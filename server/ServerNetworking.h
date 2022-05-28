@@ -251,6 +251,9 @@ public:
     /** Checks if the player has a some role */
     bool HasAuthRole(Networking::RoleType role) const;
 
+    /** Checks if compression is used for messages to the player. */
+    bool UseCompression() const;
+
     /** Get cookie associated with this connection. */
     boost::uuids::uuid Cookie() const;
 
@@ -270,7 +273,7 @@ public:
     /** Establishes a connection as a player with a specific name and id.
         This function must only be called once. */
     void EstablishPlayer(int id, const std::string& player_name, Networking::ClientType client_type,
-                         const std::string& client_version_string);
+                         const std::string& client_version_string, bool use_compression);
 
     /** Sets this connection's client type. Useful for already-connected players
       * changing type such as in the multiplayer lobby. */
@@ -330,6 +333,7 @@ private:
     Networking::AuthRoles           m_roles;
     boost::uuids::uuid              m_cookie = boost::uuids::nil_uuid();
     bool                            m_valid = true;
+    bool                            m_use_compression = false;
 
     MessageAndConnectionFn          m_nonplayer_message_callback;
     MessageAndConnectionFn          m_player_message_callback;

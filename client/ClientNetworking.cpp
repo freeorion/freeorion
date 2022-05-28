@@ -222,6 +222,9 @@ public:
     /** Sets Host player ID. */
     void SetHostPlayerID(int host_player_id);
 
+    /** Sets compression usage for outgoing messages. */
+    void SetCompressionUse(bool use_cpr);
+
     /** Get authorization roles access. */
     Networking::AuthRoles& AuthorizationRoles();
 
@@ -256,6 +259,7 @@ private:
     boost::asio::high_resolution_timer m_reconnect_timer;
     tcp::resolver::iterator            m_resolver_results;
     bool                               m_deadline_has_expired{ false };
+    bool                               m_localhost_server;
 
     // m_mutex guards m_incoming_message, m_rx_connected and m_tx_connected which are written by
     // the networking thread and read by the main thread to check incoming messages and connection
@@ -274,6 +278,8 @@ private:
     Message::HeaderBuffer           m_outgoing_header = {};
 
     std::string                     m_destination;
+
+    bool                            m_use_compression;
 };
 
 
@@ -284,7 +290,9 @@ ClientNetworking::Impl::Impl() :
     m_socket(m_io_context),
     m_deadline_timer(m_io_context),
     m_reconnect_timer(m_io_context),
-    m_incoming_messages(m_mutex)
+    m_localhost_server(false),
+    m_incoming_messages(m_mutex),
+    m_use_compression(false)
 {}
 
 bool ClientNetworking::Impl::IsConnected() const {
@@ -421,8 +429,10 @@ bool ClientNetworking::Impl::ConnectToServer(
         ErrorLogger(network) << "ConnectToServer() : unable to connect to server at "
                              << ip_address << " due to exception: " << e.what();
     }
-    if (IsConnected())
+    if (IsConnected()) {
         m_destination = ip_address;
+        m_localhost_server = m_destination == "localhost" || m_destination == "127.0.0.1";
+    }
     TraceLogger(network) << "ClientNetworking::Impl::ConnectToServer() - Returning.";
     return IsConnected();
 }
@@ -468,6 +478,9 @@ void ClientNetworking::Impl::SetPlayerID(int player_id) {
 void ClientNetworking::Impl::SetHostPlayerID(int host_player_id)
 { m_host_player_id = host_player_id; }
 
+void ClientNetworking::Impl::SetCompressionUse(bool use_cpr)
+{ m_use_compression = use_cpr; }
+
 Networking::AuthRoles& ClientNetworking::Impl::AuthorizationRoles()
 { return m_roles; }
 
@@ -476,7 +489,12 @@ void ClientNetworking::Impl::SendMessage(Message&& message) {
         ErrorLogger(network) << "ClientNetworking::SendMessage can't send message when not transmit connected";
         return;
     }
-    TraceLogger(network) << "ClientNetworking::SendMessage() : sending message " << message;
+    if (!m_localhost_server && m_use_compression && message.Size() >= Message::COMPRESSION_THRESHOLD) {
+        TraceLogger(network) << "ClientNetworking::SendMessage() : sending compressed message " << message;
+        message.Compress();
+    } else {
+        TraceLogger(network) << "ClientNetworking::SendMessage() : sending message " << message;
+    }
     m_io_context.post(boost::bind(&ClientNetworking::Impl::SendMessageImpl, this, std::move(message)));
 }
 
@@ -487,8 +505,14 @@ void ClientNetworking::Impl::SendSelfMessage(Message&& message) {
 
 boost::optional<Message> ClientNetworking::Impl::GetMessage() {
     auto message = m_incoming_messages.PopFront();
-    if (message)
-        TraceLogger(network) << "ClientNetworking::GetMessage() : received message " << *message;
+    if (message) {
+        if ((*message).Compressed()) {
+            (*message).Decompress();
+            TraceLogger(network) << "ClientNetworking::GetMessage() : received compressed message " << *message;
+        } else{
+            TraceLogger(network) << "ClientNetworking::GetMessage() : received message " << *message;
+        }
+    }
     return message;
 }
 
@@ -818,6 +842,9 @@ void ClientNetworking::SetPlayerID(int player_id)
 
 void ClientNetworking::SetHostPlayerID(int host_player_id)
 { return m_impl->SetHostPlayerID(host_player_id); }
+
+void ClientNetworking::SetCompressionUse(bool use_cpr)
+{ m_impl->SetCompressionUse(use_cpr); }
 
 Networking::AuthRoles& ClientNetworking::AuthorizationRoles()
 { return m_impl->AuthorizationRoles(); }

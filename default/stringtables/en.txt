@@ -2177,6 +2177,9 @@ The server will use Binary serialization for client-server interaction if the cl
 OPTIONS_DB_XML_ZLIB_SERIALIZATION
 When saving games with XML serialization, compress most of the XML before writing the file. Compression substantially reduces save file sizes, but may make saves unloadable due to memory requirements to decompress the save data.
 
+OPTIONS_DB_USE_MSG_ZLIB_CPR
+Allow remote clients to send compressed data.
+
 OPTIONS_DB_UI_WINDOWS_EXISTS
 True if the window with a given config name currently exists, false if one was created and deleted, doesn't exist if no window has yet been created with that name.
 
@@ -3410,6 +3413,9 @@ Create Binary Save Files
 
 OPTIONS_USE_XML_ZLIB_SERIALIZATION
 Use Compression for XML Save Files
+
+OPTIONS_USE_MSG_ZLIB_CPR
+Allow remote servers to send compressed data.
 
 OPTIONS_CREATE_PERSISTENT_CONFIG
 Write Persistent Config File

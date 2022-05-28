@@ -265,10 +265,13 @@ boost::statechart::result WaitingForMPHostAck::react(const HostMPGame& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) WaitingForMPHostAck.HostMPGame";
 
     try {
-        int host_id = boost::lexical_cast<int>(msg.m_message.Text());
+        int host_id;
+        bool use_compression;
+        ExtractHostMPAckMessage(msg.m_message, host_id, use_compression);
 
         Client().Networking().SetPlayerID(host_id);
         Client().Networking().SetHostPlayerID(host_id);
+        Client().Networking().SetCompressionUse(use_compression);
 
         // Logging configuration can only be sent after receiving host id.
         Client().SendLoggingConfigToServer();
@@ -346,7 +349,8 @@ boost::statechart::result WaitingForMPJoinAck::react(const JoinGame& msg) {
     try {
         int player_id;
         boost::uuids::uuid cookie;
-        ExtractJoinAckMessageData(msg.m_message, player_id, cookie);
+        bool use_compression;
+        ExtractJoinAckMessageData(msg.m_message, player_id, cookie, use_compression);
 
         if (!cookie.is_nil()) {
             try {
@@ -364,6 +368,7 @@ boost::statechart::result WaitingForMPJoinAck::react(const JoinGame& msg) {
         }
 
         Client().Networking().SetPlayerID(player_id);
+        Client().Networking().SetCompressionUse(use_compression);
 
         return transit<MPLobby>();
     } catch (const boost::bad_lexical_cast& ex) {

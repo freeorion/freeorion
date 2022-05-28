@@ -17,7 +17,8 @@
 
 ClientAppFixture::ClientAppFixture() :
     m_game_started(false),
-    m_cookie(boost::uuids::nil_uuid())
+    m_cookie(boost::uuids::nil_uuid()),
+    m_use_compression(false)
 {
     InitDirs(boost::unit_test::framework::master_test_suite().argv[0]);
 
@@ -127,7 +128,8 @@ void ClientAppFixture::JoinGame() {
     m_networking->SendMessage(JoinGameMessage("TestPlayer",
                                               Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER,
                                               {},
-                                              m_cookie));
+                                              m_cookie,
+                                              false));
 }
 
 bool ClientAppFixture::ProcessMessages(const boost::posix_time::ptime& start_time, int max_seconds) {
@@ -256,7 +258,7 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
         return true;
     case Message::MessageType::JOIN_GAME: {
         int player_id;
-        ExtractJoinAckMessageData(msg, player_id, m_cookie);
+        ExtractJoinAckMessageData(msg, player_id, m_cookie, m_use_compression);
         m_networking->SetPlayerID(player_id);
         return true;
     }

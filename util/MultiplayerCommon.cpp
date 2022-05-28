@@ -37,6 +37,7 @@ namespace {
         db.Add<std::string>("resource.stringtable.path",    UserStringNop("OPTIONS_DB_STRINGTABLE_FILENAME"),   "");
         db.Add("save.format.binary.enabled",                UserStringNop("OPTIONS_DB_BINARY_SERIALIZATION"),   false);
         db.Add("save.format.xml.zlib.enabled",              UserStringNop("OPTIONS_DB_XML_ZLIB_SERIALIZATION"), true);
+        db.Add("network.message.zlib.enabled",              UserStringNop("OPTIONS_DB_USE_MSG_ZLIB_CPR"),       true);
         db.Add("save.auto.hostless.enabled",                UserStringNop("OPTIONS_DB_AUTOSAVE_HOSTLESS"),      true);
         db.Add("save.auto.hostless.each-player.enabled",    UserStringNop("OPTIONS_DB_AUTOSAVE_HOSTLESS_EACH_PLAYER"), false);
         db.Add<int>("save.auto.interval",                   UserStringNop("OPTIONS_DB_AUTOSAVE_INTERVAL"),      0);

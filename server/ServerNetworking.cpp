@@ -256,6 +256,9 @@ bool PlayerConnection::HasAuthRole(Networking::RoleType role) const {
 boost::uuids::uuid PlayerConnection::Cookie() const
 { return m_cookie; }
 
+bool PlayerConnection::UseCompression() const
+{ return m_use_compression; }
+
 std::string PlayerConnection::GetIpAddress() const {
     if (m_socket) {
         m_socket->remote_endpoint().address().to_string();
@@ -281,7 +284,7 @@ void PlayerConnection::AwaitPlayer(Networking::ClientType client_type,
 }
 
 void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, Networking::ClientType client_type,
-                                       const std::string& client_version_string)
+                                       const std::string& client_version_string, bool use_compression)
 {
     TraceLogger(network) << "PlayerConnection(@ " << this << ")::EstablishPlayer("
                          << id << ", " << player_name << ", "
@@ -313,6 +316,7 @@ void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, N
     m_player_name = player_name;
     m_client_type = client_type;
     m_client_version_string = client_version_string;
+    m_use_compression = use_compression;
 }
 
 void PlayerConnection::SetClientType(Networking::ClientType client_type) {
@@ -429,6 +433,8 @@ void PlayerConnection::HandleMessageBodyRead(boost::system::error_code error,
     } else {
         assert(static_cast<int>(bytes_transferred) <= m_incoming_header_buffer[Message::Parts::SIZE]);
         if (static_cast<int>(bytes_transferred) == m_incoming_header_buffer[Message::Parts::SIZE]) {
+            if (m_incoming_message.Compressed())
+                m_incoming_message.Decompress();
             if (m_incoming_message.Type() != Message::MessageType::REQUEST_NEW_DESIGN_ID) {   // new design id messages ignored due to log spam
                 TraceLogger(network) << "Server received message from player id: " << m_ID
                                      << " of type " << MessageTypeName(m_incoming_message.Type())
@@ -557,6 +563,8 @@ void PlayerConnection::AsyncWriteMessage() {
         return;
     }
 
+    if (!IsLocalConnection() && m_use_compression && m_outgoing_messages.front().Size() >= Message::COMPRESSION_THRESHOLD)
+        m_outgoing_messages.front().Compress();
     HeaderToBuffer(m_outgoing_messages.front(), m_outgoing_header);
     std::vector<boost::asio::const_buffer> buffers;
     buffers.push_back(boost::asio::buffer(m_outgoing_header));

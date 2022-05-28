@@ -112,6 +112,9 @@ public:
     /** Sets Host player ID. */
     void SetHostPlayerID(int host_player_id);
 
+    /** Sets compression usage for outgoing messages. */
+    void SetCompressionUse(bool use_cpr);
+
     /** Access to client's authorization roles */
     [[nodiscard]] Networking::AuthRoles& AuthorizationRoles();
 

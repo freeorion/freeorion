@@ -137,7 +137,8 @@ void AIClientApp::Run() {
         Networking().SendMessage(JoinGameMessage(PlayerName(),
                                                  Networking::ClientType::CLIENT_TYPE_AI_PLAYER,
                                                  DependencyVersions(),
-                                                 boost::uuids::nil_uuid()));
+                                                 boost::uuids::nil_uuid(),
+                                                 false));
 
         // Start parsing content
         std::promise<void> barrier;
@@ -228,7 +229,8 @@ void AIClientApp::HandleMessage(const Message& msg) {
             try {
                 int player_id;
                 boost::uuids::uuid cookie; // ignore
-                ExtractJoinAckMessageData(msg, player_id, cookie);
+                bool use_compression; // ignore
+                ExtractJoinAckMessageData(msg, player_id, cookie, use_compression);
                 m_networking->SetPlayerID(player_id);
             } catch(const boost::bad_lexical_cast& ex) {
                 ErrorLogger() << "AIClientApp::HandleMessage for JOIN_GAME : Couldn't parse message text \"" << msg.Text() << "\": " << ex.what();

@@ -663,7 +663,8 @@ void GGHumanClientApp::MultiPlayerGame() {
     }
 
     if (server_connect_wnd->GetResult().server_dest == "HOST GAME SELECTED") {
-        m_networking->SendMessage(HostMPGameMessage(server_connect_wnd->GetResult().player_name));
+        m_networking->SendMessage(HostMPGameMessage(server_connect_wnd->GetResult().player_name,
+                                  GetOptionsDB().Get<bool>("network.message.zlib.enabled")));
         m_fsm->process_event(HostMPGameRequested());
     } else {
         boost::uuids::uuid cookie = boost::uuids::nil_uuid();
@@ -686,7 +687,8 @@ void GGHumanClientApp::MultiPlayerGame() {
         m_networking->SendMessage(JoinGameMessage(server_connect_wnd->GetResult().player_name,
                                                   server_connect_wnd->GetResult().type,
                                                   DependencyVersions(),
-                                                  cookie));
+                                                  cookie,
+                                                  GetOptionsDB().Get<bool>("network.message.zlib.enabled")));
         m_fsm->process_event(JoinMPGameRequested());
     }
 }

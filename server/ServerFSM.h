@@ -133,7 +133,8 @@ struct ServerFSM : sc::state_machine<ServerFSM, Idle> {
                          const std::string& player_name,
                          Networking::ClientType client_type,
                          const std::string& client_version_string,
-                         const Networking::AuthRoles& roles);
+                         const Networking::AuthRoles& roles,
+                         bool use_compression);
 
     std::shared_ptr<MultiplayerLobbyData>   m_lobby_data;
     std::shared_ptr<SinglePlayerSetupData>  m_single_player_setup_data;
@@ -208,7 +209,8 @@ private:
                          const std::string& player_name,
                          Networking::ClientType client_type,
                          const std::string& client_version_string,
-                         const Networking::AuthRoles& roles);
+                         const Networking::AuthRoles& roles,
+                         bool use_compression);
     void ValidateClientLimits();
 
     SERVER_ACCESSOR
@@ -322,7 +324,8 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
                          const std::string& player_name,
                          Networking::ClientType client_type,
                          const std::string& client_version_string,
-                         const Networking::AuthRoles& roles);
+                         const Networking::AuthRoles& roles,
+                         bool use_compression);
     void TurnTimedoutHandler(const boost::system::error_code& error);
 
     boost::asio::deadline_timer                     m_turn_timeout;

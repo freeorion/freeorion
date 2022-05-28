@@ -9,6 +9,7 @@
 #include "../util/SaveGamePreviewUtils.h"
 #include "../universe/Species.h"
 #include "../universe/Universe.h"
+#include "../util/base64_filter.h"
 #include "../util/OptionsDB.h"
 #include "../util/OrderSet.h"
 #include "../util/Serialize.h"
@@ -17,6 +18,11 @@
 #include "../util/Version.h"
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/iostreams/copy.hpp>
+#include <boost/iostreams/device/back_inserter.hpp>
+#include <boost/iostreams/filter/zlib.hpp>
+#include <boost/iostreams/filtering_streambuf.hpp>
+#include <boost/iostreams/stream.hpp>
 #include <boost/serialization/deque.hpp>
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/map.hpp>
@@ -67,6 +73,9 @@ Message::MessageType Message::Type() const noexcept
 std::size_t Message::Size() const noexcept
 { return m_message_size; }
 
+bool Message::Compressed() const noexcept
+{ return m_is_compressed; }
+
 const char* Message::Data() const noexcept
 { return m_message_text.data(); }
 
@@ -85,13 +94,72 @@ char* Message::Data() noexcept
 void Message::Swap(Message& rhs) noexcept {
     std::swap(m_type, rhs.m_type);
     std::swap(m_message_size, rhs.m_message_size);
+    std::swap(m_is_compressed, rhs.m_is_compressed);
     std::swap(m_message_text, rhs.m_message_text);
 }
 
 void Message::Reset() noexcept {
     m_type = MessageType::UNDEFINED;
     m_message_size = 0;
+    m_is_compressed = false;
     m_message_text.clear();
+}
+
+void Message::Compress() noexcept {
+    if (!m_is_compressed) {
+        std::string_view::size_type temp = m_message_size;
+        m_message_text = CompressImpl(m_message_text);
+        m_message_size = m_message_text.size();
+        m_is_compressed = true;
+    }
+}
+
+std::string Message::CompressImpl(const std::string& data) {
+    boost::iostreams::basic_array_source<char> src(data.c_str(), data.size());
+    boost::iostreams::stream<boost::iostreams::basic_array_source<char>> s_src(src);
+
+    std::string compressed;
+    compressed.reserve(std::pow(2.0, 26.0));
+
+    boost::iostreams::back_insert_device<std::string> cmp(compressed);
+    boost::iostreams::stream<boost::iostreams::back_insert_device<std::string>> s_cmp(cmp);
+
+    boost::iostreams::filtering_ostreambuf out;
+    out.push(boost::iostreams::zlib_compressor());
+    out.push(boost::iostreams::base64_encoder());
+    out.push(s_cmp);
+    boost::iostreams::copy(s_src, out);
+    s_cmp.flush();
+
+    return compressed;
+}
+
+void Message::Decompress() noexcept {
+    if (m_is_compressed) {
+        std::string_view::size_type temp = m_message_size;
+        m_message_text = DecompressImpl(m_message_text);
+        m_message_size = m_message_text.size();
+        m_is_compressed = false;
+    }
+}
+
+std::string Message::DecompressImpl(const std::string& data) {
+    boost::iostreams::basic_array_source<char> src(data.c_str(), data.size());
+    boost::iostreams::stream<boost::iostreams::basic_array_source<char>> s_src(src);
+
+    std::string decompressed;
+    decompressed.reserve(std::pow(2.0, 26.0));
+
+    boost::iostreams::back_insert_device<std::string> dcmp(decompressed);
+    boost::iostreams::stream<boost::iostreams::back_insert_device<std::string>> s_dcmp(dcmp);
+
+    boost::iostreams::filtering_istreambuf in;
+    in.push(boost::iostreams::zlib_decompressor());
+    in.push(boost::iostreams::base64_decoder());
+    in.push(s_src);
+    boost::iostreams::copy(in, s_dcmp);
+
+    return decompressed;
 }
 
 bool operator==(const Message& lhs, const Message& rhs) {
@@ -109,11 +177,13 @@ void swap(Message& lhs, Message& rhs)
 void BufferToHeader(const Message::HeaderBuffer& buffer, Message& message) {
     message.m_type = static_cast<Message::MessageType>(buffer[Message::Parts::TYPE]);
     message.m_message_size = buffer[Message::Parts::SIZE];
+    message.m_is_compressed = static_cast<bool>(buffer[Message::Parts::CPR_USED]);
 }
 
 void HeaderToBuffer(const Message& message, Message::HeaderBuffer& buffer) {
     buffer[Message::Parts::TYPE] = int(message.Type());
     buffer[Message::Parts::SIZE] = int(message.Size());
+    buffer[Message::Parts::CPR_USED] = int(message.Compressed());
 }
 
 ////////////////////////////////////////////////
@@ -141,14 +211,15 @@ Message HostSPGameMessage(const SinglePlayerSetupData& setup_data) {
     return Message{Message::MessageType::HOST_SP_GAME, std::move(os).str()};
 }
 
-Message HostMPGameMessage(const std::string& host_player_name)
+Message HostMPGameMessage(const std::string& host_player_name, bool use_compression)
 {
     std::ostringstream os;
     {
         std::string client_version_string = FreeOrionVersionString();
         freeorion_xml_oarchive oa(os);
         oa << BOOST_SERIALIZATION_NVP(host_player_name)
-           << BOOST_SERIALIZATION_NVP(client_version_string);
+           << BOOST_SERIALIZATION_NVP(client_version_string)
+           << BOOST_SERIALIZATION_NVP(use_compression);
     }
     return Message{Message::MessageType::HOST_MP_GAME, std::move(os).str()};
 }
@@ -156,7 +227,8 @@ Message HostMPGameMessage(const std::string& host_player_name)
 Message JoinGameMessage(const std::string& player_name,
                         Networking::ClientType client_type,
                         const std::map<std::string, std::string>& dependencies,
-                        boost::uuids::uuid cookie) {
+                        boost::uuids::uuid cookie,
+                        bool use_compression) {
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
@@ -164,7 +236,8 @@ Message JoinGameMessage(const std::string& player_name,
         oa << BOOST_SERIALIZATION_NVP(player_name)
            << BOOST_SERIALIZATION_NVP(client_type)
            << BOOST_SERIALIZATION_NVP(client_version_string)
-           << BOOST_SERIALIZATION_NVP(cookie);
+           << BOOST_SERIALIZATION_NVP(cookie)
+           << BOOST_SERIALIZATION_NVP(use_compression);
         oa << BOOST_SERIALIZATION_NVP(dependencies);
     }
     return Message{Message::MessageType::JOIN_GAME, std::move(os).str()};
@@ -361,16 +434,25 @@ Message GameStartMessage(bool single_player_game, int empire_id,
 Message HostSPAckMessage(int player_id)
 { return Message{Message::MessageType::HOST_SP_GAME, std::to_string(player_id)}; }
 
-Message HostMPAckMessage(int player_id)
-{ return Message{Message::MessageType::HOST_MP_GAME, std::to_string(player_id)}; }
-
-Message JoinAckMessage(int player_id, boost::uuids::uuid cookie)
+Message HostMPAckMessage(int player_id, bool use_compression)
 {
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
         oa << BOOST_SERIALIZATION_NVP(player_id)
-           << BOOST_SERIALIZATION_NVP(cookie);
+           << BOOST_SERIALIZATION_NVP(use_compression);
+    }
+    return Message{Message::MessageType::HOST_MP_GAME, std::move(os).str()};
+}
+
+Message JoinAckMessage(int player_id, boost::uuids::uuid cookie, bool use_compression)
+{
+    std::ostringstream os;
+    {
+        freeorion_xml_oarchive oa(os);
+        oa << BOOST_SERIALIZATION_NVP(player_id)
+           << BOOST_SERIALIZATION_NVP(cookie)
+           << BOOST_SERIALIZATION_NVP(use_compression);
     }
     return Message{Message::MessageType::JOIN_GAME, std::move(os).str()};
 }
@@ -743,15 +825,33 @@ void ExtractErrorMessageData(const Message& msg, int& player_id, std::string& pr
     }
 }
 
-void ExtractHostMPGameMessageData(const Message& msg, std::string& host_player_name, std::string& client_version_string) {
+void ExtractHostMPGameMessageData(const Message& msg, std::string& host_player_name, std::string& client_version_string,
+                                  bool& use_compression) {
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(host_player_name)
-           >> BOOST_SERIALIZATION_NVP(client_version_string);
+           >> BOOST_SERIALIZATION_NVP(client_version_string)
+           >> BOOST_SERIALIZATION_NVP(use_compression);
 
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractHostMPGameMessageData(const Message& msg, std::string& host_player_name, std::string& client_version_string) failed!  Message:\n"
+        ErrorLogger() << "ExtractHostMPGameMessageData(const Message& msg, std::string& host_player_name, std::string& client_version_string, bool& use_compression) failed!  Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
+        throw err;
+    }
+}
+
+void ExtractHostMPAckMessage(const Message& msg, int& player_id, bool& req_compression)
+{
+    try {
+        std::istringstream is(msg.Text());
+        freeorion_xml_iarchive ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(player_id);
+        ia >> BOOST_SERIALIZATION_NVP(req_compression);
+
+    } catch (const std::exception& err) {
+        ErrorLogger() << "ExtractHostMPAckMessage(const Message& msg, int& player_id, bool& req_compression) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         throw err;
@@ -954,7 +1054,7 @@ void ExtractJoinGameMessageData(const Message& msg, std::string& player_name,
                                 Networking::ClientType& client_type,
                                 std::string& version_string,
                                 std::map<std::string, std::string>& dependencies,
-                                boost::uuids::uuid& cookie)
+                                boost::uuids::uuid& cookie, bool& use_compression)
 {
     DebugLogger() << "ExtractJoinGameMessageData() from " << player_name
                   << " client type " << client_type;
@@ -964,7 +1064,8 @@ void ExtractJoinGameMessageData(const Message& msg, std::string& player_name,
         ia >> BOOST_SERIALIZATION_NVP(player_name)
            >> BOOST_SERIALIZATION_NVP(client_type)
            >> BOOST_SERIALIZATION_NVP(version_string)
-           >> BOOST_SERIALIZATION_NVP(cookie);
+           >> BOOST_SERIALIZATION_NVP(cookie)
+           >> BOOST_SERIALIZATION_NVP(use_compression);
 
         dependencies.clear();
         try {
@@ -983,13 +1084,14 @@ void ExtractJoinGameMessageData(const Message& msg, std::string& player_name,
 }
 
 void ExtractJoinAckMessageData(const Message& msg, int& player_id,
-                               boost::uuids::uuid& cookie)
+                               boost::uuids::uuid& cookie, bool& use_compression)
 {
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(player_id)
-           >> BOOST_SERIALIZATION_NVP(cookie);
+           >> BOOST_SERIALIZATION_NVP(cookie)
+           >> BOOST_SERIALIZATION_NVP(use_compression);
 
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractJoinAckMessageData(const Message& msg, int& player_id, "
