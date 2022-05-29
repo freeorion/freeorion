@@ -9,16 +9,16 @@ current_dir = os.path.dirname(__file__)
 common = os.path.join(current_dir, "..", "common")
 sys.path.append(common)
 
-from collect_data import get_ais  # noqa: E402
+from collect_data import get_ais_data  # noqa: E402
 
 
-def plot_param(ais, attribute):
+def plot_param(ais_data, attribute):
+    st.markdown(f"**Distribution of the {attribute}**")
+
+    empires = sorted(item["player"] for item in ais_data)
+
     plot_data = {}
-    f"Distribution of the {attribute}"
-
-    empires = sorted(item["player"] for item in ais)
-
-    for item in ais:
+    for item in ais_data:
         name = item["player"]
 
         empire_dict = plot_data.setdefault(name, {})
@@ -49,8 +49,8 @@ def plot_param(ais, attribute):
     )
 
 
-def configure_colors(data):
-    colors = sorted((item["player"], item["color"]) for item in data)
+def configure_colors(ais_data):
+    colors = sorted((item["player"], item["color"]) for item in ais_data)
     theme_colors = [f"#{r:02X}{g:02X}{b:02X}" for _, (r, g, b, a) in colors]
 
     def empire_theme():
@@ -60,11 +60,11 @@ def configure_colors(data):
     alt.themes.enable("empire_theme")
 
 
-def draw_plots(data):
-    configure_colors(data)
+def draw_plots(ais_data):
+    configure_colors(ais_data)
 
     for param in ["PP", "RP", "SHIP_CONT"]:
-        plot_param(data, attribute=param)
+        plot_param(ais_data, attribute=param)
 
 
-draw_plots(get_ais())
+draw_plots(get_ais_data())
