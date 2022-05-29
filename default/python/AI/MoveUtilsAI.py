@@ -8,10 +8,11 @@ import pathfinding
 import PlanetUtilsAI
 from AIDependencies import DRYDOCK_HAPPINESS_THRESHOLD, INVALID_ID
 from aistate_interface import get_aistate
+from buildings import get_empire_drydocks
 from common.fo_typing import SystemId
 from freeorion_tools import get_fleet_position
 from target import TargetFleet, TargetSystem
-from turn_state import get_empire_drydocks, get_system_supply
+from turn_state import get_system_supply
 
 
 def create_move_orders_to_system(fleet: TargetFleet, target: TargetSystem) -> List["fleet_orders.OrderMove"]:

@@ -1,8 +1,7 @@
-from collections import defaultdict
-from typing import DefaultDict, Dict, FrozenSet, Set
+from typing import Dict, FrozenSet, Set
 
 import AIDependencies
-from common.fo_typing import BuildingName, PlanetId, SystemId
+from common.fo_typing import BuildingName, PlanetId
 from empire.pilot_rating import best_pilot_rating
 from empire.survey_lock import survey_universe_lock
 from freeorion_tools.caching import cache_for_current_turn
@@ -18,44 +17,17 @@ def get_best_pilot_facilities(facility: BuildingName) -> FrozenSet[PlanetId]:
     return best_pilot_facilities.get(facility, set())
 
 
-@survey_universe_lock
-def get_systems_with_facilities(bld_name: BuildingName) -> FrozenSet[SystemId]:
-    """Give list of systems with system-wide ship facilities (asteroid processors)"""
-    return _get_system_facilities()[bld_name]
-
-
-@survey_universe_lock
-def get_planets_with_building(bld_name: BuildingName) -> FrozenSet[PlanetId]:
-    """Give list of planets containing the given building"""
-    return _get_building_locations()[bld_name]
-
-
 @cache_for_current_turn
 def _get_facilities() -> Dict[str, Dict[BuildingName, Set[PlanetId]]]:
     return {}
-
-
-@cache_for_current_turn
-def _get_system_facilities() -> DefaultDict[BuildingName, Set]:
-    return defaultdict(set)
-
-
-@cache_for_current_turn
-def _get_building_locations() -> DefaultDict[BuildingName, Set]:
-    return defaultdict(set)
 
 
 def set_building_locations(
     weapons_grade: str,
     buildings_here: Set[BuildingName],
     pid: PlanetId,
-    sid: SystemId,
 ):
     this_grade_facilities = _get_facilities().setdefault(weapons_grade, {})
-
     for building in buildings_here:
-        _get_building_locations().setdefault(building, set()).add(pid)
         if building in AIDependencies.SHIP_FACILITIES:
             this_grade_facilities.setdefault(building, set()).add(pid)
-        if building in AIDependencies.SYSTEM_SHIP_FACILITIES:
-            _get_system_facilities()[building].add(sid)

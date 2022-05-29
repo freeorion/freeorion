@@ -27,7 +27,6 @@ If you don't sure which sub-modules should be chosen - consider creating a new o
 If your code adds new sub-modules dependency to existing sub-modules - consider creating a new one.
 """
 
-from turn_state._dry_dock_state import get_empire_drydocks
 from turn_state._empire_resources import (
     have_asteroids,
     have_computronium,
