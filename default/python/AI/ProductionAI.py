@@ -635,6 +635,7 @@ def generate_production_orders():
     building_expense += _build_gas_giant_generator()
     building_expense += _build_translator()
     building_expense += _build_regional_administration()
+    building_expense += _build_military_command()
 
     building_name = "BLD_SOL_ORB_GEN"
     if empire.buildingTypeAvailable(building_name) and aistate.character.may_build_building(building_name):
@@ -1784,7 +1785,7 @@ def _try_enqueue(
             preferred_locations.append((_location_rating(planet), pid))
         else:
             locations.append((_location_rating(planet), pid))
-    for _, pid in sorted(preferred_locations) + sorted(locations):
+    for _, pid in sorted(preferred_locations, reverse=True) + sorted(locations, reverse=True):
         planet = universe.getPlanet(pid)
         res = building_type.enqueue(pid)
         debug("Enqueueing %s at planet %d (%s) , with result %d", building_type, pid, planet.name, res)
@@ -2014,3 +2015,21 @@ def _rate_system_for_admin(sys_id: SystemId, systems_that_may_profit: List[Tuple
                         rating += 2
     debug(f"admin rating {universe.getSystem(sys_id)}={rating}")
     return rating
+
+
+def _build_military_command() -> float:
+    """
+    Consider building a Military Command, return added turn costs.
+    Since its major purpose is to provide policy slots, and we may need the production for more important
+    things, do not build it too early. Won't build it at all, if all our planets dislike it.
+    """
+    building_type = BuildingType.MILITARY_COMMAND
+    palace_planet = BuildingType.PALACE.built_at()
+    # an empire can only build one, and if we do not have a palace, this is definitely more important
+    if building_type.built_or_queued_at() or not palace_planet:
+        return 0.0
+    # cost is independent of the location, but we need a valid location
+    if fo.getEmpire().productionPoints > building_type.turn_cost(list(palace_planet)[0]) * 1.5:
+        # default selection should prefer the capital, unless its species dislikes it.
+        return _try_enqueue(building_type, get_inhabited_planets())
+    return 0.0

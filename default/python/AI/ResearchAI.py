@@ -1,6 +1,6 @@
 import freeOrionAIInterface as fo
 import random
-from logging import debug, warning
+from logging import debug, error, warning
 
 import AIDependencies as Dep
 import AIstate
@@ -218,7 +218,7 @@ def generate_classic_research_orders():
             if tech not in tech_base:
                 this_tech = fo.getTech(tech)
                 if this_tech is None:
-                    warning("Desired tech '%s' appears to not exist" % tech)
+                    error("Desired tech '%s' appears to not exist" % tech)
                     continue
                 missing_prereqs = [
                     preReq for preReq in this_tech.recursivePrerequisites(empire_id) if preReq not in tech_base
