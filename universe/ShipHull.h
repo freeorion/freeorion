@@ -58,43 +58,35 @@ public:
     { return !(*this == rhs); }
 
     //! Returns name of hull
-    auto Name() const -> const std::string&
-    { return m_name; }
+    auto Name() const -> const std::string& { return m_name; }
 
     //! Returns description, including a description of the stats and effects
     //! of this hull
-    auto Description() const -> const std::string&
-    { return m_description; }
+    auto Description() const -> const std::string& { return m_description; }
 
     //! Returns starlane speed of hull
     auto Speed() const -> float;
 
     //! Returns fuel capacity of hull
-    auto Fuel() const -> float
-    { return m_fuel; }
+    auto Fuel() const -> float { return m_fuel; }
 
     //! Returns stealth of hull
-    auto Stealth() const -> float
-    { return m_stealth; }
+    auto Stealth() const -> float { return m_stealth; }
 
     //! Returns structure of hull
     auto Structure() const -> float;
 
     //! Returns shields of hull
-    auto Shields() const -> float
-    { return 0.0f; }
+    auto Shields() const -> float { return 0.0f; }
 
     //! Returns colonist capacity of hull
-    auto ColonyCapacity() const -> float
-    { return 0.0f; }
+    auto ColonyCapacity() const -> float { return 0.0f; }
 
     //! Returns the troop capacity of hull
-    auto TroopCapacity() const -> float
-    { return 0.0f; }
+    auto TroopCapacity() const -> float { return 0.0f; }
 
     //! Returns detection ability of hull
-    auto Detection() const -> float
-    { return 0.0f; }
+    auto Detection() const -> float { return 0.0f; }
 
     //! Returns true if the production cost and time are invariant (does not
     //! depend on) the location
@@ -110,8 +102,7 @@ public:
 
     //! Returns whether this hull type is producible by players and appears on
     //! the design screen
-    auto Producible() const -> bool
-    { return m_producible; }
+    auto Producible() const -> bool { return m_producible; }
 
     auto ProductionMeterConsumption() const -> const ConsumptionMap<MeterType>&
     { return m_production_meter_consumption; }
@@ -120,15 +111,13 @@ public:
     { return m_production_special_consumption; }
 
     //! Returns total number of of slots in hull
-    auto NumSlots() const -> unsigned int
-    { return m_slots.size(); }
+    auto NumSlots() const -> unsigned int { return m_slots.size(); }
 
     //! Returns number of of slots of indicated type in hull
     auto NumSlots(ShipSlotType slot_type) const -> unsigned int;
 
     //! Returns vector of slots in hull
-    auto Slots() const -> const std::vector<Slot>&
-    { return m_slots; }
+    auto Slots() const -> const std::vector<Slot>& { return m_slots; }
 
     const auto& Tags() const { return m_tags; }
 
@@ -137,26 +126,21 @@ public:
 
     //! Returns the condition that determines the locations where ShipDesign
     //! containing hull can be produced
-    auto Location() const -> const Condition::Condition*
-    { return m_location.get(); }
+    auto Location() const -> const Condition::Condition* { return m_location.get(); }
 
     //! Returns the names of other content that cannot be used in the same
     //! ship design as this part
-    auto Exclusions() const -> const std::set<std::string>&
-    { return m_exclusions; }
+    auto Exclusions() const -> const std::set<std::string>& { return m_exclusions; }
 
     //! Returns the EffectsGroups that encapsulate the effects this part hull
     //! has.
-    auto Effects() const -> const std::vector<std::shared_ptr<Effect::EffectsGroup>>&
-    { return m_effects; }
+    auto Effects() const -> const std::vector<std::shared_ptr<Effect::EffectsGroup>>& { return m_effects; }
 
     //! Returns the image that represents the hull on the design screen
-    auto Graphic() const -> const std::string&
-    { return m_graphic; }
+    auto Graphic() const -> const std::string& { return m_graphic; }
 
     //! Returns the small icon to represent hull
-    auto Icon() const -> const std::string&
-    { return m_icon; }
+    auto Icon() const -> const std::string& { return m_icon; }
 
     //! Returns a number, calculated from the contained data, which should be
     //! different for different contained data, and must be the same for

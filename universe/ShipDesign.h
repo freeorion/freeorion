@@ -191,20 +191,20 @@ private:
 
     void BuildStatCaches();
 
-    int                         m_id = INVALID_DESIGN_ID;
+    int                      m_id = INVALID_DESIGN_ID;
 
-    std::string                 m_name;
-    std::string                 m_description;
-    boost::uuids::uuid          m_uuid = boost::uuids::nil_uuid();
+    std::string              m_name;
+    std::string              m_description;
+    boost::uuids::uuid       m_uuid = boost::uuids::nil_uuid();
 
-    int                         m_designed_on_turn = INVALID_GAME_TURN;
-    int                         m_designed_by_empire = ALL_EMPIRES;
+    int                      m_designed_on_turn = INVALID_GAME_TURN;
+    int                      m_designed_by_empire = ALL_EMPIRES;
 
-    std::string                 m_hull;
-    std::vector<std::string>    m_parts;
+    std::string              m_hull;
+    std::vector<std::string> m_parts;
 
-    std::string                 m_icon;
-    std::string                 m_3D_model;
+    std::string              m_icon;
+    std::string              m_3D_model;
 
     // initialized by BuildStatCaches based on parts and hull tags. tags data does not need to be serialized.
     std::string                   m_tags_concatenated;

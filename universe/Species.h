@@ -52,11 +52,11 @@ public:
               std::string& graphic);
     ~FocusType(); // needed due to forward-declared Condition held in unique_ptr
 
-    const std::string&          Name() const        { return m_name; }          ///< returns the name for this focus type
-    const std::string&          Description() const { return m_description; }   ///< returns a text description of this focus type
-    const Condition::Condition* Location() const    { return m_location.get(); }///< returns the condition that determines whether an UniverseObject can use this FocusType
-    const std::string&          Graphic() const     { return m_graphic; }       ///< returns the name of the grapic file for this focus type
-    std::string                 Dump(unsigned short ntabs = 0) const;           ///< returns a data file format representation of this object
+    [[nodiscard]] const std::string&          Name() const        { return m_name; }          ///< returns the name for this focus type
+    [[nodiscard]] const std::string&          Description() const { return m_description; }   ///< returns a text description of this focus type
+    [[nodiscard]] const Condition::Condition* Location() const    { return m_location.get(); }///< returns the condition that determines whether an UniverseObject can use this FocusType
+    [[nodiscard]] const std::string&          Graphic() const     { return m_graphic; }       ///< returns the name of the grapic file for this focus type
+    [[nodiscard]] std::string                 Dump(unsigned short ntabs = 0) const;           ///< returns a data file format representation of this object
 
     /** Returns a number, calculated from the contained data, which should be
       * different for different contained data, and must be the same for
@@ -64,7 +64,7 @@ public:
       * and executions of the program and the function. Useful to verify that
       * the parsed content is consistent without sending it all between
       * clients and server. */
-    unsigned int GetCheckSum() const;
+    [[nodiscard]] unsigned int GetCheckSum() const;
 
 private:
     std::string                                 m_name;
@@ -95,41 +95,41 @@ public:
 
     ~Species();
 
-    const std::string&              Name() const                        { return m_name; }                  ///< returns the unique name for this type of species
-    const std::string&              Description() const                 { return m_description; }           ///< returns a text description of this type of species
+    [[nodiscard]] const std::string&            Name() const          { return m_name; }                  ///< returns the unique name for this type of species
+    [[nodiscard]] const std::string&            Description() const   { return m_description; }           ///< returns a text description of this type of species
     /** returns a text description of this type of species */
-    std::string                     GameplayDescription() const;
+    [[nodiscard]] std::string                   GameplayDescription() const;
 
-    const Condition::Condition*     Location() const                    { return m_location.get(); }        ///< returns the condition determining what planets on which this species may spawn
-    const Condition::Condition*     CombatTargets() const               { return m_combat_targets.get(); }  ///< returns the condition for possible targets. may be nullptr if no condition was specified.
+    [[nodiscard]] const Condition::Condition*   Location() const      { return m_location.get(); }        ///< returns the condition determining what planets on which this species may spawn
+    [[nodiscard]] const Condition::Condition*   CombatTargets() const { return m_combat_targets.get(); }  ///< returns the condition for possible targets. may be nullptr if no condition was specified.
 
-    std::string                     Dump(unsigned short ntabs = 0) const;                                   ///< returns a data file format representation of this object
-    const std::vector<FocusType>&   Foci() const                        { return m_foci; }                  ///< returns the focus types this species can use
-    const std::string&              DefaultFocus() const                { return m_default_focus; }         ///< returns the name of the planetary focus this species defaults to. Used for new colonies and uninvaded natives.
-    const std::map<PlanetType, PlanetEnvironment>& PlanetEnvironments() const { return m_planet_environments; } ///< returns a map from PlanetType to the PlanetEnvironment this Species has on that PlanetType
-    PlanetEnvironment               GetPlanetEnvironment(PlanetType planet_type) const;                     ///< returns the PlanetEnvironment this species has on PlanetType \a planet_type
-    PlanetType                      NextBestPlanetType(PlanetType initial_planet_type) const;             ///< returns a best PlanetType for this species from the \a initial_planet_type specified which needs the few steps to reach
-    PlanetType                      NextBetterPlanetType(PlanetType initial_planet_type) const;             ///< returns a PlanetType for this species which is a step closer to the best PlanetType than the specified \a initial_planet_type (if such exists)
+    [[nodiscard]] std::string                   Dump(unsigned short ntabs = 0) const;                                   ///< returns a data file format representation of this object
+    [[nodiscard]] const std::vector<FocusType>& Foci() const          { return m_foci; }                  ///< returns the focus types this species can use
+    [[nodiscard]] const std::string&            DefaultFocus() const  { return m_default_focus; }         ///< returns the name of the planetary focus this species defaults to. Used for new colonies and uninvaded natives.
+    [[nodiscard]] const std::map<PlanetType, PlanetEnvironment>& PlanetEnvironments() const { return m_planet_environments; } ///< returns a map from PlanetType to the PlanetEnvironment this Species has on that PlanetType
+    [[nodiscard]] PlanetEnvironment             GetPlanetEnvironment(PlanetType planet_type) const;                     ///< returns the PlanetEnvironment this species has on PlanetType \a planet_type
+    [[nodiscard]] PlanetType                    NextBestPlanetType(PlanetType initial_planet_type) const;             ///< returns a best PlanetType for this species from the \a initial_planet_type specified which needs the few steps to reach
+    [[nodiscard]] PlanetType                    NextBetterPlanetType(PlanetType initial_planet_type) const;             ///< returns a PlanetType for this species which is a step closer to the best PlanetType than the specified \a initial_planet_type (if such exists)
 
     /** Returns the EffectsGroups that encapsulate the effects that species of
         this type have. */
-    const std::vector<std::shared_ptr<Effect::EffectsGroup>>& Effects() const
+    [[nodiscard]] const std::vector<std::shared_ptr<Effect::EffectsGroup>>& Effects() const
     { return m_effects; }
 
-    float                           SpawnRate() const       { return m_spawn_rate; }
-    int                             SpawnLimit() const      { return m_spawn_limit; }
-    bool                            Playable() const        { return m_playable; }          ///< returns whether this species is a suitable starting species for players
-    bool                            Native() const          { return m_native; }            ///< returns whether this species is a suitable native species (for non player-controlled planets)
-    bool                            CanColonize() const     { return m_can_colonize; }      ///< returns whether this species can colonize planets
-    bool                            CanProduceShips() const { return m_can_produce_ships; } ///< returns whether this species can produce ships
+    [[nodiscard]] float                           SpawnRate() const       { return m_spawn_rate; }
+    [[nodiscard]] int                             SpawnLimit() const      { return m_spawn_limit; }
+    [[nodiscard]] bool                            Playable() const        { return m_playable; }          ///< returns whether this species is a suitable starting species for players
+    [[nodiscard]] bool                            Native() const          { return m_native; }            ///< returns whether this species is a suitable native species (for non player-controlled planets)
+    [[nodiscard]] bool                            CanColonize() const     { return m_can_colonize; }      ///< returns whether this species can colonize planets
+    [[nodiscard]] bool                            CanProduceShips() const { return m_can_produce_ships; } ///< returns whether this species can produce ships
 
     [[nodiscard]] const auto&       Tags() const { return m_tags; }
     [[nodiscard]] bool              HasTag(std::string_view tag) const
     { return std::any_of(m_tags.begin(), m_tags.end(), [tag](const auto& t) { return t == tag; }); }
 
-    const std::set<std::string>&    Likes() const           { return m_likes; }
-    const std::set<std::string>&    Dislikes() const        { return m_dislikes; }
-    const std::string&              Graphic() const         { return m_graphic; }           ///< returns the name of the grapic file for this species
+    [[nodiscard]] const std::set<std::string>& Likes() const    { return m_likes; }
+    [[nodiscard]] const std::set<std::string>& Dislikes() const { return m_dislikes; }
+    [[nodiscard]] const std::string&           Graphic() const  { return m_graphic; }       ///< returns the name of the grapic file for this species
 
     /** Returns a number, calculated from the contained data, which should be
       * different for different contained data, and must be the same for
@@ -137,7 +137,7 @@ public:
       * and executions of the program and the function. Useful to verify that
       * the parsed content is consistent without sending it all between
       * clients and server. */
-    unsigned int                    GetCheckSum() const;
+    [[nodiscard]] unsigned int GetCheckSum() const;
 
 private:
     void Init();
@@ -158,26 +158,26 @@ private:
       * current planet type needs to be returned.
       */
     template <typename Func>
-    PlanetType TheNextBestPlanetTypeApply(PlanetType initial_planet_type, Func apply_for_best_forward_backward) const;
+    [[nodiscard]] PlanetType TheNextBestPlanetTypeApply(PlanetType initial_planet_type, Func apply_for_best_forward_backward) const;
 
-    std::string                             m_name;
-    std::string                             m_description;
-    std::string                             m_gameplay_description;
+    std::string m_name;
+    std::string m_description;
+    std::string m_gameplay_description;
 
     std::vector<FocusType>                  m_foci;
     std::string                             m_default_focus;
     std::map<PlanetType, PlanetEnvironment> m_planet_environments;
 
-    std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
-    std::unique_ptr<Condition::Condition>               m_location;
-    std::unique_ptr<Condition::Condition>               m_combat_targets;
+    std::vector<std::shared_ptr<Effect::EffectsGroup>> m_effects;
+    std::unique_ptr<Condition::Condition>              m_location;
+    std::unique_ptr<Condition::Condition>              m_combat_targets;
 
-    bool                                    m_playable = true;
-    bool                                    m_native = true;
-    bool                                    m_can_colonize = true;
-    bool                                    m_can_produce_ships = true;
-    float                                   m_spawn_rate = 1.0;
-    int                                     m_spawn_limit = 99999;
+    bool  m_playable = true;
+    bool  m_native = true;
+    bool  m_can_colonize = true;
+    bool  m_can_produce_ships = true;
+    float m_spawn_rate = 1.0;
+    int   m_spawn_limit = 99999;
 
     const std::string                   m_tags_concatenated;
     const std::vector<std::string_view> m_tags;
