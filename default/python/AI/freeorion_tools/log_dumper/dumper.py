@@ -1,6 +1,6 @@
 from typing import Callable, Union
 
-from common.dump_interface import DumpKey, DumpType
+from common.dump_interface import LOG_PREFIX, DumpKey, DumpType
 
 DumpValue = Union[str, int]
 
@@ -27,7 +27,7 @@ class Dumper:
             raise DumpException(f"Fail to dump {key} with {value}") from e
 
     def _dump_raw(self, key: DumpKey, type_: DumpType, value_as_string):
-        self._writer(f"##{key.value}:{type_.value}:{value_as_string}")
+        self._writer(f"{LOG_PREFIX}{key.value}:{type_.value}:{value_as_string}")
 
     def _get_type(self, value) -> DumpType:
         if isinstance(value, int):

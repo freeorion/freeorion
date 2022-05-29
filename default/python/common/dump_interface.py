@@ -12,3 +12,6 @@ class DumpKey(Enum):
 class DumpType(Enum):
     str = "str"
     int = "int"
+
+
+LOG_PREFIX = "##"

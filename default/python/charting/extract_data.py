@@ -20,7 +20,7 @@ def parse_empire(value):
 
 
 def parse_color(value):
-    return tuple(float(chunk) / 255 for chunk in value.strip().split())
+    return tuple(int(chunk) for chunk in value.strip().split())
 
 
 def start_turn(key, type_, value, data):

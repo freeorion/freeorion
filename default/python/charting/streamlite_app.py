@@ -16,7 +16,7 @@ def plot_param(ais, attribute):
     plot_data = {}
     f"Distribution of the {attribute}"
 
-    empires = [str(item["player"]) for item in ais]
+    empires = sorted(item["player"] for item in ais)
 
     for item in ais:
         name = item["player"]
@@ -29,7 +29,7 @@ def plot_param(ais, attribute):
 
     chart_data = pd.DataFrame(plot_data).rename_axis("turn").reset_index()
 
-    order = sorted(chart_data["turn"].values, key=int)
+    turn_order = sorted(chart_data["turn"].values, key=int)
 
     st.altair_chart(
         alt.Chart(chart_data)
@@ -38,18 +38,31 @@ def plot_param(ais, attribute):
         .encode(
             x=alt.X(
                 "turn",
-                sort=order,
+                sort=turn_order,
                 axis=alt.Axis(
                     grid=True,
                 ),
             ),
             y=f"{attribute}:Q",
-            color="empire:N",
+            color=alt.Color("empire:N", sort=empires),
         )
     )
 
 
+def configure_colors(data):
+    colors = sorted((item["player"], item["color"]) for item in data)
+    theme_colors = [f"#{r:02X}{g:02X}{b:02X}" for _, (r, g, b, a) in colors]
+
+    def empire_theme():
+        return {"config": {"range": {"category": {"scheme": theme_colors}}}}
+
+    alt.themes.register("empire_theme", empire_theme)
+    alt.themes.enable("empire_theme")
+
+
 def draw_plots(data):
+    configure_colors(data)
+
     for param in ["PP", "RP", "SHIP_CONT"]:
         plot_param(data, attribute=param)
 
