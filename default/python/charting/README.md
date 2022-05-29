@@ -8,5 +8,5 @@ pip install requirements_charts.txt
 
 ## Run
 ```shell
-streamlit run J:\projects\freeorion\default\python\charting\streamlite_app.py
+streamlit run charting\streamlite_app.py
 ```
