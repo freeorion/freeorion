@@ -122,6 +122,21 @@ class PolicyManager:
         self._wanted_ip = self._wanted_for_bureaucracy()
         self._adoptable = self._get_adoptable()
         self._available = set(self._empire.availablePolicies)
+        self._rating_functions = {
+            propaganda: lambda: 20 + self._rate_opinion(propaganda),
+            algo_research: self._rate_algo_research,
+            diversity: self._rate_diversity,
+            artisans: self._rate_artisans,
+            # military policies are mostly chosen by opinion, plus some rule-of-thumb values
+            allied_repair: lambda: self._rate_opinion(charge),  # no effect, unless we have allies...
+            charge: lambda: 5 + self._rate_opinion(charge),  # A small bonus in battle
+            scanning: lambda: 20 + self._rate_opinion(scanning),  # May help us detect ships and planets
+            simplicity: lambda: 20 + self._rate_opinion(simplicity),  # Makes simple ships cheaper
+            engineering: self._rate_engineering_corps,
+            exploration: lambda: 10 + self._rate_opinion(exploration),  # may give a little research, speeds up scouts
+            flanking: lambda: 5 + self._rate_opinion(flanking),  # A small bonus in battle
+            recruitment: lambda: 15 + self._rate_opinion(recruitment),  # cheaper troop ships
+        }
 
     # Policies that may use IP "reserved" by wanted_ip.
     # The first two get IP specially reserved for them in the constructor.
@@ -232,29 +247,13 @@ class PolicyManager:
             return diversity
         return None
 
-    _rating_functions = {
-        propaganda: lambda self: 20 + self._rate_opinion(propaganda),
-        algo_research: lambda self: self._rate_algo_research(),
-        diversity: lambda self: self._rate_diversity(),
-        artisans: lambda self: self._rate_artisans(),
-        # military policies are mostly chosen by opinion, plus some rule-of-thumb values
-        allied_repair: lambda self: self._rate_opinion(charge),  # no effect, unless we have allies...
-        charge: lambda self: 5 + self._rate_opinion(charge),  # A small bonus in battle
-        scanning: lambda self: 20 + self._rate_opinion(scanning),  # May help us detect ships and planets
-        simplicity: lambda self: 20 + self._rate_opinion(simplicity),  # Makes simple ships cheaper
-        engineering: lambda self: self._rate_engineering_corps(),
-        exploration: lambda self: 10 + self._rate_opinion(exploration),  # may give a little research, speeds up scouts
-        flanking: lambda self: 5 + self._rate_opinion(flanking),  # A small bonus in battle
-        recruitment: lambda self: 15 + self._rate_opinion(recruitment),  # cheaper troop ships
-    }
-
     @cache_for_current_turn
     def _rate_policy(self, name: str) -> float:
         """Gives a rough value of a policy."""
         rating_function = self._rating_functions.get(name)
         if assertion_fails(rating_function, f"_rate_policy({name}) not yet supported"):
             return 0.0
-        return rating_function(self)
+        return rating_function()
 
     def _rate_costs(self, costs: float) -> float:
         """
@@ -262,9 +261,11 @@ class PolicyManager:
         Generally costs / 3, but less if we have plenty of IP.
         """
         unreserved_ip = self._ip - self._wanted_ip
-        priority = max(self._aistate.get_priority(PriorityType.RESOURCE_INFLUENCE), 1)  # in turn 1 priority is 0
-        # For big numbers this makes 1.5 * priority an upper limit for the rating
-        return costs / max(3, unreserved_ip / (1.5 * priority))
+        priority = self._aistate.get_priority(PriorityType.RESOURCE_INFLUENCE)
+        # For big empires, costs of some policies go over 100 and their rating doesn't grow that much, but they may
+        # also have lots of IP and the policy may still be useful. Note that costs should be less than unreserved_ip,
+        # so if cost is e.g. 1/3 of unreserved_ip, this limits the rating to 0.5 * priority.
+        return min(costs / 3, 1.5 * priority * costs / unreserved_ip)
 
     @staticmethod
     def _rate_opinion(name: str) -> float:
