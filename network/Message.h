@@ -51,7 +51,13 @@ namespace Moderator {
   * misbehave as well.) */
 class FO_COMMON_API Message {
 public:
-    enum Parts : std::size_t {TYPE = 0, SIZE, CPR_USED, Parts_Count};;
+    enum Parts : std::size_t {
+        TYPE = 0,
+        SIZE,       ///< transmitted size of the data, possibly after compression
+        UNCPR_SIZE, ///< size of the data without compression
+        CPR_USED,
+        Parts_Count
+    };;
 
     typedef std::array<int, Parts::Parts_Count> HeaderBuffer;
 
@@ -59,7 +65,7 @@ public:
         std::tuple_size<HeaderBuffer>::value* sizeof(HeaderBuffer::value_type);
 
     /** Commpression is only performed on message data of at least this size in bytes. */
-    const static int COMPRESSION_THRESHOLD = 64;
+    static constexpr int COMPRESSION_THRESHOLD = 64;
 
     /** Represents the type of the message */
     FO_ENUM(
@@ -142,29 +148,33 @@ public:
     Message() = default;
     Message(MessageType message_type, std::string text);
 
-    MessageType        Type() const noexcept;       ///< Returns the type of the message.
-    std::size_t        Size() const noexcept;       ///< Returns the size of the underlying buffer.
-    bool               Compressed() const noexcept; ///< Returns the compression flag.
-    const char*        Data() const noexcept;       ///< Returns the underlying buffer.
-    const std::string& Text() const;                ///< Returns the underlying buffer as a std::string.
+    MessageType        Type() const noexcept;             ///< Returns the type of the message.
+    std::size_t        Size() const noexcept;             ///< Returns the size of the uncompressed message.
+    bool               Compressed() const noexcept;       ///< Returns the compression flag.
+    std::size_t        CompressedSize() const noexcept;   ///< Returns the size of the compressed message. Only useful if the message is compressed.
+    std::size_t        TransmissionSize() const noexcept; ///< Returns the size of transmitted data, possibly after compression.
+
+    const char*        Data() const noexcept;           ///< Returns the underlying buffer.
+    const std::string& Text() const;                    ///< Returns the underlying buffer as a std::string.
 
     void               Resize(std::size_t size);   ///< Resizes the underlying char buffer to \a size uninitialized bytes.
     char*              Data() noexcept;            ///< Returns the underlying buffer.
     void               Swap(Message& rhs) noexcept;///< Swaps the contents of \a *this with \a rhs.  Does not throw.
     void               Reset() noexcept;           ///< Reverts message to same state as after default constructor
 
-    void               Compress() noexcept;   ///< Compresses data, updates size and compression flag, if data is uncompressed.
-    void               Decompress() noexcept; ///< Decompresses data, updates size and compression flag, if data is compressed.
+    void               Compress();   ///< Compresses data, updates compression flag and compressed size, if data is uncompressed.
+    void               Decompress(); ///< Decompresses data, updates compression flag, if data is compressed.
 
 private:
     MessageType                 m_type = MessageType::UNDEFINED;
     std::string_view::size_type m_message_size = 0;
     bool                        m_is_compressed = false;
+    std::string_view::size_type m_message_cpr_size = 0;
     std::string                 m_message_text;
 
     friend FO_COMMON_API void BufferToHeader(const HeaderBuffer&, Message&);
 
-    std::string CompressImpl(const std::string& in);
+    bool        CompressImpl(const std::string& in, std::string& compressed);
     std::string DecompressImpl(const std::string& in);
 };
 
@@ -394,7 +404,7 @@ FO_COMMON_API void ExtractErrorMessageData(const Message& msg, int& player_id, s
 FO_COMMON_API void ExtractHostMPGameMessageData(const Message& msg, std::string& host_player_name,
                                                 std::string& client_version_string, bool& use_compression);
 
-FO_COMMON_API void ExtractHostMPAckMessage(const Message& msg, int& player_id, bool& req_compression);
+FO_COMMON_API void ExtractHostMPAckMessage(const Message& msg, int& player_id, bool& use_compression);
 
 FO_COMMON_API void ExtractLobbyUpdateMessageData(const Message& msg, MultiplayerLobbyData& lobby_data);
 

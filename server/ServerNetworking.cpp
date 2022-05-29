@@ -532,7 +532,7 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
             }
             boost::asio::async_read(
                 *m_socket,
-                boost::asio::buffer(m_incoming_message.Data(), m_incoming_message.Size()),
+                boost::asio::buffer(m_incoming_message.Data(), m_incoming_message.TransmissionSize()),
                 boost::bind(&PlayerConnection::HandleMessageBodyRead, shared_from_this(),
                             boost::asio::placeholders::error,
                             boost::asio::placeholders::bytes_transferred));
@@ -569,7 +569,7 @@ void PlayerConnection::AsyncWriteMessage() {
     std::vector<boost::asio::const_buffer> buffers;
     buffers.push_back(boost::asio::buffer(m_outgoing_header));
     buffers.push_back(boost::asio::buffer(m_outgoing_messages.front().Data(),
-                                          m_outgoing_messages.front().Size()));
+                                          m_outgoing_messages.front().TransmissionSize()));
     boost::asio::async_write(*m_socket, buffers,
                              boost::bind(&PlayerConnection::HandleMessageWrite, shared_from_this(),
                                          boost::asio::placeholders::error,

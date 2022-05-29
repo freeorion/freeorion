@@ -64,6 +64,7 @@ std::ostream& operator<<(std::ostream& os, const Message& msg) {
 Message::Message(MessageType type, std::string text) :
     m_type(type),
     m_message_size(text.size()),
+    m_message_cpr_size(0),
     m_message_text(std::move(text))
 {}
 
@@ -76,6 +77,17 @@ std::size_t Message::Size() const noexcept
 bool Message::Compressed() const noexcept
 { return m_is_compressed; }
 
+std::size_t Message::CompressedSize() const noexcept
+{ return m_message_cpr_size; }
+
+std::size_t Message::TransmissionSize() const noexcept {
+    if (m_is_compressed) {
+        return m_message_cpr_size;
+    } else {
+        return m_message_size;
+    }
+}
+
 const char* Message::Data() const noexcept
 { return m_message_text.data(); }
 
@@ -83,7 +95,11 @@ const std::string& Message::Text() const
 { return m_message_text; }
 
 void Message::Resize(std::size_t size) {
-    m_message_size = size;
+    if (m_is_compressed) {
+        m_message_cpr_size = size;
+    } else {
+        m_message_size = size;
+    }
     m_message_text.clear();
     m_message_text.resize(size);
 }
@@ -95,6 +111,7 @@ void Message::Swap(Message& rhs) noexcept {
     std::swap(m_type, rhs.m_type);
     std::swap(m_message_size, rhs.m_message_size);
     std::swap(m_is_compressed, rhs.m_is_compressed);
+    std::swap(m_message_cpr_size, rhs.m_message_cpr_size);
     std::swap(m_message_text, rhs.m_message_text);
 }
 
@@ -102,43 +119,49 @@ void Message::Reset() noexcept {
     m_type = MessageType::UNDEFINED;
     m_message_size = 0;
     m_is_compressed = false;
+    m_message_cpr_size = 0;
     m_message_text.clear();
 }
 
-void Message::Compress() noexcept {
+void Message::Compress() {
     if (!m_is_compressed) {
-        std::string_view::size_type temp = m_message_size;
-        m_message_text = CompressImpl(m_message_text);
-        m_message_size = m_message_text.size();
-        m_is_compressed = true;
+        std::string compressed;
+        if (CompressImpl(m_message_text, compressed)) {
+            m_message_text = compressed;
+            m_message_cpr_size = m_message_text.size();
+            m_is_compressed = true;
+        }
     }
 }
 
-std::string Message::CompressImpl(const std::string& data) {
+bool Message::CompressImpl(const std::string& data, std::string& compressed) {
     boost::iostreams::basic_array_source<char> src(data.c_str(), data.size());
     boost::iostreams::stream<boost::iostreams::basic_array_source<char>> s_src(src);
 
-    std::string compressed;
-    compressed.reserve(std::pow(2.0, 26.0));
+    try {
+        compressed.reserve(m_message_size);
+    } catch (const std::length_error& err) {
+        ErrorLogger() << "CompressImpl(const std::string& data) failed!  Message size is "
+                      << m_message_size << ", but maximum string size is " << compressed.max_size() << "\n"
+                      << "Error: " << err.what();
+        return false;
+    }
 
     boost::iostreams::back_insert_device<std::string> cmp(compressed);
     boost::iostreams::stream<boost::iostreams::back_insert_device<std::string>> s_cmp(cmp);
 
     boost::iostreams::filtering_ostreambuf out;
     out.push(boost::iostreams::zlib_compressor());
-    out.push(boost::iostreams::base64_encoder());
     out.push(s_cmp);
     boost::iostreams::copy(s_src, out);
     s_cmp.flush();
 
-    return compressed;
+    return true;
 }
 
-void Message::Decompress() noexcept {
+void Message::Decompress() {
     if (m_is_compressed) {
-        std::string_view::size_type temp = m_message_size;
         m_message_text = DecompressImpl(m_message_text);
-        m_message_size = m_message_text.size();
         m_is_compressed = false;
     }
 }
@@ -148,14 +171,20 @@ std::string Message::DecompressImpl(const std::string& data) {
     boost::iostreams::stream<boost::iostreams::basic_array_source<char>> s_src(src);
 
     std::string decompressed;
-    decompressed.reserve(std::pow(2.0, 26.0));
+    try {
+        decompressed.reserve(m_message_size);
+    } catch (const std::length_error& err) {
+        ErrorLogger() << "DecompressImpl(const std::string& data) failed!  Message size is "
+                      << m_message_size << ", but maximum string size is " << decompressed.max_size() << "\n"
+                      << "Error: " << err.what();
+        throw err;
+    }
 
     boost::iostreams::back_insert_device<std::string> dcmp(decompressed);
     boost::iostreams::stream<boost::iostreams::back_insert_device<std::string>> s_dcmp(dcmp);
 
     boost::iostreams::filtering_istreambuf in;
     in.push(boost::iostreams::zlib_decompressor());
-    in.push(boost::iostreams::base64_decoder());
     in.push(s_src);
     boost::iostreams::copy(in, s_dcmp);
 
@@ -176,14 +205,17 @@ void swap(Message& lhs, Message& rhs)
 
 void BufferToHeader(const Message::HeaderBuffer& buffer, Message& message) {
     message.m_type = static_cast<Message::MessageType>(buffer[Message::Parts::TYPE]);
-    message.m_message_size = buffer[Message::Parts::SIZE];
+    message.m_message_size = buffer[Message::Parts::UNCPR_SIZE];
     message.m_is_compressed = static_cast<bool>(buffer[Message::Parts::CPR_USED]);
+    if (message.m_is_compressed)
+        message.m_message_cpr_size = buffer[Message::Parts::SIZE];
 }
 
 void HeaderToBuffer(const Message& message, Message::HeaderBuffer& buffer) {
     buffer[Message::Parts::TYPE] = int(message.Type());
-    buffer[Message::Parts::SIZE] = int(message.Size());
-    buffer[Message::Parts::CPR_USED] = int(message.Compressed());
+    buffer[Message::Parts::SIZE] = int(message.TransmissionSize());
+    buffer[Message::Parts::UNCPR_SIZE] = int(message.Size());
+    buffer[Message::Parts::CPR_USED] = static_cast<int>(message.Compressed());
 }
 
 ////////////////////////////////////////////////

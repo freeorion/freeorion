@@ -431,7 +431,7 @@ bool ClientNetworking::Impl::ConnectToServer(
     }
     if (IsConnected()) {
         m_destination = ip_address;
-        m_localhost_server = m_destination == "localhost" || m_destination == "127.0.0.1";
+        m_localhost_server = m_socket.remote_endpoint().address().is_loopback();
     }
     TraceLogger(network) << "ClientNetworking::Impl::ConnectToServer() - Returning.";
     return IsConnected();
@@ -506,8 +506,8 @@ void ClientNetworking::Impl::SendSelfMessage(Message&& message) {
 boost::optional<Message> ClientNetworking::Impl::GetMessage() {
     auto message = m_incoming_messages.PopFront();
     if (message) {
-        if ((*message).Compressed()) {
-            (*message).Decompress();
+        if (message->Compressed()) {
+            message->Decompress();
             TraceLogger(network) << "ClientNetworking::GetMessage() : received compressed message " << *message;
         } else{
             TraceLogger(network) << "ClientNetworking::GetMessage() : received message " << *message;
@@ -677,7 +677,7 @@ void ClientNetworking::Impl::HandleMessageHeaderRead(const std::shared_ptr<const
     // Intentionally not checked for open.  We expect (header, body) pairs.
     boost::asio::async_read(
         m_socket,
-        boost::asio::buffer(m_incoming_message.Data(), m_incoming_message.Size()),
+        boost::asio::buffer(m_incoming_message.Data(), m_incoming_message.TransmissionSize()),
         boost::bind(&ClientNetworking::Impl::HandleMessageBodyRead,
                     this, keep_alive,
                     boost::asio::placeholders::error,
@@ -734,7 +734,7 @@ void ClientNetworking::Impl::AsyncWriteMessage() {
     std::vector<boost::asio::const_buffer> buffers;
     buffers.push_back(boost::asio::buffer(m_outgoing_header));
     buffers.push_back(boost::asio::buffer(m_outgoing_messages.front().Data(),
-                                          m_outgoing_messages.front().Size()));
+                                          m_outgoing_messages.front().TransmissionSize()));
     boost::asio::async_write(m_socket, buffers,
                              boost::bind(&ClientNetworking::Impl::HandleMessageWrite, this,
                                          boost::asio::placeholders::error,
