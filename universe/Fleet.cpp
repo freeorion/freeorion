@@ -641,55 +641,46 @@ int Fleet::PreviousToFinalDestinationID() const {
 }
 
 namespace {
-    bool HasXShips(const std::function<bool(const std::shared_ptr<const Ship>&)>& pred,
-                   const std::set<int>& ship_ids,
-                   const ObjectMap& objects)
-    {
-        // Searching for each Ship one at a time is possibly faster than
-        // find(ship_ids), because an early exit avoids searching the
-        // remaining ids.
-        return std::any_of(
-            ship_ids.begin(), ship_ids.end(),
-            [&pred, &objects](const int ship_id) {
-                const auto& ship = objects.get<const Ship>(ship_id);
-                if (!ship) {
-                    WarnLogger() << "Object map is missing ship with expected id " << ship_id;
-                    return false;
-                }
-                return pred(ship);
-            });
+    template <typename ShipPredicate>
+    bool HasXShips(const ShipPredicate& pred, const std::set<int>& ship_ids, const ObjectMap& objects) {
+        // Searching for each Ship one at a time is possibly faster than find(ship_ids),
+        // because an early exit avoids searching the remaining ids.
+        return std::any_of(ship_ids.begin(), ship_ids.end(), [&pred, &objects](const int ship_id) {
+            const auto ship = objects.getRaw<const Ship>(ship_id);
+            return ship && pred(ship);
+        });
     }
 }
 
 bool Fleet::CanDamageShips(const ScriptingContext& context, float target_shields) const {
-    auto isX = [target_shields, &context](const std::shared_ptr<const Ship>& ship)
+    auto isX = [target_shields, &context](const Ship* ship)
     { return ship->CanDamageShips(context, target_shields); };
     return HasXShips(isX, m_ships, context.ContextObjects());
 }
 
 bool Fleet::CanDestroyFighters(const ScriptingContext& context) const {
-    auto isX = [&context](const std::shared_ptr<const Ship>& ship)
+    auto isX = [&context](const Ship* ship)
     { return ship->CanDestroyFighters(context); };
     return HasXShips(isX, m_ships, context.ContextObjects());
 }
 
 bool Fleet::HasMonsters(const Universe& u) const {
-    auto isX = [&u](const std::shared_ptr<const Ship>& ship){ return ship->IsMonster(u); };
+    auto isX = [&u](const Ship* ship){ return ship->IsMonster(u); };
     return HasXShips(isX, m_ships, u.Objects());
 }
 
 bool Fleet::HasArmedShips(const ScriptingContext& context) const {
-    auto isX = [&context](const std::shared_ptr<const Ship>& ship){ return ship->IsArmed(context); };
+    auto isX = [&context](const Ship* ship){ return ship->IsArmed(context); };
     return HasXShips(isX, m_ships, context.ContextObjects());
 }
 
 bool Fleet::HasFighterShips(const Universe& u) const {
-    auto isX = [&u](const std::shared_ptr<const Ship>& ship){ return ship->HasFighters(u); };
+    auto isX = [&u](const Ship* ship){ return ship->HasFighters(u); };
     return HasXShips(isX, m_ships, u.Objects());
 }
 
 bool Fleet::HasColonyShips(const Universe& universe) const {
-    auto isX = [&universe](const std::shared_ptr<const Ship>& ship) {
+    auto isX = [&universe](const Ship* ship) {
         if (const auto design = universe.GetShipDesign(ship->DesignID()))
             if (design->ColonyCapacity() > 0.0f)
                 return true;
@@ -699,7 +690,7 @@ bool Fleet::HasColonyShips(const Universe& universe) const {
 }
 
 bool Fleet::HasOutpostShips(const Universe& universe) const {
-    auto isX = [&universe](const std::shared_ptr<const Ship>& ship) {
+    auto isX = [&universe](const Ship* ship) {
         if (const auto design = universe.GetShipDesign(ship->DesignID()))
             if (design->CanColonize() && design->ColonyCapacity() == 0.0f)
                 return true;
@@ -709,17 +700,17 @@ bool Fleet::HasOutpostShips(const Universe& universe) const {
 }
 
 bool Fleet::HasTroopShips(const Universe& u) const {
-    auto isX = [&u](const std::shared_ptr<const Ship>& ship){ return ship->HasTroops(u); };
+    auto isX = [&u](const Ship* ship){ return ship->HasTroops(u); };
     return HasXShips(isX, m_ships, u.Objects());
 }
 
 bool Fleet::HasShipsOrderedScrapped(const Universe& u) const {
-    auto isX = [](const std::shared_ptr<const Ship>& ship){ return ship->OrderedScrapped(); };
+    auto isX = [](const Ship* ship){ return ship->OrderedScrapped(); };
     return HasXShips(isX, m_ships, u.Objects());
 }
 
 bool Fleet::HasShipsWithoutScrapOrders(const Universe& u) const {
-    auto isX = [](const std::shared_ptr<const Ship>& ship){ return !ship->OrderedScrapped(); };
+    auto isX = [](const Ship* ship){ return !ship->OrderedScrapped(); };
     return HasXShips(isX, m_ships, u.Objects());
 }
 
