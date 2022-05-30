@@ -1410,6 +1410,9 @@ Ignore le contrôle du dossier de ressources. Ceci permet un démarrage plus rap
 OPTIONS_DB_TESTING
 Linux uniquement. L'IA enverra le fichier journal vers la console au lieu de créer un fichier externe.
 
+OPTIONS_DB_LOAD_OR_QUICKSTART
+Recherche dans le dossier de sauvegarde automatique la dernière sauvegarde d'une partie multijoueurs. Si trouvée, charge et démarre celle-ci ou crée une nouvelle partie avec les options et règles de jeu prédéfinies. Nécessite le mode sans hôte et aucune restriction sur le nombre minimum de joueurs connectés, car le serveur démarrera sans joueurs connectés.
+
 OPTIONS_DB_GENERATE_CONFIG_XML
 Génère un fichier config.xml à partir des réglages contenus dans les fichiers config.xml existants et donnés dans la ligne de commande. Ceci écrasera le fichier config.xml actuel, s'il existe.
 
@@ -2065,6 +2068,9 @@ Définit le chemin du dossier contenant les fichiers de script de l'IA, pour l'e
 
 OPTIONS_DB_AI_CONFIG
 Est disponible pour l'IA via l'interface freeorion, et utilisé pour l'éxécution en cours uniquement. Permet de nommer un fichier de configuration optionnel de l'IA à l'intérieur du dossier de scripts de l'IA; par défaut une valeur nulle. A pour but de faciliter le test de l'IA.
+
+OPTIONS_DB_AI_LOG_DIR
+Définit le chemin du dossier dans lequel les clients IA créent les fichiers log.
 
 OPTIONS_DB_AI_CONFIG_TRAIT_AGGRESSION_FORCED
 Valeur boléenne pour test d'IA indiquant si toutes les IAs ont forcément le même Niveau d'Agressivité.
@@ -12054,9 +12060,9 @@ Diversité
 
 PLC_DIVERSITY_DESC
 '''Accorde des bonus ou des pénalités à la Recherche, la Stabilité, et à l'Influence de la Capitale, selon le nombre d'espèces présentes au sein de l'empire.
-Le bonus de Recherche requiert une [[metertype METER_HAPPINESS]] de [[value PLC_DIVERSITY_MIN_STABILITY]].
+Le bonus de Recherche requiert le Focus Recherche et une [[metertype METER_HAPPINESS]] de [[value PLC_DIVERSITY_MIN_STABILITY]].
 
-La valeur de tous les bonus ou pénalités est de [[value PLC_DIVERSITY_SCALING]] par espèce, et sera d'autant plus importante que le nombre d'espèces présentes dans l'empire est supérieur ou inférieur à 4.'''
+La valeur de tous les bonus ou pénalités est de [[value PLC_DIVERSITY_SCALING]] par espèce, et sera d'autant plus importante que le nombre d'espèces présentes dans l'empire est supérieur ou inférieur à [[value PLC_DIVERSITY_THRESHOLD]].'''
 
 PLC_DIVERSITY_SHORT_DESC
 Améliore la Recherche, la Stabilité, et l'Influence
@@ -12306,7 +12312,9 @@ PLC_ARTISAN_WORKSHOPS
 Ateliers Artisanaux
 
 PLC_ARTISAN_WORKSHOPS_DESC
-Les planètes peuplés d'espèces de type [[encyclopedia ARTISTIC]] et réglées sur le Focus Influence généreront de l'Influence et exporteront de l'artisanat de luxe vers les planètes du même système, améliorant la [[metertype METER_HAPPINESS]] de ces planètes.
+'''Les planètes peuplées d'espèces de type [[encyclopedia ARTISTIC]] généreront de l'Influence en exportant de l'artisanat de luxe. 
+• Augmente de [[value ARTISANS_INFLUENCE_FLAT_FOCUS]] la [[metertype METER_TARGET_INFLUENCE]] sur les planètes en Focus Influence et ayant une [[metertype METER_HAPPINESS]] minimum de [[value ARTISANS_MIN_STABILITY_FOCUS]].
+• Augmente de [[value ARTISANS_INFLUENCE_FLAT_NO_FOCUS]] la [[metertype METER_TARGET_INFLUENCE]] sur les planètes non réglées en Focus Influence et n'ayant pas une Stabilité minimum de [[value ARTISANS_MIN_STABILITY_NO_FOCUS]].'''
 
 PLC_ARTISAN_WORKSHOPS_SHORT_DESC
 Production d'objets de luxe par les espèces de type [[encyclopedia ARTISTIC]]
