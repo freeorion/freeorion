@@ -184,7 +184,8 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>>            m_production_time;
     bool                                                m_producible = false;
     std::vector<Slot>                                   m_slots;
-    const std::vector<std::string>                      m_tags;
+    const std::string                                   m_tags_concatenated;
+    const std::vector<std::string_view>                 m_tags;
     ConsumptionMap<MeterType>                           m_production_meter_consumption;
     ConsumptionMap<std::string>                         m_production_special_consumption;
     std::unique_ptr<Condition::Condition>               m_location;

@@ -73,18 +73,19 @@ namespace {
     constexpr std::string_view TEXT_SEARCH_RESULTS = "dynamic generated text";
 
     /** @content_tag{CTRL_ALWAYS_REPORT} Always display a species on a planet suitability report. **/
-    const std::string TAG_ALWAYS_REPORT = "CTRL_ALWAYS_REPORT";
+    constexpr std::string_view TAG_ALWAYS_REPORT = "CTRL_ALWAYS_REPORT";
     /** @content_tag{CTRL_EXTINCT} Added to both a species and their enabling tech.  Handles display in planet suitability report. **/
-    const std::string TAG_EXTINCT = "CTRL_EXTINCT";
+    constexpr std::string_view TAG_EXTINCT = "CTRL_EXTINCT";
     /** @content_tag{PEDIA_} Defines an encyclopedia category for the generated article of the containing content definition.  The category name should be postfixed to this tag. **/
-    const std::string TAG_PEDIA_PREFIX = "PEDIA_";
+    constexpr std::string_view TAG_PEDIA_PREFIX = "PEDIA_";
 }
 
 namespace {
     // Checks content \a tags for custom defined pedia category \a cat
     template <typename StringContainer, typename S>
     bool HasCustomCategory(const StringContainer& tags, const S& cat) {
-        return std::any_of(tags.begin(), tags.end(), [&cat, len{TAG_PEDIA_PREFIX.length()}](std::string_view sv) {
+        static constexpr auto len{TAG_PEDIA_PREFIX.length()};
+        return std::any_of(tags.begin(), tags.end(), [&cat](std::string_view sv) {
             return sv.substr(0, len) == TAG_PEDIA_PREFIX &&
                 sv.substr(len) == cat;
         });
@@ -93,7 +94,8 @@ namespace {
     // Checks content \a tags for any custom pedia categories
     template <typename StringContainer>
     bool HasCustomCategory(const StringContainer& tags) {
-        return std::any_of(tags.begin(), tags.end(), [len{TAG_PEDIA_PREFIX.length()}](std::string_view sv) {
+        static constexpr auto len{TAG_PEDIA_PREFIX.length()};
+        return std::any_of(tags.begin(), tags.end(), [](std::string_view sv) {
             return sv.substr(0, len) == TAG_PEDIA_PREFIX;
         });
     }

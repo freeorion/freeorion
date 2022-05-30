@@ -678,10 +678,22 @@ void ShipDesign::BuildStatCaches() {
     // ensure tags are unique and copy into this->m_tags
     std::sort(tags.begin(), tags.end());
     auto last = std::unique(tags.begin(), tags.end());
+
+    // compile concatenated tags into contiguous storage
+    // TODO: transform_reduce when available on all platforms...
+    std::size_t tags_sz = 0;
+    for (const auto& t : tags)
+        tags_sz += t.size();
+    m_tags_concatenated.reserve(tags_sz);
+
     m_tags.clear();
     m_tags.reserve(tags.size());
-    std::transform(tags.begin(), last, std::back_inserter(m_tags),
-                   [](std::string_view sv) { return std::string{sv}; });
+
+    std::for_each(tags.begin(), tags.end(), [this](auto& str) {
+        auto next_start = m_tags_concatenated.size();
+        m_tags_concatenated.append(str);
+        m_tags.push_back(std::string_view{m_tags_concatenated}.substr(next_start));
+    });
 }
 
 std::string ShipDesign::Dump(unsigned short ntabs) const {

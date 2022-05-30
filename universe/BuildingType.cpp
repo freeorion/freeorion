@@ -42,10 +42,38 @@ BuildingType::BuildingType(std::string&& name, std::string&& description,
     m_production_time(std::move(common_params.production_time)),
     m_producible(common_params.producible),
     m_capture_result(capture_result),
-    m_tags([&common_params]() {
+    m_tags_concatenated([&common_params]() {
+        // ensure tags are all upper-case
         std::for_each(common_params.tags.begin(), common_params.tags.end(),
                       [](auto& t) { boost::to_upper<std::string>(t); });
-        return std::move(common_params.tags);
+
+        // allocate storage for concatenated tags
+        std::string retval;
+        // TODO: transform_reduce when available on all platforms...
+        std::size_t params_sz = 0;
+        for (const auto& t : common_params.tags)
+            params_sz += t.size();
+        retval.reserve(params_sz);
+
+        // concatenate tags
+        std::for_each(common_params.tags.begin(), common_params.tags.end(),
+                      [&retval](const auto& t) { retval.append(t); });
+        return retval;
+    }()),
+    m_tags([&common_params, this]() {
+        std::vector<std::string_view> retval;
+        std::size_t next_idx = 0;
+        retval.reserve(common_params.tags.size());
+        std::string_view sv{m_tags_concatenated};
+
+        // store views into concatenated tags string
+        std::for_each(common_params.tags.begin(), common_params.tags.end(),
+                      [&next_idx, &retval, this, sv](const auto& t)
+        {
+            retval.push_back(sv.substr(next_idx, t.size()));
+            next_idx += t.size();
+        });
+        return retval;
     }()),
     m_production_meter_consumption(std::move(common_params.production_meter_consumption)),
     m_production_special_consumption(std::move(common_params.production_special_consumption)),
@@ -171,11 +199,11 @@ std::string BuildingType::Dump(unsigned short ntabs) const {
 
     if (!m_tags.empty()) {
         if (m_tags.size() == 1) {
-            retval += DumpIndent(ntabs+1) + "tags = \"" + *m_tags.begin() + "\"\n";
+            retval.append(DumpIndent(ntabs+1)).append("tags = \"").append(m_tags.front()).append("\"\n");
         } else {
             retval += DumpIndent(ntabs+1) + "tags = [ ";
             for (const auto& tag : m_tags)
-               retval += "\"" + tag + "\" ";
+               retval.append("\"").append(tag).append("\" ");
             retval += " ]\n";
         }
     }
