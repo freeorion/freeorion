@@ -123,8 +123,8 @@ public:
     bool                            CanColonize() const     { return m_can_colonize; }      ///< returns whether this species can colonize planets
     bool                            CanProduceShips() const { return m_can_produce_ships; } ///< returns whether this species can produce ships
 
-    const std::vector<std::string>& Tags() const            { return m_tags; }
-    bool                            HasTag(std::string_view tag) const
+    [[nodiscard]] const auto&       Tags() const { return m_tags; }
+    [[nodiscard]] bool              HasTag(std::string_view tag) const
     { return std::any_of(m_tags.begin(), m_tags.end(), [tag](const auto& t) { return t == tag; }); }
 
     const std::set<std::string>&    Likes() const           { return m_likes; }
@@ -179,10 +179,11 @@ private:
     float                                   m_spawn_rate = 1.0;
     int                                     m_spawn_limit = 99999;
 
-    const std::vector<std::string>          m_tags;
-    std::set<std::string>                   m_likes;
-    std::set<std::string>                   m_dislikes;
-    std::string                             m_graphic;
+    const std::string                   m_tags_concatenated;
+    const std::vector<std::string_view> m_tags;
+    std::set<std::string>               m_likes;
+    std::set<std::string>               m_dislikes;
+    std::string                         m_graphic;
 };
 
 

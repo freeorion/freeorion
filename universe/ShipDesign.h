@@ -134,7 +134,7 @@ public:
     std::vector<std::string>        Parts(ShipSlotType slot_type) const;            ///< returns vector of names of parts in slots of indicated type in this design, unrelated to slot positions
     std::vector<std::string>        Weapons() const;                                ///< returns vector of names of weapon parts in, unrelated to slot positions
 
-    const std::vector<std::string>& Tags() const            { return m_tags; };
+    const auto&                     Tags() const            { return m_tags; };
     bool                            HasTag(std::string_view tag) const
     { return std::any_of(m_tags.begin(), m_tags.end(), [tag](const auto& t) { return t == tag; }); }
 
@@ -206,9 +206,9 @@ private:
     std::string                 m_icon;
     std::string                 m_3D_model;
 
-    // Note that these are fine to compute on demand and cache here -- it is
-    // not necessary to serialize them.
-    std::vector<std::string> m_tags;
+    // initialized by BuildStatCaches based on parts and hull tags. tags data does not need to be serialized.
+    std::string                   m_tags_concatenated;
+    std::vector<std::string_view> m_tags;
 
     float   m_detection = 0.0f;
     float   m_colony_capacity = 0.0f;

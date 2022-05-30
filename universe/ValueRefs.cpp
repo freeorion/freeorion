@@ -1281,8 +1281,8 @@ std::vector<std::string> Variable<std::vector<std::string>>::Eval(
         std::vector<std::string> retval;
         auto tags = object->Tags(context);
         retval.reserve(tags.size());
-        std::copy(tags.first.begin(), tags.first.end(), std::back_inserter(retval));
-        std::copy(tags.second.begin(), tags.second.end(), std::back_inserter(retval));
+        std::transform(tags.first.begin(), tags.first.end(), std::back_inserter(retval), [](auto sv) { return std::string{sv}; });
+        std::transform(tags.second.begin(), tags.second.end(), std::back_inserter(retval), [](auto sv) { return std::string{sv}; });
         return retval;
     }
     else if (property_name == "Specials") {

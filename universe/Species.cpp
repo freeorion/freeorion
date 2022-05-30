@@ -79,9 +79,32 @@ Species::Species(std::string&& name, std::string&& desc,
     m_can_produce_ships(can_produce_ships),
     m_spawn_rate(spawn_rate),
     m_spawn_limit(spawn_limit),
-    m_tags([&tags]() {
-        std::vector<std::string> retval(tags.begin(), tags.end());
-        std::for_each(retval.begin(), retval.end(), [](auto& t) { boost::to_upper<std::string>(t); });
+    m_tags_concatenated([&tags]() {
+        // allocate storage for concatenated tags
+        // TODO: transform_reduce when available on all platforms...
+        std::size_t params_sz = 0;
+        for (const auto& t : tags)
+            params_sz += t.size();
+        std::string retval;
+        retval.reserve(params_sz);
+
+        // concatenate tags
+        std::for_each(tags.begin(), tags.end(), [&retval](const auto& t)
+        { retval.append(boost::to_upper_copy<std::string>(t)); });
+        return retval;
+    }()),
+    m_tags([&tags, this]() {
+        std::vector<std::string_view> retval;
+        std::size_t next_idx = 0;
+        retval.reserve(tags.size());
+        std::string_view sv{m_tags_concatenated};
+
+        // store views into concatenated tags string
+        std::for_each(tags.begin(), tags.end(), [&next_idx, &retval, this, sv](const auto& t) {
+            std::string upper_t = boost::to_upper_copy<std::string>(t);
+            retval.push_back(sv.substr(next_idx, upper_t.size()));
+            next_idx += upper_t.size();
+        });
         return retval;
     }()),
     m_likes(std::move(likes)),
@@ -148,7 +171,7 @@ std::string Species::Dump(unsigned short ntabs) const {
         retval += DumpIndent(ntabs+1) + "CanColonize\n";
     if (m_foci.size() == 1) {
         retval += DumpIndent(ntabs+1) + "foci =\n";
-        m_foci.begin()->Dump(ntabs+1);
+        retval += m_foci.front().Dump(ntabs+1);
     } else {
         retval += DumpIndent(ntabs+1) + "foci = [\n";
         for (const FocusType& focus : m_foci)

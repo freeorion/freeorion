@@ -69,7 +69,8 @@ private:
     std::string                                         m_name;
     std::string                                         m_description;
     float                                               m_stealth;
-    const std::vector<std::string>                      m_tags;
+    const std::string                                   m_tags_concatenated;
+    const std::vector<std::string_view>                 m_tags;
     std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
     std::string                                         m_graphic;
 };

@@ -36,13 +36,40 @@ namespace py = boost::python;
 
 
 namespace {
-    template<typename T>
+    template <typename T>
     auto ObjectIDs(const Universe& universe) -> std::vector<int>
     {
         std::vector<int> result;
         result.reserve(universe.Objects().size<T>());
         for (const auto& obj : universe.Objects().all<T>())
             result.push_back(obj->ID());
+        return result;
+    }
+
+    auto ObjectTagsAsStringVec(const UniverseObject& o) -> std::vector<std::string>
+    {
+        const ScriptingContext context;
+        UniverseObject::TagVecs tags = o.Tags(context);
+
+        std::vector<std::string> result;
+        result.reserve(tags.size());
+
+        std::transform(tags.first.begin(), tags.first.end(), std::back_inserter(result),
+                       [](std::string_view sv) { return std::string{sv}; });
+        std::transform(tags.first.begin(), tags.first.end(), std::back_inserter(result),
+                       [](std::string_view sv) { return std::string{sv}; });
+        return result;
+    }
+
+    auto SpeciesTags(const Species& species) -> std::vector<std::string>
+    {
+        std::vector<std::string_view> tags = species.Tags();
+
+        std::vector<std::string> result;
+        result.reserve(tags.size());
+
+        std::transform(tags.begin(), tags.end(), std::back_inserter(result),
+                       [](std::string_view sv) { return std::string{sv}; });
         return result;
     }
 
@@ -410,7 +437,7 @@ namespace FreeOrionPython {
         ////////////////////
         py::class_<UniverseObject, boost::noncopyable>("universeObject", py::no_init)
             .add_property("id",                 &UniverseObject::ID)
-            .add_property("name",               make_function(&UniverseObject::Name,        py::return_value_policy<py::copy_const_reference>()))
+            .add_property("name",               make_function(&UniverseObject::Name, py::return_value_policy<py::copy_const_reference>()))
             .add_property("x",                  &UniverseObject::X)
             .add_property("y",                  &UniverseObject::Y)
             .add_property("systemID",           &UniverseObject::SystemID)
@@ -419,27 +446,16 @@ namespace FreeOrionPython {
             .def("ownedBy",                     &UniverseObject::OwnedBy)
             .add_property("creationTurn",       &UniverseObject::CreationTurn)
             .add_property("ageInTurns",         &UniverseObject::AgeInTurns)
-            .add_property("specials",           make_function(ObjectSpecials,               py::return_value_policy<py::return_by_value>()))
+            .add_property("specials",           make_function(ObjectSpecials,        py::return_value_policy<py::return_by_value>()))
             .def("hasSpecial",                  &UniverseObject::HasSpecial)
             .def("specialAddedOnTurn",          &UniverseObject::SpecialAddedOnTurn)
             .def("contains",                    &UniverseObject::Contains)
             .def("containedBy",                 &UniverseObject::ContainedBy)
             .add_property("containedObjects",   make_function(&UniverseObject::ContainedObjectIDs,  py::return_value_policy<py::return_by_value>()))
             .add_property("containerObject",    &UniverseObject::ContainerObjectID)
-            .def("currentMeterValue",           ObjectCurrentMeterValue,
-                                                py::return_value_policy<py::return_by_value>())
-            .def("initialMeterValue",           ObjectInitialMeterValue,
-                                                py::return_value_policy<py::return_by_value>())
-            .add_property("tags",               make_function(
-                                                    +[](const UniverseObject& o) -> std::set<std::string>
-                                                    {
-                                                        const ScriptingContext context;
-                                                        const auto& tags = o.Tags(context);
-                                                        std::set<std::string> retval(tags.first.begin(), tags.first.end());
-                                                        std::copy(tags.second.begin(), tags.second.end(), std::inserter(retval, retval.end()));
-                                                        return retval;
-                                                    },
-                                                    py::return_value_policy<py::return_by_value>()))
+            .def("currentMeterValue",           ObjectCurrentMeterValue,             py::return_value_policy<py::return_by_value>())
+            .def("initialMeterValue",           ObjectInitialMeterValue,             py::return_value_policy<py::return_by_value>())
+            .add_property("tags",               make_function(ObjectTagsAsStringVec, py::return_value_policy<py::return_by_value>()))
             .def("hasTag",                      +[](const UniverseObject& obj, const std::string& tag) -> bool { const ScriptingContext context; return obj.HasTag(tag, context); })
             .add_property("meters",             make_function(
                                                     +[](const UniverseObject& o) -> std::map<MeterType, Meter> { return {o.Meters().begin(), o.Meters().end()}; },
@@ -763,7 +779,7 @@ namespace FreeOrionPython {
             .add_property("canColonize",        make_function(&Species::CanColonize,    py::return_value_policy<py::return_by_value>()))
             .add_property("canProduceShips",    make_function(&Species::CanProduceShips,py::return_value_policy<py::return_by_value>()))
             .add_property("native",             &Species::Native)
-            .add_property("tags",               make_function(&Species::Tags,           py::return_value_policy<py::return_by_value>()))
+            .add_property("tags",               &SpeciesTags)
             .add_property("spawnrate",          make_function(&Species::SpawnRate,      py::return_value_policy<py::return_by_value>()))
             .add_property("spawnlimit",         make_function(&Species::SpawnLimit,     py::return_value_policy<py::return_by_value>()))
             .add_property("likes",              make_function(&Species::Likes,          py::return_value_policy<py::return_by_value>()))

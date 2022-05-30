@@ -104,21 +104,21 @@ public:
 
     struct TagVecs {
         TagVecs() = default;
-        TagVecs(const std::vector<std::string>& vec) :
+        TagVecs(const std::vector<std::string_view>& vec) :
             first(vec)
         {}
-        TagVecs(const std::vector<std::string>& vec1, const std::vector<std::string>& vec2) :
+        TagVecs(const std::vector<std::string_view>& vec1, const std::vector<std::string_view>& vec2) :
             first(vec1),
             second(vec2)
         {}
         bool empty() const { return first.empty() && second.empty(); }
         auto size() const { return first.size() + second.size(); }
-        const std::vector<std::string>& first = EMPTY_STRING_VEC;
-        const std::vector<std::string>& second = EMPTY_STRING_VEC;
-        static const inline std::vector<std::string> EMPTY_STRING_VEC{};
+        const std::vector<std::string_view>& first = EMPTY_STRING_VEC;
+        const std::vector<std::string_view>& second = EMPTY_STRING_VEC;
+        static const inline std::vector<std::string_view> EMPTY_STRING_VEC{};
     };
-    [[nodiscard]] virtual TagVecs               Tags(const ScriptingContext&) const { return {}; }; ///< Returns all tags this object has
-    [[nodiscard]] virtual bool                  HasTag(std::string_view name, const ScriptingContext&) const { return false; } ///< Returns true iff this object has the tag with the indicated \a name
+    [[nodiscard]] virtual TagVecs             Tags(const ScriptingContext&) const { return {}; }; ///< Returns all tags this object has
+    [[nodiscard]] virtual bool                HasTag(std::string_view name, const ScriptingContext&) const { return false; } ///< Returns true iff this object has the tag with the indicated \a name
 
     [[nodiscard]] virtual UniverseObjectType  ObjectType() const;
 

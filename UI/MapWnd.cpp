@@ -6964,9 +6964,9 @@ void MapWnd::RefreshPopulationIndicator() {
         population_counts[species_name] += this_pop;
         population_worlds[species_name] += 1;
         if (const Species* species = GetSpecies(species_name) ) {
-            for (const std::string& tag : species->Tags()) {
-                tag_counts[tag] += this_pop;
-                tag_worlds[tag] += 1;
+            for (auto& tag : species->Tags()) {
+                tag_counts[std::string{tag}] += this_pop;
+                tag_worlds[std::string{tag}] += 1;
             }
         }
     }
