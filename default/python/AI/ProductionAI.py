@@ -3,7 +3,17 @@ import math
 import random
 from logging import debug, error, warning
 from operator import itemgetter
-from typing import Dict, FrozenSet, Iterable, List, Set, Tuple, Union
+from typing import (
+    Dict,
+    FrozenSet,
+    Iterable,
+    List,
+    NamedTuple,
+    NewType,
+    Set,
+    Tuple,
+    Union,
+)
 
 import AIDependencies
 import AIstate
@@ -88,7 +98,7 @@ def translators_wanted() -> int:
     translator_cost = building_type.production_cost(pid)
     influence_priority = get_aistate().get_priority(PriorityType.RESOURCE_INFLUENCE)
     num_species = len(get_empire_planets_by_species())
-    num_enqueued = len(building_type.queued_at())
+    num_enqueued = len(building_type.queued_in())
     num_built = len(building_type.built_at())
     # first one gives a policy slot
     first_bonus = 35 if num_enqueued + num_built == 0 else 0
@@ -341,7 +351,10 @@ def generate_production_orders():
                         fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
                         break
 
-    queued_shipyard_pids, colony_systems, top_pilot_systems = _build_basic_shipyards()
+    info = _build_basic_shipyards()
+    queued_shipyard_pids = info.queued_shipyard_pids
+    colony_systems = info.colony_systems
+    top_pilot_systems = info.top_pilot_systems
     blackhole_pilots, red_pilots, building_expense = _build_energy_shipyards(
         queued_shipyard_pids, colony_systems, building_ratio, building_expense
     )
@@ -1272,32 +1285,29 @@ def already_has_completed_colony_building(planet_id) -> bool:
     return any(universe.getBuilding(bldg).name.startswith("BLD_COL_") for bldg in planet.buildingIDs)
 
 
-def _build_ship_facilities(building_type: BuildingType, top_pids: Set[PlanetId] = None) -> None:
+def _build_ship_facilities(building_type: BuildingType, top_pids: Set[PlanetId] = frozenset()) -> None:
     # TODO: add total_pp checks below, so don't overload queue
-    if top_pids is None:
-        top_pids = set()
-    universe = fo.getUniverse()
-    empire = fo.getEmpire()
-    total_pp = empire.productionPoints
-    prerequisite_type = building_type.prerequisite()
     if not building_type.available():
         return
-    queued_bld_pids = building_type.queued_at()
+    universe = fo.getUniverse()
+    total_pp = fo.getEmpire().productionPoints
+    prerequisite_type = building_type.prerequisite()
+    queued_bld_pids = building_type.queued_in()
     if building_type in BuildingType.get_system_ship_facilities():
         current_coverage = building_type.built_or_queued_at_sys()
         open_systems = set(
             universe.getPlanet(pid).systemID for pid in BuildingType.SHIPYARD_BASE.get_best_pilot_facilities()
         ).difference(current_coverage)
         try_systems = open_systems & prerequisite_type.built_or_queued_at_sys() if prerequisite_type else open_systems
-        try_pids = set(pid for sys_id in try_systems for pid in get_owned_planets_in_system(sys_id))
+        try_pids = {pid for sys_id in try_systems for pid in get_owned_planets_in_system(sys_id)}
     else:
-        current_locs = get_best_pilot_facilities(building_type.value)
-        try_pids = prerequisite_type.get_best_pilot_facilities().difference(queued_bld_pids, current_locs)
+        current_pids = get_best_pilot_facilities(building_type.value)
+        try_pids = prerequisite_type.get_best_pilot_facilities().difference(queued_bld_pids, current_pids)
     debug(
         "Considering constructing a %s, have %d already built and %d queued",
         building_type,
         len(building_type.built_at()),
-        len(building_type.queued_at()),
+        len(building_type.queued_in()),
     )
     if not try_pids:
         return
@@ -1308,9 +1318,9 @@ def _build_ship_facilities(building_type: BuildingType, top_pids: Set[PlanetId] 
     debug("Allowances: max total: %d, max under construction: %d", max_total, max_under_construction)
     if len(building_type.built_at()) >= max_total:
         return
-    valid_pids = list(pids for pids in try_pids & top_pids if building_type.can_be_produced(pids)) + list(
-        pids for pids in try_pids - top_pids if building_type.can_be_produced(pids)
-    )
+    try_top_pids = [pid for pid in try_pids & top_pids if building_type.can_be_produced(pid)]
+    try_other_pids = [pid for pid in try_pids - top_pids if building_type.can_be_produced(pid)]
+    valid_pids = try_top_pids + try_other_pids
     debug("Have %d potential locations: %s", len(valid_pids), [universe.getPlanet(x) for x in valid_pids])
     # TODO: rank by defense ability, etc.
     num_queued = len(queued_bld_pids)
@@ -1435,7 +1445,7 @@ def _try_enqueue(
     opinion = building_type.get_opinions()
     locations = []
     preferred_locations = []
-    if isinstance(candidates, int):  # isinstance(candidates, ObjectId) does not work, at least not in python-3.9
+    if isinstance(candidates, int):  # isinstance(candidates, PlanetId) does not work, at least not in python-3.9
         candidates = [candidates]
     for pid in candidates:
         planet = universe.getPlanet(pid)
@@ -1469,7 +1479,7 @@ def _may_enqueue_for_stability(building_type: BuildingType, new_turn_cost: float
     i.e. there are currently no build queue entries for the given building.
     returns new_turn_cost or turn_cost of the building enqueued by this function.
     """
-    if building_type.queued_at() or new_turn_cost:
+    if building_type.queued_in() or new_turn_cost:
         return new_turn_cost
     # this can be improved a lot, taking into account value of planets, actual stability and
     # what effects the change would have. For the moment, keep it simple.
@@ -1495,7 +1505,7 @@ def _build_scanning_facility() -> float:
     turn_cost = 0.0
     opinion = building_type.get_opinions()
     # TBD use actual cost?
-    max_scanner_builds = max(1, int(empire.productionPoints / 30)) - len(building_type.queued_at())
+    max_scanner_builds = max(1, int(empire.productionPoints / 30)) - len(building_type.queued_in())
     scanner_systems = building_type.built_or_queued_at_sys()
     debug(
         "Considering building %s, found current and queued systems %s, planets that like it %s, #dislikes: %d",
@@ -1699,16 +1709,22 @@ def _build_military_command() -> float:
     return 0.0
 
 
-def _build_basic_shipyards() -> Tuple[
-    List[PlanetId], Dict[PlanetId, SystemId], Dict[SystemId, List[Tuple[PlanetId, float]]]
-]:
+TopPilotSystems = NewType("TopPilotSystems", Dict[SystemId, List[Tuple[PlanetId, float]]])
+
+
+class ShipYardInfo(NamedTuple):
+    queued_shipyard_pids: List[PlanetId]
+    colony_systems: Dict[PlanetId, SystemId]
+    top_pilot_systems: TopPilotSystems
+
+
+def _build_basic_shipyards() -> ShipYardInfo:
     """
     Consider building basic ship yards and also determine some value needed for other shipyard buildings.
-    Returns queued_shipyard_pids, colony_systems, top_pilot_systems.
     """
     building_type = BuildingType.SHIPYARD_BASE
     universe = fo.getUniverse()
-    queued_shipyard_pids = building_type.queued_at()
+    queued_shipyard_pids = building_type.queued_in()
     system_colonies = {}
     colony_systems = {}
     empire_species = get_empire_planets_by_species()
@@ -1743,9 +1759,7 @@ def _build_basic_shipyards() -> Tuple[
                 system_colonies.setdefault(planet.systemID, {}).setdefault("pids", []).append(pid)
                 colony_systems[pid] = planet.systemID
 
-    acirema_systems = {}
     for pid in get_empire_planets_with_species("SP_ACIREMA"):
-        acirema_systems.setdefault(universe.getPlanet(pid).systemID, []).append(pid)
         if (pid in queued_shipyard_pids) or not building_type.can_be_produced(pid):
             continue  # but not 'break' because we want to build shipyards at *every* Acirema planet
         # currently Acirema do not dislike ship yards, but if that changes, do not build shipyards anymore
@@ -1811,7 +1825,7 @@ def _build_energy_shipyards(
     energy_shipyard_pids = {}
     building_type = BuildingType.SHIPYARD_ENRG_COMP
     if building_type.available():
-        queued_building_pids = building_type.queued_at()
+        queued_building_pids = building_type.queued_in()
         for pid in blackhole_pilots + blue_pilots:
             if len(queued_building_pids) > 1:  # build a max of 2 at once
                 break
@@ -1825,7 +1839,7 @@ def _build_energy_shipyards(
                 building_expense += _try_enqueue(building_type, pid, at_front=True)
 
     building_type = BuildingType.SHIPYARD_ENRG_SOLAR
-    if building_type.available() and not building_type.queued_at():
+    if building_type.available() and not building_type.queued_in():
         # TODO: check that production is not frozen at a queued location
         for pid in blackhole_pilots:
             this_planet = universe.getPlanet(pid)
@@ -1849,15 +1863,13 @@ def _build_energy_shipyards(
     return blackhole_pilots, red_pilots, building_expense
 
 
-def _build_asteroid_processor(
-    top_pilot_systems: Dict[SystemId, List[Tuple[PlanetId, float]]], queued_shipyard_pids: List[PlanetId]
-) -> float:
+def _build_asteroid_processor(top_pilot_systems: TopPilotSystems, queued_shipyard_pids: List[PlanetId]) -> float:
     """Consider building asteroid processor, return added turn costs."""
     building_type = BuildingType.SHIPYARD_AST
     building_expense = 0.0
     if building_type.available():
         universe = fo.getUniverse()
-        queued_building_pids = building_type.queued_at()
+        queued_building_pids = building_type.queued_in()
         if not queued_building_pids:
             asteroid_systems = {}
             asteroid_yards = {}
@@ -1933,13 +1945,13 @@ def _build_asteroid_processor(
     return building_expense
 
 
-def _build_orbital_drydock(top_pilot_systems: Dict[SystemId, List[Tuple[PlanetId, float]]]) -> None:
+def _build_orbital_drydock(top_pilot_systems: TopPilotSystems) -> None:
     """Consider building orbital drydocks."""
     building_type = BuildingType.SHIPYARD_ORBITAL_DRYDOCK
     if building_type.available():
         empire = fo.getEmpire()
         universe = fo.getUniverse()
-        queued_pids = building_type.queued_at()
+        queued_pids = building_type.queued_in()
         current_drydock_sys = building_type.built_or_queued_at_sys()
         covered_drydock_systems = set()
         for start_set, dest_set in [
