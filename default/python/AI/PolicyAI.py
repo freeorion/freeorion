@@ -260,7 +260,8 @@ class PolicyManager:
         How do we rate the costs in comparison to a policies rating?
         Generally costs / 3, but less if we have plenty of IP.
         """
-        unreserved_ip = self._ip - self._wanted_ip
+        # avoid division by zero, with unreserved_ip < 1 the policy won't be adopted anyway
+        unreserved_ip = max(1, self._ip - self._wanted_ip)
         priority = self._aistate.get_priority(PriorityType.RESOURCE_INFLUENCE)
         # For big empires, costs of some policies go over 100 and their rating doesn't grow that much, but they may
         # also have lots of IP and the policy may still be useful. Note that costs should be less than unreserved_ip,
