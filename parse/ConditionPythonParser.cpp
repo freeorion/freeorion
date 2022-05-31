@@ -200,8 +200,48 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     globals["Unowned"] = condition_wrapper(std::make_shared<Condition::EmpireAffiliation>(EmpireAffiliationType::AFFIL_NONE));
     globals["Human"] = condition_wrapper(std::make_shared<Condition::EmpireAffiliation>(EmpireAffiliationType::AFFIL_HUMAN));
 
-    globals["Structure"] = boost::python::raw_function([] (auto args, auto kw) -> auto { return insert_meter_value_(args, kw, MeterType::METER_STRUCTURE);});
-    globals["Population"] = boost::python::raw_function([] (auto args, auto kw) -> auto { return insert_meter_value_(args, kw, MeterType::METER_POPULATION);});
+    // non_ship_part_meter_enum_grammar
+    for (const auto& meter : std::initializer_list<std::pair<const char*, MeterType>>{
+            {"TargetConstruction", MeterType::METER_TARGET_CONSTRUCTION},
+            {"TargetIndustry",     MeterType::METER_TARGET_INDUSTRY},
+            {"TargetPopulation",   MeterType::METER_TARGET_POPULATION},
+            {"TargetResearch",     MeterType::METER_TARGET_RESEARCH},
+            {"TargetInfluence",    MeterType::METER_TARGET_INFLUENCE},
+            {"TargetHappiness",    MeterType::METER_TARGET_HAPPINESS},
+            {"MaxDefense",         MeterType::METER_MAX_DEFENSE},
+            {"MaxFuel",            MeterType::METER_MAX_FUEL},
+            {"MaxShield",          MeterType::METER_MAX_SHIELD},
+            {"MaxStructure",       MeterType::METER_MAX_STRUCTURE},
+            {"MaxTroops",          MeterType::METER_MAX_TROOPS},
+            {"MaxSupply",          MeterType::METER_MAX_SUPPLY},
+            {"MaxStockpile",       MeterType::METER_MAX_STOCKPILE},
+
+            {"Construction",       MeterType::METER_CONSTRUCTION},
+            {"Industry",           MeterType::METER_INDUSTRY},
+            {"Population",         MeterType::METER_POPULATION},
+            {"Research",           MeterType::METER_RESEARCH},
+            {"Influence",          MeterType::METER_INFLUENCE},
+            {"Happiness",          MeterType::METER_HAPPINESS},
+
+            {"Defense",            MeterType::METER_DEFENSE},
+            {"Fuel",               MeterType::METER_FUEL},
+            {"Shield",             MeterType::METER_SHIELD},
+            {"Structure",          MeterType::METER_STRUCTURE},
+            {"Troops",             MeterType::METER_TROOPS},
+            {"Supply",             MeterType::METER_SUPPLY},
+            {"Stockpile",          MeterType::METER_STOCKPILE},
+
+            {"RebelTroops",        MeterType::METER_REBEL_TROOPS},
+            {"Stealth",            MeterType::METER_STEALTH},
+            {"Detection",          MeterType::METER_DETECTION},
+            {"Speed",              MeterType::METER_SPEED},
+
+            {"Size",               MeterType::METER_SIZE}})
+    {
+        const auto m = meter.second;
+        const auto f_insert_meter_value = [m](const auto& args, const auto& kw) { return insert_meter_value_(args, kw, m); };
+        globals[meter.first] = boost::python::raw_function(f_insert_meter_value);
+    }
 
     globals["Species"] = condition_wrapper(std::make_shared<Condition::Species>());
 
