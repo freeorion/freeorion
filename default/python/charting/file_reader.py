@@ -1,4 +1,5 @@
 import os
+import platform
 from glob import glob
 from pathlib import Path
 
@@ -12,6 +13,8 @@ def _get_log_dir() -> Path:
     """
     if os.name == "nt":
         return Path(os.path.expanduser("~/Appdata/Roaming/Freeorion"))
+    elif platform.system() == 'Darwin':
+        return Path("~/Library/Application Support/FreeOrion").expanduser()
     elif os.name == "posix":
         return Path(os.environ.get("XDG_DATA_HOME", os.environ.get("HOME", "") + "/.local/share")) / "freeorion"
     else:
@@ -37,7 +40,7 @@ def _list_log_files(data_dir: Path, timestamp):
 def return_file_list():
     data_dir = _get_log_dir()
     if not _validate_data_dir(data_dir):
-        raise Exception("freeorion.log is missed, please run the game to fix it.")
+        raise Exception(f"freeorion.log is missed in {data_dir}, please run the game to fix it.")
 
     timestamp = os.path.getmtime(data_dir / "freeorion.log")
 

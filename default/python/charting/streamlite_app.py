@@ -12,7 +12,7 @@ sys.path.append(common)
 from collect_data import get_ais_data  # noqa: E402
 
 
-def plot_param(ais_data, attribute):
+def plot_for_attribute(ais_data, attribute):
     st.markdown(f"**Distribution of the {attribute}**")
 
     empires = sorted(item["player"] for item in ais_data)
@@ -64,7 +64,7 @@ def draw_plots(ais_data):
     configure_colors(ais_data)
 
     for param in ["PP", "RP", "SHIP_CONT"]:
-        plot_param(ais_data, attribute=param)
+        plot_for_attribute(ais_data, attribute=param)
 
 
 draw_plots(get_ais_data())
