@@ -9,6 +9,9 @@ on:
       - 'packaging/**'
       - 'snap/**'
       - '*.md'
+      - 'check/**'
+      - 'default/**'
+      - 'test-scripting/**'
   pull_request:
     paths-ignore:
       - 'msvc*/**'
@@ -17,6 +20,9 @@ on:
       - 'packaging/**'
       - 'snap/**'
       - '*.md'
+      - 'check/**'
+      - 'default/**'
+      - 'test-scripting/**'
 
 jobs:
   build-macos:
