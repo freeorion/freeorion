@@ -663,9 +663,10 @@ void GGHumanClientApp::MultiPlayerGame() {
     }
 
     if (server_connect_wnd->GetResult().server_dest == "HOST GAME SELECTED") {
-        m_networking->SendMessage(HostMPGameMessage(server_connect_wnd->GetResult().player_name,
-                                  GetOptionsDB().Get<bool>("network.message.zlib.enabled")));
+        m_networking->SendMessage(HostMPGameMessage(server_connect_wnd->GetResult().player_name));
         m_fsm->process_event(HostMPGameRequested());
+
+        m_networking->SendMessage(UseCompressionMessage(GetOptionsDB().Get<bool>("network.message.zlib.enabled")));
     } else {
         boost::uuids::uuid cookie = boost::uuids::nil_uuid();
         try {
@@ -687,9 +688,10 @@ void GGHumanClientApp::MultiPlayerGame() {
         m_networking->SendMessage(JoinGameMessage(server_connect_wnd->GetResult().player_name,
                                                   server_connect_wnd->GetResult().type,
                                                   DependencyVersions(),
-                                                  cookie,
-                                                  GetOptionsDB().Get<bool>("network.message.zlib.enabled")));
+                                                  cookie));
         m_fsm->process_event(JoinMPGameRequested());
+
+        m_networking->SendMessage(UseCompressionMessage(GetOptionsDB().Get<bool>("network.message.zlib.enabled")));
     }
 }
 
@@ -1022,6 +1024,7 @@ void GGHumanClientApp::HandleMessage(Message&& msg) {
         case Message::MessageType::SET_AUTH_ROLES:          HandleSetAuthRoles(msg);                            break;
         case Message::MessageType::TURN_TIMEOUT:            m_fsm->process_event(TurnTimeout(msg));             break;
         case Message::MessageType::PLAYER_INFO:             m_fsm->process_event(PlayerInfoMsg(msg));           break;
+        case Message::MessageType::USE_COMPRESSION:         m_fsm->process_event(UseCompression(msg));          break;
         default:
             ErrorLogger() << "GGHumanClientApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".";
         }

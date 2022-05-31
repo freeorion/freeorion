@@ -164,6 +164,7 @@ struct WaitingForMPHostAck : boost::statechart::simple_state<WaitingForMPHostAck
         boost::statechart::custom_reaction<HostMPGame>,
         boost::statechart::custom_reaction<Disconnection>,
         boost::statechart::custom_reaction<StartQuittingGame>,
+        boost::statechart::custom_reaction<UseCompression>,
         boost::statechart::custom_reaction<Error>,
         boost::statechart::custom_reaction<CheckSum>
     > reactions;
@@ -174,6 +175,7 @@ struct WaitingForMPHostAck : boost::statechart::simple_state<WaitingForMPHostAck
     boost::statechart::result react(const HostMPGame& a);
     boost::statechart::result react(const Disconnection& d);
     boost::statechart::result react(const StartQuittingGame& msg);
+    boost::statechart::result react(const UseCompression& msg);
     boost::statechart::result react(const Error& msg);
     boost::statechart::result react(const CheckSum& msg);
 
@@ -193,6 +195,7 @@ struct WaitingForMPJoinAck : boost::statechart::simple_state<WaitingForMPJoinAck
         boost::statechart::custom_reaction<Disconnection>,
         boost::statechart::custom_reaction<StartQuittingGame>,
         boost::statechart::custom_reaction<CancelMPGameClicked>,
+        boost::statechart::custom_reaction<UseCompression>,
         boost::statechart::custom_reaction<Error>
     > reactions;
 
@@ -204,6 +207,7 @@ struct WaitingForMPJoinAck : boost::statechart::simple_state<WaitingForMPJoinAck
     boost::statechart::result react(const Disconnection& d);
     boost::statechart::result react(const StartQuittingGame& msg);
     boost::statechart::result react(const CancelMPGameClicked& msg);
+    boost::statechart::result react(const UseCompression& msg);
     boost::statechart::result react(const Error& msg);
 
     CLIENT_ACCESSOR
@@ -223,6 +227,7 @@ struct MPLobby : boost::statechart::state<MPLobby, HumanClientFSM> {
         boost::statechart::custom_reaction<StartMPGameClicked>,
         boost::statechart::custom_reaction<GameStart>,
         boost::statechart::custom_reaction<StartQuittingGame>,
+        boost::statechart::custom_reaction<UseCompression>,
         boost::statechart::custom_reaction<Error>,
         boost::statechart::custom_reaction<CheckSum>,
         boost::statechart::custom_reaction<ChatHistory>,
@@ -242,6 +247,7 @@ struct MPLobby : boost::statechart::state<MPLobby, HumanClientFSM> {
     boost::statechart::result react(const StartMPGameClicked& a);
     boost::statechart::result react(const GameStart& msg);
     boost::statechart::result react(const StartQuittingGame& msg);
+    boost::statechart::result react(const UseCompression& msg);
     boost::statechart::result react(const Error& msg);
     boost::statechart::result react(const CheckSum& msg);
     boost::statechart::result react(const ChatHistory& msg);
@@ -266,6 +272,7 @@ struct PlayingGame : boost::statechart::state<PlayingGame, HumanClientFSM, Waiti
         boost::statechart::custom_reaction<DiplomaticStatusUpdate>,
         boost::statechart::custom_reaction<EndGame>,
         boost::statechart::custom_reaction<StartQuittingGame>,
+        boost::statechart::custom_reaction<UseCompression>,
         boost::statechart::custom_reaction<Error>,
         boost::statechart::custom_reaction<TurnProgress>,
         boost::statechart::custom_reaction<TurnPartialUpdate>,
@@ -285,6 +292,7 @@ struct PlayingGame : boost::statechart::state<PlayingGame, HumanClientFSM, Waiti
     boost::statechart::result react(const DiplomaticStatusUpdate& u);
     boost::statechart::result react(const EndGame& msg);
     boost::statechart::result react(const StartQuittingGame& msg);
+    boost::statechart::result react(const UseCompression& msg);
     boost::statechart::result react(const Error& msg);
     boost::statechart::result react(const TurnProgress& msg);
     boost::statechart::result react(const TurnPartialUpdate& msg);

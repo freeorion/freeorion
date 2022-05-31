@@ -89,6 +89,7 @@ struct MessageEventBase {
     (AuthResponse)                          \
     (EliminateSelf)                         \
     (AutoTurn)                              \
+    (UseCompression)                        \
     (Error)
 
 
@@ -133,8 +134,7 @@ struct ServerFSM : sc::state_machine<ServerFSM, Idle> {
                          const std::string& player_name,
                          Networking::ClientType client_type,
                          const std::string& client_version_string,
-                         const Networking::AuthRoles& roles,
-                         bool use_compression);
+                         const Networking::AuthRoles& roles);
 
     std::shared_ptr<MultiplayerLobbyData>   m_lobby_data;
     std::shared_ptr<SinglePlayerSetupData>  m_single_player_setup_data;
@@ -181,6 +181,7 @@ struct MPLobby : sc::state<MPLobby, ServerFSM> {
         sc::custom_reaction<HostSPGame>,
         sc::custom_reaction<ShutdownServer>,
         sc::custom_reaction<Hostless>,
+        sc::custom_reaction<UseCompression>,
         sc::custom_reaction<Error>
     > reactions;
 
@@ -197,6 +198,7 @@ struct MPLobby : sc::state<MPLobby, ServerFSM> {
     sc::result react(const HostSPGame& msg);
     sc::result react(const ShutdownServer& u);
     sc::result react(const Hostless& u);
+    sc::result react(const UseCompression& u);
     sc::result react(const Error& msg);
 
     std::shared_ptr<MultiplayerLobbyData>   m_lobby_data;
@@ -209,8 +211,7 @@ private:
                          const std::string& player_name,
                          Networking::ClientType client_type,
                          const std::string& client_version_string,
-                         const Networking::AuthRoles& roles,
-                         bool use_compression);
+                         const Networking::AuthRoles& roles);
     void ValidateClientLimits();
 
     SERVER_ACCESSOR
@@ -260,6 +261,7 @@ struct WaitingForMPGameJoiners : sc::state<WaitingForMPGameJoiners, ServerFSM> {
         sc::custom_reaction<CheckStartConditions>,
         sc::custom_reaction<ShutdownServer>,
         sc::custom_reaction<Hostless>,
+        sc::custom_reaction<UseCompression>,
         sc::custom_reaction<Error>
     > reactions;
 
@@ -274,6 +276,7 @@ struct WaitingForMPGameJoiners : sc::state<WaitingForMPGameJoiners, ServerFSM> {
     // as such, no file load error handling reaction is needed in this state.
     sc::result react(const ShutdownServer& u);
     sc::result react(const Hostless& u);
+    sc::result react(const UseCompression& u);
     sc::result react(const Error& msg);
 
     std::shared_ptr<MultiplayerLobbyData>   m_lobby_data;
@@ -300,6 +303,7 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
         sc::custom_reaction<AuthResponse>,
         sc::custom_reaction<EliminateSelf>,
         sc::custom_reaction<AutoTurn>,
+        sc::custom_reaction<UseCompression>,
         sc::custom_reaction<Error>,
         sc::custom_reaction<LobbyUpdate>
     > reactions;
@@ -317,6 +321,7 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
     sc::result react(const AuthResponse& msg);
     sc::result react(const EliminateSelf& msg);
     sc::result react(const AutoTurn& msg);
+    sc::result react(const UseCompression& msg);
     sc::result react(const Error& msg);
     sc::result react(const LobbyUpdate& msg);
 
@@ -324,8 +329,7 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
                          const std::string& player_name,
                          Networking::ClientType client_type,
                          const std::string& client_version_string,
-                         const Networking::AuthRoles& roles,
-                         bool use_compression);
+                         const Networking::AuthRoles& roles);
     void TurnTimedoutHandler(const boost::system::error_code& error);
 
     boost::asio::deadline_timer                     m_turn_timeout;

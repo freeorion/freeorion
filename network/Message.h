@@ -116,6 +116,7 @@ public:
         ((TURN_TIMEOUT))           ///< sent by server to client to notify about remaining time before turn advance
         ((PLAYER_INFO))            ///< sent by server to client to notify about changes in the player data
         ((AUTO_TURN))              ///< sent by client to server to move into auto-turn state
+        ((USE_COMPRESSION))        ///< used to notify other endpoints that the sender may accept and send compressed data
     )
 
     FO_ENUM(
@@ -210,15 +211,14 @@ FO_COMMON_API Message ErrorMessage(const std::string& problem, bool fatal = true
 FO_COMMON_API Message HostSPGameMessage(const SinglePlayerSetupData& setup_data);
 
 /** creates a minimal HOST_MP_GAME message used to initiate multiplayer "lobby" setup*/
-FO_COMMON_API Message HostMPGameMessage(const std::string& host_player_name, bool use_compression);
+FO_COMMON_API Message HostMPGameMessage(const std::string& host_player_name);
 
-/** creates a JOIN_GAME message.  The sender's player name, client type,
-  * cookie, and message compression request flag are sent in the message.*/
+/** creates a JOIN_GAME message.  The sender's player name, client type, and
+  * cookie are sent in the message.*/
 FO_COMMON_API Message JoinGameMessage(const std::string& player_name,
                                       Networking::ClientType client_type,
                                       const std::map<std::string, std::string>& dependencies,
-                                      boost::uuids::uuid cookie,
-                                      bool use_compression);
+                                      boost::uuids::uuid cookie);
 
 /** creates a HOST_ID message.  The player ID of the host is sent in the message. */
 FO_COMMON_API Message HostIDMessage(int host_player_id);
@@ -257,14 +257,12 @@ FO_COMMON_API Message HostSPAckMessage(int player_id);
 
 /** creates a HOST_MP_GAME acknowledgement message.  The \a player_id is the ID
   * of the receiving player.  This message should only be sent by the server.*/
-FO_COMMON_API Message HostMPAckMessage(int player_id, bool use_compression);
+FO_COMMON_API Message HostMPAckMessage(int player_id);
 
 /** creates a JOIN_GAME acknowledgement message.  The \a player_id is the ID of
-  * the receiving player, \a cookie is a token to quickly authenticate player,
-  * and \a use_compression is the compression use request flag.
+  * the receiving player and \a cookie is a token to quickly authenticate player.
   * This message should only be sent by the server.*/
-FO_COMMON_API Message JoinAckMessage(int player_id, boost::uuids::uuid cookie,
-                                     bool use_compression);
+FO_COMMON_API Message JoinAckMessage(int player_id, boost::uuids::uuid cookie);
 
 /** creates a TURN_ORDERS message, including UI data but without a state string. */
 FO_COMMON_API Message TurnOrdersMessage(const OrderSet& orders, const SaveGameUIData& ui_data);
@@ -341,6 +339,9 @@ FO_COMMON_API Message DispatchCombatLogsMessage(const std::vector<std::pair<int,
 /** Sends logger configuration details to server or ai process. */
 FO_COMMON_API Message LoggerConfigMessage(int sender, const std::set<std::tuple<std::string, std::string, LogLevel>>& options);
 
+/** create a USE_COMPRESSION message. */
+FO_COMMON_API Message UseCompressionMessage(bool use_compression);
+
 ////////////////////////////////////////////////
 // Multiplayer Lobby Message named ctors
 ////////////////////////////////////////////////
@@ -402,9 +403,7 @@ FO_COMMON_API Message AutoTurnMessage(int turns_count);
 FO_COMMON_API void ExtractErrorMessageData(const Message& msg, int& player_id, std::string& problem, bool& fatal);
 
 FO_COMMON_API void ExtractHostMPGameMessageData(const Message& msg, std::string& host_player_name,
-                                                std::string& client_version_string, bool& use_compression);
-
-FO_COMMON_API void ExtractHostMPAckMessage(const Message& msg, int& player_id, bool& use_compression);
+                                                std::string& client_version_string);
 
 FO_COMMON_API void ExtractLobbyUpdateMessageData(const Message& msg, MultiplayerLobbyData& lobby_data);
 
@@ -438,10 +437,10 @@ FO_COMMON_API void ExtractJoinGameMessageData(const Message& msg, std::string& p
                                               Networking::ClientType& client_type,
                                               std::string& version_string,
                                               std::map<std::string, std::string>& dependencies,
-                                              boost::uuids::uuid& cookie, bool& req_compression);
+                                              boost::uuids::uuid& cookie);
 
 FO_COMMON_API void ExtractJoinAckMessageData(const Message& msg, int& player_id,
-                                             boost::uuids::uuid& cookie, bool& req_compression);
+                                             boost::uuids::uuid& cookie);
 
 FO_COMMON_API void ExtractTurnOrdersMessageData(const Message& msg, OrderSet& orders, bool& ui_data_available,
                                                 SaveGameUIData& ui_data, bool& save_state_string_available,
@@ -497,5 +496,6 @@ FO_COMMON_API void ExtractSetAuthorizationRolesMessage(const Message &msg, Netwo
 
 FO_COMMON_API void ExtractPlayerInfoMessageData(const Message &msg, std::map<int, PlayerInfo>& players);
 
+FO_COMMON_API void ExtractUseCompressionMessageData(const Message &msg, bool& use_compression);
 
 #endif

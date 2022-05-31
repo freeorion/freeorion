@@ -477,6 +477,7 @@ void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_con
     case Message::MessageType::MODERATOR_ACTION:         m_fsm->process_event(ModeratorAct(msg, player_connection));     break;
     case Message::MessageType::ELIMINATE_SELF:           m_fsm->process_event(EliminateSelf(msg, player_connection));    break;
     case Message::MessageType::AUTO_TURN:                m_fsm->process_event(AutoTurn(msg, player_connection));         break;
+    case Message::MessageType::USE_COMPRESSION:          m_fsm->process_event(UseCompression(msg, player_connection));   break;
 
     case Message::MessageType::ERROR_MSG:
     case Message::MessageType::DEBUG:                    break;

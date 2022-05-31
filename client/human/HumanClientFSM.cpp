@@ -265,13 +265,10 @@ boost::statechart::result WaitingForMPHostAck::react(const HostMPGame& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) WaitingForMPHostAck.HostMPGame";
 
     try {
-        int host_id;
-        bool use_compression;
-        ExtractHostMPAckMessage(msg.m_message, host_id, use_compression);
+        int host_id = boost::lexical_cast<int>(msg.m_message.Text());
 
         Client().Networking().SetPlayerID(host_id);
         Client().Networking().SetHostPlayerID(host_id);
-        Client().Networking().SetCompressionUse(use_compression);
 
         // Logging configuration can only be sent after receiving host id.
         Client().SendLoggingConfigToServer();
@@ -291,6 +288,17 @@ boost::statechart::result WaitingForMPHostAck::react(const Disconnection& d) {
     Client().ResetToIntro(true);
     ClientUI::MessageBox(UserString("SERVER_LOST"), true);
     return retval;
+}
+
+boost::statechart::result WaitingForMPHostAck::react(const UseCompression& msg) {
+    TraceLogger(FSM) << "(HumanClientFSM) WaitingForMPJoinAck.UseCompression";
+
+    bool use_compression;
+    ExtractUseCompressionMessageData(msg.m_message, use_compression);
+
+    Client().Networking().SetUseCompression(use_compression);
+
+    return discard_event();
 }
 
 boost::statechart::result WaitingForMPHostAck::react(const Error& msg) {
@@ -349,8 +357,7 @@ boost::statechart::result WaitingForMPJoinAck::react(const JoinGame& msg) {
     try {
         int player_id;
         boost::uuids::uuid cookie;
-        bool use_compression;
-        ExtractJoinAckMessageData(msg.m_message, player_id, cookie, use_compression);
+        ExtractJoinAckMessageData(msg.m_message, player_id, cookie);
 
         if (!cookie.is_nil()) {
             try {
@@ -368,7 +375,6 @@ boost::statechart::result WaitingForMPJoinAck::react(const JoinGame& msg) {
         }
 
         Client().Networking().SetPlayerID(player_id);
-        Client().Networking().SetCompressionUse(use_compression);
 
         return transit<MPLobby>();
     } catch (const boost::bad_lexical_cast& ex) {
@@ -399,6 +405,17 @@ boost::statechart::result WaitingForMPJoinAck::react(const Disconnection& d) {
     Client().ResetToIntro(true);
     ClientUI::MessageBox(UserString("SERVER_LOST"), true);
     return retval;
+}
+
+boost::statechart::result WaitingForMPJoinAck::react(const UseCompression& msg) {
+    TraceLogger(FSM) << "(HumanClientFSM) WaitingForMPJoinAck.UseCompression";
+
+    bool use_compression;
+    ExtractUseCompressionMessageData(msg.m_message, use_compression);
+
+    Client().Networking().SetUseCompression(use_compression);
+
+    return discard_event();
 }
 
 boost::statechart::result WaitingForMPJoinAck::react(const Error& msg) {
@@ -545,6 +562,17 @@ boost::statechart::result MPLobby::react(const GameStart& msg) {
     Client().GetClientUI().GetMessageWnd()->SetChatText(chat_text);
 
     return transit<WaitingForGameStart>();
+}
+
+boost::statechart::result MPLobby::react(const UseCompression& msg) {
+    TraceLogger(FSM) << "(HumanClientFSM) MPLobby.UseCompression";
+
+    bool use_compression;
+    ExtractUseCompressionMessageData(msg.m_message, use_compression);
+
+    Client().Networking().SetUseCompression(use_compression);
+
+    return discard_event();
 }
 
 boost::statechart::result MPLobby::react(const Error& msg) {
@@ -762,6 +790,17 @@ boost::statechart::result PlayingGame::react(const StartQuittingGame& e) {
 
     post_event(e);
     return transit<QuittingGame>();
+}
+
+boost::statechart::result PlayingGame::react(const UseCompression& msg) {
+    TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.UseCompression";
+
+    bool use_compression;
+    ExtractUseCompressionMessageData(msg.m_message, use_compression);
+
+    Client().Networking().SetUseCompression(use_compression);
+
+    return discard_event();
 }
 
 boost::statechart::result PlayingGame::react(const Error& msg) {

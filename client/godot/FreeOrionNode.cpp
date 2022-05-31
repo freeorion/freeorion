@@ -203,8 +203,7 @@ void FreeOrionNode::HandleMessage(Message&& msg) {
         case Message::MessageType::JOIN_GAME: {
             int player_id;
             boost::uuids::uuid cookie;
-            bool use_compression;
-            ExtractJoinAckMessageData(msg, player_id, cookie, use_compression);
+            ExtractJoinAckMessageData(msg, player_id, cookie);
 
             m_app->Networking().SetPlayerID(player_id);
             break;
@@ -381,7 +380,7 @@ void FreeOrionNode::join_game(godot::String player_name, int client_type) {
     std::string player_name8 = player_name.utf8().get_data();
     m_app->Networking().SendMessage(JoinGameMessage(
         player_name8, static_cast<Networking::ClientType>(client_type),
-        DependencyVersions(), boost::uuids::nil_uuid(), false));
+        DependencyVersions(), boost::uuids::nil_uuid()));
 }
 
 void FreeOrionNode::auth_response(godot::String player_name, godot::String password) {

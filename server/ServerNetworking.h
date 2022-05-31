@@ -273,7 +273,7 @@ public:
     /** Establishes a connection as a player with a specific name and id.
         This function must only be called once. */
     void EstablishPlayer(int id, const std::string& player_name, Networking::ClientType client_type,
-                         const std::string& client_version_string, bool use_compression);
+                         const std::string& client_version_string);
 
     /** Sets this connection's client type. Useful for already-connected players
       * changing type such as in the multiplayer lobby. */
@@ -289,6 +289,9 @@ public:
 
     /** Sets or unset authorizaion role and send message to client. */
     void SetAuthRole(Networking::RoleType role, bool value = true);
+
+    /** Sets or unsets the use of compressed message data for this player. */
+    void SetUseCompression(bool use_compression);
 
     /** Sets cookie value to this connection to update expire date. */
     void SetCookie(boost::uuids::uuid cookie);

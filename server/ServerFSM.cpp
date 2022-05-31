@@ -491,8 +491,7 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
                                 const std::string& player_name,
                                 Networking::ClientType client_type,
                                 const std::string& client_version_string,
-                                const Networking::AuthRoles& roles,
-                                bool use_compression)
+                                const Networking::AuthRoles& roles)
 {
     std::list<PlayerConnectionPtr> to_disconnect;
 
@@ -549,8 +548,7 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
         DebugLogger() << "ServerFSM.EstablishPlayer Assign new player id " << player_id;
 
         // establish player with requested client type and acknowldge via connection
-        player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string,
-                                           use_compression);
+        player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
 
         // save cookie for player name
         boost::uuids::uuid cookie = player_connection->Cookie();
@@ -562,7 +560,7 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
         DebugLogger() << "ServerFSM.EstablishPlayer player " << player_name << " get cookie: " << cookie;
         player_connection->SetCookie(cookie);
 
-        player_connection->SendMessage(JoinAckMessage(player_id, cookie, !player_connection->IsLocalConnection()));
+        player_connection->SendMessage(JoinAckMessage(player_id, cookie));
         if (!GetOptionsDB().Get<bool>("skip-checksum"))
             player_connection->SendMessage(ContentCheckSumMessage());
 
@@ -633,8 +631,7 @@ sc::result Idle::react(const HostMPGame& msg) {
 
     std::string host_player_name;
     std::string client_version_string;
-    bool use_compression;
-    ExtractHostMPGameMessageData(message, host_player_name, client_version_string, use_compression);
+    ExtractHostMPGameMessageData(message, host_player_name, client_version_string);
 
     // validate host name (was found and wasn't empty)
     if (host_player_name.empty()) {
@@ -645,8 +642,7 @@ sc::result Idle::react(const HostMPGame& msg) {
     DebugLogger(FSM) << "Idle::react(HostMPGame) about to establish host";
 
     int host_player_id = server.m_networking.NewPlayerID();
-    player_connection->EstablishPlayer(host_player_id, host_player_name, Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER,
-                                       client_version_string, use_compression);
+    player_connection->EstablishPlayer(host_player_id, host_player_name, Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER, client_version_string);
     server.m_networking.SetHostPlayerID(host_player_id);
 
     if (!GetOptionsDB().Get<bool>("skip-checksum"))
@@ -660,7 +656,7 @@ sc::result Idle::react(const HostMPGame& msg) {
                     Networking::RoleType::ROLE_CLIENT_TYPE_OBSERVER,
                     Networking::RoleType::ROLE_GALAXY_SETUP
                     });
-    player_connection->SendMessage(HostMPAckMessage(host_player_id, !player_connection->IsLocalConnection()));
+    player_connection->SendMessage(HostMPAckMessage(host_player_id));
 
     server.m_single_player_game = false;
 
@@ -696,8 +692,7 @@ sc::result Idle::react(const HostSPGame& msg) {
 
 
     int host_player_id = server.m_networking.NewPlayerID();
-    player_connection->EstablishPlayer(host_player_id, host_player_name, Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER,
-                                       client_version_string, false);
+    player_connection->EstablishPlayer(host_player_id, host_player_name, Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER, client_version_string);
     server.m_networking.SetHostPlayerID(host_player_id);
     if (!GetOptionsDB().Get<bool>("skip-checksum"))
         player_connection->SendMessage(ContentCheckSumMessage());
@@ -1124,8 +1119,7 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
                               const std::string& player_name,
                               Networking::ClientType client_type,
                               const std::string& client_version_string,
-                              const Networking::AuthRoles& roles,
-                              bool use_compression)
+                              const Networking::AuthRoles& roles)
 {
     ServerApp& server = Server();
     const SpeciesManager& sm = GetSpeciesManager();
@@ -1134,8 +1128,7 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
                                              player_name,
                                              client_type,
                                              client_version_string,
-                                             roles,
-                                             use_compression))
+                                             roles))
     {
         int player_id = player_connection->PlayerID();
 
@@ -1197,10 +1190,9 @@ sc::result MPLobby::react(const JoinGame& msg) {
     std::string client_version_string;
     std::map<std::string, std::string> dependencies;
     boost::uuids::uuid cookie = boost::uuids::nil_generator{}();
-    bool use_compression = false;
     try {
         ExtractJoinGameMessageData(message, player_name, client_type, client_version_string,
-                                   dependencies, cookie, use_compression);
+                                   dependencies, cookie);
     } catch (const std::exception&) {
         ErrorLogger(FSM) << "MPLobby::react(const JoinGame& msg): couldn't extract data from join game message";
         player_connection->SendMessage(ErrorMessage(UserString("ERROR_INCOMPATIBLE_VERSION"), true));
@@ -1278,8 +1270,7 @@ sc::result MPLobby::react(const JoinGame& msg) {
         player_name = std::move(new_player_name);
     }
 
-    EstablishPlayer(player_connection, player_name, client_type, client_version_string, roles, 
-                    use_compression);
+    EstablishPlayer(player_connection, player_name, client_type, client_version_string, roles);
 
     return discard_event();
 }
@@ -1311,8 +1302,7 @@ sc::result MPLobby::react(const AuthResponse& msg) {
                     player_name,
                     client_type,
                     player_connection->ClientVersionString(),
-                    roles,
-                    player_connection->UseCompression());
+                    roles);
 
     return discard_event();
 }
@@ -2024,6 +2014,16 @@ sc::result MPLobby::react(const Hostless& msg) {
     return discard_event();
 }
 
+sc::result MPLobby::react(const UseCompression& msg) {
+    TraceLogger(FSM) << "(ServerFSM) MPLobby.UseCompression";
+
+    bool use_compression;
+    ExtractUseCompressionMessageData(msg.m_message, use_compression);
+    msg.m_player_connection->SetUseCompression(use_compression);
+    msg.m_player_connection->SendMessage(UseCompressionMessage(msg.m_player_connection->UseCompression()));
+    return discard_event();
+}
+
 sc::result MPLobby::react(const Error& msg) {
     auto fatal = HandleErrorMessage(msg, Server());
     if (fatal && !Server().IsHostless())
@@ -2157,9 +2157,8 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
     std::string client_version_string;
     std::map<std::string, std::string> dependencies;
     boost::uuids::uuid cookie = boost::uuids::nil_generator{}();
-    bool use_compression = false; // Ignore
     ExtractJoinGameMessageData(message, player_name, client_type, client_version_string,
-                               dependencies, cookie, use_compression);
+                               dependencies, cookie);
 
     DebugLogger() << "Player " << player_name << " has dependencies: " << StringifyDependencies(dependencies);
 
@@ -2174,8 +2173,8 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
         } else {
             // expected player
             // let the networking system know what socket this player is on
-            player_connection->EstablishPlayer(expected_it->second, player_name, client_type, client_version_string, false);
-            player_connection->SendMessage(JoinAckMessage(expected_it->second, boost::uuids::nil_uuid(), false));
+            player_connection->EstablishPlayer(expected_it->second, player_name, client_type, client_version_string);
+            player_connection->SendMessage(JoinAckMessage(expected_it->second, boost::uuids::nil_uuid()));
             if (!GetOptionsDB().Get<bool>("skip-checksum"))
                 player_connection->SendMessage(ContentCheckSumMessage());
 
@@ -2199,8 +2198,8 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
         } else {
             // unexpected but welcome human player
             int host_id = server.Networking().HostPlayerID();
-            player_connection->EstablishPlayer(host_id, player_name, client_type, client_version_string, false);
-            player_connection->SendMessage(JoinAckMessage(host_id, boost::uuids::nil_uuid(), false));
+            player_connection->EstablishPlayer(host_id, player_name, client_type, client_version_string);
+            player_connection->SendMessage(JoinAckMessage(host_id, boost::uuids::nil_uuid()));
             if (!GetOptionsDB().Get<bool>("skip-checksum"))
                 player_connection->SendMessage(ContentCheckSumMessage());
 
@@ -2324,9 +2323,8 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
     std::string client_version_string;
     std::map<std::string, std::string> dependencies;
     boost::uuids::uuid cookie = boost::uuids::nil_generator{}();
-    bool use_compression = false;
     ExtractJoinGameMessageData(message, player_name, client_type, client_version_string,
-                               dependencies, cookie, use_compression);
+                               dependencies, cookie);
 
     DebugLogger() << "Player " << player_name << " has dependencies: " << StringifyDependencies(dependencies);
 
@@ -2341,8 +2339,8 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
             // expected player
             // let the networking system know what socket this player is on
             int player_id = server.m_networking.NewPlayerID();
-            player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string, false);
-            player_connection->SendMessage(JoinAckMessage(player_id, boost::uuids::nil_uuid(), false));
+            player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
+            player_connection->SendMessage(JoinAckMessage(player_id, boost::uuids::nil_uuid()));
 
             // Inform AI of logging configuration.
             player_connection->SendMessage(
@@ -2447,7 +2445,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
             }
         }
 
-        fsm.EstablishPlayer(player_connection, new_player_name, client_type, client_version_string, roles, use_compression);
+        fsm.EstablishPlayer(player_connection, new_player_name, client_type, client_version_string, roles);
     } else {
         ErrorLogger(FSM) << "WaitingForMPGameJoiners::react(const JoinGame& msg): Received JoinGame message with invalid client type: " << client_type;
         return discard_event();
@@ -2522,8 +2520,7 @@ sc::result WaitingForMPGameJoiners::react(const AuthResponse& msg) {
                             player_name,
                             client_type,
                             player_connection->ClientVersionString(),
-                            roles,
-                            player_connection->UseCompression());
+                            roles);
     } else {
         // non-human player
         ErrorLogger(FSM) << "WaitingForMPGameJoiners.AuthResponse : A non-human player attempted to join the game.";
@@ -2575,6 +2572,16 @@ sc::result WaitingForMPGameJoiners::react(const Hostless& msg) {
 sc::result WaitingForMPGameJoiners::react(const ShutdownServer& msg) {
     TraceLogger(FSM) << "(ServerFSM) WaitingForMPGameJoiners.ShutdownServer";
     return transit<ShuttingDownServer>();
+}
+
+sc::result WaitingForMPGameJoiners::react(const UseCompression& msg) {
+    TraceLogger(FSM) << "(ServerFSM) WaitingForMPGameJoiners.UseCompression";
+
+    bool use_compression;
+    ExtractUseCompressionMessageData(msg.m_message, use_compression);
+    msg.m_player_connection->SetUseCompression(use_compression);
+    msg.m_player_connection->SendMessage(UseCompressionMessage(msg.m_player_connection->UseCompression()));
+    return discard_event();
 }
 
 sc::result WaitingForMPGameJoiners::react(const Error& msg) {
@@ -2762,8 +2769,7 @@ void PlayingGame::EstablishPlayer(const PlayerConnectionPtr& player_connection,
                                   const std::string& player_name,
                                   Networking::ClientType client_type,
                                   const std::string& client_version_string,
-                                  const Networking::AuthRoles& roles,
-                                  bool use_compression)
+                                  const Networking::AuthRoles& roles)
 {
     ServerApp& server = Server();
     // due disconnection could cause `delete this` in transition
@@ -2774,8 +2780,7 @@ void PlayingGame::EstablishPlayer(const PlayerConnectionPtr& player_connection,
                             player_name,
                             client_type,
                             player_connection->ClientVersionString(),
-                            roles,
-                            use_compression))
+                            roles))
     {
         // it possible to be not in PlayingGame here
         bool is_in_mplobby = false;
@@ -2832,10 +2837,9 @@ sc::result PlayingGame::react(const JoinGame& msg) {
     std::string client_version_string;
     std::map<std::string, std::string> dependencies;
     boost::uuids::uuid cookie = boost::uuids::nil_generator{}();
-    bool use_compression;
     try {
         ExtractJoinGameMessageData(message, player_name, client_type, client_version_string,
-                                   dependencies, cookie, use_compression);
+                                   dependencies, cookie);
     } catch (const std::exception&) {
         ErrorLogger(FSM) << "PlayingGame::react(const JoinGame& msg): couldn't extract data from join game message";
         player_connection->SendMessage(ErrorMessage(UserString("ERROR_INCOMPATIBLE_VERSION"), true));
@@ -2909,7 +2913,7 @@ sc::result PlayingGame::react(const JoinGame& msg) {
     }
 
     EstablishPlayer(player_connection, player_name, client_type,
-                    client_version_string, roles, use_compression);
+                    client_version_string, roles);
 
     return discard_event();
 }
@@ -2938,8 +2942,7 @@ sc::result PlayingGame::react(const AuthResponse& msg) {
     Networking::ClientType client_type = player_connection->GetClientType();
 
     EstablishPlayer(player_connection, player_name, client_type,
-                    player_connection->ClientVersionString(), roles,
-                    player_connection->UseCompression());
+                    player_connection->ClientVersionString(), roles);
 
     return discard_event();
 }
@@ -3031,6 +3034,16 @@ sc::result PlayingGame::react(const AutoTurn& msg) {
         post_event(CheckTurnEndConditions());
     }
 
+    return discard_event();
+}
+
+sc::result PlayingGame::react(const UseCompression& msg) {
+    TraceLogger(FSM) << "(ServerFSM) PlayingGame.UseCompression";
+
+    bool use_compression;
+    ExtractUseCompressionMessageData(msg.m_message, use_compression);
+    msg.m_player_connection->SetUseCompression(use_compression);
+    msg.m_player_connection->SendMessage(UseCompressionMessage(msg.m_player_connection->UseCompression()));
     return discard_event();
 }
 
