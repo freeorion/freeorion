@@ -427,9 +427,8 @@ bool ClientNetworking::Impl::ConnectToServer(
         ErrorLogger(network) << "ConnectToServer() : unable to connect to server at "
                              << ip_address << " due to exception: " << e.what();
     }
-    if (IsConnected()) {
+    if (IsConnected())
         m_destination = ip_address;
-    }
     TraceLogger(network) << "ClientNetworking::Impl::ConnectToServer() - Returning.";
     return IsConnected();
 }
