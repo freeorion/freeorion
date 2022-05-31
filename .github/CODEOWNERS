@@ -4,5 +4,5 @@ ru.txt @Cjkjvfnby @o01eg
 # Tool for stringtables check
 st-tool.py @Cjkjvfnby
 
-# Tool for AI skeleton generation
-stub_generator @Cjkjvfnby
+# all AI
+/default/python @Cjkjvfnby
