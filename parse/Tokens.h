@@ -36,6 +36,7 @@
 
 #define TOKEN_SEQ_2                             \
     (Building)                                  \
+    (BuildingTypesOwned)                        \
     (BuildingType)                              \
     (BuildingTypesProduced)                     \
     (BuildingTypesScrapped)                     \
