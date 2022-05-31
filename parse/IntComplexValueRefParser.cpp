@@ -67,7 +67,8 @@ namespace parse {
 
          empire_name_ref
             =   (
-                    (   tok.BuildingTypesProduced_
+                    (   tok.BuildingTypesOwned_
+                    |   tok.BuildingTypesProduced_
                     |   tok.BuildingTypesScrapped_
                     |   tok.SpeciesColoniesOwned_
                     |   tok.SpeciesPlanetsBombed_
