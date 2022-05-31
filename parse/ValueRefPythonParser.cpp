@@ -332,14 +332,29 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
         globals[variable] = boost::python::raw_function(f_insert_int_complex_variable);
     }
 
+    // single-parameter math functions
+    for (const auto& op : std::initializer_list<std::pair<const char*, ValueRef::OpType>>{
+            {"Sin",   ValueRef::OpType::SINE},
+            {"Cos",   ValueRef::OpType::COSINE},
+            {"Log",   ValueRef::OpType::LOGARITHM},
+            {"NoOp",  ValueRef::OpType::NOOP},
+            {"Abs",   ValueRef::OpType::ABS},
+            {"Round", ValueRef::OpType::ROUND_NEAREST},
+            {"Ceil",  ValueRef::OpType::ROUND_UP},
+            {"Floor", ValueRef::OpType::ROUND_DOWN},
+            {"Sign",  ValueRef::OpType::SIGN}})
+    {
+        std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_abs = [&parser, op](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_1arg_(parser, op.second, args, kw); };
+        globals[op.first] = boost::python::raw_function(f_insert_abs, 2);
+    }
+
     std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_game_rule = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_game_rule_(parser, args, kw); };
     globals["GameRule"] = boost::python::raw_function(f_insert_game_rule);
     std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_min = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_minmaxoneof_<ValueRef::OpType::MINIMUM>(parser, args, kw); };
     globals["Min"] = boost::python::raw_function(f_insert_min, 3);
     std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_max = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_minmaxoneof_<ValueRef::OpType::MAXIMUM>(parser, args, kw); };
     globals["Max"] = boost::python::raw_function(f_insert_max, 3);
-    std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_abs = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_1arg_(parser, ValueRef::OpType::ABS, args, kw); };
-    globals["Abs"] = boost::python::raw_function(f_insert_abs, 2);
+
     std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_statistic_if = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_statistic_(parser, ValueRef::StatisticType::IF, args, kw); };
     globals["StatisticIf"] = boost::python::raw_function(f_insert_statistic_if, 1);
 }
