@@ -25,7 +25,7 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/iostreams/filter/zlib.hpp>
-#include <boost/iostreams/filtering_streambuf.hpp>
+#include <boost/iostreams/filtering_stream.hpp>
 #include <boost/iostreams/copy.hpp>
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/iostreams/stream.hpp>
@@ -432,16 +432,10 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
                     throw std::invalid_argument("Save Format Not Compatible with Boost Version " BOOST_LIB_VERSION);
 
                 timer.EnterSection("decompression");
-                // allocate buffers for compressed and deceompressed serialized gamestate
-                DebugLogger() << "Allocating buffers for XML deserialization...";
-                std::string serial_str, compressed_str;
+                // allocate buffer for compressed serialized gamestate
+                DebugLogger() << "Allocating buffer for XML deserialization...";
+                std::string compressed_str;
                 try {
-                    if (ignored_save_preview_data.uncompressed_text_size > 0) {
-                        DebugLogger() << "Based on header info for uncompressed state string, attempting to reserve: " << ignored_save_preview_data.uncompressed_text_size << " bytes";
-                        serial_str.reserve(ignored_save_preview_data.uncompressed_text_size);
-                    } else {
-                        serial_str.reserve(std::pow(2.0, 29.0));
-                    }
                     if (ignored_save_preview_data.compressed_text_size > 0) {
                         DebugLogger() << "Based on header info for compressed state string, attempting to reserve: " << ignored_save_preview_data.compressed_text_size << " bytes";
                         compressed_str.reserve(ignored_save_preview_data.compressed_text_size);
@@ -455,32 +449,16 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
                 // extract compressed gamestate info
                 xia >> BOOST_SERIALIZATION_NVP(compressed_str);
 
-                // wrap compressed string in iostream::stream to extract compressed data
-                typedef boost::iostreams::basic_array_source<char> SourceDevice;
-                SourceDevice compressed_source(compressed_str.data(), compressed_str.size());
-                boost::iostreams::stream<SourceDevice> c_source(compressed_source);
-
-                // wrap uncompressed buffer string in iostream::stream to receive decompressed string
-                typedef boost::iostreams::back_insert_device<std::string> InsertDevice;
-                InsertDevice serial_inserter(serial_str);
-                boost::iostreams::stream<InsertDevice> s_sink(serial_inserter);
-
-                // set up filter to decompress data
-                boost::iostreams::filtering_istreambuf i;
-                i.push(boost::iostreams::zlib_decompressor());
+                boost::iostreams::filtering_istream zis;
+                zis.push(boost::iostreams::zlib_decompressor());
                 if (ignored_save_preview_data.save_format_marker == XML_COMPRESSED_BASE64_MARKER)
-                    i.push(boost::iostreams::base64_decoder());
-                i.push(c_source);
-                boost::iostreams::copy(i, s_sink);
-                // The following line has been commented out because it caused an assertion in boost iostreams to fail
-                // s_sink.flush();
+                    zis.push(boost::iostreams::base64_decoder());
+                std::istringstream is(compressed_str);
+                zis.push(is);
 
-                // wrap uncompressed buffer string in iostream::stream to extract decompressed string
-                SourceDevice serial_source(serial_str.data(), serial_str.size());
-                boost::iostreams::stream<SourceDevice> s_source(serial_source);
+                // create archive with from decompressed stream
+                freeorion_xml_iarchive xia2(zis);
 
-                // create archive with (preallocated) buffer...
-                freeorion_xml_iarchive xia2(s_source);
                 // deserialize main gamestate info
                 timer.EnterSection("xml player data");
                 xia2 >> BOOST_SERIALIZATION_NVP(player_save_game_data);
