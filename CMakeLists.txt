@@ -88,7 +88,10 @@ if(WIN32)
     # Search dependency DLLs inside FreeOrionSDK
     target_dependencies_add_search_path("${CMAKE_PREFIX_PATH}/bin")
     set(CMAKE_INSTALL_BINDIR ".")
+    set(CMAKE_INSTALL_DATADIR ".")
     set(FreeOrion_INSTALL_LIBDIR ".")
+else()
+    set(CMAKE_INSTALL_DATADIR "${CMAKE_INSTALL_DATADIR}/freeorion")
 endif()
 
 if(APPLE)
@@ -894,29 +897,42 @@ add_subdirectory(doc)
 ## Install targets and package project.
 ##
 
-if(UNIX AND BUILD_CLIENT_GG)
+cpack_add_component(binaries
+    DISPLAY_NAME "Binaries only"
+    REQUIRED
+)
+
+cpack_add_component(resources
+    DISPLAY_NAME "Game resources"
+)
+
+if(BUILD_CLIENT_GG)
     install(
         TARGETS
-	    freeorion
+            freeorion
+        COMPONENT binaries
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         BUNDLE DESTINATION .
         RESOURCE
     )
 endif()
 
-if(UNIX AND NOT APPLE AND NOT ANDROID)
-    install(
-        TARGETS
-            freeorioncommon
-            freeorionparse
-        LIBRARY DESTINATION ${FreeOrion_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    )
+if(NOT APPLE AND NOT ANDROID)
+    if(NOT WIN32)
+        install(
+            TARGETS
+                freeorioncommon
+                freeorionparse
+            LIBRARY DESTINATION ${FreeOrion_INSTALL_LIBDIR}
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        )
+    endif()
     
     if(BUILD_SERVER)
         install(
             TARGETS
                 freeoriond
+            COMPONENT binaries
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
             BUNDLE DESTINATION .
         )
@@ -926,90 +942,72 @@ if(UNIX AND NOT APPLE AND NOT ANDROID)
         install(
             TARGETS
                 freeorionca
+            COMPONENT binaries
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
             BUNDLE DESTINATION .
         )
     endif()
 
-    if(BUILD_CLIENT_GG)
-        install(
-            FILES
-            ${CMAKE_SOURCE_DIR}/packaging/org.freeorion.FreeOrion.desktop
-            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications
-        )
+    if(NOT WIN32)
+        if(BUILD_CLIENT_GG)
+            install(
+                FILES
+                ${CMAKE_SOURCE_DIR}/packaging/org.freeorion.FreeOrion.desktop
+                DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications
+            )
+        endif()
     endif()
 
     if(BUILD_CLIENT_GODOT)
         install(
             TARGETS
                 freeoriongodot
+            COMPONENT binaries
             LIBRARY DESTINATION ${FreeOrion_INSTALL_LIBDIR}
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         )
     endif()
 
-    install(
-        FILES
-        ${CMAKE_SOURCE_DIR}/packaging/org.freeorion.FreeOrion.metainfo.xml
-        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/metainfo
-    )
+    if(NOT WIN32)
+        install(
+            FILES
+            ${CMAKE_SOURCE_DIR}/packaging/org.freeorion.FreeOrion.metainfo.xml
+            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/metainfo
+        )
+    endif()
 
     if(BUILD_CLIENT_GG)
         install(
             DIRECTORY default/
-            DESTINATION ${CMAKE_INSTALL_DATADIR}/freeorion/default
+            DESTINATION ${CMAKE_INSTALL_DATADIR}/default
+            COMPONENT resources
             PATTERN "*~" EXCLUDE
             PATTERN "*.pyc" EXCLUDE
+            PATTERN "tox.ini" EXCLUDE
         )
 
-        foreach(SIZE 16 24 32 64 128 256)
-            install(
-                FILES
-                ${CMAKE_SOURCE_DIR}/default/data/art/icons/FO_Icon_${SIZE}x${SIZE}.png
-                DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/${SIZE}x${SIZE}/apps/
-                RENAME freeorion.png
-            )
-        endforeach()
+        if(NOT WIN32)
+            foreach(SIZE 16 24 32 64 128 256)
+                install(
+                    FILES
+                    ${CMAKE_SOURCE_DIR}/default/data/art/icons/FO_Icon_${SIZE}x${SIZE}.png
+                    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/${SIZE}x${SIZE}/apps/
+                    RENAME freeorion.png
+                )
+            endforeach()
+        endif()
     else()
         install(
             DIRECTORY default/
-            DESTINATION ${CMAKE_INSTALL_DATADIR}/freeorion/default
+            DESTINATION ${CMAKE_INSTALL_DATADIR}/default
+            COMPONENT resources
             PATTERN "*~" EXCLUDE
             PATTERN "*.pyc" EXCLUDE
             PATTERN "*.png" EXCLUDE
             PATTERN "*.ogg" EXCLUDE
+            PATTERN "tox.ini" EXCLUDE
         )
     endif()
-endif()
-
-if(WIN32)
-    install(
-        FILES
-        OpenAL32.dll
-        boost_chrono.dll
-        boost_date_time.dll
-        boost_filesystem.dll
-        boost_iostreams.dll
-        boost_locale.dll
-        boost_log.dll
-        boost_log_setup.dll
-        boost_python${Boost_PYTHON_SUFFIX}.dll
-        boost_regex.dll
-        boost_serialization.dll
-        boost_system.dll
-        boost_thread.dll
-        glew32.dll
-        libexpat.dll
-        libogg.dll
-        libpng13.dll
-        libvorbis.dll
-        libvorbisfile.dll
-        python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}.dll
-        wrap_oal.dll
-        z.dll
-        zlib1.dll
-        DESTINATION ${CMAKE_INSTALL_BINDIR}
-    )
 endif()
 
 set(CPACK_PACKAGE_NAME ${CMAKE_PROJECT_NAME})
@@ -1031,7 +1029,6 @@ else()
     set(PACKAGE_FILE_SYSTEM_NAME ${CPACK_SYSTEM_NAME})
 endif()
 set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${PACKAGE_FILE_SYSTEM_NAME}")
-set(CPACK_MONOLITHIC_INSTALL ON)
 
 # NSIS-specific settings
 set(CPACK_NSIS_COMPRESSOR bzip2)

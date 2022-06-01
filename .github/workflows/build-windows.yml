@@ -78,6 +78,19 @@ jobs:
         run: |
           $env:Path += ";$($pwd.Path)\\build\\Release"
           .\build\Release\Godot_v3.2.3-stable_win32.exe --no-window --disable-render-loop --video-driver GLES2 --verbose -s --path godot addons/gut/gut_cmdln.gd -gdir=res://test/ -ginclude_subdirs -gexit
+      - name: Generate binaries only
+        run: |
+          pushd build
+          cpack -V -C Release -G ZIP -D CPACK_ARCHIVE_COMPONENT_INSTALL=ON -D CPACK_MONOLITHIC_INSTALL=OFF -D CPACK_COMPONENTS_ALL=binaries
+          ls
+      - name: Upload binaries only
+        if: true # only for weekly-test-build push
+        uses: actions/upload-artifact@v2
+        with:
+          name: freeorion-binaries-win32-build
+          path: build/FreeOrion-*.zip
+          if-no-files-found: error
+          retention-days: 14
 
   build-windows-2022-cmake:
     name: MSVS 2022 on Windows 
