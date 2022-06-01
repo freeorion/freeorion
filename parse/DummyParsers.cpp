@@ -63,7 +63,7 @@ namespace parse {
     std::map<std::string, std::unique_ptr<ValueRef::ValueRef<double>>> statistics(const boost::filesystem::path& path)
     { return {}; }
 
-    std::map<std::string, std::vector<EncyclopediaArticle>> encyclopedia_articles(const boost::filesystem::path& path)
+    std::map<std::string, std::vector<EncyclopediaArticle>, std::less<>> encyclopedia_articles(const boost::filesystem::path& path)
     { return {}; }
 
     GameRulesTypeMap game_rules(const PythonParser& parser, const boost::filesystem::path& path)
