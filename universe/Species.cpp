@@ -79,27 +79,45 @@ Species::Species(std::string&& name, std::string&& desc,
     m_can_produce_ships(can_produce_ships),
     m_spawn_rate(spawn_rate),
     m_spawn_limit(spawn_limit),
-    m_tags_concatenated([&tags]() {
-        // allocate storage for concatenated tags
-        // TODO: transform_reduce when available on all platforms...
+    m_tags_concatenated([&tags, &likes, &dislikes]() {
+        // ensure capitalization and determine size of tags, likes, dislikes
         std::size_t params_sz = 0;
-        for (const auto& t : tags)
-            params_sz += t.size();
-        std::string retval;
-        retval.reserve(params_sz);
+        std::vector<std::string> upper_tags;
+        upper_tags.reserve(tags.size());
+        for (const auto& t : tags) {
+            const auto& upper_tag = upper_tags.emplace_back(boost::to_upper_copy<std::string>(t));
+            params_sz += upper_tag.size();
+        }
+        std::vector<std::string> upper_likes;
+        upper_likes.reserve(likes.size());
+        for (const auto& l : likes) {
+            const auto& upper_like = upper_likes.emplace_back(boost::to_upper_copy<std::string>(l));
+            params_sz += upper_like.size();
+        }
+        std::vector<std::string> upper_dislikes;
+        upper_dislikes.reserve(dislikes.size());
+        for (const auto& d : dislikes) {
+            const auto& upper_dislike = upper_dislikes.emplace_back(boost::to_upper_copy<std::string>(d));
+            params_sz += upper_dislike.size();
+        }
 
-        // concatenate tags
-        std::for_each(tags.begin(), tags.end(), [&retval](const auto& t)
-        { retval.append(boost::to_upper_copy<std::string>(t)); });
-        return retval;
+        // storage for concatenating tags, likes, and dislikes
+        std::ostringstream retval;
+
+        // concatenate tags, likes, and dislikes
+        std::copy(upper_tags.begin(), upper_tags.end(), std::ostream_iterator<std::string>(retval));
+        std::copy(upper_likes.begin(), upper_likes.end(), std::ostream_iterator<std::string>(retval));
+        std::copy(upper_dislikes.begin(), upper_dislikes.end(), std::ostream_iterator<std::string>(retval));
+        return std::move(retval).str();
     }()),
     m_tags([&tags, this]() {
         std::vector<std::string_view> retval;
-        std::size_t next_idx = 0;
         retval.reserve(tags.size());
-        std::string_view sv{m_tags_concatenated};
 
-        // store views into concatenated tags string
+        const std::string_view sv{m_tags_concatenated};
+        std::size_t next_idx = 0;
+
+        // store views into concatenated tags/likes string
         std::for_each(tags.begin(), tags.end(), [&next_idx, &retval, this, sv](const auto& t) {
             std::string upper_t = boost::to_upper_copy<std::string>(t);
             retval.push_back(sv.substr(next_idx, upper_t.size()));
@@ -107,8 +125,43 @@ Species::Species(std::string&& name, std::string&& desc,
         });
         return retval;
     }()),
-    m_likes(std::move(likes)),
-    m_dislikes(std::move(dislikes)),
+    m_likes([&likes, this]() {
+        std::vector<std::string_view> retval;
+        retval.reserve(likes.size());
+
+        const std::string_view sv{m_tags_concatenated};
+        std::size_t next_idx = 0;
+        // find starting point for first like, after end of tags, within m_tags_concatenated
+        std::for_each(m_tags.begin(), m_tags.end(), [&next_idx](const auto& t) { next_idx += t.size(); });
+
+        // store views into concatenated tags/likes string
+        std::for_each(likes.begin(), likes.end(), [&next_idx, &retval, this, sv](const auto& t) {
+            std::string upper_t = boost::to_upper_copy<std::string>(t);
+            retval.push_back(sv.substr(next_idx, upper_t.size()));
+            next_idx += upper_t.size();
+        });
+
+        return retval;
+    }()),
+    m_dislikes([&dislikes, this]() {
+        std::vector<std::string_view> retval;
+        retval.reserve(dislikes.size());
+
+        const std::string_view sv{m_tags_concatenated};
+        std::size_t next_idx = 0;
+        // find starting point for first dislike, after end of tags and likes, within m_tags_concatenated
+        std::for_each(m_tags.begin(), m_tags.end(), [&next_idx](const auto& t) { next_idx += t.size(); });
+        std::for_each(m_likes.begin(), m_likes.end(), [&next_idx](const auto& t) { next_idx += t.size(); });
+
+        // store views into concatenated tags/likes string
+        std::for_each(dislikes.begin(), dislikes.end(), [&next_idx, &retval, this, sv](const auto& t) {
+            std::string upper_t = boost::to_upper_copy<std::string>(t);
+            retval.push_back(sv.substr(next_idx, upper_t.size()));
+            next_idx += upper_t.size();
+        });
+
+        return retval;
+    }()),
     m_graphic(std::move(graphic))
 {
     for (auto&& effect : effects)

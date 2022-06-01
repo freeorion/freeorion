@@ -82,10 +82,9 @@ namespace {
 
 namespace {
     // Checks content \a tags for custom defined pedia category \a cat
-    template <typename StringContainer, typename S>
-    bool HasCustomCategory(const StringContainer& tags, const S& cat) {
+    bool HasCustomCategory(const std::vector<std::string_view>& tags, const std::string_view cat) {
         static constexpr auto len{TAG_PEDIA_PREFIX.length()};
-        return std::any_of(tags.begin(), tags.end(), [&cat](std::string_view sv) {
+        return std::any_of(tags.begin(), tags.end(), [&cat](const auto& sv) {
             return sv.substr(0, len) == TAG_PEDIA_PREFIX &&
                 sv.substr(len) == cat;
         });
@@ -2303,7 +2302,7 @@ namespace {
             for (const auto& s : species->Dislikes())
                 detailed_description
                 .append(count++ == 0 ? "" : ",  ")
-                .append(LinkStringIfPossible(s,UserString(s)))
+                .append(LinkStringIfPossible(std::string{s}, UserString(s)))
                 //.append(UserString(s))
                 ;
         }
