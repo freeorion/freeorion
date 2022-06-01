@@ -588,7 +588,7 @@ void TextLinker::MarkLinks() {
     SetLinkedText(std::move(marked_text));
 }
 
-std::string LinkStringIfPossible(const std::string &raw, const std::string &user_string) {
+std::string LinkStringIfPossible(std::string_view raw, std::string_view user_string) {
     if      (GetBuildingType(raw)) return LinkTaggedPresetText(VarText::BUILDING_TYPE_TAG, raw, user_string);
     else if (GetSpecies(raw))      return LinkTaggedPresetText(VarText::SPECIES_TAG,       raw, user_string);
     else if (GetSpecial(raw))      return LinkTaggedPresetText(VarText::SPECIAL_TAG,       raw, user_string);
@@ -597,35 +597,46 @@ std::string LinkStringIfPossible(const std::string &raw, const std::string &user
     else if (GetShipPart(raw))     return LinkTaggedPresetText(VarText::SHIP_PART_TAG,     raw, user_string);
     else if (GetTech(raw))         return LinkTaggedPresetText(VarText::TECH_TAG,          raw, user_string);
     else if (GetFieldType(raw))    return LinkTaggedPresetText(VarText::FIELD_TYPE_TAG,    raw, user_string);
-    else return user_string;
+    else return std::string{user_string};
 }
 
-std::string LinkList(const std::vector<std::string> &strings) {
+std::string LinkList(const std::vector<std::string>& strings) {
     std::string s;
     bool first = true;
     for (std::string string : strings) {
-        if (first) first = false;
-        else s.append(",  ");
-        s.append(LinkStringIfPossible(string,UserString(string)));
+        if (first)
+            first = false;
+        else
+            s.append(",  ");
+        s.append(LinkStringIfPossible(string, UserString(string)));
     }
     return s;
 }
 
-std::string LinkList(std::vector<std::string_view> strings) {
+std::string LinkList(const std::vector<std::string_view>& strings) {
     std::string s;
     bool first = true;
     for (std::string_view string : strings) {
-        if (first) first = false;
-        else s.append(",  ");
-        std::string str(string);
-        s.append(LinkStringIfPossible(str,UserString(string)));
+        if (first)
+            first = false;
+        else
+            s.append(",  ");
+        s.append(LinkStringIfPossible(string, UserString(string)));
     }
     return s;
 }
 
-std::string LinkList(const std::set<std::string> &strings) {
-    std::vector<std::string> vector(strings.begin(), strings.end());
-    return LinkList(vector);
+std::string LinkList(const std::set<std::string>& strings) {
+    std::string s;
+    bool first = true;
+    for (const auto& string : strings) {
+        if (first)
+            first = false;
+        else
+            s.append(",  ");
+        s.append(LinkStringIfPossible(string, UserString(string)));
+    }
+    return s;
 }
 
 std::string LinkTaggedText(std::string_view tag, std::string_view stringtable_entry)
