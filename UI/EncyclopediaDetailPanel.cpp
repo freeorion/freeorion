@@ -2292,7 +2292,7 @@ namespace {
 
         // likes
         if (!species->Likes().empty()) {
-            detailed_description += "\n\n" + UserString("LIKES");
+            detailed_description.append("\n\n").append(UserString("LIKES"));
             detailed_description.append(LinkList(species->Likes()));
         }
 
