@@ -891,12 +891,18 @@ namespace {
                 WeaponsPlatformEvent::WeaponsPlatformEventPtr platform_event,
                 std::shared_ptr<FightersAttackFightersEvent>& fighter_on_fighter_event)
     {
-        const auto attack_ship = std::dynamic_pointer_cast<Ship>(attacker);
-        const auto attack_planet = std::dynamic_pointer_cast<Planet>(attacker);
-        const auto attack_fighter = std::dynamic_pointer_cast<Fighter>(attacker);
-        const auto target_ship = std::dynamic_pointer_cast<Ship>(target);
-        const auto target_planet = std::dynamic_pointer_cast<Planet>(target);
-        const auto target_fighter = std::dynamic_pointer_cast<Fighter>(target);
+        const auto attack_ship = attacker->ObjectType() == UniverseObjectType::OBJ_SHIP ?
+            std::static_pointer_cast<Ship>(attacker) : nullptr;
+        const auto attack_planet = attacker->ObjectType() == UniverseObjectType::OBJ_PLANET ?
+            std::static_pointer_cast<Planet>(attacker) : nullptr;
+        const auto attack_fighter = attacker->ObjectType() == UniverseObjectType::OBJ_FIGHTER ?
+            std::static_pointer_cast<Fighter>(attacker) : nullptr;
+        const auto target_ship = target->ObjectType() == UniverseObjectType::OBJ_SHIP ?
+            std::static_pointer_cast<Ship>(target) : nullptr;
+        const auto target_planet = target->ObjectType() == UniverseObjectType::OBJ_PLANET ?
+            std::static_pointer_cast<Planet>(target) : nullptr;
+        const auto target_fighter = target->ObjectType() == UniverseObjectType::OBJ_FIGHTER ?
+            std::static_pointer_cast<Fighter>(target) : nullptr;;
 
         if (attack_ship && target_ship) {
             AttackShipShip(         attack_ship,    weapon, target_ship,    combat_info, bout, round, platform_event);
@@ -1527,7 +1533,7 @@ namespace {
 
             // select target object from matches
             int target_idx = RandInt(0, targets.size() - 1);
-            auto target = *std::next(targets.begin(), target_idx);
+            auto& target = *std::next(targets.begin(), target_idx);
 
             if (!target) {
                 ErrorLogger(combat) << "AutoResolveCombat selected null target object?";
