@@ -1767,7 +1767,7 @@ def _build_basic_shipyards() -> ShipYardInfo:
         if res > 0:
             queued_shipyard_pids.append(pid)
 
-    top_pilot_systems = {}
+    top_pilot_systems = TopPilotSystems({})
     for pid, rating in get_pilot_ratings().items():
         if (rating <= medium_pilot_rating()) and (rating < GREAT_PILOT_RATING):
             continue
@@ -1778,7 +1778,7 @@ def _build_basic_shipyards() -> ShipYardInfo:
         res = _try_enqueue(building_type, pid, at_front=True, ignore_dislike=True)
         if res:
             queued_shipyard_pids.append(pid)
-    return queued_shipyard_pids, colony_systems, top_pilot_systems  # TBD return added costs?
+    return ShipYardInfo(queued_shipyard_pids, colony_systems, top_pilot_systems)  # TBD return added costs?
 
 
 def _build_energy_shipyards(
