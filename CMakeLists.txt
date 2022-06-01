@@ -55,6 +55,7 @@ use_compiler_cache_with_xcode()
 include(GNUInstallDirs)
 include(UseCodeCoverage)
 include(TargetDependencies)
+include(CPackComponent)
 
 set(FreeOrion_VERSION 0.4.10+)
 set(CMAKE_CXX_STANDARD 17)
