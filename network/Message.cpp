@@ -17,6 +17,8 @@
 #include "../util/Version.h"
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/iostreams/filtering_stream.hpp>
+#include <boost/iostreams/filter/zlib.hpp>
 #include <boost/serialization/deque.hpp>
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/map.hpp>
@@ -183,8 +185,11 @@ Message GameStartMessage(bool single_player_game, int empire_id,
 {
     std::ostringstream os;
     {
+        boost::iostreams::filtering_ostream zos;
+        zos.push(boost::iostreams::zlib_compressor());
+        zos.push(os);
         if (use_binary_serialization) {
-            freeorion_bin_oarchive oa(os);
+            freeorion_bin_oarchive oa(zos);
             oa << BOOST_SERIALIZATION_NVP(single_player_game)
                << BOOST_SERIALIZATION_NVP(empire_id)
                << BOOST_SERIALIZATION_NVP(current_turn);
@@ -200,7 +205,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             galaxy_setup_data.encoding_empire = empire_id;
             oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         } else {
-            freeorion_xml_oarchive oa(os);
+            freeorion_xml_oarchive oa(zos);
             oa << BOOST_SERIALIZATION_NVP(single_player_game)
                << BOOST_SERIALIZATION_NVP(empire_id)
                << BOOST_SERIALIZATION_NVP(current_turn);
@@ -231,8 +236,11 @@ Message GameStartMessage(bool single_player_game, int empire_id,
 {
     std::ostringstream os;
     {
+        boost::iostreams::filtering_ostream zos;
+        zos.push(boost::iostreams::zlib_compressor());
+        zos.push(os);
         if (use_binary_serialization) {
-            freeorion_bin_oarchive oa(os);
+            freeorion_bin_oarchive oa(zos);
             oa << BOOST_SERIALIZATION_NVP(single_player_game)
                << BOOST_SERIALIZATION_NVP(empire_id)
                << BOOST_SERIALIZATION_NVP(current_turn);
@@ -255,7 +263,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             galaxy_setup_data.encoding_empire = empire_id;
             oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         } else {
-            freeorion_xml_oarchive oa(os);
+            freeorion_xml_oarchive oa(zos);
             oa << BOOST_SERIALIZATION_NVP(single_player_game)
                << BOOST_SERIALIZATION_NVP(empire_id)
                << BOOST_SERIALIZATION_NVP(current_turn);
@@ -300,8 +308,11 @@ Message GameStartMessage(bool single_player_game, int empire_id,
 {
     std::ostringstream os;
     {
+        boost::iostreams::filtering_ostream zos;
+        zos.push(boost::iostreams::zlib_compressor());
+        zos.push(os);
         if (use_binary_serialization) {
-            freeorion_bin_oarchive oa(os);
+            freeorion_bin_oarchive oa(zos);
             oa << BOOST_SERIALIZATION_NVP(single_player_game)
                << BOOST_SERIALIZATION_NVP(empire_id)
                << BOOST_SERIALIZATION_NVP(current_turn);
@@ -324,7 +335,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             galaxy_setup_data.encoding_empire = empire_id;
             oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         } else {
-            freeorion_xml_oarchive oa(os);
+            freeorion_xml_oarchive oa(zos);
             oa << BOOST_SERIALIZATION_NVP(single_player_game)
                << BOOST_SERIALIZATION_NVP(empire_id)
                << BOOST_SERIALIZATION_NVP(current_turn);
@@ -853,8 +864,11 @@ void ExtractGameStartMessageData(std::string text, bool& single_player_game, int
             try {
                 // first attempt binary deserialziation
                 std::istringstream is(text);
+                boost::iostreams::filtering_istream zis;
+                zis.push(boost::iostreams::zlib_decompressor());
+                zis.push(is);
 
-                freeorion_bin_iarchive ia(is);
+                freeorion_bin_iarchive ia(zis);
                 ia >> BOOST_SERIALIZATION_NVP(single_player_game)
                    >> BOOST_SERIALIZATION_NVP(empire_id)
                    >> BOOST_SERIALIZATION_NVP(current_turn);
@@ -898,8 +912,11 @@ void ExtractGameStartMessageData(std::string text, bool& single_player_game, int
         if (try_xml) {
             // if binary deserialization failed, try more-portable XML deserialization
             std::istringstream is(text);
+            boost::iostreams::filtering_istream zis;
+            zis.push(boost::iostreams::zlib_decompressor());
+            zis.push(is);
 
-            freeorion_xml_iarchive ia(is);
+            freeorion_xml_iarchive ia(zis);
             ia >> BOOST_SERIALIZATION_NVP(single_player_game)
                >> BOOST_SERIALIZATION_NVP(empire_id)
                >> BOOST_SERIALIZATION_NVP(current_turn);
@@ -945,7 +962,6 @@ void ExtractGameStartMessageData(std::string text, bool& single_player_game, int
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractGameStartMessageData(...) failed!  Message probably long, so not outputting to log.\n"
                       << "Error: " << err.what();
-        TraceLogger() << "Message: " << text;
         throw err;
     }
 }
