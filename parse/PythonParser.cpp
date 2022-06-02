@@ -1,5 +1,6 @@
 #include "PythonParser.h"
 
+#include "../universe/Species.h"
 #include "../universe/UnlockableItem.h"
 #include "../universe/ValueRef.h"
 #include "../universe/ValueRefs.h"
@@ -110,6 +111,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         py::class_<enum_wrapper<UnlockableItemType>>("UnlockableItemType", py::no_init);
         py::class_<enum_wrapper<EmpireAffiliationType>>("EmpireAffiliationType", py::no_init);
         py::class_<enum_wrapper<ResourceType>>("ResourceType", py::no_init);
+        py::class_<enum_wrapper< ::PlanetEnvironment>>("PlanetEnvironment", py::no_init);
         py::class_<unlockable_item_wrapper>("UnlockableItem", py::no_init);
         auto py_variable_wrapper = py::class_<variable_wrapper>("__Variable", py::no_init)
             .def_readonly("Construction", &variable_wrapper::construction)
