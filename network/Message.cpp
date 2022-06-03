@@ -181,12 +181,12 @@ Message GameStartMessage(bool single_player_game, int empire_id,
                          CombatLogManager& combat_logs, const SupplyManager& supply,
                          const std::map<int, PlayerInfo>& players,
                          GalaxySetupData galaxy_setup_data,
-                         bool use_binary_serialization)
+                         bool use_binary_serialization, int zlib_level)
 {
     std::ostringstream os;
     {
         boost::iostreams::filtering_ostream zos;
-        zos.push(boost::iostreams::zlib_compressor());
+        zos.push(boost::iostreams::zlib_compressor(boost::iostreams::zlib_params{zlib_level}));
         zos.push(os);
         if (use_binary_serialization) {
             freeorion_bin_oarchive oa(zos);
@@ -232,12 +232,12 @@ Message GameStartMessage(bool single_player_game, int empire_id,
                          const std::map<int, PlayerInfo>& players,
                          const OrderSet& orders, const SaveGameUIData* ui_data,
                          GalaxySetupData galaxy_setup_data,
-                         bool use_binary_serialization)
+                         bool use_binary_serialization, int zlib_level)
 {
     std::ostringstream os;
     {
         boost::iostreams::filtering_ostream zos;
-        zos.push(boost::iostreams::zlib_compressor());
+        zos.push(boost::iostreams::zlib_compressor(boost::iostreams::zlib_params{zlib_level}));
         zos.push(os);
         if (use_binary_serialization) {
             freeorion_bin_oarchive oa(zos);
@@ -304,12 +304,12 @@ Message GameStartMessage(bool single_player_game, int empire_id,
                          const std::map<int, PlayerInfo>& players,
                          const OrderSet& orders, const std::string* save_state_string,
                          GalaxySetupData galaxy_setup_data,
-                         bool use_binary_serialization)
+                         bool use_binary_serialization, int zlib_level)
 {
     std::ostringstream os;
     {
         boost::iostreams::filtering_ostream zos;
-        zos.push(boost::iostreams::zlib_compressor());
+        zos.push(boost::iostreams::zlib_compressor(boost::iostreams::zlib_params{zlib_level}));
         zos.push(os);
         if (use_binary_serialization) {
             freeorion_bin_oarchive oa(zos);

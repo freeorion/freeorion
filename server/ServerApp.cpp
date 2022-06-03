@@ -8,6 +8,7 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/functional/hash.hpp>
+#include <boost/iostreams/filter/zlib.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
@@ -920,7 +921,7 @@ void ServerApp::SendNewGameStartMessages() {
                                                         m_universe,              GetSpeciesManager(),
                                                         GetCombatLogManager(),   GetSupplyManager(),
                                                         player_info_map,         m_galaxy_setup_data,
-                                                        use_binary_serialization));
+                                                        use_binary_serialization, boost::iostreams::zlib::default_compression));
     }
 }
 
@@ -1498,7 +1499,8 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
                                                             m_current_turn, m_empires, m_universe,
                                                             GetSpeciesManager(), GetCombatLogManager(),
                                                             GetSupplyManager(), player_info_map, *orders, sss,
-                                                            m_galaxy_setup_data, use_binary_serialization));
+                                                            m_galaxy_setup_data, use_binary_serialization,
+                                                            boost::iostreams::zlib::default_compression));
 
         } else if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
             player_connection->SendMessage(GameStartMessage(m_single_player_game, empire_id,
@@ -1506,7 +1508,8 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
                                                             GetSpeciesManager(), GetCombatLogManager(),
                                                             GetSupplyManager(), player_info_map, *orders,
                                                             psgd.ui_data.get(), m_galaxy_setup_data,
-                                                            use_binary_serialization));
+                                                            use_binary_serialization,
+                                                            boost::iostreams::zlib::default_compression));
 
         } else if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER ||
                    client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
@@ -1516,7 +1519,8 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
                                                             m_current_turn, m_empires, m_universe,
                                                             GetSpeciesManager(), GetCombatLogManager(),
                                                             GetSupplyManager(), player_info_map,
-                                                            m_galaxy_setup_data, use_binary_serialization));
+                                                            m_galaxy_setup_data, use_binary_serialization,
+                                                            boost::iostreams::zlib::default_compression));
         } else {
             ErrorLogger() << "ServerApp::CommonGameInit unsupported client type: skipping game start message.";
         }
@@ -1841,7 +1845,8 @@ void ServerApp::AddObserverPlayerIntoGame(const PlayerConnectionPtr& player_conn
                                                         m_current_turn, m_empires, m_universe,
                                                         GetSpeciesManager(), GetCombatLogManager(),
                                                         GetSupplyManager(), player_info_map,
-                                                        m_galaxy_setup_data, use_binary_serialization));
+                                                        m_galaxy_setup_data, use_binary_serialization,
+                                                        boost::iostreams::zlib::default_compression));
     } else {
         ErrorLogger() << "ServerApp::CommonGameInit unsupported client type: skipping game start message.";
     }
@@ -2056,7 +2061,8 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
         GetSupplyManager(), player_info_map, orders,
         ui_data,
         m_galaxy_setup_data,
-        use_binary_serialization));
+        use_binary_serialization,
+        boost::iostreams::zlib::default_compression));
 
     return empire_id;
 }
