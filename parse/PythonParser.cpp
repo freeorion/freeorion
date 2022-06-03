@@ -17,6 +17,7 @@
 #include <boost/core/noncopyable.hpp>
 #include <boost/core/ref.hpp>
 #include <boost/filesystem/operations.hpp>
+#include <boost/mpl/vector.hpp>
 #include <boost/python/class.hpp>
 #include <boost/python/import.hpp>
 #include <boost/python/object.hpp>
