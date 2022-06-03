@@ -221,6 +221,9 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             galaxy_setup_data.encoding_empire = empire_id;
             oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         }
+        if (!zos.strict_sync()) {
+            zos.reset();
+        }
     }
     return Message{Message::MessageType::GAME_START, std::move(os).str()};
 }
@@ -293,6 +296,9 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             galaxy_setup_data.encoding_empire = empire_id;
             oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         }
+        if (!zos.strict_sync()) {
+            zos.reset();
+        }
     }
     return Message{Message::MessageType::GAME_START, std::move(os).str()};
 }
@@ -364,6 +370,9 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             }
             galaxy_setup_data.encoding_empire = empire_id;
             oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
+        }
+        if (!zos.strict_sync()) {
+            zos.reset();
         }
     }
     return Message{Message::MessageType::GAME_START, std::move(os).str()};
