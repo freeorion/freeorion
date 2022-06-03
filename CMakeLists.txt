@@ -347,6 +347,7 @@ add_custom_target(freeorionversion
     "${CMAKE_SOURCE_DIR}"
     "CMake"
     "${Boost_PYTHON_SUFFIX}"
+    "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}"
 )
 
 set_source_files_properties(

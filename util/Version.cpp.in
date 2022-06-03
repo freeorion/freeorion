@@ -9,7 +9,7 @@
 //!     that is used or should be used by all build systems.
 
 namespace {
-    static const std::string retval = "v${FreeOrion_VERSION} ${FreeOrion_BRANCH}[build ${FreeOrion_BUILD_NO}] ${FreeOrion_BUILDSYS}";
+    static const std::string retval = "v${FreeOrion_VERSION} ${FreeOrion_BRANCH}[build ${FreeOrion_BUILD_NO}] ${FreeOrion_BUILDSYS} boost${FreeOrion_BOOST_VER}";
 }
 
 const std::string& FreeOrionVersionString()

@@ -18,15 +18,16 @@ class Generator:
         self.infile = infile
         self.outfile = outfile
 
-    def compile_output(self, template, version, branch, build_no, build_sys):
+    def compile_output(self, template, version, branch, build_no, build_sys, boost_version):
         return template.substitute(
             FreeOrion_VERSION=version,
             FreeOrion_BRANCH=branch,
             FreeOrion_BUILD_NO=build_no,
             FreeOrion_BUILDSYS=build_sys,
+            FreeOrion_BOOST_VER=boost_version,
         )
 
-    def execute(self, version, branch, build_no, build_sys):
+    def execute(self, version, branch, build_no, build_sys, boost_version):
         if build_no == INVALID_BUILD_NO:
             print("WARNING: Can't determine git commit!")
 
@@ -50,7 +51,7 @@ class Generator:
 
         print("Writing file: %s" % self.outfile)
         with open(self.outfile, "w") as generated_file:
-            generated_file.write(self.compile_output(template, version, branch, build_no, build_sys))
+            generated_file.write(self.compile_output(template, version, branch, build_no, build_sys, boost_version))
 
 
 class NsisInstScriptGenerator(Generator):
@@ -65,7 +66,7 @@ class NsisInstScriptGenerator(Generator):
                 accepted_dll_files.add(dll_file)
         return sorted(accepted_dll_files)
 
-    def compile_output(self, template, version, branch, build_no, build_sys):
+    def compile_output(self, template, version, branch, build_no, build_sys, boost_version):
         dll_files = self.compile_dll_list()
         if dll_files:
             return template.substitute(
@@ -91,15 +92,18 @@ class NsisInstScriptGenerator(Generator):
             )
 
 
-if len(sys.argv) not in (3, 4):
+if len(sys.argv) not in (3, 4, 5):
     print("ERROR: invalid parameters.")
-    print("make_versioncpp.py <project rootdir> <build system name> [<boost python suffix>]")
+    print("make_versioncpp.py <project rootdir> <build system name> [<boost python suffix>] [<boost version>]")
     quit()
 
 os.chdir(sys.argv[1])
 build_sys = sys.argv[2]
-if 4 == len(sys.argv):
+boost_version = ""
+if 4 <= len(sys.argv):
     boost_python_suffix = sys.argv[3]
+    if 5 <= len(sys.argv):
+        boost_version = sys.argv[4]
 else:
     boost_python_suffix = "%d%d" % (sys.version_info.major, sys.version_info.minor)
 
@@ -150,6 +154,6 @@ except (IOError, CalledProcessError):
     print("WARNING: git not installed or not setup correctly")
 
 for generator in generators:
-    generator.execute(version, branch, build_no, build_sys)
+    generator.execute(version, branch, build_no, build_sys, boost_version)
 
 print("Building v%s %sbuild %s" % (version, branch, build_no))
