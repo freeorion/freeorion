@@ -220,7 +220,7 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
                     InsertDevice serial_inserter(serial_str);
                     boost::iostreams::stream<InsertDevice> s_sink(serial_inserter);
 
-                    timer.EnterSection("");
+                    timer.EnterSection("universe to xml");
                     {
                         // create archive with (preallocated) buffer...
                         freeorion_xml_oarchive xoa(s_sink);
