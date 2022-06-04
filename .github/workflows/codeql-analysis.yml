@@ -6,7 +6,16 @@ on:
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ master ]
-
+    paths-ignore:
+      - 'msvc*/**'
+      - 'check/**'
+      - 'doc/**'
+      - 'packaging/**'
+      - 'snap/**'
+      - '*.md'
+      - 'check/**'
+      - 'default/**'
+      - 'test-scripting/**'
 
 jobs:
   analyze:
