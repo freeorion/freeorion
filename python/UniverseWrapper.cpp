@@ -61,9 +61,18 @@ namespace {
         return result;
     }
 
-    auto SpeciesTags(const Species& species) -> std::vector<std::string>
+    enum class SpeciesInfo : unsigned char {
+        TAGS,
+        LIKES,
+        DISLIKES
+    };
+    auto SpeciesTags(const Species& species, SpeciesInfo what_info) -> std::vector<std::string>
     {
-        std::vector<std::string_view> tags = species.Tags();
+        auto& tags =
+            what_info == SpeciesInfo::TAGS ? species.Tags() :
+            what_info == SpeciesInfo::LIKES ? species.Likes() :
+            what_info == SpeciesInfo::DISLIKES ? species.Dislikes() :
+            std::vector<std::string_view>{};
 
         std::vector<std::string> result;
         result.reserve(tags.size());
@@ -779,11 +788,11 @@ namespace FreeOrionPython {
             .add_property("canColonize",        make_function(&Species::CanColonize,    py::return_value_policy<py::return_by_value>()))
             .add_property("canProduceShips",    make_function(&Species::CanProduceShips,py::return_value_policy<py::return_by_value>()))
             .add_property("native",             &Species::Native)
-            .add_property("tags",               &SpeciesTags)
+            .add_property("tags",               +[](const Species& s) { return SpeciesTags(s, SpeciesInfo::TAGS); })
             .add_property("spawnrate",          make_function(&Species::SpawnRate,      py::return_value_policy<py::return_by_value>()))
             .add_property("spawnlimit",         make_function(&Species::SpawnLimit,     py::return_value_policy<py::return_by_value>()))
-            .add_property("likes",              make_function(&Species::Likes,          py::return_value_policy<py::return_by_value>()))
-            .add_property("dislikes",           make_function(&Species::Dislikes,       py::return_value_policy<py::return_by_value>()))
+            .add_property("likes",              +[](const Species& s) { return SpeciesTags(s, SpeciesInfo::LIKES); })
+            .add_property("dislikes",           +[](const Species& s) { return SpeciesTags(s, SpeciesInfo::DISLIKES); })
             .def("getPlanetEnvironment",        &Species::GetPlanetEnvironment)
             .def("dump",                        &Species::Dump,                         py::return_value_policy<py::return_by_value>(), "Returns string with debug information, use '0' as argument.")
         ;
