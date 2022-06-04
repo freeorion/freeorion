@@ -85,7 +85,7 @@ class BuildingType(Enum):
         """
         return get_planet_opinion(self.value)
 
-    def queued_in(self) -> List[PlanetId]:
+    def queued_at(self) -> List[PlanetId]:
         """
         Return list of planet ids where this building is queued.
         """
@@ -95,7 +95,7 @@ class BuildingType(Enum):
         """
         Return list of system ids where this building is queued.
         """
-        return [fo.getUniverse().getPlanet(pid).systemID for pid in self.queued_in()]
+        return [fo.getUniverse().getPlanet(pid).systemID for pid in self.queued_at()]
 
     def built_at(self) -> Set[PlanetId]:
         """
@@ -115,7 +115,7 @@ class BuildingType(Enum):
         """
         built_at_planets = _get_building_locations()[self.value].planets
         ret = copy(built_at_planets)
-        ret.update(set(self.queued_in()))
+        ret.update(set(self.queued_at()))
         return ret
 
     def built_or_queued_at_sys(self) -> Set[SystemId]:
