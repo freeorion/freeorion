@@ -13,7 +13,7 @@ def _get_log_dir() -> Path:
     """
     if os.name == "nt":
         return Path(os.path.expanduser("~/Appdata/Roaming/Freeorion"))
-    elif platform.system() == 'Darwin':
+    elif platform.system() == "Darwin":
         return Path("~/Library/Application Support/FreeOrion").expanduser()
     elif os.name == "posix":
         return Path(os.environ.get("XDG_DATA_HOME", os.environ.get("HOME", "") + "/.local/share")) / "freeorion"
