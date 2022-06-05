@@ -14,6 +14,7 @@ from aistate_interface import get_aistate
 from character.character_module import Aggression  # noqa F401
 from character.character_strings_module import get_trait_name_aggression
 from common.option_tools import check_bool, get_option_dict
+from freeorion_tools.log_dumper import dump
 
 
 def _once(function):
@@ -81,7 +82,7 @@ def set_game_turn_seed():
     random.seed(random_seed)
 
 
-def _print_empire_name():
+def _dump_empire_info():
     empire = fo.getEmpire()
     turn = fo.currentTurn()
 
@@ -102,8 +103,8 @@ def _print_empire_name():
         aggression_name.capitalize(),
     )
     empire_name = "_".join(str(part) for part in name_parts)
-    debug(f"EmpireID: {empire.empireID} Name: {empire_name} Turn: {turn}")
-    debug(f"EmpireColors: {' '.join(str(x) for x in empire.colour)}")
+    dump.empire(empire.empireID, empire_name, turn)
+    dump.empire_color(*empire.colour)
 
 
 def greet_on_first_turn(diplomatic_corp):
@@ -151,16 +152,17 @@ def print_starting_intro():
     debug("***************************************************************************")
     debug("*******  Log info for AI progress chart script. Do not modify.   **********")
     debug("Generating Orders")
-    _print_empire_name()
+    _dump_empire_info()
     _print_empire_capital()
+    dump.ship_count(get_aistate().shipCount)
 
 
 def _print_empire_capital():
     planet_id = PlanetUtilsAI.get_capital()
     if planet_id is not None and planet_id != INVALID_ID:
         planet = fo.getUniverse().getPlanet(planet_id)
-        debug("CapitalID: " + str(planet_id) + " Name: " + planet.name + " Species: " + planet.speciesName)
+        dump.capital(planet_id, planet.name, planet.speciesName)
     else:
-        debug("CapitalID: None Currently Name: None Species: None ")
+        dump.capital(None, None, None)
     debug("***************************************************************************")
     debug("***************************************************************************")
