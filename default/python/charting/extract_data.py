@@ -64,16 +64,6 @@ def parse_output(value):
 
 
 def process_output(key, type_, value, data):
-    """
-    data = {"PP": [], "RP": [], "RP_Ratio": [], "ShipCount": [], "turnsP": [], "turnPP": [], "PP + 2RP": []}
-    details = {"color": {1, 1, 1, 1}, "name": "", "species": ""}
-    :param key:
-    :param type_:
-    :param value:
-    :param data:
-    :return:
-    """
-
     (
         turn,
         rp,
@@ -83,8 +73,6 @@ def process_output(key, type_, value, data):
     info["turn"] = turn
     info["PP"] = pp
     info["RP"] = rp
-    info["RP_Ratio"] = rp / pp
-    info["PP + 2RP"] = pp + 2 * rp
 
 
 def skip(key, type_, value, data):
