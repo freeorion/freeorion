@@ -444,12 +444,12 @@ class PolicyManager:
         return ships_owned / 25 * (influence_priority_threshold - influence_priority)
 
     def _rate_population(self) -> float:
-        rating = self._rate_opinion(engineering)
+        rating = self._rate_opinion(population)
         for pid in self._populated_planet_ids:
             planet = self._universe.getPlanet(pid)
             current_population = planet.currentMeterValue(fo.meterType.population)
             target_population = planet.currentMeterValue(fo.meterType.targetPopulation)
-            ratio = current_population / target_population
+            ratio = min(1.0, current_population / target_population)
             empty_weight = 5
             # Almost empty_weight for a newly found colony on a big planet, half weight for half full, etc.
             rating += empty_weight * (1 - ratio)
