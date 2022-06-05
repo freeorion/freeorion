@@ -416,7 +416,8 @@ class PolicyManager:
             return -1  # any negative value means, deadopt
         if influence_priority > influence_priority_threshold:
             return 0  # do not deadopt yet
-        return ships_owned / 25 * (influence_priority_threshold - influence_priority)
+        opinion = self._rate_opinion(engineering)
+        return opinion + ships_owned / 25 * (influence_priority_threshold - influence_priority)
 
     def _process_infrastructure(self) -> None:
         """Handle infrastructure policies."""
