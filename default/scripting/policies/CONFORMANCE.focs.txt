@@ -13,12 +13,12 @@ Policy
 
         // Small unconditional boost to stability
         EffectsGroup
-        scope = And [
-            Planet
-            OwnedBy empire = Source.Owner
-            Species
-        ]
-        effects = SetTargetHappiness value = Value + (NamedReal name = "PLC_CONFORMANCE_STABILITY_BONUS_FLAT" value = 2.0)
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species
+            ]
+            effects = SetTargetHappiness value = Value + (NamedReal name = "PLC_CONFORMANCE_STABILITY_BONUS_FLAT" value = 2.0)
     ]
     graphic = "icons/policies/social_conformance.png"
 

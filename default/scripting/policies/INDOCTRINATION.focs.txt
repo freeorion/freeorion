@@ -14,54 +14,54 @@ Policy
         // Planet was never conquered or it was conquered, emptied and re-colonised.
         // Bonus is based on only how long indoctrination has been adapted.
         EffectsGroup
-        scope = And [
-            Planet
-            OwnedBy empire = Source.Owner
-            Species
-            Or [(LocalCandidate.TurnsSinceLastConquered == 0)
-                (LocalCandidate.TurnsSinceLastConquered > LocalCandidate.TurnsSinceColonization)]
-        ]
-        effects = [
-            SetTargetHappiness value = Value + 
-                min((NamedReal name = "PLC_INDOCTRINATION_STRENGTH_MAX" value = 10.0),
-                    (TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy) *
-                    (NamedReal name = "PLC_INDOCTRINATION_PER_TURN" value = 0.25))
-            SetTargetInfluence value = Value - (NamedReal name = "PLC_INDOCTRINATION_INFLUENCE_COST_FLAT" value = 1.0)
-        ]
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species
+                Or [(LocalCandidate.TurnsSinceLastConquered == 0)
+                    (LocalCandidate.TurnsSinceLastConquered > LocalCandidate.TurnsSinceColonization)]
+            ]
+            effects = [
+                SetTargetHappiness value = Value + 
+                    min((NamedReal name = "PLC_INDOCTRINATION_STRENGTH_MAX" value = 10.0),
+                        (TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy) *
+                        (NamedReal name = "PLC_INDOCTRINATION_PER_TURN" value = 0.25))
+                SetTargetInfluence value = Value - (NamedReal name = "PLC_INDOCTRINATION_INFLUENCE_COST_FLAT" value = 1.0)
+            ]
         // Second variant: Current population was conquered.
         // Bonus is additonally limited to turns since conquered.
         EffectsGroup
-        scope = And [
-            Planet
-            OwnedBy empire = Source.Owner
-            Species
-            (LocalCandidate.TurnsSinceLastConquered != 0)
-            // Note: TurnsSinceColonization cannot be equal to TurnsSinceLastConquered
-            (LocalCandidate.TurnsSinceLastConquered < LocalCandidate.TurnsSinceColonization)
-        ]
-        effects = [
-            SetTargetHappiness value = Value +
-                min((NamedRealLookup name = "PLC_INDOCTRINATION_STRENGTH_MAX"),
-                    min(Target.TurnsSinceLastConquered,
-                        TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy) *
-                    (NamedRealLookup name = "PLC_INDOCTRINATION_PER_TURN"))
-            SetTargetInfluence value = Value - 1.0
-        ]
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species
+                (LocalCandidate.TurnsSinceLastConquered != 0)
+                // Note: TurnsSinceColonization cannot be equal to TurnsSinceLastConquered
+                (LocalCandidate.TurnsSinceLastConquered < LocalCandidate.TurnsSinceColonization)
+            ]
+            effects = [
+                SetTargetHappiness value = Value +
+                    min((NamedRealLookup name = "PLC_INDOCTRINATION_STRENGTH_MAX"),
+                        min(Target.TurnsSinceLastConquered,
+                            TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy) *
+                        (NamedRealLookup name = "PLC_INDOCTRINATION_PER_TURN"))
+                SetTargetInfluence value = Value - 1.0
+            ]
 
         // boosts influence of influence-focused capitals or regional administrations
         EffectsGroup
-        scope = And [
-            Planet
-            OwnedBy empire = Source.Owner
-            Species
-            Focus type = "FOCUS_INFLUENCE"
-            Or [Capital Contains Building name = "BLD_REGIONAL_ADMIN"]
-        ]
-        priority = [[TARGET_SCALING_PRIORITY]]
-        effects = [
-            SetTargetInfluence value = Value + 
-                (NamedReal name = "PLC_INDOCTRINATION_INFLUENCE_FLAT" value = 5.0)
-        ]
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species
+                Focus type = "FOCUS_INFLUENCE"
+                Or [Capital Contains Building name = "BLD_REGIONAL_ADMIN"]
+            ]
+            priority = [[TARGET_SCALING_PRIORITY]]
+            effects = [
+                SetTargetInfluence value = Value + 
+                    (NamedReal name = "PLC_INDOCTRINATION_INFLUENCE_FLAT" value = 5.0)
+            ]
     ]
     graphic = "icons/policies/social_indoctrination.png"
 

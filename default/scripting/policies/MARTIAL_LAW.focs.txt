@@ -10,16 +10,16 @@ Policy
 
         // makes planets more stable at cost of research and supply range
         EffectsGroup
-        scope = And [
-            Planet
-            OwnedBy empire = Source.Owner
-            Species
-        ]
-        effects = [
-            SetTargetHappiness value = Value + Target.Troops * (NamedReal name = "PLC_MARTIAL_LAW_STABILITY_PER_TROOPS" value = 0.2)
-            SetTargetResearch value = Value - Target.Troops * (NamedRealLookup name = "PLC_MARTIAL_LAW_STABILITY_PER_TROOPS")
-            SetMaxSupply value = Value - (NamedReal name = "PLC_MARTIAL_LAW_SUPPLY_PENALTY" value = 1.0)
-        ]
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species
+            ]
+            effects = [
+                SetTargetHappiness value = Value + Target.Troops * (NamedReal name = "PLC_MARTIAL_LAW_STABILITY_PER_TROOPS" value = 0.2)
+                SetTargetResearch value = Value - Target.Troops * (NamedRealLookup name = "PLC_MARTIAL_LAW_STABILITY_PER_TROOPS")
+                SetMaxSupply value = Value - (NamedReal name = "PLC_MARTIAL_LAW_SUPPLY_PENALTY" value = 1.0)
+            ]
     ]
     graphic = "icons/policies/military_martial_law.png"
 
