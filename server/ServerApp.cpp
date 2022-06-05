@@ -921,7 +921,7 @@ void ServerApp::SendNewGameStartMessages() {
                                                         m_universe,              GetSpeciesManager(),
                                                         GetCombatLogManager(),   GetSupplyManager(),
                                                         player_info_map,         m_galaxy_setup_data,
-                                                        use_binary_serialization, boost::iostreams::zlib::default_compression));
+                                                        use_binary_serialization, !player_connection->IsLocalConnection()));
     }
 }
 
@@ -1068,11 +1068,13 @@ void ServerApp::UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_
 
     try {
         bool use_binary_serialization = player_connection->IsBinarySerializationUsed();
-        player_connection->SendMessage(DispatchCombatLogsMessage(logs, use_binary_serialization));
+        player_connection->SendMessage(DispatchCombatLogsMessage(logs, use_binary_serialization,
+                                                                 !player_connection->IsLocalConnection()));
     } catch (const std::exception& e) {
         ErrorLogger() << "caught exception sending combat logs message: " << e.what();
         std::vector<std::pair<int, const CombatLog>> empty_logs;
-        player_connection->SendMessage(DispatchCombatLogsMessage(empty_logs, false));
+        player_connection->SendMessage(DispatchCombatLogsMessage(empty_logs, false,
+                                                                 !player_connection->IsLocalConnection()));
     }
 }
 
@@ -1500,7 +1502,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
                                                             GetSpeciesManager(), GetCombatLogManager(),
                                                             GetSupplyManager(), player_info_map, *orders, sss,
                                                             m_galaxy_setup_data, use_binary_serialization,
-                                                            boost::iostreams::zlib::default_compression));
+                                                            !player_connection->IsLocalConnection()));
 
         } else if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
             player_connection->SendMessage(GameStartMessage(m_single_player_game, empire_id,
@@ -1509,7 +1511,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
                                                             GetSupplyManager(), player_info_map, *orders,
                                                             psgd.ui_data.get(), m_galaxy_setup_data,
                                                             use_binary_serialization,
-                                                            boost::iostreams::zlib::default_compression));
+                                                            !player_connection->IsLocalConnection()));
 
         } else if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER ||
                    client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
@@ -1520,7 +1522,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
                                                             GetSpeciesManager(), GetCombatLogManager(),
                                                             GetSupplyManager(), player_info_map,
                                                             m_galaxy_setup_data, use_binary_serialization,
-                                                            boost::iostreams::zlib::default_compression));
+                                                            !player_connection->IsLocalConnection()));
         } else {
             ErrorLogger() << "ServerApp::CommonGameInit unsupported client type: skipping game start message.";
         }
@@ -1846,7 +1848,7 @@ void ServerApp::AddObserverPlayerIntoGame(const PlayerConnectionPtr& player_conn
                                                         GetSpeciesManager(), GetCombatLogManager(),
                                                         GetSupplyManager(), player_info_map,
                                                         m_galaxy_setup_data, use_binary_serialization,
-                                                        boost::iostreams::zlib::default_compression));
+                                                        !player_connection->IsLocalConnection()));
     } else {
         ErrorLogger() << "ServerApp::CommonGameInit unsupported client type: skipping game start message.";
     }
@@ -2062,7 +2064,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
         ui_data,
         m_galaxy_setup_data,
         use_binary_serialization,
-        boost::iostreams::zlib::default_compression));
+        !player_connection->IsLocalConnection()));
 
     return empire_id;
 }
@@ -3507,7 +3509,8 @@ void ServerApp::PreCombatProcessTurns() {
         {
             bool use_binary_serialization = player->IsBinarySerializationUsed();
             player->SendMessage(TurnPartialUpdateMessage(PlayerEmpireID(player->PlayerID()),
-                                                         m_universe, use_binary_serialization));
+                                                         m_universe, use_binary_serialization,
+                                                         !player->IsLocalConnection()));
         }
     }
 }
@@ -3832,7 +3835,8 @@ void ServerApp::PostCombatProcessTurns() {
                                                   m_empires,                          m_universe,
                                                   GetSpeciesManager(),                GetCombatLogManager(),
                                                   GetSupplyManager(),                 players,
-                                                  use_binary_serialization));
+                                                  use_binary_serialization,
+                                                  !player->IsLocalConnection()));
         }
     }
     m_turn_expired = false;

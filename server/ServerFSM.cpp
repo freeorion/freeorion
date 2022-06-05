@@ -590,7 +590,7 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
             for (const auto& elem : m_server.GetChatHistory())
                 chat_history.push_back(std::cref(elem));
             if (chat_history.size() > 0)
-                player_connection->SendMessage(ChatHistoryMessage(chat_history));
+                player_connection->SendMessage(ChatHistoryMessage(chat_history, !player_connection->IsLocalConnection()));
         }
     }
 
@@ -2686,7 +2686,8 @@ sc::result PlayingGame::react(const ModeratorAct& msg) {
         bool use_binary_serialization = sender->IsBinarySerializationUsed();
         sender->SendMessage(TurnProgressMessage(Message::TurnProgressPhase::DOWNLOADING));
         sender->SendMessage(TurnPartialUpdateMessage(server.PlayerEmpireID(player_id),
-                                                     GetUniverse(), use_binary_serialization));
+                                                     GetUniverse(), use_binary_serialization,
+                                                     !sender->IsLocalConnection()));
     }
 
     delete action;
