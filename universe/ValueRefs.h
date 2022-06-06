@@ -1596,12 +1596,29 @@ bool StringCast<FromType>::operator==(const ValueRef<std::string>& rhs) const
 template <typename FromType>
 std::string StringCast<FromType>::Eval(const ScriptingContext& context) const
 {
-    try {
-        if (m_value_ref)
-            return boost::lexical_cast<std::string>(m_value_ref->Eval(context));
-    } catch (...) {
+    if (!m_value_ref)
+        return "";
+    auto value = m_value_ref->Eval(context);
+
+    if constexpr (std::is_same_v<FromType, std::string>) {
+        return value;
+    } else if constexpr (std::is_enum_v<FromType>) {
+        return std::string{to_string(value)};
+    } else if constexpr (std::is_arithmetic_v<FromType>) {
+        return std::to_string(value);
+    } else if constexpr (std::is_same_v<FromType, std::vector<std::string>>) {
+        std::string retval;
+        retval.reserve(16*value.size()); // TODO: sum sizes of value to reserve
+        std::for_each(value.begin(), value.end(),
+                      [&retval](const auto& v) { retval.append(v).append(" "); });
+        return retval;
+    } else {
+        try {
+            return boost::lexical_cast<std::string>(value);
+        } catch (...) {
+            return "";
+        }
     }
-    return "";
 }
 
 template <typename FromType>
@@ -1690,7 +1707,7 @@ template <typename FromType>
 std::string UserStringLookup<FromType>::Eval(const ScriptingContext& context) const {
     if (!m_value_ref)
         return "";
-    std::string ref_val = boost::lexical_cast<std::string>(m_value_ref->Eval(context));
+    auto ref_val = to_string(m_value_ref->Eval(context));
     if (ref_val.empty() || !UserStringExists(ref_val))
         return "";
     return UserString(ref_val);
