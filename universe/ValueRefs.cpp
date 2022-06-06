@@ -3058,12 +3058,12 @@ std::string UserStringLookup<std::string>::Eval(const ScriptingContext& context)
 
 template <>
 std::string UserStringLookup<std::vector<std::string>>::Eval(const ScriptingContext& context) const {
-    if (!m_value_ref)
-        return "";
-    std::vector<std::string> ref_vals = m_value_ref->Eval(context);
-    if (ref_vals.empty())
-        return "";
     std::string retval;
+    if (!m_value_ref)
+        return retval;
+    auto ref_vals = m_value_ref->Eval(context);
+    if (ref_vals.empty())
+        return retval;
     for (auto& val : ref_vals) {
         if (val.empty() || !UserStringExists(val))
             continue;
