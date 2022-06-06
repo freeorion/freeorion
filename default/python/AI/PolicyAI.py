@@ -3,7 +3,7 @@
 import freeOrionAIInterface as fo
 from copy import copy
 from logging import debug, error
-from typing import Iterable, Optional, Set, Union
+from typing import Callable, Iterable, Optional, Set, Union
 
 import PlanetUtilsAI
 from AIDependencies import Tags
@@ -13,6 +13,7 @@ from common.fo_typing import PlanetId, SpeciesName
 from EnumsAI import FocusType, PriorityType
 from freeorion_tools import assertion_fails, get_species_tag_value
 from freeorion_tools.caching import cache_for_current_turn
+from ResearchAI import research_now
 from turn_state import get_empire_planets_by_species
 
 economic_category = "ECONOMIC_CATEGORY"
@@ -181,6 +182,7 @@ class PolicyManager:
         self._process_policy_options(social_category, (propaganda, algo_research, diversity, artisans, population))
 
     def _process_military(self) -> None:
+        """Process military policies."""
         options = (allied_repair, charge, scanning, simplicity, engineering, exploration, flanking, recruitment)
         self._process_policy_options(military_category, options)
 
@@ -238,39 +240,43 @@ class PolicyManager:
             self._wanted_ip += cost
             debug(f"Adopting {name} failed due to insufficient IP, adding {cost} to wanted_ip")
 
-    @staticmethod
-    def _unlocked_by(name: str) -> Optional[str]:
-        """Returns another policy that unlocks the given policy, if any."""
-        # Some day we should get that information from the server.
-        # So far only one case.
+    def _unlocked_by(self, name: str) -> Union[str, Callable, None]:
+        """
+        Returns another policy that unlocks the given policy, a function to unlock it, or None.
+        Returned functions can be called with False to check whether it could unlock the given policy.
+        """
         if name == artisans:
+            # Some day we should get that information from the server, but then, if it changes,
+            # we need to adapt the AI anyway.
             return diversity
         if name == population:
-            unlocker = "GRO_NANOTECH_MED"
-            return fo.getTech(unlocker)
+            return self._unlock_population
         return None
 
     def _try_unlock(self, name: str) -> None:
+        """Unlock the given policy, if possible. Note that unlocking always takes at least one turn."""
         unlocker = self._unlocked_by(name)
         if isinstance(unlocker, str):
             debug(f"Trying to adopt {unlocker} to unlock {name}")
             self._we_want(unlocker, fo.getPolicy(unlocker).adoptionCost())
-        if isinstance(unlocker, fo.tech):
-            debug(f"Trying to research {unlocker.name} to unlock {name}")
-            # TBD: move this code to ResearchAI when refactoring it
-            if self._empire.researchQueue.inQueue(unlocker.name):
-                debug("...already enqueued")
-                for element in self._empire.researchQueue:
-                    if element.tech == unlocker.name:
-                        if element.allocation == 0.0:
-                            debug("...not started yet, requeue to front.")
-                            fo.issueDequeueTechOrder(unlocker.name)
-                            fo.issueEnqueueTechOrder(unlocker.name, 0)
-                        break
-            else:
-                check = fo.issueEnqueueTechOrder(unlocker.name, 0)
-                if not check:
-                    debug(f"issueEnqueueTechOrder({unlocker}) failed")
+        else:
+            unlocker(True)
+
+    def _unlock_population(self, do_unlock: bool) -> bool:
+        """
+        Unlock population by putting GRO_NANOTECH_MED and its prerequisites at the top of the research queue.
+        Until Adaptive Automation has been researched, we do not want to use research points for unlocking
+        population. Also, AA requires Nanotech Production, which is the most expensive prerequisite
+        of Nanotech Medicine. So if AA has not been researched, this function only returns false.
+        If do_unlock is false, the function only returns whether we could unlock it, i.e. AA is available.
+        """
+        # TBD: create Enum for technologies
+        could_do = self._empire.techResearched("PRO_ADAPTIVE_AUTOMATION")
+        if could_do and do_unlock:
+            unlocker = "GRO_NANOTECH_MED"
+            debug(f"Prioritising research for {unlocker} to unlock population")
+            research_now(unlocker, True)
+        return could_do
 
     @cache_for_current_turn
     def _rate_policy(self, name: str) -> float:
@@ -617,13 +623,8 @@ class PolicyManager:
             return False
         if isinstance(unlocker, str):
             return unlocker in self._available
-        if isinstance(unlocker, fo.tech):
-            # should also be moved to ResearchAI
-            for prerequisite in unlocker.prerequisites:
-                if not self._empire.techResearched(prerequisite):
-                    return False
-            return True
-        raise ValueError(f"_potentially_available: cannot handle unlocker {unlocker} of type {type(unlocker)}")
+        else:
+            return unlocker(False)
 
     def _can_adopt(self, name: str, replace: Union[str, Set[str], None] = None) -> bool:
         """
