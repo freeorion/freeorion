@@ -146,6 +146,24 @@ def exclude_tech(tech_name):
     )
 
 
+def research_now(tech_name: str, with_prerequisites: bool = True) -> None:
+    todo = [tech_name]
+    empire = fo.getEmpire()
+    if with_prerequisites:
+        tech = fo.getTech(tech_name)
+        todo += [t for t in tech.recursivePrerequisites(empire.empireID)]
+    for name in todo:
+        if not empire.researchQueue.inQueue(name):
+            fo.issueEnqueueTechOrder(name, 0)
+        else:
+            for element in empire.researchQueue:
+                if element.tech == name:
+                    # research points are not lost when a tech is dequeued
+                    fo.issueDequeueTechOrder(name)
+                    fo.issueEnqueueTechOrder(name, 0)
+                    break
+
+
 def generate_classic_research_orders():
     """generate research orders"""
     empire = fo.getEmpire()
@@ -180,9 +198,10 @@ def generate_classic_research_orders():
             unlocked_items = [uli.name for uli in this_tech.unlockedItems]
             if not missing_prereqs:
                 debug(
-                    "    %25s allocated %6.2f RP -- unlockable items: %s ",
+                    "    %25s allocated %6.2f RP (%d turns left)-- unlockable items: %s ",
                     element.tech,
                     element.allocation,
+                    tech_turns_left[element.tech],
                     unlocked_items,
                 )
             else:

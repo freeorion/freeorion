@@ -3,7 +3,7 @@
 import freeOrionAIInterface as fo
 from copy import copy
 from logging import debug, error
-from typing import Iterable, Optional, Set, Union
+from typing import Callable, Iterable, Optional, Set, Union
 
 import PlanetUtilsAI
 from AIDependencies import Tags
@@ -13,6 +13,7 @@ from common.fo_typing import PlanetId, SpeciesName
 from EnumsAI import FocusType, PriorityType
 from freeorion_tools import assertion_fails, get_species_tag_value
 from freeorion_tools.caching import cache_for_current_turn
+from ResearchAI import research_now
 from turn_state import get_empire_planets_by_species
 
 economic_category = "ECONOMIC_CATEGORY"
@@ -41,6 +42,7 @@ algo_research = "PLC_ALGORITHMIC_RESEARCH"
 liberty = "PLC_LIBERTY"
 diversity = "PLC_DIVERSITY"
 artisans = "PLC_ARTISAN_WORKSHOPS"
+population = "PLC_POPULATION"
 
 
 class _EmpireOutput:
@@ -127,6 +129,7 @@ class PolicyManager:
             algo_research: self._rate_algo_research,
             diversity: self._rate_diversity,
             artisans: self._rate_artisans,
+            population: self._rate_population,
             # military policies are mostly chosen by opinion, plus some rule-of-thumb values
             allied_repair: lambda: self._rate_opinion(charge),  # no effect, unless we have allies...
             charge: lambda: 5 + self._rate_opinion(charge),  # A small bonus in battle
@@ -176,9 +179,10 @@ class PolicyManager:
         try to adopt the best possible ones for the slots we have.
         """
         self._process_liberty()
-        self._process_policy_options(social_category, (propaganda, algo_research, diversity, artisans))
+        self._process_policy_options(social_category, (propaganda, algo_research, diversity, artisans, population))
 
     def _process_military(self) -> None:
+        """Process military policies."""
         options = (allied_repair, charge, scanning, simplicity, engineering, exploration, flanking, recruitment)
         self._process_policy_options(military_category, options)
 
@@ -196,6 +200,7 @@ class PolicyManager:
                 continue
             rating = self._rate_policy(policy)
             cost = fo.getPolicy(policy).adoptionCost()
+            debug(f"_process_policy_options {policy} adopted={policy in self._adopted} rating={rating} cost={cost}")
             if policy in self._adopted:
                 if rating < 0:
                     self._deadopt(policy)
@@ -224,10 +229,7 @@ class PolicyManager:
 
     def _we_want(self, name: str, cost: float, replace: Optional[str] = None) -> None:
         if name not in self._empire.availablePolicies:
-            unlocker = self._unlocked_by(name)
-            if not assertion_fails(unlocker, f"_we_want: we can neither adopt nor unlock {name} yet"):
-                debug(f"Trying to adopt {unlocker} to unlock {name}")
-                self._we_want(unlocker, fo.getPolicy(unlocker).adoptionCost())
+            self._try_unlock(name)
             return
         if self._can_adopt(name, replace):
             if replace:
@@ -238,14 +240,43 @@ class PolicyManager:
             self._wanted_ip += cost
             debug(f"Adopting {name} failed due to insufficient IP, adding {cost} to wanted_ip")
 
-    @staticmethod
-    def _unlocked_by(name: str) -> Optional[str]:
-        """Returns another policy that unlocks the given policy, if any."""
-        # Some day we should get that information from the server.
-        # So far only one case.
+    def _unlocked_by(self, name: str) -> Union[str, Callable, None]:
+        """
+        Returns another policy that unlocks the given policy, a function to unlock it, or None.
+        Returned functions can be called with False to check whether it could unlock the given policy.
+        """
         if name == artisans:
+            # Some day we should get that information from the server, but then, if it changes,
+            # we need to adapt the AI anyway.
             return diversity
+        if name == population:
+            return self._unlock_population
         return None
+
+    def _try_unlock(self, name: str) -> None:
+        """Unlock the given policy, if possible. Note that unlocking always takes at least one turn."""
+        unlocker = self._unlocked_by(name)
+        if isinstance(unlocker, str):
+            debug(f"Trying to adopt {unlocker} to unlock {name}")
+            self._we_want(unlocker, fo.getPolicy(unlocker).adoptionCost())
+        else:
+            unlocker(True)
+
+    def _unlock_population(self, do_unlock: bool) -> bool:
+        """
+        Unlock population by putting GRO_NANOTECH_MED and its prerequisites at the top of the research queue.
+        Until Adaptive Automation has been researched, we do not want to use research points for unlocking
+        population. Also, AA requires Nanotech Production, which is the most expensive prerequisite
+        of Nanotech Medicine. So if AA has not been researched, this function only returns false.
+        If do_unlock is false, the function only returns whether we could unlock it, i.e. AA is available.
+        """
+        # TBD: create Enum for technologies
+        could_do = self._empire.techResearched("PRO_ADAPTIVE_AUTOMATION")
+        if could_do and do_unlock:
+            unlocker = "GRO_NANOTECH_MED"
+            debug(f"Prioritising research for {unlocker} to unlock population")
+            research_now(unlocker, True)
+        return could_do
 
     @cache_for_current_turn
     def _rate_policy(self, name: str) -> float:
@@ -418,6 +449,18 @@ class PolicyManager:
             return 0  # do not deadopt yet
         return ships_owned / 25 * (influence_priority_threshold - influence_priority)
 
+    def _rate_population(self) -> float:
+        rating = self._rate_opinion(population)
+        for pid in self._populated_planet_ids:
+            planet = self._universe.getPlanet(pid)
+            current_population = planet.currentMeterValue(fo.meterType.population)
+            target_population = planet.currentMeterValue(fo.meterType.targetPopulation)
+            ratio = min(1.0, current_population / target_population)
+            empty_weight = 5
+            # Almost empty_weight for a newly found colony on a big planet, half weight for half full, etc.
+            rating += empty_weight * (1 - ratio)
+        return rating
+
     def _process_infrastructure(self) -> None:
         """Handle infrastructure policies."""
         if infra1 in self._adoptable:
@@ -573,8 +616,15 @@ class PolicyManager:
 
     def _potentially_available(self, name: str) -> bool:
         """Determine whether we have a way to adopt given policy."""
-        # future extension could be to request a technology or building
-        return name in self._available or self._unlocked_by(name) in self._available
+        if name in self._available:
+            return True
+        unlocker = self._unlocked_by(name)
+        if unlocker is None:
+            return False
+        if isinstance(unlocker, str):
+            return unlocker in self._available
+        else:
+            return unlocker(False)
 
     def _can_adopt(self, name: str, replace: Union[str, Set[str], None] = None) -> bool:
         """
