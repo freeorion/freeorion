@@ -12030,7 +12030,7 @@ PLC_INDUSTRIALISM_DESC
 '''Les planètes en Focus Industrie améliorent leur [[metertype METER_TARGET_INDUSTRY]] de [[value PLC_INDUSTRIALISM_TARGET_INDUSTRY_PERCENT]]% et leur [[metertype METER_HAPPINESS]] augmente de [[value PLC_INDUSTRIALISM_TARGET_HAPPINESS_FLAT]].
 Cet effet requiert une [[metertype METER_HAPPINESS]] de [[value PLC_INDUSTRIALISM_MIN_STABILITY]].
 
-Diminue le coût de recherche de certaines technologies de Génération améliorant la production.'''
+Diminue le coût de recherche des technologies de Génération d'énergie améliorant la production: [[tech PRO_ORBITAL_GEN]], [[tech PRO_SOL_ORB_GEN]], [[tech PRO_FUSION_GEN]], [[tech PRO_SINGULAR_GEN]], et [[tech PRO_ZERO_GEN]].'''
 
 PLC_INDUSTRIALISM_SHORT_DESC
 Améliore la capacité industrielle
