@@ -39,7 +39,7 @@ namespace Networking {
 class ClientNetworking : public std::enable_shared_from_this<ClientNetworking> {
 public:
     /** The type of list returned by a call to DiscoverLANServers(). */
-    using ServerNames =  std::vector<std::string>;
+    using ServerNames = std::vector<std::string>;
 
     ClientNetworking();
 public:
