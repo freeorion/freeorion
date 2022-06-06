@@ -26,8 +26,8 @@ std::vector<std::string_view> SpecialsManager::SpecialNames() const {
     CheckPendingSpecialsTypes();
     std::vector<std::string_view> retval;
     retval.reserve(m_specials.size());
-    for (const auto& entry : m_specials)
-        retval.emplace_back(entry.first);
+    std::transform(m_specials.begin(), m_specials.end(), std::back_inserter(retval),
+                   [](const auto& s) -> std::string_view { return s.first; });
     return retval;
 }
 
