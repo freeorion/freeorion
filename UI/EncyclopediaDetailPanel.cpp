@@ -3171,32 +3171,92 @@ namespace {
         return retval;
     }
 
-    const std::vector<std::string>& PlanetEnvFilenames(PlanetType planet_type) {
-        static std::unordered_map<PlanetType, std::vector<std::string>>
-            filenames_by_type{{PlanetType::INVALID_PLANET_TYPE, {}}};
-        std::string planet_type_str{to_string(planet_type)};
-        boost::algorithm::to_lower(planet_type_str);
 
-        if (!filenames_by_type.count(planet_type)) {
-            auto pe_path = ClientUI::ArtDir() / "encyclopedia" / "planet_environments";
+    namespace {
+        std::mutex planet_type_names_mutex;
 
-            auto pe_type_func = [planet_type_str, pe_path](const boost::filesystem::path& path) {
-                return IsExistingFile(path)
-                    && (pe_path == path.parent_path())
-                    && boost::algorithm::starts_with(PathToString(path.filename()), planet_type_str);
-            };
+        constexpr auto NUM_PT = static_cast<std::size_t>(static_cast<std::underlying_type_t<PlanetType>>(
+            PlanetType::NUM_PLANET_TYPES));
 
-            // retain only the filenames of each path
-            for (const auto& file_path : ListDir(pe_path, pe_type_func))
-                filenames_by_type[planet_type].push_back(PathToString(file_path.filename()));
+        // all lower-case string representations of PlanetType value names
+        static constexpr auto lower_planet_type_names{[]() {
+            std::array<std::array<std::string::value_type, 16>, NUM_PT> retval{}; // 16 chars should be big enough for all planet types as text...
+            for (std::size_t idx = 0; idx < NUM_PT; ++idx) {
+                const auto sv = to_string(PlanetType(idx));
+                for (std::size_t idx2 = 0; idx2 < sv.size(); ++idx2) {
+                    const auto c = sv[idx2];
+                    retval[idx][idx2] = (c >= 'A' && c <= 'Z') ? c + ('a' - 'A') : c;
+                }
+            }
+            return retval;
+        }()};
+        static constexpr auto lower_names_by_type{[]() {
+            std::array<std::string_view, lower_planet_type_names.size()> retval;
+            for (std::size_t idx = 0; idx < retval.size(); ++idx)
+                retval[idx] = std::string_view{lower_planet_type_names[idx].data()};
+            return retval;
+        }()};
 
-            for (const auto& filename : filenames_by_type[planet_type])
-                DebugLogger() << "PlanetEnvFilename for " << to_string(planet_type) <<" : " << filename;
+        constexpr auto TypeToLowerName(PlanetType planet_type) -> std::string_view {
+            const auto pt_num = static_cast<std::underlying_type_t<PlanetType>>(planet_type);
+            const auto pt_idx = static_cast<std::size_t>(pt_num);
+            return planet_type > PlanetType::INVALID_PLANET_TYPE && planet_type < PlanetType::NUM_PLANET_TYPES ?
+                lower_names_by_type[pt_idx] : "";
+        };
+        static_assert(TypeToLowerName(PlanetType::PT_TERRAN) == "pt_terran");
+
+        boost::signals2::scoped_connection resource_dir_changed_signal_connection{};
+        std::array<std::vector<std::string>, NUM_PT> filenames_by_type{};
+
+        // assume already locked
+        void InitFilenames() {
+            std::scoped_lock ptn_lock(planet_type_names_mutex);
+
+            DebugLogger() << "Initializing planet pedia banner filenames";
+            // cache filenames for each planet type for current art directory
+            const auto pe_path = ClientUI::ArtDir() / "encyclopedia" / "planet_environments";
+            for (std::size_t pt_idx = 0; pt_idx < filenames_by_type.size(); ++pt_idx) {
+                auto& planet_type_str = lower_names_by_type[pt_idx];
+
+                // get and retain the filenames of each path for this type
+                auto pe_type_func = [planet_type_str, &pe_path](const boost::filesystem::path& path) {
+                    return IsExistingFile(path)
+                        && (pe_path == path.parent_path())
+                        && boost::algorithm::starts_with(PathToString(path.filename()), planet_type_str);
+                };
+
+                for (const auto& file_path : ListDir(pe_path, pe_type_func))
+                    filenames_by_type[pt_idx].push_back(PathToString(file_path.filename()));
+            }
+        }
+    }
+
+    const std::string& PlanetEnvFilename(PlanetType planet_type, std::size_t idx) {
+        if (planet_type == PlanetType::INVALID_PLANET_TYPE || planet_type >= PlanetType::NUM_PLANET_TYPES)
+            return {};
+        const auto pt_num = static_cast<std::underlying_type_t<PlanetType>>(planet_type);
+        const auto pt_idx = static_cast<std::size_t>(pt_num);
+
+        // init, and  ensure that if the resource directory is changed, the cached filenames are regenerated
+        if (!resource_dir_changed_signal_connection.connected()) {
+            auto& signal = GetOptionsDB().OptionChangedSignal("resource.path");
+            resource_dir_changed_signal_connection = signal.connect([]() { InitFilenames(); });
+            InitFilenames();
         }
 
-        if (filenames_by_type.count(planet_type))
-            return filenames_by_type.at(planet_type);
-        return filenames_by_type.at(PlanetType::INVALID_PLANET_TYPE);
+        {
+            std::scoped_lock ptn_lock(planet_type_names_mutex);
+            const auto& pe_paths = filenames_by_type[pt_idx]; // vector of filenames for input planet type
+            static constexpr std::size_t arbitrary_prime = 37;
+            if (pe_paths.empty())
+                return {};
+            else {
+                std::size_t vec_idx = (idx % arbitrary_prime) % pe_paths.size();
+                return pe_paths[vec_idx];
+            }
+        }
+
+        return {};
     }
 
     void RefreshDetailPanelSuitabilityTag(const std::string& item_type, const std::string& item_name,
@@ -3221,10 +3281,10 @@ namespace {
         }
 
         // show image of planet environment at the top of the suitability report
-        const auto& filenames = PlanetEnvFilenames(planet->Type());
-        if (!filenames.empty()) {
-            auto env_img_tag = "<img src=\"encyclopedia/planet_environments/"
-                               + filenames[planet_id % filenames.size()] + "\"></img>";
+        const auto& filename = PlanetEnvFilename(planet->Type(), planet_id);
+        if (!filename.empty()) {
+            auto env_img_tag = std::string{"<img src=\"encyclopedia/planet_environments/"}
+                                .append(filename).append("\"></img>");
             TraceLogger() << "Suitability report env image tag \"" << env_img_tag << "\"";
             detailed_description.append(env_img_tag);
         }
@@ -3818,7 +3878,7 @@ void EncyclopediaDetailPanel::SetText(const std::string& text, bool lookup_in_st
 
 void EncyclopediaDetailPanel::SetPlanet(int planet_id) {
     int current_item_id = INVALID_OBJECT_ID;
-    if (m_items_it != m_items.end()) {
+    if (m_items_it != m_items.end() && m_items_it->first == PLANET_SUITABILITY_REPORT) {
         try {
             current_item_id = boost::lexical_cast<int>(m_items_it->second);
         } catch (...) {
