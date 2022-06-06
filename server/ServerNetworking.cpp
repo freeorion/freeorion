@@ -453,7 +453,7 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
         ErrorLogger(network) << "PlayerConnection::HandleMessageHeaderRead():"
                              << " player ID: " << m_ID
                              << "  name: " << m_player_name
-                             << "  client type: " << boost::lexical_cast<std::string>(m_client_type)
+                             << "  client type: " << to_string(m_client_type)
                              << "  client version: " << m_client_version_string
                              << "  authenticated: " << m_authenticated
                              << "  cookie: " << boost::uuids::to_string(m_cookie)

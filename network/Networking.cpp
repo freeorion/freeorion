@@ -30,27 +30,14 @@ namespace Networking {
            m_roles.set(int(r), true);
     }
 
-    std::ostream& operator<<(std::ostream& os, ClientType client_type) {
-        switch (client_type) {
-        case ClientType::CLIENT_TYPE_AI_PLAYER:         os << "CLIENT_TYPE_AI_PLAYER";      break;
-        case ClientType::CLIENT_TYPE_HUMAN_PLAYER:      os << "CLIENT_TYPE_HUMAN_PLAYER";   break;
-        case ClientType::CLIENT_TYPE_HUMAN_OBSERVER:    os << "CLIENT_TYPE_HUMAN_OBSERVER"; break;
-        case ClientType::CLIENT_TYPE_HUMAN_MODERATOR:   os << "CLIENT_TYPE_HUMAN_MODERATOR";break;
-        case ClientType::NUM_CLIENT_TYPES:              os << "NUM_CLIENT_TYPES";           break;
-        case ClientType::INVALID_CLIENT_TYPE:
-        default:                                        os << "INVALID_CLIENT_TYPE";
-        }
-        return os;
-    }
-
     void AuthRoles::SetRole(RoleType role, bool value)
-    { m_roles.set(int(role), value); }
+    { m_roles.set(std::size_t(role), value); }
 
     void AuthRoles::Clear()
-    { m_roles = std::bitset<int(RoleType::Roles_Count)>(); }
+    { m_roles = std::bitset<std::size_t(RoleType::Roles_Count)>(); }
 
     bool AuthRoles::HasRole(RoleType role) const
-    { return m_roles.test(int(role)); }
+    { return m_roles.test(std::size_t(role)); }
 
     std::string AuthRoles::Text() const
     { return m_roles.to_string(); }

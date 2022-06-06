@@ -2100,7 +2100,7 @@ std::vector<PlayerSaveGameData> ServerApp::GetPlayerSaveGameData() const {
     std::vector<PlayerSaveGameData> player_save_game_data;
     for (const auto& [empire_id, save_data] : m_turn_sequence) {
         DebugLogger() << "ServerApp::GetPlayerSaveGameData() Empire " << empire_id
-                      << " type: " << boost::lexical_cast<std::string>(save_data->client_type)
+                      << " type: " << to_string(save_data->client_type)
                       << " save_game_data state string size: " << save_data->save_state_string.size()
                       << " UI data?: " << save_data->ui_data;
         if (save_data)

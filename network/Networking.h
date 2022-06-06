@@ -4,6 +4,7 @@
 #include <string>
 #include <bitset>
 
+#include "../util/Enum.h"
 #include "../util/Export.h"
 
 namespace Networking {
@@ -16,15 +17,15 @@ namespace Networking {
     FO_COMMON_API int DiscoveryPort();
     FO_COMMON_API int MessagePort();
 
-    enum class ClientType : signed char {
-        INVALID_CLIENT_TYPE = -1,
-        CLIENT_TYPE_AI_PLAYER,
-        CLIENT_TYPE_HUMAN_PLAYER,
-        CLIENT_TYPE_HUMAN_OBSERVER,
-        CLIENT_TYPE_HUMAN_MODERATOR,
-        NUM_CLIENT_TYPES
-    };
-    FO_COMMON_API std::ostream& operator<<(std::ostream& os, ClientType client_type);
+    FO_ENUM(
+        (ClientType),
+        ((INVALID_CLIENT_TYPE, -1))
+        ((CLIENT_TYPE_AI_PLAYER))
+        ((CLIENT_TYPE_HUMAN_PLAYER))
+        ((CLIENT_TYPE_HUMAN_OBSERVER))
+        ((CLIENT_TYPE_HUMAN_MODERATOR))
+        ((NUM_CLIENT_TYPES))
+    )
 
     enum class RoleType : unsigned char {
         ROLE_HOST = 0,              ///< allows save and load games, edit other player settings, stop server
