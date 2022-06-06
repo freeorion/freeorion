@@ -145,8 +145,13 @@ namespace {
         SetEmptyStringDefaultOption("setup.multiplayer.player.name", player_name);
     }
 
-    std::string GetGLVersionString()
-    { return boost::lexical_cast<std::string>(glGetString(GL_VERSION)); }
+    std::string GetGLVersionString() {
+        std::array<std::string::value_type, 64> buff{};
+        auto* v = glGetString(GL_VERSION);
+        for (auto buff_it = buff.begin(); v && *v && buff_it != buff.end();)
+            *buff_it++ = *v++;
+        return buff.data();
+    }
 
     static float stored_gl_version = -1.0f;  // to be replaced when gl version first checked
 
