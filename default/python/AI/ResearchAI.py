@@ -158,9 +158,9 @@ def research_now(tech_name: str, with_prerequisites: bool = True) -> None:
         else:
             for element in empire.researchQueue:
                 if element.tech == name:
-                    if element.allocation == 0.0:
-                        fo.issueDequeueTechOrder(name)
-                        fo.issueEnqueueTechOrder(name, 0)
+                    # research points are not lost when a tech is dequeued
+                    fo.issueDequeueTechOrder(name)
+                    fo.issueEnqueueTechOrder(name, 0)
                     break
 
 
