@@ -164,6 +164,7 @@ class TechGroup1a(TechGroup1):
             self.weapon,
             self.economy,
             self.hull,
+            "CON_ARCH_PSYCH",
         )
 
 
@@ -177,6 +178,7 @@ class TechGroup1b(TechGroup1):
             self.weapon,
             self.weapon,
             self.weapon,
+            "CON_ARCH_PSYCH",
         )
 
 
@@ -191,6 +193,7 @@ class TechGroup1SparseA(TechGroup1):
             self.weapon,
             "SHP_SPACE_FLUX_DRIVE",
             self.weapon,
+            "CON_ARCH_PSYCH",
         )
 
 
@@ -205,8 +208,8 @@ class TechGroup1SparseB(TechGroup1):
             self.weapon,
             "PRO_NANOTECH_PROD",
             Dep.PRO_AUTO_1,
-            "CON_ASYMP_MATS",
             "CON_ARCH_PSYCH",
+            "CON_ASYMP_MATS",
             "PRO_EXOBOTS",
             "CON_ORBITAL_CON",  # not a economy tech in the strictest sense but bonus supply often equals more planets
             "GRO_GENETIC_MED",
@@ -238,8 +241,8 @@ class TechGroup1SparseC(TechGroup1):
             "PRO_NANOTECH_PROD",
             Dep.PRO_AUTO_1,
             self.weapon,
-            "CON_ASYMP_MATS",
             "CON_ARCH_PSYCH",
+            "CON_ASYMP_MATS",
             "CON_ORBITAL_CON",  # not a economy tech in the strictest sense but bonus supply often equals more planets
             "GRO_GENETIC_MED",
             "GRO_SYMBIOTIC_BIO",
@@ -725,7 +728,7 @@ def test_tech_integrity():
 def sparse_galaxy_techs(index):
     # return primary_meta_techs()
     result = []
-    debug("Choosing Research Techlist Index %d" % index)
+    debug("Choosing Sparse Research Techlist Index %d" % index)
     if index == 0:
         result = TechGroup1a().get_techs()  # early org_hull
         result += TechGroup2A().get_techs()  # prioritizes growth & defense over weapons
