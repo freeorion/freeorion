@@ -9,22 +9,7 @@ struct variable_wrapper {
     {}
 
     value_ref_wrapper<int> get_int_property(const char *property) const;
-
-    value_ref_wrapper<double> construction() const;
-    value_ref_wrapper<double> habitable_size() const;
-    value_ref_wrapper<double> max_shield() const;
-    value_ref_wrapper<double> max_defense() const;
-    value_ref_wrapper<double> max_troops() const;
-    value_ref_wrapper<double> target_happiness() const;
-    value_ref_wrapper<double> target_industry() const;
-    value_ref_wrapper<double> target_research() const;
-    value_ref_wrapper<double> target_construction() const;
-    value_ref_wrapper<double> max_stockpile() const;
-    value_ref_wrapper<double> population() const;
-
-    value_ref_wrapper<double> industry() const;
-    value_ref_wrapper<double> research() const;
-    value_ref_wrapper<double> stockpile() const;
+    value_ref_wrapper<double> get_double_property(const char *property) const;
 
     operator condition_wrapper() const;
 
