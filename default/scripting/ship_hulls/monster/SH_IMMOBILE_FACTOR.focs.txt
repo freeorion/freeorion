@@ -37,7 +37,11 @@ Hull
                     DesignHasHull name = "SH_DRONE_BODY"
                 ]
             ]
-            activation = Random probability = .1
+            activation = And [
+                (GalaxyMaxAIAggression >= 1)   // do not make more drones if the player wants lowest aggression
+                (GalaxyMonsterFrequency > 1)   // do not make more drones in the lowest two monster-settings
+                Random probability = .1
+            ]
             effects = CreateShip designname = "SM_DRONE"
     ]
     icon = ""

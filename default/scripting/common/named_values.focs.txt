@@ -12,6 +12,8 @@ NamedReal name = "IMPERIAL_GARRISON_MAX_TROOPS_FLAT" value = 6
 
 NamedReal name = "SHP_REINFORCED_HULL_BONUS" value = (5 * [[SHIP_STRUCTURE_FACTOR]])
 
+NamedReal name = "AR_REINFORCING_HULL_BONUS" value = (4 * [[SHIP_STRUCTURE_FACTOR]])
+
 NamedInteger name = "NUM_COMBAT_ROUNDS" value = (GameRule name = "RULE_NUM_COMBAT_ROUNDS")
 
 NamedInteger name = "NUM_COMBAT_ROUNDS_FIGHTERS" value = (GameRule name = "RULE_NUM_COMBAT_ROUNDS") - 1

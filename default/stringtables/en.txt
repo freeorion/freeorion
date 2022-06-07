@@ -3957,7 +3957,7 @@ TT_FIELD
 # %1% name of the adopting empire.
 # %2% name of policy
 TT_POLICY
-%1% Policy <i>%2%</i>
+%1% policy <i>%2%</i>
 
 TT_FIGHTER_LAUNCH
 Launching
@@ -13243,6 +13243,12 @@ Solar Containment
 SHP_SOLAR_CONT_DESC
 A hull constructed from pure energy, while far more versatile than a solid hull, has a disadvantage in that it is unable to harness the potential energy of material objects. If, however, it were made possible to contain a hull composed not of pure energy, but of super-heated gases constantly undergoing a self-sustaining fusion reaction, the limitations of both pure energy and solid matter could be avoided.
 
+SHP_KRILL_SIREN
+Krill Siren
+
+SHP_KRILL_SIREN_DESC
+Unlocks the [[shippart SP_KRILL_SIREN]] ship part and the [[buildingtype BLD_KRILL_SIREN]] building, which both draw wild space krill from nearby star systems towards their position on the map.
+
 SHP_KRILL_SPAWN
 Krill Spawner
 
@@ -13624,6 +13630,12 @@ Planetary Barrier Shield 5
 
 DEF_PLAN_BARRIER_SHLD_5_DESC
 Increases max [[metertype METER_SHIELD]] on planets by an additional 150, cumulative with other shield boosts and regenerates each turn by one plus the greater of (i)  5 times the value of the planets' [[metertype METER_CONSTRUCTION]] or (ii) 32 (so long as the shields are not already knocked below 14).
+
+DEF_MONSTER_BLOCKER
+System Defence Ping
+
+DEF_MONSTER_BLOCKER_DESC
+How to use the electromagnetic spectrum in creative ways as a form of mega-fauna-deterrent. This technology is all about pumping powerful ping signals into space, modulating them in such a way as to frighten roaming space monsters off engough so they will never decide to visit a star system containing a source pinging in this manner.
 
 DEF_SYST_DEF_MINE_1
 System Defense Mines 1
@@ -14229,6 +14241,12 @@ Biobombers
 SHP_BIOBOMBER_DESC
 Living bombers designed to target ships and planets. Far more effective than regular bombers. [[BLD_BIONEURAL_REQUIRED_ANY_SYSTEM]]
 
+SHP_ETHERIAL_ENERGY_ENFORCER
+Etherial Energy Enforcement
+
+SHP_ETHERIAL_ENERGY_ENFORCER_DESC
+A generally devious and nefarious technique to manipulate large scale fields on the galactic map.
+
 SHP_NOVA_BOMB
 Nova Bomb
 
@@ -14544,6 +14562,12 @@ BLD_BIOTERROR_PROJECTOR_DESC
 
 This clandestine biological warfare base wreaks havoc on enemy planets in the vicinity. Such activities are not endorsed by the public however, and this facility can only be built on a planet with a resonant moon. Ineffective if there is a [[buildingtype BLD_GENOME_BANK]] building in the enemy empire. [[BUILDING_AVAILABLE_ON_OUTPOSTS]], provided it has a [[special RESONANT_MOON_SPECIAL]].'''
 
+BLD_KRILL_SIREN
+Krill Siren
+
+BLD_KRILL_SIREN_DESC
+Decreases the [[metertype METER_STEALTH]] of all objects in the same system by 10. [[BUILDING_AVAILABLE_ON_OUTPOSTS]] and will attract wild space krill from nearby star systems towards its position on the map.
+
 BLD_LIGHTHOUSE
 Interstellar Lighthouse
 
@@ -14672,7 +14696,13 @@ BLD_FIELD_REPELLOR
 Field Repellor
 
 BLD_FIELD_REPELLOR_DESC
-Pushes mobile fields (those not in systems) away from its location.
+Pushes mobile fields (those not fixed to a particular star systems) away from its location on the map, deflecting them in their path at their current velocity without changing their velocity but directing them away.
+
+BLD_FIELD_ATTRACTOR
+Field Attractor
+
+BLD_FIELD_ATTRACTOR_DESC
+Pulls mobile fields (those not fixed to a particular star systems) toward its location on the map, deflecting them in their path at their current velocity without changing their velocity but attracting them.
 
 BLD_HYPER_DAM
 Hyperspatial Dam
@@ -14778,6 +14808,12 @@ Remote Terraforming
 
 BLD_REMOTE_TERRAFORM_DESC
 Terraforms a world one step closer to the [[encyclopedia ENVIRONMENT_TITLE]] preference of the inhabiting species. This process can be enacted at an [[encyclopedia OUTPOSTS_TITLE]].
+
+BLD_MONSTER_BLOCKER
+Monster Blocker
+
+BLD_MONSTER_BLOCKER_DESC
+Pumps powerful ping signals into space, modulated in such a way as to frighten roaming space monsters off engough so they will never decide to visit a star system containing one of these buildings. An unintentional side effect of anti-megafauna-pinging is, that stealth of all objects in the same system is reduced by 5.
 
 BLD_NEST_ERADICATOR
 Nest Eradicator
@@ -15355,6 +15391,12 @@ Upgrading the weapon technology will increase the shot damage.
 
 The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Piloting trait does not affect damage.'''
 
+SP_ETHERIAL_ENERGY_ENFORCER
+Etherial Energy Enforcer
+
+SP_ETHERIAL_ENERGY_ENFORCER_DESC
+Manipulates etherial cosmic energies in such a way as to attract all mobile fields with negative effects such as [[fieldtype FLD_ION_STORM]] or [[fieldtype FLD_VOID_RIFT]], and to repel all mobile fields with positive effects such as [[fieldtype FLD_METEOR_BLIZZARD]] or [[fieldtype FLD_NANITE_SWARM]].
+
 SR_SPINAL_ANTIMATTER
 Spinal Antimatter Cannon
 
@@ -15633,6 +15675,12 @@ ST_CLOAK_4_DESC
 
 Improves [[metertype METER_STEALTH]] of ship on which it is mounted by modulating the frequency of any matter waves emitted from the ship to match that of the background radiation. [[NO_STACK_STEALTH_SHIP_PARTS]]'''
 
+AR_REINFORCED_HULL
+Self-Reinforcing Hull
+
+AR_REINFORCED_HULL_DESC
+Increases the max value for ship's hull [[metertype METER_STRUCTURE]] and regenerates it from within by [[value AR_REINFORCING_HULL_BONUS]] in every turn, even during transit or battle, as long as is damaged.
+
 AR_STD_PLATE
 Standard Armor Plating
 
@@ -15853,6 +15901,12 @@ Nova Bomb
 
 SP_NOVA_BOMB_DESC
 A weapon of tremendous power capable of destroying an entire system. The weapon will activate when it receives the signal from a [[buildingtype BLD_NOVA_BOMB_ACTIVATOR]] not more than one starlane jump away.
+
+SP_KRILL_SIREN
+Krill Siren
+
+SP_KRILL_SIREN_DESC
+Attracts wild space krill from nearby star systems towards its position on the map. Also reduces stealth for ships in the same system or travelling in the same fleet by 10.
 
 SP_KRILL_SPAWNER
 Krill Spawner
@@ -17030,7 +17084,7 @@ GREAT_ASTEROID_INDUSTRY_DESC
 LIGHT_SENSITIVE_DESC
 −	Light Sensitive: [[metertype METER_POPULATION]] is reduced in systems with [[STAR_BLUE]] and to a lesser extent [[STAR_WHITE]] stars.
 
-HAEMAESTHETIC_DETECTION_DESC
+SANGUINE_SENSORIUM_DETECTION_DESC
 +	Sanguine Sensorium: can sense nearby planets populated with organic beings.
 
 TELEPATHIC_DETECTION_DESC
@@ -17076,47 +17130,65 @@ Likes other Artistic Species in System
 # %1% name of empire
 # %2% name of policy
 LIKES_POLICY_LABEL
-Likes %1% policy %2%
+Likes %1% policy <i>%2%</i>
 
 # %1% name of empire
 # %2% name of policy
 DISLIKES_POLICY_LABEL
-Dislikes %1% policy %2%
+Dislikes %1% policy <i>%2%</i>
 
 # %1% name of planet
 # %2% name of building
 LIKES_BUILDING_LABEL
-Likes %1% building %2%
+Likes <i>%1%</i> building %2%
 
 # %1% name of planet
 # %2% name of building
 DISLIKES_BUILDING_LABEL
-Dislikes %1% building %2%
+Dislikes <i>%1%</i> building %2%
 
 # %1% name of planet
 # %2% name of species on planet (not the focus!)
 LIKES_FOCUS_LABEL
-Likes %1% focus
+Likes <i>%1%</i> focus
 
 # %1% name of planet
 # %2% name of species on planet (not the focus!)
 DISLIKES_FOCUS_LABEL
-Dislikes %1% focus
+Dislikes <i>%1%</i> focus
+
+# %1% name of planet
+# %2% name of species
+LIKES_SPECIES_LABEL
+Likes <i>%2%</i> on <i>%1%</i>
+
+# %1% name of planet
+# %2% name of species
+DISLIKES_SPECIES_LABEL
+Dislikes <i>%2%</i> on <i>%1%</i>
+
+# %1% name of field
+LIKES_FIELD_LABEL
+Likes being in <i>%1%</i>
+
+# %1% name of field
+DISLIKES_FIELD_LABEL
+Dislikes being in <i>%2%</i>
 
 # %1% name of planet
 # %2% name of special
 LIKES_SPECIAL_LABEL
-Likes %1% %2%
+Likes special <i>%2%</i> on <i>%1%</i>
 
 # %1% name of planet
 # %2% name of special
 DISLIKES_SPECIAL_LABEL
-Dislikes %1% %2%
+Dislikes special <i>%2%</i> on <i>%1%</i>
 
 # %1% name of planet
 # %2% name of species on planet
 FOCUS_PROTECTION_LABEL
-%2% Protection Focus
+<i>%2%</i> Protection Focus
 
 # %1% FIXME
 STANDARD_CONSTRUCTION_LABEL
@@ -21719,6 +21791,136 @@ Yarak
 Yekub'''
 
 # }
+# Newline separated ship name list based on musical jargon {
+SHIP_NAME_MUSICAL
+'''A Capella
+Accelerando
+Ad Libitum
+Adagio
+Anacrusis
+Allegretto
+Allegro
+Andante
+Anthem
+Bal Musette
+Ballad
+Baritone
+Berceuse
+Bongo Bongo
+Bolero
+Cadence
+Cadenza
+Caesura
+Cantata
+Chanson
+Chorale
+Chorus
+Clarinet
+Clef
+Coda
+Concerto
+Consonance
+Contralto
+Crescendo
+Cymbal
+Coda
+Da Capo
+Decibel
+Decrescendo
+Diminuendo
+Dolcissimo
+Doloroso
+Doremi-Fasola
+Elegy
+Ensemble
+Fagotto
+Falsetto
+Fermata
+Fortepiano
+Fortissimo
+Forzando
+Fugue
+Giocoso
+Glissando
+Güiro
+Harpsichord
+Hemiola
+Hocket
+Hymn
+Ictus
+Incalzando
+Interlude
+Interval
+Irato
+Jitterbug
+Jive
+Larghetto
+Legato
+Leitmotif
+Libretto
+Madrigal
+Marcato
+Marimba
+Mazurka
+Medley
+Melisma
+Melody
+Messa Di Voce
+Metronome
+Minuet
+Monochord
+Oboe
+Ocarina
+Octave
+Octet
+Opera
+Organum
+Ostinato
+Overture
+Passacaglia
+Pentatonica
+Perdendosi
+Pianissimo
+Pianoforte
+Piccolo
+Polka
+Polyphony
+Polytonality
+Prelude
+Prima Donna
+Quartet
+Rallentando
+Refrain
+Requiem
+Rhapsody
+Riguadon
+Ritardando
+Rococo
+Serenade
+Sforzando
+Shamisen
+Sonata
+Soprano
+Sostenuto
+Spiccato
+Staccato
+Stanza
+Symphony
+Tenor
+Tenuto
+Timbre
+Treble Staff
+Tremolo
+Triad
+Trill
+Unisono
+Vibrato
+Virtuoso
+Vivace
+Waltz
+Xylophone'''
+
+# }
 # Newline separated ship name list based on months or other times {
 SHIP_NAME_MONTH_TIME
 '''Easter Egg
@@ -21742,10 +21944,12 @@ Titanic'''
 # }
 # Newline separated ship name list based on various fictional monster names {
 SHIP_NAME_FICTIONAL_MONSTERS
-'''Beowulf
+'''Artax
+Beowulf
+Fuchur
+Gelfling
 Gormagander
-Nessi
-'''
+Nessi'''
 
 # }
 # Newline separated ship name list based on developer names {
@@ -21787,6 +21991,7 @@ SHIP_NAMES
 [[SHIP_NAME_EMOTIONS]]
 [[SHIP_NAME_ARCHITECTURE]]
 [[SHIP_NAME_MOO2_STARS]]
+[[SHIP_NAME_MUSICAL]]
 [[SHIP_NAME_MONTH_TIME]]
 [[SHIP_NAME_OTHER]]'''
 

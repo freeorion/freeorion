@@ -45,8 +45,11 @@ Species
         "BLD_CULTURE_LIBRARY"
         "BLD_GAS_GIANT_GEN"
         "BLD_PLANET_BEACON"
-        "BLD_SOL_ACCEL"
+        //"BLD_SOL_ACCEL"              // disabled content
         "ELERIUM_SPECIAL"
+        "FLD_NEBULA_1"                 // hates to be shadowed by nebulae
+        "FLD_NEBULA_2"                 // hates to be shadowed by nebulae
+        "FLD_NEBULA_3"                 // hates to be shadowed by nebulae
         "PLC_EXOBOT_PRODUCTIVITY"
         "PLC_INDUSTRIALISM"
         "PLC_MARINE_RECRUITMENT"

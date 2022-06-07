@@ -1,0 +1,38 @@
+BuildingType
+    name = "BLD_KRILL_SIREN"
+    description = "BLD_KRILL_SIREN_DESC"
+    buildcost = 250 * [[BUILDING_COST_MULTIPLIER]]
+    buildtime = 10
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_KRILL_SIREN"
+        OwnedBy empire = Source.Owner
+    ]
+    enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
+    
+        EffectsGroup
+            scope = WithinDistance distance = 0.00001 condition = Source
+            stackinggroup = "KRILL_SIREN_STEALTH_STACK"
+            effects = SetStealth value = Value - 10
+
+        // TODO: maybe just slow down krill who are moving away and speed up those moving towards
+        /*
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                WithinDistance distance = 50 condition = Source
+                Speed low = 1 // Immobile objects do not get the starlane speed boost.
+            ]
+            stackinggroup = "LIGHTHOUSE_SPEED_STACK"
+            effects = SetSpeed value = Value + 20
+        */
+    ]
+    icon = "icons/building/krill-siren.png"
+
+#include "/scripting/common/enqueue.macros"
+#include "/scripting/common/base_prod.macros"
+#include "/scripting/buildings/buildings.macros"
+#include "/scripting/common/priorities.macros"

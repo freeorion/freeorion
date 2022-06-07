@@ -83,7 +83,7 @@ SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS
             effects =
                 SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_SPECIAL_ON_PLANET]] * SpeciesContentOpinion species = Target.Species name = ThisSpecial
 
-        // species dislike special in the same system
+        // species like special in the same system
         EffectsGroup
             scope = And [
                 Planet

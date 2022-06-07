@@ -37,13 +37,21 @@ BASIC_POPULATION
               + ((Value >= Target.TargetPopulation) *
                     max(Target.TargetPopulation, Value - 0.1*(Value - Target.TargetPopulation)))
 
+        [[LIVING_POPULATION]]
+'''
+
+LIVING_POPULATION
+'''
         // Since all species have the same advanced focus effects and
         // infrastructure, the macros are stashed here, where they don't
         // need to be manually included in each species' macros.
+        // except for SP_LEMBALALAM where this needs to be included manually.
         [[FOCUS_CHANGE_PENALTY]]
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[STANDARD_METER_GROWTH]]
+
+        [[SPECIES_LIKES_OR_DISLIKES_SPECIES_STABILITY_EFFECTS]]
 '''
 
 AVERAGE_POPULATION
@@ -331,6 +339,41 @@ LIFECYCLE_MANIP_POPULATION_EFFECTS
                 SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
             ]
 '''
+
+STABILITY_PER_LIKED_OR_DISLIKED_SPECIES
+'''0.5 * [[SPECIES_LIKE_DISLIKE_SCALING]]'''
+
+SPECIES_LIKES_OR_DISLIKES_SPECIES_STABILITY_EFFECTS
+'''
+        // species like species irregardless of affiliation
+        EffectsGroup
+            scope = And [
+                Planet
+                InSystem id = Source.SystemID
+                Species
+                Not Source         // but not on same planet because there can be only one species per planet
+                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisSpecies > 0)
+            ]
+            activation = Planet
+            accountinglabel = "LIKES_SPECIES_LABEL"
+            effects =
+                SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_SPECIES]] * SpeciesContentOpinion species = Target.Species name = ThisSpecies
+
+
+        // species dislike species irregardless of affiliation
+        EffectsGroup
+            scope = And [
+                Planet
+                InSystem id = Source.SystemID
+                Species
+                Not Object id = Source.PlanetID         // but not on same planet because there can be only one species per planet
+                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisSpecies < 0)
+            ]
+            accountinglabel = "DISLIKES_SPECIES_LABEL"
+            effects =
+                SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_SPECIES]] * SpeciesContentOpinion species = Target.Species name = ThisSpecies
+'''
+
 
 #include "/scripting/species/common/advanced_focus.macros"
 #include "/scripting/species/common/focus.macros"

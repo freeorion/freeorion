@@ -1,0 +1,26 @@
+Part
+    name = "SP_ETHERIAL_ENERGY_ENFORCER"
+    description = "SP_ETHERIAL_ENERGY_ENFORCER_DESC"
+    class = General
+    damage = 0
+    destroyFightersPerBattleMax = 0
+    mountableSlotTypes = Core
+    buildcost = 250 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 7
+    tags = [ "PEDIA_PC_GENERAL" ]
+    location = All
+    effectsgroups = [
+        // attracts bad fields
+        EffectsGroup
+            scope = Field name = [ "FLD_ION_STORM" "FLD_MOLECULAR_CLOUD" "FLD_SUBSPACE_RIFT" "FLD_VOID_RIFT" ]
+            stackinggroup = "ROTTEN_CORE_STACKING"
+            effects = MoveTowards speed = Target.Speed x = Source.X y = Source.Y
+        // repels good fields
+        EffectsGroup
+            scope = Field name = [ "FLD_METEOR_BLIZZARD" "FLD_NANITE_SWARM" ]
+            stackinggroup = "ROTTEN_CORE_STACKING"
+            effects = MoveTowards speed = -Target.Speed x = Source.X y = Source.Y
+    ]
+    icon = "icons/ship_parts/etherial_energy_enforcer.png"
+
+#include "/scripting/common/upkeep.macros"

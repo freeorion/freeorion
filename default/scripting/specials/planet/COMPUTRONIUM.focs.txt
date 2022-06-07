@@ -6,7 +6,7 @@ Special
     spawnlimit = 9999
     location = And [
         Planet
-        Not Planet type = [Asteroids GasGiant]
+        Not Planet type = [Asteroids]
         Not ContainedBy And [
             System 
             Contains Capital

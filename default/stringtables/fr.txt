@@ -17030,7 +17030,7 @@ GREAT_ASTEROID_INDUSTRY_DESC
 LIGHT_SENSITIVE_DESC
 −	Sensibilité à la lumière: la [[metertype METER_POPULATION]] est réduite dans les systèmes abritant une Étoile [[STAR_BLUE]], et dans une moindre mesure, une Étoile [[STAR_WHITE]].
 
-HAEMAESTHETIC_DETECTION_DESC
+SANGUINE_SENSORIUM_DETECTION_DESC
 +	Sens Sanguin: peut sentir les planètes proches peuplées par des êtres organiques
 
 TELEPATHIC_DETECTION_DESC

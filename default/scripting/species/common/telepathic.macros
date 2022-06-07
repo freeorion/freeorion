@@ -27,9 +27,9 @@ TELEPATHIC_DETECTION
             effects = SetVisibility empire = Source.Owner visibility = Max(Basic, Value)
 '''
 
-HAEMAESTHETIC_DETECTION
+SANGUINE_SENSORIUM_DETECTION
 '''     EffectsGroup
-            description = "HAEMAESTHETIC_DETECTION_DESC"
+            description = "SANGUINE_SENSORIUM_DETECTION_DESC"
             scope = And [
                 Planet
                 Not Population high = 0

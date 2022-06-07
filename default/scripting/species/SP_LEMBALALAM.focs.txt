@@ -35,6 +35,9 @@ Species
         [[AVERAGE_PLANETARY_DEFENSE]]
         [[STANDARD_SHIP_SHIELDS]]
 
+        // since the basic population macro is not called, this needs to be explicit so as to get species likes and dislikes effects
+        [[LIVING_POPULATION]]
+
         // Start the game with Volcanic Ash stealth special
         EffectsGroup
             scope = Source

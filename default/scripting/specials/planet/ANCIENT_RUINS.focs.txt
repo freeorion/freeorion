@@ -10,7 +10,7 @@ Special
             (GalaxyMonsterFrequency >= 1)
             Random probability = 0.2
         ]
-        Not Planet type = [Asteroids GasGiant]
+        Not Planet type = [GasGiant]
         Not ContainedBy And [
             System 
             Contains Or [

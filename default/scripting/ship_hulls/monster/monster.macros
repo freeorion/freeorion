@@ -24,7 +24,7 @@ MONSTER_MOVE_ALWAYS
                 System
                 Not Object id = Source.SystemID
                 WithinStarlaneJumps jumps = 1 condition = Source
-                Not Contains Building name = "BLD_EXPERIMENTOR_OUTPOST"
+                Not Contains Building name = [ "BLD_EXPERIMENTOR_OUTPOST" "BLD_MONSTER_BLOCKER" ]
             ]
 '''
 
