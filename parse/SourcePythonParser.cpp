@@ -9,60 +9,8 @@ value_ref_wrapper<int> variable_wrapper::get_int_property(const char *property) 
     return value_ref_wrapper<int>(std::make_shared<ValueRef::Variable<int>>(m_reference_type, property));
 }
 
-value_ref_wrapper<double> variable_wrapper::construction() const {
-    return value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(m_reference_type, "Construction"));
-}
-
-value_ref_wrapper<double> variable_wrapper::habitable_size() const {
-    return value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(m_reference_type, "HabitableSize"));
-}
-
-value_ref_wrapper<double> variable_wrapper::max_shield() const {
-    return value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(m_reference_type, "MaxShield"));
-}
-
-value_ref_wrapper<double> variable_wrapper::max_defense() const {
-    return value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(m_reference_type, "MaxDefense"));
-}
-
-value_ref_wrapper<double> variable_wrapper::max_troops() const {
-    return value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(m_reference_type, "MaxTroops"));
-}
-
-value_ref_wrapper<double> variable_wrapper::target_happiness() const {
-    return value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(m_reference_type, "TargetHappiness"));
-}
-
-value_ref_wrapper<double> variable_wrapper::target_industry() const {
-    return value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(m_reference_type, "TargetIndustry"));
-}
-
-value_ref_wrapper<double> variable_wrapper::target_research() const {
-    return value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(m_reference_type, "TargetResearch"));
-}
-
-value_ref_wrapper<double> variable_wrapper::target_construction() const {
-    return value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(m_reference_type, "TargetConstruction"));
-}
-
-value_ref_wrapper<double> variable_wrapper::max_stockpile() const {
-    return value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(m_reference_type, "MaxStockpile"));
-}
-
-value_ref_wrapper<double> variable_wrapper::population() const {
-    return value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(m_reference_type, "Population"));
-}
-
-value_ref_wrapper<double> variable_wrapper::industry() const {
-    return value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(m_reference_type, "Industry"));
-}
-
-value_ref_wrapper<double> variable_wrapper::research() const {
-    return value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(m_reference_type, "Research"));
-}
-
-value_ref_wrapper<double> variable_wrapper::stockpile() const {
-    return value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(m_reference_type, "Stockpile"));
+value_ref_wrapper<double> variable_wrapper::get_double_property(const char *property) const {
+    return value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(m_reference_type, property));
 }
 
 variable_wrapper::operator condition_wrapper() const {

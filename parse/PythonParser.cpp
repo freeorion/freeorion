@@ -115,20 +115,6 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         py::class_<enum_wrapper< ::PlanetEnvironment>>("PlanetEnvironment", py::no_init);
         py::class_<unlockable_item_wrapper>("UnlockableItem", py::no_init);
         auto py_variable_wrapper = py::class_<variable_wrapper>("__Variable", py::no_init)
-            .def_readonly("Construction", &variable_wrapper::construction)
-            .def_readonly("HabitableSize", &variable_wrapper::habitable_size)
-            .def_readonly("MaxShield", &variable_wrapper::max_shield)
-            .def_readonly("MaxDefense", &variable_wrapper::max_defense)
-            .def_readonly("MaxTroops", &variable_wrapper::max_troops)
-            .def_readonly("TargetHappiness", &variable_wrapper::target_happiness)
-            .def_readonly("TargetIndustry", &variable_wrapper::target_industry)
-            .def_readonly("TargetResearch", &variable_wrapper::target_research)
-            .def_readonly("TargetConstruction", &variable_wrapper::target_construction)
-            .def_readonly("MaxStockpile", &variable_wrapper::max_stockpile)
-            .def_readonly("Population", &variable_wrapper::population)
-            .def_readonly("Industry", &variable_wrapper::industry)
-            .def_readonly("Research", &variable_wrapper::research)
-            .def_readonly("Stockpile", &variable_wrapper::stockpile)
             .def(py::self_ns::self & py::other<condition_wrapper>());
 
         for (const char* property : {"Owner",
@@ -168,6 +154,52 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
                 [property] (const variable_wrapper& w) { return w.get_int_property(property); },
                 py::default_call_policies(),
                 boost::mpl::vector<value_ref_wrapper<int>, const variable_wrapper&>()));
+        }
+
+        for (const char* property : {"Industry",
+                                     "TargetIndustry",
+                                     "Research",
+                                     "TargetResearch",
+                                     "Influence",
+                                     "TargetInfluence",
+                                     "Construction",
+                                     "TargetConstruction",
+                                     "Population",
+                                     "TargetPopulation",
+                                     "TargetHappiness",
+                                     "Happiness",
+                                     "MaxFuel",
+                                     "Fuel",
+                                     "MaxShield",
+                                     "Shield",
+                                     "MaxDefense",
+                                     "Defense",
+                                     "MaxTroops",
+                                     "Troops",
+                                     "RebelTroops",
+                                     "MaxStructure",
+                                     "Structure",
+                                     "MaxSupply",
+                                     "Supply",
+                                     "MaxStockpile",
+                                     "Stockpile",
+                                     "Stealth",
+                                     "Detection",
+                                     "Speed",
+                                     "X",
+                                     "Y",
+                                     "SizeAsDouble",
+                                     "HabitableSize",
+                                     "Size",
+                                     "DistanceFromOriginalType",
+                                     "DestroyFightersPerBattleMax",
+                                     "DamageStructurePerBattleMax",
+                                     "PropagatedSupplyRange"})
+        {
+            py_variable_wrapper.add_property(property, py::make_function(
+                [property] (const variable_wrapper& w) { return w.get_double_property(property); },
+                py::default_call_policies(),
+                boost::mpl::vector<value_ref_wrapper<double>, const variable_wrapper&>()));
         }
 
         py::implicitly_convertible<variable_wrapper, condition_wrapper>();
