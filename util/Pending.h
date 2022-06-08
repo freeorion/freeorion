@@ -47,11 +47,10 @@ namespace Pending {
 
     template <typename T>
     [[nodiscard]] boost::optional<T> WaitForPendingUnlocked(Pending<T>&& pending, bool do_not_care_about_result = false) {
-        std::future_status status;
+        std::future_status status = std::future_status::deferred;
         do {
-            if (!pending.pending->valid()) {
+            if (!pending.pending->valid())
                 return boost::none;
-            }
 
             status = pending.pending->wait_for(std::chrono::seconds(1));
             if (status == std::future_status::timeout)
