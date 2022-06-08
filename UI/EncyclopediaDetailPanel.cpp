@@ -1799,7 +1799,7 @@ namespace {
         std::vector<std::shared_ptr<const UniverseObject>> objects_with_special;
         objects_with_special.reserve(objects.size());
         for (const auto& obj : objects.all())
-            if (obj->Specials().count(item_name))
+            if (obj->HasSpecial(item_name))
                 objects_with_special.push_back(obj);
 
         if (!objects_with_special.empty()) {
