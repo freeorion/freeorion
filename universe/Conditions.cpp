@@ -2704,8 +2704,7 @@ namespace {
             if (it == candidate->Specials().end())
                 return false;
 
-            int special_since_turn = it->second.first;
-            float special_capacity = it->second.second;
+            const auto& [special_since_turn, special_capacity] = it->second;
             return m_low_turn <= special_since_turn
                 && special_since_turn <= m_high_turn
                 && m_low_cap <= special_capacity
