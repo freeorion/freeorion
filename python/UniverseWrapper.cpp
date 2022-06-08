@@ -153,8 +153,8 @@ namespace {
     {
         std::vector<std::string> retval;
         retval.reserve(object.Specials().size());
-        for (const auto& special : object.Specials())
-            retval.push_back(special.first);
+        std::transform(object.Specials().begin(), object.Specials().end(), std::back_inserter(retval),
+                       [](const auto& s) { return s.first; });
         return retval;
     }
 
