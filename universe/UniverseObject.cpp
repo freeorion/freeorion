@@ -91,9 +91,10 @@ void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object,
         this->m_y =                     copied_object->m_y;
 
         this->m_specials.clear();
-        for (const auto& entry_special : copied_object->m_specials) {
-            if (visible_specials.count(entry_special.first))
-                this->m_specials[entry_special.first] = entry_special.second;
+        this->m_specials.reserve(copied_object->m_specials.size());
+        for (const auto& [entry_special_name, entry_special] : copied_object->m_specials) {
+            if (visible_specials.count(entry_special_name))
+                this->m_specials[entry_special_name] = entry_special;
         }
 
         if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
@@ -332,14 +333,15 @@ void UniverseObject::SetSystem(int sys) {
     }
 }
 
-void UniverseObject::AddSpecial(const std::string& name, float capacity)
-{ m_specials[name] = std::make_pair(CurrentTurn(), capacity); }
+void UniverseObject::AddSpecial(const std::string& name, float capacity) // TODO: pass turn
+{ m_specials[name] = std::pair{CurrentTurn(), capacity}; }
 
 void UniverseObject::SetSpecialCapacity(const std::string& name, float capacity) {
-    if (m_specials.count(name))
-        m_specials[name].second = capacity;
+    auto it = m_specials.find(name);
+    if (it != m_specials.end())
+        it->second.second = capacity;
     else
-        AddSpecial(name, capacity);
+        m_specials[name] = std::pair{CurrentTurn(), capacity};
 }
 
 void UniverseObject::RemoveSpecial(const std::string& name)
