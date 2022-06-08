@@ -36,6 +36,7 @@ public:
             std::unique_ptr<ValueRef::ValueRef<double>>&& initial_capaicty = nullptr,
             std::unique_ptr<Condition::Condition>&& location = nullptr,
             const std::string& graphic = "");
+    Special(Special&&) = default;
 
     ~Special();
 
@@ -111,7 +112,9 @@ private:
         be assigned to m_species_types when completed.*/
     mutable boost::optional<Pending::Pending<SpecialsTypeMap>> m_pending_types = boost::none;
 
-    mutable SpecialsTypeMap m_specials;
+    mutable std::string                   m_concatenated_special_names;
+    mutable std::vector<std::string_view> m_special_names;
+    mutable std::vector<Special>          m_specials;
 };
 
 FO_COMMON_API SpecialsManager& GetSpecialsManager();
