@@ -44,22 +44,17 @@ public:
     bool operator!=(const Special& rhs) const
     { return !(*this == rhs); }
 
-    const std::string&                  Name() const            { return m_name; }          ///< returns the unique name for this type of special
-    std::string                         Description() const;                                ///< returns a text description of this type of special
-    std::string                         Dump(unsigned short ntabs = 0) const;               ///< returns a data file format representation of this object
-    const ValueRef::ValueRef<double>*   Stealth() const         { return m_stealth.get(); } ///< returns the stealth of the special, which determines how easily it is seen by empires
-
-    /** Returns the EffectsGroups that encapsulate the effects that specials of
-        this type have. */
-    const std::vector<std::shared_ptr<Effect::EffectsGroup>>& Effects() const
-    { return m_effects; }
-
-    float                               SpawnRate() const       { return m_spawn_rate; }
-    int                                 SpawnLimit() const      { return m_spawn_limit; }
-    const ValueRef::ValueRef<double>*   InitialCapacity() const { return m_initial_capacity.get(); }///< returns the ValueRef to use to set the initial capacity of the special when placed
-    float                               InitialCapacity(int object_id) const;                       ///< evaluates initial apacity ValueRef using the object with specified \a object_id as the object on which the special will be placed
-    const Condition::Condition*         Location() const        { return m_location.get(); }        ///< returns the condition that determines whether an UniverseObject can have this special applied during universe creation
-    const std::string&                  Graphic() const         { return m_graphic; };              ///< returns the name of the grapic file for this special
+    auto&       Name() const            { return m_name; }          ///< returns the unique name for this type of special
+    std::string Description() const;                                ///< returns a text description of this type of special
+    std::string Dump(unsigned short ntabs = 0) const;               ///< returns a data file format representation of this object
+    auto*       Stealth() const         { return m_stealth.get(); } ///< returns the stealth of the special, which determines how easily it is seen by empires
+    auto&       Effects() const         { return m_effects; }               ///< returns the EffectsGroups that encapsulate the effects that specials of this type have.
+    float       SpawnRate() const       { return m_spawn_rate; }
+    int         SpawnLimit() const      { return m_spawn_limit; }
+    auto*       InitialCapacity() const { return m_initial_capacity.get(); }///< returns the ValueRef to use to set the initial capacity of the special when placed
+    float       InitialCapacity(int object_id) const;                       ///< evaluates initial apacity ValueRef using the object with specified \a object_id as the object on which the special will be placed
+    const auto* Location() const        { return m_location.get(); }        ///< returns the condition that determines whether an UniverseObject can have this special applied during universe creation
+    auto&       Graphic() const         { return m_graphic; };              ///< returns the name of the grapic file for this special
 
     /** Returns a number, calculated from the contained data, which should be
       * different for different contained data, and must be the same for
