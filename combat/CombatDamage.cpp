@@ -71,7 +71,7 @@ namespace {
                     // as TotalFighterDamage contains the damage from all fighters, do not further include fighter
                     include_fighters = false;
                 } else if (part->CombatTargets() && context.effect_target &&
-                           part->CombatTargets()->Eval(context, context.effect_target)) 
+                           part->CombatTargets()->Eval(context, context.effect_target))
                 {
                     fighter_damage = ship->CurrentPartMeterValue(SECONDARY_METER, part_name);
                     available_fighters = std::max(0, static_cast<int>(
