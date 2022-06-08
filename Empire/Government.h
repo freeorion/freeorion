@@ -93,7 +93,7 @@ public:
     void SetPolicies(Pending::Pending<PoliciesTypeMap>&& future);
 
 private:
-    void CheckPendingPolicies() const;  //! Assigns any m_pending_types to m_specials.
+    void CheckPendingPolicies() const;  //! Assigns any m_pending_types to m_policies.
 
     //! Future types being parsed by parser.  mutable so that it can
     //! be assigned to m_species_types when completed.
