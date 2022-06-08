@@ -762,13 +762,17 @@ private:
     template <typename T>
     T GetEnum() {
         auto text = GetString();
-        T enum_val = T(-1);
-        try {
-            enum_val = boost::lexical_cast<T>(text);
-        } catch (...) {
-            ErrorLogger() << "ConditionWidget::GetEnum unable to convert text to enum type: " << text;
+        if constexpr (std::is_same_v<T, MeterType>) {
+            return MeterTypeFromString(text, MeterType::INVALID_METER_TYPE);
+        } else {
+            T enum_val = T(-1);
+            try {
+                enum_val = boost::lexical_cast<T>(text);
+            } catch (...) {
+                ErrorLogger() << "ConditionWidget::GetEnum unable to convert text to enum type: " << text;
+            }
+            return enum_val;
         }
-        return enum_val;
     }
 
     template <typename T>
