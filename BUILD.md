@@ -35,7 +35,7 @@ FreeOrion depends on the following libraries or APIs to run:
   * OpenGL - 2.1 or later ; usually provided by the graphic card driver or
     Operating System
   * OpenAL - It's recommended to use the [OpenAL Soft] implementation
-  * [Boost] - 1.58 or later
+  * [Boost] - 1.69 or later
   * [zlib]
   * [libpython] - 3.6.* or later
   * [FreeType2]
