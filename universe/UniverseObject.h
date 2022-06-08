@@ -80,6 +80,7 @@ class FO_COMMON_API UniverseObject : virtual public std::enable_shared_from_this
 public:
     using MeterMap = flat_map<MeterType, Meter>;
     static_assert(std::is_same_v<flat_map<MeterType, Meter, std::less<MeterType>>, MeterMap>);
+    using SpecialMap = flat_map<std::string, std::pair<int, float>>;
 
     using CombinerType = assignable_blocking_combiner;
     using StateChangedSignalType = boost::signals2::signal<void (), CombinerType>;
@@ -255,14 +256,14 @@ protected:
 private:
     [[nodiscard]] MeterMap CensoredMeters(Visibility vis) const; ///< returns set of meters of this object that are censored based on the specified Visibility \a vis
 
-    int                                          m_id = INVALID_OBJECT_ID;
-    int                                          m_owner_empire_id = ALL_EMPIRES;
-    int                                          m_system_id = INVALID_OBJECT_ID;
-    int                                          m_created_on_turn = INVALID_GAME_TURN;
-    double                                       m_x = INVALID_POSITION;
-    double                                       m_y = INVALID_POSITION;
-    std::map<std::string, std::pair<int, float>> m_specials; // map from special name to pair of (turn added, capacity)
-    MeterMap                                     m_meters;
+    int        m_id = INVALID_OBJECT_ID;
+    int        m_owner_empire_id = ALL_EMPIRES;
+    int        m_system_id = INVALID_OBJECT_ID;
+    int        m_created_on_turn = INVALID_GAME_TURN;
+    double     m_x = INVALID_POSITION;
+    double     m_y = INVALID_POSITION;
+    MeterMap   m_meters;
+    SpecialMap m_specials; // map from special name to pair of (turn added, capacity)
 
     template <typename Archive>
     friend void serialize(Archive&, UniverseObject&, unsigned int const);
