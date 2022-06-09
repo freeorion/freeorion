@@ -16,7 +16,7 @@ Tech(
             accountinglabel="CON_TECH_ACCOUNTING_LABEL",
             priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=[
-                If(
+                Conditional(
                     condition=(Value(LocalCandidate.Industry) <= Value(LocalCandidate.TargetIndustry)),
                     effects=SetIndustry(
                         value=MinOf(
@@ -33,7 +33,7 @@ Tech(
                         )
                     ),
                 ),
-                If(
+                Conditional(
                     condition=(Value(LocalCandidate.Research) <= Value(LocalCandidate.TargetResearch)),
                     effects=SetResearch(
                         value=MinOf(
@@ -50,7 +50,7 @@ Tech(
                         )
                     ),
                 ),
-                If(
+                Conditional(
                     condition=(Value(LocalCandidate.Construction) <= Value(LocalCandidate.TargetConstruction)),
                     effects=SetConstruction(
                         value=MinOf(
@@ -67,7 +67,7 @@ Tech(
                         )
                     ),
                 ),
-                If(
+                Conditional(
                     condition=(Value(LocalCandidate.Stockpile) <= Value(LocalCandidate.MaxStockpile)),
                     effects=SetStockpile(
                         value=MinOf(

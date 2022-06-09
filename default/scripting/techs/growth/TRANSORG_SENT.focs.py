@@ -15,7 +15,7 @@ Tech(
         EffectsGroup(
             scope=ProductionCenter & OwnedBy(empire=Source.Owner),
             priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
-            effects=If(
+            effects=Conditional(
                 condition=(Value(LocalCandidate.Influence) <= Value(LocalCandidate.TargetInfluence)),
                 effects=SetInfluence(
                     value=MinOf(
