@@ -10,7 +10,17 @@
 #include "../universe/NamedValueRefManager.h"
 #include "../universe/Conditions.h"
 
+#include "EnumPythonParser.h"
 #include "PythonParser.h"
+
+value_ref_wrapper<double> pow(const value_ref_wrapper<double>& lhs, double rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::EXPONENTIATE,
+            ValueRef::CloneUnique(lhs.value_ref),
+            std::make_unique<ValueRef::Constant<double>>(rhs)
+        )
+    );
+}
 
 value_ref_wrapper<double> operator*(int lhs, const value_ref_wrapper<double>& rhs) {
     return value_ref_wrapper<double>(
@@ -242,6 +252,37 @@ namespace {
         return boost::python::object();
     }
 
+    boost::python::object insert_statistic_value_(const PythonParser& parser, const boost::python::tuple& args, const boost::python::dict& kw) {
+        const auto type = boost::python::extract<enum_wrapper<ValueRef::StatisticType>>(args[1])().value;
+        const auto condition = boost::python::extract<condition_wrapper>(kw["condition"])().condition;
+
+        if (args[0] == parser.type_int) {
+            const auto value_arg = boost::python::extract<value_ref_wrapper<int>>(kw["value"]);
+            std::unique_ptr<ValueRef::ValueRef<int>> value;
+            if (value_arg.check()) {
+                value = ValueRef::CloneUnique(value_arg().value_ref);
+            } else {
+                value = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["value"])());
+            }
+            return boost::python::object(value_ref_wrapper<int>(std::make_shared<ValueRef::Statistic<int, int>>(std::move(value), type, ValueRef::CloneUnique(condition))));
+        } else if (args[0] == parser.type_float) {
+            const auto value_arg = boost::python::extract<value_ref_wrapper<double>>(kw["value"]);
+            std::unique_ptr<ValueRef::ValueRef<double>> value;
+            if (value_arg.check()) {
+                value = ValueRef::CloneUnique(value_arg().value_ref);
+            } else {
+                value = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["value"])());
+            }
+            return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::Statistic<double, double>>(std::move(value), type, ValueRef::CloneUnique(condition))));
+        } else {
+            ErrorLogger() << "Unsupported type for statistic : " << boost::python::extract<std::string>(boost::python::str(args[0]))();
+
+            throw std::runtime_error(std::string("Not implemented ") + __func__);
+        }
+
+        return boost::python::object();
+    }
+
     boost::python::object insert_game_rule_(const PythonParser& parser, const boost::python::tuple& args, const boost::python::dict& kw) {
         auto name = boost::python::extract<std::string>(kw["name"])();
         auto type_ = kw["type"];
@@ -299,6 +340,33 @@ namespace {
             nullptr,
             std::move(name),
             nullptr)));
+    }
+
+    value_ref_wrapper<double> insert_direct_distance_between_(boost::python::object arg1, boost::python::object arg2) {
+        std::unique_ptr<ValueRef::ValueRef<int>> id1;
+        auto id1_args = boost::python::extract<value_ref_wrapper<int>>(arg1);
+        if (id1_args.check()) {
+            id1 = ValueRef::CloneUnique(id1_args().value_ref);
+        } else {
+            id1 = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(arg1)());
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<int>> id2;
+        auto id2_args = boost::python::extract<value_ref_wrapper<int>>(arg2);
+        if (id2_args.check()) {
+            id2 = ValueRef::CloneUnique(id2_args().value_ref);
+        } else {
+            id2 = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(arg2)());
+        }
+
+        return value_ref_wrapper<double>(std::make_shared<ValueRef::ComplexVariable<double>>(
+            "DirectDistanceBetween",
+            std::move(id1),
+            std::move(id2),
+            nullptr,
+            nullptr,
+            nullptr
+        ));
     }
 }
 
@@ -361,7 +429,15 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
         globals[op.first] = boost::python::raw_function(f, 3);
     }
 
-    std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_statistic_if = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_statistic_(parser, ValueRef::StatisticType::IF, args, kw); };
+    const auto f_insert_statistic_if = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_statistic_(parser, ValueRef::StatisticType::IF, args, kw); };
     globals["StatisticIf"] = boost::python::raw_function(f_insert_statistic_if, 1);
+
+    const auto f_insert_statistic_count = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_statistic_(parser, ValueRef::StatisticType::COUNT, args, kw); };
+    globals["StatisticCount"] = boost::python::raw_function(f_insert_statistic_count, 1);
+
+    const auto f_insert_statistic = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_statistic_value_(parser, args, kw); };
+    globals["Statistic"] = boost::python::raw_function(f_insert_statistic, 2);
+
+    globals["DirectDistanceBetween"] = insert_direct_distance_between_;
 }
 
