@@ -101,7 +101,8 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def(py::self_ns::self - py::self_ns::self)
             .def(int() - py::self_ns::self)
             .def(py::self_ns::self <= py::self_ns::self)
-            .def(py::self_ns::self > py::self_ns::self);
+            .def(py::self_ns::self > py::self_ns::self)
+            .def(py::self_ns::pow(py::self_ns::self, double()));
         py::class_<value_ref_wrapper<std::string>>("ValueRefString", py::no_init);
         py::class_<condition_wrapper>("Condition", py::no_init)
             .def(py::self_ns::self & py::self_ns::self)
@@ -113,6 +114,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         py::class_<enum_wrapper<EmpireAffiliationType>>("EmpireAffiliationType", py::no_init);
         py::class_<enum_wrapper<ResourceType>>("ResourceType", py::no_init);
         py::class_<enum_wrapper< ::PlanetEnvironment>>("PlanetEnvironment", py::no_init);
+        py::class_<enum_wrapper<ValueRef::StatisticType>>("PlanetEnvironment", py::no_init);
         py::class_<unlockable_item_wrapper>("UnlockableItem", py::no_init);
         auto py_variable_wrapper = py::class_<variable_wrapper>("__Variable", py::no_init)
             .def(py::self_ns::self & py::other<condition_wrapper>());
