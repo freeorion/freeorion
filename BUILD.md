@@ -119,6 +119,7 @@ project by selecting the `Build` -> `Build Solution` menu entry.
 After the build finished successfully the binaries can be found within
 the `freeorion-project/FreeOrion` directory.
 
+There are also Visual Studio 2019 project files provided.
 
 ### Windows (CMake; work in progress)
 
