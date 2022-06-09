@@ -18,14 +18,14 @@ Tech(
             effects=If(
                 condition=(Value(LocalCandidate.Influence) <= Value(LocalCandidate.TargetInfluence)),
                 effects=SetInfluence(
-                    value=Min(
+                    value=MinOf(
                         float,
                         Value + NamedReal(name="GRO_TRANSORG_INFLUENCE_RATE", value=1.0),
                         Value(Target.TargetInfluence),
                     )
                 ),
                 else_=SetInfluence(
-                    value=Max(
+                    value=MaxOf(
                         float,
                         Value - NamedRealLookup(name="GRO_TRANSORG_INFLUENCE_RATE"),
                         Value(Target.TargetInfluence),

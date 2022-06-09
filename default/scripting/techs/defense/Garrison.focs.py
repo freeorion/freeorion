@@ -44,7 +44,9 @@ Tech(
             accountinglabel="DEF_TECH_ACCOUNTING_LABEL",
             priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=SetTroops(
-                value=Min(float, Value(Target.MaxTroops), Value + NamedReal(name="GARRISON_2_TROOPREGEN_FLAT", value=1))
+                value=MinOf(
+                    float, Value(Target.MaxTroops), Value + NamedReal(name="GARRISON_2_TROOPREGEN_FLAT", value=1)
+                )
             ),
         ),
         EffectsGroup(
@@ -78,7 +80,9 @@ Tech(
             accountinglabel="DEF_TECH_ACCOUNTING_LABEL",
             priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=SetTroops(
-                value=Min(float, Value(Target.MaxTroops), Value + NamedReal(name="GARRISON_3_TROOPREGEN_FLAT", value=2))
+                value=MinOf(
+                    float, Value(Target.MaxTroops), Value + NamedReal(name="GARRISON_3_TROOPREGEN_FLAT", value=2)
+                )
             ),
         ),
         EffectsGroup(
@@ -111,7 +115,9 @@ Tech(
             accountinglabel="DEF_TECH_ACCOUNTING_LABEL",
             priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=SetTroops(
-                value=Min(float, Value(Target.MaxTroops), Value + NamedReal(name="GARRISON_4_TROOPREGEN_FLAT", value=4))
+                value=MinOf(
+                    float, Value(Target.MaxTroops), Value + NamedReal(name="GARRISON_4_TROOPREGEN_FLAT", value=4)
+                )
             ),
         ),
         EffectsGroup(

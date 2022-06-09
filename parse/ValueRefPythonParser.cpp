@@ -169,8 +169,7 @@ namespace {
     }
 
 
-    template <ValueRef::OpType O>
-    boost::python::object insert_minmaxoneof_(const PythonParser& parser, const boost::python::tuple& args, const boost::python::dict& kw) {
+    boost::python::object insert_minmaxoneof_(const PythonParser& parser, ValueRef::OpType op, const boost::python::tuple& args, const boost::python::dict& kw) {
         if (args[0] == parser.type_int) {
             std::vector<std::unique_ptr<ValueRef::ValueRef<int>>> operands;
             operands.reserve(boost::python::len(args) - 1);
@@ -181,7 +180,7 @@ namespace {
                 else
                     operands.push_back(std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(args[i])()));
             }
-            return boost::python::object(value_ref_wrapper<int>(std::make_shared<ValueRef::Operation<int>>(O, std::move(operands))));
+            return boost::python::object(value_ref_wrapper<int>(std::make_shared<ValueRef::Operation<int>>(op, std::move(operands))));
         } else if (args[0] == parser.type_float) {
             std::vector<std::unique_ptr<ValueRef::ValueRef<double>>> operands;
             operands.reserve(boost::python::len(args) - 1);
@@ -192,7 +191,7 @@ namespace {
                 else
                     operands.push_back(std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(args[i])()));
             }
-            return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::Operation<double>>(O, std::move(operands))));
+            return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::Operation<double>>(op, std::move(operands))));
         } else {
             ErrorLogger() << "Unsupported type for min/max/oneof : " << boost::python::extract<std::string>(boost::python::str(args[0]))();
 
@@ -350,10 +349,17 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
 
     std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_game_rule = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_game_rule_(parser, args, kw); };
     globals["GameRule"] = boost::python::raw_function(f_insert_game_rule);
-    std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_min = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_minmaxoneof_<ValueRef::OpType::MINIMUM>(parser, args, kw); };
-    globals["Min"] = boost::python::raw_function(f_insert_min, 3);
-    std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_max = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_minmaxoneof_<ValueRef::OpType::MAXIMUM>(parser, args, kw); };
-    globals["Max"] = boost::python::raw_function(f_insert_max, 3);
+
+    // selection_operator
+    for (const auto& op : std::initializer_list<std::pair<const char*, ValueRef::OpType>>{
+            {"OneOf",   ValueRef::OpType::RANDOM_PICK},
+            {"MinOf",   ValueRef::OpType::MINIMUM},
+            {"MaxOf",   ValueRef::OpType::MAXIMUM}})
+    {
+        const auto e = op.second;
+        const auto f = [&parser, e](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_minmaxoneof_(parser, e, args, kw); };
+        globals[op.first] = boost::python::raw_function(f, 3);
+    }
 
     std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_statistic_if = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_statistic_(parser, ValueRef::StatisticType::IF, args, kw); };
     globals["StatisticIf"] = boost::python::raw_function(f_insert_statistic_if, 1);
