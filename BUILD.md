@@ -114,8 +114,10 @@ maintained Visual Studio Project is used for building.
 
 To build FreeOrion open the `FreeOrion.sln` project solution within
 `_source directory_\msvc2019` or `_source directory_\msvc2022` with
-Visual Studio.  Now compile the whole project by selecting the
-`Build` -> `Build Solution` menu entry.
+Visual Studio.  Make sure that the platform configuration (Win32 or
+x64) matches the version of the FreeOrion SDK that you downloaded.
+Compile the whole project by selecting the `Build` -> `Build Solution`
+menu entry.
 
 After the build finished successfully the binaries can be found within
 the `freeorion-project/FreeOrion` directory.
@@ -262,7 +264,7 @@ adb exec-out run-as org.godotengine.freeoriongodotclient cat files/freeorion-god
 [libvorbis]: https://xiph.org/downloads/
 [SDL2]: https://www.libsdl.org/download-2.0.php
 [Software Development Kit]: https://github.com/freeorion/freeorion-sdk
-[FreeOrionSDK v11]: https://github.com/freeorion/freeorion-sdk/releases/tag/v11
+[FreeOrionSDK v12]: https://github.com/freeorion/freeorion-sdk/releases/tag/v12
 [FreeOrion Releases]: https://github.com/freeorion/freeorion/releases
 [make jobs]: https://www.gnu.org/software/make/manual/html_node/Parallel.html
 [Python-For-Android]: https://github.com/python-cmake-buildsystem/python-cmake-buildsystem/pull/262
