@@ -1,19 +1,22 @@
 Building FreeOrion
 ==================
 
+These notes are applicable for building the master development Git branch
+of FreeOrion. For building numbered FreeOrion releases, consult the
+corresponding release branch, eg. [FreeOrion v0.4.10 BUILD.md]
 
 Hardware and OS Requirements
 ----------------------------
 
-FreeOrion will compile on Windows 7 (or later), Mac OS X 10.10 (or later) and
+FreeOrion shoudl compile on Windows 7 (or later), Mac OS X 10.10 (or later) and
 Linux operating systems. Other operating systems have reported to work, but
 support is not actively maintained by the FreeOrion developers. FreeOrion is
 developed for x86 compatible processor architectures, other architectures
 haven't been tested.
 
 The FreeOrion source code makes heavy use of templates and requires much memory
-to compile ; 6 GiB RAM or more is recommended. To build FreeOrion, expect up to
-45 minutes on a Intel Core i5 system.
+to compile ; 8 GiB RAM or more is recommended. Expect up to 45 minutes on a Intel
+Core i5 system, or about 5 min on a 12-core AMD Ryzen 9 3.8 GHz system.
 
 
 Required Software Dependencies
@@ -269,3 +272,4 @@ adb exec-out run-as org.godotengine.freeoriongodotclient cat files/freeorion-god
 [make jobs]: https://www.gnu.org/software/make/manual/html_node/Parallel.html
 [Python-For-Android]: https://github.com/python-cmake-buildsystem/python-cmake-buildsystem/pull/262
 [Boost-For-Android]: https://github.com/moritz-wundke/Boost-for-Android
+[FreeOrion v0.4.10 BUILD.md]: https://github.com/freeorion/freeorion/blob/release-v0.4.10/BUILD.md
