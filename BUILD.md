@@ -60,7 +60,7 @@ manager or compiling from source).
 Step by step procedure:
 
  * On Windows:
-   * Download the [FreeOrionSDK v11] from the FreeOrionSDK respository releases.
+   * Download the [FreeOrionSDK v11] (Win32 version) from the FreeOrionSDK respository releases.
  * On Mac OS X:
    * The [FreeOrionSDK v11] is downloaded automatically when CMake creates the
      build environment.
@@ -113,13 +113,12 @@ maintained Visual Studio Project is used for building.
 ### Windows (Visual Studio)
 
 To build FreeOrion open the `FreeOrion.sln` project solution within
-`_source directory_\msvc2017` with Visual Studio.  Now compile the whole
-project by selecting the `Build` -> `Build Solution` menu entry.
+`_source directory_\msvc2017` (or `\msvc2019`) with Visual Studio.
+Now compile the whole project by selecting the `Build` -> `Build Solution`
+menu entry.
 
 After the build finished successfully the binaries can be found within
 the `freeorion-project/FreeOrion` directory.
-
-There are also Visual Studio 2019 project files provided.
 
 ### Windows (CMake; work in progress)
 
