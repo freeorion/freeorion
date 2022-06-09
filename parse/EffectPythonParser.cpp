@@ -76,7 +76,7 @@ namespace {
                               ));
     }
 
-    effect_wrapper insert_if_(const py::tuple& args, const py::dict& kw) {
+    effect_wrapper insert_conditional_(const py::tuple& args, const py::dict& kw) {
         auto condition = ValueRef::CloneUnique(py::extract<condition_wrapper>(kw["condition"])().condition);
 
         std::vector<std::unique_ptr<Effect::Effect>> effects;
@@ -210,7 +210,7 @@ void RegisterGlobalsEffects(py::dict& globals) {
     globals["Destroy"] = effect_wrapper(std::make_shared<Effect::Destroy>());
 
     globals["GenerateSitRepMessage"] = py::raw_function(insert_generate_sit_rep_message_);
-    globals["If"] = py::raw_function(insert_if_);
+    globals["Conditional"] = py::raw_function(insert_conditional_);
 
     globals["SetEmpireMeter"] = py::raw_function(set_empire_meter);
 
