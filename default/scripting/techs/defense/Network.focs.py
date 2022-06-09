@@ -84,7 +84,7 @@ Tech(
         EffectsGroup(
             scope=Planet() & OwnedBy(empire=Source.Owner),
             accountinglabel="DEF_TECH_ACCOUNTING_LABEL",
-            effects=SetDefense(value=Value + Max(float, 0.1 * Target.MaxDefense, 0.25 * Target.Construction)),
+            effects=SetDefense(value=Value + MaxOf(float, 0.1 * Target.MaxDefense, 0.25 * Target.Construction)),
         )
     ],
     graphic="icons/tech/defense_regeneration.png",

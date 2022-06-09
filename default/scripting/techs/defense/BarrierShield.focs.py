@@ -24,7 +24,9 @@ Tech(
             priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=SetShield(
                 value=Value
-                + Max(float, Min(float, PLANET_SHIELD_FACTOR, Value), 0.25 * Target.Construction * PLANET_SHIELD_FACTOR)
+                + MaxOf(
+                    float, MinOf(float, PLANET_SHIELD_FACTOR, Value), 0.25 * Target.Construction * PLANET_SHIELD_FACTOR
+                )
             ),
         ),
     ],
@@ -53,9 +55,9 @@ Tech(
             priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=SetShield(
                 value=Value
-                + Max(
+                + MaxOf(
                     float,
-                    Min(float, 3.0 * PLANET_SHIELD_FACTOR, Value),
+                    MinOf(float, 3.0 * PLANET_SHIELD_FACTOR, Value),
                     0.75 * Target.Construction * PLANET_SHIELD_FACTOR,
                 )
             ),
@@ -86,9 +88,9 @@ Tech(
             priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=SetShield(
                 value=Value
-                + Max(
+                + MaxOf(
                     float,
-                    Min(float, 5.0 * PLANET_SHIELD_FACTOR, Value),
+                    MinOf(float, 5.0 * PLANET_SHIELD_FACTOR, Value),
                     1.0 * Target.Construction * PLANET_SHIELD_FACTOR,
                 )
             ),
@@ -119,9 +121,9 @@ Tech(
             priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=SetShield(
                 value=Value
-                + Max(
+                + MaxOf(
                     float,
-                    Min(float, 9.0 * PLANET_SHIELD_FACTOR, Value),
+                    MinOf(float, 9.0 * PLANET_SHIELD_FACTOR, Value),
                     1.5 * Target.Construction * PLANET_SHIELD_FACTOR,
                 )
             ),
@@ -152,9 +154,9 @@ Tech(
             priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=SetShield(
                 value=Value
-                + Max(
+                + MaxOf(
                     float,
-                    Min(float, 14.0 * PLANET_SHIELD_FACTOR, Value),
+                    MinOf(float, 14.0 * PLANET_SHIELD_FACTOR, Value),
                     2.5 * Target.Construction * PLANET_SHIELD_FACTOR,
                 )
             ),
