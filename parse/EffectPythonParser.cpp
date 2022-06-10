@@ -197,6 +197,20 @@ namespace {
         else 
             return effect_wrapper(std::make_shared<Effect::SetEmpireStockpile>(resource.value, std::move(value)));
     }
+
+    effect_wrapper insert_set_owner_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<int>> empire;
+        if (kw.has_key("empire")) {
+            auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
+            if (empire_args.check()) {
+                empire = ValueRef::CloneUnique(empire_args().value_ref);
+            } else {
+                empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
+            }
+        }
+       
+        return effect_wrapper(std::make_shared<Effect::SetOwner>(std::move(empire)));
+    }
 }
 
 void RegisterGlobalsEffects(py::dict& globals) {
@@ -259,5 +273,6 @@ void RegisterGlobalsEffects(py::dict& globals) {
     }
 
     globals["SetEmpireStockpile"] = py::raw_function(insert_set_empire_stockpile);
+    globals["SetOwner"] = py::raw_function(insert_set_owner_);
 }
 

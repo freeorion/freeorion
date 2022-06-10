@@ -205,6 +205,17 @@ namespace {
         }
         return condition_wrapper(std::make_shared<Condition::OwnerHasTech>(std::move(name)));
     }
+
+    condition_wrapper insert_random_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<double>> probability;
+        auto p_args = boost::python::extract<value_ref_wrapper<double>>(kw["probability"]);
+        if (p_args.check()) {
+            probability = ValueRef::CloneUnique(p_args().value_ref);
+        } else {
+            probability = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["probability"])());
+        }
+        return condition_wrapper(std::make_shared<Condition::Chance>(std::move(probability)));
+    }
 }
 
 void RegisterGlobalsConditions(boost::python::dict& globals) {
@@ -212,11 +223,13 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     globals["System"] = condition_wrapper(std::make_shared<Condition::Type>(UniverseObjectType::OBJ_SYSTEM));
     globals["Fleet"] = condition_wrapper(std::make_shared<Condition::Type>(UniverseObjectType::OBJ_FLEET));
     globals["ProductionCenter"] = condition_wrapper(std::make_shared<Condition::Type>(UniverseObjectType::OBJ_PROD_CENTER));
+    globals["Monster"] = condition_wrapper(std::make_shared<Condition::Monster>());
 
     globals["Unowned"] = condition_wrapper(std::make_shared<Condition::EmpireAffiliation>(EmpireAffiliationType::AFFIL_NONE));
     globals["Human"] = condition_wrapper(std::make_shared<Condition::EmpireAffiliation>(EmpireAffiliationType::AFFIL_HUMAN));
 
     globals["OwnerHasTech"] = boost::python::raw_function(insert_owner_has_tech_);
+    globals["Random"] = boost::python::raw_function(insert_random_);
 
     // non_ship_part_meter_enum_grammar
     for (const auto& meter : std::initializer_list<std::pair<const char*, MeterType>>{
