@@ -121,7 +121,7 @@ public:
     [[nodiscard]] virtual TagVecs             Tags(const ScriptingContext&) const { return {}; }; ///< Returns all tags this object has
     [[nodiscard]] virtual bool                HasTag(std::string_view name, const ScriptingContext&) const { return false; } ///< Returns true iff this object has the tag with the indicated \a name
 
-    [[nodiscard]] virtual UniverseObjectType  ObjectType() const { return UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE; }
+    [[nodiscard]] UniverseObjectType          ObjectType() const { return m_type; }
 
     /** Return human readable string description of object offset \p ntabs from
         margin. */
@@ -235,9 +235,10 @@ protected:
     template <typename Archive>
     friend void serialize(Archive& ar, Universe& u, unsigned int const version);
 
-    UniverseObject() = default;
-    UniverseObject(std::string name, double x, double y, int owner_id, int creation_turn);
-    UniverseObject(std::string name, int owner_id, int creation_turn);
+    UniverseObject() = delete;
+    UniverseObject(UniverseObjectType type) : m_type{type} {}
+    UniverseObject(UniverseObjectType type, std::string name, double x, double y, int owner_id, int creation_turn);
+    UniverseObject(UniverseObjectType type, std::string name, int owner_id, int creation_turn);
 
     void SetSignalCombiner(const Universe& universe);
 
@@ -264,6 +265,8 @@ private:
     double     m_y = INVALID_POSITION;
     MeterMap   m_meters;
     SpecialMap m_specials; // map from special name to pair of (turn added, capacity)
+
+    UniverseObjectType m_type = UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE;
 
     template <typename Archive>
     friend void serialize(Archive&, UniverseObject&, unsigned int const);

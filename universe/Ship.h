@@ -20,7 +20,6 @@ public:
 
     [[nodiscard]] TagVecs            Tags(const ScriptingContext& context) const override;
     [[nodiscard]] bool               HasTag(std::string_view name, const ScriptingContext& context) const override;
-    [[nodiscard]] UniverseObjectType ObjectType() const override;
     [[nodiscard]] std::string        Dump(unsigned short ntabs = 0) const override;
 
     [[nodiscard]] int ContainerObjectID() const override { return m_fleet_id; }
@@ -114,7 +113,7 @@ public:
         @p production_by_empire_id. */
     Ship(int empire_id, int design_id, std::string species_name, const Universe& universe,
          const SpeciesManager& species, int produced_by_empire_id, int current_turn);
-    Ship() = default;
+    Ship() : UniverseObject(UniverseObjectType::OBJ_SHIP) {}
 
 private:
     friend class Universe;

@@ -74,7 +74,7 @@ namespace {
 
 
 Fleet::Fleet(std::string name, double x, double y, int owner_id, int creation_turn) :
-    UniverseObject{std::move(name), owner_id, creation_turn}
+    UniverseObject{UniverseObjectType::OBJ_FLEET, std::move(name), owner_id, creation_turn}
 { UniverseObject::Init(); }
 
 Fleet* Fleet::Clone(const Universe& universe, int empire_id) const {
@@ -144,9 +144,6 @@ bool Fleet::HostileToEmpire(int empire_id, const EmpireManager& empires) const {
     return empire_id == ALL_EMPIRES || Unowned() ||
            empires.GetDiplomaticStatus(Owner(), empire_id) == DiplomaticStatus::DIPLO_WAR;
 }
-
-UniverseObjectType Fleet::ObjectType() const
-{ return UniverseObjectType::OBJ_FLEET; }
 
 std::string Fleet::Dump(unsigned short ntabs) const {
     std::string retval = UniverseObject::Dump(ntabs);

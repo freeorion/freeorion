@@ -19,19 +19,21 @@ namespace ValueRef {
     const std::string& MeterToName(MeterType meter);
 }
 
-UniverseObject::UniverseObject(std::string name, double x, double y, int owner_id,
-                               int creation_turn) :
+UniverseObject::UniverseObject(UniverseObjectType type, std::string name,
+                               double x, double y, int owner_id, int creation_turn) :
     m_name(std::move(name)),
     m_owner_empire_id(owner_id),
     m_created_on_turn(creation_turn),
     m_x(x),
-    m_y(y)
+    m_y(y),
+    m_type(type)
 {}
 
-UniverseObject::UniverseObject(std::string name, int owner_id, int creation_turn) :
+UniverseObject::UniverseObject(UniverseObjectType type, std::string name, int owner_id, int creation_turn) :
     m_name(std::move(name)),
     m_owner_empire_id(owner_id),
-    m_created_on_turn(creation_turn)
+    m_created_on_turn(creation_turn),
+    m_type(type)
 {}
 
 assignable_blocking_combiner::assignable_blocking_combiner(const Universe& universe) :
@@ -84,7 +86,9 @@ void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object,
         }
     }
 
+
     if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
+        this->m_type =                  copied_object->m_type;
         this->m_id =                    copied_object->m_id;
         this->m_system_id =             copied_object->m_system_id;
         this->m_x =                     copied_object->m_x;
@@ -147,7 +151,7 @@ std::string UniverseObject::Dump(unsigned short ntabs) const {
 
     std::string retval;
     retval.reserve(2048); // guesstimate
-    retval.append(to_string(this->ObjectType())).append(" ")
+    retval.append(to_string(m_type)).append(" ")
           .append(std::to_string(this->ID())).append(": ").append(this->Name());
 
     if (system) {

@@ -59,7 +59,6 @@ class FO_COMMON_API Fleet : public UniverseObject {
 public:
     [[nodiscard]] bool                    HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
 
-    [[nodiscard]] UniverseObjectType      ObjectType() const override;
     [[nodiscard]] std::string             Dump(unsigned short ntabs = 0) const override;
 
     [[nodiscard]] int                     ContainerObjectID() const override;
@@ -177,7 +176,7 @@ public:
     static constexpr int ETA_OUT_OF_RANGE = (1 << 30) - 2;  ///< returned by ETA when fleet can't reach destination due to insufficient fuel capacity and lack of fleet resupply on route
 
     Fleet(std::string name, double x, double y, int owner_id, int creation_turn);
-    Fleet() = default;
+    Fleet() : UniverseObject(UniverseObjectType::OBJ_FLEET) {}
 
 private:
     friend class ObjectMap;

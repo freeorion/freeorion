@@ -54,8 +54,6 @@ public:
       * or if multiple empires control planet(s). */
     [[nodiscard]] int EffectiveOwner(const ObjectMap& objects) const;
 
-    [[nodiscard]] UniverseObjectType ObjectType() const override;
-
     [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
 
     [[nodiscard]] const std::set<int>& ContainedObjectIDs() const override;
@@ -142,7 +140,7 @@ public:
     void SetOverlayTexture(const std::string& texture, double size);
 
     System(StarType star, std::string name, double x, double y, int current_turn);
-    System() = default;
+    System() : UniverseObject(UniverseObjectType::OBJ_SYSTEM) {}
 
 private:
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);

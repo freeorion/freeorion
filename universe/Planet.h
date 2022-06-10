@@ -55,8 +55,6 @@ public:
     [[nodiscard]] TagVecs                 Tags(const ScriptingContext& context) const override;
     [[nodiscard]] bool                    HasTag(std::string_view name, const ScriptingContext& context) const override;
 
-    [[nodiscard]] UniverseObjectType      ObjectType() const override;
-
     [[nodiscard]] std::string             Dump(unsigned short ntabs = 0) const override;
 
     [[nodiscard]] int                     ContainerObjectID() const override;
@@ -162,7 +160,7 @@ public:
 
     /** Create planet from @p type and @p size. */
     Planet(PlanetType type, PlanetSize size, int creation_turn);
-    Planet() = default;
+    Planet() : UniverseObject(UniverseObjectType::OBJ_PLANET) {}
 
     /** returns new copy of this Planet. */
     [[nodiscard]] Planet* Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const override;

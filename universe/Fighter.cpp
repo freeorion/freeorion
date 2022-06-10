@@ -8,6 +8,7 @@
 
 Fighter::Fighter(int empire_id, int launched_from_id, const std::string& species_name,
                  float damage, const ::Condition::Condition* combat_targets/*, int current_turn*/) :
+    UniverseObject(UniverseObjectType::OBJ_FIGHTER),
     m_damage(damage),
     m_launched_from_id(launched_from_id),
     m_species_name(species_name),
@@ -23,9 +24,6 @@ bool Fighter::HostileToEmpire(int empire_id, const EmpireManager& empires) const
     return empire_id == ALL_EMPIRES || Unowned() ||
         empires.GetDiplomaticStatus(Owner(), empire_id) == DiplomaticStatus::DIPLO_WAR;
 }
-
-UniverseObjectType Fighter::ObjectType() const
-{ return UniverseObjectType::OBJ_FIGHTER; }
 
 const ::Condition::Condition* Fighter::CombatTargets() const
 { return m_combat_targets; }

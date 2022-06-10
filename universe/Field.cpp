@@ -13,7 +13,7 @@
 // Field                                       //
 /////////////////////////////////////////////////
 Field::Field(std::string field_type, double x, double y, double radius, int creation_turn) :
-    UniverseObject{"", x, y, ALL_EMPIRES, creation_turn},
+    UniverseObject{UniverseObjectType::OBJ_FIELD, "", x, y, ALL_EMPIRES, creation_turn},
     m_type_name(std::move(field_type))
 {
     if (const FieldType* type = GetFieldType(m_type_name))
@@ -73,9 +73,6 @@ bool Field::HasTag(std::string_view name, const ScriptingContext&) const {
     const FieldType* type = GetFieldType(m_type_name);
     return type && type->HasTag(name);
 }
-
-UniverseObjectType Field::ObjectType() const
-{ return UniverseObjectType::OBJ_FIELD; }
 
 std::string Field::Dump(unsigned short ntabs) const {
     std::stringstream os;

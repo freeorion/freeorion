@@ -27,7 +27,7 @@ namespace {
 
 
 System::System(StarType star, std::string name, double x, double y, int current_turn) :
-    UniverseObject{std::move(name), x, y, ALL_EMPIRES, current_turn},
+    UniverseObject{UniverseObjectType::OBJ_SYSTEM, std::move(name), x, y, ALL_EMPIRES, current_turn},
     m_star(star)
 {
     if (m_star < StarType::INVALID_STAR_TYPE || StarType::NUM_STAR_TYPES < m_star)
@@ -135,9 +135,6 @@ void System::Copy(std::shared_ptr<const UniverseObject> copied_object,
         }
     }
 }
-
-UniverseObjectType System::ObjectType() const
-{ return UniverseObjectType::OBJ_SYSTEM; }
 
 std::string System::Dump(unsigned short ntabs) const {
     std::string retval = UniverseObject::Dump(ntabs);

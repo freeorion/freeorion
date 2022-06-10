@@ -47,7 +47,7 @@ namespace {
 // Planet
 ////////////////////////////////////////////////////////////
 Planet::Planet(PlanetType type, PlanetSize size, int creation_turn) :
-    UniverseObject{"", ALL_EMPIRES, creation_turn},
+    UniverseObject{UniverseObjectType::OBJ_PLANET, "", ALL_EMPIRES, creation_turn},
     m_type(type),
     m_original_type(type),
     m_size(size),
@@ -156,9 +156,6 @@ bool Planet::HasTag(std::string_view name, const ScriptingContext& context) cons
     const Species* species = context.species.GetSpecies(SpeciesName());
     return species && species->HasTag(name);
 }
-
-UniverseObjectType Planet::ObjectType() const
-{ return UniverseObjectType::OBJ_PLANET; }
 
 std::string Planet::Dump(unsigned short ntabs) const {
     std::string retval = UniverseObject::Dump(ntabs);
