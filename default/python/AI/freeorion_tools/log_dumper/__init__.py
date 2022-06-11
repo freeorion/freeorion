@@ -25,11 +25,19 @@ class DumpWrapper:
 
         return self._dump(DumpKey.EmpireID, {"empire_id": id_, "name": name, "turn": turn})
 
-    def empire_color(self, R, G, B, A):
-        return self._dump(DumpKey.EmpireColors, (R, G, B, A))
+    def empire_color(self, r, g, b, a):
+        return self._dump(
+            DumpKey.EmpireColors,
+            {
+                "R": r,
+                "G": g,
+                "B": b,
+                "A": a,
+            },
+        )
 
     def output(self, turn, rp, pp):
-        self._dump(DumpKey.Output, f"turn: {turn:4d} RP: {rp:.1f} PP: {pp:.1f}")
+        self._dump(DumpKey.Output, {"turn": turn, "RP": rp, "PP": pp})
 
 
 dump = DumpWrapper()

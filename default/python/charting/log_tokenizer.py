@@ -7,7 +7,7 @@ Log entry samples.
 """
 from typing import Optional, Tuple
 
-from dump_interface import LOG_PREFIX, DumpKey
+from common.dump_interface import LOG_PREFIX, DumpKey
 
 
 def _get_token_from_line(line: str) -> Optional[Tuple[DumpKey, str]]:

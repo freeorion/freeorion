@@ -1,30 +1,19 @@
 import pytest
-from dump_interface._serizlizer import (
-    DictSerializer,
-    FloatSerializer,
-    IntSerializer,
-    StrSerializer,
-    TupleSerializer,
-)
+from common.dump_interface._serizlizer import DictSerializer, to_float, to_int, to_str
 
 
 @pytest.mark.parametrize(
-    ("converter", "serizlized", "desirizlized"),
+    ("converter", "serialized", "deserialized"),
     (
-        (IntSerializer(), "11", 11),
-        (FloatSerializer(), "11.11", 11.11),
-        (StrSerializer(), "hello", "hello"),
-        (
-            TupleSerializer([IntSerializer(), FloatSerializer(), StrSerializer()]),
-            "11, 11.11, hello",
-            (11, 11.11, "hello"),
-        ),
+        (to_int, "11", 11),
+        (to_float, "11.11", 11.11),
+        (to_str, "hello", "hello"),
         (
             DictSerializer(
                 {
-                    "int": IntSerializer(),
-                    "float": FloatSerializer(),
-                    "str": StrSerializer(),
+                    "int": to_int,
+                    "float": to_float,
+                    "str": to_str,
                 }
             ),
             "int: 11, float: 11.11, str: hello",
@@ -32,5 +21,5 @@ from dump_interface._serizlizer import (
         ),
     ),
 )
-def test_conversion(converter, serizlized, desirizlized):
-    assert converter.deserialize(serizlized) == desirizlized
+def test_conversion(converter, serialized, deserialized):
+    assert converter.deserialize(serialized) == deserialized

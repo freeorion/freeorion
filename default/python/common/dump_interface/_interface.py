@@ -2,8 +2,8 @@ from abc import ABC
 from enum import Enum
 from typing import Callable, TypeVar
 
-from dump_interface._dump_value import DumpDict, DumpInt, DumpTuple
-from dump_interface._serizlizer import FloatSerializer, IntSerializer, StrSerializer
+from common.dump_interface._dump_value import DumpDict, DumpInt
+from common.dump_interface._serizlizer import to_float, to_int, to_str
 
 D = TypeVar("D")
 
@@ -26,17 +26,25 @@ class Serializer(ABC):
 
 
 class DumpKey(Enum):
-    EmpireColors = DumpTuple("EmpireColors", [IntSerializer(), IntSerializer(), IntSerializer(), IntSerializer()])
-    EmpireID = DumpDict("EmpireID", {"empire_id": IntSerializer(), "name": StrSerializer(), "turn": IntSerializer()})
+    EmpireColors = DumpDict(
+        "EmpireColors",
+        {
+            "R": to_int,
+            "G": to_int,
+            "B": to_int,
+            "A": to_int,
+        },
+    )
+    EmpireID = DumpDict("EmpireID", {"empire_id": to_int, "name": to_str, "turn": to_int})
     CapitalID = DumpDict(
         "CapitalID",
         {
-            "capital_planet_id": StrSerializer(),
-            "capital_planet_name": IntSerializer(),
-            "capital_species": StrSerializer(),
+            "capital_planet_id": to_str,
+            "capital_planet_name": to_int,
+            "capital_species": to_str,
         },
     )
-    Output = DumpDict("CurrentOutput", {"turn": IntSerializer(), "RP": FloatSerializer(), "PP": FloatSerializer()})
+    Output = DumpDict("CurrentOutput", {"turn": to_int, "RP": to_float, "PP": to_float})
     SHIP_CONT = DumpInt("ShipCount")
 
     @classmethod

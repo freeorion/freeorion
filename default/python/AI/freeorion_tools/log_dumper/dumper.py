@@ -14,5 +14,5 @@ class Dumper:
         self._writer = writer
 
     def dump(self, key: DumpKey, value: DumpValue):
-        serialized = key.value.serizlize(value)
+        serialized = key.value.serialize(value)
         self._writer(f"{LOG_PREFIX}{key.value.name}:{serialized}")

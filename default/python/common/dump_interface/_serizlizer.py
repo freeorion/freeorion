@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Callable, Dict, Sequence, TypeVar
+from typing import Callable, Dict, TypeVar
 
 Serializable = TypeVar("Serializable")
 
@@ -21,45 +21,31 @@ class Serializer(ABC):
         return self._serializer(value)
 
 
-class IntSerializer(Serializer):
+class _IntSerializer(Serializer):
     def __init__(self):
         super().__init__(serializer=str, deserializer=int)
 
 
-class FloatSerializer(Serializer):
+class _FloatSerializer(Serializer):
     def __init__(self):
         super().__init__(serializer=str, deserializer=float)
 
 
-class StrSerializer(Serializer):
+class _StrSerializer(Serializer):
     def __init__(self):
         super().__init__(serializer=str, deserializer=str.strip)
-
-
-class TupleSerializer(Serializer):
-    def __init__(self, items: Sequence[Serializer]):
-        def serializer(value: Sequence[Serializable]):
-            assert len(value) == len(items)
-            return ", ".join(s.serialize(v) for v, s in zip(value, items))
-
-        def deserializer(serialized: str):
-            elements = serialized.split(",")
-            assert len(elements) == len(items)
-            return tuple(s.deserialize(v) for v, s in zip(elements, items))
-
-        super().__init__(serializer=serializer, deserializer=deserializer)
 
 
 class DictSerializer(Serializer):
     def __init__(self, items: Dict[str, Serializer]):
         def serializer(value: Dict[str, Serializable]) -> str:
-            assert set(value) == set(items), "Keys should match"
+            assert set(value) == set(items), f"Keys should match {sorted(value)} != {sorted(items)}"
             serialized_dict = {}
             for key, val in value.items():  # preserve order of values dict
                 serializer_instance = items[key]
                 serialized_dict[key] = serializer_instance.serialize(val)
 
-            return ", ".join(f"{k}: {v}" for k, v in serialized_dict)
+            return ", ".join(f"{k}: {v}" for k, v in serialized_dict.items())
 
         def deserializer(serialized: str) -> Serializable:
             elements = serialized.split(",")
@@ -73,3 +59,8 @@ class DictSerializer(Serializer):
             return dict((k, items[k].deserialize(v)) for (k, v) in pairs)
 
         super().__init__(serializer=serializer, deserializer=deserializer)
+
+
+to_int = _IntSerializer()
+to_str = _StrSerializer()
+to_float = _FloatSerializer()

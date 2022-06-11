@@ -1,14 +1,13 @@
 from abc import ABC
-from typing import Dict, Sequence
+from typing import Dict
 
-from dump_interface._serizlizer import (
+from common.dump_interface._serizlizer import (
     DictSerializer,
-    FloatSerializer,
-    IntSerializer,
     Serializable,
     Serializer,
-    StrSerializer,
-    TupleSerializer,
+    to_float,
+    to_int,
+    to_str,
 )
 
 
@@ -18,30 +17,25 @@ class Dump(ABC):
         self._serializer = serializer
 
     def deserialize(self, value: str) -> Serializable:
-        return self._serializer.serialize(value)
+        return self._serializer.deserialize(value)
 
     def serialize(self, value: Serializable) -> str:
-        return self._serializer.deserialize(value)
+        return self._serializer.serialize(value)
 
 
 class DumpInt(Dump):
     def __init__(self, name: str):
-        super().__init__(name, IntSerializer())
+        super().__init__(name, to_int)
 
 
 class DumpFloat(Dump):
     def __init__(self, name: str):
-        super().__init__(name, FloatSerializer())
+        super().__init__(name, to_float)
 
 
 class DumpStr(Dump):
     def __init__(self, name: str):
-        super().__init__(name, StrSerializer())
-
-
-class DumpTuple(Dump):
-    def __init__(self, name: str, items: Sequence[Serializer]):
-        super().__init__(name, TupleSerializer(items))
+        super().__init__(name, to_str)
 
 
 class DumpDict(Dump):

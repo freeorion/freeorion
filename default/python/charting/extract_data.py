@@ -1,4 +1,4 @@
-from dump_interface import DumpKey
+from common.dump_interface import DumpKey
 
 
 def start_turn(key, value, data):
@@ -12,12 +12,12 @@ def add_attribute(key, value, data):
 
 def start_first_turn(key, value, data):
     start_turn(key, value, data)
-    data["empire"] = value["empire_id"]
-    data["player"] = value["name"]
+    data["empire_id"] = value["empire_id"]
+    data["player_name"] = value["name"]
 
 
 def set_color(key, value, data):
-    data["color"] = value[:-1]
+    data["color"] = value
 
 
 def process_output(key, value, data):
