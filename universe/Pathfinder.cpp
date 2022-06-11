@@ -458,19 +458,27 @@ namespace SystemPathing {
     }
 
     template <typename Graph>
-    std::multimap<double, int> ImmediateNeighborsImpl(const Graph& graph, int system_id,
-                                                      const boost::container::flat_map<int, size_t>& id_to_graph_index)
+    auto ImmediateNeighborsImpl(
+        const Graph& graph, int system_id, const boost::container::flat_map<int, size_t>& id_to_graph_index)
     {
-        typedef typename Graph::out_edge_iterator OutEdgeIterator;
-        typedef typename boost::property_map<Graph, vertex_system_id_t>::const_type ConstSystemIDPropertyMap;
-        typedef typename boost::property_map<Graph, boost::edge_weight_t>::const_type ConstEdgeWeightPropertyMap;
-
-        std::multimap<double, int> retval;
+        using OutEdgeIterator = typename Graph::out_edge_iterator;
+        using ConstSystemIDPropertyMap = typename boost::property_map<Graph, vertex_system_id_t>::const_type;
+        using ConstEdgeWeightPropertyMap = typename boost::property_map<Graph, boost::edge_weight_t>::const_type;
         ConstEdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, graph);
         ConstSystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), graph);
-        auto edges = boost::out_edges(id_to_graph_index.at(system_id), graph);
-        for (OutEdgeIterator it = edges.first; it != edges.second; ++it)
-            retval.emplace(edge_weight_map[*it], sys_id_property_map[boost::target(*it, graph)]);
+
+        OutEdgeIterator first_edge, last_edge;
+        std::tie(first_edge, last_edge) = boost::out_edges(id_to_graph_index.at(system_id), graph);
+
+        //using edge_weight_t = typename ConstEdgeWeightPropertyMap::value_type;
+        //using sys_property_t = typename ConstEdgeWeightPropertyMap::value_type;
+        using val_t = std::pair<double, int>; // may not be same as std::pair<edge_weight_t, sys_property_t> depending 
+        std::vector<val_t> retval;
+        retval.reserve(std::distance(first_edge, last_edge));
+
+        using EdgeInfo = decltype(*std::declval<OutEdgeIterator>());
+        std::transform(first_edge, last_edge, std::back_inserter(retval), [&](const EdgeInfo& e) -> val_t
+                       { return {edge_weight_map[e], sys_id_property_map[boost::target(e, graph)]}; });
         return retval;
     }
 }
@@ -652,10 +660,6 @@ namespace {
 /////////////////////////////////////////////
 class Pathfinder::PathfinderImpl {
 public:
-    PathfinderImpl() :
-        m_graph_impl(new GraphImpl)
-    {}
-
     double LinearDistance(int object1_id, int object2_id, const ObjectMap& objects) const;
     short JumpDistanceBetweenSystems(int system1_id, int system2_id) const;
     int JumpDistanceBetweenObjects(int object1_id, int object2_id, const ObjectMap& objects) const;
@@ -670,7 +674,7 @@ public:
         int system1_id, int system2_id, int empire_id = ALL_EMPIRES, int max_jumps = INT_MAX) const;
     bool SystemsConnected(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
     bool SystemHasVisibleStarlanes(int system_id, const ObjectMap& objects) const;
-    std::multimap<double, int> ImmediateNeighbors(int system_id, int empire_id = ALL_EMPIRES) const;
+    std::vector<std::pair<double, int>> ImmediateNeighbors(int system_id, int empire_id = ALL_EMPIRES) const;
 
     std::unordered_set<int> WithinJumps(size_t jumps, const std::vector<int>& candidates) const;
     void WithinJumpsCacheHit(
@@ -711,8 +715,8 @@ public:
     void HandleCacheMiss(size_t ii, distance_matrix_storage<short>::row_ref row) const;
 
 
-    mutable distance_matrix_storage<short>  m_system_jumps;             ///< indexed by system graph index (not system id), caches the smallest number of jumps to travel between all the systems
-    std::shared_ptr<GraphImpl>              m_graph_impl;               ///< a graph in which the systems are vertices and the starlanes are edges
+    mutable distance_matrix_storage<short>  m_system_jumps; ///< indexed by system graph index (not system id), caches the smallest number of jumps to travel between all the systems
+    std::shared_ptr<GraphImpl>              m_graph_impl = std::make_shared<GraphImpl>(); ///< a graph in which the systems are vertices and the starlanes are edges
     boost::container::flat_map<int, size_t> m_system_id_to_graph_index;
 };
 
@@ -1157,11 +1161,11 @@ bool Pathfinder::PathfinderImpl::SystemHasVisibleStarlanes(int system_id, const 
     return false;
 }
 
-std::multimap<double, int> Pathfinder::ImmediateNeighbors(int system_id, int empire_id/* = ALL_EMPIRES*/) const
+std::vector<std::pair<double, int>> Pathfinder::ImmediateNeighbors(int system_id, int empire_id) const
 { return pimpl->ImmediateNeighbors(system_id, empire_id); }
 
-std::multimap<double, int> Pathfinder::PathfinderImpl::ImmediateNeighbors(
-    int system_id, int empire_id/* = ALL_EMPIRES*/) const
+std::vector<std::pair<double, int>> Pathfinder::PathfinderImpl::ImmediateNeighbors(
+    int system_id, int empire_id) const
 {
     if (empire_id == ALL_EMPIRES) {
         return ImmediateNeighborsImpl(m_graph_impl->system_graph, system_id,
@@ -1172,7 +1176,7 @@ std::multimap<double, int> Pathfinder::PathfinderImpl::ImmediateNeighbors(
             return ImmediateNeighborsImpl(*graph_it->second, system_id,
                                           m_system_id_to_graph_index);
     }
-    return std::multimap<double, int>();
+    return {};
 }
 
 void Pathfinder::PathfinderImpl::WithinJumpsCacheHit(

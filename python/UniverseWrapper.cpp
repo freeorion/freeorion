@@ -143,9 +143,10 @@ namespace {
 
     auto SystemNeighborsMap(const Universe& universe, int system1_id, int empire_id) -> std::map<int, double>
     {
+        auto neighbours{universe.GetPathfinder()->ImmediateNeighbors(system1_id, empire_id)};
         std::map<int, double> retval;
-        for (const auto& entry : universe.GetPathfinder()->ImmediateNeighbors(system1_id, empire_id))
-            retval.emplace(entry.second, entry.first);
+        std::transform(neighbours.begin(), neighbours.end(), std::inserter(retval, retval.end()),
+                       [](auto& n) { return std::pair{n.second, n.first}; });
         return retval;
     }
 

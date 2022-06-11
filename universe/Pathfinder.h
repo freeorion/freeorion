@@ -114,7 +114,7 @@ public:
       * ID is out of range. */
     //TODO empire_id is never set to anything other than self, which in
     //the AI's is the same as ALL_EMPIRES
-    std::multimap<double, int> ImmediateNeighbors(int system_id, int empire_id = ALL_EMPIRES) const;
+    std::vector<std::pair<double, int>> ImmediateNeighbors(int system_id, int empire_id = ALL_EMPIRES) const;
 
     /** Returns the system ids of systems that are within \p jumps of the \p
         candidates system ids.*/
