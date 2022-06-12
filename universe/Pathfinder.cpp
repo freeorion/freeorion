@@ -314,12 +314,6 @@ namespace SystemPathing {
         const Graph& graph, int system1_id, int system2_id,
         double linear_distance, const boost::container::flat_map<int, size_t>& id_to_graph_index)
     {
-        typedef typename boost::property_map<Graph, vertex_system_id_t>::const_type     ConstSystemIDPropertyMap;
-        typedef typename boost::property_map<Graph, boost::vertex_index_t>::const_type  ConstIndexPropertyMap;
-        typedef typename boost::property_map<Graph, boost::edge_weight_t>::const_type   ConstEdgeWeightPropertyMap;
-
-        ConstSystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), graph);
-
         // convert system IDs to graph indices.  try/catch for invalid input system ids.
         size_t system1_index, system2_index;
         try {
@@ -348,11 +342,9 @@ namespace SystemPathing {
         }
 
 
-        ConstIndexPropertyMap index_map = boost::get(boost::vertex_index, graph);
-        ConstEdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, graph);
-
-
         // do the actual path finding using verbose boost magic...
+        const auto& index_map = boost::get(boost::vertex_index, graph);
+        const auto& edge_weight_map = boost::get(boost::edge_weight, graph);
         try {
             boost::dijkstra_shortest_paths(
                 graph, system1_index, &predecessors[0], &distances[0],
@@ -366,6 +358,7 @@ namespace SystemPathing {
 
         boost::circular_buffer<int> buf(id_to_graph_index.size()); // expect that path can at most visit all systems once
 
+        const auto& sys_id_property_map = boost::get(vertex_system_id_t(), graph);
         int current_system = system2_index;
         while (predecessors[current_system] != current_system) {
             buf.push_front(sys_id_property_map[current_system]);
@@ -392,23 +385,22 @@ namespace SystemPathing {
       * is 0.  If there is no path between the two vertices, then the list is
       * empty and the path length is -1 */
     template <typename Graph>
-    std::pair<std::list<int>, int> LeastJumpsPathImpl(const Graph& graph, int system1_id, int system2_id,
-                                                      const boost::container::flat_map<int, size_t>& id_to_graph_index,
-                                                      int max_jumps = INT_MAX)
+    std::pair<std::vector<int>, int> LeastJumpsPathImpl(
+        const Graph& graph, int system1_id, int system2_id,
+        const boost::container::flat_map<int, size_t>& id_to_graph_index,
+        int max_jumps = INT_MAX)
     {
-        typedef typename boost::property_map<Graph, vertex_system_id_t>::const_type ConstSystemIDPropertyMap;
-
-        ConstSystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), graph);
-        std::pair<std::list<int>, int> retval;
-
-        size_t system1_index = id_to_graph_index.at(system1_id);
-        size_t system2_index = id_to_graph_index.at(system2_id);
-
         // early exit if systems are the same
-        if (system1_id == system2_id) {
-            retval.first.push_back(system2_id);
-            retval.second = 0;  // no jumps needed
-            return retval;
+        if (system1_id == system2_id)
+            return {{system2_id}, 0}; // no jumps needed
+
+        // convert system IDs to graph indices.  try/catch for invalid input system ids.
+        size_t system1_index, system2_index;
+        try {
+            system1_index = id_to_graph_index.at(system1_id);
+            system2_index = id_to_graph_index.at(system2_id);
+        } catch (...) {
+            return {{}, -1}; // specified system(s) do no exist, so no path between them exists
         }
 
         /* initializing all vertices' predecessors to themselves prevents endless loops
@@ -424,7 +416,7 @@ namespace SystemPathing {
 
 
         // do the actual path finding using verbose boost magic...
-        typedef BFSVisitorImpl<Graph, typename boost::graph_traits<Graph>::edge_descriptor, int> BFSVisitor;
+        using BFSVisitor = BFSVisitorImpl<Graph, typename boost::graph_traits<Graph>::edge_descriptor, int>;
         try {
             boost::queue<int> buf;
             std::vector<int> colors(boost::num_vertices(graph));
@@ -433,47 +425,46 @@ namespace SystemPathing {
             boost::breadth_first_search(graph, system1_index, buf, bfsVisitor, &colors[0]);
         } catch (const typename BFSVisitor::ReachedDepthLimit&) {
             // catching this means the algorithm explored the neighborhood until max_jumps and didn't find anything
-            return std::make_pair(std::list<int>(), -1);
+            return {{}, -1};
         } catch (const typename BFSVisitor::FoundDestination&) {
             // catching this just means that the destination was found, and so the
             // algorithm was exited early, via exception
         }
 
+        boost::circular_buffer<int> buf(id_to_graph_index.size()); // expect that path can at most visit all systems once
 
+        const auto& sys_id_property_map = boost::get(vertex_system_id_t(), graph);
         int current_system = system2_index;
         while (predecessors[current_system] != current_system) {
-            retval.first.push_front(sys_id_property_map[current_system]);
+            buf.push_front(sys_id_property_map[current_system]);
             current_system = predecessors[current_system];
         }
-        retval.second = retval.first.size() - 1;    // number of jumps is number of systems in path minus one for the starting system
 
-        if (retval.first.empty()) {
-            // there is no path between the specified nodes
-            retval.second = -1;
-        } else {
-            // add start system to path, as it wasn't added by traversing predecessors array
-            retval.first.push_front(sys_id_property_map[system1_index]);
+        if (buf.empty())
+            return {{}, -1}; // there is no path between the specified nodes
+
+        // add start system to path, as it wasn't added by traversing predecessors array
+        if (buf.full()) {
+            ErrorLogger() << "LeastJumpsPathImpl buffer full before expected!";
+            buf.set_capacity(buf.capacity() + 1);
         }
+        buf.push_front(system1_id);
 
-        return retval;
+        return {{buf.begin(), buf.end()}, static_cast<int>(buf.size() - 1)};
     }
 
     template <typename Graph>
     auto ImmediateNeighborsImpl(
         const Graph& graph, int system_id, const boost::container::flat_map<int, size_t>& id_to_graph_index)
     {
-        using OutEdgeIterator = typename Graph::out_edge_iterator;
-        using ConstSystemIDPropertyMap = typename boost::property_map<Graph, vertex_system_id_t>::const_type;
-        using ConstEdgeWeightPropertyMap = typename boost::property_map<Graph, boost::edge_weight_t>::const_type;
-        ConstEdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, graph);
-        ConstSystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), graph);
+        const auto& edge_weight_map = boost::get(boost::edge_weight, graph);
+        const auto& sys_id_property_map = boost::get(vertex_system_id_t(), graph);
 
+        using OutEdgeIterator = typename Graph::out_edge_iterator;
         OutEdgeIterator first_edge, last_edge;
         std::tie(first_edge, last_edge) = boost::out_edges(id_to_graph_index.at(system_id), graph);
 
-        //using edge_weight_t = typename ConstEdgeWeightPropertyMap::value_type;
-        //using sys_property_t = typename ConstEdgeWeightPropertyMap::value_type;
-        using val_t = std::pair<double, int>; // may not be same as std::pair<edge_weight_t, sys_property_t> depending 
+        using val_t = std::pair<double, int>;
         std::vector<val_t> retval;
         retval.reserve(std::distance(first_edge, last_edge));
 
@@ -533,7 +524,7 @@ namespace {
                     return false;
 
                 // get system ids from graph indices
-                ConstSystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), *m_graph); // for reverse-lookup System universe ID from graph index
+                const auto& sys_id_property_map = boost::get(vertex_system_id_t(), *m_graph); // for reverse-lookup System universe ID from graph index
                 int sys_graph_index_1 = boost::source(edge, *m_graph);
                 int sys_id_1 = sys_id_property_map[sys_graph_index_1];
                 int sys_graph_index_2 = boost::target(edge, *m_graph);
@@ -594,7 +585,7 @@ namespace {
                 // get system ids from graph indices
 
                 // for reverse-lookup System universe ID from graph index
-                ConstSystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), *m_graph);
+                const auto& sys_id_property_map = boost::get(vertex_system_id_t(), *m_graph);
                 int sys_graph_index_1 = boost::source(edge, *m_graph);
                 int sys_id_1 = sys_id_property_map[sys_graph_index_1];
                 int sys_graph_index_2 = boost::target(edge, *m_graph);
@@ -670,9 +661,12 @@ public:
     std::pair<std::vector<int>, double> ShortestPath(
         int system1_id, int system2_id, int empire_id, const ObjectMap& objects,
         const EmpireManager& empires, const Pathfinder::SystemExclusionPredicateType& sys_pred) const;
+
     double ShortestPathDistance(int object1_id, int object2_id, const ObjectMap& objects) const;
-    std::pair<std::list<int>, int> LeastJumpsPath(
+
+    std::pair<std::vector<int>, int> LeastJumpsPath(
         int system1_id, int system2_id, int empire_id = ALL_EMPIRES, int max_jumps = INT_MAX) const;
+
     bool SystemsConnected(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
     bool SystemHasVisibleStarlanes(int system_id, const ObjectMap& objects) const;
     std::vector<std::pair<double, int>> ImmediateNeighbors(int system_id, int empire_id = ALL_EMPIRES) const;
@@ -1106,12 +1100,12 @@ double Pathfinder::PathfinderImpl::ShortestPathDistance(int object1_id, int obje
     }
 }
 
-std::pair<std::list<int>, int> Pathfinder::LeastJumpsPath(
-    int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/, int max_jumps/* = INT_MAX*/) const
+std::pair<std::vector<int>, int> Pathfinder::LeastJumpsPath(
+    int system1_id, int system2_id, int empire_id, int max_jumps) const
 { return pimpl->LeastJumpsPath(system1_id, system2_id, empire_id, max_jumps); }
 
-std::pair<std::list<int>, int> Pathfinder::PathfinderImpl::LeastJumpsPath(
-    int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/, int max_jumps/* = INT_MAX*/) const
+std::pair<std::vector<int>, int> Pathfinder::PathfinderImpl::LeastJumpsPath(
+    int system1_id, int system2_id, int empire_id, int max_jumps) const
 {
     if (empire_id == ALL_EMPIRES) {
         // find path on full / complete system graph
@@ -1457,11 +1451,8 @@ void Pathfinder::InitializeSystemGraph(const ObjectMap& objects, const EmpireMan
 void Pathfinder::PathfinderImpl::InitializeSystemGraph(const ObjectMap& objects, const EmpireManager& empires) {
     auto new_graph_impl = std::make_shared<GraphImpl>();
 
-    GraphImpl::SystemIDPropertyMap sys_id_property_map =
-        boost::get(vertex_system_id_t(), new_graph_impl->system_graph);
-
-    GraphImpl::EdgeWeightPropertyMap edge_weight_map =
-        boost::get(boost::edge_weight, new_graph_impl->system_graph);
+    const auto& sys_id_property_map = boost::get(vertex_system_id_t(), new_graph_impl->system_graph);
+    const auto& edge_weight_map = boost::get(boost::edge_weight, new_graph_impl->system_graph);
 
     // add vertices to graph for all systems
     std::vector<int> system_ids;
