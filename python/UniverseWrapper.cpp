@@ -487,6 +487,7 @@ namespace FreeOrionPython {
             .add_property("finalDestinationID",        &Fleet::FinalDestinationID)
             .add_property("previousSystemID",          &Fleet::PreviousSystemID)
             .add_property("nextSystemID",              &Fleet::NextSystemID)
+            .add_property("route",                     +[](const Fleet& fleet) -> std::vector<int> { return fleet.TravelRoute(); })
             .add_property("aggressive",                &Fleet::Aggressive)
             .add_property("obstructive",               &Fleet::Obstructive)
             .add_property("aggression",                &Fleet::Aggression)
