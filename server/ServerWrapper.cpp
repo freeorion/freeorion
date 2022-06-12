@@ -977,16 +977,16 @@ namespace {
         py::stl_input_iterator<int> end;
 
         std::vector<int> systems;
-
-        for (py::stl_input_iterator<int> id(sys_ids); id != end; ++id) {
+        for (py::stl_input_iterator<int> id(sys_ids); id != end; ++id)
             systems.push_back(*id);
-        }
 
-        auto systems_in_vicinity = GetUniverse().GetPathfinder()->WithinJumps(jumps, systems);
+        auto systems_in_vicinity = GetUniverse().GetPathfinder()->WithinJumps(jumps, std::move(systems));
 
-        for (auto system_id : systems_in_vicinity) {
+        TraceLogger() << "within " << jumps << " jumps: " << systems_in_vicinity.size() << " systems";
+
+        for (auto system_id : systems_in_vicinity)
             py_systems.append(system_id);
-        }
+
         return py_systems;
     }
 

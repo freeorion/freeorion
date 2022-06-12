@@ -83,7 +83,7 @@ namespace {
     //synchronization costs way out-weigh the saved computation costs.
     template <typename Storage, typename T = typename Storage::value_type, typename Row = typename Storage::row_ref>
     class distance_matrix_cache {
-        public:
+    public:
         distance_matrix_cache(Storage& the_storage) : m_storage(the_storage) {}
         /**Read lock the table and return the size N.*/
         size_t size() {
@@ -96,15 +96,13 @@ namespace {
             m_storage.resize(a_size);
         }
 
-        public:
-
         // Note: The signatures for the cache miss handler and the cache hit handler have a void
         // return type, because this code can not anticipate all expected return types.  In order
         // to return a result function the calling code will need to bind the return parameter to
         // the function so that the function still has the required signature.
 
         /// Cache miss handler
-        typedef std::function<void (size_t &/*ii*/, Row /*row*/)> cache_miss_handler;
+        typedef std::function<void (size_t&, Row)> cache_miss_handler;
 
         /// A function to examine an entire row cache hit
         typedef std::function<void (size_t &/*ii*/, const Row /*row*/)> cache_hit_handler;
@@ -175,21 +173,26 @@ namespace {
                               << ii << " matrix size: " << NN;
                 throw std::out_of_range("row index is invalid.");
             }
-            {
-                std::shared_lock<std::shared_mutex> row_guard(*m_storage.m_row_mutexes[ii]);
-                const Row &row_data = m_storage.m_data[ii];
 
-                if (NN == row_data.size())
-                    return use_row(ii, row_data);
-            }
             {
-                std::unique_lock<std::shared_mutex> row_guard(*m_storage.m_row_mutexes[ii]);
-                Row &row_data = m_storage.m_data[ii];
+                // check for existing cache data for requested row
+                std::shared_lock<std::shared_mutex> row_guard(*m_storage.m_row_mutexes[ii]);
+                const Row& row_data = m_storage.m_data[ii];
 
                 if (NN == row_data.size()) {
-                    return use_row(ii, row_data);
-                } else {
+                    use_row(ii, row_data);
+                    return;
+                }
+            }
+
+            {
+                std::unique_lock<std::shared_mutex> row_guard(*m_storage.m_row_mutexes[ii]);
+                Row& row_data = m_storage.m_data[ii];
+
+                if (NN != row_data.size()) { // re-check for data after getting unique lock
+                    // fill row with so-far missing data...
                     fill_row(ii, row_data);
+
                     if (row_data.size() != NN) {
                         std::stringstream ss;
                         ss << "Cache miss handler only filled cache row with "
@@ -198,8 +201,9 @@ namespace {
                         ErrorLogger() << ss.str();
                         throw std::range_error(ss.str());
                     }
-                    return use_row(ii, row_data);
                 }
+
+                use_row(ii, row_data);
             }
         }
 
@@ -676,12 +680,14 @@ public:
     bool SystemHasVisibleStarlanes(int system_id, const ObjectMap& objects) const;
     std::vector<std::pair<double, int>> ImmediateNeighbors(int system_id, int empire_id = ALL_EMPIRES) const;
 
-    std::unordered_set<int> WithinJumps(size_t jumps, const std::vector<int>& candidates) const;
+    std::vector<int> WithinJumps(size_t jumps, int candidate) const;
+    std::vector<int> WithinJumps(size_t jumps, std::vector<int> candidates) const;
     void WithinJumpsCacheHit(
-        std::unordered_set<int>* result, size_t jump_limit,
-        size_t ii, distance_matrix_storage<short>::row_ref row) const;
+        std::vector<int>& result, size_t jump_limit,
+        size_t ii, const std::vector<short>& row) const;
 
-    std::pair<std::vector<std::shared_ptr<const UniverseObject>>, std::vector<std::shared_ptr<const UniverseObject>>>
+    std::pair<std::vector<std::shared_ptr<const UniverseObject>>,
+              std::vector<std::shared_ptr<const UniverseObject>>>
     WithinJumpsOfOthers(
         int jumps, const ObjectMap& objects,
         const std::vector<std::shared_ptr<const UniverseObject>>& candidates,
@@ -744,17 +750,16 @@ namespace {
 
 /** HandleCacheMiss requires that \p row be locked by exterior context. */
 void Pathfinder::PathfinderImpl::HandleCacheMiss(size_t ii, distance_matrix_storage<short>::row_ref row) const {
-    typedef boost::iterator_property_map<std::vector<short>::iterator,
-                                         boost::identity_property_map> DistancePropertyMap;
+    using DistancePropertyMap = boost::iterator_property_map<std::vector<short>::iterator,
+                                                             boost::identity_property_map>;
+    // FIXME: compute the i row and the j column, but only utilize the i row.
 
-    distance_matrix_storage<short>::row_ref distance_buffer = row;
-    distance_buffer.assign(m_system_jumps.size(), SHRT_MAX);
-    distance_buffer[ii] = 0;
-    DistancePropertyMap distance_property_map(distance_buffer.begin());
+    TraceLogger() << "Cache MISS ii: " << ii;
+
+    row.assign(m_system_jumps.size(), SHRT_MAX);
+    row[ii] = 0;
+    DistancePropertyMap distance_property_map(row.begin());
     boost::distance_recorder<DistancePropertyMap, boost::on_tree_edge> distance_recorder(distance_property_map);
-
-    // FIXME: we have computed the i row and the j column, but
-    // we are only utilizing the i row.
 
     boost::breadth_first_search(m_graph_impl->system_graph, ii,
                                 boost::visitor(boost::make_bfs_visitor(distance_recorder)));
@@ -789,7 +794,7 @@ short Pathfinder::PathfinderImpl::JumpDistanceBetweenSystems(int system1_id, int
         return 0;
 
     try {
-        distance_matrix_cache< distance_matrix_storage<short>> cache(m_system_jumps);
+        distance_matrix_cache<distance_matrix_storage<short>> cache(m_system_jumps);
 
         size_t system1_index = m_system_id_to_graph_index.at(system1_id);
         size_t system2_index = m_system_id_to_graph_index.at(system2_id);
@@ -1180,49 +1185,79 @@ std::vector<std::pair<double, int>> Pathfinder::PathfinderImpl::ImmediateNeighbo
 }
 
 void Pathfinder::PathfinderImpl::WithinJumpsCacheHit(
-    std::unordered_set<int>* result, size_t jump_limit,
-    size_t ii, distance_matrix_storage<short>::row_ref row) const
+    std::vector<int>& result, size_t jump_limit, size_t ii, const std::vector<short>& row) const
 {
+    TraceLogger() << "Cache Hit ii: " << ii << "  jumps: " << jump_limit;
     // Scan the LUT of system ids and add any result from the row within
     // the neighborhood range to the results.
     for (auto& [sys_id, sys_idx] : m_system_id_to_graph_index) {
-        size_t hops = row[sys_idx];
-        if (hops <= jump_limit)
-            result->insert(sys_id);
+        auto hops = row[sys_idx];
+        if (hops <= static_cast<decltype(hops)>(jump_limit))
+            result.push_back(sys_id);
     }
 }
 
-std::unordered_set<int> Pathfinder::WithinJumps(size_t jumps, const std::vector<int>& candidates) const
-{ return pimpl->WithinJumps(jumps, candidates); }
+std::vector<int> Pathfinder::WithinJumps(size_t jumps, std::vector<int> candidates) const
+{ return pimpl->WithinJumps(jumps, std::move(candidates)); }
 
-std::unordered_set<int> Pathfinder::PathfinderImpl::WithinJumps(
-    size_t jumps, const std::vector<int>& candidates) const
+std::vector<int> Pathfinder::WithinJumps(size_t jumps, int candidate) const
+{ return pimpl->WithinJumps(jumps, candidate); }
+
+std::vector<int> Pathfinder::PathfinderImpl::WithinJumps(
+    size_t jumps, std::vector<int> near) const
 {
-    std::unordered_set<int> near;
-    distance_matrix_cache<distance_matrix_storage<short>> cache(m_system_jumps);
-    for (auto candidate : candidates) {
-        size_t system_index;
-        try {
-            system_index = m_system_id_to_graph_index.at(candidate);
-        } catch (const std::out_of_range&) {
-            ErrorLogger() << "Passed invalid system id: " << candidate;
-            continue;
-        }
+    if (near.empty())
+        return {};
+    // if (near.size() == 1)
+    //     return WithinJumps(jumps, near.front());
 
-        near.insert(candidate);
-        if (jumps == 0)
-            continue;
+    // if jumps is 0, then just return the input systems, as they are always near themselves
+    if (jumps > 0) {
+        distance_matrix_cache<distance_matrix_storage<short>> cache(m_system_jumps);
 
-        namespace ph = boost::placeholders;
+        std::vector<std::vector<int>> candidate_results(near.size());
 
-        cache.examine_row(system_index,
-                          boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, ph::_1, ph::_2),
-                          boost::bind(&Pathfinder::PathfinderImpl::WithinJumpsCacheHit, this,
-                                      &near, jumps, ph::_1, ph::_2));
+        auto get_neighbours = [&cache, jumps, this](int candidate) {
+            std::vector<int> row_result;
+
+            auto index_it = m_system_id_to_graph_index.find(candidate);
+            if (index_it == m_system_id_to_graph_index.end())
+                return row_result;
+            auto system_index = index_it->second;
+
+            using row_ref = distance_matrix_storage<short>::row_ref;
+            cache.examine_row(
+                system_index,
+                [this](size_t ii, row_ref row) { HandleCacheMiss(ii, row); }, // boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, ph::_1, ph::_2)
+                [this, jumps, &row_result](size_t ii, row_ref row) { WithinJumpsCacheHit(row_result, jumps, ii, row); }); // boost::bind(&Pathfinder::PathfinderImpl::WithinJumpsCacheHit, this, row_result, jumps, ph::_1, ph::_2));
+            return row_result;
+        };
+
+        // get results for each candidate
+        std::transform(near.begin(), near.end(), candidate_results.begin(), get_neighbours);
+
+        // reserve needed space to combine
+        auto results_sz = near.size();
+        std::for_each(candidate_results.begin(), candidate_results.end(),
+                      [&results_sz](const auto& res) { results_sz += res.size(); });
+        near.reserve(results_sz);
+
+        // combine into single list, probably with duplicate entries
+        std::for_each(candidate_results.begin(), candidate_results.end(),
+                      [&near](std::vector<int>& res) { std::copy(res.begin(), res.end(), std::back_inserter(near)); });
     }
+
+    // ensure uniqueness of results
+    std::sort(near.begin(), near.end());
+    auto it = std::unique(near.begin(), near.end());
+    near.resize(std::distance(near.begin(), it));
+
     return near;
 }
 
+std::vector<int> Pathfinder::PathfinderImpl::WithinJumps(size_t jumps, int candidate) const {
+    return {}; // WIP
+}
 
 /** Examine a single universe object and determine if it is within jumps
     of any object in others.*/
@@ -1437,9 +1472,8 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(const ObjectMap& objects,
         auto system1 = objects.get<System>(system1_id);
 
         // add edges and edge weights
-        for (auto const& lane_dest : system1->StarlanesWormholes()) {
-            // get id in universe of system at other end of lane
-            const int lane_dest_id = lane_dest.first;
+        for (auto const& [lane_dest_id, is_wormhole] : system1->StarlanesWormholes()) {
+
             // skip null lanes and only add edges in one direction, to avoid
             // duplicating edges ( since this is an undirected graph, A->B
             // duplicates B->A )
@@ -1452,15 +1486,15 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(const ObjectMap& objects,
                 continue;   // couldn't find destination system id in vertex lookup map; don't add to graph
             size_t lane_dest_graph_index = reverse_lookup_map_it->second;
 
-            auto add_edge_result = boost::add_edge(system1_index, lane_dest_graph_index,
-                                                   new_graph_impl->system_graph);
+            auto [edge_descriptor, add_success] =
+                boost::add_edge(system1_index, lane_dest_graph_index, new_graph_impl->system_graph);
+            //DebugLogger() << "Adding graph edge from " << system1_id << " to " << lane_dest_id;
 
-            if (add_edge_result.second) {   // if this is a non-duplicate starlane or wormhole
-                if (lane_dest.second) {         // if this is a wormhole
-                    edge_weight_map[add_edge_result.first] = WORMHOLE_TRAVEL_DISTANCE;
-                } else {                        // if this is a starlane
-                    edge_weight_map[add_edge_result.first] = LinearDistance(system1_id, lane_dest_id, objects);
-                }
+            if (add_success) {   // if this is a non-duplicate starlane or wormhole
+                if (is_wormhole)
+                    edge_weight_map[std::move(edge_descriptor)] = WORMHOLE_TRAVEL_DISTANCE;
+                else
+                    edge_weight_map[std::move(edge_descriptor)] = LinearDistance(system1_id, lane_dest_id, objects);
             }
         }
     }
