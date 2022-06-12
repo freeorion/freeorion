@@ -976,10 +976,7 @@ namespace {
         py::list py_systems;
         py::stl_input_iterator<int> end;
 
-        std::vector<int> systems;
-        for (py::stl_input_iterator<int> id(sys_ids); id != end; ++id)
-            systems.push_back(*id);
-
+        std::vector<int> systems{py::stl_input_iterator<int>(sys_ids), end};
         auto systems_in_vicinity = GetUniverse().GetPathfinder()->WithinJumps(jumps, std::move(systems));
 
         TraceLogger() << "within " << jumps << " jumps: " << systems_in_vicinity.size() << " systems";
