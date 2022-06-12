@@ -40,7 +40,7 @@ Policy
                 SetTargetInfluence value = Value - 0.5 * [[POPULATION_OWNED_BY_EMPIRE]]^0.5
                     // ...reduced to 1/10 with Centralization
                     / 2.5 ^ (Statistic If condition = And [Source EmpireHasAdoptedPolicy empire = Target.Owner name = "PLC_CENTRALIZATION"])
-                    // divided by number of administrative buildings + 1
+                    // divided by number of sqrt(administrative buildings + 1)
                     / ((Statistic Count
                         condition = And [
                             Or [
