@@ -76,7 +76,7 @@ public:
     /** Returns the list of systems that this fleet will move through en route
       * to its destination (may be empty).  If this fleet is currently at a
       * system, that system will be the first one in the list. */
-    [[nodiscard]] const std::list<int>&   TravelRoute() const;
+    [[nodiscard]] const auto&             TravelRoute() const { return m_travel_route; };
     [[nodiscard]] int                     OrderedGivenToEmpire() const { return m_ordered_given_to_empire_id; }   ///< returns the ID of the empire this fleet has been ordered given to, or ALL_EMPIRES if this fleet hasn't been ordered given to an empire
     [[nodiscard]] int                     LastTurnMoveOrdered() const { return m_last_turn_move_ordered; }
     [[nodiscard]] bool                    Aggressive() const { return m_aggression >= FleetAggression::FLEET_AGGRESSIVE; }
@@ -87,7 +87,7 @@ public:
     /** Returns a list of locations at which notable events will occur along the fleet's path if it follows the
         specified route.  It is assumed in the calculation that the fleet starts its move path at its actual current
         location, however the fleet's current location will not be on the list, even if it is currently in a system. */
-    [[nodiscard]] std::list<MovePathNode> MovePath(const std::list<int>& route, bool flag_blockades = false,
+    [[nodiscard]] std::list<MovePathNode> MovePath(const std::vector<int>& route, bool flag_blockades = false,
                                                    const ScriptingContext& context = ScriptingContext{}) const;
     [[nodiscard]] std::list<MovePathNode> MovePath(bool flag_blockades = false,
                                                    const ScriptingContext& context = ScriptingContext{}) const;   ///< Returns MovePath for fleet's current TravelRoute
@@ -148,7 +148,7 @@ public:
     void ResetTargetMaxUnpairedMeters() override;
 
     /** Sets this fleet to move through the series of systems in the list, in order */
-    void SetRoute(const std::list<int>& route, const ObjectMap& objects);
+    void SetRoute(const std::vector<int>& route, const ObjectMap& objects);
 
     /** Sets this fleet to move through the series of systems that makes the
       * shortest path from its current location to target_system_id */
@@ -202,7 +202,7 @@ private:
       * also contain a single null pointer, which indicates that the route is
       * unknown.  The list may also be empty, which indicates that the fleet
       * is not planning to move. */
-    std::list<int>  m_travel_route;
+    std::vector<int>m_travel_route;
 
     int             m_arrival_starlane = INVALID_OBJECT_ID; // see comment for ArrivalStarlane()
     bool            m_arrived_this_turn = false;

@@ -384,8 +384,14 @@ void serialize(Archive& ar, Fleet& obj, unsigned int const version)
         ar  & make_nvp("m_aggression", obj.m_aggression);
     }
 
-    ar  & make_nvp("m_ordered_given_to_empire_id", obj.m_ordered_given_to_empire_id)
-        & make_nvp("m_travel_route", obj.m_travel_route);
+    ar  & make_nvp("m_ordered_given_to_empire_id", obj.m_ordered_given_to_empire_id);
+    if (version < 6) {
+        std::list<int> travel_route;
+        ar & make_nvp("m_travel_route", travel_route);
+        obj.m_travel_route = std::vector(travel_route.begin(), travel_route.end());
+    } else {
+        ar & make_nvp("m_travel_route", obj.m_travel_route);
+    }
     if (version < 3) {
         double dummy_travel_distance;
         ar & boost::serialization::make_nvp("m_travel_distance", dummy_travel_distance);
@@ -398,7 +404,7 @@ void serialize(Archive& ar, Fleet& obj, unsigned int const version)
 }
 
 BOOST_CLASS_EXPORT(Fleet)
-BOOST_CLASS_VERSION(Fleet, 5)
+BOOST_CLASS_VERSION(Fleet, 6)
 
 
 template <typename Archive>

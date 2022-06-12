@@ -310,7 +310,7 @@ namespace SystemPathing {
       * between the two vertices, then the list is empty and the path length
       * is -1.0 */
     template <typename Graph>
-    std::pair<std::list<int>, double> ShortestPathImpl(
+    std::pair<std::vector<int>, double> ShortestPathImpl(
         const Graph& graph, int system1_id, int system2_id,
         double linear_distance, const boost::container::flat_map<int, size_t>& id_to_graph_index)
     {
@@ -665,9 +665,9 @@ public:
     short JumpDistanceBetweenSystems(int system1_id, int system2_id) const;
     int JumpDistanceBetweenObjects(int object1_id, int object2_id, const ObjectMap& objects) const;
 
-    std::pair<std::list<int>, double> ShortestPath(
+    std::pair<std::vector<int>, double> ShortestPath(
         int system1_id, int system2_id, const ObjectMap& objects, int empire_id = ALL_EMPIRES) const;
-    std::pair<std::list<int>, double> ShortestPath(
+    std::pair<std::vector<int>, double> ShortestPath(
         int system1_id, int system2_id, int empire_id, const ObjectMap& objects,
         const EmpireManager& empires, const Pathfinder::SystemExclusionPredicateType& sys_pred) const;
     double ShortestPathDistance(int object1_id, int object2_id, const ObjectMap& objects) const;
@@ -974,11 +974,11 @@ int Pathfinder::PathfinderImpl::JumpDistanceBetweenObjects(int object1_id, int o
     return boost::apply_visitor(visitor, obj1);
 }
 
-std::pair<std::list<int>, double> Pathfinder::ShortestPath(
+std::pair<std::vector<int>, double> Pathfinder::ShortestPath(
     int system1_id, int system2_id, int empire_id, const ObjectMap& objects) const
 { return pimpl->ShortestPath(system1_id, system2_id, objects, empire_id); }
 
-std::pair<std::list<int>, double> Pathfinder::PathfinderImpl::ShortestPath(
+std::pair<std::vector<int>, double> Pathfinder::PathfinderImpl::ShortestPath(
     int system1_id, int system2_id, const ObjectMap& objects, int empire_id) const
 {
     if (empire_id == ALL_EMPIRES) {
@@ -1007,17 +1007,17 @@ std::pair<std::list<int>, double> Pathfinder::PathfinderImpl::ShortestPath(
     } catch (const std::out_of_range&) {
         ErrorLogger() << "PathfinderImpl::ShortestPath passed invalid system id(s): "
                       << system1_id << " & " << system2_id;
-        return {std::list<int>(), -1.0};
+        return {{}, -1.0};
     }
 }
 
-std::pair<std::list<int>, double> Pathfinder::ShortestPath(
+std::pair<std::vector<int>, double> Pathfinder::ShortestPath(
     int system1_id, int system2_id, int empire_id,
     const SystemExclusionPredicateType& system_predicate,
     const EmpireManager& empires, const ObjectMap& objects) const
 { return pimpl->ShortestPath(system1_id, system2_id, empire_id, objects, empires, system_predicate); }
 
-std::pair<std::list<int>, double> Pathfinder::PathfinderImpl::ShortestPath(
+std::pair<std::vector<int>, double> Pathfinder::PathfinderImpl::ShortestPath(
     int system1_id, int system2_id, int empire_id, const ObjectMap& objects,
     const EmpireManager& empires, const Pathfinder::SystemExclusionPredicateType& sys_pred) const
 {
@@ -1065,11 +1065,11 @@ double Pathfinder::PathfinderImpl::ShortestPathDistance(int object1_id, int obje
     // the distance travelled until both could be in the same system.
     const auto obj1 = objects.get(object1_id);
     if (!obj1)
-        return -1;
+        return -1.0;
 
     const auto obj2 = objects.get(object2_id);
     if (!obj2)
-        return -1;
+        return -1.0;
 
     double dist{0.0};
 
@@ -1078,7 +1078,7 @@ double Pathfinder::PathfinderImpl::ShortestPathDistance(int object1_id, int obje
     if (!system_one) {
         auto fleet = FleetFromObject(obj1, objects);
         if (!fleet)
-            return -1;
+            return -1.0;
         if (auto next_sys = objects.get<System>(fleet->NextSystemID())) {
             dist = std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
             system_one = std::move(next_sys);
@@ -1090,7 +1090,7 @@ double Pathfinder::PathfinderImpl::ShortestPathDistance(int object1_id, int obje
     if (!system_two) {
         auto fleet = FleetFromObject(obj2, objects);
         if (!fleet)
-            return -1;
+            return -1.0;
         if (auto next_sys = objects.get<System>(fleet->NextSystemID())) {
             dist += std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
             system_two = std::move(next_sys);
@@ -1102,7 +1102,7 @@ double Pathfinder::PathfinderImpl::ShortestPathDistance(int object1_id, int obje
         return path_len_pair.second + dist;
     } catch (...) {
         ErrorLogger() << "ShortestPathDistance caught exception when calling ShortestPath";
-        return -1;
+        return -1.0;
     }
 }
 

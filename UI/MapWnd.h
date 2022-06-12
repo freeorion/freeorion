@@ -185,11 +185,11 @@ public:
     /* creates specially-coloured projected fleet movement line for specified
      * fleet following the specified route.  Move line originates from the
      * fleet's button location. */
-    void SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& travel_route);
+    void SetProjectedFleetMovementLine(int fleet_id, const std::vector<int>& travel_route);
     /* creates specially-coloured projected fleet movement lines for specified
      * fleets following the specified route.  Move lines originates from the
      * fleets' button locations. */
-    void SetProjectedFleetMovementLines(const std::vector<int>& fleet_ids, const std::list<int>& travel_route);
+    void SetProjectedFleetMovementLines(const std::vector<int>& fleet_ids, const std::vector<int>& travel_route);
 
     void ClearProjectedFleetMovementLines();     //!< removes all projected fleet movement lines
 

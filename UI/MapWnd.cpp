@@ -4643,7 +4643,7 @@ void MapWnd::SetFleetMovementLine(int fleet_id) {
     m_fleet_lines[fleet_id] = MovementLineData(path, m_starlane_endpoints, line_colour, fleet->Owner());
 }
 
-void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& travel_route) {
+void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::vector<int>& travel_route) {
     if (fleet_id == INVALID_OBJECT_ID)
         return;
 
@@ -4702,7 +4702,7 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& t
 }
 
 void MapWnd::SetProjectedFleetMovementLines(const std::vector<int>& fleet_ids,
-                                            const std::list<int>& travel_route)
+                                            const std::vector<int>& travel_route)
 {
     for (int fleet_id : fleet_ids)
         SetProjectedFleetMovementLine(fleet_id, travel_route);
@@ -5549,16 +5549,16 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
             start_system, system_id, empire_id, objects).first;
         // Prepend a non-empty old_route to the beginning of route.
         if (append && !fleet->TravelRoute().empty()) {
-            std::list<int> old_route(fleet->TravelRoute());
+            auto old_route(fleet->TravelRoute());
             old_route.erase(--old_route.end()); //end of old is begin of new
-            route.splice(route.begin(), old_route);
+            route.insert(route.begin(), old_route.begin(), old_route.end()); // route.splice(route.begin(), old_route);
         }
 
         // disallow "offroad" (direct non-starlane non-wormhole) travel
-        if (route.size() == 2 && *route.begin() != *route.rbegin()) {
-            int begin_id = *route.begin();
+        if (route.size() == 2 && route.front() != route.back()) {
+            int begin_id = route.front();
             auto begin_sys = objects.get<System>(begin_id);
-            int end_id = *route.rbegin();
+            int end_id = route.back();
             auto end_sys = objects.get<System>(end_id);
 
             if (!begin_sys->HasStarlaneTo(end_id) && !begin_sys->HasWormholeTo(end_id) &&
@@ -7430,16 +7430,14 @@ namespace {
     bool FleetRouteInRange(const std::shared_ptr<const Fleet>& fleet, const RouteListType& route,
                            const ScriptingContext& context)
     {
-        std::list<int> route_list{route.begin(), route.end()};
-
-        auto eta = fleet->ETA(fleet->MovePath(route_list, false, context));
+        auto eta = fleet->ETA(fleet->MovePath(route, false, context));
         return (eta.first != Fleet::ETA_NEVER && eta.first != Fleet::ETA_UNKNOWN &&
                 eta.first != Fleet::ETA_OUT_OF_RANGE);
     }
 
     //helper function for DispatchFleetsExploring
     //return the set of all systems ID with a starlane connecting them to a system in set
-    SystemIDListType NeighbourSystemsOf(const Empire *empire, const Universe& universe,
+    SystemIDListType NeighbourSystemsOf(const Empire* empire, const Universe& universe,
                                         const SystemIDListType& system_ids)
     {
         SystemIDListType retval;
@@ -7461,24 +7459,22 @@ namespace {
         auto dest_system = objects.get<System>(destination_id);
         if (!start_system || !dest_system) {
             WarnLogger() << "Invalid start or destination system";
-            return OrderedRouteType();
+            return {};
         }
 
         auto ignore_hostile = GetOptionsDB().Get<bool>("ui.fleet.explore.hostile.ignored");
         auto fleet_pred = std::make_shared<HostileVisitor>(empire_id, empires);
-        std::pair<std::list<int>, double> route_distance;
+        std::pair<std::vector<int>, double> route_distance;
 
         if (ignore_hostile)
             route_distance = universe.GetPathfinder()->ShortestPath(start_id, destination_id, empire_id, objects);
         else
             route_distance = universe.GetPathfinder()->ShortestPath(start_id, destination_id, empire_id, fleet_pred, empires, objects);
 
-        if (!route_distance.first.empty() && route_distance.second > 0.0) {
-            RouteListType route(route_distance.first.begin(), route_distance.first.end());
-            return {route_distance.second, std::move(route)};
-        }
+        if (!route_distance.first.empty() && route_distance.second > 0.0)
+            return {route_distance.second, std::move(route_distance.first)};
 
-        return OrderedRouteType();
+        return {};
     }
 
     /** Route from @p fleet current location to @p destination */

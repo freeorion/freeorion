@@ -54,9 +54,8 @@ public:
       * visibility if \a empire_id == ALL_EMPIRES.
       * \throw std::out_of_range This function will throw if either system ID
       * is out of range, or if the empire ID is not known. */
-    std::pair<std::list<int>, double> ShortestPath(int system1_id, int system2_id,
-                                                   int empire_id,
-                                                   const ObjectMap& objects) const;
+    std::pair<std::vector<int>, double> ShortestPath(int system1_id, int system2_id,
+                                                     int empire_id, const ObjectMap& objects) const;
 
     /** Shortest path known to an empire between two systems, excluding routes
      *  for systems containing objects for @p system_predicate.
@@ -67,9 +66,9 @@ public:
      *                         if it is or contains a matched object
      * 
      * @returns list of System ids, distance between systems */
-    std::pair<std::list<int>, double> ShortestPath(int system1_id, int system2_id, int empire_id,
-                                                   const SystemExclusionPredicateType& system_predicate,
-                                                   const EmpireManager& empires, const ObjectMap& objects) const;
+    std::pair<std::vector<int>, double> ShortestPath(int system1_id, int system2_id, int empire_id,
+                                                     const SystemExclusionPredicateType& system_predicate,
+                                                     const EmpireManager& empires, const ObjectMap& objects) const;
 
     /** Returns the shortest starlane path distance between any two objects, accounting
       * for cases where one or the other are fleets / ships on starlanes between

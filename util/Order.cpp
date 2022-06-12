@@ -354,10 +354,10 @@ FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
         DebugLogger() << "FleetMoveOrder removing fleet " << fleet_id
                       << " current system location " << fleet->SystemID()
                       << " from shortest path to system " << m_dest_system;
-        short_path.first.pop_front();
+        short_path.first.erase(short_path.first.begin()); // pop_front();
     }
 
-    std::copy(short_path.first.begin(), short_path.first.end(), std::back_inserter(m_route));
+    m_route = std::move(short_path.first);
 
     // ensure a zero-length (invalid) route is not requested / sent to a fleet
     if (m_route.empty())
@@ -437,7 +437,7 @@ void FleetMoveOrder::ExecuteImpl(ScriptingContext& context) const {
     if (!fleet_travel_route.empty() && fleet_travel_route.front() == fleet->SystemID()) {
         DebugLogger() << "FleetMoveOrder::ExecuteImpl given route that starts with fleet " << fleet->ID()
                       << "'s current system (" << fleet_travel_route.front() << "); removing it";
-        fleet_travel_route.pop_front();
+        fleet_travel_route.erase(fleet_travel_route.begin()); // pop_front();
     }
 
     // check destination validity: disallow movement that's out of range
@@ -466,12 +466,11 @@ FleetTransferOrder::FleetTransferOrder(int empire, int dest_fleet, const std::ve
     m_add_ships(ships)
 {
     if (!Check(empire, dest_fleet, ships, context))
-        return;
+        ErrorLogger() << "FleetTransferOrder constructor found problem...";
 }
 
-std::string FleetTransferOrder::Dump() const {
-    return UserString("ORDER_FLEET_TRANSFER");
-}
+std::string FleetTransferOrder::Dump() const
+{ return UserString("ORDER_FLEET_TRANSFER"); }
 
 bool FleetTransferOrder::Check(int empire_id, int dest_fleet_id, const std::vector<int>& ship_ids,
                                const ScriptingContext& context)
@@ -496,7 +495,7 @@ bool FleetTransferOrder::Check(int empire_id, int dest_fleet_id, const std::vect
 
     bool invalid_ships{false};
 
-    for (auto ship : objects.find<Ship>(ship_ids)) {
+    for (const auto& ship : objects.find<Ship>(ship_ids)) {
         if (!ship) {
             ErrorLogger() << "IssueFleetTransferOrder : passed an invalid ship_id";
             invalid_ships = true;

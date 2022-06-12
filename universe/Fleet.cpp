@@ -39,10 +39,10 @@ namespace {
 
     /** Return \p full_route terminates at \p last_system or before the first
         system not known to the \p empire_id. */
-    std::list<int> TruncateRouteToEndAtSystem(const std::list<int>& full_route,
-                                              const ObjectMap& objects, int last_system)
+    std::vector<int> TruncateRouteToEndAtSystem(const std::vector<int>& full_route,
+                                                const ObjectMap& objects, int last_system)
     {
-        std::list<int> truncated_route;
+        std::vector<int> truncated_route;
 
         if (full_route.empty() || (last_system == INVALID_OBJECT_ID))
             return truncated_route;
@@ -209,13 +209,10 @@ int Fleet::MaxShipAgeInTurns(const ObjectMap& objects) const {
     return retval;
 }
 
-const std::list<int>& Fleet::TravelRoute() const
-{ return m_travel_route; }
-
 std::list<MovePathNode> Fleet::MovePath(bool flag_blockades, const ScriptingContext& context) const
 { return MovePath(TravelRoute(), flag_blockades, context); }
 
-std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_blockades,
+std::list<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool flag_blockades,
                                         const ScriptingContext& context) const
 {
     std::list<MovePathNode> retval;
@@ -735,7 +732,7 @@ bool Fleet::UnknownRoute() const
 std::shared_ptr<UniverseObject> Fleet::Accept(const UniverseObjectVisitor& visitor) const
 { return visitor.Visit(std::const_pointer_cast<Fleet>(std::static_pointer_cast<const Fleet>(shared_from_this()))); }
 
-void Fleet::SetRoute(const std::list<int>& route, const ObjectMap& objects) {
+void Fleet::SetRoute(const std::vector<int>& route, const ObjectMap& objects) {
     if (UnknownRoute())
         throw std::invalid_argument("Fleet::SetRoute() : Attempted to set an unknown route.");
 
@@ -1006,11 +1003,11 @@ void Fleet::MovementPhase(ScriptingContext& context) {
                 current_system = system;
 
                 if (supply_unobstructed_systems.count(SystemID()))
-                    m_arrival_starlane = SystemID();//allows departure via any starlane
+                    m_arrival_starlane = SystemID(); // allows departure via any starlane
 
                 // Add current system to the start of any existing route for next turn
                 if (!m_travel_route.empty() && m_travel_route.front() != SystemID())
-                    m_travel_route.push_front(SystemID());
+                    m_travel_route.insert(m_travel_route.begin(), SystemID());
 
                 break;
 
@@ -1074,7 +1071,7 @@ void Fleet::ResetTargetMaxUnpairedMeters() {
 }
 
 void Fleet::CalculateRouteTo(int target_system_id, const Universe& universe) {
-    std::list<int> route;
+    std::vector<int> route;
     const ObjectMap& objects = universe.Objects();
 
     //DebugLogger() << "Fleet::CalculateRoute";
@@ -1084,7 +1081,7 @@ void Fleet::CalculateRouteTo(int target_system_id, const Universe& universe) {
         } catch (const std::exception& e) {
             ErrorLogger() << "Caught exception in Fleet CalculateRouteTo: " << e.what();
         }
-        return; 
+        return;
     }
 
     if (m_prev_system != INVALID_OBJECT_ID && SystemID() == m_prev_system) {
@@ -1100,7 +1097,7 @@ void Fleet::CalculateRouteTo(int target_system_id, const Universe& universe) {
             return;
         }
 
-        std::pair<std::list<int>, double> path;
+        std::pair<std::vector<int>, double> path;
         try {
             path = universe.GetPathfinder()->ShortestPath(m_prev_system, target_system_id, this->Owner(), objects);
         } catch (...) {
@@ -1119,7 +1116,7 @@ void Fleet::CalculateRouteTo(int target_system_id, const Universe& universe) {
 
     // if we're between systems, the shortest route may be through either one
     if (this->CanChangeDirectionEnRoute()) {
-        std::pair<std::list<int>, double> path1;
+        std::pair<std::vector<int>, double> path1;
         try {
             path1 = universe.GetPathfinder()->ShortestPath(m_next_system, dest_system_id, this->Owner(), objects);
         } catch (...) {
@@ -1140,7 +1137,7 @@ void Fleet::CalculateRouteTo(int target_system_id, const Universe& universe) {
         double dist_y = obj->Y() - this->Y();
         double dist1 = std::sqrt(dist_x*dist_x + dist_y*dist_y);
 
-        std::pair<std::list<int>, double> path2;
+        std::pair<std::vector<int>, double> path2;
         try {
             path2 = universe.GetPathfinder()->ShortestPath(m_prev_system, dest_system_id, this->Owner(), objects);
         } catch (...) {
@@ -1174,7 +1171,7 @@ void Fleet::CalculateRouteTo(int target_system_id, const Universe& universe) {
 
     } else {
         // Cannot change direction. Must go to the end of the current starlane
-        std::pair<std::list<int>, double> path;
+        std::pair<std::vector<int>, double> path;
         try {
             path = universe.GetPathfinder()->ShortestPath(m_next_system, dest_system_id, this->Owner(), objects);
         } catch (...) {
