@@ -1207,11 +1207,12 @@ std::vector<int> Pathfinder::PathfinderImpl::WithinJumps(
     size_t jumps, std::vector<int> near) const
 {
     if (near.empty())
-        return {};
-    // if (near.size() == 1)
-    //     return WithinJumps(jumps, near.front());
+        return near;
+    if (near.size() == 1)
+        return WithinJumps(jumps, near.front());
 
-    // if jumps is 0, then just return the input systems, as they are always near themselves
+    // if jumps is 0, then just return the input systems (after filtering for
+    // duplicates below), as they are always near themselves
     if (jumps > 0) {
         distance_matrix_cache<distance_matrix_storage<short>> cache(m_system_jumps);
 
@@ -1256,7 +1257,29 @@ std::vector<int> Pathfinder::PathfinderImpl::WithinJumps(
 }
 
 std::vector<int> Pathfinder::PathfinderImpl::WithinJumps(size_t jumps, int candidate) const {
-    return {}; // WIP
+    auto index_it = m_system_id_to_graph_index.find(candidate);
+    if (index_it == m_system_id_to_graph_index.end())
+        return {};
+    auto system_index = index_it->second;
+
+    if (jumps == 0) // after check for graph index to avoid returning a candidate if it's not actually a system
+        return {candidate};
+
+    std::vector<int> row_result;
+
+    distance_matrix_cache<distance_matrix_storage<short>> cache(m_system_jumps);
+    using row_ref = distance_matrix_storage<short>::row_ref;
+    cache.examine_row(
+        system_index,
+        [this](size_t ii, row_ref row) { HandleCacheMiss(ii, row); },
+        [this, jumps, &row_result](size_t ii, row_ref row) { WithinJumpsCacheHit(row_result, jumps, ii, row); });
+
+    // ensure uniqueness of results
+    std::sort(row_result.begin(), row_result.end());
+    auto it = std::unique(row_result.begin(), row_result.end());
+    row_result.resize(std::distance(row_result.begin(), it));
+
+    return row_result;
 }
 
 /** Examine a single universe object and determine if it is within jumps
