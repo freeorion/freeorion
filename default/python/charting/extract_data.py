@@ -1,4 +1,4 @@
-from common.dump_interface import DumpKey
+from common.statistic_interface import StatKey
 
 
 def start_turn(key, value, data):
@@ -32,15 +32,15 @@ def skip(key, value, data):
 
 
 states = {
-    "new": {DumpKey.EmpireID: (start_first_turn, "first_turn")},
+    "new": {StatKey.EmpireID: (start_first_turn, "first_turn")},
     "first_turn": {
-        DumpKey.EmpireColors: (set_color, "turn"),
+        StatKey.EmpireColors: (set_color, "turn"),
     },
     "turn": {
-        DumpKey.EmpireID: (start_turn, "turn"),
-        DumpKey.EmpireColors: (skip, "turn"),
-        DumpKey.SHIP_CONT: (add_attribute, "turn"),
-        DumpKey.Output: (process_output, "turn"),
+        StatKey.EmpireID: (start_turn, "turn"),
+        StatKey.EmpireColors: (skip, "turn"),
+        StatKey.SHIP_CONT: (add_attribute, "turn"),
+        StatKey.Output: (process_output, "turn"),
     },
 }
 

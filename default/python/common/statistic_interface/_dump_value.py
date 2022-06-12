@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import Dict
 
-from common.dump_interface._serizlizer import (
+from common.statistic_interface._serizlizer import (
     DictSerializer,
     Serializable,
     Serializer,
