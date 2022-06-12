@@ -467,9 +467,6 @@ namespace FreeOrionPython {
         def("getTech",                              +[](const std::string& name) -> const Tech* { return GetTech(name); },
                                                     py::return_value_policy<py::reference_existing_object>(),
                                                     "Returns the tech (Tech) with the indicated name (string).");
-        def("getTechCategories",                    &TechManager::CategoryNames,
-                                                    py::return_value_policy<py::return_by_value>(),
-                                                    "Returns the names of all tech categories (StringVec).");
 
         def("getTechCategories",
             +[]() -> std::vector<std::string> { return ViewVecToStringVec(GetTechManager().CategoryNames()); },
