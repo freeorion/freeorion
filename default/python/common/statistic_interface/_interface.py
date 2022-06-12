@@ -1,31 +1,33 @@
 from abc import ABC
 from enum import Enum
-from typing import Callable, TypeVar
+from typing import Callable, Dict, TypeVar, Union
 
-from common.dump_interface._dump_value import DumpDict, DumpInt
-from common.dump_interface._serizlizer import to_float, to_int, to_str
+from common.statistic_interface._dump_value import DumpDict, DumpInt
+from common.statistic_interface._serizlizer import to_float, to_int, to_str
 
-D = TypeVar("D")
+_ScalarValue = Union[str, int, float]
+
+StatValue = TypeVar("StatValue", Dict[str, _ScalarValue], _ScalarValue)
 
 
 class Serializer(ABC):
     def __init__(
         self,
         *,
-        serializer: Callable[[D], str],
-        deserializer: Callable[[str], D],
+        serializer: Callable[[StatValue], str],
+        deserializer: Callable[[str], StatValue],
     ):
         self._deserializer = deserializer
         self._serializer = serializer
 
-    def deserialize(self, value: str) -> D:
+    def deserialize(self, value: str) -> StatValue:
         return self._deserializer(value)
 
-    def serialize(self, value: D) -> str:
+    def serialize(self, value: StatValue) -> str:
         return self._serializer(value)
 
 
-class DumpKey(Enum):
+class StatKey(Enum):
     EmpireColors = DumpDict(
         "EmpireColors",
         {

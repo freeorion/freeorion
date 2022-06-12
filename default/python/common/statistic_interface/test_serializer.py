@@ -1,5 +1,10 @@
 import pytest
-from common.dump_interface._serizlizer import DictSerializer, to_float, to_int, to_str
+from common.statistic_interface._serizlizer import (
+    DictSerializer,
+    to_float,
+    to_int,
+    to_str,
+)
 
 
 @pytest.mark.parametrize(

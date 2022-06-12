@@ -22,7 +22,7 @@ from common.print_utils import Table, Text
 from empire.growth_specials import get_growth_specials
 from EnumsAI import FocusType, PriorityType, get_priority_resource_types
 from freeorion_tools import combine_ratings, policy_is_adopted, tech_is_complete
-from freeorion_tools.log_dumper import dump
+from freeorion_tools.statistics import stats
 from freeorion_tools.timers import AITimer
 from PolicyAI import algo_research, bureaucracy
 
@@ -375,7 +375,7 @@ class Reporter:
     def dump_output():
         empire = fo.getEmpire()
         pp, rp = empire.productionPoints, empire.resourceProduction(fo.resourceType.research)
-        dump.output(fo.currentTurn(), rp, pp)
+        stats.output(fo.currentTurn(), rp, pp)
 
     @staticmethod
     def print_resources_priority():

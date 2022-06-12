@@ -14,7 +14,7 @@ from aistate_interface import get_aistate
 from character.character_module import Aggression  # noqa F401
 from character.character_strings_module import get_trait_name_aggression
 from common.option_tools import check_bool, get_option_dict
-from freeorion_tools.log_dumper import dump
+from freeorion_tools.statistics import stats
 
 
 def _once(function):
@@ -103,8 +103,8 @@ def _dump_empire_info():
         aggression_name.capitalize(),
     )
     empire_name = "_".join(str(part) for part in name_parts)
-    dump.empire(empire.empireID, empire_name, turn)
-    dump.empire_color(*empire.colour)
+    stats.empire(empire.empireID, empire_name, turn)
+    stats.empire_color(*empire.colour)
 
 
 def greet_on_first_turn(diplomatic_corp):
@@ -154,15 +154,15 @@ def print_starting_intro():
     debug("Generating Orders")
     _dump_empire_info()
     _print_empire_capital()
-    dump.ship_count(get_aistate().shipCount)
+    stats.ship_count(get_aistate().shipCount)
 
 
 def _print_empire_capital():
     planet_id = PlanetUtilsAI.get_capital()
     if planet_id is not None and planet_id != INVALID_ID:
         planet = fo.getUniverse().getPlanet(planet_id)
-        dump.capital(planet_id, planet.name, planet.speciesName)
+        stats.capital(planet_id, planet.name, planet.speciesName)
     else:
-        dump.capital(None, None, None)
+        stats.capital(None, None, None)
     debug("***************************************************************************")
     debug("***************************************************************************")
