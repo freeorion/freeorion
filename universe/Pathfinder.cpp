@@ -4,6 +4,7 @@
 #include <limits>
 #include <shared_mutex>
 #include <stdexcept>
+#include <boost/circular_buffer.hpp>
 #include <boost/container/container_fwd.hpp>
 #include <boost/container/flat_set.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -317,8 +318,6 @@ namespace SystemPathing {
         typedef typename boost::property_map<Graph, boost::vertex_index_t>::const_type  ConstIndexPropertyMap;
         typedef typename boost::property_map<Graph, boost::edge_weight_t>::const_type   ConstEdgeWeightPropertyMap;
 
-        std::pair<std::list<int>, double> retval(std::list<int>(), -1.0);
-
         ConstSystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), graph);
 
         // convert system IDs to graph indices.  try/catch for invalid input system ids.
@@ -327,15 +326,12 @@ namespace SystemPathing {
             system1_index = id_to_graph_index.at(system1_id);
             system2_index = id_to_graph_index.at(system2_id);
         } catch (...) {
-            return retval;
+            return {{}, -1.0}; // specified system(s) do no exist, so no path between them exists
         }
 
         // early exit if systems are the same
-        if (system1_id == system2_id) {
-            retval.first.push_back(system2_id);
-            retval.second = 0.0;    // no jumps needed -> 0 distance
-            return retval;
-        }
+        if (system1_id == system2_id)
+            return {{system2_id}, 0.0}; // no jumps needed -> 0 distance
 
         /* initializing all vertices' predecessors to themselves prevents endless loops
            when back traversing the tree in the case where one of the end systems is
@@ -368,24 +364,25 @@ namespace SystemPathing {
             // the algorithm was exited early, via exception
         }
 
+        boost::circular_buffer<int> buf(id_to_graph_index.size()); // expect that path can at most visit all systems once
 
         int current_system = system2_index;
         while (predecessors[current_system] != current_system) {
-            retval.first.push_front(sys_id_property_map[current_system]);
+            buf.push_front(sys_id_property_map[current_system]);
             current_system = predecessors[current_system];
         }
-        retval.second = distances[system2_index];
 
-        if (retval.first.empty()) {
-            // there is no path between the specified nodes
-            retval.second = -1.0;
-            return retval;
-        } else {
-            // add start system to path, as it wasn't added by traversing predecessors array
-            retval.first.push_front(sys_id_property_map[system1_index]);
+        if (buf.empty())
+            return {{}, -1.0}; // there is no path between the specified nodes
+
+        // add start system to path, as it wasn't added by traversing predecessors array
+        if (buf.full()) {
+            ErrorLogger() << "ShortestPathImpl buffer full before expected!";
+            buf.set_capacity(buf.capacity() + 1);
         }
+        buf.push_front(sys_id_property_map[system1_index]);
 
-        return retval;
+        return {{buf.begin(), buf.end()}, distances[system2_index]};
     }
 
     /** Returns the path between vertices \a system1_id and \a system2_id of
