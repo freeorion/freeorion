@@ -3231,9 +3231,9 @@ namespace {
         }
     }
 
-    const std::string& PlanetEnvFilename(PlanetType planet_type, std::size_t idx) {
+    std::string_view PlanetEnvFilename(PlanetType planet_type, std::size_t idx) {
         if (planet_type == PlanetType::INVALID_PLANET_TYPE || planet_type >= PlanetType::NUM_PLANET_TYPES)
-            return {};
+            return "";
         const auto pt_num = static_cast<std::underlying_type_t<PlanetType>>(planet_type);
         const auto pt_idx = static_cast<std::size_t>(pt_num);
 
@@ -3249,14 +3249,14 @@ namespace {
             const auto& pe_paths = filenames_by_type[pt_idx]; // vector of filenames for input planet type
             static constexpr std::size_t arbitrary_prime = 37;
             if (pe_paths.empty())
-                return {};
+                return "";
             else {
                 std::size_t vec_idx = (idx % arbitrary_prime) % pe_paths.size();
                 return pe_paths[vec_idx];
             }
         }
 
-        return {};
+        return "";
     }
 
     void RefreshDetailPanelSuitabilityTag(const std::string& item_type, const std::string& item_name,
