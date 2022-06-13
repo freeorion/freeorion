@@ -8,7 +8,6 @@ from typing import Callable, Iterable, Optional, Set, Union
 import PlanetUtilsAI
 from AIDependencies import Tags
 from aistate_interface import get_aistate
-from buildings import BuildingType
 from common.fo_typing import PlanetId, SpeciesName
 from EnumsAI import FocusType, PriorityType
 from freeorion_tools import assertion_fails, get_species_tag_value
@@ -592,10 +591,8 @@ class PolicyManager:
     @staticmethod
     def _calculate_max_turn_bureaucracy() -> int:
         """Determine how many turns we can currently keep bureaucracy."""
-        admin_buildings = len(BuildingType.PALACE.built_at()) + len(BuildingType.REGIONAL_ADMIN.built_at())
-        turns_per_building = fo.getNamedValue("BUREAUCRACY_ADMINS_NEEDED_TURN_SCALING")
-        # bureaucracy needs (turns / turns_per_building) buildings rounded down
-        return (admin_buildings + 1) * turns_per_building - 1
+        # quick fix, bureaucracy no longer needs to be readopted regularly
+        return 9999
 
     def _set_priority(self, calculated_priority: float, ignore_old: bool) -> None:
         """Set and log influence priority."""

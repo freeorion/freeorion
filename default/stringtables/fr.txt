@@ -7625,14 +7625,6 @@ Les astronomes ont observé une nouvelle supernova ayant détruit la totalité d
 SITREP_NOVA_DETECTED_LABEL
 Supernova détectée
 
-SITREP_BUREAUCRACY_STOPPED
-'''Le développement de la [[policy PLC_BUREAUCRACY]] nécessite des structures administratives supplémentaires.
-À partir du prochain tour, %rawtext:needbuildings% structures ([[buildingtype BLD_REGIONAL_ADMIN]], [[buildingtype BLD_IMPERIAL_PALACE]]) seront requises afin d'éviter la paralysie de la bureaucratie. Actuellement, un total de %rawtext:havebuildings% structures se trouvent dans l'empire.
-La Bureaucratie requiert une structure administrative supplémentaire tous les [[value BUREAUCRACY_ADMINS_NEEDED_TURN_SCALING]] tours.'''
-
-SITREP_BUREAUCRACY_STOPPED_LABEL
-Paralysie Bureaucratique
-
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH
 ALERTE : il semble que %rawtext% %predefinedshipdesign% aient été repérés dans le système %system%, rôdant près de l'Avant-Poste %species%!
 

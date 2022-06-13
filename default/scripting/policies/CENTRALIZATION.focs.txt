@@ -6,8 +6,8 @@ Policy
     adoptioncost = floor(2.0 * [[POPULATION_OWNED_BY_EMPIRE]]^0.5)
     exclusions = [ "PLC_COLONIZATION" "PLC_CONFEDERATION" "PLC_FEUDALISM" "PLC_ISOLATION" ]
     unlock = [
-        Item type = Building name = "BLD_REGIONAL_ADMIN"
         Item type = Policy name = "PLC_METROPOLES"
+        Item type = Policy name = "PLC_BUREAUCRACY"
     ]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
