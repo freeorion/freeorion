@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.6']
+        python-version: ['3.7']
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
@@ -22,7 +22,7 @@ jobs:
         run: pip install -r default/python/requirements-dev.txt
       - name: Lint with black
         run: |
-          black . --check --no-color -t py36 --diff -q
+          black . --check --no-color -t py37 --diff -q
       - name: Lint with isort
         run: |
           isort . --check-only --diff --quiet
