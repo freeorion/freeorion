@@ -110,7 +110,6 @@ def _handle_class(info: ClassInfo):
         else:
             result.append("    @property")
             result.append("    def %s(self)%s: ..." % (property_name, return_annotation))
-        result.append("")
 
     for routine_name, routine_docs in instance_methods:
         docs = Docs(routine_docs, 2, is_class=True)
@@ -136,11 +135,9 @@ def _handle_class(info: ClassInfo):
 
             result.append("    def %s(*args)%s:%s%s" % (routine_name, return_annotation, doc_string, end))
 
-        result.append("")
     if not (properties or instance_methods):
-        result.append("    ...")
-    if not result[-1]:
-        result.pop()
+        result[-1] += " ..."
+    result.append("")
     yield "\n".join(result)
 
 
