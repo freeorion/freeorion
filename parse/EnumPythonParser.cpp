@@ -4,6 +4,7 @@
 
 #include "../universe/Enums.h"
 #include "../universe/Species.h"
+#include "../universe/System.h"
 #include "../universe/ValueRef.h"
 #include "../Empire/ResourcePool.h"
 
@@ -39,6 +40,19 @@ void RegisterGlobalsEnums(boost::python::dict& globals) {
             {"Product",         ValueRef::StatisticType::PRODUCT}})
     {
         globals[op.first] = enum_wrapper<ValueRef::StatisticType>(op.second);
+    }
+
+    for (const auto& op : std::initializer_list<std::pair<const char*, ::StarType>>{
+            {"Blue",      StarType::STAR_BLUE},
+            {"White",     StarType::STAR_WHITE},
+            {"Yellow",    StarType::STAR_YELLOW},
+            {"Orange",    StarType::STAR_ORANGE},
+            {"Red",       StarType::STAR_RED},
+            {"Neutron",   StarType::STAR_NEUTRON},
+            {"BlackHole", StarType::STAR_BLACK},
+            {"NoStar",    StarType::STAR_NONE}})
+    {
+        globals[op.first] = enum_wrapper< ::StarType>(op.second);
     }
 }
 

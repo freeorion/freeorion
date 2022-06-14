@@ -110,11 +110,12 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def(~py::self_ns::self);
         py::class_<effect_wrapper>("Effect", py::no_init);
         py::class_<effect_group_wrapper>("EffectsGroup", py::no_init);
-        py::class_<enum_wrapper<UnlockableItemType>>("UnlockableItemType", py::no_init);
-        py::class_<enum_wrapper<EmpireAffiliationType>>("EmpireAffiliationType", py::no_init);
-        py::class_<enum_wrapper<ResourceType>>("ResourceType", py::no_init);
-        py::class_<enum_wrapper< ::PlanetEnvironment>>("PlanetEnvironment", py::no_init);
-        py::class_<enum_wrapper<ValueRef::StatisticType>>("PlanetEnvironment", py::no_init);
+        py::class_<enum_wrapper<UnlockableItemType>>("__UnlockableItemType", py::no_init);
+        py::class_<enum_wrapper<EmpireAffiliationType>>("__EmpireAffiliationType", py::no_init);
+        py::class_<enum_wrapper<ResourceType>>("__ResourceType", py::no_init);
+        py::class_<enum_wrapper< ::PlanetEnvironment>>("__PlanetEnvironment", py::no_init);
+        py::class_<enum_wrapper< ::StarType>>("__StarType", py::no_init);
+        py::class_<enum_wrapper<ValueRef::StatisticType>>("__PlanetEnvironment", py::no_init);
         py::class_<unlockable_item_wrapper>("UnlockableItem", py::no_init);
         auto py_variable_wrapper = py::class_<variable_wrapper>("__Variable", py::no_init)
             .def(py::self_ns::self & py::other<condition_wrapper>());
