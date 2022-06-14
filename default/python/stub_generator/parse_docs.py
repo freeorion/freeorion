@@ -100,6 +100,29 @@ class Docs:
             names, types = get_argument_names(argument_set, is_class)
             self.args_sets.append(list(zip(names, types)))
 
+    def _format_arg_string(self, args):
+        arg_string = ", ".join(args)
+
+        # Black limit is 120, this includes
+        # function definition including name and return type
+        # Lets guess the best option
+        # Adding trailing coma will stop black from reformatting lines,
+        # so in case of long names we could just reduce this number.
+        arg_size = 90
+
+        if len(arg_string) <= arg_size:
+            return arg_string
+        else:
+            if self.is_class:
+                indent = " " * 12
+            else:
+                indent = " " * 8
+            result = ["\n"]
+            for arg in args:
+                result.append(f"{indent}{arg},\n")
+            result.append(indent[:-4])
+            return "".join(result)
+
     def get_argument_strings(self) -> Iterator[str]:
         for arg_set in self.args_sets:
             if self.is_class:
@@ -107,7 +130,7 @@ class Docs:
             else:
                 args = []
             args.extend("%s: %s" % (arg_name, arg_type) for arg_name, arg_type in arg_set[self.is_class :])
-            yield ", ".join(args)
+            yield self._format_arg_string(args)
 
     def get_doc_string(self):
         doc = []

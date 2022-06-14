@@ -1433,7 +1433,13 @@ def issueColonizeOrder(number1: int, number2: int) -> int:
     """
 
 def issueCreateShipDesignOrder(
-    string1: str, string2: str, string3: str, item_list: list, string4: str, string5: str, boolean: bool
+    string1: str,
+    string2: str,
+    string3: str,
+    item_list: list,
+    string4: str,
+    string5: str,
+    boolean: bool,
 ) -> int:
     """
     Orders the creation of a new ship design with the name (string), description (string), hull (string), parts vector partsVec (StringVec), graphic (string) and model (string). model should be left as an empty string as of this writing. There is currently no easy way to find the id of the new design, though the client's empire should have the new design after this order is issued successfully. Returns 1 (int) on success or 0 (int) on failure if any of the name, description, hull or graphic are empty strings, if the design is invalid (due to not following number and type of slot requirements for the hull) or if creating the design fails for some reason.
