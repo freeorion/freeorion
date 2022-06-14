@@ -114,9 +114,9 @@ class Docs:
             return arg_string
         else:
             if self.is_class:
-                indent = " " * 12
-            else:
                 indent = " " * 8
+            else:
+                indent = " " * 4
             result = ["\n"]
             for arg in args:
                 result.append(f"{indent}{arg},\n")
