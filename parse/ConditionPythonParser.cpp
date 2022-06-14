@@ -216,6 +216,33 @@ namespace {
         }
         return condition_wrapper(std::make_shared<Condition::Chance>(std::move(probability)));
     }
+
+    condition_wrapper insert_star_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::vector<std::unique_ptr<ValueRef::ValueRef< ::StarType>>> types;
+
+        py_parse::detail::flatten_list<boost::python::object>(kw["type"], [](const boost::python::object& o, std::vector<std::unique_ptr<ValueRef::ValueRef< ::StarType>>>& v) {
+            auto type_arg = boost::python::extract<value_ref_wrapper< ::StarType>>(o);
+            if (type_arg.check()) {
+                v.push_back(ValueRef::CloneUnique(type_arg().value_ref));
+            } else {
+                v.push_back(std::make_unique<ValueRef::Constant< ::StarType>>(boost::python::extract<enum_wrapper< ::StarType>>(o)().value));
+            }
+        }, types);
+
+        return condition_wrapper(std::make_shared<Condition::StarType>(std::move(types)));
+    }
+
+    condition_wrapper insert_in_system_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<int>> system_id;
+        auto id_args = boost::python::extract<value_ref_wrapper<int>>(kw["id"]);
+        if (id_args.check()) {
+            system_id = ValueRef::CloneUnique(id_args().value_ref);
+        } else {
+            system_id = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["id"])());
+        }
+        
+        return condition_wrapper(std::make_shared<Condition::InOrIsSystem>(std::move(system_id)));
+    }
 }
 
 void RegisterGlobalsConditions(boost::python::dict& globals) {
@@ -230,6 +257,8 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
 
     globals["OwnerHasTech"] = boost::python::raw_function(insert_owner_has_tech_);
     globals["Random"] = boost::python::raw_function(insert_random_);
+    globals["Star"] = boost::python::raw_function(insert_star_);
+    globals["InSystem"] = boost::python::raw_function(insert_in_system_);
 
     // non_ship_part_meter_enum_grammar
     for (const auto& meter : std::initializer_list<std::pair<const char*, MeterType>>{
