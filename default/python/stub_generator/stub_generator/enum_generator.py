@@ -23,6 +23,7 @@ def _handle_enum(info: EnumInfo):
 
     for text, value in pairs:
         result.append("    %s = %s" % (text, value))
+    result.append("")
     yield "\n".join(result)
 
 
