@@ -1,0 +1,49 @@
+name: "Windows MS VS build"
+
+on:
+  push:
+    paths-ignore:
+      - 'check/**'
+      - 'doc/**'
+      - 'packaging/**'
+      - 'snap/**'
+      - '*.md'
+      - 'check/**'
+      - 'default/**'
+      - 'test-scripting/**'
+  pull_request:
+    paths-ignore:
+      - 'check/**'
+      - 'doc/**'
+      - 'packaging/**'
+      - 'snap/**'
+      - '*.md'
+      - 'check/**'
+      - 'default/**'
+      - 'test-scripting/**'
+
+jobs:
+  build-windows-2022:
+    name: MSVS 2022 on Windows
+    runs-on: windows-2022
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Download SDK
+        id: download-sdk
+        uses: suisei-cn/actions-download-file@v1
+        with:
+          url: https://github.com/freeorion/freeorion-sdk/releases/download/v13/FreeOrionSDK_13_MSVC-v141-Win32.zip
+          target: ../
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.3
+        with:
+            vs-prerelease: true
+      - name: Prepare
+        run: |
+          unzip -q ../${{ steps.download-sdk.outputs.filename }} -d ..
+          cp ../bin/* ./
+      - name: Build
+        run: |
+          cd msvc2022
+          msbuild FreeOrion.sln /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /property:PlatformToolset=v142 /property:Configuration=Release /verbosity:minimal
