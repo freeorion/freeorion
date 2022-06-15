@@ -26,7 +26,7 @@ on:
 
 jobs:
   build-windows-2019-cmake:
-    name: MSVS 2019 on Windows
+    name: MSVS 2019 on Windows CMake
     runs-on: windows-2019
     steps:
       - name: Checkout sources
@@ -93,7 +93,7 @@ jobs:
           retention-days: 14
 
   build-windows-2022-cmake:
-    name: MSVS 2022 on Windows 
+    name: MSVS 2022 on Windows CMake
     runs-on: windows-2022
     steps:
       - name: Checkout sources
