@@ -69,7 +69,7 @@ jobs:
        cmake -DBUILD_SHARED_LIBS=ON \
              -DBUILD_TESTING=OFF -DBUILD_CLIENT_GG=ON \
              -DBUILD_SERVER=ON -DBUILD_AI=ON \
-             -DBUILD_PARSERS=OFF ..
+             -DBUILD_PARSERS=OFF -DCMAKE_SUPPRESS_REGENERATION=On ..
 
        cmake --build . --config Release
        df

@@ -46,7 +46,7 @@ jobs:
           unzip -q ../${{ steps.download-sdk.outputs.filename }} -d ..
           mkdir build
           pushd build
-          cmake -G "Visual Studio 16 2019" -T v142 -A Win32 -DBUILD_TESTING=On -DBUILD_CLIENT_GODOT=On -DCMAKE_C_FLAGS=/MP -DCMAKE_CXX_FLAGS=/MP ..
+          cmake -G "Visual Studio 16 2019" -T v142 -A Win32 -DBUILD_TESTING=On -DBUILD_CLIENT_GODOT=On -DCMAKE_C_FLAGS=/MP -DCMAKE_CXX_FLAGS=/MP -DCMAKE_SUPPRESS_REGENERATION=On ..
       - name: Build
         run: |
           pushd build
@@ -113,7 +113,7 @@ jobs:
           unzip -q ../${{ steps.download-sdk.outputs.filename }} -d ..
           mkdir build
           pushd build
-          cmake -G "Visual Studio 17 2022" -T v143 -A Win32 -DBUILD_TESTING=On -DBUILD_CLIENT_GODOT=On -DCMAKE_C_FLAGS=/MP -DCMAKE_CXX_FLAGS=/MP ..
+          cmake -G "Visual Studio 17 2022" -T v143 -A Win32 -DBUILD_TESTING=On -DBUILD_CLIENT_GODOT=On -DCMAKE_C_FLAGS=/MP -DCMAKE_CXX_FLAGS=/MP -DCMAKE_SUPPRESS_REGENERATION=On ..
       - name: Build
         run: |
           pushd build

@@ -82,7 +82,7 @@ jobs:
           CCACHE_DIR: ${{ runner.temp }}/ccache
         run: |
           cd build
-          cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=${{ matrix.client-gg }} -DBUILD_CLIENT_GODOT=${{ matrix.client-godot }} ..
+          cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=${{ matrix.client-gg }} -DBUILD_CLIENT_GODOT=${{ matrix.client-godot }} -DCMAKE_SUPPRESS_REGENERATION=On ..
       - name: Configure for clang
         if: ${{ matrix.compiler == 'clang' }}
         env:
@@ -93,7 +93,7 @@ jobs:
           CXX: clang++
         run: |
           cd build
-          cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=${{ matrix.client-gg }} -DBUILD_CLIENT_GODOT=${{ matrix.client-godot }} ..
+          cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=${{ matrix.client-gg }} -DBUILD_CLIENT_GODOT=${{ matrix.client-godot }} -DCMAKE_SUPPRESS_REGENERATION=On ..
       - name: Build
         env:
           CCACHE_DIR: ${{ runner.temp }}/ccache
