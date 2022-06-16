@@ -104,6 +104,7 @@ else:
     boost_python_suffix = "%d%d" % (sys.version_info.major, sys.version_info.minor)
 
 required_boost_libraries = [
+    "boost_atomic",
     "boost_chrono",
     "boost_date_time",
     "boost_filesystem",
