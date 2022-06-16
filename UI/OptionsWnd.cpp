@@ -17,7 +17,7 @@
 #include <GG/TabWnd.h>
 
 #include <boost/spirit/include/qi.hpp>
-#include <boost/spirit/include/phoenix_operator.hpp>
+#include <boost/phoenix/operator.hpp>
 
 #include <boost/format.hpp>
 #include <boost/algorithm/string/predicate.hpp>
