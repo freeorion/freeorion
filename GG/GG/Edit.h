@@ -214,14 +214,10 @@ private:
     bool   m_recently_edited = false; ///< The contents when the focus was last gained
 };
 
-void GG_API GetTranslatedCodePoint(Key key,
-                                   std::uint32_t key_code_point,
-                                   Flags<ModKey> mod_keys,
-                                   std::string& translated_code_point);
+void GG_API GetTranslatedCodePoint(Key key, std::uint32_t key_code_point,
+                                   Flags<ModKey> mod_keys, std::string& translated_code_point);
 
-CPSize GG_API NextWordEdgeFrom(const std::string& text,
-                               CPSize from_position,
-                               bool search_right = true);
+CPSize GG_API NextWordEdgeFrom(std::string_view text, CPSize from_position, bool search_right = true);
 
 }
 

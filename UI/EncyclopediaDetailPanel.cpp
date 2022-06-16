@@ -3970,18 +3970,9 @@ namespace {
         return retval;
     }
 
-    std::set<std::string> ExtractWords(const std::string& search_text) { // TODO: return vector<string_view> ?
-        std::set<std::string> words_in_search_text;
-        for (const auto& word_range : GG::GUI::GetGUI()->FindWordsStringIndices(search_text)) {
-            if (word_range.first == word_range.second)
-                continue;
-            std::string word(search_text.begin() + Value(word_range.first), search_text.begin() + Value(word_range.second));
-            if (word.empty())
-                continue;
-            words_in_search_text.insert(std::move(word));
-        }
-        return words_in_search_text;
-    }
+
+    auto ExtractWords(std::string_view text)
+    { return GG::GUI::GetGUI()->FindWordsStringViews(text); }
 
     void SearchPediaArticleForWords(        std::string article_key,
                                             std::string article_directory,
@@ -3991,7 +3982,7 @@ namespace {
                                             std::pair<std::string, std::string>& partial_match,
                                             std::pair<std::string, std::string>& article_match,
                                             const std::string& search_text,
-                                            const std::set<std::string>& words_in_search_text,
+                                            const std::vector<std::string_view>& words_in_search_text,
                                             std::size_t idx,
                                             bool search_article_text)
     {
@@ -4010,7 +4001,9 @@ namespace {
         // search for full word matches in title
         auto title_words{ExtractWords(article_name)};
         for (const auto& title_word : title_words) {
-            if (words_in_search_text.count(title_word)) {
+            if (std::any_of(words_in_search_text.begin(), words_in_search_text.end(),
+                            [title_word](const auto& wist) { return wist == title_word; }))
+            {
                 word_match = std::move(article_name_link);
                 return;
             }
@@ -4018,7 +4011,7 @@ namespace {
 
         // search for partial word matches: searched-for words that appear
         // in the title text, not necessarily as a complete word
-        for (const std::string& word : words_in_search_text) {
+        for (const auto& word : words_in_search_text) {
             // reject searches in text for words less than 3 characters
             if (word.size() < 3)
                 continue;
@@ -4095,7 +4088,7 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
 
 
     // find distinct words in search text
-    std::set<std::string> words_in_search_text = ExtractWords(search_text);
+    auto words_in_search_text = ExtractWords(search_text);
     if (words_in_search_text.empty())
         return;
 

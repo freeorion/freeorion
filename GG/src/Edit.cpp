@@ -647,8 +647,8 @@ void GG::GetTranslatedCodePoint(Key key, std::uint32_t key_code_point, Flags<Mod
     }
 }
 
-CPSize GG::NextWordEdgeFrom(const std::string& text, CPSize from_position, bool search_right) {
-    std::set<std::pair<CPSize, CPSize>> words = GUI::GetGUI()->FindWords(text);
+CPSize GG::NextWordEdgeFrom(std::string_view text, CPSize from_position, bool search_right) {
+    auto words = GUI::GetGUI()->FindWords(text);
     CPSize retval = CP0;
 
     if (!search_right) {

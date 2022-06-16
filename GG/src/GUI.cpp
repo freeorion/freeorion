@@ -64,7 +64,7 @@ WndEvent::EventType ButtonEvent(WndEvent::EventType left_type, unsigned int mous
 }
 
 namespace {
-    using utf8_wchar_iterator = utf8::iterator<std::string::const_iterator, wchar_t>;
+    using utf8_wchar_iterator = utf8::iterator<std::string_view::const_iterator, wchar_t> ;
     using word_regex = boost::xpressive::basic_regex<utf8_wchar_iterator>;
     using word_regex_iterator = boost::xpressive::regex_iterator<utf8_wchar_iterator>;
 
@@ -1028,71 +1028,77 @@ Flags<ModKey> GUI::ModKeys() const
 bool GUI::MouseLRSwapped() const
 { return m_impl->m_mouse_lr_swap; }
 
-std::set<std::pair<CPSize, CPSize>> GUI::FindWords(const std::string& str) const
+std::vector<std::pair<CPSize, CPSize>> GUI::FindWords(std::string_view str) const
 {
-    std::set<std::pair<CPSize, CPSize>> retval;
-    utf8_wchar_iterator first(str.begin(), str.begin(), str.end());
-    utf8_wchar_iterator last(str.end(), str.begin(), str.end());
-    word_regex_iterator it(first, last, DEFAULT_WORD_REGEX);
-    word_regex_iterator end_it;
-    for ( ; it != end_it; ++it)
-        retval.emplace(CPSize(it->position()), CPSize(it->position() + it->length()));
-    return retval;
-}
-
-std::set<std::pair<StrSize, StrSize>> GUI::FindWordsStringIndices(const std::string& str) const
-{
-    std::set<std::pair<StrSize, StrSize>> retval;
-    if (str.empty())
-        return retval;
+    std::vector<std::pair<CPSize, CPSize>> retval;
 
     try {
-        utf8_wchar_iterator first(str.begin(), str.begin(), str.end());
-        utf8_wchar_iterator last(str.end(), str.begin(), str.end());
-        word_regex_iterator it(first, last, DEFAULT_WORD_REGEX);
-        word_regex_iterator end_it;
+        const utf8_wchar_iterator first(str.begin(), str.begin(), str.end());
+        const utf8_wchar_iterator last(str.end(), str.begin(), str.end());
+        const word_regex_iterator it(first, last, DEFAULT_WORD_REGEX);
+        const word_regex_iterator end_it;
 
-        for ( ; it != end_it; ++it) {
-            auto match_result = *it;
-            utf8_wchar_iterator word_pos_it = first;
+        std::transform(it, end_it, std::back_inserter(retval),
+                       [](const word_regex_iterator::value_type& match_result) -> std::pair<CPSize, CPSize>
+        { return { CPSize(match_result.position()), CPSize(match_result.position() + match_result.length()) }; });
 
-            std::advance(word_pos_it, match_result.position());
-            StrSize start_idx(std::distance(str.begin(), word_pos_it.base()));
-            std::advance(word_pos_it, match_result.length());
-            StrSize end_idx(std::distance(str.begin(), word_pos_it.base()));
-
-            retval.emplace(start_idx, end_idx);
-        }
     } catch (...) {}
+
     return retval;
 }
 
-bool GUI::ContainsWord(const std::string& str, const std::string& word) const
+std::vector<std::pair<StrSize, StrSize>> GUI::FindWordsStringIndices(std::string_view str) const
 {
-    if (word.empty())
-        return false;
+    std::vector<std::pair<StrSize, StrSize>> retval;
 
-    utf8_wchar_iterator first(str.begin(), str.begin(), str.end());
-    utf8_wchar_iterator last(str.end(), str.begin(), str.end());
-    word_regex_iterator it(first, last, DEFAULT_WORD_REGEX);
-    word_regex_iterator end_it;
+    try {
+        const utf8_wchar_iterator first(str.begin(), str.begin(), str.end());
+        const utf8_wchar_iterator last(str.end(), str.begin(), str.end());
+        const word_regex_iterator it(first, last, DEFAULT_WORD_REGEX);
+        const word_regex_iterator end_it;
 
-    typedef word_regex_iterator::value_type match_result_type;
+        std::transform(it, end_it, std::back_inserter(retval),
+                       [first, begin{str.begin()}](const word_regex_iterator::value_type& match_result) -> std::pair<StrSize, StrSize>
+        {
+            auto word_pos_it = first;
+            std::advance(word_pos_it, match_result.position());
+            StrSize start_idx(std::distance(begin, word_pos_it.base()));
+            std::advance(word_pos_it, match_result.length());
+            StrSize end_idx(std::distance(begin, word_pos_it.base()));
 
-    for ( ; it != end_it; ++it) {
-        match_result_type match_result = *it;
-        utf8_wchar_iterator word_pos_it = first;
+            return {start_idx, end_idx};
+        });
+    } catch (...) {}
 
-        std::advance(word_pos_it, match_result.position());
-        auto start_it = word_pos_it.base();
-        std::advance(word_pos_it, match_result.length());
-        std::string word_in_str(start_it, word_pos_it.base());
+    return retval;
+}
 
-        if (boost::iequals(word_in_str, word))
-            return true;
-    }
+std::vector<std::string_view> GUI::FindWordsStringViews(std::string_view str) const
+{
+    std::vector<std::string_view> retval;
 
-    return false;
+    try {
+        const utf8_wchar_iterator first(str.begin(), str.begin(), str.end());
+        const utf8_wchar_iterator last(str.end(), str.begin(), str.end());
+        const word_regex_iterator it(first, last, DEFAULT_WORD_REGEX);
+        const word_regex_iterator end_it;
+
+        std::transform(it, end_it, std::back_inserter(retval),
+                      [str, first, begin{str.begin()}](const word_regex_iterator::value_type& match_result)
+        {
+            auto word_pos_it = first;
+            std::advance(word_pos_it, match_result.position());
+            auto start_idx(std::distance(begin, word_pos_it.base()));
+
+            auto word_end_it = word_pos_it;
+            std::advance(word_end_it, match_result.length());
+            auto len = std::distance(word_pos_it.base(), word_end_it.base());
+
+            return str.substr(start_idx, len);
+        });
+    } catch (...) {}
+
+    return retval;
 }
 
 const std::shared_ptr<StyleFactory>& GUI::GetStyleFactory() const
