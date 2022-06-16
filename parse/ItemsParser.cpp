@@ -4,7 +4,7 @@
 #include "EnumParser.h"
 #include "../universe/UnlockableItem.h"
 
-#include <boost/spirit/include/phoenix.hpp>
+#include <boost/phoenix.hpp>
 
 
 #define DEBUG_PARSERS 0

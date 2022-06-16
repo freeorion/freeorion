@@ -8,7 +8,7 @@
 #include "../universe/Universe.h"
 #include "../universe/FleetPlan.h"
 
-#include <boost/spirit/include/phoenix.hpp>
+#include <boost/phoenix.hpp>
 
 #define DEBUG_PARSERS 0
 

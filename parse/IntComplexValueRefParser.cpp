@@ -8,7 +8,7 @@
 #include "../universe/Planet.h"
 #include "../universe/System.h"
 
-#include <boost/spirit/include/phoenix.hpp>
+#include <boost/phoenix.hpp>
 #include <boost/spirit/include/qi_as.hpp>
 
 

@@ -43,7 +43,7 @@ namespace boost::core {
 #include <boost/preprocessor/stringize.hpp>
 #include <boost/spirit/include/lex_lexertl.hpp>
 #include <boost/spirit/include/lex_lexertl_position_token.hpp>
-#include <boost/spirit/include/phoenix.hpp>
+#include <boost/phoenix.hpp>
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/qi_as.hpp>
 #include <boost/spirit/include/support_argument.hpp>

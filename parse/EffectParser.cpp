@@ -9,7 +9,7 @@
 #include "../universe/Condition.h"
 #include "../universe/Effect.h"
 
-#include <boost/spirit/include/phoenix.hpp>
+#include <boost/phoenix.hpp>
 
 namespace parse {
 

@@ -5,7 +5,7 @@
 
 #include "../universe/ValueRefs.h"
 
-#include <boost/spirit/include/phoenix.hpp>
+#include <boost/phoenix.hpp>
 
 namespace parse { namespace detail {
     visibility_complex_parser_grammar::visibility_complex_parser_grammar(

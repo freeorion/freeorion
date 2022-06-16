@@ -5,7 +5,7 @@
 #include "../universe/Effects.h"
 #include "../universe/ValueRef.h"
 
-#include <boost/spirit/include/phoenix.hpp>
+#include <boost/phoenix.hpp>
 
 namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;

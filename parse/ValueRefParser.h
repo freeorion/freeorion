@@ -9,7 +9,7 @@
 #include "../universe/EnumsFwd.h"
 
 #include <boost/spirit/include/qi.hpp>
-#include <boost/spirit/include/phoenix.hpp>
+#include <boost/phoenix.hpp>
 
 namespace Condition {
     struct Condition;

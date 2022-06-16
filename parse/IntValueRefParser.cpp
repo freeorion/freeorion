@@ -4,7 +4,7 @@
 #include "MovableEnvelope.h"
 #include "../universe/ValueRef.h"
 
-#include <boost/spirit/include/phoenix.hpp>
+#include <boost/phoenix.hpp>
 
 parse::detail::simple_int_parser_rules::simple_int_parser_rules(const parse::lexer& tok) :
     simple_variable_rules("integer", tok)

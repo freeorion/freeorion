@@ -3,7 +3,7 @@
 #include "MovableEnvelope.h"
 #include "../universe/ValueRefs.h"
 
-#include <boost/spirit/include/phoenix.hpp>
+#include <boost/phoenix.hpp>
 
 namespace parse { namespace detail {
     string_complex_parser_grammar::string_complex_parser_grammar(

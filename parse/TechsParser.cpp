@@ -16,7 +16,7 @@
 #include "../universe/Tech.h"
 #include "../util/Directories.h"
 
-#include <boost/spirit/include/phoenix.hpp>
+#include <boost/phoenix.hpp>
 #include <boost/spirit/include/qi_as.hpp>
 
 #include <boost/python/import.hpp>

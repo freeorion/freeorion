@@ -13,7 +13,7 @@
 #include "../universe/Effect.h"
 #include "../universe/ValueRefs.h"
 
-#include <boost/spirit/include/phoenix.hpp>
+#include <boost/phoenix.hpp>
 
 
 namespace phoenix = boost::phoenix;

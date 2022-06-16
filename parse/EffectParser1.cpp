@@ -4,7 +4,7 @@
 #include "../universe/ValueRef.h"
 #include "../universe/Enums.h"
 
-#include <boost/spirit/include/phoenix.hpp>
+#include <boost/phoenix.hpp>
 #include <boost/phoenix/function/adapt_function.hpp>
 
 namespace qi = boost::spirit::qi;

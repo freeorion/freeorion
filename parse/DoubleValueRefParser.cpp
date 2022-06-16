@@ -5,7 +5,7 @@
 #include "../universe/ValueRef.h"
 #include "../universe/ValueRefs.h"
 
-#include <boost/spirit/include/phoenix.hpp>
+#include <boost/phoenix.hpp>
 
 parse::detail::simple_double_parser_rules::simple_double_parser_rules(const parse::lexer& tok) :
     simple_variable_rules("double", tok)

@@ -5,7 +5,7 @@
 #include "../universe/ShipDesign.h"
 #include "../util/Directories.h"
 
-#include <boost/spirit/include/phoenix.hpp>
+#include <boost/phoenix.hpp>
 #include <boost/phoenix/function/adapt_function.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>

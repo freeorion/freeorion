@@ -6,7 +6,7 @@
 #include "MovableEnvelope.h"
 #include "../universe/ValueRefs.h"
 
-#include <boost/spirit/include/phoenix.hpp>
+#include <boost/phoenix.hpp>
 
 namespace parse {
     string_parser_grammar::string_parser_grammar(
