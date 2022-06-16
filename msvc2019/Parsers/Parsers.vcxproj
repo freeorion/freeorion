@@ -267,7 +267,9 @@
     <ClCompile Include="..\..\parse\UniverseObjectTypeValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\ValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\VisibilityValueRefParser.cpp" />
-    <ClCompile Include="..\..\parse\ValueRefPythonParser.cpp" />
+    <ClCompile Include="..\..\parse\ValueRefPythonParser.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4244;4251;4275;4180</DisableSpecificWarnings>
+    </ClCompile>
     <ClCompile Include="..\..\parse\ConditionPythonParser.cpp">
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4180;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
