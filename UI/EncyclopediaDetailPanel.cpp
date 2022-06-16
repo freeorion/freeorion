@@ -1178,64 +1178,59 @@ void EncyclopediaDetailPanel::InitBuffers() {
 }
 
 void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, const std::string& data) {
-    using boost::lexical_cast;
-    try {
-        if (link_type == VarText::PLANET_ID_TAG) {
-            ClientUI::GetClientUI()->ZoomToPlanet(lexical_cast<int>(data));
-            this->SetPlanet(lexical_cast<int>(data));
+    if (link_type == VarText::PLANET_ID_TAG) {
+        auto id = ToInt(data, INVALID_OBJECT_ID);
+        ClientUI::GetClientUI()->ZoomToPlanet(id);
+        this->SetPlanet(id);
 
-        } else if (link_type == VarText::SYSTEM_ID_TAG) {
-            ClientUI::GetClientUI()->ZoomToSystem(lexical_cast<int>(data));
-        } else if (link_type == VarText::FLEET_ID_TAG) {
-            ClientUI::GetClientUI()->ZoomToFleet(lexical_cast<int>(data));
-        } else if (link_type == VarText::SHIP_ID_TAG) {
-            ClientUI::GetClientUI()->ZoomToShip(lexical_cast<int>(data));
-        } else if (link_type == VarText::BUILDING_ID_TAG) {
-            ClientUI::GetClientUI()->ZoomToBuilding(lexical_cast<int>(data));
-        } else if (link_type == VarText::FIELD_ID_TAG) {
-            ClientUI::GetClientUI()->ZoomToField(lexical_cast<int>(data));
+    } else if (link_type == VarText::SYSTEM_ID_TAG) {
+        ClientUI::GetClientUI()->ZoomToSystem(ToInt(data, INVALID_OBJECT_ID));
+    } else if (link_type == VarText::FLEET_ID_TAG) {
+        ClientUI::GetClientUI()->ZoomToFleet(ToInt(data, INVALID_OBJECT_ID));
+    } else if (link_type == VarText::SHIP_ID_TAG) {
+        ClientUI::GetClientUI()->ZoomToShip(ToInt(data, INVALID_OBJECT_ID));
+    } else if (link_type == VarText::BUILDING_ID_TAG) {
+        ClientUI::GetClientUI()->ZoomToBuilding(ToInt(data, INVALID_OBJECT_ID));
+    } else if (link_type == VarText::FIELD_ID_TAG) {
+        ClientUI::GetClientUI()->ZoomToField(ToInt(data, INVALID_OBJECT_ID));
 
-        } else if (link_type == VarText::COMBAT_ID_TAG) {
-            ClientUI::GetClientUI()->ZoomToCombatLog(lexical_cast<int>(data));
+    } else if (link_type == VarText::COMBAT_ID_TAG) {
+        ClientUI::GetClientUI()->ZoomToCombatLog(ToInt(data, CombatLogManager::INVALID_COMBAT_LOG_ID));
 
-        } else if (link_type == VarText::EMPIRE_ID_TAG) {
-            this->SetEmpire(lexical_cast<int>(data));
-        } else if (link_type == VarText::DESIGN_ID_TAG) {
-            this->SetDesign(lexical_cast<int>(data));
-        } else if (link_type == VarText::PREDEFINED_DESIGN_TAG) {
-            if (const ShipDesign* design = GetUniverse().GetGenericShipDesign(data))
-                this->SetDesign(design->ID());
+    } else if (link_type == VarText::EMPIRE_ID_TAG) {
+        this->SetEmpire(ToInt(data, ALL_EMPIRES));
+    } else if (link_type == VarText::DESIGN_ID_TAG) {
+        this->SetDesign(ToInt(data, INVALID_DESIGN_ID));
+    } else if (link_type == VarText::PREDEFINED_DESIGN_TAG) {
+        if (const ShipDesign* design = GetUniverse().GetGenericShipDesign(data))
+            this->SetDesign(design->ID());
 
-        } else if (link_type == VarText::TECH_TAG) {
-            this->SetTech(data);
-        } else if (link_type == VarText::POLICY_TAG) {
-            this->SetPolicy(data);
-        } else if (link_type == VarText::BUILDING_TYPE_TAG) {
-            this->SetBuildingType(data);
-        } else if (link_type == VarText::FIELD_TYPE_TAG) {
-            this->SetFieldType(data);
-        } else if (link_type == VarText::METER_TYPE_TAG) {
-            this->SetMeterType(data);
-        } else if (link_type == VarText::SPECIAL_TAG) {
-            this->SetSpecial(data);
-        } else if (link_type == VarText::SHIP_HULL_TAG) {
-            this->SetShipHull(data);
-        } else if (link_type == VarText::SHIP_PART_TAG) {
-            this->SetShipPart(data);
-        } else if (link_type == VarText::SPECIES_TAG) {
-            this->SetSpecies(data);
-        } else if (link_type == TextLinker::ENCYCLOPEDIA_TAG) {
-            this->SetText(data, false);
-        } else if (link_type == TextLinker::GRAPH_TAG) {
-            this->SetGraph(data);
-        } else if (link_type == TextLinker::URL_TAG) {
-            GGHumanClientApp::GetApp()->OpenURL(data);
-        } else if (link_type == TextLinker::BROWSE_PATH_TAG) {
-            GGHumanClientApp::GetApp()->BrowsePath(FilenameToPath(data));
-        }
-
-    } catch (const boost::bad_lexical_cast&) {
-        ErrorLogger() << "EncyclopediaDetailPanel::HandleLinkClick caught lexical cast exception for link type: " << link_type << " and data: " << data;
+    } else if (link_type == VarText::TECH_TAG) {
+        this->SetTech(data);
+    } else if (link_type == VarText::POLICY_TAG) {
+        this->SetPolicy(data);
+    } else if (link_type == VarText::BUILDING_TYPE_TAG) {
+        this->SetBuildingType(data);
+    } else if (link_type == VarText::FIELD_TYPE_TAG) {
+        this->SetFieldType(data);
+    } else if (link_type == VarText::METER_TYPE_TAG) {
+        this->SetMeterType(data);
+    } else if (link_type == VarText::SPECIAL_TAG) {
+        this->SetSpecial(data);
+    } else if (link_type == VarText::SHIP_HULL_TAG) {
+        this->SetShipHull(data);
+    } else if (link_type == VarText::SHIP_PART_TAG) {
+        this->SetShipPart(data);
+    } else if (link_type == VarText::SPECIES_TAG) {
+        this->SetSpecies(data);
+    } else if (link_type == TextLinker::ENCYCLOPEDIA_TAG) {
+        this->SetText(data, false);
+    } else if (link_type == TextLinker::GRAPH_TAG) {
+        this->SetGraph(data);
+    } else if (link_type == TextLinker::URL_TAG) {
+        GGHumanClientApp::GetApp()->OpenURL(data);
+    } else if (link_type == TextLinker::BROWSE_PATH_TAG) {
+        GGHumanClientApp::GetApp()->BrowsePath(FilenameToPath(data));
     }
 }
 

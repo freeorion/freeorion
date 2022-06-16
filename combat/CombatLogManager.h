@@ -52,11 +52,13 @@ public:
     void CompleteLog(int id, const CombatLog& log); // TODO: add && override
     void Clear();
 
+    static constexpr int INVALID_COMBAT_LOG_ID = -1;
+
 private:
     std::unordered_map<int, CombatLog> m_logs;
     //! Set of logs ids that do not have bodies and need to be fetched from the server
     std::set<int>                      m_incomplete_logs;
-    std::atomic<int>                   m_latest_log_id = -1;
+    std::atomic<int>                   m_latest_log_id = 0;
 
     template <typename Archive>
     friend void serialize(Archive&, CombatLogManager&, const unsigned int);
