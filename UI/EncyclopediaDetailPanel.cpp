@@ -167,6 +167,9 @@ namespace {
         return dir_names;
     }
 
+    std::map<std::string, std::string> prepended_homeworld_names;
+    std::mutex prepended_homeworld_names_access;
+
     /** Returns map from (Human-readable and thus sorted article name) to
         pair of (article link tag text, stringtable key for article category or
         subcategorization of it). Category is something like "ENC_TECH" and
@@ -364,9 +367,24 @@ namespace {
                                     std::forward_as_tuple(UserString(entry.first)),
                                     std::forward_as_tuple(species_entry.append("\n"), entry.first));
             }
+
+#if defined(__cpp_lib_char8_t)
+            static constexpr std::u8string_view slash_thing_chars = u8"\u20E0 ";
+            static constexpr auto slash_thing_arr = []() {
+                std::array<std::string_view::value_type, slash_thing_chars.size()> retval{};
+                for (std::size_t idx = 0; idx < retval.size(); ++idx)
+                    retval[idx] = slash_thing_chars[idx];
+                return retval;
+            }();
+            static const std::string_view slash_thing(slash_thing_arr.data(), slash_thing_arr.size());
+#else
+            static constexpr std::string_view slash_thing = u8"\u20E0 "; // "⃠"  ⃠ Combining Enclosing Circle Backslash
+#endif
+
             retval.emplace_back(std::piecewise_construct,
-                                std::forward_as_tuple("⃠ "),
+                                std::forward_as_tuple(slash_thing),
                                 std::forward_as_tuple("\n\n", "  "));
+
             for (const auto& entry : GetSpeciesManager()) {
                 if (!homeworlds.count(entry.first) || homeworlds.at(entry.first).empty()) {
                     std::string species_entry{
@@ -375,9 +393,16 @@ namespace {
                         .append(UserString("NO_HOMEWORLD"))
                         .append("\n")
                     };
-                    retval.emplace_back(std::piecewise_construct,
-                                        std::forward_as_tuple("⃠⃠⃠ " + UserString(entry.first)),
-                                        std::forward_as_tuple(std::move(species_entry), entry.first));
+                    const auto& us_entry_first = UserString(entry.first);
+                    {
+                        std::scoped_lock prepended_lock{prepended_homeworld_names_access};
+                        const auto& prep_entry = prepended_homeworld_names.try_emplace(
+                            us_entry_first, std::string{slash_thing}.append(us_entry_first)).first->second;
+
+                        retval.emplace_back(std::piecewise_construct,
+                                            std::forward_as_tuple(prep_entry),
+                                            std::forward_as_tuple(std::move(species_entry), entry.first));
+                    }
                 }
             }
 
@@ -1162,6 +1187,11 @@ namespace {
         for (auto& [readable_article_name, link_category] : sorted_entries) {
             auto& [link_text, category_str_key] = link_category;
 
+            if (!utf8::is_valid(readable_article_name.begin(), readable_article_name.end())) {
+                ErrorLogger() << "GetSubDirs invalid article name: " << readable_article_name
+                              << "  in category: " << category_str_key;
+            }
+
             // explicitly exclude textures and input directory itself
             if (category_str_key == "ENC_TEXTURES" || category_str_key == dir_name)
                 continue;
@@ -1170,8 +1200,8 @@ namespace {
                                          GetSubDirs,
                                          category_str_key, exclude_custom_categories_from_dir_name, depth));
 
-            retval.emplace(std::pair{std::move(category_str_key), dir_name},
-                           std::pair{readable_article_name, std::move(link_text)});
+            retval.emplace(std::pair{category_str_key, dir_name}, // don't move from category_str_key as it's viewed by the above future
+                           std::pair{std::string{readable_article_name}, std::move(link_text)});
         }
 
         for (auto& fut : futures)
@@ -3068,14 +3098,20 @@ namespace {
         auto font = ClientUI::GetFont();
 
 #if defined(__cpp_lib_char8_t)
-        static constexpr std::u8string_view hair_space_chars{u8"\u200A"};
-        static const std::string hair_space_str{hair_space_chars.begin(), hair_space_chars.end()};
         DebugLogger() << "HairSpaceExtext with __cpp_lib_char8_t defined";
+        static constexpr std::u8string_view hair_space_u8chars{u8"\u200A"};
+        static constexpr auto hair_space_arr = []() {
+            std::array<std::string_view::value_type, hair_space_u8chars.size()> retval{};
+            for (std::size_t idx = 0; idx < retval.size(); ++idx)
+                retval[idx] = hair_space_u8chars[idx];
+            return retval;
+        }();
+        static constexpr std::string_view hair_space_chars(hair_space_arr.data(), hair_space_arr.size());
 #else
-        static constexpr std::string_view hair_space_chars{u8"\u200A"};
-        static const std::string hair_space_str{hair_space_chars};
         DebugLogger() << "HairSpaceExtext without __cpp_lib_char8_t defined";
+        static constexpr std::string_view hair_space_chars{u8"\u200A"};
 #endif
+        static const std::string hair_space_str{hair_space_chars};
         DebugLogger() << "hair_space_str: " << hair_space_str << " valid UTF8?: "
                       << utf8::is_valid(hair_space_str.begin(), hair_space_str.end());
 
@@ -3963,6 +3999,20 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
     // assemble link text to all pedia entries, indexed by name
     std::size_t idx = -1;
     for (auto& [article_key_directory, article_name_link] : pedia_entries) {
+        if (!utf8::is_valid(article_key_directory.first.begin(), article_key_directory.first.end())) {
+            ErrorLogger() << "Invalid key UTF8: " << article_key_directory.first
+                          << "  name: " << article_name_link.first
+                          << "  dir: " << article_key_directory.second;
+            continue;
+        }
+        if (!utf8::is_valid(article_name_link.first.begin(), article_name_link.first.end())) {
+            ErrorLogger() << "Invalid name UTF8: " << article_name_link.first
+                          << "  key: " << article_key_directory.first
+                          << "  dir: " << article_key_directory.second;
+            continue;
+        }
+
+
         idx++;
         auto& emr{exact_match_report[idx]};
         auto& wmr{word_match_report[idx]};
