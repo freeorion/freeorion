@@ -31,6 +31,15 @@ value_ref_wrapper<double> operator*(int lhs, const value_ref_wrapper<double>& rh
     );
 }
 
+value_ref_wrapper<double> operator*(const value_ref_wrapper<int>& lhs, const value_ref_wrapper<double>& rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::TIMES,
+            std::make_unique<ValueRef::StaticCast<int, double>>(ValueRef::CloneUnique(lhs.value_ref)),
+            ValueRef::CloneUnique(rhs.value_ref)
+        )
+    );
+}
+
 value_ref_wrapper<double> operator*(const value_ref_wrapper<double>& lhs, double rhs) {
     return value_ref_wrapper<double>(
         std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::TIMES,
@@ -54,6 +63,15 @@ value_ref_wrapper<double> operator*(double lhs, const value_ref_wrapper<double>&
         std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::TIMES,
             std::make_unique<ValueRef::Constant<double>>(lhs),
             ValueRef::CloneUnique(rhs.value_ref)
+        )
+    );
+}
+
+value_ref_wrapper<double> operator*(double lhs, const value_ref_wrapper<int>& rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::TIMES,
+            std::make_unique<ValueRef::Constant<double>>(lhs),
+            std::make_unique<ValueRef::StaticCast<int, double>>(ValueRef::CloneUnique(rhs.value_ref))
         )
     );
 }
@@ -116,6 +134,15 @@ condition_wrapper operator>(const value_ref_wrapper<double>& lhs, const value_re
         std::make_shared<Condition::ValueTest>(ValueRef::CloneUnique(lhs.value_ref),
             Condition::ComparisonType::GREATER_THAN,
             ValueRef::CloneUnique(rhs.value_ref))
+    );
+}
+
+value_ref_wrapper<int> operator*(int lhs, const value_ref_wrapper<int>& rhs) {
+    return value_ref_wrapper<int>(
+        std::make_shared<ValueRef::Operation<int>>(ValueRef::OpType::TIMES,
+            std::make_unique<ValueRef::Constant<int>>(lhs),
+            ValueRef::CloneUnique(rhs.value_ref)
+        )
     );
 }
 
@@ -374,7 +401,23 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
     globals["NamedReal"] = boost::python::raw_function(insert_named_<double>);
     globals["NamedRealLookup"] = boost::python::raw_function(insert_named_lookup_<double>);
     globals["Value"] = value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE));
-    globals["CurrentTurn"] = value_ref_wrapper<int>(std::make_shared<ValueRef::Variable<int>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, "CurrentTurn"));
+
+    // free variable name
+    for (const char* variable : {"CombatBout",
+                                 "CurrentTurn",
+                                 "GalaxyAge",
+                                 "GalaxyMaxAIAggression",
+                                 "GalaxyMonsterFrequency",
+                                 "GalaxyNativeFrequency",
+                                 "GalaxyPlanetDensity",
+                                 "GalaxyShape",
+                                 "GalaxySize",
+                                 "GalaxySpecialFrequency",
+                                 "GalaxyStarlaneFrequency",
+                                 "UsedInDesignID"})
+    {
+        globals[variable] = value_ref_wrapper<int>(std::make_shared<ValueRef::Variable<int>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, variable));       
+    }
 
     // Integer complex variables
     for (const char* variable : {"BuildingTypesOwned",
