@@ -7018,7 +7018,7 @@ namespace {
     struct CustomRowCmp {
         bool operator()(const std::pair<std::string, int>& lhs,
                         const std::pair<std::string, int>& rhs) const
-        { return GetLocale("en_US.UTF-8").operator()(lhs.first, rhs.first); } // todo: use .second values to break ties
+        { return GetLocale().operator()(lhs.first, rhs.first); } // todo: use .second values to break ties
     };
 
     std::set<std::pair<std::string, int>, CustomRowCmp> GetSystemNamesIDs() {

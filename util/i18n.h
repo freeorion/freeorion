@@ -12,7 +12,7 @@
 
 #if !defined(FREEORION_ANDROID)
 /** Returns locale, which may be previously cached */
-FO_COMMON_API std::locale GetLocale(const std::string& name = std::string(""));
+FO_COMMON_API const std::locale& GetLocale(std::string_view name = "en_US.UTF-8");
 #endif
 
 /** Returns a language-specific string for the key-string \a str */

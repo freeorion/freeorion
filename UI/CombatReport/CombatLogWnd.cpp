@@ -170,7 +170,7 @@ namespace {
                 // I, X β I, X α II
                 return lhs_public_name < rhs_public_name;
 #else
-                return GetLocale("en_US.UTF-8").operator()(lhs_public_name, rhs_public_name);
+                return GetLocale().operator()(lhs_public_name, rhs_public_name);
 #endif
             }
 

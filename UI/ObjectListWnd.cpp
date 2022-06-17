@@ -1862,7 +1862,7 @@ namespace {
             // Collate on OSX seemingly ignores greek characters, resulting in sort order: X α I, X β I, X α II
             return lhs_key < rhs_key;
 #else
-            return GetLocale("en_US.UTF-8").operator()(lhs_key, rhs_key);
+            return GetLocale().operator()(lhs_key, rhs_key);
 #endif
         }
 

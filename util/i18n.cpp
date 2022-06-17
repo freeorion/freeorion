@@ -272,34 +272,20 @@ namespace {
 }
 
 #if !defined(FREEORION_ANDROID)
-std::locale GetLocale(const std::string& name) {
-    static bool locale_init { false };
-    // Initialize backend and generator on first use, provide a log for current enivornment locale
-    static auto locale_backend = boost::locale::localization_backend_manager::global();
-    if (!locale_init)
+const std::locale& GetLocale(std::string_view name) {
+    thread_local auto retval = [name_str{std::string{name}}]() -> std::locale {
+        static auto locale_backend = boost::locale::localization_backend_manager::global();
         locale_backend.select("std");
-    static boost::locale::generator locale_gen(locale_backend);
-    if (!locale_init) {
+        static boost::locale::generator locale_gen(locale_backend);
         locale_gen.locale_cache_enabled(true);
         try {
-            InfoLogger() << "Global locale: " << std::use_facet<boost::locale::info>(locale_gen("")).name();
-        } catch (const std::runtime_error&) {
-            ErrorLogger() << "Global locale: set to invalid locale, setting to C locale";
-            std::locale::global(std::locale::classic());
+            auto retval = locale_gen.generate(name_str);
+            std::use_facet<boost::locale::info>(retval);
+            return retval;
+        } catch (...) {
+            return std::locale::classic();
         }
-        locale_init = true;
-    }
-
-    std::locale retval;
-    try {
-        retval = locale_gen(name);
-    } catch(const std::runtime_error&) {
-        ErrorLogger() << "Requested locale \"" << name << "\" is not a valid locale for this operating system";
-        return std::locale::classic();
-    }
-
-    TraceLogger() << "Requested " << (name.empty() ? "(default)" : name) << " locale"
-                  << " returning " << std::use_facet<boost::locale::info>(retval).name();
+    }();
     return retval;
 }
 #endif
