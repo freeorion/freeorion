@@ -211,6 +211,11 @@ namespace {
        
         return effect_wrapper(std::make_shared<Effect::SetOwner>(std::move(empire)));
     }
+
+    effect_wrapper victory(const boost::python::tuple& args, const boost::python::dict& kw) {
+        auto reason = boost::python::extract<std::string>(kw["reason"])();
+        return effect_wrapper(std::make_shared<Effect::Victory>(reason));
+    }
 }
 
 void RegisterGlobalsEffects(py::dict& globals) {
@@ -227,6 +232,7 @@ void RegisterGlobalsEffects(py::dict& globals) {
     globals["Conditional"] = py::raw_function(insert_conditional_);
 
     globals["SetEmpireMeter"] = py::raw_function(set_empire_meter);
+    globals["Victory"] = py::raw_function(victory);
 
     // set_non_ship_part_meter_enum_grammar
     for (const auto& meter : std::initializer_list<std::pair<const char*, MeterType>>{
