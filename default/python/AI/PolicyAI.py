@@ -12,6 +12,7 @@ from common.fo_typing import PlanetId, SpeciesName
 from EnumsAI import FocusType, PriorityType
 from freeorion_tools import assertion_fails, get_species_tag_value
 from freeorion_tools.caching import cache_for_current_turn
+from freeorion_tools.statistics import stats
 from ResearchAI import research_now
 from turn_state import get_empire_planets_by_species
 
@@ -660,6 +661,7 @@ class PolicyManager:
         if fo.issueAdoptPolicyOrder(name, category, slot) and name in self._empire.adoptedPolicies:
             if name not in self._originally_adopted:
                 self._ip -= policy.adoptionCost()
+            stats.adopt_policy(name)
             debug(f"Issued adoption order for {name} in slot {slot} turn {fo.currentTurn()}, remaining IP: {self._ip}")
             self._adoptable = self._get_adoptable()
             self._adopted.add(name)
@@ -682,6 +684,7 @@ class PolicyManager:
         """Deadopt name, if it is adopted."""
         if name in self._adopted:
             fo.issueDeadoptPolicyOrder(name)
+            stats.deadopt_policy(name)
             self._adopted.remove(name)
             self._adoptable = self._get_adoptable()
             if name not in self._originally_adopted:

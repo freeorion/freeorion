@@ -7,7 +7,7 @@ def start_turn(key, value, data):
 
 def add_attribute(key, value, data):
     info = data["turns"][-1]
-    info[key.name] = key.value.deserialize(value)
+    info[key.name] = value
 
 
 def start_first_turn(key, value, data):
@@ -31,6 +31,8 @@ def skip(key, value, data):
     pass
 
 
+DEFAULT = object()
+
 states = {
     "new": {StatKey.EmpireID: (start_first_turn, "first_turn")},
     "first_turn": {
@@ -39,7 +41,7 @@ states = {
     "turn": {
         StatKey.EmpireID: (start_turn, "turn"),
         StatKey.EmpireColors: (skip, "turn"),
-        StatKey.SHIP_CONT: (add_attribute, "turn"),
+        DEFAULT: (add_attribute, "turn"),
         StatKey.Output: (process_output, "turn"),
     },
 }
@@ -53,7 +55,7 @@ def process_state(lines):
         handlers = states[state]
         if key in handlers:
             handler, state = handlers[key]
-            handler(key, key.value.deserialize(value), data)
         else:
-            pass
+            handler, state = handlers[DEFAULT]
+        handler(key, key.value.deserialize(value), data)
     return data

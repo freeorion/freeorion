@@ -3,6 +3,7 @@ from typing import Dict
 
 from common.statistic_interface._serizlizer import (
     DictSerializer,
+    ListSerializer,
     Serializable,
     Serializer,
     to_float,
@@ -41,3 +42,8 @@ class DumpStr(Dump):
 class DumpDict(Dump):
     def __init__(self, name: str, items: Dict[str, Serializer]):
         super().__init__(name, DictSerializer(items))
+
+
+class DumpList(Dump):
+    def __init__(self, name: str, serializer: Serializer):
+        super().__init__(name, ListSerializer(serializer))

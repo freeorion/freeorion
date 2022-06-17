@@ -58,8 +58,29 @@ def plot_for_attribute(ais_data, attribute):
     )
 
 
-def add_sidebar(ais_data):
-    with st.sidebar:
+def plot_policy_adoptions(ais_data):
+    data = {}
+    for empire in ais_data:
+        empire_id = empire["empire_id"]
+        for turn in empire["turns"]:
+            adoptions = set(turn.get("PolicyAdoption", []))
+            deadoptions = set(turn.get("PolicyDeAdoption", []))
+
+            adoptions = adoptions - deadoptions
+            deadoptions = deadoptions - adoptions
+            result = set(*adoptions, *deadoptions)
+
+            data.setdefault(empire_id, {})[turn["turn"]] = result
+
+    # frame = pd.DataFrame(data)
+
+    st.table(pd.DataFrame(data))
+
+
+def draw_plots(ais_data):
+    ais_data = sorted(ais_data, key=lambda x: int(x["empire_id"]))
+
+    with st.expander("Legend", expanded=False):
         for item in ais_data:
             color = to_hex_color(item["color"])
             player = item["player_name"]
@@ -67,10 +88,7 @@ def add_sidebar(ais_data):
             body = f"""- **{empire_id}**: <span style="color:{color}">{player}</span>"""
             st.markdown(body, unsafe_allow_html=True)
 
-
-def draw_plots(ais_data):
-    ais_data = sorted(ais_data, key=lambda x: int(x["empire_id"]))
-    st.button("Extended legend", key="?", on_click=add_sidebar, args=(ais_data,))
+    plot_policy_adoptions(ais_data)
 
     for param in ["PP", "RP", "SHIP_CONT"]:
         plot_for_attribute(ais_data, attribute=param)
