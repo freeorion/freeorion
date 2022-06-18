@@ -1,7 +1,6 @@
 import pytest
 from common.statistic_interface._serizlizer import (
     DictSerializer,
-    ListSerializer,
     to_float,
     to_int,
     to_str,
@@ -14,7 +13,6 @@ from common.statistic_interface._serizlizer import (
         (to_int, "11", 11),
         (to_float, "11.11", 11.11),
         (to_str, "hello", "hello"),
-        (ListSerializer(to_str), "hello, world", ["hello", "world"]),
         (
             DictSerializer(
                 {

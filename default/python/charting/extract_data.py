@@ -5,9 +5,12 @@ def start_turn(key, value, data):
     data["turns"].append({})
 
 
-def add_attribute(key, value, data):
+def add_attribute(key: StatKey, value, data):
     info = data["turns"][-1]
-    info[key.name] = value
+    if key.is_multi():
+        info.setdefault(key.name, []).append(value)
+    else:
+        info[key.name] = value
 
 
 def start_first_turn(key, value, data):
