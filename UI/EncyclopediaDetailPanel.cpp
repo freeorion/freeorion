@@ -139,7 +139,7 @@ namespace {
     }
 
     void MeterTypeDirEntry(MeterType meter_type,
-                           std::vector<std::pair<std::string_view,
+                           std::vector<std::pair<std::string,
                                                  std::pair<std::string, std::string>>>& list)
     {
         auto [value_label, string_rep] = MeterValueLabelAndString(meter_type);
@@ -171,9 +171,10 @@ namespace {
     std::mutex prepended_homeworld_names_access;
 
     /** Returns map from (Human-readable and thus sorted article name) to
-        pair of (article link tag text, stringtable key for article category or
-        subcategorization of it). Category is something like "ENC_TECH" and
-        subcategorization is something like a tech category (eg. growth). */
+        pair of (article link tag text, key for article category or
+        subcategorization of it or article key). Category is something like
+        "ENC_TECH" and subcategorization is something like a tech category
+        (eg. growth) or tech_name or an object ID. */
     auto GetSortedPediaDirEntires(
         std::string_view dir_name,
         bool exclude_custom_categories_from_dir_name = true)
@@ -181,7 +182,10 @@ namespace {
         ScopedTimer subdir_timer(std::string{"GetSortedPediaDirEntires("}.append(dir_name).append(")"),
                                  true, std::chrono::milliseconds(20));
 
-        std::vector<std::pair<std::string_view, std::pair<std::string, std::string>>> retval;
+        // first: readable name. can't be a view because some names are on-the fly generated, eg. system apparent name
+        // second.first: link text. generated on the fly
+        // second.second: item name/id/key within category. coul be dynamically generated from an ID number
+        std::vector<std::pair<std::string, std::pair<std::string, std::string>>> retval;
 
         const Encyclopedia& encyclopedia = GetEncyclopedia();
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
@@ -197,14 +201,16 @@ namespace {
                 auto& us_name{UserString(str)};
                 retval.emplace_back(std::piecewise_construct,
                                     std::forward_as_tuple(us_name),
-                                    std::forward_as_tuple(LinkTaggedPresetText(TextLinker::ENCYCLOPEDIA_TAG, str, us_name).append("\n"), str));
+                                    std::forward_as_tuple(LinkTaggedPresetText(TextLinker::ENCYCLOPEDIA_TAG, str, us_name).append("\n"),
+                                                          str));
             }
 
             for (auto str : {"ENC_TEXTURES", "ENC_HOMEWORLDS"}) {
                 auto& us_name{UserString(str)};
                 retval.emplace_back(std::piecewise_construct,
                                     std::forward_as_tuple(us_name),
-                                    std::forward_as_tuple(LinkTaggedPresetText(TextLinker::ENCYCLOPEDIA_TAG, str, us_name).append("\n"), str));
+                                    std::forward_as_tuple(LinkTaggedPresetText(TextLinker::ENCYCLOPEDIA_TAG, str, us_name).append("\n"),
+                                                          str));
             }
 
             for ([[maybe_unused]] auto& [category_name, article_vec] : encyclopedia.Articles()) {
@@ -217,7 +223,8 @@ namespace {
                 auto& us_name{UserString(category_name)};
                 retval.emplace_back(std::piecewise_construct,
                                     std::forward_as_tuple(us_name),
-                                    std::forward_as_tuple(LinkTaggedPresetText(TextLinker::ENCYCLOPEDIA_TAG, category_name, us_name).append("\n"), category_name));
+                                    std::forward_as_tuple(LinkTaggedPresetText(TextLinker::ENCYCLOPEDIA_TAG, category_name, us_name).append("\n"),
+                                                          category_name));
             }
 
         }
@@ -227,7 +234,8 @@ namespace {
                     auto& us_name{UserString(part_name)};
                     retval.emplace_back(std::piecewise_construct,
                                         std::forward_as_tuple(us_name),
-                                        std::forward_as_tuple(LinkTaggedPresetText(VarText::SHIP_PART_TAG, part_name, us_name).append("\n"), part_name));
+                                        std::forward_as_tuple(LinkTaggedPresetText(VarText::SHIP_PART_TAG, part_name, us_name).append("\n"),
+                                                              part_name));
                 }
             }
 
@@ -238,7 +246,8 @@ namespace {
                     auto& us_name{UserString(hull_name)};
                     retval.emplace_back(std::piecewise_construct,
                                         std::forward_as_tuple(us_name),
-                                        std::forward_as_tuple(LinkTaggedPresetText(VarText::SHIP_HULL_TAG, hull_name, us_name).append("\n"), hull_name));
+                                        std::forward_as_tuple(LinkTaggedPresetText(VarText::SHIP_HULL_TAG, hull_name, us_name).append("\n"),
+                                                              hull_name));
                 }
             }
 
@@ -246,12 +255,14 @@ namespace {
         else if (dir_name == "ENC_TECH") {
             // sort tech names by user-visible name, so names are shown alphabetically in UI
             auto tech_names{GetTechManager().TechNames()};
-            std::vector<std::pair<std::string_view, std::string>> userstring_tech_names;
+            static_assert(std::is_same_v<std::string_view, decltype(tech_names)::value_type>);
+            using two_sv_t = std::pair<std::string_view, std::string_view>;
+            std::vector<two_sv_t> userstring_tech_names;
             userstring_tech_names.reserve(tech_names.size());
-            for (auto& tech_name : tech_names) {
-                auto& us_name{UserString(tech_name)};   // use tech_name on line before moving from tech_name to avoid order of evaluation issues
-                userstring_tech_names.emplace_back(us_name, std::move(tech_name));
-            }
+            std::transform(tech_names.begin(), tech_names.end(), std::back_inserter(userstring_tech_names),
+                           [](const auto tech_name) -> std::pair<std::string_view, std::string_view> {
+                               return {UserString(tech_name), tech_name};
+                           });
             std::sort(userstring_tech_names.begin(), userstring_tech_names.end());
 
             // second loop over alphabetically sorted names...
@@ -261,7 +272,8 @@ namespace {
                     std::string tagged_text{LinkTaggedPresetText(VarText::TECH_TAG, tech_name, us_name).append("\n")};
                     retval.emplace_back(std::piecewise_construct,
                                         std::forward_as_tuple(us_name),
-                                        std::forward_as_tuple(std::move(tagged_text), std::move(tech_name)));
+                                        std::forward_as_tuple(std::move(tagged_text),
+                                                              tech_name));
                 }
             }
 
@@ -272,7 +284,8 @@ namespace {
                 std::string tagged_text{LinkTaggedPresetText(VarText::POLICY_TAG, policy_name, us_name).append("\n")};
                 retval.emplace_back(std::piecewise_construct,
                                     std::forward_as_tuple(us_name),
-                                    std::forward_as_tuple(std::move(tagged_text), policy_name));
+                                    std::forward_as_tuple(std::move(tagged_text),
+                                                          policy_name));
             }
 
         }
@@ -282,7 +295,8 @@ namespace {
                     auto& us_name{UserString(building_name)};
                     retval.emplace_back(std::piecewise_construct,
                                         std::forward_as_tuple(us_name),
-                                        std::forward_as_tuple(LinkTaggedPresetText(VarText::BUILDING_TYPE_TAG, building_name, us_name).append("\n"), building_name));
+                                        std::forward_as_tuple(LinkTaggedPresetText(VarText::BUILDING_TYPE_TAG, building_name, us_name).append("\n"),
+                                                              building_name));
                 }
             }
 
@@ -293,7 +307,8 @@ namespace {
                 std::string tagged_text{LinkTaggedPresetText(VarText::SPECIAL_TAG, special_name, us_name).append("\n")};
                 retval.emplace_back(std::piecewise_construct,
                                     std::forward_as_tuple(us_name),
-                                    std::forward_as_tuple(std::move(tagged_text), special_name));
+                                    std::forward_as_tuple(std::move(tagged_text),
+                                                          special_name));
             }
 
         }
@@ -305,7 +320,8 @@ namespace {
                     auto& us_name{UserString(species_name)};
                     retval.emplace_back(std::piecewise_construct,
                                         std::forward_as_tuple(us_name),
-                                        std::forward_as_tuple(LinkTaggedPresetText(VarText::SPECIES_TAG, species_name, us_name).append("\n"), species_name));
+                                        std::forward_as_tuple(LinkTaggedPresetText(VarText::SPECIES_TAG, species_name, us_name).append("\n"),
+                                                              species_name));
                 }
             }
 
@@ -553,7 +569,8 @@ namespace {
                      tex_name);
                  retval.emplace_back(std::piecewise_construct,
                                      std::forward_as_tuple(tex_name),
-                                     std::forward_as_tuple(std::move(texture_info_str), tex_name));
+                                     std::forward_as_tuple(std::move(texture_info_str),
+                                                           tex_name));
              }
 
              for (auto& [tex_name, tex] : GG::GetVectorTextureManager().Textures()) {
@@ -565,7 +582,8 @@ namespace {
                      tex_name);
                  retval.emplace_back(std::piecewise_construct,
                                      std::forward_as_tuple(tex_name),
-                                     std::forward_as_tuple(std::move(texture_info_str), tex_name));
+                                     std::forward_as_tuple(std::move(texture_info_str),
+                                                           tex_name));
              }
 
         }
@@ -574,7 +592,8 @@ namespace {
             for (auto& [str_key, str_val] : AllStringtableEntries())
                 retval.emplace_back(std::piecewise_construct,
                                     std::forward_as_tuple(str_key),
-                                    std::forward_as_tuple(str_key + ": " + str_val + "\n", str_key));
+                                    std::forward_as_tuple(str_key + ": " + str_val + "\n",
+                                                          str_key));
 
         }
         else if  (dir_name == "ENC_NAMED_VALUE_REF") {
@@ -1154,7 +1173,7 @@ void EncyclopediaDetailPanel::HandleLinkDoubleClick(const std::string& link_type
 namespace {
     /** Recursively searches pedia directory \a dir_name for articles and
       * sub-directories. Returns a map from
-      * (category_str_key, dir_name) to (readable_article_name, link_text) */
+      * (article_key, dir_name) to (readable_article_name, link_text) */
     [[nodiscard]] auto GetSubDirs(std::string_view dir_name,
                                   bool exclude_custom_categories_from_dir_name = true,
                                   int depth = 0)
@@ -1184,23 +1203,23 @@ namespace {
         std::vector<std::future<decltype(GetSubDirs(""))>> futures;
         futures.reserve(sorted_entries.size());
 
-        for (auto& [readable_article_name, link_category] : sorted_entries) {
-            auto& [link_text, category_str_key] = link_category;
+        for (auto& [readable_article_name, link_key] : sorted_entries) {
+            const auto& [link_text, key] = link_key;
 
             if (!utf8::is_valid(readable_article_name.begin(), readable_article_name.end())) {
                 ErrorLogger() << "GetSubDirs invalid article name: " << readable_article_name
-                              << "  in category: " << category_str_key;
+                              << "  with key: " << key;
             }
 
             // explicitly exclude textures and input directory itself
-            if (category_str_key == "ENC_TEXTURES" || category_str_key == dir_name)
+            if (key == "ENC_TEXTURES" || key == dir_name)
                 continue;
 
             futures.push_back(std::async(std::launch::async,
                                          GetSubDirs,
-                                         category_str_key, exclude_custom_categories_from_dir_name, depth));
+                                         key, exclude_custom_categories_from_dir_name, depth));
 
-            retval.emplace(std::pair{category_str_key, dir_name}, // don't move from category_str_key as it's viewed by the above future
+            retval.emplace(std::pair{key, dir_name}, // don't move from key as it's viewed by the above future
                            std::pair{std::string{readable_article_name}, std::move(link_text)});
         }
 
