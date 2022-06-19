@@ -35,7 +35,13 @@ DEALINGS IN THE SOFTWARE.
 // Otherwise, trust the unreliable predefined macro __cplusplus
 
 #if !defined UTF_CPP_CPLUSPLUS
+#  if defined(_MSC_VER) && defined(__has_include)
+#    if __has_include(<string_view>)
+#      define UTF_CPP_CPLUSPLUS 201703L
+#    endif
+#  else
     #define UTF_CPP_CPLUSPLUS __cplusplus
+#  endif
 #endif
 
 #if UTF_CPP_CPLUSPLUS >= 201103L // C++ 11 or later
