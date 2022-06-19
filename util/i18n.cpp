@@ -528,7 +528,7 @@ namespace {
 }
 
 std::string DoubleToString(double val, int digits, bool always_show_sign) {
-    std::string text; // = ""
+    std::string text;
 
     // minimum digits is 2. Fewer than this and things can't be sensibly displayed.
     // eg. 300 with 2 digits is 0.3k. With 1 digits, it would be unrepresentable.
@@ -637,7 +637,7 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
         text += "n";        // nano
         break;
     case -6:
-        text += "\xC2\xB5"; // micro.  mu in UTF-8
+        text += "\xC2\xB5"; // micro / µ in UTF-8
         break;
     case -3:
         text += "m";        // milli
