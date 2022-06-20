@@ -25,7 +25,11 @@ def _validate_data_dir(data_dir: Path) -> bool:
     return os.path.exists(data_dir / "freeorion.log")
 
 
-def _list_log_files(data_dir: Path, timestamp):
+def is_close(time_a: float, time_b: float, seconds=3.0):
+    return abs(time_a - time_b) < seconds
+
+
+def _list_log_files(data_dir: Path):
     """
     List and filter log files.
 
@@ -34,14 +38,14 @@ def _list_log_files(data_dir: Path, timestamp):
     """
     log_pattern = (data_dir / "AI_*.log").as_posix()
     logfiles = glob(log_pattern)
-    return [log for log in logfiles if abs(timestamp - os.path.getmtime(log)) < 300]
+
+    timestamps = sorted([(os.path.getmtime(log), log) for log in logfiles], reverse=True)
+    latest_time, _ = timestamps[0]
+    return [file_ for time, file_ in timestamps if is_close(latest_time, time)]
 
 
 def return_file_list():
     data_dir = _get_log_dir()
     if not _validate_data_dir(data_dir):
         raise Exception(f"freeorion.log is missed in {data_dir}, please run the game to fix it.")
-
-    timestamp = os.path.getmtime(data_dir / "freeorion.log")
-
-    return _list_log_files(data_dir, timestamp)
+    return _list_log_files(data_dir)
