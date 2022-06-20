@@ -82,9 +82,7 @@ def _system_to_supply_group() -> Mapping[SystemId, int]:
     Used buy supply_connected, get_supply_group_id and get_supply_group.
     """
     result = {}
-    num = 0
-    for group in fo.getEmpire().resourceSupplyGroups:
-        num += 1
+    for num, group in enumerate(fo.getEmpire().resourceSupplyGroups, start=1):
         result.update((sys_id, num) for sys_id in group)
     return result
 
@@ -111,11 +109,9 @@ def get_supply_group(group_id: int) -> fo.IntSet:
     Returns a Set of systems in the given group. Note that group_ids are only valid for the current turn,
     so the argument must have been returned by get_supply_group_id in the same turn.
     """
-    num = 0
     # There is no way to directly get the nth element, but it should iterate in the same order every time,
     # see _system_to_supply_group.
-    for group in fo.getEmpire().resourceSupplyGroups:
-        num += 1
+    for num, group in enumerate(fo.getEmpire().resourceSupplyGroups, start=1):
         if num == group_id:
             return group
     raise (ValueError(f"invalid supply group_id: {group_id}"))
