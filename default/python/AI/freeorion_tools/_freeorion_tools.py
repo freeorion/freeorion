@@ -327,6 +327,8 @@ def get_species_tag_value(species_name: str, tag_type: AIDependencies.Tags) -> f
         return AIDependencies.SPECIES_POPULATION_MODIFIER.get(grade, 1.0)
     if tag_type == AIDependencies.Tags.SUPPLY:
         return AIDependencies.SPECIES_SUPPLY_MODIFIER.get(grade, 1.0)
+    if tag_type == AIDependencies.Tags.STABILITY:
+        return AIDependencies.SPECIES_STABILITY_MODIFIER.get(grade, 0.0)
     if tag_type == AIDependencies.Tags.FUEL:
         return AIDependencies.SPECIES_FUEL_MODIFIER.get(grade, 0.0)
     if tag_type == AIDependencies.Tags.ATTACKTROOPS:
@@ -349,3 +351,37 @@ def get_ship_part(part_name: str):
         warning("Could not find part %s" % part_name)
 
     return part_type
+
+
+def get_named_int(name: str) -> int:
+    """
+    Returns a NamedReal from FOCS.
+    If the value does not exist, reports an error and returns 1.
+    Note that we do not raise and exception so that the AI can continue, as good as it can, with outdated information.
+    This is also why we return 1, returning 0 could cause followup errors if the value is used as divisor.
+    """
+    value = fo.getNamedValue(name)
+    if value is None:
+        error(f"Requested NamedInt {name}, which doesn't exist!")
+        value = 1
+    elif not isinstance(value, int):
+        error(f"Requested value {name} of type int got {type(value)}!")
+        value = 1
+    return value
+
+
+def get_named_real(name: str) -> float:
+    """
+    Returns a NamedReal from FOCS.
+    If the value does not exist, reports an error and returns 1.0.
+    Note that we do not raise and exception so that the AI can continue, as good as it can, with outdated information.
+    This is also why we return 1, returning 0 could cause followup errors if the value is used as divisor.
+    """
+    value = fo.getNamedValue(name)
+    if value is None:
+        error(f"Requested NamedReal {name}, which doesn't exist!")
+        value = 1.0
+    elif not isinstance(value, float):
+        error(f"Requested value {name} of type float got {type(value)}!")
+        value = 1.0
+    return value

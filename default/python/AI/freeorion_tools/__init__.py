@@ -8,6 +8,8 @@ from ._freeorion_tools import (
     chat_human,
     dict_to_tuple,
     get_ai_tag_grade,
+    get_named_int,
+    get_named_real,
     get_partial_visibility_turn,
     get_ship_part,
     get_species_tag_grade,
