@@ -365,6 +365,10 @@ namespace FreeOrionPython {
                                                         ))
             .add_property("supplyUnobstructedSystems",  make_function(&Empire::SupplyUnobstructedSystems,   py::return_internal_reference<>()))
             .add_property("systemSupplyRanges",         make_function(&Empire::SystemSupplyRanges,          py::return_internal_reference<>()))
+            .add_property("resourceSupplyGroups",       make_function(
+                                                             +[](const Empire& empire) -> const std::set<std::set<int>>& { return GetSupplyManager().ResourceSupplyGroups(empire.EmpireID()); },
+                                                             py::return_value_policy<py::copy_const_reference>()
+                                                        ))
 
             .def("obstructedStarlanes",             obstructedStarlanes,
                                                     py::return_value_policy<py::return_by_value>())
