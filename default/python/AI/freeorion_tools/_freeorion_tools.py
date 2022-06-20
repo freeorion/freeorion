@@ -353,7 +353,7 @@ def get_ship_part(part_name: str):
     return part_type
 
 
-def named_int(name: str) -> int:
+def get_named_int(name: str) -> int:
     """
     Returns a NamedReal from FOCS.
     If the value does not exist, reports an error and returns 1.
@@ -361,13 +361,16 @@ def named_int(name: str) -> int:
     This is also why we return 1, returning 0 could cause followup errors if the value is used as divisor.
     """
     value = fo.getNamedValue(name)
-    if not isinstance(value, int):
+    if value is None:
         error(f"Requested NamedInt {name}, which doesn't exist!")
+        value = 1
+    elif not isinstance(value, int):
+        error(f"Requested value {name} of type int got {type(value)}!")
         value = 1
     return value
 
 
-def named_real(name: str) -> float:
+def get_named_real(name: str) -> float:
     """
     Returns a NamedReal from FOCS.
     If the value does not exist, reports an error and returns 1.0.
@@ -375,7 +378,10 @@ def named_real(name: str) -> float:
     This is also why we return 1, returning 0 could cause followup errors if the value is used as divisor.
     """
     value = fo.getNamedValue(name)
-    if not isinstance(value, float):
+    if value is None:
         error(f"Requested NamedReal {name}, which doesn't exist!")
+        value = 1.0
+    elif not isinstance(value, float):
+        error(f"Requested value {name} of type float got {type(value)}!")
         value = 1.0
     return value
