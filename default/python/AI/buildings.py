@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import freeOrionAIInterface as fo
 from collections import defaultdict
 from copy import copy
@@ -5,7 +7,7 @@ from enum import Enum
 from typing import DefaultDict, FrozenSet, List, Mapping, NamedTuple, Set, Tuple
 
 from aistate_interface import get_aistate
-from common.fo_typing import BuildingName, PlanetId, SystemId
+from common.fo_typing import BuildingId, BuildingName, PlanetId, SystemId
 from empire.buildings_locations import get_best_pilot_facilities
 from freeorion_tools import ReadOnlyDict
 from freeorion_tools.caching import cache_for_current_turn
@@ -38,12 +40,33 @@ class BuildingType(Enum):
     Note: It does not required to have exactly the same name and value.
     """
 
+    AUTO_HISTORY_ANALYSER = "BLD_AUTO_HISTORY_ANALYSER"
+    BLACK_HOLE_POW_GEN = "BLD_BLACK_HOLE_POW_GEN"
+    COLLECTIVE_NET = "BLD_COLLECTIVE_NET"
+    CULTURE_ARCHIVES = "BLD_CULTURE_ARCHIVES"
+    CULTURE_LIBRARY = "BLD_CULTURE_LIBRARY"
+    ENCLAVE_VOID = "BLD_ENCLAVE_VOID"
     GAS_GIANT_GEN = "BLD_GAS_GIANT_GEN"
+    GENOME_BANK = "BLD_GENOME_BANK"
+    INDUSTRY_CENTER = "BLD_INDUSTRY_CENTER"
+    INTERSPECIES_ACADEMY = "BLD_INTERSPECIES_ACADEMY"
+    LIGHTHOUSE = "BLD_LIGHTHOUSE"
+    MEGALITH = "BLD_MEGALITH"
+    MILITARY_COMMAND = "BLD_MILITARY_COMMAND"
+    NEUTRONIUM_SYNTH = "BLD_NEUTRONIUM_SYNTH"
+    NEUTRONIUM_EXTRACTOR = "BLD_NEUTRONIUM_EXTRACTOR"
     PALACE = "BLD_IMPERIAL_PALACE"
     REGIONAL_ADMIN = "BLD_REGIONAL_ADMIN"
     SCANNING_FACILITY = "BLD_SCANNING_FACILITY"
+    SCRYING_SPHERE = "BLD_SCRYING_SPHERE"
+    SOL_ORB_GEN = "BLD_SOL_ORB_GEN"
+    SPACE_ELEVATOR = "BLD_SPACE_ELEVATOR"
+    SPATIAL_DISTORT_GEN = "BLD_SPATIAL_DISTORT_GEN"
+    STARGATE = "BLD_STARGATE"
+    STOCKPILING_CENTER = "BLD_STOCKPILING_CENTER"
     TRANSLATOR = "BLD_TRANSLATOR"
-    MILITARY_COMMAND = "BLD_MILITARY_COMMAND"
+    XENORESURRECTION_LAB = "BLD_XENORESURRECTION_LAB"
+    # shipyard buildings
     SHIPYARD_BASE = "BLD_SHIPYARD_BASE"
     SHIPYARD_ORBITAL_DRYDOCK = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
     SHIPYARD_CON_NANOROBO = "BLD_SHIPYARD_CON_NANOROBO"
@@ -59,12 +82,16 @@ class BuildingType(Enum):
     NEUTRONIUM_FORGE = "BLD_NEUTRONIUM_FORGE"  # not a shipyard by name, but only used for building ships
 
     @staticmethod
-    def get(name: BuildingName):
-        """Get BuildType for a given BuildingName"""
+    def get(name: BuildingName) -> BuildingType:
+        """Get BuildType for a given BuildingName."""
         for bt in BuildingType:
             if bt.value == name:
                 return bt
         raise ValueError(f"BuildingType.get(): got unknown name {name}")
+
+    def is_this_type(self, building_id: BuildingId):
+        """Return whether the building with the given identifier is of this type."""
+        return fo.getUniverse().getBuilding(building_id) == self.value
 
     def enqueue(self, pid: PlanetId) -> bool:
         """
