@@ -33,6 +33,8 @@ from turn_state._empire_resources import (
     have_gas_giant,
     have_nest,
     have_ruins,
+    have_worldtree,
+    owned_asteroid_coatings,
     population_with_industry_focus,
     population_with_research_focus,
     set_have_asteroids,
