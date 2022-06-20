@@ -56,6 +56,9 @@ from turn_state._planet_state import (
 )
 from turn_state._supply_state import (
     get_distance_to_enemy_supply,
+    get_supply_group,
+    get_supply_group_id,
     get_system_supply,
     get_systems_by_supply_tier,
+    supply_connected,
 )

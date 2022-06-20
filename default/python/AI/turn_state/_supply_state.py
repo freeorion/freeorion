@@ -2,6 +2,7 @@ import freeOrionAIInterface as fo
 from logging import error, warning
 from typing import Dict, Mapping, Tuple
 
+from AIDependencies import INVALID_ID
 from common.fo_typing import SystemId
 from freeorion_tools.caching import cache_for_current_turn
 
@@ -11,7 +12,7 @@ def _get_system_supply_map() -> Dict[SystemId, int]:
     return fo.getEmpire().supplyProjections()  # map from system_id to supply
 
 
-def get_system_supply(sys_id: int) -> int:
+def get_system_supply(sys_id: SystemId) -> int:
     """
     Get the supply level of a system.
 
@@ -72,3 +73,45 @@ def _get_enemy_supply_distance_map() -> Mapping[int, int]:
 
 def get_distance_to_enemy_supply(sys_id: int) -> int:
     return _get_enemy_supply_distance_map().get(sys_id, 999)
+
+
+@cache_for_current_turn
+def _system_to_supply_group() -> Mapping[SystemId, int]:
+    """
+    Create a mapping of SystemIds to supply_group_id.
+    Used buy supply_connected, get_supply_group_id and get_supply_group.
+    """
+    result = {}
+    for num, group in enumerate(fo.getEmpire().resourceSupplyGroups, start=1):
+        result.update((sys_id, num) for sys_id in group)
+    return result
+
+
+def supply_connected(system_id1: SystemId, system_id2: SystemId) -> bool:
+    """Return whether the two systems are connected by this empire's supply chains."""
+    mapping = _system_to_supply_group()
+    # Different defaults to get False when neither system is part of any group
+    return mapping.get(system_id1, -1) == mapping.get(system_id2, -2)
+
+
+def get_supply_group_id(system_id: SystemId) -> int:
+    """
+    Return a number identifying a supply group, INVALID_ID if none.
+    These number have no meaning beyond the current turn, groups may be completely different next turn.
+    The number can be used to check if a set of system belongs to the same or multiple groups or as input to
+    get_supply_group
+    """
+    return _system_to_supply_group().get(system_id, INVALID_ID)
+
+
+def get_supply_group(group_id: int) -> fo.IntSet:
+    """
+    Returns a Set of systems in the given group. Note that group_ids are only valid for the current turn,
+    so the argument must have been returned by get_supply_group_id in the same turn.
+    """
+    # There is no way to directly get the nth element, but it should iterate in the same order every time,
+    # see _system_to_supply_group.
+    for num, group in enumerate(fo.getEmpire().resourceSupplyGroups, start=1):
+        if num == group_id:
+            return group
+    raise (ValueError(f"invalid supply group_id: {group_id}"))
