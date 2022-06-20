@@ -12,6 +12,8 @@ from ._freeorion_tools import (
     get_ship_part,
     get_species_tag_grade,
     get_species_tag_value,
+    named_int,
+    named_real,
     policy_is_adopted,
     ppstring,
     tech_is_complete,
