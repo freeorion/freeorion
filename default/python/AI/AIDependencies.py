@@ -219,9 +219,15 @@ for metab, boosts in metabolismBoostMap.items():
 # Please see the Note at top of this file regarding PlanetSize-Dependent-Lookup
 # Regardless of whether the sub-dictionary here has PlanetSize keys, the final
 # value will be applied as a *fixed-size mod* to the max population
+WORLDTREE_SPECIAL = "WORLDTREE_SPECIAL"
 POP_FIXED_MOD_SPECIALS = {
-    "DIM_RIFT_MASTER_SPECIAL": -4,
+    WORLDTREE_SPECIAL: 1,  # Not for SP_KHAKTURIAN...
 }
+
+
+def not_affect_by_special(special: str, species: str) -> bool:  # stupid special handlings...
+    return special == WORLDTREE_SPECIAL and species == "SP_KHAKTURIAN"
+
 
 # Please see the Note at top of this file regarding PlanetSize-Dependent-Lookup
 # The return value from the respective sub-dictionary will be applied as a
@@ -247,11 +253,13 @@ COMPUTRONIUM_SPECIAL = "COMPUTRONIUM_SPECIAL"
 COMPUTRONIUM_RES_MULTIPLIER = 0.5
 
 ANCIENT_RUINS_SPECIAL = "ANCIENT_RUINS_SPECIAL"
+ASTEROID_COATING_OWNED_SPECIAL = "ASTEROID_COATING_OWNED_SPECIAL"
+ASTEROID_COATING_SPECIAL = "ASTEROID_COATING_SPECIAL"
 # </editor-fold>
 
 # <editor-fold desc="Supply related specials">
 SUPPLY_MOD_SPECIALS = {
-    "WORLDTREE_SPECIAL": {
+    WORLDTREE_SPECIAL: {
         -1: 1,
     },
     "ECCENTRIC_ORBIT_SPECIAL": {
