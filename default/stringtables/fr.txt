@@ -12284,7 +12284,7 @@ Marchés Capitaux
 
 PLC_CAPITAL_MARKETS_DESC
 '''• Les planètes disposant d'une Particularité de ressources de luxe et réglées sur le Focus Influence, exporteront cette ressource vers les planètes reliées par lignes d'[[metertype METER_SUPPLY]]. Cela améliore de [[value SPECIAL_CAPITAL_MARKETS_STABILITY_FOCUS_BONUS]] la [[metertype METER_HAPPINESS]] des planètes peuplées d'espèces appréciant cette ressource.
-• Augmente la [[metertype METER_TARGET_INFLUENCE]] des planètes habitées ayant une [[metertype METER_HAPPINESS]] au moins égale à [[value CAPITAL_MARKETS_INFLUENCE_MIN_STABILITY]], de [[value CAPITAL_MARKETS_INFLUENCE_BONUS_SCALING]] par la valeur la plus faible entre l'[[metertype METER_CONSTRUCTION]] et la [[metertype METER_POPULATION]].
+• Augmente la [[metertype METER_TARGET_INFLUENCE]] des planètes en Focus Influence ayant une [[metertype METER_HAPPINESS]] au moins égale à [[value CAPITAL_MARKETS_INFLUENCE_MIN_STABILITY]], de [[value CAPITAL_MARKETS_INFLUENCE_BONUS_SCALING]] par la valeur la plus faible entre l'[[metertype METER_CONSTRUCTION]] et la [[metertype METER_POPULATION]].
 • Augmente le taux de progression ou de régression de l'[[metertype METER_INFLUENCE]] et de la [[metertype METER_HAPPINESS]] de [[value PLC_CAPITAL_MARKETS_INFLUENCE_RATE]] / tour pour atteindre la valeur de la [[metertype METER_TARGET_INFLUENCE]] ou de la [[metertype METER_TARGET_HAPPINESS]].
 • Réduit la [[metertype METER_TARGET_HAPPINESS]] sur les planètes habitées appartenant à l'empire de [[value CAPITAL_MARKETS_DEBT_INSTABILITY]] fois la valeur de la dette d'Influence de l'empire.'''
 
@@ -12364,8 +12364,10 @@ PLC_BUREAUCRACY
 Bureaucratie
 
 PLC_BUREAUCRACY_DESC
-'''• Augmente la [[metertype METER_TARGET_HAPPINESS]] d'une planète habitée et appartenant à l'empire de [[value PLC_BUREAUCRACY_STABILITY_FLAT]], tant que l'empire dispose de suffisamment de structures d'[[buildingtype BLD_REGIONAL_ADMIN]]. Une structure supplémentaire d'[[buildingtype BLD_REGIONAL_ADMIN]] est requise tous les [[value BUREAUCRACY_ADMINS_NEEDED_TURN_SCALING]] tours à partir de l'adoption de cette Politique.
-• Modifier le Focus planétaire réduit l'[[metertype METER_INFLUENCE]] de cette planète de [[value BUREAUCRACY_FOCUS_CHANGE_PENALTY]].'''
+'''• Augmente de [[value PLC_BUREAUCRACY_STABILITY_FLAT]] la [[metertype METER_TARGET_HAPPINESS]] d'une planète habitée et appartenant à l'empire.
+• Modifier le Focus planétaire réduit l'[[metertype METER_INFLUENCE]] de cette planète de [[value BUREAUCRACY_FOCUS_CHANGE_PENALTY]].
+• Coûte de l'Influence selon la population globale. Les coûts sont réduits en possédant davantage de structures administratives ([[buildingtype BLD_IMPERIAL_PALACE]], [[buildingtype BLD_REGIONAL_ADMIN]]) et en adoptant la Politique [[PLC_CENTRALIZATION]].
+'''
 
 PLC_BUREAUCRACY_SHORT_DESC
 Améliore la Stabilité
