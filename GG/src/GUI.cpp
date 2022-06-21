@@ -64,11 +64,11 @@ WndEvent::EventType ButtonEvent(WndEvent::EventType left_type, unsigned int mous
 }
 
 namespace {
-    using utf8_wchar_iterator = utf8::iterator<std::string::const_iterator, wchar_t> ;
+    using utf8_wchar_iterator = utf8::iterator<std::string::const_iterator, wchar_t>;
     using word_regex = boost::xpressive::basic_regex<utf8_wchar_iterator>;
     using word_regex_iterator = boost::xpressive::regex_iterator<utf8_wchar_iterator>;
 
-    constexpr wchar_t WIDE_DASH = '-';
+    constexpr wchar_t WIDE_DASH = u'-';
     const word_regex DEFAULT_WORD_REGEX =
         +boost::xpressive::set[boost::xpressive::_w | WIDE_DASH];
 }
