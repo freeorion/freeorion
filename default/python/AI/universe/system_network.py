@@ -96,10 +96,16 @@ def systems_connected_to_system(system_id: SystemId) -> Set[SystemId]:
 
 @cache_for_current_turn
 def within_n_jumps(system_id: SystemId, n: int) -> FrozenSet[SystemId]:
+    """
+    Returns a frozenset of all systems within n jumps from the given system.
+    """
     if n < 1:
         return frozenset({system_id})
-    inner_tier = within_n_jumps(system_id, n - 1)
-    result = set(inner_tier)
-    for sys_id in inner_tier:
+    elif n == 1:
+        return frozenset({system_id} & get_neighbors(system_id))
+    tier_minus_2 = within_n_jumps(system_id, n - 2)
+    tier_minus_1 = within_n_jumps(system_id, n - 1)
+    result = set(tier_minus_1)
+    for sys_id in tier_minus_1 - tier_minus_2:
         result.update(get_neighbors(sys_id))
     return frozenset(result)
