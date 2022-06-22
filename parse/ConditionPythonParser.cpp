@@ -195,6 +195,30 @@ namespace {
             std::move(high)));
     }
 
+    condition_wrapper insert_empire_has_adopted_policy_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<int>> empire;
+        if (kw.has_key("empire")) {
+            auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
+            if (empire_args.check()) {
+                empire = ValueRef::CloneUnique(empire_args().value_ref);
+            } else {
+                empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
+            }
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<std::string>> name;
+        auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
+        if (name_args.check()) {
+            name = ValueRef::CloneUnique(name_args().value_ref);
+        } else {
+            name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
+        }
+
+        return condition_wrapper(std::make_shared<Condition::EmpireHasAdoptedPolicy>(
+            std::move(empire),
+            std::move(name)));
+    }
+
     condition_wrapper insert_owner_has_tech_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<std::string>> name;
         auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
@@ -313,5 +337,6 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     globals["Contains"] = insert_contains_;
     globals["Focus"] = boost::python::raw_function(insert_focus_);
     globals["EmpireStockpile"] = boost::python::raw_function(insert_empire_stockpile_);
+    globals["EmpireHasAdoptedPolicy"] = boost::python::raw_function(insert_empire_has_adopted_policy_);
 }
 
