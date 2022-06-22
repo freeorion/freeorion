@@ -1,0 +1,14 @@
+from common.base_prod import TECH_COST_MULTIPLIER
+
+Tech(
+    name="PRO_EXOBOTS",
+    description="PRO_EXOBOTS_DESC",
+    short_description="EXOBOT_SHORT_DESC",
+    category="PRODUCTION_CATEGORY",
+    researchcost=60 * TECH_COST_MULTIPLIER,
+    researchturns=6,
+    tags=["PEDIA_PRODUCTION_CATEGORY"],
+    prerequisites=["LRN_NASCENT_AI", "PRO_NANOTECH_PROD"],
+    unlock=[Item(type=Building, name="BLD_COL_EXOBOT"), Item(type=Policy, name="PLC_EXOBOT_PRODUCTIVITY")],
+    graphic="icons/species/robotic-01.png",
+)
