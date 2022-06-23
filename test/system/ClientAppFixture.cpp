@@ -119,7 +119,7 @@ void ClientAppFixture::HostSPGame(unsigned int num_AIs) {
         setup_data.players.push_back(ai_setup_data);
     }
 
-    m_networking->SendMessage(HostSPGameMessage(setup_data));
+    m_networking->SendMessage(HostSPGameMessage(setup_data, DependencyVersions()));
 }
 
 void ClientAppFixture::JoinGame() {

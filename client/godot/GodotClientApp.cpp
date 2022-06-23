@@ -255,7 +255,7 @@ void GodotClientApp::NewSinglePlayerGame() {
 
 
     DebugLogger() << "Sending host SP setup message";
-    m_networking->SendMessage(HostSPGameMessage(setup_data));
+    m_networking->SendMessage(HostSPGameMessage(setup_data, DependencyVersions()));
     DebugLogger() << "GodotClientApp::NewSinglePlayerGame done";
 }
 #endif

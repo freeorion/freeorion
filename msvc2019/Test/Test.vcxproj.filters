@@ -43,6 +43,9 @@
     <ClCompile Include="..\..\client\ClientNetworking.cpp">
       <Filter>Test\client</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\util\DependencyVersions.cpp">
+      <Filter>Test\util</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\util\Process.cpp">
       <Filter>Test\util</Filter>
     </ClCompile>

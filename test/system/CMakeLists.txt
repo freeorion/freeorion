@@ -10,7 +10,6 @@ add_executable(fo_systemtest_game
 
 target_compile_definitions(fo_systemtest_game
     PRIVATE
-        -DFREEORION_BUILD_HUMAN
         -DBOOST_TEST_IGNORE_SIGCHLD
 )
 
@@ -45,6 +44,7 @@ target_sources(fo_systemtest_game
         ${PROJECT_SOURCE_DIR}/client/ClientApp.cpp
         ${PROJECT_SOURCE_DIR}/client/ClientFSMEvents.cpp
         ${PROJECT_SOURCE_DIR}/client/ClientNetworking.cpp
+        ${PROJECT_SOURCE_DIR}/util/DependencyVersions.cpp
 )
 
 set(FO_TEST_GAME

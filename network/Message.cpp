@@ -130,25 +130,27 @@ Message ErrorMessage(const std::string& problem, bool fatal, int player_id) {
     return Message{Message::MessageType::ERROR_MSG, std::move(os).str()};
 }
 
-Message HostSPGameMessage(const SinglePlayerSetupData& setup_data) {
+Message HostSPGameMessage(const SinglePlayerSetupData& setup_data, const std::map<std::string, std::string>& dependencies) {
     std::ostringstream os;
     {
         std::string client_version_string = FreeOrionVersionString();
         freeorion_xml_oarchive oa(os);
         oa << BOOST_SERIALIZATION_NVP(setup_data)
-           << BOOST_SERIALIZATION_NVP(client_version_string);
+           << BOOST_SERIALIZATION_NVP(client_version_string)
+           << BOOST_SERIALIZATION_NVP(dependencies);
     }
     return Message{Message::MessageType::HOST_SP_GAME, std::move(os).str()};
 }
 
-Message HostMPGameMessage(const std::string& host_player_name)
+Message HostMPGameMessage(const std::string& host_player_name, const std::map<std::string, std::string>& dependencies)
 {
     std::ostringstream os;
     {
         std::string client_version_string = FreeOrionVersionString();
         freeorion_xml_oarchive oa(os);
         oa << BOOST_SERIALIZATION_NVP(host_player_name)
-           << BOOST_SERIALIZATION_NVP(client_version_string);
+           << BOOST_SERIALIZATION_NVP(client_version_string)
+           << BOOST_SERIALIZATION_NVP(dependencies);
     }
     return Message{Message::MessageType::HOST_MP_GAME, std::move(os).str()};
 }
@@ -164,8 +166,8 @@ Message JoinGameMessage(const std::string& player_name,
         oa << BOOST_SERIALIZATION_NVP(player_name)
            << BOOST_SERIALIZATION_NVP(client_type)
            << BOOST_SERIALIZATION_NVP(client_version_string)
-           << BOOST_SERIALIZATION_NVP(cookie);
-        oa << BOOST_SERIALIZATION_NVP(dependencies);
+           << BOOST_SERIALIZATION_NVP(cookie)
+           << BOOST_SERIALIZATION_NVP(dependencies);
     }
     return Message{Message::MessageType::JOIN_GAME, std::move(os).str()};
 }
@@ -743,13 +745,14 @@ void ExtractErrorMessageData(const Message& msg, int& player_id, std::string& pr
     }
 }
 
-void ExtractHostMPGameMessageData(const Message& msg, std::string& host_player_name, std::string& client_version_string) {
+void ExtractHostMPGameMessageData(const Message& msg, std::string& host_player_name, std::string& client_version_string, std::map<std::string, std::string>& dependencies) {
+    dependencies.clear();
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(host_player_name)
-           >> BOOST_SERIALIZATION_NVP(client_version_string);
-
+           >> BOOST_SERIALIZATION_NVP(client_version_string)
+           >> BOOST_SERIALIZATION_NVP(dependencies);
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractHostMPGameMessageData(const Message& msg, std::string& host_player_name, std::string& client_version_string) failed!  Message:\n"
                       << msg.Text() << "\n"
@@ -958,21 +961,15 @@ void ExtractJoinGameMessageData(const Message& msg, std::string& player_name,
 {
     DebugLogger() << "ExtractJoinGameMessageData() from " << player_name
                   << " client type " << client_type;
+    dependencies.clear();
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(player_name)
            >> BOOST_SERIALIZATION_NVP(client_type)
            >> BOOST_SERIALIZATION_NVP(version_string)
-           >> BOOST_SERIALIZATION_NVP(cookie);
-
-        dependencies.clear();
-        try {
-            ia >> BOOST_SERIALIZATION_NVP(dependencies);
-        } catch (...) {
-            DebugLogger() << "ExtractJoinAckMessageData(const Message& msg, int& player_id, "
-                          << "boost::uuids::uuid& cookie) didn't get a list of dependencies.";
-        }
+           >> BOOST_SERIALIZATION_NVP(cookie)
+           >> BOOST_SERIALIZATION_NVP(dependencies);
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractJoinGameMessageData(const Message& msg, std::string& player_name, "
                       << "Networking::ClientType client_type, std::string& version_string) failed!  Message:\n"
@@ -1162,13 +1159,14 @@ void ExtractPlayerStatusMessageData(const Message& msg, Message::PlayerStatus& s
     }
 }
 
-void ExtractHostSPGameMessageData(const Message& msg, SinglePlayerSetupData& setup_data, std::string& client_version_string) {
+void ExtractHostSPGameMessageData(const Message& msg, SinglePlayerSetupData& setup_data, std::string& client_version_string, std::map<std::string, std::string>& dependencies) {
+    dependencies.clear();
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(setup_data)
-           >> BOOST_SERIALIZATION_NVP(client_version_string);
-
+           >> BOOST_SERIALIZATION_NVP(client_version_string)
+           >> BOOST_SERIALIZATION_NVP(dependencies);
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractHostSPGameMessageData(const Message& msg, SinglePlayerSetupData& setup_data, std::string& client_version_string) failed!  Message:\n"
                       << msg.Text() << "\n"
