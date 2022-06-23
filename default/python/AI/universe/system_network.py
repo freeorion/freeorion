@@ -102,7 +102,7 @@ def within_n_jumps(system_id: SystemId, n: int) -> FrozenSet[SystemId]:
     if n < 1:
         return frozenset({system_id})
     elif n == 1:
-        return frozenset({system_id} & get_neighbors(system_id))
+        return frozenset({system_id} | get_neighbors(system_id))
     tier_minus_2 = within_n_jumps(system_id, n - 2)
     tier_minus_1 = within_n_jumps(system_id, n - 1)
     result = set(tier_minus_1)
