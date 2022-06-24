@@ -1,4 +1,4 @@
-# from __future__ import annotations
+from __future__ import annotations
 
 import freeOrionAIInterface as fo
 from copy import copy
@@ -60,7 +60,7 @@ class _EmpireOutput:
             self.population_stability,
         )
 
-    def is_better_than(self, other, cost_for_other: float) -> bool:  # other: _EmpireOutput,
+    def is_better_than(self, other: _EmpireOutput, cost_for_other: float) -> bool:
         """Return true if this is better than changing to other at given IP cost."""
         aistate = get_aistate()
         delta_pp = (self.industry - other.industry) * aistate.get_priority(PriorityType.RESOURCE_PRODUCTION)
@@ -656,7 +656,8 @@ class PolicyManager:
         policy = fo.getPolicy(name)
         category = policy.category
         slot = self._find_empty_slot(category)
-        if fo.issueAdoptPolicyOrder(name, category, slot):
+        # getting True does not guarantee that is has worked, so doublecheck the policy has been adopted
+        if fo.issueAdoptPolicyOrder(name, category, slot) and name in self._empire.adoptedPolicies:
             if name not in self._originally_adopted:
                 self._ip -= policy.adoptionCost()
             debug(f"Issued adoption order for {name} in slot {slot} turn {fo.currentTurn()}, remaining IP: {self._ip}")
