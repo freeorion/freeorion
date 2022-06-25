@@ -1043,25 +1043,27 @@ std::set<std::pair<CPSize, CPSize>> GUI::FindWords(const std::string& str) const
 std::set<std::pair<StrSize, StrSize>> GUI::FindWordsStringIndices(const std::string& str) const
 {
     std::set<std::pair<StrSize, StrSize>> retval;
+    if (str.empty())
+        return retval;
 
-    utf8_wchar_iterator first(str.begin(), str.begin(), str.end());
-    utf8_wchar_iterator last(str.end(), str.begin(), str.end());
-    word_regex_iterator it(first, last, DEFAULT_WORD_REGEX);
-    word_regex_iterator end_it;
+    try {
+        utf8_wchar_iterator first(str.begin(), str.begin(), str.end());
+        utf8_wchar_iterator last(str.end(), str.begin(), str.end());
+        word_regex_iterator it(first, last, DEFAULT_WORD_REGEX);
+        word_regex_iterator end_it;
 
-    typedef word_regex_iterator::value_type match_result_type;
+        for ( ; it != end_it; ++it) {
+            auto match_result = *it;
+            utf8_wchar_iterator word_pos_it = first;
 
-    for ( ; it != end_it; ++it) {
-        match_result_type match_result = *it;
-        utf8_wchar_iterator word_pos_it = first;
+            std::advance(word_pos_it, match_result.position());
+            StrSize start_idx(std::distance(str.begin(), word_pos_it.base()));
+            std::advance(word_pos_it, match_result.length());
+            StrSize end_idx(std::distance(str.begin(), word_pos_it.base()));
 
-        std::advance(word_pos_it, match_result.position());
-        StrSize start_idx(std::distance(str.begin(), word_pos_it.base()));
-        std::advance(word_pos_it, match_result.length());
-        StrSize end_idx(std::distance(str.begin(), word_pos_it.base()));
-
-        retval.emplace(start_idx, end_idx);
-    }
+            retval.emplace(start_idx, end_idx);
+        }
+    } catch (...) {}
     return retval;
 }
 
