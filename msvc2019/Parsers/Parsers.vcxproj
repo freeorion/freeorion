@@ -117,8 +117,7 @@
       <DebugInformationFormat>
       </DebugInformationFormat>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
-      <AdditionalOptions>
-      </AdditionalOptions>
+      <AdditionalOptions>/utf-8</AdditionalOptions>
       <ForcedIncludeFiles>StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>

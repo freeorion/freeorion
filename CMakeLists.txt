@@ -183,6 +183,10 @@ add_compile_options(
  
     # Use the multithread-specific and DLL-specific version of the run-time library in Debug Configuration
     $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<CONFIG:DEBUG>>:/MD>
+    
+    # Set character set to UTF-8
+    # https://docs.microsoft.com/en-us/cpp/build/reference/utf-8-set-source-and-executable-character-sets-to-utf-8?view=msvc-170
+    $<$<CXX_COMPILER_ID:MSVC>:/utf-8>
 )
 
 # Determine minimum Windows target (see FreeOrion SDK)
