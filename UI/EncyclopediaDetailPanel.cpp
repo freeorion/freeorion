@@ -1,4 +1,4 @@
-#include "EncyclopediaDetailPanel.h"
+﻿#include "EncyclopediaDetailPanel.h"
 
 #include <unordered_map>
 #include <boost/algorithm/clamp.hpp>
@@ -3476,6 +3476,344 @@ namespace {
         }
     }
 
+    namespace {
+        // UTF-8 code points that can be easily converted from lower and upper case by offsetting the wchar_t
+
+        // Latin-1 supplement
+        static constexpr uint8_t A_WITH_GRAVE_byte1 = 0x80; // À
+        //static_assert(u8"\u00C0"[1] == A_WITH_GRAVE_byte1);
+        //static_assert(u8"\u00C0"[0] == u8"À"[0] && u8"\u00C0"[1] == u8"À"[1]);
+
+        static constexpr uint8_t O_WITH_DIARESIS_byte1 = 0x96; // Ö
+        // multiply symbol × is between these ranges...
+        static constexpr uint8_t O_WITH_STROKE_byte1 = 0x98; // Ø
+
+        static constexpr uint8_t THORN_byte1 = 0x9E; // Þ
+        //static_assert(u8"\u00DE"[1] == THORN_byte1);
+        static constexpr uint8_t a_with_grave_byte1 = 0xA0; // à
+        //static_assert(u8"\u00E0"[1] == a_with_grave_byte1);
+
+        static constexpr uint8_t y_with_diaresis_byte1 = 0xBF; // ÿ
+
+
+        // Latin extended-A first half
+        static constexpr uint8_t A_WITH_MACRON_byte1 = 0x80; // Ā
+        //static_assert(u8"\u0100"[1] == A_WITH_MACRON_byte1);
+        //static_assert(u8"\u0100"[0] == u8"Ā"[0] && u8"\u0100"[1] == u8"Ā"[1]);
+        static constexpr uint8_t I_WITH_OGONEK_byte1 = 0xAE; // Į
+        //static_assert(u8"\u012E"[1] == I_WITH_OGONEK_byte1);
+        //static_assert(u8"\u012E"[0] == u8"Į"[0] && u8"\u012E"[1] == u8"Į"[1]);
+
+        static constexpr uint8_t LIGATURE_IJ_byte1 = 0xB2; // Ĳ
+        //static_assert(u8"\u0132"[1] == LIGATURE_IJ_byte1);
+        //static_assert(u8"\u0132"[0] == u8"Ĳ"[0] && u8"\u0132"[1] == u8"Ĳ"[1]);
+        static constexpr uint8_t K_WITH_CEDILLA_byte1 = 0xB6; // Ķ
+        //static_assert(u8"\u0136"[1] == K_WITH_CEDILLA_byte1);
+        //static_assert(u8"\u0136"[0] == u8"Ķ"[0] && u8"\u0136"[1] == u8"Ķ"[1]);
+
+        static constexpr uint8_t kra_byte1 = 0xB8; // ĸ
+
+        static constexpr uint8_t L_WITH_ACUTE_byte1 = 0xB9; // Ĺ
+        //static_assert(u8"\u0139"[1] == L_WITH_ACUTE_byte1);
+        //static_assert(u8"\u0139"[0] == u8"Ĺ"[0] && u8"\u0139"[1] == u8"Ĺ"[1]);
+        static constexpr uint8_t L_WITH_CARON_byte1 = 0xBD; // Ľ
+        //static_assert(u8"\u013D"[1] == L_WITH_CARON_byte1);
+        //static_assert(u8"\u013D"[0] == u8"Ľ"[0] && u8"\u013D"[1] == u8"Ľ"[1]);
+
+
+        static constexpr uint8_t a_with_macron_byte1 = 0x81; // ā
+        static constexpr uint8_t awmb0 = u8"\u0101"[0];
+        static constexpr uint8_t awmb1 = u8"\u0101"[1];
+        static_assert(awmb0 == 0xC4);
+        static_assert(awmb1 == 0x81);
+        static_assert(awmb1 == a_with_macron_byte1);
+
+        static_assert(a_with_macron_byte1 - A_WITH_MACRON_byte1 == 1); // this range of chars is offset by one between upper and and lower case
+
+        // Latin Extended-A first-to-second half
+        static constexpr uint8_t L_WITH_MIDDLE_DOT_byte1 = 0xBF; // first byte C4
+        static constexpr uint8_t l_with_middle_dot_byte1 = 0x80; // first byte C5
+
+        // Latin Extended-A second half
+        static constexpr uint8_t L_WITH_STROKE_byte1 = 0x81; // Ł
+        static constexpr uint8_t l_with_stroke_byte1 = 0x82; // ł
+        static constexpr uint8_t N_WITH_CARON_byte1 = 0x87; // Ň
+
+        static constexpr uint8_t n_preceeded_by_apostrophe_byte1 = 0x89; // ŉ
+
+        static constexpr uint8_t ENG_byte1 = 0x8A; // Ŋ
+        static constexpr uint8_t Y_WITH_CIRCUMFLEX_byte1 = 0xB6; // Ŷ
+
+        static constexpr uint8_t Y_WITH_DIARESIS_byte1 = 0xB8; // Ÿ
+
+        static constexpr uint8_t Z_WITH_ACCUTE_byte1 = 0xB9; // Ź
+        static constexpr uint8_t Z_WITH_CARON_byte1 = 0xBD; // Ž
+
+        static constexpr uint8_t long_s_byte1 = 0xBF; // ſ
+
+        // Greek and Coptic
+
+        // first byte 0xCE
+        static constexpr uint8_t ALPHA_byte1 = 0x91; // Α
+        static constexpr uint8_t OMICRON_byte1 = 0x9F; // Ο
+        static constexpr uint8_t PI_byte1 = 0xA0; // Π
+        static constexpr uint8_t RHO_byte1 = 0xA1; // Ρ
+        // no code at 0xA2
+        static constexpr uint8_t SIGMA_byte1 = 0xA3; // Ρ
+        //static constexpr uint8_t OMEGA_byte1 = 0xA9; // Ω
+        static constexpr uint8_t UPSILON_WITH_DIALYTIKA_byte1 = 0xAB; // Ϋ
+
+        static constexpr uint8_t alpha_with_tonos_byte1 = 0xAC; // ά
+        static constexpr uint8_t alpha_byte1 = 0xB1; // α
+        static constexpr uint8_t omicron_byte1 = 0xBF; // ο
+
+        // first byte 0xCF
+        static constexpr uint8_t pi_byte1 = 0x80;
+        static constexpr uint8_t rho_byte1 = 0x81; // ρ
+
+        static constexpr uint8_t final_sigma_byte1 = 0x82; // ς
+
+        static constexpr uint8_t sigma_byte1 = 0x83; // σ
+        static constexpr uint8_t upsilon_with_dialytika_byte1 = 0x8B; // ϋ
+
+        static constexpr uint8_t omicron_with_tonos_byte1 = 0x8C; // ό
+        static constexpr uint8_t omega_with_tonos_byte1 = 0x8E; // ώ
+
+        // note: alternate mu encoding covered by full page 0xC2 case
+        static constexpr auto mu = u8"\u00B5"; // µ
+        static_assert(mu[0] == u8"µ"[0]);
+        static_assert(mu[1] == u8"µ"[1]);
+
+
+        static constexpr auto o_with_dot_below = u8"ọ";
+        static constexpr uint8_t o_with_dot_below_byte1 = o_with_dot_below[1];
+        static constexpr uint8_t o_with_dot_below_byte2 = o_with_dot_below[2];
+    }
+
+    // Checks if the (next few) chars starting at \a it are a 3-byte code
+    // point that is handled by CustomToLower or does not need modification
+    // to be lower-case. Returns true if it is OK or handled. Returns false
+    // to indicate that CustomToLower won't check for that char or make it
+    // lower case if it is not already.
+    inline bool IsOK3CharCode(const std::string::iterator& it) {
+        uint8_t c1 = *it;
+        uint8_t c2 = *(it + 1);
+        uint8_t c3 = *(it + 2);
+
+        if (c1 == 0xE2) {
+            if ((c2 >= 0x80 && c2 <= 0x83) ||
+                (c2 >= 0x86 && c2 <= 0x91) ||
+                (c2 >= 0x94 && c2 <= 0xAF) ||
+                (c2 >= 0xB4))
+            {
+                // all caseless or lower
+                return true;
+            }
+
+        } else if (c1 == 0xE1) {
+            if (c2 == o_with_dot_below_byte1 && c3 == o_with_dot_below_byte2) {
+                // already lower case
+                return true;
+            }
+
+        } else if (c1 >= 0xE3 && c1 <= 0xE9) {
+            // all caseless or lower
+            return true;
+        }
+
+        // are other ranges that could be checked: https://www.unicode.org/Public/14.0.0/ucd/CaseFolding.txt
+
+        return false; // character not in handled pages
+    }
+
+    // Converts some UTF-8 upper-case chars to lower-case. returns true if
+    // all code points in the text were in ranges known to not require further
+    // case conversion after having applied this function. If some code points were
+    // outside the known rage or couldn't be converted, returns false, indicating
+    // that further case conversion may be needed.
+    bool CustomToLower(std::string::iterator it, const std::string::iterator end_it) {
+        std::ptrdiff_t dist = std::distance(it, end_it);
+        bool retval = true; // util an char outside the handled range is seen
+        auto prev_char_it = it;
+        bool once = true;
+
+        //DebugLogger() << "CustomToLower on: " << std::string_view(it, end_it) << " : " << [it, end_it]() mutable {
+        //    std::string retval;
+        //    for (; it != end_it; ++it) {
+        //        uint8_t c = *it;
+        //        retval += std::to_string(static_cast<unsigned int>(c));
+        //    }
+        //    return retval;
+        //}();
+
+        while (dist >= 2) {
+            if (!retval && once) {
+                once = false;
+                const uint8_t prev_c1 = *prev_char_it;
+                std::ptrdiff_t prev_sequence_length = (prev_c1 < 0x80) ? 1 : (prev_c1 <= 0xDF) ? 2 : (prev_c1 <= 0xEF) ? 3 : 4;
+                DebugLogger() << "not handled char: " << std::string_view(&*prev_char_it, prev_sequence_length);
+            }
+
+            prev_char_it = it;
+            const uint8_t c1 = *it;
+
+            std::ptrdiff_t sequence_length = (c1 < 0x80) ? 1 : (c1 <= 0xDF) ? 2 : (c1 <= 0xEF) ? 3 : 4;
+            //DebugLogger() << std::string_view(&*it, sequence_length) << "(" << sequence_length << ") : " << static_cast<int>(c1) << " " << static_cast<int>(*(it+1));
+
+            // adjust current sequence if it is a recognized capital letter
+            if (sequence_length == 1) { // ASCII
+                if (c1 >= 'A' && c1 <= 'Z')
+                    *it += ('a' - 'A');
+                // other code points are lower case or caseless
+
+            } else if (sequence_length == 2) {
+                if (c1 >= 0x80 && c1 <= 0xC1) {
+                    retval = false;
+                    break; // invalid UTF-8 ?
+
+                } else if (c1 == 0xC2) { // first 64 Latin Supplement has no upper-case
+
+                } else if (c1 == 0xC3) { // Latin-1 Supplement starting at capital A with Grave
+                    auto cur_it = it + 1;
+                    const uint8_t c2 = *cur_it;
+                    if ((c2 >= A_WITH_GRAVE_byte1 && c2 <= O_WITH_DIARESIS_byte1) ||
+                        (c2 >= O_WITH_STROKE_byte1 && c2 <= THORN_byte1))
+                    {
+                        static constexpr uint8_t offset = a_with_grave_byte1 - A_WITH_GRAVE_byte1;
+                        *cur_it += offset;
+                    }
+                    // other code poitns are lower case or caseless
+
+                } else if (c1 == 0xC4) { // Latin Extended-A starting at A with Macron
+                    auto cur_it = it + 1;
+                    const uint8_t c2 = *cur_it;
+                    if ((c2 >= A_WITH_MACRON_byte1 && c2 <= I_WITH_OGONEK_byte1) ||
+                        (c2 >= LIGATURE_IJ_byte1 && c2 <= K_WITH_CEDILLA_byte1))
+                    {
+                        *cur_it += (c2 % 2 == 0);
+
+                    } else if (c2 == kra_byte1) {
+                        // do nothing, already lower case
+
+                    } else if (c2 >= L_WITH_ACUTE_byte1 && c2 <= L_WITH_CARON_byte1) {
+                        *cur_it += (c2 % 2/* == 1*/);
+
+                    } else if (c2 == L_WITH_MIDDLE_DOT_byte1) {
+                        *it += 1; // to 0xC5
+                        *cur_it = l_with_middle_dot_byte1;
+
+                    } else {
+                        retval = false; // character not handled
+                    }
+
+                } else if (c1 == 0xC5) { // Latin Extended-A starting with L with Stroke
+                    auto cur_it = it + 1;
+                    const uint8_t c2 = *cur_it;
+                    if (c2 >= L_WITH_STROKE_byte1 && c2 <= N_WITH_CARON_byte1) {
+                        *cur_it += (c2 % 2/* == 1*/);
+
+                    } else if (c2 == n_preceeded_by_apostrophe_byte1) {
+                        // do nothing, already lower case
+
+                    } else if (c2 >= ENG_byte1 && c2 <= Y_WITH_CIRCUMFLEX_byte1) {
+                        *cur_it += (c2 % 2 == 0);
+
+                    } else if (c2 == Y_WITH_DIARESIS_byte1) {
+                        *it -= 2; // to 0xC3;
+                        *cur_it = y_with_diaresis_byte1;
+                        static_assert(0xBF == y_with_diaresis_byte1);
+
+                    } else if (c2 >= Z_WITH_ACCUTE_byte1 && c2 <= Z_WITH_CARON_byte1) {
+                        *cur_it += (c2 % 2/* == 1*/);
+
+                    } else if (c2 == long_s_byte1) {
+                        // do nothing, already lower case
+
+                    } else {
+                        retval = false; // character not handled
+                    }
+
+                } else if (c1 == 0xCC || // // spacing modified letters, combining diacritical marks
+                           (c1 == 0xCD && static_cast<uint8_t>(*(it + 1)) <= 0xAF))
+                {
+                    static_assert(static_cast<uint8_t>(192) == 0xC0);
+                    using it_char_t = std::decay_t<decltype(*it)>;
+                    static constexpr it_char_t neg_40(-40);
+                    static constexpr uint8_t neg_40_uint_8 = static_cast<uint8_t>(neg_40);
+                    static_assert(neg_40_uint_8 == 0xD8);
+                    // do nothing, not cased
+
+                // note: some Greek in 0xCD page not handled
+                } else if (c1 == 0xCE) { // Greek and Coptic
+                    auto cur_it = it + 1;
+                    const uint8_t c2 = *cur_it;
+
+                    if (c2 >= ALPHA_byte1 && c2 <= OMICRON_byte1) {
+                        static constexpr auto offset = alpha_byte1 - ALPHA_byte1;
+                        static_assert(ALPHA_byte1 + offset == alpha_byte1);
+                        *cur_it += offset;
+
+                    } else if (c2 == PI_byte1) {
+                        *it += 1; // to 0xCF
+                        *cur_it = pi_byte1;
+
+                    } else if (c2 == RHO_byte1) {
+                        *it += 1; // to 0xCF
+                        *cur_it = rho_byte1;
+
+                    } else if (c2 >= SIGMA_byte1 && c2 <= UPSILON_WITH_DIALYTIKA_byte1) {
+                        *it += 1; // to 0xCF
+                        static constexpr auto offset = sigma_byte1 - SIGMA_byte1;
+                        static_assert(SIGMA_byte1 + offset == sigma_byte1);
+                        *cur_it += offset;
+
+                    } else if (c2 >= alpha_with_tonos_byte1 && c2 <= omicron_byte1) {
+                        // do nothing, already lower case
+
+                    } else {
+                        retval = false; // character not handled
+                    }
+
+                } else if (c1 == 0xCF) { // Greek and Coptic
+                    auto cur_it = it + 1;
+                    const uint8_t c2 = *cur_it;
+
+                    if (c2 >= pi_byte1 && c2 <= omega_with_tonos_byte1) {
+                        // do nothing, already lower case
+                    } else {
+                        retval = false;
+                    }
+
+                } else {
+                    retval = false; // character not handled
+                }
+
+            } else if (sequence_length == 3) {
+                if (dist < 3 || !IsOK3CharCode(it)) {
+                    //DebugLogger() << "unrecognized 3 length code: " << std::string_view(&*it, 3);
+                    retval = false;  // unrecognized code
+                }
+
+            } else { // if (sequence_length >= 4) {
+                retval = false; // unrecognized code
+            }
+
+            if (dist < sequence_length) {
+                retval = false;
+                break; // invalid UTF-8, possibly due to truncation of string
+            }
+            it += sequence_length;
+            dist -= sequence_length;
+        }
+
+        if (dist == 1) {
+            uint8_t c1 = *it;
+            *it += (c1 >= 'A' && c1 <= 'Z') * ('a' - 'A');
+        }
+
+        return retval;
+    }
+
     std::set<std::string> ExtractWords(const std::string& search_text) { // TODO: return vector<string_view> ?
         std::set<std::string> words_in_search_text;
         for (const auto& word_range : GG::GUI::GetGUI()->FindWordsStringIndices(search_text)) {
@@ -3502,7 +3840,11 @@ namespace {
                                             bool search_article_text)
     {
         //std::cout << "start scanning article " << idx << ": " << article_name_link.first << std::endl;
-        std::string article_name = boost::locale::to_lower(article_name_link.first, GetLocale("en_US.UTF-8"));
+        auto article_name{article_name_link.first};
+        auto all_handled = CustomToLower(article_name.begin(), article_name.end());
+        if (!all_handled)
+            article_name = boost::locale::to_lower(article_name_link.first, GetLocale("en_US.UTF-8"));
+
         // search for exact title matches
         if (article_name == search_text) {
             exact_match = std::move(article_name_link);
@@ -3567,7 +3909,12 @@ namespace {
             article_match = std::move(article_name_link);
             return;
         }
-        std::string desc_lower = boost::locale::to_lower(detailed_description, GetLocale("en_US.UTF-8"));
+
+        auto desc_lower{detailed_description};
+        all_handled = CustomToLower(desc_lower.begin(), desc_lower.end());
+        if (!all_handled)
+            desc_lower = boost::locale::to_lower(detailed_description, GetLocale("en_US.UTF-8"));
+
         if (boost::contains(desc_lower, search_text)) {
             article_match = std::move(article_name_link);
             return;
@@ -3583,15 +3930,18 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
     boost::asio::thread_pool thread_pool(num_threads);
 
     // search lists of articles for typed text
-    auto search_text = boost::algorithm::to_lower_copy(m_search_edit->Text());
+    auto search_text = m_search_edit->Text();
     if (search_text.empty())
         return;
+    auto all_handled = CustomToLower(search_text.begin(), search_text.end());
+    if (!all_handled)
+        search_text = boost::locale::to_lower(m_search_edit->Text(), GetLocale("en_US.UTF-8"));
+
 
     // find distinct words in search text
     std::set<std::string> words_in_search_text = ExtractWords(search_text);
     if (words_in_search_text.empty())
         return;
-
 
     // search through all articles for full or partial matches to search query
     timer.EnterSection("get subdirs");
