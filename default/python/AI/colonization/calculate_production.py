@@ -19,10 +19,14 @@ def calculate_production(
         return 0.0
 
     bonus_modified = _get_production_bonus_modified(planet, stability, research_list)
-    skill = get_species_tag_value(species.name, AIDependencies.Tags.INDUSTRY)
+    skill_multiplier = get_species_tag_value(species.name, AIDependencies.Tags.INDUSTRY)
+    bonus_by_policy = _get_production_bonus_mod_by_policy(stability)
+    policy_multiplier = _get_policy_multiplier(stability)
     bonus_unmodified = _get_production_bonus_unmodified(planet, stability)
     bonus_flat = _get_production_flat(planet, stability, research_list)
-    per_population = (AIDependencies.INDUSTRY_PER_POP + bonus_modified) * skill + bonus_unmodified
+    per_population = (
+        (AIDependencies.INDUSTRY_PER_POP + bonus_modified) * skill_multiplier + bonus_by_policy
+    ) * policy_multiplier + bonus_unmodified
     return max_population * per_population + bonus_flat
 
 
@@ -80,6 +84,32 @@ def _get_production_bonus_modified(planet: fo.planet, stability: float, research
     return result
 
 
+def _get_policy_multiplier(stability) -> float:
+    if fo.getEmpire().policyAdopted("INDUSTRIALISM") and stability >= get_named_real("PLC_INDUSTRIALISM_MIN_STABILITY"):
+        return 1.0 + get_named_real("PLC_INDUSTRIALISM_TARGET_INDUSTRY_PERCENT")
+    return 1.0
+
+
+def _get_production_bonus_mod_by_policy(stability: float):
+    """
+    Calculate bonus production per population which is independent of the species production skill, but affected
+    by industrialism.
+    """
+    # TBD: check connections?
+    result = 0.0
+    bonuses = [
+        _ProductionBonus(
+            bool(BuildingType.BLACK_HOLE_POW_GEN.built_or_queued_at()),
+            get_named_real("BLD_BLACK_HOLE_POW_GEN_MIN_STABILITY"),
+            get_named_real("BLD_BLACK_HOLE_POW_GEN_TARGET_INDUSTRY_PERPOP"),
+        ),
+    ]
+    for bonus in bonuses:
+        if bonus.available and stability >= bonus.min_stability:
+            result += bonus.value
+    return result
+
+
 def _get_production_bonus_unmodified(planet: fo.planet, stability: float):
     """
     Calculate bonus production per population which is independent of the species production skill.
@@ -97,11 +127,6 @@ def _get_production_bonus_unmodified(planet: fo.planet, stability: float):
             bool(BuildingType.SOL_ORB_GEN.built_or_queued_at()),  # TBD: check star type
             get_named_real("BLD_SOL_ORB_GEN_MIN_STABILITY"),
             get_named_real("BLD_SOL_ORB_GEN_BRIGHT_TARGET_INDUSTRY_PERPOP"),
-        ),
-        _ProductionBonus(
-            bool(BuildingType.BLACK_HOLE_POW_GEN.built_or_queued_at()),
-            get_named_real("BLD_BLACK_HOLE_POW_GEN_MIN_STABILITY"),
-            get_named_real("BLD_BLACK_HOLE_POW_GEN_TARGET_INDUSTRY_PERPOP"),
         ),
         _ProductionBonus(
             have_honeycomb(),
