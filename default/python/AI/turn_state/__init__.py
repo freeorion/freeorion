@@ -31,6 +31,7 @@ from turn_state._empire_resources import (
     have_asteroids,
     have_computronium,
     have_gas_giant,
+    have_honeycomb,
     have_nest,
     have_ruins,
     have_worldtree,

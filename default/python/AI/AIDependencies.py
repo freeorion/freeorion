@@ -216,6 +216,21 @@ for metab, boosts in metabolismBoostMap.items():
         metabolismBoosts[boost] = metab
 # </editor-fold>
 
+# <editor-fold desc="Industry boosting specials">
+# modified = affected by species multiplier
+industry_boost_specials_modified = {
+    "TIDAL_LOCK_SPECIAL",
+}
+industry_boost_specials_unmodified = {
+    "CRYSTALS_SPECIAL",
+    "ELERIUM_SPECIAL",
+    "MINERALS_SPECIAL",
+    "MONOPOLE_SPECIAL",
+    "POSITRONIUM_SPECIAL",
+    "SUPERCONDUCTOR_SPECIAL",
+}
+# </editor-fold>
+
 # <editor-fold desc="Other Population changing specials">
 # Please see the Note at top of this file regarding PlanetSize-Dependent-Lookup
 # Regardless of whether the sub-dictionary here has PlanetSize keys, the final
@@ -246,6 +261,7 @@ POP_PROPORTIONAL_MOD_SPECIALS = {
 # </editor-fold>
 
 # <editor-fold desc="Industry related specials">
+HONEYCOMB_SPECIAL = "HONEYCOMB_SPECIAL"
 HONEYCOMB_IND_MULTIPLIER = 1.0
 # </editor-fold>
 
