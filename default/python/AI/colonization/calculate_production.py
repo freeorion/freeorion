@@ -4,6 +4,7 @@ from typing import Iterable, NamedTuple
 import AIDependencies
 from buildings import BuildingType
 from freeorion_tools import get_named_real, get_species_tag_value, tech_is_complete
+from freeorion_tools.caching import cache_for_current_turn
 from turn_state import have_honeycomb
 
 
@@ -18,7 +19,7 @@ def calculate_production(
     if stability <= 0.0:
         return 0.0
 
-    bonus_modified = _get_production_bonus_modified(planet, stability, research_list)
+    bonus_modified = _get_production_bonus_modified(planet, stability)
     skill_multiplier = get_species_tag_value(species.name, AIDependencies.Tags.INDUSTRY)
     bonus_by_policy = _get_production_bonus_mod_by_policy(stability)
     policy_multiplier = _get_policy_multiplier(stability)
@@ -36,28 +37,26 @@ class _ProductionBonus(NamedTuple):
     value: float
 
 
-def _get_production_bonus_modified(planet: fo.planet, stability: float, research_list: Iterable):
+@cache_for_current_turn
+def _get_modified_industry_bonuses():
     """
-    Calculate bonus production per population which is added before multiplication with the species skill value.
+    Get list of per-population bonuses which are added before multiplication with the species skill value.
     """
-    result = sum(
-        AIDependencies.INDUSTRY_PER_POP for s in planet.specials if s in AIDependencies.industry_boost_specials_modified
-    )
-
     # TBD check connection!?
-    # TBD: cache bonuses?
     have_center = bool(BuildingType.INDUSTRY_CENTER.built_or_queued_at())
     centre_bonus1 = get_named_real("BLD_INDUSTRY_CENTER_1_TARGET_INDUSTRY_PERPOP")
     centre_bonus2 = get_named_real("BLD_INDUSTRY_CENTER_2_TARGET_INDUSTRY_PERPOP")
     centre_bonus3 = get_named_real("BLD_INDUSTRY_CENTER_3_TARGET_INDUSTRY_PERPOP")
-    bonuses = [
+    # use fo.getEmpire().researchQueue directly here to simplify caching this function
+    top3_research = [fo.getEmpire().researchQueue[i] for i in range(0, 3)]
+    return [
         _ProductionBonus(
-            tech_is_complete("PRO_FUSION_GEN") or "PRO_FUSION_GEN" in research_list[:3],
+            tech_is_complete("PRO_FUSION_GEN") or "PRO_FUSION_GEN" in top3_research,
             get_named_real("PRO_FUSION_GEN_MIN_STABILITY"),
             get_named_real("PRO_FUSION_GEN_TARGET_INDUSTRY_PERPOP"),
         ),
         _ProductionBonus(
-            tech_is_complete("GRO_ENERGY_META") or "GRO_ENERGY_META" in research_list[:3],
+            tech_is_complete("GRO_ENERGY_META") or "GRO_ENERGY_META" in top3_research,
             get_named_real("GRO_ENERGY_META_MIN_STABILITY"),
             get_named_real("GRO_ENERGY_META_TARGET_INDUSTRY_PERPOP"),
         ),
@@ -78,6 +77,16 @@ def _get_production_bonus_modified(planet: fo.planet, stability: float, research
             centre_bonus1,
         ),
     ]
+
+
+def _get_production_bonus_modified(planet: fo.planet, stability: float):
+    """
+    Calculate bonus production per population which would be added before multiplication with the species skill value.
+    """
+    result = sum(
+        AIDependencies.INDUSTRY_PER_POP for s in planet.specials if s in AIDependencies.industry_boost_specials_modified
+    )
+    bonuses = _get_modified_industry_bonuses()
     for bonus in bonuses:
         if bonus.available and stability >= bonus.min_stability:
             result += bonus.value
@@ -92,8 +101,8 @@ def _get_policy_multiplier(stability) -> float:
 
 def _get_production_bonus_mod_by_policy(stability: float):
     """
-    Calculate bonus production per population which is independent of the species production skill, but affected
-    by industrialism.
+    Calculate bonus production per population which we would get independent of the species production skill,
+    but still affected by industrialism.
     """
     # TBD: check connections?
     result = 0.0
@@ -112,7 +121,7 @@ def _get_production_bonus_mod_by_policy(stability: float):
 
 def _get_production_bonus_unmodified(planet: fo.planet, stability: float):
     """
-    Calculate bonus production per population which is independent of the species production skill.
+    Calculate bonus production per population which we would get independent of the species production skill.
     """
     result = sum(
         # growth.macros: STANDARD_INDUSTRY_BOOST
@@ -147,14 +156,14 @@ def _get_production_flat(planet: fo.planet, stability: float, research_list: Ite
     value = _get_asteroid_and_ggg_value(planet, stability, research_list)
     tech = AIDependencies.PRO_AUTO_1
     # this is a rather expensive one, so consider it only if it is on top of the list
-    if tech_is_complete(tech) or tech == research_list[0]:
+    if tech_is_complete(tech) or tech == research_list[:1]:
         value += get_named_real("PRO_SENTIENT_AUTO_TARGET_INDUSTRY_FLAT")
     return value
 
 
 def _get_asteroid_and_ggg_value(planet: fo.planet, stability: float, research_list: Iterable) -> float:
     """
-    Calculate an estimate of the bonus we may get from asteroids (micro-gravity) and gas giant generators.
+    Calculate an estimate of the bonus we may get from asteroids (microgravity) and gas giant generators.
     """
     universe = fo.getUniverse()
     system = universe.getSystem(planet.systemID)
@@ -195,7 +204,7 @@ def _ggg_value(planet: fo.planet, p2: fo.planet) -> float:
             if p2.id in BuildingType.GAS_GIANT_GEN.built_or_queued_at():
                 return ggg_colony_flat
             else:
-                return 0.4 * ggg_colony_flat  # we could built one, but inhabitants won't like it
+                return 0.4 * ggg_colony_flat  # we could build one, but inhabitants won't like it
         if p2.unowned:
             return 0.5 * ggg_colony_flat  # unowned means we could probably get it easily
         # TODO prospective_invasion_targets?

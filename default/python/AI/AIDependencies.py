@@ -217,10 +217,11 @@ for metab, boosts in metabolismBoostMap.items():
 # </editor-fold>
 
 # <editor-fold desc="Industry boosting specials">
-# modified = affected by species multiplier
+# Each adds INDUSTRY_PER_POP before production is multiplied by species skill modifier
 industry_boost_specials_modified = {
     "TIDAL_LOCK_SPECIAL",
 }
+# Each adds INDUSTRY_PER_POP after all multipliers have been applied
 industry_boost_specials_unmodified = {
     "CRYSTALS_SPECIAL",
     "ELERIUM_SPECIAL",
