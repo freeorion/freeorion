@@ -1,5 +1,5 @@
 import freeOrionAIInterface as fo
-from typing import Sequence, Set
+from typing import FrozenSet, Sequence, Set
 
 from AIDependencies import INVALID_ID
 from common.fo_typing import SystemId
@@ -69,7 +69,7 @@ def _get_shortest_distance(system_1: SystemId, system_2: SystemId) -> float:
 
 
 @cache_for_current_turn
-def get_neighbors(sid: SystemId):
+def get_neighbors(sid: SystemId) -> Set[SystemId]:
     return set(fo.getUniverse().getImmediateNeighbors(sid, fo.empireID()))
 
 
@@ -92,3 +92,20 @@ def systems_connected_to_system(system_id: SystemId) -> Set[SystemId]:
         to_visit.extend(get_neighbors(current_system))
 
     return connected_systems
+
+
+@cache_for_current_turn
+def within_n_jumps(system_id: SystemId, n: int) -> FrozenSet[SystemId]:
+    """
+    Returns a frozenset of all systems within n jumps from the given system.
+    """
+    if n < 1:
+        return frozenset({system_id})
+    elif n == 1:
+        return frozenset({system_id} | get_neighbors(system_id))
+    tier_minus_2 = within_n_jumps(system_id, n - 2)
+    tier_minus_1 = within_n_jumps(system_id, n - 1)
+    result = set(tier_minus_1)
+    for sys_id in tier_minus_1 - tier_minus_2:
+        result.update(get_neighbors(sys_id))
+    return frozenset(result)
