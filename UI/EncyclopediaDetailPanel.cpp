@@ -1994,8 +1994,10 @@ namespace {
         }
 
         // Issued orders this turn
-        detailed_description.append("\n\n").append(UserString("ISSUED_ORDERS"))
+        if (empire_id == GGHumanClientApp::GetApp()->EmpireID())
+            detailed_description.append("\n\n").append(UserString("ISSUED_ORDERS"))
             .append("\n").append(GGHumanClientApp::GetApp()->Orders().Dump());
+
 
         // Techs
         auto& techs = empire->ResearchedTechs();
