@@ -14,12 +14,12 @@ Policy
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_RESEARCH"
                 Population low = 0.001
-                Happiness low = 5
+                Happiness low = (NamedReal name = "PLC_TECHNOCRACY_MIN_STABILITY" value = 5)
             ]
             priority = [[TARGET_2ND_SCALING_PRIORITY]]
             effects =
                 SetTargetResearch value = Value
-                    + abs(Value * (NamedReal name = "PLC_TECHNOCRACY_TARGET_INDUSTRY_PERCENT" value = 25) / 100)
+                    + abs(Value * (NamedReal name = "PLC_TECHNOCRACY_TARGET_RESEARCH_PERCENT" value = 25) / 100)
 
         EffectsGroup
             scope = And [
