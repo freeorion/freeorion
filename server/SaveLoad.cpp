@@ -44,7 +44,7 @@ namespace {
     {
         // First compile the non-player related data
         preview.current_turn = server_save_game_data.current_turn;
-        preview.number_of_empires = empire_save_game_data.size();
+        preview.number_of_empires = static_cast<decltype(preview.number_of_empires)>(empire_save_game_data.size());
         preview.save_time = boost::posix_time::to_iso_extended_string(boost::posix_time::second_clock::local_time());
 
         DebugLogger() << "CompileSaveGamePreviewData(...) player_save_game_data size: " << player_save_game_data.size();
