@@ -35,7 +35,7 @@ namespace {
 
     std::string StackTrace() {
         static std::atomic<int> string_error_lookup_count = 0;
-        if (string_error_lookup_count++ > 10)
+        if (string_error_lookup_count++ > 3)
             return "";
         std::stringstream ss;
         ss << "stacktrace:\n" << boost::stacktrace::stacktrace();
@@ -459,30 +459,27 @@ const std::string& Language() {
 
 std::string RomanNumber(unsigned int n) {
     //letter pattern (N) and the associated values (V)
-    static const std::string N[] =      { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
-    static constexpr unsigned int V[] = {1000,  900, 500,  400, 100,   90,  50,   40,  10,    9,   5,    4,   1};
-    unsigned int remainder = n; // remainder of the number to be written
-    int i = 0;                  // pattern index
-    if (n == 0) return "";      // the romans didn't know there is a zero, read a book about history of the zero if you want to know more
-                                // Roman numbers are written using patterns, you chosse the highest pattern lower that the number
-                                // write it down, and substract it's value until you reach zero.
+    static constexpr std::array N = {  "M",  "CM",  "D",  "CD",  "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I" };
+    static constexpr std::array V = { 1000u, 900u, 500u,  400u, 100u,  90u, 50u,  40u, 10u,   9u,  5u,   4u,  1u };
+    if (n == 0) return ""; // the romans didn't know there is a zero, read a book about history of the zero if you want to know more
+                           // Roman numbers are written using patterns, you chosse the highest pattern lower that the number
+                           // write it down, and substract it's value until you reach zero.
 
     // safety check to avoid very long loops
     if (n > 10000)
         return "!";
 
-    //we start with the highest pattern and reduce the size every time it doesn't fit
+    // start with the highest pattern and reduce the size every time it doesn't fit
     std::string retval;
+    unsigned int remainder = n; // remainder of the number to be written
+    int i = 0;                  // pattern index
     while (remainder > 0) {
-        //check if number is larger than the actual pattern value
+        // check if number is larger than the actual pattern value
         if (remainder >= V[i]) {
-            //write pattern down
-            retval += N[i];
-            //reduce number
-            remainder -= V[i];
+            retval += N[i]; // write pattern down
+            remainder -= V[i]; // reduce number
         } else {
-            //we need the next pattern
-            i++;
+            i++; // go to next pattern
         }
     }
     return retval;
@@ -637,7 +634,7 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
         text += "n";        // nano
         break;
     case -6:
-        text += "\xC2\xB5"; // micro / µ in UTF-8
+        text += "\xC2\xB5"; // micro / Âµ in UTF-8
         break;
     case -3:
         text += "m";        // milli
