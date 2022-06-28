@@ -41,22 +41,22 @@ using namespace GG;
 
 namespace {
 
-const std::uint32_t WIDE_SPACE = ' ';
-const std::uint32_t WIDE_NEWLINE = '\n';
-const std::uint32_t WIDE_CR = '\r';
-const std::uint32_t WIDE_FF = '\f';
-const std::uint32_t WIDE_TAB = '\t';
+constexpr std::uint32_t WIDE_SPACE = ' ';
+constexpr std::uint32_t WIDE_NEWLINE = '\n';
+constexpr std::uint32_t WIDE_CR = '\r';
+constexpr std::uint32_t WIDE_FF = '\f';
+constexpr std::uint32_t WIDE_TAB = '\t';
 
-const std::string ITALIC_TAG = "i";
-const std::string SHADOW_TAG = "s";
-const std::string UNDERLINE_TAG = "u";
-const std::string SUPERSCRIPT_TAG = "sup";
-const std::string SUBSCRIPT_TAG = "sub";
-const std::string RGBA_TAG = "rgba";
-const std::string ALIGN_LEFT_TAG = "left";
-const std::string ALIGN_CENTER_TAG = "center";
-const std::string ALIGN_RIGHT_TAG = "right";
-const std::string PRE_TAG = "pre";
+constexpr std::string_view ITALIC_TAG = "i";
+constexpr std::string_view SHADOW_TAG = "s";
+constexpr std::string_view UNDERLINE_TAG = "u";
+constexpr std::string_view SUPERSCRIPT_TAG = "sup";
+constexpr std::string_view SUBSCRIPT_TAG = "sub";
+constexpr std::string_view RGBA_TAG = "rgba";
+constexpr std::string_view ALIGN_LEFT_TAG = "left";
+constexpr std::string_view ALIGN_CENTER_TAG = "center";
+constexpr std::string_view ALIGN_RIGHT_TAG = "right";
+constexpr std::string_view PRE_TAG = "pre";
 
 template <typename T>
 T NextPowerOfTwo(T input)
@@ -361,6 +361,10 @@ bool Font::Substring::operator==(std::string_view rhs) const
 
 bool Font::Substring::operator!=(const std::string& rhs) const
 { return !operator==(rhs); }
+
+bool Font::Substring::operator!=(std::string_view rhs) const
+{ return !operator==(rhs); }
+
 
 Font::Substring& Font::Substring::operator+=(const IterPair& rhs)
 {

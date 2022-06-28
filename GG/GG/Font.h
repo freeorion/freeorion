@@ -160,8 +160,9 @@ public:
         bool operator==(const std::string& rhs) const;
         bool operator==(std::string_view rhs) const;
 
-        /** Comparison with std::string. */
+        /** Comparison with std::string, std::string_view. */
         bool operator!=(const std::string& rhs) const;
+        bool operator!=(std::string_view rhs) const;
 
         /** Concatenation with base.  \a rhs.first must be <= \a rhs.second.
             .second must be equal to \a rhs.first (*this and \a rhs must be
