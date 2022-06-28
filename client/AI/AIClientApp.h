@@ -45,6 +45,7 @@ public:
 
 private:
     void ConnectToServer();
+    void InitializePythonAI();
     void StartPythonAI();
     void HandlePythonAICrash();
     void HandleMessage(const Message& msg);

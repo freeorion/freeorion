@@ -132,7 +132,7 @@ void AIClientApp::Run() {
     ConnectToServer();
 
     try {
-        StartPythonAI();
+        InitializePythonAI();
 
         // join game
         Networking().SendMessage(JoinGameMessage(PlayerName(),
@@ -145,6 +145,10 @@ void AIClientApp::Run() {
         std::future<void> barrier_future = barrier.get_future();
         StartBackgroundParsing(PythonParser(*m_AI, GetResourceDir() / "scripting"), std::move(barrier));
         barrier_future.wait();
+
+        // Import python main module only after game content has been parsed, allowing
+        // python to query e.g. NamedReals during module initialization.
+        StartPythonAI();
 
         // respond to messages until disconnected
         while (1) {
@@ -180,12 +184,16 @@ void AIClientApp::ConnectToServer() {
         ExitApp(1);
 }
 
-void AIClientApp::StartPythonAI() {
+void AIClientApp::InitializePythonAI() {
     m_AI = std::make_unique<PythonAI>();
     if (!(m_AI.get())->Initialize()) {
         HandlePythonAICrash();
         throw std::runtime_error("PythonAI failed to initialize.");
     }
+}
+
+void AIClientApp::StartPythonAI() {
+    m_AI.get()->Start();
 }
 
 void AIClientApp::HandlePythonAICrash() {
