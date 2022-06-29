@@ -117,8 +117,10 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         py::class_<enum_wrapper<EmpireAffiliationType>>("__EmpireAffiliationType", py::no_init);
         py::class_<enum_wrapper<ResourceType>>("__ResourceType", py::no_init);
         py::class_<enum_wrapper< ::PlanetEnvironment>>("__PlanetEnvironment", py::no_init);
+        py::class_<enum_wrapper<PlanetSize>>("__PlanetSize", py::no_init);
+        py::class_<enum_wrapper<PlanetType>>("__PlanetType", py::no_init);
         py::class_<enum_wrapper< ::StarType>>("__StarType", py::no_init);
-        py::class_<enum_wrapper<ValueRef::StatisticType>>("__PlanetEnvironment", py::no_init);
+        py::class_<enum_wrapper<ValueRef::StatisticType>>("__StatisticType", py::no_init);
         py::class_<unlockable_item_wrapper>("UnlockableItem", py::no_init);
         auto py_variable_wrapper = py::class_<variable_wrapper>("__Variable", py::no_init)
             .def(py::self_ns::self & py::other<condition_wrapper>());
