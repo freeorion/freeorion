@@ -105,17 +105,26 @@ namespace {
     condition_wrapper insert_planet_(const boost::python::tuple& args, const boost::python::dict& kw) {
         if (kw.has_key("type")) {
             std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>> types;
-            py_parse::detail::flatten_list<value_ref_wrapper< ::PlanetType>>(kw["type"], [](const value_ref_wrapper< ::PlanetType>& o, std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>>& v) {
-                v.push_back(ValueRef::CloneUnique(o.value_ref));
+            py_parse::detail::flatten_list<boost::python::object>(kw["type"], [](const boost::python::object& o, std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>>& v) {
+                auto type_arg = boost::python::extract<value_ref_wrapper< ::PlanetType>>(o);
+                if (type_arg.check()) {
+                    v.push_back(ValueRef::CloneUnique(type_arg().value_ref));
+                } else {
+                    v.push_back(std::make_unique<ValueRef::Constant< ::PlanetType>>(boost::python::extract<enum_wrapper< ::PlanetType>>(o)().value));
+                }
             }, types);
             return condition_wrapper(std::make_shared<Condition::PlanetType>(std::move(types)));
         } else if (kw.has_key("size")) {
             std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetSize>>> sizes;
-            py_parse::detail::flatten_list<value_ref_wrapper< ::PlanetSize>>(kw["size"], [](const value_ref_wrapper< ::PlanetSize>& o, std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetSize>>>& v) {
-                v.push_back(ValueRef::CloneUnique(o.value_ref));
+            py_parse::detail::flatten_list<boost::python::object>(kw["size"], [](const boost::python::object& o, std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetSize>>>& v) {
+                auto size_arg = boost::python::extract<value_ref_wrapper< ::PlanetSize>>(o);
+                if (size_arg.check()) {
+                    v.push_back(ValueRef::CloneUnique(size_arg().value_ref));
+                } else {
+                    v.push_back(std::make_unique<ValueRef::Constant< ::PlanetSize>>(boost::python::extract<enum_wrapper< ::PlanetSize>>(o)().value));
+                }
             }, sizes);
             return condition_wrapper(std::make_shared<Condition::PlanetSize>(std::move(sizes)));
-
         } else if (kw.has_key("environment")) {
             std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetEnvironment>>> environments;
             py_parse::detail::flatten_list<boost::python::object>(kw["environment"], [](const boost::python::object& o, std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetEnvironment>>>& v) {
@@ -258,11 +267,13 @@ namespace {
 
     condition_wrapper insert_in_system_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<int>> system_id;
-        auto id_args = boost::python::extract<value_ref_wrapper<int>>(kw["id"]);
-        if (id_args.check()) {
-            system_id = ValueRef::CloneUnique(id_args().value_ref);
-        } else {
-            system_id = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["id"])());
+        if (kw.has_key("id")) {
+            auto id_args = boost::python::extract<value_ref_wrapper<int>>(kw["id"]);
+            if (id_args.check()) {
+                system_id = ValueRef::CloneUnique(id_args().value_ref);
+            } else {
+                system_id = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["id"])());
+            }
         }
         
         return condition_wrapper(std::make_shared<Condition::InOrIsSystem>(std::move(system_id)));
