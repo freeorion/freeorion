@@ -12020,7 +12020,7 @@ Industrialism
 
 PLC_INDUSTRIALISM_DESC
 '''Industry-focused planets get a boost to [[metertype METER_TARGET_INDUSTRY]] of [[value PLC_INDUSTRIALISM_TARGET_INDUSTRY_PERCENT]]% and a bonus of [[value PLC_INDUSTRIALISM_TARGET_HAPPINESS_FLAT]] to [[metertype METER_HAPPINESS]].
-The effect requires a stability of [[value PLC_INDUSTRIALISM_MIN_STABILITY]].
+The production bonus requires a stability of [[value PLC_INDUSTRIALISM_MIN_STABILITY]].
 
 Makes production-boosting power generation techs cheaper to research: [[tech PRO_ORBITAL_GEN]] [[tech PRO_SOL_ORB_GEN]] [[tech PRO_FUSION_GEN]] [[tech PRO_SINGULAR_GEN]] [[tech PRO_ZERO_GEN]]'''
 
@@ -12031,7 +12031,8 @@ PLC_TECHNOCRACY
 Technocracy
 
 PLC_TECHNOCRACY_DESC
-Research-focused planets get a boost to [[metertype METER_TARGET_RESEARCH]] of [[value PLC_INDUSTRIALISM_TARGET_INDUSTRY_PERCENT]]% and a bonus of [[value PLC_INDUSTRIALISM_TARGET_HAPPINESS_FLAT]] to [[metertype METER_HAPPINESS]].
+'''Research-focused planets get a boost to [[metertype METER_TARGET_RESEARCH]] of [[value PLC_TECHNOCRACY_TARGET_RESEARCH_PERCENT]]% and a bonus of [[value PLC_TECHNOCRACY_TARGET_HAPPINESS_FLAT]] to [[metertype METER_HAPPINESS]].
+The research bonus requires a stability of [[value PLC_TECHNOCRACY_MIN_STABILITY]].'''
 
 PLC_TECHNOCRACY_SHORT_DESC
 Improves research output
