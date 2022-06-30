@@ -29,6 +29,8 @@ class PythonAI : public PythonBase {
 public:
     bool Initialize();
 
+    void Start();
+
     /** Initializes AI Python imports. */
     bool InitImports() override;
     /** Initializes AI Python modules. */

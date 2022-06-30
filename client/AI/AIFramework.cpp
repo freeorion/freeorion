@@ -120,12 +120,15 @@ auto PythonAI::InitModules() -> bool
         return false;
     }
     AddToSysPath(ai_path);
-
-    // import universe generator script file
-    m_python_module_ai = py::import("FreeOrionAI");
-
     DebugLogger() << "AI Python modules successfully initialized!";
     return true;
+}
+
+void PythonAI::Start()
+{
+    // import AI main file
+    m_python_module_ai = py::import("FreeOrionAI");
+    DebugLogger() << "AI Python modules started!";
 }
 
 void PythonAI::GenerateOrders()
