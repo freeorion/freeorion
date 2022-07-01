@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Callable, Dict, TypeVar
+from typing import Callable, Dict, List, TypeVar
 
 Serializable = TypeVar("Serializable")
 
@@ -15,7 +15,10 @@ class Serializer(ABC):
         self._serializer = serializer
 
     def deserialize(self, value: str) -> Serializable:
-        return self._deserializer(value)
+        try:
+            return self._deserializer(value)
+        except Exception as e:
+            raise ValueError(f"{self.__class__.__name__} fail to deserialize {value}: {e}") from e
 
     def serialize(self, value: Serializable) -> str:
         return self._serializer(value)
@@ -34,6 +37,18 @@ class _FloatSerializer(Serializer):
 class _StrSerializer(Serializer):
     def __init__(self):
         super().__init__(serializer=str, deserializer=str.strip)
+
+
+class ListSerializer(Serializer):
+    def __init__(self, item_serializer: Serializer):
+        def serializer(value: List[Serializable]) -> str:
+            return ", ".join(item_serializer.serialize(val) for val in value)
+
+        def deserializer(serialized: str) -> Serializable:
+            elements = serialized.split(",")
+            return [item_serializer.deserialize(v) for v in elements]
+
+        super().__init__(serializer=serializer, deserializer=deserializer)
 
 
 class DictSerializer(Serializer):

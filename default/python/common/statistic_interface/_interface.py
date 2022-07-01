@@ -2,7 +2,7 @@ from abc import ABC
 from enum import Enum
 from typing import Callable, Dict, TypeVar, Union
 
-from common.statistic_interface._dump_value import DumpDict, DumpInt
+from common.statistic_interface._dump_value import DumpDict, DumpInt, DumpMultiple
 from common.statistic_interface._serizlizer import to_float, to_int, to_str
 
 _ScalarValue = Union[str, int, float]
@@ -28,6 +28,8 @@ class Serializer(ABC):
 
 
 class StatKey(Enum):
+    PolicyAdoption = DumpMultiple("PolicyAdoption", to_str)
+    PolicyDeAdoption = DumpMultiple("PolicyDeAdoption", to_str)
     EmpireColors = DumpDict(
         "EmpireColors",
         {
@@ -41,13 +43,16 @@ class StatKey(Enum):
     CapitalID = DumpDict(
         "CapitalID",
         {
-            "capital_planet_id": to_str,
-            "capital_planet_name": to_int,
+            "capital_planet_id": to_int,
+            "capital_planet_name": to_str,
             "capital_species": to_str,
         },
     )
     Output = DumpDict("CurrentOutput", {"turn": to_int, "RP": to_float, "PP": to_float})
     SHIP_CONT = DumpInt("ShipCount")
+
+    def is_multi(self):
+        return self.value.multi
 
     @classmethod
     def get_by_value_name(cls, name: str):

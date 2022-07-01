@@ -37,5 +37,11 @@ class StatsWrapper:
     def output(self, turn, rp, pp):
         self._write(StatKey.Output, {"turn": turn, "RP": rp, "PP": pp})
 
+    def adopt_policy(self, name):
+        self._write(StatKey.PolicyAdoption, name)
+
+    def deadopt_policy(self, name):
+        self._write(StatKey.PolicyDeAdoption, name)
+
 
 stats = StatsWrapper()
