@@ -17,5 +17,6 @@ from ._freeorion_tools import (
     policy_is_adopted,
     ppstring,
     tech_is_complete,
+    tech_soon_available,
     tuple_to_dict,
 )
