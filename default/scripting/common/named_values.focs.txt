@@ -44,5 +44,9 @@ NamedReal name = "PLC_LIBERTY_DISLIKE_FACTOR" value = 2.0
 
 NamedReal name = "PLC_CONFORMANCE_DISLIKE_FACTOR" value = 0.5
 
+NamedReal name = "FLD_NEBULA_SPEED_MALUS" value = 20
+NamedReal name = "FLD_NEBULA_STEALTH_BONUS" value = 20
+NamedReal name = "FLD_NEBULA_DETECTION_MALUS" value = 20
+
 #include "/scripting/common/misc.macros"
 #include "/scripting/common/base_prod.macros"

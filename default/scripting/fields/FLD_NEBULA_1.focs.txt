@@ -23,9 +23,9 @@ FieldType
 
         EffectsGroup    // spawn new star when small enough
             scope = And [ 
-                    System
-                    Object id = Source.SystemID
-                ]
+                System
+                Object id = Source.SystemID
+            ]
             activation = And [
                 Size high = 5
                 Star type = NoStar
@@ -51,9 +51,9 @@ FieldType
             ]
             stackinggroup = "NEBULA_SHIP_EFFECTS"
             effects = [
-                SetSpeed value = max(5, Value - 20)
-                SetStealth value = Value + 20
-                SetDetection value = Value - 20
+                SetSpeed value = max(5, Value - NamedRealLookup name = "FLD_NEBULA_SPEED_MALUS")
+                SetStealth value = Value + NamedRealLookup name = "FLD_NEBULA_STEALTH_BONUS"
+                SetDetection value = Value - NamedRealLookup name = "FLD_NEBULA_DETECTION_MALUS"
             ]
 
         EffectsGroup    // dissipate when small

@@ -863,19 +863,19 @@ FLD_ION_STORM
 Ion Storm
 
 FLD_ION_STORM_DESC
-Magnetic vortex of relativistic charged particles that can interfere with sensors and obscures all objects within it. All objects inside the storm receive an increase to [[metertype METER_STEALTH]] of 40, but a decrease to [[metertype METER_DETECTION]] of 40.
+Magnetic vortex of relativistic charged particles that can interfere with sensors and obscures all objects within it. All objects inside the storm receive an increase to [[metertype METER_STEALTH]] of [[value FLD_ION_STORM_STEALTH_BONUS]], but a decrease to [[metertype METER_DETECTION]] of [[value FLD_ION_STORM_DETECTION_MALUS]].
 
 FLD_MOLECULAR_CLOUD
 Molecular Cloud
 
 FLD_MOLECULAR_CLOUD_DESC
-Diffuse cloud of complex molecules that disrupts ship shielding. All ships have their [[metertype METER_SHIELD]] decreased by 15.
+Diffuse cloud of complex molecules that disrupts ship shielding. All ships have their [[metertype METER_SHIELD]] decreased by [[value FLD_MOLECULAR_CLOUD_SHIELD_MALUS]].
 
 FLD_NEBULA_1
 Nebula
 
 FLD_NEBULA_1_DESC
-Cloud of hydrogen gas that could coalesce to form a new star. Ship [[metertype METER_SPEED]] and [[metertype METER_DETECTION]] are reduced by 20, [[metertype METER_STEALTH]] is increased by 20.
+Cloud of hydrogen gas that could coalesce to form a new star. Ship [[metertype METER_SPEED]] is reduced by [[value FLD_NEBULA_SPEED_MALUS]], [[metertype METER_DETECTION]] is reduced by [[value FLD_NEBULA_DETECTION_MALUS]], [[metertype METER_STEALTH]] is increased by [[value FLD_NEBULA_STEALTH_BONUS]].
 
 FLD_NEBULA_2
 [[FLD_NEBULA_1]]

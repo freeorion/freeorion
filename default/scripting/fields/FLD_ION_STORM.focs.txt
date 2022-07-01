@@ -24,15 +24,7 @@ FieldType
             scope = Source
             activation = (Source.Age >= max((UniverseWidth ^ 1.1) / 50, 20))
             effects = SetSize value = Value - min(max(Value * RandomNumber(0.05, 0.1), 1.0), 3.0)
-/*
-        EffectsGroup    // after reaching a certain age, shrink size a bit each turn when near systems
-            scope = Source
-            activation = (Source.Age >= 10)
-            effects = SetSize value = Value - 0.3 * (Count condition = And [
-                System
-                WithinDistance distance = 80 condition = Source
-            ])
-*/
+
         EffectsGroup    // affect stealth / detection of objects in storm
             scope = And [
                 Not Field
@@ -40,8 +32,8 @@ FieldType
             ]
             stackinggroup = "ION_STORM_STEALTH_DETECTION_REDUCTION"
             effects = [
-                SetStealth value = Value + 40
-                SetDetection value = Value - 40
+                SetStealth value = Value + NamedReal name = "FLD_ION_STORM_STEALTH_BONUS" value = 40
+                SetDetection value = Value - NamedReal name = "FLD_ION_STORM_DETECTION_MALUS" value = 40
             ]
 
         EffectsGroup    // after reaching a certain age, dissipate when small
