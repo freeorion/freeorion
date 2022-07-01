@@ -67,11 +67,15 @@ public:
       * are of type T */
     template <typename T = UniverseObject>
     [[nodiscard]] std::vector<std::shared_ptr<const T>> find(const id_range& object_ids) const;
+    template <typename T = UniverseObject>
+    [[nodiscard]] std::vector<const T*> findRaw(const id_range& object_ids) const;
 
     /** Returns a vector containing the objects with ids in \a object_ids that
       * are of type T */
     template <typename T = UniverseObject>
     [[nodiscard]] std::vector<std::shared_ptr<T>> find(const id_range& object_ids);
+    template <typename T = UniverseObject>
+    [[nodiscard]] std::vector<T*> findRaw(const id_range& object_ids);
 
     /** Returns all the objects that match \a visitor */
     template <typename T = UniverseObject>
@@ -309,6 +313,20 @@ std::vector<std::shared_ptr<const T>> ObjectMap::find(const id_range& object_ids
 }
 
 template <typename T>
+std::vector<const T*> ObjectMap::findRaw(const id_range& object_ids) const
+{
+    std::vector<const T*> retval;
+    retval.reserve(boost::size(object_ids));
+    typedef typename std::remove_const_t<T> mutableT;
+    for (int object_id : object_ids) {
+        auto map_it = Map<mutableT>().find(object_id);
+        if (map_it != Map<mutableT>().end())
+            retval.push_back(map_it->second.get());
+    }
+    return retval;
+}
+
+template <typename T>
 std::vector<std::shared_ptr<T>> ObjectMap::find(const id_range& object_ids)
 {
     std::vector<std::shared_ptr<T>> retval;
@@ -318,6 +336,20 @@ std::vector<std::shared_ptr<T>> ObjectMap::find(const id_range& object_ids)
         auto map_it = Map<mutableT>().find(object_id);
         if (map_it != Map<mutableT>().end())
             retval.push_back(map_it->second);
+    }
+    return retval;
+}
+
+template <typename T>
+std::vector<T*> ObjectMap::findRaw(const id_range& object_ids)
+{
+    std::vector<T*> retval;
+    retval.reserve(boost::size(object_ids));
+    typedef typename std::remove_const_t<T> mutableT;
+    for (int object_id : object_ids) {
+        auto map_it = Map<mutableT>().find(object_id);
+        if (map_it != Map<mutableT>().end())
+            retval.push_back(map_it->second.get());
     }
     return retval;
 }
