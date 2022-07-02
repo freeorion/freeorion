@@ -619,7 +619,7 @@ void GGHumanClientApp::NewSinglePlayerGame(bool quickstart) {
 
 
     TraceLogger() << "Sending host SP setup message";
-    m_networking->SendMessage(HostSPGameMessage(setup_data));
+    m_networking->SendMessage(HostSPGameMessage(setup_data, DependencyVersions()));
     m_fsm->process_event(HostSPGameRequested());
     TraceLogger() << "GGHumanClientApp::NewSinglePlayerGame done";
 }
@@ -668,7 +668,7 @@ void GGHumanClientApp::MultiPlayerGame() {
     }
 
     if (server_connect_wnd->GetResult().server_dest == "HOST GAME SELECTED") {
-        m_networking->SendMessage(HostMPGameMessage(server_connect_wnd->GetResult().player_name));
+        m_networking->SendMessage(HostMPGameMessage(server_connect_wnd->GetResult().player_name, DependencyVersions()));
         m_fsm->process_event(HostMPGameRequested());
     } else {
         boost::uuids::uuid cookie = boost::uuids::nil_uuid();
@@ -804,7 +804,7 @@ void GGHumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
     // leving setup_data.m_players empty : not specified when loading a game, as server will generate from save file
 
 
-    m_networking->SendMessage(HostSPGameMessage(setup_data));
+    m_networking->SendMessage(HostSPGameMessage(setup_data, DependencyVersions()));
     m_fsm->process_event(HostSPGameRequested());
 }
 

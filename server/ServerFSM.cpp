@@ -631,7 +631,8 @@ sc::result Idle::react(const HostMPGame& msg) {
 
     std::string host_player_name;
     std::string client_version_string;
-    ExtractHostMPGameMessageData(message, host_player_name, client_version_string);
+    std::map<std::string, std::string> dependencies;
+    ExtractHostMPGameMessageData(message, host_player_name, client_version_string, dependencies);
 
     // validate host name (was found and wasn't empty)
     if (host_player_name.empty()) {
@@ -673,7 +674,8 @@ sc::result Idle::react(const HostSPGame& msg) {
 
     auto single_player_setup_data = std::make_shared<SinglePlayerSetupData>();
     std::string client_version_string;
-    ExtractHostSPGameMessageData(message, *single_player_setup_data, client_version_string);
+    std::map<std::string, std::string> dependencies;
+    ExtractHostSPGameMessageData(message, *single_player_setup_data, client_version_string, dependencies);
 
 
     // get host player's name from setup data or saved file

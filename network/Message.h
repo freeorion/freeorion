@@ -186,10 +186,10 @@ FO_COMMON_API Message ErrorMessage(const std::string& problem, bool fatal = true
                                    int player_id = Networking::INVALID_PLAYER_ID);
 
 /** creates a HOST_SP_GAME message*/
-FO_COMMON_API Message HostSPGameMessage(const SinglePlayerSetupData& setup_data);
+FO_COMMON_API Message HostSPGameMessage(const SinglePlayerSetupData& setup_data, const std::map<std::string, std::string>& dependencies);
 
 /** creates a minimal HOST_MP_GAME message used to initiate multiplayer "lobby" setup*/
-FO_COMMON_API Message HostMPGameMessage(const std::string& host_player_name);
+FO_COMMON_API Message HostMPGameMessage(const std::string& host_player_name, const std::map<std::string, std::string>& dependencies);
 
 /** creates a JOIN_GAME message.  The sender's player name, client type, and
   * cookie are sent in the message.*/
@@ -384,7 +384,7 @@ FO_COMMON_API Message AutoTurnMessage(int turns_count);
 FO_COMMON_API void ExtractErrorMessageData(const Message& msg, int& player_id, std::string& problem, bool& fatal);
 
 FO_COMMON_API void ExtractHostMPGameMessageData(const Message& msg, std::string& host_player_name,
-                                                std::string& client_version_string);
+                                                std::string& client_version_string, std::map<std::string, std::string>& dependencies);
 
 FO_COMMON_API void ExtractLobbyUpdateMessageData(const Message& msg, MultiplayerLobbyData& lobby_data);
 
@@ -445,7 +445,7 @@ FO_COMMON_API void ExtractPlayerStatusMessageData(const Message& msg,
                                                   Message::PlayerStatus& status,
                                                   int& about_empire_id);
 
-FO_COMMON_API void ExtractHostSPGameMessageData(const Message& msg, SinglePlayerSetupData& setup_data, std::string& client_version_string);
+FO_COMMON_API void ExtractHostSPGameMessageData(const Message& msg, SinglePlayerSetupData& setup_data, std::string& client_version_string, std::map<std::string, std::string>& dependencies);
 
 FO_COMMON_API void ExtractEndGameMessageData(const Message& msg, Message::EndGameReason& reason, std::string& reason_player_name);
 
