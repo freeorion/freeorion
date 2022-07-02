@@ -994,11 +994,13 @@ void GGHumanClientApp::RenderBegin() {
 }
 
 void GGHumanClientApp::HandleMessage(Message&& msg) {
+    auto msg_type = msg.Type();
+
     if (INSTRUMENT_MESSAGE_HANDLING)
-        std::cerr << "GGHumanClientApp::HandleMessage(" << msg.Type() << ")\n";
+        std::cerr << "GGHumanClientApp::HandleMessage(" << msg_type << ")\n";
 
     try {
-        switch (msg.Type()) {
+        switch (msg_type) {
         case Message::MessageType::ERROR_MSG:               m_fsm->process_event(Error(msg));                   break;
         case Message::MessageType::HOST_MP_GAME:            m_fsm->process_event(HostMPGame(msg));              break;
         case Message::MessageType::HOST_SP_GAME:            m_fsm->process_event(HostSPGame(msg));              break;
@@ -1026,11 +1028,11 @@ void GGHumanClientApp::HandleMessage(Message&& msg) {
         case Message::MessageType::TURN_TIMEOUT:            m_fsm->process_event(TurnTimeout(msg));             break;
         case Message::MessageType::PLAYER_INFO:             m_fsm->process_event(PlayerInfoMsg(msg));           break;
         default:
-            ErrorLogger() << "GGHumanClientApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".";
+            ErrorLogger() << "GGHumanClientApp::HandleMessage : Received an unknown message type \"" << msg_type << "\".";
         }
     } catch (const std::exception& e) {
         ErrorLogger() << "GGHumanClientApp::HandleMessage : Exception while reacting to message of type \""
-                      << msg.Type() << "\". what: " << e.what();
+                      << msg_type << "\". what: " << e.what();
     }
 }
 
