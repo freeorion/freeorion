@@ -134,6 +134,7 @@ public:
         (Message, EndGameReason),
         ((LOCAL_CLIENT_DISCONNECT)) ///< the local player's client networking detected a disconnection from the server
         ((PLAYER_DISCONNECT))       ///< an active player (not an observer) was disconnected
+        ((UNKNOWN))                 ///< unable to determine reason for end game
     )
 
     Message() = default;

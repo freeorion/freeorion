@@ -5,6 +5,7 @@
 #include <boost/serialization/access.hpp>
 #include "../util/Enum.h"
 #include "../util/Export.h"
+#include "../universe/ConstantsFwd.h"
 
 
 //! diplomatic statuses
@@ -44,9 +45,9 @@ public:
     [[nodiscard]] bool          IsAllowed() const; ///< Tells if this dimplomatic message allowed by game rules
 
 private:
-    int  m_sender_empire;
-    int  m_recipient_empire;
-    Type m_type;
+    int  m_sender_empire = ALL_EMPIRES;
+    int  m_recipient_empire = ALL_EMPIRES;
+    Type m_type = Type::INVALID;
 
     friend class boost::serialization::access;
     template <typename Archive>
@@ -56,9 +57,9 @@ private:
 struct FO_COMMON_API DiplomaticStatusUpdateInfo {
     DiplomaticStatusUpdateInfo();
     DiplomaticStatusUpdateInfo(int empire1_id_, int empire2_id_, DiplomaticStatus status);
-    int                 empire1_id;
-    int                 empire2_id;
-    DiplomaticStatus    diplo_status;
+    int                 empire1_id = ALL_EMPIRES;
+    int                 empire2_id = ALL_EMPIRES;
+    DiplomaticStatus    diplo_status = DiplomaticStatus::INVALID_DIPLOMATIC_STATUS;
 };
 
 bool operator==(const DiplomaticMessage& lhs, const DiplomaticMessage& rhs);

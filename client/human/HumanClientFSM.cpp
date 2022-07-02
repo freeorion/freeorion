@@ -214,10 +214,13 @@ boost::statechart::result WaitingForSPHostAck::react(const Disconnection& d) {
 boost::statechart::result WaitingForSPHostAck::react(const Error& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) WaitingForSPHostAck.Error";
     std::string problem;
-    bool fatal;
-    int player_id;
-    ExtractErrorMessageData(msg.m_message, player_id, problem, fatal);
-
+    bool fatal = false;
+    try {
+        int player_id = Networking::INVALID_PLAYER_ID;
+        ExtractErrorMessageData(msg.m_message, player_id, problem, fatal);
+    } catch (...) {
+        problem = UserString("UNKNOWN");
+    }
     ErrorLogger(FSM) << "WaitingForSPHostAck::react(const Error& msg) error: " << problem;
 
     //Note: transit<> frees this pointer so Client() must be called before.
@@ -226,7 +229,7 @@ boost::statechart::result WaitingForSPHostAck::react(const Error& msg) {
     // See reaction_transition_note.
     auto retval = discard_event();
     if (fatal) {
-        Client().ResetToIntro(true);
+        client.ResetToIntro(true);
         ClientUI::MessageBox(UserString(problem), true);
         client.GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
     }
@@ -293,10 +296,13 @@ boost::statechart::result WaitingForMPHostAck::react(const Disconnection& d) {
 boost::statechart::result WaitingForMPHostAck::react(const Error& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) WaitingForMPHostAck.Error";
     std::string problem;
-    bool fatal;
-    int player_id;
-    ExtractErrorMessageData(msg.m_message, player_id, problem, fatal);
-
+    bool fatal = false;
+    try {
+        int player_id = Networking::INVALID_PLAYER_ID;
+        ExtractErrorMessageData(msg.m_message, player_id, problem, fatal);
+    } catch (...) {
+        problem = UserString("UNKNOWN");
+    }
     ErrorLogger(FSM) << "WaitingForMPHostAck::react(const Error& msg) error: " << problem;
 
     //Note: transit<> frees this pointer so Client() must be called before.
@@ -376,8 +382,12 @@ boost::statechart::result WaitingForMPJoinAck::react(const AuthRequest& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) WaitingForMPJoinAck.AuthRequest";
 
     std::string player_name;
-    std::string auth;
-    ExtractAuthRequestMessageData(msg.m_message, player_name, auth);
+    try {
+        std::string auth;
+        ExtractAuthRequestMessageData(msg.m_message, player_name, auth);
+    } catch (...) {
+        player_name = UserString("UNKNOWN");
+    }
 
     auto password_dialog = Client().GetClientUI().GetPasswordEnterWnd();
     password_dialog->SetPlayerName(player_name);
@@ -399,10 +409,13 @@ boost::statechart::result WaitingForMPJoinAck::react(const Disconnection& d) {
 boost::statechart::result WaitingForMPJoinAck::react(const Error& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) WaitingForMPJoinAck.Error";
     std::string problem;
-    bool fatal;
-    int player_id;
-    ExtractErrorMessageData(msg.m_message, player_id, problem, fatal);
-
+    bool fatal = false;
+    try {
+        int player_id = Networking::INVALID_PLAYER_ID;
+        ExtractErrorMessageData(msg.m_message, player_id, problem, fatal);
+    } catch (...) {
+        problem = UserString("UNKNOWN");
+    }
     ErrorLogger(FSM) << "WaitingForMPJoinAck::react(const Error& msg) error: " << problem;
 
     //Note: transit<> frees this pointer so Client() must be called before.
@@ -411,7 +424,7 @@ boost::statechart::result WaitingForMPJoinAck::react(const Error& msg) {
     // See reaction_transition_note.
     auto retval = discard_event();
     if (fatal) {
-        Client().ResetToIntro(true);
+        client.ResetToIntro(true);
         ClientUI::MessageBox(UserString(problem), true);
         client.GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
     }
@@ -484,9 +497,11 @@ boost::statechart::result MPLobby::react(const HostID& msg) {
 
 boost::statechart::result MPLobby::react(const LobbyUpdate& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) MPLobby.LobbyUpdate";
-    MultiplayerLobbyData lobby_data;
-    ExtractLobbyUpdateMessageData(msg.m_message, lobby_data);
-    Client().GetClientUI().GetMultiPlayerLobbyWnd()->LobbyUpdate(lobby_data);
+    try {
+        MultiplayerLobbyData lobby_data{};
+        ExtractLobbyUpdateMessageData(msg.m_message, lobby_data);
+        Client().GetClientUI().GetMultiPlayerLobbyWnd()->LobbyUpdate(lobby_data);
+    } catch (...) {}
     return discard_event();
 }
 
@@ -494,12 +509,13 @@ boost::statechart::result MPLobby::react(const PlayerChat& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) MPLobby.PlayerChat";
 
     int player_id;
-    boost::posix_time::ptime timestamp;
+    boost::posix_time::ptime timestamp{};
     std::string data;
-    bool pm;
-    ExtractServerPlayerChatMessageData(msg.m_message, player_id, timestamp, data, pm);
-
-    Client().GetClientUI().GetMultiPlayerLobbyWnd()->ChatMessage(player_id, timestamp, data);
+    bool pm = false;
+    try {
+        ExtractServerPlayerChatMessageData(msg.m_message, player_id, timestamp, data, pm);
+        Client().GetClientUI().GetMultiPlayerLobbyWnd()->ChatMessage(player_id, timestamp, data);
+    } catch (...) {}
     return discard_event();
 }
 
@@ -545,16 +561,22 @@ boost::statechart::result MPLobby::react(const GameStart& msg) {
 boost::statechart::result MPLobby::react(const Error& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) MPLobby.Error";
     std::string problem;
-    bool fatal;
-    int player_id;
-    ExtractErrorMessageData(msg.m_message, player_id, problem, fatal);
-
+    bool fatal = false;
+    int player_id = Networking::INVALID_PLAYER_ID;
+    try {
+        ExtractErrorMessageData(msg.m_message, player_id, problem, fatal);
+    } catch (...) {
+        problem = UserString("UNKNOWN");
+    }
     ErrorLogger(FSM) << "MPLobby::react(const Error& msg) error: " << problem;
+
+    //Note: transit<> frees this pointer so Client() must be called before.
+    GGHumanClientApp& client = Client();
 
     // See reaction_transition_note.
     auto retval = discard_event();
     if (fatal) {
-        Client().ResetToIntro(true);
+        client.ResetToIntro(true);
         ClientUI::MessageBox(UserString(problem), true);
     }
 
@@ -582,7 +604,9 @@ boost::statechart::result MPLobby::react(const ChatHistory& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) ChatHistory.";
 
     std::vector<ChatHistoryEntity> chat_history;
-    ExtractChatHistoryMessage(msg.m_message, chat_history);
+    try {
+        ExtractChatHistoryMessage(msg.m_message, chat_history);
+    } catch (...) {}
 
     const auto& wnd = Client().GetClientUI().GetMultiPlayerLobbyWnd();
     for (const auto& elem : chat_history)
@@ -612,7 +636,10 @@ boost::statechart::result MPLobby::react(const TurnProgress& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) TurnProgress.";
 
     Message::TurnProgressPhase phase_id;
-    ExtractTurnProgressMessageData(msg.m_message, phase_id);
+    try {
+        ExtractTurnProgressMessageData(msg.m_message, phase_id);
+    } catch (...) {}
+
     const auto& wnd = Client().GetClientUI().GetMultiPlayerLobbyWnd();
     wnd->TurnPhaseUpdate(phase_id);
 
@@ -659,15 +686,17 @@ boost::statechart::result PlayingGame::react(const HostID& msg) {
 boost::statechart::result PlayingGame::react(const PlayerChat& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.PlayerChat: " << msg.m_message.Text();
     std::string text;
-    int sending_player_id;
-    boost::posix_time::ptime timestamp;
-    bool pm;
-    ExtractServerPlayerChatMessageData(msg.m_message, sending_player_id, timestamp, text, pm);
+    int sending_player_id = Networking::INVALID_PLAYER_ID;
+    boost::posix_time::ptime timestamp{};
+    bool pm = true;
+    try {
+        ExtractServerPlayerChatMessageData(msg.m_message, sending_player_id, timestamp, text, pm);
+    } catch (...) {}
 
     std::string player_name{UserString("PLAYER") + " " + std::to_string(sending_player_id)};
     GG::Clr text_color{Client().GetClientUI().TextColor()};
     if (sending_player_id != Networking::INVALID_PLAYER_ID) {
-        auto players = Client().Players();
+        auto& players = Client().Players();
         auto player_it = players.find(sending_player_id);
         if (player_it != players.end()) {
             player_name = player_it->second.name;
@@ -696,11 +725,12 @@ boost::statechart::result PlayingGame::react(const Disconnection& d) {
 
 boost::statechart::result PlayingGame::react(const PlayerStatus& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.PlayerStatus";
-    Message::PlayerStatus status;
-    int about_empire_id;
-    ExtractPlayerStatusMessageData(msg.m_message, status, about_empire_id);
-
-    Client().SetEmpireStatus(about_empire_id, status);
+    try {
+        Message::PlayerStatus status = Message::PlayerStatus::WAITING;
+        int about_empire_id = ALL_EMPIRES;
+        ExtractPlayerStatusMessageData(msg.m_message, status, about_empire_id);
+        Client().SetEmpireStatus(about_empire_id, status);
+    } catch (...) {}
     // TODO: tell the map wnd or something else as well?
 
     return discard_event();
@@ -708,39 +738,49 @@ boost::statechart::result PlayingGame::react(const PlayerStatus& msg) {
 
 boost::statechart::result PlayingGame::react(const Diplomacy& d) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.Diplomacy";
-
-    DiplomaticMessage diplo_message;
-    ExtractDiplomacyMessageData(d.m_message, diplo_message);
-    Client().Empires().SetDiplomaticMessage(diplo_message);
+    try {
+        DiplomaticMessage diplo_message;
+        ExtractDiplomacyMessageData(d.m_message, diplo_message);
+        Client().Empires().SetDiplomaticMessage(diplo_message);
+    } catch (...) {}
 
     return discard_event();
 }
 
 boost::statechart::result PlayingGame::react(const DiplomaticStatusUpdate& u) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.DiplomaticStatusUpdate";
-
-    DiplomaticStatusUpdateInfo diplo_update;
-    ExtractDiplomaticStatusMessageData(u.m_message, diplo_update);
-    Client().Empires().SetDiplomaticStatus(diplo_update.empire1_id, diplo_update.empire2_id, diplo_update.diplo_status);
+    try {
+        DiplomaticStatusUpdateInfo diplo_update;
+        ExtractDiplomaticStatusMessageData(u.m_message, diplo_update);
+        Client().Empires().SetDiplomaticStatus(diplo_update.empire1_id, diplo_update.empire2_id, diplo_update.diplo_status);
+    } catch (...) {}
 
     return discard_event();
 }
 
 boost::statechart::result PlayingGame::react(const EndGame& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.EndGame";
-    Message::EndGameReason reason;
-    std::string reason_player_name;
-    ExtractEndGameMessageData(msg.m_message, reason, reason_player_name);
+    Message::EndGameReason reason = Message::EndGameReason::UNKNOWN;
     std::string reason_message;
     bool error = false;
-    switch (reason) {
-    case Message::EndGameReason::LOCAL_CLIENT_DISCONNECT:
-        reason_message = UserString("SERVER_LOST");
-        break;
-    case Message::EndGameReason::PLAYER_DISCONNECT:
-        reason_message = boost::io::str(FlexibleFormat(UserString("PLAYER_DISCONNECTED")) % reason_player_name);
+    try {
+        std::string reason_player_name;
+        ExtractEndGameMessageData(msg.m_message, reason, reason_player_name);
+        switch (reason) {
+        case Message::EndGameReason::LOCAL_CLIENT_DISCONNECT:
+            reason_message = UserString("SERVER_LOST");
+            break;
+        case Message::EndGameReason::PLAYER_DISCONNECT:
+            reason_message = boost::io::str(FlexibleFormat(UserString("PLAYER_DISCONNECTED")) % reason_player_name);
+            error = true;
+            break;
+        default:
+            reason_message = UserString("UNKNOWN");
+            error = true;
+        }
+    } catch (...) {
+        reason_message = UserString("UNKNOWN");
         error = true;
-        break;
     }
 
     // See reaction_transition_note.
@@ -762,17 +802,23 @@ boost::statechart::result PlayingGame::react(const StartQuittingGame& e) {
 boost::statechart::result PlayingGame::react(const Error& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.Error";
     std::string problem;
-    bool fatal;
-    int player_id;
-    ExtractErrorMessageData(msg.m_message, player_id, problem, fatal);
-
+    bool fatal = false;
+    try {
+        int player_id = Networking::INVALID_PLAYER_ID;
+        ExtractErrorMessageData(msg.m_message, player_id, problem, fatal);
+    } catch (...) {
+        problem = UserString("UNKNOWN");
+    }
     ErrorLogger(FSM) << "PlayingGame::react(const Error& msg) error: "
-                  << problem << "\nProblem is" << (fatal ? "fatal" : "non-fatal");
+                     << problem << "\nProblem is" << (fatal ? "fatal" : "non-fatal");
+
+    //Note: transit<> frees this pointer so Client() must be called before.
+    GGHumanClientApp& client = Client();
 
     // See reaction_transition_note.
     auto retval = discard_event();
     if (fatal)
-        Client().ResetToIntro(true);
+        client.ResetToIntro(true);
 
     ClientUI::MessageBox(UserString(problem), fatal);
 
@@ -783,8 +829,10 @@ boost::statechart::result PlayingGame::react(const TurnProgress& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.TurnProgress";
 
     Message::TurnProgressPhase phase_id;
-    ExtractTurnProgressMessageData(msg.m_message, phase_id);
-    Client().HandleTurnPhaseUpdate(phase_id);
+    try {
+        ExtractTurnProgressMessageData(msg.m_message, phase_id);
+        Client().HandleTurnPhaseUpdate(phase_id);
+    } catch (...) {}
 
     return discard_event();
 }
@@ -792,9 +840,10 @@ boost::statechart::result PlayingGame::react(const TurnProgress& msg) {
 boost::statechart::result PlayingGame::react(const TurnPartialUpdate& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.TurnPartialUpdate";
 
-    ExtractTurnPartialUpdateMessageData(msg.m_message,   Client().EmpireID(),    GetUniverse());
-
-    Client().GetClientUI().GetMapWnd()->MidTurnUpdate();
+    try {
+        ExtractTurnPartialUpdateMessageData(msg.m_message,   Client().EmpireID(),    GetUniverse());
+        Client().GetClientUI().GetMapWnd()->MidTurnUpdate();
+    } catch (...) {}
 
     return discard_event();
 }
@@ -827,8 +876,10 @@ boost::statechart::result PlayingGame::react(const TurnTimeout& msg) {
 
 boost::statechart::result PlayingGame::react(const PlayerInfoMsg& msg) {
     DebugLogger(FSM) << "(PlayerFSM) PlayingGame::PlayerInfoMsg message received: " << msg.m_message.Text();
-    ExtractPlayerInfoMessageData(msg.m_message, Client().Players());
-    Client().GetClientUI().GetPlayerListWnd()->Refresh();
+    try {
+        ExtractPlayerInfoMessageData(msg.m_message, Client().Players());
+        Client().GetClientUI().GetPlayerListWnd()->Refresh();
+    } catch (...) {}
     return discard_event();
 }
 
@@ -968,6 +1019,7 @@ boost::statechart::result WaitingForGameStart::react(const UnpackFailedNotificat
 ////////////////////////////////////////////////////////////
 struct WaitingForTurnData::TurnDataUnpackedNotification::UnpackedData {
     UnpackedData(std::string message, const int client_empire_id) {
+        // may throw, caller should catch
         ExtractTurnUpdateMessageData(std::move(message), client_empire_id, current_turn,
                                      empires, universe, species, combat_logs, supply,
                                      player_info);
@@ -996,13 +1048,14 @@ WaitingForTurnData::~WaitingForTurnData()
 boost::statechart::result WaitingForTurnData::react(const SaveGameComplete& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) WaitingForTurnData.SaveGameComplete";
 
-    std::string save_filename;
-    int bytes_written;
-    ExtractServerSaveGameCompleteMessageData(msg.m_message, save_filename, bytes_written);
+    std::string save_filename = "???";
+    int bytes_written = 0;
+    try {
+        ExtractServerSaveGameCompleteMessageData(msg.m_message, save_filename, bytes_written);
+    } catch (...) {};
 
     Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(
         boost::io::str(FlexibleFormat(UserString("SERVER_SAVE_COMPLETE")) % save_filename % bytes_written) + "\n");
-
     Client().SaveGameCompleted();
 
     return discard_event();
@@ -1145,9 +1198,11 @@ PlayingTurn::~PlayingTurn()
 boost::statechart::result PlayingTurn::react(const SaveGameComplete& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingTurn.SaveGameComplete";
 
-    std::string save_filename;
-    int bytes_written;
-    ExtractServerSaveGameCompleteMessageData(msg.m_message, save_filename, bytes_written);
+    std::string save_filename = "???";
+    int bytes_written = 0;
+    try {
+        ExtractServerSaveGameCompleteMessageData(msg.m_message, save_filename, bytes_written);
+    } catch(...) {}
 
     Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(
         boost::io::str(FlexibleFormat(UserString("SERVER_SAVE_COMPLETE")) % save_filename % bytes_written) + "\n");
@@ -1192,11 +1247,13 @@ boost::statechart::result PlayingTurn::react(const TurnEnded& msg) {
 
 boost::statechart::result PlayingTurn::react(const PlayerStatus& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingTurn.PlayerStatus";
-    Message::PlayerStatus status;
-    int about_empire_id;
-    ExtractPlayerStatusMessageData(msg.m_message, status, about_empire_id);
+    try {
+        Message::PlayerStatus status;
+        int about_empire_id = ALL_EMPIRES;
+        ExtractPlayerStatusMessageData(msg.m_message, status, about_empire_id);
 
-    Client().SetEmpireStatus(about_empire_id, status);
+        Client().SetEmpireStatus(about_empire_id, status);
+    } catch (...) {}
 
     if (Client().GetApp()->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR &&
         Client().GetClientUI().GetMapWnd()->AutoEndTurnEnabled())
