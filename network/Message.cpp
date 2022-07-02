@@ -185,12 +185,10 @@ Message GameStartMessage(bool single_player_game, int empire_id,
 {
     std::ostringstream os;
     {
-        boost::iostreams::zlib_params params;
-        params.level = boost::iostreams::zlib::no_compression;
-        if (use_compression)
-            params.level = boost::iostreams::zlib::default_compression;
-        boost::iostreams::filtering_ostream zos;
-        zos.push(boost::iostreams::zlib_compressor(params));
+        using namespace boost::iostreams;
+        zlib_params params{use_compression ? zlib::default_compression : zlib::no_compression};
+        filtering_ostream zos;
+        zos.push(zlib_compressor(params));
         zos.push(os);
         if (use_binary_serialization) {
             freeorion_bin_oarchive oa(zos);
@@ -225,9 +223,8 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             galaxy_setup_data.encoding_empire = empire_id;
             oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         }
-        if (!zos.strict_sync()) {
+        if (!zos.strict_sync())
             zos.reset();
-        }
     }
     return Message{Message::MessageType::GAME_START, std::move(os).str()};
 }
@@ -243,12 +240,10 @@ Message GameStartMessage(bool single_player_game, int empire_id,
 {
     std::ostringstream os;
     {
-        boost::iostreams::zlib_params params;
-        params.level = boost::iostreams::zlib::no_compression;
-        if (use_compression)
-            params.level = boost::iostreams::zlib::default_compression;
-        boost::iostreams::filtering_ostream zos;
-        zos.push(boost::iostreams::zlib_compressor(params));
+        using namespace boost::iostreams;
+        zlib_params params{use_compression ? zlib::default_compression : zlib::no_compression};
+        filtering_ostream zos;
+        zos.push(zlib_compressor(params));
         zos.push(os);
         if (use_binary_serialization) {
             freeorion_bin_oarchive oa(zos);
@@ -304,9 +299,8 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             galaxy_setup_data.encoding_empire = empire_id;
             oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         }
-        if (!zos.strict_sync()) {
+        if (!zos.strict_sync())
             zos.reset();
-        }
     }
     return Message{Message::MessageType::GAME_START, std::move(os).str()};
 }
@@ -319,15 +313,14 @@ Message GameStartMessage(bool single_player_game, int empire_id,
                          const OrderSet& orders, const std::string* save_state_string,
                          GalaxySetupData galaxy_setup_data,
                          bool use_binary_serialization, bool use_compression)
+
 {
     std::ostringstream os;
     {
-        boost::iostreams::zlib_params params;
-        params.level = boost::iostreams::zlib::no_compression;
-        if (use_compression)
-            params.level = boost::iostreams::zlib::default_compression;
-        boost::iostreams::filtering_ostream zos;
-        zos.push(boost::iostreams::zlib_compressor(params));
+        using namespace boost::iostreams;
+        zlib_params params{use_compression ? zlib::default_compression : zlib::no_compression};
+        filtering_ostream zos;
+        zos.push(zlib_compressor(params));
         zos.push(os);
         if (use_binary_serialization) {
             freeorion_bin_oarchive oa(zos);
@@ -383,9 +376,8 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             galaxy_setup_data.encoding_empire = empire_id;
             oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         }
-        if (!zos.strict_sync()) {
+        if (!zos.strict_sync())
             zos.reset();
-        }
     }
     return Message{Message::MessageType::GAME_START, std::move(os).str()};
 }
@@ -478,12 +470,10 @@ Message TurnUpdateMessage(int empire_id, int current_turn,
 {
     std::ostringstream os;
     {
-        boost::iostreams::zlib_params params;
-        params.level = boost::iostreams::zlib::no_compression;
-        if (use_compression)
-            params.level = boost::iostreams::zlib::default_compression;
-        boost::iostreams::filtering_ostream zos;
-        zos.push(boost::iostreams::zlib_compressor(params));
+        using namespace boost::iostreams;
+        zlib_params params{use_compression ? zlib::default_compression : zlib::no_compression};
+        filtering_ostream zos;
+        zos.push(zlib_compressor(params));
         zos.push(os);
         if (use_binary_serialization) {
             freeorion_bin_oarchive oa(zos);
@@ -506,9 +496,8 @@ Message TurnUpdateMessage(int empire_id, int current_turn,
             Serialize(oa, universe);
             oa << BOOST_SERIALIZATION_NVP(players);
         }
-        if (!zos.strict_sync()) {
+        if (!zos.strict_sync())
             zos.reset();
-        }
     }
     return Message{Message::MessageType::TURN_UPDATE, std::move(os).str()};
 }
@@ -517,12 +506,10 @@ Message TurnPartialUpdateMessage(int empire_id, const Universe& universe,
                                  bool use_binary_serialization, bool use_compression) {
     std::ostringstream os;
     {
-        boost::iostreams::zlib_params params;
-        params.level = boost::iostreams::zlib::no_compression;
-        if (use_compression)
-            params.level = boost::iostreams::zlib::default_compression;
-        boost::iostreams::filtering_ostream zos;
-        zos.push(boost::iostreams::zlib_compressor(params));
+        using namespace boost::iostreams;
+        zlib_params params{use_compression ? zlib::default_compression : zlib::no_compression};
+        filtering_ostream zos;
+        zos.push(zlib_compressor(params));
         zos.push(os);
         if (use_binary_serialization) {
             freeorion_bin_oarchive oa(zos);
@@ -533,9 +520,8 @@ Message TurnPartialUpdateMessage(int empire_id, const Universe& universe,
             GlobalSerializationEncodingForEmpire() = empire_id;
             Serialize(oa, universe);
         }
-        if (!zos.strict_sync()) {
+        if (!zos.strict_sync())
             zos.reset();
-        }
     }
     return Message{Message::MessageType::TURN_PARTIAL_UPDATE, std::move(os).str()};
 }
@@ -630,12 +616,10 @@ Message DispatchCombatLogsMessage(const std::vector<std::pair<int, const CombatL
     std::ostringstream os;
     {
         try {
-            boost::iostreams::zlib_params params;
-            params.level = boost::iostreams::zlib::no_compression;
-            if (use_compression)
-                params.level = boost::iostreams::zlib::default_compression;
-            boost::iostreams::filtering_ostream zos;
-            zos.push(boost::iostreams::zlib_compressor(params));
+            using namespace boost::iostreams;
+            zlib_params params{use_compression ? zlib::default_compression : zlib::no_compression};
+            filtering_ostream zos;
+            zos.push(zlib_compressor(params));
             zos.push(os);
             if (use_binary_serialization) {
                 freeorion_bin_oarchive oa(zos);
@@ -644,9 +628,8 @@ Message DispatchCombatLogsMessage(const std::vector<std::pair<int, const CombatL
                 freeorion_xml_oarchive oa(zos);
                 oa << BOOST_SERIALIZATION_NVP(logs);
             }
-            if (!zos.strict_sync()) {
+            if (!zos.strict_sync())
                 zos.reset();
-            }
         } catch (const std::exception& e) {
             ErrorLogger() << "Caught exception serializing combat logs: " << e.what();
         }
@@ -696,12 +679,10 @@ Message ChatHistoryMessage(const std::vector<std::reference_wrapper<const ChatHi
                            bool use_compression) {
     std::ostringstream os;
     {
-        boost::iostreams::zlib_params params;
-        params.level = boost::iostreams::zlib::no_compression;
-        if (use_compression)
-            params.level = boost::iostreams::zlib::default_compression;
-        boost::iostreams::filtering_ostream zos;
-        zos.push(boost::iostreams::zlib_compressor(params));
+        using namespace boost::iostreams;
+        zlib_params params{use_compression ? zlib::default_compression : zlib::no_compression};
+        filtering_ostream zos;
+        zos.push(zlib_compressor(params));
         zos.push(os);
         {
             // Nested block ensures archive is closed and completes writing before
@@ -713,9 +694,8 @@ Message ChatHistoryMessage(const std::vector<std::reference_wrapper<const ChatHi
                 oa << boost::serialization::make_nvp(BOOST_PP_STRINGIZE(elem), elem.get());
             }
         }
-        if (!zos.strict_sync()) {
+        if (!zos.strict_sync())
             zos.reset();
-        }
     }
     return Message{Message::MessageType::CHAT_HISTORY, std::move(os).str()};
 }
@@ -1139,7 +1119,6 @@ void ExtractTurnUpdateMessageData(std::string text, int empire_id, int& current_
     try {
         ScopedTimer timer("Turn Update Unpacking");
 
-        bool try_xml = false;
         try {
             // first attempt binary deserialization
             std::istringstream is(text);
@@ -1157,9 +1136,6 @@ void ExtractTurnUpdateMessageData(std::string text, int empire_id, int& current_
             Deserialize(ia, universe);
             ia >> BOOST_SERIALIZATION_NVP(players);
         } catch (...) {
-            try_xml = true;
-        }
-        if (try_xml) {
             // try again with more-portable XML deserialization
             std::istringstream is(text);
             boost::iostreams::filtering_istream zis;
