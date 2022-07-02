@@ -5,4 +5,4 @@ MINIMUM_COLONY_SCORE = 60
 # resource production is evaluated as production * priority_for_the_resource * RESOURCE_PRIORITY_MULTIPLIER
 RESOURCE_PRIORITY_MULTIPLIER = 0.5
 
-DEBUG_COLONY_RATING = check_bool(get_option_dict().get("debug_planet_rating=1", "False"))
+DEBUG_COLONY_RATING = check_bool(get_option_dict().get("debug_planet_rating", "False"))
