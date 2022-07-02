@@ -1,11 +1,10 @@
 import freeOrionAIInterface as fo
-from logging import debug
 from typing import Dict, Tuple
 
 import AIDependencies
 import PolicyAI
 from buildings import BuildingType
-from colonization.colony_score import DEBUG_COLONY_RATING
+from colonization.colony_score import debug_rating
 from freeorion_tools import get_species_tag_value
 from freeorion_tools.caching import cache_for_current_turn
 from PlanetUtilsAI import dislike_factor
@@ -29,12 +28,11 @@ def calculate_stability(planet: fo.planet, species: fo.species) -> float:
     administration = _evaluate_administration(planet, species)
     result = baseline + species_mod + home_bonus + policies + specials + buildings + xenophobia + administration
     # missing: supply connection check, artisan bonus, anything else?
-    if DEBUG_COLONY_RATING:
-        debug(
-            f"stability of {species.name} on {planet} would be {result:.1f} (base={baseline:.1f}, "
-            f"species={species_mod:.1f}, specials={specials:.1f}, home={home_bonus:.1f}, policies={policies:.1f}, "
-            f"buildings={buildings:.1f}, xeno={xenophobia:.1f}, admin={administration:.1f})"
-        )
+    debug_rating(
+        f"stability of {species.name} on {planet} would be {result:.1f} (base={baseline:.1f}, "
+        f"species={species_mod:.1f}, specials={specials:.1f}, home={home_bonus:.1f}, policies={policies:.1f}, "
+        f"buildings={buildings:.1f}, xeno={xenophobia:.1f}, admin={administration:.1f})"
+    )
     return result
 
 

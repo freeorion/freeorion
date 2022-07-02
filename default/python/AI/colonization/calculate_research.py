@@ -1,10 +1,9 @@
 import freeOrionAIInterface as fo
-from logging import debug
 from typing import List, NamedTuple
 
 import AIDependencies
 from buildings import BuildingType
-from colonization.colony_score import DEBUG_COLONY_RATING
+from colonization.colony_score import debug_rating
 from common.fo_typing import SystemId
 from EnumsAI import FocusType
 from freeorion_tools import (
@@ -37,12 +36,11 @@ def calculate_research(planet: fo.planet, species: fo.species, max_population: f
     result = max_population * (AIDependencies.INDUSTRY_PER_POP + bonus_modified) * skill_multiplier
     result = (result + max_population * bonus_by_policy + flat_by_policy) * policy_multiplier
     result += max_population * bonus_unmodified
-    if DEBUG_COLONY_RATING:
-        debug(
-            f"calculate_research pop={max_population:.2f}, st={stability:.2f}, b1={bonus_modified:.2f}, "
-            f"m1={skill_multiplier:.2f}, b2={bonus_by_policy:.2f}, f2={flat_by_policy:.2f}, "
-            f"m2={policy_multiplier:.2f}, b3={bonus_unmodified:.2f} -> {result:.2f}"
-        )
+    debug_rating(
+        f"calculate_research pop={max_population:.2f}, st={stability:.2f}, b1={bonus_modified:.2f}, "
+        f"m1={skill_multiplier:.2f}, b2={bonus_by_policy:.2f}, f2={flat_by_policy:.2f}, "
+        f"m2={policy_multiplier:.2f}, b3={bonus_unmodified:.2f} -> {result:.2f}"
+    )
     return result
 
 
@@ -50,6 +48,9 @@ class _ResearchBonus(NamedTuple):
     available: bool
     min_stability: float
     value: float
+
+    def get_bonus(self, stability: float) -> float:
+        return self.value if stability > self.min_stability else 0.0
 
 
 @cache_for_current_turn
@@ -88,11 +89,7 @@ def _get_research_bonus_modified(planet: fo.planet, stability: float) -> float:
     """
     Calculate bonus research per population which would be added before multiplication with the species skill value.
     """
-    result = 0.0
-    for bonus in _get_modified_research_bonuses(planet):
-        if bonus.available and stability >= bonus.min_stability:
-            result += bonus.value
-    return result
+    return sum(bonus.get_bonus(stability) for bonus in _get_modified_research_bonuses(planet))
 
 
 @cache_for_current_turn
@@ -123,11 +120,7 @@ def _get_research_bonus_modified_by_policy(stability: float) -> float:
     Calculate bonus research per population which we would get independent of the species research skill,
     but still affected by industrialism.
     """
-    result = 0.0
-    for bonus in _get_modified_by_policy_research_bonuses(stability):
-        if bonus.available and stability >= bonus.min_stability:
-            result += bonus.value
-    return result
+    return sum(bonus.get_bonus(stability) for bonus in _get_modified_by_policy_research_bonuses(stability))
 
 
 @cache_for_current_turn
@@ -159,11 +152,7 @@ def _get_research_flat_modified_by_policy(planet: fo.planet, stability: float) -
         ),
         # TODO Species InterDesign Academy
     ]
-    result = 0.0
-    for bonus in bonuses:
-        if bonus.available and stability >= bonus.min_stability:
-            result += bonus.value
-    return result
+    return sum(bonus.get_bonus(stability) for bonus in bonuses)
 
 
 def _get_policy_multiplier(stability) -> float:

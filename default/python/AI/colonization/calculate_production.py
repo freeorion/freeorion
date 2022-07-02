@@ -1,10 +1,9 @@
 import freeOrionAIInterface as fo
-from logging import debug
 from typing import List, NamedTuple
 
 import AIDependencies
 from buildings import BuildingType
-from colonization.colony_score import DEBUG_COLONY_RATING
+from colonization.colony_score import debug_rating
 from freeorion_tools import get_named_real, get_species_tag_value, tech_soon_available
 from freeorion_tools.caching import cache_for_current_turn
 from turn_state import have_honeycomb
@@ -29,12 +28,11 @@ def calculate_production(planet: fo.planet, species: fo.species, max_population:
         (AIDependencies.INDUSTRY_PER_POP + bonus_modified) * skill_multiplier + bonus_by_policy
     ) * policy_multiplier + bonus_unmodified
     result = max_population * per_population + bonus_flat
-    if DEBUG_COLONY_RATING:
-        debug(
-            f"calculate_production pop={max_population:.2f}, st={stability:.2f}, b1={bonus_modified:.2f}, "
-            f"m1={skill_multiplier:.2f}, b2={bonus_by_policy:.2f}, m2={policy_multiplier:.2f}, "
-            f"b3={bonus_unmodified:.2f}, flat={bonus_flat:.2f} -> {result:.2f}"
-        )
+    debug_rating(
+        f"calculate_production pop={max_population:.2f}, st={stability:.2f}, b1={bonus_modified:.2f}, "
+        f"m1={skill_multiplier:.2f}, b2={bonus_by_policy:.2f}, m2={policy_multiplier:.2f}, "
+        f"b3={bonus_unmodified:.2f}, flat={bonus_flat:.2f} -> {result:.2f}"
+    )
     return result
 
 
@@ -42,6 +40,9 @@ class _ProductionBonus(NamedTuple):
     available: bool
     min_stability: float
     value: float
+
+    def get_bonus(self, stability: float) -> float:
+        return self.value if stability > self.min_stability else 0.0
 
 
 @cache_for_current_turn
@@ -89,13 +90,10 @@ def _get_production_bonus_modified(planet: fo.planet, stability: float) -> float
     """
     Calculate bonus production per population which would be added before multiplication with the species skill value.
     """
-    result = sum(
+    specials_bonus = sum(
         AIDependencies.INDUSTRY_PER_POP for s in planet.specials if s in AIDependencies.industry_boost_specials_modified
     )
-    for bonus in _get_modified_industry_bonuses():
-        if bonus.available and stability >= bonus.min_stability:
-            result += bonus.value
-    return result
+    return specials_bonus + sum(bonus.get_bonus(stability) for bonus in _get_modified_industry_bonuses(planet))
 
 
 def _get_policy_multiplier(stability) -> float:
@@ -110,7 +108,6 @@ def _get_production_bonus_mod_by_policy(stability: float) -> float:
     but still affected by industrialism.
     """
     # TBD: check connections?
-    result = 0.0
     bonuses = [
         _ProductionBonus(
             bool(BuildingType.BLACK_HOLE_POW_GEN.built_or_queued_at()),
@@ -118,17 +115,14 @@ def _get_production_bonus_mod_by_policy(stability: float) -> float:
             get_named_real("BLD_BLACK_HOLE_POW_GEN_TARGET_INDUSTRY_PERPOP"),
         ),
     ]
-    for bonus in bonuses:
-        if bonus.available and stability >= bonus.min_stability:
-            result += bonus.value
-    return result
+    return sum(bonus.get_bonus(stability) for bonus in bonuses)
 
 
 def _get_production_bonus_unmodified(planet: fo.planet, stability: float) -> float:
     """
     Calculate bonus production per population which we would get independent of the species production skill.
     """
-    result = sum(
+    specials_bonus = sum(
         # growth.macros: STANDARD_INDUSTRY_BOOST
         AIDependencies.INDUSTRY_PER_POP
         for s in planet.specials
@@ -150,10 +144,7 @@ def _get_production_bonus_unmodified(planet: fo.planet, stability: float) -> flo
         # TBD: Collective Thought Network? Ignored for now, AI doesn't know how to handle it.
         # It shouldn't make a big difference for selecting which planets to colonise anyway.
     ]
-    for bonus in bonuses:
-        if bonus.available and stability >= bonus.min_stability:
-            result += bonus.value
-    return result
+    return specials_bonus + sum(bonus.get_bonus(stability) for bonus in bonuses)
 
 
 def _get_production_flat(planet: fo.planet, stability: float) -> float:
@@ -191,11 +182,10 @@ def _get_asteroid_and_ggg_value(planet: fo.planet, stability: float) -> float:
                 # TODO prospective_invasion_targets?
             if count_ggg:
                 ggg_value = max(ggg_value, _ggg_value(planet, p2))
-    if DEBUG_COLONY_RATING:
-        debug(
-            f"_get_asteroid_and_ggg_value amin={ast_min_stability:.1f}->{count_asteroids:.1f}, "
-            f"gmin={ggg_min_stability:.1f}->{count_ggg:.1f}, aval={asteroid_value:.1f}, gval={ggg_value:.1f}"
-        )
+    debug_rating(
+        f"_get_asteroid_and_ggg_value amin={ast_min_stability:.1f}->{count_asteroids:.1f}, "
+        f"gmin={ggg_min_stability:.1f}->{count_ggg:.1f}, aval={asteroid_value:.1f}, gval={ggg_value:.1f}"
+    )
     return asteroid_value + ggg_value
 
 
