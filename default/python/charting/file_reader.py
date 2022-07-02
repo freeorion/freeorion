@@ -25,7 +25,7 @@ def _validate_data_dir(data_dir: Path) -> bool:
     return os.path.exists(data_dir / "freeorion.log")
 
 
-def is_close(time_a: float, time_b: float, seconds=3.0):
+def is_close(time_a: float, time_b: float, seconds=60.0):
     return abs(time_a - time_b) < seconds
 
 
