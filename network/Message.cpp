@@ -1253,11 +1253,15 @@ void ExtractEndGameMessageData(const Message& msg, Message::EndGameReason& reaso
     }
 }
 
-void ExtractModeratorActionMessageData(const Message& msg, Moderator::ModeratorAction*& mod_action) {
+void ExtractModeratorActionMessageData(const Message& msg,
+                                       std::unique_ptr<Moderator::ModeratorAction>& mod_action)
+{
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
-        ia >> BOOST_SERIALIZATION_NVP(mod_action);
+        Moderator::ModeratorAction* action = nullptr;
+        ia >> BOOST_SERIALIZATION_NVP(action);
+        mod_action.reset(action);
 
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractModeratorActionMessageData(const Message& msg, Moderator::ModeratorAction& mod_act) "

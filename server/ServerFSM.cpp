@@ -154,14 +154,16 @@ namespace {
 
 
     /** Return true for fatal errors.*/
-    bool HandleErrorMessage(const Error& msg, ServerApp &server) {
-        std::string problem;
-        bool fatal;
-        int player_id;
-        ExtractErrorMessageData(msg.m_message, player_id, problem, fatal);
-
+    bool HandleErrorMessage(const Error& msg, ServerApp& server) {
         std::stringstream ss;
-
+        std::string problem;
+        bool fatal = false;
+        int player_id = Networking::INVALID_PLAYER_ID;
+        try {
+            ExtractErrorMessageData(msg.m_message, player_id, problem, fatal);
+        } catch (...) {
+            problem = UserString("UNKNOWN");
+        }
         ss << "Server received from player "
            << msg.m_player_connection->PlayerName() << "("
            << msg.m_player_connection->PlayerID() << ")"
@@ -520,7 +522,7 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
              it != m_server.m_networking.established_end(); ++it)
         {
             if ((*it)->PlayerName() == player_name && player_connection != (*it)) {
-                (*it)->SendMessage(ErrorMessage(UserString("ERROR_CONNECTION_WAS_REPLACED"), true));
+                (*it)->SendMessage(ErrorMessage(UserStringNop("ERROR_CONNECTION_WAS_REPLACED"), true));
                 to_disconnect.push_back(*it);
 
                 // If we're going to establish Human Player
@@ -632,7 +634,9 @@ sc::result Idle::react(const HostMPGame& msg) {
     std::string host_player_name;
     std::string client_version_string;
     std::map<std::string, std::string> dependencies;
-    ExtractHostMPGameMessageData(message, host_player_name, client_version_string, dependencies);
+    try {
+        ExtractHostMPGameMessageData(message, host_player_name, client_version_string, dependencies);
+    } catch (...) {}
 
     // validate host name (was found and wasn't empty)
     if (host_player_name.empty()) {
@@ -675,7 +679,9 @@ sc::result Idle::react(const HostSPGame& msg) {
     auto single_player_setup_data = std::make_shared<SinglePlayerSetupData>();
     std::string client_version_string;
     std::map<std::string, std::string> dependencies;
-    ExtractHostSPGameMessageData(message, *single_player_setup_data, client_version_string, dependencies);
+    try {
+        ExtractHostSPGameMessageData(message, *single_player_setup_data, client_version_string, dependencies);
+    } catch (...) {}
 
 
     // get host player's name from setup data or saved file
@@ -1175,7 +1181,7 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
 namespace {
     std::string StringifyDependencies(const std::map<std::string, std::string>& deps) {
         std::string retval;
-        for (auto [dep, version] : deps)
+        for (auto& [dep, version] : deps)
             retval.append(dep).append(": ").append(version).append("   ");
         return retval;
     }
@@ -1197,7 +1203,7 @@ sc::result MPLobby::react(const JoinGame& msg) {
                                    dependencies, cookie);
     } catch (const std::exception&) {
         ErrorLogger(FSM) << "MPLobby::react(const JoinGame& msg): couldn't extract data from join game message";
-        player_connection->SendMessage(ErrorMessage(UserString("ERROR_INCOMPATIBLE_VERSION"), true));
+        player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_INCOMPATIBLE_VERSION"), true));
         server.Networking().Disconnect(player_connection);
         return discard_event();
     }
@@ -1285,7 +1291,9 @@ sc::result MPLobby::react(const AuthResponse& msg) {
 
     std::string player_name;
     std::string auth;
-    ExtractAuthResponseMessageData(message, player_name, auth);
+    try {
+        ExtractAuthResponseMessageData(message, player_name, auth);
+    } catch (...) {}
 
     Networking::AuthRoles roles;
 
@@ -1316,7 +1324,9 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     const PlayerConnectionPtr& sender = msg.m_player_connection;
 
     MultiplayerLobbyData incoming_lobby_data;
-    ExtractLobbyUpdateMessageData(message, incoming_lobby_data);
+    try {
+        ExtractLobbyUpdateMessageData(message, incoming_lobby_data);
+    } catch (...) {}
 
     // check if new lobby data changed player setup data.  if so, need to echo
     // back to sender with updated lobby details.
@@ -1891,7 +1901,9 @@ sc::result MPLobby::react(const PlayerChat& msg) {
     std::string data;
     std::set<int> recipients;
     bool pm;
-    ExtractPlayerChatMessageData(message, recipients, data, pm);
+    try  {
+        ExtractPlayerChatMessageData(message, recipients, data, pm);
+    } catch (...) {}
 
     boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
 
@@ -2149,8 +2161,10 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
     std::string client_version_string;
     std::map<std::string, std::string> dependencies;
     boost::uuids::uuid cookie = boost::uuids::nil_generator{}();
-    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string,
-                               dependencies, cookie);
+    try {
+        ExtractJoinGameMessageData(message, player_name, client_type, client_version_string,
+                                   dependencies, cookie);
+    } catch (...) {}
 
     DebugLogger() << "Player " << player_name << " has dependencies: " << StringifyDependencies(dependencies);
 
@@ -2315,8 +2329,10 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
     std::string client_version_string;
     std::map<std::string, std::string> dependencies;
     boost::uuids::uuid cookie = boost::uuids::nil_generator{}();
-    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string,
-                               dependencies, cookie);
+    try {
+        ExtractJoinGameMessageData(message, player_name, client_type, client_version_string,
+                                   dependencies, cookie);
+    } catch (...) {}
 
     DebugLogger() << "Player " << player_name << " has dependencies: " << StringifyDependencies(dependencies);
 
@@ -2360,7 +2376,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
                  it != server.m_networking.established_end(); ++it)
             {
                 if ((*it)->PlayerName() == player_name && player_connection != (*it)) {
-                    (*it)->SendMessage(ErrorMessage(UserString("ERROR_CONNECTION_WAS_REPLACED"), true));
+                    (*it)->SendMessage(ErrorMessage(UserStringNop("ERROR_CONNECTION_WAS_REPLACED"), true));
                     to_disconnect.push_back(*it);
                 }
             }
@@ -2462,7 +2478,13 @@ sc::result WaitingForMPGameJoiners::react(const AuthResponse& msg) {
 
     std::string player_name;
     std::string auth;
-    ExtractAuthResponseMessageData(message, player_name, auth);
+    try {
+        ExtractAuthResponseMessageData(message, player_name, auth);
+    } catch (...) {
+        // unable to read message
+        player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_INCOMPATIBLE_VERSION"), true));
+        return discard_event();
+    }
 
     Networking::AuthRoles roles;
 
@@ -2484,7 +2506,7 @@ sc::result WaitingForMPGameJoiners::react(const AuthResponse& msg) {
              it != server.m_networking.established_end(); ++it)
         {
             if ((*it)->PlayerName() == player_name && player_connection != (*it)) {
-                (*it)->SendMessage(ErrorMessage(UserString("ERROR_CONNECTION_WAS_REPLACED"), true));
+                (*it)->SendMessage(ErrorMessage(UserStringNop("ERROR_CONNECTION_WAS_REPLACED"), true));
                 to_disconnect.push_back(*it);
             }
         }
@@ -2622,13 +2644,18 @@ sc::result PlayingGame::react(const PlayerChat& msg) {
 
     std::string data;
     std::set<int> recipients;
-    bool pm;
-    ExtractPlayerChatMessageData(message, recipients, data, pm);
+    bool pm = true;
+    try {
+        ExtractPlayerChatMessageData(message, recipients, data, pm);
+    } catch (...) {
+        // unable to read message
+        sender->SendMessage(ErrorMessage(UserStringNop("ERROR_INCOMPATIBLE_VERSION"), true));
+        return discard_event();
+    }
 
     boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
 
-    if (recipients.empty() && sender->GetClientType() != Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
-    {
+    if (recipients.empty() && sender->GetClientType() != Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
         EmpireColor text_color = CLR_SERVER;
         if (auto empire = server.Empires().GetEmpire(server.PlayerEmpireID(sender->PlayerID())))
             text_color = empire->Color();
@@ -2655,8 +2682,10 @@ sc::result PlayingGame::react(const Diplomacy& msg) {
     const Message& message = msg.m_message;
 
     DiplomaticMessage diplo_message;
-    ExtractDiplomacyMessageData(message, diplo_message);
-    Empires().HandleDiplomaticMessage(diplo_message);
+    try {
+        ExtractDiplomacyMessageData(message, diplo_message);
+        Empires().HandleDiplomaticMessage(diplo_message);
+    } catch (...) {}
 
     return discard_event();
 }
@@ -2675,8 +2704,10 @@ sc::result PlayingGame::react(const ModeratorAct& msg) {
         return discard_event();
     }
 
-    Moderator::ModeratorAction* action = nullptr;
-    ExtractModeratorActionMessageData(message, action);
+    std::unique_ptr<Moderator::ModeratorAction> action;
+    try {
+        ExtractModeratorActionMessageData(message, action);
+    } catch (...) {}
 
     DebugLogger(FSM) << "PlayingGame::react(ModeratorAct): " << (action ? action->Dump() : "(null)");
 
@@ -2691,8 +2722,6 @@ sc::result PlayingGame::react(const ModeratorAct& msg) {
                                                      GetUniverse(), use_binary_serialization,
                                                      !sender->IsLocalConnection()));
     }
-
-    delete action;
 
     return discard_event();
 }
@@ -2825,7 +2854,7 @@ sc::result PlayingGame::react(const JoinGame& msg) {
                                    dependencies, cookie);
     } catch (const std::exception&) {
         ErrorLogger(FSM) << "PlayingGame::react(const JoinGame& msg): couldn't extract data from join game message";
-        player_connection->SendMessage(ErrorMessage(UserString("ERROR_INCOMPATIBLE_VERSION"), true));
+        player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_INCOMPATIBLE_VERSION"), true));
         server.Networking().Disconnect(player_connection);
         return discard_event();
     }
@@ -2909,7 +2938,9 @@ sc::result PlayingGame::react(const AuthResponse& msg) {
 
     std::string player_name;
     std::string auth;
-    ExtractAuthResponseMessageData(message, player_name, auth);
+    try {
+        ExtractAuthResponseMessageData(message, player_name, auth);
+    } catch (...) {}
 
     Networking::AuthRoles roles;
 
@@ -3036,7 +3067,12 @@ sc::result PlayingGame::react(const LobbyUpdate& msg) {
     const Message& message = msg.m_message;
 
     MultiplayerLobbyData incoming_lobby_data;
-    ExtractLobbyUpdateMessageData(message, incoming_lobby_data);
+    try {
+        ExtractLobbyUpdateMessageData(message, incoming_lobby_data);
+    } catch (...) {
+        sender->SendMessage(ErrorMessage(UserStringNop("ERROR_INCOMPATIBLE_VERSION")));
+        return discard_event();
+    }
 
     // try to add the player into the game if he choose empire
     for (const auto& player : incoming_lobby_data.players) {

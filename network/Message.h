@@ -450,7 +450,7 @@ FO_COMMON_API void ExtractHostSPGameMessageData(const Message& msg, SinglePlayer
 
 FO_COMMON_API void ExtractEndGameMessageData(const Message& msg, Message::EndGameReason& reason, std::string& reason_player_name);
 
-FO_COMMON_API void ExtractModeratorActionMessageData(const Message& msg, Moderator::ModeratorAction*& action);
+FO_COMMON_API void ExtractModeratorActionMessageData(const Message& msg, std::unique_ptr<Moderator::ModeratorAction>& action);
 
 FO_COMMON_API void ExtractDiplomacyMessageData(const Message& msg, DiplomaticMessage& diplo_message);
 

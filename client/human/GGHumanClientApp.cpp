@@ -1040,12 +1040,14 @@ void GGHumanClientApp::UpdateCombatLogs(const Message& msg) {
     ScopedTimer timer("GGHumanClientApp::UpdateCombatLogs");
 
     // Unpack the combat logs from the message
-    std::vector<std::pair<int, CombatLog>> logs;
-    ExtractDispatchCombatLogsMessageData(msg, logs);
+    try {
+        std::vector<std::pair<int, CombatLog>> logs;
+        ExtractDispatchCombatLogsMessageData(msg, logs);
 
-    // Update the combat log manager with the completed logs.
-    for (auto it = logs.begin(); it != logs.end(); ++it)
-        GetCombatLogManager().CompleteLog(it->first, it->second);
+        // Update the combat log manager with the completed logs.
+        for (auto it = logs.begin(); it != logs.end(); ++it)
+            GetCombatLogManager().CompleteLog(it->first, it->second);
+    } catch (...) {}
 }
 
 void GGHumanClientApp::HandleSaveGamePreviews(const Message& msg) {
@@ -1053,16 +1055,20 @@ void GGHumanClientApp::HandleSaveGamePreviews(const Message& msg) {
     if (!sfd)
         return;
 
-    PreviewInformation previews;
-    ExtractDispatchSavePreviewsMessageData(msg, previews);
-    DebugLogger() << "GGHumanClientApp::RequestSavePreviews Got " << previews.previews.size() << " previews.";
+    try {
+        PreviewInformation previews;
+        ExtractDispatchSavePreviewsMessageData(msg, previews);
+        DebugLogger() << "GGHumanClientApp::RequestSavePreviews Got " << previews.previews.size() << " previews.";
 
-    sfd->SetPreviewList(std::move(previews));
+        sfd->SetPreviewList(std::move(previews));
+    } catch (...) {}
 }
 
 void GGHumanClientApp::HandleSetAuthRoles(const Message& msg) {
-    ExtractSetAuthorizationRolesMessage(msg, m_networking->AuthorizationRoles());
-    DebugLogger() << "New roles: " << m_networking->AuthorizationRoles().Text();
+    try {
+        ExtractSetAuthorizationRolesMessage(msg, m_networking->AuthorizationRoles());
+        DebugLogger() << "New roles: " << m_networking->AuthorizationRoles().Text();
+    } catch (...) {}
 }
 
 void GGHumanClientApp::ChangeLoggerThreshold(const std::string& option_name, LogLevel option_value) {
