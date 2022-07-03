@@ -59,7 +59,7 @@ def get_common_instances() -> Generator:
     yield fo.getGameRules()
     ship_hull = fo.getShipHull("SH_XENTRONIUM")
     yield ship_hull
-    yield ship_hull.slots,
+    yield ship_hull.slots
 
     yield fo.getSpecies("SP_ABADDONI")
 
@@ -104,6 +104,8 @@ def get_common_instances() -> Generator:
     building = list(planet.buildingIDs)[0]
     yield universe.getBuilding(building)
 
+    yield fo.getPolicy("PLC_LIBERTY")
+
 
 common_classes_to_exclude = {
     "IntBoolMap",
@@ -118,12 +120,20 @@ common_classes_to_exclude = {
     "VisibilityIntMap",
     "IntSet",
     "StringSet",
+    "StringSet2",
     "StringVec",
     "IntIntDblMapMap",
     "IntStringMap",
     "String_IntStringMap_Map",
     "StringIntMap",
     "StringsMap",
+    "IntIntMap",
+    "AccountingInfoVec",
+    "StatRecordsMap",
+    "MeterTypeAccountingInfoVecPair",
+    "MeterTypeAccountingInfoVecMap",
+    "popCenter",
+    "resourceCenter",
 }
 
 classes_to_exclude_from_universe = {
@@ -135,7 +145,6 @@ classes_to_exclude_from_universe = {
 }
 
 classes_to_exclude_from_ai = {
-    "ShipSlotVec",
     "UnlockableItemVec",
     "universeObject",
     # this item cannot be get from generate orders
