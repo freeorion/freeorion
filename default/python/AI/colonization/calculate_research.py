@@ -187,8 +187,4 @@ def _get_research_bonus_unmodified(planet: fo.planet, stability: float):
         ),
         # TODO: distributed thought and collective thought
     ]
-    result = 0.0
-    for bonus in bonuses:
-        if bonus.available and stability >= bonus.min_stability:
-            result += bonus.value
-    return result
+    return sum(bonus.get_bonus(stability) for bonus in bonuses)
