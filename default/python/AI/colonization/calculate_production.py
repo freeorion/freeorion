@@ -85,7 +85,7 @@ def _get_production_bonus_modified(planet: fo.planet, stability: float) -> float
     specials_bonus = sum(
         AIDependencies.INDUSTRY_PER_POP for s in planet.specials if s in AIDependencies.industry_boost_specials_modified
     )
-    return specials_bonus + sum(bonus.get_bonus(stability) for bonus in _get_modified_industry_bonuses(planet))
+    return specials_bonus + sum(bonus.get_bonus(stability) for bonus in _get_modified_industry_bonuses())
 
 
 def _get_policy_multiplier(stability) -> float:
@@ -169,7 +169,9 @@ def _get_asteroid_and_ggg_value(planet: fo.planet, stability: float) -> float:
                 full_bonus = get_named_real("PRO_MICROGRAV_MAN_TARGET_INDUSTRY_FLAT")
                 if p2.owner == fo.empireID or pid == planet.id:
                     asteroid_value = full_bonus
-                elif p2.unowned:
+                # If we cannot see it, we cannot put an outpost on it, although in case of asteroids it likely
+                # only hidden temporarily.
+                elif universe.getVisibility(pid, fo.empireID()) and p2.unowned:
                     asteroid_value = max(asteroid_value, 0.5 * full_bonus)
                 # TODO prospective_invasion_targets?
             if count_ggg:
@@ -185,6 +187,7 @@ def _ggg_value(planet: fo.planet, p2: fo.planet) -> float:
     """
     Check if p2 not planet and is a gas giant. If determines a value for the potential GGG on p2.
     """
+    universe = fo.getUniverse()
     if p2.id != planet.id and p2.size == fo.planetSize.gasGiant:
         ggg_colony_flat = get_named_real("BLD_GAS_GIANT_GEN_COLONY_TARGET_INDUSTRY_FLAT")
         ggg_outpost_flat = get_named_real("BLD_GAS_GIANT_GEN_OUTPOST_TARGET_INDUSTRY_FLAT")
@@ -196,7 +199,8 @@ def _ggg_value(planet: fo.planet, p2: fo.planet) -> float:
                 return ggg_colony_flat
             else:
                 return 0.4 * ggg_colony_flat  # we could build one, but inhabitants won't like it
-        if p2.unowned:
+        # If we cannot see it, we cannot put an outpost on it, most likely it is not really unowned
+        if universe.getVisibility(p2.id, fo.empireID()) and p2.unowned:
             return 0.5 * ggg_colony_flat  # unowned means we could probably get it easily
         # TODO prospective_invasion_targets?
         #  So far we do not consider owned gas giant for planets here

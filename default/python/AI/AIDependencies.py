@@ -48,7 +48,18 @@ TROOPS_PER_POP = 0.2
 PROT_FOCUS_MULTIPLIER = 2.0
 TECH_COST_MULTIPLIER = 2.0
 FOCUS_CHANGE_PENALTY = 1
+HOMEWORLD_INFLUENCE_COST = 1  # homeworld independency movement
+
 STABILITY_PER_LIKED_FOCUS = 2.0
+STABILITY_HOMEWORLD_BONUS = 5.0
+STABILITY_PER_LIKED_BUILDING_ON_PLANET = 4.0
+STABILITY_PER_LIKED_BUILDING_IN_SYSTEM = 1.0
+STABILITY_BASE_LIKED_BUILDING_ELSEWHERE = 0.5  # bonus is this time sqrt(number)
+STABILITY_BY_WORLDTREE = 1.0
+# specials (dis)likes are not affected by PlanetUtilsAI.dislike_factor() and also not by who owns them!
+STABILITY_PER_LIKED_SPECIAL_ON_PLANET = 3.0
+STABILITY_PER_LIKED_SPECIAL_IN_SYSTEM = 1.0
+
 
 SHIP_STRUCTURE_FACTOR = fo.getGameRules().getDouble("RULE_SHIP_STRUCTURE_FACTOR")
 SHIP_WEAPON_DAMAGE_FACTOR = fo.getGameRules().getDouble("RULE_SHIP_WEAPON_DAMAGE_FACTOR")
@@ -94,8 +105,10 @@ class Tags:
     STEALTH = "STEALTH"
     SHIELDS = "SHIELDS"
     FUEL = "FUEL"
+    DETECTION = "DETECTION"
     INDEPENDENT = "INDEPENDENT_HAPPINESS"
     ARTISTIC = "ARTISTIC"
+    XENOPHOBIC = "XENOPHOBIC"
 
 
 # </editor-fold>
@@ -240,10 +253,16 @@ WORLDTREE_SPECIAL = "WORLDTREE_SPECIAL"
 POP_FIXED_MOD_SPECIALS = {
     WORLDTREE_SPECIAL: 1,  # Not for SP_KHAKTURIAN...
 }
+GAIA_SPECIAL = "GAIA_SPECIAL"
 
 
-def not_affect_by_special(special: str, species: str) -> bool:  # stupid special handlings...
-    return special == WORLDTREE_SPECIAL and species == "SP_KHAKTURIAN"
+def not_affect_by_special(special: str, species: str) -> bool:
+    if special == WORLDTREE_SPECIAL:
+        return species == "SP_KHAKTURIAN"
+    # They do not have a good environment on normal planets (or none at all).
+    # TBD: could determine that list when there is a way to iterate over all species
+    if special == GAIA_SPECIAL:
+        return species in ("SP_EXOBOT", "SP_SLY", "SP_THENIAN")
 
 
 # Please see the Note at top of this file regarding PlanetSize-Dependent-Lookup
@@ -271,6 +290,7 @@ COMPUTRONIUM_SPECIAL = "COMPUTRONIUM_SPECIAL"
 COMPUTRONIUM_RES_MULTIPLIER = 0.5
 
 ANCIENT_RUINS_SPECIAL = "ANCIENT_RUINS_SPECIAL"
+ANCIENT_RUINS_SPECIAL2 = "ANCIENT_RUINS_DEPLETED_SPECIAL"  # nothing to excavate anymore, but some research bonus
 ASTEROID_COATING_OWNED_SPECIAL = "ASTEROID_COATING_OWNED_SPECIAL"
 ASTEROID_COATING_SPECIAL = "ASTEROID_COATING_SPECIAL"
 # </editor-fold>
@@ -316,15 +336,18 @@ PRO_MICROGRAV_MAN = "PRO_MICROGRAV_MAN"
 PRO_SINGULAR_GEN = "PRO_SINGULAR_GEN"
 PRO_AUTO_1 = "PRO_ADAPTIVE_AUTOMATION"
 PRO_AUTO_2 = "PRO_SENTIENT_AUTOMATION"
+PRO_NEUTRONIUM_EXTRACTION = "PRO_NEUTRONIUM_EXTRACTION"
 NEST_DOMESTICATION_TECH = "SHP_DOMESTIC_MONSTER"
 
 LRN_ARTIF_MINDS_1 = "LRN_NASCENT_AI"
+LRN_ARTIF_MINDS_2 = "LRN_NASCENT_AI"
 LRN_ALGO_ELEGANCE = "LRN_ALGO_ELEGANCE"
 GRO_PLANET_ECOL = "GRO_PLANET_ECOL"
 GRO_SUBTER_HAB = "GRO_SUBTER_HAB"
 LRN_PHYS_BRAIN = "LRN_PHYS_BRAIN"
 LRN_QUANT_NET = "LRN_QUANT_NET"
 LRN_XENOARCH = "LRN_XENOARCH"
+LRN_EVERYTHING = "LRN_EVERYTHING"
 LRN_ART_BLACK_HOLE = "LRN_ART_BLACK_HOLE"
 
 GRO_XENO_GENETICS = "GRO_XENO_GENETICS"
@@ -337,6 +360,7 @@ SPY_STEALTH_1 = "SPY_STEALTH_1"
 SPY_STEALTH_2 = "SPY_STEALTH_2"
 
 EXOBOT_TECH_NAME = "PRO_EXOBOTS"
+SHP_ASTEROID_HULLS = "SHP_ASTEROID_HULLS"
 
 # </editor-fold>
 
@@ -806,9 +830,7 @@ SPECIES_TECH_UNLOCKS = {
 # Please see the Note at top of this file regarding PlanetSize-Dependent-Lookup
 # building supply bonuses are keyed by planet size; key -1 stands for any planet size
 building_supply = {
-    "BLD_IMPERIAL_PALACE": {
-        -1: 2,
-    },
+    # Palace also gives a bonus, but it is destroyed when being conquered, so we wouldn't get it.
     "BLD_MEGALITH": {
         -1: 2,
     },

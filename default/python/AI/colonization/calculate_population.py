@@ -7,6 +7,7 @@ from AIDependencies import (
     POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES,
     Tags,
 )
+from colonization.colony_score import debug_rating
 from freeorion_tools import get_species_tag_value, tech_is_complete
 
 active_growth_specials = {}
@@ -27,6 +28,9 @@ def calc_max_pop(planet, species, detail):
             detail.append("Gateway to the void: Uninhabitable.")
             return 0
 
+    if planet.speciesName in AIDependencies.SPECIES_FIXED_POPULATION:
+        return AIDependencies.SPECIES_FIXED_POPULATION[planet.speciesName]
+
     tag_list = list(species.tags) if species else []
     pop_tag_mod = get_species_tag_value(species.name, Tags.POPULATION)
     if planet.type == fo.planetType.gasGiant and "GASEOUS" in tag_list:
@@ -34,12 +38,6 @@ def calc_max_pop(planet, species, detail):
         detail.append("GASEOUS adjustment: %.2f" % gaseous_adjustment)
     else:
         gaseous_adjustment = 1.0
-
-    if planet.type != fo.planetType.asteroids and "MINDLESS_SPECIES" in tag_list:
-        mindless_adjustment = AIDependencies.MINDLESS_POP_FACTOR
-        detail.append("MINDLESS adjustment: %.2f" % mindless_adjustment)
-    else:
-        mindless_adjustment = 1.0
 
     planet_specials = set(planet.specials)
 
@@ -69,6 +67,8 @@ def calc_max_pop(planet, species, detail):
             detail.append("%s_PCM(%d)" % (tech, POP_CONST_MOD_MAP[tech][planet_env]))
 
     for _special in planet_specials.intersection(AIDependencies.POP_FIXED_MOD_SPECIALS):
+        if AIDependencies.not_affect_by_special(_special, species.name):
+            continue
         this_mod = AIDependencies.POP_FIXED_MOD_SPECIALS[_special]
         detail.append("%s_PCM(%d)" % (_special, this_mod))
         pop_const_mod += this_mod
@@ -78,8 +78,8 @@ def calc_max_pop(planet, species, detail):
         detail.append("%s (maxPop%+.1f)" % (_special, this_mod))
         base_pop_not_modified_by_species += this_mod
 
-    #  exobots and sly can't ever get to good environ so no gaia bonus, for others we'll assume they'll get there
-    if "GAIA_SPECIAL" in planet_specials and species.name != "SP_EXOBOT" and species.name != "SP_SLY":
+    gaia = AIDependencies.GAIA_SPECIAL
+    if gaia in planet_specials and not AIDependencies.not_affect_by_special(gaia, species):
         base_pop_not_modified_by_species += 3
         detail.append("Gaia_PSM_late(3)")
 
@@ -118,14 +118,7 @@ def calc_max_pop(planet, species, detail):
     def max_pop_size():
         species_effect = (pop_tag_mod - 1) * abs(base_pop_modified_by_species)
         gaseous_effect = (gaseous_adjustment - 1) * abs(base_pop_modified_by_species)
-        mindless_effect = (mindless_adjustment - 1) * abs(base_pop_modified_by_species)
-        base_pop = (
-            base_pop_not_modified_by_species
-            + base_pop_modified_by_species
-            + species_effect
-            + gaseous_effect
-            + mindless_effect
-        )
+        base_pop = base_pop_not_modified_by_species + base_pop_modified_by_species + species_effect + gaseous_effect
         return planet_size * base_pop + pop_const_mod
 
     target_pop = max_pop_size()
@@ -149,4 +142,6 @@ def calc_max_pop(planet, species, detail):
         )
     )
     detail.append("        = %.2f" % target_pop)
+    # new rating code passes a dummy to this function and only adds the result to detail
+    debug_rating(f"Details from calc_max_pop: {detail}")
     return target_pop

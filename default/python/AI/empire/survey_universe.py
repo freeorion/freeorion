@@ -82,8 +82,6 @@ def survey_universe():
                         empire_metabolisms[metab] = empire_metabolisms.get(metab, 0.0) + planet.habitableSize
                     if this_spec.canProduceShips:
                         pilot_val = rate_piloting_tag(spec_name)
-                        if spec_name == "SP_ACIREMA":
-                            pilot_val += 1
                         weapons_grade = "WEAPONS_%.1f" % pilot_val
                         set_pilot_rating_for_planet(pid, pilot_val)
                         yard_here = []
