@@ -115,7 +115,7 @@ namespace {
             case Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR:   ss << "MODERATOR, ";    break;
             case Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER:    ss << "OBSERVER, ";     break;
             case Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER:      ss << "PLAYER, "; break;
-            default:                                        ss << "<invalid client type>, ";
+            default:                                                    ss << "<invalid client type>, ";
             }
             EmpireColor empire_color = entry.second.empire_color;
             ss << "(" << static_cast<unsigned int>(std::get<0>(empire_color))
@@ -651,12 +651,12 @@ sc::result Idle::react(const HostMPGame& msg) {
 
     DebugLogger(FSM) << "Idle::react(HostMPGame) about to send acknowledgement to host";
     player_connection->SetAuthRoles({
-                    Networking::RoleType::ROLE_HOST,
-                    Networking::RoleType::ROLE_CLIENT_TYPE_MODERATOR,
-                    Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER,
-                    Networking::RoleType::ROLE_CLIENT_TYPE_OBSERVER,
-                    Networking::RoleType::ROLE_GALAXY_SETUP
-                    });
+        Networking::RoleType::ROLE_HOST,
+        Networking::RoleType::ROLE_CLIENT_TYPE_MODERATOR,
+        Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER,
+        Networking::RoleType::ROLE_CLIENT_TYPE_OBSERVER,
+        Networking::RoleType::ROLE_GALAXY_SETUP
+    });
     player_connection->SendMessage(HostMPAckMessage(host_player_id));
 
     server.m_single_player_game = false;
