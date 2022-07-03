@@ -30,12 +30,7 @@ def _get_property_return_type_by_name(attr_name: str) -> str:
 def _update_property_return_type(attr_name: str, rtype: str):
     """
     Match property of known type.
-
-    This method is double check for case when
-    properties of different object could have different return types.
-
     """
-
     if rtype.startswith("<type"):
         rtype = rtype[7:-2]
     else:

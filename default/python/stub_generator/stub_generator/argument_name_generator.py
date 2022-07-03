@@ -37,6 +37,7 @@ normalization_dict = {
     "IntVisibilityMap": "int_visibility_map",
     "UnlockableItemVec": "unlockable_item_vec",
     "StringSet": "string_set",
+    "StringSet2": "string_set",
     "VisibilityIntMap": "visibility_int_map",
     "buildingType": "buildingType",
     "productionQueueElement": "production_queue_element",
