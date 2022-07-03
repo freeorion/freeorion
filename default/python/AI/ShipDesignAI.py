@@ -1224,7 +1224,7 @@ class ShipDesigner:
         This heuristic will always find a local maximum. For simple enough (convex) rating functions this is also
         the global maximum. More intrigued functions might require a different approach, however. Another problem might
         occur if we have a non-stacking part available for both the external and internal slot. We will never exchange
-        these parts in this algorithm so if future oontent has this situation, we need to either specify a very distinct
+        these parts in this algorithm so if future content has this situation, we need to either specify a very distinct
         _starting_guess() or change the algorithm.
 
         :param available_parts: dict, indexed by slottype, containing a list of partnames for the slot
