@@ -456,7 +456,7 @@ class PolicyManager:
             planet = self._universe.getPlanet(pid)
             current_population = planet.currentMeterValue(fo.meterType.population)
             target_population = planet.currentMeterValue(fo.meterType.targetPopulation)
-            ratio = min(1.0, current_population / target_population)
+            ratio = min(1.0, current_population / max(target_population, 0.01))
             empty_weight = 5
             # Almost empty_weight for a newly found colony on a big planet, half weight for half full, etc.
             rating += empty_weight * (1 - ratio)
