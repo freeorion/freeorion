@@ -1,6 +1,6 @@
 import freeOrionAIInterface as fo
 from logging import debug
-from typing import NamedTuple, Optional, Tuple
+from typing import List, NamedTuple, Optional, Tuple
 
 import AIDependencies
 import AIstate
@@ -863,7 +863,7 @@ def _count_producers(candidates: Tuple[fo.planet], min_stability: float, number:
     return value
 
 
-def _already_have_types(locally_owned_planets: list[fo.planet]) -> Tuple[bool, bool]:
+def _already_have_types(locally_owned_planets: List[fo.planet]) -> Tuple[bool, bool]:
     """
     Determine whether list of planets contains asteroids and a gas giant.
     Gas giants are not considered, if they are populated by a species that dislikes GGG and the
