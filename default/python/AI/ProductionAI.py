@@ -23,7 +23,7 @@ import PlanetUtilsAI
 import PriorityAI
 from AIDependencies import INVALID_ID, Tags
 from aistate_interface import get_aistate
-from buildings import BuildingType, get_empire_drydocks
+from buildings import BuildingType, Shipyard, get_empire_drydocks
 from character.character_module import Aggression
 from colonization import rate_planetary_piloting
 from colonization.rate_pilots import GREAT_PILOT_RATING
@@ -77,7 +77,7 @@ def get_priority_locations() -> FrozenSet[PlanetId]:
         "BLD_SHIPYARD_ENRG_SOLAR",
         "BLD_SHIPYARD_CON_GEOINT",
         "BLD_SHIPYARD_AST_REF",
-        BuildingType.SHIPYARD_ENRG_COMP.value,
+        Shipyard.ENRG_COMP.value,
     ]
     # TODO: also cover good troopship locations
     return frozenset(loc for building in priority_facilities for loc in get_best_pilot_facilities(building))
@@ -358,10 +358,10 @@ def generate_production_orders():
     blackhole_pilots, red_pilots, building_expense = _build_energy_shipyards(
         queued_shipyard_pids, colony_systems, building_ratio, building_expense
     )
-    _build_ship_facilities(BuildingType.SHIPYARD_ORG_ORB_INC)
+    _build_ship_facilities(Shipyard.ORG_ORB_INC)
     # gating by life cycle manipulation helps delay these until they are closer to being worthwhile
     if tech_is_complete(AIDependencies.GRO_LIFE_CYCLE) or empire.researchProgress(AIDependencies.GRO_LIFE_CYCLE) > 0:
-        for building_type in (BuildingType.SHIPYARD_ORG_XENO_FAC, BuildingType.SHIPYARD_ORG_CELL_GRO_CHAMB):
+        for building_type in (Shipyard.XENO_FACILITY, Shipyard.ORG_CELL_GRO_CHAMB):
             _build_ship_facilities(building_type)
     building_expense += _build_asteroid_processor(top_pilot_systems, queued_shipyard_pids)
 
@@ -652,13 +652,13 @@ def generate_production_orders():
                 except:  # noqa: E722
                     warning("problem queueing BLD_NEUTRONIUM_EXTRACTOR at planet %s of system %s" % (use_loc, use_sys))
 
-    _build_ship_facilities(BuildingType.SHIPYARD_CON_GEOINT)
+    _build_ship_facilities(Shipyard.GEO)
 
     # with current stats the AI considers Titanic Hull superior to Scattered Asteroid, so don't bother building for now
     # TODO: uncomment once dynamic assessment of prospective designs is enabled & indicates building is worthwhile
-    _build_ship_facilities(BuildingType.SHIPYARD_AST_REF)
+    _build_ship_facilities(Shipyard.ASTEROID_REF)
 
-    _build_ship_facilities(BuildingType.NEUTRONIUM_FORGE, get_priority_locations())
+    _build_ship_facilities(Shipyard.NEUTRONIUM_FORGE, get_priority_locations())
 
     colony_ship_map = {}
     for fid in FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.COLONISATION):
@@ -1293,10 +1293,10 @@ def _build_ship_facilities(building_type: BuildingType, top_pids: Set[PlanetId] 
     total_pp = fo.getEmpire().productionPoints
     prerequisite_type = building_type.prerequisite()
     queued_bld_pids = building_type.queued_at()
-    if building_type in BuildingType.get_system_ship_facilities():
+    if building_type in Shipyard.get_system_ship_facilities():
         current_coverage = building_type.built_or_queued_at_sys()
         open_systems = set(
-            universe.getPlanet(pid).systemID for pid in BuildingType.SHIPYARD_BASE.get_best_pilot_facilities()
+            universe.getPlanet(pid).systemID for pid in Shipyard.BASE.get_best_pilot_facilities()
         ).difference(current_coverage)
         try_systems = open_systems & prerequisite_type.built_or_queued_at_sys() if prerequisite_type else open_systems
         try_pids = {pid for sys_id in try_systems for pid in get_owned_planets_in_system(sys_id)}
@@ -1722,7 +1722,7 @@ def _build_basic_shipyards() -> ShipYardInfo:
     """
     Consider building basic ship yards and also determine some value needed for other shipyard buildings.
     """
-    building_type = BuildingType.SHIPYARD_BASE
+    building_type = Shipyard.BASE
     universe = fo.getUniverse()
     queued_shipyard_pids = building_type.queued_at()
     system_colonies = {}
@@ -1823,7 +1823,7 @@ def _build_energy_shipyards(
     )
     blackhole_pilots = [pid for _, pid in blackhole_pilots if _ == best_pilot_rating()]
     energy_shipyard_pids = {}
-    building_type = BuildingType.SHIPYARD_ENRG_COMP
+    building_type = Shipyard.ENRG_COMP
     if building_type.available():
         queued_building_pids = building_type.queued_at()
         for pid in blackhole_pilots + blue_pilots:
@@ -1838,7 +1838,7 @@ def _build_energy_shipyards(
             if pid not in queued_building_pids and building_type.can_be_produced(pid):
                 building_expense += _try_enqueue(building_type, pid, at_front=True)
 
-    building_type = BuildingType.SHIPYARD_ENRG_SOLAR
+    building_type = Shipyard.ENRG_SOLAR
     if building_type.available() and not building_type.queued_at():
         # TODO: check that production is not frozen at a queued location
         for pid in blackhole_pilots:
@@ -1851,7 +1851,7 @@ def _build_energy_shipyards(
                 building_expense += _try_enqueue(building_type, pid, at_front=True)
 
     total_pp = empire.productionPoints
-    building_type = BuildingType.SHIPYARD_BASE
+    building_type = Shipyard.BASE
     if building_type.available() and (building_expense < building_ratio * total_pp) and (total_pp > 50):
         for sys_id in energy_shipyard_pids:  # Todo ensure only one or 2 per sys
             # only start one per turn (TBD why [:2]?)
@@ -1865,7 +1865,7 @@ def _build_energy_shipyards(
 
 def _build_asteroid_processor(top_pilot_systems: TopPilotSystems, queued_shipyard_pids: List[PlanetId]) -> float:
     """Consider building asteroid processor, return added turn costs."""
-    building_type = BuildingType.SHIPYARD_AST
+    building_type = Shipyard.ASTEROID
     building_expense = 0.0
     if building_type.available():
         universe = fo.getUniverse()
@@ -1932,7 +1932,7 @@ def _build_asteroid_processor(top_pilot_systems: TopPilotSystems, queued_shipyar
                 pid = asteroid_systems[sys_id][0]
                 if sys_id in need_yard:
                     pid2 = need_yard[sys_id]
-                    res = _try_enqueue(BuildingType.SHIPYARD_BASE, pid2, at_front=True)
+                    res = _try_enqueue(Shipyard.BASE, pid2, at_front=True)
                     if res > 0:
                         queued_shipyard_pids.append(pid2)
                         building_expense += res
@@ -1947,7 +1947,7 @@ def _build_asteroid_processor(top_pilot_systems: TopPilotSystems, queued_shipyar
 
 def _build_orbital_drydock(top_pilot_systems: TopPilotSystems) -> None:
     """Consider building orbital drydocks."""
-    building_type = BuildingType.SHIPYARD_ORBITAL_DRYDOCK
+    building_type = Shipyard.ORBITAL_DRYDOCK
     if building_type.available():
         empire = fo.getEmpire()
         universe = fo.getUniverse()
