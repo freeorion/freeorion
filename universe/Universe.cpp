@@ -1807,9 +1807,9 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
             const Effect::EffectsGroup* effects_group = sourced_effects_group.effects_group;
 
             TraceLogger(effects) << "\n\n * * * * * * * * * * * (new effects group log entry)("
-            << " content: " << effects_group->TopLevelContent()
-            << "  acc.label: " << effects_group->AccountingLabel()
-            << "  stack grp: " << effects_group->StackingGroup() << " )";
+                                 << " content: " << effects_group->TopLevelContent()
+                                 << "  acc.label: " << effects_group->AccountingLabel()
+                                 << "  stack grp: " << effects_group->StackingGroup() << " )";
 
             // execute Effects in the EffectsGroup
             auto source = context.ContextObjects().get(sourced_effects_group.source_object_id);
