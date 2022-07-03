@@ -134,7 +134,7 @@ def _evaluate_administration(planet: fo.planet, species: fo.species) -> float:
     universe = fo.getUniverse()
     if AIDependencies.Tags.INDEPENDENT not in species.tags:
         admin_systems = BuildingType.REGIONAL_ADMIN.built_or_queued_at_sys() | palace.built_or_queued_at_sys()
-        jumps_to_admin = min(universe.jumpDistance(planet.systemID, admin) for admin in admin_systems)
+        jumps_to_admin = min((universe.jumpDistance(planet.systemID, admin) for admin in admin_systems), default=99)
         # cap at 5, if it is 6 or more, we could build a Regional Admin on this planet
         # TODO: check if the planet would be supply-connected to the nearest administration
         # disconnected gives namedReal("DISCONNECTED_FROM_CAPITAL_AND_REGIONAL_ADMIN_STABILITY_PENALTY")

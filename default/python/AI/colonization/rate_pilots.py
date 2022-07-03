@@ -15,19 +15,31 @@ from freeorion_tools import (
 )
 from freeorion_tools.caching import cache_for_session
 
-GOOD_PILOT_RATING = 4.0
-GREAT_PILOT_RATING = 6.0
-ULT_PILOT_RATING = 12.0
-GOOD_SHIELD_BONUS = 1.0
-DETECTION_FACTOR = 0.2  # detection values -1 to 3
-FUEL_FACTOR = 0.3  # fuel values: -0.5 to 1.5
-# troop values range from 0.5 to 2 (or 3, but there is currently no species with ult. troops)
-# TROOP_FACTOR is not used by rate_piloting, only in rate_colony_for_pilots
-TROOP_FACTOR = 0.4
+GOOD_PILOT_RATING_OLD = 4.0
+GREAT_PILOT_RATING_OLD = 6.0
+ULT_PILOT_RATING_OLD = 12.0
 
-_pilot_tags_rating = {
+_pilot_tags_rating_old = {
     "NO": 1e-8,
     "BAD": 0.75,
+    "GOOD": GOOD_PILOT_RATING_OLD,
+    "GREAT": GREAT_PILOT_RATING_OLD,
+    "ULTIMATE": ULT_PILOT_RATING_OLD,
+}
+
+BAD_PILOT_RATING = 0.4
+GOOD_PILOT_RATING = 2.0
+GREAT_PILOT_RATING = 3.0
+ULT_PILOT_RATING = 4.0
+GOOD_SHIELD_BONUS = 0.3
+DETECTION_FACTOR = 0.08  # detection values -1 to 3
+FUEL_FACTOR = 0.1  # fuel values: -0.5 to 1.5
+# troop values range from 0.5 to 2 (or 3, but there is currently no species with ult. troops)
+# TROOP_FACTOR is not used by rate_piloting, only in rate_colony_for_pilots
+TROOP_FACTOR = 0.15
+
+_pilot_tags_rating = {
+    "BAD": BAD_PILOT_RATING,
     "GOOD": GOOD_PILOT_RATING,
     "GREAT": GREAT_PILOT_RATING,
     "ULTIMATE": ULT_PILOT_RATING,
@@ -58,7 +70,7 @@ def rate_piloting_old(species_name: str) -> float:
     Does the shield bonus stuff here instead of only in survey_universe, though.
     """
     weapon_grade_tag = get_species_tag_grade(species_name, Tags.WEAPONS)
-    result = _pilot_tags_rating.get(weapon_grade_tag, 1.0)
+    result = _pilot_tags_rating_old.get(weapon_grade_tag, 1.0)
     if result == "SP_ACIREMA":
         result += 1
     return result
@@ -69,6 +81,8 @@ def rate_piloting(species_name: SpeciesName) -> float:
     """
     Rate species as pilots. Does also include small modifications for fuel and detections skills.
     """
+    # TODO rate for different purposes, e.g. when building ships, dislikes should not be considered,
+    #  when building scouts, vision is very important, etc.
     species = fo.getSpecies(species_name)
     if not species or not species.canProduceShips:
         return 0.0
@@ -78,13 +92,13 @@ def rate_piloting(species_name: SpeciesName) -> float:
     # only GOOD_SHIELDS exists so far
     # TODO: reduce with tech, unlike weapon skill, shield bonus gets less effective with better weapons.
     #  Cannot use cache_for_session then anymore, of course
-    shield_value = 1 if shield_grade_tag == "GOOD" else 0
+    shield_value = GOOD_SHIELD_BONUS if shield_grade_tag == "GOOD" else 0
     detection_val = detection_value(species_name) * DETECTION_FACTOR
     # TODO add something for Sly and Laenfa ability to regenerate fuel quickly in certain systems?
     fuel_val = get_species_tag_value(species_name, Tags.FUEL) * FUEL_FACTOR
     dislikes = sum(1 for bld in AIDependencies.SHIP_FACILITIES if bld in species.dislikes)
     # basic shipyard is specifically important, cannot build any ships without it
-    discount = 0.92 if "BLD_SHIPYARD_BASE" in species.dislikes else 0.95
+    discount = 0.93 if "BLD_SHIPYARD_BASE" in species.dislikes else 0.96
     result = (weapon_val + shield_value + detection_val + fuel_val) * discount**dislikes
     debug(
         f"rate_piloting {species_name}: {result:.2f} (w={weapon_val}, s={shield_value}, d={detection_val}, "

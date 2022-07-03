@@ -12,7 +12,7 @@ def set_growth_special(special: SpecialName, pid: PlanetId):
 @survey_universe_lock
 def get_growth_specials() -> Mapping[SpecialName, List[PlanetId]]:
     """
-    Return map from the species to list of the planet where you could build a ship with it.
+    Return map from a growth special to list of the planets where we have it.
     """
     return _get_growth_specials()
 

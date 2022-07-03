@@ -35,6 +35,7 @@ from colonization.rate_pilots import (
 )
 from common.fo_typing import PlanetId, SpeciesName, SystemId
 from common.print_utils import Sequence
+from empire.growth_specials import get_growth_specials
 from empire.pilot_rating import best_pilot_rating
 from EnumsAI import FocusType, MissionType, PriorityType
 from freeorion_tools import (
@@ -100,7 +101,11 @@ def calculate_planet_colonization_rating(
     new_marker = "+" if use_new_rating() else "-"
     debug(f"{old_marker}colrating {mission_type}-{owned} {planet} {spec_name} old={old_rating}, detail={detail}")
     debug(f"{new_marker}colrating {mission_type}-{owned} {planet} {spec_name} new={new_rating}, detail={new_detail}")
-    return new_rating if use_new_rating() else old_rating
+    if use_new_rating():
+        detail.clear()
+        detail.extend(new_detail)
+        return new_rating
+    return old_rating
 
 
 def _calculate_planet_colonization_rating(
@@ -1279,6 +1284,23 @@ def _rate_with_influence_focus(
     return focus_rating + flat_rating
 
 
+def _rate_growth_special(special: str) -> float:
+    # habitable size affected by this special
+    boost_value = empire_metabolisms.get(AIDependencies.metabolismBoosts[special], 0)
+    multiplier = 1.0
+    universe = fo.getUniverse()
+    for pid in get_growth_specials().get(special, []):
+        planet = universe.getPlanet(pid)
+        if planet.focus == FocusType.FOCUS_GROWTH:
+            # TODO check supply
+            multiplier = 0.4  # we already have it, but a backup may still be useful
+        else:
+            species = fo.getSpecies(planet.speciesName)
+            if species and FocusType.FOCUS_GROWTH in species.foci:
+                multiplier = min(multiplier, 0.9)  # planet is currently not exporting it, but it could
+    return boost_value * multiplier * MINIMUM_COLONY_SCORE * 0.3
+
+
 def _rate_with_growth_focus(
     planet: fo.planet,
     species: fo.species,
@@ -1290,7 +1312,11 @@ def _rate_with_growth_focus(
     if focus not in species.foci:
         return 0.0
     stability = base_stability + PlanetUtilsAI.focus_stability_effect(species, focus)
-    focus_rating = 0.0  # TODO
+    focus_rating = 0.0
+    for special in [spec for spec in planet.specials if spec in AIDependencies.metabolismBoosts]:
+        rating = _rate_growth_special(special)
+        focus_rating += rating
+        details.append("Bonus for %s: %.1f" % (special, rating))
     flat_rating = _rate_focus_independent(planet, species, stability, max_pop)
     details.append(f"growth: stability={stability} focus={focus_rating}, flat={flat_rating}")
     return focus_rating + flat_rating
@@ -1317,7 +1343,7 @@ def _adapt_population_for_rating(planet: fo.planet, max_population, details: lis
         current_population = 3.0 if tech_is_complete("GRO_LIFECYCLE_MAN") else 1.0
     # If more than half full, we consider its full potential population
     # TODO: could do some calculations to predict size in e.g. 20 turns
-    result = max((2 * current_population + max_population) / 2, max_population)
+    result = min((2 * current_population + max_population) / 2, max_population)
     details.append(f"Adapted population: {result}")
     return result
 
@@ -1375,8 +1401,9 @@ def _rate_upkeep(planet: fo.planet, species_name: SpeciesName, details: list) ->
     species = fo.getSpecies(species_name)
     if species and planet.id in species.homeworlds:
         ip_cost -= AIDependencies.HOMEWORLD_INFLUENCE_COST
-    details.append(f"IP upkeep: {ip_cost}")
-    return _rate_influence(ip_cost)
+    result = _rate_influence(ip_cost)
+    details.append(f"IP upkeep: {ip_cost} -> {result}")
+    return result
 
 
 def _calculate_planet_rating(planet: fo.planet, species_name: SpeciesName) -> Tuple[float, list]:
