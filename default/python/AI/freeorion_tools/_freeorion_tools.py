@@ -50,14 +50,25 @@ def get_ai_tag_grade(tag_list, tag_type):
     return ""
 
 
-def tech_is_complete(tech):
+def tech_is_complete(tech: str) -> bool:
     """
-    Return if tech is complete.
+    Return if tech has been researched.
     """
     return fo.getEmpire().techResearched(tech)
 
 
-def policy_is_adopted(policy):
+def tech_soon_available(tech: str, max_position: int) -> bool:
+    """
+    Return if tech has been researched or is in at most in max_position in the current research queue.
+    """
+    empire = fo.getEmpire()
+    if empire.techResearched(tech):
+        return True
+    research_queue = empire.researchQueue
+    return any(research_queue[i].tech == tech for i in range(0, min(max_position, len(research_queue))))
+
+
+def policy_is_adopted(policy: str) -> bool:
     """
     Return if policy is currently adopted.
     """
