@@ -1,5 +1,5 @@
 import freeOrionAIInterface as fo
-from typing import List, NamedTuple
+from typing import List
 
 import AIDependencies
 from buildings import BuildingType
@@ -12,6 +12,7 @@ from freeorion_tools import (
     get_species_tag_value,
     tech_soon_available,
 )
+from freeorion_tools.bonus_calculation import Bonus
 from freeorion_tools.caching import cache_for_current_turn
 from PlanetUtilsAI import get_empire_populated_planets
 from turn_state import get_empire_planets_by_species, have_computronium
@@ -44,40 +45,31 @@ def calculate_research(planet: fo.planet, species: fo.species, max_population: f
     return result
 
 
-class _ResearchBonus(NamedTuple):
-    available: bool
-    min_stability: float
-    value: float
-
-    def get_bonus(self, stability: float) -> float:
-        return self.value if stability > self.min_stability else 0.0
-
-
 @cache_for_current_turn
-def _get_modified_research_bonuses(planet: fo.planet) -> List[_ResearchBonus]:
+def _get_modified_research_bonuses(planet: fo.planet) -> List[Bonus]:
     """
     Get list of per-population bonuses which are added before multiplication with the species skill value.
     """
     # use fo.getEmpire().researchQueue directly here to simplify caching this function
     specials = planet.specials
     return [
-        _ResearchBonus(
+        Bonus(
             AIDependencies.ANCIENT_RUINS_SPECIAL in specials or AIDependencies.ANCIENT_RUINS_SPECIAL2 in specials,
             get_named_real("ANCIENT_RUINS_MIN_STABILITY"),
             get_named_real("ANCIENT_RUINS_TARGET_RESEARCH_PERPOP"),
         ),
-        _ResearchBonus(
+        Bonus(
             fo.getEmpire().policyAdopted("PLC_DIVERSITY"),
             get_named_real("PLC_DIVERSITY_MIN_STABILITY"),
             (len(get_empire_planets_by_species()) - get_named_int("PLC_DIVERSITY_THRESHOLD"))
             * get_named_real("PLC_DIVERSITY_SCALING"),
         ),
-        _ResearchBonus(
+        Bonus(
             tech_soon_available("GRO_ENERGY_META", 3),
             get_named_real("GRO_ENERGY_META_MIN_STABILITY"),
             get_named_real("GRO_ENERGY_META_TARGET_RESEARCH_PERPOP"),
         ),
-        _ResearchBonus(
+        Bonus(
             bool(BuildingType.ENCLAVE_VOID.built_or_queued_at()),
             get_named_real("BLD_ENCLAVE_VOID_MIN_STABILITY"),
             get_named_real("BLD_ENCLAVE_VOID_TARGET_RESEARCH_PERPOP"),
@@ -93,20 +85,20 @@ def _get_research_bonus_modified(planet: fo.planet, stability: float) -> float:
 
 
 @cache_for_current_turn
-def _get_modified_by_policy_research_bonuses(stability: float) -> List[_ResearchBonus]:
+def _get_modified_by_policy_research_bonuses(stability: float) -> List[Bonus]:
     return [
-        _ResearchBonus(
+        Bonus(
             tech_soon_available("LRN_QUANT_NET", 3),
             get_named_real("LRN_QUANT_NET_MIN_STABILITY"),
             get_named_real("LRN_QUANT_NET_TARGET_RESEARCH_PERPOP"),
         ),
         # TBD check connection, _empire_resources should collect a list of systems or planets
-        _ResearchBonus(
+        Bonus(
             have_computronium(),
             get_named_real("COMPUTRONIUM_MIN_STABILITY"),
             get_named_real("COMPUTRONIUM_TARGET_RESEARCH_PERPOP"),
         ),
-        _ResearchBonus(
+        Bonus(
             fo.getEmpire().policyAdopted("PLC_LIBERTY"),
             get_named_real("PLC_LIBERTY_MIN_STABILITY"),
             (min(stability, get_named_real("PLC_LIBERTY_MAX_STABILITY")) - get_named_real("PLC_LIBERTY_MIN_STABILITY"))
@@ -145,7 +137,7 @@ def _get_stellar_tomography_bonus(system_id: SystemId) -> float:
 
 def _get_research_flat_modified_by_policy(planet: fo.planet, stability: float) -> float:
     bonuses = [
-        _ResearchBonus(
+        Bonus(
             tech_soon_available("LRN_STELLAR_TOMOGRAPHY", 3),
             0.0,
             _get_stellar_tomography_bonus(planet.systemID),
@@ -183,12 +175,12 @@ def _get_research_bonus_unmodified(planet: fo.planet, stability: float):
     Calculate bonus research per population which we would get independent of the species research skill.
     """
     bonuses = [
-        _ResearchBonus(
+        Bonus(
             fo.getEmpire().policyAdopted("PLC_ALGORITHMIC_RESEARCH"),
             get_named_real("LRN_ALGO_RESEARCH_MIN_STABILITY"),
             get_named_real("LRN_ALGO_RESEARCH_TARGET_RESEARCH_PERCONSTRUCTION"),
         ),
-        _ResearchBonus(
+        Bonus(
             tech_soon_available("LRN_DISTRIB_THOUGHT", 3),
             get_named_real("LRN_DISTRIB_THOUGHT_MIN_STABILITY"),
             _get_distributed_thought_bonus(planet.systemID),
