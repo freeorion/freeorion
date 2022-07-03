@@ -1,10 +1,11 @@
 import freeOrionAIInterface as fo
-from typing import List, NamedTuple
+from typing import List
 
 import AIDependencies
 from buildings import BuildingType
 from colonization.colony_score import debug_rating
 from freeorion_tools import get_named_real, get_species_tag_value, tech_soon_available
+from freeorion_tools.bonus_calculation import Bonus
 from freeorion_tools.caching import cache_for_current_turn
 from turn_state import have_honeycomb
 
@@ -36,17 +37,8 @@ def calculate_production(planet: fo.planet, species: fo.species, max_population:
     return result
 
 
-class _ProductionBonus(NamedTuple):
-    available: bool
-    min_stability: float
-    value: float
-
-    def get_bonus(self, stability: float) -> float:
-        return self.value if stability > self.min_stability else 0.0
-
-
 @cache_for_current_turn
-def _get_modified_industry_bonuses() -> List[_ProductionBonus]:
+def _get_modified_industry_bonuses() -> List[Bonus]:
     """
     Get list of per-population bonuses which are added before multiplication with the species skill value.
     """
@@ -56,28 +48,28 @@ def _get_modified_industry_bonuses() -> List[_ProductionBonus]:
     centre_bonus2 = get_named_real("BLD_INDUSTRY_CENTER_2_TARGET_INDUSTRY_PERPOP")
     centre_bonus3 = get_named_real("BLD_INDUSTRY_CENTER_3_TARGET_INDUSTRY_PERPOP")
     return [
-        _ProductionBonus(
+        Bonus(
             tech_soon_available("PRO_FUSION_GEN", 3),
             get_named_real("PRO_FUSION_GEN_MIN_STABILITY"),
             get_named_real("PRO_FUSION_GEN_TARGET_INDUSTRY_PERPOP"),
         ),
-        _ProductionBonus(
+        Bonus(
             tech_soon_available("GRO_ENERGY_META", 3),
             get_named_real("GRO_ENERGY_META_MIN_STABILITY"),
             get_named_real("GRO_ENERGY_META_TARGET_INDUSTRY_PERPOP"),
         ),
         # special case: these are not cumulative
-        _ProductionBonus(
+        Bonus(
             have_center and tech_soon_available("PRO_INDUSTRY_CENTER_III", 1),  # expensive research
             get_named_real("BLD_INDUSTRY_CENTER_3_MIN_STABILITY"),
             centre_bonus3 - centre_bonus2,
         ),
-        _ProductionBonus(
+        Bonus(
             have_center and tech_soon_available("PRO_INDUSTRY_CENTER_II", 2),
             get_named_real("BLD_INDUSTRY_CENTER_2_MIN_STABILITY"),
             centre_bonus2 - centre_bonus1,
         ),
-        _ProductionBonus(
+        Bonus(
             # normally we have the tech when we have the building, but we could have conquered one
             have_center and tech_soon_available("PRO_INDUSTRY_CENTER_II", 3),
             get_named_real("BLD_INDUSTRY_CENTER_1_MIN_STABILITY"),
@@ -109,7 +101,7 @@ def _get_production_bonus_mod_by_policy(stability: float) -> float:
     """
     # TBD: check connections?
     bonuses = [
-        _ProductionBonus(
+        Bonus(
             bool(BuildingType.BLACK_HOLE_POW_GEN.built_or_queued_at()),
             get_named_real("BLD_BLACK_HOLE_POW_GEN_MIN_STABILITY"),
             get_named_real("BLD_BLACK_HOLE_POW_GEN_TARGET_INDUSTRY_PERPOP"),
@@ -131,12 +123,12 @@ def _get_production_bonus_unmodified(planet: fo.planet, stability: float) -> flo
 
     # TBD: check connections?
     bonuses = [
-        _ProductionBonus(
+        Bonus(
             bool(BuildingType.SOL_ORB_GEN.built_or_queued_at()),  # TBD: check star type
             get_named_real("BLD_SOL_ORB_GEN_MIN_STABILITY"),
             get_named_real("BLD_SOL_ORB_GEN_BRIGHT_TARGET_INDUSTRY_PERPOP"),
         ),
-        _ProductionBonus(
+        Bonus(
             have_honeycomb(),
             0.0,
             get_named_real("HONEYCOMB_TARGET_INDUSTRY_PERPOP"),
