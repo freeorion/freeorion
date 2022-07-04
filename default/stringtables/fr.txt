@@ -270,7 +270,7 @@ CONTENT
 Contenu
 
 MULTIPLAYER
-Multijoueurs
+Multijoueur
 
 
 ##
@@ -863,19 +863,19 @@ FLD_ION_STORM
 Tempête Ionique
 
 FLD_ION_STORM_DESC
-Vortex magnétique de particules relativistes chargées, pouvant perturber les capteurs et masquer tout objet se trouvant dans son périmètre. Tout objet au sein de la tempête voit sa [[metertype METER_STEALTH]] augmenter de 40, mais son [[metertype METER_DETECTION]] diminuer de 40.
+Vortex magnétique de particules relativistes chargées, pouvant perturber les capteurs et masquer tout objet se trouvant dans son périmètre. Tout objet au sein de la tempête voit sa [[metertype METER_STEALTH]] augmenter de [[value FLD_ION_STORM_STEALTH_BONUS]], mais son [[metertype METER_DETECTION]] diminuer de [[value FLD_ION_STORM_DETECTION_MALUS]].
 
 FLD_MOLECULAR_CLOUD
 Nuage Moléculaire
 
 FLD_MOLECULAR_CLOUD_DESC
-Nuage diffus de molécules complexes pouvant perturber le champ de protection des astronefs, ces derniers voyant la solidité de leurs [[metertype METER_SHIELD]] diminuer de 15.
+Nuage diffus de molécules complexes pouvant perturber le champ de protection des astronefs, ces derniers voyant la solidité de leurs [[metertype METER_SHIELD]] diminuer de [[value FLD_MOLECULAR_CLOUD_SHIELD_MALUS]].
 
 FLD_NEBULA_1
 Nébuleuse
 
 FLD_NEBULA_1_DESC
-Nuage de gaz d'hydrogène qui, en s'effondrant sur lui-même, peut donner naissance à une nouvelle étoile. La [[metertype METER_SPEED]] et le [[metertype METER_DETECTION]] des astronefs diminuent de 20, la [[metertype METER_STEALTH]] augmente de 20.
+Nuage de gaz d'hydrogène qui, en s'effondrant sur lui-même, peut donner naissance à une nouvelle étoile. La [[metertype METER_SPEED]] des astronefs diminue de [[value FLD_NEBULA_SPEED_MALUS]], leur [[metertype METER_DETECTION]] diminue de [[value FLD_NEBULA_DETECTION_MALUS]], mais leur [[metertype METER_STEALTH]] augmente de [[value FLD_NEBULA_STEALTH_BONUS]].
 
 FLD_NEBULA_2  # translated
 [[FLD_NEBULA_1]]
@@ -1320,7 +1320,7 @@ RULE_THRESHOLD_HUMAN_PLAYER_WIN
 Maximum de joueurs humains vainqueurs
 
 RULE_THRESHOLD_HUMAN_PLAYER_WIN_DESC
-Nombre maximum de joueurs humains pouvant gagner collectivement dans une partie multijoueurs s'il n'y a pas d'autres joueurs humains survivants.
+Nombre maximum de joueurs humains pouvant gagner collectivement dans une partie multijoueur s'il n'y a pas d'autres joueurs humains survivants.
 
 RULE_ONLY_ALLIANCE_WIN
 Seuls les joueurs alliés gagnent
@@ -1411,7 +1411,7 @@ OPTIONS_DB_TESTING
 Linux uniquement. L'IA enverra le fichier journal vers la console au lieu de créer un fichier externe.
 
 OPTIONS_DB_LOAD_OR_QUICKSTART
-Recherche dans le dossier de sauvegarde automatique la dernière sauvegarde d'une partie multijoueurs. Si trouvée, charge et démarre celle-ci ou crée une nouvelle partie avec les options et règles de jeu prédéfinies. Nécessite le mode sans hôte et aucune restriction sur le nombre minimum de joueurs connectés, car le serveur démarrera sans joueurs connectés.
+Recherche dans le dossier de sauvegarde automatique la dernière sauvegarde d'une partie multijoueur. Si trouvée, charge et démarre celle-ci ou crée une nouvelle partie avec les options et règles de jeu prédéfinies. Nécessite le mode sans hôte et aucune restriction sur le nombre minimum de joueurs connectés, car le serveur démarrera sans joueurs connectés.
 
 OPTIONS_DB_GENERATE_CONFIG_XML
 Génère un fichier config.xml à partir des réglages contenus dans les fichiers config.xml existants et donnés dans la ligne de commande. Ceci écrasera le fichier config.xml actuel, s'il existe.
@@ -1527,22 +1527,22 @@ OPTIONS_DB_EXTERNAL_SERVER_ADDRESS
 Adresse à laquelle se connecter en mode serveur externe. Si utilisé, ce client devient le gestionnaire de la partie.
 
 OPTIONS_DB_MP_HOST_ADDRESS
-Adresse à laquelle se connecter pour rejoindre une partie multijoueurs.
+Adresse à laquelle se connecter pour rejoindre une partie multijoueur.
 
 OPTIONS_DB_MP_PLAYER_NAME
-Nom utilisé par le joueur lorsqu'il héberge ou rejoint une partie multijoueurs.
+Nom utilisé par le joueur lorsqu'il héberge ou rejoint une partie multijoueur.
 
 OPTIONS_DB_MP_AI_MIN
-Définit le nombre minimum de joueurs IA requis pour démarrer une partie multijoueurs.
+Définit le nombre minimum de joueurs IA requis pour démarrer une partie multijoueur.
 
 OPTIONS_DB_MP_AI_MAX
-Limite le nombre de joueurs IA dans une partie multijoueurs. Une valeur de -1 correspond à un nombre illimité.
+Limite le nombre de joueurs IA dans une partie multijoueur. Une valeur de -1 correspond à un nombre illimité.
 
 OPTIONS_DB_MP_HUMAN_MIN
-Définit le nombre minimum de joueurs humains requis pour démarrer une partie multijoueurs.
+Définit le nombre minimum de joueurs humains requis pour démarrer une partie multijoueur.
 
 OPTIONS_DB_MP_HUMAN_MAX
-Limite le nombre de joueurs humains dans une partie multijoueurs. Une valeur de -1 correspond à un nombre illimité.
+Limite le nombre de joueurs humains dans une partie multijoueur. Une valeur de -1 correspond à un nombre illimité.
 
 OPTIONS_DB_MP_CONN_HUMAN_MIN
 Nombre minimum de joueurs humains actifs, au-dessous duquel le serveur stoppera la partie en cours.
@@ -2106,7 +2106,7 @@ OPTIONS_DB_AUTOSAVE_GALAXY_CREATION
 Active une sauvegarde automatique dès que la galaxie est créée et avant toute action de jeu.
 
 OPTIONS_DB_AUTOSAVE_GAME_CLOSE
-Active une sauvegarde automatique lors d'un abandon ou de la fermeture du jeu. En mode multijoueurs sans hôte, active une sauvegarde automatique lorsque le serveur ferme une partie suite à la déconnexion d'un joueur ou lorsque le serveur est arrêté.
+Active une sauvegarde automatique lors d'un abandon ou de la fermeture du jeu. En mode multijoueur sans hôte, active une sauvegarde automatique lorsque le serveur ferme une partie suite à la déconnexion d'un joueur ou lorsque le serveur est arrêté.
 
 OPTIONS_DB_AUTOSAVE_HOSTLESS
 Active la sauvegarde automatique en mode sans hôte.
@@ -2124,7 +2124,7 @@ OPTIONS_DB_MUSIC_VOLUME
 Fixe le volume sonore de la musique (de 0 à 255).
 
 OPTIONS_DB_QUICKSTART
-Lance une nouvelle partie en court-circuitant le menu principal en mode solo ou le salon en multijoueurs. En multijoueurs, nécessite le mode sans hôte et aucune restriction sur le nombre minimum de joueurs connectés, car le serveur démarrera sans joueurs connectés.
+Lance une nouvelle partie en court-circuitant le menu principal en mode solo ou le salon en multijoueur. En multijoueur, nécessite le mode sans hôte et aucune restriction sur le nombre minimum de joueurs connectés, car le serveur démarrera sans joueurs connectés.
 
 OPTIONS_DB_CONTINUE
 Reprend une partie depuis la sauvegarde la plus récente, sans passer par le menu principal.
@@ -2151,7 +2151,7 @@ OPTIONS_DB_UI_SITREP_ICONSIZE
 Définit la largeur et la hauteur des icônes du Rapport de Situation; par défaut 16 (min 12, max 64).
 
 OPTIONS_DB_LOAD
-Charge et démarre la partie sauvegardée solo ou multijoueurs spécifiée. En multijoueurs, nécessite le mode sans hôte et aucune restriction sur le nombre minimum de joueurs connectés, car le serveur démarrera sans joueurs connectés.
+Charge et démarre la partie sauvegardée solo ou multijoueur spécifiée. En multijoueur, nécessite le mode sans hôte et aucune restriction sur le nombre minimum de joueurs connectés, car le serveur démarrera sans joueurs connectés.
 
 OPTIONS_DB_EFFECTS_THREADS_UI_DESC
 Spécifie le nombre de threads simultanés pour le rendu des effets dans l'interface utilisateur. Plus d'un thread peut mener à des plantages inopinés.
@@ -2429,7 +2429,7 @@ INTRO_BTN_QUICK_START
 Démarrage rapide
 
 INTRO_BTN_MULTI_PLAYER
-Partie multijoueurs
+Partie multijoueur
 
 INTRO_BTN_LOAD_GAME
 Charger une partie
@@ -2504,7 +2504,7 @@ Mot de Passe
 ##
 
 MPLOBBY_WINDOW_TITLE
-Configuration multijoueurs
+Configuration multijoueur
 
 MULTIPLAYER_GAME_START_CONDITIONS
 Noms et couleurs uniques requis
@@ -2774,7 +2774,7 @@ Bouton désactivé
 SAVE_DISABLED_BROWSE_TEXT
 '''Le bouton "Sauvegarder" est désactivé. Possibles causes:
 
-- Il s'agit d'une partie multijoueurs dont ce client n'est ni l'Hôte ni le Modérateur.
+- Il s'agit d'une partie multijoueur dont ce client n'est ni l'Hôte ni le Modérateur.
 
 - Le menu a été ouvert alors qu'au moins une des IAs n'a pas encore terminé son tour de jeu (indiqué par un triangle vert à gauche de l'icône représentant le type de joueur dans la fenêtre Empires).
 
@@ -12020,7 +12020,7 @@ Industrialisme
 
 PLC_INDUSTRIALISM_DESC
 '''Les planètes en Focus Industrie améliorent leur [[metertype METER_TARGET_INDUSTRY]] de [[value PLC_INDUSTRIALISM_TARGET_INDUSTRY_PERCENT]]% et leur [[metertype METER_HAPPINESS]] augmente de [[value PLC_INDUSTRIALISM_TARGET_HAPPINESS_FLAT]].
-Cet effet requiert une [[metertype METER_HAPPINESS]] de [[value PLC_INDUSTRIALISM_MIN_STABILITY]].
+Le bonus de Production requiert une [[metertype METER_HAPPINESS]] de [[value PLC_INDUSTRIALISM_MIN_STABILITY]].
 
 Diminue le coût de recherche des technologies de Génération d'énergie améliorant la production: [[tech PRO_ORBITAL_GEN]], [[tech PRO_SOL_ORB_GEN]], [[tech PRO_FUSION_GEN]], [[tech PRO_SINGULAR_GEN]], et [[tech PRO_ZERO_GEN]].'''
 
@@ -12031,7 +12031,8 @@ PLC_TECHNOCRACY
 Technocratie
 
 PLC_TECHNOCRACY_DESC
-Les planètes en Focus Recherche améliorent leur [[metertype METER_TARGET_RESEARCH]] de [[value PLC_INDUSTRIALISM_TARGET_INDUSTRY_PERCENT]]% et reçoivent un bonus de [[value PLC_INDUSTRIALISM_TARGET_HAPPINESS_FLAT]] en [[metertype METER_HAPPINESS]].
+'''Les planètes en Focus Recherche améliorent leur [[metertype METER_TARGET_RESEARCH]] de [[value PLC_TECHNOCRACY_TARGET_RESEARCH_PERCENT]]% et reçoivent un bonus de [[value PLC_TECHNOCRACY_TARGET_HAPPINESS_FLAT]] en [[metertype METER_HAPPINESS]].
+Le bonus de Recherche requiert une [[metertype METER_HAPPINESS]] de [[value PLC_TECHNOCRACY_MIN_STABILITY]].'''
 
 PLC_TECHNOCRACY_SHORT_DESC
 Améliore la capacité en Recherche
@@ -14039,7 +14040,7 @@ SPY_CUSTOM_ADVISORIES_DESC
 '''La Direction du Renseignement Impérial rassemble et traite les informations émanant de plusieurs sources, tels que les espions, les informateurs, ainsi que les organismes officiels de commandement. Les sujets les plus importants sont présentés à chaque tour comme Rapports de Situation (SitReps). Si un SitRep est réaffiché tour après tour plus qu'il n'est nécessaire pour mémoriser l'information, il est possible d'ignorer le SitRep pour le tour en cours par un double-clic sur son icône, ou bien pour plusieurs tours par un clic-droit sur l'icône du SitRep.
 
 La plupart des Sitreps sont prédéfinis ou déterminés automatiquement, mais des Sitreps Personnalisés peuvent être spécifiés et/ou traduits en éditant le fichier default/customizations/custom_sitreps.txt.
-(Note: lors d'une partie multijoueurs, les fichiers du Serveur sont utilisés afin de déterminer quels SitReps sont envoyés aux empires.)
+(Note: lors d'une partie multijoueur, les fichiers du Serveur sont utilisés afin de déterminer quels SitReps sont envoyés aux empires.)
 Des informations supplémentaires concernant les scripts dans FreeOrion sont disponibles sur le Wiki:  http://www.freeorion.org/index.php/Free_Orion_Content_Script_(FOCS)
 Il existe quatre labels prédéfinis pouvant être utilisés avec des Sitreps Personnalisés, afin que ces derniers apparaissent en tête de la Fenêtre Rapport de Situation. Des informations supplémentaires sur comment définir ces messages sont disponibles sur le Wiki, ainsi que dans le fichier custom_sitreps.txt.
 Ces quatres labels sont:
