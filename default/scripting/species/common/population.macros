@@ -1,7 +1,7 @@
 
 GROWTH_RATE_FACTOR
 '''
-0.08 *
+0.1 *
 (1 - (Statistic If condition = And [Target EmpireHasAdoptedPolicy name = "PLC_NO_GROWTH"])) *       // no growth with no-growth policy
 (1 + 0.5*(Statistic If condition = And [Target EmpireHasAdoptedPolicy name = "PLC_POPULATION"])) *  // +50% growth with population policy
 (1 + (Statistic If condition = And [Target EmpireHasAdoptedPolicy name = "PLC_AUGMENTATION"]) *     // slower growth with augmentation on low-infrastructure planets
