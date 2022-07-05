@@ -54,7 +54,7 @@ from EnumsAI import (
     ShipRoleType,
     get_priority_production_types,
 )
-from freeorion_tools import ppstring, tech_is_complete
+from freeorion_tools import get_named_real, ppstring, tech_is_complete
 from production import print_building_list, print_capital_info, print_production_queue
 from turn_state import (
     get_all_empire_planets,
@@ -1540,7 +1540,7 @@ def _build_gas_giant_generator() -> float:
     if not building_type.available():
         return 0.0
 
-    ggg_min_stability = fo.getNamedValue("BLD_GAS_GIANT_GEN_MIN_STABILITY")
+    ggg_min_stability = get_named_real("BLD_GAS_GIANT_GEN_MIN_STABILITY")
     universe = fo.getUniverse()
     colonized_planets = get_colonized_planets()
     opinion = building_type.get_opinions()

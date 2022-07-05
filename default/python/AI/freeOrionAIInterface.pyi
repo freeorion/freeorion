@@ -1301,9 +1301,14 @@ def getGameRules() -> GameRules:
     Returns the game rules manager, which can be used to look up the names (string) of rules are defined with what type (boolean / toggle, int, double, string), and what values the rules have in the current game.
     """
 
-def getNamedValue(string: str) -> object:
+def getNamedInt(string: str) -> int:
     """
-    Returns the named value of the scripted constant with name (string). If no such named constant exists, returns none.
+    Returns the named integer value of the scripted constant with name (string). If no such named constant exists, returns 0.
+    """
+
+def getNamedReal(string: str) -> float:
+    """
+    Returns the named real value of the scripted constant with name (string). If no such named constant exists, returns 0.0.
     """
 
 def getOptionsDBOptionBool(string: str) -> object:

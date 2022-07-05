@@ -371,14 +371,10 @@ def get_named_int(name: str) -> int:
     Note that we do not raise and exception so that the AI can continue, as good as it can, with outdated information.
     This is also why we return 1, returning 0 could cause followup errors if the value is used as divisor.
     """
-    value = fo.getNamedValue(name)
-    if value is None:
-        error(f"Requested NamedInt {name}, which doesn't exist!")
-        value = 1
-    elif not isinstance(value, int):
-        error(f"Requested value {name} of type int got {type(value)}!")
-        value = 1
-    return value
+    if fo.namedIntDefined(name):
+        return fo.getNamedInt(name)
+    error(f"Requested integer {name} does not exist!")
+    return 1
 
 
 def get_named_real(name: str) -> float:
@@ -388,11 +384,7 @@ def get_named_real(name: str) -> float:
     Note that we do not raise and exception so that the AI can continue, as good as it can, with outdated information.
     This is also why we return 1, returning 0 could cause followup errors if the value is used as divisor.
     """
-    value = fo.getNamedValue(name)
-    if value is None:
-        error(f"Requested NamedReal {name}, which doesn't exist!")
-        value = 1.0
-    elif not isinstance(value, float):
-        error(f"Requested value {name} of type float got {type(value)}!")
-        value = 1.0
-    return value
+    if fo.namedRealDefined(name):
+        return fo.getNamedReal(name)
+    error(f"Requested integer {name} does not exist!")
+    return 1.0

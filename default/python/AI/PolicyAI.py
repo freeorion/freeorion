@@ -10,7 +10,12 @@ from AIDependencies import Tags
 from aistate_interface import get_aistate
 from common.fo_typing import PlanetId, SpeciesName
 from EnumsAI import FocusType, PriorityType
-from freeorion_tools import assertion_fails, get_species_tag_value
+from freeorion_tools import (
+    assertion_fails,
+    get_named_int,
+    get_named_real,
+    get_species_tag_value,
+)
 from freeorion_tools.caching import cache_for_current_turn
 from freeorion_tools.statistics import stats
 from ResearchAI import research_now
@@ -375,8 +380,8 @@ class PolicyManager:
         if diversity not in self._empire.availablePolicies:
             return 0.0
         # diversity affects stability, but also gives a bonus to research-focused planets and a little influence,
-        diversity_value = len(get_empire_planets_by_species()) - fo.getNamedValue("PLC_DIVERSITY_THRESHOLD")
-        diversity_scaling = fo.getNamedValue("PLC_DIVERSITY_SCALING")
+        diversity_value = len(get_empire_planets_by_species()) - get_named_int("PLC_DIVERSITY_THRESHOLD")
+        diversity_scaling = get_named_real("PLC_DIVERSITY_SCALING")
         # Research bonus goes to research-focused planets only. With priority there are usually none.
         research_priority = self._aistate.get_priority(PriorityType.RESOURCE_RESEARCH)
         research_bonus = max(0, research_priority - 20)
@@ -411,8 +416,8 @@ class PolicyManager:
         return rating
 
     def _rate_artisan_planet(self, pid: PlanetId, species_name: SpeciesName) -> float:
-        focus_bonus = fo.getNamedValue("ARTISANS_INFLUENCE_FLAT_FOCUS")
-        focus_minimum = fo.getNamedValue("ARTISANS_MIN_STABILITY_FOCUS")
+        focus_bonus = get_named_real("ARTISANS_INFLUENCE_FLAT_FOCUS")
+        focus_minimum = get_named_real("ARTISANS_MIN_STABILITY_FOCUS")
         species_focus_bonus = focus_bonus * get_species_tag_value(species_name, Tags.INFLUENCE)
         planet = self._universe.getPlanet(pid)
         stability = planet.currentMeterValue(fo.meterType.targetHappiness)
@@ -422,8 +427,8 @@ class PolicyManager:
 
         # Planet does not have influence focus...
         # Check for the non-focus bonus. Since we would get this "for free", rate it higher
-        non_focus_bonus = fo.getNamedValue("ARTISANS_INFLUENCE_FLAT_NO_FOCUS")
-        non_focus_minimum = fo.getNamedValue("ARTISANS_MIN_STABILITY_NO_FOCUS")
+        non_focus_bonus = get_named_real("ARTISANS_INFLUENCE_FLAT_NO_FOCUS")
+        non_focus_minimum = get_named_real("ARTISANS_MIN_STABILITY_NO_FOCUS")
         rating = 0.0
         if stability >= non_focus_minimum:
             rating += 4 * non_focus_bonus
