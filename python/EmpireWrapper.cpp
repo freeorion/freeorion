@@ -215,16 +215,10 @@ namespace FreeOrionPython {
             .def(py::vector_indexing_suite<std::vector<UnlockableItem>, true>())
         ;
 
-        py::class_<ResourcePool, std::shared_ptr<ResourcePool>, boost::noncopyable>("resPool", py::no_init);
-
         FreeOrionPython::SetWrapper<std::set<std::set<int>>>::Wrap("IntSetSet");
         FreeOrionPython::SetWrapper<std::set<int>>::Wrap("IntSet");
         FreeOrionPython::SetWrapper<std::set<std::string>>::Wrap("StringSet");
         FreeOrionPython::SetWrapper<std::set<std::string, std::less<>>>::Wrap("StringSet2");
-
-        py::class_<std::map<std::set<int>, float>>("resPoolMap")
-            .def(py::map_indexing_suite<std::map<std::set<int>, float>, true>())
-        ;
 
         py::class_<std::map<std::string, int>>("StringIntMap")
             .def(py::map_indexing_suite<std::map<std::string, int>, true>())
@@ -354,7 +348,6 @@ namespace FreeOrionPython {
             .def("resourceStockpile",               &Empire::ResourceStockpile)
             .def("resourceProduction",              &Empire::ResourceOutput)
             .def("resourceAvailable",               &Empire::ResourceAvailable)
-            .def("getResourcePool",                 &Empire::GetResourcePool)
 
             .def("population",                      &Empire::Population)
 
@@ -416,17 +409,8 @@ namespace FreeOrionPython {
             .add_property("totalSpent",             &ProductionQueue::TotalPPsSpent)
             .add_property("empireID",               &ProductionQueue::EmpireID)
 
-            .def("availablePP",                     +[](const ProductionQueue& queue, const std::shared_ptr<ResourcePool>& r) -> std::map<std::set<int>, float> {
-                                                        return r ? r->Output() : std::map<std::set<int>, float>{};
-                                                    }, py::return_value_policy<py::return_by_value>())
-
             .add_property("allocatedPP",            make_function(&ProductionQueue::AllocatedPP,        py::return_internal_reference<>()))
-
-            .def("objectsWithWastedPP",             +[](const ProductionQueue& queue, const std::shared_ptr<ResourcePool>& r) -> std::set<std::set<int>> {
-                                                        const auto const_r{std::const_pointer_cast<const ResourcePool>(r)};
-                                                        return queue.ObjectsWithWastedPP(const_r);
-                                                    }, py::return_value_policy<py::return_by_value>())
-            ;
+        ;
 
         ////////////////////
         // Research Queue //
