@@ -2174,7 +2174,7 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
     // UpdateResourcePools should have generated necessary info
     // m_production_queue.Update(context.ContextUniverse());
 
-    std::map<int, std::vector<std::shared_ptr<Ship>>> system_new_ships;
+    std::map<int, std::vector<Ship*>> system_new_ships;
     std::map<int, int> new_ship_rally_point_ids;
 
     auto& universe = context.ContextUniverse();
@@ -2447,7 +2447,7 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
 
                 // store ships to put into fleets later
                 const auto SHIP_ID = ship->ID();
-                system_new_ships[system->ID()].push_back(ship);
+                system_new_ships[system->ID()].push_back(ship.get());
 
                 // store ship rally points
                 if (elem.rally_point_id != INVALID_OBJECT_ID)
@@ -2484,7 +2484,7 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
 
     // create fleets for new ships and put ships into fleets
     for (auto& [system_id, new_ships] : system_new_ships) {
-        auto system = context.ContextObjects().get<System>(system_id);
+        auto system = context.ContextObjects().getRaw<System>(system_id);
         if (!system) {
             ErrorLogger() << "Couldn't get system with id " << system_id << " for creating new fleets for newly produced ships";
             continue;
@@ -2493,16 +2493,16 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
             continue;
 
         // group ships into fleets by rally point and design
-        std::map<int, std::map<int, std::vector<std::shared_ptr<Ship>>>>
+        std::map<int, std::map<int, std::vector<Ship*>>>
             new_ships_by_rally_point_id_and_design_id;
-        for (auto& ship : new_ships) {
+        for (auto* ship : new_ships) {
             int rally_point_id = INVALID_OBJECT_ID;
             auto rally_it = new_ship_rally_point_ids.find(ship->ID());
             if (rally_it != new_ship_rally_point_ids.end())
                 rally_point_id = rally_it->second;
 
             auto design_id = ship->DesignID();
-            new_ships_by_rally_point_id_and_design_id[rally_point_id][design_id].push_back(std::move(ship));
+            new_ships_by_rally_point_id_and_design_id[rally_point_id][design_id].push_back(ship);
         }
 
 
@@ -2528,7 +2528,7 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
                                            || (*ships.begin())->CanHaveTroops(universe)
                                            || (*ships.begin())->CanBombard(universe));
 
-                std::vector<std::shared_ptr<Fleet>> fleets;
+                std::vector<Fleet*> fleets;
                 std::shared_ptr<Fleet> fleet;
 
                 if (!individual_fleets) {
@@ -2544,7 +2544,7 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
                     // set invalid arrival starlane so that fleet won't necessarily be free from blockades
                     fleet->SetArrivalStarlane(INVALID_OBJECT_ID);
 
-                    fleets.push_back(fleet); // can't move
+                    fleets.push_back(fleet.get());
                 }
 
                 for (auto& ship : ships) {
@@ -2561,14 +2561,14 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
                         // set invalid arrival starlane so that fleet won't necessarily be free from blockades
                         fleet->SetArrivalStarlane(INVALID_OBJECT_ID);
 
-                        fleets.push_back(fleet); // can't move
+                        fleets.push_back(fleet.get());
                     }
                     ship_ids.push_back(ship->ID());
                     fleet->AddShips({ship->ID()});
                     ship->SetFleetID(fleet->ID());
                 }
 
-                for (auto& next_fleet : fleets) {
+                for (auto* next_fleet : fleets) {
                     // rename fleet, given its id and the ship that is in it
                     next_fleet->Rename(next_fleet->GenerateFleetName(context));
                     FleetAggression new_aggr = next_fleet->HasArmedShips(context) ?

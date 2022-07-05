@@ -3211,7 +3211,7 @@ namespace {
                 // gifted object must be in a system
                 if (gifted_obj->SystemID() == INVALID_OBJECT_ID)
                     continue;
-                auto system = objects.get<System>(gifted_obj->SystemID());
+                auto system = objects.getRaw<System>(gifted_obj->SystemID());
                 if (!system)
                     continue;
 
@@ -3225,7 +3225,7 @@ namespace {
 
                 } else {
                     // not cached, so scan for objects
-                    for (auto& system_obj : objects.find<const UniverseObject>(system->ObjectIDs())) {
+                    for (auto* system_obj : objects.findRaw<const UniverseObject>(system->ObjectIDs())) {
                         if (system_obj->OwnedBy(recipient_empire_id)) {
                             can_receive_here = true;
                             systems_contain_recipient_empire_owned_objects[system->ID()] = true;
@@ -3239,7 +3239,7 @@ namespace {
                     continue;
 
                 // recipient empire can receive objects at this system, so do transfer
-                filtered_empire_gifted_objects[{initial_owner_empire_id, recipient_empire_id}].push_back(std::move(gifted_obj));
+                filtered_empire_gifted_objects[{initial_owner_empire_id, recipient_empire_id}].push_back(gifted_obj);
             }
         }
 

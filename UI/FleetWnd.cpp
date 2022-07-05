@@ -304,19 +304,19 @@ namespace {
 
         // filter fleets in system to select just those owned by this client's
         // empire, and collect their ship ids
-        std::vector<std::shared_ptr<Fleet>> all_system_fleets(objects.find<Fleet>(system->FleetIDs()));
+        auto all_system_fleets = objects.findRaw<Fleet>(system->FleetIDs());
         std::vector<int> empire_system_fleet_ids;
         empire_system_fleet_ids.reserve(all_system_fleets.size());
         std::vector<int> empire_system_ship_ids;
         empire_system_ship_ids.reserve(all_system_fleets.size());   // probably an underestimate
 
-        for (auto& fleet : all_system_fleets) {
+        for (auto* fleet : all_system_fleets) {
             if (!fleet->OwnedBy(client_empire_id))
                 continue;
             if (fleet->ID() == target_fleet->ID() || fleet->ID() == INVALID_OBJECT_ID)
                 continue;   // no need to do things to target fleet's contents
 
-            const std::set<int>& fleet_ships = fleet->ShipIDs();
+            const auto& fleet_ships = fleet->ShipIDs();
             empire_system_ship_ids.insert(empire_system_ship_ids.end(),
                                           fleet_ships.begin(), fleet_ships.end());
             empire_system_fleet_ids.push_back(fleet->ID());

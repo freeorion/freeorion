@@ -1872,7 +1872,7 @@ namespace {
             detailed_description += str(FlexibleFormat(UserString("ENC_AUTO_TIME_COST_INVARIANT_STR")) % UserString("ENC_VERB_PRODUCE_STR"));
         } else {
             detailed_description += str(FlexibleFormat(UserString("ENC_AUTO_TIME_COST_VARIABLE_STR")) % UserString("ENC_VERB_PRODUCE_STR"));
-            if (auto planet = Objects().get<Planet>(this_location_id)) {
+            if (auto* planet = Objects().getRaw<Planet>(this_location_id)) {
                 int local_cost = only_description ? 1 : building_type->ProductionCost(client_empire_id, this_location_id);
                 int local_time = only_description ? 1 : building_type->ProductionTime(client_empire_id, this_location_id);
                 auto& local_name = planet->Name();
@@ -1956,9 +1956,9 @@ namespace {
 
 
         // objects that have special
-        std::vector<std::shared_ptr<const UniverseObject>> objects_with_special;
+        std::vector<const UniverseObject*> objects_with_special;
         objects_with_special.reserve(objects.size());
-        for (const auto& obj : objects.all())
+        for (const auto& obj : objects.allRaw())
             if (obj->HasSpecial(item_name))
                 objects_with_special.push_back(obj);
 
@@ -2421,6 +2421,7 @@ namespace {
 
         const Universe& universe = GetUniverse();
         const ObjectMap& objects = universe.Objects();
+        const EmpireManager& empires = Empires();
 
         if (!only_description) {
             name = UserString(item_name);
@@ -2506,21 +2507,21 @@ namespace {
         }
 
         // occupied planets
-        std::vector<std::shared_ptr<const Planet>> species_occupied_planets;
+        std::vector<const Planet*> species_occupied_planets;
         const auto& species_object_populations = sm.SpeciesObjectPopulations();
         species_occupied_planets.reserve(species_object_populations.size());
         auto sp_op_it = species_object_populations.find(item_name);
         if (sp_op_it != species_object_populations.end()) {
             const auto& object_pops = sp_op_it->second;
             for (const auto& object_pop : object_pops) {
-                auto plt = objects.get<Planet>(object_pop.first);
+                auto plt = objects.getRaw<Planet>(object_pop.first);
                 if (!plt)
                     continue;
                 if (plt->SpeciesName() != item_name) {
                     ErrorLogger() << "SpeciesManager SpeciesObjectPopulations suggested planet had a species, but it doesn't?";
                     continue;
                 }
-                species_occupied_planets.push_back(std::move(plt));
+                species_occupied_planets.push_back(plt);
             }
         }
 
@@ -2528,11 +2529,14 @@ namespace {
             detailed_description.append("\n").append(UserString("OCCUPIED_PLANETS")).append("\n");
             bool first = true;
             // TODO: alphabetical sorting order to make the list better readable
-            for (auto& planet : species_occupied_planets) {
-                if (first) first = false;
-                else detailed_description.append(",  ");
-                detailed_description
-                .append(LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(), planet->PublicName(client_empire_id, universe)));
+            for (auto* planet : species_occupied_planets) {
+                if (first)
+                    first = false;
+                else
+                    detailed_description.append(",  ");
+                detailed_description.append(
+                    LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(),
+                                     planet->PublicName(client_empire_id, universe)));
             }
             detailed_description.append("\n");
         }
@@ -2543,7 +2547,7 @@ namespace {
         if (species_it != seom.end()) {
             detailed_description.append("\n").append(UserString("OPINIONS_OF_EMPIRES")).append("\n");
             for (const auto& entry : species_it->second) {
-                const Empire* empire = GetEmpire(entry.first);
+                auto empire = empires.GetEmpire(entry.first);
                 if (!empire)
                     continue;
             }
@@ -2639,15 +2643,12 @@ namespace {
         const Universe& u = GetUniverse();
         const ObjectMap& objects = u.Objects();
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        std::vector<std::shared_ptr<const UniverseObject>> current_fields;
+        std::vector<const Field*> current_fields;
         current_fields.reserve(objects.size());
-        for (const auto& obj : objects.all())
-            if (
-                obj->ObjectType() == UniverseObjectType::OBJ_FIELD
-                && obj->PublicName(client_empire_id, u) == name
-            ) {
-                current_fields.push_back(obj);
-            }
+        for (const auto* field : objects.allRaw<Field>())
+            if (field->FieldTypeName() == name)
+                current_fields.push_back(field);
+
         detailed_description.append("\n\n").append(UserString("KNOWN_FIELDS_OF_THIS_TYPE")).append("\n");
         if (!current_fields.empty()) {
             for (auto& obj : current_fields) {
