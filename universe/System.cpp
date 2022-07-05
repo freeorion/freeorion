@@ -285,7 +285,7 @@ bool System::Contains(int object_id) const {
 std::shared_ptr<UniverseObject> System::Accept(const UniverseObjectVisitor& visitor) const
 { return visitor.Visit(std::const_pointer_cast<System>(std::static_pointer_cast<const System>(shared_from_this()))); }
 
-void System::Insert(std::shared_ptr<UniverseObject> obj, int orbit/* = -1*/) {
+void System::Insert(std::shared_ptr<UniverseObject> obj, int orbit) {
     if (!obj) {
         ErrorLogger() << "System::Insert() : Attempted to place a null object in a System";
         return;
