@@ -2542,6 +2542,7 @@ namespace {
         }
 
         // empire opinions
+        /*
         const auto& seom = GetSpeciesManager().GetSpeciesEmpireOpinionsMap();
         auto species_it = seom.find(species->Name());
         if (species_it != seom.end()) {
@@ -2552,6 +2553,7 @@ namespace {
                     continue;
             }
         }
+        */
 
         // species opinions
         const auto& ssom = GetSpeciesManager().GetSpeciesSpeciesOpinionsMap();
