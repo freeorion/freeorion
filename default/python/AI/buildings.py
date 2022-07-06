@@ -1,3 +1,19 @@
+"""
+This module encapsulate some basic buildings manipulation.
+It's organized as a set of enums with various methods.
+Each enum represent a set of building types with similar usage.
+
+Keep in mind when implementing enum:
+ - It encapsulate FOCS names and fo API usage exposing convenient API for AI.
+ - It should not contain any decision logic, , only provide information that is easy to handle.
+   For example direct manipulation like enqueue or information like if this building could be constructed.
+ - It should not accept or expose any fo.* object.
+ - We don't need to keep enums names the same as FOCS ids, so keep them short but recognizable.
+
+
+TODO: Use building ids only inside that file, change other code to accept enums.
+"""
+
 from __future__ import annotations
 
 import freeOrionAIInterface as fo
@@ -22,72 +38,26 @@ def get_empire_drydocks() -> Mapping[SystemId, Tuple[PlanetId]]:
     """
     universe = fo.getUniverse()
     drydocks = {}
-    for pid in BuildingType.SHIPYARD_ORBITAL_DRYDOCK.built_at():
+    for pid in Shipyard.ORBITAL_DRYDOCK.built_at():
         planet = universe.getPlanet(pid)
         drydocks.setdefault(planet.systemID, []).append(pid)
     return ReadOnlyDict({k: tuple(v) for k, v in drydocks.items()})
 
 
-class BuildingType(Enum):
+class _BuildingOperations:
     """
-    Enum to represent fo building template.
+    Mixin class for building enums.
 
-    This class encapsulate FOCS names and fo API usage exposing convenient API for AI.
-    It should not contain any decision logic, only provide information that is easy to handle.
-
-    It should not accept or expose any fo.* object.
-
-    Note: It does not required to have exactly the same name and value.
+    This class contains operations that applicable for all building enums.
     """
 
-    AUTO_HISTORY_ANALYSER = "BLD_AUTO_HISTORY_ANALYSER"
-    BLACK_HOLE_POW_GEN = "BLD_BLACK_HOLE_POW_GEN"
-    COLLECTIVE_NET = "BLD_COLLECTIVE_NET"
-    CULTURE_ARCHIVES = "BLD_CULTURE_ARCHIVES"
-    CULTURE_LIBRARY = "BLD_CULTURE_LIBRARY"
-    ENCLAVE_VOID = "BLD_ENCLAVE_VOID"
-    GAS_GIANT_GEN = "BLD_GAS_GIANT_GEN"
-    GENOME_BANK = "BLD_GENOME_BANK"
-    INDUSTRY_CENTER = "BLD_INDUSTRY_CENTER"
-    INTERSPECIES_ACADEMY = "BLD_INTERSPECIES_ACADEMY"
-    LIGHTHOUSE = "BLD_LIGHTHOUSE"
-    MEGALITH = "BLD_MEGALITH"
-    MILITARY_COMMAND = "BLD_MILITARY_COMMAND"
-    NEUTRONIUM_SYNTH = "BLD_NEUTRONIUM_SYNTH"
-    NEUTRONIUM_EXTRACTOR = "BLD_NEUTRONIUM_EXTRACTOR"
-    PALACE = "BLD_IMPERIAL_PALACE"
-    REGIONAL_ADMIN = "BLD_REGIONAL_ADMIN"
-    SCANNING_FACILITY = "BLD_SCANNING_FACILITY"
-    SCRYING_SPHERE = "BLD_SCRYING_SPHERE"
-    SOL_ORB_GEN = "BLD_SOL_ORB_GEN"
-    SPACE_ELEVATOR = "BLD_SPACE_ELEVATOR"
-    SPATIAL_DISTORT_GEN = "BLD_SPATIAL_DISTORT_GEN"
-    STARGATE = "BLD_STARGATE"
-    STOCKPILING_CENTER = "BLD_STOCKPILING_CENTER"
-    TRANSLATOR = "BLD_TRANSLATOR"
-    XENORESURRECTION_LAB = "BLD_XENORESURRECTION_LAB"
-    # shipyard buildings
-    SHIPYARD_BASE = "BLD_SHIPYARD_BASE"
-    SHIPYARD_ORBITAL_DRYDOCK = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
-    SHIPYARD_CON_NANOROBO = "BLD_SHIPYARD_CON_NANOROBO"
-    SHIPYARD_CON_GEOINT = "BLD_SHIPYARD_CON_GEOINT"
-    SHIPYARD_CON_ADV_ENGINE = "BLD_SHIPYARD_CON_ADV_ENGINE"
-    SHIPYARD_AST = "BLD_SHIPYARD_AST"
-    SHIPYARD_AST_REF = "BLD_SHIPYARD_AST_REF"
-    SHIPYARD_ORG_ORB_INC = "BLD_SHIPYARD_ORG_ORB_INC"
-    SHIPYARD_ORG_CELL_GRO_CHAMB = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
-    SHIPYARD_ORG_XENO_FAC = "BLD_SHIPYARD_ORG_XENO_FAC"
-    SHIPYARD_ENRG_COMP = "BLD_SHIPYARD_ENRG_COMP"
-    SHIPYARD_ENRG_SOLAR = "BLD_SHIPYARD_ENRG_SOLAR"
-    NEUTRONIUM_FORGE = "BLD_NEUTRONIUM_FORGE"  # not a shipyard by name, but only used for building ships
-
-    @staticmethod
-    def get(name: BuildingName) -> BuildingType:
+    @classmethod
+    def get(cls, name: BuildingName):
         """Get BuildType for a given BuildingName."""
         for bt in BuildingType:
             if bt.value == name:
                 return bt
-        raise ValueError(f"BuildingType.get(): got unknown name {name}")
+        raise ValueError(f"{cls.__name__}.get(): got unknown name {name}")
 
     def is_this_type(self, building_id: BuildingId):
         """Return whether the building with the given identifier is of this type."""
@@ -188,12 +158,71 @@ class BuildingType(Enum):
         """Return another building type, that this is based on or None."""
         return _prerequisites.get(self, None)
 
-    @staticmethod
-    def get_system_ship_facilities():
-        return frozenset({BuildingType.SHIPYARD_AST, BuildingType.SHIPYARD_AST_REF})
-
     def get_best_pilot_facilities(self) -> FrozenSet[PlanetId]:
         return get_best_pilot_facilities(self.value)
+
+
+class BuildingType(_BuildingOperations, Enum):
+    """
+    Represent basic buildings.
+
+    Start adding new buildings here.
+    There are 2 things why you want to move anything to separate enum.
+
+    1) names became shorter, for example BuildingType.SHIPYARD_BASE -> Shipyard.BASE
+    2) you need new method exclusively to that building/buildings.
+    """
+
+    AUTO_HISTORY_ANALYSER = "BLD_AUTO_HISTORY_ANALYSER"
+    BLACK_HOLE_POW_GEN = "BLD_BLACK_HOLE_POW_GEN"
+    COLLECTIVE_NET = "BLD_COLLECTIVE_NET"
+    CULTURE_ARCHIVES = "BLD_CULTURE_ARCHIVES"
+    CULTURE_LIBRARY = "BLD_CULTURE_LIBRARY"
+    ENCLAVE_VOID = "BLD_ENCLAVE_VOID"
+    GAS_GIANT_GEN = "BLD_GAS_GIANT_GEN"
+    GENOME_BANK = "BLD_GENOME_BANK"
+    INDUSTRY_CENTER = "BLD_INDUSTRY_CENTER"
+    INTERSPECIES_ACADEMY = "BLD_INTERSPECIES_ACADEMY"
+    LIGHTHOUSE = "BLD_LIGHTHOUSE"
+    MEGALITH = "BLD_MEGALITH"
+    MILITARY_COMMAND = "BLD_MILITARY_COMMAND"
+    NEUTRONIUM_SYNTH = "BLD_NEUTRONIUM_SYNTH"
+    NEUTRONIUM_EXTRACTOR = "BLD_NEUTRONIUM_EXTRACTOR"
+    PALACE = "BLD_IMPERIAL_PALACE"
+    REGIONAL_ADMIN = "BLD_REGIONAL_ADMIN"
+    SCANNING_FACILITY = "BLD_SCANNING_FACILITY"
+    SCRYING_SPHERE = "BLD_SCRYING_SPHERE"
+    SOL_ORB_GEN = "BLD_SOL_ORB_GEN"
+    SPACE_ELEVATOR = "BLD_SPACE_ELEVATOR"
+    SPATIAL_DISTORT_GEN = "BLD_SPATIAL_DISTORT_GEN"
+    STARGATE = "BLD_STARGATE"
+    STOCKPILING_CENTER = "BLD_STOCKPILING_CENTER"
+    TRANSLATOR = "BLD_TRANSLATOR"
+    XENORESURRECTION_LAB = "BLD_XENORESURRECTION_LAB"
+
+
+class Shipyard(_BuildingOperations, Enum):
+    """
+    Represent buildings required to build ships.
+    """
+
+    BASE = "BLD_SHIPYARD_BASE"
+    ORBITAL_DRYDOCK = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+    NANOROBO = "BLD_SHIPYARD_CON_NANOROBO"
+    GEO = "BLD_SHIPYARD_CON_GEOINT"
+    ADV_ENGINE = "BLD_SHIPYARD_CON_ADV_ENGINE"
+    ASTEROID = "BLD_SHIPYARD_AST"
+    ASTEROID_REF = "BLD_SHIPYARD_AST_REF"
+    ORG_ORB_INC = "BLD_SHIPYARD_ORG_ORB_INC"
+    ORG_CELL_GRO_CHAMB = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
+    XENO_FACILITY = "BLD_SHIPYARD_ORG_XENO_FAC"
+    ENRG_COMP = "BLD_SHIPYARD_ENRG_COMP"
+    ENRG_SOLAR = "BLD_SHIPYARD_ENRG_SOLAR"
+    NEUTRONIUM_FORGE = "BLD_NEUTRONIUM_FORGE"  # not a shipyard by name, but only used for building ships
+
+    @staticmethod
+    def get_system_ship_facilities():
+        return frozenset({Shipyard.ASTEROID, Shipyard.ASTEROID_REF})
 
 
 class _BuildingLocations(NamedTuple):
@@ -221,17 +250,17 @@ def _get_building_locations() -> DefaultDict[BuildingName, _BuildingLocations]:
 
 _prerequisites = ReadOnlyDict(
     {
-        BuildingType.SHIPYARD_ORBITAL_DRYDOCK: BuildingType.SHIPYARD_BASE,
-        BuildingType.SHIPYARD_CON_NANOROBO: BuildingType.SHIPYARD_ORBITAL_DRYDOCK,
-        BuildingType.SHIPYARD_CON_GEOINT: BuildingType.SHIPYARD_ORBITAL_DRYDOCK,
-        BuildingType.SHIPYARD_CON_ADV_ENGINE: BuildingType.SHIPYARD_ORBITAL_DRYDOCK,
-        BuildingType.SHIPYARD_AST_REF: BuildingType.SHIPYARD_AST,
-        BuildingType.SHIPYARD_ORG_ORB_INC: BuildingType.SHIPYARD_BASE,
-        BuildingType.SHIPYARD_ORG_CELL_GRO_CHAMB: BuildingType.SHIPYARD_ORG_ORB_INC,
-        BuildingType.SHIPYARD_ORG_XENO_FAC: BuildingType.SHIPYARD_ORG_ORB_INC,
-        BuildingType.SHIPYARD_ENRG_COMP: BuildingType.SHIPYARD_BASE,
-        BuildingType.SHIPYARD_ENRG_SOLAR: BuildingType.SHIPYARD_ENRG_COMP,
+        Shipyard.ORBITAL_DRYDOCK: Shipyard.BASE,
+        Shipyard.NANOROBO: Shipyard.ORBITAL_DRYDOCK,
+        Shipyard.GEO: Shipyard.ORBITAL_DRYDOCK,
+        Shipyard.ADV_ENGINE: Shipyard.ORBITAL_DRYDOCK,
+        Shipyard.ASTEROID_REF: Shipyard.ASTEROID,
+        Shipyard.ORG_ORB_INC: Shipyard.BASE,
+        Shipyard.ORG_CELL_GRO_CHAMB: Shipyard.ORG_ORB_INC,
+        Shipyard.XENO_FACILITY: Shipyard.ORG_ORB_INC,
+        Shipyard.ENRG_COMP: Shipyard.BASE,
+        Shipyard.ENRG_SOLAR: Shipyard.ENRG_COMP,
         # not a technical prerequisite, but it has no purpose without a shipyard
-        BuildingType.NEUTRONIUM_FORGE: BuildingType.SHIPYARD_BASE,
+        Shipyard.NEUTRONIUM_FORGE: Shipyard.BASE,
     }
 )
