@@ -20,7 +20,18 @@ import freeOrionAIInterface as fo
 from collections import defaultdict
 from copy import copy
 from enum import Enum
-from typing import DefaultDict, FrozenSet, List, Mapping, NamedTuple, Set, Tuple
+from itertools import chain
+from typing import (
+    DefaultDict,
+    FrozenSet,
+    Iterator,
+    List,
+    Mapping,
+    NamedTuple,
+    Set,
+    Tuple,
+    Union,
+)
 
 from aistate_interface import get_aistate
 from common.fo_typing import BuildingId, BuildingName, PlanetId, SystemId
@@ -223,6 +234,13 @@ class Shipyard(_BuildingOperations, Enum):
     @staticmethod
     def get_system_ship_facilities():
         return frozenset({Shipyard.ASTEROID, Shipyard.ASTEROID_REF})
+
+
+def iterate_buildings_types() -> Iterator[Union[BuildingType, Shipyard]]:
+    """
+    Iterator over all building types.
+    """
+    yield from chain(BuildingType, Shipyard)
 
 
 class _BuildingLocations(NamedTuple):

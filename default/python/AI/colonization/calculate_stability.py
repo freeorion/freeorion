@@ -3,7 +3,7 @@ from typing import Dict, Tuple
 
 import AIDependencies
 import PolicyAI
-from buildings import BuildingType
+from buildings import BuildingType, iterate_buildings_types
 from colonization.colony_score import debug_rating
 from freeorion_tools import get_species_tag_value
 from freeorion_tools.caching import cache_for_current_turn
@@ -82,7 +82,7 @@ def _count_building(planet: fo.planet) -> Dict[str, Tuple[int, int, int]]:
     system_pids = set(pid for pid in system.planetIDs if pid != planet.id)
     # TODO: add all buildings to BuildingType, so we get them all here
     result = {}
-    for building_type in BuildingType:
+    for building_type in iterate_buildings_types():
         # So far we only consider conquering / settling this planet. By the time we have it,
         # queued buildings are likely finished as well, so we consider them here already.
         all_pids = building_type.built_or_queued_at()
