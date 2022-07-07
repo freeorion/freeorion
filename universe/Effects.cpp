@@ -3084,7 +3084,7 @@ void MoveTo::Execute(ScriptingContext& context) const {
             old_sys->Remove(field->ID());
         field->SetSystem(INVALID_OBJECT_ID);
         field->MoveTo(destination);
-        if (destination->ObjectType() == UniverseObjectType::OBJ_SHIP) {
+        if (destination->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
             auto dest_system = std::static_pointer_cast<System>(destination);
             dest_system->Insert(std::move(field));
         }
