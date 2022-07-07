@@ -5,7 +5,7 @@ import AIDependencies
 import PolicyAI
 from buildings import BuildingType, iterate_buildings_types
 from colonization.colony_score import debug_rating
-from freeorion_tools import get_species_tag_value
+from freeorion_tools import get_named_real, get_species_tag_value
 from freeorion_tools.caching import cache_for_current_turn
 from PlanetUtilsAI import dislike_factor
 from turn_state import get_colonized_planets, have_worldtree
@@ -44,7 +44,7 @@ def _evaluate_policies(species: fo.species) -> float:
     result = sum(like_value for p in empire.adoptedPolicies if p in species.likes)
     result -= sum(dislike_value for p in empire.adoptedPolicies if p in species.dislikes)
     if PolicyAI.bureaucracy in empire.adoptedPolicies:
-        result += fo.getNamedValue("PLC_BUREAUCRACY_STABILITY_FLAT")
+        result += get_named_real("PLC_BUREAUCRACY_STABILITY_FLAT")
     # TBD: add conformance, indoctrination, etc. when the AI learns to use them
     return result
 
@@ -119,7 +119,7 @@ def _evaluate_xenophobia(planet, species) -> float:
     relevant_systems = within_n_jumps(planet.systemID, 5) & set(colonies.keys())
     result = 0.0
     universe = fo.getUniverse()
-    value = fo.getNamedValue("XENOPHOBIC_SELF_TARGET_HAPPINESS_COUNT")
+    value = get_named_real("XENOPHOBIC_SELF_TARGET_HAPPINESS_COUNT")
     for sys_id in relevant_systems:
         for pid in colonies[sys_id]:
             planet_species = universe.getPlanet(pid).speciesName

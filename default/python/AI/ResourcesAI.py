@@ -21,7 +21,12 @@ from colonization.calculate_planet_colonization_rating import empire_metabolisms
 from common.print_utils import Table, Text
 from empire.growth_specials import get_growth_specials
 from EnumsAI import FocusType, PriorityType, get_priority_resource_types
-from freeorion_tools import combine_ratings, policy_is_adopted, tech_is_complete
+from freeorion_tools import (
+    combine_ratings,
+    get_named_real,
+    policy_is_adopted,
+    tech_is_complete,
+)
 from freeorion_tools.statistics import stats
 from freeorion_tools.timers import AITimer
 from PolicyAI import algo_research, bureaucracy
@@ -445,8 +450,8 @@ def assess_protection_focus(pinfo, priority):
     """Return True if planet should use Protection Focus."""
     this_planet = pinfo.planet
     # this is unrelated to military threats
-    stability_bonus = (pinfo.current_focus == PROTECTION) * fo.getNamedValue("PROTECION_FOCUS_STABILITY_BONUS")
-    # industry and research produce nothing below 0
+    stability_bonus = (pinfo.current_focus == PROTECTION) * get_named_real("PROTECION_FOCUS_STABILITY_BONUS")
+    # industry and research produce nothing below
     threshold = -1 * (pinfo.current_focus not in (INDUSTRY, RESEARCH))
     # Negative IP lowers stability. Trying to counter this by setting planets to Protection just makes it worse!
     ip = fo.getEmpire().resourceAvailable(fo.resourceType.influence)

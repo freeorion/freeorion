@@ -18,7 +18,7 @@ from aistate_interface import get_aistate
 from common.fo_typing import PlanetId, SpeciesName, SystemId
 from empire.colony_builders import get_colony_builders, get_extra_colony_builders
 from empire.ship_builders import get_ship_builders
-from freeorion_tools import ppstring
+from freeorion_tools import get_named_real, ppstring
 from freeorion_tools.caching import cache_for_current_turn
 
 
@@ -285,7 +285,7 @@ def dislike_factor() -> float:
     # See happiness.macros
     has_liberty = fo.getEmpire().policyAdopted("PLC_LIBERTY")
     # conformance not used yet
-    return fo.getNamedValue("PLC_LIBERTY_DISLIKE_FACTOR") if has_liberty else 1.0
+    return get_named_real("PLC_LIBERTY_DISLIKE_FACTOR") if has_liberty else 1.0
 
 
 def focus_stability_effect(species: fo.species, focus: str) -> float:
