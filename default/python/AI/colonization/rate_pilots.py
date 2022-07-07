@@ -32,11 +32,11 @@ GOOD_PILOT_RATING = 2.0
 GREAT_PILOT_RATING = 3.0
 ULT_PILOT_RATING = 4.0
 GOOD_SHIELD_BONUS = 0.3
-DETECTION_FACTOR = 0.08  # detection values -1 to 3
-FUEL_FACTOR = 0.1  # fuel values: -0.5 to 1.5
-# troop values range from 0.5 to 2 (or 3, but there is currently no species with ult. troops)
+DETECTION_SCALING = 0.08  # detection values: -1 to 3, so rating effect is -0.08 to 0.32
+FUEL_SCALING = 0.1  # fuel values: -0.5 to 1.5, so rating effect is -0.05 to 0.15
+# troop values range from 0.5 to 2 (or 3, but there is currently no species with ultimate troops)
 # TROOP_FACTOR is not used by rate_piloting, only in rate_colony_for_pilots
-TROOP_FACTOR = 0.15
+TROOP_SCALING = 0.15
 
 _pilot_tags_rating = {
     "BAD": BAD_PILOT_RATING,
@@ -60,7 +60,8 @@ def rate_piloting_tag(species_name: str) -> float:
     """
     if use_new_rating:
         return rate_piloting(species_name)
-    return rate_piloting_old(species_name)
+    else:
+        return rate_piloting_old(species_name)
 
 
 @cache_for_session
@@ -71,7 +72,7 @@ def rate_piloting_old(species_name: str) -> float:
     """
     weapon_grade_tag = get_species_tag_grade(species_name, Tags.WEAPONS)
     result = _pilot_tags_rating_old.get(weapon_grade_tag, 1.0)
-    if result == "SP_ACIREMA":
+    if species_name == "SP_ACIREMA":
         result += 1
     return result
 
@@ -93,9 +94,9 @@ def rate_piloting(species_name: SpeciesName) -> float:
     # TODO: reduce with tech, unlike weapon skill, shield bonus gets less effective with better weapons.
     #  Cannot use cache_for_session then anymore, of course
     shield_value = GOOD_SHIELD_BONUS if shield_grade_tag == "GOOD" else 0
-    detection_val = detection_value(species_name) * DETECTION_FACTOR
+    detection_val = detection_value(species_name) * DETECTION_SCALING
     # TODO add something for Sly and Laenfa ability to regenerate fuel quickly in certain systems?
-    fuel_val = get_species_tag_value(species_name, Tags.FUEL) * FUEL_FACTOR
+    fuel_val = get_species_tag_value(species_name, Tags.FUEL) * FUEL_SCALING
     dislikes = sum(1 for bld in AIDependencies.SHIP_FACILITIES if bld in species.dislikes)
     # basic shipyard is specifically important, cannot build any ships without it
     discount = 0.93 if "BLD_SHIPYARD_BASE" in species.dislikes else 0.96
@@ -178,7 +179,7 @@ def rate_colony_for_pilots(planet: fo.planet, species: fo.species, details: list
 
     if pilot_value > best_pilots:
         pilot_value += pilot_value - best_pilots
-    pilot_value += TROOP_FACTOR * troop_value
+    pilot_value += TROOP_SCALING * troop_value
 
     # No need for future check, basic tech only allows energy scouts
     energy_hull = tech_is_complete("SHP_FRC_ENRG_COMP")
