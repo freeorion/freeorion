@@ -37,6 +37,7 @@ def make_stub(
         "\n"
         "from common.fo_typing import (\n"
         "    BuildingId,\n"
+        "    BuildingName,\n"
         "    EmpireId,\n"
         "    FleetId,\n"
         "    ObjectId,\n"

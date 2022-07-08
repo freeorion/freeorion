@@ -8,6 +8,7 @@ from typing import Dict, Iterator, Sequence, Set, overload
 
 from common.fo_typing import (
     BuildingId,
+    BuildingName,
     EmpireId,
     FleetId,
     ObjectId,
@@ -852,7 +853,7 @@ class universeObject:
 
 class building(universeObject):
     @property
-    def buildingTypeName(self) -> str: ...
+    def buildingTypeName(self) -> BuildingName: ...
     @property
     def orderedScrapped(self) -> bool: ...
     @property
