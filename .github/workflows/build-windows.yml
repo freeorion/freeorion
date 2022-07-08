@@ -87,7 +87,7 @@ jobs:
         if: true # only for weekly-test-build push
         uses: actions/upload-artifact@v2
         with:
-          name: freeorion-binaries-win32-build-${{ env.GITHUB_RUN_NUMBER }}
+          name: freeorion-binaries-win32-build-${{ github.run_number }}
           path: build/FreeOrion-*.zip
           if-no-files-found: error
           retention-days: 14
