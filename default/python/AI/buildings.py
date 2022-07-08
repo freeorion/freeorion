@@ -21,21 +21,10 @@ from collections import defaultdict
 from copy import copy
 from enum import Enum
 from itertools import chain
-from typing import (
-    DefaultDict,
-    FrozenSet,
-    Iterator,
-    List,
-    Mapping,
-    NamedTuple,
-    Set,
-    Tuple,
-    Union,
-)
+from typing import DefaultDict, Iterator, List, Mapping, NamedTuple, Set, Tuple, Union
 
 from aistate_interface import get_aistate
 from common.fo_typing import BuildingId, BuildingName, PlanetId, SystemId
-from empire.buildings_locations import get_best_pilot_facilities
 from freeorion_tools import ReadOnlyDict
 from freeorion_tools.caching import cache_for_current_turn
 from PlanetUtilsAI import Opinion, get_planet_opinion
@@ -168,9 +157,6 @@ class _BuildingOperations:
     def prerequisite(self):  # not yet. -> Optional[BuildingType]:
         """Return another building type, that this is based on or None."""
         return _prerequisites.get(self, None)
-
-    def get_best_pilot_facilities(self) -> FrozenSet[PlanetId]:
-        return get_best_pilot_facilities(self.value)
 
 
 class BuildingType(_BuildingOperations, Enum):

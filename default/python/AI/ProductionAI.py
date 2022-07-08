@@ -1296,13 +1296,13 @@ def _build_ship_facilities(building_type: BuildingType, top_pids: Set[PlanetId] 
     if building_type in Shipyard.get_system_ship_facilities():
         current_coverage = building_type.built_or_queued_at_sys()
         open_systems = set(
-            universe.getPlanet(pid).systemID for pid in Shipyard.BASE.get_best_pilot_facilities()
+            universe.getPlanet(pid).systemID for pid in get_best_pilot_facilities(Shipyard.BASE.value)
         ).difference(current_coverage)
         try_systems = open_systems & prerequisite_type.built_or_queued_at_sys() if prerequisite_type else open_systems
         try_pids = {pid for sys_id in try_systems for pid in get_owned_planets_in_system(sys_id)}
     else:
         current_pids = get_best_pilot_facilities(building_type.value)
-        try_pids = prerequisite_type.get_best_pilot_facilities().difference(queued_bld_pids, current_pids)
+        try_pids = get_best_pilot_facilities(prerequisite_type.value).difference(queued_bld_pids, current_pids)
     debug(
         "Considering constructing a %s, have %d already built and %d queued",
         building_type,
