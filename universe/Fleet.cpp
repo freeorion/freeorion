@@ -733,11 +733,20 @@ std::shared_ptr<UniverseObject> Fleet::Accept(const UniverseObjectVisitor& visit
 { return visitor.Visit(std::const_pointer_cast<Fleet>(std::static_pointer_cast<const Fleet>(shared_from_this()))); }
 
 void Fleet::SetRoute(const std::vector<int>& route, const ObjectMap& objects) {
-    if (UnknownRoute())
-        throw std::invalid_argument("Fleet::SetRoute() : Attempted to set an unknown route.");
-
-    if (m_prev_system != SystemID() && m_prev_system == route.front() && !CanChangeDirectionEnRoute())
-        throw std::invalid_argument("Fleet::SetRoute() : Illegally attempted to change a fleet's direction while it was in transit.");
+    if (route.empty()) {
+        if (SystemID() == INVALID_OBJECT_ID) {
+            ErrorLogger() << "Fleet::SetRoute() : Attempted to change fleet " << this->Name()
+                          << " (" << this->ID() << ") route to empty while not in a system.";
+            return;
+        }
+    } else if (m_prev_system != SystemID() &&
+               m_prev_system == route.front() &&
+               !CanChangeDirectionEnRoute())
+    {
+        ErrorLogger() << "Fleet::SetRoute() : Illegally attempted to change fleet " << this->Name()
+                      << " (" << this->ID() << ") direction while in transit.";
+        return;
+    }
 
     m_travel_route = route;
 
