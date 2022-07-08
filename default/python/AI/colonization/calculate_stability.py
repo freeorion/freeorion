@@ -5,7 +5,7 @@ import AIDependencies
 import PolicyAI
 from buildings import BuildingType, iterate_buildings_types
 from colonization.colony_score import debug_rating
-from freeorion_tools import get_named_real, get_species_tag_value
+from freeorion_tools import get_named_real, get_species_stability
 from freeorion_tools.caching import cache_for_current_turn
 from PlanetUtilsAI import dislike_factor
 from turn_state import get_colonized_planets, have_worldtree
@@ -19,7 +19,7 @@ def calculate_stability(planet: fo.planet, species: fo.species) -> float:
     Supply-connection to nearest regional admin still TBD.
     """
     baseline = fo.getGameRules().getDouble("RULE_BASELINE_PLANET_STABILITY")
-    species_mod = get_species_tag_value(species.name, AIDependencies.Tags.STABILITY)
+    species_mod = get_species_stability(species.name)
     home_bonus = AIDependencies.STABILITY_HOMEWORLD_BONUS if planet.id in species.homeworlds else 0.0
     policies = _evaluate_policies(species)
     specials = _evaluate_specials(planet, species)

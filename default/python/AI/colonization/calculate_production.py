@@ -4,7 +4,7 @@ from typing import List
 import AIDependencies
 from buildings import BuildingType
 from colonization.colony_score import debug_rating
-from freeorion_tools import get_named_real, get_species_tag_value, tech_soon_available
+from freeorion_tools import get_named_real, get_species_industry, tech_soon_available
 from freeorion_tools.bonus_calculation import Bonus
 from freeorion_tools.caching import cache_for_current_turn
 from turn_state import have_honeycomb
@@ -20,7 +20,7 @@ def calculate_production(planet: fo.planet, species: fo.species, max_population:
         return 0.0
 
     bonus_modified = _get_production_bonus_modified(planet, stability)
-    skill_multiplier = get_species_tag_value(species.name, AIDependencies.Tags.INDUSTRY)
+    skill_multiplier = get_species_industry(species.name)
     bonus_by_policy = _get_production_bonus_mod_by_policy(stability)
     policy_multiplier = _get_policy_multiplier(stability)
     bonus_unmodified = _get_production_bonus_unmodified(planet, stability)

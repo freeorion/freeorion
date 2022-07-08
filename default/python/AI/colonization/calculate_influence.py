@@ -1,11 +1,10 @@
 import freeOrionAIInterface as fo
 from math import sqrt
 
-from AIDependencies import Tags
 from aistate_interface import get_aistate
 from buildings import BuildingType
 from EnumsAI import FocusType, PriorityType
-from freeorion_tools import get_named_real, get_species_tag_value
+from freeorion_tools import get_named_real, get_species_influence
 from turn_state import get_empire_planets_by_species
 
 INFLUENCE_SPECIALS = [
@@ -38,7 +37,7 @@ def calculate_influence(planet: fo.planet, species: fo.species, max_pop: float, 
         offset = stability - get_named_real("ARTISANS_MIN_STABILITY_FOCUS")
         production += ARTISAN_FLAT / (1.0 if offset >= 0 else offset**2 + 2)  # grant a little, if close
     # So far all those flat bonuses are affected by the species multiplier
-    production *= get_species_tag_value(species.name, Tags.INFLUENCE)
+    production *= get_species_influence(species.name)
 
     translator = BuildingType.TRANSLATOR
     bonus = get_named_real("TRANSLATOR_PER_SPECIES_INFLUENCE") * len(get_empire_planets_by_species()) ** 0.5

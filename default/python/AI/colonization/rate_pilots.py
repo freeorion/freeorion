@@ -8,8 +8,9 @@ from colonization.colony_score import MINIMUM_COLONY_SCORE, debug_rating, use_ne
 from common.fo_typing import SpeciesName
 from empire.pilot_rating import best_pilot_rating, medium_pilot_rating
 from freeorion_tools import (
+    get_species_attack_troops,
+    get_species_fuel,
     get_species_tag_grade,
-    get_species_tag_value,
     tech_is_complete,
     tech_soon_available,
 )
@@ -96,7 +97,7 @@ def rate_piloting(species_name: SpeciesName) -> float:
     shield_value = GOOD_SHIELD_BONUS if shield_grade_tag == "GOOD" else 0
     detection_val = detection_value(species_name) * DETECTION_SCALING
     # TODO add something for Sly and Laenfa ability to regenerate fuel quickly in certain systems?
-    fuel_val = get_species_tag_value(species_name, Tags.FUEL) * FUEL_SCALING
+    fuel_val = get_species_fuel(species_name) * FUEL_SCALING
     dislikes = sum(1 for bld in AIDependencies.SHIP_FACILITIES if bld in species.dislikes)
     # basic shipyard is specifically important, cannot build any ships without it
     discount = 0.93 if "BLD_SHIPYARD_BASE" in species.dislikes else 0.96
@@ -166,7 +167,7 @@ def rate_colony_for_pilots(planet: fo.planet, species: fo.species, details: list
     medium_pilots = medium_pilot_rating()
     # TODO: determine current best troopers, if we have only bad troops, even conquering a planet with
     #  average troops is helpful.
-    troop_value = max(get_species_tag_value(species.name, Tags.ATTACKTROOPS) - 1.0, 0.0)
+    troop_value = max(get_species_attack_troops(species.name) - 1.0, 0.0)
     pilot_value = 2 * pilot_rating - best_pilots - medium_pilots
     if pilot_value < 0.0:
         if troop_value > 0.0:
