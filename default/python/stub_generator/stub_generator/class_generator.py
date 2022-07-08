@@ -52,6 +52,7 @@ def _update_property_return_type(attr_name: str, rtype: str):
         ("owner", "int"): "EmpireId",
         ("speciesName", "str"): "SpeciesName",
         ("designedOnTurn", "int"): "Turn",
+        ("buildingTypeName", "str"): "BuildingName",
     }
     return property_map.get((attr_name, rtype), rtype)
 
