@@ -63,7 +63,7 @@ double RandGaussian(double mean, double sigma) {
     }
 }
 
-void RandomShuffle(std::vector<bool>& c) {
+void RandomShuffle(std::vector<uint8_t>& c) {
     std::scoped_lock lock(s_prng_mutex);
     std::shuffle(c.begin(), c.end(), gen);
 }

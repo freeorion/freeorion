@@ -455,11 +455,11 @@ void Number::Eval(const ScriptingContext& parent_context,
         // number of matches was within the requested range.
         if (search_domain == SearchDomain::MATCHES && !in_range) {
             // move all objects from matches to non_matches
-            std::move(matches.begin(), matches.end(), std::back_inserter(non_matches));
+            non_matches.insert(non_matches.end(), matches.begin(), matches.end());
             matches.clear();
         } else if (search_domain == SearchDomain::NON_MATCHES && in_range) {
             // move all objects from non_matches to matches
-            std::move(non_matches.begin(), non_matches.end(), std::back_inserter(matches));
+            matches.insert(matches.end(), non_matches.begin(), non_matches.end());
             non_matches.clear();
         }
     }
@@ -560,11 +560,11 @@ void Turn::Eval(const ScriptingContext& parent_context,
         // current turn was within the requested range.
         if (search_domain == SearchDomain::MATCHES && !match) {
             // move all objects from matches to non_matches
-            std::move(matches.begin(), matches.end(), std::back_inserter(non_matches));
+            non_matches.insert(non_matches.end(), matches.begin(), matches.end());
             matches.clear();
         } else if (search_domain == SearchDomain::NON_MATCHES && match) {
             // move all objects from non_matches to matches
-            std::move(non_matches.begin(), non_matches.end(), std::back_inserter(matches));
+            matches.insert(matches.end(), non_matches.begin(), non_matches.end());
             non_matches.clear();
         }
     } else {
@@ -714,7 +714,7 @@ namespace {
 
         // create list of bool flags to indicate whether each item in from_set
         // with corresponding place in iteration order should be transfered
-        std::vector<bool> transfer_flags(from_set.size(), false);   // initialized to all false
+        std::vector<uint8_t> transfer_flags(from_set.size(), false); // initialized to all false
 
         // set first  number  flags to true
         std::fill_n(transfer_flags.begin(), number, true);
@@ -723,14 +723,15 @@ namespace {
         RandomShuffle(transfer_flags);
 
         // transfer objects that have been flagged
-        int i = 0;
-        for (auto it = from_set.begin(); it != from_set.end(); ++i) {
-            if (transfer_flags[i]) {
-                to_set.push_back(std::move(*it));
-                *it = std::move(from_set.back());
+        auto flag_it = transfer_flags.begin();
+        auto obj_it = from_set.begin();
+        for (; obj_it != from_set.end(); ++flag_it) {
+            if (*flag_it) {
+                to_set.push_back(*obj_it);
+                *obj_it = from_set.back();
                 from_set.pop_back();
             } else {
-                ++it;
+                ++obj_it;
             }
         }
     }
@@ -778,7 +779,7 @@ namespace {
                 (void)ignored_float;    // quiet unused variable warning
                 auto from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
                 if (from_it != from_set.end()) {
-                    *from_it = std::move(from_set.back());
+                    *from_it = from_set.back();
                     from_set.pop_back();
                     to_set.push_back(object_to_transfer);
                     number_transferred++;
@@ -796,7 +797,7 @@ namespace {
                 auto& object_to_transfer = sorted_it->second;
                 auto from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
                 if (from_it != from_set.end()) {
-                    *from_it = std::move(from_set.back());
+                    *from_it = from_set.back();
                     from_set.pop_back();
                     to_set.push_back(object_to_transfer);
                     number_transferred++;
@@ -3659,11 +3660,9 @@ void InOrIsSystem::GetDefaultInitialCandidateObjects(const ScriptingContext& par
 
     // insert all objects that have the specified system id
     condition_non_targets.reserve(sys_objs.size() + 1);
-    std::copy(std::make_move_iterator(sys_objs.begin()),
-              std::make_move_iterator(sys_objs.end()),
-              std::back_inserter(condition_non_targets));
+    condition_non_targets.insert(condition_non_targets.end(), sys_objs.begin(), sys_objs.end());
     // also insert system itself
-    condition_non_targets.push_back(std::move(system));
+    condition_non_targets.push_back(system);
 }
 
 bool InOrIsSystem::Match(const ScriptingContext& local_context) const {
@@ -6790,11 +6789,11 @@ void EmpireMeterValue::Eval(const ScriptingContext& parent_context,
         // specified empire meter was in the requested range
         if (search_domain == SearchDomain::MATCHES && !match) {
             // move all objects from matches to non_matches
-            std::move(matches.begin(), matches.end(), std::back_inserter(non_matches));
+            non_matches.insert(non_matches.end(), matches.begin(), matches.end());
             matches.clear();
         } else if (search_domain == SearchDomain::NON_MATCHES && match) {
             // move all objects from non_matches to matches
-            std::move(non_matches.begin(), non_matches.end(), std::back_inserter(matches));
+            matches.insert(matches.end(), non_matches.begin(), non_matches.end());
             non_matches.clear();
         }
 
@@ -6979,11 +6978,11 @@ void EmpireStockpileValue::Eval(const ScriptingContext& parent_context,
         // specified empire meter was in the requested range
         if (search_domain == SearchDomain::MATCHES && !match) {
             // move all objects from matches to non_matches
-            std::move(matches.begin(), matches.end(), std::back_inserter(non_matches));
+            non_matches.insert(non_matches.end(), matches.begin(), matches.end());
             matches.clear();
         } else if (search_domain == SearchDomain::NON_MATCHES && match) {
             // move all objects from non_matches to matches
-            std::move(non_matches.begin(), non_matches.end(), std::back_inserter(matches));
+            matches.insert(matches.end(), non_matches.begin(), non_matches.end());
             non_matches.clear();
         }
 
@@ -9749,11 +9748,11 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
         // transfer objects to or from candidate set, according to whether the value comparisons were true
         if (search_domain == SearchDomain::MATCHES && !match) {
             // move all objects from matches to non_matches
-            std::move(matches.begin(), matches.end(), std::back_inserter(non_matches));
+            non_matches.insert(non_matches.end(), matches.begin(), matches.end());
             matches.clear();
         } else if (search_domain == SearchDomain::NON_MATCHES && match) {
             // move all objects from non_matches to matches
-            std::move(non_matches.begin(), non_matches.end(), std::back_inserter(matches));
+            matches.insert(matches.end(), non_matches.begin(), non_matches.end());
             non_matches.clear();
         }
 
@@ -10055,7 +10054,7 @@ void Location::Eval(const ScriptingContext& parent_context,
             // condition, match nothing
             if (search_domain == SearchDomain::MATCHES) {
                 // move all objects from matches to non_matches
-                std::move(matches.begin(), matches.end(), std::back_inserter(non_matches));
+                non_matches.insert(non_matches.end(), matches.begin(), matches.end());
                 matches.clear();
             }
         }
@@ -10415,8 +10414,8 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         }
 
         // merge items that passed all operand conditions into matches
-        matches.insert(matches.end(), std::make_move_iterator(partly_checked_non_matches.begin()),
-                       std::make_move_iterator(partly_checked_non_matches.end()));
+        matches.insert(matches.end(), partly_checked_non_matches.begin(),
+                       partly_checked_non_matches.end());
 
         // items already in matches set are not checked, and remain in matches set even if
         // they don't match one of the operand conditions
@@ -10791,9 +10790,7 @@ std::unique_ptr<Condition> Not::Clone() const
 ///////////////////////////////////////////////////////////
 namespace {
     void FCMoveContent(ObjectSet& from_set, ObjectSet& to_set) {
-        to_set.insert(to_set.end(),
-                      std::make_move_iterator(from_set.begin()),
-                      std::make_move_iterator(from_set.end()));
+        to_set.insert(to_set.end(), from_set.begin(), from_set.end());
         from_set.clear();
     }
 }

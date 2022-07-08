@@ -1024,9 +1024,8 @@ private:
             std::set<std::string> all_foci;
             for (auto* planet : objects.allRaw<Planet>()) {
                 auto obj_foci = planet->AvailableFoci();
-                std::copy(std::make_move_iterator(obj_foci.begin()),
-                          std::make_move_iterator(obj_foci.end()),
-                          std::inserter(all_foci, all_foci.end()));
+                all_foci.insert(std::make_move_iterator(obj_foci.begin()),
+                                std::make_move_iterator(obj_foci.end()));
             }
 
             auto row_it = m_string_drop->end();
@@ -1354,9 +1353,8 @@ namespace {
                 if (size_icon)
                     retval.push_back(std::move(size_icon));
                 auto head_icons = FleetHeadIcons(fleet, FleetButton::SizeType::LARGE);
-                std::copy(std::make_move_iterator(head_icons.begin()),
-                          std::make_move_iterator(head_icons.end()),
-                          std::back_inserter(retval));
+                retval.insert(retval.end(), std::make_move_iterator(head_icons.begin()),
+                              std::make_move_iterator(head_icons.end()));
             }
 
         } else if (obj->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
