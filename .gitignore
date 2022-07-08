@@ -103,6 +103,9 @@ libpython.py
 .vs/
 .vscode/
 
+# CMake
+build/
+
 # linters temp files
 .mypy_cache
 .pytest_cache
