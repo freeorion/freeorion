@@ -140,10 +140,10 @@ struct ScriptingContext {
 
     ScriptingContext(ScriptingContext&& parent_context,
                      const CurrentValueVariant& current_value_) :
-        source(                   std::move(parent_context.source)),
-        effect_target(            std::move(parent_context.effect_target)),
-        condition_root_candidate( std::move(parent_context.condition_root_candidate)),
-        condition_local_candidate(std::move(parent_context.condition_local_candidate)),
+        source(                   parent_context.source),
+        effect_target(            parent_context.effect_target),
+        condition_root_candidate( parent_context.condition_root_candidate),
+        condition_local_candidate(parent_context.condition_local_candidate),
         current_value(            current_value_),
         combat_bout(              parent_context.combat_bout),
         current_turn(             parent_context.current_turn),
