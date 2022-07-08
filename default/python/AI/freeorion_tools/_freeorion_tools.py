@@ -337,7 +337,7 @@ def get_species_tag_value(species_name: str, tag_type: AIDependencies.Tags) -> f
     if tag_type == AIDependencies.Tags.POPULATION:
         return AIDependencies.SPECIES_POPULATION_MODIFIER.get(grade, 1.0)
     if tag_type == AIDependencies.Tags.SUPPLY:
-        return AIDependencies.SPECIES_SUPPLY_MODIFIER.get(grade, 1.0)
+        return AIDependencies.SPECIES_SUPPLY_MODIFIER.get(grade, 1)
     if tag_type == AIDependencies.Tags.STABILITY:
         return AIDependencies.SPECIES_STABILITY_MODIFIER.get(grade, 0.0)
     if tag_type == AIDependencies.Tags.FUEL:

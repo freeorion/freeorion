@@ -10,9 +10,11 @@ from typing import (
     Optional,
     Sequence,
     Set,
+    Tuple,
     Union,
 )
 
+import AIDependencies
 from AIDependencies import INVALID_ID, STABILITY_PER_LIKED_FOCUS
 from aistate_interface import get_aistate
 from common.fo_typing import PlanetId, SpeciesName, SystemId
@@ -168,6 +170,12 @@ def get_populated_planet_ids(planet_ids: Sequence[PlanetId]) -> Sequence[PlanetI
     return [pid for pid in planet_ids if universe.getPlanet(pid).initialMeterValue(fo.meterType.population) > 0]
 
 
+@cache_for_current_turn
+def get_empire_populated_planets() -> Tuple[fo.planet]:
+    universe = fo.getUniverse()
+    return tuple(universe.getPlanet(pid) for pid in get_populated_planet_ids(get_owned_planets_by_empire()))
+
+
 def get_systems(planet_ids: Sequence[PlanetId]) -> Sequence[SystemId]:
     """
     Return list of systems containing planet_ids.
@@ -290,11 +298,18 @@ def dislike_factor() -> float:
 
 def focus_stability_effect(species: fo.species, focus: str) -> float:
     """How does the focus affect the stability of a planet with the species."""
+    result = 0.0
     if focus in species.likes:
-        return STABILITY_PER_LIKED_FOCUS
+        result += STABILITY_PER_LIKED_FOCUS
     if focus in species.dislikes:
-        return STABILITY_PER_LIKED_FOCUS * dislike_factor()
-    return 0.0
+        result += STABILITY_PER_LIKED_FOCUS * dislike_factor()
+    empire = fo.getEmpire()
+    # TODO move policy definitions to AIDependency? Or used an EnumClass like BuildingType?
+    if focus == AIDependencies.Tags.INDUSTRY and empire.policyAdopted("PLC_INDUSTRIALISM"):
+        result += fo.getNamedValue("PLC_INDUSTRIALISM_TARGET_HAPPINESS_FLAT")
+    if focus == AIDependencies.Tags.INDUSTRY and empire.policyAdopted("PLC_TECHNOCRACY"):
+        result += fo.getNamedValue("PLC_TECHNOCRACY_TARGET_HAPPINESS_FLAT")
+    return result
 
 
 def stability_with_focus(planet: fo.planet, focus: str) -> float:
