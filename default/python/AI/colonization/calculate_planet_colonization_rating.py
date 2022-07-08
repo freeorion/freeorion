@@ -809,7 +809,7 @@ def _rate_research(rp: float) -> float:
 
 
 def _rate_influence(ip: float) -> float:
-    return ip * RESOURCE_PRIORITY_MULTIPLIER * get_aistate().get_priority(PriorityType.RESOURCE_RESEARCH)
+    return ip * RESOURCE_PRIORITY_MULTIPLIER * get_aistate().get_priority(PriorityType.RESOURCE_INFLUENCE)
 
 
 def _path_to_capital(system_id: SystemId):

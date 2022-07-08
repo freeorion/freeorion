@@ -12,7 +12,7 @@ INFLUENCE_SPECIALS = [
     "FRACTAL_GEODES_SPECIAL",
     "MIMETIC_ALLOY_SPECIAL",
     "SHIMMER_SILK_SPECIAL",
-    "SPARK_FOSSILS_SPECIAL_DESC",
+    "SPARK_FOSSILS_SPECIAL",
     "SUCCULENT_BARNACLES_SPECIAL",
 ]
 # Hardcoded values, to be replaced when we have an interface to read them.

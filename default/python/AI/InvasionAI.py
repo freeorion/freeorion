@@ -1,5 +1,6 @@
 import freeOrionAIInterface as fo
 import math
+from copy import copy
 from logging import debug, info, warning
 from typing import Sequence, Tuple
 
@@ -13,6 +14,7 @@ import PlanetUtilsAI
 from AIDependencies import INVALID_ID, Tags
 from aistate_interface import get_aistate
 from colonization import calculate_planet_colonization_rating
+from colonization.colony_score import use_new_rating
 from common.fo_typing import SystemId
 from common.print_utils import Number, Table, Text
 from empire.ship_builders import can_build_ship_for_species
@@ -275,10 +277,11 @@ def assign_invasion_values(planet_ids):
     empire_id = fo.empireID()
     planet_values = {}
     neighbor_values = {}
-    neighbor_val_ratio = 0.95
+    neighbor_val_ratio = 0.95 if not use_new_rating() else 0.3
     universe = fo.getUniverse()
     for pid in planet_ids:
-        planet_values[pid] = neighbor_values.setdefault(pid, evaluate_invasion_planet(pid))
+        # Must copy to avoid modifying neighbor_values when adding neighbor_values to planet_values
+        planet_values[pid] = copy(neighbor_values.setdefault(pid, evaluate_invasion_planet(pid)))
         debug("planet %d, values %s", pid, planet_values[pid])
         planet = universe.getPlanet(pid)
         species_name = (planet and planet.speciesName) or ""
@@ -428,6 +431,9 @@ def evaluate_invasion_planet(planet_id):
         bval = building_values.get(bldType, 50)
         bld_tally += bval
         detail.append("%s: %d" % (bldType, bval))
+    # quick fix, building values dwarf the new planet ratings, and I think they are too high in general
+    if use_new_rating():
+        bld_tally /= 20
 
     # Add extra score for unlocked techs when we conquer the species
     tech_tally = 0
