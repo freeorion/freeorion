@@ -1,6 +1,6 @@
 from typing import Dict, FrozenSet, Set
 
-import AIDependencies
+from buildings import Shipyard
 from common.fo_typing import BuildingName, PlanetId
 from empire.pilot_rating import best_pilot_rating
 from empire.survey_lock import survey_universe_lock
@@ -29,5 +29,8 @@ def set_building_locations(
 ):
     this_grade_facilities = _get_facilities().setdefault(weapons_grade, {})
     for building in buildings_here:
-        if building in AIDependencies.SHIP_FACILITIES:
-            this_grade_facilities.setdefault(building, set()).add(pid)
+        try:
+            Shipyard(building)
+        except ValueError:
+            continue
+        this_grade_facilities.setdefault(building, set()).add(pid)
