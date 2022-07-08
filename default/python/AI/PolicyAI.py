@@ -14,7 +14,7 @@ from freeorion_tools import (
     assertion_fails,
     get_named_int,
     get_named_real,
-    get_species_tag_value,
+    get_species_influence,
 )
 from freeorion_tools.caching import cache_for_current_turn
 from freeorion_tools.statistics import stats
@@ -418,7 +418,7 @@ class PolicyManager:
     def _rate_artisan_planet(self, pid: PlanetId, species_name: SpeciesName) -> float:
         focus_bonus = get_named_real("ARTISANS_INFLUENCE_FLAT_FOCUS")
         focus_minimum = get_named_real("ARTISANS_MIN_STABILITY_FOCUS")
-        species_focus_bonus = focus_bonus * get_species_tag_value(species_name, Tags.INFLUENCE)
+        species_focus_bonus = focus_bonus * get_species_influence(species_name)
         planet = self._universe.getPlanet(pid)
         stability = planet.currentMeterValue(fo.meterType.targetHappiness)
         # First check whether the planet would currently get the focus bonus.

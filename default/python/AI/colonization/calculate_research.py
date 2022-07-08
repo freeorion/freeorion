@@ -9,7 +9,7 @@ from EnumsAI import FocusType
 from freeorion_tools import (
     get_named_int,
     get_named_real,
-    get_species_tag_value,
+    get_species_research,
     tech_soon_available,
 )
 from freeorion_tools.bonus_calculation import Bonus
@@ -28,7 +28,7 @@ def calculate_research(planet: fo.planet, species: fo.species, max_population: f
         return 0.0
 
     bonus_modified = _get_research_bonus_modified(planet, stability)
-    skill_multiplier = get_species_tag_value(species.name, AIDependencies.Tags.RESEARCH)
+    skill_multiplier = get_species_research(species.name)
     bonus_by_policy = _get_research_bonus_modified_by_policy(stability)
     flat_by_policy = _get_research_flat_modified_by_policy(planet, stability)
     policy_multiplier = _get_policy_multiplier(stability)

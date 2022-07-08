@@ -5,10 +5,9 @@ from AIDependencies import (
     POP_CONST_MOD_MAP,
     POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES,
     POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES,
-    Tags,
 )
 from colonization.colony_score import debug_rating
-from freeorion_tools import get_species_tag_value, tech_is_complete
+from freeorion_tools import get_species_population, tech_is_complete
 
 active_growth_specials = {}
 
@@ -32,7 +31,7 @@ def calc_max_pop(planet, species, detail):
         return AIDependencies.SPECIES_FIXED_POPULATION[planet.speciesName]
 
     tag_list = list(species.tags) if species else []
-    pop_tag_mod = get_species_tag_value(species.name, Tags.POPULATION)
+    pop_tag_mod = get_species_population(species.name)
     if planet.type == fo.planetType.gasGiant and "GASEOUS" in tag_list:
         gaseous_adjustment = AIDependencies.GASEOUS_POP_FACTOR
         detail.append("GASEOUS adjustment: %.2f" % gaseous_adjustment)

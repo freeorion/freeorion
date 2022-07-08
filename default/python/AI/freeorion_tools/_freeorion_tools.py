@@ -325,27 +325,57 @@ def get_species_tag_grade(species_name: str, tag_type: AIDependencies.Tags) -> s
 
 
 @cache_for_session
-def get_species_tag_value(species_name: str, tag_type: AIDependencies.Tags) -> float:
-    """Get a numeric value for a skill-like (GOOD, BAD...) Tag."""
-    grade = get_species_tag_grade(species_name, tag_type)
-    if tag_type == AIDependencies.Tags.INDUSTRY:
-        return AIDependencies.SPECIES_INDUSTRY_MODIFIER.get(grade, 1.0)
-    if tag_type == AIDependencies.Tags.RESEARCH:
-        return AIDependencies.SPECIES_RESEARCH_MODIFIER.get(grade, 1.0)
-    if tag_type == AIDependencies.Tags.INFLUENCE:
-        return AIDependencies.SPECIES_INFLUENCE_MODIFIER.get(grade, 1.0)
-    if tag_type == AIDependencies.Tags.POPULATION:
-        return AIDependencies.SPECIES_POPULATION_MODIFIER.get(grade, 1.0)
-    if tag_type == AIDependencies.Tags.SUPPLY:
-        return AIDependencies.SPECIES_SUPPLY_MODIFIER.get(grade, 1)
-    if tag_type == AIDependencies.Tags.STABILITY:
-        return AIDependencies.SPECIES_STABILITY_MODIFIER.get(grade, 0.0)
-    if tag_type == AIDependencies.Tags.FUEL:
-        return AIDependencies.SPECIES_FUEL_MODIFIER.get(grade, 0.0)
-    if tag_type == AIDependencies.Tags.ATTACKTROOPS:
-        return AIDependencies.SPECIES_TROOP_MODIFIER.get(grade, 1.0)
-    if tag_type == AIDependencies.Tags.STEALTH:
-        return AIDependencies.STEALTH_STRENGTHS_BY_SPECIES_TAG.get(grade, 0.0)
+def get_species_stealth(species_name: str) -> float:
+    grade = get_species_tag_grade(species_name, AIDependencies.Tags.STEALTH)
+    return AIDependencies.STEALTH_STRENGTHS_BY_SPECIES_TAG.get(grade, 0.0)
+
+
+@cache_for_session
+def get_species_attack_troops(species_name: str) -> float:
+    grade = get_species_tag_grade(species_name, AIDependencies.Tags.ATTACKTROOPS)
+    return AIDependencies.SPECIES_TROOP_MODIFIER.get(grade, 1.0)
+
+
+@cache_for_session
+def get_species_fuel(species_name: str) -> float:
+    grade = get_species_tag_grade(species_name, AIDependencies.Tags.FUEL)
+    return AIDependencies.SPECIES_FUEL_MODIFIER.get(grade, 0.0)
+
+
+@cache_for_session
+def get_species_stability(species_name: str) -> float:
+    grade = get_species_tag_grade(species_name, AIDependencies.Tags.STABILITY)
+    return AIDependencies.SPECIES_STABILITY_MODIFIER.get(grade, 0.0)
+
+
+@cache_for_session
+def get_species_supply(species_name: str) -> int:
+    grade = get_species_tag_grade(species_name, AIDependencies.Tags.SUPPLY)
+    return int(AIDependencies.SPECIES_SUPPLY_MODIFIER.get(grade, 1))
+
+
+@cache_for_session
+def get_species_population(species_name: str) -> float:
+    grade = get_species_tag_grade(species_name, AIDependencies.Tags.POPULATION)
+    return AIDependencies.SPECIES_POPULATION_MODIFIER.get(grade, 1.0)
+
+
+@cache_for_session
+def get_species_influence(species_name: str) -> float:
+    grade = get_species_tag_grade(species_name, AIDependencies.Tags.INFLUENCE)
+    return AIDependencies.SPECIES_INFLUENCE_MODIFIER.get(grade, 1.0)
+
+
+@cache_for_session
+def get_species_research(species_name: str) -> float:
+    grade = get_species_tag_grade(species_name, AIDependencies.Tags.RESEARCH)
+    return AIDependencies.SPECIES_RESEARCH_MODIFIER.get(grade, 1.0)
+
+
+@cache_for_session
+def get_species_industry(species_name: str) -> float:
+    grade = get_species_tag_grade(species_name, AIDependencies.Tags.INDUSTRY)
+    return AIDependencies.SPECIES_INDUSTRY_MODIFIER.get(grade, 1.0)
 
 
 @cache_for_session

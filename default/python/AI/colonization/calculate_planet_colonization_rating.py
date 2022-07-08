@@ -9,7 +9,7 @@ import InvasionAI
 import MilitaryAI
 import PlanetUtilsAI
 import PriorityAI
-from AIDependencies import INVALID_ID, Tags
+from AIDependencies import INVALID_ID
 from aistate_interface import get_aistate
 from buildings import BuildingType
 from colonization import get_nest_rating, special_is_nest, update_planet_supply
@@ -42,7 +42,9 @@ from freeorion_tools import (
     assertion_fails,
     get_named_real,
     get_partial_visibility_turn,
-    get_species_tag_value,
+    get_species_industry,
+    get_species_research,
+    get_species_supply,
     tech_is_complete,
     tech_soon_available,
 )
@@ -190,10 +192,10 @@ def _calculate_planet_colonization_rating(
         for psize in [-1, planet.size]
     )
 
-    ind_tag_mod = get_species_tag_value(species_name, Tags.INDUSTRY)
-    res_tag_mod = get_species_tag_value(species_name, Tags.RESEARCH)
+    ind_tag_mod = get_species_industry(species_name)
+    res_tag_mod = get_species_research(species_name)
     if species:
-        supply_tag_mod = get_species_tag_value(species_name, Tags.SUPPLY)
+        supply_tag_mod = get_species_supply(species_name)
     else:
         supply_tag_mod = 0
 
@@ -1412,12 +1414,13 @@ def _calculate_planet_rating(planet: fo.planet, species_name: SpeciesName) -> Tu
     if not _path_to_capital(planet.systemID):
         return 0.0, ["no path from capital"]
     species = None
-    supply_modifier = 0
     if species_name:
         species = fo.getSpecies(species_name)
-        supply_modifier = get_species_tag_value(species_name, Tags.SUPPLY)
         if assertion_fails(species, f"unknown species {species_name}"):
             return 0.0, [f"unknown species {species_name}"]
+        supply_modifier = get_species_supply(species_name)
+    else:
+        supply_modifier = 0
     sys_partial_vis_turn = get_partial_visibility_turn(planet.systemID)
     planet_partial_vis_turn = get_partial_visibility_turn(planet.id)
     # TODO: check whether this copied code makes sense
