@@ -1433,7 +1433,7 @@ def _calculate_planet_rating(planet: fo.planet, species_name: SpeciesName) -> Tu
         colony_rating = _calculate_colony_rating(planet, species, supply_factor, details)
         if colony_rating <= 0.0:
             return 0.0, details  # planet not habitable for species? skip the rest
-        rating += colony_rating
+        rating += colony_rating * supply_factor
     threat_factor = _determine_colony_threat_factor(planet, species_name, local_presence)
     if threat_factor < 1.0:
         threat_factor = _revise_threat_factor(threat_factor, rating, planet.systemID)
