@@ -54,6 +54,7 @@ from freeorion_tools.caching import (
     cache_for_session,
 )
 from PlanetUtilsAI import get_empire_populated_planets, stability_with_focus
+from references import get_industry_per_population
 from turn_state import (
     get_empire_outposts,
     get_empire_planets_by_species,
@@ -329,7 +330,7 @@ def _calculate_planet_colonization_rating(
             elif special == "HONEYCOMB_SPECIAL":
                 honey_val = 0.3 * (
                     AIDependencies.HONEYCOMB_IND_MULTIPLIER
-                    * AIDependencies.INDUSTRY_PER_POP
+                    * get_industry_per_population()
                     * population_with_industry_focus()
                     * discount_multiplier
                 )
@@ -456,7 +457,7 @@ def _calculate_planet_colonization_rating(
         if "HONEYCOMB_SPECIAL" in planet.specials:
             honey_val = (
                 AIDependencies.HONEYCOMB_IND_MULTIPLIER
-                * AIDependencies.INDUSTRY_PER_POP
+                * get_industry_per_population()
                 * population_with_industry_focus()
                 * discount_multiplier
             )
@@ -577,8 +578,8 @@ def _calculate_planet_colonization_rating(
         if FocusType.FOCUS_INDUSTRY in species.foci:
             if "TIDAL_LOCK_SPECIAL" in planet.specials:
                 ind_mult += 1
-            max_ind_factor += AIDependencies.INDUSTRY_PER_POP * mining_bonus
-            max_ind_factor += AIDependencies.INDUSTRY_PER_POP * ind_mult
+            max_ind_factor += get_industry_per_population() * mining_bonus
+            max_ind_factor += get_industry_per_population() * ind_mult
         cur_pop = 1.0  # assume an initial colonization value
         if planet.speciesName != "":
             cur_pop = planet.currentMeterValue(fo.meterType.population)
@@ -595,7 +596,7 @@ def _calculate_planet_colonization_rating(
             # TODO: also consider potential future benefit re currently unpopulated planets
             gbonus = (
                 discount_multiplier
-                * AIDependencies.INDUSTRY_PER_POP
+                * get_industry_per_population()
                 * ind_mult
                 * empire_metabolisms.get(AIDependencies.metabolismBoosts[special], 0)
             )  # due to growth applicability to other planets

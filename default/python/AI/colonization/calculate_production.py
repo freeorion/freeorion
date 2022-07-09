@@ -7,6 +7,7 @@ from colonization.colony_score import debug_rating
 from freeorion_tools import get_named_real, get_species_industry, tech_soon_available
 from freeorion_tools.bonus_calculation import Bonus
 from freeorion_tools.caching import cache_for_current_turn
+from references import get_industry_per_population
 from turn_state import have_honeycomb
 
 
@@ -26,7 +27,7 @@ def calculate_production(planet: fo.planet, species: fo.species, max_population:
     bonus_unmodified = _get_production_bonus_unmodified(planet, stability)
     bonus_flat = _get_production_flat(planet, stability)
     per_population = (
-        (AIDependencies.INDUSTRY_PER_POP + bonus_modified) * skill_multiplier + bonus_by_policy
+        (get_industry_per_population() + bonus_modified) * skill_multiplier + bonus_by_policy
     ) * policy_multiplier + bonus_unmodified
     result = max_population * per_population + bonus_flat
     debug_rating(
@@ -83,7 +84,7 @@ def _get_production_bonus_modified(planet: fo.planet, stability: float) -> float
     Calculate bonus production per population which would be added before multiplication with the species skill value.
     """
     specials_bonus = sum(
-        AIDependencies.INDUSTRY_PER_POP for s in planet.specials if s in AIDependencies.industry_boost_specials_modified
+        get_industry_per_population() for s in planet.specials if s in AIDependencies.industry_boost_specials_modified
     )
     return specials_bonus + sum(bonus.get_bonus(stability) for bonus in _get_modified_industry_bonuses())
 
@@ -116,7 +117,7 @@ def _get_production_bonus_unmodified(planet: fo.planet, stability: float) -> flo
     """
     specials_bonus = sum(
         # growth.macros: STANDARD_INDUSTRY_BOOST
-        AIDependencies.INDUSTRY_PER_POP
+        get_industry_per_population()
         for s in planet.specials
         if s in AIDependencies.industry_boost_specials_unmodified
     )

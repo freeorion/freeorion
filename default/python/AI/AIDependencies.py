@@ -40,8 +40,6 @@ from typing import Dict
 # Please refer to the building_supply dictionary below for an example that displays both of these uses.
 
 # <editor-fold desc="Basic Game Rules">
-# TODO look into (enabling) simply retrieving the below values via UserString
-INDUSTRY_PER_POP = 0.2
 RESEARCH_PER_POP = 0.2
 TROOPS_PER_POP = 0.2
 

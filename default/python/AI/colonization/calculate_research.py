@@ -6,15 +6,18 @@ from buildings import BuildingType
 from colonization.colony_score import debug_rating
 from common.fo_typing import SystemId
 from EnumsAI import FocusType
-from freeorion_tools import (
-    get_named_int,
-    get_named_real,
-    get_species_research,
-    tech_soon_available,
-)
+from freeorion_tools import get_named_real, get_species_research, tech_soon_available
 from freeorion_tools.bonus_calculation import Bonus
 from freeorion_tools.caching import cache_for_current_turn
 from PlanetUtilsAI import get_empire_populated_planets
+from references import (
+    get_ancient_ruins_min_stability,
+    get_ancient_ruins_target_research_perpop,
+    get_industry_per_population,
+    get_policy_diversity_min_stability,
+    get_policy_diversity_scaling,
+    get_policy_diversity_threshold,
+)
 from turn_state import get_empire_planets_by_species, have_computronium
 
 
@@ -34,7 +37,7 @@ def calculate_research(planet: fo.planet, species: fo.species, max_population: f
     policy_multiplier = _get_policy_multiplier(stability)
     bonus_unmodified = _get_research_bonus_unmodified(planet, stability)
 
-    result = max_population * (AIDependencies.INDUSTRY_PER_POP + bonus_modified) * skill_multiplier
+    result = max_population * (get_industry_per_population() + bonus_modified) * skill_multiplier
     result = (result + max_population * bonus_by_policy + flat_by_policy) * policy_multiplier
     result += max_population * bonus_unmodified
     debug_rating(
@@ -55,14 +58,13 @@ def _get_modified_research_bonuses(planet: fo.planet) -> List[Bonus]:
     return [
         Bonus(
             AIDependencies.ANCIENT_RUINS_SPECIAL in specials or AIDependencies.ANCIENT_RUINS_SPECIAL2 in specials,
-            get_named_real("ANCIENT_RUINS_MIN_STABILITY"),
-            get_named_real("ANCIENT_RUINS_TARGET_RESEARCH_PERPOP"),
+            get_ancient_ruins_min_stability(),
+            get_ancient_ruins_target_research_perpop(),
         ),
         Bonus(
             fo.getEmpire().policyAdopted("PLC_DIVERSITY"),
-            get_named_real("PLC_DIVERSITY_MIN_STABILITY"),
-            (len(get_empire_planets_by_species()) - get_named_int("PLC_DIVERSITY_THRESHOLD"))
-            * get_named_real("PLC_DIVERSITY_SCALING"),
+            get_policy_diversity_min_stability(),
+            (len(get_empire_planets_by_species()) - get_policy_diversity_threshold()) * get_policy_diversity_scaling(),
         ),
         Bonus(
             tech_soon_available("GRO_ENERGY_META", 3),
