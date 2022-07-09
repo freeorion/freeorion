@@ -4,7 +4,7 @@ from common.priorities import TARGET_AFTER_2ND_SCALING_PRIORITY
 Tech(
     name="PRO_SENTIENT_AUTOMATION",
     description="PRO_SENTIENT_AUTOMATION_DESC",
-    short_description="INDUSTRY_SHORT_DESC",
+    short_description="INDUSTRY_AND_SLOT_SHORT_DESC",
     category="PRODUCTION_CATEGORY",
     researchcost=640 * TECH_COST_MULTIPLIER,
     researchturns=8,

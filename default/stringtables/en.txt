@@ -13285,11 +13285,32 @@ Unlocks Ship Hull
 BUILDING_UNLOCK_SHORT_DESC
 Unlocks Building
 
+POLICY_UNLOCK_SHORT_DESC
+Unlocks Policy
+
+POLICY_SLOT_UNLOCK_SHORT_DESC
+Unlocks Slot
+
+POLICY_AND_SLOT_UNLOCK_SHORT_DESC
+Unlocks Slot & Policy
+
+POLICY_AND_BUILDING_UNLOCK_SHORT_DESC
+Unlocks Policy & Building
+
+VARIOUS_UNLOCK_SHORT_DESC
+Unlocks Various Things
+
 RESEARCH_SHORT_DESC
 Improves Research
 
 INDUSTRY_SHORT_DESC
 Improves Industry
+
+RESEARCH_AND_SLOT_SHORT_DESC
+Improves Research, Unlocks Slot
+
+INDUSTRY_AND_SLOT_SHORT_DESC
+Improves Industry, Unlocks Slot
 
 SUPPLY_SHORT_DESC
 Improves Supply

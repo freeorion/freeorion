@@ -3,7 +3,7 @@ from common.base_prod import TECH_COST_MULTIPLIER
 Tech(
     name="LRN_PSIONICS",
     description="LRN_PSIONICS_DESC",
-    short_description="THEORY_SHORT_DESC",
+    short_description="POLICY_UNLOCK_SHORT_DESC",
     category="LEARNING_CATEGORY",
     researchcost=300 * TECH_COST_MULTIPLIER
     - (

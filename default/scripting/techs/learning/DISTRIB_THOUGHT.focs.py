@@ -4,7 +4,7 @@ from common.priorities import TARGET_AFTER_2ND_SCALING_PRIORITY
 Tech(
     name="LRN_DISTRIB_THOUGHT",
     description="LRN_DISTRIB_THOUGHT_DESC",
-    short_description="RESEARCH_SHORT_DESC",
+    short_description="RESEARCH_AND_SLOT_SHORT_DESC",
     category="LEARNING_CATEGORY",
     researchcost=75 * TECH_COST_MULTIPLIER,
     researchturns=5,
