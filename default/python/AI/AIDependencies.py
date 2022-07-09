@@ -845,25 +845,6 @@ building_supply = {
 }
 # </editor-fold>
 
-# <editor-fold desc="Shipyards">
-SHIP_FACILITIES = {
-    "BLD_SHIPYARD_BASE",
-    "BLD_SHIPYARD_ORBITAL_DRYDOCK",
-    "BLD_SHIPYARD_CON_NANOROBO",
-    "BLD_SHIPYARD_CON_GEOINT",
-    "BLD_SHIPYARD_CON_ADV_ENGINE",
-    "BLD_SHIPYARD_AST",
-    "BLD_SHIPYARD_AST_REF",
-    "BLD_SHIPYARD_ORG_ORB_INC",
-    "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB",
-    "BLD_SHIPYARD_ORG_XENO_FAC",
-    "BLD_SHIPYARD_ENRG_COMP",
-    "BLD_SHIPYARD_ENRG_SOLAR",
-    "BLD_NEUTRONIUM_FORGE",
-}
-
-# </editor-fold>
-
 # </editor-fold>
 
 

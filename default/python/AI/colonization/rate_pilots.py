@@ -1,8 +1,8 @@
 import freeOrionAIInterface as fo
 from logging import debug
 
-import AIDependencies
 from AIDependencies import Tags
+from buildings import Shipyard
 from colonization.claimed_stars import has_claimed_star
 from colonization.colony_score import MINIMUM_COLONY_SCORE, debug_rating, use_new_rating
 from common.fo_typing import SpeciesName
@@ -98,7 +98,7 @@ def rate_piloting(species_name: SpeciesName) -> float:
     detection_val = detection_value(species_name) * DETECTION_SCALING
     # TODO add something for Sly and Laenfa ability to regenerate fuel quickly in certain systems?
     fuel_val = get_species_fuel(species_name) * FUEL_SCALING
-    dislikes = sum(1 for bld in AIDependencies.SHIP_FACILITIES if bld in species.dislikes)
+    dislikes = sum(1 for bld in Shipyard if bld.value in species.dislikes)
     # basic shipyard is specifically important, cannot build any ships without it
     discount = 0.93 if "BLD_SHIPYARD_BASE" in species.dislikes else 0.96
     result = (weapon_val + shield_value + detection_val + fuel_val) * discount**dislikes

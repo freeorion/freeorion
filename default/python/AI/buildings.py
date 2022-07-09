@@ -51,14 +51,6 @@ class _BuildingOperations:
     This class contains operations that applicable for all building enums.
     """
 
-    @classmethod
-    def get(cls, name: BuildingName):
-        """Get BuildType for a given BuildingName."""
-        for bt in BuildingType:
-            if bt.value == name:
-                return bt
-        raise ValueError(f"{cls.__name__}.get(): got unknown name {name}")
-
     def is_this_type(self, building_id: BuildingId):
         """Return whether the building with the given identifier is of this type."""
         return fo.getUniverse().getBuilding(building_id) == self.value
