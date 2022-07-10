@@ -159,9 +159,8 @@ def generate_production_orders():
 
     debug("Production Queue Management:")
     empire = fo.getEmpire()
-    total_pp = empire.productionPoints
     debug("")
-    debug("  Total Available Production Points: %s" % total_pp)
+    debug("  Total Available Production Points: %s" % empire.productionPoints)
     print_building_list()
 
     aistate = get_aistate()
@@ -244,10 +243,10 @@ def generate_production_orders():
 
             # TODO: check existence of BLD_INDUSTRY_CENTER (and other buildings) in other locations in case we captured it
             if (
-                (total_pp > 40 or ((current_turn > 40) and (population_with_industry_focus() >= 20)))
+                (empire.productionPoints > 40 or ((current_turn > 40) and (population_with_industry_focus() >= 20)))
                 and ("BLD_INDUSTRY_CENTER" in possible_building_types)
                 and ("BLD_INDUSTRY_CENTER" not in (capital_buildings + queued_building_names))
-                and (building_expense < building_ratio * total_pp)
+                and (building_expense < building_ratio * empire.productionPoints)
             ):
                 res = fo.issueEnqueueBuildingProductionOrder("BLD_INDUSTRY_CENTER", homeworld.id)
                 debug("Enqueueing BLD_INDUSTRY_CENTER, with result %d" % res)
@@ -268,7 +267,7 @@ def generate_production_orders():
                 if (
                     (building_name in possible_building_types)
                     and (building_name not in (capital_buildings + queued_building_names))
-                    and (building_expense < building_ratio * total_pp)
+                    and (building_expense < building_ratio * empire.productionPoints)
                 ):
                     try:
                         res = fo.issueEnqueueBuildingProductionOrder(building_name, homeworld.id)
@@ -322,7 +321,7 @@ def generate_production_orders():
         for sys_id, pids in get_colonized_planets().items():
             if aistate.systemStatus.get(sys_id, {}).get("fleetThreat", 1) > 0:
                 continue  # don't build orbital shields if enemy fleet present
-            if defense_allocation > max_defense_portion * total_pp:
+            if defense_allocation > max_defense_portion * empire.productionPoints:
                 break
             sys_orbital_defenses[sys_id] = 0
             fleets_here = aistate.systemStatus.get(sys_id, {}).get("myfleets", [])
@@ -841,9 +840,9 @@ def generate_production_orders():
     total_pp_spent = fo.getEmpire().productionQueue.totalSpent
     debug("  Total Production Points Spent: %s", total_pp_spent)
 
-    wasted_pp = max(0, total_pp - total_pp_spent)
+    wasted_pp = max(0, empire.productionPoints - total_pp_spent)
     debug("  Wasted Production Points: %s", wasted_pp)  # TODO: add resource group analysis
-    avail_pp = total_pp - total_pp_spent - 0.0001
+    avail_pp = empire.productionPoints - total_pp_spent - 0.0001
 
     production_queue = empire.productionQueue
     queued_colony_ships = {}
@@ -943,7 +942,7 @@ def generate_production_orders():
             per_turn_cost = float(prod_cost) / prod_time
             if (
                 troopers_needed > 0
-                and total_pp > 3 * per_turn_cost * queued_troop_ships
+                and empire.productionPoints > 3 * per_turn_cost * queued_troop_ships
                 and aistate.character.may_produce_troops()
             ):
                 retval = fo.issueEnqueueShipProductionOrder(best_design_id, loc)
