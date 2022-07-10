@@ -6,7 +6,7 @@ ShipDesign
     parts = [
         ""
         "SR_SPINES"
-        ""
+        "SR_TENTACLE"
         ""
         ""
     ]
