@@ -732,9 +732,9 @@ PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const
     else if (property_name == "NextCloserToOriginalPlanetType")
         planet_property = &Planet::NextCloserToOriginalPlanetType;
     else if (property_name == "NextBestPlanetType")
-        planet_property = boost::bind(&Planet::NextBestPlanetTypeForSpecies, boost::placeholders::_1, "");
+        planet_property = [](const Planet& planet) { return planet.NextBestPlanetTypeForSpecies(); };
     else if (property_name == "NextBetterPlanetType")
-        planet_property = boost::bind(&Planet::NextBetterPlanetTypeForSpecies, boost::placeholders::_1, "");
+        planet_property = [](const Planet& planet) { return planet.NextBetterPlanetTypeForSpecies(); };
     else if (property_name == "ClockwiseNextPlanetType")
         planet_property = &Planet::ClockwiseNextPlanetType;
     else if (property_name == "CounterClockwiseNextPlanetType")
@@ -2173,7 +2173,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
 
         std::function<int (const Empire*)> empire_property{nullptr};
 
-        empire_property = boost::bind(&Empire::ResourceStockpile, boost::placeholders::_1, res_type);
+        empire_property = [res_type](const Empire* empire) { return empire->ResourceStockpile(res_type); };
 
         using namespace boost::adaptors;
         auto GetRawPtr = [](const auto& smart_ptr){ return smart_ptr.get(); };

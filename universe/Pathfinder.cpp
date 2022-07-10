@@ -792,12 +792,12 @@ int16_t Pathfinder::PathfinderImpl::JumpDistanceBetweenSystems(int system1_id, i
         std::size_t smaller_index = std::min(system1_index, system2_index);
         std::size_t other_index   = std::max(system1_index, system2_index);
 
-        namespace ph = boost::placeholders;
+        using row_ref = distance_matrix_storage<short>::row_ref;
 
         // prefer filling the smaller row/column for increased cache locality
         int16_t jumps = cache.get_T(
             smaller_index, other_index,
-            boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, ph::_1, ph::_2));
+            [this](size_t ii, row_ref row) { HandleCacheMiss(ii, row); }); // boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, ph::_1, ph::_2));
         if (jumps == SHRT_MAX)  // value returned for no valid path
             return -1;
         return jumps;
@@ -1403,15 +1403,17 @@ bool Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
         return false;
     }
 
-    namespace ph = boost::placeholders;
+    using row_ref = distance_matrix_storage<short>::row_ref;
 
     // Examine the cache to see if \p system_id is within \p jumps of \p others
     bool within_jumps(false);
     distance_matrix_cache<distance_matrix_storage<int16_t>> cache(m_system_jumps);
     cache.examine_row(system_index,
-                      boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, ph::_1, ph::_2),
-                      boost::bind(&Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit, this,
-                                  std::ref(within_jumps), jumps, std::ref(objects), std::ref(others), ph::_1, ph::_2));
+        [this](size_t ii, row_ref row) { HandleCacheMiss(ii, row); }, // boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, ph::_1, ph::_2),
+        [this, &within_jumps, jumps, &objects, &others](size_t ii, row_ref row)
+        { WithinJumpsOfOthersCacheHit(within_jumps, jumps, objects, others, ii, row); }); // boost::bind(&Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit, this,
+                                                                                          //             std::ref(within_jumps), jumps, std::ref(objects), std::ref(others), ph::_1, ph::_2));
+
     return within_jumps;
 }
 
