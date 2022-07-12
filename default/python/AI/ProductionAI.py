@@ -202,10 +202,7 @@ def generate_production_orders():
                     )
                 )
 
-            possible_building_types = [
-                fo.getBuildingType(type_id) and fo.getBuildingType(type_id).name
-                for type_id in possible_building_type_ids
-            ]  # makes sure is not None before getting name
+            possible_building_types = [fo.getBuildingType(type_id).name for type_id in possible_building_type_ids]
 
             debug("")
             debug("Buildings already in Production Queue:")
