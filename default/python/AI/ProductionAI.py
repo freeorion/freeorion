@@ -28,7 +28,7 @@ from buildings import BuildingType, Shipyard, get_empire_drydocks
 from character.character_module import Aggression
 from colonization import rate_planetary_piloting
 from colonization.rate_pilots import GREAT_PILOT_RATING
-from common.fo_typing import PlanetId, SystemId
+from common.fo_typing import BuildingName, PlanetId, SystemId
 from empire.buildings_locations import get_best_pilot_facilities
 from empire.colony_builders import (
     can_build_colony_for_species,
@@ -204,16 +204,7 @@ def generate_production_orders():
 
             possible_building_types = [fo.getBuildingType(type_id).name for type_id in possible_building_type_ids]
 
-            debug("")
-            debug("Buildings already in Production Queue:")
-            capital_queued_buildings = _get_queued_buildings_for_planet(capital_id)
-
-            for bldg in capital_queued_buildings:
-                debug("    %s turns: %s PP: %s" % (bldg.name, bldg.turnsLeft, bldg.allocation))
-            if not capital_queued_buildings:
-                debug("No capital queued buildings")
-            debug("")
-            queued_building_names = [bldg.name for bldg in capital_queued_buildings]
+            queued_building_names = _get_queued_buildings(capital_id)
 
             if "BLD_AUTO_HISTORY_ANALYSER" in possible_building_types:
                 for pid in find_automatic_historic_analyzer_candidates():
@@ -1241,6 +1232,17 @@ def generate_production_orders():
     print_production_queue(after_turn=True)
 
 
+def _get_queued_buildings(pid: PlanetId) -> List[BuildingName]:
+    debug("Buildings already in Production Queue:")
+    capital_queued_buildings = _get_queued_buildings_for_planet(pid)
+    for bldg in capital_queued_buildings:
+        debug("    %s turns: %s PP: %s" % (bldg.name, bldg.turnsLeft, bldg.allocation))
+    if not capital_queued_buildings:
+        debug("No capital queued buildings")
+    queued_building_names = [bldg.name for bldg in capital_queued_buildings]
+    return queued_building_names
+
+
 def _is_queued_building_on_planet(e: "fo.productionQueueElement", pid: PlanetId) -> bool:
     return e.buildType == EmpireProductionTypes.BT_BUILDING and e.locationID == pid
 
@@ -1294,7 +1296,7 @@ def already_has_completed_colony_building(planet_id) -> bool:
     return any(universe.getBuilding(bldg).name.startswith("BLD_COL_") for bldg in planet.buildingIDs)
 
 
-def _build_ship_facilities(building_type: BuildingType, top_pids: Set[PlanetId] = frozenset()) -> None:
+def _build_ship_facilities(building_type: Shipyard, top_pids: Set[PlanetId] = frozenset()) -> None:
     # TODO: add total_pp checks below, so don't overload queue
     if not building_type.available():
         return
