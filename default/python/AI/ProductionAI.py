@@ -10,6 +10,7 @@ from typing import (
     List,
     NamedTuple,
     NewType,
+    Sequence,
     Set,
     Tuple,
     Union,
@@ -111,7 +112,7 @@ def translators_wanted() -> int:
     return int(importance)
 
 
-def _get_capital_info():
+def _get_capital_info() -> Tuple[PlanetId, "fo.planet", SystemId]:
     capital_id = PlanetUtilsAI.get_capital()
     if capital_id is None or capital_id == INVALID_ID:
         homeworld = None
@@ -148,6 +149,11 @@ def _first_turn_action():
             fo.updateProductionQueue()
 
 
+def get_building_allocations() -> float:
+    empire = fo.getEmpire()
+    return sum(e.allocation for e in empire.productionQueue if e.buildType == EmpireProductionTypes.BT_BUILDING)
+
+
 # TODO Move Building names to AIDependencies to avoid typos and for IDE-Support
 def generate_production_orders():
     """generate production orders"""
@@ -170,6 +176,7 @@ def generate_production_orders():
     building_ratio = aistate.character.preferred_building_ratio([0.4, 0.35, 0.30])
     capital_id, homeworld, capital_system_id = _get_capital_info()
     current_turn = fo.currentTurn()
+    building_expense += get_building_allocations()
     if not homeworld:
         debug("if no capital, no place to build, should get around to capturing or colonizing a new one")  # TODO
     else:
@@ -213,11 +220,8 @@ def generate_production_orders():
 
             debug("")
             debug("Buildings already in Production Queue:")
-            capital_queued_buildings = []
-            for element in [e for e in (empire.productionQueue) if (e.buildType == EmpireProductionTypes.BT_BUILDING)]:
-                building_expense += element.allocation
-                if element.locationID == homeworld.id:
-                    capital_queued_buildings.append(element)
+            capital_queued_buildings = _get_queued_buildings_for_planet(capital_id)
+
             for bldg in capital_queued_buildings:
                 debug("    %s turns: %s PP: %s" % (bldg.name, bldg.turnsLeft, bldg.allocation))
             if not capital_queued_buildings:
@@ -1249,6 +1253,15 @@ def generate_production_orders():
     update_stockpile_use()
     fo.updateProductionQueue()
     print_production_queue(after_turn=True)
+
+
+def _is_queued_building_on_planet(e: "fo.productionQueueElement", pid: PlanetId) -> bool:
+    return e.buildType == EmpireProductionTypes.BT_BUILDING and e.locationID == pid
+
+
+def _get_queued_buildings_for_planet(pid: PlanetId) -> Sequence["fo.productionQueueElement"]:
+    queue = fo.getEmpire().productionQueue
+    return [e for e in queue if _is_queued_building_on_planet(e, pid)]
 
 
 def update_stockpile_use():
