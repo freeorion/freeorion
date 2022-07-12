@@ -186,20 +186,9 @@ def generate_production_orders():
 
         possible_building_type_ids = []
         for type_id in empire.availableBuildingTypes:
-            try:
-                if fo.getBuildingType(type_id).canBeProduced(empire.empireID, homeworld.id):
-                    possible_building_type_ids.append(type_id)
-            except:  # noqa: E722
-                if fo.getBuildingType(type_id) is None:
-                    debug(
-                        "For empire %d, 'available Building Type priority_id' %s returns None from fo.getBuildingType(type_id)"
-                        % (empire.empireID, type_id)
-                    )
-                else:
-                    debug(
-                        "For empire %d, problem getting BuildingTypeID for 'available Building Type priority_id' %s"
-                        % (empire.empireID, type_id)
-                    )
+            if fo.getBuildingType(type_id).canBeProduced(empire.empireID, homeworld.id):
+                possible_building_type_ids.append(type_id)
+
         if possible_building_type_ids:
             debug("Possible building types to build:")
             for type_id in possible_building_type_ids:
