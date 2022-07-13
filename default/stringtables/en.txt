@@ -14817,7 +14817,14 @@ BLD_LIGHTHOUSE
 Interstellar Lighthouse
 
 BLD_LIGHTHOUSE_DESC
-Decreases the [[metertype METER_STEALTH]] of all objects in the same system by 30 and increases the [[metertype METER_SPEED]] of friendly ships that start the turn within 50 uu by 20 for that turn. [[BUILDING_AVAILABLE_ON_OUTPOSTS]] and may facilitate use of a [[buildingtype BLD_PLANET_DRIVE]].
+'''Decreases the [[metertype METER_STEALTH]] of all ships in the same system by [[value BLD_LIGHTHOUSE_IMMEDIATE_STEALTH_MALUS]]. On top of this the Interstellar Lighthouse decreases the [[metertype METER_STEALTH]] of all objects by the number of turns it operates, up to [[value BLD_LIGHTHOUSE_CATALOG_STEALTH_MALUS]]. It also increases the [[metertype METER_SPEED]] of friendly ships that start the turn within [[value BLD_LIGHTHOUSE_SPEEDUP_DISTANCE]] uu by [[value BLD_LIGHTHOUSE_SPEEDUP]] for that turn. [[BUILDING_AVAILABLE_ON_OUTPOSTS]] and may facilitate use of a [[buildingtype BLD_PLANET_DRIVE]].
+
+This building complex sends a complex pattern of EM pulses and particle streams to reveal the location of objects in a system. After a while, all usual objects in a system are registered in a catalog so unusual occurences can be identified more effectively.
+
+The building complex itself immediately gets registered in the catalog and is very visible with [[metertype METER_STEALTH]] decreased by [[value BLD_LIGHTHOUSE_SELF_STEALTH_MALUS]].'''
+
+BLD_LIGHTHOUSE_CATALOG_STEALTH_LABEL
+Lighthouse System Catalog
 
 BLD_SCANNING_FACILITY
 Scanning Facility
