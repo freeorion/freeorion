@@ -3738,10 +3738,31 @@ namespace {
         static constexpr uint8_t omicron_with_tonos_byte1 = 0x8C; // ό
         static constexpr uint8_t omega_with_tonos_byte1 = 0x8E; // ώ
 
-        // note: alternate mu encoding covered by full page 0xC2 case
-        static constexpr auto mu = u8"\u00B5"; // µ
-        static_assert(mu[0] == u8"µ"[0]);
-        static_assert(mu[1] == u8"µ"[1]);
+        // note: alternate mu/micro encoding covered by full page 0xC2 case
+        static constexpr auto micro = u8"\u00B5"; // µ (micro)
+        static constexpr uint8_t microb0 = micro[0];
+        static constexpr uint8_t microb1 = micro[1];
+        static_assert(microb0 == 0xC2);
+        static_assert(microb1 == 0xB5);
+
+        static constexpr auto micro2 = u8"µ";
+        static constexpr uint8_t micro2b0 = micro2[0];
+        static constexpr uint8_t micro2b1 = micro2[1];
+        static_assert(microb0 == 0xC2);
+        static_assert(microb1 == 0xB5);
+
+        static constexpr auto mu = u8"\u03BC"; // μ (lower case mu)
+        static constexpr uint8_t mub0 = mu[0];
+        static constexpr uint8_t mub1 = mu[1];
+        static_assert(mub0 == 0xCE);
+        static_assert(mub1 == 0xBC);
+
+        // following tests fail on MSVC x64
+        static constexpr auto mu2 = u8"μ";
+        static constexpr uint8_t mu2b0 = mu2[0];
+        static constexpr uint8_t mu2b1 = mu2[1];
+        //static_assert(mu2b0 == 0xCE);
+        //static_assert(mu2b1 == 0xBC);
 
 
         static constexpr auto o_with_dot_below = u8"ọ";
