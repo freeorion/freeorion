@@ -3,7 +3,7 @@ from common.base_prod import TECH_COST_MULTIPLIER
 Tech(
     name="CON_TRANS_ARCH",
     description="CON_TRANS_ARCH_DESC",
-    short_description="BUILDING_UNLOCK_SHORT_DESC",
+    short_description="VARIOUS_UNLOCK_SHORT_DESC",
     category="CONSTRUCTION_CATEGORY",
     researchcost=1000 * TECH_COST_MULTIPLIER,
     researchturns=10,
