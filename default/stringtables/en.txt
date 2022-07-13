@@ -6597,6 +6597,14 @@ ARTISTIC_SPECIES_TRAIT_TEXT
 
 List of Artistic species:'''
 
+SNEAKY_TITLE
+Sneaky
+
+SNEAKY_TEXT
+'''Sneaky species research [[tech SPY_STEALTH_1]], [[tech SPY_STEALTH_2]], [[tech SPY_STEALTH_3]] and [[tech SPY_STEALTH_4]] at reduced costs.
+
+List of Sneaky species:'''
+
 FLEET_UPKEEP_TITLE
 Fleet Upkeep
 
@@ -8471,7 +8479,7 @@ SP_LAENFA_GAMEPLAY_DESC
 '''<img src="species/preview/laenfa.png"></img>
 Sneaky, telepathic, sentient vines.
 Prefer [[PT_OCEAN]] planets.
-[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
+[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]], [[encyclopedia SNEAKY_TITLE]]
 '''
 
 SP_LAENFA_DESC
