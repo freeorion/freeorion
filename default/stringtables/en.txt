@@ -16977,8 +16977,17 @@ GREAT_STOCKPILE_DESC
 ULTIMATE_STOCKPILE_DESC
 +++	Ultimate [[metertype METER_STOCKPILE]]: +0.3 per [[metertype METER_POPULATION]]
 
+BAD_SHIP_SHIELD_DESC
+-	Bad ship [[metertype METER_SHIELD]]: Weaker ship shields
+
 GOOD_SHIP_SHIELD_DESC
-+	Good ship [[metertype METER_SHIELD]]: +1
++	Good ship [[metertype METER_SHIELD]]: Stronger ship shields
+
+GREAT_SHIP_SHIELD_DESC
+++	Great ship [[metertype METER_SHIELD]]: Stronger ship shields
+
+ULTIMATE_SHIP_SHIELD_DESC
++++	Ultimate ship [[metertype METER_SHIELD]]: Strongest ship shields
 
 GOOD_PLANETARY_SHIELD_DESC
 +	Good planetary [[metertype METER_SHIELD]]: +5

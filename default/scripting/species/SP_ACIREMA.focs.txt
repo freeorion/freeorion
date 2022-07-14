@@ -5,7 +5,7 @@ Species
     Native
     CanProduceShips
 
-    tags = [ "SELF_SUSTAINING" "GREAT_INDUSTRY" "GOOD_RESEARCH" "GOOD_INFLUENCE" "GOOD_SHIELDS" "GREAT_SUPPLY" "PEDIA_SELF_SUSTAINING_SPECIES_CLASS" ]
+    tags = [ "SELF_SUSTAINING" "GREAT_INDUSTRY" "GOOD_RESEARCH" "GOOD_INFLUENCE" "GOOD_PLANETARY_SHIELDS" "ULTIMATE_SHIP_SHIELDS" "GREAT_SUPPLY" "PEDIA_SELF_SUSTAINING_SPECIES_CLASS" ]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -60,7 +60,7 @@ Species
             activation = Turn high = 0
             effects = SetStarType type = Blue
 
-        [[GOOD_SHIP_SHIELDS]]
+        [[ULTIMATE_SHIP_SHIELDS]]
 
         EffectsGroup
             description = "GOOD_PLANETARY_DEFENSE_DESC"
