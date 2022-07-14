@@ -41,17 +41,17 @@ void TestCheckSumFromEnv(const char* env, unsigned int def, unsigned int calcula
 BOOST_AUTO_TEST_CASE(compare_checksum) {
     auto checksums = CheckSumContent();
 
-    TestCheckSumFromEnv("FO_CHECKSUM_BUILDING", 7870370, checksums["BuildingTypeManager"]);
-    TestCheckSumFromEnv("FO_CHECKSUM_ENCYCLOPEDIA", 1090024, checksums["Encyclopedia"]);
-    TestCheckSumFromEnv("FO_CHECKSUM_FIELD", 3780088, checksums["FieldTypeManager"]);
-    TestCheckSumFromEnv("FO_CHECKSUM_POLICY", 7303441, checksums["PolicyManager"]);
-    TestCheckSumFromEnv("FO_CHECKSUM_SHIP_HULL", 5932838, checksums["ShipHullManager"]);
-    TestCheckSumFromEnv("FO_CHECKSUM_SHIP_PART", 1765649, checksums["ShipPartManager"]);
-    TestCheckSumFromEnv("FO_CHECKSUM_SHIP_DESIGN", 872567, checksums["PredefinedShipDesignManager"]);
-    TestCheckSumFromEnv("FO_CHECKSUM_SPECIES", 181788, checksums["SpeciesManager"]);
-    TestCheckSumFromEnv("FO_CHECKSUM_SPECIALS", 9623845, checksums["SpecialsManager"]);
-    TestCheckSumFromEnv("FO_CHECKSUM_TECH", 5378437, checksums["TechManager"]);
-    TestCheckSumFromEnv("FO_CHECKSUM_NAMED_VALUEREF", 8513318, checksums["NamedValueRefManager"]);
+    TestCheckSumFromEnv("FO_CHECKSUM_BUILDING", 9738579, checksums["BuildingTypeManager"]);
+    TestCheckSumFromEnv("FO_CHECKSUM_ENCYCLOPEDIA", 1099081, checksums["Encyclopedia"]);
+    TestCheckSumFromEnv("FO_CHECKSUM_FIELD", 5633722, checksums["FieldTypeManager"]);
+    TestCheckSumFromEnv("FO_CHECKSUM_POLICY", 7039723, checksums["PolicyManager"]);
+    TestCheckSumFromEnv("FO_CHECKSUM_SHIP_HULL", 8777190, checksums["ShipHullManager"]);
+    TestCheckSumFromEnv("FO_CHECKSUM_SHIP_PART", 1778809, checksums["ShipPartManager"]);
+    TestCheckSumFromEnv("FO_CHECKSUM_SHIP_DESIGN", 873430, checksums["PredefinedShipDesignManager"]);
+    TestCheckSumFromEnv("FO_CHECKSUM_SPECIES", 3129479, checksums["SpeciesManager"]);
+    TestCheckSumFromEnv("FO_CHECKSUM_SPECIALS", 7644502, checksums["SpecialsManager"]);
+    TestCheckSumFromEnv("FO_CHECKSUM_TECH", 5486989, checksums["TechManager"]);
+    TestCheckSumFromEnv("FO_CHECKSUM_NAMED_VALUEREF", 2609136, checksums["NamedValueRefManager"]);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
