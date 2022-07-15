@@ -30,12 +30,12 @@ BASIC_POPULATION
                 // growth is GROWTH_RATE_FACTOR * population * (maximum + 1 - population) / maximum
                 // which gives factor for population 1, best growth around half full and aproaching
                 // factor again when almost full
-                ((Value < Target.TargetPopulation) *
-                    min(Target.TargetPopulation, Value + Value*[[GROWTH_RATE_FACTOR]]*
-                                                               (1 + (1 - Value)/Target.TargetPopulation)))
+                ((Value < Value(Target.TargetPopulation)) *
+                    min(Value(Target.TargetPopulation), Value + Value*[[GROWTH_RATE_FACTOR]]*
+                                                                      (1 + (1 - Value)/Value(Target.TargetPopulation))))
                 // shrink if overpopulated
-              + ((Value >= Target.TargetPopulation) *
-                    max(Target.TargetPopulation, Value - 0.1*(Value - Target.TargetPopulation)))
+              + ((Value >= Value(Target.TargetPopulation)) *
+                    max(Value(Target.TargetPopulation), Value - 0.1*(Value - Value(Target.TargetPopulation))))
 
         // Since all species have the same advanced focus effects and
         // infrastructure, the macros are stashed here, where they don't
