@@ -314,11 +314,9 @@ void Condition::Eval(const ScriptingContext& parent_context,
         this->Eval(parent_context, matches_as_objectset);
 
     } else {
-        ObjectSet matches_as_objectset{matches.begin(), matches.end()};
         matches.clear();
-
+        ObjectSet matches_as_objectset;
         this->Eval(parent_context, matches_as_objectset);
-
         std::transform(matches_as_objectset.begin(), matches_as_objectset.end(), std::back_inserter(matches),
                        [](auto&& o) { return const_cast<UniverseObject*>(o); });
     }
