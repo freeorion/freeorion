@@ -13,7 +13,7 @@ from EnumsAI import FocusType, PriorityType
 from freeorion_tools import assertion_fails, get_named_real, get_species_influence
 from freeorion_tools.caching import cache_for_current_turn
 from freeorion_tools.statistics import stats
-from references import get_policy_diversity_scaling, get_policy_diversity_threshold
+from references import PLC_DIVERSITY_THRESHOLD, get_policy_diversity_scaling
 from ResearchAI import research_now
 from turn_state import get_empire_planets_by_species
 
@@ -376,7 +376,7 @@ class PolicyManager:
         if diversity not in self._empire.availablePolicies:
             return 0.0
         # diversity affects stability, but also gives a bonus to research-focused planets and a little influence,
-        diversity_value = len(get_empire_planets_by_species()) - get_policy_diversity_threshold()
+        diversity_value = len(get_empire_planets_by_species()) - PLC_DIVERSITY_THRESHOLD
         diversity_scaling = get_policy_diversity_scaling()
         # Research bonus goes to research-focused planets only. With priority there are usually none.
         research_priority = self._aistate.get_priority(PriorityType.RESOURCE_RESEARCH)

@@ -11,12 +11,12 @@ from freeorion_tools.bonus_calculation import Bonus
 from freeorion_tools.caching import cache_for_current_turn
 from PlanetUtilsAI import get_empire_populated_planets
 from references import (
+    PLC_DIVERSITY_THRESHOLD,
     get_ancient_ruins_min_stability,
     get_ancient_ruins_target_research_perpop,
     get_industry_per_population,
     get_policy_diversity_min_stability,
     get_policy_diversity_scaling,
-    get_policy_diversity_threshold,
 )
 from turn_state import get_empire_planets_by_species, have_computronium
 
@@ -64,7 +64,7 @@ def _get_modified_research_bonuses(planet: fo.planet) -> List[Bonus]:
         Bonus(
             fo.getEmpire().policyAdopted("PLC_DIVERSITY"),
             get_policy_diversity_min_stability(),
-            (len(get_empire_planets_by_species()) - get_policy_diversity_threshold()) * get_policy_diversity_scaling(),
+            (len(get_empire_planets_by_species()) - PLC_DIVERSITY_THRESHOLD) * get_policy_diversity_scaling(),
         ),
         Bonus(
             tech_soon_available("GRO_ENERGY_META", 3),
