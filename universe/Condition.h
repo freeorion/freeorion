@@ -64,31 +64,26 @@ struct FO_COMMON_API Condition {
     //! condition is a subcondition to another Condition or a ValueRef, this
     //! condition may be evaluated once and its result used to match all local
     //! candidates to that condition.
-    bool RootCandidateInvariant() const
-    { return m_root_candidate_invariant; }
+    bool RootCandidateInvariant() const { return m_root_candidate_invariant; }
 
     //! (Almost) all conditions are varying with local candidates; this is the
     //! point of evaluating a condition.  This funciton is provided for
     //! consistency with ValueRef, which may not depend on the local candidiate
     //! of an enclosing condition.
-    bool LocalCandidateInvariant() const
-    { return false; }
+    bool LocalCandidateInvariant() const { return false; }
 
     //! Returns true iff this condition's evaluation does not reference the
     //! target object.
-    bool TargetInvariant() const
-    { return m_target_invariant; }
+    bool TargetInvariant() const { return m_target_invariant; }
 
     //! Returns true iff this condition's evaluation does not reference the
     //! source object.
-    bool SourceInvariant() const
-    { return m_source_invariant; }
+    bool SourceInvariant() const { return m_source_invariant; }
 
     virtual std::string Description(bool negated = false) const = 0;
     virtual std::string Dump(unsigned short ntabs = 0) const = 0;
     virtual void SetTopLevelContent(const std::string& content_name) = 0;
-    virtual unsigned int GetCheckSum() const
-    { return 0; }
+    virtual unsigned int GetCheckSum() const { return 0; }
 
     //! Makes a clone of this Condition in a new owning pointer. Required for
     //! Boost.Python, which doesn't support move semantics for returned values.
