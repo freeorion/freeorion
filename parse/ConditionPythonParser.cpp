@@ -10,6 +10,50 @@
 #include "ValueRefPythonParser.h"
 
 condition_wrapper operator&(const condition_wrapper& lhs, const condition_wrapper& rhs) {
+    std::shared_ptr<Condition::ValueTest> lhs_cond = std::dynamic_pointer_cast<Condition::ValueTest>(lhs.condition);
+    std::shared_ptr<Condition::ValueTest> rhs_cond = std::dynamic_pointer_cast<Condition::ValueTest>(rhs.condition);
+
+    if (lhs_cond && rhs_cond) {
+        const auto lhs_vals = lhs_cond->ValuesDouble();
+        const auto rhs_vals = rhs_cond->ValuesDouble();
+
+        if (!lhs_vals[2] && !rhs_vals[2] && lhs_vals[1] && rhs_vals[0] && (*lhs_vals[1] == *rhs_vals[0])) {
+            return condition_wrapper(std::make_shared<Condition::ValueTest>(
+                lhs_vals[0] ? lhs_vals[0]->Clone() : nullptr,
+                lhs_cond->CompareTypes()[0],
+                lhs_vals[1]->Clone(),
+                rhs_cond->CompareTypes()[0],
+                rhs_vals[1] ? rhs_vals[1]->Clone() : nullptr
+            ));
+        }
+
+        const auto lhs_vals_i = lhs_cond->ValuesInt();
+        const auto rhs_vals_i = rhs_cond->ValuesInt();
+
+        if (!lhs_vals_i[2] && !rhs_vals_i[2] && lhs_vals_i[1] && rhs_vals_i[0] && (*lhs_vals_i[1] == *rhs_vals_i[0])) {
+            return condition_wrapper(std::make_shared<Condition::ValueTest>(
+                lhs_vals_i[0] ? lhs_vals_i[0]->Clone() : nullptr,
+                lhs_cond->CompareTypes()[0],
+                lhs_vals_i[1]->Clone(),
+                rhs_cond->CompareTypes()[0],
+                rhs_vals_i[1] ? rhs_vals_i[1]->Clone() : nullptr
+            ));
+        }
+
+        const auto lhs_vals_s = lhs_cond->ValuesString();
+        const auto rhs_vals_s = rhs_cond->ValuesString();
+
+        if (!lhs_vals_s[2] && !rhs_vals_s[2] && lhs_vals_s[1] && rhs_vals_s[0] && (*lhs_vals_s[1] == *rhs_vals_s[0])) {
+            return condition_wrapper(std::make_shared<Condition::ValueTest>(
+                lhs_vals_s[0] ? lhs_vals_s[0]->Clone() : nullptr,
+                lhs_cond->CompareTypes()[0],
+                lhs_vals_s[1]->Clone(),
+                rhs_cond->CompareTypes()[0],
+                rhs_vals_s[1] ? rhs_vals_s[1]->Clone() : nullptr
+            ));
+        }
+    }
+
     return condition_wrapper(std::make_shared<Condition::And>(
         lhs.condition->Clone(),
         rhs.condition->Clone()
@@ -60,7 +104,7 @@ namespace {
     }
 
     condition_wrapper insert_meter_value_(const boost::python::tuple& args, const boost::python::dict& kw, MeterType m) {
-        std::unique_ptr<ValueRef::ValueRef<double>> low = nullptr;
+        std::unique_ptr<ValueRef::ValueRef<double>> low;
         if (kw.has_key("low")) {
             auto low_args = boost::python::extract<value_ref_wrapper<double>>(kw["low"]);
             if (low_args.check()) {
@@ -70,7 +114,7 @@ namespace {
             }
         }
 
-        std::unique_ptr<ValueRef::ValueRef<double>> high = nullptr;
+        std::unique_ptr<ValueRef::ValueRef<double>> high;
         if (kw.has_key("high")) {
             auto high_args = boost::python::extract<value_ref_wrapper<double>>(kw["high"]);
             if (high_args.check()) {
@@ -141,7 +185,7 @@ namespace {
     }
 
     condition_wrapper insert_has_tag_(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<ValueRef::ValueRef<std::string>> name = nullptr;
+        std::unique_ptr<ValueRef::ValueRef<std::string>> name;
         if (kw.has_key("name")) {
             auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
             if (name_args.check()) {
@@ -177,7 +221,7 @@ namespace {
 
         auto resource = boost::python::extract<enum_wrapper<ResourceType>>(kw["resource"])();
 
-        std::unique_ptr<ValueRef::ValueRef<double>> low = nullptr;
+        std::unique_ptr<ValueRef::ValueRef<double>> low;
         if (kw.has_key("low")) {
             auto low_args = boost::python::extract<value_ref_wrapper<double>>(kw["low"]);
             if (low_args.check()) {
@@ -187,7 +231,7 @@ namespace {
             }
         }
 
-        std::unique_ptr<ValueRef::ValueRef<double>> high = nullptr;
+        std::unique_ptr<ValueRef::ValueRef<double>> high;
         if (kw.has_key("high")) {
             auto high_args = boost::python::extract<value_ref_wrapper<double>>(kw["high"]);
             if (high_args.check()) {
@@ -278,6 +322,30 @@ namespace {
         
         return condition_wrapper(std::make_shared<Condition::InOrIsSystem>(std::move(system_id)));
     }
+
+    condition_wrapper insert_turn_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<int>> low;
+        if (kw.has_key("low")) {
+            auto low_args = boost::python::extract<value_ref_wrapper<int>>(kw["low"]);
+            if (low_args.check()) {
+                low = ValueRef::CloneUnique(low_args().value_ref);
+            } else {
+                low = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["low"])());
+            }
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<int>> high;
+        if (kw.has_key("high")) {
+            auto high_args = boost::python::extract<value_ref_wrapper<int>>(kw["high"]);
+            if (high_args.check()) {
+                high = ValueRef::CloneUnique(high_args().value_ref);
+            } else {
+                high = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["high"])());
+            }
+        }
+
+        return condition_wrapper(std::make_shared<Condition::Turn>(std::move(low), std::move(high)));
+    }
 }
 
 void RegisterGlobalsConditions(boost::python::dict& globals) {
@@ -340,6 +408,7 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     }
 
     globals["Species"] = condition_wrapper(std::make_shared<Condition::Species>());
+    globals["CanColonize"] = condition_wrapper(std::make_shared<Condition::CanColonize>());
 
     globals["HasTag"] = boost::python::raw_function(insert_has_tag_);
     globals["Planet"] = boost::python::raw_function(insert_planet_);
@@ -350,5 +419,6 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     globals["Focus"] = boost::python::raw_function(insert_focus_);
     globals["EmpireStockpile"] = boost::python::raw_function(insert_empire_stockpile_);
     globals["EmpireHasAdoptedPolicy"] = boost::python::raw_function(insert_empire_has_adopted_policy_);
+    globals["Turn"] = boost::python::raw_function(insert_turn_);
 }
 
