@@ -1470,6 +1470,18 @@ struct FO_COMMON_API ValueTest final : public Condition {
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
+    [[nodiscard]] std::array<const ValueRef::ValueRef<double>*, 3> ValuesDouble() const
+    { return {m_value_ref1.get(), m_value_ref2.get(), m_value_ref3.get()}; }
+
+    [[nodiscard]] std::array<const ValueRef::ValueRef<std::string>*, 3> ValuesString() const
+    { return {m_string_value_ref1.get(), m_string_value_ref2.get(), m_string_value_ref3.get()}; }
+
+    [[nodiscard]] std::array<const ValueRef::ValueRef<int>*, 3> ValuesInt() const
+    { return {m_int_value_ref1.get(), m_int_value_ref2.get(), m_int_value_ref3.get()}; }
+
+    [[nodiscard]] std::array<ComparisonType, 2> CompareTypes() const
+    { return {m_compare_type1, m_compare_type2}; }
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 

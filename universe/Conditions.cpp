@@ -9933,6 +9933,7 @@ unsigned int ValueTest::GetCheckSum() const {
 std::unique_ptr<Condition> ValueTest::Clone() const
 { return std::make_unique<ValueTest>(*this); }
 
+
 ///////////////////////////////////////////////////////////
 // Location                                              //
 ///////////////////////////////////////////////////////////
