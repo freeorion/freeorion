@@ -1379,6 +1379,21 @@ def _calculate_colony_rating(planet: fo.planet, species: fo.species, supply_fact
     return rating
 
 
+def _adapt_supply_factor(supply_factor: float, species: fo.species) -> float:
+    """
+    Limit the supply factor (penalty for bad supply) for INDEPENDENT species, especially Sly, which have basically
+    no other chance then to settle in disconnected places for a long time.
+    """
+    if AIDependencies.Tags.INDEPENDENT in species.tags:
+        current_turn = fo.currentTurn()
+        if species.name == "SP_SLY":
+            return max(supply_factor, 1.0 - current_turn * 0.003)  # minimum 0.4 at turn 200
+        else:
+            return max(supply_factor, 0.9 - current_turn * 0.005)  # minimum 0.4 at turn 100
+    else:
+        return supply_factor
+
+
 def _colony_upkeep(num_exobots: int, num_normal: int, num_outpost: int) -> float:
     colonies = num_exobots + num_normal - 1  # assume we have a capital, calculation won't be too wrong otherwise
     per_colony = get_named_real("COLONY_ADMIN_COSTS_PER_PLANET")
@@ -1431,6 +1446,7 @@ def _calculate_planet_rating(planet: fo.planet, species_name: SpeciesName) -> Tu
     rating, planet_supply, supply_factor, local_presence, details = _calculate_outpost_rating(planet, supply_modifier)
     if species:
         colony_rating = _calculate_colony_rating(planet, species, supply_factor, details)
+        supply_factor = _adapt_supply_factor(supply_factor, species)
         if colony_rating <= 0.0:
             return 0.0, details  # planet not habitable for species? skip the rest
         rating += colony_rating * supply_factor
