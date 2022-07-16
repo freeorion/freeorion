@@ -272,12 +272,14 @@ private:
     V* GetValueRefImpl(const std::map<NamedValueRefManager::key_type, std::unique_ptr<V>, std::less<>>& registry,
                        std::string_view label, std::string_view name) const
     {
-        TraceLogger() << "NamedValueRefManager::GetValueRef look for registered " << label << " valueref for \"" << name << '"';
-        TraceLogger() << "Number of registered " << label << " ValueRefs: " << registry.size();
+        TraceLogger() << "NamedValueRefManager::GetValueRef look for registered (" << label << ") valueref for \"" << name << '"';
+        TraceLogger() << "Number of registered (" << label << ") ValueRefs: " << registry.size();
         const auto it = registry.find(name);
         if (it != registry.end())
             return it->second.get();
-        WarnLogger() << "NamedValueRefManager::GetValueRef found no registered " << label << " valueref for \"" << name << "\". This should not happen once \"#3225 Refactor initialisation of invariants in value refs to happen after parsing\" is implemented";
+        DebugLogger() << "NamedValueRefManager::GetValueRef found no registered (" << label << ") valueref for \"" << name
+                      << "\". This is either looking in the wrong registry (which can be OK). This should not happen "
+                      << "if looking in the right registry once \"#3225 Refactor initialisation of invariants in value refs to happen after parsing\" is implemented";
         return nullptr;
     }
 
