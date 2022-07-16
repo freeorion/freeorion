@@ -140,7 +140,9 @@ def _evaluate_administration(planet: fo.planet, species: fo.species) -> float:
         # disconnected gives namedReal("DISCONNECTED_FROM_CAPITAL_AND_REGIONAL_ADMIN_STABILITY_PENALTY")
         result += 5 - min(jumps_to_admin, 5)
     if palace.built_at():  # bonus is only given the capital actually contains the palace
-        capital = universe.getPlanet(fo.getEmpire().capitalID)
+        # When rebuilding a palace, the planet only becomes the capital the turn after the palace is finished.
+        # So we cannot use fo.getEmpire().capitalID here, but for the calculation we do consider it the capital.
+        capital = universe.getPlanet(list(palace.built_at())[0])
         if species.name == capital.speciesName:
             result += 5.0
     return result
