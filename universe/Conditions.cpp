@@ -3129,9 +3129,7 @@ bool Contains::operator==(const Condition& rhs) const {
 
 namespace {
     struct ContainsSimpleMatch {
-        ContainsSimpleMatch(const ObjectSet& subcondition_matches) :
-            m_subcondition_matches_ids()
-        {
+        ContainsSimpleMatch(const ObjectSet& subcondition_matches) {
             // We need a sorted container for efficiently intersecting
             // subcondition_matches with the set of objects contained in some
             // candidate object.
@@ -3142,7 +3140,7 @@ namespace {
             // for each candidate.
             m_subcondition_matches_ids.reserve(subcondition_matches.size());
             // gather the ids
-            for (auto& obj : subcondition_matches) {
+            for (auto* obj : subcondition_matches) {
                 if (obj)
                     m_subcondition_matches_ids.push_back(obj->ID());
             }
@@ -3281,7 +3279,7 @@ bool Contains::Match(const ScriptingContext& local_context) const {
     m_condition->Eval(local_context, subcondition_matches);
 
     // does candidate object contain any subcondition matches?
-    for (auto& obj : subcondition_matches)
+    for (auto* obj : subcondition_matches)
         if (candidate->Contains(obj->ID()))
             return true;
 
@@ -3343,7 +3341,7 @@ namespace {
             // executed for each candidate.
             m_subcondition_matches_ids.reserve(subcondition_matches.size());
             // gather the ids
-            for (auto& obj : subcondition_matches) {
+            for (auto* obj : subcondition_matches) {
                 if (obj)
                     m_subcondition_matches_ids.push_back(obj->ID());
             }
@@ -8073,7 +8071,7 @@ namespace {
                 return false;
 
             // is candidate object close enough to any of the passed-in objects?
-            for (auto& obj : m_from_objects) {
+            for (auto* obj : m_from_objects) { // TODO: if_any
                 double delta_x = candidate->X() - obj->X();
                 double delta_y = candidate->Y() - obj->Y();
                 if (delta_x*delta_x + delta_y*delta_y <= m_distance2)
@@ -8546,43 +8544,54 @@ namespace {
     struct CanAddStarlaneConnectionSimpleMatch {
         CanAddStarlaneConnectionSimpleMatch(const ObjectSet& destination_objects,
                                             const ObjectMap& objects) :
-            m_objects(objects)
-        {
-            // get set of (unique) systems that are or that contain any
-            // destination objects
-            std::map<int, std::shared_ptr<const System>> dest_systems;
-            for (auto& obj : destination_objects) {
-                if (auto sys = m_objects.get<System>(obj->SystemID()))
-                    dest_systems.emplace(obj->SystemID(), std::move(sys));
-            }
-
-            // move into member storage
-            m_destination_systems.reserve(dest_systems.size());
-            for (auto& id_obj : dest_systems)
-                m_destination_systems.push_back(std::move(id_obj.second));
-        }
+            m_objects(objects),
+            m_destination_systems{[&destination_objects, &objects]() {
+                // get set of (unique) systems that are or that contain any
+                // destination objects
+                std::vector<const System*> retval;
+                retval.reserve(destination_objects.size());
+                std::for_each(destination_objects.begin(), destination_objects.end(),
+                              [&objects, &retval](const UniverseObject* obj) {
+                                  if (!obj)
+                                      return;
+                                  if (obj->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
+                                      retval.push_back(static_cast<const System*>(obj));
+                                      return;
+                                  }
+                                  int sys_id = obj->SystemID();
+                                  if (sys_id != INVALID_OBJECT_ID)
+                                      if (const auto* sys = objects.getRaw<const System>(sys_id))
+                                          retval.push_back(sys);
+                              });
+                // ensure uniqueness
+                std::sort(retval.begin(), retval.end());
+                auto unique_it = std::unique(retval.begin(), retval.end());
+                retval.resize(std::distance(retval.begin(), unique_it));
+                return retval;
+            }()}
+        {}
 
         bool operator()(const UniverseObject* candidate) const {
             if (!candidate)
                 return false;
 
             // get system from candidate
-            auto candidate_sys = dynamic_cast<const System*>(candidate);
+            const System* candidate_sys = nullptr;
+            if (candidate->ObjectType() == UniverseObjectType::OBJ_SYSTEM)
+                candidate_sys = static_cast<const System*>(candidate);
             if (!candidate_sys)
                 candidate_sys = m_objects.getRaw<System>(candidate->SystemID());
             if (!candidate_sys)
                 return false;
 
-
             // check if candidate is one of the destination systems
-            for (auto& destination : m_destination_systems) {
-                if (candidate_sys->ID() == destination->ID())
-                    return false;
-            }
+            if (std::any_of(m_destination_systems.begin(), m_destination_systems.end(),
+                [can_id{candidate_sys->ID()}](const auto* d) { return can_id == d->ID(); }))
+            { return false; }
 
 
             // check if candidate already has a lane to any of the destination systems
-            for (auto& destination : m_destination_systems) {
+            for (auto* destination : m_destination_systems) {
                 if (candidate_sys->HasStarlaneTo(destination->ID()))
                     return false;
             }
@@ -8596,9 +8605,9 @@ namespace {
                     continue;
 
                 // check this existing lane against potential lanes to all destination systems
-                for (auto& dest_sys : m_destination_systems) {
+                for (auto* dest_sys : m_destination_systems) {
                     if (LanesAngularlyTooClose(candidate_sys, candidate_existing_lane_end_sys,
-                                               dest_sys.get()))
+                                               dest_sys))
                     {
                         //TraceLogger(conditions) << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << dest_sys->UniverseObject::Name() << " due to existing lane to " << candidate_existing_lane_end_sys->UniverseObject::Name() << "\n";
                         return false;
@@ -8610,15 +8619,15 @@ namespace {
             // check if any of the proposed lanes are too close to any already-
             // present lanes of any of the destination systems
             //TraceLogger(conditions) << "... Checking lanes of destination systems:" << "\n";
-            for (auto& dest_sys : m_destination_systems) {
+            for (auto* dest_sys : m_destination_systems) {
                 // check this destination system's existing lanes against a lane
                 // to the candidate system
                 for (const auto& dest_lane : dest_sys->StarlanesWormholes()) {
-                    auto dest_lane_end_sys = m_objects.getRaw<System>(dest_lane.first);
+                    auto dest_lane_end_sys = m_objects.getRaw<const System>(dest_lane.first);
                     if (!dest_lane_end_sys)
                         continue;
 
-                    if (LanesAngularlyTooClose(dest_sys.get(), candidate_sys, dest_lane_end_sys)) {
+                    if (LanesAngularlyTooClose(dest_sys, candidate_sys, dest_lane_end_sys)) {
                         //TraceLogger(conditions) << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << dest_sys->UniverseObject::Name() << " due to existing lane from dest to " << dest_lane_end_sys->UniverseObject::Name() << "\n";
                         return false;
                     }
@@ -8631,13 +8640,13 @@ namespace {
             for (auto it1 = m_destination_systems.begin();
                  it1 != m_destination_systems.end(); ++it1)
             {
-                auto dest_sys1 = it1->get();
+                auto* dest_sys1 = *it1;
 
                 // don't need to check a lane in both directions, so start at one past it1
                 auto it2 = it1;
                 ++it2;
                 for (; it2 != m_destination_systems.end(); ++it2) {
-                    auto dest_sys2 = it2->get();
+                    auto* dest_sys2 = *it2;
                     if (LanesAngularlyTooClose(candidate_sys, dest_sys1, dest_sys2)) {
                         //TraceLogger(conditions) << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << dest_sys1->UniverseObject::Name() << " and also to " << dest_sys2->UniverseObject::Name() << "\n";
                         return false;
@@ -8649,8 +8658,8 @@ namespace {
             // check that the proposed lanes are not too close to any existing
             // system they are not connected to
             //TraceLogger(conditions) << "... Checking proposed lanes for proximity to other systems" << "\n";
-            for (auto& dest_sys : m_destination_systems) {
-                if (LaneTooCloseToOtherSystem(candidate_sys, dest_sys.get(), m_objects)) {
+            for (auto* dest_sys : m_destination_systems) {
+                if (LaneTooCloseToOtherSystem(candidate_sys, dest_sys, m_objects)) {
                     //TraceLogger(conditions) << " ... ... can't add lane from candidate: " << candidate_sys->Name() << " to " << dest_sys->Name() << " due to proximity to another system." << "\n";
                     return false;
                 }
@@ -8659,8 +8668,8 @@ namespace {
 
             // check that there are no lanes already existing that cross the proposed lanes
             //TraceLogger(conditions) << "... Checking for potential lanes crossing existing lanes" << "\n";
-            for (auto& dest_sys : m_destination_systems) {
-                if (LaneCrossesExistingLane(candidate_sys, dest_sys.get(), m_objects)) {
+            for (auto* dest_sys : m_destination_systems) {
+                if (LaneCrossesExistingLane(candidate_sys, dest_sys, m_objects)) {
                     //TraceLogger(conditions) << " ... ... can't add lane from candidate: " << candidate_sys->Name() << " to " << dest_sys->Name() << " due to crossing an existing lane." << "\n";
                     return false;
                 }
@@ -8669,8 +8678,8 @@ namespace {
             return true;
         }
 
-        std::vector<std::shared_ptr<const System>> m_destination_systems;
         const ObjectMap& m_objects;
+        const std::vector<const System*> m_destination_systems;
     };
 }
 

@@ -449,7 +449,7 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id, c
                 }
 
                 // determine how much to take from each matched object
-                for (auto& object : matches) {
+                for (auto* object : matches) {
                     location_target_context.effect_target = const_cast<UniverseObject*>(object); // call to ValueRef cannot modify the pointed-to object
                     retval[special_name][object->ID()] += static_cast<float>(amount->Eval(location_target_context));
                 }

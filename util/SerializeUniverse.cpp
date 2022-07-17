@@ -154,7 +154,7 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
         u.m_objects.swap(objects_ptr);
 
         // use the Universe u's flag to enable/disable StateChangedSignal for these UniverseObject
-        for (auto& obj : u.m_objects->all())
+        for (auto* obj : u.m_objects->allRaw())
             obj->SetSignalCombiner(u);
     }
     DebugLogger() << "Universe::" << serializing_label << " " << u.m_objects->size() << " objects";
