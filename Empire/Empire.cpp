@@ -1059,15 +1059,15 @@ void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects, const 
     // as of this writing, only planets can generate supply propagation
     std::vector<const UniverseObject*> owned_planets;
     owned_planets.reserve(known_objects.size());
-    for (auto& planet: objects.find<Planet>(known_objects)) {
+    for (auto* planet: objects.findRaw<Planet>(known_objects)) {
         if (!planet)
             continue;
         if (planet->OwnedBy(this->EmpireID()))
-            owned_planets.push_back(planet.get());
+            owned_planets.push_back(planet);
     }
 
     //std::cout << "... empire owns " << owned_planets.size() << " planets" << std::endl;
-    for (auto& obj : owned_planets) {
+    for (auto* obj : owned_planets) {
         //std::cout << "... considering owned planet: " << obj->Name() << std::endl;
 
         // ensure object is within a system, from which it can distribute supplies
@@ -1113,7 +1113,7 @@ void Empire::UpdateUnobstructedFleets(ObjectMap& objects, const std::set<int>& k
         if (!system)
             continue;
 
-        for (auto& fleet : objects.find<Fleet>(system->FleetIDs())) {
+        for (auto* fleet : objects.findRaw<Fleet>(system->FleetIDs())) {
             if (known_destroyed_objects.count(fleet->ID()))
                 continue;
             if (fleet->OwnedBy(m_id))
@@ -1310,7 +1310,7 @@ void Empire::RecordPendingLaneUpdate(int start_system_id, int dest_system_id, co
     if (!m_supply_unobstructed_systems.count(start_system_id)) {
         m_pending_system_exit_lanes[start_system_id].insert(dest_system_id);
     } else { // if the system is unobstructed, mark all its lanes as avilable
-        for (const auto& lane : objects.get<System>(start_system_id)->StarlanesWormholes())
+        for (const auto& lane : objects.getRaw<System>(start_system_id)->StarlanesWormholes())
             m_pending_system_exit_lanes[start_system_id].insert(lane.first); // will add both starlanes and wormholes
     }
 }
@@ -2547,7 +2547,7 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
                     fleets.push_back(fleet.get());
                 }
 
-                for (auto& ship : ships) {
+                for (auto* ship : ships) {
                     if (individual_fleets) {
                         fleet = universe.InsertNew<Fleet>("", system->X(), system->Y(),
                                                           m_id, context.current_turn);

@@ -318,7 +318,7 @@ void Condition::Eval(const ScriptingContext& parent_context,
         ObjectSet matches_as_objectset;
         this->Eval(parent_context, matches_as_objectset);
         std::transform(matches_as_objectset.begin(), matches_as_objectset.end(), std::back_inserter(matches),
-                       [](auto&& o) { return const_cast<UniverseObject*>(o); });
+                       [](auto* o) { return const_cast<UniverseObject*>(o); });
     }
 }
 

@@ -245,7 +245,7 @@ namespace {
         float accumulator_current = 0.0f;
         float accumulator_max = 0.0f;
 
-        for (auto& obj : objects.find(sys->ObjectIDs())) {
+        for (auto* obj : objects.findRaw(sys->ObjectIDs())) {
             if (!obj || !obj->OwnedBy(empire_id))
                 continue;
             if (const auto* m = obj->GetMeter(MeterType::METER_SUPPLY))
@@ -352,7 +352,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
         const auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(empire_id);
         std::set<int> systems_containing_friendly_fleets;
 
-        for (auto& fleet : objects.all<Fleet>()) {
+        for (auto* fleet : objects.allRaw<Fleet>()) {
             int system_id = fleet->SystemID();
             if (system_id == INVALID_OBJECT_ID || known_destroyed_objects.count(fleet->ID()))
                 continue;
@@ -461,10 +461,8 @@ void SupplyManager::Update(const ScriptingContext& context) {
 
                 // empires with planets in system
                 bool has_outpost = false, has_colony = false;
-                for (auto& planet : objects.find<Planet>(sys->PlanetIDs())) {
-                    if (!planet)
-                        continue;
-                    if (!planet->OwnedBy(empire_id))
+                for (auto* planet : objects.findRaw<Planet>(sys->PlanetIDs())) {
+                    if (!planet || !planet->OwnedBy(empire_id))
                         continue;
                     if (!planet->SpeciesName().empty())
                         has_colony = true;
