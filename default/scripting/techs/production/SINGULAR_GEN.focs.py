@@ -15,6 +15,6 @@ Tech(
     researchturns=4,
     tags=["PEDIA_PRODUCTION_CATEGORY"],
     prerequisites=["LRN_TIME_MECH", "PRO_SOL_ORB_GEN"],
-    unlock=Item(type=Building, name="BLD_BLACK_HOLE_POW_GEN"),
+    unlock=Item(type=UnlockBuilding, name="BLD_BLACK_HOLE_POW_GEN"),
     graphic="icons/tech/singularity_generation.png",
 )

@@ -9,7 +9,7 @@ Tech(
     researchturns=5,
     tags=["PEDIA_PRODUCTION_CATEGORY"],
     prerequisites=["PRO_GENERIC_SUPPLIES", "PRO_ADAPTIVE_AUTOMATION", "LRN_GRAVITONICS"],
-    unlock=Item(type=Building, name="BLD_STOCKPILING_CENTER"),
+    unlock=Item(type=UnlockBuilding, name="BLD_STOCKPILING_CENTER"),
     effectsgroups=[
         EffectsGroup(
             scope=ProductionCenter & OwnedBy(empire=Source.Owner) & Species,

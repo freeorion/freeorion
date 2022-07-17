@@ -13,7 +13,7 @@ Tech(
         "LRN_SPATIAL_DISTORT_GEN",
     ],
     unlock=[
-        Item(type=Building, name="BLD_STARGATE"),
+        Item(type=UnlockBuilding, name="BLD_STARGATE"),
     ],
     graphic="icons/building/stargate.png",
 )

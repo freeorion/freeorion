@@ -10,8 +10,8 @@ Tech(
     tags=["PEDIA_GROWTH_CATEGORY"],
     prerequisites="GRO_GENETIC_ENG",
     unlock=[
-        Item(type=ShipPart, name="CO_SUSPEND_ANIM_POD"),
-        Item(type=Policy, name="PLC_NO_GROWTH"),
+        Item(type=UnlockShipPart, name="CO_SUSPEND_ANIM_POD"),
+        Item(type=UnlockPolicy, name="PLC_NO_GROWTH"),
     ],
     graphic="icons/tech/lifecycle_manipulation.png",
 )

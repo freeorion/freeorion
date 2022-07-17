@@ -9,6 +9,6 @@ Tech(
     researchturns=6,
     tags=["PEDIA_CONSTRUCTION_CATEGORY"],
     prerequisites=["CON_CONTGRAV_ARCH", "SHP_CONTGRAV_MAINT"],
-    unlock=Item(type=Building, name="BLD_ART_MOON"),
+    unlock=Item(type=UnlockBuilding, name="BLD_ART_MOON"),
     graphic="icons/tech/artificial_heavenly_bodies.png",
 )

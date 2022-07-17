@@ -12,7 +12,7 @@ Tech(
     researchcost=1,
     researchturns=1,
     tags=["PEDIA_CONSTRUCTION_CATEGORY"],
-    unlock=Item(type=Building, name="BLD_ABANDON_OUTPOST"),
+    unlock=Item(type=UnlockBuilding, name="BLD_ABANDON_OUTPOST"),
     # Effects for outposts
     effectsgroups=[
         # Outposts only have 50% of troops

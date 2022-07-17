@@ -9,6 +9,6 @@ Tech(
     researchturns=5,
     tags=["PEDIA_GROWTH_CATEGORY"],
     prerequisites="GRO_NANOTECH_MED",
-    unlock=[Item(type=ShipPart, name="GT_TROOP_POD_2"), Item(type=Policy, name="PLC_AUGMENTATION")],
+    unlock=[Item(type=UnlockShipPart, name="GT_TROOP_POD_2"), Item(type=UnlockPolicy, name="PLC_AUGMENTATION")],
     graphic="icons/tech/nanotech_cybernetics.png",
 )

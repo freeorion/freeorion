@@ -10,9 +10,9 @@ Tech(
     tags=["PEDIA_PRODUCTION_CATEGORY"],
     prerequisites=["PRO_ZERO_GEN", "LRN_STELLAR_TOMOGRAPHY"],
     unlock=[
-        Item(type=Building, name="BLD_NEUTRONIUM_EXTRACTOR"),
-        Item(type=Building, name="BLD_NEUTRONIUM_FORGE"),
-        Item(type=ShipPart, name="AR_NEUTRONIUM_PLATE"),
+        Item(type=UnlockBuilding, name="BLD_NEUTRONIUM_EXTRACTOR"),
+        Item(type=UnlockBuilding, name="BLD_NEUTRONIUM_FORGE"),
+        Item(type=UnlockShipPart, name="AR_NEUTRONIUM_PLATE"),
     ],
     graphic="icons/tech/neutronium_extraction.png",
 )

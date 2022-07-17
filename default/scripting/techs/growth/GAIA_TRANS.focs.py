@@ -9,6 +9,6 @@ Tech(
     researchturns=7,
     tags=["PEDIA_GROWTH_CATEGORY"],
     prerequisites="GRO_TRANSORG_SENT",
-    unlock=Item(type=Building, name="BLD_GAIA_TRANS"),
+    unlock=Item(type=UnlockBuilding, name="BLD_GAIA_TRANS"),
     graphic="icons/tech/the_living_planet.png",
 )

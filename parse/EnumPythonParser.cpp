@@ -84,5 +84,16 @@ void RegisterGlobalsEnums(boost::python::dict& globals) {
         globals[op.first] = enum_wrapper<PlanetType>(op.second);
     }
 
+    for (const auto& op : std::initializer_list<std::pair<const char*, UnlockableItemType>>{
+            {"UnlockBuilding",   UnlockableItemType::UIT_BUILDING},
+            {"UnlockShipPart",   UnlockableItemType::UIT_SHIP_PART},
+            {"UnlockShipHull",   UnlockableItemType::UIT_SHIP_HULL},
+            {"UnlockShipDesign", UnlockableItemType::UIT_SHIP_DESIGN},
+            {"UnlockTech",       UnlockableItemType::UIT_TECH},
+            {"UnlockPolicy",     UnlockableItemType::UIT_POLICY}})
+    {
+        globals[op.first] = enum_wrapper<UnlockableItemType>(op.second);
+    }
+
 }
 

@@ -10,8 +10,8 @@ Tech(
     tags=["PEDIA_LEARNING_CATEGORY"],
     prerequisites="LRN_FORCE_FIELD",
     unlock=[
-        Item(type=Building, name="BLD_STARLANE_BORE"),
-        Item(type=Building, name="BLD_SCRYING_SPHERE"),
+        Item(type=UnlockBuilding, name="BLD_STARLANE_BORE"),
+        Item(type=UnlockBuilding, name="BLD_SCRYING_SPHERE"),
     ],
     graphic="icons/tech/gravitonics.png",
 )

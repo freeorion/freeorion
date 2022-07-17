@@ -10,8 +10,8 @@ Tech(
     tags=["PEDIA_PRODUCTION_CATEGORY"],
     prerequisites="PRO_ROBOTIC_PROD",
     unlock=[
-        Item(type=Building, name="BLD_INDUSTRY_CENTER"),
-        Item(type=Policy, name="PLC_INDUSTRIALISM"),
+        Item(type=UnlockBuilding, name="BLD_INDUSTRY_CENTER"),
+        Item(type=UnlockPolicy, name="PLC_INDUSTRIALISM"),
     ],
     graphic="icons/tech/industrial_centre_i.png",
 )

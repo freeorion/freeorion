@@ -11,7 +11,7 @@ Tech(
     researchcost=4 * TECH_COST_MULTIPLIER,
     researchturns=1,
     tags=["PEDIA_SHIP_PARTS_CATEGORY", "THEORY"],
-    unlock=Item(type=Policy, name="PLC_EXPLORATION"),
+    unlock=Item(type=UnlockPolicy, name="PLC_EXPLORATION"),
     effectsgroups=[
         EffectsGroup(
             scope=Planet(size=Tiny) & OwnedBy(empire=Source.Owner),

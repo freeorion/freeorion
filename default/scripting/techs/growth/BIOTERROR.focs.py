@@ -9,6 +9,6 @@ Tech(
     researchturns=5,
     tags=["PEDIA_GROWTH_CATEGORY"],
     prerequisites="GRO_NANOTECH_MED",
-    unlock=Item(type=Building, name="BLD_BIOTERROR_PROJECTOR"),
+    unlock=Item(type=UnlockBuilding, name="BLD_BIOTERROR_PROJECTOR"),
     graphic="icons/tech/bioterror_facilities.png",
 )

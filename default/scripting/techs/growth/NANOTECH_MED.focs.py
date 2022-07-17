@@ -12,6 +12,6 @@ Tech(
         "GRO_GENETIC_MED",
         "PRO_NANOTECH_PROD",
     ],
-    unlock=Item(type=Policy, name="PLC_POPULATION"),
+    unlock=Item(type=UnlockPolicy, name="PLC_POPULATION"),
     graphic="icons/tech/nanotech_medicine.png",
 )

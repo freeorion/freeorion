@@ -222,10 +222,6 @@ void RegisterGlobalsEffects(py::dict& globals) {
     globals["EffectsGroup"] = py::raw_function(insert_effects_group_);
     globals["Item"] = py::raw_function(insert_item_);
 
-    globals["Policy"] = enum_wrapper<UnlockableItemType>(UnlockableItemType::UIT_POLICY);
-    globals["Building"] = enum_wrapper<UnlockableItemType>(UnlockableItemType::UIT_BUILDING);
-    globals["ShipPart"] = enum_wrapper<UnlockableItemType>(UnlockableItemType::UIT_SHIP_PART);
-
     globals["Destroy"] = effect_wrapper(std::make_shared<Effect::Destroy>());
 
     globals["GenerateSitRepMessage"] = py::raw_function(insert_generate_sit_rep_message_);

@@ -15,6 +15,6 @@ Tech(
     researchturns=8,
     tags=["PEDIA_PRODUCTION_CATEGORY"],
     prerequisites="PRO_ORBITAL_GEN",
-    unlock=Item(type=Building, name="BLD_SOL_ORB_GEN"),
+    unlock=Item(type=UnlockBuilding, name="BLD_SOL_ORB_GEN"),
     graphic="icons/building/miniature_sun.png",
 )
