@@ -9,6 +9,6 @@ Tech(
     researchturns=8,
     tags=["PEDIA_CONSTRUCTION_CATEGORY"],
     prerequisites=["GRO_SYMBIOTIC_BIO", "CON_FRC_ENRG_STRC"],
-    unlock=Item(type=Building, name="BLD_TRANSFORMER"),
+    unlock=Item(type=UnlockBuilding, name="BLD_TRANSFORMER"),
     graphic="icons/tech/transforming_structures.png",
 )

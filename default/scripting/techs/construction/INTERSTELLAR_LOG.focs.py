@@ -10,9 +10,9 @@ Tech(
     tags=["PEDIA_CONSTRUCTION_CATEGORY"],
     prerequisites="CON_ORBITAL_CON",
     unlock=[
-        Item(type=Policy, name="PLC_NO_SUPPLY"),
-        Item(type=Policy, name="PLC_CONFEDERATION"),
-        Item(type=Policy, name="PLC_TRAFFIC_CONTROL"),
+        Item(type=UnlockPolicy, name="PLC_NO_SUPPLY"),
+        Item(type=UnlockPolicy, name="PLC_CONFEDERATION"),
+        Item(type=UnlockPolicy, name="PLC_TRAFFIC_CONTROL"),
     ],
     graphic="icons/tech/stellar_navigation.png",
 )

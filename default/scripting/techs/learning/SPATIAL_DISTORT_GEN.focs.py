@@ -9,6 +9,6 @@ Tech(
     researchturns=5,
     tags=["PEDIA_LEARNING_CATEGORY"],
     prerequisites="LRN_NDIM_SUBSPACE",
-    unlock=Item(type=Building, name="BLD_SPATIAL_DISTORT_GEN"),
+    unlock=Item(type=UnlockBuilding, name="BLD_SPATIAL_DISTORT_GEN"),
     graphic="icons/tech/controlled_gravity_wells.png",
 )

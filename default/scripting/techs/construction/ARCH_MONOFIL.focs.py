@@ -9,6 +9,6 @@ Tech(
     researchturns=5,
     tags=["PEDIA_CONSTRUCTION_CATEGORY"],
     prerequisites="CON_ASYMP_MATS",
-    unlock=Item(type=Building, name="BLD_SPACE_ELEVATOR"),
+    unlock=Item(type=UnlockBuilding, name="BLD_SPACE_ELEVATOR"),
     graphic="icons/tech/architectural_monofilaments.png",
 )

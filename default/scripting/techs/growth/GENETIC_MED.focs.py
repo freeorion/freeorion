@@ -9,6 +9,6 @@ Tech(
     researchturns=4,
     tags=["PEDIA_GROWTH_CATEGORY"],
     prerequisites="GRO_GENETIC_ENG",
-    unlock=Item(type=Building, name="BLD_GENOME_BANK"),
+    unlock=Item(type=UnlockBuilding, name="BLD_GENOME_BANK"),
     graphic="icons/tech/genetic_medicine.png",
 )

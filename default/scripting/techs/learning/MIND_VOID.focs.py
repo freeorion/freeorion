@@ -9,7 +9,7 @@ Tech(
     researchturns=10,
     tags=["PEDIA_LEARNING_CATEGORY", "THEORY"],
     prerequisites="LRN_XENOARCH",
-    unlock=Item(type=Policy, name="PLC_DESIGN_SIMPLICITY"),
+    unlock=Item(type=UnlockPolicy, name="PLC_DESIGN_SIMPLICITY"),
     effectsgroups=EffectsGroup(
         scope=Source,
         effects=SetEmpireMeter(empire=Source.Owner, meter="SOCIAL_CATEGORY_NUM_POLICY_SLOTS", value=Value + 1),

@@ -13,6 +13,6 @@ Tech(
         "GRO_TERRAFORM",
         "GRO_NANOTECH_MED",
     ],
-    unlock=Item(type=Building, name="BLD_NEST_ERADICATOR"),
+    unlock=Item(type=UnlockBuilding, name="BLD_NEST_ERADICATOR"),
     graphic="icons/tech/megafauna_ecology.png",
 )

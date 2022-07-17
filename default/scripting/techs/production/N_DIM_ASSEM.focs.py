@@ -9,6 +9,6 @@ Tech(
     researchturns=5,
     tags=["PEDIA_PRODUCTION_CATEGORY"],
     prerequisites="LRN_NDIM_SUBSPACE",
-    unlock=Item(type=Building, name="BLD_HYPER_DAM"),
+    unlock=Item(type=UnlockBuilding, name="BLD_HYPER_DAM"),
     graphic="icons/tech/n-dimensional_assembly.png",
 )

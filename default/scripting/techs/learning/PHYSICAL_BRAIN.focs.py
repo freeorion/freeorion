@@ -8,6 +8,6 @@ Tech(
     researchcost=4 * TECH_COST_MULTIPLIER,
     researchturns=2,
     tags=["PEDIA_LEARNING_CATEGORY"],
-    unlock=[Item(type=Policy, name="PLC_LIBERTY"), Item(type=Building, name="BLD_AUTO_HISTORY_ANALYSER")],
+    unlock=[Item(type=UnlockPolicy, name="PLC_LIBERTY"), Item(type=UnlockBuilding, name="BLD_AUTO_HISTORY_ANALYSER")],
     graphic="icons/tech/the_physical_brain.png",
 )

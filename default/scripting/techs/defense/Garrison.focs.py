@@ -34,7 +34,7 @@ Tech(
     researchturns=5,
     tags=["PEDIA_DEFENSE_CATEGORY"],
     prerequisites="DEF_GARRISON_1",
-    unlock=Item(type=Policy, name="PLC_CHECKPOINTS"),
+    unlock=Item(type=UnlockPolicy, name="PLC_CHECKPOINTS"),
     effectsgroups=[
         EffectsGroup(
             scope=Planet()
@@ -105,7 +105,7 @@ Tech(
     researchturns=9,
     tags=["PEDIA_DEFENSE_CATEGORY"],
     prerequisites="DEF_GARRISON_3",
-    unlock=Item(type=Policy, name="PLC_MARTIAL_LAW"),
+    unlock=Item(type=UnlockPolicy, name="PLC_MARTIAL_LAW"),
     effectsgroups=[
         EffectsGroup(
             scope=Planet()

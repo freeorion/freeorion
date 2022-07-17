@@ -54,7 +54,7 @@ Tech(
     unresearchable=True,
     tags=["PEDIA_DEFENSE_CATEGORY"],
     prerequisites="SPY_STEALTH_3",
-    unlock=Item(type=Building, name="BLD_PLANET_CLOAK"),
+    unlock=Item(type=UnlockBuilding, name="BLD_PLANET_CLOAK"),
 )
 
 Tech(

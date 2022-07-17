@@ -9,6 +9,6 @@ Tech(
     researchturns=5,
     tags=["PEDIA_LEARNING_CATEGORY"],
     prerequisites=["CON_STARGATE"],
-    unlock=Item(type=Building, name="BLD_GATEWAY_VOID"),
+    unlock=Item(type=UnlockBuilding, name="BLD_GATEWAY_VOID"),
     graphic="icons/tech/monument_to_exodus.png",
 )

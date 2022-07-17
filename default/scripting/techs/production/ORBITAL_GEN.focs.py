@@ -15,6 +15,6 @@ Tech(
     researchturns=4,
     tags=["PEDIA_PRODUCTION_CATEGORY"],
     prerequisites=["PRO_FUSION_GEN", "CON_ORBITAL_CON"],
-    unlock=Item(type=Building, name="BLD_GAS_GIANT_GEN"),
+    unlock=Item(type=UnlockBuilding, name="BLD_GAS_GIANT_GEN"),
     graphic="icons/tech/orbital_generation.png",
 )

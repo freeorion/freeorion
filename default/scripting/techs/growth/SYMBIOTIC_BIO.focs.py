@@ -11,8 +11,8 @@ Tech(
     tags=["PEDIA_GROWTH_CATEGORY"],
     prerequisites="GRO_PLANET_ECOL",
     unlock=[
-        Item(type=Policy, name="PLC_DIVERSITY"),
-        Item(type=Policy, name="PLC_BLACK_MARKET"),
+        Item(type=UnlockPolicy, name="PLC_DIVERSITY"),
+        Item(type=UnlockPolicy, name="PLC_BLACK_MARKET"),
     ],
     effectsgroups=[
         EffectsGroup(

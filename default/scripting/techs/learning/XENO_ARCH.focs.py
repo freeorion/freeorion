@@ -9,6 +9,9 @@ Tech(
     researchturns=5,
     tags=["PEDIA_LEARNING_CATEGORY"],
     prerequisites="LRN_TRANSLING_THT",
-    unlock=[Item(type=Building, name="BLD_XENORESURRECTION_LAB"), Item(type=Policy, name="PLC_DIVINE_AUTHORITY")],
+    unlock=[
+        Item(type=UnlockBuilding, name="BLD_XENORESURRECTION_LAB"),
+        Item(type=UnlockPolicy, name="PLC_DIVINE_AUTHORITY"),
+    ],
     graphic="icons/tech/xenoarchaeology.png",
 )

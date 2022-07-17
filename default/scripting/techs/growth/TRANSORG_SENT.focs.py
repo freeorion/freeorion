@@ -10,7 +10,7 @@ Tech(
     researchturns=7,
     tags=["PEDIA_GROWTH_CATEGORY", "THEORY"],
     prerequisites=["GRO_TERRAFORM"],
-    unlock=Item(type=Policy, name="PLC_TERRAFORMING"),
+    unlock=Item(type=UnlockPolicy, name="PLC_TERRAFORMING"),
     effectsgroups=[
         EffectsGroup(
             scope=ProductionCenter & OwnedBy(empire=Source.Owner),

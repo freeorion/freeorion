@@ -10,9 +10,9 @@ Tech(
     tags=["PEDIA_CONSTRUCTION_CATEGORY"],
     prerequisites=["CON_ART_HEAVENLY", "LRN_SPATIAL_DISTORT_GEN"],
     unlock=[
-        Item(type=Building, name="BLD_ART_PLANET"),
-        Item(type=Building, name="BLD_ART_FACTORY_PLANET"),
-        Item(type=Building, name="BLD_ART_PARADISE_PLANET"),
+        Item(type=UnlockBuilding, name="BLD_ART_PLANET"),
+        Item(type=UnlockBuilding, name="BLD_ART_FACTORY_PLANET"),
+        Item(type=UnlockBuilding, name="BLD_ART_PARADISE_PLANET"),
     ],
     graphic="icons/tech/artificial_planet.png",
 )

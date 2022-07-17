@@ -9,6 +9,6 @@ Tech(
     researchturns=4,
     tags=["PEDIA_CONSTRUCTION_CATEGORY"],
     prerequisites="CON_ARCH_PSYCH",
-    unlock=Item(type=Building, name="BLD_CONC_CAMP"),
+    unlock=Item(type=UnlockBuilding, name="BLD_CONC_CAMP"),
     graphic="icons/building/concentration-camp.png",
 )

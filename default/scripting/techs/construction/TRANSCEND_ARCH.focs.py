@@ -13,8 +13,8 @@ Tech(
         "CON_NDIM_STRC",
     ],
     unlock=[
-        Item(type=Building, name="BLD_MEGALITH"),
-        Item(type=Policy, name="PLC_DIVINE_AUTHORITY"),
+        Item(type=UnlockBuilding, name="BLD_MEGALITH"),
+        Item(type=UnlockPolicy, name="PLC_DIVINE_AUTHORITY"),
     ],
     effectsgroups=EffectsGroup(
         scope=Source,

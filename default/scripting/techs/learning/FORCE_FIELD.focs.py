@@ -11,7 +11,7 @@ Tech(
     researchturns=5,
     tags=["PEDIA_LEARNING_CATEGORY"],
     prerequisites="LRN_NASCENT_AI",
-    unlock=Item(type=ShipPart, name="SH_DEFENSE_GRID"),
+    unlock=Item(type=UnlockShipPart, name="SH_DEFENSE_GRID"),
     effectsgroups=[
         EffectsGroup(
             scope=Planet() & OwnedBy(empire=Source.Owner),

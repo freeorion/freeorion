@@ -9,6 +9,6 @@ Tech(
     researchturns=8,
     tags=["PEDIA_LEARNING_CATEGORY"],
     prerequisites=["LRN_ART_BLACK_HOLE", "LRN_STELLAR_TOMOGRAPHY", "LRN_SPATIAL_DISTORT_GEN"],
-    unlock=Item(type=Building, name="BLD_BLACK_HOLE_COLLAPSER"),
+    unlock=Item(type=UnlockBuilding, name="BLD_BLACK_HOLE_COLLAPSER"),
     graphic="icons/tech/black_hole_collapse.png",
 )

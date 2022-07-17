@@ -10,9 +10,9 @@ Tech(
     tags=["PEDIA_LEARNING_CATEGORY", "THEORY"],
     prerequisites=["LRN_PHYS_BRAIN", "LRN_ALGO_ELEGANCE"],
     unlock=[
-        Item(type=Policy, name="PLC_MARINE_RECRUITMENT"),
-        Item(type=Policy, name="PLC_NATIVE_APPROPRIATION"),
-        Item(type=Building, name="BLD_TRANSLATOR"),
+        Item(type=UnlockPolicy, name="PLC_MARINE_RECRUITMENT"),
+        Item(type=UnlockPolicy, name="PLC_NATIVE_APPROPRIATION"),
+        Item(type=UnlockBuilding, name="BLD_TRANSLATOR"),
     ],
     graphic="icons/tech/translingustic_thought.png",
 )

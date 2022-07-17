@@ -9,6 +9,6 @@ Tech(
     researchturns=6,
     tags=["PEDIA_LEARNING_CATEGORY", "THEORY"],
     prerequisites="LRN_GRAVITONICS",
-    unlock=Item(type=Building, name="BLD_FIELD_REPELLOR"),
+    unlock=Item(type=UnlockBuilding, name="BLD_FIELD_REPELLOR"),
     graphic="icons/tech/the_theory_of_everything.png",
 )

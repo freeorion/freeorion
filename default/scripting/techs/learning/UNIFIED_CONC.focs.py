@@ -9,6 +9,6 @@ Tech(
     researchturns=7,
     tags=["PEDIA_LEARNING_CATEGORY"],
     prerequisites=["LRN_GATEWAY_VOID", "LRN_QUANT_NET"],
-    unlock=[Item(type=Building, name="BLD_COLLECTIVE_NET"), Item(type=Policy, name="PLC_DREAM_RECURSION")],
+    unlock=[Item(type=UnlockBuilding, name="BLD_COLLECTIVE_NET"), Item(type=UnlockPolicy, name="PLC_DREAM_RECURSION")],
     graphic="icons/tech/unified_conscious.png",
 )

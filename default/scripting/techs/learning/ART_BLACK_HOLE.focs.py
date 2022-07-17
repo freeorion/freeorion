@@ -9,6 +9,6 @@ Tech(
     researchturns=8,
     tags=["PEDIA_LEARNING_CATEGORY"],
     prerequisites="LRN_TIME_MECH",
-    unlock=Item(type=Building, name="BLD_ART_BLACK_HOLE"),
+    unlock=Item(type=UnlockBuilding, name="BLD_ART_BLACK_HOLE"),
     graphic="icons/tech/artificial_black_hole.png",
 )

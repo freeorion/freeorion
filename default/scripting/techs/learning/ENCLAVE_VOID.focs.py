@@ -12,6 +12,6 @@ Tech(
         "LRN_GATEWAY_VOID",
         "LRN_EVERYTHING",
     ],
-    unlock=Item(type=Building, name="BLD_ENCLAVE_VOID"),
+    unlock=Item(type=UnlockBuilding, name="BLD_ENCLAVE_VOID"),
     graphic="icons/tech/enclave_of_the_void.png",
 )

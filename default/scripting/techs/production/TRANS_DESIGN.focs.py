@@ -9,6 +9,6 @@ Tech(
     researchturns=5,
     tags=["PEDIA_PRODUCTION_CATEGORY"],
     prerequisites=["LRN_PSIONICS", "CON_ARCH_PSYCH"],
-    unlock=Item(type=Building, name="BLD_INTERSPECIES_ACADEMY"),
+    unlock=Item(type=UnlockBuilding, name="BLD_INTERSPECIES_ACADEMY"),
     graphic="icons/tech/transcendent_architecture.png",
 )
