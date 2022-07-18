@@ -263,7 +263,7 @@ void Button::RenderDefault()
 StateButton::StateButton(std::string str, const std::shared_ptr<Font>& font,
                          Flags<TextFormat> format, Clr color,
                          std::shared_ptr<StateButtonRepresenter> representer,
-                         Clr text_color/* = CLR_BLACK*/) :
+                         Clr text_color) :
     Control(X0, Y0, X1, Y1, INTERACTIVE),
     m_representer(std::move(representer)),
     m_label(Wnd::Create<TextControl>(X0, Y0, X1, Y1, std::move(str), font,
@@ -354,7 +354,7 @@ void StateButton::SizeMove(const Pt& ul, const Pt& lr)
 void StateButton::Reset()
 { SetCheck(false); }
 
-void StateButton::SetCheck(bool b/* = true*/)
+void StateButton::SetCheck(bool b)
 { m_checked = b; }
 
 void StateButton::SetTextColor(Clr c)
@@ -443,7 +443,7 @@ Pt StateButtonRepresenter::MinUsableSize(const StateButton& button) const
 ////////////////////////////////////////////////
 // GG::BeveledCheckBoxRepresenter
 ////////////////////////////////////////////////
-BeveledCheckBoxRepresenter::BeveledCheckBoxRepresenter(Clr interior/* = CLR_ZERO*/):
+BeveledCheckBoxRepresenter::BeveledCheckBoxRepresenter(Clr interior):
     m_int_color(interior)
 {}
 
@@ -478,7 +478,7 @@ void BeveledCheckBoxRepresenter::Render(const GG::StateButton& button) const
 ////////////////////////////////////////////////
 // GG::BeveledRadioRepresenter
 ////////////////////////////////////////////////
-BeveledRadioRepresenter::BeveledRadioRepresenter(Clr interior/* = CLR_ZERO*/):
+BeveledRadioRepresenter::BeveledRadioRepresenter(Clr interior):
     m_int_color(interior)
 {}
 
@@ -623,7 +623,7 @@ void RadioButtonGroup::SetCheck(std::size_t index)
     SetCheckImpl(index, false);
 }
 
-void RadioButtonGroup::DisableButton(std::size_t index, bool b/* = true*/)
+void RadioButtonGroup::DisableButton(std::size_t index, bool b)
 {
     if (index < m_button_slots.size()) {
         bool was_disabled = m_button_slots[index].button->Disabled();

@@ -917,7 +917,7 @@ void GalaxySetupPanel::DoLayout() {
     m_ai_aggression_list->SizeMove(control_ul, control_lr);
 }
 
-void GalaxySetupPanel::Disable(bool b/* = true*/) {
+void GalaxySetupPanel::Disable(bool b) {
     for (auto& child : Children())
         static_cast<GG::Control*>(child.get())->Disable(b);
 }

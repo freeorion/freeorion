@@ -1347,7 +1347,8 @@ ShipDesignOrder::ShipDesignOrder(int empire, const ShipDesign& ship_design) :
     m_name_desc_in_stringtable(ship_design.LookupInStringtable())
 {}
 
-ShipDesignOrder::ShipDesignOrder(int empire, int existing_design_id, const std::string& new_name/* = ""*/, const std::string& new_description/* = ""*/) :
+ShipDesignOrder::ShipDesignOrder(int empire, int existing_design_id,
+                                 const std::string& new_name, const std::string& new_description) :
     Order(empire),
     m_design_id(existing_design_id),
     m_update_name_or_description(true),

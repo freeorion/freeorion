@@ -160,7 +160,7 @@ std::string ValueRefLinkText(const std::string& text, const bool add_explanation
 // LinkText
 ///////////////////////////////////////
 LinkText::LinkText(GG::X x, GG::Y y, GG::X w, const std::string& str, const std::shared_ptr<GG::Font>& font,
-                   GG::Flags<GG::TextFormat> format/* = GG::FORMAT_NONE*/, GG::Clr color/* = GG::CLR_BLACK*/) :
+                   GG::Flags<GG::TextFormat> format, GG::Clr color) :
     GG::TextControl(x, y, w, GG::Y1, str, font, color, format, GG::INTERACTIVE),
     TextLinker(),
     m_raw_text(str)
@@ -171,7 +171,7 @@ LinkText::LinkText(GG::X x, GG::Y y, GG::X w, const std::string& str, const std:
 }
 
 LinkText::LinkText(GG::X x, GG::Y y, const std::string& str, const std::shared_ptr<GG::Font>& font,
-                   GG::Clr color/* = GG::CLR_BLACK*/) :
+                   GG::Clr color) :
     GG::TextControl(x, y, GG::X1, GG::Y1, str, font, color, GG::FORMAT_NOWRAP, GG::INTERACTIVE),
     TextLinker(),
     m_raw_text(str)

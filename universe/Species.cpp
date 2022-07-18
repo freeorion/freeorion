@@ -554,7 +554,7 @@ void SpeciesManager::SetSpeciesSpeciesOpinion(const std::string& opinionated_spe
 { m_species_species_opinions[opinionated_species][rated_species] = opinion; }
 
 const std::map<std::string, std::set<int>>& SpeciesManager::GetSpeciesHomeworldsMap(
-    int encoding_empire/* = ALL_EMPIRES*/) const
+    int encoding_empire) const
 {
     if (encoding_empire == ALL_EMPIRES)
         return m_species_homeworlds;
@@ -562,10 +562,10 @@ const std::map<std::string, std::set<int>>& SpeciesManager::GetSpeciesHomeworlds
     return m_species_homeworlds;
 }
 
-const std::map<std::string, std::map<int, float>>& SpeciesManager::GetSpeciesEmpireOpinionsMap(int encoding_empire/* = ALL_EMPIRES*/) const
+const std::map<std::string, std::map<int, float>>& SpeciesManager::GetSpeciesEmpireOpinionsMap(int encoding_empire) const
 { return m_species_empire_opinions; }
 
-const std::map<std::string, std::map<std::string, float>>& SpeciesManager::GetSpeciesSpeciesOpinionsMap(int encoding_empire/* = ALL_EMPIRES*/) const
+const std::map<std::string, std::map<std::string, float>>& SpeciesManager::GetSpeciesSpeciesOpinionsMap(int encoding_empire) const
 { return m_species_species_opinions; }
 
 float SpeciesManager::SpeciesEmpireOpinion(const std::string& species_name, int empire_id) const {

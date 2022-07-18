@@ -111,13 +111,13 @@ const XMLElement& XMLElement::Child(const std::string& tag) const {
     return *match;
 }
 
-std::string XMLElement::WriteElement(int indent/* = 0*/, bool whitespace/* = true*/) const {
+std::string XMLElement::WriteElement(int indent, bool whitespace) const {
     std::stringstream ss;
     WriteElement(ss, indent, whitespace);
     return ss.str();
 }
 
-std::ostream& XMLElement::WriteElement(std::ostream& os, int indent/* = 0*/, bool whitespace/* = true*/) const {
+std::ostream& XMLElement::WriteElement(std::ostream& os, int indent, bool whitespace) const {
     if (whitespace)
         os << std::string(indent * 2, ' ');
     os << '<' << m_tag;
@@ -170,7 +170,7 @@ XMLDoc::RuleDefiner      XMLDoc::s_rule_definer;
 XMLElement               XMLDoc::s_temp_elem;
 std::string              XMLDoc::s_temp_attr_name;
 
-XMLDoc::XMLDoc(std::string root_tag/*= "XMLDoc"*/) :
+XMLDoc::XMLDoc(std::string root_tag) :
     root_node(XMLElement(std::move(root_tag), true))
 {}
 
@@ -178,7 +178,7 @@ XMLDoc::XMLDoc(const std::istream& is) :
     root_node(XMLElement())
 {}
 
-std::ostream& XMLDoc::WriteDoc(std::ostream& os, bool whitespace/* = true*/) const {
+std::ostream& XMLDoc::WriteDoc(std::ostream& os, bool whitespace) const {
     os << "<?xml version=\"1.0\"?>";
     if (whitespace) os << "\n";
     return root_node.WriteElement(os, 0, whitespace);

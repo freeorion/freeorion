@@ -18,7 +18,7 @@ namespace {
 }
 
 TextureCursor::TextureCursor(std::shared_ptr<Texture> texture,
-                             const Pt& hotspot/* = Pt()*/) :
+                             const Pt& hotspot) :
     m_texture(std::move(texture)),
     m_hotspot(hotspot)
 {

@@ -697,7 +697,7 @@ void MultiPlayerLobbyWnd::CompleteConstruction() {
     TraceLogger() << "MultiPlayerLobbyWnd::CompleteConstruction done";
 }
 
-MultiPlayerLobbyWnd::PlayerLabelRow::PlayerLabelRow(GG::X width /* = GG::X(580)*/) :
+MultiPlayerLobbyWnd::PlayerLabelRow::PlayerLabelRow(GG::X width) :
     GG::ListBox::Row(width, PlayerRowHeight())
 {}
 

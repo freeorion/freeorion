@@ -413,7 +413,7 @@ bool GGHumanClientApp::CanSaveNow() const {
     return true;
 }
 
-void GGHumanClientApp::SetSinglePlayerGame(bool sp/* = true*/)
+void GGHumanClientApp::SetSinglePlayerGame(bool sp)
 { m_single_player_game = sp; }
 
 #ifdef FREEORION_MACOSX
@@ -730,7 +730,7 @@ void GGHumanClientApp::SaveGameCompleted() {
     }
 }
 
-void GGHumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
+void GGHumanClientApp::LoadSinglePlayerGame(std::string filename) {
     DebugLogger() << "GGHumanClientApp::LoadSinglePlayerGame";
 
     if (!filename.empty()) {
@@ -1451,7 +1451,7 @@ void GGHumanClientApp::ExitApp(int exit_code)
 void GGHumanClientApp::ExitSDL(int exit_code)
 { SDLGUI::ExitApp(exit_code); }
 
-void GGHumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_code /* = 0*/) {
+void GGHumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_code ) {
     DebugLogger() << "GGHumanClientApp::ResetOrExitApp(" << reset << ", " << skip_savegame << ", " << exit_code << ")";
     if (m_exit_handled) {
         static int repeat_count = 0;

@@ -3126,8 +3126,8 @@ MoveInOrbit::MoveInOrbit(std::unique_ptr<ValueRef::ValueRef<double>>&& speed,
 {}
 
 MoveInOrbit::MoveInOrbit(std::unique_ptr<ValueRef::ValueRef<double>>&& speed,
-                         std::unique_ptr<ValueRef::ValueRef<double>>&& focus_x/* = 0*/,
-                         std::unique_ptr<ValueRef::ValueRef<double>>&& focus_y/* = 0*/) :
+                         std::unique_ptr<ValueRef::ValueRef<double>>&& focus_x,
+                         std::unique_ptr<ValueRef::ValueRef<double>>&& focus_y) :
     m_speed(std::move(speed)),
     m_focus_x(std::move(focus_x)),
     m_focus_y(std::move(focus_y))
@@ -3284,8 +3284,8 @@ MoveTowards::MoveTowards(std::unique_ptr<ValueRef::ValueRef<double>>&& speed,
 {}
 
 MoveTowards::MoveTowards(std::unique_ptr<ValueRef::ValueRef<double>>&& speed,
-                         std::unique_ptr<ValueRef::ValueRef<double>>&& dest_x/* = 0*/,
-                         std::unique_ptr<ValueRef::ValueRef<double>>&& dest_y/* = 0*/) :
+                         std::unique_ptr<ValueRef::ValueRef<double>>&& dest_x,
+                         std::unique_ptr<ValueRef::ValueRef<double>>&& dest_y) :
     m_speed(std::move(speed)),
     m_dest_x(std::move(dest_x)),
     m_dest_y(std::move(dest_y))
@@ -3621,7 +3621,7 @@ std::unique_ptr<Effect> Victory::Clone() const {
 ///////////////////////////////////////////////////////////
 SetEmpireTechProgress::SetEmpireTechProgress(std::unique_ptr<ValueRef::ValueRef<std::string>>&& tech_name,
                                              std::unique_ptr<ValueRef::ValueRef<double>>&& research_progress,
-                                             std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id /*= nullptr*/) :
+                                             std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
     m_tech_name(std::move(tech_name)),
     m_research_progress(std::move(research_progress)),
     m_empire_id(

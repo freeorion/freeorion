@@ -1208,19 +1208,19 @@ void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const 
 
 void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name,
                             const std::string& text, const boost::filesystem::path& path,
-                            std::function<bool (const std::string&)> string_validator/* = 0*/)
+                            std::function<bool (const std::string&)> string_validator)
 { FileOption(page, indentation_level, option_name, text, path, std::vector<std::pair<std::string, std::string>>(), string_validator); }
 
 void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name,
                             const std::string& text, const boost::filesystem::path& path,
                             const std::pair<std::string, std::string>& filter,
-                            std::function<bool (const std::string&)> string_validator/* = 0*/)
+                            std::function<bool (const std::string&)> string_validator)
 { FileOption(page, indentation_level, option_name, text, path, std::vector<std::pair<std::string, std::string>>(1, filter), string_validator); }
 
 void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name,
                             const std::string& text, const boost::filesystem::path& path,
                             const std::vector<std::pair<std::string, std::string>>& filters,
-                            std::function<bool (const std::string&)> string_validator/* = 0*/)
+                            std::function<bool (const std::string&)> string_validator)
 { FileOptionImpl(page, indentation_level, option_name, text, path, filters, string_validator, false, false, false); }
 
 void OptionsWnd::SoundFileOption(GG::ListBox* page, int indentation_level, const std::string& option_name,
@@ -1230,7 +1230,7 @@ void OptionsWnd::SoundFileOption(GG::ListBox* page, int indentation_level, const
 }
 
 void OptionsWnd::DirectoryOption(GG::ListBox* page, int indentation_level, const std::string& option_name,
-                                 const std::string& text, const fs::path& path, bool disabled /*= false*/)
+                                 const std::string& text, const fs::path& path, bool disabled)
 {
     FileOptionImpl(page, indentation_level, option_name, text, path, std::vector<std::pair<std::string, std::string>>(),
                    ValidDirectory, true, false, disabled);

@@ -659,7 +659,7 @@ namespace {
     };
 }
 
-ShipFightersBrowseWnd::ShipFightersBrowseWnd(int object_id, MeterType primary_meter_type, bool show_all_bouts /* = false*/) :
+ShipFightersBrowseWnd::ShipFightersBrowseWnd(int object_id, MeterType primary_meter_type, bool show_all_bouts ) :
     MeterBrowseWnd(object_id, primary_meter_type),
     m_show_all_bouts(show_all_bouts)
 {}

@@ -2516,7 +2516,7 @@ void SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot(GG::DropDownList:
     DebugLogger() << "Returned from sending focus-changed signal.";
 }
 
-void SidePanel::PlanetPanel::EnableOrderIssuing(bool enable/* = true*/) {
+void SidePanel::PlanetPanel::EnableOrderIssuing(bool enable) {
     m_order_issuing_enabled = enable;
 
     m_colonize_button->Disable(!enable);
@@ -2858,7 +2858,7 @@ void SidePanel::PlanetPanelContainer::SizeMove(const GG::Pt& ul, const GG::Pt& l
         RequirePreRender();
 }
 
-void SidePanel::PlanetPanelContainer::EnableOrderIssuing(bool enable/* = true*/) {
+void SidePanel::PlanetPanelContainer::EnableOrderIssuing(bool enable) {
     for (auto& panel : m_planet_panels) {
         panel->EnableOrderIssuing(enable);
     }
@@ -3655,10 +3655,10 @@ void SidePanel::SetSystem(int system_id) {
     Refresh();
 }
 
-void SidePanel::EnableSelection(bool enable/* = true*/)
+void SidePanel::EnableSelection(bool enable)
 { m_selection_enabled = enable; }
 
-void SidePanel::EnableOrderIssuing(bool enable/* = true*/) {
+void SidePanel::EnableOrderIssuing(bool enable) {
     m_system_name->EnableOrderIssuing(enable);
     m_planet_panel_container->EnableOrderIssuing(enable);
 }

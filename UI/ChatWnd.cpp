@@ -405,7 +405,7 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text,
     }
 }
 
-void MessageWnd::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id, bool prefixed /*= false*/) {
+void MessageWnd::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id, bool prefixed) {
     std::string phase_str;
     switch (phase_id) {
     case Message::TurnProgressPhase::FLEET_MOVEMENT:

@@ -126,8 +126,8 @@ private:
 
 template <typename T>
 Slider<T>::Slider(T min, T max, Orientation orientation,
-                  Clr color, int unsigned tab_width, int unsigned line_width/* = 5*/,
-                  Flags<WndFlag> flags/* = INTERACTIVE*/) :
+                  Clr color, int unsigned tab_width, int unsigned line_width,
+                  Flags<WndFlag> flags) :
     Control(X0, Y0, X1, Y1, flags),
     m_posn(min),
     m_range_min(min),
@@ -225,7 +225,7 @@ void Slider<T>::SizeMove(const Pt& ul, const Pt& lr)
 }
 
 template <typename T>
-void Slider<T>::Disable(bool b/* = true*/)
+void Slider<T>::Disable(bool b)
 {
     Control::Disable(b);
     m_tab->Disable(b);

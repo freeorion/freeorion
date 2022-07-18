@@ -9,7 +9,8 @@ namespace {
     constexpr GG::Y ICON_BROWSE_ICON_HEIGHT(64);
 }
 
-TextBrowseWnd::TextBrowseWnd(const std::string& title_text, const std::string& main_text, GG::X w /* = GG::X(200) */) :
+TextBrowseWnd::TextBrowseWnd(const std::string& title_text,
+                             const std::string& main_text, GG::X w) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, w, GG::Y1)
 {
     const GG::Y ROW_HEIGHT(IconTextBrowseWndRowHeight());

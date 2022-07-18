@@ -50,8 +50,8 @@ std::string CUIStyle::Translate(const std::string& text) const
 }
 
 std::shared_ptr<GG::Button> CUIStyle::NewButton(std::string str, const std::shared_ptr<GG::Font>& font,
-                                                GG::Clr color, GG::Clr text_color/* = CLR_BLACK*/,
-                                                GG::Flags<GG::WndFlag> flags/* = INTERACTIVE*/) const
+                                                GG::Clr color, GG::Clr text_color,
+                                                GG::Flags<GG::WndFlag> flags) const
 { return GG::Wnd::Create<CUIButton>(std::move(str)); }
 
 
@@ -59,23 +59,23 @@ std::shared_ptr<GG::DropDownList> CUIStyle::NewDropDownList(size_t num_shown_ele
 { return GG::Wnd::Create<CUIDropDownList>(num_shown_elements); }
 
 std::shared_ptr<GG::Edit> CUIStyle::NewEdit(std::string str, const std::shared_ptr<GG::Font>& font,
-                                            GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
-                                            GG::Clr interior/* = GG::CLR_ZERO*/) const
+                                            GG::Clr color, GG::Clr text_color,
+                                            GG::Clr interior) const
 { return GG::Wnd::Create<CUIEdit>(std::move(str)); }
 
-std::shared_ptr<GG::ListBox> CUIStyle::NewListBox(GG::Clr color, GG::Clr interior/* = GG::CLR_ZERO*/) const
+std::shared_ptr<GG::ListBox> CUIStyle::NewListBox(GG::Clr color, GG::Clr interior) const
 { return GG::Wnd::Create<CUIListBox>(); }
 
 std::shared_ptr<GG::Scroll> CUIStyle::NewScroll(GG::Orientation orientation, GG::Clr color, GG::Clr interior) const
 { return GG::Wnd::Create<CUIScroll>(orientation); }
 
 std::shared_ptr<GG::Slider<int>> CUIStyle::NewIntSlider(int min, int max, GG::Orientation orientation,
-                                                        GG::Clr color, int tab_width, int line_width/* = 5*/) const
+                                                        GG::Clr color, int tab_width, int line_width) const
 { return GG::Wnd::Create<CUISlider<int>>(min, max, orientation); }
 
 
 std::shared_ptr<GG::TabBar> CUIStyle::NewTabBar(const std::shared_ptr<GG::Font>& font, GG::Clr color,
-                                                GG::Clr text_color/* = GG::CLR_BLACK*/) const
+                                                GG::Clr text_color) const
 { return GG::Wnd::Create<CUITabBar>(font, color, text_color); }
 
 std::shared_ptr<GG::Button> CUIStyle::NewScrollUpButton(GG::Clr color) const
@@ -121,7 +121,7 @@ std::shared_ptr<GG::Button> CUIStyle::NewSpinDecrButton(
 std::shared_ptr<GG::StateButton> CUIStyle::NewTabBarTab(
     std::string str, const std::shared_ptr<GG::Font>& font,
     GG::Flags<GG::TextFormat> format, GG::Clr color,
-    GG::Clr text_color/* = GG::CLR_BLACK*/) const
+    GG::Clr text_color) const
 {
     auto retval = GG::Wnd::Create<CUIStateButton>(std::move(str), format, std::make_shared<CUITabRepresenter>());
     retval->SetColor(ClientUI::WndColor());
@@ -132,10 +132,10 @@ std::shared_ptr<GG::StateButton> CUIStyle::NewTabBarTab(
 
 std::shared_ptr<GG::Button> CUIStyle::NewTabBarLeftButton(
     const std::shared_ptr<GG::Font>& font,
-    GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/) const
+    GG::Clr color, GG::Clr text_color) const
 { return GG::Wnd::Create<CUIArrowButton>(ShapeOrientation::LEFT, true, GG::INTERACTIVE); }
 
 std::shared_ptr<GG::Button> CUIStyle::NewTabBarRightButton(
     const std::shared_ptr<GG::Font>& font,
-    GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/) const
+    GG::Clr color, GG::Clr text_color) const
 { return GG::Wnd::Create<CUIArrowButton>(ShapeOrientation::RIGHT, true, GG::INTERACTIVE); }

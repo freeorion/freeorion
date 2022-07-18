@@ -1116,7 +1116,7 @@ GUI::const_accel_iterator GUI::accel_begin() const
 GUI::const_accel_iterator GUI::accel_end() const
 { return m_impl->m_accelerators.end(); }
 
-GUI::AcceleratorSignalType& GUI::AcceleratorSignal(Key key, Flags<ModKey> mod_keys/* = MOD_KEY_NONE*/) const
+GUI::AcceleratorSignalType& GUI::AcceleratorSignal(Key key, Flags<ModKey> mod_keys) const
 {
     std::shared_ptr<AcceleratorSignalType>& sig_ptr = m_impl->m_accelerator_sigs[{key, mod_keys}];
     if (!sig_ptr)
@@ -1294,7 +1294,7 @@ void GUI::Remove(const std::shared_ptr<Wnd>& wnd)
         m_impl->m_zlist.Remove(wnd);
 }
 
-void GUI::EnableFPS(bool b/* = true*/)
+void GUI::EnableFPS(bool b)
 {
     m_impl->m_calc_FPS = b;
     if (!b)
@@ -1387,13 +1387,13 @@ GUI::accel_iterator GUI::accel_begin()
 GUI::accel_iterator GUI::accel_end()
 { return m_impl->m_accelerators.end(); }
 
-void GUI::SetAccelerator(Key key, Flags<ModKey> mod_keys/* = MOD_KEY_NONE*/)
+void GUI::SetAccelerator(Key key, Flags<ModKey> mod_keys)
 {
     mod_keys = MassagedAccelModKeys(mod_keys);
     m_impl->m_accelerators.emplace(key, mod_keys);
 }
 
-void GUI::RemoveAccelerator(Key key, Flags<ModKey> mod_keys/* = MOD_KEY_NONE*/)
+void GUI::RemoveAccelerator(Key key, Flags<ModKey> mod_keys)
 {
     mod_keys = MassagedAccelModKeys(mod_keys);
     m_impl->m_accelerators.erase({key, mod_keys});
@@ -1405,7 +1405,7 @@ void GUI::RemoveAccelerator(accel_iterator it)
 void GUI::EnableModalAcceleratorSignals(bool allow)
 { m_impl->m_allow_modal_accelerator_signals = allow; }
 
-void GUI::SetMouseLRSwapped(bool swapped/* = true*/)
+void GUI::SetMouseLRSwapped(bool swapped)
 { m_impl->m_mouse_lr_swap = swapped; }
 
 std::shared_ptr<Font> GUI::GetFont(const std::string& font_filename, unsigned int pts)
@@ -1437,7 +1437,7 @@ std::shared_ptr<Texture> GUI::StoreTexture(Texture* texture, const std::string& 
 std::shared_ptr<Texture> GUI::StoreTexture(const std::shared_ptr<Texture>& texture, const std::string& texture_name)
 { return GetTextureManager().StoreTexture(texture, texture_name); }
 
-std::shared_ptr<Texture> GUI::GetTexture(const boost::filesystem::path& path, bool mipmap/* = false*/)
+std::shared_ptr<Texture> GUI::GetTexture(const boost::filesystem::path& path, bool mipmap)
 { return GetTextureManager().GetTexture(path, mipmap); }
 
 void GUI::FreeTexture(const boost::filesystem::path& path)

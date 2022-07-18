@@ -45,8 +45,8 @@ bool dummy = RegisterGraphicStyles();
 // GG::StaticGraphic
 ////////////////////////////////////////////////
 StaticGraphic::StaticGraphic(std::shared_ptr<Texture> texture,
-                             Flags<GraphicStyle> style/* = GRAPHIC_NONE*/,
-                             Flags<WndFlag> flags/* = 0*/) :
+                             Flags<GraphicStyle> style,
+                             Flags<WndFlag> flags) :
     Control(X0, Y0, X1, Y1, flags),
     m_style(style)
 {
@@ -59,8 +59,8 @@ StaticGraphic::StaticGraphic(std::shared_ptr<Texture> texture,
 }
 
 StaticGraphic::StaticGraphic(SubTexture subtexture,
-                             Flags<GraphicStyle> style/* = GRAPHIC_NONE*/,
-                             Flags<WndFlag> flags/* = 0*/) :
+                             Flags<GraphicStyle> style,
+                             Flags<WndFlag> flags) :
     Control(X0, Y0, X1, Y1, flags),
     m_graphic(std::move(subtexture)),
     m_style(style)
@@ -70,8 +70,8 @@ StaticGraphic::StaticGraphic(SubTexture subtexture,
 }
 
 StaticGraphic::StaticGraphic(std::shared_ptr<VectorTexture> texture,
-                             Flags<GraphicStyle> style/* = GRAPHIC_NONE*/,
-                             Flags<WndFlag> flags/* = 0*/) :
+                             Flags<GraphicStyle> style,
+                             Flags<WndFlag> flags) :
     Control(X0, Y0, X1, Y1, flags),
     m_vector_texture(std::move(texture)),
     m_style(style)

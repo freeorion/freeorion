@@ -355,8 +355,8 @@ const ShipDesign* Universe::GetShipDesign(int ship_design_id) const {
     return (it != m_ship_designs.end() ? it->second : nullptr);
 }
 
-void Universe::RenameShipDesign(int design_id, const std::string& name/* = ""*/,
-                                const std::string& description/* = ""*/)
+void Universe::RenameShipDesign(int design_id, const std::string& name,
+                                const std::string& description)
 {
     auto design_it = m_ship_designs.find(design_id);
     if (design_it == m_ship_designs.end()) {
@@ -1724,10 +1724,10 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
 void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
                               ScriptingContext& context,
                               bool update_effect_accounting,
-                              bool only_meter_effects/* = false*/,
-                              bool only_appearance_effects/* = false*/,
-                              bool include_empire_meter_effects/* = false*/,
-                              bool only_generate_sitrep_effects/* = false*/)
+                              bool only_meter_effects,
+                              bool only_appearance_effects,
+                              bool include_empire_meter_effects,
+                              bool only_generate_sitrep_effects)
 {
     CheckContextVsThisUniverse(*this, context);
     ScopedTimer timer("Universe::ExecuteEffects", true);
@@ -2018,7 +2018,7 @@ void Universe::SetEmpireObjectVisibility(int empire_id, int object_id, Visibilit
 
 void Universe::SetEmpireSpecialVisibility(int empire_id, int object_id,
                                           const std::string& special_name,
-                                          bool visible/* = true*/)
+                                          bool visible)
 {
     if (empire_id == ALL_EMPIRES || special_name.empty() || object_id == INVALID_OBJECT_ID)
         return;

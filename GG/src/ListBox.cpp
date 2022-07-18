@@ -477,7 +477,7 @@ bool ListBox::RowPtrIteratorLess::operator()(const ListBox::iterator& lhs, const
 ////////////////////////////////////////////////
 // GG::ListBox
 ////////////////////////////////////////////////
-ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
+ListBox::ListBox(Clr color, Clr interior) :
     Control(X0, Y0, X1, Y1, INTERACTIVE),
     m_caret(m_rows.end()),
     m_old_sel_row(m_rows.end()),
@@ -969,7 +969,7 @@ void ListBox::Show()
     ShowVisibleRows(false);
 }
 
-void ListBox::Disable(bool b/* = true*/)
+void ListBox::Disable(bool b)
 {
     Control::Disable(b);
     if (m_vscroll)
@@ -1005,7 +1005,7 @@ void ListBox::Insert(const std::vector<std::shared_ptr<Row>>& rows)
 void ListBox::Insert(std::vector<std::shared_ptr<Row>>&& rows)
 { Insert(std::move(rows), m_rows.end(), false); }
 
-std::shared_ptr<ListBox::Row> ListBox::Erase(iterator it, bool signal/* = false*/)
+std::shared_ptr<ListBox::Row> ListBox::Erase(iterator it, bool signal)
 { return Erase(it, false, signal); }
 
 void ListBox::Clear()
@@ -1041,7 +1041,7 @@ void ListBox::Clear()
     ClearedRowsSignal();
 }
 
-void ListBox::SelectRow(iterator it, bool signal/* = false*/)
+void ListBox::SelectRow(iterator it, bool signal)
 {
     if (m_style & LIST_NOSEL)
         return;
@@ -1061,7 +1061,7 @@ void ListBox::SelectRow(iterator it, bool signal/* = false*/)
         SelRowsChangedSignal(m_selections);
 }
 
-void ListBox::DeselectRow(iterator it, bool signal/* = false*/)
+void ListBox::DeselectRow(iterator it, bool signal)
 {
     SelectionSet previous_selections = m_selections;
 
@@ -1074,7 +1074,7 @@ void ListBox::DeselectRow(iterator it, bool signal/* = false*/)
         SelRowsChangedSignal(m_selections);
 }
 
-void ListBox::SelectAll(bool signal/* = false*/)
+void ListBox::SelectAll(bool signal)
 {
     if (m_style & LIST_NOSEL)
         return;
@@ -1098,7 +1098,7 @@ void ListBox::SelectAll(bool signal/* = false*/)
         SelRowsChangedSignal(m_selections);
 }
 
-void ListBox::DeselectAll(bool signal/* = false*/)
+void ListBox::DeselectAll(bool signal)
 {
     SelectionSet previous_selections = m_selections;
 
@@ -1123,7 +1123,7 @@ ListBox::Row& ListBox::GetRow(std::size_t n)
     return **std::next(m_rows.begin(), n);
 }
 
-void ListBox::SetSelections(const SelectionSet& s, bool signal/* = false*/)
+void ListBox::SetSelections(const SelectionSet& s, bool signal)
 {
     if (m_style & LIST_NOSEL)
         return;

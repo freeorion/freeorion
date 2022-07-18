@@ -135,7 +135,7 @@ void OverlayWnd::SetCurrentWnd(std::size_t index)
 // GG::TabWnd
 ////////////////////////////////////////////////
 TabWnd::TabWnd(X x, Y y, X w, Y h, const std::shared_ptr<Font>& font, Clr color,
-               Clr text_color/* = CLR_BLACK*/) :
+               Clr text_color) :
     Wnd(x, y, w, h, INTERACTIVE),
     m_tab_bar(GetStyleFactory()->NewTabBar(font, color, text_color)),
     m_overlay(Wnd::Create<OverlayWnd>(X0, Y0, X1, Y1))
@@ -230,8 +230,8 @@ void TabWnd::TabChanged(std::size_t index, bool signal)
 ////////////////////////////////////////////////
 // GG::TabBar
 ////////////////////////////////////////////////
-TabBar::TabBar(const std::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
-               Flags<WndFlag> flags/* = INTERACTIVE*/) :
+TabBar::TabBar(const std::shared_ptr<Font>& font, Clr color, Clr text_color,
+               Flags<WndFlag> flags) :
     Control(X0, Y0, X1, TabHeightFromFont(font), flags),
     m_font(font),
     m_left_right_button_layout(Wnd::Create<Layout>(X0, Y0, X1, TabHeightFromFont(font), 1, 3)),

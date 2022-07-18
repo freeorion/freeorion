@@ -884,7 +884,7 @@ void ClientUI::ZoomToFleet(std::shared_ptr<const Fleet> fleet) {
         fleet_wnd->SelectFleet(fleet->ID());
 }
 
-bool ClientUI::ZoomToContent(const std::string& name, bool reverse_lookup/* = false*/) {
+bool ClientUI::ZoomToContent(const std::string& name, bool reverse_lookup) {
     if (reverse_lookup) {
         for (const auto& tech : GetTechManager()) {
             if (boost::iequals(name, UserString(tech->Name())))
@@ -1086,7 +1086,7 @@ void ClientUI::RestoreFromSaveData(const SaveGameUIData& ui_data) {
 ClientUI* ClientUI::GetClientUI()
 { return s_the_UI; }
 
-void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = false*/) {
+void ClientUI::MessageBox(const std::string& message, bool play_alert_sound) {
     auto dlg = GG::GUI::GetGUI()->GetStyleFactory()->NewThreeButtonDlg(
         GG::X(320), GG::Y(200), message, GetFont(Pts()+2),
         WndColor(), WndOuterBorderColor(), CtrlColor(), TextColor(),
@@ -1096,7 +1096,7 @@ void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = 
     dlg->Run();
 }
 
-std::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::path& path, bool mipmap/* = false*/) {
+std::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::path& path, bool mipmap) {
     std::shared_ptr<GG::Texture> retval;
     try {
         retval = GGHumanClientApp::GetApp()->GetTexture(path, mipmap);
@@ -1124,7 +1124,7 @@ std::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::path&
     return retval;
 }
 
-std::shared_ptr<GG::Font> ClientUI::GetFont(int pts/* = Pts()*/) {
+std::shared_ptr<GG::Font> ClientUI::GetFont(int pts) {
      try {
         return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("ui.font.path"), pts,
                                           RequiredCharsets().begin(), RequiredCharsets().end());
@@ -1138,7 +1138,7 @@ std::shared_ptr<GG::Font> ClientUI::GetFont(int pts/* = Pts()*/) {
     }
 }
 
-std::shared_ptr<GG::Font> ClientUI::GetBoldFont(int pts/* = Pts()*/) {
+std::shared_ptr<GG::Font> ClientUI::GetBoldFont(int pts) {
     try {
         return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("ui.font.bold.path"), pts, RequiredCharsets().begin(), RequiredCharsets().end());
     } catch (...) {
@@ -1151,7 +1151,7 @@ std::shared_ptr<GG::Font> ClientUI::GetBoldFont(int pts/* = Pts()*/) {
     }
 }
 
-std::shared_ptr<GG::Font> ClientUI::GetTitleFont(int pts/* = TitlePts()*/) {
+std::shared_ptr<GG::Font> ClientUI::GetTitleFont(int pts) {
     try {
         return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("ui.font.title.path"), pts, RequiredCharsets().begin(), RequiredCharsets().end());
     } catch (...) {

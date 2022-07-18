@@ -741,16 +741,16 @@ void GG::Triangle(X x1, Y y1, X x2, Y y2, X x3, Y y3, bool filled)
 }
 
 void GG::FlatRectangle(Pt ul, Pt lr, Clr color, Clr border_color,
-                       unsigned int border_thick/* = 2*/)
+                       unsigned int border_thick)
 {
     Rectangle(ul, lr, color, border_color, border_color, border_thick,
               true, true, true, true);
 }
 
 void GG::BeveledRectangle(Pt ul, Pt lr, Clr color, Clr border_color, bool up,
-                          unsigned int bevel_thick/* = 2*/, bool bevel_left/* = true*/,
-                          bool bevel_top/* = true*/, bool bevel_right/* = true*/,
-                          bool bevel_bottom/* = true*/)
+                          unsigned int bevel_thick, bool bevel_left,
+                          bool bevel_top, bool bevel_right,
+                          bool bevel_bottom)
 {
     Rectangle(ul, lr, color,
               (up ? LightenClr(border_color) : DarkenClr(border_color)),
@@ -759,16 +759,16 @@ void GG::BeveledRectangle(Pt ul, Pt lr, Clr color, Clr border_color, bool up,
 }
 
 void GG::FlatRoundedRectangle(Pt ul, Pt lr, Clr color, Clr border_color,
-                              unsigned int corner_radius/* = 5*/,
-                              unsigned int border_thick/* = 2*/)
+                              unsigned int corner_radius,
+                              unsigned int border_thick)
 {
     RoundedRectangle(ul, lr, color, border_color, border_color,
                      corner_radius, border_thick);
 }
 
 void GG::BeveledRoundedRectangle(Pt ul, Pt lr, Clr color, Clr border_color, bool up,
-                                 unsigned int corner_radius/* = 5*/,
-                                 unsigned int bevel_thick/* = 2*/)
+                                 unsigned int corner_radius,
+                                 unsigned int bevel_thick)
 {
     RoundedRectangle(ul, lr, color,
                      (up ? LightenClr(border_color) : DarkenClr(border_color)),
@@ -785,7 +785,7 @@ void GG::BeveledCheck(Pt ul, Pt lr, Clr color)
 void GG::FlatX(Pt ul, Pt lr, Clr color)
 { XMark(ul, lr, color, color, color); }
 
-void GG::Bubble(Pt ul, Pt lr, Clr color, bool up/* = true*/)
+void GG::Bubble(Pt ul, Pt lr, Clr color, bool up)
 {
     BubbleArc(ul, lr, color,
               (up ? DarkenClr(color) : LightenClr(color)),
@@ -793,10 +793,10 @@ void GG::Bubble(Pt ul, Pt lr, Clr color, bool up/* = true*/)
               0, 0);
 }
 
-void GG::FlatCircle(Pt ul, Pt lr, Clr color, Clr border_color, unsigned int thick/* = 2*/)
+void GG::FlatCircle(Pt ul, Pt lr, Clr color, Clr border_color, unsigned int thick)
 { CircleArc(ul, lr, color, border_color, border_color, thick, 0, 0); }
 
-void GG::BeveledCircle(Pt ul, Pt lr, Clr color, Clr border_color, bool up/* = true*/, unsigned int bevel_thick/* = 2*/)
+void GG::BeveledCircle(Pt ul, Pt lr, Clr color, Clr border_color, bool up, unsigned int bevel_thick)
 {
     CircleArc(ul, lr, color,
               (up ? DarkenClr(border_color) : LightenClr(border_color)),
@@ -804,7 +804,7 @@ void GG::BeveledCircle(Pt ul, Pt lr, Clr color, Clr border_color, bool up/* = tr
               bevel_thick, 0, 0);
 }
 
-void GG::BubbleRectangle(Pt ul, Pt lr, Clr color, bool up, unsigned int corner_radius/* = 5*/)
+void GG::BubbleRectangle(Pt ul, Pt lr, Clr color, bool up, unsigned int corner_radius)
 {
     ::BubbleRectangle(ul, lr, color,
                       (up ? LightenClr(color) : DarkenClr(color)),

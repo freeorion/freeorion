@@ -166,7 +166,7 @@ void BuildingsPanel::RefreshImpl() {
     DoLayout();
 }
 
-void BuildingsPanel::EnableOrderIssuing(bool enable/* = true*/) {
+void BuildingsPanel::EnableOrderIssuing(bool enable) {
     for (auto& indicator : m_building_indicators)
     { indicator->EnableOrderIssuing(enable); }
 }
@@ -455,7 +455,7 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     popup->Run();
 }
 
-void BuildingIndicator::EnableOrderIssuing(bool enable/* = true*/)
+void BuildingIndicator::EnableOrderIssuing(bool enable)
 { m_order_issuing_enabled = enable; }
 
 void BuildingIndicator::DoLayout() {

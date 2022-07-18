@@ -47,7 +47,7 @@ ZList::RenderOrderIterable ZList::RenderOrder() const
 
 
 
-std::shared_ptr<Wnd> ZList::Pick(const Pt& pt, const std::shared_ptr<Wnd>& modal, const std::set<Wnd*>* ignore/* = 0*/) const
+std::shared_ptr<Wnd> ZList::Pick(const Pt& pt, const std::shared_ptr<Wnd>& modal, const std::set<Wnd*>* ignore) const
 {
     if (modal) { // if a modal window is active, only look there
         // NOTE: We have to check Visible() separately, because in the

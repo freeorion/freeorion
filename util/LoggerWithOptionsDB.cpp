@@ -91,7 +91,7 @@ void InitLoggingOptionsDBSystem() {
     InfoLogger(log) << "Initialized OptionsDB logging configuration.";
 }
 
-void RegisterLoggerWithOptionsDB(const std::string& logger_name, const bool is_exec_logger/*= false*/) {
+void RegisterLoggerWithOptionsDB(const std::string& logger_name, const bool is_exec_logger) {
     if (logger_name.empty())
         return;
 

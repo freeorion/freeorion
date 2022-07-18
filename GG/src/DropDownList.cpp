@@ -813,7 +813,7 @@ void DropDownList::Insert(std::vector<std::shared_ptr<Row>>&& rows)
     RequirePreRender();
 }
 
-std::shared_ptr<DropDownList::Row> DropDownList::Erase(iterator it, bool signal/* = false*/)
+std::shared_ptr<DropDownList::Row> DropDownList::Erase(iterator it, bool signal)
 { return LB()->Erase(it, signal); }
 
 void DropDownList::Clear()
@@ -875,7 +875,7 @@ void DropDownList::SetRowAlignment(iterator it, Alignment align)
 void DropDownList::SetColStretch(std::size_t n, double stretch)
 { LB()->SetColStretch(n, stretch); }
 
-void DropDownList::NormalizeRowsOnInsert(bool enable /*= true*/)
+void DropDownList::NormalizeRowsOnInsert(bool enable)
 { LB()->NormalizeRowsOnInsert(enable); }
 
 void DropDownList::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)

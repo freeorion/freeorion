@@ -360,8 +360,8 @@ void ClientNetworking::Impl::LaunchNetworkThread(const ClientNetworking* const s
 bool ClientNetworking::Impl::ConnectToServer(
     const ClientNetworking* const self,
     const std::string& ip_address,
-    const std::chrono::milliseconds& timeout/* = std::chrono::seconds(10)*/,
-    bool expect_timeout /*=false*/)
+    const std::chrono::milliseconds& timeout,
+    bool expect_timeout)
 {
     TraceLogger(network) << "ClientNetworking::Impl::ConnectToServer(" << self << ", " << ip_address << ", " << timeout.count() << ", " << expect_timeout << ")";
     using Clock = std::chrono::high_resolution_clock;
@@ -415,8 +415,8 @@ bool ClientNetworking::Impl::ConnectToServer(
 
 bool ClientNetworking::Impl::ConnectToLocalHostServer(
     const ClientNetworking* const self,
-    const std::chrono::milliseconds& timeout/* = std::chrono::seconds(10)*/,
-    bool expect_timeout /*=false*/)
+    const std::chrono::milliseconds& timeout,
+    bool expect_timeout)
 {
     TraceLogger(network) << "ClientNetworking::Impl::ConnectToLocalHostServer(" << self << ", " << timeout.count() << ", " << expect_timeout << ")";
     bool retval = false;
@@ -780,20 +780,20 @@ ClientNetworking::ServerNames ClientNetworking::DiscoverLANServerNames()
 
 bool ClientNetworking::ConnectToServer(
     const std::string& ip_address,
-    const std::chrono::milliseconds& timeout/* = std::chrono::seconds(10)*/)
+    const std::chrono::milliseconds& timeout)
 { return m_impl->ConnectToServer(this, ip_address, timeout); }
 
 bool ClientNetworking::ConnectToLocalHostServer(
-    const std::chrono::milliseconds& timeout/* = std::chrono::seconds(10)*/)
+    const std::chrono::milliseconds& timeout)
 { return m_impl->ConnectToLocalHostServer(this, timeout); }
 
 bool ClientNetworking::PingServer(
     const std::string& ip_address,
-    const std::chrono::milliseconds& timeout/* = std::chrono::seconds(10)*/)
+    const std::chrono::milliseconds& timeout)
 { return m_impl->ConnectToServer(this, ip_address, timeout, true /*expect_timeout*/); }
 
 bool ClientNetworking::PingLocalHostServer(
-    const std::chrono::milliseconds& timeout/* = std::chrono::seconds(10)*/)
+    const std::chrono::milliseconds& timeout)
 { return m_impl->ConnectToLocalHostServer(this, timeout, true /*expect_timeout*/); }
 
 void ClientNetworking::DisconnectFromServer()

@@ -31,8 +31,8 @@ GroupBox::GroupBox()
 {}
 
 GroupBox::GroupBox(X x, Y y, X w, Y h, std::string label, const std::shared_ptr<Font>& font,
-                   Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/,
-                   Flags<WndFlag> flags/* = NO_WND_FLAGS*/) :
+                   Clr color, Clr text_color, Clr interior,
+                   Flags<WndFlag> flags) :
     m_color(color),
     m_text_color(text_color),
     m_int_color(interior),

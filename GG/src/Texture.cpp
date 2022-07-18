@@ -130,7 +130,7 @@ void Texture::Blit(const GL2DVertexBuffer& vertex_buffer,
 }
 
 void Texture::OrthoBlit(const Pt& pt1, const Pt& pt2,
-                        const GLfloat* tex_coords/* = 0*/) const
+                        const GLfloat* tex_coords) const
 {
     if (m_opengl_id == 0)
         return;
@@ -181,7 +181,7 @@ void Texture::InitBuffer(GLTexCoordBuffer& tex_coord_buffer, const GLfloat* tex_
 void Texture::OrthoBlit(const Pt& pt) const
 { OrthoBlit(pt, pt + Pt(m_default_width, m_default_height), m_tex_coords); }
 
-void Texture::Load(const boost::filesystem::path& path, bool mipmap/* = false*/)
+void Texture::Load(const boost::filesystem::path& path, bool mipmap)
 {
     namespace gil = boost::gil;
     namespace fs = boost::filesystem;
@@ -321,7 +321,7 @@ void Texture::Load(const boost::filesystem::path& path, bool mipmap/* = false*/)
 }
 
 void Texture::Init(X width, Y height, const unsigned char* image, GLenum format, GLenum type,
-                   unsigned int bytes_per_pixel, bool mipmap/* = false*/)
+                   unsigned int bytes_per_pixel, bool mipmap)
 {
     glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
     glPixelStorei(GL_UNPACK_SWAP_BYTES, false);
@@ -570,7 +570,7 @@ std::shared_ptr<Texture> TextureManager::StoreTexture(std::shared_ptr<Texture> t
     return texture;
 }
 
-std::shared_ptr<Texture> TextureManager::GetTexture(const boost::filesystem::path& path, bool mipmap/* = false*/)
+std::shared_ptr<Texture> TextureManager::GetTexture(const boost::filesystem::path& path, bool mipmap)
 {
     std::scoped_lock lock(m_texture_access_guard);
     auto it = m_textures.find(path.generic_string());

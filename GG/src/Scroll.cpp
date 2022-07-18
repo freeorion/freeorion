@@ -179,7 +179,7 @@ void Scroll::DoLayout()
     SizeScroll(m_range_min, m_range_max, m_line_sz, m_page_sz); // update tab size and position
 }
 
-void Scroll::Disable(bool b/* = true*/)
+void Scroll::Disable(bool b)
 {
     Control::Disable(b);
     m_tab->Disable(b);

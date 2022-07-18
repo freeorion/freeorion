@@ -211,7 +211,7 @@ bool SettableInWindowCUIButton::InWindow(const GG::Pt& pt) const {
 // class CUIArrowButton
 ///////////////////////////////////////
 CUIArrowButton::CUIArrowButton(ShapeOrientation orientation, bool fill_background,
-                               GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) :
+                               GG::Flags<GG::WndFlag> flags) :
     Button("", nullptr, ClientUI::DropDownListArrowColor(), GG::CLR_ZERO, flags),
     m_orientation(orientation),
     m_fill_background_with_wnd_color(fill_background)
@@ -1097,7 +1097,7 @@ void CensoredCUIEdit::ClearSelected() {
 // class CUIMultiEdit
 ///////////////////////////////////////
 CUIMultiEdit::CUIMultiEdit(std::string str,
-                           GG::Flags<GG::MultiEditStyle> style/* = MULTI_LINEWRAP*/) :
+                           GG::Flags<GG::MultiEditStyle> style) :
     MultiEdit(std::move(str), ClientUI::GetFont(), ClientUI::CtrlBorderColor(), style,
               ClientUI::TextColor(), ClientUI::CtrlColor())
 {}
@@ -1304,8 +1304,7 @@ namespace {
     constexpr int STAT_ICON_PAD = 2;    // horizontal or vertical space between icon and label
 }
 
-StatisticIcon::StatisticIcon(std::shared_ptr<GG::Texture> texture,
-                             GG::X w /*= GG::X1*/, GG::Y h /*= GG::Y1*/) :
+StatisticIcon::StatisticIcon(std::shared_ptr<GG::Texture> texture, GG::X w, GG::Y h) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE)
 {
     m_icon = GG::Wnd::Create<GG::StaticGraphic>(std::move(texture), GG::GRAPHIC_FITGRAPHIC);
@@ -1313,7 +1312,7 @@ StatisticIcon::StatisticIcon(std::shared_ptr<GG::Texture> texture,
 
 StatisticIcon::StatisticIcon(std::shared_ptr<GG::Texture> texture,
                              double value, int digits, bool showsign,
-                             GG::X w /*= GG::X1*/, GG::Y h /*= GG::Y1*/) :
+                             GG::X w, GG::Y h) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
     m_values(1, std::tuple<double, int, bool>{value, digits, showsign})
 {

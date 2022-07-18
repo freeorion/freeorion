@@ -213,7 +213,7 @@ void BufferStoreRectangle(GG::GL2DVertexBuffer& buffer,
 }
 
 void AngledCornerRectangle(const GG::Pt& ul, const GG::Pt& lr, GG::Clr color, GG::Clr border, int angle_offset, int thick,
-                           bool upper_left_angled/* = true*/, bool lower_right_angled/* = true*/, bool draw_bottom/* = true*/)
+                           bool upper_left_angled, bool lower_right_angled, bool draw_bottom)
 {
     glDisable(GL_TEXTURE_2D);
 
@@ -273,7 +273,7 @@ void BufferStoreAngledCornerRectangleVertices(GG::GL2DVertexBuffer& buffer, cons
 }
 
 bool InAngledCornerRect(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, int angle_offset,
-                        bool upper_left_angled/* = true*/, bool lower_right_angled)
+                        bool upper_left_angled, bool lower_right_angled)
 {
     bool retval = false;
     if ((retval = ((ul <= pt) && (pt < lr)))) {

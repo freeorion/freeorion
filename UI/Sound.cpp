@@ -184,7 +184,7 @@ void Sound::Enable()
 void Sound::Disable()
 { m_impl->Disable(); }
 
-void Sound::PlayMusic(const boost::filesystem::path& path, int loops /* = 0*/)
+void Sound::PlayMusic(const boost::filesystem::path& path, int loops)
 { m_impl->PlayMusic(path, loops); }
 
 void Sound::PauseMusic()
@@ -196,7 +196,7 @@ void Sound::ResumeMusic()
 void Sound::StopMusic()
 { m_impl->StopMusic(); }
 
-void Sound::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = false*/)
+void Sound::PlaySound(const boost::filesystem::path& path, bool is_ui_sound)
 { m_impl->PlaySound(path, is_ui_sound); }
 
 void Sound::FreeSound(const boost::filesystem::path& path)

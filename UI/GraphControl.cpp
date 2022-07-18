@@ -96,35 +96,35 @@ void GraphControl::AutoSetRange() {
     SetRange(x_min, x_max, y_min, y_max);
 }
 
-void GraphControl::ShowPoints(bool show/* = true*/) {
+void GraphControl::ShowPoints(bool show) {
     bool old_show_points = m_show_points;
     m_show_points = show;
     if (show != old_show_points)
         DoLayout();
 }
 
-void GraphControl::ShowLines(bool show/* = true*/) {
+void GraphControl::ShowLines(bool show) {
     bool old_show_lines = m_show_lines;
     m_show_lines = show;
     if (show != old_show_lines)
         DoLayout();
 }
 
-void GraphControl::ShowScale(bool show/* = true*/) {
+void GraphControl::ShowScale(bool show) {
     bool old_show_scale = m_show_scale;
     m_show_scale = show;
     if (show != old_show_scale)
         DoLayout();
 }
 
-void GraphControl::UseLogScale(bool log/* = true*/) {
+void GraphControl::UseLogScale(bool log) {
     bool old_log_scale = m_log_scale;
     m_log_scale = log;
     if (log != old_log_scale)
         DoLayout();
 }
 
-void GraphControl::ScaleToZero(bool zero/* = true*/) {
+void GraphControl::ScaleToZero(bool zero) {
     bool old_zero = m_zero_in_range;
     m_zero_in_range = zero;
     if (zero != old_zero)

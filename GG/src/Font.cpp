@@ -1083,7 +1083,7 @@ X Font::RenderText(const Pt& pt_, const std::string& text) const
 }
 
 void Font::RenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
-                      const std::vector<LineData>& line_data, RenderState* render_state/* = 0*/) const
+                      const std::vector<LineData>& line_data, RenderState* render_state) const
 {
     RenderState state;
     if (!render_state)

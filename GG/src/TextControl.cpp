@@ -18,9 +18,9 @@ using namespace GG;
 // GG::TextControl
 ////////////////////////////////////////////////
 TextControl::TextControl(X x, Y y, X w, Y h, std::string str,
-                         const std::shared_ptr<Font>& font, Clr color/* = CLR_BLACK*/,
-                         Flags<TextFormat> format/* = FORMAT_NONE*/,
-                         Flags<WndFlag> flags/* = NO_WND_FLAGS*/) :
+                         const std::shared_ptr<Font>& font, Clr color,
+                         Flags<TextFormat> format,
+                         Flags<WndFlag> flags) :
     Control(x, y, w, h, flags),
     m_format(format),
     m_text_color(color),
@@ -33,8 +33,8 @@ TextControl::TextControl(X x, Y y, X w, Y h, std::string str,
 TextControl::TextControl(X x, Y y, X w, Y h, std::string str,
                          std::vector<std::shared_ptr<Font::TextElement>> text_elements,
                          const std::shared_ptr<Font>& font,
-                         Clr color /*= CLR_BLACK*/, Flags<TextFormat> format /*= FORMAT_NONE*/,
-                         Flags<WndFlag> flags /*= NO_WND_FLAGS*/) :
+                         Clr color, Flags<TextFormat> format,
+                         Flags<WndFlag> flags) :
     Control(x, y, w, h, flags),
     m_format(format),
     m_text_color(color),
@@ -354,7 +354,7 @@ void TextControl::Insert(CPSize pos, const std::string& s)
     Insert(line, pos, s);
 }
 
-void TextControl::Erase(CPSize pos, CPSize num/* = CP1*/)
+void TextControl::Erase(CPSize pos, CPSize num)
 {
     std::size_t line;
     std::tie(line, pos) = LinePositionOf(pos, m_line_data);
@@ -377,7 +377,7 @@ void TextControl::Insert(std::size_t line, CPSize pos, const std::string& s)
     SetText(std::move(m_text));
 }
 
-void TextControl::Erase(std::size_t line, CPSize pos, CPSize num/* = CP1*/)
+void TextControl::Erase(std::size_t line, CPSize pos, CPSize num)
 {
     auto it = m_text.begin() + Value(StringIndexOf(line, pos, m_line_data));
     auto end_it = m_text.begin() + Value(StringIndexOf(line, pos + num, m_line_data));

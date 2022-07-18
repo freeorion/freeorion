@@ -900,7 +900,7 @@ MapWnd::MovementLineData::~MovementLineData() = default;
 
 MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
                                            const std::map<std::pair<int, int>, LaneEndpoints>& lane_end_points_map,
-                                           GG::Clr colour_/*= GG::CLR_WHITE*/, int empireID /*= ALL_EMPIRES*/) :
+                                           GG::Clr colour_, int empireID) :
     path(path_),
     colour(colour_)
 {
@@ -2711,7 +2711,7 @@ void MapWnd::KeyRelease(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG:
     }
 }
 
-void MapWnd::EnableOrderIssuing(bool enable/* = true*/) {
+void MapWnd::EnableOrderIssuing(bool enable) {
     // disallow order enabling if this client does not have an empire
     // and is not a moderator
     GGHumanClientApp* app = GGHumanClientApp::GetApp();

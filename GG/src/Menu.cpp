@@ -30,8 +30,8 @@ namespace {
     constexpr X HORIZONTAL_MARGIN(3);
 }
 
-PopupMenu::PopupMenu(X x, Y y, const std::shared_ptr<Font>& font, Clr text_color/* = CLR_WHITE*/,
-                     Clr border_color/* = CLR_BLACK*/, Clr interior_color/* = CLR_SHADOW*/, Clr hilite_color/* = CLR_GRAY*/) :
+PopupMenu::PopupMenu(X x, Y y, const std::shared_ptr<Font>& font, Clr text_color,
+                     Clr border_color, Clr interior_color, Clr hilite_color) :
     Wnd(X0, Y0, GUI::GetGUI()->AppWidth() - 1, GUI::GetGUI()->AppHeight() - 1, INTERACTIVE | MODAL),
     m_font(font),
     m_border_color(border_color),

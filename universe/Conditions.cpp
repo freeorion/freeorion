@@ -360,7 +360,7 @@ bool Number::operator==(const Condition& rhs) const {
     return true;
 }
 
-std::string Number::Description(bool negated/* = false*/) const {
+std::string Number::Description(bool negated) const {
     std::string low_str = (m_low ? (m_low->ConstantExpr() ?
                                     std::to_string(m_low->Eval()) :
                                     m_low->Description())
@@ -392,7 +392,7 @@ std::string Number::Dump(unsigned short ntabs) const {
 
 void Number::Eval(const ScriptingContext& parent_context,
                   ObjectSet& matches, ObjectSet& non_matches,
-                  SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                  SearchDomain search_domain) const
 {
     // Number does not have a single valid local candidate to be matched, as it
     // will match anything if the proper number of objects match the subcondition.
@@ -513,7 +513,7 @@ bool Turn::operator==(const Condition& rhs) const {
 
 void Turn::Eval(const ScriptingContext& parent_context,
                 ObjectSet& matches, ObjectSet& non_matches,
-                SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                SearchDomain search_domain) const
 {
     // if ValueRef for low or high range limits depend on local candidate, then
     // they must be evaluated per-candidate.
@@ -548,7 +548,7 @@ void Turn::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string Turn::Description(bool negated/* = false*/) const {
+std::string Turn::Description(bool negated) const {
     std::string low_str;
     if (m_low)
         low_str = (m_low->ConstantExpr() ?
@@ -830,7 +830,7 @@ namespace {
 
 void SortedNumberOf::Eval(const ScriptingContext& parent_context,
                           ObjectSet& matches, ObjectSet& non_matches,
-                          SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                          SearchDomain search_domain) const
 {
     // Most conditions match objects independently of the other objects being
     // tested, but the number parameter for NumberOf conditions makes things
@@ -1087,7 +1087,7 @@ void All::Eval(const ScriptingContext& parent_context,
 bool All::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
-std::string All::Description(bool negated/* = false*/) const {
+std::string All::Description(bool negated) const {
     return (!negated)
         ? UserString("DESC_ALL")
         : UserString("DESC_ALL_NOT");
@@ -1335,7 +1335,7 @@ namespace {
 
 void EmpireAffiliation::Eval(const ScriptingContext& parent_context,
                              ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                             SearchDomain search_domain) const
 {
     bool simple_eval_safe = (!m_empire_id || m_empire_id->ConstantExpr()) ||
                             ((!m_empire_id || m_empire_id->LocalCandidateInvariant()) &&
@@ -1351,7 +1351,7 @@ void EmpireAffiliation::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string EmpireAffiliation::Description(bool negated/* = false*/) const {
+std::string EmpireAffiliation::Description(bool negated) const {
     std::string empire_str;
     if (m_empire_id) {
         int empire_id = ALL_EMPIRES;
@@ -1694,7 +1694,7 @@ namespace {
 
 void Homeworld::Eval(const ScriptingContext& parent_context,
                      ObjectSet& matches, ObjectSet& non_matches,
-                     SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                     SearchDomain search_domain) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -1721,7 +1721,7 @@ void Homeworld::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string Homeworld::Description(bool negated/* = false*/) const {
+std::string Homeworld::Description(bool negated) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_names.size(); ++i) {
         values_str += m_names[i]->ConstantExpr() ?
@@ -1855,7 +1855,7 @@ void Capital::Eval(const ScriptingContext& parent_context,
                    SearchDomain search_domain) const
 { EvalImpl(matches, non_matches, search_domain, CapitalSimpleMatch{parent_context.Empires().GetEmpires()}); }
 
-std::string Capital::Description(bool negated/* = false*/) const {
+std::string Capital::Description(bool negated) const {
     return (!negated)
         ? UserString("DESC_CAPITAL")
         : UserString("DESC_CAPITAL_NOT");
@@ -1930,7 +1930,7 @@ Monster::Monster() {
 bool Monster::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
-std::string Monster::Description(bool negated/* = false*/) const {
+std::string Monster::Description(bool negated) const {
     return (!negated)
         ? UserString("DESC_MONSTER")
         : UserString("DESC_MONSTER_NOT");
@@ -1983,7 +1983,7 @@ Armed::Armed() {
 bool Armed::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
-std::string Armed::Description(bool negated/* = false*/) const {
+std::string Armed::Description(bool negated) const {
     return (!negated)
         ? UserString("DESC_ARMED")
         : UserString("DESC_ARMED_NOT");
@@ -2100,7 +2100,7 @@ void Type::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string Type::Description(bool negated/* = false*/) const {
+std::string Type::Description(bool negated) const {
     std::string value_str = m_type->ConstantExpr() ?
                                 UserString(to_string(m_type->Eval())) :
                                 m_type->Description();
@@ -2319,7 +2319,7 @@ void Building::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string Building::Description(bool negated/* = false*/) const {
+std::string Building::Description(bool negated) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_names.size(); ++i) {
         values_str += m_names[i]->ConstantExpr() ?
@@ -2486,7 +2486,7 @@ void Field::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string Field::Description(bool negated/* = false*/) const {
+std::string Field::Description(bool negated) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_names.size(); ++i) {
         values_str += m_names[i]->ConstantExpr() ?
@@ -2683,7 +2683,7 @@ namespace {
 
 void HasSpecial::Eval(const ScriptingContext& parent_context,
                       ObjectSet& matches, ObjectSet& non_matches,
-                      SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                      SearchDomain search_domain) const
 {
     bool simple_eval_safe = ((!m_name || m_name->LocalCandidateInvariant()) &&
                              (!m_capacity_low || m_capacity_low->LocalCandidateInvariant()) &&
@@ -2705,7 +2705,7 @@ void HasSpecial::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string HasSpecial::Description(bool negated/* = false*/) const {
+std::string HasSpecial::Description(bool negated) const {
     std::string name_str;
     if (m_name) {
         name_str = m_name->Description();
@@ -2882,7 +2882,7 @@ namespace {
 
 void HasTag::Eval(const ScriptingContext& parent_context,
                   ObjectSet& matches, ObjectSet& non_matches,
-                  SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                  SearchDomain search_domain) const
 {
     bool simple_eval_safe = (!m_name || m_name->LocalCandidateInvariant()) &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant());
@@ -2900,7 +2900,7 @@ void HasTag::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string HasTag::Description(bool negated/* = false*/) const {
+std::string HasTag::Description(bool negated) const {
     std::string name_str;
     if (m_name) {
         name_str = m_name->Description();
@@ -3002,7 +3002,7 @@ namespace {
 
 void CreatedOnTurn::Eval(const ScriptingContext& parent_context,
                          ObjectSet& matches, ObjectSet& non_matches,
-                         SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                         SearchDomain search_domain) const
 {
     bool simple_eval_safe = ((!m_low || m_low->LocalCandidateInvariant()) &&
                              (!m_high || m_high->LocalCandidateInvariant()) &&
@@ -3017,7 +3017,7 @@ void CreatedOnTurn::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string CreatedOnTurn::Description(bool negated/* = false*/) const {
+std::string CreatedOnTurn::Description(bool negated) const {
     std::string low_str = (m_low ? (m_low->ConstantExpr() ?
                                     std::to_string(m_low->Eval()) :
                                     m_low->Description())
@@ -3436,7 +3436,7 @@ void ContainedBy::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string ContainedBy::Description(bool negated/* = false*/) const {
+std::string ContainedBy::Description(bool negated) const {
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_CONTAINED_BY")
         : UserString("DESC_CONTAINED_BY_NOT"))
@@ -3547,7 +3547,7 @@ namespace {
 
 void InOrIsSystem::Eval(const ScriptingContext& parent_context,
                         ObjectSet& matches, ObjectSet& non_matches,
-                        SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                        SearchDomain search_domain) const
 {
     bool simple_eval_safe = !m_system_id || m_system_id->ConstantExpr() ||
                             (m_system_id->LocalCandidateInvariant() &&
@@ -3715,7 +3715,7 @@ namespace {
 
 void OnPlanet::Eval(const ScriptingContext& parent_context,
                     ObjectSet& matches, ObjectSet& non_matches,
-                    SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                    SearchDomain search_domain) const
 {
     bool simple_eval_safe = !m_planet_id || m_planet_id->ConstantExpr() ||
                             (m_planet_id->LocalCandidateInvariant() &&
@@ -3870,7 +3870,7 @@ namespace {
 
 void ObjectID::Eval(const ScriptingContext& parent_context,
                     ObjectSet& matches, ObjectSet& non_matches,
-                    SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                    SearchDomain search_domain) const
 {
     bool simple_eval_safe = !m_object_id || m_object_id->ConstantExpr() ||
                             (m_object_id->LocalCandidateInvariant() &&
@@ -4034,7 +4034,7 @@ namespace {
 
 void PlanetType::Eval(const ScriptingContext& parent_context,
                       ObjectSet& matches, ObjectSet& non_matches,
-                      SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                      SearchDomain search_domain) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -4060,7 +4060,7 @@ void PlanetType::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string PlanetType::Description(bool negated/* = false*/) const {
+std::string PlanetType::Description(bool negated) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_types.size(); ++i) {
         values_str += m_types[i]->ConstantExpr() ?
@@ -4213,7 +4213,7 @@ namespace {
 
 void PlanetSize::Eval(const ScriptingContext& parent_context,
                       ObjectSet& matches, ObjectSet& non_matches,
-                      SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                      SearchDomain search_domain) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -4239,7 +4239,7 @@ void PlanetSize::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string PlanetSize::Description(bool negated/* = false*/) const {
+std::string PlanetSize::Description(bool negated) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_sizes.size(); ++i) {
         values_str += m_sizes[i]->ConstantExpr() ?
@@ -4408,7 +4408,7 @@ namespace {
 
 void PlanetEnvironment::Eval(const ScriptingContext& parent_context,
                              ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                             SearchDomain search_domain) const
 {
     bool simple_eval_safe = ((!m_species_name || m_species_name->LocalCandidateInvariant()) &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
@@ -4437,7 +4437,7 @@ void PlanetEnvironment::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string PlanetEnvironment::Description(bool negated/* = false*/) const {
+std::string PlanetEnvironment::Description(bool negated) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_environments.size(); ++i) {
         values_str += m_environments[i]->ConstantExpr() ?
@@ -4618,7 +4618,7 @@ namespace {
 
 void Species::Eval(const ScriptingContext& parent_context,
                    ObjectSet& matches, ObjectSet& non_matches,
-                   SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                   SearchDomain search_domain) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -4644,7 +4644,7 @@ void Species::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string Species::Description(bool negated/* = false*/) const {
+std::string Species::Description(bool negated) const {
     std::string values_str;
     if (m_names.empty())
         values_str = "(" + UserString("CONDITION_ANY") +")";
@@ -4885,7 +4885,7 @@ namespace {
 
 void Enqueued::Eval(const ScriptingContext& parent_context,
                     ObjectSet& matches, ObjectSet& non_matches,
-                    SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                    SearchDomain search_domain) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -4925,7 +4925,7 @@ void Enqueued::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string Enqueued::Description(bool negated/* = false*/) const {
+std::string Enqueued::Description(bool negated) const {
     std::string empire_str;
     if (m_empire_id) {
         int empire_id = ALL_EMPIRES;
@@ -5125,7 +5125,7 @@ namespace {
 
 void FocusType::Eval(const ScriptingContext& parent_context,
                      ObjectSet& matches, ObjectSet& non_matches,
-                     SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                     SearchDomain search_domain) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -5151,7 +5151,7 @@ void FocusType::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string FocusType::Description(bool negated/* = false*/) const {
+std::string FocusType::Description(bool negated) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_names.size(); ++i) {
         values_str += m_names[i]->ConstantExpr() ?
@@ -5288,7 +5288,7 @@ namespace {
 
 void StarType::Eval(const ScriptingContext& parent_context,
                     ObjectSet& matches, ObjectSet& non_matches,
-                    SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                    SearchDomain search_domain) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -5314,7 +5314,7 @@ void StarType::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string StarType::Description(bool negated/* = false*/) const {
+std::string StarType::Description(bool negated) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_types.size(); ++i) {
         values_str += m_types[i]->ConstantExpr() ?
@@ -5449,7 +5449,7 @@ namespace {
 
 void DesignHasHull::Eval(const ScriptingContext& parent_context,
                          ObjectSet& matches, ObjectSet& non_matches,
-                         SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                         SearchDomain search_domain) const
 {
     bool simple_eval_safe = (!m_name || m_name->LocalCandidateInvariant()) &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant());
@@ -5466,7 +5466,7 @@ void DesignHasHull::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string DesignHasHull::Description(bool negated/* = false*/) const {
+std::string DesignHasHull::Description(bool negated) const {
     std::string name_str;
     if (m_name) {
         name_str = m_name->Description();
@@ -5603,7 +5603,7 @@ namespace {
 
 void DesignHasPart::Eval(const ScriptingContext& parent_context,
                          ObjectSet& matches, ObjectSet& non_matches,
-                         SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                         SearchDomain search_domain) const
 {
     bool simple_eval_safe = (!m_low || m_low->LocalCandidateInvariant()) &&
                             (!m_high || m_high->LocalCandidateInvariant()) &&
@@ -5624,7 +5624,7 @@ void DesignHasPart::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string DesignHasPart::Description(bool negated/* = false*/) const {
+std::string DesignHasPart::Description(bool negated) const {
     std::string low_str = "1";
     if (m_low) {
         low_str = m_low->ConstantExpr() ?
@@ -5786,7 +5786,7 @@ namespace {
 
 void DesignHasPartClass::Eval(const ScriptingContext& parent_context,
                               ObjectSet& matches, ObjectSet& non_matches,
-                              SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                              SearchDomain search_domain) const
 {
     bool simple_eval_safe = (!m_low || m_low->LocalCandidateInvariant()) &&
                             (!m_high || m_high->LocalCandidateInvariant()) &&
@@ -5806,7 +5806,7 @@ void DesignHasPartClass::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string DesignHasPartClass::Description(bool negated/* = false*/) const {
+std::string DesignHasPartClass::Description(bool negated) const {
     std::string low_str = "1";
     if (m_low) {
         low_str = m_low->ConstantExpr() ?
@@ -5947,7 +5947,7 @@ namespace {
 
 void PredefinedShipDesign::Eval(const ScriptingContext& parent_context,
                                 ObjectSet& matches, ObjectSet& non_matches,
-                                SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                                SearchDomain search_domain) const
 {
     bool simple_eval_safe = (!m_name || m_name->LocalCandidateInvariant()) &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant());
@@ -5968,7 +5968,7 @@ void PredefinedShipDesign::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string PredefinedShipDesign::Description(bool negated/* = false*/) const {
+std::string PredefinedShipDesign::Description(bool negated) const {
     std::string name_str;
     if (m_name) {
         name_str = m_name->Description();
@@ -6068,7 +6068,7 @@ namespace {
 
 void NumberedShipDesign::Eval(const ScriptingContext& parent_context,
                               ObjectSet& matches, ObjectSet& non_matches,
-                              SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                              SearchDomain search_domain) const
 {
     bool simple_eval_safe = m_design_id->ConstantExpr() ||
                             (m_design_id->LocalCandidateInvariant() &&
@@ -6085,7 +6085,7 @@ void NumberedShipDesign::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string NumberedShipDesign::Description(bool negated/* = false*/) const {
+std::string NumberedShipDesign::Description(bool negated) const {
     std::string id_str = m_design_id->ConstantExpr() ?
                             std::to_string(m_design_id->Eval()) :
                             m_design_id->Description();
@@ -6173,7 +6173,7 @@ namespace {
 
 void ProducedByEmpire::Eval(const ScriptingContext& parent_context,
                             ObjectSet& matches, ObjectSet& non_matches,
-                            SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                            SearchDomain search_domain) const
 {
     bool simple_eval_safe = m_empire_id->ConstantExpr() ||
                             (m_empire_id->LocalCandidateInvariant() &&
@@ -6188,7 +6188,7 @@ void ProducedByEmpire::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string ProducedByEmpire::Description(bool negated/* = false*/) const {
+std::string ProducedByEmpire::Description(bool negated) const {
     std::string empire_str;
     if (m_empire_id) {
         int empire_id = ALL_EMPIRES;
@@ -6293,7 +6293,7 @@ void Chance::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string Chance::Description(bool negated/* = false*/) const {
+std::string Chance::Description(bool negated) const {
     if (m_chance->ConstantExpr()) {
         return str(FlexibleFormat((!negated)
             ? UserString("DESC_CHANCE_PERCENTAGE")
@@ -6436,7 +6436,7 @@ namespace {
 
 void MeterValue::Eval(const ScriptingContext& parent_context,
                       ObjectSet& matches, ObjectSet& non_matches,
-                      SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                      SearchDomain search_domain) const
 {
     bool simple_eval_safe = ((!m_low || m_low->LocalCandidateInvariant()) &&
                              (!m_high || m_high->LocalCandidateInvariant()) &&
@@ -6452,7 +6452,7 @@ void MeterValue::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string MeterValue::Description(bool negated/* = false*/) const {
+std::string MeterValue::Description(bool negated) const {
     std::string low_str = (m_low ? (m_low->ConstantExpr() ?
                                     std::to_string(m_low->Eval()) :
                                     m_low->Description())
@@ -6599,7 +6599,7 @@ namespace {
 
 void ShipPartMeterValue::Eval(const ScriptingContext& parent_context,
                               ObjectSet& matches, ObjectSet& non_matches,
-                              SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                              SearchDomain search_domain) const
 {
     bool simple_eval_safe = ((!m_part_name || m_part_name->LocalCandidateInvariant()) &&
                              (!m_low || m_low->LocalCandidateInvariant()) &&
@@ -6617,7 +6617,7 @@ void ShipPartMeterValue::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string ShipPartMeterValue::Description(bool negated/* = false*/) const {
+std::string ShipPartMeterValue::Description(bool negated) const {
     std::string low_str;
     if (m_low)
         low_str = m_low->Description();
@@ -6745,7 +6745,7 @@ bool EmpireMeterValue::operator==(const Condition& rhs) const {
 
 void EmpireMeterValue::Eval(const ScriptingContext& parent_context,
                             ObjectSet& matches, ObjectSet& non_matches,
-                            SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                            SearchDomain search_domain) const
 {
     bool simple_eval_safe = ((m_empire_id && m_empire_id->LocalCandidateInvariant()) &&
                              (!m_low || m_low->LocalCandidateInvariant()) &&
@@ -6778,7 +6778,7 @@ void EmpireMeterValue::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string EmpireMeterValue::Description(bool negated/* = false*/) const {
+std::string EmpireMeterValue::Description(bool negated) const {
     std::string empire_str;
     if (m_empire_id) {
         int empire_id = ALL_EMPIRES;
@@ -6933,7 +6933,7 @@ bool EmpireStockpileValue::operator==(const Condition& rhs) const {
 
 void EmpireStockpileValue::Eval(const ScriptingContext& parent_context,
                                 ObjectSet& matches, ObjectSet& non_matches,
-                                SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                                SearchDomain search_domain) const
 {
     // if m_empire_id not set, the local candidate's owner is used, which is not target invariant
     bool simple_eval_safe = ((m_empire_id && m_empire_id->LocalCandidateInvariant()) &&
@@ -6967,7 +6967,7 @@ void EmpireStockpileValue::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string EmpireStockpileValue::Description(bool negated/* = false*/) const {
+std::string EmpireStockpileValue::Description(bool negated) const {
     std::string low_str = m_low->ConstantExpr() ?
                             std::to_string(m_low->Eval()) :
                             m_low->Description();
@@ -7104,7 +7104,7 @@ bool EmpireHasAdoptedPolicy::operator==(const Condition& rhs) const {
 
 void EmpireHasAdoptedPolicy::Eval(const ScriptingContext& parent_context,
                                   ObjectSet& matches, ObjectSet& non_matches,
-                                  SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                                  SearchDomain search_domain) const
 {
     bool simple_eval_safe = ((m_empire_id && m_empire_id->LocalCandidateInvariant()) &&
                              (!m_name || m_name->LocalCandidateInvariant()) &&
@@ -7134,7 +7134,7 @@ void EmpireHasAdoptedPolicy::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string EmpireHasAdoptedPolicy::Description(bool negated/* = false*/) const {
+std::string EmpireHasAdoptedPolicy::Description(bool negated) const {
     std::string name_str;
     if (m_name) {
         name_str = m_name->Description();
@@ -7280,7 +7280,7 @@ namespace {
 
 void OwnerHasTech::Eval(const ScriptingContext& parent_context,
                         ObjectSet& matches, ObjectSet& non_matches,
-                        SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                        SearchDomain search_domain) const
 {
     // if m_empire_id not set, the local candidate's owner is used, which is not target invariant
     bool simple_eval_safe = ((m_empire_id && m_empire_id->LocalCandidateInvariant()) &&
@@ -7297,7 +7297,7 @@ void OwnerHasTech::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string OwnerHasTech::Description(bool negated/* = false*/) const {
+std::string OwnerHasTech::Description(bool negated) const {
     std::string name_str;
     if (m_name) {
         name_str = m_name->Description();
@@ -7430,7 +7430,7 @@ namespace {
 
 void OwnerHasBuildingTypeAvailable::Eval(const ScriptingContext& parent_context,
                                          ObjectSet& matches, ObjectSet& non_matches,
-                                         SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                                         SearchDomain search_domain) const
 {
     // if m_empire_id not set, the local candidate's owner is used, which is not target invariant
     bool simple_eval_safe = ((m_empire_id && m_empire_id->LocalCandidateInvariant()) &&
@@ -7447,7 +7447,7 @@ void OwnerHasBuildingTypeAvailable::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string OwnerHasBuildingTypeAvailable::Description(bool negated/* = false*/) const {
+std::string OwnerHasBuildingTypeAvailable::Description(bool negated) const {
     // used internally for a tooltip where context is apparent, so don't need
     // to name builing type here
     return (!negated)
@@ -7574,7 +7574,7 @@ namespace {
 
 void OwnerHasShipDesignAvailable::Eval(const ScriptingContext& parent_context,
                                        ObjectSet& matches, ObjectSet& non_matches,
-                                       SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                                       SearchDomain search_domain) const
 {
     // if m_empire_id not set, the local candidate's owner is used, which is not target invariant
     bool simple_eval_safe = ((m_empire_id && m_empire_id->LocalCandidateInvariant()) &&
@@ -7591,7 +7591,7 @@ void OwnerHasShipDesignAvailable::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string OwnerHasShipDesignAvailable::Description(bool negated/* = false*/) const {
+std::string OwnerHasShipDesignAvailable::Description(bool negated) const {
     // used internally for a tooltip where context is apparent, so don't need
     // to specify design here
     return (!negated)
@@ -7718,7 +7718,7 @@ namespace {
 
 void OwnerHasShipPartAvailable::Eval(const ScriptingContext& parent_context,
                                      ObjectSet& matches, ObjectSet& non_matches,
-                                     SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                                     SearchDomain search_domain) const
 {
     // if m_empire_id not set, the local candidate's owner is used, which is not target invariant
     bool simple_eval_safe = ((m_empire_id && m_empire_id->LocalCandidateInvariant()) &&
@@ -7735,7 +7735,7 @@ void OwnerHasShipPartAvailable::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string OwnerHasShipPartAvailable::Description(bool negated/* = false*/) const {
+std::string OwnerHasShipPartAvailable::Description(bool negated) const {
     return (!negated)
         ? UserString("DESC_OWNER_HAS_SHIP_PART")
         : UserString("DESC_OWNER_HAS_SHIP_PART_NOT");
@@ -7875,7 +7875,7 @@ namespace {
 
 void VisibleToEmpire::Eval(const ScriptingContext& parent_context,
                            ObjectSet& matches, ObjectSet& non_matches,
-                           SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                           SearchDomain search_domain) const
 {
     bool simple_eval_safe = (!m_empire_id || m_empire_id->LocalCandidateInvariant()) &&
                             (!m_since_turn || m_since_turn->LocalCandidateInvariant()) &&
@@ -7897,7 +7897,7 @@ void VisibleToEmpire::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string VisibleToEmpire::Description(bool negated/* = false*/) const {
+std::string VisibleToEmpire::Description(bool negated) const {
     std::string empire_str;
     if (m_empire_id) {
         int empire_id = ALL_EMPIRES;
@@ -8065,7 +8065,7 @@ namespace {
 
 void WithinDistance::Eval(const ScriptingContext& parent_context,
                           ObjectSet& matches, ObjectSet& non_matches,
-                          SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                          SearchDomain search_domain) const
 {
     bool simple_eval_safe = m_distance->LocalCandidateInvariant() &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant());
@@ -8086,7 +8086,7 @@ void WithinDistance::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string WithinDistance::Description(bool negated/* = false*/) const {
+std::string WithinDistance::Description(bool negated) const {
     std::string value_str = m_distance->ConstantExpr() ?
                                 std::to_string(m_distance->Eval()) :
                                 m_distance->Description();
@@ -8176,7 +8176,7 @@ bool WithinStarlaneJumps::operator==(const Condition& rhs) const {
 
 void WithinStarlaneJumps::Eval(const ScriptingContext& parent_context,
                                ObjectSet& matches, ObjectSet& non_matches,
-                               SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                               SearchDomain search_domain) const
 {
     bool simple_eval_safe = m_jumps->LocalCandidateInvariant() &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant());
@@ -8197,7 +8197,7 @@ void WithinStarlaneJumps::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string WithinStarlaneJumps::Description(bool negated/* = false*/) const {
+std::string WithinStarlaneJumps::Description(bool negated) const {
     std::string value_str = m_jumps->ConstantExpr() ? std::to_string(m_jumps->Eval()) : m_jumps->Description();
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_WITHIN_STARLANE_JUMPS")
@@ -8658,7 +8658,7 @@ namespace {
 
 void CanAddStarlaneConnection::Eval(const ScriptingContext& parent_context,
                                     ObjectSet& matches, ObjectSet& non_matches,
-                                    SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                                    SearchDomain search_domain) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -8676,7 +8676,7 @@ void CanAddStarlaneConnection::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string CanAddStarlaneConnection::Description(bool negated/* = false*/) const {
+std::string CanAddStarlaneConnection::Description(bool negated) const {
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_CAN_ADD_STARLANE_CONNECTION") : UserString("DESC_CAN_ADD_STARLANE_CONNECTION_NOT"))
         % m_condition->Description());
@@ -8769,7 +8769,7 @@ namespace {
 
 void ExploredByEmpire::Eval(const ScriptingContext& parent_context,
                             ObjectSet& matches, ObjectSet& non_matches,
-                            SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                            SearchDomain search_domain) const
 {
     bool simple_eval_safe = m_empire_id->ConstantExpr() ||
                             (m_empire_id->LocalCandidateInvariant() &&
@@ -8786,7 +8786,7 @@ void ExploredByEmpire::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string ExploredByEmpire::Description(bool negated/* = false*/) const {
+std::string ExploredByEmpire::Description(bool negated) const {
     std::string empire_str;
     if (m_empire_id) {
         int empire_id = ALL_EMPIRES;
@@ -8848,7 +8848,7 @@ Stationary::Stationary() {
 bool Stationary::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
-std::string Stationary::Description(bool negated/* = false*/) const {
+std::string Stationary::Description(bool negated) const {
     return (!negated)
         ? UserString("DESC_STATIONARY")
         : UserString("DESC_STATIONARY_NOT");
@@ -8916,7 +8916,7 @@ Aggressive::Aggressive(bool aggressive) :
 bool Aggressive::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
-std::string Aggressive::Description(bool negated/* = false*/) const {
+std::string Aggressive::Description(bool negated) const {
     if (m_aggressive)
         return (!negated)
             ? UserString("DESC_AGGRESSIVE")
@@ -9016,7 +9016,7 @@ namespace {
 
 void FleetSupplyableByEmpire::Eval(const ScriptingContext& parent_context,
                                    ObjectSet& matches, ObjectSet& non_matches,
-                                   SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                                   SearchDomain search_domain) const
 {
     bool simple_eval_safe = m_empire_id->ConstantExpr() ||
                             (m_empire_id->LocalCandidateInvariant() &&
@@ -9032,7 +9032,7 @@ void FleetSupplyableByEmpire::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string FleetSupplyableByEmpire::Description(bool negated/* = false*/) const {
+std::string FleetSupplyableByEmpire::Description(bool negated) const {
     std::string empire_str;
     if (m_empire_id) {
         int empire_id = ALL_EMPIRES;
@@ -9196,7 +9196,7 @@ namespace {
 
 void ResourceSupplyConnectedByEmpire::Eval(const ScriptingContext& parent_context,
                                            ObjectSet& matches, ObjectSet& non_matches,
-                                           SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                                           SearchDomain search_domain) const
 {
     bool simple_eval_safe = m_empire_id->ConstantExpr() ||
                             (m_empire_id->LocalCandidateInvariant() &&
@@ -9232,7 +9232,7 @@ bool ResourceSupplyConnectedByEmpire::Match(const ScriptingContext& local_contex
                                      local_context.supply)(candidate);
 }
 
-std::string ResourceSupplyConnectedByEmpire::Description(bool negated/* = false*/) const {
+std::string ResourceSupplyConnectedByEmpire::Description(bool negated) const {
     std::string empire_str;
     if (m_empire_id) {
         int empire_id = ALL_EMPIRES;
@@ -9294,7 +9294,7 @@ CanColonize::CanColonize() {
 bool CanColonize::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
-std::string CanColonize::Description(bool negated/* = false*/) const {
+std::string CanColonize::Description(bool negated) const {
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_CAN_COLONIZE")
         : UserString("DESC_CAN_COLONIZE_NOT")));
@@ -9376,7 +9376,7 @@ CanProduceShips::CanProduceShips() {
 bool CanProduceShips::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
-std::string CanProduceShips::Description(bool negated/* = false*/) const {
+std::string CanProduceShips::Description(bool negated) const {
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_CAN_PRODUCE_SHIPS")
         : UserString("DESC_CAN_PRODUCE_SHIPS_NOT")));
@@ -9505,7 +9505,7 @@ namespace {
 
 void OrderedBombarded::Eval(const ScriptingContext& parent_context,
                             ObjectSet& matches, ObjectSet& non_matches,
-                            SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                            SearchDomain search_domain) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -9521,7 +9521,7 @@ void OrderedBombarded::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string OrderedBombarded::Description(bool negated/* = false*/) const {
+std::string OrderedBombarded::Description(bool negated) const {
     std::string by_str;
     if (m_by_object_condition)
         by_str = m_by_object_condition->Description();
@@ -9702,7 +9702,7 @@ bool ValueTest::operator==(const Condition& rhs) const {
 
 void ValueTest::Eval(const ScriptingContext& parent_context,
                      ObjectSet& matches, ObjectSet& non_matches,
-                     SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                     SearchDomain search_domain) const
 {
     bool simple_eval_safe = ((!m_value_ref1         || m_value_ref1->LocalCandidateInvariant()) &&
                              (!m_value_ref2         || m_value_ref2->LocalCandidateInvariant()) &&
@@ -9736,7 +9736,7 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string ValueTest::Description(bool negated/* = false*/) const {
+std::string ValueTest::Description(bool negated) const {
     std::string value_str1, value_str2, value_str3;
     if (m_value_ref1)
         value_str1 = m_value_ref1->Description();
@@ -10007,7 +10007,7 @@ bool Location::operator==(const Condition& rhs) const {
 
 void Location::Eval(const ScriptingContext& parent_context,
                     ObjectSet& matches, ObjectSet& non_matches,
-                    SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                    SearchDomain search_domain) const
 {
     bool simple_eval_safe = ((!m_name1 || m_name1->LocalCandidateInvariant()) &&
                              (!m_name2 || m_name2->LocalCandidateInvariant()) &&
@@ -10040,7 +10040,7 @@ void Location::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string Location::Description(bool negated/* = false*/) const {
+std::string Location::Description(bool negated) const {
     std::string name1_str;
     if (m_name1)
         name1_str = m_name1->Description();
@@ -10178,7 +10178,7 @@ bool CombatTarget::operator==(const Condition& rhs) const {
 
 void CombatTarget::Eval(const ScriptingContext& parent_context,
                         ObjectSet& matches, ObjectSet& non_matches,
-                        SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                        SearchDomain search_domain) const
 {
     bool simple_eval_safe = ((!m_name || m_name->LocalCandidateInvariant()) &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
@@ -10209,7 +10209,7 @@ void CombatTarget::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string CombatTarget::Description(bool negated/* = false*/) const {
+std::string CombatTarget::Description(bool negated) const {
     std::string name_str;
     if (m_name)
         name_str = m_name->Description();
@@ -10414,7 +10414,7 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                             << " and non_matches (" << non_matches.size() << "): " << ObjList(non_matches);
 }
 
-std::string And::Description(bool negated/* = false*/) const {
+std::string And::Description(bool negated) const {
     std::string values_str;
     if (m_operands.size() == 1) {
         values_str += (!negated)
@@ -10590,7 +10590,7 @@ void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
     }
 }
 
-std::string Or::Description(bool negated/* = false*/) const {
+std::string Or::Description(bool negated) const {
     std::string values_str;
     if (m_operands.size() == 1) {
         values_str += (!negated)
@@ -10716,7 +10716,7 @@ bool Not::operator==(const Condition& rhs) const {
 }
 
 void Not::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
-               SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+               SearchDomain search_domain) const
 {
     if (!m_operand) {
         ErrorLogger(conditions) << "Not::Eval found no subcondition to evaluate!";
@@ -10734,7 +10734,7 @@ void Not::Eval(const ScriptingContext& parent_context, ObjectSet& matches, Objec
     }
 }
 
-std::string Not::Description(bool negated/* = false*/) const
+std::string Not::Description(bool negated) const
 { return m_operand->Description(!negated); }
 
 std::string Not::Dump(unsigned short ntabs) const {
@@ -10799,7 +10799,7 @@ bool OrderedAlternativesOf::operator==(const Condition& rhs) const {
 
 void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
                                  ObjectSet& matches, ObjectSet& non_matches,
-                                 SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                                 SearchDomain search_domain) const
 {
     if (m_operands.empty()) {
         ErrorLogger(conditions) << "OrderedAlternativesOf::Eval given no operands!";
@@ -10895,7 +10895,7 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string OrderedAlternativesOf::Description(bool negated/* = false*/) const {
+std::string OrderedAlternativesOf::Description(bool negated) const {
     std::string values_str;
     if (m_operands.size() == 1) {
         values_str += (!negated)
@@ -10991,7 +10991,7 @@ bool Described::operator==(const Condition& rhs) const {
 }
 
 void Described::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
-                     SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                     SearchDomain search_domain) const
 {
     if (!m_condition)
         ErrorLogger(conditions) << "Described::Eval found no subcondition to evaluate!";
@@ -10999,7 +10999,7 @@ void Described::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         m_condition->Eval(parent_context, matches, non_matches, search_domain);
 }
 
-std::string Described::Description(bool negated/* = false*/) const {
+std::string Described::Description(bool negated) const {
     if (!m_desc_stringtable_key.empty() && UserStringExists(m_desc_stringtable_key))
         return UserString(m_desc_stringtable_key);
     if (m_condition)

@@ -410,7 +410,7 @@ private:
 //////////////////////////////////////////////////
 // ResearchWnd                                  //
 //////////////////////////////////////////////////
-ResearchWnd::ResearchWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
+ResearchWnd::ResearchWnd(GG::X w, GG::Y h, bool initially_hidden) :
     GG::Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP),
     m_enabled(false),
     m_empire_shown_id(ALL_EMPIRES)

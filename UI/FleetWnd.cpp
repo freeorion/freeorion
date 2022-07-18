@@ -445,9 +445,9 @@ std::set<int> FleetUIManager::SelectedShipIDs() const {
 
 std::shared_ptr<FleetWnd> FleetUIManager::NewFleetWnd(
     const std::vector<int>& fleet_ids,
-    double allowed_bounding_box_leeway /*= 0*/,
-    int selected_fleet_id/* = INVALID_OBJECT_ID*/,
-    GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE*/)
+    double allowed_bounding_box_leeway,
+    int selected_fleet_id,
+    GG::Flags<GG::WndFlag> flags)
 {
     std::string config_name;
     if (!GetOptionsDB().Get<bool>("ui.fleet.multiple.enabled")) {
@@ -549,7 +549,7 @@ void FleetUIManager::FleetWndClicked(std::shared_ptr<FleetWnd> fleet_wnd) {
     SetActiveFleetWnd(std::move(fleet_wnd));
 }
 
-void FleetUIManager::EnableOrderIssuing(bool enable/* = true*/) {
+void FleetUIManager::EnableOrderIssuing(bool enable) {
     m_order_issuing_enabled = enable;
     GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds,
                                  [&enable](std::shared_ptr<FleetWnd>& wnd)
@@ -2447,7 +2447,7 @@ private:
 };
 
 FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_issuing_enabled,
-                                   GG::Flags<GG::WndFlag> flags/* = GG::NO_WND_FLAGS*/) :
+                                   GG::Flags<GG::WndFlag> flags) :
     GG::Wnd(GG::X0, GG::Y0, w, h, flags),
     m_order_issuing_enabled(order_issuing_enabled)
 {
@@ -2573,7 +2573,7 @@ void FleetDetailPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         DoLayout();
 }
 
-void FleetDetailPanel::EnableOrderIssuing(bool enabled/* = true*/) {
+void FleetDetailPanel::EnableOrderIssuing(bool enabled) {
     m_order_issuing_enabled = enabled;
     m_ships_lb->EnableOrderIssuing(m_order_issuing_enabled);
 }
@@ -2795,9 +2795,9 @@ namespace {
 }
 
 FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled,
-                   double allowed_bounding_box_leeway /*= 0*/,
-                   int selected_fleet_id/* = INVALID_OBJECT_ID*/,
-                   GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | DRAGABLE | ONTOP | CLOSABLE | RESIZABLE*/,
+                   double allowed_bounding_box_leeway,
+                   int selected_fleet_id,
+                   GG::Flags<GG::WndFlag> flags,
                    std::string_view config_name) :
     MapWndPopup("", flags | GG::RESIZABLE, config_name),
     m_fleet_ids(fleet_ids.begin(), fleet_ids.end()),
@@ -3898,7 +3898,7 @@ void FleetWnd::UniverseObjectDeleted(const std::shared_ptr<const UniverseObject>
     }
 }
 
-void FleetWnd::EnableOrderIssuing(bool enable/* = true*/) {
+void FleetWnd::EnableOrderIssuing(bool enable) {
     m_order_issuing_enabled = enable;
     if (m_new_fleet_drop_target)
         m_new_fleet_drop_target->Disable(!m_order_issuing_enabled);

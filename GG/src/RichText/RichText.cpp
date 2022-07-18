@@ -188,7 +188,7 @@ private:
 
 RichTextPrivate::RichTextPrivate(RichText* q, const std::string& content,
                                  const std::shared_ptr<Font>& font,
-                                 Clr color, Flags<TextFormat> format /*= FORMAT_NONE*/) :
+                                 Clr color, Flags<TextFormat> format) :
     m_owner(q),
     m_font(font),
     m_color(color),

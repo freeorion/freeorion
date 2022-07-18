@@ -129,7 +129,7 @@ HSVClr::HSVClr() :
     a(0)
 {}
 
-HSVClr::HSVClr(double h_, double s_, double v_, GLubyte a_/* = 255*/) :
+HSVClr::HSVClr(double h_, double s_, double v_, GLubyte a_) :
     h(h_),
     s(s_),
     v(v_),
@@ -477,7 +477,7 @@ namespace {
 std::vector<Clr> ColorDlg::s_custom_colors;
 
 ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& font,
-                   Clr dialog_color, Clr border_color, Clr text_color/* = CLR_BLACK*/) :
+                   Clr dialog_color, Clr border_color, Clr text_color) :
     Wnd(x, y, X(315), Y(300), INTERACTIVE | DRAGABLE | MODAL),
     m_original_color(original_color),
     m_current_color_button(INVALID_COLOR_BUTTON),

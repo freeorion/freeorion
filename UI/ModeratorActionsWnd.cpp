@@ -331,7 +331,7 @@ void ModeratorActionsWnd::Refresh() {
         m_empire_drop->Select(m_empire_drop->begin());
 }
 
-void ModeratorActionsWnd::EnableActions(bool enable/* = true*/)
+void ModeratorActionsWnd::EnableActions(bool enable)
 { m_actions_enabled = enable; }
 
 void ModeratorActionsWnd::CloseClicked()

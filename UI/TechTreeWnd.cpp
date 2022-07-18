@@ -1833,7 +1833,7 @@ void TechTreeWnd::TechListBox::Reset() {
     Populate();
 }
 
-void TechTreeWnd::TechListBox::Update(bool populate /* = true */) {
+void TechTreeWnd::TechListBox::Update(bool populate) {
     if (populate)
         Populate(false);
 
@@ -1893,7 +1893,7 @@ void TechTreeWnd::TechListBox::Update(bool populate /* = true */) {
     DebugLogger() << "Tech List Box Updating Done, Insertion time = " << (insertion_elapsed * 1000) << " ms";
 }
 
-void TechTreeWnd::TechListBox::Populate(bool update /* = true*/) {
+void TechTreeWnd::TechListBox::Populate(bool update ) {
     DebugLogger() << "Tech List Box Populating";
 
     GG::X row_width = Width() - ClientUI::ScrollWidth() - ClientUI::Pts();
@@ -2007,7 +2007,7 @@ void TechTreeWnd::TechListBox::TechDoubleClicked(GG::ListBox::iterator it, const
 //////////////////////////////////////////////////
 // TechTreeWnd                                  //
 //////////////////////////////////////////////////
-TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
+TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden) :
     GG::Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
     m_init_flag(initially_hidden)
 {}

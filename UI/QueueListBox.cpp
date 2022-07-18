@@ -167,7 +167,7 @@ int QueueListBox::IteraterIndex(const const_iterator it) {
     return -1;
 }
 
-void QueueListBox::EnableOrderIssuing(bool enable/* = true*/) {
+void QueueListBox::EnableOrderIssuing(bool enable) {
     m_order_issuing_enabled = enable;
     AllowDrops(enable);
     for (auto& row : *this)

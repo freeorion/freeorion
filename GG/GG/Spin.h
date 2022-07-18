@@ -148,7 +148,7 @@ private:
 
 template <typename T>
 Spin<T>::Spin(T value, T step, T min, T max, bool edits, const std::shared_ptr<Font>& font, Clr color,
-              Clr text_color/* = CLR_BLACK*/) :
+              Clr text_color) :
     Control(X0, Y0, X1, font->Height() + 2 * PIXEL_MARGIN, INTERACTIVE),
     m_value(value),
     m_step_size(step),
@@ -254,7 +254,7 @@ void Spin<T>::SizeMove(const Pt& ul, const Pt& lr)
 }
 
 template <typename T>
-void Spin<T>::Disable(bool b/* = true*/)
+void Spin<T>::Disable(bool b)
 {
     Control::Disable(b);
     m_edit->Disable(b);

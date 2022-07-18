@@ -2855,7 +2855,7 @@ std::shared_ptr<BasesListBox::Row> AllDesignsListBox::ChildrenDraggedAwayCore(co
     return row;
 }
 
-void EmptyHullsListBox::EnableOrderIssuing(bool enable/* = true*/)
+void EmptyHullsListBox::EnableOrderIssuing(bool enable)
 { QueueListBox::EnableOrderIssuing(enable); }
 
 void MonstersListBox::EnableOrderIssuing(bool)
@@ -3342,7 +3342,7 @@ public:
     void Reset();
     void ToggleAvailability(const Availability::Enum type);
     void SetEmpireShown(int empire_id, bool refresh_list);
-    void EnableOrderIssuing(bool enable/* = true*/);
+    void EnableOrderIssuing(bool enable);
 
     mutable boost::signals2::signal<void (int)>                         DesignSelectedSignal;
     mutable boost::signals2::signal<void (int)>                         DesignUpdatedSignal;
@@ -3513,7 +3513,7 @@ void DesignWnd::BaseSelector::ToggleAvailability(Availability::Enum type) {
     m_saved_designs_list->Populate();
 }
 
-void DesignWnd::BaseSelector::EnableOrderIssuing(bool enable/* = true*/) {
+void DesignWnd::BaseSelector::EnableOrderIssuing(bool enable) {
     m_hulls_list->EnableOrderIssuing(enable);
     m_designs_list->EnableOrderIssuing(enable);
     m_saved_designs_list->EnableOrderIssuing(enable);
@@ -4228,8 +4228,8 @@ void DesignWnd::MainPanel::SetPart(const std::string& part_name, unsigned int sl
 { SetPart(GetShipPart(part_name), slot); }
 
 void DesignWnd::MainPanel::SetPart(const ShipPart* part, unsigned int slot,
-                                   bool emit_signal /* = false */,
-                                   bool change_all_similar_parts /*= false*/)
+                                   bool emit_signal,
+                                   bool change_all_similar_parts)
 {
     //DebugLogger() << "DesignWnd::MainPanel::SetPart(" << (part ? part->Name() : "no part") << ", slot " << slot << ")";
     if (slot > m_slots.size()) {
@@ -5146,5 +5146,5 @@ void DesignWnd::DesignNameChanged() {
     m_base_selector->Reset();
 }
 
-void DesignWnd::EnableOrderIssuing(bool enable/* = true*/)
+void DesignWnd::EnableOrderIssuing(bool enable)
 { m_base_selector->EnableOrderIssuing(enable); }

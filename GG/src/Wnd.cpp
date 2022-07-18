@@ -922,7 +922,7 @@ bool Wnd::Run()
 void Wnd::EndRun()
 { m_done = true; }
 
-void Wnd::SetBrowseModeTime(unsigned int time, std::size_t mode/* = 0*/)
+void Wnd::SetBrowseModeTime(unsigned int time, std::size_t mode)
 {
     if (m_browse_modes.size() <= mode) {
         if (m_browse_modes.empty()) {
@@ -941,13 +941,13 @@ void Wnd::SetBrowseModeTime(unsigned int time, std::size_t mode/* = 0*/)
     m_browse_modes[mode].time = time;
 }
 
-void Wnd::SetBrowseInfoWnd(std::shared_ptr<BrowseInfoWnd> wnd, std::size_t mode/* = 0*/)
+void Wnd::SetBrowseInfoWnd(std::shared_ptr<BrowseInfoWnd> wnd, std::size_t mode)
 { m_browse_modes.at(mode).wnd = std::move(wnd); }
 
-void Wnd::ClearBrowseInfoWnd(std::size_t mode/* = 0*/)
+void Wnd::ClearBrowseInfoWnd(std::size_t mode)
 { m_browse_modes.at(mode).wnd.reset(); }
 
-void Wnd::SetBrowseText(std::string text, std::size_t mode/* = 0*/)
+void Wnd::SetBrowseText(std::string text, std::size_t mode)
 { m_browse_modes.at(mode).text = std::move(text); }
 
 void Wnd::SetBrowseModes(std::vector<BrowseInfoMode> modes)

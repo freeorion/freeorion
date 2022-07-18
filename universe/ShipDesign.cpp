@@ -134,7 +134,7 @@ ShipDesign::ShipDesign(const ParsedShipDesign& design) :
                design.m_is_monster, design.m_uuid)
 {}
 
-const std::string& ShipDesign::Name(bool stringtable_lookup /* = true */) const {
+const std::string& ShipDesign::Name(bool stringtable_lookup) const {
     if (m_name_desc_in_stringtable && stringtable_lookup)
         return UserString(m_name);
     else
