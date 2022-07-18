@@ -9570,7 +9570,8 @@ std::unique_ptr<Condition> OrderedBombarded::Clone() const
 // ValueTest                                             //
 ///////////////////////////////////////////////////////////
 namespace {
-    bool Comparison(float val1, ComparisonType comp, float val2) {
+    template <typename T, std::enable_if<std::is_arithmetic_v<T>>* = nullptr>
+    bool Comparison(T val1, ComparisonType comp, T val2) {
         switch (comp) {
             case ComparisonType::EQUAL:                 return val1 == val2;
             case ComparisonType::GREATER_THAN:          return val1 > val2;
@@ -9822,54 +9823,30 @@ bool ValueTest::Match(const ScriptingContext& local_context) const {
 
     // simple evaluation should have only local-candidate-invariation sub-value-refs
     // base class evaulation should have defined local candidate
-
-    if (m_value_ref1) {
-        if (!m_value_ref2)
+    auto test_compare_refs = [c12{m_compare_type1}, c23{m_compare_type2}, &local_context]
+        (const auto& ref1, const auto& ref2, const auto& ref3)
+    {
+        if (!ref1 || !ref2 || c12 == ComparisonType::INVALID_COMPARISON)
+            return false;
+        auto val1 = ref1->Eval(local_context);
+        auto val2 = ref2->Eval(local_context);
+        if (!Comparison(val1, c12, val2))
             return false;
 
-        float val1 = m_value_ref1->Eval(local_context);
-        float val2 = m_value_ref2->Eval(local_context);
-        if (!Comparison(val1, m_compare_type1, val2))
-            return false;
-
-        if (m_compare_type2 == ComparisonType::INVALID_COMPARISON || !m_value_ref3)
+        if (!ref3 || c23 == ComparisonType::INVALID_COMPARISON)
             return true;
+        auto val3 = ref3->Eval(local_context);
+        return Comparison(val2, c23, val3);
+    };
 
-        float val3 = m_value_ref3->Eval(local_context);
-        return Comparison(val2, m_compare_type1, val3);
-
-    } else if (m_string_value_ref1) {
-        if (!m_string_value_ref2)
-            return false;
-
-        std::string val1 = m_string_value_ref1->Eval(local_context);
-        std::string val2 = m_string_value_ref2->Eval(local_context);
-        if (!Comparison(val1, m_compare_type1, val2))
-            return false;
-
-        if (m_compare_type2 == ComparisonType::INVALID_COMPARISON || !m_value_ref3)
-            return true;
-
-        std::string val3 = m_string_value_ref3->Eval(local_context);
-        return Comparison(val2, m_compare_type1, val3);
-
-    } else if (m_int_value_ref1) {
-        if (!m_int_value_ref2)
-            return false;
-
-        int val1 = m_int_value_ref1->Eval(local_context);
-        int val2 = m_int_value_ref2->Eval(local_context);
-        if (!Comparison(val1, m_compare_type1, val2))
-            return false;
-
-        if (m_compare_type2 == ComparisonType::INVALID_COMPARISON || !m_value_ref3)
-            return true;
-
-        int val3 = m_int_value_ref3->Eval(local_context);
-        return Comparison(val2, m_compare_type1, val3);
-    }
-
-    return false;
+    if (m_int_value_ref1)
+        return test_compare_refs(m_int_value_ref1, m_int_value_ref2, m_int_value_ref3);
+    else if (m_value_ref1)
+        return test_compare_refs(m_value_ref1, m_value_ref2, m_value_ref3);
+    else if (m_string_value_ref1)
+        return test_compare_refs(m_string_value_ref1, m_string_value_ref2, m_string_value_ref3);
+    else
+        return false;
 }
 
 void ValueTest::SetTopLevelContent(const std::string& content_name) {
