@@ -102,31 +102,55 @@ public:
     [[nodiscard]] auto all() const
     {
         static const auto tx = [](const typename container_type<T>::mapped_type& p)
-            -> const typename container_type<const T>::mapped_type
+            -> typename container_type<const T>::mapped_type
         { return std::const_pointer_cast<const T>(p); };
 
-        return Map<T>() | boost::adaptors::map_values | boost::adaptors::transformed(tx);
+        using DecayT = std::decay_t<T>;
+        return Map<DecayT>() |
+            boost::adaptors::map_values |
+            boost::adaptors::transformed(tx);
     }
 
     template <typename T = UniverseObject>
     [[nodiscard]] auto allRaw() const
     {
-        return Map<T>() | boost::adaptors::map_values | boost::adaptors::transformed(
-            [](const auto& p) -> const T* { return p.get(); }
+        using DecayT = std::decay_t<T>;
+        return std::as_const(Map<DecayT>()) |
+            boost::adaptors::map_values |
+            boost::adaptors::transformed(
+                [](const auto& p) -> const DecayT* { return p.get(); }
         );
     }
 
     /** Returns all the objects of type T */
     template <typename T = UniverseObject>
     [[nodiscard]] auto all()
-    { return std::as_const(Map<T>()) | boost::adaptors::map_values; }
+    {
+        using DecayT = std::decay_t<T>;
+        if constexpr (std::is_const_v<T>) {
+            const auto& const_this = *this;
+            return const_this.all<DecayT>();
+        } else {
+            return std::as_const(Map<DecayT>()) | boost::adaptors::map_values;
+        }
+    }
 
     template <typename T = UniverseObject>
     [[nodiscard]] auto allRaw()
     {
-        return Map<T>() | boost::adaptors::map_values | boost::adaptors::transformed(
-            [](const auto& p) -> T* { return p.get(); }
-        );
+        if constexpr (std::is_const_v<T>) {
+            using DecayT = std::decay_t<T>;
+            return std::as_const(Map<DecayT>()) |
+                boost::adaptors::map_values |
+                boost::adaptors::transformed(
+                    [](const auto& p) -> T* { return p.get(); });
+        } else {
+            return Map<T>() |
+                boost::adaptors::map_values |
+                boost::adaptors::transformed(
+                    [](const auto& p) -> T* { return p.get(); }
+            );
+        }
     }
 
     /** Returns the IDs of all objects not known to have been destroyed. */
@@ -226,13 +250,69 @@ private:
     void CopyObjectsToSpecializedMaps();
 
     template <typename T>
-    const container_type<T>& Map() const;
+    const container_type<std::decay_t<T>>& Map() const
+    {
+        static_assert(!std::is_const_v<T>, "type for Map() should not be const");
+        using DecayT = std::decay_t<T>;
+        if constexpr (std::is_same_v<DecayT, UniverseObject>)
+            return m_objects;
+        else if constexpr (std::is_same_v<DecayT, ResourceCenter>)
+            return m_resource_centers;
+        else if constexpr (std::is_same_v<DecayT, PopCenter>)
+            return m_pop_centers;
+        else if constexpr (std::is_same_v<DecayT, Ship>)
+            return m_ships;
+        else if constexpr (std::is_same_v<DecayT, Fleet>)
+            return m_fleets;
+        else if constexpr (std::is_same_v<DecayT, Planet>)
+            return m_planets;
+        else if constexpr (std::is_same_v<DecayT, System>)
+            return m_systems;
+        else if constexpr (std::is_same_v<DecayT, Building>)
+            return m_buildings;
+        else if constexpr (std::is_same_v<DecayT, Field>)
+            return m_fields;
+        else {
+            static_assert(std::is_same_v<DecayT, UniverseObject>, "invalid type for Map()");
+            static container_type<DecayT> error_retval;
+            return error_retval;
+        }
+    }
 
     template <typename T>
-    container_type<T>& Map();
+    container_type<std::decay_t<T>>& Map()
+    {
+        static_assert(!std::is_const_v<T>, "type for Map() should not be const");
+        using DecayT = std::decay_t<T>;
+        if constexpr (std::is_same_v<DecayT, UniverseObject>)
+            return m_objects;
+        else if constexpr (std::is_same_v<DecayT, ResourceCenter>)
+            return m_resource_centers;
+        else if constexpr (std::is_same_v<DecayT, PopCenter>)
+            return m_pop_centers;
+        else if constexpr (std::is_same_v<DecayT, Ship>)
+            return m_ships;
+        else if constexpr (std::is_same_v<DecayT, Fleet>)
+            return m_fleets;
+        else if constexpr (std::is_same_v<DecayT, Planet>)
+            return m_planets;
+        else if constexpr (std::is_same_v<DecayT, System>)
+            return m_systems;
+        else if constexpr (std::is_same_v<DecayT, Building>)
+            return m_buildings;
+        else if constexpr (std::is_same_v<DecayT, Field>)
+            return m_fields;
+        else {
+            static_assert(std::is_same_v<DecayT, UniverseObject>, "invalid type for Map()");
+            static container_type<DecayT> error_retval;
+            return error_retval;
+        }
+    }
 
     template <typename T>
-    static void SwapMap(container_type<T>& map, ObjectMap& rhs);
+    static void SwapMap(container_type<T>& map, ObjectMap& rhs)
+    { map.swap(rhs.Map<T>()); }
+
 
     container_type<UniverseObject>  m_objects;
     container_type<ResourceCenter>  m_resource_centers;
@@ -424,61 +504,5 @@ void ObjectMap::insert(std::shared_ptr<T> item, int empire_id)
         return;
     insertCore(std::move(item), empire_id);
 }
-
-// template specializations
-
-template <>
-FO_COMMON_API const ObjectMap::container_type<UniverseObject>& ObjectMap::Map() const;
-
-template <>
-FO_COMMON_API const ObjectMap::container_type<ResourceCenter>& ObjectMap::Map() const;
-
-template <>
-FO_COMMON_API const ObjectMap::container_type<PopCenter>& ObjectMap::Map() const;
-
-template <>
-FO_COMMON_API const ObjectMap::container_type<Ship>& ObjectMap::Map() const;
-
-template <>
-FO_COMMON_API const ObjectMap::container_type<Fleet>& ObjectMap::Map() const;
-
-template <>
-FO_COMMON_API const ObjectMap::container_type<Planet>& ObjectMap::Map() const;
-
-template <>
-FO_COMMON_API const ObjectMap::container_type<System>& ObjectMap::Map() const;
-
-template <>
-FO_COMMON_API const ObjectMap::container_type<Building>& ObjectMap::Map() const;
-
-template <>
-FO_COMMON_API const ObjectMap::container_type<Field>& ObjectMap::Map() const;
-
-template <>
-FO_COMMON_API ObjectMap::container_type<UniverseObject>& ObjectMap::Map();
-
-template <>
-FO_COMMON_API ObjectMap::container_type<ResourceCenter>& ObjectMap::Map();
-
-template <>
-FO_COMMON_API ObjectMap::container_type<PopCenter>& ObjectMap::Map();
-
-template <>
-FO_COMMON_API ObjectMap::container_type<Ship>& ObjectMap::Map();
-
-template <>
-FO_COMMON_API ObjectMap::container_type<Fleet>& ObjectMap::Map();
-
-template <>
-FO_COMMON_API ObjectMap::container_type<Planet>& ObjectMap::Map();
-
-template <>
-FO_COMMON_API ObjectMap::container_type<System>& ObjectMap::Map();
-
-template <>
-FO_COMMON_API ObjectMap::container_type<Building>& ObjectMap::Map();
-
-template <>
-FO_COMMON_API ObjectMap::container_type<Field>& ObjectMap::Map();
 
 #endif

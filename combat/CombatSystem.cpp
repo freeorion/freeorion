@@ -1356,8 +1356,8 @@ namespace {
                 }
             };
 
-            check_add(combat_info.objects.allRaw<Planet>());
-            check_add(combat_info.objects.allRaw<Ship>());
+            check_add(combat_info.objects.allRaw<const Planet>());
+            check_add(combat_info.objects.allRaw<const Ship>());
         }
     };
 
