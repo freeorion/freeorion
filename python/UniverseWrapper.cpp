@@ -41,7 +41,7 @@ namespace {
     {
         std::vector<int> result;
         result.reserve(universe.Objects().size<T>());
-        for (const auto& obj : universe.Objects().allRaw<T>())
+        for (const auto* obj : universe.Objects().allRaw<T>())
             result.push_back(obj->ID());
         return result;
     }

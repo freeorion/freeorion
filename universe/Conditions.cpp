@@ -769,7 +769,7 @@ namespace {
             for (auto sorted_it = sort_key_objects.rbegin();  // would use const_reverse_iterator but this causes a compile error in some compilers
                  sorted_it != sort_key_objects.rend(); ++sorted_it)
             {
-                auto& object_to_transfer = sorted_it->second;
+                auto* object_to_transfer = sorted_it->second;
                 auto from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
                 if (from_it != from_set.end()) {
                     *from_it = from_set.back();
@@ -809,7 +809,7 @@ namespace {
                 for (auto sorted_it = key_range.first;
                      sorted_it != key_range.second; ++sorted_it)
                 {
-                    auto& object_to_transfer = sorted_it->second;
+                    auto* object_to_transfer = sorted_it->second;
                     auto from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
                     if (from_it != from_set.end()) {
                         *from_it = from_set.back();
@@ -10346,10 +10346,11 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
     }
 
     auto ObjList = [](const ObjectSet& objs) -> std::string {
-        std::stringstream ss;
-        for (const auto& obj : objs)
-            ss << obj->Name() << " (" << std::to_string(obj->ID()) << ")  ";
-        return ss.str();
+        std::string ss;
+        ss.reserve(objs.size() * 20); // guesstimate
+        for (const auto* obj : objs)
+            ss.append(obj->Name()).append(" (").append(std::to_string(obj->ID())).append(")  ");
+        return ss;
     };
 
     TraceLogger(conditions) << [&]() {

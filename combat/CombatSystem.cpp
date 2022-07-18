@@ -104,10 +104,10 @@ std::shared_ptr<Empire> CombatInfo::GetEmpire(int id)
 
 float CombatInfo::GetMonsterDetection() const {
     float monster_detection = 0.0;
-    for (const auto& obj : objects.allRaw<Ship>())
+    for (const auto* obj : objects.allRaw<Ship>())
         if (obj->Unowned())
             monster_detection = std::max(monster_detection, obj->GetMeter(MeterType::METER_DETECTION)->Initial());
-    for (const auto& obj : objects.allRaw<Planet>())
+    for (const auto* obj : objects.allRaw<Planet>())
         if (obj->Unowned())
             monster_detection = std::max(monster_detection, obj->GetMeter(MeterType::METER_DETECTION)->Initial());
     return monster_detection;
@@ -1268,7 +1268,7 @@ namespace {
             auto temp{empire_infos};
 
             std::set<int> empire_ids_with_objects;
-            for (const auto& obj : combat_info.objects.allRaw())
+            for (const auto* obj : combat_info.objects.allRaw())
                 empire_ids_with_objects.insert(obj->Owner());
 
             for (auto& [empire_id, ignored] : empire_infos) {
@@ -1302,7 +1302,7 @@ namespace {
             InitialStealthEvent::EmpireToObjectVisibilityMap report;
 
             // loop over all objects, noting which is visible by which empire or neutrals
-            for (const auto& target : combat_info.objects.allRaw()) {
+            for (const auto* target : combat_info.objects.allRaw()) {
                 // for all empires, can they detect this object?
                 for (int viewing_empire_id : combat_info.empire_ids) {
                     // get visibility of target to attacker empire
@@ -1712,19 +1712,24 @@ namespace {
         DebugLogger() << "Recovering fighters at end of combat...";
 
         // count still-existing and not destroyed fighters at end of combat
-        for (const auto& obj : combat_info.objects.allRaw()) { // TODO: call this iterate over <Fighter> and avoid the dynamic_pointer_cast ? would require a dedicated Fighter map in ObjectMap
-            if (obj->ID() >= 0)
+        for (const auto* obj : combat_info.objects.allRaw()) { // TODO: call this iterate over <Fighter> and avoid the cast ? would require a dedicated Fighter map in ObjectMap
+            const int obj_id = obj->ID();
+            if (obj_id >= 0 || obj->ObjectType() != UniverseObjectType::OBJ_FIGHTER)
                 continue;
-            auto fighter = dynamic_cast<Fighter*>(obj);
-            if (!fighter || fighter->Destroyed())
+            auto fighter = static_cast<const Fighter*>(obj);
+            if (fighter->Destroyed())
                 continue;   // destroyed fighters can't return
-            if (combat_info.destroyed_object_ids.count(fighter->LaunchedFrom())) {
-                DebugLogger() << " ... Fighter " << fighter->Name() << " (" << fighter->ID()
-                              << ") is from destroyed ship id" << fighter->LaunchedFrom()
+            auto launched_from_id = fighter->LaunchedFrom();
+            const auto& cidoi = combat_info.destroyed_object_ids;
+            if (std::any_of(cidoi.begin(), cidoi.end(),
+                            [launched_from_id](int id) { return launched_from_id == id; }))
+            {
+                DebugLogger() << " ... Fighter " << fighter->Name() << " (" << obj_id
+                              << ") is from destroyed ship id" << launched_from_id
                               << " so can't be recovered";
                 continue;   // can't return to a destroyed ship
             }
-            ships_fighters_to_add_back[fighter->LaunchedFrom()]++;
+            ships_fighters_to_add_back[launched_from_id]++;
         }
         DebugLogger() << "Fighters left at end of combat:";
         for (auto [ship_id, fighter_count] : ships_fighters_to_add_back)
