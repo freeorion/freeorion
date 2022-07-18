@@ -278,8 +278,8 @@ private:
         if (it != registry.end())
             return it->second.get();
         DebugLogger() << "NamedValueRefManager::GetValueRef found no registered (" << label << ") valueref for \"" << name
-                      << "\". This is either looking in the wrong registry (which can be OK). This should not happen "
-                      << "if looking in the right registry once \"#3225 Refactor initialisation of invariants in value refs to happen after parsing\" is implemented";
+                      << "\". This is may be due to looking in the wrong registry (which can be OK)"
+                      << ".  This should not happen if looking in the right registry.";
         return nullptr;
     }
 
