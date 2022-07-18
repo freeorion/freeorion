@@ -13,7 +13,10 @@ CHANCE_OF_GUARD_1
                 ]
             ]
             effects = [
-                If condition = Or [ Random probability = 0.6   Homeworld ]
+                If condition = And [
+                        Random probability = 0.6
+                        [[MINIMUM_DISTANCE_EMPIRE_CHECK]]
+                    ]
                     effects = [
                         If condition = ContainedBy Contains Planet type = Asteroids
                                 effects = CreateShip designname = OneOf("SM_SNAIL", "SM_GUARD_0", "SM_GUARD_1")
@@ -22,7 +25,10 @@ CHANCE_OF_GUARD_1
                         ]
                     ]
                 else = [
-                    If condition = Random probability = 0.8
+                    If condition = And [
+                            Random probability = 0.7
+                            Not Homeworld
+                        ]
                         effects = [
                             SetSpecies name = "SP_ANCIENT_GUARDIANS"
                             SetPopulation value = Target.TargetPopulation
@@ -49,11 +55,14 @@ CHANCE_OF_GUARD_2
                 If condition = And [
                         (GalaxyMaxAIAggression >= 1)
                         (GalaxyMonsterFrequency >= 1)
-                        Not Homeworld
+                        [[MINIMUM_DISTANCE_EMPIRE_CHECK]]
                     ]
                     effects = CreateShip designname = "SM_GUARD_2"
                 else = [
-                    If condition = Random probability = 0.8
+                    If condition = And [
+                            Random probability = 0.7
+                            Not Homeworld
+                        ]
                         effects = [
                             SetSpecies name = "SP_ANCIENT_GUARDIANS"
                             SetPopulation value = Target.TargetPopulation
@@ -81,11 +90,14 @@ CHANCE_OF_GUARD_3
                 If condition = And [
                         (GalaxyMaxAIAggression >= 1)
                         (GalaxyMonsterFrequency >= 1)
-                        Not Homeworld
+                        [[MINIMUM_DISTANCE_EMPIRE_CHECK]]
                     ]
                     effects = CreateShip designname = "SM_GUARD_3"
                 else = [
-                    If condition = Random probability = 0.8
+                    If condition = And [
+                            Random probability = 0.7
+                            Not Homeworld
+                        ]
                         effects = [
                             SetSpecies name = "SP_ANCIENT_GUARDIANS"
                             SetPopulation value = Target.TargetPopulation
@@ -114,3 +126,5 @@ CHANCE_OF_HIDE_1
                 AddSpecial name = "CLOUD_COVER_MASTER_SPECIAL"
             ]
 '''
+
+#include "/scripting/common/*.macros"

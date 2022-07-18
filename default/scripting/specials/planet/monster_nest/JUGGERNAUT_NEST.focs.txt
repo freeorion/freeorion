@@ -6,7 +6,7 @@ Special
         Planet
         (GalaxyMonsterFrequency >= 1)
         Planet type = Asteroids
-        Not WithinStarlaneJumps jumps = 4 condition = And [
+        Not WithinStarlaneJumps jumps = max(4, (NamedIntegerLookup name = "MIN_MONSTER_DISTANCE")) condition = And [
             System
             Contains And [
                 Planet

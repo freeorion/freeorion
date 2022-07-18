@@ -70,7 +70,19 @@ Species
                 (GalaxyMaxAIAggression >= 1)
                 (GalaxyMonsterFrequency >= 1)
             ]
-            effects = CreateShip designname = "SM_TREE"
+            effects = [
+                If condition = And [
+                    [[MINIMUM_DISTANCE_EMPIRE_CHECK]]
+                    Star type = [Blue White Yellow Orange Red]
+                ]
+                    effects = [
+                        CreateShip designname = "SM_TREE"
+                    ]
+                else = [
+                    AddSpecial name = "VOLCANIC_ASH_SLAVE_SPECIAL"
+                    AddSpecial name = "VOLCANIC_ASH_MASTER_SPECIAL"
+                ]
+            ]
 
     ]
 

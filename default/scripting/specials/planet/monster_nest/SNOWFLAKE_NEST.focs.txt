@@ -5,7 +5,7 @@ Special
     location = And [
         Planet
         Planet size = Small
-        Not WithinStarlaneJumps jumps = 2 condition = And [
+        Not WithinStarlaneJumps jumps = max(2, (NamedIntegerLookup name = "MIN_MONSTER_DISTANCE")) condition = And [
             System
             Contains And [
                 Planet

@@ -40,6 +40,16 @@ SYSTEM_MINES_DAMAGE_FACTOR
 SUPPLY_DISCONNECTED_INFLUENCE_MALUS
 '''1'''
 
+MINIMUM_DISTANCE_EMPIRE_CHECK
+'''         Not WithinStarlaneJumps jumps = (NamedIntegerLookup name = "MIN_MONSTER_DISTANCE") condition = And [
+            System
+            Contains And [
+                Planet
+                OwnedBy affiliation = AnyEmpire
+            ]
+        ]
+'''
+
 // empire id used for unowned planets/ships - as defined in Universe.cpp(?)
 UNOWNED_EMPIRE_ID
 '''-1'''

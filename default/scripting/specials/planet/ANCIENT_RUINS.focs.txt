@@ -31,15 +31,7 @@ Special
             scope = Source
             effects = SetTexture name = "planets/overlays/ruins.png"
 
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Turn high = 0
-                Random probability = 0.9
-                (GalaxyMaxAIAggression >= 1)
-                (GalaxyMonsterFrequency >= 1)
-            ]
-            effects = CreateShip designname = "SM_GUARD_2"
+        [[CHANCE_OF_GUARD_2]]
 
         EffectsGroup
             scope = And [
@@ -282,3 +274,4 @@ Special
     graphic = "icons/specials_huge/ancient_ruins.png"
 
 #include "/scripting/common/base_prod.macros"
+#include "./monster_guard.macros"

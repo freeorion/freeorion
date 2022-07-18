@@ -186,3 +186,13 @@ GameRule(
     type=bool,
     default=False,
 )
+
+GameRule(
+    name="RULE_MINIMUM_MONSTER_DISTANCE_CAPITAL",
+    description="RULE_MINIMUM_MONSTER_DISTANCE_CAPITAL_DESC",
+    category="BALANCE",
+    type=int,
+    default=4,
+    min=1,
+    max=10,
+)
