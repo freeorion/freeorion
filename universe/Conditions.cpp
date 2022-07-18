@@ -9594,7 +9594,7 @@ namespace {
         }
     }
 
-    std::string CompareTypeString(ComparisonType comp) {
+    constexpr std::string_view CompareTypeString(ComparisonType comp) {
         switch (comp) {
         case ComparisonType::EQUAL:                 return "=";
         case ComparisonType::GREATER_THAN:          return ">";
@@ -9672,8 +9672,7 @@ ValueTest::ValueTest(const ValueTest& rhs) :
     m_int_value_ref3(ValueRef::CloneUnique(rhs.m_int_value_ref3)),
     m_compare_type1(rhs.m_compare_type1),
     m_compare_type2(rhs.m_compare_type2)
-{
-}
+{}
 
 bool ValueTest::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -9769,14 +9768,11 @@ std::string ValueTest::Description(bool negated) const {
     else if (m_int_value_ref3)
         value_str3 = m_int_value_ref3->Description();
 
-    std::string comp_str1 = CompareTypeString(m_compare_type1);
-    std::string comp_str2 = CompareTypeString(m_compare_type2);
-
-    std::string composed_comparison = value_str1 + " " + comp_str1 + " " + value_str2;
-    if (!comp_str2.empty())
-        composed_comparison += " " + comp_str2;
+    std::string composed_comparison = value_str1.append(" ").append(CompareTypeString(m_compare_type1))
+                                                .append(" ").append(value_str2);
     if (!value_str3.empty())
-        composed_comparison += +" " + value_str3;
+        composed_comparison.append(" ").append(CompareTypeString(m_compare_type2))
+                           .append(" ").append(value_str3);
 
     return str(FlexibleFormat((!negated)
                ? UserString("DESC_VALUE_TEST")
@@ -9794,7 +9790,7 @@ std::string ValueTest::Dump(unsigned short ntabs) const {
         retval += m_int_value_ref1->Dump(ntabs);
 
     if (m_compare_type1 != ComparisonType::INVALID_COMPARISON)
-        retval += " " + CompareTypeString(m_compare_type1);
+        retval.append(" ").append(CompareTypeString(m_compare_type1));
 
     if (m_value_ref2)
         retval += " " + m_value_ref2->Dump(ntabs);
@@ -9804,7 +9800,7 @@ std::string ValueTest::Dump(unsigned short ntabs) const {
         retval += " " + m_int_value_ref2->Dump(ntabs);
 
     if (m_compare_type2 != ComparisonType::INVALID_COMPARISON)
-        retval += " " + CompareTypeString(m_compare_type2);
+        retval.append(" ").append(CompareTypeString(m_compare_type2));
 
     if (m_value_ref3)
         retval += " " + m_value_ref3->Dump(ntabs);
