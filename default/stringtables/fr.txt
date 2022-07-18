@@ -6448,7 +6448,9 @@ LOGISTICS_FOCUS_TITLE
 Focus Logistique
 
 LOGISTICS_FOCUS_TEXT
-Les planètes en Focus Logistique voient leur [[metertype METER_SUPPLY]] augmenter de 3, ce qui déploie le réseau impérial d'approvisionnement de la planète sur 3 Voies spatiales supplémentaires consécutives.
+'''Les planètes en Focus Logistique voient leur [[metertype METER_SUPPLY]] augmenter de 3, ce qui déploie le réseau impérial d'approvisionnement de la planète sur 3 Voies spatiales supplémentaires consécutives.
+
+Débloqué par : [[tech SHP_INTSTEL_LOG]].'''
 
 PLANETDRIVE_FOCUS_TITLE
 Focus Navigation Planétaire
@@ -6470,7 +6472,9 @@ PSYCHIC_FOCUS_TEXT
 
 À chaque tour, procure 10% de chance de prendre le contrôle de chaque astronef, à moins que l'empire ennemi ne dispose également de la technologie [[LRN_PSY_DOM]].
 
-Lorsque le Focus Domination Psychique est activé, réduit par ailleurs la chance qu'un [[predefinedshipdesign SM_PSIONIC_SNOWFLAKE]] prenne le contrôle des astronefs de l'empire se trouvant dans le même système.'''
+Lorsque le Focus Domination Psychique est activé, réduit par ailleurs la chance qu'un [[predefinedshipdesign SM_PSIONIC_SNOWFLAKE]] prenne le contrôle des astronefs de l'empire se trouvant dans le même système.
+
+Débloqué par : [[tech LRN_PSY_DOM]].'''
 
 STOCKPILE_FOCUS_TITLE
 Focus Distribution Stock
@@ -6592,6 +6596,14 @@ ARTISTIC_SPECIES_TRAIT_TEXT
 '''Les espèces artistiques réalisent des travaux d'ordre artistique lorsque leur empire a adopté la Politique [[policy PLC_ARTISAN_WORKSHOPS]], laquelle génère de l'[[metertype METER_INFLUENCE]]. De plus, les autres planètes situées dans le même système et peuplées d'espèces artistiques différentes, jouiront d'une meilleure [[metertype METER_HAPPINESS]].
 
 Liste des espèces artistiques:'''
+
+SNEAKY_TITLE
+Sournoise
+
+SNEAKY_TEXT
+'''Les espèces sournoises recherchent les technologies [[tech SPY_STEALTH_1]], [[tech SPY_STEALTH_2]], [[tech SPY_STEALTH_3]] et [[tech SPY_STEALTH_4]] à un coût réduit.
+
+Liste des espèces sournoises:'''
 
 FLEET_UPKEEP_TITLE
 Entretien des Flottes
@@ -8467,7 +8479,7 @@ SP_LAENFA_GAMEPLAY_DESC
 '''<img src="species/preview/laenfa.png"></img>
 Vignes sentientes, télépathes, et insidieuses.
 Préfèrent les Planètes [[PT_OCEAN]]s.
-[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
+[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]], [[encyclopedia SNEAKY_TITLE]]
 '''
 
 SP_LAENFA_DESC
@@ -9537,19 +9549,19 @@ KRAKEN_NEST_SPECIAL
 Nid Kraken
 
 KRAKEN_NEST_SPECIAL_DESC
-Avec le temps, de jeunes Kraken naîtront sur cette planète. Un empire maîtrisant la [[tech SHP_DOMESTIC_MONSTER]] pourra les apprivoiser.
+Avec le temps, de jeunes Kraken naîtront sur cette planète. Un empire maîtrisant la technologie [[tech SHP_DOMESTIC_MONSTER]] pourra les apprivoiser.
 
 SNOWFLAKE_NEST_SPECIAL
 Nid Floconneux
 
 SNOWFLAKE_NEST_SPECIAL_DESC
-Avec le temps, de jeunes Flocons de Neige naîtront sur cette planète. Un empire maîtrisant la [[tech SHP_DOMESTIC_MONSTER]] pourra les apprivoiser.
+Avec le temps, de jeunes Flocons de Neige naîtront sur cette planète. Un empire maîtrisant la technologie [[tech SHP_DOMESTIC_MONSTER]] pourra les apprivoiser.
 
 JUGGERNAUT_NEST_SPECIAL
 Nid Mastodonte
 
 JUGGERNAUT_NEST_SPECIAL_DESC
-Avec le temps, de jeunes Mastodontes naîtront sur cette planète. Un empire maîtrisant la [[tech SHP_DOMESTIC_MONSTER]] pourra les apprivoiser.
+Avec le temps, de jeunes Mastodontes naîtront sur cette planète. Un empire maîtrisant la technologie [[tech SHP_DOMESTIC_MONSTER]] pourra les apprivoiser.
 
 KRAKEN_IN_THE_ICE_SPECIAL
 Kraken Congelé
@@ -13017,7 +13029,7 @@ CON_CONTGRAV_ARCH
 Architecture Gravitationnelle
 
 CON_CONTGRAV_ARCH_DESC
-'''Augmente de 1 la portée de l'[[metertype METER_SUPPLY]] des colonies en Focus Logistique.
+'''Augmente de 1 la portée de l'[[metertype METER_SUPPLY]] des colonies en [[encyclopedia LOGISTICS_FOCUS_TITLE]].
 
 L'installation d'un générateur de gravité nulle au cœur d'une planète rend possible le contrôle binaire "marche/arrêt" de la gravité planétaire, mais seulement sur une zone limitée. L'industrie planétaire profite alors des nombreux bénéfices de la faible gravité et de la gravité zéro (low-G et zero-G), mais sans ses inconvénients. Une gravité inversée peut être également générée, rendant les coûts des lancements spatiaux quasiment inexistants.
 
@@ -13067,7 +13079,7 @@ SHP_INTSTEL_LOG
 Logistique Interstellaire
 
 SHP_INTSTEL_LOG_DESC
-'''Débloque le Focus Logistique, augmentant l'[[metertype METER_SUPPLY]] de 3 sur toutes les planètes.
+'''Débloque le [[encyclopedia LOGISTICS_FOCUS_TITLE]], augmentant l'[[metertype METER_SUPPLY]] de 3 sur toutes les planètes.
 
 [[COLONY_BUILDING_TIME_DECREASE]]
 
@@ -13285,11 +13297,32 @@ Débloque une coque d'astronef
 BUILDING_UNLOCK_SHORT_DESC
 Débloque une structure
 
+POLICY_UNLOCK_SHORT_DESC
+Débloque une politique
+
+POLICY_SLOT_UNLOCK_SHORT_DESC
+Débloque un choix politique
+
+POLICY_AND_SLOT_UNLOCK_SHORT_DESC
+Débloque une politique et un choix politique
+
+POLICY_AND_BUILDING_UNLOCK_SHORT_DESC
+Débloque une politique et une structure
+
+VARIOUS_UNLOCK_SHORT_DESC
+Débloque divers éléments
+
 RESEARCH_SHORT_DESC
 Améliore la Recherche
 
 INDUSTRY_SHORT_DESC
 Améliore l'Industrie
+
+RESEARCH_AND_SLOT_SHORT_DESC
+Améliore la Recherche, Débloque un choix politique
+
+INDUSTRY_AND_SLOT_SHORT_DESC
+Améliore l'Industrie, Débloque un choix politique
 
 SUPPLY_SHORT_DESC
 Améliore l'Approvisionnement
@@ -13340,7 +13373,7 @@ EXOBOT_SHORT_DESC
 Crée des citoyens exobots
 
 STARLANE_SPEED_SHORT_DESC
-Augmente la Vitesse sur Voie spatiale
+Débloque le [[encyclopedia LOGISTICS_FOCUS_TITLE]]
 
 CON_ORBITAL_CON
 Construction Orbitale
@@ -13525,7 +13558,7 @@ LRN_PSY_DOM_DESC
 
 Réduit la probabilité de prise de contrôle d'un astronef par un [[predefinedshipdesign SM_PSIONIC_SNOWFLAKE]].
 
-Il est difficile de soumettre un individu conscient à un contrôle mental total par une entité étrangère, et ce contre son gré. En manipulant cependant les durées de soumission, la force mentale accumulée par une population sur plusieurs heures peut être canalisée sur un unique individu durant quelques secondes, engendrant ainsi une compulsion quasi-irrésistible de se joindre à l'esprit unifié.'''
+Il est difficile de soumettre un individu conscient à un contrôle mental total par une entité étrangère, et ce, contre son gré. En manipulant cependant les durées de soumission, la force mentale accumulée par une population sur plusieurs heures peut être canalisée sur un unique individu durant quelques secondes, engendrant ainsi une compulsion quasi-irrésistible de se joindre à l'esprit unifié. Cette capacité semble toutefois n'avoir aucun effet sur la Méga-Faune, l'encéphale des monstres spatiaux étant apparemment trop différent.'''
 
 MIND_CONTROL_SHORT_DESC
 Permet le Contrôle de l'Esprit
@@ -15957,7 +15990,7 @@ Son [[metertype METER_DETECTION]] est standard et sa [[metertype METER_SPEED]] e
 FLUX_STEALTH_DESC
 '''La [[metertype METER_STEALTH]] de base des astronefs équipés de cette coque est de [[value SPATIAL_FLUX_STEALTH_HULL_BASE]] lorsque la flotte est réglée sur '[[FW_AGGRESSIVE]]', et de [[value SPATIAL_FLUX_STEALTH_NON_AGGRESSIVE]] pour tout autre réglage de comportement d'attaque des flottes.
 
-La recherche de chaque technologie parmi [[tech SPY_STEALTH_PART_1]], [[tech SPY_STEALTH_PART_2]], [[tech SPY_STEALTH_PART_3]], et [[tech SPY_STEALTH_4]] augmentera la Furtivité de base de [[value SPATIAL_FLUX_STEALTH_TECH_BONUS]].
+La recherche de chaque technologie parmi [[tech SPY_STEALTH_PART_1]], [[tech SPY_STEALTH_PART_2]], [[tech SPY_STEALTH_PART_3]], et [[tech SPY_STEALTH_4]] augmentera la Furtivité de base de [[value SPATIAL_FLUX_STEALTH_TECH_BONUS]], si l'astronef se trouve dans une Flotte non réglée sur '[[FW_AGGRESSIVE]]'.
 
 Si un astronef s'arrête dans un système, sa Furtivité est réduite de [[value SPATIAL_FLUX_STEALTH_ARRIVAL_MALUS]] pour 2 tours, en raison de la rupture d'équilibre du flux.'''
 
@@ -16105,7 +16138,7 @@ SH_ORGANIC
 Coque Organique
 
 SH_ORGANIC_DESC
-'''Une coque vivante disposant de trois niches externes et d'une niche interne.
+'''Une coque vivante disposant d'une niche externe et d'une niche interne.
 Croissance Organique: débute avec une [[metertype METER_STRUCTURE]] égale à 5, mais bénéficie d'un bonus additionnel de 5 après 25 tours.
 
 Sa [[metertype METER_STEALTH]] est standard, son [[metertype METER_DETECTION]] est faible et sa [[metertype METER_SPEED]] élevée.
