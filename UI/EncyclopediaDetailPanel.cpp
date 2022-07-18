@@ -269,20 +269,6 @@ namespace {
                                                 string_rep));
     }
 
-    const std::vector<std::string>& GetSearchTextDirNames() {
-        static const std::vector<std::string> dir_names{
-            "ENC_INDEX",        "ENC_SHIP_PART",    "ENC_SHIP_HULL",    "ENC_TECH",
-            "ENC_POLICY",
-            "ENC_BUILDING_TYPE","ENC_SPECIAL",      "ENC_SPECIES",      "ENC_FIELD_TYPE",
-            "ENC_METER_TYPE",   "ENC_EMPIRE",       "ENC_SHIP_DESIGN",  "ENC_SHIP",
-            "ENC_MONSTER",      "ENC_MONSTER_TYPE", "ENC_FLEET",        "ENC_PLANET",
-            "ENC_BUILDING",     "ENC_SYSTEM",       "ENC_FIELD",        "ENC_GRAPH",
-            "ENC_GALAXY_SETUP", "ENC_GAME_RULES",   "ENC_NAMED_VALUE_REF",
-            "ENC_STRINGS"};
-        //  "ENC_HOMEWORLDS" omitted due to weird formatting of article titles
-        return dir_names;
-    }
-
     std::map<std::string, std::string> prepended_homeworld_names;
     std::mutex prepended_homeworld_names_access;
 
@@ -311,17 +297,15 @@ namespace {
         if (dir_name == "ENC_INDEX") {
             // add entries consisting of links to pedia page lists of
             // articles of various types
-            for (const std::string& str : GetSearchTextDirNames()) {
-                if (str == "ENC_INDEX")
-                    continue;
-                auto& us_name{UserString(str)};
-                retval.emplace_back(std::piecewise_construct,
-                                    std::forward_as_tuple(us_name),
-                                    std::forward_as_tuple(LinkTaggedPresetText(TextLinker::ENCYCLOPEDIA_TAG, str, us_name).append("\n"),
-                                                          str));
-            }
-
-            for (auto str : {"ENC_TEXTURES", "ENC_HOMEWORLDS"}) {
+            static constexpr std::array<std::string_view, 26> SEARCH_TEXT_DIR_NAMES{{
+                    "ENC_SHIP_PART",    "ENC_SHIP_HULL",    "ENC_TECH",         "ENC_POLICY",
+                    "ENC_BUILDING_TYPE","ENC_SPECIAL",      "ENC_SPECIES",      "ENC_FIELD_TYPE",
+                    "ENC_METER_TYPE",   "ENC_EMPIRE",       "ENC_SHIP_DESIGN",  "ENC_SHIP",
+                    "ENC_MONSTER",      "ENC_MONSTER_TYPE", "ENC_FLEET",        "ENC_PLANET",
+                    "ENC_BUILDING",     "ENC_SYSTEM",       "ENC_FIELD",        "ENC_GRAPH",
+                    "ENC_GALAXY_SETUP", "ENC_GAME_RULES",   "ENC_NAMED_VALUE_REF",
+                    "ENC_STRINGS",      "ENC_TEXTURES",     "ENC_HOMEWORLDS"}};
+            for (std::string_view str : SEARCH_TEXT_DIR_NAMES) {
                 auto& us_name{UserString(str)};
                 retval.emplace_back(std::piecewise_construct,
                                     std::forward_as_tuple(us_name),
