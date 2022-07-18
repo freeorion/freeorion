@@ -1049,7 +1049,7 @@ namespace {
             // move scope condition matches into output matches
             if (candidate_objects_in.empty()) {
                 // condition default candidates will be tested
-                scope->Eval(context, matched_targets);
+                matched_targets = scope->Eval(context);
 
             } else if (scope_is_just_source) {
                 // special case for condition that is just Source when a set of

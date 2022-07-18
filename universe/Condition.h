@@ -37,20 +37,20 @@ struct FO_COMMON_API Condition {
                       ObjectSet& non_matches,
                       SearchDomain search_domain = SearchDomain::NON_MATCHES) const;
 
-    void Eval(const ScriptingContext& parent_context,
+    void Eval(ScriptingContext& parent_context,
               Effect::TargetSet& matches,
               Effect::TargetSet& non_matches,
               SearchDomain search_domain = SearchDomain::NON_MATCHES) const;
 
-    /** Tests all objects in universe as NON_MATCHES. */
-    void Eval(const ScriptingContext& parent_context, ObjectSet& matches) const;
-
-    /** Tests all objects in universe as NON_MATCHES. */
-    void Eval(const ScriptingContext& parent_context, Effect::TargetSet& matches) const;
+    /** Tests all objects in \a parent_context and returns those that match. */
+    ObjectSet Eval(const ScriptingContext& parent_context) const;
+    Effect::TargetSet Eval(ScriptingContext& parent_context) const;
 
     /** Tests single candidate object, returning true iff it matches condition. */
     bool Eval(const ScriptingContext& parent_context, const UniverseObject* candidate) const;
 
+    /** Initializes \a condition_non_targets with a set of objects that could
+      * match this condition, without checking if they all actually do. */
     virtual void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                    ObjectSet& condition_non_targets) const;
 

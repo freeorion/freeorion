@@ -442,11 +442,10 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id, c
                 Condition::ObjectSet matches;
                 // if a condition selecting where to take resources from was specified, use it.
                 // Otherwise take from the production location
-                if (cond) {
-                    cond->Eval(location_target_context, matches);
-                } else {
+                if (cond)
+                    matches = cond->Eval(std::as_const(location_target_context));
+                else
                     matches.push_back(location_obj);
-                }
 
                 // determine how much to take from each matched object
                 for (auto* object : matches) {

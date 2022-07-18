@@ -40,10 +40,6 @@ using boost::io::str;
 bool UserStringExists(const std::string& str);
 
 namespace {
-    void AddOptions(OptionsDB& db)
-    { db.Add<bool>("effects.move.test", UserStringNop("OPTIONS_DB_UI_EFFECTS_MOVE_TEST"), false); }
-    bool temp_bool = RegisterOptions(&AddOptions);
-
     const std::string EMPTY_STRING;
 
     DeclareThreadSafeLogger(conditions);
@@ -264,62 +260,44 @@ void Condition::Eval(const ScriptingContext& parent_context,
                      SearchDomain search_domain) const
 { EvalImpl(matches, non_matches, search_domain, MatchHelper(this, parent_context)); }
 
-void Condition::Eval(const ScriptingContext& parent_context,
+void Condition::Eval(ScriptingContext& parent_context,
                      Effect::TargetSet& matches, Effect::TargetSet& non_matches,
                      SearchDomain search_domain) const
 {
-    if (!GetOptionsDB().Get<bool>("effects.move.test")) {
-        // reinterpret sets of mutable objects as sets of non-mutable objects.
-        auto& matches_as_objectset = reinterpret_cast<ObjectSet&>(matches);
-        auto& non_matches_as_objectset = reinterpret_cast<ObjectSet&>(non_matches);
-        this->Eval(parent_context, matches_as_objectset, non_matches_as_objectset, search_domain);
-
-    } else {
-        ObjectSet matches_as_objectset{matches.begin(), matches.end()};
-        ObjectSet non_matches_as_objectset{non_matches.begin(), non_matches.end()};
-        matches.clear();
-        non_matches.clear();
-
-        this->Eval(parent_context, matches_as_objectset, non_matches_as_objectset, search_domain);
-
-        std::transform(matches_as_objectset.begin(), matches_as_objectset.end(), std::back_inserter(matches),
-                       [](auto&& o) { return const_cast<UniverseObject*>(o); });
-        std::transform(non_matches_as_objectset.begin(), non_matches_as_objectset.end(), std::back_inserter(non_matches),
-                       [](auto&& o) { return const_cast<UniverseObject*>(o); });
-    }
-}
-
-void Condition::Eval(const ScriptingContext& parent_context, ObjectSet& matches) const {
+    ObjectSet matches_as_objectset{matches.begin(), matches.end()};
+    ObjectSet non_matches_as_objectset{non_matches.begin(), non_matches.end()};
     matches.clear();
-    ObjectSet condition_initial_candidates;
+    non_matches.clear();
 
-    if (InitialCandidatesAllMatch()) {
-        // don't need to evaluate condition, since all initial candidates are known to match it
-        GetDefaultInitialCandidateObjects(parent_context, matches);
+    this->Eval(parent_context, matches_as_objectset, non_matches_as_objectset, search_domain);
 
-    } else {
-        // evaluate condition only on objects that could potentially be matched by the condition
-        GetDefaultInitialCandidateObjects(parent_context, condition_initial_candidates);
-        matches.reserve(condition_initial_candidates.size());
-        Eval(parent_context, matches, condition_initial_candidates);
-    }
+    std::transform(matches_as_objectset.begin(), matches_as_objectset.end(), std::back_inserter(matches),
+                   [](auto&& o) { return const_cast<UniverseObject*>(o); });
+    std::transform(non_matches_as_objectset.begin(), non_matches_as_objectset.end(), std::back_inserter(non_matches),
+                   [](auto&& o) { return const_cast<UniverseObject*>(o); });
 }
 
-void Condition::Eval(const ScriptingContext& parent_context,
-                     Effect::TargetSet& matches) const
-{
-    if (!GetOptionsDB().Get<bool>("effects.move.test")) {
-        // reinterpret sets of mutable objects as sets of non-mutable objects.
-        auto& matches_as_objectset = reinterpret_cast<ObjectSet&>(matches);
-        this->Eval(parent_context, matches_as_objectset);
+ObjectSet Condition::Eval(const ScriptingContext& parent_context) const {
+    ObjectSet matches;
+    GetDefaultInitialCandidateObjects(parent_context, matches);
 
-    } else {
-        matches.clear();
-        ObjectSet matches_as_objectset;
-        this->Eval(parent_context, matches_as_objectset);
-        std::transform(matches_as_objectset.begin(), matches_as_objectset.end(), std::back_inserter(matches),
-                       [](auto* o) { return const_cast<UniverseObject*>(o); });
-    }
+    if (InitialCandidatesAllMatch())
+        return matches; // don't need to evaluate condition further
+
+    ObjectSet non_matches;
+    non_matches.reserve(matches.size());
+    Eval(parent_context, matches, non_matches, SearchDomain::MATCHES);
+    return matches;
+}
+
+Effect::TargetSet Condition::Eval(ScriptingContext& parent_context) const
+{
+    ObjectSet matches_as_objectset{this->Eval(std::as_const(parent_context))};
+    Effect::TargetSet retval;
+    std::transform(matches_as_objectset.begin(), matches_as_objectset.end(),
+                   std::back_inserter(retval),
+                   [](auto&& o) { return const_cast<UniverseObject*>(o); });
+    return retval;
 }
 
 bool Condition::Eval(const ScriptingContext& parent_context,
@@ -465,8 +443,7 @@ void Number::Eval(const ScriptingContext& parent_context,
 
 bool Number::Match(const ScriptingContext& local_context) const {
     // get set of all UniverseObjects that satisfy m_condition
-    ObjectSet condition_matches;
-    m_condition->Eval(local_context, condition_matches);
+    ObjectSet condition_matches = m_condition->Eval(local_context);
 
     // compare number of objects that satisfy m_condition to the acceptable range of such objects
     int matched = condition_matches.size();
@@ -3129,7 +3106,9 @@ bool Contains::operator==(const Condition& rhs) const {
 
 namespace {
     struct ContainsSimpleMatch {
-        ContainsSimpleMatch(const ObjectSet& subcondition_matches) {
+        ContainsSimpleMatch(const ObjectSet& subcondition_matches) :
+            m_subcondition_matches_ids()
+        {
             // We need a sorted container for efficiently intersecting
             // subcondition_matches with the set of objects contained in some
             // candidate object.
@@ -3236,9 +3215,8 @@ void Contains::Eval(const ScriptingContext& parent_context,
         // evaluate contained objects once using default initial candidates
         // of subcondition to find all subcondition matches in the Universe
         static constexpr UniverseObject* const no_object = nullptr;
-        ScriptingContext local_context{parent_context, no_object};
-        ObjectSet subcondition_matches;
-        m_condition->Eval(local_context, subcondition_matches);
+        const ScriptingContext local_context{parent_context, no_object};
+        ObjectSet subcondition_matches = m_condition->Eval(local_context);
 
         // check all candidates to see if they contain any subcondition matches
         EvalImpl(matches, non_matches, search_domain, ContainsSimpleMatch(subcondition_matches));
@@ -3275,8 +3253,7 @@ bool Contains::Match(const ScriptingContext& local_context) const {
     }
 
     // get subcondition matches
-    ObjectSet subcondition_matches;
-    m_condition->Eval(local_context, subcondition_matches);
+    ObjectSet subcondition_matches = m_condition->Eval(local_context);
 
     // does candidate object contain any subcondition matches?
     for (auto* obj : subcondition_matches)
@@ -3417,7 +3394,7 @@ void ContainedBy::Eval(const ScriptingContext& parent_context,
 
     } else if (search_domain_size == 1) {
         // evaluate subcondition on objects that contain the candidate
-        ScriptingContext local_context{
+        const ScriptingContext local_context{
             parent_context, search_domain == SearchDomain::MATCHES ? *matches.begin() : *non_matches.begin()};
 
         // initialize subcondition candidates from local candidate's containers
@@ -3451,9 +3428,8 @@ void ContainedBy::Eval(const ScriptingContext& parent_context,
         // evaluate container objects once using default initial candidates
         // of subcondition to find all subcondition matches in the Universe
         static constexpr UniverseObject* const no_object = nullptr;
-        ScriptingContext local_context{parent_context, no_object};
-        ObjectSet subcondition_matches;
-        m_condition->Eval(local_context, subcondition_matches);
+        const ScriptingContext local_context{parent_context, no_object};
+        ObjectSet subcondition_matches = m_condition->Eval(local_context);
 
         // check all candidates to see if they contain any subcondition matches
         EvalImpl(matches, non_matches, search_domain, ContainedBySimpleMatch(subcondition_matches));
@@ -3502,9 +3478,10 @@ bool ContainedBy::Match(const ScriptingContext& local_context) const {
         return false;   // if no containers, don't need to check them
 
     // do any containers match the subcondition?
-    m_condition->Eval(local_context, container_objects);
+    ObjectSet non_matches;
+    m_condition->Eval(local_context, container_objects, non_matches, SearchDomain::MATCHES);
 
-    return !container_objects.empty(); 
+    return !container_objects.empty();
 }
 
 void ContainedBy::SetTopLevelContent(const std::string& content_name) {
@@ -8097,8 +8074,7 @@ void WithinDistance::Eval(const ScriptingContext& parent_context,
         TraceLogger(conditions) << "WithinDistance::Eval simple case";
 
         // get subcondition matches
-        ObjectSet subcondition_matches;
-        m_condition->Eval(parent_context, subcondition_matches);
+        ObjectSet subcondition_matches = m_condition->Eval(parent_context);
         double distance = m_distance->Eval(parent_context);
 
         // need to check locations (with respect to subcondition matches) of candidates separately
@@ -8135,8 +8111,7 @@ bool WithinDistance::Match(const ScriptingContext& local_context) const {
     }
 
     // get subcondition matches
-    ObjectSet subcondition_matches;
-    m_condition->Eval(local_context, subcondition_matches);
+    ObjectSet subcondition_matches = m_condition->Eval(local_context);
     if (subcondition_matches.empty())
         return false;
 
@@ -8209,8 +8184,7 @@ void WithinStarlaneJumps::Eval(const ScriptingContext& parent_context,
         // evaluate contained objects and jumps limit once and check for all candidates
 
         // get subcondition matches
-        ObjectSet subcondition_matches;
-        m_condition->Eval(parent_context, subcondition_matches);
+        ObjectSet subcondition_matches = m_condition->Eval(parent_context);
         int jump_limit = m_jumps->Eval(parent_context);
         ObjectSet &from_set(search_domain == SearchDomain::MATCHES ? matches : non_matches);
 
@@ -8246,8 +8220,7 @@ bool WithinStarlaneJumps::Match(const ScriptingContext& local_context) const {
     }
 
     // get subcondition matches
-    ObjectSet subcondition_matches;
-    m_condition->Eval(local_context, subcondition_matches);
+    ObjectSet subcondition_matches = m_condition->Eval(local_context);
     if (subcondition_matches.empty())
         return false;
 
@@ -8692,8 +8665,7 @@ void CanAddStarlaneConnection::Eval(const ScriptingContext& parent_context,
         // evaluate contained objects once and check for all candidates
 
         // get subcondition matches
-        ObjectSet subcondition_matches;
-        m_condition->Eval(parent_context, subcondition_matches);
+        ObjectSet subcondition_matches = m_condition->Eval(parent_context);
 
         EvalImpl(matches, non_matches, search_domain,
                  CanAddStarlaneConnectionSimpleMatch(subcondition_matches,
@@ -8724,8 +8696,7 @@ bool CanAddStarlaneConnection::Match(const ScriptingContext& local_context) cons
     }
 
     // get subcondition matches
-    ObjectSet subcondition_matches;
-    m_condition->Eval(local_context, subcondition_matches);
+    ObjectSet subcondition_matches = m_condition->Eval(local_context);
 
     return CanAddStarlaneConnectionSimpleMatch(subcondition_matches,
                                                local_context.ContextObjects())(candidate);
@@ -9234,8 +9205,7 @@ void ResourceSupplyConnectedByEmpire::Eval(const ScriptingContext& parent_contex
         // evaluate contained objects once and check for all candidates
 
         // get objects to be considering for matching against subcondition
-        ObjectSet subcondition_matches;
-        m_condition->Eval(parent_context, subcondition_matches);
+        ObjectSet subcondition_matches = m_condition->Eval(parent_context);
         int empire_id = m_empire_id->Eval(parent_context);
 
         EvalImpl(matches, non_matches, search_domain,
@@ -9255,8 +9225,7 @@ bool ResourceSupplyConnectedByEmpire::Match(const ScriptingContext& local_contex
     }
 
     // get subcondition matches
-    ObjectSet subcondition_matches;
-    m_condition->Eval(local_context, subcondition_matches);
+    ObjectSet subcondition_matches = m_condition->Eval(local_context);
     int empire_id = m_empire_id->Eval(local_context);
 
     return ResourceSupplySimpleMatch(empire_id, subcondition_matches, local_context.ContextObjects(),
@@ -9543,8 +9512,7 @@ void OrderedBombarded::Eval(const ScriptingContext& parent_context,
         // evaluate contained objects once and check for all candidates
 
         // get subcondition matches
-        ObjectSet subcondition_matches;
-        m_by_object_condition->Eval(parent_context, subcondition_matches);
+        ObjectSet subcondition_matches = m_by_object_condition->Eval(parent_context);
 
         EvalImpl(matches, non_matches, search_domain, OrderedBombardedSimpleMatch(subcondition_matches));
     } else {
@@ -9575,8 +9543,7 @@ bool OrderedBombarded::Match(const ScriptingContext& local_context) const {
     }
 
     // get subcondition matches
-    ObjectSet subcondition_matches;
-    m_by_object_condition->Eval(local_context, subcondition_matches);
+    ObjectSet subcondition_matches = m_by_object_condition->Eval(local_context);
 
     return OrderedBombardedSimpleMatch(subcondition_matches)(candidate);
 }
@@ -11025,11 +10992,10 @@ bool Described::operator==(const Condition& rhs) const {
 void Described::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                      SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
 {
-    if (!m_condition) {
+    if (!m_condition)
         ErrorLogger(conditions) << "Described::Eval found no subcondition to evaluate!";
-        return;
-    }
-    return m_condition->Eval(parent_context, matches, non_matches, search_domain);
+    else
+        m_condition->Eval(parent_context, matches, non_matches, search_domain);
 }
 
 std::string Described::Description(bool negated/* = false*/) const {

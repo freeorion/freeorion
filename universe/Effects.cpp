@@ -2626,11 +2626,9 @@ void AddStarlanes::Execute(ScriptingContext& context) const {
     if (!target_system)
         return; // nothing to do!
 
-    // get other endpoint systems...
-    TargetSet endpoint_objects;
-    // apply endpoints condition to determine objects whose systems should be
+    // from endpoints condition, get objects whose systems should be
     // connected to the source system
-    m_other_lane_endpoint_condition->Eval(context, endpoint_objects);
+    TargetSet endpoint_objects = m_other_lane_endpoint_condition->Eval(context);
 
     // early exit if there are no valid locations
     if (endpoint_objects.empty())
@@ -2702,10 +2700,10 @@ void RemoveStarlanes::Execute(ScriptingContext& context) const {
 
     // get other endpoint systems...
 
-    Condition::ObjectSet endpoint_objects;
     // apply endpoints condition to determine objects whose systems should be
     // connected to the source system
-    m_other_lane_endpoint_condition->Eval(context, endpoint_objects);
+    Condition::ObjectSet endpoint_objects =
+        m_other_lane_endpoint_condition->Eval(std::as_const(context));
 
     // early exit if there are no valid locations - can't move anything if there's nowhere to move to
     if (endpoint_objects.empty())
@@ -2812,9 +2810,8 @@ void MoveTo::Execute(ScriptingContext& context) const {
     Universe& universe = context.ContextUniverse();
     ObjectMap& objects = context.ContextObjects();
 
-    TargetSet valid_locations;
     // apply location condition to determine valid location to move target to
-    m_location_condition->Eval(context, valid_locations);
+    TargetSet valid_locations = m_location_condition->Eval(context);
 
     // early exit if there are no valid locations - can't move anything if there's nowhere to move to
     if (valid_locations.empty())
@@ -3159,8 +3156,7 @@ void MoveInOrbit::Execute(ScriptingContext& context) const {
     if (speed == 0.0)
         return;
     if (m_focal_point_condition) {
-        Condition::ObjectSet matches;
-        m_focal_point_condition->Eval(context, matches);
+        Condition::ObjectSet matches = m_focal_point_condition->Eval(std::as_const(context));
         if (matches.empty())
             return;
         const auto& focus_object = *matches.begin();
@@ -3318,8 +3314,7 @@ void MoveTowards::Execute(ScriptingContext& context) const {
     if (speed == 0.0)
         return;
     if (m_dest_condition) {
-        Condition::ObjectSet matches;
-        m_dest_condition->Eval(context, matches);
+        Condition::ObjectSet matches = m_dest_condition->Eval(std::as_const(context));
         if (matches.empty())
             return;
         auto focus_object = matches.front();
@@ -3350,16 +3345,16 @@ void MoveTowards::Execute(ScriptingContext& context) const {
     if (target->X() == new_x && target->Y() == new_y)
         return; // nothing to do
 
-    if (auto system = dynamic_cast<System*>(target)) {
+    if (auto* system = dynamic_cast<System*>(target)) {
         system->MoveTo(new_x, new_y);
-        for (auto& obj : context.ContextObjects().findRaw<UniverseObject>(system->ObjectIDs()))
+        for (auto* obj : context.ContextObjects().findRaw<UniverseObject>(system->ObjectIDs()))
             obj->MoveTo(new_x, new_y);
 
         // don't need to remove objects from system or insert into it, as all
         // contained objects in system are moved with it, maintaining their
         // containment situation
 
-    } else if (auto fleet = dynamic_cast<Fleet*>(target)) {
+    } else if (auto* fleet = dynamic_cast<Fleet*>(target)) {
         auto old_sys = context.ContextObjects().getRaw<System>(fleet->SystemID());
         if (old_sys)
             old_sys->Remove(fleet->ID());
@@ -3375,7 +3370,7 @@ void MoveTowards::Execute(ScriptingContext& context) const {
         // todo: is fleet now close enough to fall into a system?
         UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID, context);
 
-    } else if (auto ship = dynamic_cast<Ship*>(target)) {
+    } else if (auto* ship = dynamic_cast<Ship*>(target)) {
         auto old_sys = context.ContextObjects().getRaw<System>(ship->SystemID());
         if (old_sys)
             old_sys->Remove(ship->ID());
@@ -3399,7 +3394,7 @@ void MoveTowards::Execute(ScriptingContext& context) const {
             context.ContextUniverse().EffectDestroy(old_fleet->ID(), INVALID_OBJECT_ID);    // no object in particular destroyed this fleet
         }
 
-    } else if (auto field = dynamic_cast<Field*>(target)) {
+    } else if (auto* field = dynamic_cast<Field*>(target)) {
         auto old_sys = context.ContextObjects().getRaw<System>(field->SystemID());
         if (old_sys)
             old_sys->Remove(field->ID());
@@ -3471,9 +3466,8 @@ void SetDestination::Execute(ScriptingContext& context) const {
         return;
     }
 
-    TargetSet valid_locations;
     // apply location condition to determine valid location to move target to
-    m_location_condition->Eval(context, valid_locations);
+    TargetSet valid_locations = m_location_condition->Eval(context);
 
     // early exit if there are no valid locations - can't move anything if there's nowhere to move to
     if (valid_locations.empty())
@@ -3926,12 +3920,12 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
         // evaluate condition
         Condition::ObjectSet condition_matches;
         if (m_condition)
-            m_condition->Eval(context, condition_matches);
+            condition_matches = m_condition->Eval(std::as_const(context));
 
         // add empires that can see any condition-matching object
         for ([[maybe_unused]] auto& [empire_id, unused_empire] : context.Empires()) {
             (void)unused_empire;
-            for (auto& object : condition_matches) {
+            for (auto* object : condition_matches) {
                 auto vis = context.ContextVis(object->ID(), empire_id);
                 if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
                     recipient_empire_ids.insert(empire_id);
@@ -4246,14 +4240,20 @@ void SetVisibility::Execute(ScriptingContext& context) const {
     }
 
     // what to set visibility of?
-    std::set<int> object_ids;
+    std::vector<int> object_ids;
     if (!m_condition) {
-        object_ids.insert(context.effect_target->ID());
+        object_ids.push_back(context.effect_target->ID());
     } else {
-        Condition::ObjectSet condition_matches;
-        m_condition->Eval(context, condition_matches);
-        for (auto& object : condition_matches)
-            object_ids.insert(object->ID());
+        // get target object IDs
+        Condition::ObjectSet condition_matches = m_condition->Eval(std::as_const(context));
+        object_ids.reserve(condition_matches.size());
+        std::transform(condition_matches.begin(), condition_matches.end(),
+                       std::back_inserter(object_ids),
+                       [](const auto* o) { return o->ID(); });
+        // ensure uniqueness
+        std::sort(object_ids.begin(), object_ids.end());
+        auto unique_it = std::unique(object_ids.begin(), object_ids.end());
+        object_ids.resize(std::distance(object_ids.begin(), unique_it));
     }
 
     int source_id = INVALID_OBJECT_ID;

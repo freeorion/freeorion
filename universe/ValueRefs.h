@@ -154,11 +154,6 @@ struct FO_COMMON_API Statistic final : public Variable<T>
     }
 
 protected:
-    /** Gets the set of objects in the Universe that match the sampling condition. */
-    void GetConditionMatches(const ScriptingContext& context,
-                             Condition::ObjectSet& condition_targets,
-                             Condition::Condition* condition) const;
-
     /** Evaluates the property for the specified objects. */
     std::vector<V> GetObjectPropertyValues(const ScriptingContext& context,
                                            const Condition::ObjectSet& objects) const;
@@ -792,16 +787,6 @@ bool Statistic<T, V>::operator==(const ValueRef<T>& rhs) const
 }
 
 template <typename T, typename V>
-void Statistic<T, V>::GetConditionMatches(const ScriptingContext& context,
-                                          Condition::ObjectSet& condition_targets,
-                                          Condition::Condition* condition) const
-{
-    condition_targets.clear();
-    if (condition)
-        condition->Eval(context, condition_targets);
-}
-
-template <typename T, typename V>
 std::vector<V> Statistic<T, V>::GetObjectPropertyValues(const ScriptingContext& context,
                                                         const Condition::ObjectSet& objects) const
 {
@@ -809,8 +794,8 @@ std::vector<V> Statistic<T, V>::GetObjectPropertyValues(const ScriptingContext& 
 
     if (m_value_ref) {
         std::transform(objects.begin(), objects.end(), retval.begin(),
-                       [&context, &ref{m_value_ref}](const auto& obj)
-            { return ref->Eval(ScriptingContext(context, obj)); });
+                       [&context, &ref{m_value_ref}](const auto* obj)
+        { return ref->Eval(ScriptingContext(context, obj)); });
     }
 
     return retval;
@@ -1170,8 +1155,8 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
 template <typename T, typename V>
 T Statistic<T, V>::Eval(const ScriptingContext& context) const
 {
-    Condition::ObjectSet condition_matches;
-    GetConditionMatches(context, condition_matches, m_sampling_condition.get());
+    const auto* scond = m_sampling_condition.get();
+    Condition::ObjectSet condition_matches = scond ? scond->Eval(context) : Condition::ObjectSet{};
 
     // these two statistic types don't depend on the object property values,
     // so can be evaluated without getting those values.

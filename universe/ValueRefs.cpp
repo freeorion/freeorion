@@ -1438,8 +1438,10 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
 template <>
 std::string Statistic<std::string, std::string>::Eval(const ScriptingContext& context) const
 {
-    Condition::ObjectSet condition_matches;
-    GetConditionMatches(context, condition_matches, m_sampling_condition.get());
+    const auto* scond = m_sampling_condition.get();
+    if (!scond)
+        return "";
+    Condition::ObjectSet condition_matches = scond->Eval(context);
 
     if (condition_matches.empty())
         return "";  // empty string

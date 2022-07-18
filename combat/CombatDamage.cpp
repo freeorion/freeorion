@@ -263,8 +263,7 @@ int Combat::TotalFighterShots(const ScriptingContext& context, const Ship& ship,
         int shots_this_bout = launched_fighters;
         if (sampling_condition && launched_fighters > 0) {
             // check if not shooting
-            condition_matches.clear();
-            sampling_condition->Eval(mut_context, condition_matches);
+            condition_matches = sampling_condition->Eval(std::as_const(mut_context));
             if (condition_matches.size() == 0)
                 shots_this_bout = 0;
         }
