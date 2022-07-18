@@ -9704,6 +9704,7 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
                      ObjectSet& matches, ObjectSet& non_matches,
                      SearchDomain search_domain) const
 {
+    // not-defined and local candidate invariant refs can be evaluated just once for all candidates
     bool simple_eval_safe = ((!m_value_ref1         || m_value_ref1->LocalCandidateInvariant()) &&
                              (!m_value_ref2         || m_value_ref2->LocalCandidateInvariant()) &&
                              (!m_value_ref3         || m_value_ref3->LocalCandidateInvariant()) &&
@@ -9714,6 +9715,14 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
                              (!m_int_value_ref2     || m_int_value_ref2->LocalCandidateInvariant()) &&
                              (!m_int_value_ref3     || m_int_value_ref3->LocalCandidateInvariant()) &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
+
+    // if there is no pair of values to compare, then nothing matches,
+    // even if the present values aren't invariant
+    simple_eval_safe = simple_eval_safe ||
+        (m_value_ref1 && !m_value_ref2) ||
+        (!m_value_ref1 && m_string_value_ref1 && !m_string_value_ref1) ||
+        (!m_value_ref1 && !m_string_value_ref1 && m_int_value_ref1 && !m_int_value_ref2) ||
+        (m_compare_type1 == ComparisonType::INVALID_COMPARISON);
 
     if (simple_eval_safe) {
         // evaluate value and range limits once, use to match all candidates
