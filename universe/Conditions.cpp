@@ -9563,7 +9563,7 @@ std::unique_ptr<Condition> OrderedBombarded::Clone() const
 ///////////////////////////////////////////////////////////
 namespace {
     template <typename T, std::enable_if<std::is_arithmetic_v<T>>* = nullptr>
-    bool Comparison(T val1, ComparisonType comp, T val2) {
+    constexpr bool Comparison(T val1, ComparisonType comp, T val2) {
         switch (comp) {
             case ComparisonType::EQUAL:                 return val1 == val2;
             case ComparisonType::GREATER_THAN:          return val1 > val2;
@@ -9571,20 +9571,125 @@ namespace {
             case ComparisonType::LESS_THAN:             return val1 < val2;
             case ComparisonType::LESS_THAN_OR_EQUAL:    return val1 <= val2;
             case ComparisonType::NOT_EQUAL:             return val1 != val2;
-            case ComparisonType::INVALID_COMPARISON:
             default:                                    return false;
         }
     }
-    bool Comparison(const std::string& val1, ComparisonType comp,
-                    const std::string& val2)
+
+    constexpr bool Comparison(const std::string& val1, ComparisonType comp,
+                              const std::string& val2)
     {
         switch (comp) {
-            case ComparisonType::EQUAL:              return val1 == val2;
-            case ComparisonType::NOT_EQUAL:          return val1 != val2;
-            case ComparisonType::INVALID_COMPARISON:
-            default:                                 return false;
+            case ComparisonType::EQUAL:     return val1 == val2;
+            case ComparisonType::NOT_EQUAL: return val1 != val2;
+            default:                        return false;
         }
     }
+
+    template <typename T, std::enable_if<std::is_arithmetic_v<T>>* = nullptr>
+    auto Comparison(const std::vector<T>& vals1, ComparisonType comp, const T val2)
+    {
+        std::vector<uint8_t> retval(vals1.size(), false);
+        switch (comp) {
+        case ComparisonType::EQUAL:
+            std::transform(vals1.begin(), vals1.end(), retval.begin(), [val2](const auto val1) { return val1 == val2; });
+            break;
+        case ComparisonType::GREATER_THAN:
+            std::transform(vals1.begin(), vals1.end(), retval.begin(), [val2](const auto val1) { return val1 > val2; });
+            break;
+        case ComparisonType::GREATER_THAN_OR_EQUAL:
+            std::transform(vals1.begin(), vals1.end(), retval.begin(), [val2](const auto val1) { return val1 >= val2; });
+            break;
+        case ComparisonType::LESS_THAN:
+            std::transform(vals1.begin(), vals1.end(), retval.begin(), [val2](const auto val1) { return val1 < val2; });
+            break;
+        case ComparisonType::LESS_THAN_OR_EQUAL:
+            std::transform(vals1.begin(), vals1.end(), retval.begin(), [val2](const auto val1) { return val1 <= val2; });
+            break;
+        case ComparisonType::NOT_EQUAL:
+            std::transform(vals1.begin(), vals1.end(), retval.begin(), [val2](const auto val1) { return val1 != val2; });
+            break;
+        default: break;
+        }
+        return retval;
+    }
+
+    constexpr ComparisonType SwapSides(ComparisonType comp) {
+        switch (comp) {
+        case ComparisonType::GREATER_THAN:          return ComparisonType::LESS_THAN;           break;
+        case ComparisonType::GREATER_THAN_OR_EQUAL: return ComparisonType::LESS_THAN_OR_EQUAL;  break;
+        case ComparisonType::LESS_THAN:             return ComparisonType::GREATER_THAN;        break;
+        case ComparisonType::LESS_THAN_OR_EQUAL:    return ComparisonType::LESS_THAN_OR_EQUAL;  break;
+        default: return comp;
+        }
+    }
+
+    template <typename T, std::enable_if<std::is_arithmetic_v<T>>* = nullptr>
+    auto Comparison(const std::vector<T>& vals1, ComparisonType comp, const std::vector<T>& vals2)
+    {
+        std::vector<uint8_t> retval(vals1.size(), false);
+        switch (comp) {
+        case ComparisonType::EQUAL:
+            std::transform(vals1.begin(), vals1.end(), vals2.begin(), retval.begin(), [](const auto val1, const auto val2) { return val1 == val2; });
+            break;
+        case ComparisonType::GREATER_THAN:
+            std::transform(vals1.begin(), vals1.end(), vals2.begin(), retval.begin(), [](const auto val1, const auto val2) { return val1 > val2; });
+            break;
+        case ComparisonType::GREATER_THAN_OR_EQUAL:
+            std::transform(vals1.begin(), vals1.end(), vals2.begin(), retval.begin(), [](const auto val1, const auto val2) { return val1 >= val2; });
+            break;
+        case ComparisonType::LESS_THAN:
+            std::transform(vals1.begin(), vals1.end(), vals2.begin(), retval.begin(), [](const auto val1, const auto val2) { return val1 < val2; });
+            break;
+        case ComparisonType::LESS_THAN_OR_EQUAL:
+            std::transform(vals1.begin(), vals1.end(), vals2.begin(), retval.begin(), [](const auto val1, const auto val2) { return val1 <= val2; });
+            break;
+        case ComparisonType::NOT_EQUAL:
+            std::transform(vals1.begin(), vals1.end(), vals2.begin(), retval.begin(), [](const auto val1, const auto val2) { return val1 != val2; });
+            break;
+        default: break;
+        }
+        return retval;
+    }
+
+    auto Comparison(const std::vector<std::string>& vals1, ComparisonType comp,
+                    const std::string& val2)
+    {
+        std::vector<uint8_t> retval(vals1.size(), false);
+        switch (comp) {
+        case ComparisonType::EQUAL:
+            std::transform(vals1.begin(), vals1.end(), retval.begin(), [&val2](const auto& val1) { return val1 == val2; });
+            break;
+        case ComparisonType::NOT_EQUAL:
+            std::transform(vals1.begin(), vals1.end(), retval.begin(), [&val2](const auto& val1) { return val1 != val2; });
+            break;
+        default: break;
+        }
+        return retval;
+    }
+
+    auto Comparison(const std::vector<std::string>& vals1, ComparisonType comp,
+                    const std::vector<std::string>& vals2)
+    {
+        std::vector<uint8_t> retval(vals1.size(), false);
+        switch (comp) {
+        case ComparisonType::EQUAL:
+            std::transform(vals1.begin(), vals1.end(), vals2.begin(), retval.begin(), [](const auto& val1, const auto& val2) { return val1 == val2; });
+            break;
+        case ComparisonType::NOT_EQUAL:
+            std::transform(vals1.begin(), vals1.end(), vals2.begin(), retval.begin(), [](const auto& val1, const auto& val2) { return val1 != val2; });
+            break;
+        default: break;
+        }
+        return retval;
+    }
+
+    template <typename T, std::enable_if<std::is_arithmetic_v<T>>* = nullptr>
+    auto Comparison(const T val1, ComparisonType comp, const std::vector<T>& vals2)
+    { return Comparison(vals2, SwapSides(comp), val1); }
+
+    auto Comparison(const std::string& val1, ComparisonType comp,
+                    const std::vector<std::string>& vals2)
+    { return Comparison(vals2, SwapSides(comp), val1); }
 
     constexpr std::string_view CompareTypeString(ComparisonType comp) {
         switch (comp) {
@@ -9730,11 +9835,256 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
             matches.insert(matches.end(), non_matches.begin(), non_matches.end());
             non_matches.clear();
         }
-
-    } else {
-        // re-evaluate value and ranges for each candidate object
-        Condition::Eval(parent_context, matches, non_matches, search_domain);
+        return;
     }
+
+    auto match_none = [&matches, &non_matches, search_domain]() {
+        if (search_domain == SearchDomain::MATCHES) {
+            non_matches.insert(non_matches.end(), matches.begin(), matches.end());
+            matches.clear();
+        } // if search domain is non_matches, no need to do anything to match nothing
+    };
+    auto match_all = [&matches, &non_matches, search_domain]() {
+        if (search_domain == SearchDomain::NON_MATCHES) {
+            matches.insert(matches.end(), non_matches.begin(), non_matches.end());
+            non_matches.clear();
+        } // if search domain is matches, no need to do anything to match everything
+    };
+
+
+    // Move between matches and non_matches, depending search_domain and the
+    // values of ref1, ref2, and ref3 for each object in the searched set.
+    auto test_compare_refs = [c12_in{m_compare_type1}, c23_in{m_compare_type2},
+                              &matches, &non_matches, search_domain, match_none, match_all]
+        (const auto* ref1, const auto* const ref2, const auto* ref3, const ScriptingContext& context)
+    {
+        // assuming both ref1 and ref2 are non-null and comparison should be OK here,
+        // given simple eval safe tests above
+        using RefT = std::decay_t<decltype(std::declval<decltype(ref1)>()->Eval())>;
+        static_assert(std::is_same_v<decltype(std::declval<decltype(ref2)>()->Eval()), RefT>);
+        static_assert(std::is_same_v<decltype(std::declval<decltype(ref3)>()->Eval()), RefT>);
+
+        // safety checks
+        if (!ref1) {
+            ErrorLogger() << "no first reference!";
+            match_none();
+            return;
+        } else if (!ref2) {
+            ErrorLogger() << "no second reference!";
+            match_none();
+            return;
+        } else if (c12_in == ComparisonType::INVALID_COMPARISON) {
+            ErrorLogger() << "invalid ref1-ref2 comparison type!";
+            match_none();
+            return;
+        } else if (ref3 && c23_in != ComparisonType::INVALID_COMPARISON) {
+            ErrorLogger() << "third reference present but invalid ref2-ref3 comparison type!";
+            ref3 = nullptr;
+        }
+
+        // possible cases of input, depending on whether references are present (ref3)
+        // and variant or invariant to local candidate (ref1, ref2, ref3):
+        // 1inv 2inv ----, 1inv 2var ----, 1var 2inv ----, 1var 2var ----
+        // 1inv 2inv 3inv, 1inv 2var 3inv, 1var 2inv 3inv, 1var 2var 3inv
+        // 1inv 2inv 3var, 1inv 2var 3var, 1var 2inv 3var, 1var 2var 3var
+
+        // if ref1_in is not invariant but ref3_in is invariant, then swap them
+        // so that the simpler to evaluate case is handled first
+        bool swap_1_3 = ref3 && ref3->LocalCandidateInvariant() && !ref1->LocalCandidateInvariant();
+        if (swap_1_3)
+            std::swap(ref1, ref3);
+        auto c12 = swap_1_3 ? SwapSides(c23_in) : c12_in;
+        auto c23 = swap_1_3 ? SwapSides(c12_in) : c23_in;
+
+
+        // remaining cases:
+        // 1inv 2inv ----, 1inv 2var ----, 1var 2inv ----, 1var 2var ----
+        // 1inv 2inv 3inv, 1inv 2var 3inv
+        // 1inv 2inv 3var, 1inv 2var 3var, 1var 2inv 3var, 1var 2var 3var
+
+        bool ref1_lci = ref1->LocalCandidateInvariant();
+        bool ref2_lci = ref2->LocalCandidateInvariant();
+        bool ref1_calced = false, ref2_calced = false;
+        RefT ref1_val{}, ref2_val{};
+        if (ref1_lci && ref2_lci) {
+            // if ref1 and ref2 are invariant and ref3 is invariant or missing,
+            // handle tests as single comparison(s)
+            ref1_val = ref1->Eval(context);
+            ref2_val = ref2->Eval(context);
+            ref1_calced = true;
+            ref2_calced = true;
+
+            if (!ref3) {
+                // if refs 1 and 2 are local candidate invariant and there is no ref3,
+                // just need to check single value comparison for refs 1 and 2
+                if (Comparison(ref1_val, c12, ref2_val))
+                    match_all();
+                else
+                    match_none();
+                return;
+
+            } else if (ref3->LocalCandidateInvariant()) {
+                // if refs 1, 2, and 3 are local candidate invariant,
+                // just need to check single value comparisons for refs 1 vs 2 and 2 vs 3
+                if (Comparison(ref1_val, c12, ref2_val) &&
+                    Comparison(ref2_val, c23, ref3->Eval(context)))
+                {
+                    match_all();
+                } else {
+                    match_none();
+                }
+                return;
+
+            } else {
+                // if ref1 and ref2 are invariant and ref3 is variant, may be able to
+                // skip evaluating ref3 for each candidate if the single value check
+                // for ref1 and ref2 doesn't pass
+                if (!Comparison(ref1_val, c12, ref2_val)) {
+                    match_none();
+                    return;
+                } else {
+                    // if ref1-ref2 comparison passed, so still need to check ref2 vs ref3
+                    // for each candidate, but can reduce that to the case of no ref3 by
+                    // moving ref3 over ref1 and making ref3 nullptr
+                    ref1 = ref3;
+                    ref3 = nullptr;
+                    ref1_lci = false; // former ref3->LocalCandidateInvariant() == false
+                    ref1_calced = false;
+                    // leaves ref1_val with an out-of-date value, but this will not be used
+                }
+            }
+        }
+
+
+        // remaining cases all require contexts for each candidate to get values for
+        // at least one comparison:
+        //                 1inv 2var ----, 1var 2inv ----, 1var 2var ----
+        //                 1inv 2var 3inv
+        //                 1inv 2var 3var, 1var 2inv 3var, 1var 2var 3var
+
+        // safety check
+        if (ref1_lci && ref2_lci) {
+            ErrorLogger() << "Shouldn't have both ref1 and ref2 invariant here!";
+            match_none();
+            return;
+        }
+
+        // which set to filter from?
+        auto& from_set = (search_domain == SearchDomain::MATCHES) ? matches : non_matches;
+
+        // get contexts with which to evaluate values for each object
+        std::vector<ScriptingContext> contexts;
+        contexts.reserve(from_set.size());
+        std::transform(from_set.begin(), from_set.end(), std::back_inserter(contexts),
+                       [&context](const UniverseObject* o) { return ScriptingContext{context, o}; });
+
+        // get values for ref1 and ref2
+        std::vector<RefT> vals1, vals2;
+        if (ref1_lci) {
+            if (!ref1_calced)
+                ref1_val = ref1->Eval(context);
+        } else {
+            vals1.reserve(contexts.size());
+            std::transform(contexts.begin(), contexts.end(), std::back_inserter(vals1),
+                           [ref1](const ScriptingContext& ocx) { return ref1->Eval(ocx); });
+        }
+        if (ref2_lci) {
+            if (!ref2_calced)
+                ref2_val = ref2->Eval(context);
+        } else {
+            vals2.reserve(contexts.size());
+            std::transform(contexts.begin(), contexts.end(), std::back_inserter(vals2),
+                           [ref2](const ScriptingContext& ocx) { return ref2->Eval(ocx); });
+        }
+
+        // get mask of values that pass comparison of ref1 and ref2
+        auto passed = [&, ref1_lci, ref2_lci]() {
+            if (!ref1_lci && !ref2_lci)
+                return Comparison(vals1, c12, vals2);
+            else if (ref1_lci)
+                return Comparison(ref1_val, c12, vals2);
+            else // if (ref2_lci)
+                return Comparison(vals1, c12, ref2_val);
+        }();
+        static_assert(std::is_same_v<std::vector<uint8_t>, decltype(passed)>);
+
+        auto move_based_on_mask = [search_domain, &matches, &non_matches](const auto& mask) {
+            const uint8_t test_val = search_domain == SearchDomain::MATCHES;
+            auto& from = test_val ? matches : non_matches;
+            auto& to = test_val ? non_matches : matches;
+
+            auto o_it = from.begin();
+            auto m_it = mask.begin();
+            const auto m_end = mask.end();
+            auto dest = std::back_inserter(to);
+
+            for (; m_it != m_end; ++m_it) {
+                if (*m_it != test_val) {
+                    *dest++ = std::exchange(*o_it, from.back());
+                    from.pop_back();
+                } else {
+                    ++o_it;
+                }
+            }
+        };
+
+        // if there is no 3rd reference to compare to, or if all candidates
+        // didn't pass the first comparison, then the result of ref1 to ref2
+        // comparison is the final result
+        if (!ref3 || std::all_of(passed.begin(), passed.end(), [](const auto p) { return !p; })) {
+            move_based_on_mask(passed);
+            return;
+        }
+
+
+        // remaining cases: 1inv 2var 3inv, 1inv 2var 3var, 1var 2inv 3var, 1var 2var 3var
+        // but determining "passed" above covers all tests for ref1, so effectively
+        //
+        // remaining cases: 2var 3inv, 2inv 3var, 2var 3var
+        // with additional filter: objects with 0 in "passed" don't need ref3 value to be calculated
+
+        // safety check
+        bool ref3_lci = ref3->LocalCandidateInvariant();
+        if (ref2_lci && ref3_lci) {
+            ErrorLogger() << "Shouldn't have both ref1 and ref3 invariant here!";
+            match_none();
+            return;
+        }
+
+        auto p_it = passed.begin();
+        const auto p_end = passed.end();
+        auto c_it = contexts.begin();
+
+        // compare ref2 and ref3 results, except when passed is 0, in which case
+        // the comparison can be skipped
+        if (ref3_lci) {
+            auto ref3_val = ref3->Eval(context);
+            auto v2_it = vals2.begin();
+            for (; p_it != p_end; ++p_it, ++v2_it)
+                *p_it = *p_it && Comparison(*v2_it, c23, ref3_val);
+
+        } else if (ref2_lci) {
+            for (; p_it != p_end; ++c_it, ++p_it)
+                *p_it = *p_it && Comparison(ref2_val, c23, ref3->Eval(*c_it));
+
+        } else {
+            auto v2_it = vals2.begin();
+            for (; p_it != p_end; ++c_it, ++p_it, ++v2_it)
+                *p_it = *p_it && Comparison(*v2_it, c23, ref3->Eval(*c_it));
+        }
+
+        move_based_on_mask(passed);
+    };
+
+
+    if (m_int_value_ref1) // testing if second ref is non-null should be redundant here given simple eval safe tests above
+        test_compare_refs(m_int_value_ref1.get(), m_int_value_ref2.get(), m_int_value_ref3.get(), parent_context);
+    else if (m_value_ref1)
+        test_compare_refs(m_value_ref1.get(), m_value_ref2.get(), m_value_ref3.get(), parent_context);
+    else if (m_string_value_ref1)
+        test_compare_refs(m_string_value_ref1.get(), m_string_value_ref2.get(), m_string_value_ref3.get(), parent_context);
+    else
+        match_none();
 }
 
 std::string ValueTest::Description(bool negated) const {
@@ -9811,28 +10161,28 @@ bool ValueTest::Match(const ScriptingContext& local_context) const {
 
     // simple evaluation should have only local-candidate-invariation sub-value-refs
     // base class evaulation should have defined local candidate
-    auto test_compare_refs = [c12{m_compare_type1}, c23{m_compare_type2}, &local_context]
-        (const auto& ref1, const auto& ref2, const auto& ref3)
+    auto test_compare_refs = [c12{m_compare_type1}, c23{m_compare_type2}]
+        (const auto& ref1, const auto& ref2, const auto& ref3, const ScriptingContext& cx)
     {
         if (!ref1 || !ref2 || c12 == ComparisonType::INVALID_COMPARISON)
             return false;
-        auto val1 = ref1->Eval(local_context);
-        auto val2 = ref2->Eval(local_context);
+        const auto val1 = ref1->Eval(cx);
+        const auto val2 = ref2->Eval(cx);
         if (!Comparison(val1, c12, val2))
             return false;
 
         if (!ref3 || c23 == ComparisonType::INVALID_COMPARISON)
             return true;
-        auto val3 = ref3->Eval(local_context);
+        const auto val3 = ref3->Eval(cx);
         return Comparison(val2, c23, val3);
     };
 
     if (m_int_value_ref1)
-        return test_compare_refs(m_int_value_ref1, m_int_value_ref2, m_int_value_ref3);
+        return test_compare_refs(m_int_value_ref1, m_int_value_ref2, m_int_value_ref3, local_context);
     else if (m_value_ref1)
-        return test_compare_refs(m_value_ref1, m_value_ref2, m_value_ref3);
+        return test_compare_refs(m_value_ref1, m_value_ref2, m_value_ref3, local_context);
     else if (m_string_value_ref1)
-        return test_compare_refs(m_string_value_ref1, m_string_value_ref2, m_string_value_ref3);
+        return test_compare_refs(m_string_value_ref1, m_string_value_ref2, m_string_value_ref3, local_context);
     else
         return false;
 }
