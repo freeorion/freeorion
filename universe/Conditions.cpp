@@ -230,21 +230,6 @@ std::string ConditionDescription(const std::vector<const Condition*>& conditions
 ///////////////////////////////////////////////////////////
 // Condition                                             //
 ///////////////////////////////////////////////////////////
-struct Condition::MatchHelper {
-    MatchHelper(const Condition* this_, const ScriptingContext& parent_context) :
-        m_this(this_),
-        m_parent_context(parent_context)
-    {}
-
-    bool operator()(const UniverseObject* candidate) const {
-        ScriptingContext context{m_parent_context, candidate};
-        return m_this->Match(context);
-    }
-
-    const Condition* m_this = nullptr;
-    const ScriptingContext& m_parent_context;
-};
-
 bool Condition::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
@@ -258,7 +243,14 @@ bool Condition::operator==(const Condition& rhs) const {
 void Condition::Eval(const ScriptingContext& parent_context,
                      ObjectSet& matches, ObjectSet& non_matches,
                      SearchDomain search_domain) const
-{ EvalImpl(matches, non_matches, search_domain, MatchHelper(this, parent_context)); }
+{
+    EvalImpl(matches, non_matches, search_domain,
+             [cond{this}, &parent_context](const UniverseObject* candidate) -> bool
+    {
+        const ScriptingContext candidate_context{parent_context, candidate};
+        return cond->Match(candidate_context);
+    });
+}
 
 void Condition::Eval(ScriptingContext& parent_context,
                      Effect::TargetSet& matches, Effect::TargetSet& non_matches,

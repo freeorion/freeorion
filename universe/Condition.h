@@ -102,9 +102,6 @@ protected:
     bool m_source_invariant = false;
 
 private:
-    struct MatchHelper;
-    friend struct MatchHelper;
-
     virtual bool Match(const ScriptingContext& local_context) const;
 };
 
