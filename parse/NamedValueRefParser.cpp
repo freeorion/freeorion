@@ -83,6 +83,11 @@ namespace parse {
                    > label(tok.value_) > qi::as<parse::detail::MovableEnvelope<ValueRef::ValueRef<double>>>()[double_rules.expr]
                     ) [ insert_named_ref_(_r1, _2, _3, _pass) ]
                     |
+                    ((omit_[tok.Named_] >> tok.String_)
+                   > label(tok.name_) > tok.string
+                   > label(tok.value_) > qi::as<parse::detail::MovableEnvelope<ValueRef::ValueRef<std::string>>>()[string_grammar.expr]
+                    ) [ insert_named_ref_(_r1, _2, _3, _pass) ]
+                    |
                     ((omit_[tok.Named_] >> tok.PlanetType_) > label(tok.name_) > tok.string > label(tok.value_) > planet_type_rules.expr
                     ) [ insert_named_ref_(_r1, _2, _3, _pass) ]
                     |

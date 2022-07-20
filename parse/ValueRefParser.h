@@ -225,6 +225,8 @@ namespace parse {
         detail::variable_rule<std::string>      value_wrapped_bound_variable;
         detail::value_ref_rule<std::string>     statistic_sub_value_ref;
         detail::statistic_rule<std::string>     statistic;
+        detail::value_ref_rule<std::string>     named_string_valueref;
+        detail::value_ref_rule<std::string>     named_lookup_expr;
         detail::expression_rule<std::string>    function_expr;
         detail::expression_rule<std::string>    operated_expr;
         detail::value_ref_rule<std::string>     expr;

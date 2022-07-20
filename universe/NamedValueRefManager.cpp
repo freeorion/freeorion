@@ -178,6 +178,11 @@ void NamedValueRefManager::RegisterValueRef(std::string&& valueref_name,
 
 template <>
 void NamedValueRefManager::RegisterValueRef(std::string&& valueref_name,
+                                            std::unique_ptr<ValueRef::ValueRef<std::string>>&& vref)
+{ RegisterValueRefImpl(m_value_refs, m_value_refs_mutex, "string", std::move(valueref_name), std::move(vref)); }
+
+template <>
+void NamedValueRefManager::RegisterValueRef(std::string&& valueref_name,
                                             std::unique_ptr<ValueRef::ValueRef<int>>&& vref)
 { RegisterValueRefImpl(m_value_refs_int, m_value_refs_int_mutex, "int", std::move(valueref_name), std::move(vref)); }
 
@@ -220,6 +225,7 @@ namespace ValueRef {
     // trigger instantiations
     template struct NamedRef<double>;
     template struct NamedRef<int>;
+    template struct NamedRef<std::string>;
     template struct NamedRef<PlanetEnvironment>;
     template struct NamedRef<PlanetSize>;
     template struct NamedRef<PlanetType>;
