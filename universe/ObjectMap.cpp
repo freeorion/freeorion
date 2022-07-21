@@ -308,7 +308,7 @@ void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
     std::map<int, std::set<int>> contained_ships;
     std::map<int, std::set<int>> contained_fields;
 
-    for (const auto& contained : all()) {
+    for (const auto* contained : allRaw()) {
         if (destroyed_object_ids.count(contained->ID()))
             continue;
 
@@ -345,11 +345,11 @@ void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
     }
 
     // set contained objects of all possible containers
-    for (const auto& obj : all()) {
+    for (auto* obj : allRaw()) {
         const int ID = obj->ID();
         const auto TYPE = obj->ObjectType();
         if (TYPE == UniverseObjectType::OBJ_SYSTEM) {
-            auto sys = std::static_pointer_cast<System>(obj);
+            auto sys = static_cast<System*>(obj);
             sys->m_objects =    contained_objs[ID];
             sys->m_planets =    contained_planets[ID];
             sys->m_buildings =  contained_buildings[ID];
@@ -358,11 +358,11 @@ void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
             sys->m_fields =     contained_fields[ID];
 
         } else if (TYPE == UniverseObjectType::OBJ_PLANET) {
-            auto plt = std::static_pointer_cast<Planet>(obj);
+            auto plt = static_cast<Planet*>(obj);
             plt->m_buildings =  contained_buildings[ID];
 
         } else if (TYPE == UniverseObjectType::OBJ_FLEET) {
-            auto flt = std::static_pointer_cast<Fleet>(obj);
+            auto flt = static_cast<Fleet*>(obj);
             flt->m_ships =      contained_ships[ID];
         }
     }
