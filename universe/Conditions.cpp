@@ -114,8 +114,10 @@ namespace {
         auto& from_set = domain_matches ? matches : non_matches;
         auto& to_set = domain_matches ? non_matches : matches;
 
+        // checking for from_set.size() == 1 and/or to_set.empty() and early exiting didn't seem to speed up evaluation
+
         auto part_it = std::stable_partition(from_set.begin(), from_set.end(),
-                                             [pred, domain_matches](const auto* o) { return pred(o) == domain_matches; });
+            [pred, domain_matches](const auto* o) { return pred(o) == domain_matches; });
         to_set.insert(to_set.end(), part_it, from_set.end());
         from_set.erase(part_it, from_set.end());
     }
