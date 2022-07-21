@@ -645,7 +645,7 @@ void SpeciesManager::ClearSpeciesHomeworlds()
 void SpeciesManager::UpdatePopulationCounter(const ObjectMap& objects) {
     // ships of each species and design
     m_species_object_populations.clear();
-    for (const auto& [obj_id, obj] : objects.ExistingObjects()) {
+    for (const auto& [obj_id, obj] : objects.allExisting()) {
         if (obj->ObjectType() != UniverseObjectType::OBJ_PLANET &&
             obj->ObjectType() != UniverseObjectType::OBJ_POP_CENTER)
         { continue; }

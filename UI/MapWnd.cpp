@@ -5047,7 +5047,7 @@ void MapWnd::DeferredRefreshFleetButtons() {
     LocationXEmpireToFleetsMap moving_fleets;
     LocationXEmpireToFleetsMap offroad_fleets;
 
-    for (const auto& entry : Objects().ExistingFleets()) {
+    for (const auto& entry : Objects().allExisting<Fleet>()) {
         auto fleet = IsQualifiedFleet(entry.second, client_empire_id,
                                       this_client_known_destroyed_objects,
                                       this_client_stale_object_info);

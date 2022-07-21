@@ -848,7 +848,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec,
     ObjectMap& objects{*m_objects};
 
     auto number_text = std::to_string(objects_vec.empty() ?
-                                      objects.ExistingObjects().size() : objects_vec.size());
+                                      objects.allExisting().size() : objects_vec.size());
     ScopedTimer timer("Universe::UpdateMeterEstimatesImpl on " + number_text + " objects", true);
 
 
@@ -856,8 +856,8 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec,
     // when iterating over the list in the following code
     auto object_ptrs = objects.find(objects_vec);
     if (objects_vec.empty()) {
-        object_ptrs.reserve(objects.ExistingObjects().size());
-        std::transform(objects.ExistingObjects().begin(), objects.ExistingObjects().end(),
+        object_ptrs.reserve(objects.allExisting().size());
+        std::transform(objects.allExisting().begin(), objects.allExisting().end(),
                        std::back_inserter(object_ptrs), [](const auto& p) {
             return std::const_pointer_cast<UniverseObject>(p.second);
         });

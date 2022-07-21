@@ -1423,14 +1423,14 @@ namespace {
     }
 
     void AddAllObjectsSet(const ObjectMap& obj_map, Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + obj_map.ExistingObjects().size());
-        std::transform(obj_map.ExistingObjects().begin(), obj_map.ExistingObjects().end(),  // ExistingObjects() here does not consider whether objects have been destroyed during this combat
+        condition_non_targets.reserve(condition_non_targets.size() + obj_map.allExisting().size());
+        std::transform(obj_map.allExisting().begin(), obj_map.allExisting().end(),  // allExisting() here does not consider whether objects have been destroyed during this combat
                        std::back_inserter(condition_non_targets),
                        [](const auto& p) -> const UniverseObject* { return p.second.get(); });
     }
     void AddAllObjectsSet(ObjectMap& obj_map, Effect::TargetSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + obj_map.ExistingObjects().size());
-        std::transform(obj_map.ExistingObjects().begin(), obj_map.ExistingObjects().end(),  // ExistingObjects() here does not consider whether objects have been destroyed during this combat
+        condition_non_targets.reserve(condition_non_targets.size() + obj_map.allExisting().size());
+        std::transform(obj_map.allExisting().begin(), obj_map.allExisting().end(),  // allExisting() here does not consider whether objects have been destroyed during this combat
                        std::back_inserter(condition_non_targets),
                        [](const auto& p) -> UniverseObject* { return const_cast<UniverseObject*>(p.second.get()); });
     }

@@ -47,57 +47,57 @@ namespace {
     using boost::placeholders::_1;
 
     void AddAllObjectsSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingObjects().size());
-        for (const auto& obj : objects.ExistingObjects())
+        condition_non_targets.reserve(condition_non_targets.size() + objects.allExisting().size());
+        for (const auto& obj : objects.allExisting())
             condition_non_targets.push_back(obj.second.get());
         // in my tests, this range for loop with emplace_back was about 5% faster than std::transform with std::back_inserter and a lambda returning the .second of the map entries
     }
 
     void AddBuildingSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingBuildings().size());
-        for (const auto& obj : objects.ExistingBuildings())
+        condition_non_targets.reserve(condition_non_targets.size() + objects.allExisting<Building>().size());
+        for (const auto& obj : objects.allExisting<Building>())
             condition_non_targets.push_back(obj.second.get());
     }
 
     void AddFieldSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingFields().size());
-        for (const auto& obj : objects.ExistingFields())
+        condition_non_targets.reserve(condition_non_targets.size() + objects.allExisting<Field>().size());
+        for (const auto& obj : objects.allExisting<Field>())
             condition_non_targets.push_back(obj.second.get());
     }
 
     void AddFleetSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingFleets().size());
-        for (const auto& obj : objects.ExistingFleets())
+        condition_non_targets.reserve(condition_non_targets.size() + objects.allExisting<Fleet>().size());
+        for (const auto& obj : objects.allExisting<Fleet>())
             condition_non_targets.push_back(obj.second.get());
     }
 
     void AddPlanetSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingPlanets().size());
-        for (const auto& obj : objects.ExistingPlanets())
+        condition_non_targets.reserve(condition_non_targets.size() + objects.allExisting<Planet>().size());
+        for (const auto& obj : objects.allExisting<Planet>())
             condition_non_targets.push_back(obj.second.get());
     }
 
     void AddPopCenterSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingPopCenters().size());
-        for (const auto& obj : objects.ExistingPopCenters())
+        condition_non_targets.reserve(condition_non_targets.size() + objects.allExisting<PopCenter>().size());
+        for (const auto& obj : objects.allExisting<PopCenter>())
             condition_non_targets.push_back(obj.second.get());
     }
 
     void AddResCenterSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingResourceCenters().size());
-        for (const auto& obj : objects.ExistingResourceCenters())
+        condition_non_targets.reserve(condition_non_targets.size() + objects.allExisting<ResourceCenter>().size());
+        for (const auto& obj : objects.allExisting<ResourceCenter>())
             condition_non_targets.push_back(obj.second.get());
     }
 
     void AddShipSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingShips().size());
-        for (const auto& obj : objects.ExistingShips())
+        condition_non_targets.reserve(condition_non_targets.size() + objects.allExisting<Ship>().size());
+        for (const auto& obj : objects.allExisting<Ship>())
             condition_non_targets.push_back(obj.second.get());
     }
 
     void AddSystemSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingSystems().size());
-        for (const auto& obj : objects.ExistingSystems())
+        condition_non_targets.reserve(condition_non_targets.size() + objects.allExisting<System>().size());
+        for (const auto& obj : objects.allExisting<System>())
             condition_non_targets.push_back(obj.second.get());
     }
 
@@ -3929,7 +3929,7 @@ void ObjectID::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
     if (object_id == INVALID_OBJECT_ID)
         return;
 
-    if (auto obj = parent_context.ContextObjects().ExistingObject(object_id))
+    if (auto obj = parent_context.ContextObjects().getExisting(object_id))
         condition_non_targets.push_back(obj.get());
 }
 

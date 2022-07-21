@@ -1448,8 +1448,8 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(const ObjectMap& objects,
 
     // add vertices to graph for all systems
     std::vector<int> system_ids;
-    system_ids.reserve(objects.ExistingSystems().size());
-    for (auto& sys : objects.ExistingSystems())
+    system_ids.reserve(objects.allExisting<System>().size());
+    for (auto& sys : objects.allExisting<System>())
         system_ids.push_back(sys.first);
 
     decltype(m_system_id_to_graph_index)::sequence_type system_id_to_graph_idx_vec;

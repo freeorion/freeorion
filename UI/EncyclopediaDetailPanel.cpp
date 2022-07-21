@@ -2887,8 +2887,8 @@ namespace {
 
         // ships of this design
         std::vector<const Ship*> design_ships;
-        design_ships.reserve(objects.ExistingShips().size());
-        for (const auto& entry : objects.ExistingShips()) {
+        design_ships.reserve(objects.allExisting<Ship>().size());
+        for (const auto& entry : objects.allExisting<Ship>()) {
             auto ship = static_cast<const Ship*>(entry.second.get());
             if (ship && ship->DesignID() == design_id)
                 design_ships.emplace_back(ship);

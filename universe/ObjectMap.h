@@ -162,26 +162,36 @@ public:
     [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const;
 
     /**  */
-    [[nodiscard]] std::shared_ptr<const UniverseObject> ExistingObject(int id) const;
+    [[nodiscard]] std::shared_ptr<const UniverseObject> getExisting(int id) const;
 
-    [[nodiscard]] const container_type<const UniverseObject>& ExistingObjects() const
-    { return m_existing_objects; }
-    [[nodiscard]] const container_type<const UniverseObject>& ExistingResourceCenters() const
-    { return m_existing_resource_centers; }
-    [[nodiscard]] const container_type<const UniverseObject>& ExistingPopCenters() const
-    { return m_existing_pop_centers; }
-    [[nodiscard]] const container_type<const UniverseObject>& ExistingShips() const
-    { return m_existing_ships; }
-    [[nodiscard]] const container_type<const UniverseObject>& ExistingFleets() const
-    { return m_existing_fleets; }
-    [[nodiscard]] const container_type<const UniverseObject>& ExistingPlanets() const
-    { return m_existing_planets; }
-    [[nodiscard]] const container_type<const UniverseObject>& ExistingSystems() const
-    { return m_existing_systems; }
-    [[nodiscard]] const container_type<const UniverseObject>& ExistingBuildings() const
-    { return m_existing_buildings; }
-    [[nodiscard]] const container_type<const UniverseObject>& ExistingFields() const
-    { return m_existing_fields; }
+    template <typename T = UniverseObject>
+    [[nodiscard]] const auto& allExisting() const
+    {
+        using DecayT = std::decay_t<T>;
+        if constexpr (std::is_same_v<DecayT, UniverseObject>)
+            return m_existing_objects;
+        else if constexpr (std::is_same_v<DecayT, ResourceCenter>)
+            return m_existing_resource_centers;
+        else if constexpr (std::is_same_v<DecayT, PopCenter>)
+            return m_existing_pop_centers;
+        else if constexpr (std::is_same_v<DecayT, Ship>)
+            return m_existing_ships;
+        else if constexpr (std::is_same_v<DecayT, Fleet>)
+            return m_existing_fleets;
+        else if constexpr (std::is_same_v<DecayT, Planet>)
+            return m_existing_planets;
+        else if constexpr (std::is_same_v<DecayT, System>)
+            return m_existing_systems;
+        else if constexpr (std::is_same_v<DecayT, Building>)
+            return m_existing_buildings;
+        else if constexpr (std::is_same_v<DecayT, Field>)
+            return m_existing_fields;
+        else {
+            static_assert(std::is_same_v<DecayT, UniverseObject>, "invalid type for allExisting()");
+            static const decltype(m_existing_objects) error_retval;
+            return error_retval;
+        }
+    }
 
     /** Copies the contents of the ObjectMap \a copied_map into this ObjectMap.
       * Each object in \a copied_map has information transferred to this map.
@@ -274,7 +284,7 @@ private:
             return m_fields;
         else {
             static_assert(std::is_same_v<DecayT, UniverseObject>, "invalid type for Map()");
-            static container_type<DecayT> error_retval;
+            static const decltype(m_objects) error_retval;
             return error_retval;
         }
     }
@@ -304,7 +314,7 @@ private:
             return m_fields;
         else {
             static_assert(std::is_same_v<DecayT, UniverseObject>, "invalid type for Map()");
-            static container_type<DecayT> error_retval;
+            static const decltype(m_objects) error_retval;
             return error_retval;
         }
     }
@@ -495,9 +505,8 @@ template <typename T,
           typename std::enable_if_t<std::is_base_of_v<UniverseObject, T>>*>
 void ObjectMap::insert(std::shared_ptr<T> item, int empire_id)
 {
-    if (!item)
-        return;
-    insertCore(std::move(item), empire_id);
+    if (item)
+        insertCore(std::move(item), empire_id);
 }
 
 #endif

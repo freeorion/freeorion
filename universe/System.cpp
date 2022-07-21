@@ -198,7 +198,7 @@ std::string System::ApparentName(int empire_id, const Universe& u,
 
     if (m_star == StarType::STAR_NONE) {
         // determine if there are any planets in the system
-        for (const auto& entry : o.ExistingPlanets()) {
+        for (const auto& entry : o.allExisting<Planet>()) {
             if (entry.second->SystemID() == this->ID())
                 return this->PublicName(empire_id, u);
         }

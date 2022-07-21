@@ -3557,7 +3557,7 @@ void ServerApp::UpdateMonsterTravelRestrictions() {
     const ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data,
                                    m_species_manager, m_supply_manager};
 
-    for (auto const& maybe_system : m_universe.Objects().ExistingSystems()) {
+    for (auto const& maybe_system : m_universe.Objects().allExisting<System>()) {
         auto system = std::dynamic_pointer_cast<const System>(maybe_system.second);
         if (!system) {
             ErrorLogger() << "Non System object in ExistingSystems with id = " << maybe_system.second->ID();
@@ -3568,7 +3568,7 @@ void ServerApp::UpdateMonsterTravelRestrictions() {
         bool empires_present = false;
         bool unrestricted_empires_present = false;
         std::vector<std::shared_ptr<Fleet>> monsters;
-        for (auto&& fleet : m_universe.Objects().find<Fleet>(system->FleetIDs())) {
+        for (auto&& fleet : m_universe.Objects().find<Fleet>(system->FleetIDs())) { // TODO: findRaw
             // will not require visibility for empires to block clearing of monster travel restrictions
             // unrestricted lane access (i.e, (fleet->ArrivalStarlane() == system->ID()) ) is used as a proxy for
             // order of arrival -- if an enemy has unrestricted lane access and you don't, they must have arrived

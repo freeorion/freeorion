@@ -127,7 +127,7 @@ std::shared_ptr<const UniverseObject> Empire::Source(const ObjectMap& objects) c
     }
 
     // Find any planet / ship owned by the empire
-    // TODO determine if ExistingObjects() is faster and acceptable
+    // TODO determine if allExisting() is faster and acceptable
     for (const auto& obj : objects.all<Planet>()) {
         if (obj->OwnedBy(m_id)) {
             m_source_id = obj->ID();
@@ -165,7 +165,7 @@ void Empire::SetCapitalID(int id, const ObjectMap& objects) {
         return;
 
     // Verify that the capital exists and is owned by the empire
-    auto possible_capital = objects.ExistingObject(id);
+    auto possible_capital = objects.getExisting(id);
     if (possible_capital && possible_capital->OwnedBy(m_id))
         m_capital_id = id;
 
@@ -2626,16 +2626,16 @@ void Empire::SetPlayerName(const std::string& player_name)
 void Empire::InitResourcePools(const ObjectMap& objects) {
     // get this empire's owned resource centers and ships (which can both produce resources)
     std::vector<int> res_centers;
-    res_centers.reserve(objects.ExistingResourceCenters().size());
-    for (const auto& entry : objects.ExistingResourceCenters()) {
-        if (!entry.second->OwnedBy(m_id))
+    res_centers.reserve(objects.allExisting<ResourceCenter>().size());
+    for (const auto& [rc_id, rc] : objects.allExisting<ResourceCenter>()) {
+        if (!rc->OwnedBy(m_id))
             continue;
-        res_centers.push_back(entry.first);
+        res_centers.push_back(rc_id);
     }
-    for (const auto& entry : objects.ExistingShips()) {
-        if (!entry.second->OwnedBy(m_id))
+    for (const auto& [ship_id, ship] : objects.allExisting<Ship>()) {
+        if (!ship->OwnedBy(m_id))
             continue;
-        res_centers.push_back(entry.first);
+        res_centers.push_back(ship_id);
     }
     m_resource_pools[ResourceType::RE_RESEARCH]->SetObjects(res_centers);
     m_resource_pools[ResourceType::RE_INDUSTRY]->SetObjects(res_centers);
@@ -2643,8 +2643,8 @@ void Empire::InitResourcePools(const ObjectMap& objects) {
 
     // get this empire's owned population centers
     std::vector<int> pop_centers;
-    pop_centers.reserve(objects.ExistingPopCenters().size());
-    for (const auto& [res_id, res] : objects.ExistingPopCenters()) {
+    pop_centers.reserve(objects.allExisting<PopCenter>().size());
+    for (const auto& [res_id, res] : objects.allExisting<PopCenter>()) {
         if (res->OwnedBy(m_id))
             pop_centers.push_back(res_id);
     }
@@ -2657,9 +2657,9 @@ void Empire::InitResourcePools(const ObjectMap& objects) {
     // set non-blockadeable resource pools to share resources between all systems
     std::set<std::set<int>> sets_set;
     std::set<int> all_systems_set;
-    for (const auto& entry : objects.ExistingSystems())
+    for (const auto& entry : objects.allExisting<System>())
         all_systems_set.insert(entry.first);
-    sets_set.insert(all_systems_set);
+    sets_set.insert(std::move(all_systems_set));
     m_resource_pools[ResourceType::RE_RESEARCH]->SetConnectedSupplyGroups(sets_set);
     m_resource_pools[ResourceType::RE_INFLUENCE]->SetConnectedSupplyGroups(sets_set);
 }
@@ -2708,7 +2708,7 @@ void Empire::UpdateOwnedObjectCounters(const Universe& universe) {
     // ships of each species and design
     m_species_ships_owned.clear();
     m_ship_designs_owned.clear();
-    for (const auto& entry : objects.ExistingShips()) {
+    for (const auto& entry : objects.allExisting<Ship>()) {
         if (!entry.second->OwnedBy(this->EmpireID()))
             continue;
         auto ship = std::dynamic_pointer_cast<const Ship>(entry.second);
@@ -2748,7 +2748,7 @@ void Empire::UpdateOwnedObjectCounters(const Universe& universe) {
     // colonies of each species, and unspecified outposts
     m_species_colonies_owned.clear();
     m_outposts_owned = 0;
-    for (const auto& entry : objects.ExistingPlanets()) {
+    for (const auto& entry : objects.allExisting<Planet>()) {
         if (!entry.second->OwnedBy(this->EmpireID()))
             continue;
         auto planet = std::dynamic_pointer_cast<const Planet>(entry.second);
@@ -2762,7 +2762,7 @@ void Empire::UpdateOwnedObjectCounters(const Universe& universe) {
 
     // buildings of each type
     m_building_types_owned.clear();
-    for (const auto& entry : objects.ExistingBuildings()) {
+    for (const auto& entry : objects.allExisting<Building>()) {
         if (!entry.second->OwnedBy(this->EmpireID()))
             continue;
         auto building = std::dynamic_pointer_cast<const Building>(entry.second);
