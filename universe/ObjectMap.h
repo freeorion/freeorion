@@ -309,11 +309,6 @@ private:
         }
     }
 
-    template <typename T>
-    static void SwapMap(container_type<T>& map, ObjectMap& rhs)
-    { map.swap(rhs.Map<T>()); }
-
-
     container_type<UniverseObject>  m_objects;
     container_type<ResourceCenter>  m_resource_centers;
     container_type<PopCenter>       m_pop_centers;
