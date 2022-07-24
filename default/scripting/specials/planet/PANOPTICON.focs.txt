@@ -6,7 +6,13 @@ Special
     spawnlimit = 1
     location = And [
         Planet
-        Not Planet type = [Asteroids GasGiant]
+        Or [
+            Not Planet type = [Asteroids GasGiant]
+            And [
+                Planet type = GasGiant
+                [[GASGIANT_SPECIAL_PROBABILITY]]
+            ]
+        ]
         Not WithinStarlaneJumps jumps = 2 condition = And [
             System
             Contains And [

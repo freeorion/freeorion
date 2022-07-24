@@ -9390,7 +9390,7 @@ ANCIENT_RUINS_DEPLETED_SPECIAL_DESC
 '''Increases [[metertype METER_TARGET_RESEARCH]] on this planet by [[value ANCIENT_RUINS_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]] when Focus is set to Research.
 The effect requires a stability of [[value ANCIENT_RUINS_MIN_STABILITY]].
 
-This planet holds the ruins of an unknown, advanced ancient race. A valuable discovery has already been made here.'''
+This celestial body holds the ruins of an unknown, advanced ancient race. A valuable discovery has already been made here.'''
 
 ANCIENT_RUINS_SPECIAL
 Ancient Ruins
@@ -9446,7 +9446,7 @@ Panopticon Complex
 PANOPTICON_SPECIAL_DESC
 '''Increases empire-wide [[encyclopedia DETECTION_TITLE]] by 10. Also increases [[metertype METER_DETECTION]] on this planet by 75.
 
-Buried deep within the crust of the planet, the Panopticon is a powerful relic of an unknown precursor civilization. When fed the data from an empire's detection equipment, it has the power to pull reliable information from the chaotic static beyond the edges of certainty.'''
+Buried deep inside the planet, the Panopticon is a powerful relic of an unknown precursor civilization. When fed the data from an empire's detection equipment, it has the power to pull reliable information from the chaotic static beyond the edges of certainty.'''
 
 FORTRESS_SPECIAL
 Fortress
@@ -9463,7 +9463,7 @@ ECCENTRIC_ORBIT_SPECIAL_DESC
 '''Increases [[metertype METER_TARGET_RESEARCH]] by [[value ECCENTRIC_ORBIT_TARGET_RESEARCH_FLAT]], but [[metertype METER_SUPPLY]] is decreased ([[value ECCENTRIC_ORBIT_MAX_SUPPLY_FLAT]]).
 The research bonus requires a stability of [[value ECCENTRIC_ORBIT_MIN_STABILITY]].
 
-This planet's orbit is very eccentric. It has a large distance between its closest and farthest approaches to its star. Total insolation varies significantly throughout the year. The varied conditions inhibit the supply the planet can provide, but are a beneficial platform for research.'''
+This celestial body's orbit is very eccentric. It has a large distance between its closest and farthest approaches to its star. Total insolation varies significantly throughout the year. The varied conditions inhibit the supply the celestial body can provide, but are a beneficial platform for research.'''
 
 TIDAL_LOCK_SPECIAL
 Tidally Locked Rotation
@@ -9480,7 +9480,7 @@ TEMPORAL_ANOMALY_SPECIAL_DESC
 '''Increases [[metertype METER_TARGET_RESEARCH]] on this planet by [[value TEMPORAL_ANOMALY_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]] when Focus is set to [[metertype METER_RESEARCH]]. Penalizes [[metertype METER_TARGET_POPULATION]] (regardless of Focus) with [[value TEMPORAL_ANOMALY_TARGET_POPULATION_PERSIZE]] per planet size ([[SZ_TINY]] -5, [[SZ_SMALL]] -10, [[SZ_MEDIUM]] -15, [[SZ_LARGE]] -20, [[SZ_HUGE]] -25).
 The research bonus requires a stability of [[value TEMPORAL_ANOMALY_MIN_STABILITY]].
 
-The flow of time on this planet is gravely disturbed. Seemingly random local occurences of increases and decreases of the pace of time, induces grave disarrangement in any living being. A social or productive life is nearly impossible. Extreme adaptability and precaution is needed to establish a colony on this planet.
+The flow of time on this celestial body is gravely disturbed. Seemingly random local occurences of increases and decreases of the pace of time, induces grave disarrangement in any living being. A social or productive life is nearly impossible. Extreme adaptability and precaution is needed to establish a colony on this celestial body.
 On the other hand the temporal anomaly has a huge potential for scientific experiments beyond what is possible on normal planets.'''
 
 RESONANT_MOON_SPECIAL
@@ -9725,7 +9725,7 @@ CRYSTALS_SPECIAL
 Silmaline Crystals
 
 CRYSTALS_SPECIAL_DESC
-This planet has a rich natural deposit of minerals, boosting production or Lithic growth significantly.
+This celestial body has a rich natural deposit of minerals, boosting production or Lithic growth significantly.
 
 ELERIUM_SPECIAL
 Native Elerium

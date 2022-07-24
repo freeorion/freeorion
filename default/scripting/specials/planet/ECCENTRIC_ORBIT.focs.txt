@@ -7,7 +7,17 @@ Special
     location = And [
         Planet
         Not Capital
-        Not Planet type = [Asteroids GasGiant]
+        Or [
+            Not Planet type = [Asteroids GasGiant]
+            And [
+                Planet type = GasGiant
+                [[GASGIANT_SPECIAL_PROBABILITY]]
+            ]
+            And [
+                Planet type = Asteroids
+                [[ASTEROID_SPECIAL_PROBABILITY]]
+            ]
+        ]
     ]
     // TODO: make sure this does not happen at starless worlds
     effectsgroups = [

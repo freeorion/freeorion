@@ -1,5 +1,11 @@
 // sets stability (happiness) on planets in empire that, if those planets' species like or dislike the special
 
+GASGIANT_SPECIAL_PROBABILITY
+'''Random probability = 0.3'''
+
+ASTEROID_SPECIAL_PROBABILITY
+'''Random probability = 0.3'''
+
 SPECIAL_LIKE_DISLIKE_SCALING
 '''1.0'''
 

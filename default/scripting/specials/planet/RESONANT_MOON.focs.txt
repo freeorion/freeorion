@@ -7,7 +7,13 @@ Special
     location = And [
         Planet
         Not Capital
-        Not Planet type = [Asteroids GasGiant]
+        Or [
+            Not Planet type = [Asteroids GasGiant]
+            And [
+                Planet type = GasGiant
+                [[GASGIANT_SPECIAL_PROBABILITY]]
+            ]
+        ]
     ]
     effectsgroups = [
         EffectsGroup
