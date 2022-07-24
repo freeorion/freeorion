@@ -50,10 +50,3 @@ auto UnownedVisitor::Visit(const std::shared_ptr<System>& obj) const -> std::sha
 auto HostileVisitor::Visit(const std::shared_ptr<UniverseObject>& obj) const -> std::shared_ptr<UniverseObject>
 { return obj->HostileToEmpire(hostile_to_empire_id, empires) ? obj : nullptr; }
 
-auto NotInSetsVisitor::Visit(const std::shared_ptr<UniverseObject>& obj) const -> std::shared_ptr<UniverseObject>
-{
-    int obj_id = obj->ID();
-    if (set1.find(obj_id) != set1.end())
-        return nullptr;
-    return set2.find(obj_id) != set2.end() ? nullptr : obj;
-}

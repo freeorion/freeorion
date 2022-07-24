@@ -4,6 +4,7 @@
 
 #include "UniverseObjectVisitor.h"
 #include "ConstantsFwd.h"
+#include "UniverseObject.h"
 
 #include <set>
 
@@ -95,21 +96,36 @@ struct FO_COMMON_API HostileVisitor : UniverseObjectVisitor
 
 
 //! Returns obj iff the ID of @a obj is NOT in either of the passed-in sets.
+template <typename S1, typename S2>
 struct FO_COMMON_API NotInSetsVisitor : UniverseObjectVisitor
 {
-    explicit NotInSetsVisitor(const std::set<int>& set1_, const std::set<int>& set2_) :
+    NotInSetsVisitor(const S1& set1_, const S2& set2_) :
         set1(set1_),
         set2(set2_)
     {}
-    explicit NotInSetsVisitor(const std::set<int>& set1_) :
-        set1(set1_)
+    auto Visit(const std::shared_ptr<UniverseObject>& obj) const -> std::shared_ptr<UniverseObject> override {
+        int obj_id = obj->ID();
+        if (set1.find(obj_id) != set1.end())
+            return nullptr;
+        return set2.find(obj_id) != set2.end() ? nullptr : obj;
+    }
+
+    const S1& set1;
+    const S2& set2;
+};
+
+
+//! Returns obj iff the ID of @a obj is NOT in the passed-in set.
+template <typename S>
+struct FO_COMMON_API NotInSetVisitor : UniverseObjectVisitor
+{
+    explicit NotInSetVisitor(const S& set_) :
+        set(set_)
     {}
-    auto Visit(const std::shared_ptr<UniverseObject>& obj) const -> std::shared_ptr<UniverseObject> override;
+    auto Visit(const std::shared_ptr<UniverseObject>& obj) const -> std::shared_ptr<UniverseObject> override
+    { return set.find(obj->ID()) != set.end() ? nullptr : obj; }
 
-    static const inline std::set<int> EMPTY_SET = {};
-
-    const std::set<int>& set1;
-    const std::set<int>& set2 = EMPTY_SET;
+    const S& set;
 };
 
 #endif

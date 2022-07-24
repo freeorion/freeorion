@@ -2073,9 +2073,9 @@ Universe::GetEmpiresPositionDetectionRanges(const ObjectMap& objects) const
 {
     std::map<int, std::map<std::pair<double, double>, float>> retval;
 
-    CheckObjects(objects.find<Planet>(NotInSetsVisitor(m_destroyed_object_ids)), retval);
-    CheckObjects(objects.find<Ship>(NotInSetsVisitor(m_destroyed_object_ids)), retval);
-    //CheckObjects(objects.find<Building>(NotInSetsVisitor(m_destroyed_object_ids), retval); // as of this writing, buildings don't have detection meters
+    CheckObjects(objects.find<Planet>(NotInSetVisitor(m_destroyed_object_ids)), retval);
+    CheckObjects(objects.find<Ship>(NotInSetVisitor(m_destroyed_object_ids)), retval);
+    //CheckObjects(objects.find<Building>(NotInSetVisitor(m_destroyed_object_ids), retval); // as of this writing, buildings don't have detection meters
 
     return retval;
 }
