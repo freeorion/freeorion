@@ -32,6 +32,7 @@ Species
         "PLC_CONTINUOUS_SCANNING"
         "PLC_DIVERSITY"
         "PLC_EXPLORATION"
+        "PLC_NO_SUPPLY"
         "SPICE_SPECIAL"
         "WORLDTREE_SPECIAL"
     ]

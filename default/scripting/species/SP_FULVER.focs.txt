@@ -33,6 +33,7 @@ Species
         "PLC_EXPLORATION"
         "PLC_LIBERTY"
         "PLC_MODERATION"
+        "PLC_NO_SUPPLY"
         "PLC_RACIAL_PURITY"
         "PLC_STOCKPILE_LIQUIDATION"
         "RESONANT_MOON_SPECIAL"
