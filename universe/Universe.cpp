@@ -1,5 +1,6 @@
 #include "Universe.h"
 
+#include <boost/range/adaptor/filtered.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/container/flat_set.hpp>
 #include <boost/property_map/property_map.hpp>
@@ -324,27 +325,24 @@ std::set<int> Universe::EmpireVisibleObjectIDs(int empire_id, const EmpireManage
     return retval;
 }
 
-const std::set<int>& Universe::DestroyedObjectIds() const
-{ return m_destroyed_object_ids; }
-
 int Universe::HighestDestroyedObjectID() const {
     if (m_destroyed_object_ids.empty())
         return INVALID_OBJECT_ID;
-    return *m_destroyed_object_ids.rbegin();
+    return *std::max_element(m_destroyed_object_ids.begin(), m_destroyed_object_ids.end());
 }
 
-const std::set<int>& Universe::EmpireKnownDestroyedObjectIDs(int empire_id) const {
+const std::unordered_set<int>& Universe::EmpireKnownDestroyedObjectIDs(int empire_id) const {
     auto it = m_empire_known_destroyed_object_ids.find(empire_id);
     if (it != m_empire_known_destroyed_object_ids.end())
         return it->second;
     return m_destroyed_object_ids;
 }
 
-const std::set<int>& Universe::EmpireStaleKnowledgeObjectIDs(int empire_id) const {
+const std::unordered_set<int>& Universe::EmpireStaleKnowledgeObjectIDs(int empire_id) const {
     auto it = m_empire_stale_knowledge_object_ids.find(empire_id);
     if (it != m_empire_stale_knowledge_object_ids.end())
         return it->second;
-    static const std::set<int> empty_set;
+    static const std::unordered_set<int> empty_set;
     return empty_set;
 }
 
@@ -1343,8 +1341,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     // assemble target objects from input vector of IDs
     auto potential_targets{context.ContextObjects().findRaw<const UniverseObject>(target_object_ids)};
     const boost::container::flat_set<int> potential_ids_set{target_object_ids.begin(), target_object_ids.end()};
-    const auto& doids{context.ContextUniverse().DestroyedObjectIds()};
-    const boost::container::flat_set<int> destroyed_object_ids{doids.begin(), doids.end()};
+    const auto& destroyed_object_ids{context.ContextUniverse().DestroyedObjectIds()};
 
     TraceLogger(effects) << "GetEffectsAndTargets input candidate target objects:";
     for (auto& obj : potential_targets)
@@ -2081,7 +2078,8 @@ Universe::GetEmpiresPositionDetectionRanges(const ObjectMap& objects) const
 }
 
 std::map<int, std::map<std::pair<double, double>, float>>
-Universe::GetEmpiresPositionDetectionRanges(const ObjectMap& objects, const std::set<int>& exclude_ids) const
+Universe::GetEmpiresPositionDetectionRanges(const ObjectMap& objects,
+                                            const std::unordered_set<int>& exclude_ids) const
 {
     std::map<int, std::map<std::pair<double, double>, float>> retval;
 
@@ -2235,8 +2233,9 @@ namespace {
 
     /** removes ids of objects that the indicated empire knows have been
       * destroyed */
+    template <typename DS>
     void FilterObjectIDsByKnownDestruction(std::vector<int>& object_ids, int empire_id,
-                                           const std::map<int, std::set<int>>& empire_known_destroyed_object_ids)
+                                           const DS& empire_known_destroyed_object_ids)
     {
         if (empire_id == ALL_EMPIRES)
             return;
@@ -2247,7 +2246,7 @@ namespace {
                 ++it;
                 continue;
             }
-            const std::set<int>& empires_that_know = obj_it->second;
+            const auto& empires_that_know = obj_it->second;
             if (!empires_that_know.count(empire_id)) {
                 ++it;
                 continue;
@@ -2816,8 +2815,8 @@ void Universe::UpdateEmpireStaleObjectKnowledge(EmpireManager& empires) {
 
     for (const auto& [empire_id, latest_known_objects] : m_empire_latest_known_objects) {
         const ObjectVisibilityMap& vis_map = m_empire_object_visibility[empire_id];
-        std::set<int>& stale_set = m_empire_stale_knowledge_object_ids[empire_id];
-        const std::set<int>& destroyed_set = m_empire_known_destroyed_object_ids[empire_id];
+        auto& stale_set = m_empire_stale_knowledge_object_ids[empire_id];
+        const auto& destroyed_set = m_empire_known_destroyed_object_ids[empire_id];
 
         // remove stale marking for any known destroyed or currently visible objects
         for (auto stale_it = stale_set.begin(); stale_it != stale_set.end();) {
@@ -3217,29 +3216,23 @@ void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) co
         objects.CopyForSerialize(it->second);
 
         auto destroyed_ids_it = m_empire_known_destroyed_object_ids.find(encoding_empire);
-        bool map_avail = (destroyed_ids_it != m_empire_known_destroyed_object_ids.end());
-        const auto& destroyed_object_ids = map_avail ?
-            destroyed_ids_it->second : std::set<int>();
-
-        objects.AuditContainment(destroyed_object_ids);
+        if (destroyed_ids_it != m_empire_known_destroyed_object_ids.end())
+            objects.AuditContainment(destroyed_ids_it->second);
     }
 }
 
 void Universe::GetDestroyedObjectsToSerialize(std::set<int>& destroyed_object_ids,
                                               int encoding_empire) const
 {
-    if (&destroyed_object_ids == &m_destroyed_object_ids)
-        return;
-
+    destroyed_object_ids.clear();
     if (encoding_empire == ALL_EMPIRES) {
         // all destroyed objects
-        destroyed_object_ids = m_destroyed_object_ids;
+        destroyed_object_ids.insert(m_destroyed_object_ids.begin(), m_destroyed_object_ids.end());
     } else {
-        destroyed_object_ids.clear();
         // get empire's known destroyed objects
         auto it = m_empire_known_destroyed_object_ids.find(encoding_empire);
         if (it != m_empire_known_destroyed_object_ids.end())
-            destroyed_object_ids = it->second;
+            destroyed_object_ids.insert(it->second.begin(), it->second.end());
     }
 }
 

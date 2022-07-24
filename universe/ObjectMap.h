@@ -4,9 +4,9 @@
 
 #include <map>
 #include <memory>
-#include <set>
 #include <string>
 #include <type_traits>
+#include <unordered_set>
 #include <vector>
 #include <boost/range/adaptor/map.hpp>
 #include <boost/range/any_range.hpp>
@@ -267,14 +267,14 @@ public:
     //void swap(ObjectMap& rhs);
 
     /** */
-    void UpdateCurrentDestroyedObjects(const std::set<int>& destroyed_object_ids);
+    void UpdateCurrentDestroyedObjects(const std::unordered_set<int>& destroyed_object_ids);
 
     /** Recalculates contained objects for all objects in this ObjectMap based
       * on what other objects exist in this ObjectMap. Useful to eliminate
       * cases where there are inconsistencies between whan an object thinks it
       * contains, and what other objects think they are contained by the first
       * object. */
-    void AuditContainment(const std::set<int>& destroyed_object_ids);
+    void AuditContainment(const std::unordered_set<int>& destroyed_object_ids);
 
 private:
     void insertCore(std::shared_ptr<UniverseObject> item, int empire_id = ALL_EMPIRES);

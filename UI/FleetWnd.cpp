@@ -1531,8 +1531,8 @@ void FleetDataPanel::SetStatIconValues() {
     const ScriptingContext context{universe, Empires()};
 
 
-    const std::set<int>& this_client_known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(client_empire_id);
-    const std::set<int>& this_client_stale_object_info = universe.EmpireStaleKnowledgeObjectIDs(client_empire_id);
+    const auto& this_client_known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(client_empire_id);
+    const auto& this_client_stale_object_info = universe.EmpireStaleKnowledgeObjectIDs(client_empire_id);
     int ship_count =        0;
     float damage_tally  =   0.0f;
     float destroy_tally =   0.0f;
@@ -2290,12 +2290,12 @@ public:
         ManuallyManageColProps();
 
         int this_client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        const std::set<int>& this_client_known_destroyed_objects =
+        const auto& this_client_known_destroyed_objects =
             GetUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
-        const std::set<int>& this_client_stale_object_info =
+        const auto& this_client_stale_object_info =
             GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
 
-        const std::set<int>& ship_ids = fleet->ShipIDs();
+        const auto& ship_ids = fleet->ShipIDs();
         std::vector<std::shared_ptr<GG::ListBox::Row>> rows;
         rows.reserve(ship_ids.size());
         for (int ship_id : ship_ids) {
@@ -2305,7 +2305,7 @@ public:
             if (this_client_stale_object_info.count(ship_id))
                 continue;
 
-            rows.emplace_back(GG::Wnd::Create<ShipRow>(GG::X1, row_size.y, ship_id));
+            rows.push_back(GG::Wnd::Create<ShipRow>(GG::X1, row_size.y, ship_id));
         }
         Insert(rows);
         for (auto& row : rows)
@@ -2949,8 +2949,8 @@ void FleetWnd::SetStatIconValues() {
     const ObjectMap& objects = universe.Objects();
     const ScriptingContext context{universe, Empires()};
 
-    const std::set<int>& this_client_known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(client_empire_id);
-    const std::set<int>& this_client_stale_object_info = universe.EmpireStaleKnowledgeObjectIDs(client_empire_id);
+    const auto& this_client_known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(client_empire_id);
+    const auto& this_client_stale_object_info = universe.EmpireStaleKnowledgeObjectIDs(client_empire_id);
 
 
     for (auto& fleet : objects.find<const Fleet>(m_fleet_ids)) {

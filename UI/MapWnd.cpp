@@ -3724,7 +3724,7 @@ namespace {
                            res_group_cores, res_group_core_members,
                            member_to_core, under_alloc_res_grp_core_members);
 
-        const std::set<int>& this_client_known_destroyed_objects =
+        const auto& this_client_known_destroyed_objects =
             GetUniverse().EmpireKnownDestroyedObjectIDs(GGHumanClientApp::GetApp()->EmpireID());
         //unused variable const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("ui.map.starlane.color");
 
@@ -3884,7 +3884,7 @@ namespace {
 
         std::map<std::pair<int, int>, LaneEndpoints> retval;
 
-        const std::set<int>& this_client_known_destroyed_objects =
+        const auto& this_client_known_destroyed_objects =
             GetUniverse().EmpireKnownDestroyedObjectIDs(GGHumanClientApp::GetApp()->EmpireID());
 
         for (auto const& id_icon : sys_icons) {
@@ -4915,10 +4915,11 @@ namespace {
     using StarlaneToFleetsMap = KeyToFleetsMap<std::pair<int, int>>;
 
     /** Return fleet if \p obj is not destroyed, not stale, a fleet and not empty.*/
+    template <typename IntSet>
     std::shared_ptr<const Fleet> IsQualifiedFleet(const std::shared_ptr<const UniverseObject>& obj,
                                                   int empire_id,
-                                                  const std::set<int>& known_destroyed_objects,
-                                                  const std::set<int>& stale_object_info)
+                                                  const IntSet& known_destroyed_objects,
+                                                  const IntSet& stale_object_info)
     {
         int object_id = obj->ID();
         if (obj->ObjectType() != UniverseObjectType::OBJ_FLEET)

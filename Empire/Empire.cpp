@@ -1097,7 +1097,7 @@ void Empire::UpdateSystemSupplyRanges(const Universe& universe) {
         universe.EmpireKnownObjects(this->EmpireID()) : universe.Objects()};
 
     // get ids of objects partially or better visible to this empire.
-    const std::set<int>& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
+    const auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
 
     std::set<int> known_objects_set;
 
@@ -1108,7 +1108,7 @@ void Empire::UpdateSystemSupplyRanges(const Universe& universe) {
     UpdateSystemSupplyRanges(known_objects_set, empire_known_objects);
 }
 
-void Empire::UpdateUnobstructedFleets(ObjectMap& objects, const std::set<int>& known_destroyed_objects) {
+void Empire::UpdateUnobstructedFleets(ObjectMap& objects, const std::unordered_set<int>& known_destroyed_objects) {
     for (const auto& system : objects.find<System>(m_supply_unobstructed_systems)) {
         if (!system)
             continue;
@@ -1127,7 +1127,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context, bo
 
     // get ids of systems partially or better visible to this empire.
     // TODO: make a UniverseObjectVisitor for objects visible to an empire at a specified visibility or greater
-    const std::set<int>& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
+    const auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
 
     std::set<int> known_systems_set;
 

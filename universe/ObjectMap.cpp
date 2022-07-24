@@ -289,17 +289,16 @@ std::vector<int> ObjectMap::FindExistingObjectIDs() const {
     return result;
 }
 
-void ObjectMap::UpdateCurrentDestroyedObjects(const std::set<int>& destroyed_object_ids) {
+void ObjectMap::UpdateCurrentDestroyedObjects(const std::unordered_set<int>& destroyed_object_ids) {
     FOR_EACH_EXISTING_MAP(ClearMap);
     for (const auto& [ID, obj] : m_objects) {
         if (!obj || destroyed_object_ids.count(ID))
             continue;
         FOR_EACH_EXISTING_MAP(TryInsertIntoMap, obj);
-
     }
 }
 
-void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
+void ObjectMap::AuditContainment(const std::unordered_set<int>& destroyed_object_ids) {
     // determine all objects that some other object thinks contains them
     std::map<int, std::set<int>> contained_objs;
     std::map<int, std::set<int>> contained_planets;

@@ -35,7 +35,7 @@ namespace {
 
 BOOST_CLASS_EXPORT(Field)
 BOOST_CLASS_EXPORT(Universe)
-BOOST_CLASS_VERSION(Universe, 1)
+BOOST_CLASS_VERSION(Universe, 2)
 
 template <typename Archive>
 void serialize(Archive& ar, PopCenter& p, unsigned int const version)
@@ -128,25 +128,58 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
 
     ar  & make_nvp("m_empire_known_ship_design_ids", u.m_empire_known_ship_design_ids);
 
-    timer.EnterSection("vis / known");
+    timer.EnterSection("visibility / known destroyed or stale");
     ar  & make_nvp("empire_object_visibility", empire_object_visibility);
     ar  & make_nvp("empire_object_visibility_turns", empire_object_visibility_turns);
-    ar  & make_nvp("empire_known_destroyed_object_ids", empire_known_destroyed_object_ids);
-    ar  & make_nvp("empire_stale_knowledge_object_ids", empire_stale_knowledge_object_ids);
+    if constexpr (Archive::is_loading::value) {
+        u.m_empire_object_visibility.swap(empire_object_visibility);
+        u.m_empire_object_visibility_turns.swap(empire_object_visibility_turns);
+    }
+
+
+    const auto copy_map = [](const auto& from, auto& to) {
+        for (auto& [id, ids] : from)
+            to.emplace(std::piecewise_construct,
+                       std::forward_as_tuple(id),
+                       std::forward_as_tuple(ids.begin(), ids.end()));
+    };
+
+    if constexpr (Archive::is_loading::value) {
+        u.m_empire_known_destroyed_object_ids.clear();
+        u.m_empire_stale_knowledge_object_ids.clear();
+        if (version < 2) {
+            std::map<int, std::set<int>> known_map;
+            std::map<int, std::set<int>> stale_map;
+            ar >> make_nvp("empire_known_destroyed_object_ids", known_map);
+            ar >> make_nvp("empire_stale_knowledge_object_ids", stale_map);
+            copy_map(known_map, u.m_empire_known_destroyed_object_ids);
+            copy_map(stale_map, u.m_empire_stale_knowledge_object_ids);
+
+        } else {
+            std::map<int, std::vector<int>> known_map;
+            std::map<int, std::vector<int>> stale_map;
+            ar >> make_nvp("empire_known_destroyed_object_ids", known_map);
+            ar >> make_nvp("empire_stale_knowledge_object_ids", stale_map);
+            copy_map(known_map, u.m_empire_known_destroyed_object_ids);
+            copy_map(stale_map, u.m_empire_stale_knowledge_object_ids);
+        }
+
+    } else { // saving
+        std::map<int, std::vector<int>> known_map;
+        std::map<int, std::vector<int>> stale_map;
+        copy_map(empire_known_destroyed_object_ids, known_map);
+        copy_map(empire_stale_knowledge_object_ids, stale_map);
+        ar << make_nvp("empire_known_destroyed_object_ids", known_map);
+        ar << make_nvp("empire_stale_knowledge_object_ids", stale_map);
+    }
+    timer.EnterSection("");
+
     DebugLogger() << "Universe::serialize : " << serializing_label
                   << " empire object visibility for " << empire_object_visibility.size() << ", "
                   << empire_object_visibility_turns.size() << ", "
                   << empire_known_destroyed_object_ids.size() << ", "
                   << empire_stale_knowledge_object_ids.size() <<  " empires";
-    timer.EnterSection("");
-    if constexpr (Archive::is_loading::value) {
-        timer.EnterSection("load swap");
-        u.m_empire_object_visibility.swap(empire_object_visibility);
-        u.m_empire_object_visibility_turns.swap(empire_object_visibility_turns);
-        u.m_empire_known_destroyed_object_ids.swap(empire_known_destroyed_object_ids);
-        u.m_empire_stale_knowledge_object_ids.swap(empire_stale_knowledge_object_ids);
-        timer.EnterSection("");
-    }
+
 
     timer.EnterSection("objects");
     ar  & make_nvp("objects", objects);
@@ -157,13 +190,15 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
         for (auto* obj : u.m_objects->allRaw())
             obj->SetSignalCombiner(u);
     }
+    timer.EnterSection("");
     DebugLogger() << "Universe::" << serializing_label << " " << u.m_objects->size() << " objects";
 
     timer.EnterSection("destroyed ids");
     ar  & make_nvp("destroyed_object_ids", destroyed_object_ids);
     DebugLogger() << "Universe::serialize : " << serializing_label << " " << destroyed_object_ids.size() << " destroyed object ids";
     if constexpr (Archive::is_loading::value) {
-        u.m_destroyed_object_ids.swap(destroyed_object_ids);
+        u.m_destroyed_object_ids.clear();
+        u.m_destroyed_object_ids.insert(destroyed_object_ids.begin(), destroyed_object_ids.end());
         u.m_objects->UpdateCurrentDestroyedObjects(u.m_destroyed_object_ids);
     }
 

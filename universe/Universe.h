@@ -8,6 +8,7 @@
 #include <set>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 #include <boost/container/flat_map.hpp>
 #include <boost/signals2/signal.hpp>
@@ -71,7 +72,7 @@ public:
     typedef std::map<int, ObjectVisibilityTurnMap>  EmpireObjectVisibilityTurnMap;  ///< Each empire's most recent turns on which object information was known; keyed by empire id
 
 private:
-    typedef std::map<int, std::set<int>>            ObjectKnowledgeMap;             ///< IDs of Empires which know information about an object (or deleted object); keyed by object id
+    typedef std::map<int, std::unordered_set<int>>  ObjectKnowledgeMap;             ///< IDs of Empires which know information about an object (or deleted object); keyed by object id
 
     typedef const ValueRef::ValueRef<Visibility>*   VisValRef;
     typedef std::vector<std::pair<int, VisValRef>>  SrcVisValRefVec;
@@ -120,20 +121,20 @@ public:
     [[nodiscard]] std::set<int> EmpireVisibleObjectIDs(int empire_id, const EmpireManager& empires) const;
 
     /** Returns IDs of objects that have been destroyed. */
-    [[nodiscard]] const std::set<int>& DestroyedObjectIds() const;
-    [[nodiscard]] int                  HighestDestroyedObjectID() const;
+    [[nodiscard]] auto& DestroyedObjectIds() const noexcept { return m_destroyed_object_ids; }
+    [[nodiscard]] int   HighestDestroyedObjectID() const;
 
     /** Returns IDs of objects that the Empire with id \a empire_id knows have
       * been destroyed.  Each empire's latest known objects data contains the
       * last known information about each object, whether it has been destroyed
       * or not.  If \a empire_id = ALL_EMPIRES an empty set of IDs is
       * returned. */
-    [[nodiscard]] const std::set<int>& EmpireKnownDestroyedObjectIDs(int empire_id) const;
+    [[nodiscard]] const std::unordered_set<int>& EmpireKnownDestroyedObjectIDs(int empire_id) const;
 
     /** Returns IDs of objects that the Empire with id \a empire_id has stale
       * knowledge of in its latest known objects.  The latest known data about
       * these objects suggests that they should be visible, but they are not. */
-    [[nodiscard]] const std::set<int>&    EmpireStaleKnowledgeObjectIDs(int empire_id) const;
+    [[nodiscard]] const std::unordered_set<int>& EmpireStaleKnowledgeObjectIDs(int empire_id) const;
 
     [[nodiscard]] const ShipDesign* GetShipDesign(int ship_design_id) const;    ///< returns the ship design with id \a ship_design id, or 0 if non exists
 
@@ -181,7 +182,7 @@ public:
         GetEmpiresPositionDetectionRanges(const ObjectMap& objects) const;
 
     [[nodiscard]] std::map<int, std::map<std::pair<double, double>, float>>
-        GetEmpiresPositionDetectionRanges(const ObjectMap& objects, const std::set<int>& exclude_ids) const;
+        GetEmpiresPositionDetectionRanges(const ObjectMap& objects, const std::unordered_set<int>& exclude_ids) const;
 
     /** Returns map from empire ID to map from location (X, Y) to detection range
       * that empire is expected to have at that location after the next turn's
@@ -519,7 +520,7 @@ private:
     std::unique_ptr<ObjectMap>      m_objects;                          ///< map from object id to UniverseObjects in the universe.  for the server: all of them, up to date and true information about object is stored;  for clients, only limited information based on what the client knows about is sent.
     EmpireObjectMap                 m_empire_latest_known_objects;      ///< map from empire id to (map from object id to latest known information about each object by that empire)
 
-    std::set<int>                   m_destroyed_object_ids;             ///< all ids of objects that have been destroyed (on server) or that a player knows were destroyed (on clients)
+    std::unordered_set<int>         m_destroyed_object_ids;             ///< all ids of objects that have been destroyed (on server) or that a player knows were destroyed (on clients)
 
     EmpireObjectVisibilityMap       m_empire_object_visibility;         ///< map from empire id to (map from object id to visibility of that object for that empire)
     EmpireObjectVisibilityTurnMap   m_empire_object_visibility_turns;   ///< map from empire id to (map from object id to (map from Visibility rating to turn number on which the empire last saw the object at the indicated Visibility rating or higher)
