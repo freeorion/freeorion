@@ -101,11 +101,11 @@ public:
     template <typename T = UniverseObject>
     [[nodiscard]] auto all() const
     {
-        static const auto tx = [](const typename container_type<T>::mapped_type& p)
-            -> typename container_type<const T>::mapped_type
-        { return std::const_pointer_cast<const T>(p); };
-
         using DecayT = std::decay_t<T>;
+        static constexpr auto tx = [](const typename container_type<DecayT>::mapped_type& p)
+            -> typename container_type<const DecayT>::mapped_type
+        { return std::const_pointer_cast<const DecayT>(p); };
+
         return Map<DecayT>() |
             boost::adaptors::map_values |
             boost::adaptors::transformed(tx);
@@ -135,23 +135,46 @@ public:
         }
     }
 
+    /** Returns all the objects of type T */
     template <typename T = UniverseObject>
     [[nodiscard]] auto allRaw()
     {
-        if constexpr (std::is_const_v<T>) {
-            using DecayT = std::decay_t<T>;
-            return std::as_const(Map<DecayT>()) |
-                boost::adaptors::map_values |
-                boost::adaptors::transformed(
-                    [](const auto& p) -> T* { return p.get(); });
-        } else {
-            return Map<T>() |
-                boost::adaptors::map_values |
-                boost::adaptors::transformed(
-                    [](const auto& p) -> T* { return p.get(); }
-            );
-        }
+        using DecayT = std::decay_t<T>;
+        using OutT = std::conditional_t<std::is_const_v<T>, const DecayT*, DecayT*>;
+        return Map<DecayT>() |
+            boost::adaptors::map_values |
+            boost::adaptors::transformed(
+                [](const auto& p) -> OutT { return p.get(); });
     }
+
+    /** Returns all the ids and objects of type T */
+    template <typename T = UniverseObject>
+    [[nodiscard]] auto allWithIDs() const
+    {
+        using DecayT = std::decay_t<T>;
+        static const auto tx = [](const typename container_type<DecayT>::value_type& p)
+            -> typename container_type<const DecayT>::value_type
+        { return {p.first, std::const_pointer_cast<const DecayT>(p.second)}; };
+
+        return std::as_const(Map<DecayT>()) | boost::adaptors::transformed(tx);
+    }
+
+    /** Returns all the ids and objects of type T */
+    template <typename T, std::enable_if_t<std::is_const_v<T>>* = nullptr>
+    [[nodiscard]] auto allWithIDs()
+    {
+        const auto& const_this = *this;
+        return const_this.allWithIDs<T>();
+    }
+
+    /** Returns all the ids and objects of type T */
+    template <typename T = UniverseObject, std::enable_if_t<!std::is_const_v<T>>* = nullptr>
+    [[nodiscard]] const auto& allWithIDs()
+    {
+        using DecayT = std::decay_t<T>;
+        return std::as_const(Map<DecayT>());
+    }
+
 
     /** Returns the IDs of all objects not known to have been destroyed. */
     [[nodiscard]] std::vector<int> FindExistingObjectIDs() const;
@@ -259,6 +282,7 @@ private:
 
     void CopyObjectsToSpecializedMaps();
 
+    // returns const container of mutable T ... may need further adapting for fully const safe use
     template <typename T>
     const container_type<std::decay_t<T>>& Map() const
     {
