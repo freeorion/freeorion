@@ -3399,9 +3399,6 @@ Mise à jour indicateurs quand ouverture panneau latéral
 OPTIONS_UI_OBJECT_CHANGED_METER_UPDATE
 Mise à jour indicateurs quand changement d'un objet
 
-OPTIONS_DB_UI_EFFECTS_MOVE_TEST
-Test / modificateur moteur interne: Utilise des redirections de pointeurs, au lieu d'appels de conteneurs de pointeurs, lors de l'évaluation des conditions.
-
 OPTIONS_ADD_SAVED_DESIGNS
 Ajouter tous les modèles d'astronef sauvegardés au démarrage d'une partie
 
