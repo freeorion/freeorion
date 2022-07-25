@@ -44,3 +44,17 @@ ENQUEUE_ARTIFICIAL_PLANET_EXCLUSION
         Not Enqueued type = Building name = "BLD_ART_FACTORY_PLANET"
         Not Enqueued type = Building name = "BLD_ART_PARADISE_PLANET"
     ]'''
+
+// @1@ code before each planet type
+// @2@ code after each planet type
+FOR_ALL_TERRAFORM_PLANET_TYPES
+'''@1@BARREN@2@
+@1@TUNDRA@2@
+@1@DESERT@2@
+@1@TERRAN@2@
+@1@OCEAN@2@
+@1@SWAMP@2@
+@1@TOXIC@2@
+@1@INFERNO@2@
+@1@RADIATED@2@
+@1@BARREN@2@'''

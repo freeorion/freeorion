@@ -27,7 +27,6 @@ TARGET_TERRAFORMING
         OwnedBy empire = Source.Owner
         TargetPopulation low = 1
         Not Planet type = [Asteroids GasGiant]
-        Not Enqueued type = Building name = "BLD_TERRAFORM_BEST"
         Or [
             Planet type = @1@
             Planet type = @3@
@@ -36,26 +35,31 @@ TARGET_TERRAFORMING
         ]
     ]
     enqueuelocation = And [
-       [[ENQUEUE_BUILD_ONE_PER_PLANET]]
-       Not Planet type = @2@
-       // Options should go down to one after a player started going into one direction,
-       // E.g. after enqueing Ocean on a Terran planet, Desert should be removed.
-       // We can however not simply exclude Desert when Ocean is enqueued, since someone
-       // may want to convert Swamp to Desert.
-       Not And [
-           Planet type = @1@
-           Or [
-               Contains Building name = "BLD_TERRAFORM_@4@"
-               Enqueued type = Building name = "BLD_TERRAFORM_@4@"
-           ]
-       ]
-       Not And [
-           Planet type = @3@
-           Or [
-               Contains Building name = "BLD_TERRAFORM_@8@"
-               Enqueued type = Building name = "BLD_TERRAFORM_@8@"
-           ]
-       ]
+        [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+        Not Planet type = @2@
+        Not Contains Building name = "BLD_GAIA_TRANS"
+        Not Enqueued type = Building name = "BLD_GAIA_TRANS"
+        Not HasSpecial name = "GAIA_SPECIAL"
+        Not Contains Building name = "BLD_TERRAFORM_BEST"
+        Not Enqueued type = Building name = "BLD_TERRAFORM_BEST"
+        // Options should go down to one after a player started going into one direction,
+        // E.g. after enqueing Ocean on a Terran planet, Desert should be removed.
+        // We can however not simply exclude Desert when Ocean is enqueued, since someone
+        // may want to convert Swamp to Desert.
+        Not And [
+            Planet type = @1@
+            Or [
+                Contains Building name = "BLD_TERRAFORM_@4@"
+                Enqueued type = Building name = "BLD_TERRAFORM_@4@"
+            ]
+        ]
+        Not And [
+            Planet type = @3@
+            Or [
+                Contains Building name = "BLD_TERRAFORM_@8@"
+                Enqueued type = Building name = "BLD_TERRAFORM_@8@"
+            ]
+        ]
     ]
     effectsgroups = [
         EffectsGroup
@@ -111,15 +115,15 @@ BuildingType
                     * (100 - 10 * ((PlanetTypeDifference from = Target.PlanetType to = Target.NextBestPlanetType) - 1)) / 100
     location = And [
         Planet
-        Not Contains Building name = "BLD_TERRAFORM"
         OwnedBy empire = Source.Owner
         TargetPopulation low = 1
         Not Planet type = [Asteroids GasGiant]
         Not Planet environment = [Uninhabitable Good]
         Not Contains Building name = "BLD_GAIA_TRANS"
+        Not Enqueued type = Building name = "BLD_GAIA_TRANS"
         Not HasSpecial name = "GAIA_SPECIAL"
-[[FOR_ALL_TERRAFORM_PLANET_TYPES(        Not Contains Building name = "BLD_TERRAFORM_,")]]
-[[FOR_ALL_TERRAFORM_PLANET_TYPES(        Not Enqueued type = Building name = "BLD_TERRAFORM_,")]]
+        [[FOR_ALL_TERRAFORM_PLANET_TYPES(Not Contains Building name = "BLD_TERRAFORM_,")]]
+        [[FOR_ALL_TERRAFORM_PLANET_TYPES(Not Enqueued type = Building name = "BLD_TERRAFORM_,")]]
         // Hide building if the species can not improve (Check species' highest available target environment tag)
         Not HasTag name = "NO_TERRAFORM"
         (LocalCandidate.PlanetType != LocalCandidate.NextBestPlanetType)
@@ -156,20 +160,6 @@ BuildingType
 // @2@ to planet type
 AGGREGATED_STEPS_FROM_TO
 '''((1 + PlanetTypeDifference from = @1@ to = @2@) * (PlanetTypeDifference from = @1@ to = @2@) / 2 )'''
-
-// @1@ code before each planet type
-// @2@ code after each planet type
-FOR_ALL_TERRAFORM_PLANET_TYPES
-'''@1@BARREN@2@
-@1@TUNDRA@2@
-@1@DESERT@2@
-@1@TERRAN@2@
-@1@OCEAN@2@
-@1@SWAMP@2@
-@1@TOXIC@2@
-@1@INFERNO@2@
-@1@RADIATED@2@
-@1@BARREN@2@'''
 
 #include "/scripting/common/base_prod.macros"
 #include "/scripting/common/enqueue.macros"
