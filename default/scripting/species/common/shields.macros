@@ -21,6 +21,23 @@ STANDARD_SHIP_SHIELDS
             effects = SetShield value = Target.MaxShield
 '''
 
+BAD_SHIP_SHIELDS
+'''[[STANDARD_SHIP_SHIELDS]]
+
+EffectsGroup
+            description = "BAD_SHIP_SHIELD_DESC"
+            scope = And [
+                Source
+                Ship
+            ]
+            effects = SetMaxShield value = Value
+                - (0.5 * [[SHIP_SHIELD_FACTOR]] * (Statistic If condition = And [ Source DesignHasPart name = "SH_DEFENSE_GRID"]))
+                - (1.0 * [[SHIP_SHIELD_FACTOR]] * (Statistic If condition = And [ Source DesignHasPart name = "SH_DEFLECTOR"]))
+                - (1.5 * [[SHIP_SHIELD_FACTOR]] * (Statistic If condition = And [ Source DesignHasPart name = "SH_PLASMA"]))
+                - (2.0 * [[SHIP_SHIELD_FACTOR]] * (Statistic If condition = And [ Source DesignHasPart name = "SH_MULTISPEC"]))
+                - (2.5 * [[SHIP_SHIELD_FACTOR]] * (Statistic If condition = And [ Source DesignHasPart name = "SH_BLACK"]))
+'''
+
 GOOD_SHIP_SHIELDS
 '''[[STANDARD_SHIP_SHIELDS]]
 
@@ -30,7 +47,46 @@ EffectsGroup
                 Source
                 Ship
             ]
-            effects = SetMaxShield value = Value + (1 * [[SHIP_SHIELD_FACTOR]])
+            effects = SetMaxShield value = Value
+                + (0.5 * [[SHIP_SHIELD_FACTOR]] * (Statistic If condition = And [ Source DesignHasPart name = "SH_DEFENSE_GRID"]))
+                + (1.0 * [[SHIP_SHIELD_FACTOR]] * (Statistic If condition = And [ Source DesignHasPart name = "SH_DEFLECTOR"]))
+                + (1.5 * [[SHIP_SHIELD_FACTOR]] * (Statistic If condition = And [ Source DesignHasPart name = "SH_PLASMA"]))
+                + (2.0 * [[SHIP_SHIELD_FACTOR]] * (Statistic If condition = And [ Source DesignHasPart name = "SH_MULTISPEC"]))
+                + (2.5 * [[SHIP_SHIELD_FACTOR]] * (Statistic If condition = And [ Source DesignHasPart name = "SH_BLACK"]))
+'''
+
+GREAT_SHIP_SHIELDS
+'''[[STANDARD_SHIP_SHIELDS]]
+
+EffectsGroup
+            description = "GOOD_SHIP_SHIELD_DESC"
+            scope = And [
+                Source
+                Ship
+            ]
+            effects = SetMaxShield value = Value
+                + (1.0 * [[SHIP_SHIELD_FACTOR]] * (Statistic If condition = And [ Source DesignHasPart name = "SH_DEFENSE_GRID"]))
+                + (2.0 * [[SHIP_SHIELD_FACTOR]] * (Statistic If condition = And [ Source DesignHasPart name = "SH_DEFLECTOR"]))
+                + (3.0 * [[SHIP_SHIELD_FACTOR]] * (Statistic If condition = And [ Source DesignHasPart name = "SH_PLASMA"]))
+                + (4.0 * [[SHIP_SHIELD_FACTOR]] * (Statistic If condition = And [ Source DesignHasPart name = "SH_MULTISPEC"]))
+                + (5.0 * [[SHIP_SHIELD_FACTOR]] * (Statistic If condition = And [ Source DesignHasPart name = "SH_BLACK"]))
+'''
+
+ULTIMATE_SHIP_SHIELDS
+'''[[STANDARD_SHIP_SHIELDS]]
+
+EffectsGroup
+            description = "GOOD_SHIP_SHIELD_DESC"
+            scope = And [
+                Source
+                Ship
+            ]
+            effects = SetMaxShield value = Value
+                + (1.5 * [[SHIP_SHIELD_FACTOR]] * (Statistic If condition = And [ Source DesignHasPart name = "SH_DEFENSE_GRID"]))
+                + (3.0 * [[SHIP_SHIELD_FACTOR]] * (Statistic If condition = And [ Source DesignHasPart name = "SH_DEFLECTOR"]))
+                + (4.5 * [[SHIP_SHIELD_FACTOR]] * (Statistic If condition = And [ Source DesignHasPart name = "SH_PLASMA"]))
+                + (6.0 * [[SHIP_SHIELD_FACTOR]] * (Statistic If condition = And [ Source DesignHasPart name = "SH_MULTISPEC"]))
+                + (7.5 * [[SHIP_SHIELD_FACTOR]] * (Statistic If condition = And [ Source DesignHasPart name = "SH_BLACK"]))
 '''
 
 #include "/scripting/common/misc.macros"
