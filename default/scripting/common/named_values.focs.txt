@@ -27,6 +27,8 @@ NamedInteger name = "MIN_COLONY_SIZE" value = [[MIN_RECOLONIZING_SIZE]]
 
 NamedInteger name = "MIN_COLONY_HAPPINESS" value = [[MIN_RECOLONIZING_HAPPINESS]]
 
+NamedInteger name = "MIN_MONSTER_DISTANCE" value = (GameRule name = "RULE_MINIMUM_MONSTER_DISTANCE_CAPITAL") - 1
+
 // Spatial Flux Stealth section
 NamedReal name = "SPATIAL_FLUX_STEALTH_HULL_BASE" value = [[SPATIAL_FLUX_STEALTH_HULL_BASE]]
 NamedReal name = "SPATIAL_FLUX_STEALTH_ARRIVAL_MALUS" value = 30

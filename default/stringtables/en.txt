@@ -1304,6 +1304,12 @@ Planet Stability Baseline
 RULE_BASELINE_PLANET_STABILITY_DESC
 Baseline level of planet [[METER_HAPPINESS]].
 
+RULE_MINIMUM_MONSTER_DISTANCE_CAPITAL
+Minimum distance monsters start from Capital
+
+RULE_MINIMUM_MONSTER_DISTANCE_CAPITAL_DESC
+Minimum distance monsters start from Capital
+
 RULE_ALLOW_CONCEDE
 Allow Conceding
 

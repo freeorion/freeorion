@@ -69,7 +69,7 @@ Special
                         * (NamedReal name = "HONEYCOMB_TARGET_INDUSTRY_PERPOP"
                                      value = 0.5 * [[INDUSTRY_PER_POP]])
 
-        [[CHANCE_OF_GUARD_2]]
+        [[CHANCE_OF_GUARD_3]]
         
         [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS]]
     ]

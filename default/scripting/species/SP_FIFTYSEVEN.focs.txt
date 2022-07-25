@@ -45,7 +45,16 @@ Species
                 (GalaxyMaxAIAggression >= 1)
                 (GalaxyMonsterFrequency >= 1)
             ]
-            effects = CreateShip designname = "SM_DRAGON"
+            effects = [
+                If condition = [[MINIMUM_DISTANCE_EMPIRE_CHECK]]
+                    effects = [
+                        CreateShip designname = "SM_DRAGON"
+                    ]
+                else = [
+                    AddSpecial name = "VOLCANIC_ASH_SLAVE_SPECIAL"
+                    AddSpecial name = "VOLCANIC_ASH_MASTER_SPECIAL"
+                ]
+            ]
 
     ]
 

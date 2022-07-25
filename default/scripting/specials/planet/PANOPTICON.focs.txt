@@ -28,34 +28,10 @@ Special
             scope = Source
             effects = SetTexture name = "planets/overlays/ruins.png"
 
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Turn high = 0
-                Random probability = 0.5
-                (GalaxyMaxAIAggression >= 1)
-                (GalaxyMonsterFrequency >= 1)
-                Not WithinStarlaneJumps jumps = 1 condition = And [
-                    System
-                    Contains And [
-                        Planet
-                        OwnedBy affiliation = AnyEmpire
-                    ]
-                ]
-            ]
-            effects = CreateShip designname = "SM_GUARD_2"
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Turn high = 0
-                (GalaxyMaxAIAggression >= 1)
-                (GalaxyMonsterFrequency >= 1)
-            ]
-            effects = CreateShip designname = "SM_GUARD_2"
-        
+        [[CHANCE_OF_GUARD_2]]
         [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS]]
     ]
     graphic = "icons/meter/detection.png"
 
 #include "/scripting/specials/specials.macros.txt"
+#include "./monster_guard.macros"
