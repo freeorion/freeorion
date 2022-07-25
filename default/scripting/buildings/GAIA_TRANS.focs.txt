@@ -14,13 +14,13 @@ BuildingType
     enqueuelocation = And [
         Planet
         OwnedBy empire = Source.Owner
-        Not Contains Building name = "BLD_TERRAFORM"
-        Not Contains Building name = "BLD_TERRAFORM_REVERT"
+        Not Contains Building name = "BLD_TERRAFORM_BEST"
         Not Contains Building name = "BLD_GAIA_TRANS"
         Not HasSpecial name = "GAIA_SPECIAL"
-        Not Enqueued type = Building name = "BLD_TERRAFORM"
-        Not Enqueued type = Building name = "BLD_TERRAFORM_REVERT"
+        Not Enqueued type = Building name = "BLD_TERRAFORM_BEST"
         Not Enqueued type = Building name = "BLD_GAIA_TRANS"
+        [[FOR_ALL_TERRAFORM_PLANET_TYPES(Not Contains Building name = "BLD_TERRAFORM_,")]]
+        [[FOR_ALL_TERRAFORM_PLANET_TYPES(Not Enqueued type = Building name = "BLD_TERRAFORM_,")]]
     ]
     effectsgroups = [
         EffectsGroup
