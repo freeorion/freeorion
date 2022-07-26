@@ -10,6 +10,7 @@ from empire.pilot_rating import best_pilot_rating, medium_pilot_rating
 from freeorion_tools import (
     get_species_attack_troops,
     get_species_fuel,
+    get_species_ship_shields,
     get_species_tag_grade,
     tech_is_complete,
     tech_soon_available,
@@ -32,7 +33,9 @@ BAD_PILOT_RATING = 0.4
 GOOD_PILOT_RATING = 2.0
 GREAT_PILOT_RATING = 3.0
 ULT_PILOT_RATING = 4.0
-GOOD_SHIELD_BONUS = 0.3
+# shield vales: -0.5 to 1.5, so rating effect is -0.3 to 0.9
+# worth of shields is not easy to compare with weapons, but ultimate shields should be close to one weapon level
+SHIELD_SCALING = 0.6
 DETECTION_SCALING = 0.08  # detection values: -1 to 3, so rating effect is -0.08 to 0.32
 FUEL_SCALING = 0.1  # fuel values: -0.5 to 1.5, so rating effect is -0.05 to 0.15
 # troop values range from 0.5 to 2 (or 3, but there is currently no species with ultimate troops)
@@ -89,12 +92,8 @@ def rate_piloting(species_name: SpeciesName) -> float:
     if not species or not species.canProduceShips:
         return 0.0
     weapon_grade_tag = get_species_tag_grade(species_name, Tags.WEAPONS)
-    shield_grade_tag = get_species_tag_grade(species_name, Tags.SHIELDS)
     weapon_val = _pilot_tags_rating.get(weapon_grade_tag, 1.0)
-    # only GOOD_SHIELDS exists so far
-    # TODO: reduce with tech, unlike weapon skill, shield bonus gets less effective with better weapons.
-    #  Cannot use cache_for_session then anymore, of course
-    shield_value = GOOD_SHIELD_BONUS if shield_grade_tag == "GOOD" else 0
+    shield_value = SHIELD_SCALING * get_species_ship_shields(species_name)
     detection_val = detection_value(species_name) * DETECTION_SCALING
     # TODO add something for Sly and Laenfa ability to regenerate fuel quickly in certain systems?
     fuel_val = get_species_fuel(species_name) * FUEL_SCALING

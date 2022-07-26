@@ -53,7 +53,7 @@ import AIDependencies
 import FleetUtilsAI
 from AIDependencies import INVALID_ID, Tags
 from aistate_interface import get_aistate
-from CombatRatingsAI import ShipCombatStats, get_allowed_targets, weight_shields
+from CombatRatingsAI import ShipCombatStats, get_allowed_targets, species_shield_bonus
 from freeorion_tools import (
     assertion_fails,
     get_ship_part,
@@ -511,6 +511,7 @@ class DesignStats:
         self.has_interceptors = False
         self.damage_vs_planets = 0
         self.has_bomber = False
+        self.shield_type = None
 
     def convert_to_combat_stats(self):
         """Return a tuple as expected by CombatRatingsAI"""
@@ -745,6 +746,7 @@ class ShipDesigner:
                 shield_counter += 1
                 if shield_counter == 1:
                     self.design_stats.shields = capacity
+                    self.design_stats.shield_type = part.name
                 else:
                     self.design_stats.shields = 0
             elif partclass in TROOPS:
@@ -785,8 +787,7 @@ class ShipDesigner:
         self._apply_hardcoded_effects(ignore_species)
 
         if self.species and not ignore_species:
-            shields_grade = get_species_tag_grade(self.species, Tags.SHIELDS)
-            self.design_stats.shields = weight_shields(self.design_stats.shields, shields_grade)
+            self.design_stats.shields += species_shield_bonus(self.species, self.design_stats.shields)
             if self.design_stats.troops:
                 troops_grade = get_species_attack_troops(self.species)
                 self.design_stats.troops = self.design_stats.troops * troops_grade
@@ -1032,7 +1033,7 @@ class ShipDesigner:
                 weapons_grade = get_species_tag_grade(self.species, Tags.WEAPONS)
                 relevant_grades.append("WEAPON: %s" % weapons_grade)
             if SHIELDS & self.useful_part_classes:
-                shields_grade = get_species_tag_grade(self.species, Tags.SHIELDS)
+                shields_grade = get_species_tag_grade(self.species, Tags.SHIP_SHIELDS)
                 relevant_grades.append("SHIELDS: %s" % shields_grade)
             if TROOPS & self.useful_part_classes:
                 troops_grade = get_species_tag_grade(self.species, Tags.ATTACKTROOPS)
