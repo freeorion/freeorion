@@ -343,6 +343,12 @@ def get_species_fuel(species_name: str) -> float:
 
 
 @cache_for_session
+def get_species_ship_shields(species_name: str) -> float:
+    grade = get_species_tag_grade(species_name, AIDependencies.Tags.SHIP_SHIELDS)
+    return AIDependencies.SPECIES_SHIP_SHIELD_MODIFIER.get(grade, 0.0)
+
+
+@cache_for_session
 def get_species_stability(species_name: str) -> float:
     grade = get_species_tag_grade(species_name, AIDependencies.Tags.STABILITY)
     return AIDependencies.SPECIES_STABILITY_MODIFIER.get(grade, 0.0)

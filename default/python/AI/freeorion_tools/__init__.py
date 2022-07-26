@@ -18,6 +18,7 @@ from ._freeorion_tools import (
     get_species_influence,
     get_species_population,
     get_species_research,
+    get_species_ship_shields,
     get_species_stability,
     get_species_stealth,
     get_species_supply,
