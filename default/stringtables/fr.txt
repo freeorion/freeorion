@@ -1304,6 +1304,12 @@ Stabilité planétaire de base
 RULE_BASELINE_PLANET_STABILITY_DESC
 Niveau de base de la [[METER_HAPPINESS]] d'une planète.
 
+RULE_MINIMUM_MONSTER_DISTANCE_CAPITAL
+Distance minimum entre monstres et Capitale 
+
+RULE_MINIMUM_MONSTER_DISTANCE_CAPITAL_DESC
+Distance minimum à laquelle débutent les monstres par rapport à la Capitale.
+
 RULE_ALLOW_CONCEDE
 Autoriser Capitulation
 
@@ -1614,13 +1620,13 @@ OPTIONS_DB_SHOW_FPS
 Affiche/Cache le nombre d'images par seconde.
 
 OPTIONS_DB_LIMIT_FPS
-Active/Désactive la limitation du Ni/s (nombre d'images par seconde). La limite est définie avec l'option Ni/s Maximal.
+Active/Désactive la limitation du Ni/s (nombre d'images par seconde). La limite est définie avec l'option Ni/s Maximum.
 
 OPTIONS_DB_MAX_FPS
 Fixe la valeur limite du Ni/s (nombre d'images par seconde) lorsque sa limitation est activée avec l'option Limitation Ni/s.
 
 OPTIONS_DB_LIMIT_FPS_NO_FOCUS
-Active/Désactive la limitation du Ni/s lorsque la fenêtre principale de jeu n'est pas sélectionnée. La limite est définie avec l'option Ni/s Maximal (hors-fenêtre).
+Active/Désactive la limitation du Ni/s lorsque la fenêtre principale de jeu n'est pas sélectionnée. La limite est définie avec l'option Ni/s Maximum (hors-fenêtre).
 
 OPTIONS_DB_MAX_FPS_NO_FOCUS
 Fixe la valeur limite du Ni/s (nombre d'images par seconde) lorsque la fenêtre principale de jeu n'est pas sélectionnée, si la limitation est activée avec l'option Limitation Ni/s (hors-fenêtre).
@@ -2100,7 +2106,7 @@ OPTIONS_DB_AUTOSAVE_TURNS
 Fixe le nombre de tours séparant les sauvegardes automatiques.
 
 OPTIONS_DB_AUTOSAVE_LIMIT
-Fixe le nombre maximal de sauvegardes automatiques à conserver.
+Fixe le nombre maximum de sauvegardes automatiques à conserver.
 
 OPTIONS_DB_AUTOSAVE_GALAXY_CREATION
 Active une sauvegarde automatique dès que la galaxie est créée et avant toute action de jeu.
@@ -2905,7 +2911,7 @@ OPTIONS_MISC_UI
 Options diverses de l'interface utilisateur
 
 OPTIONS_AUTOSAVE_LIMIT
-Nombre maximal de sauvegardes automatiques
+Nombre maximum de sauvegardes automatiques
 
 OPTIONS_AUTOSAVE_TURNS_BETWEEN
 Tours entre les sauvegardes automatiques
@@ -3007,13 +3013,13 @@ OPTIONS_LIMIT_FPS
 Limitation du Ni/s
 
 OPTIONS_MAX_FPS
-Ni/s Maximal
+Ni/s Maximum
 
 OPTIONS_LIMIT_FPS_NO_FOCUS
 Limitation du Ni/s (hors-fenêtre)
 
 OPTIONS_MAX_FPS_NO_FOCUS
-Ni/s Maximal (hors-fenêtre)
+Ni/s Maximum (hors-fenêtre)
 
 OPTIONS_APPLY
 Appliquer
@@ -6206,7 +6212,7 @@ METER_RESEARCH_VALUE_DESC
 
 La Projection Recherche est le niveau optimal de capacité en Recherche qu'une planète tend à approcher, compte tenu des différents facteurs influençant les ressources en Recherche. Sa valeur est liée aux <encyclopedia ENC_BUILDING_TYPE>Types de Structures</encyclopedia> bâtis sur la planète, aux [[encyclopedia ENC_TECH]] recherchées par l'empire, aux <encyclopedia ENC_SPECIAL>Particularités</encyclopedia> liées à la planète, aux [[encyclopedia ENC_POLICY]] adoptées par l'empire, ainsi que divers effets de jeu. Si ces facteurs changent, alors la valeur de Projection Recherche est susceptible de fluctuer à son tour.
 
-L'assimilation complète de chaque technologie nécessite un nombre minimal de tours. Par exemple, si une technologie coûte 15 PR et requiert un minimum de 3 tours, seulement 5 PR par tour peuvent lui être alloués.
+L'assimilation complète de chaque technologie nécessite un nombre minimum de tours. Par exemple, si une technologie coûte 15 PR et requiert un minimum de 3 tours, seulement 5 PR par tour peuvent lui être alloués.
 Les PR sont affectés aux technologies à assimiler selon leur position dans la file d'attente: la technologie en tête de file est prioritaire. Les PR restants sont alloués au projet suivant dans la file et ainsi de suite, jusqu'à épuisement des points disponibles. L'ordre des technologies dans la file d'attente peut être modifié: les technologies que vous jugez prioritaires peuvent ainsi être déplacées en tête de file. Si des PR restent non-alloués après que chaque technologie ait reçu son maximum autorisé de PR, ces PR en excédent sont automatiquement attribués à une ou plusieurs technologies déverrouillées et présentant le moins de PR nécessaires ou restants avant assimilation.
 
 À l'inverse de l'[[metertype METER_INDUSTRY]], la Recherche n'impose pas d'échanges matériels entre planètes et n'est donc pas dépendante des lignes d'[[metertype METER_SUPPLY]] de l'empire.'''
@@ -13767,19 +13773,19 @@ L'attribut "Pilotes" n'affecte pas les chasseurs provenant d'un [[shippart FT_HA
 Au terme d'un combat, les astronefs transporteurs récupèreront automatiquement les chasseurs non-détruits. Si un transporteur est stationnaire dans une zone d'[[metertype METER_SUPPLY]], ses hangars seront rééquipés à leur capacité maximale.'''
 
 SHP_FIGHTERS_2
-Chasseurs Laser
+Chasseurs et Rampes de Lancement 2
 
 SHP_FIGHTERS_2_DESC
 Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Laser. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_2]] augmentent de 12, augmentent de 18 pour un [[shippart FT_HANGAR_3]] et de 36 pour un [[shippart FT_HANGAR_4]]. Pour les chasseurs d'un [[shippart FT_HANGAR_1]], la capacité ainsi que la cadence de lancement de la [[shippart FT_BAY_1]] augmentent de 1.
 
 SHP_FIGHTERS_3
-Chasseurs Plasma
+Chasseurs et Rampes de Lancement 3
 
 SHP_FIGHTERS_3_DESC
 Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Plasma. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_2]] augmentent de 12, augmentent de 18 pour un [[shippart FT_HANGAR_3]] et de 36 pour un [[shippart FT_HANGAR_4]]. Pour les chasseurs d'un [[shippart FT_HANGAR_1]], la capacité ainsi que la cadence de lancement de la [[shippart FT_BAY_1]] augmentent de 1.
 
 SHP_FIGHTERS_4
-Chasseurs Gamma
+Chasseurs et Rampes de Lancement 4
 
 SHP_FIGHTERS_4_DESC
 Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Gamma. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_2]] augmentent de 12, augmentent de 18 pour un [[shippart FT_HANGAR_3]] et de 36 pour un [[shippart FT_HANGAR_4]]. Pour les chasseurs d'un [[shippart FT_HANGAR_1]], la capacité ainsi que la cadence de lancement de la [[shippart FT_BAY_1]] augmentent de 1.
@@ -16910,16 +16916,16 @@ ULTIMATE_OFFENSE_TROOPS_DESC
 +++	Parfait en [[metertype METER_TROOPS]] offensive : 300%
 
 BAD_DETECTION_DESC
-−	Faible [[metertype METER_DETECTION]] : −20 malus
+−	Faible en [[metertype METER_DETECTION]] : −20 malus
 
 GOOD_DETECTION_DESC
-+	Bon [[metertype METER_DETECTION]] : +25 bonus
++	Bon en [[metertype METER_DETECTION]] : +25 bonus
 
 GREAT_DETECTION_DESC
-++	Excellent [[metertype METER_DETECTION]] : +50 bonus
+++	Excellent en [[metertype METER_DETECTION]] : +50 bonus
 
 ULTIMATE_DETECTION_DESC
-+++	Parfait [[metertype METER_DETECTION]] : +100 bonus
++++	Parfait en [[metertype METER_DETECTION]] : +100 bonus
 
 BAD_STEALTH_DESC
 −	Mauvais en [[metertype METER_STEALTH]] Planétaire : −20 malus
@@ -17007,17 +17013,26 @@ GREAT_STOCKPILE_DESC
 ULTIMATE_STOCKPILE_DESC
 +++	Parfait en [[metertype METER_STOCKPILE]] : +0.3 par [[metertype METER_POPULATION]]
 
+BAD_SHIP_SHIELD_DESC
+-	Mauvais en [[metertype METER_SHIELD]] d'astronefs : boucliers d'astronefs moins solides
+
 GOOD_SHIP_SHIELD_DESC
-+	Bons [[metertype METER_SHIELD]] d'astronefs : +1
++	Bon en [[metertype METER_SHIELD]] d'astronefs : boucliers d'astronefs plus solides
+
+GREAT_SHIP_SHIELD_DESC
+++	Excellent en [[metertype METER_SHIELD]] d'astronefs : boucliers d'astronefs plus solides
+
+ULTIMATE_SHIP_SHIELD_DESC
++++	Parfait en [[metertype METER_SHIELD]] d'astronefs : boucliers d'astronefs les plus solides
 
 GOOD_PLANETARY_SHIELD_DESC
-+	Bons [[metertype METER_SHIELD]] planétaires : +5
++	Bon en [[metertype METER_SHIELD]] planétaires : +5
 
 ANCIENT_PLANETARY_SHIELD_DESC
 +++	[[metertype METER_SHIELD]] planétaires ancestraux : +500
 
 GOOD_PLANETARY_DEFENSE_DESC
-+	Bonne [[metertype METER_DEFENSE]] planétaire : +5
++	Bon en [[metertype METER_DEFENSE]] planétaire : +5
 
 BROAD_EP_DESC
 +	Grande adaptabilité : peut s'acclimater à plus de types planétaires
