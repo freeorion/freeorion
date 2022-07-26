@@ -796,6 +796,9 @@ def generate_production_orders():
         building_name = "BLD_COL_" + entry[1][1][3:]
         planet = universe.getPlanet(pid)
         building_type = fo.getBuildingType(building_name)
+        # We may have conquered a planet with a queued colony.
+        # If we want to build another species, we have to remove the queued one.
+        _remove_other_colonies(pid, building_name)
         if not (building_type and building_type.canBeEnqueued(empire.empireID, pid)):
             continue
         res = fo.issueEnqueueBuildingProductionOrder(building_name, pid)
@@ -2002,3 +2005,17 @@ def _build_orbital_drydock(top_pilot_systems: TopPilotSystems) -> None:
                     system_id = universe.getPlanet(pid).systemID
                     covered_drydock_systems.add(system_id)
                     covered_drydock_systems.update(get_neighbors(system_id))
+
+
+def _remove_other_colonies(pid: PlanetId, building_name: str) -> None:
+    """
+    Removes enqueued colony buildings at the given planet.
+    Since colonies cannot be queued in parallel, to allow enqueuing building_name, all others must be removed.
+    If building_name is already enqueued, it's fine of course.
+    """
+    numbered_queue = list(enumerate(fo.getEmpire().productionQueue))
+    # It should not be more than one, except possibly when loading an old safe file, just to be sure, remove all.
+    # Start at the end to avoid changing the numbers of further elements when removing one.
+    for num, entry in reversed(numbered_queue):
+        if entry.locationID == pid and entry.name.startswith("BLD_COL_") and entry.name != building_name:
+            fo.issueDequeueProductionOrder(num)
