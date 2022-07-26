@@ -1513,7 +1513,7 @@ std::string StaticCast<FromType, ToType>::Description() const
 
 template <typename FromType, typename ToType>
 std::string StaticCast<FromType, ToType>::Dump(unsigned short ntabs) const
-{ return "(" + m_value_ref->Dump(ntabs) + ") // StaticCast<" + typeid(FromType).name() + "," + typeid(ToType).name() + ">\n" + DumpIndent(ntabs + 1); }
+{ return "(" + m_value_ref->Dump(ntabs) + ") // StaticCast{" + typeid(FromType).name() + "," + typeid(ToType).name() + "}\n" + DumpIndent(ntabs + 1); }
 
 template <typename FromType, typename ToType>
 void StaticCast<FromType, ToType>::SetTopLevelContent(const std::string& content_name)
@@ -1635,7 +1635,7 @@ std::string StringCast<FromType>::Description() const
 
 template <typename FromType>
 std::string StringCast<FromType>::Dump(unsigned short ntabs) const
-{ return "(" + m_value_ref->Dump(ntabs) + ") // StringCast<" + typeid(FromType).name() + ">\n" + DumpIndent(ntabs + 1); }
+{ return "(" + m_value_ref->Dump(ntabs) + ") // StringCast{" + typeid(FromType).name() + "}\n" + DumpIndent(ntabs + 1); }
 
 template <typename FromType>
 void StringCast<FromType>::SetTopLevelContent(const std::string& content_name) {
