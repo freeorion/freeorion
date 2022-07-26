@@ -1,4 +1,4 @@
-FROM docker.io/ubuntu:hirsute
+FROM docker.io/ubuntu:kinetic
 
 ENV DEBIAN_FRONTEND=noninteractive
 
