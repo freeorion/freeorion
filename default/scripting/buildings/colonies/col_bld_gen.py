@@ -9,6 +9,7 @@ When executed, definition files will be generated in the current working directo
 import os
 import os.path
 import string
+from itertools import chain
 
 # List of all colonizable species in game: definition key, graphic file(relative to default/data/art)
 species_list = [
@@ -95,8 +96,7 @@ BuildingType
         OwnedBy empire = Source.Owner
         Population high = 0
         Not Planet environment = Uninhabitable species = "${id}"
-        Not Contains Building name = "BLD_COL_${name}"
-        Not Enqueued type = Building name = "BLD_COL_${name}"
+        ${exclude_parallel_colonies}
         ${species_condition}
     ]
     effectsgroups = [
@@ -224,6 +224,16 @@ t_buildtime = string.Template(
     )"""
 )
 
+exclude_parallel_colonies = ""
+for species in chain((x[0] for x in species_list), species_extinct_techs.keys()):
+    name = species[3:]
+    exclude_parallel_colonies += f"""\
+        Not Contains Building name = "BLD_COL_{name}"
+        Not Enqueued type = Building name = "BLD_COL_{name}"
+"""
+# remove indent from first line and newline at the end to match format expected by the template
+exclude_parallel_colonies = exclude_parallel_colonies[8:-1]
+
 outpath = os.getcwd()
 print("Output folder: %s" % outpath)
 
@@ -241,6 +251,7 @@ for sp_id, sp_graphic in species_list:
         "graphic": sp_graphic,
         "cost": species_buildcost.get(sp_id, buildcost_default),
         "time": "",
+        "exclude_parallel_colonies": exclude_parallel_colonies,
         "species_condition": "",
     }
 
