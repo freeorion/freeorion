@@ -122,6 +122,7 @@ BuildingType
         Not Contains Building name = "BLD_GAIA_TRANS"
         Not Enqueued type = Building name = "BLD_GAIA_TRANS"
         Not HasSpecial name = "GAIA_SPECIAL"
+        // no targeted terraforming buildings contained or enqueued
         [[FOR_ALL_TERRAFORM_PLANET_TYPES(Not Contains Building name = "BLD_TERRAFORM_,")]]
         [[FOR_ALL_TERRAFORM_PLANET_TYPES(Not Enqueued type = Building name = "BLD_TERRAFORM_,")]]
         // Hide building if the species can not improve (Check species' highest available target environment tag)

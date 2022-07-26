@@ -5,23 +5,17 @@ BuildingType
     buildtime = 12
     location = And [
         Planet
-        Not Contains Building name = "BLD_GAIA_TRANS"
         OwnedBy empire = Source.Owner
         Planet environment = Good
         Not Planet type = [Asteroids GasGiant]
         Not HasSpecial name = "GAIA_SPECIAL"
-    ]
-    enqueuelocation = And [
-        Planet
-        OwnedBy empire = Source.Owner
+        // No terraforming buildings contained or enqueued (neither popular nor any of the targeted ones)
         Not Contains Building name = "BLD_TERRAFORM_BEST"
-        Not Contains Building name = "BLD_GAIA_TRANS"
-        Not HasSpecial name = "GAIA_SPECIAL"
         Not Enqueued type = Building name = "BLD_TERRAFORM_BEST"
-        Not Enqueued type = Building name = "BLD_GAIA_TRANS"
         [[FOR_ALL_TERRAFORM_PLANET_TYPES(Not Contains Building name = "BLD_TERRAFORM_,")]]
         [[FOR_ALL_TERRAFORM_PLANET_TYPES(Not Enqueued type = Building name = "BLD_TERRAFORM_,")]]
     ]
+    enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = And [
