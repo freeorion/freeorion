@@ -6,11 +6,19 @@
 #include "../universe/ValueRefs.h"
 
 value_ref_wrapper<int> variable_wrapper::get_int_property(const char *property) const {
-    return value_ref_wrapper<int>(std::make_shared<ValueRef::Variable<int>>(m_reference_type, property));
+    std::vector property_name = std::vector(m_container);
+    property_name.emplace_back(property);
+    return value_ref_wrapper<int>(std::make_shared<ValueRef::Variable<int>>(m_reference_type, property_name));
 }
 
 value_ref_wrapper<double> variable_wrapper::get_double_property(const char *property) const {
-    return value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(m_reference_type, property));
+    std::vector property_name = std::vector(m_container);
+    property_name.emplace_back(property);
+    return value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(m_reference_type, property_name));
+}
+
+variable_wrapper variable_wrapper::get_variable_property(const char *property) const {
+    return variable_wrapper(m_reference_type, std::vector{std::string(property)});
 }
 
 variable_wrapper::operator condition_wrapper() const {
