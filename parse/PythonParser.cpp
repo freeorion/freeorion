@@ -88,6 +88,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def(int() * py::self_ns::self)
             .def(double() * py::self_ns::self)
             .def(py::self_ns::self - int())
+            .def(py::self_ns::self + int())
             .def(py::self_ns::self < py::self_ns::self)
             .def(py::self_ns::self == py::self_ns::self)
             .def(py::self_ns::self == int());
@@ -99,6 +100,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def(py::self_ns::self * py::self_ns::self)
             .def(double() * py::self_ns::self)
             .def(py::self_ns::self / py::self_ns::self)
+            .def(py::self_ns::self / int())
             .def(py::self_ns::self + int())
             .def(py::self_ns::self + double())
             .def(py::self_ns::self + py::self_ns::self)
@@ -215,6 +217,16 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
                 [property] (const variable_wrapper& w) { return w.get_double_property(property); },
                 py::default_call_policies(),
                 boost::mpl::vector<value_ref_wrapper<double>, const variable_wrapper&>()));
+        }
+
+        for (const char* property : {"Planet",
+                                     "System",
+                                     "Fleet"})
+        {
+             py_variable_wrapper.add_property(property, py::make_function(
+                [property] (const variable_wrapper& w) { return w.get_variable_property(property); },
+                py::default_call_policies(),
+                boost::mpl::vector<variable_wrapper, const variable_wrapper&>()));
         }
 
         py::implicitly_convertible<variable_wrapper, condition_wrapper>();

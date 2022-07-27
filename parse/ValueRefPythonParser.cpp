@@ -67,6 +67,15 @@ value_ref_wrapper<double> operator/(const value_ref_wrapper<double>& lhs, const 
     );
 }
 
+value_ref_wrapper<double> operator/(const value_ref_wrapper<double>& lhs, int rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::DIVIDE,
+            ValueRef::CloneUnique(lhs.value_ref),
+            std::make_unique<ValueRef::Constant<double>>(rhs)
+        )
+    );
+}
+
 value_ref_wrapper<double> operator*(double lhs, const value_ref_wrapper<double>& rhs) {
     return value_ref_wrapper<double>(
         std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::TIMES,
@@ -209,6 +218,15 @@ value_ref_wrapper<int> operator*(int lhs, const value_ref_wrapper<int>& rhs) {
 value_ref_wrapper<int> operator-(const value_ref_wrapper<int>& lhs, int rhs) {
     return value_ref_wrapper<int>(
         std::make_shared<ValueRef::Operation<int>>(ValueRef::OpType::MINUS,
+            ValueRef::CloneUnique(lhs.value_ref),
+            std::make_unique<ValueRef::Constant<int>>(rhs)
+        )
+    );
+}
+
+value_ref_wrapper<int> operator+(const value_ref_wrapper<int>& lhs, int rhs) {
+    return value_ref_wrapper<int>(
+        std::make_shared<ValueRef::Operation<int>>(ValueRef::OpType::PLUS,
             ValueRef::CloneUnique(lhs.value_ref),
             std::make_unique<ValueRef::Constant<int>>(rhs)
         )

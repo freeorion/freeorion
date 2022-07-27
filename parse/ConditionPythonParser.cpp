@@ -355,6 +355,7 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     globals["ProductionCenter"] = condition_wrapper(std::make_shared<Condition::Type>(UniverseObjectType::OBJ_PROD_CENTER));
     globals["Monster"] = condition_wrapper(std::make_shared<Condition::Monster>());
     globals["Capital"] = condition_wrapper(std::make_shared<Condition::Capital>());
+    globals["Stationary"] = condition_wrapper(std::make_shared<Condition::Stationary>());
 
     globals["Unowned"] = condition_wrapper(std::make_shared<Condition::EmpireAffiliation>(EmpireAffiliationType::AFFIL_NONE));
     globals["Human"] = condition_wrapper(std::make_shared<Condition::EmpireAffiliation>(EmpireAffiliationType::AFFIL_HUMAN));
