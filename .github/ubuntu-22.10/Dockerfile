@@ -27,7 +27,7 @@ APT::Install-Suggests \"false\";\n\
 RUN apt-get update --assume-yes
 RUN apt-get install --assume-yes \
         git \
-        g++-11 \
+        g++-12 \
 	make \
         cmake \
         python3 \
@@ -45,7 +45,6 @@ RUN apt-get install --assume-yes \
         libpng-dev \
 	libboost-all-dev \
 	godot3-server \
-	libalut-dev \
 	libboost-all-dev \
 	libjpeg-dev \
 	libtiff-dev \
