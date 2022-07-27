@@ -104,6 +104,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def(py::self_ns::self + int())
             .def(py::self_ns::self + double())
             .def(py::self_ns::self + py::self_ns::self)
+            .def(py::self_ns::self - double())
             .def(py::self_ns::self - py::self_ns::self)
             .def(int() + py::self_ns::self)
             .def(int() - py::self_ns::self)
