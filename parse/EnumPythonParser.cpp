@@ -10,8 +10,21 @@
 #include "../Empire/ResourcePool.h"
 
 void RegisterGlobalsEnums(boost::python::dict& globals) {
-    globals["EnemyOf"] = enum_wrapper<EmpireAffiliationType>(EmpireAffiliationType::AFFIL_ENEMY);
     globals["Influence"] = enum_wrapper<ResourceType>(ResourceType::RE_INFLUENCE);
+
+    for (const auto& op : std::initializer_list<std::pair<const char*, EmpireAffiliationType>>{
+            {"TheEmpire", EmpireAffiliationType::AFFIL_SELF},
+            {"EnemyOf",   EmpireAffiliationType::AFFIL_ENEMY},
+            {"PeaceWith", EmpireAffiliationType::AFFIL_PEACE},
+            {"AllyOf",    EmpireAffiliationType::AFFIL_ALLY},
+            {"AnyEmpire", EmpireAffiliationType::AFFIL_ANY},
+            {"None",      EmpireAffiliationType::AFFIL_NONE},
+            {"CanSee",    EmpireAffiliationType::AFFIL_CAN_SEE},
+            {"Human",     EmpireAffiliationType::AFFIL_HUMAN}})
+    {
+        globals[op.first] = enum_wrapper<EmpireAffiliationType>(op.second);
+    }
+                   
 
     for (const auto& op : std::initializer_list<std::pair<const char*, ::PlanetEnvironment>>{
             {"Uninhabitable", PlanetEnvironment::PE_UNINHABITABLE},
