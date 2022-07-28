@@ -650,7 +650,9 @@ class PolicyManager:
         if isinstance(replace, set) and replace & self._adopted:
             return ret
         return (
-            ret and self._empire.emptyPolicySlots[policy.category] and self._empire.policyPrereqsAndExclusionsOK(name)
+            ret
+            and self._empire.emptyPolicySlots[policy.category] > 0
+            and self._empire.policyPrereqsAndExclusionsOK(name)
         )
 
     def _get_adoptable(self) -> Set[str]:
