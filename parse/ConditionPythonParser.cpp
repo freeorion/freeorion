@@ -284,6 +284,41 @@ namespace {
         return condition_wrapper(std::make_shared<Condition::FleetSupplyableByEmpire>(std::move(empire)));
     }
 
+    condition_wrapper insert_design_has_part_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<std::string>> name;
+        auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
+        if (name_args.check()) {
+            name = ValueRef::CloneUnique(name_args().value_ref);
+        } else {
+            name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<int>> low;
+        if (kw.has_key("low")) {
+            auto low_args = boost::python::extract<value_ref_wrapper<int>>(kw["low"]);
+            if (low_args.check()) {
+                low = ValueRef::CloneUnique(low_args().value_ref);
+            } else {
+                low = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["low"])());
+            }
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<int>> high;
+        if (kw.has_key("high")) {
+            auto high_args = boost::python::extract<value_ref_wrapper<int>>(kw["high"]);
+            if (high_args.check()) {
+                high = ValueRef::CloneUnique(high_args().value_ref);
+            } else {
+                high = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["high"])());
+            }
+        }
+
+        return condition_wrapper(std::make_shared<Condition::DesignHasPart>(
+            std::move(name),
+            std::move(low),
+            std::move(high)));
+    }
+
     condition_wrapper insert_owner_has_tech_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<std::string>> name;
         auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
@@ -377,6 +412,7 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     globals["Star"] = boost::python::raw_function(insert_star_);
     globals["InSystem"] = boost::python::raw_function(insert_in_system_);
     globals["ResupplyableBy"] = boost::python::raw_function(insert_resupplyable_by_);
+    globals["DesignHasPart"] = boost::python::raw_function(insert_design_has_part_);
 
     // non_ship_part_meter_enum_grammar
     for (const auto& meter : std::initializer_list<std::pair<const char*, MeterType>>{
