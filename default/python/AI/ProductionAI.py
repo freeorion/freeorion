@@ -24,7 +24,7 @@ import PlanetUtilsAI
 import PriorityAI
 from AIDependencies import INVALID_ID, Tags
 from aistate_interface import get_aistate
-from buildings import BuildingType, Shipyard, get_empire_drydocks
+from buildings import BuildingType, BuildingTypeBase, Shipyard, get_empire_drydocks
 from character.character_module import Aggression
 from colonization import rate_planetary_piloting
 from colonization.rate_pilots import GREAT_PILOT_RATING
@@ -1443,7 +1443,7 @@ def _location_rating(planet: fo.planet) -> float:
 
 
 def _try_enqueue(
-    building_type: BuildingType,
+    building_type: BuildingTypeBase,
     candidates: Union[PlanetId, Iterable[PlanetId]],
     *,
     at_front: bool = False,
@@ -1486,7 +1486,7 @@ def _try_enqueue(
     return 0.0
 
 
-def _may_enqueue_for_stability(building_type: BuildingType, new_turn_cost: float) -> float:
+def _may_enqueue_for_stability(building_type: BuildingTypeBase, new_turn_cost: float) -> float:
     """
     Build building if it seems worth doing so to increase stability.
     Only builds of locations.planets_enqueued is empty and new_turn_cost is 0.0,

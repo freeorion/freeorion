@@ -44,7 +44,7 @@ def get_empire_drydocks() -> Mapping[SystemId, Tuple[PlanetId]]:
     return ReadOnlyDict({k: tuple(v) for k, v in drydocks.items()})
 
 
-class _BuildingOperations:
+class BuildingTypeBase:
     """
     Mixin class for building enums.
 
@@ -151,7 +151,7 @@ class _BuildingOperations:
         return _prerequisites.get(self, None)
 
 
-class BuildingType(_BuildingOperations, Enum):
+class BuildingType(BuildingTypeBase, Enum):
     """
     Represent basic buildings.
 
@@ -190,7 +190,7 @@ class BuildingType(_BuildingOperations, Enum):
     XENORESURRECTION_LAB = "BLD_XENORESURRECTION_LAB"
 
 
-class Shipyard(_BuildingOperations, Enum):
+class Shipyard(BuildingTypeBase, Enum):
     """
     Represent buildings required to build ships.
     """
