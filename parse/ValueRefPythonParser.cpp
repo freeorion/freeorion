@@ -40,6 +40,15 @@ value_ref_wrapper<double> operator*(const value_ref_wrapper<int>& lhs, const val
     );
 }
 
+value_ref_wrapper<double> operator*(const value_ref_wrapper<double>& lhs, const value_ref_wrapper<int>& rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::TIMES,
+            ValueRef::CloneUnique(lhs.value_ref),
+            std::make_unique<ValueRef::StaticCast<int, double>>(ValueRef::CloneUnique(rhs.value_ref))
+        )
+    );
+}
+
 value_ref_wrapper<double> operator*(const value_ref_wrapper<double>& lhs, double rhs) {
     return value_ref_wrapper<double>(
         std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::TIMES,
@@ -482,6 +491,35 @@ namespace {
             nullptr
         ));
     }
+
+    value_ref_wrapper<int> insert_parts_in_ship_design_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<std::string>> name;
+        if (kw.has_key("name")) {
+            auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
+            if (name_args.check()) {
+                name = ValueRef::CloneUnique(name_args().value_ref);
+            } else {
+                name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
+            }
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<int>> design;
+        auto design_args = boost::python::extract<value_ref_wrapper<int>>(kw["design"]);
+        if (design_args.check()) {
+            design = ValueRef::CloneUnique(design_args().value_ref);
+        } else {
+            design = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["design"])());
+        }
+
+        return value_ref_wrapper<int>(std::make_shared<ValueRef::ComplexVariable<int>>(
+            "PartsInShipDesign",
+            std::move(design),
+            nullptr,
+            nullptr,
+            std::move(name),
+            nullptr
+        ));
+    }
 }
 
 void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& parser) {
@@ -569,5 +607,6 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
     globals["Statistic"] = boost::python::raw_function(f_insert_statistic, 2);
 
     globals["DirectDistanceBetween"] = insert_direct_distance_between_;
+    globals["PartsInShipDesign"] = boost::python::raw_function(insert_parts_in_ship_design_);
 }
 
