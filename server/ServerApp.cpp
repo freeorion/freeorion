@@ -2239,8 +2239,10 @@ namespace {
     bool EmpireEliminated(int empire_id, const ObjectMap& objects) {
         // are there any populated planets? if so, not eliminated
         // are there any ships? if so, not eliminated
-        return !objects.check_if_any<Planet>(PopulatedOwnedVisitor(empire_id)) &&
-               !objects.check_if_any<Ship>(OwnedVisitor(empire_id));
+        return !objects.check_if_any<Planet>([empire_id](const auto* p)
+                                             { return p->OwnedBy(empire_id) && p->Populated(); }) &&
+               !objects.check_if_any<Ship>([empire_id](const auto* s)
+                                           { return s->OwnedBy(empire_id); });
     }
 
     void GetEmpireFleetsAtSystem(std::map<int, std::set<int>>& empire_fleets, int system_id,
