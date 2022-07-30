@@ -59,7 +59,7 @@ GREAT_SHIP_SHIELDS
 '''[[STANDARD_SHIP_SHIELDS]]
 
 EffectsGroup
-            description = "GOOD_SHIP_SHIELD_DESC"
+            description = "GREAT_SHIP_SHIELD_DESC"
             scope = And [
                 Source
                 Ship
@@ -76,7 +76,7 @@ ULTIMATE_SHIP_SHIELDS
 '''[[STANDARD_SHIP_SHIELDS]]
 
 EffectsGroup
-            description = "GOOD_SHIP_SHIELD_DESC"
+            description = "ULTIMATE_SHIP_SHIELD_DESC"
             scope = And [
                 Source
                 Ship
