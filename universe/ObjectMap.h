@@ -34,14 +34,14 @@ public:
     /** Copies contents of this ObjectMap to a new ObjectMap, which is
       * returned.  Copies are limited to only duplicate information that the
       * empire with id \a empire_id would know about the copied objects. */
-    ObjectMap* Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const;
+    [[nodiscard]] ObjectMap* Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const;
 
     /** Returns the number of objects of the specified class in this ObjectMap. */
     template <typename T = UniverseObject>
-    std::size_t size() const;
+    [[nodiscard]] std::size_t size() const;
 
     /** Returns true if this ObjectMap contains no objects */
-    bool empty() const;
+    [[nodiscard]] bool empty() const;
 
     /** Returns a pointer to the object of type T with ID number \a id.
       * Returns a null std::shared_ptr if none exists or the object with
@@ -89,11 +89,11 @@ public:
 
     /** Returns how many objects match \a visitor */
     template <typename T = UniverseObject, typename Pred>
-    int count(const Pred pred) const;
+    [[nodiscard]] int count(Pred pred) const;
 
     /** Returns true iff any object matches \a pred when applied as a visitor or predicate filter */
     template <typename T = UniverseObject, typename Pred>
-    bool check_if_any(const Pred pred) const;
+    [[nodiscard]] bool check_if_any(Pred pred) const;
 
     /** Returns all the objects of type T */
     template <typename T = UniverseObject>
@@ -178,7 +178,7 @@ public:
     [[nodiscard]] std::vector<int> FindExistingObjectIDs() const;
 
     /** Returns highest used object ID in this ObjectMap */
-    int HighestObjectID() const;
+    [[nodiscard]] int HighestObjectID() const;
 
     [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const;
 
@@ -282,7 +282,7 @@ private:
 
     // returns const container of mutable T ... may need further adapting for fully const safe use
     template <typename T>
-    const container_type<std::decay_t<T>>& Map() const
+    [[nodiscard]] const container_type<std::decay_t<T>>& Map() const
     {
         static_assert(!std::is_const_v<T>, "type for Map() should not be const");
         using DecayT = std::decay_t<T>;
@@ -312,7 +312,7 @@ private:
     }
 
     template <typename T>
-    container_type<std::decay_t<T>>& Map()
+    [[nodiscard]] container_type<std::decay_t<T>>& Map()
     {
         static_assert(!std::is_const_v<T>, "type for Map() should not be const");
         using DecayT = std::decay_t<T>;
@@ -342,7 +342,7 @@ private:
     }
 
     template <typename T, typename Pred>
-    static constexpr std::array<bool, 10> CheckTypes();
+    [[nodiscard]] static constexpr std::array<bool, 10> CheckTypes();
 
     container_type<UniverseObject>  m_objects;
     container_type<ResourceCenter>  m_resource_centers;
@@ -572,7 +572,7 @@ std::vector<int> ObjectMap::findIDs(const UniverseObjectVisitor& visitor) const
 }
 
 template <typename T, typename Pred>
-int ObjectMap::count(const Pred pred) const
+int ObjectMap::count(Pred pred) const
 {
     constexpr auto invoke_flags = CheckTypes<T, Pred>();
     constexpr bool is_visitor = invoke_flags[9];
@@ -614,7 +614,7 @@ int ObjectMap::count(const Pred pred) const
 }
 
 template <typename T, typename Pred>
-bool ObjectMap::check_if_any(const Pred pred) const
+bool ObjectMap::check_if_any(Pred pred) const
 {
     constexpr auto invoke_flags = CheckTypes<T, Pred>();
     constexpr bool is_visitor = invoke_flags[9];
