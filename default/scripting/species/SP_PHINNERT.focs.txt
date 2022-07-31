@@ -35,6 +35,17 @@ Species
         // not for description
         [[DEFAULT_NATIVE_DEFENSE]]
         [[STANDARD_SHIP_SHIELDS]]
+
+                // Start the game with Cloud Cover stealth special
+        EffectsGroup
+            scope = Source
+            activation = Turn high = 0
+            //stackinggroup = "GAME_START_MOD_STACK"
+            effects = [
+                AddSpecial name = "CLOUD_COVER_SLAVE_SPECIAL"
+                AddSpecial name = "CLOUD_COVER_MASTER_SPECIAL"
+            ]
+
     ]
 
     [[SWAMP_STANDARD_EP]]
