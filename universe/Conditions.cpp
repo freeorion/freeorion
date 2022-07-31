@@ -8065,7 +8065,6 @@ void WithinDistance::Eval(const ScriptingContext& parent_context,
                             (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate contained objects and distance once and check for all candidates
-        TraceLogger(conditions) << "WithinDistance::Eval simple case";
 
         // get subcondition matches
         ObjectSet subcondition_matches = m_condition->Eval(parent_context);
@@ -8075,7 +8074,6 @@ void WithinDistance::Eval(const ScriptingContext& parent_context,
         EvalImpl(matches, non_matches, search_domain, WithinDistanceSimpleMatch(subcondition_matches, distance));
     } else {
         // re-evaluate contained objects for each candidate object
-        TraceLogger(conditions) << "WithinDistance::Eval full case";
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
@@ -10329,6 +10327,7 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         return ss;
     };
 
+    /*
     TraceLogger(conditions) << [&]() {
         std::stringstream ss;
         ss << "And::Eval searching " << (search_domain == SearchDomain::MATCHES ? "matches" : "non_matches")
@@ -10336,6 +10335,7 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
            << " and input non_matches(" << non_matches.size() << "): " << ObjList(non_matches);
         return ss.str();
     }();
+    */
 
     if (search_domain == SearchDomain::NON_MATCHES) {
         ObjectSet partly_checked_non_matches;
@@ -10344,6 +10344,7 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         // move items in non_matches set that pass first operand condition into
         // partly_checked_non_matches set
         m_operands[0]->Eval(parent_context, partly_checked_non_matches, non_matches, SearchDomain::NON_MATCHES);
+        /*
         TraceLogger(conditions) << [&]() {
             std::stringstream ss;
             ss << "Subcondition: " << m_operands[0]->Dump()
@@ -10351,11 +10352,13 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                << ObjList(partly_checked_non_matches);
             return ss.str();
         }();
+        */
 
         // move items that don't pass one of the other conditions back to non_matches
         for (unsigned int i = 1; i < m_operands.size(); ++i) {
             if (partly_checked_non_matches.empty()) break;
             m_operands[i]->Eval(parent_context, partly_checked_non_matches, non_matches, SearchDomain::MATCHES);
+            /*
             TraceLogger(conditions) << [&]() {
                 std::stringstream ss;
                 ss << "Subcondition: " << m_operands[i]->Dump()
@@ -10363,6 +10366,7 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                    << ObjList(partly_checked_non_matches);
                 return ss.str();
             }();
+            */
         }
 
         // merge items that passed all operand conditions into matches
@@ -10379,15 +10383,19 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         for (auto& operand : m_operands) {
             if (matches.empty()) break;
             operand->Eval(parent_context, matches, non_matches, SearchDomain::MATCHES);
+            /*
             TraceLogger(conditions) << "Subcondition: " << operand->Dump()
                                     <<"\nremaining matches (" << matches.size() << "): " << ObjList(matches);
+            */
         }
 
         // items already in non_matches set are not checked, and remain in non_matches set
         // even if they pass all operand conditions
     }
+    /*
     TraceLogger(conditions) << "And::Eval final matches (" << matches.size() << "): " << ObjList(matches)
                             << " and non_matches (" << non_matches.size() << "): " << ObjList(non_matches);
+    */
 }
 
 std::string And::Description(bool negated) const {
