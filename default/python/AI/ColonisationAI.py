@@ -141,22 +141,19 @@ def get_colony_fleets():
     reserved_outpost_base_targets = outpost_base_manager.get_targets()
     debug("Current qualifyingOutpostBaseTargets: %s" % reserved_outpost_base_targets)
     outpost_base_manager.build_bases()
-    colonization_timer.start("Evaluate Primary Colony Opportunities")
 
+    colonization_timer.start("Evaluate All Colony Opportunities")
     evaluated_outpost_planet_ids = list(
         get_unowned_empty_planets()
         - set(outpost_targeted_planet_ids)
         - set(colony_targeted_planet_ids)
         - set(reserved_outpost_base_targets)
     )
-
-    evaluated_colony_planets = assign_colonisation_values(evaluated_colony_planet_ids, MissionType.COLONISATION, None)
-    colonization_timer.stop("Evaluate %d Primary Colony Opportunities" % (len(evaluated_colony_planet_ids)))
-    colonization_timer.start("Evaluate All Colony Opportunities")
     _all_colony_opportunities.clear()
     _all_colony_opportunities.update(
-        assign_colonisation_values(evaluated_colony_planet_ids, MissionType.COLONISATION, None, [], True)
+        assign_colonisation_values(evaluated_colony_planet_ids, MissionType.COLONISATION, None, return_all=True)
     )
+    evaluated_colony_planets = {pid: values[0] for pid, values in _all_colony_opportunities.items()}
     colonization_timer.start("Evaluate Outpost Opportunities")
 
     sorted_planets = list(evaluated_colony_planets.items())
