@@ -1,3 +1,87 @@
+SET_NATIVE_GUARDS
+'''         If condition = And [
+                Planet type = Terran
+                (GalaxyNativeFrequency >= 0.1)
+            ]
+                effects = [
+                    SetSpecies name = OneOf("SP_RAAAGH", "SP_ANCIENT_GUARDIANS")
+                    SetPopulation value = Target.TargetPopulation
+                ]
+
+            If condition = And [
+                Planet type = Swamp
+                (GalaxyNativeFrequency >= 0.1)
+            ]
+                effects = [
+                    If condition = Random probability = 0.5
+                        effects = [
+                            SetSpecies name = "SP_PHINNERT"
+                            SetPopulation value = Target.TargetPopulation
+                            AddSpecial name = "CLOUD_COVER_SLAVE_SPECIAL"
+                            AddSpecial name = "CLOUD_COVER_MASTER_SPECIAL"
+                        ]
+                    else = [
+                        SetSpecies name = "SP_ANCIENT_GUARDIANS"
+                        SetPopulation value = Target.TargetPopulation
+                    ]
+                ]
+
+            If condition = And [
+                Planet type = Tundra
+                (GalaxyNativeFrequency >= 0.1)
+                Not WithinStarlaneJumps jumps = 3 condition = And [
+                    System
+                    Contains Building name = "BLD_IMPERIAL_PALACE"
+                ]
+            ]
+                effects = [
+                    SetSpecies name = OneOf("SP_FURTHEST", "SP_HHHOH", "SP_ANCIENT_GUARDIANS")
+                    SetPopulation value = Target.TargetPopulation
+                ]
+
+            If condition = And [
+                Planet type = Tundra
+                (GalaxyNativeFrequency >= 0.1)
+                WithinStarlaneJumps jumps = 3 condition = And [
+                    System
+                    Contains Building name = "BLD_IMPERIAL_PALACE"
+                ]
+            ]
+                effects = [
+                    SetSpecies name = OneOf("SP_HHHOH", "SP_ANCIENT_GUARDIANS")
+                    SetPopulation value = Target.TargetPopulation
+                ]
+
+            If condition = And [
+                Planet type = Desert
+                (GalaxyNativeFrequency >= 0.1)
+            ]
+                effects = [
+                    SetSpecies name = OneOf("SP_NYMNMN", "SP_ANCIENT_GUARDIANS")
+                    SetPopulation value = Target.TargetPopulation
+                ]
+
+            If condition = Or [
+                Not Planet type = [ Terran Swamp Tundra Desert ]
+                (GalaxyNativeFrequency < 0.1)
+            ]
+                effects = [
+                    SetSpecies name = "SP_ANCIENT_GUARDIANS"
+                    SetPopulation value = Target.TargetPopulation
+                ]
+
+            If condition = And [
+                Not ContainedBy Contains Or [
+                    And [ Species HasTag name = "PRIMITIVE" ]
+                    And [ Planet HasSpecial name = "MODERATE_TECH_NATIVES_SPECIAL" ]
+                    And [ Planet HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL" ]
+                    And [ Planet HasTag name = "ANCIENT_GUARDIANS"]
+                ]
+            ]
+                effects = AddSpecial name = "MODERATE_TECH_NATIVES_SPECIAL"
+
+'''
+
 CHANCE_OF_GUARD_1
 '''        EffectsGroup
             scope = Source
@@ -5,7 +89,6 @@ CHANCE_OF_GUARD_1
                 Turn high = 0
                 Random probability = 0.70
                 (GalaxyMaxAIAggression >= 1)
-                (GalaxyMonsterFrequency >= 1)
                 Not ContainedBy Contains Or [
                     Design name = "SM_EXP_OUTPOST"
                     Building name = "BLD_EXPERIMENTOR_OUTPOST"
@@ -16,6 +99,7 @@ CHANCE_OF_GUARD_1
                 If condition = And [
                         Random probability = 0.6
                         [[MINIMUM_DISTANCE_EMPIRE_CHECK]]
+                        (GalaxyMonsterFrequency >= 1)
                     ]
                     effects = [
                         If condition = ContainedBy Contains Planet type = Asteroids
@@ -30,8 +114,7 @@ CHANCE_OF_GUARD_1
                             Not Homeworld
                         ]
                         effects = [
-                            SetSpecies name = "SP_ANCIENT_GUARDIANS"
-                            SetPopulation value = Target.TargetPopulation
+                            [[SET_NATIVE_GUARDS]]
                         ]
                     else = [
                         AddSpecial name = "CLOUD_COVER_MASTER_SPECIAL"
