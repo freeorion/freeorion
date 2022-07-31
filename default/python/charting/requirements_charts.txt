@@ -1,2 +1,2 @@
 altair
-streamlit
+streamlit >= 1.10.0
