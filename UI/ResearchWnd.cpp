@@ -411,9 +411,7 @@ private:
 // ResearchWnd                                  //
 //////////////////////////////////////////////////
 ResearchWnd::ResearchWnd(GG::X w, GG::Y h, bool initially_hidden) :
-    GG::Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP),
-    m_enabled(false),
-    m_empire_shown_id(ALL_EMPIRES)
+    GG::Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP)
 {
     GG::X queue_width(GetOptionsDB().Get<int>("ui.queue.width"));
     GG::Pt tech_tree_wnd_size = ClientSize() - GG::Pt(GG::X(GetOptionsDB().Get<int>("ui.queue.width")), GG::Y0);
@@ -454,6 +452,8 @@ void ResearchWnd::CompleteConstruction() {
     SetChildClippingMode(ChildClippingMode::ClipToClient);
 
     DoLayout(true);
+
+    m_refresh_needed.store(true);
 }
 
 void ResearchWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -498,21 +498,18 @@ void ResearchWnd::Refresh(const ScriptingContext& context) {
         m_empire_connection = empire->GetResearchQueue().ResearchQueueChangedSignal.connect(
             boost::bind(&ResearchWnd::ResearchQueueChangedSlot, this));
     }
-    Update(context);
+
+    m_refresh_needed.store(true);
 }
 
 void ResearchWnd::Reset(const ScriptingContext& context) {
     m_tech_tree_wnd->Reset();
-    UpdateQueue(context);
-    UpdateInfoPanel(context);
     m_queue_wnd->GetQueueListBox()->BringRowIntoView(m_queue_wnd->GetQueueListBox()->begin());
+    m_refresh_needed.store(true);
 }
 
-void ResearchWnd::Update(const ScriptingContext& context) {
-    m_tech_tree_wnd->Update();
-    UpdateQueue(context);
-    UpdateInfoPanel(context);
-}
+void ResearchWnd::Update(const ScriptingContext& context)
+{ m_refresh_needed.store(true); }
 
 void ResearchWnd::CenterOnTech(const std::string& tech_name)
 { m_tech_tree_wnd->CenterOnTech(tech_name); }
@@ -571,22 +568,25 @@ void ResearchWnd::QueueItemMoved(const GG::ListBox::iterator& row_it,
 void ResearchWnd::Sanitize()
 { m_tech_tree_wnd->Clear(); }
 
-void ResearchWnd::Render()
-{}
+void ResearchWnd::Render() {
+    bool do_update = m_refresh_needed.exchange(false);
+    if (do_update) {
+        const ScriptingContext context;
+        UpdateQueue(context);
+        UpdateInfoPanel(context);
+        m_tech_tree_wnd->Update();
+    }
+}
 
 void ResearchWnd::SetEmpireShown(int empire_id, const ScriptingContext& context) {
     if (empire_id != m_empire_shown_id) {
         m_empire_shown_id = empire_id;
-        Refresh(context);
+        m_refresh_needed.store(true);
     }
 }
 
-void ResearchWnd::ResearchQueueChangedSlot() {
-    const ScriptingContext context;
-    UpdateQueue(context);
-    UpdateInfoPanel(context);
-    m_tech_tree_wnd->Update();
-}
+void ResearchWnd::ResearchQueueChangedSlot()
+{ m_refresh_needed.store(true); }
 
 void ResearchWnd::UpdateQueue(const ScriptingContext& context) {
     DebugLogger() << "ResearchWnd::UpdateQueue()";
@@ -735,7 +735,6 @@ void ResearchWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
 
     empire->UpdateResearchQueue(context);
 }
-
 
 void ResearchWnd::EnableOrderIssuing(bool enable) {
     m_enabled = enable;

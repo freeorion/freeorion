@@ -1,10 +1,10 @@
 #ifndef _ResearchWnd_h_
 #define _ResearchWnd_h_
 
-#include "CUIWnd.h"
+#include <atomic>
 #include "../universe/ConstantsFwd.h"
-
 #include <GG/ListBox.h>
+#include <GG/Wnd.h>
 
 class TechTreeWnd;
 class ResourceInfoPanel;
@@ -62,6 +62,7 @@ private:
     boost::signals2::scoped_connection  m_empire_connection;
     int                                 m_empire_shown_id = ALL_EMPIRES;
     bool                                m_enabled = false;
+    std::atomic<bool>                   m_refresh_needed = false;
 };
 
 
