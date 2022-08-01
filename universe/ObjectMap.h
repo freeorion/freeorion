@@ -10,7 +10,6 @@
 #include <unordered_set>
 #include <vector>
 #include <boost/range/adaptor/map.hpp>
-#include <boost/range/any_range.hpp>
 #include "ConstantsFwd.h"
 #include "UniverseObjectVisitor.h"
 #include "../util/Export.h"

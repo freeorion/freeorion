@@ -27,6 +27,7 @@
 #include <GG/Layout.h>
 
 #include <boost/lexical_cast.hpp>
+#include <boost/range/any_range.hpp>
 #include <boost/uuid/random_generator.hpp>
 
 #include <iterator>
