@@ -7031,19 +7031,23 @@ namespace {
     }
 
     std::set<std::pair<std::string, int>, CustomRowCmp> GetOwnedSystemNamesIDs(int empire_id) {
-        auto owned_planets = Objects().find<Planet>(OwnedVisitor(empire_id));
+        auto owned_planets = Objects().findRaw<const Planet>(
+            [empire_id](const Planet* p) { return p->OwnedBy(empire_id); });
 
         // get IDs of systems that contain any owned planets
-        std::set<int> system_ids;
-        for (auto& obj : owned_planets)
-            system_ids.insert(obj->SystemID());
+        std::vector<int> system_ids;
+        system_ids.reserve(owned_planets.size());
+        std::transform(owned_planets.begin(), owned_planets.end(), std::back_inserter(system_ids),
+                       [](const auto* p) { return p->SystemID(); });
+        std::sort(system_ids.begin(), system_ids.end());
+        auto it = std::unique(system_ids.begin(), system_ids.end());
+        system_ids.erase(it, system_ids.end());
 
         // store systems, sorted alphabetically
+        const auto sys = Objects().findRaw<const System>(system_ids);
         std::set<std::pair<std::string, int>, CustomRowCmp> system_names_ids;
-        for (const auto& sys : Objects().findRaw<System>(system_ids)) {
-            if (sys)
-                system_names_ids.emplace(sys->Name(), sys->ID());
-        }
+        std::transform(sys.begin(), sys.end(), std::inserter(system_names_ids, system_names_ids.end()),
+                       [](const System* s) -> std::pair<std::string, int> { return {s->Name(), s->ID()}; });
 
         return system_names_ids;
     }
