@@ -61,17 +61,13 @@ public:
     template <typename T = UniverseObject>
     [[nodiscard]] std::decay_t<T>* getRaw(int id);
 
-    using id_range = boost::any_range<int, boost::forward_traversal_tag>;
+    /** Returns a vector containing the objects that match \a pred when applied as a visitor or predicate filter or range of object ids */
+    template <typename T = UniverseObject, typename Pred>
+    [[nodiscard]] std::vector<const std::decay_t<T>*> findRaw(Pred pred) const;
 
-    /** Returns a vector containing the objects with ids in \a object_ids that
-      * are of type T */
-    template <typename T = UniverseObject>
-    [[nodiscard]] std::vector<const std::decay_t<T>*> findRaw(const id_range& object_ids) const;
-
-    /** Returns a vector containing the objects with ids in \a object_ids that
-      * are of type T */
-    template <typename T = UniverseObject>
-    [[nodiscard]] std::vector<std::decay_t<T>*> findRaw(const id_range& object_ids);
+    /** Returns a vector containing the objects that match \a pred when applied as a visitor or predicate filter or range of object ids */
+    template <typename T = UniverseObject, typename Pred>
+    [[nodiscard]] std::vector<std::decay_t<T>*> findRaw(Pred pred);
 
     /** Returns all the objects that match \a pred when applied as a visitor or predicate filter or range of object ids */
     template <typename T = UniverseObject, typename Pred>
@@ -398,34 +394,6 @@ std::decay_t<T>* ObjectMap::getRaw(int id)
     return it != Map<DecayT>().end() ? it->second.get() : nullptr;
 }
 
-template <typename T>
-std::vector<const std::decay_t<T>*> ObjectMap::findRaw(const id_range& object_ids) const
-{
-    using DecayT = std::decay_t<T>;
-    std::vector<const DecayT*> retval;
-    retval.reserve(boost::size(object_ids));
-    for (int object_id : object_ids) {
-        auto map_it = Map<DecayT>().find(object_id);
-        if (map_it != Map<DecayT>().end())
-            retval.push_back(map_it->second.get());
-    }
-    return retval;
-}
-
-template <typename T>
-std::vector<std::decay_t<T>*> ObjectMap::findRaw(const id_range& object_ids)
-{
-    using DecayT = std::decay_t<T>;
-    std::vector<DecayT*> retval;
-    retval.reserve(boost::size(object_ids));
-    for (int object_id : object_ids) {
-        auto map_it = Map<DecayT>().find(object_id);
-        if (map_it != Map<DecayT>().end())
-            retval.push_back(map_it->second.get());
-    }
-    return retval;
-}
-
 namespace {
     template <typename, typename = void>
     static constexpr bool is_int_iterable = false;
@@ -508,6 +476,134 @@ constexpr std::array<bool, 11> ObjectMap::CheckTypes()
         invokable_on_const_entry, invokable_on_mutable_entry,
         invokable_on_const_reference, invokable_on_mutable_reference,
         invokable, is_visitor, is_int_range};
+}
+
+template <typename T, typename Pred>
+std::vector<const std::decay_t<T>*> ObjectMap::findRaw(Pred pred) const
+{
+    constexpr auto invoke_flags = CheckTypes<T, Pred>();
+    constexpr bool invokable_on_raw_const_object = invoke_flags[0];
+    constexpr bool invokable_on_shared_const_object = invoke_flags[2];
+    constexpr bool invokable_on_const_entry = invoke_flags[4];
+    constexpr bool invokable_on_const_reference = invoke_flags[6];
+    constexpr bool invokable = invoke_flags[8];
+    constexpr bool is_visitor = invoke_flags[9];
+    constexpr bool is_int_range = invoke_flags[10];
+
+    using DecayT = std::decay_t<T>;
+    using ContainerT = std::decay_t<decltype(Map<DecayT>())>;
+    using EntryT = typename ContainerT::value_type;
+
+    std::vector<const DecayT*> result;
+    if constexpr (!is_int_range)
+        result.reserve(size<DecayT>());
+    else
+        result.reserve(std::size(pred));
+
+    if constexpr (is_int_range) {
+        for (int object_id : pred) {
+            auto map_it = Map<DecayT>().find(object_id);
+            if (map_it != Map<DecayT>().end())
+                result.push_back(map_it->second.get());
+        }
+
+    } else if constexpr (is_visitor) {
+        for (const auto& [id, obj] : Map<DecayT>())
+            if (obj->Accept(pred))
+                result.push_back(obj.get());
+
+    } else if constexpr (invokable_on_raw_const_object) {
+        for (const auto& [id, obj] : Map<DecayT>()) {
+            const DecayT* obj_raw = obj.get();
+            if (pred(obj_raw))
+                result.push_back(obj_raw);
+        }
+
+    } else if constexpr (invokable_on_shared_const_object) {
+        for (const auto& [id, obj] : Map<DecayT>()) {
+            if (pred(obj))
+                result.push_back(obj.get());
+        }
+
+    } else if constexpr (invokable_on_const_entry) {
+        for (const auto& id_obj : Map<DecayT>())
+            if (pred(id_obj))
+                result.push_back(id_obj.second.get());
+
+    } else if constexpr (invokable_on_const_reference) {
+        for (const auto& [id, obj] : Map<DecayT>())
+            if (pred(*obj))
+                result.push_back(obj.get());
+
+    } else {
+        static_assert(invokable, "Don't know how to handle predicate");
+    }
+
+    return result;
+}
+
+template <typename T, typename Pred>
+std::vector<std::decay_t<T>*> ObjectMap::findRaw(Pred pred)
+{
+    constexpr auto invoke_flags = CheckTypes<T, Pred>();
+    constexpr bool invokable_on_raw_const_object = invoke_flags[0];
+    constexpr bool invokable_on_shared_const_object = invoke_flags[2];
+    constexpr bool invokable_on_const_entry = invoke_flags[4];
+    constexpr bool invokable_on_const_reference = invoke_flags[6];
+    constexpr bool invokable = invoke_flags[8];
+    constexpr bool is_visitor = invoke_flags[9];
+    constexpr bool is_int_range = invoke_flags[10];
+
+    using DecayT = std::decay_t<T>;
+    using ContainerT = std::decay_t<decltype(Map<DecayT>())>;
+    using EntryT = typename ContainerT::value_type;
+
+    std::vector<DecayT*> result;
+    if constexpr (!is_int_range)
+        result.reserve(size<DecayT>());
+    else
+        result.reserve(std::size(pred));
+
+    if constexpr (is_int_range) {
+        for (int object_id : pred) {
+            auto map_it = Map<DecayT>().find(object_id);
+            if (map_it != Map<DecayT>().end())
+                result.push_back(map_it->second.get());
+        }
+
+    } else if constexpr (is_visitor) {
+        for (const auto& [id, obj] : Map<DecayT>())
+            if (obj->Accept(pred))
+                result.push_back(obj.get());
+
+    } else if constexpr (invokable_on_raw_const_object) {
+        for (const auto& [id, obj] : Map<DecayT>()) {
+            DecayT* obj_raw = obj.get();
+            if (pred(obj_raw))
+                result.push_back(obj_raw);
+        }
+
+    } else if constexpr (invokable_on_shared_const_object) {
+        for (const auto& [id, obj] : Map<DecayT>()) {
+            if (pred(obj))
+                result.push_back(obj.get());
+        }
+
+    } else if constexpr (invokable_on_const_entry) {
+        for (const auto& id_obj : Map<DecayT>())
+            if (pred(id_obj))
+                result.push_back(id_obj.second.get());
+
+    } else if constexpr (invokable_on_const_reference) {
+        for (const auto& [id, obj] : Map<DecayT>())
+            if (pred(*obj))
+                result.push_back(obj.get());
+
+    } else {
+        static_assert(invokable, "Don't know how to handle predicate");
+    }
+
+    return result;
 }
 
 template <typename T, typename Pred>
