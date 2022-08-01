@@ -454,7 +454,13 @@ def assess_ship_design_role(design):
             return ShipRoleType.BASE_INVASION
 
     if design.speed == 0:
-        if not parts or parts[0].partClass == fo.shipPartClass.shields:  # ToDo: Update logic for new ship designs
+        if not parts or parts[0].partClass in (
+            fo.shipPartClass.shortRange,
+            fo.shipPartClass.fighterBay,
+            fo.shipPartClass.fighterHangar,
+            fo.shipPartClass.shields,
+            fo.shipPartClass.armour,
+        ):
             return ShipRoleType.BASE_DEFENSE
         else:
             return ShipRoleType.INVALID
