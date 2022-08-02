@@ -814,6 +814,11 @@ boost::statechart::result PlayingGame::react(const Error& msg) {
 
     //Note: transit<> frees this pointer so Client() must be called before.
     GGHumanClientApp& client = Client();
+    // Stop auto-advance turn on error
+    if (client.GetClientUI().GetMapWnd()->AutoEndTurnEnabled()) {
+        client.GetClientUI().GetMapWnd()->ToggleAutoEndTurn();
+        client.InitAutoTurns(0);
+    }
 
     // See reaction_transition_note.
     auto retval = discard_event();
