@@ -57,12 +57,12 @@ public:
 
     [[nodiscard]] std::string             Dump(unsigned short ntabs = 0) const override;
 
-    [[nodiscard]] int                     ContainerObjectID() const override;
-    [[nodiscard]] const std::set<int>&    ContainedObjectIDs() const override;
+    [[nodiscard]] int                     ContainerObjectID() const override { return this->SystemID(); }
+    [[nodiscard]] const std::set<int>&    ContainedObjectIDs() const override { return m_buildings; }
     [[nodiscard]] bool                    Contains(int object_id) const override;
     [[nodiscard]] bool                    ContainedBy(int object_id) const override;
 
-    [[nodiscard]] const Meter*            GetMeter(MeterType type) const override;
+    [[nodiscard]] const Meter*            GetMeter(MeterType type) const override { return UniverseObject::GetMeter(type); }
 
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
@@ -88,25 +88,25 @@ public:
 
     /** An orbital period is equal to a planets "year". A "year" is arbitrarily
       * defined to be 4 turns. */
-    [[nodiscard]] float OrbitalPeriod() const;
+    [[nodiscard]] float OrbitalPeriod() const noexcept              { return m_orbital_period; }
     /** @returns an angle in radians. */
-    [[nodiscard]] float InitialOrbitalPosition() const;
+    [[nodiscard]] float InitialOrbitalPosition() const noexcept     { return m_initial_orbital_position; }
     /** @returns an angle in radians. */
     [[nodiscard]] float OrbitalPositionOnTurn(int turn) const;
     /** The rotational period represents a planets "day".  A "day" is
       * arbitrarily defined to be 1/360 of a "year", and 1/90 of a turn. */
-    [[nodiscard]] float RotationalPeriod() const;
+    [[nodiscard]] float RotationalPeriod() const noexcept           { return m_rotational_period; }
     /** @returns an angle in degree. */
-    [[nodiscard]] float AxialTilt() const;
+    [[nodiscard]] float AxialTilt() const noexcept                  { return m_axial_tilt; }
 
-    [[nodiscard]] const std::set<int>& BuildingIDs() const    { return m_buildings; }
+    [[nodiscard]] const std::set<int>& BuildingIDs() const noexcept { return m_buildings; }
 
-    [[nodiscard]] bool IsAboutToBeColonized() const           { return m_is_about_to_be_colonized; }
-    [[nodiscard]] bool IsAboutToBeInvaded() const             { return m_is_about_to_be_invaded; }
-    [[nodiscard]] bool IsAboutToBeBombarded() const           { return m_is_about_to_be_bombarded; }
-    [[nodiscard]] int OrderedGivenToEmpire() const            { return m_ordered_given_to_empire_id; }
-    [[nodiscard]] int LastTurnAttackedByShip() const          { return m_last_turn_attacked_by_ship; }
-    [[nodiscard]] int LastTurnColonized() const               { return m_turn_last_colonized; }
+    [[nodiscard]] bool IsAboutToBeColonized() const noexcept        { return m_is_about_to_be_colonized; }
+    [[nodiscard]] bool IsAboutToBeInvaded() const noexcept          { return m_is_about_to_be_invaded; }
+    [[nodiscard]] bool IsAboutToBeBombarded() const noexcept        { return m_is_about_to_be_bombarded; }
+    [[nodiscard]] int OrderedGivenToEmpire() const noexcept         { return m_ordered_given_to_empire_id; }
+    [[nodiscard]] int LastTurnAttackedByShip() const noexcept       { return m_last_turn_attacked_by_ship; }
+    [[nodiscard]] int LastTurnColonized() const noexcept            { return m_turn_last_colonized; }
     [[nodiscard]] int TurnsSinceColonization() const;
     [[nodiscard]] int LastTurnConquered() const               { return m_turn_last_conquered; }
     [[nodiscard]] int TurnsSinceLastConquered() const;
@@ -120,7 +120,7 @@ public:
     void Copy(std::shared_ptr<const UniverseObject> copied_object,
               const Universe& universe, int empire_id = ALL_EMPIRES) override;
 
-    [[nodiscard]] Meter* GetMeter(MeterType type) override;
+    [[nodiscard]] Meter* GetMeter(MeterType type) override { return UniverseObject::GetMeter(type); }
 
     void Reset(ObjectMap& objects) override;
     void Depopulate() override;

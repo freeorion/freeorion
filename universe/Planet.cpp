@@ -403,29 +403,11 @@ PlanetSize Planet::NextLargerPlanetSize() const
 PlanetSize Planet::NextSmallerPlanetSize() const
 { return PlanetSizeIncrement(m_size, -1); }
 
-float Planet::OrbitalPeriod() const
-{ return m_orbital_period; }
-
-float Planet::InitialOrbitalPosition() const
-{ return m_initial_orbital_position; }
-
 float Planet::OrbitalPositionOnTurn(int turn) const
 { return m_initial_orbital_position + OrbitalPeriod() * 2.0 * 3.1415926 / 4 * turn; }
 
-float Planet::RotationalPeriod() const
-{ return m_rotational_period; }
-
-float Planet::AxialTilt() const
-{ return m_axial_tilt; }
-
 std::shared_ptr<UniverseObject> Planet::Accept(const UniverseObjectVisitor& visitor) const
 { return visitor.Visit(std::const_pointer_cast<Planet>(std::static_pointer_cast<const Planet>(UniverseObject::shared_from_this()))); }
-
-Meter* Planet::GetMeter(MeterType type)
-{ return UniverseObject::GetMeter(type); }
-
-const Meter* Planet::GetMeter(MeterType type) const
-{ return UniverseObject::GetMeter(type); }
 
 std::string Planet::CardinalSuffix(const ObjectMap& objects) const {
     std::string retval;
@@ -501,12 +483,6 @@ std::string Planet::CardinalSuffix(const ObjectMap& objects) const {
     }
     return retval;
 }
-
-int Planet::ContainerObjectID() const
-{ return this->SystemID(); }
-
-const std::set<int>& Planet::ContainedObjectIDs() const
-{ return m_buildings; }
 
 bool Planet::Contains(int object_id) const
 { return object_id != INVALID_OBJECT_ID && m_buildings.count(object_id); }

@@ -85,23 +85,23 @@ public:
     using CombinerType = assignable_blocking_combiner;
     using StateChangedSignalType = boost::signals2::signal<void (), CombinerType>;
 
-    [[nodiscard]] int                           ID() const { return m_id; }    ///< returns the ID number of this object.  Each object in FreeOrion has a unique ID number.
-    [[nodiscard]] const std::string&            Name() const { return m_name; }///< returns the name of this object; some valid objects will have no name
-    [[nodiscard]] virtual double                X() const { return m_x; }      ///< the X-coordinate of this object
-    [[nodiscard]] virtual double                Y() const { return m_y; }      ///< the Y-coordinate of this object
+    [[nodiscard]] int                           ID() const noexcept { return m_id; }    ///< returns the ID number of this object.  Each object in FreeOrion has a unique ID number.
+    [[nodiscard]] const std::string&            Name() const noexcept { return m_name; }///< returns the name of this object; some valid objects will have no name
+    [[nodiscard]] double                        X() const noexcept { return m_x; }      ///< the X-coordinate of this object
+    [[nodiscard]] double                        Y() const noexcept { return m_y; }      ///< the Y-coordinate of this object
 
-    [[nodiscard]] int                           Owner() const { return m_owner_empire_id; }; ///< returns the ID of the empire that owns this object, or ALL_EMPIRES if there is no owner
+    [[nodiscard]] int                           Owner() const noexcept   { return m_owner_empire_id; }; ///< returns the ID of the empire that owns this object, or ALL_EMPIRES if there is no owner
     [[nodiscard]] bool                          Unowned() const;           ///< returns true iff there are no owners of this object
     [[nodiscard]] bool                          OwnedBy(int empire) const; ///< returns true iff the empire with id \a empire owns this object; unowned objects always return false;
     /** Object owner is at war with empire @p empire_id */
     [[nodiscard]] virtual bool                  HostileToEmpire(int empire_id, const EmpireManager& empires) const;
 
-    [[nodiscard]] virtual int                   SystemID() const { return m_system_id; };       ///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
+    [[nodiscard]] int                           SystemID() const noexcept { return m_system_id; };  ///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
 
-    [[nodiscard]] const auto&                   Specials() const { return m_specials; };        ///< returns the Specials attached to this object
-    [[nodiscard]] bool                          HasSpecial(std::string_view name) const;        ///< returns true iff this object has a special with the indicated \a name
-    [[nodiscard]] int                           SpecialAddedOnTurn(std::string_view name) const;///< returns the turn on which the special with name \a name was added to this object, or INVALID_GAME_TURN if that special is not present
-    [[nodiscard]] float                         SpecialCapacity(std::string_view name) const;   ///> returns the capacity of the special with name \a name or 0 if that special is not present
+    [[nodiscard]] const auto&                   Specials() const noexcept { return m_specials; };   ///< returns the Specials attached to this object
+    [[nodiscard]] bool                          HasSpecial(std::string_view name) const;            ///< returns true iff this object has a special with the indicated \a name
+    [[nodiscard]] int                           SpecialAddedOnTurn(std::string_view name) const;    ///< returns the turn on which the special with name \a name was added to this object, or INVALID_GAME_TURN if that special is not present
+    [[nodiscard]] float                         SpecialCapacity(std::string_view name) const;       ///> returns the capacity of the special with name \a name or 0 if that special is not present
 
     struct TagVecs {
         TagVecs() = default;
@@ -121,7 +121,7 @@ public:
     [[nodiscard]] virtual TagVecs             Tags(const ScriptingContext&) const { return {}; }; ///< Returns all tags this object has
     [[nodiscard]] virtual bool                HasTag(std::string_view name, const ScriptingContext&) const { return false; } ///< Returns true iff this object has the tag with the indicated \a name
 
-    [[nodiscard]] UniverseObjectType          ObjectType() const { return m_type; }
+    [[nodiscard]] UniverseObjectType          ObjectType() const noexcept { return m_type; }
 
     /** Return human readable string description of object offset \p ntabs from
         margin. */
@@ -145,7 +145,7 @@ public:
     using EmpireObjectVisMap = std::map<int, std::map<int, Visibility>>;
     [[nodiscard]] std::set<int>               VisibleContainedObjectIDs(int empire_id, const EmpireObjectVisMap& vis) const; ///< returns the subset of contained object IDs that is visible to empire with id \a empire_id
 
-    [[nodiscard]] const MeterMap&             Meters() const { return m_meters; }             ///< returns this UniverseObject's meters
+    [[nodiscard]] const MeterMap&             Meters() const noexcept { return m_meters; }    ///< returns this UniverseObject's meters
     [[nodiscard]] const Meter*                GetMeter(MeterType type) const;                 ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
 
     using EmpireIDtoObjectIDtoVisMap = std::map<int, std::map<int, Visibility>>; // duplicates Universe::EmpireObjectVisibilityMap
@@ -158,7 +158,7 @@ public:
     /** Accepts a visitor object \see UniverseObjectVisitor */
     virtual std::shared_ptr<UniverseObject>   Accept(const UniverseObjectVisitor& visitor) const;
 
-    [[nodiscard]] int                         CreationTurn() const { return m_created_on_turn; }; ///< returns game turn on which object was created
+    [[nodiscard]] int                         CreationTurn() const noexcept { return m_created_on_turn; }; ///< returns game turn on which object was created
     [[nodiscard]] int                         AgeInTurns() const;   ///< returns elapsed number of turns between turn object was created and current game turn
 
     mutable StateChangedSignalType StateChangedSignal; ///< emitted when the UniverseObject is altered in any way
@@ -169,7 +169,7 @@ public:
     virtual void    Copy(std::shared_ptr<const UniverseObject> copied_object,
                          const Universe&, int empire_id) = 0;
 
-    void            SetID(int id);              ///< sets the ID number of the object to \a id
+    virtual void    SetID(int id);              ///< sets the ID number of the object to \a id
     void            Rename(std::string name);   ///< renames this object to \a name
 
     /** moves this object by relative displacements x and y. */
@@ -183,8 +183,8 @@ public:
     /** moves this object to map coordinates (x, y). */
     void            MoveTo(double x, double y);
 
-    [[nodiscard]] MeterMap& Meters() { return m_meters; } ///< returns this UniverseObject's meters
-    [[nodiscard]] Meter*    GetMeter(MeterType type);     ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
+    [[nodiscard]] MeterMap& Meters() noexcept { return m_meters; }  ///< returns this UniverseObject's meters
+    [[nodiscard]] Meter*    GetMeter(MeterType type);               ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
 
     /** Sets all this UniverseObject's meters' initial values equal to their
         current values. */
@@ -253,13 +253,13 @@ protected:
               const Universe& universe);
 
     std::string m_name;
+    int         m_system_id = INVALID_OBJECT_ID;
 
 private:
     [[nodiscard]] MeterMap CensoredMeters(Visibility vis) const; ///< returns set of meters of this object that are censored based on the specified Visibility \a vis
 
     int        m_id = INVALID_OBJECT_ID;
     int        m_owner_empire_id = ALL_EMPIRES;
-    int        m_system_id = INVALID_OBJECT_ID;
     int        m_created_on_turn = INVALID_GAME_TURN;
     double     m_x = INVALID_POSITION;
     double     m_y = INVALID_POSITION;

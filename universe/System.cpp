@@ -273,9 +273,6 @@ int System::EffectiveOwner(const ObjectMap& objects) const {
     return first_owner_found;
 }
 
-const std::set<int>& System::ContainedObjectIDs() const
-{ return m_objects; }
-
 bool System::Contains(int object_id) const {
     if (object_id == INVALID_OBJECT_ID)
         return false;
@@ -500,9 +497,6 @@ std::set<int> System::FreeOrbits() const {
             retval.insert(o);
     return retval;
 }
-
-const std::map<int, bool>& System::StarlanesWormholes() const
-{ return m_starlanes_wormholes; }
 
 std::map<int, bool> System::VisibleStarlanesWormholes(int empire_id, const Universe& universe) const {
     if (empire_id == ALL_EMPIRES)

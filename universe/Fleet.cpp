@@ -1,7 +1,5 @@
 #include "Fleet.h"
 
-#include <boost/algorithm/cxx11/all_of.hpp>
-#include <boost/lexical_cast.hpp>
 #include "Pathfinder.h"
 #include "ShipDesign.h"
 #include "Ship.h"
@@ -1424,17 +1422,17 @@ std::string Fleet::GenerateFleetName(const ScriptingContext& context) {
                ship.CanHaveTroops(u) || ship.CanBombard(u);
     };
 
-    if (boost::algorithm::all_of(ships, [&u](const auto& ship){ return ship->IsMonster(u); }))
+    if (std::all_of(ships.begin(), ships.end(), [&u](const auto& ship){ return ship->IsMonster(u); }))
         fleet_name_key = UserStringNop("NEW_MONSTER_FLEET_NAME");
-    else if (boost::algorithm::all_of(ships, [&u, &sm](const auto& ship){ return ship->CanColonize(u, sm); }))
+    else if (std::all_of(ships.begin(), ships.end(), [&u, &sm](const auto& ship){ return ship->CanColonize(u, sm); }))
         fleet_name_key = UserStringNop("NEW_COLONY_FLEET_NAME");
-    else if (boost::algorithm::all_of(ships, [&IsCombatShip](const auto& ship){ return !IsCombatShip(*ship); }))
+    else if (std::all_of(ships.begin(), ships.end(), [&IsCombatShip](const auto& ship){ return !IsCombatShip(*ship); }))
         fleet_name_key = UserStringNop("NEW_RECON_FLEET_NAME");
-    else if (boost::algorithm::all_of(ships, [&u](const auto& ship){ return ship->CanHaveTroops(u); }))
+    else if (std::all_of(ships.begin(), ships.end(), [&u](const auto& ship){ return ship->CanHaveTroops(u); }))
         fleet_name_key = UserStringNop("NEW_TROOP_FLEET_NAME");
-    else if (boost::algorithm::all_of(ships, [&u](const auto& ship){ return ship->CanBombard(u); }))
+    else if (std::all_of(ships.begin(), ships.end(), [&u](const auto& ship){ return ship->CanBombard(u); }))
         fleet_name_key = UserStringNop("NEW_BOMBARD_FLEET_NAME");
-    else if (boost::algorithm::all_of(ships, [&IsCombatShip](const auto& ship){ return IsCombatShip(*ship); }))
+    else if (std::all_of(ships.begin(), ships.end(), [&IsCombatShip](const auto& ship){ return IsCombatShip(*ship); }))
         fleet_name_key = UserStringNop("NEW_BATTLE_FLEET_NAME");
 
     return boost::io::str(FlexibleFormat(UserString(fleet_name_key)) % ID());
