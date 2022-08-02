@@ -1639,9 +1639,10 @@ namespace {
     }
 
     struct HomeworldSimpleMatch {
-        HomeworldSimpleMatch(std::vector<std::string> names, const ObjectMap& objects,
+        HomeworldSimpleMatch(const std::vector<std::string>& names,
+                             const ObjectMap& objects,
                              const SpeciesManager& species) :
-            m_names(std::move(names)),
+            m_names(names),
             m_objects(objects),
             m_species_homeworlds(species.GetSpeciesHomeworldsMap())
         {}
@@ -1656,29 +1657,29 @@ namespace {
 
             if (m_names.empty()) {
                 // match homeworlds for any species
-                for ([[maybe_unused]] auto& [ignored_name, ids] : m_species_homeworlds) {
-                    (void)ignored_name; // quieting unused variable warning
-                    if (ids.count(planet_id))
-                        return true;
-                }
+                if (std::any_of(m_species_homeworlds.begin(), m_species_homeworlds.end(),
+                                [planet_id](const auto& name_ids)
+                                { return name_ids.second.count(planet_id) > 0; }))
+                { return true; }
 
             } else {
                 // match any of the species specified
-                for (const std::string& name : m_names) {
+                if (std::any_of(m_names.begin(), m_names.end(),
+                                [planet_id, this](const auto& name)
+                {
                     auto it = m_species_homeworlds.find(name);
                     if (it == m_species_homeworlds.end())
-                        continue;
+                        return false;
                     const auto& planet_ids = it->second;
-                    auto planet_count = planet_ids.count(planet_id);
-                    if (planet_count > 0)
-                        return true;
-                }
+                    return planet_ids.count(planet_id) > 0;
+                }))
+                { return true; }
             }
 
             return false;
         }
 
-        const std::vector<std::string> m_names;
+        const std::vector<std::string>& m_names;
         const ObjectMap& m_objects;
         const std::map<std::string, std::set<int>>& m_species_homeworlds;
     };
@@ -1703,9 +1704,9 @@ void Homeworld::Eval(const ScriptingContext& parent_context,
         std::vector<std::string> names;
         names.reserve(m_names.size());
         // get all names from valuerefs
-        for (auto& name : m_names)
-            names.push_back(name->Eval(parent_context));
-        HomeworldSimpleMatch hsm{std::move(names), parent_context.ContextObjects(), parent_context.species};
+        std::transform(m_names.begin(), m_names.end(), std::back_inserter(names),
+                       [&parent_context](const auto& ref) { return ref->Eval(parent_context); });
+        HomeworldSimpleMatch hsm{names, parent_context.ContextObjects(), parent_context.species};
         EvalImpl(matches, non_matches, search_domain, hsm);
     } else {
         // re-evaluate allowed names for each candidate object
