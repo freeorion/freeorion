@@ -294,6 +294,8 @@ def generateOrders():  # pylint: disable=invalid-name
     if not empire_is_ok():
         return
 
+    DiplomaticCorp.check_gang_up()
+
     set_game_turn_seed()
 
     generate_order_timer.start("Update states on server")
