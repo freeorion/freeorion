@@ -107,6 +107,23 @@ namespace {
             accountinglabel));
     }
 
+    effect_wrapper insert_ship_part_set_meter_(const MeterType m, const py::tuple& args, const py::dict& kw) {
+        auto value = py::extract<value_ref_wrapper<double>>(kw["value"])();
+
+        std::unique_ptr<ValueRef::ValueRef<std::string>> partname;
+        auto partname_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["partname"]);
+        if (partname_args.check()) {
+            partname = ValueRef::CloneUnique(partname_args().value_ref);
+        } else {
+            partname = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["partname"])());
+        }
+
+        return effect_wrapper(std::make_shared<Effect::SetShipPartMeter>(
+            m,
+            std::move(partname),
+            ValueRef::CloneUnique(value.value_ref)));
+    }
+
     unlockable_item_wrapper insert_item_(const py::tuple& args, const py::dict& kw) {
         auto type = py::extract<enum_wrapper<UnlockableItemType>>(kw["type"])();
         auto name = py::extract<std::string>(kw["name"])();
@@ -271,6 +288,20 @@ void RegisterGlobalsEffects(py::dict& globals) {
     {
         const auto m = meter.second;
         const auto f_insert_set_meter = [m](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_set_meter_(m, args, kw); };
+        globals[meter.first] = boost::python::raw_function(f_insert_set_meter);
+    }
+
+    // set_ship_part_meter_enum_grammar
+    for (const auto& meter : std::initializer_list<std::pair<const char*, MeterType>>{
+            {"SetMaxCapacity",      MeterType::METER_MAX_CAPACITY},
+            {"SetMaxDamage",        MeterType::METER_MAX_CAPACITY},
+            {"SetMaxSecondaryStat", MeterType::METER_MAX_SECONDARY_STAT},
+            {"SetCapacity",         MeterType::METER_CAPACITY},
+            {"SetDamage",           MeterType::METER_CAPACITY},
+            {"SetSecondaryStat",    MeterType::METER_SECONDARY_STAT}})
+    {
+        const auto m = meter.second;
+        const auto f_insert_set_meter = [m](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_ship_part_set_meter_(m, args, kw); };
         globals[meter.first] = boost::python::raw_function(f_insert_set_meter);
     }
 
