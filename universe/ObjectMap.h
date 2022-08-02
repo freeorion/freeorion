@@ -39,7 +39,7 @@ public:
 
     /** Returns the number of objects of the specified class in this ObjectMap. */
     template <typename T = UniverseObject>
-    [[nodiscard]] std::size_t size() const;
+    [[nodiscard]] std::size_t size() const { return Map<typename std::decay_t<T>>().size(); }
 
     /** Returns true if this ObjectMap contains no objects */
     [[nodiscard]] bool empty() const noexcept { return m_objects.empty(); };
@@ -275,7 +275,7 @@ private:
 
     // returns const container of mutable T ... may need further adapting for fully const safe use
     template <typename T>
-    [[nodiscard]] const container_type<std::decay_t<T>>& Map() const
+    [[nodiscard]] const container_type<std::decay_t<T>>& Map() const noexcept
     {
         static_assert(!std::is_const_v<T>, "type for Map() should not be const");
         using DecayT = std::decay_t<T>;
@@ -305,7 +305,7 @@ private:
     }
 
     template <typename T>
-    [[nodiscard]] container_type<std::decay_t<T>>& Map()
+    [[nodiscard]] container_type<std::decay_t<T>>& Map() noexcept
     {
         static_assert(!std::is_const_v<T>, "type for Map() should not be const");
         using DecayT = std::decay_t<T>;
@@ -871,10 +871,6 @@ bool ObjectMap::check_if_any(Pred pred) const
         return false;
     }
 }
-
-template <typename T>
-std::size_t ObjectMap::size() const
-{ return Map<typename std::decay_t<T>>().size(); }
 
 template <typename T,
           typename std::enable_if_t<std::is_base_of_v<UniverseObject, T>>*>
