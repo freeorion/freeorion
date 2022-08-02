@@ -42,7 +42,7 @@ public:
     [[nodiscard]] std::size_t size() const;
 
     /** Returns true if this ObjectMap contains no objects */
-    [[nodiscard]] bool empty() const;
+    [[nodiscard]] bool empty() const noexcept { return m_objects.empty(); };
 
     /** Returns a pointer to the object of type T with ID number \a id.
       * Returns a null std::shared_ptr if none exists or the object with

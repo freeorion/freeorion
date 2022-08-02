@@ -219,9 +219,6 @@ ObjectMap* ObjectMap::Clone(const Universe& universe, int empire_id) const {
     return result.release();
 }
 
-bool ObjectMap::empty() const
-{ return m_objects.empty(); }
-
 int ObjectMap::HighestObjectID() const {
     if (m_objects.empty())
         return INVALID_OBJECT_ID;
