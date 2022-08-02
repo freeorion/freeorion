@@ -126,8 +126,8 @@ struct GG_API Rect
 
     [[nodiscard]] constexpr bool Contains(const Pt& pt) const noexcept { return ul <= pt && pt < lr; }
 
-    constexpr void operator+=(const Pt& pt) { ul += pt; lr += pt; } ///< shifts the Rect by adding \a pt to each corner
-    constexpr void operator-=(const Pt& pt) { ul -= pt; lr -= pt; } ///< shifts the Rect by subtracting \a pt from each corner
+    constexpr Rect& operator+=(const Pt& pt) { ul += pt; lr += pt; return *this; } ///< shifts the Rect by adding \a pt to each corner
+    constexpr Rect& operator-=(const Pt& pt) { ul -= pt; lr -= pt; return *this; } ///< shifts the Rect by subtracting \a pt from each corner
 
     Pt ul; ///< the upper-left corner of the Rect
     Pt lr; ///< the lower-right corner of the Rect
