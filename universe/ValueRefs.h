@@ -7,7 +7,6 @@
 #include <numeric>
 #include <unordered_set>
 #include <unordered_map>
-#include <boost/algorithm/cxx11/all_of.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
@@ -1251,12 +1250,12 @@ ComplexVariable<T>::ComplexVariable(const ComplexVariable<T>& rhs) :
 template <typename T>
 void ComplexVariable<T>::InitInvariants()
 {
-    std::initializer_list<ValueRefBase*> refs =
+    std::initializer_list<const ValueRefBase*> refs =
         { m_int_ref1.get(), m_int_ref2.get(), m_int_ref3.get(), m_string_ref1.get(), m_string_ref2.get() };
-    this->m_root_candidate_invariant = boost::algorithm::all_of(refs, [](const auto& e) { return !e || e->RootCandidateInvariant(); });
-    this->m_local_candidate_invariant = boost::algorithm::all_of(refs, [](const auto& e) { return !e || e->LocalCandidateInvariant(); });
-    this->m_target_invariant = boost::algorithm::all_of(refs, [](const auto& e) { return !e || e->TargetInvariant(); });
-    this->m_source_invariant = boost::algorithm::all_of(refs, [](const auto& e) { return !e || e->SourceInvariant(); });
+    this->m_root_candidate_invariant = std::all_of(refs.begin(), refs.end(), [](const auto& e) { return !e || e->RootCandidateInvariant(); });
+    this->m_local_candidate_invariant = std::all_of(refs.begin(), refs.end(), [](const auto& e) { return !e || e->LocalCandidateInvariant(); });
+    this->m_target_invariant = std::all_of(refs.begin(), refs.end(), [](const auto& e) { return !e || e->TargetInvariant(); });
+    this->m_source_invariant = std::all_of(refs.begin(), refs.end(), [](const auto& e) { return !e || e->SourceInvariant(); });
     // this->m_constant_expr and this->m_simple_increment should always be false
 }
 
