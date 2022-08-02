@@ -491,7 +491,6 @@ std::vector<const std::decay_t<T>*> ObjectMap::findRaw(Pred pred) const
 
     using DecayT = std::decay_t<T>;
     using ContainerT = std::decay_t<decltype(Map<DecayT>())>;
-    using EntryT = typename ContainerT::value_type;
 
     std::vector<const DecayT*> result;
     if constexpr (!is_int_range)
@@ -555,7 +554,6 @@ std::vector<std::decay_t<T>*> ObjectMap::findRaw(Pred pred)
 
     using DecayT = std::decay_t<T>;
     using ContainerT = std::decay_t<decltype(Map<DecayT>())>;
-    using EntryT = typename ContainerT::value_type;
 
     std::vector<DecayT*> result;
     if constexpr (!is_int_range)
@@ -619,7 +617,6 @@ std::vector<std::shared_ptr<const std::decay_t<T>>> ObjectMap::find(Pred pred) c
 
     using DecayT = std::decay_t<T>;
     using ContainerT = std::decay_t<decltype(Map<DecayT>())>;
-    using EntryT = typename ContainerT::value_type;
 
     std::vector<std::shared_ptr<const DecayT>> result;
     if constexpr (!is_int_range)
@@ -680,7 +677,6 @@ std::vector<std::shared_ptr<std::decay_t<T>>> ObjectMap::find(Pred pred)
 
     using DecayT = std::decay_t<T>;
     using ContainerT = std::decay_t<decltype(Map<DecayT>())>;
-    using EntryT = typename ContainerT::value_type;
 
     std::vector<std::shared_ptr<DecayT>> result;
     if constexpr (!is_int_range)
@@ -741,7 +737,6 @@ std::vector<int> ObjectMap::findIDs(Pred pred) const
 
     using DecayT = std::decay_t<T>;
     using ContainerT = std::decay_t<decltype(Map<DecayT>())>;
-    using EntryT = typename ContainerT::value_type;
 
     std::vector<int> result;
     if constexpr (!is_int_range)
