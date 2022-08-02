@@ -260,7 +260,7 @@ public:
         \throw boost::bad_lexical_cast boost::lexical_cast throws
         boost::bad_lexical_cast when it is confused.*/
     template <typename T>
-    void operator<<(T t);
+    void operator<<(T&& t);
 
     void operator+=(const std::string& s); ///< Appends \a s to text.
     void operator+=(char c);               ///< Appends \a c to text.
@@ -348,17 +348,19 @@ T GG::TextControl::GetValue() const
     try {
         return boost::lexical_cast<T, std::string>(m_text);
     } catch (const boost::bad_lexical_cast&) {
-        return T();
+        return T{};
     }
 }
 
 template <typename T>
-void GG::TextControl::operator<<(T t)
+void GG::TextControl::operator<<(T&& t)
 {
-    if constexpr (std::is_same_v<std::decay_t<T>, std::string>) {
-        SetText(std::move(t));
-    } else if constexpr (std::is_same_v<T, const char*>) {
-        SetText(std::string{t});
+    static_assert(std::is_same_v<std::decay_t<decltype("")>, const char*>);
+
+    if constexpr (std::is_same_v<std::decay_t<T>, std::string> ||
+                  std::is_same_v<std::decay_t<T>, const char*>)
+    {
+        SetText(std::forward<T>(t));
     } else {
         using std::to_string;
         SetText(to_string(t));
