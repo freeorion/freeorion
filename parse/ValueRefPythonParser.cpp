@@ -268,6 +268,14 @@ condition_wrapper operator<(const value_ref_wrapper<int>& lhs, const value_ref_w
     );
 }
 
+condition_wrapper operator>=(const value_ref_wrapper<int>& lhs, const value_ref_wrapper<int>& rhs) {
+    return condition_wrapper(
+        std::make_shared<Condition::ValueTest>(ValueRef::CloneUnique(lhs.value_ref),
+            Condition::ComparisonType::GREATER_THAN_OR_EQUAL,
+            ValueRef::CloneUnique(rhs.value_ref))
+    );
+}
+
 condition_wrapper operator==(const value_ref_wrapper<int>& lhs, const value_ref_wrapper<int>& rhs) {
     return condition_wrapper(
         std::make_shared<Condition::ValueTest>(ValueRef::CloneUnique(lhs.value_ref),
@@ -474,6 +482,26 @@ namespace {
             nullptr)));
     }
 
+    value_ref_wrapper<double> insert_double_complex_variable_(const char* variable, const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<std::string>> name;
+        if (kw.has_key("name")) {
+            auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
+            if (name_args.check()) {
+                name = ValueRef::CloneUnique(name_args().value_ref);
+            } else {
+                name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
+            }
+        }
+
+        return value_ref_wrapper<double>(std::make_shared<ValueRef::ComplexVariable<double>>(
+            variable,
+            nullptr,
+            nullptr,
+            nullptr,
+            std::move(name),
+            nullptr));
+    }
+
     value_ref_wrapper<double> insert_direct_distance_between_(boost::python::object arg1, boost::python::object arg2) {
         std::unique_ptr<ValueRef::ValueRef<int>> id1;
         auto id1_args = boost::python::extract<value_ref_wrapper<int>>(arg1);
@@ -572,8 +600,20 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
                                  "CumulativeTurnsPolicyAdopted",
                                  "NumPoliciesAdopted"})
     {
-        std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_int_complex_variable = [variable](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_int_complex_variable_(variable, args, kw); };
+        const auto f_insert_int_complex_variable = [variable](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_int_complex_variable_(variable, args, kw); };
         globals[variable] = boost::python::raw_function(f_insert_int_complex_variable);
+    }
+
+    // name_property_rule
+    for (const char* variable : {"HullFuel",
+                                 "HullStructure",
+                                 "HullStealth",
+                                 "HullSpeed",
+                                 "PartCapacity",
+                                 "PartSecondaryStat"})
+    {
+        const auto f_insert_name_property = [variable](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_double_complex_variable_(variable, args, kw); };
+        globals[variable] = boost::python::raw_function(f_insert_name_property);
     }
 
     // single-parameter math functions
@@ -592,7 +632,22 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
         globals[op.first] = boost::python::raw_function(f_insert_abs, 2);
     }
 
-    std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_game_rule = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_game_rule_(parser, args, kw); };
+    // CurrentContent
+    const auto current_content = value_ref_wrapper<std::string>(std::make_shared<ValueRef::Constant<std::string>>("CurrentContent"));
+    for (const char* variable : {"CurrentContent",
+                                 "ThisBuilding",
+                                 "ThisField",
+                                 "ThisHull",
+                                 "ThisPart",  // various aliases for this reference in scripts, allowing scripter to use their preference
+                                 "ThisPolicy",
+                                 "ThisTech",
+                                 "ThisSpecies",
+                                 "ThisSpecial"})
+    {
+        globals[variable] = current_content;
+    }
+
+    const auto f_insert_game_rule = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_game_rule_(parser, args, kw); };
     globals["GameRule"] = boost::python::raw_function(f_insert_game_rule);
 
     // selection_operator
