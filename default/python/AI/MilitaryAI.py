@@ -811,7 +811,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
             for sid in interior_targets1
             if (
                 allocation_helper.threat_bias + systems_status.get(sid, {}).get("totalThreat", 0)
-                > 0.8 * allocation_helper.already_assigned_rating[sid]
+                > 0.8 * allocation_helper.already_assigned_rating.get(sid, 0)
             )
         ]
         for sys_id in interior_targets:
