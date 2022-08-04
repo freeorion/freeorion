@@ -17,6 +17,7 @@ from AIDependencies import INVALID_ID, TECH_NATIVE_SPECIALS
 from character.character_module import Aggression, create_character
 from CombatRatingsAI import ShipCombatStats
 from common.print_utils import Number, Table, Text
+from DiplomaticCorp import get_diplomatic_status
 from EnumsAI import MissionType, ShipRoleType
 from freeorion_tools import combine_ratings, get_partial_visibility_turn
 
@@ -478,6 +479,9 @@ class AIstate:
 
             # we are only interested in immediately recent data
             if get_partial_visibility_turn(fleet_id) < (current_turn - 1):
+                continue
+
+            if get_diplomatic_status(fleet.owner) != fo.diplomaticStatus.war:
                 continue
 
             sys_status = self.systemStatus.setdefault(this_system_id, {})
