@@ -48,6 +48,7 @@ struct module_spec {
     {}
 
     py::list path;
+    py::list uninitialized_submodules;
     std::string fullname;
     std::string parent;
     const PythonParser& parser;
@@ -77,6 +78,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
 
         py::class_<module_spec>("PythonParserSpec", py::no_init)
             .def_readonly("name", &module_spec::fullname)
+            .def_readonly("_uninitialized_submodules", &module_spec::uninitialized_submodules)
             .add_static_property("loader", py::make_getter(*this, py::return_value_policy<py::reference_existing_object>()))
             .def_readonly("submodule_search_locations", &module_spec::path)
             .def_readonly("has_location", false)
