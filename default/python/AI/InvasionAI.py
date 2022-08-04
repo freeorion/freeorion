@@ -17,6 +17,7 @@ from colonization import calculate_planet_colonization_rating
 from colonization.colony_score import use_new_rating
 from common.fo_typing import SystemId
 from common.print_utils import Number, Table, Text
+from DiplomaticCorp import get_diplomatic_status
 from empire.ship_builders import can_build_ship_for_species
 from EnumsAI import EmpireProductionTypes, MissionType, PriorityType, ShipRoleType
 from freeorion_tools import (
@@ -345,6 +346,9 @@ def evaluate_invasion_planet(planet_id):
     planet = universe.getPlanet(planet_id)
     if planet is None:
         debug("Invasion AI couldn't access any info for planet id %d" % planet_id)
+        return [0, 0]
+
+    if planet.owner != INVALID_ID and get_diplomatic_status(planet.owner) != fo.diplomaticStatus.war:
         return [0, 0]
 
     system_id = planet.systemID
