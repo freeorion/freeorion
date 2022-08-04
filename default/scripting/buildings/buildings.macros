@@ -20,7 +20,7 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
             scope = And [
                 Object id = Source.PlanetID
                 Population low = 0.001
-                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisBuilding > 0)
+                SpeciesLikes name = ThisBuilding
             ]
             accountinglabel = "LIKES_BUILDING_LABEL"
             effects = SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_BUILDING_ON_PLANET]]
@@ -30,7 +30,7 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
             scope = And [
                 Object id = Source.PlanetID
                 Population low = 0.001
-                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisBuilding < 0)
+                SpeciesDislikes name = ThisBuilding
             ]
             accountinglabel = "DISLIKES_BUILDING_LABEL"
             effects = SetTargetHappiness value = Value - [[STABILITY_PER_DISLIKED_BUILDING_ON_PLANET]]
@@ -42,7 +42,7 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
                 InSystem id = Source.SystemID
                 Population low = 0.001
                 Not Object id = Source.PlanetID // but not on same planet, which is covered by above case
-                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisBuilding > 0)
+                SpeciesLikes name = ThisBuilding
             ]
             accountinglabel = "LIKES_BUILDING_LABEL"
             effects = SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_BUILDING_IN_SYSTEM]]
@@ -54,7 +54,7 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
                 InSystem id = Source.SystemID
                 Population low = 0.001
                 Not Object id = Source.PlanetID // but not on same planet, which is covered by above case
-                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisBuilding < 0)
+                SpeciesDislikes name = ThisBuilding
             ]
             accountinglabel = "DISLIKES_BUILDING_LABEL"
             effects = SetTargetHappiness value = Value - [[STABILITY_PER_DISLIKED_BUILDING_IN_SYSTEM]]
@@ -66,7 +66,7 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
                 OwnedBy empire = Source.Owner
                 Population low = 0.001
                 Not InSystem id = Source.SystemID
-                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisBuilding > 0)
+                SpeciesLikes name = ThisBuilding
             ]
             accountinglabel = "LIKES_BUILDING_LABEL"
             effects =
@@ -88,7 +88,7 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
                 OwnedBy empire = Source.Owner
                 Population low = 0.001
                 Not InSystem id = Source.SystemID
-                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisBuilding < 0)
+                SpeciesDislikes name = ThisBuilding
             ]
             accountinglabel = "DISLIKES_BUILDING_LABEL"
             effects =

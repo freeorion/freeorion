@@ -11225,6 +11225,26 @@ DESC_SPECIES
 DESC_SPECIES_NOT
 ''' that does not contain species %1%'''
 
+# %1% textual decription of the species.
+# %2% description of content liked
+DESC_SPECIES_LIKES
+''' when species %1% likes %2%'''
+
+# %1% textual decription of the species.
+# %2% description of content liked
+DESC_SPECIES_LIKES_NOT
+''' when species %1% does not like %2%'''
+
+# %1% textual decription of the species.
+# %2% description of content liked
+DESC_SPECIES_DISLIKES
+''' when species %1% dislikes %2%'''
+
+# %1% textual decription of the species.
+# %2% description of content disliked
+DESC_SPECIES_DISLIKES_NOT
+''' when species %1% does not dislike %2%'''
+
 # %1% name of the empire that enqueued items.
 # %2% textual description of the lower limit for the number of enqueued items.
 # %3% textual description of the upper limit for the number of enqueued items.

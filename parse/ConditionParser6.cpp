@@ -80,6 +80,26 @@ namespace parse { namespace detail {
               ) [ _val = construct_movable_(new_<Condition::Species>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
 
+        species_likes
+            = ( omit_[tok.SpeciesLikes_]
+                > -(label(tok.species_) > string_grammar)
+                >   label(tok.name_) > string_grammar
+              ) [ _val = construct_movable_(new_<Condition::SpeciesOpinion>(
+                    deconstruct_movable_(_1, _pass),
+                    deconstruct_movable_(_2, _pass),
+                    Condition::ComparisonType::GREATER_THAN)) ]
+            ;
+
+        species_dislikes
+            = ( omit_[tok.SpeciesDislikes_]
+                > -(label(tok.species_) > string_grammar)
+                >   label(tok.name_) > string_grammar
+               ) [ _val = construct_movable_(new_<Condition::SpeciesOpinion>(
+                   deconstruct_movable_(_1, _pass),
+                   deconstruct_movable_(_2, _pass),
+                   Condition::ComparisonType::LESS_THAN)) ]
+            ;
+
         focus_type
             =   tok.Focus_
             > -(label(tok.type_) > one_or_more_string_values)
@@ -131,6 +151,8 @@ namespace parse { namespace detail {
             %=  homeworld
             |   building
             |   field
+            |   species_likes
+            |   species_dislikes
             |   species
             |   focus_type
             |   planet_type
@@ -143,6 +165,8 @@ namespace parse { namespace detail {
         homeworld.name("Homeworld");
         building.name("Building");
         field.name("Field");
+        species_likes.name("SpeciesLikes");
+        species_dislikes.name("SpeciesDislikes");
         species.name("Species");
         focus_type.name("Focus");
         planet_type.name("PlanetType");
@@ -155,6 +179,8 @@ namespace parse { namespace detail {
         debug(homeworld);
         debug(building);
         debug(field);
+        debug(species_likes);
+        debug(species_dislikes);
         debug(species);
         debug(focus_type);
         debug(planet_type);

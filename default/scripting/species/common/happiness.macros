@@ -91,7 +91,7 @@ COMMON_HAPPINESS_EFFECTS
             scope = Source
             activation = And [
                 Population low = 0.001
-                (SpeciesContentOpinion species = LocalCandidate.Species name = LocalCandidate.Focus > 0)
+                SpeciesLikes name = LocalCandidate.Focus
             ]
             accountinglabel = "LIKES_FOCUS_LABEL"
             effects = SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_FOCUS]]
@@ -101,7 +101,7 @@ COMMON_HAPPINESS_EFFECTS
             activation = And [
                 Not Unowned
                 Population low = 0.001
-                (SpeciesContentOpinion species = LocalCandidate.Species name = LocalCandidate.Focus < 0)
+                SpeciesDislikes name = LocalCandidate.Focus
             ]
             accountinglabel = "DISLIKES_FOCUS_LABEL"
             effects = SetTargetHappiness value = Value - [[STABILITY_PER_DISLIKED_FOCUS]]

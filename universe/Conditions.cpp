@@ -4724,6 +4724,390 @@ std::unique_ptr<Condition> Species::Clone() const
 { return std::make_unique<Species>(ValueRef::CloneUnique(m_names)); }
 
 ///////////////////////////////////////////////////////////
+// SpeciesOpinion                                      //
+///////////////////////////////////////////////////////////
+SpeciesOpinion::SpeciesOpinion(std::unique_ptr<ValueRef::ValueRef<std::string>>&& species,
+                               std::unique_ptr<ValueRef::ValueRef<std::string>>&& content,
+                               ComparisonType comp) :
+    m_species(std::move(species)),
+    m_content(std::move(content)),
+    m_comp(comp)
+{
+    std::array<const ValueRef::ValueRefBase*, 2> operands = {{m_species.get(), m_content.get()}};
+    m_root_candidate_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); });
+}
+
+bool SpeciesOpinion::operator==(const Condition& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const SpeciesOpinion& rhs_ = static_cast<const SpeciesOpinion&>(rhs);
+
+    if (m_comp != rhs_.m_comp)
+        return false;
+    CHECK_COND_VREF_MEMBER(m_species)
+    CHECK_COND_VREF_MEMBER(m_content)
+
+    return true;
+}
+
+namespace {
+    std::string_view SpeciesForObject(const UniverseObject* obj, const ScriptingContext& context) {
+        if (!obj)
+            return "";
+
+        // get species from object or its container
+        switch (obj->ObjectType()) {
+        case UniverseObjectType::OBJ_BUILDING: {
+            const auto* building = static_cast<const ::Building*>(obj);
+            const auto* planet = context.ContextObjects().getRaw<Planet>(building->PlanetID());
+            return planet->SpeciesName();
+            break;
+        }
+        case UniverseObjectType::OBJ_PLANET: {
+            auto planet = static_cast<const Planet*>(obj);
+            return planet->SpeciesName();
+            break;
+        }
+        case UniverseObjectType::OBJ_SHIP: {
+            const auto* ship = static_cast<const Ship*>(obj);
+            return ship->SpeciesName();
+            break;
+        }
+        default:
+            return "";
+            break;
+        }
+    }
+
+    template <typename M>
+    void MoveBasedOnMask(SearchDomain search_domain, ObjectSet& matches,
+                         ObjectSet& non_matches, const M& mask)
+    {
+        using M_val_t = typename M::value_type;
+        static_assert(std::is_convertible_v<M_val_t, bool>);
+
+        const std::decay_t<M_val_t> test_val = search_domain == SearchDomain::MATCHES;
+        auto& from = test_val ? matches : non_matches;
+        auto& to = test_val ? non_matches : matches;
+
+        auto o_it = from.begin();
+        auto m_it = mask.begin();
+        const auto m_end = mask.end();
+        auto dest = std::back_inserter(to);
+
+        for (; m_it != m_end; ++m_it) {
+            if (*m_it != test_val) {
+                *dest++ = std::exchange(*o_it, from.back());
+                from.pop_back();
+            } else {
+                ++o_it;
+            }
+        }
+    };
+
+    template <typename V, typename Pred>
+    void MoveBasedOnPairedValPredicate(SearchDomain search_domain, ObjectSet& matches,
+                                       ObjectSet& non_matches, const std::vector<V>& vals,
+                                       Pred pred)
+    {
+        using pred_retval_t = std::decay_t<decltype(pred(V{}))>;
+        static_assert(std::is_convertible_v<pred_retval_t, uint8_t>);
+        static_assert(std::is_convertible_v<pred_retval_t, bool>);
+
+        // equivalent that first converts vals via pred to a mask vector
+        //// evaluate predicate on all vals
+        //std::vector<uint8_t> mask;
+        //mask.reserve(vals.size());
+        //std::transform(vals.begin(), vals.end(), std::back_inserter(mask),
+        //               [pred](const auto& val) -> uint8_t { return pred(val); });
+        //MoveBasedOnMask(search_domain, matches, non_matches, mask);
+
+        const pred_retval_t test_val = search_domain == SearchDomain::MATCHES;
+        auto& from = test_val ? matches : non_matches;
+        auto& to = test_val ? non_matches : matches;
+
+        auto o_it = from.begin();
+        auto v_it = vals.begin();
+        const auto v_end = vals.end();
+        auto dest = std::back_inserter(to);
+
+        for (; v_it != v_end; ++v_it) {
+            if (pred(*v_it) != test_val) {
+                *dest++ = std::exchange(*o_it, from.back());
+                from.pop_back();
+            } else {
+                ++o_it;
+            }
+        }
+    };
+}
+
+void SpeciesOpinion::Eval(const ScriptingContext& parent_context,
+                          ObjectSet& matches, ObjectSet& non_matches,
+                          SearchDomain search_domain) const
+{
+    bool simple_eval_safe = ((m_species && m_species->LocalCandidateInvariant()) &&
+                             (!m_content || m_content->LocalCandidateInvariant()) &&
+                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
+    // if species is unspecified, then the localcandiate species is used
+    // which is not local-candidate invariant
+
+    const bool test_val = search_domain == SearchDomain::MATCHES;
+    auto& from = test_val ? matches : non_matches;
+    auto& to = test_val ? non_matches : matches;
+
+    if (simple_eval_safe) {
+        if (Match(parent_context) != test_val) {
+            to.insert(to.end(), from.begin(), from.end());
+            from.clear();
+        }
+        return;
+    } else if (from.size() == 1) {
+        const ScriptingContext obj_context{parent_context, from.front()};
+        if (Match(obj_context) != test_val) {
+            to.insert(to.end(), from.begin(), from.end());
+            from.clear();
+        }
+        return;
+    }
+
+
+    if (m_content && m_content->LocalCandidateInvariant()) {
+        auto process_objects_with_different_species = [search_domain, &matches, &non_matches, this]
+            (const auto& species_for_objects, std::string content)
+        {
+            // determine all unique species
+            std::vector<std::string_view> unique_species(species_for_objects.begin(), species_for_objects.end());
+            std::sort(unique_species.begin(), unique_species.end());
+            auto unique_it = std::unique(unique_species.begin(), unique_species.end());
+            unique_species.resize(std::distance(unique_species.begin(), unique_it));
+
+            // get set of species that match the criteron about liking or disliking the content
+            std::vector<std::string_view> matching_species;
+            matching_species.reserve(unique_species.size());
+
+            const auto& sm{GetSpeciesManager()};
+            if (sm.empty()) // forces check for pending species
+                DebugLogger() << "SpeciesOpinion found no species...";
+
+            if (m_comp == ComparisonType::GREATER_THAN) {
+                // find species that like content
+                std::copy_if(unique_species.begin(), unique_species.end(), std::back_inserter(matching_species),
+                             [content, &sm](const std::string_view sv) -> bool {
+                                 const auto* species = sm.GetSpeciesUnchecked(sv); //GetSpecies(sv); //sm.GetSpeciesUnchecked(sv);
+                                 if (!species)
+                                     return false;
+                                 const auto& likes = species->Likes();
+                                 return std::any_of(likes.begin(), likes.end(),
+                                                    [&content](const auto l) { return l == content; });
+                             });
+
+            } else if (m_comp == ComparisonType::LESS_THAN) {
+                // find species that dislike content
+                std::copy_if(unique_species.begin(), unique_species.end(), std::back_inserter(matching_species),
+                             [content, &sm](const std::string_view sv) -> bool {
+                                 const auto* species = sm.GetSpeciesUnchecked(sv); //GetSpecies(sv); // sm.GetSpeciesUnchecked(sv);
+                                 if (!species)
+                                     return false;
+                                 const auto& dislikes = species->Dislikes();
+                                 return std::any_of(dislikes.begin(), dislikes.end(),
+                                                    [&content](const auto d) { return d == content; });
+                             });
+            }
+
+            // move objects that shouldn't be in from set due to their species
+            // liking/disliking or not the content (ie. if in or not in matching_species)
+            // ie. if (is_in_matching_species != test_val) move();
+            auto is_matching_species = [&matching_species](const std::string_view s) -> bool {
+                return std::any_of(matching_species.begin(), matching_species.end(),
+                                   [s](const std::string_view ms) { return s == ms; });
+            };
+            MoveBasedOnPairedValPredicate(search_domain, matches, non_matches,
+                                          species_for_objects, is_matching_species);
+        };
+
+        auto process_objects_with_same_species = [search_domain, &matches, &non_matches, this]
+            (std::string species_name, std::string content)
+        {
+            const auto& sm{GetSpeciesManager()};
+            if (sm.empty()) // forces check for pending species
+                DebugLogger() << "SpeciesOpinion found no species...";
+            const auto* species = sm.GetSpeciesUnchecked(species_name);
+            if (!species) {
+                DebugLogger() << "SpeciesOpinion couldn't find species " << species_name;
+                return;
+            }
+
+            bool species_matches = false;
+            if (m_comp == ComparisonType::GREATER_THAN) {
+                const auto& likes = species->Likes();
+                species_matches = std::any_of(likes.begin(), likes.end(),
+                                              [&content](const auto l) { return l == content; });
+
+            } else if (m_comp == ComparisonType::LESS_THAN) {
+                const auto& dislikes = species->Dislikes();
+                species_matches = std::any_of(dislikes.begin(), dislikes.end(),
+                                              [&content](const auto d) { return d == content; });
+            }
+
+            const bool test_val = search_domain == SearchDomain::MATCHES;
+            auto& from = test_val ? matches : non_matches;
+            auto& to = test_val ? non_matches : matches;
+
+            if (species_matches != test_val) {
+                to.insert(to.end(), from.begin(), from.end());
+                from.clear();
+            }
+        };
+
+
+        if (!m_species) {
+            auto get_species_for_object = [&parent_context](const UniverseObject* obj) -> std::string_view
+            { return SpeciesForObject(obj, parent_context); };
+
+            // get species for each object
+            std::vector<std::string_view> species_for_objects;
+            species_for_objects.reserve(from.size());
+            std::transform(from.begin(), from.end(), std::back_inserter(species_for_objects),
+                           get_species_for_object);
+
+            process_objects_with_different_species(species_for_objects, m_content->Eval(parent_context));
+
+        } else if (!m_species->LocalCandidateInvariant()) {
+            auto eval_object_species = [&parent_context, this](const UniverseObject* obj) -> std::string {
+                // get species from reference with object as local candidate
+                const ScriptingContext obj_context{parent_context, obj};
+                return m_species->Eval(obj_context);
+            };
+
+            // get species for each object
+            std::vector<std::string_view> species_for_objects;
+            species_for_objects.reserve(from.size());
+            std::transform(from.begin(), from.end(), std::back_inserter(species_for_objects),
+                           eval_object_species);
+
+            process_objects_with_different_species(species_for_objects, m_content->Eval(parent_context));
+
+        } else {
+            process_objects_with_same_species(m_species->Eval(parent_context), m_content->Eval(parent_context));
+        }
+        return;
+    }
+
+    // re-evaluate all parameters for each candidate object.
+    Condition::Eval(parent_context, matches, non_matches, search_domain);
+}
+
+std::string SpeciesOpinion::Description(bool negated) const {
+    std::string species_str = m_species ?
+        (m_species->ConstantExpr() ? m_species->Eval() : m_species->Description()) : "";
+    std::string content_str = m_content ?
+        (m_content->ConstantExpr() ? m_content->Eval() : m_content->Description()) : "";
+
+    std::string description_str;
+    switch (m_comp) {
+    case ComparisonType::GREATER_THAN:
+        description_str = !negated ? UserString("DESC_SPECIES_LIKES") : UserString("DESC_SPECIES_LIKES_NOT");       break;
+    case ComparisonType::LESS_THAN:
+        description_str = !negated ? UserString("DESC_SPECIES_DISLIKES") : UserString("DESC_SPECIES_DISLIKES_NOT"); break;
+    default: break;
+    }
+    return str(FlexibleFormat(description_str)
+               % species_str
+               % content_str);
+}
+
+std::string SpeciesOpinion::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs);
+    switch (m_comp) {
+    case ComparisonType::GREATER_THAN:
+        retval += "SpeciesLikes";   break;
+    case ComparisonType::LESS_THAN:
+        retval += "SpeciesDislikes";   break;
+    default:
+        retval += "???";
+    }
+    if (m_species)
+        retval += " species = " + m_species->Dump(ntabs);
+    if (m_content)
+        retval += " name = " + m_content->Dump(ntabs);
+    retval += "\n";
+    return retval;
+}
+
+bool SpeciesOpinion::Match(const ScriptingContext& local_context) const {
+    const auto* candidate = local_context.condition_local_candidate;
+
+    if (!m_content) {
+        ErrorLogger(conditions) << "SpeciesOpinion::Match has no content specified";
+        return false;
+    } else if (!m_species && !candidate) {
+        ErrorLogger(conditions) << "SpeciesOpinion::Match passed no candidate object but expects one due to having no species valueref specified and thus wanting to use the local candidate's species";
+        return false;
+    } else if (m_species && !candidate && !m_species->LocalCandidateInvariant()) {
+        ErrorLogger(conditions) << "SpeciesOpinion::Match passed no candidate object but but species valueref references the local candidate";
+        return false;
+    }
+
+    const std::string content = m_content->Eval(local_context);
+    if (content.empty())
+        return false;
+
+    const ::Species* species = nullptr;
+    if (!m_species)
+        species = GetSpecies(SpeciesForObject(candidate, local_context));
+    else
+        species = GetSpecies(m_species->Eval(local_context));
+    if (!species)
+        return false;
+
+    switch (m_comp) {
+    case ComparisonType::GREATER_THAN: {
+        const auto& likes = species->Likes();
+        return std::any_of(likes.begin(), likes.end(), [&content](const auto l) { return l == content; });
+        break;
+    }
+    case ComparisonType::LESS_THAN: {
+        const auto& dislikes = species->Dislikes();
+        return std::any_of(dislikes.begin(), dislikes.end(), [&content](const auto d) { return d == content; });
+        break;
+    }
+    default:
+        return false;
+    }
+}
+
+void SpeciesOpinion::SetTopLevelContent(const std::string& content_name) {
+    if (m_species)
+        m_species->SetTopLevelContent(content_name);
+    if (m_content)
+        m_content->SetTopLevelContent(content_name);
+}
+
+unsigned int SpeciesOpinion::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::SpeciesOpinion");
+    CheckSums::CheckSumCombine(retval, m_species);
+    CheckSums::CheckSumCombine(retval, m_content);
+    CheckSums::CheckSumCombine(retval, m_comp);
+
+    TraceLogger(conditions) << "GetCheckSum(SpeciesOpinion): retval: " << retval;
+    return retval;
+}
+
+std::unique_ptr<Condition> SpeciesOpinion::Clone() const {
+    return std::make_unique<SpeciesOpinion>(ValueRef::CloneUnique(m_species),
+                                            ValueRef::CloneUnique(m_content),
+                                            m_comp);
+}
+
+///////////////////////////////////////////////////////////
 // Enqueued                                              //
 ///////////////////////////////////////////////////////////
 Enqueued::Enqueued(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id,
@@ -8177,7 +8561,7 @@ void WithinStarlaneJumps::Eval(const ScriptingContext& parent_context,
         // get subcondition matches
         ObjectSet subcondition_matches = m_condition->Eval(parent_context);
         int jump_limit = m_jumps->Eval(parent_context);
-        ObjectSet &from_set(search_domain == SearchDomain::MATCHES ? matches : non_matches);
+        ObjectSet& from_set(search_domain == SearchDomain::MATCHES ? matches : non_matches);
 
         std::tie(matches, non_matches) = parent_context.ContextUniverse().GetPathfinder()->WithinJumpsOfOthers(
             jump_limit, parent_context.ContextObjects(), from_set, subcondition_matches);
@@ -10007,31 +10391,12 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
         }();
         static_assert(std::is_same_v<std::vector<uint8_t>, decltype(passed)>);
 
-        auto move_based_on_mask = [search_domain, &matches, &non_matches](const auto& mask) {
-            const uint8_t test_val = search_domain == SearchDomain::MATCHES;
-            auto& from = test_val ? matches : non_matches;
-            auto& to = test_val ? non_matches : matches;
-
-            auto o_it = from.begin();
-            auto m_it = mask.begin();
-            const auto m_end = mask.end();
-            auto dest = std::back_inserter(to);
-
-            for (; m_it != m_end; ++m_it) {
-                if (*m_it != test_val) {
-                    *dest++ = std::exchange(*o_it, from.back());
-                    from.pop_back();
-                } else {
-                    ++o_it;
-                }
-            }
-        };
 
         // if there is no 3rd reference to compare to, or if all candidates
         // didn't pass the first comparison, then the result of ref1 to ref2
         // comparison is the final result
         if (!ref3 || std::all_of(passed.begin(), passed.end(), [](const auto p) { return !p; })) {
-            move_based_on_mask(passed);
+            MoveBasedOnMask(search_domain, matches, non_matches, passed);
             return;
         }
 
@@ -10072,7 +10437,7 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
                 *p_it = *p_it && Comparison(*v2_it, c23, ref3->Eval(*c_it));
         }
 
-        move_based_on_mask(passed);
+        MoveBasedOnMask(search_domain, matches, non_matches, passed);
     };
 
 

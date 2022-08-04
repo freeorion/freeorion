@@ -20,6 +20,8 @@ namespace parse { namespace detail {
         condition_parser_rule             building;
         condition_parser_rule             field;
         condition_parser_rule             species;
+        condition_parser_rule             species_likes;
+        condition_parser_rule             species_dislikes;
         condition_parser_rule             focus_type;
         condition_parser_rule             planet_type;
         condition_parser_rule             planet_size;

@@ -31,7 +31,7 @@ SPECIAL_INFLUENCE_RESOURCE_EXPORT
                 Planet
                 Not Source
                 Species // must have some population
-                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisSpecial > 0)
+                SpeciesLikes name = ThisSpecial
                 ResourceSupplyConnected empire = Source.Owner condition = Source
                 // TODO: check for other empires with border checkpoints or free trade or somesuch...
             ]
@@ -52,7 +52,7 @@ SPECIAL_INFLUENCE_RESOURCE_EXPORT
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_INFLUENCE"
                 Happiness high = (NamedReal name = "PLC_BLACK_MARKET_MAX_STABILITY" value = 8)
-                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisSpecial > 0)
+                SpeciesLikes name = ThisSpecial
                 ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
             activation = EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_BLACK_MARKET"
@@ -66,7 +66,7 @@ SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS
             scope = And [
                 Object id = Source.PlanetID
                 Population low = 0.001
-                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisSpecial > 0)
+                SpeciesLikes name = ThisSpecial
             ]
             accountinglabel = "LIKES_SPECIAL_LABEL"
             effects =
@@ -77,7 +77,7 @@ SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS
             scope = And [
                 Object id = Source.PlanetID
                 Population low = 0.001
-                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisSpecial < 0)
+                SpeciesDislikes name = ThisSpecial
             ]
             accountinglabel = "DISLIKES_SPECIAL_LABEL"
             effects =
@@ -90,7 +90,7 @@ SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS
                 InSystem id = Source.SystemID
                 Population low = 0.001
                 Not Object id = Source.PlanetID // but not on same planet, which is covered by above case
-                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisSpecial > 0)
+                SpeciesLikes name = ThisSpecial
             ]
             accountinglabel = "LIKES_SPECIAL_LABEL"
             effects =

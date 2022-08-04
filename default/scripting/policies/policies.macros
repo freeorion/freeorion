@@ -14,7 +14,7 @@ SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS
                 Planet
                 OwnedBy empire = Source.Owner
                 Population low = 0.001
-                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisPolicy > 0)
+                SpeciesLikes name = ThisPolicy
             ]
             accountinglabel = "LIKES_POLICY_LABEL"
             effects =
@@ -25,7 +25,7 @@ SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS
                 Planet
                 OwnedBy empire = Source.Owner
                 Population low = 0.001
-                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisPolicy < 0)
+                SpeciesDislikes name = ThisPolicy
             ]
             accountinglabel = "DISLIKES_POLICY_LABEL"
             effects =

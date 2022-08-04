@@ -497,7 +497,9 @@
     (SpeciesCensusOrdering)                     \
     (SpeciesColoniesOwned)                      \
     (SpeciesContentOpinion)                     \
+    (SpeciesDislikes)                           \
     (SpeciesEmpireOpinion)                      \
+    (SpeciesLikes)                              \
     (SpeciesSpeciesOpinion)                     \
     (SpeciesPlanetsBombed)
 
