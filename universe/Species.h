@@ -203,9 +203,13 @@ public:
 
     SpeciesManager() = default;
 
-    /** returns the building type with the name \a name; you should use the
+    /** returns the species with the name \a name; you should use the
       * free function GetSpecies() instead, mainly to save some typing. */
     const Species*      GetSpecies(std::string_view name) const;
+
+    /** returns the species with name \a without guarding access to
+      * shared state. */
+    const Species*      GetSpeciesUnchecked(std::string_view name) const;
 
     /** iterators for all species */
     iterator            begin() const;

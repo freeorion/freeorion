@@ -438,6 +438,11 @@ const Species* SpeciesManager::GetSpecies(std::string_view name) const {
     return it != s_species.end() ? it->second.get() : nullptr;
 }
 
+const Species* SpeciesManager::GetSpeciesUnchecked(std::string_view name) const {
+    auto it = s_species.find(name);
+    return it != s_species.end() ? it->second.get() : nullptr;
+}
+
 namespace {
     std::mutex species_mutex;
 }
