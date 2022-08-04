@@ -6,6 +6,7 @@ from logging import debug
 from aistate_interface import get_aistate
 from character.character_module import Aggression
 from character.character_strings_module import possible_greetings
+from common.fo_typing import EmpireId
 from common.option_tools import get_option_dict
 from freeorion_tools.translation import UserStringList
 
@@ -21,6 +22,10 @@ def check_gang_up():
                 offer = fo.diplomaticMessage(empire_id, fo.empireID(), fo.diplomaticMessageType.peaceProposal)
                 debug("Sending diplomatic message to empire %s of type %s" % (empire_id, offer.type))
                 fo.sendDiplomaticMessage(offer)
+
+
+def get_diplomatic_status(empire_id: EmpireId) -> fo.diplomaticStatus:
+    return fo.getDiplomaticStatus(fo.empireID(), empire_id)
 
 
 def handle_pregame_chat(sender_player_id, message_txt):
