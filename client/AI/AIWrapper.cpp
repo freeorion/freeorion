@@ -727,6 +727,10 @@ namespace FreeOrionPython {
                 py::return_value_policy<py::reference_existing_object>(),
                 "Returns the empire object (Empire) with the specified empire ID (int)");
 
+        py::def("getDiplomaticStatus",
+                +[](int empire_id1, int empire_id2) -> const DiplomaticStatus { return AIClientApp::GetApp()->Empires().GetDiplomaticStatus(empire_id1, empire_id2); },
+                "Returns the diplomatic status between two empires");
+
         py::def("getUniverse",              GetUniverse,       py::return_value_policy<py::reference_existing_object>(), "Returns the universe object (Universe)");
 
         py::def("currentTurn",              CurrentTurn,       "Returns the current game turn (int).");

@@ -1272,6 +1272,11 @@ def getBuildingType(string: str) -> buildingType:
     Returns the building type (BuildingType) with the indicated name (string).
     """
 
+def getDiplomaticStatus(number1: int, number2: int) -> diplomaticStatus:
+    """
+    Returns the diplomatic status between two empires
+    """
+
 @overload
 def getEmpire() -> empire: ...
 @overload
