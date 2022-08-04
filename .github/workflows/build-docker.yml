@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: [ubuntu-22.10, fedora-32, manjaro]
+        image: [ubuntu-22.10, fedora-32, fedora-rawhide, manjaro]
     env:
       CACHE_NAME: linux
     steps:
