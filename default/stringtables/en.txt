@@ -8910,7 +8910,14 @@ Prefer [[PT_BARREN]] planets.
 
 SP_TRENCHERS_DESC
 '''Description:
-Coming soon.
+The Trenchers are an enigma of the galaxy. Who built them? Why do they constantly dig their spiral trenches? Theories abound: "The trenches are an obscure form of communication" or "The patterns are of religious importance to the Trenchers". No one really knows.
+
+Homeworld:
+The Trenchers homeworld is a barren planet. It is mostly flat except for the elaborate trenches dug by its inhabitants, and a series of artificial hills constructed from the soil left over by the Trenchers digging. It is nearly devoid of plant life, with the exception of a local iridescent moss that clings to the side of the trenches.
+
+Society:
+Little is known about Trencher society; they seem to show no interest in anything apart from digging trenches and the construction of new workers. Strange rumours and reports of Trenchers gathering together and spinning on their wheels in some sort of ritualistic dance abound. However, no one has ever been able to confirm the existence of this behavior, and most experts have dismissed these reports as an adverse side effect of consuming the local flora.
+
 <img src="species/trenchers.png"></img>
 '''
 
