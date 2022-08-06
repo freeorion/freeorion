@@ -12133,9 +12133,13 @@ PLC_RACIAL_PURITY
 Racial Purity
 
 PLC_RACIAL_PURITY_DESC
-'''Planets with species different from the capital's species have various penalities applied.
+'''Provides benefits for single-species empires, but penalizes species other than that on the capital planet.
 
-Planets with other species have penalties.
+Planets with species different from the capital's species have various penalities applied:
+• Reduces [[metertype METER_TARGET_HAPPINESS]] by [[value PLC_RACIAL_PURITY_TARGET_HAPPINESS_FLAT]]
+• Reduces [[metertype METER_TARGET_INFLUENCE]] by [[value PLC_RACIAL_PURITY_TARGET_HAPPINESS_FLAT]]
+• Reduces [[metertype METER_TARGET_RESEARCH]] by [[value PLC_RACIAL_PURITY_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]]
+• Reduces [[metertype METER_TARGET_INDUSTRY]] by [[value PLC_RACIAL_PURITY_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]]
 
 Allows [[buildingtype BLD_CONC_CAMP]] to be produced.'''
 
