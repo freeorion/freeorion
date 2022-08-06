@@ -339,6 +339,12 @@ void EmpireManager::ResetDiplomacy() {
     }
 }
 
+void EmpireManager::RefreshCapitalIDs() {
+    m_capital_ids.clear();
+    std::transform(m_const_empire_map.begin(), m_const_empire_map.end(), std::back_inserter(m_capital_ids),
+                   [](const auto& e) { return e.second->CapitalID(); });
+}
+
 void EmpireManager::GetDiplomaticMessagesToSerialize(std::map<std::pair<int, int>, DiplomaticMessage>& messages,
                                                      int encoding_empire) const
 {

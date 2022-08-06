@@ -415,6 +415,8 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
         }
         std::sort(em.m_empire_ids.begin(), em.m_empire_ids.end());
 
+        em.RefreshCapitalIDs();
+
         em.m_diplomatic_messages = std::move(messages);
 
         // erase invalid empire diplomatic statuses

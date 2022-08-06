@@ -41,6 +41,8 @@ public:
     [[nodiscard]] int                       NumEmpires() const noexcept { return m_const_empire_map.size(); }
     [[nodiscard]] int                       NumEliminatedEmpires() const;
 
+    [[nodiscard]] const std::vector<int>&   CapitalIDs() const noexcept { return m_capital_ids; }
+
     [[nodiscard]] const DiploStatusMap&     GetDiplomaticStatuses() const noexcept { return m_empire_diplomatic_statuses; }
     [[nodiscard]] DiplomaticStatus          GetDiplomaticStatus(int empire1, int empire2) const;
     [[nodiscard]] std::set<int>             GetEmpireIDsWithDiplomaticStatusWithEmpire(
@@ -71,6 +73,8 @@ public:
 
     void ResetDiplomacy();
 
+    void RefreshCapitalIDs();
+
     /** Creates and inserts an empire with the specified properties and returns
       * a pointer to it.  This will only set up the data in Empire.  It is the
       * caller's responsibility to make sure that universe updates planet
@@ -95,6 +99,7 @@ private:
                                           int encoding_empire) const;
 
     std::vector<int>                                 m_empire_ids;
+    std::vector<int>                                 m_capital_ids;
     container_type                                   m_empire_map;
     const_container_type                             m_const_empire_map;
     DiploStatusMap                                   m_empire_diplomatic_statuses;

@@ -1351,6 +1351,7 @@ void SetEmpireCapital::Execute(ScriptingContext& context) const {
     int empire_id = m_empire_id->Eval(context);
     if (auto empire = context.GetEmpire(empire_id))
         empire->SetCapitalID(context.effect_target->ID(), context.ContextObjects());
+    context.Empires().RefreshCapitalIDs();
 }
 
 std::string SetEmpireCapital::Dump(unsigned short ntabs) const

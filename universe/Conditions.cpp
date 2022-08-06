@@ -1816,37 +1816,36 @@ Capital::Capital() {
 bool Capital::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
-namespace {
-    struct CapitalSimpleMatch {
-        CapitalSimpleMatch(const EmpireManager::const_container_type& empires) :
-            m_capital_ids{[empires]() -> std::vector<int> {
-                // collect capitals of all empires
-                std::vector<int> retval;
-                retval.reserve(empires.size());
-                for (auto& [empire_id, empire] : empires) {
-                    (void)empire_id;
-                    auto id = empire->CapitalID();
-                    if (id != INVALID_OBJECT_ID)
-                        retval.push_back(id);
-                }
-                return retval;
-            }()}
-        {}
+void Capital::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                   ObjectSet& non_matches, SearchDomain search_domain) const
+{
+    auto sz = (search_domain == SearchDomain::MATCHES) ? matches.size() : non_matches.size();
+    const auto& empires{parent_context.Empires()};
+    const auto& capitals = empires.CapitalIDs();
 
-        bool operator()(const UniverseObject* candidate) const {
-            if (!candidate)
-                return false;
-            return std::find(m_capital_ids.begin(), m_capital_ids.end(), candidate->ID()) != m_capital_ids.end();
+    if (sz == 1) { // in testing, this was faster for a single candidate than setting up the loop stuff
+        const bool test_val = search_domain == SearchDomain::MATCHES;
+        auto& from = test_val ? matches : non_matches;
+        auto& to = test_val ? non_matches : matches;
+        auto obj = from.front();
+
+        bool is_capital = std::any_of(capitals.begin(), capitals.end(),
+                                      [obj_id{obj->ID()}](int cap_id) { return cap_id == obj_id; });
+
+        if (is_capital != test_val) {
+            to.push_back(obj);
+            from.clear();
         }
 
-        const std::vector<int> m_capital_ids;
-    };
-}
+    } else {
+        auto is_capital = [&capitals](const UniverseObject* obj) {
+            return std::any_of(capitals.begin(), capitals.end(),
+                               [obj_id{obj->ID()}](int cap_id) { return cap_id == obj_id; });
+        };
 
-void Capital::Eval(const ScriptingContext& parent_context,
-                   ObjectSet& matches, ObjectSet& non_matches,
-                   SearchDomain search_domain) const
-{ EvalImpl(matches, non_matches, search_domain, CapitalSimpleMatch{parent_context.Empires().GetEmpires()}); }
+        EvalImpl(matches, non_matches, search_domain, is_capital);
+    }
+}
 
 std::string Capital::Description(bool negated) const {
     return (!negated)

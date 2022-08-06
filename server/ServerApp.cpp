@@ -3618,6 +3618,7 @@ void ServerApp::PostCombatProcessTurns() {
             empire->SetCapitalID(INVALID_OBJECT_ID, m_universe.Objects());
         }
     }
+    m_empires.RefreshCapitalIDs();
 
 
     // process production and growth phase
@@ -3720,6 +3721,7 @@ void ServerApp::PostCombatProcessTurns() {
             empire->SetCapitalID(INVALID_OBJECT_ID, m_universe.Objects());
         }
     }
+    m_empires.RefreshCapitalIDs();
 
 
     // store any changes in objects from various progress functions

@@ -810,6 +810,7 @@ bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name,
     context.species.AddSpeciesHomeworld(std::move(species_name), home_planet->ID());
 
     empire->SetCapitalID(home_planet->ID(), context.ContextObjects());
+    context.Empires().RefreshCapitalIDs();
     empire->AddExploredSystem(home_planet->SystemID(), BEFORE_FIRST_TURN, context.ContextObjects());
 
     return true;
