@@ -290,6 +290,8 @@ struct FO_COMMON_API Capital final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
+    bool InitialCandidatesAllMatch() const override { return true; };
+
     [[nodiscard]] std::string  Description(bool negated = false) const override;
     [[nodiscard]] std::string  Dump(unsigned short ntabs = 0) const override;
     void                       SetTopLevelContent(const std::string& content_name) override {}

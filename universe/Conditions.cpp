@@ -1877,24 +1877,13 @@ bool Capital::Match(const ScriptingContext& local_context) const {
 void Capital::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                 ObjectSet& condition_non_targets) const
 {
-    if constexpr(false) { // TODO: test / enable this?
-        auto capital_ids{[empires{parent_context.Empires().GetEmpires()}]() -> std::set<int> {
-            // collect capitals of all empires
-            std::set<int> retval;
-            for (auto& [empire_id, empire] : empires) {
-                (void)empire_id;
-                auto id = empire->CapitalID();
-                if (id != INVALID_OBJECT_ID)
-                    retval.insert(id);
-            }
-            return retval;
-        }()};
-
-        condition_non_targets.reserve(condition_non_targets.size() + capital_ids.size());
-        for (auto* obj : parent_context.ContextObjects().findRaw(capital_ids))
-            condition_non_targets.push_back(obj);
-    } else {
-        AddPlanetSet(parent_context.ContextObjects(), condition_non_targets);
+    const auto& capital_ids = parent_context.Empires().CapitalIDs();
+    condition_non_targets.reserve(condition_non_targets.size() + capital_ids.size());
+    const auto& existing_objects = parent_context.ContextObjects().allExisting();
+    for (const auto& [obj_id, obj] : existing_objects) {
+        if (std::any_of(capital_ids.begin(), capital_ids.end(),
+                        [o_id{obj_id}](const int cap_id) { return o_id == cap_id; }))
+        { condition_non_targets.push_back(obj.get()); }
     }
 }
 
@@ -2143,9 +2132,10 @@ bool Type::InitialCandidatesAllMatch() const {
 void Type::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                              ObjectSet& condition_non_targets) const
 {
-    // Ships, Fleets and default checks for current objects only
-    if (!InitialCandidatesAllMatch())
+    if (!InitialCandidatesAllMatch()) { // checks that there is just a single type specified, not dependent on the individual candidate
+        Condition::GetDefaultInitialCandidateObjects(parent_context, condition_non_targets);
         return;
+    }
 
     switch (m_type->Eval(parent_context)) {
         case UniverseObjectType::OBJ_BUILDING:
