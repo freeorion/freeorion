@@ -727,7 +727,6 @@ std::vector<int> ObjectMap::findIDs(Pred pred) const
     constexpr bool invokable_on_shared_const_object = invoke_flags[2];
     constexpr bool invokable_on_const_entry = invoke_flags[4];
     constexpr bool invokable_on_const_reference = invoke_flags[6];
-    constexpr bool invokable = invoke_flags[8];
     constexpr bool is_visitor = invoke_flags[9];
     constexpr bool is_int_range = invoke_flags[10];
 
@@ -769,6 +768,7 @@ std::vector<int> ObjectMap::findIDs(Pred pred) const
                 result.push_back(id);
 
     } else {
+        constexpr bool invokable = invoke_flags[8];
         static_assert(invokable, "Don't know how to handle predicate");
     }
 
@@ -829,7 +829,6 @@ bool ObjectMap::check_if_any(Pred pred) const
     constexpr bool invokable_on_shared_const_object = invoke_flags[2];
     constexpr bool invokable_on_const_entry = invoke_flags[4];
     constexpr bool invokable_on_const_reference = invoke_flags[6];
-    constexpr bool invokable = invoke_flags[8];
     constexpr bool is_visitor = invoke_flags[9];
     constexpr bool is_int_range = invoke_flags[10];
 
@@ -862,6 +861,7 @@ bool ObjectMap::check_if_any(Pred pred) const
                            [ref_pred{pred}](const EntryT& o) { return ref_pred(*o.second); });
 
     } else {
+        constexpr bool invokable = invoke_flags[8];
         static_assert(invokable, "Don't know how to handle predicate");
         return false;
     }

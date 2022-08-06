@@ -930,7 +930,7 @@ namespace {
                 return false;
             auto fleet = context.ContextObjects().get<Fleet>(ship->FleetID());
             return !fleet || fleet->Aggression() > FleetAggression::FLEET_PASSIVE;
-        } else if (auto planet = dynamic_cast<const Planet*>(obj)) {
+        } else if (obj->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             return obj->GetMeter(MeterType::METER_DEFENSE)->Current() > 0.0f;
         } else if (auto fighter = dynamic_cast<const Fighter*>(obj)) {
             return fighter->Damage() > 0.0f;

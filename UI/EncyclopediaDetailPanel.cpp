@@ -2405,7 +2405,7 @@ namespace {
 
         const Universe& universe = GetUniverse();
         const ObjectMap& objects = universe.Objects();
-        const EmpireManager& empires = Empires();
+        //const EmpireManager& empires = Empires();
 
         if (!only_description) {
             name = UserString(item_name);

@@ -717,9 +717,9 @@ void DropDownList::RenderDisplayedRow()
 
     /** The following code possibly renders the selected row twice.  Once in the selected area and
       * also in the drop down list if it is visible.*/
-    auto current_item = *CurrentItem();
+    auto* current_item = CurrentItem()->get();
     bool sel_visible = current_item->Visible();
-    bool lb_visible = LB()->Visible();
+    //bool lb_visible = LB()->Visible();
 
     // neither LB() nor the selected row may be visible and prerendered.
     GUI::GetGUI()->PreRenderWindow(LB(), true);
@@ -732,10 +732,10 @@ void DropDownList::RenderDisplayedRow()
                        Top() + Height() / 2 - (current_item->Top() + current_item->Height() / 2));
     current_item->OffsetMove(offset);
 
-    GUI::GetGUI()->PreRenderWindow(current_item.get());
+    GUI::GetGUI()->PreRenderWindow(current_item);
 
     BeginClipping();
-    GUI::GetGUI()->RenderWindow(current_item.get());
+    GUI::GetGUI()->RenderWindow(current_item);
     EndClipping();
 
     current_item->OffsetMove(-offset);
