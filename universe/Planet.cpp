@@ -648,7 +648,7 @@ void Planet::Conquer(int conquerer, EmpireManager& empires, Universe& universe) 
     Empire::ConquerProductionQueueItemsAtLocation(ID(), conquerer, empires);
 
     ObjectMap& objects{universe.Objects()};
-    auto empire_ids = empires.EmpireIDs();
+    const auto& empire_ids = empires.EmpireIDs();
 
     // deal with UniverseObjects (eg. buildings) located on this planet
     for (auto& building : objects.find<Building>(m_buildings)) {

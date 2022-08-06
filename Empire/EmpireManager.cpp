@@ -19,6 +19,7 @@ namespace {
 
 EmpireManager& EmpireManager::operator=(EmpireManager&& other) noexcept {
     if (this != &other) {
+        m_empire_ids = std::move(other.m_empire_ids);
         m_empire_map = std::move(other.m_empire_map);
         m_const_empire_map = std::move(other.m_const_empire_map);
         m_empire_diplomatic_statuses = std::move(other.m_empire_diplomatic_statuses);
@@ -26,17 +27,6 @@ EmpireManager& EmpireManager::operator=(EmpireManager&& other) noexcept {
     }
     return *this;
 }
-
-std::vector<int> EmpireManager::EmpireIDs() const {
-    std::vector<int> retval;
-    retval.reserve(m_const_empire_map.size());
-    std::transform(m_const_empire_map.begin(), m_const_empire_map.end(),
-                   std::back_inserter(retval), [](const auto& e) { return e.first; });
-    return retval;
-}
-
-const EmpireManager::const_container_type& EmpireManager::GetEmpires() const
-{ return m_const_empire_map; }
 
 std::shared_ptr<const Empire> EmpireManager::GetEmpire(int id) const {
     auto it = m_const_empire_map.find(id);
@@ -52,9 +42,6 @@ const std::string& EmpireManager::GetEmpireName(int id) const {
     auto it = m_const_empire_map.find(id);
     return it == m_const_empire_map.end() ? EMPTY_STRING : it->second->Name();
 }
-
-int EmpireManager::NumEmpires() const
-{ return m_const_empire_map.size(); }
 
 int EmpireManager::NumEliminatedEmpires() const {
     int eliminated_count = 0;
@@ -108,25 +95,10 @@ std::string EmpireManager::DumpDiplomacy() const {
     return retval;
 }
 
-const EmpireManager::container_type& EmpireManager::GetEmpires()
-{ return m_empire_map; }
-
 std::shared_ptr<Empire> EmpireManager::GetEmpire(int id) {
     iterator it = m_empire_map.find(id);
     return it == end() ? nullptr : it->second;
 }
-
-EmpireManager::const_iterator EmpireManager::begin() const
-{ return m_const_empire_map.begin(); }
-
-EmpireManager::const_iterator EmpireManager::end() const
-{ return m_const_empire_map.end(); }
-
-EmpireManager::iterator EmpireManager::begin()
-{ return m_empire_map.begin(); }
-
-EmpireManager::iterator EmpireManager::end()
-{ return m_empire_map.end(); }
 
 void EmpireManager::BackPropagateMeters() {
     for (auto& entry : m_empire_map)
@@ -154,18 +126,18 @@ void EmpireManager::InsertEmpire(std::shared_ptr<Empire>&& empire) {
         return;
     }
 
+    m_empire_ids.push_back(empire_id);
+    std::sort(m_empire_ids.begin(), m_empire_ids.end());
     m_const_empire_map[empire_id] = empire;
     m_empire_map[empire_id] = std::move(empire);
 }
 
-void EmpireManager::Clear() {
+void EmpireManager::Clear() noexcept {
+    m_empire_ids.clear();
     m_const_empire_map.clear();
     m_empire_map.clear();
     m_empire_diplomatic_statuses.clear();
 }
-
-const EmpireManager::DiploStatusMap& EmpireManager::GetDiplomaticStatuses() const
-{ return m_empire_diplomatic_statuses; }
 
 DiplomaticStatus EmpireManager::GetDiplomaticStatus(int empire1, int empire2) const {
     if (empire1 == ALL_EMPIRES || empire2 == ALL_EMPIRES || empire1 == empire2)

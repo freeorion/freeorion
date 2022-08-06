@@ -32,16 +32,16 @@ public:
     EmpireManager& operator=(EmpireManager&& other) noexcept;
     ~EmpireManager() = default;
 
-    [[nodiscard]] std::vector<int>                      EmpireIDs() const;
-    [[nodiscard]] const const_container_type&           GetEmpires() const;
+    [[nodiscard]] const std::vector<int>&               EmpireIDs() const noexcept { return m_empire_ids; }
+    [[nodiscard]] const const_container_type&           GetEmpires() const noexcept { return m_const_empire_map; }
     [[nodiscard]] std::shared_ptr<const Empire>         GetEmpire(int id) const;  //!< Returns the empire whose ID is \a id, or nullptr if none exist
     [[nodiscard]] const std::string&                    GetEmpireName(int id) const;
     [[nodiscard]] std::shared_ptr<const UniverseObject> GetSource(int id, const ObjectMap& objects) const;  //!< Return the empire source or nullptr if the empire or source doesn't exist
 
-    [[nodiscard]] int                       NumEmpires() const;
+    [[nodiscard]] int                       NumEmpires() const noexcept { return m_const_empire_map.size(); }
     [[nodiscard]] int                       NumEliminatedEmpires() const;
 
-    [[nodiscard]] const DiploStatusMap&     GetDiplomaticStatuses() const;
+    [[nodiscard]] const DiploStatusMap&     GetDiplomaticStatuses() const noexcept { return m_empire_diplomatic_statuses; }
     [[nodiscard]] DiplomaticStatus          GetDiplomaticStatus(int empire1, int empire2) const;
     [[nodiscard]] std::set<int>             GetEmpireIDsWithDiplomaticStatusWithEmpire(
         int empire_id, DiplomaticStatus diplo_status) const
@@ -54,12 +54,13 @@ public:
     [[nodiscard]] std::string               Dump() const;
 
     [[nodiscard]] std::shared_ptr<Empire>   GetEmpire(int id);  //!< Returns the empire whose ID is \a id, or nullptr if none exist
-    [[nodiscard]] const container_type&     GetEmpires();
+    [[nodiscard]] const container_type&     GetEmpires() noexcept { return m_empire_map; }
 
-    [[nodiscard]] const_iterator            begin() const;
-    [[nodiscard]] const_iterator            end() const;
-    [[nodiscard]] iterator                  begin();
-    [[nodiscard]] iterator                  end();
+    [[nodiscard]] const_iterator            begin() const noexcept { return m_const_empire_map.begin(); }
+    [[nodiscard]] const_iterator            end() const noexcept { return m_const_empire_map.end(); }
+    [[nodiscard]] iterator                  begin() noexcept { return m_empire_map.begin(); }
+    [[nodiscard]] iterator                  end() noexcept { return m_empire_map.end(); }
+
 
     void BackPropagateMeters();
 
@@ -78,7 +79,7 @@ public:
                       const EmpireColor& color, bool authenticated);
 
     /** Removes and deletes all empires from the manager. */
-    void Clear();
+    void Clear() noexcept;
 
     typedef boost::signals2::signal<void (int, int)> DiploSignalType;
 
@@ -93,6 +94,7 @@ private:
     void GetDiplomaticMessagesToSerialize(std::map<std::pair<int, int>, DiplomaticMessage>& messages,
                                           int encoding_empire) const;
 
+    std::vector<int>                                 m_empire_ids;
     container_type                                   m_empire_map;
     const_container_type                             m_const_empire_map;
     DiploStatusMap                                   m_empire_diplomatic_statuses;

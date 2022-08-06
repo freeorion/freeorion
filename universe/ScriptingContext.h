@@ -337,7 +337,7 @@ struct ScriptingContext {
     // helper functions for accessing state in this context
 
     // immutable container of immutable objects
-    const Universe& ContextUniverse() const { return const_universe; }
+    const Universe& ContextUniverse() const noexcept { return const_universe; }
 
     // mutable container of mutable objects, not thread safe to modify
     Universe& ContextUniverse() {
@@ -348,7 +348,7 @@ struct ScriptingContext {
     }
 
     // immutable container of immutable objects
-    const ObjectMap& ContextObjects() const { return const_objects; }
+    const ObjectMap& ContextObjects() const noexcept { return const_objects; }
 
     // mutable container of mutable objects, not thread safe to modify
     ObjectMap& ContextObjects() {
@@ -395,7 +395,7 @@ struct ScriptingContext {
     std::shared_ptr<const Empire> GetEmpire(int id) const
     { return const_empires.GetEmpire(id); }
 
-    const EmpireManager& Empires() const
+    const EmpireManager& Empires() const noexcept
     { return const_empires; } // const container of const empires
 
     EmpireManager& Empires() { // const container of mutable empires
@@ -405,13 +405,8 @@ struct ScriptingContext {
         throw std::runtime_error("ScriptingContext::ContextUniverse() asked for undefined mutable empires");
     }
 
-    std::vector<int> EmpireIDs() const {
-        std::vector<int> retval;
-        retval.reserve(const_empires.NumEmpires());
-        std::transform(const_empires.begin(), const_empires.end(),
-                       std::back_inserter(retval), [](const auto& e) { return e.first; });
-        return retval;
-    }
+    const auto& EmpireIDs() const noexcept
+    { return const_empires.EmpireIDs(); }
 
     // script evaluation local state, some of which may vary during evaluation of an expression
     const UniverseObject*      source = nullptr;

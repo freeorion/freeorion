@@ -1823,7 +1823,7 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
         }
     }
 
-    auto empire_ids = context.EmpireIDs();
+    const auto& empire_ids = context.EmpireIDs();
 
 
     // actually do destroy effect action.  Executing the effect just marks

@@ -1902,7 +1902,7 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
 
     // empire elimination
     empire->Eliminate(m_empires);
-    auto empire_ids = m_empires.EmpireIDs();
+    const auto& empire_ids = m_empires.EmpireIDs();
 
     // destroy owned ships
     for (auto& obj : m_universe.Objects().find<Ship>(OwnedVisitor(empire_id))) {
@@ -2576,7 +2576,7 @@ namespace {
         // gamestate. Standard visibility updating will then transfer the
         // modified objects / combat results to empires' known gamestate
         // ObjectMaps.
-        const auto empire_ids = empires.EmpireIDs();
+        const auto& empire_ids = empires.EmpireIDs();
 
         for (const CombatInfo& combat_info : combats) {
             // update visibilities from combat, in case anything was revealed
@@ -2886,7 +2886,7 @@ namespace {
     void HandleColonization(ScriptingContext& context) {
         Universe& universe = context.ContextUniverse();
         ObjectMap& objects = context.ContextObjects();
-        auto empire_ids = context.EmpireIDs();
+        const auto& empire_ids = context.EmpireIDs();
 
         // collect, for each planet, what ships have been ordered to colonize it
         std::map<int, std::map<int, std::set<int>>> planet_empire_colonization_ship_ids; // map from planet ID to map from empire ID to set of ship IDs
@@ -3006,7 +3006,7 @@ namespace {
         std::map<int, std::map<int, double>> planet_empire_troops;  // map from planet ID to map from empire ID to pair consisting of set of ship IDs and amount of troops empires have at planet
         std::vector<Ship*> invade_ships;
         ObjectMap& objects = universe.Objects();
-        auto empire_ids = empires.EmpireIDs();
+        const auto& empire_ids = empires.EmpireIDs();
 
         // collect ships that are invading and the troops they carry
         for (auto* ship : objects.allRaw<Ship>()) {
@@ -3271,7 +3271,7 @@ namespace {
     void HandleScrapping(Universe& universe, EmpireManager& empires) {
         std::vector<Ship*> scrapped_ships;
         ObjectMap& objects{universe.Objects()};
-        auto empire_ids = empires.EmpireIDs();
+        const auto& empire_ids = empires.EmpireIDs();
 
         for (auto* ship : objects.allRaw<Ship>()) {
             if (ship->OrderedScrapped())
@@ -3362,7 +3362,7 @@ namespace {
         std::vector<Fleet*> empty_fleets;
         Universe& universe{context.ContextUniverse()};
         ObjectMap& objects{context.ContextObjects()};
-        auto empire_ids = context.EmpireIDs();
+        const auto& empire_ids = context.EmpireIDs();
 
         for (auto* fleet : objects.allRaw<Fleet>()) {
             if (fleet->Empty())

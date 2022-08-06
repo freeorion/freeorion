@@ -243,7 +243,7 @@ void NewFleetOrder::ExecuteImpl(ScriptingContext& context) const {
 
     Universe& u = context.ContextUniverse();
     ObjectMap& o = context.ContextObjects();
-    auto empire_ids = context.EmpireIDs();
+    const auto& empire_ids = context.EmpireIDs();
 
     u.InhibitUniverseObjectSignals(true);
 
@@ -585,7 +585,7 @@ void FleetTransferOrder::ExecuteImpl(ScriptingContext& context) const {
 
     // signal change to fleet states
     modified_fleets.insert(target_fleet.get());
-    auto empire_ids = context.EmpireIDs();
+    const auto& empire_ids = context.EmpireIDs();
 
     for (auto* modified_fleet : modified_fleets) {
         if (!modified_fleet) {

@@ -409,8 +409,11 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
     ar  & BOOST_SERIALIZATION_NVP(messages);
 
     if constexpr (Archive::is_loading::value) {
-        for (auto& [empire_id, empire_ptr] : em.m_empire_map)
+        for (auto& [empire_id, empire_ptr] : em.m_empire_map) {
             em.m_const_empire_map.emplace(empire_id, empire_ptr);
+            em.m_empire_ids.push_back(empire_id);
+        }
+        std::sort(em.m_empire_ids.begin(), em.m_empire_ids.end());
 
         em.m_diplomatic_messages = std::move(messages);
 
