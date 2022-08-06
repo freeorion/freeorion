@@ -207,6 +207,36 @@ public:
         }
     }
 
+    template <typename T = UniverseObject>
+    [[nodiscard]] const auto& allExistingRaw() const
+    {
+        using DecayT = std::decay_t<T>;
+        if constexpr (std::is_same_v<DecayT, UniverseObject>)
+            return m_existing_object_vec;
+        else if constexpr (std::is_same_v<DecayT, ResourceCenter>)
+            return m_existing_resource_center_vec;
+        else if constexpr (std::is_same_v<DecayT, PopCenter>)
+            return m_existing_pop_center_vec;
+        else if constexpr (std::is_same_v<DecayT, Ship>)
+            return m_existing_ship_vec;
+        else if constexpr (std::is_same_v<DecayT, Fleet>)
+            return m_existing_fleet_vec;
+        else if constexpr (std::is_same_v<DecayT, Planet>)
+            return m_existing_planet_vec;
+        else if constexpr (std::is_same_v<DecayT, System>)
+            return m_existing_system_vec;
+        else if constexpr (std::is_same_v<DecayT, Building>)
+            return m_existing_building_vec;
+        else if constexpr (std::is_same_v<DecayT, Field>)
+            return m_existing_field_vec;
+        else {
+            static_assert(std::is_same_v<DecayT, UniverseObject>, "invalid type for allExistingRaw()");
+            static const decltype(m_existing_object_vec) error_retval;
+            return error_retval;
+        }
+    }
+
+
     /** Copies the contents of the ObjectMap \a copied_map into this ObjectMap.
       * Each object in \a copied_map has information transferred to this map.
       * If there already is a version of an object in \a copied_map in this map
@@ -254,8 +284,6 @@ public:
     /** Empties map, removing shared ownership by this map of all
       * previously contained objects. */
     void clear();
-    ///** Swaps the contents of *this with \a rhs. */
-    //void swap(ObjectMap& rhs);
 
     /** */
     void UpdateCurrentDestroyedObjects(const std::unordered_set<int>& destroyed_object_ids);
@@ -347,15 +375,25 @@ private:
     container_type<Building>        m_buildings;
     container_type<Field>           m_fields;
 
-    container_type<const UniverseObject>  m_existing_objects;
-    container_type<const UniverseObject>  m_existing_resource_centers;
-    container_type<const UniverseObject>  m_existing_pop_centers;
-    container_type<const UniverseObject>  m_existing_ships;
-    container_type<const UniverseObject>  m_existing_fleets;
-    container_type<const UniverseObject>  m_existing_planets;
-    container_type<const UniverseObject>  m_existing_systems;
-    container_type<const UniverseObject>  m_existing_buildings;
-    container_type<const UniverseObject>  m_existing_fields;
+    container_type<const UniverseObject> m_existing_objects;
+    container_type<const UniverseObject> m_existing_resource_centers;
+    container_type<const UniverseObject> m_existing_pop_centers;
+    container_type<const UniverseObject> m_existing_ships;
+    container_type<const UniverseObject> m_existing_fleets;
+    container_type<const UniverseObject> m_existing_planets;
+    container_type<const UniverseObject> m_existing_systems;
+    container_type<const UniverseObject> m_existing_buildings;
+    container_type<const UniverseObject> m_existing_fields;
+
+    std::vector<const UniverseObject*> m_existing_object_vec;
+    std::vector<const UniverseObject*> m_existing_resource_center_vec;
+    std::vector<const UniverseObject*> m_existing_pop_center_vec;
+    std::vector<const UniverseObject*> m_existing_ship_vec;
+    std::vector<const UniverseObject*> m_existing_fleet_vec;
+    std::vector<const UniverseObject*> m_existing_planet_vec;
+    std::vector<const UniverseObject*> m_existing_system_vec;
+    std::vector<const UniverseObject*> m_existing_building_vec;
+    std::vector<const UniverseObject*> m_existing_field_vec;
 
     template <typename Archive>
     friend void serialize(Archive&, ObjectMap&, unsigned int const);

@@ -35,12 +35,27 @@ class Fighter;
                                             f<UniverseObjectType::OBJ_BUILDING>(m_existing_buildings, ##__VA_ARGS__);           \
                                             f<UniverseObjectType::OBJ_FIELD>(m_existing_fields, ##__VA_ARGS__); }
 
+#define FOR_EACH_EXISTING_VEC(f, ...)     { f(m_existing_object_vec, ##__VA_ARGS__);                                               \
+                                            f<UniverseObjectType::OBJ_PROD_CENTER>(m_existing_resource_center_vec, ##__VA_ARGS__); \
+                                            f<UniverseObjectType::OBJ_POP_CENTER>(m_existing_pop_center_vec, ##__VA_ARGS__);       \
+                                            f<UniverseObjectType::OBJ_SHIP>(m_existing_ship_vec, ##__VA_ARGS__);                   \
+                                            f<UniverseObjectType::OBJ_FLEET>(m_existing_fleet_vec, ##__VA_ARGS__);                 \
+                                            f<UniverseObjectType::OBJ_PLANET>(m_existing_planet_vec, ##__VA_ARGS__);               \
+                                            f<UniverseObjectType::OBJ_SYSTEM>(m_existing_system_vec, ##__VA_ARGS__);               \
+                                            f<UniverseObjectType::OBJ_BUILDING>(m_existing_building_vec, ##__VA_ARGS__);           \
+                                            f<UniverseObjectType::OBJ_FIELD>(m_existing_field_vec, ##__VA_ARGS__); }
+
 
 namespace {
     template <UniverseObjectType ignored = UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE,
               typename T>
-    void ClearMap(ObjectMap::container_type<T>& map)
-    { map.clear(); }
+    void ClearContainer(ObjectMap::container_type<T>& container)
+    { container.clear(); }
+
+    template <UniverseObjectType ignored = UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE,
+              typename T>
+    void ClearContainer(std::vector<T>& container)
+    { container.clear(); }
 
     // UniverseObject class type to enum UniverseObjectType
     template <typename UniverseObject_t>
@@ -97,7 +112,7 @@ namespace {
                 return false;
 
         } else {
-            // only the specified object type is accetpable
+            // only the specified object type is acceptable
             // all pointers should be shared_ptr<UniverseObject> but the pointed-to
             // objects should be a concrete type (Planet, System, Building, etc.)
             if (item->ObjectType() != obj_type_filter)
@@ -145,6 +160,182 @@ namespace {
               typename T>
     void EraseFromMap(ObjectMap::container_type<T>& map, int id)
     { map.erase(id); }
+
+    template <UniverseObjectType obj_type_filter = UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE,
+              typename VectorValueType>
+    bool TryInsertIntoVec(std::vector<VectorValueType*>& vec, const std::shared_ptr<UniverseObject>& item)
+    {
+        using VecTypeBare = std::remove_const_t<VectorValueType>; // eg. Planet, ResourceCenter, UniverseObject
+        static_assert(std::is_base_of_v<UniverseObject, VecTypeBare> ||
+                      std::is_same_v<ResourceCenter, VecTypeBare> ||
+                      std::is_same_v<PopCenter, VecTypeBare>);
+
+        if (!item)
+            return false;
+
+        // check dynamic type filter on the passed in pointer
+        if constexpr (obj_type_filter == UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE) {
+            // any pointed-to object type is acceptable, as long as it is convertable into
+            // the VectorValueType and thus insertable into the input map
+
+        } else if constexpr (obj_type_filter == UniverseObjectType::OBJ_POP_CENTER ||
+                             obj_type_filter == UniverseObjectType::OBJ_PROD_CENTER)
+        {
+            // only one of PopCenter or ResourceCenter objects are acceptable, which
+            // as of this writing can only be planets, so don't need to dynamic cast
+            // or otherwise try to convert to a specialized base class
+            if (item->ObjectType() != UniverseObjectType::OBJ_PLANET)
+                return false;
+
+        } else {
+            // only the specified object type is acceptable
+            // all pointers should be shared_ptr<UniverseObject> but the pointed-to
+            // objects should be a concrete type (Planet, System, Building, etc.)
+            if (item->ObjectType() != obj_type_filter)
+                return false;
+        }
+
+
+        // check whether the passed-in pointer can be inserted into the passed-in map
+        if constexpr (std::is_same_v<UniverseObject, VecTypeBare>) {
+            // passed a pointer and a vector of of the same type: UniverseObject
+            const UniverseObject* obj = item.get();
+            if (std::any_of(vec.begin(), vec.end(), [obj](const auto* v) { return v == obj; }))
+                return false;
+            vec.push_back(obj);
+            return true;
+
+        } else if constexpr (std::is_base_of_v<UniverseObject, VecTypeBare>) {
+            // passed a UniverseObject pointer and a vector of derived type. need to check the
+            // actual type of the pointer and cast before inserting in the vector
+            if (item->ObjectType() != uot_enum_v<VecTypeBare>)
+                return false;
+            const auto obj = static_cast<VecTypeBare*>(item.get());
+            if (std::any_of(vec.begin(), vec.end(), [obj](const auto* v) { return v == obj; }))
+                return false;
+            vec.push_back(obj);
+            return true;
+
+        } else if constexpr (std::is_same_v<ResourceCenter, VecTypeBare> ||
+                             std::is_same_v<PopCenter, VecTypeBare>)
+        {
+            // passed a vector of ResourceCenter or PopCenter, which are not related classes to UniverseObject,
+            // and passed a pointer to UniverseObject. need to check its actual type...
+            if (item->ObjectType() != UniverseObjectType::OBJ_PLANET)
+                return false;
+            const auto obj = static_cast<const VecTypeBare*>(static_cast<const Planet*>(item.get()));
+            if (std::any_of(vec.begin(), vec.end(), [obj](const auto* v) { return v == obj; }))
+                return false;
+            vec.push_back(obj);
+            return true;
+
+        } else {
+            // shouldn't be possible to instantiate with this block enabled, but if so,
+            // try to generate some useful compiler error messages to indicate what
+            // type VecObjectType is
+            using GenerateCompileError = typename VectorValueType::not_a_member_zi23tg;
+            return false;
+        }
+    }
+
+    template <UniverseObjectType obj_type_filter = UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE,
+              typename VectorValueType>
+    bool TryInsertIntoVec(std::vector<VectorValueType*>& vec, const UniverseObject* obj)
+    {
+        using VecTypeBare = std::remove_const_t<VectorValueType>; // eg. Planet, ResourceCenter, UniverseObject
+        static_assert(std::is_base_of_v<UniverseObject, VecTypeBare> ||
+                      std::is_same_v<ResourceCenter, VecTypeBare> ||
+                      std::is_same_v<PopCenter, VecTypeBare>);
+
+        if (!obj)
+            return false;
+
+        // check dynamic type filter on the passed in pointer
+        if constexpr (obj_type_filter == UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE) {
+            // any pointed-to object type is acceptable, as long as it is convertable into
+            // the VectorValueType and thus insertable into the input map
+
+        } else if constexpr (obj_type_filter == UniverseObjectType::OBJ_POP_CENTER ||
+                             obj_type_filter == UniverseObjectType::OBJ_PROD_CENTER)
+        {
+            // only one of PopCenter or ResourceCenter objects are acceptable, which
+            // as of this writing can only be planets, so don't need to dynamic cast
+            // or otherwise try to convert to a specialized base class
+            if (obj->ObjectType() != UniverseObjectType::OBJ_PLANET)
+                return false;
+
+        } else {
+            // only the specified object type is acceptable
+            // all pointers should be shared_ptr<UniverseObject> but the pointed-to
+            // objects should be a concrete type (Planet, System, Building, etc.)
+            if (obj->ObjectType() != obj_type_filter)
+                return false;
+        }
+
+
+        // check whether the passed-in pointer can be inserted into the passed-in map
+        if constexpr (std::is_same_v<UniverseObject, VecTypeBare>) {
+            // passed a pointer and a vector of of the same type: UniverseObject
+            if (std::any_of(vec.begin(), vec.end(), [obj](const auto* v) { return v == obj; }))
+                return false;
+            vec.push_back(obj);
+            return true;
+
+        } else if constexpr (std::is_base_of_v<UniverseObject, VecTypeBare>) {
+            // passed a UniverseObject pointer and a vector of derived type. need to check the
+            // actual type of the pointer and cast before inserting in the vector
+            if (obj->ObjectType() != uot_enum_v<VecTypeBare>)
+                return false;
+            const auto vec_obj = static_cast<VecTypeBare*>(obj);
+            if (std::any_of(vec.begin(), vec.end(), [vec_obj](const auto* v) { return v == vec_obj; }))
+                return false;
+            vec.push_back(vec_obj);
+            return true;
+
+        } else if constexpr (std::is_same_v<ResourceCenter, VecTypeBare> ||
+                             std::is_same_v<PopCenter, VecTypeBare>)
+        {
+            // passed a vector of ResourceCenter or PopCenter, which are not related classes to UniverseObject,
+            // and passed a pointer to UniverseObject. need to check its actual type...
+            if (obj->ObjectType() != UniverseObjectType::OBJ_PLANET)
+                return false;
+            const auto vec_obj = static_cast<const VecTypeBare*>(static_cast<const Planet*>(obj));
+            if (std::any_of(vec.begin(), vec.end(), [vec_obj](const auto* v) { return v == vec_obj; }))
+                return false;
+            vec.push_back(vec_obj);
+            return true;
+
+        } else {
+            // shouldn't be possible to instantiate with this block enabled, but if so,
+            // try to generate some useful compiler error messages to indicate what
+            // type VecObjectType is
+            using GenerateCompileError = typename VectorValueType::not_a_member_zi23tg;
+            return false;
+        }
+    }
+
+
+    template <UniverseObjectType ignored = UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE,
+              typename T>
+    void EraseFromVec(std::vector<const T*>& vec, int id)
+    {
+        const auto begin = vec.begin();
+        const auto end = vec.end();
+        auto it = std::find_if(begin, end, [id](const auto* v) -> bool { return v->ID() == id; });
+        if (it != end)
+            vec.erase(it);
+    }
+
+    template <UniverseObjectType ignored = UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE,
+              typename T>
+    void EraseFromVec(std::vector<const T*>& vec, const T* o)
+    {
+        const auto begin = vec.begin();
+        const auto end = vec.end();
+        auto it = std::find(begin, end, o);
+        if (it != end)
+            vec.erase(it);
+    }
 }
 
 namespace {
@@ -233,9 +424,15 @@ void ObjectMap::insertCore(std::shared_ptr<UniverseObject> item, int empire_id) 
     // can't use FOR_EACH_EXISTING_MAP with TryInsertIntoMap as all the existing map types store UniverseObject pointers
     FOR_EACH_SPECIALIZED_MAP(TryInsertIntoMap, item);
     if (!known_destroyed) {
+        const auto item_raw = item.get();
+        FOR_EACH_EXISTING_VEC(TryInsertIntoVec, item_raw)
         FOR_EACH_EXISTING_MAP(TryInsertIntoMap, item)
 
+        bool already_there = m_existing_objects.count(ID);
+
         m_existing_objects[ID] = item;
+        if (!already_there)
+            m_existing_object_vec.push_back(item.get());
     }
     m_objects[ID] = std::move(item);
 }
@@ -253,6 +450,8 @@ void ObjectMap::insertCore(std::shared_ptr<Planet> item, int empire_id) {
         m_existing_pop_centers.insert_or_assign(ID, item);
         m_existing_planets.insert_or_assign(ID, item);
         m_existing_objects.insert_or_assign(ID, item);
+        m_existing_object_vec.push_back(item.get());
+        m_existing_planet_vec.push_back(item.get());
     }
     m_objects[ID] = std::move(item);
 }
@@ -265,15 +464,18 @@ std::shared_ptr<UniverseObject> ObjectMap::erase(int id) {
     //DebugLogger() << "Object was removed: " << it->second->Dump();
     // object found, so store pointer for later...
     auto result = it->second;
+    const auto raw_result = result.get();
     // and erase from pointer maps
+    FOR_EACH_EXISTING_VEC(EraseFromVec, raw_result);
     FOR_EACH_MAP(EraseFromMap, id);
     FOR_EACH_EXISTING_MAP(EraseFromMap, id);
     return result;
 }
 
 void ObjectMap::clear() {
-    FOR_EACH_MAP(ClearMap);
-    FOR_EACH_EXISTING_MAP(ClearMap);
+    FOR_EACH_EXISTING_VEC(ClearContainer);
+    FOR_EACH_MAP(ClearContainer);
+    FOR_EACH_EXISTING_MAP(ClearContainer);
 }
 
 std::vector<int> ObjectMap::FindExistingObjectIDs() const {
@@ -287,10 +489,13 @@ std::vector<int> ObjectMap::FindExistingObjectIDs() const {
 }
 
 void ObjectMap::UpdateCurrentDestroyedObjects(const std::unordered_set<int>& destroyed_object_ids) {
-    FOR_EACH_EXISTING_MAP(ClearMap);
+    FOR_EACH_EXISTING_VEC(ClearContainer);
+    FOR_EACH_EXISTING_MAP(ClearContainer);
     for (const auto& [ID, obj] : m_objects) {
         if (!obj || destroyed_object_ids.count(ID))
             continue;
+        const auto obj_raw = obj.get();
+        FOR_EACH_EXISTING_VEC(TryInsertIntoVec, obj_raw);
         FOR_EACH_EXISTING_MAP(TryInsertIntoMap, obj);
     }
 }
@@ -365,7 +570,7 @@ void ObjectMap::AuditContainment(const std::unordered_set<int>& destroyed_object
 }
 
 void ObjectMap::CopyObjectsToSpecializedMaps() {
-    FOR_EACH_SPECIALIZED_MAP(ClearMap);
+    FOR_EACH_SPECIALIZED_MAP(ClearContainer);
     for (const auto& entry : Map<UniverseObject>())
     { FOR_EACH_SPECIALIZED_MAP(TryInsertIntoMap, entry.second); }
 }
