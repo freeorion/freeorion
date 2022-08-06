@@ -483,6 +483,8 @@ void serialize(Archive& ar, System& obj, unsigned int const version)
         & make_nvp("m_fields", obj.m_fields)
         & make_nvp("m_starlanes_wormholes", obj.m_starlanes_wormholes)
         & make_nvp("m_last_turn_battle_here", obj.m_last_turn_battle_here);
+    if constexpr (Archive::is_loading::value)
+        obj.m_system_id = obj.ID(); // override old value that was stored differently previously...
 }
 
 BOOST_CLASS_EXPORT(System)
