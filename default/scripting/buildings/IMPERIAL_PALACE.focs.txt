@@ -124,7 +124,7 @@ BuildingType
                 SetMaxTroops value = Value
                     + (NamedReal name = "BLD_IMPERIAL_PALACE_MAX_TROOPS_FLAT" value = 6)
                 SetTargetInfluence value = Value
-                     + (NamedReal name = "BLD_IMPERIAL_PALACE_TARGET_INFLUENCE_FLAT" value = 3) 
+                     + (NamedReal name = "BLD_IMPERIAL_PALACE_TARGET_INFLUENCE_FLAT" value = (GameRule name = "RULE_IMPERIAL_PALACE_INFLUENCE"))
             ]
     ]
     icon = "icons/building/palace.png"

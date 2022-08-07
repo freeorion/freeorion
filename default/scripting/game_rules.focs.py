@@ -164,6 +164,16 @@ GameRule(
 )
 
 GameRule(
+    name="RULE_IMPERIAL_PALACE_INFLUENCE",
+    description="RULE_IMPERIAL_PALACE_INFLUENCE_DESC",
+    category="BALANCE_STABILITY",
+    type=int,
+    default=3,
+    min=-20,
+    max=20,
+)
+
+GameRule(
     name="RULE_SHIP_PART_BASED_UPKEEP",
     description="RULE_SHIP_PART_BASED_UPKEEP_DESC",
     category="BALANCE",
