@@ -43,61 +43,11 @@ namespace {
 
     DeclareThreadSafeLogger(conditions);
 
-    using boost::placeholders::_1;
-
+    template <typename T = UniverseObject>
     void AddAllObjectsSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + objects.allExisting().size());
-        for (const auto& obj : objects.allExisting())
-            condition_non_targets.push_back(obj.second.get());
-        // in my tests, this range for loop with emplace_back was about 5% faster than std::transform with std::back_inserter and a lambda returning the .second of the map entries
-    }
-
-    void AddBuildingSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + objects.allExisting<Building>().size());
-        for (const auto& obj : objects.allExisting<Building>())
-            condition_non_targets.push_back(obj.second.get());
-    }
-
-    void AddFieldSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + objects.allExisting<Field>().size());
-        for (const auto& obj : objects.allExisting<Field>())
-            condition_non_targets.push_back(obj.second.get());
-    }
-
-    void AddFleetSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + objects.allExisting<Fleet>().size());
-        for (const auto& obj : objects.allExisting<Fleet>())
-            condition_non_targets.push_back(obj.second.get());
-    }
-
-    void AddPlanetSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + objects.allExisting<Planet>().size());
-        for (const auto& obj : objects.allExisting<Planet>())
-            condition_non_targets.push_back(obj.second.get());
-    }
-
-    void AddPopCenterSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + objects.allExisting<PopCenter>().size());
-        for (const auto& obj : objects.allExisting<PopCenter>())
-            condition_non_targets.push_back(obj.second.get());
-    }
-
-    void AddResCenterSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + objects.allExisting<ResourceCenter>().size());
-        for (const auto& obj : objects.allExisting<ResourceCenter>())
-            condition_non_targets.push_back(obj.second.get());
-    }
-
-    void AddShipSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + objects.allExisting<Ship>().size());
-        for (const auto& obj : objects.allExisting<Ship>())
-            condition_non_targets.push_back(obj.second.get());
-    }
-
-    void AddSystemSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + objects.allExisting<System>().size());
-        for (const auto& obj : objects.allExisting<System>())
-            condition_non_targets.push_back(obj.second.get());
+        const auto& all_t = objects.allExistingRaw<T>();
+        condition_non_targets.reserve(condition_non_targets.size() + all_t.size());
+        condition_non_targets.insert(condition_non_targets.end(), all_t.begin(), all_t.end());
     }
 
     /** Used by 4-parameter Condition::Eval function, and some of its
@@ -1664,9 +1614,7 @@ namespace {
 
             } else {
                 // match any of the species specified
-                if (std::any_of(m_names.begin(), m_names.end(),
-                                [planet_id, this](const auto& name)
-                {
+                if (std::any_of(m_names.begin(), m_names.end(), [planet_id, this](const auto& name) {
                     auto it = m_species_homeworlds.find(name);
                     if (it == m_species_homeworlds.end())
                         return false;
@@ -1782,7 +1730,7 @@ bool Homeworld::Match(const ScriptingContext& local_context) const {
 
 void Homeworld::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                   ObjectSet& condition_non_targets) const
-{ AddPlanetSet(parent_context.ContextObjects(), condition_non_targets); }
+{ AddAllObjectsSet<Planet>(parent_context.ContextObjects(), condition_non_targets); }
 
 void Homeworld::SetTopLevelContent(const std::string& content_name) {
     for (auto& name : m_names) {
@@ -1938,7 +1886,7 @@ bool Monster::Match(const ScriptingContext& local_context) const {
 
 void Monster::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                 ObjectSet& condition_non_targets) const
-{ AddShipSet(parent_context.ContextObjects(), condition_non_targets); }
+{ AddAllObjectsSet<Ship>(parent_context.ContextObjects(), condition_non_targets); }
 
 unsigned int Monster::GetCheckSum() const {
     unsigned int retval{0};
@@ -2139,28 +2087,28 @@ void Type::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_cont
 
     switch (m_type->Eval(parent_context)) {
         case UniverseObjectType::OBJ_BUILDING:
-            AddBuildingSet(parent_context.ContextObjects(), condition_non_targets);
+            AddAllObjectsSet<::Building>(parent_context.ContextObjects(), condition_non_targets);
             break;
         case UniverseObjectType::OBJ_FIELD:
-            AddFieldSet(parent_context.ContextObjects(), condition_non_targets);
+            AddAllObjectsSet<::Field>(parent_context.ContextObjects(), condition_non_targets);
             break;
         case UniverseObjectType::OBJ_FLEET:
-            AddFleetSet(parent_context.ContextObjects(), condition_non_targets);
+            AddAllObjectsSet<Fleet>(parent_context.ContextObjects(), condition_non_targets);
             break;
         case UniverseObjectType::OBJ_PLANET:
-            AddPlanetSet(parent_context.ContextObjects(), condition_non_targets);
+            AddAllObjectsSet<Planet>(parent_context.ContextObjects(), condition_non_targets);
             break;
         case UniverseObjectType::OBJ_POP_CENTER:
-            AddPopCenterSet(parent_context.ContextObjects(), condition_non_targets);
+            AddAllObjectsSet<PopCenter>(parent_context.ContextObjects(), condition_non_targets);
             break;
         case UniverseObjectType::OBJ_PROD_CENTER:
-            AddResCenterSet(parent_context.ContextObjects(), condition_non_targets);
+            AddAllObjectsSet<ResourceCenter>(parent_context.ContextObjects(), condition_non_targets);
             break;
         case UniverseObjectType::OBJ_SHIP:
-            AddShipSet(parent_context.ContextObjects(), condition_non_targets);
+            AddAllObjectsSet<Ship>(parent_context.ContextObjects(), condition_non_targets);
             break;
         case UniverseObjectType::OBJ_SYSTEM:
-            AddSystemSet(parent_context.ContextObjects(), condition_non_targets);
+            AddAllObjectsSet<System>(parent_context.ContextObjects(), condition_non_targets);
             break;
         case UniverseObjectType::OBJ_FIGHTER:   // shouldn't exist outside of combat as a separate object
         default:
@@ -2337,7 +2285,7 @@ std::string Building::Dump(unsigned short ntabs) const {
 
 void Building::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                  ObjectSet& condition_non_targets) const
-{ AddBuildingSet(parent_context.ContextObjects(), condition_non_targets); }
+{ AddAllObjectsSet<::Building>(parent_context.ContextObjects(), condition_non_targets); }
 
 bool Building::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
@@ -2504,7 +2452,7 @@ std::string Field::Dump(unsigned short ntabs) const {
 
 void Field::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                               ObjectSet& condition_non_targets) const
-{ AddFieldSet(parent_context.ContextObjects(), condition_non_targets); }
+{ AddAllObjectsSet<::Field>(parent_context.ContextObjects(), condition_non_targets); }
 
 bool Field::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
@@ -3222,9 +3170,9 @@ void Contains::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
                                                  ObjectSet& condition_non_targets) const
 {
     // objects that can contain other objects: systems, fleets, planets
-    AddSystemSet(parent_context.ContextObjects(), condition_non_targets);
-    AddFleetSet(parent_context.ContextObjects(), condition_non_targets);
-    AddPlanetSet(parent_context.ContextObjects(), condition_non_targets);
+    AddAllObjectsSet<System>(parent_context.ContextObjects(), condition_non_targets);
+    AddAllObjectsSet<Fleet>(parent_context.ContextObjects(), condition_non_targets);
+    AddAllObjectsSet<Planet>(parent_context.ContextObjects(), condition_non_targets);
 }
 
 bool Contains::Match(const ScriptingContext& local_context) const {
@@ -3435,10 +3383,10 @@ void ContainedBy::GetDefaultInitialCandidateObjects(const ScriptingContext& pare
                                                     ObjectSet& condition_non_targets) const
 {
     // objects that can be contained by other objects: fleets, planets, ships, buildings
-    AddFleetSet(parent_context.ContextObjects(), condition_non_targets);
-    AddPlanetSet(parent_context.ContextObjects(), condition_non_targets);
-    AddShipSet(parent_context.ContextObjects(), condition_non_targets);
-    AddBuildingSet(parent_context.ContextObjects(), condition_non_targets);
+    AddAllObjectsSet<Fleet>(parent_context.ContextObjects(), condition_non_targets);
+    AddAllObjectsSet<Planet>(parent_context.ContextObjects(), condition_non_targets);
+    AddAllObjectsSet<Ship>(parent_context.ContextObjects(), condition_non_targets);
+    AddAllObjectsSet<::Building>(parent_context.ContextObjects(), condition_non_targets);
 }
 
 bool ContainedBy::Match(const ScriptingContext& local_context) const {
@@ -3758,7 +3706,7 @@ void OnPlanet::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
 {
     if (!m_planet_id) {
         // only buildings can be on planets
-        AddBuildingSet(parent_context.ContextObjects(), condition_non_targets);
+        AddAllObjectsSet<::Building>(parent_context.ContextObjects(), condition_non_targets);
         return;
     }
 
@@ -3768,7 +3716,7 @@ void OnPlanet::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
 
     if (!simple_eval_safe) {
         // only buildings can be on planets
-        AddBuildingSet(parent_context.ContextObjects(), condition_non_targets);
+        AddAllObjectsSet<::Building>(parent_context.ContextObjects(), condition_non_targets);
         return;
     }
 
@@ -4079,8 +4027,8 @@ std::string PlanetType::Dump(unsigned short ntabs) const {
 void PlanetType::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                    ObjectSet& condition_non_targets) const
 {
-    AddPlanetSet(parent_context.ContextObjects(), condition_non_targets);
-    AddBuildingSet(parent_context.ContextObjects(), condition_non_targets);
+    AddAllObjectsSet<Planet>(parent_context.ContextObjects(), condition_non_targets);
+    AddAllObjectsSet<::Building>(parent_context.ContextObjects(), condition_non_targets);
 }
 
 bool PlanetType::Match(const ScriptingContext& local_context) const {
@@ -4258,8 +4206,8 @@ std::string PlanetSize::Dump(unsigned short ntabs) const {
 void PlanetSize::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                    ObjectSet& condition_non_targets) const
 {
-    AddPlanetSet(parent_context.ContextObjects(), condition_non_targets);
-    AddBuildingSet(parent_context.ContextObjects(), condition_non_targets);
+    AddAllObjectsSet<Planet>(parent_context.ContextObjects(), condition_non_targets);
+    AddAllObjectsSet<::Building>(parent_context.ContextObjects(), condition_non_targets);
 }
 
 bool PlanetSize::Match(const ScriptingContext& local_context) const {
@@ -4468,8 +4416,8 @@ std::string PlanetEnvironment::Dump(unsigned short ntabs) const {
 void PlanetEnvironment::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                           ObjectSet& condition_non_targets) const
 {
-    AddPlanetSet(parent_context.ContextObjects(), condition_non_targets);
-    AddBuildingSet(parent_context.ContextObjects(), condition_non_targets);
+    AddAllObjectsSet<Planet>(parent_context.ContextObjects(), condition_non_targets);
+    AddAllObjectsSet<::Building>(parent_context.ContextObjects(), condition_non_targets);
 }
 
 bool PlanetEnvironment::Match(const ScriptingContext& local_context) const {
@@ -4667,9 +4615,9 @@ std::string Species::Dump(unsigned short ntabs) const {
 void Species::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                 ObjectSet& condition_non_targets) const
 {
-    AddPlanetSet(parent_context.ContextObjects(), condition_non_targets);
-    AddBuildingSet(parent_context.ContextObjects(), condition_non_targets);
-    AddShipSet(parent_context.ContextObjects(), condition_non_targets);
+    AddAllObjectsSet<Planet>(parent_context.ContextObjects(), condition_non_targets);
+    AddAllObjectsSet<::Building>(parent_context.ContextObjects(), condition_non_targets);
+    AddAllObjectsSet<Ship>(parent_context.ContextObjects(), condition_non_targets);
 }
 
 bool Species::Match(const ScriptingContext& local_context) const {
@@ -5388,7 +5336,7 @@ bool Enqueued::Match(const ScriptingContext& local_context) const {
 void Enqueued::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                  ObjectSet& condition_non_targets) const
 {
-    AddPlanetSet(parent_context.ContextObjects(), condition_non_targets);
+    AddAllObjectsSet<Planet>(parent_context.ContextObjects(), condition_non_targets);
 }
 
 void Enqueued::SetTopLevelContent(const std::string& content_name) {
@@ -5574,8 +5522,8 @@ bool FocusType::Match(const ScriptingContext& local_context) const {
 void FocusType::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                   ObjectSet& condition_non_targets) const
 {
-    AddPlanetSet(parent_context.ContextObjects(), condition_non_targets);
-    AddBuildingSet(parent_context.ContextObjects(), condition_non_targets);
+    AddAllObjectsSet<Planet>(parent_context.ContextObjects(), condition_non_targets);
+    AddAllObjectsSet<::Building>(parent_context.ContextObjects(), condition_non_targets);
 }
 
 void FocusType::SetTopLevelContent(const std::string& content_name) {
@@ -5868,7 +5816,7 @@ bool DesignHasHull::Match(const ScriptingContext& local_context) const {
 void DesignHasHull::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                       ObjectSet& condition_non_targets) const
 {
-    AddShipSet(parent_context.ContextObjects(), condition_non_targets);
+    AddAllObjectsSet<Ship>(parent_context.ContextObjects(), condition_non_targets);
 }
 
 void DesignHasHull::SetTopLevelContent(const std::string& content_name) {
@@ -6046,7 +5994,7 @@ bool DesignHasPart::Match(const ScriptingContext& local_context) const {
 void DesignHasPart::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                       ObjectSet& condition_non_targets) const
 {
-    AddShipSet(parent_context.ContextObjects(), condition_non_targets);
+    AddAllObjectsSet<Ship>(parent_context.ContextObjects(), condition_non_targets);
 }
 
 void DesignHasPart::SetTopLevelContent(const std::string& content_name) {
@@ -6219,7 +6167,7 @@ bool DesignHasPartClass::Match(const ScriptingContext& local_context) const {
 
 void DesignHasPartClass::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                            ObjectSet& condition_non_targets) const
-{ AddShipSet(parent_context.ContextObjects(), condition_non_targets); }
+{ AddAllObjectsSet<Ship>(parent_context.ContextObjects(), condition_non_targets); }
 
 void DesignHasPartClass::SetTopLevelContent(const std::string& content_name) {
     if (m_low)
