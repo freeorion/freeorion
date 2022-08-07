@@ -1093,10 +1093,6 @@ namespace {
                 //        int current_turn, const Universe& universe);
                 auto fighter_ptr = std::make_shared<Fighter>(owner_empire_id, from_ship_id,
                                                              species, damage, combat_targets);
-                fighter_ptr->SetID(next_fighter_id--);
-                fighter_ptr->Rename(fighter_name);
-                combat_info.objects.insert(fighter_ptr);
-
                 if (!fighter_ptr) {
                     ErrorLogger(combat) << "AddFighters unable to create and insert new Fighter object...";
                     break;
@@ -1157,6 +1153,7 @@ namespace {
                 if (!CheckDestruction(obj))
                     continue;
                 destroyed_object_ids.insert(obj->ID());
+                TraceLogger(combat) << "Added destroyed object id: " << obj->ID();
 
                 if (obj->ObjectType() == UniverseObjectType::OBJ_FIGHTER) {
                     fighters_destroyed_event->AddEvent(obj->Owner());
@@ -1422,17 +1419,12 @@ namespace {
         return species->CombatTargets();
     }
 
-    void AddAllObjectsSet(const ObjectMap& obj_map, Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + obj_map.allExisting().size());
-        std::transform(obj_map.allExisting().begin(), obj_map.allExisting().end(),  // allExisting() here does not consider whether objects have been destroyed during this combat
-                       std::back_inserter(condition_non_targets),
-                       [](const auto& p) -> const UniverseObject* { return p.second.get(); });
-    }
-    void AddAllObjectsSet(ObjectMap& obj_map, Effect::TargetSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + obj_map.allExisting().size());
-        std::transform(obj_map.allExisting().begin(), obj_map.allExisting().end(),  // allExisting() here does not consider whether objects have been destroyed during this combat
-                       std::back_inserter(condition_non_targets),
-                       [](const auto& p) -> UniverseObject* { return const_cast<UniverseObject*>(p.second.get()); });
+    void AddObjects(ObjectMap& obj_map, Effect::TargetSet& into_set, const std::set<int>& exclude_ids) {
+        using MapPair = typename ObjectMap::container_type<const UniverseObject>::value_type;
+        auto objs = obj_map.findRaw([&exclude_ids](const MapPair& id_obj)
+                                    { return exclude_ids.count(id_obj.first) == 0; });
+        into_set.reserve(into_set.size() + objs.size());
+        into_set.insert(into_set.end(), objs.begin(), objs.end());
     }
 
     void ShootAllWeapons(UniverseObject* attacker,
@@ -1513,7 +1505,14 @@ namespace {
 
 
             Effect::TargetSet targets, rejected_targets;
-            AddAllObjectsSet(combat_state.combat_info.objects, targets);
+            AddObjects(combat_state.combat_info.objects, targets, combat_state.destroyed_object_ids);
+
+            TraceLogger(combat) << "all candidate targets: " << [&targets]() -> std::string {
+                std::stringstream retval;
+                for (auto& t : targets)
+                    retval << " " << t->ID();
+                return retval.str();
+            }();
 
             // apply species targeting condition and then weapon targeting condition
             TraceLogger(combat) << "Species targeting condition: " << species_targetting_condition->Dump();
