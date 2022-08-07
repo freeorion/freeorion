@@ -109,7 +109,7 @@ void PythonCommon::Finalize() {
         // cleanup python objects before interpterer shutdown
         m_system_exit = py::object();
         try {
-            Py_Finalize();
+            // According to boost.python 1.69 docs python Py_Finalize must not be called
 #if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
             if (m_home_dir != nullptr) {
                 PyMem_RawFree(m_home_dir);
