@@ -1187,8 +1187,8 @@ namespace {
             // check for destruction of target object
 
             if (target->ObjectType() == UniverseObjectType::OBJ_FIGHTER) {
-                auto fighter = dynamic_cast<const Fighter*>(target);
-                if (fighter && fighter->Destroyed()) {
+                auto fighter = static_cast<const Fighter*>(target);
+                if (fighter->Destroyed()) {
                     // remove destroyed fighter's ID from lists of valid attackers and targets
                     valid_attacker_object_ids.erase(target_id);
                     DebugLogger(combat) << "Removed destroyed fighter id: " << fighter->ID() << " from attackers";
@@ -1196,7 +1196,7 @@ namespace {
                     // Remove target from its empire's list of attackers
                     empire_infos[target->Owner()].attacker_ids.erase(target_id);
                     CleanEmpires();
-                    return fighter->Destroyed();
+                    return true;
                 }
 
             } else if (target->ObjectType() == UniverseObjectType::OBJ_SHIP) {
