@@ -1485,7 +1485,7 @@ namespace {
 
             return ss.str();
         }()
-                            << "  empires: " << context.Empires().NumEmpires()
+                            << "  empires: " << std::as_const(context).Empires().NumEmpires()
                             << "  diplostatus: " << [ds{context.diplo_statuses}]()
         {
             std::stringstream ss;
