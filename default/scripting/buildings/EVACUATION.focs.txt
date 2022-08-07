@@ -53,7 +53,7 @@ BuildingType
                     empire = Source.Owner
             ]
 
-        EffectsGroup            // remove population from location
+        EffectsGroup            // remove population from location & nullify production
             scope = And [
                 Object id = Source.PlanetID
                 Planet
@@ -72,6 +72,8 @@ BuildingType
                 SetTargetIndustry value = 0
                 SetResearch value = 0
                 SetTargetResearch value = 0
+                SetInfluence value = 0
+                SetTargetInfluence value = 0
             ]
 
         EffectsGroup            // remove evacuation when planet is depopulated or no longer owned by empire that produced this building
