@@ -39,7 +39,7 @@ PROTECTION_FOCUS_DEFENSE
             priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = [
                 SetMaxDefense value = Value * 2
-                SetTargetHappiness value = Value + (NamedReal name = "PROTECION_FOCUS_STABILITY_BONUS" value = 15.0)
+                SetTargetHappiness value = Value + (NamedReal name = "PROTECION_FOCUS_STABILITY_BONUS" value = (GameRule name = "RULE_PROTECTION_FOCUS_STABILITY"))
             ]
 '''
 

@@ -1307,6 +1307,12 @@ Planet Stability Baseline
 RULE_BASELINE_PLANET_STABILITY_DESC
 Baseline level of planet [[METER_HAPPINESS]].
 
+RULE_PROTECTION_FOCUS_STABILITY
+Protection Focus Stability Bonus
+
+RULE_PROTECTION_FOCUS_STABILITY_DESC
+Bonus [[METER_HAPPINESS]] from Protection Focus.
+
 RULE_MINIMUM_MONSTER_DISTANCE_CAPITAL
 Minimum distance monsters start from Capital
 

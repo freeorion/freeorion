@@ -154,6 +154,16 @@ GameRule(
 )
 
 GameRule(
+    name="RULE_PROTECTION_FOCUS_STABILITY",
+    description="RULE_PROTECTION_FOCUS_STABILITY_DESC",
+    category="BALANCE_STABILITY",
+    type=int,
+    default=15,
+    min=-20,
+    max=20,
+)
+
+GameRule(
     name="RULE_SHIP_PART_BASED_UPKEEP",
     description="RULE_SHIP_PART_BASED_UPKEEP_DESC",
     category="BALANCE",
