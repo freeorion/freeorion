@@ -677,7 +677,6 @@ void ShipDesign::BuildStatCaches() {
 
     // ensure tags are unique and copy into this->m_tags
     std::sort(tags.begin(), tags.end());
-    auto last = std::unique(tags.begin(), tags.end());
 
     // compile concatenated tags into contiguous storage
     // TODO: transform_reduce when available on all platforms...

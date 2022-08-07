@@ -136,6 +136,7 @@ namespace {
             // shouldn't be possible to instantiate with this block enabled, but if so,
             // try to generate some useful compiler error messages to indicate what
             // type MappedObjectType is
+            // TODO: Unused alias?
             using GenerateCompileError = typename MappedObjectType::not_a_member_zi23tg;
             return false;
         }

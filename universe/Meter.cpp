@@ -55,7 +55,6 @@ namespace {
 }
 
 Meter::ToCharsArrayT Meter::ToChars() const {
-    using internal_meter_t = decltype(cur);
     static constexpr auto max_val = std::numeric_limits<int>::max();
     static_assert(max_val < Pow(10LL, 10LL)); // ensure serialized form of int can fit in 11 digits
     static_assert(max_val > Pow(10, 9));

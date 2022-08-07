@@ -397,7 +397,7 @@ namespace {
 #else
         int chars_consumed = 0;
         const char* next = buffer.data();
-        auto matched = sscanf(next, "%u%n", &count, &chars_consumed);
+        auto matched = sscanf(next, "%lu%n", &count, &chars_consumed);
         if (matched < 1)
             return;
 
