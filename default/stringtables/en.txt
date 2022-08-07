@@ -264,13 +264,16 @@ TEST
 Test
 
 BALANCE
-Balance
+Balance:Misc
 
 CONTENT
 Content
 
 MULTIPLAYER
 Multiplayer
+
+BALANCE_STABILITY
+Balance:Stability
 
 
 ##
@@ -7172,7 +7175,7 @@ NEXT_TOWARDS_ORIGINAL_TYPE
 Next Towards Original Planet Type
 
 PLANET_SIZE
-Planet Size
+Balance:Planet
 
 PLANET_ENVIRONMENT
 Planet Environment

@@ -146,11 +146,11 @@ GameRule(
 GameRule(
     name="RULE_BASELINE_PLANET_STABILITY",
     description="RULE_BASELINE_PLANET_STABILITY_DESC",
-    category="BALANCE",
-    type=float,
-    default=0.0,
-    min=-20.0,
-    max=20.0,
+    category="BALANCE_STABILITY",
+    type=int,
+    default=0,
+    min=-20,
+    max=20,
 )
 
 GameRule(
