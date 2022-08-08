@@ -5285,7 +5285,7 @@ SPECIES_THAT_LIKE
 '''Espèces qui aiment : '''
 
 SPECIES_THAT_DISLIKE
-'''Espèces qui n'aiment pas : '''
+'''Espèces qui détestent : '''
 
 ENC_BUILDING_TYPE
 Type de Structures
@@ -8853,7 +8853,7 @@ Ils émettent tellement d'ondes négatives, qu'ils semblent attirer le feu et le
 
 Ces ondes sont si négatives, qu'elles repoussent même les Milieux bénéfiques. (Les colonies de Nightsiders repousseront un [[fieldtype FLD_NANITE_SWARM]] en approche).
 
-Lorsqu'on leur demande ce qu'ils aiment ou n'aiment pas, un Nightsider typique répondra toujours de la même manière.
+Lorsqu'on leur demande ce qu'ils aiment ou détestent, un Nightsider typique répondra toujours de la même manière.
 
 Question: Aimeriez-vous rejoindre notre [[buildingtype BLD_INTERSPECIES_ACADEMY]]?
 Nightsider: Bien sûr, pourquoi pas, montrez-nous toutes les espèces organiques qui s'y rassemblent. On viendra peut-être même la visiter une de ces nuits.
@@ -8910,7 +8910,14 @@ Préfèrent les Planètes [[PT_BARREN]]s.
 
 SP_TRENCHERS_DESC  # translated
 '''Description:
-À venir.
+Les Trenchers sont une énigme pour toute la galaxie. Qui les a conçus? Pourquoi creusent-ils en permanence des tranchées en forme de spirale? Les théories sont nombreuses: "Ces tranchées sont une forme insondable de communication" ou bien "Ces formes et motifs ont une importance religieuse pour les Trenchers". En réalité, le mystère reste entier.
+
+Monde Natal:
+Le monde des Trenchers est une planète stérile et totalement plate, à l'exception des tranchées complexes creusées par ses habitants, ainsi qu'une chaîne de collines artificielles formées par les énormes quantités de terre extraites par les Trenchers. Leur monde est presque totalement dépourvu de vie végétale, exceptée une mousse endémique aux couleurs irisées, recouvrant les parois des tranchées.
+
+Société:
+Très peu de données sont disponibles concernant la structure sociale des Trenchers. Rien ne semble les intéresser, hormis creuser des tranchées et construire de nouveaux ouvriers. D'étranges rumeurs et informations mentionnent que les Trenchers peuvent se rassembler pour tournoyer tous ensemble sur leurs roues, dans ce qui s'apparente à une sorte de danse rituelle collective. Cependant, personne n'a été en mesure de prouver l'existence de ce comportement. La plupart des experts ont donc rejeté ces rapports résultant probablement des effets secondaires indésirables dûs à la consommation de la plante locale.
+
 <img src="species/trenchers.png"></img>
 '''
 
@@ -11225,6 +11232,26 @@ DESC_SPECIES
 DESC_SPECIES_NOT
 ''' n'hébergeant pas l'espèce %1%'''
 
+# %1% textual decription of the species.
+# %2% description of content liked
+DESC_SPECIES_LIKES
+''' quand l'espèce %1% aime %2%'''
+
+# %1% textual decription of the species.
+# %2% description of content liked
+DESC_SPECIES_LIKES_NOT
+''' quand l'espèce %1% n'aime pas %2%'''
+
+# %1% textual decription of the species.
+# %2% description of content liked
+DESC_SPECIES_DISLIKES
+''' quand l'espèce %1% déteste %2%'''
+
+# %1% textual decription of the species.
+# %2% description of content disliked
+DESC_SPECIES_DISLIKES_NOT
+''' quand l'espèce %1% ne déteste pas %2%'''
+
 # %1% name of the empire that enqueued items.
 # %2% textual description of the lower limit for the number of enqueued items.
 # %3% textual description of the upper limit for the number of enqueued items.
@@ -12113,11 +12140,15 @@ PLC_RACIAL_PURITY
 Pureté Raciale
 
 PLC_RACIAL_PURITY_DESC
-'''Les planètes abritant des espèces différentes de celle dirigeant la Capitale sont soumises à diverses pénalités.
+'''Accorde un bénéfice aux empires à espèce unique, mais pénalise les espèces autres que celle dirigeant la Capitale.
 
-Les planètes peuplées par d'autres espèces subissent des pénalités.
+Les planètes peuplées par des espèces différentes de celle de la Capitale subissent diverses pénalités:
+• Diminue la [[metertype METER_TARGET_HAPPINESS]] de [[value PLC_RACIAL_PURITY_TARGET_HAPPINESS_FLAT]]
+• Diminue la [[metertype METER_TARGET_INFLUENCE]] de [[value PLC_RACIAL_PURITY_TARGET_HAPPINESS_FLAT]]
+• Diminue la [[metertype METER_TARGET_RESEARCH]] de [[value PLC_RACIAL_PURITY_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]]
+• Diminue la [[metertype METER_TARGET_INDUSTRY]] de [[value PLC_RACIAL_PURITY_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]]
 
-Permet la construction de [[buildingtype BLD_CONC_CAMP]].'''
+Permet la construction de la structure [[buildingtype BLD_CONC_CAMP]].'''
 
 PLC_RACIAL_PURITY_SHORT_DESC
 Favorise l'espèce de la Capitale
@@ -12237,21 +12268,21 @@ PLC_CONFORMANCE
 Conformité
 
 PLC_CONFORMANCE_DESC
-'''• Réduit l'impact de ce que n'aime pas une espèce (structures, Politiques, ou Focus) sur la [[metertype METER_HAPPINESS]] planétaire (x[[value PLC_CONFORMANCE_DISLIKE_FACTOR]]).
+'''• Réduit l'impact de ce que déteste une espèce (structures, Politiques, ou Focus) sur la [[metertype METER_HAPPINESS]] planétaire (x[[value PLC_CONFORMANCE_DISLIKE_FACTOR]]).
 • Augmente la [[metertype METER_TARGET_HAPPINESS]] de [[value PLC_CONFORMANCE_STABILITY_BONUS_FLAT]].'''
 
 PLC_CONFORMANCE_SHORT_DESC
-Réduit les effets de ce que n'aime pas une espèce et augmente la Stabilité
+Réduit les effets de ce que déteste une espèce et augmente la Stabilité
 
 PLC_LIBERTY
 Liberté
 
 PLC_LIBERTY_DESC
-'''• Augmente l'impact de ce que n'aime pas une espèce (structures, Politiques, ou Focus) sur la [[metertype METER_HAPPINESS]] planétaire (x[[value PLC_LIBERTY_DISLIKE_FACTOR]]).
+'''• Augmente l'impact de ce que déteste une espèce (structures, Politiques, ou Focus) sur la [[metertype METER_HAPPINESS]] planétaire (x[[value PLC_LIBERTY_DISLIKE_FACTOR]]).
 • Augmente la [[metertype METER_TARGET_RESEARCH]] sur les planètes en Focus Recherche ayant une [[metertype METER_HAPPINESS]] supérieure à [[value PLC_LIBERTY_MIN_STABILITY]]. L'augmentation est de [[value PLC_LIBERTY_RESEARCH_BONUS_SCALING]] par Population, multipliée par combien la Stabilité est supérieure à [[value PLC_LIBERTY_MIN_STABILITY]], jusqu'à un maximum de [[value PLC_LIBERTY_MAX_STABILITY]].'''
 
 PLC_LIBERTY_SHORT_DESC
-Augmente les effets de ce que n'aime pas une espèce ainsi que la Recherche
+Augmente les effets de ce que déteste une espèce ainsi que la Recherche
 
 PLC_TRAFFIC_CONTROL
 Gestion du Trafic
@@ -12299,7 +12330,7 @@ PLC_CAPITAL_MARKETS
 Marchés Capitaux
 
 PLC_CAPITAL_MARKETS_DESC
-'''• Les planètes disposant d'une Particularité de ressources de luxe et réglées sur le Focus Influence, exporteront cette ressource vers les planètes reliées par lignes d'[[metertype METER_SUPPLY]]. Cela améliore de [[value SPECIAL_CAPITAL_MARKETS_STABILITY_FOCUS_BONUS]] la [[metertype METER_HAPPINESS]] des planètes peuplées d'espèces appréciant cette ressource.
+'''• Les planètes disposant d'une Particularité de ressources de luxe et réglées sur le Focus Influence, exporteront cette ressource vers les planètes reliées par lignes d'[[metertype METER_SUPPLY]]. Cela améliore de [[value SPECIAL_CAPITAL_MARKETS_STABILITY_FOCUS_BONUS]] la [[metertype METER_HAPPINESS]] des planètes peuplées d'espèces aimant cette ressource.
 • Augmente la [[metertype METER_TARGET_INFLUENCE]] des planètes en Focus Influence ayant une [[metertype METER_HAPPINESS]] au moins égale à [[value CAPITAL_MARKETS_INFLUENCE_MIN_STABILITY]], de [[value CAPITAL_MARKETS_INFLUENCE_BONUS_SCALING]] par la valeur la plus faible entre l'[[metertype METER_CONSTRUCTION]] et la [[metertype METER_POPULATION]].
 • Augmente le taux de progression ou de régression de l'[[metertype METER_INFLUENCE]] et de la [[metertype METER_HAPPINESS]] de [[value PLC_CAPITAL_MARKETS_INFLUENCE_RATE]] / tour pour atteindre la valeur de la [[metertype METER_TARGET_INFLUENCE]] ou de la [[metertype METER_TARGET_HAPPINESS]].
 • Réduit la [[metertype METER_TARGET_HAPPINESS]] sur les planètes habitées appartenant à l'empire de [[value CAPITAL_MARKETS_DEBT_INSTABILITY]] fois la valeur de la dette d'Influence de l'empire.'''
@@ -12311,7 +12342,7 @@ PLC_BLACK_MARKET
 Marchés Noirs
 
 PLC_BLACK_MARKET_DESC
-La [[metertype METER_TARGET_INFLUENCE]] des planètes avec une [[metertype METER_HAPPINESS]] de [[value PLC_BLACK_MARKET_MAX_STABILITY]] ou moins, et étant réglées sur le Focus Influence, augmentera de [[value SPECIAL_BLACK_MARKET_INFLUENCE_FOCUS_BONUS]] pour chaque planète reliées par ligne d'[[metertype METER_SUPPLY]] et disposant d'une Particularité de ressources de luxe, qu'apprécie la population de la planète en Focus Influence.
+La [[metertype METER_TARGET_INFLUENCE]] des planètes avec une [[metertype METER_HAPPINESS]] de [[value PLC_BLACK_MARKET_MAX_STABILITY]] ou moins, et étant réglées sur le Focus Influence, augmentera de [[value SPECIAL_BLACK_MARKET_INFLUENCE_FOCUS_BONUS]] pour chaque planète reliées par ligne d'[[metertype METER_SUPPLY]] et disposant d'une Particularité de ressources de luxe appréciée par la population de la planète en Focus Influence.
 
 PLC_BLACK_MARKET_SHORT_DESC
 Améliore l'Influence selon les ressources
@@ -17121,7 +17152,7 @@ Aime la Politique %2% de %1%
 # %1% name of empire
 # %2% name of policy
 DISLIKES_POLICY_LABEL
-N'aime pas la Politique %2% de %1%
+Déteste la Politique %2% de %1%
 
 # %1% name of planet
 # %2% name of building
@@ -17131,7 +17162,7 @@ Aime la structure %2% sur %1%
 # %1% name of planet
 # %2% name of building
 DISLIKES_BUILDING_LABEL
-N'aime pas la structure %2% sur %1%
+Déteste la structure %2% sur %1%
 
 # %1% name of planet
 # %2% name of species on planet (not the focus!)
@@ -17141,7 +17172,7 @@ Aime le Focus sur %1%
 # %1% name of planet
 # %2% name of species on planet (not the focus!)
 DISLIKES_FOCUS_LABEL
-N'aime pas le Focus sur %1%
+Déteste le Focus sur %1%
 
 # %1% name of planet
 # %2% name of special
@@ -17151,7 +17182,7 @@ Aime %2% sur %1%
 # %1% name of planet
 # %2% name of special
 DISLIKES_SPECIAL_LABEL
-N'aime pas %2% sur %1% 
+Déteste %2% sur %1% 
 
 # %1% name of planet
 # %2% name of species on planet
@@ -17628,7 +17659,7 @@ LIKES
 '''Aime : '''
 
 DISLIKES
-'''N'aime pas : '''
+'''Déteste : '''
 
 ROBOTIC_INTERFACE_EFFECT
 Réseau d'équipage robotique
