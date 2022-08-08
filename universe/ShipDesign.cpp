@@ -675,8 +675,10 @@ void ShipDesign::BuildStatCaches() {
         { m_num_part_classes[part_class]++; }
     }
 
-    // ensure tags are unique and copy into this->m_tags
+    // ensure tags are unique
     std::sort(tags.begin(), tags.end());
+    auto last = std::unique(tags.begin(), tags.end());
+    tags.erase(last, tags.end());
 
     // compile concatenated tags into contiguous storage
     // TODO: transform_reduce when available on all platforms...
