@@ -174,6 +174,46 @@ GameRule(
 )
 
 GameRule(
+    name="RULE_GOOD_ENVIRONMENT_STABILITY",
+    description="RULE_GOOD_ENVIRONMENT_STABILITY_DESC",
+    category="BALANCE_STABILITY",
+    type=int,
+    default=2,
+    min=-20,
+    max=20,
+)
+
+GameRule(
+    name="RULE_ADEQUATE_ENVIRONMENT_STABILITY",
+    description="RULE_ADEQUATE_ENVIRONMENT_STABILITY_DESC",
+    category="BALANCE_STABILITY",
+    type=int,
+    default=1,
+    min=-20,
+    max=20,
+)
+
+GameRule(
+    name="RULE_POOR_ENVIRONMENT_STABILITY",
+    description="RULE_POOR_ENVIRONMENT_STABILITY_DESC",
+    category="BALANCE_STABILITY",
+    type=int,
+    default=0,
+    min=-20,
+    max=20,
+)
+
+GameRule(
+    name="RULE_HOSTILE_ENVIRONMENT_STABILITY",
+    description="RULE_HOSTILE_ENVIRONMENT_STABILITY_DESC",
+    category="BALANCE_STABILITY",
+    type=int,
+    default=-1,
+    min=-20,
+    max=20,
+)
+
+GameRule(
     name="RULE_SHIP_PART_BASED_UPKEEP",
     description="RULE_SHIP_PART_BASED_UPKEEP_DESC",
     category="BALANCE",
