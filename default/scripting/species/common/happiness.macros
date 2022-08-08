@@ -70,6 +70,8 @@ INDEPENDENT_HAPPINESS
 
 COMMON_HAPPINESS_EFFECTS
 '''
+        [[ENVIRONMENT_STABILITY_MODIFIER]]
+
         EffectsGroup    // increase or decrease 1 per turn towards target
             scope = Source
             activation = And [
@@ -190,6 +192,58 @@ STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY
             ]
             accountinglabel = "CAPITAL_DISCONNECTION_LABEL"
             effects = SetTargetHappiness value = Value - (NamedReal name = "DISCONNECTED_FROM_CAPITAL_AND_REGIONAL_ADMIN_STABILITY_PENALTY" value = 10)
+'''
+
+ENVIRONMENT_STABILITY_MODIFIER
+'''     EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = Uninhabitable
+                ((GameRule name = "RULE_HOSTILE_ENVIRONMENT_STABILITY") != 0)
+            ]
+            accountinglabel = "UNINHABTIABLE_ENVIRONMENT_STABILITY_LABEL"
+            effects = SetTargetHappiness value = Value + (GameRule name = "RULE_HOSTILE_ENVIRONMENT_STABILITY")
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = Hostile
+                ((GameRule name = "RULE_HOSTILE_ENVIRONMENT_STABILITY") != 0)
+            ]
+            accountinglabel = "HOSTILE_ENVIRONMENT_STABILITY_LABEL"
+            effects = SetTargetHappiness value = Value + (GameRule name = "RULE_HOSTILE_ENVIRONMENT_STABILITY")
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = Poor
+                ((GameRule name = "RULE_POOR_ENVIRONMENT_STABILITY") != 0)
+            ]
+            accountinglabel = "POOR_ENVIRONMENT_STABILITY_LABEL"
+            effects = SetTargetHappiness value = Value + (GameRule name = "RULE_POOR_ENVIRONMENT_STABILITY")
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = Adequate
+                ((GameRule name = "RULE_ADEQUATE_ENVIRONMENT_STABILITY") != 0)
+            ]
+            accountinglabel = "ADEQUATE_ENVIRONMENT_STABILITY_LABEL"
+            effects = SetTargetHappiness value = Value + (GameRule name = "RULE_ADEQUATE_ENVIRONMENT_STABILITY")
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = Good
+                ((GameRule name = "RULE_GOOD_ENVIRONMENT_STABILITY") != 0)
+            ]
+            accountinglabel = "GOOD_ENVIRONMENT_STABILITY_LABEL"
+            effects = SetTargetHappiness value = Value + (GameRule name = "RULE_GOOD_ENVIRONMENT_STABILITY")
 '''
 
 #include "/scripting/common/opinion.macros"
