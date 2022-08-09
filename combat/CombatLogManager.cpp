@@ -69,12 +69,12 @@ CombatLog::CombatLog(const CombatInfo& combat_info) :
     turn(combat_info.turn),
     system_id(combat_info.system_id),
     empire_ids(combat_info.empire_ids),
-    damaged_object_ids(combat_info.damaged_object_ids),
-    destroyed_object_ids(combat_info.destroyed_object_ids),
+    damaged_object_ids(combat_info.damaged_object_ids.begin(), combat_info.damaged_object_ids.end()),
+    destroyed_object_ids(combat_info.destroyed_object_ids.begin(), combat_info.destroyed_object_ids.end()),
     combat_events(combat_info.combat_events)
 {
     // compile all remaining and destroyed objects' ids
-    object_ids = combat_info.destroyed_object_ids;
+    object_ids.insert(combat_info.destroyed_object_ids.begin(), combat_info.destroyed_object_ids.end());
     for (const auto& obj : combat_info.objects.allRaw()) {
         object_ids.insert(obj->ID());
         participant_states[obj->ID()] = CombatParticipantState(*obj);
