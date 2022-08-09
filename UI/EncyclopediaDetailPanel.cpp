@@ -1587,21 +1587,20 @@ namespace {
 
         std::string slots_list;
         for (auto slot_type : {ShipSlotType::SL_EXTERNAL, ShipSlotType::SL_INTERNAL, ShipSlotType::SL_CORE})
-            slots_list += UserString(to_string(slot_type)) + ": " + ToChars(hull->NumSlots(slot_type)) + "\n";
-        detailed_description += UserString(hull->Description()) + "\n\n" + str(FlexibleFormat(UserString("HULL_DESC"))
-            % hull->Speed()
-            % hull->Fuel()
-            % hull->Stealth()
-            % hull->Structure()
-            % slots_list);
+            slots_list.append(UserString(to_string(slot_type))).append(": ")
+                      .append(ToChars(hull->NumSlots(slot_type))).append("\n");
+        detailed_description.append(UserString(hull->Description())).append("\n\n")
+                            .append(str(FlexibleFormat(UserString("HULL_DESC"))
+                                        % hull->Speed() % hull->Fuel() % hull->Stealth()
+                                        % hull->Structure() % slots_list));
 
         static std::vector<std::string> hull_tags_to_describe = UserStringList("FUNCTIONAL_HULL_DESC_TAGS_LIST");
         for (const std::string& tag : hull_tags_to_describe) {
             if (hull->HasTag(tag)) {
                 if (UserStringExists("HULL_DESC_" + tag)) {
-                    detailed_description += "\n\n" + UserString("HULL_DESC_" + tag);
+                    detailed_description.append("\n\n").append(UserString("HULL_DESC_" + tag));
                 } else {
-                    detailed_description += "\n\n" + tag;
+                    detailed_description.append("\n\n").append(tag);
                 }
             }
         }
@@ -1614,14 +1613,14 @@ namespace {
 
         auto unlocked_by_techs = TechsThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_SHIP_HULL, item_name));
         if (!unlocked_by_techs.empty()) {
-            detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
+            detailed_description.append("\n\n").append(UserString("ENC_UNLOCKED_BY"));
             detailed_description.append(LinkList(unlocked_by_techs));
-            detailed_description += "\n\n";
+            detailed_description.append("\n\n");
         }
 
         auto unlocked_by_policies = PoliciesThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_SHIP_HULL, item_name));
         if (!unlocked_by_policies.empty()) {
-            detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
+            detailed_description.append("\n\n").append(UserString("ENC_UNLOCKED_BY"));
             detailed_description.append(LinkList(unlocked_by_policies));
         }
 
@@ -1629,20 +1628,20 @@ namespace {
         auto species_that_like = GetSpeciesManager().SpeciesThatLike(item_name);
         auto species_that_dislike = GetSpeciesManager().SpeciesThatDislike(item_name);
         if (!species_that_like.empty()) {
-            detailed_description += "\n\n" + UserString("SPECIES_THAT_LIKE");
+            detailed_description.append("\n\n").append(UserString("SPECIES_THAT_LIKE"));
             detailed_description.append(LinkList(species_that_like));
         }
         if (!species_that_dislike.empty()) {
-            detailed_description += "\n\n" + UserString("SPECIES_THAT_DISLIKE");
+            detailed_description.append("\n\n").append(UserString("SPECIES_THAT_DISLIKE"));
             detailed_description.append(LinkList(species_that_dislike));
         }
 
         if (GetOptionsDB().Get<bool>("resource.effects.description.shown")) {
-            detailed_description += "\n\n";
+            detailed_description.append("\n\n");
             if (hull->Location())
-                detailed_description += "\n" + hull->Location()->Dump();
+                detailed_description.append("\n").append(hull->Location()->Dump());
             if (!hull->Effects().empty())
-                detailed_description += "\n" + Dump(hull->Effects());
+                detailed_description.append("\n").append(Dump(hull->Effects()));
         }
         detailed_description.append("\n");
     }
