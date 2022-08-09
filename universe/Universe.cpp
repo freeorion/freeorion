@@ -26,7 +26,6 @@
 #include "System.h"
 #include "Tech.h"
 #include "UniverseObject.h"
-#include "UniverseObjectVisitors.h"
 #include "UnlockableItem.h"
 #include "ValueRef.h"
 #include "../Empire/EmpireManager.h"
@@ -2069,10 +2068,11 @@ std::map<int, std::map<std::pair<double, double>, float>>
 Universe::GetEmpiresPositionDetectionRanges(const ObjectMap& objects) const
 {
     std::map<int, std::map<std::pair<double, double>, float>> retval;
+    auto not_destroyed = [this](const UniverseObject* obj) { return !m_destroyed_object_ids.count(obj->ID()); };
 
-    CheckObjects(objects.find<Planet>(NotInSetVisitor(m_destroyed_object_ids)), retval);
-    CheckObjects(objects.find<Ship>(NotInSetVisitor(m_destroyed_object_ids)), retval);
-    //CheckObjects(objects.find<Building>(NotInSetVisitor(m_destroyed_object_ids), retval); // as of this writing, buildings don't have detection meters
+    CheckObjects(objects.find<Planet>(not_destroyed), retval);
+    CheckObjects(objects.find<Ship>(not_destroyed), retval);
+    //CheckObjects(objects.find<Building>(not_destroyed), retval); // as of this writing, buildings don't have detection meters
 
     return retval;
 }
@@ -2082,10 +2082,12 @@ Universe::GetEmpiresPositionDetectionRanges(const ObjectMap& objects,
                                             const std::unordered_set<int>& exclude_ids) const
 {
     std::map<int, std::map<std::pair<double, double>, float>> retval;
+    auto not_destroyed_or_excluded = [this, &exclude_ids](const UniverseObject* obj)
+    { return !m_destroyed_object_ids.count(obj->ID()) && !exclude_ids.count(obj->ID()); };
 
-    CheckObjects(objects.find<Planet>(NotInSetsVisitor(m_destroyed_object_ids, exclude_ids)), retval);
-    CheckObjects(objects.find<Ship>(NotInSetsVisitor(m_destroyed_object_ids, exclude_ids)), retval);
-    //CheckObjects(objects.find<Building>(NotInSetsVisitor(m_destroyed_object_ids, exclude_ids)), retval); // as of this writing, buildings don't have detection meters
+    CheckObjects(objects.find<Planet>(not_destroyed_or_excluded), retval);
+    CheckObjects(objects.find<Ship>(not_destroyed_or_excluded), retval);
+    //CheckObjects(objects.find<Building>(not_destroyed_or_excluded), retval); // as of this writing, buildings don't have detection meters
 
     return retval;
 }
@@ -2557,10 +2559,13 @@ namespace {
         // ensure systems on either side of a starlane along which a fleet is
         // moving are at least basically visible, so that the starlane itself can /
         // will be visible
-        for (const auto& fleet : objects.find<const Fleet>(MovingFleetVisitor())) {
-            if (fleet->Unowned() || fleet->SystemID() == INVALID_OBJECT_ID)
-            { continue; }
+        auto moving_owned_insystem_fleet = [](const Fleet* fleet) {
+            return fleet->FinalDestinationID() != INVALID_OBJECT_ID &&
+                fleet->SystemID() == INVALID_OBJECT_ID &&
+                !fleet->Unowned();
+        };
 
+        for (const auto* fleet : objects.findRaw<const Fleet>(moving_owned_insystem_fleet)) {
             int prev = fleet->PreviousSystemID();
             int next = fleet->NextSystemID();
 

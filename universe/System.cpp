@@ -535,16 +535,14 @@ std::map<int, bool> System::VisibleStarlanesWormholes(int empire_id, const Unive
     // check if any fleets owned by empire are moving along a starlane connected to this system...
 
     // get moving fleets owned by empire
-    std::vector<const Fleet*> moving_empire_fleets;
-    moving_empire_fleets.reserve(objects.size<Fleet>());
-    static const MovingFleetVisitor moving_fleet_visitor;
-    for (auto& object : objects.find<Fleet>(moving_fleet_visitor)) {
-        if (object && object->ObjectType() == UniverseObjectType::OBJ_FLEET && object->OwnedBy(empire_id))
-            moving_empire_fleets.push_back(object.get());
-    }
+    auto is_owned_moving_fleet = [empire_id](const Fleet* fleet) {
+        return fleet->FinalDestinationID() != INVALID_OBJECT_ID &&
+            fleet->SystemID() == INVALID_OBJECT_ID &&
+            fleet->OwnedBy(empire_id);
+    };
 
     // add any lanes an owned fleet is moving along that connect to this system
-    for (auto* fleet : moving_empire_fleets) {
+    for (auto* fleet : objects.findRaw<const Fleet>(is_owned_moving_fleet)) {
         if (fleet->SystemID() != INVALID_OBJECT_ID) {
             ErrorLogger() << "System::VisibleStarlanesWormholes somehow got a moving fleet that had a valid system id?";
             continue;
