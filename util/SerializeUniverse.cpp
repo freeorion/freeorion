@@ -385,29 +385,29 @@ namespace {
         buffer.reserve(buffer_size);
         ar >> make_nvp("meters", buffer);
 
-        size_t count = 0;
+        unsigned int count = 0U;
         const char* const buffer_end = buffer.c_str() + buffer.size();
 
 #if defined(__cpp_lib_to_chars)
         auto result = std::from_chars(buffer.c_str(), buffer_end, count);
-        count = std::min(count, num_meters_possible);
+        count = std::min(count, static_cast<unsigned int>(num_meters_possible));
         if (result.ec != std::errc())
             return;
         auto next{result.ptr};
 #else
         int chars_consumed = 0;
         const char* next = buffer.data();
-        auto matched = sscanf(next, "%lu%n", &count, &chars_consumed);
+        auto matched = sscanf(next, "%u%n", &count, &chars_consumed);
         if (matched < 1)
             return;
 
-        count = std::min(count, num_meters_possible);
+        count = std::min(count, static_cast<unsigned int>(num_meters_possible));
         next += chars_consumed;
 #endif
         while (std::distance(next, buffer_end) > 0 && *next == ' ')
             ++next;
 
-        for (size_t idx = 0; idx < count; ++idx) {
+        for (unsigned int idx = 0; idx < count; ++idx) {
             if (std::distance(next, buffer_end) < 7) // 7 is enough for "POP 0 0" or similar
                 return;
             auto mt = MeterTypeFromTag(std::string_view(next, 3));
