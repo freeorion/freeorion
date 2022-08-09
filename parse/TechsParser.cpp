@@ -247,6 +247,9 @@ namespace {
         }
 
         bool researchable = true;
+        if (kw.has_key("researchable")) {
+            researchable = boost::python::extract<bool>(kw["researchable"])();
+        }
 
         std::set<std::string> tags;
         auto tags_args = boost::python::extract<boost::python::list>(kw["tags"])();
