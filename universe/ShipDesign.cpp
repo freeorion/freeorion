@@ -675,22 +675,20 @@ void ShipDesign::BuildStatCaches() {
         { m_num_part_classes[part_class]++; }
     }
 
-    // ensure tags are unique
+    // collect unique tags
     std::sort(tags.begin(), tags.end());
     auto last = std::unique(tags.begin(), tags.end());
-    tags.erase(last, tags.end());
 
     // compile concatenated tags into contiguous storage
     // TODO: transform_reduce when available on all platforms...
     std::size_t tags_sz = 0;
-    for (const auto& t : tags)
-        tags_sz += t.size();
-    m_tags_concatenated.reserve(tags_sz);
+    std::for_each(tags.begin(), last, [&tags_sz](auto str) { tags_sz += str.size(); });
 
+    m_tags_concatenated.reserve(tags_sz);
     m_tags.clear();
     m_tags.reserve(tags.size());
 
-    std::for_each(tags.begin(), tags.end(), [this](auto& str) {
+    std::for_each(tags.begin(), last, [this](auto str) {
         auto next_start = m_tags_concatenated.size();
         m_tags_concatenated.append(str);
         m_tags.push_back(std::string_view{m_tags_concatenated}.substr(next_start));
