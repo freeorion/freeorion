@@ -214,6 +214,66 @@ GameRule(
 )
 
 GameRule(
+    name="RULE_TINY_SIZE_STABILITY",
+    description="RULE_TINY_SIZE_STABILITY_DESC",
+    category="BALANCE_STABILITY",
+    type=int,
+    default=2,
+    min=-20,
+    max=20,
+)
+
+GameRule(
+    name="RULE_SMALL_SIZE_STABILITY",
+    description="RULE_SMALL_SIZE_STABILITY_DESC",
+    category="BALANCE_STABILITY",
+    type=int,
+    default=1,
+    min=-20,
+    max=20,
+)
+
+GameRule(
+    name="RULE_MEDIUM_SIZE_STABILITY",
+    description="RULE_MEDIUM_SIZE_STABILITY_DESC",
+    category="BALANCE_STABILITY",
+    type=int,
+    default=0,
+    min=-20,
+    max=20,
+)
+
+GameRule(
+    name="RULE_LARGE_SIZE_STABILITY",
+    description="RULE_LARGE_SIZE_STABILITY_DESC",
+    category="BALANCE_STABILITY",
+    type=int,
+    default=-1,
+    min=-20,
+    max=20,
+)
+
+GameRule(
+    name="RULE_HUGE_SIZE_STABILITY",
+    description="RULE_HUGE_SIZE_STABILITY_DESC",
+    category="BALANCE_STABILITY",
+    type=int,
+    default=-2,
+    min=-20,
+    max=20,
+)
+
+GameRule(
+    name="RULE_GAS_GIANT_SIZE_STABILITY",
+    description="RULE_GAS_GIANT_SIZE_STABILITY_DESC",
+    category="BALANCE_STABILITY",
+    type=int,
+    default=0,
+    min=-20,
+    max=20,
+)
+
+GameRule(
     name="RULE_SHIP_PART_BASED_UPKEEP",
     description="RULE_SHIP_PART_BASED_UPKEEP_DESC",
     category="BALANCE",

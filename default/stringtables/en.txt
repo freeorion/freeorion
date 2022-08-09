@@ -1343,6 +1343,42 @@ Stability Modifier for Hostile/Uninhabitable Environment
 RULE_HOSTILE_ENVIRONMENT_STABILITY_DESC
 Modifier of [[METER_HAPPINESS]] for Hostile/Uninhabitable Environment.
 
+RULE_TINY_SIZE_STABILITY
+Stability Modifier for Tiny Planets
+
+RULE_TINY_SIZE_STABILITY_DESC
+Modifier of [[METER_HAPPINESS]] for Tiny Planets.
+
+RULE_SMALL_SIZE_STABILITY
+Stability Modifier for Small Planets
+
+RULE_SMALL_SIZE_STABILITY_DESC
+Modifier of [[METER_HAPPINESS]] for Small Planets.
+
+RULE_MEDIUM_SIZE_STABILITY
+Stability Modifier for Medium Planets
+
+RULE_MEDIUM_SIZE_STABILITY_DESC
+Modifier of [[METER_HAPPINESS]] for Medium Planets.
+
+RULE_LARGE_SIZE_STABILITY
+Stability Modifier for Large Planet
+
+RULE_LARGE_SIZE_STABILITY_DESC
+Modifier of [[METER_HAPPINESS]] for Large Planets.
+
+RULE_HUGE_SIZE_STABILITY
+Stability Modifier for Huge Planets
+
+RULE_HUGE_SIZE_STABILITY_DESC
+Modifier of [[METER_HAPPINESS]] for Huge Planets.
+
+RULE_GAS_GIANT_SIZE_STABILITY
+Stability Modifier for Gas Giants
+
+RULE_GAS_GIANT_SIZE_STABILITY_DESC
+Modifier of [[METER_HAPPINESS]] for Gas Giants.
+
 RULE_MINIMUM_MONSTER_DISTANCE_CAPITAL
 Minimum distance monsters start from Capital
 
@@ -17622,6 +17658,24 @@ HUGE_PLANET_LABEL
 Huge Planet
 
 GAS_GIANT_LABEL
+Gas Giant
+
+TINY_PLANET_STABILITY_LABEL
+Tiny Planet
+
+SMALL_PLANET_STABILITY_LABEL
+Small Planet
+
+MEDIUM_PLANET_STABILITY_LABEL
+Medium Planet
+
+LARGE_PLANET_STABILITY_LABEL
+Large Planet
+
+HUGE_PLANET_STABILITY_LABEL
+Huge Planet
+
+GAS_GIANT_STABILITY_LABEL
 Gas Giant
 
 HOMEWORLD_SUPPLY
