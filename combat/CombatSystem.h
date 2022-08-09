@@ -60,9 +60,6 @@ private:
     void    GetCombatEventsToSerialize(          std::vector<CombatEventPtr>&           filtered_combat_events,             int encoding_empire) const;
 
     void    InitializeObjectVisibility();
-
-    template <typename Archive>
-    friend void serialize(Archive&, CombatInfo&, unsigned int const);
 };
 
 /** Auto-resolves a battle. */
