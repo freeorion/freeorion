@@ -113,71 +113,6 @@ float CombatInfo::GetMonsterDetection() const {
     return monster_detection;
 }
 
-void CombatInfo::GetEmpireIdsToSerialize(std::set<int>& filtered_empire_ids, int encoding_empire) const {
-    if (encoding_empire == ALL_EMPIRES) {
-        filtered_empire_ids = this->empire_ids;
-        return;
-    }
-    // TODO: include only empires that the encoding empire knows are present in the system / battle
-    filtered_empire_ids = this->empire_ids; // for now, include all empires involved in battle
-}
-
-void CombatInfo::GetObjectsToSerialize(ObjectMap& filtered_objects, int encoding_empire) const {
-    if (&filtered_objects == &this->objects)
-        return;
-
-    filtered_objects.clear();
-    filtered_objects.Copy(this->objects, this->universe); // copy everything in combat info
-    // TODO: Actually filter based on the encoding empire and what visibility it has of objects
-
-    DebugLogger() << "CombatInfo::GetObjectsToSerialize: input: " << this->objects.size()
-                  << "  copied: " << filtered_objects.size();
-}
-
-void CombatInfo::GetDamagedObjectsToSerialize(std::set<int>& filtered_damaged_objects,
-                                              int encoding_empire) const
-{
-    if (encoding_empire == ALL_EMPIRES) {
-        filtered_damaged_objects = this->damaged_object_ids;
-        return;
-    }
-    // TODO: decide if some filtering is needed for damaged objects... it may not be.
-    filtered_damaged_objects = this->damaged_object_ids;
-}
-
-void CombatInfo::GetDestroyedObjectsToSerialize(std::set<int>& filtered_destroyed_objects,
-                                                int encoding_empire) const
-{
-    if (encoding_empire == ALL_EMPIRES) {
-        filtered_destroyed_objects = this->destroyed_object_ids;
-        return;
-    }
-    // TODO: decide if some filtering is needed for destroyed objects... it may not be.
-    filtered_destroyed_objects = this->destroyed_object_ids;
-}
-
-void CombatInfo::GetDestroyedObjectKnowersToSerialize(std::map<int, std::set<int>>&
-                                                      filtered_destroyed_object_knowers,
-                                                      int encoding_empire) const
-{
-    if (encoding_empire == ALL_EMPIRES) {
-        filtered_destroyed_object_knowers = this->destroyed_object_knowers;
-        return;
-    }
-    // TODO: decide if some filtering is needed for which empires know about which
-    // other empires know which objects have been destroyed during the battle.
-    filtered_destroyed_object_knowers = this->destroyed_object_knowers;
-}
-
-void CombatInfo::GetCombatEventsToSerialize(std::vector<CombatEventPtr>& filtered_combat_events,
-                                            int encoding_empire) const
-{ filtered_combat_events = this->combat_events; }
-
-void CombatInfo::GetEmpireObjectVisibilityToSerialize(Universe::EmpireObjectVisibilityMap&
-                                                      filtered_empire_object_visibility,
-                                                      int encoding_empire) const
-{ filtered_empire_object_visibility = this->empire_object_visibility; }
-
 namespace {
     // collect detection strengths of all empires (and neutrals) in \a combat_info
     std::map<int, float> GetEmpiresDetectionStrengths(const CombatInfo& combat_info) {
@@ -510,7 +445,7 @@ namespace {
         if (power <= 0.0f)
             return;
 
-        std::set<int>& damaged_object_ids = combat_info.damaged_object_ids;
+        auto& damaged_object_ids = combat_info.damaged_object_ids;
 
         const ShipDesign* attacker_design = universe.GetShipDesign(attacker->DesignID());
         if (!attacker_design)
@@ -611,7 +546,7 @@ namespace {
         if (attacker_damage)
             power = attacker_damage->Current();   // planet "Defense" meter is actually its attack power
 
-        std::set<int>& damaged_object_ids = combat_info.damaged_object_ids;
+        auto& damaged_object_ids = combat_info.damaged_object_ids;
 
         Meter* target_structure = target->UniverseObject::GetMeter(MeterType::METER_STRUCTURE);
         if (!target_structure) {
@@ -654,7 +589,7 @@ namespace {
         if (attacker_damage)
             power = attacker_damage->Current();   // planet "Defense" meter is actually its attack power
 
-        std::set<int>& damaged_object_ids = combat_info.damaged_object_ids;
+        auto& damaged_object_ids = combat_info.damaged_object_ids;
 
         Meter* target_shield = target->GetMeter(MeterType::METER_SHIELD);
         Meter* target_defense = target->UniverseObject::GetMeter(MeterType::METER_DEFENSE);
@@ -752,7 +687,7 @@ namespace {
 
         float power = attacker->Damage();
 
-        std::set<int>& damaged_object_ids = combat_info.damaged_object_ids;
+        auto& damaged_object_ids = combat_info.damaged_object_ids;
 
         Meter* target_structure = target->UniverseObject::GetMeter(MeterType::METER_STRUCTURE);
         if (!target_structure) {
@@ -794,7 +729,7 @@ namespace {
 
         float power = attacker->Damage();
 
-        std::set<int>& damaged_object_ids = combat_info.damaged_object_ids;
+        auto& damaged_object_ids = combat_info.damaged_object_ids;
 
         Meter* target_shield = target->GetMeter(MeterType::METER_SHIELD);
         Meter* target_defense = target->UniverseObject::GetMeter(MeterType::METER_DEFENSE);
@@ -1098,21 +1033,22 @@ namespace {
                     break;
                 }
 
-                fighter_ptr->SetID(next_fighter_id--);
+                const int new_id = next_fighter_id--;
+                fighter_ptr->SetID(new_id);
                 fighter_ptr->Rename(std::move(fighter_name));
                 combat_info.objects.insert(fighter_ptr);
-                retval.push_back(fighter_ptr->ID());
+                retval.push_back(new_id);
 
                 // add fighter to attackers (if it can attack)
                 if (damage > 0.0f) {
-                    valid_attacker_object_ids.insert(fighter_ptr->ID());
-                    empire_infos[fighter_ptr->Owner()].attacker_ids.insert(fighter_ptr->ID());
-                    DebugLogger(combat) << "Added fighter id: " << fighter_ptr->ID() << " to attackers sets";
+                    valid_attacker_object_ids.insert(new_id);
+                    empire_infos[fighter_ptr->Owner()].attacker_ids.insert(new_id);
+                    DebugLogger(combat) << "Added fighter id: " << new_id << " to attackers sets";
                 }
 
                 // mark fighter visible to all empire participants
                 for (auto viewing_empire_id : combat_info.empire_ids)
-                    combat_info.empire_object_visibility[viewing_empire_id][fighter_ptr->ID()] = Visibility::VIS_PARTIAL_VISIBILITY;
+                    combat_info.empire_object_visibility[viewing_empire_id][new_id] = Visibility::VIS_PARTIAL_VISIBILITY;
             }
 
             return retval;
