@@ -71,6 +71,7 @@ INDEPENDENT_HAPPINESS
 COMMON_HAPPINESS_EFFECTS
 '''
         [[ENVIRONMENT_STABILITY_MODIFIER]]
+        [[PLANET_SIZE_STABILITY_MODIFIER]]
 
         EffectsGroup    // increase or decrease 1 per turn towards target
             scope = Source
@@ -244,6 +245,69 @@ ENVIRONMENT_STABILITY_MODIFIER
             ]
             accountinglabel = "GOOD_ENVIRONMENT_STABILITY_LABEL"
             effects = SetTargetHappiness value = Value + (GameRule name = "RULE_GOOD_ENVIRONMENT_STABILITY")
+'''
+
+PLANET_SIZE_STABILITY_MODIFIER
+'''
+       EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet size = Tiny
+                ((GameRule name = "RULE_TINY_SIZE_STABILITY") != 0)
+            ]
+            accountinglabel = "TINY_PLANET_STABILITY_LABEL"
+            effects = SetTargetHappiness value = Value + (GameRule name = "RULE_TINY_SIZE_STABILITY")
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet size = Small
+                ((GameRule name = "RULE_SMALL_SIZE_STABILITY") != 0)
+            ]
+            accountinglabel = "SMALL_PLANET_STABILITY_LABEL"
+            effects = SetTargetHappiness value = Value + (GameRule name = "RULE_SMALL_SIZE_STABILITY")
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet size = Medium
+                ((GameRule name = "RULE_MEDIUM_SIZE_STABILITY") != 0)
+            ]
+            accountinglabel = "SMALL_MEDIUM_STABILITY_LABEL"
+            effects = SetTargetHappiness value = Value + (GameRule name = "RULE_MEDIUM_SIZE_STABILITY")
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet size = Large
+                ((GameRule name = "RULE_LARGE_SIZE_STABILITY") != 0)
+            ]
+            accountinglabel = "LARGE_PLANET_STABILITY_LABEL"
+            effects = SetTargetHappiness value = Value + (GameRule name = "RULE_LARGE_SIZE_STABILITY")
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet size = Huge
+                ((GameRule name = "RULE_HUGE_SIZE_STABILITY") != 0)
+            ]
+            accountinglabel = "HUGE_PLANET_STABILITY_LABEL"
+            effects = SetTargetHappiness value = Value + (GameRule name = "RULE_HUGE_SIZE_STABILITY")
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet type = GasGiant
+                ((GameRule name = "RULE_GAS_GIANT_SIZE_STABILITY") != 0)
+            ]
+            accountinglabel = "GAS_GIANT_STABILITY_LABEL"
+            effects = SetTargetHappiness value = Value + (GameRule name = "RULE_GAS_GIANT_SIZE_STABILITY")
 '''
 
 #include "/scripting/common/opinion.macros"
