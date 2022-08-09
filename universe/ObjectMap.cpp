@@ -400,7 +400,14 @@ void ObjectMap::CopyObject(std::shared_ptr<const UniverseObject> source,
     if (auto destination = this->get(source_id)) {
         destination->Copy(std::move(source), universe, empire_id); // there already is a version of this object present in this ObjectMap, so just update it
     } else {
-        insertCore(std::shared_ptr<UniverseObject>(source->Clone(universe)), empire_id); // this object is not yet present in this ObjectMap, so add a new UniverseObject object for it
+        bool destroyed = universe.DestroyedObjectIds().count(source_id);
+        // this object is not yet present in this ObjectMap, so add a new UniverseObject object for it
+        if (source->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+            auto plt = static_cast<const Planet*>(source.get());
+            insertCore(std::shared_ptr<Planet>(plt->Clone(universe)), destroyed);
+        } else {
+            insertCore(std::shared_ptr<UniverseObject>(source->Clone(universe)), destroyed);
+        }
     }
 }
 
@@ -416,44 +423,48 @@ int ObjectMap::HighestObjectID() const {
     return m_objects.rbegin()->first;
 }
 
-void ObjectMap::insertCore(std::shared_ptr<UniverseObject> item, int empire_id) {
-    const auto ID = item ? item->ID() : INVALID_OBJECT_ID;
-    const bool known_destroyed = (ID != INVALID_OBJECT_ID) ?
-        GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id).count(ID) : false;
+void ObjectMap::insertCore(std::shared_ptr<UniverseObject> obj, bool destroyed) {
+    if (!obj)
+        return;
+    if (obj->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+        insertCore(std::static_pointer_cast<Planet>(obj), destroyed);
+        return;
+    }
+    const auto ID = obj->ID();
 
     // can't use FOR_EACH_EXISTING_MAP with TryInsertIntoMap as all the existing map types store UniverseObject pointers
-    FOR_EACH_SPECIALIZED_MAP(TryInsertIntoMap, item);
-    if (!known_destroyed) {
-        const auto item_raw = item.get();
-        FOR_EACH_EXISTING_VEC(TryInsertIntoVec, item_raw)
-        FOR_EACH_EXISTING_MAP(TryInsertIntoMap, item)
+    FOR_EACH_SPECIALIZED_MAP(TryInsertIntoMap, obj);
+    if (!destroyed) {
+        const auto obj_raw = obj.get();
+        FOR_EACH_EXISTING_VEC(TryInsertIntoVec, obj_raw)
+        FOR_EACH_EXISTING_MAP(TryInsertIntoMap, obj)
 
         bool already_there = m_existing_objects.count(ID);
 
-        m_existing_objects[ID] = item;
+        m_existing_objects[ID] = obj;
         if (!already_there)
-            m_existing_object_vec.push_back(item.get());
+            m_existing_object_vec.push_back(obj.get());
     }
-    m_objects[ID] = std::move(item);
+    m_objects[ID] = std::move(obj);
 }
 
-void ObjectMap::insertCore(std::shared_ptr<Planet> item, int empire_id) {
-    const auto ID = item ? item->ID() : INVALID_OBJECT_ID;
-    const bool known_destroyed = (ID != INVALID_OBJECT_ID) ?
-        GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id).count(ID) : false;
+void ObjectMap::insertCore(std::shared_ptr<Planet> obj, bool destroyed) {
+    if (!obj)
+        return;
+    const auto ID = obj->ID();
 
-    m_resource_centers.insert_or_assign(ID, item);
-    m_pop_centers.insert_or_assign(ID, item);
-    m_planets.insert_or_assign(ID, item);
-    if (!known_destroyed) {
-        m_existing_resource_centers.insert_or_assign(ID, item);
-        m_existing_pop_centers.insert_or_assign(ID, item);
-        m_existing_planets.insert_or_assign(ID, item);
-        m_existing_objects.insert_or_assign(ID, item);
-        m_existing_object_vec.push_back(item.get());
-        m_existing_planet_vec.push_back(item.get());
+    m_resource_centers.insert_or_assign(ID, obj);
+    m_pop_centers.insert_or_assign(ID, obj);
+    m_planets.insert_or_assign(ID, obj);
+    if (!destroyed) {
+        m_existing_resource_centers.insert_or_assign(ID, obj);
+        m_existing_pop_centers.insert_or_assign(ID, obj);
+        m_existing_planets.insert_or_assign(ID, obj);
+        m_existing_objects.insert_or_assign(ID, obj);
+        m_existing_object_vec.push_back(obj.get());
+        m_existing_planet_vec.push_back(obj.get());
     }
-    m_objects[ID] = std::move(item);
+    m_objects[ID] = std::move(obj);
 }
 
 std::shared_ptr<UniverseObject> ObjectMap::erase(int id) {

@@ -479,7 +479,7 @@ void Universe::InsertIDCore(std::shared_ptr<UniverseObject> obj, int id) {
 
     obj->StateChangedSignal.set_combiner(UniverseObject::CombinerType{*this});
 
-    m_objects->insert(std::move(obj));
+    m_objects->insert(std::move(obj), m_destroyed_object_ids.count(id));
 }
 
 bool Universe::InsertShipDesign(ShipDesign* ship_design) {
@@ -2769,10 +2769,10 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() {
             // information about object, and historical turns on which object
             // was seen at various visibility levels.
 
-            ObjectMap&                  known_object_map = m_empire_latest_known_objects[empire_id];        // creates empty map if none yet present
-            ObjectVisibilityTurnMap&    object_vis_turn_map = m_empire_object_visibility_turns[empire_id];  // creates empty map if none yet present
-            VisibilityTurnMap&          vis_turn_map = object_vis_turn_map[object_id];                      // creates empty map if none yet present
-
+            ObjectMap&               known_object_map = m_empire_latest_known_objects[empire_id];         // creates empty map if none yet present
+            ObjectVisibilityTurnMap& object_vis_turn_map = m_empire_object_visibility_turns[empire_id];   // creates empty map if none yet present
+            VisibilityTurnMap&       vis_turn_map = object_vis_turn_map[object_id];                       // creates empty map if none yet present
+            const auto&              known_destroyed_ids = m_empire_known_destroyed_object_ids[empire_id];
 
             // update empire's latest known data about object, based on current visibility and historical visibility and knowledge of object
 
@@ -2781,7 +2781,7 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() {
                 known_obj->Copy(full_object, *this, empire_id); // already a stored version of this object for this empire.  update it, limited by visibility this empire has for this object this turn
             } else {
                 if (auto new_obj = std::shared_ptr<UniverseObject>(full_object->Clone(*this, empire_id)))   // no previously-recorded version of this object for this empire.  create a new one, copying only the information limtied by visibility, leaving the rest as default values
-                    known_object_map.insert(new_obj);
+                    known_object_map.insert(std::move(new_obj), known_destroyed_ids.count(object_id));
             }
 
             //DebugLogger() << "Empire " << empire_id << " can see object " << object_id << " with vis level " << vis;

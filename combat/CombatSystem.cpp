@@ -65,14 +65,15 @@ CombatInfo::CombatInfo(int system_id_, int turn_,
 
 
     // add system to objects in combat
-    objects.insert(std::move(system));
+    objects.insert(std::move(system), destroyed_object_ids.count(system_id));
 
     // find ships and their owners in system
     for (auto& ship : ships) {
         // add owner of ships in system to empires that have assets in this battle
         empire_ids.insert(ship->Owner());
         // add ships to objects in combat
-        objects.insert(std::move(ship));
+        const int ship_id = ship->ID();
+        objects.insert(std::move(ship), destroyed_object_ids.count(ship_id));
     }
 
     // find planets and their owners in system
@@ -81,7 +82,8 @@ CombatInfo::CombatInfo(int system_id_, int turn_,
         if (!planet->Unowned() || planet->GetMeter(MeterType::METER_POPULATION)->Initial() > 0.0f)
             empire_ids.insert(planet->Owner());
         // add planets to objects in combat
-        objects.insert(std::move(planet));
+        const int planet_id = planet->ID();
+        objects.insert(std::move(planet), destroyed_object_ids.count(planet_id));
     }
 
     InitializeObjectVisibility();
@@ -1036,7 +1038,7 @@ namespace {
                 const int new_id = next_fighter_id--;
                 fighter_ptr->SetID(new_id);
                 fighter_ptr->Rename(std::move(fighter_name));
-                combat_info.objects.insert(fighter_ptr);
+                combat_info.objects.insert(fighter_ptr, combat_info.destroyed_object_ids.count(new_id));
                 retval.push_back(new_id);
 
                 // add fighter to attackers (if it can attack)

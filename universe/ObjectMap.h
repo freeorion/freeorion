@@ -267,12 +267,15 @@ public:
     void CopyObject(std::shared_ptr<const UniverseObject> source, int empire_id,
                     const Universe& universe);
 
-    /** Adds object \a obj to the map under its ID, if it is a valid object.
-      * If there already was an object in the map with the id \a id then
-      * that object will be removed. */
+    /** Adds object \a obj to the map under its ID. If there already was an object
+      * in the map with the id \a id then that object will be replaced. If destroyed
+      * is false, then \a obj is also added to this ObjectMap's internal lists of
+      * existing (ie. not destroyed) objects, which are returned by the Existing*
+      * functions. */
     template <typename T,
-              typename std::enable_if_t<std::is_base_of_v<UniverseObject, T>>* = nullptr>
-    void insert(std::shared_ptr<T> item, int empire_id = ALL_EMPIRES);
+        typename std::enable_if_t<std::is_base_of_v<UniverseObject, T>>* = nullptr>
+    void insert(std::shared_ptr<T> obj, bool destroyed)
+    { insertCore(std::move(obj), destroyed); }
 
     /** Removes object with id \a id from map, and returns that object, if
       * there was an object under that ID in the map.  If no such object
@@ -296,8 +299,8 @@ public:
     void AuditContainment(const std::unordered_set<int>& destroyed_object_ids);
 
 private:
-    void insertCore(std::shared_ptr<UniverseObject> item, int empire_id = ALL_EMPIRES);
-    void insertCore(std::shared_ptr<Planet> item, int empire_id = ALL_EMPIRES);
+    void insertCore(std::shared_ptr<UniverseObject> obj, bool destroyed);
+    void insertCore(std::shared_ptr<Planet> obj, bool destroyed);
 
     void CopyObjectsToSpecializedMaps();
 
@@ -905,12 +908,5 @@ bool ObjectMap::check_if_any(Pred pred) const
     }
 }
 
-template <typename T,
-          typename std::enable_if_t<std::is_base_of_v<UniverseObject, T>>*>
-void ObjectMap::insert(std::shared_ptr<T> item, int empire_id)
-{
-    if (item)
-        insertCore(std::move(item), empire_id);
-}
 
 #endif
