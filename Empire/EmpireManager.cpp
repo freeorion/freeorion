@@ -20,6 +20,7 @@ namespace {
 EmpireManager& EmpireManager::operator=(EmpireManager&& other) noexcept {
     if (this != &other) {
         m_empire_ids = std::move(other.m_empire_ids);
+        m_capital_ids = std::move(other.m_capital_ids);
         m_empire_map = std::move(other.m_empire_map);
         m_const_empire_map = std::move(other.m_const_empire_map);
         m_empire_diplomatic_statuses = std::move(other.m_empire_diplomatic_statuses);
