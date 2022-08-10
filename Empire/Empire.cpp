@@ -512,7 +512,7 @@ bool Empire::PolicyAffordable(std::string_view name, const ScriptingContext& con
             ErrorLogger() << "Empire::PolicyAffordable couldn't find policy named " << adopted_policy_name << " that was supposedly already adopted this turn (" << context.current_turn << ")";
             continue;
         }
-        DebugLogger() << "Empire::PolicyAffordable : Already adopted policy this turn: " << adopted_policy_name
+        TraceLogger() << "Empire::PolicyAffordable : Already adopted policy this turn: " << adopted_policy_name
                       << " with cost " << pre_adopted_policy->AdoptionCost(m_id, context);
         other_this_turn_adopted_policies_cost += pre_adopted_policy->AdoptionCost(m_id, context);
     }
