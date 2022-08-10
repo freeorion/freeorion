@@ -210,6 +210,8 @@ BOOST_AUTO_TEST_CASE(parse_techs_full) {
 
     PythonParser parser(m_python, scripting_dir);
 
+    auto named_values = Pending::ParseSynchronously(parse::named_value_refs, scripting_dir / "common");
+
     auto techs_p = Pending::ParseSynchronously(parse::techs<TechManager::TechParseTuple>, parser, scripting_dir / "techs");
     auto [techs, tech_categories, categories_seen] = *Pending::WaitForPendingUnlocked(std::move(techs_p));
 
@@ -234,6 +236,45 @@ BOOST_AUTO_TEST_CASE(parse_techs_full) {
             unsigned int value{0};
             CheckSums::CheckSumCombine(value, *tech_it);
             BOOST_REQUIRE_EQUAL(tech_checksum, value);
+        }
+    }
+}
+
+/**
+ * Checks count of species and species census ordering in real scripts
+ * FO_CHECKSUM_SPECIES_NAME determines tech name to be check for FO_CHECKSUM_SPECIES_VALUE checksum
+ */
+
+BOOST_AUTO_TEST_CASE(parse_species_full) {
+    auto scripting_dir = boost::filesystem::system_complete(GetBinDir() / "default/scripting");
+    BOOST_REQUIRE(scripting_dir.is_absolute());
+    BOOST_REQUIRE(boost::filesystem::exists(scripting_dir));
+    BOOST_REQUIRE(boost::filesystem::is_directory(scripting_dir));
+
+    auto named_values = Pending::ParseSynchronously(parse::named_value_refs, scripting_dir / "common");
+
+    auto species_p = Pending::StartAsyncParsing(parse::species, scripting_dir / "species");
+    auto [species, ordering] = *Pending::WaitForPendingUnlocked(std::move(species_p));
+
+    BOOST_REQUIRE(!ordering.empty());
+    BOOST_REQUIRE(!species.empty());
+
+    BOOST_REQUIRE_EQUAL(7, ordering.size());
+    BOOST_REQUIRE_EQUAL(50, species.size());
+
+    if (const char *species_name = std::getenv("FO_CHECKSUM_SPECIES_NAME")) {
+        const auto species_it = species.find(species_name);
+        BOOST_REQUIRE(species.end() != species_it);
+        BOOST_REQUIRE_EQUAL(species_name, species_it->second->Name());
+
+        BOOST_TEST_MESSAGE("Dump " << species_name << ":");
+        BOOST_TEST_MESSAGE(species_it->second->Dump(0));
+
+        if (const char *species_checksum_str = std::getenv("FO_CHECKSUM_SPECIES_VALUE")) {
+            unsigned int species_checksum = boost::lexical_cast<unsigned int>(species_checksum_str);
+            unsigned int value{0};
+            CheckSums::CheckSumCombine(value, species_it->second);
+            BOOST_REQUIRE_EQUAL(species_checksum, value);
         }
     }
 }
