@@ -10264,7 +10264,10 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
 
         // if ref1_in is not invariant but ref3_in is invariant, then swap them
         // so that the simpler to evaluate case is handled first
-        bool swap_1_3 = ref3 && ref3->LocalCandidateInvariant() && !ref1->LocalCandidateInvariant();
+        bool swap_1_3 = ref3 &&
+            ref3->LocalCandidateInvariant() &&
+            (context.condition_root_candidate || ref3->RootCandidateInvariant()) &&
+            !ref1->LocalCandidateInvariant();
         if (swap_1_3)
             std::swap(ref1, ref3);
         auto c12 = swap_1_3 ? SwapSides(c23_in) : c12_in;
@@ -10276,8 +10279,10 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
         // 1inv 2inv 3inv, 1inv 2var 3inv
         // 1inv 2inv 3var, 1inv 2var 3var, 1var 2inv 3var, 1var 2var 3var
 
-        bool ref1_lci = ref1->LocalCandidateInvariant();
-        bool ref2_lci = ref2->LocalCandidateInvariant();
+        bool ref1_lci = ref1->LocalCandidateInvariant() &&
+            (context.condition_root_candidate || ref1->RootCandidateInvariant());
+        bool ref2_lci = ref2->LocalCandidateInvariant() &&
+            (context.condition_root_candidate || ref2->RootCandidateInvariant());
         bool ref1_calced = false, ref2_calced = false;
         RefT ref1_val{}, ref2_val{};
         if (ref1_lci && ref2_lci) {
@@ -10297,7 +10302,9 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
                     match_none();
                 return;
 
-            } else if (ref3->LocalCandidateInvariant()) {
+            } else if (ref3->LocalCandidateInvariant() &&
+                       (context.condition_root_candidate || ref3->RootCandidateInvariant()))
+            {
                 // if refs 1, 2, and 3 are local candidate invariant,
                 // just need to check single value comparisons for refs 1 vs 2 and 2 vs 3
                 if (Comparison(ref1_val, c12, ref2_val) &&
@@ -10317,7 +10324,7 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
                     match_none();
                     return;
                 } else {
-                    // if ref1-ref2 comparison passed, so still need to check ref2 vs ref3
+                    // ref1-ref2 comparison passed, but still need to check ref2 vs ref3
                     // for each candidate, but can reduce that to the case of no ref3 by
                     // moving ref3 over ref1 and making ref3 nullptr
                     ref1 = ref3;
@@ -10399,7 +10406,8 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
         // with additional filter: objects with 0 in "passed" don't need ref3 value to be calculated
 
         // safety check
-        bool ref3_lci = ref3->LocalCandidateInvariant();
+        bool ref3_lci = ref3->LocalCandidateInvariant() &&
+            (context.condition_root_candidate || ref3->RootCandidateInvariant());
         if (ref2_lci && ref3_lci) {
             ErrorLogger() << "Shouldn't have both ref1 and ref3 invariant here!";
             match_none();
@@ -10416,16 +10424,16 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
             auto ref3_val = ref3->Eval(context);
             auto v2_it = vals2.begin();
             for (; p_it != p_end; ++p_it, ++v2_it)
-                *p_it = *p_it && Comparison(*v2_it, c23, ref3_val);
+                *p_it = (*p_it != 0) && Comparison(*v2_it, c23, ref3_val);
 
         } else if (ref2_lci) {
             for (; p_it != p_end; ++c_it, ++p_it)
-                *p_it = *p_it && Comparison(ref2_val, c23, ref3->Eval(*c_it));
+                *p_it = (*p_it != 0) && Comparison(ref2_val, c23, ref3->Eval(*c_it));
 
         } else {
             auto v2_it = vals2.begin();
             for (; p_it != p_end; ++c_it, ++p_it, ++v2_it)
-                *p_it = *p_it && Comparison(*v2_it, c23, ref3->Eval(*c_it));
+                *p_it = (*p_it != 0) && Comparison(*v2_it, c23, ref3->Eval(*c_it));
         }
 
         MoveBasedOnMask(search_domain, matches, non_matches, passed);
