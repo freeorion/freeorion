@@ -11032,6 +11032,8 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         }
     }
 
+    // TODO: Enable if TraceLogger is needed
+    /*
     auto ObjList = [](const ObjectSet& objs) -> std::string {
         std::string ss;
         ss.reserve(objs.size() * 20); // guesstimate
@@ -11040,7 +11042,6 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         return ss;
     };
 
-    /*
     TraceLogger(conditions) << [&]() {
         std::stringstream ss;
         ss << "And::Eval searching " << (search_domain == SearchDomain::MATCHES ? "matches" : "non_matches")
