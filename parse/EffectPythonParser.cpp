@@ -85,9 +85,11 @@ namespace {
         }, effects);
         
         std::vector<std::unique_ptr<Effect::Effect>> else_;
-        py_parse::detail::flatten_list<effect_wrapper>(kw["else_"], [](const effect_wrapper& o, std::vector<std::unique_ptr<Effect::Effect>> &v) {
-            v.push_back(ValueRef::CloneUnique(o.effect));
-        }, else_);
+        if (kw.has_key("else_")) {
+            py_parse::detail::flatten_list<effect_wrapper>(kw["else_"], [](const effect_wrapper& o, std::vector<std::unique_ptr<Effect::Effect>> &v) {
+                v.push_back(ValueRef::CloneUnique(o.effect));
+            }, else_);
+        }
 
         return effect_wrapper(std::make_shared<Effect::Conditional>(std::move(condition),
                                                                     std::move(effects),

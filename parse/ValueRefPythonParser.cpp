@@ -260,6 +260,15 @@ value_ref_wrapper<int> operator+(const value_ref_wrapper<int>& lhs, int rhs) {
     );
 }
 
+value_ref_wrapper<int> operator+(const value_ref_wrapper<int>& lhs, const value_ref_wrapper<int>& rhs) {
+    return value_ref_wrapper<int>(
+        std::make_shared<ValueRef::Operation<int>>(ValueRef::OpType::PLUS,
+            ValueRef::CloneUnique(lhs.value_ref),
+            ValueRef::CloneUnique(rhs.value_ref)
+        )
+    );
+}
+
 condition_wrapper operator<(const value_ref_wrapper<int>& lhs, const value_ref_wrapper<int>& rhs) {
     return condition_wrapper(
         std::make_shared<Condition::ValueTest>(ValueRef::CloneUnique(lhs.value_ref),
@@ -342,6 +351,17 @@ namespace {
                     operands.push_back(std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(args[i])()));
             }
             return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::Operation<double>>(op, std::move(operands))));
+        } else if (args[0] == parser.type_str) {
+            std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> operands;
+            operands.reserve(boost::python::len(args) - 1);
+            for (auto i = 1; i < boost::python::len(args); i++) {
+                auto arg = boost::python::extract<value_ref_wrapper<std::string>>(args[i]);
+                if (arg.check())
+                    operands.push_back(ValueRef::CloneUnique(arg().value_ref));
+                else
+                    operands.push_back(std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(args[i])()));
+            }
+            return boost::python::object(value_ref_wrapper<std::string>(std::make_shared<ValueRef::Operation<std::string>>(op, std::move(operands))));
         } else {
             ErrorLogger() << "Unsupported type for min/max/oneof : " << boost::python::extract<std::string>(boost::python::str(args[0]))();
 
@@ -529,6 +549,19 @@ namespace {
         ));
     }
 
+    value_ref_wrapper<std::string> insert_user_string(const boost::python::object& expr) {
+        std::unique_ptr<ValueRef::ValueRef<std::string>> expr_;
+        auto expr_args = boost::python::extract<value_ref_wrapper<std::string>>(expr);
+        if (expr_args.check()) {
+            expr_ = ValueRef::CloneUnique(expr_args().value_ref);
+        } else {
+            expr_ = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(expr)());
+        }
+
+
+        return value_ref_wrapper<std::string>(std::make_shared<ValueRef::UserStringLookup<std::string>>(std::move(expr_)));
+    }
+
     value_ref_wrapper<int> insert_parts_in_ship_design_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<std::string>> name;
         if (kw.has_key("name")) {
@@ -554,6 +587,27 @@ namespace {
             nullptr,
             nullptr,
             std::move(name),
+            nullptr
+        ));
+    }
+
+    value_ref_wrapper<double> insert_empire_meter_value_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<int>> empire;
+        auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
+        if (empire_args.check()) {
+            empire = ValueRef::CloneUnique(empire_args().value_ref);
+        } else {
+            empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
+        }
+
+        std::string meter = boost::python::extract<std::string>(kw["meter"])();
+
+        return value_ref_wrapper<double>(std::make_shared<ValueRef::ComplexVariable<double>>(
+            "EmpireMeterValue",
+            std::move(empire),
+            nullptr,
+            nullptr,
+            std::move(std::make_unique<ValueRef::Constant<std::string>>(meter)),
             nullptr
         ));
     }
@@ -671,6 +725,8 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
     globals["Statistic"] = boost::python::raw_function(f_insert_statistic, 2);
 
     globals["DirectDistanceBetween"] = insert_direct_distance_between_;
+    globals["UserString"] = insert_user_string;
     globals["PartsInShipDesign"] = boost::python::raw_function(insert_parts_in_ship_design_);
+    globals["EmpireMeterValue"] = boost::python::raw_function(insert_empire_meter_value_);
 }
 

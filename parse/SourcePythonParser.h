@@ -16,6 +16,7 @@ struct variable_wrapper {
 
     value_ref_wrapper<int> get_int_property(const char *property) const;
     value_ref_wrapper<double> get_double_property(const char *property) const;
+    value_ref_wrapper<std::string> get_string_property(const char *property) const;
     variable_wrapper get_variable_property(const char *property) const;
 
     operator condition_wrapper() const;

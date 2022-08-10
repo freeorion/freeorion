@@ -8,6 +8,7 @@
 #include "../universe/System.h"
 #include "../universe/ValueRef.h"
 #include "../Empire/ResourcePool.h"
+#include "../Empire/ProductionQueue.h"
 
 void RegisterGlobalsEnums(boost::python::dict& globals) {
     globals["Influence"] = enum_wrapper<ResourceType>(ResourceType::RE_INFLUENCE);
@@ -108,5 +109,11 @@ void RegisterGlobalsEnums(boost::python::dict& globals) {
         globals[op.first] = enum_wrapper<UnlockableItemType>(op.second);
     }
 
+    for (const auto& op : std::initializer_list<std::pair<const char*, BuildType>>{
+            {"BuildBuilding", BuildType::BT_BUILDING},
+            {"BuildShip", BuildType::BT_SHIP}})
+    {
+        globals[op.first] = enum_wrapper<BuildType>(op.second);
+    }
 }
 
