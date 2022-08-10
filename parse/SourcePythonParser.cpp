@@ -17,6 +17,12 @@ value_ref_wrapper<double> variable_wrapper::get_double_property(const char *prop
     return value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(m_reference_type, property_name));
 }
 
+value_ref_wrapper<std::string> variable_wrapper::get_string_property(const char *property) const {
+    std::vector property_name = std::vector(m_container);
+    property_name.emplace_back(property);
+    return value_ref_wrapper<std::string>(std::make_shared<ValueRef::Variable<std::string>>(m_reference_type, property_name));
+}
+
 variable_wrapper variable_wrapper::get_variable_property(const char *property) const {
     return variable_wrapper(m_reference_type, std::vector{std::string(property)});
 }

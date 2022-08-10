@@ -319,6 +319,149 @@ namespace {
             std::move(high)));
     }
 
+    condition_wrapper insert_building_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> names;
+
+        py_parse::detail::flatten_list<boost::python::object>(kw["name"], [](const boost::python::object& o, std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>& v) {
+            auto name_arg = boost::python::extract<value_ref_wrapper<std::string>>(o);
+            if (name_arg.check()) {
+                v.push_back(ValueRef::CloneUnique(name_arg().value_ref));
+            } else {
+                v.push_back(std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(o)()));
+            }
+        }, names);
+
+        return condition_wrapper(std::make_shared<Condition::Building>(std::move(names)));
+    }
+
+    condition_wrapper insert_location_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        Condition::ContentType content_type = boost::python::extract<enum_wrapper<Condition::ContentType>>(kw["type"])().value;
+
+        std::unique_ptr<ValueRef::ValueRef<std::string>> name;
+        auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
+        if (name_args.check()) {
+            name = ValueRef::CloneUnique(name_args().value_ref);
+        } else {
+            name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<std::string>> name2;
+        if (kw.has_key("name2")) {
+            auto name2_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name2"]);
+            if (name2_args.check()) {
+                name2 = ValueRef::CloneUnique(name2_args().value_ref);
+            } else {
+                name2 = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name2"])());
+            }
+        }
+
+        return condition_wrapper(std::make_shared<Condition::Location>(
+            content_type,
+            std::move(name),
+            std::move(name2)));
+    }
+
+    condition_wrapper insert_enqueued_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        BuildType build_type = BuildType::INVALID_BUILD_TYPE;
+        if (kw.has_key("type")) {
+            build_type = boost::python::extract<enum_wrapper<BuildType>>(kw["type"])().value;
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<int>> low;
+        if (kw.has_key("low")) {
+            auto low_args = boost::python::extract<value_ref_wrapper<int>>(kw["low"]);
+            if (low_args.check()) {
+                low = ValueRef::CloneUnique(low_args().value_ref);
+            } else {
+                low = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["low"])());
+            }
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<int>> high;
+        if (kw.has_key("high")) {
+            auto high_args = boost::python::extract<value_ref_wrapper<int>>(kw["high"]);
+            if (high_args.check()) {
+                high = ValueRef::CloneUnique(high_args().value_ref);
+            } else {
+                high = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["high"])());
+            }
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<int>> empire;
+        if (kw.has_key("empire")) {
+            auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
+            if (empire_args.check()) {
+                empire = ValueRef::CloneUnique(empire_args().value_ref);
+            } else {
+                empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
+            }
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<std::string>> name;
+        if (kw.has_key("name")) {
+            auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
+            if (name_args.check()) {
+                name = ValueRef::CloneUnique(name_args().value_ref);
+            } else {
+                name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
+            }
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<int>> design;
+        if (kw.has_key("design")) {
+            auto design_args = boost::python::extract<value_ref_wrapper<int>>(kw["design"]);
+            if (design_args.check()) {
+                design = ValueRef::CloneUnique(design_args().value_ref);
+            } else {
+                design = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["design"])());
+            }
+        }
+
+        if (build_type == BuildType::BT_SHIP) {
+            return condition_wrapper(std::make_shared<Condition::Enqueued>(
+                std::move(design),
+                std::move(empire),
+                std::move(low),
+                std::move(high)));
+        } else {
+            return condition_wrapper(std::make_shared<Condition::Enqueued>(
+                build_type,
+                std::move(name),
+                std::move(empire),
+                std::move(low),
+                std::move(high)));
+        }
+    }
+
+    condition_wrapper insert_number_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<int>> low;
+        if (kw.has_key("low")) {
+            auto low_args = boost::python::extract<value_ref_wrapper<int>>(kw["low"]);
+            if (low_args.check()) {
+                low = ValueRef::CloneUnique(low_args().value_ref);
+            } else {
+                low = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["low"])());
+            }
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<int>> high;
+        if (kw.has_key("high")) {
+            auto high_args = boost::python::extract<value_ref_wrapper<int>>(kw["high"]);
+            if (high_args.check()) {
+                high = ValueRef::CloneUnique(high_args().value_ref);
+            } else {
+                high = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["high"])());
+            }
+        }
+
+        auto condition = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["condition"])().condition);
+
+        return condition_wrapper(std::make_shared<Condition::Number>(
+            std::move(low),
+            std::move(high),
+            std::move(condition)));
+    }
+
     condition_wrapper insert_owner_has_tech_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<std::string>> name;
         auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
@@ -413,6 +556,10 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     globals["InSystem"] = boost::python::raw_function(insert_in_system_);
     globals["ResupplyableBy"] = boost::python::raw_function(insert_resupplyable_by_);
     globals["DesignHasPart"] = boost::python::raw_function(insert_design_has_part_);
+    globals["Building"] = boost::python::raw_function(insert_building_);
+    globals["Location"] = boost::python::raw_function(insert_location_);
+    globals["Enqueued"] = boost::python::raw_function(insert_enqueued_);
+    globals["Number"] = boost::python::raw_function(insert_number_);
 
     // non_ship_part_meter_enum_grammar
     for (const auto& meter : std::initializer_list<std::pair<const char*, MeterType>>{
@@ -455,6 +602,17 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
         const auto m = meter.second;
         const auto f_insert_meter_value = [m](const auto& args, const auto& kw) { return insert_meter_value_(args, kw, m); };
         globals[meter.first] = boost::python::raw_function(f_insert_meter_value);
+    }
+
+    for (const auto& op : std::initializer_list<std::pair<const char*, Condition::ContentType>>{
+            {"ContentBuilding", Condition::ContentType::CONTENT_BUILDING},
+            {"ContentSpecies",  Condition::ContentType::CONTENT_SPECIES},
+            {"ContentHull",     Condition::ContentType::CONTENT_SHIP_HULL},
+            {"ContentPart",     Condition::ContentType::CONTENT_SHIP_PART},
+            {"ContentSpecial",  Condition::ContentType::CONTENT_SPECIAL},
+            {"ContentFocus",    Condition::ContentType::CONTENT_FOCUS}})
+    {
+        globals[op.first] = enum_wrapper<Condition::ContentType>(op.second);
     }
 
     globals["Species"] = condition_wrapper(std::make_shared<Condition::Species>());

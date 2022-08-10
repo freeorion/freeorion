@@ -4,6 +4,7 @@
 #include "../universe/UnlockableItem.h"
 #include "../universe/ValueRef.h"
 #include "../universe/ValueRefs.h"
+#include "../universe/Conditions.h"
 #include "../util/Directories.h"
 #include "../util/Logger.h"
 #include "../util/PythonCommon.h"
@@ -90,6 +91,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def(int() * py::self_ns::self)
             .def(double() * py::self_ns::self)
             .def(py::self_ns::self - int())
+            .def(py::self_ns::self + py::self_ns::self)
             .def(py::self_ns::self + int())
             .def(py::self_ns::self < py::self_ns::self)
             .def(py::self_ns::self >= py::self_ns::self)
@@ -136,6 +138,8 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         py::class_<enum_wrapper<PlanetType>>("__PlanetType", py::no_init);
         py::class_<enum_wrapper< ::StarType>>("__StarType", py::no_init);
         py::class_<enum_wrapper<ValueRef::StatisticType>>("__StatisticType", py::no_init);
+        py::class_<enum_wrapper<Condition::ContentType>>("__LocationContentType", py::no_init);
+        py::class_<enum_wrapper<BuildType>>("__BuildType", py::no_init);
         py::class_<unlockable_item_wrapper>("UnlockableItem", py::no_init);
         auto py_variable_wrapper = py::class_<variable_wrapper>("__Variable", py::no_init)
             .def(py::self_ns::self & py::other<condition_wrapper>());
@@ -223,6 +227,20 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
                 [property] (const variable_wrapper& w) { return w.get_double_property(property); },
                 py::default_call_policies(),
                 boost::mpl::vector<value_ref_wrapper<double>, const variable_wrapper&>()));
+        }
+
+        for (const char* property : {"Name",
+                                     "Species",
+                                     "BuildingType",
+                                     "FieldType",
+                                     "Focus",
+                                     "DefaultFocus",
+                                     "Hull"})
+        {
+            py_variable_wrapper.add_property(property, py::make_function(
+                [property] (const variable_wrapper& w) { return w.get_string_property(property); },
+                py::default_call_policies(),
+                boost::mpl::vector<value_ref_wrapper<std::string>, const variable_wrapper&>()));
         }
 
         for (const char* property : {"Planet",
