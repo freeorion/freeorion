@@ -10249,9 +10249,11 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
             ErrorLogger() << "invalid ref1-ref2 comparison type!";
             match_none();
             return;
-        } else if (ref3 && c23_in != ComparisonType::INVALID_COMPARISON) {
+        } else if (ref3 && c23_in == ComparisonType::INVALID_COMPARISON) {
             ErrorLogger() << "third reference present but invalid ref2-ref3 comparison type!";
             ref3 = nullptr;
+        } else if (!ref3 && c23_in != ComparisonType::INVALID_COMPARISON) {
+            ErrorLogger() << "no third reference present but valid ref2-ref3 comparison specified?";
         }
 
         // possible cases of input, depending on whether references are present (ref3)
