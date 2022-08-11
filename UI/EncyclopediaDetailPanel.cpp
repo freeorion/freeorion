@@ -41,7 +41,6 @@
 #include "../universe/Species.h"
 #include "../universe/System.h"
 #include "../universe/Tech.h"
-#include "../universe/UniverseObjectVisitors.h"
 #include "../universe/Universe.h"
 #include "../universe/UnlockableItem.h"
 #include "../universe/ValueRef.h"
@@ -2065,7 +2064,9 @@ namespace {
 
 
         // Planets
-        auto empire_planets = objects.find<Planet>(OwnedVisitor(empire_id));
+        auto is_owned = [empire_id](const UniverseObject* obj)
+        { return empire_id != ALL_EMPIRES && obj->OwnedBy(empire_id); };
+        auto empire_planets = objects.findRaw<const Planet>(is_owned);
         if (!empire_planets.empty()) {
             detailed_description.append("\n\n").append(UserString("OWNED_PLANETS"));
             for (auto& obj : empire_planets) {
@@ -2077,13 +2078,12 @@ namespace {
         }
 
         // Fleets
-        std::vector<const Fleet*> nonempty_empire_fleets;
-        auto&& empire_owned_fleets{objects.find<Fleet>(OwnedVisitor(empire_id))};
-        nonempty_empire_fleets.reserve(empire_owned_fleets.size());
-        for (const auto& fleet : empire_owned_fleets) {
-            if (!fleet->Empty())
-                nonempty_empire_fleets.emplace_back(fleet.get());
-        }
+        auto is_nonempty_owned_fleet = [empire_id](const Fleet* fleet) {
+            return empire_id != ALL_EMPIRES &&
+                fleet->OwnedBy(empire_id) &&
+                !fleet->Empty();
+        };
+        auto nonempty_empire_fleets = objects.findRaw<const Fleet>(is_nonempty_owned_fleet);
         if (!nonempty_empire_fleets.empty()) {
             detailed_description.append("\n\n").append(UserString("OWNED_FLEETS")).append("\n");
             for (auto* obj : nonempty_empire_fleets) {
