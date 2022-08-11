@@ -6,7 +6,7 @@ ShipDesign
     parts = [
         "SR_ICE_BEAM"
         "SP_DEATH_SPORE"
-        ""
+        "SP_SOLAR_CONCENTRATOR"
         ""
         ]
     icon = "icons/monsters/snowflake-2.png"

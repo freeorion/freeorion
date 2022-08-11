@@ -15,7 +15,7 @@ Hull
     buildcost = 1
     buildtime = 1
     Unproducible
-    tags = [ "PEDIA_HULL_MONSTER_SNOWFLAKE" ]
+    tags = [ "PEDIA_HULL_MONSTER_SNOWFLAKE" "SNOWFLAKE_HULL" ]
     location = All
     effectsgroups = [
         [[HUNT_SHIPS]]

@@ -19,6 +19,8 @@ Part
             effects = [
                 SetMaxCapacity partname = "SR_WEAPON_2_1" value = Value + [[SOLAR_CONCENTRATOR_EFFECT]] * 0.5
                 SetCapacity partname = "SR_WEAPON_2_1" value = Value + [[SOLAR_CONCENTRATOR_EFFECT]] * 0.5
+                SetMaxCapacity partname = "SR_ICE_BEAM" value = Value + [[SOLAR_CONCENTRATOR_EFFECT]] * 0.5
+                SetCapacity partname = "SR_ICE_BEAM" value = Value + [[SOLAR_CONCENTRATOR_EFFECT]] * 0.5
             ]
         EffectsGroup
             scope = Source
@@ -27,6 +29,8 @@ Part
             effects = [
                 SetMaxCapacity partname = "SR_WEAPON_2_1" value = Value + [[SOLAR_CONCENTRATOR_EFFECT]] * 0.75
                 SetCapacity partname = "SR_WEAPON_2_1" value = Value + [[SOLAR_CONCENTRATOR_EFFECT]] * 0.75
+                SetMaxCapacity partname = "SR_ICE_BEAM" value = Value + [[SOLAR_CONCENTRATOR_EFFECT]] * 0.75
+                SetCapacity partname = "SR_ICE_BEAM" value = Value + [[SOLAR_CONCENTRATOR_EFFECT]] * 0.75
             ]
         EffectsGroup
             scope = Source
@@ -35,6 +39,8 @@ Part
             effects = [
                 SetMaxCapacity partname = "SR_WEAPON_2_1" value = Value + [[SOLAR_CONCENTRATOR_EFFECT]]
                 SetCapacity partname = "SR_WEAPON_2_1" value = Value + [[SOLAR_CONCENTRATOR_EFFECT]]
+                SetMaxCapacity partname = "SR_ICE_BEAM" value = Value + [[SOLAR_CONCENTRATOR_EFFECT]]
+                SetCapacity partname = "SR_ICE_BEAM" value = Value + [[SOLAR_CONCENTRATOR_EFFECT]]
             ]
         EffectsGroup
             scope = Source
@@ -43,6 +49,8 @@ Part
             effects = [
                 SetMaxCapacity partname = "SR_WEAPON_2_1" value = Value + [[SOLAR_CONCENTRATOR_EFFECT]] * 1.25
                 SetCapacity partname = "SR_WEAPON_2_1" value = Value + [[SOLAR_CONCENTRATOR_EFFECT]] * 1.25
+                SetMaxCapacity partname = "SR_ICE_BEAM" value = Value + [[SOLAR_CONCENTRATOR_EFFECT]] * 1.25
+                SetCapacity partname = "SR_ICE_BEAM" value = Value + [[SOLAR_CONCENTRATOR_EFFECT]] * 1.25
             ]
         EffectsGroup
             scope = Source
@@ -51,6 +59,8 @@ Part
             effects = [
                 SetMaxCapacity partname = "SR_WEAPON_2_1" value = Value + [[SOLAR_CONCENTRATOR_EFFECT]] * 1.5
                 SetCapacity partname = "SR_WEAPON_2_1" value = Value + [[SOLAR_CONCENTRATOR_EFFECT]] * 1.5
+                SetMaxCapacity partname = "SR_ICE_BEAM" value = Value + [[SOLAR_CONCENTRATOR_EFFECT]] * 1.5
+                SetCapacity partname = "SR_ICE_BEAM" value = Value + [[SOLAR_CONCENTRATOR_EFFECT]] * 1.5
             ]
         ]
     icon = "icons/ship_parts/solarcollector.png"
@@ -63,7 +73,10 @@ Statistic Count condition = And [
                 Ship
                 OwnedBy empire = Source.Owner
                 VisibleToEmpire empire = Source.Owner
-                HasTag name = "ORGANIC_HULL"
+                Or [
+                    HasTag name = "ORGANIC_HULL"
+                    HasTag name = "SNOWFLAKE_HULL"
+                ]
                 DesignHasPart low = 1 high = 999 name = "SP_SOLAR_CONCENTRATOR"
                 WithinStarlaneJumps jumps = 0 condition = Source
             ]
