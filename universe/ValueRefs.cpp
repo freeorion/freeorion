@@ -7,6 +7,8 @@
 #include <functional>
 #include <iomanip>
 #include <iterator>
+#include <string>
+#include <utility>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -209,51 +211,46 @@ namespace {
         return retval;
     }
 
-    const std::map<std::string, MeterType>& GetMeterNameMap() {
-        static const std::map<std::string, MeterType> meter_name_map{
-            {"Population",           MeterType::METER_POPULATION},
-            {"TargetPopulation",     MeterType::METER_TARGET_POPULATION},
-            {"Industry",             MeterType::METER_INDUSTRY},
-            {"TargetIndustry",       MeterType::METER_TARGET_INDUSTRY},
-            {"Research",             MeterType::METER_RESEARCH},
-            {"TargetResearch",       MeterType::METER_TARGET_RESEARCH},
-            {"Influence",            MeterType::METER_INFLUENCE},
-            {"TargetInfluence",      MeterType::METER_TARGET_INFLUENCE},
-            {"Construction",         MeterType::METER_CONSTRUCTION},
-            {"TargetConstruction",   MeterType::METER_TARGET_CONSTRUCTION},
-            {"Happiness",            MeterType::METER_HAPPINESS},
-            {"TargetHappiness",      MeterType::METER_TARGET_HAPPINESS},
-            {"MaxFuel",              MeterType::METER_MAX_FUEL},
-            {"Fuel",                 MeterType::METER_FUEL},
-            {"MaxStructure",         MeterType::METER_MAX_STRUCTURE},
-            {"Structure",            MeterType::METER_STRUCTURE},
-            {"MaxShield",            MeterType::METER_MAX_SHIELD},
-            {"Shield",               MeterType::METER_SHIELD},
-            {"MaxDefense",           MeterType::METER_MAX_DEFENSE},
-            {"Defense",              MeterType::METER_DEFENSE},
-            {"MaxTroops",            MeterType::METER_MAX_TROOPS},
-            {"Troops",               MeterType::METER_TROOPS},
-            {"RebelTroops",          MeterType::METER_REBEL_TROOPS},
-            {"Supply",               MeterType::METER_SUPPLY},
-            {"MaxSupply",            MeterType::METER_MAX_SUPPLY},
-            {"Stockpile",            MeterType::METER_STOCKPILE},
-            {"MaxStockpile",         MeterType::METER_MAX_STOCKPILE},
-            {"Stealth",              MeterType::METER_STEALTH},
-            {"Detection",            MeterType::METER_DETECTION},
-            {"Speed",                MeterType::METER_SPEED},
-            {"Damage",               MeterType::METER_CAPACITY},
-            {"Capacity",             MeterType::METER_CAPACITY},
-            {"MaxCapacity",          MeterType::METER_MAX_CAPACITY},
-            {"SecondaryStat",        MeterType::METER_SECONDARY_STAT},
-            {"MaxSecondaryStat",     MeterType::METER_MAX_SECONDARY_STAT},
-            {"Size",                 MeterType::METER_SIZE}
-        };
-        return meter_name_map;
-    }
-    // force early init to avoid threading issues later
-    std::map<std::string, MeterType> dummy = GetMeterNameMap();
-
-    const std::string EMPTY_STRING;
+    constexpr std::vector<std::pair<std::string_view, MeterType>> METER_TO_NAME{
+        {"Population",           MeterType::METER_POPULATION},
+        {"TargetPopulation",     MeterType::METER_TARGET_POPULATION},
+        {"Industry",             MeterType::METER_INDUSTRY},
+        {"TargetIndustry",       MeterType::METER_TARGET_INDUSTRY},
+        {"Research",             MeterType::METER_RESEARCH},
+        {"TargetResearch",       MeterType::METER_TARGET_RESEARCH},
+        {"Influence",            MeterType::METER_INFLUENCE},
+        {"TargetInfluence",      MeterType::METER_TARGET_INFLUENCE},
+        {"Construction",         MeterType::METER_CONSTRUCTION},
+        {"TargetConstruction",   MeterType::METER_TARGET_CONSTRUCTION},
+        {"Happiness",            MeterType::METER_HAPPINESS},
+        {"TargetHappiness",      MeterType::METER_TARGET_HAPPINESS},
+        {"MaxFuel",              MeterType::METER_MAX_FUEL},
+        {"Fuel",                 MeterType::METER_FUEL},
+        {"MaxStructure",         MeterType::METER_MAX_STRUCTURE},
+        {"Structure",            MeterType::METER_STRUCTURE},
+        {"MaxShield",            MeterType::METER_MAX_SHIELD},
+        {"Shield",               MeterType::METER_SHIELD},
+        {"MaxDefense",           MeterType::METER_MAX_DEFENSE},
+        {"Defense",              MeterType::METER_DEFENSE},
+        {"MaxTroops",            MeterType::METER_MAX_TROOPS},
+        {"Troops",               MeterType::METER_TROOPS},
+        {"RebelTroops",          MeterType::METER_REBEL_TROOPS},
+        {"Supply",               MeterType::METER_SUPPLY},
+        {"MaxSupply",            MeterType::METER_MAX_SUPPLY},
+        {"Stockpile",            MeterType::METER_STOCKPILE},
+        {"MaxStockpile",         MeterType::METER_MAX_STOCKPILE},
+        {"Stealth",              MeterType::METER_STEALTH},
+        {"Detection",            MeterType::METER_DETECTION},
+        {"Speed",                MeterType::METER_SPEED},
+        {"Damage",               MeterType::METER_CAPACITY},
+        {"Capacity",             MeterType::METER_CAPACITY},
+        {"MaxCapacity",          MeterType::METER_MAX_CAPACITY},
+        {"SecondaryStat",        MeterType::METER_SECONDARY_STAT},
+        {"MaxSecondaryStat",     MeterType::METER_MAX_SECONDARY_STAT},
+        {"Size",                 MeterType::METER_SIZE}
+    };
+ 
+    constexpr std::string_view EMPTY_STRING;
 }
 
 namespace ValueRef {
