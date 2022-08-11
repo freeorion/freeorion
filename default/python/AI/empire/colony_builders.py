@@ -3,7 +3,7 @@ from typing import Dict, List, Mapping, Sequence, Union
 import AIDependencies
 from common.fo_typing import PlanetId, SpeciesName
 from empire.survey_lock import survey_universe_lock
-from freeorion_tools import tech_is_complete
+from freeorion_tools import tech_is_complete, tech_soon_available
 from freeorion_tools.caching import cache_for_current_turn
 
 
@@ -52,10 +52,12 @@ def get_colony_builders() -> Mapping[SpeciesName, List[PlanetId]]:
 @cache_for_current_turn
 def get_extra_colony_builders() -> List[str]:
     """
-    Returns species the empire can build without having a colony, i.e. Exobots plus
+    Returns species the empire can build without having a colony, i.e. Exobots, if (almost) researched, plus
     extinct species that has been enabled.
     """
-    ret = ["SP_EXOBOT"]
+    ret = []
+    if tech_soon_available(AIDependencies.EXOBOT_TECH_NAME, 1):
+        ret.append("SP_EXOBOT")
     for spec_name in AIDependencies.EXTINCT_SPECIES:
         if tech_is_complete("TECH_COL_" + spec_name):
             ret.append("SP_" + spec_name)
