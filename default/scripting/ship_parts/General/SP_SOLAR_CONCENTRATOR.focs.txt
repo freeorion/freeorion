@@ -71,13 +71,13 @@ Statistic Count condition = And [
 
 SOLAR_CONCENTRATOR_EFFECT
 '''
-max(
+(max(
     min(
         min(
             (([[COUNT_OF_LOCAL_SOLAR_CONCENTRATOR]]) / 2),
             (([[COUNT_OF_LOCAL_SOLAR_CONCENTRATOR]]) ^ 0.5 ) + 4 ),
         15)
-    ,3)
+    ,3)) * [[SHIP_WEAPON_DAMAGE_FACTOR]]
 '''
 
 #include "/scripting/common/upkeep.macros"
