@@ -18,6 +18,7 @@ Hull
     tags = [ "PEDIA_HULL_MONSTER_KRAKEN" ]
     location = All
     effectsgroups = [
+        [[GAS_GIANT_STEALTH_BONUS]]
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
         [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
