@@ -151,3 +151,14 @@ HUNT_PLANETS
                 ]
             ]
 '''
+
+GAS_GIANT_STEALTH_BONUS
+'''EffectsGroup
+            scope = Source
+            activation = ContainedBy And [
+                Object id = Source.SystemID
+                Contains Planet type = GasGiant
+            ]
+            accountinglabel = "GAS_GIANT_STEALTH"
+            effects = SetStealth value = Value + 20
+'''

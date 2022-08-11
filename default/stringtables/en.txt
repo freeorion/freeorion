@@ -17646,6 +17646,9 @@ Organic Growth
 ASTEROID_FIELD_STEALTH
 Asteroid Concealment
 
+GAS_GIANT_STEALTH
+Gas Giant Concealment
+
 AGE_BONUS
 Age
 

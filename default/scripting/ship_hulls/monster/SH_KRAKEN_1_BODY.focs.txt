@@ -40,6 +40,7 @@ Hull
             stackinggroup = "GAME_START_MOD_STACK"
             effects = AddSpecial name = "KRAKEN_NEST_SPECIAL"
 
+        [[GAS_GIANT_STEALTH_BONUS]]
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
         [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]

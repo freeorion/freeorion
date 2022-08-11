@@ -19,6 +19,7 @@ Hull
     tags = [ "PEDIA_HULL_MONSTER_KRAKEN" ]
     location = All
     effectsgroups = [
+        [[GAS_GIANT_STEALTH_BONUS]]
         [[HUNT_BUILDINGS]]
         [[MONSTER_MOVE_ALWAYS]]
         [[EXCELLENT_VISION]]
