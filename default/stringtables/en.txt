@@ -16872,22 +16872,22 @@ NO_INFLUENCE_DESC
 −−−	No [[metertype METER_INFLUENCE]]
 
 VERY_BAD_INFLUENCE_DESC
-−−	Very bad [[metertype METER_INFLUENCE]]: 50%
+−−	Very bad [[metertype METER_INFLUENCE]]: 66.7%
 
 BAD_INFLUENCE_DESC
-−	Bad [[metertype METER_INFLUENCE]]: 75%
+−	Bad [[metertype METER_INFLUENCE]]: 80%
 
 AVERAGE_INFLUENCE_DESC
 ⋄	Average [[metertype METER_INFLUENCE]]: 100%
 
 GOOD_INFLUENCE_DESC
-+	Good [[metertype METER_INFLUENCE]]: 150%
++	Good [[metertype METER_INFLUENCE]]: 125%
 
 GREAT_INFLUENCE_DESC
-++	Great [[metertype METER_INFLUENCE]]: 200%
+++	Great [[metertype METER_INFLUENCE]]: 150%
 
 ULTIMATE_INFLUENCE_DESC
-+++	Ultimate [[metertype METER_INFLUENCE]]: 300%
++++	Ultimate [[metertype METER_INFLUENCE]]: 200%
 
 BAD_HAPPINESS_DESC
 −	Bad [[metertype METER_HAPPINESS]]: [[value BAD_HAPPINESS_VAL]]
