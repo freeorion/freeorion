@@ -257,6 +257,18 @@ namespace {
 
         return effect_wrapper(std::make_shared<Effect::AddSpecial>(std::move(name), std::move(capacity)));
     }
+
+    effect_wrapper remove_special(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<std::string>> name;
+        auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
+        if (name_args.check()) {
+            name = ValueRef::CloneUnique(name_args().value_ref);
+        } else {
+            name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
+        }
+
+        return effect_wrapper(std::make_shared<Effect::RemoveSpecial>(std::move(name)));
+    }
 }
 
 void RegisterGlobalsEffects(py::dict& globals) {
@@ -271,6 +283,7 @@ void RegisterGlobalsEffects(py::dict& globals) {
     globals["SetEmpireMeter"] = py::raw_function(set_empire_meter);
     globals["Victory"] = py::raw_function(victory);
     globals["AddSpecial"] = py::raw_function(add_special);
+    globals["RemoveSpecial"] = py::raw_function(remove_special);
 
     // set_non_ship_part_meter_enum_grammar
     for (const auto& meter : std::initializer_list<std::pair<const char*, MeterType>>{
