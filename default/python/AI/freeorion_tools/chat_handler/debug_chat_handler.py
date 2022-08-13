@@ -84,6 +84,7 @@ class DebugChatHandler(ChatHandlerBase):
         shell_locals=None,
         provider=None,
     ):
+        super().__init__()
         if not shell_locals:
             shell_locals = debug_chat_handler_local_vars
 
@@ -126,7 +127,7 @@ class DebugChatHandler(ChatHandlerBase):
         elif message == "help" and not self._debug_mode:
             self._handle_help()
         elif message == "stop":
-            pass
+            self.debug_active = False
         else:
             return False
         return True
@@ -144,6 +145,7 @@ class DebugChatHandler(ChatHandlerBase):
             chat_message=self._exit_debug_message,
             log_message=self._exit_debug_message,
         )
+        self.debug_active = False
         self._debug_mode = False
 
     def _handle_shell_input(self, message):
@@ -172,6 +174,7 @@ class DebugChatHandler(ChatHandlerBase):
                 )
                 self._handle_help()
             return
+        self.debug_active = True
         # This message is not for that AI
         if player_id != self._provider.player_id():
             return
