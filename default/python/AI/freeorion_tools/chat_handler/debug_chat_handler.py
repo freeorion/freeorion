@@ -227,13 +227,12 @@ class DebugChatHandler(ChatHandlerBase):
         self.send_notification(chat_message="\n".join(help_message))
 
     def _get_empire_string(self, player_id):
-        empire_id = self._provider.get_empire_id(player_id)
         name = self._provider.get_empire_name(player_id)
         color = self._provider.get_empire_color(player_id)
 
         return (
             "    "
-            + self._formatter.underline(self._formatter.blue(empire_id))
+            + self._formatter.underline(self._formatter.blue(player_id))
             + self._formatter.colored(color, " %s" % name)
             + self._formatter.white(" by %s" % self._provider.player_name(player_id))
         )
