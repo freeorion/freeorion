@@ -807,7 +807,15 @@ def _rate_production(pp: float) -> float:
 
 
 def _rate_research(rp: float) -> float:
-    return rp * RESOURCE_PRIORITY_MULTIPLIER * get_aistate().get_priority(PriorityType.RESOURCE_RESEARCH)
+    # Research priority starts rather high, but in the long term it is usually much lower than production.
+    return (
+        rp
+        * RESOURCE_PRIORITY_MULTIPLIER
+        * min(
+            get_aistate().get_priority(PriorityType.RESOURCE_PRODUCTION),
+            get_aistate().get_priority(PriorityType.RESOURCE_RESEARCH),
+        )
+    )
 
 
 def _rate_influence(ip: float) -> float:
