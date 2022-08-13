@@ -27,6 +27,7 @@ from aistate_interface import get_aistate
 from buildings import BuildingType, BuildingTypeBase, Shipyard, get_empire_drydocks
 from character.character_module import Aggression
 from colonization import rate_planetary_piloting
+from colonization.colony_score import MINIMUM_COLONY_SCORE
 from colonization.rate_pilots import GREAT_PILOT_RATING
 from common.fo_typing import BuildingName, PlanetId, SystemId
 from empire.buildings_locations import get_best_pilot_facilities
@@ -785,7 +786,7 @@ def generate_production_orders():
     colony_bldg_entries = [
         entry
         for entry in aistate.colonisablePlanetIDs.items()
-        if entry[1][0] > 60
+        if entry[1][0] > MINIMUM_COLONY_SCORE
         and entry[0] not in queued_clny_bld_locs
         and entry[0] in get_empire_outposts()
         and not already_has_completed_colony_building(entry[0])
