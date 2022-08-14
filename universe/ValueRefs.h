@@ -2232,21 +2232,10 @@ std::string Operation<T>::Description() const
 template <typename T>
 std::string Operation<T>::Dump(unsigned short ntabs) const
 {
-    if (m_op_type == OpType::NEGATE) {
-        if (auto rhs = dynamic_cast<const Operation<T>*>(LHS())) {
-            OpType op_type = rhs->GetOpType();
-            if (op_type == OpType::PLUS   || op_type == OpType::MINUS ||
-                op_type == OpType::TIMES  || op_type == OpType::DIVIDE ||
-                op_type == OpType::NEGATE || op_type == OpType::EXPONENTIATE ||
-                op_type == OpType::REMAINDER)
-            { return "-(" + LHS()->Dump(ntabs) + ")"; }
-        } else {
-            return "-" + LHS()->Dump(ntabs);
-        }
-    }
-
+    if (m_op_type == OpType::NEGATE)
+        return "-(" + LHS()->Dump(ntabs) + ")";
     if (m_op_type == OpType::NOOP)
-        return LHS()->Dump();
+        return "(" + LHS()->Dump() + ")";
     if (m_op_type == OpType::ABS)
         return "abs(" + LHS()->Dump(ntabs) + ")";
     if (m_op_type == OpType::LOGARITHM)
