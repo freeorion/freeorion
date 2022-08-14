@@ -211,7 +211,8 @@ namespace {
         return retval;
     }
 
-    constexpr std::vector<std::pair<std::string_view, MeterType>> METER_TO_NAME{
+    // TODO: compute array size from MeterType size?
+    constexpr std::array<std::pair<std::string_view, MeterType>, 36> METER_TO_NAME = {{
         {"Population",           MeterType::METER_POPULATION},
         {"TargetPopulation",     MeterType::METER_TARGET_POPULATION},
         {"Industry",             MeterType::METER_INDUSTRY},
@@ -248,9 +249,9 @@ namespace {
         {"SecondaryStat",        MeterType::METER_SECONDARY_STAT},
         {"MaxSecondaryStat",     MeterType::METER_MAX_SECONDARY_STAT},
         {"Size",                 MeterType::METER_SIZE}
-    };
+    }};
  
-    constexpr std::string_view EMPTY_STRING;
+    const std::string EMPTY_STRING;
 }
 
 namespace ValueRef {
@@ -282,18 +283,20 @@ std::string ValueRefBase::InvariancePattern() const {
         .append(ConstantExpr()                  ? "C" : "c");
 }
 
-MeterType NameToMeter(const std::string& name) {
-    MeterType retval = MeterType::INVALID_METER_TYPE;
-    auto it = GetMeterNameMap().find(name);
-    if (it != GetMeterNameMap().end())
-        retval = it->second;
-    return retval;
+MeterType NameToMeter(const std::string_view name) {
+    auto it = std::find_if(METER_TO_NAME.begin(), METER_TO_NAME.end(),
+        [&name](const std::pair<std::string_view, MeterType>& elem) {
+            return elem.first == name;
+        }
+    );
+
+    return (it != METER_TO_NAME.end()) ? it->second : MeterType::INVALID_METER_TYPE;
 }
 
-const std::string& MeterToName(MeterType meter) {
-    for (auto& [name, type] : GetMeterNameMap()) {
+const std::string& MeterToName(const MeterType& meter) {
+    for (auto& [name, type] : METER_TO_NAME) {
         if (type == meter)
-            return name; // CodeQL reports "Returning stack-allocated memory", but the name structured binding should be a reference as far as I can tell
+            return std::string{name}; // CodeQL reports "Returning stack-allocated memory", but the name structured binding should be a reference as far as I can tell
     }
     return EMPTY_STRING;
 }
