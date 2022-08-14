@@ -90,7 +90,7 @@ ARTISANS_INFLUENCE_STABILITY
             ]
             accountinglabel = "PLC_ARTISAN_WORKSHOPS"
             effects = SetTargetInfluence value = Value +
-                (NamedReal name = "ARTISANS_INFLUENCE_FLAT_FOCUS" value = 4.0)
+                (NamedReal name = "ARTISANS_INFLUENCE_FLAT_FOCUS" value = 2.0)
 
         EffectsGroup
             scope = Source
