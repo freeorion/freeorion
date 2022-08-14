@@ -14,13 +14,8 @@ INFLUENCE_SPECIALS = [
     "SPARK_FOSSILS_SPECIAL",
     "SUCCULENT_BARNACLES_SPECIAL",
 ]
-# Hardcoded values, to be replaced when we have an interface to read them.
-# NamedReal name = "SPECIAL_INFLUENCE_FOCUS_BONUS" value = 3.0
-SPECIAL_FLAT = 3.0
-# NamedReal name = "ARTISANS_INFLUENCE_FLAT_FOCUS" value = 4.0
-ARTISAN_FLAT = 4.0
-# TBD artisan bonus for non-focused planets.
-# well, first we'll have to teach the AI to use workshops at all...
+SPECIAL_FLAT = get_named_real("SPECIAL_INFLUENCE_FOCUS_BONUS")
+ARTISAN_FLAT = get_named_real("ARTISANS_INFLUENCE_FLAT_FOCUS")
 PLC_ARTISAN = "PLC_ARTISAN_WORKSHOPS"
 TAG_ARTISTIC = "ARTISTIC"
 
