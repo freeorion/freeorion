@@ -283,7 +283,7 @@ std::string ValueRefBase::InvariancePattern() const {
         .append(ConstantExpr()                  ? "C" : "c");
 }
 
-MeterType NameToMeter(const std::string_view name) {
+MeterType NameToMeter(const std::string& name) {
     auto it = std::find_if(METER_TO_NAME.begin(), METER_TO_NAME.end(),
         [&name](const std::pair<std::string_view, MeterType>& elem) {
             return elem.first == name;
