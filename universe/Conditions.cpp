@@ -4732,19 +4732,19 @@ namespace {
         auto& from = test_val ? matches : non_matches;
         auto& to = test_val ? non_matches : matches;
 
-        auto o_it = from.begin();
-        auto m_it = mask.begin();
+        auto o_it = from.begin();               // next object to test
+        auto from_dest = o_it;                  // where to put next object if it stays in from_set
+        auto to_dest = std::back_inserter(to);  // where to put next object if it moves to to_set
+        auto m_it = mask.begin();               // next object's mask value to check
         const auto m_end = mask.end();
-        auto dest = std::back_inserter(to);
 
         for (; m_it != m_end; ++m_it) {
-            if (*m_it != test_val) {
-                *dest++ = std::exchange(*o_it, from.back());
-                from.pop_back();
-            } else {
-                ++o_it;
-            }
+            if (*m_it != test_val)
+                *to_dest++ = *o_it++;       // put at next position in to set and move to next object to test
+            else
+                *from_dest++ = *o_it++;     // put at next output position in from set and move to next object to check mask for
         }
+        from.erase(from_dest, from.end());  // remove any remaining stuff past last used output position in from set
     };
 
     template <typename V, typename Pred>
