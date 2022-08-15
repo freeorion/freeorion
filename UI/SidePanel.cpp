@@ -3596,16 +3596,11 @@ bool SidePanel::PlanetSelectable(int planet_id, const ObjectMap& objects) const 
     if (!planet)
         return false;
 
-    // Find a selection visitor and apply it to planet
-    std::shared_ptr<UniverseObjectVisitor> selectable_visitor;
-    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    if (empire_id != ALL_EMPIRES)
-        selectable_visitor = std::make_shared<OwnedVisitor>(empire_id);
+    if (planet->Unowned())
+        return false;
 
-    if (!selectable_visitor)
-        return true;
-
-    return planet->Accept(*selectable_visitor).use_count();
+    int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    return planet->OwnedBy(client_empire_id);
 }
 
 void SidePanel::SelectPlanet(int planet_id, const ObjectMap& objects) {
@@ -3613,7 +3608,7 @@ void SidePanel::SelectPlanet(int planet_id, const ObjectMap& objects) {
         return;
 
     // Use the first sidepanel with selection enabled to determine if planet is selectable.
-    bool planet_selectable(false);
+    bool planet_selectable = false;
     for (auto& weak_panel : s_side_panels) {
         if (auto panel = weak_panel.lock())
             if (panel->m_selection_enabled) {
@@ -3640,7 +3635,7 @@ void SidePanel::SetSystem(int system_id) {
     if (s_system_id == system_id)
         return;
 
-    auto system = Objects().get<System>(system_id);
+    auto system = Objects().getRaw<const System>(system_id);
     if (!system) {
         s_system_id = INVALID_OBJECT_ID;
         return;
@@ -3648,7 +3643,7 @@ void SidePanel::SetSystem(int system_id) {
 
     s_system_id = system_id;
 
-    if (Objects().get<System>(s_system_id))
+    if (Objects().getRaw<const System>(s_system_id))
         PlaySidePanelOpenSound();
 
     // refresh sidepanels

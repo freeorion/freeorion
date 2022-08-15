@@ -3,7 +3,6 @@
 #include "ClientAppFixture.h"
 #include "Empire/Empire.h"
 #include "universe/Planet.h"
-#include "universe/UniverseObjectVisitors.h"
 #include "util/Directories.h"
 #include "util/Process.h"
 #include "util/SitRepEntry.h"
@@ -215,7 +214,10 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
             if (m_current_turn == 2) {
                 // check home planet meters
                 bool found_planet = false;
-                for (const auto& planet : Objects().find<Planet>(OwnedVisitor(m_empire_id))) {
+
+                auto is_owned = [this](const UniverseObject* obj) { return obj->OwnedBy(m_empire_id); };
+
+                for (const auto* planet : Objects().findRaw<Planet>(is_owned)) {
                     BOOST_REQUIRE_LT(0.0, planet->GetMeter(MeterType::METER_POPULATION)->Current());
                     BOOST_TEST_MESSAGE("Population: " << planet->GetMeter(MeterType::METER_POPULATION)->Current());
                     BOOST_REQUIRE_LT(0.0, planet->GetMeter(MeterType::METER_INDUSTRY)->Current());
