@@ -24,7 +24,6 @@
 
 class Empire;
 class EmpireManager;
-struct UniverseObjectVisitor;
 class XMLElement;
 class ShipDesign;
 class System;
