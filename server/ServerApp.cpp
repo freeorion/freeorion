@@ -2221,20 +2221,6 @@ bool ServerApp::AllOrdersReceived() {
 }
 
 namespace {
-    struct PopulatedOwnedVisitor : public UniverseObjectVisitor {
-        PopulatedOwnedVisitor(int empire_id = ALL_EMPIRES) :
-            m_empire_id(empire_id)
-        {}
-        virtual ~PopulatedOwnedVisitor() = default;
-        auto Visit(const std::shared_ptr<Planet>& obj) const -> std::shared_ptr<UniverseObject> override {
-            return (obj
-                    && obj->OwnedBy(m_empire_id)
-                    && obj->Populated())
-                ? obj : nullptr;
-        }
-        const int m_empire_id;
-    };
-
     /** Returns true if \a empire has been eliminated by the applicable
       * definition of elimination.  As of this writing, elimination means
       * having no ships and no population on planets. */
