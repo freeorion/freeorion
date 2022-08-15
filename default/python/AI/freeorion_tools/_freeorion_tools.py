@@ -426,3 +426,27 @@ def get_named_real(name: str) -> float:
         return fo.getNamedReal(name)
     error(f"Requested integer {name} does not exist!")
     return 1.0
+
+
+def get_game_rule_int(name: str) -> int:
+    """
+    Returns a integer value for a game rule.
+    Exceptions are handled like in get_named_int.
+    """
+    rules = fo.getGameRules()
+    if rules.ruleExistsWithType(name, fo.ruleType.int):
+        return rules.getInt(name)
+    error(f"Requested integer rule {name} does not exist!")
+    return 1
+
+
+def get_game_rule_real(name: str) -> int:
+    """
+    Returns a integer value for a game rule.
+    Exceptions are handled like in get_named_real.
+    """
+    rules = fo.getGameRules()
+    if rules.ruleExistsWithType(name, fo.ruleType.double):
+        return rules.getDouble(name)
+    error(f"Requested double rule {name} does not exist!")
+    return 1.0
