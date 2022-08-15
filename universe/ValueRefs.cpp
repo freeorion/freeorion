@@ -211,7 +211,6 @@ namespace {
         return retval;
     }
 
-    // TODO: compute array size from MeterType size?
     const std::array<std::pair<std::string, MeterType>, 36> NAME_TO_METER = {{
         {"Population",           MeterType::METER_POPULATION},
         {"TargetPopulation",     MeterType::METER_TARGET_POPULATION},
