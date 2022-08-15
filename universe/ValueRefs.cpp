@@ -212,7 +212,7 @@ namespace {
     }
 
     // TODO: compute array size from MeterType size?
-    constexpr std::array<std::pair<std::string_view, MeterType>, 36> METER_TO_NAME = {{
+    const std::array<std::pair<std::string, MeterType>, 36> NAME_TO_METER = {{
         {"Population",           MeterType::METER_POPULATION},
         {"TargetPopulation",     MeterType::METER_TARGET_POPULATION},
         {"Industry",             MeterType::METER_INDUSTRY},
@@ -283,22 +283,24 @@ std::string ValueRefBase::InvariancePattern() const {
         .append(ConstantExpr()                  ? "C" : "c");
 }
 
-MeterType NameToMeter(const std::string& name) {
-    auto it = std::find_if(METER_TO_NAME.begin(), METER_TO_NAME.end(),
+MeterType NameToMeter(const std::string_view name) {
+    auto it = std::find_if(NAME_TO_METER.begin(), NAME_TO_METER.end(),
         [&name](const std::pair<std::string_view, MeterType>& elem) {
             return elem.first == name;
         }
     );
 
-    return (it != METER_TO_NAME.end()) ? it->second : MeterType::INVALID_METER_TYPE;
+    return (it != NAME_TO_METER.end()) ? it->second : MeterType::INVALID_METER_TYPE;
 }
 
 const std::string& MeterToName(const MeterType& meter) {
-    for (auto& [name, type] : METER_TO_NAME) {
-        if (type == meter)
-            return std::string{name}; // CodeQL reports "Returning stack-allocated memory", but the name structured binding should be a reference as far as I can tell
-    }
-    return EMPTY_STRING;
+    auto it = std::find_if(NAME_TO_METER.begin(), NAME_TO_METER.end(),
+        [&meter](const std::pair<std::string, MeterType>& elem) {
+            return elem.second == meter;
+        }
+    );
+
+    return (it != NAME_TO_METER.end()) ? it->first : EMPTY_STRING;
 }
 
 constexpr std::string_view PlanetTypeToStringConstexpr(PlanetType type) {
@@ -853,7 +855,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
 {
     IF_CURRENT_VALUE(double)
 
-    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
+    const std::string_view property_name = m_property_name.empty() ? "" : m_property_name.back();
 
     if (m_ref_type == ReferenceType::NON_OBJECT_REFERENCE) {
         if ((property_name == "UniverseCentreX") ||
