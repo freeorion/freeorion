@@ -7185,8 +7185,14 @@ bool MapWnd::ZoomToPrevIdleFleet() {
 }
 
 bool MapWnd::ZoomToNextIdleFleet() {
-    auto vec = GetUniverse().Objects().findIDs<Fleet>(
-        StationaryFleetVisitor(GGHumanClientApp::GetApp()->EmpireID()));
+    const auto client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    auto is_stationary_client_empire_fleet = [client_empire_id](const Fleet* fleet) {
+        return (fleet->FinalDestinationID() == INVALID_OBJECT_ID || fleet->TravelRoute().empty()) &&
+                (client_empire_id == ALL_EMPIRES ||
+                (!fleet->Unowned() && fleet->Owner() == client_empire_id));
+    };
+    auto vec = GetUniverse().Objects().findIDs<Fleet>(is_stationary_client_empire_fleet);
+
     auto it = std::find(vec.begin(), vec.end(), m_current_fleet_id);
     const auto& destroyed_object_ids = GetUniverse().DestroyedObjectIds();
     if (it != vec.end())
@@ -7204,7 +7210,11 @@ bool MapWnd::ZoomToNextIdleFleet() {
 }
 
 bool MapWnd::ZoomToPrevFleet() {
-    auto vec = GetUniverse().Objects().findIDs<Fleet>(OwnedVisitor(GGHumanClientApp::GetApp()->EmpireID()));
+    auto client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    auto is_owned_fleet = [client_empire_id](const Fleet* fleet)
+    { return client_empire_id == ALL_EMPIRES || fleet->OwnedBy(client_empire_id); };
+    auto vec = GetUniverse().Objects().findIDs<Fleet>(is_owned_fleet);
+
     auto it = std::find(vec.begin(), vec.end(), m_current_fleet_id);
     const auto& destroyed_object_ids = GetUniverse().DestroyedObjectIds();
     if (it != vec.begin())
@@ -7224,8 +7234,11 @@ bool MapWnd::ZoomToPrevFleet() {
 }
 
 bool MapWnd::ZoomToNextFleet() {
-    auto vec = GetUniverse().Objects().findIDs<Fleet>(
-        OwnedVisitor(GGHumanClientApp::GetApp()->EmpireID()));
+    auto client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    auto is_owned_fleet = [client_empire_id](const Fleet* fleet)
+    { return client_empire_id == ALL_EMPIRES || fleet->OwnedBy(client_empire_id); };
+    auto vec = GetUniverse().Objects().findIDs<Fleet>(is_owned_fleet);
+
     auto it = std::find_if(vec.begin(), vec.end(),
         [cur_id{this->m_current_fleet_id}](int o_id){ return o_id == cur_id; });
     auto& destroyed_object_ids = GetUniverse().DestroyedObjectIds();

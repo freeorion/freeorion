@@ -8,7 +8,6 @@
 #include "../universe/ShipPart.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/ValueRef.h"
-#include "../universe/UniverseObjectVisitors.h"
 #include "../util/AppInterface.h"
 #include "../util/GameRules.h"
 #include "../util/ScopedTimer.h"

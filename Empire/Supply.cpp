@@ -10,7 +10,6 @@
 #include "../universe/System.h"
 #include "../universe/Universe.h"
 #include "../universe/UniverseObject.h"
-#include "../universe/UniverseObjectVisitors.h"
 #include "../util/AppInterface.h"
 #include "../util/Logger.h"
 
@@ -260,10 +259,10 @@ namespace {
         if (empire_id == ALL_EMPIRES)
             return 0.0f;
 
+        auto is_owned = [empire_id](const UniverseObject* obj) { return obj->OwnedBy(empire_id); };
+
         float accumulator_current = 0.0f;
-        for (auto& obj : objects.find<Planet>(OwnedVisitor(empire_id))) { // TODO: handle ships if they can have supply meters
-            if (!obj)
-                continue;
+        for (auto& obj : objects.findRaw<Planet>(is_owned)) { // TODO: handle ships if they can have supply meters
             if (auto* m = obj->GetMeter(MeterType::METER_SUPPLY))
                 accumulator_current += m->Current();
         }

@@ -26,7 +26,6 @@
 #include "Species.h"
 #include "System.h"
 #include "Tech.h"
-#include "UniverseObjectVisitors.h"
 #include "UniverseObject.h"
 #include "Universe.h"
 #include "../combat/CombatDamage.h"

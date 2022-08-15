@@ -32,7 +32,6 @@
 #include "../universe/Species.h"
 #include "../universe/System.h"
 #include "../universe/Tech.h"
-#include "../universe/UniverseObjectVisitors.h"
 #include "../universe/UnlockableItem.h"
 #include "../universe/ValueRef.h"
 #include "../util/Directories.h"
