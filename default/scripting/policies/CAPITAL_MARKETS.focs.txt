@@ -31,7 +31,6 @@ Policy
             ]
             activation = And [
                 Source
-                NoOp
                 Not EmpireStockpile empire = Source.Owner resource = Influence low = 0
             ]
             priority = [[TARGET_EARLY_BEFORE_SCALING_PRIORITY]]
