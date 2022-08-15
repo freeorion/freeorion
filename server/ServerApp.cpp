@@ -1893,8 +1893,10 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
         return false;
     }
 
+    auto is_owned = [empire_id](const UniverseObject* obj) { return obj->OwnedBy(empire_id); };
+
     // test for colonies count
-    auto planets = m_universe.Objects().find<Planet>(OwnedVisitor(empire_id));
+    auto planets = m_universe.Objects().findRaw <Planet>(is_owned);
     if (planets.size() > static_cast<size_t>(GetGameRules().Get<int>("RULE_CONCEDE_COLONIES_THRESHOLD"))) {
         player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_CONCEDE_EXCEED_COLONIES"), false));
         return false;
@@ -1905,17 +1907,17 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
     const auto& empire_ids = m_empires.EmpireIDs();
 
     // destroy owned ships
-    for (auto& obj : m_universe.Objects().find<Ship>(OwnedVisitor(empire_id))) {
+    for (auto* obj : m_universe.Objects().findRaw<Ship>(is_owned)) {
         obj->SetOwner(ALL_EMPIRES);
         m_universe.RecursiveDestroy(obj->ID(), empire_ids);
     }
     // destroy owned buildings
-    for (auto& obj : m_universe.Objects().find<Building>(OwnedVisitor(empire_id))) {
+    for (auto* obj : m_universe.Objects().findRaw<Building>(is_owned)) {
         obj->SetOwner(ALL_EMPIRES);
         m_universe.RecursiveDestroy(obj->ID(), empire_ids);
     }
     // unclaim owned planets
-    for (const auto& planet : planets)
+    for (auto* planet : planets)
         planet->Reset(m_universe.Objects());
 
     // Don't wait for turn
