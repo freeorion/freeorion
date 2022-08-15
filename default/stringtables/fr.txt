@@ -264,13 +264,16 @@ TEST  # translated
 Test
 
 BALANCE
-Équilibrage
+Équilibrage:divers
 
 CONTENT
 Contenu
 
 MULTIPLAYER
 Multijoueur
+
+BALANCE_STABILITY
+Équilibrage:Stabilité
 
 
 ##
@@ -1303,6 +1306,78 @@ Stabilité planétaire de base
 
 RULE_BASELINE_PLANET_STABILITY_DESC
 Niveau de base de la [[METER_HAPPINESS]] d'une planète.
+
+RULE_PROTECTION_FOCUS_STABILITY
+Bonus Stabilité du Focus Protection
+
+RULE_PROTECTION_FOCUS_STABILITY_DESC
+Bonus de [[METER_HAPPINESS]] fourni par le Focus Protection.
+
+RULE_IMPERIAL_PALACE_INFLUENCE
+Influence générée par Palais Impérial
+
+RULE_IMPERIAL_PALACE_INFLUENCE_DESC
+[[METER_INFLUENCE]] générée par la structure Palais Impérial.
+
+RULE_GOOD_ENVIRONMENT_STABILITY
+Modificateur Stabilité pour Environnement Parfait
+
+RULE_GOOD_ENVIRONMENT_STABILITY_DESC
+Modification de la [[METER_HAPPINESS]] si l'Environnement est Parfait.
+
+RULE_ADEQUATE_ENVIRONMENT_STABILITY
+Modificateur Stabilité pour Environnement Convenable
+
+RULE_ADEQUATE_ENVIRONMENT_STABILITY_DESC
+Modification de la [[METER_HAPPINESS]] si l'Environnement est Convenable.
+
+RULE_POOR_ENVIRONMENT_STABILITY
+Modificateur Stabilité pour Environnement Pauvre
+
+RULE_POOR_ENVIRONMENT_STABILITY_DESC
+Modification de la [[METER_HAPPINESS]] si l'Environnement est Pauvre.
+
+RULE_HOSTILE_ENVIRONMENT_STABILITY
+Modificateur Stabilité pour Environnement Hostile/Inhabitable
+
+RULE_HOSTILE_ENVIRONMENT_STABILITY_DESC
+Modification de la [[METER_HAPPINESS]] si l'Environnement est Hostile/Inhabitable.
+
+RULE_TINY_SIZE_STABILITY
+Modificateur Stabilité pour Minuscules Planètes
+
+RULE_TINY_SIZE_STABILITY_DESC
+Modification de la [[METER_HAPPINESS]] si la planète est de taille minuscule.
+
+RULE_SMALL_SIZE_STABILITY
+Modificateur Stabilité pour Petites Planètes
+
+RULE_SMALL_SIZE_STABILITY_DESC
+Modification de la [[METER_HAPPINESS]] si la planète est de petite taille.
+
+RULE_MEDIUM_SIZE_STABILITY
+Modificateur Stabilité pour Moyennes Planètes
+
+RULE_MEDIUM_SIZE_STABILITY_DESC
+Modification de la [[METER_HAPPINESS]] si la planète est de taille moyenne.
+
+RULE_LARGE_SIZE_STABILITY
+Modificateur Stabilité pour Grandes Planètes
+
+RULE_LARGE_SIZE_STABILITY_DESC
+Modification de la [[METER_HAPPINESS]] si la planète est de grande taille.
+
+RULE_HUGE_SIZE_STABILITY
+Modificateur Stabilité pour Immenses Planètes
+
+RULE_HUGE_SIZE_STABILITY_DESC
+Modification de la [[METER_HAPPINESS]] si la planète est de taille immense.
+
+RULE_GAS_GIANT_SIZE_STABILITY
+Modificateur Stabilité pour Géantes Gazeuses
+
+RULE_GAS_GIANT_SIZE_STABILITY_DESC
+Modification de la [[METER_HAPPINESS]] si la planète est une géante gazeuse.
 
 RULE_MINIMUM_MONSTER_DISTANCE_CAPITAL
 Distance minimum entre monstres et Capitale 
@@ -7172,7 +7247,7 @@ NEXT_TOWARDS_ORIGINAL_TYPE
 Prochain vers Type d'origine de la Planète
 
 PLANET_SIZE
-Taille Planète
+Équilibrage:Planète
 
 PLANET_ENVIRONMENT
 Environnement Planétaire
@@ -17214,6 +17289,26 @@ UNINHABTIABLE_ENVIRONMENT_LABEL
 %1% Environnement Inhabitable
 
 # %1% FIXME
+GOOD_ENVIRONMENT_STABILITY_LABEL
+%1% Environnement Parfait
+
+# %1% FIXME
+ADEQUATE_ENVIRONMENT_STABILITY_LABEL
+%1% Environnement Convenable
+
+# %1% FIXME
+POOR_ENVIRONMENT_STABILITY_LABEL
+%1% Environnement Pauvre
+
+# %1% FIXME
+HOSTILE_ENVIRONMENT_STABILITY_LABEL
+%1% Environnement Hostile
+
+# %1% FIXME
+UNINHABTIABLE_ENVIRONMENT_STABILITY_LABEL
+%1% Environnement Inhabitable
+
+# %1% FIXME
 ENV_ENCAPSUL_LABEL
 %1% Encapsulation de l'Environnement
 
@@ -17563,6 +17658,24 @@ HUGE_PLANET_LABEL
 Immense planète
 
 GAS_GIANT_LABEL
+Géante gazeuse
+
+TINY_PLANET_STABILITY_LABEL
+Minuscule planète
+
+SMALL_PLANET_STABILITY_LABEL
+Petite planète
+
+MEDIUM_PLANET_STABILITY_LABEL
+Moyenne planète
+
+LARGE_PLANET_STABILITY_LABEL
+Grande planète
+
+HUGE_PLANET_STABILITY_LABEL
+Immense planète
+
+GAS_GIANT_STABILITY_LABEL
 Géante gazeuse
 
 HOMEWORLD_SUPPLY
