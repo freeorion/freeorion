@@ -25,7 +25,6 @@ namespace Condition {
   * around the Universe. */
 class FO_COMMON_API Pathfinder {
 public:
-    typedef std::shared_ptr<const Pathfinder> ConstPtr;
     typedef std::shared_ptr<UniverseObjectVisitor> SystemExclusionPredicateType;
 
     Pathfinder();

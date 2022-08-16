@@ -629,17 +629,18 @@ namespace {
             const SystemGraph*                       m_graph = nullptr;
             Pathfinder::SystemExclusionPredicateType m_pred;
         };
-        typedef boost::filtered_graph<SystemGraph, SystemPredicateFilter> SystemPredicateGraph;
-        typedef std::map<int, std::shared_ptr<SystemPredicateGraph>> EmpireSystemPredicateMap;
-        typedef std::map<Pathfinder::SystemExclusionPredicateType, EmpireSystemPredicateMap> SystemPredicateGraphMap;
+
+        using SystemPredicateGraph = boost::filtered_graph<SystemGraph, SystemPredicateFilter>;
+        using EmpireSystemPredicateMap = std::map<int, std::shared_ptr<SystemPredicateGraph>>;
+        using SystemPredicateGraphMap = std::map<Pathfinder::SystemExclusionPredicateType, EmpireSystemPredicateMap>;
 
         // declare property map types for properties declared above
-        typedef boost::property_map<SystemGraph, vertex_system_id_t>::const_type        ConstSystemIDPropertyMap;
-        typedef boost::property_map<SystemGraph, vertex_system_id_t>::type              SystemIDPropertyMap;
-        typedef boost::property_map<SystemGraph, boost::vertex_index_t>::const_type     ConstIndexPropertyMap;
-        typedef boost::property_map<SystemGraph, boost::vertex_index_t>::type           IndexPropertyMap;
-        typedef boost::property_map<SystemGraph, boost::edge_weight_t>::const_type      ConstEdgeWeightPropertyMap;
-        typedef boost::property_map<SystemGraph, boost::edge_weight_t>::type            EdgeWeightPropertyMap;
+        using ConstSystemIDPropertyMap = boost::property_map<SystemGraph, vertex_system_id_t>::const_type;
+        using SystemIDPropertyMap = boost::property_map<SystemGraph, vertex_system_id_t>::type;
+        using ConstIndexPropertyMap = boost::property_map<SystemGraph, boost::vertex_index_t>::const_type;
+        using IndexPropertyMap = boost::property_map<SystemGraph, boost::vertex_index_t>::type;
+        using ConstEdgeWeightPropertyMap = boost::property_map<SystemGraph, boost::edge_weight_t>::const_type;
+        using EdgeWeightPropertyMap = boost::property_map<SystemGraph, boost::edge_weight_t>::type;
 
         SystemGraph              system_graph;              ///< a graph in which the systems are vertices and the starlanes are edges
         EmpireViewSystemGraphMap empire_system_graph_views; ///< a map of empire IDs to the views of the system graph by those empires

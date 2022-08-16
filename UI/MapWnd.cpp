@@ -7491,9 +7491,11 @@ namespace {
         std::pair<std::vector<int>, double> route_distance;
 
         if (ignore_hostile)
-            route_distance = universe.GetPathfinder()->ShortestPath(start_id, destination_id, empire_id, objects);
+            route_distance = universe.GetPathfinder()->ShortestPath(
+                start_id, destination_id, empire_id, objects);
         else
-            route_distance = universe.GetPathfinder()->ShortestPath(start_id, destination_id, empire_id, fleet_pred, empires, objects);
+            route_distance = universe.GetPathfinder()->ShortestPath(
+                start_id, destination_id, empire_id, fleet_pred, empires, objects);
 
         if (!route_distance.first.empty() && route_distance.second > 0.0)
             return {route_distance.second, std::move(route_distance.first)};
