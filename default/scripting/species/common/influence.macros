@@ -153,7 +153,7 @@ VERY_BAD_INFLUENCE
             ]
             accountinglabel = "VERY_BAD_INFLUENCE_LABEL"
             priority = [[TARGET_SCALING_PRIORITY]]
-            effects = SetTargetInfluence value = Value + ([[VERY_BAD_MULTIPLIER]]-1.0)*abs(Value)
+            effects = SetTargetInfluence value = Value + (2.0/3.0-1.0)*abs(Value)
 '''
 
 /*
@@ -184,7 +184,7 @@ BAD_INFLUENCE
             ]
             accountinglabel = "BAD_INFLUENCE_LABEL"
             priority = [[TARGET_SCALING_PRIORITY]]
-            effects = SetTargetInfluence value = Value + ([[BAD_MULTIPLIER]]-1.0)*abs(Value)
+            effects = SetTargetInfluence value = Value + (0.8-1.0)*abs(Value)
 '''
 
 AVERAGE_INFLUENCE
@@ -203,7 +203,7 @@ GOOD_INFLUENCE
             ]
             accountinglabel = "GOOD_INFLUENCE_LABEL"
             priority = [[TARGET_SCALING_PRIORITY]]
-            effects = SetTargetInfluence value = Value + ([[GOOD_MULTIPLIER]]-1.0)*abs(Value)
+            effects = SetTargetInfluence value = Value + (1.25-1.0)*abs(Value)
 '''
 
 GREAT_INFLUENCE
@@ -218,7 +218,7 @@ GREAT_INFLUENCE
             ]
             accountinglabel = "GREAT_INFLUENCE_LABEL"
             priority = [[TARGET_SCALING_PRIORITY]]
-            effects = SetTargetInfluence value = Value + ([[GREAT_MULTIPLIER]]-1.0)*abs(Value)
+            effects = SetTargetInfluence value = Value + (1.5-1.0)*abs(Value)
 '''
 
 ULTIMATE_INFLUENCE
@@ -233,7 +233,7 @@ ULTIMATE_INFLUENCE
             ]
             accountinglabel = "ULTIMATE_INFLUENCE_LABEL"
             priority = [[TARGET_SCALING_PRIORITY]]
-            effects = SetTargetInfluence value = Value + ([[ULTIMATE_MULTIPLIER]]-1.0)*abs(Value)
+            effects = SetTargetInfluence value = Value + (2.0-1.0)*abs(Value)
 '''
 
 #include "/scripting/common/misc.macros"
