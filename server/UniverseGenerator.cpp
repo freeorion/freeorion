@@ -849,9 +849,9 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data) {
                 colors.erase(colors.begin());
             } else {
                 // as a last resort, make up a colour
-                empire_colour = {{static_cast<unsigned char>(RandInt(0, 255)),
-                                  static_cast<unsigned char>(RandInt(0, 255)),
-                                  static_cast<unsigned char>(RandInt(0, 255)),
+                empire_colour = {{static_cast<uint8_t>(RandInt(0, 255)),
+                                  static_cast<uint8_t>(RandInt(0, 255)),
+                                  static_cast<uint8_t>(RandInt(0, 255)),
                                   255}};
             }
         }

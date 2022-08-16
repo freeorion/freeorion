@@ -116,10 +116,10 @@ void GLClientAndServerBufferBase<vtype>::clear()
 ///////////////////////////////////////////////////////////////////////////
 // GLRGBAColorBuffer
 ///////////////////////////////////////////////////////////////////////////
-template class GG::GLClientAndServerBufferBase<unsigned char>;
+template class GG::GLClientAndServerBufferBase<uint8_t>;
 
 GLRGBAColorBuffer::GLRGBAColorBuffer() :
-    GLClientAndServerBufferBase<unsigned char>(4)
+    GLClientAndServerBufferBase<uint8_t>(4)
 {}
 
 void GLRGBAColorBuffer::store(const Clr& color)

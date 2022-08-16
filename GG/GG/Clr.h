@@ -38,25 +38,25 @@ struct Clr
     constexpr Clr() = default;
 
     /** ctor that constructs a Clr from four ints that represent the color channels */
-    constexpr Clr(unsigned char r_,
-                  unsigned char g_,
-                  unsigned char b_,
-                  unsigned char a_) :
+    constexpr Clr(uint8_t r_,
+                  uint8_t g_,
+                  uint8_t b_,
+                  uint8_t a_) :
         r(r_), g(g_), b(b_), a(a_)
     {}
 
     /** ctor that constructs a Clr from std::array that represents the color channels */
-    constexpr Clr(const std::array<unsigned char, 4>& clr) :
+    constexpr Clr(const std::array<uint8_t, 4>& clr) :
         r(std::get<0>(clr)),
         g(std::get<1>(clr)),
         b(std::get<2>(clr)),
         a(std::get<3>(clr))
     {}
 
-    unsigned char r = 0;    ///< the red channel
-    unsigned char g = 0;    ///< the green channel
-    unsigned char b = 0;    ///< the blue channel
-    unsigned char a = 0;    ///< the alpha channel
+    uint8_t r = 0;    ///< the red channel
+    uint8_t g = 0;    ///< the green channel
+    uint8_t b = 0;    ///< the blue channel
+    uint8_t a = 0;    ///< the alpha channel
 };
 
 GG_API std::ostream& operator<<(std::ostream& os, const Clr& pt);
@@ -66,9 +66,9 @@ GG_API std::ostream& operator<<(std::ostream& os, const Clr& pt);
 inline constexpr Clr LightenClr(const Clr& clr, float factor = 2.0)
 {
     return Clr(
-        static_cast<unsigned char>(std::min(static_cast<int>(clr.r * factor), 255)),
-        static_cast<unsigned char>(std::min(static_cast<int>(clr.g * factor), 255)),
-        static_cast<unsigned char>(std::min(static_cast<int>(clr.b * factor), 255)),
+        static_cast<uint8_t>(std::min(static_cast<int>(clr.r * factor), 255)),
+        static_cast<uint8_t>(std::min(static_cast<int>(clr.g * factor), 255)),
+        static_cast<uint8_t>(std::min(static_cast<int>(clr.b * factor), 255)),
         clr.a);
 }
 
@@ -77,9 +77,9 @@ inline constexpr Clr LightenClr(const Clr& clr, float factor = 2.0)
 inline constexpr Clr DarkenClr(const Clr& clr, float factor = 2.0)
 {
     return Clr(
-        static_cast<unsigned char>(clr.r / factor),
-        static_cast<unsigned char>(clr.g / factor),
-        static_cast<unsigned char>(clr.b / factor),
+        static_cast<uint8_t>(clr.r / factor),
+        static_cast<uint8_t>(clr.g / factor),
+        static_cast<uint8_t>(clr.b / factor),
         clr.a);
 }
 
@@ -93,20 +93,20 @@ inline constexpr Clr InvertClr(const Clr& clr)
 
 inline constexpr Clr BlendClr(const Clr& src, const Clr& dst, float factor)
 {
-    return Clr(static_cast<unsigned char>(src.r * factor + dst.r * (1 - factor)),
-               static_cast<unsigned char>(src.g * factor + dst.g * (1 - factor)),
-               static_cast<unsigned char>(src.b * factor + dst.b * (1 - factor)),
-               static_cast<unsigned char>(src.a * factor + dst.a * (1 - factor)));
+    return Clr(static_cast<uint8_t>(src.r * factor + dst.r * (1 - factor)),
+               static_cast<uint8_t>(src.g * factor + dst.g * (1 - factor)),
+               static_cast<uint8_t>(src.b * factor + dst.b * (1 - factor)),
+               static_cast<uint8_t>(src.a * factor + dst.a * (1 - factor)));
 }
 
 /** Named ctor that constructs a Clr from four floats that represent the color
     channels (each must be >= 0.0 and <= 1.0). */
 inline constexpr Clr FloatClr(float r, float g, float b, float a)
 {
-    return Clr(static_cast<unsigned char>(r * 255),
-               static_cast<unsigned char>(g * 255),
-               static_cast<unsigned char>(b * 255),
-               static_cast<unsigned char>(a * 255));
+    return Clr(static_cast<uint8_t>(r * 255),
+               static_cast<uint8_t>(g * 255),
+               static_cast<uint8_t>(b * 255),
+               static_cast<uint8_t>(a * 255));
 }
 
 /** Named ctor that constructs a Clr from a string that represents the color
@@ -154,10 +154,10 @@ inline bool operator!=(const Clr& rhs, const Clr& lhs)
 /** Returns the input Clr scaned by the input factor \a s. */
 inline Clr operator*(const Clr& lhs, float s)
 {
-    return Clr(static_cast<unsigned char>(lhs.r * s),
-               static_cast<unsigned char>(lhs.g * s),
-               static_cast<unsigned char>(lhs.b * s),
-               static_cast<unsigned char>(lhs.a * s));
+    return Clr(static_cast<uint8_t>(lhs.r * s),
+               static_cast<uint8_t>(lhs.g * s),
+               static_cast<uint8_t>(lhs.b * s),
+               static_cast<uint8_t>(lhs.a * s));
 }
 
 /** Returns the component-wise sum of input Clrs. */
