@@ -379,7 +379,6 @@
     (RemoveSpecial)                             \
     (RemoveStarlanes)                           \
     (Research)                                  \
-    (Researchable)                              \
     (researchcost)                              \
     (researchturns)                             \
     (resource)                                  \
@@ -587,7 +586,6 @@
     (unlock)                                    \
     (Unowned)                                   \
     (Unproducible)                              \
-    (Unresearchable)                            \
     (UsedInDesignID)                            \
     (UserString)                                \
     (uuid)                                      \
