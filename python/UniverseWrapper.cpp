@@ -361,19 +361,19 @@ namespace FreeOrionPython {
         //    Universe    //
         ////////////////////
         py::class_<Universe, boost::noncopyable>("universe", py::no_init)
-            .def("getObject",                   +[](const Universe& u, int id) -> const UniverseObject* { return ::Objects().get<UniverseObject>(id).operator->(); },
+            .def("getObject",                   +[](const Universe& u, int id) -> const UniverseObject* { return u.Objects().getRaw<const UniverseObject>(id); },
                                                 py::return_value_policy<py::reference_existing_object>())
-            .def("getFleet",                    +[](const Universe& u, int id) -> const Fleet* { return u.Objects().get<Fleet>(id).operator->(); },
+            .def("getFleet",                    +[](const Universe& u, int id) -> const Fleet* { return u.Objects().getRaw<const Fleet>(id); },
                                                 py::return_value_policy<py::reference_existing_object>())
-            .def("getShip",                     +[](const Universe& u, int id) -> const Ship* { return u.Objects().get<Ship>(id).operator->(); },
+            .def("getShip",                     +[](const Universe& u, int id) -> const Ship* { return u.Objects().getRaw<const Ship>(id); },
                                                 py::return_value_policy<py::reference_existing_object>())
-            .def("getPlanet",                   +[](const Universe& u, int id) -> const Planet* { return u.Objects().get<Planet>(id).operator->(); },
+            .def("getPlanet",                   +[](const Universe& u, int id) -> const Planet* { return u.Objects().getRaw<const Planet>(id); },
                                                 py::return_value_policy<py::reference_existing_object>())
-            .def("getSystem",                   +[](const Universe& u, int id) -> const System* { return u.Objects().get<System>(id).operator->(); },
+            .def("getSystem",                   +[](const Universe& u, int id) -> const System* { return u.Objects().getRaw<const System>(id); },
                                                 py::return_value_policy<py::reference_existing_object>())
-            .def("getField",                    +[](const Universe& u, int id) -> const Field* { return u.Objects().get<Field>(id).operator->(); },
+            .def("getField",                    +[](const Universe& u, int id) -> const Field* { return u.Objects().getRaw<const Field>(id); },
                                                 py::return_value_policy<py::reference_existing_object>())
-            .def("getBuilding",                 +[](const Universe& u, int id) -> const Building* { return u.Objects().get<Building>(id).operator->(); },
+            .def("getBuilding",                 +[](const Universe& u, int id) -> const Building* { return u.Objects().getRaw<const Building>(id); },
                                                 py::return_value_policy<py::reference_existing_object>())
             .def("getGenericShipDesign",        +[](const Universe& u, const std::string& name) -> const ShipDesign* { return u.GetGenericShipDesign(name); },
                                                 py::return_value_policy<py::reference_existing_object>(),
