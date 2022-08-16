@@ -728,7 +728,7 @@ void MultiPlayerLobbyWnd::PlayerLabelRow::CompleteConstruction() {
     RequirePreRender();
 }
 
-void MultiPlayerLobbyWnd::PlayerLabelRow::SetText(size_t column, const std::string& str) {
+void MultiPlayerLobbyWnd::PlayerLabelRow::SetText(std::size_t column, const std::string& str) {
     if (m_cells.size() < column) {
         ErrorLogger() << "Invalid column " << column << " for row with " << m_cells.size() << " columns";
         return;

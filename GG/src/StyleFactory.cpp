@@ -67,7 +67,7 @@ std::shared_ptr<Button> StyleFactory::NewButton(std::string str, const std::shar
 std::shared_ptr<RadioButtonGroup> StyleFactory::NewRadioButtonGroup(Orientation orientation) const
 { return Wnd::Create<RadioButtonGroup>(orientation); }
 
-std::shared_ptr<DropDownList> StyleFactory::NewDropDownList(size_t num_shown_elements, Clr color) const
+std::shared_ptr<DropDownList> StyleFactory::NewDropDownList(std::size_t num_shown_elements, Clr color) const
 { return Wnd::Create<DropDownList>(num_shown_elements, color); }
 
 std::shared_ptr<Edit> StyleFactory::NewEdit(

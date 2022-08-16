@@ -218,7 +218,7 @@ public:
         const std::set<std::string>& known_techs, const std::string& desired_tech,
         int empire_id, const ScriptingContext& context);
 
-    [[nodiscard]] size_t                   size() const;
+    [[nodiscard]] std::size_t              size() const;
 
     /** iterator to the first tech */
     [[nodiscard]] iterator                 begin() const;

@@ -231,7 +231,7 @@ public:
 
     */
 
-    void ChangeTemplatedText(const std::string& new_text, size_t targ_offset);
+    void ChangeTemplatedText(const std::string& new_text, std::size_t targ_offset);
 
     /** Returns the Font used by this TextControl to render its text. */
     const std::shared_ptr<Font>& GetFont() const;

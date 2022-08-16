@@ -76,10 +76,10 @@ void System::Copy(std::shared_ptr<const UniverseObject> copied_object,
         this->m_objects = copied_system->VisibleContainedObjectIDs(empire_id, universe.GetEmpireObjectVisibility());
 
         // only copy orbit info for visible planets
-        size_t orbits_size = m_orbits.size();
+        auto orbits_size = m_orbits.size();
         m_orbits.clear();
         m_orbits.assign(orbits_size, INVALID_OBJECT_ID);
-        for (std::size_t o = 0; o < copied_system->m_orbits.size(); ++o) {
+        for (std::size_t o = 0u; o < copied_system->m_orbits.size(); ++o) {
             int planet_id = copied_system->m_orbits[o];
             if (m_objects.count(planet_id))
                 m_orbits[o] = planet_id;

@@ -141,7 +141,7 @@ public:
 
     [[nodiscard]] ship_design_iterator beginShipDesigns() const { return m_ship_designs.begin(); }
     [[nodiscard]] ship_design_iterator endShipDesigns() const   { return m_ship_designs.end(); }
-    [[nodiscard]] size_t               NumShipDesigns() const   { return m_ship_designs.size(); }
+    [[nodiscard]] auto                 NumShipDesigns() const   { return m_ship_designs.size(); }
 
     [[nodiscard]] const ShipDesign* GetGenericShipDesign(std::string_view name) const;
 

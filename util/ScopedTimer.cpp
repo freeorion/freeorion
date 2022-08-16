@@ -226,7 +226,7 @@ public:
         //Print the section times followed by the total time elapsed.
 
         // Find the longest name to right align the times and longest time to align the units
-        size_t longest_section_name(0);
+        std::size_t longest_section_name(0);
         std::chrono::nanoseconds longest_section_duration(0);
         for (const auto& section : m_sections->m_table) {
             longest_section_name = std::max(longest_section_name, section.first.size());

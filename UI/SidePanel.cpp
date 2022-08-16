@@ -232,7 +232,7 @@ namespace {
 
         if (!usphere_initialized) {
             // calculate azimuth on unit sphere along equator
-            for (auto longitude : boost::irange<size_t>(0, azimuth.size())) {
+            for (auto longitude : boost::irange<std::size_t>(0, azimuth.size())) {
                 float phi = 2 * M_PI * longitude / (azimuth.size() - 1);
                 azimuth[longitude] = {std::sin(phi), std::cos(phi)};
             }
@@ -241,7 +241,7 @@ namespace {
             azimuth.back() = azimuth[0];
 
             // calculate elevation on unit sphere along meridian
-            for (auto latitude : boost::irange<size_t>(0, elevation.size())) {
+            for (auto latitude : boost::irange<std::size_t>(0, elevation.size())) {
                 float theta = M_PI * latitude / (elevation.size() - 1);
                 elevation[latitude] = {std::sin(theta), std::cos(theta)};
             }
@@ -272,9 +272,9 @@ namespace {
         glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse_v);
 
         glColor(GG::CLR_WHITE);
-        for (auto latitude : boost::irange<size_t>(0, elevation.size() - 1)) {
+        for (auto latitude : boost::irange<std::size_t>(0, elevation.size() - 1)) {
             glBegin(GL_QUAD_STRIP);
-            for (auto longitude : boost::irange<size_t>(0, azimuth.size())) {
+            for (auto longitude : boost::irange<std::size_t>(0, azimuth.size())) {
                 glNormal3f(azimuth[longitude].sin * elevation[latitude+1].sin,
                            azimuth[longitude].cos * elevation[latitude+1].sin,
                            elevation[latitude+1].cos);
@@ -809,7 +809,7 @@ namespace {
 /** A class to display all of the system names*/
 class SidePanel::SystemNameDropDownList : public CUIDropDownList {
     public:
-    SystemNameDropDownList(size_t num_shown_elements) :
+    SystemNameDropDownList(std::size_t num_shown_elements) :
         CUIDropDownList(num_shown_elements),
         m_order_issuing_enabled(true)
     { }

@@ -49,8 +49,8 @@ namespace {
         return retval;
     }
 
-    template <typename T, size_t N>
-    constexpr size_t ArrSize(std::array<T, N>)
+    template <typename T, std::size_t N>
+    constexpr std::size_t ArrSize(std::array<T, N>)
     { return N; }
 }
 
@@ -74,7 +74,7 @@ size_t Meter::ToChars(char* buffer, char* buffer_end) const {
     result_ptr = std::to_chars(result_ptr, buffer_end, init).ptr;
     return std::distance(buffer, result_ptr);
 #else
-    size_t buffer_sz = std::distance(buffer, buffer_end);
+    std::size_t buffer_sz = std::distance(buffer, buffer_end);
     auto temp = std::to_string(cur);
     auto out_sz = temp.size();
     std::copy_n(temp.begin(), std::min(buffer_sz, out_sz), buffer);

@@ -158,7 +158,7 @@ int QueueListBox::IteraterIndex(const const_iterator it) {
     if (it == this->end())
         return -1;
 
-    size_t dist = 0;
+    std::size_t dist = 0;
     for (auto qit = this->begin(); qit != this->end(); ++qit) {
         if (qit == it)
             return dist;

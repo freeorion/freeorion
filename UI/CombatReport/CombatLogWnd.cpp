@@ -111,7 +111,7 @@ namespace {
             if (owner_forces.empty())
                 owner_forces.resize(categories.size());
 
-            for (size_t i = 0; i < categories.size(); ++i) {
+            for (std::size_t i = 0; i < categories.size(); ++i) {
                 const auto& category = categories[i];
                 if (category(object)) {
                     auto& owner_forces_category = owner_forces[i];

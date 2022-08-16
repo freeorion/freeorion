@@ -524,7 +524,7 @@ void ModalListPicker::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 ////////////////////////////////////////////////
 // GG::DropDownList
 ////////////////////////////////////////////////
-DropDownList::DropDownList(size_t num_shown_elements, Clr color) :
+DropDownList::DropDownList(std::size_t num_shown_elements, Clr color) :
     Control(X0, Y0, X(1 + 2 * ListBox::BORDER_THICK),
             Y(1 + 2 * ListBox::BORDER_THICK), INTERACTIVE),
     m_modal_picker(Wnd::Create<ModalListPicker>(color, this, num_shown_elements))

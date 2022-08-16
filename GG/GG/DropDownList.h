@@ -65,7 +65,7 @@ public:
     typedef boost::signals2::signal<void (bool)>       DropDownOpenedSignalType;
 
     /** basic ctor.  DropDownList retains ownership of \a lb, if it is non-null. */
-    DropDownList(size_t num_shown_elements, Clr color);
+    DropDownList(std::size_t num_shown_elements, Clr color);
     ~DropDownList();
 
     [[nodiscard]] iterator        CurrentItem() const;            ///< returns the currently selected list item (returns end() if none is selected)

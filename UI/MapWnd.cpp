@@ -609,7 +609,7 @@ namespace {
         }
 
     private:
-        void UpdateImpl(size_t mode, const Wnd* target) override {
+        void UpdateImpl(std::size_t mode, const Wnd* target) override {
             UpdateLabels();
             ResetShipDesignLabels();
             DoLayout();
@@ -2507,7 +2507,7 @@ void MapWnd::RenderVisibilityRadii() {
                                              0.0, TWO_PI, false, 0, false);
 
                 // store colours for line segments
-                for (size_t count = 0; count < verts.size(); ++count)
+                for (std::size_t count = 0; count < verts.size(); ++count)
                     vert_colours.store(circle_colour);
 
                 verts.activate();

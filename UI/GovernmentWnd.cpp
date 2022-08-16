@@ -690,7 +690,7 @@ void GovernmentWnd::PolicyPalette::CompleteConstruction() {
             UserStringNop("POLICY_LIST_ADOPTED"), UserStringNop("POLICY_LIST_ADOPTABLE"),
             UserStringNop("POLICY_LIST_UNAFFORDABLE"), UserStringNop("POLICY_LIST_RESTRICTED"),
             UserStringNop("POLICY_LIST_LOCKED")}};
-    for (size_t n = 0; n < 5; ++n) {
+    for (std::size_t n = 0; n < 5; ++n) {
         auto& button = m_availabilities_buttons[n];
         button = GG::Wnd::Create<CUIStateButton>(UserString(BUTTON_LABELS[n]),
                                                  GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
@@ -750,9 +750,9 @@ void GovernmentWnd::PolicyPalette::DoLayout() {
         TOTAL_BUTTONS_PER_ROW = AVAILABILITY_BUTTONS_PER_ROW + CATEGORY_BUTTONS_PER_ROW;
     }
 
-    //const std::size_t NUM_CATEGORY_BUTTON_ROWS = static_cast<size_t>(std::ceil(
+    //const std::size_t NUM_CATEGORY_BUTTON_ROWS = static_cast<std::size_t>(std::ceil(
     //    NUM_CATEGORY_BUTTONS * 1.0f / CATEGORY_BUTTONS_PER_ROW));
-    //const std::size_t NUM_AVAILABILITY_BUTTON_ROWS = static_cast<size_t>(std::ceil(
+    //const std::size_t NUM_AVAILABILITY_BUTTON_ROWS = static_cast<std::size_t>(std::ceil(
     //    NUM_AVAILABILITY_BUTTONS * 1.0f / AVAILABILITY_BUTTONS_PER_ROW));
 
     const GG::X BUTTON_WIDTH = (USABLE_WIDTH - (TOTAL_BUTTONS_PER_ROW - 1)*BUTTON_SEPARATION) / TOTAL_BUTTONS_PER_ROW;

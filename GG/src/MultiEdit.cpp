@@ -147,7 +147,7 @@ void MultiEdit::Render()
     const auto focus_wnd{GUI::GetGUI()->FocusWnd().get()};
     const bool multiselected = MultiSelected();
     const std::size_t caret_row = (!multiselected && focus_wnd == this && !(m_style & MULTI_READ_ONLY))
-        ? m_cursor_begin.first : std::numeric_limits<size_t>::max();
+        ? m_cursor_begin.first : std::numeric_limits<std::size_t>::max();
 
     // process tags
     font->ProcessTagsBefore(lines, state, first_visible_row, CP0);
@@ -1078,8 +1078,8 @@ void MultiEdit::ClearSelected()
     //std::cout << "text before erase:" << Text() << std::endl;
 
     // predetermine post-erase cursor position because erasing can mess up state of cursor position members
-    std::pair<size_t, CPSize> low_pos = LowCursorPos();
-    std::pair<size_t, CPSize> high_pos = HighCursorPos();
+    std::pair<std::size_t, CPSize> low_pos = LowCursorPos();
+    std::pair<std::size_t, CPSize> high_pos = HighCursorPos();
 
     Erase(low_pos.first, low_pos.second, high_pos.first, high_pos.second);
     //std::cout << "text after  erase:" << Text() << "\n";

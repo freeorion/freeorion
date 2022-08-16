@@ -1872,7 +1872,7 @@ namespace {
 
             // adjust for SI postfix
             auto next_char_offset = std::distance(key.data(), result.ptr);
-            if (next_char_offset > 0 && static_cast<size_t>(next_char_offset) < key.length()) {
+            if (next_char_offset > 0 && static_cast<std::size_t>(next_char_offset) < key.length()) {
                 //std::cout << "key:\"" << key << "\" next char:" << *result.ptr << std::endl;
                 float power = 0.0f;
                 switch (*result.ptr) {

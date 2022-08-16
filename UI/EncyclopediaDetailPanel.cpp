@@ -233,7 +233,7 @@ namespace {
 
         static const auto label_value_strings = []() {
             std::array<std::string, NUM_IDX> retval{};
-            for (size_t idx = 0; idx < NUM_IDX; ++idx)
+            for (std::size_t idx = 0; idx < NUM_IDX; ++idx)
                 retval[idx] = std::string{to_string(MeterType(static_cast<signed_idx_type>(idx)))}
                                 .append("_VALUE_LABEL");
             return retval;

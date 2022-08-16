@@ -247,7 +247,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
     std::vector<std::string> args, arg;
     args.push_back("\"" + AI_CLIENT_EXE + "\"");
     args.push_back("place_holder");
-    size_t player_pos = args.size()-1;
+    std::size_t player_pos = args.size()-1;
     std::stringstream max_aggr_str;
     max_aggr_str << max_aggression;
     args.push_back(max_aggr_str.str());
@@ -1896,7 +1896,7 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
 
     // test for colonies count
     auto planets = m_universe.Objects().findRaw <Planet>(is_owned);
-    if (planets.size() > static_cast<size_t>(GetGameRules().Get<int>("RULE_CONCEDE_COLONIES_THRESHOLD"))) {
+    if (planets.size() > static_cast<std::size_t>(GetGameRules().Get<int>("RULE_CONCEDE_COLONIES_THRESHOLD"))) {
         player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_CONCEDE_EXCEED_COLONIES"), false));
         return false;
     }

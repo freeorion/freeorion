@@ -193,7 +193,7 @@ private:
         DoLayout();
     }
 
-    void HandleTabChanged(size_t tabnum) {
+    void HandleTabChanged(std::size_t tabnum) {
         if (tabnum == 1)
             m_log->HandleMadeVisible();
 

@@ -239,7 +239,7 @@ public:
 /** a FreeOrion DropDownList control */
 class CUIDropDownList : public GG::DropDownList {
 public:
-    explicit CUIDropDownList(size_t num_shown_elements);
+    explicit CUIDropDownList(std::size_t num_shown_elements);
 
     /** Return the width of the dropped row which excludes the DropArrow. */
     GG::X DroppedRowWidth() const override;
@@ -386,7 +386,7 @@ public:
 
     void CompleteConstruction() override;
 
-    double GetValue(size_t index = 0) const;
+    double GetValue(std::size_t index = 0) const;
     GG::Pt MinUsableSize() const override;
 
     void PreRender() override;

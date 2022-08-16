@@ -119,8 +119,8 @@ public:
 
     /** Returns the system ids of systems that are within \p jumps of the \p
         candidates system ids.*/
-    std::vector<int> WithinJumps(size_t jumps, std::vector<int> candidates) const;
-    std::vector<int> WithinJumps(size_t jumps, int candidate) const;
+    std::vector<int> WithinJumps(std::size_t jumps, std::vector<int> candidates) const;
+    std::vector<int> WithinJumps(std::size_t jumps, int candidate) const;
 
     /** Returns the partition (near, far) of the \p candidate objects into two sets,
         those that are within \p jumps of the \p stationary objects and that are not.*/

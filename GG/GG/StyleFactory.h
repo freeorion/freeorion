@@ -82,7 +82,7 @@ public:
     virtual std::shared_ptr<RadioButtonGroup> NewRadioButtonGroup(Orientation orientation) const;
 
     /** Returns a new GG DropDownList. */
-    virtual std::shared_ptr<DropDownList> NewDropDownList(size_t num_shown_elements, Clr color) const;
+    virtual std::shared_ptr<DropDownList> NewDropDownList(std::size_t num_shown_elements, Clr color) const;
 
     /** Returns a new GG Edit. */
     virtual std::shared_ptr<Edit> NewEdit(

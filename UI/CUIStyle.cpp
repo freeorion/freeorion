@@ -55,7 +55,7 @@ std::shared_ptr<GG::Button> CUIStyle::NewButton(std::string str, const std::shar
 { return GG::Wnd::Create<CUIButton>(std::move(str)); }
 
 
-std::shared_ptr<GG::DropDownList> CUIStyle::NewDropDownList(size_t num_shown_elements, GG::Clr color) const
+std::shared_ptr<GG::DropDownList> CUIStyle::NewDropDownList(std::size_t num_shown_elements, GG::Clr color) const
 { return GG::Wnd::Create<CUIDropDownList>(num_shown_elements); }
 
 std::shared_ptr<GG::Edit> CUIStyle::NewEdit(std::string str, const std::shared_ptr<GG::Font>& font,

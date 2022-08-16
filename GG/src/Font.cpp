@@ -2071,7 +2071,7 @@ namespace {
         if (params.size() != 4)
             return {retval, false};
 
-        for (size_t n = 0; n < 4; ++n) {
+        for (std::size_t n = 0; n < 4; ++n) {
 #if defined(__cpp_lib_to_chars)
             const auto& param{params[n]};
             if (param.empty())

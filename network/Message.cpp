@@ -843,7 +843,7 @@ void ExtractChatHistoryMessage(const Message& msg, std::vector<ChatHistoryEntity
         ia >> BOOST_SERIALIZATION_NVP(size);
         chat_history.clear();
         chat_history.reserve(size);
-        for (size_t ii = 0; ii < size; ++ii) {
+        for (std::size_t ii = 0; ii < size; ++ii) {
             ChatHistoryEntity elem;
             ia >> BOOST_SERIALIZATION_NVP(elem);
             chat_history.push_back(elem);
@@ -1390,7 +1390,7 @@ FO_COMMON_API void ExtractLoggerConfigMessageData(const Message& msg,
         freeorion_xml_iarchive ia(is);
         std::size_t size;
         ia >> BOOST_SERIALIZATION_NVP(size);
-        for (size_t ii = 0; ii < size; ++ii) {
+        for (std::size_t ii = 0; ii < size; ++ii) {
             std::string option;
             std::string name;
             LogLevel level;

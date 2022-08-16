@@ -67,10 +67,10 @@ const std::string& StringTable::Add(std::string key, std::string value)
 { return m_strings.emplace(std::move(key), std::move(value)).first->second; }
 
 namespace {
-    std::string_view MatchLookupKey(const boost::xpressive::smatch& match, size_t idx) {
+    std::string_view MatchLookupKey(const boost::xpressive::smatch& match, std::size_t idx) {
         //return match[idx].str(); // constructs a std::string, which should be avoidable for lookup purposes...
         const auto& m{match[idx]};
-        return {&*m.first, static_cast<size_t>(std::max(0, static_cast<int>(m.length())))};
+        return {&*m.first, static_cast<std::size_t>(std::max(0, static_cast<int>(m.length())))};
     }
 }
 

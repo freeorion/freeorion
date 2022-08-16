@@ -257,7 +257,7 @@ namespace {
 
             const int idx = match[2].matched ? 2 : 1;
             const auto& m{match[idx]};
-            std::string_view label{&*m.first, static_cast<size_t>(std::max(0, static_cast<int>(m.length())))};
+            std::string_view label{&*m.first, static_cast<std::size_t>(std::max(0, static_cast<int>(m.length())))};
 
             // look up child
             auto elem = m_variables.find(label);
@@ -268,7 +268,7 @@ namespace {
                 return UserString("ERROR");
             }
 
-            std::string_view tag{&*match[1].first, static_cast<size_t>(std::max(0, static_cast<int>(match[1].length())))};
+            std::string_view tag{&*match[1].first, static_cast<std::size_t>(std::max(0, static_cast<int>(match[1].length())))};
 
             auto substituter_it = std::find_if(substitution_map.begin(), substitution_map.end(),
                                                [tag](const auto& e) { return e.first == tag; });

@@ -28,8 +28,8 @@
 #endif
 
 namespace {
-    template <typename T, size_t N>
-    constexpr size_t ArrSize(std::array<T, N>)
+    template <typename T, std::size_t N>
+    constexpr std::size_t ArrSize(std::array<T, N>)
     { return N; }
 }
 
@@ -264,12 +264,12 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
 
 
 namespace {
-    size_t ToChars(size_t num, char* buffer, char* buffer_end) {
+    std::size_t ToChars(std::size_t num, char* buffer, char* buffer_end) {
 #if defined(__cpp_lib_to_chars)
         auto result_ptr = std::to_chars(buffer, buffer_end, num).ptr;
         return std::distance(buffer, result_ptr);
 #else
-        size_t buffer_sz = std::distance(buffer, buffer_end);
+        std::size_t buffer_sz = std::distance(buffer, buffer_end);
         auto temp = std::to_string(num);
         auto out_sz = std::min(buffer_sz, temp.size());
         std::copy_n(temp.begin(), out_sz, buffer);
@@ -277,8 +277,8 @@ namespace {
 #endif
     }
 
-    constexpr size_t num_meters_possible{static_cast<size_t>(MeterType::NUM_METER_TYPES)};
-    constexpr size_t single_meter_text_size{ArrSize(Meter::ToCharsArrayT())};
+    constexpr std::size_t num_meters_possible{static_cast<std::size_t>(MeterType::NUM_METER_TYPES)};
+    constexpr std::size_t single_meter_text_size{ArrSize(Meter::ToCharsArrayT())};
 
     constexpr std::array<std::string_view, num_meters_possible + 2> tags{
         "inv",
@@ -301,7 +301,7 @@ namespace {
         using mt_under = std::underlying_type_t<MeterType>;
         static_assert(std::is_same_v<mt_under, signed char>);
         static_assert(static_cast<mt_under>(MeterType::INVALID_METER_TYPE) == -1);
-        auto mt_offset = static_cast<size_t>(MeterType(static_cast<mt_under>(mt) + 1));
+        auto mt_offset = static_cast<std::size_t>(MeterType(static_cast<mt_under>(mt) + 1));
         return tags.at(mt_offset);
     }
     static_assert(MeterTypeTag(MeterType::INVALID_METER_TYPE) == "inv");
@@ -311,7 +311,7 @@ namespace {
     constexpr MeterType MeterTypeFromTag(std::string_view sv) {
         using mt_under = std::underlying_type_t<MeterType>;
 
-        for (size_t idx = 0; idx < tags.size(); ++idx) {
+        for (std::size_t idx = 0; idx < tags.size(); ++idx) {
             if (tags[idx] == sv)
                 return MeterType(static_cast<mt_under>(idx) - 1);
         }
@@ -324,7 +324,7 @@ namespace {
 
     /** Write text representation of meter type, current, and initial value.
       * Return number of consumed chars. */
-    size_t ToChars(const UniverseObject::MeterMap::value_type& val, char* const buffer, char* const buffer_end) {
+    std::size_t ToChars(const UniverseObject::MeterMap::value_type& val, char* const buffer, char* const buffer_end) {
         const auto& [type, m] = val;
 
         if (std::distance(buffer, buffer_end) < 10)
@@ -348,7 +348,7 @@ namespace {
     {
         using namespace boost::serialization;
 
-        static constexpr size_t buffer_size = num_meters_possible * single_meter_text_size;
+        static constexpr std::size_t buffer_size = num_meters_possible * single_meter_text_size;
         static_assert(buffer_size > 100);
 
         std::array<std::string::value_type, buffer_size> buffer{};
@@ -374,7 +374,7 @@ namespace {
     {
         using namespace boost::serialization;
 
-        static constexpr size_t buffer_size = num_meters_possible * single_meter_text_size;
+        static constexpr std::size_t buffer_size = num_meters_possible * single_meter_text_size;
 
         if (version < 4) {
             ar >> make_nvp("m_meters", meters);

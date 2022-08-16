@@ -131,7 +131,7 @@ std::string_view TextControl::Text(CPSize from, CPSize to) const
         //std::cout << "dist low to high: " << std::distance(low_it, high_it) << std::endl;
         //std::cout << "dist high to end: " << std::distance(high_it, m_text.end()) << std::endl;
 
-        return {&*low_it, static_cast<size_t>(std::distance(low_it, high_it))};
+        return {&*low_it, static_cast<std::size_t>(std::distance(low_it, high_it))};
     } catch (...) {
         return "";
     }
@@ -228,7 +228,7 @@ void TextControl::SetText(std::string str,
     RecomputeLineData();
 }
 
-void TextControl::ChangeTemplatedText(const std::string& new_text, size_t targ_offset) {
+void TextControl::ChangeTemplatedText(const std::string& new_text, std::size_t targ_offset) {
     m_font->ChangeTemplatedText(m_text, m_text_elements, new_text, targ_offset);
     RecomputeLineData();
 }
@@ -391,8 +391,8 @@ void TextControl::Erase(std::size_t line1, CPSize pos1, std::size_t line2, CPSiz
 {
     //std::cout << "TextControl::Erase(" << line1 << ", " << pos1 << "," << line2 << ", " << pos2 << ")" << std::endl;
 
-    size_t offset1 = Value(StringIndexOf(line1, pos1, m_line_data));
-    size_t offset2 = Value(StringIndexOf(line2, pos2, m_line_data));
+    std::size_t offset1 = Value(StringIndexOf(line1, pos1, m_line_data));
+    std::size_t offset2 = Value(StringIndexOf(line2, pos2, m_line_data));
     if (offset1 == offset2)
         return;
     //std::cout << "TextControl::Erase offsets: " << offset1 << " // " << offset2 << std::endl;

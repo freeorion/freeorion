@@ -56,7 +56,7 @@ std::string FlexibleToString(T&& t)
         return std::string{t};
 
     } else if constexpr (std::is_same_v<T, std::vector<std::string>>) {
-        size_t total_size = 0;
+        std::size_t total_size = 0;
         for (auto& ts : t)
             total_size += ts.size();
         std::string retval;

@@ -1568,7 +1568,7 @@ private:
     std::set<TechStatus>                                        m_tech_statuses_shown;
     std::unordered_map<std::string, std::shared_ptr<TechRow>>   m_tech_row_cache;
     std::shared_ptr<GG::ListBox::Row>                           m_header_row;
-    size_t                                                      m_previous_sort_col = 0;
+    std::size_t                                                 m_previous_sort_col = 0;
 };
 
 void TechTreeWnd::TechListBox::TechRow::Render() {

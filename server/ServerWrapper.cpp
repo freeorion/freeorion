@@ -971,7 +971,7 @@ namespace {
     }
 
     // Return all systems within \p jumps of \p sys_ids
-    auto SystemsWithinJumps(size_t jumps, const py::list& sys_ids) -> py::list
+    auto SystemsWithinJumps(std::size_t jumps, const py::list& sys_ids) -> py::list
     {
         py::list py_systems;
         py::stl_input_iterator<int> end;

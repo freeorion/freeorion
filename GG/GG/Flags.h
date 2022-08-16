@@ -162,7 +162,7 @@ public:
     /** Returns true iff FlagSpec contains \a flag. */
     [[nodiscard]] constexpr bool contains(FlagType flag) const
     {
-        for (size_t idx = 0; idx < m_count; ++idx)
+        for (std::size_t idx = 0; idx < m_count; ++idx)
             if (m_flags.at(idx) == flag)
                 return true;
         return false;
@@ -188,7 +188,7 @@ public:
         unknown flag's stringification is requested. */
     [[nodiscard]] constexpr std::string_view ToString(FlagType flag) const
     {
-        for (size_t idx = 0; idx < m_count; ++idx)
+        for (std::size_t idx = 0; idx < m_count; ++idx)
             if (m_flags.at(idx) == flag)
                 return m_strings.at(idx);
         throw UnknownFlag("Could not find string corresponding to unknown flag");
@@ -197,7 +197,7 @@ public:
         GG::FlagSpec::UnknownString if an unknown string is provided. */
     [[nodiscard]] constexpr FlagType FromString(std::string_view str) const
     {
-        for (size_t idx = 0; idx < m_count; ++idx)
+        for (std::size_t idx = 0; idx < m_count; ++idx)
             if (m_strings.at(idx) == str)
                 return m_flags.at(idx);
         throw UnknownString("Could not find flag corresponding to unknown string");
@@ -212,7 +212,7 @@ public:
     {
         if (m_count >= digits)
             throw std::runtime_error("FlagSpec had too many flags inserted");
-        for (size_t idx = 0; idx < m_count; ++idx)
+        for (std::size_t idx = 0; idx < m_count; ++idx)
             if (m_flags.at(idx) == flag)
                 throw std::invalid_argument("FlagSpec duplicate flag inserted");
         m_flags[m_count] = flag;

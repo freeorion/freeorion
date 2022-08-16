@@ -100,7 +100,7 @@ namespace {
         // use probably-bad but adequate for this purpose hash function to
         // convert seed into a hash value
         int hash_value = 223;
-        for (size_t i = 0; i < seed.length(); ++i) {
+        for (std::size_t i = 0; i < seed.length(); ++i) {
             //DebugLogger() << "hash value: " << hash_value << " char: " << static_cast<int>(seed[i]);
             hash_value += (seed[i] * 61);
             hash_value %= 191;
@@ -193,7 +193,7 @@ int GalaxySetupData::GetSize() const
 Shape GalaxySetupData::GetShape() const {
     if (shape != Shape::RANDOM)
         return shape;
-    size_t num_shapes = int(Shape::GALAXY_SHAPES) - 1; // -1 so that RANDOM isn't counted
+    std::size_t num_shapes = int(Shape::GALAXY_SHAPES) - 1; // -1 so that RANDOM isn't counted
     return static_cast<Shape>(GetIdx(num_shapes, seed + "shape"));
 }
 

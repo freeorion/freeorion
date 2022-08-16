@@ -763,7 +763,7 @@ namespace {
     constexpr int CUIDROPDOWNLIST_ANGLE_OFFSET = 5;
 }
 
-CUIDropDownList::CUIDropDownList(size_t num_shown_elements) :
+CUIDropDownList::CUIDropDownList(std::size_t num_shown_elements) :
     DropDownList(num_shown_elements, ClientUI::CtrlBorderColor()),
     m_render_drop_arrow(true),
     m_mouse_here(false)
@@ -1346,7 +1346,7 @@ void StatisticIcon::PreRender() {
     DoLayout();
 }
 
-double StatisticIcon::GetValue(size_t index) const {
+double StatisticIcon::GetValue(std::size_t index) const {
     if (index < 0u || index >= m_values.size()) {
         ErrorLogger() << "StatisticIcon::GetValue passed index out of range index:" << index;
         return 0.0;

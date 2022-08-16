@@ -275,7 +275,7 @@ private:
 /** A function that returns the correct amount of spacing for an indentation of
   * \p ntabs during a dump. */
 [[nodiscard]] inline std::string DumpIndent(unsigned short ntabs = 1)
-{ return std::string(ntabs * 4 /* conversion to size_t is safe */, ' '); }
+{ return std::string(ntabs * 4 /* conversion to std::size_t is safe */, ' '); }
 
 
 #endif
