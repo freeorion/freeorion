@@ -5,11 +5,30 @@ import AIDependencies
 import PolicyAI
 from buildings import BuildingType, iterate_buildings_types
 from colonization.colony_score import debug_rating
-from freeorion_tools import get_named_real, get_species_stability
+from freeorion_tools import get_game_rule_int, get_named_real, get_species_stability
 from freeorion_tools.caching import cache_for_current_turn
 from PlanetUtilsAI import dislike_factor
 from turn_state import get_colonized_planets, have_worldtree
 from universe.system_network import within_n_jumps
+
+_size_modifier = {
+    fo.planetSize.tiny: get_game_rule_int("RULE_TINY_SIZE_STABILITY"),
+    fo.planetSize.small: get_game_rule_int("RULE_SMALL_SIZE_STABILITY"),
+    fo.planetSize.medium: get_game_rule_int("RULE_MEDIUM_SIZE_STABILITY"),
+    fo.planetSize.large: get_game_rule_int("RULE_LARGE_SIZE_STABILITY"),
+    fo.planetSize.huge: get_game_rule_int("RULE_HUGE_SIZE_STABILITY"),
+    fo.planetSize.gasGiant: get_game_rule_int("RULE_GAS_GIANT_SIZE_STABILITY"),
+    fo.planetSize.asteroids: 0,  # no rule for asteroids yet(?)
+}
+
+_environment_modifier = {
+    fo.planetEnvironment.good: get_game_rule_int("RULE_GOOD_ENVIRONMENT_STABILITY"),
+    fo.planetEnvironment.adequate: get_game_rule_int("RULE_ADEQUATE_ENVIRONMENT_STABILITY"),
+    fo.planetEnvironment.poor: get_game_rule_int("RULE_POOR_ENVIRONMENT_STABILITY"),
+    fo.planetEnvironment.hostile: get_game_rule_int("RULE_HOSTILE_ENVIRONMENT_STABILITY"),
+    # That is used by the script. It doesn't matter in practice, AI shouldn't try to settle uninhabitable planets.
+    fo.planetEnvironment.uninhabitable: get_game_rule_int("RULE_HOSTILE_ENVIRONMENT_STABILITY"),
+}
 
 
 def calculate_stability(planet: fo.planet, species: fo.species) -> float:
@@ -26,12 +45,13 @@ def calculate_stability(planet: fo.planet, species: fo.species) -> float:
     buildings = _evaluate_buildings(planet, species)
     xenophobia = _evaluate_xenophobia(planet, species)
     administration = _evaluate_administration(planet, species)
-    result = baseline + species_mod + home_bonus + policies + specials + buildings + xenophobia + administration
+    rules = _size_modifier[planet.size] + _environment_modifier[planet.environmentForSpecies(species.name)]
+    result = baseline + species_mod + home_bonus + policies + specials + buildings + xenophobia + administration + rules
     # missing: supply connection check, artisan bonus, anything else?
     debug_rating(
         f"stability of {species.name} on {planet} would be {result:.1f} (base={baseline:.1f}, "
         f"species={species_mod:.1f}, specials={specials:.1f}, home={home_bonus:.1f}, policies={policies:.1f}, "
-        f"buildings={buildings:.1f}, xeno={xenophobia:.1f}, admin={administration:.1f})"
+        f"buildings={buildings:.1f}, xeno={xenophobia:.1f}, admin={administration:.1f}), rules={rules}"
     )
     return result
 
