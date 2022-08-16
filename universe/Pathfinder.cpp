@@ -312,7 +312,7 @@ namespace SystemPathing {
     template <typename Graph>
     std::pair<std::vector<int>, double> ShortestPathImpl(
         const Graph& graph, int system1_id, int system2_id,
-        double linear_distance, const boost::container::flat_map<int, size_t>& id_to_graph_index)
+        const boost::container::flat_map<int, size_t>& id_to_graph_index)
     {
         // convert system IDs to graph indices.  try/catch for invalid input system ids.
         size_t system1_index, system2_index;
@@ -976,9 +976,8 @@ std::pair<std::vector<int>, double> Pathfinder::PathfinderImpl::ShortestPath(
     if (empire_id == ALL_EMPIRES) {
         // find path on full / complete system graph
         try {
-            double linear_distance = LinearDistance(system1_id, system2_id, objects);
             return ShortestPathImpl(m_graph_impl->system_graph, system1_id, system2_id,
-                                    linear_distance, m_system_id_to_graph_index);
+                                    m_system_id_to_graph_index);
         } catch (const std::out_of_range&) {
             ErrorLogger() << "PathfinderImpl::ShortestPath passed invalid system id(s): "
                           << system1_id << " & " << system2_id;
@@ -993,9 +992,8 @@ std::pair<std::vector<int>, double> Pathfinder::PathfinderImpl::ShortestPath(
         throw std::out_of_range("PathfinderImpl::ShortestPath passed unknown empire id");
     }
     try {
-        double linear_distance = LinearDistance(system1_id, system2_id, objects);
         return ShortestPathImpl(*graph_it->second, system1_id, system2_id,
-                                linear_distance, m_system_id_to_graph_index);
+                                m_system_id_to_graph_index);
     } catch (const std::out_of_range&) {
         ErrorLogger() << "PathfinderImpl::ShortestPath passed invalid system id(s): "
                       << system1_id << " & " << system2_id;
@@ -1034,9 +1032,8 @@ std::pair<std::vector<int>, double> Pathfinder::PathfinderImpl::ShortestPath(
     }
 
     try {
-        auto linear_distance = LinearDistance(system1_id, system2_id, objects);
         return ShortestPathImpl(*graph_it->second, system1_id, system2_id,
-                                linear_distance, m_system_id_to_graph_index);
+                                m_system_id_to_graph_index);
     } catch (const std::out_of_range&) {
         ErrorLogger() << "Invalid system id(s): " << system1_id << ", " << system2_id;
         throw;
