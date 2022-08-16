@@ -237,6 +237,7 @@ Effect::TargetSet Condition::Eval(ScriptingContext& parent_context) const
 {
     ObjectSet matches_as_objectset{this->Eval(std::as_const(parent_context))};
     Effect::TargetSet retval;
+    retval.reserve(matches_as_objectset.size());
     std::transform(matches_as_objectset.begin(), matches_as_objectset.end(),
                    std::back_inserter(retval),
                    [](auto&& o) { return const_cast<UniverseObject*>(o); });
