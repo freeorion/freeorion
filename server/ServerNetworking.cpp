@@ -215,17 +215,8 @@ PlayerConnection::~PlayerConnection() {
     std::thread(AsyncCloseClosure(std::move(m_socket), m_ID)).detach();
 }
 
-bool PlayerConnection::EstablishedPlayer() const
+bool PlayerConnection::EstablishedPlayer() const noexcept
 { return m_ID != INVALID_PLAYER_ID; }
-
-int PlayerConnection::PlayerID() const
-{ return m_ID; }
-
-const std::string& PlayerConnection::PlayerName() const
-{ return m_player_name; }
-
-Networking::ClientType PlayerConnection::GetClientType() const
-{ return m_client_type; }
 
 bool PlayerConnection::IsLocalConnection() const
 { return (m_socket->remote_endpoint().address().is_loopback()); }
@@ -242,19 +233,9 @@ void PlayerConnection::SendMessage(const Message& message) {
 }
 
 bool PlayerConnection::IsEstablished() const {
-    return (m_ID != INVALID_PLAYER_ID && !m_player_name.empty() && m_client_type != Networking::ClientType::INVALID_CLIENT_TYPE);
+    return (m_ID != INVALID_PLAYER_ID && !m_player_name.empty()
+            && m_client_type != Networking::ClientType::INVALID_CLIENT_TYPE);
 }
-
-bool PlayerConnection::IsAuthenticated() const {
-    return m_authenticated;
-}
-
-bool PlayerConnection::HasAuthRole(Networking::RoleType role) const {
-    return m_roles.HasRole(role);
-}
-
-boost::uuids::uuid PlayerConnection::Cookie() const
-{ return m_cookie; }
 
 std::string PlayerConnection::GetIpAddress() const {
     if (m_socket)
@@ -341,9 +322,6 @@ void PlayerConnection::SetAuthRole(Networking::RoleType role, bool value) {
 
 void PlayerConnection::SetCookie(boost::uuids::uuid cookie)
 { m_cookie = cookie; }
-
-const std::string& PlayerConnection::ClientVersionString() const
-{ return m_client_version_string; }
 
 bool PlayerConnection::IsBinarySerializationUsed() const {
     return GetOptionsDB().Get<bool>("network.server.binary.enabled")

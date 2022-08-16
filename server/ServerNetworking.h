@@ -207,44 +207,44 @@ public:
 
     /** Returns true if EstablishPlayer() successfully has been called on this
         connection. */
-    bool EstablishedPlayer() const;
+    [[nodiscard]] bool EstablishedPlayer() const noexcept;
 
     /** Returns the ID of the player associated with this connection, if
         any. */
-    int PlayerID() const;
+    [[nodiscard]] int PlayerID() const noexcept { return m_ID; }
 
     /** Returns the name of the player associated with this connection, if
         any. */
-    const std::string& PlayerName() const;
+    [[nodiscard]] const std::string& PlayerName() const noexcept { return m_player_name; }
 
     /** Returns the type of client associated with this connection (AI client,
       * human client, ...) */
-    Networking::ClientType GetClientType() const;
+    [[nodiscard]] Networking::ClientType GetClientType() const noexcept { return m_client_type; }
 
     /** Returns the version string the client provided when joining. */
-    const std::string& ClientVersionString() const;
+    [[nodiscard]] const std::string& ClientVersionString() const noexcept { return m_client_version_string; }
 
     /** Checks if the server will enable binary serialization for this client's connection. */
-    bool IsBinarySerializationUsed() const;
+    [[nodiscard]] bool IsBinarySerializationUsed() const;
 
     /** Checks if client associated with this connection runs on the same
         physical machine as the server */
-    bool IsLocalConnection() const;
+    [[nodiscard]] bool IsLocalConnection() const;
 
     /** Checks if the player is established, has a valid name, id and client type. */
-    bool IsEstablished() const;
+    [[nodiscard]] bool IsEstablished() const;
 
     /** Checks if the player was authenticated. */
-    bool IsAuthenticated() const;
+    [[nodiscard]] bool IsAuthenticated() const noexcept { return m_authenticated; }
 
     /** Checks if the player has a some role */
-    bool HasAuthRole(Networking::RoleType role) const;
+    [[nodiscard]] bool HasAuthRole(Networking::RoleType role) const { return m_roles.HasRole(role); }
 
     /** Get cookie associated with this connection. */
-    boost::uuids::uuid Cookie() const;
+    [[nodiscard]] boost::uuids::uuid Cookie() const noexcept { return m_cookie; }
 
     /** Get string representation of remote ip address. */
-    std::string GetIpAddress() const;
+    [[nodiscard]] std::string GetIpAddress() const;
 
     /** Starts the connection reading incoming messages on its socket. */
     void Start();
