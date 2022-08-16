@@ -257,9 +257,8 @@ boost::uuids::uuid PlayerConnection::Cookie() const
 { return m_cookie; }
 
 std::string PlayerConnection::GetIpAddress() const {
-    if (m_socket) {
-        m_socket->remote_endpoint().address().to_string();
-    }
+    if (m_socket)
+        return m_socket->remote_endpoint().address().to_string();
     return "";
 }
 
