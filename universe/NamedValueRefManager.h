@@ -78,7 +78,7 @@ struct FO_COMMON_API NamedRef final : public ValueRef<T>
         return ref ? ref->Description() : UserString("NAMED_REF_UNKNOWN");
     }
 
-    std::string Dump(unsigned short ntabs = 0) const override {
+    std::string Dump(uint8_t ntabs = 0) const override {
         std::string retval = "Named";
         if constexpr (std::is_same<T, int>::value) {
             retval += "Integer";

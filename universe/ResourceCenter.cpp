@@ -82,7 +82,7 @@ std::vector<std::string> ResourceCenter::AvailableFoci() const
 const std::string& ResourceCenter::FocusIcon(const std::string& focus_name) const
 { return EMPTY_STRING; }
 
-std::string ResourceCenter::Dump(unsigned short ntabs) const {
+std::string ResourceCenter::Dump(uint8_t ntabs) const {
     return std::string{"ResourceCenter focus: "}.append(m_focus)
         .append(" last changed on turn: ").append(std::to_string(m_last_turn_focus_changed));
 }

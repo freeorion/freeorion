@@ -125,7 +125,7 @@ public:
 
     /** Return human readable string description of object offset \p ntabs from
         margin. */
-    [[nodiscard]] virtual std::string         Dump(unsigned short ntabs = 0) const;
+    [[nodiscard]] virtual std::string         Dump(uint8_t ntabs = 0) const;
 
     /** Returns id of the object that directly contains this object, if any, or
         INVALID_OBJECT_ID if this object is not contained by any other. */

@@ -183,7 +183,7 @@ bool Ship::ContainedBy(int object_id) const {
             ||  object_id == this->SystemID());
 }
 
-std::string Ship::Dump(unsigned short ntabs) const {
+std::string Ship::Dump(uint8_t ntabs) const {
     std::string retval = UniverseObject::Dump(ntabs);
     retval.reserve(2048); // guesstimate
     retval.append(" design id: ").append(std::to_string(m_design_id))

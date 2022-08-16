@@ -83,9 +83,9 @@ struct FO_COMMON_API Number final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
-    [[nodiscard]] std::string  Description(bool negated = false) const override;
-    [[nodiscard]] std::string  Dump(unsigned short ntabs = 0) const override;
-    void                       SetTopLevelContent(const std::string& content_name) override;
+    [[nodiscard]] std::string Description(bool negated = false) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
@@ -106,9 +106,9 @@ struct FO_COMMON_API Turn final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
-    [[nodiscard]] std::string  Description(bool negated = false) const override;
-    [[nodiscard]] std::string  Dump(unsigned short ntabs = 0) const override;
-    void                       SetTopLevelContent(const std::string& content_name) override;
+    [[nodiscard]] std::string Description(bool negated = false) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
@@ -145,9 +145,9 @@ struct FO_COMMON_API SortedNumberOf final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    [[nodiscard]] std::string  Description(bool negated = false) const override;
-    [[nodiscard]] std::string  Dump(unsigned short ntabs = 0) const override;
-    void                       SetTopLevelContent(const std::string& content_name) override;
+    [[nodiscard]] std::string Description(bool negated = false) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
@@ -169,9 +169,9 @@ struct FO_COMMON_API None final : public Condition {
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override
     { /* efficient rejection of everything. */ }
-    [[nodiscard]] std::string  Description(bool negated = false) const override;
-    [[nodiscard]] std::string  Dump(unsigned short ntabs = 0) const override;
-    void                       SetTopLevelContent(const std::string& content_name) override {}
+    [[nodiscard]] std::string Description(bool negated = false) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void SetTopLevelContent(const std::string& content_name) override {}
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
@@ -183,9 +183,9 @@ struct FO_COMMON_API NoOp final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
-    [[nodiscard]] std::string  Description(bool negated = false) const override;
-    [[nodiscard]] std::string  Dump(unsigned short ntabs = 0) const override;
-    void                       SetTopLevelContent(const std::string& content_name) override {}
+    [[nodiscard]] std::string Description(bool negated = false) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void SetTopLevelContent(const std::string& content_name) override {}
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
@@ -203,9 +203,9 @@ struct FO_COMMON_API EmpireAffiliation final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
-    [[nodiscard]] std::string  Description(bool negated = false) const override;
-    [[nodiscard]] std::string  Dump(unsigned short ntabs = 0) const override;
-    void                       SetTopLevelContent(const std::string& content_name) override;
+    [[nodiscard]] std::string Description(bool negated = false) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
@@ -226,9 +226,9 @@ struct FO_COMMON_API RootCandidate final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    [[nodiscard]] std::string  Description(bool negated = false) const override;
-    [[nodiscard]] std::string  Dump(unsigned short ntabs = 0) const override;
-    void                       SetTopLevelContent(const std::string& content_name) override {}
+    [[nodiscard]] std::string Description(bool negated = false) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void SetTopLevelContent(const std::string& content_name) override {}
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
@@ -246,9 +246,9 @@ struct FO_COMMON_API Target final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    [[nodiscard]] std::string  Description(bool negated = false) const override;
-    [[nodiscard]] std::string  Dump(unsigned short ntabs = 0) const override;
-    void                       SetTopLevelContent(const std::string& content_name) override {}
+    [[nodiscard]] std::string Description(bool negated = false) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void SetTopLevelContent(const std::string& content_name) override {}
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
@@ -269,9 +269,9 @@ struct FO_COMMON_API Homeworld final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    [[nodiscard]] std::string  Description(bool negated = false) const override;
-    [[nodiscard]] std::string  Dump(unsigned short ntabs = 0) const override;
-    void                       SetTopLevelContent(const std::string& content_name) override;
+    [[nodiscard]] std::string Description(bool negated = false) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
@@ -292,9 +292,9 @@ struct FO_COMMON_API Capital final : public Condition {
                                            ObjectSet& condition_non_targets) const override;
     bool InitialCandidatesAllMatch() const override { return true; };
 
-    [[nodiscard]] std::string  Description(bool negated = false) const override;
-    [[nodiscard]] std::string  Dump(unsigned short ntabs = 0) const override;
-    void                       SetTopLevelContent(const std::string& content_name) override {}
+    [[nodiscard]] std::string Description(bool negated = false) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void SetTopLevelContent(const std::string& content_name) override {}
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
@@ -310,7 +310,7 @@ struct FO_COMMON_API Monster final : public Condition {
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override
     {}
     [[nodiscard]] unsigned int GetCheckSum() const override;
@@ -326,7 +326,7 @@ struct FO_COMMON_API Armed final : public Condition {
     Armed();
     bool operator==(const Condition& rhs) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override
     {}
     [[nodiscard]] unsigned int GetCheckSum() const override;
@@ -351,7 +351,7 @@ struct FO_COMMON_API Type final : public Condition {
     bool InitialCandidatesAllMatch() const override;
 
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -374,7 +374,7 @@ struct FO_COMMON_API Building final : public Condition {
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -397,7 +397,7 @@ struct FO_COMMON_API Field final : public Condition {
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -426,7 +426,7 @@ struct FO_COMMON_API HasSpecial final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -452,7 +452,7 @@ struct FO_COMMON_API HasTag final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -473,7 +473,7 @@ struct FO_COMMON_API CreatedOnTurn final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -497,7 +497,7 @@ struct FO_COMMON_API Contains final : public Condition {
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -520,7 +520,7 @@ struct FO_COMMON_API ContainedBy final : public Condition {
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -546,7 +546,7 @@ struct FO_COMMON_API InOrIsSystem final : public Condition {
     bool InitialCandidatesAllMatch() const override;
 
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -572,7 +572,7 @@ struct FO_COMMON_API OnPlanet final : public Condition {
     bool InitialCandidatesAllMatch() const override;
 
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -596,7 +596,7 @@ struct FO_COMMON_API ObjectID final : public Condition {
     bool InitialCandidatesAllMatch() const override;
 
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -620,7 +620,7 @@ struct FO_COMMON_API PlanetType final : public Condition {
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -644,7 +644,7 @@ struct FO_COMMON_API PlanetSize final : public Condition {
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -669,7 +669,7 @@ struct FO_COMMON_API PlanetEnvironment final : public Condition {
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -695,7 +695,7 @@ struct FO_COMMON_API Species final : public Condition {
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -718,7 +718,7 @@ struct FO_COMMON_API SpeciesOpinion final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -753,7 +753,7 @@ struct FO_COMMON_API Enqueued final : public Condition {
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -778,7 +778,7 @@ struct FO_COMMON_API FocusType final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -801,7 +801,7 @@ struct FO_COMMON_API StarType final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -823,7 +823,7 @@ struct FO_COMMON_API DesignHasHull final : public Condition {
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -848,7 +848,7 @@ struct FO_COMMON_API DesignHasPart final : public Condition {
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -875,7 +875,7 @@ struct FO_COMMON_API DesignHasPartClass final : public Condition {
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -898,7 +898,7 @@ struct FO_COMMON_API PredefinedShipDesign final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -918,7 +918,7 @@ struct FO_COMMON_API NumberedShipDesign final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -938,7 +938,7 @@ struct FO_COMMON_API ProducedByEmpire final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -958,7 +958,7 @@ struct FO_COMMON_API Chance final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -981,7 +981,7 @@ struct FO_COMMON_API MeterValue final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -1007,7 +1007,7 @@ struct FO_COMMON_API ShipPartMeterValue final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -1037,7 +1037,7 @@ struct FO_COMMON_API EmpireMeterValue final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -1067,7 +1067,7 @@ struct FO_COMMON_API EmpireStockpileValue final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -1096,7 +1096,7 @@ struct FO_COMMON_API EmpireHasAdoptedPolicy final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
 
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
@@ -1116,13 +1116,13 @@ struct FO_COMMON_API OwnerHasTech final : public Condition {
                  std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
     explicit OwnerHasTech(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
 
-    bool            operator==(const Condition& rhs) const override;
-    void            Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                         ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
-    [[nodiscard]] std::string     Description(bool negated = false) const override;
-    [[nodiscard]] std::string     Dump(unsigned short ntabs = 0) const override;
-    void            SetTopLevelContent(const std::string& content_name) override;
-    [[nodiscard]] unsigned int    GetCheckSum() const override;
+    bool operator==(const Condition& rhs) const override;
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] std::string Description(bool negated = false) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void SetTopLevelContent(const std::string& content_name) override;
+    [[nodiscard]] unsigned int GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
@@ -1140,13 +1140,13 @@ struct FO_COMMON_API OwnerHasBuildingTypeAvailable final : public Condition {
     explicit OwnerHasBuildingTypeAvailable(const std::string& name);
     explicit OwnerHasBuildingTypeAvailable(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
 
-    bool            operator==(const Condition& rhs) const override;
-    void            Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                         ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
-    [[nodiscard]] std::string     Description(bool negated = false) const override;
-    [[nodiscard]] std::string     Dump(unsigned short ntabs = 0) const override;
-    void            SetTopLevelContent(const std::string& content_name) override;
-    [[nodiscard]] unsigned int    GetCheckSum() const override;
+    bool operator==(const Condition& rhs) const override;
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] std::string Description(bool negated = false) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void SetTopLevelContent(const std::string& content_name) override;
+    [[nodiscard]] unsigned int GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
@@ -1164,13 +1164,13 @@ struct FO_COMMON_API OwnerHasShipDesignAvailable final : public Condition {
     explicit OwnerHasShipDesignAvailable(int design_id);
     explicit OwnerHasShipDesignAvailable(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id);
 
-    bool            operator==(const Condition& rhs) const override;
-    void            Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                         ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
-    [[nodiscard]] std::string     Description(bool negated = false) const override;
-    [[nodiscard]] std::string     Dump(unsigned short ntabs = 0) const override;
-    void            SetTopLevelContent(const std::string& content_name) override;
-    [[nodiscard]] unsigned int    GetCheckSum() const override;
+    bool operator==(const Condition& rhs) const override;
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] std::string Description(bool negated = false) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void SetTopLevelContent(const std::string& content_name) override;
+    [[nodiscard]] unsigned int GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
@@ -1188,13 +1188,13 @@ struct FO_COMMON_API OwnerHasShipPartAvailable final : public Condition {
     explicit OwnerHasShipPartAvailable(const std::string& name);
     explicit OwnerHasShipPartAvailable(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
 
-    bool            operator==(const Condition& rhs) const override;
-    void            Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                         ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
-    [[nodiscard]] std::string     Description(bool negated = false) const override;
-    [[nodiscard]] std::string     Dump(unsigned short ntabs = 0) const override;
-    void            SetTopLevelContent(const std::string& content_name) override;
-    [[nodiscard]] unsigned int    GetCheckSum() const override;
+    bool operator==(const Condition& rhs) const override;
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] std::string Description(bool negated = false) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void SetTopLevelContent(const std::string& content_name) override;
+    [[nodiscard]] unsigned int GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
@@ -1216,7 +1216,7 @@ struct FO_COMMON_API VisibleToEmpire final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -1242,7 +1242,7 @@ struct FO_COMMON_API WithinDistance final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -1267,7 +1267,7 @@ struct FO_COMMON_API WithinStarlaneJumps final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -1293,7 +1293,7 @@ struct FO_COMMON_API CanAddStarlaneConnection : Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -1314,7 +1314,7 @@ struct FO_COMMON_API ExploredByEmpire final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -1333,7 +1333,7 @@ struct FO_COMMON_API Stationary final : public Condition {
 
     bool operator==(const Condition& rhs) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override
     {}
     [[nodiscard]] unsigned int GetCheckSum() const override;
@@ -1351,7 +1351,7 @@ struct FO_COMMON_API Aggressive final : public Condition {
 
     bool operator==(const Condition& rhs) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override {}
     [[nodiscard]] bool GetAggressive() const { return m_aggressive; }
     [[nodiscard]] unsigned int GetCheckSum() const override;
@@ -1373,7 +1373,7 @@ struct FO_COMMON_API FleetSupplyableByEmpire final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -1396,7 +1396,7 @@ struct FO_COMMON_API ResourceSupplyConnectedByEmpire final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -1415,7 +1415,7 @@ struct FO_COMMON_API CanColonize final : public Condition {
 
     bool operator==(const Condition& rhs) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override
     {}
     [[nodiscard]] unsigned int GetCheckSum() const override;
@@ -1432,7 +1432,7 @@ struct FO_COMMON_API CanProduceShips final : public Condition {
 
     bool operator==(const Condition& rhs) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override
     {}
     [[nodiscard]] unsigned int GetCheckSum() const override;
@@ -1452,7 +1452,7 @@ struct FO_COMMON_API OrderedBombarded final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     virtual void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -1490,7 +1490,7 @@ struct FO_COMMON_API ValueTest final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -1537,7 +1537,7 @@ public:
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -1562,7 +1562,7 @@ public:
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -1591,7 +1591,7 @@ struct FO_COMMON_API And final : public Condition {
     bool InitialCandidatesAllMatch() const override;
 
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] std::vector<const Condition*> Operands() const;
     [[nodiscard]] unsigned int GetCheckSum() const override;
@@ -1618,7 +1618,7 @@ struct FO_COMMON_API Or final : public Condition {
     bool InitialCandidatesAllMatch() const override;
 
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     virtual void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -1636,7 +1636,7 @@ struct FO_COMMON_API Not final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -1657,7 +1657,7 @@ struct FO_COMMON_API OrderedAlternativesOf final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] std::vector<const Condition*> Operands() const;
     [[nodiscard]] unsigned int GetCheckSum() const override;
@@ -1677,7 +1677,7 @@ struct FO_COMMON_API Described final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override
     { return m_condition ? m_condition->Dump(ntabs) : ""; }
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] unsigned int GetCheckSum() const override;

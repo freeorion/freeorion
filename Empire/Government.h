@@ -32,7 +32,7 @@ public:
     [[nodiscard]] const std::string&  Name() const                { return m_name; }
     [[nodiscard]] const std::string&  Description() const         { return m_description; }
     [[nodiscard]] const std::string&  ShortDescription() const    { return m_short_description; }
-    [[nodiscard]] std::string         Dump(unsigned short ntabs = 0) const;
+    [[nodiscard]] std::string         Dump(uint8_t ntabs = 0) const;
     [[nodiscard]] const std::string&  Category() const            { return m_category; }
     [[nodiscard]] float               AdoptionCost(int empire_id, const ScriptingContext& context) const;
 

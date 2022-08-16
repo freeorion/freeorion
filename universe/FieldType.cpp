@@ -107,7 +107,7 @@ bool FieldType::operator==(const FieldType& rhs) const {
     return true;
 }
 
-std::string FieldType::Dump(unsigned short ntabs) const {
+std::string FieldType::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs) + "FieldType\n";
     retval += DumpIndent(ntabs+1) + "name = \"" + m_name + "\"\n";
     retval += DumpIndent(ntabs+1) + "description = \"" + m_description + "\"\n";

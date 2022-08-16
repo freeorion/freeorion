@@ -143,7 +143,7 @@ float UniverseObject::SpecialCapacity(std::string_view name) const {
     return it->second.second;
 }
 
-std::string UniverseObject::Dump(unsigned short ntabs) const {
+std::string UniverseObject::Dump(uint8_t ntabs) const {
     const ScriptingContext context;
     const auto& universe = context.ContextUniverse();
     const auto& objects = context.ContextObjects();

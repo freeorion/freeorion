@@ -30,7 +30,7 @@ public:
     int                             TurnsSinceFocusChange() const;                  ///< number of turns since focus was last changed.
     virtual std::vector<std::string>AvailableFoci() const;                          ///< focus settings available to this ResourceCenter
     virtual const std::string&      FocusIcon(const std::string& focus_name) const; ///< icon representing focus with name \a focus_name for this ResourceCenter
-    std::string                     Dump(unsigned short ntabs = 0) const;
+    std::string                     Dump(uint8_t ntabs = 0) const;
 
     virtual const Meter*            GetMeter(MeterType type) const = 0;             ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
 

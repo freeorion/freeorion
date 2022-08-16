@@ -1019,7 +1019,7 @@ Font::Font(std::string font_filename, unsigned int pts) :
 }
 
 Font::Font(std::string font_filename, unsigned int pts,
-           const std::vector<unsigned char>& file_contents) :
+           const std::vector<uint8_t>& file_contents) :
     m_font_filename(std::move(font_filename)),
     m_pt_sz(pts)
 {
@@ -1775,7 +1775,7 @@ std::vector<Font::LineData> Font::DetermineLines(
 FT_Error Font::GetFace(FT_Face& face)
 { return FT_New_Face(g_library.m_library, m_font_filename.c_str(), 0, &face); }
 
-FT_Error Font::GetFace(const std::vector<unsigned char>& file_contents, FT_Face& face)
+FT_Error Font::GetFace(const std::vector<uint8_t>& file_contents, FT_Face& face)
 {
     return FT_New_Memory_Face(g_library.m_library, &file_contents[0],
                               file_contents.size(), 0, &face);
@@ -1913,7 +1913,7 @@ void Font::Init(FT_Face& face)
     // create opengl texture from buffer
     m_texture.reset(new Texture);
     m_texture->Init(buffer.BufferWidth(), buffer.BufferHeight(),
-                    (unsigned char*)buffer.Buffer(), GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, 2);
+                    (uint8_t*)buffer.Buffer(), GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, 2);
 
     // create Glyph objects from temp glyph data
     for (const auto& glyph_data : temp_glyph_data) {
@@ -2190,7 +2190,7 @@ std::shared_ptr<Font> FontManager::GetFont(std::string font_filename, unsigned i
 }
 
 std::shared_ptr<Font> FontManager::GetFont(std::string font_filename, unsigned int pts,
-                                           const std::vector<unsigned char>& file_contents)
+                                           const std::vector<uint8_t>& file_contents)
 {
     std::vector<UnicodeCharset> v;
     std::vector<UnicodeCharset>::iterator it = v.end();

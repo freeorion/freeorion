@@ -178,7 +178,7 @@ void Special::Init() {
         m_location->SetTopLevelContent(m_name);
 }
 
-std::string Special::Dump(unsigned short ntabs) const {
+std::string Special::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs) + "Special\n";
     retval += DumpIndent(ntabs+1) + "name = \"" + m_name + "\"\n";
     retval += DumpIndent(ntabs+1) + "description = \"" + m_description + "\"\n";

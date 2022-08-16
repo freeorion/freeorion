@@ -87,7 +87,7 @@ bool Building::ContainedBy(int object_id) const {
             ||  object_id == this->SystemID());
 }
 
-std::string Building::Dump(unsigned short ntabs) const {
+std::string Building::Dump(uint8_t ntabs) const {
     std::stringstream os;
     os << UniverseObject::Dump(ntabs);
     os << " building type: " << m_building_type

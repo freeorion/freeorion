@@ -31,7 +31,7 @@ FocusType::FocusType(std::string& name, std::string& description,
 
 FocusType::~FocusType() = default;
 
-std::string FocusType::Dump(unsigned short ntabs) const {
+std::string FocusType::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs) + "FocusType\n";
     retval += DumpIndent(ntabs+1) + "name = \"" + m_name + "\"\n";
     retval += DumpIndent(ntabs+1) + "description = \"" + m_description + "\"\n";
@@ -207,7 +207,7 @@ void Species::Init() {
     TraceLogger() << "Species::Init: " << Dump();
 }
 
-std::string Species::Dump(unsigned short ntabs) const {
+std::string Species::Dump(uint8_t ntabs) const {
     std::string retval;
     retval.reserve(500); // guesstimate
     retval += DumpIndent(ntabs) + "Species\n";

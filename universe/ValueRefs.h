@@ -50,7 +50,7 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
     [[nodiscard]] T    Eval(const ScriptingContext& context) const override;
 
     [[nodiscard]] std::string Description() const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -98,7 +98,7 @@ struct FO_COMMON_API Variable : public ValueRef<T>
     [[nodiscard]] bool operator==(const ValueRef<T>& rhs) const override;
     [[nodiscard]] T Eval(const ScriptingContext& context) const override;
     [[nodiscard]] std::string Description() const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     [[nodiscard]] ReferenceType GetReferenceType() const noexcept override { return m_ref_type; }
     [[nodiscard]] const std::vector<std::string>& PropertyName() const noexcept { return m_property_name; }
     [[nodiscard]] bool ReturnImmediateValue() const noexcept { return m_return_immediate_value; }
@@ -131,7 +131,7 @@ struct FO_COMMON_API Statistic final : public Variable<T>
     [[nodiscard]] bool        operator==(const ValueRef<T>& rhs) const override;
     [[nodiscard]] T           Eval(const ScriptingContext& context) const override;
     [[nodiscard]] std::string Description() const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -174,7 +174,7 @@ struct FO_COMMON_API TotalFighterShots final : public Variable<int>
     bool                      operator==(const ValueRef<int>& rhs) const override;
     [[nodiscard]] int         Eval(const ScriptingContext& context) const override;
     [[nodiscard]] std::string Description() const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void                      SetTopLevelContent(const std::string& content_name) override;
 
     [[nodiscard]] const Condition::Condition* GetSamplingCondition() const
@@ -217,7 +217,7 @@ struct FO_COMMON_API ComplexVariable final : public Variable<T>
     [[nodiscard]] bool        operator==(const ValueRef<T>& rhs) const override;
     [[nodiscard]] T           Eval(const ScriptingContext& context) const override;
     [[nodiscard]] std::string Description() const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -260,7 +260,7 @@ struct FO_COMMON_API StaticCast final : public Variable<ToType>
     [[nodiscard]]             bool operator==(const ValueRef<ToType>& rhs) const override;
     [[nodiscard]] ToType      Eval(const ScriptingContext& context) const override;
     [[nodiscard]] std::string Description() const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -287,7 +287,7 @@ struct FO_COMMON_API StringCast final : public Variable<std::string>
     [[nodiscard]] bool        operator==(const ValueRef<std::string>& rhs) const override;
     [[nodiscard]] std::string Eval(const ScriptingContext& context) const override;
     [[nodiscard]] std::string Description() const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -312,7 +312,7 @@ struct FO_COMMON_API UserStringLookup final : public Variable<std::string> {
     [[nodiscard]] bool        operator==(const ValueRef<std::string>& rhs) const override;
     [[nodiscard]] std::string Eval(const ScriptingContext& context) const override;
     [[nodiscard]] std::string Description() const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -342,7 +342,7 @@ struct FO_COMMON_API NameLookup final : public Variable<std::string> {
     [[nodiscard]] bool        operator==(const ValueRef<std::string>& rhs) const override;
     [[nodiscard]] std::string Eval(const ScriptingContext& context) const override;
     [[nodiscard]] std::string Description() const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
@@ -415,7 +415,7 @@ struct FO_COMMON_API Operation final : public ValueRef<T>
     [[nodiscard]] bool        operator==(const ValueRef<T>& rhs) const override;
     [[nodiscard]] T           Eval(const ScriptingContext& context) const override;
     [[nodiscard]] std::string Description() const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     [[nodiscard]] OpType      GetOpType() const;
 
     [[nodiscard]] static T    EvalImpl(OpType op_type, T lhs, T rhs);
@@ -560,31 +560,31 @@ template <>
 FO_COMMON_API std::string Constant<std::string>::Description() const;
 
 template <>
-FO_COMMON_API std::string Constant<PlanetSize>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string Constant<PlanetSize>::Dump(uint8_t ntabs) const;
 
 template <>
-FO_COMMON_API std::string Constant<PlanetType>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string Constant<PlanetType>::Dump(uint8_t ntabs) const;
 
 template <>
-FO_COMMON_API std::string Constant<PlanetEnvironment>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string Constant<PlanetEnvironment>::Dump(uint8_t ntabs) const;
 
 template <>
-FO_COMMON_API std::string Constant<UniverseObjectType>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string Constant<UniverseObjectType>::Dump(uint8_t ntabs) const;
 
 template <>
-FO_COMMON_API std::string Constant<StarType>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string Constant<StarType>::Dump(uint8_t ntabs) const;
 
 template <>
-FO_COMMON_API std::string Constant<Visibility>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string Constant<Visibility>::Dump(uint8_t ntabs) const;
 
 template <>
-FO_COMMON_API std::string Constant<double>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string Constant<double>::Dump(uint8_t ntabs) const;
 
 template <>
-FO_COMMON_API std::string Constant<int>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string Constant<int>::Dump(uint8_t ntabs) const;
 
 template <>
-FO_COMMON_API std::string Constant<std::string>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string Constant<std::string>::Dump(uint8_t ntabs) const;
 
 template <>
 FO_COMMON_API std::string Constant<std::string>::Eval(const ScriptingContext& context) const;
@@ -678,7 +678,7 @@ std::string Variable<T>::Description() const
 { return FormatedDescriptionPropertyNames(m_ref_type, m_property_name, m_return_immediate_value); }
 
 template <typename T>
-std::string Variable<T>::Dump(unsigned short ntabs) const
+std::string Variable<T>::Dump(uint8_t ntabs) const
 { return ReconstructName(m_property_name, m_ref_type, m_return_immediate_value); }
 
 template <typename T>
@@ -815,7 +815,7 @@ std::string Statistic<T, V>::Description() const
 }
 
 template <typename T, typename V>
-std::string Statistic<T, V>::Dump(unsigned short ntabs) const
+std::string Statistic<T, V>::Dump(uint8_t ntabs) const
 {
     std::string retval = "Statistic ";
 
@@ -1357,7 +1357,7 @@ std::string ComplexVariable<T>::Description() const
 }
 
 template <typename T>
-std::string ComplexVariable<T>::Dump(unsigned short ntabs) const
+std::string ComplexVariable<T>::Dump(uint8_t ntabs) const
 {
     return ComplexVariableDump(this->m_property_name,
                                m_int_ref1 ? m_int_ref1.get() : nullptr,
@@ -1428,19 +1428,19 @@ template <>
 FO_COMMON_API std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API std::string ComplexVariable<std::vector<std::string>>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string ComplexVariable<std::vector<std::string>>::Dump(uint8_t ntabs) const;
 
 template <>
-FO_COMMON_API std::string ComplexVariable<Visibility>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string ComplexVariable<Visibility>::Dump(uint8_t ntabs) const;
 
 template <>
-FO_COMMON_API std::string ComplexVariable<double>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string ComplexVariable<double>::Dump(uint8_t ntabs) const;
 
 template <>
-FO_COMMON_API std::string ComplexVariable<int>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string ComplexVariable<int>::Dump(uint8_t ntabs) const;
 
 template <>
-FO_COMMON_API std::string ComplexVariable<std::string>::Dump(unsigned short ntabs) const;
+FO_COMMON_API std::string ComplexVariable<std::string>::Dump(uint8_t ntabs) const;
 
 
 ///////////////////////////////////////////////////////////
@@ -1511,7 +1511,7 @@ std::string StaticCast<FromType, ToType>::Description() const
 { return m_value_ref->Description(); }
 
 template <typename FromType, typename ToType>
-std::string StaticCast<FromType, ToType>::Dump(unsigned short ntabs) const
+std::string StaticCast<FromType, ToType>::Dump(uint8_t ntabs) const
 { return "(" + m_value_ref->Dump(ntabs) + ") // StaticCast{" + typeid(FromType).name() + "," + typeid(ToType).name() + "}\n" + DumpIndent(ntabs + 1); }
 
 template <typename FromType, typename ToType>
@@ -1633,7 +1633,7 @@ std::string StringCast<FromType>::Description() const
 { return m_value_ref->Description(); }
 
 template <typename FromType>
-std::string StringCast<FromType>::Dump(unsigned short ntabs) const
+std::string StringCast<FromType>::Dump(uint8_t ntabs) const
 { return "(" + m_value_ref->Dump(ntabs) + ") // StringCast{" + typeid(FromType).name() + "}\n" + DumpIndent(ntabs + 1); }
 
 template <typename FromType>
@@ -1713,7 +1713,7 @@ std::string UserStringLookup<FromType>::Description() const
 }
 
 template <typename FromType>
-std::string UserStringLookup<FromType>::Dump(unsigned short ntabs) const
+std::string UserStringLookup<FromType>::Dump(uint8_t ntabs) const
 {
     return m_value_ref->Dump(ntabs);
 }
@@ -2230,7 +2230,7 @@ std::string Operation<T>::Description() const
 }
 
 template <typename T>
-std::string Operation<T>::Dump(unsigned short ntabs) const
+std::string Operation<T>::Dump(uint8_t ntabs) const
 {
     if (m_op_type == OpType::NEGATE)
         return "-(" + LHS()->Dump(ntabs) + ")";

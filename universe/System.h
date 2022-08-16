@@ -51,7 +51,7 @@ public:
       * or if multiple empires control planet(s). */
     [[nodiscard]] int EffectiveOwner(const ObjectMap& objects) const;
 
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
 
     [[nodiscard]] const std::set<int>& ContainedObjectIDs() const override { return m_objects; }
 

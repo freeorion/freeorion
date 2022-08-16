@@ -185,7 +185,7 @@ void BuildingType::Init() {
         effect->SetTopLevelContent(m_name);
 }
 
-std::string BuildingType::Dump(unsigned short ntabs) const {
+std::string BuildingType::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs) + "BuildingType\n";
     retval += DumpIndent(ntabs+1) + "name = \"" + m_name + "\"\n";
     retval += DumpIndent(ntabs+1) + "description = \"" + m_description + "\"\n";

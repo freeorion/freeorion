@@ -14,7 +14,7 @@ public:
     [[nodiscard]] bool                  HasTag(std::string_view name, const ScriptingContext&) const override;
 
     [[nodiscard]] bool                  HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
-    [[nodiscard]] std::string           Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string           Dump(uint8_t ntabs = 0) const override;
     [[nodiscard]] int                   ContainerObjectID() const override { return m_planet_id; }
     [[nodiscard]] bool                  ContainedBy(int object_id) const override;
 

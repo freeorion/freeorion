@@ -56,7 +56,7 @@ public:
     [[nodiscard]] const std::string&          Description() const { return m_description; }   ///< returns a text description of this focus type
     [[nodiscard]] const Condition::Condition* Location() const    { return m_location.get(); }///< returns the condition that determines whether an UniverseObject can use this FocusType
     [[nodiscard]] const std::string&          Graphic() const     { return m_graphic; }       ///< returns the name of the grapic file for this focus type
-    [[nodiscard]] std::string                 Dump(unsigned short ntabs = 0) const;           ///< returns a data file format representation of this object
+    [[nodiscard]] std::string                 Dump(uint8_t ntabs = 0) const;           ///< returns a data file format representation of this object
 
     /** Returns a number, calculated from the contained data, which should be
       * different for different contained data, and must be the same for
@@ -103,7 +103,7 @@ public:
     [[nodiscard]] const Condition::Condition*   Location() const      { return m_location.get(); }        ///< returns the condition determining what planets on which this species may spawn
     [[nodiscard]] const Condition::Condition*   CombatTargets() const { return m_combat_targets.get(); }  ///< returns the condition for possible targets. may be nullptr if no condition was specified.
 
-    [[nodiscard]] std::string                   Dump(unsigned short ntabs = 0) const;                                   ///< returns a data file format representation of this object
+    [[nodiscard]] std::string                   Dump(uint8_t ntabs = 0) const;                                   ///< returns a data file format representation of this object
     [[nodiscard]] const std::vector<FocusType>& Foci() const          { return m_foci; }                  ///< returns the focus types this species can use
     [[nodiscard]] const std::string&            DefaultFocus() const  { return m_default_focus; }         ///< returns the name of the planetary focus this species defaults to. Used for new colonies and uninvaded natives.
     [[nodiscard]] const std::map<PlanetType, PlanetEnvironment>& PlanetEnvironments() const { return m_planet_environments; } ///< returns a map from PlanetType to the PlanetEnvironment this Species has on that PlanetType

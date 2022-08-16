@@ -144,7 +144,7 @@ bool Fleet::HostileToEmpire(int empire_id, const EmpireManager& empires) const {
            empires.GetDiplomaticStatus(Owner(), empire_id) == DiplomaticStatus::DIPLO_WAR;
 }
 
-std::string Fleet::Dump(unsigned short ntabs) const {
+std::string Fleet::Dump(uint8_t ntabs) const {
     std::string retval = UniverseObject::Dump(ntabs);
     retval.reserve(2048);
     retval.append(" aggression: ").append(to_string(m_aggression))

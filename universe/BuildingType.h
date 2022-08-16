@@ -61,7 +61,7 @@ public:
     { return m_description; }
 
     //! Returns a data file format representation of this object
-    auto Dump(unsigned short ntabs = 0) const -> std::string;
+    auto Dump(uint8_t ntabs = 0) const -> std::string;
 
     //! Returns true if the production cost and time are invariant (does not
     //! depend on) the location

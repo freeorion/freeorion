@@ -173,7 +173,7 @@ public:
     /** Returns highest used object ID in this ObjectMap */
     [[nodiscard]] int HighestObjectID() const;
 
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const;
 
     /**  */
     [[nodiscard]] std::shared_ptr<const UniverseObject> getExisting(int id) const;

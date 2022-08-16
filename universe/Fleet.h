@@ -59,7 +59,7 @@ class FO_COMMON_API Fleet : public UniverseObject {
 public:
     [[nodiscard]] bool                    HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
 
-    [[nodiscard]] std::string             Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string             Dump(uint8_t ntabs = 0) const override;
 
     [[nodiscard]] int                     ContainerObjectID() const override;
     [[nodiscard]] const std::set<int>&    ContainedObjectIDs() const override;

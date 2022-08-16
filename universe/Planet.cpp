@@ -157,7 +157,7 @@ bool Planet::HasTag(std::string_view name, const ScriptingContext& context) cons
     return species && species->HasTag(name);
 }
 
-std::string Planet::Dump(unsigned short ntabs) const {
+std::string Planet::Dump(uint8_t ntabs) const {
     std::string retval = UniverseObject::Dump(ntabs);
     retval.reserve(2048);
     retval += PopCenter::Dump(ntabs);

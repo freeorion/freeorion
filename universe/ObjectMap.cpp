@@ -586,7 +586,7 @@ void ObjectMap::CopyObjectsToSpecializedMaps() {
     { FOR_EACH_SPECIALIZED_MAP(TryInsertIntoMap, entry.second); }
 }
 
-std::string ObjectMap::Dump(unsigned short ntabs) const {
+std::string ObjectMap::Dump(uint8_t ntabs) const {
     std::ostringstream dump_stream;
     dump_stream << "ObjectMap contains UniverseObjects: \n";
     for (const auto& obj : all())

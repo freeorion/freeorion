@@ -20,7 +20,7 @@ public:
 
     [[nodiscard]] TagVecs            Tags(const ScriptingContext& context) const override;
     [[nodiscard]] bool               HasTag(std::string_view name, const ScriptingContext& context) const override;
-    [[nodiscard]] std::string        Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string        Dump(uint8_t ntabs = 0) const override;
 
     [[nodiscard]] int ContainerObjectID() const override { return m_fleet_id; }
     [[nodiscard]] bool ContainedBy(int object_id) const override;

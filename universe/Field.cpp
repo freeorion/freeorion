@@ -74,7 +74,7 @@ bool Field::HasTag(std::string_view name, const ScriptingContext&) const {
     return type && type->HasTag(name);
 }
 
-std::string Field::Dump(unsigned short ntabs) const {
+std::string Field::Dump(uint8_t ntabs) const {
     std::stringstream os;
     os << UniverseObject::Dump(ntabs);
     os << " field type: " << m_type_name;

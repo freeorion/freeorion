@@ -11,7 +11,7 @@
 #include <stdio.h>
 #endif
 
-std::array<std::string::value_type, 64> Meter::Dump(unsigned short ntabs) const noexcept {
+std::array<std::string::value_type, 64> Meter::Dump(uint8_t ntabs) const noexcept {
     std::array<std::string::value_type, 64> buffer{"Cur: "}; // rest should be nulls
 #if defined(__cpp_lib_to_chars)
     auto ToChars = [buf_end{buffer.data() + buffer.size()}](char* buf_start, float num) -> char * {

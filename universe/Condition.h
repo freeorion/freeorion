@@ -81,7 +81,7 @@ struct FO_COMMON_API Condition {
     bool SourceInvariant() const { return m_source_invariant; }
 
     virtual std::string Description(bool negated = false) const = 0;
-    virtual std::string Dump(unsigned short ntabs = 0) const = 0;
+    virtual std::string Dump(uint8_t ntabs = 0) const = 0;
     virtual void SetTopLevelContent(const std::string& content_name) = 0;
     virtual unsigned int GetCheckSum() const { return 0; }
 

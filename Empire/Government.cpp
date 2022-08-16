@@ -59,7 +59,7 @@ Policy::Policy(std::string name, std::string description,
         effect->SetTopLevelContent(m_name);
 }
 
-std::string Policy::Dump(unsigned short ntabs) const {
+std::string Policy::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs) + "Policy\n";
     retval += DumpIndent(ntabs+1) + "name = \"" + m_name + "\"\n";
     retval += DumpIndent(ntabs+1) + "description = \"" + m_description + "\"\n";

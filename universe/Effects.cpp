@@ -302,7 +302,7 @@ const std::vector<Effect*> EffectsGroup::EffectsList() const {
 const std::string& EffectsGroup::GetDescription() const
 { return m_description; }
 
-std::string EffectsGroup::Dump(unsigned short ntabs) const {
+std::string EffectsGroup::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs) + "EffectsGroup";
     if (!m_content_name.empty())
         retval += " // from " + m_content_name;
@@ -455,7 +455,7 @@ unsigned int Effect::GetCheckSum() const {
 void NoOp::Execute(ScriptingContext& context) const
 { DebugLogger(effects) << "Effect::NoOp::Execute: src: " << context.source << "  tgt: " << context.effect_target; }
 
-std::string NoOp::Dump(unsigned short ntabs) const
+std::string NoOp::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "NoOp\n"; }
 
 unsigned int NoOp::GetCheckSum() const {
@@ -667,7 +667,7 @@ void SetMeter::Execute(ScriptingContext& context, const TargetSet& targets) cons
     Execute(context, targets, nullptr, default_effect_cause);
 }
 
-std::string SetMeter::Dump(unsigned short ntabs) const {
+std::string SetMeter::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs) + "Set";
     switch (m_meter) {
     case MeterType::METER_TARGET_POPULATION:   retval += "TargetPopulation"; break;
@@ -965,7 +965,7 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
     }
 }
 
-std::string SetShipPartMeter::Dump(unsigned short ntabs) const {
+std::string SetShipPartMeter::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs);
     switch (m_meter) {
         case MeterType::METER_CAPACITY:            retval += "SetCapacity";        break;
@@ -1200,7 +1200,7 @@ void SetEmpireMeter::Execute(ScriptingContext& context, const TargetSet& targets
     }
 }
 
-std::string SetEmpireMeter::Dump(unsigned short ntabs) const
+std::string SetEmpireMeter::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "SetEmpireMeter meter = " + m_meter + " empire = " + m_empire_id->Dump(ntabs) + " value = " + m_value->Dump(ntabs); }
 
 void SetEmpireMeter::SetTopLevelContent(const std::string& content_name) {
@@ -1280,7 +1280,7 @@ void SetEmpireStockpile::Execute(ScriptingContext& context) const {
     empire->SetResourceStockpile(m_stockpile, m_value->Eval(stockpile_context));
 }
 
-std::string SetEmpireStockpile::Dump(unsigned short ntabs) const {
+std::string SetEmpireStockpile::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs);
     switch (m_stockpile) {
     // TODO: Support for other resource stockpiles?
@@ -1354,7 +1354,7 @@ void SetEmpireCapital::Execute(ScriptingContext& context) const {
     context.Empires().RefreshCapitalIDs();
 }
 
-std::string SetEmpireCapital::Dump(unsigned short ntabs) const
+std::string SetEmpireCapital::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "SetEmpireCapital empire = " + m_empire_id->Dump(ntabs) + "\n"; }
 
 void SetEmpireCapital::SetTopLevelContent(const std::string& content_name) {
@@ -1403,7 +1403,7 @@ void SetPlanetType::Execute(ScriptingContext& context) const {
         p->SetSize(PlanetSize::SZ_HUGE);
 }
 
-std::string SetPlanetType::Dump(unsigned short ntabs) const
+std::string SetPlanetType::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "SetPlanetType type = " + m_type->Dump(ntabs) + "\n"; }
 
 void SetPlanetType::SetTopLevelContent(const std::string& content_name) {
@@ -1450,7 +1450,7 @@ void SetPlanetSize::Execute(ScriptingContext& context) const {
         p->SetType(PlanetType::PT_BARREN);
 }
 
-std::string SetPlanetSize::Dump(unsigned short ntabs) const
+std::string SetPlanetSize::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "SetPlanetSize size = " + m_size->Dump(ntabs) + "\n"; }
 
 void SetPlanetSize::SetTopLevelContent(const std::string& content_name) {
@@ -1526,7 +1526,7 @@ void SetSpecies::Execute(ScriptingContext& context) const {
     }
 }
 
-std::string SetSpecies::Dump(unsigned short ntabs) const
+std::string SetSpecies::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "SetSpecies name = " + m_species_name->Dump(ntabs) + "\n"; }
 
 void SetSpecies::SetTopLevelContent(const std::string& content_name) {
@@ -1604,7 +1604,7 @@ void SetOwner::Execute(ScriptingContext& context) const {
     }
 }
 
-std::string SetOwner::Dump(unsigned short ntabs) const
+std::string SetOwner::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "SetOwner empire = " + m_empire_id->Dump(ntabs) + "\n"; }
 
 void SetOwner::SetTopLevelContent(const std::string& content_name) {
@@ -1661,7 +1661,7 @@ void SetSpeciesEmpireOpinion::Execute(ScriptingContext& context) const {
     context.species.SetSpeciesEmpireOpinion(species_name, empire_id, opinion);
 }
 
-std::string SetSpeciesEmpireOpinion::Dump(unsigned short ntabs) const
+std::string SetSpeciesEmpireOpinion::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "SetSpeciesEmpireOpinion empire = " + m_empire_id->Dump(ntabs) + "\n"; }
 
 void SetSpeciesEmpireOpinion::SetTopLevelContent(const std::string& content_name) {
@@ -1727,7 +1727,7 @@ void SetSpeciesSpeciesOpinion::Execute(ScriptingContext& context) const {
     context.species.SetSpeciesSpeciesOpinion(opinionated_species_name, rated_species_name, opinion);
 }
 
-std::string SetSpeciesSpeciesOpinion::Dump(unsigned short ntabs) const
+std::string SetSpeciesSpeciesOpinion::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "SetSpeciesSpeciesOpinion" + "\n"; }
 
 void SetSpeciesSpeciesOpinion::SetTopLevelContent(const std::string& content_name) {
@@ -1837,7 +1837,7 @@ void CreatePlanet::Execute(ScriptingContext& context) const {
     }
 }
 
-std::string CreatePlanet::Dump(unsigned short ntabs) const {
+std::string CreatePlanet::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs) + "CreatePlanet";
     if (m_size)
         retval += " size = " + m_size->Dump(ntabs);
@@ -1956,7 +1956,7 @@ void CreateBuilding::Execute(ScriptingContext& context) const {
     }
 }
 
-std::string CreateBuilding::Dump(unsigned short ntabs) const {
+std::string CreateBuilding::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs) + "CreateBuilding";
     if (m_building_type_name)
         retval += " type = " + m_building_type_name->Dump(ntabs);
@@ -2127,7 +2127,7 @@ void CreateShip::Execute(ScriptingContext& context) const {
     }
 }
 
-std::string CreateShip::Dump(unsigned short ntabs) const {
+std::string CreateShip::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs) + "CreateShip";
     if (m_design_id)
         retval += " designid = " + m_design_id->Dump(ntabs);
@@ -2287,7 +2287,7 @@ void CreateField::Execute(ScriptingContext& context) const {
     }
 }
 
-std::string CreateField::Dump(unsigned short ntabs) const {
+std::string CreateField::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs) + "CreateField";
     if (m_field_type_name)
         retval += " type = " + m_field_type_name->Dump(ntabs);
@@ -2417,7 +2417,7 @@ void CreateSystem::Execute(ScriptingContext& context) const {
     }
 }
 
-std::string CreateSystem::Dump(unsigned short ntabs) const {
+std::string CreateSystem::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs) + "CreateSystem";
     if (m_type)
         retval += " type = " + m_type->Dump(ntabs);
@@ -2486,7 +2486,7 @@ void Destroy::Execute(ScriptingContext& context) const {
     context.ContextUniverse().EffectDestroy(context.effect_target->ID(), source_id);
 }
 
-std::string Destroy::Dump(unsigned short ntabs) const
+std::string Destroy::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "Destroy\n"; }
 
 unsigned int Destroy::GetCheckSum() const {
@@ -2535,7 +2535,7 @@ void AddSpecial::Execute(ScriptingContext& context) const {
     context.effect_target->SetSpecialCapacity(name, capacity);
 }
 
-std::string AddSpecial::Dump(unsigned short ntabs) const {
+std::string AddSpecial::Dump(uint8_t ntabs) const {
     return DumpIndent(ntabs) + "AddSpecial name = " +  (m_name ? m_name->Dump(ntabs) : "") +
         " capacity = " + (m_capacity ? m_capacity->Dump(ntabs) : "0.0") +  "\n";
 }
@@ -2585,7 +2585,7 @@ void RemoveSpecial::Execute(ScriptingContext& context) const {
     context.effect_target->RemoveSpecial(name);
 }
 
-std::string RemoveSpecial::Dump(unsigned short ntabs) const {
+std::string RemoveSpecial::Dump(uint8_t ntabs) const {
     return DumpIndent(ntabs) + "RemoveSpecial name = " +  (m_name ? m_name->Dump(ntabs) : "") + "\n";
 }
 
@@ -2658,7 +2658,7 @@ void AddStarlanes::Execute(ScriptingContext& context) const {
     }
 }
 
-std::string AddStarlanes::Dump(unsigned short ntabs) const
+std::string AddStarlanes::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "AddStarlanes endpoints = " + m_other_lane_endpoint_condition->Dump(ntabs) + "\n"; }
 
 void AddStarlanes::SetTopLevelContent(const std::string& content_name) {
@@ -2729,7 +2729,7 @@ void RemoveStarlanes::Execute(ScriptingContext& context) const {
     }
 }
 
-std::string RemoveStarlanes::Dump(unsigned short ntabs) const
+std::string RemoveStarlanes::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "RemoveStarlanes endpoints = " + m_other_lane_endpoint_condition->Dump(ntabs) + "\n"; }
 
 void RemoveStarlanes::SetTopLevelContent(const std::string& content_name) {
@@ -2773,7 +2773,7 @@ void SetStarType::Execute(ScriptingContext& context) const {
     }
 }
 
-std::string SetStarType::Dump(unsigned short ntabs) const
+std::string SetStarType::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "SetStarType type = " + m_type->Dump(ntabs) + "\n"; }
 
 void SetStarType::SetTopLevelContent(const std::string& content_name) {
@@ -3095,7 +3095,7 @@ void MoveTo::Execute(ScriptingContext& context) const {
     }
 }
 
-std::string MoveTo::Dump(unsigned short ntabs) const
+std::string MoveTo::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "MoveTo destination = " + m_location_condition->Dump(ntabs) + "\n"; }
 
 void MoveTo::SetTopLevelContent(const std::string& content_name) {
@@ -3233,7 +3233,7 @@ void MoveInOrbit::Execute(ScriptingContext& context) const {
     // don't move planets or buildings, as these can't exist outside of systems
 }
 
-std::string MoveInOrbit::Dump(unsigned short ntabs) const {
+std::string MoveInOrbit::Dump(uint8_t ntabs) const {
     if (m_focal_point_condition)
         return DumpIndent(ntabs) + "MoveInOrbit around = " + m_focal_point_condition->Dump(ntabs) + "\n";
     else if (m_focus_x && m_focus_y)
@@ -3406,7 +3406,7 @@ void MoveTowards::Execute(ScriptingContext& context) const {
     // don't move planets or buildings, as these can't exist outside of systems
 }
 
-std::string MoveTowards::Dump(unsigned short ntabs) const {
+std::string MoveTowards::Dump(uint8_t ntabs) const {
     if (m_dest_condition)
         return DumpIndent(ntabs) + "MoveTowards destination = " + m_dest_condition->Dump(ntabs) + "\n";
     else if (m_dest_x && m_dest_y)
@@ -3511,7 +3511,7 @@ void SetDestination::Execute(ScriptingContext& context) const {
     }
 }
 
-std::string SetDestination::Dump(unsigned short ntabs) const
+std::string SetDestination::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "SetDestination destination = " + m_location_condition->Dump(ntabs) + "\n"; }
 
 void SetDestination::SetTopLevelContent(const std::string& content_name) {
@@ -3554,7 +3554,7 @@ void SetAggression::Execute(ScriptingContext& context) const {
     target_fleet->SetAggression(m_aggression);
 }
 
-std::string SetAggression::Dump(unsigned short ntabs) const {
+std::string SetAggression::Dump(uint8_t ntabs) const {
     return DumpIndent(ntabs) + [aggr{this->m_aggression}]() {
         switch(aggr) {
         case FleetAggression::FLEET_AGGRESSIVE:  return "SetAggressive";  break;
@@ -3598,7 +3598,7 @@ void Victory::Execute(ScriptingContext& context) const {
         ErrorLogger(effects) << "Trying to grant victory to a missing empire!";
 }
 
-std::string Victory::Dump(unsigned short ntabs) const
+std::string Victory::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "Victory reason = \"" + m_reason_string + "\"\n"; }
 
 unsigned int Victory::GetCheckSum() const {
@@ -3656,7 +3656,7 @@ void SetEmpireTechProgress::Execute(ScriptingContext& context) const {
                                     context);
 }
 
-std::string SetEmpireTechProgress::Dump(unsigned short ntabs) const {
+std::string SetEmpireTechProgress::Dump(uint8_t ntabs) const {
     std::string retval = "SetEmpireTechProgress name = ";
     if (m_tech_name)
         retval += m_tech_name->Dump(ntabs);
@@ -3739,7 +3739,7 @@ void GiveEmpireContent::Execute(ScriptingContext& context) const {
     }
 }
 
-std::string GiveEmpireContent::Dump(unsigned short ntabs) const {
+std::string GiveEmpireContent::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs) + "GiveEmpire";
 
     switch(m_unlock_type) {
@@ -3973,7 +3973,7 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
     }
 }
 
-std::string GenerateSitRepMessage::Dump(unsigned short ntabs) const {
+std::string GenerateSitRepMessage::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs);
     retval += "GenerateSitRepMessage\n";
     retval += DumpIndent(ntabs+1) + "message = \"" + m_message_string + "\"" + " icon = " + m_icon + "\n";
@@ -4079,7 +4079,7 @@ void SetOverlayTexture::Execute(ScriptingContext& context) const {
     system->SetOverlayTexture(m_texture, size);
 }
 
-std::string SetOverlayTexture::Dump(unsigned short ntabs) const {
+std::string SetOverlayTexture::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs) + "SetOverlayTexture texture = " + m_texture;
     if (m_size)
         retval += " size = " + m_size->Dump(ntabs);
@@ -4124,7 +4124,7 @@ void SetTexture::Execute(ScriptingContext& context) const {
     planet->SetSurfaceTexture(m_texture);
 }
 
-std::string SetTexture::Dump(unsigned short ntabs) const
+std::string SetTexture::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "SetTexture texture = " + m_texture + "\n"; }
 
 unsigned int SetTexture::GetCheckSum() const {
@@ -4272,7 +4272,7 @@ void SetVisibility::Execute(ScriptingContext& context) const {
     }
 }
 
-std::string SetVisibility::Dump(unsigned short ntabs) const {
+std::string SetVisibility::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs);
 
     retval += DumpIndent(ntabs) + "SetVisibility affiliation = ";
@@ -4429,7 +4429,7 @@ void Conditional::Execute(ScriptingContext& context,
     }
 }
 
-std::string Conditional::Dump(unsigned short ntabs) const {
+std::string Conditional::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs) + "If\n";
     if (m_target_condition) {
         retval += DumpIndent(ntabs+1) + "condition =\n";

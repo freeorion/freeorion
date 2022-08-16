@@ -695,7 +695,7 @@ void ShipDesign::BuildStatCaches() {
     });
 }
 
-std::string ShipDesign::Dump(unsigned short ntabs) const {
+std::string ShipDesign::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs) + "ShipDesign\n";
     retval += DumpIndent(ntabs+1) + "name = \"" + m_name + "\"\n";
     retval += DumpIndent(ntabs+1) + "uuid = \"" + boost::uuids::to_string(m_uuid) + "\"\n";

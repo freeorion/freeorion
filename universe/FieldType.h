@@ -34,7 +34,7 @@ public:
     auto Description() const -> const std::string& { return m_description; }
 
     //! Returns a data file format representation of this object
-    auto Dump(unsigned short ntabs = 0) const -> std::string;
+    auto Dump(uint8_t ntabs = 0) const -> std::string;
 
     //! Returns stealth of field type
     auto Stealth() const -> float { return m_stealth; }

@@ -19,7 +19,7 @@ public:
     Fighter() : UniverseObject(UniverseObjectType::OBJ_FIGHTER) {}
 
     [[nodiscard]] bool               HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
-    [[nodiscard]] std::string        Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string        Dump(uint8_t ntabs = 0) const override;
 
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 

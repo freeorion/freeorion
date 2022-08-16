@@ -122,7 +122,7 @@ namespace Effect {
         virtual bool            operator==(const Effect& rhs) const;
         bool                    operator!=(const Effect& rhs) const { return !(*this == rhs); }
 
-        virtual std::string     Dump(unsigned short ntabs = 0) const = 0;
+        virtual std::string     Dump(uint8_t ntabs = 0) const = 0;
 
         virtual bool            IsMeterEffect() const { return false; }
         virtual bool            IsEmpireMeterEffect() const { return false; }
@@ -218,7 +218,7 @@ namespace Effect {
         const std::string&              GetDescription() const;
         const std::string&              AccountingLabel() const     { return m_accounting_label; }
         int                             Priority() const            { return m_priority; }
-        std::string                     Dump(unsigned short ntabs = 0) const;
+        std::string                     Dump(uint8_t ntabs = 0) const;
         bool                            HasMeterEffects() const;
         bool                            HasAppearanceEffects() const;
         bool                            HasSitrepEffects() const;

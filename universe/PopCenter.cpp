@@ -41,7 +41,7 @@ void PopCenter::Init() {
     AddMeter(MeterType::METER_TARGET_HAPPINESS);
 }
 
-std::string PopCenter::Dump(unsigned short ntabs) const
+std::string PopCenter::Dump(uint8_t ntabs) const
 { return std::string{" species: "}.append(m_species_name).append("  "); }
 
 bool PopCenter::Populated() const

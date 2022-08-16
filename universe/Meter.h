@@ -26,7 +26,7 @@ public:
     [[nodiscard]] constexpr float Current() const noexcept { return FromInt(cur); };
     [[nodiscard]] constexpr float Initial() const noexcept { return FromInt(init); };
 
-    [[nodiscard]] std::array<std::string::value_type, 64> Dump(unsigned short ntabs = 0) const noexcept; ///< returns text of meter values
+    [[nodiscard]] std::array<std::string::value_type, 64> Dump(uint8_t ntabs = 0) const noexcept; ///< returns text of meter values
 
     [[nodiscard]] constexpr bool operator==(const Meter& rhs) const noexcept
     { return cur == rhs.cur && init == rhs.init; }

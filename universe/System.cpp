@@ -136,7 +136,7 @@ void System::Copy(std::shared_ptr<const UniverseObject> copied_object,
     }
 }
 
-std::string System::Dump(unsigned short ntabs) const {
+std::string System::Dump(uint8_t ntabs) const {
     std::string retval = UniverseObject::Dump(ntabs);
     retval.reserve(2048);
     retval.append(" star type: ").append(to_string(m_star))

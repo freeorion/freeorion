@@ -76,7 +76,7 @@ public:
     [[nodiscard]] const std::string&  Name() const                { return m_name; }              //!< returns name of this tech
     [[nodiscard]] const std::string&  Description() const         { return m_description; }       //!< Returns the text description of this tech
     [[nodiscard]] const std::string&  ShortDescription() const    { return m_short_description; } //!< Returns the single-line short text description of this tech
-    [[nodiscard]] std::string         Dump(unsigned short ntabs = 0) const;                               //!< Returns a text representation of this object
+    [[nodiscard]] std::string         Dump(uint8_t ntabs = 0) const;                                      //!< Returns a text representation of this object
     [[nodiscard]] const std::string&  Category() const            { return m_category; }                  //!< retursn the name of the category to which this tech belongs
     [[nodiscard]] float               ResearchCost(int empire_id, const ScriptingContext& context) const; //!< returns the total research cost in RPs required to research this tech
     [[nodiscard]] float               PerTurnCost(int empire_id, const ScriptingContext& context) const;  //!< returns the maximum number of RPs per turn allowed to be spent on researching this tech

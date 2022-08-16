@@ -24,7 +24,7 @@ public:
     NoOp() = default;
 
     void                       Execute(ScriptingContext& context) const override;
-    [[nodiscard]] std::string  Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string  Dump(uint8_t ntabs = 0) const override;
     void                       SetTopLevelContent(const std::string& content_name) override {}
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
@@ -56,7 +56,7 @@ public:
                  bool include_empire_meter_effects = false,
                  bool only_generate_sitrep_effects = false) const override;
 
-    std::string         Dump(unsigned short ntabs = 0) const override;
+    std::string         Dump(uint8_t ntabs = 0) const override;
     bool                IsMeterEffect() const override { return true; }
     void                SetTopLevelContent(const std::string& content_name) override;
     MeterType           GetMeterType() const { return m_meter; };
@@ -98,7 +98,7 @@ public:
                  bool include_empire_meter_effects = false,
                  bool only_generate_sitrep_effects = false) const override;
 
-    std::string     Dump(unsigned short ntabs = 0) const override;
+    std::string     Dump(uint8_t ntabs = 0) const override;
     bool            IsMeterEffect() const override { return true; }
     void            SetTopLevelContent(const std::string& content_name) override;
     const           ValueRef::ValueRef<std::string>* GetPartName() const { return m_part_name.get(); }
@@ -136,7 +136,7 @@ public:
                  bool include_empire_meter_effects = false,
                  bool only_generate_sitrep_effects = false) const override;
 
-    std::string     Dump(unsigned short ntabs = 0) const override;
+    std::string     Dump(uint8_t ntabs = 0) const override;
     bool            IsMeterEffect() const override { return true; }
     bool            IsEmpireMeterEffect() const override { return true; }
     void            SetTopLevelContent(const std::string& content_name) override;
@@ -163,7 +163,7 @@ public:
     bool operator==(const Effect& rhs) const override;
 
     void Execute(ScriptingContext& context) const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
+    std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
@@ -186,7 +186,7 @@ public:
     bool operator==(const Effect& rhs) const override;
 
     void            Execute(ScriptingContext& context) const override;
-    std::string     Dump(unsigned short ntabs = 0) const override;
+    std::string     Dump(uint8_t ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
 
@@ -205,7 +205,7 @@ public:
     explicit SetPlanetType(std::unique_ptr<ValueRef::ValueRef<PlanetType>>&& type);
 
     void Execute(ScriptingContext& context) const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
+    std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
@@ -225,7 +225,7 @@ public:
     explicit SetPlanetSize(std::unique_ptr<ValueRef::ValueRef<PlanetSize>>&& size);
 
     void Execute(ScriptingContext& context) const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
+    std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
@@ -242,7 +242,7 @@ public:
     explicit SetSpecies(std::unique_ptr<ValueRef::ValueRef<std::string>>&& species);
 
     void Execute(ScriptingContext& context) const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
+    std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
@@ -259,7 +259,7 @@ public:
     explicit SetOwner(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id);
 
     void Execute(ScriptingContext& context) const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
+    std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
@@ -278,7 +278,7 @@ public:
                             std::unique_ptr<ValueRef::ValueRef<double>>&& opinion);
 
     void Execute(ScriptingContext& context) const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
+    std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
@@ -299,7 +299,7 @@ public:
                              std::unique_ptr<ValueRef::ValueRef<double>>&& opinion);
 
     void Execute(ScriptingContext& context) const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
+    std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
@@ -321,7 +321,7 @@ public:
                  std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
     void Execute(ScriptingContext& context) const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
+    std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
@@ -342,7 +342,7 @@ public:
                    std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
     void Execute(ScriptingContext& context) const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
+    std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
@@ -372,7 +372,7 @@ public:
                std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
     void Execute(ScriptingContext& context) const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
+    std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
@@ -404,7 +404,7 @@ public:
                 std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
     void Execute(ScriptingContext& context) const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
+    std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
@@ -435,7 +435,7 @@ public:
                  std::vector<std::unique_ptr<Effect>>&& effects_to_apply_after);
 
     void Execute(ScriptingContext& context) const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
+    std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
@@ -459,7 +459,7 @@ public:
     Destroy() = default;
 
     void Execute(ScriptingContext& context) const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
+    std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override {}
     unsigned int GetCheckSum() const override;
 
@@ -475,7 +475,7 @@ public:
 
     void Execute(ScriptingContext& context) const override;
 
-    std::string Dump(unsigned short ntabs = 0) const override;
+    std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     const ValueRef::ValueRef<std::string>* GetSpecialName() const { return m_name.get(); }
     unsigned int GetCheckSum() const override;
@@ -495,7 +495,7 @@ public:
     explicit RemoveSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
 
     void Execute(ScriptingContext& context) const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
+    std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
@@ -512,7 +512,7 @@ public:
     explicit AddStarlanes(std::unique_ptr<Condition::Condition>&& other_lane_endpoint_condition);
 
     void Execute(ScriptingContext& context) const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
+    std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
@@ -529,7 +529,7 @@ public:
     explicit RemoveStarlanes(std::unique_ptr<Condition::Condition>&& other_lane_endpoint_condition);
 
     void            Execute(ScriptingContext& context) const override;
-    std::string     Dump(unsigned short ntabs = 0) const override;
+    std::string     Dump(uint8_t ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
 
@@ -546,7 +546,7 @@ public:
     explicit SetStarType(std::unique_ptr<ValueRef::ValueRef<StarType>>&& type);
 
     void            Execute(ScriptingContext& context) const override;
-    std::string     Dump(unsigned short ntabs = 0) const override;
+    std::string     Dump(uint8_t ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
 
@@ -565,7 +565,7 @@ public:
     explicit MoveTo(std::unique_ptr<Condition::Condition>&& location_condition);
 
     void            Execute(ScriptingContext& context) const override;
-    std::string     Dump(unsigned short ntabs = 0) const override;
+    std::string     Dump(uint8_t ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
 
@@ -587,7 +587,7 @@ public:
                 std::unique_ptr<ValueRef::ValueRef<double>>&& focus_y = nullptr);
 
     void            Execute(ScriptingContext& context) const override;
-    std::string     Dump(unsigned short ntabs = 0) const override;
+    std::string     Dump(uint8_t ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
 
@@ -611,7 +611,7 @@ public:
                 std::unique_ptr<ValueRef::ValueRef<double>>&& dest_y = nullptr);
 
     void            Execute(ScriptingContext& context) const override;
-    std::string     Dump(unsigned short ntabs = 0) const override;
+    std::string     Dump(uint8_t ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
 
@@ -633,7 +633,7 @@ public:
     explicit SetDestination(std::unique_ptr<Condition::Condition>&& location_condition);
 
     void            Execute(ScriptingContext& context) const override;
-    std::string     Dump(unsigned short ntabs = 0) const override;
+    std::string     Dump(uint8_t ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
 
@@ -649,7 +649,7 @@ public:
     explicit SetAggression(FleetAggression aggression);
 
     void            Execute(ScriptingContext& context) const override;
-    std::string     Dump(unsigned short ntabs = 0) const override;
+    std::string     Dump(uint8_t ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override {}
     unsigned int    GetCheckSum() const override;
 
@@ -666,7 +666,7 @@ public:
     explicit Victory(std::string& reason_string); // TODO: Make this a ValueRef<std::string>*
 
     void            Execute(ScriptingContext& context) const override;
-    std::string     Dump(unsigned short ntabs = 0) const override;
+    std::string     Dump(uint8_t ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override {}
     unsigned int    GetCheckSum() const override;
 
@@ -685,7 +685,7 @@ public:
                           std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id = nullptr);
 
     void            Execute(ScriptingContext& context) const override;
-    std::string     Dump(unsigned short ntabs = 0) const override;
+    std::string     Dump(uint8_t ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
 
@@ -704,7 +704,7 @@ public:
                                std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id = nullptr);
 
     void            Execute(ScriptingContext& context) const override;
-    std::string     Dump(unsigned short ntabs = 0) const override;
+    std::string     Dump(uint8_t ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
 
@@ -747,7 +747,7 @@ public:
 
     void                Execute(ScriptingContext& context) const override;
     bool                IsSitrepEffect() const override     { return true; }
-    std::string         Dump(unsigned short ntabs = 0) const override;
+    std::string         Dump(uint8_t ntabs = 0) const override;
     void                SetTopLevelContent(const std::string& content_name) override;
     const std::string&  MessageString() const               { return m_message_string; }
     const std::string&  Icon() const                        { return m_icon; }
@@ -780,7 +780,7 @@ public:
     SetOverlayTexture(std::string& texture, ValueRef::ValueRef<double>* size);
 
     void Execute(ScriptingContext& context) const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
+    std::string Dump(uint8_t ntabs = 0) const override;
     bool IsAppearanceEffect() const override { return true; }
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
@@ -799,7 +799,7 @@ public:
 
     void Execute(ScriptingContext& context) const override;
 
-    std::string Dump(unsigned short ntabs = 0) const override;
+    std::string Dump(uint8_t ntabs = 0) const override;
     bool IsAppearanceEffect() const override { return true; }
     void SetTopLevelContent(const std::string& content_name) override {}
     unsigned int GetCheckSum() const override;
@@ -820,7 +820,7 @@ public:
                   std::unique_ptr<Condition::Condition>&& of_objects = nullptr);    // if not specified, acts on target. if specified, acts on all matching objects
 
     void Execute(ScriptingContext& context) const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
+    std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
 
     ValueRef::ValueRef<Visibility>* GetVisibility() const
@@ -869,7 +869,7 @@ public:
                  bool include_empire_meter_effects = false,
                  bool only_generate_sitrep_effects = false) const override;
 
-    std::string Dump(unsigned short ntabs = 0) const override;
+    std::string Dump(uint8_t ntabs = 0) const override;
 
     bool IsMeterEffect() const override;
     bool IsAppearanceEffect() const override;
