@@ -90,11 +90,11 @@ public:
     [[nodiscard]] double                        X() const noexcept { return m_x; }      ///< the X-coordinate of this object
     [[nodiscard]] double                        Y() const noexcept { return m_y; }      ///< the Y-coordinate of this object
 
-    [[nodiscard]] int                           Owner() const noexcept   { return m_owner_empire_id; }; ///< returns the ID of the empire that owns this object, or ALL_EMPIRES if there is no owner
-    [[nodiscard]] bool                          Unowned() const;           ///< returns true iff there are no owners of this object
-    [[nodiscard]] bool                          OwnedBy(int empire) const; ///< returns true iff the empire with id \a empire owns this object; unowned objects always return false;
+    [[nodiscard]] int                           Owner() const noexcept   { return m_owner_empire_id; };               ///< returns the ID of the empire that owns this object, or ALL_EMPIRES if there is no owner
+    [[nodiscard]] bool                          Unowned() const noexcept { return m_owner_empire_id == ALL_EMPIRES; } ///< returns true iff there are no owners of this object
+    [[nodiscard]] bool                          OwnedBy(int empire) const noexcept { return empire != ALL_EMPIRES && empire == m_owner_empire_id; }; ///< returns true iff the empire with id \a empire owns this object; unowned objects always return false;
     /** Object owner is at war with empire @p empire_id */
-    [[nodiscard]] virtual bool                  HostileToEmpire(int empire_id, const EmpireManager& empires) const;
+    [[nodiscard]] virtual bool                  HostileToEmpire(int empire_id, const EmpireManager& empires) const { return false; }
 
     [[nodiscard]] int                           SystemID() const noexcept { return m_system_id; };  ///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
 
@@ -153,7 +153,7 @@ public:
     [[nodiscard]] Visibility                  GetVisibility(int empire_id, const Universe& u) const;
 
     /** Returns the name of this objectas it appears to empire \a empire_id .*/
-    [[nodiscard]] virtual const std::string&  PublicName(int empire_id, const Universe& universe) const;
+    [[nodiscard]] virtual const std::string&  PublicName(int empire_id, const Universe& universe) const { return m_name; };
 
     /** Accepts a visitor object \see UniverseObjectVisitor */
     virtual std::shared_ptr<UniverseObject>   Accept(const UniverseObjectVisitor& visitor) const;

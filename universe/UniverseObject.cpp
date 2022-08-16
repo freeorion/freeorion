@@ -232,15 +232,6 @@ void UniverseObject::AddMeter(MeterType meter_type) {
         m_meters[meter_type];
 }
 
-bool UniverseObject::Unowned() const
-{ return m_owner_empire_id == ALL_EMPIRES; }
-
-bool UniverseObject::OwnedBy(int empire) const
-{ return empire != ALL_EMPIRES && empire == m_owner_empire_id; }
-
-bool UniverseObject::HostileToEmpire(int, const EmpireManager&) const
-{ return false; }
-
 Visibility UniverseObject::GetVisibility(int empire_id, const EmpireIDtoObjectIDtoVisMap& v) const {
     auto empire_it = v.find(empire_id);
     if (empire_it == v.end())
@@ -253,9 +244,6 @@ Visibility UniverseObject::GetVisibility(int empire_id, const EmpireIDtoObjectID
 
 Visibility UniverseObject::GetVisibility(int empire_id, const Universe& u) const
 { return GetVisibility(empire_id, u.GetEmpireObjectVisibility()); }
-
-const std::string& UniverseObject::PublicName(int, const Universe&) const
-{ return m_name; }
 
 std::shared_ptr<UniverseObject> UniverseObject::Accept(const UniverseObjectVisitor& visitor) const
 { return visitor.Visit(std::const_pointer_cast<UniverseObject>(shared_from_this())); }
