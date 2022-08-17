@@ -27,9 +27,6 @@
 
 namespace fs = boost::filesystem;
 
-using std::vector;
-using std::string;
-
 namespace {
     constexpr GG::X SAVE_FILE_DIALOG_WIDTH(600);
     constexpr GG::Y SAVE_FILE_DIALOG_HEIGHT(400);
@@ -505,7 +502,7 @@ public:
         if (abs_path.is_relative())
             abs_path = GetSaveDir() / path;
 
-        vector<FullPreview> previews;
+        std::vector<FullPreview> previews;
         ::LoadSaveGamePreviews(abs_path, extension, previews);
         LoadSaveGamePreviews(std::move(previews));
     }
@@ -984,7 +981,7 @@ bool SaveFileDialog::CheckChoiceValidity() {
 void SaveFileDialog::FileNameEdited(const std::string& filename)
 { CheckChoiceValidity(); }
 
-void SaveFileDialog::DirectoryEdited(const string& filename)
+void SaveFileDialog::DirectoryEdited(const std::string& filename)
 { CheckChoiceValidity(); }
 
 std::string SaveFileDialog::GetDirPath() const {
