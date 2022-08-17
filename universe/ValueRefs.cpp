@@ -210,45 +210,51 @@ namespace {
         return retval;
     }
 
-    const std::array<std::pair<std::string, MeterType>, 36> NAME_TO_METER = {{
-        {"Population",           MeterType::METER_POPULATION},
-        {"TargetPopulation",     MeterType::METER_TARGET_POPULATION},
-        {"Industry",             MeterType::METER_INDUSTRY},
-        {"TargetIndustry",       MeterType::METER_TARGET_INDUSTRY},
-        {"Research",             MeterType::METER_RESEARCH},
-        {"TargetResearch",       MeterType::METER_TARGET_RESEARCH},
-        {"Influence",            MeterType::METER_INFLUENCE},
-        {"TargetInfluence",      MeterType::METER_TARGET_INFLUENCE},
-        {"Construction",         MeterType::METER_CONSTRUCTION},
-        {"TargetConstruction",   MeterType::METER_TARGET_CONSTRUCTION},
-        {"Happiness",            MeterType::METER_HAPPINESS},
-        {"TargetHappiness",      MeterType::METER_TARGET_HAPPINESS},
-        {"MaxFuel",              MeterType::METER_MAX_FUEL},
-        {"Fuel",                 MeterType::METER_FUEL},
-        {"MaxStructure",         MeterType::METER_MAX_STRUCTURE},
-        {"Structure",            MeterType::METER_STRUCTURE},
-        {"MaxShield",            MeterType::METER_MAX_SHIELD},
-        {"Shield",               MeterType::METER_SHIELD},
-        {"MaxDefense",           MeterType::METER_MAX_DEFENSE},
-        {"Defense",              MeterType::METER_DEFENSE},
-        {"MaxTroops",            MeterType::METER_MAX_TROOPS},
-        {"Troops",               MeterType::METER_TROOPS},
-        {"RebelTroops",          MeterType::METER_REBEL_TROOPS},
-        {"Supply",               MeterType::METER_SUPPLY},
-        {"MaxSupply",            MeterType::METER_MAX_SUPPLY},
-        {"Stockpile",            MeterType::METER_STOCKPILE},
-        {"MaxStockpile",         MeterType::METER_MAX_STOCKPILE},
-        {"Stealth",              MeterType::METER_STEALTH},
-        {"Detection",            MeterType::METER_DETECTION},
-        {"Speed",                MeterType::METER_SPEED},
-        {"Damage",               MeterType::METER_CAPACITY},
-        {"Capacity",             MeterType::METER_CAPACITY},
-        {"MaxCapacity",          MeterType::METER_MAX_CAPACITY},
-        {"SecondaryStat",        MeterType::METER_SECONDARY_STAT},
-        {"MaxSecondaryStat",     MeterType::METER_MAX_SECONDARY_STAT},
-        {"Size",                 MeterType::METER_SIZE}
-    }};
- 
+    // Array of meter names enumerated by MeterType
+    const std::array<std::string, static_cast<std::size_t>(MeterType::NUM_METER_TYPES)> NAME_BY_METER = {
+        "TargetPopulation",
+        "TargetIndustry",
+        "TargetResearch",
+        "TargetInfluence",
+        "TargetConstruction",
+        "TargetHappiness",
+
+        "MaxCapacity",
+        "MaxSecondaryStat",
+
+        "MaxFuel",
+        "MaxShield",
+        "MaxStructure",
+        "MaxDefense",
+        "MaxSupply",
+        "MaxStockpile",
+        "MaxTroops",
+
+        "Population",
+        "Industry",
+        "Research",
+        "Influence",
+        "Construction",
+        "Happiness",
+
+        "Capacity",
+        "SecondaryStat",
+
+        "Fuel",
+        "Shield",
+        "Structure",
+        "Defense",
+        "Supply",
+        "Stockpile",
+        "Troops",
+
+        "RebelTroops",
+        "Size",
+        "Stealth",
+        "Detection",
+        "Speed"
+    };
+
     const std::string EMPTY_STRING;
 }
 
@@ -282,23 +288,17 @@ std::string ValueRefBase::InvariancePattern() const {
 }
 
 MeterType NameToMeter(const std::string_view name) {
-    auto it = std::find_if(NAME_TO_METER.begin(), NAME_TO_METER.end(),
-        [&name](const std::pair<std::string_view, MeterType>& elem) {
-            return elem.first == name;
-        }
-    );
+    for (std::size_t i = 0; i < NAME_BY_METER.size(); i++)
+    {
+        if (NAME_BY_METER[i] == name)
+            return static_cast<MeterType>(i);
+    }
 
-    return (it != NAME_TO_METER.end()) ? it->second : MeterType::INVALID_METER_TYPE;
+    return MeterType::INVALID_METER_TYPE;
 }
 
 const std::string& MeterToName(const MeterType meter) {
-    auto it = std::find_if(NAME_TO_METER.begin(), NAME_TO_METER.end(),
-        [&meter](const std::pair<std::string, MeterType>& elem) {
-            return elem.second == meter;
-        }
-    );
-
-    return (it != NAME_TO_METER.end()) ? it->first : EMPTY_STRING;
+    return (meter == MeterType::INVALID_METER_TYPE) ? EMPTY_STRING : NAME_BY_METER[static_cast<std::size_t>(meter)];
 }
 
 constexpr std::string_view PlanetTypeToStringConstexpr(PlanetType type) {
