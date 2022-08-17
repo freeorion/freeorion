@@ -1,7 +1,8 @@
-#include "Order.h"
+﻿#include "Order.h"
 
 #include <fstream>
 #include <vector>
+#include <boost/algorithm/string/trim.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
@@ -55,34 +56,152 @@ namespace {
             return UserString("ORDER_UNEXECUTED");
         return EMPTY_STRING;
     }
+
+    // checks for first and continuation bytes in allowed ranges for UTF8
+    // doesn't check for overlong sequences
+    constexpr bool IsValidUTF8(std::string_view sv) {
+        if (sv.empty())
+            return true;
+
+        auto it = sv.begin();
+        auto dist = std::distance(it, sv.end());
+
+        while (true) {
+            const uint8_t c = *it;
+            std::ptrdiff_t sequence_length =
+                (c <= 0x7F) ? 1 :
+                (c >= 0xC2 && c <= 0xDF) ? 2 :
+                (c >= 0xE0 && c <= 0xEF) ? 3 :
+                (c >= 0xF0) ? 4 : 0;
+
+            if (dist < sequence_length || sequence_length == 0)
+                return false;
+
+            if (sequence_length == 1) {
+                dist -= 1;
+
+            } else if (sequence_length == 2) {
+                const uint8_t c2 = *++it;
+                if (c2 < 0x80 || c2 > 0xBF)
+                    return false;
+                dist -= 2;
+
+            } else if (sequence_length == 3) {
+                const uint8_t c2 = *++it;
+                if (c2 < 0x80 || c2 > 0xBF)
+                    return false;
+                const uint8_t c3 = *++it;
+                if (c3 < 0x80 || c3 > 0xBF)
+                    return false;
+                dist -= 3;
+
+            }  else if (sequence_length == 4) {
+                const uint8_t c2 = *++it;
+                if (c2 < 0x80 || c2 > 0xBF)
+                    return false;
+                const uint8_t c3 = *++it;
+                if (c3 < 0x80 || c3 > 0xBF)
+                    return false;
+                const uint8_t c4 = *++it;
+                if (c4 < 0x80 || c4 > 0xBF)
+                    return false;
+                dist -= 4;
+            }
+
+            ++it;
+
+            if (dist < 1)
+                return true;
+        }
+
+        return true;
+    };
+
+    template <std::size_t N>
+    constexpr bool IsValidUTF8(std::array<char, N> arr)
+    { return IsValidUTF8(std::string_view{arr.data(), arr.size()}); }
+
+    static_assert(IsValidUTF8("test string!"));
+
+#if defined(__cpp_lib_char8_t)
+    constexpr std::u8string_view long_chars = u8"αbåオーガитیای مجهو ";
+    constexpr auto long_chars_arr = []() {
+        std::array<std::string_view::value_type, long_chars.size()> retval{};
+        for (std::size_t idx = 0; idx < retval.size(); ++idx)
+            retval[idx] = long_chars[idx];
+        return retval;
+    }();
+    constexpr std::string_view long_chars_sv(long_chars_arr.data(), long_chars_arr.size());
+#else
+    constexpr std::string_view long_chars_sv = u8"αbåオーガитیای مجهو";
+#endif
+    static_assert(IsValidUTF8(long_chars_sv));
+
+    static_assert(IsValidUTF8(""));
+
+    constexpr auto ch = [](const uint8_t u) -> char { return static_cast<char>(u); };
+
+    constexpr std::array<char, 4> some_chars1{33, 53, ch(225), 90}; // two ascii chars, then a truncated sequence
+    static_assert(!IsValidUTF8(some_chars1));
+
+    constexpr std::array<char, 1> some_chars2{ch(239)}; // truncated 3 byte sequence
+    static_assert(!IsValidUTF8(some_chars2));
+
+    constexpr std::array<char, 4> some_chars3{ch(255), 1, 80, 80}; // 4 byte sequence with second byte that is not a continuation byte
+    static_assert(!IsValidUTF8(some_chars3));
+
+    constexpr std::array<char, 4> some_chars4{50, 60, ch(192), 80}; // two ascii chars, then an invalid first byte
+    static_assert(!IsValidUTF8(some_chars4));
+
+    constexpr bool IsControlChar(const uint8_t c)
+    { return c < 0x20 || c == 0x7F || (c >= 0x81 && c <= 0x9F); }
 }
 
 ////////////////////////////////////////////////
 // RenameOrder
 ////////////////////////////////////////////////
-RenameOrder::RenameOrder(int empire, int object, const std::string& name,
+RenameOrder::RenameOrder(int empire, int object, std::string name,
                          const ScriptingContext& context) :
     Order(empire),
     m_object(object),
-    m_name(name)
+    m_name(std::move(name))
 {
-    if (!Check(empire, object, name, context)) {
+    if (!Check(empire, object, name, context))
         m_object = INVALID_OBJECT_ID;
-        return;
-    }
 }
 
 std::string RenameOrder::Dump() const
 { return boost::io::str(FlexibleFormat(UserString("ORDER_RENAME")) % m_object % m_name) + ExecutedTag(this); }
 
-bool RenameOrder::Check(int empire, int object, const std::string& new_name,
+bool RenameOrder::Check(int empire, int object, std::string new_name,
                         const ScriptingContext& context)
 {
-    // disallow the name "", since that denotes an unknown object
+    if (new_name.size() > 64) {
+        ErrorLogger() << "RenameOrder::Check() : passed an overly long new_name of size: " << new_name.size();
+        return false;
+    }
+
+    auto& locale = GetLocale();
+    boost::trim(new_name, locale);
+
+    // disallow nameless objects
     if (new_name.empty()) {
         ErrorLogger() << "RenameOrder::Check() : passed an empty new_name.";
         return false;
     }
+
+    // check UTF8 valididty
+    if (!IsValidUTF8(new_name)) {
+        ErrorLogger() << "RenameOrder::Check() : passed invalid UTF8 new_name.";
+        return false;
+    }
+
+    // disallow control characters
+    if (std::any_of(new_name.begin(), new_name.end(), IsControlChar)) {
+        ErrorLogger() << "RenameOrder::Check : passed control character in name.";
+        return false;
+    }
+
 
     auto obj = context.ContextObjects().get(object);
 

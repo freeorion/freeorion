@@ -91,20 +91,18 @@ private:
 /** the Order subclass that represents the renaming of a UniverseObject. */
 class FO_COMMON_API RenameOrder : public Order {
 public:
-    RenameOrder(int empire, int object, const std::string& name, const ScriptingContext& context);
+    RenameOrder(int empire, int object, std::string name, const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
 
     /** Returns ID of fleet selected in this order. */
-    [[nodiscard]] int ObjectID() const
-    { return m_object; }
+    [[nodiscard]] int ObjectID() const { return m_object; }
 
     /** Returns the new name of the fleet. */
-    [[nodiscard]] const std::string& Name() const
-    { return m_name; }
+    [[nodiscard]] const std::string& Name() const { return m_name; }
 
     //! Returns true when the Order parameters are valid.
-    [[nodiscard]] static bool Check(int empire, int object, const std::string& new_name,
+    [[nodiscard]] static bool Check(int empire, int object, std::string new_name,
                                     const ScriptingContext& context);
 
 private:
