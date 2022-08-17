@@ -291,7 +291,7 @@ MeterType NameToMeter(const std::string_view name) {
     return (it != NAME_TO_METER.end()) ? it->second : MeterType::INVALID_METER_TYPE;
 }
 
-const std::string& MeterToName(const MeterType& meter) {
+const std::string& MeterToName(const MeterType meter) {
     auto it = std::find_if(NAME_TO_METER.begin(), NAME_TO_METER.end(),
         [&meter](const std::pair<std::string, MeterType>& elem) {
             return elem.second == meter;
