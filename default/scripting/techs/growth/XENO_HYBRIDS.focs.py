@@ -6,7 +6,7 @@ Tech(
     description="GRO_XENO_HYBRIDS_DESC",
     short_description="POPULATION_SHORT_DESC",
     category="GROWTH_CATEGORY",
-    researchcost=150 * TECH_COST_MULTIPLIER,
+    researchcost=240 * TECH_COST_MULTIPLIER,
     researchturns=10,
     tags=["PEDIA_GROWTH_CATEGORY"],
     prerequisites="GRO_XENO_GENETICS",

@@ -5,7 +5,7 @@ Tech(
     description="SHP_FLEET_REPAIR_DESC",
     short_description="SHIP_REPAIR_DESC",
     category="SHIP_PARTS_CATEGORY",
-    researchcost=80 * TECH_COST_MULTIPLIER,
+    researchcost=130 * TECH_COST_MULTIPLIER,
     researchturns=10,
     tags=["PEDIA_DAMAGE_CONTROL_PART_TECHS"],
     prerequisites=["SHP_INTSTEL_LOG", "SHP_BASIC_DAM_CONT"],

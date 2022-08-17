@@ -5,7 +5,7 @@ Tech(
     description="SHP_NOVA_BOMB_DESC",
     short_description="SHIP_PART_UNLOCK_SHORT_DESC",
     category="SHIP_WEAPONS_CATEGORY",
-    researchcost=750 * TECH_COST_MULTIPLIER,
+    researchcost=960 * TECH_COST_MULTIPLIER,
     researchturns=12,
     tags=["PEDIA_SHIP_WEAPONS_CATEGORY"],
     prerequisites=["LRN_STELLAR_TOMOGRAPHY", "PRO_ZERO_GEN"],

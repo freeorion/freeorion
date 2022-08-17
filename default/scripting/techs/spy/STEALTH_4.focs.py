@@ -5,7 +5,7 @@ Tech(
     description="SPY_STEALTH_4_DESC",
     short_description="SHIP_PART_UNLOCK_SHORT_DESC",
     category="SPY_CATEGORY",
-    researchcost=1000
+    researchcost=1200
     * TECH_COST_MULTIPLIER
     / (1 + StatisticIf(float, condition=OwnedBy(empire=Source.Owner) & HasTag(name="SNEAKY"))),
     researchturns=8,

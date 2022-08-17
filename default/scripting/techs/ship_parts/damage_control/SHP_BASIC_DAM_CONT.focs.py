@@ -6,7 +6,7 @@ Tech(
     description="SHP_BASIC_DAM_CONT_DESC",
     short_description="STRUCTURE_SHORT_DESC",
     category="SHIP_PARTS_CATEGORY",
-    researchcost=40 * TECH_COST_MULTIPLIER,
+    researchcost=80 * TECH_COST_MULTIPLIER,
     researchturns=4,
     tags=["PEDIA_DAMAGE_CONTROL_PART_TECHS"],
     prerequisites="SHP_MIL_ROBO_CONT",

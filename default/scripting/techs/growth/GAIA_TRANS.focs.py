@@ -5,7 +5,7 @@ Tech(
     description="GRO_GAIA_TRANS_DESC",
     short_description="GRO_GAIA_TRANS_SHORT_DESC",
     category="GROWTH_CATEGORY",
-    researchcost=250 * TECH_COST_MULTIPLIER,
+    researchcost=420 * TECH_COST_MULTIPLIER,
     researchturns=7,
     tags=["PEDIA_GROWTH_CATEGORY"],
     prerequisites="GRO_TRANSORG_SENT",

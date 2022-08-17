@@ -6,7 +6,7 @@ Tech(
     description="GRO_XENO_GENETICS_DESC",
     short_description="POPULATION_SHORT_DESC",
     category="GROWTH_CATEGORY",
-    researchcost=75 * TECH_COST_MULTIPLIER,
+    researchcost=120 * TECH_COST_MULTIPLIER,
     researchturns=8,
     tags=["PEDIA_GROWTH_CATEGORY"],
     prerequisites=[

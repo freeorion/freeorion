@@ -5,7 +5,7 @@ Tech(
     description="CON_FRC_ENRG_CAMO_DESC",
     short_description="STEALTH_SHORT_DESC",
     category="SPY_CATEGORY",
-    researchcost=125 * TECH_COST_MULTIPLIER,
+    researchcost=180 * TECH_COST_MULTIPLIER,
     researchturns=3,
     tags=["PEDIA_SPY_CATEGORY"],
     prerequisites="CON_FRC_ENRG_STRC",

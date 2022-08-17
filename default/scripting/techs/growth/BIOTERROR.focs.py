@@ -5,7 +5,7 @@ Tech(
     description="GRO_BIOTERROR_DESC",
     short_description="BUILDING_UNLOCK_SHORT_DESC",
     category="GROWTH_CATEGORY",
-    researchcost=50 * TECH_COST_MULTIPLIER,
+    researchcost=80 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_GROWTH_CATEGORY"],
     prerequisites="GRO_NANOTECH_MED",

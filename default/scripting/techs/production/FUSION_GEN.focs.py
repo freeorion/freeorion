@@ -5,7 +5,7 @@ Tech(
     description="PRO_FUSION_GEN_DESC",
     short_description="INDUSTRY_SHORT_DESC",
     category="PRODUCTION_CATEGORY",
-    researchcost=24
+    researchcost=48
     * TECH_COST_MULTIPLIER
     * (1 - 0.25 * StatisticIf(float, condition=EmpireHasAdoptedPolicy(empire=Source.Owner, name="PLC_INDUSTRIALISM"))),
     researchturns=3,

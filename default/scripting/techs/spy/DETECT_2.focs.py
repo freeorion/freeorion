@@ -5,7 +5,7 @@ Tech(
     description="SPY_DETECT_2_DESC",
     short_description="DETECTION_SHORT_DESC",
     category="SPY_CATEGORY",
-    researchcost=50 * TECH_COST_MULTIPLIER,
+    researchcost=90 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_SPY_CATEGORY"],
     prerequisites="SHP_GAL_EXPLO",

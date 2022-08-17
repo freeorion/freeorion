@@ -6,7 +6,7 @@ Tech(
     description="SHP_WEAPON_2_4_DESC",
     short_description="SHIP_WEAPON_IMPROVE_SHORT_DESC",
     category="SHIP_WEAPONS_CATEGORY",
-    researchcost=50 * TECH_COST_MULTIPLIER,
+    researchcost=100 * TECH_COST_MULTIPLIER,
     researchturns=2,
     tags=["PEDIA_SR_WEAPON_TECHS"],
     prerequisites="SHP_WEAPON_2_3",

@@ -6,7 +6,7 @@ Tech(
     description="GRO_SUBTER_HAB_DESC",
     short_description="POPULATION_SHORT_DESC",
     category="GROWTH_CATEGORY",
-    researchcost=12 * TECH_COST_MULTIPLIER,
+    researchcost=24 * TECH_COST_MULTIPLIER,
     researchturns=2,
     tags=["PEDIA_GROWTH_CATEGORY"],
     prerequisites="GRO_PLANET_ECOL",

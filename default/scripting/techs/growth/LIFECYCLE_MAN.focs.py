@@ -5,7 +5,7 @@ Tech(
     description="GRO_LIFECYCLE_MAN_DESC",
     short_description="SHIP_PART_UNLOCK_SHORT_DESC",
     category="GROWTH_CATEGORY",
-    researchcost=150 * TECH_COST_MULTIPLIER,
+    researchcost=240 * TECH_COST_MULTIPLIER,
     researchturns=6,
     tags=["PEDIA_GROWTH_CATEGORY"],
     prerequisites="GRO_GENETIC_ENG",

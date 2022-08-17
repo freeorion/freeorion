@@ -6,7 +6,7 @@ Tech(
     description="SHP_WEAPON_4_1_DESC",
     short_description="SHIP_WEAPON_UNLOCK_SHORT_DESC",
     category="SHIP_WEAPONS_CATEGORY",
-    researchcost=750 * TECH_COST_MULTIPLIER,
+    researchcost=1000 * TECH_COST_MULTIPLIER,
     researchturns=10,
     tags=["PEDIA_SR_WEAPON_TECHS"],
     prerequisites="SHP_WEAPON_3_1",

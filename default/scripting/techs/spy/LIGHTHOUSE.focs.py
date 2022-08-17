@@ -5,7 +5,7 @@ Tech(
     description="SPY_LIGHTHOUSE_DESC",
     short_description="BUILDING_UNLOCK_SHORT_DESC",
     category="SPY_CATEGORY",
-    researchcost=75 * TECH_COST_MULTIPLIER,
+    researchcost=120 * TECH_COST_MULTIPLIER,
     researchturns=4,
     tags=["PEDIA_SPY_CATEGORY"],
     prerequisites="SPY_DETECT_2",

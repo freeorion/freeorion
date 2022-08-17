@@ -5,7 +5,7 @@ Tech(
     description="LRN_MIND_VOID_DESC",
     short_description="POLICY_AND_SLOT_UNLOCK_SHORT_DESC",
     category="LEARNING_CATEGORY",
-    researchcost=75 * TECH_COST_MULTIPLIER,
+    researchcost=120 * TECH_COST_MULTIPLIER,
     researchturns=10,
     tags=["PEDIA_LEARNING_CATEGORY", "THEORY"],
     prerequisites="LRN_XENOARCH",

@@ -5,7 +5,7 @@ Tech(
     description="CON_ORGANIC_STRC_DESC",
     short_description="BUILDING_UNLOCK_SHORT_DESC",
     category="CONSTRUCTION_CATEGORY",
-    researchcost=150 * TECH_COST_MULTIPLIER,
+    researchcost=280 * TECH_COST_MULTIPLIER,
     researchturns=8,
     tags=["PEDIA_CONSTRUCTION_CATEGORY"],
     prerequisites=["GRO_SYMBIOTIC_BIO", "CON_FRC_ENRG_STRC"],

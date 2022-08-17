@@ -6,7 +6,7 @@ Tech(
     description="LRN_NASCENT_AI_DESC",
     short_description="RESEARCH_SHORT_DESC",
     category="LEARNING_CATEGORY",
-    researchcost=24 * TECH_COST_MULTIPLIER,
+    researchcost=48 * TECH_COST_MULTIPLIER,
     researchturns=4,
     tags=["PEDIA_LEARNING_CATEGORY"],
     prerequisites="LRN_ALGO_ELEGANCE",

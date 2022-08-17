@@ -6,7 +6,7 @@ Tech(
     description="CON_FRC_ENRG_STRC_DESC",
     short_description="METER_GROWTH_SHORT_DESC",
     category="CONSTRUCTION_CATEGORY",
-    researchcost=200 * TECH_COST_MULTIPLIER,
+    researchcost=350 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_CONSTRUCTION_CATEGORY"],
     prerequisites=["LRN_FORCE_FIELD", "CON_ARCH_PSYCH"],

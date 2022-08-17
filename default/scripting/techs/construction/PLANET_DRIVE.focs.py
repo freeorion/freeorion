@@ -5,7 +5,7 @@ Tech(
     description="CON_PLANET_DRIVE_DESC",
     short_description="BUILDING_UNLOCK_SHORT_DESC",
     category="CONSTRUCTION_CATEGORY",
-    researchcost=250 * TECH_COST_MULTIPLIER,
+    researchcost=360 * TECH_COST_MULTIPLIER,
     researchturns=6,
     tags=["PEDIA_CONSTRUCTION_CATEGORY"],
     prerequisites="LRN_SPATIAL_DISTORT_GEN",

@@ -5,7 +5,7 @@ Tech(
     description="SHP_TRANSSPACE_DRIVE_DESC",
     short_description="SHIP_HULL_UNLOCK_SHORT_DESC",
     category="SHIP_HULLS_CATEGORY",
-    researchcost=400 * TECH_COST_MULTIPLIER,
+    researchcost=480 * TECH_COST_MULTIPLIER,
     researchturns=8,
     tags=["PEDIA_ROBOTIC_HULL_TECHS"],
     prerequisites="SHP_NANOROBO_MAINT",

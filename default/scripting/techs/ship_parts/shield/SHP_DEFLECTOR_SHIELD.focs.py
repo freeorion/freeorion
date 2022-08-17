@@ -5,7 +5,7 @@ Tech(
     description="SHP_DEFLECTOR_SHIELD_DESC",
     short_description="SHIP_PART_UNLOCK_SHORT_DESC",
     category="SHIP_PARTS_CATEGORY",
-    researchcost=150 * TECH_COST_MULTIPLIER,
+    researchcost=240 * TECH_COST_MULTIPLIER,
     researchturns=10,
     tags=["PEDIA_SHIELD_PART_TECHS"],
     prerequisites="LRN_FORCE_FIELD",

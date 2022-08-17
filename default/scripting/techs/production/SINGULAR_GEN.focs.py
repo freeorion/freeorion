@@ -5,7 +5,7 @@ Tech(
     description="PRO_SINGULAR_GEN_DESC",
     short_description="BUILDING_UNLOCK_SHORT_DESC",
     category="PRODUCTION_CATEGORY",
-    researchcost=200
+    researchcost=320
     * TECH_COST_MULTIPLIER
     * (
         1

@@ -5,7 +5,7 @@ Tech(
     description="CON_ARCH_PSYCH_DESC",
     short_description="POLICY_AND_SLOT_UNLOCK_SHORT_DESC",
     category="CONSTRUCTION_CATEGORY",
-    researchcost=50 * TECH_COST_MULTIPLIER,
+    researchcost=84 * TECH_COST_MULTIPLIER,
     researchturns=4,
     tags=["PEDIA_CONSTRUCTION_CATEGORY", "THEORY"],
     prerequisites="CON_ASYMP_MATS",

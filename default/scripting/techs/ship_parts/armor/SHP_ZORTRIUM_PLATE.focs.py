@@ -5,7 +5,7 @@ Tech(
     description="SHP_ZORTRIUM_PLATE_DESC",
     short_description="SHIP_PART_UNLOCK_SHORT_DESC",
     category="SHIP_PARTS_CATEGORY",
-    researchcost=30 * TECH_COST_MULTIPLIER,
+    researchcost=60 * TECH_COST_MULTIPLIER,
     researchturns=2,
     tags=["PEDIA_ARMOR_PART_TECHS"],
     prerequisites="SHP_ROOT_ARMOR",

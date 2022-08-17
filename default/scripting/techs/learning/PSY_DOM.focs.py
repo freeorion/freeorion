@@ -5,7 +5,7 @@ Tech(
     description="LRN_PSY_DOM_DESC",
     short_description="MIND_CONTROL_SHORT_DESC",
     category="LEARNING_CATEGORY",
-    researchcost=750 * TECH_COST_MULTIPLIER,
+    researchcost=1050 * TECH_COST_MULTIPLIER,
     researchturns=7,
     tags=["PEDIA_LEARNING_CATEGORY"],
     prerequisites=["LRN_UNIF_CONC", "LRN_TIME_MECH"],

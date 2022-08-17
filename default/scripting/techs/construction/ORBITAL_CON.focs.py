@@ -5,7 +5,7 @@ Tech(
     description="CON_ORBITAL_CON_DESC",
     short_description="SUPPLY_SHORT_DESC",
     category="CONSTRUCTION_CATEGORY",
-    researchcost=40 * TECH_COST_MULTIPLIER,
+    researchcost=72 * TECH_COST_MULTIPLIER,
     researchturns=4,
     tags=["PEDIA_CONSTRUCTION_CATEGORY"],
     effectsgroups=EffectsGroup(

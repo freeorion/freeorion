@@ -5,7 +5,7 @@ Tech(
     description="PRO_ORBITAL_GEN_DESC",
     short_description="BUILDING_UNLOCK_SHORT_DESC",
     category="PRODUCTION_CATEGORY",
-    researchcost=80
+    researchcost=128
     * TECH_COST_MULTIPLIER
     * (
         1

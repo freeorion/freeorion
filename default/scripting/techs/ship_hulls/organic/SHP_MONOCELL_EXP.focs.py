@@ -5,7 +5,7 @@ Tech(
     description="SHP_MONOCELL_EXP_DESC",
     short_description="SHIP_HULL_UNLOCK_SHORT_DESC",
     category="SHIP_HULLS_CATEGORY",
-    researchcost=45 * TECH_COST_MULTIPLIER,
+    researchcost=80 * TECH_COST_MULTIPLIER,
     researchturns=8,
     tags=["PEDIA_ORGANIC_HULL_TECHS"],
     prerequisites=["SHP_CONT_SYMB"],

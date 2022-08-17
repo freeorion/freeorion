@@ -5,7 +5,7 @@ Tech(
     description="SHP_ENRG_FRIGATE_DESC",
     short_description="SHIP_HULL_UNLOCK_SHORT_DESC",
     category="SHIP_HULLS_CATEGORY",
-    researchcost=120 * TECH_COST_MULTIPLIER,
+    researchcost=192 * TECH_COST_MULTIPLIER,
     researchturns=4,
     tags=["PEDIA_ENERGY_HULL_TECHS"],
     prerequisites=["SHP_FRC_ENRG_COMP"],
