@@ -126,10 +126,10 @@ namespace {
         boost::asio::high_resolution_timer  m_timer;
         boost::asio::ip::udp::socket        m_socket;
 
-        std::array<char, 1024>              m_recv_buf;
+        std::array<char, 1024>              m_recv_buf = {};
 
         boost::asio::ip::udp::endpoint      m_sender_endpoint;
-        bool                                m_receive_successful;
+        bool                                m_receive_successful = false;
         std::string                         m_server_name;
         ServerList                          m_servers;
     };
