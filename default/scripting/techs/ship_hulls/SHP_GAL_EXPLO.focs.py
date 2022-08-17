@@ -8,7 +8,7 @@ Tech(
     description="SHP_GAL_EXPLO_DESC",
     short_description="POLICY_UNLOCK_SHORT_DESC",
     category="SHIP_PARTS_CATEGORY",
-    researchcost=4 * TECH_COST_MULTIPLIER,
+    researchcost=1 * TECH_COST_MULTIPLIER,
     researchturns=1,
     tags=["PEDIA_SHIP_PARTS_CATEGORY", "THEORY"],
     unlock=Item(type=UnlockPolicy, name="PLC_EXPLORATION"),
