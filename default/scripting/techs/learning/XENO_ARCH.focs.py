@@ -5,7 +5,7 @@ Tech(
     description="LRN_XENOARCH_DESC",
     short_description="XENOARCH_SHORT_DESC",
     category="LEARNING_CATEGORY",
-    researchcost=36 * TECH_COST_MULTIPLIER,
+    researchcost=70 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_LEARNING_CATEGORY"],
     prerequisites="LRN_TRANSLING_THT",

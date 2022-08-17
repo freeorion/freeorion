@@ -5,7 +5,7 @@ Tech(
     description="SHP_N_DIMENSIONAL_ENGINE_MATRIX_DESC",
     short_description="SHIP_PART_UNLOCK_SHORT_DESC",
     category="SHIP_PARTS_CATEGORY",
-    researchcost=250 * TECH_COST_MULTIPLIER,
+    researchcost=400 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_ENGINE_PART_TECHS"],
     prerequisites=["SHP_IMPROVED_ENGINE_COUPLINGS", "LRN_NDIM_SUBSPACE"],

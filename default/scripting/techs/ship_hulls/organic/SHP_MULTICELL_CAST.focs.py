@@ -5,7 +5,7 @@ Tech(
     description="SHP_MULTICELL_CAST_DESC",
     short_description="SHIP_HULL_UNLOCK_SHORT_DESC",
     category="SHIP_HULLS_CATEGORY",
-    researchcost=10 * TECH_COST_MULTIPLIER,
+    researchcost=20 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_ORGANIC_HULL_TECHS"],
     prerequisites=["SHP_ORG_HULL", "GRO_GENETIC_ENG"],

@@ -5,7 +5,7 @@ Tech(
     description="SHP_SPACE_FLUX_COMPOSITION_DESC",
     short_description="SHIP_HULL_UNLOCK_SHORT_DESC",
     category="SHIP_HULLS_CATEGORY",
-    researchcost=60 * TECH_COST_MULTIPLIER,
+    researchcost=120 * TECH_COST_MULTIPLIER,
     researchturns=6,
     tags=["PEDIA_FLUX_HULL_TECHS"],
     prerequisites=["SHP_SPACE_FLUX_BUBBLE", "SHP_SPACE_FLUX_DRIVE"],

@@ -5,7 +5,7 @@ Tech(
     description="SHP_SPINAL_ANTIMATTER_DESC",
     short_description="SHIP_PART_UNLOCK_SHORT_DESC",
     category="SHIP_WEAPONS_CATEGORY",
-    researchcost=250 * TECH_COST_MULTIPLIER,
+    researchcost=300 * TECH_COST_MULTIPLIER,
     researchturns=3,
     tags=["PEDIA_SR_WEAPON_TECHS"],
     prerequisites=["PRO_ZERO_GEN"],

@@ -5,7 +5,7 @@ Tech(
     description="SHP_ZERO_POINT_DESC",
     short_description="SHIP_PART_UNLOCK_SHORT_DESC",
     category="SHIP_PARTS_CATEGORY",
-    researchcost=175 * TECH_COST_MULTIPLIER,
+    researchcost=270 * TECH_COST_MULTIPLIER,
     researchturns=3,
     tags=["PEDIA_FUEL_PART_TECHS"],
     prerequisites=["SHP_ANTIMATTER_TANK", "PRO_ZERO_GEN"],

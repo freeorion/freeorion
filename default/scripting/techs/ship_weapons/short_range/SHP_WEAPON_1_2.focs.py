@@ -6,7 +6,7 @@ Tech(
     description="SHP_WEAPON_1_2_DESC",
     short_description="SHIP_WEAPON_IMPROVE_SHORT_DESC",
     category="SHIP_WEAPONS_CATEGORY",
-    researchcost=4 * TECH_COST_MULTIPLIER,
+    researchcost=8 * TECH_COST_MULTIPLIER,
     researchturns=2,
     tags=["PEDIA_SR_WEAPON_TECHS"],
     prerequisites="SHP_ROOT_AGGRESSION",

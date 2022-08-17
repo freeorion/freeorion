@@ -5,7 +5,7 @@ Tech(
     description="PRO_VOID_PREDICTION_DESC",
     short_description="IMPERIAL_STOCKPILE_SHORT_DESC",
     category="PRODUCTION_CATEGORY",
-    researchcost=500 * TECH_COST_MULTIPLIER,
+    researchcost=700 * TECH_COST_MULTIPLIER,
     researchturns=7,
     tags=["PEDIA_PRODUCTION_CATEGORY"],
     prerequisites=["LRN_MIND_VOID", "PRO_GENERIC_SUPPLIES"],

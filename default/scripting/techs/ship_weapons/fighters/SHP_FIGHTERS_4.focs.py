@@ -6,7 +6,7 @@ Tech(
     description="SHP_FIGHTERS_4_DESC",
     short_description="SHIP_WEAPON_IMPROVE_SHORT_DESC",
     category="SHIP_WEAPONS_CATEGORY",
-    researchcost=1125 * TECH_COST_MULTIPLIER,
+    researchcost=1500 * TECH_COST_MULTIPLIER,
     researchturns=12,
     tags=["PEDIA_FIGHTER_TECHS"],
     prerequisites=["SHP_FIGHTERS_3"],

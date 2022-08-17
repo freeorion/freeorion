@@ -5,7 +5,7 @@ Tech(
     description="LRN_EVERYTHING_DESC",
     short_description="BUILDING_UNLOCK_SHORT_DESC",
     category="LEARNING_CATEGORY",
-    researchcost=400 * TECH_COST_MULTIPLIER,
+    researchcost=600 * TECH_COST_MULTIPLIER,
     researchturns=6,
     tags=["PEDIA_LEARNING_CATEGORY", "THEORY"],
     prerequisites="LRN_GRAVITONICS",

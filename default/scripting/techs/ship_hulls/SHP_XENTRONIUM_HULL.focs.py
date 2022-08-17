@@ -5,7 +5,7 @@ Tech(
     description="SH_XENTRONIUM_DESC",
     short_description="SHIP_HULL_UNLOCK_SHORT_DESC",
     category="SHIP_HULLS_CATEGORY",
-    researchcost=500 * TECH_COST_MULTIPLIER,
+    researchcost=600 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_SHIP_HULLS_CATEGORY"],
     prerequisites="SHP_XENTRONIUM_PLATE",

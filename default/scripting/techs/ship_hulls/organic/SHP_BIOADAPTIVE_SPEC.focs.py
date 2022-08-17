@@ -5,7 +5,7 @@ Tech(
     description="SHP_BIOADAPTIVE_SPEC_DESC",
     short_description="SHIP_HULL_UNLOCK_SHORT_DESC",
     category="SHIP_HULLS_CATEGORY",
-    researchcost=125 * TECH_COST_MULTIPLIER,
+    researchcost=216 * TECH_COST_MULTIPLIER,
     researchturns=12,
     tags=["PEDIA_ORGANIC_HULL_TECHS"],
     prerequisites=["SHP_MONOCELL_EXP", "GRO_TRANSORG_SENT"],

@@ -6,7 +6,7 @@ Tech(
     description="GRO_PLANET_ECOL_DESC",
     short_description="POPULATION_SHORT_DESC",
     category="GROWTH_CATEGORY",
-    researchcost=4 * TECH_COST_MULTIPLIER,
+    researchcost=8 * TECH_COST_MULTIPLIER,
     researchturns=2,
     tags=["PEDIA_GROWTH_CATEGORY"],
     effectsgroups=[

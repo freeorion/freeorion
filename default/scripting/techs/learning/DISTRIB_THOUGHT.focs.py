@@ -6,7 +6,7 @@ Tech(
     description="LRN_DISTRIB_THOUGHT_DESC",
     short_description="RESEARCH_AND_SLOT_SHORT_DESC",
     category="LEARNING_CATEGORY",
-    researchcost=75 * TECH_COST_MULTIPLIER,
+    researchcost=120 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_LEARNING_CATEGORY"],
     prerequisites="LRN_PSIONICS",

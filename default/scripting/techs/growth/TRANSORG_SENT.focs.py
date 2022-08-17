@@ -6,7 +6,7 @@ Tech(
     description="GRO_TRANSORG_SENT_DESC",
     short_description="POLICY_UNLOCK_SHORT_DESC",
     category="GROWTH_CATEGORY",
-    researchcost=75 * TECH_COST_MULTIPLIER,
+    researchcost=126 * TECH_COST_MULTIPLIER,
     researchturns=7,
     tags=["PEDIA_GROWTH_CATEGORY", "THEORY"],
     prerequisites=["GRO_TERRAFORM"],

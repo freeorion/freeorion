@@ -7,7 +7,7 @@ Tech(
     description="LRN_FORCE_FIELD_DESC",
     short_description="SHIELD_SHORT_DESC",
     category="LEARNING_CATEGORY",
-    researchcost=50 * TECH_COST_MULTIPLIER,
+    researchcost=80 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_LEARNING_CATEGORY"],
     prerequisites="LRN_NASCENT_AI",

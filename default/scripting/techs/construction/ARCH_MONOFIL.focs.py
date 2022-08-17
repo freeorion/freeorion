@@ -5,7 +5,7 @@ Tech(
     description="CON_ARCH_MONOFILS_DESC",
     short_description="BUILDING_UNLOCK_SHORT_DESC",
     category="CONSTRUCTION_CATEGORY",
-    researchcost=75 * TECH_COST_MULTIPLIER,
+    researchcost=125 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_CONSTRUCTION_CATEGORY"],
     prerequisites="CON_ASYMP_MATS",

@@ -10,7 +10,7 @@ Tech(
     description="GRO_ENERGY_META_DESC",
     short_description="VARIOUS_SHORT_DESC",
     category="GROWTH_CATEGORY",
-    researchcost=200 * TECH_COST_MULTIPLIER,
+    researchcost=330 * TECH_COST_MULTIPLIER,
     researchturns=15,
     tags=["PEDIA_GROWTH_CATEGORY"],
     prerequisites=[

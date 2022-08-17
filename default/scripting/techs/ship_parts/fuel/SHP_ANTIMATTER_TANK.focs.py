@@ -6,7 +6,7 @@ Tech(
     description="SHP_ANTIMATTER_TANK_DESC",
     short_description="SHIP_FUEL_IMPROVE_SHORT_DESC",
     category="SHIP_PARTS_CATEGORY",
-    researchcost=175 * TECH_COST_MULTIPLIER,
+    researchcost=270 * TECH_COST_MULTIPLIER,
     researchturns=3,
     tags=["PEDIA_FUEL_PART_TECHS"],
     prerequisites=["SHP_DEUTERIUM_TANK", "LRN_FORCE_FIELD"],

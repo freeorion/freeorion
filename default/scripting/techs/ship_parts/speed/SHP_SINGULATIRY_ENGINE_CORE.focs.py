@@ -5,7 +5,7 @@ Tech(
     description="SHP_SINGULARITY_ENGINE_CORE_DESC",
     short_description="SHIP_PART_UNLOCK_SHORT_DESC",
     category="SHIP_PARTS_CATEGORY",
-    researchcost=500 * TECH_COST_MULTIPLIER,
+    researchcost=800 * TECH_COST_MULTIPLIER,
     researchturns=10,
     tags=["PEDIA_ENGINE_PART_TECHS"],
     prerequisites=["SHP_N_DIMENSIONAL_ENGINE_MATRIX", "PRO_SINGULAR_GEN"],

@@ -5,7 +5,7 @@ Tech(
     description="SHP_XENTRONIUM_PLATE_DESC",
     short_description="SHIP_PART_UNLOCK_SHORT_DESC",
     category="SHIP_PARTS_CATEGORY",
-    researchcost=750 * TECH_COST_MULTIPLIER,
+    researchcost=1200 * TECH_COST_MULTIPLIER,
     researchturns=6,
     tags=["PEDIA_ARMOR_PART_TECHS"],
     prerequisites="SHP_DIAMOND_PLATE",

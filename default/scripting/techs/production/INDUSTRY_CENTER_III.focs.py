@@ -5,7 +5,7 @@ Tech(
     description="PRO_INDUSTRY_CENTER_III_DESC",
     short_description="BUILDING_REFINE_SHORT_DESC",
     category="PRODUCTION_CATEGORY",
-    researchcost=500 * TECH_COST_MULTIPLIER,
+    researchcost=700 * TECH_COST_MULTIPLIER,
     researchturns=7,
     tags=["PEDIA_PRODUCTION_CATEGORY"],
     prerequisites="PRO_INDUSTRY_CENTER_II",

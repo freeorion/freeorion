@@ -6,7 +6,7 @@ Tech(
     description="LRN_STELLAR_TOMOGRAPHY_DESC",
     short_description="RESEARCH_SHORT_DESC",
     category="LEARNING_CATEGORY",
-    researchcost=125 * TECH_COST_MULTIPLIER,
+    researchcost=180 * TECH_COST_MULTIPLIER,
     researchturns=6,
     tags=["PEDIA_LEARNING_CATEGORY"],
     prerequisites="LRN_EVERYTHING",

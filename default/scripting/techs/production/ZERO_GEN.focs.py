@@ -5,7 +5,7 @@ Tech(
     description="PRO_ZERO_GEN_DESC",
     short_description="THEORY_SHORT_DESC",
     category="PRODUCTION_CATEGORY",
-    researchcost=640
+    researchcost=840
     * TECH_COST_MULTIPLIER
     * (
         1

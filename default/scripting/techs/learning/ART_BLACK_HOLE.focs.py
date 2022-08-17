@@ -5,7 +5,7 @@ Tech(
     description="LRN_ART_BLACK_HOLE_DESC",
     short_description="BUILDING_UNLOCK_SHORT_DESC",
     category="LEARNING_CATEGORY",
-    researchcost=350 * TECH_COST_MULTIPLIER,
+    researchcost=480 * TECH_COST_MULTIPLIER,
     researchturns=8,
     tags=["PEDIA_LEARNING_CATEGORY"],
     prerequisites="LRN_TIME_MECH",

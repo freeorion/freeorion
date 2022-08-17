@@ -5,7 +5,7 @@ Tech(
     description="GRO_MEGA_ECO_DESC",
     short_description="GRO_MEGA_ECO_SHORT_DESC",
     category="GROWTH_CATEGORY",
-    researchcost=135 * TECH_COST_MULTIPLIER,
+    researchcost=225 * TECH_COST_MULTIPLIER,
     researchturns=9,
     tags=["PEDIA_GROWTH_CATEGORY"],
     prerequisites=[

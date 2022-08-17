@@ -6,7 +6,7 @@ Tech(
     description="PRO_ADAPTIVE_AUTOMATION_DESC",
     short_description="INDUSTRY_SHORT_DESC",
     category="PRODUCTION_CATEGORY",
-    researchcost=100 * TECH_COST_MULTIPLIER,
+    researchcost=180 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_PRODUCTION_CATEGORY"],
     prerequisites=["LRN_ALGO_ELEGANCE", "PRO_NANOTECH_PROD"],

@@ -6,7 +6,7 @@ Tech(
     description="LRN_QUANT_NET_DESC",
     short_description="RESEARCH_SHORT_DESC",
     category="LEARNING_CATEGORY",
-    researchcost=200 * TECH_COST_MULTIPLIER,
+    researchcost=300 * TECH_COST_MULTIPLIER,
     researchturns=6,
     tags=["PEDIA_LEARNING_CATEGORY"],
     prerequisites="LRN_NDIM_SUBSPACE",

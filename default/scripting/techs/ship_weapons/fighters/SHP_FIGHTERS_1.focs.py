@@ -5,7 +5,7 @@ Tech(
     description="SHP_FIGHTERS_1_DESC",
     short_description="SHIP_WEAPON_UNLOCK_SHORT_DESC",
     category="SHIP_WEAPONS_CATEGORY",
-    researchcost=6 * TECH_COST_MULTIPLIER,
+    researchcost=12 * TECH_COST_MULTIPLIER,
     researchturns=3,
     tags=["PEDIA_FIGHTER_TECHS"],
     prerequisites="SHP_ROOT_AGGRESSION",

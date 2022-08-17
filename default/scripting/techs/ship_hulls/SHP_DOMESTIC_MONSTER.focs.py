@@ -5,7 +5,7 @@ Tech(
     description="SHP_DOMESTIC_MONSTER_DESC",
     short_description="TAME_MONSTER_SHORT_DESC",
     category="SHIP_HULLS_CATEGORY",
-    researchcost=9 * TECH_COST_MULTIPLIER,
+    researchcost=18 * TECH_COST_MULTIPLIER,
     researchturns=3,
     tags=["PEDIA_SHIP_HULLS_CATEGORY"],
     prerequisites="GRO_PLANET_ECOL",

@@ -6,7 +6,7 @@ Tech(
     description="CON_ORBITAL_HAB_DESC",
     short_description="POPULATION_SHORT_DESC",
     category="GROWTH_CATEGORY",
-    researchcost=250 * TECH_COST_MULTIPLIER,
+    researchcost=350 * TECH_COST_MULTIPLIER,
     researchturns=7,
     tags=["PEDIA_GROWTH_CATEGORY"],
     prerequisites="PRO_MICROGRAV_MAN",

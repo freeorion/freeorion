@@ -6,7 +6,7 @@ Tech(
     description="PRO_MICROGRAV_MAN_DESC",
     short_description="INDUSTRY_SHORT_DESC",
     category="PRODUCTION_CATEGORY",
-    researchcost=50 * TECH_COST_MULTIPLIER,
+    researchcost=80 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_PRODUCTION_CATEGORY"],
     prerequisites="CON_ORBITAL_CON",

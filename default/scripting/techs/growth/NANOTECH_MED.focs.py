@@ -5,7 +5,7 @@ Tech(
     description="GRO_NANOTECH_MED_DESC",
     short_description="POLICY_UNLOCK_SHORT_DESC",
     category="GROWTH_CATEGORY",
-    researchcost=40 * TECH_COST_MULTIPLIER,
+    researchcost=75 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_GROWTH_CATEGORY", "THEORY"],
     prerequisites=[

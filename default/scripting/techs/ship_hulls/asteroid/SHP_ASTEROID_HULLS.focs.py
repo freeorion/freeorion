@@ -5,7 +5,7 @@ Tech(
     description="SHP_ASTEROID_HULLS_DESC",
     short_description="SHIP_HULL_UNLOCK_SHORT_DESC",
     category="SHIP_HULLS_CATEGORY",
-    researchcost=25 * TECH_COST_MULTIPLIER,
+    researchcost=45 * TECH_COST_MULTIPLIER,
     researchturns=3,
     tags=["PEDIA_ASTEROID_HULL_TECHS"],
     prerequisites="PRO_MICROGRAV_MAN",
