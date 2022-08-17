@@ -316,3 +316,23 @@ GameRule(
     min=1,
     max=10,
 )
+
+GameRule(
+    name="RULE_END_GAME_PROPORTION_INFLUENCE_FOCUSED",
+    description="RULE_END_GAME_PROPORTION_INFLUENCE_FOCUSED_DESC",
+    category="BALANCE",
+    type=float,
+    default=1.0,
+    min=0.1,
+    max=10.0,
+)
+
+GameRule(
+    name="RULE_END_GAME_COLONY_IP_OUTPUT",
+    description="RULE_END_GAME_COLONY_IP_OUTPUT",
+    category="BALANCE",
+    type=float,
+    default=9.0,
+    min=6.0,
+    max=12.0,
+)

@@ -1402,12 +1402,19 @@ def _adapt_supply_factor(supply_factor: float, species: fo.species) -> float:
         return supply_factor
 
 
-def _colony_upkeep(num_exobots: int, num_normal: int, num_outpost: int) -> float:
+def _colony_upkeep(num_exobots: int, num_normal: int, num_outpost: int, num_planets_in_galaxy: int) -> float:
     colonies = num_exobots + num_normal - 1  # assume we have a capital, calculation won't be too wrong otherwise
-    per_colony = get_named_real("COLONY_ADMIN_COSTS_PER_PLANET")
+    influence_focused_ratio = get_named_real("END_GAME_PROPORTION_INFLUENCE_FOCUSED")
+    IP_per_colony = get_named_real("END_GAME_COLONY_IP_OUTPUT")
     outpost_factor = get_named_real("OUTPOST_RELATIVE_ADMIN_COUNT")
+    ratio_owned_planets = (num_normal + outpost_factor * (num_exobots + num_outpost)) / num_planets_in_galaxy
     # see influence.macros, exobot colonies pay like a colony, but count as outposts for the cost increase
-    return colonies * per_colony * (num_normal + outpost_factor * (num_exobots + num_outpost)) ** 0.5
+    return (
+        colonies
+        * influence_focused_ratio
+        * IP_per_colony
+        / (1 + 2.71828182846 ** (-10 * (ratio_owned_planets - 2 / 3)))
+    )
 
 
 def _rate_upkeep(planet: fo.planet, species_name: SpeciesName, details: list) -> float:
@@ -1415,14 +1422,16 @@ def _rate_upkeep(planet: fo.planet, species_name: SpeciesName, details: list) ->
     num_exobots = len(get_empire_planets_by_species().get(exobot, []))
     num_normal = len(get_empire_populated_planets()) - num_exobots
     num_outpost = len(get_empire_outposts())
-    current_upkeep = _colony_upkeep(num_exobots, num_normal, num_outpost)
+    universe = fo.getUniverse()
+    num_planets_in_galaxy = len(universe.planetIDs)
+    current_upkeep = _colony_upkeep(num_exobots, num_normal, num_outpost, num_planets_in_galaxy)
     if species_name == exobot:
         num_exobots += 1
     elif not species_name:
         num_outpost += 1
     else:
         num_normal += 1
-    ip_cost = current_upkeep - _colony_upkeep(num_exobots, num_normal, num_outpost)
+    ip_cost = current_upkeep - _colony_upkeep(num_exobots, num_normal, num_outpost, num_planets_in_galaxy)
     species = fo.getSpecies(species_name)
     if species and planet.id in species.homeworlds:
         ip_cost -= AIDependencies.HOMEWORLD_INFLUENCE_COST

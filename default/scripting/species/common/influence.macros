@@ -1,4 +1,24 @@
 
+// (Owned non-exobot colonies + 0.25*(owned exobots and outposts)) / total planets in galaxy
+PERCENTAGE_OWNED_PLANETS
+'''((Statistic Count condition = And [
+                        Planet
+                        OwnedBy empire = Source.Owner
+                        Species
+                        Not Species name = "SP_EXOBOT"
+                    ]
+                    + ((NamedReal name = "OUTPOST_RELATIVE_ADMIN_COUNT" value = 0.25)
+                    * Statistic Count condition = And [
+                        Planet
+                        OwnedBy empire = Source.Owner
+                        Or [
+                            Not Species
+                            Species name = "SP_EXOBOT"
+                        ]
+                    ]))
+                    / (Statistic Count condition = Planet))'''
+
+
 BASE_INFLUENCE_COSTS
 '''EffectsGroup      // colonies consume influence, proportional to square-root of how many populated planets and non-populated outposts the empire controls
             scope = Source
@@ -11,24 +31,13 @@ BASE_INFLUENCE_COSTS
             accountinglabel = "COLONY_ADMIN_COSTS_LABEL"
             priority = [[TARGET_LAST_BEFORE_OVERRIDE_PRIORITY]]
             effects = SetTargetInfluence value = Value -
-                (NamedReal name = "COLONY_ADMIN_COSTS_PER_PLANET" value = 0.4) * ((
-                    Statistic Count condition = And [
-                        Planet
-                        OwnedBy empire = Source.Owner
-                        Species
-                        Not Species name = "SP_EXOBOT"
-                    ] +
-                    ((NamedReal name = "OUTPOST_RELATIVE_ADMIN_COUNT" value = 0.25) *
-                        (Statistic Count condition = And [
-                            Planet
-                            OwnedBy empire = Source.Owner
-                            Or [
-                                Not Species
-                                Species name = "SP_EXOBOT"
-                            ]
-                        ])
-                    )
-                )^0.5)
+                // Upkeep per colony is
+                //  Desired proportion of infuence-focused colonies when galaxy is fully colonized
+                //  * Average influence output per influence-focused colony at end game
+                //  / logistic function on the percentage of galaxy owned, with steepness 10 and skewness 2/3
+                (NamedReal name = "END_GAME_PROPORTION_INFLUENCE_FOCUSED" value = (GameRule name = "RULE_END_GAME_PROPORTION_INFLUENCE_FOCUSED"))
+                * (NamedReal name = "END_GAME_COLONY_IP_OUTPUT" value = (GameRule name = "RULE_END_GAME_COLONY_IP_OUTPUT"))
+                / (1 + 2.71828182846 ^ (-10*(-2/3 + [[PERCENTAGE_OWNED_PLANETS]])))
 
         EffectsGroup      // species homeworlds consume more influence
             scope = Source

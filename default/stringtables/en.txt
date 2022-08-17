@@ -1385,6 +1385,18 @@ Minimum distance monsters start from Capital
 RULE_MINIMUM_MONSTER_DISTANCE_CAPITAL_DESC
 Minimum distance monsters start from Capital
 
+RULE_END_GAME_PROPORTION_INFLUENCE_FOCUSED
+Influence-focused colonies at end game
+
+RULE_END_GAME_PROPORTION_INFLUENCE_FOCUSED_DESC
+Desired proportion of influence-focused colonies when galaxy is fully colonized.
+
+RULE_END_GAME_COLONY_IP_OUTPUT
+IP output per colony at end game
+
+RULE_END_GAME_COLONY_IP_OUTPUT_DESC
+Expected average IP output per influence-focused colony for fully-developed empires.
+
 RULE_ALLOW_CONCEDE
 Allow Conceding
 
