@@ -22,8 +22,7 @@
 #include <map>
 #include <sstream>
 #include <string>
-#include <boost/algorithm/string/trim.hpp>
-
+#include <limits>
 
 namespace GG {
 

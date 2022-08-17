@@ -26,6 +26,7 @@
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
 
+#include <boost/algorithm/string/trim.hpp>
 #include <algorithm>
 
 namespace {

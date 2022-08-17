@@ -23,6 +23,7 @@
 #include <GG/utf8/checked.h>
 
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string/trim.hpp>
 #include <boost/xpressive/xpressive.hpp>
 
 #include <algorithm>
