@@ -210,8 +210,16 @@ namespace {
         return retval;
     }
 
+<<<<<<< HEAD
     // Array of meter names enumerated by MeterType
     const std::array<std::string, static_cast<std::size_t>(MeterType::NUM_METER_TYPES)> NAME_BY_METER = {
+=======
+    const std::string EMPTY_STRING;
+
+    // Array of meter names enumerated by MeterType with INVALID_METER_TYPE as first element
+    const std::array<std::string, static_cast<std::size_t>(MeterType::NUM_METER_TYPES) + 1> NAME_BY_METER = {
+        EMPTY_STRING,
+>>>>>>> Use offset and INVALID_METER_TYPE to index NAME_BY_METER
         "TargetPopulation",
         "TargetIndustry",
         "TargetResearch",
@@ -255,7 +263,6 @@ namespace {
         "Speed"
     };
 
-    const std::string EMPTY_STRING;
 }
 
 namespace ValueRef {
@@ -291,14 +298,14 @@ MeterType NameToMeter(const std::string_view name) {
     for (std::size_t i = 0; i < NAME_BY_METER.size(); i++)
     {
         if (NAME_BY_METER[i] == name)
-            return static_cast<MeterType>(i);
+            return static_cast<MeterType>(i - 1);
     }
 
     return MeterType::INVALID_METER_TYPE;
 }
 
 const std::string& MeterToName(const MeterType meter) {
-    return (meter == MeterType::INVALID_METER_TYPE) ? EMPTY_STRING : NAME_BY_METER[static_cast<std::size_t>(meter)];
+    return NAME_BY_METER[static_cast<int>(meter) + 1];
 }
 
 constexpr std::string_view PlanetTypeToStringConstexpr(PlanetType type) {
