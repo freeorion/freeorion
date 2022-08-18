@@ -1110,11 +1110,11 @@ boost::statechart::result WaitingForTurnData::react(const TurnDataUnpackedNotifi
         DebugLogger(FSM) << "Extracted TurnUpdate message for turn: " << unpacked.current_turn;
 
         Client().SetCurrentTurn(unpacked.current_turn);
-        Empires() = std::move(unpacked.empires);
-        GetUniverse() = std::move(unpacked.universe);
-        GetSpeciesManager() = std::move(unpacked.species);
+        Client().Empires() = std::move(unpacked.empires);
+        Client().GetUniverse() = std::move(unpacked.universe);
+        Client().GetSpeciesManager() = std::move(unpacked.species);
         GetCombatLogManager() = std::move(unpacked.combat_logs);
-        GetSupplyManager() = std::move(unpacked.supply);
+        Client().GetSupplyManager() = std::move(unpacked.supply);
         Client().Players() = std::move(unpacked.player_info);
 
         return transit<PlayingTurn>();
