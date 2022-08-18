@@ -1574,7 +1574,7 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     // Add predefined ship designs to universe
     GetPredefinedShipDesignManager().AddShipDesignsToUniverse(m_universe);
     // Initialize empire objects for each player
-    InitEmpires(player_setup_data);
+    InitEmpires(player_setup_data, m_empires);
 
     bool success{false};
     try {

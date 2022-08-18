@@ -33,7 +33,8 @@ bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name,
 //! Creates Empires objects for each entry in \a player_setup_data with empire
 //! ids equal to the corresponding map keys (so that the calling code can know
 //! which empire belongs to which player).
-void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data);
+void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data,
+                 EmpireManager& empries);
 
 
 #endif
