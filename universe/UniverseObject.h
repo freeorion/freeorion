@@ -188,10 +188,10 @@ public:
 
     /** Sets all this UniverseObject's meters' initial values equal to their
         current values. */
-    virtual void    BackPropagateMeters();
+    virtual void BackPropagateMeters();
 
     /** Sets the empire that owns this object. */
-    virtual void    SetOwner(int id);
+    virtual void SetOwner(int id);
 
     void SetSystem(int sys);                                        ///< assigns this object to a System.  does not actually move object in universe
     void AddSpecial(std::string name, float capacity, int turn);    ///< adds the Special \a name to this object, if it is not already present
@@ -201,21 +201,21 @@ public:
     /** Sets current value of max, target and unpaired meters in in this
       * UniverseObject to Meter::DEFAULT_VALUE.  This should be done before any
       * Effects that alter these meter(s) act on the object. */
-    virtual void    ResetTargetMaxUnpairedMeters();
+    virtual void ResetTargetMaxUnpairedMeters();
 
     /** Sets current value of active paired meters (the non-max non-target
       * meters that have a max or target meter associated with them) back to
       * the initial value the meter had at the start of this turn. */
-    virtual void    ResetPairedActiveMeters();
+    virtual void ResetPairedActiveMeters();
 
     /** calls Clamp(min, max) on meters each meter in this UniverseObject, to
       * ensure that meter current values aren't outside the valid range for
       * each meter. */
-    virtual void    ClampMeters();
+    virtual void ClampMeters();
 
     /** performs the movement that this object is responsible for this object's
         actions during the pop growth/production/research phase of a turn. */
-    virtual void    PopGrowthProductionResearchPhase(ScriptingContext&) {}
+    virtual void PopGrowthProductionResearchPhase(ScriptingContext&) {}
 
     static constexpr double INVALID_POSITION = -100000.0;           ///< the position in x and y at which default-constructed objects are placed
     static constexpr int    INVALID_OBJECT_AGE = -(1 << 30) - 1;;   ///< the age returned by UniverseObject::AgeInTurns() if the current turn is INVALID_GAME_TURN, or if the turn on which an object was created is INVALID_GAME_TURN
