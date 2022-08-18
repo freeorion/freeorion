@@ -347,6 +347,7 @@
     <ClCompile Include="..\..\util\SerializeOrderSet.cpp" />
     <ClCompile Include="..\..\util\SerializeUniverse.cpp">
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4172;4308;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <ClCompile Include="..\..\util\SitRepEntry.cpp" />
     <ClCompile Include="..\..\util\XMLDoc.cpp" />
