@@ -51,7 +51,7 @@ Tech(
     category="DEFENSE_CATEGORY",
     researchcost=9999 * TECH_COST_MULTIPLIER,
     researchturns=9999,
-    unresearchable=True,
+    researchable=False,
     tags=["PEDIA_DEFENSE_CATEGORY"],
     prerequisites="SPY_STEALTH_3",
     unlock=Item(type=UnlockBuilding, name="BLD_PLANET_CLOAK"),
