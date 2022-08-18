@@ -325,15 +325,17 @@ void UniverseObject::SetSystem(int sys) {
     }
 }
 
-void UniverseObject::AddSpecial(const std::string& name, float capacity) // TODO: pass turn
-{ m_specials[name] = std::pair{CurrentTurn(), capacity}; }
+void UniverseObject::AddSpecial(std::string name, float capacity, int turn)
+{ m_specials[std::move(name)] = std::pair{turn, capacity}; }
 
-void UniverseObject::SetSpecialCapacity(const std::string& name, float capacity) {
+void UniverseObject::SetSpecialCapacity(std::string name, float capacity, int turn) {
     auto it = m_specials.find(name);
     if (it != m_specials.end())
         it->second.second = capacity;
     else
-        m_specials[name] = std::pair{CurrentTurn(), capacity};
+        m_specials.emplace(std::piecewise_construct,
+                           std::forward_as_tuple(std::move(name)),
+                           std::forward_as_tuple(turn, capacity));
 }
 
 void UniverseObject::RemoveSpecial(const std::string& name)

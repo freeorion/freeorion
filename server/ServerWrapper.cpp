@@ -609,7 +609,7 @@ namespace {
         return obj->Owner();
     }
 
-    void AddSpecial(int object_id, const std::string special_name)
+    void AddSpecial(int object_id, std::string special_name)
     {
         // get the universe object and check if it exists
         auto obj = Objects().get(object_id);
@@ -626,7 +626,7 @@ namespace {
 
         float capacity = special->InitialCapacity(object_id);
 
-        obj->AddSpecial(special_name, capacity);
+        obj->AddSpecial(std::move(special_name), capacity, CurrentTurn());
     }
 
     void RemoveSpecial(int object_id, const std::string special_name)

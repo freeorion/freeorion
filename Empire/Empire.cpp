@@ -2342,7 +2342,7 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
                     continue;
                 float cur_capacity = obj->SpecialCapacity(special_type.first);
                 float new_capacity = std::max(0.0f, cur_capacity - special_meter.second * elem.blocksize);
-                obj->SetSpecialCapacity(special_type.first, new_capacity);
+                obj->SetSpecialCapacity(special_type.first, new_capacity, context.current_turn);
             }
         }
         for (auto& meter_type : mc) {

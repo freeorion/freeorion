@@ -2532,7 +2532,7 @@ void AddSpecial::Execute(ScriptingContext& context) const {
         capacity = m_capacity->Eval(capacity_context);
     }
 
-    context.effect_target->SetSpecialCapacity(name, capacity);
+    context.effect_target->SetSpecialCapacity(std::move(name), capacity, context.current_turn);
 }
 
 std::string AddSpecial::Dump(uint8_t ntabs) const {
