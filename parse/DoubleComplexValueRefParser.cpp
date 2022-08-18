@@ -7,7 +7,11 @@
 
 namespace parse {
 
-    BOOST_PHOENIX_ADAPT_FUNCTION(std::string, MeterToName_, ValueRef::MeterToName, 1)
+    std::string MeterToNameWrapper(MeterType meter) {
+        return std::string().append(ValueRef::MeterToName(meter));
+    }
+
+    BOOST_PHOENIX_ADAPT_FUNCTION(std::string, MeterToName_, MeterToNameWrapper, 1)
 
     double_complex_parser_grammar::double_complex_parser_grammar(
         const lexer& tok,

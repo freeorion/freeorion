@@ -210,16 +210,9 @@ namespace {
         return retval;
     }
 
-<<<<<<< HEAD
-    // Array of meter names enumerated by MeterType
-    const std::array<std::string, static_cast<std::size_t>(MeterType::NUM_METER_TYPES)> NAME_BY_METER = {
-=======
-    const std::string EMPTY_STRING;
-
     // Array of meter names enumerated by MeterType with INVALID_METER_TYPE as first element
-    const std::array<std::string, static_cast<std::size_t>(MeterType::NUM_METER_TYPES) + 1> NAME_BY_METER = {
-        EMPTY_STRING,
->>>>>>> Use offset and INVALID_METER_TYPE to index NAME_BY_METER
+    constexpr std::array<std::string_view, static_cast<std::size_t>(MeterType::NUM_METER_TYPES) + 1> NAME_BY_METER = {
+        "",
         "TargetPopulation",
         "TargetIndustry",
         "TargetResearch",
@@ -304,7 +297,7 @@ MeterType NameToMeter(const std::string_view name) {
     return MeterType::INVALID_METER_TYPE;
 }
 
-const std::string& MeterToName(const MeterType meter) {
+const std::string_view MeterToName(const MeterType meter) {
     return NAME_BY_METER[static_cast<int>(meter) + 1];
 }
 
