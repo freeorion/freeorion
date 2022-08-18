@@ -166,7 +166,7 @@ RenameOrder::RenameOrder(int empire, int object, std::string name,
     m_object(object),
     m_name(std::move(name))
 {
-    if (!Check(empire, object, name, context))
+    if (!Check(empire, object, m_name, context))
         m_object = INVALID_OBJECT_ID;
 }
 
@@ -403,17 +403,19 @@ void NewFleetOrder::ExecuteImpl(ScriptingContext& context) const {
     if (first_fleet)
         fleet->SetArrivalStarlane(first_fleet->ArrivalStarlane());
 
-    std::unordered_set<std::shared_ptr<Fleet>> modified_fleets;
+    std::vector<Fleet*> modified_fleets;
     int ordered_moved_turn = BEFORE_FIRST_TURN;
     // remove ships from old fleet(s) and add to new
-    for (auto& ship : validated_ships) {
-        if (auto old_fleet = o.get<Fleet>(ship->FleetID())) {
+    for (auto* ship : validated_ships) {
+        if (auto* old_fleet = o.getRaw<Fleet>(ship->FleetID())) {
             ordered_moved_turn = std::max(ordered_moved_turn, old_fleet->LastTurnMoveOrdered());
             old_fleet->RemoveShips({ship->ID()});
-            modified_fleets.insert(std::move(old_fleet));
+            modified_fleets.push_back(old_fleet);
         }
         ship->SetFleetID(fleet->ID());
     }
+    std::sort(modified_fleets.begin(), modified_fleets.end());
+    modified_fleets.erase(std::unique(modified_fleets.begin(), modified_fleets.end()), modified_fleets.end());
     fleet->AddShips(m_ship_ids);
     fleet->SetMoveOrderedTurn(ordered_moved_turn);
 
@@ -427,11 +429,11 @@ void NewFleetOrder::ExecuteImpl(ScriptingContext& context) const {
     system->StateChangedSignal();
 
     // Signal changed state of modified fleets and remove any empty fleets.
-    for (auto& modified_fleet : modified_fleets) {
+    for (auto* modified_fleet : modified_fleets) {
         if (!modified_fleet->Empty()) {
             modified_fleet->StateChangedSignal();
         } else {
-            if (auto modified_fleet_system = o.get<System>(modified_fleet->SystemID()))
+            if (auto modified_fleet_system = o.getRaw<System>(modified_fleet->SystemID()))
                 modified_fleet_system->Remove(modified_fleet->ID());
 
             u.Destroy(modified_fleet->ID(), empire_ids);
