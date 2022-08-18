@@ -288,7 +288,7 @@ std::string ValueRefBase::InvariancePattern() const {
 }
 
 MeterType NameToMeter(const std::string_view name) {
-    for (std::size_t i = 0; i < NAME_BY_METER.size(); i++)
+    for (int i = 0; i < static_cast<int>(NAME_BY_METER.size()); i++)
     {
         if (NAME_BY_METER[i] == name)
             return static_cast<MeterType>(i - 1);
@@ -298,7 +298,7 @@ MeterType NameToMeter(const std::string_view name) {
 }
 
 const std::string_view MeterToName(const MeterType meter) {
-    return NAME_BY_METER[static_cast<int>(meter) + 1];
+    return NAME_BY_METER[static_cast<std::underlying_type_t<MeterType>>(meter) + 1];
 }
 
 constexpr std::string_view PlanetTypeToStringConstexpr(PlanetType type) {
