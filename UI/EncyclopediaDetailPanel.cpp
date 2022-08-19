@@ -4459,6 +4459,11 @@ void EncyclopediaDetailPanel::SetMeterType(std::string meter_string) {
         AddItem("ENC_METER_TYPE", std::move(meter_string));
 }
 
+void EncyclopediaDetailPanel::SetMeterType(MeterType meter_type) {
+    if (meter_type != MeterType::INVALID_METER_TYPE)
+        AddItem("ENC_METER_TYPE", std::string{to_string(meter_type)});
+}
+
 void EncyclopediaDetailPanel::SetObject(int object_id) {
     int current_item_id = ToInt(m_items_it->second, INVALID_OBJECT_ID);
     if (object_id == current_item_id)

@@ -970,14 +970,14 @@ namespace {
 
         m_stat_icons.reserve(meters_icons.size());
         for (auto& [meter_type, icon_texture] : meters_icons) {
-            auto icon = GG::Wnd::Create<StatisticIcon>(icon_texture, 0, 0, false, StatIconSize().x, StatIconSize().y);
+            auto icon = GG::Wnd::Create<StatisticIcon>(icon_texture, 0, 0, false,
+                                                       StatIconSize().x, StatIconSize().y);
             m_stat_icons.emplace_back(meter_type, icon);
 
-            auto meter_string = to_string(meter_type);
-            icon->RightClickedSignal.connect([meter_string](const GG::Pt& pt) {
-                auto zoom_article_action = [meter_string]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(std::string{meter_string}); }; // TODO: avoid construction
+            icon->RightClickedSignal.connect([meter_type{meter_type}](GG::Pt pt) {
+                auto zoom_article_action = [meter_type]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_type); };
                 std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) %
-                                                                        UserString(meter_string));
+                                                                        UserString(to_string(meter_type)));
 
                 auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
                 popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false,
@@ -1572,9 +1572,9 @@ void FleetDataPanel::SetStatIconValues() {
         }
     }
     if (!fuels.empty())
-        min_fuel = *std::min_element(fuels.begin(), fuels.end()); // TODO: cbegin, cend
+        min_fuel = *std::min_element(fuels.cbegin(), fuels.cend());
     if (!speeds.empty())
-        min_speed = *std::min_element(speeds.begin(), speeds.end());
+        min_speed = *std::min_element(speeds.cbegin(), speeds.cend());
 
     for (auto& [stat_name, icon] : m_stat_icons) {
         DetachChild(icon);
@@ -1782,19 +1782,18 @@ void FleetDataPanel::Init() {
         for (auto& [meter_type, icon, text] : meters_icons_browsetext) {
             auto stat_icon = GG::Wnd::Create<StatisticIcon>(icon, 0, 0, false,
                                                             StatIconSize().x, StatIconSize().y);
-            auto meter_string = to_string(meter_type);
 
             m_stat_icons.emplace_back(meter_type, stat_icon);
             stat_icon->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
-                std::move(icon), UserString(meter_string), UserString(text)));
+                std::move(icon), UserString(to_string(meter_type)), UserString(text)));
 
-            stat_icon->RightClickedSignal.connect([meter_string](const GG::Pt& pt){
-                auto zoom_article_action = [meter_string]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(std::string{meter_string}); }; // TODO: avoid construction
+            stat_icon->RightClickedSignal.connect([meter_type{meter_type}](const GG::Pt& pt){
+                auto zoom_article_action = [meter_type]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_type); };
 
                 auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
                 std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) %
-                                                                        UserString(meter_string));
+                                                                        UserString(to_string(meter_type)));
                 popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false,
                                                 zoom_article_action));
                 popup->Run();

@@ -4398,6 +4398,11 @@ void MapWnd::ShowMeterTypeArticle(const std::string& meter_string) {
     m_pedia_panel->SetMeterType(meter_string);
 }
 
+void MapWnd::ShowMeterTypeArticle(MeterType meter_type) {
+    ShowPedia();
+    m_pedia_panel->SetMeterType(meter_type);
+}
+
 void MapWnd::ShowEncyclopediaEntry(const std::string& str) {
     if (!m_pedia_panel->Visible())
         TogglePedia();

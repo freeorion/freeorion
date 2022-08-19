@@ -58,6 +58,11 @@
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/date_time.hpp>
 
+#if __has_include(<charconv>)
+#include <charconv>
+#else
+#include <stdio.h>
+#endif
 
 bool TextureFileNameCompare(const std::shared_ptr<GG::Texture>& t1,
                             const std::shared_ptr<GG::Texture>& t2)
@@ -793,7 +798,13 @@ bool ClientUI::ZoomToObject(const std::string& name) {
 
     // try again by converting string to an ID
     try {
-        return ZoomToObject(std::stoi(name)); // TODO: probably a better way to cast string to int
+#if defined(__cpp_lib_to_chars)
+        int id = INVALID_OBJECT_ID;
+        std::from_chars(name.data(), name.data() + name.size(), id);
+#else
+        int id = boost::lexical_cast<int>(name);
+#endif
+        return ZoomToObject(id);
     } catch (...) {
     }
 
@@ -1004,6 +1015,11 @@ bool ClientUI::ZoomToEmpire(int empire_id) {
 
 bool ClientUI::ZoomToMeterTypeArticle(const std::string& meter_string) {
     GetMapWnd()->ShowMeterTypeArticle(meter_string);
+    return true;
+}
+
+bool ClientUI::ZoomToMeterTypeArticle(MeterType meter_type) {
+    GetMapWnd()->ShowMeterTypeArticle(meter_type);
     return true;
 }
 
