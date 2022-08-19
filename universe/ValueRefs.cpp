@@ -1033,7 +1033,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return object->CreationTurn();
     }
     else if (property_name == "Age") {
-        return object->AgeInTurns();
+        return object->AgeInTurns(context.current_turn);
 
     }
 

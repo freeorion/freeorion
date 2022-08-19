@@ -1216,7 +1216,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
                 // fleets themselves may be created and/or destroyed purely as organizational matters, we check ship
                 // age not fleet age.
                 int cutoff_age = precombat ? 1 : 0;
-                if (fleet_at_war && fleet->MaxShipAgeInTurns(objects) > cutoff_age) {
+                if (fleet_at_war && fleet->MaxShipAgeInTurns(objects, context.current_turn) > cutoff_age) {
                     systems_containing_obstructing_objects.insert(system_id);
                     if (fleet->ArrivalStarlane() == system_id)
                         unrestricted_obstruction_systems.insert(system_id);

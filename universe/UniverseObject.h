@@ -159,7 +159,7 @@ public:
     virtual std::shared_ptr<UniverseObject>   Accept(const UniverseObjectVisitor& visitor) const;
 
     [[nodiscard]] int                         CreationTurn() const noexcept { return m_created_on_turn; }; ///< returns game turn on which object was created
-    [[nodiscard]] int                         AgeInTurns() const;   ///< returns elapsed number of turns between turn object was created and current game turn
+    [[nodiscard]] int                         AgeInTurns(int current_turn) const;   ///< returns elapsed number of turns between turn object was created and current game turn
 
     mutable StateChangedSignalType StateChangedSignal; ///< emitted when the UniverseObject is altered in any way
 

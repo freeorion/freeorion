@@ -114,12 +114,12 @@ void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object,
 void UniverseObject::Init()
 { AddMeter(MeterType::METER_STEALTH); }
 
-int UniverseObject::AgeInTurns() const {
+int UniverseObject::AgeInTurns(int current_turn) const {
     if (m_created_on_turn == BEFORE_FIRST_TURN)
         return SINCE_BEFORE_TIME_AGE;
-    if ((m_created_on_turn == INVALID_GAME_TURN) || (CurrentTurn() == INVALID_GAME_TURN))
+    if ((m_created_on_turn == INVALID_GAME_TURN) || (current_turn == INVALID_GAME_TURN))
         return INVALID_OBJECT_AGE;
-    return CurrentTurn() - m_created_on_turn;
+    return current_turn - m_created_on_turn;
 }
 
 bool UniverseObject::HasSpecial(std::string_view name) const {

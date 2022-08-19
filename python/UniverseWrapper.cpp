@@ -461,7 +461,7 @@ namespace FreeOrionPython {
             .add_property("owner",              &UniverseObject::Owner)
             .def("ownedBy",                     &UniverseObject::OwnedBy)
             .add_property("creationTurn",       &UniverseObject::CreationTurn)
-            .add_property("ageInTurns",         &UniverseObject::AgeInTurns)
+            .add_property("ageInTurns",         +[](const UniverseObject& o) { return o.AgeInTurns(CurrentTurn()); })
             .add_property("specials",           make_function(ObjectSpecials,        py::return_value_policy<py::return_by_value>()))
             .def("hasSpecial",                  &UniverseObject::HasSpecial)
             .def("specialAddedOnTurn",          &UniverseObject::SpecialAddedOnTurn)

@@ -70,19 +70,19 @@ public:
 
     std::shared_ptr<UniverseObject>       Accept(const UniverseObjectVisitor& visitor) const override;
 
-    [[nodiscard]] const std::set<int>&    ShipIDs() const { return m_ships; } ///< returns set of IDs of ships in fleet.
-    [[nodiscard]] int                     MaxShipAgeInTurns(const ObjectMap& objects) const; ///< Returns the age of the oldest ship in the fleet
+    [[nodiscard]] const std::set<int>&    ShipIDs() const noexcept { return m_ships; } ///< returns set of IDs of ships in fleet.
+    [[nodiscard]] int                     MaxShipAgeInTurns(const ObjectMap& objects, int current_turn) const; ///< Returns the age of the oldest ship in the fleet
 
     /** Returns the list of systems that this fleet will move through en route
       * to its destination (may be empty).  If this fleet is currently at a
       * system, that system will be the first one in the list. */
-    [[nodiscard]] const auto&             TravelRoute() const { return m_travel_route; };
-    [[nodiscard]] int                     OrderedGivenToEmpire() const { return m_ordered_given_to_empire_id; }   ///< returns the ID of the empire this fleet has been ordered given to, or ALL_EMPIRES if this fleet hasn't been ordered given to an empire
-    [[nodiscard]] int                     LastTurnMoveOrdered() const { return m_last_turn_move_ordered; }
-    [[nodiscard]] bool                    Aggressive() const { return m_aggression >= FleetAggression::FLEET_AGGRESSIVE; }
-    [[nodiscard]] bool                    Obstructive() const { return m_aggression >= FleetAggression::FLEET_OBSTRUCTIVE; }
-    [[nodiscard]] bool                    Passive() const { return m_aggression <= FleetAggression::FLEET_PASSIVE; }
-    [[nodiscard]] FleetAggression         Aggression() const { return m_aggression; }
+    [[nodiscard]] const auto&             TravelRoute() const noexcept { return m_travel_route; };
+    [[nodiscard]] int                     OrderedGivenToEmpire() const noexcept { return m_ordered_given_to_empire_id; }   ///< returns the ID of the empire this fleet has been ordered given to, or ALL_EMPIRES if this fleet hasn't been ordered given to an empire
+    [[nodiscard]] int                     LastTurnMoveOrdered() const noexcept { return m_last_turn_move_ordered; }
+    [[nodiscard]] bool                    Aggressive() const noexcept { return m_aggression >= FleetAggression::FLEET_AGGRESSIVE; }
+    [[nodiscard]] bool                    Obstructive() const noexcept { return m_aggression >= FleetAggression::FLEET_OBSTRUCTIVE; }
+    [[nodiscard]] bool                    Passive() const noexcept { return m_aggression <= FleetAggression::FLEET_PASSIVE; }
+    [[nodiscard]] FleetAggression         Aggression() const noexcept { return m_aggression; }
 
     /** Returns a list of locations at which notable events will occur along the fleet's path if it follows the
         specified route.  It is assumed in the calculation that the fleet starts its move path at its actual current
@@ -102,12 +102,12 @@ public:
     [[nodiscard]] float   MaxFuel(const ObjectMap& objects) const;                    ///< Returns effective maximum amount of fuel this fleet has, which is the least of the max amounts of fuel that the ships can have
     [[nodiscard]] int     FinalDestinationID() const;                                 ///< Returns ID of system that this fleet is moving to or INVALID_OBJECT_ID if staying still.
     [[nodiscard]] int     PreviousToFinalDestinationID() const;                       ///< Returns ID of system previous to the destination system that this fleet is moving to or INVALID_OBJECT_ID not moving at least two jumps.
-    [[nodiscard]] int     PreviousSystemID() const    { return m_prev_system; }       ///< Returns ID of system that this fleet is moving away from as it moves to its destination.
-    [[nodiscard]] int     NextSystemID() const        { return m_next_system; }       ///< Returns ID of system that this fleet is moving to next as it moves to its destination.
+    [[nodiscard]] int     PreviousSystemID() const noexcept { return m_prev_system; } ///< Returns ID of system that this fleet is moving away from as it moves to its destination.
+    [[nodiscard]] int     NextSystemID() const noexcept     { return m_next_system; } ///< Returns ID of system that this fleet is moving to next as it moves to its destination.
     [[nodiscard]] bool    Blockaded(const ScriptingContext& context) const;           ///< returns true iff either (i) fleet is stationary and at least one system exit is blocked for this fleet or (ii) fleet is attempting to depart a system along a blocked system exit
     [[nodiscard]] bool    BlockadedAtSystem(int start_system_id, int dest_system_id, const ScriptingContext& context) const; ///< returns true iff this fleet's movement would be blockaded at system.
     [[nodiscard]] float   Speed(const ObjectMap& objects) const;                      ///< Returns speed of fleet. (Should be equal to speed of slowest ship in fleet, unless in future the calculation of fleet speed changes.)
-    [[nodiscard]] bool    CanChangeDirectionEnRoute() const   { return false; }       ///< Returns true iff this fleet can change its direction while in interstellar space.
+    [[nodiscard]] bool    CanChangeDirectionEnRoute() const noexcept { return false; }///< Returns true iff this fleet can change its direction while in interstellar space.
     [[nodiscard]] bool    CanDamageShips(const ScriptingContext& context,
                                          float target_shields = 0.0f) const;          ///< Returns true if there is at least one ship in the fleet which is currently able to damage a ship using direct weapons or fighters
     [[nodiscard]] bool    CanDestroyFighters(const ScriptingContext& context) const;  ///< Returns true if there is at least one ship in the fleet which is currently able to destroy fighters using direct weapons or fighters
@@ -119,8 +119,8 @@ public:
     [[nodiscard]] bool    HasTroopShips(const Universe& universe) const;              ///< Returns true if there is at least one troop ship in the fleet.
     [[nodiscard]] bool    HasShipsOrderedScrapped(const Universe& universe) const;    ///< Returns true if there is at least one ship ordered scrapped in the fleet.
     [[nodiscard]] bool    HasShipsWithoutScrapOrders(const Universe& universe) const; ///< Returns true if there is at least one ship without any scrap orders in the fleet.
-    [[nodiscard]] int     NumShips() const            { return m_ships.size(); }      ///< Returns number of ships in fleet.
-    [[nodiscard]] bool    Empty() const               { return m_ships.empty(); }     ///< Returns true if fleet contains no ships, false otherwise.
+    [[nodiscard]] int     NumShips() const noexcept { return m_ships.size(); }        ///< Returns number of ships in fleet.
+    [[nodiscard]] bool    Empty() const noexcept    { return m_ships.empty(); }       ///< Returns true if fleet contains no ships, false otherwise.
     [[nodiscard]] float   ResourceOutput(ResourceType type, const ObjectMap& objects) const;
 
     /** Returns true iff this fleet is moving, but the route is unknown.  This

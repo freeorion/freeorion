@@ -188,17 +188,17 @@ const std::string& Fleet::PublicName(int empire_id, const Universe& universe) co
         return UserString("OBJ_FLEET");
 }
 
-int Fleet::MaxShipAgeInTurns(const ObjectMap& objects) const {
+int Fleet::MaxShipAgeInTurns(const ObjectMap& objects, int current_turn) const {
     if (m_ships.empty())
         return INVALID_OBJECT_AGE;
 
     bool fleet_is_scrapped = true;
     int retval = 0;
-    for (const auto& ship : objects.find<Ship>(m_ships)) {
+    for (const auto* ship : objects.findRaw<Ship>(m_ships)) {
         if (!ship || ship->OrderedScrapped())
             continue;
-        if (ship->AgeInTurns() > retval)
-            retval = ship->AgeInTurns();
+        if (ship->AgeInTurns(current_turn) > retval)
+            retval = ship->AgeInTurns(current_turn);
         fleet_is_scrapped = false;
     }
 
@@ -1312,7 +1312,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id,
         // ageas since fleets can be created/destroyed as purely organizational matters.  Since these checks are
         // pertinent just during those stages of turn processing immediately following turn number advancement,
         // whereas the new ships were created just prior to turn advamcenemt, we require age greater than 1.
-        if (fleet->MaxShipAgeInTurns(objects) <= 1)
+        if (fleet->MaxShipAgeInTurns(objects, context.current_turn) <= 1)
             continue;
         // These are the most costly checks.  Do them last
         if (!fleet->CanDamageShips(context))

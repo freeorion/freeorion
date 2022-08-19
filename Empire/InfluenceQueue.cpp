@@ -121,7 +121,7 @@ void InfluenceQueue::Update(const ScriptingContext& context) {
 
     float spending_on_policy_adoption_ip = 0.0f;
     for (const auto& [policy_name, adoption_turn] : empire->TurnsPoliciesAdopted()) {
-        if (adoption_turn != CurrentTurn())
+        if (adoption_turn != context.current_turn)
             continue;
         auto policy = GetPolicy(policy_name);
         if (!policy) {
