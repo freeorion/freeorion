@@ -396,14 +396,18 @@ int Empire::TurnPolicyAdopted(std::string_view name) const {
 }
 
 int Empire::CurrentTurnsPolicyHasBeenAdopted(std::string_view name) const {
-    auto it = m_policy_adoption_current_duration.find(std::string{name}); // TODO: remove temporary string construction
+    auto it = std::find_if(m_policy_adoption_current_duration.begin(),
+                           m_policy_adoption_current_duration.end(),
+                           [name](const auto& pacd) { return name == pacd.first; });
     if (it == m_policy_adoption_current_duration.end())
         return 0;
     return it->second;
 }
 
 int Empire::CumulativeTurnsPolicyHasBeenAdopted(std::string_view name) const {
-    auto it = m_policy_adoption_total_duration.find(std::string{name}); // TODO: remove temporary string construction
+    auto it = std::find_if(m_policy_adoption_total_duration.begin(),
+                           m_policy_adoption_total_duration.end(),
+                           [name](const auto& patd) { return name == patd.first; });
     if (it == m_policy_adoption_total_duration.end())
         return 0;
     return it->second;
