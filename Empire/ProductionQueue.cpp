@@ -372,7 +372,7 @@ std::pair<float, int> ProductionQueue::ProductionItem::ProductionCostAndTime(
     if (build_type == BuildType::BT_BUILDING) {
         const BuildingType* type = GetBuildingType(name);
         if (!type)
-            return {-1.0, -1};
+            return {-1.0f, -1};
         return {type->ProductionCost(empire_id, location_id, context),
                 type->ProductionTime(empire_id, location_id, context)};
 
@@ -381,13 +381,13 @@ std::pair<float, int> ProductionQueue::ProductionItem::ProductionCostAndTime(
         if (design)
             return {design->ProductionCost(empire_id, location_id),
                     design->ProductionTime(empire_id, location_id)};
-        return {-1.0, -1};
+        return {-1.0f, -1};
 
     } else if (build_type == BuildType::BT_STOCKPILE) {
-        return {1.0, 1};
+        return {1.0f, 1};
     }
     ErrorLogger() << "Empire::ProductionCostAndTime was passed a ProductionItem with an invalid BuildType";
-    return {-1.0, -1};
+    return {-1.0f, -1};
 }
 
 bool ProductionQueue::ProductionItem::EnqueueConditionPassedAt(int location_id, const ScriptingContext& context) const {
@@ -823,7 +823,6 @@ void ProductionQueue::Update(const ScriptingContext& context) {
 
     boost::posix_time::ptime sim_time_start;
     boost::posix_time::ptime sim_time_end;
-    long sim_time;
     sim_time_start = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
     std::map<std::set<int>, float>  allocated_pp;
     float sim_available_stockpile = available_stockpile;
@@ -833,7 +832,7 @@ void ProductionQueue::Update(const ScriptingContext& context) {
 
     update_timer.EnterSection("Looping over Turns");
     for (int sim_turn = 1; sim_turn <= TOO_MANY_TURNS; sim_turn ++) {
-        long sim_time_until_now = (boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()) - sim_time_start).total_microseconds();
+        int64_t sim_time_until_now = (boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()) - sim_time_start).total_microseconds();
         if ((sim_time_until_now * 1e-6) >= TOO_LONG_TIME)
             break;
 
@@ -878,7 +877,7 @@ void ProductionQueue::Update(const ScriptingContext& context) {
     update_timer.EnterSection("Logging");
 
     sim_time_end = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time());
-    sim_time = (sim_time_end - sim_time_start).total_microseconds();
+    int64_t sim_time = (sim_time_end - sim_time_start).total_microseconds();
     if ((sim_time * 1e-6) >= TOO_LONG_TIME) {
         DebugLogger()  << "ProductionQueue::Update: Projections timed out after " << sim_time
                        << " microseconds; all remaining items in queue marked completing 'Never'.";

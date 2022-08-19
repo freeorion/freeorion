@@ -571,7 +571,7 @@ void SetMeter::Execute(ScriptingContext& context) const {
     if (!context.effect_target) return;
 
     if (Meter* m = context.effect_target->GetMeter(m_meter))
-        m->SetCurrent(NewMeterValue(context, m, m_value).first);
+        m->SetCurrent(static_cast<float>(NewMeterValue(context, m, m_value).first));
 }
 
 void SetMeter::Execute(ScriptingContext& context,
@@ -602,7 +602,7 @@ void SetMeter::Execute(ScriptingContext& context,
         (double new_meter_value, int target_id, Meter* meter) -> void
     {
         auto old_value = meter->Current();
-        meter->SetCurrent(new_meter_value);
+        meter->SetCurrent(static_cast<float>(new_meter_value));
 
         if (have_accounting) {
             auto diff = new_meter_value - old_value;
@@ -785,7 +785,7 @@ void SetShipPartMeter::Execute(ScriptingContext& context) const {
 
     // get meter, evaluate new value, assign
     if (Meter* m = ship->GetPartMeter(m_meter, m_part_name->Eval(context)))
-        m->SetCurrent(NewMeterValue(context, m, m_value).first);
+        m->SetCurrent(static_cast<float>(NewMeterValue(context, m, m_value).first));
 }
 
 void SetShipPartMeter::Execute(ScriptingContext& context,
@@ -832,13 +832,13 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
             auto part_name = m_part_name->Eval(target_context);
 
             if (Meter* meter = ship->GetPartMeter(m_meter, part_name)) {
-                auto new_val = NewMeterValue(std::move(target_context), meter, m_value).first;
+                float new_val = static_cast<float>(NewMeterValue(std::move(target_context), meter, m_value).first);
                 meter->SetCurrent(new_val);
             }
 
         } else if (m_value->TargetInvariant()) {
             // meter value does not depend on target, so handle with single ValueRef evaluation
-            auto new_val = m_value->Eval(context);
+            float new_val = static_cast<float>(m_value->Eval(context));
             for (auto* target : targets) {
                 if (target->ObjectType() != UniverseObjectType::OBJ_SHIP)
                     continue;
@@ -1182,7 +1182,7 @@ void SetEmpireMeter::Execute(ScriptingContext& context, const TargetSet& targets
             auto lhs = meter->Current();
             for (auto* target : targets) {
                 (void)target; // don't use the target objects, but should re-apply the adjustment once per target
-                lhs = ValueRef::Operation<double>::EvalImpl(op_type, lhs, rhs);
+                lhs = static_cast<float>(ValueRef::Operation<double>::EvalImpl(op_type, lhs, rhs));
             }
             meter->SetCurrent(lhs);
         }
@@ -1193,7 +1193,7 @@ void SetEmpireMeter::Execute(ScriptingContext& context, const TargetSet& targets
         // empire meter, so have to calculate new meter values one at a time...
         for (auto* target : targets) {
             if (auto meter = GetEmpireMeter(context, empire_id, m_meter)) {
-                auto new_val = NewMeterValue(context, meter, m_value, target).first;
+                float new_val = static_cast<float>(NewMeterValue(context, meter, m_value, target).first);
                 meter->SetCurrent(new_val);
             }
         }
@@ -1656,7 +1656,7 @@ void SetSpeciesEmpireOpinion::Execute(ScriptingContext& context) const {
     double initial_opinion = context.species.SpeciesEmpireOpinion(species_name, empire_id);
     ScriptingContext::CurrentValueVariant cvv{initial_opinion};
     ScriptingContext opinion_context{context, cvv};
-    double opinion = m_opinion->Eval(opinion_context);
+    float opinion = static_cast<float>(m_opinion->Eval(opinion_context));
 
     context.species.SetSpeciesEmpireOpinion(species_name, empire_id, opinion);
 }
@@ -1722,7 +1722,7 @@ void SetSpeciesSpeciesOpinion::Execute(ScriptingContext& context) const {
     float initial_opinion = context.species.SpeciesSpeciesOpinion(opinionated_species_name, rated_species_name);
     ScriptingContext::CurrentValueVariant cvv{initial_opinion};
     ScriptingContext opinion_context{context, cvv};
-    float opinion = m_opinion->Eval(opinion_context);
+    float opinion = static_cast<float>(m_opinion->Eval(opinion_context));
 
     context.species.SetSpeciesSpeciesOpinion(opinionated_species_name, rated_species_name, opinion);
 }
@@ -2529,7 +2529,7 @@ void AddSpecial::Execute(ScriptingContext& context) const {
     if (m_capacity) {
         ScriptingContext::CurrentValueVariant cvv{capacity};
         ScriptingContext capacity_context{context, cvv};
-        capacity = m_capacity->Eval(capacity_context);
+        capacity = static_cast<float>(m_capacity->Eval(capacity_context));
     }
 
     context.effect_target->SetSpecialCapacity(std::move(name), capacity, context.current_turn);
