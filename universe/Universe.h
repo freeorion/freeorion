@@ -369,7 +369,7 @@ public:
       * is true, and (re)enables UniverseObjectSignals if \a inhibit is false. */
     void InhibitUniverseObjectSignals(bool inhibit = true);
 
-    void UpdateStatRecords(EmpireManager& empires);
+    void UpdateStatRecords(const ScriptingContext& context);
 
     /** Returns true if UniverseOjbectSignals are inhibited, false otherwise. */
     const bool& UniverseObjectSignalsInhibited() const;

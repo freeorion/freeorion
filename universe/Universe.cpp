@@ -3123,8 +3123,12 @@ const bool& Universe::UniverseObjectSignalsInhibited() const
 void Universe::InhibitUniverseObjectSignals(bool inhibit)
 { m_inhibit_universe_object_signals = inhibit; }
 
-void Universe::UpdateStatRecords(EmpireManager& empires) { // TODO: pass in current turn
-    int current_turn = CurrentTurn();
+void Universe::UpdateStatRecords(const ScriptingContext& context) {
+    CheckContextVsThisUniverse(*this, context);
+
+    int current_turn = context.current_turn;
+    const auto& empires = context.Empires();
+
     if (current_turn == INVALID_GAME_TURN)
         return;
     if (current_turn == 0)
@@ -3144,7 +3148,6 @@ void Universe::UpdateStatRecords(EmpireManager& empires) { // TODO: pass in curr
     }
 
     // process each stat
-    const ScriptingContext context{*this, empires};
     for (auto& [stat_name, value_ref] : EmpireStats()) {
         if (!value_ref)
             continue;
@@ -3155,7 +3158,7 @@ void Universe::UpdateStatRecords(EmpireManager& empires) { // TODO: pass in curr
             if (value_ref->SourceInvariant()) {
                 stat_records[empire_id][current_turn] = value_ref->Eval();
             } else if (empire_source) {
-                ScriptingContext source_context{empire_source, context};
+                const ScriptingContext source_context{empire_source, context};
                 stat_records[empire_id][current_turn] = value_ref->Eval(source_context);
             }
         }

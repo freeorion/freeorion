@@ -819,7 +819,7 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
         entry.second->UpdateOwnedObjectCounters(m_universe);
 
     UpdateEmpireSupply(context, m_supply_manager, false);
-    m_universe.UpdateStatRecords(m_empires);
+    m_universe.UpdateStatRecords(context);
 }
 
 bool ServerApp::NewGameInitVerifyJoiners(const std::vector<PlayerSetupData>& player_setup_data) {
@@ -3779,7 +3779,7 @@ void ServerApp::PostCombatProcessTurns() {
 
 
     // misc. other updates and records
-    m_universe.UpdateStatRecords(m_empires);
+    m_universe.UpdateStatRecords(context);
     for ([[maybe_unused]] auto& [ignored_empire_id, empire] : m_empires) {
         (void)ignored_empire_id;    // quiet unused variable warning
         empire->UpdateOwnedObjectCounters(m_universe);
