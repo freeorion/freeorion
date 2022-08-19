@@ -642,7 +642,6 @@ namespace FreeOrionPython {
             .add_property("structure",          &ShipHull::Structure)
             .add_property("stealth",            &ShipHull::Stealth)
             .add_property("fuel",               &ShipHull::Fuel)
-            .add_property("starlaneSpeed",      &ShipHull::Speed) // TODO: Remove this after transition period
             .add_property("speed",              &ShipHull::Speed)
             .def("numSlotsOfSlotType",          +[](const ShipHull& hull, ShipSlotType slot_type) -> unsigned int { return hull.NumSlots(slot_type); })
             .add_property("slots",              make_function(
