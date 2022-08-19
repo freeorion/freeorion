@@ -4,6 +4,7 @@
 #include "parse/PythonParser.h"
 #include "universe/Conditions.h"
 #include "universe/Effects.h"
+#include "universe/Planet.h"
 #include "universe/Tech.h"
 #include "universe/UnlockableItem.h"
 #include "universe/ValueRefs.h"
@@ -205,6 +206,38 @@ BOOST_AUTO_TEST_CASE(parse_species) {
 
     BOOST_REQUIRE(!ordering.empty());
     BOOST_REQUIRE(!species.empty());
+
+    BOOST_REQUIRE_EQUAL("LITHIC", ordering[0]);
+    BOOST_REQUIRE_EQUAL("ORGANIC", ordering[1]);
+    BOOST_REQUIRE_EQUAL("GASEOUS", ordering[6]);
+
+    {
+        const auto species_it = species.find("SP_ABADDONI");
+        BOOST_REQUIRE(species_it != species.end());
+
+        const auto specie = species_it->second.get();
+        BOOST_REQUIRE_EQUAL("SP_ABADDONI", specie->Name());
+        BOOST_REQUIRE_EQUAL("SP_ABADDONI_DESC", specie->Description());
+        // BOOST_REQUIRE_EQUAL("SP_ABADDONI_GAMEPLAY_DESC", specie->GameplayDescription()); // already resolved to user string
+
+        BOOST_REQUIRE(specie->Location() != nullptr);
+        BOOST_REQUIRE(specie->CombatTargets() == nullptr);
+
+        BOOST_REQUIRE_EQUAL(14, specie->Foci().size());
+        BOOST_REQUIRE_EQUAL("FOCUS_INDUSTRY", specie->Foci()[0].Name());
+        BOOST_REQUIRE_EQUAL("FOCUS_DOMINATION", specie->Foci()[13].Name());
+        BOOST_REQUIRE_EQUAL("FOCUS_INDUSTRY", specie->DefaultFocus());
+
+        BOOST_REQUIRE_EQUAL(11, specie->PlanetEnvironments().size());
+        BOOST_REQUIRE_EQUAL(PlanetEnvironment::PE_POOR, specie->GetPlanetEnvironment(PlanetType::PT_BARREN));
+        BOOST_REQUIRE_EQUAL(PlanetEnvironment::PE_ADEQUATE, specie->GetPlanetEnvironment(PlanetType::PT_TOXIC));
+
+        BOOST_REQUIRE_EQUAL(98, specie->Effects().size());
+    }
+
+    // test it last
+    BOOST_REQUIRE_EQUAL(7, ordering.size());
+    BOOST_REQUIRE_EQUAL(1, species.size());
 }
 
 /**
