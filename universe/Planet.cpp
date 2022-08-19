@@ -529,19 +529,17 @@ std::map<int, double> Planet::EmpireGroundCombatForces() const {
     return empire_troops;
 }
 
-int Planet::TurnsSinceColonization() const {
+int Planet::TurnsSinceColonization(int current_turn) const {
     if (m_turn_last_colonized == INVALID_GAME_TURN)
         return 0;
-    int current_turn = CurrentTurn();
     if (current_turn == INVALID_GAME_TURN)
         return 0;
     return current_turn - m_turn_last_colonized;
 }
 
-int Planet::TurnsSinceLastConquered() const {
+int Planet::TurnsSinceLastConquered(int current_turn) const {
     if (m_turn_last_conquered == INVALID_GAME_TURN)
         return 0;
-    int current_turn = CurrentTurn();
     if (current_turn == INVALID_GAME_TURN)
         return 0;
     return current_turn - m_turn_last_conquered;

@@ -69,10 +69,10 @@ public:
     [[nodiscard]] std::vector<std::string>AvailableFoci() const override;
     [[nodiscard]] const std::string&      FocusIcon(const std::string& focus_name) const override;
 
-    [[nodiscard]] PlanetType          Type() const                        { return m_type; }
-    [[nodiscard]] PlanetType          OriginalType() const                { return m_original_type; }
+    [[nodiscard]] PlanetType          Type() const noexcept               { return m_type; }
+    [[nodiscard]] PlanetType          OriginalType() const noexcept       { return m_original_type; }
     [[nodiscard]] int                 DistanceFromOriginalType() const    { return TypeDifference(m_type, m_original_type); }
-    [[nodiscard]] PlanetSize          Size() const                        { return m_size; }
+    [[nodiscard]] PlanetSize          Size() const noexcept               { return m_size; }
     [[nodiscard]] int                 HabitableSize() const;
 
     [[nodiscard]] bool                HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
@@ -107,11 +107,11 @@ public:
     [[nodiscard]] int OrderedGivenToEmpire() const noexcept         { return m_ordered_given_to_empire_id; }
     [[nodiscard]] int LastTurnAttackedByShip() const noexcept       { return m_last_turn_attacked_by_ship; }
     [[nodiscard]] int LastTurnColonized() const noexcept            { return m_turn_last_colonized; }
-    [[nodiscard]] int TurnsSinceColonization() const;
-    [[nodiscard]] int LastTurnConquered() const               { return m_turn_last_conquered; }
-    [[nodiscard]] int TurnsSinceLastConquered() const;
+    [[nodiscard]] int TurnsSinceColonization(int current_turn) const;
+    [[nodiscard]] int LastTurnConquered() const noexcept            { return m_turn_last_conquered; }
+    [[nodiscard]] int TurnsSinceLastConquered(int current_turn) const;
 
-    [[nodiscard]] const std::string&  SurfaceTexture() const  { return m_surface_texture; }
+    [[nodiscard]] const std::string&  SurfaceTexture() const noexcept { return m_surface_texture; }
     [[nodiscard]] std::string         CardinalSuffix(const ObjectMap& objects) const; ///< returns a roman number representing this planets orbit in relation to other planets
 
     [[nodiscard]] std::map<int, double> EmpireGroundCombatForces() const;

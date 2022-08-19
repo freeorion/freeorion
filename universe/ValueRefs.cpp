@@ -1097,7 +1097,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
     if (property_name == "TurnsSinceFocusChange") {
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             auto planet = static_cast<const Planet*>(object);
-            return planet->TurnsSinceFocusChange();
+            return planet->TurnsSinceFocusChange(context.current_turn);
         }
         return 0;
 
@@ -1105,14 +1105,14 @@ int Variable<int>::Eval(const ScriptingContext& context) const
     else if (property_name == "TurnsSinceColonization") {
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             auto planet = static_cast<const Planet*>(object);
-            return planet->TurnsSinceColonization();
+            return planet->TurnsSinceColonization(context.current_turn);
         }
         return 0;
     }
     else if (property_name == "TurnsSinceLastConquered") {
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             auto planet = static_cast<const Planet*>(object);
-            return planet->TurnsSinceLastConquered();
+            return planet->TurnsSinceLastConquered(context.current_turn);
         }
         return 0;
     }
