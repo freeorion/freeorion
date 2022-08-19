@@ -197,6 +197,16 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
     BOOST_REQUIRE_EQUAL(2, categories_seen.size());
 }
 
+BOOST_AUTO_TEST_CASE(parse_species) {
+    PythonParser parser(m_python, m_scripting_dir);
+
+    auto species_p = Pending::StartAsyncParsing(parse::species, m_scripting_dir / "species");
+    auto [species, ordering] = *Pending::WaitForPendingUnlocked(std::move(species_p));
+
+    BOOST_REQUIRE(!ordering.empty());
+    BOOST_REQUIRE(!species.empty());
+}
+
 /**
  * Checks count of techs and tech categories in real scripts
  * FO_CHECKSUM_TECH_NAME determines tech name to be check for FO_CHECKSUM_TECH_VALUE checksum

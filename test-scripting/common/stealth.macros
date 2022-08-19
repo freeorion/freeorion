@@ -1,0 +1,130 @@
+STEALTH_BOOST_LOW
+'''EffectsGroup
+    scope = Or [
+        Source
+        OnPlanet id = Source.ID
+    ]
+    stackinggroup = "TECH_STEALTH_STACK"
+    effects = SetStealth value = Value + [[LOW_STEALTH]]
+'''
+
+STEALTH_BOOST_MEDIUM
+'''EffectsGroup
+    scope = Or [
+        Source
+        OnPlanet id = Source.ID
+    ]
+    stackinggroup = "TECH_STEALTH_STACK"
+    effects = SetStealth value = Value + [[MEDIUM_STEALTH]]
+'''
+
+STEALTH_BOOST_HIGH
+'''EffectsGroup
+    scope = Or [
+        Source
+        OnPlanet id = Source.ID
+    ]
+    stackinggroup = "TECH_STEALTH_STACK"
+    effects = SetStealth value = Value + [[HIGH_STEALTH]]
+'''
+
+STEALTH_BOOST_ULTIMATE
+'''EffectsGroup
+    scope = Or [
+        Source
+        OnPlanet id = Source.ID
+    ]
+    stackinggroup = "TECH_STEALTH_STACK"
+    effects = SetStealth value = Value + [[VERY_HIGH_STEALTH]]
+'''
+
+STEALTH_BOOST_LOW_NO_ORBITAL
+'''EffectsGroup
+    scope = Or [
+        Source
+        And [
+            OnPlanet id = Source.ID
+            Not HasTag name = "ORBITAL"
+        ]
+    ]
+    stackinggroup = "TECH_STEALTH_STACK"
+    effects = SetStealth value = Value + [[LOW_STEALTH]]
+'''
+
+STEALTH_BOOST_MEDIUM_NO_ORBITAL
+'''EffectsGroup
+    scope = Or [
+        Source
+        And [
+            OnPlanet id = Source.ID
+            Not HasTag name = "ORBITAL"
+        ]
+    ]
+    stackinggroup = "TECH_STEALTH_STACK"
+    effects = SetStealth value = Value + [[MEDIUM_STEALTH]]
+'''
+
+STEALTH_BOOST_HIGH_NO_ORBITAL
+'''EffectsGroup
+    scope = Or [
+        Source
+        And [
+            OnPlanet id = Source.ID
+            Not HasTag name = "ORBITAL"
+        ]
+    ]
+    stackinggroup = "TECH_STEALTH_STACK"
+    effects = SetStealth value = Value + [[HIGH_STEALTH]]
+'''
+
+STEALTH_BOOST_ULTIMATE_NO_ORBITAL
+'''EffectsGroup
+    scope = Or [
+        Source
+        And [
+            OnPlanet id = Source.ID
+            Not HasTag name = "ORBITAL"
+        ]
+    ]
+    stackinggroup = "TECH_STEALTH_STACK"
+    effects = SetStealth value = Value + [[VERY_HIGH_STEALTH]]
+'''
+
+STEALTH_BOOST_PLUS_PLUS
+'''EffectsGroup
+    scope = Or [
+        Source
+        OnPlanet id = Source.ID
+    ]
+    stackinggroup = "SPECIES_STEALTH_STACK"
+    effects = SetStealth value = Value + [[PLUS_PLUS_STEALTH]]
+'''
+
+SYSTEM_STEALTH_PLUS_PLUS
+'''EffectsGroup
+    scope = Or [
+        Source
+        OnPlanet id = Source.ID
+    ]
+    stackinggroup = "SPECIES_STEALTH_STACK"
+    effects = SetStealth value = Value + [[PLUS_PLUS_STEALTH]]
+'''
+
+LOW_STEALTH
+'''20'''
+
+MEDIUM_STEALTH
+'''40'''
+
+HIGH_STEALTH
+'''60'''
+
+VERY_HIGH_STEALTH
+'''80'''
+
+PLUS_STEALTH
+'''5'''
+
+PLUS_PLUS_STEALTH
+'''[[PLUS_STEALTH]] + [[PLUS_STEALTH]]'''
+

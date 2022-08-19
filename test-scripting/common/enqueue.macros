@@ -1,0 +1,60 @@
+/* Allows the current building to be enqueued if the given prerequisite is built or enqueued.
+   Takes the prerequisite name as parameter; Usage:
+        [[LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED(BLD_SHIPYARD_BASE)]]
+*/
+LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED
+'''Or  [
+            Contains And [
+                Building name = "@1@"
+                OwnedBy empire = Source.Owner
+            ]
+            // Allows enqueue if this is not enqueued but prerequisite @1@ is
+            And [
+                Enqueued type = Building name = "@1@"
+                Not Enqueued type = Building name = CurrentContent
+            ]
+        ]'''
+/* Allows the current building to be build if the given prerequisite is built or enqueued.
+   Takes the prerequisite name as parameter; Usage:
+        [[LOCATION_ALLOW_BUILD_IF_PREREQ_ENQUEUED(BLD_SHIPYARD_ORBITAL_DRYDOCK)]]
+*/
+LOCATION_ALLOW_BUILD_IF_PREREQ_ENQUEUED
+'''Or  [
+            Contains And [
+                Building name = "@1@"
+                OwnedBy empire = Source.Owner
+            ]
+            Enqueued type = Building name = "@1@"
+        ]'''
+
+
+ENQUEUE_BUILD_ONE_PER_PLANET
+'''And [
+        Not Contains Building name = CurrentContent
+        Not Enqueued type = Building name = CurrentContent
+        OwnedBy empire = Source.Owner
+    ]'''
+
+ENQUEUE_ARTIFICIAL_PLANET_EXCLUSION
+'''And [
+        Not Contains Building name = "BLD_ART_PLANET"
+        Not Contains Building name = "BLD_ART_FACTORY_PLANET"
+        Not Contains Building name = "BLD_ART_PARADISE_PLANET"
+        Not Enqueued type = Building name = "BLD_ART_PLANET"
+        Not Enqueued type = Building name = "BLD_ART_FACTORY_PLANET"
+        Not Enqueued type = Building name = "BLD_ART_PARADISE_PLANET"
+    ]'''
+
+// @1@ code before each planet type
+// @2@ code after each planet type
+FOR_ALL_TERRAFORM_PLANET_TYPES
+'''@1@BARREN@2@
+@1@TUNDRA@2@
+@1@DESERT@2@
+@1@TERRAN@2@
+@1@OCEAN@2@
+@1@SWAMP@2@
+@1@TOXIC@2@
+@1@INFERNO@2@
+@1@RADIATED@2@
+@1@BARREN@2@'''

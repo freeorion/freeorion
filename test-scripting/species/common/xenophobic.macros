@@ -1,0 +1,102 @@
+XENOPHOBIC_SELF
+'''
+        // Give the concentration camp tech at game start
+        EffectsGroup
+            scope = Source
+            activation = Turn high = 0
+            effects = GiveEmpireTech name = "CON_CONC_CAMP"
+
+        // Give malus to industry, research and happiness for other species nearby
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Number low = 1 condition = And [
+                    Planet
+                    OwnedBy empire = RootCandidate.Owner
+                    Not Or [ 
+                        Species name = RootCandidate.Species
+                        Species name = "SP_EXOBOT"
+                    ]
+                    Not Population high = 0
+                    Not Contains Building name = "BLD_CONC_CAMP"
+                    WithinStarlaneJumps jumps = 5 condition = Source
+                ]
+            ]
+            stackinggroup = "XENOPHOBIC_LABEL_SELF"
+            accountinglabel = "XENOPHOBIC_LABEL_SELF"
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
+            effects = [ 
+                SetTargetIndustry value = Value
+                    * (NamedReal name = "XENOPHOBIC_SELF_TARGET_INDUSTRY_SCALING" value = 0.9)
+                SetTargetResearch value = Value
+                    * (NamedReal name = "XENOPHOBIC_SELF_TARGET_RESEARCH_SCALING" value = 0.9)
+                SetTargetHappiness value = Value
+                    + (Statistic Count condition = And [
+                        Planet
+                        OwnedBy empire = Source.Owner
+                        Not Or [ 
+                            Species name = Source.Species
+                            Species name = "SP_EXOBOT"
+                        ]
+                        Not Population high = 0
+                        Not Contains Building name = "BLD_CONC_CAMP"
+                        WithinStarlaneJumps jumps = 5 condition = Source
+                    ]) * (NamedReal name = "XENOPHOBIC_SELF_TARGET_HAPPINESS_COUNT" value = -1.0)
+            ]
+
+        // Give a pop malus for self-sustaining xenophobic species based on the number of nearby planets with other species
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                HasTag name = "SELF_SUSTAINING"
+            ]
+            stackinggroup = "XENOPHOBIC_POP_SELF"
+            accountinglabel = "XENOPHOBIC_LABEL_SELF"
+            priority = [[TARGET_POPULATION_LAST_BEFORE_OVERRIDE_PRIORITY]]
+            effects = SetTargetPopulation value = Value - min(
+                    max(Value, 0) * 0.4 * (1 - 0.8^[[XENOPHOBIC_SELFSUSTAINING_QUALIFYING_PLANET_COUNT]]),
+                    3 * Target.HabitableSize  // Cap malus at the self-sustaining bonus
+                )
+'''
+
+XENOPHOBIC_SELFSUSTAINING_QUALIFYING_PLANET_COUNT
+'''
+Statistic Count condition = And [
+                    Planet
+                    Not Or [
+                        Species name = Source.Species
+                        Species name = "SP_EXOBOT"
+                    ]
+                    Not Population high = 0
+                    WithinStarlaneJumps jumps = 5 condition = Source
+                    WithinStarlaneJumps
+                                  jumps = 2
+                              condition = ExploredByEmpire
+                                          empire = Source.Owner
+                ]
+'''
+
+// single argument should be the name of the species capitalized
+XENOPHOBIC_OTHER
+'''     EffectsGroup 
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Not Or [ 
+                    Species name = Source.Species
+                    Species name = "SP_EXOBOT"
+                ]
+                Not Population high = 0
+                Not Contains Building name = "BLD_CONC_CAMP"
+                WithinStarlaneJumps jumps = 5 condition = Source
+            ]
+            activation = Planet
+            stackinggroup = "XENOPHOBIC_LABEL_@1@_OTHER"
+            accountinglabel = "XENOPHOBIC_LABEL_@1@_OTHER"
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
+            effects = SetTargetIndustry value = Value + Target.Population
+                        * (NamedReal name = "XENOPHOBIC_OTHER_TARGET_INDUSTRY_PERPOP"
+                                     value = -0.5 * [[INDUSTRY_PER_POP]])
+'''
