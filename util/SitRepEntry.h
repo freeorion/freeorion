@@ -12,6 +12,7 @@
 #include "Export.h"
 
 class ObjectMap;
+class UniverseObject;
 struct ScriptingContext;
 
 //! Represents a situation report entry for a significant game event.
@@ -59,14 +60,14 @@ private:
 [[nodiscard]] SitRepEntry CreateShipHullUnlockedSitRep(const std::string& ship_hull_name, int current_turn);
 [[nodiscard]] SitRepEntry CreateShipPartUnlockedSitRep(const std::string& ship_part_name, int current_turn);
 
-[[nodiscard]] FO_COMMON_API SitRepEntry CreateCombatSitRep(int system_id, int log_id, int empire_id);
+[[nodiscard]] FO_COMMON_API SitRepEntry CreateCombatSitRep(int system_id, int log_id, int empire_id, int current_turn);
 [[nodiscard]] FO_COMMON_API SitRepEntry CreateGroundCombatSitRep(int planet_id, int empire_id);
 [[nodiscard]] FO_COMMON_API SitRepEntry CreatePlanetCapturedSitRep(int planet_id, int empire_id);
 [[nodiscard]] FO_COMMON_API SitRepEntry CreatePlanetRebelledSitRep(int planet_id, int empire_id);
 [[nodiscard]] FO_COMMON_API SitRepEntry CreateCombatDamagedObjectSitRep(
-    int object_id, int combat_system_id, int empire_id, const ObjectMap& objects, int current_turn);
+    const UniverseObject* obj, int combat_system_id, int empire_id, int current_turn);
 [[nodiscard]] FO_COMMON_API SitRepEntry CreateCombatDestroyedObjectSitRep(
-    int object_id, int combat_system_id, int empire_id, int current_turn);
+    const UniverseObject* obj, int combat_system_id, int empire_id, int current_turn);
 [[nodiscard]] SitRepEntry               CreatePlanetDepopulatedSitRep(int planet_id);
 [[nodiscard]] FO_COMMON_API SitRepEntry CreatePlanetColonizedSitRep(int planet_id, const std::string& species);
 [[nodiscard]] FO_COMMON_API SitRepEntry CreatePlanetOutpostedSitRep(int planet_id);

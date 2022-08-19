@@ -156,7 +156,7 @@ SitRepEntry CreateShipPartUnlockedSitRep(const std::string& ship_part_name, int 
     return sitrep;
 }
 
-SitRepEntry CreateCombatSitRep(int system_id, int log_id, int enemy_id) {
+SitRepEntry CreateCombatSitRep(int system_id, int log_id, int enemy_id, int current_turn) {
     std::string template_string = (enemy_id == ALL_EMPIRES)
         ? UserStringNop("SITREP_COMBAT_SYSTEM")
         : UserStringNop("SITREP_COMBAT_SYSTEM_ENEMY");
@@ -164,7 +164,7 @@ SitRepEntry CreateCombatSitRep(int system_id, int log_id, int enemy_id) {
         ? UserStringNop("SITREP_COMBAT_SYSTEM_LABEL")
         : UserStringNop("SITREP_COMBAT_SYSTEM_ENEMY_LABEL");
     SitRepEntry sitrep(
-        std::move(template_string), CurrentTurn() + 1,
+        std::move(template_string), current_turn + 1,
         "icons/sitrep/combat.png", std::move(label_string), true);
     sitrep.AddVariable(VarText::SYSTEM_ID_TAG, std::to_string(system_id));
     sitrep.AddVariable(VarText::COMBAT_ID_TAG, std::to_string(log_id));
@@ -231,16 +231,16 @@ namespace {
     }
 }
 
-SitRepEntry CreateCombatDamagedObjectSitRep(int object_id, int combat_system_id, int empire_id,
-                                            const ObjectMap& objects, int current_turn)
+SitRepEntry CreateCombatDamagedObjectSitRep(const UniverseObject* obj, int combat_system_id,
+                                            int empire_id, int current_turn)
 {
-    auto obj = objects.get(object_id);
     if (!obj)
         return GenericCombatDamagedObjectSitrep(combat_system_id, current_turn);
+    int object_id = obj->ID();
 
     SitRepEntry sitrep;
 
-    if (auto ship = std::dynamic_pointer_cast<const Ship>(obj)) {
+    if (auto ship = dynamic_cast<const Ship*>(obj)) {
         if (ship->Unowned())
             sitrep = SitRepEntry(
                 UserStringNop("SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM"),
@@ -256,7 +256,7 @@ SitRepEntry CreateCombatDamagedObjectSitRep(int object_id, int combat_system_id,
         sitrep.AddVariable(VarText::SHIP_ID_TAG,   std::to_string(object_id));
         sitrep.AddVariable(VarText::DESIGN_ID_TAG, std::to_string(ship->DesignID()));
 
-    } else if (auto planet = std::dynamic_pointer_cast<const Planet>(obj)) {
+    } else if (auto planet = dynamic_cast<const Planet*>(obj)) {
         if (planet->Unowned())
             sitrep = SitRepEntry(
                 UserStringNop("SITREP_UNOWNED_PLANET_ATTACKED_AT_SYSTEM"),
@@ -281,18 +281,19 @@ SitRepEntry CreateCombatDamagedObjectSitRep(int object_id, int combat_system_id,
     return sitrep;
 }
 
-SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_id, int empire_id,
-                                              int current_turn)
+SitRepEntry CreateCombatDestroyedObjectSitRep(const UniverseObject* obj, int combat_system_id,
+                                              int empire_id, int current_turn)
 {
-    auto obj = EmpireKnownObjects(empire_id).get(object_id); // TODO: pass in objects?
     if (!obj) {
-        DebugLogger() << "CreateCombatDestroyedObjectSitRep: Object " << object_id << " does not exist for empire " << empire_id;
+        DebugLogger() << "CreateCombatDestroyedObjectSitRep: passed null object";
         return GenericCombatDestroyedObjectSitrep(combat_system_id, current_turn);
     }
+    int object_id = obj->ID();
 
     SitRepEntry sitrep;
 
-    if (auto ship = std::dynamic_pointer_cast<const Ship>(obj)) {
+    if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP) {
+        auto ship = static_cast<const Ship*>(obj);
         if (ship->Unowned())
             sitrep = SitRepEntry(
                 UserStringNop("SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM"),
@@ -314,7 +315,8 @@ SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_i
         sitrep.AddVariable(VarText::SHIP_ID_TAG,   std::to_string(object_id));
         sitrep.AddVariable(VarText::DESIGN_ID_TAG, std::to_string(ship->DesignID()));
 
-    } else if (auto fleet = std::dynamic_pointer_cast<const Fleet>(obj)) {
+    } else if (obj->ObjectType() == UniverseObjectType::OBJ_FLEET) {
+        auto fleet = static_cast<const Fleet*>(obj);
         if (fleet->Unowned())
             sitrep = SitRepEntry(
                 UserStringNop("SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM"),
@@ -329,7 +331,8 @@ SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_i
                 UserStringNop("SITREP_FLEET_DESTROYED_AT_SYSTEM_LABEL"), true);
         sitrep.AddVariable(VarText::FLEET_ID_TAG, std::to_string(object_id));
 
-    } else if (auto planet = std::dynamic_pointer_cast<const Planet>(obj)) {
+    } else if (obj->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+        auto planet = static_cast<const Planet*>(obj);
         if (planet->Unowned())
             sitrep = SitRepEntry(
                 UserStringNop("SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM"),
@@ -344,7 +347,8 @@ SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_i
                 UserStringNop("SITREP_PLANET_DESTROYED_AT_SYSTEM_LABEL"), true);
         sitrep.AddVariable(VarText::PLANET_ID_TAG, std::to_string(object_id));
 
-    } else if (auto building = std::dynamic_pointer_cast<const Building>(obj)) {
+    } else if (obj->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
+        auto building = static_cast<const Building*>(obj);
         if (building->Unowned())
             sitrep = SitRepEntry(
                 UserStringNop("SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM"),
@@ -359,6 +363,7 @@ SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_i
                 UserStringNop("SITREP_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM_LABEL"), true);
         sitrep.AddVariable(VarText::BUILDING_ID_TAG, std::to_string(object_id));
         sitrep.AddVariable(VarText::PLANET_ID_TAG,   std::to_string(building->PlanetID()));
+
     } else {
         sitrep = GenericCombatDestroyedObjectSitrep(combat_system_id, current_turn);
     }

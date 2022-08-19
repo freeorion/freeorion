@@ -2644,8 +2644,6 @@ namespace {
         CombatLogManager& log_manager = GetCombatLogManager();
 
         for (CombatInfo& combat_info : combats) {
-            const ObjectMap& objects{combat_info.objects};
-
             // add combat log entry
             int log_id = log_manager.AddNewLog(CombatLog{combat_info});
 
@@ -2653,7 +2651,8 @@ namespace {
             for (int empire_id : combat_info.empire_ids) {
                 if (auto empire{combat_info.GetEmpire(empire_id)})
                     empire->AddSitRepEntry(CreateCombatSitRep(
-                        combat_info.system_id, log_id, EnemyId(empire_id, combat_info.empire_ids)));
+                        combat_info.system_id, log_id, EnemyId(empire_id, combat_info.empire_ids),
+                        combat_info.turn));
             }
 
             // sitreps about destroyed objects
@@ -2662,8 +2661,9 @@ namespace {
             {
                 if (auto empire{combat_info.GetEmpire(knowing_empire_id)}) {
                     for (int dest_obj_id : known_destroyed_object_ids) {
-                        empire->AddSitRepEntry(CreateCombatDestroyedObjectSitRep(
-                            dest_obj_id, combat_info.system_id, knowing_empire_id, combat_info.turn));
+                        if (auto* obj = combat_info.objects.getRaw(dest_obj_id))
+                            empire->AddSitRepEntry(CreateCombatDestroyedObjectSitRep(
+                                obj, combat_info.system_id, knowing_empire_id, combat_info.turn));
                     }
                 }
             }
@@ -2676,20 +2676,24 @@ namespace {
                     //DebugLogger() << " ... Object is destroyed and doesn't need a sitrep.";
                     continue;
                 }
+                const auto* obj = combat_info.objects.getRaw(damaged_object_id);
+                if (!obj) {
+                    ErrorLogger() << "CreateCombatSitreps couldn't find damaged object with id: " << damaged_object_id;
+                    continue;
+                }
+
                 // which empires know about this object?
                 for (auto& [viewing_empire_id, empire_known_objects] : combat_info.empire_object_visibility) {
                     // does this empire know about this object?
                     auto damaged_obj_it = empire_known_objects.find(damaged_object_id);
                     if (damaged_obj_it == empire_known_objects.end())
                         continue;
-                    //DebugLogger() << " ... Empire " << viewing_empire_id << " has visibility " << damaged_obj_it->second << " of object " << damaged_object_id;
                     if (damaged_obj_it->second < Visibility::VIS_BASIC_VISIBILITY)
                         continue;
 
                     if (auto empire = combat_info.GetEmpire(viewing_empire_id))
                         empire->AddSitRepEntry(CreateCombatDamagedObjectSitRep(
-                            damaged_object_id, combat_info.system_id, viewing_empire_id,
-                            objects, combat_info.turn));
+                            obj, combat_info.system_id, viewing_empire_id, combat_info.turn));
                 }
             }
         }
