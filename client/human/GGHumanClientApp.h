@@ -92,8 +92,7 @@ public:
     void DecAutoTurns(int n = 1);       ///< Decrease auto turn counter
     void EliminateSelf();               ///< Resign from the game
 
-    [[nodiscard]] ClientUI& GetClientUI()
-    { return *m_ui.get(); }
+    [[nodiscard]] ClientUI& GetClientUI() { return *m_ui.get(); }
 
     void Reinitialize();
     [[nodiscard]] float GLVersion() const;

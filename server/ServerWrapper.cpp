@@ -154,16 +154,15 @@ namespace {
 
     auto GetAllSpecies() -> py::list
     {
-        py::list            species_list;
-        for (const auto& entry : GetSpeciesManager()) {
+        py::list species_list;
+        for (const auto& entry : GetSpeciesManager())
             species_list.append(py::object(entry.first));
-        }
         return species_list;
     }
 
     auto GetPlayableSpecies() -> py::list
     {
-        py::list            species_list;
+        py::list species_list;
         SpeciesManager& species_manager = GetSpeciesManager();
         for (auto it = species_manager.playable_begin();
              it != species_manager.playable_end(); ++it)
@@ -173,7 +172,7 @@ namespace {
 
     auto GetNativeSpecies() -> py::list
     {
-        py::list            species_list;
+        py::list species_list;
         SpeciesManager& species_manager = GetSpeciesManager();
         for (auto it = species_manager.native_begin();
              it != species_manager.native_end(); ++it)

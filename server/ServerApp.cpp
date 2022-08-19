@@ -917,10 +917,10 @@ void ServerApp::SendNewGameStartMessages() {
         bool use_binary_serialization = player_connection->IsBinarySerializationUsed();
         player_connection->SendMessage(GameStartMessage(m_single_player_game,    empire_id,
                                                         m_current_turn,          m_empires,
-                                                        m_universe,              GetSpeciesManager(),
-                                                        GetCombatLogManager(),   GetSupplyManager(),
+                                                        m_universe,              m_species_manager,
+                                                        GetCombatLogManager(),   m_supply_manager,
                                                         player_info_map,         m_galaxy_setup_data,
-                                                        use_binary_serialization, !player_connection->IsLocalConnection()));
+                                                        use_binary_serialization,!player_connection->IsLocalConnection()));
     }
 }
 
@@ -1498,16 +1498,16 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
             player_connection->SendMessage(GameStartMessage(m_single_player_game, empire_id,
                                                             m_current_turn, m_empires, m_universe,
-                                                            GetSpeciesManager(), GetCombatLogManager(),
-                                                            GetSupplyManager(), player_info_map, *orders, sss,
+                                                            m_species_manager, GetCombatLogManager(),
+                                                            m_supply_manager, player_info_map, *orders, sss,
                                                             m_galaxy_setup_data, use_binary_serialization,
                                                             !player_connection->IsLocalConnection()));
 
         } else if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
             player_connection->SendMessage(GameStartMessage(m_single_player_game, empire_id,
                                                             m_current_turn, m_empires, m_universe,
-                                                            GetSpeciesManager(), GetCombatLogManager(),
-                                                            GetSupplyManager(), player_info_map, *orders,
+                                                            m_species_manager, GetCombatLogManager(),
+                                                            m_supply_manager, player_info_map, *orders,
                                                             psgd.ui_data.get(), m_galaxy_setup_data,
                                                             use_binary_serialization,
                                                             !player_connection->IsLocalConnection()));
@@ -1518,8 +1518,8 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
             player_connection->SendMessage(GameStartMessage(m_single_player_game, ALL_EMPIRES,
                                                             m_current_turn, m_empires, m_universe,
-                                                            GetSpeciesManager(), GetCombatLogManager(),
-                                                            GetSupplyManager(), player_info_map,
+                                                            m_species_manager, GetCombatLogManager(),
+                                                            m_supply_manager, player_info_map,
                                                             m_galaxy_setup_data, use_binary_serialization,
                                                             !player_connection->IsLocalConnection()));
         } else {
@@ -1844,8 +1844,8 @@ void ServerApp::AddObserverPlayerIntoGame(const PlayerConnectionPtr& player_conn
         // simply sends GAME_START message so established player will known he is in the game now
         player_connection->SendMessage(GameStartMessage(m_single_player_game, ALL_EMPIRES,
                                                         m_current_turn, m_empires, m_universe,
-                                                        GetSpeciesManager(), GetCombatLogManager(),
-                                                        GetSupplyManager(), player_info_map,
+                                                        m_species_manager, GetCombatLogManager(),
+                                                        m_supply_manager, player_info_map,
                                                         m_galaxy_setup_data, use_binary_serialization,
                                                         !player_connection->IsLocalConnection()));
     } else {
@@ -2060,8 +2060,8 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
     player_connection->SendMessage(GameStartMessage(
         m_single_player_game, empire_id,
         m_current_turn, m_empires, m_universe,
-        GetSpeciesManager(), GetCombatLogManager(),
-        GetSupplyManager(), player_info_map, orders,
+        m_species_manager, GetCombatLogManager(),
+        m_supply_manager, player_info_map, orders,
         ui_data,
         m_galaxy_setup_data,
         use_binary_serialization,
@@ -3520,7 +3520,7 @@ void ServerApp::ProcessCombats() {
     for (CombatInfo& combat_info : combats) {
         auto combat_system = combat_info.GetSystem();
         if (combat_system)
-            combat_system->SetLastTurnBattleHere(CurrentTurn());
+            combat_system->SetLastTurnBattleHere(context.current_turn);
 
         DebugLogger(combat) << "Processing combat at " << (combat_system ? combat_system->Name() : "(No System id: " + std::to_string(combat_info.system_id) + ")");
         TraceLogger(combat) << combat_info.objects.Dump();
@@ -3620,7 +3620,7 @@ void ServerApp::PostCombatProcessTurns() {
     // execute all effects and update meters prior to production, research, etc.
     if (GetGameRules().Get<bool>("RULE_RESEED_PRNG_SERVER")) {
         static boost::hash<std::string> pcpt_string_hash;
-        Seed(static_cast<unsigned int>(CurrentTurn()) + pcpt_string_hash(m_galaxy_setup_data.seed));
+        Seed(static_cast<unsigned int>(context.current_turn) + pcpt_string_hash(m_galaxy_setup_data.seed));
     }
     m_universe.ApplyAllEffectsAndUpdateMeters(context, false);
 
@@ -3816,12 +3816,11 @@ void ServerApp::PostCombatProcessTurns() {
             player->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER)
         {
             bool use_binary_serialization = player->IsBinarySerializationUsed();
-            player->SendMessage(TurnUpdateMessage(empire_id, m_current_turn,
-                                                  m_empires,                          m_universe,
-                                                  GetSpeciesManager(),                GetCombatLogManager(),
-                                                  GetSupplyManager(),                 players,
-                                                  use_binary_serialization,
-                                                  !player->IsLocalConnection()));
+            player->SendMessage(TurnUpdateMessage(empire_id,                m_current_turn,
+                                                  m_empires,                m_universe,
+                                                  m_species_manager,        GetCombatLogManager(),
+                                                  m_supply_manager,         players,
+                                                  use_binary_serialization, !player->IsLocalConnection()));
         }
     }
     m_turn_expired = false;

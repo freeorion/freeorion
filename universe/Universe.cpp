@@ -2738,7 +2738,7 @@ void Universe::UpdateEmpireObjectVisibilities(EmpireManager& empires) {
     ShareVisbilitiesBetweenAllies(*this, empires, m_empire_object_visibility, m_empire_object_visible_specials);
 }
 
-void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() {
+void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() { // TODO: pass in current_turn
     //DebugLogger() << "Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns()";
 
     // assumes m_empire_object_visibility has been updated
@@ -3123,7 +3123,7 @@ const bool& Universe::UniverseObjectSignalsInhibited() const
 void Universe::InhibitUniverseObjectSignals(bool inhibit)
 { m_inhibit_universe_object_signals = inhibit; }
 
-void Universe::UpdateStatRecords(EmpireManager& empires) {
+void Universe::UpdateStatRecords(EmpireManager& empires) { // TODO: pass in current turn
     int current_turn = CurrentTurn();
     if (current_turn == INVALID_GAME_TURN)
         return;

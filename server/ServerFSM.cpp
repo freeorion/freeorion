@@ -870,7 +870,7 @@ MPLobby::MPLobby(my_context c) :
     ServerApp& server = Server();
     server.LoadChatHistory();
     m_lobby_data->game_rules = GetGameRules().GetRulesAsStrings();
-    const SpeciesManager& sm = GetSpeciesManager();
+    const SpeciesManager& sm = server.GetSpeciesManager();
     if (server.IsHostless()) {
         DebugLogger(FSM) << "(ServerFSM) MPLobby. Fill MPLobby data from the previous game.";
 
@@ -1130,7 +1130,7 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
                               const Networking::AuthRoles& roles)
 {
     ServerApp& server = Server();
-    const SpeciesManager& sm = GetSpeciesManager();
+    const SpeciesManager& sm = server.GetSpeciesManager();
 
     if (context<ServerFSM>().EstablishPlayer(player_connection,
                                              player_name,
@@ -1388,9 +1388,9 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                     psd.empire_name = GenerateEmpireName(psd.player_name, incoming_lobby_data.players);
                 if (psd.starting_species_name.empty()) {
                     if (m_lobby_data->seed != "")
-                        psd.starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
+                        psd.starting_species_name = server.m_species_manager.RandomPlayableSpeciesName();
                     else
-                        psd.starting_species_name = GetSpeciesManager().SequentialPlayableSpeciesName(m_ai_next_index);
+                        psd.starting_species_name = server.m_species_manager.SequentialPlayableSpeciesName(m_ai_next_index);
                 }
 
             } else if (psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
@@ -1399,7 +1399,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 if (psd.empire_name.empty())
                     psd.empire_name = psd.player_name;
                 if (psd.starting_species_name.empty())
-                    psd.starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
+                    psd.starting_species_name = server.m_species_manager.RandomPlayableSpeciesName();
             }
         }
 

@@ -4814,9 +4814,11 @@ void SpeciesOpinion::Eval(const ScriptingContext& parent_context,
         return;
     }
 
+    const auto& sm{parent_context.species};
 
     if (m_content && m_content->LocalCandidateInvariant()) {
-        auto process_objects_with_different_species = [search_domain, &matches, &non_matches, this]
+        auto process_objects_with_different_species =
+            [&sm, search_domain, &matches, &non_matches, this]
             (const auto& species_for_objects, std::string content)
         {
             // determine all unique species
@@ -4829,7 +4831,6 @@ void SpeciesOpinion::Eval(const ScriptingContext& parent_context,
             std::vector<std::string_view> matching_species;
             matching_species.reserve(unique_species.size());
 
-            const auto& sm{GetSpeciesManager()};
             if (sm.empty()) // forces check for pending species
                 DebugLogger() << "SpeciesOpinion found no species...";
 
@@ -4869,10 +4870,10 @@ void SpeciesOpinion::Eval(const ScriptingContext& parent_context,
                                           species_for_objects, is_matching_species);
         };
 
-        auto process_objects_with_same_species = [search_domain, &matches, &non_matches, this]
+        auto process_objects_with_same_species =
+            [&sm, search_domain, &matches, &non_matches, this]
             (std::string species_name, std::string content)
         {
-            const auto& sm{GetSpeciesManager()};
             if (sm.empty()) // forces check for pending species
                 DebugLogger() << "SpeciesOpinion found no species...";
             const auto* species = sm.GetSpeciesUnchecked(species_name);

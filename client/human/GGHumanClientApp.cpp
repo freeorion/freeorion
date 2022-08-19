@@ -589,7 +589,7 @@ void GGHumanClientApp::NewSinglePlayerGame(bool quickstart) {
     if (human_player_setup_data.starting_species_name != "RANDOM" &&
         !GetSpecies(human_player_setup_data.starting_species_name))
     {
-        const SpeciesManager& sm = GetSpeciesManager();
+        const SpeciesManager& sm = this->GetSpeciesManager();
         if (sm.NumPlayableSpecies() < 1)
             human_player_setup_data.starting_species_name.clear();
         else
