@@ -135,14 +135,14 @@ private:
 struct FO_COMMON_API TechCategory {
     TechCategory() = default;
     TechCategory(std::string name_, std::string&& graphic_,
-                 std::array<unsigned char, 4> colour_):
+                 std::array<uint8_t, 4> colour_):
         name(std::move(name_)),
         graphic(std::move(graphic_)),
         colour(colour_)
     {}
-    std::string name;                       ///< name of category
-    std::string graphic;                    ///< icon that represents catetegory
-    std::array<unsigned char, 4> colour{{255, 255, 255, 255}}; ///< colour associatied with category
+    std::string             name;                           ///< name of category
+    std::string             graphic;                        ///< icon that represents catetegory
+    std::array<uint8_t, 4>  colour{{255, 255, 255, 255}};   ///< colour associatied with category
 };
 
 namespace CheckSums {

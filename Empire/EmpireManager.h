@@ -16,7 +16,7 @@
 
 class Empire;
 class UniverseObject;
-typedef std::array<unsigned char, 4> EmpireColor;
+typedef std::array<uint8_t, 4> EmpireColor;
 
 /** Maintains all of the Empire objects that exist in the application. */
 class FO_COMMON_API EmpireManager {
@@ -113,7 +113,7 @@ private:
 };
 
 /** The colors that are available for use for empires in the game. */
-[[nodiscard]] FO_COMMON_API const std::vector<std::array<unsigned char, 4>>& EmpireColors();
+[[nodiscard]] FO_COMMON_API const std::vector<std::array<uint8_t, 4>>& EmpireColors();
 
 /** Initialize empire colors from \p path */
 FO_COMMON_API void InitEmpireColors(const boost::filesystem::path& path);

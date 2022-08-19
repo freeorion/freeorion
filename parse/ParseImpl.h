@@ -136,7 +136,7 @@ namespace parse::detail {
         single_or_repeated_string<std::set<std::string>> one_or_more_string_tokens;
     };
 
-    using color_parser_signature = std::array<unsigned char, 4> ();
+    using color_parser_signature = std::array<uint8_t, 4> ();
     using color_rule_type = rule<color_parser_signature>;
     using color_grammar_type = grammar<color_parser_signature>;
 

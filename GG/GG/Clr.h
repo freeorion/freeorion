@@ -38,15 +38,12 @@ struct Clr
     constexpr Clr() = default;
 
     /** ctor that constructs a Clr from four ints that represent the color channels */
-    constexpr Clr(uint8_t r_,
-                  uint8_t g_,
-                  uint8_t b_,
-                  uint8_t a_) :
+    constexpr Clr(uint8_t r_, uint8_t g_, uint8_t b_, uint8_t a_) :
         r(r_), g(g_), b(b_), a(a_)
     {}
 
     /** ctor that constructs a Clr from std::array that represents the color channels */
-    constexpr Clr(const std::array<uint8_t, 4>& clr) :
+    constexpr Clr(std::array<uint8_t, 4> clr) :
         r(std::get<0>(clr)),
         g(std::get<1>(clr)),
         b(std::get<2>(clr)),

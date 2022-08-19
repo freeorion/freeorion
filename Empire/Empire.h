@@ -21,7 +21,7 @@ struct UnlockableItem;
 class ShipDesign;
 class ResourcePool;
 
-using EmpireColor = std::array<unsigned char, 4>;
+using EmpireColor = std::array<uint8_t, 4>;
 
 
 //! Research status of techs, relating to whether they have been or can be

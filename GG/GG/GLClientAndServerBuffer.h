@@ -86,7 +86,7 @@ protected:
 ///////////////////////////////////////////////////////////////////////////
 // GLRGBAColorBuffer specialized class for RGBA color values
 ///////////////////////////////////////////////////////////////////////////
-class GG_API GLRGBAColorBuffer : public GLClientAndServerBufferBase<unsigned char>
+class GG_API GLRGBAColorBuffer : public GLClientAndServerBufferBase<uint8_t>
 {
 public:
     GLRGBAColorBuffer();

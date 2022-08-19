@@ -399,13 +399,9 @@ namespace parse {
 #endif
     }
 
-    typedef std::array<unsigned char, 4> ColorType;
+    typedef std::array<uint8_t, 4> ColorType;
 
-    inline std::array<unsigned char, 4> construct_color(
-        unsigned char r,
-        unsigned char g,
-        unsigned char b,
-        unsigned char a)
+    inline std::array<uint8_t, 4> construct_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     { return {{r, g, b, a}}; }
 
     BOOST_PHOENIX_ADAPT_FUNCTION(ColorType, construct_color_, construct_color, 4)

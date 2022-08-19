@@ -42,7 +42,7 @@ namespace {
     }
 
     void insert_category(std::map<std::string, std::unique_ptr<TechCategory>, std::less<>>& categories,
-                         std::string& name, std::string& graphic, const std::array<unsigned char, 4>& color)
+                         std::string& name, std::string& graphic, std::array<uint8_t, 4> color)
     {
         auto category_ptr = std::make_unique<TechCategory>(name, std::move(graphic), color);
         categories.emplace(std::move(name), std::move(category_ptr));
@@ -53,9 +53,9 @@ namespace {
         auto graphic = boost::python::extract<std::string>(kw["graphic"])();
         auto colour = boost::python::extract<boost::python::tuple>(kw["colour"])();
 
-        std::array<unsigned char, 4> color{0, 0, 0, 255};
+        std::array<uint8_t, 4> color{0, 0, 0, 255};
 
-        boost::python::stl_input_iterator<unsigned char> colour_begin(colour), colour_end;
+        boost::python::stl_input_iterator<uint8_t> colour_begin(colour), colour_end;
         int colour_index = 0;
         for (auto it = colour_begin; it != colour_end; ++it) {
             if (colour_index < 4)

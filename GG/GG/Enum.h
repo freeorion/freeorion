@@ -104,7 +104,7 @@ private:
         m_values[place_idx] = value;
     }
 
-    static constexpr std::size_t CAPACITY = std::numeric_limits<unsigned char>::max();
+    static constexpr std::size_t CAPACITY = std::numeric_limits<uint8_t>::max();
 
 
     [[nodiscard]] static constexpr std::pair<std::string_view, std::string_view> Split(

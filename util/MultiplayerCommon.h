@@ -159,7 +159,7 @@ struct FO_COMMON_API SaveGameUIData {
 struct FO_COMMON_API SaveGameEmpireData {
     SaveGameEmpireData() = default;
     SaveGameEmpireData(int id, std::string ename, std::string pname,
-                       std::array<unsigned char, 4> c, bool a, bool e, bool w) :
+                       std::array<uint8_t, 4> c, bool a, bool e, bool w) :
         empire_id(id),
         empire_name(std::move(ename)),
         player_name(std::move(pname)),
@@ -172,7 +172,7 @@ struct FO_COMMON_API SaveGameEmpireData {
     int         empire_id = ALL_EMPIRES;
     std::string empire_name;
     std::string player_name;
-    std::array<unsigned char, 4> color{{0, 0, 0, 0}};
+    std::array<uint8_t, 4> color = {};
     bool        authenticated = false;
     bool        eliminated = false;
     bool        won = false;
@@ -212,7 +212,7 @@ struct PlayerSetupData {
     std::string             player_name;
     int                     player_id = Networking::INVALID_PLAYER_ID;
     std::string             empire_name;
-    std::array<unsigned char, 4> empire_color{{0, 0, 0, 0}};
+    std::array<uint8_t, 4>  empire_color = {};
     std::string             starting_species_name;
     //! When loading a game, the ID of the empire that this player will control
     int                     save_game_empire_id = ALL_EMPIRES;
@@ -268,10 +268,10 @@ struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
 
 /** The data structure stores information about latest chat massages. */
 struct FO_COMMON_API ChatHistoryEntity {
-    boost::posix_time::ptime     timestamp;
-    std::string                  player_name;
-    std::string                  text;
-    std::array<unsigned char, 4> text_color{{192, 192, 192, 255}};
+    boost::posix_time::ptime    timestamp;
+    std::string                 player_name;
+    std::string                 text;
+    std::array<uint8_t, 4>      text_color{{192, 192, 192, 255}};
 };
 
 /** Information about one player that other players are informed of.  Assembled by server and sent to players. */
