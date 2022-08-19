@@ -468,10 +468,6 @@ std::string ComplexVariableDump(const std::vector<std::string>& property_names,
     }
     std::string retval{property_names.back()};
 
-    // TODO: Depending on the property name, the parameter names will vary.
-    //       Need to handle each case correctly, in order for the Dumped
-    //       text to be parsable as the correct ComplexVariable.
-
     if (int_ref1)
         retval += " int1 = " + int_ref1->Dump();
     if (int_ref2)
