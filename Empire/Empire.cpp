@@ -464,8 +464,7 @@ bool Empire::PolicyAvailable(std::string_view name) const
 { return m_available_policies.count(name); }
 
 bool Empire::PolicyPrereqsAndExclusionsOK(std::string_view name, int current_turn) const {
-    const std::string name_str{name}; // TODO: remove this when possible for heterogenous lookup
-    const Policy* policy_to_adopt = GetPolicy(name_str);
+    const Policy* policy_to_adopt = GetPolicy(name);
     if (!policy_to_adopt)
         return false;
 
@@ -482,7 +481,8 @@ bool Empire::PolicyPrereqsAndExclusionsOK(std::string_view name, int current_tur
             ErrorLogger() << "Couldn't get already adopted policy: " << already_adopted_policy_name;
             continue;
         }
-        if (already_adopted_policy->Exclusions().count(name_str)) {
+        const auto& excl = already_adopted_policy->Exclusions();
+        if (std::any_of(excl.begin(), excl.end(), [name](const auto& x) { return name == x; })) {
             // already adopted policy has an exclusion with the policy to be adopted
             return false;
         }
