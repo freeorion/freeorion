@@ -127,19 +127,17 @@ std::shared_ptr<const UniverseObject> Empire::Source(const ObjectMap& objects) c
     }
 
     // Find any planet / ship owned by the empire
-    // TODO determine if allExisting() is faster and acceptable
-    for (const auto& obj : objects.all<Planet>()) {
-        if (obj->OwnedBy(m_id)) {
-            m_source_id = obj->ID();
-            return obj;
-        }
-    }
-    for (const auto& obj : objects.all<Ship>()) {
-        if (obj->OwnedBy(m_id)) {
-            m_source_id = obj->ID();
-            return obj;
-        }
-    }
+    auto owned = [this](const auto& o) { return o.second->OwnedBy(m_id); };
+
+    const auto& planets = objects.allExisting<Planet>();
+    auto p_it = std::find_if(planets.begin(), planets.end(), owned);
+    if (p_it != planets.end())
+        return p_it->second;
+
+    auto ships = objects.allExisting<Ship>();
+    auto s_it = std::find_if(ships.begin(), ships.end(), owned);
+    if (s_it != ships.end())
+        return s_it->second;
 
     m_source_id = INVALID_OBJECT_ID;
     return nullptr;
