@@ -961,12 +961,10 @@ namespace {
         if (ship->GetMeter(MeterType::METER_INFLUENCE)->Initial() != 0.0f)
             meters_icons.emplace_back(MeterType::METER_INFLUENCE,      InfluenceIcon());
 
-        for (auto& meter : {MeterType::METER_SHIELD, MeterType::METER_FUEL,
-                            MeterType::METER_DETECTION, MeterType::METER_STEALTH,
-                            MeterType::METER_SPEED})
-        {
-            meters_icons.emplace_back(meter, ClientUI::MeterIcon(meter));
-        }
+        for (auto meter : {MeterType::METER_SHIELD,     MeterType::METER_FUEL,
+                           MeterType::METER_DETECTION,  MeterType::METER_STEALTH,
+                           MeterType::METER_SPEED})
+        { meters_icons.emplace_back(meter, ClientUI::MeterIcon(meter)); }
 
         m_stat_icons.reserve(meters_icons.size());
         for (auto& [meter_type, icon_texture] : meters_icons) {
