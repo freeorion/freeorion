@@ -7,7 +7,6 @@
 #include <functional>
 #include <iomanip>
 #include <iterator>
-#include <utility>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
