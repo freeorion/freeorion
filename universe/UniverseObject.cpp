@@ -187,7 +187,7 @@ std::string UniverseObject::Dump(unsigned short ntabs) const {
               .append(std::to_string(turn_amount.second)).append(") ");
     retval.append("  Meters: ");
     for (auto& [meter_type, meter] : m_meters)
-        retval.append(std::string().append(ValueRef::MeterToName(meter_type))).append(": ").append(meter.Dump().data()).append("  ");
+        retval.append(ValueRef::MeterToName(meter_type)).append(": ").append(meter.Dump().data()).append("  ");
     return retval;
 }
 
