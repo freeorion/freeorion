@@ -11,11 +11,6 @@
 #include <cstdlib>
 #include <mutex>
 
-#if defined(FREEORION_WIN32)
-#  include <codecvt>
-#  include <locale>
-#endif
-
 #if defined(FREEORION_MACOSX)
 #  include <iostream>
 #  include <sys/param.h>
@@ -35,9 +30,9 @@
 #endif
 
 #if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_NETBSD) || defined(FREEORION_DRAGONFLY) || defined(FREEORION_HAIKU) || defined(FREEORION_ANDROID)
-#include "binreloc.h"
-#include <unistd.h>
-#include <boost/filesystem/fstream.hpp>
+#  include "binreloc.h"
+#  include <unistd.h>
+#  include <boost/filesystem/fstream.hpp>
 
 #  if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
 #    include <sys/sysctl.h>
@@ -47,11 +42,14 @@
 #  endif
 #endif
 
-# if defined(FREEORION_WIN32) || defined(FREEORION_MACOSX) || defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_NETBSD) || defined(FREEORION_DRAGONFLY) || defined(FREEORION_HAIKU) || defined(FREEORION_ANDROID)
-# else
+#if defined(FREEORION_WIN32) || defined(FREEORION_MACOSX) || defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_NETBSD) || defined(FREEORION_DRAGONFLY) || defined(FREEORION_HAIKU) || defined(FREEORION_ANDROID)
+#else
 #  error Neither FREEORION_LINUX, FREEORION_MACOSX, FREEORION_FREEBSD, FREEORION_OPENBSD, FREEORION_NETBSD, FREEORION_DRAGONFLY, FREEORION_WIN32, FREEORION_HAIKU nor FREEORION_ANDROID set
 #endif
 
+#if defined(FREEORION_WIN32)
+#  include <windows.h>
+#endif
 
 namespace fs = ::boost::filesystem;
 
@@ -747,22 +745,33 @@ auto FilenameToPath(std::string const& path_str) -> fs::path
 {
 #if defined(FREEORION_WIN32)
     // convert UTF-8 directory string to UTF-16
-    fs::path::string_type directory_native = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.from_bytes(path_str);
-    return fs::path(directory_native).generic_path();
-#else // defined(FREEORION_WIN32)
+    int utf16_sz = MultiByteToWideChar(CP_UTF8, 0, path_str.data(), path_str.length(), NULL, 0);
+    std::wstring utf16_string(utf16_sz, 0);
+    if (utf16_sz > 0)
+        MultiByteToWideChar(CP_UTF8, 0, path_str.data(), path_str.size(), utf16_string.data(), utf16_sz);
+    static_assert(std::is_same_v<fs::path::string_type, std::wstring>);
+    return fs::path(utf16_string).generic_path();
+#else
     return fs::path(path_str);
-#endif // defined(FREEORION_WIN32)
+#endif
 }
 
 auto PathToString(fs::path const& path) -> std::string
 {
 #if defined(FREEORION_WIN32)
     fs::path::string_type native_string = path.generic_wstring();
-    std::string retval = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(native_string);
-    return retval;
-#else // defined(FREEORION_WIN32)
+    // convert UTF-16 native path to UTF-8
+    int utf8_sz = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS,
+                                      native_string.data(), native_string.size(),
+                                      NULL, 0, NULL, NULL);
+    std::string utf8_string(utf8_sz, 0);
+    if (utf8_sz > 0)
+        WideCharToMultiByte(CP_UTF8, 0, native_string.data(), native_string.size(),
+                            utf8_string.data(), utf8_sz, NULL, NULL);
+    return utf8_string;
+#else
     return path.string();
-#endif // defined(FREEORION_WIN32)
+#endif
 }
 
 #if !defined(FREEORION_ANDROID)
