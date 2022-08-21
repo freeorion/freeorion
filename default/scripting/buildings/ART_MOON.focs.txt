@@ -12,14 +12,16 @@ BuildingType
     ]
     enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
-        [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
-    
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID
                 Planet
             ]
             effects = AddSpecial name = "RESONANT_MOON_SPECIAL"
+
+        EffectsGroup
+            scope = Source
+            effects = Destroy
     ]
     icon = "icons/specials_huge/resonant_moon.png"
 
