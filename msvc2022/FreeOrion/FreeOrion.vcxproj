@@ -126,6 +126,7 @@
       <ForcedIncludeFiles>StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8</AdditionalOptions>
+      <DisableSpecificWarnings>4244; 4251; 4275</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -298,7 +299,9 @@
     <ClCompile Include="..\..\client\ClientNetworking.cpp" />
     <ClCompile Include="..\..\client\human\chmain.cpp" />
     <ClCompile Include="..\..\client\human\GGHumanClientApp.cpp" />
-    <ClCompile Include="..\..\client\human\HumanClientFSM.cpp" />
+    <ClCompile Include="..\..\client\human\HumanClientFSM.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4244; 4251; 4275; 4996</DisableSpecificWarnings>
+    </ClCompile>
     <ClCompile Include="..\..\UI\About.cpp" />
     <ClCompile Include="..\..\UI\AccordionPanel.cpp" />
     <ClCompile Include="..\..\UI\BuildDesignatorWnd.cpp" />
