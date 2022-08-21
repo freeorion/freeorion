@@ -39,7 +39,6 @@ BuildingType
         OwnedBy empire = Source.Owner
         Population high = 0
         Not Planet environment = Uninhabitable species = "SP_UGMORS"
-        Not Contains Building name = "BLD_COL_UGMORS"
         ResourceSupplyConnected empire = Source.Owner condition = And [
             Planet
             OwnedBy empire = Source.Owner
@@ -53,75 +52,75 @@ BuildingType
         OwnedBy empire = Source.Owner
         Population high = 0
         Not Planet environment = Uninhabitable species = "SP_UGMORS"
-        Not Contains Building name = "BLD_COL_SUPER_TEST"
+        Not Contains And [ Building name = "BLD_COL_SUPER_TEST" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_SUPER_TEST"
-        Not Contains Building name = "BLD_COL_ABADDONI"
+        Not Contains And [ Building name = "BLD_COL_ABADDONI" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_ABADDONI"
-        Not Contains Building name = "BLD_COL_BANFORO"
+        Not Contains And [ Building name = "BLD_COL_BANFORO" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_BANFORO"
-        Not Contains Building name = "BLD_COL_CHATO"
+        Not Contains And [ Building name = "BLD_COL_CHATO" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_CHATO"
-        Not Contains Building name = "BLD_COL_CRAY"
+        Not Contains And [ Building name = "BLD_COL_CRAY" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_CRAY"
-        Not Contains Building name = "BLD_COL_DERTHREAN"
+        Not Contains And [ Building name = "BLD_COL_DERTHREAN" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_DERTHREAN"
-        Not Contains Building name = "BLD_COL_EAXAW"
+        Not Contains And [ Building name = "BLD_COL_EAXAW" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_EAXAW"
-        Not Contains Building name = "BLD_COL_EGASSEM"
+        Not Contains And [ Building name = "BLD_COL_EGASSEM" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_EGASSEM"
-        Not Contains Building name = "BLD_COL_ETTY"
+        Not Contains And [ Building name = "BLD_COL_ETTY" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_ETTY"
-        Not Contains Building name = "BLD_COL_FULVER"
+        Not Contains And [ Building name = "BLD_COL_FULVER" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_FULVER"
-        Not Contains Building name = "BLD_COL_FURTHEST"
+        Not Contains And [ Building name = "BLD_COL_FURTHEST" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_FURTHEST"
-        Not Contains Building name = "BLD_COL_GEORGE"
+        Not Contains And [ Building name = "BLD_COL_GEORGE" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_GEORGE"
-        Not Contains Building name = "BLD_COL_GYSACHE"
+        Not Contains And [ Building name = "BLD_COL_GYSACHE" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_GYSACHE"
-        Not Contains Building name = "BLD_COL_HAPPY"
+        Not Contains And [ Building name = "BLD_COL_HAPPY" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_HAPPY"
-        Not Contains Building name = "BLD_COL_HHHOH"
+        Not Contains And [ Building name = "BLD_COL_HHHOH" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_HHHOH"
-        Not Contains Building name = "BLD_COL_HUMAN"
+        Not Contains And [ Building name = "BLD_COL_HUMAN" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_HUMAN"
-        Not Contains Building name = "BLD_COL_KILANDOW"
+        Not Contains And [ Building name = "BLD_COL_KILANDOW" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_KILANDOW"
-        Not Contains Building name = "BLD_COL_KOBUNTURA"
+        Not Contains And [ Building name = "BLD_COL_KOBUNTURA" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_KOBUNTURA"
-        Not Contains Building name = "BLD_COL_LAENFA"
+        Not Contains And [ Building name = "BLD_COL_LAENFA" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_LAENFA"
-        Not Contains Building name = "BLD_COL_MISIORLA"
+        Not Contains And [ Building name = "BLD_COL_MISIORLA" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_MISIORLA"
-        Not Contains Building name = "BLD_COL_MUURSH"
+        Not Contains And [ Building name = "BLD_COL_MUURSH" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_MUURSH"
-        Not Contains Building name = "BLD_COL_PHINNERT"
+        Not Contains And [ Building name = "BLD_COL_PHINNERT" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_PHINNERT"
-        Not Contains Building name = "BLD_COL_SCYLIOR"
+        Not Contains And [ Building name = "BLD_COL_SCYLIOR" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_SCYLIOR"
-        Not Contains Building name = "BLD_COL_SETINON"
+        Not Contains And [ Building name = "BLD_COL_SETINON" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_SETINON"
-        Not Contains Building name = "BLD_COL_SILEXIAN"
+        Not Contains And [ Building name = "BLD_COL_SILEXIAN" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_SILEXIAN"
-        Not Contains Building name = "BLD_COL_SLY"
+        Not Contains And [ Building name = "BLD_COL_SLY" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_SLY"
-        Not Contains Building name = "BLD_COL_SSLITH"
+        Not Contains And [ Building name = "BLD_COL_SSLITH" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_SSLITH"
-        Not Contains Building name = "BLD_COL_TAEGHIRUS"
+        Not Contains And [ Building name = "BLD_COL_TAEGHIRUS" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_TAEGHIRUS"
-        Not Contains Building name = "BLD_COL_TRITH"
+        Not Contains And [ Building name = "BLD_COL_TRITH" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_TRITH"
-        Not Contains Building name = "BLD_COL_REPLICON"
+        Not Contains And [ Building name = "BLD_COL_REPLICON" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_REPLICON"
-        Not Contains Building name = "BLD_COL_UGMORS"
+        Not Contains And [ Building name = "BLD_COL_UGMORS" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_UGMORS"
-        Not Contains Building name = "BLD_COL_EXOBOT"
+        Not Contains And [ Building name = "BLD_COL_EXOBOT" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_EXOBOT"
-        Not Contains Building name = "BLD_COL_BANFORO"
+        Not Contains And [ Building name = "BLD_COL_BANFORO" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_BANFORO"
-        Not Contains Building name = "BLD_COL_KILANDOW"
+        Not Contains And [ Building name = "BLD_COL_KILANDOW" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_KILANDOW"
-        Not Contains Building name = "BLD_COL_MISIORLA"
+        Not Contains And [ Building name = "BLD_COL_MISIORLA" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_MISIORLA"
         ResourceSupplyConnected empire = Source.Owner condition = And [
             Planet

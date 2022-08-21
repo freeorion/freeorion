@@ -88,7 +88,6 @@ BuildingType
         OwnedBy empire = Source.Owner
         Population high = 0
         Not Planet environment = Uninhabitable species = "${id}"
-        Not Contains Building name = "BLD_COL_${name}"
         ${species_condition}
     ]
     enqueuelocation = And [
@@ -228,7 +227,7 @@ exclude_parallel_colonies = ""
 for species in chain((x[0] for x in species_list), species_extinct_techs.keys()):
     name = species[3:]
     exclude_parallel_colonies += f"""\
-        Not Contains Building name = "BLD_COL_{name}"
+        Not Contains And [ Building name = "BLD_COL_{name}" OwnedBy empire = Source.Owner ]
         Not Enqueued type = Building name = "BLD_COL_{name}"
 """
 # remove indent from first line and newline at the end to match format expected by the template
