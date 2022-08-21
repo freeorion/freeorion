@@ -45,6 +45,9 @@ from character.character_strings_module import (
 from common.handlers import init_handlers
 from common.listeners import listener
 from empire.survey_universe import survey_universe
+from ExpansionPlans.ExpansionPlansImplementation import (
+    initialise as init_expansion_plans,
+)
 from freeorion_tools import chat_human
 from freeorion_tools.timers import AITimer
 from generate_orders import (
@@ -56,6 +59,8 @@ from generate_orders import (
     set_game_turn_seed,
     update_resource_pool,
 )
+
+init_expansion_plans()
 
 turn_timer = AITimer("full turn")
 

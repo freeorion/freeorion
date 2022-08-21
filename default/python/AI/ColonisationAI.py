@@ -19,6 +19,12 @@ from colonization.planet_supply import get_planet_supply
 from common.print_utils import Number, Sequence, Table, Text
 from empire.colony_builders import can_build_colony_for_species, get_colony_builders
 from EnumsAI import EmpireProductionTypes, MissionType, PriorityType, ShipRoleType
+from ExpansionPlans import (
+    get_colonisable_outpost_ids,
+    get_colonisable_planet_ids,
+    update_colonisable_outpost_ids,
+    update_colonisable_planet_ids,
+)
 from freeorion_tools import get_ship_part, tech_is_complete
 from freeorion_tools.caching import cache_by_turn_persistent, cache_for_current_turn
 from freeorion_tools.timers import AITimer
@@ -163,8 +169,7 @@ def get_colony_fleets():
 
     sorted_planets = [(planet_id, score[:2]) for planet_id, score in sorted_planets if score[0] > 0]
     # export planets for other AI modules
-    aistate.colonisablePlanetIDs.clear()
-    aistate.colonisablePlanetIDs.update(sorted_planets)
+    update_colonisable_planet_ids(sorted_planets)
 
     evaluated_outpost_planets = assign_colonisation_values(evaluated_outpost_planet_ids, MissionType.OUTPOST, None)
     # if outposted planet would be in supply range, let outpost value be best of outpost value or colonization value
@@ -184,8 +189,7 @@ def get_colony_fleets():
 
     sorted_outposts = [(planet_id, score[:2]) for planet_id, score in sorted_outposts if score[0] > 0]
     # export outposts for other AI modules
-    aistate.colonisableOutpostIDs.clear()
-    aistate.colonisableOutpostIDs.update(sorted_outposts)
+    update_colonisable_outpost_ids(sorted_outposts)
     colonization_timer.stop_print_and_clear()
 
 
@@ -249,7 +253,7 @@ def assign_colony_fleets_to_colonise():
     all_colony_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.COLONISATION)
     send_colony_ships(
         FleetUtilsAI.extract_fleet_ids_without_mission_types(all_colony_fleet_ids),
-        list(aistate.colonisablePlanetIDs.items()),
+        list(get_colonisable_planet_ids().items()),
         MissionType.COLONISATION,
     )
 
@@ -257,7 +261,7 @@ def assign_colony_fleets_to_colonise():
     all_outpost_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.OUTPOST)
     send_colony_ships(
         FleetUtilsAI.extract_fleet_ids_without_mission_types(all_outpost_fleet_ids),
-        list(aistate.colonisableOutpostIDs.items()),
+        list(get_colonisable_outpost_ids().items()),
         MissionType.OUTPOST,
     )
 

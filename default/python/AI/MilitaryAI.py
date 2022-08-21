@@ -17,6 +17,7 @@ from CombatRatingsAI import (
     rating_needed,
 )
 from EnumsAI import MissionType
+from ExpansionPlans import get_colonisable_outpost_ids, get_colonisable_planet_ids
 from freeorion_tools import combine_ratings
 from freeorion_tools.caching import cache_by_turn_persistent
 from target import TargetSystem
@@ -745,12 +746,12 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
         ]
         + [
             pid
-            for pid, (pscore, spec) in list(aistate.colonisableOutpostIDs.items())[:num_targets]
+            for pid, (pscore, spec) in list(get_colonisable_outpost_ids(True).items())[:num_targets]
             if pscore > InvasionAI.MIN_INVASION_SCORE
         ]
         + [
             pid
-            for pid, (pscore, spec) in list(aistate.colonisablePlanetIDs.items())[:num_targets]
+            for pid, (pscore, spec) in list(get_colonisable_planet_ids(True).items())[:num_targets]
             if pscore > InvasionAI.MIN_INVASION_SCORE
         ]
     )
