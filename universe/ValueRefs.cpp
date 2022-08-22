@@ -287,8 +287,7 @@ std::string ValueRefBase::InvariancePattern() const {
 }
 
 MeterType NameToMeter(const std::string_view name) {
-    for (int i = 0; i < static_cast<int>(NAME_BY_METER.size()); i++)
-    {
+    for (int i = 0; i < static_cast<int>(NAME_BY_METER.size()); i++) {
         if (NAME_BY_METER[i] == name)
             return static_cast<MeterType>(i - 1);
     }
