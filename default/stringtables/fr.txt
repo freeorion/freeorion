@@ -5338,6 +5338,36 @@ Politiques
 ENC_POLICY_DESC
 Effets d'amélioration ou situationnels pouvant être adoptés par les empires.
 
+ENC_POLICY_SLOTS
+Choix de Politique
+
+ENC_POLICY_SLOTS_DESC
+'''Les choix de Politique permettent d'adopter des politiques depuis l'écran "Politiques Gouvernementales". Les choix et les politiques sont classés par catégories (économique, militaire, et sociale) et seules les politiques de la catégorie appropriée peuvent être assignées au choix correspondant.
+
+Les choix sont limités: en débloquer davantage est donc un aspect important du développement de l'empire, car cela permet d'adopter plus de politiques qu'il n'est possible d'en choisir initialement. Les choix peuvent être débloqués en construisant certaines structures, en recherchant des technologies, en possédant des astronefs équipés de certaines coques, et en adoptant des politiques. En règle générale, un moyen donné de débloquer un choix supplémentaire ne fonctionnera qu'une seule fois par empire: posséder plusieurs exemplaires d'une structure ou d'une coque d'astronef ne fournira pas des choix supplémentaires au-delà de celui fourni de base par la structure ou la coque.
+
+Choix de Politique Économique :
+[[buildingtype BLD_IMPERIAL_PALACE]]
+[[policy PLC_INTERSTELLAR_INFRA]]
+[[policy PLC_PLANETARY_INFRA]]
+[[policy PLC_SYSTEM_INFRA]]
+[[tech PRO_SENTIENT_AUTOMATION]]
+
+Choix de Politique Militaire :
+[[buildingtype BLD_MILITARY_COMMAND]]
+[[shiphull SH_SENTIENT]]
+[[tech LRN_DISTRIB_THOUGHT]]
+[[tech LRN_TIME_MECH]]
+
+Choix de Politique Sociale :
+[[buildingtype BLD_CULTURE_ARCHIVES]]
+[[buildingtype BLD_SCRYING_SPHERE]]
+[[buildingtype BLD_TRANSLATOR]]
+[[tech CON_ARCH_PSYCH]]
+[[tech CON_TRANS_ARCH]]
+[[tech LRN_MIND_VOID]]
+'''
+
 ENC_POICY_EXCLUSIONS
 '''Ne peut pas être adopté avec : '''
 
@@ -9540,7 +9570,7 @@ FORTRESS_SPECIAL
 Forteresse
 
 FORTRESS_SPECIAL_DESC
-'''Augmente les [[metertype METER_SHIELD]] de +100, la [[metertype METER_DEFENSE]] de +30, l'[[metertype METER_TROOPS]] de +30 et le [[metertype METER_DETECTION]] de +30. Les Boucliers se régénèrent de 5 par tour et la Défense de 1 par tour. Les Mines réduisent la [[metertype METER_STRUCTURE]] des astronefs ennemis situés dans le système de 3 par tour. À chaque tour, il y a 5% de chance qu'un Factionnaire apparaisse pour protéger le système, à moins qu'un spécimen soit déjà présent.
+'''Augmente les [[metertype METER_SHIELD]] de +800, la [[metertype METER_DEFENSE]] de +180, l'[[metertype METER_TROOPS]] de +30 et le [[metertype METER_DETECTION]] de +30. Les Boucliers se régénèrent de 40 par tour et la Défense de 6 par tour. Les Mines réduisent la [[metertype METER_STRUCTURE]] des astronefs ennemis situés dans le système de 24 par tour. À chaque tour, il y a 5% de chance qu'un Factionnaire apparaisse pour protéger le système, à moins qu'un spécimen soit déjà présent.
 
 La défense de cette planète fut conçue par l'une des anciennes civilisations de Précurseurs. Elle comprend des boucliers planétaires solides, des armements redoutables et des équipements de détection performants, l'ensemble permettant de faire face à tout type de siège. Les installations sont encore totalement fonctionnelles et étonnamment très simples d'utilisation.'''
 
@@ -12372,7 +12402,7 @@ PLC_PLANETARY_INFRA
 Infrastructure Planétaire
 
 PLC_PLANETARY_INFRA_DESC
-'''Octroie 2 choix supplémentaires de Politique économique.
+'''Octroie 2 [[encyclopedia ENC_POLICY_SLOTS]] économique supplémentaires.
 
 Augmente de 5 la [[metertype METER_TARGET_CONSTRUCTION]] des planètes habitées.'''
 
@@ -12383,7 +12413,7 @@ PLC_SYSTEM_INFRA
 Infrastructure Systémique
 
 PLC_SYSTEM_INFRA_DESC
-'''Octroie 1 choix supplémentaire de Politique économique.
+'''Octroie 1 [[encyclopedia ENC_POLICY_SLOTS]] économique supplémentaire.
 
 Augmente de 5 la [[metertype METER_TARGET_CONSTRUCTION]] des planètes habitées au sein des systèmes abritant au moins 2 planètes appartenant à l'empire ayant adopté cette Politique.'''
 
@@ -12394,7 +12424,7 @@ PLC_INTERSTELLAR_INFRA
 Infrastructure Interstellaire
 
 PLC_INTERSTELLAR_INFRA_DESC
-'''Octroie 2 choix supplémentaires de Politique économique.
+'''Octroie 2 choix [[encyclopedia ENC_POLICY_SLOTS]] économique supplémentaires.
 
 Augmente de 5 la [[metertype METER_TARGET_CONSTRUCTION]] des planètes habitées étant connectées aux ressources d'approvisionnement de planètes situées dans d'autres systèmes, et appartenant à l'empire ayant adopté cette Politique.'''
 
@@ -12759,7 +12789,7 @@ LRN_FORCE_FIELD
 Harmonique des Champs de Force
 
 LRN_FORCE_FIELD_DESC
-'''Augmente les [[metertype METER_SHIELD]] max de 10 sur toutes les planètes et débloque la technologie de base pour les boucliers d'astronef. Les [[metertype METER_SHIELD]] sont en général plus chers que les blindages, en raison de la technologie nécessaire pour les fabriquer, les boucliers procurant une bien meilleure défense qu'un simple [[encyclopedia ARMOR_TITLE]]. Cependant, il ne peut y avoir qu'un seul bouclier actif par astronef, rendant par conséquent impossible l'addition défensive de plusieurs boucliers.
+'''Augmente les [[metertype METER_SHIELD]] max de 80 sur toutes les planètes et débloque la technologie de base pour les boucliers d'astronef. Les [[metertype METER_SHIELD]] sont en général plus chers que les blindages, en raison de la technologie nécessaire pour les fabriquer, les boucliers procurant une bien meilleure défense qu'un simple [[encyclopedia ARMOR_TITLE]]. Cependant, il ne peut y avoir qu'un seul bouclier actif par astronef, rendant par conséquent impossible l'addition défensive de plusieurs boucliers.
 
 Tout comme l'analyse du son de Fourier, l'électromagnétisme ainsi que les interactions fortes et faibles peuvent être exprimées sous la forme de superpositions d'ondes d'harmonique quantique transportant des particules de force. Par l'amplification sélective de ces harmoniques, ces forces peuvent être contrôlées pour défendre, attaquer, contenir ou soutenir.'''
 
@@ -12767,7 +12797,7 @@ LRN_MIND_VOID
 Esprit du Vide
 
 LRN_MIND_VOID_DESC
-'''Octroie 1 choix de Politique sociale.
+'''Octroie 1 [[encyclopedia ENC_POLICY_SLOTS]] sociale.
 
 Nous ne sommes pas seuls dans le cosmos... mais pourquoi la recherche d'autres existences devrait se limiter à un unique paradigme? De nombreuses cultures possèdent des mythes, des légendes ou de ferventes croyances en une plus haute conscience. Que ce soit un Dieu miséricordieux ou malveillant, ou bien un observateur détaché, il est indéniable que quelque chose, peut-être l'univers lui-même à un certain niveau, est vivant, conscient, et observe.'''
 
@@ -12775,7 +12805,7 @@ LRN_TIME_MECH
 Mécanique Temporelle
 
 LRN_TIME_MECH_DESC
-'''Octroie 1 choix supplémentaire de Politique militaire.
+'''Octroie 1 [[encyclopedia ENC_POLICY_SLOTS]] militaire supplémentaire.
 
 Qu'est-ce que "le présent", "le futur" et "le passé"? Le double paradoxe de la relativité ou bien la théorie du "trou de ver", suggèrent les premières formes de "voyage dans le temps". La manipulation directe des flux spatio-temporels permet de contrôler et d'amplifier ces effets. Les incursions temporelles ne peuvent pas modifier d'une manière perceptible le passé de l'univers que nous observons. Cependant, ces manipulations peuvent compresser le temps ou allonger arbitrairement la durée des instants, en vue d'applications limitées seulement par nos ressources, ainsi que notre propre patience...'''
 
@@ -13054,7 +13084,7 @@ Automates Conscients
 PRO_SENTIENT_AUTOMATION_DESC
 '''Augmente la [[metertype METER_TARGET_INDUSTRY]] de [[value PRO_SENTIENT_AUTO_TARGET_INDUSTRY_FLAT]] sur toutes les planètes en Focus Industrie.
 
-Octroie 1 choix supplémentaire de Politique économique.
+Octroie 1 [[encyclopedia ENC_POLICY_SLOTS]] économique supplémentaire.
 
 L'évolution naturelle des usines automatisées s'accomplit en attribuant aux consciences artificielles qui dirigent de telles structures, le pouvoir de déduire et décider par elles-mêmes des meilleurs processus afin d'atteindre les buts de leurs propriétaires, avant même que ces derniers n'aient commencé à y réfléchir. Cette amélioration décisionnelle augmente grandement la performance des installations autonomes de production dans tous les systèmes de l'empire se consacrant à la production industrielle.'''
 
@@ -13102,7 +13132,7 @@ Psychologie Architecturale
 CON_ARCH_PSYCH_DESC
 '''La forme d'une structure ou la configuration d'un espace habité ne se définissent pas seulement par les limitations physiques des matériaux qui les composent. L'influence psychologique des habitants, ou d'observateurs extérieurs, peut avoir une incidence bien plus importante sur la réussite et la fonctionnalité d'un design, que la simple robustesse de ses murs ou la profonde solidité de ses fondations.
 
-Octroie 1 choix supplémentaire de Politique sociale.'''
+Octroie 1 [[encyclopedia ENC_POLICY_SLOTS]] sociale supplémentaire.'''
 
 CON_ORGANIC_STRC
 Structures Organiques
@@ -13154,7 +13184,7 @@ CON_TRANS_ARCH
 Architecture Transcendantale
 
 CON_TRANS_ARCH_DESC
-'''Octroie 1 choix supplémentaire de Politique sociale.
+'''Octroie 1 [[encyclopedia ENC_POLICY_SLOTS]] sociale supplémentaire.
 
 La maîtrise des techniques avancées de construction orbitale permet aux scientifiques d'élaborer des méthodes visant à construire un [[buildingtype BLD_MEGALITH]] d'une majestuosité sans égale.
 
@@ -13201,6 +13231,12 @@ SHP_MIL_ROBO_CONT_DESC
 '''À moins que la Recherche ait déjà rendu possible la production de coques d'astronefs plus rapides, cette technologie permet de réduire le délai nécessaire à la construction d'une colonie très éloignée de l'espèce correspondante dans l'empire.
 
 Le contrôle robotisé s'avère efficace dans les domaines de l'industrie et de l'extraction minière. L'extension naturelle de ce concept est de développer un équipement militaire robotisé capable de gérer de manière autonome un astronef. Cela permettrait une plus grande souplesse en matière de conception et de design, tous les systèmes encombrants de support vital devenant inutiles. Les coques dotées d'une telle technologie pourraient s'auto-réparer, tandis que la gestion de la sécurité et des limitations physiques des ingénieurs appartiendrait dès lors au passé.'''
+
+SHP_SMALL_ROBO
+Coque Robotique Miniature
+
+SHP_SMALL_ROBO_DESC
+Grâce aux progrès de la nanotechnologie, les équipements d'astronef peuvent être miniaturisés, permettant ainsi d'obtenir une coque robotique plus petite mais toujours spacieuse.
 
 SHP_SPACE_FLUX_BASICS
 Manipulation Flux Spatial
@@ -13620,7 +13656,7 @@ LRN_DISTRIB_THOUGHT_DESC
 • L'[[metertype METER_CONSTRUCTION]] de la planète la plus éloignée x [[value DISTRIB_THOUGH_INFRA_LIMIT_SCALING]]
 Cet effet requiert une [[metertype METER_HAPPINESS]] de [[value LRN_DISTRIB_THOUGHT_MIN_STABILITY]].
 
-Octroie 1 choix supplémentaire de Politique militaire.
+Octroie 1 [[encyclopedia ENC_POLICY_SLOTS]] militaire supplémentaire.
 
 Le citoyen moyen gaspille littéralement ses capacités cérébrales, pourtant issues d'un des outils de calcul les plus fins de l'univers. En intégrant les cycles cérébraux inactifs d'une population suffisament importante au sein d'un réseau de simples émetteurs-récepteurs cybernétiques, la totalité des centres de recherche d'un empire peuvent accéder à une puissance de calcul considérable et peu coûteuse.'''
 
@@ -13702,7 +13738,7 @@ DEF_DEFENSE_NET_1
 Dispositif Défense Planétaire 1
 
 DEF_DEFENSE_NET_1_DESC
-'''Augmente la [[metertype METER_DEFENSE]] max de 5 sur toutes les planètes.
+'''Augmente la [[metertype METER_DEFENSE]] max de 30 sur toutes les planètes.
 
 Avec l'exploration galactique vient la possibilité de rencontrer de nouvelles races - mais aussi de nouveaux ennemis. En disposant plusieurs bases de défense armées en orbite autour d'une planète, il est possible de conférer à cette planète une capacité défensive importante sans qu'il soit nécessaire de recourir à des astronefs.'''
 
@@ -13710,13 +13746,13 @@ DEF_DEFENSE_NET_2
 Dispositif Défense Planétaire 2
 
 DEF_DEFENSE_NET_2_DESC
-Augmente la [[metertype METER_DEFENSE]] max de 15 sur toutes les planètes, et s'ajoute au bonus du [[tech DEF_DEFENSE_NET_1]].
+Augmente la [[metertype METER_DEFENSE]] max de 90 sur toutes les planètes, et s'ajoute au bonus du [[tech DEF_DEFENSE_NET_1]].
 
 DEF_DEFENSE_NET_3
 Dispositif Défense Planétaire 3
 
 DEF_DEFENSE_NET_3_DESC
-Augmente la [[metertype METER_DEFENSE]] max de 25 sur toutes les planètes, et s'ajoute aux bonus des précédentes technologies de dispositif de défense planétaire.
+Augmente la [[metertype METER_DEFENSE]] max de 150 sur toutes les planètes, et s'ajoute aux bonus des précédentes technologies de dispositif de défense planétaire.
 
 DEF_DEFENSE_NET_REGEN_1
 Régénération Défense Planétaire 1
@@ -13730,37 +13766,37 @@ DEF_DEFENSE_NET_REGEN_2
 Régénération Défense Planétaire 2
 
 DEF_DEFENSE_NET_REGEN_2_DESC
-Accroît à chaque tour la [[metertype METER_DEFENSE]] de toutes les planètes du meilleur de (i) 0.25 fois leur valeur d'[[metertype METER_CONSTRUCTION]], ou (ii) 0.1 fois leur valeur maximum de [[metertype METER_DEFENSE]], mais sans pouvoir dépasser leurs valeurs max respectives de Défense, et s'ajoute au bonus de [[tech DEF_DEFENSE_NET_REGEN_1]].
+Accroît à chaque tour la [[metertype METER_DEFENSE]] de toutes les planètes du meilleur entre (i) 1.5 fois leur valeur d'[[metertype METER_CONSTRUCTION]], ou (ii) 0.1 fois leur valeur maximum de [[metertype METER_DEFENSE]], mais sans pouvoir dépasser leurs valeurs max respectives de Défense, et s'ajoute au bonus de [[tech DEF_DEFENSE_NET_REGEN_1]].
 
 DEF_PLAN_BARRIER_SHLD_1
 Bouclier Planétaire 1
 
 DEF_PLAN_BARRIER_SHLD_1_DESC
-Augmente les [[metertype METER_SHIELD]] max de 30 sur toutes les planètes, cumulables avec le bonus de la technologie [[tech LRN_FORCE_FIELD]], et les régénère chaque tour de 1 plus le meilleur de (i) 25% de la valeur d'[[metertype METER_CONSTRUCTION]] respective de chaque planète ou (ii) 1 (tant que la valeur des Boucliers n'a pas été réduite à zéro).
+Augmente les [[metertype METER_SHIELD]] max de 240 sur toutes les planètes, cumulables avec le bonus de la technologie [[tech LRN_FORCE_FIELD]], et les régénère chaque tour de 8 plus le meilleur entre (i) 2 fois de la valeur d'[[metertype METER_CONSTRUCTION]] respective de chaque planète ou (ii) 8 (tant que la valeur des Boucliers n'a pas été réduite à zéro).
 
 DEF_PLAN_BARRIER_SHLD_2
 Bouclier Planétaire 2
 
 DEF_PLAN_BARRIER_SHLD_2_DESC
-Augmente les [[metertype METER_SHIELD]] max de 60 sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et les régénère chaque tour de 1 plus le meilleur de (i) la valeur d'[[metertype METER_CONSTRUCTION]] respective de chaque planète ou (ii) 4 (tant que la valeur des Boucliers n'a pas été réduite à moins de 3).
+Augmente les [[metertype METER_SHIELD]] max de 480 sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et les régénère chaque tour de 8 plus le meilleur entre (i) 8 fois la valeur d'[[metertype METER_CONSTRUCTION]] respective de chaque planète ou (ii) 32 (tant que la valeur des Boucliers n'a pas été réduite à moins de 24).
 
 DEF_PLAN_BARRIER_SHLD_3
 Bouclier Planétaire 3
 
 DEF_PLAN_BARRIER_SHLD_3_DESC
-Augmente les [[metertype METER_SHIELD]] max de 90 sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et les régénère chaque tour de 1 plus le meilleur de (i) deux fois la valeur d'[[metertype METER_CONSTRUCTION]] respective de chaque planète ou (ii) 9 (tant que la valeur des Boucliers n'a pas été réduite à moins de 5).
+Augmente les [[metertype METER_SHIELD]] max de 720 sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et les régénère chaque tour de 8 plus le meilleur entre (i) 16 fois la valeur d'[[metertype METER_CONSTRUCTION]] respective de chaque planète ou (ii) 72 (tant que la valeur des Boucliers n'a pas été réduite à moins de 40).
 
 DEF_PLAN_BARRIER_SHLD_4
 Bouclier Planétaire 4
 
 DEF_PLAN_BARRIER_SHLD_4_DESC
-Augmente les [[metertype METER_SHIELD]] max de 150 sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et les régénère chaque tour de 1 plus le meilleur de (i) 2.5 fois la valeur d'[[metertype METER_CONSTRUCTION]] respective de chaque planète ou (ii) 18 (tant que la valeur des Boucliers n'a pas été réduite à moins de 9).
+Augmente les [[metertype METER_SHIELD]] max de 1200 sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et les régénère chaque tour de 8 plus le meilleur entre (i) 20 fois la valeur d'[[metertype METER_CONSTRUCTION]] respective de chaque planète ou (ii) 144 (tant que la valeur des Boucliers n'a pas été réduite à moins de 72).
 
 DEF_PLAN_BARRIER_SHLD_5
 Bouclier Planétaire 5
 
 DEF_PLAN_BARRIER_SHLD_5_DESC
-Augmente les [[metertype METER_SHIELD]] max d'un bonus de 150 sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et les régénère chaque tour de 1 plus le meilleur de (i) cinq fois la valeur d'[[metertype METER_CONSTRUCTION]] respective de chaque planète ou (ii) 32 (tant que la valeur des Boucliers n'a pas été réduite à moins de 14).
+Augmente les [[metertype METER_SHIELD]] max d'un bonus de 1200 sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et les régénère chaque tour de 8 plus le meilleur entre (i) 40 fois la valeur d'[[metertype METER_CONSTRUCTION]] respective de chaque planète ou (ii) 256 (tant que la valeur des Boucliers n'a pas été réduite à moins de 112).
 
 DEF_SYST_DEF_MINE_1
 Mines Défensives 1
@@ -13768,7 +13804,7 @@ Mines Défensives 1
 DEF_SYST_DEF_MINE_1_DESC
 '''Lorsqu'aucun astronef allié n'est présent dans un système stellaire, les astronefs ennemis ont tout loisir de procéder à un blocus, interrompant ainsi l'acheminement de ressources, et ce en évitant de se mettre à portée des défenses planétaires, et donc sans subir de dégâts. Un réseau spatial de mines défensives, endommageant à chaque tour les astronefs ennemis se trouvant dans le système, peut les dissuader d'adopter cette tactique.
 
-La [[metertype METER_STRUCTURE]] de tous les astronefs ennemis présents dans un système stellaire abritant une planète de l'empire maîtrisant cette technologie, sera réduite au rythme de 2 par tour.
+La [[metertype METER_STRUCTURE]] de tous les astronefs ennemis présents dans un système stellaire abritant une planète de l'empire maîtrisant cette technologie, sera réduite au rythme de 16 par tour.
 
 Les mines sont renouvelées à chaque tour et leur utilisation n'entraîne pas un épuisement des stocks de munitions, ces derniers étant constamment approvisionnés.'''
 
@@ -13776,19 +13812,19 @@ DEF_SYST_DEF_MINE_2
 Mines Défensives 2
 
 DEF_SYST_DEF_MINE_2_DESC
-Réduit la [[metertype METER_STRUCTURE]] des astronefs ennemis de 4 par tour, cumulables avec les dommages des [[tech DEF_SYST_DEF_MINE_1]].
+Réduit la [[metertype METER_STRUCTURE]] des astronefs ennemis de 32 en plus par tour, cumulables avec les dommages des [[tech DEF_SYST_DEF_MINE_1]].
 
 DEF_SYST_DEF_MINE_3
 Mines Défensives 3
 
 DEF_SYST_DEF_MINE_3_DESC
-Réduit la [[metertype METER_STRUCTURE]] des astronefs ennemis de 8 par tour, cumulables avec les précédentes technologies de mines défensives.
+Réduit la [[metertype METER_STRUCTURE]] des astronefs ennemis de 64 en plus par tour, cumulables avec les précédentes technologies de mines défensives.
 
 DEF_ROOT_DEFENSE
 Auto-défense
 
 DEF_ROOT_DEFENSE_DESC
-'''Augmente les [[metertype METER_SHIELD]] max de 1 sur chaque planète appartenant à l'empire. Régénère 1 point de [[metertype METER_SHIELD]] par tour, seulement durant les tours où la planète n'est pas attaquée. Pour les espèces disposant de troupes de défense, augmente l'[[metertype METER_TROOPS]] max de [[value BASIC_DEFENSE_TROOPS_MAX_TROOPS_PERPOP]] par [[metertype METER_POPULATION]] sur la planète.
+'''Augmente les [[metertype METER_SHIELD]] max de 8 sur chaque planète appartenant à l'empire. Régénère 8 points de [[metertype METER_SHIELD]] par tour, seulement durant les tours où la planète n'est pas attaquée. Pour les espèces disposant de troupes de défense, augmente l'[[metertype METER_TROOPS]] max de [[value BASIC_DEFENSE_TROOPS_MAX_TROOPS_PERPOP]] par [[metertype METER_POPULATION]] sur la planète.
 
 Le concept d'Auto-défense est à la racine de maints développements technologiques.'''
 
@@ -14352,7 +14388,7 @@ Coque Sensitive
 SHP_SENT_HULL_DESC
 '''Cet astronef amiral doué de conscience dispose de capacités analytiques et mémorielles exceptionnelles, lui permettant ainsi d'intéragir avec les astronefs alliés, en leur fournissant des informations utiles et d'habiles orientations tactiques en situation de combat.
 
-Les empires contrôlant au moins un astronef équipé de cette coque reçoivent également un choix supplémentaire de Politique militaire.'''
+Les empires contrôlant au moins un astronef équipé de cette coque reçoivent également un [[encyclopedia ENC_POLICY_SLOTS]] militaire supplémentaire.'''
 
 SHP_BIOINTERCEPTOR
 Bio-Intercepteurs
@@ -14516,7 +14552,7 @@ Archives Culturelles
 
 BLD_CULTURE_ARCHIVES_DESC
 '''• Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value BLD_CULTURE_ARCHIVES_TARGET_RESEARCH_FLAT]], ainsi que la [[metertype METER_TARGET_INDUSTRY]] de [[value BLD_CULTURE_ARCHIVES_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]]. Cet effet requiert une [[metertype METER_HAPPINESS]] de [[value BLD_CULTURE_ARCHIVES_MIN_STABILITY]].
-• Octroie un choix de Politique sociale.
+• Octroie un [[encyclopedia ENC_POLICY_SLOTS]] sociale.
 
 Abrite le savoir accumulé durant des milliers d'années d'existence sur cette planète, améliorant différents aspects de la productivité planétaire.'''
 
@@ -14548,7 +14584,7 @@ BLD_IMPERIAL_PALACE_DESC
 • la [[metertype METER_DEFENSE]] de [[value BLD_IMPERIAL_PALACE_MAX_DEFENSE_FLAT]]
 • l'[[metertype METER_TROOPS]] de [[value BLD_IMPERIAL_PALACE_MAX_TROOPS_FLAT]]
 
-Octroie 1 choix de Politique économique.
+Octroie 1 [[encyclopedia ENC_POLICY_SLOTS]] économique.
 
 Son emplacement définit la Capitale de l'empire.
 
@@ -14564,8 +14600,8 @@ BLD_MILITARY_COMMAND
 Commandement Militaire
 
 BLD_MILITARY_COMMAND_DESC
-'''• Octroie un choix de Politique militaire.
-• Octroie un choix supplémentaire de Politique militaire si l'empire a détruit au moins 5 astronefs.'''
+'''• Octroie un [[encyclopedia ENC_POLICY_SLOTS]] militaire.
+• Octroie un [[encyclopedia ENC_POLICY_SLOTS]] militaire supplémentaire si l'empire a détruit au moins 5 astronefs.'''
 
 BLD_SUPER_TEST
 Invasion Super-Testeurs
@@ -15088,7 +15124,7 @@ BLD_TRANSLATOR
 Traducteur Quasi-Universel
 
 BLD_TRANSLATOR_DESC
-'''Octroie 1 choix de Politique sociale.
+'''Octroie 1 [[encyclopedia ENC_POLICY_SLOTS]] sociale.
 
 Augmente la capacité en Influence d'une planète, lorsque celle-ci est réglée sur le Focus Influence, de [[value TRANSLATOR_PER_SPECIES_INFLUENCE]] multiplié par la racine carrée du nombre d'espèces uniques sur les planètes contrôlées par l'empire possédant cette structure.
 
@@ -15116,7 +15152,7 @@ BLD_SCRYING_SPHERE
 Sphère de Vision
 
 BLD_SCRYING_SPHERE_DESC
-'''Octroie à son propriétaire un choix de Politique sociale.
+'''Octroie à son propriétaire un [[encyclopedia ENC_POLICY_SLOTS]] sociale.
 
 Octroie la visibilité pour toutes les autres planètes abritant également une Sphère de Vision.'''
 
@@ -15862,7 +15898,7 @@ SH_ROBOTIC_INTERFACE_SHIELDS
 Boucliers à Interface Robotique
 
 SH_ROBOTIC_INTERFACE_SHIELDS_DESC
-'''Les Boucliers à Interface Robotique ont approximativement une solidité de 6 multipliée par le nombre des autres astronefs situés au même emplacement et équipés du même bouclier, bien que cette valeur tende à diminuer lorsqu'un grand nombre d'astronefs est concerné. La solidité du bouclier ne peut dépasser 20, l'effet ne s'applique qu'aux astronefs de [[encyclopedia HULL_LINE_ROBOTIC]] et dont l'équipage est une espèce à [[encyclopedia ROBOTIC_SPECIES_TITLE]].
+'''Les Boucliers à Interface Robotique ont approximativement une solidité de 36 multipliée par le nombre des autres astronefs situés au même emplacement et équipés du même bouclier, bien que cette valeur tende à diminuer lorsqu'un grand nombre d'astronefs est concerné. La solidité du bouclier ne peut pas dépasser 120, et l'effet ne s'applique qu'aux astronefs de [[encyclopedia HULL_LINE_ROBOTIC]], dont l'équipage est une espèce à [[encyclopedia ROBOTIC_SPECIES_TITLE]].
 
 Les Espèces Robotiques ont la capacité intrinsèque de fonctionner en réseau et augmentent ainsi considérablement leur puissance de calcul pure. Les Boucliers à Interface Robotique utilisent ce réseau afin de calculer la trajectoire du feu ennemi et concentrer la solidité du bouclier au point d'impact.
 '''
@@ -16060,6 +16096,16 @@ Sa [[metertype METER_STEALTH]] est standard de même que son [[metertype METER_D
 
 [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]'''
 
+SH_SMALL_ROBOTIC
+Coque Robotique Miniature
+
+SH_SMALL_ROBOTIC_DESC
+'''Cette coque automatisée, bien que petite mais étonnamment spacieuse, est parfaite pour remplir des rôles auxiliaires. Elle dispose de trois niches internes, et s'auto-répare à raison de [[value SHP_ROBOTIC_REPAIR]] points de [[metertype METER_STRUCTURE]] par tour, tant que l'astronef n'engage aucun combat.
+
+Sa [[metertype METER_STEALTH]] est standard de même que son [[metertype METER_DETECTION]], tandis que sa [[metertype METER_SPEED]] est moyenne.
+
+[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]'''
+
 SH_SPATIAL_FLUX
 Coque Flux Spatial
 
@@ -16248,7 +16294,7 @@ Coque Organique
 
 SH_ORGANIC_DESC
 '''Une coque vivante disposant d'une niche externe et d'une niche interne.
-Croissance Organique: débute avec une [[metertype METER_STRUCTURE]] égale à 5, mais bénéficie d'un bonus additionnel de 5 après 25 tours.
+Croissance Organique: débute avec une [[metertype METER_STRUCTURE]] égale à 24, mais bénéficie d'un bonus additionnel de 24 après 25 tours.
 
 Sa [[metertype METER_STEALTH]] est standard, son [[metertype METER_DETECTION]] est faible et sa [[metertype METER_SPEED]] élevée.
 
@@ -16275,7 +16321,7 @@ Coque Endomorphe
 
 SH_ENDOMORPHIC_DESC
 '''Une coque à moitié vivante disposant de quatre niches externes et de deux niches internes.
-Croissance Organique: débute avec une [[metertype METER_STRUCTURE]] égale à 5, mais bénéficie d'un bonus additionnel de 15 après 30 tours.
+Croissance Organique: débute avec une [[metertype METER_STRUCTURE]] égale à 40, mais bénéficie d'un bonus additionnel de 120 après 30 tours.
 
 Sa [[metertype METER_STEALTH]] est standard, son [[metertype METER_DETECTION]] est élevé de même que sa [[metertype METER_SPEED]].
 
@@ -16290,7 +16336,7 @@ Coque Symbiotique
 
 SH_SYMBIOTIC_DESC
 '''Une coque vivante disposant de deux niches externes et de deux niches internes. Développe une relation symbiotique avec son équipage, augmentant ainsi sa [[metertype METER_STEALTH]] et sa [[metertype METER_SPEED]].
-Croissance Organique: débute avec une [[metertype METER_STRUCTURE]] égale à 10, mais bénéficie d'un bonus additionnel de 10 après 50 tours.
+Croissance Organique: débute avec une [[metertype METER_STRUCTURE]] égale à 80, mais bénéficie d'un bonus additionnel de 80 après 50 tours.
 
 Sa [[metertype METER_STEALTH]] est élevée de même que son [[metertype METER_DETECTION]] et sa [[metertype METER_SPEED]].
 
@@ -16305,7 +16351,7 @@ Coque Protoplasmique
 
 SH_PROTOPLASMIC_DESC
 '''Une coque vivante disposant de deux niches externes et de trois niches internes.
-Croissance Organique: débute avec une [[metertype METER_STRUCTURE]] égale à 5, mais bénéficie d'un bonus additionnel de 25 après 50 tours.
+Croissance Organique: débute avec une [[metertype METER_STRUCTURE]] égale à 40, mais bénéficie d'un bonus additionnel de 200 après 50 tours.
 
 Sa [[metertype METER_STEALTH]] est très élevée, son [[metertype METER_DETECTION]] est élevée de même que sa [[metertype METER_SPEED]].
 
@@ -16320,7 +16366,7 @@ SH_ENDOSYMBIOTIC_DESC
 '''Une coque vivante monocellulaire ayant développé une relation symbiotique avec les membres de son équipage, hébergeant ces derniers dans son cytoplasme et les utilisant comme organites.
 Grâce à cette parfaite organisation, cette coque dispose de quatre niches externes et de trois niches internes.
 
-Croissance Organique: débute avec une [[metertype METER_STRUCTURE]] égale à 5, mais bénéficie d'un bonus additionnel de 15 après 30 tours.
+Croissance Organique: débute avec une [[metertype METER_STRUCTURE]] égale à 40, mais bénéficie d'un bonus additionnel de 120 après 30 tours.
 
 Sa [[metertype METER_STEALTH]] est élevée de même que son [[metertype METER_DETECTION]] et sa [[metertype METER_SPEED]].
 
@@ -16337,7 +16383,7 @@ Coque Vorace
 SH_RAVENOUS_DESC
 '''Une coque organique 'zombie' donc non-vivante, conçue à partir de la chair et du sang de ses semblables disparus, disposant de cinq niches externes et de deux niches internes.
 
-Croissance Organique: débute avec une [[metertype METER_STRUCTURE]] égale à 5, mais bénéficie d'un bonus additionnel de 20 après 40 tours.
+Croissance Organique: débute avec une [[metertype METER_STRUCTURE]] égale à 40, mais bénéficie d'un bonus additionnel de 160 après 40 tours.
 
 Sa [[metertype METER_STEALTH]] est standard, son [[metertype METER_DETECTION]] est très élevé et sa [[metertype METER_SPEED]] élevée.
 
@@ -16353,7 +16399,7 @@ Coque Bio-Adaptative
 
 SH_BIOADAPTIVE_DESC
 '''Une coque vivante dont l'esprit et le corps ne font qu'un, pour une maîtrise totale de la régénération et de l'endurance. Elle dispose de trois niches externes et de trois niches internes.
-Croissance Organique: débute avec une [[metertype METER_STRUCTURE]] égale à 15, mais bénéficie d'un bonus additionnel de 25 après 50 tours.
+Croissance Organique: débute avec une [[metertype METER_STRUCTURE]] égale à 120, mais bénéficie d'un bonus additionnel de 200 après 50 tours.
 
 Sa [[metertype METER_STEALTH]] est très élevée de même que son [[metertype METER_DETECTION]], tandis que sa [[metertype METER_SPEED]] est élevée.
 
@@ -16369,7 +16415,7 @@ Coque Sensitive
 
 SH_SENTIENT_DESC
 '''Cet astronef amiral vivant et doué de conscience, dispose de capacités analytiques et mémorielles exceptionnelles lui permettant d'intéragir avec les astronefs alliés, en leur fournissant des informations utiles et d'habiles orientations tactiques en situation de combat, procurant ainsi un bonus de [[metertype METER_STEALTH]] et de [[metertype METER_DETECTION]] à tous les astronefs alliés se trouvant à proximité. Cette coque dispose de six niches externes, de trois niches internes, et d'une niche centrale.
-Croissance Organique: débute avec une [[metertype METER_STRUCTURE]] égale à 12, mais bénéficie d'un bonus additionnel de 45 après 45 tours.
+Croissance Organique: débute avec une [[metertype METER_STRUCTURE]] égale à 96, mais bénéficie d'un bonus additionnel de 360 après 45 tours.
 
 Sa [[metertype METER_STEALTH]] est très élevée de même que son [[metertype METER_DETECTION]], tandis que sa [[metertype METER_SPEED]] est élevée.
 
@@ -16377,7 +16423,7 @@ Sa [[metertype METER_STEALTH]] est très élevée de même que son [[metertype M
 
 [[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED]]
 
-Les empires contrôlant au moins un astronef équipé de cette coque reçoivent également un choix supplémentaire de Politique militaire.'''
+Les empires contrôlant au moins un astronef équipé de cette coque reçoivent également un [[encyclopedia ENC_POLICY_SLOTS]] militaire supplémentaire.'''
 
 SH_COMPRESSED_ENERGY
 Coque Énergie Compressée
@@ -16947,22 +16993,22 @@ NO_INFLUENCE_DESC
 −−−	Pas d'[[metertype METER_INFLUENCE]]
 
 VERY_BAD_INFLUENCE_DESC
-−−	Très Mauvais en [[metertype METER_INFLUENCE]] : 50%
+−−	Très Mauvais en [[metertype METER_INFLUENCE]] : 66.7%
 
 BAD_INFLUENCE_DESC
-−	Mauvais en [[metertype METER_INFLUENCE]] : 75%
+−	Mauvais en [[metertype METER_INFLUENCE]] : 80%
 
 AVERAGE_INFLUENCE_DESC
 ⋄	Normal en [[metertype METER_INFLUENCE]] : 100%
 
 GOOD_INFLUENCE_DESC
-+	Bon en [[metertype METER_INFLUENCE]] : 150%
++	Bon en [[metertype METER_INFLUENCE]] : 125%
 
 GREAT_INFLUENCE_DESC
-++	Excellent en [[metertype METER_INFLUENCE]] : 200%
+++	Excellent en [[metertype METER_INFLUENCE]] : 150%
 
 ULTIMATE_INFLUENCE_DESC
-+++	Parfait en [[metertype METER_INFLUENCE]] : 300%
++++	Parfait en [[metertype METER_INFLUENCE]] : 200%
 
 BAD_HAPPINESS_DESC
 −	Mauvais en [[metertype METER_HAPPINESS]]: [[value BAD_HAPPINESS_VAL]]
@@ -17132,13 +17178,13 @@ ULTIMATE_SHIP_SHIELD_DESC
 +++	Parfait en [[metertype METER_SHIELD]] d'astronefs : boucliers d'astronefs les plus solides
 
 GOOD_PLANETARY_SHIELD_DESC
-+	Bon en [[metertype METER_SHIELD]] planétaires : +5
++	Bon en [[metertype METER_SHIELD]] planétaires : +40
 
 ANCIENT_PLANETARY_SHIELD_DESC
-+++	[[metertype METER_SHIELD]] planétaires ancestraux : +500
++++	[[metertype METER_SHIELD]] planétaires ancestraux : +4000
 
 GOOD_PLANETARY_DEFENSE_DESC
-+	Bon en [[metertype METER_DEFENSE]] planétaire : +5
++	Bon en [[metertype METER_DEFENSE]] planétaire : +30
 
 BROAD_EP_DESC
 +	Grande adaptabilité : peut s'acclimater à plus de types planétaires
@@ -17758,6 +17804,9 @@ Croissance Organique
 
 ASTEROID_FIELD_STEALTH
 Dissimulation Astéroïdale
+
+GAS_GIANT_STEALTH
+Dissimulation Géante Gazeuse
 
 AGE_BONUS
 Âge
