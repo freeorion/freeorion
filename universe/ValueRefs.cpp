@@ -286,7 +286,7 @@ std::string ValueRefBase::InvariancePattern() const {
         .append(ConstantExpr()                  ? "C" : "c");
 }
 
-MeterType NameToMeter(const std::string_view name) {
+constexpr MeterType NameToMeter(const std::string_view name) {
     for (int i = 0; i < static_cast<int>(NAME_BY_METER.size()); i++) {
         if (NAME_BY_METER[i] == name)
             return static_cast<MeterType>(i - 1);
@@ -294,6 +294,10 @@ MeterType NameToMeter(const std::string_view name) {
 
     return MeterType::INVALID_METER_TYPE;
 }
+
+static_assert(NameToMeter("not a meter") == MeterType::INVALID_METER_TYPE, "Name to Meter conversion failed for invalid meter type!");
+static_assert(NameToMeter("Population") == MeterType::METER_POPULATION, "Name to Meter conversion failed for 'Population' meter!");
+static_assert(NameToMeter("Speed") == MeterType::METER_SPEED, "Name to Meter conversion failed for 'Speed' meter!");
 
 std::string_view MeterToName(const MeterType meter) {
     // NOTE: INVALID_METER_TYPE (enum's -1 position) <= meter < NUM_METER_TYPES (enum's final position)
