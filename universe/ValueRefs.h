@@ -449,7 +449,7 @@ private:
 /* Convert between names and MeterType. Names are scripting token, like Population
  * and not the MeterType string representations like METER_POPULATION */
 [[nodiscard]] FO_COMMON_API MeterType          NameToMeter(const std::string_view name);
-[[nodiscard]] FO_COMMON_API const std::string_view MeterToName(const MeterType meter);
+[[nodiscard]] FO_COMMON_API std::string_view MeterToName(const MeterType meter);
 
 [[nodiscard]] FO_COMMON_API std::string_view   PlanetTypeToString(PlanetType type);
 [[nodiscard]] FO_COMMON_API std::string_view   PlanetEnvironmentToString(PlanetEnvironment env);

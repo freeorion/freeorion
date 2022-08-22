@@ -296,7 +296,7 @@ MeterType NameToMeter(const std::string_view name) {
     return MeterType::INVALID_METER_TYPE;
 }
 
-const std::string_view MeterToName(const MeterType meter) {
+std::string_view MeterToName(const MeterType meter) {
     return NAME_BY_METER[static_cast<std::underlying_type_t<MeterType>>(meter) + 1];
 }
 
