@@ -26,6 +26,7 @@ from EnumsAI import (
     ShipRoleType,
     get_priority_production_types,
 )
+from expansion_plans import get_colonisable_outpost_ids, get_colonisable_planet_ids
 from freeorion_tools import tech_is_complete
 from freeorion_tools.timers import AITimer
 from turn_state import (
@@ -60,7 +61,7 @@ def calculate_priorities():
 
     debug("\n*** Updating Colonization Status ***\n")
     prioritiees_timer.start("Evaluating Colonization Status")
-    ColonisationAI.get_colony_fleets()  # sets aistate.colonisablePlanetIDs and many other values used by other modules
+    ColonisationAI.get_colony_fleets()  # TODO sets aistate.colonisablePlanetIDs and many other values used by other modules
 
     debug("\n*** Updating Invasion Status ***\n")
     prioritiees_timer.start("Evaluating Invasion Status")
@@ -151,6 +152,7 @@ def _calculate_research_priority():
     industry_surge = (
         aistate.character.may_surge_industry(total_pp, total_rp)
         and (
+            # TODO: having a gas giant does not necessarily mean we want to build a GGG, especially for Sly
             ((orb_gen_tech in research_queue_list[:2] or got_orb_gen) and have_gas_giant())
             or ((mgrav_prod_tech in research_queue_list[:2] or got_mgrav_prod) and have_asteroids())
         )
@@ -301,11 +303,11 @@ def _calculate_colonisation_priority():
     minimal_top = min_score + 2  # one more than the conditional floor set by ColonisationAI.revise_threat_factor()
     minimal_opportunities = [
         species_name
-        for (_, (score, species_name)) in aistate.colonisablePlanetIDs.items()
+        for (_, (score, species_name)) in get_colonisable_planet_ids().items()
         if min_score < score <= minimal_top
     ]
     decent_opportunities = [
-        species_name for (_, (score, species_name)) in aistate.colonisablePlanetIDs.items() if score > minimal_top
+        species_name for (_, (score, species_name)) in get_colonisable_planet_ids().items() if score > minimal_top
     ]
     minimal_planet_factor = 0.2  # count them for something, but not much
     num_colonisable_planet_ids = len(decent_opportunities) + minimal_planet_factor * len(minimal_opportunities)
@@ -361,7 +363,7 @@ def _calculate_outpost_priority():
     num_outpost_targets = len(
         [
             pid
-            for (pid, (score, specName)) in aistate.colonisableOutpostIDs.items()
+            for (pid, (score, specName)) in get_colonisable_outpost_ids().items()
             if score > max(1.0 * base_outpost_cost / 3.0, ColonisationAI.MINIMUM_COLONY_SCORE)
         ][:allotted_outpost_targets]
     )
@@ -484,8 +486,8 @@ def _calculate_military_priority():
 
     target_planet_ids = (
         [pid for pid, pscore, trp in AIstate.invasionTargets[: allotted_invasion_targets()]]
-        + [pid for pid, pscore in list(aistate.colonisablePlanetIDs.items())[:allottedColonyTargets]]
-        + [pid for pid, pscore in list(aistate.colonisableOutpostIDs.items())[:allottedColonyTargets]]
+        + [pid for pid, pscore in list(get_colonisable_planet_ids(True).items())[:allottedColonyTargets]]
+        + [pid for pid, pscore in list(get_colonisable_outpost_ids(True).items())[:allottedColonyTargets]]
     )
 
     my_systems = set(get_owned_planets())

@@ -63,8 +63,6 @@ def survey_universe():
             planet = universe.getPlanet(pid)
             if not planet:
                 continue
-            if pid in aistate.colonisablePlanetIDs:
-                empire_has_qualifying_planet = True
             if planet.size == fo.planetSize.asteroids:
                 local_ast = True
             elif planet.size == fo.planetSize.gasGiant:

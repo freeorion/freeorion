@@ -56,6 +56,7 @@ from EnumsAI import (
     ShipRoleType,
     get_priority_production_types,
 )
+from expansion_plans import get_colonisable_planet_ids
 from freeorion_tools import get_named_real, ppstring, tech_is_complete
 from production import print_building_list, print_capital_info, print_production_queue
 from turn_state import (
@@ -785,7 +786,7 @@ def generate_production_orders():
     ]
     colony_bldg_entries = [
         entry
-        for entry in aistate.colonisablePlanetIDs.items()
+        for entry in get_colonisable_planet_ids().items()
         if entry[1][0] > MINIMUM_COLONY_SCORE
         and entry[0] not in queued_clny_bld_locs
         and entry[0] in get_empire_outposts()
