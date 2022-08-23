@@ -808,7 +808,7 @@ void ServerNetworking::Init() {
 #endif
 
     // use a dual stack (ipv6 + ipv4) socket
-    tcp::endpoint message_endpoint{tcp::v6(), static_cast<unsigned short>(Networking::MessagePort())};
+    tcp::endpoint message_endpoint{tcp::v6(), static_cast<uint16_t>(Networking::MessagePort())};
 
     if (GetOptionsDB().Get<bool>("singleplayer")) {
         // when hosting a single player game only accept connections from

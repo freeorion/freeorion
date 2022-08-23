@@ -81,7 +81,7 @@ inline constexpr bool is_flag_type_v = is_flag_type<T>::value;
     class GG_API name                                                   \
     {                                                                   \
     public:                                                             \
-        using InternalType = unsigned short int;                        \
+        using InternalType = uint16_t;                                  \
         constexpr name() noexcept = default;                            \
         constexpr explicit name(InternalType value) :                   \
             m_value(value)                                              \

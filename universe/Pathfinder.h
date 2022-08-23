@@ -39,7 +39,7 @@ public:
       * IDs. If there is no path between the systems, -1 is returned.
       * \throw std::out_of_range This function will throw if either system
       * ID is not a valid system id. */
-    short JumpDistanceBetweenSystems(int system1_id, int system2_id) const;
+    int16_t JumpDistanceBetweenSystems(int system1_id, int system2_id) const;
 
     /** Returns the number of starlane jumps between any two objects, accounting
       * for cases where one or the other are fleets / ships on starlanes between

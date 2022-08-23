@@ -654,7 +654,7 @@ namespace {
 class Pathfinder::PathfinderImpl {
 public:
     double LinearDistance(int object1_id, int object2_id, const ObjectMap& objects) const;
-    short JumpDistanceBetweenSystems(int system1_id, int system2_id) const;
+    int16_t JumpDistanceBetweenSystems(int system1_id, int system2_id) const;
     int JumpDistanceBetweenObjects(int object1_id, int object2_id, const ObjectMap& objects) const;
 
     std::pair<std::vector<int>, double> ShortestPath(
@@ -676,7 +676,7 @@ public:
     std::vector<int> WithinJumps(std::size_t jumps, std::vector<int> candidates) const;
     void WithinJumpsCacheHit(
         std::vector<int>& result, std::size_t jump_limit,
-        std::size_t ii, const std::vector<short>& row) const;
+        std::size_t ii, const std::vector<int16_t>& row) const;
 
     std::pair<Condition::ObjectSet, Condition::ObjectSet>
     WithinJumpsOfOthers(
@@ -697,7 +697,7 @@ public:
     void WithinJumpsOfOthersCacheHit(
         bool& answer, int jumps, const ObjectMap& objects,
         const Condition::ObjectSet& others,
-        std::size_t ii, distance_matrix_storage<short>::row_ref row) const;
+        std::size_t ii, distance_matrix_storage<int16_t>::row_ref row) const;
 
     int NearestSystemTo(double x, double y, const ObjectMap& objects) const;
 
@@ -709,10 +709,10 @@ public:
 
     /** When a cache miss occurs fill \p row with the distances
         from index \p ii to every other index.*/
-    void HandleCacheMiss(std::size_t ii, distance_matrix_storage<short>::row_ref row) const;
+    void HandleCacheMiss(std::size_t ii, distance_matrix_storage<int16_t>::row_ref row) const;
 
 
-    mutable distance_matrix_storage<short>        m_system_jumps; ///< indexed by system graph index (not system id), caches the smallest number of jumps to travel between all the systems
+    mutable distance_matrix_storage<int16_t>     m_system_jumps; ///< indexed by system graph index (not system id), caches the smallest number of jumps to travel between all the systems
     std::shared_ptr<GraphImpl>                   m_graph_impl = std::make_shared<GraphImpl>(); ///< a graph in which the systems are vertices and the starlanes are edges
     boost::container::flat_map<int, std::size_t> m_system_id_to_graph_index;
 };
@@ -739,9 +739,9 @@ namespace {
 
 /** HandleCacheMiss requires that \p row be locked by exterior context. */
 void Pathfinder::PathfinderImpl::HandleCacheMiss(
-    std::size_t ii, distance_matrix_storage<short>::row_ref row) const
+    std::size_t ii, distance_matrix_storage<int16_t>::row_ref row) const
 {
-    using DistancePropertyMap = boost::iterator_property_map<std::vector<short>::iterator,
+    using DistancePropertyMap = boost::iterator_property_map<std::vector<int16_t>::iterator,
                                                              boost::identity_property_map>;
     // FIXME: compute the i row and the j column, but only utilize the i row.
 
@@ -777,15 +777,15 @@ double Pathfinder::PathfinderImpl::LinearDistance(int system1_id, int system2_id
     return std::sqrt(x_dist*x_dist + y_dist*y_dist);
 }
 
-short Pathfinder::JumpDistanceBetweenSystems(int system1_id, int system2_id) const
+int16_t Pathfinder::JumpDistanceBetweenSystems(int system1_id, int system2_id) const
 { return pimpl->JumpDistanceBetweenSystems(system1_id, system2_id); }
 
-short Pathfinder::PathfinderImpl::JumpDistanceBetweenSystems(int system1_id, int system2_id) const {
+int16_t Pathfinder::PathfinderImpl::JumpDistanceBetweenSystems(int system1_id, int system2_id) const {
     if (system1_id == system2_id)
         return 0;
 
     try {
-        distance_matrix_cache<distance_matrix_storage<short>> cache(m_system_jumps);
+        distance_matrix_cache<distance_matrix_storage<int16_t>> cache(m_system_jumps);
 
         std::size_t system1_index = m_system_id_to_graph_index.at(system1_id);
         std::size_t system2_index = m_system_id_to_graph_index.at(system2_id);
@@ -795,7 +795,7 @@ short Pathfinder::PathfinderImpl::JumpDistanceBetweenSystems(int system1_id, int
         namespace ph = boost::placeholders;
 
         // prefer filling the smaller row/column for increased cache locality
-        short jumps = cache.get_T(
+        int16_t jumps = cache.get_T(
             smaller_index, other_index,
             boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, ph::_1, ph::_2));
         if (jumps == SHRT_MAX)  // value returned for no valid path
@@ -879,7 +879,7 @@ struct JumpDistanceSys2Visitor : public boost::static_visitor<int> {
 
     /** Simple case of two system ids, return the distance between systems.*/
     int operator()(int sys_id2) const {
-        short sjumps = -1;
+        int16_t sjumps = -1;
         try {
             sjumps = pf.JumpDistanceBetweenSystems(sys_id1, sys_id2);
         } catch (const std::out_of_range&) {
@@ -894,7 +894,7 @@ struct JumpDistanceSys2Visitor : public boost::static_visitor<int> {
     /** A single system id and a fleet with two locations.  For an object in
         transit return the distance to the closest system.*/
     int operator()(std::pair<int, int> prev_next) const {
-        short sjumps1 = -1, sjumps2 = -1;
+        int16_t sjumps1 = -1, sjumps2 = -1;
         int prev_sys_id = prev_next.first, next_sys_id = prev_next.second;
         try {
             if (prev_sys_id != INVALID_OBJECT_ID)
@@ -1173,7 +1173,7 @@ std::vector<std::pair<double, int>> Pathfinder::PathfinderImpl::ImmediateNeighbo
 }
 
 void Pathfinder::PathfinderImpl::WithinJumpsCacheHit(
-    std::vector<int>& result, std::size_t jump_limit, std::size_t ii, const std::vector<short>& row) const
+    std::vector<int>& result, std::size_t jump_limit, std::size_t ii, const std::vector<int16_t>& row) const
 {
     TraceLogger() << "Cache Hit ii: " << ii << "  jumps: " << jump_limit;
     // Scan the LUT of system ids and add any result from the row within
@@ -1202,7 +1202,7 @@ std::vector<int> Pathfinder::PathfinderImpl::WithinJumps(
     // if jumps is 0, then just return the input systems (after filtering for
     // duplicates below), as they are always near themselves
     if (jumps > 0) {
-        distance_matrix_cache<distance_matrix_storage<short>> cache(m_system_jumps);
+        distance_matrix_cache<distance_matrix_storage<int16_t>> cache(m_system_jumps);
 
         std::vector<std::vector<int>> candidate_results(near.size());
 
@@ -1214,7 +1214,7 @@ std::vector<int> Pathfinder::PathfinderImpl::WithinJumps(
                 return row_result;
             auto system_index = index_it->second;
 
-            using row_ref = distance_matrix_storage<short>::row_ref;
+            using row_ref = distance_matrix_storage<int16_t>::row_ref;
             cache.examine_row(
                 system_index,
                 [this](std::size_t ii, row_ref row) { HandleCacheMiss(ii, row); }, // boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, ph::_1, ph::_2)
@@ -1255,8 +1255,8 @@ std::vector<int> Pathfinder::PathfinderImpl::WithinJumps(std::size_t jumps, int 
 
     std::vector<int> row_result;
 
-    distance_matrix_cache<distance_matrix_storage<short>> cache(m_system_jumps);
-    using row_ref = distance_matrix_storage<short>::row_ref;
+    distance_matrix_cache<distance_matrix_storage<int16_t>> cache(m_system_jumps);
+    using row_ref = distance_matrix_storage<int16_t>::row_ref;
     cache.examine_row(
         system_index,
         [this](std::size_t ii, row_ref row) { HandleCacheMiss(ii, row); },
@@ -1301,7 +1301,7 @@ struct WithinJumpsOfOthersObjectVisitor : public boost::static_visitor<bool> {
 struct WithinJumpsOfOthersOtherVisitor : public boost::static_visitor<bool> {
     WithinJumpsOfOthersOtherVisitor(const Pathfinder::PathfinderImpl& _pf,
                                     int _jumps,
-                                    distance_matrix_storage<short>::row_ref _row) :
+                                    distance_matrix_storage<int16_t>::row_ref _row) :
         pf(_pf), jumps(_jumps), row(_row)
     {}
 
@@ -1327,7 +1327,7 @@ struct WithinJumpsOfOthersOtherVisitor : public boost::static_visitor<bool> {
     }
     const Pathfinder::PathfinderImpl& pf;
     int jumps;
-    distance_matrix_storage<short>::row_ref row;
+    distance_matrix_storage<int16_t>::row_ref row;
 };
 
 
@@ -1335,7 +1335,7 @@ void Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit(
     bool& answer, int jumps,
     const ObjectMap& objects,
     const Condition::ObjectSet& others,
-    std::size_t ii, distance_matrix_storage<short>::row_ref row) const
+    std::size_t ii, distance_matrix_storage<int16_t>::row_ref row) const
 {
     // Check if any of the others are within jumps of candidate, by looping
     // through all of the others and applying the WithinJumpsOfOthersOtherVisitor.
@@ -1407,7 +1407,7 @@ bool Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
 
     // Examine the cache to see if \p system_id is within \p jumps of \p others
     bool within_jumps(false);
-    distance_matrix_cache<distance_matrix_storage<short>> cache(m_system_jumps);
+    distance_matrix_cache<distance_matrix_storage<int16_t>> cache(m_system_jumps);
     cache.examine_row(system_index,
                       boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, ph::_1, ph::_2),
                       boost::bind(&Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit, this,

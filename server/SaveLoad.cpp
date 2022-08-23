@@ -58,7 +58,7 @@ namespace {
             const PlayerSaveGameData* player = &(*player_save_game_data.begin());
 
             // If there are human players, the first of them should be the main player
-            short humans = 0;
+            int16_t humans = 0;
             for (const PlayerSaveGameData& psgd : player_save_game_data) {
                 if (psgd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
                     if (player->client_type != Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&

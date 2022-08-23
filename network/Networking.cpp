@@ -15,9 +15,9 @@ namespace Networking {
     const std::string DISCOVERY_ANSWER = "Word!";
 #ifdef FREEORION_OPENBSD
     // Needs to set shorter linger time on OpenBSD to be able to start the session
-    const int SOCKET_LINGER_TIME = 1 << (sizeof(unsigned short) * 4 - 1);
+    const int SOCKET_LINGER_TIME = 1 << (sizeof(uint16_t) * 4 - 1);
 #else
-    const int SOCKET_LINGER_TIME = 1 << (sizeof(unsigned short) * 8 - 1);
+    const int SOCKET_LINGER_TIME = 1 << (sizeof(uint16_t) * 8 - 1);
 #endif
 
     int DiscoveryPort()
