@@ -71,11 +71,11 @@ struct GG_API Pt
     [[nodiscard]] constexpr bool Less(const Pt& rhs) const noexcept
     { return x < rhs.x ? true : (x == rhs.x ? (y < rhs.y ? true : false) : false); }
 
-    [[nodiscard]] constexpr Pt  operator-() const            { return Pt(-x, -y); }
-    constexpr Pt& operator+=(const Pt& rhs)    { x += rhs.x; y += rhs.y; return *this; }
-    constexpr Pt& operator-=(const Pt& rhs)    { x -= rhs.x; y -= rhs.y; return *this; }
-    constexpr Pt& operator/=(const double rhs) { x /= rhs;   y /= rhs;   return *this; }
-    constexpr Pt& operator*=(const double rhs) { x *= rhs;   y *= rhs;   return *this; }
+    [[nodiscard]] constexpr Pt operator-() const { return Pt(-x, -y); }
+    constexpr Pt& operator+=(const Pt& rhs)      { x += rhs.x; y += rhs.y; return *this; }
+    constexpr Pt& operator-=(const Pt& rhs)      { x -= rhs.x; y -= rhs.y; return *this; }
+    constexpr Pt& operator/=(const double rhs)   { x /= rhs;   y /= rhs;   return *this; }
+    constexpr Pt& operator*=(const double rhs)   { x *= rhs;   y *= rhs;   return *this; }
 
     [[nodiscard]] operator std::string() const;
 
