@@ -22,23 +22,39 @@
 #include <limits>
 #include <type_traits>
 #include <GG/Exception.h>
-
+#if __has_include(<bit>)
+#  include <bit>
+#endif
+#include <climits>
 
 namespace GG {
 
 namespace detail {
     template <typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
-    constexpr inline std::size_t OneBits(T num)
+    constexpr inline std::size_t OneBits(T num) noexcept
     {
-        std::size_t retval = 0;
-        constexpr std::size_t NUM_BITS = std::numeric_limits<T>::digits;
-        for (std::size_t i = 0; i < NUM_BITS; ++i) {
-            if (num & 1)
-                ++retval;
-            num >>= 1;
+#if defined(__cpp_lib_bitops)
+        if constexpr (std::is_unsigned_v<T>) {
+            return std::popcount(num);
+        } else {
+#endif
+            std::size_t retval = 0;
+            constexpr std::size_t NUM_BITS = sizeof(T)*CHAR_BIT;
+            for (std::size_t i = 0; i < NUM_BITS; ++i) {
+                if (num & 1)
+                    ++retval;
+                num >>= 1;
+            }
+            return retval;
+#if defined(__cpp_lib_bitops)
         }
-        return retval;
+#endif
     }
+    static_assert(OneBits(0x0) == 0);
+    static_assert(OneBits(8u) == 1);
+    static_assert(OneBits(1) == 1);
+    static_assert(OneBits(std::numeric_limits<uint16_t>::max()) == 16);
+    static_assert(OneBits(std::numeric_limits<int8_t>::min()) == 1);
 }
 
 
