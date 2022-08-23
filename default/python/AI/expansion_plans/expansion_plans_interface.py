@@ -1,5 +1,4 @@
-from collections import OrderedDict
-from typing import FrozenSet, Iterable, Tuple
+from typing import FrozenSet, Iterable, OrderedDict, Tuple
 
 from common.fo_typing import PlanetId, SpeciesName
 from freeorion_tools.caching import cache_for_current_turn

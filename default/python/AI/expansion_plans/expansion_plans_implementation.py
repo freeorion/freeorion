@@ -1,8 +1,8 @@
 import freeOrionAIInterface as fo
-from collections import OrderedDict
+from collections import OrderedDict as odict
 from itertools import chain
 from logging import debug
-from typing import FrozenSet, Iterable, Tuple
+from typing import FrozenSet, Iterable, OrderedDict, Tuple
 
 from aistate_interface import get_aistate
 from common.fo_typing import PlanetId, SpeciesName
@@ -35,7 +35,7 @@ class ExpansionPlanner:
         if include_targeted:
             return get_aistate().colonisablePlanetIDs
         else:
-            return OrderedDict(
+            return odict(
                 (pid, values)
                 for (pid, values) in get_aistate().colonisablePlanetIDs.items()
                 if pid not in ExpansionPlanner.colonies_targeted()
@@ -46,7 +46,7 @@ class ExpansionPlanner:
         if include_targeted:
             return get_aistate().colonisableOutpostIDs
         else:
-            return OrderedDict(
+            return odict(
                 (pid, values)
                 for (pid, values) in get_aistate().colonisableOutpostIDs.items()
                 if pid not in ExpansionPlanner.outposts_targeted()
