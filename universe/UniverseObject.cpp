@@ -16,7 +16,7 @@
 #include "../util/i18n.h"
 
 namespace ValueRef {
-    const std::string& MeterToName(MeterType meter);
+    std::string_view MeterToName(const MeterType meter);
 }
 
 UniverseObject::UniverseObject(UniverseObjectType type, std::string name,

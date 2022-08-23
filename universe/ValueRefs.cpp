@@ -209,51 +209,52 @@ namespace {
         return retval;
     }
 
-    const std::map<std::string, MeterType>& GetMeterNameMap() {
-        static const std::map<std::string, MeterType> meter_name_map{
-            {"Population",           MeterType::METER_POPULATION},
-            {"TargetPopulation",     MeterType::METER_TARGET_POPULATION},
-            {"Industry",             MeterType::METER_INDUSTRY},
-            {"TargetIndustry",       MeterType::METER_TARGET_INDUSTRY},
-            {"Research",             MeterType::METER_RESEARCH},
-            {"TargetResearch",       MeterType::METER_TARGET_RESEARCH},
-            {"Influence",            MeterType::METER_INFLUENCE},
-            {"TargetInfluence",      MeterType::METER_TARGET_INFLUENCE},
-            {"Construction",         MeterType::METER_CONSTRUCTION},
-            {"TargetConstruction",   MeterType::METER_TARGET_CONSTRUCTION},
-            {"Happiness",            MeterType::METER_HAPPINESS},
-            {"TargetHappiness",      MeterType::METER_TARGET_HAPPINESS},
-            {"MaxFuel",              MeterType::METER_MAX_FUEL},
-            {"Fuel",                 MeterType::METER_FUEL},
-            {"MaxStructure",         MeterType::METER_MAX_STRUCTURE},
-            {"Structure",            MeterType::METER_STRUCTURE},
-            {"MaxShield",            MeterType::METER_MAX_SHIELD},
-            {"Shield",               MeterType::METER_SHIELD},
-            {"MaxDefense",           MeterType::METER_MAX_DEFENSE},
-            {"Defense",              MeterType::METER_DEFENSE},
-            {"MaxTroops",            MeterType::METER_MAX_TROOPS},
-            {"Troops",               MeterType::METER_TROOPS},
-            {"RebelTroops",          MeterType::METER_REBEL_TROOPS},
-            {"Supply",               MeterType::METER_SUPPLY},
-            {"MaxSupply",            MeterType::METER_MAX_SUPPLY},
-            {"Stockpile",            MeterType::METER_STOCKPILE},
-            {"MaxStockpile",         MeterType::METER_MAX_STOCKPILE},
-            {"Stealth",              MeterType::METER_STEALTH},
-            {"Detection",            MeterType::METER_DETECTION},
-            {"Speed",                MeterType::METER_SPEED},
-            {"Damage",               MeterType::METER_CAPACITY},
-            {"Capacity",             MeterType::METER_CAPACITY},
-            {"MaxCapacity",          MeterType::METER_MAX_CAPACITY},
-            {"SecondaryStat",        MeterType::METER_SECONDARY_STAT},
-            {"MaxSecondaryStat",     MeterType::METER_MAX_SECONDARY_STAT},
-            {"Size",                 MeterType::METER_SIZE}
-        };
-        return meter_name_map;
-    }
-    // force early init to avoid threading issues later
-    std::map<std::string, MeterType> dummy = GetMeterNameMap();
+    // Array of meter names enumerated by MeterType with INVALID_METER_TYPE as first element
+    constexpr std::array<std::string_view, static_cast<std::size_t>(MeterType::NUM_METER_TYPES) + 1> NAME_BY_METER = {
+        "",
+        "TargetPopulation",
+        "TargetIndustry",
+        "TargetResearch",
+        "TargetInfluence",
+        "TargetConstruction",
+        "TargetHappiness",
 
-    const std::string EMPTY_STRING;
+        "MaxCapacity",
+        "MaxSecondaryStat",
+
+        "MaxFuel",
+        "MaxShield",
+        "MaxStructure",
+        "MaxDefense",
+        "MaxSupply",
+        "MaxStockpile",
+        "MaxTroops",
+
+        "Population",
+        "Industry",
+        "Research",
+        "Influence",
+        "Construction",
+        "Happiness",
+
+        "Capacity",
+        "SecondaryStat",
+
+        "Fuel",
+        "Shield",
+        "Structure",
+        "Defense",
+        "Supply",
+        "Stockpile",
+        "Troops",
+
+        "RebelTroops",
+        "Size",
+        "Stealth",
+        "Detection",
+        "Speed"
+    };
+
 }
 
 namespace ValueRef {
@@ -285,20 +286,22 @@ std::string ValueRefBase::InvariancePattern() const {
         .append(ConstantExpr()                  ? "C" : "c");
 }
 
-MeterType NameToMeter(const std::string& name) {
-    MeterType retval = MeterType::INVALID_METER_TYPE;
-    auto it = GetMeterNameMap().find(name);
-    if (it != GetMeterNameMap().end())
-        retval = it->second;
-    return retval;
+constexpr MeterType NameToMeter(const std::string_view name) {
+    for (int i = 0; i < static_cast<int>(NAME_BY_METER.size()); i++) {
+        if (NAME_BY_METER[i] == name)
+            return static_cast<MeterType>(i - 1);
+    }
+
+    return MeterType::INVALID_METER_TYPE;
 }
 
-const std::string& MeterToName(MeterType meter) {
-    for (auto& [name, type] : GetMeterNameMap()) {
-        if (type == meter)
-            return name; // CodeQL reports "Returning stack-allocated memory", but the name structured binding should be a reference as far as I can tell
-    }
-    return EMPTY_STRING;
+static_assert(NameToMeter("not a meter") == MeterType::INVALID_METER_TYPE, "Name to Meter conversion failed for invalid meter type!");
+static_assert(NameToMeter("Population") == MeterType::METER_POPULATION, "Name to Meter conversion failed for 'Population' meter!");
+static_assert(NameToMeter("Speed") == MeterType::METER_SPEED, "Name to Meter conversion failed for 'Speed' meter!");
+
+std::string_view MeterToName(const MeterType meter) {
+    // NOTE: INVALID_METER_TYPE (enum's -1 position) <= meter < NUM_METER_TYPES (enum's final position)
+    return NAME_BY_METER[static_cast<std::underlying_type_t<MeterType>>(meter) + 1];
 }
 
 constexpr std::string_view PlanetTypeToStringConstexpr(PlanetType type) {
