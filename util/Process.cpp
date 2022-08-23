@@ -114,12 +114,23 @@ void Process::Free() {
 
 #if defined(FREEORION_WIN32)
 
-Process::Impl::Impl(const std::string& cmd, const std::vector<std::string>& argv) {
-    std::wstring wargs;
+std::wstring ToWString(const std::string& utf8_string) {
+    // convert UTF-8 string to UTF-16
+    int utf16_sz = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
+                                       utf8_string.data(), utf8_string.length(), NULL, 0);
+    std::wstring utf16_string(utf16_sz, 0);
+    if (utf16_sz > 0)
+        MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
+                            utf8_string.data(), utf8_string.size(),
+                            utf16_string.data(), utf16_sz);
+    return utf16_string;
+}
 
-    std::wstring wcmd = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.from_bytes(cmd);
+Process::Impl::Impl(const std::string& cmd, const std::vector<std::string>& argv) {
+    // convert UTF8 command and arguments to UTF16
+    std::wstring wargs;
     for (unsigned int i = 0; i < argv.size(); ++i) {
-        wargs += std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.from_bytes(argv[i]);
+        wargs += ToWString(argv[i]);
         if (i + 1 < argv.size())
             wargs += ' ';
     }
@@ -128,12 +139,15 @@ Process::Impl::Impl(const std::string& cmd, const std::vector<std::string>& argv
     m_startup_info.cb = sizeof(STARTUPINFOW);
     ZeroMemory(&m_process_info, sizeof(PROCESS_INFORMATION));
 
+    std::wstring wcmd = ToWString(cmd);
+
+
     if (!CreateProcessW(wcmd.c_str(), const_cast<LPWSTR>(wargs.c_str()), 0, 0,
         false, CREATE_NO_WINDOW, 0, 0, &m_startup_info, &m_process_info)) {
             std::string err_str;
             DWORD err = GetLastError();
-            DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM;
-            LPSTR buf;
+            static constexpr DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM;
+            LPSTR buf = {};
             if (FormatMessageA(flags, 0, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&buf, 0, 0)) {
                 err_str += buf;
                 LocalFree(buf);
@@ -147,10 +161,8 @@ Process::Impl::~Impl()
 { if (!m_free) Kill(); }
 
 bool Process::Impl::SetLowPriority(bool low) {
-    if (low)
-        return (SetPriorityClass(m_process_info.hProcess, BELOW_NORMAL_PRIORITY_CLASS) != 0);
-    else
-        return (SetPriorityClass(m_process_info.hProcess, NORMAL_PRIORITY_CLASS) != 0);
+    const DWORD priority = low ? BELOW_NORMAL_PRIORITY_CLASS : NORMAL_PRIORITY_CLASS;
+    return SetPriorityClass(m_process_info.hProcess, priority);
 }
 
 bool Process::Impl::Terminate() {
@@ -163,8 +175,8 @@ void Process::Impl::Kill() {
     if (m_process_info.hProcess && !TerminateProcess(m_process_info.hProcess, 0)) {
         std::string err_str;
         DWORD err = GetLastError();
-        DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM;
-        LPSTR buf;
+        static constexpr DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM;
+        LPSTR buf = {};
         if (FormatMessageA(flags, 0, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&buf, 0, 0)) {
             err_str += buf;
             LocalFree(buf);
@@ -189,8 +201,8 @@ void Process::Impl::Kill() {
     if (m_process_info.hThread && !CloseHandle(m_process_info.hThread)) {
         std::string err_str;
         DWORD err = GetLastError();
-        DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM;
-        LPSTR buf;
+        static constexpr DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM;
+        LPSTR buf = {};
         if (FormatMessageA(flags, 0, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&buf, 0, 0)) {
             err_str += buf;
             LocalFree(buf);
@@ -216,9 +228,8 @@ void Process::Impl::Kill() {
 
 Process::Impl::Impl(const std::string& cmd, const std::vector<std::string>& argv) {
     std::vector<char*> args;
-    for (unsigned int i = 0; i < argv.size(); ++i) {
+    for (unsigned int i = 0; i < argv.size(); ++i)
         args.push_back(const_cast<char*>(&(const_cast<std::string&>(argv[i])[0])));
-    }
     args.push_back(nullptr);
 
     switch (m_process_id = fork()) {
