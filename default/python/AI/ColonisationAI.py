@@ -19,7 +19,7 @@ from colonization.planet_supply import get_planet_supply
 from common.print_utils import Number, Sequence, Table, Text
 from empire.colony_builders import can_build_colony_for_species, get_colony_builders
 from EnumsAI import EmpireProductionTypes, MissionType, PriorityType, ShipRoleType
-from ExpansionPlans import (
+from expansion_plans import (
     get_colonisable_outpost_ids,
     get_colonisable_planet_ids,
     update_colonisable_outpost_ids,

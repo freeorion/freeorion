@@ -26,7 +26,7 @@ from EnumsAI import (
     ShipRoleType,
     get_priority_production_types,
 )
-from ExpansionPlans import get_colonisable_outpost_ids, get_colonisable_planet_ids
+from expansion_plans import get_colonisable_outpost_ids, get_colonisable_planet_ids
 from freeorion_tools import tech_is_complete
 from freeorion_tools.timers import AITimer
 from turn_state import (

@@ -1,4 +1,4 @@
-from ExpansionPlans.ExpansionPlansInterface import (
+from expansion_plans.expansion_plans_interface import (
     colonies_targeted,
     get_colonisable_outpost_ids,
     get_colonisable_planet_ids,

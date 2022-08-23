@@ -17,7 +17,7 @@ from CombatRatingsAI import (
     rating_needed,
 )
 from EnumsAI import MissionType
-from ExpansionPlans import get_colonisable_outpost_ids, get_colonisable_planet_ids
+from expansion_plans import get_colonisable_outpost_ids, get_colonisable_planet_ids
 from freeorion_tools import combine_ratings
 from freeorion_tools.caching import cache_by_turn_persistent
 from target import TargetSystem

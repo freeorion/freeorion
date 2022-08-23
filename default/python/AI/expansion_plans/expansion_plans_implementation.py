@@ -7,12 +7,12 @@ from typing import FrozenSet, Iterable, Tuple
 from aistate_interface import get_aistate
 from common.fo_typing import PlanetId, SpeciesName
 from EnumsAI import MissionType
-from ExpansionPlans import ExpansionPlansInterface
+from expansion_plans import expansion_plans_interface
 from FleetUtilsAI import get_targeted_planet_ids
 
 
-def initialise():
-    ExpansionPlansInterface._the_planner = ExpansionPlanner()
+def initialise_expansion_plans():
+    expansion_plans_interface._the_planner = ExpansionPlanner()
 
 
 class ExpansionPlanner:

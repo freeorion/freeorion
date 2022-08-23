@@ -56,7 +56,7 @@ from EnumsAI import (
     ShipRoleType,
     get_priority_production_types,
 )
-from ExpansionPlans import get_colonisable_planet_ids
+from expansion_plans import get_colonisable_planet_ids
 from freeorion_tools import get_named_real, ppstring, tech_is_complete
 from production import print_building_list, print_capital_info, print_production_queue
 from turn_state import (
