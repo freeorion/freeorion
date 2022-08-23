@@ -856,7 +856,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
 {
     IF_CURRENT_VALUE(double)
 
-    const std::string property_name = m_property_name.empty() ? "" : m_property_name.back();
+    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
 
     if (m_ref_type == ReferenceType::NON_OBJECT_REFERENCE) {
         if ((property_name == "UniverseCentreX") ||
