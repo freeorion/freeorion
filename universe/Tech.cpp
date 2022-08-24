@@ -167,55 +167,6 @@ Tech::Tech(std::string&& name, std::string&& description,
     Init();
 }
 
-Tech::Tech(TechInfo&& tech_info,
-           std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
-           std::set<std::string>&& prerequisites,
-           std::vector<UnlockableItem>&& unlocked_items,
-           std::string&& graphic) :
-    m_name(std::move(tech_info.name)),
-    m_description(std::move(tech_info.description)),
-    m_short_description(std::move(tech_info.short_description)),
-    m_category(std::move(tech_info.category)),
-    m_research_cost(std::move(tech_info.research_cost)),
-    m_research_turns(std::move(tech_info.research_turns)),
-    m_researchable(tech_info.researchable),
-    m_tags_concatenated([&tech_info]() {
-        // allocate storage for concatenated tags
-        // TODO: transform_reduce when available on all platforms...
-        std::size_t params_sz = 0;
-        for (const auto& t : tech_info.tags)
-            params_sz += t.size();
-        std::string retval;
-        retval.reserve(params_sz);
-
-        // concatenate tags
-        std::for_each(tech_info.tags.begin(), tech_info.tags.end(), [&retval](const auto& t)
-        { retval.append(boost::to_upper_copy<std::string>(t)); });
-        return retval;
-    }()),
-    m_tags([&tech_info, this]() {
-        std::vector<std::string_view> retval;
-        std::size_t next_idx = 0;
-        retval.reserve(tech_info.tags.size());
-        std::string_view sv{m_tags_concatenated};
-
-        // store views into concatenated tags string
-        std::for_each(tech_info.tags.begin(), tech_info.tags.end(), [&next_idx, &retval, this, sv](const auto& t) {
-            std::string upper_t = boost::to_upper_copy<std::string>(t);
-            retval.push_back(sv.substr(next_idx, upper_t.size()));
-            next_idx += upper_t.size();
-        });
-        return retval;
-    }()),
-    m_prerequisites(std::move(prerequisites)),
-    m_unlocked_items(std::move(unlocked_items)),
-    m_graphic(std::move(graphic))
-{
-    for (auto&& effect : effects)
-        m_effects.push_back(std::move(effect));
-    Init();
-}
-
 void Tech::Init() {
     if (m_research_cost)
         m_research_cost->SetTopLevelContent(m_name);
