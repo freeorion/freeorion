@@ -5,7 +5,7 @@ Tech(
     description="SHP_SMALL_ROBO_DESC",
     short_description="SHIP_HULL_UNLOCK_SHORT_DESC",
     category="SHIP_HULLS_CATEGORY",
-    researchcost=8 * TECH_COST_MULTIPLIER,
+    researchcost=16 * TECH_COST_MULTIPLIER,
     researchturns=2,
     tags=["PEDIA_ROBOTIC_HULL_TECHS"],
     prerequisites=["SHP_MIL_ROBO_CONT", "PRO_NANOTECH_PROD"],
