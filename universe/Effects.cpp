@@ -4463,7 +4463,7 @@ std::string Conditional::Dump(uint8_t ntabs) const {
     return retval;
 }
 
-bool Conditional::IsMeterEffect() const {
+bool Conditional::IsMeterEffect() const noexcept {
     for (auto& effect : m_true_effects) {
         if (effect->IsMeterEffect())
             return true;
@@ -4475,7 +4475,7 @@ bool Conditional::IsMeterEffect() const {
     return false;
 }
 
-bool Conditional::IsAppearanceEffect() const {
+bool Conditional::IsAppearanceEffect() const noexcept {
     for (auto& effect : m_true_effects) {
         if (effect->IsAppearanceEffect())
             return true;
@@ -4487,7 +4487,7 @@ bool Conditional::IsAppearanceEffect() const {
     return false;
 }
 
-bool Conditional::IsSitrepEffect() const {
+bool Conditional::IsSitrepEffect() const noexcept {
     for (auto& effect : m_true_effects) {
         if (effect->IsSitrepEffect())
             return true;

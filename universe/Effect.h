@@ -119,21 +119,21 @@ namespace Effect {
                              bool include_empire_meter_effects = false,
                              bool only_generate_sitrep_effects = false) const;
 
-        virtual bool            operator==(const Effect& rhs) const;
-        bool                    operator!=(const Effect& rhs) const { return !(*this == rhs); }
+        virtual bool operator==(const Effect& rhs) const;
+        bool         operator!=(const Effect& rhs) const { return !(*this == rhs); }
 
-        virtual std::string     Dump(uint8_t ntabs = 0) const = 0;
+        [[nodiscard]] virtual std::string Dump(uint8_t ntabs = 0) const = 0;
 
-        virtual bool            IsMeterEffect() const { return false; }
-        virtual bool            IsEmpireMeterEffect() const { return false; }
-        virtual bool            IsAppearanceEffect() const { return false; }
-        virtual bool            IsSitrepEffect() const { return false; }
-        virtual bool            IsConditionalEffect() const { return false; }
+        [[nodiscard]] virtual bool IsMeterEffect() const noexcept { return false; }
+        [[nodiscard]] virtual bool IsEmpireMeterEffect() const noexcept { return false; }
+        [[nodiscard]] virtual bool IsAppearanceEffect() const noexcept { return false; }
+        [[nodiscard]] virtual bool IsSitrepEffect() const noexcept { return false; }
+        [[nodiscard]] virtual bool IsConditionalEffect() const noexcept { return false; }
 
         // TODO: source-invariant?
 
-        virtual void            SetTopLevelContent(const std::string& content_name) = 0;
-        virtual unsigned int    GetCheckSum() const;
+        virtual void SetTopLevelContent(const std::string& content_name) = 0;
+        [[nodiscard]] virtual unsigned int GetCheckSum() const;
 
         //! Makes a clone of this Effect in a new owning pointer. Required for Boost.Python, which
         //! doesn't supports move semantics for returned values.
