@@ -107,7 +107,7 @@ public:
     [[nodiscard]] const std::set<std::string>& AvailableBuildingTypes() const;
 
     /** Returns the set of ShipDesign IDs available for this empire to build. */
-    [[nodiscard]] std::set<int>                AvailableShipDesigns(const Universe& universe) const;
+    [[nodiscard]] std::vector<int>             AvailableShipDesigns(const Universe& universe) const;
 
     [[nodiscard]] const std::set<int>&         ShipDesigns() const;                ///< Returns the set of all ship design ids of this empire
     [[nodiscard]] const std::set<std::string>& AvailableShipParts() const;         ///< Returns the set of ship part names this empire that the empire can currently build

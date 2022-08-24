@@ -775,13 +775,16 @@ bool Empire::BuildingTypeAvailable(const std::string& name) const
 const std::set<int>& Empire::ShipDesigns() const
 { return m_known_ship_designs; }
 
-std::set<int> Empire::AvailableShipDesigns(const Universe& universe) const {
+std::vector<int> Empire::AvailableShipDesigns(const Universe& universe) const {
     // create new map containing all ship designs that are available
-    std::set<int> retval;
-    for (int design_id : m_known_ship_designs) {
-        if (ShipDesignAvailable(design_id, universe))
-            retval.insert(design_id);
-    }
+    std::vector<int> retval;
+    retval.reserve(m_known_ship_designs.size());
+    std::copy_if(m_known_ship_designs.begin(), m_known_ship_designs.end(),
+                 std::back_inserter(retval), [&universe, this](int design_id)
+                 { return ShipDesignAvailable(design_id, universe); });
+    std::sort(retval.begin(), retval.end());
+    auto unique_it = std::unique(retval.begin(), retval.end());
+    retval.erase(unique_it, retval.end());
     return retval;
 }
 
