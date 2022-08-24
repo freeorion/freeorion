@@ -205,71 +205,71 @@ public:
 
     /** returns the species with the name \a name; you should use the
       * free function GetSpecies() instead, mainly to save some typing. */
-    const Species*      GetSpecies(std::string_view name) const;
+    [[nodiscard]] const Species*      GetSpecies(std::string_view name) const;
 
     /** returns the species with name \a without guarding access to
       * shared state. */
-    const Species*      GetSpeciesUnchecked(std::string_view name) const;
+    [[nodiscard]] const Species*      GetSpeciesUnchecked(std::string_view name) const;
 
     /** iterators for all species */
-    iterator            begin() const;
-    iterator            end() const;
+    [[nodiscard]] iterator            begin() const;
+    [[nodiscard]] iterator            end() const;
 
     /** iterators for playble species. */
-    playable_iterator   playable_begin() const;
-    playable_iterator   playable_end() const;
+    [[nodiscard]] playable_iterator   playable_begin() const;
+    [[nodiscard]] playable_iterator   playable_end() const;
 
     /** iterators for native species. */
-    native_iterator     native_begin() const;
-    native_iterator     native_end() const;
+    [[nodiscard]] native_iterator     native_begin() const;
+    [[nodiscard]] native_iterator     native_end() const;
 
     /** returns an ordered list of tags that should be considered for census listings. */
-    const CensusOrder&  census_order() const;
+    [[nodiscard]] const CensusOrder&  census_order() const;
 
     /** returns true iff this SpeciesManager is empty. */
-    bool                empty() const;
+    [[nodiscard]] bool                empty() const;
 
     /** returns the number of species stored in this manager. */
-    int                 NumSpecies() const;
-    int                 NumPlayableSpecies() const;
-    int                 NumNativeSpecies() const;
+    [[nodiscard]] int                 NumSpecies() const;
+    [[nodiscard]] int                 NumPlayableSpecies() const;
+    [[nodiscard]] int                 NumNativeSpecies() const;
 
     /** returns the name of a species in this manager, or an empty string if
       * this manager is empty. */
-    const std::string&  RandomSpeciesName() const;
+    [[nodiscard]] const std::string&  RandomSpeciesName() const;
 
     /** returns the name of a playable species in this manager, or an empty
       * string if there are no playable species. */
-    const std::string&  RandomPlayableSpeciesName() const;
-    const std::string&  SequentialPlayableSpeciesName(int id) const;
+    [[nodiscard]] const std::string&  RandomPlayableSpeciesName() const;
+    [[nodiscard]] const std::string&  SequentialPlayableSpeciesName(int id) const;
 
     /** returns a map from species name to a set of object IDs that are the
       * homeworld(s) of that species in the current game. */
-    const std::map<std::string, std::set<int>>&
+    [[nodiscard]] const std::map<std::string, std::set<int>>&
         GetSpeciesHomeworldsMap(int encoding_empire = ALL_EMPIRES) const;
 
     /** returns a map from species name to a map from empire id to each the
       * species' opinion of the empire */
-    const std::map<std::string, std::map<int, float>>&
+    [[nodiscard]] const std::map<std::string, std::map<int, float>>&
         GetSpeciesEmpireOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
 
     /** returns opinion of species with name \a species_name about empire with
       * id \a empire_id or 0.0 if there is no such opinion yet recorded. */
-    float SpeciesEmpireOpinion(const std::string& species_name, int empire_id) const;
+    [[nodiscard]] float SpeciesEmpireOpinion(const std::string& species_name, int empire_id) const;
 
     /** returns a map from species name to a map from other species names to the
       * opinion of the first species about the other species. */
-    const std::map<std::string, std::map<std::string, float>>&
+    [[nodiscard]] const std::map<std::string, std::map<std::string, float>>&
         GetSpeciesSpeciesOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
 
     /** returns opinion of species with name \a opinionated_species_name about
       * other species with name \a rated_species_name or 0.0 if there is no
       * such opinion yet recorded. */
-    float SpeciesSpeciesOpinion(const std::string& opinionated_species_name,
-                                const std::string& rated_species_name) const;
+    [[nodiscard]] float SpeciesSpeciesOpinion(const std::string& opinionated_species_name,
+                                              const std::string& rated_species_name) const;
 
-    std::vector<std::string_view> SpeciesThatLike(std::string_view content_name) const;
-    std::vector<std::string_view> SpeciesThatDislike(std::string_view content_name) const;
+    [[nodiscard]] std::vector<std::string_view> SpeciesThatLike(std::string_view content_name) const;
+    [[nodiscard]] std::vector<std::string_view> SpeciesThatDislike(std::string_view content_name) const;
 
     /** Returns a number, calculated from the contained data, which should be
       * different for different contained data, and must be the same for
@@ -277,7 +277,7 @@ public:
       * and executions of the program and the function. Useful to verify that
       * the parsed content is consistent without sending it all between
       * clients and server. */
-    unsigned int GetCheckSum() const;
+    [[nodiscard]] unsigned int GetCheckSum() const;
 
     /** sets the opinions of species (indexed by name string) of empires (indexed
       * by id) as a double-valued number. */
@@ -298,8 +298,8 @@ public:
 
     void UpdatePopulationCounter(const ObjectMap& objects);
 
-    const std::map<std::string, std::map<int, float>>&       SpeciesObjectPopulations(int encoding_empire = ALL_EMPIRES) const;
-    const std::map<std::string, std::map<std::string, int>>& SpeciesShipsDestroyed(int encoding_empire = ALL_EMPIRES) const;
+    [[nodiscard]] const std::map<std::string, std::map<int, float>>&       SpeciesObjectPopulations(int encoding_empire = ALL_EMPIRES) const;
+    [[nodiscard]] const std::map<std::string, std::map<std::string, int>>& SpeciesShipsDestroyed(int encoding_empire = ALL_EMPIRES) const;
     void SetSpeciesObjectPopulations(std::map<std::string, std::map<int, float>> sop);
     void SetSpeciesShipsDestroyed(std::map<std::string, std::map<std::string, int>> ssd);
 

@@ -44,17 +44,17 @@ public:
     bool operator!=(const Special& rhs) const
     { return !(*this == rhs); }
 
-    auto&       Name() const            { return m_name; }          ///< returns the unique name for this type of special
-    std::string Description() const;                                ///< returns a text description of this type of special
-    std::string Dump(uint8_t ntabs = 0) const;               ///< returns a data file format representation of this object
-    auto*       Stealth() const         { return m_stealth.get(); } ///< returns the stealth of the special, which determines how easily it is seen by empires
-    auto&       Effects() const         { return m_effects; }               ///< returns the EffectsGroups that encapsulate the effects that specials of this type have.
-    float       SpawnRate() const       { return m_spawn_rate; }
-    int         SpawnLimit() const      { return m_spawn_limit; }
-    auto*       InitialCapacity() const { return m_initial_capacity.get(); }///< returns the ValueRef to use to set the initial capacity of the special when placed
-    float       InitialCapacity(int object_id) const;                       ///< evaluates initial apacity ValueRef using the object with specified \a object_id as the object on which the special will be placed
-    const auto* Location() const        { return m_location.get(); }        ///< returns the condition that determines whether an UniverseObject can have this special applied during universe creation
-    auto&       Graphic() const         { return m_graphic; };              ///< returns the name of the grapic file for this special
+    [[nodiscard]] auto&       Name() const noexcept            { return m_name; }           ///< unique name for this type of special
+    [[nodiscard]] std::string Description() const;           ///< text description of this type of special
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const; ///< data file format representation of this object
+    [[nodiscard]] auto*       Stealth() const noexcept         { return m_stealth.get(); } ///< stealth of the special, which determines how easily it is seen by empires
+    [[nodiscard]] auto&       Effects() const noexcept         { return m_effects; }       ///< EffectsGroups that encapsulate the effects that specials of this type have.
+    [[nodiscard]] float       SpawnRate() const noexcept       { return m_spawn_rate; }
+    [[nodiscard]] int         SpawnLimit() const noexcept      { return m_spawn_limit; }
+    [[nodiscard]] auto*       InitialCapacity() const noexcept { return m_initial_capacity.get(); } ///< ValueRef to use to set the initial capacity of the special when placed
+    [[nodiscard]] float       InitialCapacity(int object_id) const; ///< evaluates initial capacity ValueRef using the object with specified \a object_id as the object on which the special will be placed
+    [[nodiscard]] const auto* Location() const noexcept        { return m_location.get(); }///< condition that determines whether an UniverseObject can have this special applied during universe creation
+    [[nodiscard]] auto&       Graphic() const noexcept         { return m_graphic; };      ///< name of the grapic file for this special
 
     /** Returns a number, calculated from the contained data, which should be
       * different for different contained data, and must be the same for
@@ -62,7 +62,7 @@ public:
       * and executions of the program and the function. Useful to verify that
       * the parsed content is consistent without sending it all between
       * clients and server. */
-    unsigned int GetCheckSum() const;
+    [[nodiscard]] unsigned int GetCheckSum() const;
 
 private:
     void Init();
@@ -80,10 +80,10 @@ private:
 
 /** Returns the Special object used to represent specials of type \a name.
   * If no such Special exists, 0 is returned instead. */
-FO_COMMON_API const Special* GetSpecial(std::string_view name);
+[[nodiscard]]FO_COMMON_API const Special* GetSpecial(std::string_view name);
 
 /** Returns names of all specials. */
-FO_COMMON_API std::vector<std::string_view> SpecialNames();
+[[nodiscard]] FO_COMMON_API std::vector<std::string_view> SpecialNames();
 
 
 /** Look up table for specials.*/
@@ -91,10 +91,10 @@ class FO_COMMON_API SpecialsManager {
 public:
     using SpecialsTypeMap = std::map<std::string, std::unique_ptr<Special>, std::less<>>;
 
-    int                           NumSpecials() const { return m_specials.size(); }
-    std::vector<std::string_view> SpecialNames() const;
-    const Special*                GetSpecial(std::string_view name) const;
-    unsigned int                  GetCheckSum() const;
+    [[nodiscard]] int                           NumSpecials() const noexcept { return m_specials.size(); }
+    [[nodiscard]] std::vector<std::string_view> SpecialNames() const;
+    [[nodiscard]] const Special*                GetSpecial(std::string_view name) const;
+    [[nodiscard]] unsigned int                  GetCheckSum() const;
 
     /** Sets types to the value of \p future. */
     void SetSpecialsTypes(Pending::Pending<SpecialsTypeMap>&& future);

@@ -55,91 +55,86 @@ public:
     { return !(*this == rhs); }
 
     //! Returns name of part
-    auto Name() const -> const std::string&
-    { return m_name; }
+    [[nodiscard]] auto Name() const noexcept -> const std::string& { return m_name; }
 
     //! Returns description string, generally a UserString key.
-    auto Description() const -> const std::string&
-    { return m_description; }
+    [[nodiscard]] auto Description() const noexcept -> const std::string& { return m_description; }
 
     //! Returns that class of part that this is.
-    auto Class() const -> ShipPartClass
-    { return m_class; }
+    [[nodiscard]] auto Class() const noexcept -> ShipPartClass { return m_class; }
 
-    auto Capacity() const -> float;
+    [[nodiscard]] auto Capacity() const -> float;
 
     //! Returns a translated description of the part capacity, with numeric
     //! value
-    auto CapacityDescription() const -> std::string;
+    [[nodiscard]] auto CapacityDescription() const -> std::string;
 
-    auto SecondaryStat() const -> float;
+    [[nodiscard]] auto SecondaryStat() const -> float;
 
     //! Returns true if this part can be placed in a slot of the indicated type
-    auto CanMountInSlotType(ShipSlotType slot_type) const -> bool;
+    [[nodiscard]] auto CanMountInSlotType(ShipSlotType slot_type) const -> bool;
 
     //! Returns the value ref estimating maximum damage against fighters in a combat.
     //! may be nullptr if no value ref was specified
-    auto TotalFighterDamage() const -> const ValueRef::ValueRef<double>*
+    [[nodiscard]] auto TotalFighterDamage() const noexcept -> const ValueRef::ValueRef<double>*
     { return m_total_fighter_damage.get(); }
 
     //! Returns the value ref estimating maximum damage against ships in a combat.
     //! may be nullptr if no value ref was specified
-    auto TotalShipDamage() const -> const ValueRef::ValueRef<double>*
+    [[nodiscard]] auto TotalShipDamage() const noexcept -> const ValueRef::ValueRef<double>*
     { return m_total_ship_damage.get(); }
 
     //! Returns the condition for possible targets. may be nullptr if no
     //! condition was specified.
-    auto CombatTargets() const -> const Condition::Condition*
+    [[nodiscard]] auto CombatTargets() const noexcept -> const Condition::Condition*
     { return m_combat_targets.get(); }
 
-    auto MountableSlotTypes() const -> const std::vector<ShipSlotType>&
+    [[nodiscard]] auto MountableSlotTypes() const noexcept -> const std::vector<ShipSlotType>&
     { return m_mountable_slot_types; }
 
     //! Returns true if the production cost and time are invariant
     //! (does not depend on) the location
-    auto ProductionCostTimeLocationInvariant() const -> bool;
+    [[nodiscard]] auto ProductionCostTimeLocationInvariant() const -> bool;
 
     //! Returns the number of production points required to produce this part
-    auto ProductionCost(int empire_id, int location_id, const ScriptingContext& context,
-                        int in_design_id = INVALID_DESIGN_ID) const -> float;
+    [[nodiscard]] auto ProductionCost(int empire_id, int location_id, const ScriptingContext& context,
+                                      int in_design_id = INVALID_DESIGN_ID) const -> float;
 
     //! Returns the number of turns required to produce this part
-    auto ProductionTime(int empire_id, int location_id, const ScriptingContext& context,
-                        int in_design_id = INVALID_DESIGN_ID) const -> int;
+    [[nodiscard]] auto ProductionTime(int empire_id, int location_id, const ScriptingContext& context,
+                                      int in_design_id = INVALID_DESIGN_ID) const -> int;
 
     //! Returns whether this part type is producible by players and appears on
     //! the design screen
-    auto Producible() const -> bool
-    { return m_producible; }
+    [[nodiscard]] auto Producible() const noexcept -> bool { return m_producible; }
 
-    auto ProductionMeterConsumption() const -> const ConsumptionMap<MeterType>&
+    [[nodiscard]] auto ProductionMeterConsumption() const noexcept -> const ConsumptionMap<MeterType>&
     { return m_production_meter_consumption; }
 
-    auto ProductionSpecialConsumption() const -> const ConsumptionMap<std::string>&
+    [[nodiscard]] auto ProductionSpecialConsumption() const noexcept -> const ConsumptionMap<std::string>&
     { return m_production_special_consumption; }
 
-    const auto& Tags() const { return m_tags; }
+    [[nodiscard]] const auto& Tags() const noexcept { return m_tags; }
 
-    bool HasTag(std::string_view tag) const
+    [[nodiscard]] bool HasTag(std::string_view tag) const
     { return std::any_of(m_tags.begin(), m_tags.end(), [&tag](const auto& t) { return t == tag; }); }
 
     //! Returns the condition that determines the locations where ShipDesign
     //! containing part can be produced
-    auto Location() const -> const Condition::Condition*
+    [[nodiscard]] auto Location() const noexcept -> const Condition::Condition*
     { return m_location.get(); }
 
     //! Returns the names of other content that cannot be used in the same
     //! ship design as this part
-    auto Exclusions() const -> const std::set<std::string>&
+    [[nodiscard]] auto Exclusions() const noexcept -> const std::set<std::string>&
     { return m_exclusions; }
 
     //! Returns the EffectsGroups that encapsulate the effects this part has.
-    auto Effects() const -> const std::vector<std::shared_ptr<Effect::EffectsGroup>>&
+    [[nodiscard]] auto Effects() const noexcept -> const std::vector<std::shared_ptr<Effect::EffectsGroup>>&
     { return m_effects; }
 
     //! Returns icon graphic that represents part in UI
-    auto Icon() const -> const std::string&
-    { return m_icon; }
+    [[nodiscard]] auto Icon() const noexcept -> const std::string& { return m_icon; }
 
     //! Returns a number, calculated from the contained data, which should be
     //! different for different contained data, and must be the same for
@@ -147,7 +142,7 @@ public:
     //! and executions of the program and the function. Useful to verify that
     //! the parsed content is consistent without sending it all between
     //! clients and server.
-    unsigned int GetCheckSum() const;
+    [[nodiscard]] unsigned int GetCheckSum() const;
     //@}
 
 private:
@@ -187,20 +182,20 @@ public:
 
     //! Returns the ShipPart with the name @p name; you should use the free
     //! function GetShipPart() instead
-    auto GetShipPart(std::string_view name) const -> const ShipPart*;
+    [[nodiscard]] auto GetShipPart(std::string_view name) const -> const ShipPart*;
 
     //! Iterator to the first ShipPart
-    auto begin() const -> iterator;
+    [[nodiscard]] auto begin() const -> iterator;
 
     //! Iterator to one after the last ShipPart.
-    auto end() const -> iterator;
+    [[nodiscard]] auto end() const -> iterator;
 
     //! How many parts are known?
-    auto size() const -> std::size_t;
+    [[nodiscard]] auto size() const -> std::size_t;
 
     //! Returns the instance of this singleton class; you should use the free
     //! function GetShipPartManager() instead.
-    static auto GetShipPartManager() -> ShipPartManager&;
+    [[nodiscard]] static auto GetShipPartManager() -> ShipPartManager&;
 
     //! Returns a number, calculated from the contained data, which should be
     //! different for different contained data, and must be the same for
@@ -208,7 +203,7 @@ public:
     //! and executions of the program and the function. Useful to verify that
     //! the parsed content is consistent without sending it all between
     //! clients and server.
-    auto GetCheckSum() const -> unsigned int;
+    [[nodiscard]] auto GetCheckSum() const -> unsigned int;
 
     //! Sets part types to the future value of @p pending_ship_parts.
     FO_COMMON_API void SetShipParts(Pending::Pending<ShipPartMap>&& pending_ship_parts);
@@ -230,12 +225,12 @@ private:
 
 
 //! Returns the singleton ShipPart manager
-FO_COMMON_API ShipPartManager& GetShipPartManager();
+[[nodiscard]] FO_COMMON_API ShipPartManager& GetShipPartManager();
 
 
 //! Returns the ShipPart specification object with name @p name.  If no
 //! such ShipPart exists, nullptr is returned instead.
-FO_COMMON_API const ShipPart* GetShipPart(std::string_view name);
+[[nodiscard]] FO_COMMON_API const ShipPart* GetShipPart(std::string_view name);
 
 
 #endif

@@ -43,11 +43,11 @@ struct FO_COMMON_API Condition {
               SearchDomain search_domain = SearchDomain::NON_MATCHES) const;
 
     /** Tests all objects in \a parent_context and returns those that match. */
-    ObjectSet Eval(const ScriptingContext& parent_context) const;
-    Effect::TargetSet Eval(ScriptingContext& parent_context) const;
+    [[nodiscard]] ObjectSet Eval(const ScriptingContext& parent_context) const;
+    [[nodiscard]] Effect::TargetSet Eval(ScriptingContext& parent_context) const;
 
     /** Tests single candidate object, returning true iff it matches condition. */
-    bool Eval(const ScriptingContext& parent_context, const UniverseObject* candidate) const;
+    [[nodiscard]] bool Eval(const ScriptingContext& parent_context, const UniverseObject* candidate) const;
 
     /** Initializes \a condition_non_targets with a set of objects that could
       * match this condition, without checking if they all actually do. */
@@ -57,14 +57,14 @@ struct FO_COMMON_API Condition {
     /** Derived Condition classes can override this to true if all objects returned
       * by GetDefaultInitialCandidateObject() are guaranteed to also match this
       * condition. */
-    virtual bool InitialCandidatesAllMatch() const { return false; }
+    [[nodiscard]] virtual bool InitialCandidatesAllMatch() const { return false; }
 
     //! Returns true iff this condition's evaluation does not reference
     //! the RootCandidate objects.  This requirement ensures that if this
     //! condition is a subcondition to another Condition or a ValueRef, this
     //! condition may be evaluated once and its result used to match all local
     //! candidates to that condition.
-    bool RootCandidateInvariant() const { return m_root_candidate_invariant; }
+    [[nodiscard]] bool RootCandidateInvariant() const noexcept { return m_root_candidate_invariant; }
 
     //! (Almost) all conditions are varying with local candidates; this is the
     //! point of evaluating a condition.  This funciton is provided for
