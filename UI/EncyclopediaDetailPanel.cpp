@@ -378,7 +378,7 @@ namespace {
             // second loop over alphabetically sorted names...
             for (auto& [us_name, tech_name] : userstring_tech_names) {
                 if (!exclude_custom_categories_from_dir_name ||
-                    !HasCustomCategory(GetTech(tech_name)->Tags()))
+                    GetTech(tech_name)->PediaTags().empty())
                 {
                     // already iterating over userstring-looked-up names, so don't need to re-look-up-here
                     std::string tagged_text{LinkTaggedPresetText(VarText::TECH_TAG, tech_name, us_name).append("\n")};
@@ -760,7 +760,7 @@ namespace {
             // techs
             for (const auto& tech : GetTechManager()) {
                 const auto& tech_name = tech->Name();
-                if (HasCustomCategory(tech->Tags(), dir_name))
+                if (HasCustomCategoryNoPrefixCheck(tech->PediaTags(), dir_name))
                     dir_entries.emplace_back(std::piecewise_construct,
                                              std::forward_as_tuple(UserString(tech_name)),
                                              std::forward_as_tuple(VarText::TECH_TAG, tech_name));

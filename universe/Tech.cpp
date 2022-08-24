@@ -1,6 +1,7 @@
 #include "Tech.h"
 
 #include <boost/filesystem/fstream.hpp>
+#include "CommonParams.h"
 #include "Effect.h"
 #include "ObjectMap.h"
 #include "UniverseObject.h"
@@ -152,9 +153,30 @@ Tech::Tech(std::string&& name, std::string&& description,
         std::string_view sv{m_tags_concatenated};
 
         // store views into concatenated tags string
-        std::for_each(tags.begin(), tags.end(), [&next_idx, &retval, this, sv](const auto& t) {
+        std::for_each(tags.begin(), tags.end(),
+                      [&next_idx, &retval, sv](const auto& t)
+        {
             std::string upper_t = boost::to_upper_copy<std::string>(t);
             retval.push_back(sv.substr(next_idx, upper_t.size()));
+            next_idx += upper_t.size();
+        });
+        return retval;
+    }()),
+    m_pedia_tags([&tags, this]() {
+        std::vector<std::string_view> retval;
+        std::size_t next_idx = 0;
+        retval.reserve(tags.size());
+        std::string_view sv{m_tags_concatenated};
+        static constexpr auto len{TAG_PEDIA_PREFIX.length()};
+
+        // store views into concatenated tags string
+        std::for_each(tags.begin(), tags.end(),
+                      [&next_idx, &retval, sv](const auto& t)
+        {
+            std::string upper_t = boost::to_upper_copy<std::string>(t);
+            auto tag = sv.substr(next_idx, upper_t.size());
+            if (tag.substr(0, len) == TAG_PEDIA_PREFIX)
+                retval.push_back(tag);
             next_idx += upper_t.size();
         });
         return retval;
