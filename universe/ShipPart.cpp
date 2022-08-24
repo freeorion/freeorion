@@ -185,9 +185,28 @@ ShipPart::ShipPart(ShipPartClass part_class, double capacity, double stat2,
 
         // store views into concatenated tags string
         std::for_each(common_params.tags.begin(), common_params.tags.end(),
-                      [&next_idx, &retval, this, sv](const auto& t)
+                      [&next_idx, &retval, sv](const auto& t)
         {
-            retval.push_back(sv.substr(next_idx, t.size()));
+            auto tag = sv.substr(next_idx, t.size());
+            retval.push_back(tag);
+            next_idx += t.size();
+        });
+        return retval;
+    }()),
+    m_pedia_tags([&common_params, this]() {
+        std::vector<std::string_view> retval;
+        std::size_t next_idx = 0;
+        retval.reserve(common_params.tags.size());
+        std::string_view sv{m_tags_concatenated};
+        static constexpr auto len{TAG_PEDIA_PREFIX.length()};
+
+        // store views into concatenated tags string
+        std::for_each(common_params.tags.begin(), common_params.tags.end(),
+                      [&next_idx, &retval, sv](const auto& t)
+        {
+            auto tag = sv.substr(next_idx, t.size());
+            if (tag.substr(0, len) == TAG_PEDIA_PREFIX)
+                retval.push_back(tag);
             next_idx += t.size();
         });
         return retval;

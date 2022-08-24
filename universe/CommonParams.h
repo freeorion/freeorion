@@ -26,6 +26,11 @@ template <typename T>
 using ConsumptionMap = std::map<T, std::pair<std::unique_ptr<ValueRef::ValueRef<double>>,
                                              std::unique_ptr<Condition::Condition>>>;
 
+/** @content_tag{PEDIA_} Defines an encyclopedia category for
+  * the generated article of the containing content definition.
+  * The category name should be postfixed to this tag. **/
+constexpr std::string_view TAG_PEDIA_PREFIX = "PEDIA_";
+
 //! Common parameters for ShipPart, ShipHull, and BuildingType constructors.
 //!
 //! Used as temporary storage for parsing to reduce number of sub-items parsed

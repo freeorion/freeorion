@@ -115,6 +115,7 @@ public:
     { return m_production_special_consumption; }
 
     [[nodiscard]] const auto& Tags() const noexcept { return m_tags; }
+    [[nodiscard]] const auto& PediaTags() const noexcept { return m_pedia_tags; }
 
     [[nodiscard]] bool HasTag(std::string_view tag) const
     { return std::any_of(m_tags.begin(), m_tags.end(), [&tag](const auto& t) { return t == tag; }); }
@@ -160,6 +161,7 @@ private:
     std::vector<ShipSlotType>                           m_mountable_slot_types;
     const std::string                                   m_tags_concatenated;
     const std::vector<std::string_view>                 m_tags;
+    const std::vector<std::string_view>                 m_pedia_tags;
     ConsumptionMap<MeterType>                           m_production_meter_consumption;
     ConsumptionMap<std::string>                         m_production_special_consumption;
     std::unique_ptr<Condition::Condition>               m_location;

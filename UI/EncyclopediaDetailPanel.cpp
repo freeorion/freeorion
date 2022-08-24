@@ -78,18 +78,33 @@ namespace {
     constexpr std::string_view TAG_ALWAYS_REPORT = "CTRL_ALWAYS_REPORT";
     /** @content_tag{CTRL_EXTINCT} Added to both a species and their enabling tech.  Handles display in planet suitability report. **/
     constexpr std::string_view TAG_EXTINCT = "CTRL_EXTINCT";
-    /** @content_tag{PEDIA_} Defines an encyclopedia category for the generated article of the containing content definition.  The category name should be postfixed to this tag. **/
-    constexpr std::string_view TAG_PEDIA_PREFIX = "PEDIA_";
 }
 
 namespace {
+    static constexpr auto prefix_len{TAG_PEDIA_PREFIX.length()};
+
     // Checks content \a tags for custom defined pedia category \a cat
-    bool HasCustomCategory(const std::vector<std::string_view>& tags, const std::string_view cat) {
-        static constexpr auto len{TAG_PEDIA_PREFIX.length()};
-        return std::any_of(tags.begin(), tags.end(), [&cat](const auto& sv) {
-            return sv.substr(0, len) == TAG_PEDIA_PREFIX &&
-                sv.substr(len) == cat;
+    bool HasCustomCategory(const std::vector<std::string_view>& tags,
+                           const std::string_view cat)
+    {
+        return std::any_of(tags.begin(), tags.end(), [cat](std::string_view sv) {
+            return sv.substr(0, prefix_len) == TAG_PEDIA_PREFIX &&
+                sv.substr(prefix_len) == cat;
         });
+    }
+
+    bool HasCustomCategoryNoPrefixCheck(const std::vector<std::string_view>& tags,
+                                        const std::string_view cat)
+    {
+        return std::any_of(tags.begin(), tags.end(), [cat](std::string_view sv)
+                           { return sv.substr(prefix_len) == cat; });
+    }
+
+    bool HasCustomCategoryNoPrefixes(const std::vector<std::string_view>& tags,
+                                     const std::string_view cat)
+    {
+        return std::any_of(tags.begin(), tags.end(), [cat](std::string_view sv)
+                           { return sv == cat; });
     }
 
     constexpr int ToIntCX(std::string_view sv, int default_result = -1) {
@@ -321,7 +336,9 @@ namespace {
         }
         else if (dir_name == "ENC_SHIP_PART") {
             for (auto& [part_name, part] : GetShipPartManager()) {
-                if (!exclude_custom_categories_from_dir_name || !HasCustomCategory(part->Tags())) {
+                if (!exclude_custom_categories_from_dir_name ||
+                    part->PediaTags().empty())
+                {
                     auto& us_name{UserString(part_name)};
                     retval.emplace_back(std::piecewise_construct,
                                         std::forward_as_tuple(us_name),
@@ -333,7 +350,9 @@ namespace {
         }
         else if (dir_name == "ENC_SHIP_HULL") {
             for (auto& [hull_name, hull] : GetShipHullManager()) {
-                if (!exclude_custom_categories_from_dir_name || !HasCustomCategory(hull->Tags())) {
+                if (!exclude_custom_categories_from_dir_name ||
+                    !HasCustomCategory(hull->Tags()))
+                {
                     auto& us_name{UserString(hull_name)};
                     retval.emplace_back(std::piecewise_construct,
                                         std::forward_as_tuple(us_name),
@@ -358,7 +377,9 @@ namespace {
 
             // second loop over alphabetically sorted names...
             for (auto& [us_name, tech_name] : userstring_tech_names) {
-                if (!exclude_custom_categories_from_dir_name || !HasCustomCategory(GetTech(tech_name)->Tags())) {
+                if (!exclude_custom_categories_from_dir_name ||
+                    !HasCustomCategory(GetTech(tech_name)->Tags()))
+                {
                     // already iterating over userstring-looked-up names, so don't need to re-look-up-here
                     std::string tagged_text{LinkTaggedPresetText(VarText::TECH_TAG, tech_name, us_name).append("\n")};
                     retval.emplace_back(std::piecewise_construct,
@@ -382,7 +403,9 @@ namespace {
         }
         else if (dir_name == "ENC_BUILDING_TYPE") {
             for (const auto& [building_name, building_type] : GetBuildingTypeManager()) {
-                if (!exclude_custom_categories_from_dir_name || !HasCustomCategory(building_type->Tags())) {
+                if (!exclude_custom_categories_from_dir_name ||
+                    !HasCustomCategory(building_type->Tags()))
+                {
                     auto& us_name{UserString(building_name)};
                     retval.emplace_back(std::piecewise_construct,
                                         std::forward_as_tuple(us_name),
@@ -516,7 +539,9 @@ namespace {
         }
         else if (dir_name == "ENC_FIELD_TYPE") {
             for (const auto& [field_name, field] : GetFieldTypeManager()) {
-                if (!exclude_custom_categories_from_dir_name || !HasCustomCategory(field->Tags())) {
+                if (!exclude_custom_categories_from_dir_name ||
+                    !HasCustomCategory(field->Tags()))
+                {
                     auto& us_name{UserString(field_name)};
                     retval.emplace_back(std::piecewise_construct,
                                         std::forward_as_tuple(us_name),
@@ -720,7 +745,7 @@ namespace {
 
             // part types
             for (auto& [part_name, part_type] : GetShipPartManager())
-                if (HasCustomCategory(part_type->Tags(), dir_name))
+                if (HasCustomCategoryNoPrefixCheck(part_type->PediaTags(), dir_name))
                     dir_entries.emplace_back(std::piecewise_construct,
                                              std::forward_as_tuple(UserString(part_name)),
                                              std::forward_as_tuple(VarText::SHIP_PART_TAG, part_name));
@@ -753,7 +778,7 @@ namespace {
                 if (dir_name == "ALL_SPECIES" ||
                    (dir_name == "NATIVE_SPECIES" && species->Native()) ||
                    (dir_name == "PLAYABLE_SPECIES" && species->Playable()) ||
-                    HasCustomCategory(species->Tags(), dir_name))
+                    HasCustomCategoryNoPrefixes(species->PediaTags(), dir_name))
                 {
                     dir_entries.emplace_back(std::piecewise_construct,
                                              std::forward_as_tuple(UserString(species_name)),
