@@ -28,9 +28,9 @@ public:
 
     [[nodiscard]] int                GetDataIDNumber(const std::string& tag) const;
     [[nodiscard]] const std::string& GetDataString(const std::string& tag) const;
-    [[nodiscard]] int                GetTurn() const         { return m_turn; }
-    [[nodiscard]] const std::string& GetIcon() const         { return m_icon; }
-    [[nodiscard]] const std::string& GetLabelString() const  { return m_label; }
+    [[nodiscard]] int                GetTurn() const noexcept        { return m_turn; }
+    [[nodiscard]] const std::string& GetIcon() const noexcept        { return m_icon; }
+    [[nodiscard]] const std::string& GetLabelString() const noexcept { return m_label; }
     [[nodiscard]] std::string        Dump() const;
 
 private:

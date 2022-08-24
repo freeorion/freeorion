@@ -83,21 +83,21 @@ public:
     explicit VarText(std::string template_string, bool stringtable_lookup = true);
 
     //! Return the text generated after substituting all variables.
-    const std::string& GetText() const;
+    [[nodiscard]] const std::string& GetText() const;
 
     //! Return if the text substitution was successful.
     bool Validate() const;
 
     //! Return the #m_template_string
-    const std::string& GetTemplateString() const
+    [[nodiscard]] const std::string& GetTemplateString() const noexcept
     { return m_template_string; }
 
     //! Return the #m_stringtable_lookup_flag
-    bool GetStringtableLookupFlag() const
+    [[nodiscard]] bool GetStringtableLookupFlag() const noexcept
     { return m_stringtable_lookup_flag; }
 
     //! Return the variables available for substitution.
-    std::vector<std::string_view> GetVariableTags() const;
+    [[nodiscard]] std::vector<std::string_view> GetVariableTags() const;
 
     //! Set the #m_template_string to the given @p template_string.
     //!

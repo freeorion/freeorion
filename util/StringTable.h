@@ -162,15 +162,12 @@ public:
     [[nodiscard]] std::pair<bool, const std::string&> CheckGet(const char* key) const;
 
     //! Returns the native language name of this StringTable.
-    [[nodiscard]] const std::string& Language() const
-    { return m_language; }
+    [[nodiscard]] const std::string& Language() const noexcept { return m_language; }
 
     //! Returns the translation file name this StringTable was loaded from.
-    [[nodiscard]] const std::string& Filename() const
-    { return m_filename; }
+    [[nodiscard]] const std::string& Filename() const noexcept { return m_filename; }
 
-    [[nodiscard]] const auto& AllStrings() const
-    { return m_strings; }
+    [[nodiscard]] const auto& AllStrings() const noexcept { return m_strings; }
 
     //! Adds the a @p key and @p value pair to this StringTable, and returns a reference
     //! to the newly-added string. If the key already exists, it is overwritten.

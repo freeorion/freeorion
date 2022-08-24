@@ -21,13 +21,13 @@ public:
                const SupplyManager& supply_);
 
     /** Returns System object in this CombatInfo's objects if one exists with id system_id. */
-    std::shared_ptr<const System> GetSystem() const;
+    [[nodiscard]] std::shared_ptr<const System> GetSystem() const;
 
     /** Returns System object in this CombatInfo's objects if one exists with id system_id. */
-    std::shared_ptr<System> GetSystem();
+    [[nodiscard]] std::shared_ptr<System> GetSystem();
 
-    std::shared_ptr<const Empire> GetEmpire(int id) const;
-    std::shared_ptr<Empire> GetEmpire(int id);
+    [[nodiscard]] std::shared_ptr<const Empire> GetEmpire(int id) const;
+    [[nodiscard]] std::shared_ptr<Empire> GetEmpire(int id);
 
     const Universe&                                universe; // universe in which combat occurs, used for general info getting, but not object state info
     EmpireManager&                                 empires;

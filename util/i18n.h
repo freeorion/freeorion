@@ -12,24 +12,24 @@
 
 #if !defined(FREEORION_ANDROID)
 /** Returns locale, which may be previously cached */
-FO_COMMON_API const std::locale& GetLocale(std::string_view name = "en_US.UTF-8");
+[[nodiscard]] FO_COMMON_API const std::locale& GetLocale(std::string_view name = "en_US.UTF-8");
 #endif
 
 /** Returns a language-specific string for the key-string \a str */
-FO_COMMON_API const std::string& UserString(const std::string& str);
-FO_COMMON_API const std::string& UserString(const std::string_view str);
-FO_COMMON_API const std::string& UserString(const char* str);
+[[nodiscard]] FO_COMMON_API const std::string& UserString(const std::string& str);
+[[nodiscard]] FO_COMMON_API const std::string& UserString(const std::string_view str);
+[[nodiscard]] FO_COMMON_API const std::string& UserString(const char* str);
 
 /** Returns all entries in current stringtable */
-FO_COMMON_API const std::map<std::string, std::string, std::less<>>& AllStringtableEntries(bool default_table = false);
+[[nodiscard]] FO_COMMON_API const std::map<std::string, std::string, std::less<>>& AllStringtableEntries(bool default_table = false);
 
 /** Returns a language-specific vector of strings for given @a key. */
-FO_COMMON_API std::vector<std::string> UserStringList(const std::string& key);
+[[nodiscard]] FO_COMMON_API std::vector<std::string> UserStringList(const std::string& key);
 
 /** Returns true iff a user-string exists for the key string \a str */
-FO_COMMON_API bool UserStringExists(const std::string& str);
-FO_COMMON_API bool UserStringExists(const std::string_view str);
-FO_COMMON_API bool UserStringExists(const char* str);
+[[nodiscard]] FO_COMMON_API bool UserStringExists(const std::string& str);
+[[nodiscard]] FO_COMMON_API bool UserStringExists(const std::string_view str);
+[[nodiscard]] FO_COMMON_API bool UserStringExists(const char* str);
 
 /** Clears all loaded strings, so that subsequent UserString lookups will cause
   * the stringtable(s) to be reloaded. */
@@ -39,24 +39,24 @@ FO_COMMON_API void FlushLoadedStringTables();
 #define UserStringNop(key) key
 
 /** Returns the language of the StringTable currently in use */
-const std::string& Language();
+[[nodiscard]] const std::string& Language();
 
 /** Wraps boost::format such that it won't crash if passed the wrong number of arguments */
-FO_COMMON_API boost::format FlexibleFormat(const std::string& string_to_format);
+[[nodiscard]] FO_COMMON_API boost::format FlexibleFormat(const std::string& string_to_format);
 
 /** Returns the stringified form of \a n as a roman number.  "Only" defined for 1 <= n <= 3999, as we can't display the
     symbol for 5000. */
-FO_COMMON_API std::string RomanNumber(unsigned int n);
+[[nodiscard]] FO_COMMON_API std::string RomanNumber(unsigned int n);
 
 /** Converts double to string with \a digits digits.  Represents large numbers
   * with SI prefixes. */
-FO_COMMON_API std::string DoubleToString(double val, int digits, bool always_show_sign);
+[[nodiscard]] FO_COMMON_API std::string DoubleToString(double val, int digits, bool always_show_sign);
 
 /** Returns sign of value, accounting for SMALL_UI_DISPLAY_VALUE: +1 for
   * positive values and -1 for negative values if their absolute value is
   * larger than SMALL VALUE, and returns 0 for zero values or values with
   * absolute value less than SMALL_UI_DISPLAY_VALUE */
-FO_COMMON_API int EffectiveSign(double val);
+[[nodiscard]] FO_COMMON_API int EffectiveSign(double val);
 
 /** returns a boost::format pre-filled with a list of up to 10 items with some introductory text similar to
   * These are 3 fruit: apples, pears and bananas.
@@ -64,7 +64,7 @@ FO_COMMON_API int EffectiveSign(double val);
   * The headers are boost::format strings fed the size of the words list and then any header words passed in.
   * TODO: Adopt an out of house i18n framework and handle of empty, singular, pairs, triplets etc. correctly. */
 template<typename HeaderContainer, typename ListContainer>
-boost::format FlexibleFormatList(
+[[nodiscard]] boost::format FlexibleFormatList(
     const HeaderContainer& header_words,
     const ListContainer& words,
     const std::string& plural_header_template,
@@ -108,7 +108,7 @@ boost::format FlexibleFormatList(
 }
 
 template<typename Container>
-boost::format FlexibleFormatList(const Container& words)
+[[nodiscard]] boost::format FlexibleFormatList(const Container& words)
 {
     return FlexibleFormatList(std::vector<std::string>(), words,
                               UserString("FORMAT_LIST_DEFAULT_PLURAL_HEADER"),
@@ -118,21 +118,21 @@ boost::format FlexibleFormatList(const Container& words)
 }
 
 template<typename Container>
-boost::format FlexibleFormatList(
+[[nodiscard]] boost::format FlexibleFormatList(
     const Container& words, const std::string& all_header)
 {
     return FlexibleFormatList(std::vector<std::string>(), words, all_header, all_header, all_header, all_header);
 }
 
 template<typename Container>
-boost::format FlexibleFormatList(
+[[nodiscard]] boost::format FlexibleFormatList(
     const Container& words, const std::string& plural_header, const std::string& single_header)
 {
     return FlexibleFormatList(std::vector<std::string>(), words, plural_header, single_header, plural_header, plural_header);
 }
 
 template<typename Container>
-boost::format FlexibleFormatList(
+[[nodiscard]] boost::format FlexibleFormatList(
     const Container& words, const std::string& plural_header,
     const std::string& single_header, const std::string& empty_header)
 {
@@ -140,7 +140,7 @@ boost::format FlexibleFormatList(
 }
 
 template<typename T1, typename T2>
-boost::format FlexibleFormatList(const T2& header_words, const T1& words)
+[[nodiscard]] boost::format FlexibleFormatList(const T2& header_words, const T1& words)
 {
     return FlexibleFormatList(header_words, words,
                               UserString("FORMAT_LIST_DEFAULT_PLURAL_HEADER"),
@@ -150,21 +150,21 @@ boost::format FlexibleFormatList(const T2& header_words, const T1& words)
 }
 
 template<typename T1, typename T2>
-boost::format FlexibleFormatList(
+[[nodiscard]] boost::format FlexibleFormatList(
     const T2& header_words, const T1& words, const std::string& all_header)
 {
     return FlexibleFormatList(header_words, words, all_header, all_header, all_header, all_header);
 }
 
 template<typename T1, typename T2>
-boost::format FlexibleFormatList(
+[[nodiscard]] boost::format FlexibleFormatList(
     const T2& header_words, const T1& words, const std::string& plural_header, const std::string& single_header)
 {
     return FlexibleFormatList(header_words, words, plural_header, single_header, plural_header, plural_header);
 }
 
 template<typename T1, typename T2>
-boost::format FlexibleFormatList(
+[[nodiscard]] boost::format FlexibleFormatList(
     const T2& header_words, const T1& words, const std::string& plural_header,
     const std::string& single_header, const std::string& empty_header)
 {
