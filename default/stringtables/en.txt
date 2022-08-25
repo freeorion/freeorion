@@ -6713,6 +6713,14 @@ SNEAKY_TEXT
 
 List of Sneaky species:'''
 
+ADAPTIVE_TITLE
+Adaptive
+
+ADAPTIVE_TEXT
+'''Adaptive species research [[tech GRO_SYMBIOTIC_BIO]], [[tech GRO_XENO_GENETICS]] and [[tech GRO_XENO_HYBRIDS]] at reduced costs.
+
+List of Adaptive species:'''
+
 FLEET_UPKEEP_TITLE
 Fleet Upkeep
 
@@ -17010,6 +17018,9 @@ GREAT_INFLUENCE_DESC
 ULTIMATE_INFLUENCE_DESC
 +++	Ultimate [[metertype METER_INFLUENCE]]: 200%
 
+VERY_BAD_HAPPINESS_DESC
+−−	Very Bad [[metertype METER_HAPPINESS]]: [[value VERY_BAD_HAPPINESS_VAL]]
+
 BAD_HAPPINESS_DESC
 −	Bad [[metertype METER_HAPPINESS]]: [[value BAD_HAPPINESS_VAL]]
 
@@ -17128,6 +17139,9 @@ AVERAGE_POPULATION_DESC
 
 GOOD_POPULATION_DESC
 +	Good [[metertype METER_POPULATION]]: 125%
+
+GREAT_POPULATION_DESC
+++	Great [[metertype METER_POPULATION]]: 150%
 
 FIXED_LOW_POPULATION_DESC
 −−	Maximum Population is fixed at 5
@@ -17431,6 +17445,11 @@ GOOD_POPULATION_LABEL
 
 # %1% FIXME
 # %2% name of species on planet
+GREAT_POPULATION_LABEL
+%2% Great Population
+
+# %1% FIXME
+# %2% name of species on planet
 FOCUS_INDUSTRY_LABEL
 %2% Industry Focus
 
@@ -17518,6 +17537,11 @@ GREAT_INFLUENCE_LABEL
 # %2% FIXME
 ULTIMATE_INFLUENCE_LABEL
 %2% Ultimate Influence
+
+# %1% FIXME
+# %2% FIXME
+VERY_BAD_HAPPINESS_LABEL
+%2% Very Bad Stability
 
 # %1% FIXME
 # %2% FIXME

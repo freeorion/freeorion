@@ -6,7 +6,11 @@ Tech(
     description="GRO_XENO_GENETICS_DESC",
     short_description="POPULATION_SHORT_DESC",
     category="GROWTH_CATEGORY",
-    researchcost=120 * TECH_COST_MULTIPLIER,
+    researchcost=(
+        120
+        * TECH_COST_MULTIPLIER
+        / (1 + StatisticIf(float, condition=OwnedBy(empire=Source.Owner) & HasTag(name="ADAPTIVE")))
+    ),
     researchturns=8,
     tags=["PEDIA_GROWTH_CATEGORY"],
     prerequisites=[
