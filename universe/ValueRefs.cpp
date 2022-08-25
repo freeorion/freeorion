@@ -255,6 +255,21 @@ namespace {
         "Speed"
     };
 
+    // Array of planet types enumerated by PlanetType with INVALID_PLANET_TYPE as first element
+    constexpr std::array<std::string_view, static_cast<std::size_t>(PlanetType::NUM_PLANET_TYPES) + 1> NAME_BY_PLANET = {
+        "?",
+        "Swamp",
+        "Toxic",
+        "Inferno",
+        "Radiated",
+        "Barren",
+        "Tundra",
+        "Desert",
+        "Terran",
+        "Ocean",
+        "Asteroids",
+        "GasGiant"
+    };
 }
 
 namespace ValueRef {
@@ -304,36 +319,24 @@ std::string_view MeterToName(const MeterType meter) {
     return NAME_BY_METER[static_cast<std::underlying_type_t<MeterType>>(meter) + 1];
 }
 
-constexpr std::string_view PlanetTypeToStringConstexpr(PlanetType type) {
-    switch (type) {
-    case PlanetType::PT_SWAMP:     return "Swamp";
-    case PlanetType::PT_TOXIC:     return "Toxic";
-    case PlanetType::PT_INFERNO:   return "Inferno";
-    case PlanetType::PT_RADIATED:  return "Radiated";
-    case PlanetType::PT_BARREN:    return "Barren";
-    case PlanetType::PT_TUNDRA:    return "Tundra";
-    case PlanetType::PT_DESERT:    return "Desert";
-    case PlanetType::PT_TERRAN:    return "Terran";
-    case PlanetType::PT_OCEAN:     return "Ocean";
-    case PlanetType::PT_ASTEROIDS: return "Asteroids";
-    case PlanetType::PT_GASGIANT:  return "GasGiant";
-    default:                       return "?";
-    }
+std::string_view PlanetTypeToString(const PlanetType planet) {
+    // NOTE: INVALID_PLANET_TYPE (enum's -1 position) <= planet < NUM_PLANET_TYPES (enum's final position)
+    return NAME_BY_PLANET[static_cast<std::underlying_type_t<PlanetType>>(planet) + 1]; 
 }
-
-std::string_view PlanetTypeToString(PlanetType type)
-{ return PlanetTypeToStringConstexpr(type); }
 
 // @return the correct PlanetType enum for a user friendly planet type string (e.g. "Ocean"), else it returns PlanetType::INVALID_PLANET_TYPE
-PlanetType StringToPlanetType(std::string_view name) {
-    for (PlanetType pt = PlanetType::INVALID_PLANET_TYPE; pt < PlanetType::NUM_PLANET_TYPES;
-         pt = PlanetType(static_cast<std::underlying_type_t<PlanetType>>(pt) + 1))
-    {
-        if (PlanetTypeToStringConstexpr(pt) == name)
-            return pt;
+constexpr PlanetType StringToPlanetType(const std::string_view name) {
+    for (int i = 0; i < static_cast<int>(NAME_BY_PLANET.size()); i++) {
+        if (NAME_BY_PLANET[i] == name)
+            return static_cast<PlanetType>(i - 1);
     }
+
     return PlanetType::INVALID_PLANET_TYPE;
 }
+
+static_assert(StringToPlanetType("not a planet") == PlanetType::INVALID_PLANET_TYPE, "Name to Planet conversion failed for invalid planet type!");
+static_assert(StringToPlanetType("Swamp") == PlanetType::PT_SWAMP, "Name to Planet conversion failed for 'Swamp' planet!");
+static_assert(StringToPlanetType("GasGiant") == PlanetType::PT_GASGIANT, "Name to Planet conversion failed for 'GasGiant' planet!");
 
 std::string_view PlanetEnvironmentToString(PlanetEnvironment env) {
     switch (env) {
