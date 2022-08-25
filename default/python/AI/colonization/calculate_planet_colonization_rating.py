@@ -40,6 +40,7 @@ from empire.pilot_rating import best_pilot_rating
 from EnumsAI import FocusType, MissionType, PriorityType
 from freeorion_tools import (
     assertion_fails,
+    get_named_int,
     get_named_real,
     get_partial_visibility_turn,
     get_species_industry,
@@ -1402,12 +1403,41 @@ def _adapt_supply_factor(supply_factor: float, species: fo.species) -> float:
         return supply_factor
 
 
-def _colony_upkeep(num_exobots: int, num_normal: int, num_outpost: int) -> float:
+def _colony_upkeep(
+    num_exobots: int,
+    num_normal: int,
+    num_outpost: int,
+    max_colony_upkeep: float,
+    owned_colonies_at_max_upkeep: int,
+    outpost_factor: float,
+) -> float:
+    """
+    Calculate empire's colonies influence upkeep based on a function of owned colonies and outposts and two game settings:
+    max_colony_upkeep and owned_colonies_at_max_upkeep.
+
+    The upkeep per colony is
+      max_colony_upkeep * (1.0 - (weighted_owned_colonies/owned_colonies_at_max_upkeep - 1.0)^2.0)^0.5
+    This corresponds to the second quadrant (from 9 to 12 o'clock) of an elongated circle with
+      center at <x=owned_colonies_at_max_upkeep, y=0>,
+      vertical radius = max_colony_upkeep, and
+      horizontal radius = owned_colonies_at_max_upkeep.
+    This draws a curve that grows fast at start and gradually slows down until it reaches the maximum upkeep.
+    weighted_owned_colonies is
+      min(non-exobot colonies + outpost_factor*(exobot colonies + outposts), owned_colonies_at_max_upkeep)
+    so that upkeep sticks to max_colony_upkeep once the number of colonies surpasses owned_colonies_at_max_upkeep.
+    See influence.macros: exobot colonies pay like a colony, but count as outposts for the cost increase
+
+    See sample values in tests/AI/test_calculate_planet_colonization_rating.py
+    """
     colonies = num_exobots + num_normal - 1  # assume we have a capital, calculation won't be too wrong otherwise
-    per_colony = get_named_real("COLONY_ADMIN_COSTS_PER_PLANET")
-    outpost_factor = get_named_real("OUTPOST_RELATIVE_ADMIN_COUNT")
-    # see influence.macros, exobot colonies pay like a colony, but count as outposts for the cost increase
-    return colonies * per_colony * (num_normal + outpost_factor * (num_exobots + num_outpost)) ** 0.5
+    weighted_owned_colonies = min(
+        num_normal + outpost_factor * (num_exobots + num_outpost), owned_colonies_at_max_upkeep
+    )
+    return (
+        colonies
+        * max_colony_upkeep
+        * (1.0 - (weighted_owned_colonies / owned_colonies_at_max_upkeep - 1.0) ** 2.0) ** 0.5
+    )
 
 
 def _rate_upkeep(planet: fo.planet, species_name: SpeciesName, details: list) -> float:
@@ -1415,14 +1445,22 @@ def _rate_upkeep(planet: fo.planet, species_name: SpeciesName, details: list) ->
     num_exobots = len(get_empire_planets_by_species().get(exobot, []))
     num_normal = len(get_empire_populated_planets()) - num_exobots
     num_outpost = len(get_empire_outposts())
-    current_upkeep = _colony_upkeep(num_exobots, num_normal, num_outpost)
+    max_colony_upkeep = get_named_real("MAXIMUM_COLONY_UPKEEP")
+    owned_colonies_at_max_upkeep = get_named_int("OWNED_COLONIES_AT_MAXIMUM_UPKEEP")
+    outpost_factor = get_named_real("OUTPOST_RELATIVE_ADMIN_COUNT")
+
+    current_upkeep = _colony_upkeep(
+        num_exobots, num_normal, num_outpost, max_colony_upkeep, owned_colonies_at_max_upkeep, outpost_factor
+    )
     if species_name == exobot:
         num_exobots += 1
     elif not species_name:
         num_outpost += 1
     else:
         num_normal += 1
-    ip_cost = current_upkeep - _colony_upkeep(num_exobots, num_normal, num_outpost)
+    ip_cost = current_upkeep - _colony_upkeep(
+        num_exobots, num_normal, num_outpost, max_colony_upkeep, owned_colonies_at_max_upkeep, outpost_factor
+    )
     species = fo.getSpecies(species_name)
     if species and planet.id in species.homeworlds:
         ip_cost -= AIDependencies.HOMEWORLD_INFLUENCE_COST

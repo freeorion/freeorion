@@ -316,3 +316,23 @@ GameRule(
     min=1,
     max=10,
 )
+
+GameRule(
+    name="RULE_OWNED_COLONIES_AT_MAXIMUM_UPKEEP",
+    description="RULE_OWNED_COLONIES_AT_MAXIMUM_UPKEEP_DESC",
+    category="BALANCE",
+    type=int,
+    default=1000,
+    min=10,
+    max=60000,
+)
+
+GameRule(
+    name="RULE_MAXIMUM_COLONY_UPKEEP",
+    description="RULE_MAXIMUM_COLONY_UPKEEP_DESC",
+    category="BALANCE",
+    type=float,
+    default=9.0,
+    min=1.0,
+    max=30.0,
+)
