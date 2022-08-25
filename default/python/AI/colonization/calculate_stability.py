@@ -12,22 +12,22 @@ from turn_state import get_colonized_planets, have_worldtree
 from universe.system_network import within_n_jumps
 
 _size_modifier = {
-    fo.planetSize.tiny: get_game_rule_int("RULE_TINY_SIZE_STABILITY"),
-    fo.planetSize.small: get_game_rule_int("RULE_SMALL_SIZE_STABILITY"),
-    fo.planetSize.medium: get_game_rule_int("RULE_MEDIUM_SIZE_STABILITY"),
-    fo.planetSize.large: get_game_rule_int("RULE_LARGE_SIZE_STABILITY"),
-    fo.planetSize.huge: get_game_rule_int("RULE_HUGE_SIZE_STABILITY"),
-    fo.planetSize.gasGiant: get_game_rule_int("RULE_GAS_GIANT_SIZE_STABILITY"),
+    fo.planetSize.tiny: get_game_rule_int("RULE_TINY_SIZE_STABILITY", 2),
+    fo.planetSize.small: get_game_rule_int("RULE_SMALL_SIZE_STABILITY", 1),
+    fo.planetSize.medium: get_game_rule_int("RULE_MEDIUM_SIZE_STABILITY", 0),
+    fo.planetSize.large: get_game_rule_int("RULE_LARGE_SIZE_STABILITY", -1),
+    fo.planetSize.huge: get_game_rule_int("RULE_HUGE_SIZE_STABILITY", -2),
+    fo.planetSize.gasGiant: get_game_rule_int("RULE_GAS_GIANT_SIZE_STABILITY", 0),
     fo.planetSize.asteroids: 0,  # no rule for asteroids yet(?)
 }
 
 _environment_modifier = {
-    fo.planetEnvironment.good: get_game_rule_int("RULE_GOOD_ENVIRONMENT_STABILITY"),
-    fo.planetEnvironment.adequate: get_game_rule_int("RULE_ADEQUATE_ENVIRONMENT_STABILITY"),
-    fo.planetEnvironment.poor: get_game_rule_int("RULE_POOR_ENVIRONMENT_STABILITY"),
-    fo.planetEnvironment.hostile: get_game_rule_int("RULE_HOSTILE_ENVIRONMENT_STABILITY"),
+    fo.planetEnvironment.good: get_game_rule_int("RULE_GOOD_ENVIRONMENT_STABILITY", 2),
+    fo.planetEnvironment.adequate: get_game_rule_int("RULE_ADEQUATE_ENVIRONMENT_STABILITY", 1),
+    fo.planetEnvironment.poor: get_game_rule_int("RULE_POOR_ENVIRONMENT_STABILITY", 0),
+    fo.planetEnvironment.hostile: get_game_rule_int("RULE_HOSTILE_ENVIRONMENT_STABILITY", -1),
     # That is used by the script. It doesn't matter in practice, AI shouldn't try to settle uninhabitable planets.
-    fo.planetEnvironment.uninhabitable: get_game_rule_int("RULE_HOSTILE_ENVIRONMENT_STABILITY"),
+    fo.planetEnvironment.uninhabitable: get_game_rule_int("RULE_HOSTILE_ENVIRONMENT_STABILITY", -1),
 }
 
 
