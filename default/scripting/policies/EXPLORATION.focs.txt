@@ -27,7 +27,7 @@ Policy
                 DesignHasPartClass low = 0 high = 0 class = Influence
                 DesignHasPartClass low = 0 high = 0 class = ProductionLocation
             ]
-            effects = SetSpeed value = Value + 20
+            effects = SetSpeed value = Value + (NamedReal name = "PLC_EXPLORATION_SPEED_BONUS" value = 20)
 
         // spread research bonus even over all ships that explore system on the same turn
         EffectsGroup
