@@ -105,7 +105,7 @@ namespace {
         py::stl_input_iterator<int> begin(objIter), end;
         std::vector<int> objvec(begin, end);
         ScriptingContext context{universe, Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
-        universe.UpdateMeterEstimates(context);
+        universe.UpdateMeterEstimates(objvec, context);
     }
 
     auto ShortestPath(const Universe& universe, int start_sys, int end_sys, int empire_id) -> std::vector<int>
