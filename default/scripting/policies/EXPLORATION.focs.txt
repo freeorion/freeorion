@@ -4,7 +4,7 @@ Policy
     short_description = "PLC_EXPLORATION_SHORT_DESC"
     category = "MILITARY_CATEGORY"
     adoptioncost = 10
-    exclusions = [ "PLC_COLONIZATION" "PLC_ISOLATION" ]
+    exclusions = [ "PLC_ISOLATION" ]
     unlock = Item type = Policy name = "PLC_NECESSITY"
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
