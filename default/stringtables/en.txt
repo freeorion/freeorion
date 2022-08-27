@@ -16838,6 +16838,12 @@ Dragon Body
 SH_STRONG_MONSTER_BODY_DESC
 Large strong body with fearsome natural weapons and strong natural armor.
 
+SH_GUARD_ACIREMA_BODY
+Acirema Guard Hull
+
+SH_GUARD_ACIREMA_BODY_DESC
+[[SH_ENERGY_FRIGATE_DESC]]
+
 SH_GUARD_MONSTER_BODY
 Guard Hull
 
