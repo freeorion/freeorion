@@ -188,7 +188,10 @@ def generate_production_orders():
 
         possible_building_type_ids = []
         for type_id in empire.availableBuildingTypes:
-            if fo.getBuildingType(type_id).canBeProduced(empire.empireID, homeworld.id):
+            # Apparently, when loading a saved game from another version, availableBuildingTypes may return
+            # buildings that are not in our script.
+            fo_building_type = fo.getBuildingType(type_id)
+            if fo_building_type and fo_building_type.canBeProduced(empire.empireID, homeworld.id):
                 possible_building_type_ids.append(type_id)
 
         if possible_building_type_ids:
