@@ -428,7 +428,7 @@ def get_named_real(name: str) -> float:
     return 1.0
 
 
-def get_game_rule_int(name: str, default: int = 0) -> int:
+def get_game_rule_int(name: str, default: int) -> int:
     """
     Returns an integer value for a game rule.
     If the current game does not include the rule, the default value is returned.
@@ -442,7 +442,7 @@ def get_game_rule_int(name: str, default: int = 0) -> int:
     return default
 
 
-def get_game_rule_real(name: str, default: int = 0.0) -> float:
+def get_game_rule_real(name: str, default: int) -> float:
     """
     Returns a real value for a game rule.
     If the current game does not include the rule, the default value is returned. See also get_game_rule_int.
