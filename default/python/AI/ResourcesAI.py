@@ -29,7 +29,7 @@ from freeorion_tools import (
 )
 from freeorion_tools.statistics import stats
 from freeorion_tools.timers import AITimer
-from PolicyAI import algo_research, bureaucracy
+from PolicyAI import PolicyManager, algo_research, bureaucracy
 
 resource_timer = AITimer("timer_bucket")
 
@@ -94,6 +94,7 @@ class PlanetFocusManager:
             aistate.get_priority(PriorityType.RESOURCE_RESEARCH),
             aistate.get_priority(PriorityType.RESOURCE_INFLUENCE),
         )
+        self.bureaucracy = bureaucracy in fo.getEmpire().adoptedPolicies
 
     def bake_future_focus(self, pid, focus, update=True, force=False):
         """Set the focus and moves it from the raw list to the baked list of planets.
@@ -124,29 +125,16 @@ class PlanetFocusManager:
                     f" > {focus_gain:.2f} * {self.priority[idx]:.1f}"
                 )
                 focus = INFLUENCE
-        last_turn = fo.currentTurn()
-        if (  # define idx constants for accessing these tuples
-            focus != PROTECTION
-            and focus != pinfo.current_focus
-            and policy_is_adopted(bureaucracy)
-            and pinfo.current_output[2] + 0.2 < pinfo.possible_output[pinfo.current_focus][2]
-            and pinfo.planet.LastTurnColonized != last_turn
-            and pinfo.planet.LastTurnConquered != last_turn
-        ):
-            # avoid going down too much by repeated focus changes while having bureaucracy
-            info(
-                "Avoid focus change on %s due to bureaucracy. IPprod: current=%.2f, target=%.2f",
-                pinfo.planet.name,
-                pinfo.current_output[2],
-                pinfo.possible_output[pinfo.current_focus][2],
-            )
-            return False
+            if self.check_avoid_change_due_to_bureaucracy(pinfo, focus, focus_gain, influence_gain):
+                return False
 
         success = bool(
             pinfo.current_focus == focus
             or (focus in pinfo.planet.availableFoci and fo.issueChangeFocusOrder(pid, focus))
         )
         if success:
+            if pinfo.current_focus != focus:
+                PolicyManager.report_focus_change()
             if update and pinfo.current_focus != focus:
                 universe = fo.getUniverse()
                 universe.updateMeterEstimates(self.raw_planet_info.keys())
@@ -158,6 +146,24 @@ class PlanetFocusManager:
             pinfo.future_focus = focus
             self.baked_planet_info[pid] = self.raw_planet_info.pop(pid)
         return success
+
+    def check_avoid_change_due_to_bureaucracy(self, pinfo, focus, focus_gain, influence_gain) -> bool:
+        if not self.bureaucracy or focus == pinfo.current_focus:
+            return False  # No bureaucracy or no change
+        last_turn = fo.currentTurn() - 1
+        if pinfo.planet.LastTurnColonized == last_turn or pinfo.planet.LastTurnConquered == last_turn:
+            return False  # no penalty for newly settled/conquered planets
+        threshold = 3.0
+        if (
+            (focus == INFLUENCE and influence_gain < focus_gain + threshold)
+            or (pinfo.current_focus == INFLUENCE and focus_gain < influence_gain + threshold)
+            # avoid repeated focus changes: When influence production already is below target, do not
+            # get it further down by switching again (I've seen one planet at -30...)
+            or (pinfo.current_output[2] + 0.5 < pinfo.possible_output[pinfo.current_focus][2])
+        ):
+            debug(f"Avoid focus change on {pinfo.planet.name} due to bureaucracy")
+            return True
+        return False
 
     def calculate_planet_infos(self, pids):
         """Calculates for each possible focus the target output of each planet and stores it in planet info
