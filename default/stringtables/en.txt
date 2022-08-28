@@ -6705,6 +6705,14 @@ ARTISTIC_SPECIES_TRAIT_TEXT
 
 List of Artistic species:'''
 
+INDEPENDENT_SPECIES_TITLE
+Independent Trait
+
+INDEPENDENT_SPECIES_TRAIT_TEXT
+'''Independent species' stability is unaffected by modifiers based on distance from capitals or regional administration.
+
+List of Independent species:'''
+
 SNEAKY_TITLE
 Sneaky
 
