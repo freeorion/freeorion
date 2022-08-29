@@ -406,8 +406,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
     if (must_quit) {
         ErrorLogger(FSM) << "Unable to recover server terminating.";
         if (m_server.IsHostless()) {
-            if (GetOptionsDB().Get<bool>("save.auto.hostless.enabled") &&
-                GetOptionsDB().Get<bool>("save.auto.exit.enabled") &&
+            if (GetOptionsDB().Get<bool>("save.auto.exit.enabled") &&
                 m_server.CurrentTurn() > 0)
             {
                 // save game on exit
@@ -2733,7 +2732,6 @@ sc::result PlayingGame::react(const ShutdownServer& msg) {
     ServerApp& server = Server();
 
     if (server.IsHostless() &&
-        GetOptionsDB().Get<bool>("save.auto.hostless.enabled") &&
         GetOptionsDB().Get<bool>("save.auto.exit.enabled") &&
         server.CurrentTurn() > 0)
     {
