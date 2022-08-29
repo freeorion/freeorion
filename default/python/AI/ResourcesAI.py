@@ -94,7 +94,7 @@ class PlanetFocusManager:
             aistate.get_priority(PriorityType.RESOURCE_RESEARCH),
             aistate.get_priority(PriorityType.RESOURCE_INFLUENCE),
         )
-        self.bureaucracy = bureaucracy in fo.getEmpire().adoptedPolicies
+        self.have_bureaucracy = bureaucracy in fo.getEmpire().adoptedPolicies
 
     def bake_future_focus(self, pid, focus, update=True, force=False):
         """Set the focus and moves it from the raw list to the baked list of planets.
@@ -110,22 +110,16 @@ class PlanetFocusManager:
         if not pinfo:
             return False
         if (focus == INDUSTRY or focus == RESEARCH) and not force:
-            idx = 0 if focus == INDUSTRY else 1
             # check for influence instead
-            focus_gain = pinfo.possible_output[focus][idx] - pinfo.possible_output[INFLUENCE][idx]
-            influence_gain = pinfo.possible_output[INFLUENCE][2] - pinfo.possible_output[focus][2]
+            focus_value = self.production_value(pinfo, focus)
+            influence_value = self.production_value(pinfo, INFLUENCE)
             debug(
                 f"{pinfo.planet.name} current: {_focus_name(pinfo.current_focus)}, requested: {_focus_name(focus)}, "
-                f"requested_gain: {focus_gain}, influence_gain: {influence_gain}"
+                f"requested_value: {focus_value}, influence_value: {influence_value}"
             )
-            if influence_gain * self.priority[2] > focus_gain * self.priority[idx]:
-                debug(
-                    f"Choosing influence over {_focus_name(focus)}."
-                    f" {influence_gain:.2f} * {self.priority[2]:.1f}"
-                    f" > {focus_gain:.2f} * {self.priority[idx]:.1f}"
-                )
+            if influence_value > focus_value:
                 focus = INFLUENCE
-            if self.check_avoid_change_due_to_bureaucracy(pinfo, focus, focus_gain, influence_gain):
+            if self.check_avoid_change_due_to_bureaucracy(pinfo, focus):
                 return False
 
         success = bool(
@@ -147,23 +141,39 @@ class PlanetFocusManager:
             self.baked_planet_info[pid] = self.raw_planet_info.pop(pid)
         return success
 
-    def check_avoid_change_due_to_bureaucracy(self, pinfo, focus, focus_gain, influence_gain) -> bool:
-        if not self.bureaucracy or focus == pinfo.current_focus:
+    def check_avoid_change_due_to_bureaucracy(self, pinfo: PlanetFocusInfo, focus: str) -> bool:
+        """Check whether we better not change a focus to avoid the influence penalty from bureaucracy."""
+        if not self.have_bureaucracy or focus == pinfo.current_focus:
             return False  # No bureaucracy or no change
         last_turn = fo.currentTurn() - 1
         if pinfo.planet.LastTurnColonized == last_turn or pinfo.planet.LastTurnConquered == last_turn:
             return False  # no penalty for newly settled/conquered planets
-        threshold = 3.0
-        if (
-            (focus == INFLUENCE and influence_gain < focus_gain + threshold)
-            or (pinfo.current_focus == INFLUENCE and focus_gain < influence_gain + threshold)
+        if pinfo.current_output[2] + 0.5 < pinfo.possible_output[pinfo.current_focus][2]:
             # avoid repeated focus changes: When influence production already is below target, do not
             # get it further down by switching again (I've seen one planet at -30...)
-            or (pinfo.current_output[2] + 0.5 < pinfo.possible_output[pinfo.current_focus][2])
-        ):
-            debug(f"Avoid focus change on {pinfo.planet.name} due to bureaucracy")
+            debug(f"Avoid focus change on {pinfo.planet.name} due bureaucracy and influence not maxed.")
+            return True
+        threshold = 5.0
+        if self.production_value(pinfo, pinfo.current_focus) + threshold > self.production_value(pinfo, focus):
+            debug(f"Avoid focus change on {pinfo.planet.name} due bureaucracy and gain below {threshold}.")
             return True
         return False
+
+    def production_value(self, pinfo: PlanetFocusInfo, focus: str) -> float:
+        """
+        Calculate value of the production output with the given production focus.
+        Returns 0 of focus is not INDUSTRY, RESEARCH or INFLUENCE, unless focus is pinfo.current_focus
+        """
+        if focus not in (INDUSTRY, RESEARCH, INFLUENCE, pinfo.current_focus):
+            return 0.0
+        # Note that changes in stability may affect other values, so there could be cases where a planet
+        # produces more PP with research focus than with industry focus. This is not correctly evaluated yet,
+        # but let's sum up all three anyway. The whole module should be refactored or possible re-written...
+        return (
+            pinfo.possible_output[focus][0] * self.priority[0]
+            + pinfo.possible_output[focus][1] * self.priority[1]
+            + pinfo.possible_output[focus][2] * self.priority[2]
+        )
 
     def calculate_planet_infos(self, pids):
         """Calculates for each possible focus the target output of each planet and stores it in planet info
