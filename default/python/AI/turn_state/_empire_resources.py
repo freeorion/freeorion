@@ -1,4 +1,5 @@
 import freeOrionAIInterface as fo
+from typing import Dict, List
 
 import AIDependencies
 from EnumsAI import FocusType
@@ -18,6 +19,7 @@ class EmpireResources:
         self.have_worldtree = False
         self.num_researchers = 0  # population with research focus
         self.num_industrialists = 0  # population with industry focus
+        self.luxury_planets = {}  # list of planets per luxury special
 
         empire_id = fo.empireID()
         universe = fo.getUniverse()
@@ -40,6 +42,10 @@ class EmpireResources:
 
                 if planet.focus == FocusType.FOCUS_INDUSTRY and AIDependencies.HONEYCOMB_SPECIAL in planet.specials:
                     self.have_honeycomb = True
+
+                for special in AIDependencies.luxury_specials:
+                    if special in planet.specials:
+                        self.luxury_planets.get(special, []).append(planet)
 
                 population = planet.currentMeterValue(fo.meterType.population)
                 if planet.focus == FocusType.FOCUS_INDUSTRY:
@@ -103,3 +109,7 @@ def have_honeycomb() -> bool:
 
 def have_worldtree() -> bool:
     return _get_planet_catalog().have_worldtree
+
+
+def luxury_resources() -> Dict[str, List[fo.planet]]:
+    return _get_planet_catalog().luxury_planets

@@ -246,6 +246,14 @@ industry_boost_specials_unmodified = {
 }
 # </editor-fold>
 
+luxury_specials = {
+    "FRACTAL_GEODES_SPECIAL",
+    "MIMETIC_ALLOY_SPECIAL",
+    "SHIMMER_SILK_SPECIAL",
+    "SPARK_FOSSILS_SPECIAL",
+    "SUCCULENT_BARNACLES_SPECIAL",
+}
+
 # <editor-fold desc="Other Population changing specials">
 # Please see the Note at top of this file regarding PlanetSize-Dependent-Lookup
 # Regardless of whether the sub-dictionary here has PlanetSize keys, the final

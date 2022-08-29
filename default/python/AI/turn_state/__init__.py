@@ -35,6 +35,7 @@ from turn_state._empire_resources import (
     have_nest,
     have_ruins,
     have_worldtree,
+    luxury_resources,
     owned_asteroid_coatings,
     population_with_industry_focus,
     population_with_research_focus,
