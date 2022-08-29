@@ -38,7 +38,7 @@ class ExpansionPlanner:
             return odict(
                 (pid, values)
                 for (pid, values) in get_aistate().colonisablePlanetIDs.items()
-                if pid not in ExpansionPlanner.colonies_targeted()
+                if pid not in expansion_plans_interface.colonies_targeted()  # interface function is cached
             )
 
     @staticmethod
@@ -49,7 +49,7 @@ class ExpansionPlanner:
             return odict(
                 (pid, values)
                 for (pid, values) in get_aistate().colonisableOutpostIDs.items()
-                if pid not in ExpansionPlanner.outposts_targeted()
+                if pid not in expansion_plans_interface.outposts_targeted()  # interface function is cached
             )
 
     @staticmethod
