@@ -32,6 +32,27 @@ FocusType::FocusType(std::string& name, std::string& description,
 
 FocusType::~FocusType() = default;
 
+bool FocusType::operator==(const FocusType& rhs) const {
+    if (&rhs == this)
+        return true;
+
+    if (m_name != rhs.m_name ||
+        m_description != rhs.m_description ||
+        m_graphic != rhs.m_graphic)
+    { return false; }
+
+    if (m_location == rhs.m_location) { // could be nullptr
+        // check next member
+    } else if (!m_location || !rhs.m_location) {
+        return false;
+    } else {
+        if (*m_location != *(rhs.m_location))
+            return false;
+    }
+
+    return true;
+}
+
 std::string FocusType::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs) + "FocusType\n";
     retval += DumpIndent(ntabs+1) + "name = \"" + m_name + "\"\n";
@@ -186,6 +207,67 @@ Species::Species(std::string&& name, std::string&& desc,
 }
 
 Species::~Species() = default;
+
+bool Species::operator==(const Species& rhs) const {
+    if (&rhs == this)
+        return true;
+
+    if (m_name != rhs.m_name ||
+        m_description != rhs.m_description ||
+        m_gameplay_description != rhs.m_gameplay_description ||
+        m_foci != rhs.m_foci ||
+        m_default_focus != rhs.m_default_focus ||
+        m_planet_environments != rhs.m_planet_environments ||
+        m_playable != rhs.m_playable ||
+        m_native != rhs.m_native ||
+        m_can_colonize != rhs.m_can_colonize ||
+        m_can_produce_ships != rhs.m_can_produce_ships ||
+        m_spawn_rate != rhs.m_spawn_rate ||
+        m_spawn_limit != rhs.m_spawn_limit ||
+        m_tags != rhs.m_tags ||
+        m_likes != rhs.m_likes ||
+        m_dislikes != rhs.m_dislikes ||
+        m_graphic != rhs.m_graphic)
+    { return false; }
+
+    if (m_location == rhs.m_location) { // could be nullptr
+        // check next member
+    } else if (!m_location || !rhs.m_location) {
+        return false;
+    } else {
+        if (*m_location != *(rhs.m_location))
+            return false;
+    }
+
+    if (m_combat_targets == rhs.m_combat_targets) { // could be nullptr
+        // check next member
+    } else if (!m_combat_targets || !rhs.m_combat_targets) {
+        return false;
+    } else {
+        if (*m_combat_targets != *(rhs.m_combat_targets))
+            return false;
+    }
+
+    if (m_effects.size() != rhs.m_effects.size())
+        return false;
+    try {
+        for (std::size_t idx = 0; idx < m_effects.size(); ++idx) {
+            const auto& my_op = m_effects.at(idx);
+            const auto& rhs_op = rhs.m_effects.at(idx);
+
+            if (my_op == rhs_op)
+                continue;
+            if (!my_op || !rhs_op)
+                return false;
+            if (*my_op != *rhs_op)
+                return false;
+        }
+    } catch (...) {
+        return false;
+    }
+
+    return true;
+}
 
 void Species::Init() {
     for (auto& effect : m_effects)
