@@ -52,6 +52,10 @@ public:
               std::string& graphic);
     ~FocusType(); // needed due to forward-declared Condition held in unique_ptr
 
+    bool operator==(const FocusType& rhs) const;
+    bool operator!=(const FocusType& rhs) const
+    { return !(*this == rhs); }
+
     [[nodiscard]] const std::string&          Name() const        { return m_name; }          ///< returns the name for this focus type
     [[nodiscard]] const std::string&          Description() const { return m_description; }   ///< returns a text description of this focus type
     [[nodiscard]] const Condition::Condition* Location() const    { return m_location.get(); }///< returns the condition that determines whether an UniverseObject can use this FocusType
@@ -94,6 +98,10 @@ public:
             double spawn_rate = 1.0, int spawn_limit = 99999);
 
     ~Species();
+
+    bool operator==(const Species& rhs) const;
+    bool operator!=(const Species& rhs) const
+    { return !(*this == rhs); }
 
     [[nodiscard]] const std::string&            Name() const          { return m_name; }                  ///< returns the unique name for this type of species
     [[nodiscard]] const std::string&            Description() const   { return m_description; }           ///< returns a text description of this type of species
