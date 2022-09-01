@@ -4,7 +4,7 @@ from logging import debug
 from AIDependencies import Tags
 from buildings import Shipyard
 from colonization.claimed_stars import has_claimed_star
-from colonization.colony_score import MINIMUM_COLONY_SCORE, debug_rating, use_new_rating
+from colonization.colony_score import MINIMUM_COLONY_SCORE, debug_rating
 from common.fo_typing import SpeciesName
 from empire.pilot_rating import best_pilot_rating, medium_pilot_rating
 from freeorion_tools import (
@@ -20,14 +20,6 @@ from freeorion_tools.caching import cache_for_session
 GOOD_PILOT_RATING_OLD = 4.0
 GREAT_PILOT_RATING_OLD = 6.0
 ULT_PILOT_RATING_OLD = 12.0
-
-_pilot_tags_rating_old = {
-    "NO": 1e-8,
-    "BAD": 0.75,
-    "GOOD": GOOD_PILOT_RATING_OLD,
-    "GREAT": GREAT_PILOT_RATING_OLD,
-    "ULTIMATE": ULT_PILOT_RATING_OLD,
-}
 
 BAD_PILOT_RATING = 0.4
 GOOD_PILOT_RATING = 2.0
@@ -57,34 +49,12 @@ _detection_tags_rating = {
 }
 
 
-def rate_piloting_tag(species_name: str) -> float:
-    """
-    Wrapper while we have both rating functions.
-    This ensures survey_universe uses the same rating function like colonization.
-    """
-    if use_new_rating:
-        return rate_piloting(species_name)
-    else:
-        return rate_piloting_old(species_name)
-
-
-@cache_for_session
-def rate_piloting_old(species_name: str) -> float:
-    """
-    Almost the old function.
-    Does the shield bonus stuff here instead of only in survey_universe, though.
-    """
-    weapon_grade_tag = get_species_tag_grade(species_name, Tags.WEAPONS)
-    result = _pilot_tags_rating_old.get(weapon_grade_tag, 1.0)
-    if species_name == "SP_ACIREMA":
-        result += 1
-    return result
-
-
 @cache_for_session
 def rate_piloting(species_name: SpeciesName) -> float:
     """
-    Rate species as pilots. Does also include small modifications for fuel and detections skills.
+    Rate species as pilots.
+    Weapon skill is the most important factor, shields are also a major factor.
+    Does also include small modifications for fuel and detections skills and even disliking shipyards.
     """
     # TODO rate for different purposes, e.g. when building ships, dislikes should not be considered,
     #  when building scouts, vision is very important, etc.
@@ -123,7 +93,7 @@ def rate_planetary_piloting(pid: int) -> float:
     planet = universe.getPlanet(pid)
     if not planet:
         return 0.0
-    return rate_piloting_tag(planet.speciesName)
+    return rate_piloting(planet.speciesName)
 
 
 def _check_star_for_energy_hulls(

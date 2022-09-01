@@ -196,7 +196,6 @@ def get_colony_fleets():
 # TODO: clean up suppliable versus annexable
 def assign_colonisation_values(planet_ids, mission_type, species, detail=None, return_all=False):
     """Creates a dictionary that takes planetIDs as key and their colonisation score as value."""
-    empire_research_list = tuple(element.tech for element in fo.getEmpire().researchQueue)
     if detail is None:
         detail = []
     orig_detail = detail
@@ -218,6 +217,7 @@ def assign_colonisation_values(planet_ids, mission_type, species, detail=None, r
     for planet_id in planet_ids:
         pv = []
         for spec_name in try_species:
+            # TODO: this function never returned detail to its caller, can we remove it?
             detail = orig_detail[:]
             # appends (score, species_name, detail)
             pv.append(
@@ -227,7 +227,6 @@ def assign_colonisation_values(planet_ids, mission_type, species, detail=None, r
                         mission_type=mission_type,
                         spec_name=spec_name,
                         detail=detail,
-                        empire_research_list=empire_research_list,
                     ),
                     spec_name,
                     detail,
@@ -514,7 +513,6 @@ class OrbitalColonizationPlan:
             mission_type=MissionType.OUTPOST,
             spec_name=None,
             detail=None,
-            empire_research_list=None,
         )
         for species in get_colony_builders():
             this_score = calculate_planet_colonization_rating(
@@ -522,7 +520,6 @@ class OrbitalColonizationPlan:
                 mission_type=MissionType.COLONISATION,
                 spec_name=species,
                 detail=None,
-                empire_research_list=None,
             )
             planet_score = max(planet_score, this_score)
         self.__last_score_update = fo.currentTurn()

@@ -5,7 +5,7 @@ import AIDependencies
 import AIstate
 from AIDependencies import Tags
 from aistate_interface import get_aistate
-from colonization import rate_piloting_tag, special_is_nest
+from colonization import rate_piloting, special_is_nest
 from colonization.calculate_planet_colonization_rating import empire_metabolisms
 from colonization.calculate_population import active_growth_specials
 from common.listeners import register_pre_handler
@@ -79,7 +79,7 @@ def survey_universe():
                     for metab in [tag for tag in this_spec.tags if tag in AIDependencies.metabolismBoostMap]:
                         empire_metabolisms[metab] = empire_metabolisms.get(metab, 0.0) + planet.habitableSize
                     if this_spec.canProduceShips:
-                        pilot_val = rate_piloting_tag(spec_name)
+                        pilot_val = rate_piloting(spec_name)
                         weapons_grade = "WEAPONS_%.1f" % pilot_val
                         set_pilot_rating_for_planet(pid, pilot_val)
                         yard_here = []
