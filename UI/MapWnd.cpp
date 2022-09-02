@@ -2144,8 +2144,6 @@ void MapWnd::RenderStarlanes(GG::GL2DVertexBuffer& vertices, GG::GLRGBAColorBuff
 
         glDrawArrays(GL_LINES, 0, vertices.size());
 
-        glLineWidth(1.0);
-
         glPopClientAttrib();
         glPopAttrib();
 
