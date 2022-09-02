@@ -1990,6 +1990,32 @@ void MapWnd::RenderSystems() {
     const double max_inner_circle_width = GetOptionsDB().Get<double>("ui.map.system.circle.inner.max.width");
 
 
+    std::vector<std::pair<int, int>> colony_count_by_empire_id;
+    colony_count_by_empire_id.reserve(empires.NumEmpires() + 1);
+    auto increment_empire_colony_count = [&colony_count_by_empire_id](int col_empire_id) {
+        auto it = std::find_if(colony_count_by_empire_id.begin(), colony_count_by_empire_id.end(),
+                               [col_empire_id](const auto& e) { return e.first == col_empire_id; });
+        if (it != colony_count_by_empire_id.end())
+            it->second++;
+        else
+            colony_count_by_empire_id.emplace_back(col_empire_id, 1);
+    };
+
+    std::vector<std::pair<int, GG::Clr>> empire_colours;
+    empire_colours.reserve(colony_count_by_empire_id.size());
+    std::transform(empires.begin(), empires.end(), std::back_inserter(empire_colours),
+                   [](const auto& e) { return std::pair{e.first, e.second->Color()}; });
+    auto get_empire_colour = [empire_colours{std::move(empire_colours)},
+        neutral_colour{GetOptionsDB().Get<GG::Clr>("ui.map.starlane.color")}](int empire_id)
+    {
+        auto it = std::find_if(empire_colours.begin(), empire_colours.end(),
+                               [empire_id](const auto& id_clr) { return empire_id == id_clr.first; });
+        if (it != empire_colours.end())
+            return it->second;
+        return neutral_colour;
+    };
+
+
     for (const auto& [system_id, icon] : m_system_icons) {
         // Render scanlines...
         GG::Pt icon_size = icon->LowerRight() - icon->UpperLeft();
@@ -1998,8 +2024,8 @@ void MapWnd::RenderSystems() {
                                     static_cast<GG::Y>(icon->EnclosingCircleDiameter()));
         GG::Pt circle_ul = icon_middle - (circle_size / 2);
         GG::Pt circle_lr = circle_ul + circle_size;
-        if (fog_scanlines
-            && (universe.GetObjectVisibilityByEmpire(system_id, empire_id) <= Visibility::VIS_BASIC_VISIBILITY))
+        if (fog_scanlines &&
+            universe.GetObjectVisibilityByEmpire(system_id, empire_id) <= Visibility::VIS_BASIC_VISIBILITY)
         {
             m_scanline_shader.SetColor(GetOptionsDB().Get<GG::Clr>("ui.map.system.scanlines.color"));
             m_scanline_shader.RenderCircle(circle_ul, circle_lr);
@@ -2009,7 +2035,7 @@ void MapWnd::RenderSystems() {
         // Render circles around systems that have at least one starlane, if they are enabled
         if (!circles) continue;
 
-        auto system = objects.get<System>(system_id);
+        auto* system = objects.getRaw<const System>(system_id);
         if (!system || system->NumStarlanes() < 1)
             continue;
 
@@ -2019,16 +2045,7 @@ void MapWnd::RenderSystems() {
 
         bool has_empire_planet = false;
         bool has_neutrals = false;
-        std::vector<std::pair<int, int>> colony_count_by_empire_id;
-        colony_count_by_empire_id.reserve(empires.NumEmpires() + 1);
-        auto increment_empire_colony_count = [&colony_count_by_empire_id](int col_empire_id) {
-            auto it = std::find_if(colony_count_by_empire_id.begin(), colony_count_by_empire_id.end(),
-                                   [col_empire_id](const auto& e) { return e.first == col_empire_id; });
-            if (it != colony_count_by_empire_id.end())
-                it->second++;
-            else
-                colony_count_by_empire_id.emplace_back(col_empire_id, 1);
-        };
+        colony_count_by_empire_id.clear();
 
         for (const auto& planet : objects.findRaw<const Planet>(system->PlanetIDs())) {
             if (known_destroyed_object_ids.count(planet->ID()) > 0)
@@ -2051,15 +2068,7 @@ void MapWnd::RenderSystems() {
 
         // draw outer circle in color of supplying empire
         int supply_empire_id = supply.EmpireThatCanSupplyAt(system_id);
-        if (supply_empire_id != ALL_EMPIRES) {
-            if (auto empire = context.GetEmpire(supply_empire_id))
-                glColor(empire->Color());
-            else
-                ErrorLogger() << "MapWnd::RenderSystems(): could not load empire with id " << supply_empire_id;
-        } else {
-            glColor(GetOptionsDB().Get<GG::Clr>("ui.map.starlane.color"));
-        }
-
+        glColor(get_empire_colour(supply_empire_id));
         glLineWidth(outer_circle_width);
         CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
 
