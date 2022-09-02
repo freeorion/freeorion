@@ -80,8 +80,11 @@ bool InIsoscelesTriangle(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr,
 
 /** Draws a filled portion of a circle when \a filled_shape is true or an
   * unfilled portion when \a filled_shape is false. */
-void CircleArc(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2,
-               bool filled_shape);
+void CircleArc(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2, bool filled_shape);
+
+/** Draws a filled or unfilled portions of a circle with every other segment
+  * skipped, with a total of \a segments segments. */
+void CircleArcSegments(const GG::Pt ul, const GG::Pt lr, int segments, bool filled_shape);
 
 /** Stores, in \a buffer vertices in CCW order that outline a circular arc or
   * \a num_slices indicates how many triangles to use to compose the circle, or

@@ -11,8 +11,9 @@
 
 
 namespace {
-    void FindIsoscelesTriangleVertices(const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orientation,
-                                       double& x1_, double& y1_, double& x2_, double& y2_, double& x3_, double& y3_)
+    void FindIsoscelesTriangleVertices(const GG::Pt ul, const GG::Pt lr,
+                                       ShapeOrientation orientation, double& x1_, double& y1_,
+                                       double& x2_, double& y2_, double& x3_, double& y3_)
     {
         switch (orientation) {
         case ShapeOrientation::UP:
@@ -54,9 +55,9 @@ namespace {
     }
 }
 
-void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul, const GG::Pt& lr,
-                                  double theta1, double theta2, bool filled_shape, int num_slices,
-                                  bool fan)
+void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul,
+                                  const GG::Pt& lr, double theta1, double theta2,
+                                  bool filled_shape, int num_slices, bool fan)
 {
     int wd = Value(lr.x - ul.x), ht = Value(lr.y - ul.y);
     double center_x = Value(ul.x + wd / 2.0);
@@ -99,28 +100,32 @@ void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul
         last_slice_idx += SLICES;
 
     if (fan) {  // store a triangle fan vertex list, specifying each vertex just once
-
-        if (filled_shape)   // specify the central vertex first, to act as the pivot vertex for the fan
-            buffer.store(static_cast<GLfloat>(center_x),    static_cast<GLfloat>(center_y));
+        if (filled_shape)   // central vertex first, to act as the pivot vertex for the fan
+            buffer.store(static_cast<GLfloat>(center_x),
+                         static_cast<GLfloat>(center_y));
         // if not filled_shape, assumes a previously-specified vertex in the buffer will act as the pivot for the fan
 
         // point on circle at angle theta1
         double theta1_x = std::cos(-theta1), theta1_y = std::sin(-theta1);
-        buffer.store(static_cast<GLfloat>(center_x + theta1_x * r), static_cast<GLfloat>(center_y + theta1_y * r));
+        buffer.store(static_cast<GLfloat>(center_x + theta1_x * r),
+                     static_cast<GLfloat>(center_y + theta1_y * r));
 
         // angles in between theta1 and theta2, if any
         for (int i = first_slice_idx; i <= last_slice_idx + 1; ++i) {
             int X = (i > SLICES ? (i - SLICES) : i) * 2, Y = X + 1;
-            buffer.store(static_cast<GLfloat>(center_x + unit_vertices[X] * r), static_cast<GLfloat>(center_y + unit_vertices[Y] * r));
+            buffer.store(static_cast<GLfloat>(center_x + unit_vertices[X] * r),
+                         static_cast<GLfloat>(center_y + unit_vertices[Y] * r));
         }
 
         // theta2
         double theta2_x = std::cos(-theta2), theta2_y = std::sin(-theta2);
-        buffer.store(static_cast<GLfloat>(center_x + theta2_x * r), static_cast<GLfloat>(center_y + theta2_y * r));
+        buffer.store(static_cast<GLfloat>(center_x + theta2_x * r),
+                     static_cast<GLfloat>(center_y + theta2_y * r));
 
     } else {    // (not a fan) store a list of complete lines / triangles
         // if storing a filled_shape, the first point in each triangle should be the centre of the arc
-        std::pair<GLfloat, GLfloat> first_point = {static_cast<GLfloat>(center_x), static_cast<GLfloat>(center_y)};
+        std::pair<GLfloat, GLfloat> first_point{static_cast<GLfloat>(center_x),
+                                                static_cast<GLfloat>(center_y)};
         // (not used for non-filled-shape)
 
         // angles in between theta1 and theta2, if any
@@ -133,26 +138,29 @@ void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul
 
             int X = (i > SLICES ? (i - SLICES) : i) * 2;
             int Y = X + 1;
-            buffer.store(static_cast<GLfloat>(center_x + unit_vertices[X] * r), static_cast<GLfloat>(center_y + unit_vertices[Y] * r));
+            buffer.store(static_cast<GLfloat>(center_x + unit_vertices[X] * r),
+                         static_cast<GLfloat>(center_y + unit_vertices[Y] * r));
 
             int next_i = i + 1;
             X = (next_i > SLICES ? (next_i - SLICES) : next_i) * 2;
             Y = X + 1;
-            buffer.store(static_cast<GLfloat>(center_x + unit_vertices[X] * r), static_cast<GLfloat>(center_y + unit_vertices[Y] * r));
+            buffer.store(static_cast<GLfloat>(center_x + unit_vertices[X] * r),
+                         static_cast<GLfloat>(center_y + unit_vertices[Y] * r));
         }
 
         // theta2
-        if (filled_shape) {
+        if (filled_shape)
             buffer.store(first_point.first, first_point.second);
-        }
 
         int i = last_slice_idx + 1;
         int X = (i > SLICES ? (i - SLICES) : i) * 2;
         int Y = X + 1;
-        buffer.store(static_cast<GLfloat>(center_x + unit_vertices[X] * r), static_cast<GLfloat>(center_y + unit_vertices[Y] * r));
+        buffer.store(static_cast<GLfloat>(center_x + unit_vertices[X] * r),
+                     static_cast<GLfloat>(center_y + unit_vertices[Y] * r));
 
         double theta2_x = std::cos(-theta2), theta2_y = std::sin(-theta2);
-        buffer.store(static_cast<GLfloat>(center_x + theta2_x * r), static_cast<GLfloat>(center_y + theta2_y * r));
+        buffer.store(static_cast<GLfloat>(center_x + theta2_x * r),
+                     static_cast<GLfloat>(center_y + theta2_y * r));
     }
 }
 
@@ -359,6 +367,38 @@ void CircleArc(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2,
 
     glPopClientAttrib();
     //glEnable(GL_TEXTURE_2D);
+}
+
+void CircleArcSegments(GG::Pt ul, GG::Pt lr, int segments, bool filled_shape) {
+    if (segments < 2)
+        return;
+
+    GG::GL2DVertexBuffer vert_buf;
+    vert_buf.reserve(5 * segments); // guesstimate for how many verts might be added
+
+    constexpr double TWO_PI = 2.0*3.1415926536;
+
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    float segment = static_cast<float>(TWO_PI) / segments;
+    for (int n = 0; n < 24; n = n + 2) {
+        auto theta1 = n * segment;
+        auto theta2 = (n+1) * segment;
+
+        BufferStoreCircleArcVertices(vert_buf, ul, lr, theta1, theta2, filled_shape, 0, false);
+    }
+
+    vert_buf.activate();
+
+    if (filled_shape)
+        glDrawArrays(GL_TRIANGLES, 0, vert_buf.size());
+    else
+        glDrawArrays(GL_LINES, 0, vert_buf.size());
+
+    glPopClientAttrib();
 }
 
 void PartlyRoundedRect(const GG::Pt& ul, const GG::Pt& lr, int radius,
