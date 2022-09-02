@@ -181,8 +181,12 @@ bool RenameOrder::Check(int empire, int object, std::string new_name,
         return false;
     }
 
+#if defined(FREEORION_ANDROID)
+    boost::trim(new_name);
+#else
     auto& locale = GetLocale();
     boost::trim(new_name, locale);
+#endif
 
     // disallow nameless objects
     if (new_name.empty()) {
