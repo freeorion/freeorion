@@ -2098,10 +2098,10 @@ void MapWnd::RenderSystems() {
 
         int position = 0;
         for (auto& [empire_id, colony_count] : colony_count_by_empire_id) {
-            if (auto empire = context.GetEmpire(empire_id))
-                glColor(empire->Color());
-            else
+            if (empire_id == ALL_EMPIRES)
                 glColor(ClientUI::TextColor());
+            else
+                glColor(get_empire_colour(empire_id));
 
             CircleArc(inner_circle_ul, inner_circle_lr, position * segment,
                       (colony_count + position) * segment, false);
