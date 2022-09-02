@@ -2072,10 +2072,7 @@ void MapWnd::RenderSystems() {
             float line_width = std::max(std::min(2 / ZoomFactor(), max_inner_circle_width), inner_circle_width);
             glLineWidth(line_width);
             glColor(ClientUI::TextColor());
-
-            float segment = static_cast<float>(TWO_PI) / 24.0f;
-            for (int n = 0; n < 24; n = n + 2)
-                CircleArc(inner_circle_ul, inner_circle_lr, n * segment, (n+1) * segment, false);
+            CircleArcSegments(inner_circle_ul, inner_circle_lr, 24, false);
         }
 
         // systems with empire planets have an unbroken inner circle; color segments for each empire present
