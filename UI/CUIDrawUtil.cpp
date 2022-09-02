@@ -55,8 +55,8 @@ namespace {
     }
 }
 
-void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul,
-                                  const GG::Pt& lr, double theta1, double theta2,
+void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt ul,
+                                  const GG::Pt lr, double theta1, double theta2,
                                   bool filled_shape, int num_slices, bool fan)
 {
     int wd = Value(lr.x - ul.x), ht = Value(lr.y - ul.y);
@@ -220,7 +220,7 @@ void BufferStoreRectangle(GG::GL2DVertexBuffer& buffer,
         buffer.store(inner_x2, inner_y2);
 }
 
-void AngledCornerRectangle(const GG::Pt& ul, const GG::Pt& lr, GG::Clr color, GG::Clr border, int angle_offset, int thick,
+void AngledCornerRectangle(const GG::Pt ul, const GG::Pt lr, GG::Clr color, GG::Clr border, int angle_offset, int thick,
                            bool upper_left_angled, bool lower_right_angled, bool draw_bottom)
 {
     glDisable(GL_TEXTURE_2D);
@@ -253,9 +253,10 @@ void AngledCornerRectangle(const GG::Pt& ul, const GG::Pt& lr, GG::Clr color, GG
     glEnable(GL_TEXTURE_2D);
 }
 
-void BufferStoreAngledCornerRectangleVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul, const GG::Pt& lr,
-                                              int angle_offset, bool upper_left_angled,
-                                              bool lower_right_angled, bool connect_bottom_line)
+void BufferStoreAngledCornerRectangleVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt ul,
+                                              const GG::Pt lr, int angle_offset,
+                                              bool upper_left_angled, bool lower_right_angled,
+                                              bool connect_bottom_line)
 {
     // these are listed in CCW order
     if (connect_bottom_line)
@@ -280,7 +281,7 @@ void BufferStoreAngledCornerRectangleVertices(GG::GL2DVertexBuffer& buffer, cons
     buffer.store(Value(ul.x),                       Value(lr.y));
 }
 
-bool InAngledCornerRect(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, int angle_offset,
+bool InAngledCornerRect(const GG::Pt pt, const GG::Pt ul, const GG::Pt lr, int angle_offset,
                         bool upper_left_angled, bool lower_right_angled)
 {
     bool retval = false;
@@ -304,7 +305,7 @@ void Triangle(double x1, double y1, double x2, double y2, double x3, double y3, 
                  color, border ? border_clr : GG::CLR_ZERO);
 }
 
-bool InTriangle(const GG::Pt& pt, double x1, double y1, double x2, double y2, double x3, double y3) {
+bool InTriangle(const GG::Pt pt, double x1, double y1, double x2, double y2, double x3, double y3) {
     double vec_A_x = x2 - x1; // side A is the vector from pt1 to pt2
     double vec_A_y = y2 - y1; // side A is the vector from pt1 to pt2
     double vec_B_x = x3 - x2; // side B is the vector from pt2 to pt3
@@ -321,13 +322,17 @@ bool InTriangle(const GG::Pt& pt, double x1, double y1, double x2, double y2, do
     return (sum == 3 || sum == 0);
 }
 
-void IsoscelesTriangle(const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orientation, GG::Clr color, bool border) {
+void IsoscelesTriangle(const GG::Pt ul, const GG::Pt lr, ShapeOrientation orientation,
+                       GG::Clr color, bool border)
+{
     double x1_, y1_, x2_, y2_, x3_, y3_;
     FindIsoscelesTriangleVertices(ul, lr, orientation, x1_, y1_, x2_, y2_, x3_, y3_);
     Triangle(x1_, y1_, x2_, y2_, x3_, y3_, color, border);
 }
 
-void BufferStoreIsoscelesTriangle(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orientation) {
+void BufferStoreIsoscelesTriangle(GG::GL2DVertexBuffer& buffer, const GG::Pt ul,
+                                  const GG::Pt lr, ShapeOrientation orientation)
+{
     double x1_, y1_, x2_, y2_, x3_, y3_;
     FindIsoscelesTriangleVertices(ul, lr, orientation, x1_, y1_, x2_, y2_, x3_, y3_);
     buffer.store(x1_,   y1_);
@@ -335,7 +340,7 @@ void BufferStoreIsoscelesTriangle(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul
     buffer.store(x3_,   y3_);
 }
 
-bool InIsoscelesTriangle(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr,
+bool InIsoscelesTriangle(const GG::Pt pt, const GG::Pt ul, const GG::Pt lr,
                          ShapeOrientation orientation)
 {
     double x1_, y1_, x2_, y2_, x3_, y3_;
@@ -343,7 +348,7 @@ bool InIsoscelesTriangle(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr,
     return InTriangle(pt, x1_, y1_, x2_, y2_, x3_, y3_);
 }
 
-void CircleArc(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2,
+void CircleArc(const GG::Pt ul, const GG::Pt lr, double theta1, double theta2,
                bool filled_shape)
 {
     //std::cout << "CircleArc ul: " << ul << "  lr: " << lr << "  theta1: " << theta1 << "  theta2: " << theta2 << "  filled: " << filled_shape << std::endl;
@@ -401,7 +406,7 @@ void CircleArcSegments(GG::Pt ul, GG::Pt lr, int segments, bool filled_shape) {
     glPopClientAttrib();
 }
 
-void PartlyRoundedRect(const GG::Pt& ul, const GG::Pt& lr, int radius,
+void PartlyRoundedRect(const GG::Pt ul, const GG::Pt lr, int radius,
                        bool ur_round, bool ul_round,
                        bool ll_round, bool lr_round, bool fill)
 {
@@ -428,8 +433,8 @@ void PartlyRoundedRect(const GG::Pt& ul, const GG::Pt& lr, int radius,
     //glEnable(GL_TEXTURE_2D);
 }
 
-void BufferStorePartlyRoundedRectVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul,
-                                          const GG::Pt& lr, int radius, bool ur_round,
+void BufferStorePartlyRoundedRectVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt ul,
+                                          const GG::Pt lr, int radius, bool ur_round,
                                           bool ul_round, bool ll_round, bool lr_round)
 {
     static constexpr double PI = 3.141594; // probably intentionally sightly more than Pi
@@ -509,13 +514,13 @@ public:
     void StopUsing()
     { m_scanline_shader->stopUse(); }
 
-    void RenderCircle(const GG::Pt& ul, const GG::Pt& lr) {
+    void RenderCircle(const GG::Pt ul, const GG::Pt lr) {
         StartUsing();
         CircleArc(ul, lr, 0.0, TWO_PI, true);
         StopUsing();
     }
 
-    void RenderRectangle(const GG::Pt& ul, const GG::Pt& lr) {
+    void RenderRectangle(const GG::Pt ul, const GG::Pt lr) {
         StartUsing();
         GG::FlatRectangle(ul, lr, GG::CLR_WHITE, GG::CLR_WHITE, 0u);
         StopUsing();
@@ -534,10 +539,10 @@ ScanlineRenderer::ScanlineRenderer() :
 // This destructor is required here because ~ScanlineRendererImpl is declared here.
 ScanlineRenderer::~ScanlineRenderer() = default;
 
-void ScanlineRenderer::RenderCircle(const GG::Pt& ul, const GG::Pt& lr)
+void ScanlineRenderer::RenderCircle(const GG::Pt ul, const GG::Pt lr)
 { m_impl->RenderCircle(ul, lr); }
 
-void ScanlineRenderer::RenderRectangle(const GG::Pt& ul, const GG::Pt& lr)
+void ScanlineRenderer::RenderRectangle(const GG::Pt ul, const GG::Pt lr)
 { m_impl->RenderRectangle(ul, lr); }
 
 void ScanlineRenderer::StartUsing()

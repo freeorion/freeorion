@@ -298,11 +298,11 @@ namespace {
                                                          dist_along_lane);
     }
 
-    bool InRect(GG::X left, GG::Y top, GG::X right, GG::Y bottom, const GG::Pt& pt)
+    bool InRect(GG::X left, GG::Y top, GG::X right, GG::Y bottom, const GG::Pt pt)
     { return pt.x >= left && pt.y >= top && pt.x < right && pt.y < bottom; } //pt >= ul && pt < lr;
 
     auto InWndRect(const GG::Wnd* top_wnd) {
-        return [top_wnd](const GG::Wnd* wnd, const GG::Pt& pt) -> bool {
+        return [top_wnd](const GG::Wnd* wnd, const GG::Pt pt) -> bool {
             if (!wnd)
                 return false;
             return InRect(wnd->Left(), top_wnd ? top_wnd->Top() : wnd->Top(),
@@ -388,8 +388,8 @@ namespace {
             static constexpr GG::Y offset{32};
             const GG::Clr& BG_CLR = ClientUI::WndColor();
             const GG::Clr& BORDER_CLR = ClientUI::WndOuterBorderColor();
-            const GG::Pt& UL = GG::Pt(UpperLeft().x, UpperLeft().y + offset);
-            const GG::Pt& LR = LowerRight();
+            const GG::Pt UL = GG::Pt(UpperLeft().x, UpperLeft().y + offset);
+            const GG::Pt LR = LowerRight();
 
             // main background
             GG::FlatRectangle(UL, LR, BG_CLR, BORDER_CLR);
@@ -548,7 +548,7 @@ namespace {
         void LayoutRow(const std::string& descr,
                        GG::Pt& descr_ul, GG::Pt& descr_lr,
                        GG::Pt& value_ul, GG::Pt& value_lr,
-                       const GG::Pt& row_advance)
+                       const GG::Pt row_advance)
         {
             if (!m_labels.count(descr)) {
                 ErrorLogger() << "Unable to find expected label key " << descr;
@@ -558,15 +558,12 @@ namespace {
             LayoutRow(m_labels.at(descr), descr_ul, descr_lr, value_ul, value_lr, row_advance);
         }
 
-        void LayoutRow(LabelValueType& row,
-            GG::Pt& descr_ul, GG::Pt& descr_lr,
-            GG::Pt& value_ul, GG::Pt& value_lr,
-            const GG::Pt& row_advance)
+        void LayoutRow(LabelValueType& row, GG::Pt& descr_ul, GG::Pt& descr_lr,
+                       GG::Pt& value_ul, GG::Pt& value_lr, const GG::Pt row_advance)
         {
             row.first->SizeMove(descr_ul, descr_lr);
-            if (row.second) {
+            if (row.second)
                 row.second->SizeMove(value_ul, value_lr);
-            }
             descr_ul += row_advance;
             descr_lr += row_advance;
             value_ul += row_advance;
@@ -585,22 +582,21 @@ namespace {
                 GG::Y height{ ClientUI::Pts() };
                 // center format for title label
                 m_ship_design_labels.emplace_back(
-                    GG::Wnd::Create<CUILabel>(GetUniverse().GetShipDesign(entry.first)->Name(),
+                    GG::Wnd::Create<CUILabel>(
+                        GetUniverse().GetShipDesign(entry.first)->Name(),
                         GG::FORMAT_RIGHT,
                         GG::NO_WND_FLAGS, GG::X0, GG::Y0,
-                        m_col_widths.at(0) - (m_margin * 2), height
-                        ),
-                    GG::Wnd::Create<CUILabel>(std::to_string(entry.second),
+                        m_col_widths.at(0) - (m_margin * 2), height),
+                    GG::Wnd::Create<CUILabel>(
+                        std::to_string(entry.second),
                         GG::FORMAT_RIGHT,
                         GG::NO_WND_FLAGS, GG::X0, GG::Y0,
-                        m_col_widths.at(1) - (m_margin * 2), height
-                        )
+                        m_col_widths.at(1) - (m_margin * 2), height)
                 );
             }
             std::sort(m_ship_design_labels.begin(), m_ship_design_labels.end(),
-                [](LabelValueType a, LabelValueType b) {
-                    return a.first->Text() < b.first->Text();
-                }
+                [](LabelValueType a, LabelValueType b)
+                { return a.first->Text() < b.first->Text(); }
             );
             for (auto& labels : m_ship_design_labels) {
                 AttachChild(labels.first);
@@ -2582,7 +2578,7 @@ void MapWnd::RemoveWindows() {
     }
 }
 
-void MapWnd::Pan(const GG::Pt& delta) {
+void MapWnd::Pan(const GG::Pt delta) {
     GG::Pt move_to_pt = ClientUpperLeft() + delta;
     CorrectMapPosition(move_to_pt);
     MoveTo(move_to_pt - GG::Pt(AppWidth(), AppHeight()));
@@ -2617,7 +2613,7 @@ void MapWnd::LButtonUp(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys) {
     m_dragged = false;
 }
 
-void MapWnd::LClick(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys) {
+void MapWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     m_drag_offset = GG::Pt(-GG::X1, -GG::Y1);
     FleetUIManager& manager = FleetUIManager::GetFleetUIManager();
     const auto fleet_wnd = manager.ActiveFleetWnd();
@@ -2687,7 +2683,6 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE"),   false, detectionRange, detection_range_action));
         // display popup menu
         popup->Run();
-
     }
 }
 
@@ -2697,15 +2692,13 @@ void MapWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_ke
 }
 
 void MapWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
-    if (key == GG::Key::GGK_LSHIFT || key == GG::Key::GGK_RSHIFT) {
+    if (key == GG::Key::GGK_LSHIFT || key == GG::Key::GGK_RSHIFT)
         ReplotProjectedFleetMovement(mod_keys & GG::MOD_KEY_SHIFT);
-    }
 }
 
 void MapWnd::KeyRelease(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
-    if (key == GG::Key::GGK_LSHIFT || key == GG::Key::GGK_RSHIFT) {
+    if (key == GG::Key::GGK_LSHIFT || key == GG::Key::GGK_RSHIFT)
         ReplotProjectedFleetMovement(mod_keys & GG::MOD_KEY_SHIFT);
-    }
 }
 
 void MapWnd::EnableOrderIssuing(bool enable) {
@@ -5207,7 +5200,7 @@ void MapWnd::Zoom(int delta) {
     Zoom(delta, center);
 }
 
-void MapWnd::Zoom(int delta, const GG::Pt& position) {
+void MapWnd::Zoom(int delta, const GG::Pt position) {
     if (delta == 0)
         return;
 
@@ -5221,7 +5214,7 @@ void MapWnd::SetZoom(double steps_in, bool update_slide) {
     SetZoom(steps_in, update_slide, center);
 }
 
-void MapWnd::SetZoom(double steps_in, bool update_slide, const GG::Pt& position) {
+void MapWnd::SetZoom(double steps_in, bool update_slide, const GG::Pt position) {
     if (GetOptionsDB().Get<bool>("ui.map.lock"))
         return;
 
