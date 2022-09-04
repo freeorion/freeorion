@@ -15,8 +15,6 @@ using namespace GG;
 ///////////////////////////////////////////////////////////////////////////
 // GLBufferBase
 ///////////////////////////////////////////////////////////////////////////
-GLBufferBase::~GLBufferBase()
-{ dropServerBuffer(); }
 
 void GLBufferBase::dropServerBuffer()
 {
@@ -36,95 +34,15 @@ void GLBufferBase::harmonizeBufferType(GLBufferBase& other)
     }
 }
 
-///////////////////////////////////////////////////////////////////////////
-// GLClientAndServerBufferBase<vtype> template
-///////////////////////////////////////////////////////////////////////////
-template <typename vtype>
-GLClientAndServerBufferBase<vtype>::GLClientAndServerBufferBase(std::size_t elementsPerItem) :
-    GLBufferBase(),
-    b_elements_per_item(elementsPerItem)
-{}
 
-template <typename vtype>
-std::size_t GLClientAndServerBufferBase<vtype>::size() const
-{ return b_size; }
-
-template <typename vtype>
-bool GLClientAndServerBufferBase<vtype>::empty() const
-{ return b_size == 0; }
-
-template <typename vtype>
-void GLClientAndServerBufferBase<vtype>::reserve(std::size_t num_items)
-{ b_data.reserve(num_items * b_elements_per_item); }
-
-template <typename vtype>
-void GLClientAndServerBufferBase<vtype>::store(vtype item)
-{
-    b_data.push_back(item);
-    b_size = b_data.size() / b_elements_per_item;
-}
-
-template <typename vtype>
-void GLClientAndServerBufferBase<vtype>::store(vtype item1, vtype item2)
-{
-    b_data.push_back(item1);
-    b_data.push_back(item2);
-    b_size = b_data.size() / b_elements_per_item;
-}
-
-template <typename vtype>
-void GLClientAndServerBufferBase<vtype>::store(vtype item1, vtype item2, vtype item3)
-{
-    b_data.push_back(item1);
-    b_data.push_back(item2);
-    b_data.push_back(item3);
-    b_size = b_data.size() / b_elements_per_item;
-}
-
-template <typename vtype>
-void GLClientAndServerBufferBase<vtype>::store(vtype item1, vtype item2, vtype item3, vtype item4)
-{
-    b_data.push_back(item1);
-    b_data.push_back(item2);
-    b_data.push_back(item3);
-    b_data.push_back(item4);
-    b_size = b_data.size() / b_elements_per_item;
-}
-
-template <typename vtype>
-void GLClientAndServerBufferBase<vtype>::createServerBuffer()
-{
-    glGenBuffers(1, &b_name);
-    if (!b_name)
-        return;
-    glBindBuffer(GL_ARRAY_BUFFER, b_name);
-    glBufferData(GL_ARRAY_BUFFER,
-                 b_data.size() * sizeof(vtype),
-                 b_data.empty() ? nullptr : &b_data[0],
-                 GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
-template <typename vtype>
-void GLClientAndServerBufferBase<vtype>::clear()
-{
-    dropServerBuffer();
-    b_size = 0;
-    b_data.clear();
-}
+template class GG::GLClientAndServerBufferBase<uint8_t, 4>;
+template class GG::GLClientAndServerBufferBase<float, 2>;
+template class GG::GLClientAndServerBufferBase<float, 3>;
+template class GG::GLClientAndServerBufferBase<float, 4>;
 
 ///////////////////////////////////////////////////////////////////////////
 // GLRGBAColorBuffer
 ///////////////////////////////////////////////////////////////////////////
-template class GG::GLClientAndServerBufferBase<uint8_t>;
-
-GLRGBAColorBuffer::GLRGBAColorBuffer() :
-    GLClientAndServerBufferBase<uint8_t>(4)
-{}
-
-void GLRGBAColorBuffer::store(const Clr& color)
-{ GLClientAndServerBufferBase::store(color.r, color.g, color.b, color.a); }
-
 void GLRGBAColorBuffer::activate() const
 {
     if (b_name) {
@@ -136,30 +54,10 @@ void GLRGBAColorBuffer::activate() const
     }
 }
 
+
 ///////////////////////////////////////////////////////////////////////////
 // GL2DVertexBuffer
 ///////////////////////////////////////////////////////////////////////////
-template class GG::GLClientAndServerBufferBase<float>;
-
-GL2DVertexBuffer::GL2DVertexBuffer() :
-    GLClientAndServerBufferBase<float>(2)
-{}
-
-void GL2DVertexBuffer::store(const Pt& pt)
-{ store(pt.x, pt.y); }
-
-void GL2DVertexBuffer::store(X x, Y y)
-{ GLClientAndServerBufferBase::store(Value(x), Value(y)); }
-
-void GL2DVertexBuffer::store(X x, float y)
-{ GLClientAndServerBufferBase::store(Value(x), y); }
-
-void GL2DVertexBuffer::store(float x, Y y)
-{ GLClientAndServerBufferBase::store(x, Value(y)); }
-
-void GL2DVertexBuffer::store(float x, float y)
-{ GLClientAndServerBufferBase::store(x, y); }
-
 void GL2DVertexBuffer::activate() const
 {
     if (b_name) {
@@ -175,10 +73,6 @@ void GL2DVertexBuffer::activate() const
 ///////////////////////////////////////////////////////////////////////////
 // GLTexCoordBuffer
 ///////////////////////////////////////////////////////////////////////////
-GLTexCoordBuffer::GLTexCoordBuffer() :
-    GLClientAndServerBufferBase<float>(2)
-{}
-
 void GLTexCoordBuffer::activate() const
 {
     if (b_name) {
@@ -194,13 +88,6 @@ void GLTexCoordBuffer::activate() const
 ///////////////////////////////////////////////////////////////////////////
 // GL3DVertexBuffer
 ///////////////////////////////////////////////////////////////////////////
-GL3DVertexBuffer::GL3DVertexBuffer() :
-    GLClientAndServerBufferBase<float>(3)
-{}
-
-void GL3DVertexBuffer::store(float x, float y, float z)
-{ GLClientAndServerBufferBase::store(x, y, z); }
-
 void GL3DVertexBuffer::activate() const
 {
     if (b_name) {
@@ -216,13 +103,6 @@ void GL3DVertexBuffer::activate() const
 ///////////////////////////////////////////////////////////////////////////
 // GLNormalBuffer
 ///////////////////////////////////////////////////////////////////////////
-GLNormalBuffer::GLNormalBuffer() :
-    GLClientAndServerBufferBase<float>(3)
-{}
-
-void GLNormalBuffer::store(float x, float y, float z)
-{ GLClientAndServerBufferBase::store(x, y, z); }
-
 void GLNormalBuffer::activate() const
 {
     if (b_name) {

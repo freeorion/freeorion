@@ -26,7 +26,7 @@ public:
     GLBufferBase() = default;
 
     /** Required to automatically drop server buffer in case of delete. */
-    virtual ~GLBufferBase();
+    virtual ~GLBufferBase() { dropServerBuffer(); }
 
     // use this if you want to make sure that two buffers both
     // have server buffers or not, drops the buffer for mixed cases
@@ -43,39 +43,75 @@ protected:
 // GLClientAndServerBufferBase
 // template class for buffers with different types of content
 ///////////////////////////////////////////////////////////////////////////
-template <typename vtype>
+template <typename vtype, std::size_t N>
 class GG_API GLClientAndServerBufferBase : public GLBufferBase
 {
-private:
-    GLClientAndServerBufferBase(); // default ctor forbidden,
-                                   // buffer needs to know number
-                                   // of elements per item
 public:
-    GLClientAndServerBufferBase(std::size_t elementsPerItem);
-    [[nodiscard]] std::size_t size() const;
-    [[nodiscard]] bool        empty() const;
+    GLClientAndServerBufferBase() = default;
+    [[nodiscard]] std::size_t size() const { return b_size; }
+    [[nodiscard]] bool        empty() const { return b_size == 0; }
 
     // pre-allocate space for item data
-    void reserve(std::size_t num_items);
-
-    // store items, buffers usually store tupels, convenience functions
-    // do not use while server buffer exists
-    void store(vtype item);
-    void store(vtype item1, vtype item2);
-    void store(vtype item1, vtype item2, vtype item3);
-    void store(vtype item1, vtype item2, vtype item3, vtype item4);
-
-    // try to store the buffered data in a server buffer
-    void createServerBuffer();
-
-    // drops a server buffer if one exists,
-    // clears the client side buffer
-    void clear();
+    void reserve(std::size_t num_items) { b_data.reserve(num_items * b_elements_per_item); }
 
 protected:
-    std::vector<vtype>  b_data;
-    std::size_t         b_size = 0;
-    std::size_t         b_elements_per_item = 0;
+    // store items, buffers usually store tuples, convenience functions
+    // do not use while server buffer exists
+    void store(vtype item)
+    {
+        b_data.push_back(item);
+        b_size = b_data.size() / b_elements_per_item;
+    }
+
+    void store(vtype item1, vtype item2)
+    {
+        b_data.push_back(item1);
+        b_data.push_back(item2);
+        b_size = b_data.size() / b_elements_per_item;
+    }
+
+    void store(vtype item1, vtype item2, vtype item3)
+    {
+        b_data.push_back(item1);
+        b_data.push_back(item2);
+        b_data.push_back(item3);
+        b_size = b_data.size() / b_elements_per_item;
+    }
+
+    void store(vtype item1, vtype item2, vtype item3, vtype item4)
+    {
+        b_data.push_back(item1);
+        b_data.push_back(item2);
+        b_data.push_back(item3);
+        b_data.push_back(item4);
+        b_size = b_data.size() / b_elements_per_item;
+    }
+
+public:
+    // try to store the buffered data in a server buffer
+    void createServerBuffer() {
+        glGenBuffers(1, &b_name);
+        if (!b_name)
+            return;
+        glBindBuffer(GL_ARRAY_BUFFER, b_name);
+        glBufferData(GL_ARRAY_BUFFER,
+                     b_data.size() * sizeof(vtype),
+                     b_data.empty() ? nullptr : &b_data[0],
+                     GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+
+    // drops a server buffer if one exists, clears the client side buffer
+    void clear() {
+        dropServerBuffer();
+        b_size = 0;
+        b_data.clear();
+    }
+
+protected:
+    std::vector<vtype>           b_data;
+    std::size_t                  b_size = 0;
+    static constexpr std::size_t b_elements_per_item = N;
 
     // used in derived classes to activate the buffer
     // implementations should use glBindBuffer, gl...Pointer if
@@ -86,58 +122,64 @@ protected:
 ///////////////////////////////////////////////////////////////////////////
 // GLRGBAColorBuffer specialized class for RGBA color values
 ///////////////////////////////////////////////////////////////////////////
-class GG_API GLRGBAColorBuffer : public GLClientAndServerBufferBase<uint8_t>
+class GG_API GLRGBAColorBuffer : public GLClientAndServerBufferBase<uint8_t, 4>
 {
 public:
-    GLRGBAColorBuffer();
-    void store(const Clr& color);
+    using base_t = GLClientAndServerBufferBase<uint8_t, 4>;
+    GLRGBAColorBuffer() = default;
+    void store(const Clr color) { base_t::store(color.r, color.g, color.b, color.a); }
     void activate() const override;
 };
 
 ///////////////////////////////////////////////////////////////////////////
 // GL2DVertexBuffer specialized class for 2d vertex data
 ///////////////////////////////////////////////////////////////////////////
-class GG_API GL2DVertexBuffer : public GLClientAndServerBufferBase<float>
+class GG_API GL2DVertexBuffer : public GLClientAndServerBufferBase<float, 2>
 {
 public:
-    GL2DVertexBuffer();
-    void store(const Pt& pt);
-    void store(X x, Y y);
-    void store(X x, float y);
-    void store(float x, Y y);
-    void store(float x, float y);
+    using base_t = GLClientAndServerBufferBase<float, 2>;
+    GL2DVertexBuffer() = default;
+    void store(const Pt pt) { store(pt.x, pt.y); }
+    void store(X x, Y y) { base_t::store(Value(x), Value(y)); }
+    void store(X x, float y) { base_t::store(Value(x), y); }
+    void store(float x, Y y) { base_t::store(x, Value(y)); }
+    void store(float x, float y) { base_t::store(x, y); }
     void activate() const override;
 };
 
 ///////////////////////////////////////////////////////////////////////////
 // GLTexCoordBuffer specialized class for texture coordinate data
 ///////////////////////////////////////////////////////////////////////////
-class GG_API GLTexCoordBuffer : public GLClientAndServerBufferBase<float>
+class GG_API GLTexCoordBuffer : public GLClientAndServerBufferBase<float, 2>
 {
 public:
-    GLTexCoordBuffer();
+    using base_t = GLClientAndServerBufferBase<float, 2>;
+    GLTexCoordBuffer() = default;
+    void store(float x, float y) { base_t::store(x, y); }
     void activate() const override;
 };
 
 ///////////////////////////////////////////////////////////////////////////
 // GL3DVertexBuffer specialized class for 3d vertex data
 ///////////////////////////////////////////////////////////////////////////
-class GG_API GL3DVertexBuffer : public GLClientAndServerBufferBase<float>
+class GG_API GL3DVertexBuffer : public GLClientAndServerBufferBase<float, 3>
 {
 public:
-    GL3DVertexBuffer();
-    void store(float x, float y, float z);
+    using base_t = GLClientAndServerBufferBase<float, 3>;
+    GL3DVertexBuffer() = default;
+    void store(float x, float y, float z) { base_t::store(x, y, z); }
     void activate() const override;
 };
 
 ///////////////////////////////////////////////////////////////////////////
 // GLNormalBuffer specialized class for 3d normal data
 ///////////////////////////////////////////////////////////////////////////
-class GG_API GLNormalBuffer : public GLClientAndServerBufferBase<float>
+class GG_API GLNormalBuffer : public GLClientAndServerBufferBase<float, 3>
 {
 public:
-    GLNormalBuffer();
-    void store(float x, float y, float z);
+    using base_t = GLClientAndServerBufferBase<float, 3>;
+    GLNormalBuffer() = default;
+    void store(float x, float y, float z) { base_t::store(x, y, z); }
     void activate() const override;
 };
 
