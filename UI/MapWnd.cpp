@@ -2164,14 +2164,26 @@ void MapWnd::RenderStarlanes(GG::GL2DVertexBuffer& vertices, GG::GLRGBAColorBuff
 }
 
 namespace {
-    GG::GL2DVertexBuffer dot_vertices_buffer;
-    GG::GLTexCoordBuffer dot_star_texture_coords;
-    constexpr std::size_t BUFFER_CAPACITY(512); // should be long enough for most plausible fleet move lines
-
     std::shared_ptr<GG::Texture> MoveLineDotTexture() {
         auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "move_line_dot.png");
         return retval;
     }
+
+    constexpr std::size_t BUFFER_CAPACITY(512); // should be long enough for most plausible fleet move lines
+
+    GG::GL2DVertexBuffer dot_vertices_buffer;
+
+    const GG::GLTexCoordBuffer dot_star_texture_coords{[]() {
+        GG::GLTexCoordBuffer retval;
+        retval.reserve(BUFFER_CAPACITY*4);
+        for (std::size_t i = 0; i < BUFFER_CAPACITY; ++i) {
+            retval.store(0.0f, 0.0f);
+            retval.store(0.0f, 1.0f);
+            retval.store(1.0f, 1.0f);
+            retval.store(1.0f, 0.0f);
+        }
+        return retval;
+    }()};
 }
 
 void MapWnd::RenderFleetMovementLines() {
@@ -2189,18 +2201,6 @@ void MapWnd::RenderFleetMovementLines() {
     // texture for dots
     auto move_line_dot_texture = MoveLineDotTexture();
     float dot_size = Value(move_line_dot_texture->DefaultWidth());
-
-    // texture coords
-    if (dot_star_texture_coords.empty()) {
-        dot_star_texture_coords.reserve(BUFFER_CAPACITY*4);
-        for (std::size_t i = 0; i < BUFFER_CAPACITY; ++i) {
-            dot_star_texture_coords.store(0.0f, 0.0f);
-            dot_star_texture_coords.store(0.0f, 1.0f);
-            dot_star_texture_coords.store(1.0f, 1.0f);
-            dot_star_texture_coords.store(1.0f, 0.0f);
-        }
-    }
-
 
     // dots rendered same size for all zoom levels, so do positioning in screen
     // space instead of universe space
