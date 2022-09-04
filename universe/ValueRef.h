@@ -158,7 +158,8 @@ template<typename T>
 { return ptr ? ptr->Clone() : nullptr; }
 
 template<typename T>
-[[nodiscard]] inline std::vector<std::unique_ptr<T>> CloneUnique(const std::vector<std::unique_ptr<T>>& vec) {
+[[nodiscard]] inline auto CloneUnique(const std::vector<std::unique_ptr<T>>& vec)
+{
     std::vector<std::unique_ptr<T>> retval;
     retval.reserve(vec.size());
     for (const auto& val : vec)
@@ -167,7 +168,8 @@ template<typename T>
 }
 
 template<typename T>
-[[nodiscard]] inline std::vector<std::pair<std::string, std::unique_ptr<T>>> CloneUnique(const std::vector<std::pair<std::string, std::unique_ptr<T>>>& vec) {
+[[nodiscard]] inline auto CloneUnique(const std::vector<std::pair<std::string, std::unique_ptr<T>>>& vec)
+{
     std::vector<std::pair<std::string, std::unique_ptr<T>>> retval;
     retval.reserve(vec.size());
     for (const auto& val : vec)
