@@ -57,34 +57,42 @@ public:
 protected:
     // store items, buffers usually store tuples, convenience functions
     // do not use while server buffer exists
+    template <std::size_t M = N, std::enable_if_t<M == 1>* = nullptr>
     void store(vtype item)
     {
+        static_assert(b_elements_per_item == 1);
         b_data.push_back(item);
-        b_size = b_data.size() / b_elements_per_item;
+        ++b_size;
     }
 
+    template <std::size_t M = N, std::enable_if_t<M == 2>* = nullptr>
     void store(vtype item1, vtype item2)
     {
+        static_assert(b_elements_per_item == 2);
         b_data.push_back(item1);
         b_data.push_back(item2);
-        b_size = b_data.size() / b_elements_per_item;
+        ++b_size;
     }
 
+    template <std::size_t M = N, std::enable_if_t<M == 3>* = nullptr>
     void store(vtype item1, vtype item2, vtype item3)
     {
+        static_assert(b_elements_per_item == 3);
         b_data.push_back(item1);
         b_data.push_back(item2);
         b_data.push_back(item3);
-        b_size = b_data.size() / b_elements_per_item;
+        ++b_size;
     }
 
+    template <std::size_t M = N, std::enable_if_t<M == 4>* = nullptr>
     void store(vtype item1, vtype item2, vtype item3, vtype item4)
     {
+        static_assert(b_elements_per_item == 4);
         b_data.push_back(item1);
         b_data.push_back(item2);
         b_data.push_back(item3);
         b_data.push_back(item4);
-        b_size = b_data.size() / b_elements_per_item;
+        ++b_size;
     }
 
 public:
