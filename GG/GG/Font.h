@@ -537,7 +537,7 @@ public:
         call it repeatedly on a known text.
     */
     std::vector<std::shared_ptr<Font::TextElement>> ExpensiveParseFromTextToTextElements(
-        const std::string& text, const Flags<TextFormat>& format) const;
+        const std::string& text, Flags<TextFormat> format) const;
 
     /** Fill \p text_elements with the font widths of characters from \p text starting from \p
         starting_from. */
@@ -580,7 +580,7 @@ public:
                              std::size_t targ_offset) const;
 
     /** DetermineLines() returns the \p line_data resulting from adding the necessary line
-        breaks, to  the \p text formatted with \p format and parsed into \p text_elements, to fit
+        breaks, to the \p text formatted with \p format and parsed into \p text_elements, to fit
         the \p text into a box of width \p box_width.
 
         It accounts for alignment, wrapping and justification of the \p text.
@@ -592,12 +592,12 @@ public:
         bound.  Compatible means the exact same \p text object, not the same text content.
         */
     std::vector<LineData> DetermineLines(const std::string& text,
-                                         Flags<TextFormat>& format,
+                                         Flags<TextFormat>& format, // may be modified
                                          X box_width,
                                          const std::vector<std::shared_ptr<TextElement>>& text_elements) const;
 
     /** Returns the maximum dimensions of the text in x and y. */
-    Pt   TextExtent(const std::vector<LineData>& line_data) const;
+    Pt TextExtent(const std::vector<LineData>& line_data) const;
 
     /** Adds \a tag to the list of embedded tags that Font should not print
         when rendering text.  Passing "foo" will cause Font to treat "<foo>",
@@ -674,7 +674,7 @@ private:
     void              CheckFace(FT_Face font, FT_Error error);
     void              Init(FT_Face& font);
 
-    bool GenerateGlyph(FT_Face font, std::uint32_t ch);
+    bool              GenerateGlyph(FT_Face font, std::uint32_t ch);
 
     void              ValidateFormat(Flags<TextFormat>& format) const;
 

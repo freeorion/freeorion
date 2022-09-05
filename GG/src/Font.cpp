@@ -1367,8 +1367,7 @@ namespace DebugOutput {
 }
 
 std::vector<std::shared_ptr<Font::TextElement>>
-    Font::ExpensiveParseFromTextToTextElements(const std::string& text,
-                                               const Flags<TextFormat>& format) const
+Font::ExpensiveParseFromTextToTextElements(const std::string& text, Flags<TextFormat> format) const
 {
     std::vector<std::shared_ptr<TextElement>> text_elements;
 
@@ -1572,7 +1571,7 @@ std::vector<Font::LineData> Font::DetermineLines(
         return std::vector<Font::LineData>{};
     }
 
-    ValidateFormat(format);
+    ValidateFormat(format); // may modify format
 
     RenderState render_state;
     static constexpr int tab_width = 8; // default tab width
@@ -1960,7 +1959,7 @@ bool Font::GenerateGlyph(FT_Face face, std::uint32_t ch)
 void Font::ValidateFormat(Flags<TextFormat>& format) const
 {
     // correct any disagreements in the format flags
-    int dup_ct = 0;   // duplication count
+    uint8_t dup_ct = 0;   // duplication count
     if (format & FORMAT_LEFT) ++dup_ct;
     if (format & FORMAT_RIGHT) ++dup_ct;
     if (format & FORMAT_CENTER) ++dup_ct;
@@ -1968,11 +1967,11 @@ void Font::ValidateFormat(Flags<TextFormat>& format) const
         format &= ~(FORMAT_RIGHT | FORMAT_CENTER);
         format |= FORMAT_LEFT;
     }
-    dup_ct = 0;
-    if (format & FORMAT_TOP) ++dup_ct;
-    if (format & FORMAT_BOTTOM) ++dup_ct;
-    if (format & FORMAT_VCENTER) ++dup_ct;
-    if (dup_ct != 1) {   // exactly one must be picked; when none or multiples are picked, use FORMAT_TOP by default
+    uint8_t dup_ct2 = 0;
+    if (format & FORMAT_TOP) ++dup_ct2;
+    if (format & FORMAT_BOTTOM) ++dup_ct2;
+    if (format & FORMAT_VCENTER) ++dup_ct2;
+    if (dup_ct2 != 1) {   // exactly one must be picked; when none or multiples are picked, use FORMAT_TOP by default
         format &= ~(FORMAT_BOTTOM | FORMAT_VCENTER);
         format |= FORMAT_TOP;
     }
