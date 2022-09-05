@@ -134,7 +134,7 @@ build_no = INVALID_BUILD_NO
 
 try:
     branch = check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"], universal_newlines=True).strip()
-    if (branch == "master") or (branch[:7] == "release"):
+    if (branch == "master") or (branch == "weekly-test-builds") or (branch[:7] == "release"):
         branch = ""
     else:
         branch += " "
