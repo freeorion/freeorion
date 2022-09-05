@@ -62,6 +62,7 @@ DerivedData
 *.zip
 libpython.py
 /util/Version.cpp
+/cmake/FreeOrionVersion.cmake
 /packaging/windows_installer.nsi
 /packaging/Info.plist
 /doc/apidoc-commit-message

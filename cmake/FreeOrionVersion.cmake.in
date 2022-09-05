@@ -1,0 +1,5 @@
+
+set(FreeOrion_VERSION ${FreeOrion_VERSION})
+set(FreeOrion_BUILD_NO ${FreeOrion_BUILD_NO})
+set(FreeOrion_VERSION_FILENAME ${FreeOrion_VERSION_FILENAME})
+

@@ -57,7 +57,6 @@ include(UseCodeCoverage)
 include(TargetDependencies)
 include(CPackComponent)
 
-set(FreeOrion_VERSION 0.4.10+)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -355,20 +354,26 @@ set_property(DIRECTORY APPEND
 
 # To run the version generation every compile we need to deferr the
 # execution to a separate target and the existing python command
-add_custom_target(freeorionversion
+execute_process(
     COMMAND
     "${PYTHON_EXECUTABLE}"
     "${CMAKE_SOURCE_DIR}/cmake/make_versioncpp.py"
     "${CMAKE_SOURCE_DIR}"
     "CMake"
     "${Boost_PYTHON_SUFFIX}"
+    RESULT_VARIABLE result
 )
+if(NOT result EQUAL 0)
+        message(FATAL_ERROR "FreeOrion version failed")
+endif()
 
 set_source_files_properties(
     ${CMAKE_CURRENT_SOURCE_DIR}/util/Version.cpp
     PROPERTIES
     GENERATED TRUE
 )
+
+include(FreeOrionVersion)
 
 if(Apple)
     set_source_files_properties(
@@ -451,8 +456,6 @@ endif()
 if(CMAKE_SYSTEM_NAME MATCHES "Haiku")
 	target_link_libraries(freeorioncommon PUBLIC network)
 endif()
-
-add_dependencies(freeorioncommon freeorionversion)
 
 
 add_library(freeorionparseobj OBJECT "")
@@ -1098,7 +1101,7 @@ if(WIN32)
 endif()
 
 set(CPACK_PACKAGE_NAME ${CMAKE_PROJECT_NAME})
-set(CPACK_PACKAGE_VERSION ${FreeOrion_VERSION})
+set(CPACK_PACKAGE_VERSION ${FreeOrion_VERSION_FILENAME})
 set(CPACK_PACKAGE_VENDOR "FreeOrion Community")
 set(CPACK_PACKAGE_CONTACT http://freeorion.org/forum)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "FreeOrion is a free, open source, turn-based space empire and galactic conquest (4X) computer game being designed and built by the FreeOrion project. FreeOrion is inspired by the tradition of the Master of Orion games, but is not a clone or remake of that series or any other game.")

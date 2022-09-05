@@ -18,15 +18,16 @@ class Generator:
         self.infile = infile
         self.outfile = outfile
 
-    def compile_output(self, template, version, branch, build_no, build_sys):
+    def compile_output(self, template, version, branch, build_no, build_sys, version_file_name):
         return template.substitute(
             FreeOrion_VERSION=version,
             FreeOrion_BRANCH=branch,
             FreeOrion_BUILD_NO=build_no,
             FreeOrion_BUILDSYS=build_sys,
+            FreeOrion_VERSION_FILENAME=version_file_name,
         )
 
-    def execute(self, version, branch, build_no, build_sys):
+    def execute(self, version, branch, build_no, build_sys, version_file_name):
         if build_no == INVALID_BUILD_NO:
             print("WARNING: Can't determine git commit!")
 
@@ -50,7 +51,8 @@ class Generator:
 
         print("Writing file: %s" % self.outfile)
         with open(self.outfile, "w") as generated_file:
-            generated_file.write(self.compile_output(template, version, branch, build_no, build_sys))
+            generated_file.write(self.compile_output(template, version, branch, build_no,
+                build_sys, version_file_name))
 
 
 class NsisInstScriptGenerator(Generator):
@@ -65,7 +67,7 @@ class NsisInstScriptGenerator(Generator):
                 accepted_dll_files.add(dll_file)
         return sorted(accepted_dll_files)
 
-    def compile_output(self, template, version, branch, build_no, build_sys):
+    def compile_output(self, template, version, branch, build_no, build_sys, version_file_name):
         dll_files = self.compile_dll_list()
         if dll_files:
             return template.substitute(
@@ -122,7 +124,8 @@ required_boost_libraries = [
 
 
 # A list of tuples containing generators
-generators = [Generator("util/Version.cpp.in", "util/Version.cpp")]
+generators = [Generator("util/Version.cpp.in", "util/Version.cpp"),
+              Generator("cmake/FreeOrionVersion.cmake.in", "cmake/FreeOrionVersion.cmake")]
 if system() == "Windows":
     generators.append(NsisInstScriptGenerator("packaging/windows_installer.nsi.in", "packaging/windows_installer.nsi"))
 if system() == "Darwin":
@@ -131,6 +134,7 @@ if system() == "Darwin":
 version = "0.4.10+"
 branch = ""
 build_no = INVALID_BUILD_NO
+version_file_name = version
 
 try:
     branch = check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"], universal_newlines=True).strip()
@@ -147,10 +151,14 @@ try:
         ).strip()
     )
     build_no = ".".join([datetime.utcfromtimestamp(timestamp).strftime("%Y-%m-%d"), commit])
+    if branch[:7] == "release":
+        version_file_name = "v" + version
+    else:
+        version_file_name = build_no + "_Test" 
 except (IOError, CalledProcessError):
     print("WARNING: git not installed or not setup correctly")
 
 for generator in generators:
-    generator.execute(version, branch, build_no, build_sys)
+    generator.execute(version, branch, build_no, build_sys, version_file_name)
 
 print("Building v%s %sbuild %s" % (version, branch, build_no))
