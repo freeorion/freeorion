@@ -2127,7 +2127,8 @@ void MapWnd::RenderStarlanes() {
 }
 
 void MapWnd::RenderStarlanes(GG::GL2DVertexBuffer& vertices, GG::GLRGBAColorBuffer& colours,
-                             double thickness, bool coloured, bool do_base_render) {
+                             double thickness, bool coloured, bool do_base_render)
+{
     if (vertices.size() && (colours.size() || !coloured) && (coloured || do_base_render)) {
         // render starlanes with vertex buffer (and possibly colour buffer)
         const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("ui.map.starlane.color");
@@ -2215,7 +2216,8 @@ void MapWnd::RenderFleetMovementLines() {
 
     glBindTexture(GL_TEXTURE_2D, move_line_dot_texture->OpenGLId());
     for (const auto& fleet_line : m_fleet_lines)
-    { RenderMovementLine(fleet_line.second, dot_size, dot_spacing, move_line_animation_shift); }
+        RenderMovementLine(fleet_line.second, dot_size, dot_spacing,
+                           move_line_animation_shift);
 
     // re-render selected fleets' movement lines in white
     for (int fleet_id : m_selected_fleet_ids) {
@@ -2234,11 +2236,12 @@ void MapWnd::RenderFleetMovementLines() {
     // render projected move lines
     glBindTexture(GL_TEXTURE_2D, move_line_dot_texture->OpenGLId());
     for (const auto& fleet_line : m_projected_fleet_lines)
-    { RenderMovementLine(fleet_line.second, dot_size, dot_spacing, move_line_animation_shift, GG::CLR_WHITE); }
+        RenderMovementLine(fleet_line.second, dot_size, dot_spacing,
+                           move_line_animation_shift, GG::CLR_WHITE);
 
     // render projected move line ETA indicators
     for (const auto& eta_indicator : m_projected_fleet_lines)
-    { RenderMovementLineETAIndicators(eta_indicator.second, GG::CLR_WHITE); }
+        RenderMovementLineETAIndicators(eta_indicator.second, GG::CLR_WHITE);
 
     glPopClientAttrib();
     glPopMatrix();
