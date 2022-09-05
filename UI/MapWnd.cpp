@@ -2165,10 +2165,8 @@ void MapWnd::RenderStarlanes(GG::GL2DVertexBuffer& vertices, GG::GLRGBAColorBuff
 }
 
 namespace {
-    std::shared_ptr<GG::Texture> MoveLineDotTexture() {
-        auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "move_line_dot.png");
-        return retval;
-    }
+    auto MoveLineDotTexture()
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "move_line_dot.png"); }
 
     constexpr std::size_t BUFFER_CAPACITY(512); // should be long enough for most plausible fleet move lines
 
@@ -2341,14 +2339,14 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
         return; // nothing to draw.
 
 
-    static constexpr double MARKER_HALF_SIZE = 9;
+    constexpr double MARKER_HALF_SIZE = 9;
     const int MARKER_PTS = ClientUI::Pts();
     auto font = ClientUI::GetBoldFont(MARKER_PTS);
     auto flags = GG::FORMAT_CENTER | GG::FORMAT_VCENTER;
 
     glPushMatrix();
     glLoadIdentity();
-    int flag_border = 5;
+    constexpr int flag_border = 5;
 
     for (const auto& vert : vertices) {
         if (!vert.show_eta)
@@ -2365,7 +2363,7 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
 
         // segmented circle of wedges to indicate blockades
         if (vert.flag_blockade) {
-            float wedge = static_cast<float>(TWO_PI)/12.0f;
+            constexpr float wedge = static_cast<float>(TWO_PI)/12.0f;
             for (int n = 0; n < 12; n = n + 2) {
                 glColor(GG::CLR_BLACK);
                 CircleArc(ul + GG::Pt(-flag_border*GG::X1,      -flag_border*GG::Y1),   lr + GG::Pt(flag_border*GG::X1,     flag_border*GG::Y1),    n*wedge,        (n+1)*wedge, true);
@@ -2373,7 +2371,7 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
                 CircleArc(ul + GG::Pt(-(flag_border)*GG::X1,    -(flag_border)*GG::Y1), lr + GG::Pt((flag_border)*GG::X1,   (flag_border)*GG::Y1),  (n+1)*wedge,    (n+2)*wedge, true);
             }
         } else if (vert.flag_supply_block) {
-            float wedge = static_cast<float>(TWO_PI)/12.0f;
+            constexpr float wedge = static_cast<float>(TWO_PI)/12.0f;
             for (int n = 0; n < 12; n = n + 2) {
                 glColor(GG::CLR_BLACK);
                 CircleArc(ul + GG::Pt(-flag_border*GG::X1,      -flag_border*GG::Y1),   lr + GG::Pt(flag_border*GG::X1,     flag_border*GG::Y1),    n*wedge,        (n+1)*wedge, true);
@@ -3105,7 +3103,7 @@ void MapWnd::InitSystemRenderingBuffers() {
     // be.  This allows us to use one set of texture coords for everything, even
     // though the star-halo textures must be rendered at sizes as much as twice
     // as large as the star-disc textures.
-    GLfloat tex_coords[4] = {-0.5, -0.5, 1.5, 1.5};
+    constexpr GLfloat tex_coords[4] = {-0.5, -0.5, 1.5, 1.5};
     for (std::size_t i = 0; i < m_system_icons.size(); ++i)
         GG::Texture::InitBuffer(m_star_texture_coords, tex_coords);
 
@@ -3113,7 +3111,7 @@ void MapWnd::InitSystemRenderingBuffers() {
     for (const auto& system_icon : m_system_icons) {
         const auto& icon = system_icon.second;
         int system_id = system_icon.first;
-        auto system = Objects().get<System>(system_id);
+        auto* system = Objects().getRaw<const System>(system_id);
         if (!system) {
             ErrorLogger() << "MapWnd::InitSystemRenderingBuffers couldn't get system with id " << system_id;
             continue;
@@ -3194,7 +3192,7 @@ void MapWnd::InitSystemRenderingBuffers() {
             const GLfloat tx_low_y = tex_coord_min_y  + (subtexture_y_index + 0)*(tex_coord_max_y - tex_coord_min_y)/3;
             const GLfloat tx_high_y = tex_coord_min_y + (subtexture_y_index + 1)*(tex_coord_max_y - tex_coord_min_y)/3;
 
-            GLfloat rot_tex_coords[4] = {tx_low_x, tx_low_y, tx_high_x, tx_high_y};
+            const GLfloat rot_tex_coords[4] = {tx_low_x, tx_low_y, tx_high_x, tx_high_y};
             GG::Texture::InitBuffer(m_galaxy_gas_texture_coords, rot_tex_coords);
         }
     }
@@ -3656,7 +3654,7 @@ namespace {
                 if (this_client_known_destroyed_objects.count(lane_end_sys_id))
                     continue;
 
-                auto dest_system = Objects().get<System>(render_lane.first);
+                auto* dest_system = Objects().getRaw<const System>(render_lane.first);
                 if (!dest_system)
                     continue;
 
@@ -3753,7 +3751,7 @@ namespace {
                 if (this_client_known_destroyed_objects.count(lane_end_sys_id))
                     continue;
 
-                auto dest_system = Objects().get<System>(render_lane.first);
+                auto* dest_system = Objects().getRaw<const System>(render_lane.first);
                 if (!dest_system)
                     continue;
                 //std::cout << "colouring lanes between " << start_system->Name() << " and " << dest_system->Name() << std::endl;
