@@ -50,6 +50,9 @@ public:
     FocusType(std::string& name, std::string& description,
               std::unique_ptr<Condition::Condition>&& location,
               std::string& graphic);
+    FocusType(std::string&& name, std::string&& description,
+              std::unique_ptr<Condition::Condition>&& location,
+              std::string&& graphic);
     ~FocusType(); // needed due to forward-declared Condition held in unique_ptr
 
     bool operator==(const FocusType& rhs) const;
