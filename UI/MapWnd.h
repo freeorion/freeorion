@@ -239,6 +239,13 @@ private:
         std::vector<Vertex>     vertices;   // cached apparent universe positions of starts and ends of line segments drawn to represent move path
     };
 
+    void BufferAddMoveLineVertices(GG::GL2DVertexBuffer& dot_verts_buf,
+                                   GG::GLRGBAColorBuffer& dot_colours_buf,
+                                   GG::GLTexCoordBuffer& dot_star_texture_coords_buf,
+                                   float offset, float dot_size, int dot_spacing,
+                                   const MapWnd::MovementLineData& move_line,
+                                   GG::Clr colour_override = GG::CLR_ZERO);
+
     class MapScaleLine;
 
     void InitializeWindows();

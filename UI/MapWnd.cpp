@@ -2171,6 +2171,8 @@ namespace {
     constexpr std::size_t BUFFER_CAPACITY(512); // should be long enough for most plausible fleet move lines
 
     GG::GL2DVertexBuffer dot_vertices_buffer;
+    GG::GLRGBAColorBuffer dot_colours_buffer;
+    GG::GLTexCoordBuffer dot_star_texture_coords_buffer;
 
     const GG::GLTexCoordBuffer dot_star_texture_coords{[]() {
         GG::GLTexCoordBuffer retval;
@@ -2183,6 +2185,68 @@ namespace {
         }
         return retval;
     }()};
+}
+
+void MapWnd::BufferAddMoveLineVertices(GG::GL2DVertexBuffer& dot_verts_buf,
+                                       GG::GLRGBAColorBuffer& dot_colours_buf,
+                                       GG::GLTexCoordBuffer& dot_star_texture_coords_buf,
+                                       float offset, float dot_size, int dot_spacing,
+                                       const MapWnd::MovementLineData& move_line,
+                                       GG::Clr colour_override)
+{
+    const float dot_half_sz = dot_size / 2.0f;
+
+    for (auto vert_it = move_line.vertices.begin(); vert_it != move_line.vertices.end(); ++vert_it) {
+        // get next two vertices
+        const auto& vert1 = *vert_it;
+        ++vert_it;
+        const auto& vert2 = *vert_it;
+
+        // find centres of dots on screen
+        GG::Pt vert1Pt = ScreenCoordsFromUniversePosition(vert1.x, vert1.y);
+        GG::Pt vert2Pt = ScreenCoordsFromUniversePosition(vert2.x, vert2.y);
+
+        // get unit vector along line connecting vertices
+        float deltaX = Value(vert2Pt.x - vert1Pt.x);
+        float deltaY = Value(vert2Pt.y - vert1Pt.y);
+        float length = std::sqrt(deltaX*deltaX + deltaY*deltaY);
+        if (length == 0.0f) // safety check
+            continue;
+        float uVecX = deltaX / length;
+        float uVecY = deltaY / length;
+
+        // increment along line, adding dots to buffers, until end of line segment is passed
+        while (offset < length) {
+            // don't know why the dot needs to be shifted half a dot size down/right and
+            // rendered 2 x dot size on each axis, but apparently it does...
+
+            // find position of dot from initial vertex position, offset length and unit vectors
+            const auto left = Value(vert1Pt.x) + offset * uVecX + dot_half_sz;
+            const auto top =  Value(vert1Pt.y) + offset * uVecY + dot_half_sz;
+
+            dot_vertices_buffer.store(left - dot_size, top - dot_size);
+            dot_vertices_buffer.store(left - dot_size, top + dot_size);
+            dot_vertices_buffer.store(left + dot_size, top + dot_size);
+            dot_vertices_buffer.store(left + dot_size, top - dot_size);
+
+            // move offset to that for next dot
+            offset += dot_spacing;
+
+            auto colour = colour_override == GG::CLR_ZERO ? move_line.colour : colour_override;
+
+            dot_colours_buffer.store(colour);
+            dot_colours_buffer.store(colour);
+            dot_colours_buffer.store(colour);
+            dot_colours_buffer.store(colour);
+
+            dot_star_texture_coords_buf.store(0.0f, 0.0f);
+            dot_star_texture_coords_buf.store(0.0f, 1.0f);
+            dot_star_texture_coords_buf.store(1.0f, 1.0f);
+            dot_star_texture_coords_buf.store(1.0f, 0.0f);
+        }
+
+        offset -= length;   // so next segment's dots meld smoothly into this segment's
+    }
 }
 
 void MapWnd::RenderFleetMovementLines() {
@@ -2209,20 +2273,53 @@ void MapWnd::RenderFleetMovementLines() {
     // render movement lines for all fleets
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
     glBindTexture(GL_TEXTURE_2D, move_line_dot_texture->OpenGLId());
-    for (const auto& fleet_line : m_fleet_lines)
-        RenderMovementLine(fleet_line.second, dot_size, dot_spacing,
-                           move_line_animation_shift);
+
+    const float dot_half_sz = dot_size / 2.0f;
+
+
+    dot_vertices_buffer.clear();
+    dot_vertices_buffer.reserve(m_fleet_lines.size() * 4);
+    dot_colours_buffer.clear();
+    dot_colours_buffer.reserve(m_fleet_lines.size() * 4);
+    dot_star_texture_coords_buffer.clear();
+    dot_star_texture_coords_buffer.reserve(m_fleet_lines.size() * 4);
+
+    for (const auto& [fleet_id, move_line] : m_fleet_lines) {
+        (void)fleet_id;
+        if (move_line.vertices.empty() || move_line.vertices.size() % 2 == 1)
+            continue;
+        BufferAddMoveLineVertices(dot_vertices_buffer, dot_colours_buffer,
+                                  dot_star_texture_coords_buffer, move_line_animation_shift,
+                                  dot_size, dot_spacing, move_line);
+    }
 
     // re-render selected fleets' movement lines in white
     for (int fleet_id : m_selected_fleet_ids) {
         auto line_it = m_fleet_lines.find(fleet_id);
-        if (line_it != m_fleet_lines.end())
-            RenderMovementLine(line_it->second, dot_size, dot_spacing, move_line_animation_shift, GG::CLR_WHITE);
+        if (line_it != m_fleet_lines.end()) {
+            const auto& move_line = line_it->second;
+            if (!move_line.vertices.empty() && move_line.vertices.size() % 2 == 0) {
+                BufferAddMoveLineVertices(dot_vertices_buffer, dot_colours_buffer,
+                                          dot_star_texture_coords_buffer,
+                                          move_line_animation_shift,
+                                          dot_size, dot_spacing, move_line,
+                                          GG::CLR_WHITE);
+            }
+        }
     }
+
+    // after adding all dots to buffer, render in one call
+    dot_vertices_buffer.activate();
+    dot_colours_buffer.activate();
+    dot_star_texture_coords_buffer.activate();
+
+    glDrawArrays(GL_QUADS, 0, dot_vertices_buffer.size());
+
+    glDisableClientState(GL_COLOR_ARRAY);
 
     // render move line ETA indicators for selected fleets
     for (int fleet_id : m_selected_fleet_ids) {
@@ -2392,7 +2489,7 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
 
 
         // render ETA number in white with black shadows
-        std::string text = "<s>" + std::to_string(vert.eta) + "</s>";
+        std::string text = "<s>" + std::to_string(vert.eta) + "</s>"; // TODO: use to_chars and reused string?
         glColor(GG::CLR_WHITE);
         // TODO cache the text_elements
         auto text_elements = font->ExpensiveParseFromTextToTextElements(text, flags);
