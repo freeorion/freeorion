@@ -272,6 +272,38 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_REQUIRE_EQUAL("icons/species/abaddonnian.png", specie->Graphic());
 
         BOOST_REQUIRE_EQUAL(6497634, specie->GetCheckSum());
+
+        Species test_species{"SP_ABADDONI",
+            "SP_ABADDONI_DESC",
+            "SP_ABADDONI_GAMEPLAY_DESC",
+            {},
+            "FOCUS_INDUSTRY",
+            {
+                {PlanetType::PT_SWAMP, PlanetEnvironment::PE_POOR},
+                {PlanetType::PT_TOXIC, PlanetEnvironment::PE_ADEQUATE},
+                {PlanetType::PT_INFERNO, PlanetEnvironment::PE_GOOD},
+                {PlanetType::PT_RADIATED, PlanetEnvironment::PE_ADEQUATE},
+                {PlanetType::PT_BARREN, PlanetEnvironment::PE_POOR},
+                {PlanetType::PT_TUNDRA, PlanetEnvironment::PE_POOR},
+                {PlanetType::PT_DESERT, PlanetEnvironment::PE_HOSTILE},
+                {PlanetType::PT_TERRAN, PlanetEnvironment::PE_HOSTILE},
+                {PlanetType::PT_OCEAN, PlanetEnvironment::PE_POOR},
+                {PlanetType::PT_ASTEROIDS, PlanetEnvironment::PE_UNINHABITABLE},
+                {PlanetType::PT_GASGIANT, PlanetEnvironment::PE_UNINHABITABLE},
+            },
+            {},
+            nullptr,
+            true,
+            false,
+            true,
+            true,
+            {"LITHIC", "BAD_RESEARCH", "GREAT_INFLUENCE", "GOOD_HAPPINESS", "AVERAGE_SUPPLY", "PEDIA_LITHIC_SPECIES_CLASS"},
+            {"FOCUS_INDUSTRY", "SHIMMER_SILK_SPECIAL", "FRACTAL_GEODES_SPECIAL", "SUPERCONDUCTOR_SPECIAL", "PROBIOTIC_SPECIAL", "MINERALS_SPECIAL", "CRYSTALS_SPECIAL", "PLC_DIVINE_AUTHORITY", "PLC_CONFORMANCE", "PLC_TERROR_SUPPRESSION", "PLC_INDOCTRINATION", "PLC_BUREAUCRACY"},
+            {"BLD_SCRYING_SPHERE", "BLD_MEGALITH", "BLD_PLANET_DRIVE", "BLD_GATEWAY_VOID", "BLD_GAS_GIANT_GEN", "FORTRESS_SPECIAL", "HONEYCOMB_SPECIAL", "PHILOSOPHER_SPECIAL", "TIDAL_LOCK_SPECIAL", "PLC_DIVERSITY", "PLC_LIBERTY", "PLC_ARTISAN_WORKSHOPS", "PLC_CONFEDERATION"},
+            "icons/species/abaddonnian.png",
+            1.0,
+            9999};
+        BOOST_WARN(test_species == (*specie));
     }
 
     // test it last
