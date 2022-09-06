@@ -276,7 +276,13 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         Species test_species{"SP_ABADDONI",
             "SP_ABADDONI_DESC",
             "SP_ABADDONI_GAMEPLAY_DESC",
-            {},
+            {
+                {"FOCUS_INDUSTRY", "FOCUS_INDUSTRY_DESC", std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET), "icons/focus/industry.png"},
+                {"FOCUS_RESEARCH", "FOCUS_RESEARCH_DESC", std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET), "icons/focus/research.png"},
+                {"FOCUS_INFLUENCE", "FOCUS_INFLUENCE_DESC", std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET), "icons/focus/influence.png"},
+                {"FOCUS_GROWTH", "FOCUS_GROWTH_DESC", std::make_unique<Condition::Or, std::vector<std::unique_ptr<Condition::Condition>>>({
+                }), "icons/focus/growth.png"},
+            },
             "FOCUS_INDUSTRY",
             {
                 {PlanetType::PT_SWAMP, PlanetEnvironment::PE_POOR},
