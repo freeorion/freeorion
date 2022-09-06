@@ -30,6 +30,15 @@ FocusType::FocusType(std::string& name, std::string& description,
     m_graphic(std::move(graphic))
 {}
 
+FocusType::FocusType(std::string&& name, std::string&& description,
+                     std::unique_ptr<Condition::Condition>&& location,
+                     std::string&& graphic) :
+    m_name(std::move(name)),
+    m_description(std::move(description)),
+    m_location(std::move(location)),
+    m_graphic(std::move(graphic))
+{}
+
 FocusType::~FocusType() = default;
 
 bool FocusType::operator==(const FocusType& rhs) const {
