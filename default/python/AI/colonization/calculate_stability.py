@@ -17,6 +17,7 @@ from PlanetUtilsAI import dislike_factor
 from turn_state import (
     get_colonized_planets,
     get_empire_planets_by_species,
+    get_owned_planets,
     have_worldtree,
     luxury_resources,
 )
@@ -158,15 +159,20 @@ def _evaluate_xenophobia(planet, species) -> float:
     if AIDependencies.Tags.XENOPHOBIC not in species.tags:
         return 0.0
     colonies = get_colonized_planets()
-    relevant_systems = within_n_jumps(planet.systemID, 5) & set(colonies.keys())
-    result = 0.0
     universe = fo.getUniverse()
-    value = get_named_real("XENOPHOBIC_SELF_TARGET_HAPPINESS_COUNT")
+    empire = fo.getEmpire()
+    max_jumps = get_named_real("XENOPHOBIC_MAX_JUMPS")
+    relevant_systems = within_n_jumps(planet.systemID, max_jumps) & set(colonies.keys())
+    # Do not count owned, different species planets when Racial Purity is adopted
+    if PolicyAI.racial_purity in empire.adoptedPolicies:
+        relevant_systems = relevant_systems.difference(get_owned_planets())
+    penalty_perjump = get_named_real("XENOPHOBIC_TARGET_STABILITY_PERJUMP")
+    result = 0.0
     for sys_id in relevant_systems:
         for pid in colonies[sys_id]:
             planet_species = universe.getPlanet(pid).speciesName
             if planet_species not in ("SP_EXOBOT", species.name, ""):
-                result += value  # value is negative
+                result += penalty_perjump * (1 + max_jumps - universe.jumpDistance(planet.systemID, pid))
     return result
 
 

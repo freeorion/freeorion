@@ -10,7 +10,18 @@ HAS_RESEARCH_FOCUS
 '''        Focus
             name = "FOCUS_RESEARCH"
             description = "FOCUS_RESEARCH_DESC"
-            location = Planet
+            location = And [
+                Planet
+                Or [
+                    Not EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_RACIAL_PURITY"
+                    Number low = 1 condition = And [
+                        Planet
+                        OwnedBy empire = Source.Owner
+                        Species name = Source.Species
+                        Contains Building name = "BLD_IMPERIAL_PALACE"
+                    ]
+                ]
+            ]
             graphic = "icons/focus/research.png"
 '''
 
@@ -18,7 +29,18 @@ HAS_INFLUENCE_FOCUS
 '''        Focus
             name = "FOCUS_INFLUENCE"
             description = "FOCUS_INFLUENCE_DESC"
-            location = Planet
+            location = And [
+                Planet
+                Or [
+                    Not EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_RACIAL_PURITY"
+                    Number low = 1 condition = And [
+                        Planet
+                        OwnedBy empire = Source.Owner
+                        Species name = Source.Species
+                        Contains Building name = "BLD_IMPERIAL_PALACE"
+                    ]
+                ]
+            ]
             graphic = "icons/focus/influence.png"
 '''
 
