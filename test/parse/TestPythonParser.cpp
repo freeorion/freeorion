@@ -8,6 +8,7 @@
 #include "universe/Tech.h"
 #include "universe/UnlockableItem.h"
 #include "universe/ValueRefs.h"
+#include "universe/NamedValueRefManager.h"
 #include "util/CheckSums.h"
 #include "util/Directories.h"
 #include "util/GameRules.h"
@@ -365,7 +366,33 @@ BOOST_AUTO_TEST_CASE(parse_species) {
                 {PlanetType::PT_ASTEROIDS, PlanetEnvironment::PE_UNINHABITABLE},
                 {PlanetType::PT_GASGIANT, PlanetEnvironment::PE_UNINHABITABLE},
             },
-            {},
+            array_to_vector<Effect::EffectsGroup, 1>({
+                std::make_unique<Effect::EffectsGroup>(
+                    std::make_unique<Condition::Source>(),
+                    std::make_unique<Condition::And>(
+                        std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET),
+                        std::make_unique<Condition::MeterValue>(MeterType::METER_TARGET_INDUSTRY,
+                            std::make_unique<ValueRef::Constant<double>>(0.0),
+                            nullptr),
+                        std::make_unique<Condition::MeterValue>(MeterType::METER_HAPPINESS,
+                            std::make_unique<ValueRef::Constant<double>>(0.0),
+                            nullptr),
+                        std::make_unique<Condition::FocusType>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("FOCUS_INDUSTRY")}))
+                    ),
+                    array_to_vector<Effect::Effect, 1>({std::make_unique<Effect::SetMeter>(MeterType::METER_TARGET_INDUSTRY,
+                        std::make_unique<ValueRef::Operation<double>>(ValueRef::OpType::PLUS,
+                            std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE),
+                            std::make_unique<ValueRef::Operation<double>>(ValueRef::OpType::TIMES,
+                                std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_REFERENCE, "Population"),
+                                std::make_unique<ValueRef::NamedRef<double>>("INDUSTRY_FOCUS_TARGET_INDUSTRY_PERPOP")
+                            )
+                        )
+                    )}),
+                    "FOCUS_INDUSTRY_LABEL",
+                    "",
+                    98
+                )
+            }),
             nullptr,
             true,
             false,
