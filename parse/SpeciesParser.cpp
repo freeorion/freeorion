@@ -386,7 +386,7 @@ namespace {
 }
 
 namespace parse {
-    start_rule_payload species(const boost::filesystem::path& path) {
+    start_rule_payload species(const PythonParser& parser, const boost::filesystem::path& path) {
         start_rule_payload retval;
         auto& [species_, ordering] = retval;
 
