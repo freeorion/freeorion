@@ -32,7 +32,7 @@ namespace parse {
     std::map<std::string, std::unique_ptr<Policy>, std::less<>> policies(const boost::filesystem::path& path)
     { return {}; }
 
-    species_type species(const boost::filesystem::path& path)
+    species_type species(const PythonParser& parser, const boost::filesystem::path& path)
     { return {}; }
 
     template <>
