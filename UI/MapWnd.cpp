@@ -874,8 +874,10 @@ LaneEndpoints::LaneEndpoints() :
 // MapWnd::MovementLineData::Vertex
 ////////////////////////////////////////////////
 struct MapWnd::MovementLineData::Vertex {
-    Vertex(double x_, double y_, int eta_, bool show_eta_, bool flag_blockade_ = false, bool flag_supply_block_ = false) :
-        x(x_), y(y_), eta(eta_), show_eta(show_eta_), flag_blockade(flag_blockade_), flag_supply_block(flag_supply_block_)
+    Vertex(double x_, double y_, int eta_, bool show_eta_,
+           bool flag_blockade_ = false, bool flag_supply_block_ = false) :
+        x(x_), y(y_), eta(eta_), show_eta(show_eta_),
+        flag_blockade(flag_blockade_), flag_supply_block(flag_supply_block_)
     {}
     double  x, y;       // apparent in-universe position of a point on move line.  not actual universe positions, but rather where the move line vertices are drawn
     int     eta;        // turns taken to reach point by object travelling along move line
@@ -2196,24 +2198,41 @@ void MapWnd::BufferAddMoveLineVertices(GG::GL2DVertexBuffer& dot_verts_buf,
 {
     const float dot_half_sz = dot_size / 2.0f;
 
-    for (auto vert_it = move_line.vertices.begin(); vert_it != move_line.vertices.end(); ++vert_it) {
-        // get next two vertices
-        const auto& vert1 = *vert_it;
-        ++vert_it;
-        const auto& vert2 = *vert_it;
+    const auto colour = colour_override == GG::CLR_ZERO ? move_line.colour : colour_override;
 
-        // find centres of dots on screen
-        GG::Pt vert1Pt = ScreenCoordsFromUniversePosition(vert1.x, vert1.y);
-        GG::Pt vert2Pt = ScreenCoordsFromUniversePosition(vert2.x, vert2.y);
+    std::vector<std::pair<int, int>> vert_screen_coords;
+    vert_screen_coords.reserve(move_line.vertices.size());
+    std::transform(move_line.vertices.begin(), move_line.vertices.end(),
+                   std::back_inserter(vert_screen_coords),
+                   [left{Value(ClientUpperLeft().x)},
+                    top{Value(ClientUpperLeft().y)},
+                    zoom{ZoomFactor()}] (const auto& vert)
+    {
+        int x = (vert.x * zoom) + left;
+        int y = (vert.y * zoom) + top;
+        return std::pair{x, y};
+    });
+
+    auto vert_coord_it = vert_screen_coords.begin();
+    auto vert_coord_end = vert_screen_coords.end();
+
+    for (; vert_coord_it != vert_coord_end;) {
+        // get next two vertices screen positions
+        const auto& [x1, y1] = *vert_coord_it;
+        ++vert_coord_it;
+        if (vert_coord_it == vert_coord_end)
+            continue;
+        const auto& [x2, y2] = *vert_coord_it;
 
         // get unit vector along line connecting vertices
-        float deltaX = Value(vert2Pt.x - vert1Pt.x);
-        float deltaY = Value(vert2Pt.y - vert1Pt.y);
+        float deltaX = x2 - x1;
+        float deltaY = y2 - y1;
         float length = std::sqrt(deltaX*deltaX + deltaY*deltaY);
-        if (length == 0.0f) // safety check
+        if (!isnormal(length)) // safety check
             continue;
-        float uVecX = deltaX / length;
-        float uVecY = deltaY / length;
+        float inv_length = 1.0 / length;
+        float uVecX = deltaX * inv_length;
+        float uVecY = deltaY * inv_length;
 
         // increment along line, adding dots to buffers, until end of line segment is passed
         while (offset < length) {
@@ -2221,8 +2240,8 @@ void MapWnd::BufferAddMoveLineVertices(GG::GL2DVertexBuffer& dot_verts_buf,
             // rendered 2 x dot size on each axis, but apparently it does...
 
             // find position of dot from initial vertex position, offset length and unit vectors
-            const auto left = Value(vert1Pt.x) + offset * uVecX + dot_half_sz;
-            const auto top =  Value(vert1Pt.y) + offset * uVecY + dot_half_sz;
+            const auto left = x1 + offset * uVecX + dot_half_sz;
+            const auto top =  y1 + offset * uVecY + dot_half_sz;
 
             dot_vertices_buffer.store(left - dot_size, top - dot_size);
             dot_vertices_buffer.store(left - dot_size, top + dot_size);
@@ -2231,8 +2250,6 @@ void MapWnd::BufferAddMoveLineVertices(GG::GL2DVertexBuffer& dot_verts_buf,
 
             // move offset to that for next dot
             offset += dot_spacing;
-
-            auto colour = colour_override == GG::CLR_ZERO ? move_line.colour : colour_override;
 
             dot_colours_buffer.store(colour);
             dot_colours_buffer.store(colour);
