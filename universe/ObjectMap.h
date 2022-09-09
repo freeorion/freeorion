@@ -521,13 +521,13 @@ constexpr std::array<bool, 11> ObjectMap::CheckTypes()
 template <typename T, typename Pred>
 std::vector<const std::decay_t<T>*> ObjectMap::findRaw(Pred pred) const
 {
-    constexpr auto invoke_flags = CheckTypes<T, Pred>();
-    constexpr bool invokable_on_raw_const_object = invoke_flags[0];
-    constexpr bool invokable_on_shared_const_object = invoke_flags[2];
-    constexpr bool invokable_on_const_entry = invoke_flags[4];
-    constexpr bool invokable_on_const_reference = invoke_flags[6];
-    constexpr bool is_visitor = invoke_flags[9];
-    constexpr bool is_int_range = invoke_flags[10];
+    static constexpr auto invoke_flags = CheckTypes<T, Pred>();
+    static constexpr bool invokable_on_raw_const_object = invoke_flags[0];
+    static constexpr bool invokable_on_shared_const_object = invoke_flags[2];
+    static constexpr bool invokable_on_const_entry = invoke_flags[4];
+    static constexpr bool invokable_on_const_reference = invoke_flags[6];
+    static constexpr bool is_visitor = invoke_flags[9];
+    static constexpr bool is_int_range = invoke_flags[10];
 
     using DecayT = std::decay_t<T>;
 
@@ -573,7 +573,7 @@ std::vector<const std::decay_t<T>*> ObjectMap::findRaw(Pred pred) const
                 result.push_back(obj.get());
 
     } else {
-        constexpr bool invokable = invoke_flags[8];
+        static constexpr bool invokable = invoke_flags[8];
         static_assert(invokable, "Don't know how to handle predicate");
     }
 
@@ -583,13 +583,13 @@ std::vector<const std::decay_t<T>*> ObjectMap::findRaw(Pred pred) const
 template <typename T, typename Pred>
 std::vector<std::decay_t<T>*> ObjectMap::findRaw(Pred pred)
 {
-    constexpr auto invoke_flags = CheckTypes<T, Pred>();
-    constexpr bool invokable_on_raw_const_object = invoke_flags[0];
-    constexpr bool invokable_on_shared_const_object = invoke_flags[2];
-    constexpr bool invokable_on_const_entry = invoke_flags[4];
-    constexpr bool invokable_on_const_reference = invoke_flags[6];
-    constexpr bool is_visitor = invoke_flags[9];
-    constexpr bool is_int_range = invoke_flags[10];
+    static constexpr auto invoke_flags = CheckTypes<T, Pred>();
+    static constexpr bool invokable_on_raw_const_object = invoke_flags[0];
+    static constexpr bool invokable_on_shared_const_object = invoke_flags[2];
+    static constexpr bool invokable_on_const_entry = invoke_flags[4];
+    static constexpr bool invokable_on_const_reference = invoke_flags[6];
+    static constexpr bool is_visitor = invoke_flags[9];
+    static constexpr bool is_int_range = invoke_flags[10];
 
     using DecayT = std::decay_t<T>;
 
@@ -635,7 +635,7 @@ std::vector<std::decay_t<T>*> ObjectMap::findRaw(Pred pred)
                 result.push_back(obj.get());
 
     } else {
-        constexpr bool invokable = invoke_flags[8];
+        static constexpr bool invokable = invoke_flags[8];
         static_assert(invokable, "Don't know how to handle predicate");
     }
 
@@ -645,13 +645,13 @@ std::vector<std::decay_t<T>*> ObjectMap::findRaw(Pred pred)
 template <typename T, typename Pred>
 std::vector<std::shared_ptr<const std::decay_t<T>>> ObjectMap::find(Pred pred) const
 {
-    constexpr auto invoke_flags = CheckTypes<T, Pred>();
-    constexpr bool invokable_on_raw_const_object = invoke_flags[0];
-    constexpr bool invokable_on_shared_const_object = invoke_flags[2];
-    constexpr bool invokable_on_const_entry = invoke_flags[4];
-    constexpr bool invokable_on_const_reference = invoke_flags[6];
-    constexpr bool is_visitor = invoke_flags[9];
-    constexpr bool is_int_range = invoke_flags[10];
+    static constexpr auto invoke_flags = CheckTypes<T, Pred>();
+    static constexpr bool invokable_on_raw_const_object = invoke_flags[0];
+    static constexpr bool invokable_on_shared_const_object = invoke_flags[2];
+    static constexpr bool invokable_on_const_entry = invoke_flags[4];
+    static constexpr bool invokable_on_const_reference = invoke_flags[6];
+    static constexpr bool is_visitor = invoke_flags[9];
+    static constexpr bool is_int_range = invoke_flags[10];
 
     using DecayT = std::decay_t<T>;
 
@@ -694,7 +694,7 @@ std::vector<std::shared_ptr<const std::decay_t<T>>> ObjectMap::find(Pred pred) c
                 result.push_back(obj);
 
     } else {
-        constexpr bool invokable = invoke_flags[8];
+        static constexpr bool invokable = invoke_flags[8];
         static_assert(invokable, "Don't know how to handle predicate");
     }
 
@@ -704,13 +704,13 @@ std::vector<std::shared_ptr<const std::decay_t<T>>> ObjectMap::find(Pred pred) c
 template <typename T, typename Pred>
 std::vector<std::shared_ptr<std::decay_t<T>>> ObjectMap::find(Pred pred)
 {
-    constexpr auto invoke_flags = CheckTypes<T, Pred>();
-    constexpr bool invokable_on_raw_const_object = invoke_flags[0];
-    constexpr bool invokable_on_shared_const_object = invoke_flags[2];
-    constexpr bool invokable_on_const_entry = invoke_flags[4];
-    constexpr bool invokable_on_const_reference = invoke_flags[6];
-    constexpr bool is_visitor = invoke_flags[9];
-    constexpr bool is_int_range = invoke_flags[10];
+    static constexpr auto invoke_flags = CheckTypes<T, Pred>();
+    static constexpr bool invokable_on_raw_const_object = invoke_flags[0];
+    static constexpr bool invokable_on_shared_const_object = invoke_flags[2];
+    static constexpr bool invokable_on_const_entry = invoke_flags[4];
+    static constexpr bool invokable_on_const_reference = invoke_flags[6];
+    static constexpr bool is_visitor = invoke_flags[9];
+    static constexpr bool is_int_range = invoke_flags[10];
 
     using DecayT = std::decay_t<T>;
 
@@ -753,7 +753,7 @@ std::vector<std::shared_ptr<std::decay_t<T>>> ObjectMap::find(Pred pred)
                 result.push_back(obj);
 
     } else {
-        constexpr bool invokable = invoke_flags[8];
+        static constexpr bool invokable = invoke_flags[8];
         static_assert(invokable, "Don't know how to handle predicate");
     }
 
@@ -763,13 +763,13 @@ std::vector<std::shared_ptr<std::decay_t<T>>> ObjectMap::find(Pred pred)
 template <typename T, typename Pred>
 std::vector<int> ObjectMap::findIDs(Pred pred) const
 {
-    constexpr auto invoke_flags = CheckTypes<T, Pred>();
-    constexpr bool invokable_on_raw_const_object = invoke_flags[0];
-    constexpr bool invokable_on_shared_const_object = invoke_flags[2];
-    constexpr bool invokable_on_const_entry = invoke_flags[4];
-    constexpr bool invokable_on_const_reference = invoke_flags[6];
-    constexpr bool is_visitor = invoke_flags[9];
-    constexpr bool is_int_range = invoke_flags[10];
+    static constexpr auto invoke_flags = CheckTypes<T, Pred>();
+    static constexpr bool invokable_on_raw_const_object = invoke_flags[0];
+    static constexpr bool invokable_on_shared_const_object = invoke_flags[2];
+    static constexpr bool invokable_on_const_entry = invoke_flags[4];
+    static constexpr bool invokable_on_const_reference = invoke_flags[6];
+    static constexpr bool is_visitor = invoke_flags[9];
+    static constexpr bool is_int_range = invoke_flags[10];
 
     using DecayT = std::decay_t<T>;
 
