@@ -488,7 +488,7 @@ float ShipPart::ProductionCost(int empire_id, int location_id, const ScriptingCo
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_cost)
         return 1.0f;
 
-    constexpr int PRODUCTION_BLOCK_SIZE = 1;
+    static constexpr int PRODUCTION_BLOCK_SIZE = 1;
 
     if (m_production_cost->ConstantExpr()) {
         return static_cast<float>(m_production_cost->Eval());

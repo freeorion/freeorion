@@ -773,9 +773,9 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         return;
 
     // colors used, these could be moved to OptionsDB if other controls utilize similar value types
-    constexpr GG::Clr DAMAGE_COLOR = GG::CLR_ORANGE;
-    constexpr GG::Clr BAY_COLOR = GG::Clr(0, 160, 255, 255);
-    constexpr GG::Clr HANGAR_COLOR = GG::CLR_YELLOW;
+    static constexpr GG::Clr DAMAGE_COLOR = GG::CLR_ORANGE;
+    static constexpr GG::Clr BAY_COLOR = GG::Clr(0, 160, 255, 255);
+    static constexpr GG::Clr HANGAR_COLOR = GG::CLR_YELLOW;
 
     const GG::X LABEL_WIDTH = FighterBrowseLabelWidth();
     const GG::X QTY_WIDTH = MeterBrowseQtyWidth();
@@ -856,7 +856,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
                                                         DAMAGE_COLOR);
 
     if (!m_show_all_bouts) {
-        constexpr int BOUTS_TO_SHOW_LIMIT = 2;
+        static constexpr int BOUTS_TO_SHOW_LIMIT = 2;
 
         // Show damage for first wave (2nd combat round)
         auto bout_info = Combat::ResolveFighterBouts(

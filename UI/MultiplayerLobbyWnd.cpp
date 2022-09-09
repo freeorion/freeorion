@@ -587,7 +587,7 @@ namespace {
     constexpr int       PREVIEW_MARGIN = 3;
 
     std::vector<GG::X> PlayerRowColWidths(GG::X width = GG::X{600}) {
-        constexpr GG::X color_width{75};
+        static constexpr GG::X color_width{75};
         const GG::X ready_width((ClientUI::Pts() / 2) * 5);
         const GG::X prop_width = ((width - color_width - 2 * ready_width) / 4) - CONTROL_MARGIN;
         return {

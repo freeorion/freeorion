@@ -710,7 +710,7 @@ namespace {
             return;
         m_selected = b;
 
-        const GG::Clr& unselected_text_color = ClientUI::TextColor();
+        auto unselected_text_color = ClientUI::TextColor();
         static constexpr GG::Clr selected_text_color = GG::CLR_BLACK;
 
         GG::Clr text_color_to_use = m_selected ? selected_text_color : unselected_text_color;

@@ -81,7 +81,7 @@ namespace {
 }
 
 namespace {
-    static constexpr auto prefix_len{TAG_PEDIA_PREFIX.length()};
+    constexpr auto prefix_len{TAG_PEDIA_PREFIX.length()};
 
     // Checks content \a tags for custom defined pedia category \a cat
     bool HasCustomCategory(const std::vector<std::string_view>& tags,

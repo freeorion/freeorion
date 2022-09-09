@@ -76,11 +76,11 @@ namespace {
     }
 
     // "Babylonian Method" of finding square roots...
-    double constexpr SqrtIterative2(double a, double c) {
+    constexpr double SqrtIterative2(double a, double c) {
         double g = 0.5 * (c + a/c);
         return (g == c) ? g : SqrtIterative2(a, g);
     }
-    double constexpr Sqrt(double a)
+    constexpr double Sqrt(double a)
     { return SqrtIterative2(a, a); }
 
     constexpr double ZOOM_STEP_SIZE = Sqrt(Sqrt(2.0));
@@ -2453,14 +2453,14 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
         return; // nothing to draw.
 
 
-    constexpr double MARKER_HALF_SIZE = 9;
+    static constexpr double MARKER_HALF_SIZE = 9;
     const int MARKER_PTS = ClientUI::Pts();
     auto font = ClientUI::GetBoldFont(MARKER_PTS);
     auto flags = GG::FORMAT_CENTER | GG::FORMAT_VCENTER;
 
     glPushMatrix();
     glLoadIdentity();
-    constexpr int flag_border = 5;
+    static constexpr int flag_border = 5;
 
     for (const auto& vert : vertices) {
         if (!vert.show_eta)
@@ -2477,7 +2477,7 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
 
         // segmented circle of wedges to indicate blockades
         if (vert.flag_blockade) {
-            constexpr float wedge = static_cast<float>(TWO_PI)/12.0f;
+            static constexpr float wedge = static_cast<float>(TWO_PI)/12.0f;
             for (int n = 0; n < 12; n = n + 2) {
                 glColor(GG::CLR_BLACK);
                 CircleArc(ul + GG::Pt(-flag_border*GG::X1,      -flag_border*GG::Y1),   lr + GG::Pt(flag_border*GG::X1,     flag_border*GG::Y1),    n*wedge,        (n+1)*wedge, true);
@@ -2485,7 +2485,7 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
                 CircleArc(ul + GG::Pt(-(flag_border)*GG::X1,    -(flag_border)*GG::Y1), lr + GG::Pt((flag_border)*GG::X1,   (flag_border)*GG::Y1),  (n+1)*wedge,    (n+2)*wedge, true);
             }
         } else if (vert.flag_supply_block) {
-            constexpr float wedge = static_cast<float>(TWO_PI)/12.0f;
+            static constexpr float wedge = static_cast<float>(TWO_PI)/12.0f;
             for (int n = 0; n < 12; n = n + 2) {
                 glColor(GG::CLR_BLACK);
                 CircleArc(ul + GG::Pt(-flag_border*GG::X1,      -flag_border*GG::Y1),   lr + GG::Pt(flag_border*GG::X1,     flag_border*GG::Y1),    n*wedge,        (n+1)*wedge, true);
@@ -3217,7 +3217,7 @@ void MapWnd::InitSystemRenderingBuffers() {
     // be.  This allows us to use one set of texture coords for everything, even
     // though the star-halo textures must be rendered at sizes as much as twice
     // as large as the star-disc textures.
-    constexpr GLfloat tex_coords[4] = {-0.5, -0.5, 1.5, 1.5};
+    static constexpr GLfloat tex_coords[4] = {-0.5, -0.5, 1.5, 1.5};
     for (std::size_t i = 0; i < m_system_icons.size(); ++i)
         GG::Texture::InitBuffer(m_star_texture_coords, tex_coords);
 
