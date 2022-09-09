@@ -314,43 +314,49 @@ namespace {
         return retval;
     }
 
-    const std::map<StarType, std::vector<float>>& GetStarLightColors() {
-        static std::map<StarType, std::vector<float>> light_colors;
-
-        if (light_colors.empty()) {
+    const auto& GetStarLightColors() {
+        static const auto light_colors{[]() -> std::map<StarType, std::array<float, 4>> {
             XMLDoc doc;
             boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
             doc.ReadDoc(ifs);
             ifs.close();
 
-            if (doc.root_node.ContainsChild("GLStars") && 0 < doc.root_node.Child("GLStars").children.size()) {
-                for (const XMLElement& star_definition : doc.root_node.Child("GLStars").children) {
-                    try {
-                        std::string hex_colour("#");
-                        hex_colour.append(star_definition.attributes.at("color"));
-                        std::vector<float>& color_vec = light_colors[boost::lexical_cast<StarType>(star_definition.attributes.at("star_type"))];
-                        GG::Clr color = GG::HexClr(hex_colour);
+            std::map<StarType, std::array<float, 4>> retval;
 
-                        color_vec.push_back(color.r / 255.0f);
-                        color_vec.push_back(color.g / 255.0f);
-                        color_vec.push_back(color.b / 255.0f);
-                        color_vec.push_back(color.a / 255.0f);
-                    } catch(const std::exception& e) {
-                        std::cerr << "planets.xml: " << e.what() << std::endl;
-                    }
-                }
-            } else {
+            if (!doc.root_node.ContainsChild("GLStars") || doc.root_node.Child("GLStars").children.empty()) {
                 for (StarType i = StarType::STAR_BLUE; i < StarType::NUM_STAR_TYPES;
                      i = StarType(int(i) + 1))
-                { light_colors[i].resize(4, 1.0); }
+                { retval[i] = {1.0f, 1.0f, 1.0f, 1.0f}; }
+                return retval;
             }
-        }
+
+            for (const XMLElement& star_definition : doc.root_node.Child("GLStars").children) {
+                auto it = star_definition.attributes.find("star_type");
+                if (it == star_definition.attributes.end())
+                    continue;
+                const auto& star_type_name = it->second;
+                const auto star_type = StarTypeFromString(star_type_name);
+                if (star_type == StarType::INVALID_STAR_TYPE)
+                    continue;
+
+                auto clr_it = star_definition.attributes.find("color");
+                if (clr_it == star_definition.attributes.end())
+                    continue;
+                std::string_view colour_string = clr_it->second;
+                if (colour_string.size() != 6 && colour_string.size() != 8)
+                    continue;
+                GG::Clr color = GG::Clr(colour_string);
+                retval.emplace(star_type, std::array{color.r / 255.0f, color.g / 255.0f,
+                                                     color.b / 255.0f, color.a / 255.0f});
+            }
+            return retval;
+        }()};
 
         return light_colors;
     }
 
-    const std::vector<float>& StarLightColour(StarType star_type) {
-        static const std::vector<float> white(4, 0.0f);
+    const std::array<float, 4>& StarLightColour(StarType star_type) {
+        static constexpr std::array<float, 4> white{1.0f, 1.0f, 1.0f, 1.0f};
         const auto& colour_map = GetStarLightColors();
         auto it = colour_map.find(star_type);
         if (it != colour_map.end())
@@ -386,7 +392,7 @@ namespace {
         glEnable(GL_LIGHTING);
         glEnable(GL_LIGHT0);
 
-        const std::vector<float>& colour = StarLightColour(star_type);
+        auto& colour = StarLightColour(star_type);
         glLightfv(GL_LIGHT0, GL_DIFFUSE, &colour[0]);
         glLightfv(GL_LIGHT0, GL_SPECULAR, &colour[0]);
         glEnable(GL_TEXTURE_2D);

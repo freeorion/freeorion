@@ -38,17 +38,50 @@ struct Clr
     constexpr Clr() = default;
 
     /** ctor that constructs a Clr from four ints that represent the color channels */
-    constexpr Clr(uint8_t r_, uint8_t g_, uint8_t b_, uint8_t a_) :
+    constexpr Clr(uint8_t r_, uint8_t g_, uint8_t b_, uint8_t a_) noexcept :
         r(r_), g(g_), b(b_), a(a_)
     {}
 
     /** ctor that constructs a Clr from std::array that represents the color channels */
-    constexpr Clr(std::array<uint8_t, 4> clr) :
-        r(std::get<0>(clr)),
-        g(std::get<1>(clr)),
-        b(std::get<2>(clr)),
-        a(std::get<3>(clr))
+    constexpr Clr(std::array<uint8_t, 4> clr) noexcept :
+        Clr{std::get<0>(clr), std::get<1>(clr), std::get<2>(clr), std::get<3>(clr)}
     {}
+
+    /** ctor that constructs a Clr from a string that represents the color
+        channels in the format 'RRGGBB', 'RRGGBBAA' where each channel value
+        ranges from 00 to FF.  When the alpha component is left out, the alpha
+        value FF is assumed.  When characters out of the range 0-9 and A-F are
+        passed, results are undefined.
+        @throws std::invalid_argument if the hex_colour string is not well formed
+    */
+    constexpr Clr(std::string_view hex_colour)
+    {
+        const auto sz = hex_colour.size();
+        if (sz != 6 && sz != 8)
+            throw std::invalid_argument("GG::HexClr passed wrong length string");
+
+        auto val_from_two_hex_chars = [](std::string_view chars) -> uint8_t {
+            auto digit0 = chars[0];
+            auto digit1 = chars[1];
+
+            uint8_t val0 = 16 * (digit0 >= 'A' ? (digit0 - 'A' + 10) : (digit0 - '0'));
+            uint8_t val1 = (digit1 >= 'A' ? (digit1 - 'A' + 10) : (digit1 - '0'));
+
+            return val0 + val1;
+        };
+        static_assert(val_from_two_hex_chars("01") == 1);
+        static_assert(val_from_two_hex_chars("FF") == 255);
+        static_assert(val_from_two_hex_chars("A0") == 160);
+        constexpr auto huh = val_from_two_hex_chars("!.");
+
+        r = val_from_two_hex_chars(hex_colour.substr(0, 2));
+        g = val_from_two_hex_chars(hex_colour.substr(2, 2));
+        b = val_from_two_hex_chars(hex_colour.substr(4, 2));
+        if (sz == 8)
+            a = val_from_two_hex_chars(hex_colour.substr(6, 2));
+        else
+            a = 255;
+    }
 
     uint8_t r = 0;    ///< the red channel
     uint8_t g = 0;    ///< the green channel
@@ -56,11 +89,23 @@ struct Clr
     uint8_t a = 0;    ///< the alpha channel
 };
 
-GG_API std::ostream& operator<<(std::ostream& os, const Clr& pt);
+/** Returns true iff \a rhs and \a lhs are identical. */
+constexpr bool operator==(const Clr rhs, const Clr lhs) noexcept
+{ return rhs.r == lhs.r && rhs.g == lhs.g && rhs.b == lhs.b && rhs.a == lhs.a; }
+
+/** Returns true iff \a rhs and \a lhs are different. */
+constexpr bool operator!=(const Clr rhs, const Clr lhs) noexcept
+{ return !(rhs == lhs); }
+
+static_assert(Clr("A0FF01") == Clr{160, 255, 1, 255});
+static_assert(Clr("12345678") == Clr{16*1+2, 16*3+4, 16*5+6, 16*7+8});
+
+
+GG_API std::ostream& operator<<(std::ostream& os, const Clr pt);
 
 //! Returns the lightened version of color clr.  LightenClr leaves the alpha
 //! channel unchanged, and multiplies the other channels by some factor.
-inline constexpr Clr LightenClr(const Clr& clr, float factor = 2.0)
+constexpr Clr LightenClr(const Clr& clr, float factor = 2.0) noexcept
 {
     return Clr(
         static_cast<uint8_t>(std::min(static_cast<int>(clr.r * factor), 255)),
@@ -71,7 +116,7 @@ inline constexpr Clr LightenClr(const Clr& clr, float factor = 2.0)
 
 //! Returns the darkened version of color clr.  DarkenClr leaves the alpha
 //! channel unchanged, and divides the other channels by some factor.
-inline constexpr Clr DarkenClr(const Clr& clr, float factor = 2.0)
+constexpr Clr DarkenClr(const Clr clr, float factor = 2.0) noexcept
 {
     return Clr(
         static_cast<uint8_t>(clr.r / factor),
@@ -80,15 +125,10 @@ inline constexpr Clr DarkenClr(const Clr& clr, float factor = 2.0)
         clr.a);
 }
 
-inline constexpr Clr InvertClr(const Clr& clr)
-{
-    return Clr(255 - clr.r,
-               255 - clr.g,
-               255 - clr.b,
-               clr.a);
-}
+constexpr Clr InvertClr(const Clr clr) noexcept
+{ return Clr(255 - clr.r, 255 - clr.g, 255 - clr.b, clr.a); }
 
-inline constexpr Clr BlendClr(const Clr& src, const Clr& dst, float factor)
+constexpr Clr BlendClr(const Clr src, const Clr dst, float factor) noexcept
 {
     return Clr(static_cast<uint8_t>(src.r * factor + dst.r * (1 - factor)),
                static_cast<uint8_t>(src.g * factor + dst.g * (1 - factor)),
@@ -98,7 +138,7 @@ inline constexpr Clr BlendClr(const Clr& src, const Clr& dst, float factor)
 
 /** Named ctor that constructs a Clr from four floats that represent the color
     channels (each must be >= 0.0 and <= 1.0). */
-inline constexpr Clr FloatClr(float r, float g, float b, float a)
+constexpr Clr FloatClr(float r, float g, float b, float a) noexcept
 {
     return Clr(static_cast<uint8_t>(r * 255),
                static_cast<uint8_t>(g * 255),
@@ -106,50 +146,8 @@ inline constexpr Clr FloatClr(float r, float g, float b, float a)
                static_cast<uint8_t>(a * 255));
 }
 
-/** Named ctor that constructs a Clr from a string that represents the color
-    channels in the format '#RRGGBB', '#RRGGBBAA' where each channel value
-    ranges from 0 to FF.  When the alpha component is left out the alpha
-    value FF is assumed.
-    @throws std::invalid_argument if the hex_colour string is not well formed
-    */
-inline Clr HexClr(const std::string& hex_colour)
-{
-    std::istringstream iss(hex_colour);
-
-    unsigned long rgba = 0;
-    if ((hex_colour.size() == 7 || hex_colour.size() == 9) &&
-        '#' == iss.get() && !(iss >> std::hex >> rgba).fail())
-    {
-        GG::Clr retval = GG::Clr(0, 0, 0, 255);
-
-        if (hex_colour.size() == 7) {
-            retval.r = (rgba >> 16) & 0xFF;
-            retval.g = (rgba >> 8)  & 0xFF;
-            retval.b = rgba         & 0xFF;
-            retval.a = 255;
-        } else {
-            retval.r = (rgba >> 24) & 0xFF;
-            retval.g = (rgba >> 16) & 0xFF;
-            retval.b = (rgba >> 8)  & 0xFF;
-            retval.a = rgba         & 0xFF;
-        }
-
-        return retval;
-    }
-
-    throw std::invalid_argument("GG::HexClr could not interpret hex colour string");
-}
-
-/** Returns true iff \a rhs and \a lhs are identical. */
-inline bool operator==(const Clr& rhs, const Clr& lhs)
-{ return rhs.r == lhs.r && rhs.g == lhs.g && rhs.b == lhs.b && rhs.a == lhs.a; }
-
-/** Returns true iff \a rhs and \a lhs are different. */
-inline bool operator!=(const Clr& rhs, const Clr& lhs)
-{ return !(rhs == lhs); }
-
 /** Returns the input Clr scaned by the input factor \a s. */
-inline Clr operator*(const Clr& lhs, float s)
+constexpr Clr operator*(const Clr lhs, float s) noexcept
 {
     return Clr(static_cast<uint8_t>(lhs.r * s),
                static_cast<uint8_t>(lhs.g * s),
@@ -158,11 +156,11 @@ inline Clr operator*(const Clr& lhs, float s)
 }
 
 /** Returns the component-wise sum of input Clrs. */
-inline Clr operator+(const Clr& lhs, const Clr& rhs)
+constexpr Clr operator+(const Clr lhs, const Clr rhs) noexcept
 { return Clr(lhs.r + rhs.r, lhs.g + rhs.g, lhs.b + rhs.b, lhs.a + rhs.a); }
 
 /** Clr comparisons */
-inline bool operator<(const Clr& lhs, const Clr& rhs)
+constexpr bool operator<(const Clr lhs, const Clr rhs) noexcept
 {
     if (rhs.r != lhs.r)
         return rhs.r < lhs.r;
@@ -177,7 +175,7 @@ inline bool operator<(const Clr& lhs, const Clr& rhs)
 
 
 //! Calls the appropriate version of glColor*() with @a clr.
-GG_API void glColor(const GG::Clr& clr);
+GG_API void glColor(const GG::Clr clr);
 
 
 #endif
