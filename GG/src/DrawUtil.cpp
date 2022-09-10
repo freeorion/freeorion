@@ -24,9 +24,6 @@ constexpr float SQRT2OVER2 = 0.70710678118654757274f; //std::sqrt(2.0) / 2.0;
 /// a stack of the currently-active clipping rects, in GG coordinates, not OpenGL scissor coordinates
 std::vector<Rect> g_scissor_clipping_rects;
 
-GLboolean g_prev_color_writemask[4];
-GLboolean g_prev_depth_writemask;
-
 /// the index of the next stencil bit to use for stencil clipping
 unsigned int g_stencil_bit = 0;
 
@@ -216,8 +213,8 @@ void BubbleArc(Pt ul, Pt lr, Clr color1, Clr color2, Clr color3, double theta1, 
     const int      SLICES = std::min(3 + std::max(Value(wd), Value(ht)), 50);  // this is a good guess at how much to tesselate the circle coordinates (50 segments max)
     const double   HORZ_THETA = (2 * PI) / SLICES;
 
-    std::valarray<double>& unit_vertices = unit_circle_coords[SLICES];
-    std::valarray<Clr>&    colors = color_arrays[SLICES];
+    auto& unit_vertices = unit_circle_coords[SLICES];
+    auto& colors = color_arrays[SLICES];
     if (unit_vertices.size() == 0) {    // only calculate once, when empty
         unit_vertices.resize(2 * (SLICES + 1), 0.0);
         double theta = 0.0f;
@@ -288,13 +285,12 @@ void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
     else if (theta2 >= 2 * PI)
         theta2 -= int(theta2 / (2 * PI)) * 2 * PI;
 
-    const int      SLICES = std::min(3 + std::max(Value(wd), Value(ht)), 50);  // this is a good guess at how much to tesselate the circle coordinates (50 segments max)
-    const double   HORZ_THETA = (2 * PI) / SLICES;
+    const int SLICES = std::min(3 + std::max(Value(wd), Value(ht)), 50);  // this is a good guess at how much to tesselate the circle coordinates (50 segments max)
+    const double HORZ_THETA = (2 * PI) / SLICES;
 
-    std::valarray<double>& unit_vertices = unit_circle_coords[SLICES];
-    std::valarray<Clr>&    colors = color_arrays[SLICES];
-    bool calc_vertices = unit_vertices.size() == 0;
-    if (calc_vertices) {
+    auto& unit_vertices = unit_circle_coords[SLICES];
+    auto& colors = color_arrays[SLICES];
+    if (unit_vertices.size() == 0) {
         unit_vertices.resize(2 * (SLICES + 1), 0.0);
         double theta = 0.0f;
         for (int j = 0; j <= SLICES; theta += HORZ_THETA, ++j) { // calculate x,y values for each point on a unit circle divided into SLICES arcs
@@ -604,8 +600,10 @@ void GG::BeginStencilClipping(Pt inner_ul, Pt inner_lr, Pt outer_ul, Pt outer_lr
             glDisable(GL_SCISSOR_TEST);
     }
 
-    glGetBooleanv(GL_COLOR_WRITEMASK, g_prev_color_writemask);
-    glGetBooleanv(GL_DEPTH_WRITEMASK, &g_prev_depth_writemask);
+    GLboolean prev_color_writemask[4] = {};
+    glGetBooleanv(GL_COLOR_WRITEMASK, prev_color_writemask);
+    GLboolean prev_depth_writemask = 0;
+    glGetBooleanv(GL_DEPTH_WRITEMASK, &prev_depth_writemask);
 
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
     glDepthMask(GL_FALSE);
@@ -638,11 +636,11 @@ void GG::BeginStencilClipping(Pt inner_ul, Pt inner_lr, Pt outer_ul, Pt outer_lr
     glVertexPointer(2, GL_INT, 0, inner_vertices);
     glDrawArrays(GL_QUADS, 0, 4);
 
-    glColorMask(g_prev_color_writemask[0],
-                g_prev_color_writemask[1],
-                g_prev_color_writemask[2],
-                g_prev_color_writemask[3]);
-    glDepthMask(g_prev_depth_writemask);
+    glColorMask(prev_color_writemask[0],
+                prev_color_writemask[1],
+                prev_color_writemask[2],
+                prev_color_writemask[3]);
+    glDepthMask(prev_depth_writemask);
 
     glStencilFunc(GL_EQUAL, mask, mask);
     glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
