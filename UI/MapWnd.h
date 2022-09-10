@@ -244,7 +244,7 @@ private:
                                    GG::GLTexCoordBuffer& dot_star_texture_coords_buf,
                                    float offset, float dot_size, int dot_spacing,
                                    const MapWnd::MovementLineData& move_line,
-                                   GG::Clr colour_override = GG::CLR_ZERO);
+                                   GG::Clr colour_override = GG::CLR_ZERO) const;
 
     class MapScaleLine;
 
@@ -324,12 +324,6 @@ private:
 
     /* renders the dashed lines indicating where each fleet is going */
     void RenderFleetMovementLines();
-
-    /* renders a single fleet movement line. if \a clr is GG::CLR_ZERO, the lane
-     * is rendered with the .colour attribute of \a move_line. assumes that the
-     * move dot texture has already been bound. */
-    void RenderMovementLine(const MapWnd::MovementLineData& move_line, float dot_size, float dot_spacing, float dot_shift,
-                            GG::Clr clr = GG::CLR_ZERO);
 
     /* renders ETA indicators at end-of-turn positions for a single fleet movement
      * line.  if \a clr is GG::CLR_ZERO, the indicators are filled with the .colour
@@ -516,15 +510,20 @@ private:
 
     std::map<std::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer> m_star_core_quad_vertices;
     std::map<std::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer> m_star_halo_quad_vertices;
-    GG::GL2DVertexBuffer            m_galaxy_gas_quad_vertices;
-    GG::GLTexCoordBuffer            m_galaxy_gas_texture_coords;
-    GG::GLTexCoordBuffer            m_star_texture_coords;
-    GG::GL2DVertexBuffer            m_star_circle_vertices;
+    GG::GL2DVertexBuffer    m_galaxy_gas_quad_vertices;
+    GG::GLTexCoordBuffer    m_galaxy_gas_texture_coords;
+    GG::GLTexCoordBuffer    m_star_texture_coords;
+    GG::GL2DVertexBuffer    m_star_circle_vertices;
 
-    GG::GL2DVertexBuffer            m_starlane_vertices;
-    GG::GLRGBAColorBuffer           m_starlane_colors;
-    GG::GL2DVertexBuffer            m_RC_starlane_vertices;
-    GG::GLRGBAColorBuffer           m_RC_starlane_colors;
+    GG::GL2DVertexBuffer    m_starlane_vertices;
+    GG::GLRGBAColorBuffer   m_starlane_colors;
+    GG::GL2DVertexBuffer    m_RC_starlane_vertices;
+    GG::GLRGBAColorBuffer   m_RC_starlane_colors;
+
+    GG::GL2DVertexBuffer    m_fleet_move_dot_vertices;
+    GG::GLRGBAColorBuffer   m_fleet_move_dot_colours;
+    GG::GLTexCoordBuffer    m_fleet_move_dot_star_texture_coords;
+    std::size_t             m_projected_move_dots_start_index = 0;
 
     /** First buffer is visible fields, second buffer is not visible (scanlined)
         fields for each texture. */
