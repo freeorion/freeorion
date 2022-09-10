@@ -19,130 +19,11 @@
 
 using namespace GG;
 
-namespace {
-
-constexpr double EPSILON = 0.0001;
-
-HSVClr Convert(const Clr& color)
-{
-    HSVClr retval;
-    retval.a = color.a;
-    double r = (color.r / 255.0), g = (color.g / 255.0), b = (color.b / 255.0);
-
-    double min_channel = std::min(r, std::min(g, b));
-    double max_channel = std::max(r, std::max(g, b));
-    double channel_range = max_channel - min_channel;
-
-    retval.v = max_channel;
-
-    if (max_channel < EPSILON) {
-        retval.h = 0.0;
-        retval.s = 0.0;
-    } else {
-        retval.s = channel_range / max_channel;
-
-        if (channel_range) {
-            double delta_r = (((max_channel - r) / 6.0) + (channel_range / 2.0)) / channel_range;
-            double delta_g = (((max_channel - g) / 6.0) + (channel_range / 2.0)) / channel_range;
-            double delta_b = (((max_channel - b) / 6.0) + (channel_range / 2.0)) / channel_range;
-
-            if (r == max_channel)
-                retval.h = delta_b - delta_g;
-            else if (g == max_channel)
-                retval.h = (1.0 / 3.0) + delta_r - delta_b;
-            else if (b == max_channel)
-                retval.h = (2.0 / 3.0) + delta_g - delta_r;
-
-            if (retval.h < 0.0)
-                retval.h += 1.0;
-            if (1.0 < retval.h)
-                retval.h -= 1.0;
-        } else {
-            retval.h = 0.0;
-        }
-    }
-    return retval;
-}
-
-Clr Convert(const HSVClr& hsv_color)
-{
-    Clr retval;
-    retval.a = hsv_color.a;
-
-    if (hsv_color.s < EPSILON) {
-        retval.r = static_cast<GLubyte>(hsv_color.v * 255);
-        retval.g = static_cast<GLubyte>(hsv_color.v * 255);
-        retval.b = static_cast<GLubyte>(hsv_color.v * 255);
-    } else {
-        double tmph = hsv_color.h * 6.0;
-        int tmpi = static_cast<int>(tmph);
-        double tmp1 = hsv_color.v * (1 - hsv_color.s);
-        double tmp2 = hsv_color.v * (1 - hsv_color.s * (tmph - tmpi));
-        double tmp3 = hsv_color.v * (1 - hsv_color.s * (1 - (tmph - tmpi)));
-        switch (tmpi) {
-        case 0:
-            retval.r = static_cast<GLubyte>(hsv_color.v * 255);
-            retval.g = static_cast<GLubyte>(tmp3 * 255);
-            retval.b = static_cast<GLubyte>(tmp1 * 255);
-            break;
-        case 1:
-            retval.r = static_cast<GLubyte>(tmp2 * 255);
-            retval.g = static_cast<GLubyte>(hsv_color.v * 255);
-            retval.b = static_cast<GLubyte>(tmp1 * 255);
-            break;
-        case 2:
-            retval.r = static_cast<GLubyte>(tmp1 * 255);
-            retval.g = static_cast<GLubyte>(hsv_color.v * 255);
-            retval.b = static_cast<GLubyte>(tmp3 * 255);
-            break;
-        case 3:
-            retval.r = static_cast<GLubyte>(tmp1 * 255);
-            retval.g = static_cast<GLubyte>(tmp2 * 255);
-            retval.b = static_cast<GLubyte>(hsv_color.v * 255);
-            break;
-        case 4:
-            retval.r = static_cast<GLubyte>(tmp3 * 255);
-            retval.g = static_cast<GLubyte>(tmp1 * 255);
-            retval.b = static_cast<GLubyte>(hsv_color.v * 255);
-            break;
-        default:
-            retval.r = static_cast<GLubyte>(hsv_color.v * 255);
-            retval.g = static_cast<GLubyte>(tmp1 * 255);
-            retval.b = static_cast<GLubyte>(tmp2 * 255);
-            break;
-        }
-    }
-
-    return retval;
-}
-
-}
-
-
-////////////////////////////////////////////////
-// HSVClr
-////////////////////////////////////////////////
-HSVClr::HSVClr() :
-    h(0.0),
-    s(0.0),
-    v(0.0),
-    a(0)
-{}
-
-HSVClr::HSVClr(double h_, double s_, double v_, GLubyte a_) :
-    h(h_),
-    s(s_),
-    v(v_),
-    a(a_)
-{}
-
 ////////////////////////////////////////////////
 // HueSaturationPicker
 ////////////////////////////////////////////////
 HueSaturationPicker::HueSaturationPicker(X x, Y y, X w, Y h) :
-    Control(x, y, w, h, INTERACTIVE),
-    m_hue(0.0),
-    m_saturation(0.0)
+    Control(x, y, w, h, INTERACTIVE)
 {
     static constexpr int SAMPLES = 100;
     static constexpr double INCREMENT = 1.0 / (SAMPLES + 1);
@@ -153,8 +34,8 @@ HueSaturationPicker::HueSaturationPicker(X x, Y y, X w, Y h) :
         for (int row = 0; row < SAMPLES + 1; ++row) {
             m_vertices[col][2 * row] =      {col * INCREMENT, row * INCREMENT};
             m_vertices[col][2 * row + 1] =  {(col + 1) * INCREMENT, row * INCREMENT};
-            m_colors[col][2 * row] =        Convert(HSVClr(col * INCREMENT, 1.0 - row * INCREMENT, VALUE));
-            m_colors[col][2 * row + 1] =    Convert(HSVClr((col + 1) * INCREMENT, 1.0 - row * INCREMENT, VALUE));
+            m_colors[col][2 * row] =        HSVClr(col * INCREMENT, 1.0 - row * INCREMENT, VALUE);
+            m_colors[col][2 * row + 1] =    HSVClr((col + 1) * INCREMENT, 1.0 - row * INCREMENT, VALUE);
         }
     }
 }
@@ -281,14 +162,14 @@ void ValuePicker::Render()
 
     // bar for picking lightness
     vert_buf.store(Value(eff_lr.x),    Value(eff_ul.y));
-    colour_buf.store(Convert(HSVClr(m_hue, m_saturation, 1.0)));
+    colour_buf.store(HSVClr(m_hue, m_saturation, 1.0));
     vert_buf.store(Value(eff_ul.x),    Value(eff_ul.y));
-    colour_buf.store(Convert(HSVClr(m_hue, m_saturation, 1.0)));
+    colour_buf.store(HSVClr(m_hue, m_saturation, 1.0));
 
     vert_buf.store(Value(eff_ul.x),    Value(eff_lr.y));
-    colour_buf.store(Convert(HSVClr(m_hue, m_saturation, 0.0)));
+    colour_buf.store(HSVClr(m_hue, m_saturation, 0.0));
     vert_buf.store(Value(eff_lr.x),    Value(eff_lr.y));
-    colour_buf.store(Convert(HSVClr(m_hue, m_saturation, 0.0)));
+    colour_buf.store(HSVClr(m_hue, m_saturation, 0.0));
 
     // line indicating currently-selected lightness
     Y color_position(eff_ul.y + h * (1.0 - m_value));
@@ -485,8 +366,8 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
     m_border_color(border_color),
     m_text_color(text_color)
 {
-    m_current_color = m_original_color_specified ? Convert(m_original_color) : Convert(CLR_BLACK);
-    Clr color = Convert(m_current_color);
+    m_current_color = m_original_color_specified ? m_original_color : CLR_BLACK;
+    Clr color = m_current_color;
 
     const auto& style = GetStyleFactory();
 
@@ -627,7 +508,7 @@ bool ColorDlg::ColorWasSelected() const
 { return m_color_was_picked; }
 
 Clr ColorDlg::Result() const
-{ return Convert(m_current_color); }
+{ return m_current_color; }
 
 void ColorDlg::Render()
 {
@@ -654,7 +535,7 @@ void ColorDlg::ColorChanged(HSVClr color)
     m_hue_saturation_picker->SetHueSaturation(m_current_color.h, m_current_color.s);
     m_value_picker->SetHueSaturation(m_current_color.h, m_current_color.s);
     m_value_picker->SetValue(m_current_color.v);
-    Clr rgb_color = Convert(m_current_color);
+    Clr rgb_color = m_current_color;
     m_new_color_square->SetColor(rgb_color);
     if (m_current_color_button != INVALID_COLOR_BUTTON) {
         m_color_buttons[m_current_color_button]->SetRepresentedColor(rgb_color);
@@ -679,7 +560,7 @@ void ColorDlg::ValuePickerChanged(double value)
 
 void ColorDlg::UpdateRGBSliders()
 {
-    Clr color = Convert(m_current_color);
+    Clr color = m_current_color;
     *m_slider_values[R] << static_cast<int>(color.r);
     *m_slider_values[G] << static_cast<int>(color.g);
     *m_slider_values[B] << static_cast<int>(color.b);
@@ -702,7 +583,7 @@ void ColorDlg::UpdateHSVSliders()
 
 void ColorDlg::ColorChangeFromRGBSlider()
 {
-    Clr color = Convert(m_current_color);
+    Clr color = m_current_color;
     m_hue_saturation_picker->SetHueSaturation(m_current_color.h, m_current_color.s);
     m_value_picker->SetHueSaturation(m_current_color.h, m_current_color.s);
     m_value_picker->SetValue(m_current_color.v);
@@ -717,42 +598,42 @@ void ColorDlg::ColorChangeFromRGBSlider()
 void ColorDlg::ColorButtonClicked(std::size_t i)
 {
     m_current_color_button = i;
-    m_current_color = Convert(m_color_buttons[m_current_color_button]->RepresentedColor());
+    m_current_color = m_color_buttons[m_current_color_button]->RepresentedColor();
     ColorChanged(m_current_color);
 }
 
 void ColorDlg::RedSliderChanged(int value, int low, int high)
 {
-    Clr color = Convert(m_current_color);
+    Clr color = m_current_color;
     color.r = value;
-    m_current_color = Convert(color);
+    m_current_color = color;
     ColorChangeFromRGBSlider();
     *m_slider_values[R] << value;
 }
 
 void ColorDlg::GreenSliderChanged(int value, int low, int high)
 {
-    Clr color = Convert(m_current_color);
+    Clr color = m_current_color;
     color.g = value;
-    m_current_color = Convert(color);
+    m_current_color = color;
     ColorChangeFromRGBSlider();
     *m_slider_values[G] << value;
 }
 
 void ColorDlg::BlueSliderChanged(int value, int low, int high)
 {
-    Clr color = Convert(m_current_color);
+    Clr color = m_current_color;
     color.b = value;
-    m_current_color = Convert(color);
+    m_current_color = color;
     ColorChangeFromRGBSlider();
     *m_slider_values[B] << value;
 }
 
 void ColorDlg::AlphaSliderChanged(int value, int low, int high)
 {
-    Clr color = Convert(m_current_color);
+    Clr color = m_current_color;
     color.a = value;
-    m_current_color = Convert(color);
+    m_current_color = color;
     ColorChangeFromRGBSlider();
     *m_slider_values[A] << value;
 }
@@ -783,6 +664,6 @@ void ColorDlg::OkClicked()
 
 void ColorDlg::CancelClicked()
 {
-    m_current_color = Convert(m_original_color);
+    m_current_color = m_original_color;
     m_done = true;
 }

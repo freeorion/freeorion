@@ -30,14 +30,115 @@ class Slider;
     possible. */
 struct GG_API HSVClr
 {
-    HSVClr();
+    constexpr HSVClr() = default;
 
-    HSVClr(double h_, double s_, double v_, GLubyte a_ = 255);
+    constexpr HSVClr(double h_, double s_, double v_, GLubyte a_ = 255) noexcept :
+        h(h_),
+        s(s_),
+        v(v_),
+        a(a_)
+    {}
 
-    double  h;   ///< hue
-    double  s;   ///< saturation
-    double  v;   ///< value
-    GLubyte a;   ///< alpha
+    constexpr HSVClr(Clr color) noexcept :
+        a(color.a)
+    {
+        double r = (color.r / 255.0);
+        double g = (color.g / 255.0);
+        double b = (color.b / 255.0);
+
+        double min_channel = std::min(r, std::min(g, b));
+        double max_channel = std::max(r, std::max(g, b));
+        double channel_range = max_channel - min_channel;
+
+        v = max_channel;
+
+        if (max_channel < EPSILON) {
+            h = 0.0;
+            s = 0.0;
+            return;
+        }
+
+        s = channel_range / max_channel;
+        if (channel_range == 0.0) {
+            h = 0.0;
+            return;
+        }
+
+        double delta_r = (((max_channel - r) / 6.0) + (channel_range / 2.0)) / channel_range;
+        double delta_g = (((max_channel - g) / 6.0) + (channel_range / 2.0)) / channel_range;
+        double delta_b = (((max_channel - b) / 6.0) + (channel_range / 2.0)) / channel_range;
+
+        if (r == max_channel)
+            h = delta_b - delta_g;
+        else if (g == max_channel)
+            h = (1.0 / 3.0) + delta_r - delta_b;
+        else if (b == max_channel)
+            h = (2.0 / 3.0) + delta_g - delta_r;
+
+        if (h < 0.0)
+            h += 1.0;
+        if (1.0 < h)
+            h -= 1.0;
+    }
+
+    constexpr operator Clr() const noexcept {
+        Clr retval{0, 0, 0, a};
+
+        if (s < EPSILON) {
+            retval.r = static_cast<GLubyte>(v * 255);
+            retval.g = static_cast<GLubyte>(v * 255);
+            retval.b = static_cast<GLubyte>(v * 255);
+            return retval;
+        }
+        double tmph = h * 6.0;
+        int tmpi = static_cast<int>(tmph);
+        double tmp1 = v * (1 - s);
+        double tmp2 = v * (1 - s * (tmph - tmpi));
+        double tmp3 = v * (1 - s * (1 - (tmph - tmpi)));
+
+        switch (tmpi) {
+        case 0:
+            retval.r = static_cast<GLubyte>(v * 255);
+            retval.g = static_cast<GLubyte>(tmp3 * 255);
+            retval.b = static_cast<GLubyte>(tmp1 * 255);
+            break;
+        case 1:
+            retval.r = static_cast<GLubyte>(tmp2 * 255);
+            retval.g = static_cast<GLubyte>(v * 255);
+            retval.b = static_cast<GLubyte>(tmp1 * 255);
+            break;
+        case 2:
+            retval.r = static_cast<GLubyte>(tmp1 * 255);
+            retval.g = static_cast<GLubyte>(v * 255);
+            retval.b = static_cast<GLubyte>(tmp3 * 255);
+            break;
+        case 3:
+            retval.r = static_cast<GLubyte>(tmp1 * 255);
+            retval.g = static_cast<GLubyte>(tmp2 * 255);
+            retval.b = static_cast<GLubyte>(v * 255);
+            break;
+        case 4:
+            retval.r = static_cast<GLubyte>(tmp3 * 255);
+            retval.g = static_cast<GLubyte>(tmp1 * 255);
+            retval.b = static_cast<GLubyte>(v * 255);
+            break;
+        default:
+            retval.r = static_cast<GLubyte>(v * 255);
+            retval.g = static_cast<GLubyte>(tmp1 * 255);
+            retval.b = static_cast<GLubyte>(tmp2 * 255);
+            break;
+        }
+
+        return retval;
+    }
+
+    double  h = 0.0; ///< hue
+    double  s = 0.0; ///< saturation
+    double  v = 0.0; ///< value
+    GLubyte a = 0;   ///< alpha
+
+private:
+    static constexpr double EPSILON = 0.0001;
 };
 
 /** \brief A control specifically designed for ColorDlg that allows the user
@@ -64,8 +165,8 @@ public:
 private:
     void SetHueSaturationFromPt(Pt pt);
 
-    double m_hue;
-    double m_saturation;
+    double m_hue = 0.0;
+    double m_saturation = 0.0;
     std::vector<std::vector<std::pair<double, double>>> m_vertices;
     std::vector<std::vector<Clr>>                       m_colors;
 };
