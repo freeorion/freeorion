@@ -55,8 +55,8 @@ public:
     [[nodiscard]] std::size_t    size() const noexcept         { return m_orders.size(); }
     [[nodiscard]] bool           empty() const noexcept        { return m_orders.empty(); }
     [[nodiscard]] iterator       find(const key_type& k)       { return m_orders.find(k); }
-    std::pair<iterator, bool>    insert(const value_type& val) { return m_orders.insert(val); }
-    [[nodiscard]] void           erase(const key_type& k)      { m_orders.erase(k); }
+    auto                         insert(const value_type& val) { return m_orders.insert(val); }
+    auto                         erase(const key_type& k)      { return m_orders.erase(k); }
     [[nodiscard]] OrderPtr&      operator[](std::size_t i);
     [[nodiscard]] key_compare    key_comp() const              { return m_orders.key_comp(); }
 
