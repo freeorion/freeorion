@@ -525,6 +525,10 @@ private:
     GG::GLTexCoordBuffer    m_fleet_move_dot_star_texture_coords;
     std::size_t             m_projected_move_dots_start_index = 0;
 
+    GG::GL2DVertexBuffer    m_scanline_circle_vertices;
+    GG::GL2DVertexBuffer    m_system_circle_vertices;
+    GG::GLRGBAColorBuffer   m_system_circle_colours;
+
     /** First buffer is visible fields, second buffer is not visible (scanlined)
         fields for each texture. */
     std::map<std::shared_ptr<GG::Texture>,

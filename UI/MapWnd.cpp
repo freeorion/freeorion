@@ -1977,11 +1977,6 @@ void MapWnd::RenderSystems() {
     auto& known_destroyed_object_ids = universe.EmpireKnownDestroyedObjectIDs(empire_id);
 
 
-    glPushMatrix();
-    glLoadIdentity();
-    glDisable(GL_TEXTURE_2D);
-    glEnable(GL_LINE_SMOOTH);
-
     // distance between inner and outer system circle
     const double circle_distance = GetOptionsDB().Get<double>("ui.map.system.circle.distance");
     // width of outer...
@@ -1990,6 +1985,8 @@ void MapWnd::RenderSystems() {
     const double inner_circle_width = GetOptionsDB().Get<double>("ui.map.system.circle.inner.width");
     // width of inner circle line when map is zoomed out
     const double max_inner_circle_width = GetOptionsDB().Get<double>("ui.map.system.circle.inner.max.width");
+    // thick
+    const float line_thick = std::max(std::min(2 / ZoomFactor(), max_inner_circle_width), inner_circle_width);
 
 
     std::vector<std::pair<int, int>> colony_count_by_empire_id;
@@ -2003,12 +2000,14 @@ void MapWnd::RenderSystems() {
             colony_count_by_empire_id.emplace_back(col_empire_id, 1);
     };
 
+
     std::vector<std::pair<int, GG::Clr>> empire_colours;
     empire_colours.reserve(colony_count_by_empire_id.size());
     std::transform(empires.begin(), empires.end(), std::back_inserter(empire_colours),
                    [](const auto& e) { return std::pair{e.first, e.second->Color()}; });
-    auto get_empire_colour = [empire_colours{std::move(empire_colours)},
-        neutral_colour{GetOptionsDB().Get<GG::Clr>("ui.map.starlane.color")}](int empire_id)
+    auto get_empire_colour = [&empire_colours,
+                              neutral_colour{GetOptionsDB().Get<GG::Clr>("ui.map.starlane.color")}]
+                              (int empire_id)
     {
         auto it = std::find_if(empire_colours.begin(), empire_colours.end(),
                                [empire_id](const auto& id_clr) { return empire_id == id_clr.first; });
@@ -2017,30 +2016,40 @@ void MapWnd::RenderSystems() {
         return neutral_colour;
     };
 
+    m_scanline_circle_vertices.clear();
+    m_system_circle_vertices.clear();
+    m_system_circle_colours.clear();
+    m_scanline_circle_vertices.reserve(120*m_system_icons.size());
+    m_system_circle_vertices.reserve(120*m_system_icons.size());
+    m_system_circle_colours.reserve(120*m_system_icons.size());
+
 
     for (const auto& [system_id, icon] : m_system_icons) {
-        // Render scanlines...
         GG::Pt icon_size = icon->LowerRight() - icon->UpperLeft();
         GG::Pt icon_middle = icon->UpperLeft() + (icon_size / 2);
         GG::Pt circle_size = GG::Pt(static_cast<GG::X>(icon->EnclosingCircleDiameter()),
                                     static_cast<GG::Y>(icon->EnclosingCircleDiameter()));
         GG::Pt circle_ul = icon_middle - (circle_size / 2);
         GG::Pt circle_lr = circle_ul + circle_size;
+
+
+        // prep scanlines
         if (fog_scanlines &&
             universe.GetObjectVisibilityByEmpire(system_id, empire_id) <= Visibility::VIS_BASIC_VISIBILITY)
         {
-            m_scanline_shader.SetColor(GetOptionsDB().Get<GG::Clr>("ui.map.system.scanlines.color"));
-            m_scanline_shader.RenderCircle(circle_ul, circle_lr);
+            BufferStoreCircleArcVertices(m_scanline_circle_vertices, circle_ul, circle_lr,
+                                         0, TWO_PI, true, 0, false);
         }
 
 
-        // Render circles around systems that have at least one starlane, if they are enabled
-        if (!circles) continue;
-
+        if (!circles)
+            continue;
         auto* system = objects.getRaw<const System>(system_id);
         if (!system || system->NumStarlanes() < 1)
             continue;
 
+
+        // prep circles around systems that have at least one starlane, if they are enabled
         GG::Pt circle_distance_pt = GG::Pt(GG::X1, GG::Y1) * circle_distance;
         GG::Pt inner_circle_ul = circle_ul + (circle_distance_pt * ZoomFactor());
         GG::Pt inner_circle_lr = circle_lr - (circle_distance_pt * ZoomFactor());
@@ -2068,49 +2077,99 @@ void MapWnd::RenderSystems() {
             }
         }
 
-        // draw outer circle in color of supplying empire
+
+        // outer circle in color of supplying empire
         int supply_empire_id = supply.EmpireThatCanSupplyAt(system_id);
-        glColor(get_empire_colour(supply_empire_id));
-        glLineWidth(outer_circle_width);
-        CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
+        auto pre_sz = m_system_circle_vertices.size();
+        BufferStoreCircleArcVertices(m_system_circle_vertices, circle_ul, circle_lr,
+                                     0.0, TWO_PI, false, 0, false);
+        std::size_t count = m_system_circle_vertices.size() - pre_sz;
+        const auto clr = get_empire_colour(supply_empire_id);
+        for (std::size_t n = 0; n < count; ++n)
+            m_system_circle_colours.store(clr);
+
 
         // systems with neutrals and no empire have a segmented inner circle
-        if (has_neutrals && !(has_empire_planet)) {
-            float line_width = std::max(std::min(2 / ZoomFactor(), max_inner_circle_width), inner_circle_width);
-            glLineWidth(line_width);
-            glColor(ClientUI::TextColor());
-            CircleArcSegments(inner_circle_ul, inner_circle_lr, 24, false);
+        if (has_neutrals && !has_empire_planet) {
+            static constexpr std::size_t segments = 24;
+            static constexpr double segment_arc = TWO_PI / segments;
+
+            pre_sz = m_system_circle_vertices.size();
+            for (std::size_t n = 0; n < segments; n = n + 2) {
+                auto theta1 = n * segment_arc;
+                auto theta2 = (n+1) * segment_arc;
+                BufferStoreCircleArcVertices(m_system_circle_vertices, inner_circle_ul, inner_circle_lr,
+                                             theta1, theta2, false, 0, false);
+            }
+            std::size_t count = m_system_circle_vertices.size() - pre_sz;
+            const auto clr = ClientUI::TextColor();
+            for (std::size_t n = 0; n < count; ++n)
+                m_system_circle_colours.store(clr);
         }
 
-        // systems with empire planets have an unbroken inner circle; color segments for each empire present
-        if (!has_empire_planet) continue;
 
-        float line_width = std::max(std::min(2 / ZoomFactor(), max_inner_circle_width), inner_circle_width);
-        glLineWidth(line_width);
+        // systems with empire planets have an unbroken inner circle,
+        // with different-color segments for each empire present
+        if (!has_empire_planet)
+            continue;
 
 #if (defined(__clang_major__)) || (defined(__GNUC__) && (__GNUC__ < 11))
         int colonized_planets = 0;
         for (const auto& e : colony_count_by_empire_id)
             colonized_planets += e.second;
 #else
-        int colonized_planets = std::transform_reduce(colony_count_by_empire_id.begin(), colony_count_by_empire_id.end(),
-                                                      0, std::plus<>(), [](const auto& e) { return e.second; });
+        int colonized_planets = std::transform_reduce(
+            colony_count_by_empire_id.begin(), colony_count_by_empire_id.end(),
+            0, std::plus<>(), [](const auto& e) { return e.second; });
 #endif
-        const double segment = TWO_PI / std::max(colonized_planets, 1);
+        const std::size_t segments = std::max(colonized_planets, 1);
+        const double segment_arc = TWO_PI / segments;
 
-        int position = 0;
-        for (auto& [empire_id, colony_count] : colony_count_by_empire_id) {
-            if (empire_id == ALL_EMPIRES)
-                glColor(ClientUI::TextColor());
-            else
-                glColor(get_empire_colour(empire_id));
 
-            CircleArc(inner_circle_ul, inner_circle_lr, position * segment,
-                      (colony_count + position) * segment, false);
-            position += colony_count;
+        std::size_t n = 0;
+        for (const auto& [empire_id, colony_count] : colony_count_by_empire_id) {
+            pre_sz = m_system_circle_vertices.size();
+            auto theta1 = n*segment_arc;
+            auto theta2 = (n + colony_count)*segment_arc;
+            BufferStoreCircleArcVertices(m_system_circle_vertices, inner_circle_ul, inner_circle_lr,
+                                         theta1, theta2, false, 0, false);
+            std::size_t count = m_system_circle_vertices.size() - pre_sz;
+            n += colony_count;
+            const auto clr = (empire_id == ALL_EMPIRES) ?
+                ClientUI::TextColor() : get_empire_colour(empire_id);
+            for (std::size_t n2 = 0; n2 < count; ++n2)
+                m_system_circle_colours.store(clr);
         }
     }
 
+
+    glPushMatrix();
+    glLoadIdentity();
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_LINE_SMOOTH);
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+
+    // render scanlines
+    m_scanline_shader.SetColor(GetOptionsDB().Get<GG::Clr>("ui.map.system.scanlines.color"));
+    m_scanline_shader.StartUsing();
+    m_scanline_circle_vertices.activate();
+    glDrawArrays(GL_TRIANGLES, 0, m_scanline_circle_vertices.size());
+    m_scanline_shader.StopUsing();
+
+
+    // render system circles
+    glEnableClientState(GL_COLOR_ARRAY);
+    glLineWidth(line_thick);
+    m_system_circle_vertices.activate();
+    m_system_circle_colours.activate();
+    glDrawArrays(GL_LINES, 0, m_system_circle_vertices.size());
+
+
+    glPopClientAttrib();
     glDisable(GL_LINE_SMOOTH);
     glEnable(GL_TEXTURE_2D);
     glPopMatrix();
