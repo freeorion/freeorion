@@ -2147,7 +2147,7 @@ void MapWnd::RenderSystems() {
     glLoadIdentity();
     glDisable(GL_TEXTURE_2D);
     glEnable(GL_LINE_SMOOTH);
-    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    //glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS); // already pushed above
     glEnableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
