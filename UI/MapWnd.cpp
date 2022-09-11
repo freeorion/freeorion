@@ -2038,7 +2038,7 @@ void MapWnd::RenderSystems() {
             universe.GetObjectVisibilityByEmpire(system_id, empire_id) <= Visibility::VIS_BASIC_VISIBILITY)
         {
             BufferStoreCircleArcVertices(m_scanline_circle_vertices, circle_ul, circle_lr,
-                                         0, TWO_PI, true, 0, false);
+                                         0, TWO_PI, true, 24, false);
         }
 
 
@@ -2099,7 +2099,7 @@ void MapWnd::RenderSystems() {
                 auto theta1 = n * segment_arc;
                 auto theta2 = (n+1) * segment_arc;
                 BufferStoreCircleArcVertices(m_system_circle_vertices, inner_circle_ul, inner_circle_lr,
-                                             theta1, theta2, false, 0, false);
+                                             theta1, theta2, false, 48, false);
             }
             std::size_t count = m_system_circle_vertices.size() - pre_sz;
             const auto clr = ClientUI::TextColor();
@@ -2132,7 +2132,7 @@ void MapWnd::RenderSystems() {
             auto theta1 = n*segment_arc;
             auto theta2 = (n + colony_count)*segment_arc;
             BufferStoreCircleArcVertices(m_system_circle_vertices, inner_circle_ul, inner_circle_lr,
-                                         theta1, theta2, false, 0, false);
+                                         theta1, theta2, false, 30, false);
             std::size_t count = m_system_circle_vertices.size() - pre_sz;
             n += colony_count;
             const auto clr = (empire_id == ALL_EMPIRES) ?
@@ -2585,7 +2585,7 @@ void MapWnd::RenderVisibilityRadii() {
                 verts.clear();
                 vert_colours.clear();
                 BufferStoreCircleArcVertices(verts, ul + BORDER_INSET, lr - BORDER_INSET,
-                                             0.0, TWO_PI, false, 0, false);
+                                             0.0, TWO_PI, false, 72, false);
 
                 // store colours for line segments
                 for (std::size_t count = 0; count < verts.size(); ++count)
@@ -4212,12 +4212,14 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
         std::size_t radii_start_index = m_visibility_radii_vertices.size();
         std::size_t border_start_index = m_visibility_radii_border_vertices.size();
 
-        for (const auto& ul_lr : ul_lrs) {
-            const auto& [ul, lr] = ul_lr;
+        for (const auto& [ul, lr] : ul_lrs) {
+            static constexpr std::size_t verts_per_circle = 36;
+            static constexpr std::size_t vert_per_cricle_edge = 72;
 
             unsigned int initial_size = m_visibility_radii_vertices.size();
             // store triangles for filled / transparent part of radii
-            BufferStoreCircleArcVertices(m_visibility_radii_vertices, ul, lr, 0.0, TWO_PI, true, 0, false);
+            BufferStoreCircleArcVertices(m_visibility_radii_vertices, ul, lr,
+                                         0.0, TWO_PI, true, verts_per_circle, false);
 
             // store colours for triangles
             unsigned int size_increment = m_visibility_radii_vertices.size() - initial_size;
@@ -4227,7 +4229,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
             // store line segments for border lines of radii
             initial_size = m_visibility_radii_border_vertices.size();
             BufferStoreCircleArcVertices(m_visibility_radii_border_vertices, ul + BORDER_INSET, lr - BORDER_INSET,
-                                         0.0, TWO_PI, false, 0, false);
+                                         0.0, TWO_PI, false, vert_per_cricle_edge, false);
 
             // store colours for line segments
             size_increment = m_visibility_radii_border_vertices.size() - initial_size;

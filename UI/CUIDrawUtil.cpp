@@ -59,7 +59,8 @@ void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt ul,
                                   const GG::Pt lr, double theta1, double theta2,
                                   bool filled_shape, int num_slices, bool fan)
 {
-    int wd = Value(lr.x - ul.x), ht = Value(lr.y - ul.y);
+    int wd = Value(lr.x - ul.x);
+    int ht = Value(lr.y - ul.y);
     double center_x = Value(ul.x + wd / 2.0);
     double center_y = Value(ul.y + ht / 2.0);
     double r = std::min(wd / 2.0, ht / 2.0);
@@ -76,9 +77,9 @@ void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt ul,
     else if (theta2 >= TWO_PI)
         theta2 -= int(theta2 / TWO_PI) * TWO_PI;
 
-    int SLICES = 50;
+    std::size_t SLICES = 30;
     if (num_slices <= 0)
-        SLICES = std::min(std::max(12, 3 + std::max(wd, ht)), 50);  // this is a good guess at how much to tesselate the circle coordinates (50 segments max)
+        SLICES = std::min(std::max(12u, 3u + std::max(wd, ht) / 4u), 30u);  // how much to tesselate the circle coordinates
     else
         SLICES = num_slices;
     const double HORZ_THETA = TWO_PI / SLICES;
@@ -353,7 +354,7 @@ void CircleArc(const GG::Pt ul, const GG::Pt lr, double theta1, double theta2,
 {
     //std::cout << "CircleArc ul: " << ul << "  lr: " << lr << "  theta1: " << theta1 << "  theta2: " << theta2 << "  filled: " << filled_shape << std::endl;
     GG::GL2DVertexBuffer vert_buf;
-    vert_buf.reserve(51);   // max number that BufferStoreCircleArcVertices might add
+    vert_buf.reserve(31);   // max number that BufferStoreCircleArcVertices might add
 
     BufferStoreCircleArcVertices(vert_buf, ul, lr, theta1, theta2, filled_shape, 0, true);
 
