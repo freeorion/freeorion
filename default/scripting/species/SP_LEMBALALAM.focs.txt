@@ -30,6 +30,12 @@ Species
 
         [[GOOD_STEALTH]]
 
+        // other species get these via BASIC_POPULATION 
+        [[FOCUS_CHANGE_PENALTY]]
+        [[ADVANCED_FOCUS_EFFECTS]]
+        [[STANDARD_CONSTRUCTION]]
+        [[STANDARD_METER_GROWTH]]
+
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
