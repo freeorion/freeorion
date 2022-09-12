@@ -484,7 +484,7 @@ void GGHumanClientApp::StartServer() {
         args.push_back("--skip-checksum");
     }
     DebugLogger() << "Launching server process with args: ";
-    for (auto arg : args)
+    for (const auto& arg : args)
         DebugLogger() << arg;
     m_server_process = Process(SERVER_CLIENT_EXE, args);
     DebugLogger() << "... finished launching server process.";
