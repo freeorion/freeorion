@@ -23,7 +23,11 @@
 #include <type_traits>
 #include <GG/Exception.h>
 #if __has_include(<bit>)
-#  include <bit>
+#  if defined(_MSC_VER) && defined(_MSVC_LANG) && _MSVC_LANG < 202002L
+    // do nothing
+#  else
+#    include <bit>
+#  endif
 #endif
 #include <climits>
 
