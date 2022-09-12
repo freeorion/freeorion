@@ -58,7 +58,7 @@ public:
 
     [[nodiscard]] std::string        Dump(uint8_t ntabs = 0) const override;
     [[nodiscard]] bool               IsMeterEffect() const noexcept override { return true; }
-    [[nodiscard]] void               SetTopLevelContent(const std::string& content_name) override;
+    void                             SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] MeterType          GetMeterType() const noexcept { return m_meter; };
     [[nodiscard]] const std::string& AccountingLabel() const noexcept { return m_accounting_label; }
     [[nodiscard]] unsigned int       GetCheckSum() const override;
@@ -100,7 +100,7 @@ public:
 
     [[nodiscard]] std::string  Dump(uint8_t ntabs = 0) const override;
     [[nodiscard]] bool         IsMeterEffect() const noexcept override { return true; }
-    [[nodiscard]] void         SetTopLevelContent(const std::string& content_name) override;
+    void                       SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] const ValueRef::ValueRef<std::string>* GetPartName() const noexcept { return m_part_name.get(); }
     [[nodiscard]] MeterType    GetMeterType() const noexcept { return m_meter; }
     [[nodiscard]] unsigned int GetCheckSum() const override;
@@ -136,11 +136,11 @@ public:
                  bool include_empire_meter_effects = false,
                  bool only_generate_sitrep_effects = false) const override;
 
-    [[nodiscard]] std::string     Dump(uint8_t ntabs = 0) const override;
-    [[nodiscard]] bool            IsMeterEffect() const noexcept override { return true; }
-    [[nodiscard]] bool            IsEmpireMeterEffect() const noexcept override { return true; }
-    [[nodiscard]] void            SetTopLevelContent(const std::string& content_name) override;
-    [[nodiscard]] unsigned int    GetCheckSum() const override;
+    [[nodiscard]] std::string  Dump(uint8_t ntabs = 0) const override;
+    [[nodiscard]] bool         IsMeterEffect() const noexcept override { return true; }
+    [[nodiscard]] bool         IsEmpireMeterEffect() const noexcept override { return true; }
+    void                       SetTopLevelContent(const std::string& content_name) override;
+    [[nodiscard]] unsigned int GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Effect> Clone() const override;
 
