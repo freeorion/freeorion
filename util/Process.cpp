@@ -12,8 +12,6 @@
 #endif
 
 #ifdef FREEORION_WIN32
-#include <codecvt>
-#include <locale>
 #define WIN32_LEAN_AND_MEAN
 // define needed on Windows due to conflict with windows.h and std::min and std::max
 #ifndef NOMINMAX

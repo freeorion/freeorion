@@ -1,8 +1,5 @@
 #include "ServerApp.h"
 
-#include <codecvt>
-#include <locale>
-
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 #include "../util/i18n.h"

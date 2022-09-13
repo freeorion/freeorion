@@ -1,8 +1,5 @@
 #include "AIClientApp.h"
 
-#include <codecvt>
-#include <locale>
-
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"
 #include "../../util/Logger.h"
