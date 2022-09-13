@@ -814,10 +814,6 @@ bool ColonizeOrder::Check(int empire_id, int ship_id, int planet_id,
         ErrorLogger() << "ColonizeOrder::Check() : given ids of ship and planet not in the same system";
         return false;
     }
-    if (planet->IsAboutToBeColonized()) {
-        ErrorLogger() << "ColonizeOrder::Check() : given id planet that is already being colonized";
-        return false;
-    }
 
     return true;
 }
