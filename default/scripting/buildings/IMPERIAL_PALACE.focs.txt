@@ -87,7 +87,7 @@ BuildingType
             effects = SetTargetConstruction value = Value
                         + (NamedReal name = "BLD_IMPERIAL_PALACE_TARGET_CONSTRUCTION_FLAT" value = 20)
 
-        // flat bonus to stability of capital
+        // flat bonus to stability of capital species
         EffectsGroup
             scope = And [
                 Planet
@@ -106,7 +106,7 @@ BuildingType
             stackinggroup = "IMPERIAL_PALACE_HAPPINESS"
             accountinglabel = "IMPERIAL_PALACE_SPECIES_HAPPINESS"
             effects = SetTargetHappiness value = Value
-                        + (NamedReal name = "BLD_IMPERIAL_PALACE_TARGET_HAPPINESS_FLAT" value = 5) // min(10, max(0, 10 - Target.DistanceToSource/20))
+                        + (NamedReal name = "BLD_IMPERIAL_PALACE_TARGET_HAPPINESS_FLAT" value = 5)
 
         // flat bonus to defense, troops and influence
         EffectsGroup
