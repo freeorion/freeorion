@@ -64,11 +64,12 @@ namespace {
 }
 
 std::unique_ptr<DiscreteValidator<std::string>> LogLevelValidator() {
-    std::set<std::string> valid_labels;
+    std::vector<std::string> valid_labels;
+    valid_labels.reserve(LoggerDetails::valid_names_and_levels.size());
     std::transform(LoggerDetails::valid_names_and_levels.begin(),
                    LoggerDetails::valid_names_and_levels.end(),
-                   std::inserter(valid_labels, valid_labels.end()),
-                   [](auto& name_level) { return std::string{name_level.first}; });
+                   std::back_inserter(valid_labels),
+                   [](auto name_level) { return std::string{name_level.first}; });
     return std::make_unique<DiscreteValidator<std::string>>(std::move(valid_labels));
 }
 

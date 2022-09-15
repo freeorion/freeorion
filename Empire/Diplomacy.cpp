@@ -10,10 +10,10 @@ namespace {
         rules.Add<std::string>(UserStringNop("RULE_DIPLOMACY"), UserStringNop("RULE_DIPLOMACY_DESC"),
                                UserStringNop("MULTIPLAYER"), UserStringNop("RULE_DIPLOMACY_ALLOWED_FOR_ALL"),
                                true,
-                               DiscreteValidator<std::string>(std::set<std::string>({
+                               DiscreteValidator<std::string>(std::array{
                                    "RULE_DIPLOMACY_ALLOWED_FOR_ALL",
                                    "RULE_DIPLOMACY_FORBIDDEN_FOR_ALL"
-                               })));
+                               }));
     }
     bool temp_bool = RegisterGameRules(&AddRules);
 }
