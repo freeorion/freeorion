@@ -111,7 +111,7 @@ namespace {
         return hash_value % static_cast<int>(enum_vals_count);
     }
 
-    static char alphanum[] = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+    constexpr std::string_view alphanum = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 }
 
 const std::string& TextForGalaxySetupSetting(GalaxySetupOptionGeneric gso) {
@@ -136,7 +136,7 @@ const std::string& TextForGalaxySetupSetting(GalaxySetupOptionMonsterFreq gso) {
         case GalaxySetupOptionMonsterFreq::MONSTER_SETUP_VERY_HIGH:      return UserString("GSETUP_VERY_HIGH");
         case GalaxySetupOptionMonsterFreq::MONSTER_SETUP_EXTREMELY_HIGH: return UserString("GSETUP_EXTREMELY_HIGH");
         case GalaxySetupOptionMonsterFreq::MONSTER_SETUP_RANDOM:         return UserString("GSETUP_RANDOM");
-        default:                                     return EMPTY_STRING;
+        default:                                                         return EMPTY_STRING;
     }
 }
 
@@ -248,7 +248,7 @@ void GalaxySetupData::SetSeed(const std::string& seed_) {
         ClockSeed();
         new_seed.clear();
         for (int i = 0; i < 8; ++i)
-            new_seed += alphanum[RandInt(0, (sizeof(alphanum) - 2))];
+            new_seed += alphanum[RandInt(0, alphanum.size() - 2)];
         DebugLogger() << "Set empty or requested random seed to " << new_seed;
     }
     seed = std::move(new_seed);
