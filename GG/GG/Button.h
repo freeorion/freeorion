@@ -37,7 +37,7 @@ class GG_API Button : public Control
 {
 public:
     /// the states of being for a GG::Button
-    GG_CLASS_ENUM(ButtonState, unsigned char,
+    GG_CLASS_ENUM(ButtonState, uint8_t,
         BN_PRESSED,    ///< The button is being pressed by the user, and the cursor is over the button
         BN_UNPRESSED,  ///< The button is unpressed
         BN_ROLLOVER    ///< The button has the cursor over it, but is unpressed
@@ -135,7 +135,7 @@ class GG_API StateButton : public Control
 {
 public:
     /// the states of being for a GG::Button
-    GG_CLASS_ENUM(ButtonState, unsigned char,
+    GG_CLASS_ENUM(ButtonState, uint8_t,
         BN_PRESSED,    ///< The button is being pressed by the user, and the cursor is over the button
         BN_UNPRESSED,  ///< The button is unpressed
         BN_ROLLOVER    ///< The button has the cursor over it, but is unpressed

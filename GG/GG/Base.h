@@ -126,7 +126,7 @@ void ProcessThenRemoveExpiredPtrs(
 
 /** "Regions" of a window; used e.g. to determine direction(s) of drag when a
     window that has a drag-frame is clicked. */
-GG_ENUM(WndRegion, signed char,
+GG_ENUM(WndRegion, int8_t,
     WR_NONE = -1,
     WR_TOPLEFT = 0,
     WR_TOP,
@@ -140,7 +140,7 @@ GG_ENUM(WndRegion, signed char,
 )
 
 /** The orientations for scrollbars, sliders, etc. */
-GG_ENUM(Orientation, unsigned char,
+GG_ENUM(Orientation, uint8_t,
     VERTICAL,  ///< Vertical orientation.
     HORIZONTAL ///< Horizontal orientation.
 )
@@ -150,7 +150,7 @@ GG_ENUM(Orientation, unsigned char,
 /// (Keyboard/Keypad page).
 ///
 /// https://www.usb.org/sites/default/files/documents/hut1_12v2.pdf
-GG_ENUM(Key, unsigned char,
+GG_ENUM(Key, uint8_t,
     GGK_NONE            = 0x00,
     GGK_a               = 0x04,
     GGK_b               = 0x05,

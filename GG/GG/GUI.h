@@ -122,7 +122,7 @@ public:
 
     /// These are the only events absolutely necessary for GG to function
     /// properly
-    enum class EventType : char {
+    enum class EventType : uint8_t {
         IDLE,        ///< nothing has changed since the last message, but the GUI might want to update some things anyway
         KEYPRESS,    ///< a down key press or key repeat, with or without modifiers like Alt, Ctrl, Meta, etc.
         KEYRELEASE,  ///< a key release, with or without modifiers like Alt, Ctrl, Meta, etc.
@@ -297,7 +297,7 @@ public:
     /** Returns a shared_ptr to the desired font, supporting all printable
         ASCII characters, from the in-memory contents \a file_contents. */
     std::shared_ptr<Font> GetFont(const std::string& font_filename, unsigned int pts,
-                                  const std::vector<unsigned char>& file_contents);
+                                  const std::vector<uint8_t>& file_contents);
 
     /** Returns a shared_ptr to the desired font, supporting all the
         characters in the UnicodeCharsets in the range [first, last). */
@@ -310,7 +310,7 @@ public:
         in-memory contents \a file_contents. */
     template <typename CharSetIter>
     std::shared_ptr<Font> GetFont(const std::string& font_filename, unsigned int pts,
-                                  const std::vector<unsigned char>& file_contents,
+                                  const std::vector<uint8_t>& file_contents,
                                   CharSetIter first, CharSetIter last);
 
     /** Returns a shared_ptr to existing font \a font in a new size, \a pts. */
@@ -470,7 +470,7 @@ std::shared_ptr<Font> GUI::GetFont(const std::string& font_filename, unsigned in
 
 template <typename CharSetIter>
 std::shared_ptr<Font> GUI::GetFont(const std::string& font_filename, unsigned int pts,
-                                   const std::vector<unsigned char>& file_contents,
+                                   const std::vector<uint8_t>& file_contents,
                                    CharSetIter first, CharSetIter last)
 { return GetFontManager().GetFont(font_filename, pts, file_contents, first, last); }
 

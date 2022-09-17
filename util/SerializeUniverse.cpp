@@ -299,7 +299,7 @@ namespace {
 
     constexpr std::string_view MeterTypeTag(MeterType mt) {
         using mt_under = std::underlying_type_t<MeterType>;
-        static_assert(std::is_same_v<mt_under, signed char>);
+        static_assert(std::is_same_v<mt_under, int8_t>);
         static_assert(static_cast<mt_under>(MeterType::INVALID_METER_TYPE) == -1);
         auto mt_offset = static_cast<std::size_t>(MeterType(static_cast<mt_under>(mt) + 1));
         return tags.at(mt_offset);

@@ -372,7 +372,7 @@ namespace {
 
     constexpr int DATA_PANEL_BORDER = 1;
 
-    enum class VIS_DISPLAY : char { SHOW_VISIBLE, SHOW_PREVIOUSLY_VISIBLE, SHOW_DESTROYED };
+    enum class VIS_DISPLAY : uint8_t { SHOW_VISIBLE, SHOW_PREVIOUSLY_VISIBLE, SHOW_DESTROYED };
 
     constexpr std::string_view EMPTY_STRING;
     constexpr std::string_view ALL_CONDITION(UserStringNop("CONDITION_ALL"));

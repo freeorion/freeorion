@@ -32,7 +32,7 @@ BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
 #define FO_DEF_ENUM(typeName, values) \
 enum class \
 FO_ENUM_NAME_FROM_TYPENAME(typeName) \
-: signed char { \
+: int8_t { \
     BOOST_PP_SEQ_FOR_EACH(FO_DEF_ENUM_VALUE, _, values) \
 };
 

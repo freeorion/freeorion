@@ -61,7 +61,7 @@ namespace {
         return result;
     }
 
-    enum class SpeciesInfo : unsigned char {
+    enum class SpeciesInfo : uint8_t {
         TAGS,
         LIKES,
         DISLIKES

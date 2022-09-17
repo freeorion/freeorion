@@ -1412,7 +1412,7 @@ std::shared_ptr<Font> GUI::GetFont(const std::string& font_filename, unsigned in
 { return GetFontManager().GetFont(font_filename, pts); }
 
 std::shared_ptr<Font> GUI::GetFont(const std::string& font_filename, unsigned int pts,
-                                   const std::vector<unsigned char>& file_contents)
+                                   const std::vector<uint8_t>& file_contents)
 { return GetFontManager().GetFont(font_filename, pts, file_contents); }
 
 std::shared_ptr<Font> GUI::GetFont(const std::shared_ptr<Font>& font, unsigned int pts)

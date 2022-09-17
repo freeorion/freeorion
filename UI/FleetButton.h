@@ -15,7 +15,7 @@ class ScanlineControl;
 /** represents one or more fleets of an empire at a location on the map. */
 class FleetButton : public GG::Button {
 public:
-    enum class SizeType : char {
+    enum class SizeType : uint8_t {
         NONE,
         TINY,
         SMALL,

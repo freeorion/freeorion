@@ -66,7 +66,7 @@ class GG_API WndEvent
 public:
     /** The types of Wnd events.  Each of these corresponds to a Wnd member
         function of the same name. */
-    enum class EventType : char {
+    enum class EventType : uint8_t {
         LButtonDown,
         LDrag,
         LButtonUp,

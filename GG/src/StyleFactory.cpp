@@ -34,9 +34,9 @@ using namespace GG;
 std::shared_ptr<Font> StyleFactory::DefaultFont(unsigned int pts) const
 {
     if (GetFontManager().HasFont(DefaultFontName(), pts)) {
-        return GUI::GetGUI()->GetFont(DefaultFontName(), pts, std::vector<unsigned char>());
+        return GUI::GetGUI()->GetFont(DefaultFontName(), pts, std::vector<uint8_t>());
     } else {
-        std::vector<unsigned char> bytes;
+        std::vector<uint8_t> bytes;
         VeraTTFBytes(bytes);
         return GUI::GetGUI()->GetFont(DefaultFontName(), pts, bytes);
     }
@@ -47,9 +47,9 @@ std::shared_ptr<Font> StyleFactory::DefaultFont(unsigned int pts,
                                                 const UnicodeCharset* last) const
 {
     if (GetFontManager().HasFont(DefaultFontName(), pts, first, last)) {
-        return GUI::GetGUI()->GetFont(DefaultFontName(), pts, std::vector<unsigned char>(), first, last);
+        return GUI::GetGUI()->GetFont(DefaultFontName(), pts, std::vector<uint8_t>(), first, last);
     } else {
-        std::vector<unsigned char> bytes;
+        std::vector<uint8_t> bytes;
         VeraTTFBytes(bytes);
         return GUI::GetGUI()->GetFont(DefaultFontName(), pts, bytes, first, last);
     }

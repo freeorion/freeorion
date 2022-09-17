@@ -21,7 +21,7 @@ FO_ENUM(
 
 class FO_COMMON_API DiplomaticMessage {
 public:
-    enum class Type : signed char {
+    enum class Type : int8_t {
         INVALID = -1,
         WAR_DECLARATION,
         PEACE_PROPOSAL,
