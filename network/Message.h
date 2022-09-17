@@ -19,7 +19,7 @@
 #include <vector>
 
 
-enum class LogLevel : char;
+enum class LogLevel : uint8_t;
 class EmpireManager;
 class SupplyManager;
 class SpeciesManager;

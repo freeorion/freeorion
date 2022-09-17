@@ -3,7 +3,7 @@
 
 
 #include <string>
-#include <unordered_map>
+#include <array>
 #include <boost/log/sources/global_logger_storage.hpp>
 #include <boost/log/sources/severity_channel_logger.hpp>
 #include <boost/log/utility/manipulators/add_value.hpp>
@@ -137,12 +137,51 @@
 */
 
 // The logging levels.
-enum class LogLevel : char {trace, debug, info, warn, error, min = trace, max = error};
+enum class LogLevel : uint8_t {trace, debug, info, warn, error, min = trace, max = error};
 
 constexpr LogLevel default_log_level_threshold = LogLevel::debug;
 
-FO_COMMON_API std::string to_string(const LogLevel level);
-FO_COMMON_API LogLevel to_LogLevel(const std::string& name);
+namespace LoggerDetails {
+    constexpr std::array<std::string_view, 5> log_level_names{"trace", "debug", "info", "warn", "error"};
+}
+
+constexpr const char* to_string(LogLevel level) {
+    using LoggerDetails::log_level_names;
+    static_assert(std::is_unsigned_v<std::underlying_type_t<LogLevel>>);
+    static_assert(static_cast<std::size_t>(LogLevel::max) < log_level_names.size());
+    return log_level_names[static_cast<std::size_t>(level)].data();
+}
+
+namespace LoggerDetails {
+    constexpr std::array<std::pair<std::string_view, LogLevel>, 14> valid_names_and_levels{{
+        {to_string(LogLevel::trace), LogLevel::trace},
+        {"TRACE",                    LogLevel::trace},
+        {to_string(LogLevel::debug), LogLevel::debug},
+        {"DEBUG",                    LogLevel::trace},
+        {to_string(LogLevel::info),  LogLevel::info},
+        {"INFO",                     LogLevel::info},
+        {to_string(LogLevel::warn),  LogLevel::warn},
+        {"WARN",                     LogLevel::warn},
+        {to_string(LogLevel::error), LogLevel::error},
+        {"ERROR",                    LogLevel::error},
+        {to_string(LogLevel::min),   LogLevel::min},
+        {"MIN",                      LogLevel::min},
+        {to_string(LogLevel::max),   LogLevel::max},
+        {"MAX",                      LogLevel::max}
+    }};
+    static_assert(valid_names_and_levels[8].first != valid_names_and_levels[9].first);
+    static_assert(valid_names_and_levels[8].second == valid_names_and_levels[9].second);
+}
+
+constexpr LogLevel to_LogLevel(std::string_view name) {
+    for (auto& [valid_name, level] : LoggerDetails::valid_names_and_levels)
+        if (name == valid_name)
+            return level;
+    return default_log_level_threshold;
+}
+static_assert(to_LogLevel("ERROR") == LogLevel::error);
+static_assert(to_LogLevel("TRACE") == to_LogLevel("trace"));
+static_assert(to_LogLevel(to_string(default_log_level_threshold)) == default_log_level_threshold);
 
 // Provide a LogLevel stream out formatter for streaming logs
 template<typename CharT, typename TraitsT>
@@ -153,13 +192,12 @@ std::basic_ostream<CharT, TraitsT>& operator<<(
     return os;
 }
 
-std::unordered_map<std::string, LogLevel> ValidNameToLogLevel();
-
 /** Initializes the logging system. Log to the \p log_file.  If \p log_file already exists it will
  * be deleted. \p unnamed_logger_identifier is the name used in the log file to identify logs from
  * the singular unnamed logger for this executable.  Logs from the named loggers are identified by
  * their own name.*/
-FO_COMMON_API void InitLoggingSystem(const std::string& log_file, const std::string& unnamed_logger_identifier);
+FO_COMMON_API void InitLoggingSystem(const std::string& log_file,
+                                     std::string_view unnamed_logger_identifier);
 
 /** Shutdown the file sink.  This should be called near the end of main() before the start of
     static de-initialization.
@@ -216,20 +254,20 @@ FO_COMMON_API std::vector<std::string> CreatedLoggersNames();
 
 // Place in source file to create the previously defined global logger \p name
 #define DeclareThreadSafeLogger(...)   \
-    BOOST_LOG_INLINE_GLOBAL_LOGGER_INIT(                          \
-        FO_GLOBAL_LOGGER_NAME(__VA_ARGS__), NamedThreadedLogger)  \
-    {                                                             \
-        constexpr auto channel = BOOST_PP_IF(                     \
-            BOOST_PP_AND(                                         \
-                FO_LOGGER_WIN32_WORKAROUND,                       \
-                BOOST_PP_IS_EMPTY(__VA_ARGS__)),                  \
-            "",                                                   \
-            #__VA_ARGS__);                                        \
-        auto lg = NamedThreadedLogger(                            \
-            (boost::log::keywords::severity = LogLevel::debug),   \
-            (boost::log::keywords::channel = channel));           \
-        ConfigureLogger(lg, channel);                             \
-        return lg;                                                \
+    BOOST_LOG_INLINE_GLOBAL_LOGGER_INIT(                                    \
+        FO_GLOBAL_LOGGER_NAME(__VA_ARGS__), NamedThreadedLogger)            \
+    {                                                                       \
+        constexpr auto channel = BOOST_PP_IF(                               \
+            BOOST_PP_AND(                                                   \
+                FO_LOGGER_WIN32_WORKAROUND,                                 \
+                BOOST_PP_IS_EMPTY(__VA_ARGS__)),                            \
+            "",                                                             \
+            #__VA_ARGS__);                                                  \
+        auto lg = NamedThreadedLogger(                                      \
+            (boost::log::keywords::severity = default_log_level_threshold), \
+            (boost::log::keywords::channel = channel));                     \
+        ConfigureLogger(lg, channel);                                       \
+        return lg;                                                          \
     }
 
 

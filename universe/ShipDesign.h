@@ -9,6 +9,7 @@
 #include "ConstantsFwd.h"
 #include "EnumsFwd.h"
 #include "../util/Pending.h"
+#include <unordered_map>
 
 class Universe;
 

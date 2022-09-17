@@ -42,17 +42,13 @@ namespace sinks = boost::log::sinks;
 namespace {
     // Create the log logger for logging of logger and logging related events.
     // Manually created to prevent a recursive call during initialization.
-    BOOST_LOG_INLINE_GLOBAL_LOGGER_INIT(                                \
-        FO_GLOBAL_LOGGER_NAME(log), NamedThreadedLogger)                \
-    {                                                                   \
-        return NamedThreadedLogger(                                     \
-            (boost::log::keywords::severity = LogLevel::debug),         \
-            (boost::log::keywords::channel = "log"));                   \
+    BOOST_LOG_INLINE_GLOBAL_LOGGER_INIT(                                    \
+        FO_GLOBAL_LOGGER_NAME(log), NamedThreadedLogger)                    \
+    {                                                                       \
+        return NamedThreadedLogger(                                         \
+            (boost::log::keywords::severity = default_log_level_threshold), \
+            (boost::log::keywords::channel = "log"));                       \
     }
-
-
-    // Compile time constant pointers to constant char arrays.
-    constexpr const char* const log_level_names[] = {"trace", "debug", "info", "warn", "error"};
 
     std::stringstream InvalidLogLevelWarning(const std::string& text) {
         std::stringstream ss;
@@ -79,45 +75,6 @@ namespace {
     }
 }
 
-
-std::string to_string(const LogLevel level)
-{ return log_level_names[static_cast<std::size_t>(level)]; }
-
-
-LogLevel to_LogLevel(const std::string& text) {
-
-    // Use a static local variable so that during static initialization it
-    // is initialized on first use in any compilation unit.
-    static std::unordered_map<std::string, LogLevel> string_to_log_level = ValidNameToLogLevel();
-
-    auto it = string_to_log_level.find(text);
-    if (it != string_to_log_level.end())
-        return it->second;
-
-    WarnLogger(log) << InvalidLogLevelWarning(text).str();
-    return LogLevel::debug;
-}
-
-std::unordered_map<std::string, LogLevel> ValidNameToLogLevel() {
-    std::unordered_map<std::string, LogLevel> retval;
-
-    for (int ii = static_cast<int>(LogLevel::min); ii <= static_cast<int>(LogLevel::max); ++ii) {
-        auto log_level = static_cast<LogLevel>(ii);
-
-        //Insert the number
-        retval.emplace(std::to_string(ii), log_level);
-
-        // Insert the lower case
-        auto name = to_string(log_level);
-        retval.emplace(name, log_level);
-
-        // Insert the upper case
-        std::transform(name.begin(), name.end(), name.begin(), // in-place replacement
-                       [](const char c) { return std::toupper(c); });
-        retval.emplace(std::move(name), log_level);
-    }
-    return retval;
-}
 
 // Provide a LogLevel input formatter for filtering
 template<typename CharT, typename TraitsT>
@@ -344,7 +301,7 @@ void SetLoggerThreshold(const std::string& source, LogLevel threshold) {
                     << "\" logger threshold to \"" << name_and_threshold.second << "\".";
 }
 
-void InitLoggingSystem(const std::string& log_file, const std::string& _unnamed_logger_identifier) {
+void InitLoggingSystem(const std::string& log_file, std::string_view _unnamed_logger_identifier) {
     auto& unnamed_logger_identifier = LocalUnnamedLoggerIdentifier();
     unnamed_logger_identifier = _unnamed_logger_identifier;
     std::transform(unnamed_logger_identifier.begin(), unnamed_logger_identifier.end(),
@@ -363,7 +320,9 @@ void InitLoggingSystem(const std::string& log_file, const std::string& _unnamed_
     );
 
     // Create the frontend for formatting default records.
-    ApplyConfigurationToFileSinkFrontEnd("", boost::bind(ConfigureFileSinkFrontEnd, boost::placeholders::_1, ""));
+    ApplyConfigurationToFileSinkFrontEnd("",
+        [](LoggerTextFileSinkFrontend& sink_frontend)
+        { return ConfigureFileSinkFrontEnd(sink_frontend, ""); });
 
     // Add global attributes to all records
     logging::core::get()->add_global_attribute("TimeStamp", attr::local_clock());
@@ -448,8 +407,9 @@ void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name) {
     if (name.empty())
         return;
 
-    ApplyConfigurationToFileSinkFrontEnd(
-        name, boost::bind(ConfigureFileSinkFrontEnd, boost::placeholders::_1, name));
+    ApplyConfigurationToFileSinkFrontEnd(name,
+        [name](LoggerTextFileSinkFrontend& sink_frontend)
+        { return ConfigureFileSinkFrontEnd(sink_frontend, name); });
 
     // Store as static to initialize once.
     static bool dummy = InitializeLoggerCreatedSignal();

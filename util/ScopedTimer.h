@@ -8,6 +8,7 @@
 #include "Export.h"
 
 #include <chrono>
+#include <unordered_map>
 
 
 //! Logs period during which this object existed.
