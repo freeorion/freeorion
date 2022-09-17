@@ -212,7 +212,7 @@ BOOST_AUTO_TEST_CASE(parse_species) {
     auto [species, ordering] = *Pending::WaitForPendingUnlocked(std::move(species_p));
 
     BOOST_REQUIRE(!ordering.empty());
-    BOOST_REQUIRE(!species.empty());
+    BOOST_CHECK(!species.empty());
 
     BOOST_REQUIRE_EQUAL("LITHIC", ordering[0]);
     BOOST_REQUIRE_EQUAL("ORGANIC", ordering[1]);
