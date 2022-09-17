@@ -617,7 +617,7 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
         globals[op.first] = enum_wrapper<Condition::ContentType>(op.second);
     }
 
-    globals["Species"] = condition_wrapper(std::make_shared<Condition::Species>());
+    globals["HasSpecies"] = condition_wrapper(std::make_shared<Condition::Species>());
     globals["CanColonize"] = condition_wrapper(std::make_shared<Condition::CanColonize>());
 
     globals["HasTag"] = boost::python::raw_function(insert_has_tag_);
