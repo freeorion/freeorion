@@ -354,6 +354,35 @@ namespace {
             ordering.push_back(*it);
     }
 
+    boost::python::object py_insert_species_(start_rule_payload::first_type& species_, const boost::python::tuple& args, const boost::python::dict& kw) {
+        auto name = boost::python::extract<std::string>(kw["name"])();
+        auto description = boost::python::extract<std::string>(kw["description"])();
+        auto gameplay_description = boost::python::extract<std::string>(kw["gameplay_description"])();
+
+        auto species_ptr = std::make_unique<Species>(
+            std::move(name), std::move(description), std::move(gameplay_description),
+            std::vector<FocusType>{},
+            std::string{},
+            std::map<PlanetType, PlanetEnvironment>{},
+            std::vector<std::unique_ptr<Effect::EffectsGroup>>{},
+            nullptr,
+            false,
+            false,
+            false,
+            false,
+            std::set<std::string>{},    // intentionally not moved
+            std::set<std::string>{},
+            std::set<std::string>{},
+            std::string{},
+            1.0,
+            9999);
+
+        auto& species_name{species_ptr->Name()};
+        species_.emplace(species_name, std::move(species_ptr));
+
+        return boost::python::object();
+    }
+
     struct py_grammar {
          boost::python::dict globals;
 
@@ -368,6 +397,8 @@ namespace {
             RegisterGlobalsValueRefs(globals, parser);
             RegisterGlobalsSources(globals);
             RegisterGlobalsEnums(globals);
+
+            globals["Species"] = boost::python::raw_function([&species_](const boost::python::tuple& args, const boost::python::dict& kw) { return py_insert_species_(species_, args, kw); });
         }
 
         boost::python::dict operator()() const
