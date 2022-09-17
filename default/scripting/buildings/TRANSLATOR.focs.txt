@@ -1,10 +1,7 @@
 BuildingType
     name = "BLD_TRANSLATOR"
     description = "BLD_TRANSLATOR_DESC"
-    buildcost = 500 * 2^0.5 * [[BUILDING_COST_MULTIPLIER]] * (1.0 + Statistic CountUnique
-            value = LocalCandidate.Species
-            condition = And [ Planet Species VisibleToEmpire empire = Source.Owner ]
-        )^(-0.5)
+    buildcost = 320
     buildtime = 10
     location = And [
         Planet
