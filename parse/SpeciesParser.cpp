@@ -1,6 +1,11 @@
 #include "Parse.h"
 
 #include "PythonParserImpl.h"
+#include "ValueRefPythonParser.h"
+#include "ConditionPythonParser.h"
+#include "EffectPythonParser.h"
+#include "EnumPythonParser.h"
+#include "SourcePythonParser.h"
 
 #include "ParseImpl.h"
 #include "EnumParser.h"
@@ -349,6 +354,26 @@ namespace {
             ordering.push_back(*it);
     }
 
+    struct py_grammar {
+         boost::python::dict globals;
+
+        py_grammar(const PythonParser& parser, start_rule_payload::first_type& species_) :
+            globals(boost::python::import("builtins").attr("__dict__"))
+        {
+#if PY_VERSION_HEX < 0x03080000
+            globals["__builtins__"] = boost::python::import("builtins");
+#endif
+            RegisterGlobalsEffects(globals);
+            RegisterGlobalsConditions(globals);
+            RegisterGlobalsValueRefs(globals, parser);
+            RegisterGlobalsSources(globals);
+            RegisterGlobalsEnums(globals);
+        }
+
+        boost::python::dict operator()() const
+        { return globals; }
+    };
+
     struct py_manifest_grammar {
         boost::python::dict operator()(start_rule_payload::second_type& ordering) const {
             boost::python::dict globals(boost::python::import("builtins").attr("__dict__"));
@@ -373,11 +398,14 @@ namespace parse {
         for (const auto& file : ListDir(path, IsFOCScript))
             detail::parse_file<grammar, start_rule_payload::first_type>(lexer::tok, file, species_);
 
+        py_grammar p = py_grammar(parser, species_);
         for (const auto& file : ListDir(path, IsFOCPyScript)) {
             if (file.filename() == "SpeciesCensusOrdering.focs.py" ) {
                 manifest_file = file;
                 continue;
             }
+
+            py_parse::detail::parse_file<py_grammar>(parser, file, p);
         }
 
         if (!manifest_file.empty()) {
