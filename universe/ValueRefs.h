@@ -330,7 +330,7 @@ private:
 
 /** Returns the in-game name of the object / empire / etc. with a specified id. */
 struct FO_COMMON_API NameLookup final : public Variable<std::string> {
-    enum class LookupType : signed char {
+    enum class LookupType : int8_t {
         INVALID_LOOKUP = -1,
         OBJECT_NAME,
         EMPIRE_NAME,
@@ -362,7 +362,7 @@ private:
     LookupType m_lookup_type;
 };
 
-enum class OpType : char {
+enum class OpType : uint8_t {
     PLUS,
     MINUS,
     TIMES,

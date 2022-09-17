@@ -181,7 +181,7 @@ public:
     {
         /** The types of token-like entities that can be represented by a
             TextElement. */
-        enum class TextElementType : char {
+        enum class TextElementType : uint8_t {
             OPEN_TAG,   ///< An opening text formatting tag (e.g. "<rgba 0 0 0 255>").
             CLOSE_TAG,  ///< A closing text formatting tag (e.g. "</rgba>").
             TEXT,       ///< Some non-whitespace text (e.g. "The").
@@ -441,7 +441,7 @@ public:
         Throws a subclass of Font::Exception if the condition specified for
         the subclass is met. */
     Font(std::string font_filename, unsigned int pts,
-         const std::vector<unsigned char>& file_contents);
+         const std::vector<uint8_t>& file_contents);
 
     /** Construct a font using all the code points in the
         UnicodeCharsets in the range [first, last).  \throw Font::Exception
@@ -458,7 +458,7 @@ public:
         met. */
     template <typename CharSetIter>
     Font(std::string font_filename, unsigned int pts,
-         const std::vector<unsigned char>& file_contents,
+         const std::vector<uint8_t>& file_contents,
          CharSetIter first, CharSetIter last);
 
     ~Font() = default;
@@ -670,7 +670,7 @@ private:
     typedef std::unordered_map<std::uint32_t, Glyph> GlyphMap;
 
     FT_Error          GetFace(FT_Face& face);
-    FT_Error          GetFace(const std::vector<unsigned char>& file_contents, FT_Face& face);
+    FT_Error          GetFace(const std::vector<uint8_t>& file_contents, FT_Face& face);
     void              CheckFace(FT_Face font, FT_Error error);
     void              Init(FT_Face& font);
 
@@ -787,7 +787,7 @@ public:
         ASCII characters, from the in-memory contents \a file_contents.  \note
         May load font if unavailable at time of request. */
     std::shared_ptr<Font> GetFont(std::string font_filename, unsigned int pts,
-                                  const std::vector<unsigned char>& file_contents);
+                                  const std::vector<uint8_t>& file_contents);
 
     /** Returns a shared_ptr to the requested font, supporting all the
         code points in the UnicodeCharsets in the range [first, last).  \note
@@ -802,7 +802,7 @@ public:
         unavailable at time of request. */
     template <typename CharSetIter>
     std::shared_ptr<Font> GetFont(std::string font_filename, unsigned int pts,
-                                  const std::vector<unsigned char>& file_contents,
+                                  const std::vector<uint8_t>& file_contents,
                                   CharSetIter first, CharSetIter last);
 
     /** Removes the indicated font from the font manager.  Due to shared_ptr
@@ -813,7 +813,7 @@ private:
     FontManager();
     template <typename CharSetIter>
     std::shared_ptr<Font> GetFontImpl(std::string font_filename, unsigned int pts,
-                                      const std::vector<unsigned char>* file_contents,
+                                      const std::vector<uint8_t>* file_contents,
                                       CharSetIter first, CharSetIter last);
 
     std::map<FontKey, std::shared_ptr<Font>> m_rendered_fonts;
@@ -884,7 +884,7 @@ GG::Font::Font(std::string font_filename, unsigned int pts,
 
 template <typename CharSetIter>
 GG::Font::Font(std::string font_filename, unsigned int pts,
-               const std::vector<unsigned char>& file_contents,
+               const std::vector<uint8_t>& file_contents,
                CharSetIter first, CharSetIter last) :
     m_font_filename(std::move(font_filename)),
     m_pt_sz(pts),
@@ -931,7 +931,7 @@ GG::FontManager::GetFont(std::string font_filename, unsigned int pts,
 template <typename CharSetIter>
 std::shared_ptr<GG::Font>
 GG::FontManager::GetFont(std::string font_filename, unsigned int pts,
-                         const std::vector<unsigned char>& file_contents,
+                         const std::vector<uint8_t>& file_contents,
                          CharSetIter first, CharSetIter last)
 { return GetFontImpl(std::move(font_filename), pts, &file_contents, first, last); }
 
@@ -939,7 +939,7 @@ GG::FontManager::GetFont(std::string font_filename, unsigned int pts,
 template <typename CharSetIter>
 std::shared_ptr<GG::Font>
 GG::FontManager::GetFontImpl(std::string font_filename, unsigned int pts,
-                             const std::vector<unsigned char>* file_contents,
+                             const std::vector<uint8_t>* file_contents,
                              CharSetIter first, CharSetIter last)
 {
     FontKey key(font_filename, pts);

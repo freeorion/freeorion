@@ -471,7 +471,7 @@ void ColorDlg::ColorDisplay::Render()
 
 
 namespace {
-    enum : char {R, G, B, A, H, S, V};
+    enum : uint8_t {R, G, B, A, H, S, V};
 }
 
 std::vector<Clr> ColorDlg::s_custom_colors;

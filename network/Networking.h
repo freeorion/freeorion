@@ -27,7 +27,7 @@ namespace Networking {
         ((NUM_CLIENT_TYPES))
     )
 
-    enum class RoleType : unsigned char {
+    enum class RoleType : uint8_t {
         ROLE_HOST = 0,              ///< allows save and load games, edit other player settings, stop server
         ROLE_CLIENT_TYPE_MODERATOR, ///< allows have a client type Moderator
         ROLE_CLIENT_TYPE_PLAYER,    ///< allows have a client type Player

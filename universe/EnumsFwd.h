@@ -1,21 +1,23 @@
 #ifndef _EnumsFwd_h_
 #define _EnumsFwd_h_
 
-enum class UniverseObjectType : signed char;
-enum class StarType : signed char;
-enum class PlanetType : signed char;
-enum class PlanetSize : signed char;
-enum class PlanetEnvironment : signed char;
-enum class MeterType : signed char;
-enum class EmpireAffiliationType : signed char;
-enum class UnlockableItemType : signed char;
-enum class ResourceType : signed char;
-enum class ShipPartClass : signed char;
-enum class ShipSlotType : signed char;
-enum class Visibility : signed char;
-enum class CaptureResult : signed char;
-enum class ModeratorActionSetting : signed char;
-enum class FleetAggression : signed char;
-enum class DiplomaticStatus : signed char;
+#include <stdint.h>
+
+enum class UniverseObjectType : int8_t;
+enum class StarType : int8_t;
+enum class PlanetType : int8_t;
+enum class PlanetSize : int8_t;
+enum class PlanetEnvironment : int8_t;
+enum class MeterType : int8_t;
+enum class EmpireAffiliationType : int8_t;
+enum class UnlockableItemType : int8_t;
+enum class ResourceType : int8_t;
+enum class ShipPartClass : int8_t;
+enum class ShipSlotType : int8_t;
+enum class Visibility : int8_t;
+enum class CaptureResult : int8_t;
+enum class ModeratorActionSetting : int8_t;
+enum class FleetAggression : int8_t;
+enum class DiplomaticStatus : int8_t;
 
 #endif

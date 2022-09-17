@@ -134,9 +134,9 @@ struct FO_COMMON_API TechCategory {
         graphic(std::move(graphic_)),
         colour(colour_)
     {}
-    std::string             name;                           ///< name of category
-    std::string             graphic;                        ///< icon that represents catetegory
-    std::array<uint8_t, 4>  colour{{255, 255, 255, 255}};   ///< colour associatied with category
+    std::string            name;                           ///< name of category
+    std::string            graphic;                        ///< icon that represents catetegory
+    std::array<uint8_t, 4> colour{{255, 255, 255, 255}};   ///< colour associatied with category
 };
 
 namespace CheckSums {

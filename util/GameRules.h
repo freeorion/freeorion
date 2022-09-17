@@ -22,7 +22,7 @@ FO_COMMON_API bool RegisterGameRules(GameRulesFn function);
 FO_COMMON_API GameRules& GetGameRules();
 
 struct FO_COMMON_API GameRule : public OptionsDB::Option {
-    enum class Type : signed char {
+    enum class Type : int8_t {
         INVALID = -1,
         TOGGLE,
         INT,

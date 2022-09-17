@@ -299,7 +299,7 @@ void Texture::Load(const boost::filesystem::path& path, bool mipmap)
     }
 #endif
 
-    const unsigned char* image_data = nullptr;
+    const uint8_t* image_data = nullptr;
 
     IF_IMAGE_TYPE_IS(gil::gray8)
     else IF_IMAGE_TYPE_IS(gil::gray_alpha8)
@@ -320,7 +320,7 @@ void Texture::Load(const boost::filesystem::path& path, bool mipmap)
     Init(m_default_width, m_default_height, image_data, m_format, m_type, m_bytes_pp, mipmap);
 }
 
-void Texture::Init(X width, Y height, const unsigned char* image, GLenum format, GLenum type,
+void Texture::Init(X width, Y height, const uint8_t* image, GLenum format, GLenum type,
                    unsigned int bytes_per_pixel, bool mipmap)
 {
     glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
@@ -376,7 +376,7 @@ void Texture::Clear()
     m_tex_coords[2] = m_tex_coords[3] = 1.0f;   // max x, y
 }
 
-void Texture::InitFromRawData(X width, Y height, const unsigned char* image, GLenum format, GLenum type,
+void Texture::InitFromRawData(X width, Y height, const uint8_t* image, GLenum format, GLenum type,
                               unsigned int bytes_per_pixel, bool mipmap)
 {
     if (!image)
@@ -412,7 +412,7 @@ void Texture::InitFromRawData(X width, Y height, const unsigned char* image, GLe
     if (image_is_power_of_two) {
         glTexImage2D(GL_TEXTURE_2D, 0, format, Value(width), Value(height), 0, format, type, image);
     } else {
-        std::vector<unsigned char> zero_data(bytes_per_pixel * Value(GL_texture_width) * Value(GL_texture_height));
+        std::vector<uint8_t> zero_data(bytes_per_pixel * Value(GL_texture_width) * Value(GL_texture_height));
         glTexImage2D(GL_TEXTURE_2D, 0, format, Value(GL_texture_width), Value(GL_texture_height), 0, format, type, &zero_data[0]);
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, Value(width), Value(height), format, type, image);
     }
@@ -432,9 +432,9 @@ void Texture::InitFromRawData(X width, Y height, const unsigned char* image, GLe
     m_tex_coords[3] = Value(1.0 * m_default_height / m_height);
 }
 
-unsigned char* Texture::GetRawBytes()
+uint8_t* Texture::GetRawBytes()
 {
-    unsigned char* retval = nullptr;
+    uint8_t* retval = nullptr;
     glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
     glPixelStorei(GL_PACK_SWAP_BYTES, false);
     glPixelStorei(GL_PACK_LSB_FIRST, false);
@@ -444,8 +444,7 @@ unsigned char* Texture::GetRawBytes()
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
     // get pixel data
-    typedef unsigned char uchar;
-    retval = new uchar[Value(m_width) * Value(m_height) * m_bytes_pp];
+    retval = new uint8_t[Value(m_width) * Value(m_height) * m_bytes_pp];
     glGetTexImage(GL_TEXTURE_2D, 0, m_format, m_type, retval);
     glPopClientAttrib();
     return retval;

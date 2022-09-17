@@ -543,7 +543,7 @@ private:
   * \a empire's queue. */
 class FO_COMMON_API ProductionQueueOrder : public Order {
 public:
-    enum class ProdQueueOrderAction : signed char {
+    enum class ProdQueueOrderAction : int8_t {
         INVALID_PROD_QUEUE_ACTION = -1,
         PLACE_IN_QUEUE,
         REMOVE_FROM_QUEUE,

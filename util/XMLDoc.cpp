@@ -72,7 +72,7 @@ struct IUnknown; // Workaround for "combaseapi.h(229,21): error C2760: syntax er
 namespace {
     using namespace boost::spirit::classic;
 
-    typedef chset<unsigned char> chset_t;
+    typedef chset<uint8_t> chset_t;
 
     //! XML grammar rules
     rule<> document, prolog, element, Misc, Reference, CData, doctypedecl,

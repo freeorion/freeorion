@@ -101,7 +101,7 @@ public:
         array \a image.  \throw GG::Texture::Exception Throws applicable
         subclass if the texture creation fails in one of the specified
         ways. */
-    void Init(X width, Y height, const unsigned char* image, GLenum format, GLenum type,
+    void Init(X width, Y height, const uint8_t* image, GLenum format, GLenum type,
               unsigned int bytes_per_pixel, bool mipmap = false);
 
     void SetFilters(GLenum min, GLenum mag);  ///< sets the opengl min/mag filter modes associated with opengl texture m_opengl_id
@@ -123,9 +123,9 @@ private:
     Texture(const Texture& rhs) = delete;
     Texture& operator=(const Texture& rhs) = delete;
 
-    void InitFromRawData(X width, Y height, const unsigned char* image, GLenum format, GLenum type,
+    void InitFromRawData(X width, Y height, const uint8_t* image, GLenum format, GLenum type,
                          unsigned int bytes_per_pixel, bool mipmap);
-    unsigned char* GetRawBytes();
+    uint8_t* GetRawBytes();
 
     boost::filesystem::path m_path;     ///< file path from which this Texture was constructed
 

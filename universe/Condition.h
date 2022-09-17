@@ -19,7 +19,7 @@ namespace Condition {
 
 using ObjectSet = std::vector<const UniverseObject*>;
 
-enum class SearchDomain : char {
+enum class SearchDomain : uint8_t {
     NON_MATCHES,    ///< The Condition will only examine items in the non matches set; those that match the Condition will be inserted into the matches set.
     MATCHES         ///< The Condition will only examine items in the matches set; those that do not match the Condition will be inserted into the nonmatches set.
 };
