@@ -26,7 +26,7 @@ Policy
             effects = 
                 SetTargetInfluence value = Value
                     + (NamedReal name = "PLC_TERRAFORMING_TARGET_INFLUENCE_ORIGINAL_FLAT"
-                                 value = 1)
+                                 value = 0.5)
                         * [[PLC_TERRAFORMING_DISTANCE]]
 
         EffectsGroup
