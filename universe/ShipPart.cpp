@@ -552,8 +552,8 @@ int ShipPart::ProductionTime(int empire_id, int location_id, const ScriptingCont
     return m_production_time->Eval(design_id_context);
 }
 
-unsigned int ShipPart::GetCheckSum() const {
-    unsigned int retval{0};
+uint32_t ShipPart::GetCheckSum() const {
+    uint32_t retval{0};
 
     CheckSums::CheckSumCombine(retval, m_name);
     CheckSums::CheckSumCombine(retval, m_description);
@@ -616,9 +616,9 @@ std::size_t ShipPartManager::size() const {
     return m_parts.size();
 }
 
-unsigned int ShipPartManager::GetCheckSum() const {
+uint32_t ShipPartManager::GetCheckSum() const {
     CheckPendingShipParts();
-    unsigned int retval{0};
+    uint32_t retval{0};
     for (auto const& name_part_pair : m_parts)
         CheckSums::CheckSumCombine(retval, name_part_pair);
     CheckSums::CheckSumCombine(retval, m_parts.size());

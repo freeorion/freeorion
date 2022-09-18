@@ -15,8 +15,8 @@ Encyclopedia& GetEncyclopedia() {
     return encyclopedia;
 }
 
-unsigned int Encyclopedia::GetCheckSum() const {
-    unsigned int retval{0};
+uint32_t Encyclopedia::GetCheckSum() const {
+    uint32_t retval{0};
 
     for (const auto& n : Articles()) {
         CheckSums::CheckSumCombine(retval, n.first);

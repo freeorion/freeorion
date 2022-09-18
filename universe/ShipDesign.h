@@ -158,7 +158,7 @@ public:
       * and executions of the program and the function. Useful to verify that
       * the parsed content is consistent without sending it all between
       * clients and server. */
-    [[nodiscard]] unsigned int GetCheckSum() const;
+    [[nodiscard]] uint32_t GetCheckSum() const;
 
     friend FO_COMMON_API bool operator ==(const ShipDesign& first, const ShipDesign& second);
 
@@ -258,7 +258,7 @@ public:
     /** Returns the ID for the design in the Universe for the predefined design
       * with the specified \a name.  If there is generic design available for
       * the specified \a name, then INVALID_DESIGN_ID is returned. */
-    int                 GetDesignID(const std::string& name) const;
+    int GetDesignID(const std::string& name) const;
 
     /** Returns a number, calculated from the contained data, which should be
       * different for different contained data, and must be the same for
@@ -266,7 +266,7 @@ public:
       * and executions of the program and the function. Useful to verify that
       * the parsed content is consistent without sending it all between
       * clients and server. */
-    unsigned int        GetCheckSum() const;
+    uint32_t GetCheckSum() const;
 
     /** Adds designs in this manager to the universe with the design creator
       * left as no empire. */

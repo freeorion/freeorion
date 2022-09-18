@@ -282,8 +282,8 @@ float ShipHull::Speed() const
 float ShipHull::Structure() const
 { return m_structure * GetGameRules().Get<double>("RULE_SHIP_STRUCTURE_FACTOR"); }
 
-unsigned int ShipHull::NumSlots(ShipSlotType slot_type) const {
-    unsigned int count = 0;
+uint32_t ShipHull::NumSlots(ShipSlotType slot_type) const {
+    uint32_t count = 0;
     for (const Slot& slot : m_slots)
         if (slot.type == slot_type)
             ++count;
@@ -369,8 +369,8 @@ int ShipHull::ProductionTime(int empire_id, int location_id,
     return m_production_time->Eval(design_id_context);
 }
 
-unsigned int ShipHull::GetCheckSum() const {
-    unsigned int retval{0};
+uint32_t ShipHull::GetCheckSum() const {
+    uint32_t retval{0};
 
     CheckSums::CheckSumCombine(retval, m_name);
     CheckSums::CheckSumCombine(retval, m_description);
@@ -431,9 +431,9 @@ std::size_t ShipHullManager::size() const {
     return m_hulls.size();
 }
 
-unsigned int ShipHullManager::GetCheckSum() const {
+uint32_t ShipHullManager::GetCheckSum() const {
     CheckPendingShipHulls();
-    unsigned int retval{0};
+    uint32_t retval{0};
     for (auto const& name_hull_pair : m_hulls)
         CheckSums::CheckSumCombine(retval, name_hull_pair);
     CheckSums::CheckSumCombine(retval, m_hulls.size());
@@ -464,7 +464,7 @@ void ShipHullManager::CheckPendingShipHulls() const {
 
 
 namespace CheckSums {
-    void CheckSumCombine(unsigned int& sum, const ShipHull::Slot& slot) {
+    void CheckSumCombine(uint32_t& sum, const ShipHull::Slot& slot) {
         TraceLogger() << "CheckSumCombine(Slot): " << typeid(slot).name();
         CheckSumCombine(sum, slot.x);
         CheckSumCombine(sum, slot.y);

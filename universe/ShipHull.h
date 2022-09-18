@@ -58,35 +58,35 @@ public:
     { return !(*this == rhs); }
 
     //! Returns name of hull
-    auto Name() const -> const std::string& { return m_name; }
+    const auto& Name() const noexcept { return m_name; }
 
     //! Returns description, including a description of the stats and effects
     //! of this hull
-    auto Description() const -> const std::string& { return m_description; }
+    const auto& Description() const noexcept { return m_description; }
 
     //! Returns starlane speed of hull
     auto Speed() const -> float;
 
     //! Returns fuel capacity of hull
-    auto Fuel() const -> float { return m_fuel; }
+    auto Fuel() const noexcept { return m_fuel; }
 
     //! Returns stealth of hull
-    auto Stealth() const -> float { return m_stealth; }
+    auto Stealth() const noexcept { return m_stealth; }
 
     //! Returns structure of hull
     auto Structure() const -> float;
 
     //! Returns shields of hull
-    auto Shields() const -> float { return 0.0f; }
+    auto Shields() const noexcept { return 0.0f; }
 
     //! Returns colonist capacity of hull
-    auto ColonyCapacity() const -> float { return 0.0f; }
+    auto ColonyCapacity() const noexcept { return 0.0f; }
 
     //! Returns the troop capacity of hull
-    auto TroopCapacity() const -> float { return 0.0f; }
+    auto TroopCapacity() const noexcept { return 0.0f; }
 
     //! Returns detection ability of hull
-    auto Detection() const -> float { return 0.0f; }
+    auto Detection() const noexcept { return 0.0f; }
 
     //! Returns true if the production cost and time are invariant (does not
     //! depend on) the location
@@ -102,45 +102,43 @@ public:
 
     //! Returns whether this hull type is producible by players and appears on
     //! the design screen
-    auto Producible() const -> bool { return m_producible; }
+    auto Producible() const noexcept { return m_producible; }
 
-    auto ProductionMeterConsumption() const -> const ConsumptionMap<MeterType>&
-    { return m_production_meter_consumption; }
+    const auto& ProductionMeterConsumption() const noexcept { return m_production_meter_consumption; }
 
-    auto ProductionSpecialConsumption() const -> const ConsumptionMap<std::string>&
-    { return m_production_special_consumption; }
+    const auto& ProductionSpecialConsumption() const noexcept { return m_production_special_consumption; }
 
     //! Returns total number of of slots in hull
-    auto NumSlots() const -> unsigned int { return m_slots.size(); }
+    auto NumSlots() const noexcept -> uint32_t { return m_slots.size(); }
 
     //! Returns number of of slots of indicated type in hull
-    auto NumSlots(ShipSlotType slot_type) const -> unsigned int;
+    auto NumSlots(ShipSlotType slot_type) const -> uint32_t;
 
     //! Returns vector of slots in hull
-    auto Slots() const -> const std::vector<Slot>& { return m_slots; }
+    const auto& Slots() const noexcept  { return m_slots; }
 
-    const auto& Tags() const { return m_tags; }
+    const auto& Tags() const noexcept { return m_tags; }
 
     bool HasTag(std::string_view tag) const
     { return std::any_of(m_tags.begin(), m_tags.end(), [&tag](const auto& t) { return t == tag; }); }
 
     //! Returns the condition that determines the locations where ShipDesign
     //! containing hull can be produced
-    auto Location() const -> const Condition::Condition* { return m_location.get(); }
+    const auto* Location() const noexcept { return m_location.get(); }
 
     //! Returns the names of other content that cannot be used in the same
     //! ship design as this part
-    auto Exclusions() const -> const std::set<std::string>& { return m_exclusions; }
+    const auto& Exclusions() const noexcept { return m_exclusions; }
 
     //! Returns the EffectsGroups that encapsulate the effects this part hull
     //! has.
-    auto Effects() const -> const std::vector<std::shared_ptr<Effect::EffectsGroup>>& { return m_effects; }
+    const auto& Effects() const noexcept { return m_effects; }
 
     //! Returns the image that represents the hull on the design screen
-    auto Graphic() const -> const std::string& { return m_graphic; }
+    const auto& Graphic() const noexcept { return m_graphic; }
 
     //! Returns the small icon to represent hull
-    auto Icon() const -> const std::string& { return m_icon; }
+    const auto& Icon() const noexcept { return m_icon; }
 
     //! Returns a number, calculated from the contained data, which should be
     //! different for different contained data, and must be the same for
@@ -148,7 +146,7 @@ public:
     //! and executions of the program and the function. Useful to verify that
     //! the parsed content is consistent without sending it all between
     //! clients and server.
-    auto GetCheckSum() const -> unsigned int;
+    auto GetCheckSum() const -> uint32_t;
 
 private:
     void Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
@@ -181,7 +179,7 @@ private:
 
 
 namespace CheckSums {
-    FO_COMMON_API void CheckSumCombine(unsigned int& sum, const ShipHull::Slot& slot);
+    FO_COMMON_API void CheckSumCombine(uint32_t& sum, const ShipHull::Slot& slot);
 }
 
 
@@ -214,7 +212,7 @@ public:
     //! and executions of the program and the function. Useful to verify that
     //! the parsed content is consistent without sending it all between
     //! clients and server.
-    auto GetCheckSum() const -> unsigned int;
+    auto GetCheckSum() const -> uint32_t;
 
     //! Sets hull types to the future value of \p pending_ship_hulls.
     FO_COMMON_API void SetShipHulls(Pending::Pending<container_type>&& pending_ship_hulls);

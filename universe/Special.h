@@ -62,7 +62,7 @@ public:
       * and executions of the program and the function. Useful to verify that
       * the parsed content is consistent without sending it all between
       * clients and server. */
-    [[nodiscard]] unsigned int GetCheckSum() const;
+    [[nodiscard]] uint32_t GetCheckSum() const;
 
 private:
     void Init();
@@ -94,7 +94,7 @@ public:
     [[nodiscard]] int                           NumSpecials() const noexcept { return m_specials.size(); }
     [[nodiscard]] std::vector<std::string_view> SpecialNames() const;
     [[nodiscard]] const Special*                GetSpecial(std::string_view name) const;
-    [[nodiscard]] unsigned int                  GetCheckSum() const;
+    [[nodiscard]] uint32_t                      GetCheckSum() const;
 
     /** Sets types to the value of \p future. */
     void SetSpecialsTypes(Pending::Pending<SpecialsTypeMap>&& future);

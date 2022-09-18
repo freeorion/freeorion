@@ -27,7 +27,7 @@ std::ostream& operator<<(std::ostream&, StarType);
 
 namespace CheckSums {
     template <typename T>
-    void CheckSumCombine(unsigned int& sum, const typename ValueRef::ValueRef<T>& c)
+    void CheckSumCombine(uint32_t& sum, const typename ValueRef::ValueRef<T>& c)
     {
         TraceLogger() << "CheckSumCombine(ValueRef::ValueRef<T>): " << typeid(c).name();
         sum += c.GetCheckSum();
@@ -55,7 +55,7 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
     void SetTopLevelContent(const std::string& content_name) override;
 
     [[nodiscard]] T Value() const;
-    [[nodiscard]] unsigned int GetCheckSum() const override;
+    [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override {
         auto retval = std::make_unique<Constant>(m_value);
@@ -103,7 +103,7 @@ struct FO_COMMON_API Variable : public ValueRef<T>
     [[nodiscard]] const std::vector<std::string>& PropertyName() const noexcept { return m_property_name; }
     [[nodiscard]] bool ReturnImmediateValue() const noexcept { return m_return_immediate_value; }
 
-    [[nodiscard]] unsigned int GetCheckSum() const override;
+    [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override
     { return std::make_unique<Variable<T>>(m_ref_type, m_property_name, m_return_immediate_value); }
@@ -144,7 +144,7 @@ struct FO_COMMON_API Statistic final : public Variable<T>
     [[nodiscard]] const ValueRef<V>* GetValueRef() const
     { return m_value_ref.get(); }
 
-    [[nodiscard]] unsigned int GetCheckSum() const override;
+    [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override {
         return std::make_unique<Statistic<T, V>>(CloneUnique(m_value_ref),
@@ -180,7 +180,7 @@ struct FO_COMMON_API TotalFighterShots final : public Variable<int>
     [[nodiscard]] const Condition::Condition* GetSamplingCondition() const
     { return m_sampling_condition.get(); }
 
-    [[nodiscard]] unsigned int GetCheckSum() const override;
+    [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<ValueRef<int>> Clone() const override
     { return std::make_unique<TotalFighterShots>(CloneUnique(m_carrier_id), CloneUnique(m_sampling_condition)); }
@@ -226,7 +226,7 @@ struct FO_COMMON_API ComplexVariable final : public Variable<T>
     [[nodiscard]] const ValueRef<int>*         IntRef3() const;
     [[nodiscard]] const ValueRef<std::string>* StringRef1() const;
     [[nodiscard]] const ValueRef<std::string>* StringRef2() const;
-    [[nodiscard]] unsigned int                 GetCheckSum() const override;
+    [[nodiscard]] uint32_t                     GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override
     { return std::make_unique<ComplexVariable<T>>(*this); }
@@ -267,7 +267,7 @@ struct FO_COMMON_API StaticCast final : public Variable<ToType>
     [[nodiscard]] const ValueRef<FromType>* GetValueRef() const
     { return m_value_ref.get(); }
 
-    [[nodiscard]] unsigned int GetCheckSum() const override;
+    [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<ValueRef<ToType>> Clone() const override
     { return std::make_unique<StaticCast<FromType, ToType>>(CloneUnique(m_value_ref)); }
@@ -294,7 +294,7 @@ struct FO_COMMON_API StringCast final : public Variable<std::string>
     [[nodiscard]] const ValueRef<FromType>* GetValueRef() const
     { return m_value_ref; }
 
-    [[nodiscard]] unsigned int GetCheckSum() const override;
+    [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<ValueRef<std::string>> Clone() const override
     { return std::make_unique<StringCast<FromType>>(CloneUnique(m_value_ref)); }
@@ -319,7 +319,7 @@ struct FO_COMMON_API UserStringLookup final : public Variable<std::string> {
     [[nodiscard]] const ValueRef<FromType>* GetValueRef() const
     { return m_value_ref; }
 
-    [[nodiscard]] unsigned int GetCheckSum() const override;
+    [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<ValueRef<std::string>> Clone() const override
     { return std::make_unique<UserStringLookup<FromType>>(CloneUnique(m_value_ref)); }
@@ -352,7 +352,7 @@ struct FO_COMMON_API NameLookup final : public Variable<std::string> {
     [[nodiscard]] LookupType GetLookupType() const
     { return m_lookup_type; }
 
-    [[nodiscard]] unsigned int GetCheckSum() const override;
+    [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<ValueRef<std::string>> Clone() const override
     { return std::make_unique<NameLookup>(CloneUnique(m_value_ref), m_lookup_type); }
@@ -424,7 +424,7 @@ struct FO_COMMON_API Operation final : public ValueRef<T>
     [[nodiscard]] const ValueRef<T>*              RHS() const; // 2nd operand (or nullptr if no 2nd operand exists)
     [[nodiscard]] const std::vector<ValueRef<T>*> Operands() const; // all operands
 
-    [[nodiscard]] unsigned int GetCheckSum() const override;
+    [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override
     { return std::make_unique<Operation<T>>(*this); }
@@ -540,9 +540,9 @@ void Constant<T>::SetTopLevelContent(const std::string& content_name)
 {}
 
 template <typename T>
-unsigned int Constant<T>::GetCheckSum() const
+uint32_t Constant<T>::GetCheckSum() const
 {
-    unsigned int retval{0};
+    uint32_t retval{0};
 
     CheckSums::CheckSumCombine(retval, "ValueRef::Constant");
     CheckSums::CheckSumCombine(retval, m_value);
@@ -682,9 +682,9 @@ std::string Variable<T>::Dump(uint8_t ntabs) const
 { return ReconstructName(m_property_name, m_ref_type, m_return_immediate_value); }
 
 template <typename T>
-unsigned int Variable<T>::GetCheckSum() const
+uint32_t Variable<T>::GetCheckSum() const
 {
-    unsigned int retval{0};
+    uint32_t retval{0};
 
     CheckSums::CheckSumCombine(retval, "ValueRef::Variable");
     CheckSums::CheckSumCombine(retval, m_property_name);
@@ -1169,9 +1169,9 @@ T Statistic<T, V>::Eval(const ScriptingContext& context) const
 }
 
 template <typename T, typename V>
-unsigned int Statistic<T, V>::GetCheckSum() const
+uint32_t Statistic<T, V>::GetCheckSum() const
 {
-    unsigned int retval{0};
+    uint32_t retval{0};
 
     CheckSums::CheckSumCombine(retval, "ValueRef::Statistic");
     CheckSums::CheckSumCombine(retval, m_stat_type);
@@ -1383,9 +1383,9 @@ void ComplexVariable<T>::SetTopLevelContent(const std::string& content_name)
 }
 
 template <typename T>
-unsigned int ComplexVariable<T>::GetCheckSum() const
+uint32_t ComplexVariable<T>::GetCheckSum() const
 {
-    unsigned int retval{0};
+    uint32_t retval{0};
 
     CheckSums::CheckSumCombine(retval, "ValueRef::ComplexVariable");
     CheckSums::CheckSumCombine(retval, m_int_ref1);
@@ -1522,9 +1522,9 @@ void StaticCast<FromType, ToType>::SetTopLevelContent(const std::string& content
 }
 
 template <typename FromType, typename ToType>
-unsigned int StaticCast<FromType, ToType>::GetCheckSum() const
+uint32_t StaticCast<FromType, ToType>::GetCheckSum() const
 {
-    unsigned int retval{0};
+    uint32_t retval{0};
 
     CheckSums::CheckSumCombine(retval, "ValueRef::StaticCast");
     CheckSums::CheckSumCombine(retval, m_value_ref);
@@ -1609,9 +1609,9 @@ std::string StringCast<FromType>::Eval(const ScriptingContext& context) const
 }
 
 template <typename FromType>
-unsigned int StringCast<FromType>::GetCheckSum() const
+uint32_t StringCast<FromType>::GetCheckSum() const
 {
-    unsigned int retval{0};
+    uint32_t retval{0};
 
     CheckSums::CheckSumCombine(retval, "ValueRef::StringCast");
     CheckSums::CheckSumCombine(retval, m_value_ref);
@@ -1725,9 +1725,9 @@ void UserStringLookup<FromType>::SetTopLevelContent(const std::string& content_n
 }
 
 template <typename FromType>
-unsigned int UserStringLookup<FromType>::GetCheckSum() const
+uint32_t UserStringLookup<FromType>::GetCheckSum() const
 {
-    unsigned int retval{0};
+    uint32_t retval{0};
 
     CheckSums::CheckSumCombine(retval, "ValueRef::UserStringLookup");
     CheckSums::CheckSumCombine(retval, m_value_ref);
@@ -2071,9 +2071,9 @@ T Operation<T>::EvalImpl(const ScriptingContext& context) const
 }
 
 template <typename T>
-unsigned int Operation<T>::GetCheckSum() const
+uint32_t Operation<T>::GetCheckSum() const
 {
-    unsigned int retval{0};
+    uint32_t retval{0};
 
     CheckSums::CheckSumCombine(retval, "ValueRef::Operation");
     CheckSums::CheckSumCombine(retval, m_op_type);

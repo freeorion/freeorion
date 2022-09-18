@@ -143,7 +143,7 @@ public:
     //! and executions of the program and the function. Useful to verify that
     //! the parsed content is consistent without sending it all between
     //! clients and server.
-    [[nodiscard]] unsigned int GetCheckSum() const;
+    [[nodiscard]] uint32_t GetCheckSum() const;
     //@}
 
 private:
@@ -205,7 +205,7 @@ public:
     //! and executions of the program and the function. Useful to verify that
     //! the parsed content is consistent without sending it all between
     //! clients and server.
-    [[nodiscard]] auto GetCheckSum() const -> unsigned int;
+    [[nodiscard]] auto GetCheckSum() const -> uint32_t;
 
     //! Sets part types to the future value of @p pending_ship_parts.
     FO_COMMON_API void SetShipParts(Pending::Pending<ShipPartMap>&& pending_ship_parts);

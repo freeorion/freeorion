@@ -5,10 +5,10 @@
 #include <float.h>
 
 namespace CheckSums {
-    void CheckSumCombine(unsigned int& sum, const char* s)
+    void CheckSumCombine(uint32_t& sum, const char* s)
     { CheckSumCombine(sum, std::string(s)); }
 
-    void CheckSumCombine(unsigned int& sum, const std::string& c) {
+    void CheckSumCombine(uint32_t& sum, const std::string& c) {
         TraceLogger() << "CheckSumCombine(std::string): " << c;
         for (auto& t : c)
             CheckSumCombine(sum, t);
@@ -16,7 +16,7 @@ namespace CheckSums {
         sum %= CHECKSUM_MODULUS;
     }
 
-    void CheckSumCombine(unsigned int& sum, double t) {
+    void CheckSumCombine(uint32_t& sum, double t) {
         static_assert(DBL_MAX_10_EXP < 400);
         if (t == 0.0)
             return;
@@ -28,7 +28,7 @@ namespace CheckSums {
         sum %= CHECKSUM_MODULUS;
     }
 
-    void CheckSumCombine(unsigned int& sum, float t) {
+    void CheckSumCombine(uint32_t& sum, float t) {
         static_assert(FLT_MAX_10_EXP < 40);
         if (t == 0.0f)
             return;

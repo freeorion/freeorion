@@ -133,7 +133,7 @@ namespace Effect {
         // TODO: source-invariant?
 
         virtual void SetTopLevelContent(const std::string& content_name) = 0;
-        [[nodiscard]] virtual unsigned int GetCheckSum() const;
+        [[nodiscard]] virtual uint32_t GetCheckSum() const;
 
         //! Makes a clone of this Effect in a new owning pointer. Required for Boost.Python, which
         //! doesn't supports move semantics for returned values.
@@ -226,7 +226,7 @@ namespace Effect {
         void                            SetTopLevelContent(const std::string& content_name);
         const std::string&              TopLevelContent() const { return m_content_name; }
 
-        virtual unsigned int            GetCheckSum() const;
+        virtual uint32_t                GetCheckSum() const;
 
     protected:
         std::unique_ptr<Condition::Condition>   m_scope;

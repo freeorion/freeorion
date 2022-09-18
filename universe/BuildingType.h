@@ -152,7 +152,7 @@ public:
     //! and executions of the program and the function. Useful to verify that
     //! the parsed content is consistent without sending it all between
     //! clients and server.
-    auto GetCheckSum() const -> unsigned int;
+    auto GetCheckSum() const -> uint32_t;
 
 private:
     void Init();
@@ -201,7 +201,7 @@ public:
     //! and executions of the program and the function. Useful to verify that
     //! the parsed content is consistent without sending it all between
     //! clients and server.
-    auto GetCheckSum() const -> unsigned int;
+    auto GetCheckSum() const -> uint32_t;
 
     //! Sets building types to the future value of \p pending_building_types.
     FO_COMMON_API void SetBuildingTypes(Pending::Pending<container_type>&& pending_building_types);

@@ -117,9 +117,9 @@ NamedValueRefManager& NamedValueRefManager::GetNamedValueRefManager() {
     return manager;
 }
 
-unsigned int NamedValueRefManager::GetCheckSum() const {
+uint32_t NamedValueRefManager::GetCheckSum() const {
     CheckPendingNamedValueRefs();
-    unsigned int retval{0};
+    uint32_t retval{0};
     for (auto const& name_type_pair : m_value_refs)
         CheckSums::CheckSumCombine(retval, name_type_pair);
     DebugLogger() << "NamedValueRefManager partial checksum: " << retval;

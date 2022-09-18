@@ -51,7 +51,7 @@ bool operator!=(const UnlockableItem& lhs, const UnlockableItem& rhs);
 
 
 namespace CheckSums {
-    FO_COMMON_API void CheckSumCombine(unsigned int& sum, const UnlockableItem& item);
+    FO_COMMON_API void CheckSumCombine(uint32_t& sum, const UnlockableItem& item);
 }
 
 

@@ -36,9 +36,9 @@ const Special* SpecialsManager::GetSpecial(std::string_view name) const {
     return &m_specials[offset];
 }
 
-unsigned int SpecialsManager::GetCheckSum() const {
+uint32_t SpecialsManager::GetCheckSum() const {
     CheckPendingSpecialsTypes();
-    unsigned int retval{0};
+    uint32_t retval{0};
     for (auto const& special : m_specials)
         CheckSums::CheckSumCombine(retval, special);
     CheckSums::CheckSumCombine(retval, m_specials.size());
@@ -226,8 +226,8 @@ float Special::InitialCapacity(int object_id) const {
     return m_initial_capacity->Eval(local_context);
 }
 
-unsigned int Special::GetCheckSum() const {
-    unsigned int retval{0};
+uint32_t Special::GetCheckSum() const {
+    uint32_t retval{0};
 
     CheckSums::CheckSumCombine(retval, m_name);
     CheckSums::CheckSumCombine(retval, m_description);

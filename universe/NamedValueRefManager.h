@@ -8,8 +8,8 @@
 FO_COMMON_API const std::string& UserString(const std::string& str);
 
 namespace CheckSums {
-    FO_COMMON_API void CheckSumCombine(unsigned int& sum, const char* s);
-    FO_COMMON_API void CheckSumCombine(unsigned int& sum, const std::string& c);
+    FO_COMMON_API void CheckSumCombine(uint32_t& sum, const char* s);
+    FO_COMMON_API void CheckSumCombine(uint32_t& sum, const std::string& c);
 }
 
 class NamedValueRefManager;
@@ -105,8 +105,8 @@ struct FO_COMMON_API NamedRef final : public ValueRef<T>
         return ::GetValueRef<T>(m_value_ref_name, m_is_lookup_only);
     }
 
-    [[nodiscard]] unsigned int GetCheckSum() const override {
-        unsigned int retval{0};
+    [[nodiscard]] uint32_t GetCheckSum() const override {
+        uint32_t retval{0};
         CheckSums::CheckSumCombine(retval, "ValueRef::NamedRef");
         CheckSums::CheckSumCombine(retval, m_value_ref_name);
         TraceLogger() << "GetCheckSum(NamedRef<T>): " << typeid(*this).name() << " retval: " << retval;
@@ -235,7 +235,7 @@ public:
     //! and executions of the program and the function. Useful to verify that
     //! the parsed content is consistent without sending it all between
     //! clients and server.
-    auto GetCheckSum() const -> unsigned int;
+    auto GetCheckSum() const -> uint32_t;
 
     using NamedValueRefParseMap = std::map<std::string, std::unique_ptr<ValueRef::ValueRefBase>, std::less<>>;
     //! This sets the asynchronous parse, so we can block on that

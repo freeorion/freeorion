@@ -30,7 +30,7 @@ struct FO_COMMON_API ValueRefBase {
 
     virtual void SetTopLevelContent(const std::string& content_name) {}
 
-    [[nodiscard]] virtual unsigned int GetCheckSum() const { return 0; }
+    [[nodiscard]] virtual uint32_t GetCheckSum() const { return 0; }
 
 protected:
     bool m_root_candidate_invariant = false;

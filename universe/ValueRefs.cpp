@@ -1441,7 +1441,7 @@ std::string Statistic<std::string, std::string>::Eval(const ScriptingContext& co
     auto object_property_values = GetObjectPropertyValues(context, condition_matches);
 
     // count appearances to determine the value that appears the most often
-    std::map<std::string, unsigned int> observed_values;
+    std::unordered_map<std::string, uint32_t> observed_values;
     for (auto& entry : object_property_values)
         observed_values[std::move(entry)]++;
 
@@ -1472,8 +1472,7 @@ TotalFighterShots::TotalFighterShots(std::unique_ptr<ValueRef<int>>&& carrier_id
     this->m_source_invariant = true;
 }
 
-bool TotalFighterShots::operator==(const ValueRef<int>& rhs) const
-{
+bool TotalFighterShots::operator==(const ValueRef<int>& rhs) const {
     if (&rhs == this)
         return true;
     if (typeid(rhs) != typeid(*this))
@@ -1488,8 +1487,7 @@ bool TotalFighterShots::operator==(const ValueRef<int>& rhs) const
     return false;
 }
 
-std::string TotalFighterShots::Description() const
-{
+std::string TotalFighterShots::Description() const {
     std::string retval = "TotalFighterShots(";
     if (m_carrier_id) {
         retval += m_carrier_id->Description();
@@ -1502,8 +1500,7 @@ std::string TotalFighterShots::Description() const
     return retval;
 }
 
-std::string TotalFighterShots::Dump(uint8_t ntabs) const
-{
+std::string TotalFighterShots::Dump(uint8_t ntabs) const {
     std::string retval = "TotalFighterShots";
     if (m_carrier_id)
         retval += " carrier = " + m_carrier_id->Dump();
@@ -1512,15 +1509,14 @@ std::string TotalFighterShots::Dump(uint8_t ntabs) const
     return retval;
 }
 
-void TotalFighterShots::SetTopLevelContent(const std::string& content_name)
-{
+void TotalFighterShots::SetTopLevelContent(const std::string& content_name) {
     if (m_sampling_condition)
         m_sampling_condition->SetTopLevelContent(content_name);
 }
 
-unsigned int TotalFighterShots::GetCheckSum() const
+uint32_t TotalFighterShots::GetCheckSum() const
 {
-    unsigned int retval{0};
+    uint32_t retval{0};
 
     CheckSums::CheckSumCombine(retval, "ValueRef::TotalFighterShots");
     CheckSums::CheckSumCombine(retval, m_carrier_id);
@@ -1529,8 +1525,7 @@ unsigned int TotalFighterShots::GetCheckSum() const
     return retval;
 }
 
-int TotalFighterShots::Eval(const ScriptingContext& context) const
-{
+int TotalFighterShots::Eval(const ScriptingContext& context) const {
     if (!m_carrier_id) {
         ErrorLogger() << "TotalFighterShots condition without carrier id";
         return 0;
@@ -3125,8 +3120,8 @@ void NameLookup::SetTopLevelContent(const std::string& content_name) {
         m_value_ref->SetTopLevelContent(content_name);
 }
 
-unsigned int NameLookup::GetCheckSum() const {
-    unsigned int retval{0};
+uint32_t NameLookup::GetCheckSum() const {
+    uint32_t retval{0};
 
     CheckSums::CheckSumCombine(retval, "ValueRef::NameLookup");
     CheckSums::CheckSumCombine(retval, m_value_ref);
@@ -3555,7 +3550,7 @@ std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) co
         // select one operand, evaluate it, return result
         if (m_operands.empty())
             return "";
-        unsigned int idx = RandInt(0, m_operands.size() - 1);
+        std::ptrdiff_t idx = RandInt(0, m_operands.size() - 1);
         auto& vr = *std::next(m_operands.begin(), idx);
         if (!vr)
             return "";
@@ -3721,7 +3716,7 @@ double Operation<double>::EvalImpl(const ScriptingContext& context) const
             // select one operand, evaluate it, return result
             if (m_operands.empty())
                 return 0.0;
-            unsigned int idx = RandInt(0, m_operands.size() - 1);
+            std::ptrdiff_t idx = RandInt(0, m_operands.size() - 1);
             auto& vr = *std::next(m_operands.begin(), idx);
             if (!vr)
                 return 0.0;
@@ -3909,7 +3904,7 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
             // select one operand, evaluate it, return result
             if (m_operands.empty())
                 return 0;
-            unsigned int idx = RandInt(0, m_operands.size() - 1);
+            std::ptrdiff_t idx = RandInt(0, m_operands.size() - 1);
             auto& vr = *std::next(m_operands.begin(), idx);
             if (!vr)
                 return 0;

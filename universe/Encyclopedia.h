@@ -34,7 +34,7 @@ public:
     using ArticleMap = std::map<std::string, std::vector<EncyclopediaArticle>, std::less<>>;
 
     Encyclopedia() = default;
-    [[nodiscard]] unsigned int GetCheckSum() const;
+    [[nodiscard]] uint32_t GetCheckSum() const;
 
     /** Sets articles to the value of \p future. */
     FO_COMMON_API void SetArticles(Pending::Pending<ArticleMap>&& future);

@@ -126,8 +126,8 @@ std::string FieldType::Dump(uint8_t ntabs) const {
     return retval;
 }
 
-unsigned int FieldType::GetCheckSum() const {
-    unsigned int retval{0};
+uint32_t FieldType::GetCheckSum() const {
+    uint32_t retval{0};
 
     CheckSums::CheckSumCombine(retval, m_name);
     CheckSums::CheckSumCombine(retval, m_description);
@@ -177,9 +177,9 @@ FieldTypeManager& FieldTypeManager::GetFieldTypeManager() {
     return manager;
 }
 
-unsigned int FieldTypeManager::GetCheckSum() const {
+uint32_t FieldTypeManager::GetCheckSum() const {
     CheckPendingFieldTypes();
-    unsigned int retval{0};
+    uint32_t retval{0};
     for (auto const& name_type_pair : m_field_types)
         CheckSums::CheckSumCombine(retval, name_type_pair);
     CheckSums::CheckSumCombine(retval, m_field_types.size());

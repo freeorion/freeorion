@@ -42,7 +42,7 @@ namespace {
             stack.push_back(it->get());
             while (!stack.empty()) {
                 const Tech* current_tech = stack.back();
-                unsigned int starting_stack_size = stack.size();
+                std::size_t starting_stack_size = stack.size();
                 bool all_prereqs_known = true;
                 for (const std::string& prereq_name : current_tech->Prerequisites()) {
                     const Tech* prereq_tech = GetTech(prereq_name);
@@ -70,7 +70,7 @@ namespace {
 
         float min_price = next_techs[0]->ResearchCost(empire_id, context);
         int min_index = 0;
-        for (unsigned int i = 0; i < next_techs.size(); ++i) {
+        for (std::size_t i = 0; i < next_techs.size(); ++i) {
             float price = next_techs[i]->ResearchCost(empire_id, context);
             if (price < min_price) {
                 min_price = price;
@@ -83,7 +83,7 @@ namespace {
 }
 
 namespace CheckSums {
-    void CheckSumCombine(unsigned int& sum, const TechCategory& cat) {
+    void CheckSumCombine(uint32_t& sum, const TechCategory& cat) {
         TraceLogger() << "CheckSumCombine(Slot): " << typeid(cat).name();
         CheckSumCombine(sum, cat.name);
         CheckSumCombine(sum, cat.graphic);
@@ -368,8 +368,8 @@ int Tech::ResearchTime(int empire_id, const ScriptingContext& context) const {
     }
 }
 
-unsigned int Tech::GetCheckSum() const {
-    unsigned int retval{0};
+uint32_t Tech::GetCheckSum() const {
+    uint32_t retval{0};
 
     CheckSums::CheckSumCombine(retval, m_name);
     CheckSums::CheckSumCombine(retval, m_description);
@@ -761,9 +761,9 @@ std::vector<std::string> TechManager::RecursivePrereqs(
     return retval;
 }
 
-unsigned int TechManager::GetCheckSum() const {
+uint32_t TechManager::GetCheckSum() const {
     CheckPendingTechs();
-    unsigned int retval{0};
+    uint32_t retval{0};
     for (auto const& name_type_pair : m_categories)
         CheckSums::CheckSumCombine(retval, name_type_pair);
     CheckSums::CheckSumCombine(retval, m_categories.size());

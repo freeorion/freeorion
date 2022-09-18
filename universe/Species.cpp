@@ -72,8 +72,8 @@ std::string FocusType::Dump(uint8_t ntabs) const {
     return retval;
 }
 
-unsigned int FocusType::GetCheckSum() const {
-    unsigned int retval{0};
+uint32_t FocusType::GetCheckSum() const {
+    uint32_t retval{0};
 
     CheckSums::CheckSumCombine(retval, m_name);
     CheckSums::CheckSumCombine(retval, m_description);
@@ -494,8 +494,8 @@ PlanetType Species::NextBetterPlanetType(PlanetType initial_planet_type) const {
     });
 }
 
-unsigned int Species::GetCheckSum() const {
-    unsigned int retval{0};
+uint32_t Species::GetCheckSum() const {
+    uint32_t retval{0};
 
     CheckSums::CheckSumCombine(retval, m_name);
     CheckSums::CheckSumCombine(retval, m_description);
@@ -788,9 +788,9 @@ void SpeciesManager::SetSpeciesShipsDestroyed(std::map<std::string, std::map<std
 { m_species_species_ships_destroyed = std::move(ssd); }
 
 
-unsigned int SpeciesManager::GetCheckSum() const {
+uint32_t SpeciesManager::GetCheckSum() const {
     CheckPendingSpeciesTypes();
-    unsigned int retval{0};
+    uint32_t retval{0};
     for (auto const& name_type_pair : s_species)
         CheckSums::CheckSumCombine(retval, name_type_pair);
     CheckSums::CheckSumCombine(retval, s_species.size());

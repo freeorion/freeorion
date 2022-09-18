@@ -357,8 +357,8 @@ bool BuildingType::EnqueueLocation(int empire_id, int location_id, const Scripti
     return m_enqueue_location->Eval(local_context, location);
 }
 
-unsigned int BuildingType::GetCheckSum() const {
-    unsigned int retval{0};
+uint32_t BuildingType::GetCheckSum() const {
+    uint32_t retval{0};
 
     CheckSums::CheckSumCombine(retval, m_name);
     CheckSums::CheckSumCombine(retval, m_description);
@@ -409,9 +409,9 @@ BuildingTypeManager& BuildingTypeManager::GetBuildingTypeManager() {
     return manager;
 }
 
-unsigned int BuildingTypeManager::GetCheckSum() const {
+uint32_t BuildingTypeManager::GetCheckSum() const {
     CheckPendingBuildingTypes();
-    unsigned int retval{0};
+    uint32_t retval{0};
     for (auto const& name_type_pair : m_building_types)
         CheckSums::CheckSumCombine(retval, name_type_pair);
     CheckSums::CheckSumCombine(retval, m_building_types.size());

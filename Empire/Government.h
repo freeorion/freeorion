@@ -51,7 +51,7 @@ public:
     //! and executions of the program and the function. Useful to verify that
     //! the parsed content is consistent without sending it all between
     //! clients and server. */
-    [[nodiscard]] unsigned int GetCheckSum() const;
+    [[nodiscard]] uint32_t GetCheckSum() const;
 
 private:
     Policy(const Policy&) = delete;
@@ -84,7 +84,7 @@ public:
     //! returns list of names of policies in specified category
     [[nodiscard]] std::vector<std::string_view> PolicyNames(const std::string& category_name) const;
     [[nodiscard]] std::set<std::string_view>    PolicyCategories() const;
-    [[nodiscard]] unsigned int                  GetCheckSum() const;
+    [[nodiscard]] uint32_t                      GetCheckSum() const;
 
     [[nodiscard]] iterator begin() const; //! iterator to the first policy
     [[nodiscard]] iterator end() const;   //! iterator to the last + 1th policy

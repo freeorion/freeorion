@@ -146,8 +146,8 @@ float Policy::AdoptionCost(int empire_id, const ScriptingContext& context) const
     }
 }
 
-unsigned int Policy::GetCheckSum() const {
-    unsigned int retval{0};
+uint32_t Policy::GetCheckSum() const {
+    uint32_t retval{0};
 
     CheckSums::CheckSumCombine(retval, m_name);
     CheckSums::CheckSumCombine(retval, m_description);
@@ -213,9 +213,9 @@ void PolicyManager::CheckPendingPolicies() const {
     Pending::SwapPending(m_pending_types, m_policies);
 }
 
-unsigned int PolicyManager::GetCheckSum() const {
+uint32_t PolicyManager::GetCheckSum() const {
     CheckPendingPolicies();
-    unsigned int retval{0};
+    uint32_t retval{0};
     for (auto const& policy : m_policies)
         CheckSums::CheckSumCombine(retval, policy);
     CheckSums::CheckSumCombine(retval, m_policies.size());

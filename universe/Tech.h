@@ -98,7 +98,7 @@ public:
       * and executions of the program and the function. Useful to verify that
       * the parsed content is consistent without sending it all between
       * clients and server. */
-    [[nodiscard]] unsigned int                      GetCheckSum() const;
+    [[nodiscard]] uint32_t GetCheckSum() const;
 
 private:
     Tech(const Tech&) = delete;
@@ -140,7 +140,7 @@ struct FO_COMMON_API TechCategory {
 };
 
 namespace CheckSums {
-    FO_COMMON_API void CheckSumCombine(unsigned int& sum, const TechCategory& cat);
+    FO_COMMON_API void CheckSumCombine(uint32_t& sum, const TechCategory& cat);
 }
 
 /** holds all FreeOrion techs.  Techs may be looked up by name and by category, and the next researchable techs can be querried,
@@ -239,7 +239,7 @@ public:
       * and executions of the program and the function. Useful to verify that
       * the parsed content is consistent without sending it all between
       * clients and server. */
-    [[nodiscard]] unsigned int             GetCheckSum() const;
+    [[nodiscard]] uint32_t GetCheckSum() const;
 
     using TechParseTuple = std::tuple<
         TechManager::TechContainer, // techs_

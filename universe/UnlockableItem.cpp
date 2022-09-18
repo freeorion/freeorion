@@ -28,7 +28,7 @@ bool operator!=(const UnlockableItem& lhs, const UnlockableItem& rhs)
 
 
 namespace CheckSums {
-    void CheckSumCombine(unsigned int& sum, const UnlockableItem& item) {
+    void CheckSumCombine(uint32_t& sum, const UnlockableItem& item) {
         TraceLogger() << "CheckSumCombine(Slot): " << typeid(item).name();
         CheckSumCombine(sum, item.type);
         CheckSumCombine(sum, item.name);
