@@ -218,11 +218,10 @@ PlayerConnection::~PlayerConnection() {
 bool PlayerConnection::EstablishedPlayer() const noexcept
 { return m_ID != INVALID_PLAYER_ID; }
 
-bool PlayerConnection::IsLocalConnection() const
-{ return (m_socket->remote_endpoint().address().is_loopback()); }
-
-void PlayerConnection::Start()
-{ AsyncReadMessage(); }
+void PlayerConnection::Start() {
+    m_is_local_connection = m_socket->remote_endpoint().address().is_loopback();
+    AsyncReadMessage();
+}
 
 void PlayerConnection::SendMessage(const Message& message) {
     if (!m_valid) {

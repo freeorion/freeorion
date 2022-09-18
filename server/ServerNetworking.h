@@ -229,7 +229,7 @@ public:
 
     /** Checks if client associated with this connection runs on the same
         physical machine as the server */
-    [[nodiscard]] bool IsLocalConnection() const;
+    [[nodiscard]] bool IsLocalConnection() const noexcept { return m_is_local_connection; }
 
     /** Checks if the player is established, has a valid name, id and client type. */
     [[nodiscard]] bool IsEstablished() const;
@@ -319,6 +319,7 @@ private:
     Networking::AuthRoles           m_roles;
     boost::uuids::uuid              m_cookie = boost::uuids::nil_uuid();
     bool                            m_valid = true;
+    bool                            m_is_local_connection = false;
 
     MessageAndConnectionFn          m_nonplayer_message_callback;
     MessageAndConnectionFn          m_player_message_callback;
