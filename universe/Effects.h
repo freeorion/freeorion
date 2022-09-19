@@ -215,6 +215,25 @@ private:
     std::unique_ptr<ValueRef::ValueRef<PlanetType>> m_type;
 };
 
+/** Sets the original planet type of the target to \a type.  This has no effect on non-Planet targets.
+    This does not change the planet itself, it only affects game effects that compare the current type
+    to the original type. Typically effects that trigger during universe creation will set both
+    current and original type, while later effect will only modify the current type. */
+class FO_COMMON_API SetOriginalType final : public Effect {
+public:
+    explicit SetOriginalType(std::unique_ptr<ValueRef::ValueRef<PlanetType>>&& type);
+
+    void Execute(ScriptingContext& context) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void SetTopLevelContent(const std::string& content_name) override;
+    [[nodiscard]] unsigned int GetCheckSum() const override;
+
+    [[nodiscard]] std::unique_ptr<Effect> Clone() const override;
+
+private:
+    std::unique_ptr<ValueRef::ValueRef<PlanetType>> m_type;
+};
+
 /** Sets the planet size of the target to \a size.  This has no effect on non-
   * Planet targets.  Note that changing the size of a PlanetType::PT_ASTEROID or PlanetType::PT_GASGIANT
   * planet will also change its type to PlanetType::PT_BARREN.  Similarly, changing size to

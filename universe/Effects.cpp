@@ -1426,6 +1426,55 @@ std::unique_ptr<Effect> SetPlanetType::Clone() const
 
 
 ///////////////////////////////////////////////////////////
+// SetOriginalType                                         //
+///////////////////////////////////////////////////////////
+SetOriginalType::SetOriginalType(std::unique_ptr<ValueRef::ValueRef<PlanetType>>&& type) :
+    m_type(std::move(type))
+{}
+
+void SetOriginalType::Execute(ScriptingContext& context) const {
+    if (!context.effect_target || context.effect_target->ObjectType() != UniverseObjectType::OBJ_PLANET)
+        return;
+    auto p = static_cast<Planet*>(context.effect_target);
+
+    ScriptingContext::CurrentValueVariant cvv{p->OriginalType()};
+    ScriptingContext type_context{context, cvv};
+    PlanetType type = m_type->Eval(type_context);
+    p->SetOriginalType(type);
+
+    if (type == PlanetType::PT_ASTEROIDS)
+        p->SetSize(PlanetSize::SZ_ASTEROIDS);
+    else if (type == PlanetType::PT_GASGIANT)
+        p->SetSize(PlanetSize::SZ_GASGIANT);
+    else if (p->Size() == PlanetSize::SZ_ASTEROIDS)
+        p->SetSize(PlanetSize::SZ_TINY);
+    else if (p->Size() == PlanetSize::SZ_GASGIANT)
+        p->SetSize(PlanetSize::SZ_HUGE);
+}
+
+std::string SetOriginalType::Dump(uint8_t ntabs) const
+{ return DumpIndent(ntabs) + "SetOriginalType type = " + m_type->Dump(ntabs) + "\n"; }
+
+void SetOriginalType::SetTopLevelContent(const std::string& content_name) {
+    if (m_type)
+        m_type->SetTopLevelContent(content_name);
+}
+
+unsigned int SetOriginalType::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "SetOriginalType");
+    CheckSums::CheckSumCombine(retval, m_type);
+
+    TraceLogger(effects) << "GetCheckSum(SetOriginalType): retval: " << retval;
+    return retval;
+}
+
+std::unique_ptr<Effect> SetOriginalType::Clone() const
+{ return std::make_unique<SetOriginalType>(ValueRef::CloneUnique(m_type)); }
+
+
+///////////////////////////////////////////////////////////
 // SetPlanetSize                                         //
 ///////////////////////////////////////////////////////////
 SetPlanetSize::SetPlanetSize(std::unique_ptr<ValueRef::ValueRef<PlanetSize>>&& size) :

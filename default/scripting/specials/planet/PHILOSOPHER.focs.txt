@@ -30,7 +30,10 @@ Special
             activation = Turn high = 0
             stackinggroup = "GAME_START_MOD_STACK"
             priority = [[BEFORE_ANYTHING_ELSE_PRIORITY]]
-            effects = SetPlanetType type = Radiated
+            effects = [
+                SetPlanetType type = Radiated
+                SetOriginalType type = Radiated
+            ]
 
         EffectsGroup
             scope = And [

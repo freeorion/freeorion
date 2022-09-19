@@ -101,6 +101,12 @@ namespace parse { namespace detail {
                 new_<Effect::SetPlanetType>(deconstruct_movable_(_1, _pass))) ]
             ;
 
+        set_original_type
+            =    tok.SetOriginalType_
+            >    label(tok.type_) > planet_type_rules.expr [ _val = construct_movable_(
+                new_<Effect::SetOriginalType>(deconstruct_movable_(_1, _pass))) ]
+            ;
+
         set_planet_size
             =    tok.SetPlanetSize_
             >    label(tok.planetsize_) > planet_size_rules.expr [
@@ -175,6 +181,7 @@ namespace parse { namespace detail {
             |   set_empire_stockpile
             |   set_empire_capital
             |   set_planet_type
+            |   set_original_type
             |   set_planet_size
             |   set_species
             |   set_species_opinion
@@ -187,6 +194,7 @@ namespace parse { namespace detail {
         set_empire_stockpile.name("SetEmpireStockpile");
         set_empire_capital.name("SetEmpireCapital");
         set_planet_type.name("SetPlanetType");
+        set_original_type.name("SetOriginalType");
         set_planet_size.name("SetPlanetSize");
         set_species.name("SetSpecies");
         set_species_opinion.name("SetSpeciesOpinion");
@@ -200,6 +208,7 @@ namespace parse { namespace detail {
         debug(set_empire_stockpile);
         debug(set_empire_capital);
         debug(set_planet_type);
+        debug(set_original_type);
         debug(set_planet_size);
         debug(set_species);
         debug(set_species_opinion);
