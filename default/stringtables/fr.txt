@@ -2160,7 +2160,7 @@ OPTIONS_DB_AI_CONFIG_TRAIT_AGGRESSION_FORCED_VALUE
 Valeur forcée pour le Niveau d'Agressivité. Une valeur de 0 à 5.
 
 OPTIONS_DB_AI_CONFIG_TRAIT_EMPIREID_FORCED
-Valeur boléenne pour test d'IA indiquant si toutes les IAs ont forcément le même Niveau selon l'EmpireID.
+Valeur boléenne pour le test d'IA indiquant si toutes les IAs ont forcément le même Niveau selon l'EmpireID.
 
 OPTIONS_DB_AI_CONFIG_TRAIT_EMPIREID_FORCED_VALUE
 Valeur forcée pour le Niveau selon l'EmpireID. Une valeur de 0 à 39.
@@ -6344,9 +6344,32 @@ METER_HAPPINESS_VALUE_LABEL
 Stabilité
 
 METER_HAPPINESS_VALUE_DESC
-'''La Stabilité de la [[metertype METER_POPULATION]] d'une colonie débute entre 1 et 5 suite à la colonisation initiale, et dépend de l'adaptation de l'[[encyclopedia ENC_SPECIES]] à l'[[encyclopedia ENVIRONMENT_TITLE]] de la planète. La Stabilité est réduite à 0 suite à une invasion, et peut également dépendre d'autres facteurs. Une Stabilité minimum de 5 est requise pour qu'une colonie puisse entreprendre la colonisation d'autres planètes. L'[[metertype METER_INDUSTRY]] et la [[metertype METER_RESEARCH]] ne commenceront à croître que si la Stabilité est au moins égale à 5.
+'''La Stabilité de la [[metertype METER_POPULATION]] d'une colonie débute entre 1 et 5 suite à la colonisation initiale, et dépend de l'adaptation de l'[[encyclopedia ENC_SPECIES]] à l'[[encyclopedia ENVIRONMENT_TITLE]] de la planète. La Stabilité est réduite à 0 suite à une invasion, et peut également dépendre d'autres facteurs. Une Stabilité minimum de 5 est requise pour qu'une colonie puisse entreprendre la colonisation d'autres planètes. L'[[metertype METER_INDUSTRY]] et la [[metertype METER_RESEARCH]] augmentent lentement si la Stabilité est inférieure à 5.
 
-La Projection Stabilité est le niveau optimal de Stabilité que la Population d'une planète tend à approcher, compte tenu des différents facteurs influençant la Stabilité planétaire. Sa valeur est liée aux <encyclopedia ENC_BUILDING_TYPE>Types de Structures</encyclopedia> bâtis sur la planète, aux [[encyclopedia ENC_TECH]] recherchées par l'empire, aux <encyclopedia ENC_SPECIAL>Particularités</encyclopedia> liées à la planète, ainsi que divers effets de jeu. Si ces facteurs changent, alors la valeur de Projection Stabilité est susceptible de fluctuer à son tour.'''
+La Projection Stabilité est le niveau optimal de Stabilité que la Population d'une planète tend à approcher, compte tenu des différents facteurs influençant la Stabilité planétaire. Sa valeur est liée aux <encyclopedia ENC_BUILDING_TYPE>Types de Structures</encyclopedia> bâtis sur la planète, aux [[encyclopedia ENC_TECH]] recherchées par l'empire, aux <encyclopedia ENC_SPECIAL>Particularités</encyclopedia> liées à la planète, ainsi que divers effets de jeu. Si ces facteurs changent, alors la valeur de Projection Stabilité est susceptible de fluctuer à son tour.
+
+Modificateurs de base de la Stabilité:
+[[STABILITY_MODIFIERS]]
+'''
+
+STABILITY_MODIFIERS
+'''• -/+ 5 Connexion par lignes d'[[metertype METER_SUPPLY]] à la Capitale - Dépend de la distance en nombre de Voies Spatiales à la Capitale ou à une structure [[buildingtype BLD_REGIONAL_ADMIN]]. Ne concerne pas les espèces <encyclopedia INDEPENDENT_SPECIES_TITLE>indépendantistes</encyclopedia> et les empires ayant adopté la Politique [[policy PLC_CONFEDERATION]].
+• +5 Monde Natal - les espèces vivant sur leur propre planète natale sont plus stables.
+• +5 Espèce de la Capitale - Les colonies abritant la même espèce que celle de la Capitale sont plus stables. Ne s'applique pas à la Capitale elle-même.
+• +10 Capitale - La colonie abrite une structure [[buildingtype BLD_IMPERIAL_PALACE]].
+• Environnement - Bonus ou pénalité selon la préférence environnementale de l'espèce. Est défini au démarrage selon les règles de la partie dans Divers: onglet Stabilité.
+• Taille de la planète - Bonus ou pénalité selon la taille de la planète. Est défini au démarrage selon les règles de la partie dans Divers: onglet Stabilité.
+• +1 Appréciation artisanale - 2 espèces artistiques ou plus dans le même système.
+• -2/+2 Focus aimés/détestés - Modifié par les Politiques [[policy PLC_LIBERTY]] et [[policy PLC_CONFORMANCE]].
+• -2/+2 Politiques aimées/détestées - Modifié par les Politiques [[policy PLC_LIBERTY]] et [[policy PLC_CONFORMANCE]].
+• Structures aimées/détestées (sur planète) - Modifié par les Politiques [[policy PLC_LIBERTY]] et [[policy PLC_CONFORMANCE]].
+• Structures aimées/détestées (dans système) - Modifié par les Politiques [[policy PLC_LIBERTY]] et [[policy PLC_CONFORMANCE]].
+• Structures aimées/détestées (hors système) - Modifié par les Politiques [[policy PLC_LIBERTY]] et [[policy PLC_CONFORMANCE]].
+• Particularités aimées/détestées (sur planète) - Modifié par les Politiques [[policy PLC_LIBERTY]] et [[policy PLC_CONFORMANCE]].
+• Particularités aimées/détestées (dans système) - Modifié par les Politiques [[policy PLC_LIBERTY]] et [[policy PLC_CONFORMANCE]].
+• Particularités - Par exemple les Particularités [[special GAIA_SPECIAL]] ou [[special WORLDTREE_SPECIAL]].
+• Politiques
+• Attributs d'Espèce'''
 
 METER_CAPACITY_VALUE_LABEL
 Stat - Primaire
@@ -6704,6 +6727,14 @@ ARTISTIC_SPECIES_TRAIT_TEXT
 '''Les espèces artistiques réalisent des travaux d'ordre artistique lorsque leur empire a adopté la Politique [[policy PLC_ARTISAN_WORKSHOPS]], laquelle génère de l'[[metertype METER_INFLUENCE]]. De plus, les autres planètes situées dans le même système et peuplées d'espèces artistiques différentes, jouiront d'une meilleure [[metertype METER_HAPPINESS]].
 
 Liste des espèces artistiques:'''
+
+INDEPENDENT_SPECIES_TITLE
+Attribut Indépendantiste
+
+INDEPENDENT_SPECIES_TRAIT_TEXT
+'''La [[metertype METER_HAPPINESS]] des espèces indépendantistes n'est pas modifiée par la distance aux Capitales ou aux Administrations Régionales Impériales.
+
+Liste des espèces indépendantistes:'''
 
 SNEAKY_TITLE
 Sournoise
@@ -13832,25 +13863,25 @@ DEF_GARRISON_1
 Réseau Bunker Planétaire
 
 DEF_GARRISON_1_DESC
-Augmente l'[[metertype METER_TROOPS]] max de [[value GARRISON_1_MAX_TROOPS_FLAT]] sur toutes les planètes de l'empire, indépendamment des caractéristiques de l'espèce.
+Augmente l'[[metertype METER_TROOPS]] max de [[value GARRISON_1_MAX_TROOPS_FLAT]] sur toutes les planètes de l'empire, indépendamment des attributs de l'espèce.
 
 DEF_GARRISON_2
 Milice Planétaire Défensive
 
 DEF_GARRISON_2_DESC
-Augmente l'[[metertype METER_TROOPS]] max de [[value GARRISON_2_MAXTROOPS_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes de l'empire (variable selon les caractéristiques défensives de l'espèce), et régénère l'Infanterie d'un bonus de [[value GARRISON_2_TROOPREGEN_FLAT]] par tour.
+Augmente l'[[metertype METER_TROOPS]] max de [[value GARRISON_2_MAXTROOPS_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes de l'empire (variable selon les attributs défensifs de l'espèce), et régénère l'Infanterie d'un bonus de [[value GARRISON_2_TROOPREGEN_FLAT]] par tour.
 
 DEF_GARRISON_3
 Réseau Fortication Planétaire
 
 DEF_GARRISON_3_DESC
-Augmente l'[[metertype METER_TROOPS]] max de [[value GARRISON_3_MAX_TROOPS_FLAT]] sur toutes les planètes de l'empire (indépendamment des caractéristiques de l'espèce), et régénère l'Infanterie d'un bonus de [[value GARRISON_3_TROOPREGEN_FLAT]] par tour cumulable avec le bonus de la [[DEF_GARRISON_2]].
+Augmente l'[[metertype METER_TROOPS]] max de [[value GARRISON_3_MAX_TROOPS_FLAT]] sur toutes les planètes de l'empire (indépendamment des attributs de l'espèce), et régénère l'Infanterie d'un bonus de [[value GARRISON_3_TROOPREGEN_FLAT]] par tour cumulable avec le bonus de la [[DEF_GARRISON_2]].
 
 DEF_GARRISON_4
 Armée Planétaire Défensive
 
 DEF_GARRISON_4_DESC
-Augmente l'[[metertype METER_TROOPS]] max de [[value GARRISON_4_MAX_TROOPS_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes de l'empire (variable selon les caractéristiques défensives de l'espèce), et régénère l'Infanterie d'un bonus de [[value GARRISON_4_TROOPREGEN_FLAT]] par tour cumulable avec les bonus du [[DEF_GARRISON_3]] et de la [[DEF_GARRISON_2]].
+Augmente l'[[metertype METER_TROOPS]] max de [[value GARRISON_4_MAX_TROOPS_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes de l'empire (variable selon les attributs défensifs de l'espèce), et régénère l'Infanterie d'un bonus de [[value GARRISON_4_TROOPREGEN_FLAT]] par tour cumulable avec les bonus du [[DEF_GARRISON_3]] et de la [[DEF_GARRISON_2]].
 
 DEF_PLANET_CLOAK
 Camouflage Planétaire
@@ -14167,7 +14198,7 @@ Couverture Nuageuse Planétaire
 SPY_STEALTH_1_DESC
 '''Confère la Particularité [[special CLOUD_COVER_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 20 la [[metertype METER_STEALTH]] des planètes et des structures qui s'y trouvent.
 
-Le coût de [[metertype METER_RESEARCH]] de cette technologie est diminué de la valeur du coût de recherche de l'[[tech SPY_STEALTH_PART_1]], si cette dernière a été déjà effectuée.'''
+Le coût de [[metertype METER_RESEARCH]] de cette technologie est réduit si la technologie [[tech SPY_STEALTH_PART_1]] a déjà été assimilée, et/ou si l'empire abrite une espèce [[encyclopedia SNEAKY_TITLE]].'''
 
 SPY_STEALTH_PART_1
 Affaiblissement Électromagnétique
@@ -14181,7 +14212,7 @@ Cendres Volcaniques Planétaires
 SPY_STEALTH_2_DESC
 '''Confère la Particularité [[special VOLCANIC_ASH_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 40 la [[metertype METER_STEALTH]] des planètes et des structures qui s'y trouvent.
 
-Le coût de [[metertype METER_RESEARCH]] de cette technologie est diminué de la valeur du coût de recherche de l'[[tech SPY_STEALTH_PART_2]], si cette dernière a été déjà effectuée.'''
+Le coût de [[metertype METER_RESEARCH]] de cette technologie est réduit si la technologie [[tech SPY_STEALTH_PART_2]] a déjà été assimilée, et/ou si l'empire abrite une espèce [[encyclopedia SNEAKY_TITLE]].'''
 
 SPY_STEALTH_PART_2
 Absorption Radiative
@@ -14195,7 +14226,7 @@ Camouflage Dimensionnel Planétaire
 SPY_STEALTH_3_DESC
 '''Confère la Particularité [[special DIM_RIFT_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 60 la [[metertype METER_STEALTH]] des planètes et des structures qui s'y trouvent.
 
-Le coût de [[metertype METER_RESEARCH]] de cette technologie est diminué de la valeur du coût de recherche du [[tech SPY_STEALTH_PART_3]], si cette dernière a été déjà effectuée.'''
+Le coût de [[metertype METER_RESEARCH]] de cette technologie est réduit si la technologie [[tech SPY_STEALTH_PART_3]] a déjà été assimilée, et/ou si l'empire abrite une espèce [[encyclopedia SNEAKY_TITLE]].'''
 
 SPY_STEALTH_PART_3
 Camouflage Dimensionnel
@@ -14208,6 +14239,8 @@ Camouflage de Phase Planétaire
 
 SPY_STEALTH_4_DESC
 '''Débloque l'équipement [[shippart ST_CLOAK_4]] pour les astronefs et confère la Particularité [[special VOID_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 80 la [[metertype METER_STEALTH]] des planètes et des structures qui s'y trouvent.
+
+Le coût de [[metertype METER_RESEARCH]] de cette technologie est réduit si l'empire abrite une espèce [[encyclopedia SNEAKY_TITLE]].
 
 Même les astronefs les plus furtifs émettent un rayonnement composé de particules quantiques. En modulant le front d'onde de ces particules, il est possible de le synchroniser avec le rayonnement ambiant, neutralisant ainsi les dispositifs de détection les plus avancés.'''
 
@@ -15126,9 +15159,7 @@ Traducteur Quasi-Universel
 BLD_TRANSLATOR_DESC
 '''Octroie 1 [[encyclopedia ENC_POLICY_SLOTS]] sociale.
 
-Augmente la capacité en Influence d'une planète, lorsque celle-ci est réglée sur le Focus Influence, de [[value TRANSLATOR_PER_SPECIES_INFLUENCE]] multiplié par la racine carrée du nombre d'espèces uniques sur les planètes contrôlées par l'empire possédant cette structure.
-
-Le coût de production diminue à mesure qu'augmente le nombre d'espèces uniques visibles par l'empire producteur de la structure.'''
+Augmente la capacité en Influence d'une planète, lorsque celle-ci est réglée sur le Focus Influence, de [[value TRANSLATOR_PER_SPECIES_INFLUENCE]] multiplié par la racine carrée du nombre d'espèces uniques sur les planètes contrôlées par l'empire possédant cette structure.'''
 
 BLD_COLONY_BASE
 Colonisateur Stellaire
