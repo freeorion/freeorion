@@ -3,7 +3,7 @@ from __future__ import annotations
 import freeOrionAIInterface as fo
 from copy import copy
 from logging import debug, error
-from typing import Callable, Iterable, Optional, Set, Tuple, Union
+from typing import Callable, Iterable, NamedTuple, Optional, Set, Tuple, Union
 
 import PlanetUtilsAI
 from AIDependencies import Tags
@@ -131,6 +131,12 @@ class _EmpireOutput:
         difference = max(low, min(high, target_stability)) - max(low, min(high, current_stability))
         debug(f"adjust_liberty on {planet}: difference={difference}, population={population}")
         return difference * population * get_named_real("PLC_LIBERTY_RESEARCH_BONUS_SCALING")
+
+
+class _Alternative(NamedTuple):
+    output: _EmpireOutput
+    costs: float
+    adopted: Set
 
 
 class PolicyManager:
@@ -411,26 +417,23 @@ class PolicyManager:
         # For this we use a fixed, low rating for liberty since later in the game (it must be later, since we have
         # conformance) it is usually not so great. Even more so when the empire was using conformance.
         adopt_options = sorted([(self._rate_policy(p), p) for p in conformance_exclusions], reverse=True)
-        best_output = current_output
-        best_costs = 0.0
-        best_adopted = set()
+        best = _Alternative(current_output, 0.0, set())
         costs = 0.0
         adopted = set()
         # Note that this function does not unlock artisans. Perhaps it should?
         # _process_policy_options cannot deadopt conformance to do it.
         for rating, policy in adopt_options:
             if rating > 0.0 and self._can_adopt(policy):
-                costs += fo.getPolicy(policy).adoptionCost()
                 self._adopt(policy)
+                costs += fo.getPolicy(policy).adoptionCost()
                 adopted.add(policy)
                 new_output = self._calculate_empire_output()
-                if new_output.is_better_than(best_output, costs - best_costs):
-                    best_output = new_output
-                    best_costs = costs
-                    best_adopted = adopted
-        for policy in adopted - best_adopted:
+                if new_output.is_better_than(best.output, costs - best.costs):
+                    best = _Alternative(new_output, costs, adopted)
+        for policy in adopted - best.adopted:
+            # best wasn't the last one, so undo all further adoptions
             self._deadopt(policy)
-        if not best_adopted:
+        if not best.adopted:
             # No alternative was better than current_output with conformance.
             self._adopt(conformance)
 
