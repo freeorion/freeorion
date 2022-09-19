@@ -732,6 +732,8 @@ namespace {
 }
 
 void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& parser) {
+    globals["NamedInteger"] = boost::python::raw_function(insert_named_<int>);
+    globals["NamedIntegerLookup"] = boost::python::raw_function(insert_named_lookup_<int>);
     globals["NamedReal"] = boost::python::raw_function(insert_named_<double>);
     globals["NamedRealLookup"] = boost::python::raw_function(insert_named_lookup_<double>);
     globals["Value"] = value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE));
