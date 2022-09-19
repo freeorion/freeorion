@@ -6,8 +6,9 @@ Tech(
     short_description="PLANET_PROTECT_SHORT_DESC",
     category="SPY_CATEGORY",
     researchcost=(
-        (160 - (80 * StatisticIf(float, condition=Source & OwnerHasTech(name="SPY_STEALTH_PART_1"))))
+        160
         * TECH_COST_MULTIPLIER
+        / (1 + StatisticIf(float, condition=Source & OwnerHasTech(name="SPY_STEALTH_PART_1")))
         / (1 + StatisticIf(float, condition=OwnedBy(empire=Source.Owner) & HasTag(name="SNEAKY")))
     ),
     researchturns=5,
