@@ -10627,7 +10627,7 @@ Stealth
 PC_STEALTH_DESC
 '''Stealth parts increase the [[metertype METER_STEALTH]] of a ship. The effects from these parts do not complement each other, only the highest rated part will affect the ship.
 
-If combat occurs in a system, ships that are invisible to an enemy are not targetted by the enemy's weapons. If the ship attacks, it may become visible for the following rounds.
+If combat occurs in a system, ships that are invisible to an enemy are not targetted by the enemy's weapons. If the ship attacks, it may become visible for the following combat rounds.
 
 See also: [[metertype METER_DETECTION]], [[encyclopedia DETECTION_TITLE]]'''
 
