@@ -48,6 +48,7 @@ namespace parse::detail {
         set_stockpile_or_vis_rule                   set_empire_stockpile;
         effect_parser_rule                          set_empire_capital;
         effect_parser_rule                          set_planet_type;
+        effect_parser_rule                          set_original_type;
         effect_parser_rule                          set_planet_size;
         effect_parser_rule                          set_species;
         string_string_int_rule                      set_species_opinion;
