@@ -605,7 +605,7 @@ void serialize(Archive& ar, Fleet& obj, unsigned int const version)
         ar & make_nvp("m_travel_route", obj.m_travel_route);
     }
     if (version < 3) {
-        double dummy_travel_distance;
+        double dummy_travel_distance = 0.0;
         ar & boost::serialization::make_nvp("m_travel_distance", dummy_travel_distance);
     }
     if (version >= 4) {
