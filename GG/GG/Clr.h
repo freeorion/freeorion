@@ -84,11 +84,24 @@ struct Clr
             a = 255;
     }
 
+    explicit constexpr operator uint32_t() const noexcept
+    {
+        uint32_t retval = r << 24;
+        retval += g << 16;
+        retval += b << 8;
+        retval += a;
+        return retval;
+    }
+
     uint8_t r = 0;    ///< the red channel
     uint8_t g = 0;    ///< the green channel
     uint8_t b = 0;    ///< the blue channel
     uint8_t a = 0;    ///< the alpha channel
 };
+
+static_assert(uint32_t{Clr{0,0,0,1}} == 1u);
+static_assert(uint32_t{Clr{0,0,2,3}} == 2*256u + 3u);
+static_assert(uint32_t{Clr{255,1,0,0}} == 256*256*256*255u + 256*256*1u);
 
 /** Returns true iff \a rhs and \a lhs are identical. */
 constexpr bool operator==(const Clr rhs, const Clr lhs) noexcept
