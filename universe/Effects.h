@@ -583,10 +583,10 @@ class FO_COMMON_API MoveTo final : public Effect {
 public:
     explicit MoveTo(std::unique_ptr<Condition::Condition>&& location_condition);
 
-    void        Execute(ScriptingContext& context) const override;
-    std::string Dump(uint8_t ntabs = 0) const override;
-    void        SetTopLevelContent(const std::string& content_name) override;
-    uint32_t    GetCheckSum() const override;
+    void                      Execute(ScriptingContext& context) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void                      SetTopLevelContent(const std::string& content_name) override;
+    [[nodiscard]] uint32_t    GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Effect> Clone() const override;
 
@@ -605,10 +605,10 @@ public:
                 std::unique_ptr<ValueRef::ValueRef<double>>&& focus_x = nullptr,
                 std::unique_ptr<ValueRef::ValueRef<double>>&& focus_y = nullptr);
 
-    void        Execute(ScriptingContext& context) const override;
-    std::string Dump(uint8_t ntabs = 0) const override;
-    void        SetTopLevelContent(const std::string& content_name) override;
-    uint32_t    GetCheckSum() const override;
+    void                      Execute(ScriptingContext& context) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void                      SetTopLevelContent(const std::string& content_name) override;
+    [[nodiscard]] uint32_t    GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Effect> Clone() const override;
 
@@ -629,10 +629,10 @@ public:
                 std::unique_ptr<ValueRef::ValueRef<double>>&& dest_x = nullptr,
                 std::unique_ptr<ValueRef::ValueRef<double>>&& dest_y = nullptr);
 
-    void        Execute(ScriptingContext& context) const override;
-    std::string Dump(uint8_t ntabs = 0) const override;
-    void        SetTopLevelContent(const std::string& content_name) override;
-    uint32_t    GetCheckSum() const override;
+    void                      Execute(ScriptingContext& context) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void                      SetTopLevelContent(const std::string& content_name) override;
+    [[nodiscard]] uint32_t    GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Effect> Clone() const override;
 
@@ -651,10 +651,10 @@ class FO_COMMON_API SetDestination final : public Effect {
 public:
     explicit SetDestination(std::unique_ptr<Condition::Condition>&& location_condition);
 
-    void        Execute(ScriptingContext& context) const override;
-    std::string Dump(uint8_t ntabs = 0) const override;
-    void        SetTopLevelContent(const std::string& content_name) override;
-    uint32_t    GetCheckSum() const override;
+    void                      Execute(ScriptingContext& context) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void                      SetTopLevelContent(const std::string& content_name) override;
+    [[nodiscard]] uint32_t    GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Effect> Clone() const override;
 
@@ -667,10 +667,10 @@ class FO_COMMON_API SetAggression final : public Effect {
 public:
     explicit SetAggression(FleetAggression aggression);
 
-    void        Execute(ScriptingContext& context) const override;
-    std::string Dump(uint8_t ntabs = 0) const override;
-    void        SetTopLevelContent(const std::string& content_name) override {}
-    uint32_t    GetCheckSum() const override;
+    void                      Execute(ScriptingContext& context) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void                      SetTopLevelContent(const std::string& content_name) override {}
+    [[nodiscard]] uint32_t    GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Effect> Clone() const override;
 
@@ -684,10 +684,10 @@ class FO_COMMON_API Victory final : public Effect {
 public:
     explicit Victory(std::string& reason_string); // TODO: Make this a ValueRef<std::string>*
 
-    void        Execute(ScriptingContext& context) const override;
-    std::string Dump(uint8_t ntabs = 0) const override;
-    void        SetTopLevelContent(const std::string& content_name) override {}
-    uint32_t    GetCheckSum() const override;
+    void                      Execute(ScriptingContext& context) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void                      SetTopLevelContent(const std::string& content_name) override {}
+    [[nodiscard]] uint32_t    GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Effect> Clone() const override;
 
@@ -703,10 +703,10 @@ public:
                           std::unique_ptr<ValueRef::ValueRef<double>>&& research_progress,
                           std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id = nullptr);
 
-    void        Execute(ScriptingContext& context) const override;
-    std::string Dump(uint8_t ntabs = 0) const override;
-    void        SetTopLevelContent(const std::string& content_name) override;
-    uint32_t    GetCheckSum() const override;
+    void                      Execute(ScriptingContext& context) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void                      SetTopLevelContent(const std::string& content_name) override;
+    [[nodiscard]] uint32_t    GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Effect> Clone() const override;
 
@@ -722,10 +722,10 @@ public:
                                UnlockableItemType unlock_type,
                                std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id = nullptr);
 
-    void        Execute(ScriptingContext& context) const override;
-    std::string Dump(uint8_t ntabs = 0) const override;
-    void        SetTopLevelContent(const std::string& content_name) override;
-    uint32_t    GetCheckSum() const override;
+    void                      Execute(ScriptingContext& context) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void                      SetTopLevelContent(const std::string& content_name) override;
+    [[nodiscard]] uint32_t    GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Effect> Clone() const override;
 
