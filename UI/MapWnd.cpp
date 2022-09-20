@@ -2485,9 +2485,19 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
 namespace {
     constexpr GG::Pt BORDER_INSET{GG::X(1.0f), GG::Y(1.0f)};
 
-    std::map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt>>>
-        GetFleetFutureTurnDetectionRangeCircles(const ScriptingContext& context, const std::set<int>& fleet_ids) {
-        std::map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt>>> retval;
+    // Reimplementation of the boost::hash_range function, embedding
+    // boost::hash_combine and using std::hash instead of boost::hash
+    struct hash_clr {
+        std::size_t operator()(const GG::Clr& clr) const noexcept {
+            static constexpr std::hash<uint32_t> hasher;
+            return hasher(uint32_t(clr));
+        }
+    };
+
+    auto GetFleetFutureTurnDetectionRangeCircles(const ScriptingContext& context,
+                                                 const std::set<int>& fleet_ids)
+    {
+        std::unordered_map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt>>, hash_clr> retval;
 
         for (const auto& fleet : context.ContextObjects().findRaw<Fleet>(fleet_ids)) {
             float fleet_detection_range = 0.0f;
@@ -2498,10 +2508,12 @@ namespace {
             // skip fleets with no detection range
             if (fleet_detection_range <= 0.0f)
                 continue;
+            const int radius = static_cast<int>(fleet_detection_range);
+            const GG::Pt rad_pt{GG::X{radius}, GG::Y{radius}};
 
             // get colour... empire, monster, or neutral
             auto empire = context.GetEmpire(fleet->Owner());
-            GG::Clr empire_colour = empire ? empire->Color() :
+            const GG::Clr empire_colour = empire ? empire->Color() :
                 fleet->HasMonsters(context.ContextUniverse()) ? GG::CLR_RED : GG::CLR_WHITE;
 
             // get all current and future positions of fleet
@@ -2516,8 +2528,6 @@ namespace {
                 { continue; }
 
                 GG::Pt circle_centre = GG::Pt{GG::X(node.x), GG::Y(node.y)};
-                int radius = static_cast<int>(fleet_detection_range);
-                GG::Pt rad_pt{GG::X{radius}, GG::Y{radius}};
                 retval[empire_colour].emplace_back(circle_centre - rad_pt, circle_centre + rad_pt);
             }
         }
@@ -4172,7 +4182,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
     //auto empire_position_max_detection_ranges = universe.GetEmpiresPositionNextTurnFleetDetectionRanges(context);
 
 
-    std::map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt>>> circles;
+    std::unordered_map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt>>, hash_clr> circles;
 
 
     for (const auto& [empire_id, detection_circles] : empire_position_max_detection_ranges) {
