@@ -40,7 +40,7 @@ class GL2DVertexBuffer;
 
 /** Returns a string of the form "<rgba r g b a>" from a Clr object with color
     channels r, b, g, a. */
-GG_API std::string RgbaTag(const Clr& c);
+GG_API std::string RgbaTag(Clr c);
 
 
 /** \brief A bitmapped font rendering class.
@@ -141,28 +141,32 @@ public:
         */
         void Bind(const std::string& str_);
 
+        [[nodiscard]] auto data() const noexcept { return str->data() + first; }
+
         /** Returns an iterator to the beginning of the substring. */
-        std::string::const_iterator begin() const;
+        [[nodiscard]] auto begin() const { return std::next(str->begin(), first); }
 
         /** Returns an iterator to one-past-the-end of the substring. */
-        std::string::const_iterator end() const;
+        [[nodiscard]] auto end() const { return std::next(str->begin(), second); }
 
         /** True iff .first == .second. */
-        bool empty() const;
+        [[nodiscard]] bool empty() const noexcept { return first == second; }
 
         /** Length, in original string chars, of the substring. */
-        std::size_t size() const;
+        [[nodiscard]] std::size_t size() const noexcept { return second - first; }
 
         /** Implicit conversion to std::string. */
-        operator std::string() const;
+        [[nodiscard]] operator std::string() const { return std::string(begin(), end()); }
+        [[nodiscard]] operator std::string_view() const { return {data(), size()}; }
 
         /** Comparison with std::string. */
         bool operator==(const std::string& rhs) const;
         bool operator==(std::string_view rhs) const;
+        bool operator==(const Substring& rhs) const;
 
         /** Comparison with std::string, std::string_view. */
-        bool operator!=(const std::string& rhs) const;
-        bool operator!=(std::string_view rhs) const;
+        bool operator!=(const std::string& rhs) const { return !operator==(rhs); }
+        bool operator!=(std::string_view rhs) const { return !operator==(rhs); }
 
         /** Concatenation with base.  \a rhs.first must be <= \a rhs.second.
             .second must be equal to \a rhs.first (*this and \a rhs must be
