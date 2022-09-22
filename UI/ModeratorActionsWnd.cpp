@@ -112,14 +112,14 @@ void ModeratorActionsWnd::CompleteConstruction() {
     for (PlanetSize planet_size = PlanetSize::SZ_TINY; planet_size != PlanetSize::NUM_PLANET_SIZES;
          planet_size = PlanetSize(int(planet_size) + 1))
     {
-        std::shared_ptr<GG::Texture> texture = ClientUI::PlanetSizeIcon(planet_size);
+        auto texture = ClientUI::PlanetSizeIcon(planet_size);
         auto row = GG::Wnd::Create<GG::DropDownList::Row>();
         auto icon = GG::Wnd::Create<GG::StaticGraphic>(std::move(texture), style);
         icon->Resize(GG::Pt(CONTROL_WIDTH, CONTROL_HEIGHT));
         row->push_back(std::move(icon));
         m_planet_size_drop->Insert(std::move(row));
     }
-    GG::DropDownList::iterator it = m_planet_size_drop->begin();
+    auto it = m_planet_size_drop->begin();
     std::advance(it, 2);
     m_planet_size_drop->Select(it); // default select 3rd size (should be medium?)
     m_planet_size_drop->SelChangedSignal.connect(boost::bind(&ModeratorActionsWnd::CreatePlanet, this));

@@ -61,7 +61,7 @@ namespace {
                                        resolver_query_base::address_configured |
                                        resolver_query_base::numeric_service);
             udp::resolver::iterator end_it;
-            for (udp::resolver::iterator it = resolver.resolve(query); it != end_it; ++it) {
+            for (auto it = resolver.resolve(query); it != end_it; ++it) {
                 udp::endpoint receiver_endpoint = *it;
 
                 m_socket.close();

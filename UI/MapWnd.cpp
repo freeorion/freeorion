@@ -772,7 +772,7 @@ public:
             // shown_length determined above but still less than the max_shown_length, and if so then use that value.
             // Note: if the ZOOM_STEP_SIZE is too large, then potential values in the set of fixed distances
             // might get skipped over.
-            std::set<double>::iterator distance_ub = fixed_distances.upper_bound(max_shown_length/ZOOM_STEP_SIZE);
+            auto distance_ub = fixed_distances.upper_bound(max_shown_length/ZOOM_STEP_SIZE);
             if (distance_ub != fixed_distances.end() && *distance_ub <= max_shown_length) {
                 TraceLogger()  << " MapScaleLine::Update distance_ub: " << *distance_ub;
                 shown_length = *distance_ub;

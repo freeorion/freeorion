@@ -35,7 +35,7 @@ namespace parse {
 
     void parse_and_erase_macro_definitions(std::string& text, std::map<std::string, std::string>& macros) {
         try {
-            std::string::iterator text_it = text.begin();
+            auto text_it = text.begin();
             while (true) {
                 // find next macro definition
                 smatch match;
@@ -148,8 +148,8 @@ namespace parse {
                         std::string macro_params = match[2]; // arg1,arg2,arg3,etc.
                         if (!macro_params.empty()) { // found macro parameters
                             int replace_number = 1;
-                            for (boost::split_iterator<std::string::iterator> it =
-                                    boost::make_split_iterator(macro_params, boost::first_finder(",", boost::is_iequal()));
+                            for (auto it = boost::make_split_iterator(
+                                macro_params, boost::first_finder(",", boost::is_iequal()));
                                 it != boost::split_iterator<std::string::iterator>();
                                 ++it, ++replace_number)
                             {

@@ -218,7 +218,7 @@ const std::map<std::string, std::shared_ptr<VectorTexture>>& VectorTextureManage
 
 std::shared_ptr<VectorTexture> VectorTextureManager::GetTexture(const boost::filesystem::path& path)
 {
-    std::map<std::string, std::shared_ptr<VectorTexture>>::iterator it = m_textures.find(path.generic_string());
+    auto it = m_textures.find(path.generic_string());
     if (it == m_textures.end()) { // if no such texture was found, attempt to load it now, using name as the filename
         //std::cout << "VectorTextureManager::GetTexture storing new texture under name: " << path.generic_string();
         return (m_textures[path.generic_string()] = LoadTexture(path));
@@ -232,7 +232,7 @@ void VectorTextureManager::FreeTexture(const boost::filesystem::path& path)
 
 void VectorTextureManager::FreeTexture(const std::string& name)
 {
-    std::map<std::string, std::shared_ptr<VectorTexture>>::iterator it = m_textures.find(name);
+    auto it = m_textures.find(name);
     if (it != m_textures.end())
         m_textures.erase(it);
 }

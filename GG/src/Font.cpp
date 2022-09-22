@@ -1515,7 +1515,7 @@ void Font::ChangeTemplatedText(
 
     // Find the target text element.
     std::size_t curr_offset = 0;
-    std::vector<std::shared_ptr<Font::TextElement>>::iterator te_it = text_elements.begin();
+    auto te_it = text_elements.begin();
     while (te_it != text_elements.end()) {
         if ((*te_it)->Type() == TextElement::TextElementType::TEXT) {
             // Change the target text element
@@ -1540,7 +1540,7 @@ void Font::ChangeTemplatedText(
     if (te_it == text_elements.end())
         return;
 
-    std::vector<std::shared_ptr<Font::TextElement>>::iterator start_of_reflow = te_it;
+    auto start_of_reflow = te_it;
 
     if (change_of_len != 0) {
         ++te_it;
@@ -2182,7 +2182,7 @@ bool FontManager::HasFont(std::string font_filename, unsigned int pts) const
 std::shared_ptr<Font> FontManager::GetFont(std::string font_filename, unsigned int pts)
 {
     std::vector<UnicodeCharset> v;
-    std::vector<UnicodeCharset>::iterator it = v.end();
+    auto it = v.end();
     return GetFont(std::move(font_filename), pts, it, it);
 }
 
@@ -2190,7 +2190,7 @@ std::shared_ptr<Font> FontManager::GetFont(std::string font_filename, unsigned i
                                            const std::vector<uint8_t>& file_contents)
 {
     std::vector<UnicodeCharset> v;
-    std::vector<UnicodeCharset>::iterator it = v.end();
+    auto it = v.end();
     return GetFont(std::move(font_filename), pts, file_contents, it, it);
 }
 

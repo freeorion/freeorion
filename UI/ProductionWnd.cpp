@@ -135,7 +135,7 @@ namespace {
 
             for (int droplist_quantity : myQuantSet) {
                 auto row =  GG::Wnd::Create<QuantRow>(droplist_quantity, build.item.design_id, nwidth, h, inProgress, amBlockType);
-                GG::DropDownList::iterator latest_it = Insert(row);
+                auto latest_it = Insert(row);
 
                 if (amBlockType) {
                     if (build.blocksize == droplist_quantity)

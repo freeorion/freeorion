@@ -80,7 +80,7 @@ void QueueListBox::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags
         return;
     }
     if (key == GG::Key::GGK_DELETE) {
-        QueueListBox::iterator it = Caret();
+        auto it = Caret();
         if (it == end())
             return;
         QueueItemDeletedSignal(it);
