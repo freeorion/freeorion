@@ -906,13 +906,13 @@ void GovernmentWnd::PolicyPalette::Populate() {
 class PolicySlotControl : public GG::Control {
 public:
     PolicySlotControl();
-    PolicySlotControl(std::string slot_category, int category_index, unsigned int slot_index);
+    PolicySlotControl(std::string slot_category, int category_index, std::size_t slot_index);
     void CompleteConstruction() override;
 
-    const std::string&  SlotCategory() const    { return m_slot_category; }
-    const Policy*       GetPolicy() const;
-    int                 CategoryIndex() const   { return m_category_index; }
-    unsigned int        SlotIndex() const       { return m_slot_index; }
+    [[nodiscard]] const auto&   SlotCategory() const noexcept  { return m_slot_category; }
+    [[nodiscard]] const Policy* GetPolicy() const;
+    [[nodiscard]] auto          CategoryIndex() const noexcept { return m_category_index; }
+    [[nodiscard]] auto          SlotIndex() const noexcept     { return m_slot_index; }
 
     void StartingChildDragDrop(const GG::Wnd* wnd, const GG::Pt& offset) override;
     void CancellingChildDragDrop(const std::vector<const GG::Wnd*>& wnds) override;
@@ -943,12 +943,12 @@ protected:
                          const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const override;
 
 private:
-    bool                                m_highlighted = false;
-    std::string                         m_slot_category;
-    int                                 m_category_index = -1;
-    unsigned int                        m_slot_index = 0;
-    std::shared_ptr<PolicyControl>      m_policy_control = nullptr;
-    std::shared_ptr<GG::StaticGraphic>  m_background = nullptr;
+    std::string                        m_slot_category;
+    std::shared_ptr<PolicyControl>     m_policy_control;
+    std::shared_ptr<GG::StaticGraphic> m_background;
+    int                                m_category_index = -1;
+    std::size_t                        m_slot_index = 0;
+    bool                               m_highlighted = false;
 };
 
 PolicySlotControl::PolicySlotControl() :
@@ -956,7 +956,7 @@ PolicySlotControl::PolicySlotControl() :
 {}
 
 PolicySlotControl::PolicySlotControl(std::string slot_category, int category_index,
-                                     unsigned int slot_index) :
+                                     std::size_t slot_index) :
     GG::Control(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT, GG::INTERACTIVE),
     m_slot_category(std::move(slot_category)),
     m_category_index(category_index),
@@ -1434,7 +1434,7 @@ int GovernmentWnd::MainPanel::FindEmptySlotForPolicy(const Policy* policy) const
     { return -1; }
 
     // scan through slots to find one that can "mount" policy
-    for (unsigned int i = 0; i < m_slots.size(); ++i) {
+    for (std::size_t i = 0u; i < m_slots.size(); ++i) {
         if (m_slots[i]->GetPolicy())
             continue;   // slot already occupied
         auto& slot_category = m_slots[i]->SlotCategory();
