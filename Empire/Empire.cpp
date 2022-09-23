@@ -286,10 +286,7 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
     // if no particular slot was specified, try to find a suitable slot in category
     if (slot == INVALID_SLOT_INDEX) {
         // search for any suitable empty slot
-        for (int i = adopted_policies_in_category.size();
-             i < static_cast<int>(adopted_policies_in_category.size());
-             ++i)
-        {
+        for (std::size_t i = 0u; i < adopted_policies_in_category.size(); ++i) {
             if (adopted_policies_in_category[i].empty()) {
                 slot = i;
                 break;
