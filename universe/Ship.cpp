@@ -583,9 +583,8 @@ void Ship::Resupply() {
     // set all part capacities equal to any associated max capacity
     // this "upgrades" any direct-fire weapon parts to their latest-allowed
     // strengths, and replaces any lost fighters
-    for (auto& entry : m_part_meters) {
-        const auto& part_name = entry.first.second;
-        MeterType meter_type = entry.first.first;
+    for (auto& [type_str, meter] : m_part_meters) {
+        const auto& [meter_type, part_name] = type_str;
         MeterType paired_meter_type = MeterType::INVALID_METER_TYPE;
         switch(meter_type) {
         case MeterType::METER_CAPACITY:       paired_meter_type = MeterType::METER_MAX_CAPACITY;         break;
@@ -601,8 +600,8 @@ void Ship::Resupply() {
 
         const Meter& max_meter = max_it->second;
 
-        entry.second.SetCurrent(max_meter.Current());
-        entry.second.BackPropagate();
+        meter.SetCurrent(max_meter.Current());
+        meter.BackPropagate();
     }
 }
 
@@ -661,15 +660,13 @@ void Ship::ResetTargetMaxUnpairedMeters() {
 
     // max meters are always treated as target/max meters.
     // other meters may be unpaired if there is no associated max or target meter
-    for (auto& entry : m_part_meters) {
-        const auto& part_name = entry.first.second;
-        MeterType meter_type = entry.first.first;
+    for (auto& [type_str, meter] : m_part_meters) {
+        const auto& [meter_type, part_name] = type_str;
         MeterType paired_meter_type = MeterType::INVALID_METER_TYPE;
-
         switch(meter_type) {
         case MeterType::METER_MAX_CAPACITY:
         case MeterType::METER_MAX_SECONDARY_STAT:
-            entry.second.ResetCurrent();
+            meter.ResetCurrent();
             continue;
             break;
         case MeterType::METER_CAPACITY:        paired_meter_type = MeterType::METER_MAX_CAPACITY;         break;
@@ -684,7 +681,7 @@ void Ship::ResetTargetMaxUnpairedMeters() {
             continue;   // is a max/target meter associated with the meter, so don't treat this a target/max
 
         // no associated target/max meter, so treat this meter as unpaired
-        entry.second.ResetCurrent();
+        meter.ResetCurrent();
     }
 }
 
@@ -693,9 +690,9 @@ void Ship::ResetPairedActiveMeters() {
 
     // meters are paired only if they are not max/target meters, and there is an
     // associated max/target meter
-    for (auto& entry : m_part_meters) {
-        const auto& part_name = entry.first.second;
-        MeterType meter_type = entry.first.first;
+    for (auto& [type_str, meter] : m_part_meters) {
+        (void)meter;
+        const auto& [meter_type, part_name] = type_str;
         MeterType paired_meter_type = MeterType::INVALID_METER_TYPE;
 
         switch(meter_type) {
@@ -716,7 +713,7 @@ void Ship::ResetPairedActiveMeters() {
 
         // has an associated max/target meter.
         //std::map<std::pair<MeterType, std::string>, Meter>::iterator
-        entry.second.SetCurrent(entry.second.Initial());
+        meter.SetCurrent(meter.Initial());
     }
 }
 
@@ -753,12 +750,11 @@ void Ship::ClampMeters() {
     UniverseObject::GetMeter(MeterType::METER_SPEED)->ClampCurrentToRange();
 
     // clamp most part meters to basic range limits
-    for (auto& entry : m_part_meters) {
-        MeterType meter_type = entry.first.first;
-        switch(meter_type) {
+    for (auto& [type_str, meter] : m_part_meters) {
+        switch(type_str.first) {
         case MeterType::METER_MAX_CAPACITY:
         case MeterType::METER_MAX_SECONDARY_STAT:
-            entry.second.ClampCurrentToRange();
+            meter.ClampCurrentToRange();
             [[fallthrough]];
         default:
             break;
@@ -767,9 +763,8 @@ void Ship::ClampMeters() {
 
     // special case extra clamping for paired active meters dependent
     // on their associated max meter...
-    for (auto& entry : m_part_meters) {
-        const auto& part_name = entry.first.second;
-        MeterType meter_type = entry.first.first;
+    for (auto& [type_str, meter] : m_part_meters) {
+        const auto& [meter_type, part_name] = type_str;
         MeterType paired_meter_type = MeterType::INVALID_METER_TYPE;
         switch(meter_type) {
         case MeterType::METER_CAPACITY:        paired_meter_type = MeterType::METER_MAX_CAPACITY;         break;
@@ -784,7 +779,7 @@ void Ship::ClampMeters() {
             continue;
 
         const Meter& max_meter = max_it->second;
-        entry.second.ClampCurrentToRange(Meter::DEFAULT_VALUE, max_meter.Current());
+        meter.ClampCurrentToRange(Meter::DEFAULT_VALUE, max_meter.Current());
     }
 }
 
@@ -792,8 +787,8 @@ void Ship::ClampMeters() {
 // Free Functions //
 ////////////////////
 std::string NewMonsterName() {
-    static std::vector<std::string> monster_names = UserStringList("MONSTER_NAMES");
-    static std::map<std::string, int> monster_names_used;
+    auto monster_names = UserStringList("MONSTER_NAMES");
+    static std::unordered_map<std::string, std::size_t> monster_names_used;
 
     if (monster_names.empty())
         monster_names.push_back(UserString("MONSTER"));
