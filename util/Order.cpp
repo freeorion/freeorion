@@ -155,6 +155,10 @@ namespace {
 
     constexpr bool IsControlChar(const uint8_t c)
     { return c < 0x20 || c == 0x7F || (c >= 0x81 && c <= 0x9F); }
+
+    constexpr std::string_view formatting_chars = "<>;:,.@#$%&*(){}'\"/?\\`[]|\a\b\f\n\r\t\b";
+    constexpr bool IsFormattingChar(char c)
+    { return formatting_chars.find(c) != std::string_view::npos; }
 }
 
 ////////////////////////////////////////////////
@@ -206,6 +210,11 @@ bool RenameOrder::Check(int empire, int object, std::string new_name,
         return false;
     }
 
+    // disallow formatting characters
+    if (std::any_of(new_name.begin(), new_name.end(), IsFormattingChar)) {
+        ErrorLogger() << "RenameOrder::Check : passed formatting character in name.";
+        return false;
+    }
 
     auto obj = context.ContextObjects().get(object);
 
@@ -292,6 +301,11 @@ bool NewFleetOrder::Check(int empire, const std::string& fleet_name, const std::
 {
     if (ship_ids.empty()) {
         ErrorLogger() << "Empire " << empire << " attempted to create a new fleet (" << fleet_name << ") without ships";
+        return false;
+    }
+
+    if (auto pos = fleet_name.find_first_of(formatting_chars); pos != std::string::npos) {
+        ErrorLogger() << "New fleet name contains banned character: \"" << fleet_name[pos] << "\"";
         return false;
     }
 
