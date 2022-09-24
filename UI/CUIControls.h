@@ -279,14 +279,13 @@ public:
     void LosingFocus() override;
     void Render() override;
     virtual bool AutoComplete() { return false; };
-    void DisallowChars(std::string chars)
-    { m_disallowed_chars = std::move(chars); }
+    void DisallowChars(std::string_view chars) { m_disallowed_chars = chars; }
 
     mutable boost::signals2::signal<void ()> GainingFocusSignal;
     mutable boost::signals2::signal<void ()> LosingFocusSignal;
 
 private:
-    std::string m_disallowed_chars;
+    std::string_view m_disallowed_chars;
 };
 
 /** a FreeOrion Edit control that replaces its displayed characters with a

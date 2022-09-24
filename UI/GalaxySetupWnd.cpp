@@ -151,6 +151,8 @@ namespace {
         db.Add("setup.initial.species",         UserStringNop("OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME"),    std::string("SP_HUMAN"),    Validator<std::string>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
+
+    constexpr std::string_view formatting_chars = "<>;:,.@#$%&*(){}'\"/?\\`[]|\a\b\f\n\r\t\b";
 }
 
 ////////////////////////////////////////////////
@@ -557,7 +559,7 @@ void GalaxySetupPanel::CompleteConstruction() {
     } else {
         m_seed_edit = GG::Wnd::Create<CUIEdit>(m_seed);
     }
-    m_seed_edit->DisallowChars("<>/\\[]'`?{}, ");
+    m_seed_edit->DisallowChars(formatting_chars);
 
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
@@ -990,12 +992,14 @@ void GalaxySetupWnd::CompleteConstruction() {
     m_player_name_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_player_name_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.player.name")));
     m_player_name_edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>("setup.player.name"));
+    m_player_name_edit->DisallowChars(formatting_chars);
 
     // empire name
     m_empire_name_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_EMPIRE_NAME"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_empire_name_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_empire_name_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.empire.name")));
     m_empire_name_edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>("setup.empire.name"));
+    m_empire_name_edit->DisallowChars(formatting_chars);
 
     // empire color
     m_empire_color_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_EMPIRE_COLOR"), GG::FORMAT_RIGHT, GG::INTERACTIVE);

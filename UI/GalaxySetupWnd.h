@@ -161,9 +161,9 @@ private:
     std::shared_ptr<GalaxySetupPanel>       m_galaxy_setup_panel;    //!< The GalaxySetupPanel that does most of the work of the dialog
     std::shared_ptr<GameRulesPanel>         m_game_rules_panel;
     std::shared_ptr<GG::Label>              m_player_name_label;
-    std::shared_ptr<GG::Edit>               m_player_name_edit;
+    std::shared_ptr<CUIEdit>                m_player_name_edit;
     std::shared_ptr<GG::Label>              m_empire_name_label;
-    std::shared_ptr<GG::Edit>               m_empire_name_edit;
+    std::shared_ptr<CUIEdit>                m_empire_name_edit;
     std::shared_ptr<GG::Label>              m_empire_color_label;
     std::shared_ptr<EmpireColorSelector>    m_empire_color_selector;
     std::shared_ptr<SpeciesSelector>        m_starting_secies_selector;
