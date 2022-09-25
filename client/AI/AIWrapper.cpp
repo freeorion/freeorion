@@ -640,7 +640,7 @@ namespace {
                 std::invalid_argument(""), name, description, context.current_turn,
                 empire_id, hull, parts, icon, model, name_desc_in_stringtable, false, uuid);
             AIClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ShipDesignOrder>(empire_id, *design),
+                std::make_shared<ShipDesignOrder>(empire_id, *design, context),
                 context);
             return 1;
 

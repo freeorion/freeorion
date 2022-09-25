@@ -51,6 +51,8 @@ struct Availability {
     };
 };
 
+class CUIEdit;
+
 namespace {
     constexpr std::string_view PART_CONTROL_DROP_TYPE_STRING = "Part Control";
     constexpr std::string_view HULL_PARTS_ROW_DROP_TYPE_STRING = "Hull and Parts Row";
@@ -134,10 +136,12 @@ namespace {
 
     typedef std::map<std::pair<ShipPartClass, ShipSlotType>, std::vector<const ShipPart*>> PartGroupsType;
 
-    const std::string DESIGN_FILENAME_PREFIX = "ShipDesign-";
-    const std::string DESIGN_FILENAME_EXTENSION = ".focs.txt";
-    const std::string DESIGN_MANIFEST_PREFIX = "ShipDesignOrdering";
-    const std::string UNABLE_TO_OPEN_FILE = "Unable to open file";
+    constexpr std::string_view formatting_chars = "<>;:,.@#$%&*(){}'\"/?\\`[]|\a\b\f\n\r\t\b";
+
+    constexpr std::string_view DESIGN_FILENAME_PREFIX = "ShipDesign-";
+    constexpr std::string_view DESIGN_FILENAME_EXTENSION = ".focs.txt";
+    constexpr std::string_view DESIGN_MANIFEST_PREFIX = "ShipDesignOrdering";
+    constexpr std::string_view UNABLE_TO_OPEN_FILE = "Unable to open file";
     boost::filesystem::path SavedDesignsDir() { return GetUserDataDir() / "shipdesigns/"; }
 
     void ReportFileError(const boost::filesystem::path& file) {
@@ -176,8 +180,8 @@ namespace {
         // Since there is no easy way to guarantee that an arbitrary design name with possibly
         // embedded decorator code is a safe file name, use the UUID. The users will never interact
         // with this filename.
-        std::string file_name =
-            DESIGN_FILENAME_PREFIX + boost::uuids::to_string(design.UUID()) + DESIGN_FILENAME_EXTENSION;
+        auto file_name = std::string(DESIGN_FILENAME_PREFIX)
+            .append(boost::uuids::to_string(design.UUID())).append(DESIGN_FILENAME_EXTENSION);
 
         return boost::filesystem::absolute(designs_dir_path / file_name);
     }
@@ -373,7 +377,7 @@ namespace {
         auto new_current_design{*design};
         new_current_design.SetUUID(boost::uuids::random_generator()());
 
-        auto order = std::make_shared<ShipDesignOrder>(empire_id, new_current_design);
+        auto order = std::make_shared<ShipDesignOrder>(empire_id, new_current_design, context);
         GGHumanClientApp::GetApp()->Orders().IssueOrder(order, context);
 
         auto& current_manager = GetDisplayedDesignsManager();
@@ -404,7 +408,7 @@ namespace {
         if (obsolete) {
             // make empire forget on the server
             GGHumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ShipDesignOrder>(empire_id, design_id, true),
+                std::make_shared<ShipDesignOrder>(empire_id, design_id, true, context),
                 context);
         } else {
             const auto design = context.ContextUniverse().GetShipDesign(design_id);
@@ -416,7 +420,7 @@ namespace {
 
             //make known to empire on server
             GGHumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ShipDesignOrder>(empire_id, design_id),
+                std::make_shared<ShipDesignOrder>(empire_id, design_id, context),
                 context);
         }
     }
@@ -430,7 +434,7 @@ namespace {
         const auto maybe_obsolete = manager.IsObsolete(design_id, context); // purpose of this obsolescence check is unclear... author didn't comment
         if (maybe_obsolete && !*maybe_obsolete)
             GGHumanClientApp::GetApp()->Orders().IssueOrder(  // erase design id order : empire should forget this design
-                std::make_shared<ShipDesignOrder>(empire_id, design_id, true),
+                std::make_shared<ShipDesignOrder>(empire_id, design_id, true, context),
                 context);
         manager.Remove(design_id);
     }
@@ -515,10 +519,8 @@ namespace {
                 bool stem_wrong = extension_wrong || stem_extension.empty() || stem_extension != ".focs";
 
                 if (extension_wrong || stem_wrong)
-                    path += DESIGN_FILENAME_EXTENSION;
-
+                    path += DESIGN_FILENAME_EXTENSION.data();
             }
-
 
             for (auto& uuid: m_ordered_uuids)
                 SaveDesignConst(uuid);
@@ -555,10 +557,8 @@ namespace {
         CheckPendingDesigns();
         boost::filesystem::path designs_dir_path = GetDesignsDir();
 
-        std::string file_name = DESIGN_MANIFEST_PREFIX + DESIGN_FILENAME_EXTENSION;
-
-        boost::filesystem::path file =
-            boost::filesystem::absolute(PathToString(designs_dir_path / file_name));
+        auto file_name = std::string{DESIGN_MANIFEST_PREFIX}.append(DESIGN_FILENAME_EXTENSION);
+        auto file = boost::filesystem::absolute(PathToString(designs_dir_path / file_name));
 
         std::stringstream ss;
         ss << DESIGN_MANIFEST_PREFIX << "\n";
@@ -1161,7 +1161,7 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
         DebugLogger() << "Remove default designs from empire";
         for (const auto design_id : empire->ShipDesigns()) {
             GGHumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ShipDesignOrder>(empire_id, design_id, true),
+                std::make_shared<ShipDesignOrder>(empire_id, design_id, true, context),
                 context);
         }
     }
@@ -3076,11 +3076,11 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
         auto edit_wnd = GG::Wnd::Create<CUIEditWnd>(
             GG::X(350), UserString("DESIGN_ENTER_NEW_DESIGN_NAME"), design->Name());
         edit_wnd->Run();
-        const std::string& result = edit_wnd->Result();
+        auto& result = edit_wnd->Result();
         if (!result.empty() && result != design->Name()) {
             ScriptingContext context;
             GGHumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ShipDesignOrder>(empire_id, design_id, result),
+                std::make_shared<ShipDesignOrder>(empire_id, design_id, result, design->Description(), context),
                 context);
             design_row->SetDisplayName(design->Name());
         }
@@ -4035,7 +4035,7 @@ private:
 
     std::shared_ptr<GG::StaticGraphic>          m_background_image;
     std::shared_ptr<GG::Label>                  m_design_name_label;
-    std::shared_ptr<GG::Edit>                   m_design_name;
+    std::shared_ptr<CUIEdit>                    m_design_name;
     std::shared_ptr<GG::StateButton>            m_design_description_toggle;
     std::shared_ptr<GG::MultiEdit>              m_design_description_edit;
     std::shared_ptr<GG::Button>                 m_replace_button;
@@ -4058,6 +4058,7 @@ void DesignWnd::MainPanel::CompleteConstruction() {
 
     m_design_name_label = GG::Wnd::Create<CUILabel>(UserString("DESIGN_WND_DESIGN_NAME"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_design_name = GG::Wnd::Create<CUIEdit>(UserString("DESIGN_NAME_DEFAULT"));
+    m_design_name->DisallowChars(formatting_chars);
     m_design_description_toggle = GG::Wnd::Create<CUIStateButton>(UserString("DESIGN_WND_DESIGN_DESCRIPTION"),GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     m_design_description_edit = GG::Wnd::Create<CUIMultiEdit>(UserString("DESIGN_DESCRIPTION_DEFAULT"));
     m_design_description_edit->SetTextFormat(m_design_description_edit->GetTextFormat() | GG::FORMAT_IGNORETAGS);
@@ -4920,7 +4921,7 @@ std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
             auto empire = context.GetEmpire(empire_id);
             if (!empire) return {INVALID_DESIGN_ID, boost::uuids::nil_generator()()};
 
-            auto order = std::make_shared<ShipDesignOrder>(empire_id, design);
+            auto order = std::make_shared<ShipDesignOrder>(empire_id, design, context);
             GGHumanClientApp::GetApp()->Orders().IssueOrder(order, context);
             new_design_id = order->DesignID();
 
@@ -4980,7 +4981,7 @@ void DesignWnd::MainPanel::ReplaceDesign() {
             bool is_obsolete = maybe_obsolete && *maybe_obsolete;
             if (!is_obsolete) {
                 GGHumanClientApp::GetApp()->Orders().IssueOrder(
-                    std::make_shared<ShipDesignOrder>(empire_id, replaced_id, true),
+                    std::make_shared<ShipDesignOrder>(empire_id, replaced_id, true, context),
                     context);
             }
 

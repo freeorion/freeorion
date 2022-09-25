@@ -326,12 +326,12 @@ namespace {
         // order ships moved into target fleet
         GGHumanClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<FleetTransferOrder>(client_empire_id, target_fleet->ID(),
-                                                 empire_system_ship_ids, context),
+                                                 std::move(empire_system_ship_ids), context),
             context);
     }
 
    /** Returns map from object ID to issued colonize orders affecting it. */
-    std::map<int, int> PendingScrapOrders() {
+    auto PendingScrapOrders() {
         std::map<int, int> retval;
         const ClientApp* app = ClientApp::GetApp();
         if (!app)

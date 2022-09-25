@@ -246,7 +246,7 @@ private:
   * another. */
 class FO_COMMON_API FleetTransferOrder : public Order {
 public:
-    FleetTransferOrder(int empire, int dest_fleet, const std::vector<int>& ships,
+    FleetTransferOrder(int empire, int dest_fleet, std::vector<int> ships,
                        const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
@@ -303,8 +303,7 @@ public:
     [[nodiscard]] int ShipID() const
     { return m_ship; }
 
-    [[nodiscard]] static bool Check(int empire_id, int ship_id, int planet_id,
-                                    const ScriptingContext& context);
+    static bool Check(int empire_id, int ship_id, int planet_id, const ScriptingContext& context);
 
 private:
     ColonizeOrder() = default;
@@ -351,8 +350,7 @@ public:
     [[nodiscard]] int ShipID() const
     { return m_ship; }
 
-    [[nodiscard]] static bool Check(int empire_id, int ship_id,
-                                    int planet_id, const ScriptingContext& context);
+    static bool Check(int empire_id, int ship_id, int planet_id, const ScriptingContext& context);
 
 private:
     InvadeOrder() = default;
@@ -441,8 +439,7 @@ public:
     [[nodiscard]] int PlanetID() const
     { return m_planet; }
 
-    [[nodiscard]] static bool Check(int empire_id, int planet_id, const std::string& focus,
-                                    const ScriptingContext& context);
+    static bool Check(int empire_id, int planet_id, const std::string& focus, const ScriptingContext& context);
 
 private:
     ChangeFocusOrder() = default;
@@ -609,16 +606,31 @@ private:
   */
 class FO_COMMON_API ShipDesignOrder : public Order {
 public:
-    ShipDesignOrder(int empire, int existing_design_id_to_remember);
-    ShipDesignOrder(int empire, int design_id_to_erase, bool dummy);
-    ShipDesignOrder(int empire, const ShipDesign& ship_design);
-    ShipDesignOrder(int empire, int existing_design_id, const std::string& new_name,
-                    const std::string& new_description = "");
+    ShipDesignOrder(int empire_id, int existing_design_id_to_remember,
+                    const ScriptingContext& context);
+    ShipDesignOrder(int empire_id, int design_id_to_erase, bool dummy,
+                    const ScriptingContext& context);
+    ShipDesignOrder(int empire_id, const ShipDesign& ship_design,
+                    const ScriptingContext& context);
+    ShipDesignOrder(int empire_id, int existing_design_id, std::string new_name,
+                    std::string new_description,
+                    const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
 
     [[nodiscard]] int DesignID() const
     { return m_design_id; }
+
+    static bool CheckRemember(int empire_id, int existing_design_id_to_remember, const ScriptingContext& context);
+
+    static bool CheckErase(int empire_id, int design_id_to_erase, bool dummy, const ScriptingContext& context);
+
+    static bool CheckNew(int empire_id, const std::string& name, const std::string& desc,
+                         const std::string& hull, const std::vector<std::string>& parts,
+                         const ScriptingContext& context);
+
+    static bool CheckRename(int empire_id, int existing_design_id, const std::string& new_name,
+                            const std::string& new_description, const ScriptingContext& context);
 
 private:
     ShipDesignOrder() = default;
@@ -643,23 +655,23 @@ private:
      */
     void ExecuteImpl(ScriptingContext& context) const override;
 
-    /// m_design_id is mutable to save the id for the server when the client calls ExecuteImpl.
-    mutable int              m_design_id = INVALID_DESIGN_ID;
-
     boost::uuids::uuid       m_uuid = boost::uuids::nil_generator()();
-    bool                     m_update_name_or_description = false;
-    bool                     m_delete_design_from_empire = false;
-    bool                     m_create_new_design = false;
 
     // details of design to create
     std::string              m_name;
     std::string              m_description;
-    int                      m_designed_on_turn = 0;
     std::string              m_hull;
     std::vector<std::string> m_parts;
-    bool                     m_is_monster  = false;
     std::string              m_icon;
     std::string              m_3D_model;
+
+    mutable int              m_design_id = INVALID_DESIGN_ID; /// m_design_id is mutable to save the id for the server when the client calls ExecuteImpl.
+
+    int                      m_designed_on_turn = 0;
+    bool                     m_update_name_or_description = false;
+    bool                     m_delete_design_from_empire = false;
+    bool                     m_create_new_design = false;
+    bool                     m_is_monster  = false;
     bool                     m_name_desc_in_stringtable = false;
     // end details of design to create
 
