@@ -1,0 +1,32 @@
+Special
+    name = "RACIAL_PURITY_SENTINEL_SPECIAL"
+    description = "RACIAL_PURITY_SENTINEL_SPECIAL_DESC"
+    spawnrate = 0.0
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Population low = 0.0001
+                Species name = Statistic Mode value = LocalCandidate.Species condition = And [
+                    Capital
+                    OwnedBy empire = Source.Owner
+                ]
+            ]
+            activation = Not EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_RACIAL_PURITY"
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = SetHappiness value = Value + (NamedRealLookup name = "PLC_RACIAL_PURITY_TARGET_STABILITY_OTHER")
+
+        EffectsGroup
+            scope = Source  // This should be empire's capital
+            activation = Not EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_RACIAL_PURITY"
+            priority = [[BEFORE_ANYTHING_ELSE_PRIORITY]]
+            effects = [
+                SetSpecialCapacity name = "RACIAL_PURITY_REMNANT_SPECIAL"
+                    capacity = (NamedRealLookup name = "PLC_RACIAL_PURITY_TARGET_STABILITY_OTHER")
+                RemoveSpecial name = ThisSpecial
+            ]
+    ]
+    graphic = "icons/building/concentration-camp.png"
+
+#include "/scripting/common/priorities.macros"

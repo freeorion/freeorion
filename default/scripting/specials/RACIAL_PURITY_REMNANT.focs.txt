@@ -1,0 +1,31 @@
+Special
+    name = "RACIAL_PURITY_REMNANT_SPECIAL"
+    description = "RACIAL_PURITY_REMNANT_SPECIAL_DESC"
+    spawnrate = 0.0
+    effectsgroups = [
+        EffectsGroup  // Apply a stability malus to non-capital species for 20 turns after Racial Purity is de-adopted
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Population low = 0.0001
+            ]
+            activation = Not EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_RACIAL_PURITY"
+            effects = SetTargetHappiness value = Value + min(0, SpecialCapacity name = ThisSpecial object = Source.ID)
+
+        EffectsGroup  // Removes this special if capacity depleted or the empire adopts the policy again
+            scope = Source
+            activation = Or [
+                HasSpecialCapacity name = ThisSpecial low = -0.1
+                EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_RACIAL_PURITY"
+            ]
+            effects = RemoveSpecial name = ThisSpecial
+
+        EffectsGroup  // Removes some penalty from the capacity of this special every turn
+            scope = Source
+            activation = HasSpecialCapacity name = ThisSpecial high = -0.1
+            effects = SetSpecialCapacity name = ThisSpecial
+                value = min(0.0, Value + (NamedRealLookup name = "PLC_RACIAL_PURITY_STABILITY_PER_TURN"))
+    ]
+    graphic = "icons/building/concentration-camp.png"
+
+#include "/scripting/common/priorities.macros"

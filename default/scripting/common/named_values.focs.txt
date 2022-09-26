@@ -50,5 +50,7 @@ NamedReal name = "FLD_NEBULA_SPEED_MALUS" value = 20
 NamedReal name = "FLD_NEBULA_STEALTH_BONUS" value = 20
 NamedReal name = "FLD_NEBULA_DETECTION_MALUS" value = 20
 
+NamedInteger name = "XENOPHOBIC_MAX_JUMPS" value = 4
+
 #include "/scripting/common/misc.macros"
 #include "/scripting/common/base_prod.macros"
