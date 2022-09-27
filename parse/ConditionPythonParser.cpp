@@ -184,6 +184,36 @@ namespace {
         return condition_wrapper(std::make_shared<Condition::Type>(UniverseObjectType::OBJ_PLANET));
     }
 
+    condition_wrapper insert_homeworld_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        if (kw.has_key("name")) {
+            std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> names;
+            py_parse::detail::flatten_list<boost::python::object>(kw["name"], [](const boost::python::object& o, std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>& v) {
+                auto name_arg = boost::python::extract<value_ref_wrapper<std::string>>(o);
+                if (name_arg.check()) {
+                    v.push_back(ValueRef::CloneUnique(name_arg().value_ref));
+                } else {
+                    v.push_back(std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(o)()));
+                }
+            }, names);
+            return condition_wrapper(std::make_shared<Condition::Homeworld>(std::move(names)));
+        }
+        return condition_wrapper(std::make_shared<Condition::Homeworld>());
+    }
+
+    condition_wrapper insert_has_special_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        if (kw.has_key("name")) {
+            std::unique_ptr<ValueRef::ValueRef<std::string>> name;
+            auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
+            if (name_args.check()) {
+                name = ValueRef::CloneUnique(name_args().value_ref);
+            } else {
+                name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
+            }
+            return condition_wrapper(std::make_shared<Condition::HasSpecial>(std::move(name)));
+        }
+        return condition_wrapper(std::make_shared<Condition::HasSpecial>());
+    }
+
     condition_wrapper insert_has_tag_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<std::string>> name;
         if (kw.has_key("name")) {
@@ -622,6 +652,8 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
 
     globals["HasTag"] = boost::python::raw_function(insert_has_tag_);
     globals["Planet"] = boost::python::raw_function(insert_planet_);
+    globals["Homeworld"] = boost::python::raw_function(insert_homeworld_);
+    globals["HasSpecial"] = boost::python::raw_function(insert_has_special_);
     globals["VisibleToEmpire"] = boost::python::raw_function(insert_visible_to_empire_);
     globals["OwnedBy"] = boost::python::raw_function(insert_owned_by_);
     globals["ContainedBy"] = insert_contained_by_;
