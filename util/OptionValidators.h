@@ -60,14 +60,23 @@ struct Validator : public ValidatorBase
 
     [[nodiscard]] std::string String(const boost::any& value) const override
     {
-        if constexpr (std::is_same_v<T, std::string>)
-            return boost::any_cast<std::string>(value);
-        else if constexpr (std::is_enum_v<T>)
+        if constexpr (std::is_same_v<T, std::string>) {
+            try {
+                return boost::any_cast<std::string>(value);
+            } catch (...) {
+                try {
+                    return boost::any_cast<const char*>(value);
+                } catch (...) {
+                    return "";
+                }
+            }
+        } else if constexpr (std::is_enum_v<T>) {
             return std::string{to_string(boost::any_cast<T>(value))};
-        else if constexpr (std::is_arithmetic_v<T>)
+        } else if constexpr (std::is_arithmetic_v<T>) {
             return std::to_string(boost::any_cast<T>(value));
-        else
+        } else {
             return boost::lexical_cast<std::string>(boost::any_cast<T>(value));
+        }
     }
 
     [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() const & override
