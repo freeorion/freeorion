@@ -531,9 +531,10 @@ private:
 
 template <typename T>
 bool OptionsDB::Option::SetFromValue(T&& value_) {
-    if (value.type() != typeid(T))
-        ErrorLogger() << "OptionsDB::Option::SetFromValue expected type " << value.type().name()
+    if (value.type() != typeid(std::decay_t<T>)) {
+        DebugLogger() << "OptionsDB::Option::SetFromValue expected type " << value.type().name()
                       << " but got value of type " << typeid(T).name();
+    }
 
     bool changed = false;
 
