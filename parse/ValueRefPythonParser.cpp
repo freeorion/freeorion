@@ -233,6 +233,14 @@ condition_wrapper operator<(const value_ref_wrapper<double>& lhs, const value_re
     );
 }
 
+condition_wrapper operator<(double lhs, const value_ref_wrapper<double>& rhs) {
+    return condition_wrapper(
+        std::make_shared<Condition::ValueTest>(std::make_unique<ValueRef::Constant<double>>(lhs),
+            Condition::ComparisonType::LESS_THAN,
+            ValueRef::CloneUnique(rhs.value_ref))
+    );
+}
+
 value_ref_wrapper<int> operator*(int lhs, const value_ref_wrapper<int>& rhs) {
     return value_ref_wrapper<int>(
         std::make_shared<ValueRef::Operation<int>>(ValueRef::OpType::TIMES,
