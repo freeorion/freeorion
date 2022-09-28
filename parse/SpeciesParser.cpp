@@ -362,11 +362,12 @@ namespace {
         py_parse::detail::flatten_list<FocusType>(kw["foci"], [](const FocusType& o, std::vector<FocusType>& v) {
             v.push_back(o);
         }, foci);
+        auto defaultfocus = boost::python::extract<std::string>(kw["defaultfocus"])();
 
         auto species_ptr = std::make_unique<Species>(
             std::move(name), std::move(description), std::move(gameplay_description),
             std::move(foci),
-            std::string{},
+            std::move(defaultfocus),
             std::map<PlanetType, PlanetEnvironment>{},
             std::vector<std::unique_ptr<Effect::EffectsGroup>>{},
             nullptr,
