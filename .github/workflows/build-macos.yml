@@ -30,7 +30,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-11]
+        os: [macos-11, macos-12]
     env:
       CACHE_NAME: macos-full
       CMAKE_BUILD_PARALLEL_LEVEL: 2
