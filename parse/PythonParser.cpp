@@ -123,6 +123,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def(py::self_ns::self > py::self_ns::self)
             .def(py::self_ns::self < py::self_ns::self)
             .def(double() < py::self_ns::self)
+            .def(py::self_ns::self < double())
             .def(py::self_ns::pow(py::self_ns::self, double()));
         py::class_<value_ref_wrapper<std::string>>("ValueRefString", py::no_init);
         py::class_<condition_wrapper>("Condition", py::no_init)
