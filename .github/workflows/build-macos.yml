@@ -73,5 +73,11 @@ jobs:
           alias cmake="/usr/local/bin/gtimeout 40m /usr/local/bin/cmake"
           cd build
           cmake --build . --config Release -- -parallelizeTargets
+      - name: Generate binaries
+        run: |
+          export PATH="/usr/local/opt/ccache/libexec:$PATH"
+          alias cmake="/usr/local/bin/gtimeout 40m /usr/local/bin/cmake"
+          cd build
+          cmake --build . --config Release --target package -- -parallelizeTargets
           ccache --cleanup
           ccache --show-stats || true
