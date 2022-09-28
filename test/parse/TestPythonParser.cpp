@@ -233,11 +233,11 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_REQUIRE_EQUAL(14, specie->Foci().size());
         BOOST_REQUIRE_EQUAL("FOCUS_INDUSTRY", specie->Foci()[0].Name());
         BOOST_REQUIRE_EQUAL("FOCUS_DOMINATION", specie->Foci()[13].Name());
-        BOOST_REQUIRE_EQUAL("FOCUS_INDUSTRY", specie->DefaultFocus());
+        BOOST_CHECK_EQUAL("FOCUS_INDUSTRY", specie->DefaultFocus());
 
-        BOOST_REQUIRE_EQUAL(11, specie->PlanetEnvironments().size());
-        BOOST_REQUIRE_EQUAL(PlanetEnvironment::PE_POOR, specie->GetPlanetEnvironment(PlanetType::PT_BARREN));
-        BOOST_REQUIRE_EQUAL(PlanetEnvironment::PE_ADEQUATE, specie->GetPlanetEnvironment(PlanetType::PT_TOXIC));
+        BOOST_CHECK_EQUAL(11, specie->PlanetEnvironments().size());
+        BOOST_CHECK_EQUAL(PlanetEnvironment::PE_POOR, specie->GetPlanetEnvironment(PlanetType::PT_BARREN));
+        BOOST_CHECK_EQUAL(PlanetEnvironment::PE_ADEQUATE, specie->GetPlanetEnvironment(PlanetType::PT_TOXIC));
 
         BOOST_REQUIRE_EQUAL(98, specie->Effects().size());
         const auto& effect_group = *(specie->Effects()[0]);
