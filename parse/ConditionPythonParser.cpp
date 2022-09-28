@@ -580,7 +580,7 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     globals["Stationary"] = condition_wrapper(std::make_shared<Condition::Stationary>());
 
     globals["Unowned"] = condition_wrapper(std::make_shared<Condition::EmpireAffiliation>(EmpireAffiliationType::AFFIL_NONE));
-    globals["Human"] = condition_wrapper(std::make_shared<Condition::EmpireAffiliation>(EmpireAffiliationType::AFFIL_HUMAN));
+    globals["IsHuman"] = condition_wrapper(std::make_shared<Condition::EmpireAffiliation>(EmpireAffiliationType::AFFIL_HUMAN));
 
     globals["OwnerHasTech"] = boost::python::raw_function(insert_owner_has_tech_);
     globals["Random"] = boost::python::raw_function(insert_random_);
