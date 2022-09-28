@@ -363,12 +363,19 @@ namespace {
             v.push_back(o);
         }, foci);
         auto defaultfocus = boost::python::extract<std::string>(kw["defaultfocus"])();
+        std::map<PlanetType, PlanetEnvironment> environments;
+        auto environments_args = boost::python::extract<boost::python::dict>(kw["environments"])();
+        boost::python::stl_input_iterator<enum_wrapper<PlanetType>> environments_begin(environments_args), environments_end;
+        for (auto it = environments_begin; it != environments_end; ++it) {
+            environments.emplace(it->value,
+                boost::python::extract<enum_wrapper<PlanetEnvironment>>(environments_args[*it])().value);
+        }
 
         auto species_ptr = std::make_unique<Species>(
             std::move(name), std::move(description), std::move(gameplay_description),
             std::move(foci),
             std::move(defaultfocus),
-            std::map<PlanetType, PlanetEnvironment>{},
+            std::move(environments),
             std::vector<std::unique_ptr<Effect::EffectsGroup>>{},
             nullptr,
             false,

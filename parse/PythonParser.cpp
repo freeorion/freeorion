@@ -137,7 +137,11 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         py::class_<enum_wrapper<ResourceType>>("__ResourceType", py::no_init);
         py::class_<enum_wrapper< ::PlanetEnvironment>>("__PlanetEnvironment", py::no_init);
         py::class_<enum_wrapper<PlanetSize>>("__PlanetSize", py::no_init);
-        py::class_<enum_wrapper<PlanetType>>("__PlanetType", py::no_init);
+        py::class_<enum_wrapper<PlanetType>>("__PlanetType", py::no_init)
+            .def(py::self_ns::self == py::self_ns::self)
+            .def("__hash__", py::make_function(std::hash<enum_wrapper<PlanetType>>{},
+                py::default_call_policies(),
+                boost::mpl::vector<std::size_t, const enum_wrapper<PlanetType>&>()));
         py::class_<enum_wrapper< ::StarType>>("__StarType", py::no_init);
         py::class_<enum_wrapper<ValueRef::StatisticType>>("__StatisticType", py::no_init);
         py::class_<enum_wrapper<Condition::ContentType>>("__LocationContentType", py::no_init);
