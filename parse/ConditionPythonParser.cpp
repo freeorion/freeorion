@@ -214,6 +214,22 @@ namespace {
         return condition_wrapper(std::make_shared<Condition::HasSpecial>());
     }
 
+    condition_wrapper insert_has_species_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        if (kw.has_key("name")) {
+            std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> names;
+            py_parse::detail::flatten_list<boost::python::object>(kw["name"], [](const boost::python::object& o, std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>& v) {
+                auto name_arg = boost::python::extract<value_ref_wrapper<std::string>>(o);
+                if (name_arg.check()) {
+                    v.push_back(ValueRef::CloneUnique(name_arg().value_ref));
+                } else {
+                    v.push_back(std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(o)()));
+                }
+            }, names);
+            return condition_wrapper(std::make_shared<Condition::Species>(std::move(names)));
+        }
+        return condition_wrapper(std::make_shared<Condition::Species>());
+    }
+
     condition_wrapper insert_has_tag_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<std::string>> name;
         if (kw.has_key("name")) {
@@ -647,7 +663,7 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
         globals[op.first] = enum_wrapper<Condition::ContentType>(op.second);
     }
 
-    globals["HasSpecies"] = condition_wrapper(std::make_shared<Condition::Species>());
+    globals["HasSpecies"] = boost::python::raw_function(insert_has_species_);
     globals["CanColonize"] = condition_wrapper(std::make_shared<Condition::CanColonize>());
 
     globals["HasTag"] = boost::python::raw_function(insert_has_tag_);

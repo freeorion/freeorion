@@ -39,7 +39,7 @@ Tech(
             effects=SetMaxSupply(value=Value - 1),
         ),
         EffectsGroup(  # outpost supply increases 1 per turn up to max
-            scope=Planet() & OwnedBy(empire=Source.Owner) & ~HasSpecies,
+            scope=Planet() & OwnedBy(empire=Source.Owner) & ~HasSpecies(),
             priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=SetSupply(value=MinOf(float, Value(Target.MaxSupply), Value + 1)),
         ),
