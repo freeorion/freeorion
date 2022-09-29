@@ -529,12 +529,6 @@ void BubbleRectangle(Pt ul, Pt lr, Clr color1, Clr color2, Clr color3, unsigned 
 }
 
 
-std::ostream& GG::operator<<(std::ostream& os, const GG::Clr clr)
-{
-    os << "(" << +clr.r << ", " << +clr.g << ", " << +clr.b << ", " << +clr.a << ")";
-    return os;
-}
-
 void glColor(const Clr clr)
 { glColor4ub(clr.r, clr.g, clr.b, clr.a); }
 

@@ -93,6 +93,16 @@ struct Clr
         return retval;
     }
 
+    operator std::string() const
+    {
+        std::string retval;
+        retval.reserve(1 + 4*3 + 3*2 + 1 + 1);
+        retval.append("(").append(std::to_string(+r)).append(", ").append(std::to_string(+g))
+              .append(", ").append(std::to_string(+b)).append(", ").append(std::to_string(+a))
+              .append(")");
+        return retval;
+    }
+
     uint8_t r = 0;    ///< the red channel
     uint8_t g = 0;    ///< the green channel
     uint8_t b = 0;    ///< the blue channel
@@ -114,8 +124,11 @@ constexpr bool operator!=(const Clr rhs, const Clr lhs) noexcept
 static_assert(Clr("A0FF01") == Clr{160, 255, 1, 255});
 static_assert(Clr("12345678") == Clr{16*1+2, 16*3+4, 16*5+6, 16*7+8});
 
-
-GG_API std::ostream& operator<<(std::ostream& os, const Clr pt);
+inline std::ostream& operator<<(std::ostream& os, const Clr clr)
+{
+    os << "(" << +clr.r << ", " << +clr.g << ", " << +clr.b << ", " << +clr.a << ")";
+    return os;
+}
 
 //! Returns the lightened version of color clr.  LightenClr leaves the alpha
 //! channel unchanged, and multiplies the other channels by some factor.
