@@ -19,7 +19,7 @@ Tech(
             effects=SetMaxStockpile(value=Value + 2, accountinglabel="GENERIC_SUPPLIES_FIXED_BONUS_LABEL"),
         ),
         EffectsGroup(
-            scope=ProductionCenter & OwnedBy(empire=Source.Owner) & HasSpecies,
+            scope=ProductionCenter & OwnedBy(empire=Source.Owner) & HasSpecies(),
             effects=SetMaxStockpile(
                 value=(Value + 0.5 * Target.Population * STOCKPILE_PER_POP),
                 accountinglabel="GENERIC_SUPPLIES_POPULATION_BONUS_LABEL",

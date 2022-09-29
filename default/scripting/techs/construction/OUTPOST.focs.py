@@ -35,7 +35,7 @@ Tech(
         ),
         # Influence growth / reduction towards target, since outposts have no species to get this effect from
         EffectsGroup(
-            scope=Planet() & OwnedBy(empire=Source.Owner) & (~HasSpecies),
+            scope=Planet() & OwnedBy(empire=Source.Owner) & (~HasSpecies()),
             priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=SetHappiness(
                 value=Value

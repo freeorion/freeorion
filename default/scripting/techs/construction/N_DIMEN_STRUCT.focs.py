@@ -12,7 +12,7 @@ Tech(
     prerequisites=["CON_FRC_ENRG_STRC", "LRN_NDIM_SUBSPACE"],
     effectsgroups=[
         EffectsGroup(
-            scope=HasSpecies & OwnedBy(empire=Source.Owner),
+            scope=HasSpecies() & OwnedBy(empire=Source.Owner),
             accountinglabel="CON_TECH_ACCOUNTING_LABEL",
             priority=TARGET_POPULATION_AFTER_SCALING_PRIORITY,
             effects=[

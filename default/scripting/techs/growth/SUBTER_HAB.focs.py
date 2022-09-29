@@ -12,7 +12,7 @@ Tech(
     prerequisites="GRO_PLANET_ECOL",
     effectsgroups=[
         EffectsGroup(
-            scope=HasSpecies & OwnedBy(empire=Source.Owner),
+            scope=HasSpecies() & OwnedBy(empire=Source.Owner),
             accountinglabel="GRO_TECH_ACCOUNTING_LABEL",
             priority=TARGET_POPULATION_AFTER_SCALING_PRIORITY,
             effects=SetTargetPopulation(value=Value + 1 * Target.HabitableSize),
