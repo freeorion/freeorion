@@ -6714,7 +6714,14 @@ XENOPHOBIC_SPECIES_TITLE
 Xenophobic
 
 XENOPHOBIC_SPECIES_TEXT
-'''Xenophobic species will automatically divert some of their industrial efforts into harassing other species that are nearby. The affected nearby species will suffer an industrial penalty due to this harassment. A Xenophobic species of [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]] will also find the presence of alien species nearby to be disruptive to its natural balances (whether due to some direct effect or simply due to wasted energies being applied to harassing the alien species, has not been determined) resulting in a reduced [[metertype METER_TARGET_POPULATION]].
+'''Xenophobic species get upset by the nearby pressence of other intelligent species, and will divert some of their efforts into harassing them, reducing both species' [[metertype METER_TARGET_HAPPINESS]] dependent on the distance between their planets. At a distance of [[value XENOPHOBIC_MAX_JUMPS]] jumps, the penalty is [[value XENOPHOBIC_TARGET_STABILITY_PERJUMP]], and grows by that amount per starlane jump closer. The penalty is cumulative for each offending planet nearby:
+• 4 jumps: -0.5 stability
+• 3 jumps: -1.0 stability
+• 2 jumps: -1.5 stability
+• 1 jumps: -2.0 stability
+• In same system: -2.5 stability
+
+A Xenophobic species of [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]] will also find the presence of alien species nearby to be disruptive to its natural balances, reducing the xenophobic species' [[metertype METER_TARGET_POPULATION]].
 
 Xenophobic species start with [[tech CON_CONC_CAMP]].
 
@@ -9741,6 +9748,18 @@ Psychic Fatigue
 CONC_CAMP_SLAVE_SPECIAL_DESC
 There may no longer be [[buildingtype BLD_CONC_CAMP]] operating on this planet today, but memories are still close to the surface, and remnants such as poorly hidden mass graves are still occasionally found. A psychic wound still lies upon the populace, and they do not thrive.
 
+RACIAL_PURITY_SENTINEL_SPECIAL
+Racial Purity
+
+RACIAL_PURITY_SENTINEL_SPECIAL_DESC
+This empire applies the [[policy PLC_RACIAL_PURITY]] policy.
+
+RACIAL_PURITY_REMNANT_SPECIAL
+Racial Resentment
+
+RACIAL_PURITY_REMNANT_SPECIAL_DESC
+This empire recently de-adopted the [[policy PLC_RACIAL_PURITY]] policy and memories of its adoption linger in the populace. Its toll on [[metertype METER_HAPPINESS]] on the planets of the empire will fade over time.
+
 CLOUD_COVER_MASTER_SPECIAL
 Cloud Spawns
 
@@ -12276,13 +12295,19 @@ PLC_RACIAL_PURITY
 Racial Purity
 
 PLC_RACIAL_PURITY_DESC
-'''Provides benefits for single-species empires, but penalizes species other than that on the capital planet.
+'''The species on the empire capital planet asserts dominance over all other species in the empire. This provides benefits for single-species empires, especially if they are [[encyclopedia XENOPHOBIC_SPECIES_TITLE]], but penalizes any other species.
 
-Planets with species different from the capital's species have various penalities applied:
-• Reduces [[metertype METER_TARGET_HAPPINESS]] by [[value PLC_RACIAL_PURITY_TARGET_HAPPINESS_FLAT]]
-• Reduces [[metertype METER_TARGET_INFLUENCE]] by [[value PLC_RACIAL_PURITY_TARGET_HAPPINESS_FLAT]]
-• Reduces [[metertype METER_TARGET_RESEARCH]] by [[value PLC_RACIAL_PURITY_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]]
-• Reduces [[metertype METER_TARGET_INDUSTRY]] by [[value PLC_RACIAL_PURITY_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]]
+Planets with the capital's species have various bonuses applied:
+• Increases [[metertype METER_TARGET_HAPPINESS]] over time. The bonus grows by [[value PLC_RACIAL_PURITY_STABILITY_PER_TURN]] per turn after adopting the policy, up to a maximum of [[value PLC_RACIAL_PURITY_TARGET_STABILITY_SELF]].
+• Increases [[metertype METER_TARGET_INFLUENCE]] of influence-focused planets by [[value PLC_RACIAL_PURITY_TARGET_INFLUENCE_SELF]].
+• If the capital species is xenophobic, removes the xenophobic harassment and frenzy between that species and the rest of owned planets.
+
+Planets with species different from [[species SP_EXOBOT]] or the capital's species have various penalities applied:
+• Reduces [[metertype METER_TARGET_HAPPINESS]] by [[value PLC_RACIAL_PURITY_TARGET_STABILITY_OTHER]]
+• Reduces [[metertype METER_TARGET_INFLUENCE]] by [[value PLC_RACIAL_PURITY_TARGET_INFLUENCE_OTHER]]
+• Disables [[encyclopedia INFLUENCE_FOCUS_TITLE]] and [[encyclopedia RESEARCH_FOCUS_TITLE]]
+
+Oppression also allows the empire to force other species to work harder, increasing their [[metertype METER_TARGET_INDUSTRY]] by [[value PLC_RACIAL_PURITY_TARGET_INDUSTRY_OTHER]] per [[metertype METER_POPULATION]].
 
 Allows [[buildingtype BLD_CONC_CAMP]] to be produced.'''
 

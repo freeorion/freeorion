@@ -52,6 +52,7 @@ conformance = "PLC_CONFORMANCE"  # should be added, but opposing 3 others makes 
 diversity = "PLC_DIVERSITY"
 artisans = "PLC_ARTISAN_WORKSHOPS"
 population = "PLC_POPULATION"
+racial_purity = "PLC_RACIAL_PURITY"
 
 
 class _EmpireOutput:

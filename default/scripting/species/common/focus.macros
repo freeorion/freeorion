@@ -10,7 +10,16 @@ HAS_RESEARCH_FOCUS
 '''        Focus
             name = "FOCUS_RESEARCH"
             description = "FOCUS_RESEARCH_DESC"
-            location = Planet
+            location = And [
+                Planet
+                Or [
+                    Not EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_RACIAL_PURITY"
+                    Species name = Statistic Mode value = LocalCandidate.Species condition = And [
+                        Capital
+                        OwnedBy empire = Source.Owner
+                    ]
+                ]
+            ]
             graphic = "icons/focus/research.png"
 '''
 
@@ -18,7 +27,16 @@ HAS_INFLUENCE_FOCUS
 '''        Focus
             name = "FOCUS_INFLUENCE"
             description = "FOCUS_INFLUENCE_DESC"
-            location = Planet
+            location = And [
+                Planet
+                Or [
+                    Not EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_RACIAL_PURITY"
+                    Species name = Statistic Mode value = LocalCandidate.Species condition = And [
+                        Capital
+                        OwnedBy empire = Source.Owner
+                    ]
+                ]
+            ]
             graphic = "icons/focus/influence.png"
 '''
 

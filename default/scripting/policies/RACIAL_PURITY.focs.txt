@@ -9,25 +9,66 @@ Policy
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
         
+        // This policy disables influence and research foci for non-capital, non-exobot species
+        // See /species/common/focus.macros
+
+        // Creates a special to ensure that deadopting this policy has bad consequencies for a while
+        EffectsGroup
+            scope = Source
+            activation = Not HasSpecial name = "RACIAL_PURITY_SENTINEL_SPECIAL"
+            effects = AddSpecial name = "RACIAL_PURITY_SENTINEL_SPECIAL"
+
+        // Stability bonus to capital species, grows slowly.
         EffectsGroup
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
-                Population low = 0.001
+                Species name = Source.Species
+            ]
+            effects = SetTargetHappiness value = Value
+                + min((NamedReal name = "PLC_RACIAL_PURITY_TARGET_STABILITY_SELF" value = 5),
+                    (TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy) *
+                    (NamedReal name = "PLC_RACIAL_PURITY_STABILITY_PER_TURN" value = 0.5))
+
+        // Influence bonus to influence-focused, capital species 
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = Source.Species
+                Focus type = "FOCUS_INFLUENCE"
+            ]
+            effects = SetTargetInfluence value = Value
+                + (NamedReal name = "PLC_RACIAL_PURITY_TARGET_INFLUENCE_SELF" value = 1)
+
+        // Stability and influence penalty to all non-capital, non-exobot species
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species
                 Not Species name = Source.Species
+                Not Species name = "SP_EXOBOT"
             ]
             effects = [
                 SetTargetHappiness value = Value
-                    + (NamedReal name = "PLC_RACIAL_PURITY_TARGET_HAPPINESS_FLAT" value = -20)
+                    + (NamedReal name = "PLC_RACIAL_PURITY_TARGET_STABILITY_OTHER" value = -10)
                 SetTargetInfluence value = Value
-                    + (NamedReal name = "PLC_RACIAL_PURITY_TARGET_INFLUENCE_FLAT" value = -5)
-                SetTargetResearch value = Value + Target.Population
-                    * (NamedReal name = "PLC_RACIAL_PURITY_TARGET_RESEARCH_PERPOP"
-                                 value = -1.0 * [[RESEARCH_PER_POP]])
-                SetTargetIndustry value = Value + Target.Population
-                    * (NamedReal name = "PLC_RACIAL_PURITY_TARGET_INDUSTRY_PERPOP"
-                                 value = -1.0 * [[RESEARCH_PER_POP]])
+                    + (NamedReal name = "PLC_RACIAL_PURITY_TARGET_INFLUENCE_OTHER" value = -1)
             ]
+
+        // Industry bonus to industry-focused, non-capital, non-exobot species (slavery)
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species
+                Not Species name = Source.Species
+                Not Species name = "SP_EXOBOT"
+                Focus type = "FOCUS_INDUSTRY"
+            ]
+            effects = SetTargetIndustry value = Value + Target.Population
+                * (NamedReal name = "PLC_RACIAL_PURITY_TARGET_INDUSTRY_OTHER" value = 0.25 * [[RESEARCH_PER_POP]])
     ]
     graphic = "icons/policies/social_racial_purity.png"
 

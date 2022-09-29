@@ -14,12 +14,7 @@ from freeorion_tools import (
 )
 from freeorion_tools.caching import cache_for_current_turn
 from PlanetUtilsAI import dislike_factor
-from turn_state import (
-    get_colonized_planets,
-    get_empire_planets_by_species,
-    have_worldtree,
-    luxury_resources,
-)
+from turn_state import get_empire_planets_by_species, have_worldtree, luxury_resources
 from universe.system_network import within_n_jumps
 
 _size_modifier = {
@@ -157,16 +152,18 @@ def _evaluate_buildings(planet: fo.planet, species: fo.species) -> float:
 def _evaluate_xenophobia(planet, species) -> float:
     if AIDependencies.Tags.XENOPHOBIC not in species.tags:
         return 0.0
-    colonies = get_colonized_planets()
-    relevant_systems = within_n_jumps(planet.systemID, 5) & set(colonies.keys())
-    result = 0.0
     universe = fo.getUniverse()
-    value = get_named_real("XENOPHOBIC_SELF_TARGET_HAPPINESS_COUNT")
+    max_jumps = get_named_int("XENOPHOBIC_MAX_JUMPS")
+    relevant_systems = within_n_jumps(planet.systemID, max_jumps)
+    penalty_perjump = get_named_real("XENOPHOBIC_TARGET_STABILITY_PERJUMP")
+    result = 0.0
     for sys_id in relevant_systems:
-        for pid in colonies[sys_id]:
+        system = universe.getSystem(sys_id)
+        for pid in system.planetIDs:
             planet_species = universe.getPlanet(pid).speciesName
+            # TODO Do not count owned, different species planets when Racial Purity is adopted. AI doesn't adopt Racial Purity yet.
             if planet_species not in ("SP_EXOBOT", species.name, ""):
-                result += value  # value is negative
+                result += penalty_perjump * (1 + max_jumps - universe.jumpDistance(planet.systemID, pid))
     return result
 
 
