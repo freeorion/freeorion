@@ -62,6 +62,25 @@ condition_wrapper operator&(const variable_wrapper& lhs, const condition_wrapper
     ));
 }
 
+condition_wrapper operator~(const variable_wrapper& lhs) {
+    std::unique_ptr<Condition::Condition> variable;
+    switch (lhs.m_reference_type) {
+        case ValueRef::ReferenceType::SOURCE_REFERENCE:
+            variable = std::make_unique<Condition::Source>();
+            break;
+        case ValueRef::ReferenceType::EFFECT_TARGET_REFERENCE:
+            variable = std::make_unique<Condition::Target>();
+            break;
+        case ValueRef::ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE:
+            variable = std::make_unique<Condition::RootCandidate>();
+            break;
+        default:
+            throw std::runtime_error(std::string("Not implemented in ") + __func__ + " type " + std::to_string(static_cast<int>(lhs.m_reference_type)));
+    }
+
+    return condition_wrapper(std::make_shared<Condition::Not>(std::move(variable)));
+}
+
 void RegisterGlobalsSources(boost::python::dict& globals) {
     globals["Source"] = variable_wrapper(ValueRef::ReferenceType::SOURCE_REFERENCE);
     globals["Target"] = variable_wrapper(ValueRef::ReferenceType::EFFECT_TARGET_REFERENCE);

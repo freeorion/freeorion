@@ -584,6 +584,20 @@ namespace {
 
         return condition_wrapper(std::make_shared<Condition::Turn>(std::move(low), std::move(high)));
     }
+
+    condition_wrapper insert_resource_supply_connected_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<int>> empire;
+        auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
+        if (empire_args.check()) {
+            empire = ValueRef::CloneUnique(empire_args().value_ref);
+        } else {
+            empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
+        }
+
+        auto condition = boost::python::extract<condition_wrapper>(kw["condition"])();
+        return condition_wrapper(std::make_shared<Condition::ResourceSupplyConnectedByEmpire>(std::move(empire),
+            std::move(ValueRef::CloneUnique(condition.condition))));
+    }
 }
 
 void RegisterGlobalsConditions(boost::python::dict& globals) {
@@ -678,5 +692,6 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     globals["EmpireStockpile"] = boost::python::raw_function(insert_empire_stockpile_);
     globals["EmpireHasAdoptedPolicy"] = boost::python::raw_function(insert_empire_has_adopted_policy_);
     globals["Turn"] = boost::python::raw_function(insert_turn_);
+    globals["ResourceSupplyConnected"] = boost::python::raw_function(insert_resource_supply_connected_);
 }
 
