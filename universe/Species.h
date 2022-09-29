@@ -100,6 +100,18 @@ public:
             std::string&& graphic,
             double spawn_rate = 1.0, int spawn_limit = 99999);
 
+    Species(std::string&& name, std::string&& desc,
+            std::string&& gameplay_desc, std::vector<FocusType>&& foci,
+            std::string&& default_focus,
+            std::map<PlanetType, PlanetEnvironment>&& planet_environments,
+            std::vector<std::shared_ptr<Effect::EffectsGroup>>&& effects,
+            std::unique_ptr<Condition::Condition>&& combat_targets,
+            bool playable, bool native, bool can_colonize, bool can_produce_ships,
+            const std::set<std::string>& tags,
+            std::set<std::string>&& likes, std::set<std::string>&& dislikes,
+            std::string&& graphic,
+            double spawn_rate = 1.0, int spawn_limit = 99999);
+
     ~Species();
 
     bool operator==(const Species& rhs) const;

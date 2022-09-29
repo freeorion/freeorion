@@ -371,12 +371,17 @@ namespace {
                 boost::python::extract<enum_wrapper<PlanetEnvironment>>(environments_args[*it])().value);
         }
 
+        std::vector<std::shared_ptr<Effect::EffectsGroup>> effectsgroups;
+        py_parse::detail::flatten_list<effect_group_wrapper>(kw["effectsgroups"], [](const effect_group_wrapper& o, std::vector<std::shared_ptr<Effect::EffectsGroup>>& v) {
+            v.push_back(o.effects_group);
+        }, effectsgroups);
+
         auto species_ptr = std::make_unique<Species>(
             std::move(name), std::move(description), std::move(gameplay_description),
             std::move(foci),
             std::move(defaultfocus),
             std::move(environments),
-            std::vector<std::unique_ptr<Effect::EffectsGroup>>{},
+            std::move(effectsgroups),
             nullptr,
             false,
             false,
