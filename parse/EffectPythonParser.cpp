@@ -97,7 +97,13 @@ namespace {
     }
 
     effect_wrapper insert_set_meter_(const MeterType m, const py::tuple& args, const py::dict& kw) {
-        auto value = py::extract<value_ref_wrapper<double>>(kw["value"])();
+        std::unique_ptr<ValueRef::ValueRef<double>> value;
+        auto value_arg = py::extract<value_ref_wrapper<double>>(kw["value"]);
+        if (value_arg.check()) {
+            value = ValueRef::CloneUnique(value_arg().value_ref);
+        } else {
+            value = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["value"])());
+        }
 
         boost::optional<std::string> accountinglabel;
         if (kw.has_key("accountinglabel")) {
@@ -105,7 +111,7 @@ namespace {
         }
         return effect_wrapper(std::make_shared<Effect::SetMeter>(
             m,
-            ValueRef::CloneUnique(value.value_ref),
+            std::move(value),
             accountinglabel));
     }
 
