@@ -14,11 +14,8 @@
 #ifndef _GG_Clr_h_
 #define _GG_Clr_h_
 
-
-#include <algorithm>
 #include <array>
 #include <sstream>
-#include <stdexcept>
 #include <string>
 #include <GG/Export.h>
 
