@@ -600,27 +600,6 @@ namespace {
 
     const std::string MESSAGE_WND_NAME = "map.messages";
     const std::string PLAYER_LIST_WND_NAME = "map.empires";
-
-    template <typename OptionType, typename PredicateType>
-    void ConditionalForward(const std::string& option_name,
-                            const OptionsDB::OptionChangedSignalType::slot_type& slot,
-                            OptionType ref_val,
-                            PredicateType pred)
-    {
-        if (pred(GetOptionsDB().Get<OptionType>(option_name), ref_val))
-            slot();
-    }
-
-    template <typename OptionType, typename PredicateType>
-    void ConditionalConnectOption(const std::string& option_name,
-                                  const OptionsDB::OptionChangedSignalType::slot_type& slot,
-                                  OptionType ref_val,
-                                  PredicateType pred)
-    {
-        GetOptionsDB().OptionChangedSignal(option_name).connect(
-            boost::bind(&ConditionalForward<OptionType, PredicateType>,
-                        std::ref(option_name), slot, ref_val, pred));
-    }
 }
 
 
@@ -659,9 +638,12 @@ ClientUI::ClientUI() :
         boost::bind(&ClientUI::HandleFullscreenSwitch, this),
         boost::signals2::at_front);
 
-    ConditionalConnectOption("ui.reposition.auto.enabled",
-                             GGHumanClientApp::GetApp()->RepositionWindowsSignal,
-                             true, std::equal_to<bool>());
+    GetOptionsDB().OptionChangedSignal("ui.reposition.auto.enabled").connect(
+        []() {
+            if (GetOptionsDB().Get<bool>("ui.reposition.auto.enabled"))
+                GGHumanClientApp::GetApp()->RepositionWindowsSignal();
+        }
+    );
 
     // Set the root path for image tags in rich text.
     GG::ImageBlock::SetDefaultImagePath(ArtDir().string());
