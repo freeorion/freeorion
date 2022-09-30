@@ -613,10 +613,12 @@ void OptionsDB::GetXML(XMLDoc& doc, bool non_default_only, bool include_version)
     }
 }
 
-OptionsDB::OptionChangedSignalType& OptionsDB::OptionChangedSignal(const std::string& option) {
+OptionsDB::OptionChangedSignalType& OptionsDB::OptionChangedSignal(std::string_view option) {
+    //DebugLogger() << "getting option changed signal for string" << option;
     auto it = m_options.find(option);
     if (it == m_options.end())
-        throw std::runtime_error("OptionsDB::OptionChangedSignal() : Attempted to get signal for nonexistent option \"" + option + "\".");
+        throw std::runtime_error(std::string{"OptionsDB::OptionChangedSignal() : Attempted to get signal for nonexistent option \""}
+                                 .append(option).append("\"."));
     return *it->second.option_changed_sig_ptr;
 }
 

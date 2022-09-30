@@ -218,7 +218,7 @@ public:
     std::vector<std::string_view> FindOptions(std::string_view prefix, bool allow_unrecognized = false) const;
 
     /** the option changed signal object for the given option */
-    OptionChangedSignalType&        OptionChangedSignal(const std::string& option);
+    OptionChangedSignalType&        OptionChangedSignal(std::string_view option);
 
     mutable OptionAddedSignalType   OptionAddedSignal;   ///< the option added signal object for this DB
     mutable OptionRemovedSignalType OptionRemovedSignal; ///< the change removed signal object for this DB
