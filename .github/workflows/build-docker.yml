@@ -21,8 +21,6 @@ on:
       - 'snap/**'
       - '*.md'
       - 'check/**'
-      - 'default/**'
-      - 'test-scripting/**'
 
 jobs:
   build-docker:
