@@ -107,7 +107,7 @@ struct FO_COMMON_API GalaxySetupData {
     GalaxySetupOptionMonsterFreq GetMonsterFreq() const;
     GalaxySetupOptionGeneric     GetNativeFreq() const;
     Aggression                   GetAggression() const;
-    
+
     const std::map<std::string, std::string>& GetGameRules() const;
     const std::string&                        GetGameUID() const;
 
@@ -126,7 +126,7 @@ struct FO_COMMON_API GalaxySetupData {
     GalaxySetupOptionMonsterFreq monster_freq = GalaxySetupOptionMonsterFreq::MONSTER_SETUP_MEDIUM;
     GalaxySetupOptionGeneric     native_freq = GalaxySetupOptionGeneric::GALAXY_SETUP_MEDIUM;
     Aggression                   ai_aggr = Aggression::MANIACAL;
-    
+
     std::map<std::string, std::string>  game_rules;
     std::string                         game_uid;
 
@@ -135,16 +135,16 @@ struct FO_COMMON_API GalaxySetupData {
       * serialized.  The use of this local field is done just so I don't
       * have to rewrite any custom boost::serialization classes that implement
       * empire-dependent visibility. */
-    int                 encoding_empire = ALL_EMPIRES; ///< used during serialization to globally set what empire knowledge to use
+    int encoding_empire = ALL_EMPIRES; ///< used during serialization to globally set what empire knowledge to use
 };
 
 
 /** Contains the UI data that must be saved in save game files in order to
   * restore games to the users' last views. */
 struct FO_COMMON_API SaveGameUIData {
-    int     map_top = 0;
-    int     map_left = 0;
-    double  map_zoom_steps_in = 0.0;
+    int    map_top = 0;
+    int    map_left = 0;
+    double map_zoom_steps_in = 0.0;
     std::set<int> fleets_exploring;
 
     // See DesignWnd.cpp for the usage of the following variables.
