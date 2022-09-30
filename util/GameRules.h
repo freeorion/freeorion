@@ -84,17 +84,47 @@ public:
     [[nodiscard]] T Get(const std::string& name)
     {
         CheckPendingGameRules();
+
+        TraceLogger() << "Requested rule named " << name << " of type " << typeid(T).name();
+
+
         auto it = m_game_rules.find(name);
-        if (it == m_game_rules.end())
-            throw std::runtime_error("GameRules::Get<>() : Attempted to get nonexistent rule \"" + name + "\".");
+        if (it == m_game_rules.end()) {
+            ErrorLogger() << "GameRules::Get<>() : Attempted to get nonexistent rule \"" << name 
+                          << "\". Returning data-type default value instead: " << T();
+            return T();
+        }
+
+        if (it->second.value.type() != typeid(std::decay_t<T>)) {
+            if constexpr (std::is_same_v<std::decay_t<T>, double>) {
+                if (it->second.value.type() == typeid(int)) {
+                    DebugLogger() << "GameRules::Get<>() : Requested value of type " << typeid(T).name()
+                                  << " from rule of type " << it->second.value.type().name()
+                                  << " ... getting as int instead";
+                    try {
+                        return boost::any_cast<int>(it->second.value);
+                    } catch (const boost::bad_any_cast&) {
+                        ErrorLogger() << "Getting as int failed";
+                    }
+                }
+            }
+            DebugLogger() << "GameRules::Get<>() : Requested value of type " << typeid(T).name()
+                          << " from rule of type " << it->second.value.type().name()
+                          << ". Returning data-type default value instead: " << T();
+            return T();
+        }
+
         try {
             return boost::any_cast<T>(it->second.value);
         } catch (const boost::bad_any_cast&) {
-            ErrorLogger() << "bad any cast converting value of game rule named: " << name << ". Returning default value instead";
+            ErrorLogger() << "GameRules::Get<>() : bad any cast getting value of game rule named: " << name
+                          << " as type << " << typeid(T).name() << ". Returning default value of rule instead";
             try {
                 return boost::any_cast<T>(it->second.default_value);
             } catch (const boost::bad_any_cast&) {
-                ErrorLogger() << "bad any cast converting default value of game rule named: " << name << ". Returning data-type default value instead: " << T();
+                ErrorLogger() << "GameRules::Get<>() : bad any cast getting default value of game rule named: "
+                              << name << " that contains a value of type: " << it->second.value.type().name()
+                              << ". Returning " << typeid(T).name() << " default value instead: " << T();
                 return T();
             }
         }
@@ -145,13 +175,13 @@ public:
     void Add(Pending::Pending<GameRulesTypeMap>&& future);
 
     template <typename T>
-    void Set(const std::string& name, T value)
+    void Set(const std::string& name, T&& value)
     {
         CheckPendingGameRules();
         auto it = m_game_rules.find(name);
         if (it == m_game_rules.end())
             throw std::runtime_error("GameRules::Set<>() : Attempted to set nonexistent rule \"" + name + "\".");
-        it->second.SetFromValue(std::move(value));
+        it->second.SetFromValue(std::forward<T>(value));
     }
 
     void SetFromStrings(const std::map<std::string, std::string>& names_values);
