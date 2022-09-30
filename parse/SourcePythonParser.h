@@ -26,6 +26,7 @@ struct variable_wrapper {
 };
 
 condition_wrapper operator&(const variable_wrapper&, const condition_wrapper&);
+condition_wrapper operator&(const variable_wrapper&, const value_ref_wrapper<double>&);
 condition_wrapper operator~(const variable_wrapper&);
 
 void RegisterGlobalsSources(boost::python::dict& globals);
