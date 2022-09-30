@@ -149,6 +149,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         py::class_<unlockable_item_wrapper>("UnlockableItem", py::no_init);
         py::class_<FocusType>("__FocusType", py::no_init);
         auto py_variable_wrapper = py::class_<variable_wrapper>("__Variable", py::no_init)
+            .def(py::self_ns::self & py::other<value_ref_wrapper<double>>())
             .def(py::self_ns::self & py::other<condition_wrapper>())
             .def(~py::self_ns::self);
 
