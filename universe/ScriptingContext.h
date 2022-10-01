@@ -9,7 +9,7 @@
 
 struct CombatInfo;
 
-struct ScriptingContext {
+struct [[nodiscard]] ScriptingContext {
     typedef boost::variant<
         int, double, PlanetType, PlanetSize, ::PlanetEnvironment, StarType,
         UniverseObjectType, Visibility, std::string, std::vector<std::string>
@@ -337,10 +337,10 @@ struct ScriptingContext {
     // helper functions for accessing state in this context
 
     // immutable container of immutable objects
-    const Universe& ContextUniverse() const noexcept { return const_universe; }
+    [[nodiscard]] const Universe& ContextUniverse() const noexcept { return const_universe; }
 
     // mutable container of mutable objects, not thread safe to modify
-    Universe& ContextUniverse() {
+    [[nodiscard]] Universe& ContextUniverse() {
         if (universe)
             return *universe;
         ErrorLogger() << "ScriptingContext::ContextUniverse() asked for undefined mutable Universe";
@@ -348,17 +348,17 @@ struct ScriptingContext {
     }
 
     // immutable container of immutable objects
-    const ObjectMap& ContextObjects() const noexcept { return const_objects; }
+    [[nodiscard]] const ObjectMap& ContextObjects() const noexcept { return const_objects; }
 
     // mutable container of mutable objects, not thread safe to modify
-    ObjectMap& ContextObjects() {
+    [[nodiscard]] ObjectMap& ContextObjects() {
         if (objects)
             return *objects;
         ErrorLogger() << "ScriptingContext::ContextUniverse() asked for undefined mutable ObjectMap";
         throw std::runtime_error("ScriptingContext::ContextUniverse() asked for undefined mutable objects");
     }
 
-    DiplomaticStatus ContextDiploStatus(int empire1, int empire2) const {
+    [[nodiscard]] DiplomaticStatus ContextDiploStatus(int empire1, int empire2) const {
         if (empire1 == ALL_EMPIRES || empire2 == ALL_EMPIRES || empire1 == empire2)
             return DiplomaticStatus::INVALID_DIPLOMATIC_STATUS;
         auto high_low_ids = empire1 > empire2 ? std::pair{empire1, empire2} : std::pair{empire2, empire1};
@@ -366,14 +366,14 @@ struct ScriptingContext {
         return it == diplo_statuses.end() ? DiplomaticStatus::INVALID_DIPLOMATIC_STATUS : it->second;
     }
 
-    std::set<int> GetEmpireIDsWithDiplomaticStatusWithEmpire(
+    [[nodiscard]] auto GetEmpireIDsWithDiplomaticStatusWithEmpire(
         int empire_id, DiplomaticStatus diplo_status) const
     {
         return EmpireManager::GetEmpireIDsWithDiplomaticStatusWithEmpire(
             empire_id, diplo_status, diplo_statuses);
     }
 
-    Visibility ContextVis(int object_id, int empire_id) const {
+    [[nodiscard]] Visibility ContextVis(int object_id, int empire_id) const {
         auto empire_it = empire_object_vis.find(empire_id);
         if (empire_it == empire_object_vis.end())
             return Visibility::VIS_NO_VISIBILITY;
@@ -384,7 +384,7 @@ struct ScriptingContext {
     }
 
     // mutable empire not thread safe to modify
-    std::shared_ptr<Empire> GetEmpire(int id) {
+    [[nodiscard]] std::shared_ptr<Empire> GetEmpire(int id) {
         if (!empires) {
             ErrorLogger() << "ScriptingContext::GetEmpire() asked for unavailable mutable Empire";
             return nullptr;
@@ -392,20 +392,20 @@ struct ScriptingContext {
         return empires->GetEmpire(id);
     }
 
-    std::shared_ptr<const Empire> GetEmpire(int id) const
+    [[nodiscard]] std::shared_ptr<const Empire> GetEmpire(int id) const
     { return const_empires.GetEmpire(id); }
 
-    const EmpireManager& Empires() const noexcept
+    [[nodiscard]] const EmpireManager& Empires() const noexcept
     { return const_empires; } // const container of const empires
 
-    EmpireManager& Empires() { // const container of mutable empires
+    [[nodiscard]] EmpireManager& Empires() { // const container of mutable empires
         if (empires)
             return *empires;
         ErrorLogger() << "ScriptingContext::ContextUniverse() asked for undefined mutable empires";
         throw std::runtime_error("ScriptingContext::ContextUniverse() asked for undefined mutable empires");
     }
 
-    const auto& EmpireIDs() const noexcept
+    [[nodiscard]] const auto& EmpireIDs() const noexcept
     { return const_empires.EmpireIDs(); }
 
     // script evaluation local state, some of which may vary during evaluation of an expression
