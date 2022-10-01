@@ -486,7 +486,7 @@ public:
             boolean conversions are done for them. */
         std::unique_ptr<ValidatorBase> validator;
 
-        mutable std::shared_ptr<boost::signals2::signal<void ()>> option_changed_sig_ptr;
+        OptionChangedSignalType option_changed_sig;
     };
 
     struct FO_COMMON_API OptionSection {
@@ -555,7 +555,7 @@ bool OptionsDB::Option::SetFromValue(T&& value_) {
 
     if (changed) {
         value = std::forward<T>(value_);
-        (*option_changed_sig_ptr)();
+        option_changed_sig();
     }
     return changed;
 }

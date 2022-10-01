@@ -80,8 +80,7 @@ OptionsDB::Option::Option(char short_name_, std::string name_, boost::any value_
     value(std::move(value_)),
     default_value(std::move(default_value_)),
     description(std::move(description_)),
-    validator(std::move(validator_)),
-    option_changed_sig_ptr(new boost::signals2::signal<void ()>())
+    validator(std::move(validator_))
 {
     if (!validator)
         DebugLogger() << "Option " << name << " created with null validator...";
@@ -124,7 +123,7 @@ bool OptionsDB::Option::SetFromString(std::string_view str) {
 
     if (changed) {
         value = std::move(value_);
-        (*option_changed_sig_ptr)();
+        option_changed_sig();
     }
     return changed;
 }
@@ -133,7 +132,7 @@ bool OptionsDB::Option::SetToDefault() {
     bool changed = !ValueIsDefault();
     if (changed) {
         value = default_value;
-        (*option_changed_sig_ptr)();
+        option_changed_sig();
     }
     return changed;
 }
@@ -619,7 +618,7 @@ OptionsDB::OptionChangedSignalType& OptionsDB::OptionChangedSignal(std::string_v
     if (it == m_options.end())
         throw std::runtime_error(std::string{"OptionsDB::OptionChangedSignal() : Attempted to get signal for nonexistent option \""}
                                  .append(option).append("\"."));
-    return *it->second.option_changed_sig_ptr;
+    return it->second.option_changed_sig;
 }
 
 void OptionsDB::Remove(const std::string& name) {
