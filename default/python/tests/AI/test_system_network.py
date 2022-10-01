@@ -1,3 +1,4 @@
+import freeOrionAIInterface as fo
 from unittest.mock import patch
 
 import pytest
@@ -27,26 +28,33 @@ class TestUniverse:
         return TestUniverse.connected_systems.get(sys_id, {})
 
 
+@pytest.fixture(autouse=True)
+def connected_systems(monkeypatch):
+    monkeypatch.setattr(fo, "getUniverse", TestUniverse)
+
+
 def test_connections():
-    """Test that the graph is bi-directional."""
+    """
+    Test that the graph is bi-directional.
+    This simplifies the implementation of TestUniverse and makes it easier to determine the expected results.
+    """
     for i1, lanes in TestUniverse.connected_systems.items():
         for i2 in lanes:
             assert i1 in TestUniverse.connected_systems[i2]
 
 
-def test_get_neighbors():
-    """Rather tests the patch."""
-    with patch("freeOrionAIInterface.getUniverse", new=TestUniverse):
-        assert system_network.get_neighbors(1) == {2, 7}
-
-
 @pytest.mark.parametrize(
     ("sys_id", "expected"),
-    ((1, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}), (4, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}), (12, {11, 12}), (INVALID_ID, {})),
+    (
+        (1, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}),
+        (4, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}),
+        (12, {11, 12}),
+        (11, {11, 12}),
+        (INVALID_ID, set()),
+    ),
 )
-def systems_connected_to_system(sys_id, expected):
-    with patch("freeOrionAIInterface.getUniverse", new=TestUniverse):
-        assert system_network.systems_connected_to_system(sys_id) == expected
+def test_systems_connected_to_system(sys_id, expected):
+    assert system_network.systems_connected_to_system(sys_id) == expected
 
 
 @pytest.mark.parametrize(
@@ -67,21 +75,18 @@ def systems_connected_to_system(sys_id, expected):
     ),
 )
 def test_within_n_jumps(sys_id, n, expected):
-    with patch("freeOrionAIInterface.getUniverse", new=TestUniverse):
-        assert system_network.within_n_jumps(sys_id, n) == expected
+    assert system_network.within_n_jumps(sys_id, n) == expected
 
 
 @pytest.mark.parametrize(
     ("s1", "s2", "expected"), ((1, 2, True), (1, 4, True), (1, 10, True), (1, 12, False), (11, 1, False))
 )
 def test_systems_connected(s1, s2, expected):
-    with patch("freeOrionAIInterface.getUniverse", new=TestUniverse):
+    def connected(sx, sy):
+        return sx in system_network.systems_connected_to_system(sy)
 
-        def connected(sx, sy):
-            return sx in system_network.systems_connected_to_system(sy)
-
-        with patch("universe.system_network.get_capital_sys_id") as get_capital:
-            get_capital.return_value = 1
-            with patch("freeOrionAIInterface.universe.systemsConnected", new=connected):
-                assert system_network.systems_connected(s1, s2) == expected
-                assert system_network.systems_connected(s2, s1) == expected
+    with patch("universe.system_network.get_capital_sys_id") as get_capital:
+        get_capital.return_value = 1
+        with patch("freeOrionAIInterface.universe.systemsConnected", new=connected):
+            assert system_network.systems_connected(s1, s2) == expected
+            assert system_network.systems_connected(s2, s1) == expected
