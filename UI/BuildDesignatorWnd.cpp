@@ -714,8 +714,6 @@ void BuildDesignatorWnd::BuildSelector::CompleteConstruction() {
         GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>()));
     AttachChild(m_availability_buttons.back());
 
-    namespace ph = boost::placeholders;
-
     // selectable list of buildable items
     AttachChild(m_buildable_items);
 
@@ -1168,49 +1166,48 @@ void BuildDesignatorWnd::CompleteConstruction() {
     m_enc_detail_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(
         GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, PROD_PEDIA_WND_NAME);
     // Wnd is manually closed by user
-    m_enc_detail_panel->ClosingSignal.connect(boost::bind(&BuildDesignatorWnd::HidePedia, this));
+    m_enc_detail_panel->ClosingSignal.connect([this]() { HidePedia(); });
 
     m_side_panel = GG::Wnd::Create<SidePanel>(PROD_SIDEPANEL_WND_NAME);
     m_build_selector = GG::Wnd::Create<BuildSelector>(PROD_SELECTOR_WND_NAME);
     InitializeWindows();
-    GGHumanClientApp::GetApp()->RepositionWindowsSignal.connect(
-        boost::bind(&BuildDesignatorWnd::InitializeWindows, this));
+    GGHumanClientApp::GetApp()->RepositionWindowsSignal.connect([this]() { InitializeWindows(); });
 
     m_side_panel->EnableSelection();
 
-    namespace ph = boost::placeholders;
-
     m_build_selector->DisplayBuildingTypeSignal.connect(
-        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const BuildingType*)>(
-            &EncyclopediaDetailPanel::SetItem), m_enc_detail_panel, ph::_1));
-    m_build_selector->DisplayShipDesignSignal.connect(
-        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(
-            &EncyclopediaDetailPanel::SetItem), m_enc_detail_panel, ph::_1));
-    m_build_selector->DisplayStockpileProjectSignal.connect(
-        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const std::string&)>(
-            &EncyclopediaDetailPanel::SetEncyclopediaArticle), m_enc_detail_panel, "PROJECT_BT_STOCKPILE"));
+        [this](const BuildingType* bt) { m_enc_detail_panel->SetItem(bt); });
 
-    m_build_selector->ShowPediaSignal.connect(
-        boost::bind(&BuildDesignatorWnd::ShowPedia, this));
+    m_build_selector->DisplayShipDesignSignal.connect(
+        [this](const ShipDesign* design) { m_enc_detail_panel->SetItem(design); });
+
+    m_build_selector->DisplayStockpileProjectSignal.connect(
+        [this]() { m_enc_detail_panel->SetEncyclopediaArticle("PROJECT_BT_STOCKPILE"); });
+
+    m_build_selector->ShowPediaSignal.connect([this]() { ShowPedia(); });
+
     m_build_selector->RequestBuildItemSignal.connect(
-        boost::bind(&BuildDesignatorWnd::BuildItemRequested, this, ph::_1, ph::_2, ph::_3));
+        [this](const ProductionQueue::ProductionItem& item, int num, int pos)
+        { BuildItemRequested(item, num, pos); });
 
     SidePanel::PlanetSelectedSignal.connect(PlanetSelectedSignal);
     SidePanel::SystemSelectedSignal.connect(SystemSelectedSignal);
 
     // connect build type button clicks to update display
     m_build_selector->m_build_type_buttons[BuildType::BT_BUILDING]->CheckedSignal.connect(
-        boost::bind(&BuildDesignatorWnd::ToggleType, this, BuildType::BT_BUILDING, true));
+        [this](bool) { ToggleType(BuildType::BT_BUILDING, true); });
+
     m_build_selector->m_build_type_buttons[BuildType::BT_SHIP]->CheckedSignal.connect(
-        boost::bind(&BuildDesignatorWnd::ToggleType, this, BuildType::BT_SHIP, true));
+        [this](bool) { ToggleType(BuildType::BT_SHIP, true); });
 
     // connect availability button clicks to update display
     // available items
     m_build_selector->m_availability_buttons.at(0)->CheckedSignal.connect(
-        boost::bind(&BuildDesignatorWnd::ToggleAvailabilitly, this, true, true));
+        [this](bool) { ToggleAvailabilitly(true, true); });
+
     // UNavailable items
     m_build_selector->m_availability_buttons.at(1)->CheckedSignal.connect(
-        boost::bind(&BuildDesignatorWnd::ToggleAvailabilitly, this, false, true));
+        [this](bool) { ToggleAvailabilitly(false, true); });
 
     AttachChild(m_enc_detail_panel);
     AttachChild(m_build_selector);
