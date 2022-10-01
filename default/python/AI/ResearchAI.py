@@ -1,6 +1,7 @@
 import freeOrionAIInterface as fo
 import random
 from logging import debug, error, warning
+from typing import List, Mapping
 
 import AIDependencies as Dep
 import AIstate
@@ -128,7 +129,7 @@ def get_possible_projects():
     return set(preliminary_projects) - set(TechsListsAI.unusable_techs())
 
 
-def get_completed_techs():
+def get_completed_techs() -> List[str]:
     """Get completed and available for use techs."""
     return [tech for tech in fo.techs() if tech_is_complete(tech)]
 
@@ -174,45 +175,16 @@ def generate_classic_research_orders():
 
     resource_production = empire.resourceProduction(fo.resourceType.research)
     completed_techs = sorted(list(get_completed_techs()))
-    _print_reserch_order_header(resource_production, completed_techs)
+    _print_research_order_header(resource_production, completed_techs)
 
     #
     # report techs currently at head of research queue
     #
+    tech_turns_left = _get_research_statistic(completed_techs)
+
     research_queue = empire.researchQueue
     research_queue_list = get_research_queue_techs()
     total_rp = empire.resourceProduction(fo.resourceType.research)
-    tech_turns_left = {}
-    if research_queue_list:
-        debug("Techs currently at head of Research Queue:")
-        for element in list(research_queue)[:10]:
-            tech_turns_left[element.tech] = element.turnsLeft
-            this_tech = fo.getTech(element.tech)
-            if not this_tech:
-                warning("Can't retrieve tech ", element.tech)
-                continue
-            missing_prereqs = [
-                preReq for preReq in this_tech.recursivePrerequisites(empire_id) if preReq not in completed_techs
-            ]
-            # unlocked_items = [(uli.name, uli.type) for uli in this_tech.unlocked_items]
-            unlocked_items = [uli.name for uli in this_tech.unlockedItems]
-            if not missing_prereqs:
-                debug(
-                    "    %25s allocated %6.2f RP (%d turns left)-- unlockable items: %s ",
-                    element.tech,
-                    element.allocation,
-                    tech_turns_left[element.tech],
-                    unlocked_items,
-                )
-            else:
-                debug(
-                    "    %25s allocated %6.2f RP -- missing preReqs: %s -- unlockable items: %s ",
-                    element.tech,
-                    element.allocation,
-                    missing_prereqs,
-                    unlocked_items,
-                )
-        debug("")
     #
     # set starting techs, or after turn 100 add any additional default techs
     #
@@ -575,7 +547,48 @@ def generate_classic_research_orders():
             debug("Tech %s gives access to new parts or hulls but there seems to be no military advantage.", tech)
 
 
-def _print_reserch_order_header(resource_production, completed_techs):
+def _get_research_statistic(completed_techs: List[str], first_n_techs=10) -> Mapping[str:int]:
+    empire = fo.getEmpire()
+    empire_id = empire.empireID
+    research_queue = list(empire.researchQueue)
+
+    tech_turns_left = {}
+
+    if not research_queue:
+        return tech_turns_left
+
+    debug("Techs currently at head of Research Queue:")
+    for element in research_queue[:first_n_techs]:
+        tech_turns_left[element.tech] = element.turnsLeft
+        this_tech = fo.getTech(element.tech)
+        if not this_tech:
+            warning("Can't retrieve tech %s", element.tech)
+            continue
+        missing_prereqs = [
+            pre_req for pre_req in this_tech.recursivePrerequisites(empire_id) if pre_req not in completed_techs
+        ]
+        unlocked_items = [uli.name for uli in this_tech.unlockedItems]
+        if not missing_prereqs:
+            debug(
+                "    %25s allocated %6.2f RP (%d turns left)-- unlockable items: %s ",
+                element.tech,
+                element.allocation,
+                tech_turns_left[element.tech],
+                unlocked_items,
+            )
+        else:
+            debug(
+                "    %25s allocated %6.2f RP -- missing preReqs: %s -- unlockable items: %s ",
+                element.tech,
+                element.allocation,
+                missing_prereqs,
+                unlocked_items,
+            )
+    debug("")
+    return tech_turns_left
+
+
+def _print_research_order_header(resource_production, completed_techs):
     debug("Research Queue Management:")
     debug("\nTotal Current Research Points: %.2f\n", resource_production)
     debug("Techs researched and available for use:")
