@@ -621,17 +621,16 @@ OptionsDB::OptionChangedSignalType& OptionsDB::OptionChangedSignal(std::string_v
     return it->second.option_changed_sig;
 }
 
-void OptionsDB::Remove(const std::string& name) {
+void OptionsDB::Remove(std::string_view name) {
     auto it = m_options.find(name);
     if (it != m_options.end()) {
         short_names.erase(it->second.short_name);
         m_options.erase(it);
         m_dirty = true;
     }
-    OptionRemovedSignal(name);
 }
 
-void OptionsDB::RemoveUnrecognized(const std::string& prefix) {
+void OptionsDB::RemoveUnrecognized(std::string_view prefix) {
     auto it = m_options.begin();
     while (it != m_options.end()) {
         if (!it->second.recognized && it->first.find(prefix) == 0)
