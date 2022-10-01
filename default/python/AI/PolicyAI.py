@@ -3,7 +3,7 @@ from __future__ import annotations
 import freeOrionAIInterface as fo
 from copy import copy
 from logging import debug, error
-from typing import Callable, Iterable, Optional, Set, Union
+from typing import Callable, Iterable, Optional, Set, Tuple, Union
 
 import PlanetUtilsAI
 from AIDependencies import Tags
@@ -48,11 +48,12 @@ social_category = "SOCIAL_CATEGORY"
 propaganda = "PLC_PROPAGANDA"
 algo_research = "PLC_ALGORITHMIC_RESEARCH"
 liberty = "PLC_LIBERTY"
-conformance = "PLC_CONFORMANCE"  # should be added, but opposing 3 others makes it a little harder to script
 diversity = "PLC_DIVERSITY"
 artisans = "PLC_ARTISAN_WORKSHOPS"
 population = "PLC_POPULATION"
 racial_purity = "PLC_RACIAL_PURITY"
+conformance = "PLC_CONFORMANCE"
+conformance_exclusions = {liberty, diversity, artisans}
 
 
 class _EmpireOutput:
@@ -164,6 +165,8 @@ class PolicyManager:
             diversity: self._rate_diversity,
             artisans: self._rate_artisans,
             population: self._rate_population,
+            liberty: lambda: 10,  # hack, only used by _try_without_conformance
+            conformance: lambda: 999,  # not an actual rating, but _deadopt_one_of fails without it
             # military policies are mostly chosen by opinion, plus some rule-of-thumb values
             allied_repair: lambda: self._rate_opinion(charge),  # no effect, unless we have allies...
             charge: lambda: self._rate_opinion(charge),  # increases attack, reduces shields
@@ -220,12 +223,11 @@ class PolicyManager:
     def _process_social(self) -> None:
         """
         Process social policies.
-        So far we use propaganda, liberty, diversity, artisan workshops and algo. research.
         Propaganda is activated in turn 1 and usually replaced by liberty in 7.
-        Since liberty affects so many other things, we check it first, then simply rate all others and
+        Since liberty and conformance affect so many other things, we check them first, then simply rate all others and
         try to adopt the best possible ones for the slots we have.
         """
-        self._process_liberty()
+        self._conformance_or_liberty()
         self._process_policy_options(social_category, (propaganda, algo_research, diversity, artisans, population))
 
     def _process_military(self) -> None:
@@ -380,29 +382,108 @@ class PolicyManager:
         debug(f"_rate_algo_research: rating={rating}")
         return rating
 
-    def _process_liberty(self) -> None:
+    def _conformance_or_liberty(self) -> _EmpireOutput:
         """
-        Adopt or deadopt liberty, may replace another social policy.
+        Try policies conformance and liberty.
         Liberty is available very early, but to help setting up basic policies we keep propaganda at least
         until we have infra1. Getting a second slot before that should be nearly impossible.
-        Centralization is always kept only for one turn and if population has a strong opinion on it,
-        stability calculation may be extremely different from normal turns, leading to a change that would
-        possibly be reverted next turn, so we skip processing liberty while centralization is adopted.
+        """
+        if infra1 in self._adopted:
+            debug("Evaluating conformance/liberty, first without change:")
+            current_output = self._calculate_empire_output()
+            if conformance in self._adopted:
+                # this may also try liberty
+                self._try_without_conformance(current_output)
+            else:
+                current_output, conformance_cost = self._try_conformance(current_output)
+                self._process_liberty(current_output, conformance_cost)
+
+    def _try_without_conformance(self, current_output: _EmpireOutput) -> None:
+        """
+        Consider de-adopting conformance.
+        Conformance always improves stability (even when disliked). Theoretically this could be negative when
+        using black markets and/or necessity. So far we ignore this and only try de-adopting it when we can
+        adopt one or more of its exclusions instead.
+        """
+        if not any(self._can_adopt(p, conformance) for p in conformance_exclusions):
+            return
+        self._deadopt(conformance)
+        # For this we use a fixed, low rating for liberty since later in the game (it must be later, since we have
+        # conformance) it is usually not so great. Even more so when the empire was using conformance.
+        adopt_options = sorted([(self._rate_policy(p), p) for p in conformance_exclusions], reverse=True)
+        best_output = current_output
+        best_costs = 0.0
+        best_adopted = set()
+        costs = 0.0
+        adopted = set()
+        # Note that this function does not unlock artisans. Perhaps it should?
+        # _process_policy_options cannot deadopt conformance to do it.
+        for rating, policy in adopt_options:
+            if rating > 0.0 and self._can_adopt(policy):
+                costs += fo.getPolicy(policy).adoptionCost()
+                self._adopt(policy)
+                adopted.add(policy)
+                new_output = self._calculate_empire_output()
+                if new_output.is_better_than(best_output, costs - best_costs):
+                    best_output = new_output
+                    best_costs = costs
+                    best_adopted = adopted
+        for policy in adopted - best_adopted:
+            self._deadopt(policy)
+        if not best_adopted:
+            # No alternative was better than current_output with conformance.
+            self._adopt(conformance)
+
+    def _try_conformance(self, current_output: _EmpireOutput) -> Tuple[_EmpireOutput, float]:
+        """
+        Try adopting conformance, may replace another social policies.
+        Conformance is rather good, but has several exclusions. So this may have to de-adopt all exclusions just
+        to try adoption conformance.
+        """
+        exclusions = conformance_exclusions & self._adopted
+        other_could_replace = {propaganda, algo_research, population} & self._adopted
+        adoption_cost = fo.getPolicy(conformance).adoptionCost()
+        if self._can_adopt(conformance):
+            self._adopt(conformance)
+            with_conformance = self._calculate_empire_output()
+            if current_output.is_better_than(with_conformance, adoption_cost):
+                self._deadopt(conformance)
+                return current_output, 0
+            return with_conformance, adoption_cost
+        elif self._can_adopt(conformance, exclusions | other_could_replace):
+            if exclusions:
+                for policy in exclusions:
+                    self._deadopt(policy)
+            else:
+                self._deadopt_one_of(other_could_replace)
+            self._adopt(conformance)
+            with_conformance = self._calculate_empire_output()
+            if current_output.is_better_than(with_conformance, adoption_cost):
+                self._deadopt(conformance)
+                if exclusions:
+                    for policy in exclusions:
+                        self._adopt(policy)
+                else:
+                    self._readopt_selected_one()
+                return current_output, 0
+            return with_conformance, adoption_cost
+        # cannot adopt it at all
+        return current_output, 0
+
+    def _process_liberty(self, current_output: _EmpireOutput, conformance_cost: float) -> None:
+        """
+        Adopt or deadopt liberty, may replace another social policy.
         """
         could_replace = {propaganda, algo_research, diversity, artisans} & self._adopted
-        if (
-            infra1 in self._adopted
-            and centralization not in self._adopted
-            and (liberty in self._adopted or self._can_adopt(liberty, could_replace))
-        ):
-            adoption_cost = fo.getPolicy(liberty).adoptionCost()
+        if conformance in self._adopted:
+            could_replace = {conformance}  # cannot adopt them together
+        if liberty in self._adopted or self._can_adopt(liberty, could_replace):
+            adoption_cost = 0.0 if liberty in self._originally_adopted else fo.getPolicy(liberty).adoptionCost()
             # liberty will generally make species less happy, but generates research
-            debug("Evaluating liberty, first without change:")
-            current_output = self._calculate_empire_output()
             if liberty in self._adopted:
                 self._deadopt(liberty)
                 without_liberty = self._calculate_empire_output()
-                if current_output.is_better_than(without_liberty, 0):
+                if current_output.is_better_than(without_liberty, 0.0):
                     self._adopt(liberty)
             elif self._can_adopt(liberty):
                 self._adopt(liberty)
@@ -415,7 +496,9 @@ class PolicyManager:
                 self._deadopt_one_of(could_replace)
                 self._adopt(liberty)
                 with_liberty = self._calculate_empire_output()
-                if current_output.is_better_than(with_liberty, adoption_cost):
+                # Current cost is only relevant when we adopted conformance in _try_conformance. Then we must compare
+                # current_output with conformance to with_liberty at the cost difference of cost.
+                if current_output.is_better_than(with_liberty, adoption_cost - conformance_cost):
                     self._deadopt(liberty)
                     self._readopt_selected_one()
 

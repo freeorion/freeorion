@@ -290,10 +290,12 @@ def _calculate_get_planet_opinions() -> Dict[str, Opinion]:
 
 def dislike_factor() -> float:
     """Returns multiplier for dislike effects."""
-    # See happiness.macros
+    # See opinion.macros
     has_liberty = fo.getEmpire().policyAdopted("PLC_LIBERTY")
-    # conformance not used yet
-    return get_named_real("PLC_LIBERTY_DISLIKE_FACTOR") if has_liberty else 1.0
+    has_conformance = fo.getEmpire().policyAdopted("PLC_CONFORMANCE")
+    liberty_factor = get_named_real("PLC_LIBERTY_DISLIKE_FACTOR") if has_liberty else 1.0
+    conformance_factor = get_named_real("PLC_CONFORMANCE_DISLIKE_FACTOR") if has_conformance else 1.0
+    return liberty_factor * conformance_factor
 
 
 def focus_stability_effect(species: fo.species, focus: str) -> float:
