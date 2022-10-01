@@ -27,6 +27,10 @@ class TestUniverse:
     def getImmediateNeighbors(self, sys_id, _):
         return TestUniverse.connected_systems.get(sys_id, {})
 
+    @staticmethod
+    def systemsConnected(sx, sy, _):
+        return sx in system_network.systems_connected_to_system(sy)
+
 
 @pytest.fixture(autouse=True)
 def connected_systems(monkeypatch):
@@ -49,7 +53,6 @@ def test_connections():
         (1, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}),
         (4, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}),
         (12, {11, 12}),
-        (11, {11, 12}),
         (INVALID_ID, set()),
     ),
 )
@@ -79,14 +82,10 @@ def test_within_n_jumps(sys_id, n, expected):
 
 
 @pytest.mark.parametrize(
-    ("s1", "s2", "expected"), ((1, 2, True), (1, 4, True), (1, 10, True), (1, 12, False), (11, 1, False))
+    ("s1", "s2", "expected"), ((1, 2, True), (1, 12, False), (11, 1, False), (11, 12, True), (11, 13, False))
 )
-def test_systems_connected(s1, s2, expected):
-    def connected(sx, sy):
-        return sx in system_network.systems_connected_to_system(sy)
-
-    with patch("universe.system_network.get_capital_sys_id") as get_capital:
-        get_capital.return_value = 1
-        with patch("freeOrionAIInterface.universe.systemsConnected", new=connected):
-            assert system_network.systems_connected(s1, s2) == expected
-            assert system_network.systems_connected(s2, s1) == expected
+def test_systems_connected(s1, s2, expected, monkeypatch):
+    with patch("universe.system_network.get_capital_sys_id") as get_capital_sys_id:
+        get_capital_sys_id.return_value = 1
+        assert system_network.systems_connected(s1, s2) == expected
+        assert system_network.systems_connected(s2, s1) == expected
