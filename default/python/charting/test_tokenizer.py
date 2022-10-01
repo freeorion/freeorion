@@ -1,5 +1,5 @@
-from log_tokenizer import _get_token_from_line
-from statistic_interface import StatKey
+from charting.log_tokenizer import _get_token_from_line
+from common.statistic_interface import StatKey
 
 
 def test_token_parser():
