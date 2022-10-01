@@ -237,6 +237,17 @@ namespace {
         return effect_wrapper(std::make_shared<Effect::SetOwner>(std::move(empire)));
     }
 
+    effect_wrapper insert_set_star_type_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef< ::StarType>> star_type;
+        auto star_type_arg = py::extract<value_ref_wrapper< ::StarType>>(kw["type"]);
+        if (star_type_arg.check()) {
+            star_type = ValueRef::CloneUnique(star_type_arg().value_ref);
+        } else {
+            star_type = std::make_unique<ValueRef::Constant< ::StarType>>(boost::python::extract<enum_wrapper< ::StarType>>(kw["type"])().value);
+        }
+        return effect_wrapper(std::make_shared<Effect::SetStarType>(std::move(star_type)));
+    }
+
     effect_wrapper victory(const boost::python::tuple& args, const boost::python::dict& kw) {
         auto reason = boost::python::extract<std::string>(kw["reason"])();
         return effect_wrapper(std::make_shared<Effect::Victory>(reason));
@@ -351,5 +362,6 @@ void RegisterGlobalsEffects(py::dict& globals) {
 
     globals["SetEmpireStockpile"] = py::raw_function(insert_set_empire_stockpile);
     globals["SetOwner"] = py::raw_function(insert_set_owner_);
+    globals["SetStarType"] = py::raw_function(insert_set_star_type_);
 }
 
