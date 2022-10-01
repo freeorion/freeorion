@@ -6,7 +6,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "ROBOTIC" "GOOD_INDUSTRY" "BAD_RESEARCH" "VERY_BAD_INFLUENCE" "PEDIA_ROBOTIC_SPECIES_CLASS" ]
+    tags = [ "ROBOTIC" "VERY_BAD_RESEARCH" "VERY_BAD_HAPPINESS" "GREAT_POPULATION" "ADAPTIVE" "PEDIA_ADAPTIVE_TITLE" "PEDIA_ROBOTIC_SPECIES_CLASS" ]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -19,38 +19,51 @@ Species
     defaultfocus = "FOCUS_INDUSTRY"
     likes = [
         "FOCUS_INDUSTRY"
+        "FOCUS_INFLUENCE"
         "PANOPTICON_SPECIAL"
         "PHILOSOPHER_SPECIAL"
         "PLC_COLONIZATION"
+        "PLC_COLONIALISM"
         "PLC_DESIGN_SIMPLICITY"
+        "PLC_DIVINE_AUTHORITY"
+        "PLC_EXPLORATION"
         "PLC_FEUDALISM"
+        "PLC_MARINE_RECRUITMENT"
+        "PLC_NATIVE_APPROPRIATION"
         "PLC_POPULATION"
+        "PLC_VASSALIZATION"
         "SHIMMER_SILK_SPECIAL"
         "SPARK_FOSSILS_SPECIAL"
         "SPICE_SPECIAL"
     ]
     dislikes = [
         //"BLD_CLONING_CENTER"       // disabled content
+        "FOCUS_RESEARCH"
         "BLD_SHIPYARD_AST"
         "BLD_SHIPYARD_ENRG_COMP"
         "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
         "CRYSTALS_SPECIAL"
         "GAIA_SPECIAL"
+        "PLC_ALGORITHMIC_RESEARCH"
         "PLC_ENVIRONMENTALISM"
+        "PLC_INDUSTRIALISM"
+        "PLC_LIBERTY"
         "PLC_NO_GROWTH"
+        "PLC_NO_SUPPLY"
+        "PLC_TECHNOCRACY"
         "RESONANT_MOON_SPECIAL"
     ]
 
     effectsgroups = [
-        [[GOOD_INDUSTRY]]
-        [[BAD_RESEARCH]]
-        [[VERY_BAD_INFLUENCE]]
+        [[AVERAGE_INDUSTRY]]
+        [[VERY_BAD_RESEARCH]]
+        [[AVERAGE_INFLUENCE]]
         [[AVERAGE_STOCKPILE]]
 
-        [[AVERAGE_POPULATION]]
-        [[AVERAGE_HAPPINESS]]
+        [[GREAT_POPULATION]]
+        [[VERY_BAD_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[GOOD_DEFENSE_TROOPS]]
+        [[AVERAGE_DEFENSE_TROOPS]]
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]

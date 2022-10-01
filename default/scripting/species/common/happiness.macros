@@ -5,6 +5,19 @@ STABILITY_PER_LIKED_FOCUS
 STABILITY_PER_DISLIKED_FOCUS
 '''2.0 * [[POLICY_DISLIKE_SCALING]]'''
 
+VERY_BAD_HAPPINESS
+'''
+[[COMMON_HAPPINESS_EFFECTS]]
+[[STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY]]
+
+        EffectsGroup
+            description = "VERY_BAD_HAPPINESS_DESC"
+            scope = Source
+            activation = Planet
+            accountinglabel = "VERY_BAD_HAPPINESS_LABEL"
+            effects = SetTargetHappiness value = Value + (NamedReal name = "VERY_BAD_HAPPINESS_VAL" value = -5)
+'''
+
 BAD_HAPPINESS
 '''
 [[COMMON_HAPPINESS_EFFECTS]]

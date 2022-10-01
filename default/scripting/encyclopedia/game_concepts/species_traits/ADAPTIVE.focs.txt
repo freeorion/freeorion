@@ -1,0 +1,6 @@
+Article
+    name = "ADAPTIVE_TITLE"
+    category = "SPECIES_TRAITS_TITLE"
+    short_description = "SPECIES_ARTICLE_SHORT_DESC"
+    description = "ADAPTIVE_TEXT"
+    icon = "icons/tech/symbiosis_biology.png"
