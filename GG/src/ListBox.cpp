@@ -25,9 +25,9 @@ namespace {
 
 struct ListSignalEcho
 {
-    ListSignalEcho(const ListBox& lb, const std::string& name) :
+    ListSignalEcho(const ListBox& lb, std::string name) :
         m_LB(lb),
-        m_name(name)
+        m_name(std::move(name))
     {}
 
     void operator()()
@@ -38,7 +38,7 @@ struct ListSignalEcho
         std::cerr << "GG SIGNAL : " << m_name << "(sels=[ ";
 
         for (const auto& sel : sels)
-        { std::cerr << RowIndex(sel) << ' '; }
+            std::cerr << RowIndex(sel) << ' ';
 
         std::cerr << "])" << std::endl;
     }
@@ -64,7 +64,7 @@ class RowSorter // used to sort rows by a certain column (which may contain some
 {
 public:
     RowSorter(const std::function<bool (const ListBox::Row&, const ListBox::Row&, std::size_t)>& cmp,
-                std::size_t col, bool invert) :
+              std::size_t col, bool invert) :
         m_cmp(cmp),
         m_sort_col(col),
         m_invert(invert)
@@ -76,7 +76,7 @@ public:
     { return m_invert ? m_cmp(*r, *l, m_sort_col) : m_cmp(*l, *r, m_sort_col); }
 
 private:
-    std::function<bool (const ListBox::Row&, const ListBox::Row&, std::size_t)> m_cmp;
+    const std::function<bool (const ListBox::Row&, const ListBox::Row&, std::size_t)>& m_cmp;
     std::size_t m_sort_col;
     bool m_invert;
 };
@@ -1333,9 +1333,9 @@ void ListBox::SetSortCol(std::size_t n)
         Resort();
 }
 
-void ListBox::SetSortCmp(const std::function<bool (const Row&, const Row&, std::size_t)>& sort_cmp)
+void ListBox::SetSortCmp(std::function<bool (const Row&, const Row&, std::size_t)> sort_cmp)
 {
-    m_sort_cmp = sort_cmp;
+    m_sort_cmp = std::move(sort_cmp);
     if (!(m_style & LIST_NOSORT))
         Resort();
 }
@@ -1875,10 +1875,9 @@ ListBox::iterator ListBox::Insert(std::shared_ptr<Row> row, iterator it, bool dr
     }
 
     row->Hide();
-    row->Resize(Pt(std::max(ClientWidth(), X(1)), row->Height()));
-    row->RightClickedSignal.connect(
-        boost::bind(&ListBox::HandleRowRightClicked, this,
-                    boost::placeholders::_1, boost::placeholders::_2));
+    row->Resize(Pt(std::max(ClientWidth(), X1), row->Height()));
+    row->RightClickedSignal.connect([this](const Pt& pt, GG::Flags<GG::ModKey> mod)
+                                    { HandleRowRightClicked(pt, mod); });
 
     AfterInsertRowSignal(it);
     if (dropped)

@@ -383,7 +383,7 @@ public:
         row sorting.  Note that \a sort_cmp is assumed to produce an ascending
         order when used to sort; setting the LIST_SORTDESCENDING style can be
         used to produce a reverse sort. */
-    void SetSortCmp(const std::function<bool (const Row&, const Row&, std::size_t)>& sort_cmp);
+    void SetSortCmp(std::function<bool (const Row&, const Row&, std::size_t)> sort_cmp);
 
     /** Fixes the column widths; by default, an empty ListBox will take on the
         number of columns of its first added row. \note The number of columns
