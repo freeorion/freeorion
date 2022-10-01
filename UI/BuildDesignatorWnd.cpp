@@ -718,13 +718,18 @@ void BuildDesignatorWnd::BuildSelector::CompleteConstruction() {
 
     // selectable list of buildable items
     AttachChild(m_buildable_items);
+
     m_buildable_items->LeftClickedRowSignal.connect(
-        boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked, this, ph::_1, ph::_2, ph::_3));
+        [this](GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+        { BuildItemLeftClicked(it, pt, modkeys); });
+
     m_buildable_items->DoubleClickedRowSignal.connect(
         [this](GG::ListBox::iterator it, const GG::Pt&, const GG::Flags<GG::ModKey>& modkeys)
-        { this->AddBuildItemToQueue(it, modkeys & GG::MOD_KEY_CTRL); });
+        { AddBuildItemToQueue(it, modkeys & GG::MOD_KEY_CTRL); });
+
     m_buildable_items->RightClickedRowSignal.connect(
-        boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemRightClicked, this, ph::_1, ph::_2, ph::_3));
+        [this](GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+        { BuildItemRightClicked(it, pt, modkeys); });
 
     //auto header = GG::Wnd::Create<GG::ListBox::Row>();
     //std::shared_ptr<GG::Font> font = ClientUI::GetFont();
