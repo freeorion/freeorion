@@ -51,8 +51,7 @@ class Generator:
 
         print("Writing file: %s" % self.outfile)
         with open(self.outfile, "w") as generated_file:
-            generated_file.write(self.compile_output(template, version, branch, build_no,
-                build_sys, version_file_name))
+            generated_file.write(self.compile_output(template, version, branch, build_no, build_sys, version_file_name))
 
 
 class NsisInstScriptGenerator(Generator):
@@ -124,8 +123,10 @@ required_boost_libraries = [
 
 
 # A list of tuples containing generators
-generators = [Generator("util/Version.cpp.in", "util/Version.cpp"),
-              Generator("cmake/FreeOrionVersion.cmake.in", "cmake/FreeOrionVersion.cmake")]
+generators = [
+    Generator("util/Version.cpp.in", "util/Version.cpp"),
+    Generator("cmake/FreeOrionVersion.cmake.in", "cmake/FreeOrionVersion.cmake"),
+]
 if system() == "Windows":
     generators.append(NsisInstScriptGenerator("packaging/windows_installer.nsi.in", "packaging/windows_installer.nsi"))
 if system() == "Darwin":
@@ -154,7 +155,7 @@ try:
     if branch[:7] == "release":
         version_file_name = "v" + version
     else:
-        version_file_name = build_no + "_Test" 
+        version_file_name = build_no + "_Test"
 except (IOError, CalledProcessError):
     print("WARNING: git not installed or not setup correctly")
 
