@@ -129,6 +129,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         py::class_<value_ref_wrapper<std::string>>("ValueRefString", py::no_init);
         py::class_<condition_wrapper>("Condition", py::no_init)
             .def(py::self_ns::self & py::self_ns::self)
+            .def(py::self_ns::self & py::other<value_ref_wrapper<double>>())
             .def(py::self_ns::self | py::self_ns::self)
             .def(~py::self_ns::self);
         py::class_<effect_wrapper>("Effect", py::no_init);

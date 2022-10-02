@@ -5,6 +5,9 @@
 
 #include "../universe/Condition.h"
 
+template<typename T>
+struct value_ref_wrapper;
+
 namespace boost::python {
     class dict;
 }
@@ -17,6 +20,7 @@ struct condition_wrapper {
 };
 
 condition_wrapper operator&(const condition_wrapper&, const condition_wrapper&);
+condition_wrapper operator&(const condition_wrapper&, const value_ref_wrapper<double>&);
 condition_wrapper operator|(const condition_wrapper&, const condition_wrapper&);
 condition_wrapper operator~(const condition_wrapper&);
 
