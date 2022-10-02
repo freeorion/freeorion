@@ -684,6 +684,21 @@ namespace {
         return condition_wrapper(std::make_shared<Condition::ResourceSupplyConnectedByEmpire>(std::move(empire),
             std::move(ValueRef::CloneUnique(condition.condition))));
     }
+
+    condition_wrapper insert_within_starlane_jumps_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        auto condition = boost::python::extract<condition_wrapper>(kw["condition"])();
+
+        std::unique_ptr<ValueRef::ValueRef<int>> jumps;
+        auto jumps_args = boost::python::extract<value_ref_wrapper<int>>(kw["jumps"]);
+        if (jumps_args.check()) {
+            jumps = ValueRef::CloneUnique(jumps_args().value_ref);
+        } else {
+            jumps = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["jumps"])());
+        }
+
+        return condition_wrapper(std::make_shared<Condition::WithinStarlaneJumps>(std::move(jumps),
+            std::move(ValueRef::CloneUnique(condition.condition))));
+    }
 }
 
 void RegisterGlobalsConditions(boost::python::dict& globals) {
@@ -779,5 +794,6 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     globals["EmpireHasAdoptedPolicy"] = boost::python::raw_function(insert_empire_has_adopted_policy_);
     globals["Turn"] = boost::python::raw_function(insert_turn_);
     globals["ResourceSupplyConnected"] = boost::python::raw_function(insert_resource_supply_connected_);
+    globals["WithinStarlaneJumps"] = boost::python::raw_function(insert_within_starlane_jumps_);
 }
 
