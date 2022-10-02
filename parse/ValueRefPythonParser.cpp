@@ -225,10 +225,10 @@ value_ref_wrapper<double> operator>(const value_ref_wrapper<double>& lhs, const 
     );
 }
 
-condition_wrapper operator<(const value_ref_wrapper<double>& lhs, const value_ref_wrapper<double>& rhs) {
-    return condition_wrapper(
-        std::make_shared<Condition::ValueTest>(ValueRef::CloneUnique(lhs.value_ref),
-            Condition::ComparisonType::LESS_THAN,
+value_ref_wrapper<double> operator<(const value_ref_wrapper<double>& lhs, const value_ref_wrapper<double>& rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::COMPARE_LESS_THAN,
+            ValueRef::CloneUnique(lhs.value_ref),
             ValueRef::CloneUnique(rhs.value_ref))
     );
 }
