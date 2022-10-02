@@ -1,6 +1,12 @@
 name: AI linters and tests
 on:
   pull_request:
+    paths:
+      - '.github/**'
+      - 'check/st-tool.py'
+      - 'default/python/**'
+      - 'default/scripting/**'
+      - 'test-scripting/**'
     types:
       - opened
       - edited

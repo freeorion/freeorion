@@ -37,7 +37,7 @@ jobs:
       HOMEBREW_NO_AUTO_UPDATE: 1
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Clean up Mono
         run: sudo ./.github/workflows/mono-uninstall.sh
       - name: Prepare ccache timestamp
