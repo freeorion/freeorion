@@ -184,6 +184,15 @@ value_ref_wrapper<double> operator-(int lhs, const value_ref_wrapper<double>& rh
     );
 }
 
+value_ref_wrapper<double> operator-(double lhs, const value_ref_wrapper<int>& rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::MINUS,
+            std::make_unique<ValueRef::Constant<double>>(lhs),
+            std::make_unique<ValueRef::StaticCast<int, double>>(ValueRef::CloneUnique(rhs.value_ref))
+        )
+    );
+}
+
 value_ref_wrapper<double> operator-(const value_ref_wrapper<double>& lhs, int rhs) {
     return value_ref_wrapper<double>(
         std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::MINUS,
@@ -234,6 +243,14 @@ value_ref_wrapper<double> operator>(const value_ref_wrapper<double>& lhs, const 
     );
 }
 
+value_ref_wrapper<double> operator>=(const value_ref_wrapper<double>& lhs, const value_ref_wrapper<double>& rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::COMPARE_GREATER_THAN_OR_EQUAL,
+            ValueRef::CloneUnique(lhs.value_ref),
+            ValueRef::CloneUnique(rhs.value_ref))
+    );
+}
+
 value_ref_wrapper<double> operator<(const value_ref_wrapper<double>& lhs, const value_ref_wrapper<double>& rhs) {
     return value_ref_wrapper<double>(
         std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::COMPARE_LESS_THAN,
@@ -272,6 +289,15 @@ value_ref_wrapper<int> operator-(const value_ref_wrapper<int>& lhs, int rhs) {
         std::make_shared<ValueRef::Operation<int>>(ValueRef::OpType::MINUS,
             ValueRef::CloneUnique(lhs.value_ref),
             std::make_unique<ValueRef::Constant<int>>(rhs)
+        )
+    );
+}
+
+value_ref_wrapper<int> operator-(int lhs, const value_ref_wrapper<int>& rhs) {
+    return value_ref_wrapper<int>(
+        std::make_shared<ValueRef::Operation<int>>(ValueRef::OpType::MINUS,
+            std::make_unique<ValueRef::Constant<int>>(lhs),
+            ValueRef::CloneUnique(rhs.value_ref)
         )
     );
 }
