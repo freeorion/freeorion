@@ -1,6 +1,6 @@
 # Tool for work with string tables
 
-[String tables](default/stringtables/README.md)
+[String tables](/default/stringtables/README.md)
 
 ## Maintain string tables
 Formatting and basic checks are maintained by tool: `st-tool.py`.

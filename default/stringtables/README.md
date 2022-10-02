@@ -1,8 +1,8 @@
 # String tables
 
 ## Table of content
-[Glossary](#glossary)
-[Tool](#tool)
+- [Glossary](#glossary)
+- [Tool](#tool)
 
 ## Glossary
 
