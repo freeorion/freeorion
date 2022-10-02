@@ -3,6 +3,11 @@ profile = "black"
 multi_line_output = 3
 skip_gitignore=true
 extra_standard_library=["freeorion", "freeOrionAIInterface"]
+skip=[
+    "client", "cmake", "combat", "Empire", "GG", "godot", "msvc2017",
+    "msvc2019", "msvc2022", "network", "packaging", "parse", "python",
+    "server", "snap", "test", "tmp", "UI", "universe", "util",
+]
 
 [tool.black]
 # do not include pyi files, since they are generated
@@ -22,8 +27,9 @@ client
 | Empire
 | GG
 | godot
-| msvc2017|
+| msvc2017
 | msvc2019
+| msvc2022
 | network
 | packaging
 | parse
