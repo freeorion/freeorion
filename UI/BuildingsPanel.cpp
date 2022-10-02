@@ -243,22 +243,19 @@ std::map<int, bool> BuildingsPanel::s_expanded_map;
 /////////////////////////////////////
 //       BuildingIndicator         //
 /////////////////////////////////////
-namespace {
-    ScanlineRenderer s_scanline_shader;
-}
-
 BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
+    m_scanlines(GG::Wnd::Create<ScanlineControl>()),
     m_building_id(building_id)
 {
     if (auto building = Objects().getRaw<Building>(m_building_id))
-        building->StateChangedSignal.connect([this]() { RequirePreRender(); });
+        m_signal_connection = building->StateChangedSignal.connect([this]() { RequirePreRender(); });
 }
 
 BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
                                      double turns_completed, double total_turns, double total_cost, double turn_spending) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
-    m_building_id(INVALID_OBJECT_ID)
+    m_scanlines(GG::Wnd::Create<ScanlineControl>())
 {
     auto texture = ClientUI::BuildingIcon(building_type);
 
@@ -300,37 +297,6 @@ void BuildingIndicator::Render() {
 
     // Draw outline and background...
     GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
-
-    // Scanlines for not currently-visible objects?
-    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    if (empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("ui.map.scanlines.shown"))
-        return;
-    if (m_building_id == INVALID_OBJECT_ID)
-        return;
-    if (GetUniverse().GetObjectVisibilityByEmpire(m_building_id, empire_id) >= Visibility::VIS_BASIC_VISIBILITY)
-        return;
-
-    s_scanline_shader.StartUsing();
-
-    GLfloat verts[8];
-    verts[0] = Value(ul.x); verts[1] = Value(ul.y);
-    verts[2] = Value(lr.x); verts[3] = Value(ul.y);
-    verts[4] = Value(lr.x); verts[5] = Value(lr.y);
-    verts[6] = Value(ul.x); verts[7] = Value(lr.y);
-
-    glDisable(GL_TEXTURE_2D);
-    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    glVertexPointer(2, GL_FLOAT, 0, verts);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-
-    glPopClientAttrib();
-    glEnable(GL_TEXTURE_2D);
-
-    s_scanline_shader.StopUsing();
 }
 
 void BuildingIndicator::PreRender() {
@@ -348,6 +314,7 @@ void BuildingIndicator::Refresh() {
     ClearBrowseInfoWnd();
 
     DetachChildAndReset(m_graphic);
+    DetachChild(m_scanlines);
     DetachChildAndReset(m_scrap_indicator);
 
     if (const BuildingType* type = GetBuildingType(building->BuildingTypeName())) {
@@ -356,9 +323,19 @@ void BuildingIndicator::Refresh() {
             texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         AttachChild(m_graphic);
 
-        std::string desc = UserString(type->Description());
-        if (building->GetMeter(MeterType::METER_STEALTH))
-            desc = UserString("METER_STEALTH") + boost::io::str(boost::format(": %3.1f\n\n") % building->GetMeter(MeterType::METER_STEALTH)->Current()) + desc;
+        // Scanlines for not currently-visible objects?
+        if (GetOptionsDB().Get<bool>("ui.map.scanlines.shown")) {
+            int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+            if (empire_id != ALL_EMPIRES &&
+                GetUniverse().GetObjectVisibilityByEmpire(m_building_id, empire_id) < Visibility::VIS_BASIC_VISIBILITY)
+            { AttachChild(m_scanlines); }
+        }
+
+        std::string desc = UserString(type->Description()); // intentional copy
+        if (const auto* stealth_meter = building->GetMeter(MeterType::METER_STEALTH)) {
+            auto stealth = stealth_meter->Current();
+            desc = UserString("METER_STEALTH") + boost::io::str(boost::format(": %3.1f\n\n") % stealth) + desc;
+        }
         if (GetOptionsDB().Get<bool>("resource.effects.description.shown") && !type->Effects().empty())
             desc += "\n" + Dump(type->Effects());
 
@@ -459,6 +436,9 @@ void BuildingIndicator::DoLayout() {
 
     if (m_graphic)
         m_graphic->SizeMove(GG::Pt(GG::X0, GG::Y0), child_lr);
+
+    if (m_scanlines)
+        m_scanlines->SizeMove(GG::Pt(GG::X0, GG::Y0), child_lr);
 
     if (m_scrap_indicator)
         m_scrap_indicator->SizeMove(GG::Pt(GG::X0, GG::Y0), child_lr);

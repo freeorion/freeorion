@@ -7,6 +7,7 @@
 
 class BuildingIndicator;
 class MultiTurnProgressBar;
+class ScanlineControl;
 
 /** Contains various BuildingIndicator to represent buildings on a planet. */
 class BuildingsPanel : public AccordionPanel {
@@ -81,8 +82,10 @@ private:
     void DoLayout();
 
     std::shared_ptr<GG::StaticGraphic>      m_graphic;
+    std::shared_ptr<ScanlineControl>        m_scanlines;
     std::shared_ptr<GG::StaticGraphic>      m_scrap_indicator; ///< shown to indicate building was ordered scrapped
     std::shared_ptr<MultiTurnProgressBar>   m_progress_bar;
+    boost::signals2::scoped_connection      m_signal_connection;
     int                                     m_building_id = INVALID_OBJECT_ID;
     bool                                    m_order_issuing_enabled = true;
 };
