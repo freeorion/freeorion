@@ -49,8 +49,7 @@ namespace {
 BuildingsPanel::BuildingsPanel(GG::X w, int columns, int planet_id) :
     AccordionPanel(w, GG::Y(ClientUI::Pts()*2)),
     m_planet_id(planet_id),
-    m_columns(columns),
-    m_building_indicators()
+    m_columns(columns)
 {}
 
 void BuildingsPanel::CompleteConstruction() {
@@ -63,16 +62,13 @@ void BuildingsPanel::CompleteConstruction() {
         m_columns = 1;
     }
 
-    m_expand_button->LeftPressedSignal.connect(
-        boost::bind(&BuildingsPanel::ExpandCollapseButtonPressed, this));
+    m_expand_button->LeftPressedSignal.connect([this]() { ExpandCollapseButtonPressed(); });
 
     // get owner, connect its production queue changed signal to update this panel
-    auto planet = Objects().get(m_planet_id);
-    if (planet) {
+    if (auto planet = Objects().getRaw(m_planet_id)) {
         if (auto empire = Empires().GetEmpire(planet->Owner())) {
             const ProductionQueue& queue = empire->GetProductionQueue();
-            queue.ProductionQueueChangedSignal.connect(
-                boost::bind(&BuildingsPanel::RequirePreRender, this));
+            m_queue_connection = queue.ProductionQueueChangedSignal.connect([this]() { RequirePreRender(); });
         }
     }
 
@@ -157,9 +153,8 @@ void BuildingsPanel::PreRender() {
     RefreshImpl();
 }
 
-void BuildingsPanel::Refresh() {
-    RequirePreRender();
-}
+void BuildingsPanel::Refresh()
+{ RequirePreRender(); }
 
 void BuildingsPanel::RefreshImpl() {
     Update();
@@ -168,7 +163,7 @@ void BuildingsPanel::RefreshImpl() {
 
 void BuildingsPanel::EnableOrderIssuing(bool enable) {
     for (auto& indicator : m_building_indicators)
-    { indicator->EnableOrderIssuing(enable); }
+        indicator->EnableOrderIssuing(enable);
 }
 
 void BuildingsPanel::ExpandCollapseButtonPressed()
@@ -248,15 +243,16 @@ std::map<int, bool> BuildingsPanel::s_expanded_map;
 /////////////////////////////////////
 //       BuildingIndicator         //
 /////////////////////////////////////
-ScanlineRenderer BuildingIndicator::s_scanline_shader;
+namespace {
+    ScanlineRenderer s_scanline_shader;
+}
 
 BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
     m_building_id(building_id)
 {
-    if (auto building = Objects().get<Building>(m_building_id))
-        building->StateChangedSignal.connect(
-            boost::bind(&BuildingIndicator::RequirePreRender, this));
+    if (auto building = Objects().getRaw<Building>(m_building_id))
+        building->StateChangedSignal.connect([this]() { RequirePreRender(); });
 }
 
 BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
