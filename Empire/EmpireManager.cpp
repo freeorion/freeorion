@@ -412,7 +412,7 @@ void InitEmpireColors(const boost::filesystem::path& path) {
     if (ReadFile(path, empire_colors_content)) {
         doc.ReadDoc(empire_colors_content);
     } else {
-        ErrorLogger() << "Unable to open data file " << path.filename();
+        ErrorLogger() << "InitEmpireColors: Unable to open data file " << path.filename();
         return;
     }
 
@@ -422,7 +422,7 @@ void InitEmpireColors(const boost::filesystem::path& path) {
             hex_colour.append(elem.attributes.at("hex"));
             colors.push_back(HexClr(hex_colour));
         } catch(const std::exception& e) {
-            ErrorLogger() << "empire_colors.xml: " << e.what() << "\n";
+            ErrorLogger() << "InitEmpireColors: exception processing hex colour " << e.what();
         }
     }
 }
