@@ -648,18 +648,18 @@ private:
 /** Renders scanlines over its area. */
 class ScanlineControl : public GG::Control {
 public:
-    ScanlineControl(GG::X x, GG::Y y, GG::X w, GG::Y h, bool square = false,
-                    GG::Clr clr = GG::CLR_BLACK);
+    ScanlineControl(GG::X x = GG::X0, GG::Y y = GG::Y0, GG::X w = GG::X1, GG::Y h = GG::Y1,
+                    bool square = false, GG::Clr clr = GG::CLR_BLACK);
 
-    /** Changes the color used to draw the scanlines. */
     void Render() override;
 
+    /** Changes the color used to draw the scanlines. */
     void SetColor(GG::Clr clr) override
     { m_color = clr; };
 
 private:
+    GG::Clr m_color = GG::CLR_WHITE;
     bool m_square = false;
-    GG::Clr m_color;
 };
 
 /** Consistently rendered popup menu */
