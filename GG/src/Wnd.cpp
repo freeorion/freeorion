@@ -539,7 +539,7 @@ void Wnd::AttachChild(std::shared_ptr<Wnd> wnd)
         if (this_as_layout)
             wnd->m_containing_layout = this_as_layout;
 
-        m_children.emplace_back(std::move(wnd));
+        m_children.push_back(std::move(wnd));
 
     } catch (const std::bad_weak_ptr&) {
         std::cerr << "\nWnd::AttachChild called either during the constructor "
@@ -614,28 +614,20 @@ void Wnd::DetachChildren()
 {
     m_layout.reset();
 
-    for (auto& wnd : m_children) {
+    for (auto& wnd : m_children)
         DetachChildCore(wnd.get());
-    }
+
     m_children.clear();
 }
 
-void Wnd::InstallEventFilter(const std::shared_ptr<Wnd>& wnd)
+void Wnd::InstallEventFilter(std::shared_ptr<Wnd> wnd)
 {
     if (!wnd)
         return;
     RemoveEventFilter(wnd);
-    m_filters.emplace_back(wnd);
-    wnd->m_filtering.emplace(shared_from_this());
-}
 
-void Wnd::InstallEventFilter(std::shared_ptr<Wnd>&& wnd)
-{
-    if (!wnd)
-        return;
-    RemoveEventFilter(wnd);
     m_filters.emplace_back(std::move(wnd));
-    wnd->m_filtering.emplace(shared_from_this());
+    wnd->m_filtering.insert(shared_from_this());
 }
 
 void Wnd::RemoveEventFilter(const std::shared_ptr<Wnd>& wnd)

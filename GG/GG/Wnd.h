@@ -603,8 +603,7 @@ public:
     void DetachChildren();
 
     /** Adds \a wnd to the front of the event filtering chain. */
-    void InstallEventFilter(const std::shared_ptr<Wnd>& wnd);
-    void InstallEventFilter(std::shared_ptr<Wnd>&& wnd);
+    void InstallEventFilter(std::shared_ptr<Wnd> wnd);
 
     /** Removes \a wnd from the filter chain. */
     void RemoveEventFilter(const std::shared_ptr<Wnd>& wnd);
@@ -995,7 +994,7 @@ private:
                                     m_filtering;                ///< The Wnds in whose filter chains this Wnd lies
     mutable std::weak_ptr<Layout>   m_layout;                   ///< The layout for this Wnd, if any
     mutable std::weak_ptr<Layout>   m_containing_layout;        ///< The layout that contains this Wnd, if any
-    std::vector<BrowseInfoMode>     m_browse_modes{{s_default_browse_time, s_default_browse_info_wnd, ""}};             ///< The browse info modes for this window
+    std::vector<BrowseInfoMode>     m_browse_modes{{s_default_browse_time, s_default_browse_info_wnd, ""}}; ///< The browse info modes for this window
 
     /** The style factory to use when creating dialogs or child controls. */
     std::shared_ptr<StyleFactory>   m_style_factory;
