@@ -1,5 +1,9 @@
 # String tables
 
+## Table of content
+[Glossary](#glossary)
+[Tool](#tool)
+
 ## Glossary
 
 - `string table` a file with translation
@@ -136,3 +140,6 @@ and then three lines starting with `##`, with the middle ## line having a sectio
 TECH_DISPLAY
 Display
 ```
+
+## Tool
+The tool to format and validate and translate string tables: [st-tool](/check/README.md).
