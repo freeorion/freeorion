@@ -210,14 +210,13 @@ struct FO_COMMON_API ServerSaveGameData {
   * multiplayer game (in the multiplayer lobby screen). */
 struct PlayerSetupData {
     std::string             player_name;
-    int                     player_id = Networking::INVALID_PLAYER_ID;
     std::string             empire_name;
-    std::array<uint8_t, 4>  empire_color = {};
     std::string             starting_species_name;
-    //! When loading a game, the ID of the empire that this player will control
-    int                     save_game_empire_id = ALL_EMPIRES;
-    Networking::ClientType  client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
+    int                     player_id = Networking::INVALID_PLAYER_ID;
+    int                     save_game_empire_id = ALL_EMPIRES; //! When loading a game, the ID of the empire that this player will control
     int                     starting_team = Networking::NO_TEAM_ID;
+    std::array<uint8_t, 4>  empire_color = {};
+    Networking::ClientType  client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
     bool                    player_ready = false;
     bool                    authenticated = false;
 };
