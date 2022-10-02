@@ -1,0 +1,73 @@
+name: 'cmake-build'
+description: 'Build FreeOrion with cmake'
+inputs:
+#  directory:
+#    description: 'Directory to check'
+#    required: true
+#  config-file:
+#    description: 'Flake8 config'
+#    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout sources
+      uses: actions/checkout@v3
+    - name: Download SDK
+      id: download-sdk
+      uses: suisei-cn/actions-download-file@v1
+      with:
+        url: https://github.com/freeorion/freeorion-sdk/releases/download/v13/FreeOrionSDK_13_MSVC-v141-Win32.zip
+        target: ../
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+      with:
+        vs-version: '[16.0,16.30)'
+    - name: Configure
+      run: |
+        unzip -q ../${{ steps.download-sdk.outputs.filename }} -d ..
+        mkdir build
+        pushd build
+        cmake -G "Visual Studio 16 2019" -T v142 -A Win32 -DBUILD_TESTING=On -DBUILD_CLIENT_GODOT=On -DCMAKE_C_FLAGS=/MP -DCMAKE_CXX_FLAGS=/MP ..
+    - name: Build
+      run: |
+        pushd build
+        cmake --build . --config "Release" -- /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /verbosity:minimal
+    - name: Test
+      run: |
+        pushd build
+        $env:Path += ";$($pwd.Path)\\Release"
+        cmake --build . --config "Release" --target unittest
+    - name: Download Godot
+      id: download-godot
+      uses: suisei-cn/actions-download-file@v1
+      with:
+        url: https://downloads.tuxfamily.org/godotengine/3.2.3/Godot_v3.2.3-stable_win32.exe.zip
+        target: ../
+    - name: Download Mesa
+      id: download-mesa
+      uses: suisei-cn/actions-download-file@v1
+      with:
+        url: https://downloads.fdossena.com/geth.php?r=mesa-latest
+        target: ../
+    - name: Install Godot and dependencies
+      run: |
+        unzip -q ../${{ steps.download-godot.outputs.filename }} -d build/Release
+        mkdir build/Release/Godot_v3.2.3-stable_win32.exe.local
+        pushd build/Release/Godot_v3.2.3-stable_win32.exe.local
+        7z e ../../../../${{ steps.download-mesa.outputs.filename }}
+    - name: Test Godot
+      run: |
+        $env:Path += ";$($pwd.Path)\\build\\Release"
+        .\build\Release\Godot_v3.2.3-stable_win32.exe --no-window --disable-render-loop --video-driver GLES2 --verbose -s --path godot addons/gut/gut_cmdln.gd -gdir=res://test/ -ginclude_subdirs -gexit
+    - name: Generate binaries only
+      run: |
+        pushd build
+        cpack -V -C Release -G ZIP -D CPACK_ARCHIVE_COMPONENT_INSTALL=ON -D CPACK_MONOLITHIC_INSTALL=OFF -D CPACK_COMPONENTS_ALL=binaries
+    - name: Decrypt deploy SSH key
+      if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
+      run: bash .github/pre-deploy.sh
+      env:
+        DEPLOY_SSH_PASSWORD: ${{ secrets.DEPLOY_SSH_PASSWORD }}
+    - name: Upload binaries only
+      if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
+      run: bash -c 'scp build/FreeOrion_*.zip o01eg@frs.sourceforge.net:/home/frs/project/freeorion/FreeOrion/Test/'
