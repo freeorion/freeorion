@@ -308,18 +308,16 @@ void MessageWnd::CompleteConstruction() {
     m_edit = GG::Wnd::Create<MessageWndEdit>();
     AttachChild(m_edit);
 
-    m_edit->TextEnteredSignal.connect(boost::bind(&MessageWnd::MessageEntered, this));
-    m_edit->UpPressedSignal.connect(boost::bind(&MessageWnd::MessageHistoryUpRequested, this));
-    m_edit->DownPressedSignal.connect(boost::bind(&MessageWnd::MessageHistoryDownRequested, this));
+    m_edit->TextEnteredSignal.connect([this]() { MessageEntered(); });
+    m_edit->UpPressedSignal.connect([this]() { MessageHistoryUpRequested(); });
+    m_edit->DownPressedSignal.connect([this]() { MessageHistoryDownRequested(); });
     m_edit->GainingFocusSignal.connect(TypingSignal);
     m_edit->LosingFocusSignal.connect(DoneTypingSignal);
 
     m_history.push_front("");
 
-    namespace ph = boost::placeholders;
-
-    Empires().DiplomaticStatusChangedSignal.connect(
-        boost::bind(&MessageWnd::HandleDiplomaticStatusChange, this, ph::_1, ph::_2));
+    m_diplo_status_connection = Empires().DiplomaticStatusChangedSignal.connect(
+        [this](int empire1_id, int empire2_id) { HandleDiplomaticStatusChange(empire1_id, empire2_id); });
 
     DoLayout();
     SaveDefaultedOptions();

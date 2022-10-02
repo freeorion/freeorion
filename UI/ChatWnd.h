@@ -53,11 +53,12 @@ private:
     void MessageHistoryUpRequested();
     void MessageHistoryDownRequested();
 
-    std::shared_ptr<GG::MultiEdit>  m_display;
-    std::shared_ptr<MessageWndEdit> m_edit;
-    int                             m_display_show_time = 0;
-    std::deque<std::string>         m_history;
-    int                             m_history_position = 0;
+    std::shared_ptr<GG::MultiEdit>     m_display;
+    std::shared_ptr<MessageWndEdit>    m_edit;
+    int                                m_display_show_time = 0;
+    std::deque<std::string>            m_history;
+    int                                m_history_position = 0;
+    boost::signals2::scoped_connection m_diplo_status_connection;
 };
 
 #endif
