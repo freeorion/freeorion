@@ -32,6 +32,15 @@ jobs:
       - uses: actions/checkout@v3
       - name: Build with CMake 2019
         uses: ./.github/actions/cmake-build
+      - name: Decrypt deploy SSH key
+        if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
+        run: bash .github/pre-deploy.sh
+        env:
+          DEPLOY_SSH_PASSWORD: ${{ secrets.DEPLOY_SSH_PASSWORD }}
+      - name: Upload binaries only
+        if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
+        run: bash -c 'scp build/FreeOrion_*.zip o01eg@frs.sourceforge.net:/home/frs/project/freeorion/FreeOrion/Test/'
+
   build-windows-2022-cmake:
     name: MSVS 2022 on Windows CMake
     runs-on: windows-2022
