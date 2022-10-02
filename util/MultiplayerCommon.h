@@ -90,15 +90,14 @@ FO_ENUM(
 //! Returns a user readable string for an Aggression
 FO_COMMON_API const std::string& TextForAIAggression(Aggression a);
 
-
 /** The data that represent the galaxy setup for a new game. */
 struct FO_COMMON_API GalaxySetupData {
     GalaxySetupData() = default;
     GalaxySetupData(const GalaxySetupData&) = default;
     GalaxySetupData(GalaxySetupData&& base);
 
-    const std::string&           GetSeed() const;
-    int                          GetSize() const;
+    const std::string&           GetSeed() const noexcept { return seed; }
+    int                          GetSize() const noexcept { return size; }
     Shape                        GetShape() const;
     GalaxySetupOptionGeneric     GetAge() const;
     GalaxySetupOptionGeneric     GetStarlaneFreq() const;
@@ -106,13 +105,12 @@ struct FO_COMMON_API GalaxySetupData {
     GalaxySetupOptionGeneric     GetSpecialsFreq() const;
     GalaxySetupOptionMonsterFreq GetMonsterFreq() const;
     GalaxySetupOptionGeneric     GetNativeFreq() const;
-    Aggression                   GetAggression() const;
+    Aggression                   GetAggression() const noexcept { return ai_aggr; }
+    const auto&                  GetGameRules() const noexcept { return game_rules; }
+    const auto&                  GetGameUID() const noexcept { return game_uid; }
 
-    const std::map<std::string, std::string>& GetGameRules() const;
-    const std::string&                        GetGameUID() const;
-
-    void                SetSeed(const std::string& seed);
-    void                SetGameUID(const std::string& game_uid);
+    void SetSeed(const std::string& seed);
+    void SetGameUID(const std::string& game_uid);
 
     GalaxySetupData& operator=(const GalaxySetupData&) = default;
 
@@ -138,22 +136,18 @@ struct FO_COMMON_API GalaxySetupData {
     int encoding_empire = ALL_EMPIRES; ///< used during serialization to globally set what empire knowledge to use
 };
 
-
 /** Contains the UI data that must be saved in save game files in order to
   * restore games to the users' last views. */
 struct FO_COMMON_API SaveGameUIData {
-    int    map_top = 0;
-    int    map_left = 0;
-    double map_zoom_steps_in = 0.0;
-    std::set<int> fleets_exploring;
-
-    // See DesignWnd.cpp for the usage of the following variables.
-    int obsolete_ui_event_count = 0;
+    std::unordered_map<std::string, int> obsolete_ship_parts;
     std::vector<std::pair<int, boost::optional<std::pair<bool, int>>>> ordered_ship_design_ids_and_obsolete;
     std::vector<std::pair<std::string, std::pair<bool, int>>> ordered_ship_hull_and_obsolete;
-    std::unordered_map<std::string, int> obsolete_ship_parts;
+    std::set<int> fleets_exploring;
+    double map_zoom_steps_in = 0.0;
+    int    map_top = 0;
+    int    map_left = 0;
+    int    obsolete_ui_event_count = 0;
 };
-
 
 /** The data for one empire necessary for game-setup during multiplayer loading. */
 struct FO_COMMON_API SaveGameEmpireData {
@@ -169,10 +163,10 @@ struct FO_COMMON_API SaveGameEmpireData {
         won(w)
     {}
 
-    int         empire_id = ALL_EMPIRES;
     std::string empire_name;
     std::string player_name;
     std::array<uint8_t, 4> color = {};
+    int         empire_id = ALL_EMPIRES;
     bool        authenticated = false;
     bool        eliminated = false;
     bool        won = false;
@@ -195,9 +189,9 @@ struct FO_COMMON_API PlayerSaveGameData : public PlayerSaveHeaderData {
                        std::string save_state_string_,
                        Networking::ClientType client_type);
 
+    std::string                     save_state_string;
     std::shared_ptr<OrderSet>       orders;
     std::shared_ptr<SaveGameUIData> ui_data;
-    std::string                     save_state_string;
 };
 
 /** Data that must be retained by the server when saving and loading a
@@ -231,9 +225,9 @@ bool operator!=(const PlayerSetupData& lhs, const PlayerSetupData& rhs);
 struct SinglePlayerSetupData : public GalaxySetupData {
     SinglePlayerSetupData() = default;
 
-    bool                            new_game = true;
     std::string                     filename;
     std::vector<PlayerSetupData>    players;
+    bool                            new_game = true;
 };
 
 /** The data structure that represents the state of the multiplayer lobby. */
@@ -250,37 +244,31 @@ struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
 
     [[nodiscard]] std::string Dump() const;
 
+    std::string                                 start_lock_cause;
+    std::string                                 save_game;            //< File name of a save file
+    std::map<int, SaveGameEmpireData>           save_game_empire_data;// indexed by empire_id
+    std::list<std::pair<int, PlayerSetupData>>  players;              // <player_id, PlayerSetupData>   // TODO: Change from a list<(player_id, PlayerSetupData)> where PlayerSetupData contain player_id to a vector of PlayerSetupData
+    int                                         save_game_current_turn = 0;
+    bool                                        in_game = false; ///< In-game lobby
     bool                                        any_can_edit = false;
     bool                                        new_game = true;
     bool                                        start_locked = false;
-    // TODO: Change from a list<(player_id, PlayerSetupData)> where
-    // PlayerSetupData contain player_id to a vector of PlayerSetupData
-    std::list<std::pair<int, PlayerSetupData>>  players;              // <player_id, PlayerSetupData>
-
-    std::string                                 save_game;            //< File name of a save file
-    std::map<int, SaveGameEmpireData>           save_game_empire_data;// indexed by empire_id
-    int                                         save_game_current_turn = 0;
-
-    std::string                                 start_lock_cause;
-    bool                                        in_game = false; ///< In-game lobby
 };
 
 /** The data structure stores information about latest chat massages. */
 struct FO_COMMON_API ChatHistoryEntity {
-    boost::posix_time::ptime timestamp;
     std::string              player_name;
     std::string              text;
+    boost::posix_time::ptime timestamp;
     std::array<uint8_t, 4>   text_color{{192, 192, 192, 255}};
 };
 
 /** Information about one player that other players are informed of.  Assembled by server and sent to players. */
 struct PlayerInfo {
-    //! Name of this player (not the same as the empire name)
-    std::string             name;
+    std::string             name; //! Name of this player (not the same as the empire name)
     int                     empire_id = ALL_EMPIRES;
     Networking::ClientType  client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
-    //! true iff this is the host player
-    bool                    host = false;
+    bool                    host = false; //! true iff this is the host player
 };
 
 
