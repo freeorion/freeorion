@@ -25,7 +25,7 @@ class ModalListPicker : public Control
 {
 public:
     typedef ListBox::iterator iterator;
-    typedef boost::signals2::signal<void (iterator)>   SelChangedSignalType;
+    typedef boost::signals2::signal<void (iterator)> SelChangedSignalType;
 
     ModalListPicker(Clr color, const DropDownList* relative_to_wnd, std::size_t m_num_shown_rows);
     void CompleteConstruction() override;
@@ -45,11 +45,8 @@ public:
     void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
     void ModalInit() override;
 
-    ListBox* LB()
-    { return m_lb_wnd.get(); }
-
-    const ListBox* LB() const
-    { return m_lb_wnd.get(); }
+    ListBox* LB() noexcept { return m_lb_wnd.get(); }
+    const ListBox* LB() const noexcept { return m_lb_wnd.get(); }
 
     /** The selection change signal while not running the modal drop down box.*/
     mutable SelChangedSignalType SelChangedSignal;
@@ -103,7 +100,7 @@ private:
     Pt DetermineListHeight(const Pt& drop_down_size);
 
     std::shared_ptr<ListBox> m_lb_wnd;
-    const std::size_t        m_num_shown_rows = 0;
+    const std::size_t        m_num_shown_rows = 1u;
     const DropDownList*      m_relative_to_wnd = nullptr;
     bool                     m_dropped = false; ///< Is the drop down list open.
 
@@ -122,8 +119,8 @@ struct DropDownListSelChangedEcho
     void operator()(const DropDownList::iterator& it)
     {
         std::cerr << "GG SIGNAL : DropDownList::SelChangedSignal(row="
-                    << m_drop_list.IteratorToIndex(it)
-                    << ")" << std::endl;
+                  << m_drop_list.IteratorToIndex(it)
+                  << ")" << std::endl;
     }
     const DropDownList& m_drop_list;
 };
@@ -136,8 +133,8 @@ struct ModalListPickerSelChangedEcho
     void operator()(const ListBox::iterator& it)
     {
         std::cerr << "GG SIGNAL : ModalListPicker::SelChangedSignal(row="
-                    << std::distance(m_picker.LB()->begin(), it)
-                    << ")" << std::endl;
+                  << std::distance(m_picker.LB()->begin(), it)
+                  << ")" << std::endl;
     }
     ModalListPicker& m_picker;
 };
@@ -150,7 +147,7 @@ struct ModalListPickerSelChangedEcho
 ModalListPicker::ModalListPicker(Clr color, const DropDownList* relative_to_wnd, std::size_t num_rows) :
     Control(X0, Y0, GUI::GetGUI()->AppWidth(), GUI::GetGUI()->AppHeight(), INTERACTIVE | MODAL),
     m_lb_wnd(GetStyleFactory()->NewDropDownListListBox(color, color)),
-    m_num_shown_rows(std::max<std::size_t>(1, num_rows)),
+    m_num_shown_rows(std::max(std::size_t{1u}, num_rows)),
     m_relative_to_wnd(relative_to_wnd)
 {}
 
@@ -396,7 +393,7 @@ boost::optional<DropDownList::iterator> ModalListPicker::KeyPressCommon(
         break;
     case Key::GGK_PAGEUP: // page up key (not numpad key)
         if (!LB()->Empty() && CurrentItem() != LB()->end()) {
-            std::size_t i = std::max<std::size_t>(1, m_num_shown_rows - 1);
+            std::size_t i = std::max(std::size_t{1}, m_num_shown_rows - 1);
             auto it = CurrentItem();
             while (i && it != LB()->begin()) {
                 --it;
@@ -408,7 +405,7 @@ boost::optional<DropDownList::iterator> ModalListPicker::KeyPressCommon(
         break;
     case Key::GGK_PAGEDOWN: // page down key (not numpad key)
         if (!LB()->Empty()) {
-            std::size_t i = std::max<std::size_t>(1, m_num_shown_rows - 1);
+            std::size_t i = std::max(std::size_t{1u}, m_num_shown_rows - 1);
             auto it = CurrentItem();
             while (i && it != --LB()->end()) {
                 ++it;
