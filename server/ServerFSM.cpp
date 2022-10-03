@@ -293,9 +293,6 @@ void ServerFSM::unconsumed_event(const sc::event_base &event) {
                      << ss.str() << ".  It is being ignored.";
 }
 
-ServerApp& ServerFSM::Server()
-{ return m_server; }
-
 void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
     PlayerConnectionPtr& player_connection = d.m_player_connection;
     bool must_quit = false;

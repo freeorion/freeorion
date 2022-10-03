@@ -126,7 +126,7 @@ struct ServerFSM : sc::state_machine<ServerFSM, Idle> {
     ServerFSM(ServerApp &server);
 
     void unconsumed_event(const sc::event_base &event);
-    ServerApp& Server();
+    ServerApp& Server() noexcept { return m_server; }
     void HandleNonLobbyDisconnection(const Disconnection& d);
     void UpdateIngameLobby();
     bool EstablishPlayer(const PlayerConnectionPtr& player_connection,
