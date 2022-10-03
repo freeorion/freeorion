@@ -471,26 +471,25 @@ void ColorDlg::CompleteConstruction()
     master_layout->Add(m_sliders_ok_cancel_layout, 0, 1, 3, 1);
     SetLayout(master_layout);
 
-    using boost::placeholders::_1;
-    using boost::placeholders::_2;
-    using boost::placeholders::_3;
-
     for (std::size_t i = 0; i < m_color_buttons.size(); ++i) {
         m_color_buttons[i]->LeftClickedSignal.connect(
             [this, i](){ this->ColorButtonClicked(i); });
     }
-    m_sliders[R]->SlidSignal.connect(boost::bind(&ColorDlg::RedSliderChanged, this, _1, _2, _3));
-    m_sliders[G]->SlidSignal.connect(boost::bind(&ColorDlg::GreenSliderChanged, this, _1, _2, _3));
-    m_sliders[B]->SlidSignal.connect(boost::bind(&ColorDlg::BlueSliderChanged, this, _1, _2, _3));
-    m_sliders[A]->SlidSignal.connect(boost::bind(&ColorDlg::AlphaSliderChanged, this, _1, _2, _3));
-    m_sliders[H]->SlidSignal.connect(boost::bind(&ColorDlg::HueSliderChanged, this, _1, _2, _3));
-    m_sliders[S]->SlidSignal.connect(boost::bind(&ColorDlg::SaturationSliderChanged, this, _1, _2, _3));
-    m_sliders[V]->SlidSignal.connect(boost::bind(&ColorDlg::ValueSliderChanged, this, _1, _2, _3));
-    m_ok->LeftClickedSignal.connect(boost::bind(&ColorDlg::OkClicked, this));
-    m_cancel->LeftClickedSignal.connect(boost::bind(&ColorDlg::CancelClicked, this));
-    m_hue_saturation_picker->ChangedSignal.connect(boost::bind(&ValuePicker::SetHueSaturation, m_value_picker, _1, _2));
-    m_hue_saturation_picker->ChangedSignal.connect(boost::bind(&ColorDlg::HueSaturationPickerChanged, this, _1, _2));
-    m_value_picker->ChangedSignal.connect(boost::bind(&ColorDlg::ValuePickerChanged, this, _1));
+
+    m_sliders[R]->SlidSignal.connect([this](auto pos, auto ub, auto lb) { RedSliderChanged(pos, ub, lb); });
+    m_sliders[G]->SlidSignal.connect([this](auto pos, auto ub, auto lb) { GreenSliderChanged(pos, ub, lb); });
+    m_sliders[B]->SlidSignal.connect([this](auto pos, auto ub, auto lb) { BlueSliderChanged(pos, ub, lb); });
+    m_sliders[A]->SlidSignal.connect([this](auto pos, auto ub, auto lb) { AlphaSliderChanged(pos, ub, lb); });
+    m_sliders[H]->SlidSignal.connect([this](auto pos, auto ub, auto lb) { HueSliderChanged(pos, ub, lb); });
+    m_sliders[S]->SlidSignal.connect([this](auto pos, auto ub, auto lb) { SaturationSliderChanged(pos, ub, lb); });
+    m_sliders[V]->SlidSignal.connect([this](auto pos, auto ub, auto lb) { ValueSliderChanged(pos, ub, lb); });
+    m_ok->LeftClickedSignal.connect([this]() { OkClicked(); });
+    m_cancel->LeftClickedSignal.connect([this]() { CancelClicked(); });
+    m_hue_saturation_picker->ChangedSignal.connect([this](auto hue, auto sat) {
+        m_value_picker->SetHueSaturation(hue, sat);
+        HueSaturationPickerChanged(hue, sat);
+    });
+    m_value_picker->ChangedSignal.connect([this](auto value) { ValuePickerChanged(value); });
 }
 
 bool ColorDlg::ColorWasSelected() const
