@@ -6634,7 +6634,7 @@ DETECTION_TITLE
 Detection Strength
 
 DETECTION_TEXT
-'''The term Detection Strength represents the technological level of an empire's sensors. An empire can only see objects that have a [[metertype METER_STEALTH]] value lower than or equal to its Detection Strength and are within [[metertype METER_DETECTION]] of a controlled space ship or planet.
+'''The term Detection Strength represents the technological level of an empire's sensors. An empire can only see objects that have a [[metertype METER_STEALTH]] value lower than or equal to its Detection Strength and are within [[metertype METER_DETECTION]] of a controlled space ship or planet. Unowned monsters and natives have a detection strength equal to their detection range.
 
 Empires have a Detection Strength meter.'''
 
