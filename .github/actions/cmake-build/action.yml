@@ -1,6 +1,6 @@
 name: 'cmake-build'
 description: 'Build FreeOrion with cmake'
-inputs:
+# inputs:
 #  directory:
 #    description: 'Directory to check'
 #    required: true
