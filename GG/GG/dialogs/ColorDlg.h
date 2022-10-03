@@ -218,13 +218,13 @@ public:
     class GG_API ColorButton : public Button
     {
     public:
-        ColorButton(const Clr& color);
+        explicit ColorButton(Clr color);
 
         /** returns the custom color represented by the button */
-        Clr RepresentedColor() const;
+        Clr RepresentedColor() const noexcept { return m_represented_color; }
 
         /** sets the custom color represented by the button */
-        void SetRepresentedColor(const Clr& color);
+        void SetRepresentedColor(Clr color) { m_represented_color = color; }
 
     protected:
         void RenderUnpressed() override;
@@ -244,7 +244,7 @@ public:
     class GG_API ColorDisplay : public Control
     {
     public:
-        ColorDisplay(Clr color);
+        explicit ColorDisplay(Clr color);
 
         void Render() override;
     };
@@ -310,8 +310,6 @@ private:
     Clr m_color;
     Clr m_border_color;
     Clr m_text_color;
-
-    static std::vector<Clr>   s_custom_colors;
 };
 
 }
