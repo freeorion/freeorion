@@ -8,6 +8,7 @@ from turn_state._planet_state import _get_planets_info
 
 
 class EmpireResources:
+    # flake8: noqa: C901
     def __init__(self):
         self.have_gas_giant = False
         self.have_asteroids = False

@@ -54,6 +54,7 @@ def planet_string(planet_ids: Union[PlanetId, Iterable[PlanetId]]) -> str:
     return ppstring([_safe_planet_name(pid) for pid in planet_ids])
 
 
+# flake8: noqa: C901
 @cache_for_current_turn
 def get_capital() -> PlanetId:
     """

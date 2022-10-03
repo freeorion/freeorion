@@ -544,6 +544,7 @@ def disc_galaxy_calc_positions(positions, adjacency_grid, size, width):
             )
 
 
+# flake8: noqa: C901
 def cluster_galaxy_calc_positions(
     positions: List[Tuple[int, int]], adjacency_grid: AdjacencyGrid, size: int, width: float
 ):

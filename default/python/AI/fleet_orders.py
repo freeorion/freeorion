@@ -121,6 +121,7 @@ class OrderMove(AIFleetOrder):
     ORDER_NAME = "move"
     TARGET_TYPE = TargetSystem
 
+    # flake8: noqa: C901
     def can_issue_order(self, verbose=False):
         if not super(OrderMove, self).can_issue_order(verbose=verbose):
             return False
