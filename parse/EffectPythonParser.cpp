@@ -248,6 +248,11 @@ namespace {
         return effect_wrapper(std::make_shared<Effect::SetStarType>(std::move(star_type)));
     }
 
+    effect_wrapper insert_move_to_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        auto destination = py::extract<condition_wrapper>(kw["destination"])();
+        return effect_wrapper(std::make_shared<Effect::MoveTo>(ValueRef::CloneUnique(destination.condition)));
+    }
+
     effect_wrapper victory(const boost::python::tuple& args, const boost::python::dict& kw) {
         auto reason = boost::python::extract<std::string>(kw["reason"])();
         return effect_wrapper(std::make_shared<Effect::Victory>(reason));
@@ -363,5 +368,6 @@ void RegisterGlobalsEffects(py::dict& globals) {
     globals["SetEmpireStockpile"] = py::raw_function(insert_set_empire_stockpile);
     globals["SetOwner"] = py::raw_function(insert_set_owner_);
     globals["SetStarType"] = py::raw_function(insert_set_star_type_);
+    globals["MoveTo"] = py::raw_function(insert_move_to_);
 }
 
