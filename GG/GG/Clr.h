@@ -54,16 +54,12 @@ struct Clr
     constexpr Clr(std::string_view hex_colour)
     {
         const auto sz = hex_colour.size();
-        if (sz != 6 && sz != 8)
-            throw std::invalid_argument("GG::HexClr passed wrong length string");
 
         auto val_from_two_hex_chars = [](std::string_view chars) -> uint8_t {
             auto digit0 = chars[0];
             auto digit1 = chars[1];
-
             uint8_t val0 = 16 * (digit0 >= 'A' ? (digit0 - 'A' + 10) : (digit0 - '0'));
             uint8_t val1 = (digit1 >= 'A' ? (digit1 - 'A' + 10) : (digit1 - '0'));
-
             return val0 + val1;
         };
         static_assert(val_from_two_hex_chars("01") == 1);
@@ -72,13 +68,10 @@ struct Clr
         constexpr auto huh = val_from_two_hex_chars("!.");
         static_assert(huh == 14u);
 
-        r = val_from_two_hex_chars(hex_colour.substr(0, 2));
-        g = val_from_two_hex_chars(hex_colour.substr(2, 2));
-        b = val_from_two_hex_chars(hex_colour.substr(4, 2));
-        if (sz == 8)
-            a = val_from_two_hex_chars(hex_colour.substr(6, 2));
-        else
-            a = 255;
+        r = (sz >= 2) ? val_from_two_hex_chars(hex_colour.substr(0, 2)) : 0;
+        g = (sz >= 4) ? val_from_two_hex_chars(hex_colour.substr(2, 2)) : 0;
+        b = (sz >= 6) ? val_from_two_hex_chars(hex_colour.substr(4, 2)) : 0;
+        a = (sz >= 8) ? val_from_two_hex_chars(hex_colour.substr(6, 2)) : 255;
     }
 
     explicit constexpr operator uint32_t() const noexcept
