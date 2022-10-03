@@ -6473,7 +6473,9 @@ Stealth
 METER_STEALTH_VALUE_DESC
 '''The term Stealth represents the ability of an object to dodge all kinds of sensors. Only empires with a [[encyclopedia DETECTION_TITLE]] higher than or equal to the Stealth value can see the object.
 
-Space ships, buildings, specials, systems and planets have a Stealth meter.'''
+Space ships, buildings, specials, systems and planets have a Stealth meter.
+
+[[DETECTION_STAR_MODIFIERS]]'''
 
 METER_DETECTION_VALUE_LABEL
 Detection Range
@@ -6483,7 +6485,20 @@ METER_DETECTION_VALUE_DESC
 
 Space ships and planets have a Detection Range meter. There is the option to display Detection Range circles (in uu) in the Galaxy Map section of the Options menu. To facilitate predictions of what would be within a Detection Range, there are also options to display a standard 'Map Scale Line' as well as a 'Map Scale Circle' centered on the currently selected system and indicating the same distance as the Map Scale Line. They are both responsive to the the map zoom level and can be toggled via hotkeys.
 
-Some objects or abilities may allow vision of certain areas outside of this range. Some examples are from species abilities of [[species SP_TRITH]] or [[species SP_GEORGE]], or from the effects from a [[buildingtype BLD_SCRYING_SPHERE]].'''
+Some objects or abilities may allow vision of certain areas outside of this range. Some examples are from species abilities of [[species SP_TRITH]] or [[species SP_GEORGE]], or from the effects from a [[buildingtype BLD_SCRYING_SPHERE]].
+
+[[DETECTION_STAR_MODIFIERS]]'''
+
+DETECTION_STAR_MODIFIERS
+'''Detection Range and Ship Stealth are modified by the systems star type:
+• No Star: +10 Detection Range. -10 Ship Stealth.
+• Neutron Star: -15 Detection Range. +5 Ship Stealth.
+• Black Hole: +5 Detection Range. +10 Ship Stealth.
+• Red Star: -5 Ship Stealth.
+• Orange Star: No Modifiers.
+• Yellow Star: -5 Detection Range.
+• White Star: -10 Detection Range.
+• Blue Star: -15 Detection Range.'''
 
 METER_SPEED_VALUE_LABEL
 Speed
