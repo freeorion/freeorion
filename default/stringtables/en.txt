@@ -6473,6 +6473,8 @@ Stealth
 METER_STEALTH_VALUE_DESC
 '''The term Stealth represents the ability of an object to dodge all kinds of sensors. Only empires with a [[encyclopedia DETECTION_TITLE]] higher than or equal to the Stealth value can see the object.
 
+If an empire owns more than [[value FLEET_UNSTEALTHY_SHIPS_THRESHOLD]] in a system, that empire will suffer a stealth penalty of [[value FLEET_UNSTEALTH_SHIPS_SCALING]] multiplied by the square root of the number of excess ships.
+
 Space ships, buildings, specials, systems and planets have a Stealth meter.
 
 [[DETECTION_STAR_MODIFIERS]]'''
