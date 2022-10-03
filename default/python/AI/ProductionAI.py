@@ -157,6 +157,7 @@ def get_building_allocations() -> float:
 
 
 # TODO Move Building names to AIDependencies to avoid typos and for IDE-Support
+# flake8: noqa: C901
 def generate_production_orders():
     """Generate production orders."""
     # first check ship designs
@@ -1853,6 +1854,7 @@ def _build_energy_shipyards(
     return blackhole_pilots, red_pilots, building_expense
 
 
+# flake8: noqa: C901
 def _build_asteroid_processor(top_pilot_systems: TopPilotSystems, queued_shipyard_pids: List[PlanetId]) -> float:
     """Consider building asteroid processor, return added turn costs."""
     building_type = Shipyard.ASTEROID

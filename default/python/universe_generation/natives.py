@@ -9,7 +9,7 @@ import universe_tables
 natives_for_planet_type = {}
 planet_types_for_natives = {}
 
-
+# flake8: noqa: C901
 def generate_natives(native_freq, systems, empire_home_systems):
     """
     Adds non-empire-affiliated native populations to planets.

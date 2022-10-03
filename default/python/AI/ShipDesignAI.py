@@ -662,6 +662,7 @@ class ShipDesigner:
         """
         self.species = species
 
+    # flake8: noqa: C901
     def update_stats(self, ignore_species: bool = False):
         """
         Calculate and update all stats of the design.
@@ -792,6 +793,7 @@ class ShipDesigner:
                 troops_grade = get_species_attack_troops(self.species)
                 self.design_stats.troops = self.design_stats.troops * troops_grade
 
+    # flake8: noqa: C901
     def _apply_hardcoded_effects(self, ignore_species=False):
         """Update stats that can not be read out by the AI yet, i.e. applied by effects.
 
@@ -952,6 +954,7 @@ class ShipDesigner:
         """
         pass
 
+    # flake8: noqa: C901
     def optimize_design(
         self,
         additional_parts=(),
@@ -1199,6 +1202,7 @@ class ShipDesigner:
         """
         return len(available_parts) * [0] + [num_slots]  # corresponds to an entirely empty design
 
+    # flake8: noqa: C901
     def _combinatorial_filling(self, available_parts):
         """Fill the design using a combinatorial approach.
 

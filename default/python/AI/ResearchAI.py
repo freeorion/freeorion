@@ -167,6 +167,7 @@ def research_now(tech_name: str, with_prerequisites: bool = True) -> None:
                     break
 
 
+# flake8: noqa: C901
 def generate_classic_research_orders():
     """generate research orders"""
     empire = fo.getEmpire()

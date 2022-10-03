@@ -73,6 +73,7 @@ def get_targeted_planet_ids(planet_ids: Sequence[PlanetId], mission_type: Missio
 
 # TODO: Avoid mutable arguments and use return values instead
 # TODO: Use Dijkstra's algorithm instead of BFS to consider starlane length
+# flake8: noqa: C901
 def get_fleets_for_mission(
     target_stats: dict,
     min_stats: dict,
@@ -474,6 +475,7 @@ def assess_ship_design_role(design):
         return ShipRoleType.CIVILIAN_EXPLORATION
 
 
+# flake8: noqa: C901
 def generate_fleet_orders_for_fleet_missions():
     """Generates fleet orders from targets."""
     debug("Generating fleet orders")

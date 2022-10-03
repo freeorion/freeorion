@@ -38,6 +38,7 @@ def get_current_exploration_info():
     return list(already_covered), available_scouts
 
 
+# flake8: noqa: C901
 def assign_scouts_to_explore_systems():
     # TODO: use Graph Theory to explore closest systems
     universe = fo.getUniverse()

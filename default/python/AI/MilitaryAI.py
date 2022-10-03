@@ -642,6 +642,7 @@ def enemies_nearly_supplying_system(sys_id):
     return get_aistate().systemStatus.get(sys_id, {}).get("enemies_nearly_supplied", [])
 
 
+# flake8: noqa: C901
 def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
     """Get armed military fleets."""
     global _military_allocations

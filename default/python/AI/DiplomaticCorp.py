@@ -45,6 +45,7 @@ class DiplomaticCorp:
     def __init__(self):
         self.be_chatty = True
 
+    # flake8: noqa: C901
     def handle_diplomatic_message(self, message):
         """Handle a diplomatic message update from the server,
         such as if another player declares war, accepts peace, or cancels a proposed peace treaty.

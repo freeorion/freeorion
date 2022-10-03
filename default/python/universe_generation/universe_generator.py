@@ -69,6 +69,7 @@ def error_report():
     return error_list
 
 
+# flake8: noqa: C901
 @listener
 def create_universe(psd_map):
     """

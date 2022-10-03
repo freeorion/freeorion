@@ -265,6 +265,7 @@ def assign_colony_fleets_to_colonise():
     )
 
 
+# flake8: noqa: C901
 def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
     """sends a list of colony ships to a list of planet_value_pairs"""
     fleet_pool = colony_fleet_ids[:]

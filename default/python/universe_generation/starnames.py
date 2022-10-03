@@ -133,6 +133,7 @@ def name_group(group_list, group_name, star_type_assignments, planet_assignments
     return zip(these_systems, name_list)
 
 
+# flake8: noqa: C901
 def name_star_systems(system_list):
     # choose star types and planet sizes, before choosing names, so naming can have special handling of Deep Space
     star_type_assignments = {}

@@ -787,6 +787,7 @@ def set_planet_protection_foci(focus_manager):
                 )
 
 
+# flake8: noqa: C901
 def set_planet_industry_research_influence_foci(focus_manager, priority_ratio):
     """Adjust planet's industry versus research focus while targeting the given ratio and
     avoiding penalties from changing focus."""

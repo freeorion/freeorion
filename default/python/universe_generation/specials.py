@@ -61,6 +61,7 @@ def place_special(specials, obj):
 # TODO Bug:  distribute_specials forward checks that a special can be
 # placed, but it doesn't recursively check all previously placed
 # specials against the new special.
+# flake8: noqa: C901
 def distribute_specials(specials_freq, universe_objects):
     """
     Adds start-of-game specials to universe objects.

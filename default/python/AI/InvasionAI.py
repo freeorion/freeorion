@@ -38,7 +38,7 @@ MIN_INVASION_SCORE = 20
 
 invasion_timer = AITimer("get_invasion_fleets()")
 
-
+# flake8: noqa: C901
 def get_invasion_fleets():
     invasion_timer.start("gathering initial info")
     universe = fo.getUniverse()

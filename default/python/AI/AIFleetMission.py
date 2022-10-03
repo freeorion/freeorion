@@ -393,6 +393,7 @@ class AIFleetMission:
         # before proceeding
         return False
 
+    # flake8: noqa: C901
     def issue_fleet_orders(self):
         """issues AIFleetOrders which can be issued in system and moves to next one if is possible"""
         # TODO: priority

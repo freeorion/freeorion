@@ -116,6 +116,7 @@ def _calculate_industry_priority():  # currently only used to print status
     return industry_priority
 
 
+# flake8: noqa: C901
 def _calculate_research_priority():
     """Calculates the AI empire's demand for research."""
     universe = fo.getUniverse()
@@ -390,6 +391,7 @@ def _calculate_outpost_priority():
     return outpost_priority
 
 
+# flake8: noqa: C901
 def _calculate_invasion_priority():
     """Calculates the demand for troop ships by opponent planets."""
 
@@ -465,6 +467,7 @@ def allotted_invasion_targets():
     return min(1 + int(fo.currentTurn() // 50), 3)
 
 
+# flake8: noqa: C901
 def _calculate_military_priority():
     """Calculates the demand for military ships by military targeted systems."""
     global unmetThreat

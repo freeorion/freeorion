@@ -11,7 +11,7 @@ from freeorion_tools import get_species_population, tech_is_complete
 
 active_growth_specials = {}
 
-
+# flake8: noqa: C901
 def calc_max_pop(planet, species, detail):
     planet_size = planet.habitableSize
     planet_env = species.getPlanetEnvironment(planet.type)

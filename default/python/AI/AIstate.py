@@ -428,6 +428,7 @@ class AIstate:
         self.__empire_standard_enemy = max(e_f_dict, key=e_f_dict.get)
         self.empire_standard_enemy_rating = self.get_standard_enemy().get_rating()
 
+    # flake8: noqa: C901
     def __update_system_status(self):
         debug("=== Updating System Threats ===")
         universe = fo.getUniverse()
