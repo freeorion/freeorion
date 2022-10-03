@@ -6388,7 +6388,9 @@ METER_FUEL_VALUE_LABEL
 Fuel
 
 METER_FUEL_VALUE_DESC
-'''Fuel allows ships to travel the starlanes outside of [[metertype METER_SUPPLY]] of their empire. Fuel is consumed for each starlane traversed outside of supply; stopping within [[metertype METER_SUPPLY]] lines will fully refuel a ship. If a ship remains stationary beyond friendly [[metertype METER_SUPPLY]] lines, fuel will slowly regenerate.
+'''Fuel allows ships to travel the starlanes outside of [[metertype METER_SUPPLY]] of their empire. 1 fuel is consumed for each starlane traversed outside of supply and passing through [[metertype METER_SUPPLY]] lines will fully refuel a ship. Fuel is deducted on entering the starlane and entering a starlane from within supply does not cost fuel.
+
+If a ship remains stationary beyond friendly [[metertype METER_SUPPLY]] lines, fuel will regenerate at a rate of 0.1 each turn. This can be modified by hull type such as living hulls, parts such as the [[shippart FU_RAMSCOOP]] or pilot species such as [[species SP_LAENFA]] and [[species SP_SLY]].
 
 The effective amount of fuel a <encyclopedia ENC_SHIP_DESIGN>Ship Design</encyclopedia> depends on the base fuel of the hull and additional fuel effects scaled by the [[encyclopedia FUEL_EFFICIENCY_TITLE]] of the [[encyclopedia ENC_SHIP_HULL]]. Fuel efficiency changes the effective capacity of fuel [[encyclopedia ENC_SHIP_PART]]s and will multiply any other fuel-modifying effects.
 
