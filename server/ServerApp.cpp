@@ -2688,7 +2688,7 @@ namespace {
                     auto damaged_obj_it = empire_known_objects.find(damaged_object_id);
                     if (damaged_obj_it == empire_known_objects.end())
                         continue;
-                    if (damaged_obj_it->second < Visibility::VIS_BASIC_VISIBILITY)
+                    if (damaged_obj_it->second < Visibility::VIS_PARTIAL_VISIBILITY)
                         continue;
 
                     if (auto empire = combat_info.GetEmpire(viewing_empire_id))
