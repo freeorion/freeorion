@@ -1273,7 +1273,7 @@ RULE_BASIC_VIS_SYSTEM_INFO_SHOWN
 Basic System Info Visible
 
 RULE_BASIC_VIS_SYSTEM_INFO_SHOWN_DESC
-'''<u>If On</u>: Systems that are detected by an empire at only basic visibility have their name and star type revealed to that empire.
+'''<u>If On</u>: Systems that are detected by an empire at only basic visibility have their name and star type revealed to that empire. Causes a UI issue where it is difficult to tell if starlanes of a system are known.
 
 <u>If Off</u>: Basic level visible systems that have never been detected at higher visiblity have unknown name and star type.'''
 
