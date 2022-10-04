@@ -253,6 +253,24 @@ namespace {
         return effect_wrapper(std::make_shared<Effect::MoveTo>(ValueRef::CloneUnique(destination.condition)));
     }
 
+    effect_wrapper insert_move_towards_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<double>> speed;
+        auto speed_args = boost::python::extract<value_ref_wrapper<double>>(kw["speed"]);
+        if (speed_args.check()) {
+            speed = ValueRef::CloneUnique(speed_args().value_ref);
+        } else {
+            speed = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["speed"])());
+        }
+
+        if (kw.has_key("target")) {
+            auto target = py::extract<condition_wrapper>(kw["target"])();
+            return effect_wrapper(std::make_shared<Effect::MoveTowards>(std::move(speed), 
+                ValueRef::CloneUnique(target.condition)));
+        }
+        
+        throw std::runtime_error(std::string("Not implemented in ") + __func__);
+    }
+
     effect_wrapper victory(const boost::python::tuple& args, const boost::python::dict& kw) {
         auto reason = boost::python::extract<std::string>(kw["reason"])();
         return effect_wrapper(std::make_shared<Effect::Victory>(reason));
@@ -369,5 +387,6 @@ void RegisterGlobalsEffects(py::dict& globals) {
     globals["SetOwner"] = py::raw_function(insert_set_owner_);
     globals["SetStarType"] = py::raw_function(insert_set_star_type_);
     globals["MoveTo"] = py::raw_function(insert_move_to_);
+    globals["MoveTowards"] = py::raw_function(insert_move_towards_);
 }
 
