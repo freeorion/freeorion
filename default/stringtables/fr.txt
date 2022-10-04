@@ -6714,7 +6714,14 @@ XENOPHOBIC_SPECIES_TITLE
 Xénophobe
 
 XENOPHOBIC_SPECIES_TEXT
-'''Les espèces xénophobes utilisent une partie de leur effort industriel pour harceler les autres espèces se trouvant aux alentours. En conséquence, les espèces sujettes à ce harcèlement développeront un malus industriel. Une espèce Xénophobe et de [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]] considère la présence d'espèces étrangères aux alentours comme une entrave à son équilibre naturel, ce qui entraîne une diminution de sa [[metertype METER_TARGET_POPULATION]] (il n'est toujours pas déterminé si cela est dû à des effets directs ou bien au fait que l'espèce gaspille des ressources dans le harcèlement des espèces étrangères).
+'''Les espèces xénophobes ne tolèrent pas la présence d'autres espèces intelligentes aux alentours, et utiliseront une partie de leur effort industriel pour harceler ces dernières, réduisant la [[metertype METER_TARGET_HAPPINESS]] des deux espèces selon la distance entre leurs planètes. À une distance de [[value XENOPHOBIC_MAX_JUMPS]] Voies spatiales, la pénalité est de [[value XENOPHOBIC_TARGET_STABILITY_PERJUMP]], et augmente de cette même valeur pour chaque Voie spatiale en moins. Les pénalités sont cumulées pour chaque planète proches non-tolérées par l'espèce xénophobe:
+• Distance 4 Voies : -0.5 Stabilité
+• Distance 3 Voies : -1.0 Stabilité
+• Distance 2 Voies : -1.5 Stabilité
+• Distance 1 Voie   : -2.0 Stabilité
+• Dans le même système : -2.5 Stabilité
+
+Une espèce Xénophobe et de [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]] considère également la présence d'espèces étrangères à proximité comme une entrave à son équilibre naturel, ce qui entraîne une diminution de sa [[metertype METER_TARGET_POPULATION]].
 
 La technologie [[tech CON_CONC_CAMP]] est disponible par défaut pour les espèces xénophobes.
 
@@ -6743,6 +6750,14 @@ SNEAKY_TEXT
 '''Les espèces sournoises recherchent les technologies [[tech SPY_STEALTH_1]], [[tech SPY_STEALTH_2]], [[tech SPY_STEALTH_3]] et [[tech SPY_STEALTH_4]] à un coût réduit.
 
 Liste des espèces sournoises:'''
+
+ADAPTIVE_TITLE
+Adaptative
+
+ADAPTIVE_TEXT
+'''Les espèces adaptatives recherchent les technologies [[tech GRO_SYMBIOTIC_BIO]], [[tech GRO_XENO_GENETICS]] et [[tech GRO_XENO_HYBRIDS]] à un coût réduit.
+
+Liste des espèces adaptatives:'''
 
 FLEET_UPKEEP_TITLE
 Entretien des Flottes
@@ -9741,6 +9756,18 @@ Morosité Psychique
 CONC_CAMP_SLAVE_SPECIAL_DESC
 Les [[buildingtype BLD_CONC_CAMP]] n'opèrent peut-être plus aujourd'hui à la surface de la planète, mais leur souvenir est encore vif, et les restes de fosses communes sont encore parfois découverts. Une blessure psychique handicape la [[metertype METER_POPULATION]], qui ne peut prospérer.
 
+RACIAL_PURITY_SENTINEL_SPECIAL
+Pureté Raciale
+
+RACIAL_PURITY_SENTINEL_SPECIAL_DESC
+Cette empire applique la Politique [[policy PLC_RACIAL_PURITY]].
+
+RACIAL_PURITY_REMNANT_SPECIAL
+Rancœur Raciale
+
+RACIAL_PURITY_REMNANT_SPECIAL_DESC
+Cet empire a récemment abandonné la Politique [[policy PLC_RACIAL_PURITY]] mais le souvenir de son application subsiste au sein des peuples. Son impact sur la [[metertype METER_HAPPINESS]] des planètes de l'empire ne s'estompera qu'avec le temps.
+
 CLOUD_COVER_MASTER_SPECIAL
 Émetteurs de Nuées
 
@@ -12276,13 +12303,19 @@ PLC_RACIAL_PURITY
 Pureté Raciale
 
 PLC_RACIAL_PURITY_DESC
-'''Accorde un bénéfice aux empires à espèce unique, mais pénalise les espèces autres que celle dirigeant la Capitale.
+'''L'espèce peuplant la planète Capitale de l'empire entend dominer toutes les autres espèces de l'empire. Cela procure un bénéfice aux empires à espèce unique, particulièrement s'il s'agit d'une espèce [[encyclopedia XENOPHOBIC_SPECIES_TITLE]], mais pénalise les espèces autres que celle dirigeant la Capitale.
 
-Les planètes peuplées par des espèces différentes de celle de la Capitale subissent diverses pénalités:
-• Diminue la [[metertype METER_TARGET_HAPPINESS]] de [[value PLC_RACIAL_PURITY_TARGET_HAPPINESS_FLAT]]
-• Diminue la [[metertype METER_TARGET_INFLUENCE]] de [[value PLC_RACIAL_PURITY_TARGET_HAPPINESS_FLAT]]
-• Diminue la [[metertype METER_TARGET_RESEARCH]] de [[value PLC_RACIAL_PURITY_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]]
-• Diminue la [[metertype METER_TARGET_INDUSTRY]] de [[value PLC_RACIAL_PURITY_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]]
+Les planètes peuplées par la même espèce que celle de la Capitale profitent de divers bonus:
+• Augmente progressivement la [[metertype METER_TARGET_HAPPINESS]]. Ce bonus croît de [[value PLC_RACIAL_PURITY_STABILITY_PER_TURN]] par tour après avoir adopté la Politique, jusqu'à un maximum de [[value PLC_RACIAL_PURITY_TARGET_STABILITY_SELF]].
+• Augmente la [[metertype METER_TARGET_INFLUENCE]] des planètes en Focus Influence de [[value PLC_RACIAL_PURITY_TARGET_INFLUENCE_SELF]].
+• Si l'espèce de la Capitale est xénophobe, supprime le harcèlement et l'intolérance de l'espèce envers les autres planètes appartenant à l'empire.
+
+Les planètes peuplées par des espèces différentes des [[species SP_EXOBOT]]s ou de celle de la Capitale subissent diverses pénalités:
+• Diminue la [[metertype METER_TARGET_HAPPINESS]] de [[value PLC_RACIAL_PURITY_TARGET_STABILITY_OTHER]].
+• Diminue la [[metertype METER_TARGET_INFLUENCE]] de [[value PLC_RACIAL_PURITY_TARGET_INFLUENCE_OTHER]].
+• Désactive le [[encyclopedia INFLUENCE_FOCUS_TITLE]] et le [[encyclopedia RESEARCH_FOCUS_TITLE]].
+
+Cette politique oppressive permet également à l'empire de contraindre les autres espèces à travailler davantage, augmentant leur [[metertype METER_TARGET_INDUSTRY]] de [[value PLC_RACIAL_PURITY_TARGET_INDUSTRY_OTHER]] par [[metertype METER_POPULATION]].
 
 Permet la construction de la structure [[buildingtype BLD_CONC_CAMP]].'''
 
@@ -17041,6 +17074,9 @@ GREAT_INFLUENCE_DESC
 ULTIMATE_INFLUENCE_DESC
 +++	Parfait en [[metertype METER_INFLUENCE]] : 200%
 
+VERY_BAD_HAPPINESS_DESC
+−−	Très Mauvais en [[metertype METER_HAPPINESS]] : [[value VERY_BAD_HAPPINESS_VAL]]
+
 BAD_HAPPINESS_DESC
 −	Mauvais en [[metertype METER_HAPPINESS]]: [[value BAD_HAPPINESS_VAL]]
 
@@ -17159,6 +17195,9 @@ AVERAGE_POPULATION_DESC
 
 GOOD_POPULATION_DESC
 +	Bon en [[metertype METER_POPULATION]] : 125%
+
+GREAT_POPULATION_DESC
+++	Excellent en [[metertype METER_POPULATION]] : 150%
 
 FIXED_LOW_POPULATION_DESC
 −−	Population Maximale limitée à 5
@@ -17462,6 +17501,11 @@ GOOD_POPULATION_LABEL
 
 # %1% FIXME
 # %2% name of species on planet
+GREAT_POPULATION_LABEL
+%2% Excellent en Population
+
+# %1% FIXME
+# %2% name of species on planet
 FOCUS_INDUSTRY_LABEL
 %2% Focus Industrie
 
@@ -17549,6 +17593,11 @@ GREAT_INFLUENCE_LABEL
 # %2% FIXME
 ULTIMATE_INFLUENCE_LABEL
 %2% Parfait en Influence
+
+# %1% FIXME
+# %2% FIXME
+VERY_BAD_HAPPINESS_LABEL
+%2% Très Mauvais en Stabilité
 
 # %1% FIXME
 # %2% FIXME
