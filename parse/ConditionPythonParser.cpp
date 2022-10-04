@@ -714,6 +714,17 @@ namespace {
         return condition_wrapper(std::make_shared<Condition::WithinDistance>(std::move(distance),
             std::move(ValueRef::CloneUnique(condition.condition))));
     }
+
+    condition_wrapper insert_object_id_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<int>> id;
+        auto id_args = boost::python::extract<value_ref_wrapper<int>>(kw["id"]);
+        if (id_args.check()) {
+            id = ValueRef::CloneUnique(id_args().value_ref);
+        } else {
+            id = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["id"])());
+        }
+        return condition_wrapper(std::make_shared<Condition::ObjectID>(std::move(id)));
+    }
 }
 
 void RegisterGlobalsConditions(boost::python::dict& globals) {
@@ -811,5 +822,6 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     globals["ResourceSupplyConnected"] = boost::python::raw_function(insert_resource_supply_connected_);
     globals["WithinStarlaneJumps"] = boost::python::raw_function(insert_within_starlane_jumps_);
     globals["WithinDistance"] = boost::python::raw_function(insert_within_distance_);
+    globals["Object"] = boost::python::raw_function(insert_object_id_);
 }
 
