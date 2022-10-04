@@ -7,6 +7,7 @@
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"
 #include "../../util/i18n.h"
+#include "../../util/GameRules.h"
 #include "../../util/AppInterface.h"
 #include "../../network/Message.h"
 #include "../../util/Random.h"
@@ -268,6 +269,8 @@ void AIClientApp::HandleMessage(const Message& msg) {
 
         m_universe.InitializeSystemGraph(m_empires, m_universe.Objects());
         m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(m_empires);
+
+        GetGameRules().SetFromStrings(m_galaxy_setup_data.GetGameRules());
 
         DebugLogger() << "Message::GAME_START loaded_game_data: " << loaded_game_data;
         if (loaded_game_data) {
