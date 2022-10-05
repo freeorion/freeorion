@@ -1,3 +1,5 @@
+from itertools import islice
+
 import freeOrionAIInterface as fo
 import random
 from logging import debug, error, warning
@@ -176,11 +178,7 @@ def generate_classic_research_orders():
     resource_production = empire.resourceProduction(fo.resourceType.research)
     completed_techs = sorted(list(get_completed_techs()))
     _print_research_order_header(resource_production, completed_techs)
-
-    #
-    # report techs currently at head of research queue
-    #
-    tech_turns_left = _get_research_statistic(completed_techs)
+    _print_research_queue_head(completed_techs)
 
     research_queue = empire.researchQueue
     research_queue_list = get_research_queue_techs()
@@ -547,19 +545,13 @@ def generate_classic_research_orders():
             debug("Tech %s gives access to new parts or hulls but there seems to be no military advantage.", tech)
 
 
-def _get_research_statistic(completed_techs: List[str], first_n_techs=10) -> Mapping[str, int]:
-    empire = fo.getEmpire()
-    empire_id = empire.empireID
-    research_queue = list(empire.researchQueue)
+def _print_research_queue_head(completed_techs: List[str], first_n_techs=10):
+    empire_id = fo.getEmpire().empireID
+    research_queue = fo.getEmpire().researchQueue
 
-    tech_turns_left = {}
+    debug("Techs currently at head of Research Queue")
 
-    if not research_queue:
-        return tech_turns_left
-
-    debug("Techs currently at head of Research Queue:")
-    for element in research_queue[:first_n_techs]:
-        tech_turns_left[element.tech] = element.turnsLeft
+    for element in islice(research_queue, first_n_techs):
         this_tech = fo.getTech(element.tech)
         if not this_tech:
             warning("Can't retrieve tech %s", element.tech)
@@ -570,22 +562,21 @@ def _get_research_statistic(completed_techs: List[str], first_n_techs=10) -> Map
         unlocked_items = [uli.name for uli in this_tech.unlockedItems]
         if not missing_prereqs:
             debug(
-                "    %25s allocated %6.2f RP (%d turns left)-- unlockable items: %s ",
+                "%-27s allocated %6.2f RP (%d turns left) -- unlocks: %s",
                 element.tech,
                 element.allocation,
-                tech_turns_left[element.tech],
+                element.turnsLeft,
                 unlocked_items,
             )
         else:
             debug(
-                "    %25s allocated %6.2f RP -- missing preReqs: %s -- unlockable items: %s ",
+                "%-27s allocated %6.2f RP -- missing preReqs: %s -- unlocks: %s",
                 element.tech,
                 element.allocation,
                 missing_prereqs,
                 unlocked_items,
             )
     debug("")
-    return tech_turns_left
 
 
 def _print_research_order_header(resource_production, completed_techs):
