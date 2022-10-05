@@ -31,6 +31,18 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
+      - name: Install NSIS
+        if: true # only for weekly-test-build push
+        run: |
+          Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
+          scoop bucket add extras
+          scoop install nsis
+      - name: Print NSIS version
+        if: true # only for weekly-test-build push
+        run: makensis -VERSION
+      - name: Print NSIS compile flags
+        if: true # only for weekly-test-build push
+        run: makensis -HDRINFO
       - name: Download SDK
         id: download-sdk
         uses: suisei-cn/actions-download-file@v1
@@ -78,6 +90,33 @@ jobs:
         run: |
           $env:Path += ";$($pwd.Path)\\build\\Release"
           .\build\Release\Godot_v3.2.3-stable_win32.exe --no-window --disable-render-loop --video-driver GLES2 --verbose -s --path godot addons/gut/gut_cmdln.gd -gdir=res://test/ -ginclude_subdirs -gexit
+      - name: Generate installer
+        if: true # only for weekly-test-build push
+        run: |
+          pushd build
+          cpack -V -C Release -G NSIS
+      - name: Generate binaries only
+        if: true # only for weekly-test-build push
+        run: |
+          pushd build
+          cpack -V -C Release -G ZIP -D CPACK_ARCHIVE_COMPONENT_INSTALL=ON -D CPACK_MONOLITHIC_INSTALL=OFF -D CPACK_COMPONENTS_ALL=binaries
+          ls
+      - name: Upload installer
+        if: true # only for weekly-test-build push
+        uses: actions/upload-artifact@v2
+        with:
+          name: freeorion-win32-build
+          path: build/FreeOrion-*-win32.exe
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload binaries
+        if: true # only for weekly-test-build push
+        uses: actions/upload-artifact@v2
+        with:
+          name: freeorion-binaries-win32-build
+          path: build/FreeOrion-*.zip
+          if-no-files-found: error
+          retention-days: 14
       - name: Generate binaries only
         run: |
           pushd build

@@ -7,6 +7,8 @@ endif()
 
 cmake_minimum_required(VERSION ${REQUIRED_CMAKE_VERSION} FATAL_ERROR)
 
+cmake_minimum_required(VERSION ${REQUIRED_CMAKE_VERSION} FATAL_ERROR)
+
 if(POLICY CMP0072)
   cmake_policy(SET CMP0072 NEW)
 endif()
@@ -946,6 +948,7 @@ if(BUILD_CLIENT_GG)
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         BUNDLE DESTINATION .
         RESOURCE
+        COMPONENT binaries
     )
     if(WIN32)
         install(CODE [[
@@ -968,6 +971,7 @@ if(NOT APPLE AND NOT ANDROID)
                 freeorionparse
             LIBRARY DESTINATION ${FreeOrion_INSTALL_LIBDIR}
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        COMPONENT binaries
         )
     endif()
     
@@ -978,6 +982,7 @@ if(NOT APPLE AND NOT ANDROID)
             COMPONENT binaries
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
             BUNDLE DESTINATION .
+            COMPONENT binaries
         )
         if(WIN32)
             install(CODE [[
@@ -999,6 +1004,7 @@ if(NOT APPLE AND NOT ANDROID)
             COMPONENT binaries
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
             BUNDLE DESTINATION .
+            COMPONENT binaries
         )
         if(WIN32)
             install(CODE [[
@@ -1030,6 +1036,7 @@ if(NOT APPLE AND NOT ANDROID)
             COMPONENT binaries
             LIBRARY DESTINATION ${FreeOrion_INSTALL_LIBDIR}
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+            COMPONENT binaries
         )
         if(WIN32)
             install(CODE [[
@@ -1082,6 +1089,108 @@ if(NOT APPLE AND NOT ANDROID)
             PATTERN "*.png" EXCLUDE
             PATTERN "*.ogg" EXCLUDE
             PATTERN "tox.ini" EXCLUDE
+        )
+    endif()
+endif()
+
+if(WIN32)
+    install(CODE [[
+        set(deps_install ${deps_install_fo} ${deps_install_fod} ${deps_install_foca} ${deps_install_fog})
+        message(STATUS "Install dependencies ${deps_install}")
+        foreach(dep ${deps_install})
+            file(INSTALL ${dep} DESTINATION ${CMAKE_INSTALL_PREFIX})
+            get_filename_component(dep_name ${dep} NAME_WLE)
+            if(${dep_name} MATCHES "^python[0-9]+")
+                get_filename_component(dep_dir ${dep} DIRECTORY)
+                file(INSTALL "${dep_dir}/${dep_name}.zip" DESTINATION ${CMAKE_INSTALL_PREFIX})
+        list(APPEND post_exclude_regexes ".*[Ww][Ii][Nn][Dd][Oo][Ww][Ss][\\/][Ss][Yy][Ss][Tt][Ee][Mm]32.*") # windows system dlls
+        list(APPEND post_exclude_regexes ".*[Ww][Ii][Nn][Dd][Oo][Ww][Ss][\\/][Ss][Yy][Ss][Ww][Oo][Ww]64.*") # windows system dlls
+            endif()
+        endforeach()
+    ]]
+    COMPONENT binaries)
+        COMPONENT binaries
+    install(CODE [[
+        file(GET_RUNTIME_DEPENDENCIES
+            EXECUTABLES $<TARGET_FILE:freeorion>
+            RESOLVED_DEPENDENCIES_VAR deps_install_fo
+            PRE_EXCLUDE_REGEXES ${pre_exclude_regexes}
+            POST_EXCLUDE_REGEXES ${post_exclude_regexes}
+        )
+    ]])
+endif()
+
+if(WIN32)
+    if(BUILD_SERVER)
+        install(
+            TARGETS
+                freeoriond
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+            BUNDLE DESTINATION .
+            COMPONENT binaries
+        )
+        install(CODE [[
+            file(GET_RUNTIME_DEPENDENCIES
+                EXECUTABLES $<TARGET_FILE:freeoriond>
+                RESOLVED_DEPENDENCIES_VAR deps_install_fod
+                PRE_EXCLUDE_REGEXES ${pre_exclude_regexes}
+                POST_EXCLUDE_REGEXES ${post_exclude_regexes}
+            )
+        ]])
+    endif()
+
+    if(BUILD_AI)
+        install(
+            TARGETS
+                freeorionca
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+            BUNDLE DESTINATION .
+            COMPONENT binaries
+        )
+        install(CODE [[
+            file(GET_RUNTIME_DEPENDENCIES
+                EXECUTABLES $<TARGET_FILE:freeorionca>
+                RESOLVED_DEPENDENCIES_VAR deps_install_foca
+                PRE_EXCLUDE_REGEXES ${pre_exclude_regexes}
+                POST_EXCLUDE_REGEXES ${post_exclude_regexes}
+            )
+        ]])
+    endif()
+
+    if(BUILD_CLIENT_GODOT)
+        install(
+            TARGETS
+                freeoriongodot
+            LIBRARY DESTINATION ${FreeOrion_INSTALL_LIBDIR}
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+            COMPONENT binaries
+        )
+
+        install(CODE [[
+            file(GET_RUNTIME_DEPENDENCIES
+                LIBRARIES $<TARGET_FILE:freeoriongodot>
+                RESOLVED_DEPENDENCIES_VAR deps_install_fog
+                PRE_EXCLUDE_REGEXES ${pre_exclude_regexes}
+                POST_EXCLUDE_REGEXES ${post_exclude_regexes}
+            )
+        ]])
+    endif()
+
+    if(BUILD_CLIENT_GG)
+        install(
+            DIRECTORY default/
+            DESTINATION ${CMAKE_INSTALL_BINDIR}/default
+            PATTERN "*~" EXCLUDE
+            PATTERN "*.pyc" EXCLUDE
+        )
+    else()
+        install(
+            DIRECTORY default/
+            DESTINATION ${CMAKE_INSTALL_BINDIR}/default
+            PATTERN "*~" EXCLUDE
+            PATTERN "*.pyc" EXCLUDE
+            PATTERN "*.png" EXCLUDE
+            PATTERN "*.ogg" EXCLUDE
         )
     endif()
 endif()
