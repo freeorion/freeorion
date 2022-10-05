@@ -20,12 +20,12 @@ runs:
         url: https://github.com/freeorion/freeorion-sdk/releases/download/v13/FreeOrionSDK_13_MSVC-v141-Win32.zip
         target: ../
     - name: Add msbuild to PATH
-      if:   inputs.mvc == "2019"
+      if:   inputs.mvc == '2019'
       uses: microsoft/setup-msbuild@v1.1
       with:
         vs-version: '[16.0,16.30)'
     - name: Add msbuild to PATH
-      if: inputs.mvc == "2022"
+      if: inputs.mvc == '2022'
       uses: microsoft/setup-msbuild@v1.0.3
       with:
         vs-prerelease: true

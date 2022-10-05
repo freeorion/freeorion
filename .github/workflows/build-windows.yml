@@ -33,9 +33,9 @@ jobs:
       - name: Build with CMake 2019
         uses: ./.github/actions/cmake-build
         with:
-          mvc: "2019"
-          generator-name: "Visual Studio 16 2019"
-          toolset-spec: "v142"
+          mvc: '2019'
+          generator-name: 'Visual Studio 16 2019'
+          toolset-spec: 'v142'
       - name: Decrypt deploy SSH key
         if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
         run: bash .github/pre-deploy.sh
@@ -59,6 +59,6 @@ jobs:
       - name: Build with CMake 2022
         uses: ./.github/actions/cmake-build
         with:
-          mvc: "2022"
-          generator-name: "Visual Studio 17 2022"
-          toolset-spec: "v143"
+          mvc: '2022'
+          generator-name: 'Visual Studio 17 2022'
+          toolset-spec: 'v143'
