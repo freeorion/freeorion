@@ -4,7 +4,7 @@ inputs:
   mvc:
     description: 'Flag to handle cases'
     required: true
-  cmake-generator:
+  generator-name:
     description: 'generator-name'
     required: true
   toolset-spec:
@@ -35,7 +35,7 @@ runs:
         unzip -q ../${{ steps.download-sdk.outputs.filename }} -d ..
         mkdir build
         pushd build
-        cmake -G "${{ inputs.cmake-generator }}" -T ${{inputs.toolset-spec }} -A Win32 -DBUILD_TESTING=On -DBUILD_CLIENT_GODOT=On -DCMAKE_C_FLAGS=/MP -DCMAKE_CXX_FLAGS=/MP ..
+        cmake -G "${{ inputs.generator-name }}" -T ${{inputs.toolset-spec }} -A Win32 -DBUILD_TESTING=On -DBUILD_CLIENT_GODOT=On -DCMAKE_C_FLAGS=/MP -DCMAKE_CXX_FLAGS=/MP ..
     - name: Build
       shell: pwsh
       run: |
