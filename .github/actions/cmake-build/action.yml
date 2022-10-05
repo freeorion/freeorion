@@ -1,12 +1,15 @@
 name: 'cmake-build'
 description: 'Build FreeOrion with cmake'
-# inputs:
-#  directory:
-#    description: 'Directory to check'
-#    required: true
-#  config-file:
-#    description: 'Flake8 config'
-#    required: true
+inputs:
+  mvc:
+    description: 'Flag to handle cases'
+    required: true
+  cmake-generator:
+    description: 'generator-name'
+    required: true
+  toolset-spec:
+    description: 'toolset-spec'
+    required: true
 runs:
   using: "composite"
   steps:
@@ -17,16 +20,22 @@ runs:
         url: https://github.com/freeorion/freeorion-sdk/releases/download/v13/FreeOrionSDK_13_MSVC-v141-Win32.zip
         target: ../
     - name: Add msbuild to PATH
+      if:   mvc == "2019"
       uses: microsoft/setup-msbuild@v1.1
       with:
         vs-version: '[16.0,16.30)'
+    - name: Add msbuild to PATH
+      if: mvc == "2022"
+      uses: microsoft/setup-msbuild@v1.0.3
+      with:
+        vs-prerelease: true
     - name: Configure
       shell: pwsh
       run: |
         unzip -q ../${{ steps.download-sdk.outputs.filename }} -d ..
         mkdir build
         pushd build
-        cmake -G "Visual Studio 16 2019" -T v142 -A Win32 -DBUILD_TESTING=On -DBUILD_CLIENT_GODOT=On -DCMAKE_C_FLAGS=/MP -DCMAKE_CXX_FLAGS=/MP ..
+        cmake -G "${{ input.cmake-generator }}" -T ${{input.toolset-spec }} -A Win32 -DBUILD_TESTING=On -DBUILD_CLIENT_GODOT=On -DCMAKE_C_FLAGS=/MP -DCMAKE_CXX_FLAGS=/MP ..
     - name: Build
       shell: pwsh
       run: |
@@ -62,8 +71,3 @@ runs:
       run: |
         $env:Path += ";$($pwd.Path)\\build\\Release"
         .\build\Release\Godot_v3.2.3-stable_win32.exe --no-window --disable-render-loop --video-driver GLES2 --verbose -s --path godot addons/gut/gut_cmdln.gd -gdir=res://test/ -ginclude_subdirs -gexit
-    - name: Generate binaries only
-      shell: pwsh
-      run: |
-        pushd build
-        cpack -V -C Release -G ZIP -D CPACK_ARCHIVE_COMPONENT_INSTALL=ON -D CPACK_MONOLITHIC_INSTALL=OFF -D CPACK_COMPONENTS_ALL=binaries
