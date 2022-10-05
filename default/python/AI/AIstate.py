@@ -939,7 +939,7 @@ class AIstate:
             elif this_sys:
                 fleet_status["sysID"] = this_sys.id
             else:
-                error("Fleet %s has no valid system." % fleet)
+                warning("Fleet %s has no valid system." % fleet)
         fleet_table.print_table(info)
         debug("Empire standard fighter summary: %s", CombatRatingsAI.get_empire_standard_military_ship_stats())
         debug("------------------------")
