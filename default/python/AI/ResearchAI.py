@@ -547,7 +547,7 @@ def generate_classic_research_orders():
             debug("Tech %s gives access to new parts or hulls but there seems to be no military advantage.", tech)
 
 
-def _get_research_statistic(completed_techs: List[str], first_n_techs=10) -> Mapping[str:int]:
+def _get_research_statistic(completed_techs: List[str], first_n_techs=10) -> Mapping[str, int]:
     empire = fo.getEmpire()
     empire_id = empire.empireID
     research_queue = list(empire.researchQueue)
