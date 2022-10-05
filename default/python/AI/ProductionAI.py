@@ -158,9 +158,9 @@ def get_building_allocations() -> float:
 
 # TODO Move Building names to AIDependencies to avoid typos and for IDE-Support
 def generate_production_orders():
-    """generate production orders"""
+    """Generate production orders."""
     # first check ship designs
-    # next check for buildings etc that could be placed on queue regardless of locally available PP
+    # next check for buildings etc, that could be placed on queue regardless of locally available PP
     # next loop over resource groups, adding buildings & ships
     print_production_queue()
     universe = fo.getUniverse()
