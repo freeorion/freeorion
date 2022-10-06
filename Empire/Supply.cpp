@@ -305,7 +305,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
     // can't exchange with any other systems.
 
     // which systems can share resources depends on system supply ranges, which
-    // systems have obstructions to supply propagation for reach empire, and
+    // systems have obstructions to supply propagation for each empire, and
     // the ranges and obstructions of other empires' supply, as only one empire
     // can supply each system or propagate along each starlane. one empire's
     // propagating supply can push back another's, if the pusher's range is
