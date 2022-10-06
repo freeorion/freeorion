@@ -175,7 +175,7 @@ class PlanetFocusManager:
             + pinfo.possible_output[focus][2] * self.priority[2]
         )
 
-    def calculate_planet_infos(self, pids):
+    def calculate_planet_infos(self, pids):  # noqa: max-complexity
         """Calculates for each possible focus the target output of each planet and stores it in planet info
         It excludes baked planets from consideration.
         Note: The results will not be strictly correct if any planets have global effects
@@ -462,7 +462,7 @@ def weighted_sum_output(op):
     return op[0][0] * op[1][0] + op[0][1] * op[1][1] + op[0][2] * op[1][2]
 
 
-def assess_protection_focus(pinfo, priority):
+def assess_protection_focus(pinfo, priority):  # noqa: max-complexity
     """Return True if planet should use Protection Focus."""
     this_planet = pinfo.planet
     # this is unrelated to military threats
@@ -600,7 +600,7 @@ def assess_protection_focus(pinfo, priority):
     return use_protection
 
 
-def set_planet_growth_specials(focus_manager):
+def set_planet_growth_specials(focus_manager):  # noqa: max-complexity
     """set resource foci of planets with potentially useful growth factors. Remove planets from list of candidates."""
     if not get_aistate().character.may_use_growth_focus():
         return
@@ -787,8 +787,7 @@ def set_planet_protection_foci(focus_manager):
                 )
 
 
-# flake8: noqa: C901
-def set_planet_industry_research_influence_foci(focus_manager, priority_ratio):
+def set_planet_industry_research_influence_foci(focus_manager, priority_ratio):  # noqa: max-complexity
     """Adjust planet's industry versus research focus while targeting the given ratio and
     avoiding penalties from changing focus."""
     debug("\n-----------------------------------------")

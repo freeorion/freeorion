@@ -265,8 +265,7 @@ def assign_colony_fleets_to_colonise():
     )
 
 
-# flake8: noqa: C901
-def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
+def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):  # noqa: max-complexity
     """sends a list of colony ships to a list of planet_value_pairs"""
     fleet_pool = colony_fleet_ids[:]
     try_all = False
@@ -584,7 +583,7 @@ class OrbitalColonizationManager:
             return
         self._colonization_plans[target_id] = OrbitalColonizationPlan(target_id, source_id)
 
-    def turn_start_cleanup(self):
+    def turn_start_cleanup(self):  # noqa: max-complexity
         universe = fo.getUniverse()
         # clean up invalid or finished plans
         for pid in list(self._colonization_plans.keys()):

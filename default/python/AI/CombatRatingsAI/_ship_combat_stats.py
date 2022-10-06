@@ -136,9 +136,8 @@ class ShipCombatStats:
         return damage * (self.structure + self.shields)
 
 
-# flake8: noqa: C901
 @cache_for_current_turn
-def get_ship_combat_stats(ship_id: ShipId, max_stats=False) -> ShipCombatStats:
+def get_ship_combat_stats(ship_id: ShipId, max_stats=False) -> ShipCombatStats:  # noqa: max-complexity
     """
     Return combat stats for the ship.
 

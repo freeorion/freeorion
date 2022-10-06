@@ -69,9 +69,8 @@ def error_report():
     return error_list
 
 
-# flake8: noqa: C901
 @listener
-def create_universe(psd_map):
+def create_universe(psd_map):  # noqa: max-complexity
     """
     Main universe generation function invoked from C++ code.
     """

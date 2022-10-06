@@ -257,8 +257,7 @@ class PolicyManager:
         elif infra1 in self._adoptable:
             self._adopt(infra1)
 
-    # flake8: noqa: C901
-    def _process_policy_options(self, category: str, options: Iterable[str]) -> None:
+    def _process_policy_options(self, category: str, options: Iterable[str]) -> None:  # noqa: max-complexity
         """
         Rate all given policies and deadopt policies with a negative rating.
         Then evaluate if any of the other is worth being adopted, possible even to replace another one.

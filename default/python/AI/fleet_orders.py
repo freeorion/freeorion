@@ -121,8 +121,7 @@ class OrderMove(AIFleetOrder):
     ORDER_NAME = "move"
     TARGET_TYPE = TargetSystem
 
-    # flake8: noqa: C901
-    def can_issue_order(self, verbose=False):
+    def can_issue_order(self, verbose=False):  # noqa: max-complexity
         if not super(OrderMove, self).can_issue_order(verbose=verbose):
             return False
         # TODO: figure out better way to have invasions (& possibly colonizations)

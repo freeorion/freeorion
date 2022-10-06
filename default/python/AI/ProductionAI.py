@@ -157,8 +157,7 @@ def get_building_allocations() -> float:
 
 
 # TODO Move Building names to AIDependencies to avoid typos and for IDE-Support
-# flake8: noqa: C901
-def generate_production_orders():
+def generate_production_orders():  # noqa: max-complexity
     """Generate production orders."""
     # first check ship designs
     # next check for buildings etc, that could be placed on queue regardless of locally available PP
@@ -1525,7 +1524,7 @@ def _build_scanning_facility() -> float:
     return _may_enqueue_for_stability(building_type, turn_cost)
 
 
-def _build_gas_giant_generator() -> float:
+def _build_gas_giant_generator() -> float:  # noqa: max-complexity
     """Consider building Gas Giant Generators, return added turn costs."""
     building_type = BuildingType.GAS_GIANT_GEN
     if not building_type.available():
@@ -1709,7 +1708,7 @@ class ShipYardInfo(NamedTuple):
     top_pilot_systems: TopPilotSystems
 
 
-def _build_basic_shipyards() -> ShipYardInfo:
+def _build_basic_shipyards() -> ShipYardInfo:  # noqa: max-complexity
     """
     Consider building basic ship yards and also determine some value needed for other shipyard buildings.
     """
@@ -1772,7 +1771,7 @@ def _build_basic_shipyards() -> ShipYardInfo:
     return ShipYardInfo(queued_shipyard_pids, colony_systems, top_pilot_systems)  # TBD return added costs?
 
 
-def _build_energy_shipyards(
+def _build_energy_shipyards(  # noqa: max-complexity
     queued_shipyard_pids: List[PlanetId],
     colony_systems: Dict[PlanetId, SystemId],
     building_ratio: float,
@@ -1854,8 +1853,9 @@ def _build_energy_shipyards(
     return blackhole_pilots, red_pilots, building_expense
 
 
-# flake8: noqa: C901
-def _build_asteroid_processor(top_pilot_systems: TopPilotSystems, queued_shipyard_pids: List[PlanetId]) -> float:
+def _build_asteroid_processor(  # noqa: max-complexity
+    top_pilot_systems: TopPilotSystems, queued_shipyard_pids: List[PlanetId]
+) -> float:
     """Consider building asteroid processor, return added turn costs."""
     building_type = Shipyard.ASTEROID
     building_expense = 0.0
@@ -1937,7 +1937,7 @@ def _build_asteroid_processor(top_pilot_systems: TopPilotSystems, queued_shipyar
     return building_expense
 
 
-def _build_orbital_drydock(top_pilot_systems: TopPilotSystems) -> None:
+def _build_orbital_drydock(top_pilot_systems: TopPilotSystems) -> None:  # noqa: max-complexity
     """Consider building orbital drydocks."""
     building_type = Shipyard.ORBITAL_DRYDOCK
     if building_type.available():

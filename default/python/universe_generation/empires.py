@@ -335,8 +335,7 @@ def add_planets_to_vicinity(vicinity, num_planets, gsd):
         num_planets -= 1
 
 
-# flake8: noqa: C901
-def compile_home_system_list(num_home_systems, systems, gsd):
+def compile_home_system_list(num_home_systems, systems, gsd):  # noqa: max-complexity
     """
     Compiles a list with a requested number of home systems.
     """
