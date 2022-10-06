@@ -274,17 +274,16 @@ def generate_classic_research_orders():
 
         if fo.currentTurn() == 1:
             return
-        if True:
-            research_queue_list = get_research_queue_techs()
-            def_techs = TechsListsAI.defense_techs_1()
-            for def_tech in def_techs:
-                if (
-                    aistate.character.may_research_tech_classic(def_tech)
-                    and def_tech not in research_queue_list[:5]
-                    and not tech_is_complete(def_tech)
-                ):
-                    res = fo.issueEnqueueTechOrder(def_tech, min(3, len(research_queue_list)))
-                    debug("Empire is very defensive, so attempted to fast-track %s, got result %d", def_tech, res)
+        research_queue_list = get_research_queue_techs()
+        def_techs = TechsListsAI.defense_techs_1()
+        for def_tech in def_techs:
+            if (
+                aistate.character.may_research_tech_classic(def_tech)
+                and def_tech not in research_queue_list[:5]
+                and not tech_is_complete(def_tech)
+            ):
+                res = fo.issueEnqueueTechOrder(def_tech, min(3, len(research_queue_list)))
+                debug("Empire is very defensive, so attempted to fast-track %s, got result %d", def_tech, res)
         disabled_research_features()
 
     elif fo.currentTurn() > 100:

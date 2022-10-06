@@ -42,11 +42,9 @@ def survey_universe():
     empire_id = fo.empireID()
     current_turn = fo.currentTurn()
 
-    # set up / reset various variables; the 'if' is purely for code folding convenience
-    if True:
-        AIstate.empireStars.clear()
-        empire_metabolisms.clear()
-        active_growth_specials.clear()
+    AIstate.empireStars.clear()
+    empire_metabolisms.clear()
+    active_growth_specials.clear()
 
     # var setup done
     aistate = get_aistate()
