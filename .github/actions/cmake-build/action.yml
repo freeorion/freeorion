@@ -15,7 +15,7 @@ runs:
   steps:
     - name: Download SDK
       id: download-sdk
-      uses: suisei-cn/actions-download-file@v1
+      uses: suisei-cn/actions-download-file@v1.0.1
       with:
         url: https://github.com/freeorion/freeorion-sdk/releases/download/v13/FreeOrionSDK_13_MSVC-v141-Win32.zip
         target: ../
@@ -26,7 +26,7 @@ runs:
         vs-version: '[16.0,16.30)'
     - name: Add msbuild to PATH
       if: inputs.mvc == '2022'
-      uses: microsoft/setup-msbuild@v1.0.3
+      uses: microsoft/setup-msbuild@v1.1
       with:
         vs-prerelease: true
     - name: Configure
@@ -49,13 +49,13 @@ runs:
         cmake --build . --config "Release" --target unittest
     - name: Download Godot
       id: download-godot
-      uses: suisei-cn/actions-download-file@v1
+      uses: suisei-cn/actions-download-file@v1.0.1
       with:
         url: https://downloads.tuxfamily.org/godotengine/3.2.3/Godot_v3.2.3-stable_win32.exe.zip
         target: ../
     - name: Download Mesa
       id: download-mesa
-      uses: suisei-cn/actions-download-file@v1
+      uses: suisei-cn/actions-download-file@v1.0.1
       with:
         url: https://downloads.fdossena.com/geth.php?r=mesa-latest
         target: ../
