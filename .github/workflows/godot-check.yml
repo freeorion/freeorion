@@ -1,0 +1,31 @@
+name: GDScript linters and formatting
+
+on:
+  push:
+    paths:
+      - 'godot/**.gd'
+  pull_request:
+    paths:
+      - 'godot/**.gd'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.9']
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install development dependencies
+        run: |
+          pip install gdtoolkit
+      - name: Check format
+        run: |
+          find godot/ -iname "*.gd" -not -path "godot/addons/*" | xargs gdformat -c
+      - name: Check lints
+        run: |
+          find godot/ -iname "*.gd" -not -path "godot/addons/*" | xargs gdlint

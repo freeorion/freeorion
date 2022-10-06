@@ -1,0 +1,34 @@
+name: Python code formatting check
+on:
+  pull_request:
+    paths:
+      - '.github/**'
+      - 'check/st-tool.py'
+      - 'default/python/**'
+      - 'default/scripting/**'
+      - 'test-scripting/**'
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+jobs:
+  format-check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.7']
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install development dependencies
+        run: pip install -r default/python/requirements-dev.txt
+      - name: Lint with black
+        run: |
+          black . --check --no-color -t py37 --diff -q
+      - name: Lint with isort
+        run: |
+          isort . --check-only --py 37 --diff --quiet
