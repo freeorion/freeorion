@@ -47,3 +47,32 @@ jobs:
         run: |
           cd msvc2022
           msbuild FreeOrion.sln /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /property:PlatformToolset=v142 /property:Configuration=Release /verbosity:minimal
+      - name: Install NSIS
+        if: true # only for weekly-test-build push
+        run: |
+          irm get.scoop.sh -outfile 'install.ps1'
+          .\install.ps1 -RunAsAdmin
+          scoop bucket add extras
+          scoop install nsis
+      - name: Download vcredist
+        id: download-vcredist
+        uses: suisei-cn/actions-download-file@v1
+        with:
+          url: https://github.com/freeorion/freeorion/files/9733497/vcredist_x86.exe.zip
+          target: ../
+      - name: Prepare vcredist
+        run: |
+          unzip -q ../${{ steps.download-vcredist.outputs.filename }} -d ..
+      - name: Generate installer
+        if: true # only for weekly-test-build push
+        run: |
+          makensis packaging/windows_installer.nsi
+          cp ../FreeOrion_*_Test_Win32_Setup.exe .
+      - name: Upload installer
+        if: true # only for weekly-test-build push
+        uses: actions/upload-artifact@v3
+        with:
+          name: freeorion-win32-build
+          path: FreeOrion_*_Test_Win32_Setup.exe
+          if-no-files-found: error
+          retention-days: 14
