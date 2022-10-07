@@ -28,6 +28,7 @@
 #include <boost/optional/optional.hpp>
 
 #include <thread>
+#include <queue>
 
 using boost::asio::ip::tcp;
 using namespace Networking;
@@ -253,7 +254,7 @@ private:
     bool                            m_tx_connected = false; // accessed from multiple threads
 
     MessageQueue                    m_incoming_messages;    // accessed from multiple threads, but its interface is threadsafe
-    std::list<Message>              m_outgoing_messages;
+    std::queue<Message>             m_outgoing_messages;
 
     Message::HeaderBuffer           m_incoming_header = {};
     Message                         m_incoming_message;
@@ -602,7 +603,8 @@ void ClientNetworking::Impl::NetworkingThread(const std::shared_ptr<const Client
     } catch (const boost::system::system_error& error) {
         HandleException(error);
     }
-    m_outgoing_messages.clear();
+    decltype(m_outgoing_messages) empty_queue;
+    m_outgoing_messages.swap(empty_queue); // clear queue
     m_io_context.reset();
     { // Mutex scope
         std::scoped_lock lock(m_mutex);
@@ -669,7 +671,7 @@ void ClientNetworking::Impl::HandleMessageWrite(boost::system::error_code error,
     if (static_cast<int>(bytes_transferred) != static_cast<int>(Message::HeaderBufferSize) + m_outgoing_header[Message::Parts::SIZE])
         return;
 
-    m_outgoing_messages.pop_front();
+    m_outgoing_messages.pop();
     if (!m_outgoing_messages.empty())
         AsyncWriteMessage();
 
@@ -680,9 +682,8 @@ void ClientNetworking::Impl::HandleMessageWrite(boost::system::error_code error,
             std::scoped_lock lock(m_mutex);
             should_shutdown = !m_tx_connected;
         }
-        if (should_shutdown) {
+        if (should_shutdown)
             DisconnectFromServerImpl();
-        }
     }
 }
 
@@ -691,21 +692,24 @@ void ClientNetworking::Impl::AsyncWriteMessage() {
         ErrorLogger(network) << "Socket is closed. Dropping message.";
         return;
     }
+    using namespace boost::asio;
+    using boost::asio::buffer;
+    using boost::asio::async_write;
+    using boost::asio::placeholders::error;
+    using boost::asio::placeholders::bytes_transferred;
 
     HeaderToBuffer(m_outgoing_messages.front(), m_outgoing_header);
-    std::vector<boost::asio::const_buffer> buffers;
-    buffers.push_back(boost::asio::buffer(m_outgoing_header));
-    buffers.push_back(boost::asio::buffer(m_outgoing_messages.front().Data(),
-                                          m_outgoing_messages.front().Size()));
-    boost::asio::async_write(m_socket, buffers,
-                             boost::bind(&ClientNetworking::Impl::HandleMessageWrite, this,
-                                         boost::asio::placeholders::error,
-                                         boost::asio::placeholders::bytes_transferred));
+    std::array<const_buffer, 2> buffers{
+        buffer(m_outgoing_header),
+        buffer(m_outgoing_messages.front().Data(), m_outgoing_messages.front().Size())
+    };
+    async_write(m_socket, buffers,
+                boost::bind(&ClientNetworking::Impl::HandleMessageWrite, this, error, bytes_transferred));
 }
 
 void ClientNetworking::Impl::SendMessageImpl(Message message) {
     bool start_write = m_outgoing_messages.empty();
-    m_outgoing_messages.push_back(std::move(message));
+    m_outgoing_messages.push(std::move(message));
     if (start_write)
         AsyncWriteMessage();
 }

@@ -1,7 +1,5 @@
 #include "MessageQueue.h"
 
-#include "Message.h"
-
 #include <boost/optional/optional.hpp>
 
 MessageQueue::MessageQueue(std::mutex& monitor) :
@@ -20,21 +18,21 @@ std::size_t MessageQueue::Size() const {
 
 void MessageQueue::Clear() {
     std::scoped_lock lock(m_monitor);
-    m_queue.clear();
+    decltype(m_queue) empty_queue;
+    m_queue.swap(empty_queue); // clear queue
 }
 
 void MessageQueue::PushBack(Message message) {
     std::scoped_lock lock(m_monitor);
-    m_queue.push_back(std::move(message));
+    m_queue.push(std::move(message));
 }
 
 boost::optional<Message> MessageQueue::PopFront() {
     std::scoped_lock lock(m_monitor);
     if (m_queue.empty())
         return boost::none;
-    Message message;
-    swap(message, m_queue.front());
-    m_queue.pop_front();
+    Message message = std::move(m_queue.front());
+    m_queue.pop();
     return message;
 }
 

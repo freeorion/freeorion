@@ -309,7 +309,7 @@ private:
     Message::HeaderBuffer           m_incoming_header_buffer = {};
     Message                         m_incoming_message;
     Message::HeaderBuffer           m_outgoing_header = {};
-    std::list<Message>              m_outgoing_messages;
+    std::queue<Message>             m_outgoing_messages;
     int                             m_ID = Networking::INVALID_PLAYER_ID;
     std::string                     m_player_name;
     bool                            m_new_connection = true;

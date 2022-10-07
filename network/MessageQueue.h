@@ -4,13 +4,11 @@
 #include <boost/thread/condition.hpp>
 #include <boost/optional/optional_fwd.hpp>
 
-#include <list>
+#include <queue>
 #include <mutex>
 
 #include "../util/Export.h"
-
-
-class Message;
+#include "Message.h"
 
 /** A thread-safe message queue.  The entire public interface is guarded with mutex locks. */
 class FO_COMMON_API MessageQueue
@@ -34,8 +32,8 @@ public:
     boost::optional<Message> PopFront();
 
 private:
-    std::list<Message> m_queue;
-    std::mutex&        m_monitor;
+    std::queue<Message> m_queue;
+    std::mutex&         m_monitor;
 };
 
 

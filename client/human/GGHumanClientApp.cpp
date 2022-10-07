@@ -960,7 +960,7 @@ boost::intrusive_ptr<const boost::statechart::event_base> GGHumanClientApp::GetD
     std::scoped_lock lock(m_event_queue_guard);
     if (m_posted_event_queue.empty())
         return nullptr;
-    auto retval = m_posted_event_queue.front();
+    auto retval = std::move(m_posted_event_queue.front());
     m_posted_event_queue.pop();
     return retval;
 }
