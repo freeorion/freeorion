@@ -137,7 +137,7 @@ class ShipCombatStats:
 
 
 @cache_for_current_turn
-def get_ship_combat_stats(ship_id: ShipId, max_stats=False) -> ShipCombatStats:  # noqa: max-complexity
+def get_ship_combat_stats(ship_id: ShipId, max_stats=False) -> ShipCombatStats:  # noqa: C901
     """
     Return combat stats for the ship.
 

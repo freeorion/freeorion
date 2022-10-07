@@ -55,7 +55,7 @@ def planet_string(planet_ids: Union[PlanetId, Iterable[PlanetId]]) -> str:
 
 
 @cache_for_current_turn
-def get_capital() -> PlanetId:  # noqa: max-complexity
+def get_capital() -> PlanetId:  # noqa: C901
     """
     Return current empire capital id.
 
