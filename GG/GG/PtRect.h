@@ -45,22 +45,22 @@ struct GG_API Pt
 {
     constexpr Pt() = default;
 
-    constexpr Pt(X x_, Y y_) :
+    constexpr Pt(X x_, Y y_) noexcept :
         x(x_),
         y(y_)
     {}
 
-    constexpr Pt(X_d x_, Y y_) :
+    constexpr Pt(X_d x_, Y y_) noexcept :
         x(x_),
         y(y_)
     {}
 
-    constexpr Pt(X x_, Y_d y_) :
+    constexpr Pt(X x_, Y_d y_) noexcept :
         x(x_),
         y(y_)
     {}
 
-    constexpr Pt(X_d x_, Y_d y_) :
+    constexpr Pt(X_d x_, Y_d y_) noexcept :
         x(x_),
         y(y_)
     {}
@@ -71,7 +71,7 @@ struct GG_API Pt
     [[nodiscard]] constexpr bool Less(const Pt& rhs) const noexcept
     { return x < rhs.x ? true : (x == rhs.x ? (y < rhs.y ? true : false) : false); }
 
-    [[nodiscard]] constexpr Pt operator-() const { return Pt(-x, -y); }
+    [[nodiscard]] constexpr Pt operator-() const noexcept { return Pt(-x, -y); }
     constexpr Pt& operator+=(const Pt& rhs)      { x += rhs.x; y += rhs.y; return *this; }
     constexpr Pt& operator-=(const Pt& rhs)      { x -= rhs.x; y -= rhs.y; return *this; }
     constexpr Pt& operator/=(const double rhs)   { x /= rhs;   y /= rhs;   return *this; }
