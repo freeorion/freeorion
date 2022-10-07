@@ -961,7 +961,7 @@ boost::intrusive_ptr<const boost::statechart::event_base> GGHumanClientApp::GetD
     if (m_posted_event_queue.empty())
         return nullptr;
     auto retval = m_posted_event_queue.front();
-    m_posted_event_queue.pop_front();
+    m_posted_event_queue.pop();
     return retval;
 }
 
@@ -969,7 +969,7 @@ void GGHumanClientApp::PostDeferredEvent(
     boost::intrusive_ptr<const boost::statechart::event_base> event)
 {
     std::scoped_lock lock(m_event_queue_guard);
-    m_posted_event_queue.push_back(std::move(event));
+    m_posted_event_queue.push(std::move(event));
 }
 
 void GGHumanClientApp::HandleSystemEvents() {

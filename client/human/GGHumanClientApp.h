@@ -148,7 +148,8 @@ private:
 
 
     std::mutex m_event_queue_guard;
-    std::list<boost::intrusive_ptr<const boost::statechart::event_base>> m_posted_event_queue;
+    using event_ptr_t = boost::intrusive_ptr<const boost::statechart::event_base>;
+    std::queue<event_ptr_t> m_posted_event_queue;
 
     void HandleSystemEvents() override;
     void RenderBegin() override;
