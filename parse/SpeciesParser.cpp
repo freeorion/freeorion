@@ -438,7 +438,6 @@ namespace {
     struct py_manifest_grammar {
         boost::python::dict operator()(start_rule_payload::second_type& ordering) const {
             boost::python::dict globals(boost::python::import("builtins").attr("__dict__"));
-            std::function<void(const boost::python::list&)> f_insert_species_census_ordering = 
             globals["SpeciesCensusOrdering"] = boost::python::make_function([&ordering](auto tags) { return insert_species_census_ordering_(tags, ordering); },
                 boost::python::default_call_policies(),
                 boost::mpl::vector<void, const boost::python::list&>());

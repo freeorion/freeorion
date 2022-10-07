@@ -173,8 +173,7 @@ namespace {
             RegisterGlobalsSources(globals);
             RegisterGlobalsEnums(globals);
 
-            std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_tech = [&techs](const boost::python::tuple& args, const boost::python::dict& kw) { return py_insert_tech_(techs, args, kw); };
-            globals["Tech"] = boost::python::raw_function(f_insert_tech);
+            globals["Tech"] = boost::python::raw_function([&techs](const boost::python::tuple& args, const boost::python::dict& kw) { return py_insert_tech_(techs, args, kw); });
         }
 
         boost::python::dict operator()() const
