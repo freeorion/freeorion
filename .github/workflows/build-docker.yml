@@ -64,15 +64,15 @@ jobs:
         if: ${{ matrix.image == 'ubuntu-22.10' }}
         run: |
           mkdir build
-          docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake -DBUILD_TESTING=ON -DCMAKE_C_COMPILER=gcc-12 -DCMAKE_CXX_COMPILER=g++-12 ..
+          docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake -DBUILD_CLIENT_GODOT=ON -DBUILD_TESTING=ON -DCMAKE_C_COMPILER=gcc-12 -DCMAKE_CXX_COMPILER=g++-12 ..
       - name: Configure freeorion
         if: ${{ matrix.image != 'ubuntu-22.10' }}
         run: |
           mkdir build
-          docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake -DBUILD_TESTING=ON ..
+          docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake -DBUILD_CLIENT_GODOT=ON -DBUILD_TESTING=ON ..
       - name: Build freeorion
         run: |
-          docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake --build . -- -j 2
+          docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -e GIT_SSL_NO_VERIFY=true -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake --build . -- -j 2
       - name: Test freeorion
         run: |
           docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -e FO_TEST_HOSTLESS_GAMES=1 -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake --build . --target unittest
