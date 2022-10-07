@@ -842,7 +842,7 @@ if(BUILD_CLIENT_GODOT)
         COMMAND
            ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/godot/bin/${SYSTEM_NAME}.${BITS}
         COMMAND
-           ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeoriongodot>" "${CMAKE_SOURCE_DIR}/godot/bin/${SYSTEM_NAME}.${BITS}"
+           ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeoriongodot>" "${CMAKE_SOURCE_DIR}/godot/bin/${SYSTEM_NAME}.${BITS}/$<TARGET_FILE_NAME:freeoriongodot>"
         COMMAND
             ${CMAKE_COMMAND}
             -DMODE=DATA_LINK
@@ -865,7 +865,11 @@ if(BUILD_CLIENT_GODOT)
     if(ANDROID)
         add_custom_command(TARGET freeoriongodot POST_BUILD
             COMMAND
-                ${CMAKE_COMMAND} -E copy_if_different "${ICONV_LIBRARY}" "${CMAKE_SOURCE_DIR}/godot/bin/${SYSTEM_NAME}.${BITS}"
+                ${CMAKE_COMMAND} -E copy_if_different "${ICONV_LIBRARY}" "${CMAKE_SOURCE_DIR}/godot/bin/${SYSTEM_NAME}.${BITS}/libiconv.so"
+            COMMAND
+                ${CMAKE_STRIP} -g -S -d --strip-debug "${CMAKE_SOURCE_DIR}/godot/bin/${SYSTEM_NAME}.${BITS}/libiconv.so"
+            COMMAND
+                ${CMAKE_STRIP} -g -S -d --strip-debug "${CMAKE_SOURCE_DIR}/godot/bin/${SYSTEM_NAME}.${BITS}/$<TARGET_FILE_NAME:freeoriongodot>"
             COMMAND
                 ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/godot/default/
             COMMAND
