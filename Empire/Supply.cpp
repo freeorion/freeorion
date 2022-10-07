@@ -749,8 +749,16 @@ void SupplyManager::Update(const ScriptingContext& context) {
     }
 
 
+    for (auto& [empire_id, traversals] : m_supply_starlane_traversals) {
+        TraceLogger(supply) << "Empire " << empire_id << " propagated supply traversals:";
+        for (auto const& [a, b] : traversals)
+            TraceLogger(supply) << " ... " << a << " to " << b;
+    }
 
-    auto ally_merged_supply_starlane_traversals{m_supply_starlane_traversals};
+
+    auto ally_merged_supply_starlane_traversals = m_supply_starlane_traversals;
+
+
 
     // add connections into allied empire systems when their obstructed lane
     // traversals originate on either end of a starlane
@@ -761,7 +769,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
         auto& empire_supply_traversals = ally_merged_supply_starlane_traversals[supply_empire_id];
 
 
-        std::set<int> allies_of_empire = context.GetEmpireIDsWithDiplomaticStatusWithEmpire(
+        auto allies_of_empire = context.GetEmpireIDsWithDiplomaticStatusWithEmpire(
             supply_empire_id, DiplomaticStatus::DIPLO_ALLIED);
         for (int ally_id : allies_of_empire) {
             auto const& ally_obstructed_traversals = m_supply_starlane_obstructed_traversals[ally_id];
@@ -778,34 +786,48 @@ void SupplyManager::Update(const ScriptingContext& context) {
             }
         }
     }
-
-    // add allied supply starlane traversals to empires' traversals, so that
-    // allies can use eachothers' supply networks
-    for (auto& empire_set : ally_merged_supply_starlane_traversals) {
-        auto& output_empire_traversals = empire_set.second;
-        for (int ally_id : context.GetEmpireIDsWithDiplomaticStatusWithEmpire(
-            empire_set.first, DiplomaticStatus::DIPLO_ALLIED))
-        {
-            // copy ally traversals into the output empire traversals set
-            for (const auto& traversal_pair : m_supply_starlane_traversals[ally_id])
-                output_empire_traversals.insert(traversal_pair);
-        }
+    for (auto& [empire_id, traversals] : ally_merged_supply_starlane_traversals) {
+        TraceLogger(supply) << "Empire " << empire_id << " supply traversals after ally connections:";
+        for (auto const& [a, b] : traversals)
+            TraceLogger(supply) << " ... " << a << " to " << b;
     }
+
 
     // same for fleet supplyable system ids, as these are added to supplyable
     // groups in following code
     auto ally_merged_fleet_supplyable_system_ids = m_fleet_supplyable_system_ids;
-    for (auto& empire_set : ally_merged_fleet_supplyable_system_ids) {
-        std::set<int>& output_empire_ids = empire_set.second;
-        for (int ally_id : context.GetEmpireIDsWithDiplomaticStatusWithEmpire(
-            empire_set.first, DiplomaticStatus::DIPLO_ALLIED))
-        {
-            // copy ally traversals into the output empire traversals set
-            for (int sys_id : m_fleet_supplyable_system_ids[ally_id])
-                output_empire_ids.insert(sys_id);
+    for (auto& [empire_id, supplyable] : ally_merged_fleet_supplyable_system_ids) {
+        auto ally_ids = context.GetEmpireIDsWithDiplomaticStatusWithEmpire(
+            empire_id, DiplomaticStatus::DIPLO_ALLIED);
+        for (int ally_id : ally_ids) {
+            const auto& ally_supplyable_systems = m_fleet_supplyable_system_ids[ally_id];
+            // copy ally supplyable systems
+            supplyable.insert(ally_supplyable_systems.begin(), ally_supplyable_systems.end());
         }
     }
+    for (auto& [empire_id, supplyable] : ally_merged_fleet_supplyable_system_ids) {
+        TraceLogger(supply) << "Empire " << empire_id << " supplyable systems after adding allies:";
+        for (auto const& a : supplyable)
+            TraceLogger(supply) << " ... " << a;
+    }
 
+
+    // add allied supply starlane traversals to empires' traversals, so that
+    // allies can use eachothers' supply networks
+    for (auto& [empire_id, traversals] : ally_merged_supply_starlane_traversals) {
+        auto ally_ids = context.GetEmpireIDsWithDiplomaticStatusWithEmpire(
+            empire_id, DiplomaticStatus::DIPLO_ALLIED);
+        for (int ally_id : ally_ids) {
+            // copy ally traversals into the output empire traversals set
+            const auto& ally_traversals = m_supply_starlane_traversals[ally_id];
+            traversals.insert(ally_traversals.begin(), ally_traversals.end());
+        }
+    }
+    for (auto& [empire_id, traversals] : ally_merged_supply_starlane_traversals) {
+        TraceLogger(supply) << "Empire " << empire_id << " supply traversals after merging allies:";
+        for (auto const& [a, b] : traversals)
+            TraceLogger(supply) << " ... " << a << " to " << b;
+    }
 
 
     // determine supply-connected groups of systems for each empire.
