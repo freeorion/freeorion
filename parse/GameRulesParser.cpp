@@ -29,9 +29,7 @@ struct grammar {
 
     dict operator()(GameRulesTypeMap& game_rules) const {
         dict globals(import("builtins").attr("__dict__"));
-        std::function<object(const tuple&, const dict&)> f = [this, &game_rules](const tuple& args,
-                  const dict& kw) { return insert_rule_(*this, game_rules, args, kw); };
-        globals["GameRule"] = raw_function(f);
+        globals["GameRule"] = raw_function([this, &game_rules](const tuple& args, const dict& kw) { return insert_rule_(*this, game_rules, args, kw); });
         return globals;
     }
 };
