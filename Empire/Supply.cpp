@@ -754,14 +754,18 @@ void SupplyManager::Update(const ScriptingContext& context) {
         for (auto const& [a, b] : traversals)
             TraceLogger(supply) << " ... " << a << " to " << b;
     }
-
+    for (auto& [empire_id, traversals] : m_supply_starlane_obstructed_traversals) {
+        TraceLogger(supply) << "Empire " << empire_id << " obstructed supply traversals:";
+        for (auto const& [a, b] : traversals)
+            TraceLogger(supply) << " ... " << a << " to " << b;
+    }
 
     auto ally_merged_supply_starlane_traversals = m_supply_starlane_traversals;
+    using DiplomaticStatus::DIPLO_ALLIED;
 
 
-
-    // add connections into allied empire systems when their obstructed lane
-    // traversals originate on either end of a starlane
+    // add connections into allied empire systems where traversals are
+    // obstructed on one side by the the ally's supply
     for (const auto& [supply_empire_id, empire_obstructed_traversals] :
          m_supply_starlane_obstructed_traversals)
     {
@@ -769,19 +773,17 @@ void SupplyManager::Update(const ScriptingContext& context) {
         auto& empire_supply_traversals = ally_merged_supply_starlane_traversals[supply_empire_id];
 
 
-        auto allies_of_empire = context.GetEmpireIDsWithDiplomaticStatusWithEmpire(
-            supply_empire_id, DiplomaticStatus::DIPLO_ALLIED);
+        const auto allies_of_empire = context.GetEmpireIDsWithDiplomaticStatusWithEmpire(supply_empire_id, DIPLO_ALLIED);
         for (int ally_id : allies_of_empire) {
-            auto const& ally_obstructed_traversals = m_supply_starlane_obstructed_traversals[ally_id];
+            const auto& ally_supplyable_systems = m_empire_propagated_supply_ranges[ally_id];
 
-            // find cases where outer loop empire has an obstructed traversal from A to B
-            // and inner loop empire has an obstructed traversal from B to A
-            for (auto const& [empire_trav1, empire_trav2] : empire_obstructed_traversals) {
-                for (auto const& [ally_trav1, ally_trav2] : ally_obstructed_traversals) {
-                    if (empire_trav1 == ally_trav2 && empire_trav2 == ally_trav1) {
-                        empire_supply_traversals.emplace(empire_trav1, empire_trav2);
-                        empire_supply_traversals.emplace(empire_trav2, empire_trav1);
-                    }
+            // find cases where outer loop empire has an obstructed traversal from 
+            // system A to system B and innter loop empire (the ally) has supply in
+            // system B
+            for (auto const& [sys_A, sys_B] : empire_obstructed_traversals) {
+                if (ally_supplyable_systems.count(sys_B)) {
+                    empire_supply_traversals.emplace(sys_A, sys_B);
+                    empire_supply_traversals.emplace(sys_B, sys_A);
                 }
             }
         }
@@ -812,19 +814,27 @@ void SupplyManager::Update(const ScriptingContext& context) {
     }
 
 
-    // add allied supply starlane traversals to empires' traversals, so that
-    // allies can use eachothers' supply networks
-    for (auto& [empire_id, traversals] : ally_merged_supply_starlane_traversals) {
-        auto ally_ids = context.GetEmpireIDsWithDiplomaticStatusWithEmpire(
-            empire_id, DiplomaticStatus::DIPLO_ALLIED);
-        for (int ally_id : ally_ids) {
-            // copy ally traversals into the output empire traversals set
-            const auto& ally_traversals = m_supply_starlane_traversals[ally_id];
-            traversals.insert(ally_traversals.begin(), ally_traversals.end());
+    // iterate...
+    bool something_changed = true;
+    std::size_t limit = 50;
+    while (something_changed && limit-- > 0) {
+        const auto initial = ally_merged_supply_starlane_traversals;
+
+        // add allied supply starlane traversals to empires' traversals, so that
+        // allies can use eachothers' supply networks
+        for (auto& [empire_id, traversals] : ally_merged_supply_starlane_traversals) {
+            const auto ally_ids = context.GetEmpireIDsWithDiplomaticStatusWithEmpire(empire_id, DIPLO_ALLIED);
+            for (auto& [ally_id, ally_traversals] : initial) {
+                if (ally_ids.count(ally_id))
+                    traversals.insert(ally_traversals.begin(), ally_traversals.end());
+            }
         }
+
+        something_changed = (initial != ally_merged_supply_starlane_traversals);
     }
     for (auto& [empire_id, traversals] : ally_merged_supply_starlane_traversals) {
-        TraceLogger(supply) << "Empire " << empire_id << " supply traversals after merging allies:";
+        TraceLogger(supply) << "Empire " << empire_id << " supply traversals after merging allies "
+                            << (50 - limit) << " times:";
         for (auto const& [a, b] : traversals)
             TraceLogger(supply) << " ... " << a << " to " << b;
     }
@@ -838,7 +848,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
     for (auto& [empire_id, ignored] : empire_propagating_supply_ranges) {
         (void)ignored;
 
-        // assemble all direct connections between systems from remaining traversals
+        // assemble all direct connections between systems from traversals
         std::map<int, std::set<int>> supply_groups_map;
         for (auto const& lane : ally_merged_supply_starlane_traversals[empire_id]) {
             supply_groups_map[lane.first].insert(lane.second);
@@ -857,7 +867,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
 
         TraceLogger(supply) << "Empire " << empire_id << " supply groups map before merging:";
         for (auto const& q : supply_groups_map) {
-            TraceLogger(supply) << " ... src: " << q.first << " to: " << [&]() {
+            TraceLogger(supply) << " ... " << q.first << " to: " << [&]() {
                 std::stringstream other_ids;
                 for (auto const& r : q.second)
                     other_ids << r << ", ";
