@@ -761,7 +761,8 @@ void SupplyManager::Update(const ScriptingContext& context) {
     }
 
     auto ally_merged_supply_starlane_traversals = m_supply_starlane_traversals;
-    using DiplomaticStatus::DIPLO_ALLIED;
+    auto allies_of = [&context](int empire_id)
+    { return context.GetEmpireIDsWithDiplomaticStatusWithEmpire(empire_id, DiplomaticStatus::DIPLO_ALLIED); };
 
 
     // add connections into allied empire systems where traversals are
@@ -773,7 +774,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
         auto& empire_supply_traversals = ally_merged_supply_starlane_traversals[supply_empire_id];
 
 
-        const auto allies_of_empire = context.GetEmpireIDsWithDiplomaticStatusWithEmpire(supply_empire_id, DIPLO_ALLIED);
+        const auto allies_of_empire = allies_of(supply_empire_id);
         for (int ally_id : allies_of_empire) {
             const auto& ally_supplyable_systems = m_empire_propagated_supply_ranges[ally_id];
 
@@ -823,7 +824,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
         // add allied supply starlane traversals to empires' traversals, so that
         // allies can use eachothers' supply networks
         for (auto& [empire_id, traversals] : ally_merged_supply_starlane_traversals) {
-            const auto ally_ids = context.GetEmpireIDsWithDiplomaticStatusWithEmpire(empire_id, DIPLO_ALLIED);
+            const auto ally_ids = allies_of(empire_id);
             for (auto& [ally_id, ally_traversals] : initial) {
                 if (ally_ids.count(ally_id))
                     traversals.insert(ally_traversals.begin(), ally_traversals.end());
