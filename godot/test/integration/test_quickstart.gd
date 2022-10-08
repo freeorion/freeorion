@@ -28,6 +28,18 @@ func test_quickstart():
 	yield(yield_to(signaler, "started_game", 100), YIELD)
 	assert_signal_emitted(signaler, "started_game", "Game started")
 
+	var systems = FreeOrionNode.get_systems()
+	assert_not_null(systems)
+	assert_typeof(systems, TYPE_DICTIONARY)
+	assert_gt(systems.size(), 0)
+	var system = systems[systems.keys()[0]]
+	assert_not_null(system)
+	assert_typeof(system, TYPE_OBJECT)
+	assert_typeof(system.id, TYPE_INT)
+	assert_typeof(system.name, TYPE_STRING)
+	assert_typeof(system.pos, TYPE_VECTOR3)
+	assert_typeof(system.get_starlanes_wormholes(), TYPE_DICTIONARY)
+
 	FreeOrionNode.free()
 	signaler.free()
 

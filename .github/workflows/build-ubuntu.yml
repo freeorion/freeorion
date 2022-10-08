@@ -116,4 +116,4 @@ jobs:
         if: matrix.client-godot == 'ON'
         run: |
           cp `which godot3-server` build/
-          ./build/godot3-server --verbose -s --path godot addons/gut/gut_cmdln.gd -gdir=res://test/ -ginclude_subdirs -gexit
+          ./build/godot3-server --disable-render-loop --verbose -s --path godot addons/gut/gut_cmdln.gd -gdir=res://test/ -ginclude_subdirs -gexit
