@@ -49,7 +49,7 @@ jobs:
         if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
         run: bash -c 'scp build/FreeOrion_*.zip o01eg@frs.sourceforge.net:/home/frs/project/freeorion/FreeOrion/Test/'
       - name: Upload binaries artefacts
-        if: github.ref == 'refs/heads/master
+        if: github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v3
         with:
           name: freeorion-binaries-win32-build-${{ github.run_number }}
