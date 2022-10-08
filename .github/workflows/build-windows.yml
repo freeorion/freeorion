@@ -45,11 +45,16 @@ jobs:
         run: |
           pushd build
           cpack -V -C Release -G ZIP -D CPACK_ARCHIVE_COMPONENT_INSTALL=ON -D CPACK_MONOLITHIC_INSTALL=OFF -D CPACK_COMPONENTS_ALL=binaries
-      - name: Upload binaries only
+      - name: Upload weekly-test binaries only
         if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
         run: bash -c 'scp build/FreeOrion_*.zip o01eg@frs.sourceforge.net:/home/frs/project/freeorion/FreeOrion/Test/'
-
-
+      - name: Upload binaries artefacts
+        if: github.ref == 'refs/heads/master
+        uses: actions/upload-artifact@v3
+        with:
+          name: freeorion-binaries-win32-build-${{ github.run_number }}
+          path: build/FreeOrion-*.zip
+          retention-days: 7
   build-windows-2022-cmake:
     name: MSVS 2022 on Windows CMake
     runs-on: windows-2022
