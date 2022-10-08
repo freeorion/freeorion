@@ -30,10 +30,17 @@ def get_argument_names(arguments, is_class):
     return names, types
 
 
-def normalize_rtype(rtype):
+def _normalize_rtype(rtype):
     if rtype == "iterator":
         return "Iterator"
     return rtype
+
+
+def _parse_signature(line):
+    expre = re.compile(r"(\w+)\((.*)\) -> (\w+)")
+    name, args, rtype = expre.match(line).group(1, 2, 3)
+    args = tuple(re.findall(r"\((\w+)\) *(\w+)", args))
+    return name, args, rtype
 
 
 class Docs:
@@ -42,42 +49,35 @@ class Docs:
         self.is_class = is_class
 
         if not text:
-            self.rtype = "unknown"
-            self.args = ["*args"]
-            self.header = ""
+            self._set_unknown()
             return
 
         self.text = text
-
         lines = [x.strip() for x in self.text.split("\n")]
 
-        def parse_signature(line):
-            expre = re.compile(r"(\w+)\((.*)\) -> (\w+)")
-            name, args, rtype = expre.match(line).group(1, 2, 3)
-            args = tuple(re.findall(r"\((\w+)\) *(\w+)", args))
-            return name, args, rtype
+        name, self.resources = self._get_resources(lines)
+        args, rtypes, infos = zip(*self.resources)
+        self.rtype = _normalize_rtype(self._get_final_rtype(name, rtypes))
 
-        res = []
-        name, args, rtype = parse_signature(lines[0])
-        res.append((args, rtype, []))
-        for line in lines[1:]:
-            if line.startswith("%s(" % name):
-                name, args, rtype = parse_signature(line)
-                res.append((args, rtype, []))
-            else:
-                res[-1][2].append(line)
+        self._header = self._make_doclines(infos, name)
 
-        self.resources = res
+        self.args_sets = self._get_argument_sets(args, is_class)
 
-        args, rtypes, infos = zip(*res)
-        if len(set(rtypes)) != 1:
-            error("[%s] Different rtypes", name)
-        self.rtype = normalize_rtype(rtypes[0])
+    def _get_argument_sets(self, args, is_class):
+        args_sets = []
+        for argument_set in args:
+            names, types = get_argument_names(argument_set, is_class)
+            args_sets.append(list(zip(names, types)))
+        return args_sets
 
-        # cut of first and last string if they are empty
-        # we cant cut off all empty lines, because it can be inside docstring
+    def _make_doclines(self, infos, name):
+        """
+        Make the Python docstring from multiple infos.
+
+        Cut of first and last string if they are empty.
+        We cant cut off all empty lines, because it can be inside docstring.
+        """
         doc_lines = []
-
         for doc_part in infos:
             if not doc_part:
                 continue
@@ -91,14 +91,35 @@ class Docs:
                     doc_part = doc_part[:-1]
                 doc_lines.append("\n".join(doc_part))
 
-        # if docs are equals show only one of them
-        self.header = sorted(doc_lines)
+        if len(doc_lines) > 1:
+            error("Too many doclines for %s %s", name, doc_lines)
 
-        self.args_sets = []
+        return doc_lines
 
-        for argument_set in args:
-            names, types = get_argument_names(argument_set, is_class)
-            self.args_sets.append(list(zip(names, types)))
+    def _get_final_rtype(self, name, rtypes):
+        if len(set(rtypes)) != 1:
+            error("[%s] Different rtypes", name)
+        return rtypes[0]
+
+    def _get_resources(self, lines):
+        res = []
+        name, args, rtype = _parse_signature(lines[0])
+        res.append((args, rtype, []))
+        for line in lines[1:]:
+            if self._is_extra_signature(line, name):
+                name, args, rtype = _parse_signature(line)
+                res.append((args, rtype, []))
+            else:
+                res[-1][2].append(line)
+        return name, res
+
+    def _set_unknown(self):
+        self.rtype = "unknown"
+        self.args = ["*args"]
+        self._header = ""
+
+    def _is_extra_signature(self, line, name):
+        return line.startswith(f"{name}(")
 
     def _format_arg_string(self, args):
         arg_string = ", ".join(args)
@@ -134,35 +155,9 @@ class Docs:
 
     def get_doc_string(self):
         doc = []
-        if self.header:
+        if self._header:
             doc.append('"""')
-            if self.header:
-                doc.extend(self.header)
+            doc.extend(self._header)
             doc.append('"""')
 
         return "\n".join("%s%s" % (" " * 4 * self.indent if x else "", x) for x in doc)
-
-
-if __name__ == "__main__":
-    # example1 = """__delitem__( (IntBoolMap)arg1, (object)arg2) -> None"""
-    example1 = """getEmpire() -> empire\n\ngetEmpire((int)star_name, (int)arg2, (int)arg3) -> empire"""
-
-    # example1 = ("""getUserDataDir() -> str :\n
-    #     Returns path to directory where FreeOrion stores user specific data (saves, etc.).
-    #
-    #     getUserDataDir((int)args1) -> str :\n
-    #         Unicorns.
-    #     """)
-    #
-    # example1 = """getUserDataDir() -> str :\n    Returns path to directory where FreeOrion stores user specific data (config files, saves, etc.)."""
-
-    info = Docs(example1, 1)
-    print("=" * 100)
-    print("Arg string:", info.get_argument_string())
-    print("=" * 100)
-    print("Doc string:\n", info.get_doc_string())
-
-    # double standards
-    # canBuild ['empire', 'buildType', 'str', 'int'], ['empire', 'buildType', 'int', 'int']
-    # inField ['field', 'universeObject'], ['field', 'float', 'float']
-    # validShipDesign ['str', 'StringVec']
