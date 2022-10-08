@@ -59,8 +59,7 @@ class StatKey(Enum):
         for item in cls:
             if item.value.name == name:
                 return item
-        else:
-            raise ValueError(f"Cannot find value with {name}")
+        raise ValueError(f"Cannot find value with {name}")
 
 
 LOG_PREFIX = "##"
