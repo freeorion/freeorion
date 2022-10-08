@@ -446,6 +446,9 @@ class AIstate:
             self.systemStatus[sys_id]["myFleetRating"] = 0
             self.systemStatus[sys_id]["myFleetRatingVsPlanets"] = 0
 
+        # for use in debugging
+        verbose = False
+
         # assess enemy fleets that may have been momentarily visible
         enemies_by_system = {}
         my_fleets_by_system = {}
@@ -493,6 +496,8 @@ class AIstate:
         for sys_id in universe.systemIDs:
             sys_status = self.systemStatus.setdefault(sys_id, {})
             system = universe.getSystem(sys_id)
+            if verbose:
+                debug("AIState threat evaluation for %s" % system)
             # update fleets
             sys_status["myfleets"] = my_fleets_by_system.get(sys_id, [])
             sys_status["myFleetsAccessible"] = fleet_spot_position.get(sys_id, [])
@@ -519,8 +524,12 @@ class AIstate:
                 )
                 if fleet.speed == 0:
                     monster_ratings.append(fleet_rating)
+                    if verbose:
+                        debug("\t immobile enemy fleet %s has rating %.1f" % (fleet, fleet_rating))
                     continue
 
+                if verbose:
+                    debug("\t mobile enemy fleet %s has rating %.1f" % (fleet, fleet_rating))
                 mobile_fleets.append(fid)
                 if fleet.unowned:
                     mob_ratings.append(fleet_rating)
@@ -539,6 +548,8 @@ class AIstate:
             # but just in case...
             partial_vis_turn = get_partial_visibility_turn(sys_id)
             if not system or partial_vis_turn < 0:
+                if verbose:
+                    debug("Never had partial vis for %s - basing threat assessment on old info and lost ships" % system)
                 sys_status.setdefault("local_fleet_threats", set())
                 sys_status["planetThreat"] = 0
                 sys_status["fleetThreat"] = max(
@@ -623,6 +634,11 @@ class AIstate:
                 sys_status["fleetThreat"] = max(
                     combine_ratings(enemy_rating, mob_rating), 2 * lost_fleet_rating - monster_rating
                 )
+                if verbose:
+                    debug(
+                        "enemy threat calc parts: enemy rating %.1f, lost fleet rating %.1f, monster_rating %.1f"
+                        % (enemy_rating, lost_fleet_rating, monster_rating)
+                    )
                 # does NOT include mobile monsters
                 sys_status["enemy_threat"] = max(enemy_rating, 2 * lost_fleet_rating - monster_rating)
                 sys_status["monsterThreat"] = monster_rating
@@ -642,6 +658,8 @@ class AIstate:
                     sys_status["totalThreat"],
                     combine_ratings(sys_status.get("planetThreat", 0), (min_hidden_attack * min_hidden_health)),
                 )
+            if verbose and sys_status["fleetThreat"] > 0:
+                debug("%s intermediate status: %s" % (system, sys_status))
 
         enemy_supply, enemy_near_supply = self.assess_enemy_supply()  # TODO: assess change in enemy supply over time
         # assess secondary threats (threats of surrounding systems) and update my fleet rating
@@ -667,6 +685,12 @@ class AIstate:
         for sys_id in universe.systemIDs:
             sys_status = self.systemStatus[sys_id]
             neighbors = sys_status.get("neighbors", set())
+            this_system = universe.getSystem(sys_id)
+            if verbose:
+                debug(
+                    "Regional Assessment for %s with local fleet threat %.1f"
+                    % (this_system, sys_status.get("fleetThreat", 0))
+                )
             jumps2 = set()
             jumps3 = set()
             jumps4 = set()
