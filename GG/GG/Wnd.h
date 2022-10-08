@@ -974,18 +974,18 @@ protected:
 
 private:
     /// m_parent may be expired or null if there is no parent.  m_parent will reset itself if expired.
-    mutable std::weak_ptr<Wnd>      m_parent;
-    std::string                     m_name;                     ///< A user-significant name for this Wnd
-    std::list<std::shared_ptr<Wnd>> m_children;                 ///< List of ptrs to child windows kept in order of decreasing area
-    bool                            m_visible = true;
-    bool                            m_needs_prerender = false;  ///< Indicates if Wnd needs a PreRender();
-    std::string                     m_drag_drop_data_type;      ///< The type of drag-and-drop data this Wnd represents, if any. If empty/blank, indicates that this Wnd cannot be drag-dropped.
-    ChildClippingMode               m_child_clipping_mode = ChildClippingMode::DontClip;
-    bool                            m_non_client_child = false;
-    Pt                              m_upperleft{X0, Y0};            ///< Upper left point of window
-    Pt                              m_lowerright{X1, Y1};           ///< Lower right point of window
-    Pt                              m_min_size{X0, Y0};             ///< Minimum window size
-    Pt                              m_max_size{X{1<<15},Y{1<<15}};  ///< Maximum window size
+    mutable std::weak_ptr<Wnd>        m_parent;
+    std::string                       m_name;                     ///< A user-significant name for this Wnd
+    std::vector<std::shared_ptr<Wnd>> m_children;                 ///< List of ptrs to child windows kept in order of decreasing area
+    std::string                       m_drag_drop_data_type;      ///< The type of drag-and-drop data this Wnd represents, if any. If empty/blank, indicates that this Wnd cannot be drag-dropped.
+    ChildClippingMode                 m_child_clipping_mode = ChildClippingMode::DontClip;
+    Pt                                m_upperleft{X0, Y0};            ///< Upper left point of window
+    Pt                                m_lowerright{X1, Y1};           ///< Lower right point of window
+    Pt                                m_min_size{X0, Y0};             ///< Minimum window size
+    Pt                                m_max_size{X{1<<15},Y{1<<15}};  ///< Maximum window size
+    bool                              m_non_client_child = false;
+    bool                              m_visible = true;
+    bool                              m_needs_prerender = false;  ///< Indicates if Wnd needs a PreRender();
 
     /** The Wnds that are filtering this Wnd's events. These are in reverse
         order: top of the stack is back(). */

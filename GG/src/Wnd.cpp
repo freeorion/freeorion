@@ -78,18 +78,6 @@ typedef GridLayoutWndContainer::index<LayoutTop>::type::iterator    TopIter;
 typedef GridLayoutWndContainer::index<LayoutRight>::type::iterator  RightIter;
 typedef GridLayoutWndContainer::index<LayoutBottom>::type::iterator BottomIter;
 
-struct WndHorizontalLess
-{
-    bool operator()(const std::shared_ptr<Wnd>& lhs, const std::shared_ptr<Wnd>& rhs) const
-        {return lhs->Left() < rhs->Left();}
-};
-
-struct WndVerticalLess
-{
-    bool operator()(const std::shared_ptr<Wnd>& lhs, const std::shared_ptr<Wnd>& rhs) const
-        {return lhs->Top() < rhs->Top();}
-};
-
 constexpr int DEFAULT_LAYOUT_BORDER_MARGIN = 0;
 constexpr int DEFAULT_LAYOUT_CELL_MARGIN = 5;
 
@@ -456,14 +444,16 @@ void Wnd::MoveChildUp(const std::shared_ptr<Wnd>& wnd)
 
 void Wnd::MoveChildUp(Wnd* wnd)
 {
-    if (!wnd)
+    if (!wnd || m_children.empty() || m_children.back().get() == wnd)
         return;
-    const auto it = std::find_if(m_children.begin(), m_children.end(),
-                                 [&wnd](const std::shared_ptr<Wnd>& x){ return x.get() == wnd; });
-    if (it == m_children.end())
+    const auto found_it = std::find_if(m_children.begin(), m_children.end(),
+                                      [&wnd](const std::shared_ptr<Wnd>& x){ return x.get() == wnd; });
+    if (found_it == m_children.end())
         return;
-    m_children.emplace_back(std::move(*it));
-    m_children.erase(it);
+
+    auto found{std::move(*found_it)};
+    m_children.erase(found_it);
+    m_children.push_back(std::move(found));
 }
 
 void Wnd::MoveChildDown(const std::shared_ptr<Wnd>& wnd)
@@ -473,13 +463,14 @@ void Wnd::MoveChildDown(Wnd* wnd)
 {
     if (!wnd)
         return;
-    auto found = std::find_if(m_children.begin(), m_children.end(),
-                              [&wnd](const std::shared_ptr<Wnd>& x){ return x.get() == wnd; });
-    if (found == m_children.end())
+    auto found_it = std::find_if(m_children.begin(), m_children.end(),
+                                 [&wnd](const std::shared_ptr<Wnd>& x){ return x.get() == wnd; });
+    if (found_it == m_children.end())
         return;
 
-    m_children.emplace_front(std::move(*found));
-    m_children.erase(found);
+    auto found{std::move(*found_it)};
+    m_children.erase(found_it);
+    m_children.insert(m_children.begin(), std::move(found));
 }
 
 void Wnd::DetachChild(const std::shared_ptr<Wnd>& wnd)
@@ -545,15 +536,16 @@ void Wnd::HorizontalLayout()
 {
     RemoveLayout();
 
-    // TODO: store in vector, sort, then move out of vector when calling layout->Add
-    std::multiset<std::shared_ptr<Wnd>, WndHorizontalLess> wnds;
+    std::vector<std::shared_ptr<Wnd>> wnds;
+    wnds.reserve(m_children.size());
     Pt client_sz = ClientSize();
     for (auto& child : m_children) {
         Pt wnd_ul = child->RelativeUpperLeft(), wnd_lr = child->RelativeLowerRight();
         if (wnd_ul.x < 0 || wnd_ul.y < 0 || client_sz.x < wnd_lr.x || client_sz.y < wnd_lr.y)
             continue;
-        wnds.emplace(child);
+        wnds.push_back(child);
     }
+    std::sort(wnds.begin(), wnds.end(), [](const auto& l, const auto& r) { return l->Left() < r->Left(); });
 
     auto layout = Wnd::Create<Layout>(X0, Y0, ClientSize().x, ClientSize().y,
                                       1, wnds.size(),
@@ -570,15 +562,16 @@ void Wnd::VerticalLayout()
 {
     RemoveLayout();
 
-    // TODO: store in vector, sort, then move out of vector when calling layout->Add
-    std::multiset<std::shared_ptr<Wnd>, WndVerticalLess> wnds;
+    std::vector<std::shared_ptr<Wnd>> wnds;
+    wnds.reserve(m_children.size());
     Pt client_sz = ClientSize();
     for (auto& child : m_children) {
         Pt wnd_ul = child->RelativeUpperLeft(), wnd_lr = child->RelativeLowerRight();
         if (wnd_ul.x < 0 || wnd_ul.y < 0 || client_sz.x < wnd_lr.x || client_sz.y < wnd_lr.y)
             continue;
-        wnds.emplace(child);
+        wnds.push_back(child);
     }
+    std::sort(wnds.begin(), wnds.end(), [](const auto& l, const auto& r) { return l->Top() < r->Top(); });
 
     auto layout = Wnd::Create<Layout>(X0, Y0, ClientSize().x, ClientSize().y,
                                       wnds.size(), 1,

@@ -1608,15 +1608,15 @@ void GUI::RenderWindow(Wnd* wnd)
         bool clip = clip_mode != Wnd::ChildClippingMode::DontClip;
         if (clip)
             wnd->BeginClipping();
-        for (auto& child_wnd : wnd->m_children) {
+        for (auto& child_wnd : wnd->Children()) {
             if (child_wnd && child_wnd->Visible())
                 RenderWindow(child_wnd.get());
         }
         if (clip)
             wnd->EndClipping();
     } else {
-        std::vector<std::shared_ptr<Wnd>> children_copy{wnd->m_children.begin(), wnd->m_children.end()};
-        const auto& client_child_begin =
+        auto children_copy{wnd->Children()};
+        const auto client_child_begin =
             std::partition(children_copy.begin(), children_copy.end(),
                            [](const auto& child) { return child->NonClientChild(); });
 
