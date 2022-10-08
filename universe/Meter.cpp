@@ -11,6 +11,44 @@
 #include <stdio.h>
 #endif
 
+namespace {
+    // rounding checks
+
+    constexpr Meter r1{65000.001f};
+    constexpr Meter r2 = []() {
+        Meter r2 = r1;
+        r2.AddToCurrent(-1.0f);
+        return r2;
+    }();
+    static_assert(r2.Current() == 64999.001f);
+    constexpr Meter r3 = []() {
+        Meter r3 = r2;
+        r3.AddToCurrent(-0.01f);
+        return r3;
+    }();
+    static_assert(r3.Current() == 64998.991f);
+    constexpr Meter r4 = []() {
+        Meter r4 = r3;
+        r4.AddToCurrent(40.009f);
+        return r4;
+    }();
+    static_assert(r4.Current() == 65039.0f);
+
+    constexpr Meter q1{2.01f};
+    constexpr Meter q2 = []() {
+        Meter q2 = q1;
+        q2.AddToCurrent(-1.0f);
+        return q2;
+    }();
+    static_assert(q2.Current() == 1.01f);
+    constexpr Meter q3 = []() {
+        Meter q3 = q2;
+        q3.AddToCurrent(-1.0f);
+        return q3;
+    }();
+    static_assert(q3.Current() == 0.01f);
+}
+
 std::array<std::string::value_type, 64> Meter::Dump(uint8_t ntabs) const noexcept {
     std::array<std::string::value_type, 64> buffer{"Cur: "}; // rest should be nulls
 #if defined(__cpp_lib_to_chars)
