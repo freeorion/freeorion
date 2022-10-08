@@ -48,7 +48,7 @@ public:
         init = FromFloat(DEFAULT_VALUE);
     }
 
-    constexpr void AddToCurrent(float adjustment) noexcept { cur = FromFloat(FromInt(cur) + adjustment); }
+    constexpr void AddToCurrent(float adjustment) noexcept { cur += FromFloat(adjustment); }
 
     void ClampCurrentToRange(float min = DEFAULT_VALUE, float max = LARGE_VALUE) noexcept; ///< ensures the current value falls in the range [\a min, \a max]
 
@@ -65,7 +65,9 @@ public:
 
 private:
     static constexpr float FLOAT_INT_SCALE = 1000.0f;
-    static constexpr int32_t FromFloat(float f) { return static_cast<int32_t>(f * FLOAT_INT_SCALE); }
+    // Value must be rounded, otherwise a calculated increase of 0.99999997 will be truncated to 0.999.
+    // Negative values are increased by truncation, so the offset must be negative, too.
+    static constexpr int32_t FromFloat(float f) { return static_cast<int32_t>(f * FLOAT_INT_SCALE + (f > 0 ? 0.5f : -0.5f)); }
     static constexpr float FromInt(int32_t i) { return i / FLOAT_INT_SCALE; }
 
     int32_t cur = FromFloat(DEFAULT_VALUE);
