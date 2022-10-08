@@ -836,7 +836,6 @@ def set_planet_industry_research_influence_foci(focus_manager, priority_ratio):
             # xy = y output when focus x, p for production(INDUSTRY), c for current
             pp, pr, pi = pinfo.possible_output[INDUSTRY]
             rp, rr, ri = pinfo.possible_output[RESEARCH]
-            ip, ir, ii = pinfo.possible_output[INFLUENCE]
             # calculate factor F at which pp + F * pr == rp + F * rr =====> F = ( pp-rp ) / (rr-pr)
             factor = (pp - rp) / max(0.01, rr - pr)
             # Races much better at producing shouldn't switch too early, better produce the history analyzer quickly
