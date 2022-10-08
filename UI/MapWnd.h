@@ -584,14 +584,16 @@ private:
     std::shared_ptr<MapScaleLine>       m_scale_line;   //!< indicates the on-screen distance that reprensents an in-universe distance
     std::shared_ptr<GG::Slider<double>> m_zoom_slider;  //!< allows user to set zoom level;
 
+    boost::signals2::scoped_connection  m_slider_show_connection;
+    boost::signals2::scoped_connection  m_obj_delete_connection;
+
     std::set<int>                   m_fleets_exploring;
 
     /// indicates that refresh fleet button work should be done before rendering.
     bool                            m_deferred_recreate_fleet_buttons = false;
     bool                            m_deferred_refresh_fleet_buttons = false;
 
-    std::chrono::time_point<std::chrono::high_resolution_clock>
-                                    m_timeout_time;
+    std::chrono::time_point<std::chrono::high_resolution_clock> m_timeout_time;
 
     friend struct IntroMenu;
     friend struct WaitingForGameStart;
