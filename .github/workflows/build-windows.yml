@@ -53,7 +53,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: freeorion-binaries-win32-build-${{ github.run_number }}
-          path: build/FreeOrion-*.zip
+          path: build/FreeOrion_*.zip
           retention-days: 7
   build-windows-2022-cmake:
     name: MSVS 2022 on Windows CMake
