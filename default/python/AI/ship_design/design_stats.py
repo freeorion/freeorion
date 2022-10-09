@@ -1,36 +1,34 @@
+from dataclasses import dataclass, field
+from typing import Dict
+
 from CombatRatingsAI import ShipCombatStats
 
 
+@dataclass
 class DesignStats:
-    def __init__(self):
-        self.attacks = {}  # {damage: shots_per_round}
-        self.reset()  # this call initiates remaining instance variables!
-
-    # noinspection PyAttributeOutsideInit
-    def reset(self):
-        self.attacks.clear()
-        self.structure = 0
-        self.shields = 0
-        self.fuel = 0
-        self.speed = 0
-        self.stealth = 0
-        self.detection = 0
-        self.troops = 0
-        self.colonisation = -1  # -1 since 0 indicates an outpost (capacity = 0)
-        self.fuel_per_turn = 0
-        self.organic_growth = 0
-        self.maximum_organic_growth = 0
-        self.repair_per_turn = 0
-        self.asteroid_stealth = 0
-        self.solar_stealth = 0
-        self.fighter_capacity = 0
-        self.fighter_launch_rate = 0
-        self.fighter_damage = 0
-        self.flak_shots = 0
-        self.has_interceptors = False
-        self.damage_vs_planets = 0
-        self.has_bomber = False
-        self.shield_type = None
+    attacks: Dict[float, int] = field(default_factory=dict)
+    structure: float = 0
+    shields: float = 0
+    fuel: float = 0
+    speed: float = 0
+    stealth: float = 0
+    detection: float = 0
+    troops: float = 0
+    colonisation: int = -1  # -1 since 0 indicates an outpost (capacity = 0)
+    fuel_per_turn: float = 0
+    organic_growth: float = 0
+    maximum_organic_growth: float = 0
+    repair_per_turn: float = 0
+    asteroid_stealth: float = 0
+    solar_stealth: float = 0
+    fighter_capacity: float = 0
+    fighter_launch_rate: float = 0
+    fighter_damage: float = 0
+    flak_shots: float = 0
+    has_interceptors: bool = False
+    damage_vs_planets: float = 0
+    has_bomber: bool = False
+    shield_type: str = None
 
     def convert_to_combat_stats(self):
         """Return a tuple as expected by CombatRatingsAI"""
