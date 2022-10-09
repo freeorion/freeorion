@@ -6,6 +6,7 @@ from common.print_utils import Table, Text
 from stub_generator.interface_inspector import ClassInfo, EnumInfo, InstanceInfo
 from stub_generator.parse_docs import Docs
 from stub_generator.stub_generator.base_generator import BaseGenerator
+from stub_generator.stub_generator.rtype import update_method_rtype, update_property_rtype
 
 
 def _get_property_return_type_by_name(attr_name: str) -> str:
@@ -27,47 +28,6 @@ def _get_property_return_type_by_name(attr_name: str) -> str:
     return property_map.get(attr_name, "")
 
 
-def _update_property_return_type(attr_name: str, rtype: str):
-    """
-    Match property of known type.
-    """
-    if rtype.startswith("<type"):
-        rtype = rtype[7:-2]
-    else:
-        rtype = rtype.split(".")[-1].strip("'>")
-
-    property_map = {
-        ("shipIDs", "IntSet"): "Set[ShipId]",
-        ("shipIDs", "IntVec"): "Sequence[ShipId]",
-        ("buildingIDs", "IntSet"): "Set[BuildingId]",
-        ("buildingIDs", "IntVec"): "Sequence[BuildingId]",
-        ("planetIDs", "IntSet"): "Set[PlanetId]",
-        ("planetIDs", "IntVec"): "Sequence[PlanetId]",
-        ("fleetIDs", "IntVec"): "Sequence[FleetId]",
-        ("fleetIDs", "IntSet"): "Set[FleetId]",
-        ("systemIDs", "IntVec"): "Sequence[SystemId]",
-        ("empireID", "int"): "EmpireId",
-        ("capitalID", "int"): "PlanetId",
-        ("locationID", "int"): "PlanetId",
-        ("owner", "int"): "EmpireId",
-        ("speciesName", "str"): "SpeciesName",
-        ("designedOnTurn", "int"): "Turn",
-        ("buildingTypeName", "str"): "BuildingName",
-    }
-    return property_map.get((attr_name, rtype), rtype)
-
-
-def _update_method_return_type(class_: str, method_name: str, rtype: str) -> str:
-    method_map = {("empire", "supplyProjections"): "Dict[SystemId, int]"}
-    key = (class_, method_name)
-    rtype = method_map.get(key, rtype)
-
-    if rtype in ("VisibilityIntMap", "IntIntMap"):
-        return "Dict[int, int]"
-    else:
-        return rtype
-
-
 def _handle_class(info: ClassInfo):
     assert not info.doc, "Got docs need to handle it"
     parents = [x for x in info.parents if x != "object"]
@@ -86,7 +46,7 @@ def _handle_class(info: ClassInfo):
             if not rtype:
                 rtype = _get_property_return_type_by_name(attr_name)
             else:
-                rtype = _update_property_return_type(attr_name, rtype)
+                rtype = update_property_rtype(attr_name, rtype)
             properties.append((attr_name, rtype))
         elif attr["type"] in ("<class 'Boost.Python.function'>", "<class 'function'>"):
             instance_methods.append(attr["routine"])
@@ -110,7 +70,7 @@ def _handle_class(info: ClassInfo):
     for routine_name, routine_docs in instance_methods:
         docs = Docs(routine_docs, 2, is_class=True)
         # TODO: Subclass map-like classes from dict (or custom class) rather than this hack
-        rtype = _update_method_return_type(info.name, routine_name, docs.rtype)
+        rtype = update_method_rtype(info.name, routine_name, docs.rtype)
 
         doc_string = docs.get_doc_string()
         if doc_string:
