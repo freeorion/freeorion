@@ -151,7 +151,7 @@ bool ZList::MoveDown(const Wnd* const wnd)
     auto found = Find(equals_wnd);
 
     if (found) {
-        auto back = m_list.back();
+        const auto& back = m_list.back();
         if ((back && back->OnTop()) || !wnd || !wnd->OnTop()) {
             // if there are only on-top windows, or wnd is not an on-top
             // window just put wnd below the bottom element
@@ -166,13 +166,9 @@ bool ZList::MoveDown(const Wnd* const wnd)
 }
 
 namespace {
-
-const std::function<boost::optional<bool> (const std::shared_ptr<Wnd>&)> IsNotOnTop =
-    [](const std::shared_ptr<Wnd>& wnd)
-{
-    return !wnd->OnTop() ? boost::optional<bool>(true) : boost::optional<bool>(boost::none);
-};
-
+    const std::function<boost::optional<bool> (const std::shared_ptr<Wnd>&)> IsNotOnTop =
+        [](const std::shared_ptr<Wnd>& wnd)
+    { return !wnd->OnTop() ? boost::optional<bool>(true) : boost::optional<bool>(boost::none); };
 }
 
 ZList::iterator ZList::FirstNonOnTop()
