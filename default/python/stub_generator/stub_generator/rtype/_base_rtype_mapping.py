@@ -48,6 +48,13 @@ class Tokens(Enum):
     MAP = MapToken("Map")
     PAIR = PairCollectionToken("Pair")
     INT = ScalarToken("Int", "int")
+
+    Visibility = ScalarToken("Visibility", "visibility")
+    UNLOCKABLE_ITEM = ScalarToken("UnlockableItem", "UnlockableItem")
+    METERTYPE = ScalarToken("MeterType", "meterType")
+    ACCOUNTING_INFO = ScalarToken("AccountingInfo", "AccountingInfo")
+    SHIP_PART = ScalarToken("ShipPart", "shipPart")
+    METER = ScalarToken("Meter", "meter")
     FLOAT = ScalarToken("Flt", "float")
     DOUBLE = ScalarToken("Dbl", "float")
     STRING = ScalarToken("String", "str")

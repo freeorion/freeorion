@@ -33,7 +33,7 @@ def make_stub(
         "# During execution, the actual module is made available via\n"
         "# a C++ Boost-python process as part of the launch.\n"
         "from enum import IntEnum\n"
-        "from typing import Dict, Iterator, Sequence, Set, overload\n"
+        "from typing import Dict, Iterator, Sequence, Set, Tuple, overload\n"
         "\n"
         "from common.fo_typing import (\n"
         "    BuildingId,\n"
