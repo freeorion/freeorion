@@ -39,7 +39,7 @@ class PairCollectionToken(SimpleCollectionToken):
 
 class MapToken(TokenType):
     def __init__(self, value: str):
-        super(MapToken, self).__init__(value, "Map[", "]", 2)
+        super(MapToken, self).__init__(value, "Dict[", "]", 2)
 
 
 class Tokens(Enum):
