@@ -1,6 +1,6 @@
 import freeOrionAIInterface as fo
 from logging import warning
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Union
 
 from AIDependencies import CombatTarget
 from aistate_interface import get_aistate
@@ -10,13 +10,16 @@ from freeorion_tools import dict_to_tuple, get_ship_part, tuple_to_dict
 from freeorion_tools.caching import cache_for_current_turn
 
 
+Attacks = Union[Tuple[Tuple[float, int]], Dict[float, int]]
+
+
 class ShipCombatStats:
     """Stores all relevant stats of a ship for combat strength evaluation."""
 
     def __init__(
         self,
         *,
-        attacks: Tuple[Tuple[float, int]] = None,
+        attacks: Attacks = None,
         structure=1.0,
         shields=0.0,
         fighter_capacity=0,
