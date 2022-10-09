@@ -1,3 +1,4 @@
 from ship_design.additional_specification import AdditionalSpecifications
+from ship_design.design_stats import DesignStats
 from ship_design.design_tools import recursive_dict_diff, build_reference_name
 from ship_design.ship_design_cache import ShipDesignCache

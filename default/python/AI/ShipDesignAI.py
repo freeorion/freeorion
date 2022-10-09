@@ -53,7 +53,7 @@ import AIDependencies
 import FleetUtilsAI
 from AIDependencies import INVALID_ID, Tags
 from aistate_interface import get_aistate
-from CombatRatingsAI import ShipCombatStats, get_allowed_targets, species_shield_bonus
+from CombatRatingsAI import get_allowed_targets, species_shield_bonus
 from freeorion_tools import (
     get_ship_part,
     get_species_attack_troops,
@@ -62,7 +62,7 @@ from freeorion_tools import (
     tech_is_complete,
 )
 from freeorion_tools.translation import UserString
-from ship_design import AdditionalSpecifications, ShipDesignCache, build_reference_name
+from ship_design import AdditionalSpecifications, ShipDesignCache, build_reference_name, DesignStats
 from turn_state import get_inhabited_planets
 
 # Define meta classes for the ship parts  TODO storing as set may not be needed anymore
@@ -107,53 +107,6 @@ def _get_capacity(x):
 
 
 Cache = ShipDesignCache()
-
-
-class DesignStats:
-    def __init__(self):
-        self.attacks = {}  # {damage: shots_per_round}
-        self.reset()  # this call initiates remaining instance variables!
-
-    # noinspection PyAttributeOutsideInit
-    def reset(self):
-        self.attacks.clear()
-        self.structure = 0
-        self.shields = 0
-        self.fuel = 0
-        self.speed = 0
-        self.stealth = 0
-        self.detection = 0
-        self.troops = 0
-        self.colonisation = -1  # -1 since 0 indicates an outpost (capacity = 0)
-        self.fuel_per_turn = 0
-        self.organic_growth = 0
-        self.maximum_organic_growth = 0
-        self.repair_per_turn = 0
-        self.asteroid_stealth = 0
-        self.solar_stealth = 0
-        self.fighter_capacity = 0
-        self.fighter_launch_rate = 0
-        self.fighter_damage = 0
-        self.flak_shots = 0
-        self.has_interceptors = False
-        self.damage_vs_planets = 0
-        self.has_bomber = False
-        self.shield_type = None
-
-    def convert_to_combat_stats(self):
-        """Return a tuple as expected by CombatRatingsAI"""
-        return ShipCombatStats(
-            attacks=self.attacks,
-            structure=self.structure,
-            shields=self.shields,
-            fighter_capacity=self.fighter_capacity,
-            fighter_launch_rate=self.fighter_launch_rate,
-            fighter_damage=self.fighter_damage,
-            flak_shots=self.flak_shots,
-            has_interceptors=self.has_interceptors,
-            damage_vs_planets=self.damage_vs_planets,
-            has_bomber=self.has_bomber,
-        )
 
 
 class ShipDesigner:
