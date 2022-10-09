@@ -49,6 +49,7 @@ class Tokens(Enum):
     PAIR = PairCollectionToken("Pair")
     INT = ScalarToken("Int", "int")
     FLOAT = ScalarToken("Flt", "float")
+    DOUBLE = ScalarToken("Dbl", "float")
     STRING = ScalarToken("String", "str")
 
     def __len__(self):

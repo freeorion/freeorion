@@ -1,6 +1,6 @@
 import pytest
 
-from stub_generator.stub_generator.rtype.base_rtype_mapping import make_type
+from stub_generator.stub_generator.rtype._base_rtype_mapping import make_type
 
 
 # IntIntDblMapMap
@@ -15,16 +15,17 @@ from stub_generator.stub_generator.rtype.base_rtype_mapping import make_type
         # Base types
         ("Int", "int"),
         ("Flt", "float"),
+        ("Dbl", "float"),
         ("String", "str"),
-        # # Simple collections
+        # Simple collections
         ("IntPair", "Tuple[int, int]"),
         ("IntSet", "Set[int]"),
         ("IntVec", "Sequence[int]"),
         # embeded collections
         ("IntSetSet", "Set[Set[int]]"),
         # mapping
-        ("StringIntMap", "Map[str, int]"),
-        ("IntSetFltMap", "Map[Set[int], float]"),
+        ("StringIntMap", "Dict[str, int]"),
+        ("IntSetFltMap", "Dict[Set[int], float]"),
         # Not matchable
         ("Hello", "Hello"),
         ("HelloVec", "HelloVec"),
