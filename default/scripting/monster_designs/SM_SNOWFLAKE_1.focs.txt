@@ -4,10 +4,10 @@ ShipDesign
     description = "SM_SNOWFLAKE_1_DESC"
     hull = "SH_SNOWFLAKE_1_BODY"
     parts = [
+        ""
+        ""
+        ""
         "SP_SOLAR_CONCENTRATOR"
-        ""
-        ""
-        ""
         ]
     icon = "icons/monsters/snowflake-1.png"
     model = "seed"
