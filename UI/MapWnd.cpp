@@ -897,7 +897,7 @@ MapWnd::MovementLineData::MovementLineData() :
 
 MapWnd::MovementLineData::~MovementLineData() = default;
 
-MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
+MapWnd::MovementLineData::MovementLineData(const std::vector<MovePathNode>& path_,
                                            const std::map<std::pair<int, int>, LaneEndpoints>& lane_end_points_map,
                                            GG::Clr colour_, int empireID) :
     path(path_),
@@ -915,7 +915,7 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
 
     // draw lines connecting points of interest along path.  only draw a line if the previous and
     // current positions of the ends of the line are known.
-    const   MovePathNode& first_node =  *(path.begin());
+    const   MovePathNode& first_node =  path.front();
     double  prev_node_x =               first_node.x;
     double  prev_node_y =               first_node.y;
     int     prev_sys_id =               first_node.object_id;

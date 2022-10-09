@@ -87,13 +87,13 @@ public:
     /** Returns a list of locations at which notable events will occur along the fleet's path if it follows the
         specified route.  It is assumed in the calculation that the fleet starts its move path at its actual current
         location, however the fleet's current location will not be on the list, even if it is currently in a system. */
-    [[nodiscard]] std::list<MovePathNode> MovePath(const std::vector<int>& route, bool flag_blockades = false,
-                                                   const ScriptingContext& context = ScriptingContext{}) const;
-    [[nodiscard]] std::list<MovePathNode> MovePath(bool flag_blockades = false,
-                                                   const ScriptingContext& context = ScriptingContext{}) const;   ///< Returns MovePath for fleet's current TravelRoute
+    [[nodiscard]] std::vector<MovePathNode> MovePath(const std::vector<int>& route, bool flag_blockades = false,
+                                                     const ScriptingContext& context = ScriptingContext{}) const;
+    [[nodiscard]] std::vector<MovePathNode> MovePath(bool flag_blockades = false,
+                                                     const ScriptingContext& context = ScriptingContext{}) const;   ///< Returns MovePath for fleet's current TravelRoute
 
-    [[nodiscard]] std::pair<int, int>     ETA(const ScriptingContext& context) const;         ///< Returns the number of turns which must elapse before the fleet arrives at its current final destination and the turns to the next system, respectively.
-    [[nodiscard]] std::pair<int, int>     ETA(const std::list<MovePathNode>& move_path) const;///< Returns the number of turns which must elapse before the fleet arrives at the final destination and next system in the spepcified \a move_path
+    [[nodiscard]] std::pair<int, int> ETA(const ScriptingContext& context) const;            ///< Returns the number of turns which must elapse before the fleet arrives at its current final destination and the turns to the next system, respectively.
+    [[nodiscard]] std::pair<int, int> ETA(const std::vector<MovePathNode>& move_path) const; ///< Returns the number of turns which must elapse before the fleet arrives at the final destination and next system in the spepcified \a move_path
 
     [[nodiscard]] float   Damage(const Universe& universe) const;                     ///< Returns total amount of damage this fleet has, which is the sum of the ships' damage
     [[nodiscard]] float   Structure(const ObjectMap& objects) const;                  ///< Returns total amount of structure this fleet has, which is the sum of the ships' structure

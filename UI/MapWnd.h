@@ -229,14 +229,14 @@ private:
     struct MovementLineData {
         struct Vertex;  // apparent universe positions of move line points, derived from actual universe positions contained in MovePathNodes
         MovementLineData();
-        MovementLineData(const std::list<MovePathNode>& path_,
+        MovementLineData(const std::vector<MovePathNode>& path_,
                          const std::map<std::pair<int, int>, LaneEndpoints>& lane_end_points_map,
                          GG::Clr colour_ = GG::CLR_WHITE, int empireID = ALL_EMPIRES);
         ~MovementLineData();
 
-        std::list<MovePathNode> path;       // raw path data from which line rendering is determined
-        GG::Clr                 colour;     // colour of line
-        std::vector<Vertex>     vertices;   // cached apparent universe positions of starts and ends of line segments drawn to represent move path
+        std::vector<MovePathNode> path;       // raw path data from which line rendering is determined
+        GG::Clr                   colour;     // colour of line
+        std::vector<Vertex>       vertices;   // cached apparent universe positions of starts and ends of line segments drawn to represent move path
     };
 
     void BufferAddMoveLineVertices(GG::GL2DVertexBuffer& dot_verts_buf,

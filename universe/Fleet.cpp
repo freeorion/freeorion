@@ -208,13 +208,13 @@ int Fleet::MaxShipAgeInTurns(const ObjectMap& objects, int current_turn) const {
     return retval;
 }
 
-std::list<MovePathNode> Fleet::MovePath(bool flag_blockades, const ScriptingContext& context) const
+std::vector<MovePathNode> Fleet::MovePath(bool flag_blockades, const ScriptingContext& context) const
 { return MovePath(TravelRoute(), flag_blockades, context); }
 
-std::list<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool flag_blockades,
-                                        const ScriptingContext& context) const
+std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool flag_blockades,
+                                          const ScriptingContext& context) const
 {
-    std::list<MovePathNode> retval;
+    std::vector<MovePathNode> retval;
 
     if (route.empty())
         return retval; // nowhere to go => empty path
@@ -311,6 +311,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool flag
         }
     }
     // place initial position MovePathNode
+    retval.reserve(route.size()*3); // rough guesstimate
     retval.emplace_back(this->X(), this->Y(), false, 0,
                         (cur_system  ? cur_system->ID()  : INVALID_OBJECT_ID),
                         (prev_system ? prev_system->ID() : INVALID_OBJECT_ID),
@@ -318,13 +319,13 @@ std::list<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool flag
                         false);
 
 
-    static constexpr int TOO_LONG =     100; // limit on turns to simulate.  99 turns max keeps ETA to two digits, making UI work better
-    int           turns_taken =         1;
-    double        turn_dist_remaining = this->Speed(context.ContextObjects()); // additional distance that can be travelled in current turn of fleet movement being simulated
-    double        cur_x =               this->X();
-    double        cur_y =               this->Y();
-    double        next_x =              next_system->X();
-    double        next_y =              next_system->Y();
+    static constexpr int TOO_LONG = 100; // limit on turns to simulate.  99 turns max keeps ETA to two digits, making UI work better
+    int    turns_taken =         1;
+    double turn_dist_remaining = this->Speed(context.ContextObjects()); // additional distance that can be travelled in current turn of fleet movement being simulated
+    double cur_x =               this->X();
+    double cur_y =               this->Y();
+    double next_x =              next_system->X();
+    double next_y =              next_system->Y();
 
     // simulate fleet movement given known speed, starting position, fuel limit and systems on route
     // need to populate retval with MovePathNodes that indicate the correct position, whether this
@@ -541,14 +542,14 @@ std::list<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool flag
 std::pair<int, int> Fleet::ETA(const ScriptingContext& context) const
 { return ETA(MovePath(false, context)); }
 
-std::pair<int, int> Fleet::ETA(const std::list<MovePathNode>& move_path) const {
+std::pair<int, int> Fleet::ETA(const std::vector<MovePathNode>& move_path) const {
     // check that path exists.  if empty, there was no valid route or some other problem prevented pathing
     if (move_path.empty())
         return {ETA_UNKNOWN, ETA_UNKNOWN};
 
     // check for single node in path.  return the single node's eta as both .first and .second (likely indicates that fleet couldn't move)
     if (move_path.size() == 1) {
-        const MovePathNode& node = *move_path.begin();
+        const MovePathNode& node = move_path.front();
         return {node.eta, node.eta};
     }
 
