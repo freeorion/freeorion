@@ -12,6 +12,13 @@ Special
                 OwnedBy affiliation = AnyEmpire
             ]
         ]
+        Not WithinStarlaneJumps jumps = max(2, (NamedIntegerLookup name = "MIN_MONSTER_DISTANCE")-1) condition = And [
+            System
+            Contains And [
+                Planet
+                HasSpecial name = "SNOWFLAKE_NEST_SPECIAL"
+            ]
+        ]
     ]
     effectsgroups = [
         [[MONSTER_NEST(SNOWFLAKE,snowflake,0.08)]]
