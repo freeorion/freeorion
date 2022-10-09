@@ -25,15 +25,41 @@ on:
       - 'test-scripting/**'
 
 jobs:
+  generate-godot-api:
+    name: Generate Godot API
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/bend-n/godot:3.5
+    steps:
+      - name: Setup
+        uses: bend-n/godot-actions/.github/actions/setup-godot@main
+        env:
+          GODOT_VERSION: 3.5
+      - name: Generate API file
+        run: |
+          godot --gdnative-generate-json-api godot-api.json
+      - name: Upload binaries
+        uses: actions/upload-artifact@v3
+        with:
+          name: godot-api
+          path: godot-api.json
+          if-no-files-found: error
+          retention-days: 1
   build-android:
     name: Android ${{ matrix.arch }}
     runs-on: ubuntu-latest
+    needs: generate-godot-api
     strategy:
       matrix:
         arch: [x86, x86_64, armeabi-v7a, arm64-v8a]
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
+      - name: Dowload Godot API
+        uses: actions/download-artifact@v3
+        with:
+          name: godot-api
+          path: .
       - name: Download SDK
         id: download-sdk
         uses: suisei-cn/actions-download-file@v1
@@ -48,16 +74,16 @@ jobs:
       - name: Configure
         run: |
           unzip -q ../${{ steps.download-sdk.outputs.filename }} -d ..
+          GODOT_API_JSON=$(realpath godot-api.json)
           mkdir build
           pushd build
           FO_SDK=$(realpath ../..)
-          cmake -DANDROID_ABI=${{ matrix.arch }} -DANDROID_PLATFORM=24 -DANDROID_NDK=${{ steps.setup-ndk.outputs.ndk-path }} -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake -DCMAKE_CXX_FLAGS=-std=c++14 -DANDROID_ALLOW_UNDEFINED_SYMBOLS=Off -DBUILD_SERVER=OFF -DBUILD_AI=OFF -DBUILD_CLIENT_GG=OFF -DBoost_INCLUDE_DIR=${FO_SDK}/include/ -DBoost_USE_STATIC_LIBS=On -DBoost_LIBRARY_DIR=${FO_SDK}/lib/ -DBUILD_CLIENT_GODOT=On -DICUI18N_LIBRARY=${FO_SDK}/lib/libicui18n.a -DICUUC_LIBRARY=${FO_SDK}/lib/libicuuc.a -DICUDATA_LIBRARY=${FO_SDK}/lib/libicudata.a -DICONV_LIBRARY=${FO_SDK}/lib/libiconv.so -DPYTHON_LIBRARY=${FO_SDK}/lib/libpython3.9.a -DPYTHON_INCLUDE_DIR=${FO_SDK}/include/python3.9/ ..
+          cmake -DANDROID_ABI=${{ matrix.arch }} -DANDROID_PLATFORM=24 -DANDROID_NDK=${{ steps.setup-ndk.outputs.ndk-path }} -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake -DCMAKE_CXX_FLAGS=-std=c++14 -DANDROID_ALLOW_UNDEFINED_SYMBOLS=Off -DBUILD_SERVER=OFF -DBUILD_AI=OFF -DBUILD_CLIENT_GG=OFF -DBoost_INCLUDE_DIR=${FO_SDK}/include/ -DBoost_USE_STATIC_LIBS=On -DBoost_LIBRARY_DIR=${FO_SDK}/lib/ -DBUILD_CLIENT_GODOT=On -DICUI18N_LIBRARY=${FO_SDK}/lib/libicui18n.a -DICUUC_LIBRARY=${FO_SDK}/lib/libicuuc.a -DICUDATA_LIBRARY=${FO_SDK}/lib/libicudata.a -DICONV_LIBRARY=${FO_SDK}/lib/libiconv.so -DPYTHON_LIBRARY=${FO_SDK}/lib/libpython3.9.a -DPYTHON_INCLUDE_DIR=${FO_SDK}/include/python3.9/ -DGODOT_CUSTOM_API_FILE=${GODOT_API_JSON} ..
       - name: Build
         run: |
           pushd build
           cmake --build . -- -j2
       - name: Upload binaries
-        if: true # only for weekly-test-build push
         uses: actions/upload-artifact@v3
         with:
           name: android-binaries
