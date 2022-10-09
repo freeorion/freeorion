@@ -25,6 +25,8 @@ func _ready():
 	add_child(global.chat_window)
 	global.chat_window.hide()
 
+	FreeOrionNode.start_network_thread()
+
 	FreeOrionNode.connect("auth_request", self, "_on_FreeOrion_auth_request", [], CONNECT_DEFERRED)
 	FreeOrionNode.connect("start_game", self, "_on_FreeOrion_start_game", [], CONNECT_DEFERRED)
 	FreeOrionNode.connect(

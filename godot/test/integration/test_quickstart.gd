@@ -18,6 +18,8 @@ func test_quickstart():
 	assert_not_null(FreeOrionNode)
 	assert_true(is_instance_valid(FreeOrionNode))
 
+	FreeOrionNode.start_network_thread()
+
 	assert_not_null(FreeOrionNode.get_version())
 	assert_typeof(FreeOrionNode.get_version(), TYPE_STRING)
 
@@ -25,7 +27,7 @@ func test_quickstart():
 
 	FreeOrionNode.new_single_player_game()
 
-	yield(yield_to(signaler, "started_game", 100), YIELD)
+	yield(yield_to(signaler, "started_game", 200), YIELD)
 	assert_signal_emitted(signaler, "started_game", "Game started")
 
 	var systems = FreeOrionNode.get_systems()

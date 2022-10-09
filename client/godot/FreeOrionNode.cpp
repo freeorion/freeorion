@@ -72,6 +72,7 @@ void FreeOrionNode::_register_methods() {
 
     register_method("new_single_player_game", &FreeOrionNode::new_single_player_game);
     register_method("network_thread", &FreeOrionNode::network_thread);
+    register_method("start_network_thread", &FreeOrionNode::start_network_thread);
     register_method("get_version", &FreeOrionNode::get_version);
     register_method("is_server_connected", &FreeOrionNode::is_server_connected);
     register_method("connect_to_server", &FreeOrionNode::connect_to_server);
@@ -164,7 +165,6 @@ void FreeOrionNode::_init() {
 
     m_network_thread = godot::Ref<godot::Thread>();
     m_network_thread.instance();
-    m_network_thread->start(this, "network_thread");
 }
 
 
@@ -355,6 +355,10 @@ void FreeOrionNode::network_thread() {
     DebugLogger() << "FreeOrionNode::network_thread(): Freeorion networking stopped";
 }
 
+void FreeOrionNode::start_network_thread() {
+    m_network_thread->start(this, "network_thread");   
+}
+
 void FreeOrionNode::new_single_player_game() {
 #ifdef FREEORION_ANDROID
     ErrorLogger() << "No single player game supported";
@@ -417,7 +421,7 @@ void FreeOrionNode::options_set(godot::String option, godot::Variant value) {
     std::string option8 = option.utf8().get_data();
     switch (value.get_type()) {
     case godot::Variant::Type::STRING:
-        GetOptionsDB().Set<std::string>(option8, godot::String(value).utf8().get_data());
+        GetOptionsDB().Set<std::string>(option8, value.operator godot::String().utf8().get_data());
         break;
     default:
         ErrorLogger() << "Unsupported option " << option8 << " type " << value.get_type();
