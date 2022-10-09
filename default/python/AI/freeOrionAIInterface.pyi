@@ -12,6 +12,7 @@ from common.fo_typing import (
     EmpireId,
     FleetId,
     ObjectId,
+    PartName,
     PlanetId,
     ShipId,
     SpeciesName,
@@ -589,7 +590,7 @@ class shipDesign:
     @property
     def name(self) -> str: ...
     @property
-    def parts(self) -> Sequence[str]: ...
+    def parts(self) -> Sequence[PartName]: ...
     @property
     def researchGeneration(self) -> float: ...
     @property

@@ -41,6 +41,7 @@ def make_stub(
         "    EmpireId,\n"
         "    FleetId,\n"
         "    ObjectId,\n"
+        "    PartName,\n"
         "    PlanetId,\n"
         "    ShipId,\n"
         "    SpeciesName,\n"

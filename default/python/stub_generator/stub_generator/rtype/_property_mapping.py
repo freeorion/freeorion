@@ -18,6 +18,7 @@ _property_map = {
     ("speciesName", "str"): "SpeciesName",
     ("designedOnTurn", "int"): "Turn",
     ("buildingTypeName", "str"): "BuildingName",
+    ("parts", "StringVec"): "Sequence[PartName]",
 }
 
 
