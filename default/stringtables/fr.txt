@@ -1273,7 +1273,7 @@ RULE_BASIC_VIS_SYSTEM_INFO_SHOWN
 Information de base des systèmes visibles
 
 RULE_BASIC_VIS_SYSTEM_INFO_SHOWN_DESC
-'''<u>Si activé</u>: Les systèmes détectés par un empire uniquement à un niveau de visibilité basique ont leur nom et leur type d'étoile révélés à cet empire.
+'''<u>Si activé</u>: Les systèmes détectés par un empire uniquement à un niveau de visibilité basique ont leur nom et leur type d'étoile révélés à cet empire. Peut causer un problème d'affichage rendant difficile de déterminer si les Voies spatiales d'un système sont connues ou non.
 
 <u>Si désactivé</u>: Les systèmes d'un niveau de visibilité basique n'ayant jamais été détectés à un niveau de visibilité supérieure ont un nom et un type d'étoile inconnus.'''
 
@@ -6388,7 +6388,9 @@ METER_FUEL_VALUE_LABEL
 Carburant
 
 METER_FUEL_VALUE_DESC
-'''Le carburant permet aux astronefs de parcourir les Voies spatiales situées hors des zones d'[[metertype METER_SUPPLY]] de l'empire. En dehors de ces dernières, un astronef consomme du carburant pour chaque Voie spatiale parcourue (soit un voyage). Un arrêt d'un astronef sur les lignes d'[[metertype METER_SUPPLY]] de l'empire permet de refaire le plein en carburant. S'il voyage au-delà des lignes d'approvisionnement de son empire ou de celles d'un allié, un astronef récupérera lentement son carburant seulement s'il est immobile (stationnaire dans un système, dans l'espace interstellaire, ou sur une Voie spatiale).
+'''Le carburant permet aux astronefs de parcourir les Voies spatiales situées hors des zones d'[[metertype METER_SUPPLY]] de l'empire. En dehors de ces dernières, un astronef consomme 1 unité de carburant pour chaque Voie spatiale parcourue (soit un voyage). Voyager sur les lignes d'[[metertype METER_SUPPLY]] de l'empire permet à un astronef de refaire le plein en carburant. Le carburant est consommé lors de l'entrée sur une Voie spatiale. Pénétrer sur une Voie spatiale dans une zone d'approvisionnement de l'empire ne consomme pas de carburant.
+
+Si un astronef demeure immobile au-delà des lignes d'[[metertype METER_SUPPLY]] de son empire ou de celles d'un allié, il récupérera 0.1 unité de carburant par tour (stationnaire dans un système, dans l'espace interstellaire, ou sur une Voie spatiale). Ce taux de récupération peut être modifié par certains types de Coque telles que les coques vivantes, certains Équipements comme le [[shippart FU_RAMSCOOP]], ou si l'espèce dispose de l'attribut "Pilotes" (par exemple les [[species SP_LAENFA]] et les [[species SP_SLY]]).
 
 La quantité effective de carburant qu'embarque un <encyclopedia ENC_SHIP_DESIGN>Modèle d'Astronef</encyclopedia> dépend de la valeur de base en carburant de la Coque et d'effets additionnels de carburant, déterminés par le [[encyclopedia FUEL_EFFICIENCY_TITLE]] de la <encyclopedia ENC_SHIP_HULL>Coque</encyclopedia> de l'astronef. Le Rendement Carburant modifie la capacité effective en carburant des <encyclopedia ENC_SHIP_PART>Équipements d'Astronef</encyclopedia> et multipliera tout autre effet modificateur en carburant.
 
@@ -6471,7 +6473,11 @@ Furtivité
 METER_STEALTH_VALUE_DESC
 '''L'indicateur 'Furtivité' représente la capacité d'un objet à déjouer toutes sortes de capteurs radars. Seuls les empires dotés d'une [[encyclopedia DETECTION_TITLE]] supérieure ou égale à la valeur de Furtivité peuvent voir cet objet.
 
-Les astronefs, les structures, les objets à particularité, les systèmes et planètes, ont un indicateur 'Furtivité'.'''
+Si un empire possède plus de [[value FLEET_UNSTEALTHY_SHIPS_THRESHOLD]] astronefs dans un système, cet empire subira une pénalité de Furtivité de [[value FLEET_UNSTEALTH_SHIPS_SCALING]] multiplié par la racine carrée du nombre d'astronefs en excès.
+
+Les astronefs, les structures, les objets à particularité, les systèmes et planètes, ont un indicateur 'Furtivité'.
+
+[[DETECTION_STAR_MODIFIERS]]'''
 
 METER_DETECTION_VALUE_LABEL
 Champ de Détection
@@ -6481,7 +6487,20 @@ METER_DETECTION_VALUE_DESC
 
 Les astronefs et les planètes ont un indicateur 'Champ de Détection'. Dans le Menu d'Options, le réglage 'Cercles de détection' permet d'afficher sur la carte galactique les zones circulaires (en uu) figurant les Champs de Détection. Afin de faciliter la mesure de ce qui se trouve à l'intérieur d'un Champ de Détection, le réglage 'Barre d'échelle des distances' permet d'afficher l'échelle de la carte (en uu) tandis que le réglage 'Cercle d'échelle des distances' permet de figurer la même distance que la barre d'échelle lorsqu'un système stellaire est sélectionné. Ces deux indicateurs d'échelle s'adaptent au niveau de zoom sur la carte et peuvent être activés/désactivés via des raccourcis claviers.
 
-Certains objets ou aptitudes permettent la vision de zones situées en dehors du Champ de Détection, telles les compétences spéciales des espèces [[species SP_TRITH]] ou [[species SP_GEORGE]], ou en raison des effets induits par la structure [[buildingtype BLD_SCRYING_SPHERE]].'''
+Certains objets ou aptitudes permettent la vision de zones situées en dehors du Champ de Détection, telles les compétences spéciales des espèces [[species SP_TRITH]] ou [[species SP_GEORGE]], ou en raison des effets induits par la structure [[buildingtype BLD_SCRYING_SPHERE]].
+
+[[DETECTION_STAR_MODIFIERS]]'''
+
+DETECTION_STAR_MODIFIERS
+'''Le [[metertype METER_DETECTION]] et la [[metertype METER_STEALTH]] d'un astronef sont modifiés par le type d'étoile du système:
+• Pas d'étoile : +10 Champ de Détection. -10 Furtivité.
+• Étoile à Neutrons : -15 Champ de Détection. +5 Furtivité.
+• Trou Noir : +5 Champ de Détection. +10 Furtivité.
+• Étoile Rouge : -5 Furtivité.
+• Étoile Orange : Aucune modification.
+• Étoile Jaune : -5 Champ de Détection.
+• Étoile Blanche : -10 Champ de Détection.
+• Étoile Bleue : -15 Champ de Détection.'''
 
 METER_SPEED_VALUE_LABEL
 Vitesse
@@ -6632,7 +6651,7 @@ DETECTION_TITLE
 Capacité de Détection
 
 DETECTION_TEXT
-'''L'indicateur 'Capacité de Détection' représente le niveau technologique des capteurs d'un empire. Un empire ne peut voir que les objets ayant une [[metertype METER_STEALTH]] d'une valeur inférieure ou égale à sa propre Capacité de Détection, et qui se trouvent dans le [[metertype METER_DETECTION]] d'un astronef ou d'une planète qu'il contrôle.
+'''L'indicateur 'Capacité de Détection' représente le niveau technologique des capteurs d'un empire. Un empire ne peut voir que les objets ayant une [[metertype METER_STEALTH]] d'une valeur inférieure ou égale à sa propre Capacité de Détection, et qui se trouvent dans le [[metertype METER_DETECTION]] d'un astronef ou d'une planète qu'il contrôle. Les monstres errants et les espèces indigènes ont une Capacité de Détection égale à leur Champ de Détection.
 
 Chaque empire présente un indicateur 'Capacité de Détection'.'''
 
@@ -17925,11 +17944,11 @@ FUEL_EFFICIENCY_TITLE
 Rendement Carburant
 
 FUEL_REFUEL_EFFICIENCY_TEXT
-'''Le [[metertype METER_FUEL]] permet aux astronefs de parcourir les Voies spatiales situées hors des zones d'[[metertype METER_SUPPLY]] de l'empire. En dehors de ces dernières, un astronef consomme du carburant pour chaque Voie spatiale parcourue (soit un voyage). Un arrêt d'un astronef sur les lignes d'[[metertype METER_SUPPLY]] de l'empire permet de refaire le plein en carburant. S'il voyage au-delà des lignes d'approvisionnement de son empire ou de celles d'un allié, un astronef récupérera lentement son carburant seulement s'il est immobile (stationnaire dans un système, dans l'espace interstellaire, ou sur une Voie spatiale).
+'''Le [[metertype METER_FUEL]] permet aux astronefs de parcourir les Voies spatiales situées hors des zones d'[[metertype METER_SUPPLY]] de l'empire. En dehors de ces dernières, un astronef consomme 1 unité de carburant pour chaque Voie spatiale parcourue (soit un voyage). Voyager sur les lignes d'[[metertype METER_SUPPLY]] de l'empire permet à un astronef de refaire le plein en carburant. Le carburant est consommé lors de l'entrée sur une Voie spatiale. Pénétrer sur une Voie spatiale dans une zone d'approvisionnement de l'empire ne consomme pas de carburant. Si un astronef demeure immobile au-delà des lignes d'[[metertype METER_SUPPLY]] de son empire ou de celles d'un allié, il récupérera 0.1 unité de carburant par tour (stationnaire dans un système, dans l'espace interstellaire, ou sur une Voie spatiale).
 
 La capacité de base en carburant d'un <encyclopedia ENC_SHIP_DESIGN>Modèle d'Astronef</encyclopedia> est déterminée par la [[encyclopedia ENC_SHIP_HULL]] utilisée, mais cette capacité peut toutefois être augmentée à l'aide de certains <encyclopedia ENC_SHIP_PART>Équipements d'Astronef</encyclopedia>.
 
-Les coques d'astronef offrent un rendement excellent (400%), bon (200%), normal (100%), ou mauvais (60%), ce qui détermine l'efficacité de tout équipement additionnel en carburant ou autre effet modificateur en carburant. Le Rendement Carburant décroît généralement avec la masse de la coque. Par conséquent, seuls les très petits astronefs disposent d'un rendement carburant élevé tandis que les astronefs massifs ont une mobilité réduite hors des zones d'[[metertype METER_SUPPLY]]. Le jeu affichera continuellement les niveaux effectifs de carburant, en fonction du Rendement Carburant.'''
+Les coques d'astronef offrent un rendement excellent (400%), bon (200%), normal (100%), ou mauvais (60%) en carburant, ce qui détermine l'efficacité de tout équipement additionnel en carburant ou autre effet modificateur en carburant. Le Rendement Carburant décroît généralement avec la masse de la coque. Par conséquent, seuls les très petits astronefs disposent d'un rendement carburant élevé tandis que les astronefs massifs ont une mobilité réduite hors des zones d'[[metertype METER_SUPPLY]]. Le jeu affichera continuellement les niveaux effectifs de carburant, en fonction du Rendement Carburant.'''
 
 BASE_FUEL_REGEN_LABEL
 Récupération Stationnaire Carburant
