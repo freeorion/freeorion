@@ -253,14 +253,6 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_REQUIRE_NE(nullptr, effect_group.Scope());
         BOOST_REQUIRE_NE(nullptr, effect_group.Activation());
 
-        BOOST_REQUIRE_EQUAL(1, effect_group.EffectsList().size());
-        const auto& effect = *(effect_group.EffectsList()[0]);
-        BOOST_REQUIRE_EQUAL(true, effect.IsMeterEffect());
-        BOOST_REQUIRE_EQUAL(false, effect.IsEmpireMeterEffect());
-        BOOST_REQUIRE_EQUAL(false, effect.IsAppearanceEffect());
-        BOOST_REQUIRE_EQUAL(false, effect.IsSitrepEffect());
-        BOOST_REQUIRE_EQUAL(false, effect.IsConditionalEffect());
-
         BOOST_REQUIRE_EQUAL(1.0, specie->SpawnRate());
         BOOST_REQUIRE_EQUAL(9999, specie->SpawnLimit());
         BOOST_REQUIRE_EQUAL(true, specie->Playable());
@@ -277,6 +269,14 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_REQUIRE_EQUAL(13, specie->Dislikes().size());
 
         BOOST_REQUIRE_EQUAL("icons/species/abaddonnian.png", specie->Graphic());
+
+        BOOST_REQUIRE_EQUAL(1, effect_group.EffectsList().size());
+        const auto& effect = *(effect_group.EffectsList()[0]);
+        BOOST_REQUIRE_EQUAL(true, effect.IsMeterEffect());
+        BOOST_REQUIRE_EQUAL(false, effect.IsEmpireMeterEffect());
+        BOOST_REQUIRE_EQUAL(false, effect.IsAppearanceEffect());
+        BOOST_REQUIRE_EQUAL(false, effect.IsSitrepEffect());
+        BOOST_REQUIRE_EQUAL(false, effect.IsConditionalEffect());
 
         BOOST_REQUIRE_EQUAL(6497634, specie->GetCheckSum());
 
