@@ -6434,7 +6434,7 @@ A set of core supply starlanes for an empire (the set of least-jump starlanes co
 Supply lines can also be used to refill the [[metertype METER_FUEL]] supply of ships.
 
 Empires in an [[encyclopedia ALLIANCE_TITLE]] use each other's supply lines.
-The extension of supply lines from source planets into a system can be obstructed by armed enemy ships in that system and that are in fleets set to [[FLEET_OBSTRUCTIVE]] or [[FLEET_AGGRESSIVE]]. Enemy ships are those owned by empires that are at [[encyclopedia WAR_TITLE]] with the supply line's empire.
+The extension of supply lines from source planets into a system can be obstructed by armed enemy ships that are in that system and that are in fleets set to [[FLEET_OBSTRUCTIVE]] or [[FLEET_AGGRESSIVE]]. Enemy ships are those owned by empires that are at [[encyclopedia WAR_TITLE]] with the supply line's empire and neutral / monster ships.
 
 If multiple empires compete for supply in a system (without any obstructions to either's supply propagation), the empire with the highested propagated supply range will supply that system. To break ties, a bonus per empire is calculated and added to the propagated supply before comparison.
 
