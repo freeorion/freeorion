@@ -9,6 +9,7 @@ from stub_generator.interface_inspector import (
 from stub_generator.stub_generator import EnumGenerator
 from stub_generator.stub_generator.class_generator import ClassGenerator
 from stub_generator.stub_generator.function_generator import FunctionGenerator
+from stub_generator.stub_generator.rtype import mapping_code
 
 
 def make_stub(
@@ -33,7 +34,7 @@ def make_stub(
         "# During execution, the actual module is made available via\n"
         "# a C++ Boost-python process as part of the launch.\n"
         "from enum import IntEnum\n"
-        "from typing import Dict, Iterator, Sequence, Set, Tuple, overload\n"
+        "from typing import Dict, Iterator, Generic, Sequence, Set, Tuple, TypeVar, overload\n"
         "\n"
         "from common.fo_typing import (\n"
         "    BuildingId,\n"
@@ -56,4 +57,5 @@ def make_stub(
 
     with open(result_path, "w") as f:
         f.write(header)
+        f.write(mapping_code)
         f.write("\n".join(res))

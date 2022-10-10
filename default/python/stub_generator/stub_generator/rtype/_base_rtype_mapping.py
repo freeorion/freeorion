@@ -41,7 +41,7 @@ class PairToken(SimpleCollectionToken):
 
 class MapToken(Token):
     def __init__(self, value: str):
-        super(MapToken, self).__init__(value, "Dict[", "]", 2)
+        super(MapToken, self).__init__(value, "Map[", "]", 2)
 
 
 _tokens: List[Token] = [
