@@ -72,6 +72,7 @@ def _split_once(string):
 
 
 def _iter_arguments(string) -> Iterator[Token]:
+    string = string.replace("_", "")
     while string:
         string, token = _split_once(string)
         yield token
