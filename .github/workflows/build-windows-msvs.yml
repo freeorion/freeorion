@@ -67,12 +67,12 @@ jobs:
         if: true # only for weekly-test-build push
         run: |
           makensis packaging/windows_installer.nsi
-          cp ../FreeOrion_*_Test_Win32_Setup.exe .
-      - name: Upload installer
-        if: true # only for weekly-test-build push
-        uses: actions/upload-artifact@v3
-        with:
-          name: freeorion-win32-build
-          path: FreeOrion_*_Test_Win32_Setup.exe
-          if-no-files-found: error
-          retention-days: 14
+          mv ../FreeOrion_*_Test_Win32_Setup.exe .
+      - name: Decrypt deploy SSH key
+        if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
+        run: bash .github/pre-deploy.sh
+        env:
+          DEPLOY_SSH_PASSWORD: ${{ secrets.DEPLOY_SSH_PASSWORD }}
+      - name: Upload weekly-test installer
+        if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
+        run: bash -c 'scp FreeOrion_*_Test_Win32_Setup.exe o01eg@frs.sourceforge.net:/home/frs/project/freeorion/FreeOrion/Test/'
