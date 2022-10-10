@@ -375,6 +375,41 @@ namespace {
         py_parse::detail::flatten_list<effect_group_wrapper>(kw["effectsgroups"], [](const effect_group_wrapper& o, std::vector<std::shared_ptr<Effect::EffectsGroup>>& v) {
             v.push_back(o.effects_group);
         }, effectsgroups);
+        bool playable = false;
+        if (kw.has_key("playable")) {
+            playable = boost::python::extract<bool>(kw["playable"])();
+        }
+        bool native = false;
+        if (kw.has_key("native")) {
+            native = boost::python::extract<bool>(kw["native"])();
+        }
+        bool can_colonize = false;
+        if (kw.has_key("can_colonize")) {
+            can_colonize = boost::python::extract<bool>(kw["can_colonize"])();
+        }
+        bool can_produce_ships = false;
+        if (kw.has_key("can_produce_ships")) {
+            can_produce_ships = boost::python::extract<bool>(kw["can_produce_ships"])();
+        }
+        boost::python::stl_input_iterator<std::string> tags_begin(kw["tags"]), it_end;
+        std::set<std::string> tags(tags_begin, it_end);
+        boost::python::stl_input_iterator<std::string> likes_begin(kw["likes"]);
+        std::set<std::string> likes(likes_begin, it_end);
+        boost::python::stl_input_iterator<std::string> dislikes_begin(kw["dislikes"]);
+        std::set<std::string> dislikes(dislikes_begin, it_end);
+        auto graphic = boost::python::extract<std::string>(kw["graphic"])();
+        double spawn_rate = 1.0;
+        if (kw.has_key("spawnrate")) {
+            spawn_rate = boost::python::extract<double>(kw["spawnrate"])();
+        }
+        int spawn_limit = 9999;
+        if (kw.has_key("spawnlimit")) {
+            spawn_limit = boost::python::extract<int>(kw["spawnlimit"])();
+        }
+        std::unique_ptr<Condition::Condition> combat_targets;
+        if (kw.has_key("combat_targets")) {
+            combat_targets = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["combat_targets"])().condition);
+        }
 
         auto species_ptr = std::make_unique<Species>(
             std::move(name), std::move(description), std::move(gameplay_description),
@@ -382,17 +417,17 @@ namespace {
             std::move(defaultfocus),
             std::move(environments),
             std::move(effectsgroups),
-            nullptr,
-            false,
-            false,
-            false,
-            false,
-            std::set<std::string>{},    // intentionally not moved
-            std::set<std::string>{},
-            std::set<std::string>{},
-            std::string{},
-            1.0,
-            9999);
+            std::move(combat_targets),
+            playable,
+            native,
+            can_colonize,
+            can_produce_ships,
+            tags,    // intentionally not moved
+            std::move(likes),
+            std::move(dislikes),
+            std::move(graphic),
+            spawn_rate,
+            spawn_limit);
 
         auto& species_name{species_ptr->Name()};
         species_.emplace(species_name, std::move(species_ptr));

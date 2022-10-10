@@ -239,6 +239,23 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_CHECK_EQUAL(PlanetEnvironment::PE_POOR, specie->GetPlanetEnvironment(PlanetType::PT_BARREN));
         BOOST_CHECK_EQUAL(PlanetEnvironment::PE_ADEQUATE, specie->GetPlanetEnvironment(PlanetType::PT_TOXIC));
 
+        BOOST_REQUIRE_EQUAL(1.0, specie->SpawnRate());
+        BOOST_REQUIRE_EQUAL(9999, specie->SpawnLimit());
+        BOOST_CHECK_EQUAL(true, specie->Playable());
+        BOOST_CHECK_EQUAL(false, specie->Native());
+        BOOST_CHECK_EQUAL(true, specie->CanColonize());
+        BOOST_CHECK_EQUAL(true, specie->CanProduceShips());
+
+        BOOST_REQUIRE_EQUAL(6, specie->Tags().size());
+        BOOST_CHECK_EQUAL("AVERAGE_SUPPLY", specie->Tags()[0]);
+        BOOST_CHECK_EQUAL("PEDIA_LITHIC_SPECIES_CLASS", specie->Tags()[5]);
+
+        BOOST_CHECK_EQUAL(12, specie->Likes().size());
+
+        BOOST_CHECK_EQUAL(13, specie->Dislikes().size());
+
+        BOOST_CHECK_EQUAL("icons/species/abaddonnian.png", specie->Graphic());
+
         BOOST_REQUIRE_EQUAL(98, specie->Effects().size());
         const auto& effect_group = *(specie->Effects()[0]);
         BOOST_REQUIRE_EQUAL("", effect_group.StackingGroup());
@@ -252,23 +269,6 @@ BOOST_AUTO_TEST_CASE(parse_species) {
 
         BOOST_REQUIRE_NE(nullptr, effect_group.Scope());
         BOOST_REQUIRE_NE(nullptr, effect_group.Activation());
-
-        BOOST_REQUIRE_EQUAL(1.0, specie->SpawnRate());
-        BOOST_REQUIRE_EQUAL(9999, specie->SpawnLimit());
-        BOOST_REQUIRE_EQUAL(true, specie->Playable());
-        BOOST_REQUIRE_EQUAL(false, specie->Native());
-        BOOST_REQUIRE_EQUAL(true, specie->CanColonize());
-        BOOST_REQUIRE_EQUAL(true, specie->CanProduceShips());
-
-        BOOST_REQUIRE_EQUAL(6, specie->Tags().size());
-        BOOST_REQUIRE_EQUAL("AVERAGE_SUPPLY", specie->Tags()[0]);
-        BOOST_REQUIRE_EQUAL("PEDIA_LITHIC_SPECIES_CLASS", specie->Tags()[5]);
-
-        BOOST_REQUIRE_EQUAL(12, specie->Likes().size());
-
-        BOOST_REQUIRE_EQUAL(13, specie->Dislikes().size());
-
-        BOOST_REQUIRE_EQUAL("icons/species/abaddonnian.png", specie->Graphic());
 
         BOOST_REQUIRE_EQUAL(1, effect_group.EffectsList().size());
         const auto& effect = *(effect_group.EffectsList()[0]);
