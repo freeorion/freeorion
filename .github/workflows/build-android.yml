@@ -29,7 +29,7 @@ jobs:
     name: Generate Godot API
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/bend-n/godot:3.5
+      image: ghcr.io/o01eg/godot:3.5
     steps:
       - name: Setup
         uses: bend-n/godot-actions/.github/actions/setup-godot@main
@@ -37,7 +37,7 @@ jobs:
           GODOT_VERSION: 3.5
       - name: Generate API file
         run: |
-          godot --gdnative-generate-json-api godot-api.json
+          timeout 1m godot --no-window --disable-render-loop --video-driver Dummy --gdnative-generate-json-api godot-api.json
       - name: Upload binaries
         uses: actions/upload-artifact@v3
         with:
