@@ -61,175 +61,16 @@ condition_wrapper operator&(const condition_wrapper& lhs, const condition_wrappe
 }
 
 condition_wrapper operator&(const condition_wrapper& lhs, const value_ref_wrapper<double>& rhs) {
-    std::shared_ptr<ValueRef::Operation<double>> rhs_op = std::dynamic_pointer_cast<ValueRef::Operation<double>>(rhs.value_ref);
-
-    std::shared_ptr<Condition::ValueTest> rhs_cond;
-    if (rhs_op && rhs_op->LHS() && rhs_op->RHS()) {
-        Condition::ComparisonType cmp_type;
-        switch (rhs_op->GetOpType()) {
-            case ValueRef::OpType::COMPARE_EQUAL:
-                cmp_type = Condition::ComparisonType::EQUAL;
-                break;
-            case ValueRef::OpType::COMPARE_GREATER_THAN:
-                cmp_type = Condition::ComparisonType::GREATER_THAN;
-                break;
-            case ValueRef::OpType::COMPARE_GREATER_THAN_OR_EQUAL:
-                cmp_type = Condition::ComparisonType::GREATER_THAN_OR_EQUAL;
-                break;
-            case ValueRef::OpType::COMPARE_LESS_THAN:
-                cmp_type = Condition::ComparisonType::LESS_THAN;
-                break;
-            case ValueRef::OpType::COMPARE_LESS_THAN_OR_EQUAL:
-                cmp_type = Condition::ComparisonType::LESS_THAN_OR_EQUAL;
-                break;
-            case ValueRef::OpType::COMPARE_NOT_EQUAL:
-                cmp_type = Condition::ComparisonType::NOT_EQUAL;
-                break;
-            default:
-                throw std::runtime_error(std::string("Not implemented in ") + __func__ + " op type " + std::to_string(static_cast<int>(rhs_op->GetOpType())) + rhs.value_ref->Dump());
-        }
-
-        rhs_cond = std::make_shared<Condition::ValueTest>(rhs_op->LHS()->Clone(),
-                cmp_type,
-                rhs_op->RHS()->Clone());
-    } else {
-        throw std::runtime_error(std::string("Not implemented in ") + __func__ + " op " + rhs.value_ref->Dump());
-    }
-
-    std::shared_ptr<Condition::ValueTest> lhs_cond = std::dynamic_pointer_cast<Condition::ValueTest>(lhs.condition);
-
-    if (lhs_cond && rhs_cond) {
-        const auto lhs_vals = lhs_cond->ValuesDouble();
-        const auto rhs_vals = rhs_cond->ValuesDouble();
-
-        if (!lhs_vals[2] && !rhs_vals[2] && lhs_vals[1] && rhs_vals[0] && (*lhs_vals[1] == *rhs_vals[0])) {
-            return condition_wrapper(std::make_shared<Condition::ValueTest>(
-                lhs_vals[0] ? lhs_vals[0]->Clone() : nullptr,
-                lhs_cond->CompareTypes()[0],
-                lhs_vals[1]->Clone(),
-                rhs_cond->CompareTypes()[0],
-                rhs_vals[1] ? rhs_vals[1]->Clone() : nullptr
-            ));
-        }
-
-        const auto lhs_vals_i = lhs_cond->ValuesInt();
-        const auto rhs_vals_i = rhs_cond->ValuesInt();
-
-        if (!lhs_vals_i[2] && !rhs_vals_i[2] && lhs_vals_i[1] && rhs_vals_i[0] && (*lhs_vals_i[1] == *rhs_vals_i[0])) {
-            return condition_wrapper(std::make_shared<Condition::ValueTest>(
-                lhs_vals_i[0] ? lhs_vals_i[0]->Clone() : nullptr,
-                lhs_cond->CompareTypes()[0],
-                lhs_vals_i[1]->Clone(),
-                rhs_cond->CompareTypes()[0],
-                rhs_vals_i[1] ? rhs_vals_i[1]->Clone() : nullptr
-            ));
-        }
-
-        const auto lhs_vals_s = lhs_cond->ValuesString();
-        const auto rhs_vals_s = rhs_cond->ValuesString();
-
-        if (!lhs_vals_s[2] && !rhs_vals_s[2] && lhs_vals_s[1] && rhs_vals_s[0] && (*lhs_vals_s[1] == *rhs_vals_s[0])) {
-            return condition_wrapper(std::make_shared<Condition::ValueTest>(
-                lhs_vals_s[0] ? lhs_vals_s[0]->Clone() : nullptr,
-                lhs_cond->CompareTypes()[0],
-                lhs_vals_s[1]->Clone(),
-                rhs_cond->CompareTypes()[0],
-                rhs_vals_s[1] ? rhs_vals_s[1]->Clone() : nullptr
-            ));
-        }
-    }
-
-    return condition_wrapper(std::make_shared<Condition::And>(
-        lhs.condition->Clone(),
-        rhs_cond->Clone()
-    ));
+    return lhs & rhs.operator condition_wrapper();
 }
 
 condition_wrapper operator&(const condition_wrapper& lhs, const value_ref_wrapper<int>& rhs) {
-    std::shared_ptr<ValueRef::Operation<int>> rhs_op = std::dynamic_pointer_cast<ValueRef::Operation<int>>(rhs.value_ref);
-
-    std::shared_ptr<Condition::ValueTest> rhs_cond;
-    if (rhs_op && rhs_op->LHS() && rhs_op->RHS()) {
-        Condition::ComparisonType cmp_type;
-        switch (rhs_op->GetOpType()) {
-            case ValueRef::OpType::COMPARE_EQUAL:
-                cmp_type = Condition::ComparisonType::EQUAL;
-                break;
-            case ValueRef::OpType::COMPARE_GREATER_THAN:
-                cmp_type = Condition::ComparisonType::GREATER_THAN;
-                break;
-            case ValueRef::OpType::COMPARE_GREATER_THAN_OR_EQUAL:
-                cmp_type = Condition::ComparisonType::GREATER_THAN_OR_EQUAL;
-                break;
-            case ValueRef::OpType::COMPARE_LESS_THAN:
-                cmp_type = Condition::ComparisonType::LESS_THAN;
-                break;
-            case ValueRef::OpType::COMPARE_LESS_THAN_OR_EQUAL:
-                cmp_type = Condition::ComparisonType::LESS_THAN_OR_EQUAL;
-                break;
-            case ValueRef::OpType::COMPARE_NOT_EQUAL:
-                cmp_type = Condition::ComparisonType::NOT_EQUAL;
-                break;
-            default:
-                throw std::runtime_error(std::string("Not implemented in ") + __func__ + " op type " + std::to_string(static_cast<int>(rhs_op->GetOpType())) + rhs.value_ref->Dump());
-        }
-
-        rhs_cond = std::make_shared<Condition::ValueTest>(rhs_op->LHS()->Clone(),
-                cmp_type,
-                rhs_op->RHS()->Clone());
-    } else {
-        throw std::runtime_error(std::string("Not implemented in ") + __func__ + " op " + rhs.value_ref->Dump());
-    }
-
-    std::shared_ptr<Condition::ValueTest> lhs_cond = std::dynamic_pointer_cast<Condition::ValueTest>(lhs.condition);
-
-    if (lhs_cond && rhs_cond) {
-        const auto lhs_vals = lhs_cond->ValuesDouble();
-        const auto rhs_vals = rhs_cond->ValuesDouble();
-
-        if (!lhs_vals[2] && !rhs_vals[2] && lhs_vals[1] && rhs_vals[0] && (*lhs_vals[1] == *rhs_vals[0])) {
-            return condition_wrapper(std::make_shared<Condition::ValueTest>(
-                lhs_vals[0] ? lhs_vals[0]->Clone() : nullptr,
-                lhs_cond->CompareTypes()[0],
-                lhs_vals[1]->Clone(),
-                rhs_cond->CompareTypes()[0],
-                rhs_vals[1] ? rhs_vals[1]->Clone() : nullptr
-            ));
-        }
-
-        const auto lhs_vals_i = lhs_cond->ValuesInt();
-        const auto rhs_vals_i = rhs_cond->ValuesInt();
-
-        if (!lhs_vals_i[2] && !rhs_vals_i[2] && lhs_vals_i[1] && rhs_vals_i[0] && (*lhs_vals_i[1] == *rhs_vals_i[0])) {
-            return condition_wrapper(std::make_shared<Condition::ValueTest>(
-                lhs_vals_i[0] ? lhs_vals_i[0]->Clone() : nullptr,
-                lhs_cond->CompareTypes()[0],
-                lhs_vals_i[1]->Clone(),
-                rhs_cond->CompareTypes()[0],
-                rhs_vals_i[1] ? rhs_vals_i[1]->Clone() : nullptr
-            ));
-        }
-
-        const auto lhs_vals_s = lhs_cond->ValuesString();
-        const auto rhs_vals_s = rhs_cond->ValuesString();
-
-        if (!lhs_vals_s[2] && !rhs_vals_s[2] && lhs_vals_s[1] && rhs_vals_s[0] && (*lhs_vals_s[1] == *rhs_vals_s[0])) {
-            return condition_wrapper(std::make_shared<Condition::ValueTest>(
-                lhs_vals_s[0] ? lhs_vals_s[0]->Clone() : nullptr,
-                lhs_cond->CompareTypes()[0],
-                lhs_vals_s[1]->Clone(),
-                rhs_cond->CompareTypes()[0],
-                rhs_vals_s[1] ? rhs_vals_s[1]->Clone() : nullptr
-            ));
-        }
-    }
-
-    return condition_wrapper(std::make_shared<Condition::And>(
-        lhs.condition->Clone(),
-        rhs_cond->Clone()
-    ));
+    return lhs & rhs.operator condition_wrapper();
 }
 
+condition_wrapper operator&(const value_ref_wrapper<double>& lhs, const value_ref_wrapper<double>& rhs) {
+    return lhs.operator condition_wrapper() & rhs.operator condition_wrapper();
+}
 
 
 condition_wrapper operator|(const condition_wrapper& lhs, const condition_wrapper& rhs) {
@@ -237,6 +78,14 @@ condition_wrapper operator|(const condition_wrapper& lhs, const condition_wrappe
         lhs.condition->Clone(),
         rhs.condition->Clone()
     ));
+}
+
+condition_wrapper operator|(const condition_wrapper& lhs, const value_ref_wrapper<int>& rhs) {
+    return lhs | rhs.operator condition_wrapper();
+}
+
+condition_wrapper operator|(const value_ref_wrapper<int>& lhs, const value_ref_wrapper<int>& rhs) {
+    return lhs.operator condition_wrapper() | rhs.operator condition_wrapper();
 }
 
 condition_wrapper operator~(const condition_wrapper& lhs) {
