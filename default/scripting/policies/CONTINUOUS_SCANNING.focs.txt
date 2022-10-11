@@ -13,7 +13,7 @@ Policy
                 OwnedBy empire = Source.Owner
             ]
             effects = [
-                SetDetection value = Value + (NamedReal name = "CONTINUOUS_SCANNING_RANGE_BOOST" value = 5.0)
+                SetDetection value = Value + (NamedReal name = "CONTINUOUS_SCANNING_RANGE_BOOST" value = 10.0)
                 SetStealth value = Value - (NamedReal name = "CONTINUOUS_SCANNING_STEALTH_PENALTY" value = 10.0)
             ]
 
@@ -25,7 +25,7 @@ Policy
             effects = SetEmpireMeter
                 empire = Source.Owner
                 meter = "METER_DETECTION_STRENGTH"
-                value = Value + min((NamedReal name = "CONTINUOUS_SCANNING_MAX_DETECTION_BOOST" value = 20.0),
+                value = Value + min((NamedReal name = "CONTINUOUS_SCANNING_MAX_DETECTION_BOOST" value = 10.0),
                                     TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy)
     ]
     graphic = "icons/policies/military_continuous_scanning.png"
