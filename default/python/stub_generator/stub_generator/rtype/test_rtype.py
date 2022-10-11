@@ -20,7 +20,7 @@ from stub_generator.stub_generator.rtype._base_rtype_mapping import make_type
         # Simple collections
         ("IntPair", "Tuple[int, int]"),
         ("IntSet", "Set[int]"),
-        ("IntVec", "Sequence[int]"),
+        ("IntVec", "Vec[int]"),
         # Embedded collections
         ("IntSetSet", "Set[Set[int]]"),
         # mapping

@@ -3,14 +3,14 @@ from stub_generator.stub_generator.rtype._base_rtype_mapping import make_type
 
 _property_map = {
     ("shipIDs", "IntSet"): "Set[ShipId]",
-    ("shipIDs", "IntVec"): "Sequence[ShipId]",
+    ("shipIDs", "IntVec"): "Vec[ShipId]",
     ("buildingIDs", "IntSet"): "Set[BuildingId]",
-    ("buildingIDs", "IntVec"): "Sequence[BuildingId]",
+    ("buildingIDs", "IntVec"): "Vec[BuildingId]",
     ("planetIDs", "IntSet"): "Set[PlanetId]",
-    ("planetIDs", "IntVec"): "Sequence[PlanetId]",
-    ("fleetIDs", "IntVec"): "Sequence[FleetId]",
+    ("planetIDs", "IntVec"): "Vec[PlanetId]",
+    ("fleetIDs", "IntVec"): "Vec[FleetId]",
     ("fleetIDs", "IntSet"): "Set[FleetId]",
-    ("systemIDs", "IntVec"): "Sequence[SystemId]",
+    ("systemIDs", "IntVec"): "Vec[SystemId]",
     ("empireID", "int"): "EmpireId",
     ("capitalID", "int"): "PlanetId",
     ("locationID", "int"): "PlanetId",
@@ -18,7 +18,7 @@ _property_map = {
     ("speciesName", "str"): "SpeciesName",
     ("designedOnTurn", "int"): "Turn",
     ("buildingTypeName", "str"): "BuildingName",
-    ("parts", "StringVec"): "Sequence[PartName]",
+    ("parts", "StringVec"): "Vec[PartName]",
 }
 
 

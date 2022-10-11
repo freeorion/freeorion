@@ -1,7 +1,7 @@
 from stub_generator.stub_generator.rtype._base_rtype_mapping import make_type
 
 _method_map = {
-    ("empire", "supplyProjections"): "Dict[SystemId, int]",
+    ("empire", "supplyProjections"): "Map[SystemId, int]",
 }
 
 
