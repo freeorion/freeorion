@@ -8,7 +8,7 @@ Tech(
     researchcost=120 * TECH_COST_MULTIPLIER,
     researchturns=10,
     tags=["PEDIA_LEARNING_CATEGORY", "THEORY"],
-    prerequisites="LRN_XENOARCH",
+    prerequisites=["LRN_XENOARCH"],
     unlock=Item(type=UnlockPolicy, name="PLC_DESIGN_SIMPLICITY"),
     effectsgroups=EffectsGroup(
         scope=Source,

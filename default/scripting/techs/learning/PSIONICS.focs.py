@@ -19,7 +19,7 @@ Tech(
     ),
     researchturns=4,
     tags=["PEDIA_LEARNING_CATEGORY", "THEORY"],
-    prerequisites="LRN_TRANSLING_THT",
+    prerequisites=["LRN_TRANSLING_THT"],
     unlock=[
         Item(type=UnlockPolicy, name="PLC_INDOCTRINATION"),
         Item(type=UnlockPolicy, name="PLC_CONFORMANCE"),

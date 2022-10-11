@@ -8,7 +8,7 @@ Tech(
     researchcost=160 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_BOMBARD_WEAPON_TECHS"],
-    prerequisites="SHP_ROOT_AGGRESSION",
+    prerequisites=["SHP_ROOT_AGGRESSION"],
     unlock=Item(type=UnlockPolicy, name="PLC_TERROR_SUPPRESSION"),
     graphic="",
 )

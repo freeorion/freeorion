@@ -9,7 +9,7 @@ Tech(
     researchcost=300 * TECH_COST_MULTIPLIER,
     researchturns=6,
     tags=["PEDIA_LEARNING_CATEGORY"],
-    prerequisites="LRN_NDIM_SUBSPACE",
+    prerequisites=["LRN_NDIM_SUBSPACE"],
     effectsgroups=[
         EffectsGroup(
             scope=ProductionCenter

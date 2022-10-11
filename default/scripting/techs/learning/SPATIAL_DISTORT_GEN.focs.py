@@ -8,7 +8,7 @@ Tech(
     researchcost=200 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_LEARNING_CATEGORY"],
-    prerequisites="LRN_NDIM_SUBSPACE",
+    prerequisites=["LRN_NDIM_SUBSPACE"],
     unlock=Item(type=UnlockBuilding, name="BLD_SPATIAL_DISTORT_GEN"),
     graphic="icons/tech/controlled_gravity_wells.png",
 )

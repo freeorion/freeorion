@@ -8,7 +8,7 @@ Tech(
     researchcost=480 * TECH_COST_MULTIPLIER,
     researchturns=8,
     tags=["PEDIA_ROBOTIC_HULL_TECHS"],
-    prerequisites="SHP_NANOROBO_MAINT",
+    prerequisites=["SHP_NANOROBO_MAINT"],
     unlock=[
         Item(type=UnlockShipHull, name="SH_TRANSSPATIAL"),
         Item(type=UnlockShipPart, name="FU_TRANSPATIAL_DRIVE"),

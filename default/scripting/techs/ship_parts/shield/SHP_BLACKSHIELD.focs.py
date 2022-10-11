@@ -8,7 +8,7 @@ Tech(
     researchcost=2500 * TECH_COST_MULTIPLIER,
     researchturns=10,
     tags=["PEDIA_SHIELD_PART_TECHS"],
-    prerequisites="SHP_PLASMA_SHIELD",
+    prerequisites=["SHP_PLASMA_SHIELD"],
     unlock=Item(type=UnlockShipPart, name="SH_BLACK"),
     graphic="icons/ship_parts/blackshield.png",
 )

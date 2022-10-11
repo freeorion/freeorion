@@ -8,7 +8,7 @@ Tech(
     researchcost=600 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_SHIP_HULLS_CATEGORY"],
-    prerequisites="SHP_XENTRONIUM_PLATE",
+    prerequisites=["SHP_XENTRONIUM_PLATE"],
     unlock=[Item(type=UnlockShipHull, name="SH_XENTRONIUM")],
     graphic="icons/ship_hulls/xentronium_hull_small.png",
 )

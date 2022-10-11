@@ -8,7 +8,7 @@ Tech(
     researchcost=24 * TECH_COST_MULTIPLIER,
     researchturns=3,
     tags=["PEDIA_ROBOTIC_HULL_TECHS"],
-    prerequisites="PRO_ROBOTIC_PROD",
+    prerequisites=["PRO_ROBOTIC_PROD"],
     unlock=[
         Item(type=UnlockShipHull, name="SH_ROBOTIC"),
         Item(type=UnlockShipPart, name="SH_ROBOTIC_INTERFACE_SHIELDS"),

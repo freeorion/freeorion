@@ -8,7 +8,7 @@ Tech(
     researchcost=60 * TECH_COST_MULTIPLIER,
     researchturns=2,
     tags=["PEDIA_ARMOR_PART_TECHS"],
-    prerequisites="SHP_ROOT_ARMOR",
+    prerequisites=["SHP_ROOT_ARMOR"],
     unlock=Item(type=UnlockShipPart, name="AR_ZORTRIUM_PLATE"),
     graphic="icons/tech/armor_plating.png",
 )

@@ -8,6 +8,6 @@ Tech(
     researchcost=180 * TECH_COST_MULTIPLIER,
     researchturns=3,
     tags=["PEDIA_SPY_CATEGORY"],
-    prerequisites="CON_FRC_ENRG_STRC",
+    prerequisites=["CON_FRC_ENRG_STRC"],
     effectsgroups=EffectsGroup(scope=Building() & OwnedBy(empire=Source.Owner), effects=SetStealth(value=Value + 20)),
 )

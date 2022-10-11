@@ -8,7 +8,7 @@ Tech(
     researchcost=90 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_SPY_CATEGORY"],
-    prerequisites="SHP_GAL_EXPLO",
+    prerequisites=["SHP_GAL_EXPLO"],
     unlock=[Item(type=UnlockShipPart, name="DT_DETECTOR_2"), Item(type=UnlockBuilding, name="BLD_SCANNING_FACILITY")],
     effectsgroups=[
         EffectsGroup(

@@ -9,7 +9,7 @@ Tech(
     researchcost=180 * TECH_COST_MULTIPLIER,
     researchturns=6,
     tags=["PEDIA_LEARNING_CATEGORY"],
-    prerequisites="LRN_EVERYTHING",
+    prerequisites=["LRN_EVERYTHING"],
     effectsgroups=[
         EffectsGroup(
             scope=Planet()

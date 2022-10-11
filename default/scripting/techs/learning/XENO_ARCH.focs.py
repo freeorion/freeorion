@@ -8,7 +8,7 @@ Tech(
     researchcost=70 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_LEARNING_CATEGORY"],
-    prerequisites="LRN_TRANSLING_THT",
+    prerequisites=["LRN_TRANSLING_THT"],
     unlock=[
         Item(type=UnlockBuilding, name="BLD_XENORESURRECTION_LAB"),
         Item(type=UnlockPolicy, name="PLC_DIVINE_AUTHORITY"),

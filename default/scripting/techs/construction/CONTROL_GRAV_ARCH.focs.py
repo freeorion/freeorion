@@ -8,7 +8,7 @@ Tech(
     researchcost=160 * TECH_COST_MULTIPLIER,
     researchturns=4,
     tags=["PEDIA_CONSTRUCTION_CATEGORY"],
-    prerequisites="CON_ARCH_MONOFILS",
+    prerequisites=["CON_ARCH_MONOFILS"],
     effectsgroups=EffectsGroup(
         scope=Planet() & OwnedBy(empire=Source.Owner) & Focus(type="FOCUS_LOGISTICS"),
         effects=SetMaxSupply(value=Value + 1),

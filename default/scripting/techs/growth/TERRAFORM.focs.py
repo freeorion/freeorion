@@ -8,7 +8,7 @@ Tech(
     researchcost=160 * TECH_COST_MULTIPLIER,
     researchturns=4,
     tags=["PEDIA_GROWTH_CATEGORY"],
-    prerequisites="GRO_ADV_ECOMAN",
+    prerequisites=["GRO_ADV_ECOMAN"],
     unlock=[
         Item(type=UnlockBuilding, name="BLD_TERRAFORM_BEST"),
         Item(type=UnlockBuilding, name="BLD_TERRAFORM_TERRAN"),

@@ -12,7 +12,7 @@ Tech(
     researchcost=9 * TECH_COST_MULTIPLIER,
     researchturns=3,
     tags=["PEDIA_DEFENSE_CATEGORY"],
-    prerequisites="DEF_ROOT_DEFENSE",
+    prerequisites=["DEF_ROOT_DEFENSE"],
     effectsgroups=[
         EffectsGroup(
             scope=Planet() & OwnedBy(empire=Source.Owner),
@@ -33,7 +33,7 @@ Tech(
     researchcost=25 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_DEFENSE_CATEGORY"],
-    prerequisites="DEF_GARRISON_1",
+    prerequisites=["DEF_GARRISON_1"],
     unlock=Item(type=UnlockPolicy, name="PLC_CHECKPOINTS"),
     effectsgroups=[
         EffectsGroup(
@@ -70,7 +70,7 @@ Tech(
     researchcost=84 * TECH_COST_MULTIPLIER,
     researchturns=7,
     tags=["PEDIA_DEFENSE_CATEGORY"],
-    prerequisites="DEF_GARRISON_2",
+    prerequisites=["DEF_GARRISON_2"],
     effectsgroups=[
         EffectsGroup(
             scope=Planet()
@@ -104,7 +104,7 @@ Tech(
     researchcost=216 * TECH_COST_MULTIPLIER,
     researchturns=9,
     tags=["PEDIA_DEFENSE_CATEGORY"],
-    prerequisites="DEF_GARRISON_3",
+    prerequisites=["DEF_GARRISON_3"],
     unlock=Item(type=UnlockPolicy, name="PLC_MARTIAL_LAW"),
     effectsgroups=[
         EffectsGroup(

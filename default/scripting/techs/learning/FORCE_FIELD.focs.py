@@ -10,7 +10,7 @@ Tech(
     researchcost=80 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_LEARNING_CATEGORY"],
-    prerequisites="LRN_NASCENT_AI",
+    prerequisites=["LRN_NASCENT_AI"],
     unlock=Item(type=UnlockShipPart, name="SH_DEFENSE_GRID"),
     effectsgroups=[
         EffectsGroup(

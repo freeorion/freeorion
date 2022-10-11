@@ -9,7 +9,7 @@ Tech(
     researchcost=48 * TECH_COST_MULTIPLIER,
     researchturns=4,
     tags=["PEDIA_LEARNING_CATEGORY"],
-    prerequisites="LRN_ALGO_ELEGANCE",
+    prerequisites=["LRN_ALGO_ELEGANCE"],
     effectsgroups=[
         EffectsGroup(
             scope=ProductionCenter

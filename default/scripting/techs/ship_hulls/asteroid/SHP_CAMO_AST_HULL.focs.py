@@ -8,7 +8,7 @@ Tech(
     researchcost=52 * TECH_COST_MULTIPLIER,
     researchturns=2,
     tags=["PEDIA_ASTEROID_HULL_TECHS"],
-    prerequisites="SHP_ASTEROID_HULLS",
+    prerequisites=["SHP_ASTEROID_HULLS"],
     unlock=[
         Item(type=UnlockShipHull, name="SH_SMALL_CAMOUFLAGE_ASTEROID"),
         Item(type=UnlockShipHull, name="SH_CAMOUFLAGE_ASTEROID"),

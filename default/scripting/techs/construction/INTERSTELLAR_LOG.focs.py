@@ -8,7 +8,7 @@ Tech(
     researchcost=120 * TECH_COST_MULTIPLIER,
     researchturns=3,
     tags=["PEDIA_CONSTRUCTION_CATEGORY"],
-    prerequisites="CON_ORBITAL_CON",
+    prerequisites=["CON_ORBITAL_CON"],
     unlock=[
         Item(type=UnlockPolicy, name="PLC_NO_SUPPLY"),
         Item(type=UnlockPolicy, name="PLC_CONFEDERATION"),

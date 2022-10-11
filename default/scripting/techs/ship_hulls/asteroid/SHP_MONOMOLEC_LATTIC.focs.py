@@ -8,7 +8,7 @@ Tech(
     researchcost=1000 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_ASTEROID_HULL_TECHS"],
-    prerequisites="SHP_ASTEROID_REFORM",
+    prerequisites=["SHP_ASTEROID_REFORM"],
     unlock=[
         Item(type=UnlockShipHull, name="SH_CRYSTALLIZED_ASTEROID"),
         Item(type=UnlockShipPart, name="AR_CRYSTAL_PLATE"),

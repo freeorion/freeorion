@@ -8,7 +8,7 @@ Tech(
     researchcost=840 * TECH_COST_MULTIPLIER,
     researchturns=7,
     tags=["PEDIA_SPY_CATEGORY"],
-    prerequisites="SPY_DETECT_3",
+    prerequisites=["SPY_DETECT_3"],
     unlock=Item(type=UnlockShipPart, name="DT_DETECTOR_4"),
     effectsgroups=[
         EffectsGroup(

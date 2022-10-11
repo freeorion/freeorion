@@ -8,7 +8,7 @@ Tech(
     researchcost=120 * TECH_COST_MULTIPLIER,
     researchturns=4,
     tags=["PEDIA_SPY_CATEGORY"],
-    prerequisites="SPY_DETECT_2",
+    prerequisites=["SPY_DETECT_2"],
     unlock=Item(type=UnlockBuilding, name="BLD_LIGHTHOUSE"),
     graphic="icons/tech/interstellar_lighthouse.png",
 )

@@ -8,6 +8,6 @@ Tech(
     researchcost=78 * TECH_COST_MULTIPLIER,
     researchturns=3,
     tags=["PEDIA_GROWTH_CATEGORY", "THEORY"],
-    prerequisites="GRO_SUBTER_HAB",
+    prerequisites=["GRO_SUBTER_HAB"],
     graphic="icons/tech/advanced_eco_man.png",
 )

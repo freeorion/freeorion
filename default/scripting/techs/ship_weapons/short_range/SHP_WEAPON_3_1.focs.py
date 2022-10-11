@@ -9,7 +9,7 @@ Tech(
     researchcost=280 * TECH_COST_MULTIPLIER,
     researchturns=8,
     tags=["PEDIA_SR_WEAPON_TECHS"],
-    prerequisites="SHP_WEAPON_2_1",
+    prerequisites=["SHP_WEAPON_2_1"],
     unlock=Item(type=UnlockShipPart, name="SR_WEAPON_3_1"),
     effectsgroups=WEAPON_BASE_EFFECTS("SR_WEAPON_3_1"),
     graphic="icons/ship_parts/plasma-1.png",

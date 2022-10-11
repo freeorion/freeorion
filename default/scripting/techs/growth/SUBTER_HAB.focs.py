@@ -9,7 +9,7 @@ Tech(
     researchcost=24 * TECH_COST_MULTIPLIER,
     researchturns=2,
     tags=["PEDIA_GROWTH_CATEGORY"],
-    prerequisites="GRO_PLANET_ECOL",
+    prerequisites=["GRO_PLANET_ECOL"],
     effectsgroups=[
         EffectsGroup(
             scope=HasSpecies() & OwnedBy(empire=Source.Owner),

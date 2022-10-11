@@ -8,7 +8,7 @@ Tech(
     researchcost=1000 * TECH_COST_MULTIPLIER,
     researchturns=10,
     tags=["PEDIA_ROBOTIC_HULL_TECHS"],
-    prerequisites="SHP_CONTGRAV_MAINT",
+    prerequisites=["SHP_CONTGRAV_MAINT"],
     unlock=[Item(type=UnlockShipHull, name="SH_TITANIC")],
     graphic="icons/ship_hulls/titanic_hull_small.png",
 )

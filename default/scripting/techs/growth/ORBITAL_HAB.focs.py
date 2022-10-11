@@ -9,7 +9,7 @@ Tech(
     researchcost=350 * TECH_COST_MULTIPLIER,
     researchturns=7,
     tags=["PEDIA_GROWTH_CATEGORY"],
-    prerequisites="PRO_MICROGRAV_MAN",
+    prerequisites=["PRO_MICROGRAV_MAN"],
     effectsgroups=[
         EffectsGroup(
             scope=HasSpecies() & OwnedBy(empire=Source.Owner),

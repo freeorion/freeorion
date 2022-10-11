@@ -118,9 +118,8 @@ namespace {
 
         std::set<std::string> prerequisites;
         if (kw.has_key("prerequisites")) {
-            py_parse::detail::flatten_list<std::string>(kw["prerequisites"], [](const std::string& o, std::set<std::string>& v) {
-                v.insert(o);
-            }, prerequisites);
+            prerequisites.insert(boost::python::stl_input_iterator<std::string>(kw["prerequisites"]),
+                boost::python::stl_input_iterator<std::string>());
         }
 
         std::vector<UnlockableItem> unlock;

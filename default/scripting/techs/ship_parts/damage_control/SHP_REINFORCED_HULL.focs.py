@@ -8,7 +8,7 @@ Tech(
     researchcost=72 * TECH_COST_MULTIPLIER,
     researchturns=3,
     tags=["PEDIA_DAMAGE_CONTROL_PART_TECHS"],
-    prerequisites="CON_ARCH_MONOFILS",
+    prerequisites=["CON_ARCH_MONOFILS"],
     effectsgroups=EffectsGroup(
         scope=Ship & OwnedBy(empire=Source.Owner),
         effects=SetMaxStructure(value=Value + NamedRealLookup(name="SHP_REINFORCED_HULL_BONUS")),

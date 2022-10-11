@@ -8,7 +8,7 @@ Tech(
     researchcost=45 * TECH_COST_MULTIPLIER,
     researchturns=3,
     tags=["PEDIA_ASTEROID_HULL_TECHS"],
-    prerequisites="PRO_MICROGRAV_MAN",
+    prerequisites=["PRO_MICROGRAV_MAN"],
     unlock=[
         Item(type=UnlockShipHull, name="SH_SMALL_ASTEROID"),
         Item(type=UnlockShipHull, name="SH_ASTEROID"),
