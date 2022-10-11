@@ -209,55 +209,55 @@ BOOST_AUTO_TEST_CASE(parse_species) {
     PythonParser parser(m_python, m_scripting_dir);
 
     auto species_p = Pending::ParseSynchronously(parse::species, parser, m_scripting_dir / "species");
-    auto [species, ordering] = *Pending::WaitForPendingUnlocked(std::move(species_p));
+    auto [species_map, ordering] = *Pending::WaitForPendingUnlocked(std::move(species_p));
 
     BOOST_REQUIRE(!ordering.empty());
-    BOOST_CHECK(!species.empty());
+    BOOST_CHECK(!species_map.empty());
 
     BOOST_REQUIRE_EQUAL("LITHIC", ordering[0]);
     BOOST_REQUIRE_EQUAL("ORGANIC", ordering[1]);
     BOOST_REQUIRE_EQUAL("GASEOUS", ordering[6]);
 
     {
-        const auto species_it = species.find("SP_ABADDONI");
-        BOOST_REQUIRE(species_it != species.end());
+        const auto species_it = species_map.find("SP_ABADDONI");
+        BOOST_REQUIRE(species_it != species_map.end());
 
-        const auto specie = species_it->second.get();
-        BOOST_REQUIRE_EQUAL("SP_ABADDONI", specie->Name());
-        BOOST_REQUIRE_EQUAL("SP_ABADDONI_DESC", specie->Description());
-        // BOOST_REQUIRE_EQUAL("SP_ABADDONI_GAMEPLAY_DESC", specie->GameplayDescription()); // already resolved to user string
+        const auto species = species_it->second.get();
+        BOOST_REQUIRE_EQUAL("SP_ABADDONI", species->Name());
+        BOOST_REQUIRE_EQUAL("SP_ABADDONI_DESC", species->Description());
+        // BOOST_REQUIRE_EQUAL("SP_ABADDONI_GAMEPLAY_DESC", species->GameplayDescription()); // already resolved to user string
 
-        BOOST_REQUIRE(specie->Location() != nullptr);
-        BOOST_REQUIRE(specie->CombatTargets() == nullptr);
+        BOOST_REQUIRE(species->Location() != nullptr);
+        BOOST_REQUIRE(species->CombatTargets() == nullptr);
 
-        BOOST_REQUIRE_EQUAL(14, specie->Foci().size());
-        BOOST_REQUIRE_EQUAL("FOCUS_INDUSTRY", specie->Foci()[0].Name());
-        BOOST_REQUIRE_EQUAL("FOCUS_DOMINATION", specie->Foci()[13].Name());
-        BOOST_CHECK_EQUAL("FOCUS_INDUSTRY", specie->DefaultFocus());
+        BOOST_REQUIRE_EQUAL(14, species->Foci().size());
+        BOOST_REQUIRE_EQUAL("FOCUS_INDUSTRY", species->Foci()[0].Name());
+        BOOST_REQUIRE_EQUAL("FOCUS_DOMINATION", species->Foci()[13].Name());
+        BOOST_CHECK_EQUAL("FOCUS_INDUSTRY", species->DefaultFocus());
 
-        BOOST_CHECK_EQUAL(11, specie->PlanetEnvironments().size());
-        BOOST_CHECK_EQUAL(PlanetEnvironment::PE_POOR, specie->GetPlanetEnvironment(PlanetType::PT_BARREN));
-        BOOST_CHECK_EQUAL(PlanetEnvironment::PE_ADEQUATE, specie->GetPlanetEnvironment(PlanetType::PT_TOXIC));
+        BOOST_CHECK_EQUAL(11, species->PlanetEnvironments().size());
+        BOOST_CHECK_EQUAL(PlanetEnvironment::PE_POOR, species->GetPlanetEnvironment(PlanetType::PT_BARREN));
+        BOOST_CHECK_EQUAL(PlanetEnvironment::PE_ADEQUATE, species->GetPlanetEnvironment(PlanetType::PT_TOXIC));
 
-        BOOST_REQUIRE_EQUAL(1.0, specie->SpawnRate());
-        BOOST_REQUIRE_EQUAL(9999, specie->SpawnLimit());
-        BOOST_CHECK_EQUAL(true, specie->Playable());
-        BOOST_CHECK_EQUAL(false, specie->Native());
-        BOOST_CHECK_EQUAL(true, specie->CanColonize());
-        BOOST_CHECK_EQUAL(true, specie->CanProduceShips());
+        BOOST_REQUIRE_EQUAL(1.0, species->SpawnRate());
+        BOOST_REQUIRE_EQUAL(9999, species->SpawnLimit());
+        BOOST_CHECK_EQUAL(true, species->Playable());
+        BOOST_CHECK_EQUAL(false, species->Native());
+        BOOST_CHECK_EQUAL(true, species->CanColonize());
+        BOOST_CHECK_EQUAL(true, species->CanProduceShips());
 
-        BOOST_REQUIRE_EQUAL(6, specie->Tags().size());
-        BOOST_CHECK_EQUAL("AVERAGE_SUPPLY", specie->Tags()[0]);
-        BOOST_CHECK_EQUAL("PEDIA_LITHIC_SPECIES_CLASS", specie->Tags()[5]);
+        BOOST_REQUIRE_EQUAL(6, species->Tags().size());
+        BOOST_CHECK_EQUAL("AVERAGE_SUPPLY", species->Tags()[0]);
+        BOOST_CHECK_EQUAL("PEDIA_LITHIC_SPECIES_CLASS", species->Tags()[5]);
 
-        BOOST_CHECK_EQUAL(12, specie->Likes().size());
+        BOOST_CHECK_EQUAL(12, species->Likes().size());
 
-        BOOST_CHECK_EQUAL(13, specie->Dislikes().size());
+        BOOST_CHECK_EQUAL(13, species->Dislikes().size());
 
-        BOOST_CHECK_EQUAL("icons/species/abaddonnian.png", specie->Graphic());
+        BOOST_CHECK_EQUAL("icons/species/abaddonnian.png", species->Graphic());
 
-        BOOST_REQUIRE_EQUAL(98, specie->Effects().size());
-        const auto& effect_group = *(specie->Effects()[0]);
+        BOOST_REQUIRE_EQUAL(98, species->Effects().size());
+        const auto& effect_group = *(species->Effects()[0]);
         BOOST_REQUIRE_EQUAL("", effect_group.StackingGroup());
         BOOST_REQUIRE_EQUAL("", effect_group.GetDescription());
         BOOST_REQUIRE_EQUAL("FOCUS_INDUSTRY_LABEL", effect_group.AccountingLabel());
@@ -278,7 +278,7 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_REQUIRE_EQUAL(false, effect.IsSitrepEffect());
         BOOST_REQUIRE_EQUAL(false, effect.IsConditionalEffect());
 
-        BOOST_REQUIRE_EQUAL(6497634, specie->GetCheckSum());
+        BOOST_REQUIRE_EQUAL(6497634, species->GetCheckSum());
 
         Species test_species{"SP_ABADDONI",
             "SP_ABADDONI_DESC",
@@ -404,12 +404,12 @@ BOOST_AUTO_TEST_CASE(parse_species) {
             "icons/species/abaddonnian.png",
             1.0,
             9999};
-        BOOST_WARN(test_species == (*specie));
+        BOOST_WARN(test_species == (*species));
     }
 
     // test it last
-    BOOST_REQUIRE_EQUAL(7, ordering.size());
-    BOOST_REQUIRE_EQUAL(1, species.size());
+    BOOST_CHECK_EQUAL(7, ordering.size());
+    BOOST_CHECK_EQUAL(1, species_map.size());
 }
 
 /**
