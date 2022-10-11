@@ -123,23 +123,25 @@ public:
         target(tg)
     {}
 
-    bool operator()() const {
-        return target && target->Visible();
-    };
+    bool operator()() const { return target && target->Visible(); };
 
 private:
-    const GG::Wnd* target;
+    const GG::Wnd* target = nullptr;
 };
 
 /// On when the given windows are invisible
+template <std::size_t N>
 class InvisibleWindowCondition {
 public:
-    InvisibleWindowCondition(std::initializer_list<const GG::Wnd*> bl);
+    InvisibleWindowCondition(std::array<const GG::Wnd*, N> bl) :
+        m_blacklist(std::move(bl))
+    {}
 
-    bool operator()() const;
+    bool operator()() const
+    { return std::none_of(m_blacklist.begin(), m_blacklist.end(), [](auto* w) { return w->Visible(); }); }
 
 private:
-    std::list<const GG::Wnd*> m_blacklist;
+    std::array<const GG::Wnd*, N> m_blacklist;
 };
 
 /// On when the given window is visible
@@ -155,7 +157,7 @@ public:
     };
 
 private:
-    const GG::Wnd* target;
+    const GG::Wnd* target = nullptr;
 };
 
 template <typename W>
@@ -163,29 +165,61 @@ class FocusWindowIsA {
 public:
     bool operator()() const {
         const auto foc = GG::GUI::GetGUI()->FocusWnd();
-        return (nullptr != dynamic_cast<const W*>(foc.get()));
+        return dynamic_cast<const W*>(foc.get());
     };
 };
 
+template <std::size_t N>
 class OrCondition {
 public:
-    OrCondition(std::initializer_list<std::function<bool()>> conditions);
+    using BoolFunc = std::function<bool()>;
 
-    bool operator()() const;
+    OrCondition(std::array<BoolFunc, N> conditions) :
+        m_conditions(std::move(conditions))
+    {}
+
+    template <typename... Args>
+    OrCondition(Args&&... args) :
+        m_conditions{std::forward<Args>(args)...}
+    {}
+
+    bool operator()() const
+    { return std::any_of(m_conditions.begin(), m_conditions.end(), [](auto& cond) { return cond(); }); }
 
 private:
-    std::list<std::function<bool()>> m_conditions;
+    std::array<BoolFunc, N> m_conditions;
 };
 
+template<typename... Args>
+OrCondition(Args&&...) -> OrCondition<sizeof...(Args)>;
+
+
+template <std::size_t N>
 class AndCondition {
 public:
-    AndCondition(std::initializer_list<std::function<bool()>> conditions);
+    using BoolFunc = std::function<bool()>;
 
-    bool operator()() const;
+    AndCondition(std::array<BoolFunc, N> conditions) :
+        m_conditions(std::move(conditions))
+    {}
+
+    template <typename... Args>
+    AndCondition(Args&&... args) :
+        m_conditions{std::forward<Args>(args)...}
+    {}
+
+    bool operator()() const {
+        return std::all_of(m_conditions.begin(), m_conditions.end(),
+                           [](auto& cond) { return cond(); });
+    }
 
 private:
-    std::list<std::function<bool()>> m_conditions;
+    std::array<BoolFunc, N> m_conditions;
 };
+
+template<typename... Args>
+AndCondition(Args&&...) -> AndCondition<sizeof...(Args)>;
+
 
 class HotkeyManager {
 public:

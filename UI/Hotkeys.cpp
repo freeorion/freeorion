@@ -55,7 +55,9 @@ namespace {
     std::map<std::string, Hotkey> hotkeys;
 }
 
-void Hotkey::AddHotkey(const std::string& name, const std::string& description, GG::Key key, GG::Flags<GG::ModKey> mod) {
+void Hotkey::AddHotkey(const std::string& name, const std::string& description,
+                       GG::Key key, GG::Flags<GG::ModKey> mod)
+{
     auto [it, inserted] = hotkeys.emplace(name, Hotkey(name, description, key, mod));
     (void)it; // suppress unused variable warning
     if (!inserted)
@@ -284,53 +286,6 @@ void Hotkey::ResetHotkey(const Hotkey& old_hotkey) {
 
 void Hotkey::ClearHotkey(const Hotkey& old_hotkey)
 { Hotkey::SetHotkey(old_hotkey, GG::Key::GGK_NONE, GG::Flags<GG::ModKey>()); }
-
-//////////////////////////////////////////////////////////////////////
-// InvisibleWindowCondition
-//////////////////////////////////////////////////////////////////////
-InvisibleWindowCondition::InvisibleWindowCondition(std::initializer_list<const GG::Wnd*> bl) :
-    m_blacklist(bl)
-{}
-
-bool InvisibleWindowCondition::operator()() const {
-    for (const auto& wnd : m_blacklist) {
-        if (wnd->Visible())
-            return false;
-    }
-    return true;
-}
-
-
-//////////////////////////////////////////////////////////////////////
-// OrCondition
-//////////////////////////////////////////////////////////////////////
-OrCondition::OrCondition(std::initializer_list<std::function<bool()>> conditions) :
-    m_conditions(conditions)
-{}
-
-bool OrCondition::operator()() const {
-    for (auto& cond : m_conditions) {
-        if (cond())
-            return true;
-    }
-    return false;
-}
-
-
-//////////////////////////////////////////////////////////////////////
-// AndCondition
-//////////////////////////////////////////////////////////////////////
-AndCondition::AndCondition(std::initializer_list<std::function<bool()>> conditions) :
-    m_conditions(conditions)
-{}
-
-bool AndCondition::operator()() const {
-    for (auto& cond : m_conditions) {
-        if (!cond())
-            return false;
-    }
-    return true;
-}
 
 
 //////////////////////////////////////////////////////////////////////
