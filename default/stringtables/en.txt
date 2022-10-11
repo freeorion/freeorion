@@ -6433,7 +6433,18 @@ A set of core supply starlanes for an empire (the set of least-jump starlanes co
 
 Supply lines can also be used to refill the [[metertype METER_FUEL]] supply of ships.
 
-Supply lines will be obstructed by armed enemy ships belonging to empires with which an empire is at [[encyclopedia WAR_TITLE]]. At the opposite end of the spectrum, empires in an [[encyclopedia ALLIANCE_TITLE]] will share supply lines and all their associated benefits.'''
+Empires in an [[encyclopedia ALLIANCE_TITLE]] use each other's supply lines.
+The extension of supply lines from source planets into a system can be obstructed by armed enemy ships that are in that system and that are in fleets set to [[FLEET_OBSTRUCTIVE]] or [[FLEET_AGGRESSIVE]]. Enemy ships are those owned by empires that are at [[encyclopedia WAR_TITLE]] with the supply line's empire and neutral / monster ships.
+
+If multiple empires compete for supply in a system (without any obstructions to either's supply propagation), the empire with the highested propagated supply range will supply that system. To break ties, a bonus per empire is calculated and added to the propagated supply before comparison.
+
+• Has a colony in the system: +0.5
+• Has an outpost (but no colony) in the system: +0.3
+* Has supply sources in the system: +(0.001 * SUM(own supply in the system))
+* Distance to the source of supply that reaches the system and that, before propagation, is the strongest. That is, a 4 strength source 4 jumps away is stronger than a 3 strength source 3 jumps away: +(0.0001 * distance to maximum supplying system)
+* Has supply sources in the system: +(0.00001 * SUM(own max supply in the system))
+* Total supply: +(0.00000001 * SUM(own supply in the empire))
+If there is still a tie, and all the tied empires are allied, one of the allied empires is randomly chosen. If at least one non-allied empire ties, no empire wins and the system will not be part of any supply group.'''
 
 METER_STOCKPILE_VALUE_LABEL
 Stockpile Distribution
