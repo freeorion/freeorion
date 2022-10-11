@@ -1,4 +1,4 @@
-from typing import List, TextIO
+from typing import List, TextIO, Iterable
 
 from dataclasses import dataclass
 
@@ -31,7 +31,6 @@ class ResultBuilder:
         self._built_in_imports = []
         self._imports = []
         self._extra_declaration = []
-        self._resources = []
         self._classes = []
         self._enums = []
         self._functions = []
@@ -45,17 +44,14 @@ class ResultBuilder:
     def add_extra_declaration(self, declaration: str):
         self._extra_declaration.append(declaration)
 
-    def add_class(self, cls: str):
-        self._classes.append(cls)
+    def add_classes(self, classes: Iterable[str]):
+        self._classes.extend(classes)
 
-    def add_resources(self, *resources: str):
-        self._resources.extend(resources)
+    def add_enums(self, enums: Iterable[str]):
+        self._enums.extend(enums)
 
-    def add_enum(self, enum):
-        self._enums.append(enum)
-
-    def add_function(self, function):
-        self._functions.append(function)
+    def add_functions(self, functions: Iterable[str]):
+        self._functions.extend(functions)
 
     def _import_string(self, import_: Import):
         return f"from {import_.from_} import {', '.join(import_.items)}"

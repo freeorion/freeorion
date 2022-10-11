@@ -57,14 +57,10 @@ def make_stub(
 
     res.add_extra_declaration(mapping_code)
 
-    for cls in ClassGenerator(classes, instances, classes_to_ignore, enums):
-        res.add_class(cls)
+    res.add_classes(ClassGenerator(classes, instances, classes_to_ignore, enums))
+    res.add_enums(EnumGenerator(enums))
 
-    for enum in EnumGenerator(enums):
-        res.add_enum(enum)
-
-    for function in FunctionGenerator(functions):
-        res.add_function(function)
+    res.add_functions(FunctionGenerator(functions))
 
     with open(result_path, "w") as f:
         res.write(f)
