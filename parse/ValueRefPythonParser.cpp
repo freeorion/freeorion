@@ -210,37 +210,36 @@ value_ref_wrapper<double> operator-(const value_ref_wrapper<double>& lhs, int rh
     );
 }
 
-condition_wrapper operator>=(const value_ref_wrapper<double>& lhs, int rhs) {
-    return condition_wrapper(
-        std::make_shared<Condition::ValueTest>(ValueRef::CloneUnique(lhs.value_ref),
-            Condition::ComparisonType::GREATER_THAN_OR_EQUAL,
+value_ref_wrapper<double> operator>=(const value_ref_wrapper<double>& lhs, int rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::COMPARE_GREATER_THAN_OR_EQUAL,
+            ValueRef::CloneUnique(lhs.value_ref),
             std::make_unique<ValueRef::Constant<double>>(rhs)
-        )
-    );
+    ));
 }
 
-condition_wrapper operator<=(const value_ref_wrapper<double>& lhs, const value_ref_wrapper<double>& rhs) {
-    return condition_wrapper(
-        std::make_shared<Condition::ValueTest>(ValueRef::CloneUnique(lhs.value_ref),
-            Condition::ComparisonType::LESS_THAN_OR_EQUAL,
-            ValueRef::CloneUnique(rhs.value_ref))
-    );
+value_ref_wrapper<double> operator<=(const value_ref_wrapper<double>& lhs, const value_ref_wrapper<double>& rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::COMPARE_LESS_THAN_OR_EQUAL,
+            ValueRef::CloneUnique(lhs.value_ref),
+            ValueRef::CloneUnique(rhs.value_ref)
+    ));
 }
 
-condition_wrapper operator<=(double lhs, const value_ref_wrapper<double>& rhs) {
-    return condition_wrapper(
-        std::make_shared<Condition::ValueTest>(std::make_unique<ValueRef::Constant<double>>(lhs),
-            Condition::ComparisonType::LESS_THAN_OR_EQUAL,
-            ValueRef::CloneUnique(rhs.value_ref))
-    );
+value_ref_wrapper<double> operator<=(double lhs, const value_ref_wrapper<double>& rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::COMPARE_LESS_THAN_OR_EQUAL,
+            std::make_unique<ValueRef::Constant<double>>(lhs),
+            ValueRef::CloneUnique(rhs.value_ref)
+    ));
 }
 
-condition_wrapper operator<=(const value_ref_wrapper<double>& lhs, double rhs) {
-    return condition_wrapper(
-        std::make_shared<Condition::ValueTest>(ValueRef::CloneUnique(lhs.value_ref),
-            Condition::ComparisonType::LESS_THAN_OR_EQUAL,
-            std::make_unique<ValueRef::Constant<double>>(rhs))
-    );
+value_ref_wrapper<double> operator<=(const value_ref_wrapper<double>& lhs, double rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::COMPARE_LESS_THAN_OR_EQUAL,
+            ValueRef::CloneUnique(lhs.value_ref),
+            std::make_unique<ValueRef::Constant<double>>(rhs)
+    ));
 }
 
 value_ref_wrapper<double> operator>(const value_ref_wrapper<double>& lhs, const value_ref_wrapper<double>& rhs) {
@@ -267,18 +266,18 @@ value_ref_wrapper<double> operator<(const value_ref_wrapper<double>& lhs, const 
     );
 }
 
-condition_wrapper operator<(double lhs, const value_ref_wrapper<double>& rhs) {
-    return condition_wrapper(
-        std::make_shared<Condition::ValueTest>(std::make_unique<ValueRef::Constant<double>>(lhs),
-            Condition::ComparisonType::LESS_THAN,
+value_ref_wrapper<double> operator<(double lhs, const value_ref_wrapper<double>& rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::COMPARE_LESS_THAN,
+            std::make_unique<ValueRef::Constant<double>>(lhs),
             ValueRef::CloneUnique(rhs.value_ref))
     );
 }
 
-condition_wrapper operator<(const value_ref_wrapper<double>& lhs, double rhs) {
-    return condition_wrapper(
-        std::make_shared<Condition::ValueTest>(ValueRef::CloneUnique(lhs.value_ref),
-            Condition::ComparisonType::LESS_THAN,
+value_ref_wrapper<double> operator<(const value_ref_wrapper<double>& lhs, double rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::COMPARE_LESS_THAN,
+            ValueRef::CloneUnique(lhs.value_ref),
             std::make_unique<ValueRef::Constant<double>>(rhs))
     );
 }
@@ -336,10 +335,10 @@ value_ref_wrapper<int> operator+(const value_ref_wrapper<int>& lhs, const value_
     );
 }
 
-condition_wrapper operator<(const value_ref_wrapper<int>& lhs, const value_ref_wrapper<int>& rhs) {
-    return condition_wrapper(
-        std::make_shared<Condition::ValueTest>(ValueRef::CloneUnique(lhs.value_ref),
-            Condition::ComparisonType::LESS_THAN,
+value_ref_wrapper<int> operator<(const value_ref_wrapper<int>& lhs, const value_ref_wrapper<int>& rhs) {
+    return value_ref_wrapper<int>(
+        std::make_shared<ValueRef::Operation<int>>(ValueRef::OpType::COMPARE_LESS_THAN,
+            ValueRef::CloneUnique(lhs.value_ref),
             ValueRef::CloneUnique(rhs.value_ref))
     );
 }
@@ -352,26 +351,34 @@ value_ref_wrapper<int> operator<(const value_ref_wrapper<int>& lhs, int rhs) {
     );
 }
 
-condition_wrapper operator>=(const value_ref_wrapper<int>& lhs, const value_ref_wrapper<int>& rhs) {
-    return condition_wrapper(
-        std::make_shared<Condition::ValueTest>(ValueRef::CloneUnique(lhs.value_ref),
-            Condition::ComparisonType::GREATER_THAN_OR_EQUAL,
+value_ref_wrapper<int> operator>(const value_ref_wrapper<int>& lhs, int rhs) {
+    return value_ref_wrapper<int>(
+        std::make_shared<ValueRef::Operation<int>>(ValueRef::OpType::COMPARE_GREATER_THAN,
+            ValueRef::CloneUnique(lhs.value_ref),
+            std::make_unique<ValueRef::Constant<int>>(rhs))
+    );
+}
+
+value_ref_wrapper<int> operator>=(const value_ref_wrapper<int>& lhs, const value_ref_wrapper<int>& rhs) {
+    return value_ref_wrapper<int>(
+        std::make_shared<ValueRef::Operation<int>>(ValueRef::OpType::COMPARE_GREATER_THAN_OR_EQUAL,
+            ValueRef::CloneUnique(lhs.value_ref),
             ValueRef::CloneUnique(rhs.value_ref))
     );
 }
 
-condition_wrapper operator==(const value_ref_wrapper<int>& lhs, const value_ref_wrapper<int>& rhs) {
-    return condition_wrapper(
-        std::make_shared<Condition::ValueTest>(ValueRef::CloneUnique(lhs.value_ref),
-            Condition::ComparisonType::EQUAL,
+value_ref_wrapper<int> operator==(const value_ref_wrapper<int>& lhs, const value_ref_wrapper<int>& rhs) {
+    return value_ref_wrapper<int>(
+        std::make_shared<ValueRef::Operation<int>>(ValueRef::OpType::COMPARE_EQUAL,
+            ValueRef::CloneUnique(lhs.value_ref),
             ValueRef::CloneUnique(rhs.value_ref))
     );
 }
 
-condition_wrapper operator==(const value_ref_wrapper<int>& lhs, int rhs) {
-    return condition_wrapper(
-        std::make_shared<Condition::ValueTest>(ValueRef::CloneUnique(lhs.value_ref),
-            Condition::ComparisonType::EQUAL,
+value_ref_wrapper<int> operator==(const value_ref_wrapper<int>& lhs, int rhs) {
+    return value_ref_wrapper<int>(
+        std::make_shared<ValueRef::Operation<int>>(ValueRef::OpType::COMPARE_EQUAL,
+            ValueRef::CloneUnique(lhs.value_ref),
             std::make_unique<ValueRef::Constant<int>>(rhs))
     );
 }

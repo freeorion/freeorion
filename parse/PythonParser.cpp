@@ -96,10 +96,12 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def(py::self_ns::self + int())
             .def(py::self_ns::self < py::self_ns::self)
             .def(py::self_ns::self < int())
+            .def(py::self_ns::self > int())
             .def(py::self_ns::self >= py::self_ns::self)
             .def(py::self_ns::self == py::self_ns::self)
             .def(double() - py::self_ns::self)
-            .def(py::self_ns::self == int());
+            .def(py::self_ns::self == int())
+            .def(py::self_ns::self | py::self_ns::self);
         py::class_<value_ref_wrapper<double>>("ValueRefDouble", py::no_init)
             .def("__call__", &value_ref_wrapper<double>::call)
             .def(int() * py::self_ns::self)
@@ -131,13 +133,15 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def(py::self_ns::self < double())
             .def(py::self_ns::self != int())
             .def(py::self_ns::pow(py::self_ns::self, double()))
-            .def(py::self_ns::pow(double(), py::self_ns::self));
+            .def(py::self_ns::pow(double(), py::self_ns::self))
+            .def(py::self_ns::self & py::self_ns::self);
         py::class_<value_ref_wrapper<std::string>>("ValueRefString", py::no_init);
         py::class_<condition_wrapper>("Condition", py::no_init)
             .def(py::self_ns::self & py::self_ns::self)
             .def(py::self_ns::self & py::other<value_ref_wrapper<double>>())
             .def(py::self_ns::self & py::other<value_ref_wrapper<int>>())
             .def(py::self_ns::self | py::self_ns::self)
+            .def(py::self_ns::self | py::other<value_ref_wrapper<int>>())
             .def(~py::self_ns::self);
         py::class_<effect_wrapper>("Effect", py::no_init);
         py::class_<effect_group_wrapper>("EffectsGroup", py::no_init);
@@ -273,6 +277,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
 
         py::implicitly_convertible<variable_wrapper, condition_wrapper>();
         py::implicitly_convertible<value_ref_wrapper<double>, condition_wrapper>();
+        py::implicitly_convertible<value_ref_wrapper<int>, condition_wrapper>();
 
         m_meta_path = py::extract<py::list>(py::import("sys").attr("meta_path"));
         m_meta_path.append(boost::cref(*this));
