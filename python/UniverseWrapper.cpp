@@ -221,6 +221,15 @@ namespace {
             return py::incref(py::make_tuple(pair.first, pair.second).ptr());
         }
     };
+
+    std::vector<std::string> ExtractList(const py::list& py_string_list) {
+        std::vector<std::string> retval;
+        retval.reserve(len(py_string_list));
+        for (int i = 0; i < len(py_string_list); i++)
+            retval.push_back(py::extract<std::string>(py_string_list[i]));
+        return retval;
+    }
+
 }
 
 namespace FreeOrionPython {
@@ -603,9 +612,9 @@ namespace FreeOrionPython {
             .def("dump",                        &ShipDesign::Dump,                          py::return_value_policy<py::return_by_value>(), "Returns string with debug information, use '0' as argument.")
         ;
         py::def("validShipDesign",
-                +[](const ShipDesign& design, const std::string& hull, const std::vector<std::string>& parts) -> bool { return design.ValidDesign(hull, parts); },
+                +[](const std::string& hull, const py::list& parts) -> bool { return ShipDesign::ValidDesign(hull, ExtractList(parts)); },
                 "Returns true (boolean) if the passed hull (string) and parts"
-                " (StringVec) make up a valid ship design, and false (boolean)"
+                " (list of string) make up a valid ship design, and false (boolean)"
                 " otherwise. Valid ship designs don't have any parts in slots"
                 " that can't accept that type of part, and contain only hulls"
                 " and parts that exist (and may also need to contain the"
