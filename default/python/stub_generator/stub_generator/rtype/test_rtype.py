@@ -21,17 +21,22 @@ from stub_generator.stub_generator.rtype._base_rtype_mapping import make_type
         ("IntPair", "Tuple[int, int]"),
         ("IntSet", "Set[int]"),
         ("IntVec", "Sequence[int]"),
-        # embeded collections
+        # Embedded collections
         ("IntSetSet", "Set[Set[int]]"),
         # mapping
-        ("StringIntMap", "Dict[str, int]"),
-        ("IntSetFltMap", "Dict[Set[int], float]"),
+        ("StringIntMap", "Map[str, int]"),
+        ("IntSetFltMap", "Map[Set[int], float]"),
+        ("IntMeterTypeAccountingInfoVecMapMap", "Map[int, Map[meterType, Sequence[AccountingInfo]]]"),
         # Not matchable
         ("Hello", "Hello"),
         ("HelloVec", "HelloVec"),
         # Empty
         ("", ""),
         (None, ""),
+        # Underscores are ignored
+        ("_I_n_t_", "int"),
+        ("Int_Set", "Set[int]"),
+        ("Int_MeterType_AccountingInfoVecMapMap", "Map[int, Map[meterType, Sequence[AccountingInfo]]]"),
     ),
 )
 def test_make_type(string, hint):
