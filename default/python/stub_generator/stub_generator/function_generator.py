@@ -11,10 +11,10 @@ def _handle_function(fun: FunctionInfo):
     return_annotation = " -> %s" % update_function_rtype(fun.name, function.rtype)
     docstring = function.get_doc_string()
     if docstring:
-        docstring = f"\n{docstring}\n\n"
+        docstring = f"\n{docstring}\n"
         end = ""
     else:
-        end = " ...\n"
+        end = " ..."
     arg_strings = list(function.get_argument_strings())
     if len(arg_strings) == 1:
         yield "def %s(%s)%s:%s%s" % (fun.name, arg_strings[0], return_annotation, docstring, end)

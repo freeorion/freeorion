@@ -92,7 +92,6 @@ def _handle_class(info: ClassInfo):
 
     if not (properties or instance_methods):
         result[-1] += " ..."
-    result.append("")
     return "\n".join(result)
 
 

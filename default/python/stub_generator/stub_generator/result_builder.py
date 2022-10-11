@@ -76,23 +76,27 @@ class ResultBuilder:
         self._write_imports(file, self._built_in_imports)
         file.write("\n")
         self._write_imports(file, self._imports)
+
         for declaraion in self._extra_declaration:
             file.write(declaraion)
+            file.write("\n")
 
         for cls in self._classes:
             file.write("\n")
             file.write(cls)
+            file.write("\n")
 
         for enum in self._enums:
             file.write("\n")
             file.write(enum)
+            file.write("\n")
 
         file.write("\n")
         for function in self._functions[:-1]:
             file.write(function)
+            file.write("\n")
 
         last_function = self._functions[-1]
-        if last_function.endswith("\n\n"):
-            file.write(last_function[:-1])
-        else:
+        file.write(last_function)
+        if not last_function.endswith("\n"):
             file.write("\n")
