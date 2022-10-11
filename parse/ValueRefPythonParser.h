@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "../universe/ValueRefs.h"
+#include "../universe/Conditions.h"
 
 #include "ConditionPythonParser.h"
 
@@ -34,10 +35,45 @@ struct value_ref_wrapper {
         }
     }
 
+    operator condition_wrapper() const {
+        std::shared_ptr<ValueRef::Operation<T>> op = std::dynamic_pointer_cast<ValueRef::Operation<T>>(value_ref);
+        if (op && op->LHS() && op->RHS()) {
+            Condition::ComparisonType cmp_type;
+            switch (op->GetOpType()) {
+                case ValueRef::OpType::COMPARE_EQUAL:
+                    cmp_type = Condition::ComparisonType::EQUAL;
+                    break;
+                case ValueRef::OpType::COMPARE_GREATER_THAN:
+                    cmp_type = Condition::ComparisonType::GREATER_THAN;
+                    break;
+                case ValueRef::OpType::COMPARE_GREATER_THAN_OR_EQUAL:
+                    cmp_type = Condition::ComparisonType::GREATER_THAN_OR_EQUAL;
+                    break;
+                case ValueRef::OpType::COMPARE_LESS_THAN:
+                    cmp_type = Condition::ComparisonType::LESS_THAN;
+                    break;
+                case ValueRef::OpType::COMPARE_LESS_THAN_OR_EQUAL:
+                    cmp_type = Condition::ComparisonType::LESS_THAN_OR_EQUAL;
+                    break;
+                case ValueRef::OpType::COMPARE_NOT_EQUAL:
+                    cmp_type = Condition::ComparisonType::NOT_EQUAL;
+                    break;
+                default:
+                    throw std::runtime_error(std::string("Not implemented in ") + __func__ + " op type " + std::to_string(static_cast<int>(op->GetOpType())) + value_ref->Dump());
+            }
+            return condition_wrapper(std::make_shared<Condition::ValueTest>(op->LHS()->Clone(),
+                cmp_type,
+                op->RHS()->Clone()));
+        } else {
+            throw std::runtime_error(std::string("Unknown type of Value to condition ") + typeid(*value_ref).name());
+        }
+    }
+
     std::shared_ptr<ValueRef::ValueRef<T>> value_ref;
 };
 
 value_ref_wrapper<double> pow(const value_ref_wrapper<double>& lhs, double rhs);
+value_ref_wrapper<double> pow(double lhs, const value_ref_wrapper<double>& rhs);
 
 value_ref_wrapper<double> operator*(int, const value_ref_wrapper<double>&);
 value_ref_wrapper<double> operator*(const value_ref_wrapper<int>&, const value_ref_wrapper<double>&);
@@ -76,6 +112,7 @@ value_ref_wrapper<int> operator-(int, const value_ref_wrapper<int>&);
 value_ref_wrapper<int> operator+(const value_ref_wrapper<int>&, int);
 value_ref_wrapper<int> operator+(const value_ref_wrapper<int>&, const value_ref_wrapper<int>&);
 condition_wrapper operator<(const value_ref_wrapper<int>&, const value_ref_wrapper<int>&);
+value_ref_wrapper<int> operator<(const value_ref_wrapper<int>&, int);
 condition_wrapper operator>=(const value_ref_wrapper<int>&, const value_ref_wrapper<int>&);
 condition_wrapper operator==(const value_ref_wrapper<int>&, const value_ref_wrapper<int>&);
 condition_wrapper operator==(const value_ref_wrapper<int>&, int);

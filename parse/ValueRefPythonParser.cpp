@@ -8,7 +8,6 @@
 
 #include "../universe/ValueRefs.h"
 #include "../universe/NamedValueRefManager.h"
-#include "../universe/Conditions.h"
 
 #include "EnumPythonParser.h"
 #include "PythonParser.h"
@@ -18,6 +17,15 @@ value_ref_wrapper<double> pow(const value_ref_wrapper<double>& lhs, double rhs) 
         std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::EXPONENTIATE,
             ValueRef::CloneUnique(lhs.value_ref),
             std::make_unique<ValueRef::Constant<double>>(rhs)
+        )
+    );
+}
+
+value_ref_wrapper<double> pow(double lhs, const value_ref_wrapper<double>& rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::EXPONENTIATE,
+            std::make_unique<ValueRef::Constant<double>>(lhs),
+            ValueRef::CloneUnique(rhs.value_ref)
         )
     );
 }
@@ -336,6 +344,14 @@ condition_wrapper operator<(const value_ref_wrapper<int>& lhs, const value_ref_w
     );
 }
 
+value_ref_wrapper<int> operator<(const value_ref_wrapper<int>& lhs, int rhs) {
+    return value_ref_wrapper<int>(
+        std::make_shared<ValueRef::Operation<int>>(ValueRef::OpType::COMPARE_LESS_THAN,
+            ValueRef::CloneUnique(lhs.value_ref),
+            std::make_unique<ValueRef::Constant<int>>(rhs))
+    );
+}
+
 condition_wrapper operator>=(const value_ref_wrapper<int>& lhs, const value_ref_wrapper<int>& rhs) {
     return condition_wrapper(
         std::make_shared<Condition::ValueTest>(ValueRef::CloneUnique(lhs.value_ref),
@@ -608,6 +624,33 @@ namespace {
         ));
     }
 
+    value_ref_wrapper<int> insert_jumps_between_(boost::python::object arg1, boost::python::object arg2) {
+        std::unique_ptr<ValueRef::ValueRef<int>> id1;
+        auto id1_args = boost::python::extract<value_ref_wrapper<int>>(arg1);
+        if (id1_args.check()) {
+            id1 = ValueRef::CloneUnique(id1_args().value_ref);
+        } else {
+            id1 = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(arg1)());
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<int>> id2;
+        auto id2_args = boost::python::extract<value_ref_wrapper<int>>(arg2);
+        if (id2_args.check()) {
+            id2 = ValueRef::CloneUnique(id2_args().value_ref);
+        } else {
+            id2 = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(arg2)());
+        }
+
+        return value_ref_wrapper<int>(std::make_shared<ValueRef::ComplexVariable<int>>(
+            "JumpsBetween",
+            std::move(id1),
+            std::move(id2),
+            nullptr,
+            nullptr,
+            nullptr
+        ));
+    }
+
     value_ref_wrapper<std::string> insert_user_string(const boost::python::object& expr) {
         std::unique_ptr<ValueRef::ValueRef<std::string>> expr_;
         auto expr_args = boost::python::extract<value_ref_wrapper<std::string>>(expr);
@@ -783,6 +826,7 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
     globals["Statistic"] = boost::python::raw_function(f_insert_statistic, 2);
 
     globals["DirectDistanceBetween"] = insert_direct_distance_between_;
+    globals["JumpsBetween"] = insert_jumps_between_;
     globals["UserString"] = insert_user_string;
     globals["PartsInShipDesign"] = boost::python::raw_function(insert_parts_in_ship_design_);
     globals["EmpireMeterValue"] = boost::python::raw_function(insert_empire_meter_value_);
