@@ -26,10 +26,6 @@ def _handle_enum(info: EnumInfo):
     return "\n".join(result)
 
 
-class EnumGenerator:
-    def __init__(self, enums: List[EnumInfo]):
-        self._enums = enums
-
-    def __iter__(self):
-        for enum in sorted(self._enums, key=attrgetter("name")):
-            yield _handle_enum(enum)
+def generate_enums(enums: List[EnumInfo]):
+    for enum in sorted(enums, key=attrgetter("name")):
+        yield _handle_enum(enum)

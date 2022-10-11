@@ -6,9 +6,10 @@ from stub_generator.interface_inspector import (
     FunctionInfo,
     InstanceInfo,
 )
-from stub_generator.stub_generator import EnumGenerator
-from stub_generator.stub_generator.class_generator import ClassGenerator
-from stub_generator.stub_generator.function_generator import FunctionGenerator
+
+from stub_generator.stub_generator.class_generator import generate_classes
+from stub_generator.stub_generator.enum_generator import generate_enums
+from stub_generator.stub_generator.function_generator import generate_functions
 from stub_generator.stub_generator.result_builder import ResultBuilder, Import
 from stub_generator.stub_generator.rtype import mapping_code
 
@@ -56,11 +57,9 @@ def make_stub(
     )
 
     res.add_extra_declaration(mapping_code)
-
-    res.add_classes(ClassGenerator(classes, instances, classes_to_ignore, enums))
-    res.add_enums(EnumGenerator(enums))
-
-    res.add_functions(FunctionGenerator(functions))
+    res.add_classes(generate_classes(classes, instances, classes_to_ignore, enums))
+    res.add_enums(generate_enums(enums))
+    res.add_functions(generate_functions(functions))
 
     with open(result_path, "w") as f:
         res.write(f)
