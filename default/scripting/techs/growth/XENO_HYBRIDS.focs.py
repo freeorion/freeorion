@@ -13,7 +13,7 @@ Tech(
     ),
     researchturns=10,
     tags=["PEDIA_GROWTH_CATEGORY"],
-    prerequisites="GRO_XENO_GENETICS",
+    prerequisites=["GRO_XENO_GENETICS"],
     effectsgroups=[
         EffectsGroup(
             scope=Planet() & OwnedBy(empire=Source.Owner) & Planet(environment=[Poor]),

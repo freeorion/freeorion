@@ -8,7 +8,7 @@ Tech(
     researchcost=60 * TECH_COST_MULTIPLIER,
     researchturns=4,
     tags=["PEDIA_PRODUCTION_CATEGORY"],
-    prerequisites="PRO_ROBOTIC_PROD",
+    prerequisites=["PRO_ROBOTIC_PROD"],
     unlock=[
         Item(type=UnlockBuilding, name="BLD_INDUSTRY_CENTER"),
         Item(type=UnlockPolicy, name="PLC_INDUSTRIALISM"),

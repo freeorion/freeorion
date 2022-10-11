@@ -8,7 +8,7 @@ Tech(
     researchcost=240 * TECH_COST_MULTIPLIER,
     researchturns=6,
     tags=["PEDIA_GROWTH_CATEGORY"],
-    prerequisites="GRO_GENETIC_ENG",
+    prerequisites=["GRO_GENETIC_ENG"],
     unlock=[
         Item(type=UnlockShipPart, name="CO_SUSPEND_ANIM_POD"),
         Item(type=UnlockPolicy, name="PLC_NO_GROWTH"),

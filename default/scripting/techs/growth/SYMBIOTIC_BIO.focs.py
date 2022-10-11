@@ -13,7 +13,7 @@ Tech(
     ),
     researchturns=6,
     tags=["PEDIA_GROWTH_CATEGORY"],
-    prerequisites="GRO_PLANET_ECOL",
+    prerequisites=["GRO_PLANET_ECOL"],
     unlock=[
         Item(type=UnlockPolicy, name="PLC_DIVERSITY"),
         Item(type=UnlockPolicy, name="PLC_BLACK_MARKET"),

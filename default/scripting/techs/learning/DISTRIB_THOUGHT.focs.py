@@ -9,7 +9,7 @@ Tech(
     researchcost=120 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_LEARNING_CATEGORY"],
-    prerequisites="LRN_PSIONICS",
+    prerequisites=["LRN_PSIONICS"],
     effectsgroups=[
         EffectsGroup(
             scope=ProductionCenter

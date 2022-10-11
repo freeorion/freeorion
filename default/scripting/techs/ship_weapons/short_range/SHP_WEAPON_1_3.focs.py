@@ -9,7 +9,7 @@ Tech(
     researchcost=12 * TECH_COST_MULTIPLIER,
     researchturns=2,
     tags=["PEDIA_SR_WEAPON_TECHS"],
-    prerequisites="SHP_WEAPON_1_2",
+    prerequisites=["SHP_WEAPON_1_2"],
     effectsgroups=WEAPON_UPGRADE_CAPACITY_EFFECTS("SR_WEAPON_1_1", 1),
     graphic="icons/ship_parts/mass-driver-3.png",
 )

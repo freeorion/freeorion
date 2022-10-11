@@ -13,7 +13,7 @@ Tech(
     ),
     researchturns=7,
     tags=["PEDIA_SPY_CATEGORY"],
-    prerequisites="SPY_STEALTH_2",
+    prerequisites=["SPY_STEALTH_2"],
     effectsgroups=EffectsGroup(
         scope=OwnedBy(empire=Source.Owner) & Planet(),
         activation=~OwnerHasTech(name="SPY_STEALTH_4"),

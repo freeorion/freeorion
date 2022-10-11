@@ -21,7 +21,7 @@ Tech(
     researchcost=30 * TECH_COST_MULTIPLIER,
     researchturns=3,
     tags=["PEDIA_DEFENSE_CATEGORY"],
-    prerequisites="DEF_ROOT_DEFENSE",
+    prerequisites=["DEF_ROOT_DEFENSE"],
     effectsgroups=[EG_DEFENSE_NET(5, "1")],
     graphic="icons/tech/defense.png",
 )
@@ -34,7 +34,7 @@ Tech(
     researchcost=96 * TECH_COST_MULTIPLIER,
     researchturns=4,
     tags=["PEDIA_DEFENSE_CATEGORY"],
-    prerequisites="DEF_DEFENSE_NET_1",
+    prerequisites=["DEF_DEFENSE_NET_1"],
     effectsgroups=[EG_DEFENSE_NET(15, "2")],
     graphic="icons/tech/defense.png",
 )
@@ -47,7 +47,7 @@ Tech(
     researchcost=240 * TECH_COST_MULTIPLIER,
     researchturns=6,
     tags=["PEDIA_DEFENSE_CATEGORY"],
-    prerequisites="DEF_DEFENSE_NET_2",
+    prerequisites=["DEF_DEFENSE_NET_2"],
     effectsgroups=[EG_DEFENSE_NET(25, "3")],
     graphic="icons/tech/defense.png",
 )
@@ -60,7 +60,7 @@ Tech(
     researchcost=120 * TECH_COST_MULTIPLIER,
     researchturns=6,
     tags=["PEDIA_DEFENSE_CATEGORY"],
-    prerequisites="DEF_DEFENSE_NET_2",
+    prerequisites=["DEF_DEFENSE_NET_2"],
     effectsgroups=[
         EffectsGroup(
             scope=Planet() & OwnedBy(empire=Source.Owner),
@@ -79,7 +79,7 @@ Tech(
     researchcost=240 * TECH_COST_MULTIPLIER,
     researchturns=8,
     tags=["PEDIA_DEFENSE_CATEGORY"],
-    prerequisites="DEF_DEFENSE_NET_REGEN_1",
+    prerequisites=["DEF_DEFENSE_NET_REGEN_1"],
     effectsgroups=[
         EffectsGroup(
             scope=Planet() & OwnedBy(empire=Source.Owner),

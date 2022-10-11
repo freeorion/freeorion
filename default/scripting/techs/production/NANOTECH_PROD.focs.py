@@ -8,6 +8,6 @@ Tech(
     researchcost=80 * TECH_COST_MULTIPLIER,
     researchturns=4,
     tags=["PEDIA_PRODUCTION_CATEGORY", "THEORY"],
-    prerequisites="PRO_ROBOTIC_PROD",
+    prerequisites=["PRO_ROBOTIC_PROD"],
     graphic="icons/tech/nanotech_production.png",
 )

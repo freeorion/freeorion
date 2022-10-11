@@ -8,6 +8,6 @@ Tech(
     researchcost=120 * TECH_COST_MULTIPLIER,
     researchturns=4,
     tags=["PEDIA_SR_WEAPON_TECHS"],
-    prerequisites="SHP_ORGANIC_WAR_ADAPTION",
+    prerequisites=["SHP_ORGANIC_WAR_ADAPTION"],
     graphic="icons/ship_parts/solarcollector.png",
 )

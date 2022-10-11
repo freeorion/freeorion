@@ -9,7 +9,7 @@ Tech(
     researchcost=900 * TECH_COST_MULTIPLIER,
     researchturns=3,
     tags=["PEDIA_SR_WEAPON_TECHS"],
-    prerequisites="SHP_WEAPON_4_2",
+    prerequisites=["SHP_WEAPON_4_2"],
     effectsgroups=WEAPON_UPGRADE_CAPACITY_EFFECTS("SR_WEAPON_4_1", 5),
     graphic="icons/ship_parts/death-ray-3.png",
 )

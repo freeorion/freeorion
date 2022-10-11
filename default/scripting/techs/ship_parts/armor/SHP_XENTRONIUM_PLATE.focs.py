@@ -8,7 +8,7 @@ Tech(
     researchcost=1200 * TECH_COST_MULTIPLIER,
     researchturns=6,
     tags=["PEDIA_ARMOR_PART_TECHS"],
-    prerequisites="SHP_DIAMOND_PLATE",
+    prerequisites=["SHP_DIAMOND_PLATE"],
     unlock=Item(type=UnlockShipPart, name="AR_XENTRONIUM_PLATE"),
     graphic="icons/tech/armor_plating.png",
 )

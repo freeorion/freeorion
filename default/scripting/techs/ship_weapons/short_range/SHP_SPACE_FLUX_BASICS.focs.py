@@ -8,7 +8,7 @@ Tech(
     researchcost=10 * TECH_COST_MULTIPLIER,
     researchturns=2,
     tags=["PEDIA_SR_WEAPON_TECHS"],
-    prerequisites="SHP_ROOT_AGGRESSION",
+    prerequisites=["SHP_ROOT_AGGRESSION"],
     unlock=Item(type=UnlockShipPart, name="SR_FLUX_LANCE"),
     graphic="icons/ship_parts/flux-lance.png",
 )

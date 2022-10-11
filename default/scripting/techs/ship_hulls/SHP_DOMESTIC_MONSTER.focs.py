@@ -8,6 +8,6 @@ Tech(
     researchcost=18 * TECH_COST_MULTIPLIER,
     researchturns=3,
     tags=["PEDIA_SHIP_HULLS_CATEGORY"],
-    prerequisites="GRO_PLANET_ECOL",
+    prerequisites=["GRO_PLANET_ECOL"],
     graphic="icons/monsters/kraken-5.png",
 )

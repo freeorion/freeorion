@@ -8,6 +8,6 @@ Tech(
     researchcost=128 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_LEARNING_CATEGORY", "THEORY"],
-    prerequisites="LRN_FORCE_FIELD",
+    prerequisites=["LRN_FORCE_FIELD"],
     graphic="icons/tech/n-dimensional_subspace.png",
 )

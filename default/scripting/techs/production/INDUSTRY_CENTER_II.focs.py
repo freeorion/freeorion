@@ -8,6 +8,6 @@ Tech(
     researchcost=240 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_PRODUCTION_CATEGORY"],
-    prerequisites="PRO_INDUSTRY_CENTER_I",
+    prerequisites=["PRO_INDUSTRY_CENTER_I"],
     graphic="icons/tech/industrial_centre_ii.png",
 )

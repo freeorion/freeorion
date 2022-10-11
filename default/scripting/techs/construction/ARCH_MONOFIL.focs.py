@@ -8,7 +8,7 @@ Tech(
     researchcost=125 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_CONSTRUCTION_CATEGORY"],
-    prerequisites="CON_ASYMP_MATS",
+    prerequisites=["CON_ASYMP_MATS"],
     unlock=Item(type=UnlockBuilding, name="BLD_SPACE_ELEVATOR"),
     graphic="icons/tech/architectural_monofilaments.png",
 )

@@ -9,7 +9,7 @@ Tech(
     researchcost=80 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_PRODUCTION_CATEGORY"],
-    prerequisites="CON_ORBITAL_CON",
+    prerequisites=["CON_ORBITAL_CON"],
     effectsgroups=[
         EffectsGroup(
             scope=ProductionCenter

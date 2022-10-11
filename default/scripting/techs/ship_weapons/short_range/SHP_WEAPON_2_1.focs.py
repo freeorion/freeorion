@@ -9,7 +9,7 @@ Tech(
     researchcost=64 * TECH_COST_MULTIPLIER,
     researchturns=8,
     tags=["PEDIA_SR_WEAPON_TECHS"],
-    prerequisites="SHP_ROOT_AGGRESSION",
+    prerequisites=["SHP_ROOT_AGGRESSION"],
     unlock=Item(type=UnlockShipPart, name="SR_WEAPON_2_1"),
     effectsgroups=WEAPON_BASE_EFFECTS("SR_WEAPON_2_1"),
     graphic="icons/ship_parts/laser-1.png",

@@ -9,7 +9,7 @@ Tech(
     researchcost=400 * TECH_COST_MULTIPLIER,
     researchturns=2,
     tags=["PEDIA_SR_WEAPON_TECHS"],
-    prerequisites="SHP_WEAPON_3_3",
+    prerequisites=["SHP_WEAPON_3_3"],
     effectsgroups=WEAPON_UPGRADE_CAPACITY_EFFECTS("SR_WEAPON_3_1", 3),
     graphic="icons/ship_parts/plasma-4.png",
 )

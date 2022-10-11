@@ -8,7 +8,7 @@ Tech(
     researchcost=180 * TECH_COST_MULTIPLIER,
     researchturns=3,
     tags=["PEDIA_ASTEROID_HULL_TECHS"],
-    prerequisites="SHP_ASTEROID_HULLS",
+    prerequisites=["SHP_ASTEROID_HULLS"],
     unlock=[
         # Item type = ShipHull name = "SH_AGREGATE_ASTEROID"
         Item(type=UnlockBuilding, name="BLD_SHIPYARD_AST_REF"),

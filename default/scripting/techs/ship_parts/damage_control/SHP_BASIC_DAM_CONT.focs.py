@@ -9,7 +9,7 @@ Tech(
     researchcost=80 * TECH_COST_MULTIPLIER,
     researchturns=4,
     tags=["PEDIA_DAMAGE_CONTROL_PART_TECHS"],
-    prerequisites="SHP_MIL_ROBO_CONT",
+    prerequisites=["SHP_MIL_ROBO_CONT"],
     unlock=Item(type=UnlockPolicy, name="PLC_ENGINEERING"),
     effectsgroups=EffectsGroup(
         scope=Ship

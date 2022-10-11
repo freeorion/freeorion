@@ -8,7 +8,7 @@ Tech(
     researchcost=12 * TECH_COST_MULTIPLIER,
     researchturns=3,
     tags=["PEDIA_FIGHTER_TECHS"],
-    prerequisites="SHP_ROOT_AGGRESSION",
+    prerequisites=["SHP_ROOT_AGGRESSION"],
     unlock=[
         Item(type=UnlockShipPart, name="FT_BAY_1"),
         Item(type=UnlockShipPart, name="FT_HANGAR_1"),

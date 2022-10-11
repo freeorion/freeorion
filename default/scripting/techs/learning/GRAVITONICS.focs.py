@@ -8,7 +8,7 @@ Tech(
     researchcost=128 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_LEARNING_CATEGORY"],
-    prerequisites="LRN_FORCE_FIELD",
+    prerequisites=["LRN_FORCE_FIELD"],
     unlock=[
         Item(type=UnlockBuilding, name="BLD_STARLANE_BORE"),
         Item(type=UnlockBuilding, name="BLD_SCRYING_SPHERE"),

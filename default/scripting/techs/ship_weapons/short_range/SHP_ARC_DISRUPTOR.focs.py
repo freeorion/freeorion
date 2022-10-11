@@ -13,7 +13,7 @@ Tech(
     researchcost=12 * TECH_COST_MULTIPLIER,
     researchturns=4,
     tags=["PEDIA_SR_WEAPON_TECHS"],
-    prerequisites="SHP_ROOT_AGGRESSION",
+    prerequisites=["SHP_ROOT_AGGRESSION"],
     unlock=Item(type=UnlockShipPart, name="SR_ARC_DISRUPTOR"),
     effectsgroups=WEAPON_BASE_EFFECTS("SR_ARC_DISRUPTOR"),
     graphic="icons/ship_parts/pulse-laser-1.png",
@@ -27,7 +27,7 @@ Tech(
     researchcost=96 * TECH_COST_MULTIPLIER,
     researchturns=8,
     tags=["PEDIA_SR_WEAPON_TECHS"],
-    prerequisites="SHP_WEAPON_ARC_DISRUPTOR_1",
+    prerequisites=["SHP_WEAPON_ARC_DISRUPTOR_1"],
     effectsgroups=WEAPON_UPGRADE_CAPACITY_EFFECTS("SR_ARC_DISRUPTOR", 2),
     graphic="icons/ship_parts/pulse-laser-2.png",
 )
@@ -41,7 +41,7 @@ Tech(
     researchcost=600 * TECH_COST_MULTIPLIER,
     researchturns=12,
     tags=["PEDIA_SR_WEAPON_TECHS"],
-    prerequisites="SHP_WEAPON_ARC_DISRUPTOR_2",
+    prerequisites=["SHP_WEAPON_ARC_DISRUPTOR_2"],
     effectsgroups=WEAPON_UPGRADE_CAPACITY_EFFECTS("SR_ARC_DISRUPTOR", 3),
     graphic="icons/ship_parts/pulse-laser-3.png",
 )

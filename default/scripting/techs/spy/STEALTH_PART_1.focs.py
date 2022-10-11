@@ -8,7 +8,7 @@ Tech(
     researchcost=80 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_STEALTH_PART_TECHS"],
-    prerequisites="SPY_DETECT_2",
+    prerequisites=["SPY_DETECT_2"],
     unlock=Item(type=UnlockShipPart, name="ST_CLOAK_1"),
     graphic="icons/ship_parts/cloak-1.png",
 )
