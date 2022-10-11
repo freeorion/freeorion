@@ -4,7 +4,7 @@ from common.fo_typing import EmpireId, Turn
 _rtypes_map = {
     "currentTurn": Turn.__name__,
     "empireID": EmpireId.__name__,
-    "allEmpireIDs": f"Sequence[{EmpireId.__name__}]",
+    "allEmpireIDs": f"Vec[{EmpireId.__name__}]",
 }
 
 

@@ -45,7 +45,7 @@ class MapToken(Token):
 
 
 _tokens: List[Token] = [
-    SimpleCollectionToken("Vec", "Sequence"),
+    SimpleCollectionToken("Vec", "Vec"),
     SimpleCollectionToken("Set", "Set"),
     MapToken("Map"),
     PairToken("Pair"),
