@@ -17,19 +17,39 @@ Policy
             effects = [
                 SetTargetInfluence value = Value
                    + (NamedReal name = "PLC_CHECKPOINTS_TARGET_INFLUENCE_FLAT" value = -0.5)
-                SetMaxSupply value = Value 
-                   + (NamedReal name = "PLC_CHECKPOINTS_MAX_SUPPLY_FLAT" value = -1)
             ]
 
         EffectsGroup
             scope = And [
-                Capital
-                OwnedBy empire = Source.Owner
+                Ship
+                // own and allied ships should not be affected
+                Not Or [
+                    OwnedBy empire = Source.Owner
+                    OwnedBy affiliation = AllyOf empire = Source.Owner
+                ]
+
+                // check in system and on starlanes if in own supply lines (allied ones dont count)
+                Or [
+                   And [
+                       InSystem
+                       (LocalCandidate.SupplyingEmpire == Source.Owner)
+                   ]
+                   And [
+                       // TODO add .SupplyingEmpire for ships on starlanes
+                       Not InSystem
+                       (2 == Statistic Count condition = And [
+                          System
+                          (LocalCandidate.SupplyingEmpire == Source.Owner)
+                          Or [
+                            (RootCandidate.Fleet.NextSystemID == LocalCandidate.ID)
+                            (RootCandidate.Fleet.PreviousSystemID == LocalCandidate.ID)
+                          ]
+                       ])
+                   ]
+                ]
             ]
-            effects = SetEmpireMeter
-                empire = Source.Owner
-                meter = "METER_DETECTION_STRENGTH"
-                value = Value + min((NamedReal name = "PLC_CHECKPOINTS_DETECTION_STRENGTH_MAX" value = 20.0),
+
+            effects = SetStealth value = Value - min((NamedReal name = "PLC_CHECKPOINTS_MAX_STEALTH_MALUS" value = 20.0),
                                     TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy)
     ]
     graphic = "icons/policies/economic_checkpoints.png"
