@@ -55,7 +55,7 @@ def test_resource_builder():
     builder.add_import(Import("common.fo_typing", ["EmpireId", "BuildingId", "X" * 50]))
     builder.add_extra_declaration("\nA = 1")
     builder.add_extra_declaration("B = 2")
-    builder.add_resources("\n\nclass Foo: ...")
+    builder.add_class("class Foo: ...\n")
 
     res = StringIO()
     builder.write(res)

@@ -5,7 +5,6 @@ from typing import Iterable, List, Set
 from common.print_utils import Table, Text
 from stub_generator.interface_inspector import ClassInfo, EnumInfo, InstanceInfo
 from stub_generator.parse_docs import Docs
-from stub_generator.stub_generator.base_generator import BaseGenerator
 from stub_generator.stub_generator.rtype import update_method_rtype, update_property_rtype
 
 
@@ -94,7 +93,7 @@ def _handle_class(info: ClassInfo):
     if not (properties or instance_methods):
         result[-1] += " ..."
     result.append("")
-    yield "\n".join(result)
+    return "\n".join(result)
 
 
 def _report_classes_without_instances(classes_map: Iterable[str], instance_names, classes_to_ignore: Set[str]):
@@ -123,7 +122,7 @@ def _report_classes_without_instances(classes_map: Iterable[str], instance_names
     table.print_table(warning)
 
 
-class ClassGenerator(BaseGenerator):
+class ClassGenerator:
     def __init__(
         self,
         classes: List[ClassInfo],
@@ -136,9 +135,8 @@ class ClassGenerator(BaseGenerator):
         self.instances = instances
         self.classes = classes
         self.enums = enums
-        self._process()
 
-    def _process(self):
+    def __iter__(self):
         # exclude technical Map classes that are prefixed with map_indexing_suite_ classes
         classes = [x for x in self.classes if not x.name.startswith("map_indexing_suite_")]
         classes_map = {x.name: x for x in classes}
@@ -190,4 +188,4 @@ class ClassGenerator(BaseGenerator):
         )  # put classes with no parents on first place
 
         for cls in classes:
-            self.body.extend(_handle_class(cls))
+            yield _handle_class(cls)

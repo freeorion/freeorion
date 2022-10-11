@@ -32,6 +32,9 @@ class ResultBuilder:
         self._imports = []
         self._extra_declaration = []
         self._resources = []
+        self._classes = []
+        self._enums = []
+        self._functions = []
 
     def add_built_in_import(self, import_: Import):
         self._built_in_imports.append(import_)
@@ -42,8 +45,17 @@ class ResultBuilder:
     def add_extra_declaration(self, declaration: str):
         self._extra_declaration.append(declaration)
 
+    def add_class(self, cls: str):
+        self._classes.append(cls)
+
     def add_resources(self, *resources: str):
         self._resources.extend(resources)
+
+    def add_enum(self, enum):
+        self._enums.append(enum)
+
+    def add_function(self, function):
+        self._functions.append(function)
 
     def _import_string(self, import_: Import):
         return f"from {import_.from_} import {', '.join(import_.items)}"
@@ -70,12 +82,21 @@ class ResultBuilder:
         self._write_imports(file, self._imports)
         for declaraion in self._extra_declaration:
             file.write(declaraion)
-            file.write("\n")
 
-        for resource in self._resources[:-1]:
-            file.write(resource)
+        for cls in self._classes:
             file.write("\n")
-        last_resource = self._resources[-1]
-        file.write(last_resource)
-        if not last_resource.endswith("\n"):
+            file.write(cls)
+
+        for enum in self._enums:
+            file.write("\n")
+            file.write(enum)
+
+        file.write("\n")
+        for function in self._functions[:-1]:
+            file.write(function)
+
+        last_function = self._functions[-1]
+        if last_function.endswith("\n\n"):
+            file.write(last_function[:-1])
+        else:
             file.write("\n")
