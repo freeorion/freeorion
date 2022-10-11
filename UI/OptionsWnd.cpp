@@ -923,7 +923,7 @@ namespace {
 
         // check if pressed key is different from existing setting...
         const Hotkey& hotkey = Hotkey::NamedHotkey(hk_name);
-        if (hotkey.m_key == kp.first && hotkey.m_mod_keys == kp.second)
+        if (hotkey.GetKey() == kp.first && hotkey.GetModKeys() == kp.second)
             return; // nothing to change
 
 

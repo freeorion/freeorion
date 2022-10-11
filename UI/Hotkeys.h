@@ -39,15 +39,12 @@ class Hotkey {
     static Hotkey& PrivateNamedHotkey(const std::string& name);
 
 public:
-    /// Internal name (code-like).
-    std::string m_name;
-
-    /// The human readable description of what this Hot does.
-    std::string m_description;
-
-    /// Returns the name of the user string containing the description
-    /// of the shortcut.
-    std::string GetDescription() const;
+    auto& GetName() const noexcept { return m_name; }
+    auto& GetDescription() const noexcept { return m_description; }
+    auto  GetKey() const noexcept { return m_key; }
+    auto  GetKeyDefault() const noexcept { return m_key_default; }
+    auto  GetModKeys() const noexcept { return m_mod_keys; }
+    auto  GetModKeysDefault() const noexcept { return m_mod_keys_default; }
 
     /// Registers a hotkey name (ie the one used for storing in the
     /// database) along with a description and a default value.
@@ -90,24 +87,24 @@ public:
     /// hotkey lists, which is probably why it should be called from
     /// main(), or something like that.
     static void AddOptions(OptionsDB& db);
-    /// 
     static void ReadFromOptions(OptionsDB& db);
 
     /// Pretty print, ie transform into something that may look
     /// reasonably nice for the user, but won't be parseable anymore.
-    static std::string PrettyPrint(GG::Key key, GG::Flags<GG::ModKey> mod);
     std::string PrettyPrint() const;
 
-    /// Whether or not the given key combination is safe to recognize while typing text
-    static bool IsTypingSafe(GG::Key key, GG::Flags<GG::ModKey> mod);
+    [[nodiscard]] bool IsTypingSafe() const noexcept;  /// Is the hotkey safe to recognize while typing text?
+    [[nodiscard]] bool IsDefault() const noexcept { return m_key == m_key_default && m_mod_keys == m_mod_keys_default; };
 
-    bool IsTypingSafe() const;  /// Is the hotkey safe to recognize while typing text?
-    bool IsDefault() const;     /// Is the hotkey set to its default value ?
-
+private:
+    std::string           m_name; /// Internal name (code-like).
+    std::string           m_description;  /// The human readable description of what this Hot does.
     GG::Key               m_key;
     GG::Key               m_key_default;
     GG::Flags<GG::ModKey> m_mod_keys;
     GG::Flags<GG::ModKey> m_mod_keys_default;
+
+    friend class HotkeyManager;
 };
 
 
