@@ -4,7 +4,7 @@
 # During execution, the actual module is made available via
 # a C++ Boost-python process as part of the launch.
 from enum import IntEnum
-from typing import Dict, Iterator, Generic, Sequence, Set, Tuple, TypeVar, overload
+from typing import Dict, Generic, Iterator, Sequence, Set, Tuple, TypeVar, overload
 
 from common.fo_typing import (
     BuildingId,

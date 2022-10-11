@@ -2,7 +2,6 @@ from operator import attrgetter
 from typing import List
 
 from stub_generator.interface_inspector import EnumInfo
-from stub_generator.stub_generator.base_generator import BaseGenerator
 
 
 def _handle_enum(info: EnumInfo):
@@ -23,13 +22,9 @@ def _handle_enum(info: EnumInfo):
 
     for text, value in pairs:
         result.append("    %s = %s" % (text, value))
-    result.append("")
-    yield "\n".join(result)
+    return "\n".join(result)
 
 
-class EnumGenerator(BaseGenerator):
-    def __init__(self, enums: List[EnumInfo]):
-        super().__init__()
-
-        for enum in sorted(enums, key=attrgetter("name")):
-            self.body.extend(_handle_enum(enum))
+def generate_enums(enums: List[EnumInfo]):
+    for enum in sorted(enums, key=attrgetter("name")):
+        yield _handle_enum(enum)
