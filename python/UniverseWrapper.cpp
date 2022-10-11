@@ -257,19 +257,19 @@ namespace FreeOrionPython {
         py::class_<std::map<int, int>>("IntIntMap")
             .def(py::map_indexing_suite<std::map<int, int>, true>())
         ;
-        py::class_<std::map<int, double>>("IntDblMap")
+        py::class_<std::map<int, double>>("IntDoubleMap")
             .def(py::map_indexing_suite<std::map<int, double>, true>())
         ;
-        py::class_<std::map<int, float>>("IntFltMap")
+        py::class_<std::map<int, float>>("IntFloatMap")
             .def(py::map_indexing_suite<std::map<int, float>, true>())
         ;
         py::class_<std::map<Visibility, int>>("VisibilityIntMap")
             .def(py::map_indexing_suite<std::map<Visibility, int>, true>())
         ;
-        py::class_<std::vector<ShipSlotType>>("ShipSlotVec")
+        py::class_<std::vector<ShipSlotType>>("ShipSlotTypeVec")
             .def(py::vector_indexing_suite<std::vector<ShipSlotType>, true>())
         ;
-        py::class_<std::map<std::string, std::string>>("StringsMap")
+        py::class_<std::map<std::string, std::string>>("StringStringMap")
             .def(py::map_indexing_suite<std::map<std::string, std::string>, true>())
         ;
 
@@ -280,14 +280,14 @@ namespace FreeOrionPython {
         py::to_python_converter<std::pair<MeterType, std::string>,
                                 PairToTupleConverter<std::pair<MeterType, std::string>>>();
 
-        py::class_<Ship::PartMeterMap>("ShipPartMeterMap")
+        py::class_<Ship::PartMeterMap>("MeterTypeStringPairMeterMap")
             .def(py::map_indexing_suite<Ship::PartMeterMap>())
         ;
 
-        py::class_<std::map<std::string, std::map<int, std::map<int, double>>>>("StatRecordsMap")
+        py::class_<std::map<std::string, std::map<int, std::map<int, double>>>>("StringIntIntDoubleMapMapMap")
             .def(py::map_indexing_suite<std::map<std::string, std::map<int, std::map<int, double>>>, true>())
         ;
-        py::class_<std::map<int, std::map<int, double>>>("IntIntDblMapMap")
+        py::class_<std::map<int, std::map<int, double>>>("IntIntDoubleMapMap")
             .def(py::map_indexing_suite<std::map<int, std::map<int, double>>, true>())
         ;
 
@@ -315,7 +315,7 @@ namespace FreeOrionPython {
         ;
         py::to_python_converter<Effect::AccountingMap::value_type,
             PairToTupleConverter<Effect::AccountingMap::value_type>>();
-        py::class_<Effect::AccountingMap>("TargetIDAccountingMapMap")
+        py::class_<Effect::AccountingMap>("IntMeterTypeAccountingInfoVecMapMap")
             .def(py::map_indexing_suite<Effect::AccountingMap, true>())
         ;
 

@@ -203,11 +203,11 @@ namespace FreeOrionPython {
         py::to_python_converter<std::pair<int, int>, PairToTupleConverter<int, int>>();
         py::to_python_converter<std::pair<float, int>, PairToTupleConverter<float, int>>();
 
-        py::class_<std::map<std::pair<int, int>, int>>("PairIntInt_IntMap")
+        py::class_<std::map<std::pair<int, int>, int>>("IntIntPairIntMap")
             .def(py::map_indexing_suite<std::map<std::pair<int, int>, int>, true>())
         ;
 
-        py::class_<std::vector<std::pair<int, int>>>("IntPairVec")
+        py::class_<std::vector<std::pair<int, int>>>("IntIntPairVec")
             .def(py::vector_indexing_suite<std::vector<std::pair<int, int>>, true>())
         ;
 
@@ -228,11 +228,11 @@ namespace FreeOrionPython {
             .def(py::map_indexing_suite<std::map<int, std::string>, true>())
         ;
 
-        py::class_<std::map<std::string, std::map<int, std::string>>>("String_IntStringMap_Map")
+        py::class_<std::map<std::string, std::map<int, std::string>>>("StringIntStringMapMap")
             .def(py::map_indexing_suite<std::map<std::string, std::map<int, std::string>>, true>())
         ;
 
-        py::class_<std::map<int, float>>("IntFltMap")
+        py::class_<std::map<int, float>>("IntFloatMap")
             .def(py::map_indexing_suite<std::map<int, float>, true>())
         ;
 
@@ -240,7 +240,7 @@ namespace FreeOrionPython {
             .def(py::map_indexing_suite<std::map<int, float>, true>())
         ;
 
-        py::class_<std::map<std::set<int>, float>>("IntSetFltMap")
+        py::class_<std::map<std::set<int>, float>>("IntSetFloatMap")
             .def(py::map_indexing_suite<std::map<std::set<int>, float>, true>())
         ;
 
