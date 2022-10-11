@@ -1,12 +1,10 @@
 mapping_code = """
-KT = TypeVar('KT')
-VT = TypeVar('VT')
-
+KT = TypeVar("KT")
+VT = TypeVar("VT")
 
 class Item(Generic[KT, VT]):
     def key(self) -> KT: ...
     def data(self) -> VT: ...
-
 
 class Map(Generic[KT, VT]):
     def __contains__(self, key: KT) -> bool: ...
@@ -15,6 +13,4 @@ class Map(Generic[KT, VT]):
     def __iter__(self) -> Iterator[Item[KT, VT]]: ...
     def __len__(self) -> int: ...
     def __setitem__(self, key: KT, value: VT) -> None: ...
-
-
 """

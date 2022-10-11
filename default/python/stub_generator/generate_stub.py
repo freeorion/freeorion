@@ -9,6 +9,7 @@ from stub_generator.interface_inspector import (
 from stub_generator.stub_generator import EnumGenerator
 from stub_generator.stub_generator.class_generator import ClassGenerator
 from stub_generator.stub_generator.function_generator import FunctionGenerator
+from stub_generator.stub_generator.result_builder import ResultBuilder, Import
 from stub_generator.stub_generator.rtype import mapping_code
 
 
@@ -32,30 +33,38 @@ def make_stub(
         "# This is a type-hinting python stub file, used by python IDEs to provide type hints. For more information\n"
         "# about stub files, see https://www.python.org/dev/peps/pep-0484/#stub-files\n"
         "# During execution, the actual module is made available via\n"
-        "# a C++ Boost-python process as part of the launch.\n"
-        "from enum import IntEnum\n"
-        "from typing import Dict, Iterator, Generic, Sequence, Set, Tuple, TypeVar, overload\n"
-        "\n"
-        "from common.fo_typing import (\n"
-        "    BuildingId,\n"
-        "    BuildingName,\n"
-        "    EmpireId,\n"
-        "    FleetId,\n"
-        "    ObjectId,\n"
-        "    PartName,\n"
-        "    PlanetId,\n"
-        "    ShipId,\n"
-        "    SpeciesName,\n"
-        "    SystemId,\n"
-        "    Turn,\n"
-        ")\n\n"
+        "# a C++ Boost-python process as part of the launch."
     )
 
-    res = []
+    res = ResultBuilder(header)
+    res.add_built_in_import(Import("enum", ["IntEnum"]))
+    res.add_built_in_import(
+        Import("typing", ["Dict", "Iterator", "Generic", "Sequence", "Set", "Tuple", "TypeVar", "overload"])
+    )
+
+    res.add_import(
+        Import(
+            "common.fo_typing",
+            [
+                "BuildingId",
+                "BuildingName",
+                "EmpireId",
+                "FleetId",
+                "ObjectId",
+                "PartName",
+                "PlanetId",
+                "ShipId",
+                "SpeciesName",
+                "SystemId",
+                "Turn",
+            ],
+        )
+    )
+
+    res.add_extra_declaration(mapping_code)
+
     for processor in processors:
-        res.extend(processor.body)
+        res.add_resources(*processor.body)
 
     with open(result_path, "w") as f:
-        f.write(header)
-        f.write(mapping_code)
-        f.write("\n".join(res))
+        res.write(f)
