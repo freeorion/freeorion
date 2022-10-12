@@ -112,7 +112,9 @@ def try_again(mil_fleet_ids, try_reset=False, thisround=""):
     get_military_fleets(try_reset=try_reset, thisround=thisround)
 
 
-def avail_mil_needing_repair(mil_fleet_ids, split_ships=False, on_mission=False, repair_limit=0.70):
+def avail_mil_needing_repair(  # noqa: max-complexity
+    mil_fleet_ids, split_ships=False, on_mission=False, repair_limit=0.70
+):
     """Returns tuple of lists: (ids_needing_repair, ids_not)."""
     fleet_buckets = [[], []]
     universe = fo.getUniverse()
@@ -642,7 +644,7 @@ def enemies_nearly_supplying_system(sys_id):
     return get_aistate().systemStatus.get(sys_id, {}).get("enemies_nearly_supplied", [])
 
 
-def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
+def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):  # noqa: max-complexity
     """Get armed military fleets."""
     global _military_allocations
 
@@ -876,7 +878,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
     return new_allocations
 
 
-def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, round=1):
+def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, round=1):  # noqa: max-complexity
     # assign military fleets to military theater systems
     global _military_allocations
     universe = fo.getUniverse()

@@ -116,7 +116,7 @@ def _calculate_industry_priority():  # currently only used to print status
     return industry_priority
 
 
-def _calculate_research_priority():
+def _calculate_research_priority():  # noqa: max-complexity
     """Calculates the AI empire's demand for research."""
     universe = fo.getUniverse()
     empire = fo.getEmpire()
@@ -390,7 +390,7 @@ def _calculate_outpost_priority():
     return outpost_priority
 
 
-def _calculate_invasion_priority():
+def _calculate_invasion_priority():  # noqa: max-complexity
     """Calculates the demand for troop ships by opponent planets."""
 
     aistate = get_aistate()
@@ -465,7 +465,7 @@ def allotted_invasion_targets():
     return min(1 + int(fo.currentTurn() // 50), 3)
 
 
-def _calculate_military_priority():
+def _calculate_military_priority():  # noqa: max-complexity
     """Calculates the demand for military ships by military targeted systems."""
     global unmetThreat
 

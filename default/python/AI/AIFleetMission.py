@@ -190,7 +190,7 @@ class AIFleetMission:
                 continue
             FleetUtilsAI.merge_fleet_a_into_b(fid, fleet_id, context="Order %s of mission %s" % (context, self))
 
-    def _is_valid_fleet_mission_target(self, mission_type: MissionType, target: Target):
+    def _is_valid_fleet_mission_target(self, mission_type: MissionType, target: Target):  # noqa: max-complexity
         if not target:
             return False
         if mission_type == MissionType.EXPLORATION:
@@ -241,7 +241,7 @@ class AIFleetMission:
             self.target = None
             self.type = None
 
-    def _check_abort_mission(self, fleet_order: AIFleetOrder):
+    def _check_abort_mission(self, fleet_order: AIFleetOrder):  # noqa: max-complexity
         """checks if current mission (targeting a planet) should be aborted"""
         planet_stealthed = False
         target_is_planet = fleet_order.target and isinstance(fleet_order.target, TargetPlanet)
@@ -292,7 +292,7 @@ class AIFleetMission:
         FleetUtilsAI.split_fleet(self.fleet.id)
         return True
 
-    def _check_retarget_invasion(self):
+    def _check_retarget_invasion(self):  # noqa: max-complexity
         """checks if an invasion mission should be retargeted"""
         universe = fo.getUniverse()
         empire_id = fo.empireID()
@@ -393,7 +393,7 @@ class AIFleetMission:
         # before proceeding
         return False
 
-    def issue_fleet_orders(self):
+    def issue_fleet_orders(self):  # noqa: max-complexity
         """issues AIFleetOrders which can be issued in system and moves to next one if is possible"""
         # TODO: priority
         order_completed = True

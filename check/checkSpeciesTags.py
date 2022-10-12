@@ -44,7 +44,7 @@ def check_skill(name):
     return ""
 
 
-def check_species(file):
+def check_species(file):  # noqa: max-complexity
     def issue(text):
         global issues_found
         issues_found = True

@@ -323,7 +323,7 @@ class ShipDesignCache:
             self.map_reference_design_name[reference_name] = design.name
             self.design_id_by_name[design.name] = design_id
 
-    def _check_cache_for_consistency(self):
+    def _check_cache_for_consistency(self):  # noqa: max-complexity
         """Check if the persistent cache is consistent with the gamestate and fix it if not.
 
         This function should be called once at the beginning of the turn (before update_shipdesign_cache()).
@@ -662,7 +662,7 @@ class ShipDesigner:
         """
         self.species = species
 
-    def update_stats(self, ignore_species: bool = False):
+    def update_stats(self, ignore_species: bool = False):  # noqa: max-complexity
         """
         Calculate and update all stats of the design.
 
@@ -792,7 +792,7 @@ class ShipDesigner:
                 troops_grade = get_species_attack_troops(self.species)
                 self.design_stats.troops = self.design_stats.troops * troops_grade
 
-    def _apply_hardcoded_effects(self, ignore_species=False):
+    def _apply_hardcoded_effects(self, ignore_species=False):  # noqa: max-complexity
         """Update stats that can not be read out by the AI yet, i.e. applied by effects.
 
         This function should contain *all* hardcoded effects for hulls/parts to be considered by the AI
@@ -952,7 +952,7 @@ class ShipDesigner:
         """
         pass
 
-    def optimize_design(
+    def optimize_design(  # noqa: max-complexity
         self,
         additional_parts=(),
         additional_hulls: Sequence = (),
@@ -1111,7 +1111,7 @@ class ShipDesigner:
         sorted_design_list = sorted(best_design_list, key=lambda x: x[0], reverse=True)
         return sorted_design_list
 
-    def _filter_parts(self, partname_dict: dict, verbose: bool = False):
+    def _filter_parts(self, partname_dict: dict, verbose: bool = False):  # noqa: max-complexity
         """Filter the partname_dict.
 
         This function filters a list of parts according to the following criteria:
@@ -1199,7 +1199,7 @@ class ShipDesigner:
         """
         return len(available_parts) * [0] + [num_slots]  # corresponds to an entirely empty design
 
-    def _combinatorial_filling(self, available_parts):
+    def _combinatorial_filling(self, available_parts):  # noqa: max-complexity
         """Fill the design using a combinatorial approach.
 
         This generic filling algorithm considers the problem of filling the slots as combinatorial problem.

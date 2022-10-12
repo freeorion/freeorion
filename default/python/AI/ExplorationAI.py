@@ -38,7 +38,7 @@ def get_current_exploration_info():
     return list(already_covered), available_scouts
 
 
-def assign_scouts_to_explore_systems():
+def assign_scouts_to_explore_systems():  # noqa: max-complexity
     # TODO: use Graph Theory to explore closest systems
     universe = fo.getUniverse()
     capital_sys_id = PlanetUtilsAI.get_capital_sys_id()
@@ -139,7 +139,7 @@ def assign_scouts_to_explore_systems():
     debug("Unassigned exploration targets: %s" % needs_coverage)
 
 
-def follow_vis_system_connections(start_system_id, home_system_id):
+def follow_vis_system_connections(start_system_id, home_system_id):  # noqa: max-complexity
     universe = fo.getUniverse()
     empire_id = fo.empireID()
     exploration_list = [start_system_id]

@@ -117,7 +117,7 @@ class _FreeOrionAISaveGameDecoder(json.JSONDecoder):
             setstate(parsed_content)
         return new_instance
 
-    def __interpret(self, x):
+    def __interpret(self, x):  # noqa: max-complexity
         """Interpret an object that was just decoded."""
         # primitive types do not have to be interpreted
         if isinstance(x, (int, float)):

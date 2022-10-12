@@ -544,7 +544,7 @@ def disc_galaxy_calc_positions(positions, adjacency_grid, size, width):
             )
 
 
-def cluster_galaxy_calc_positions(
+def cluster_galaxy_calc_positions(  # noqa: max-complexity
     positions: List[Tuple[int, int]], adjacency_grid: AdjacencyGrid, size: int, width: float
 ):
     """

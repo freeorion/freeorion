@@ -39,7 +39,7 @@ MIN_INVASION_SCORE = 20
 invasion_timer = AITimer("get_invasion_fleets()")
 
 
-def get_invasion_fleets():
+def get_invasion_fleets():  # noqa: max-complexity
     invasion_timer.start("gathering initial info")
     universe = fo.getUniverse()
     empire = fo.getEmpire()
@@ -336,7 +336,7 @@ def _get_path_from_capital(planet: "fo.planet") -> Tuple[Sequence[SystemId], int
         return [], 8
 
 
-def evaluate_invasion_planet(planet_id):
+def evaluate_invasion_planet(planet_id):  # noqa: max-complexity
     """Return the invasion value (score, troops) of a planet."""
     universe = fo.getUniverse()
     empire_id = fo.empireID()

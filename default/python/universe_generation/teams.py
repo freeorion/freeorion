@@ -49,7 +49,7 @@ def home_system_team_core(home_systems: List[int], teams: List[Tuple[int, int]])
     return result
 
 
-def place_teams_layout(
+def place_teams_layout(  # noqa: max-complexity
     layout: Dict[int, List[int]], cores: Dict[int, int], placement_teams: List[int]
 ) -> Dict[int, int]:
     """
