@@ -6487,7 +6487,7 @@ METER_DETECTION_VALUE_DESC
 
 Space ships and planets have a Detection Range meter. There is the option to display Detection Range circles (in uu) in the Galaxy Map section of the Options menu. To facilitate predictions of what would be within a Detection Range, there are also options to display a standard 'Map Scale Line' as well as a 'Map Scale Circle' centered on the currently selected system and indicating the same distance as the Map Scale Line. They are both responsive to the the map zoom level and can be toggled via hotkeys.
 
-Some objects or abilities may allow vision of certain areas outside of this range. Some examples are species abilities of [[species SP_FULVER]], [[species SP_GEORGE]], [[SP_NIGHTSIDERS]] or [[species SP_TRITH]], or the effects from a [[buildingtype BLD_SCRYING_SPHERE]], or finding a map in a derelict scout when exploring new systems.
+Some content may allow vision outside of this range. This includes the species abilities of [[species SP_FULVER]], [[species SP_GEORGE]], [[SP_NIGHTSIDERS]] or [[species SP_TRITH]], the [[buildingtype BLD_SCRYING_SPHERE]], or finding a map in a derelict scout when exploring new systems.
 
 [[DETECTION_STAR_MODIFIERS]]'''
 
