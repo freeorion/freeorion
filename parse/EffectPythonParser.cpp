@@ -80,15 +80,17 @@ namespace {
         auto condition = ValueRef::CloneUnique(py::extract<condition_wrapper>(kw["condition"])().condition);
 
         std::vector<std::unique_ptr<Effect::Effect>> effects;
-        py_parse::detail::flatten_list<effect_wrapper>(kw["effects"], [](const effect_wrapper& o, std::vector<std::unique_ptr<Effect::Effect>> &v) {
-            v.push_back(ValueRef::CloneUnique(o.effect));
-        }, effects);
+        boost::python::stl_input_iterator<effect_wrapper> effects_begin(kw["effects"]), effects_end;
+        for (auto it = effects_begin; it != effects_end; ++ it) {
+            effects.push_back(ValueRef::CloneUnique(it->effect));
+        }
         
         std::vector<std::unique_ptr<Effect::Effect>> else_;
         if (kw.has_key("else_")) {
-            py_parse::detail::flatten_list<effect_wrapper>(kw["else_"], [](const effect_wrapper& o, std::vector<std::unique_ptr<Effect::Effect>> &v) {
-                v.push_back(ValueRef::CloneUnique(o.effect));
-            }, else_);
+            boost::python::stl_input_iterator<effect_wrapper> else_begin(kw["else_"]);
+            for (auto it = else_begin; it != effects_end; ++ it) {
+                    else_.push_back(ValueRef::CloneUnique(it->effect));
+            }
         }
 
         return effect_wrapper(std::make_shared<Effect::Conditional>(std::move(condition),
