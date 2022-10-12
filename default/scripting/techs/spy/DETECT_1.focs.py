@@ -30,22 +30,22 @@ Tech(
             effects=SetDetection(value=Value - 15),
         ),
         EffectsGroup(
-            scope=(Planet() | Ship) & OwnedBy(empire=Source.Owner) & Star(type=White),
+            scope=(Planet() | Ship) & OwnedBy(empire=Source.Owner) & Star(type=[White]),
             accountinglabel="SPY_DETECT_STELLAR_INTERFERENCE",
             effects=SetDetection(value=Value - 10),
         ),
         EffectsGroup(
-            scope=(Planet() | Ship) & OwnedBy(empire=Source.Owner) & Star(type=Yellow),
+            scope=(Planet() | Ship) & OwnedBy(empire=Source.Owner) & Star(type=[Yellow]),
             accountinglabel="SPY_DETECT_STELLAR_INTERFERENCE",
             effects=SetDetection(value=Value - 5),
         ),
         EffectsGroup(
-            scope=(Planet() | Ship) & OwnedBy(empire=Source.Owner) & Star(type=BlackHole),
+            scope=(Planet() | Ship) & OwnedBy(empire=Source.Owner) & Star(type=[BlackHole]),
             accountinglabel="SPY_DETECT_LENSING",
             effects=SetDetection(value=Value + 5),
         ),
         EffectsGroup(
-            scope=(Planet() | Ship) & OwnedBy(empire=Source.Owner) & Star(type=NoStar),
+            scope=(Planet() | Ship) & OwnedBy(empire=Source.Owner) & Star(type=[NoStar]),
             accountinglabel="SPY_DETECT_CLEAN_STELLAR_BACKGROUND",
             effects=SetDetection(value=Value + 10),
         ),
