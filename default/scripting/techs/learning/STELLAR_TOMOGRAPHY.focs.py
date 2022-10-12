@@ -14,7 +14,7 @@ Tech(
         EffectsGroup(
             scope=Planet()
             & OwnedBy(empire=Source.Owner)
-            & Star(type=BlackHole)
+            & Star(type=[BlackHole])
             & Focus(type=["FOCUS_RESEARCH"])
             & Happiness(low=0),
             priority=TARGET_AFTER_SCALING_PRIORITY,
@@ -33,7 +33,7 @@ Tech(
         EffectsGroup(
             scope=Planet()
             & OwnedBy(empire=Source.Owner)
-            & Star(type=Neutron)
+            & Star(type=[Neutron])
             & Focus(type=["FOCUS_RESEARCH"])
             & Happiness(low=0),
             priority=TARGET_AFTER_SCALING_PRIORITY,

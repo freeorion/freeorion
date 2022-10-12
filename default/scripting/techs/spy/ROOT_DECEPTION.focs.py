@@ -8,22 +8,22 @@ Tech(
     tags=["PEDIA_SPY_CATEGORY", "THEORY"],
     effectsgroups=[
         EffectsGroup(
-            scope=Ship & OwnedBy(empire=Source.Owner) & Star(type=NoStar),
+            scope=Ship & OwnedBy(empire=Source.Owner) & Star(type=[NoStar]),
             accountinglabel="SPY_DECEPTION_EMPTY_SPACE_PENALTY",
             effects=SetStealth(value=Value + NamedReal(name="SPY_DECEPTION_EMPTY_SPACE_PENALTY", value=-10.0)),
         ),
         EffectsGroup(
-            scope=Ship & OwnedBy(empire=Source.Owner) & Star(type=Red),
+            scope=Ship & OwnedBy(empire=Source.Owner) & Star(type=[Red]),
             accountinglabel="SPY_DECEPTION_DIM_STAR_PENALTY",
             effects=SetStealth(value=Value + NamedReal(name="SPY_DECEPTION_DIM_STAR_PENALTY", value=-5.0)),
         ),
         EffectsGroup(
-            scope=Ship & OwnedBy(empire=Source.Owner) & Star(type=Neutron),
+            scope=Ship & OwnedBy(empire=Source.Owner) & Star(type=[Neutron]),
             accountinglabel="SPY_DECEPTION_SUBSTELLAR_INTERFERENCE",
             effects=SetStealth(value=Value + NamedReal(name="SPY_DECEPTION_NEUTRON_INTERFERENCE", value=5.0)),
         ),
         EffectsGroup(
-            scope=Ship & OwnedBy(empire=Source.Owner) & Star(type=BlackHole),
+            scope=Ship & OwnedBy(empire=Source.Owner) & Star(type=[BlackHole]),
             accountinglabel="SPY_DECEPTION_SUBSTELLAR_INTERFERENCE",
             effects=SetStealth(value=Value + NamedReal(name="SPY_DECEPTION_BLACK_INTERFERENCE", value=10.0)),
         ),
