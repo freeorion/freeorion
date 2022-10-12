@@ -94,6 +94,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def(int() - py::self_ns::self)
             .def(py::self_ns::self + py::self_ns::self)
             .def(py::self_ns::self + int())
+            .def(double() + py::self_ns::self)
             .def(py::self_ns::self < py::self_ns::self)
             .def(py::self_ns::self < int())
             .def(py::self_ns::self > int())
@@ -326,6 +327,7 @@ bool PythonParser::ParseFileCommon(const boost::filesystem::path& path,
     } catch (const boost::python::error_already_set&) {
         m_current_globals = boost::none;
         m_python.HandleErrorAlreadySet();
+        ErrorLogger() << "Unable to parse data file " << filename;
         if (!m_python.IsPythonRunning()) {
             ErrorLogger() << "Python interpreter is no longer running.  Attempting to restart.";
             if (m_python.Initialize()) {
@@ -410,6 +412,7 @@ py::object PythonParser::exec_module(py::object& module) {
                 py::exec(file_contents.c_str(), m_dict, m_dict);
             } catch (const boost::python::error_already_set&) {
                 m_python.HandleErrorAlreadySet();
+                ErrorLogger() << "Unable to parse module file " << module_path.string();
                 if (!m_python.IsPythonRunning()) {
                     ErrorLogger() << "Python interpreter is no longer running.  Attempting to restart.";
                     if (m_python.Initialize()) {
