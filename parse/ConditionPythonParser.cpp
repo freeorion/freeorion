@@ -211,14 +211,15 @@ namespace {
     condition_wrapper insert_homeworld_(const boost::python::tuple& args, const boost::python::dict& kw) {
         if (kw.has_key("name")) {
             std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> names;
-            py_parse::detail::flatten_list<boost::python::object>(kw["name"], [](const boost::python::object& o, std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>& v) {
-                auto name_arg = boost::python::extract<value_ref_wrapper<std::string>>(o);
+            boost::python::stl_input_iterator<boost::python::object> it_begin(kw["name"]), it_end;
+            for (auto it = it_begin; it != it_end; ++it) {
+                auto name_arg = boost::python::extract<value_ref_wrapper<std::string>>(*it);
                 if (name_arg.check()) {
-                    v.push_back(ValueRef::CloneUnique(name_arg().value_ref));
+                    names.push_back(ValueRef::CloneUnique(name_arg().value_ref));
                 } else {
-                    v.push_back(std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(o)()));
+                    names.push_back(std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(*it)()));
                 }
-            }, names);
+            }
             return condition_wrapper(std::make_shared<Condition::Homeworld>(std::move(names)));
         }
         return condition_wrapper(std::make_shared<Condition::Homeworld>());
