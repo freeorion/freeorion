@@ -67,7 +67,7 @@ effectsgroups = [
         scope=Planet()
         & Planet(type=[GasGiantType])
         & OwnedBy(empire=Source.Owner)
-        & ~Contains(Building(name="BLD_GAS_GIANT_GEN"))
+        & ~Contains(Building(name=["BLD_GAS_GIANT_GEN"]))
         & ContainedBy(
             Contains(
                 Planet()
@@ -78,7 +78,7 @@ effectsgroups = [
                 Planet()
                 & OwnedBy(empire=Source.Owner)
                 & (
-                    Contains(Building(name="BLD_GAS_GIANT_GEN"))
+                    Contains(Building(name=["BLD_GAS_GIANT_GEN"]))
                     | Enqueued(type=BuildBuilding, name="BLD_GAS_GIANT_GEN")
                 )
             )
