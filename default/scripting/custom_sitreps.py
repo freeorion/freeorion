@@ -65,7 +65,7 @@ effectsgroups = [
     # but haven't yet built or enqueued a GG Generator in that system yet
     EffectsGroup(
         scope=Planet()
-        & Planet(type=GasGiantType)
+        & Planet(type=[GasGiantType])
         & OwnedBy(empire=Source.Owner)
         & ~Contains(Building(name="BLD_GAS_GIANT_GEN"))
         & ContainedBy(
