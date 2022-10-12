@@ -27,7 +27,7 @@ def _get_property_return_type_by_name(attr_name: str) -> str:
     return property_map.get(attr_name, "")
 
 
-def _handle_class(info: ClassInfo):
+def _handle_class(info: ClassInfo):  # noqa: max-complexity
     assert not info.doc, "Got docs need to handle it"
     parents = [x for x in info.parents if x != "object"]
 
