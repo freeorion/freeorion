@@ -131,13 +131,15 @@ effectsgroups = [
                 & Turn(low=ETA_NEXT_TURN, high=ETA_NEXT_TURN)
                 & (RootCandidate.ID == LocalCandidate.NextSystemID),
             ),
-            effects=GenerateSitRepMessage(
-                message="SITREP_SYSTEM_GOT_INCOMING_WARNING",
-                label="SITREP_SYSTEM_GOT_INCOMING_WARNING_LABEL",
-                icon="icons/meter/ammo.png",
-                parameters={"system": Target.ID},
-                empire=Source.Owner,
-            ),
+            effects=[
+                GenerateSitRepMessage(
+                    message="SITREP_SYSTEM_GOT_INCOMING_WARNING",
+                    label="SITREP_SYSTEM_GOT_INCOMING_WARNING_LABEL",
+                    icon="icons/meter/ammo.png",
+                    parameters={"system": Target.ID},
+                    empire=Source.Owner,
+                )
+            ],
         ),
     ),
     # *********************************************************************************************************************************************************
