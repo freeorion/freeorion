@@ -34,7 +34,7 @@ Tech(
             effects=SetMaxSupply(value=Value - 2),
         ),
         EffectsGroup(
-            scope=Planet(type=GasGiantType) & OwnedBy(empire=Source.Owner),
+            scope=Planet(type=[GasGiantType]) & OwnedBy(empire=Source.Owner),
             accountinglabel="GAS_GIANT_LABEL",
             effects=SetMaxSupply(value=Value - 1),
         ),

@@ -18,7 +18,7 @@ Tech(
             & Focus(type="FOCUS_INDUSTRY")
             & Happiness(low=NamedReal(name="PRO_MICROGRAV_MAN_MIN_STABILITY", value=10))
             & InSystem()
-            & ContainedBy(Contains(Planet() & Planet(type=AsteroidsType) & OwnedBy(empire=Source.Owner))),
+            & ContainedBy(Contains(Planet() & Planet(type=[AsteroidsType]) & OwnedBy(empire=Source.Owner))),
             priority=TARGET_AFTER_2ND_SCALING_PRIORITY,
             effects=SetTargetIndustry(value=Value + NamedReal(name="PRO_MICROGRAV_MAN_TARGET_INDUSTRY_FLAT", value=2)),
         )
