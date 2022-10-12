@@ -15,7 +15,7 @@ Tech(
             scope=ProductionCenter
             & OwnedBy(empire=Source.Owner)
             & ~Population(high=0)
-            & Focus(type="FOCUS_INDUSTRY")
+            & Focus(type=["FOCUS_INDUSTRY"])
             & Happiness(low=NamedReal(name="PRO_MICROGRAV_MAN_MIN_STABILITY", value=10))
             & InSystem()
             & ContainedBy(Contains(Planet() & Planet(type=[AsteroidsType]) & OwnedBy(empire=Source.Owner))),

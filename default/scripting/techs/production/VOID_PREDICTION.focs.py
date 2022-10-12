@@ -12,7 +12,10 @@ Tech(
     unlock=Item(type=UnlockPolicy, name="PLC_STOCKPILE_LIQUIDATION"),
     effectsgroups=[
         EffectsGroup(
-            scope=ProductionCenter & OwnedBy(empire=Source.Owner) & ~Population(high=0) & Focus(type="FOCUS_STOCKPILE"),
+            scope=ProductionCenter
+            & OwnedBy(empire=Source.Owner)
+            & ~Population(high=0)
+            & Focus(type=["FOCUS_STOCKPILE"]),
             effects=SetMaxStockpile(value=Value + 10 * Target.Population * STOCKPILE_PER_POP),
         )
     ],

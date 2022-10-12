@@ -44,7 +44,7 @@ Tech(
         EffectsGroup(
             scope=ProductionCenter
             & OwnedBy(empire=Source.Owner)
-            & Focus(type="FOCUS_INDUSTRY")
+            & Focus(type=["FOCUS_INDUSTRY"])
             & Happiness(low=NamedReal(name="GRO_ENERGY_META_MIN_STABILITY", value=20)),
             priority=TARGET_EARLY_BEFORE_SCALING_PRIORITY,
             effects=SetTargetIndustry(
@@ -56,7 +56,7 @@ Tech(
         EffectsGroup(
             scope=ProductionCenter
             & OwnedBy(empire=Source.Owner)
-            & Focus(type="FOCUS_RESEARCH")
+            & Focus(type=["FOCUS_RESEARCH"])
             & Happiness(low=NamedRealLookup(name="GRO_ENERGY_META_MIN_STABILITY")),
             priority=TARGET_EARLY_BEFORE_SCALING_PRIORITY,
             effects=SetTargetResearch(

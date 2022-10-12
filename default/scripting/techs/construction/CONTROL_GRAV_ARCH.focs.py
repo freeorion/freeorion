@@ -11,7 +11,7 @@ Tech(
     prerequisites=["CON_ARCH_MONOFILS"],
     effectsgroups=[
         EffectsGroup(
-            scope=Planet() & OwnedBy(empire=Source.Owner) & Focus(type="FOCUS_LOGISTICS"),
+            scope=Planet() & OwnedBy(empire=Source.Owner) & Focus(type=["FOCUS_LOGISTICS"]),
             effects=SetMaxSupply(value=Value + 1),
         )
     ],

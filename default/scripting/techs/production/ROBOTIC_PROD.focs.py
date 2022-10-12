@@ -13,7 +13,7 @@ Tech(
         EffectsGroup(
             scope=ProductionCenter
             & OwnedBy(empire=Source.Owner)
-            & Focus(type="FOCUS_INDUSTRY")
+            & Focus(type=["FOCUS_INDUSTRY"])
             & Happiness(low=NamedReal(name="PRO_ROBOTIC_PROD_MIN_STABILITY", value=5)),
             priority=TARGET_AFTER_SCALING_PRIORITY,
             effects=SetTargetIndustry(

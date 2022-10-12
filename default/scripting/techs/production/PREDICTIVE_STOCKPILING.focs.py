@@ -9,7 +9,7 @@ Tech(
     effectsgroups=[
         # Set initial meters
         EffectsGroup(
-            scope=ProductionCenter & OwnedBy(empire=Source.Owner) & Focus(type="FOCUS_STOCKPILE"),
+            scope=ProductionCenter & OwnedBy(empire=Source.Owner) & Focus(type=["FOCUS_STOCKPILE"]),
             effects=SetMaxStockpile(value=Value + 1),
         )
     ],

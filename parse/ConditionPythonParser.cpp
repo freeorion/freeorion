@@ -271,14 +271,15 @@ namespace {
 
     condition_wrapper insert_focus_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> types;
-        py_parse::detail::flatten_list<boost::python::object>(kw["type"], [](const boost::python::object& o, std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>& v) {
-            auto type_arg = boost::python::extract<value_ref_wrapper<std::string>>(o);
+        boost::python::stl_input_iterator<boost::python::object> it_begin(kw["type"]), it_end;
+        for (auto it = it_begin; it != it_end; ++it) {
+            auto type_arg = boost::python::extract<value_ref_wrapper<std::string>>(*it);
             if (type_arg.check()) {
-                v.push_back(ValueRef::CloneUnique(type_arg().value_ref));
+                types.push_back(ValueRef::CloneUnique(type_arg().value_ref));
             } else {
-                v.push_back(std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(o)()));
+                types.push_back(std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(*it)()));
             }
-        }, types);
+        }
         return condition_wrapper(std::make_shared<Condition::FocusType>(std::move(types)));
     }
 

@@ -28,7 +28,7 @@ Tech(
                     &
                     # @content_tag{TELEPATHIC} On owned planet with focus FOCUS_DOMINATION and this tag, chance of taking ownership of suitable ships
                     HasTag(name="TELEPATHIC")
-                    & Focus(type="FOCUS_DOMINATION")
+                    & Focus(type=["FOCUS_DOMINATION"])
                 )
             ),
             effects=[

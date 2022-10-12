@@ -26,7 +26,7 @@ Tech(
             ),
         ),
         EffectsGroup(
-            scope=ProductionCenter & OwnedBy(empire=Source.Owner) & Focus(type="FOCUS_STOCKPILE"),
+            scope=ProductionCenter & OwnedBy(empire=Source.Owner) & Focus(type=["FOCUS_STOCKPILE"]),
             effects=SetMaxStockpile(value=Value + 3, accountinglabel="GENERIC_SUPPLIES_FOCUS_BONUS_LABEL"),
         ),
     ],

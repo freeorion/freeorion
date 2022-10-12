@@ -15,7 +15,7 @@ Tech(
             scope=ProductionCenter
             & OwnedBy(empire=Source.Owner)
             & TargetPopulation(low=0.0001)
-            & Focus(type="FOCUS_INDUSTRY")
+            & Focus(type=["FOCUS_INDUSTRY"])
             & Happiness(low=0),
             priority=TARGET_AFTER_2ND_SCALING_PRIORITY,
             effects=SetTargetIndustry(value=Value + NamedReal(name="PRO_SENTIENT_AUTO_TARGET_INDUSTRY_FLAT", value=3)),
