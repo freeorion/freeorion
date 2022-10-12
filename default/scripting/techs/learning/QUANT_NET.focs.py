@@ -14,7 +14,7 @@ Tech(
         EffectsGroup(
             scope=ProductionCenter
             & OwnedBy(empire=Source.Owner)
-            & Focus(type="FOCUS_RESEARCH")
+            & Focus(type=["FOCUS_RESEARCH"])
             & Happiness(low=NamedReal(name="LRN_QUANT_NET_MIN_STABILITY", value=10)),
             priority=TARGET_AFTER_SCALING_PRIORITY,
             effects=SetTargetResearch(

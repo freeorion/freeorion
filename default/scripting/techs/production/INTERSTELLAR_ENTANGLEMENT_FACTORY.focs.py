@@ -17,7 +17,7 @@ Tech(
             effects=SetMaxStockpile(value=Value + 1.0 * Target.Population * STOCKPILE_PER_POP),
         ),
         EffectsGroup(
-            scope=ProductionCenter & OwnedBy(empire=Source.Owner) & Focus(type="FOCUS_STOCKPILE"),
+            scope=ProductionCenter & OwnedBy(empire=Source.Owner) & Focus(type=["FOCUS_STOCKPILE"]),
             accountinglabel="INTERSTELLAR_ENTANGLEMENT_FACTORY_FIXED_BONUS_LABEL",
             effects=SetMaxStockpile(value=Value + 6),
         ),
