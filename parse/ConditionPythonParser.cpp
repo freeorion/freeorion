@@ -194,14 +194,15 @@ namespace {
             return condition_wrapper(std::make_shared<Condition::PlanetSize>(std::move(sizes)));
         } else if (kw.has_key("environment")) {
             std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetEnvironment>>> environments;
-            py_parse::detail::flatten_list<boost::python::object>(kw["environment"], [](const boost::python::object& o, std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetEnvironment>>>& v) {
-                auto env_arg = boost::python::extract<value_ref_wrapper< ::PlanetEnvironment>>(o);
+            boost::python::stl_input_iterator<boost::python::object> it_begin(kw["environment"]), it_end;
+            for (auto it = it_begin; it != it_end; ++it) {
+                auto env_arg = boost::python::extract<value_ref_wrapper< ::PlanetEnvironment>>(*it);
                 if (env_arg.check()) {
-                    v.push_back(ValueRef::CloneUnique(env_arg().value_ref));
+                    environments.push_back(ValueRef::CloneUnique(env_arg().value_ref));
                 } else {
-                    v.push_back(std::make_unique<ValueRef::Constant< ::PlanetEnvironment>>(boost::python::extract<enum_wrapper< ::PlanetEnvironment>>(o)().value));
+                    environments.push_back(std::make_unique<ValueRef::Constant< ::PlanetEnvironment>>(boost::python::extract<enum_wrapper< ::PlanetEnvironment>>(*it)().value));
                 }
-            }, environments);
+            }
             return condition_wrapper(std::make_shared<Condition::PlanetEnvironment>(std::move(environments)));
         }
         return condition_wrapper(std::make_shared<Condition::Type>(UniverseObjectType::OBJ_PLANET));
