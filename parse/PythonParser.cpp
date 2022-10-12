@@ -326,6 +326,7 @@ bool PythonParser::ParseFileCommon(const boost::filesystem::path& path,
     } catch (const boost::python::error_already_set&) {
         m_current_globals = boost::none;
         m_python.HandleErrorAlreadySet();
+        ErrorLogger() << "Unable to parse data file " << filename;
         if (!m_python.IsPythonRunning()) {
             ErrorLogger() << "Python interpreter is no longer running.  Attempting to restart.";
             if (m_python.Initialize()) {

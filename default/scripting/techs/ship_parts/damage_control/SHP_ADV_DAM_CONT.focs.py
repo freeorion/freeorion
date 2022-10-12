@@ -9,12 +9,14 @@ Tech(
     researchturns=5,
     tags=["PEDIA_DAMAGE_CONTROL_PART_TECHS"],
     prerequisites=["SHP_FLEET_REPAIR"],
-    effectsgroups=EffectsGroup(
-        scope=Ship
-        & OwnedBy(empire=Source.Owner)
-        & InSystem()
-        & Stationary
-        & Turn(low=LocalCandidate.System.LastTurnBattleHere + 1),
-        effects=SetStructure(value=Value + (Target.MaxStructure / 10)),
-    ),
+    effectsgroups=[
+        EffectsGroup(
+            scope=Ship
+            & OwnedBy(empire=Source.Owner)
+            & InSystem()
+            & Stationary
+            & Turn(low=LocalCandidate.System.LastTurnBattleHere + 1),
+            effects=SetStructure(value=Value + (Target.MaxStructure / 10)),
+        )
+    ],
 )

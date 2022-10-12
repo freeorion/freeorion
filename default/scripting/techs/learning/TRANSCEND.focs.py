@@ -14,6 +14,6 @@ Tech(
         "PRO_ZERO_GEN",
         "GRO_ENERGY_META",
     ],
-    effectsgroups=EffectsGroup(scope=Source, effects=[Victory(reason="VICTORY_TECH")]),
+    effectsgroups=[EffectsGroup(scope=Source, effects=[Victory(reason="VICTORY_TECH")])],
     graphic="icons/tech/singularity_of_transcendence.png",
 )

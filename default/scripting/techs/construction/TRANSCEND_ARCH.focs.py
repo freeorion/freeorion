@@ -16,9 +16,11 @@ Tech(
         Item(type=UnlockBuilding, name="BLD_MEGALITH"),
         Item(type=UnlockPolicy, name="PLC_DIVINE_AUTHORITY"),
     ],
-    effectsgroups=EffectsGroup(
-        scope=Source,
-        effects=SetEmpireMeter(empire=Source.Owner, meter="SOCIAL_CATEGORY_NUM_POLICY_SLOTS", value=Value + 1),
-    ),
+    effectsgroups=[
+        EffectsGroup(
+            scope=Source,
+            effects=SetEmpireMeter(empire=Source.Owner, meter="SOCIAL_CATEGORY_NUM_POLICY_SLOTS", value=Value + 1),
+        )
+    ],
     graphic="icons/tech/transcendent_architecture.png",
 )
