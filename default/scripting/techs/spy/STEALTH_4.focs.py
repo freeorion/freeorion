@@ -12,14 +12,16 @@ Tech(
     tags=["PEDIA_SPY_CATEGORY"],
     prerequisites=["SPY_STEALTH_3", "SPY_STEALTH_PART_3"],
     unlock=Item(type=UnlockShipPart, name="ST_CLOAK_4"),
-    effectsgroups=EffectsGroup(
-        scope=OwnedBy(empire=Source.Owner) & Planet(),
-        effects=[
-            AddSpecial(name="VOID_SLAVE_SPECIAL"),
-            RemoveSpecial(name="DIM_RIFT_SLAVE_SPECIAL"),
-            RemoveSpecial(name="VOLCANIC_ASH_SLAVE_SPECIAL"),
-            RemoveSpecial(name="CLOUD_COVER_SLAVE_SPECIAL"),
-        ],
-    ),
+    effectsgroups=[
+        EffectsGroup(
+            scope=OwnedBy(empire=Source.Owner) & Planet(),
+            effects=[
+                AddSpecial(name="VOID_SLAVE_SPECIAL"),
+                RemoveSpecial(name="DIM_RIFT_SLAVE_SPECIAL"),
+                RemoveSpecial(name="VOLCANIC_ASH_SLAVE_SPECIAL"),
+                RemoveSpecial(name="CLOUD_COVER_SLAVE_SPECIAL"),
+            ],
+        )
+    ],
     graphic="icons/specials_huge/void.png",
 )

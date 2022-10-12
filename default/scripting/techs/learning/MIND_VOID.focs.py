@@ -10,9 +10,11 @@ Tech(
     tags=["PEDIA_LEARNING_CATEGORY", "THEORY"],
     prerequisites=["LRN_XENOARCH"],
     unlock=Item(type=UnlockPolicy, name="PLC_DESIGN_SIMPLICITY"),
-    effectsgroups=EffectsGroup(
-        scope=Source,
-        effects=SetEmpireMeter(empire=Source.Owner, meter="SOCIAL_CATEGORY_NUM_POLICY_SLOTS", value=Value + 1),
-    ),
+    effectsgroups=[
+        EffectsGroup(
+            scope=Source,
+            effects=SetEmpireMeter(empire=Source.Owner, meter="SOCIAL_CATEGORY_NUM_POLICY_SLOTS", value=Value + 1),
+        )
+    ],
     graphic="icons/tech/mind_of_the_void.png",
 )

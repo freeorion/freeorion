@@ -10,9 +10,11 @@ Tech(
     tags=["PEDIA_LEARNING_CATEGORY"],
     prerequisites=["LRN_EVERYTHING"],
     unlock=Item(type=UnlockBuilding, name="BLD_STARLANE_NEXUS"),
-    effectsgroups=EffectsGroup(
-        scope=Source,
-        effects=SetEmpireMeter(empire=Source.Owner, meter="MILITARY_CATEGORY_NUM_POLICY_SLOTS", value=Value + 1),
-    ),
+    effectsgroups=[
+        EffectsGroup(
+            scope=Source,
+            effects=SetEmpireMeter(empire=Source.Owner, meter="MILITARY_CATEGORY_NUM_POLICY_SLOTS", value=Value + 1),
+        )
+    ],
     graphic="icons/tech/temporal_mechanics.png",
 )

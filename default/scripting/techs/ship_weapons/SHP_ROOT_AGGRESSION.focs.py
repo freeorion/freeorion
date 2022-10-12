@@ -13,6 +13,6 @@ Tech(
         Item(type=UnlockShipPart, name="GT_TROOP_POD"),
         Item(type=UnlockShipPart, name="SR_WEAPON_0_1"),
     ],
-    effectsgroups=[WEAPON_BASE_EFFECTS("SR_WEAPON_0_1"), WEAPON_BASE_EFFECTS("SR_WEAPON_1_1")],
+    effectsgroups=[*WEAPON_BASE_EFFECTS("SR_WEAPON_0_1"), *WEAPON_BASE_EFFECTS("SR_WEAPON_1_1")],
     graphic="icons/tech/planetary_colonialism.png",
 )

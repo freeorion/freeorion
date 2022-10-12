@@ -11,11 +11,13 @@ Tech(
     tags=["PEDIA_DAMAGE_CONTROL_PART_TECHS"],
     prerequisites=["SHP_MIL_ROBO_CONT"],
     unlock=Item(type=UnlockPolicy, name="PLC_ENGINEERING"),
-    effectsgroups=EffectsGroup(
-        scope=Ship
-        & OwnedBy(empire=Source.Owner)
-        & (~InSystem() | InSystem() & Turn(low=LocalCandidate.System.LastTurnBattleHere + 1))
-        & Structure(high=LocalCandidate.MaxStructure - 0.001),
-        effects=SetStructure(value=Value + SHIP_STRUCTURE_FACTOR),
-    ),
+    effectsgroups=[
+        EffectsGroup(
+            scope=Ship
+            & OwnedBy(empire=Source.Owner)
+            & (~InSystem() | InSystem() & Turn(low=LocalCandidate.System.LastTurnBattleHere + 1))
+            & Structure(high=LocalCandidate.MaxStructure - 0.001),
+            effects=SetStructure(value=Value + SHIP_STRUCTURE_FACTOR),
+        )
+    ],
 )

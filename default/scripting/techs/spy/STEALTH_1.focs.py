@@ -14,12 +14,14 @@ Tech(
     researchturns=5,
     tags=["PEDIA_SPY_CATEGORY"],
     prerequisites=["SPY_ROOT_DECEPTION"],
-    effectsgroups=EffectsGroup(
-        scope=OwnedBy(empire=Source.Owner) & Planet(),
-        activation=~OwnerHasTech(name="SPY_STEALTH_2")
-        & ~OwnerHasTech(name="SPY_STEALTH_3")
-        & ~OwnerHasTech(name="SPY_STEALTH_4"),
-        effects=AddSpecial(name="CLOUD_COVER_SLAVE_SPECIAL"),
-    ),
+    effectsgroups=[
+        EffectsGroup(
+            scope=OwnedBy(empire=Source.Owner) & Planet(),
+            activation=~OwnerHasTech(name="SPY_STEALTH_2")
+            & ~OwnerHasTech(name="SPY_STEALTH_3")
+            & ~OwnerHasTech(name="SPY_STEALTH_4"),
+            effects=AddSpecial(name="CLOUD_COVER_SLAVE_SPECIAL"),
+        )
+    ],
     graphic="icons/specials_huge/cloud_cover.png",
 )
