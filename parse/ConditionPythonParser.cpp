@@ -182,14 +182,15 @@ namespace {
             return condition_wrapper(std::make_shared<Condition::PlanetType>(std::move(types)));
         } else if (kw.has_key("size")) {
             std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetSize>>> sizes;
-            py_parse::detail::flatten_list<boost::python::object>(kw["size"], [](const boost::python::object& o, std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetSize>>>& v) {
-                auto size_arg = boost::python::extract<value_ref_wrapper< ::PlanetSize>>(o);
+            boost::python::stl_input_iterator<boost::python::object> it_begin(kw["size"]), it_end;
+            for (auto it = it_begin; it != it_end; ++it) {
+                auto size_arg = boost::python::extract<value_ref_wrapper< ::PlanetSize>>(*it);
                 if (size_arg.check()) {
-                    v.push_back(ValueRef::CloneUnique(size_arg().value_ref));
+                    sizes.push_back(ValueRef::CloneUnique(size_arg().value_ref));
                 } else {
-                    v.push_back(std::make_unique<ValueRef::Constant< ::PlanetSize>>(boost::python::extract<enum_wrapper< ::PlanetSize>>(o)().value));
+                    sizes.push_back(std::make_unique<ValueRef::Constant< ::PlanetSize>>(boost::python::extract<enum_wrapper< ::PlanetSize>>(*it)().value));
                 }
-            }, sizes);
+            }
             return condition_wrapper(std::make_shared<Condition::PlanetSize>(std::move(sizes)));
         } else if (kw.has_key("environment")) {
             std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetEnvironment>>> environments;
