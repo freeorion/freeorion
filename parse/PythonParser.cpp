@@ -321,11 +321,8 @@ bool PythonParser::ParseFileCommon(const boost::filesystem::path& path,
     }
 
     try {
-        m_current_globals = globals;
         py::exec(file_contents.c_str(), globals);
-        m_current_globals = boost::none;
     } catch (const boost::python::error_already_set&) {
-        m_current_globals = boost::none;
         m_python.HandleErrorAlreadySet();
         ErrorLogger() << "Unable to parse data file " << filename;
         if (!m_python.IsPythonRunning()) {
@@ -337,9 +334,6 @@ bool PythonParser::ParseFileCommon(const boost::filesystem::path& path,
             }
         }
         return false;
-    } catch (...) {
-        m_current_globals = boost::none;
-        throw;
     }
 
     return true;
@@ -401,14 +395,17 @@ py::object PythonParser::exec_module(py::object& module) {
             // store globals content in module namespace
             // it is required so functions in the same module will see each other
             // and still import will work
-            py::dict globals = m_current_globals ? (*m_current_globals) : py::dict();
-            py::stl_input_iterator<py::object> g_begin(globals.keys()), g_end;
-            for (auto it = g_begin; it != g_end; ++it) {
-                if (!m_dict.has_key(*it))
-                    m_dict[*it] = globals[*it];
-            }
-
+            DebugLogger() << "Executing module file " << module_path.string();
             try {
+#if PY_VERSION_HEX < 0x03080000
+                m_dict["__builtins__"] = boost::python::import("builtins");
+#endif
+                RegisterGlobalsEffects(m_dict);
+                RegisterGlobalsConditions(m_dict);
+                RegisterGlobalsValueRefs(m_dict, *this);
+                RegisterGlobalsSources(m_dict);
+                RegisterGlobalsEnums(m_dict);
+
                 py::exec(file_contents.c_str(), m_dict, m_dict);
             } catch (const boost::python::error_already_set&) {
                 m_python.HandleErrorAlreadySet();
