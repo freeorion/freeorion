@@ -41,7 +41,6 @@ private:
     PythonCommon&                  m_python;
     const boost::filesystem::path& m_scripting_dir;
     boost::python::list            m_meta_path;
-    mutable boost::optional<boost::python::dict> m_current_globals;
 };
 
 #endif
