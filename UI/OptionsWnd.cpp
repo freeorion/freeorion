@@ -283,8 +283,8 @@ namespace {
 
             namespace ph = boost::placeholders;
 
-            m_hscroll->ScrolledSignal.connect(
-                boost::bind(&FontTextureWnd::ScrolledSlot, this, ph::_1, ph::_2, ph::_3, ph::_4));
+            m_hscroll->ScrolledSignal.connect([this](int tab_low, int tab_high, int low, int high)
+                                              { ScrolledSlot(tab_low, tab_high, low, high); });
             DoLayout();
         }
 
@@ -839,8 +839,7 @@ void OptionsWnd::CompleteConstruction() {
     SaveOptions();
 
     // Connect the done and cancel button
-    m_done_button->LeftClickedSignal.connect(
-        boost::bind(&OptionsWnd::DoneClicked, this));
+    m_done_button->LeftClickedSignal.connect([this]() { DoneClicked(); });
 }
 
 void OptionsWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -870,19 +869,19 @@ GG::Rect OptionsWnd::CalculatePosition() const {
     return GG::Rect(ul, ul + wh);
 }
 
-GG::ListBox* OptionsWnd::CreatePage(const std::string& name) {
+GG::ListBox* OptionsWnd::CreatePage(std::string name) {
     auto page = GG::Wnd::Create<OptionsList>();
     auto* raw_ptr = page.get();
-    m_tabs->AddWnd(std::move(page), name);
+    m_tabs->AddWnd(std::move(page), std::move(name));
     m_tabs->SetCurrentWnd(m_tabs->NumWnds() - 1);
     return raw_ptr;
 }
 
 void OptionsWnd::CreateSectionHeader(GG::ListBox* page, int indentation_level,
-                                     const std::string& name, const std::string& tooltip)
+                                     std::string name, std::string tooltip)
 {
     assert(0 <= indentation_level);
-    auto heading_text = GG::Wnd::Create<CUILabel>(name, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
+    auto heading_text = GG::Wnd::Create<CUILabel>(std::move(name), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
     heading_text->SetFont(ClientUI::GetFont(ClientUI::Pts() * 4 / 3));
 
     auto heading_min_sz_y{heading_text->MinUsableSize().y};
@@ -892,24 +891,25 @@ void OptionsWnd::CreateSectionHeader(GG::ListBox* page, int indentation_level,
 
     if (!tooltip.empty()) {
         row->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
-        row->SetBrowseText(tooltip);
+        row->SetBrowseText(std::move(tooltip));
     }
 
     page->Insert(std::move(row));
 }
 
 GG::StateButton* OptionsWnd::BoolOption(GG::ListBox* page, int indentation_level,
-                                        const std::string& option_name, const std::string& text)
+                                        std::string option_name, std::string text)
 {
-    auto button = GG::Wnd::Create<CUIStateButton>(text, GG::FORMAT_LEFT, std::make_shared<CUICheckBoxRepresenter>());
+    auto button = GG::Wnd::Create<CUIStateButton>(std::move(text), GG::FORMAT_LEFT,
+                                                  std::make_shared<CUICheckBoxRepresenter>());
     auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, button->MinUsableSize().y + LAYOUT_MARGIN + 6,
                                                button, indentation_level);
     page->Insert(row);
     button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     button->SetCheck(GetOptionsDB().Get<bool>(option_name));
     button->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
-    button->CheckedSignal.connect(
-        [option_name](const bool& value){ GetOptionsDB().Set(option_name, value); });
+    button->CheckedSignal.connect([on{std::move(option_name)}](const bool& value)
+                                  { GetOptionsDB().Set(on, value); });
     return button.get();
 }
 
@@ -952,7 +952,7 @@ namespace {
     }
 }
 
-void OptionsWnd::HotkeyOption(GG::ListBox* page, int indentation_level, const std::string& hotkey_name) {
+void OptionsWnd::HotkeyOption(GG::ListBox* page, int indentation_level, std::string hotkey_name) {
     const Hotkey& hk = Hotkey::NamedHotkey(hotkey_name);
     const std::string& text = UserString(hk.GetDescription());
     auto text_control = GG::Wnd::Create<CUILabel>(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
@@ -967,16 +967,17 @@ void OptionsWnd::HotkeyOption(GG::ListBox* page, int indentation_level, const st
     auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, std::max(button->MinUsableSize().y, text_control->MinUsableSize().y) + 6,
                                                layout, indentation_level);
 
-    button->LeftClickedSignal.connect(boost::bind(HandleSetHotkeyOption, hotkey_name, button.get()));
-    button->RightClickedSignal.connect(boost::bind(HandleResetHotkeyOption, hotkey_name, button.get()));
+    button->LeftClickedSignal.connect([button, hotkey_name]() { HandleSetHotkeyOption(hotkey_name, button.get()); });
+    button->RightClickedSignal.connect([button, hotkey_name]() { HandleResetHotkeyOption(hotkey_name, button.get()); });
 
     page->Insert(row);
 }
 
 GG::Spin<int>* OptionsWnd::IntOption(GG::ListBox* page, int indentation_level,
-                                     const std::string& option_name, const std::string& text)
+                                     std::string option_name, std::string text)
 {
-    auto text_control = GG::Wnd::Create<CUILabel>(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
+    auto text_control = GG::Wnd::Create<CUILabel>(std::move(text),
+                                                  GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     auto validator = GetOptionsDB().GetValidator(option_name);
     std::shared_ptr<GG::Spin<int>> spin;
     int value = GetOptionsDB().Get<int>(option_name);
@@ -1019,9 +1020,10 @@ GG::Spin<int>* OptionsWnd::IntOption(GG::ListBox* page, int indentation_level,
 }
 
 GG::Spin<double>* OptionsWnd::DoubleOption(GG::ListBox* page, int indentation_level,
-                                           const std::string& option_name, const std::string& text)
+                                           std::string option_name, std::string text)
 {
-    auto text_control = GG::Wnd::Create<CUILabel>(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
+    auto text_control = GG::Wnd::Create<CUILabel>(std::move(text),
+                                                  GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     auto validator = GetOptionsDB().GetValidator(option_name);
     std::shared_ptr<GG::Spin<double>> spin;
     double value = GetOptionsDB().Get<double>(option_name);
@@ -1095,12 +1097,13 @@ void OptionsWnd::MusicVolumeOption(GG::ListBox* page, int indentation_level, Sou
     fb.SetMusicButton(std::move(button));
 }
 
-void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const std::string& toggle_option_name,
-                              const std::string& volume_option_name, const std::string& text,
+void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, std::string_view toggle_option_name,
+                              std::string_view volume_option_name, std::string text,
                               bool toggle_value, SoundOptionsFeedback &fb)
 {
     auto row = GG::Wnd::Create<GG::ListBox::Row>();
-    auto button = GG::Wnd::Create<CUIStateButton>(text, GG::FORMAT_LEFT, std::make_shared<CUICheckBoxRepresenter>());
+    auto button = GG::Wnd::Create<CUIStateButton>(std::move(text), GG::FORMAT_LEFT,
+                                                  std::make_shared<CUICheckBoxRepresenter>());
     button->Resize(button->MinUsableSize());
     button->SetCheck(toggle_value);
     auto validator = dynamic_cast<const RangedValidator<int>*>(GetOptionsDB().GetValidator(volume_option_name));
@@ -1129,10 +1132,10 @@ void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const st
     fb.SetEffectsButton(std::move(button));
 }
 
-void OptionsWnd::PathDisplay(GG::ListBox* page, int indentation_level, const std::string& text,
-                             const boost::filesystem::path& path)
+void OptionsWnd::PathDisplay(GG::ListBox* page, int indentation_level, std::string text,
+                             boost::filesystem::path path)
 {
-    auto text_control = GG::Wnd::Create<CUILabel>(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
+    auto text_control = GG::Wnd::Create<CUILabel>(std::move(text), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     auto edit = GG::Wnd::Create<CUIEdit>(PathToString(path));
     edit->Resize(GG::Pt(50*SPIN_WIDTH, edit->Height())); // won't resize within layout bigger than its initial size, so giving a big initial size here
     edit->Disable();
@@ -1140,25 +1143,26 @@ void OptionsWnd::PathDisplay(GG::ListBox* page, int indentation_level, const std
     auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, ROW_WIDTH, edit->MinUsableSize().y,
                                               1, 3, 0, 5);
 
-    layout->Add(text_control,   0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
-    layout->Add(edit,           0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->Add(std::move(text_control), 0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->Add(std::move(edit), 0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
     layout->SetMinimumColumnWidth(1, SPIN_WIDTH);
     layout->SetColumnStretch(0, 0.5);
     layout->SetColumnStretch(1, 1.0);
 
-    auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, layout->Height() + 6, layout,
-                                               indentation_level);
+    const auto layout_height = layout->Height() + 6;
+    auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, layout_height, std::move(layout), indentation_level);
     page->Insert(std::move(row));
 }
 
-void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const std::string& option_name,
-                                const std::string& text, const fs::path& path,
-                                const std::vector<std::pair<std::string, std::string>>& filters,
+void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, std::string option_name,
+                                std::string text, fs::path path,
+                                std::vector<std::pair<std::string, std::string>> filters,
                                 std::function<bool (const std::string&)> string_validator,
                                 bool directory, bool relative_path, bool disabled)
 {
-    auto text_control = GG::Wnd::Create<CUILabel>(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
+    auto text_control = GG::Wnd::Create<CUILabel>(std::move(text),
+                                                  GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     auto edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>(option_name));
     edit->Resize(GG::Pt(50*SPIN_WIDTH, edit->Height())); // won't resize within layout bigger than its initial size, so giving a big initial size here
     auto button = Wnd::Create<CUIButton>("...");
@@ -1167,12 +1171,21 @@ void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const 
         button->Disable();
     }
 
+    const auto& desc = UserString(GetOptionsDB().GetDescription(option_name));
+    const auto delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
+    edit->SetBrowseModeTime(delay);
+    edit->SetBrowseText(desc);
+    button->SetBrowseModeTime(delay);
+    button->SetBrowseText(desc);
+    text_control->SetBrowseModeTime(delay);
+    text_control->SetBrowseText(desc);
+
     auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, ROW_WIDTH, button->MinUsableSize().y,
                                               1, 3, 0, 5);
 
-    layout->Add(text_control,   0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
-    layout->Add(edit,           0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
-    layout->Add(button,         0, 2, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->Add(std::move(text_control), 0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->Add(edit, 0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->Add(button, 0, 2, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
     layout->SetMinimumColumnWidth(1, SPIN_WIDTH);
     layout->SetMinimumColumnWidth(2, button->Width());
@@ -1180,64 +1193,68 @@ void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const 
     layout->SetColumnStretch(1, 1.0);
     layout->SetColumnStretch(2, 0.0);
 
-    auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, layout->Height() + 6, layout,
-                                               indentation_level);
+    const auto layout_height = layout->Height() + 6;
+    auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, layout_height, std::move(layout), indentation_level);
     page->Insert(std::move(row));
 
-    edit->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
-    edit->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
-    button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
-    button->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
-    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
-    text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     edit->EditedSignal.connect(
-        [option_name, edit, string_validator](const std::string& str) {
+        [on{std::move(option_name)}, edit, string_validator](const std::string& str) {
             if (string_validator && !string_validator(str)) {
                 edit->SetTextColor(GG::CLR_RED);
             } else {
                 edit->SetTextColor(ClientUI::TextColor());
-                GetOptionsDB().Set(option_name, str);
+                GetOptionsDB().Set(on, str);
             }
         }
     );
     button->LeftClickedSignal.connect(
-        BrowseForPathButtonFunctor(path, filters, edit, directory, relative_path));
+        BrowseForPathButtonFunctor(std::move(path), std::move(filters), edit, directory, relative_path));
     if (string_validator && !string_validator(edit->Text()))
         edit->SetTextColor(GG::CLR_RED);
 }
 
-void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name,
-                            const std::string& text, const boost::filesystem::path& path,
+void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, std::string option_name,
+                            std::string text, boost::filesystem::path path,
                             std::function<bool (const std::string&)> string_validator)
-{ FileOption(page, indentation_level, option_name, text, path, std::vector<std::pair<std::string, std::string>>(), string_validator); }
+{
+    FileOption(page, indentation_level, std::move(option_name), std::move(text), std::move(path),
+               std::vector<std::pair<std::string, std::string>>(), std::move(string_validator)); }
 
-void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name,
-                            const std::string& text, const boost::filesystem::path& path,
-                            const std::pair<std::string, std::string>& filter,
+void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, std::string option_name,
+                            std::string text, boost::filesystem::path path,
+                            std::pair<std::string, std::string> filter,
                             std::function<bool (const std::string&)> string_validator)
-{ FileOption(page, indentation_level, option_name, text, path, std::vector<std::pair<std::string, std::string>>(1, filter), string_validator); }
+{
+    FileOption(page, indentation_level, std::move(option_name), std::move(text), std::move(path),
+               std::vector<std::pair<std::string, std::string>>(1, filter), std::move(string_validator));
+}
 
-void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name,
-                            const std::string& text, const boost::filesystem::path& path,
-                            const std::vector<std::pair<std::string, std::string>>& filters,
+void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, std::string option_name,
+                            std::string text, boost::filesystem::path path,
+                            std::vector<std::pair<std::string, std::string>> filters,
                             std::function<bool (const std::string&)> string_validator)
-{ FileOptionImpl(page, indentation_level, option_name, text, path, filters, string_validator, false, false, false); }
+{
+    FileOptionImpl(page, indentation_level, std::move(option_name), std::move(text), std::move(path),
+                   std::move(filters), std::move(string_validator), false, false, false);
+}
 
-void OptionsWnd::SoundFileOption(GG::ListBox* page, int indentation_level, const std::string& option_name,
-                                 const std::string& text) {
-    FileOption(page, indentation_level, option_name, text, ClientUI::SoundDir(),
+void OptionsWnd::SoundFileOption(GG::ListBox* page, int indentation_level, std::string option_name,
+                                 std::string text)
+{
+    FileOption(page, indentation_level, std::move(option_name), std::move(text), ClientUI::SoundDir(),
                {UserString("OPTIONS_SOUND_FILE"), "*" + SOUND_FILE_SUFFIX}, ValidSoundFile);
 }
 
-void OptionsWnd::DirectoryOption(GG::ListBox* page, int indentation_level, const std::string& option_name,
-                                 const std::string& text, const fs::path& path, bool disabled)
+void OptionsWnd::DirectoryOption(GG::ListBox* page, int indentation_level, std::string option_name,
+                                 std::string text, fs::path path, bool disabled)
 {
-    FileOptionImpl(page, indentation_level, option_name, text, path, std::vector<std::pair<std::string, std::string>>(),
+    FileOptionImpl(page, indentation_level, std::move(option_name), std::move(text),
+                   std::move(path), std::vector<std::pair<std::string, std::string>>(),
                    ValidDirectory, true, false, disabled);
 }
 
-void OptionsWnd::ColorOption(GG::ListBox* page, int indentation_level, const std::string& option_name,
-                             const std::string& text)
+void OptionsWnd::ColorOption(GG::ListBox* page, int indentation_level, std::string option_name,
+                             std::string text)
 {
     auto row = GG::Wnd::Create<GG::ListBox::Row>();
     auto text_control = GG::Wnd::Create<CUILabel>(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
@@ -1258,15 +1275,15 @@ void OptionsWnd::ColorOption(GG::ListBox* page, int indentation_level, const std
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     color_selector->ColorChangedSignal.connect(
-        [option_name](const GG::Clr& clr) { GetOptionsDB().Set(option_name, clr); });
+        [on{std::move(option_name)}](GG::Clr clr) { GetOptionsDB().Set(on, clr); });
 }
 
-void OptionsWnd::FontOption(GG::ListBox* page, int indentation_level, const std::string& option_name,
-                            const std::string& text)
+void OptionsWnd::FontOption(GG::ListBox* page, int indentation_level, std::string option_name,
+                            std::string text)
 {
-    FileOption(page, indentation_level, option_name, text, GetRootDataDir() / "default",
-               {std::string(option_name), "*" + FONT_FILE_SUFFIX},
-               &ValidFontFile);
+    FileOption(page, indentation_level, std::move(option_name), std::move(text),
+               GetRootDataDir() / "default", {std::string(option_name), "*" + FONT_FILE_SUFFIX},
+               ValidFontFile);
 }
 
 void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {

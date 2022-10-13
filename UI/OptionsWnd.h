@@ -58,44 +58,44 @@ private:
 
     void                DoLayout();
 
-    GG::ListBox*        CreatePage(const std::string& name);
+    GG::ListBox*        CreatePage(std::string name);
     void                CreateSectionHeader(GG::ListBox* page, int indentation_level,
-                                            const std::string& name, const std::string& tooltip = "");
+                                            std::string name, std::string tooltip = "");
     void                HotkeysPage();
-    GG::StateButton*    BoolOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text);
-    GG::Spin<int>*      IntOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text);
-    GG::Spin<double>*   DoubleOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text);
-    void                HotkeyOption(GG::ListBox* page, int indentation_level, const std::string& hotkey_name);
-    void                MusicVolumeOption(GG::ListBox* page, int indentation_level, SoundOptionsFeedback &fb);
-    void                VolumeOption(GG::ListBox* page, int indentation_level, const std::string& toggle_option_name,
-                                     const std::string& volume_option_name, const std::string& text, bool toggle_value,
+    GG::StateButton*    BoolOption(GG::ListBox* page, int indentation_level, std::string option_name, std::string text);
+    GG::Spin<int>*      IntOption(GG::ListBox* page, int indentation_level, std::string option_name, std::string text);
+    GG::Spin<double>*   DoubleOption(GG::ListBox* page, int indentation_level, std::string option_name, std::string text);
+    void                HotkeyOption(GG::ListBox* page, int indentation_level, std::string hotkey_name);
+    void                MusicVolumeOption(GG::ListBox* page, int indentation_level, SoundOptionsFeedback& fb);
+    void                VolumeOption(GG::ListBox* page, int indentation_level, std::string_view toggle_option_name,
+                                     std::string_view volume_option_name, std::string text, bool toggle_value,
                                      SoundOptionsFeedback &fb);
-    void                PathDisplay(GG::ListBox* page, int indentation_level, const std::string& text,
-                                    const boost::filesystem::path& path);
-    void                FileOptionImpl(GG::ListBox* page, int indentation_level, const std::string& option_name,
-                                       const std::string& text, const boost::filesystem::path& path,
-                                       const std::vector<std::pair<std::string, std::string>>& filters,
+    void                PathDisplay(GG::ListBox* page, int indentation_level, std::string text,
+                                    boost::filesystem::path path);
+    void                FileOptionImpl(GG::ListBox* page, int indentation_level, std::string option_name,
+                                       std::string text, boost::filesystem::path path,
+                                       std::vector<std::pair<std::string, std::string>> filters,
                                        std::function<bool (const std::string&)> string_validator,
                                        bool directory, bool relative_path, bool disabled);
-    void                FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name,
-                                   const std::string& text, const boost::filesystem::path& path,
+    void                FileOption(GG::ListBox* page, int indentation_level, std::string option_name,
+                                   std::string text, boost::filesystem::path path,
                                    std::function<bool (const std::string&)> string_validator = nullptr);
-    void                FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name,
-                                   const std::string& text, const boost::filesystem::path& path,
-                                   const std::pair<std::string, std::string>& filter,
+    void                FileOption(GG::ListBox* page, int indentation_level, std::string option_name,
+                                   std::string text, boost::filesystem::path path,
+                                   std::pair<std::string, std::string> filter,
                                    std::function<bool (const std::string&)> string_validator = nullptr);
-    void                FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name,
-                                   const std::string& text, const boost::filesystem::path& path,
-                                   const std::vector<std::pair<std::string, std::string>>& filters,
+    void                FileOption(GG::ListBox* page, int indentation_level, std::string option_name,
+                                   std::string text, boost::filesystem::path path,
+                                   std::vector<std::pair<std::string, std::string>> filters,
                                    std::function<bool (const std::string&)> string_validator = nullptr);
-    void                DirectoryOption(GG::ListBox* page, int indentation_level, const std::string& option_name,
-                                        const std::string& text, const boost::filesystem::path& path, bool disabled = false);
+    void                DirectoryOption(GG::ListBox* page, int indentation_level, std::string option_name,
+                                        std::string text, boost::filesystem::path path, bool disabled = false);
     void                SoundFileOption(GG::ListBox* page, int indentation_level,
-                                        const std::string& option_name, const std::string& text);
+                                        std::string option_name, std::string text);
     void                ColorOption(GG::ListBox* page, int indentation_level,
-                                    const std::string& option_name, const std::string& text);
+                                    std::string option_name, std::string text);
     void                FontOption(GG::ListBox* page, int indentation_level,
-                                   const std::string& option_name, const std::string& text);
+                                   std::string option_name, std::string text);
     void                ResolutionOption(GG::ListBox* page, int indentation_level);
 
     void                DoneClicked();

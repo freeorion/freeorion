@@ -452,7 +452,7 @@ public:
 
     void SelectColor(const GG::Clr& clr);
 
-    mutable boost::signals2::signal<void (const GG::Clr&)> ColorChangedSignal;
+    mutable boost::signals2::signal<void (GG::Clr)> ColorChangedSignal;
 };
 
 /** A control used to pick arbitrary colors using GG::ColorDlg. */
@@ -467,7 +467,7 @@ public:
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
-    mutable boost::signals2::signal<void (const GG::Clr&)> ColorChangedSignal;
+    mutable boost::signals2::signal<void (GG::Clr)> ColorChangedSignal;
 
 private:
     virtual void InitBuffer();
