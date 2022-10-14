@@ -46,7 +46,7 @@ Tech(
         # Reset influence to 0 if no policies adopted. Not really relevant to Outposts, but I need somewhere to put this...
         EffectsGroup(
             scope=Source,
-            activation=EmpireStockpile(empire=Source.Owner, resource=Influence, high=0)
+            activation=HasEmpireStockpile(empire=Source.Owner, resource=Influence, high=0)
             & (NumPoliciesAdopted(empire=Source.Owner) == 0),
             priority=METER_OVERRIDE_PRIORITY,
             effects=SetEmpireStockpile(resource=Influence, value=0.0),
