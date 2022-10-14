@@ -511,8 +511,6 @@ namespace {
 }
 
 std::string DoubleToString(double val, int digits, bool always_show_sign) {
-    std::string text;
-
     // minimum digits is 2. Fewer than this and things can't be sensibly displayed.
     // eg. 300 with 2 digits is 0.3k. With 1 digits, it would be unrepresentable.
     digits = std::max(digits, 2);
@@ -525,10 +523,12 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
 
     // early termination if magnitude is 0
     if (mag == 0.0 || RoundMagnitude(mag, digits + 1) == 0.0) {
-        std::string format = "%1." + std::to_string(digits - 1) + "f";
-        text += (boost::format(format) % mag).str();
-        return text;
+        std::string format = "%1." + std::to_string(digits - 1) + "f"; // TODO: avoid extra string here?
+        return (boost::format(format) % mag).str();
     }
+
+    std::string text;
+    text.reserve(digits+3);
 
     // prepend signs if neccessary
     int effective_sign = EffectiveSign(val);
@@ -537,9 +537,6 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
     else if (always_show_sign)
         text += "+";
 
-    if (mag > LARGE_UI_DISPLAY_VALUE)
-        mag = LARGE_UI_DISPLAY_VALUE;
-
     // if value is effectively 0, avoid unnecessary later processing
     if (effective_sign == 0) {
         text = "0.0";
@@ -547,6 +544,9 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
             text += "0";  // fill in 0's to required number of digits
         return text;
     }
+
+    if (mag > LARGE_UI_DISPLAY_VALUE)
+        mag = LARGE_UI_DISPLAY_VALUE;
 
     //std::cout << std::endl << "DoubleToString val: " << val << " digits: " << digits << std::endl;
     const double initial_mag = mag;
