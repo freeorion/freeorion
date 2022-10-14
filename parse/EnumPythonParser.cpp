@@ -11,7 +11,12 @@
 #include "../Empire/ProductionQueue.h"
 
 void RegisterGlobalsEnums(boost::python::dict& globals) {
-    globals["Influence"] = enum_wrapper<ResourceType>(ResourceType::RE_INFLUENCE);
+    for (const auto& op : std::initializer_list<std::pair<const char*, ResourceType>>{
+        {"Influence", ResourceType::RE_INFLUENCE},
+        {"Industry",  ResourceType::RE_INDUSTRY}})
+    {
+        globals[op.first] = enum_wrapper<ResourceType>(op.second);
+    }
 
     for (const auto& op : std::initializer_list<std::pair<const char*, EmpireAffiliationType>>{
             {"TheEmpire", EmpireAffiliationType::AFFIL_SELF},

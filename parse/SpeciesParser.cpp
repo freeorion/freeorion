@@ -434,18 +434,6 @@ namespace {
         return boost::python::object();
     }
 
-    FocusType insert_focus_type_(const boost::python::tuple& args, const boost::python::dict& kw) {
-        auto name = boost::python::extract<std::string>(kw["name"])();
-        auto description = boost::python::extract<std::string>(kw["description"])();
-        auto location = boost::python::extract<condition_wrapper>(kw["location"])();
-        auto graphic = boost::python::extract<std::string>(kw["graphic"])();
-
-        return {std::move(name),
-            std::move(description),
-            std::move(ValueRef::CloneUnique(location.condition)),
-            std::move(graphic)};
-    }
-
     struct py_grammar {
          boost::python::dict globals;
 
@@ -462,7 +450,6 @@ namespace {
             RegisterGlobalsEnums(globals);
 
             globals["Species"] = boost::python::raw_function([&species_](const boost::python::tuple& args, const boost::python::dict& kw) { return py_insert_species_(species_, args, kw); });
-            globals["FocusType"] = boost::python::raw_function(insert_focus_type_);
         }
 
         boost::python::dict operator()() const

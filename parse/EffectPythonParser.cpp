@@ -6,6 +6,7 @@
 
 #include "../universe/Effects.h"
 #include "../universe/Enums.h"
+#include "../universe/Species.h"
 
 #include "EnumPythonParser.h"
 #include "PythonParserImpl.h"
@@ -311,9 +312,23 @@ namespace {
 
         return effect_wrapper(std::make_shared<Effect::RemoveSpecial>(std::move(name)));
     }
+
+    FocusType insert_focus_type_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        auto name = boost::python::extract<std::string>(kw["name"])();
+        auto description = boost::python::extract<std::string>(kw["description"])();
+        auto location = boost::python::extract<condition_wrapper>(kw["location"])();
+        auto graphic = boost::python::extract<std::string>(kw["graphic"])();
+
+        return {std::move(name),
+            std::move(description),
+            std::move(ValueRef::CloneUnique(location.condition)),
+            std::move(graphic)};
+    }
 }
 
 void RegisterGlobalsEffects(py::dict& globals) {
+    globals["FocusType"] = py::raw_function(insert_focus_type_);
+
     globals["EffectsGroup"] = py::raw_function(insert_effects_group_);
     globals["Item"] = py::raw_function(insert_item_);
 

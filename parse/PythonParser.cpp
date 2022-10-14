@@ -418,12 +418,12 @@ py::object PythonParser::exec_module(py::object& module) {
                         ErrorLogger() << "Python interpreter failed to restart.  Exiting.";
                     }
                 }
-                throw import_error("Cannot execute module");
+                throw import_error("Cannot execute module " + fullname);
             }
 
             return py::object();
         } else {
-            throw import_error("Module not existed");
+            throw import_error("Module not existed " + fullname);
         }
     }
 }
