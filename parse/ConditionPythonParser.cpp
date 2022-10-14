@@ -780,7 +780,7 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     globals["ContainedBy"] = insert_contained_by_;
     globals["Contains"] = insert_contains_;
     globals["Focus"] = boost::python::raw_function(insert_focus_);
-    globals["EmpireStockpile"] = boost::python::raw_function(insert_empire_stockpile_);
+    globals["HasEmpireStockpile"] = boost::python::raw_function(insert_empire_stockpile_);
     globals["EmpireHasAdoptedPolicy"] = boost::python::raw_function(insert_empire_has_adopted_policy_);
     globals["Turn"] = boost::python::raw_function(insert_turn_);
     globals["ResourceSupplyConnected"] = boost::python::raw_function(insert_resource_supply_connected_);
