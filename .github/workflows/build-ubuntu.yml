@@ -44,7 +44,7 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: build-ubuntu-install-cache-id
         with:
           path: ${{ runner.temp }}/cache-build-linux-install
@@ -63,7 +63,7 @@ jobs:
           string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
           message("::set-output name=timestamp::${current_date}")
       - name: Cache files with ccache
-        uses: actions/cache@v1.1.0
+        uses: actions/cache@v2
         with:
           path: ${{ runner.temp }}/ccache
           key: build-${{ matrix.os }}-${{ matrix.compiler }}-ccache-${{ steps.build-ubuntu-ccache-timestamp.outputs.timestamp }}
