@@ -447,8 +447,19 @@ namespace {
             std::enable_if_t<std::is_same_v<typename T::value_type, int>>
         >
     > = true;
+
+    static_assert(!is_int_iterable<int>);
+    static_assert(!is_int_iterable<std::array<float, 5>>);
+    static_assert(is_int_iterable<std::vector<int>>);
 }
 
+/** Checks whether and how a predicate can be applied to select objects from the ObjectMap.
+  * T is a UniverseObject-like type, eg. Planet or Ship. Pred is the predicate type.
+  * Pred may be a function that returns bool and that can be called by passing a
+  * const T&, T*, shared_ptr<const T>, pair<const int, shared_ptr<T>>, or similar.
+  * Pred may also be a UniverseObjectVisitor.
+  * Pred may also be an iterable range of int that specifes IDs of the UniverseObjects
+  * to select. */
 template <typename T, typename Pred>
 constexpr std::array<bool, 11> ObjectMap::CheckTypes()
 {
@@ -471,6 +482,7 @@ constexpr std::array<bool, 11> ObjectMap::CheckTypes()
         std::is_invocable_r_v<bool, DecayPred, const DecayT*>;
     constexpr bool invokable_on_raw_mutable_object =
         std::is_invocable_r_v<bool, DecayPred, DecayT*>;
+    // accepting const objects only is OK, or accepting const or mutable objects, but not only mutable objects
     static_assert(invokable_on_raw_const_object ||
                     (!invokable_on_raw_const_object && !invokable_on_raw_mutable_object),
                     "predicate may not modify ObjectMap contents");
@@ -538,6 +550,7 @@ std::vector<const std::decay_t<T>*> ObjectMap::findRaw(Pred pred) const
         result.reserve(std::size(pred));
 
     if constexpr (is_int_range) {
+        // TODO: special case for sorted range of int?
         for (int object_id : pred) {
             auto map_it = Map<DecayT>().find(object_id);
             if (map_it != Map<DecayT>().end())
