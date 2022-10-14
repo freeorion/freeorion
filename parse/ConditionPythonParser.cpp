@@ -709,7 +709,7 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     globals["InSystem"] = boost::python::raw_function(insert_in_system_);
     globals["ResupplyableBy"] = boost::python::raw_function(insert_resupplyable_by_);
     globals["DesignHasPart"] = boost::python::raw_function(insert_design_has_part_);
-    globals["Building"] = boost::python::raw_function(insert_building_);
+    globals["IsBuilding"] = boost::python::raw_function(insert_building_);
     globals["Location"] = boost::python::raw_function(insert_location_);
     globals["Enqueued"] = boost::python::raw_function(insert_enqueued_);
     globals["Number"] = boost::python::raw_function(insert_number_);

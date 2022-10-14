@@ -9,7 +9,7 @@ Tech(
     tags=["PEDIA_SPY_CATEGORY"],
     effectsgroups=[
         EffectsGroup(
-            scope=Building() | Planet(),
+            scope=IsBuilding() | Planet(),
             stackinggroup="PLANET_STEALTH_MOD_STACK",
             accountinglabel="BASIC_PLANET_STEALTH",
             effects=SetStealth(value=Value + NamedReal(name="PLANET_BASIC_STEALTH", value=5.0)),
