@@ -8,6 +8,7 @@
 
 #include "../universe/ValueRefs.h"
 #include "../universe/NamedValueRefManager.h"
+#include "../Empire/ResourcePool.h"
 
 #include "EnumPythonParser.h"
 #include "PythonParser.h"
@@ -729,6 +730,37 @@ namespace {
             nullptr
         ));
     }
+
+    value_ref_wrapper<double> insert_empire_stockpile_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<int>> empire;
+        auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
+        if (empire_args.check()) {
+            empire = ValueRef::CloneUnique(empire_args().value_ref);
+        } else {
+            empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
+        }
+        auto resource = boost::python::extract<enum_wrapper<ResourceType>>(kw["resource"])();
+        std::string resource_str;
+        switch (resource.value) {
+            case ResourceType::RE_INFLUENCE:
+                resource_str = "Influence";
+                break;
+            case ResourceType::RE_INDUSTRY:
+                resource_str = "Industry";
+                break;
+            default:
+                throw std::runtime_error(std::string("Not supported") + __func__);
+        }
+
+        return value_ref_wrapper<double>(std::make_shared<ValueRef::ComplexVariable<double>>(
+            "EmpireStockpile",
+            std::move(empire),
+            nullptr,
+            nullptr,
+            std::move(std::make_unique<ValueRef::Constant<std::string>>(resource_str)),
+            nullptr
+        ));
+    }
 }
 
 void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& parser) {
@@ -848,5 +880,7 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
     globals["UserString"] = insert_user_string;
     globals["PartsInShipDesign"] = boost::python::raw_function(insert_parts_in_ship_design_);
     globals["EmpireMeterValue"] = boost::python::raw_function(insert_empire_meter_value_);
+    globals["EmpireStockpile"] = boost::python::raw_function(insert_empire_stockpile_);
+
 }
 
