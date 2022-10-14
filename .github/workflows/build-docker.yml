@@ -39,8 +39,8 @@ jobs:
         run: |
           TAG=$(echo $GITHUB_SHA | head -c7)
           IMAGE="freeorion/freeorion"
-          echo ::set-output name=tagged_image::${IMAGE}:${TAG}
-          echo ::set-output name=tag::${TAG}
+          echo tagged_image=${IMAGE}:${TAG} >> $GITHUB_OUTPUT
+          echo tag=${TAG} >> $GITHUB_OUTPUT
       - uses: satackey/action-docker-layer-caching@v0.0.11
         # Ignore the failure of a step and avoid terminating the job.
         continue-on-error: true
@@ -52,7 +52,7 @@ jobs:
         shell: cmake -P {0}
         run: |
           string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
-          message("::set-output name=timestamp::${current_date}")
+          file(APPEND "$ENV{GITHUB_OUTPUT}" "timestamp=${current_date}")
       - name: Cache files with ccache
         uses: actions/cache@v3
         with:
@@ -63,7 +63,8 @@ jobs:
       - name: Detect godot
         id: detect-godot
         run: |
-          docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake -P /freeorion/.github/godot-detect.cmake
+          touch ${GITHUB_OUTPUT}
+          docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" --mount type=bind,source=${GITHUB_OUTPUT},target=/github-output.file -e CCACHE_DIR='/ccache_dir' -e GITHUB_OUTPUT=/github-output.file -w /freeorion ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake -P /freeorion/.github/godot-detect.cmake
       - name: Copy godot
         run: |
           mkdir build
