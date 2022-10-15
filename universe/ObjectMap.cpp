@@ -461,6 +461,9 @@ void ObjectMap::insertCore(std::shared_ptr<Planet> obj, bool destroyed) {
         m_existing_pop_centers.insert_or_assign(ID, obj);
         m_existing_planets.insert_or_assign(ID, obj);
         m_existing_objects.insert_or_assign(ID, obj);
+
+        m_existing_resource_center_vec.push_back(obj.get());
+        m_existing_pop_center_vec.push_back(obj.get());
         m_existing_object_vec.push_back(obj.get());
         m_existing_planet_vec.push_back(obj.get());
     }
