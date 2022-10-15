@@ -160,7 +160,7 @@ public:
 
     /** Returns all the ids and objects of type T */
     template <typename T = UniverseObject, std::enable_if_t<!std::is_const_v<T>>* = nullptr>
-    [[nodiscard]] const auto& allWithIDs()
+    [[nodiscard]] const auto& allWithIDs() noexcept
     {
         using DecayT = std::decay_t<T>;
         return std::as_const(Map<DecayT>());
@@ -179,7 +179,7 @@ public:
     [[nodiscard]] std::shared_ptr<const UniverseObject> getExisting(int id) const;
 
     template <typename T = UniverseObject>
-    [[nodiscard]] const auto& allExisting() const
+    [[nodiscard]] const auto& allExisting() const noexcept
     {
         using DecayT = std::decay_t<T>;
         if constexpr (std::is_same_v<DecayT, UniverseObject>)
@@ -202,13 +202,13 @@ public:
             return m_existing_fields;
         else {
             static_assert(std::is_same_v<DecayT, UniverseObject>, "invalid type for allExisting()");
-            static const decltype(m_existing_objects) error_retval;
+            static const decltype(m_existing_objects) error_retval{};
             return error_retval;
         }
     }
 
     template <typename T = UniverseObject>
-    [[nodiscard]] const auto& allExistingRaw() const
+    [[nodiscard]] const auto& allExistingRaw() const noexcept
     {
         using DecayT = std::decay_t<T>;
         if constexpr (std::is_same_v<DecayT, UniverseObject>)
