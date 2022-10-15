@@ -152,7 +152,7 @@ public:
     bool                        FocusWndAcceptsTypingInput() const; ///< returns true iff the current focus GG::Wnd accepts typing input
     std::shared_ptr<Wnd>        PrevFocusInteractiveWnd() const;    ///< returns the previous Wnd to the current FocusWnd. Cycles through INTERACTIVE Wnds, in order determined by parent-child relationships
     std::shared_ptr<Wnd>        NextFocusInteractiveWnd() const;    ///< returns the next Wnd to the current FocusWnd.
-    std::shared_ptr<Wnd>        GetWindowUnder(const Pt& pt) const; ///< returns the GG::Wnd under the point pt
+    std::shared_ptr<Wnd>        GetWindowUnder(Pt pt) const;        ///< returns the GG::Wnd under the point pt
     virtual unsigned int        Ticks() const = 0;                  ///< returns milliseconds since the app started running
     bool                        RenderingDragDropWnds() const;      ///< returns true iff drag-and-drop Wnds are currently being rendered
     bool                        FPSEnabled() const;                 ///< returns true iff FPS calulations are turned on

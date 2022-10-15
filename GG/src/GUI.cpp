@@ -122,19 +122,19 @@ struct GG::GUIImpl
 {
     GUIImpl();
 
-    void HandleMouseButtonPress(  unsigned int mouse_button, const GG::Pt& pos, int curr_ticks);
-    void HandleMouseDrag(         unsigned int mouse_button, const GG::Pt& pos, int curr_ticks);
-    void HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& pos, int curr_ticks);
-    void HandleIdle(              Flags<ModKey> mod_keys, const GG::Pt& pos, int curr_ticks);
+    void HandleMouseButtonPress(  unsigned int mouse_button, Pt pos, int curr_ticks);
+    void HandleMouseDrag(         unsigned int mouse_button, Pt pos, int curr_ticks);
+    void HandleMouseButtonRelease(unsigned int mouse_button, Pt pos, int curr_ticks);
+    void HandleIdle(              Flags<ModKey> mod_keys, Pt pos, int curr_ticks);
 
     void HandleKeyPress(          Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks);
 
     void HandleKeyRelease(        Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks);
 
     void HandleTextInput(         std::string text);
-    void HandleMouseMove(         Flags<ModKey> mod_keys, const GG::Pt& pos, const Pt& rel, int curr_ticks);
-    void HandleMouseWheel(        Flags<ModKey> mod_keys, const GG::Pt& pos, const Pt& rel, int curr_ticks);
-    void HandleMouseEnter(        Flags<ModKey> mod_keys, const GG::Pt& pos, std::shared_ptr<Wnd> w);
+    void HandleMouseMove(         Flags<ModKey> mod_keys, Pt pos, Pt rel, int curr_ticks);
+    void HandleMouseWheel(        Flags<ModKey> mod_keys, Pt pos, Pt rel, int curr_ticks);
+    void HandleMouseEnter(        Flags<ModKey> mod_keys, Pt pos, std::shared_ptr<Wnd> w);
 
     void ClearState();
 
@@ -243,7 +243,7 @@ GUIImpl::GUIImpl() :
     m_style_factory(new StyleFactory())
 {}
 
-void GUIImpl::HandleMouseButtonPress(unsigned int mouse_button, const Pt& pos, int curr_ticks)
+void GUIImpl::HandleMouseButtonPress(unsigned int mouse_button, Pt pos, int curr_ticks)
 {
     const auto curr_wnd_under_cursor = GUI::s_gui->CheckedGetWindowUnder(pos, m_mod_keys);
     m_curr_wnd_under_cursor = curr_wnd_under_cursor;
@@ -292,7 +292,7 @@ void GUIImpl::HandleMouseButtonPress(unsigned int mouse_button, const Pt& pos, i
     m_prev_wnd_under_cursor = m_curr_wnd_under_cursor; // update this for the next time around
 }
 
-void GUIImpl::HandleMouseDrag(unsigned int mouse_button, const Pt& pos, int curr_ticks)
+void GUIImpl::HandleMouseDrag(unsigned int mouse_button, Pt pos, int curr_ticks)
 {
     const auto dragged_wnd = LockAndResetIfExpired(m_drag_wnds[mouse_button]);
     if (!dragged_wnd)
@@ -422,7 +422,7 @@ void GUIImpl::HandleMouseDrag(unsigned int mouse_button, const Pt& pos, int curr
     }
 }
 
-void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& pos, int curr_ticks)
+void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, Pt pos, int curr_ticks)
 {
     auto curr_wnd_under_cursor = GUI::s_gui->CheckedGetWindowUnder(pos, m_mod_keys);
     m_curr_wnd_under_cursor = curr_wnd_under_cursor;
@@ -579,7 +579,7 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
     m_prev_wnd_under_cursor = m_curr_wnd_under_cursor; // update this for the next time around
 }
 
-void GUIImpl::HandleIdle(Flags<ModKey> mod_keys, const GG::Pt& pos, int curr_ticks)
+void GUIImpl::HandleIdle(Flags<ModKey> mod_keys, const Pt pos, int curr_ticks)
 {
     const auto curr_wnd_under_cursor = LockAndResetIfExpired(m_curr_wnd_under_cursor);
     if (m_mouse_button_down_repeat_delay != 0 &&
@@ -627,7 +627,8 @@ void GUIImpl::HandleIdle(Flags<ModKey> mod_keys, const GG::Pt& pos, int curr_tic
         GUI::s_gui->ProcessBrowseInfo();
 }
 
-void GUIImpl::HandleKeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks)
+void GUIImpl::HandleKeyPress(Key key, std::uint32_t key_code_point,
+                             Flags<ModKey> mod_keys, int curr_ticks)
 {
     m_browse_info_wnd.reset();
     m_browse_info_mode = -1;
@@ -656,7 +657,8 @@ void GUIImpl::HandleKeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey
             WndEvent::EventType::KeyPress, key, key_code_point, mod_keys));
 }
 
-void GUIImpl::HandleKeyRelease(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks)
+void GUIImpl::HandleKeyRelease(Key key, std::uint32_t key_code_point,
+                               Flags<ModKey> mod_keys, int curr_ticks)
 {
     m_last_key_press_repeat_time = 0;
     m_last_pressed_key_code_point.first = Key::GGK_NONE;
@@ -678,7 +680,7 @@ void GUIImpl::HandleTextInput(std::string text) {
         focus_wnd->HandleEvent(WndEvent(WndEvent::EventType::TextInput, std::move(text)));
 }
 
-void GUIImpl::HandleMouseMove(Flags<ModKey> mod_keys, const GG::Pt& pos, const Pt& rel,
+void GUIImpl::HandleMouseMove(Flags<ModKey> mod_keys, Pt pos, Pt rel,
                               int curr_ticks)
 {
     auto curr_wnd_under_cursor = GUI::s_gui->CheckedGetWindowUnder(pos, m_mod_keys);
@@ -714,7 +716,7 @@ void GUIImpl::HandleMouseMove(Flags<ModKey> mod_keys, const GG::Pt& pos, const P
     m_prev_wnd_under_cursor = m_curr_wnd_under_cursor; // update this for the next time around
 }
 
-void GUIImpl::HandleMouseWheel(Flags<ModKey> mod_keys, const GG::Pt& pos, const Pt& rel, int curr_ticks)
+void GUIImpl::HandleMouseWheel(Flags<ModKey> mod_keys, Pt pos, Pt rel, int curr_ticks)
 {
     auto curr_wnd_under_cursor = GUI::s_gui->CheckedGetWindowUnder(pos, m_mod_keys);
     m_curr_wnd_under_cursor = curr_wnd_under_cursor;
@@ -728,7 +730,7 @@ void GUIImpl::HandleMouseWheel(Flags<ModKey> mod_keys, const GG::Pt& pos, const 
     m_prev_wnd_under_cursor = m_curr_wnd_under_cursor; // update this for the next time around
 }
 
-void GUIImpl::HandleMouseEnter(Flags<ModKey> mod_keys, const GG::Pt& pos, std::shared_ptr<Wnd> w)
+void GUIImpl::HandleMouseEnter(Flags<ModKey> mod_keys, Pt pos, std::shared_ptr<Wnd> w)
 {
     w->HandleEvent(WndEvent(WndEvent::EventType::MouseEnter, pos, mod_keys));
     m_curr_wnd_under_cursor = std::move(w);
@@ -946,7 +948,7 @@ std::shared_ptr<Wnd> GUI::NextFocusInteractiveWnd() const
     return focus_wnd;
 }
 
-std::shared_ptr<Wnd> GUI::GetWindowUnder(const Pt& pt) const
+std::shared_ptr<Wnd> GUI::GetWindowUnder(Pt pt) const
 {
     auto wnd{m_impl->m_zlist.Pick(pt, ModalWindow())};
     if constexpr (INSTRUMENT_GET_WINDOW_UNDER && wnd)
