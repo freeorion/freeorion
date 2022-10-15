@@ -234,7 +234,10 @@ class PolicyManager:
         try to adopt the best possible ones for the slots we have.
         """
         self._conformance_or_liberty()
-        self._process_policy_options(social_category, (propaganda, algo_research, diversity, artisans, population))
+        options = {propaganda, algo_research, diversity, artisans, population}
+        if conformance in self._adopted:
+            options -= conformance_exclusions
+        self._process_policy_options(social_category, options)
 
     def _process_military(self) -> None:
         """Process military policies."""
