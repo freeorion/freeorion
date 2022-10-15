@@ -14,8 +14,8 @@
 using namespace GG;
 
 namespace {
-    std::shared_ptr<Wnd> PickWithinWindow(Pt pt, std::shared_ptr<Wnd> wnd,
-                                          const std::set<Wnd*>* ignore) // TODO: ignore as reference
+    template <typename Wnds>
+    std::shared_ptr<Wnd> PickWithinWindow(Pt pt, std::shared_ptr<Wnd> wnd, const Wnds& ignore)
     {
         if (!wnd)
             return nullptr;
@@ -34,13 +34,15 @@ namespace {
         }
 
         // if wnd is visible and clickable, return it if no child windows also catch pt
-        if (!wnd->Visible() || !wnd->Interactive() || (ignore && ignore->count(wnd.get())))
+        if (!wnd->Visible() || !wnd->Interactive())
             return nullptr;
-
+        if (!ignore.empty() && std::find(ignore.begin(), ignore.end(), wnd.get()) != ignore.end())
+            return nullptr;
         return wnd;
     }
 
-    std::shared_ptr<Wnd> ContainsPt(Pt pt, std::shared_ptr<Wnd> locked, const std::set<Wnd*>* ignore)
+    template <typename Wnds>
+    std::shared_ptr<Wnd> ContainsPt(Pt pt, std::shared_ptr<Wnd> locked, const Wnds& ignore)
     {
         if (!locked || !locked->Visible() || !locked->InWindow(pt))
             return nullptr;
@@ -54,7 +56,14 @@ namespace {
 ///////////////////////////////////////
 // class GG::ZList
 ///////////////////////////////////////
-std::shared_ptr<Wnd> ZList::Pick(Pt pt, std::shared_ptr<Wnd> modal, const std::set<Wnd*>* ignore) const
+std::shared_ptr<Wnd> ZList::Pick(Pt pt, std::shared_ptr<Wnd> modal) const
+{
+    static const std::vector<const Wnd*> NO_WNDS{};
+    return Pick(pt, std::move(modal), NO_WNDS);
+}
+
+std::shared_ptr<Wnd> ZList::Pick(Pt pt, std::shared_ptr<Wnd> modal,
+                                 const std::vector<const Wnd*>& ignore) const
 {
     if (modal) { // if a modal window is active, only look there
         // NOTE: We have to check Visible() separately, because in the

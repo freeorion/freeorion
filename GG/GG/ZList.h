@@ -49,8 +49,9 @@ public:
 
     /** Returns pointer to the window under the point pt; constrains pick to
         modal if nonzero, and ignores \a ignore if nonzero. */
+    std::shared_ptr<Wnd> Pick(Pt pt, std::shared_ptr<Wnd> modal) const;
     std::shared_ptr<Wnd> Pick(Pt pt, std::shared_ptr<Wnd> modal,
-                              const std::set<Wnd*>* ignore = nullptr) const;
+                              const std::vector<const Wnd*>& ignore) const;
 
     /** Add() places \a wnd in front of the list. */
     void Add(std::shared_ptr<Wnd> wnd);
