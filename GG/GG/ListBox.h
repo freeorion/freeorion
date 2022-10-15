@@ -124,19 +124,18 @@ public:
 
         /** Returns the string by which this row may be sorted. */
         virtual SortKeyType SortKey(std::size_t column) const;
-        std::size_t         size() const;                       ///< returns the number of Controls in this Row
-        bool                empty() const;                      ///< returns true iff there are 0 Controls in this Row
+        std::size_t         size() const noexcept { return m_cells.size(); };   ///< returns the number of Controls in this Row
+        bool                empty() const noexcept { return m_cells.empty(); }; ///< returns true iff there are 0 Controls in this Row
 
         /** Returns the Control in the \a nth cell of this Row
             \throw std::range_error throws when size() <= \a n */
-        virtual Control* at(std::size_t n) const;
+        virtual Control* at(std::size_t n) const { return m_cells.at(n).get(); }
 
-        Alignment    RowAlignment() const;              ///< returns the vertical alignment of this Row
-        Alignment    ColAlignment(std::size_t n) const; ///< returns the horizontal alignment of the Control in the \a nth cell of this Row; not range checked
-        X            ColWidth(std::size_t n) const;     ///< returns the width of the \a nth cell of this Row; not range checked
-        unsigned int Margin() const;                    ///< returns the amount of space left between the contents of adjacent cells, in pixels
-        /** Return true if the row is normalized.  Used by ListBox to track normalization.*/
-        bool         IsNormalized() const;
+        Alignment    RowAlignment() const noexcept { return m_row_alignment; }         ///< vertical alignment of this Row
+        Alignment    ColAlignment(std::size_t n) const { return m_col_alignments[n]; } ///< horizontal alignment of the Control in the \a nth cell of this Row; not range checked
+        X            ColWidth(std::size_t n) const { return m_col_widths[n]; };        ///< width of the \a nth cell of this Row; not range checked
+        auto         Margin() const noexcept { return m_margin; }                      ///< amount of space left between the contents of adjacent cells, in pixels
+        bool         IsNormalized() const noexcept { return m_is_normalized; }
 
         void         Render() override;
 
@@ -178,25 +177,11 @@ public:
     typedef std::list<std::shared_ptr<Row>>::iterator iterator;
     typedef std::list<std::shared_ptr<Row>>::const_iterator const_iterator;
 
-    /** \brief Sorts iterators to ListBox::Row*s from a container of
-        ListBox::Row*s.
-
-        For instance for use in a std::map<> or std::set<> (eg,
-        ListBox::SelectionSet).  The iterators must refer to pointers to
-        ListBox::Rows that are laid out vertically (as in a ListBox).  This
-        layout is used to define a y-ordering that is used to sort the
-        iterators. */
-    struct GG_API RowPtrIteratorLess
-    {
-        bool operator()(const iterator& lhs, const iterator& rhs) const;
-    };
-
     struct IteratorHash
     {
         std::size_t operator()(const iterator& it) const
         { return boost::hash<const std::shared_ptr<Row>>()(*it); }
     };
-
     typedef std::unordered_set<iterator, IteratorHash> SelectionSet;
 
     /** emitted when the list box is cleared */
@@ -233,39 +218,39 @@ public:
     Pt ClientUpperLeft() const override;
     Pt ClientLowerRight() const override;
 
-    bool                Empty() const;          ///< returns true when the ListBox is empty
-    const_iterator      begin() const;          ///< returns an iterator to the first list row
-    const_iterator      end() const;            ///< returns an iterator to the imaginary row one past the last
-    const Row&          GetRow(std::size_t n) const; ///< returns a const reference to the row at index \a n; not range-checked.  \note This function is O(n).
-    iterator            Caret() const;          ///< returns the row that has the caret
-    const SelectionSet& Selections() const;     ///< returns a const reference to the set row indexes that is currently selected
-    bool                Selected(iterator it) const; ///< returns true if row \a it is selected
-    Clr                 InteriorColor() const;  ///< returns the color painted into the client area of the control
-    Clr                 HiliteColor() const;    ///< returns the color behind selected line items
+    bool           Empty() const noexcept { return m_rows.empty(); }
+    const_iterator begin() const noexcept { return m_rows.begin(); }
+    const_iterator end() const noexcept { return m_rows.end(); }
+    const Row&     GetRow(std::size_t n) const;                            ///< row at index \a n; not range-checked.  \note This function is O(n).
+    iterator       Caret() const noexcept { return m_caret; }              ///< row that has the caret
+    const auto&    Selections() const noexcept { return m_selections; }    ///< set row indexes that is currently selected
+    bool           Selected(iterator it) const;                            ///< returns true if row \a it is selected
+    Clr            InteriorColor() const noexcept { return m_int_color; }  ///< color painted into the client area of the control
+    Clr            HiliteColor() const noexcept { return m_hilite_color; } ///< color behind selected line items
 
     /** Returns the style flags of the listbox \see GG::ListBoxStyle */
-    Flags<ListBoxStyle> Style() const;
+    Flags<ListBoxStyle> Style() const noexcept { return m_style; }
 
-    const Row&      ColHeaders() const;     ///< returns the row containing the headings for the columns, if any.  If undefined, the returned heading Row will have size() 0.
-    iterator        FirstRowShown() const;  ///< returns the first row visible in the listbox
-    std::size_t     FirstColShown() const;  ///< returns the index of the first column visible in the listbox
+    const Row&      ColHeaders() const { return *m_header_row; }  ///< row containing the headings for the columns, if any.  If undefined, the returned heading Row will have size() 0.
+    iterator        FirstRowShown() const;  ///< first row visible in the listbox
+    std::size_t     FirstColShown() const;  ///< index of the first column visible in the listbox
 
-    iterator        LastVisibleRow() const; ///< returns the last row that could be drawn, taking into account the contents and the size of client area
-    std::size_t     LastVisibleCol() const; ///< returns the index of the last column that could be drawn, taking into account the contents and the size of client area
+    iterator        LastVisibleRow() const; ///< last row that could be drawn, taking into account the contents and the size of client area
+    std::size_t     LastVisibleCol() const; ///< index of the last column that could be drawn, taking into account the contents and the size of client area
 
-    std::size_t     NumRows() const;        ///< returns the total number of rows in the ListBox
-    std::size_t     NumCols() const;        ///< returns the total number of columns in the ListBox
+    std::size_t     NumRows() const noexcept { return m_rows.size(); }; ///< total number of rows in the ListBox
+    std::size_t     NumCols() const noexcept { return m_num_cols; }     ///< total number of columns in the ListBox
 
     /** Returns true iff column widths are fixed \see LockColWidths() */
-    bool            KeepColWidths() const;
+    bool            KeepColWidths() const noexcept { return m_keep_col_widths; }
 
     /** Return true if column width and alignment are not managed by ListBox. */
-    bool            ManuallyManagingColProps() const;
+    bool            ManuallyManagingColProps() const noexcept { return !m_manage_column_props; }
 
     /** Returns the index of the column used to sort rows, when sorting is
         enabled.  \note The sort column is not range checked when it is set by
         the user; it may be < 0 or >= NumCols(). */
-    std::size_t     SortCol() const;
+    std::size_t     SortCol() const noexcept { return m_sort_col; }
 
     X               ColWidth(std::size_t n) const;     ///< returns the width of column \a n in pixels; not range-checked
     Alignment       ColAlignment(std::size_t n) const; ///< returns the alignment of column \a n; must be ALIGN_LEFT, ALIGN_CENTER, or ALIGN_RIGHT; not range-checked
@@ -289,7 +274,7 @@ public:
     unsigned int    AutoScrollInterval() const;
 
     /** Return true if drops are allowed.*/
-    bool            AllowingDrops();
+    bool            AllowingDrops() const noexcept { return m_allow_drops; }
 
 
     mutable ClearedRowsSignalType        ClearedRowsSignal;        ///< the cleared signal object for this ListBox

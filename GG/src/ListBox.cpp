@@ -193,30 +193,6 @@ std::string ListBox::Row::SortKey(std::size_t col) const
     return text_control ? text_control->Text() : "";
 }
 
-std::size_t ListBox::Row::size() const
-{ return m_cells.size(); }
-
-bool ListBox::Row::empty() const
-{ return m_cells.empty(); }
-
-Control* ListBox::Row::at(std::size_t n) const
-{ return m_cells.at(n).get(); }
-
-Alignment ListBox::Row::RowAlignment() const
-{ return m_row_alignment; }
-
-Alignment ListBox::Row::ColAlignment(std::size_t n) const
-{ return m_col_alignments[n]; }
-
-X ListBox::Row::ColWidth(std::size_t n) const
-{ return m_col_widths[n]; }
-
-unsigned int ListBox::Row::Margin() const
-{ return m_margin; }
-
-bool ListBox::Row::IsNormalized() const
-{ return m_is_normalized; }
-
 void ListBox::Row::Render()
 {}
 
@@ -467,11 +443,10 @@ void ListBox::Row::RClick(const Pt& pt, GG::Flags<GG::ModKey> mod) {
      RightClickedSignal(pt, mod);
 }
 
-////////////////////////////////////////////////
-// GG::ListBox::RowPtrIteratorLess
-////////////////////////////////////////////////
-bool ListBox::RowPtrIteratorLess::operator()(const ListBox::iterator& lhs, const ListBox::iterator& rhs) const
-{ return (*lhs)->Top() < (*rhs)->Top(); }
+namespace {
+    auto RowPtrIteratorLess = [](const ListBox::iterator& lhs, const ListBox::iterator& rhs)
+    { return (*lhs)->Top() < (*rhs)->Top(); };
+}
 
 
 ////////////////////////////////////////////////
@@ -521,9 +496,6 @@ void ListBox::CompleteConstruction()
 void ListBox::AllowDrops(bool allow)
 { m_allow_drops = allow; }
 
-bool ListBox::AllowingDrops()
-{ return m_allow_drops; }
-
 void ListBox::AllowAllDropTypes(bool allow) {
     // If all types are allow use boost::none as a sentinel
     if (allow)
@@ -571,41 +543,14 @@ Pt ListBox::ClientUpperLeft() const
 Pt ListBox::ClientLowerRight() const
 { return LowerRight() - Pt(static_cast<int>(BORDER_THICK) + RightMargin(), static_cast<int>(BORDER_THICK) + BottomMargin()); }
 
-bool ListBox::Empty() const
-{ return m_rows.empty(); }
-
-ListBox::const_iterator ListBox::begin() const
-{ return m_rows.begin(); }
-
-ListBox::const_iterator ListBox::end() const
-{ return m_rows.end(); }
-
 const ListBox::Row& ListBox::GetRow(std::size_t n) const
 {
     assert(n < m_rows.size());
     return **std::next(m_rows.begin(), n);
 }
 
-ListBox::iterator ListBox::Caret() const
-{ return m_caret; }
-
-const ListBox::SelectionSet& ListBox::Selections() const
-{ return m_selections; }
-
 bool ListBox::Selected(iterator it) const
 { return it != m_rows.end() && m_selections.count(it); }
-
-Clr ListBox::InteriorColor() const
-{ return m_int_color; }
-
-Clr ListBox::HiliteColor() const
-{ return m_hilite_color; }
-
-Flags<ListBoxStyle> ListBox::Style() const
-{ return m_style; }
-
-const ListBox::Row& ListBox::ColHeaders() const
-{ return *m_header_row; }
 
 ListBox::iterator ListBox::FirstRowShown() const
 { return m_first_row_shown; }
@@ -647,21 +592,6 @@ std::size_t ListBox::LastVisibleCol() const
 
     return (ii_last_visible ? (ii_last_visible - 1) : 0);
 }
-
-std::size_t ListBox::NumRows() const
-{ return m_rows.size(); }
-
-std::size_t ListBox::NumCols() const
-{ return m_num_cols; }
-
-bool ListBox::KeepColWidths() const
-{ return m_keep_col_widths; }
-
-bool ListBox::ManuallyManagingColProps() const
-{ return !m_manage_column_props; }
-
-std::size_t ListBox::SortCol() const
-{ return m_sort_col; }
 
 X ListBox::ColWidth(std::size_t n) const
 { return m_col_widths[n]; }
@@ -2334,8 +2264,8 @@ void ListBox::ClickAtRow(iterator it, Flags<ModKey> mod_keys)
         if (mod_keys & MOD_KEY_CTRL) { // control key depressed
             if (mod_keys & MOD_KEY_SHIFT && m_caret != m_rows.end()) {
                 // Both shift and control keys are depressed.
-                iterator low  = RowPtrIteratorLess()(m_caret, it) ? m_caret : it;
-                iterator high = RowPtrIteratorLess()(m_caret, it) ? it : m_caret;
+                iterator low  = RowPtrIteratorLess(m_caret, it) ? m_caret : it;
+                iterator high = RowPtrIteratorLess(m_caret, it) ? it : m_caret;
 
                 bool erase = !m_selections.count(m_caret);
                 if (high != m_rows.end())
@@ -2362,8 +2292,8 @@ void ListBox::ClickAtRow(iterator it, Flags<ModKey> mod_keys)
                 m_caret = m_rows.begin();
             } 
             // select all rows between the caret and this row (inclusive), don't move the caret
-            iterator low  = RowPtrIteratorLess()(m_caret, it) ? m_caret : it;
-            iterator high = RowPtrIteratorLess()(m_caret, it) ? it : m_caret;
+            iterator low  = RowPtrIteratorLess(m_caret, it) ? m_caret : it;
+            iterator high = RowPtrIteratorLess(m_caret, it) ? it : m_caret;
             if (high != m_rows.end())
                 ++high;
             for (iterator it2 = low; it2 != high; ++it2) {
