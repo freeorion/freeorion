@@ -41,28 +41,13 @@ class Wnd;
 class GG_API ZList
 {
 public:
-    /** RenderOrderIterable can be iterated in back to front render order. */
-    struct RenderOrderIterable {
-        RenderOrderIterable(const std::list<std::shared_ptr<Wnd>>& list) :
-            m_list(list.rbegin(), list.rend())
-        {}
-
-        std::vector<std::shared_ptr<Wnd>>::const_iterator begin() const
-        { return m_list.begin(); }
-
-        std::vector<std::shared_ptr<Wnd>>::const_iterator end() const
-        { return m_list.end(); }
-
-        private:
-        const std::vector<std::shared_ptr<Wnd>> m_list;
-    };
-
     /** Return a RenderOrderIterable in back to front render order. */
-    RenderOrderIterable RenderOrder() const;
+    std::vector<std::shared_ptr<Wnd>> RenderOrder() const { return {m_list.crbegin(), m_list.crend()}; }
 
     /** Returns pointer to the window under the point pt; constrains pick to
         modal if nonzero, and ignores \a ignore if nonzero. */
-    std::shared_ptr<Wnd> Pick(const Pt& pt, const std::shared_ptr<Wnd>& modal, const std::set<Wnd*>* ignore = nullptr) const;
+    std::shared_ptr<Wnd> Pick(const Pt& pt, const std::shared_ptr<Wnd>& modal,
+                              const std::set<Wnd*>* ignore = nullptr) const;
 
     /** Add() places \a wnd in front of the list. */
     void Add(std::shared_ptr<Wnd> wnd);
