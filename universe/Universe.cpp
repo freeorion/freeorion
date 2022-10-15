@@ -1062,12 +1062,14 @@ namespace {
                 candidate_objects_in.insert(candidate_objects_in.end(), matched_targets.begin(), matched_targets.end());
             }
 
-            TraceLogger(effects) << [&]() -> std::string {
-                std::stringstream ss;
-                ss << "Scope Results <" << n << ">  source: " << source->ID() << "  matches: ";
+            TraceLogger(effects) << [=]() -> std::string {
+                std::string retval;
+                retval.reserve(30 + matched_targets.size() * 10); // guesstimate
+                retval.append("Scope Results <").append(std::to_string(n))
+                      .append(">  source: ").append(std::to_string(source->ID())).append("  matches: ");
                 for (auto& obj : matched_targets)
-                    ss << obj->ID() << ", ";
-                return ss.str();
+                    retval.append(std::to_string(obj->ID())).append(", ");
+                return retval;
             }();
         }
     }
@@ -1191,12 +1193,14 @@ namespace {
             }
         }
 
-        TraceLogger(effects) << [&]() {
-            std::stringstream ss;
-            ss << "After activation condition, for " << effects_groups.size() << " effects groups have # sources: ";
+        TraceLogger(effects) << [=]() {
+            std::string retval;
+            retval.reserve(30 + 10*active_sources.size()); // guesstimate
+            retval.append("After activation condition, for ").append(std::to_string(effects_groups.size()))
+                  .append(" effects groups have # sources: ");
             for (auto& src_set : active_sources)
-                ss << src_set.size() << ", ";
-            return ss.str();
+                retval.append(std::to_string(src_set.size())).append(", ");
+            return retval;
         }();
 
 
@@ -1210,10 +1214,9 @@ namespace {
 
         // duplicate input ObjectSet potential_targets as local TargetSet
         // that can be passed to StoreTargetsAndCausesOfEffectsGroup
-        Effect::TargetSet potential_targets_copy;
-        potential_targets_copy.reserve(potential_targets.size());
-        for (const auto* obj : potential_targets)
-            potential_targets_copy.push_back(const_cast<UniverseObject*>(obj));
+        Effect::TargetSet potential_targets_copy(potential_targets.size(), nullptr);
+        std::transform(potential_targets.begin(), potential_targets.end(), potential_targets_copy.begin(),
+                       [](const auto* obj) { return const_cast<UniverseObject*>(obj); });
 
 
         // evaluate scope conditions for source objects that are active
@@ -1283,17 +1286,27 @@ namespace {
                 &source_effects_targets_causes_reorder_buffer_out.back().first);
 
 
-            TraceLogger(effects) << [&]() {
-                std::stringstream ss;
-                ss << "Dispatching Scope Evaluations < " << n << " > sources: ";
-                for (auto& obj : active_sources[i])
-                    ss << obj->ID() << ", ";
-                ss << "  cause type: " << effect_cause_type
-                    << "  specific cause: " << specific_cause_name
-                    << "  candidates: ";
-                for (auto& obj : potential_targets_copy)
-                    ss << obj->ID() << ", ";
-                return ss.str();
+            TraceLogger(effects) << [n, effect_cause_type, specific_cause_name,
+                                     ac{active_sources[i]}, &potential_targets_copy,
+                                     num{potential_targets_copy.size()}]()
+            {
+                std::string retval;
+                retval.reserve(100 + 10*ac.size() + 10*potential_targets_copy.size()); // guesstimate
+                retval.append("Dispatching Scope Evaluations < ").append(std::to_string(n))
+                      .append(" > sources: ");
+                for (const auto& obj : ac)
+                    retval.append(std::to_string(obj->ID())).append(", ");
+                retval.append("  cause type: ").append(to_string(effect_cause_type))
+                      .append("  specific cause: ").append(specific_cause_name)
+                      .append("  candidates: ");
+                if (num == 0) {
+                    retval.append("[whole universe]");
+                } else {
+                    retval.append("[").append(std::to_string(num)).append(" specified objects]: ");
+                    for (auto& obj : potential_targets_copy)
+                        retval.append(std::to_string(obj->ID())).append(", ");
+                }
+                return retval;
             }();
 
 
