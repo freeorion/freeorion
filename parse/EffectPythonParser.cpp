@@ -274,6 +274,30 @@ namespace {
         throw std::runtime_error(std::string("Not implemented in ") + __func__);
     }
 
+    effect_wrapper insert_give_empire_item_(UnlockableItemType item, const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<int>> empire;
+        if (kw.has_key("empire")) {
+            auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
+            if (empire_args.check()) {
+                empire = ValueRef::CloneUnique(empire_args().value_ref);
+            } else {
+                empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
+            }
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<std::string>> name;
+        auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
+        if (name_args.check()) {
+            name = ValueRef::CloneUnique(name_args().value_ref);
+        } else {
+            name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
+        }
+
+        return effect_wrapper(std::make_shared<Effect::GiveEmpireContent>(std::move(name),
+            item,
+            std::move(empire)));
+    }
+
     effect_wrapper victory(const boost::python::tuple& args, const boost::python::dict& kw) {
         auto reason = boost::python::extract<std::string>(kw["reason"])();
         return effect_wrapper(std::make_shared<Effect::Victory>(reason));
@@ -382,8 +406,7 @@ void RegisterGlobalsEffects(py::dict& globals) {
             {"SetSize",               MeterType::METER_SIZE}})
     {
         const auto m = meter.second;
-        const auto f_insert_set_meter = [m](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_set_meter_(m, args, kw); };
-        globals[meter.first] = boost::python::raw_function(f_insert_set_meter);
+        globals[meter.first] = boost::python::raw_function([m](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_set_meter_(m, args, kw); });
     }
 
     // set_ship_part_meter_enum_grammar
@@ -396,8 +419,7 @@ void RegisterGlobalsEffects(py::dict& globals) {
             {"SetSecondaryStat",    MeterType::METER_SECONDARY_STAT}})
     {
         const auto m = meter.second;
-        const auto f_insert_set_meter = [m](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_ship_part_set_meter_(m, args, kw); };
-        globals[meter.first] = boost::python::raw_function(f_insert_set_meter);
+        globals[meter.first] = boost::python::raw_function([m](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_ship_part_set_meter_(m, args, kw); });
     }
 
     globals["SetEmpireStockpile"] = py::raw_function(insert_set_empire_stockpile);
@@ -405,5 +427,17 @@ void RegisterGlobalsEffects(py::dict& globals) {
     globals["SetStarType"] = py::raw_function(insert_set_star_type_);
     globals["MoveTo"] = py::raw_function(insert_move_to_);
     globals["MoveTowards"] = py::raw_function(insert_move_towards_);
+
+    // give_empire_unlockable_item_enum_grammar 
+    for (const auto& uit : std::initializer_list<std::pair<const char*, UnlockableItemType>>{
+            {"UnlockBuildingType", UnlockableItemType::UIT_BUILDING},
+            {"UnlockShipPart", UnlockableItemType::UIT_SHIP_PART},
+            {"UnlockShipHull", UnlockableItemType::UIT_SHIP_HULL},
+            {"GiveEmpireTech", UnlockableItemType::UIT_TECH},
+            {"UnlockPolicy", UnlockableItemType::UIT_POLICY}})
+    {
+        const auto u = uit.second;
+        globals[uit.first] = py::raw_function([u](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_give_empire_item_(u, args, kw); });
+    }
 }
 
