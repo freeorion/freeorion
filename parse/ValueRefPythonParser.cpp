@@ -393,6 +393,13 @@ value_ref_wrapper<int> operator==(const value_ref_wrapper<int>& lhs, int rhs) {
     );
 }
 
+value_ref_wrapper<int> operator!=(const value_ref_wrapper<int>& lhs, int rhs) {
+    return value_ref_wrapper<int>(
+        std::make_shared<ValueRef::Operation<int>>(ValueRef::OpType::COMPARE_NOT_EQUAL,
+            ValueRef::CloneUnique(lhs.value_ref),
+            std::make_unique<ValueRef::Constant<int>>(rhs))
+    );
+}
 
 namespace {
     template<typename T>
@@ -523,7 +530,12 @@ namespace {
             if (value_arg.check()) {
                 value = ValueRef::CloneUnique(value_arg().value_ref);
             } else {
-                value = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["value"])());
+                const auto value_int_arg = boost::python::extract<value_ref_wrapper<int>>(kw["value"]);
+                if (value_int_arg.check()) {
+                    value = std::make_unique<ValueRef::StaticCast<int, double>>(ValueRef::CloneUnique(value_int_arg().value_ref));
+                } else {
+                    value = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["value"])());
+               }
             }
             return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::Statistic<double, double>>(std::move(value), type, ValueRef::CloneUnique(condition))));
         } else {
