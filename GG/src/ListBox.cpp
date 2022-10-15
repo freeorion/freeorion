@@ -813,9 +813,9 @@ void ListBox::PreRender()
     // stable then force the scrollbar to be added if either cycle had a scroll bar.
 
     // Perform a cycle of adjust scrolls and prerendering rows and return if sizes changed.
-    auto check_adjust_scroll_size_change = [this](std::pair<bool, bool> force_scrolls = {false, false}) {
+    auto check_adjust_scroll_size_change = [this](std::pair<bool, bool> force_hv = {false, false}) {
         // This adjust scrolls may add or remove scrolls
-        AdjustScrolls(true);
+        AdjustScrolls(true, force_hv);
 
         bool visible_row_size_change = ShowVisibleRows(true);
 
@@ -1410,7 +1410,7 @@ void ListBox::SetAutoScrollMargin(unsigned int margin)
 void ListBox::SetAutoScrollInterval(unsigned int interval)
 { m_auto_scroll_timer.SetInterval(interval); }
 
-X ListBox::RightMargin() const
+X ListBox::RightMargin() const // TODO: noexcept, in header
 { return X(m_vscroll ? SCROLL_WIDTH : 0); }
 
 Y ListBox::BottomMargin() const
@@ -1419,7 +1419,7 @@ Y ListBox::BottomMargin() const
 unsigned int ListBox::CellMargin() const
 { return m_cell_margin; }
 
-ListBox::iterator ListBox::RowUnderPt(const Pt& pt) const
+ListBox::iterator ListBox::RowUnderPt(const Pt& pt) const // TODO: pass Pt by value
 {
     if (!InClient(pt))
         return m_rows.end();
@@ -1434,7 +1434,7 @@ ListBox::iterator ListBox::RowUnderPt(const Pt& pt) const
     return retval;
 }
 
-ListBox::iterator ListBox::OldSelRow() const
+ListBox::iterator ListBox::OldSelRow() const // TODO: noexcept in header
 { return m_old_sel_row; }
 
 ListBox::iterator ListBox::OldRDownRow() const
@@ -2080,8 +2080,7 @@ Pt ListBox::ClientSizeExcludingScrolls() const
 }
 
 std::pair<boost::optional<X>, boost::optional<Y>> ListBox::CheckIfScrollsRequired(
-    const std::pair<bool, bool>& force_scrolls,
-    const boost::optional<Pt>& maybe_client_size) const
+    std::pair<bool, bool> force_hv, const boost::optional<Pt>& maybe_client_size) const
 {
     // Use the precalculated client size if possible.
     auto cl_sz = maybe_client_size ? *maybe_client_size : ClientSizeExcludingScrolls();
@@ -2092,13 +2091,13 @@ std::pair<boost::optional<X>, boost::optional<Y>> ListBox::CheckIfScrollsRequire
         total_y_extent += row->Height();
 
     bool vertical_needed =
-        force_scrolls.second ||
+        force_hv.second ||
         m_first_row_shown != m_rows.begin() ||
         (m_rows.size() && (cl_sz.y < total_y_extent ||
                            (cl_sz.y < total_y_extent - SCROLL_WIDTH &&
                             cl_sz.x < total_x_extent - SCROLL_WIDTH)));
     bool horizontal_needed =
-        force_scrolls.first ||
+        force_hv.first ||
         m_first_col_shown ||
         (m_rows.size() && (cl_sz.x < total_x_extent ||
                            (cl_sz.x < total_x_extent - SCROLL_WIDTH &&
@@ -2230,13 +2229,13 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
     return {hscroll_added_or_removed, vscroll_added_or_removed};
 }
 
-void ListBox::AdjustScrolls(bool adjust_for_resize, const std::pair<bool, bool>& force_scrolls)
+void ListBox::AdjustScrolls(bool adjust_for_resize, std::pair<bool, bool> force_hv)
 {
     // The client size before scrolls are/are not added.
     const Pt cl_sz = ClientSizeExcludingScrolls();
 
     // The size of the underlying list box, indicating if scrolls are required.
-    const auto required_total_extents = CheckIfScrollsRequired(force_scrolls, cl_sz);
+    const auto required_total_extents = CheckIfScrollsRequired(force_hv, cl_sz);
 
     bool vscroll_added_or_removed;
     std::tie(std::ignore,  vscroll_added_or_removed) = AddOrRemoveScrolls(required_total_extents, cl_sz);
@@ -2264,9 +2263,8 @@ void ListBox::AdjustScrolls(bool adjust_for_resize, const std::pair<bool, bool>&
     if (vscroll_added_or_removed || adjust_for_resize) {
         RequirePreRender();
         X row_width(std::max(ClientWidth(), X(1)));
-        for (auto& row : m_rows) {
+        for (auto& row : m_rows)
             row->Resize(Pt(row_width, row->Height()));
-        }
     }
 }
 
@@ -2298,7 +2296,6 @@ void ListBox::VScrolled(int tab_low, int tab_high, int low, int high)
         RequirePreRender();
 
     m_first_row_offset.y = position;
-
 }
 
 void ListBox::HScrolled(int tab_low, int tab_high, int low, int high)

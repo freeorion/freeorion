@@ -510,8 +510,7 @@ protected:
 
     /** creates, destroys, or resizes scrolls to reflect size of data in listbox. \p force_scroll
         forces the scroll bar to be added.*/
-    void AdjustScrolls(bool adjust_for_resize,
-                       const std::pair<bool, bool>& force_scrolls = {false, false});
+    void AdjustScrolls(bool adjust_for_resize, std::pair<bool, bool> force_hv = {false, false});
 
     void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
                          const Pt& pt, Flags<ModKey> mod_keys) const override;
@@ -548,7 +547,7 @@ private:
 
         This is a private function that is a component of AdjustScrolls. */
     std::pair<boost::optional<X>, boost::optional<Y>>
-        CheckIfScrollsRequired(const std::pair<bool, bool>& force_scrolls = {false, false},
+        CheckIfScrollsRequired(std::pair<bool, bool> force_scrolls = {false, false},
                                const boost::optional<Pt>& maybe_client_size = boost::none) const;
 
     /** Add vscroll and/or hscroll if \p required_total_extents the x andor y dimension exists. The
