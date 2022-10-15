@@ -49,35 +49,6 @@ namespace {
             return temp;
         return nullptr;
     };
-
-    /** Return the pair (iterator, bool) for the first wnd where \p predicate(wnd) != boost::none.
-    * Remove any nullptr found before the first satisying wnd from the list. */
-    template <typename L, typename P>
-    auto Find(L& list, P predicate)
-    {
-        using iterator = ZList::iterator;
-        using list_value_t = ZList::container_t::value_type;
-        using predicate_result_t = decltype(predicate(std::declval<list_value_t>()));
-        using retval_t = boost::optional<std::pair<iterator, predicate_result_t>>;
-
-        auto wnd_it = list.begin();
-        while (wnd_it != list.end()) {
-            if (!*wnd_it) {
-                // remove this Wnd and move to next...
-                wnd_it = list.erase(wnd_it);
-                continue;
-            }
-
-            // does this Wnd pass predicate?
-            if (auto result = predicate(*wnd_it))
-                return retval_t(std::pair{wnd_it, std::move(result)});
-
-            ++wnd_it;
-        }
-
-        return retval_t(boost::none);
-    }
-
 }
 
 ///////////////////////////////////////
@@ -90,12 +61,13 @@ std::shared_ptr<Wnd> ZList::Pick(Pt pt, std::shared_ptr<Wnd> modal, const std::s
         // rendering code an invisble parent's children are never rendered.
         if (modal->Visible() && modal->InWindow(pt))
             return PickWithinWindow(pt, std::move(modal), ignore);
-        return nullptr;
 
     } else {
-        auto found = Find(m_list, [pt, ignore](auto locked) { return ContainsPt(pt, std::move(locked), ignore); });
-        if (found)
-            return found->second;
+        auto wnd_under = [pt, ignore](auto locked) { return ContainsPt(pt, std::move(locked), ignore); };
+        for (const auto& list_wnd : m_list) {
+            if (auto result = wnd_under(list_wnd))
+                return result;
+        }
     }
     return nullptr;
 }
