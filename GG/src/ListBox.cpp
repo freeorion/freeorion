@@ -548,7 +548,7 @@ void ListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter las
     }
 }
 
-void ListBox::HandleRowRightClicked(const Pt& pt, GG::Flags<GG::ModKey> mod) {
+void ListBox::HandleRowRightClicked(Pt pt, GG::Flags<GG::ModKey> mod) {
     iterator row_it = RowUnderPt(pt);
     if (row_it != m_rows.end()) {
         m_rclick_row = row_it;
@@ -1410,16 +1410,13 @@ void ListBox::SetAutoScrollMargin(unsigned int margin)
 void ListBox::SetAutoScrollInterval(unsigned int interval)
 { m_auto_scroll_timer.SetInterval(interval); }
 
-X ListBox::RightMargin() const // TODO: noexcept, in header
+X ListBox::RightMargin() const noexcept
 { return X(m_vscroll ? SCROLL_WIDTH : 0); }
 
-Y ListBox::BottomMargin() const
+Y ListBox::BottomMargin() const noexcept
 { return Y(m_hscroll ? SCROLL_WIDTH : 0); }
 
-unsigned int ListBox::CellMargin() const
-{ return m_cell_margin; }
-
-ListBox::iterator ListBox::RowUnderPt(const Pt& pt) const // TODO: pass Pt by value
+ListBox::iterator ListBox::RowUnderPt(Pt pt) const
 {
     if (!InClient(pt))
         return m_rows.end();
@@ -1876,7 +1873,7 @@ ListBox::iterator ListBox::Insert(std::shared_ptr<Row> row, iterator it, bool dr
 
     row->Hide();
     row->Resize(Pt(std::max(ClientWidth(), X1), row->Height()));
-    row->RightClickedSignal.connect([this](const Pt& pt, GG::Flags<GG::ModKey> mod)
+    row->RightClickedSignal.connect([this](Pt pt, GG::Flags<GG::ModKey> mod)
                                     { HandleRowRightClicked(pt, mod); });
 
     AfterInsertRowSignal(it);

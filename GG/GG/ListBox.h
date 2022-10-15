@@ -466,11 +466,11 @@ public:
     };
 
 protected:
-    X               RightMargin() const;     ///< space skipped at right of client area for vertical scroll bar
-    Y               BottomMargin() const;    ///< space skipped at bottom of client area for horizontal scroll bar
-    unsigned int    CellMargin() const;      ///< the number of pixels left between the contents of each cell and the cell boundary
+    X               RightMargin() const noexcept;  ///< space skipped at right of client area for vertical scroll bar
+    Y               BottomMargin() const noexcept; ///< space skipped at bottom of client area for horizontal scroll bar
+    unsigned int    CellMargin() const noexcept { return m_cell_margin; }; ///< the number of pixels left between the contents of each cell and the cell boundary
 
-    iterator        RowUnderPt(const Pt& pt) const; ///< returns row under pt, if any; value must be checked (i.e. it may be end())
+    iterator        RowUnderPt(Pt pt) const; ///< returns row under pt, if any; value must be checked (i.e. it may be end())
 
     iterator        OldSelRow() const;   ///< returns the last row that was selected with a left-button mouse-down
     iterator        OldRDownRow() const; ///< returns the last row that was selected with a right-button mouse-down
@@ -514,7 +514,7 @@ protected:
 
     void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
                          const Pt& pt, Flags<ModKey> mod_keys) const override;
-    void HandleRowRightClicked(const Pt& pt, Flags<ModKey> mod);
+    void HandleRowRightClicked(Pt pt, Flags<ModKey> mod);
 
 private:
     /** Show only rows that are within the visible list box area and hide all others.  If
