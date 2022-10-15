@@ -17,7 +17,7 @@ void TestCheckSumFromEnv(const char* env, unsigned int def, unsigned int calcula
         }
     }
     if (force) {
-        BOOST_REQUIRE_MESSAGE(calculated == expected, env << " expected " << expected << " was " << calculated);
+        BOOST_CHECK_MESSAGE(calculated == expected, env << " expected " << expected << " was " << calculated);
     } else {
         BOOST_WARN_MESSAGE(calculated == expected, env << " expected " << expected << " was " << calculated);
     }

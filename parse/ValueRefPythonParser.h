@@ -118,6 +118,7 @@ value_ref_wrapper<int> operator>(const value_ref_wrapper<int>&, int);
 value_ref_wrapper<int> operator>=(const value_ref_wrapper<int>&, const value_ref_wrapper<int>&);
 value_ref_wrapper<int> operator==(const value_ref_wrapper<int>&, const value_ref_wrapper<int>&);
 value_ref_wrapper<int> operator==(const value_ref_wrapper<int>&, int);
+value_ref_wrapper<int> operator!=(const value_ref_wrapper<int>&, int);
 
 void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& parser);
 

@@ -165,7 +165,11 @@ namespace {
 
         std::unique_ptr<Condition::Condition> activation;
         if (kw.has_key("activation")) {
-           activation = ValueRef::CloneUnique(py::extract<condition_wrapper>(kw["activation"])().condition);
+           if (py::extract<py::object>(kw["activation"])().is_none()) {
+               activation = std::make_unique<Condition::None>();
+           } else {
+               activation = ValueRef::CloneUnique(py::extract<condition_wrapper>(kw["activation"])().condition);
+           }
         }
 
         std::string accountinglabel;
@@ -274,6 +278,17 @@ namespace {
         throw std::runtime_error(std::string("Not implemented in ") + __func__);
     }
 
+    effect_wrapper insert_set_planet_size_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<PlanetSize>> planetsize;
+        auto size_arg = boost::python::extract<value_ref_wrapper< ::PlanetSize>>(kw["planetsize"]);
+        if (size_arg.check()) {
+            planetsize = ValueRef::CloneUnique(size_arg().value_ref);
+        } else {
+            planetsize = std::make_unique<ValueRef::Constant< ::PlanetSize>>(boost::python::extract<enum_wrapper< ::PlanetSize>>(kw["planetsize"])().value);
+        }
+        return effect_wrapper(std::make_shared<Effect::SetPlanetSize>(std::move(planetsize)));
+    }
+
     effect_wrapper insert_give_empire_item_(UnlockableItemType item, const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<int>> empire;
         if (kw.has_key("empire")) {
@@ -357,6 +372,7 @@ void RegisterGlobalsEffects(py::dict& globals) {
     globals["Item"] = py::raw_function(insert_item_);
 
     globals["Destroy"] = effect_wrapper(std::make_shared<Effect::Destroy>());
+    globals["NoEffect"] = effect_wrapper(std::make_shared<Effect::NoOp>());
 
     globals["GenerateSitRepMessage"] = py::raw_function(insert_generate_sit_rep_message_);
     globals["Conditional"] = py::raw_function(insert_conditional_);
@@ -427,6 +443,7 @@ void RegisterGlobalsEffects(py::dict& globals) {
     globals["SetStarType"] = py::raw_function(insert_set_star_type_);
     globals["MoveTo"] = py::raw_function(insert_move_to_);
     globals["MoveTowards"] = py::raw_function(insert_move_towards_);
+    globals["SetPlanetSize"] = py::raw_function(insert_set_planet_size_);
 
     // give_empire_unlockable_item_enum_grammar 
     for (const auto& uit : std::initializer_list<std::pair<const char*, UnlockableItemType>>{
