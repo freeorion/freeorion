@@ -21,7 +21,7 @@ public:
     bool IsRequireAuthOrReturnRoles(const std::string& player_name, const std::string& ip_address, bool &result, Networking::AuthRoles& roles) const; // Wraps call to AuthProvider's method is_require_auth
     bool IsSuccessAuthAndReturnRoles(const std::string& player_name, const std::string& auth, bool &result, Networking::AuthRoles& roles) const; // Wraps call to AuthProvider's method is_success_auth
     bool FillListPlayers(std::list<PlayerSetupData>& players) const; // Wraps call to AuthProvider's method list_player
-    bool GetPlayerDelegation(const std::string& player_name, std::list<std::string> &result) const; // Wraps call to AuthProvider's method get_player_delegation
+    bool GetPlayerDelegation(const std::string& player_name, std::vector<std::string>& result) const; // Wraps call to AuthProvider's method get_player_delegation
     bool LoadChatHistory(boost::circular_buffer<ChatHistoryEntity>& chat_history); // Wraps call to ChatProvider's method load_history
     bool PutChatHistoryEntity(const ChatHistoryEntity& chat_history_entity); // Wraps call to ChatProvider's method put_history_entity
     bool AsyncIOTick(); // Executes awaiting asyncio callbacks, see https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.loop.run_forever

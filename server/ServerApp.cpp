@@ -2071,7 +2071,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
 }
 
 std::vector<std::string> ServerApp::GetPlayerDelegation(const std::string& player_name) {
-    std::list<std::string> result;
+    std::vector<std::string> result;
     bool success = false;
     try {
         m_python_server.SetCurrentDir(GetPythonAuthDir());

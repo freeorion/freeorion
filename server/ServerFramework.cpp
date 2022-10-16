@@ -186,13 +186,15 @@ auto PythonServer::FillListPlayers(std::list<PlayerSetupData>& players) const ->
         for (auto& it = players_begin; it != players_end; ++it)
             players.push_back(*it);
     } else {
-        DebugLogger() << "Wrong players list data: check returns " << py::extract<std::string>(py::str(r))();
+        DebugLogger() << "Wrong players list data: check returns "
+                      << py::extract<std::string>(py::str(r))();
         return false;
     }
     return true;
 }
 
-auto PythonServer::GetPlayerDelegation(const std::string& player_name, std::list<std::string> &result) const -> bool
+auto PythonServer::GetPlayerDelegation(const std::string& player_name,
+                                       std::vector<std::string>& result) const -> bool
 {
     py::object auth_provider = m_python_module_auth.attr("__dict__")["auth_provider"];
     if (!auth_provider) {
@@ -208,10 +210,10 @@ auto PythonServer::GetPlayerDelegation(const std::string& player_name, std::list
     py::extract<py::list> py_players(r);
     if (py_players.check()) {
         py::stl_input_iterator<std::string> players_begin(py_players), players_end;
-        for (auto& it = players_begin; it != players_end; ++it)
-            result.push_back(*it);
+        result.insert(result.end(), players_begin, players_end);
     } else {
-        DebugLogger() << "Wrong delegated players list data: check returns " << py::extract<std::string>(py::str(r))();
+        DebugLogger() << "Wrong delegated players list data: check returns "
+                      << py::extract<std::string>(py::str(r))();
         return false;
     }
 
