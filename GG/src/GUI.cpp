@@ -148,7 +148,7 @@ struct GG::GUIImpl
     ZList               m_zlist;        // object that keeps the GUI windows in the correct depth ordering
     std::weak_ptr<Wnd>  m_focus_wnd;    // GUI window that currently has the input focus (this is the base level focus window, used when no modal windows are active)
 
-    std::list<std::pair<std::shared_ptr<Wnd>, std::weak_ptr<Wnd>>>
+    std::vector<std::pair<std::shared_ptr<Wnd>, std::weak_ptr<Wnd>>>
                         m_modal_wnds;                               // modal GUI windows, and the window with focus for that modality (only the one in back is active, simulating a stack but allowing traversal of the list)
     bool                m_allow_modal_accelerator_signals = false;  // iff true: keyboard accelerator signals will be output while modal window(s) is open
 
