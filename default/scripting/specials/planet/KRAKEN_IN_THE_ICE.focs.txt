@@ -1,13 +1,13 @@
 Special
     name = "KRAKEN_IN_THE_ICE_SPECIAL"
     description = "KRAKEN_IN_THE_ICE_SPECIAL_DESC"
-    stealth = 25
+    stealth = 45
     spawnrate = 12.0
     spawnlimit = 1
     location = And [
         Planet
         Planet type = Tundra
-        Not WithinStarlaneJumps jumps = 2 condition = And [
+        Not WithinStarlaneJumps jumps = 4 condition = And [
             System
             Contains And [
                 Planet
