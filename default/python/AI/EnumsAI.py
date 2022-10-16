@@ -89,9 +89,9 @@ class ShipRoleType(IntEnum):  # this is also used in determining fleetRoles
 
 
 class EmpireProductionTypes(IntEnum):
-    BT_NOT_BUILDING = 0  # ///< no building is taking place
-    BT_BUILDING = 1  # ///< a Building object is being built
-    BT_SHIP = 2  # ///< a Ship object is being built
+    BT_NOT_BUILDING = 0  # no production is taking place
+    BT_BUILDING = 1  # a Building object is being built
+    BT_SHIP = 2  # a Ship object is being built
 
 
 class FocusType:

@@ -34,7 +34,7 @@ def calculate_research(planet: fo.planet, species: fo.species, max_population: f
     policy_multiplier = _get_policy_multiplier(stability)
     bonus_unmodified = _get_research_bonus_unmodified(planet, stability)
 
-    result = max_population * (AIDependencies.INDUSTRY_PER_POP + bonus_modified) * skill_multiplier
+    result = max_population * (AIDependencies.RESEARCH_PER_POP + bonus_modified) * skill_multiplier
     result = (result + max_population * bonus_by_policy + flat_by_policy) * policy_multiplier
     result += max_population * bonus_unmodified
     debug_rating(
