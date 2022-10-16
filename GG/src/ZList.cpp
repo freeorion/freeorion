@@ -14,8 +14,11 @@
 using namespace GG;
 
 namespace {
+    /** Returns \a wnd or one of its (nested) children if they are visible,
+      * \a pt is within the returned Wnd and it is not in \a ignore. If no
+      * such Wnd is found, returns nullptr. */
     template <typename Wnds>
-    std::shared_ptr<Wnd> PickWithinWindow(Pt pt, std::shared_ptr<Wnd> wnd, const Wnds& ignore)
+    std::shared_ptr<Wnd> PickWithinWindow(Pt pt, const std::shared_ptr<Wnd>& wnd, const Wnds& ignore)
     {
         if (!wnd)
             return nullptr;
@@ -40,17 +43,6 @@ namespace {
             return nullptr;
         return wnd;
     }
-
-    template <typename Wnds>
-    std::shared_ptr<Wnd> ContainsPt(Pt pt, std::shared_ptr<Wnd> locked, const Wnds& ignore)
-    {
-        if (!locked || !locked->Visible() || !locked->InWindow(pt))
-            return nullptr;
-
-        if (auto temp = PickWithinWindow(pt, std::move(locked), ignore))
-            return temp;
-        return nullptr;
-    };
 }
 
 ///////////////////////////////////////
@@ -72,10 +64,9 @@ std::shared_ptr<Wnd> ZList::Pick(Pt pt, std::shared_ptr<Wnd> modal,
             return PickWithinWindow(pt, std::move(modal), ignore);
 
     } else {
-        auto wnd_under = [pt, ignore](auto locked) { return ContainsPt(pt, std::move(locked), ignore); };
         for (const auto& list_wnd : m_list) {
-            if (auto result = wnd_under(list_wnd))
-                return result;
+            if (list_wnd && list_wnd->Visible() && list_wnd->InWindow(pt))
+                return PickWithinWindow(pt, list_wnd, ignore);
         }
     }
     return nullptr;

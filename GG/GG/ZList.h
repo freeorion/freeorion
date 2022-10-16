@@ -74,7 +74,7 @@ public:
 private:
     iterator FirstNonOnTop(); ///< iterator to first window in list that is non-on-top (returns end() if none found).
 
-    mutable container_t m_list;
+    container_t m_list;
 };
 
 }
