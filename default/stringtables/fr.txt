@@ -6433,7 +6433,18 @@ Les Voies spatiales d'approvisionnement essentielles d'un empire (les lignes les
 
 Les lignes d'approvisionnement peuvent également servir à ravitailler en [[metertype METER_FUEL]] les astronefs.
 
-Les lignes d'approvisionnement seront bloquées par les astronefs ennemis armés appartenant aux empires avec lesquels l'empire est en [[encyclopedia WAR_TITLE]]. À l'opposé du spectre diplomatique, les empires sous traité d'[[encyclopedia ALLIANCE_TITLE]] partageront leurs lignes d'approvisionnement ainsi que tous les bénéfices y étant associés.'''
+Les empires sous traité d'[[encyclopedia ALLIANCE_TITLE]] partagent leurs lignes d'approvisionnement.
+L'extension des lignes d'approvisionnement depuis les planètes sources vers un système peut être bloquée par des astronefs ennemis armés se trouvant dans ce système, au sein de flottes réglées sur '[[FLEET_OBSTRUCTIVE]]' ou '[[FLEET_AGGRESSIVE]]'. Les astronefs ennemis correspondent aux astronefs d'empires en [[encyclopedia WAR_TITLE]] avec celui possédant les lignes d'approvisionnement, ou bien à des astronefs neutres ou des monstres errants.
+
+Si de multiples empires sont en compétition pour l'approvisionnement d'un système (sans faire obstruction à la propagation de l'approvisionnement de chacun d'eux), l'empire avec la portée la plus élevée de propagation de l'approvisionnement fournira ce système. Pour prévenir les cas d'égalité, un bonus par empire est calculé et ajouté à la propagation de l'approvisionnement avant comparaison.
+
+• Possède une colonie dans le système : +0.5
+• Possède un avant-poste (mais aucune colonie) dans le système : +0.3
+* Possède des sources d'approvisionnement dans le système : +(0.001 * SUM(propre appro. dans le système))
+* Distance à la source d'approvisionnement fournissant ce système et qui, avant propagation, est la plus importante. Par exemple, une source de volume 4 à 4 Voies spatiales de distance est plus importante qu'une source de volume 3 à 3 Voies spatiales de distance : +(0.0001 * distance au système offrant l'approvisionnement maximum)
+* Possède des sources d'approvisionnement dans le système : +(0.00001 * SUM(propre appro. maximum dans le système))
+* Total de l'approvisionnement : +(0.00000001 * SUM(propre appro. dans l'empire))
+S'il résulte toujours une égalité, et que tous les empires à égalité sont alliés, un des empires alliés est choisi au hasard. Si au moins un des empires à égalité n'est pas allié avec les autres, aucun empire ne l'emporte et le système ne fera partie d'aucun Groupe Ressource.'''
 
 METER_STOCKPILE_VALUE_LABEL
 Distribution Stock
@@ -6487,7 +6498,7 @@ METER_DETECTION_VALUE_DESC
 
 Les astronefs et les planètes ont un indicateur 'Champ de Détection'. Dans le Menu d'Options, le réglage 'Cercles de détection' permet d'afficher sur la carte galactique les zones circulaires (en uu) figurant les Champs de Détection. Afin de faciliter la mesure de ce qui se trouve à l'intérieur d'un Champ de Détection, le réglage 'Barre d'échelle des distances' permet d'afficher l'échelle de la carte (en uu) tandis que le réglage 'Cercle d'échelle des distances' permet de figurer la même distance que la barre d'échelle lorsqu'un système stellaire est sélectionné. Ces deux indicateurs d'échelle s'adaptent au niveau de zoom sur la carte et peuvent être activés/désactivés via des raccourcis claviers.
 
-Certains objets ou aptitudes permettent la vision de zones situées en dehors du Champ de Détection, telles les compétences spéciales des espèces [[species SP_TRITH]] ou [[species SP_GEORGE]], ou en raison des effets induits par la structure [[buildingtype BLD_SCRYING_SPHERE]].
+Certaines caractéristiques permettent la vision de zones situées en dehors du Champ de Détection. Cela inclut les aptitudes des espèces [[species SP_FULVER]], [[species SP_GEORGE]], [[SP_NIGHTSIDERS]] ou [[species SP_TRITH]], les effets induits par la structure [[buildingtype BLD_SCRYING_SPHERE]], ou l'obtention d'une carte dans une épave d'Éclaireur lors de l'exploration de nouveaux systèmes.
 
 [[DETECTION_STAR_MODIFIERS]]'''
 
@@ -7264,10 +7275,10 @@ DISTANCE_TO_SELECTED_FLEET
 Dist. à la Flotte Sélec.
 
 PROPAGATED_SUPPLY_RANGE
-Portée Approvisionnement Propagé
+Portée Propag. Approvisionnement
 
 PROPAGATED_SUPPLY_DISTANCE
-Distance Approvisionnement Propagé
+Distance Propag. Approvisionnement
 
 ETA
 Tours avant Destination
@@ -14554,6 +14565,8 @@ SPY_PLANET_STEALTH_MOD_DESC
 '''Ces effets affectent la Furtivité:
 
 • La [[BASIC_PLANET_STEALTH]] octroie une [[metertype METER_STEALTH]] de [[value PLANET_BASIC_STEALTH]] à toutes les planètes.
+
+• Les colonies peuvent avoir un malus ou un bonus supplémentaire de [[metertype METER_STEALTH]] selon l'espèce peuplant la colonie.
 
 • En raison de la [[FLEET_UNSTEALTHINESS]], lorsque plus de [[value FLEET_UNSTEALTHY_SHIPS_THRESHOLD]] astronefs d'un même empire se trouvent dans un système, leur [[metertype METER_STEALTH]] est réduite de [[value FLEET_UNSTEALTH_SHIPS_SCALING]] multiplié par la racine carrée de [[value FLEET_UNSTEALTHY_SHIPS_THRESHOLD]] moins le nombre d'astronefs appartenant à l'empire dans le système.
 
