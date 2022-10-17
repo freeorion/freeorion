@@ -43,6 +43,13 @@ GOOD_VISION
         effects = SetDetection value = Value + 50
 '''
 
+VERY_GOOD_VISION
+'''EffectsGroup
+        scope = Source
+        accountinglabel = "VERY_GOOD_VISION_LABEL"
+        effects = SetDetection value = Value + 100
+'''
+
 EXCELLENT_VISION
 '''EffectsGroup
         scope = Source
