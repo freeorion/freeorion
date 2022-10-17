@@ -2,6 +2,7 @@ from common.base_prod import TECH_COST_MULTIPLIER, TROOPS_PER_POP
 from common.priorities import (
     AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
     TARGET_AFTER_SCALING_PRIORITY,
+    TARGET_EARLY_BEFORE_SCALING_PRIORITY,
 )
 
 Tech(
@@ -53,6 +54,7 @@ Tech(
             scope=Planet() & OwnedBy(empire=Source.Owner) & Population(low=0.01),
             stackinggroup="GARRISON_2_TROOPS_STACK",
             accountinglabel="DEF_TECH_ACCOUNTING_LABEL",
+            priority=TARGET_EARLY_BEFORE_SCALING_PRIORITY,
             effects=SetMaxTroops(
                 value=Value
                 + Target.Population * NamedReal(name="GARRISON_2_MAXTROOPS_PERPOP", value=2 * TROOPS_PER_POP)
@@ -124,6 +126,7 @@ Tech(
             scope=Planet() & OwnedBy(empire=Source.Owner) & Population(low=0.01),
             stackinggroup="GARRISON_4_TROOPS_STACK",
             accountinglabel="DEF_TECH_ACCOUNTING_LABEL",
+            priority=TARGET_EARLY_BEFORE_SCALING_PRIORITY,
             effects=SetMaxTroops(
                 value=Value
                 + Target.Population * NamedReal(name="GARRISON_4_MAX_TROOPS_PERPOP", value=3 * TROOPS_PER_POP)
