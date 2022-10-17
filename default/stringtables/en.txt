@@ -12110,7 +12110,7 @@ The effect requires a stability of [[value PLC_CENTRALIZATION_MIN_STABILITY]].
 However, it also reduces [[metertype METER_SUPPLY]] range ([[value PLC_CENTRALIZATION_MAX_SUPPLY_FLAT]]) and [[metertype METER_STOCKPILE]] ([[value PLC_CENTRALIZATION_MAX_STOCKPILE_FLAT]]), and increases the [[metertype METER_INFLUENCE]] cost of the empire's colonies:
 • [[metertype METER_SUPPLY]] connected colonies get a penalization of [[value PLC_CENTRALIZATION_TARGET_INFLUENCE_PERJUMP]] per jump distance to the capital, capped at [[value PLC_CENTRALIZATION_TARGET_INFLUENCE_MAX]].
 • Colonies not [[metertype METER_SUPPLY]] connected to the capital gets the maximum penalization ([[value PLC_CENTRALIZATION_TARGET_INFLUENCE_MAX]]).
-Additionally, the cost of colonization ship parts is increased by 50%.
+Additionally, the cost of colonization ship parts is increased by 33%.
 
 Logistics of the whole empire are focused into boosting the capital's production, by diverting there most of the social and material resources. This causes some resentment in the colonies, which increases [[metertype METER_INFLUENCE]] costs.'''
 
@@ -12140,7 +12140,8 @@ PLC_COLONIZATION
 Colonization
 
 PLC_COLONIZATION_DESC
-Decreases cost of colonization ship parts and give ships with colony parts but no weapons, troops, bombard, or general parts +1 base fuel capacity.
+'''• Decreases cost of colonization ship parts, outpost ship parts and colonization buildings by 33%.
+• Gives ships with colony parts but no weapons, troops, bombard, or general parts +1 base fuel capacity.'''
 
 PLC_COLONIZATION_SHORT_DESC
 Discounts Colonization
@@ -12160,7 +12161,7 @@ PLC_EXPLORATION
 Exploration
 
 PLC_EXPLORATION_DESC
-'''• Increases speed of ships with no weapons, fighters, shields, armour, troops, colony pods, bombardment, research, industry, influence, production, or general parts. Detection, fuel, and engine parts are allowed.
+'''• Increases speed of ships with no weapons, fighters, shields, armour, troops, colony pods, bombardment, research, industry, influence, production, or general parts by [[value PLC_EXPLORATION_SPEED_BONUS]] uu. Detection, fuel, and engine parts are allowed.
 • Every turn a system is newly explored, the ships in that system generate a total of [[value EXPLORATION_RESEARCH_BONUS_TOTAL]] RP.'''
 
 PLC_EXPLORATION_SHORT_DESC
@@ -12228,11 +12229,10 @@ PLC_ENVIRONMENTALISM
 Environmentalism
 
 PLC_ENVIRONMENTALISM_DESC
-'''Decreases industry and construction of all owned planets. Penalizes further construction, stability, and influence on terraformed planets.
-
-Boosts research, stability, influence, and stealth on non-terraformed populated planets.
-
-Makes terraforming more expensive.'''
+'''• Decreases [[metertype METER_CONSTRUCTION]] by [[value PLC_ENVIRONMENTALISM_TARGET_CONSTRUCTION_TERRAFORMED_FLAT]], [[metertype METER_TARGET_HAPPINESS]] by [[value PLC_ENVIRONMENTALISM_TARGET_HAPPINESS_FLAT]] and [[metertype METER_TARGET_INFLUENCE]] by [[value PLC_ENVIRONMENTALISM_TARGET_INFLUENCE_FLAT]] on planets that have been terraformed, or otherwise changed from their original environment.
+• Decreases [[metertype METER_TARGET_INDUSTRY]] by [[value PLC_ENVIRONMENTALISM_TARGET_INDUSTRY_FLAT]] and [[metertype METER_CONSTRUCTION]] by [[value PLC_ENVIRONMENTALISM_TARGET_CONSTRUCTION_FLAT]] on non-asteroids.
+• Boosts [[metertype METER_TARGET_HAPPINESS]] by [[value PLC_ENVIRONMENTALISM_TARGET_HAPPINESS_ORIGINAL_FLAT]], [[metertype METER_TARGET_INFLUENCE]] by [[value PLC_ENVIRONMENTALISM_TARGET_INFLUENCE_ORIGINAL_FLAT]], [[metertype METER_TARGET_RESEARCH]] by [[value PLC_ENVIRONMENTALISM_TARGET_RESEARCH_ORIGINAL_FLAT]] and [[metertype METER_STEALTH]] by [[value PLC_ENVIRONMENTALISM_STEALTH_ORIGINAL_FLAT]] on planets that are not asteroids or gas giants, have not been terraformed, contain no buildings and are not industry-focused.
+• Makes terraforming a planet 3x as expensive.'''
 
 PLC_ENVIRONMENTALISM_SHORT_DESC
 Bonuses for not terraforming
@@ -12257,7 +12257,7 @@ PLC_INDUSTRIALISM_DESC
 '''Industry-focused planets get a boost to [[metertype METER_TARGET_INDUSTRY]] of [[value PLC_INDUSTRIALISM_TARGET_INDUSTRY_PERCENT]]% and a bonus of [[value PLC_INDUSTRIALISM_TARGET_HAPPINESS_FLAT]] to [[metertype METER_HAPPINESS]].
 The production bonus requires a stability of [[value PLC_INDUSTRIALISM_MIN_STABILITY]].
 
-Makes production-boosting power generation techs cheaper to research: [[tech PRO_ORBITAL_GEN]] [[tech PRO_SOL_ORB_GEN]] [[tech PRO_FUSION_GEN]] [[tech PRO_SINGULAR_GEN]] [[tech PRO_ZERO_GEN]]'''
+Makes production-boosting power generation techs cheaper to research: [[tech PRO_ORBITAL_GEN]], [[tech PRO_SOL_ORB_GEN]], [[tech PRO_FUSION_GEN]], [[tech PRO_SINGULAR_GEN]], [[tech PRO_ZERO_GEN]]'''
 
 PLC_INDUSTRIALISM_SHORT_DESC
 Improves industry output
@@ -12404,7 +12404,7 @@ PLC_THE_HUNT
 The Hunt
 
 PLC_THE_HUNT_DESC
-Boosts [[metertype METER_TARGET_HAPPINESS]], [[metertype METER_TARGET_INFLUENCE]], and [[metertype METER_MAX_TROOPS]] of planets in systems that also contain an unowned populated planet, with no [[metertype METER_SHIELD]] or [[metertype METER_DEFENSE]], and with a species other than the species on the benefiting planet or on the the imperial capital.
+Boosts [[metertype METER_TARGET_HAPPINESS]] by [[value PLC_THE_HUNT_HAPPINESS_FLAT]], [[metertype METER_TARGET_INFLUENCE]] by [[value PLC_THE_HUNT_INFLUENCE_FLAT]], and [[metertype METER_MAX_TROOPS]] by [[value PLC_THE_HUNT_TROOPS_MAX_FLAT]] on planets in systems that also contain an unowned populated planet, with no [[metertype METER_SHIELD]] or [[metertype METER_DEFENSE]], and with a species other than the species on the benefiting planet or on the the imperial capital.
 
 PLC_THE_HUNT_SHORT_DESC
 Hunting Natives Gives Boosts
