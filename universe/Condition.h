@@ -57,7 +57,7 @@ struct FO_COMMON_API Condition {
     /** Derived Condition classes can override this to true if all objects returned
       * by GetDefaultInitialCandidateObject() are guaranteed to also match this
       * condition. */
-    [[nodiscard]] virtual bool InitialCandidatesAllMatch() const { return false; }
+    [[nodiscard]] bool InitialCandidatesAllMatch() const noexcept { return m_initial_candidates_all_match; }
 
     //! Returns true iff this condition's evaluation does not reference
     //! the RootCandidate objects.  This requirement ensures that if this
@@ -100,6 +100,7 @@ protected:
     bool m_root_candidate_invariant = false;
     bool m_target_invariant = false;
     bool m_source_invariant = false;
+    bool m_initial_candidates_all_match = false;
 
 private:
     virtual bool Match(const ScriptingContext& local_context) const;

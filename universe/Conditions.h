@@ -290,7 +290,6 @@ struct FO_COMMON_API Capital final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    [[nodiscard]] bool InitialCandidatesAllMatch() const override { return true; };
 
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
@@ -348,7 +347,6 @@ struct FO_COMMON_API Type final : public Condition {
 
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    [[nodiscard]] bool InitialCandidatesAllMatch() const override;
 
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
@@ -543,7 +541,6 @@ struct FO_COMMON_API InOrIsSystem final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    [[nodiscard]] bool InitialCandidatesAllMatch() const override;
 
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
@@ -569,7 +566,6 @@ struct FO_COMMON_API OnPlanet final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    [[nodiscard]] bool InitialCandidatesAllMatch() const override;
 
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
@@ -593,7 +589,6 @@ struct FO_COMMON_API ObjectID final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    [[nodiscard]] bool InitialCandidatesAllMatch() const override;
 
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
@@ -1588,7 +1583,6 @@ struct FO_COMMON_API And final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    [[nodiscard]] bool InitialCandidatesAllMatch() const override;
 
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
@@ -1615,7 +1609,6 @@ struct FO_COMMON_API Or final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    [[nodiscard]] bool InitialCandidatesAllMatch() const override;
 
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;

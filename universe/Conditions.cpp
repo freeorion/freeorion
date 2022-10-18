@@ -1760,6 +1760,7 @@ Capital::Capital() {
     m_root_candidate_invariant = true;
     m_target_invariant = true;
     m_source_invariant = true;
+    m_initial_candidates_all_match = true;
 }
 
 bool Capital::operator==(const Condition& rhs) const
@@ -1959,6 +1960,11 @@ Type::Type(std::unique_ptr<ValueRef::ValueRef<UniverseObjectType>>&& type) :
     m_root_candidate_invariant = !m_type || m_type->RootCandidateInvariant();
     m_target_invariant = !m_type || m_type->TargetInvariant();
     m_source_invariant = !m_type || m_type->SourceInvariant();
+    m_initial_candidates_all_match =
+        m_type && (
+            m_type->ConstantExpr() || (
+                m_type->LocalCandidateInvariant() &&
+                RootCandidateInvariant()));
 }
 
 Type::Type(UniverseObjectType type) :
@@ -2069,13 +2075,6 @@ bool Type::Match(const ScriptingContext& local_context) const {
     }
 
     return TypeSimpleMatch(m_type->Eval(local_context))(candidate);
-}
-
-bool Type::InitialCandidatesAllMatch() const {
-    return m_type && (
-        m_type->ConstantExpr() || (
-            m_type->LocalCandidateInvariant() &&
-            RootCandidateInvariant()));
 }
 
 void Type::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -3442,6 +3441,11 @@ InOrIsSystem::InOrIsSystem(std::unique_ptr<ValueRef::ValueRef<int>>&& system_id)
     m_root_candidate_invariant = !m_system_id || m_system_id->RootCandidateInvariant();
     m_target_invariant = !m_system_id || m_system_id->TargetInvariant();
     m_source_invariant = !m_system_id || m_system_id->SourceInvariant();
+    m_initial_candidates_all_match = 
+        m_system_id && (
+            m_system_id->ConstantExpr() || (
+                m_system_id->LocalCandidateInvariant() &&
+                RootCandidateInvariant()));
 }
 
 bool InOrIsSystem::operator==(const Condition& rhs) const {
@@ -3527,13 +3531,6 @@ std::string InOrIsSystem::Dump(uint8_t ntabs) const {
     return retval;
 }
 
-bool InOrIsSystem::InitialCandidatesAllMatch() const {
-    return m_system_id && (
-        m_system_id->ConstantExpr() || (
-            m_system_id->LocalCandidateInvariant() &&
-            RootCandidateInvariant()));
-}
-
 void InOrIsSystem::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                      ObjectSet& condition_non_targets) const
 {
@@ -3606,6 +3603,11 @@ OnPlanet::OnPlanet(std::unique_ptr<ValueRef::ValueRef<int>>&& planet_id) :
     m_root_candidate_invariant = !m_planet_id || m_planet_id->RootCandidateInvariant();
     m_target_invariant = !m_planet_id || m_planet_id->TargetInvariant();
     m_source_invariant = !m_planet_id || m_planet_id->SourceInvariant();
+    m_initial_candidates_all_match =
+        m_planet_id && (
+            m_planet_id->ConstantExpr() || (
+                m_planet_id->LocalCandidateInvariant() &&
+                RootCandidateInvariant()));
 }
 
 bool OnPlanet::operator==(const Condition& rhs) const {
@@ -3695,13 +3697,6 @@ std::string OnPlanet::Dump(uint8_t ntabs) const {
     return retval;
 }
 
-bool OnPlanet::InitialCandidatesAllMatch() const {
-    return m_planet_id && (
-        m_planet_id->ConstantExpr() || (
-            m_planet_id->LocalCandidateInvariant() &&
-            RootCandidateInvariant()));
-}
-
 void OnPlanet::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                  ObjectSet& condition_non_targets) const
 {
@@ -3768,6 +3763,10 @@ ObjectID::ObjectID(std::unique_ptr<ValueRef::ValueRef<int>>&& object_id) :
     m_root_candidate_invariant = !m_object_id || m_object_id->RootCandidateInvariant();
     m_target_invariant = !m_object_id || m_object_id->TargetInvariant();
     m_source_invariant = !m_object_id || m_object_id->SourceInvariant();
+    m_initial_candidates_all_match =
+        m_object_id->ConstantExpr() || (
+            m_object_id->LocalCandidateInvariant() &&
+            RootCandidateInvariant());
 }
 
 bool ObjectID::operator==(const Condition& rhs) const {
@@ -3839,12 +3838,6 @@ std::string ObjectID::Description(bool negated) const {
 
 std::string ObjectID::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "Object id = " + m_object_id->Dump(ntabs) + "\n"; }
-
-bool ObjectID::InitialCandidatesAllMatch() const {
-    return m_object_id->ConstantExpr() || (
-        m_object_id->LocalCandidateInvariant() &&
-        RootCandidateInvariant());
-}
 
 void ObjectID::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                  ObjectSet& condition_non_targets) const
@@ -10926,6 +10919,7 @@ And::And(std::vector<std::unique_ptr<Condition>>&& operands) :
     m_root_candidate_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->SourceInvariant(); });
+    m_initial_candidates_all_match = m_operands.size() == 1 && m_operands[0]->InitialCandidatesAllMatch();
 }
 
 And::And(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& operand2,
@@ -10949,6 +10943,7 @@ And::And(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& ope
     m_root_candidate_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->SourceInvariant(); });
+    m_initial_candidates_all_match = m_operands.size() == 1 && m_operands[0]->InitialCandidatesAllMatch();
 }
 
 bool And::operator==(const Condition& rhs) const {
@@ -11101,9 +11096,6 @@ std::string And::Dump(uint8_t ntabs) const {
     return retval;
 }
 
-bool And::InitialCandidatesAllMatch() const
-{ return m_operands.size() == 1 && m_operands[0]->InitialCandidatesAllMatch(); }
-
 void And::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                             ObjectSet& condition_non_targets) const {
     if (!m_operands.empty())
@@ -11146,6 +11138,7 @@ Or::Or(std::vector<std::unique_ptr<Condition>>&& operands) :
     m_root_candidate_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->SourceInvariant(); });
+    m_initial_candidates_all_match = m_operands.size() == 1 && m_operands[0]->InitialCandidatesAllMatch();
 }
 
 Or::Or(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& operand2,
@@ -11169,6 +11162,7 @@ Or::Or(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& opera
     m_root_candidate_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); });
     m_target_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->TargetInvariant(); });
     m_source_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->SourceInvariant(); });
+    m_initial_candidates_all_match = m_operands.size() == 1 && m_operands[0]->InitialCandidatesAllMatch();
 }
 
 bool Or::operator==(const Condition& rhs) const {
@@ -11269,9 +11263,6 @@ std::string Or::Description(bool negated) const {
     }
     return values_str;
 }
-
-bool Or::InitialCandidatesAllMatch() const
-{ return m_operands.size() == 1 && m_operands[0]->InitialCandidatesAllMatch(); }
 
 void Or::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const
