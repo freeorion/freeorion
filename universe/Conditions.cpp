@@ -11102,7 +11102,7 @@ std::string And::Dump(uint8_t ntabs) const {
 }
 
 bool And::InitialCandidatesAllMatch() const
-{ return m_operands.size() < 2; }
+{ return m_operands.size() == 1 && m_operands[0]->InitialCandidatesAllMatch(); }
 
 void And::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                             ObjectSet& condition_non_targets) const {
@@ -11271,7 +11271,7 @@ std::string Or::Description(bool negated) const {
 }
 
 bool Or::InitialCandidatesAllMatch() const
-{ return m_operands.size() < 2; }
+{ return m_operands.size() == 1 && m_operands[0]->InitialCandidatesAllMatch(); }
 
 void Or::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const
