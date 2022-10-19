@@ -272,8 +272,8 @@ private:
     V* GetValueRefImpl(const std::map<NamedValueRefManager::key_type, std::unique_ptr<V>, std::less<>>& registry,
                        std::string_view label, std::string_view name) const
     {
-        TraceLogger() << "NamedValueRefManager::GetValueRef look for registered (" << label << ") valueref for \"" << name << '"';
-        TraceLogger() << "Number of registered (" << label << ") ValueRefs: " << registry.size();
+        //TraceLogger() << "NamedValueRefManager::GetValueRef look for registered (" << label << ") valueref for \"" << name << '"';
+        //TraceLogger() << "Number of registered (" << label << ") ValueRefs: " << registry.size();
         const auto it = registry.find(name);
         if (it != registry.end())
             return it->second.get();
