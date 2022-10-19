@@ -31,6 +31,15 @@ value_ref_wrapper<double> pow(double lhs, const value_ref_wrapper<double>& rhs) 
     );
 }
 
+value_ref_wrapper<double> pow(const value_ref_wrapper<double>& lhs, const value_ref_wrapper<double>& rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::EXPONENTIATE,
+            ValueRef::CloneUnique(lhs.value_ref),
+            ValueRef::CloneUnique(rhs.value_ref)
+        )
+    );
+}
+
 value_ref_wrapper<double> operator*(int lhs, const value_ref_wrapper<double>& rhs) {
     return value_ref_wrapper<double>(
         std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::TIMES,
@@ -538,6 +547,15 @@ namespace {
                }
             }
             return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::Statistic<double, double>>(std::move(value), type, ValueRef::CloneUnique(condition))));
+        } else if (args[0] == parser.type_str) {
+            const auto value_arg = boost::python::extract<value_ref_wrapper<std::string>>(kw["value"]);
+            std::unique_ptr<ValueRef::ValueRef<std::string>> value;
+            if (value_arg.check()) {
+                value = ValueRef::CloneUnique(value_arg().value_ref);
+            } else {
+                value = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["value"])());
+            }
+            return boost::python::object(value_ref_wrapper<std::string>(std::make_shared<ValueRef::Statistic<std::string, std::string>>(std::move(value), type, ValueRef::CloneUnique(condition))));
         } else {
             ErrorLogger() << "Unsupported type for statistic : " << boost::python::extract<std::string>(boost::python::str(args[0]))();
 
