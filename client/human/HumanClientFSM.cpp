@@ -944,13 +944,15 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
         TraceLogger(FSM) << "Unpacking TurnUpdate...";
 
         try {
-            auto unpacked_data = std::make_shared<GameStartDataUnpackedNotification::UnpackedData>(std::move(message));
-            auto unpacking_finished_event =
-                boost::intrusive_ptr<const GameStartDataUnpackedNotification>(
-                    new GameStartDataUnpackedNotification(unpacked_data), true);
+            using GSDUN = GameStartDataUnpackedNotification;
+            auto unpacked_data = std::make_shared<GSDUN::UnpackedData>(
+                std::move(message));
+            auto unpacking_finished_event = boost::intrusive_ptr<const GSDUN>(new GSDUN(unpacked_data), true);
 
-            unpacked_data->universe.InitializeSystemGraph(unpacked_data->empires, unpacked_data->universe.Objects());
-            unpacked_data->universe.UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(unpacked_data->empires);
+            unpacked_data->universe.InitializeSystemGraph(unpacked_data->empires,
+                                                          unpacked_data->universe.Objects());
+            unpacked_data->universe.UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(
+                unpacked_data->empires);
 
             // TODO: meter updates? applying orders?
 
