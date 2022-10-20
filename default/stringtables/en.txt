@@ -16351,7 +16351,7 @@ SH_AGREGATE_ASTEROID
 Aggregate Asteroid Hull
 
 SH_AGREGATE_ASTEROID_DESC
-'''This massive hull is formed by combining several large asteroids. It has fifteen external slots and four internal slots.
+'''This massive hull is formed by combining several large asteroids. It has thirteen external slots and four internal slots.
 
 [[metertype METER_STEALTH]] is medium but the hull gets a large bonus on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt. [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is low.
 
