@@ -954,11 +954,9 @@ GG::FontManager::GetFontImpl(std::string font_filename, unsigned int pts,
             // filename that shouldn't throw
             return EMPTY_FONT;
         } else {
-            std::shared_ptr<Font> font(
-                file_contents ?
-                new Font(std::move(font_filename), pts, *file_contents, first, last) :
-                new Font(std::move(font_filename), pts, first, last)
-            );
+            auto font = file_contents ?
+                std::make_shared<Font>(std::move(font_filename), pts, *file_contents, first, last) :
+                std::make_shared<Font>(std::move(font_filename), pts, first, last);
             return m_rendered_fonts.emplace(std::move(key), std::move(font)).first->second;
         }
 
@@ -974,13 +972,11 @@ GG::FontManager::GetFontImpl(std::string font_filename, unsigned int pts,
                            found_charsets.begin(), found_charsets.end(),
                            std::back_inserter(united_charsets));
             m_rendered_fonts.erase(it);
-            std::shared_ptr<Font> font(
-                file_contents ?
-                new Font(std::move(font_filename), pts, *file_contents,
-                         united_charsets.begin(), united_charsets.end()) :
-                new Font(std::move(font_filename), pts,
-                         united_charsets.begin(), united_charsets.end())
-            );
+            auto font = file_contents ?
+                std::make_shared<Font>(std::move(font_filename), pts, *file_contents,
+                                       united_charsets.begin(), united_charsets.end()) :
+                std::make_shared<Font>(std::move(font_filename), pts,
+                                       united_charsets.begin(), united_charsets.end());
             return m_rendered_fonts.emplace(std::move(key), std::move(font)).first->second;
 
         } else { // otherwise, the font we found works, so just return it
