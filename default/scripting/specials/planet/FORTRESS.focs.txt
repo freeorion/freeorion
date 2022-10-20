@@ -24,14 +24,14 @@ Special
                 Species
             ]
             effects = [
-                SetMaxShield value = Value + ( 100 * [[PLANET_SHIELD_FACTOR]] )
-                SetMaxDefense value = Value + ( 30 * [[PLANET_DEFENSE_FACTOR]] )
-                SetMaxTroops value = Value + 30
-                SetDetection value = Value + 30
+                SetMaxShield value = Value + (NamedReal name = "FORTRESS_SPECIAL_SHIELD_BONUS" value = (100 * [[PLANET_SHIELD_FACTOR]] ))
+                SetMaxDefense value = Value + (NamedReal name = "FORTRESS_SPECIAL_DEFENSE_BONUS" value = (30 * [[PLANET_DEFENSE_FACTOR]] ))
+                SetMaxTroops value = Value + (NamedReal name = "FORTRESS_SPECIAL_TROOPS_BONUS" value = 30)
+                SetDetection value = Value + (NamedReal name = "FORTRESS_SPECIAL_DETECTION_BONUS" value = 30)
 
                 //Regeneration
                 SetShield value = Value + ( min(5.0, max(Value, 0.25*Target.Construction)) * [[PLANET_SHIELD_FACTOR]] )
-                SetDefense value = Value + ( 1 * [[PLANET_DEFENSE_FACTOR]] )
+                SetDefense value = Value + (NamedReal name = "FORTRESS_SPECIAL_DEFENSE_REGEN" value = ( 1 * [[PLANET_DEFENSE_FACTOR]] ))
             ]
         [[EG_SYSTEM_MINES(3,70,SOURCE)]] //Priority deliberately not a macro
 
