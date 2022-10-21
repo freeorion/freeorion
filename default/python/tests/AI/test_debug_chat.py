@@ -251,8 +251,8 @@ class TestInDebugMode:
     def test_start_with_number_call_is_ignored(self, debug_handler: DebugChatHandler):
         assert debug_handler.process_message(1, "start 2")
         chat, log = get_output_from_handler(debug_handler)
-        assert "SyntaxError: invalid syntax" in log
-        assert "SyntaxError: invalid syntax" in chat
+        assert "SyntaxError" in log
+        assert "SyntaxError" in chat
 
 
 class TestRestart:
