@@ -215,7 +215,7 @@ FO_COMMON_API void ShutdownLoggingSystemFileSink();
 
 /** Sets all logger thresholds to \p threshold permanently. If \p threshold is boost::none then
     remove the ovverride and allow subsequent SetLoggerThreshold() to work as normal. */
-FO_COMMON_API void OverrideAllLoggersThresholds(const boost::optional<LogLevel>& threshold);
+FO_COMMON_API void OverrideAllLoggersThresholds(boost::optional<LogLevel> threshold);
 
 FO_COMMON_API const std::string& DefaultExecLoggerName();
 

@@ -82,7 +82,7 @@ inline std::basic_istream<CharT, TraitsT >& operator>>(
     std::basic_istream<CharT, TraitsT>& is, LogLevel& level)
 {
     std::string tmp;
-    is >> tmp;
+    is >> tmp; // to_string(level) ...?
     level = to_LogLevel(tmp);
     return is;
 }
@@ -129,10 +129,10 @@ namespace {
     */
     class LoggersToSinkFrontEnds {
         /// m_mutex serializes access from different threads
-        std::mutex m_mutex = {};
-        std::unordered_map<std::string, boost::shared_ptr<LoggerTextFileSinkFrontend>> m_names_to_front_ends = {};
-        std::unordered_map<std::string, LoggerFileSinkFrontEndConfigurer> m_names_to_front_end_configurers = {};
-        public:
+        std::mutex m_mutex;
+        std::unordered_map<std::string, boost::shared_ptr<LoggerTextFileSinkFrontend>> m_names_to_front_ends;
+        std::unordered_map<std::string, LoggerFileSinkFrontEndConfigurer> m_names_to_front_end_configurers;
+    public:
 
         void AddOrReplaceLoggerName(const std::string& channel_name,
                                     boost::shared_ptr<LoggerTextFileSinkFrontend> front_end = nullptr)
@@ -174,8 +174,8 @@ namespace {
 
         /** Configure front ends for any logger with stored configuration functions. */
         void ConfigureFrontEnds(const boost::shared_ptr<LoggerTextFileSinkFrontend::sink_backend_type>& file_sink_backend) {
-            for (const auto& name_and_conf: m_names_to_front_end_configurers)
-                ConfigureToFileSinkFrontEndCore(file_sink_backend, name_and_conf.first, name_and_conf.second);
+            for (const auto& [name, conf]: m_names_to_front_end_configurers)
+                ConfigureToFileSinkFrontEndCore(file_sink_backend, name, conf);
         }
 
         std::vector<std::string> LoggersNames() {
@@ -245,39 +245,21 @@ BOOST_LOG_ATTRIBUTE_KEYWORD(log_src_linenum, "SrcLinenum", int);
 BOOST_LOG_ATTRIBUTE_KEYWORD(thread_id, "ThreadID", boost::log::attributes::current_thread_id::value_type);
 
 namespace {
+    std::mutex severity_filter_mutex; /// guards severity_filter
+    expr::channel_severity_filter_actor<std::string, LogLevel> severity_filter =
+        expr::channel_severity_filter(log_channel, log_severity);
 
-    /** LoggerThresholdSetter sets the threshold of a logger */
-    class LoggerThresholdSetter {
-        /// m_mutex serializes access from different threads
-        std::mutex m_mutex = {};
+    void SetLoggerThresholdCore(const std::string& source, LogLevel threshold) {
+        std::scoped_lock lock(severity_filter_mutex);
 
-        // Create a minimum severity table filter
-        expr::channel_severity_filter_actor<std::string, LogLevel>
-        m_min_channel_severity = expr::channel_severity_filter(log_channel, log_severity);
-
-        public:
-        // Set the logger threshold and return the logger name and threshold used.
-        std::pair<std::string, LogLevel> SetThreshold(const std::string& source, LogLevel threshold) {
-            std::scoped_lock lock(m_mutex);
-
-            auto used_threshold = ForcedThreshold() ? *ForcedThreshold() : threshold;
-            m_min_channel_severity[source] = used_threshold;
-            logging::core::get()->set_filter(m_min_channel_severity);
-
-            return {DisplayName(source), used_threshold};
-        }
-
-    };
-
-    // Set the logger threshold and return the logger name and threshold used.
-    std::pair<std::string, LogLevel> SetLoggerThresholdCore(const std::string& source, LogLevel threshold) {
-        // Create logger_threshold_setter as a static variable to avoid the static initialization fiasco.
-        static LoggerThresholdSetter logger_threshold_setter{};
-
-        return logger_threshold_setter.SetThreshold(source, threshold);
+        auto used_threshold = ForcedThreshold() ? *ForcedThreshold() : threshold;
+        severity_filter[source] = used_threshold;
+        logging::core::get()->set_filter(severity_filter);
     }
 
-    void ConfigureFileSinkFrontEnd(LoggerTextFileSinkFrontend& sink_frontend, const std::string& channel_name) {
+    void ConfigureFileSinkFrontEnd(LoggerTextFileSinkFrontend& sink_frontend,
+                                   const std::string& channel_name)
+    {
         // Create the format
         sink_frontend.set_formatter(
             expr::stream
@@ -295,10 +277,8 @@ namespace {
 }
 
 void SetLoggerThreshold(const std::string& source, LogLevel threshold) {
-    const auto& name_and_threshold = SetLoggerThresholdCore(source, threshold);
-
-    InfoLogger(log) << "Setting \"" << name_and_threshold.first
-                    << "\" logger threshold to \"" << name_and_threshold.second << "\".";
+    SetLoggerThresholdCore(source, threshold);
+    InfoLogger(log) << "Setting \"" << source << "\" logger threshold to \"" << threshold << "\".";
 }
 
 void InitLoggingSystem(const std::string& log_file, std::string_view _unnamed_logger_identifier) {
@@ -369,7 +349,7 @@ void ShutdownLoggingSystemFileSink() {
     GetLoggersToSinkFrontEnds().ShutdownFileSinks();
 }
 
-void OverrideAllLoggersThresholds(const boost::optional<LogLevel>& threshold) {
+void OverrideAllLoggersThresholds(boost::optional<LogLevel> threshold) {
     if (threshold)
         InfoLogger(log) << "Overriding the thresholds of all loggers to be " << to_string(*threshold);
     else
