@@ -22,31 +22,25 @@
 #include "../util/Logger.h"
 
 
-/// A helper class that stores both a connection and the
-/// conditions in which it should be on.
-struct HotkeyManager::ConditionalConnection {
-    /// Block or unblocks the connection based on condition.
-    void UpdateConnection() {
-        if (connection.connected()) {
-            if (!condition || condition())
-                blocker.unblock();
-            else
-                blocker.block();
-        }
-    };
-
-    ConditionalConnection(boost::signals2::connection conn, std::function<bool()> cond) :
-        condition(std::move(cond)),
-        connection(std::move(conn)),
-        blocker(connection)
-    { blocker.unblock(); }
-
-    /// The condition. If null, always on.
-    std::function<bool()> condition;
-
-    boost::signals2::scoped_connection connection;
-    boost::signals2::shared_connection_block blocker;
+/////////////////////////////////////////////////////////
+// HotkeyManager::ConditionalConnection
+/////////////////////////////////////////////////////////
+void HotkeyManager::ConditionalConnection::UpdateConnection() {
+    if (connection.connected()) {
+        if (!condition || condition())
+            blocker.unblock();
+        else
+            blocker.block();
+    }
 };
+
+HotkeyManager::ConditionalConnection::ConditionalConnection(boost::signals2::connection conn,
+                                                            std::function<bool()> cond) :
+    condition(std::move(cond)),
+    connection(std::move(conn)),
+    blocker(connection)
+{ blocker.unblock(); }
+
 
 /////////////////////////////////////////////////////////
 // Hotkey
@@ -70,7 +64,7 @@ std::string Hotkey::HotkeyToString(GG::Key key, GG::Flags<GG::ModKey> mod) {
     retval.reserve(sz);
     if (mod != GG::MOD_KEY_NONE) {
         std::stringstream ss;
-        ss << mod;
+        ss << mod; // TODO: make a possibly faster to_string for Flags<ModKey> ?
         retval.append(ss.str()).append("+");
     }
     if (key > GG::Key::GGK_NONE)
@@ -81,8 +75,8 @@ std::string Hotkey::HotkeyToString(GG::Key key, GG::Flags<GG::ModKey> mod) {
 std::vector<std::string> Hotkey::DefinedHotkeys() {
     std::vector<std::string> retval;
     retval.reserve(hotkeys.size());
-    for (const auto& entry : hotkeys)
-        retval.push_back(entry.first);
+    std::transform(hotkeys.begin(), hotkeys.end(), std::back_inserter(retval),
+                   [](const auto& h) { return h.first; });
     return retval;
 }
 
@@ -96,6 +90,7 @@ std::pair<GG::Key, GG::Flags<GG::ModKey>> Hotkey::HotkeyFromString(const std::st
     // Strip whitespace
     std::string copy = str;
     copy = std::string(copy.begin(), std::remove_if(copy.begin(), copy.end(), isspace));
+    std::string_view copy_view = copy;
 
     auto plus = copy.find('+');
     bool has_modifier = plus != std::string::npos;
@@ -104,7 +99,7 @@ std::pair<GG::Key, GG::Flags<GG::ModKey>> Hotkey::HotkeyFromString(const std::st
     if (has_modifier) {
         // We have a modifier. Things get a little complex, since we need
         // to handle the |-separated flags:
-        std::string m = copy.substr(0, plus);
+        auto m = copy_view.substr(0, plus);
 
         std::size_t found = 0;
         std::size_t prev = 0;
@@ -112,10 +107,10 @@ std::pair<GG::Key, GG::Flags<GG::ModKey>> Hotkey::HotkeyFromString(const std::st
         try {
             while (true) {
                 found = m.find('|', prev);
-                std::string sub = m.substr(prev, found - prev);
+                auto sub = m.substr(prev, found - prev);
                 GG::ModKey cm = GG::FlagSpec<GG::ModKey>::instance().FromString(sub);
                 mod |= cm;
-                if (found == std::string::npos)
+                if (found == std::string_view::npos)
                     break;
                 prev = found + 1;
             }
@@ -125,15 +120,13 @@ std::pair<GG::Key, GG::Flags<GG::ModKey>> Hotkey::HotkeyFromString(const std::st
         }
     }
 
-    std::string v = has_modifier ? copy.substr(plus+1) : copy;
-    std::istringstream s(v);
-    GG::Key key;
-    s >> key;
-    return std::pair<GG::Key, GG::Flags<GG::ModKey>>(key, mod);
+    auto v = has_modifier ? copy_view.substr(plus+1) : copy_view;
+    GG::Key key = GG::KeyFromString(v, GG::Key::GGK_NONE);
+    return {key, mod};
 }
 
 void Hotkey::SetFromString(const std::string& str) {
-    std::pair<GG::Key, GG::Flags<GG::ModKey>> km = HotkeyFromString(str);
+    auto km = HotkeyFromString(str);
     m_key = km.first;
     m_mod_keys = km.second;
 }
@@ -141,8 +134,7 @@ void Hotkey::SetFromString(const std::string& str) {
 void Hotkey::AddOptions(OptionsDB& db) {
     for (const auto& entry : hotkeys) {
         const Hotkey& hotkey = entry.second;
-        std::string n = hotkey.m_name + ".hotkey";
-        db.Add(n, hotkey.GetDescription(), hotkey.ToString());
+        db.Add(hotkey.m_name + ".hotkey", hotkey.GetDescription(), hotkey.ToString());
     }
 }
 
@@ -175,10 +167,10 @@ namespace {
         if (mod & GG::MOD_KEY_META)
             retval += "META+";
 
-        std::ostringstream key_stream;
-        key_stream << key;
-        std::string key_string = key_stream.str();
-        ReplaceInString(key_string, "GGK_", "");
+        static_assert(to_string(GG::Key::GGK_RIGHT) == "GGK_RIGHT");
+
+        std::string key_string{to_string(key)};
+        ReplaceInString(key_string, "GGK_", ""); // remove prefix
 
         retval += key_string;
         return retval;
@@ -335,12 +327,10 @@ bool HotkeyManager::ProcessNamedShortcut(const std::string& name, GG::Key key,
         return false;
 
     // First update the connection state according to the current status.
-    ConditionalConnectionList& conds = m_connections[name];
-    for (auto i = conds.begin(); i != conds.end(); ++i) {
-        i->UpdateConnection();
-        if (!i->connection.connected())
-            i = conds.erase(i);
-    }
+    auto& conds = m_connections[name];
+    std::for_each(conds.begin(), conds.end(), [](auto& c) { c.UpdateConnection(); });
+    auto not_connected = [](const auto& c) { return !c.connection.connected(); };
+    conds.erase(std::remove_if(conds.begin(), conds.end(), not_connected), conds.end());
 
     // Then, return the value of the signal !
     GG::GUI::AcceleratorSignalType* sig = m_signals[name];

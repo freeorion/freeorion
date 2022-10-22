@@ -24,7 +24,6 @@
 #include <boost/signals2/shared_connection_block.hpp>
 
 #include <functional>
-#include <initializer_list>
 
 
 class OptionsDB;
@@ -248,11 +247,17 @@ private:
                                   boost::signals2::connection conn,
                                   std::function<bool()> cond);
 
-    struct ConditionalConnection;
-    typedef std::list<ConditionalConnection> ConditionalConnectionList;
-    typedef std::map<std::string, ConditionalConnectionList> Connections;
+    struct ConditionalConnection {
+        ConditionalConnection(boost::signals2::connection conn, std::function<bool()> cond);
 
-    /// A set of connected shortcuts.
+        void UpdateConnection(); ///< Block or unblocks the connection based on condition.
+        std::function<bool()> condition; ///< The condition. If null, always on.
+
+        boost::signals2::scoped_connection connection;
+        boost::signals2::shared_connection_block blocker;
+    };
+    using Connections = std::map<std::string, std::vector<ConditionalConnection>>;
+
     Connections                                             m_connections;
     std::map<std::string, GG::GUI::AcceleratorSignalType*>  m_signals;
     std::set<boost::signals2::scoped_connection>            m_internal_connections;
