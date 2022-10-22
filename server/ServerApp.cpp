@@ -1805,7 +1805,7 @@ bool ServerApp::IsAuthSuccessAndFillRoles(const std::string& player_name, const 
 }
 
 std::vector<PlayerSetupData> ServerApp::FillListPlayers() {
-    std::list<PlayerSetupData> result;
+    std::vector<PlayerSetupData> result;
     bool success = false;
     try {
         m_python_server.SetCurrentDir(GetPythonAuthDir());
@@ -1826,10 +1826,10 @@ std::vector<PlayerSetupData> ServerApp::FillListPlayers() {
 
     if (!success) {
         ErrorLogger() << "Python scripted player list failed.";
-        ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"),
-                                                                      false));
+        ServerApp::GetApp()->Networking().SendMessageAll(
+            ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"), false));
     }
-    return {result.begin(), result.end()};
+    return result;
 }
 
 void ServerApp::AddObserverPlayerIntoGame(const PlayerConnectionPtr& player_connection) {

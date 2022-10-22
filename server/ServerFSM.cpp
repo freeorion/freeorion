@@ -774,7 +774,7 @@ sc::result Idle::react(const Hostless&) {
             player_setup_data.client_type =   Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER;
             player_setup_data.empire_color =  GetUnusedEmpireColour(lobby_data->players);
             player_setup_data.authenticated = true;
-            lobby_data->players.push_back({Networking::INVALID_PLAYER_ID, player_setup_data});
+            lobby_data->players.emplace_back(Networking::INVALID_PLAYER_ID, std::move(player_setup_data));
         }
 
         const SpeciesManager& sm = server.GetSpeciesManager();
@@ -793,7 +793,7 @@ sc::result Idle::react(const Hostless&) {
             else
                 player_setup_data.starting_species_name = sm.SequentialPlayableSpeciesName(ai_next_index);
 
-            lobby_data->players.push_back({Networking::INVALID_PLAYER_ID, player_setup_data});
+            lobby_data->players.emplace_back(Networking::INVALID_PLAYER_ID, std::move(player_setup_data));
         }
     } else {
         DebugLogger(FSM) << "Loading file " << autostart_load_filename;
@@ -812,7 +812,8 @@ sc::result Idle::react(const Hostless&) {
                     seed = static_cast<unsigned int>(h);
                 } catch (...) {}
             }
-            DebugLogger(FSM) << "Seeding with loaded galaxy seed: " << server.m_galaxy_setup_data.seed << "  interpreted as actual seed: " << seed;
+            DebugLogger(FSM) << "Seeding with loaded galaxy seed: " << server.m_galaxy_setup_data.seed
+                             << "  interpreted as: " << seed;
             Seed(seed);
 
             // fill lobby data with AI to start them with server
@@ -825,7 +826,7 @@ sc::result Idle::react(const Hostless&) {
                 player_setup_data.player_name =   UserString("AI_PLAYER") + "_" + std::to_string(ai_next_index++);
                 player_setup_data.client_type =   Networking::ClientType::CLIENT_TYPE_AI_PLAYER;
                 player_setup_data.save_game_empire_id = psgd.empire_id;
-                lobby_data->players.push_back({Networking::INVALID_PLAYER_ID, player_setup_data});
+                lobby_data->players.emplace_back(Networking::INVALID_PLAYER_ID, std::move(player_setup_data));
             }
         } catch (const std::exception& e) {
             throw e;
@@ -899,7 +900,8 @@ MPLobby::MPLobby(my_context c) :
                     player_setup_data.starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
                 player_setup_data.authenticated = player_connection->IsAuthenticated();
 
-                m_lobby_data->players.push_back({player_id, player_setup_data});
+                m_lobby_data->players.emplace_back(player_id, std::move(player_setup_data));
+
             } else if (player_connection->GetClientType() == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
                 if (m_ai_next_index <= max_ai || max_ai < 0) {
                     PlayerSetupData player_setup_data;
@@ -913,7 +915,8 @@ MPLobby::MPLobby(my_context c) :
                     else
                         player_setup_data.starting_species_name = sm.SequentialPlayableSpeciesName(m_ai_next_index);
 
-                    m_lobby_data->players.push_back({Networking::INVALID_PLAYER_ID, player_setup_data});
+                    m_lobby_data->players.emplace_back(Networking::INVALID_PLAYER_ID,
+                                                       std::move(player_setup_data));
                 }
                 // disconnect AI
                 to_disconnect.push_back(player_connection);
@@ -940,7 +943,8 @@ MPLobby::MPLobby(my_context c) :
                 else
                     player_setup_data.starting_species_name = sm.SequentialPlayableSpeciesName(m_ai_next_index);
 
-                m_lobby_data->players.push_back({Networking::INVALID_PLAYER_ID, player_setup_data});
+                m_lobby_data->players.emplace_back(Networking::INVALID_PLAYER_ID,
+                                                   std::move(player_setup_data));
             }
         }
 

@@ -167,24 +167,24 @@ auto PythonServer::IsSuccessAuthAndReturnRoles(const std::string& player_name, c
     return true;
 }
 
-auto PythonServer::FillListPlayers(std::list<PlayerSetupData>& players) const -> bool
+auto PythonServer::FillListPlayers(std::vector<PlayerSetupData>& players) const -> bool
 {
-    py::object auth_provider = m_python_module_auth.attr("__dict__")["auth_provider"];
+    const py::object auth_provider = m_python_module_auth.attr("__dict__")["auth_provider"];
     if (!auth_provider) {
         ErrorLogger() << "Unable to get Python object auth_provider";
         return false;
     }
-    py::object f = auth_provider.attr("list_players");
+    const py::object f = auth_provider.attr("list_players");
     if (!f) {
         ErrorLogger() << "Unable to call Python method list_players";
         return false;
     }
-    py::object r = f();
-    py::extract<py::list> py_players(r);
+    const py::object r = f();
+    const py::extract<py::list> py_players(r);
     if (py_players.check()) {
         py::stl_input_iterator<PlayerSetupData> players_begin(py_players), players_end;
-        for (auto& it = players_begin; it != players_end; ++it)
-            players.push_back(*it);
+        players.reserve(std::distance(players_begin, players_end));
+        players.insert(players.end(), players_begin, players_end);
     } else {
         DebugLogger() << "Wrong players list data: check returns "
                       << py::extract<std::string>(py::str(r))();
