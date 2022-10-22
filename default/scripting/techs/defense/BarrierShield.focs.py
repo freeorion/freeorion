@@ -16,7 +16,9 @@ Tech(
             scope=Planet() & OwnedBy(empire=Source.Owner),
             accountinglabel="DEF_TECH_ACCOUNTING_LABEL",
             priority=DEFAULT_PRIORITY,
-            effects=SetMaxShield(value=Value + (30 * PLANET_SHIELD_FACTOR)),
+            effects=SetMaxShield(
+                value=Value + NamedReal(name="DEF_PLAN_BARRIER_SHLD_1_MAX_SHIELD_FLAT", value=30 * PLANET_SHIELD_FACTOR)
+            ),
         ),
         EffectsGroup(
             scope=Planet() & OwnedBy(empire=Source.Owner) & (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1),
@@ -47,7 +49,9 @@ Tech(
             scope=Planet() & OwnedBy(empire=Source.Owner),
             accountinglabel="DEF_TECH_ACCOUNTING_LABEL",
             priority=DEFAULT_PRIORITY,
-            effects=SetMaxShield(value=Value + (60 * PLANET_SHIELD_FACTOR)),
+            effects=SetMaxShield(
+                value=Value + NamedReal(name="DEF_PLAN_BARRIER_SHLD_2_MAX_SHIELD_FLAT", value=60 * PLANET_SHIELD_FACTOR)
+            ),
         ),
         EffectsGroup(
             scope=Planet() & OwnedBy(empire=Source.Owner) & (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1),
@@ -80,7 +84,9 @@ Tech(
             scope=Planet() & OwnedBy(empire=Source.Owner),
             accountinglabel="DEF_TECH_ACCOUNTING_LABEL",
             priority=DEFAULT_PRIORITY,
-            effects=SetMaxShield(value=Value + (90 * PLANET_SHIELD_FACTOR)),
+            effects=SetMaxShield(
+                value=Value + NamedReal(name="DEF_PLAN_BARRIER_SHLD_3_MAX_SHIELD_FLAT", value=90 * PLANET_SHIELD_FACTOR)
+            ),
         ),
         EffectsGroup(
             scope=Planet() & OwnedBy(empire=Source.Owner) & (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1),
@@ -113,7 +119,10 @@ Tech(
             scope=Planet() & OwnedBy(empire=Source.Owner),
             accountinglabel="DEF_TECH_ACCOUNTING_LABEL",
             priority=DEFAULT_PRIORITY,
-            effects=SetMaxShield(value=Value + (150 * PLANET_SHIELD_FACTOR)),
+            effects=SetMaxShield(
+                value=Value
+                + NamedReal(name="DEF_PLAN_BARRIER_SHLD_4_MAX_SHIELD_FLAT", value=150 * PLANET_SHIELD_FACTOR)
+            ),
         ),
         EffectsGroup(
             scope=Planet() & OwnedBy(empire=Source.Owner) & (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1),
@@ -146,7 +155,10 @@ Tech(
             scope=Planet() & OwnedBy(empire=Source.Owner),
             accountinglabel="DEF_TECH_ACCOUNTING_LABEL",
             priority=DEFAULT_PRIORITY,
-            effects=SetMaxShield(value=Value + (150 * PLANET_SHIELD_FACTOR)),
+            effects=SetMaxShield(
+                value=Value
+                + NamedReal(name="DEF_PLAN_BARRIER_SHLD_5_MAX_SHIELD_FLAT", value=150 * PLANET_SHIELD_FACTOR)
+            ),
         ),
         EffectsGroup(
             scope=Planet() & OwnedBy(empire=Source.Owner) & (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1),
