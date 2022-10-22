@@ -114,7 +114,12 @@ CHANCE_OF_HIDE_1
 '''        EffectsGroup
             scope = Source
             activation = And [
-                Turn high = 0
+                // Note: Kraken nests are created in the initial turn and also turns 1 and 2
+                // only check in the first turns of the game. 
+                Turn high = 5
+                Not HasSpecial name = "CLOUD_COVER_MASTER_SPECIAL"
+                // every nest has only one chance to get clouds, no matter which turn it was created:
+                (CurrentTurn <= max(1, 1 + SpecialAddedOnTurn name = ThisSpecial object = Source.ID))
                 Random probability = 0.15
                 (GalaxyMaxAIAggression >= 1)
                 Not ContainedBy Contains Or [
