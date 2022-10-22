@@ -35,7 +35,7 @@ public:
     constexpr explicit EnumMap(const char* comma_separated_names)
     { Build(comma_separated_names); }
 
-    [[nodiscard]] constexpr std::string_view operator[](EnumType value) const
+    [[nodiscard]] constexpr std::string_view operator[](EnumType value) const noexcept
     {
         std::size_t idx = 0;
         for (; idx < m_size; ++idx)
@@ -49,10 +49,14 @@ public:
         return "None";
     }
 
-    [[nodiscard]] constexpr EnumType operator[](std::string_view name) const
+    [[nodiscard]] constexpr EnumType operator[](std::string_view name) const noexcept
+    { return FromString(name); }
+
+    [[nodiscard]] constexpr EnumType FromString(std::string_view name,
+                                                EnumType not_found_result = EnumType(0)) const noexcept
     {
         std::size_t idx = 0;
-        for (; idx < m_size; ++idx)
+        for (; idx < m_size; ++idx) // TODO: use constexpr std::find once C++20 is available
         {
             if (m_names[idx] == name)
             {
@@ -60,12 +64,12 @@ public:
                 return *value_it;
             }
         }
-        return std::numeric_limits<EnumType>::max();
+        return not_found_result;
     }
 
-    [[nodiscard]] constexpr auto size() const { return m_size; }
+    [[nodiscard]] constexpr auto size() const noexcept { return m_size; }
 
-    [[nodiscard]] constexpr bool empty() const { return m_size == 0; }
+    [[nodiscard]] constexpr bool empty() const noexcept { return m_size == 0; }
 
 private:
     constexpr void Build(const char* comma_separated_names)
@@ -335,8 +339,11 @@ inline const EnumMap<EnumType>& GetEnumMap()
     { return os << GetEnumMap<EnumName>()[value]; }                                     \
                                                                                         \
     [[nodiscard]] constexpr inline std::string_view to_string(EnumName value)           \
-    { return CGetEnumMap<EnumName>()[value]; }
-
+    { return CGetEnumMap<EnumName>()[value]; }                                          \
+                                                                                        \
+    [[nodiscard]] constexpr inline EnumName EnumName##FromString(                       \
+        std::string_view sv, EnumName result_not_found = EnumName(0))                   \
+    { return CGetEnumMap<EnumName>().FromString(sv, result_not_found); }
 }
 
 
