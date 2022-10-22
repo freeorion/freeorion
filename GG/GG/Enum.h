@@ -273,7 +273,7 @@ private:
         __VA_ARGS__                                                                     \
     };                                                                                  \
                                                                                         \
-    static inline const EnumMap<EnumName>& GetEnumMap()                                 \
+    static inline const EnumMap<EnumName>& GetEnumMap() noexcept                        \
     {                                                                                   \
         constexpr EnumMap<EnumName> cmap(#__VA_ARGS__);                                 \
         static const auto& map{cmap};                                                   \
@@ -292,14 +292,14 @@ private:
 
 
 template <typename EnumType>
-constexpr EnumMap<EnumType> CGetEnumMap()
+constexpr EnumMap<EnumType> CGetEnumMap() noexcept
 {
     constexpr EnumMap<EnumType> cmap("");
     return cmap;
 }
 
 template <typename EnumType>
-inline const EnumMap<EnumType>& GetEnumMap()
+inline const EnumMap<EnumType>& GetEnumMap() noexcept
 {
     static const auto& map{CGetEnumMap<EnumType>()};
     return map;
@@ -315,14 +315,14 @@ inline const EnumMap<EnumType>& GetEnumMap()
     };                                                                                  \
                                                                                         \
     template <>                                                                         \
-    constexpr EnumMap<EnumName> CGetEnumMap()                                           \
+    constexpr EnumMap<EnumName> CGetEnumMap() noexcept                                  \
     {                                                                                   \
         constexpr EnumMap<EnumName> cmap(#__VA_ARGS__);                                 \
         return cmap;                                                                    \
     }                                                                                   \
                                                                                         \
     template <>                                                                         \
-    inline const EnumMap<EnumName>& GetEnumMap()                                        \
+    inline const EnumMap<EnumName>& GetEnumMap() noexcept                               \
     {                                                                                   \
         static const auto& map{CGetEnumMap<EnumName>()};                                \
         return map;                                                                     \
@@ -338,11 +338,11 @@ inline const EnumMap<EnumType>& GetEnumMap()
     inline std::ostream& operator<<(std::ostream& os, EnumName value)                   \
     { return os << GetEnumMap<EnumName>()[value]; }                                     \
                                                                                         \
-    [[nodiscard]] constexpr inline std::string_view to_string(EnumName value)           \
+    [[nodiscard]] constexpr inline std::string_view to_string(EnumName value) noexcept  \
     { return CGetEnumMap<EnumName>()[value]; }                                          \
                                                                                         \
     [[nodiscard]] constexpr inline EnumName EnumName##FromString(                       \
-        std::string_view sv, EnumName result_not_found = EnumName(0))                   \
+        std::string_view sv, EnumName result_not_found = EnumName(0)) noexcept          \
     { return CGetEnumMap<EnumName>().FromString(sv, result_not_found); }
 }
 
