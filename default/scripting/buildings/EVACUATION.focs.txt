@@ -44,7 +44,7 @@ BuildingType
             ]
             priority = [[POPULATION_DEFAULT_PRIORITY]]
             effects = [
-                SetPopulation value = Value + 2
+                SetPopulation value = Value + min(Source.Planet.Population, 2)
                 GenerateSitRepMessage
                     message = "EFFECT_EVACUEES"
                     label = "EFFECT_EVACUEES_LABEL"
