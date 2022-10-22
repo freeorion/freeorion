@@ -1406,12 +1406,6 @@ std::map<int, std::set<int>> Empire::VisibleStarlanes(const Universe& universe) 
     return retval;
 }
 
-Empire::SitRepItr Empire::SitRepBegin() const
-{ return m_sitrep_entries.begin(); }
-
-Empire::SitRepItr Empire::SitRepEnd() const
-{ return m_sitrep_entries.end(); }
-
 float Empire::ProductionPoints() const
 { return ResourceOutput(ResourceType::RE_INDUSTRY); }
 

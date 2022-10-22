@@ -192,10 +192,11 @@ public:
     [[nodiscard]] std::map<int, std::set<int>> KnownStarlanes(const Universe& universe) const;     ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes known to this empire
     [[nodiscard]] std::map<int, std::set<int>> VisibleStarlanes(const Universe& universe) const;   ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes visible to this empire this turn
 
-    [[nodiscard]] SitRepItr                    SitRepBegin() const;         ///< starting iterator for sitrep entries for this empire
-    [[nodiscard]] SitRepItr                    SitRepEnd() const;           ///< end iterator for sitreps
+    [[nodiscard]] const auto&           SitReps() const noexcept { return m_sitrep_entries; }
+    [[nodiscard]] auto                  SitRepBegin() const noexcept { return m_sitrep_entries.begin(); } ///< starting iterator for sitrep entries for this empire
+    [[nodiscard]] auto                  SitRepEnd() const noexcept { return m_sitrep_entries.end(); }     ///< end iterator for sitreps
 
-    [[nodiscard]] float                        ProductionPoints() const;    ///< Returns the empire's current production point output (this is available industry not including stockpile)
+    [[nodiscard]] float                 ProductionPoints() const;    ///< Returns the empire's current production point output (this is available industry not including stockpile)
 
     /** Returns ResourcePool for \a resource_type or 0 if no such ResourcePool exists. */
     [[nodiscard]] std::shared_ptr<const ResourcePool> GetResourcePool(ResourceType resource_type) const;
