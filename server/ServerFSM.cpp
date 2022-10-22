@@ -491,7 +491,8 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
                                 const std::string& client_version_string,
                                 const Networking::AuthRoles& roles)
 {
-    std::list<PlayerConnectionPtr> to_disconnect;
+    std::vector<PlayerConnectionPtr> to_disconnect;
+    to_disconnect.reserve(m_server.m_networking.size());
 
     // set and test roles
     player_connection->SetAuthRoles(roles);
@@ -873,7 +874,8 @@ MPLobby::MPLobby(my_context c) :
         m_lobby_data->any_can_edit = true;
 
         auto max_ai = GetOptionsDB().Get<int>("network.server.ai.max");
-        std::list<PlayerConnectionPtr> to_disconnect;
+        std::vector<PlayerConnectionPtr> to_disconnect;
+        to_disconnect.reserve(server.m_networking.size());
         // Try to use connections:
         for (const auto& player_connection : server.m_networking) {
             // If connection was not established disconnect it.
@@ -2367,7 +2369,8 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
                 player_connection->SetAuthenticated();
 
             // drop other connection with same name before checks for expected players
-            std::list<PlayerConnectionPtr> to_disconnect;
+            std::vector<PlayerConnectionPtr> to_disconnect;
+            to_disconnect.reserve(server.m_networking.size());
             for (auto it = server.m_networking.established_begin();
                  it != server.m_networking.established_end(); ++it)
             {
@@ -2377,7 +2380,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
                 }
             }
             for (const auto& conn : to_disconnect)
-            { server.Networking().Disconnect(conn); }
+                server.Networking().Disconnect(conn);
         } else {
             if (server.IsAuthRequiredOrFillRoles(player_name, player_connection->GetIpAddress(), roles)) {
                 // send authentication request
@@ -2497,7 +2500,8 @@ sc::result WaitingForMPGameJoiners::react(const AuthResponse& msg) {
 
     if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
         // drop other connection with same name before checks for expected players
-        std::list<PlayerConnectionPtr> to_disconnect;
+        std::vector<PlayerConnectionPtr> to_disconnect;
+        to_disconnect.reserve(server.m_networking.size());
         for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
              it != server.m_networking.established_end(); ++it)
         {
@@ -2507,7 +2511,7 @@ sc::result WaitingForMPGameJoiners::react(const AuthResponse& msg) {
             }
         }
         for (const auto& conn : to_disconnect)
-        { server.Networking().Disconnect(conn); }
+            server.Networking().Disconnect(conn);
 
         // expected human player
         if (!player_connection->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER)) {
