@@ -152,9 +152,9 @@ AVERAGE_BASE_FUEL_REGEN
     stackinggroup = "BASE_FUEL_REGEN"
     accountinglabel = "BASE_FUEL_REGEN_LABEL"
     priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
-    effects = SetFuel value = min(Target.MaxFuel, Value + 0.1001)
+    effects = SetFuel value = min(Target.MaxFuel, Value + 0.1)
 
-   [[REFUEL_MESSAGE(0.1001)]]
+   [[REFUEL_MESSAGE(0.1)]]
 '''
 
 GREAT_FUEL_EFFICIENCY
