@@ -8324,7 +8324,7 @@ BEGINNER_HINT_12
 12: Be on the lookout for planets with [[encyclopedia ENC_SPECIAL]]s, they usually indicate some special resource on that planet that may benefit your entire empire if utilized properly. Right click on a special's icon to access its 'Pedia entry and find out more!
 
 BEGINNER_HINT_13
-13: Only [[species SP_EXOBOT]] can settle asteroid belts. If you find a lot of asteroids belts nearby you might want to research how to build them sooner rather than later!
+13: Unlike most species, [[species SP_EXOBOT]] can settle asteroid belts. If there are many asteroids belts nearby, consider researching to unlock them!
 
 BEGINNER_HINT_14
 14: Research [[metertype METER_SUPPLY]] improvements, like the [[tech CON_ORBITAL_CON]], to increase the distance from your systems that your supply lines reach.
