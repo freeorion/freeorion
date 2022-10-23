@@ -55,9 +55,10 @@ _tokens: List[Token] = [
     ScalarToken("MeterType", "meterType"),
     ScalarToken("AccountingInfo", "AccountingInfo"),
     ScalarToken("ShipPart", "shipPart"),
+    ScalarToken("ShipSlotType", "shipSlotType"),
     ScalarToken("Meter", "meter"),
-    ScalarToken("Flt", "float"),
-    ScalarToken("Dbl", "float"),
+    ScalarToken("Float", "float"),
+    ScalarToken("Double", "float"),
     ScalarToken("String", "str"),
 ]
 
