@@ -147,10 +147,11 @@ namespace {
 
     auto ResearchedTechNames(const Empire& empire) -> std::set<std::string>
     {
-        std::set<std::string> retval;
-        for (const auto& entry : empire.ResearchedTechs())
-            retval.insert(entry.first);
-        return retval;
+        std::set<std::string> out;
+        const auto& rt = empire.ResearchedTechs();
+        std::transform(rt.begin(), rt.end(), std::inserter(out, out.end()),
+                       [](const auto& t) { return t.first; });
+        return out;
     }
 
     auto ViewSetToStringVec(const std::set<std::string_view>& in) -> std::vector<std::string>
