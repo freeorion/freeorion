@@ -14,8 +14,8 @@ from stub_generator.stub_generator.rtype._base_rtype_mapping import make_type
     (
         # Base types
         ("Int", "int"),
-        ("Flt", "float"),
-        ("Dbl", "float"),
+        ("Float", "float"),
+        ("Double", "float"),
         ("String", "str"),
         # Simple collections
         ("IntPair", "Tuple[int, int]"),
@@ -25,8 +25,8 @@ from stub_generator.stub_generator.rtype._base_rtype_mapping import make_type
         ("IntSetSet", "Set[Set[int]]"),
         # mapping
         ("StringIntMap", "Map[str, int]"),
-        ("IntSetFltMap", "Map[Set[int], float]"),
-        ("IntMeterTypeAccountingInfoVecMapMap", "Map[int, Map[meterType, Sequence[AccountingInfo]]]"),
+        ("IntSetFloatMap", "Map[Set[int], float]"),
+        ("IntMeterTypeAccountingInfoVecMapMap", "Map[int, Map[meterType, Vec[AccountingInfo]]]"),
         # Not matchable
         ("Hello", "Hello"),
         ("HelloVec", "HelloVec"),
@@ -36,7 +36,7 @@ from stub_generator.stub_generator.rtype._base_rtype_mapping import make_type
         # Underscores are ignored
         ("_I_n_t_", "int"),
         ("Int_Set", "Set[int]"),
-        ("Int_MeterType_AccountingInfoVecMapMap", "Map[int, Map[meterType, Sequence[AccountingInfo]]]"),
+        ("Int_MeterType_AccountingInfoVecMapMap", "Map[int, Map[meterType, Vec[AccountingInfo]]]"),
     ),
 )
 def test_make_type(string, hint):
