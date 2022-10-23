@@ -108,18 +108,17 @@ def get_common_instances() -> Generator:
 
 
 common_classes_to_exclude = {
-    "popCenter",
-    "resourceCenter",
+    "popCenter",  # parent class, it's not possible to get instance
+    "resourceCenter",  # parent class, it's not possible to get instance
 }
 
 classes_to_exclude_from_universe = {
-    "MonsterFleetPlan",
+    "MonsterFleetPlan",  # not used
 }
 
 classes_to_exclude_from_ai = {
-    "universeObject",
-    # this item cannot be got from generate orders
-    "diplomaticStatusUpdate",
+    "universeObject",  # parent class, it's not possible to get instance
+    "diplomaticStatusUpdate",  # this item cannot be got from generate orders
 }
 
 classes_to_exclude_from_ai.update(common_classes_to_exclude)

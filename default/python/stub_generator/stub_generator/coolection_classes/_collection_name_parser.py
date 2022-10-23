@@ -50,6 +50,7 @@ _tokens: List[Token] = [
     MapToken("Map"),
     PairToken("Pair"),
     ScalarToken("Int", "int"),
+    ScalarToken("Bool", "bool"),
     ScalarToken("Visibility", "visibility"),
     ScalarToken("UnlockableItem", "UnlockableItem"),
     ScalarToken("MeterType", "meterType"),
@@ -107,3 +108,8 @@ def make_type(string: Optional[str]):
             return token.wrap(*new_args)
 
     return wrap(token, args)
+
+
+def is_collection_type(type_name: str) -> bool:
+    type_ = make_type(type_name)
+    return type_.startswith(("Vec", "Set", "Map", "Tuple"))

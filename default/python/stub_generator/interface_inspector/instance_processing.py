@@ -10,18 +10,14 @@ _INVALID_CLASSES = {"method"}
 
 
 class InstanceInfo:
-    def __init__(
-        self,
-        class_name: str,
-        attributes: Dict[str, Any],
-        parents: List[str],
-    ):
+    def __init__(self, class_name: str, attributes: Dict[str, Any], parents: List[str], location: str):
         self.class_name = class_name
         self.attributes = attributes
         self.parents = parents
+        self.location = location
 
 
-def _inspect_instance(instance):
+def _inspect_instance(instance, location):
     parents = instance.__class__.mro()[1:-2]
     parent_attrs = sum((dir(parent) for parent in instance.__class__.mro()[1:]), [])
 
@@ -30,12 +26,12 @@ def _inspect_instance(instance):
     for attr_name, member in _getmembers(instance):
         if attr_name not in parent_attrs + ["__module__"]:
             attrs[attr_name] = _get_member_info("%s.%s" % (instance.__class__.__name__, attr_name), member)
-    return InstanceInfo(instance.__class__.__name__, attrs, [str(parent.__name__) for parent in parents])
+    return InstanceInfo(instance.__class__.__name__, attrs, [str(parent.__name__) for parent in parents], location)
 
 
 def is_built_in(instance: Any) -> bool:
     """
-    Return is instance is one of built in type.
+    Return is instance is one of builtin type.
 
     Inherited classes from built in return False.
     """
@@ -52,6 +48,6 @@ def inspect_instances(instances) -> Iterator[InstanceInfo]:
             warning("Argument at %s is not allowed: (%s) %s", location, type(instance), instance)
             continue
         try:
-            yield _inspect_instance(instance)
+            yield _inspect_instance(instance, location)
         except Exception as e:
             error("Error inspecting: '%s' with '%s': %s", type(instance), type(e), e, exc_info=True)
