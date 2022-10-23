@@ -109,11 +109,8 @@ common_classes_to_exclude = {
 }
 
 classes_to_exclude_from_universe = {
-    "MonsterFleetPlan",  # not used
-    "FleetPlan",  # not used
     "productionQueueElement",  # not applicable
     "researchQueueElement",  # not applicable
-    "PlayerSetupData",  # not used, this class is from Auth API
     *common_classes_to_exclude,
 }
 
