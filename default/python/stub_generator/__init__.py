@@ -1,5 +1,5 @@
 import os
-from logging import debug
+from logging import debug, error
 
 from stub_generator.generate_stub import make_stub
 from stub_generator.interface_inspector import get_module_info
@@ -25,5 +25,6 @@ def generate_stub(obj, instances, classes_to_ignore, path):
     classes, enums, functions, instances = get_module_info(obj, instances)
     make_stub(classes, enums, functions, instances, result_path, classes_to_ignore)
     debug("=" * 20)
+    error("Skeleton was created, please exit to the menu")
     debug("Skeleton written to %s" % result_path)
     debug("=" * 20)
