@@ -34,7 +34,7 @@ public:
 
     Networking::ClientType GetPlayerClientType(int player_id) const override;
 
-    std::string GetVisibleObjectName(std::shared_ptr<const UniverseObject> object) override;
+    std::string GetVisibleObjectName(const UniverseObject& object) override;
 
     EmpireManager& Empires() override;
 

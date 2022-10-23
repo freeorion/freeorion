@@ -37,14 +37,8 @@ Networking::ClientType ParserAppFixture::GetEmpireClientType(int empire_id) cons
 Networking::ClientType ParserAppFixture::GetPlayerClientType(int player_id) const
 { return Networking::ClientType::INVALID_CLIENT_TYPE; }
 
-std::string ParserAppFixture::GetVisibleObjectName(std::shared_ptr<const UniverseObject> object) {
-    if (!object) {
-        ErrorLogger() << "ParserAppFixture::GetVisibleObjectName(): expected non null object pointer.";
-        return std::string();
-    }
-
-    return object->Name();
-}
+std::string ParserAppFixture::GetVisibleObjectName(const UniverseObject& object)
+{ return object.Name(); }
 
 EmpireManager& ParserAppFixture::Empires()
 { return m_empires; }

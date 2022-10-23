@@ -137,7 +137,7 @@ public:
      * @return The name of the @a object.  Depdending on Visibility it may not
      *      match with the actual object name.
      */
-    [[nodiscard]] std::string GetVisibleObjectName(std::shared_ptr<const UniverseObject> object) override;
+    [[nodiscard]] std::string GetVisibleObjectName(const UniverseObject& object) override;
 
     /** @brief Send the OrderSet and UI data to the server and start a new turn */
     virtual void StartTurn(const SaveGameUIData& ui_data);

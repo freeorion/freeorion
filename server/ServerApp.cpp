@@ -340,14 +340,8 @@ ObjectMap& ServerApp::EmpireKnownObjects(int empire_id)
 ServerNetworking& ServerApp::Networking()
 { return m_networking; }
 
-std::string ServerApp::GetVisibleObjectName(std::shared_ptr<const UniverseObject> object) {
-    if (!object) {
-        ErrorLogger() << "ServerApp::GetVisibleObjectName(): expected non null object pointer.";
-        return std::string();
-    }
-
-    return object->Name();
-}
+std::string ServerApp::GetVisibleObjectName(const UniverseObject& object)
+{ return object.Name(); }
 
 void ServerApp::Run() {
     DebugLogger() << "FreeOrion server waiting for network events";

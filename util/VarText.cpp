@@ -77,11 +77,11 @@ namespace {
             return boost::none;
         }
 #endif
-        auto obj = objects.get(object_id);
+        auto obj = objects.getRaw(object_id);
         if (!obj)
             return boost::none;
 
-        return WithTags(GetVisibleObjectName(obj), tag, data);
+        return WithTags(GetVisibleObjectName(*obj), tag, data);
     }
 
     //! Returns substitution string for an in-Universe ship design tag

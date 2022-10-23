@@ -44,7 +44,7 @@ public:
     /** Returns the server's map for known objects of specified empire. */
     [[nodiscard]] ObjectMap& EmpireKnownObjects(int empire_id) override;
 
-    [[nodiscard]] std::string GetVisibleObjectName(std::shared_ptr<const UniverseObject> object) override;
+    [[nodiscard]] std::string GetVisibleObjectName(const UniverseObject& object) override;
 
     [[nodiscard]] int EmpireID() const override
     { return ALL_EMPIRES; }

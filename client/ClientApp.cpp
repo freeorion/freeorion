@@ -133,17 +133,12 @@ OrderSet& ClientApp::Orders()
 ClientNetworking& ClientApp::Networking()
 { return *m_networking; }
 
-std::string ClientApp::GetVisibleObjectName(std::shared_ptr<const UniverseObject> object) {
-    if (!object) {
-        ErrorLogger() << "ClientApp::GetVisibleObjectName(): expected non null object pointer.";
-        return std::string();
-    }
-
-    if (object->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
-        auto system = std::static_pointer_cast<const System>(object);
-        return system->ApparentName(m_empire_id, m_universe);
+std::string ClientApp::GetVisibleObjectName(const UniverseObject& object) {
+    if (object.ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
+        auto& system = static_cast<const System&>(object);
+        return system.ApparentName(m_empire_id, m_universe);
     } else {
-        return object->PublicName(m_empire_id, m_universe);
+        return object.PublicName(m_empire_id, m_universe);
     }
 }
 
