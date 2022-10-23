@@ -1,12 +1,6 @@
 import pytest
 
-from stub_generator.stub_generator.rtype._base_rtype_mapping import make_type
-
-
-# IntIntDblMapMap
-# IntPairVec
-# IntSetSet
-# IntSetFltMap
+from stub_generator.stub_generator.coolection_classes import make_type
 
 
 @pytest.mark.parametrize(

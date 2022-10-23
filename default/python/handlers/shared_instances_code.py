@@ -108,46 +108,17 @@ def get_common_instances() -> Generator:
 
 
 common_classes_to_exclude = {
-    "IntBoolMap",
-    "IntDblMap",
-    "IntFltMap",
-    "IntFltMap",
-    "IntPairVec",
-    "IntSetSet",
-    "MeterTypeMeterMap",
-    "MeterTypeStringPair",
-    "PairIntInt_IntMap",
-    "VisibilityIntMap",
-    "IntSet",
-    "StringSet",
-    "StringSet2",
-    "StringVec",
-    "IntIntDblMapMap",
-    "IntStringMap",
-    "String_IntStringMap_Map",
-    "StringIntMap",
-    "StringsMap",
-    "IntIntMap",
-    "AccountingInfoVec",
-    "StatRecordsMap",
-    "MeterTypeAccountingInfoVecPair",
-    "MeterTypeAccountingInfoVecMap",
     "popCenter",
     "resourceCenter",
 }
 
 classes_to_exclude_from_universe = {
-    "MeterTypeAccountingInfoVecMap",
     "MonsterFleetPlan",
-    "RuleValueStringStringPair",
-    "ShipPartMeterMap",
-    "AccountingInfoVec",
 }
 
 classes_to_exclude_from_ai = {
-    "UnlockableItemVec",
     "universeObject",
-    # this item cannot be get from generate orders
+    # this item cannot be got from generate orders
     "diplomaticStatusUpdate",
 }
 

@@ -5,6 +5,7 @@ from typing import Iterable, List, Set
 from common.print_utils import Table, Text
 from stub_generator.interface_inspector import ClassInfo, EnumInfo, InstanceInfo
 from stub_generator.parse_docs import Docs
+from stub_generator.stub_generator.coolection_classes import is_collection_type
 from stub_generator.stub_generator.rtype import update_method_rtype, update_property_rtype
 
 
@@ -97,6 +98,7 @@ def _handle_class(info: ClassInfo):  # noqa: max-complexity
 
 def _report_classes_without_instances(classes_map: Iterable[str], instance_names, classes_to_ignore: Set[str]):
     missed_instances = instance_names.symmetric_difference(classes_map).difference(classes_to_ignore)
+    missed_instances = [inst for inst in missed_instances if not is_collection_type(inst)]
 
     if not missed_instances:
         return

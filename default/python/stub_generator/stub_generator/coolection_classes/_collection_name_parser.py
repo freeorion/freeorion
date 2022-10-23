@@ -79,15 +79,15 @@ def _iter_arguments(string) -> Iterator[Token]:
         yield token
 
 
-def fetch_group(stream: Iterable[Token]):
+def _fetch_group(stream: Iterable[Token]):
     first = next(stream)
     if first.arg_count == 0:
         return [first, []]
     if first.arg_count == 1:
-        return [first, [fetch_group(stream)]]
+        return [first, [_fetch_group(stream)]]
     if first.arg_count == 2:
-        val = fetch_group(stream)
-        key = fetch_group(stream)
+        val = _fetch_group(stream)
+        key = _fetch_group(stream)
         return [first, [key, val]]
 
 
@@ -95,7 +95,7 @@ def make_type(string: Optional[str]):
     if not string:
         return ""
     try:
-        token, args = fetch_group(_iter_arguments(string))
+        token, args = _fetch_group(_iter_arguments(string))
     except UnmatchedType:
         return string
 
