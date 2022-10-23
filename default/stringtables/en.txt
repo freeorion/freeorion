@@ -12278,9 +12278,9 @@ Border Checkpoints
 PLC_CHECKPOINTS_DESC
 '''Decreases [[metertype METER_STEALTH]] of foreign ships and planets in [[metertype METER_SUPPLY]] by up to [[value PLC_CHECKPOINTS_MAX_STEALTH_MALUS]]. Ships and planets are considered foreign if not owned by or allied to this empire. Unowned planets and monsters are also foreign.
 
-The decrease depends on the time this policy is adapted, decreasing [[metertype METER_STEALTH]] by 1 per turn up to [[value PLC_CHECKPOINTS_MAX_STEALTH_MALUS]].
+The decrease depends on the time this policy is adopted, decreasing [[metertype METER_STEALTH]] by 1 per turn up to [[value PLC_CHECKPOINTS_MAX_STEALTH_MALUS]].
 
-Reduces imperial [[metertype METER_SUPPLY]] line range ([[value PLC_CHECKPOINTS_MAX_SUPPLY_FLAT]]) and [[metertype METER_INFLUENCE]] generation ([[value PLC_CHECKPOINTS_TARGET_INFLUENCE_FLAT]]).'''
+Reduces [[metertype METER_INFLUENCE]] generation ([[value PLC_CHECKPOINTS_TARGET_INFLUENCE_FLAT]]).'''
 
 PLC_CHECKPOINTS_SHORT_DESC
 Improves Detection / Hinders Supply

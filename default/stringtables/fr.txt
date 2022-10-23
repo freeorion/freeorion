@@ -12278,7 +12278,7 @@ Postes-Frontières
 PLC_CHECKPOINTS_DESC
 '''Augmente de 1 par tour (jusqu'à [[value PLC_CHECKPOINTS_DETECTION_STRENGTH_MAX]]) la Capacité de Détection de l'empire.
 
-Réduit la portée de l'[[metertype METER_SUPPLY]] impérial ([[value PLC_CHECKPOINTS_MAX_SUPPLY_FLAT]]) et la génération d'[[metertype METER_INFLUENCE]] ([[value PLC_CHECKPOINTS_TARGET_INFLUENCE_FLAT]]).'''
+Réduit la génération d'[[metertype METER_INFLUENCE]] ([[value PLC_CHECKPOINTS_TARGET_INFLUENCE_FLAT]]).'''
 
 PLC_CHECKPOINTS_SHORT_DESC
 Améliore la Détection / Entrave l'Approvisionnement
