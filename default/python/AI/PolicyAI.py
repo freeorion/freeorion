@@ -176,7 +176,7 @@ class PolicyManager:
             # military policies are mostly chosen by opinion, plus some rule-of-thumb values
             allied_repair: lambda: self._rate_opinion(charge),  # no effect, unless we have allies...
             charge: lambda: self._rate_opinion(charge),  # increases attack, reduces shields
-            scanning: lambda: 20 + self._rate_opinion(scanning),  # May help us detect ships and planets
+            scanning: lambda: 10 + self._rate_opinion(scanning),  # May help us detect stealthy attackers
             simplicity: lambda: 20 + self._rate_opinion(simplicity),  # Makes simple ships cheaper
             engineering: self._rate_engineering_corps,
             exploration: lambda: 10 + self._rate_opinion(exploration),  # may give a little research, speeds up scouts
