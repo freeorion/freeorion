@@ -562,7 +562,7 @@ private:
     bool                            m_ready_turn = false;       //!< is turn orders are ready and sent to server?
     std::shared_ptr<GG::Label>      m_timeout_remain;           //!< label to show remaining time
     GG::Timer                       m_timeout_clock{1000};      //!< clock to update remaining time
-    std::list<std::weak_ptr<MapWndPopup>> m_popups;             //!< list of currently active popup windows
+    std::vector<std::weak_ptr<MapWndPopup>> m_popups;           //!< currently active popup windows
     bool                            m_menu_showing = false;     //!< set during ShowMenu() to prevent reentrency
     int                             m_current_owned_system = INVALID_OBJECT_ID;
     int                             m_current_fleet_id = INVALID_OBJECT_ID;

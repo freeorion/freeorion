@@ -6053,8 +6053,8 @@ void MapWnd::RemovePopup(MapWndPopup* popup) {
     if (!popup)
         return;
 
-    const auto& it = std::find_if(m_popups.begin(), m_popups.end(),
-                                  [&popup](const std::weak_ptr<Wnd>& xx){ return xx.lock().get() == popup;});
+    auto it = std::find_if(m_popups.begin(), m_popups.end(),
+                           [popup](const auto& xx){ return xx.lock().get() == popup;});
     if (it != m_popups.end())
         m_popups.erase(it);
 }
@@ -7488,17 +7488,11 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
     hkm->RebuildShortcuts();
 }
 
-void MapWnd::CloseAllPopups() {
-    GG::ProcessThenRemoveExpiredPtrs(m_popups,
-                                     [](std::shared_ptr<MapWndPopup>& wnd)
-                                     { wnd->Close(); });
-}
+void MapWnd::CloseAllPopups()
+{ GG::ProcessThenRemoveExpiredPtrs(m_popups, [](auto& wnd) { wnd->Close(); }); }
 
-void MapWnd::HideAllPopups() {
-    GG::ProcessThenRemoveExpiredPtrs(m_popups,
-                                     [](std::shared_ptr<MapWndPopup>& wnd)
-                                     { wnd->Hide(); });
-}
+void MapWnd::HideAllPopups()
+{ GG::ProcessThenRemoveExpiredPtrs(m_popups, [](auto& wnd) { wnd->Hide(); }); }
 
 void MapWnd::SetFleetExploring(const int fleet_id) {
     if (!std::count(m_fleets_exploring.begin(), m_fleets_exploring.end(), fleet_id)) {
@@ -8024,8 +8018,5 @@ void MapWnd::DispatchFleetsExploring() {
     }
 }
 
-void MapWnd::ShowAllPopups() {
-    GG::ProcessThenRemoveExpiredPtrs(m_popups,
-                                     [](std::shared_ptr<MapWndPopup>& wnd)
-                                     { wnd->Show(); });
-}
+void MapWnd::ShowAllPopups()
+{ GG::ProcessThenRemoveExpiredPtrs(m_popups, [](auto& wnd) { wnd->Show(); }); }
