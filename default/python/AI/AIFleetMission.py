@@ -780,10 +780,6 @@ class AIFleetMission:
         ships_cur_health, ships_max_health = FleetUtilsAI.get_current_and_max_structure(fleet_id)
         return ships_cur_health < repair_limit * ships_max_health
 
-    def get_location_target(self) -> TargetSystem:
-        # TODO add parameter turn
-        return TargetSystem(get_fleet_position(self.fleet.id))
-
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.fleet == other.target
 

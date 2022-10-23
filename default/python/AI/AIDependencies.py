@@ -45,8 +45,6 @@ RESEARCH_PER_POP = 0.2
 TROOPS_PER_POP = 0.2
 
 PROT_FOCUS_MULTIPLIER = 2.0
-TECH_COST_MULTIPLIER = 2.0
-FOCUS_CHANGE_PENALTY = 1
 HOMEWORLD_INFLUENCE_COST = 1  # homeworld independency movement
 
 STABILITY_PER_LIKED_FOCUS = 2.0
@@ -62,10 +60,7 @@ STABILITY_PER_LIKED_SPECIAL_IN_SYSTEM = 1.0
 
 SHIP_STRUCTURE_FACTOR = fo.getGameRules().getDouble("RULE_SHIP_STRUCTURE_FACTOR")
 SHIP_WEAPON_DAMAGE_FACTOR = fo.getGameRules().getDouble("RULE_SHIP_WEAPON_DAMAGE_FACTOR")
-SHIP_SHIELD_FACTOR = SHIP_WEAPON_DAMAGE_FACTOR
 FIGHTER_DAMAGE_FACTOR = fo.getGameRules().getDouble("RULE_FIGHTER_DAMAGE_FACTOR")
-PLANET_DEFENSE_FACTOR = SHIP_WEAPON_DAMAGE_FACTOR
-PLANET_SHIELD_FACTOR = SHIP_STRUCTURE_FACTOR
 
 # Colonization details
 OUTPOST_POD_COST = 50  # TODO Query directly from part
@@ -103,7 +98,6 @@ class Tags:
     ATTACKTROOPS = "OFFENSE_TROOPS"
     STEALTH = "STEALTH"
     SHIP_SHIELDS = "SHIP_SHIELDS"
-    PLANETARY_SHIELDS = "PLANETARY_SHIELDS"
     FUEL = "FUEL"
     DETECTION = "DETECTION"
     INDEPENDENT = "INDEPENDENT_HAPPINESS"
@@ -158,10 +152,6 @@ POP_MOD_LIGHTSENSITIVE_STAR_MAP = {fo.starType.blue: -2, fo.starType.white: -1}
 
 # the percentage of normal population that a species with Gaseous tag has
 GASEOUS_POP_FACTOR = 0.50
-
-# the percentage of normal population that a species with MINDLESS_SPECIES tag has
-MINDLESS_POP_FACTOR = 0.50
-
 # </editor-fold>
 
 # <editor-fold desc="Detection Strengths">
@@ -290,12 +280,10 @@ POP_PROPORTIONAL_MOD_SPECIALS = {
 
 # <editor-fold desc="Industry related specials">
 HONEYCOMB_SPECIAL = "HONEYCOMB_SPECIAL"
-HONEYCOMB_IND_MULTIPLIER = 1.0
 # </editor-fold>
 
 # <editor-fold desc="Research related specials">
 COMPUTRONIUM_SPECIAL = "COMPUTRONIUM_SPECIAL"
-COMPUTRONIUM_RES_MULTIPLIER = 0.5
 
 ANCIENT_RUINS_SPECIAL = "ANCIENT_RUINS_SPECIAL"
 ANCIENT_RUINS_SPECIAL2 = "ANCIENT_RUINS_DEPLETED_SPECIAL"  # nothing to excavate anymore, but some research bonus
@@ -315,11 +303,6 @@ SUPPLY_MOD_SPECIALS = {
         -1: -1,
     },
 }
-# </editor-fold>
-
-# <editor-fold desc="Detection related specials">
-PANOPTICON_SPECIAL = "PANOPTICON_SPECIAL"
-PANOPTICON_DETECTION_BONUS = 10
 # </editor-fold>
 
 # <editor-fold desc="Native Tech/Defense related specials">
@@ -350,17 +333,10 @@ NEST_DOMESTICATION_TECH = "SHP_DOMESTIC_MONSTER"
 LRN_ARTIF_MINDS_1 = "LRN_NASCENT_AI"
 LRN_ALGO_ELEGANCE = "LRN_ALGO_ELEGANCE"
 GRO_PLANET_ECOL = "GRO_PLANET_ECOL"
-GRO_SUBTER_HAB = "GRO_SUBTER_HAB"
-LRN_PHYS_BRAIN = "LRN_PHYS_BRAIN"
 LRN_QUANT_NET = "LRN_QUANT_NET"
 LRN_XENOARCH = "LRN_XENOARCH"
 LRN_EVERYTHING = "LRN_EVERYTHING"
 LRN_ART_BLACK_HOLE = "LRN_ART_BLACK_HOLE"
-
-GRO_XENO_GENETICS = "GRO_XENO_GENETICS"
-GRO_GENOME_BANK = "GRO_GENETIC_MED"
-
-CON_CONC_CAMP = "CON_CONC_CAMP"
 
 SR_FLUX_LANCE = "SR_FLUX_LANCE"
 SPY_STEALTH_1 = "SPY_STEALTH_1"
@@ -375,58 +351,10 @@ SHP_ASTEROID_HULLS = "SHP_ASTEROID_HULLS"
 # Tech required to build outpost pods
 OUTPOSTING_TECH = "SHP_GAL_EXPLO"
 
-# <editor-fold desc="Supply techs">
-supply_range_techs = {"CON_ORBITAL_CON": 1, "CON_CONTGRAV_ARCH": 1}
-# </editor-fold>
-
-# <editor-fold desc="Industry bossting techs">
-# Industry flat modifiers - [[VERY_LATE_PRIORITY]]: Not affected by species modifiers
-INDUSTRY_EFFECTS_FLAT_NOT_MODIFIED_BY_SPECIES = {
-    PRO_AUTO_1: 2,
-    PRO_AUTO_2: 3,
-}
-# Industry modifiers per population - [[EARLY_PRIORITY]]: Affected by species modifiers
-INDUSTRY_EFFECTS_PER_POP_MODIFIED_BY_SPECIES = {
-    "PRO_FUSION_GEN": 0.25,
-    "GRO_ENERGY_META": 0.5,
-    "PRO_INDUSTRY_CENTER_I": 0.25,
-    "PRO_INDUSTRY_CENTER_II": 0.25,
-    "PRO_INDUSTRY_CENTER_III": 0.25,
-}
-# Industry modifiers per population - [[LATE_PRIORITY]] or later: Not affected by species modifiers
-INDUSTRY_EFFECTS_PER_POP_NOT_MODIFIED_BY_SPECIES = {
-    "PRO_ROBOTIC_PROD": 0.25,
-    "PRO_SOL_ORB_GEN": 0.75,  # TODO don't assume will build a gen at a blue/white star
-    PRO_SINGULAR_GEN: 1.0,
-}
-# </editor-fold>
-
-
 # <editor-fold desc="Defense techs">
-# TODO are these 3 necessary? Could rely on ordered DEFENSE_SHIELD_TECHS (Morlic)
-FIRST_PLANET_SHIELDS_TECH = "LRN_FORCE_FIELD"
+# TODO are these 2 necessary? Could rely on ordered DEFENSE_SHIELD_TECHS (Morlic)
 PLANET_BARRIER_I_TECH = "DEF_PLAN_BARRIER_SHLD_1"
 DEFENSE_REGEN_1_TECH = "DEF_DEFENSE_NET_REGEN_1"
-
-DEFENSE_DEFENSE_NET_TECHS = ["DEF_DEFENSE_NET_1", "DEF_DEFENSE_NET_2", "DEF_DEFENSE_NET_3"]
-DEFENSE_REGEN_TECHS = [
-    "DEF_DEFENSE_NET_REGEN_1",
-    "DEF_DEFENSE_NET_REGEN_2",
-]
-DEFENSE_GARRISON_TECHS = [
-    "DEF_GARRISON_1",
-    "DEF_GARRISON_2",
-    "DEF_GARRISON_3",
-    "DEF_GARRISON_4",
-]
-DEFENSE_SHIELDS_TECHS = [
-    "LRN_FORCE_FIELD",
-    "DEF_PLAN_BARRIER_SHLD_1",
-    "DEF_PLAN_BARRIER_SHLD_2",
-    "DEF_PLAN_BARRIER_SHLD_3",
-    "DEF_PLAN_BARRIER_SHLD_4",
-    "DEF_PLAN_BARRIER_SHLD_5",
-]
 # </editor-fold>
 
 # <editor-fold desc="Fuel techs">
@@ -511,15 +439,6 @@ FIGHTER_UPGRADE_TECHS = frozenset(
 # </editor-fold>
 
 # <editor-fold desc="Tech Groups for Automated Research Approach">
-
-# TODO: I don't think this should be in AIDependencies... (Morlic)
-# (k,v) exclude tech k if aggression is less than v
-TECH_EXCLUSION_MAP_1 = {
-    "LRN_TRANSCEND": fo.aggression.typical,
-}
-# (k,v) exclude tech k if aggression is greater than v
-TECH_EXCLUSION_MAP_2 = {}
-
 # TODO obtain this information from techs
 UNRESEARCHABLE_TECHS = (
     "SHP_KRILL_SPAWN",
@@ -530,199 +449,6 @@ UNRESEARCHABLE_TECHS = (
     "SPY_DETECT_1",
     "SPY_PLANET_STEALTH_MOD",
 )
-
-UNUSED_TECHS = (
-    "LRN_SPATIAL_DISTORT_GEN",
-    "LRN_GATEWAY_VOID",
-    "LRN_PSY_DOM",
-    "GRO_TERRAFORM",
-    "GRO_BIOTERROR",
-    "GRO_GAIA_TRANS",
-    "PRO_NDIM_ASSMB",
-    "CON_ORGANIC_STRC",
-    "CON_PLANET_DRIVE",
-    "CON_STARGATE",
-    "CON_ART_HEAVENLY",
-    "CON_ART_PLANET",
-    "SHP_NOVA_BOMB",
-    "SHP_BOMBARD",
-    "SHP_DEATH_SPORE",
-    "SHP_BIOTERM",
-    "SHP_EMP",
-    "SHP_EMO",
-    "SHP_SONIC",
-    "SHP_GRV",
-    "SHP_DARK_RAY",
-    "SHP_VOID_SHADOW",
-    "SHP_CHAOS_WAVE",
-)
-
-THEORY_TECHS = (
-    "LRN_TRANSLING_THT",
-    "LRN_PSIONICS",
-    "LRN_GRAVITONICS",
-    "LRN_EVERYTHING",
-    "LRN_MIND_VOID",
-    "LRN_NDIM_SUBSPACE",
-    "LRN_TIME_MECH",
-    "GRO_GENETIC_ENG",
-    "GRO_ADV_ECOMAN",
-    "GRO_NANOTECH_MED",
-    "GRO_TRANSORG_SENT",
-    "PRO_NANOTECH_PROD",
-    "PRO_ZERO_GEN",
-    "CON_ASYMP_MATS",
-    "CON_ARCH_PSYCH",
-    "SHP_GAL_EXPLO",
-)
-
-DEFENSE_TECHS_PREFIX = "DEF"
-
-PRODUCTION_BOOST_TECHS = (
-    "PRO_ROBOTIC_PROD",
-    "PRO_FUSION_GEN",
-    "PRO_ADAPTIVE_AUTOMATION",
-    "PRO_SENTIENT_AUTOMATION",
-    "PRO_INDUSTRY_CENTER_I",
-    "PRO_INDUSTRY_CENTER_II",
-    "PRO_INDUSTRY_CENTER_III",
-    "PRO_SOL_ORB_GEN",
-)
-RESEARCH_BOOST_TECHS = (
-    "LRN_ALGO_ELEGANCE",
-    LRN_ARTIF_MINDS_1,
-    "LRN_PHYS_BRAIN",
-    "LRN_DISTRIB_THOUGHT",
-    "LRN_QUANT_NET",
-    "LRN_STELLAR_TOMOGRAPHY",
-    "LRN_ENCLAVE_VOID",
-)
-PRODUCTION_AND_RESEARCH_BOOST_TECHS = ("LRN_UNIF_CONC", "GRO_ENERGY_META")
-POPULATION_BOOST_TECHS = (
-    "GRO_PLANET_ECOL",
-    "GRO_SYMBIOTIC_BIO",
-    "GRO_XENO_HYBRIDS",
-    "GRO_SUBTER_HAB",
-    "CON_ORBITAL_HAB",
-    "CON_NDIM_STRC",
-    "PRO_EXOBOTS",
-)
-# important that the easiest-to-reach supply tech be listed first
-SUPPLY_BOOST_TECHS = (
-    "CON_ORBITAL_CON",
-    "CON_ARCH_MONOFILS",
-    "CON_CONTGRAV_ARCH",
-)
-METER_CHANGE_BOOST_TECHS = (
-    "CON_FRC_ENRG_STRC",
-    "CON_TRANS_ARCH",
-)
-DETECTION_TECHS = (
-    "SPY_DETECT_1",
-    "SPY_DETECT_2",
-    "SPY_DETECT_3",
-    "SPY_DETECT_4",
-    "SPY_DETECT_5",
-    "SPY_DIST_MOD",
-    "SPY_LIGHTHOUSE",
-)
-STEALTH_TECHS = (
-    "SPY_STEALTH_1",
-    "SPY_STEALTH_2",
-    "SPY_STEALTH_3",
-    "SPY_STEALTH_4",
-    "CON_FRC_ENRG_CAMO",
-)
-ROBOTIC_HULL_TECHS = (
-    "SHP_MIL_ROBO_CONT",
-    "SHP_TRANSSPACE_DRIVE",
-    "SHP_CONTGRAV_MAINT",
-    "SHP_MASSPROP_SPEC",
-    "SHP_NANOROBO_MAINT",
-    "SHP_MIDCOMB_LOG",
-)
-SPACE_FLUX_HULL_TECHS = (
-    "SHP_SPACE_FLUX_BUBBLE",
-    "SHP_SPACE_FLUX_DRIVE",
-    "SHP_SPACE_FLUX_COMPOSITION",
-)
-ASTEROID_HULL_TECHS = (
-    "SHP_ASTEROID_HULLS",
-    "SHP_SCAT_AST_HULL",
-    "SHP_HEAVY_AST_HULL",
-    "SHP_CAMO_AST_HULL",
-    "SHP_MINIAST_SWARM",
-)
-ORGANIC_HULL_TECHS = (
-    "SHP_ORG_HULL",
-    "SHP_MULTICELL_CAST",
-    "SHP_ENDOCRINE_SYSTEMS",
-    "SHP_CONT_BIOADAPT",
-    "SHP_MONOCELL_EXP",
-    "SHP_CONT_SYMB",
-    "SHP_BIOADAPTIVE_SPEC",
-    "SHP_ENDOSYMB_HULL",
-    "SHP_SENT_HULL",
-)
-ENERGY_HULL_TECHS = (
-    "SHP_FRC_ENRG_COMP",
-    "SHP_QUANT_ENRG_MAG",
-    "SHP_ENRG_BOUND_MAN",
-    "SHP_SOLAR_CONT",
-)
-MISC_HULL_TECHS = ("SHP_XENTRONIUM_HULL",)
-HULL_TECHS = tuple(
-    hull
-    for hulls in (
-        ROBOTIC_HULL_TECHS,
-        ASTEROID_HULL_TECHS,
-        ORGANIC_HULL_TECHS,
-        ENERGY_HULL_TECHS,
-        MISC_HULL_TECHS,
-        SPACE_FLUX_HULL_TECHS,
-    )
-    for hull in hulls
-)
-
-DAMAGE_CONTROL_TECHS = (
-    "SHP_BASIC_DAM_CONT",
-    "SHP_FLEET_REPAIR",
-    "SHP_ADV_DAM_CONT",
-)
-
-WEAPON_PREFIX = "SHP_WEAPON"
-
-ARMOR_TECHS = (
-    "SHP_ZORTRIUM_PLATE",
-    "SHP_DIAMOND_PLATE",
-    "SHP_XENTRONIUM_PLATE",
-    "SHP_ASTEROID_REFORM",
-    "SHP_MONOMOLEC_LATTICE",
-    "PRO_NEUTRONIUM_EXTRACTION",
-    "SHP_REINFORCED_HULL",
-)
-ENGINE_TECHS = (
-    "SHP_IMPROVED_ENGINE_COUPLINGS",
-    "SHP_N_DIMENSIONAL_ENGINE_MATRIX",
-    "SHP_SINGULARITY_ENGINE_CORE",
-)
-FUEL_TECHS = (
-    "SHP_DEUTERIUM_TANK",
-    "SHP_ANTIMATTER_TANK",
-    "SHP_ZERO_POINT",
-)
-SHIELD_TECHS = (
-    "LRN_FORCE_FIELD",
-    "SHP_DEFLECTOR_SHIELD",
-    "SHP_PLASMA_SHIELD",
-    "SHP_BLACKSHIELD",
-    "SHP_MULTISPEC_SHIELD",
-)
-COLONY_POD_TECHS = ("GRO_LIFECYCLE_MAN",)
-TROOP_POD_TECHS = ("GRO_NANO_CYBERNET",)
-
-SHIP_TECHS_REQUIRING_BLACK_HOLE = ("SHP_SOLAR_CONT",)
-
 # </editor-fold>
 
 # </editor-fold>

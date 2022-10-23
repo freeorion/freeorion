@@ -18,10 +18,6 @@ from freeorion_tools import get_game_rule_int, get_named_real, ppstring
 from freeorion_tools.caching import cache_for_current_turn
 
 
-def safe_name(univ_object):
-    return (univ_object and univ_object.name) or "?"
-
-
 def sys_name_ids(sys_ids: Iterable[int]) -> str:
     """
     Get a string representation of a list with system_ids.

@@ -37,27 +37,11 @@ class Choices:
         self.extra_energy_hull = rng.random() < 0.05
 
 
-empire_stars = {}
-research_reqs = {}
 choices = Choices()
-MAIN_SHIP_DESIGNER_LIST = []
-
-# keys are individual full tech names
-priority_funcs = {}
-
-REQS_PREREQS_IDX = 0
-REQS_COST_IDX = 1
-REQS_TIME_IDX = 2
-REQS_PER_TURN_COST_IDX = 3
-
-MIL_IDX = 0
-TROOP_IDX = 1
-COLONY_IDX = 2
 
 # Priorities
 ZERO = 0.0
 LOW = 0.1
-DEFAULT_PRIORITY = 0.5
 HIGH = 42
 
 
@@ -117,16 +101,6 @@ def generate_default_research_order():
         fo.issueEnqueueTechOrder(name, -1)
         debug("    enqueued tech %s  : cost: %s RP", name, cost)
     debug("")
-
-
-def get_possible_projects():
-    """get possible projects"""
-    preliminary_projects = []
-    empire = fo.getEmpire()
-    for tech_name in fo.techs():
-        if empire.getTechStatus(tech_name) == fo.techStatus.researchable:
-            preliminary_projects.append(tech_name)
-    return set(preliminary_projects) - set(TechsListsAI.unusable_techs())
 
 
 def get_completed_techs() -> list[str]:

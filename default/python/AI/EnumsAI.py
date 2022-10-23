@@ -1,11 +1,6 @@
 from enum import IntEnum
 
 
-def check_validity(value):
-    """checks if value is valid"""
-    return value is not None and value >= 0
-
-
 class PriorityType(IntEnum):
     RESOURCE_GROWTH = 1  # obsolete, but removing it here breaks the save file
     RESOURCE_PRODUCTION = 2
@@ -18,13 +13,6 @@ class PriorityType(IntEnum):
     PRODUCTION_INVASION = 9
     PRODUCTION_MILITARY = 10
     PRODUCTION_BUILDINGS = 11
-    RESEARCH_LEARNING = 12
-    RESEARCH_GROWTH = 13
-    RESEARCH_PRODUCTION = 14
-    RESEARCH_CONSTRUCTION = 15
-    RESEARCH_ECONOMICS = 16
-    RESEARCH_SHIPS = 17
-    RESEARCH_DEFENSE = 18
     PRODUCTION_ORBITAL_DEFENSE = 19
     PRODUCTION_ORBITAL_INVASION = 20
     PRODUCTION_ORBITAL_OUTPOST = 21
@@ -54,8 +42,6 @@ def get_priority_production_types():
 class MissionType(IntEnum):
     OUTPOST = 1
     COLONISATION = 2
-    SPLIT_FLEET = 3
-    MERGE_FLEET = 4  # not really supported yet
     EXPLORATION = 5
     INVASION = 9
     MILITARY = 10
@@ -72,8 +58,6 @@ class MissionType(IntEnum):
 class ShipRoleType(IntEnum):  # this is also used in determining fleetRoles
     INVALID = -1
     MILITARY_ATTACK = 1
-    MILITARY_MISSILES = 2
-    MILITARY_POINTDEFENSE = 3
     CIVILIAN_EXPLORATION = 4
     CIVILIAN_COLONISATION = 5
     CIVILIAN_OUTPOST = 6
@@ -86,7 +70,6 @@ class ShipRoleType(IntEnum):  # this is also used in determining fleetRoles
 
 
 class EmpireProductionTypes(IntEnum):
-    BT_NOT_BUILDING = 0  # no production is taking place
     BT_BUILDING = 1  # a Building object is being built
     BT_SHIP = 2  # a Ship object is being built
 

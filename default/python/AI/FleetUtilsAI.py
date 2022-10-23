@@ -650,26 +650,6 @@ def get_fighter_capacity_of_fleet(fleet_id: int) -> tuple[int, int]:
     return cur_capacity, max_capacity
 
 
-def get_fuel(fleet_id: int) -> float:
-    """Get fuel of fleet.
-
-    :param fleet_id: Queried fleet
-    :return: fuel of fleet
-    """
-    fleet = fo.getUniverse().getFleet(fleet_id)
-    return fleet and fleet.fuel or 0.0
-
-
-def get_max_fuel(fleet_id: int) -> float:
-    """Get maximum fuel capacity of fleet.
-
-    :param fleet_id: Queried fleet
-    :return: max fuel of fleet
-    """
-    fleet = fo.getUniverse().getFleet(fleet_id)
-    return fleet and fleet.maxFuel or 0.0
-
-
 def get_fleet_upkeep():
     # TODO: Use new upkeep calculation
     return 1 + AIDependencies.SHIP_UPKEEP * get_aistate().shipCount
