@@ -318,7 +318,13 @@ namespace FreeOrionPython {
                                                         py::return_value_policy<py::return_by_value>()
                                                     ))
 
-            .add_property("availablePolicies",      make_function(&Empire::AvailablePolicies,               py::return_value_policy<py::copy_const_reference>()))
+            .add_property("availablePolicies",      make_function(
+                                                        +[](const Empire& e)
+                                                        {
+                                                            const auto& ap = e.AvailablePolicies();
+                                                            return std::set<std::string>(ap.begin(), ap.end());
+                                                        },
+                                                        py::return_value_policy<py::return_by_value>()))
 
             .def("policyAvailable",                 +[](const Empire& e, const std::string& policy) { return e.PolicyAvailable(policy); })
 
