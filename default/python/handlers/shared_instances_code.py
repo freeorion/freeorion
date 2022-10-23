@@ -59,12 +59,10 @@ def get_common_instances() -> Generator:
     yield fo.getGameRules()
     ship_hull = fo.getShipHull("SH_XENTRONIUM")
     yield ship_hull
-    yield ship_hull.slots
 
     yield fo.getSpecies("SP_ABADDONI")
 
     fleets_int_vector = universe.fleetIDs
-    yield fleets_int_vector
 
     fleet = universe.getFleet(list(fleets_int_vector)[0])
     yield fleet
@@ -80,15 +78,11 @@ def get_common_instances() -> Generator:
     yield fo.getSpecial("MODERATE_TECH_NATIVES_SPECIAL")
     yield fo.getShipHull("SH_XENTRONIUM")
 
-    yield universe.effectAccounting
-    yield universe.buildingIDs
-
     ship = universe.getShip(list(universe.shipIDs)[0])
-    design = fo.getShipDesign(ship.designID)
-    part_meters = ship.partMeters
     yield ship
+
+    design = fo.getShipDesign(ship.designID)
     yield design
-    yield part_meters
 
     yield fo.diplomaticMessage(1, 2, fo.diplomaticMessageType.acceptPeaceProposal)
     yield empire_of_first_ai
@@ -110,16 +104,19 @@ def get_common_instances() -> Generator:
 common_classes_to_exclude = {
     "popCenter",  # parent class, it's not possible to get instance
     "resourceCenter",  # parent class, it's not possible to get instance
+    "diplomaticStatusUpdate",  # this item is not used in generate orders/universe
+    "universeObject",  # parent class, it's not possible to get instance
 }
 
 classes_to_exclude_from_universe = {
     "MonsterFleetPlan",  # not used
+    "FleetPlan",  # not used
+    "productionQueueElement",  # not applicable
+    "researchQueueElement",  # not applicable
+    "PlayerSetupData",  # not used, this class is from Auth API
+    *common_classes_to_exclude,
 }
 
 classes_to_exclude_from_ai = {
-    "universeObject",  # parent class, it's not possible to get instance
-    "diplomaticStatusUpdate",  # this item cannot be got from generate orders
+    *common_classes_to_exclude,
 }
-
-classes_to_exclude_from_ai.update(common_classes_to_exclude)
-classes_to_exclude_from_universe.update(common_classes_to_exclude)
