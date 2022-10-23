@@ -22,9 +22,9 @@ LIVING_HULL_BASE_FUEL_REGEN
     stackinggroup = "BASE_FUEL_REGEN"
     accountinglabel = "BASE_FUEL_REGEN_LABEL"
     priority = [[EARLY_AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
-    effects = SetFuel value = min(Target.MaxFuel, Value + (NamedReal name = "SHP_LIVING_HULL_FUEL_REGEN" value = 0.3001))
+    effects = SetFuel value = min(Target.MaxFuel, Value + (NamedReal name = "SHP_LIVING_HULL_FUEL_REGEN" value = 0.3))
 
-   [[REFUEL_MESSAGE(0.3001)]]
+   [[REFUEL_MESSAGE(0.3)]]
 '''
 
 #include "/scripting/common/priorities.macros"
