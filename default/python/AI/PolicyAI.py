@@ -112,25 +112,8 @@ class _EmpireOutput:
             # 10 give a lot of bonuses, increases above 10 are less important
             stability = 11 + (stability - 10) / 2
         if self.has_liberty and planet.focus == FocusType.FOCUS_RESEARCH:
-            self.research += self.adjust_liberty(planet, population)
+            self.research += PlanetUtilsAI.adjust_liberty(planet, population)
         self.population_stability += population * stability * self.stability_scaling
-
-    @staticmethod
-    def adjust_liberty(planet: fo.planet, population: float) -> float:
-        """
-        Adjust liberty research output for changed stability.
-        UpdateMeterEstimate calculates liberty based on current stability, not on target stability.
-        So this may return a positive or negative adjustment, depending on whether stability goes up or down.
-        """
-        # This one is relatively easy to calculate. Still it would be better to have an adjustMeterUpdate with
-        # modified stability...
-        current_stability = planet.currentMeterValue(fo.meterType.happiness)
-        target_stability = planet.currentMeterValue(fo.meterType.targetHappiness)
-        low = get_named_real("PLC_LIBERTY_MIN_STABILITY")
-        high = get_named_real("PLC_LIBERTY_MAX_STABILITY")
-        difference = max(low, min(high, target_stability)) - max(low, min(high, current_stability))
-        debug(f"adjust_liberty on {planet}: difference={difference}, population={population}")
-        return difference * population * get_named_real("PLC_LIBERTY_RESEARCH_BONUS_SCALING")
 
 
 class _Alternative(NamedTuple):
