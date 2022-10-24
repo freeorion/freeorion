@@ -20,17 +20,14 @@ def gather_policies_data(ais_data):
 
             summary_stats[empire_id].update({k: -v for k, v in Counter(all_removed).items()})
 
-            really_added = list(all_added)
-            really_removed = []
-
+            # policies may be added or removed more than once per turn
+            added_or_removed = {}
+            for added in all_added:
+                added_or_removed[added] = added_or_removed.get(added, 0) + 1
             for removed in all_removed:
-                if removed in all_added:
-                    really_added.remove(removed)
-                else:
-                    really_removed.append(removed)
-
-            added = sorted(really_added)
-            removed = sorted(really_removed)
+                added_or_removed[removed] = added_or_removed.get(removed, 0) - 1
+            added = sorted([x for x, value in added_or_removed.items() if value > 0])
+            removed = sorted([x for x, value in added_or_removed.items() if value < 0])
 
             turn = turn["turn"]
 
