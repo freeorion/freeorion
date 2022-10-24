@@ -9646,7 +9646,7 @@ FORTRESS_SPECIAL
 Forteresse
 
 FORTRESS_SPECIAL_DESC
-'''Augmente les [[metertype METER_SHIELD]] de +800, la [[metertype METER_DEFENSE]] de +180, l'[[metertype METER_TROOPS]] de +30 et le [[metertype METER_DETECTION]] de +30. Les Boucliers se régénèrent de 40 par tour et la Défense de 6 par tour. Les Mines réduisent la [[metertype METER_STRUCTURE]] des astronefs ennemis situés dans le système de 24 par tour. À chaque tour, il y a 5% de chance qu'un Factionnaire apparaisse pour protéger le système, à moins qu'un spécimen soit déjà présent.
+'''Augmente les [[metertype METER_SHIELD]] de +[[value FORTRESS_SPECIAL_SHIELD_BONUS]], la [[metertype METER_DEFENSE]] de +[[value FORTRESS_SPECIAL_DEFENSE_BONUS]], l'[[metertype METER_TROOPS]] de +[[value FORTRESS_SPECIAL_TROOPS_BONUS]] et le [[metertype METER_DETECTION]] de +[[value FORTRESS_SPECIAL_DETECTION_BONUS]]. Les Boucliers se régénèrent de 40 par tour et la Défense de [[value FORTRESS_SPECIAL_DEFENSE_REGEN]] par tour. Les Mines réduisent la [[metertype METER_STRUCTURE]] des astronefs ennemis situés dans le système de 24 par tour. À chaque tour, il y a 5% de chance qu'un Factionnaire apparaisse pour protéger le système, à moins qu'un spécimen soit déjà présent.
 
 La défense de cette planète fut conçue par l'une des anciennes civilisations de Précurseurs. Elle comprend des boucliers planétaires solides, des armements redoutables et des équipements de détection performants, l'ensemble permettant de faire face à tout type de siège. Les installations sont encore totalement fonctionnelles et étonnamment très simples d'utilisation.'''
 
@@ -12110,7 +12110,7 @@ Cet effet requiert une [[metertype METER_HAPPINESS]] de [[value PLC_CENTRALIZATI
 Toutefois, réduit également la portée de l'[[metertype METER_SUPPLY]] ([[value PLC_CENTRALIZATION_MAX_SUPPLY_FLAT]]) ainsi que la [[metertype METER_STOCKPILE]] ([[value PLC_CENTRALIZATION_MAX_STOCKPILE_FLAT]]), et augmente le coût d'[[metertype METER_INFLUENCE]] des colonies de l'empire:
 • Les colonies connectées par lignes d'[[metertype METER_SUPPLY]] subissent une pénalité de [[value PLC_CENTRALIZATION_TARGET_INFLUENCE_PERJUMP]] par Voies spatiales les séparant de la Capitale, plafonnée à [[value PLC_CENTRALIZATION_TARGET_INFLUENCE_MAX]].
 • Les colonies non-connectées par lignes d'[[metertype METER_SUPPLY]] à la Capitale subissent la pénalité maximale ([[value PLC_CENTRALIZATION_TARGET_INFLUENCE_MAX]]).
-Le coût des équipements de colonisation pour astronefs augmente également de 50%.
+Le coût des équipements de colonisation pour astronefs augmente également de 33%.
 
 La logistique de l'ensemble de l'empire vise à accroître la production de la Capitale, en y déroutant l'essentiel des ressources matérielles et sociales. Cela provoque un certain ressentiment dans les colonies, augmentant par conséquent les coûts d'[[metertype METER_INFLUENCE]].'''
 
@@ -12140,7 +12140,8 @@ PLC_COLONIZATION
 Colonisation
 
 PLC_COLONIZATION_DESC
-Diminue le coût des équipements de colonisation pour astronefs et augmente de 1 la capacité de base en Carburant des astronefs avec équipements de colonisation mais sans Armement, Infanterie, Bombardement, ou Équipements Généraux.
+'''• Diminue le coût des équipements de colonisation pour astronefs, équipements d'Avant-Poste pour astronefs, et structures de colonisation, de 33%.
+• Augmente de 1 la capacité de base en Carburant des astronefs avec équipements de colonisation mais sans Armement, Infanterie, Bombardement, ou Équipements Généraux.'''
 
 PLC_COLONIZATION_SHORT_DESC
 Remise de prix sur la colonisation
@@ -12160,7 +12161,7 @@ PLC_EXPLORATION  # translated
 Exploration
 
 PLC_EXPLORATION_DESC
-'''• Améliore la Vitesse pour les astronefs non-armés et sans Chasseur, Bouclier, Blindage, Infanterie, Module de Colonisation, Bombardement, Recherche, Industrie, Influence, Production, ou Équipements Généraux. Les équipements de Détection, Carburant, et Motorisation sont autorisés.
+'''• Améliore de [[value PLC_EXPLORATION_SPEED_BONUS]] uu la [[metertype METER_SPEED]] pour les astronefs non-armés et sans Chasseur, Bouclier, Blindage, Infanterie, Module de Colonisation, Bombardement, Recherche, Industrie, Influence, Production, ou Équipements Généraux. Les équipements de Détection, Carburant, et Motorisation sont autorisés.
 • Chaque tour durant lequel un système est nouvellement exploré, les astronefs se trouvant dans ce système génèrent un total de [[value EXPLORATION_RESEARCH_BONUS_TOTAL]] PR.'''
 
 PLC_EXPLORATION_SHORT_DESC
@@ -12228,11 +12229,10 @@ PLC_ENVIRONMENTALISM
 Environnementalisme
 
 PLC_ENVIRONMENTALISM_DESC
-'''Diminue l'Industrie et l'Infrastructure de toutes les planètes de l'empire. Pénalise l'Infrastructure, la Stabilité, et l'Influence sur les planètes terraformées.
-
-Augmente la Recherche, la Stabilité, l'Influence, et la Furtivité sur les planètes non-terraformées et habitées.
-
-Rend la Terraformation plus coûteuse.'''
+'''• Diminue l'[[metertype METER_CONSTRUCTION]] de [[value PLC_ENVIRONMENTALISM_TARGET_CONSTRUCTION_TERRAFORMED_FLAT]], la [[metertype METER_TARGET_HAPPINESS]] de [[value PLC_ENVIRONMENTALISM_TARGET_HAPPINESS_FLAT]] et la [[metertype METER_TARGET_INFLUENCE]] de [[value PLC_ENVIRONMENTALISM_TARGET_INFLUENCE_FLAT]] sur les planètes ayant été terraformées, ou dont l'environnement d'origine a été modifié.
+• Diminue la [[metertype METER_TARGET_INDUSTRY]] de [[value PLC_ENVIRONMENTALISM_TARGET_INDUSTRY_FLAT]] et l'[[metertype METER_CONSTRUCTION]] de [[value PLC_ENVIRONMENTALISM_TARGET_CONSTRUCTION_FLAT]] sur les planètes non-astéroïdales.
+• Améliore la [[metertype METER_TARGET_HAPPINESS]] de [[value PLC_ENVIRONMENTALISM_TARGET_HAPPINESS_ORIGINAL_FLAT]], la [[metertype METER_TARGET_INFLUENCE]] de [[value PLC_ENVIRONMENTALISM_TARGET_INFLUENCE_ORIGINAL_FLAT]], la [[metertype METER_TARGET_RESEARCH]] de [[value PLC_ENVIRONMENTALISM_TARGET_RESEARCH_ORIGINAL_FLAT]] et la [[metertype METER_STEALTH]] de [[value PLC_ENVIRONMENTALISM_STEALTH_ORIGINAL_FLAT]] sur les planètes qui ne sont pas des Astéroïdes ou Géantes Gazeuses, n'ayant pas été terraformées, n'abritant aucune structure, et n'étant pas en Focus Industrie.
+• Rend la Terraformation d'une planète 3x plus coûteuse.'''
 
 PLC_ENVIRONMENTALISM_SHORT_DESC
 Bonus pour ne pas terraformer
@@ -12276,7 +12276,9 @@ PLC_CHECKPOINTS
 Postes-Frontières
 
 PLC_CHECKPOINTS_DESC
-'''Augmente de 1 par tour (jusqu'à [[value PLC_CHECKPOINTS_DETECTION_STRENGTH_MAX]]) la Capacité de Détection de l'empire.
+'''Diminue la [[metertype METER_STEALTH]] des planètes et astronefs étrangers se trouvant dans la zone d'[[metertype METER_SUPPLY]] d'au plus [[value PLC_CHECKPOINTS_MAX_STEALTH_MALUS]]. Les planètes et astronefs n'appartenant pas ou n'étant pas alliés à l'empire sont considérés comme étrangers. Les planètes non-colonisées et les monstres sont également des entités étrangères.
+
+La diminution dépend de la durée d'adoption de cette Politique, diminuant la [[metertype METER_STEALTH]] de 1 par tour, jusqu'à un maximum [[value PLC_CHECKPOINTS_MAX_STEALTH_MALUS]].
 
 Réduit la génération d'[[metertype METER_INFLUENCE]] ([[value PLC_CHECKPOINTS_TARGET_INFLUENCE_FLAT]]).'''
 
@@ -12404,7 +12406,7 @@ PLC_THE_HUNT
 La Chasse
 
 PLC_THE_HUNT_DESC
-Améliore la [[metertype METER_TARGET_HAPPINESS]], la [[metertype METER_TARGET_INFLUENCE]], et l'indicateur [[metertype METER_MAX_TROOPS]] des planètes au sein des systèmes abritant également une planète habitée non-colonisée, n'ayant pas de [[metertype METER_SHIELD]] ni de [[metertype METER_DEFENSE]], et dont l'espèce est différente de celle peuplant la planète bénéficiaire ou la Capitale impériale.
+Améliore la [[metertype METER_TARGET_HAPPINESS]] de [[value PLC_THE_HUNT_HAPPINESS_FLAT]], la [[metertype METER_TARGET_INFLUENCE]] de [[value PLC_THE_HUNT_INFLUENCE_FLAT]], et l'indicateur [[metertype METER_MAX_TROOPS]] de [[value PLC_THE_HUNT_TROOPS_MAX_FLAT]] sur les planètes au sein de systèmes abritant également une planète habitée non-colonisée, n'ayant pas de [[metertype METER_SHIELD]] ni de [[metertype METER_DEFENSE]], et dont l'espèce est différente de celle peuplant la planète bénéficiaire ou la Capitale impériale.
 
 PLC_THE_HUNT_SHORT_DESC
 Chasser les espèces indigènes octroie diverses améliorations
@@ -12883,7 +12885,7 @@ LRN_FORCE_FIELD
 Harmonique des Champs de Force
 
 LRN_FORCE_FIELD_DESC
-'''Augmente les [[metertype METER_SHIELD]] max de 80 sur toutes les planètes et débloque la technologie de base pour les boucliers d'astronef. Les [[metertype METER_SHIELD]] sont en général plus chers que les blindages, en raison de la technologie nécessaire pour les fabriquer, les boucliers procurant une bien meilleure défense qu'un simple [[encyclopedia ARMOR_TITLE]]. Cependant, il ne peut y avoir qu'un seul bouclier actif par astronef, rendant par conséquent impossible l'addition défensive de plusieurs boucliers.
+'''Augmente les [[metertype METER_SHIELD]] max de [[value LRN_FORCE_FIELD_MAX_SHIELD_FLAT]] sur toutes les planètes et débloque la technologie de base pour les boucliers d'astronef. Les [[metertype METER_SHIELD]] sont en général plus chers que les blindages, en raison de la technologie nécessaire pour les fabriquer, les boucliers procurant une bien meilleure défense qu'un simple [[encyclopedia ARMOR_TITLE]]. Cependant, il ne peut y avoir qu'un seul bouclier actif par astronef, rendant par conséquent impossible l'addition défensive de plusieurs boucliers.
 
 Tout comme l'analyse du son de Fourier, l'électromagnétisme ainsi que les interactions fortes et faibles peuvent être exprimées sous la forme de superpositions d'ondes d'harmonique quantique transportant des particules de force. Par l'amplification sélective de ces harmoniques, ces forces peuvent être contrôlées pour défendre, attaquer, contenir ou soutenir.'''
 
@@ -13866,31 +13868,31 @@ DEF_PLAN_BARRIER_SHLD_1
 Bouclier Planétaire 1
 
 DEF_PLAN_BARRIER_SHLD_1_DESC
-Augmente les [[metertype METER_SHIELD]] max de 240 sur toutes les planètes, cumulables avec le bonus de la technologie [[tech LRN_FORCE_FIELD]], et les régénère chaque tour de 8 plus le meilleur entre (i) 2 fois de la valeur d'[[metertype METER_CONSTRUCTION]] respective de chaque planète ou (ii) 8 (tant que la valeur des Boucliers n'a pas été réduite à zéro).
+Augmente les [[metertype METER_SHIELD]] max de [[value DEF_PLAN_BARRIER_SHLD_1_MAX_SHIELD_FLAT]] sur toutes les planètes, cumulables avec le bonus de la technologie [[tech LRN_FORCE_FIELD]], et les régénère chaque tour de 8 plus le meilleur entre (i) 2 fois de la valeur d'[[metertype METER_CONSTRUCTION]] respective de chaque planète ou (ii) 8 (tant que la valeur des Boucliers n'a pas été réduite à zéro).
 
 DEF_PLAN_BARRIER_SHLD_2
 Bouclier Planétaire 2
 
 DEF_PLAN_BARRIER_SHLD_2_DESC
-Augmente les [[metertype METER_SHIELD]] max de 480 sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et les régénère chaque tour de 8 plus le meilleur entre (i) 8 fois la valeur d'[[metertype METER_CONSTRUCTION]] respective de chaque planète ou (ii) 32 (tant que la valeur des Boucliers n'a pas été réduite à moins de 24).
+Augmente les [[metertype METER_SHIELD]] max de [[value DEF_PLAN_BARRIER_SHLD_2_MAX_SHIELD_FLAT]] sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et les régénère chaque tour de 8 plus le meilleur entre (i) 8 fois la valeur d'[[metertype METER_CONSTRUCTION]] respective de chaque planète ou (ii) 32 (tant que la valeur des Boucliers n'a pas été réduite à moins de 24).
 
 DEF_PLAN_BARRIER_SHLD_3
 Bouclier Planétaire 3
 
 DEF_PLAN_BARRIER_SHLD_3_DESC
-Augmente les [[metertype METER_SHIELD]] max de 720 sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et les régénère chaque tour de 8 plus le meilleur entre (i) 16 fois la valeur d'[[metertype METER_CONSTRUCTION]] respective de chaque planète ou (ii) 72 (tant que la valeur des Boucliers n'a pas été réduite à moins de 40).
+Augmente les [[metertype METER_SHIELD]] max de [[value DEF_PLAN_BARRIER_SHLD_3_MAX_SHIELD_FLAT]] sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et les régénère chaque tour de 8 plus le meilleur entre (i) 16 fois la valeur d'[[metertype METER_CONSTRUCTION]] respective de chaque planète ou (ii) 72 (tant que la valeur des Boucliers n'a pas été réduite à moins de 40).
 
 DEF_PLAN_BARRIER_SHLD_4
 Bouclier Planétaire 4
 
 DEF_PLAN_BARRIER_SHLD_4_DESC
-Augmente les [[metertype METER_SHIELD]] max de 1200 sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et les régénère chaque tour de 8 plus le meilleur entre (i) 20 fois la valeur d'[[metertype METER_CONSTRUCTION]] respective de chaque planète ou (ii) 144 (tant que la valeur des Boucliers n'a pas été réduite à moins de 72).
+Augmente les [[metertype METER_SHIELD]] max de [[value DEF_PLAN_BARRIER_SHLD_4_MAX_SHIELD_FLAT]] sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et les régénère chaque tour de 8 plus le meilleur entre (i) 20 fois la valeur d'[[metertype METER_CONSTRUCTION]] respective de chaque planète ou (ii) 144 (tant que la valeur des Boucliers n'a pas été réduite à moins de 72).
 
 DEF_PLAN_BARRIER_SHLD_5
 Bouclier Planétaire 5
 
 DEF_PLAN_BARRIER_SHLD_5_DESC
-Augmente les [[metertype METER_SHIELD]] max d'un bonus de 1200 sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et les régénère chaque tour de 8 plus le meilleur entre (i) 40 fois la valeur d'[[metertype METER_CONSTRUCTION]] respective de chaque planète ou (ii) 256 (tant que la valeur des Boucliers n'a pas été réduite à moins de 112).
+Augmente les [[metertype METER_SHIELD]] max d'un bonus de [[value DEF_PLAN_BARRIER_SHLD_5_MAX_SHIELD_FLAT]] sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et les régénère chaque tour de 8 plus le meilleur entre (i) 40 fois la valeur d'[[metertype METER_CONSTRUCTION]] respective de chaque planète ou (ii) 256 (tant que la valeur des Boucliers n'a pas été réduite à moins de 112).
 
 DEF_SYST_DEF_MINE_1
 Mines Défensives 1
@@ -16349,7 +16351,7 @@ SH_AGREGATE_ASTEROID
 Coque Astéroïdal Agglomérée
 
 SH_AGREGATE_ASTEROID_DESC
-'''Cette coque massive est formée à partir d'un agglomérat de plusieurs grands astéroïdes. Elle dispose donc de quinze niches externes et de quatre niches internes.
+'''Cette coque massive est formée à partir d'un agglomérat de plusieurs grands astéroïdes. Elle dispose donc de treize niches externes et de quatre niches internes.
 
 Sa [[metertype METER_STEALTH]] est standard mais cette coque bénéficie d'un bonus conséquent de Furtivité lorsqu'elle se trouve dans un système abritant une Ceinture d'Astéroïdes, ou en combat lorsqu'elle se dissimule dans une Ceinture d'Astéroïdes. Son [[metertype METER_DETECTION]] est standard et sa [[metertype METER_SPEED]] est faible.
 
