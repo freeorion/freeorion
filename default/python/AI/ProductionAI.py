@@ -86,6 +86,10 @@ def get_priority_locations() -> FrozenSet[PlanetId]:
     return frozenset(loc for building in priority_facilities for loc in get_best_pilot_facilities(building))
 
 
+# set by ResourceAI
+candidate_for_translator = None
+
+
 def translators_wanted() -> int:
     """
     How many near universal translators we'd like to build.
@@ -104,8 +108,8 @@ def translators_wanted() -> int:
     num_enqueued = len(building_type.queued_at())
     num_built = len(building_type.built_at())
     # first one gives a policy slot
-    first_bonus = 35 if num_enqueued + num_built == 0 else 0
-    importance = 5 * (influence_priority + first_bonus) / translator_cost * num_species**0.5 - num_enqueued
+    first_bonus = 30 if num_enqueued + num_built == 0 else 0
+    importance = 6 * (influence_priority + first_bonus) / translator_cost * num_species**0.25 - num_enqueued
     debug(
         f"translators_wanted: influence_priority: {influence_priority}, translator_cost: {translator_cost}, "
         f"built: {num_built}, enqueued: {num_enqueued}, num_species: {num_species}, turn: {fo.currentTurn()}, "
@@ -1579,38 +1583,11 @@ def _build_gas_giant_generator() -> float:  # noqa: max-complexity
 def _build_translator():
     """Consider building Near Universal Translators, return added turn costs."""
     building_type = BuildingType.TRANSLATOR
-    if not building_type.available():
-        return 0.0
-    num_wanted = translators_wanted()
-    if num_wanted == 0:
-        return 0.0
-
-    universe = fo.getUniverse()
-    opinion = building_type.get_opinions()
-    built_or_queued = building_type.built_or_queued_at()
-    have_one = bool(built_or_queued)
-    candidates = []
-    turn_cost = 0.0
-    for pid in get_inhabited_planets():
-        planet = universe.getPlanet(pid)
-        if planet.focus == FocusType.FOCUS_INFLUENCE and pid not in built_or_queued:
-            # TBD: compare with other foci, or get the information from ResourceAI
-            # long term: ResourceAI planet information should be moved to _planet_state or similar
-            rating = planet.currentMeterValue(fo.meterType.targetInfluence) * opinion.value(
-                pid, 1.5, 1.0, 0.5 / PlanetUtilsAI.dislike_factor()
-            )
-            candidates.append((rating, pid))
-    candidates.sort(reverse=True)
-    debug(f"build_translator num_wanted = {num_wanted}, candidates = {candidates}")
-    for _, pid in candidates:
-        cost = _try_enqueue(building_type, pid, at_front=not have_one)
-        if cost:
-            have_one = True
-            num_wanted -= 1
-            turn_cost += cost
-        if num_wanted == 0:
-            break
-    return turn_cost
+    if building_type.available() and translators_wanted() and candidate_for_translator:
+        # starting one per turn should be enough
+        have_one = bool(building_type.built_or_queued_at())
+        return _try_enqueue(building_type, candidate_for_translator, at_front=not have_one)
+    return 0.0
     # may_enqueue_for_stability? Building is rather expensive...
 
 
