@@ -28,6 +28,7 @@ If your code adds new sub-modules dependency to existing sub-modules - consider 
 """
 
 from turn_state._empire_resources import (
+    computronium_candidates,
     have_asteroids,
     have_computronium,
     have_gas_giant,
@@ -35,6 +36,7 @@ from turn_state._empire_resources import (
     have_nest,
     have_ruins,
     have_worldtree,
+    honeycomb_candidates,
     luxury_resources,
     owned_asteroid_coatings,
     population_with_industry_focus,
