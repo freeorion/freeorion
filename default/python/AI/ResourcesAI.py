@@ -73,7 +73,8 @@ class PlanetFocusInfo:
 
     def __init__(self, planet: fo.planet):
         self.planet = planet
-        self.current_focus = planet.focus
+        # Make sure current_focus is set, without it some calculation may go astray.
+        self.current_focus = planet.focus if planet.focus else fo.getSpecies(planet.speciesName).preferredFocus
         self.current_output = Output(
             industry=planet.currentMeterValue(fo.meterType.industry),
             research=planet.currentMeterValue(fo.meterType.research),
