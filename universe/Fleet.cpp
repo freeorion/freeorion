@@ -162,12 +162,6 @@ std::string Fleet::Dump(uint8_t ntabs) const {
     return retval;
 }
 
-int Fleet::ContainerObjectID() const
-{ return this->SystemID(); }
-
-const std::set<int>& Fleet::ContainedObjectIDs() const
-{ return m_ships; }
-
 bool Fleet::Contains(int object_id) const
 { return object_id != INVALID_OBJECT_ID && m_ships.count(object_id); }
 

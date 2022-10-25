@@ -19,7 +19,7 @@ public:
 
     [[nodiscard]] std::string           Dump(uint8_t ntabs = 0) const override;
 
-    [[nodiscard]] int                   ContainerObjectID() const override;
+    [[nodiscard]] int                   ContainerObjectID() const noexcept override { return this->SystemID(); }
     [[nodiscard]] bool                  ContainedBy(int object_id) const override;
 
     [[nodiscard]] const std::string&    PublicName(int empire_id, const Universe&) const override;

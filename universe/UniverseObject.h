@@ -129,7 +129,7 @@ public:
 
     /** Returns id of the object that directly contains this object, if any, or
         INVALID_OBJECT_ID if this object is not contained by any other. */
-    [[nodiscard]] virtual int                 ContainerObjectID() const { return INVALID_OBJECT_ID; }
+    [[nodiscard]] virtual int                 ContainerObjectID() const noexcept { return INVALID_OBJECT_ID; }
 
     /** Returns ids of objects contained within this object. */
     [[nodiscard]] virtual const std::set<int>&ContainedObjectIDs() const;
