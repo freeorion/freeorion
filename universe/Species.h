@@ -59,11 +59,11 @@ public:
     bool operator!=(const FocusType& rhs) const
     { return !(*this == rhs); }
 
-    [[nodiscard]] const std::string&          Name() const        { return m_name; }          ///< returns the name for this focus type
-    [[nodiscard]] const std::string&          Description() const { return m_description; }   ///< returns a text description of this focus type
-    [[nodiscard]] const Condition::Condition* Location() const    { return m_location.get(); }///< returns the condition that determines whether an UniverseObject can use this FocusType
-    [[nodiscard]] const std::string&          Graphic() const     { return m_graphic; }       ///< returns the name of the grapic file for this focus type
-    [[nodiscard]] std::string                 Dump(uint8_t ntabs = 0) const;           ///< returns a data file format representation of this object
+    [[nodiscard]] const std::string&          Name() const noexcept        { return m_name; }          ///< returns the name for this focus type
+    [[nodiscard]] const std::string&          Description() const noexcept { return m_description; }   ///< returns a text description of this focus type
+    [[nodiscard]] const Condition::Condition* Location() const noexcept    { return m_location.get(); }///< returns the condition that determines whether an UniverseObject can use this FocusType
+    [[nodiscard]] const std::string&          Graphic() const noexcept     { return m_graphic; }       ///< returns the name of the grapic file for this focus type
+    [[nodiscard]] std::string                 Dump(uint8_t ntabs = 0) const;                           ///< returns a data file format representation of this object
 
     /** Returns a number, calculated from the contained data, which should be
       * different for different contained data, and must be the same for
@@ -118,41 +118,39 @@ public:
     bool operator!=(const Species& rhs) const
     { return !(*this == rhs); }
 
-    [[nodiscard]] const std::string&            Name() const          { return m_name; }                  ///< returns the unique name for this type of species
-    [[nodiscard]] const std::string&            Description() const   { return m_description; }           ///< returns a text description of this type of species
-    /** returns a text description of this type of species */
-    [[nodiscard]] std::string                   GameplayDescription() const;
+    [[nodiscard]] const std::string& Name() const noexcept { return m_name; }               ///< returns the unique name for this type of species
+    [[nodiscard]] const std::string& Description() const noexcept { return m_description; } ///< returns a text description of this type of species
+    [[nodiscard]] std::string        GameplayDescription() const;                           ///< returns a text description of this type of species
 
-    [[nodiscard]] const Condition::Condition*   Location() const      { return m_location.get(); }        ///< returns the condition determining what planets on which this species may spawn
-    [[nodiscard]] const Condition::Condition*   CombatTargets() const { return m_combat_targets.get(); }  ///< returns the condition for possible targets. may be nullptr if no condition was specified.
+    [[nodiscard]] const auto*        Location() const noexcept { return m_location.get(); } ///< returns the condition determining what planets on which this species may spawn
+    [[nodiscard]] const auto*        CombatTargets() const noexcept { return m_combat_targets.get(); }  ///< returns the condition for possible targets. may be nullptr if no condition was specified.
 
-    [[nodiscard]] std::string                   Dump(uint8_t ntabs = 0) const;                                   ///< returns a data file format representation of this object
-    [[nodiscard]] const std::vector<FocusType>& Foci() const          { return m_foci; }                  ///< returns the focus types this species can use
-    [[nodiscard]] const std::string&            DefaultFocus() const  { return m_default_focus; }         ///< returns the name of the planetary focus this species defaults to. Used for new colonies and uninvaded natives.
-    [[nodiscard]] const std::map<PlanetType, PlanetEnvironment>& PlanetEnvironments() const { return m_planet_environments; } ///< returns a map from PlanetType to the PlanetEnvironment this Species has on that PlanetType
-    [[nodiscard]] PlanetEnvironment             GetPlanetEnvironment(PlanetType planet_type) const;                     ///< returns the PlanetEnvironment this species has on PlanetType \a planet_type
-    [[nodiscard]] PlanetType                    NextBestPlanetType(PlanetType initial_planet_type) const;             ///< returns a best PlanetType for this species from the \a initial_planet_type specified which needs the few steps to reach
-    [[nodiscard]] PlanetType                    NextBetterPlanetType(PlanetType initial_planet_type) const;             ///< returns a PlanetType for this species which is a step closer to the best PlanetType than the specified \a initial_planet_type (if such exists)
+    [[nodiscard]] std::string        Dump(uint8_t ntabs = 0) const;                            ///< returns a data file format representation of this object
+    [[nodiscard]] const auto&        Foci() const noexcept { return m_foci; }                  ///< returns the focus types this species can use
+    [[nodiscard]] const std::string& DefaultFocus() const noexcept { return m_default_focus; } ///< returns the name of the planetary focus this species defaults to. Used for new colonies and uninvaded natives.
+    [[nodiscard]] const auto&        PlanetEnvironments() const noexcept { return m_planet_environments; } ///< returns a map from PlanetType to the PlanetEnvironment this Species has on that PlanetType
+    [[nodiscard]] PlanetEnvironment  GetPlanetEnvironment(PlanetType planet_type) const;                     ///< returns the PlanetEnvironment this species has on PlanetType \a planet_type
+    [[nodiscard]] PlanetType         NextBestPlanetType(PlanetType initial_planet_type) const;             ///< returns a best PlanetType for this species from the \a initial_planet_type specified which needs the few steps to reach
+    [[nodiscard]] PlanetType         NextBetterPlanetType(PlanetType initial_planet_type) const;             ///< returns a PlanetType for this species which is a step closer to the best PlanetType than the specified \a initial_planet_type (if such exists)
 
     /** Returns the EffectsGroups that encapsulate the effects that species of
         this type have. */
-    [[nodiscard]] const std::vector<std::shared_ptr<Effect::EffectsGroup>>& Effects() const
-    { return m_effects; }
+    [[nodiscard]] const auto&        Effects() const noexcept { return m_effects; }
 
-    [[nodiscard]] float                           SpawnRate() const       { return m_spawn_rate; }
-    [[nodiscard]] int                             SpawnLimit() const      { return m_spawn_limit; }
-    [[nodiscard]] bool                            Playable() const        { return m_playable; }          ///< returns whether this species is a suitable starting species for players
-    [[nodiscard]] bool                            Native() const          { return m_native; }            ///< returns whether this species is a suitable native species (for non player-controlled planets)
-    [[nodiscard]] bool                            CanColonize() const     { return m_can_colonize; }      ///< returns whether this species can colonize planets
-    [[nodiscard]] bool                            CanProduceShips() const { return m_can_produce_ships; } ///< returns whether this species can produce ships
+    [[nodiscard]] float              SpawnRate() const       { return m_spawn_rate; }
+    [[nodiscard]] int                SpawnLimit() const      { return m_spawn_limit; }
+    [[nodiscard]] bool               Playable() const        { return m_playable; }          ///< returns whether this species is a suitable starting species for players
+    [[nodiscard]] bool               Native() const          { return m_native; }            ///< returns whether this species is a suitable native species (for non player-controlled planets)
+    [[nodiscard]] bool               CanColonize() const     { return m_can_colonize; }      ///< returns whether this species can colonize planets
+    [[nodiscard]] bool               CanProduceShips() const { return m_can_produce_ships; } ///< returns whether this species can produce ships
 
-    [[nodiscard]] const auto&           Tags() const noexcept { return m_tags; }
-    [[nodiscard]] const auto&           PediaTags() const noexcept { return m_pedia_tags; }
-    [[nodiscard]] bool                  HasTag(std::string_view tag) const
+    [[nodiscard]] const auto&        Tags() const noexcept      { return m_tags; }
+    [[nodiscard]] const auto&        PediaTags() const noexcept { return m_pedia_tags; }
+    [[nodiscard]] bool               HasTag(std::string_view tag) const
     { return std::any_of(m_tags.begin(), m_tags.end(), [tag](const auto& t) { return t == tag; }); }
-    [[nodiscard]] const auto&           Likes() const    { return m_likes; }
-    [[nodiscard]] const auto&           Dislikes() const { return m_dislikes; }
-    [[nodiscard]] const std::string&    Graphic() const  { return m_graphic; }       ///< returns the name of the grapic file for this species
+    [[nodiscard]] const auto&        Likes() const noexcept     { return m_likes; }
+    [[nodiscard]] const auto&        Dislikes() const noexcept  { return m_dislikes; }
+    [[nodiscard]] const std::string& Graphic() const noexcept   { return m_graphic; }        ///< returns the name of the grapic file for this species
 
     /** Returns a number, calculated from the contained data, which should be
       * different for different contained data, and must be the same for

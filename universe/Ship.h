@@ -68,7 +68,7 @@ public:
     [[nodiscard]] int   OrderedBombardPlanet() const    { return m_ordered_bombard_planet_id; } ///< returns the ID of the planet this ship has been ordered to bombard, or INVALID_OBJECT_ID if this ship hasn't been ordered to bombard a planet
     [[nodiscard]] int   LastTurnActiveInCombat() const  { return m_last_turn_active_in_combat; }///< returns the last turn this ship has been actively involved in combat
 
-    [[nodiscard]] const PartMeterMap& PartMeters() const { return m_part_meters; }                                ///< returns this Ship's part meters
+    [[nodiscard]] const PartMeterMap& PartMeters() const noexcept { return m_part_meters; }                       ///< returns this Ship's part meters
     [[nodiscard]] const Meter*        GetPartMeter(MeterType type, const std::string& part_name) const;           ///< returns the requested part Meter, or 0 if no such part Meter of that type is found in this ship for that part name
     [[nodiscard]] float               CurrentPartMeterValue(MeterType type, const std::string& part_name) const;  ///< returns current value of the specified part meter \a type for the specified part name
     [[nodiscard]] float               InitialPartMeterValue(MeterType type, const std::string& part_name) const;  ///< returns this turn's initial value for the specified part meter \a type for the specified part name

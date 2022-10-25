@@ -179,7 +179,8 @@ public:
         GetEmpiresPositionDetectionRanges(const ObjectMap& objects) const;
 
     [[nodiscard]] std::map<int, std::map<std::pair<double, double>, float>>
-        GetEmpiresPositionDetectionRanges(const ObjectMap& objects, const std::unordered_set<int>& exclude_ids) const;
+        GetEmpiresPositionDetectionRanges(const ObjectMap& objects,
+                                          const std::unordered_set<int>& exclude_ids) const;
 
     /** Returns map from empire ID to map from location (X, Y) to detection range
       * that empire is expected to have at that location after the next turn's
@@ -188,16 +189,15 @@ public:
         GetEmpiresPositionNextTurnFleetDetectionRanges(const ScriptingContext& context) const;
 
     /** Return the Pathfinder */
-    [[nodiscard]] std::shared_ptr<const Pathfinder> GetPathfinder() const { return m_pathfinder; }
+    [[nodiscard]] const auto& GetPathfinder() const noexcept { return m_pathfinder; }
 
     /** Returns map, indexed by object id, to map, indexed by MeterType,
       * to vector of EffectAccountInfo for the meter, in order effects
       * were applied to the meter. */
-    [[nodiscard]] const Effect::AccountingMap& GetEffectAccountingMap() const { return m_effect_accounting_map; }
-    [[nodiscard]] Effect::AccountingMap& GetEffectAccountingMap() { return m_effect_accounting_map; }
+    [[nodiscard]] const Effect::AccountingMap& GetEffectAccountingMap() const noexcept { return m_effect_accounting_map; }
+    [[nodiscard]] Effect::AccountingMap& GetEffectAccountingMap() noexcept { return m_effect_accounting_map; }
 
-    [[nodiscard]] const std::map<std::string, std::map<int, std::map<int, double>>>&
-        GetStatRecords() const { return m_stat_records; }
+    [[nodiscard]] const auto& GetStatRecords() const noexcept { return m_stat_records; }
 
     mutable UniverseObjectDeleteSignalType UniverseObjectDeleteSignal; ///< the state changed signal object for this UniverseObject
 

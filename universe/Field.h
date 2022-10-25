@@ -23,7 +23,7 @@ public:
     [[nodiscard]] bool                  ContainedBy(int object_id) const override;
 
     [[nodiscard]] const std::string&    PublicName(int empire_id, const Universe&) const override;
-    [[nodiscard]] const std::string&    FieldTypeName() const { return m_type_name; }
+    [[nodiscard]] const std::string&    FieldTypeName() const noexcept { return m_type_name; }
 
     /* Field is (presently) the only distributed UniverseObject that isn't just
      * location at a single point in space. These functions check if locations

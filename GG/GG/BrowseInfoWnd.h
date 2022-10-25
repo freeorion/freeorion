@@ -91,7 +91,7 @@ public:
     [[nodiscard]] bool                         WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override;
 
     [[nodiscard]] bool                         TextFromTarget() const; ///< returns true iff the text to display will be read from the target wnd
-    [[nodiscard]] const std::string&           Text () const;          ///< returns the text currently set for display
+    [[nodiscard]] const std::string&           Text() const;           ///< returns the text currently set for display
 
     /** Returns the Font used to display text. */
     [[nodiscard]] const std::shared_ptr<Font>& GetFont() const;

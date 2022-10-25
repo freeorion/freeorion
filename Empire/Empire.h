@@ -101,7 +101,7 @@ public:
 
     /** Returns the set of Tech names available to this empire and the turns on
       * which they were researched. */
-    [[nodiscard]] const auto&                  ResearchedTechs() const { return m_techs; }
+    [[nodiscard]] const auto&                  ResearchedTechs() const noexcept { return m_techs; }
 
     /** Returns the set of BuildingType names availble to this empire. */
     [[nodiscard]] const std::set<std::string>& AvailableBuildingTypes() const;
