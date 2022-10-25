@@ -42,13 +42,13 @@ public:
      *
      * @return An empire identifier.
      */
-    [[nodiscard]] int EmpireID() const override;
+    [[nodiscard]] int EmpireID() const override { return m_empire_id; }
 
     /** @brief Return the current game turn
      *
      * @return The number representing the current game turn.
      */
-    [[nodiscard]] int CurrentTurn() const override;
+    [[nodiscard]] int CurrentTurn() const override { return m_current_turn; }
 
     /** @brief Return the player identfier of the player controlling the empire
      *      @a empire_id
@@ -65,8 +65,8 @@ public:
      *      their player identifier as key.
      *
      * @{ */
-    [[nodiscard]] std::map<int, PlayerInfo>& Players();
-    [[nodiscard]] const std::map<int, PlayerInfo>& Players() const;
+    [[nodiscard]] std::map<int, PlayerInfo>& Players() noexcept { return m_player_info; }
+    [[nodiscard]] const std::map<int, PlayerInfo>& Players() const noexcept { return m_player_info; }
     /** @} */
 
     /** @brief Return the ::Universe known to this client
@@ -75,8 +75,8 @@ public:
      *      the known universe of this client.
      *
      * @{ */
-    [[nodiscard]] Universe& GetUniverse() noexcept override;
-    [[nodiscard]] const Universe& GetUniverse() const noexcept;
+    [[nodiscard]] Universe& GetUniverse() noexcept override { return m_universe; }
+    [[nodiscard]] const Universe& GetUniverse() const noexcept { return m_universe; }
     /** @} */
 
     /** @brief Return the ::GalaxySetupData of this game
@@ -84,8 +84,8 @@ public:
      * @return A reference to the ::GalaxySetupData used in this game session.
      *
      * @{ */
-    [[nodiscard]] GalaxySetupData& GetGalaxySetupData();
-    [[nodiscard]] const GalaxySetupData& GetGalaxySetupData() const override;
+    [[nodiscard]] GalaxySetupData& GetGalaxySetupData() noexcept { return m_galaxy_setup_data; }
+    [[nodiscard]] const GalaxySetupData& GetGalaxySetupData() const override { return m_galaxy_setup_data; }
     /** @} */
 
     /** @brief Return the OrderSet of this client
@@ -93,8 +93,8 @@ public:
      * @return A reference to the OrderSet of this client.
      *
      * @{ */
-    [[nodiscard]] OrderSet& Orders();
-    [[nodiscard]] const OrderSet& Orders() const;
+    [[nodiscard]] OrderSet& Orders() noexcept { return m_orders; }
+    [[nodiscard]] const OrderSet& Orders() const noexcept { return m_orders; }
     /** @} */
 
     /** @brief Return the networking object of this clients player
@@ -150,15 +150,15 @@ public:
 
     /** \brief Handle server acknowledgement of receipt of orders and clear
         the orders. */
-    virtual void HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id);
+    virtual void HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id) {}
 
     /** @brief Return the set of known Empire s for this client
      *
      * @return The EmpireManager instance in charge of maintaining the Empire
      *      object instances.
      * @{ */
-    [[nodiscard]] EmpireManager& Empires() override;
-    [[nodiscard]] const EmpireManager& Empires() const;
+    [[nodiscard]] EmpireManager& Empires() override { return m_empires; }
+    [[nodiscard]] const EmpireManager& Empires() const noexcept { return m_empires; }
     /** @} */
 
     /** @brief Return the Empire identified by @a empire_id
@@ -171,11 +171,11 @@ public:
      */
     [[nodiscard]] Empire* GetEmpire(int empire_id) override;
 
-    [[nodiscard]] SpeciesManager& GetSpeciesManager() override;
-    [[nodiscard]] const SpeciesManager& GetSpeciesManager() const;
+    [[nodiscard]] SpeciesManager& GetSpeciesManager() override { return m_species_manager; }
+    [[nodiscard]] const SpeciesManager& GetSpeciesManager() const noexcept { return m_species_manager; }
     [[nodiscard]] const Species* GetSpecies(std::string_view name) override;
 
-    [[nodiscard]] SupplyManager& GetSupplyManager() override;
+    [[nodiscard]] SupplyManager& GetSupplyManager() override { return m_supply_manager; }
 
     /** @brief Return all Objects known to @a empire_id
      *
@@ -191,13 +191,13 @@ public:
      *
      * @param empire_id The new ::Empire identifier.
      */
-    void SetEmpireID(int empire_id);
+    void SetEmpireID(int empire_id) noexcept { m_empire_id = empire_id; }
 
     /** @brief Set the current game turn of this client to @a turn
      *
      * @param turn The new turn number of this client.
      */
-    void SetCurrentTurn(int turn);
+    void SetCurrentTurn(int turn) noexcept { m_current_turn = turn; }
 
     /** @brief Set the Message::PlayerStatus @a status for @a empire_id
      *
