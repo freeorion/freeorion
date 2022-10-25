@@ -822,6 +822,44 @@ void SupplyManager::Update(const ScriptingContext& context) {
             }
         }
     }
+
+
+    for (const auto& [supply_empire_id, empire] : empires) {
+        const auto allies_of_empire = allies_of(supply_empire_id);
+        if (allies_of_empire.empty())
+            continue;
+        const auto& empire_directly_supplied = m_empire_propagated_supply_ranges[supply_empire_id];
+        const auto& empire_obstructed_traversals = m_supply_starlane_obstructed_traversals[supply_empire_id];
+        TraceLogger(supply) << " CHECK BORDERS of empire " << supply_empire_id << "";
+        for (auto const& [sys_A, sys_B] : empire_obstructed_traversals) {
+            //TraceLogger(supply) << "(?empire " << supply_empire_id << "?) " << sys_A << " - " << sys_B << " (empire ?)";
+            if (!empire_directly_supplied.count(sys_A)) {
+                ErrorLogger(supply) << "Error: system " << sys_A << " is NOT directly supplied by empire " << supply_empire_id << ", but it should";
+            }
+            // Find the supplier of B and find the intersection of allies between the B supplier and the A supplier
+            for (const auto& [b_empire_id, b_empire] : empires) {
+                //TraceLogger(supply) << "Check if (empire " << b_empire_id << ") " << " is supplier of " << sys_B;
+                if (!m_empire_propagated_supply_ranges[b_empire_id].count(sys_B))
+                    continue;
+                TraceLogger(supply) << " ... empire " << supply_empire_id << ") " << sys_A << " - " << sys_B << " (empire " << b_empire_id << ")";
+                // all allies of a_empire which are allies of b_empire may use this traversal
+                for (int a_ally_id : allies_of_empire) {
+                    TraceLogger(supply) << " ... Check if (empire " << a_ally_id << ") " << " is allied to supplier of " << sys_B << " (empire " << b_empire_id << ")";
+                    if (a_ally_id == b_empire_id)
+                        continue;
+                    if (empires.GetDiplomaticStatus(a_ally_id, b_empire_id) >= DiplomaticStatus::DIPLO_ALLIED) {
+                        TraceLogger(supply) << " ... ... Empire " << a_ally_id << " may use (empire " << supply_empire_id << ")" << sys_A << " - " << sys_B << " (empire " << b_empire_id << ") as its allied with " << b_empire_id;
+                        auto& a_ally_supply_traversals = ally_merged_supply_starlane_traversals[a_ally_id]; // output
+                        a_ally_supply_traversals.emplace(sys_A, sys_B);
+                        a_ally_supply_traversals.emplace(sys_B, sys_A);
+                    }
+                }
+                break; // stop after finding the one supplier of B
+            }
+        }
+        TraceLogger(supply) << " DONE CHECK BORDERS of empire " << supply_empire_id;
+    }
+
     for (auto& [empire_id, traversals] : ally_merged_supply_starlane_traversals) {
         TraceLogger(supply) << "Empire " << empire_id << " supply traversals after ally connections:";
         for (auto const& [a, b] : traversals)
