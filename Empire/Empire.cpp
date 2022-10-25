@@ -1945,13 +1945,13 @@ int Empire::AddShipDesign(ShipDesign* ship_design, Universe& universe) {
     /* check if there already exists this same design in the universe.  On clients, this checks whether this empire
        knows of this exact design and is trying to re-add it.  On the server, this checks whether this exact design
        exists at all yet */
-    for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it) {
-        if (ship_design == it->second) {
-            // ship design is already present in universe.  just need to add it to the empire's set of ship designs
-            int ship_design_id = it->first;
-            AddShipDesign(ship_design_id, universe);
-            return ship_design_id;
-        }
+    auto it = std::find_if(universe.ShipDesigns().begin(), universe.ShipDesigns().end(),
+                           [ship_design](const auto& id_design) { return ship_design == id_design.second; });
+    if (it != universe.ShipDesigns().end()) {
+        // ship design is already present in universe.  just need to add it to the empire's set of ship designs
+        int ship_design_id = it->first;
+        AddShipDesign(ship_design_id, universe);
+        return ship_design_id;
     }
 
     bool success = universe.InsertShipDesign(ship_design);

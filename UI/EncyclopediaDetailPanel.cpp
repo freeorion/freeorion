@@ -571,8 +571,7 @@ namespace {
 
         }
         else if (dir_name == "ENC_SHIP_DESIGN") {
-            for (auto it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it) {
-                const auto& [design_id, design] = *it;
+            for (auto [design_id, design] : universe.ShipDesigns()) {
                 if (design->IsMonster())
                     continue;
                 retval.emplace_back(std::piecewise_construct,
@@ -605,8 +604,7 @@ namespace {
 
         }
         else if (dir_name == "ENC_MONSTER_TYPE") {
-            for (auto it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it) {
-                auto&& [design_id, design] = *it;
+            for (auto [design_id, design] : universe.ShipDesigns()) {
                 if (design && design->IsMonster())
                     retval.emplace_back(std::piecewise_construct,
                                         std::forward_as_tuple(design->Name()),

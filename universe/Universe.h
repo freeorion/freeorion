@@ -139,9 +139,10 @@ public:
 
     void RenameShipDesign(int design_id, const std::string& name = "", const std::string& description = "");
 
-    [[nodiscard]] ship_design_iterator beginShipDesigns() const { return m_ship_designs.begin(); }
-    [[nodiscard]] ship_design_iterator endShipDesigns() const   { return m_ship_designs.end(); }
-    [[nodiscard]] auto                 NumShipDesigns() const   { return m_ship_designs.size(); }
+    [[nodiscard]] const auto&          ShipDesigns() const noexcept      { return m_ship_designs; }
+    [[nodiscard]] ship_design_iterator beginShipDesigns() const noexcept { return m_ship_designs.begin(); }
+    [[nodiscard]] ship_design_iterator endShipDesigns() const noexcept   { return m_ship_designs.end(); }
+    [[nodiscard]] auto                 NumShipDesigns() const noexcept   { return m_ship_designs.size(); }
 
     [[nodiscard]] const ShipDesign* GetGenericShipDesign(std::string_view name) const;
 

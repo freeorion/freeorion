@@ -779,8 +779,8 @@ namespace {
             return;
 
         /* check if there already exists this same design in the universe. */
-        for (auto it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it) {
-            const ShipDesign* existing_design = it->second;
+        for (auto [existing_id, existing_design] : universe.ShipDesigns()) {
+            (void)existing_id;
             if (!existing_design) {
                 ErrorLogger() << "PredefinedShipDesignManager::AddShipDesignsToUniverse found an invalid design in the Universe";
                 continue;
