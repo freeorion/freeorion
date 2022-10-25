@@ -1012,7 +1012,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         if (empire) {
             design_ids = ClientUI::GetClientUI()->GetShipDesignManager()->DisplayedDesigns()->OrderedIDs();
         } else {
-            design_ids.reserve(universe.NumShipDesigns());
+            design_ids.reserve(universe.ShipDesigns().size());
             std::transform(universe.ShipDesigns().begin(), universe.ShipDesigns().end(),
                            std::back_inserter(design_ids),
                            [](const auto id_design) { return id_design.first; });
