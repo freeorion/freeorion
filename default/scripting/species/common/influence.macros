@@ -89,6 +89,7 @@ ARTISANS_INFLUENCE_STABILITY
                 Focus type = "FOCUS_INFLUENCE"
             ]
             accountinglabel = "PLC_ARTISAN_WORKSHOPS"
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = SetTargetInfluence value = Value +
                 (NamedReal name = "ARTISANS_INFLUENCE_FLAT_FOCUS" value = 2.0)
 
@@ -101,6 +102,7 @@ ARTISANS_INFLUENCE_STABILITY
                 Not Focus type = "FOCUS_INFLUENCE"
             ]
             accountinglabel = "PLC_ARTISAN_WORKSHOPS"
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = SetTargetInfluence value = Value +
                 (NamedReal name = "ARTISANS_INFLUENCE_FLAT_NO_FOCUS" value = 0.5)
 

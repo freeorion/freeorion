@@ -21,6 +21,7 @@ Policy
                 Or [(LocalCandidate.TurnsSinceLastConquered == 0)
                     (LocalCandidate.TurnsSinceLastConquered > LocalCandidate.TurnsSinceColonization)]
             ]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = [
                 SetTargetHappiness value = Value + 
                     min((NamedReal name = "PLC_INDOCTRINATION_STRENGTH_MAX" value = 10.0),
@@ -39,6 +40,7 @@ Policy
                 // Note: TurnsSinceColonization cannot be equal to TurnsSinceLastConquered
                 (LocalCandidate.TurnsSinceLastConquered < LocalCandidate.TurnsSinceColonization)
             ]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = [
                 SetTargetHappiness value = Value +
                     min((NamedRealLookup name = "PLC_INDOCTRINATION_STRENGTH_MAX"),

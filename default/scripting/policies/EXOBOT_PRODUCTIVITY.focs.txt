@@ -33,6 +33,7 @@ Policy
                 Focus type = "FOCUS_INDUSTRY"
             ]
             // Other planets don't want to work when exobots could be doing it
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = [
                 SetTargetHappiness value = Value - (NamedReal name = "PLC_EXOBOT_OTHER_PLANET_INDUSTRY_PENALTY" value = 1.0)
                 SetTargetIndustry value = Value - (NamedReal name = "PLC_EXOBOT_OTHER_PLANET_INDUSTRY_PENALTY" value = 1.0)

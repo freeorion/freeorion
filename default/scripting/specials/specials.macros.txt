@@ -22,6 +22,7 @@ SPECIAL_INFLUENCE_RESOURCE_EXPORT
                 OwnedBy affiliation = AnyEmpire
                 Focus type = "FOCUS_INFLUENCE"
             ]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects =
                 SetTargetInfluence value = Value + NamedReal name = "SPECIAL_INFLUENCE_FOCUS_BONUS" value = 3.0
 
@@ -56,6 +57,7 @@ SPECIAL_INFLUENCE_RESOURCE_EXPORT
                 ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
             activation = EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_BLACK_MARKET"
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = SetTargetInfluence value = Value + NamedReal name = "SPECIAL_BLACK_MARKET_INFLUENCE_FOCUS_BONUS" value = 2.0
 '''
 

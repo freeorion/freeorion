@@ -24,6 +24,7 @@ Policy
                     Defense high = 0                    
                 ]
             ]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = [
                 SetTargetHappiness value = Value
                     + (NamedReal name = "PLC_THE_HUNT_HAPPINESS_FLAT" value = 10.0)

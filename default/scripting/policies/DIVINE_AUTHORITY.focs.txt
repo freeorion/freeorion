@@ -17,6 +17,7 @@ Policy
                 OwnedBy empire = Source.Owner
                 Population low = 0.001
             ]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = [
                 SetTargetHappiness value = Value
                     + (NamedReal name = "PLC_DIVINE_AUTHORITY_TARGET_HAPPINESS_FLAT" value = 4)

@@ -27,6 +27,7 @@ Policy
                     ]
                 ]
             ]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = SetTargetResearch value = Value + (NamedReal name = "PLC_NATIVE_APPROPRIATION_RESEARCH_PERPLANET" value = 5.0) *
                 Statistic Count condition = And [
                     InSystem id = Target.SystemID

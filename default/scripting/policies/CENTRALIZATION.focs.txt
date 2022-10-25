@@ -58,6 +58,7 @@ Policy
                     Capital
                 ]
             ]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = SetTargetInfluence value = Value
                         + (NamedReal name = "PLC_CENTRALIZATION_TARGET_INFLUENCE_FLAT" value = -4)
 
@@ -74,6 +75,7 @@ Policy
                 ]
                 Not Capital
             ]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = SetTargetInfluence value = Value + max(
                         (NamedReal name = "PLC_CENTRALIZATION_TARGET_INFLUENCE_MAX" value = -4),
                         (NamedReal name = "PLC_CENTRALIZATION_TARGET_INFLUENCE_PERJUMP" value = -0.5)

@@ -14,7 +14,7 @@ Policy
                 OwnedBy empire = Source.Owner
                 Not Planet type = Asteroids
             ]
-            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = [
                 SetTargetIndustry value = Value
                     + (NamedReal name = "PLC_ENVIRONMENTALISM_TARGET_INDUSTRY_FLAT" value = -5)
@@ -30,7 +30,7 @@ Policy
                 Not Planet type = Asteroids
                 Not Planet type = LocalCandidate.OriginalType
             ]
-            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = [
                 SetTargetConstruction value = Value
                     + (NamedReal name = "PLC_ENVIRONMENTALISM_TARGET_CONSTRUCTION_TERRAFORMED_FLAT" 
@@ -52,7 +52,7 @@ Policy
                 Not Focus type = "FOCUS_INDUSTRY"
                 Population low = 0.001
             ]
-            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = [
                 SetTargetHappiness value = Value
                     + (NamedReal name = "PLC_ENVIRONMENTALISM_TARGET_HAPPINESS_ORIGINAL_FLAT"

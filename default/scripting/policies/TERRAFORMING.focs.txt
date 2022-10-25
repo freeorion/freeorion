@@ -10,7 +10,7 @@ Policy
 
         EffectsGroup
             scope = [[PLC_TERRAFORMING_SCOPE]]
-            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects =
                 SetTargetHappiness value = Value
                     + (NamedReal name = "PLC_TERRAFORMING_TARGET_HAPPINESS_ORIGINAL_FLAT"
@@ -22,7 +22,7 @@ Policy
                 [[PLC_TERRAFORMING_SCOPE]]
                 Focus type = "FOCUS_INFLUENCE"
             ]
-            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = 
                 SetTargetInfluence value = Value
                     + (NamedReal name = "PLC_TERRAFORMING_TARGET_INFLUENCE_ORIGINAL_FLAT"
@@ -34,7 +34,7 @@ Policy
                 [[PLC_TERRAFORMING_SCOPE]]
                 Focus type = "FOCUS_RESEARCH"
             ]
-            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects =
                 SetTargetResearch value = Value
                     + (NamedReal name = "PLC_TERRAFORMING_TARGET_RESEARCH_SCALING"

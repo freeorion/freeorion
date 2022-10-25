@@ -38,6 +38,7 @@ Policy
                 Species name = Source.Species
                 Focus type = "FOCUS_INFLUENCE"
             ]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = SetTargetInfluence value = Value
                 + (NamedReal name = "PLC_RACIAL_PURITY_TARGET_INFLUENCE_SELF" value = 1)
 
@@ -50,6 +51,7 @@ Policy
                 Not Species name = Source.Species
                 Not Species name = "SP_EXOBOT"
             ]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = [
                 SetTargetHappiness value = Value
                     + (NamedReal name = "PLC_RACIAL_PURITY_TARGET_STABILITY_OTHER" value = -10)

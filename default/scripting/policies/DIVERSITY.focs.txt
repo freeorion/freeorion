@@ -17,6 +17,7 @@ Policy
                 Focus type = "FOCUS_RESEARCH"
                 Happiness low = (NamedReal name = "PLC_DIVERSITY_MIN_STABILITY" value = 8)
             ]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = [
                 SetTargetResearch value = Value + (NamedReal name = "PLC_DIVERSITY_SCALING" value = 0.5) *
                                                   ([[NUM_SPECIES]] - (NamedInteger name = "PLC_DIVERSITY_THRESHOLD" value = 4))
@@ -29,6 +30,7 @@ Policy
                 OwnedBy empire = Source.Owner
                 Population low = 0.001
             ]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = [
                 SetTargetHappiness value = Value + NamedRealLookup name = "PLC_DIVERSITY_SCALING" *
                                                    ([[NUM_SPECIES]] - (NamedIntegerLookup name = "PLC_DIVERSITY_THRESHOLD"))
@@ -40,6 +42,7 @@ Policy
                 Capital
                 OwnedBy empire = Source.Owner
             ]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = [
                 SetTargetInfluence value = Value + NamedRealLookup name = "PLC_DIVERSITY_SCALING" *
                                                    ([[NUM_SPECIES]] - (NamedIntegerLookup name = "PLC_DIVERSITY_THRESHOLD"))
