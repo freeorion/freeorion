@@ -7,6 +7,7 @@ and finally the targeted ratio of research/production. Each decision on a planet
 transfers the planet from the raw list to the baked list, until all planets
 have their future focus decided.
 """
+from __future__ import annotations
 
 # Note: The algorithm is not stable with respect to pid order.  i.e. Two empire with
 #       exactly the same colonies, but different pids may make different choices.
@@ -64,7 +65,7 @@ class Output(NamedTuple):
     research: float
     influence: float
     stability: float
-    value: float
+    rating: float  # sum of all production values weighed by priorities for overall comparisons
 
 
 class PlanetFocusInfo:
@@ -78,7 +79,7 @@ class PlanetFocusInfo:
             research=planet.currentMeterValue(fo.meterType.research),
             influence=planet.currentMeterValue(fo.meterType.influence),
             stability=planet.currentMeterValue(fo.meterType.happiness),
-            value=0.0,  # cannot calculate the value here, do we even need it?
+            rating=0.0,  # cannot calculate the rating here, do we even need it?
         )
         self.possible_output = {}
         self.future_focus = self.current_focus
@@ -86,31 +87,28 @@ class PlanetFocusInfo:
         self.second_best_focus = None
         self.options = {focus for focus in planet.availableFoci if focus in supported_foci}
 
-    def __str__(self):
-        return str(self.planet)
-
     def __repr__(self):
-        return self.planet.__repr__()
+        return f"PlanetFocusInfo({repr(self.planet)})"
 
-    def __lt__(self, other):
+    def __lt__(self, other: PlanetFocusInfo):
         """
-        Sort according to best_over_second() in reverse order.
-        This is used as a secondary criteria after value_below_best.
-        Since value_below_best needs a focus argument, we cannot use it here.
+        Dummy sorting.
+        In this module, we sort Tuples[float, PlanetFocusInfo]. To do so, PlanetFocusInfo must be sortable, but if the
+        float is the same, we don't really care which comes first.
         """
-        return self.best_over_second() >= other.best_over_second()
+        return self.planet.id < other.planet.id
 
     def value_below_best(self, focus: str) -> float:
-        return self.possible_output[focus].value - self.possible_output[self.best_output_focus].value
+        return self.possible_output[focus].rating - self.possible_output[self.best_output_focus].rating
 
     def best_over_second(self) -> float:
-        return self.possible_output[self.best_output_focus].value - self.possible_output[self.second_best_focus].value
+        return self.possible_output[self.best_output_focus].rating - self.possible_output[self.second_best_focus].rating
 
     def evaluate(self, focus: str) -> float:
         """
         Compare focus with best alternative.
-        If focus produces best, return a positive value, giving how much its output is better than second best.
-        If another focus produces better, returns a negative value, giving how much it is worse than best.
+        If focus produces best, return a positive rating, giving how much its output is better than second best.
+        If another focus produces better, returns a negative rating, giving how much it is worse than best.
         """
         sqrt_population = min(1.0, self.planet.currentMeterValue(fo.meterType.population)) ** 0.5
         if focus == self.best_output_focus:
@@ -195,8 +193,8 @@ class PlanetFocusManager:
             return True
         return False
 
-    def production_value(self, pp: float, rp: float, ip: float, stability: float, focus: str) -> float:
-        """Calculate value of the given production output."""
+    def production_rating(self, pp: float, rp: float, ip: float, stability: float, focus: str) -> float:
+        """Calculate rating of the given production output."""
         # For some reason even rebelling planets can produce influence. Also, we must avoid a death cycle: when
         # stability goes down due to influence debt, trying to counter instability by setting influence producing
         # planets to protection mode just makes it worse.
@@ -228,12 +226,12 @@ class PlanetFocusManager:
             research_target += PlanetUtilsAI.adjust_liberty(planet, planet.currentMeterValue(fo.meterType.population))
         if self.have_automation:
             min_stability = get_named_real("PRO_ADAPTIVE_AUTO_MIN_STABILITY")
-            value = get_named_real("PRO_ADAPTIVE_AUTO_TARGET_INDUSTRY_FLAT")
-            industry_target += value * adjust_direction(min_stability, current_stability, target_stability)
+            flat = get_named_real("PRO_ADAPTIVE_AUTO_TARGET_INDUSTRY_FLAT")
+            industry_target += flat * adjust_direction(min_stability, current_stability, target_stability)
         if self.have_ai:
             min_stability = get_named_real("LRN_NASCENT_AI_MIN_STABILITY")
-            value = get_named_real("LRN_NASCENT_AI_TARGET_RESEARCH_FLAT")
-            research_target += value * adjust_direction(min_stability, current_stability, target_stability)
+            flat = get_named_real("LRN_NASCENT_AI_TARGET_RESEARCH_FLAT")
+            research_target += flat * adjust_direction(min_stability, current_stability, target_stability)
         if target_stability < 0:
             industry_target = research_target = 0.0
         # There are a lot more adjustments, some also depend on supply connection. Hopefully one day we get
@@ -244,7 +242,7 @@ class PlanetFocusManager:
             research=research_target,
             influence=influence_target,
             stability=target_stability,
-            value=self.production_value(industry_target, research_target, influence_target, target_stability, focus),
+            rating=self.production_rating(industry_target, research_target, influence_target, target_stability, focus),
         )
 
     def calculate_planet_infos(self):  # noqa complexity
@@ -281,7 +279,7 @@ class PlanetFocusManager:
             set_focus(pinfo.current_focus)
         universe.updateMeterEstimates(self.planet_ids)
         for pinfo in self.planet_info.values():
-            rated = sorted([(pinfo.possible_output[focus].value, focus) for focus in supported_foci], reverse=True)
+            rated = sorted([(pinfo.possible_output[focus].rating, focus) for focus in supported_foci], reverse=True)
             pinfo.best_output_focus = rated[0][1]
             pinfo.second_best_focus = rated[1][1]
         for pid, pinfo in self.planet_info.items():
@@ -289,7 +287,7 @@ class PlanetFocusManager:
             for focus in supported_foci:
                 o = po[focus]
                 debug(
-                    f"Possible output of planet {pinfo.planet} for {focus} is {o.value} ({o.industry}/"
+                    f"Possible output of planet {pinfo.planet} for {focus} is {o.rating} ({o.industry}/"
                     f"{o.research}/{o.influence} stability={o.stability})"
                 )
             debug(f"best output: {pinfo.best_output_focus}")
@@ -481,8 +479,8 @@ class PlanetFocusManager:
         for pid, pinfo in dict(self.planet_info).items():
             # Note that if focus hasn't been baked as INFLUENCE yet, it shouldn't be.
             if pinfo.best_output_focus in (INDUSTRY, RESEARCH, INFLUENCE) and {INDUSTRY, RESEARCH} <= pinfo.options:
-                industry_value = pinfo.possible_output[INDUSTRY].value
-                research_value = pinfo.possible_output[RESEARCH].value
+                industry_value = pinfo.possible_output[INDUSTRY].rating
+                research_value = pinfo.possible_output[RESEARCH].rating
                 industry_or_research.append((industry_value - research_value, pinfo))
             else:
                 # Either protection due to stability, or planet does not support both foci
