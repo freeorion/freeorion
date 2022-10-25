@@ -43,11 +43,11 @@ public:
     void Copy(std::shared_ptr<const UniverseObject> copied_object,
               const Universe& universe, int empire_id = ALL_EMPIRES) override;
 
-    [[nodiscard]] int   DesignID() const            { return m_design_id; }             ///< returns the design id of the ship
-    [[nodiscard]] int   FleetID() const             { return m_fleet_id; }              ///< returns the ID of the fleet the ship is residing in
-    [[nodiscard]] int   ProducedByEmpireID() const  { return m_produced_by_empire_id; } ///< returns the empire ID of the empire that produced this ship
-    [[nodiscard]] int   ArrivedOnTurn() const       { return m_arrived_on_turn; }       ///< returns the turn on which this ship arrived in its current system
-    [[nodiscard]] int   LastResuppliedOnTurn() const{ return m_last_resupplied_on_turn;}///< returns the turn on which this ship was last resupplied / upgraded
+    [[nodiscard]] int   DesignID() const noexcept             { return m_design_id; }             ///< returns the design id of the ship
+    [[nodiscard]] int   FleetID() const noexcept              { return m_fleet_id; }              ///< returns the ID of the fleet the ship is residing in
+    [[nodiscard]] int   ProducedByEmpireID() const noexcept   { return m_produced_by_empire_id; } ///< returns the empire ID of the empire that produced this ship
+    [[nodiscard]] int   ArrivedOnTurn() const noexcept        { return m_arrived_on_turn; }       ///< returns the turn on which this ship arrived in its current system
+    [[nodiscard]] int   LastResuppliedOnTurn() const noexcept { return m_last_resupplied_on_turn;}///< returns the turn on which this ship was last resupplied / upgraded
     [[nodiscard]] bool  IsMonster(const Universe& universe) const;
     [[nodiscard]] bool  CanDamageShips(const ScriptingContext& context, float target_shields = 0.0f) const;
     [[nodiscard]] bool  CanDestroyFighters(const ScriptingContext& context) const;
@@ -57,16 +57,16 @@ public:
     [[nodiscard]] bool  HasTroops(const Universe& universe) const;
     [[nodiscard]] bool  CanHaveTroops(const Universe& universe) const;
     [[nodiscard]] bool  CanBombard(const Universe& universe) const;
-    [[nodiscard]] auto& SpeciesName() const             { return m_species_name; }
+    [[nodiscard]] auto& SpeciesName() const noexcept { return m_species_name; }
     [[nodiscard]] float Speed() const;
     [[nodiscard]] float ColonyCapacity(const Universe& universe) const;
     [[nodiscard]] float TroopCapacity(const Universe& universe) const;
 
-    [[nodiscard]] bool  OrderedScrapped() const         { return m_ordered_scrapped; }          ///< returns true iff this ship has been ordered scrapped, or false otherwise
-    [[nodiscard]] int   OrderedColonizePlanet() const   { return m_ordered_colonize_planet_id; }///< returns the ID of the planet this ship has been ordered to colonize, or INVALID_OBJECT_ID if this ship hasn't been ordered to colonize a planet
-    [[nodiscard]] int   OrderedInvadePlanet() const     { return m_ordered_invade_planet_id; }  ///< returns the ID of the planet this ship has been ordered to invade with ground troops, or INVALID_OBJECT_ID if this ship hasn't been ordered to invade a planet
-    [[nodiscard]] int   OrderedBombardPlanet() const    { return m_ordered_bombard_planet_id; } ///< returns the ID of the planet this ship has been ordered to bombard, or INVALID_OBJECT_ID if this ship hasn't been ordered to bombard a planet
-    [[nodiscard]] int   LastTurnActiveInCombat() const  { return m_last_turn_active_in_combat; }///< returns the last turn this ship has been actively involved in combat
+    [[nodiscard]] bool  OrderedScrapped() const noexcept        { return m_ordered_scrapped; }          ///< returns true iff this ship has been ordered scrapped, or false otherwise
+    [[nodiscard]] int   OrderedColonizePlanet() const noexcept  { return m_ordered_colonize_planet_id; }///< returns the ID of the planet this ship has been ordered to colonize, or INVALID_OBJECT_ID if this ship hasn't been ordered to colonize a planet
+    [[nodiscard]] int   OrderedInvadePlanet() const noexcept    { return m_ordered_invade_planet_id; }  ///< returns the ID of the planet this ship has been ordered to invade with ground troops, or INVALID_OBJECT_ID if this ship hasn't been ordered to invade a planet
+    [[nodiscard]] int   OrderedBombardPlanet() const noexcept   { return m_ordered_bombard_planet_id; } ///< returns the ID of the planet this ship has been ordered to bombard, or INVALID_OBJECT_ID if this ship hasn't been ordered to bombard a planet
+    [[nodiscard]] int   LastTurnActiveInCombat() const noexcept { return m_last_turn_active_in_combat; }///< returns the last turn this ship has been actively involved in combat
 
     [[nodiscard]] const PartMeterMap& PartMeters() const noexcept { return m_part_meters; }                       ///< returns this Ship's part meters
     [[nodiscard]] const Meter*        GetPartMeter(MeterType type, const std::string& part_name) const;           ///< returns the requested part Meter, or 0 if no such part Meter of that type is found in this ship for that part name
@@ -103,7 +103,7 @@ public:
     void ClearInvadePlanet();               ///< marks ship to invade no planets
     void SetBombardPlanet(int planet_id);   ///< marks ship to bombard the indicated planet
     void ClearBombardPlanet();              ///< marks ship to bombard no planets
-    void SetLastTurnActiveInCombat(int turn) { m_last_turn_active_in_combat = turn; } ///< sets the last turn this ship was actively involved in combat
+    void SetLastTurnActiveInCombat(int turn) noexcept { m_last_turn_active_in_combat = turn; } ///< sets the last turn this ship was actively involved in combat
 
     [[nodiscard]] Meter* GetPartMeter(MeterType type, const std::string& part_name); ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
 

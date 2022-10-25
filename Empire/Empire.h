@@ -59,27 +59,27 @@ public:
     Empire(std::string name, std::string player_name, int ID,
            EmpireColor color, bool authenticated);
 
-    [[nodiscard]] const std::string&  Name() const;            ///< Returns the Empire's name
-    [[nodiscard]] const std::string&  PlayerName() const;      ///< Returns the Empire's player's name
-    [[nodiscard]] bool                IsAuthenticated() const; ///< Returns the Empire's player's authentication status
-    [[nodiscard]] int                 EmpireID() const;        ///< Returns the Empire's unique numeric ID
-    [[nodiscard]] const EmpireColor&  Color() const;           ///< Returns the Empire's color
-    [[nodiscard]] int                 CapitalID() const;       ///< Returns the numeric ID of the empire's capital
+    [[nodiscard]] const auto&  Name() const noexcept { return m_name; }
+    [[nodiscard]] const auto&  PlayerName() const noexcept { return m_player_name; }
+    [[nodiscard]] bool         IsAuthenticated() const noexcept { return m_authenticated; }
+    [[nodiscard]] int          EmpireID() const noexcept { return m_id; }
+    [[nodiscard]] auto         Color() const noexcept { return m_color; }
+    [[nodiscard]] int          CapitalID() const noexcept { return m_capital_id; }
 
-                                                               /** Returns an object that is owned by the empire, or null.*/
+    /** Returns an object that is owned by the empire, or null.*/
     [[nodiscard]] std::shared_ptr<const UniverseObject> Source(const ObjectMap& objects) const;
 
-    [[nodiscard]] std::string              Dump() const;
+    [[nodiscard]] std::string  Dump() const;
 
-    [[nodiscard]] bool                     PolicyAdopted(std::string_view name) const;
-    [[nodiscard]] int                      TurnPolicyAdopted(std::string_view name) const;
-    [[nodiscard]] int                      CurrentTurnsPolicyHasBeenAdopted(std::string_view name) const;
-    [[nodiscard]] int                      CumulativeTurnsPolicyHasBeenAdopted(std::string_view name) const;
+    [[nodiscard]] bool         PolicyAdopted(std::string_view name) const { return m_adopted_policies.count(name); }
+    [[nodiscard]] int          TurnPolicyAdopted(std::string_view name) const;
+    [[nodiscard]] int          CurrentTurnsPolicyHasBeenAdopted(std::string_view name) const;
+    [[nodiscard]] int          CumulativeTurnsPolicyHasBeenAdopted(std::string_view name) const;
 
     [[nodiscard]] int                           SlotPolicyAdoptedIn(std::string_view name) const;
     [[nodiscard]] std::vector<std::string_view> AdoptedPolicies() const;
     [[nodiscard]] std::vector<std::string_view> InitialAdoptedPolicies() const;
-    [[nodiscard]] bool                          PoliciesModified() const { return m_adopted_policies != m_initial_adopted_policies; }
+    [[nodiscard]] bool                          PoliciesModified() const noexcept { return m_adopted_policies != m_initial_adopted_policies; }
 
     /** For each category, returns the slots in which policies have been adopted
       * and what policy is in that slot. */
@@ -88,30 +88,30 @@ public:
 
     /** Returns the policies the empire has adopted and turns on which they were adopted. */
     [[nodiscard]] std::map<std::string_view, int, std::less<>> TurnsPoliciesAdopted() const;
-    [[nodiscard]] const std::map<std::string, int>&            PolicyTotalAdoptedDurations() const;
-    [[nodiscard]] const std::map<std::string, int>&            PolicyCurrentAdoptedDurations() const;
+    [[nodiscard]] const auto& PolicyTotalAdoptedDurations() const noexcept { return m_policy_adoption_total_duration; }
+    [[nodiscard]] const auto& PolicyCurrentAdoptedDurations() const noexcept { return m_policy_adoption_current_duration; }
 
     /** Returns the set of policies / slots the empire has avaialble. */
-    [[nodiscard]] const std::set<std::string, std::less<>>&    AvailablePolicies() const;
-    [[nodiscard]] bool                                         PolicyAvailable(std::string_view name) const;
-    [[nodiscard]] bool                                         PolicyPrereqsAndExclusionsOK(std::string_view name, int current_turn) const;
-    [[nodiscard]] bool                                         PolicyAffordable(std::string_view name, const ScriptingContext& context) const;
+    [[nodiscard]] const auto& AvailablePolicies() const noexcept { return m_available_policies; }
+    [[nodiscard]] bool        PolicyAvailable(std::string_view name) const;
+    [[nodiscard]] bool        PolicyPrereqsAndExclusionsOK(std::string_view name, int current_turn) const;
+    [[nodiscard]] bool        PolicyAffordable(std::string_view name, const ScriptingContext& context) const;
     [[nodiscard]] std::map<std::string_view, int, std::less<>> TotalPolicySlots() const; // how many total slots does this empire have in each category
     [[nodiscard]] std::map<std::string_view, int, std::less<>> EmptyPolicySlots() const; // how many empty slots does this empire have in each category
 
     /** Returns the set of Tech names available to this empire and the turns on
       * which they were researched. */
-    [[nodiscard]] const auto&                  ResearchedTechs() const noexcept { return m_techs; }
+    [[nodiscard]] const auto& ResearchedTechs() const noexcept { return m_techs; }
 
     /** Returns the set of BuildingType names availble to this empire. */
-    [[nodiscard]] const std::set<std::string>& AvailableBuildingTypes() const;
+    [[nodiscard]] const auto& AvailableBuildingTypes() const noexcept { return m_available_building_types; }
 
     /** Returns the set of ShipDesign IDs available for this empire to build. */
     [[nodiscard]] std::vector<int>             AvailableShipDesigns(const Universe& universe) const;
 
-    [[nodiscard]] const std::set<int>&         ShipDesigns() const;                ///< Returns the set of all ship design ids of this empire
-    [[nodiscard]] const std::set<std::string>& AvailableShipParts() const;         ///< Returns the set of ship part names this empire that the empire can currently build
-    [[nodiscard]] const std::set<std::string>& AvailableShipHulls() const;         ///< Returns the set of ship hull names that that the empire can currently build
+    [[nodiscard]] const auto&                  ShipDesigns() const noexcept { return m_known_ship_designs; }
+    [[nodiscard]] const auto&                  AvailableShipParts() const noexcept { return m_available_ship_parts; }
+    [[nodiscard]] const auto&                  AvailableShipHulls() const noexcept { return m_available_ship_hulls; }
 
     [[nodiscard]] const std::string&           TopPriorityEnqueuedTech() const;
     [[nodiscard]] const std::string&           MostExpensiveEnqueuedTech(const ScriptingContext& context) const;
@@ -130,8 +130,8 @@ public:
     [[nodiscard]] auto                         meter_end() const   { return m_meters.cend(); }
 
     [[nodiscard]] const ResearchQueue&         GetResearchQueue() const;              ///< Returns the queue of techs being or queued to be researched.
-    [[nodiscard]] const ProductionQueue&       GetProductionQueue() const;            ///< Returns the queue of items being or queued to be produced.
-    [[nodiscard]] const InfluenceQueue&        GetInfluenceQueue() const;             ///< Returns the queue of items being funded with influence.
+    [[nodiscard]] const ProductionQueue&       GetProductionQueue() const noexcept { return m_production_queue; }
+    [[nodiscard]] const InfluenceQueue&        GetInfluenceQueue() const noexcept { return m_influence_queue; }
 
     [[nodiscard]] bool        ResearchableTech(std::string_view name) const;        ///< Returns true iff \a name is a tech that has not been researched, and has no unresearched prerequisites.
     [[nodiscard]] float       ResearchProgress(const std::string& name, const ScriptingContext& context) const;        ///< Returns the RPs spent towards tech \a name if it has partial research progress, or 0.0 if it is already researched.
@@ -166,21 +166,21 @@ public:
 
     [[nodiscard]] bool        HasExploredSystem(int ID) const;                            ///< returns  true if the given item is in the appropriate list, false if it is not.
 
-    [[nodiscard]] bool        Eliminated() const;                                         ///< whether this empire has lost the game
-    [[nodiscard]] bool        Won() const;                                                ///< whether this empire has won the game
-    [[nodiscard]] bool        Ready() const;                                              ///< Returns readiness status of empire
+    [[nodiscard]] bool        Eliminated() const noexcept { return m_eliminated; }        ///< whether this empire has lost the game
+    [[nodiscard]] bool        Won() const noexcept { return !m_victories.empty(); }       ///< whether this empire has won the game
+    [[nodiscard]] bool        Ready() const noexcept { return m_ready; }                  ///< readiness status of empire
 
     [[nodiscard]] int         NumSitRepEntries(int turn = INVALID_GAME_TURN) const;       ///< number of entries in the SitRep.
 
     /** Returns distance in jumps away from each system that this empire can
       * propagate supply. */
-    [[nodiscard]] const std::map<int, float>&  SystemSupplyRanges() const;
+    [[nodiscard]] const auto& SystemSupplyRanges() const noexcept { return m_supply_system_ranges; }
 
     /** Returns set of system ids that are able to propagate supply from one
       * system to the next, or at which supply can be delivered to fleets if
       * supply can reach the system from elsewhere, or in which planets can
       * exchange supply between themselves (even if not leaving the system). */
-    [[nodiscard]] const std::set<int>&         SupplyUnobstructedSystems() const;
+    [[nodiscard]] const auto& SupplyUnobstructedSystems() const noexcept { return m_supply_unobstructed_systems; }
 
     /** Returns true if the specified lane travel is preserved against being blockaded (i.e., the empire
      * has in the start system at least one fleet that meets the requirements to preserve the lane (which
@@ -192,21 +192,19 @@ public:
     [[nodiscard]] std::map<int, std::set<int>> KnownStarlanes(const Universe& universe) const;     ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes known to this empire
     [[nodiscard]] std::map<int, std::set<int>> VisibleStarlanes(const Universe& universe) const;   ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes visible to this empire this turn
 
-    [[nodiscard]] const auto&           SitReps() const noexcept { return m_sitrep_entries; }
-    [[nodiscard]] auto                  SitRepBegin() const noexcept { return m_sitrep_entries.begin(); } ///< starting iterator for sitrep entries for this empire
-    [[nodiscard]] auto                  SitRepEnd() const noexcept { return m_sitrep_entries.end(); }     ///< end iterator for sitreps
+    [[nodiscard]] const auto& SitReps() const noexcept { return m_sitrep_entries; }
 
-    [[nodiscard]] float                 ProductionPoints() const;    ///< Returns the empire's current production point output (this is available industry not including stockpile)
+    [[nodiscard]] float       ProductionPoints() const;    ///< Returns the empire's current production point output (this is available industry not including stockpile)
 
     /** Returns ResourcePool for \a resource_type or 0 if no such ResourcePool exists. */
     [[nodiscard]] std::shared_ptr<const ResourcePool> GetResourcePool(ResourceType resource_type) const;
 
-    [[nodiscard]] float                 ResourceStockpile(ResourceType type) const;         ///< returns current stockpiled amount of resource \a type
-    [[nodiscard]] float                 ResourceOutput(ResourceType type) const;            ///< returns amount of resource \a type being generated by ResourceCenters
-    [[nodiscard]] float                 ResourceAvailable(ResourceType type) const;         ///< returns amount of resource \a type immediately available.  This = production + stockpile
+    [[nodiscard]] float       ResourceStockpile(ResourceType type) const;         ///< returns current stockpiled amount of resource \a type
+    [[nodiscard]] float       ResourceOutput(ResourceType type) const;            ///< returns amount of resource \a type being generated by ResourceCenters
+    [[nodiscard]] float       ResourceAvailable(ResourceType type) const;         ///< returns amount of resource \a type immediately available.  This = production + stockpile
 
-    [[nodiscard]] const PopulationPool& GetPopulationPool() const;                          ///< Returns PopulationPool
-    [[nodiscard]] float                 Population() const;                                 ///< returns total Population of empire
+    [[nodiscard]] const auto& GetPopulationPool() const noexcept { return m_population_pool; }
+    [[nodiscard]] float       Population() const;                                 ///< returns total Population of empire
 
     /** If the object with id \a id is a planet owned by this empire, sets that
       * planet to be this empire's capital, and otherwise does nothing. */

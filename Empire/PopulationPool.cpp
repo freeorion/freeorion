@@ -4,9 +4,6 @@
 #include "../universe/PopCenter.h"
 #include "../util/AppInterface.h"
 
-float PopulationPool::Population() const
-{ return m_population; }
-
 void PopulationPool::SetPopCenters(std::vector<int> pop_center_ids)
 { m_pop_center_ids = std::move(pop_center_ids); }
 

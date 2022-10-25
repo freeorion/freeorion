@@ -92,24 +92,6 @@ void Empire::Init() {
                               std::forward_as_tuple());
 }
 
-const std::string& Empire::Name() const
-{ return m_name; }
-
-const std::string& Empire::PlayerName() const
-{ return m_player_name; }
-
-bool Empire::IsAuthenticated() const
-{ return m_authenticated; }
-
-int Empire::EmpireID() const
-{ return m_id; }
-
-const EmpireColor& Empire::Color() const
-{ return m_color; }
-
-int Empire::CapitalID() const
-{ return m_capital_id; }
-
 std::shared_ptr<const UniverseObject> Empire::Source(const ObjectMap& objects) const {
     if (m_eliminated)
         return nullptr;
@@ -382,9 +364,6 @@ void Empire::UpdatePolicies(bool update_cumulative_adoption_time, int current_tu
     PoliciesChangedSignal();
 }
 
-bool Empire::PolicyAdopted(std::string_view name) const
-{ return m_adopted_policies.count(name); }
-
 int Empire::TurnPolicyAdopted(std::string_view name) const {
     auto it = m_adopted_policies.find(name);
     if (it == m_adopted_policies.end())
@@ -447,15 +426,6 @@ std::map<std::string_view, int, std::less<>> Empire::TurnsPoliciesAdopted() cons
         retval.emplace_hint(retval.end(), policy_name, adoption_info.adoption_turn);
     return retval;
 }
-
-const std::map<std::string, int>& Empire::PolicyTotalAdoptedDurations() const
-{ return m_policy_adoption_total_duration; }
-
-const std::map<std::string, int>& Empire::PolicyCurrentAdoptedDurations() const
-{ return m_policy_adoption_current_duration; }
-
-const std::set<std::string, std::less<>>& Empire::AvailablePolicies() const
-{ return m_available_policies; }
 
 bool Empire::PolicyAvailable(std::string_view name) const
 { return m_available_policies.count(name); }
@@ -763,14 +733,8 @@ const std::string& Empire::MostRPCostLeftResearchableTech(const ScriptingContext
     return EMPTY_STRING;    // TODO: IMPLEMENT THIS
 }
 
-const std::set<std::string>& Empire::AvailableBuildingTypes() const
-{ return m_available_building_types; }
-
 bool Empire::BuildingTypeAvailable(const std::string& name) const
 { return m_available_building_types.count(name); }
-
-const std::set<int>& Empire::ShipDesigns() const
-{ return m_known_ship_designs; }
 
 std::vector<int> Empire::AvailableShipDesigns(const Universe& universe) const {
     // create new map containing all ship designs that are available
@@ -811,23 +775,11 @@ bool Empire::ShipDesignAvailable(const ShipDesign& design) const {
 bool Empire::ShipDesignKept(int ship_design_id) const
 { return m_known_ship_designs.count(ship_design_id); }
 
-const std::set<std::string>& Empire::AvailableShipParts() const
-{ return m_available_ship_parts; }
-
 bool Empire::ShipPartAvailable(const std::string& name) const
 { return m_available_ship_parts.count(name); }
 
-const std::set<std::string>& Empire::AvailableShipHulls() const
-{ return m_available_ship_hulls; }
-
 bool Empire::ShipHullAvailable(const std::string& name) const
 { return m_available_ship_hulls.count(name); }
-
-const ProductionQueue& Empire::GetProductionQueue() const
-{ return m_production_queue; }
-
-const InfluenceQueue& Empire::GetInfluenceQueue() const
-{ return m_influence_queue; }
 
 float Empire::ProductionStatus(int i, const ScriptingContext& context) const {
     if (0 > i || i >= static_cast<int>(m_production_queue.size()))
@@ -991,9 +943,6 @@ int Empire::NumSitRepEntries(int turn) const {
     return count;
 }
 
-bool Empire::Eliminated() const
-{ return m_eliminated; }
-
 void Empire::Eliminate(EmpireManager& empires) {
     m_eliminated = true;
 
@@ -1028,18 +977,12 @@ void Empire::Eliminate(EmpireManager& empires) {
     m_supply_unobstructed_systems.clear();
 }
 
-bool Empire::Won() const
-{ return !m_victories.empty(); }
-
 void Empire::Win(const std::string& reason, const EmpireManager::container_type& empires) {
     if (m_victories.insert(reason).second) {
         for (auto& entry : empires)
             entry.second->AddSitRepEntry(CreateVictorySitRep(reason, EmpireID()));
     }
 }
-
-bool Empire::Ready() const
-{ return m_ready; }
 
 void Empire::SetReady(bool ready)
 { m_ready = ready; }
@@ -1323,12 +1266,6 @@ void Empire::UpdatePreservedLanes() {
     m_pending_system_exit_lanes.clear();
 }
 
-const std::map<int, float>& Empire::SystemSupplyRanges() const
-{ return m_supply_system_ranges; }
-
-const std::set<int>& Empire::SupplyUnobstructedSystems() const
-{ return m_supply_unobstructed_systems; }
-
 bool Empire::PreservedLaneTravel(int start_system_id, int dest_system_id) const {
     auto find_it = m_preserved_system_exit_lanes.find(start_system_id);
     return find_it != m_preserved_system_exit_lanes.end()
@@ -1436,9 +1373,6 @@ float Empire::ResourceAvailable(ResourceType type) const {
         throw std::invalid_argument("Empire::ResourceAvailable passed invalid ResourceType");
     return it->second->TotalAvailable();
 }
-
-const PopulationPool& Empire::GetPopulationPool() const
-{ return m_population_pool; }
 
 float Empire::Population() const
 { return m_population_pool.Population(); }

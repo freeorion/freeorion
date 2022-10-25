@@ -112,23 +112,20 @@ namespace {
     std::set<std::string> EmpireSitRepTemplateStrings(int empire_id) {
         std::set<std::string> template_set;
 
-        Empire *empire = GGHumanClientApp::GetApp()->GetEmpire(empire_id);
+        const Empire* empire = GGHumanClientApp::GetApp()->GetEmpire(empire_id);
         if (!empire)
             return template_set;
 
-        for (Empire::SitRepItr sitrep_it = empire->SitRepBegin();
-             sitrep_it != empire->SitRepEnd(); ++sitrep_it)
-        {
+        for (const auto& sitrep : empire->SitReps()) {
             std::string label;
-            if(sitrep_it->GetLabelString().empty()) {
-                label = sitrep_it->GetTemplateString();
+            if (sitrep.GetLabelString().empty()) {
+                label = sitrep.GetTemplateString();
                 label_display_map[label] = UserString(label + "_LABEL");
             } else {
-                label = sitrep_it->GetLabelString();
-                label_display_map[label] = sitrep_it->GetStringtableLookupFlag()? UserString(label) : label;
+                label = sitrep.GetLabelString();
+                label_display_map[label] = sitrep.GetStringtableLookupFlag()? UserString(label) : label;
             }
-            template_set.insert(label);
-            
+            template_set.insert(std::move(label));
         }
 
         return template_set;

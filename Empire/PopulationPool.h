@@ -12,8 +12,8 @@ class ObjectMap;
 /** The PopulationPool class keeps track of an empire's total population and its growth. */
 class FO_COMMON_API PopulationPool {
 public:
-    const std::vector<int>& PopCenterIDs() const { return m_pop_center_ids; }
-    float Population() const;
+    const auto& PopCenterIDs() const noexcept { return m_pop_center_ids; }
+    float Population() const noexcept { return m_population; }
 
     /** emitted after updating population and growth numbers */
     mutable boost::signals2::signal<void ()> ChangedSignal;
