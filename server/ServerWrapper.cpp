@@ -349,6 +349,11 @@ namespace {
         }
     }
 
+    void EmpireSetDiplomacy(int empire1_id, int empire2_id, DiplomaticStatus status) {
+         EmpireManager& empires{Empires()};       
+         empires.SetDiplomaticStatus(empire1_id, empire2_id, status);
+    }
+
     // Wrapper for preunlocked items
     auto LoadUnlockableItemList() -> py::list
     {
@@ -1384,6 +1389,7 @@ namespace FreeOrionPython {
         py::def("empire_unlock_item",               EmpireUnlockItem);
         py::def("empire_add_ship_design",           EmpireAddShipDesign);
         py::def("empire_set_stockpile",             EmpireSetStockpile);
+        py::def("empire_set_diplomacy",             EmpireSetDiplomacy);
 
         py::def("design_create",                    ShipDesignCreate);
         py::def("design_get_premade_list",          ShipDesignGetPremadeList);
