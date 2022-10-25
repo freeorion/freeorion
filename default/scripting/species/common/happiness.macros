@@ -86,6 +86,24 @@ COMMON_HAPPINESS_EFFECTS
         [[ENVIRONMENT_STABILITY_MODIFIER]]
         [[PLANET_SIZE_STABILITY_MODIFIER]]
 
+        EffectsGroup        // artistic species make other planets with different artistic species on them and in the same system system more stable
+            scope = And [
+                Planet
+                InSystem id = Source.SystemID
+                Not Source
+                Species
+                Not Species name = Source.Species
+                HasTag name = "ARTISTIC"
+                //(SpeciesSpeciesOpinion species = LocalCandidate.Species species = Source.Species > 0) // TODO: implement within an Or condition, once species-species opinions are working...
+            ]
+            activation = And [
+                Planet
+                Species
+                HasTag name = "ARTISTIC"
+            ]
+            accountinglabel = "ARTISAN_APPRECIATION"
+            effects = SetTargetHappiness value = Value + 1.0
+
         EffectsGroup    // increase or decrease 1 per turn towards target
             scope = Source
             activation = And [
