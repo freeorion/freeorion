@@ -1,7 +1,7 @@
 """
-ResourcesAI.py provides generate_resources_orders which sets the focus for all of the planets in the empire
+ResourcesAI.py provides generate_resources_orders which sets the focus for all populated planets in the empire.
 
-The method is to start with a raw list of all of the planets in the empire.
+The method is to start with a raw list of all the populated planets in the empire.
 It considers in turn growth factors, production specials, defense requirements
 and finally the targeted ratio of research/production. Each decision on a planet
 transfers the planet from the raw list to the baked list, until all planets
@@ -9,8 +9,6 @@ have their future focus decided.
 """
 from __future__ import annotations
 
-# Note: The algorithm is not stable with respect to pid order.  i.e. Two empire with
-#       exactly the same colonies, but different pids may make different choices.
 import freeOrionAIInterface as fo
 from itertools import chain
 from logging import debug, info, warning
@@ -99,7 +97,7 @@ class PlanetFocusInfo:
         """
         return self.planet.id < other.planet.id
 
-    def value_below_best(self, focus: str) -> float:
+    def rating_below_best(self, focus: str) -> float:
         return self.possible_output[focus].rating - self.possible_output[self.best_output_focus].rating
 
     def best_over_second(self) -> float:
@@ -115,7 +113,7 @@ class PlanetFocusInfo:
         if focus == self.best_output_focus:
             return self.best_over_second() / sqrt_population
         else:
-            return self.value_below_best(focus) / sqrt_population
+            return self.rating_below_best(focus) / sqrt_population
 
 
 class PlanetFocusManager:
@@ -149,7 +147,7 @@ class PlanetFocusManager:
         # reporter.capture_section_info("Protection")
         self.set_influence_focus()
         reporter.capture_section_info("Influence")
-        self.start_capital()
+        self.early_capital_handling()
         self.set_other_foci()
         reporter.capture_section_info("Typical")
         reporter.print_table(self.priority_research / self.priority_industry)
@@ -375,7 +373,7 @@ class PlanetFocusManager:
         """
         # loss should be >= 0 with 0 meaning research is the best focus anyway
         for loss, pid in sorted(
-            [(self.planet_info[pid].value_below_best(RESEARCH), pid) for pid in computronium_candidates()]
+            [(self.planet_info[pid].rating_below_best(RESEARCH), pid) for pid in computronium_candidates()]
         ):
             # Computronium moon has a rather high stability requirement, in many cases it may not be worth anything
             if self.evaluate_computronium(pid, loss):
@@ -383,7 +381,7 @@ class PlanetFocusManager:
                 break
 
         for loss, pid in sorted(
-            [(self.planet_info[pid].value_below_best(INDUSTRY), pid) for pid in honeycomb_candidates()]
+            [(self.planet_info[pid].rating_below_best(INDUSTRY), pid) for pid in honeycomb_candidates()]
         ):
             # honeycomb has no stability requirement, it should almost always be useful
             # TODO check for supply
@@ -454,15 +452,19 @@ class PlanetFocusManager:
                 ProductionAI.candidate_for_translator = pinfo.planet.id
                 break
 
-    def start_capital(self):
-        """A small, handcrafted start optimisation for bad researchers."""
+    def early_capital_handling(self):
+        """
+        A small, handcrafted start optimisation for bad researchers.
+        Even if research is needed most, they do better by quickly finishing the Automatic History Analyzer.
+        """
         if fo.currentTurn() < 7:
             capital = fo.getUniverse().getPlanet(fo.getEmpire().capitalID)
             if capital:
                 factor = get_species_industry(capital.speciesName) / get_species_research(capital.speciesName)
                 pinfo = self.planet_info[capital.id]
-                if factor >= 1.5 and pinfo and pinfo.current_focus == INDUSTRY:
+                if factor >= 2.0 and pinfo and pinfo.current_focus == INDUSTRY:
                     # factor at start is 2.66 for Egassem and 2 for good industry / bad research.
+                    # 1.5 currently does not exist and for normal industry / bad research (1.33) the hack is no good.
                     switch_turn = 7 if factor > 2 else 6
                     if fo.currentTurn() < switch_turn:
                         debug("Special handling: keeping capital at industry.")
