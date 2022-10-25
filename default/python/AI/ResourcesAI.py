@@ -480,9 +480,20 @@ class PlanetFocusManager:
         for pid, pinfo in dict(self.planet_info).items():
             # Note that if focus hasn't been baked as INFLUENCE yet, it shouldn't be.
             if pinfo.best_output_focus in (INDUSTRY, RESEARCH, INFLUENCE) and {INDUSTRY, RESEARCH} <= pinfo.options:
-                industry_value = pinfo.possible_output[INDUSTRY].rating
-                research_value = pinfo.possible_output[RESEARCH].rating
-                industry_or_research.append((industry_value - research_value, pinfo))
+                # sort planets:
+                # - negative values, if research is better
+                # - ratio of delta research / delta industry or vice versa as absolute value
+                # So, best research planets are at the beginning, and best industry planets are at the end.
+                # Note that first criteria is better rating, so e.g. a planet that is happier and gets flat bonuses
+                # with research, but not with industry, should be set to research before any with a better rating
+                # for industry.
+                industry_rating = pinfo.possible_output[INDUSTRY].rating
+                research_rating = pinfo.possible_output[RESEARCH].rating
+                # adding 0.001 to make sure we never divide by zero, shouldn't affect normal values much
+                pp_delta = pinfo.possible_output[INDUSTRY].industry - pinfo.possible_output[RESEARCH].industry + 0.001
+                rp_delta = pinfo.possible_output[RESEARCH].research - pinfo.possible_output[INDUSTRY].research + 0.001
+                sort_value = -rp_delta / pp_delta if research_rating > industry_rating else pp_delta / rp_delta
+                industry_or_research.append((sort_value, pinfo))
             else:
                 # Either protection due to stability, or planet does not support both foci
                 self.bake_future_focus(pid, pinfo.best_output_focus)
