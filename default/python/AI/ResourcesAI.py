@@ -200,7 +200,7 @@ class PlanetFocusManager:
         # stability goes down due to influence debt, trying to counter instability by setting influence producing
         # planets to protection mode just makes it worse.
         if stability <= 0.0 and focus != INFLUENCE:
-            return 0.0
+            return -99999
         return (
             pp * self.priority_industry
             + rp * self.priority_research
@@ -215,7 +215,7 @@ class PlanetFocusManager:
         Special case: if stability is giving, calculate output from current focus, but with adapted stability.
         """
         if planet.focus != focus and stability is None:  # basic output of growth is determined using protection
-            return Output(0.0, 0.0, 0.0, 0.0, 0.0)
+            return Output(0.0, 0.0, 0.0, 0.0, -99999)
 
         industry_target = planet.currentMeterValue(fo.meterType.targetIndustry)
         research_target = planet.currentMeterValue(fo.meterType.targetResearch)
