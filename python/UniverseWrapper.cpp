@@ -112,7 +112,8 @@ namespace {
     {
         auto path = universe.GetPathfinder()->ShortestPath(
             start_sys, end_sys, empire_id, universe.EmpireKnownObjects(empire_id));
-        return std::vector<int>{path.first.begin(), path.first.end()};
+        static_assert(std::is_same_v<std::vector<int>, decltype(path.first)>);
+        return path.first;
     }
 
     auto ShortestNonHostilePath(const Universe& universe, int start_sys, int end_sys, int empire_id) -> std::vector<int>
@@ -121,14 +122,16 @@ namespace {
         auto fleet_pred = std::make_shared<HostileVisitor>(empire_id, empires);
         auto path = universe.GetPathfinder()->ShortestPath(
             start_sys, end_sys, empire_id, fleet_pred, empires, universe.EmpireKnownObjects(empire_id));
-        return std::vector<int>{path.first.begin(), path.first.end()};
+        static_assert(std::is_same_v<std::vector<int>, decltype(path.first)>);
+        return path.first;
     }
 
     auto LeastJumpsPath(const Universe& universe, int start_sys, int end_sys, int empire_id) -> std::vector<int>
     {
         auto path = universe.GetPathfinder()->LeastJumpsPath(
             start_sys, end_sys, empire_id);
-        return std::vector<int>{path.first.begin(), path.first.end()};
+        static_assert(std::is_same_v<std::vector<int>, decltype(path.first)>);
+        return path.first;
     }
 
     auto ImmediateNeighbors(const Universe& universe, int system1_id, int empire_id) -> std::vector<int>
