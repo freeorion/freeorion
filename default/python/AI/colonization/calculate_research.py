@@ -28,16 +28,16 @@ def calculate_research(planet: fo.planet, species: fo.species, max_population: f
         return 0.0
 
     bonus_modified = _get_research_bonus_modified(planet, stability)
-    flat_modified = _get_research_flat_modified(stability)
+    flat_unmodified = _get_research_flat_unmodified(stability)
     skill_multiplier = get_species_research(species.name)
     bonus_by_policy = _get_research_bonus_modified_by_policy(stability)
     flat_by_policy = _get_research_flat_modified_by_policy(planet, stability)
     policy_multiplier = _get_policy_multiplier(stability)
     bonus_unmodified = _get_research_bonus_unmodified(planet, stability)
 
-    result = (max_population * (AIDependencies.RESEARCH_PER_POP + bonus_modified) + flat_modified) * skill_multiplier
+    result = max_population * (AIDependencies.RESEARCH_PER_POP + bonus_modified) * skill_multiplier
     result = (result + max_population * bonus_by_policy + flat_by_policy) * policy_multiplier
-    result += max_population * bonus_unmodified
+    result += max_population * bonus_unmodified + flat_unmodified
     debug_rating(
         f"calculate_research pop={max_population:.2f}, st={stability:.2f}, b1={bonus_modified:.2f}, "
         f"m1={skill_multiplier:.2f}, b2={bonus_by_policy:.2f}, f2={flat_by_policy:.2f}, "
@@ -71,9 +71,9 @@ def _get_modified_research_bonuses(planet: fo.planet) -> List[Bonus]:
     ]
 
 
-def _get_research_flat_modified(stability: float) -> float:
+def _get_research_flat_unmodified(stability: float) -> float:
     """
-    Get list of flat bonuses which are added before multiplication with the species skill value.
+    Get list of flat bonuses which we would get independent of the species research skill.
     """
     diversity = Bonus(
         fo.getEmpire().policyAdopted("PLC_DIVERSITY"),

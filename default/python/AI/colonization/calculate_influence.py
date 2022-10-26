@@ -27,12 +27,12 @@ def calculate_influence(planet: fo.planet, species: fo.species, max_pop: float, 
     if not species or FocusType.FOCUS_INFLUENCE not in species.foci:
         return 0.0
     production = sqrt(max_pop)
+    production *= get_species_influence(species.name)
+
     production += sum(SPECIAL_FLAT for special in planet.specials if special in INFLUENCE_SPECIALS)
     if fo.getEmpire().policyAdopted(PLC_ARTISAN) and TAG_ARTISTIC in species.tags:
         offset = stability - get_named_real("ARTISANS_MIN_STABILITY_FOCUS")
         production += ARTISAN_FLAT / (1.0 if offset >= 0 else offset**2 + 2)  # grant a little, if close
-    # So far all those flat bonuses are affected by the species multiplier
-    production *= get_species_influence(species.name)
 
     translator = BuildingType.TRANSLATOR
     bonus = get_named_real("TRANSLATOR_PER_SPECIES_INFLUENCE") * len(get_empire_planets_by_species()) ** 0.5
