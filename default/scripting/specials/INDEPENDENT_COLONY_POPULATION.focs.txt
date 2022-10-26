@@ -18,7 +18,7 @@ Special
                 Unowned
                 Species
             ]
-            priority = [[TARGET_OVERRIDE_PRIORITY]]
+            priority = [[TARGET_POPULATION_OVERRIDE_PRIORITY]]
             effects = [
                 SetTargetPopulation value = max(Value, SpecialCapacity name = ThisSpecial object = Source.ID)
             ]
