@@ -20,8 +20,8 @@ from turn_state import get_empire_planets_by_species, have_computronium
 
 def calculate_research(planet: fo.planet, species: fo.species, max_population: float, stability: float) -> float:
     """
-    Calculate how much PP the planet's population could generate with industry focus.
-    This only considers values that actually rely on industry focus, those that do not are handled by
+    Calculate how much RP the planet's population could generate with research focus.
+    This only considers values that actually rely on research focus, those that do not are handled by
     calculate_planet_colonization_rating._rate_focus_independent.
     """
     if stability <= 0.0:
@@ -117,7 +117,7 @@ def _get_modified_by_policy_research_bonuses(stability: float) -> List[Bonus]:
 def _get_research_bonus_modified_by_policy(stability: float) -> float:
     """
     Calculate bonus research per population which we would get independent of the species research skill,
-    but still affected by industrialism.
+    but still affected by technocracy.
     """
     return sum(bonus.get_bonus(stability) for bonus in _get_modified_by_policy_research_bonuses(stability))
 
