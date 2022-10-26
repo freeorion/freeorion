@@ -18,7 +18,6 @@ def collect_ai_instances():
     fo.issueEnqueueShipProductionOrder(list(empire_of_first_ai.availableShipDesigns)[0], empire_of_first_ai.capitalID)
 
     yield prod_queue
-    yield prod_queue.allocatedPP
     yield prod_queue[0]
 
     research_queue = empire_of_first_ai.researchQueue
