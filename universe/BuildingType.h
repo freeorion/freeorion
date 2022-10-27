@@ -53,12 +53,10 @@ public:
     { return !(*this == rhs); }
 
     //! Returns the unique name for this type of building
-    auto Name() const -> const std::string&
-    { return m_name; }
+    auto& Name() const noexcept { return m_name; }
 
     //! Returns a text description of this type of building
-    auto Description() const -> const std::string&
-    { return m_description; }
+    auto& Description() const noexcept { return m_description; }
 
     //! Returns a data file format representation of this object
     auto Dump(uint8_t ntabs = 0) const -> std::string;
@@ -83,33 +81,27 @@ public:
                         const ScriptingContext& context = ScriptingContext{}) const -> int;
 
     //! Returns the ValueRef that determines ProductionCost()
-    auto Cost() const -> const ValueRef::ValueRef<double>*
-    { return m_production_cost.get(); }
+    const auto* Cost() const noexcept { return m_production_cost.get(); }
 
     //! Returns the ValueRef that determines ProductionTime()
-    auto Time() const -> const ValueRef::ValueRef<int>*
-    { return m_production_time.get(); }
+    const auto* Time() const noexcept { return m_production_time.get(); }
 
     //! Returns whether this building type is producible by players and appears
     //! on the production screen
-    auto Producible() const -> bool
-    { return m_producible; }
+    auto Producible() const noexcept { return m_producible; }
 
-    auto ProductionMeterConsumption() const -> const ConsumptionMap<MeterType>&
-    { return m_production_meter_consumption; }
+    auto& ProductionMeterConsumption() const noexcept { return m_production_meter_consumption; }
 
-    auto ProductionSpecialConsumption() const -> const ConsumptionMap<std::string>&
-    { return m_production_special_consumption; }
+    auto& ProductionSpecialConsumption() const noexcept { return m_production_special_consumption; }
 
-    const auto& Tags() const { return m_tags; }
+    auto& Tags() const noexcept { return m_tags; }
 
     auto HasTag(std::string_view tag) const -> bool
     { return std::any_of(m_tags.begin(), m_tags.end(), [tag](const auto& t) { return t == tag; }); }
 
     //! Returns the condition that determines the locations where this building
     //! can be produced
-    auto Location() const -> const Condition::Condition*
-    { return m_location.get(); }
+    const auto* Location() const noexcept { return m_location.get(); }
 
     //! Returns a condition that can be used by the UI to further filter (beyond
     //! the Location() requirement) where this building will be presented for
@@ -117,17 +109,14 @@ public:
     //! BuildDesignatorWnd. Example usage: Buildings that are already enqueued
     //! at a production location are hidden so they don't appear in the list of
     //! available items that can be enqueued/produced (again) at that location.
-    auto EnqueueLocation() const -> const Condition::Condition*
-    { return m_enqueue_location.get(); }
+    const auto* EnqueueLocation() const noexcept { return m_enqueue_location.get(); }
 
     //! Returns the EffectsGroups that encapsulate the effects that buildings of
     //! this type have when operational.
-    auto Effects() const -> const std::vector<std::shared_ptr<Effect::EffectsGroup>>&
-    { return m_effects; }
+    auto& Effects() const noexcept { return m_effects; }
 
     //! Returns the name of the grapic file for this building type
-    auto Icon() const -> const std::string&
-    { return m_icon; }
+    auto& Icon() const noexcept { return m_icon; }
 
     //! Returns true iff the empire with ID empire_id can produce this building
     //! at the location with location_id
@@ -138,13 +127,10 @@ public:
     //! location with location_id
     auto EnqueueLocation(int empire_id, int location_id, const ScriptingContext& context) const -> bool;
 
-    //! Returns CaptureResult for empire with ID @p to_empire_id capturing from
-    //! empire with IDs @p from_empire_id the planet (or other UniverseObject)
-    //! with id @p location_id on which this type of Building is located (if
-    //! @p as_production_item is false) or which is the location of a Production
-    //! Queue BuildItem for a building of this type (otherwise)
-    auto GetCaptureResult(int from_empire_id, int to_empire_id, int location_id, bool as_production_item) const -> CaptureResult
-    { return m_capture_result; }
+    //! Returns CaptureResult for an empire capturing a planet with this building
+    //! on it or that is the location of a Production Queue BuildItem for a building
+    //! of this type
+    auto GetCaptureResult(int, int, int, bool) const noexcept { return m_capture_result; }
 
     //! Returns a number, calculated from the contained data, which should be
     //! different for different contained data, and must be the same for
@@ -183,7 +169,7 @@ public:
     //! free function GetBuildingType(...) instead, mainly to save some typing.
     auto GetBuildingType(std::string_view name) const -> const BuildingType*;
 
-    auto NumBuildingTypes() const -> std::size_t { return m_building_types.size(); }
+    auto NumBuildingTypes() const noexcept { return m_building_types.size(); }
 
     //! iterator to the first building type
     FO_COMMON_API auto begin() const -> iterator;
