@@ -12721,6 +12721,12 @@ Robotic Line
 ROBOTIC_HULL_TECHS_DESC
 Technologies related to the Robotic line of ship hulls.
 
+FLUX_HULL_TECHS
+Spatial Flux Line
+
+FLUX_HULL_TECHS_DESC
+Technologies related to the Spatial Flux line of ship hulls.
+
 SHIP_PARTS_CATEGORY
 Ship Engineering
 
