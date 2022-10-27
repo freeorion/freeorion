@@ -14,7 +14,7 @@ CHANCE_OF_GUARD_1
             ]
             effects = [
                 If condition = And [
-                        Random probability = 0.6
+                        Random probability = 0.5
                         [[MINIMUM_DISTANCE_EMPIRE_CHECK]]
                     ]
                     effects = [
@@ -26,7 +26,7 @@ CHANCE_OF_GUARD_1
                     ]
                 else = [
                     If condition = And [
-                            Random probability = 0.7
+                            Random probability = 0.5
                             Not Homeworld
                         ]
                         effects = [
@@ -34,7 +34,7 @@ CHANCE_OF_GUARD_1
                             SetPopulation value = Target.TargetPopulation
                         ]
                     else = [
-                        AddSpecial name = "CLOUD_COVER_MASTER_SPECIAL"
+                        AddSpecial name = OneOf("CLOUD_COVER_MASTER_SPECIAL", "VOLCANIC_ASH_MASTER_SPECIAL")
                     ]
                 ]
             ]
