@@ -1078,12 +1078,12 @@ namespace {
     /** Collect info for scope condition evaluations and dispatch those
       * evaluations to \a thread_pool. Not thread-safe, but the individual
       * condition evaluations should be safe to evaluate in parallel. */
-    template <typename ReorderBufferT, typename IntSetT>
+    template <typename ReorderBufferT, typename IntSetT, typename EffectsGroups>
     void DispatchEffectsGroupScopeEvaluations(
         EffectsCauseType effect_cause_type,
         std::string_view specific_cause_name,
         const Condition::ObjectSet& source_objects,
-        const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects_groups,
+        const EffectsGroups& effects_groups,
         bool only_meter_effects,
         ScriptingContext context,
         const Condition::ObjectSet& potential_targets,
@@ -1193,10 +1193,10 @@ namespace {
             }
         }
 
-        TraceLogger(effects) << [=]() {
+        TraceLogger(effects) << [&active_sources, sz{effects_groups.size()}]() {
             std::string retval;
             retval.reserve(30 + 10*active_sources.size()); // guesstimate
-            retval.append("After activation condition, for ").append(std::to_string(effects_groups.size()))
+            retval.append("After activation condition, for ").append(std::to_string(sz))
                   .append(" effects groups have # sources: ");
             for (auto& src_set : active_sources)
                 retval.append(std::to_string(src_set.size())).append(", ");
