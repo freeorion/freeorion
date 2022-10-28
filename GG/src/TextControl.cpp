@@ -105,9 +105,6 @@ Pt TextControl::MinUsableSize(X width) const
     return m_cached_minusable_size;
 }
 
-const std::string& TextControl::Text() const
-{ return m_text; }
-
 std::string_view TextControl::Text(CPSize from, CPSize to) const
 {
     if (from == INVALID_CP_SIZE || to == INVALID_CP_SIZE)
@@ -136,27 +133,6 @@ std::string_view TextControl::Text(CPSize from, CPSize to) const
         return "";
     }
 }
-
-Flags<TextFormat> TextControl::GetTextFormat() const
-{ return m_format; }
-
-Clr TextControl::TextColor() const
-{ return m_text_color; }
-
-bool TextControl::ClipText() const
-{ return m_clip_text; }
-
-bool TextControl::IsResetMinSize() const
-{ return m_set_min_size; }
-
-TextControl::operator const std::string&() const
-{ return m_text; }
-
-bool TextControl::Empty() const
-{ return m_text.empty(); }
-
-CPSize TextControl::Length() const
-{ return m_code_points; }
 
 Pt TextControl::TextUpperLeft() const
 { return UpperLeft() + m_text_ul; }

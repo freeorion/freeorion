@@ -106,7 +106,7 @@ public:
     virtual Pt MinUsableSize(X width) const;
 
     /** Returns the text displayed in this control. */
-    const std::string& Text() const;
+    const std::string& Text() const noexcept { return m_text; }
 
     /** Returns the text displayed in this control between the specified
         position \a from through position \a to. */
@@ -114,15 +114,15 @@ public:
 
     /** Returns the text format (vertical and horizontal justification, use of
         word breaks and line wrapping, etc.) */
-    Flags<TextFormat> GetTextFormat() const;
+    Flags<TextFormat> GetTextFormat() const noexcept { return m_format; }
 
     /** Returns the text color (this may differ from the Control::Color() in
         some subclasses) */
-    Clr               TextColor() const;
+    Clr               TextColor() const noexcept { return m_text_color; }
 
     /** Returns true iff the text control clips its text to its client area;
         by default this is not done. */
-    bool              ClipText() const;
+    bool              ClipText() const noexcept { return m_clip_text; }
 
     /** Returns true iff the text control sets its MinSize() when the bounds
         of its text change because of a call to SetText() or SetTextFormat();
@@ -131,7 +131,7 @@ public:
         MinSize(), if any has been set.  Note that this operates independently
         of fit-to-text behavior, which sets the window size, not its minimum
         size. */
-    bool              IsResetMinSize() const;
+    bool              IsResetMinSize() const noexcept { return m_set_min_size; }
 
     /** Sets the value of \a t to the interpreted value of the control's text.
         If the control's text can be interpreted as an object of type T by
@@ -166,10 +166,10 @@ public:
 
     /** Returns the control's text; allows TextControl's to be used as
         std::string's. */
-    operator const std::string&() const;
+    operator const std::string&() const noexcept { return m_text; }
 
-    bool   Empty() const;   ///< Returns true iff text string equals "".
-    CPSize Length() const;  ///< Returns the number of code points in the text.
+    bool   Empty() const noexcept { return m_text.empty(); }
+    CPSize Length() const noexcept { return m_code_points; } ///< number of code points in the text
 
     /** Returns the upper-left corner of the text as it is would be rendered
         if it were not bound to the dimensions of this control. */
