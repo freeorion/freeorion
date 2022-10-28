@@ -16,12 +16,12 @@
 
 
 namespace {
-    void PlayMinimizeSound()
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.window.maximize.sound.path"), true); }
-    void PlayMaximizeSound()
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.window.minimize.sound.path"), true); }
-    void PlayCloseSound()
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.window.close.sound.path"), true); }
+    void PlayOptionSound(std::string_view name)
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>(name), true); }
+
+    void PlayMinimizeSound() { PlayOptionSound("ui.window.maximize.sound.path"); }
+    void PlayMaximizeSound() { PlayOptionSound("ui.window.minimize.sound.path"); }
+    void PlayCloseSound() { PlayOptionSound("ui.window.close.sound.path"); }
 
     void AddOptions(OptionsDB& db) {
         db.AddFlag('w', "window-reset", UserStringNop("OPTIONS_DB_WINDOW_RESET"), false);
