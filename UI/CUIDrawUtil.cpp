@@ -89,16 +89,15 @@ void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt ul,
     bool calc_vertices = unit_vertices.size() == 0;
     if (calc_vertices) {
         unit_vertices.resize(2 * (SLICES + 1), 0.0);
-        double theta = 0.0f;
-        for (int j = 0; j <= SLICES; theta += HORZ_THETA, ++j) { // calculate x,y values for each point on a unit circle divided into SLICES arcs
+        double theta = 0.0;
+        for (std::size_t j = 0; j <= SLICES; theta += HORZ_THETA, ++j) { // calculate x,y values for each point on a unit circle divided into SLICES arcs
             unit_vertices[j*2] = std::cos(-theta);
             unit_vertices[j*2+1] = std::sin(-theta);
         }
     }
-    int first_slice_idx = int(theta1 / HORZ_THETA + 1);
-    int last_slice_idx = int(theta2 / HORZ_THETA - 1);
-    if (theta1 >= theta2)
-        last_slice_idx += SLICES;
+    std::size_t first_slice_idx = static_cast<int>(theta1 / HORZ_THETA + 1);
+    std::size_t last_slice_idx = static_cast<int>(
+        theta2 / HORZ_THETA - 1 + ((theta1 >= theta2) ? SLICES : 0u));
 
     if (fan) {  // store a triangle fan vertex list, specifying each vertex just once
         if (filled_shape)   // central vertex first, to act as the pivot vertex for the fan
@@ -112,7 +111,7 @@ void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt ul,
                      static_cast<GLfloat>(center_y + theta1_y * r));
 
         // angles in between theta1 and theta2, if any
-        for (int i = first_slice_idx; i <= last_slice_idx + 1; ++i) {
+        for (std::size_t i = first_slice_idx; i <= last_slice_idx + 1; ++i) {
             int X = (i > SLICES ? (i - SLICES) : i) * 2, Y = X + 1;
             buffer.store(static_cast<GLfloat>(center_x + unit_vertices[X] * r),
                          static_cast<GLfloat>(center_y + unit_vertices[Y] * r));
@@ -130,7 +129,7 @@ void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt ul,
         // (not used for non-filled-shape)
 
         // angles in between theta1 and theta2, if any
-        for (int i = first_slice_idx - 1; i <= last_slice_idx; ++i) {
+        for (std::size_t i = first_slice_idx - 1; i <= last_slice_idx; ++i) {
             if (filled_shape) {
                 buffer.store(first_point.first, first_point.second);
                 // list of triangles: need two more vertices on the arc per starting vertex
@@ -142,7 +141,7 @@ void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt ul,
             buffer.store(static_cast<GLfloat>(center_x + unit_vertices[X] * r),
                          static_cast<GLfloat>(center_y + unit_vertices[Y] * r));
 
-            int next_i = i + 1;
+            auto next_i = i + 1;
             X = (next_i > SLICES ? (next_i - SLICES) : next_i) * 2;
             Y = X + 1;
             buffer.store(static_cast<GLfloat>(center_x + unit_vertices[X] * r),
@@ -153,9 +152,9 @@ void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt ul,
         if (filled_shape)
             buffer.store(first_point.first, first_point.second);
 
-        int i = last_slice_idx + 1;
-        int X = (i > SLICES ? (i - SLICES) : i) * 2;
-        int Y = X + 1;
+        auto i = last_slice_idx + 1;
+        auto X = (i > SLICES ? (i - SLICES) : i) * 2;
+        auto Y = X + 1;
         buffer.store(static_cast<GLfloat>(center_x + unit_vertices[X] * r),
                      static_cast<GLfloat>(center_y + unit_vertices[Y] * r));
 
