@@ -299,9 +299,6 @@ const std::vector<Effect*> EffectsGroup::EffectsList() const {
     return retval;
 }
 
-const std::string& EffectsGroup::GetDescription() const
-{ return m_description; }
-
 std::string EffectsGroup::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs) + "EffectsGroup";
     if (!m_content_name.empty())
@@ -331,15 +328,15 @@ std::string EffectsGroup::Dump(uint8_t ntabs) const {
     return retval;
 }
 
-bool EffectsGroup::HasMeterEffects() const {
-    for (auto& effect : m_effects) {
+bool EffectsGroup::HasMeterEffects() const noexcept {
+    for (auto& effect : m_effects) { // TODO: cache
         if (effect->IsMeterEffect())
             return true;
     }
     return false;
 }
 
-bool EffectsGroup::HasAppearanceEffects() const {
+bool EffectsGroup::HasAppearanceEffects() const noexcept {
     for (auto& effect : m_effects) {
         if (effect->IsAppearanceEffect())
             return true;
@@ -347,7 +344,7 @@ bool EffectsGroup::HasAppearanceEffects() const {
     return false;
 }
 
-bool EffectsGroup::HasSitrepEffects() const {
+bool EffectsGroup::HasSitrepEffects() const noexcept {
     for (auto& effect : m_effects) {
         if (effect->IsSitrepEffect())
             return true;
@@ -386,6 +383,15 @@ uint32_t EffectsGroup::GetCheckSum() const {
 // Dump function                                         //
 ///////////////////////////////////////////////////////////
 std::string Dump(const std::vector<std::shared_ptr<EffectsGroup>>& effects_groups) {
+    std::stringstream retval;
+
+    for (auto& effects_group : effects_groups)
+        retval << "\n" << effects_group->Dump();
+
+    return retval.str();
+}
+
+std::string Dump(const std::vector<std::unique_ptr<EffectsGroup>>& effects_groups) {
     std::stringstream retval;
 
     for (auto& effects_group : effects_groups)

@@ -198,6 +198,8 @@ namespace Effect {
                      std::string content_name = "");
         virtual ~EffectsGroup();
 
+        EffectsGroup(EffectsGroup&& rhs) = default;
+
         bool operator==(const EffectsGroup& rhs) const;
         bool operator!=(const EffectsGroup& rhs) const
         { return !(*this == rhs); }
@@ -211,20 +213,20 @@ namespace Effect {
                      bool include_empire_meter_effects = false,
                      bool only_generate_sitrep_effects = false) const;
 
-        const std::string&              StackingGroup() const       { return m_stacking_group; }
-        Condition::Condition*           Scope() const               { return m_scope.get(); }
-        Condition::Condition*           Activation() const          { return m_activation.get(); }
+        const std::string&              StackingGroup() const noexcept   { return m_stacking_group; }
+        Condition::Condition*           Scope() const noexcept           { return m_scope.get(); }
+        Condition::Condition*           Activation() const noexcept      { return m_activation.get(); }
         const std::vector<Effect*>      EffectsList() const;
-        const std::string&              GetDescription() const;
-        const std::string&              AccountingLabel() const     { return m_accounting_label; }
-        int                             Priority() const            { return m_priority; }
+        const std::string&              GetDescription() const noexcept  { return m_description; }
+        const std::string&              AccountingLabel() const noexcept { return m_accounting_label; }
+        int                             Priority() const noexcept        { return m_priority; }
         std::string                     Dump(uint8_t ntabs = 0) const;
-        bool                            HasMeterEffects() const;
-        bool                            HasAppearanceEffects() const;
-        bool                            HasSitrepEffects() const;
+        bool                            HasMeterEffects() const noexcept;
+        bool                            HasAppearanceEffects() const noexcept;
+        bool                            HasSitrepEffects() const noexcept;
 
         void                            SetTopLevelContent(const std::string& content_name);
-        const std::string&              TopLevelContent() const { return m_content_name; }
+        const std::string&              TopLevelContent() const noexcept { return m_content_name; }
 
         virtual uint32_t                GetCheckSum() const;
 
@@ -241,6 +243,7 @@ namespace Effect {
 
     /** Returns a single string which `Dump`s a vector of EffectsGroups. */
     FO_COMMON_API std::string Dump(const std::vector<std::shared_ptr<EffectsGroup>>& effects_groups);
+    FO_COMMON_API std::string Dump(const std::vector<std::unique_ptr<EffectsGroup>>& effects_groups);
 }
 
 #endif
