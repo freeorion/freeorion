@@ -6751,7 +6751,12 @@ XENOPHOBIC_SPECIES_TEXT
 • 1 jumps: -2.0 stability
 • In same system: -2.5 stability
 
-A Xenophobic species of [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]] will also find the presence of alien species nearby to be disruptive to its natural balances, reducing the xenophobic species' [[metertype METER_TARGET_POPULATION]].
+A Xenophobic species of [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]] will also find the presence of alien species nearby to be disruptive to its natural balances, reducing the xenophobic species' [[metertype METER_TARGET_POPULATION]] per jump by [[value XENOPHOBIC_TARGET_POPULATION_PERJUMP]] similar to stability:
+• 4 jumps: -0.2 target population
+• 3 jumps: -0.4 target population
+• 2 jumps: -0.6 target population
+• 1 jumps: -0.8 target population
+• In same system: -1.0 target population
 
 Xenophobic species start with [[tech CON_CONC_CAMP]].
 
