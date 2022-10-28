@@ -81,6 +81,16 @@ namespace {
 }
 
 namespace {
+    // Checks content \a tags for any custom pedia categories, which are tags
+    // that have the TAG_PEDIA_PREFIX as their first few chars
+    template <typename StringContainer>
+    bool HasCustomCategory(const StringContainer& tags) {
+        static constexpr auto len{TAG_PEDIA_PREFIX.length()};
+        return std::any_of(tags.begin(), tags.end(), [](std::string_view sv) {
+            return sv.substr(0, len) == TAG_PEDIA_PREFIX;
+        });
+    }
+
     constexpr auto prefix_len{TAG_PEDIA_PREFIX.length()};
 
     // Checks content \a tags for custom defined pedia category \a cat
@@ -93,6 +103,8 @@ namespace {
         });
     }
 
+    // checks \a tags for entries whose substring after the length of the pedia
+    // prefix matches \a cat but does not check the portion before that
     bool HasCustomCategoryNoPrefixCheck(const std::vector<std::string_view>& tags,
                                         const std::string_view cat)
     {
@@ -100,13 +112,16 @@ namespace {
                            { return sv.substr(prefix_len) == cat; });
     }
 
+    // checks \a tags for entries that match \a cat
     bool HasCustomCategoryNoPrefixes(const std::vector<std::string_view>& tags,
                                      const std::string_view cat)
     {
         return std::any_of(tags.begin(), tags.end(), [cat](std::string_view sv)
                            { return sv == cat; });
     }
+}
 
+namespace {
     constexpr int ToIntCX(std::string_view sv, int default_result = -1) {
         if (sv.empty())
             return default_result;
@@ -212,15 +227,6 @@ namespace {
 }
 
 namespace {
-    // Checks content \a tags for any custom pedia categories
-    template <typename StringContainer>
-    bool HasCustomCategory(const StringContainer& tags) {
-        static constexpr auto len{TAG_PEDIA_PREFIX.length()};
-        return std::any_of(tags.begin(), tags.end(), [](std::string_view sv) {
-            return sv.substr(0, len) == TAG_PEDIA_PREFIX;
-        });
-    }
-
     /** Retreive a value label and general string representation for @a meter_type
       * eg. {"METER_STEALTH_VALUE_LABEL", UserString("METER_STEALTH")} */
     auto MeterValueLabelAndString(MeterType meter_type) {
@@ -274,7 +280,9 @@ namespace {
                           std::forward_as_tuple(LinkTaggedPresetText(VarText::METER_TYPE_TAG, string_rep, value_label).append("\n"),
                                                 string_rep));
     }
+}
 
+namespace {
     std::map<std::string, std::string> prepended_homeworld_names;
     std::mutex prepended_homeworld_names_access;
 
