@@ -36,8 +36,7 @@ public:
     DiplomaticMessage();
     DiplomaticMessage(int sender_empire_id, int recipient_empire_id, Type type);
 
-    [[nodiscard]] auto GetType() const noexcept -> Type
-    { return m_type; }
+    [[nodiscard]] auto GetType() const noexcept { return m_type; }
 
     [[nodiscard]] int           SenderEmpireID() const noexcept { return m_sender_empire; }
     [[nodiscard]] int           RecipientEmpireID() const noexcept { return m_recipient_empire; }

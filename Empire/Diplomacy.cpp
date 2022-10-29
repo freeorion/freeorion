@@ -59,7 +59,8 @@ std::string DiplomaticMessage::Dump() const {
 }
 
 bool DiplomaticMessage::IsAllowed() const {
-    return GetGameRules().Get<std::string>("RULE_DIPLOMACY") != UserStringNop("RULE_DIPLOMACY_FORBIDDEN_FOR_ALL");
+    return GetGameRules().Get<std::string>("RULE_DIPLOMACY") !=
+        UserStringNop("RULE_DIPLOMACY_FORBIDDEN_FOR_ALL");
 }
 
 
