@@ -97,7 +97,7 @@ public:
     /** Virtual destructor. */
     virtual ~CUIWnd();
 
-    bool    Minimized() const {return m_minimized;} //!< returns true if window is minimized
+    bool    Minimized() const noexcept { return m_minimized; } //!< true if window is minimized
     GG::Pt  ClientUpperLeft() const override;
     GG::Pt  ClientLowerRight() const override;
     bool    InWindow(const GG::Pt& pt) const override;
@@ -122,68 +122,68 @@ public:
     void Hide() override;
     void Show() override;
 
-    void Flash() { m_flashing = true; };
-    void StopFlash() { m_flashing = false; };
-    void SetFlashDuration(int ms) { m_flash_duration = ms; }
+    void Flash() noexcept { m_flashing = true; };
+    void StopFlash() noexcept { m_flashing = false; };
+    void SetFlashDuration(int ms) noexcept { m_flash_duration = ms; }
 
     void ToggleMinimized() { MinimizeClicked(); }
     void Close()           { CloseClicked(); }
-    void ValidatePosition();                                 //!< calls SizeMove() to trigger position-checking and position the window entirely within the parent window/app window
-    void InitSizeMove(const GG::Pt& ul, const GG::Pt& lr);   //!< sets default positions and if default positions were set beforehand, calls SizeMove()
+    void ValidatePosition();                               //!< calls SizeMove() to trigger position-checking and position the window entirely within the parent window/app window
+    void InitSizeMove(GG::Pt ul, GG::Pt lr);               //!< sets default positions and if default positions were set beforehand, calls SizeMove()
 
-    virtual void    CloseClicked();                     //!< called when window is closed via the close button
-    virtual void    PinClicked();                       //!< called when window is pinned or unpinned via the pin button
+    virtual void    CloseClicked();                        //!< called when window is closed via the close button
+    virtual void    PinClicked();                          //!< called when window is pinned or unpinned via the pin button
 
-    static void     InvalidateUnusedOptions();          //!< removes unregistered and registered-but-unused window options from the OptionsDB so that new windows fall back to their default properties.
+    static void     InvalidateUnusedOptions();             //!< removes unregistered and registered-but-unused window options from the OptionsDB so that new windows fall back to their default properties.
 
 protected:
-    virtual GG::Pt          MinimizedSize() const;              //!< the size of a minimized CUIWnd
-    int                     InnerBorderAngleOffset() const;     //!< the distance from where the lower right corner of the inner border should be to where the angled portion of the inner border meets the right and bottom lines of the border
-    bool                    InResizeTab(const GG::Pt& pt) const;//!< returns true iff the specified \a pt is in the region where dragging will resize this Wnd
-    void                    SaveOptions() const;                //!< saves options for this window to the OptionsDB if config_name was specified in the constructor
+    virtual GG::Pt     MinimizedSize() const;              //!< the size of a minimized CUIWnd
+    int                InnerBorderAngleOffset() const;     //!< the distance from where the lower right corner of the inner border should be to where the angled portion of the inner border meets the right and bottom lines of the border
+    bool               InResizeTab(const GG::Pt& pt) const;//!< returns true iff the specified \a pt is in the region where dragging will resize this Wnd
+    void               SaveOptions() const;                //!< saves options for this window to the OptionsDB if config_name was specified in the constructor
 
-    virtual GG::Rect        CalculatePosition() const;          //!< override this if a class determines its own position/size and return the calculated values, called by ResetDefaultPosition()
+    virtual GG::Rect   CalculatePosition() const;          //!< override this if a class determines its own position/size and return the calculated values, called by ResetDefaultPosition()
 
     static std::string AddWindowOptions(std::string_view config_name,
                                         int left, int top, int width, int height,
-                                        bool visible, bool pinned, bool minimized);         //!< Adds OptionsDB entries for a window under a given name along with default values.
+                                        bool visible, bool pinned, bool minimized); //!< Adds OptionsDB entries for a window under a given name along with default values.
 
     static std::string AddWindowOptions(std::string_view config_name,
                                         GG::X left, GG::Y top, GG::X width, GG::Y height,
-                                        bool visible, bool pinned, bool minimized);         //!< overload that accepts GG::X and GG::Y instead of ints
+                                        bool visible, bool pinned, bool minimized); //!< overload that accepts GG::X and GG::Y instead of ints
 
-    static void     InvalidateWindowOptions(std::string_view config_name);                //!< removes options containing \a config_name, logs an error instead if "ui."+config_name+".initialized" exists (i.e. if a window is currently using that name)
+    static void InvalidateWindowOptions(std::string_view config_name);              //!< removes options containing \a config_name, logs an error instead if "ui."+config_name+".initialized" exists (i.e. if a window is currently using that name)
 
-    virtual void    MinimizeClicked();              //!< called when window is minimized or restored via the minimize/restore button
-    virtual void    InitButtons();                  //!< called to create the buttons, withtout positioning them
-    virtual void    PositionButtons();              //!< called to position the buttons
+    virtual void MinimizeClicked();              //!< called when window is minimized or restored via the minimize/restore button
+    virtual void InitButtons();                  //!< called to create the buttons, withtout positioning them
+    virtual void PositionButtons();              //!< called to position the buttons
 
-    virtual void    InitBuffers();
-    void            LoadOptions();                  //!< loads options for this window from the OptionsDB
-    void            Init();                         //!< performs initialization common to all CUIWnd constructors
-    void            ResetDefaultPosition();         //!< called via signal from the ClientUI, passes the value from CalculatePosition() to InitSizeMove()
+    virtual void InitBuffers();
+    void         LoadOptions();                  //!< loads options for this window from the OptionsDB
+    void         Init();                         //!< performs initialization common to all CUIWnd constructors
+    void         ResetDefaultPosition();         //!< called via signal from the ClientUI, passes the value from CalculatePosition() to InitSizeMove()
 
-    void            SetParent(std::shared_ptr<GG::Wnd> wnd) override;
-    void            SetDefaultedOptions();          //!< flags options currently at their default values for later use in SaveDefaultedOptions
-    void            SaveDefaultedOptions();         //!< sets the default value any options previously determined from calls to SetDefaultedOptions to their current value
+    void         SetParent(std::shared_ptr<GG::Wnd> wnd) override;
+    void         SetDefaultedOptions();          //!< flags options currently at their default values for later use in SaveDefaultedOptions
+    void         SaveDefaultedOptions();         //!< sets the default value any options previously determined from calls to SetDefaultedOptions to their current value
 
-    bool                    m_resizable = false;    //!< true if the window is able to be resized
-    bool                    m_closable = false;     //!< true if the window is able to be closed with a button press
-    bool                    m_minimizable = false;  //!< true if the window is able to be minimized
-    bool                    m_minimized = false;    //!< true if the window is currently minimized
-    bool                    m_pinable = false;      //!< true if the window is able to be pinned
-    bool                    m_pinned = false;       //!< true if the window is currently pinned
-    bool                    m_flashing = false;     //!< true if the window is currently flashing
+    bool              m_resizable = false;    //!< true if the window is able to be resized
+    bool              m_closable = false;     //!< true if the window is able to be closed with a button press
+    bool              m_minimizable = false;  //!< true if the window is able to be minimized
+    bool              m_minimized = false;    //!< true if the window is currently minimized
+    bool              m_pinable = false;      //!< true if the window is able to be pinned
+    bool              m_pinned = false;       //!< true if the window is currently pinned
+    bool              m_flashing = false;     //!< true if the window is currently flashing
 
-    int                     m_flash_duration = 1000;//!< time in milliseconds to switch between bright and dark
+    int               m_flash_duration = 1000;//!< time in milliseconds to switch between bright and dark
 
-    GG::Pt                  m_drag_offset;          //!< offset from the lower-right corner of the point being used to drag-resize
-    GG::Pt                  m_original_size;        //!< keeps track of the size of the window before resizing
+    GG::Pt            m_drag_offset;          //!< offset from the lower-right corner of the point being used to drag-resize
+    GG::Pt            m_original_size;        //!< keeps track of the size of the window before resizing
 
-    bool                    m_mouse_in_resize_tab = false;
+    bool              m_mouse_in_resize_tab = false;
 
-    bool                    m_config_save = true;   //!< true if SaveOptions() is currently allowed to write to the OptionsDB
-    const std::string       m_config_name;          //!< the name that this window will use to save its properties to the OptionsDB, the default empty string means "do not save"
+    bool              m_config_save = true;   //!< true if SaveOptions() is currently allowed to write to the OptionsDB
+    const std::string m_config_name;          //!< the name that this window will use to save its properties to the OptionsDB, the default empty string means "do not save"
 
     std::shared_ptr<GG::Button>             m_close_button;     //!< the close button
     std::shared_ptr<CUI_MinRestoreButton>   m_minimize_button;  //!< the minimize/restore button
@@ -218,7 +218,7 @@ public:
     void ModalInit() override;
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
 
-    const std::string& Result() const;
+    const std::string& Result() const noexcept { return m_result; }
 
 private:
     void OkClicked();

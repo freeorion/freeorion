@@ -76,25 +76,30 @@ void CUI_MinRestoreButton::Toggle() {
 ////////////////////////////////////////////////
 // CUI_PinButton
 ////////////////////////////////////////////////
+namespace {
+    auto GetButtonSubTexture(std::string name)
+    { return GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / name)); }
+}
+
 CUI_PinButton::CUI_PinButton() :
     GG::Button("", nullptr, ClientUI::WndInnerBorderColor())
 {
     LeftClickedSignal.connect(-1,
         &PlayCloseSound);
-    SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin.png"   )));
-    SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin.png"  )));
-    SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin_mouseover.png")));
+    SetUnpressedGraphic(GetButtonSubTexture("pin.png"));
+    SetPressedGraphic  (GetButtonSubTexture("pin.png"));
+    SetRolloverGraphic (GetButtonSubTexture("pin_mouseover.png"));
 }
 
 void CUI_PinButton::Toggle(bool pinned) {
     if (!pinned) {
-        SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin.png")));
-        SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin.png")));
-        SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin_mouseover.png")));
+        SetUnpressedGraphic(GetButtonSubTexture("pin.png"));
+        SetPressedGraphic  (GetButtonSubTexture("pin.png"));
+        SetRolloverGraphic (GetButtonSubTexture("pin_mouseover.png"));
     } else {
-        SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pinned.png")));
-        SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pinned.png")));
-        SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pinned_mouseover.png")));
+        SetUnpressedGraphic(GetButtonSubTexture("pinned.png"));
+        SetPressedGraphic  (GetButtonSubTexture("pinned.png"));
+        SetRolloverGraphic (GetButtonSubTexture("pinned_mouseover.png"));
     }
 }
 
@@ -114,8 +119,8 @@ namespace {
     }
     bool dummy = RegisterWndFlags();
 
-    std::string WindowNameFromOption(const std::string& option_name) {
-        std::string::size_type prefix_len { std::string("ui.").length() };
+    std::string_view WindowNameFromOption(std::string_view option_name) {
+        std::string::size_type prefix_len { std::string_view("ui.").length() };
 
         // Determine end of window name from start of window mode
         std::string::size_type mode_substr_pos { option_name.find(".fullscreen", prefix_len + 1) };
@@ -197,32 +202,36 @@ void CUIWnd::Init() {
             boost::bind(&CUIWnd::ResetDefaultPosition, this));
 }
 
-void CUIWnd::InitSizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void CUIWnd::InitSizeMove(GG::Pt ul, GG::Pt lr) {
+    if (m_config_name.empty()) {
+        SizeMove(ul, lr);
+        return;
+    }
+
     OptionsDB& db = GetOptionsDB();
 
-    if (!m_config_name.empty()) {
-        std::string option_prefix = "ui." + m_config_name;
-        if (db.OptionExists(option_prefix + ".initialized")) {
-            std::string window_mode = db.Get<bool>("video.fullscreen.enabled") ?
-                                      ".fullscreen" : ".windowed";
-            // If the window has already had its default position specified
-            // (either in the ctor or a previous call to this function), apply
-            // this position to the window.
-            if (db.Get<bool>(option_prefix + ".initialized") ||
-                db.Get<int>(option_prefix + window_mode + ".left") == INVALID_X)
-            {
-                SetDefaultedOptions();
-                SizeMove(ul, lr);
-                SaveDefaultedOptions();
-            }
-            db.Set<bool>(option_prefix + ".initialized", true);
-        } else {
-            ErrorLogger() << "CUIWnd::InitSizeMove() : attempted to check if window using name \"" << m_config_name
-                          << "\" was initialized but the options do not appear to be registered in the OptionsDB.";
-        }
-    } else {
-        SizeMove(ul, lr);
+    const std::string option_prefix = "ui." + m_config_name;
+
+
+    const std::string option_initialized_name = option_prefix + ".initialized";
+    if (!db.OptionExists(option_initialized_name)) {
+        ErrorLogger() << "CUIWnd::InitSizeMove() : attempted to check if window using name \"" << m_config_name
+                      << "\" was initialized but the options do not appear to be registered in the OptionsDB.";
+        return;
     }
+
+    const std::string window_mode = db.Get<bool>("video.fullscreen.enabled") ? ".fullscreen" : ".windowed";
+
+    // If the window has already had its default position specified (either in the ctor
+    // or a previous call to this function), apply this position to the window.
+    if (db.Get<bool>(option_initialized_name) ||
+        db.Get<int>(option_prefix + window_mode + ".left") == INVALID_X)
+    {
+        SetDefaultedOptions();
+        SizeMove(ul, lr);
+        SaveDefaultedOptions();
+    }
+    db.Set<bool>(option_initialized_name, true);
 }
 
 CUIWnd::~CUIWnd() {
@@ -253,7 +262,7 @@ void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         if (const auto&& parent = Parent()) {
             // Keep this CUIWnd entirely inside its parent.
             available_size = parent->ClientSize();
-        } else if (const GGHumanClientApp* app = GGHumanClientApp::GetApp()) {
+        } else if (const auto* app = GGHumanClientApp::GetApp()) {
             // Keep this CUIWnd entirely inside the application window.
             available_size = GG::Pt(app->AppWidth(), app->AppHeight());
         } else {
@@ -638,11 +647,10 @@ GG::Rect CUIWnd::CalculatePosition() const
 
 void CUIWnd::SetDefaultedOptions() {
     OptionsDB& db = GetOptionsDB();
-    std::set<std::string> window_options;
-    db.FindOptions(window_options, "ui." + m_config_name);
-    for (auto& option : window_options) {
+    const auto window_options = db.FindOptions("ui." + m_config_name);
+    for (auto option : window_options) {
         if (db.IsDefaultValue(option))
-            m_defaulted_options.insert(option);
+            m_defaulted_options.emplace(option);
     }
 }
 
@@ -887,8 +895,8 @@ void CUIWnd::InvalidateWindowOptions(std::string_view config_name) {
 
 void CUIWnd::InvalidateUnusedOptions() {
     OptionsDB& db = GetOptionsDB();
-    std::string prefix("ui.");
-    std::string suffix_exist(".left");
+    static constexpr const std::string_view prefix("ui.");
+    static constexpr const std::string_view suffix(".left");
 
     // Remove unrecognized options from the DB so that their values aren't
     // applied when they are eventually registered.
@@ -896,17 +904,27 @@ void CUIWnd::InvalidateUnusedOptions() {
 
     // Removed registered options for windows that aren't currently
     // instantiated so they fall back on defaults when they are re-constructed.
-    std::set<std::string> window_options;
-    db.FindOptions(window_options, prefix);
-    for (const std::string& option : window_options) {
-        if (!boost::algorithm::find_last(option, suffix_exist))
+    auto window_options = db.FindOptions(prefix);
+    for (const auto option : window_options) {
+        if (!boost::algorithm::find_last(option, suffix)) // range operator bool() == false if range is empty
             continue;
         // If the ".left" option is registered, the rest are implied to be there.
-        if ((option.rfind(suffix_exist) == (option.length() - suffix_exist.length())) && db.OptionExists(option)) {
-            auto window_name = WindowNameFromOption(option);
+        if (option.rfind(suffix) != (option.length() - suffix.length()))
+            continue;
+        if (!db.OptionExists(option))
+            continue;
+
+        auto window_name = WindowNameFromOption(option);
+        if (window_name.empty())
+            continue;
+
+        auto option_name = std::string{prefix}.append(window_name).append(".initialized");
+
+        if (std::none_of(window_options.begin(), window_options.end(),
+                         [&option_name](auto wo) { return wo == option_name; }))
+        {
             // If the ".initialized" option isn't present under this name, remove the options.
-            if (!window_name.empty() && !window_options.count(prefix + window_name + ".initialized"))
-                InvalidateWindowOptions(window_name);
+            InvalidateWindowOptions(window_name);
         }
     }
 
@@ -970,9 +988,6 @@ void CUIEditWnd::KeyPress(GG::Key key, std::uint32_t key_code_point,
     default: break;
     }
 }
-
-const std::string& CUIEditWnd::Result() const
-{ return m_result; }
 
 void CUIEditWnd::OkClicked() {
     m_result = m_edit->Text();
