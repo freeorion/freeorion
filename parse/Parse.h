@@ -54,7 +54,7 @@ namespace parse {
         std::map<std::string, std::unique_ptr<Species>, std::less<>>, // species_by_name,
         std::vector<std::string> // ordering
         >;
-    FO_PARSE_API species_type species(const PythonParser& parser, const boost::filesystem::path& path);
+    FO_PARSE_API species_type species(const boost::filesystem::path& path);
 
     /* T in techs<T> can only be TechManager::TechParseTuple.  This decouples
        Parse.h from Tech.h so that all parsers are not recompiled when Tech.h changes.*/
