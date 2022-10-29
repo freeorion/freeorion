@@ -342,8 +342,8 @@ namespace FreeOrionPython {
                                                         py::return_value_policy<py::return_by_value>()
                                                     ))
 
-            .def("canBuild",                        +[](const Empire& empire, BuildType build_type, const std::string& name, int location) -> bool { return empire.ProducibleItem(build_type, name, location); })
-            .def("canBuild",                        +[](const Empire& empire, BuildType build_type, int design, int location) -> bool { return empire.ProducibleItem(build_type, design, location); })
+            .def("canBuild",                        +[](const Empire& empire, BuildType build_type, const std::string& name, int location) -> bool { return empire.ProducibleItem(build_type, name, location, ScriptingContext{}); })
+            .def("canBuild",                        +[](const Empire& empire, BuildType build_type, int design, int location) -> bool { return empire.ProducibleItem(build_type, design, location, ScriptingContext{}); })
 
             .def("hasExploredSystem",               &Empire::HasExploredSystem)
             .add_property("exploredSystemIDs",      make_function(&Empire::ExploredSystems,         py::return_value_policy<py::return_by_value>()))

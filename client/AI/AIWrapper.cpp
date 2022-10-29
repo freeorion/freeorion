@@ -394,7 +394,7 @@ namespace {
             return 0;
         }
 
-        if (!empire->EnqueuableItem(BuildType::BT_BUILDING, item_name, location_id)) {
+        if (!empire->EnqueuableItem(BuildType::BT_BUILDING, item_name, location_id, context)) {
             ErrorLogger() << "IssueEnqueueBuildingProductionOrder : specified item_name and location_id that don't indicate an item that can be enqueued at that location";
             return 0;
         }
@@ -434,7 +434,7 @@ namespace {
             return 0;
         }
 
-        if (!empire->ProducibleItem(BuildType::BT_SHIP, design_id, location_id)) {
+        if (!empire->ProducibleItem(BuildType::BT_SHIP, design_id, location_id, context)) {
             ErrorLogger() << "IssueEnqueueShipProductionOrder : specified design_id and location_id that don't indicate a design that can be built at that location";
             return 0;
         }

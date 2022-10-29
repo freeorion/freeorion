@@ -2642,19 +2642,22 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             if (!row)
                 continue;
 
-            auto one_planet = universe.Objects().get<Planet>(row->ObjectID());
-                if (one_planet && one_planet->OwnedBy(app->EmpireID())) {
-                for (const std::string& planet_focus : one_planet->AvailableFoci())
-                    all_foci[planet_focus]++;
+            auto one_planet = universe.Objects().getRaw<const Planet>(row->ObjectID());
+            if (one_planet && one_planet->OwnedBy(app->EmpireID())) {
+                for (auto& planet_focus : one_planet->AvailableFoci())
+                    all_foci[std::move(planet_focus)]++;
 
                 for (int ship_design_id : cur_empire->AvailableShipDesigns(GetUniverse())) {
-                    if (cur_empire->ProducibleItem(BuildType::BT_SHIP, ship_design_id, row->ObjectID()))
-                        avail_designs[ship_design_id]++;
+                    if (cur_empire->ProducibleItem(BuildType::BT_SHIP, ship_design_id,
+                                                   row->ObjectID(), context))
+                    { avail_designs[ship_design_id]++; }
                 }
 
-                for (const std::string& building_type : cur_empire->AvailableBuildingTypes()) {
-                    if (cur_empire->EnqueuableItem(BuildType::BT_BUILDING, building_type, row->ObjectID()) &&
-                        cur_empire->ProducibleItem(BuildType::BT_BUILDING, building_type, row->ObjectID()))
+                for (const auto& building_type : cur_empire->AvailableBuildingTypes()) {
+                    if (cur_empire->EnqueuableItem(BuildType::BT_BUILDING, building_type,
+                                                   row->ObjectID(), context) &&
+                        cur_empire->ProducibleItem(BuildType::BT_BUILDING, building_type,
+                                                   row->ObjectID(), context))
                     { avail_blds[building_type]++; }
                 }
             }
@@ -2711,7 +2714,8 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                         continue;
                     auto one_planet = universe.Objects().get<Planet>(row->ObjectID());
                     if (!one_planet || !one_planet->OwnedBy(app->EmpireID()) ||
-                        !cur_empire->ProducibleItem(BuildType::BT_SHIP, ship_design, row->ObjectID()))
+                        !cur_empire->ProducibleItem(BuildType::BT_SHIP, ship_design,
+                                                    row->ObjectID(), context))
                     { continue; }
                     ProductionQueue::ProductionItem ship_item(BuildType::BT_SHIP, ship_design, universe);
                     app->Orders().IssueOrder(std::make_shared<ProductionQueueOrder>(
@@ -2758,8 +2762,10 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
 
                     auto one_planet = objects.get<Planet>(row->ObjectID());
                     if (!one_planet || !one_planet->OwnedBy(app->EmpireID())
-                        || !cur_empire->EnqueuableItem(BuildType::BT_BUILDING, building_type_name, row->ObjectID())
-                        || !cur_empire->ProducibleItem(BuildType::BT_BUILDING, building_type_name, row->ObjectID()))
+                        || !cur_empire->EnqueuableItem(BuildType::BT_BUILDING, building_type_name,
+                                                       row->ObjectID(), context)
+                        || !cur_empire->ProducibleItem(BuildType::BT_BUILDING, building_type_name,
+                                                       row->ObjectID(), context))
                     { continue; }
 
                     ProductionQueue::ProductionItem bld_item(BuildType::BT_BUILDING, building_type_name);

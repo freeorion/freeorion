@@ -536,7 +536,7 @@ namespace {
 
             const ScriptingContext context;
             if (auto empire = context.GetEmpire(empire_id)) {
-                if (!empire->ProducibleItem(m_item, location_id)) {
+                if (!empire->ProducibleItem(m_item, location_id, context)) {
                     this->Disable(true);
                     m_panel->Disable(true);
                 }
@@ -898,7 +898,7 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
 
     const ScriptingContext context;
     if (auto empire = context.GetEmpire(m_empire_id))
-        return empire->ProducibleItem(build_type, m_production_location);
+        return empire->ProducibleItem(build_type, m_production_location, context);
     return true;
 }
 
@@ -922,8 +922,10 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
 
     // check that item is both enqueuable and producible, since most buildings currently have
     // nonselective EnqueueLocation conditions
-    bool enqueuable_here = empire->EnqueuableItem(BuildType::BT_BUILDING, name, m_production_location) &&
-                           empire->ProducibleItem(BuildType::BT_BUILDING, name, m_production_location);
+    bool enqueuable_here = empire->EnqueuableItem(BuildType::BT_BUILDING, name, m_production_location,
+                                                  context) &&
+                           empire->ProducibleItem(BuildType::BT_BUILDING, name, m_production_location,
+                                                  context);
 
     if (enqueuable_here)
         return m_availabilities_shown.first;
@@ -947,7 +949,8 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
     if (!empire)
         return true;
 
-    bool producible_here = empire->ProducibleItem(BuildType::BT_SHIP, design_id, m_production_location);
+    bool producible_here = empire->ProducibleItem(BuildType::BT_SHIP, design_id,
+                                                  m_production_location, context);
 
     if (producible_here)
         return m_availabilities_shown.first;
@@ -1521,7 +1524,7 @@ void BuildDesignatorWnd::BuildItemRequested(const ProductionQueue::ProductionIte
 {
     const ScriptingContext context;
     auto empire = context.GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
-    if (empire && empire->EnqueuableItem(item, BuildLocation()))
+    if (empire && empire->EnqueuableItem(item, BuildLocation(), context))
         AddBuildToQueueSignal(item, num_to_build, BuildLocation(), pos);
 }
 

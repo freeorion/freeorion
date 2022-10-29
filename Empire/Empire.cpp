@@ -1467,28 +1467,30 @@ void Empire::PlaceProductionOnQueue(const ProductionQueue::ProductionItem& item,
         return;
     }
 
+    const ScriptingContext context;
+
     if (item.build_type == BuildType::BT_BUILDING) {
         // only buildings have a distinction between enqueuable and producible...
-        if (!EnqueuableItem(BuildType::BT_BUILDING, item.name, location)) {
+        if (!EnqueuableItem(BuildType::BT_BUILDING, item.name, location, context)) {
             ErrorLogger() << "Empire::PlaceProductionOnQueue() : Attempted to place non-enqueuable item in queue: build_type: Building"
                           << "  name: " << item.name << "  location: " << location;
             return;
         }
-        if (!ProducibleItem(BuildType::BT_BUILDING, item.name, location)) {
+        if (!ProducibleItem(BuildType::BT_BUILDING, item.name, location, context)) {
             ErrorLogger() << "Empire::PlaceProductionOnQueue() : Placed a non-buildable item in queue: build_type: Building"
                           << "  name: " << item.name << "  location: " << location;
             return;
         }
 
     } else if (item.build_type == BuildType::BT_SHIP) {
-        if (!ProducibleItem(BuildType::BT_SHIP, item.design_id, location)) {
+        if (!ProducibleItem(BuildType::BT_SHIP, item.design_id, location, context)) {
             ErrorLogger() << "Empire::PlaceProductionOnQueue() : Placed a non-buildable item in queue: build_type: Ship"
                           << "  design_id: " << item.design_id << "  location: " << location;
             return;
         }
 
     } else if (item.build_type == BuildType::BT_STOCKPILE) {
-        if (!ProducibleItem(BuildType::BT_STOCKPILE, location)) {
+        if (!ProducibleItem(BuildType::BT_STOCKPILE, location, context)) {
             ErrorLogger() << "Empire::PlaceProductionOnQueue() : Placed a non-buildable item in queue: build_type: Stockpile"
                           << "  location: " << location;
             return;
