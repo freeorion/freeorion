@@ -36,7 +36,7 @@ namespace {
     //////////////////////////////////////////////////
     class QueueTechPanel : public GG::Control {
     public:
-        QueueTechPanel(GG::X x, GG::Y y, GG::X w, const std::string& tech_name,
+        QueueTechPanel(GG::X x, GG::Y y, GG::X w, std::string_view tech_name,
                        double allocated_rp, int turns_left, double turns_completed,
                        int empire_id, bool paused = false);
 
@@ -50,16 +50,16 @@ namespace {
     private:
         void Draw(GG::Clr clr, bool fill);
 
-        const std::string&                      m_tech_name; // TODO: make string_view ?
+        std::string_view                        m_tech_name;
         std::shared_ptr<GG::Label>              m_name_text;
         std::shared_ptr<GG::Label>              m_RPs_and_turns_text;
         std::shared_ptr<GG::Label>              m_turns_remaining_text;
         std::shared_ptr<GG::StaticGraphic>      m_icon;
         std::shared_ptr<MultiTurnProgressBar>   m_progress_bar;
-        bool                                    m_in_progress; // TODO: give default values?
-        int                                     m_total_turns;
-        int                                     m_empire_id;
-        bool                                    m_paused;
+        int                                     m_total_turns = 1;
+        int                                     m_empire_id = ALL_EMPIRES;
+        bool                                    m_in_progress = false;
+        bool                                    m_paused = false;
     };
 
     //////////////////////////////////////////////////
@@ -128,13 +128,13 @@ namespace {
     //////////////////////////////////////////////////
     constexpr int MARGIN = 2;
 
-    QueueTechPanel::QueueTechPanel(GG::X x, GG::Y y, GG::X w, const std::string& tech_name, double turn_spending,
-                                   int turns_left, double turns_completed, int empire_id, bool paused) :
+    QueueTechPanel::QueueTechPanel(GG::X x, GG::Y y, GG::X w, std::string_view tech_name,
+                                   double turn_spending, int turns_left,
+                                   double turns_completed, int empire_id, bool paused) :
         GG::Control(x, y, w, DefaultHeight(), GG::NO_WND_FLAGS),
         m_tech_name(tech_name),
-        m_in_progress(turn_spending),
-        m_total_turns(1),
         m_empire_id(empire_id),
+        m_in_progress(turn_spending),
         m_paused(paused)
     {
         SetChildClippingMode(ChildClippingMode::ClipToClient);
@@ -206,7 +206,7 @@ namespace {
         std::string turns_cost_text = str(FlexibleFormat(UserString("TECH_TURN_COST_STR"))
             % DoubleToString(turn_spending, 3, false)
             % DoubleToString(max_spending_per_turn, 3, false));
-        m_RPs_and_turns_text = GG::Wnd::Create<CUILabel>(turns_cost_text, GG::FORMAT_LEFT);
+        m_RPs_and_turns_text = GG::Wnd::Create<CUILabel>(std::move(turns_cost_text), GG::FORMAT_LEFT);
         m_RPs_and_turns_text->MoveTo(GG::Pt(left, top));
         m_RPs_and_turns_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN)));
         m_RPs_and_turns_text->SetTextColor(clr);
@@ -217,7 +217,7 @@ namespace {
 
         std::string turns_left_text = turns_left < 0 ? UserString("TECH_TURNS_LEFT_NEVER")
                                                      : str(FlexibleFormat(UserString("TECH_TURNS_LEFT_STR")) % turns_left);
-        m_turns_remaining_text = GG::Wnd::Create<CUILabel>(turns_left_text, GG::FORMAT_RIGHT);
+        m_turns_remaining_text = GG::Wnd::Create<CUILabel>(std::move(turns_left_text), GG::FORMAT_RIGHT);
         m_turns_remaining_text->MoveTo(GG::Pt(left, top));
         m_turns_remaining_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN)));
         m_turns_remaining_text->SetTextColor(clr);
@@ -294,9 +294,9 @@ namespace {
 //////////////////////////////////////////////////
 class ResearchQueueListBox : public QueueListBox {
 public:
-    ResearchQueueListBox(const boost::optional<std::string_view>& drop_type_str,
-                         const std::string& prompt_str) :
-        QueueListBox(drop_type_str, prompt_str)
+    ResearchQueueListBox(boost::optional<std::string_view> drop_type_str,
+                         std::string prompt_str) :
+        QueueListBox(std::move(drop_type_str), std::move(prompt_str))
     {}
 
     void CompleteConstruction() override

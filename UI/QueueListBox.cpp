@@ -40,7 +40,7 @@ void PromptRow::SizeMove(const GG::Pt& ul, const GG::Pt& lr)  {
 ////////////////////////////////////////////////////////////
 // QueueListBox
 ////////////////////////////////////////////////////////////
-QueueListBox::QueueListBox(const boost::optional<std::string_view>& drop_type_str,
+QueueListBox::QueueListBox(boost::optional<std::string_view> drop_type_str,
                            std::string prompt_str) :
     m_drop_point(end()),
     m_prompt_str(std::move(prompt_str))

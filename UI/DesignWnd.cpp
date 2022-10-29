@@ -1184,8 +1184,8 @@ void ShipDesignManager::Load(const SaveGameUIData& data) {
 }
 
 ShipDesignManager::Designs* ShipDesignManager::DisplayedDesigns() {
-    auto retval = m_displayed_designs.get();
-    if (retval == nullptr) {
+    auto* retval = m_displayed_designs.get();
+    if (!retval) {
         ErrorLogger() << "ShipDesignManager m_displayed_designs was not correctly initialized "
                       << "with ShipDesignManager::GameStart().";
         m_displayed_designs = std::make_unique<DisplayedShipDesignManager>();
@@ -2150,13 +2150,13 @@ class BasesListBox : public QueueListBox {
 public:
     static constexpr std::string_view BASES_LIST_BOX_DROP_TYPE = "BasesListBoxRow";
 
-    BasesListBox(const AvailabilityManager& availabilities_state,
-                 const boost::optional<std::string_view>& drop_type = boost::none,
-                 const boost::optional<std::string_view>& empty_prompt = boost::none);
-    BasesListBox(const AvailabilityManager& availabilities_state,
-                 const boost::optional<std::string_view>& drop_type,
+    BasesListBox(AvailabilityManager availabilities_state,
+                 boost::optional<std::string_view> drop_type = boost::none,
+                 boost::optional<std::string_view> empty_prompt = boost::none);
+    BasesListBox(AvailabilityManager availabilities_state,
+                 boost::optional<std::string_view> drop_type,
                  const std::string& empty_prompt) :
-        BasesListBox(availabilities_state, drop_type,
+        BasesListBox(availabilities_state, std::move(drop_type),
                      boost::optional<std::string_view>{empty_prompt})
     {}
     void CompleteConstruction() override;
@@ -2218,19 +2218,19 @@ public:
         HullAndPartsListBoxRow(GG::X w, GG::Y h, std::string hull,
                                std::vector<std::string> parts);
         void CompleteConstruction() override;
-        const std::string&              Hull() const    { return m_hull_name; }
-        const std::vector<std::string>& Parts() const   { return m_parts; }
+        const auto& Hull() const noexcept  { return m_hull_name; }
+        const auto& Parts() const noexcept { return m_parts; }
 
     protected:
-        std::string                     m_hull_name;
-        std::vector<std::string>        m_parts;
+        std::string              m_hull_name;
+        std::vector<std::string> m_parts;
     };
 
     class CompletedDesignListBoxRow : public BasesListBoxRow {
     public:
         CompletedDesignListBoxRow(GG::X w, GG::Y h, const ShipDesign& design);
         void CompleteConstruction() override;
-        int DesignID() const { return m_design_id; }
+        int DesignID() const noexcept { return m_design_id; }
     private:
         int m_design_id = INVALID_DESIGN_ID;
     };
@@ -2247,10 +2247,9 @@ protected:
     /** If \p wnd is a valid dragged child return a replacement row.  Otherwise return nullptr. */
     virtual std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) = 0;
 
-    int EmpireID() const { return m_empire_id_shown; }
+    int EmpireID() const noexcept { return m_empire_id_shown; }
 
-    const AvailabilityManager& AvailabilityState() const
-    { return m_availabilities_state; }
+    const AvailabilityManager& AvailabilityState() const noexcept { return m_availabilities_state; }
 
     GG::Pt  ListRowSize();
 
@@ -2388,10 +2387,10 @@ void BasesListBox::CompletedDesignListBoxRow::CompleteConstruction() {
     SetDragDropDataType(COMPLETE_DESIGN_ROW_DROP_STRING);
 }
 
-BasesListBox::BasesListBox(const AvailabilityManager& availabilities_state,
-                           const boost::optional<std::string_view>& drop_type,
-                           const boost::optional<std::string_view>& empty_prompt) :
-    QueueListBox(drop_type,
+BasesListBox::BasesListBox(AvailabilityManager availabilities_state,
+                           boost::optional<std::string_view> drop_type,
+                           boost::optional<std::string_view> empty_prompt) :
+    QueueListBox(std::move(drop_type),
                  empty_prompt ? std::string{*empty_prompt} : UserString("ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT")),
     m_empire_id_shown(ALL_EMPIRES),
     m_availabilities_state(availabilities_state)
