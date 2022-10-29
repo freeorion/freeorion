@@ -24,7 +24,7 @@ public:
     explicit PopCenter(const std::string& species_name);
     virtual ~PopCenter() = default;
 
-    const std::string&  SpeciesName() const {return m_species_name;}        ///< returns the name of the species that populates this planet
+    const std::string&  SpeciesName() const noexcept { return m_species_name; } ///< name of the species that populates this planet
     std::string         Dump(uint8_t ntabs = 0) const;
     bool                Populated() const;
     virtual Meter*      GetMeter(MeterType type) = 0;                       ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object

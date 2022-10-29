@@ -385,9 +385,6 @@ const std::set<int>& Universe::EmpireKnownShipDesignIDs(int empire_id) const {
     return empty_set;
 }
 
-const Universe::EmpireObjectVisibilityMap& Universe::GetEmpireObjectVisibility() const
-{ return m_empire_object_visibility; }
-
 Visibility Universe::GetObjectVisibilityByEmpire(int object_id, int empire_id) const {
     if (empire_id == ALL_EMPIRES)
         return Visibility::VIS_FULL_VISIBILITY;
@@ -404,9 +401,6 @@ Visibility Universe::GetObjectVisibilityByEmpire(int object_id, int empire_id) c
 
     return vis_map_it->second;
 }
-
-const Universe::EmpireObjectVisibilityTurnMap& Universe::GetEmpireObjectVisibilityTurnMap() const
-{ return m_empire_object_visibility_turns; }
 
 const Universe::VisibilityTurnMap& Universe::GetObjectVisibilityTurnMapByEmpire(int object_id, int empire_id) const {
     static const std::map<Visibility, int> empty_map;
@@ -3126,15 +3120,6 @@ void Universe::UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(const
 
 void Universe::UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(const EmpireManager& empires)
 { m_pathfinder->UpdateEmpireVisibilityFilteredSystemGraphs(empires, *m_objects); }
-
-double Universe::UniverseWidth() const
-{ return m_universe_width; }
-
-const bool& Universe::UniverseObjectSignalsInhibited() const
-{ return m_inhibit_universe_object_signals; }
-
-void Universe::InhibitUniverseObjectSignals(bool inhibit)
-{ m_inhibit_universe_object_signals = inhibit; }
 
 void Universe::UpdateStatRecords(const ScriptingContext& context) {
     CheckContextVsThisUniverse(*this, context);
