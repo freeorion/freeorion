@@ -578,7 +578,6 @@ private:
 
     std::shared_ptr<Row>    m_header_row;               ///< row of header text/graphics
     bool                    m_keep_col_widths = false;  ///< should we keep the column widths, once set?
-    bool                    m_clip_cells = false;       ///< if true, the contents of each cell will be clipped to the visible area of that cell (TODO: currently unused)
     std::size_t             m_sort_col = 0;             ///< the index of the column data used to sort the list
 
     std::function<bool (const Row&, const Row&, std::size_t)>
