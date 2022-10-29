@@ -160,78 +160,6 @@ Species::Species(std::string&& name, std::string&& desc,
     m_foci(std::move(foci)),
     m_default_focus(std::move(default_focus)),
     m_planet_environments(std::move(planet_environments)),
-    m_combat_targets(std::move(combat_targets)),
-    m_playable(playable),
-    m_native(native),
-    m_can_colonize(can_colonize),
-    m_can_produce_ships(can_produce_ships),
-    m_spawn_rate(spawn_rate),
-    m_spawn_limit(spawn_limit),
-    m_tags_concatenated(ConcatenateAsString(tags, likes, dislikes)),
-    m_tags(StringViewsForTags(tags, m_tags_concatenated)),
-    m_pedia_tags(StringViewsForPediaTags(tags, m_tags_concatenated)),
-    m_likes([&likes, this]() {
-        std::vector<std::string_view> retval;
-        retval.reserve(likes.size());
-
-        const std::string_view sv{m_tags_concatenated};
-        std::size_t next_idx = 0;
-        // find starting point for first like, after end of tags, within m_tags_concatenated
-        std::for_each(m_tags.begin(), m_tags.end(), [&next_idx](const auto& t) { next_idx += t.size(); });
-
-        // store views into concatenated tags/likes string
-        std::for_each(likes.begin(), likes.end(), [&next_idx, &retval, this, sv](const auto& t) {
-            std::string upper_t = boost::to_upper_copy<std::string>(t);
-            retval.push_back(sv.substr(next_idx, upper_t.size()));
-            next_idx += upper_t.size();
-        });
-
-        return retval;
-    }()),
-    m_dislikes([&dislikes, this]() {
-        std::vector<std::string_view> retval;
-        retval.reserve(dislikes.size());
-
-        const std::string_view sv{m_tags_concatenated};
-        std::size_t next_idx = 0;
-        // find starting point for first dislike, after end of tags and likes, within m_tags_concatenated
-        std::for_each(m_tags.begin(), m_tags.end(), [&next_idx](const auto& t) { next_idx += t.size(); });
-        std::for_each(m_likes.begin(), m_likes.end(), [&next_idx](const auto& t) { next_idx += t.size(); });
-
-        // store views into concatenated tags/likes string
-        std::for_each(dislikes.begin(), dislikes.end(), [&next_idx, &retval, this, sv](const auto& t) {
-            std::string upper_t = boost::to_upper_copy<std::string>(t);
-            retval.push_back(sv.substr(next_idx, upper_t.size()));
-            next_idx += upper_t.size();
-        });
-
-        return retval;
-    }()),
-    m_graphic(std::move(graphic))
-{
-    for (auto&& effect : effects)
-        m_effects.push_back(std::move(effect));
-
-    Init();
-}
-
-Species::Species(std::string&& name, std::string&& desc,
-                 std::string&& gameplay_desc, std::vector<FocusType>&& foci,
-                 std::string&& default_focus,
-                 std::map<PlanetType, PlanetEnvironment>&& planet_environments,
-                 std::vector<std::shared_ptr<Effect::EffectsGroup>>&& effects,
-                 std::unique_ptr<Condition::Condition>&& combat_targets,
-                 bool playable, bool native, bool can_colonize, bool can_produce_ships,
-                 const std::set<std::string>& tags,
-                 std::set<std::string>&& likes, std::set<std::string>&& dislikes,
-                 std::string&& graphic,
-                 double spawn_rate, int spawn_limit) :
-    m_name(std::move(name)),
-    m_description(std::move(desc)),
-    m_gameplay_description(std::move(gameplay_desc)),
-    m_foci(std::move(foci)),
-    m_default_focus(std::move(default_focus)),
-    m_planet_environments(std::move(planet_environments)),
     m_effects(std::move(effects)),
     m_combat_targets(std::move(combat_targets)),
     m_playable(playable),
@@ -285,6 +213,33 @@ Species::Species(std::string&& name, std::string&& desc,
     Init();
 }
 
+Species::Species(std::string&& name, std::string&& desc,
+                 std::string&& gameplay_desc, std::vector<FocusType>&& foci,
+                 std::string&& default_focus,
+                 std::map<PlanetType, PlanetEnvironment>&& planet_environments,
+                 std::vector<std::shared_ptr<Effect::EffectsGroup>>&& effects,
+                 std::unique_ptr<Condition::Condition>&& combat_targets,
+                 bool playable, bool native, bool can_colonize, bool can_produce_ships,
+                 const std::set<std::string>& tags,
+                 std::set<std::string>&& likes, std::set<std::string>&& dislikes,
+                 std::string&& graphic,
+                 double spawn_rate, int spawn_limit) :
+    Species(
+        std::move(name), std::move(desc), std::move(gameplay_desc), std::move(foci), std::move(default_focus),
+        std::move(planet_environments),
+        [&effects]() {
+            std::vector<std::unique_ptr<Effect::EffectsGroup>> retval;
+            retval.reserve(effects.size());
+            std::transform(effects.begin(), effects.end(), std::back_inserter(retval),
+                           [](auto& e) {
+                               Effect::EffectsGroup&& er = std::move(*e);
+                               return std::make_unique<Effect::EffectsGroup>(std::move(er));
+                           });
+            return retval;
+        }(),
+        std::move(combat_targets), playable, native, can_colonize, can_produce_ships,
+        tags, std::move(likes), std::move(dislikes), std::move(graphic), spawn_rate, spawn_limit)
+{}
 
 Species::~Species() = default;
 

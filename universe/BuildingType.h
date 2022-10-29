@@ -155,7 +155,7 @@ private:
     ConsumptionMap<std::string>                         m_production_special_consumption;
     std::unique_ptr<Condition::Condition>               m_location;
     std::unique_ptr<Condition::Condition>               m_enqueue_location;
-    std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
+    std::vector<std::unique_ptr<Effect::EffectsGroup>>  m_effects;
     std::string                                         m_icon;
 };
 

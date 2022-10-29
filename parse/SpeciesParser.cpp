@@ -369,10 +369,10 @@ namespace {
                 boost::python::extract<enum_wrapper<PlanetEnvironment>>(environments_args[*it])().value);
         }
 
-        std::vector<std::shared_ptr<Effect::EffectsGroup>> effectsgroups;
+        std::vector<std::unique_ptr<Effect::EffectsGroup>> effectsgroups;
         boost::python::stl_input_iterator<effect_group_wrapper> effectsgroups_begin(kw["effectsgroups"]), effectsgroups_end;
         for (auto it = effectsgroups_begin; it != effectsgroups_end; ++it) {
-            effectsgroups.push_back(it->effects_group);
+            effectsgroups.push_back(std::make_unique<Effect::EffectsGroup>(std::move(*it->effects_group)));
         }
         bool playable = false;
         if (kw.has_key("playable")) {

@@ -79,10 +79,9 @@ BuildingType::BuildingType(std::string&& name, std::string&& description,
     m_production_special_consumption(std::move(common_params.production_special_consumption)),
     m_location(std::move(common_params.location)),
     m_enqueue_location(std::move(common_params.enqueue_location)),
+    m_effects(std::move(common_params.effects)),
     m_icon(std::move(icon))
 {
-    for (auto&& effect : common_params.effects)
-        m_effects.push_back(std::move(effect));
     Init();
 }
 

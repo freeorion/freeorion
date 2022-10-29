@@ -189,7 +189,7 @@ private:
     std::string                             m_default_focus;
     std::map<PlanetType, PlanetEnvironment> m_planet_environments;
 
-    std::vector<std::shared_ptr<Effect::EffectsGroup>> m_effects;
+    std::vector<std::unique_ptr<Effect::EffectsGroup>> m_effects;
     std::unique_ptr<Condition::Condition>              m_location;
     std::unique_ptr<Condition::Condition>              m_combat_targets;
 
