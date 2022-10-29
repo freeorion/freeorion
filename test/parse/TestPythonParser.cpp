@@ -208,7 +208,7 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
 BOOST_AUTO_TEST_CASE(parse_species) {
     PythonParser parser(m_python, m_scripting_dir);
 
-    auto species_p = Pending::ParseSynchronously(parse::species, parser, m_scripting_dir / "species");
+    auto species_p = Pending::StartAsyncParsing(parse::species, m_scripting_dir / "species");
     auto [species_map, ordering] = *Pending::WaitForPendingUnlocked(std::move(species_p));
 
     BOOST_REQUIRE(!ordering.empty());
@@ -469,11 +469,9 @@ BOOST_AUTO_TEST_CASE(parse_species_full) {
     BOOST_REQUIRE(boost::filesystem::exists(scripting_dir));
     BOOST_REQUIRE(boost::filesystem::is_directory(scripting_dir));
 
-    PythonParser parser(m_python, scripting_dir);
-
     auto named_values = Pending::ParseSynchronously(parse::named_value_refs, scripting_dir / "common");
 
-    auto species_p = Pending::ParseSynchronously(parse::species, parser, scripting_dir / "species");
+    auto species_p = Pending::StartAsyncParsing(parse::species, scripting_dir / "species");
     auto [species, ordering] = *Pending::WaitForPendingUnlocked(std::move(species_p));
 
     BOOST_REQUIRE(!ordering.empty());
