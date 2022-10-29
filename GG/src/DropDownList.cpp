@@ -265,8 +265,7 @@ void ModalListPicker::SignalChanged(boost::optional<DropDownList::iterator> it)
     if (!it)
         return;
 
-    // TODO: convert to weak_from_this() on upgrade to C++17
-    const std::weak_ptr<Wnd> weak_this(shared_from_this());
+    const auto weak_this(weak_from_this());
 
     if (Dropped()) {
         // There will be at least 2 shared_ptr, one held by parent and one by Run(), if the parent
