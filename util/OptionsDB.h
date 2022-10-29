@@ -210,11 +210,13 @@ public:
 
     /** find all registered Options that begin with \a prefix and store them in
       * \a ret. If \p allow_unrecognized then include unrecognized options. */
-    void FindOptions(std::set<std::string>& ret, std::string_view prefix, bool allow_unrecognized = false) const;
-    std::vector<std::string_view> FindOptions(std::string_view prefix, bool allow_unrecognized = false) const;
+    void FindOptions(std::set<std::string>& ret, std::string_view prefix,
+                     bool allow_unrecognized = false) const;
+    std::vector<std::string_view> FindOptions(std::string_view prefix,
+                                              bool allow_unrecognized = false) const;
 
     /** the option changed signal object for the given option */
-    OptionChangedSignalType&        OptionChangedSignal(std::string_view option);
+    OptionChangedSignalType& OptionChangedSignal(std::string_view option);
 
 
     /** adds an Option, optionally with a custom validator */
