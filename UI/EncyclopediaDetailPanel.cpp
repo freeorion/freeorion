@@ -2052,13 +2052,12 @@ namespace {
         detailed_description += "\n" + UserString("EMPIRE_ID") + ": " + item_name;
 
         // Empire meters
-        if (empire->meter_begin() != empire->meter_end()) {
+        const auto& meters = empire->GetMeters();
+        if (!meters.empty()) {
             detailed_description += "\n\n";
-            for (auto meter_it = empire->meter_begin();
-                 meter_it != empire->meter_end(); ++meter_it)
-            {
-                detailed_description += UserString(meter_it->first) + ": "
-                                     + DoubleToString(meter_it->second.Initial(), 3, false)
+            for (auto& [mt, m] : meters) {
+                detailed_description += UserString(mt) + ": "
+                                     + DoubleToString(m.Initial(), 3, false)
                                      + "\n";
             }
         }

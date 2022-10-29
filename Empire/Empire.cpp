@@ -550,7 +550,8 @@ Meter* Empire::GetMeter(std::string_view name) {
 }
 
 const Meter* Empire::GetMeter(std::string_view name) const {
-    auto it = std::find_if(m_meters.begin(), m_meters.end(), [name](const auto& e) { return e.first == name; });
+    auto it = std::find_if(m_meters.begin(), m_meters.end(),
+                           [name](const auto& e) { return e.first == name; });
     if (it != m_meters.end())
         return &(it->second);
     else
@@ -582,9 +583,6 @@ bool Empire::HasResearchedPrereqAndUnresearchedPrereq(std::string_view name) con
                                       [&](const auto& p) -> bool { return m_techs.count(p) != 0; });
     return one_unresearched && one_researched;
 }
-
-const ResearchQueue& Empire::GetResearchQueue() const
-{ return m_research_queue; }
 
 float Empire::ResearchProgress(const std::string& name, const ScriptingContext& context) const {
     auto it = m_research_progress.find(name);
