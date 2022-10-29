@@ -125,39 +125,40 @@ struct FO_COMMON_API ProductionQueue {
 
     ProductionQueue(int empire_id);
 
-    [[nodiscard]] int     ProjectsInProgress() const;         ///< Returns the number of production projects currently (perhaps partially) funded.
-    [[nodiscard]] float   TotalPPsSpent() const;              ///< Returns the number of PPs currently spent on the projects in this queue.
-    [[nodiscard]] int     EmpireID() const { return m_empire_id; }
+    [[nodiscard]] int     ProjectsInProgress() const noexcept { return m_projects_in_progress; } ///< number of production projects currently (perhaps partially) funded.
+    [[nodiscard]] float   TotalPPsSpent() const; ///< number of PPs currently spent on the projects in this queue.
+    [[nodiscard]] int     EmpireID() const noexcept { return m_empire_id; }
 
     /** Returns map from sets of object ids that can share resources to amount
       * of PP allocated to production queue elements that have build locations
       * in systems in the group. */
-    [[nodiscard]] const std::map<std::set<int>, float>& AllocatedPP() const;
+    [[nodiscard]] const std::map<std::set<int>, float>& AllocatedPP() const noexcept { return m_object_group_allocated_pp; }
 
     /** Returns map from sets of object ids that can share resources to amount
      * of stockpile PP allocated to production queue elements that have build locations
      * in systems in the group. */
-    [[nodiscard]] const std::map<std::set<int>, float>& AllocatedStockpilePP() const;
+    [[nodiscard]] const std::map<std::set<int>, float>& AllocatedStockpilePP() const noexcept { return m_object_group_allocated_stockpile_pp; }
 
     /** Returns sum of stockpile meters of empire-owned objects. */
     [[nodiscard]] float StockpileCapacity(const ObjectMap& objects) const;
 
     /** Returns the value expected for the Imperial Stockpile for the next turn, based on the current
     * ProductionQueue allocations. */
-    [[nodiscard]] float ExpectedNewStockpileAmount() const { return m_expected_new_stockpile_amount; }
+    [[nodiscard]] float ExpectedNewStockpileAmount() const noexcept { return m_expected_new_stockpile_amount; }
 
     /** Returns the PP amount expected to be transferred via stockpiling projects to the Imperial Stockpile
     * for the next turn, based on the current ProductionQueue allocations. */
-    [[nodiscard]] float ExpectedProjectTransferToStockpile() const { return m_expected_project_transfer_to_stockpile; }
+    [[nodiscard]] float ExpectedProjectTransferToStockpile() const noexcept { return m_expected_project_transfer_to_stockpile; }
 
     /** Returns sets of object ids that have more available than allocated PP */
-    [[nodiscard]] std::set<std::set<int>> ObjectsWithWastedPP(const std::shared_ptr<const ResourcePool>& industry_pool) const;
+    [[nodiscard]] std::set<std::set<int>> ObjectsWithWastedPP(
+        const std::shared_ptr<const ResourcePool>& industry_pool) const;
 
     // STL container-like interface
-    [[nodiscard]] bool           empty() const;
-    [[nodiscard]] unsigned int   size() const;
-    [[nodiscard]] const_iterator begin() const;
-    [[nodiscard]] const_iterator end() const;
+    [[nodiscard]] bool           empty() const noexcept { return !m_queue.size(); }
+    [[nodiscard]] unsigned int   size() const noexcept { return m_queue.size(); }
+    [[nodiscard]] const_iterator begin() const noexcept { return m_queue.begin(); }
+    [[nodiscard]] const_iterator end() const noexcept { return m_queue.end(); }
     [[nodiscard]] const_iterator find(int i) const;
     [[nodiscard]] const Element& operator[](int i) const;
 
@@ -179,8 +180,8 @@ struct FO_COMMON_API ProductionQueue {
     void     erase(int i);
     iterator erase(iterator it);
 
-    [[nodiscard]] iterator begin();
-    [[nodiscard]] iterator end();
+    [[nodiscard]] iterator begin() noexcept { return m_queue.begin(); }
+    [[nodiscard]] iterator end() noexcept { return m_queue.end(); }
     [[nodiscard]] iterator find(int i);
     Element&               operator[](int i);
 
