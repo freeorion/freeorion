@@ -43,9 +43,6 @@ struct FO_COMMON_API BoutEvent : public CombatEvent {
     [[nodiscard]] bool AreSubEventsEmpty(int viewing_empire_id) const override
     { return events.empty(); }
 
-    [[nodiscard]] virtual bool AreSubEventsOrdered() const
-    { return true; }
-
     [[nodiscard]] bool FlattenSubEvents() const override
     { return true; }
 
