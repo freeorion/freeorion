@@ -112,8 +112,8 @@ public:
             first(vec1),
             second(vec2)
         {}
-        bool empty() const { return first.empty() && second.empty(); }
-        auto size() const { return first.size() + second.size(); }
+        bool empty() const noexcept { return first.empty() && second.empty(); }
+        auto size() const noexcept { return first.size() + second.size(); }
         const std::vector<std::string_view>& first = EMPTY_STRING_VEC;
         const std::vector<std::string_view>& second = EMPTY_STRING_VEC;
         static const inline std::vector<std::string_view> EMPTY_STRING_VEC{};

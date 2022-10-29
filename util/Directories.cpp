@@ -258,7 +258,7 @@ auto PathTypeToString(PathType path_type) -> std::string_view
 std::array<PathType, NUM_PATH_TYPES> PathTypes()
 { return PathTypesImpl(); }
 
-auto PathTypeStrings() -> const std::array<std::string_view, NUM_PATH_TYPES>&
+auto PathTypeStrings() noexcept -> const std::array<std::string_view, NUM_PATH_TYPES>&
 { return path_type_views; }
 
 void InitBinDir(std::string const& argv0)

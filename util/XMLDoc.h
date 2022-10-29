@@ -153,13 +153,13 @@ public:
     //!
     //! @return
     //!     The tag-name of this XMLElement.  Can be an empty string.
-    const std::string& Tag() const;
+    const std::string& Tag() const noexcept { return m_tag; }
 
     //! Returns the text body of this XMLElement.
     //!
     //! @return
     //!     The text content of this XMLElement.  Can be an empty string.
-    const std::string& Text() const;
+    const std::string& Text() const noexcept { return m_text; }
 
     //! Returns if this XMLElement contains a child with @p tag as tag-name.
     //!

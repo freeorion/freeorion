@@ -153,7 +153,7 @@ namespace {
     constexpr std::array<char, 4> some_chars4{50, 60, ch(192), 80}; // two ascii chars, then an invalid first byte
     static_assert(!IsValidUTF8(some_chars4));
 
-    constexpr bool IsControlChar(const uint8_t c)
+    constexpr bool IsControlChar(const uint8_t c) noexcept
     { return c < 0x20 || c == 0x7F || (c >= 0x81 && c <= 0x9F); }
 
     constexpr std::string_view formatting_chars = "<>;:,.@#$%&*(){}'\"/?\\`[]|\a\b\f\n\r\t\b";
@@ -278,7 +278,7 @@ NewFleetOrder::NewFleetOrder(int empire, std::string fleet_name,
         return;
 }
 
-bool NewFleetOrder::Aggressive() const
+bool NewFleetOrder::Aggressive() const noexcept
 { return m_aggression == FleetAggression::FLEET_AGGRESSIVE; }
 
 std::string NewFleetOrder::Dump() const {

@@ -23,18 +23,12 @@ namespace {
     const std::map<int, float> EMPTY_INT_FLOAT_MAP;
 }
 
-const std::map<int, std::set<std::pair<int, int>>>& SupplyManager::SupplyStarlaneTraversals() const
-{ return m_supply_starlane_traversals; }
-
 const std::set<std::pair<int, int>>& SupplyManager::SupplyStarlaneTraversals(int empire_id) const {
     auto it = m_supply_starlane_traversals.find(empire_id);
     if (it != m_supply_starlane_traversals.end())
         return it->second;
     return EMPTY_INT_PAIR_SET;
 }
-
-const std::map<int, std::set<std::pair<int, int>>>& SupplyManager::SupplyObstructedStarlaneTraversals() const
-{ return m_supply_starlane_obstructed_traversals; }
 
 const std::set<std::pair<int, int>>& SupplyManager::SupplyObstructedStarlaneTraversals(int empire_id) const {
     auto it = m_supply_starlane_obstructed_traversals.find(empire_id);
@@ -43,11 +37,7 @@ const std::set<std::pair<int, int>>& SupplyManager::SupplyObstructedStarlaneTrav
     return EMPTY_INT_PAIR_SET;
 }
 
-const std::map<int, std::set<int>>& SupplyManager::FleetSupplyableSystemIDs() const
-{ return m_fleet_supplyable_system_ids; }
-
-const std::set<int>& SupplyManager::FleetSupplyableSystemIDs(int empire_id) const
-{
+const std::set<int>& SupplyManager::FleetSupplyableSystemIDs(int empire_id) const {
     auto it = m_fleet_supplyable_system_ids.find(empire_id);
     if (it != m_fleet_supplyable_system_ids.end())
         return it->second;
@@ -80,9 +70,6 @@ int SupplyManager::EmpireThatCanSupplyAt(int system_id) const {
     return ALL_EMPIRES;
 }
 
-const std::map<int, std::set<std::set<int>>>& SupplyManager::ResourceSupplyGroups() const
-{ return m_resource_supply_groups; }
-
 const std::set<std::set<int>>& SupplyManager::ResourceSupplyGroups(int empire_id) const {
     auto it = m_resource_supply_groups.find(empire_id);
     if (it != m_resource_supply_groups.end())
@@ -90,18 +77,12 @@ const std::set<std::set<int>>& SupplyManager::ResourceSupplyGroups(int empire_id
     return EMPTY_INT_SET_SET;
 }
 
-const std::map<int, float>& SupplyManager::PropagatedSupplyRanges() const
-{ return m_propagated_supply_ranges; }
-
 const std::map<int, float>& SupplyManager::PropagatedSupplyRanges(int empire_id) const {
     auto emp_it = m_empire_propagated_supply_ranges.find(empire_id);
     if (emp_it == m_empire_propagated_supply_ranges.end())
         return EMPTY_INT_FLOAT_MAP;
     return emp_it->second;
 }
-
-const std::map<int, float>& SupplyManager::PropagatedSupplyDistances() const
-{ return m_propagated_supply_distances; }
 
 const std::map<int, float>& SupplyManager::PropagatedSupplyDistances(int empire_id) const {
     auto emp_it = m_empire_propagated_supply_distances.find(empire_id);

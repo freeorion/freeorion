@@ -90,12 +90,6 @@ namespace {
 }
 
 
-const std::string& XMLElement::Tag() const
-{ return m_tag; }
-
-const std::string& XMLElement::Text() const
-{ return m_text; }
-
 bool XMLElement::ContainsChild(const std::string& tag) const {
     return children.end() != std::find_if(children.begin(), children.end(),
         [&tag] (const XMLElement& e) { return e.m_tag == tag; });

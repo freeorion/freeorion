@@ -221,11 +221,11 @@ struct FO_COMMON_API ComplexVariable final : public Variable<T>
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    [[nodiscard]] const ValueRef<int>*         IntRef1() const;
-    [[nodiscard]] const ValueRef<int>*         IntRef2() const;
-    [[nodiscard]] const ValueRef<int>*         IntRef3() const;
-    [[nodiscard]] const ValueRef<std::string>* StringRef1() const;
-    [[nodiscard]] const ValueRef<std::string>* StringRef2() const;
+    [[nodiscard]] const ValueRef<int>*         IntRef1() const noexcept;
+    [[nodiscard]] const ValueRef<int>*         IntRef2() const noexcept;
+    [[nodiscard]] const ValueRef<int>*         IntRef3() const noexcept;
+    [[nodiscard]] const ValueRef<std::string>* StringRef1() const noexcept;
+    [[nodiscard]] const ValueRef<std::string>* StringRef2() const noexcept;
     [[nodiscard]] uint32_t                     GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override
@@ -416,7 +416,7 @@ struct FO_COMMON_API Operation final : public ValueRef<T>
     [[nodiscard]] T           Eval(const ScriptingContext& context) const override;
     [[nodiscard]] std::string Description() const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    [[nodiscard]] OpType      GetOpType() const;
+    [[nodiscard]] OpType      GetOpType() const noexcept { return m_op_type; }
 
     [[nodiscard]] static T    EvalImpl(OpType op_type, T lhs, T rhs);
 
@@ -1322,23 +1322,23 @@ bool ComplexVariable<T>::operator==(const ValueRef<T>& rhs) const
 }
 
 template <typename T>
-const ValueRef<int>* ComplexVariable<T>::IntRef1() const
+const ValueRef<int>* ComplexVariable<T>::IntRef1() const noexcept
 { return m_int_ref1.get(); }
 
 template <typename T>
-const ValueRef<int>* ComplexVariable<T>::IntRef2() const
+const ValueRef<int>* ComplexVariable<T>::IntRef2() const noexcept
 { return m_int_ref2.get(); }
 
 template <typename T>
-const ValueRef<int>* ComplexVariable<T>::IntRef3() const
+const ValueRef<int>* ComplexVariable<T>::IntRef3() const noexcept
 { return m_int_ref3.get(); }
 
 template <typename T>
-const ValueRef<std::string>* ComplexVariable<T>::StringRef1() const
+const ValueRef<std::string>* ComplexVariable<T>::StringRef1() const noexcept
 { return m_string_ref1.get(); }
 
 template <typename T>
-const ValueRef<std::string>* ComplexVariable<T>::StringRef2() const
+const ValueRef<std::string>* ComplexVariable<T>::StringRef2() const noexcept
 { return m_string_ref2.get(); }
 
 template <typename T>
@@ -1876,10 +1876,6 @@ bool Operation<T>::operator==(const ValueRef<T>& rhs) const
 
     return true;
 }
-
-template <typename T>
-OpType Operation<T>::GetOpType() const
-{ return m_op_type; }
 
 template <typename T>
 const ValueRef<T>* Operation<T>::LHS() const

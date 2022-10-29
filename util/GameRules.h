@@ -30,14 +30,10 @@ struct FO_COMMON_API GameRule : public OptionsDB::Option {
         STRING
     };
 
-    [[nodiscard]] static constexpr Type RuleTypeForType(bool)
-    { return Type::TOGGLE; }
-    [[nodiscard]] static constexpr Type RuleTypeForType(int)
-    { return Type::INT; }
-    [[nodiscard]] static constexpr Type RuleTypeForType(double)
-    { return Type::DOUBLE; }
-    [[nodiscard]] static inline Type RuleTypeForType(std::string)
-    { return Type::STRING; }
+    [[nodiscard]] static constexpr Type RuleTypeForType(bool) noexcept { return Type::TOGGLE; }
+    [[nodiscard]] static constexpr Type RuleTypeForType(int) noexcept { return Type::INT; }
+    [[nodiscard]] static constexpr Type RuleTypeForType(double) noexcept { return Type::DOUBLE; }
+    [[nodiscard]] static inline Type RuleTypeForType(std::string) noexcept { return Type::STRING; }
 
 
     GameRule() = default;
@@ -45,7 +41,7 @@ struct FO_COMMON_API GameRule : public OptionsDB::Option {
              boost::any default_value_, std::string description_,
              std::unique_ptr<ValidatorBase>&& validator_, bool engine_internal_,
              std::string category_ = std::string());
-    [[nodiscard]] bool IsInternal() const { return this->storable; }
+    [[nodiscard]] bool IsInternal() const noexcept { return this->storable; }
 
     Type type = Type::INVALID;
     std::string category;

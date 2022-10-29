@@ -17,48 +17,48 @@ class FO_COMMON_API SupplyManager {
 public:
     /** Returns set of directed starlane traversals along which supply can flow.
       * Results are pairs of system ids of start and end system of traversal. */
-    [[nodiscard]] const std::map<int, std::set<std::pair<int, int>>>&     SupplyStarlaneTraversals() const;
-    [[nodiscard]] const std::set<std::pair<int, int>>&                    SupplyStarlaneTraversals(int empire_id) const;
+    [[nodiscard]] auto& SupplyStarlaneTraversals() const noexcept { return m_supply_starlane_traversals; }
+    [[nodiscard]] const std::set<std::pair<int, int>>& SupplyStarlaneTraversals(int empire_id) const;
 
     /** Returns set of directed starlane traversals along which supply could
       * flow for this empire, but which can't due to some obstruction in one
       * of the systems. */
-    [[nodiscard]] const std::map<int, std::set<std::pair<int, int>>>&     SupplyObstructedStarlaneTraversals() const;
-    [[nodiscard]] const std::set<std::pair<int, int>>&                    SupplyObstructedStarlaneTraversals(int empire_id) const;
+    [[nodiscard]] auto& SupplyObstructedStarlaneTraversals() const noexcept { return m_supply_starlane_obstructed_traversals; }
+    [[nodiscard]] const std::set<std::pair<int, int>>& SupplyObstructedStarlaneTraversals(int empire_id) const;
 
     /** Returns set of system ids where fleets can be supplied by this empire
       * (as determined by object supply meters and rules of supply propagation
       * and blockade). */
-    [[nodiscard]] const std::map<int, std::set<int>>&                     FleetSupplyableSystemIDs() const;
-    [[nodiscard]] const std::set<int>&                                    FleetSupplyableSystemIDs(int empire_id) const;
-    [[nodiscard]] std::set<int>                                           FleetSupplyableSystemIDs(int empire_id, bool include_allies, const ScriptingContext& context) const;
-    [[nodiscard]] int                                                     EmpireThatCanSupplyAt(int system_id) const;
+    [[nodiscard]] auto&                FleetSupplyableSystemIDs() const noexcept { return m_fleet_supplyable_system_ids; }
+    [[nodiscard]] const std::set<int>& FleetSupplyableSystemIDs(int empire_id) const;
+    [[nodiscard]] std::set<int>        FleetSupplyableSystemIDs(int empire_id, bool include_allies, const ScriptingContext& context) const;
+    [[nodiscard]] int                  EmpireThatCanSupplyAt(int system_id) const;
 
     /** Returns set of sets of systems that can share industry (systems in
       * separate groups are blockaded or otherwise separated). */
-    [[nodiscard]] const std::map<int, std::set<std::set<int>>>&           ResourceSupplyGroups() const;
-    [[nodiscard]] const std::set<std::set<int>>&                          ResourceSupplyGroups(int empire_id) const;
+    [[nodiscard]] auto&                          ResourceSupplyGroups() const noexcept { return m_resource_supply_groups; }
+    [[nodiscard]] const std::set<std::set<int>>& ResourceSupplyGroups(int empire_id) const;
 
     /** Returns the range from each system some empire can propagate supply.*/
-    [[nodiscard]] const std::map<int, float>&                             PropagatedSupplyRanges() const;
+    [[nodiscard]] auto&                       PropagatedSupplyRanges() const noexcept { return m_propagated_supply_ranges; }
     /** Returns the range from each system that the empire with id \a empire_id
       * can propagate supply.*/
-    [[nodiscard]] const std::map<int, float>&                             PropagatedSupplyRanges(int empire_id) const;
+    [[nodiscard]] const std::map<int, float>& PropagatedSupplyRanges(int empire_id) const;
 
     /** Returns the distance from each system some empire is away
       * from its closest source of supply without passing
       * through obstructed systems for that empire. */
-    [[nodiscard]] const std::map<int, float>&                             PropagatedSupplyDistances() const;
+    [[nodiscard]] auto& PropagatedSupplyDistances() const noexcept { return m_propagated_supply_distances; }
     /** Returns the distance from each system for the empire with id
       * \a empire_id to the closest source of supply without passing
       * through obstructed systems for that empire. */
-    [[nodiscard]] const std::map<int, float>&                             PropagatedSupplyDistances(int empire_id) const;
+    [[nodiscard]] const std::map<int, float>& PropagatedSupplyDistances(int empire_id) const;
 
     /** Returns true if system with id \a system_id is fleet supplyable or in
       * one of the resource supply groups for empire with id \a empire_id */
-    [[nodiscard]] bool        SystemHasFleetSupply(int system_id, int empire_id) const;
-    [[nodiscard]] bool        SystemHasFleetSupply(int system_id, int empire_id, bool include_allies,
-                                                   const std::map<std::pair<int, int>, DiplomaticStatus>& diplo_statuses) const;
+    [[nodiscard]] bool SystemHasFleetSupply(int system_id, int empire_id) const;
+    [[nodiscard]] bool SystemHasFleetSupply(int system_id, int empire_id, bool include_allies,
+                                            const std::map<std::pair<int, int>, DiplomaticStatus>& diplo_statuses) const;
 
     [[nodiscard]] std::string Dump(const Universe& u, int empire_id = ALL_EMPIRES) const;
 
