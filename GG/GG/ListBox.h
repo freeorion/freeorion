@@ -232,8 +232,8 @@ public:
     Flags<ListBoxStyle> Style() const noexcept { return m_style; }
 
     const Row&      ColHeaders() const { return *m_header_row; }  ///< row containing the headings for the columns, if any.  If undefined, the returned heading Row will have size() 0.
-    iterator        FirstRowShown() const;  ///< first row visible in the listbox
-    std::size_t     FirstColShown() const;  ///< index of the first column visible in the listbox
+    iterator        FirstRowShown() const noexcept { return m_first_row_shown; }  ///< first row visible in the listbox
+    std::size_t     FirstColShown() const noexcept { return m_first_col_shown; }  ///< index of the first column visible in the listbox
 
     iterator        LastVisibleRow() const; ///< last row that could be drawn, taking into account the contents and the size of client area
     std::size_t     LastVisibleCol() const; ///< index of the last column that could be drawn, taking into account the contents and the size of client area
@@ -263,15 +263,15 @@ public:
 
     /** Whether the list should autoscroll when the user is attempting to drop
         an item into a location that is not currently visible. */
-    bool            AutoScrollDuringDragDrops() const;
+    bool            AutoScrollDuringDragDrops() const noexcept { return m_auto_scroll_during_drag_drops; }
 
     /** The thickness of the area around the border of the client area that will
         provoke an auto-scroll, if AutoScrollDuringDragDrops() returns true. */
-    unsigned int    AutoScrollMargin() const;
+    unsigned int    AutoScrollMargin() const noexcept { return m_auto_scroll_margin; }
 
     /** The number of milliseconds that elapse between row/column scrolls when
         auto-scrolling. */
-    unsigned int    AutoScrollInterval() const;
+    unsigned int    AutoScrollInterval() const noexcept;
 
     /** Return true if drops are allowed.*/
     bool            AllowingDrops() const noexcept { return m_allow_drops; }
@@ -457,15 +457,15 @@ protected:
 
     iterator        RowUnderPt(Pt pt) const; ///< returns row under pt, if any; value must be checked (i.e. it may be end())
 
-    iterator        OldSelRow() const;   ///< returns the last row that was selected with a left-button mouse-down
-    iterator        OldRDownRow() const; ///< returns the last row that was selected with a right-button mouse-down
-    iterator        LClickRow() const;   ///< returns the last row that was left-clicked
-    iterator        RClickRow() const;   ///< returns the last row that was right-clicked
+    iterator        OldSelRow() const noexcept { return m_old_sel_row; };     ///< last row that was selected with a left-button mouse-down
+    iterator        OldRDownRow() const noexcept { return m_old_rdown_row; }; ///< last row that was selected with a right-button mouse-down
+    iterator        LClickRow() const noexcept { return m_lclick_row; }       ///< last row that was left-clicked
+    iterator        RClickRow() const noexcept { return m_rclick_row; }       ///< last row that was right-clicked
 
-    bool            AutoScrollingUp() const;    ///< returns true iff the list is being autoscrolled up due to drag-and-drop
-    bool            AutoScrollingDown() const;  ///< returns true iff the list is being autoscrolled down due to drag-and-drop
-    bool            AutoScrollingLeft() const;  ///< returns true iff the list is being autoscrolled left due to drag-and-drop
-    bool            AutoScrollingRight() const; ///< returns true iff the list is being autoscrolled right due to drag-and-drop
+    bool            AutoScrollingUp() const noexcept { return m_auto_scrolling_up; }       ///< returns true iff the list is being autoscrolled up due to drag-and-drop
+    bool            AutoScrollingDown() const noexcept { return m_auto_scrolling_down; }   ///< returns true iff the list is being autoscrolled down due to drag-and-drop
+    bool            AutoScrollingLeft() const noexcept { return m_auto_scrolling_left; }   ///< returns true iff the list is being autoscrolled left due to drag-and-drop
+    bool            AutoScrollingRight() const noexcept { return m_auto_scrolling_right; } ///< returns true iff the list is being autoscrolled right due to drag-and-drop
 
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;

@@ -46,12 +46,6 @@ Timer::~Timer()
         gui->RemoveTimer(*this);
 }
 
-unsigned int Timer::Interval() const
-{ return m_interval; }
-
-bool Timer::Running() const
-{ return m_running; }
-
 void Timer::Reset(unsigned int start_time)
 { m_last_fire = start_time ? start_time : GUI::GetGUI()->Ticks(); }
 

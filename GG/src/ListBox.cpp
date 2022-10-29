@@ -552,12 +552,6 @@ const ListBox::Row& ListBox::GetRow(std::size_t n) const
 bool ListBox::Selected(iterator it) const
 { return it != m_rows.end() && m_selections.count(it); }
 
-ListBox::iterator ListBox::FirstRowShown() const
-{ return m_first_row_shown; }
-
-std::size_t ListBox::FirstColShown() const
-{ return m_first_col_shown; }
-
 ListBox::iterator ListBox::LastVisibleRow() const
 {
     Y visible_pixels = ClientSize().y;
@@ -607,17 +601,11 @@ double ListBox::ColStretch(std::size_t n) const
 
 bool ListBox::AllowedDropType(const std::string& type) const
 {
-    return (!m_allowed_drop_types                 // all types allowed
-            || m_allowed_drop_types->count(type)); //this type allowed;
+    return (!m_allowed_drop_types                  // all types allowed
+            || m_allowed_drop_types->count(type)); // this type allowed;
 }
 
-bool ListBox::AutoScrollDuringDragDrops() const
-{ return m_auto_scroll_during_drag_drops; }
-
-unsigned int ListBox::AutoScrollMargin() const
-{ return m_auto_scroll_margin; }
-
-unsigned int ListBox::AutoScrollInterval() const
+unsigned int ListBox::AutoScrollInterval() const noexcept
 { return m_auto_scroll_timer.Interval(); }
 
 void ListBox::StartingChildDragDrop(const Wnd* wnd, const Pt& offset)
@@ -1360,30 +1348,6 @@ ListBox::iterator ListBox::RowUnderPt(Pt pt) const
     }
     return retval;
 }
-
-ListBox::iterator ListBox::OldSelRow() const // TODO: noexcept in header
-{ return m_old_sel_row; }
-
-ListBox::iterator ListBox::OldRDownRow() const
-{ return m_old_rdown_row; }
-
-ListBox::iterator ListBox::LClickRow() const
-{ return m_lclick_row; }
-
-ListBox::iterator ListBox::RClickRow() const
-{ return m_rclick_row; }
-
-bool ListBox::AutoScrollingUp() const
-{ return m_auto_scrolling_up; }
-
-bool ListBox::AutoScrollingDown() const
-{ return m_auto_scrolling_down; }
-
-bool ListBox::AutoScrollingLeft() const
-{ return m_auto_scrolling_left; }
-
-bool ListBox::AutoScrollingRight() const
-{ return m_auto_scrolling_right; }
 
 void ListBox::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
 {

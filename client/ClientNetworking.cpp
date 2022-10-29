@@ -155,10 +155,10 @@ public:
     bool IsTxConnected() const;
 
     /** Returns the ID of the player on this client. */
-    int PlayerID() const;
+    int PlayerID() const noexcept { return m_player_id; }
 
     /** Returns the ID of the host player, or INVALID_PLAYER_ID if there is no host player. */
-    int HostPlayerID() const;
+    int HostPlayerID() const noexcept { return m_host_player_id; }
 
     /** Returns whether the indicated player ID is the host. */
     bool PlayerIsHost(int player_id) const;
@@ -167,7 +167,7 @@ public:
     bool HasAuthRole(Networking::RoleType role) const;
 
     /** Returns destination address of server. */
-    const std::string& Destination() const;
+    const std::string& Destination() const noexcept { return m_destination; }
 
     /** Returns a list of the addresses and names of all servers on the Local
         Area Network. */
@@ -288,7 +288,6 @@ bool ClientNetworking::Impl::CloseSocketIfNotConnected() {
     bool do_close = !_IsConnected();
     if (do_close)
         m_socket.close();
-    
     return do_close;
 }
 
@@ -301,12 +300,6 @@ bool ClientNetworking::Impl::IsTxConnected() const {
     std::scoped_lock lock(m_mutex);
     return m_tx_connected;
 }
-
-int ClientNetworking::Impl::PlayerID() const
-{ return m_player_id; }
-
-int ClientNetworking::Impl::HostPlayerID() const
-{ return m_host_player_id; }
 
 bool ClientNetworking::Impl::PlayerIsHost(int player_id) const {
     if (player_id == Networking::INVALID_PLAYER_ID)
@@ -329,14 +322,10 @@ ClientNetworking::ServerNames ClientNetworking::Impl::DiscoverLANServerNames() {
     return names;
 }
 
-const std::string& ClientNetworking::Impl::Destination() const
-{ return m_destination; }
 
-
-void ClientNetworking::Impl::LaunchNetworkThread(const ClientNetworking* const self)
-{
+void ClientNetworking::Impl::LaunchNetworkThread(const ClientNetworking* const self) {
     // Prepare the socket
-    
+
     // linger option has different meanings on different platforms.  It affects the
     // behavior of the socket.close().  It can do the following:
     // - close both send and receive immediately,
