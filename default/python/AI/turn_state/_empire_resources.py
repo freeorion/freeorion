@@ -109,22 +109,22 @@ def set_have_nest():
 
 
 def have_computronium() -> bool:
-    """Do we have a planet with a computronium moon, which is set to research focus?"""
+    """Return True if we have a planet with a computronium moon, which is set to research focus."""
     return _get_planet_catalog().have_computronium
 
 
 def computronium_candidates() -> List[PlanetId]:
-    """Returns list of own planets that have a computronium moon and a species capable of research."""
+    """Return list of own planets that have a computronium moon and a species capable of research."""
     return _get_planet_catalog().pids_computronium
 
 
 def have_honeycomb() -> bool:
-    """Do we have a planet with the honeycomb special, which is set to industry focus?"""
+    """Return True if we have a planet with a honeycomb special, which is set to production focus."""
     return _get_planet_catalog().have_honeycomb
 
 
 def honeycomb_candidates() -> List[PlanetId]:
-    """Returns list of own planets that have the honeycomb special and a species capable of production."""
+    """Return list of own planets that have the honeycomb special and a species capable of production."""
     return _get_planet_catalog().pids_honeycomb
 
 

@@ -568,21 +568,21 @@ class Reporter:
             if pinfo.current_focus != pinfo.future_focus:
                 total_changed += 1
 
-            old_pp, old_rp, _, _, _ = pinfo.possible_output[pinfo.current_focus]
+            old_pp, old_rp, *_ = pinfo.possible_output[pinfo.current_focus]
             current_industry_target += old_pp
             current_research_target += old_rp
 
-            future_pp, future_rp, _, _, _ = pinfo.possible_output[pinfo.future_focus]
+            future_pp, future_rp, *_ = pinfo.possible_output[pinfo.future_focus]
             new_industry_target += future_pp
             new_research_target += future_rp
 
-            industry_pp, industry_rp, _, _, _ = (
+            industry_pp, industry_rp, *_ = (
                 pinfo.possible_output[INDUSTRY] if INDUSTRY in pinfo.possible_output else (future_pp, future_rp, 0, 0)
             )
             all_industry_industry_target += industry_pp
             all_industry_research_target += industry_rp
 
-            research_pp, research_rp, _, _, _ = (
+            research_pp, research_rp, *_ = (
                 pinfo.possible_output[RESEARCH] if RESEARCH in pinfo.possible_output else (future_pp, future_rp, 0, 0)
             )
             all_research_industry_target += research_pp
@@ -638,9 +638,9 @@ class Reporter:
                 pinfo = self.focus_manager.baked_planet_info[pid]
                 old_focus = pinfo.current_focus
                 new_focus = pinfo.future_focus
-                current_pp, curren_rp, _, _, _ = pinfo.current_output
-                ot_pp, ot_rp, _, _, _ = pinfo.possible_output.get(old_focus, (0, 0, 0, 0))
-                nt_pp, nt_rp, _, _, _ = pinfo.possible_output[new_focus]
+                current_pp, curren_rp, *_ = pinfo.current_output
+                ot_pp, ot_rp, *_ = pinfo.possible_output.get(old_focus, (0, 0, 0, 0))
+                nt_pp, nt_rp, *_ = pinfo.possible_output[new_focus]
                 debug(
                     Reporter.table_format,
                     "pID (%3d) %22s" % (pid, pinfo.planet.name[-22:]),
