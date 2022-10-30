@@ -246,7 +246,7 @@ private:
         WndPosition() = default;
         WndPosition(std::size_t first_row_, std::size_t first_column_,
                     std::size_t last_row_, std::size_t last_column_,
-                    Flags<Alignment> alignment_, const Pt& original_ul_, const Pt& original_size_);
+                    Flags<Alignment> alignment_, Pt original_ul_, Pt original_size_);
 
         std::size_t      first_row = 0;
         std::size_t      first_column = 0;

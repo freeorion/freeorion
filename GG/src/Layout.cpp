@@ -20,7 +20,8 @@ using namespace GG;
 
 namespace {
 
-unsigned int MinDueToMargin(unsigned int cell_margin, std::size_t num_rows_or_columns, std::size_t row_or_column)
+unsigned int MinDueToMargin(unsigned int cell_margin, std::size_t num_rows_or_columns,
+                            std::size_t row_or_column)
 {
     return (row_or_column == 0 || row_or_column == num_rows_or_columns - 1) ?
         static_cast<unsigned int>(std::ceil(cell_margin / 2.0)) :
@@ -33,7 +34,7 @@ unsigned int MinDueToMargin(unsigned int cell_margin, std::size_t num_rows_or_co
 // WndPosition
 Layout::WndPosition::WndPosition(std::size_t first_row_, std::size_t first_column_,
                                  std::size_t last_row_, std::size_t last_column_,
-                                 Flags<Alignment> alignment_, const Pt& original_ul_, const Pt& original_size_) :
+                                 Flags<Alignment> alignment_, Pt original_ul_, Pt original_size_) :
     first_row(first_row_),
     first_column(first_column_),
     last_row(last_row_),

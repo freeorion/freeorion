@@ -223,8 +223,9 @@ public:
     virtual void    HandleSystemEvents() = 0;
 
     /** Event handler for GG events. */
-    void            HandleGGEvent(EventType event, Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys,
-                                  const Pt& pos, const Pt& rel, std::string text = std::string());
+    void            HandleGGEvent(EventType event, Key key, std::uint32_t key_code_point,
+                                  Flags<ModKey> mod_keys, Pt pos, Pt rel,
+                                  std::string text = std::string());
 
     void            ClearEventState();
 
@@ -251,7 +252,8 @@ public:
         \throw std::runtime_error May throw std::runtime_error if there are
         already other Wnds registered that belong to a window other than \a
         originating_wnd. */
-    void           RegisterDragDropWnd(std::shared_ptr<Wnd> wnd, const Pt& offset, std::shared_ptr<Wnd> originating_wnd);
+    void           RegisterDragDropWnd(std::shared_ptr<Wnd> wnd, Pt offset,
+                                       std::shared_ptr<Wnd> originating_wnd);
     void           CancelDragDrop();             ///< clears the set of current drag-and-drop Wnds
 
     void           RegisterTimer(Timer& timer);  ///< adds \a timer to the list of active timers
@@ -433,7 +435,7 @@ private:
 
     // Returns the window under \a pt, sending Mouse{Enter|Leave} or
     // DragDrop{Enter|Leave} as appropriate
-    std::shared_ptr<Wnd> CheckedGetWindowUnder(const Pt& pt, Flags<ModKey> mod_keys);
+    std::shared_ptr<Wnd> CheckedGetWindowUnder(Pt pt, Flags<ModKey> mod_keys);
 
     static GUI*              s_gui;
     std::unique_ptr<GUIImpl> m_impl;

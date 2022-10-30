@@ -103,7 +103,7 @@ struct GG_API Rect
 {
     constexpr Rect() = default;
 
-    constexpr Rect(const Pt& pt1, const Pt& pt2) :
+    constexpr Rect(Pt pt1, Pt pt2) :
         ul{std::min(pt1.x, pt2.x), std::min(pt1.y, pt2.y)},
         lr{std::max(pt1.x, pt2.x), std::max(pt1.y, pt2.y)}
     {}
@@ -124,10 +124,10 @@ struct GG_API Rect
     [[nodiscard]] constexpr X  MidX() const noexcept       { return (lr.x + ul.x)/2; } ///< returns the horizontal mid-point of the Rect
     [[nodiscard]] constexpr Y  MidY() const noexcept       { return (lr.y + ul.y)/2; } ///< returns the vertical mid-point of the Rect
 
-    [[nodiscard]] constexpr bool Contains(const Pt& pt) const noexcept { return ul <= pt && pt < lr; }
+    [[nodiscard]] constexpr bool Contains(Pt pt) const noexcept { return ul <= pt && pt < lr; }
 
-    constexpr Rect& operator+=(const Pt& pt) { ul += pt; lr += pt; return *this; } ///< shifts the Rect by adding \a pt to each corner
-    constexpr Rect& operator-=(const Pt& pt) { ul -= pt; lr -= pt; return *this; } ///< shifts the Rect by subtracting \a pt from each corner
+    constexpr Rect& operator+=(Pt pt) { ul += pt; lr += pt; return *this; } ///< shifts the Rect by adding \a pt to each corner
+    constexpr Rect& operator-=(Pt pt) { ul -= pt; lr -= pt; return *this; } ///< shifts the Rect by subtracting \a pt from each corner
 
     Pt ul; ///< the upper-left corner of the Rect
     Pt lr; ///< the lower-right corner of the Rect
