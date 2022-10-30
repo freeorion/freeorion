@@ -38,8 +38,9 @@ bool dummy = RegisterModKeys();
 
 }
 
+namespace GG {
 GG_FLAGSPEC_IMPL(ModKey);
-
+}
 
 ///////////////////////////////////////
 // class GG::WndEvent

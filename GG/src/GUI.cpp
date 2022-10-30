@@ -43,7 +43,7 @@ struct AcceleratorEcho
 {
     AcceleratorEcho(Key key, Flags<ModKey> mod_keys) :
         m_str(std::string{"GG SIGNAL : GUI::AcceleratorSignal(key="}.append(to_string(key))
-              .append(" mod_keys=").append(boost::lexical_cast<std::string>(mod_keys)).append(")"))
+              .append(" mod_keys=").append(to_string(mod_keys)).append(")"))
     {}
     bool operator()()
     {

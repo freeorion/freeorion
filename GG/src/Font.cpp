@@ -295,7 +295,9 @@ std::string GG::RgbaTag(Clr c)
 ///////////////////////////////////////
 // TextFormat
 ///////////////////////////////////////
+namespace GG {
 GG_FLAGSPEC_IMPL(TextFormat);
+}
 
 namespace {
     bool RegisterTextFormats()

@@ -10,14 +10,11 @@
 #include <GG/AlignmentFlags.h>
 
 
-using namespace GG;
-
 ///////////////////////////////////////
 // Alignment
 ///////////////////////////////////////
+namespace GG {
 GG_FLAGSPEC_IMPL(Alignment);
-
-namespace {
 
 bool RegisterAlignments()
 {
