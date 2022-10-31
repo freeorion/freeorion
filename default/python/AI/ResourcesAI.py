@@ -46,6 +46,7 @@ GROWTH = FocusType.FOCUS_GROWTH
 PROTECTION = FocusType.FOCUS_PROTECTION
 INFLUENCE = FocusType.FOCUS_INFLUENCE
 supported_foci = {INDUSTRY, RESEARCH, INFLUENCE, GROWTH, PROTECTION}
+USELESS_RATING = -99999  # focus is either not available or stability is too bad
 
 
 def _focus_name(focus: str) -> str:
@@ -198,7 +199,7 @@ class PlanetFocusManager:
         # stability goes down due to influence debt, trying to counter instability by setting influence producing
         # planets to protection focus just makes it worse.
         if stability <= 0.0 and focus != INFLUENCE:
-            return -99999
+            return USELESS_RATING
         return (
             pp * self.priority_industry
             + rp * self.priority_research
@@ -213,7 +214,7 @@ class PlanetFocusManager:
         Special case: if stability is giving, calculate output from current focus, but with adapted stability.
         """
         if planet.focus != focus and stability is None:  # basic output of growth is determined using protection
-            return Output(0.0, 0.0, 0.0, 0.0, -99999)
+            return Output(0.0, 0.0, 0.0, 0.0, USELESS_RATING)
 
         industry_target = planet.currentMeterValue(fo.meterType.targetIndustry)
         research_target = planet.currentMeterValue(fo.meterType.targetResearch)
@@ -279,13 +280,37 @@ class PlanetFocusManager:
             pinfo.rated_foci = sorted(
                 [(pinfo.possible_output[focus].rating, focus) for focus in supported_foci], reverse=True
             )
-            for focus in supported_foci:
-                o = pinfo.possible_output[focus]
-                debug(
-                    f"Possible output of planet {pinfo.planet} for {focus} is {o.rating} ({o.industry}/"
-                    f"{o.research}/{o.influence} stability={o.stability})"
-                )
-            debug(f"best output: {pinfo.rated_foci[0][1]}")
+        self.print_pinfo_table()
+
+    def print_pinfo_table(self):
+        def output_table_format(o: Output) -> str:
+            if o.rating == USELESS_RATING:
+                return "---"
+            else:
+                return f"{o.rating:.1f} {o.industry:.1f} {o.research:.1f} {o.influence:.1f} {o.stability:.1f}"
+
+        debug("Values per focus: rating pp rp ip stability")
+        pinfo_table = Table(
+            Text("Planet"),
+            Text("Best Focus"),
+            Text("Industry"),
+            Text("Research"),
+            Text("Influence"),
+            Text("Protection"),
+            Text("Growth"),
+            table_name="Potential Planetary Output Overview Turn %d" % fo.currentTurn(),
+        )
+        for pinfo in self.planet_info.values():
+            pinfo_table.add_row(
+                pinfo.planet,
+                _focus_name(pinfo.rated_foci[0][1]),
+                output_table_format(pinfo.possible_output[INDUSTRY]),
+                output_table_format(pinfo.possible_output[RESEARCH]),
+                output_table_format(pinfo.possible_output[INFLUENCE]),
+                output_table_format(pinfo.possible_output[PROTECTION]),
+                output_table_format(pinfo.possible_output[GROWTH]),
+            )
+        pinfo_table.print_table(info)
 
     def set_planet_growth_specials(self):  # noqa complexity
         """Consider growth focus for planets with useful growth specials. Remove planets from list of candidates."""
