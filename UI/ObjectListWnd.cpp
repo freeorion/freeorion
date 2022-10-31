@@ -1024,7 +1024,7 @@ private:
             // collect all valid foci on any object in universe
             std::set<std::string> all_foci;
             for (auto* planet : objects.allRaw<Planet>()) {
-                auto obj_foci = planet->AvailableFoci();
+                auto obj_foci = planet->AvailableFoci(context);
                 all_foci.insert(std::make_move_iterator(obj_foci.begin()),
                                 std::make_move_iterator(obj_foci.end()));
             }
@@ -2644,7 +2644,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
 
             auto one_planet = universe.Objects().getRaw<const Planet>(row->ObjectID());
             if (one_planet && one_planet->OwnedBy(app->EmpireID())) {
-                for (auto& planet_focus : one_planet->AvailableFoci())
+                for (auto& planet_focus : one_planet->AvailableFoci(context))
                     all_foci[std::move(planet_focus)]++;
 
                 for (int ship_design_id : cur_empire->AvailableShipDesigns(GetUniverse())) {
@@ -2663,24 +2663,28 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             }
         }
 
+        auto& orders{app->Orders()};
+        const int app_empire_id{app->EmpireID()};
+
         GG::MenuItem focusMenuItem(UserString("MENUITEM_SET_FOCUS"), false, false/*, no action*/);
         for (auto& [focus_name, count_of_planets_that_have_focus_available] : all_foci) {
             menuitem_id++;
-            auto focus_action = [focus{focus_name}, app, &universe, &context,
-                                 lb{m_list_box}, &focus_ship_building_common_action]()
+            auto focus_action = [focus{focus_name}, empire_id{app_empire_id},
+                                 &orders, &universe, &context, lb{m_list_box},
+                                 &focus_ship_building_common_action]()
             {
                 for (const auto& selection : lb->Selections()) {
                     ObjectRow* row = dynamic_cast<ObjectRow*>(selection->get());
                     if (!row)
                         continue;
 
-                    auto one_planet = universe.Objects().get<Planet>(row->ObjectID());
-                    if (!(one_planet && one_planet->OwnedBy(app->EmpireID())))
+                    auto one_planet = universe.Objects().getRaw<const Planet>(row->ObjectID());
+                    if (!(one_planet && one_planet->OwnedBy(empire_id)))
                         continue;
 
-                    one_planet->SetFocus(focus);
-                    app->Orders().IssueOrder(std::make_shared<ChangeFocusOrder>(
-                        app->EmpireID(), one_planet->ID(), focus, context),
+                    one_planet->SetFocus(focus, context);
+                    orders.IssueOrder(std::make_shared<ChangeFocusOrder>(
+                        empire_id, one_planet->ID(), focus, context),
                         context);
                 }
 

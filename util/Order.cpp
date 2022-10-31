@@ -1165,9 +1165,9 @@ void ChangeFocusOrder::ExecuteImpl(ScriptingContext& context) const {
     if (!Check(EmpireID(), m_planet, m_focus, context))
         return;
 
-    auto planet = context.ContextObjects().get<Planet>(m_planet);
+    auto planet = context.ContextObjects().getRaw<Planet>(m_planet);
 
-    planet->SetFocus(m_focus);
+    planet->SetFocus(m_focus, context);
 }
 
 ////////////////////////////////////////////////

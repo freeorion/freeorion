@@ -64,9 +64,6 @@ void ResourceCenter::Init() {
     m_last_turn_focus_changed_turn_initial = INVALID_GAME_TURN;
 }
 
-const std::string& ResourceCenter::Focus() const
-{ return m_focus; }
-
 int ResourceCenter::TurnsSinceFocusChange(int current_turn) const {
     if (m_last_turn_focus_changed == INVALID_GAME_TURN)
         return 0;
@@ -74,9 +71,6 @@ int ResourceCenter::TurnsSinceFocusChange(int current_turn) const {
         return 0;
     return current_turn - m_last_turn_focus_changed;
 }
-
-std::vector<std::string> ResourceCenter::AvailableFoci() const
-{ return std::vector<std::string>(); }
 
 const std::string& ResourceCenter::FocusIcon(const std::string& focus_name) const
 { return EMPTY_STRING; }
@@ -86,30 +80,30 @@ std::string ResourceCenter::Dump(uint8_t ntabs) const {
         .append(" last changed on turn: ").append(std::to_string(m_last_turn_focus_changed));
 }
 
-void ResourceCenter::SetFocus(const std::string& focus) {
+void ResourceCenter::SetFocus(const std::string& focus, const ScriptingContext& context) {
     if (focus == m_focus)
         return;
     if (focus.empty()) {
-        ClearFocus();
+        ClearFocus(context.current_turn);
         return;
     }
-    auto avail_foci = AvailableFoci();
-    auto foci_it = std::find(avail_foci.begin(), avail_foci.end(), focus);
+    auto avail_foci = AvailableFoci(context);
+    auto foci_it = std::find(avail_foci.begin(), avail_foci.end(), focus); // TODO: use any_of
     if (foci_it != avail_foci.end()) {
         m_focus = focus;
         if (m_focus == m_focus_turn_initial)
             m_last_turn_focus_changed = m_last_turn_focus_changed_turn_initial;
         else
-            m_last_turn_focus_changed = CurrentTurn();
+            m_last_turn_focus_changed = context.current_turn;
         ResourceCenterChangedSignal();
         return;
     }
     ErrorLogger() << "ResourceCenter::SetFocus Exploiter!-- unavailable focus " << focus << " attempted to be set for object w/ dump string: " << Dump();
 }
 
-void ResourceCenter::ClearFocus() {
+void ResourceCenter::ClearFocus(int current_turn) {
     m_focus.clear();
-    m_last_turn_focus_changed = CurrentTurn();
+    m_last_turn_focus_changed = current_turn;
     ResourceCenterChangedSignal();
 }
 

@@ -1832,7 +1832,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     if (!planet->SpeciesName().empty()) {
         AttachChild(m_focus_drop);
 
-        auto available_foci = planet->AvailableFoci();
+        auto available_foci = planet->AvailableFoci(context);
 
         // refresh items in list
         m_focus_drop->Clear();
@@ -2503,21 +2503,25 @@ void SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot(GG::DropDownList:
         return;
     }
 
-    auto res = Objects().get<ResourceCenter>(m_planet_id);
+    const ScriptingContext context;
+
+    auto res = context.ContextObjects().get<ResourceCenter>(m_planet_id);
     if (!res) {
         ErrorLogger() << "PlanetPanel::FocusDropListSelectionChanged couldn't convert object with id " << m_planet_id << " to a ResourceCenter";
         return;
     }
 
+    auto foci = res->AvailableFoci(context);
+
     std::size_t i = m_focus_drop->IteratorToIndex(selected);
-    if (i >= res->AvailableFoci().size()) {
+    if (i >= foci.size()) {
         ErrorLogger() << "PlanetPanel::FocusDropListSelectionChanged got invalid focus selected index: " << i;
         return;
     }
 
     Sound::TempUISoundDisabler sound_disabler;
     DebugLogger() << "About to send focus-changed signal.";
-    FocusChangedSignal(res->AvailableFoci().at(i));
+    FocusChangedSignal(foci[i]);
     DebugLogger() << "Returned from sending focus-changed signal.";
 }
 

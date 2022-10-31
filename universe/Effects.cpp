@@ -1554,20 +1554,21 @@ void SetSpecies::Execute(ScriptingContext& context) const {
 
         // ensure non-empty and permissible focus setting for new species
         auto& initial_focus = planet->Focus();
-        std::vector<std::string> available_foci = planet->AvailableFoci();
+        auto available_foci = planet->AvailableFoci(context);
 
         // leave current focus unchanged if available.
-        for (const std::string& available_focus : available_foci) {
+        for (const auto& available_focus : available_foci) { // TODO: any_of
             if (available_focus == initial_focus)
                 return;
         }
 
-        const Species* species = GetSpecies(planet->SpeciesName());
-        const auto& default_focus = species ? species->DefaultFocus() : "";
+        const Species* species = context.species.GetSpecies(planet->SpeciesName());
+        static const std::string EMPTY_STRING{};
+        const auto& default_focus = species ? species->DefaultFocus() : EMPTY_STRING;
 
         // chose default focus if available. otherwise use any available focus
         bool default_available = false;
-        for (const std::string& available_focus : available_foci) {
+        for (const auto& available_focus : available_foci) {
             if (available_focus == default_focus) {
                 default_available = true;
                 break;
@@ -1575,9 +1576,9 @@ void SetSpecies::Execute(ScriptingContext& context) const {
         }
 
         if (default_available)
-            planet->SetFocus(default_focus);
+            planet->SetFocus(default_focus, context);
         else if (!available_foci.empty())
-            planet->SetFocus(*available_foci.begin());
+            planet->SetFocus(*available_foci.begin(), context);
     }
 }
 

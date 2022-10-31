@@ -4,6 +4,7 @@
 
 #include <boost/signals2/signal.hpp>
 #include "EnumsFwd.h"
+#include "ConstantsFwd.h"
 #include "../util/Export.h"
 
 
@@ -11,6 +12,7 @@ class Empire;
 class Meter;
 class UniverseObject;
 class ObjectMap;
+struct ScriptingContext;
 
 /** The ResourceCenter class is an abstract base class for anything in the
   * FreeOrion gamestate that generates resources (minerals, etc.).  Most
@@ -26,9 +28,9 @@ public:
     ResourceCenter(const ResourceCenter& rhs);
     virtual ~ResourceCenter();
 
-    const std::string&              Focus() const;                                  ///< current focus to which this ResourceCenter is set
+    const auto&                     Focus() const noexcept { return m_focus; }
     int                             TurnsSinceFocusChange(int current_turn) const;  ///< number of turns since focus was last changed.
-    virtual std::vector<std::string>AvailableFoci() const;                          ///< focus settings available to this ResourceCenter
+    virtual std::vector<std::string>AvailableFoci(const ScriptingContext&) const { return {}; } ///< focus settings available to this ResourceCenter
     virtual const std::string&      FocusIcon(const std::string& focus_name) const; ///< icon representing focus with name \a focus_name for this ResourceCenter
     std::string                     Dump(uint8_t ntabs = 0) const;
 
@@ -40,8 +42,8 @@ public:
     void Copy(std::shared_ptr<const ResourceCenter> copied_object, Visibility vis);
     void Copy(std::shared_ptr<const ResourceCenter> copied_object);
 
-    void SetFocus(const std::string& focus);
-    void ClearFocus();
+    void SetFocus(const std::string& focus, const ScriptingContext& context);
+    void ClearFocus(int current_turn);
     void UpdateFocusHistory();
 
     virtual Meter* GetMeter(MeterType type) = 0;    ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
@@ -58,9 +60,9 @@ protected:
 
 private:
     std::string m_focus;
-    int         m_last_turn_focus_changed;
+    int         m_last_turn_focus_changed = INVALID_GAME_TURN;
     std::string m_focus_turn_initial;
-    int         m_last_turn_focus_changed_turn_initial;
+    int         m_last_turn_focus_changed_turn_initial = INVALID_GAME_TURN;
 
     virtual void AddMeter(MeterType meter_type) = 0; ///< implementation should add a meter to the object so that it can be accessed with the GetMeter() functions
 

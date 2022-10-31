@@ -66,13 +66,13 @@ public:
 
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
-    [[nodiscard]] std::vector<std::string>AvailableFoci() const override;
+    [[nodiscard]] std::vector<std::string>AvailableFoci(const ScriptingContext& context) const override; // TODO: return vector<string_view>
     [[nodiscard]] const std::string&      FocusIcon(const std::string& focus_name) const override;
 
-    [[nodiscard]] PlanetType          Type() const noexcept               { return m_type; }
-    [[nodiscard]] PlanetType          OriginalType() const noexcept       { return m_original_type; }
-    [[nodiscard]] int                 DistanceFromOriginalType() const    { return TypeDifference(m_type, m_original_type); }
-    [[nodiscard]] PlanetSize          Size() const noexcept               { return m_size; }
+    [[nodiscard]] PlanetType          Type() const noexcept            { return m_type; }
+    [[nodiscard]] PlanetType          OriginalType() const noexcept    { return m_original_type; }
+    [[nodiscard]] int                 DistanceFromOriginalType() const { return TypeDifference(m_type, m_original_type); }
+    [[nodiscard]] PlanetSize          Size() const noexcept            { return m_size; }
     [[nodiscard]] int                 HabitableSize() const;
 
     [[nodiscard]] bool                HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
@@ -136,9 +136,9 @@ public:
     void AddBuilding(int building_id);      ///< adds the building to the planet
     bool RemoveBuilding(int building_id);   ///< removes the building from the planet; returns false if no such building was found
 
-    void Conquer(int conquerer, EmpireManager& empires, Universe& universe);    ///< Called during combat when a planet changes hands
-    bool Colonize(int empire_id, std::string species_name, double population,   ///< Called during colonization handling to do the actual colonizing
-                  ScriptingContext& context);
+    void Conquer(int conquerer, ScriptingContext& context); ///< Called during combat when a planet changes hands
+    bool Colonize(int empire_id, std::string species_name,  ///< Called during colonization handling to do the actual colonizing
+                  double population, ScriptingContext& context);
     void SetIsAboutToBeColonized(bool b);   ///< Called during colonization when a planet is about to be colonized
     void ResetIsAboutToBeColonized();       ///< Called after colonization, to reset the number of prospective colonizers to 0
     void SetIsAboutToBeInvaded(bool b);     ///< Marks planet as being invaded or not, depending on whether \a b is true or false
@@ -156,7 +156,8 @@ public:
 
     /** Given initial set of ground forces on planet, determine ground forces on
       * planet after a turn of ground combat. */
-    static void ResolveGroundCombat(std::map<int, double>& empires_troops, const EmpireManager::DiploStatusMap& diplo_statuses);
+    static void ResolveGroundCombat(std::map<int, double>& empires_troops,
+                                    const EmpireManager::DiploStatusMap& diplo_statuses);
 
     /** Create planet from @p type and @p size. */
     Planet(PlanetType type, PlanetSize size, int creation_turn);

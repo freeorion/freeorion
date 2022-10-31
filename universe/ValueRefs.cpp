@@ -1265,7 +1265,7 @@ std::vector<std::string> Variable<std::vector<std::string>>::Eval(
     else if (property_name == "AvailableFoci") {
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             auto planet = static_cast<const Planet*>(object);
-            return planet->AvailableFoci();
+            return planet->AvailableFoci(context);
         }
         return {};
     }

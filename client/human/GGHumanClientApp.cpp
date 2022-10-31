@@ -926,14 +926,13 @@ void GGHumanClientApp::StartTurn(const SaveGameUIData& ui_data) {
     if (auto empire = m_empires.GetEmpire(EmpireID())) {
         double RP = empire->ResourceOutput(ResourceType::RE_RESEARCH);
         double PP = empire->ResourceOutput(ResourceType::RE_INDUSTRY);
-        int turn_number = CurrentTurn();
-        float ratio = RP / std::max(PP, 0.0001);
-        const GG::Clr& color = empire->Color();
-        DebugLogger() << "Current Output (turn " << turn_number << ") RP/PP: " << ratio << " (" << RP << "/" << PP << ")";
-        DebugLogger() << "EmpireColors: " << static_cast<int>(color.r)
-                      << " " << static_cast<int>(color.g)
-                      << " " << static_cast<int>(color.b)
-                      << " " << static_cast<int>(color.a);
+        auto turn_number = this->m_current_turn;
+        auto ratio = RP / std::max(PP, 0.0001);
+        auto [r, g, b, a] = empire->Color();
+        DebugLogger() << "Current Output (turn " << turn_number << ") RP/PP: " << ratio
+                      << " (" << RP << "/" << PP << ")";
+        DebugLogger() << "EmpireColors: " << static_cast<int>(r) << " " << static_cast<int>(g)
+                      << " " << static_cast<int>(b) << " " << static_cast<int>(a);
     }
 
     // Do the turn end autosave.

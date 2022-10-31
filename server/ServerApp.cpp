@@ -2987,11 +2987,13 @@ namespace {
 
     /** Determines which ships ordered to invade planets, does invasion and
       * ground combat resolution */
-    void HandleInvasion(EmpireManager& empires, Universe& universe) {
+    void HandleInvasion(ScriptingContext& context) {
         std::map<int, std::map<int, double>> planet_empire_troops;  // map from planet ID to map from empire ID to pair consisting of set of ship IDs and amount of troops empires have at planet
         std::vector<Ship*> invade_ships;
-        ObjectMap& objects = universe.Objects();
-        const auto& empire_ids = empires.EmpireIDs();
+        Universe& universe = context.ContextUniverse();
+        ObjectMap& objects = context.ContextObjects();
+        EmpireManager& empires = context.Empires();
+        const auto& empire_ids = context.EmpireIDs();
 
         // collect ships that are invading and the troops they carry
         for (auto* ship : objects.allRaw<Ship>()) {
@@ -3096,7 +3098,7 @@ namespace {
                 // if planet is unowned and victor is an empire, or if planet is
                 // owned by an empire that is not the victor, conquer it
                 if ((victor_id != ALL_EMPIRES) && (planet->Unowned() || !planet->OwnedBy(victor_id))) {
-                    planet->Conquer(victor_id, empires, universe);
+                    planet->Conquer(victor_id, context);
 
                     // create planet conquered sitrep for all involved empires
                     for (int empire_id : all_involved_empires) {
@@ -3111,7 +3113,7 @@ namespace {
 
                 } else if (!planet->Unowned() && victor_id == ALL_EMPIRES) {
                     int previous_owner_id = planet->Owner();
-                    planet->Conquer(ALL_EMPIRES, empires, universe);
+                    planet->Conquer(ALL_EMPIRES, context);
                     DebugLogger() << "Independents conquer planet";
                     for (const auto& empire_troops : empires_troops)
                         DebugLogger() << " empire: " << empire_troops.first << ": " << empire_troops.second;
@@ -3422,7 +3424,7 @@ void ServerApp::PreCombatProcessTurns() {
     HandleColonization(context);
 
     DebugLogger() << "ServerApp::ProcessTurns invasion";
-    HandleInvasion(m_empires, m_universe);
+    HandleInvasion(context);
 
     DebugLogger() << "ServerApp::ProcessTurns gifting";
     HandleGifting(m_empires, m_universe.Objects());

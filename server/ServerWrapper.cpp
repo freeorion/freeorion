@@ -1234,23 +1234,25 @@ namespace {
 
     void PlanetSetFocus(int planet_id, const std::string& focus)
     {
-        auto planet = Objects().get<Planet>(planet_id);
+        ScriptingContext context;
+        auto planet = context.ContextObjects().getRaw<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetSetSpecies: Couldn't get planet with ID " << planet_id;
             return;
         }
-        planet->SetFocus(focus);
+        planet->SetFocus(focus, context);
     }
 
     auto PlanetAvailableFoci(int planet_id) -> py::list
     {
+        const ScriptingContext context;
         py::list py_foci;
-        auto planet = Objects().get<Planet>(planet_id);
+        auto planet = context.ContextObjects().getRaw<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetAvailableFoci: Couldn't get planet with ID " << planet_id;
             return py_foci;
         }
-        for (const std::string& focus : planet->AvailableFoci()) {
+        for (const std::string& focus : planet->AvailableFoci(context)) {
             py_foci.append(py::object(focus));
         }
         return py_foci;
