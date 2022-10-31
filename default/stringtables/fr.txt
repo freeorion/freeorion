@@ -8324,7 +8324,7 @@ BEGINNER_HINT_12
 12: Prêtez attention aux planètes dotées d'une [[encyclopedia ENC_SPECIAL]], ces dernières renferment parfois des ressources pouvant benéficier à l'ensemble de votre empire si celles-ci sont utilisées avec efficacité. Un clic-droit sur l'icône de la Particularité ouvrira l'article correspondant dans l'Encyclopédie.
 
 BEGINNER_HINT_13
-13: Seule l'espèce [[species SP_EXOBOT]] est capable de s'établir au sein des Ceintures d'Astéroïdes. Si vous découvrez de nombreuses Ceintures d'Astéroïdes à proximité des planètes de votre empire, il serait judicieux de rechercher comment produire ces Exobots!
+13: Contrairement à la plupart des espèces, l'espèce [[species SP_EXOBOT]] est capable de coloniser les Ceintures d'Astéroïdes. Si de nombreuses Ceintures d'Astéroïdes se trouvent à proximité des planètes de votre empire, il serait judicieux de rechercher comment produire ces Exobots!
 
 BEGINNER_HINT_14
 14: Recherchez les technologies améliorant l'[[metertype METER_SUPPLY]], telle la [[tech CON_ORBITAL_CON]], afin d'accroître la distance que vos lignes d'approvisonnement peuvent atteindre à partir de vos systèmes.
@@ -12278,7 +12278,7 @@ Postes-Frontières
 PLC_CHECKPOINTS_DESC
 '''Diminue la [[metertype METER_STEALTH]] des planètes et astronefs étrangers se trouvant dans la zone d'[[metertype METER_SUPPLY]] d'au plus [[value PLC_CHECKPOINTS_MAX_STEALTH_MALUS]]. Les planètes et astronefs n'appartenant pas ou n'étant pas alliés à l'empire sont considérés comme étrangers. Les planètes non-colonisées et les monstres sont également des entités étrangères.
 
-La diminution dépend de la durée d'adoption de cette Politique, diminuant la [[metertype METER_STEALTH]] de 1 par tour, jusqu'à un maximum [[value PLC_CHECKPOINTS_MAX_STEALTH_MALUS]].
+La diminution dépend de la durée d'adoption de cette Politique, diminuant la [[metertype METER_STEALTH]] de 1 par tour, jusqu'à un maximum de [[value PLC_CHECKPOINTS_MAX_STEALTH_MALUS]].
 
 Réduit la génération d'[[metertype METER_INFLUENCE]] ([[value PLC_CHECKPOINTS_TARGET_INFLUENCE_FLAT]]).'''
 
@@ -12312,7 +12312,7 @@ Productivité Exobot
 PLC_EXOBOT_PRODUCTIVITY_DESC
 '''Augmente la capacité effective de Production des Exobots sur les planètes en Focus Industrie de "Très Mauvais" à seulement "Mauvais".
 
-Diminue de [[value PLC_EXOBOT_OTHER_PLANET_INDUSTRY_PENALTY]] la Stabilité et la capacité de Production des planètes habitées non-Exobot dans l'empire.'''
+Diminue de [[value PLC_EXOBOT_OTHER_PLANET_INDUSTRY_PENALTY]] la Stabilité et la capacité de Production des planètes habitées non-Exobot en Focus Industrie.'''
 
 PLC_EXOBOT_PRODUCTIVITY_SHORT_DESC
 Améliore la Production des Exobots
