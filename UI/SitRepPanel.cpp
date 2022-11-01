@@ -276,7 +276,7 @@ namespace {
                 DoLayout(ul, lr.x - ul.x);
         }
 
-        const SitRepEntry& GetSitRepEntry() const { return m_sitrep_entry; }
+        const SitRepEntry& GetSitRepEntry() const noexcept { return m_sitrep_entry; }
 
         mutable boost::signals2::signal<void(const GG::Pt&, GG::Flags<GG::ModKey>)> RightClickedSignal;
 
@@ -346,7 +346,8 @@ namespace {
                 Init();
 
             // Resize to fit panel after text reflows
-            GG::Pt border(GG::X(2 * GetLayout()->BorderMargin()), GG::Y(2 * GetLayout()->BorderMargin()));
+            const int margin = 2 * GetLayout()->BorderMargin();
+            const GG::Pt border{GG::X{margin}, GG::Y{margin}};
             m_panel->Resize(Size() - border);
             GG::ListBox::Row::Resize(m_panel->Size() + border);
         }
@@ -358,16 +359,17 @@ namespace {
         }
 
         void Init() {
-            m_panel = GG::Wnd::Create<SitRepDataPanel>(GG::X(GetLayout()->BorderMargin()), GG::Y(GetLayout()->BorderMargin()),
-                                                       ClientWidth() - GG::X(2 * GetLayout()->BorderMargin()),
-                                                       ClientHeight() - GG::Y(2 * GetLayout()->BorderMargin()), m_sitrep);
+            const int margin = GetLayout()->BorderMargin();
+            const auto margin2 = 2 * margin;
+            m_panel = GG::Wnd::Create<SitRepDataPanel>(GG::X(margin), GG::Y(margin),
+                                                       ClientWidth() - GG::X(margin2),
+                                                       ClientHeight() - GG::Y(margin2),
+                                                       m_sitrep);
             push_back(m_panel);
-            namespace ph = boost::placeholders;
-            m_panel->RightClickedSignal.connect(
-                boost::bind(&SitRepRow::RClick, this, ph::_1, ph::_2));
+            m_panel->RightClickedSignal.connect([this](auto pt, auto flags) { return RClick(pt, flags); });
         }
 
-        const SitRepEntry& GetSitRepEntry() const { return m_panel->GetSitRepEntry(); }
+        auto& GetSitRepEntry() const noexcept { return m_sitrep; }
 
     private:
         std::shared_ptr<SitRepDataPanel>    m_panel;
@@ -476,12 +478,12 @@ namespace {
      * Note: Validating requires substituting all of the variables which is time
      * consuming for sitreps that the player will never view. */
     auto GetUnvalidatedSitRepsSortedByTurn(int empire_id) {
-        std::map<int, std::vector<SitRepEntry>> turns;
+        std::map<int, std::vector<const SitRepEntry*>> turns;
 
         auto empire_sitrep_inserter = [&turns](const Empire* e) {
             const auto& sitreps = e->SitReps();
             std::for_each(sitreps.begin(), sitreps.end(),
-                          [&turns](const auto& s) { turns[s.GetTurn()].push_back(s); });
+                          [&turns](const auto& s) { turns[s.GetTurn()].push_back(&s); });
         };
         auto empire_pair_sitrep_inserter = [empire_sitrep_inserter](const auto& ep)
         { empire_sitrep_inserter(ep.second.get()); };
@@ -498,60 +500,65 @@ namespace {
 
         return turns;
     }
-}
 
-bool SitRepPanel::IsSitRepInvalid(const SitRepEntry& sitrep) const {
-    if (m_hidden_sitrep_templates.count(sitrep.GetLabelString().empty() ?
-        sitrep.GetTemplateString() : sitrep.GetLabelString()))
-    { return true; }
+    /** Return true iff the \a sitrep is not hidden, validates and is not snoozed. */
+    bool IsSitRepInvalid(const SitRepEntry& sitrep, const std::set<std::string>& hidden_templates) {
+        auto& label = sitrep.GetLabelString().empty() ? sitrep.GetTemplateString() : sitrep.GetLabelString();
+        if (hidden_templates.count(label))
+            return true;
 
-    // Validation is time consuming because all variables are substituted.
-    // Having ui.map.sitrep.invalid.shown off / disabled will hide sitreps that do not
-    // validate. Having it on will skip the validation check.
-    if (!GetOptionsDB().Get<bool>("ui.map.sitrep.invalid.shown") && !sitrep.Validate())
-        return true;
+        // Validation is time consuming because all variables are substituted.
+        // Having ui.map.sitrep.invalid.shown off / disabled will hide sitreps that do not
+        // validate. Having it on will skip the validation check.
+        if (!GetOptionsDB().Get<bool>("ui.map.sitrep.invalid.shown") && !sitrep.Validate())
+            return true;
 
-    // Check for snoozing.
-    if (permanently_snoozed_sitreps.count(sitrep.GetText()))
-        return true;
+        // Check for snoozing.
+        if (permanently_snoozed_sitreps.count(sitrep.GetText()))
+            return true;
 
-    auto sitrep_set_it = snoozed_sitreps.find(sitrep.GetTurn());
-    if (sitrep_set_it != snoozed_sitreps.end()
-        && sitrep_set_it->second.count(sitrep.GetText()))
-    { return true; }
+        auto sitrep_set_it = snoozed_sitreps.find(sitrep.GetTurn());
+        if (sitrep_set_it != snoozed_sitreps.end()
+            && sitrep_set_it->second.count(sitrep.GetText()))
+        { return true; }
 
-    return false;
-}
-
-int SitRepPanel::GetNextNonEmptySitrepsTurn(const std::map<int, std::vector<SitRepEntry>>& turns,
-                                            int turn, bool forward) const
-{
-    if (turns.empty())
-        return INVALID_GAME_TURN;
-
-    auto contains_valid_sitrep = [this](const auto& p) {
-        return std::any_of(p.cbegin(), p.cend(),
-                           [this](const auto& s) { return !IsSitRepInvalid(s); });
-    };
-
-    auto turn_ok = [=](int t)
-    { return forward ? (t > turn) : (t < turn); };
-
-    auto ok_and_contains_valid = [=](const auto& p)
-    { return turn_ok(p.first) && contains_valid_sitrep(p.second); };
-
-    if (forward) {
-        auto found_it = std::find_if(turns.lower_bound(turn), turns.end(), ok_and_contains_valid);
-        if (found_it != turns.end())
-            return found_it->first;
-
-    } else {
-        auto found_it = std::find_if(turns.crbegin(), turns.crend(), ok_and_contains_valid);
-        if (found_it != turns.rend())
-            return found_it->first;
+        return false;
     }
 
-    return INVALID_GAME_TURN;
+    /** Search forward (if \a forward is true) or backward from \a turn for the next
+    * turn with one or more valid sitreps (not including \a turn itself). */
+    int GetNextNonEmptySitrepsTurn(const std::map<int, std::vector<const SitRepEntry*>>& turns,
+                                   int turn, bool forward, const std::set<std::string>& hidden_templates)
+    {
+        if (turns.empty())
+            return INVALID_GAME_TURN;
+
+        auto contains_valid_sitrep = [&hidden_templates](const auto& p) {
+            return std::any_of(p.cbegin(), p.cend(),
+                               [&hidden_templates](const auto* s) {
+                                   return s && !IsSitRepInvalid(*s, hidden_templates);
+                               });
+        };
+
+        auto turn_ok = [=](int t)
+        { return forward ? (t > turn) : (t < turn); };
+
+        auto ok_and_contains_valid = [=](const auto& p)
+        { return turn_ok(p.first) && contains_valid_sitrep(p.second); };
+
+        if (forward) {
+            auto found_it = std::find_if(turns.lower_bound(turn), turns.end(), ok_and_contains_valid);
+            if (found_it != turns.end())
+                return found_it->first;
+
+        } else {
+            auto found_it = std::find_if(turns.crbegin(), turns.crend(), ok_and_contains_valid);
+            if (found_it != turns.rend())
+                return found_it->first;
+        }
+
+        return INVALID_GAME_TURN;
+    }
 }
 
 void SitRepPanel::CloseClicked()
@@ -559,17 +566,18 @@ void SitRepPanel::CloseClicked()
 
 void SitRepPanel::PrevClicked() {
     auto turns = GetUnvalidatedSitRepsSortedByTurn(GGHumanClientApp::GetApp()->EmpireID());
-    ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(turns, m_showing_turn, false));
+    ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(turns, m_showing_turn, false, m_hidden_sitrep_templates));
 }
 
 void SitRepPanel::NextClicked() {
     auto turns = GetUnvalidatedSitRepsSortedByTurn(GGHumanClientApp::GetApp()->EmpireID());
-    ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(turns, m_showing_turn, true));
+    ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(turns, m_showing_turn, true, m_hidden_sitrep_templates));
 }
 
 void SitRepPanel::LastClicked() {
     auto turns = GetUnvalidatedSitRepsSortedByTurn(GGHumanClientApp::GetApp()->EmpireID());
-    ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(turns, CurrentTurn() + 1, false));    // search backwards from current turn for a non-empty sitrep turn
+    // search backwards from current turn for a non-empty sitrep turn
+    ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(turns, CurrentTurn() + 1, false, m_hidden_sitrep_templates));
 }
 
 void SitRepPanel::FilterClicked() {
@@ -759,7 +767,7 @@ void SitRepPanel::Update() {
     //       observers, instead of just passing the client empire id.
     auto sitreps_by_turn = GetUnvalidatedSitRepsSortedByTurn(GGHumanClientApp::GetApp()->EmpireID());
 
-    m_showing_turn = GetNextNonEmptySitrepsTurn(sitreps_by_turn, m_showing_turn - 1, true);
+    m_showing_turn = GetNextNonEmptySitrepsTurn(sitreps_by_turn, m_showing_turn - 1, true, m_hidden_sitrep_templates);
     if (m_showing_turn < 1)
         this->SetName(UserString("SITREP_PANEL_TITLE"));
     else
@@ -770,55 +778,52 @@ void SitRepPanel::Update() {
 
 
     // filter for valid / visible sitreps
-    std::vector<SitRepEntry> current_turn_sitreps;
+    std::vector<const SitRepEntry*> current_turn_sitreps;
     current_turn_sitreps.reserve(all_current_turn_sitreps.size());
     std::copy_if(std::make_move_iterator(all_current_turn_sitreps.begin()),
                  std::make_move_iterator(all_current_turn_sitreps.end()),
                  std::back_inserter(current_turn_sitreps),
-                 [this](const SitRepEntry& sitrep) { return !IsSitRepInvalid(sitrep); });
+                 [this](const auto* s) { return s && !IsSitRepInvalid(*s, m_hidden_sitrep_templates); });
 
     // order sitreps for display
     const auto ordered_template_strings = OrderedSitrepTemplateStrings();
-    std::vector<std::vector<SitRepEntry>> sorted_sitreps;
+    std::vector<std::vector<const SitRepEntry*>> sorted_sitreps;
     sorted_sitreps.resize(ordered_template_strings.size());
-    std::vector<SitRepEntry> remaining_unordered_sitreps;
+    std::vector<const SitRepEntry*> remaining_unordered_sitreps;
     remaining_unordered_sitreps.reserve(current_turn_sitreps.size());
 
-    for (auto& sitrep : current_turn_sitreps) {
-        std::string_view label_string = sitrep.GetLabelString().empty() ?
-            sitrep.GetTemplateString() : sitrep.GetLabelString();
+    for (auto* sitrep : current_turn_sitreps) {
+        if (!sitrep)
+            continue;
+        const auto& s{*sitrep};
+        std::string_view label_string = s.GetLabelString().empty() ? s.GetTemplateString() : s.GetLabelString();
         auto it = std::find_if(ordered_template_strings.begin(), ordered_template_strings.end(),
-                            [label_string](const auto& ts) { return label_string == ts; });
+                               [label_string](const auto& ts) { return label_string == ts; });
         if (it == ordered_template_strings.end()) {
-            remaining_unordered_sitreps.push_back(std::move(sitrep));
+            remaining_unordered_sitreps.push_back(sitrep);
         } else {
             auto idx = std::distance(ordered_template_strings.begin(), it);
-            sorted_sitreps[idx].push_back(std::move(sitrep));
+            sorted_sitreps[idx].push_back(sitrep);
         }
     }
 
     // flatten vector of vectors to single vector
-    std::vector<SitRepEntry> ordered_sitreps;
+    std::vector<const SitRepEntry*> ordered_sitreps;
     ordered_sitreps.reserve(current_turn_sitreps.size());
     std::for_each(sorted_sitreps.begin(), sorted_sitreps.end(),
                   [&ordered_sitreps](auto& sitrep_vec) {
-                      ordered_sitreps.insert(ordered_sitreps.end(),
-                                             std::make_move_iterator(sitrep_vec.begin()),
-                                             std::make_move_iterator(sitrep_vec.end()));
+                      ordered_sitreps.insert(ordered_sitreps.end(), sitrep_vec.begin(), sitrep_vec.end());
                   });
 
     // create UI rows for all sitrps
-    GG::X width = m_sitreps_lb->ClientWidth();
+    const GG::X width = m_sitreps_lb->ClientWidth();
+    const GG::Y height{ClientUI::Pts()*2};
     // first the ordered sitreps
-    for (SitRepEntry& sitrep : ordered_sitreps) {
-        m_sitreps_lb->Insert(GG::Wnd::Create<SitRepRow>(width, GG::Y(ClientUI::Pts()*2),
-                                                        std::move(sitrep)));
-    }
+    for (auto* sitrep : ordered_sitreps)
+        m_sitreps_lb->Insert(GG::Wnd::Create<SitRepRow>(width, height, *sitrep));
     // then the remaining unordered sitreps
-    for (SitRepEntry& sitrep : remaining_unordered_sitreps) {
-        m_sitreps_lb->Insert(GG::Wnd::Create<SitRepRow>(width, GG::Y(ClientUI::Pts()*2),
-                                                        std::move(sitrep)));
-    }
+    for (auto* sitrep : remaining_unordered_sitreps)
+        m_sitreps_lb->Insert(GG::Wnd::Create<SitRepRow>(width, height, *sitrep));
 
 
     if (m_sitreps_lb->NumRows() > first_visible_row) {
@@ -828,13 +833,13 @@ void SitRepPanel::Update() {
     }
 
     // if at first turn with visible sitreps, disable back button
-    int prev_turn_with_sitrep = GetNextNonEmptySitrepsTurn(sitreps_by_turn, m_showing_turn, false);
+    int prev_turn_with_sitrep = GetNextNonEmptySitrepsTurn(sitreps_by_turn, m_showing_turn, false, m_hidden_sitrep_templates);
 
     bool disable_prev_turn = prev_turn_with_sitrep == INVALID_GAME_TURN;
     m_prev_turn_button->Disable(disable_prev_turn);
 
     // if at last turn with visible sitreps, disable forward button
-    int next_turn_with_sitrep = GetNextNonEmptySitrepsTurn(sitreps_by_turn, m_showing_turn, true);
+    int next_turn_with_sitrep = GetNextNonEmptySitrepsTurn(sitreps_by_turn, m_showing_turn, true, m_hidden_sitrep_templates);
 
     bool disable_next_turn = next_turn_with_sitrep == INVALID_GAME_TURN;
     m_next_turn_button->Disable(disable_next_turn);
@@ -859,7 +864,7 @@ void SitRepPanel::SetHiddenSitRepTemplates(const std::set<std::string>& template
 int SitRepPanel::NumVisibleSitrepsThisTurn() const {
     auto turns = GetUnvalidatedSitRepsSortedByTurn(GGHumanClientApp::GetApp()->EmpireID());
     auto& this_turn_sitreps = turns[CurrentTurn()];
-    auto is_valid = [this](const auto& s) { return !IsSitRepInvalid(s); };
+    auto is_valid = [this](const auto* s) { return s && !IsSitRepInvalid(*s, m_hidden_sitrep_templates); };
 
     return std::count_if(this_turn_sitreps.begin(), this_turn_sitreps.end(), is_valid);
 }
