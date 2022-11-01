@@ -9943,7 +9943,9 @@ SUCCULENT_BARNACLES_SPECIAL
 Succulent Barnacles
 
 SUCCULENT_BARNACLES_SPECIAL_DESC
-The planet hosts a colony of succulent barnacles that can be harvested and exported.
+'''The planet hosts a colony of succulent barnacles that can be harvested and exported.
+
+[[LUXURY_SPECIAL]]'''
 
 SUCCULENT_BARNACLES_SPECIAL_IMPORTS
 Imported [[SUCCULENT_BARNACLES_SPECIAL]]
@@ -9952,7 +9954,9 @@ FRACTAL_GEODES_SPECIAL
 Fractal Geodes
 
 FRACTAL_GEODES_SPECIAL_DESC
-The planet is scattered with irridescent fractal geodes that can be collected and exported.
+'''The planet is scattered with irridescent fractal geodes that can be collected and exported.
+
+[[LUXURY_SPECIAL]]'''
 
 FRACTAL_GEODES_SPECIAL_IMPORTS
 Imported [[FRACTAL_GEODES_SPECIAL]]
@@ -9961,7 +9965,9 @@ SHIMMER_SILK_SPECIAL
 Shimmer Silk
 
 SHIMMER_SILK_SPECIAL_SPECIAL_DESC
-This planet extrudes sheets of delicate and shimmering silk-like material that can be collected and exported.
+'''This planet extrudes sheets of delicate and shimmering silk-like material that can be collected and exported.
+
+[[LUXURY_SPECIAL]]'''
 
 SHIMMER_SILK_SPECIAL_IMPORTS
 Imported [[SHIMMER_SILK_SPECIAL]]
@@ -9970,7 +9976,9 @@ SPARK_FOSSILS_SPECIAL
 Spark Fossils
 
 SPARK_FOSSILS_SPECIAL_DESC
-This planet's outer crust is spotted with clear crystal fossilized creatures that sparkle with electric discharges when touched, and which can be extracted and exported.
+'''This planet's outer crust is spotted with clear crystal fossilized creatures that sparkle with electric discharges when touched, and which can be extracted and exported.
+
+[[LUXURY_SPECIAL]]'''
 
 SPARK_FOSSILS_SPECIAL_IMPORTS
 Imported [[SPARK_FOSSILS_SPECIAL]]
@@ -9979,10 +9987,16 @@ MIMETIC_ALLOY_SPECIAL
 Mimetic Alloy
 
 MIMETIC_ALLOY_SPECIAL_DESC
-This planet has pools of mimetic alloy on its surface, which morphs to resemble the shape of an object placed nearby, and which may be bottled and exported.
+'''This planet has pools of mimetic alloy on its surface, which morphs to resemble the shape of an object placed nearby, and which may be bottled and exported.
+
+[[LUXURY_SPECIAL]]'''
 
 MIMETIC_ALLOY_SPECIAL_IMPORTS
 Imported [[MIMETIC_ALLOY_SPECIAL]]
+
+LUXURY_SPECIAL
+'''Increases [[metertype METER_TARGET_INFLUENCE]] on this planet by [[value SPECIAL_INFLUENCE_FOCUS_BONUS]] when Focus is set to [[encyclopedia INFLUENCE_FOCUS_TITLE]].
+Provides additional bonuses when empire has adopted [[policy PLC_CAPITAL_MARKETS]] or [[policy PLC_BLACK_MARKET]].'''
 
 STARLANE_DRIVE_ACTIVATED_SPECIAL
 Scripting auxiliary
