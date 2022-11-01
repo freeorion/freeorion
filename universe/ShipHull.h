@@ -34,7 +34,7 @@ public:
             type(slot_type), x(x_), y(y_)
         {}
 
-        bool operator==(const Slot& rhs) const
+        bool operator==(const Slot& rhs) const noexcept
         { return type == rhs.type && x == rhs.x && y == rhs.y; }
 
         ShipSlotType type = ShipSlotType::INVALID_SHIP_SLOT_TYPE;
