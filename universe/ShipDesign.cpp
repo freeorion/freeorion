@@ -361,21 +361,21 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const { // T
     if (!location->OwnedBy(empire_id))
         return false;
 
-    auto planet = dynamic_cast<const Planet*>(location);
-    const Ship* ship = nullptr;
-    if (!planet)
-        ship = dynamic_cast<const Ship*>(location);
-    if (!planet && !ship)
-        return false;
-
-    // ships can only be produced by species that are not planetbound
-    const std::string& species_name = planet ? planet->SpeciesName() : (ship ? ship->SpeciesName() : EMPTY_STRING);
+    std::string_view species_name;
+    if (location->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+        auto planet = static_cast<const Planet*>(location);
+        species_name = planet->SpeciesName();
+    } else if (location->ObjectType() == UniverseObjectType::OBJ_SHIP) {
+        auto ship = static_cast<const Ship*>(location);
+        species_name = ship->SpeciesName();
+    }
     if (species_name.empty())
         return false;
-    const Species* species = GetSpecies(species_name);
+    const Species* species = GetSpecies(species_name); // TODO: use context.species.GetSpecies
     if (!species)
         return false;
 
+    // ships can only be produced by species that are not planetbound
     if (!species->CanProduceShips())
         return false;
     // also, species that can't colonize can't produce colony ships
@@ -394,7 +394,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const { // T
         return false;
 
     // apply external and internal parts' location conditions to potential location
-    for (const std::string& part_name : m_parts) {
+    for (const auto& part_name : m_parts) {
         if (part_name.empty())
             continue;       // empty slots don't limit build location
 

@@ -1390,11 +1390,11 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
         const Species* species = nullptr;
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             auto planet = static_cast<const Planet*>(object);
-            species = GetSpecies(planet->SpeciesName());
+            species = context.species.GetSpecies(planet->SpeciesName());
 
         } else if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {
             auto ship = static_cast<const Ship*>(object);
-            species = GetSpecies(ship->SpeciesName());
+            species = context.species.GetSpecies(ship->SpeciesName());
         }
         if (species)
             return species->DefaultFocus();

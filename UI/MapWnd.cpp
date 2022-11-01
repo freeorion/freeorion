@@ -7029,6 +7029,8 @@ void MapWnd::RefreshIndustryResourceIndicator() {
 }
 
 void MapWnd::RefreshPopulationIndicator() {
+    // TODO: make a ScriptingContext and use instead of free GetEmpire, Objects, etc.
+
     float target_population = 0.0f;
     Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
     if (!empire) {
@@ -7046,20 +7048,21 @@ void MapWnd::RefreshPopulationIndicator() {
     std::map<std::string, float> tag_counts;
     std::map<std::string, int>   tag_worlds;
     const ObjectMap& objects = Objects();
+    const SpeciesManager& sm = GetSpeciesManager();
 
     //tally up all species population counts
-    for (const auto& pc : objects.findRaw<PopCenter>(pop_center_ids)) {
+    for (const auto* pc : objects.findRaw<PopCenter>(pop_center_ids)) {
         if (!pc)
             continue;
 
-        const std::string& species_name = pc->SpeciesName();
+        const auto& species_name = pc->SpeciesName();
         if (species_name.empty())
             continue;
         float this_pop = pc->GetMeter(MeterType::METER_POPULATION)->Initial();
         population_counts[species_name] += this_pop;
         population_worlds[species_name] += 1;
-        if (const Species* species = GetSpecies(species_name) ) {
-            for (auto& tag : species->Tags()) {
+        if (const Species* species = sm.GetSpecies(species_name) ) {
+            for (auto tag : species->Tags()) {
                 tag_counts[std::string{tag}] += this_pop;
                 tag_worlds[std::string{tag}] += 1;
             }
