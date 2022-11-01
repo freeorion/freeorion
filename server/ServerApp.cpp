@@ -3276,8 +3276,8 @@ namespace {
             if (fleet) {
                 fleet->RemoveShips({ship->ID()});
                 if (fleet->Empty()) {
-                    //scrapped_object_ids.push_back(fleet->ID());
-                    system->Remove(fleet->ID());
+                    if (system)
+                        system->Remove(fleet->ID());
                     universe.Destroy(fleet->ID(), empire_ids);
                 }
             }
