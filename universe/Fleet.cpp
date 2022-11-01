@@ -846,7 +846,7 @@ void Fleet::MovementPhase(ScriptingContext& context) {
                                     context.diplo_statuses))
     {
         for (auto& ship : ships)
-            ship->Resupply();
+            ship->Resupply(context.current_turn);
     }
 
     auto current_system = objects.get<System>(SystemID());
@@ -994,7 +994,7 @@ void Fleet::MovementPhase(ScriptingContext& context) {
                 //DebugLogger() << " ... node has fuel supply.  consumed fuel for movement reset to 0 and fleet resupplied";
                 fuel_consumed = 0.0f;
                 for (auto& ship : ships)
-                    ship->Resupply();
+                    ship->Resupply(context.current_turn);
             }
 
 

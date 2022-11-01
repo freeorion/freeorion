@@ -1550,7 +1550,7 @@ void SetSpecies::Execute(ScriptingContext& context) const {
 
         ScriptingContext::CurrentValueVariant cvv{planet->SpeciesName()};
         ScriptingContext name_context{context, cvv};
-        planet->SetSpecies(m_species_name->Eval(name_context));
+        planet->SetSpecies(m_species_name->Eval(name_context), context.current_turn);
 
         // ensure non-empty and permissible focus setting for new species
         auto& initial_focus = planet->Focus();

@@ -1407,14 +1407,14 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
                 if (spec_pair_it != species_colony_projections.end()) {
                     planet_capacity = spec_pair_it->second;
                 } else {
-                    const Species* species = GetSpecies(ship_species_name);
+                    const Species* species = context.species.GetSpecies(ship_species_name);
                     PlanetEnvironment planet_environment = PlanetEnvironment::PE_UNINHABITABLE;
                     if (species)
                         planet_environment = species->GetPlanetEnvironment(target_planet->Type());
                     if (planet_environment != PlanetEnvironment::PE_UNINHABITABLE) {
                         changed_planet = true;
                         target_planet->SetOwner(empire_id);
-                        target_planet->SetSpecies(ship_species_name);
+                        target_planet->SetSpecies(ship_species_name, context.current_turn);
                         target_planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Reset();
 
                         // temporary meter update with currently set species
@@ -1435,7 +1435,7 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
     }
     if (changed_planet) {
         target_planet->SetOwner(orig_owner);
-        target_planet->SetSpecies(orig_species);
+        target_planet->SetSpecies(orig_species, context.current_turn);
         target_planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Set(orig_initial_target_pop,
                                                                          orig_initial_target_pop);
         u.UpdateMeterEstimates(target_planet_id, context);
@@ -1725,14 +1725,14 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
             int orig_owner = planet->Owner();
             float orig_initial_target_pop = planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Initial();
             planet->SetOwner(client_empire_id);
-            planet->SetSpecies(colony_ship_species_name);   // const std::string& -> no move
+            planet->SetSpecies(colony_ship_species_name, context.current_turn); // const std::string& -> no move
             planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Reset();
 
             // temporary meter updates for curently set species
             u.UpdateMeterEstimates(m_planet_id, context);
             planet_capacity = ((planet_env_for_colony_species == PlanetEnvironment::PE_UNINHABITABLE) ? 0.0 : planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Current());   // want target pop after meter update, so check current value of meter
             planet->SetOwner(orig_owner);
-            planet->SetSpecies(orig_species);
+            planet->SetSpecies(orig_species, context.current_turn);
             planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Set(
                 orig_initial_target_pop, orig_initial_target_pop);
             u.UpdateMeterEstimates(m_planet_id, context);

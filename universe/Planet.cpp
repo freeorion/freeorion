@@ -627,20 +627,19 @@ void Planet::Reset(ObjectMap& objects) {
     SetOwner(ALL_EMPIRES);
 }
 
-void Planet::Depopulate() {
-    PopCenter::Depopulate();
+void Planet::Depopulate(int current_turn) {
+    PopCenter::Depopulate(current_turn);
 
     GetMeter(MeterType::METER_INDUSTRY)->Reset();
     GetMeter(MeterType::METER_RESEARCH)->Reset();
     GetMeter(MeterType::METER_INFLUENCE)->Reset();
     GetMeter(MeterType::METER_CONSTRUCTION)->Reset();
 
-    const ScriptingContext context; // TODO: pass in turn
-    ClearFocus(context.current_turn);
+    ClearFocus(current_turn);
 }
 
 void Planet::Conquer(int conquerer, ScriptingContext& context) {
-    m_turn_last_conquered = CurrentTurn(); // TODO: pass in turn
+    m_turn_last_conquered = context.current_turn;
 
     // deal with things on production queue located at this planet
     Empire::ConquerProductionQueueItemsAtLocation(ID(), conquerer, context.Empires());
@@ -703,10 +702,10 @@ void Planet::Conquer(int conquerer, ScriptingContext& context) {
     GetMeter(MeterType::METER_DETECTION)->BackPropagate();
 }
 
-void Planet::SetSpecies(std::string species_name) { // TODO: pass current_turn
+void Planet::SetSpecies(std::string species_name, int turn) {
     if (SpeciesName().empty() && !species_name.empty())
-        m_turn_last_colonized = CurrentTurn();  // if setting species with an effect, not via Colonize, consider it a colonization when there was no previous species set
-    PopCenter::SetSpecies(std::move(species_name));
+        m_turn_last_colonized = turn;  // if setting species with an effect, not via Colonize, consider it a colonization when there was no previous species set
+    PopCenter::SetSpecies(std::move(species_name), turn);
 }
 
 bool Planet::Colonize(int empire_id, std::string species_name, double population,
@@ -749,7 +748,7 @@ bool Planet::Colonize(int empire_id, std::string species_name, double population
 
     // if desired pop > 0, we want a colony, not an outpost, so we have to set the colony species
     if (population > 0.0)
-        SetSpecies(std::move(species_name));
+        SetSpecies(std::move(species_name), context.current_turn);
     m_turn_last_colonized = context.current_turn; // may be redundant with same in SetSpecies, but here occurrs always, whereas in SetSpecies is only done if species is initially empty
 
     // find a default focus. use first defined available focus.
@@ -838,7 +837,7 @@ void Planet::SetSurfaceTexture(const std::string& texture) {
 
 void Planet::PopGrowthProductionResearchPhase(ScriptingContext& context) {
     UniverseObject::PopGrowthProductionResearchPhase(context);
-    PopCenterPopGrowthProductionResearchPhase();
+    PopCenterPopGrowthProductionResearchPhase(context.current_turn);
 
     // should be run after a meter update, but before a backpropagation, so check current, not initial, meter values
 

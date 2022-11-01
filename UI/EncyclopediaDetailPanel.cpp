@@ -2562,12 +2562,12 @@ namespace {
         */
 
         // species opinions
-        const auto& ssom = GetSpeciesManager().GetSpeciesSpeciesOpinionsMap();
+        const auto& ssom = sm.GetSpeciesSpeciesOpinionsMap();
         auto species_it2 = ssom.find(species->Name());
         if (species_it2 != ssom.end()) {
             detailed_description.append("\n").append(UserString("OPINIONS_OF_OTHER_SPECIES")).append("\n");
             for (const auto& entry : species_it2->second) {
-                const Species* species2 = GetSpecies(entry.first);
+                const Species* species2 = sm.GetSpecies(entry.first);
                 if (!species2)
                     continue;
 
@@ -2576,8 +2576,8 @@ namespace {
         }
 
         // species that like / dislike other species
-        auto species_that_like = GetSpeciesManager().SpeciesThatLike(item_name);
-        auto species_that_dislike = GetSpeciesManager().SpeciesThatDislike(item_name);
+        auto species_that_like = sm.SpeciesThatLike(item_name);
+        auto species_that_dislike = sm.SpeciesThatDislike(item_name);
         if (!species_that_like.empty()) {
             detailed_description.append("\n\n").append(UserString("SPECIES_THAT_LIKE"));
             detailed_description.append(LinkList(species_that_like));
@@ -2891,14 +2891,14 @@ namespace {
 
             // apply empty species for 'Generic' entry
             universe.UpdateMeterEstimates(temp->ID(), context);
-            temp->Resupply();
+            temp->Resupply(context.current_turn);
             detailed_description.append(GetDetailedDescriptionStats(temp, design, enemy_DR, enemy_shots, cost));
 
             // apply various species to ship, re-calculating the meter values for each
             for (std::string& species_name : species_list) {
                 temp->SetSpecies(std::move(species_name));
                 universe.UpdateMeterEstimates(temp->ID(), context);
-                temp->Resupply();
+                temp->Resupply(context.current_turn);
                 detailed_description.append(GetDetailedDescriptionStats(temp, design, enemy_DR, enemy_shots, cost));
             }
 
@@ -3017,9 +3017,6 @@ namespace {
             additional_species.insert(this_ship->SpeciesName());
         }
 
-        std::vector<std::string> species_list(additional_species.begin(), additional_species.end());
-
-
         // temporary ship to use for estimating design's meter values
         auto temp = universe.InsertTemp<Ship>(client_empire_id, incomplete_design->ID(), "",
                                               universe, species_manager, client_empire_id,
@@ -3027,15 +3024,15 @@ namespace {
 
         // apply empty species for 'Generic' entry
         universe.UpdateMeterEstimates(temp->ID(), context);
-        temp->Resupply();
+        temp->Resupply(context.current_turn);
         detailed_description.append(GetDetailedDescriptionStats(temp, incomplete_design.get(),
                                                                 enemy_DR, enemy_shots, cost));
 
         // apply various species to ship, re-calculating the meter values for each
-        for (std::string& species_name : species_list) {
-            temp->SetSpecies(std::move(species_name));
-            GetUniverse().UpdateMeterEstimates(temp->ID(), context);
-            temp->Resupply();
+        for (auto& species_name : additional_species) {
+            temp->SetSpecies(species_name);
+            universe.UpdateMeterEstimates(temp->ID(), context);
+            temp->Resupply(context.current_turn);
             detailed_description.append(GetDetailedDescriptionStats(temp, incomplete_design.get(),
                                                                     enemy_DR, enemy_shots, cost));
         }
@@ -3164,10 +3161,11 @@ namespace {
         auto empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
         Universe& universe = GetUniverse();
-        ScriptingContext context{universe, Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
+        ScriptingContext context{universe, Empires(), GetGalaxySetupData(),
+                                 GetSpeciesManager(), GetSupplyManager()};
         universe.InhibitUniverseObjectSignals(true);
 
-        for (const auto& species_name : species_names) { // TODO: parallelize somehow? tricky since an existing planet is being modified, rather than adding a test planet...
+        for (const auto species_name : species_names) { // TODO: parallelize somehow? tricky since an existing planet is being modified, rather than adding a test planet...
             // Setting the planet's species allows all of it meters to reflect
             // species (and empire) properties, such as environment type
             // preferences and tech.
@@ -3175,7 +3173,7 @@ namespace {
             // NOTE: Overridding current or initial value of MeterType::METER_TARGET_POPULATION prior to update
             //       results in incorrect estimates for at least effects with a min target population of 0
             try {
-                planet->SetSpecies(std::string{species_name});
+                planet->SetSpecies(std::string{species_name}, context.current_turn);
                 planet->SetOwner(empire_id);
                 universe.ApplyMeterEffectsAndUpdateMeters(planet_id_vec, context, false);
             } catch (const std::exception& e) {
@@ -3185,9 +3183,8 @@ namespace {
 
             try {
                 const auto species = context.species.GetSpecies(species_name);
-                auto planet_environment = PlanetEnvironment::PE_UNINHABITABLE;
-                if (species)
-                    planet_environment = species->GetPlanetEnvironment(planet->Type());
+                auto planet_environment = species ?
+                    species->GetPlanetEnvironment(planet->Type()) : PlanetEnvironment::PE_UNINHABITABLE;
 
                 float planet_capacity = ((planet_environment == PlanetEnvironment::PE_UNINHABITABLE) ?
                                          0.0f : planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Current()); // want value after temporary meter update, so get current, not initial value of meter
@@ -3201,9 +3198,10 @@ namespace {
 
         try {
             // restore planet to original state
-            planet->SetSpecies(original_planet_species);
+            planet->SetSpecies(original_planet_species, context.current_turn);
             planet->SetOwner(original_owner_id);
-            planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Set(orig_initial_target_pop, orig_initial_target_pop);
+            planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Set(
+                orig_initial_target_pop, orig_initial_target_pop);
         } catch (const std::exception& e) {
             ErrorLogger() << "Caught exception restoring planet to original state after setting test species / owner : " << e.what();
         }

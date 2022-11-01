@@ -32,15 +32,15 @@ public:
 
     void                Copy(std::shared_ptr<const PopCenter> copied_object, Visibility vis);
     void                Copy(std::shared_ptr<const PopCenter> copied_object);
-    virtual void        SetSpecies(std::string species_name);               ///< sets the species of the population to \a species_name
+    virtual void        SetSpecies(std::string species_name, int turn);     ///< sets the species of the population to \a species_name
     virtual void        Reset(ObjectMap&);                                  ///< sets all meters to 0, clears race name
-    virtual void        Depopulate();                                       ///< removes population
+    virtual void        Depopulate(int);                                    ///< removes population
 
 protected:
     void Init();    ///< initialization that needs to be called by derived class after derived class is constructed
     void PopCenterResetTargetMaxUnpairedMeters();
     void PopCenterClampMeters();
-    void PopCenterPopGrowthProductionResearchPhase();
+    void PopCenterPopGrowthProductionResearchPhase(int turn);
 
 private:
     virtual void AddMeter(MeterType meter_type) = 0;///< implementation should add a meter to the object so that it can be accessed with the GetMeter() functions

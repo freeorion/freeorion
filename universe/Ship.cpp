@@ -568,8 +568,8 @@ void Ship::BackPropagateMeters() {
         entry.second.BackPropagate();
 }
 
-void Ship::Resupply() {
-    m_last_resupplied_on_turn = CurrentTurn();
+void Ship::Resupply(int turn) {
+    m_last_resupplied_on_turn = turn;
 
     Meter* fuel_meter = UniverseObject::GetMeter(MeterType::METER_FUEL);
     const Meter* max_fuel_meter = UniverseObject::GetMeter(MeterType::METER_MAX_FUEL);

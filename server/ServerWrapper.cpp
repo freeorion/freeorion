@@ -944,7 +944,7 @@ namespace {
     auto CreateFieldInSystem(const std::string& field_type_name, double size, int system_id) -> int
     {
         // check if system exists and get system
-        auto system = Objects().get<System>(system_id);
+        auto system = Objects().getRaw<System>(system_id);
         if (!system) {
             ErrorLogger() << "CreateFieldInSystem: couldn't get system with ID " << system_id;
             return INVALID_OBJECT_ID;
@@ -964,7 +964,7 @@ namespace {
         py::stl_input_iterator<int> end;
         for (py::stl_input_iterator<int> id(obj_ids);
              id != end; ++id) {
-            if (auto obj = Objects().get(*id)) {
+            if (auto obj = Objects().getRaw(*id)) {
                 py_systems.append(obj->SystemID());
             } else {
                 ErrorLogger() << "Passed an invalid universe object id " << *id;
@@ -994,7 +994,7 @@ namespace {
     // Wrappers for System class member functions
     auto SystemGetStarType(int system_id) -> StarType
     {
-        auto system = Objects().get<System>(system_id);
+        auto system = Objects().getRaw<const System>(system_id);
         if (!system) {
             ErrorLogger() << "SystemGetStarType: couldn't get system with ID " << system_id;
             return StarType::INVALID_STAR_TYPE;
@@ -1009,7 +1009,7 @@ namespace {
             return;
         }
 
-        auto system = Objects().get<System>(system_id);
+        auto system = Objects().getRaw<System>(system_id);
         if (!system) {
             ErrorLogger() << "SystemSetStarType : Couldn't get system with ID " << system_id;
             return;
@@ -1020,7 +1020,7 @@ namespace {
 
     auto SystemGetNumOrbits(int system_id) -> int
     {
-        auto system = Objects().get<System>(system_id);
+        auto system = Objects().getRaw<const System>(system_id);
         if (!system) {
             ErrorLogger() << "SystemGetNumOrbits : Couldn't get system with ID " << system_id;
             return 0;
@@ -1031,19 +1031,19 @@ namespace {
     auto SystemFreeOrbits(int system_id) -> py::list
     {
         py::list py_orbits;
-        auto system = Objects().get<System>(system_id);
+        auto system = Objects().getRaw<const System>(system_id);
         if (!system) {
             ErrorLogger() << "SystemFreeOrbits : Couldn't get system with ID " << system_id;
             return py_orbits;
         }
         for (int orbit_idx : system->FreeOrbits())
-        { py_orbits.append(orbit_idx); }
+            py_orbits.append(orbit_idx);
         return py_orbits;
     }
 
     auto SystemOrbitOccupied(int system_id, int orbit) -> bool
     {
-        auto system = Objects().get<System>(system_id);
+        auto system = Objects().getRaw<const System>(system_id);
         if (!system) {
             ErrorLogger() << "SystemOrbitOccupied : Couldn't get system with ID " << system_id;
             return 0;
@@ -1053,7 +1053,7 @@ namespace {
 
     auto SystemOrbitOfPlanet(int system_id, int planet_id) -> int
     {
-        auto system = Objects().get<System>(system_id);
+        auto system = Objects().getRaw<const System>(system_id);
         if (!system) {
             ErrorLogger() << "SystemOrbitOfPlanet : Couldn't get system with ID " << system_id;
             return 0;
@@ -1064,26 +1064,26 @@ namespace {
     auto SystemGetPlanets(int system_id) -> py::list
     {
         py::list py_planets;
-        auto system = Objects().get<System>(system_id);
+        auto system = Objects().getRaw<const System>(system_id);
         if (!system) {
             ErrorLogger() << "SystemGetPlanets : Couldn't get system with ID " << system_id;
             return py_planets;
         }
         for (int planet_id : system->PlanetIDs())
-        { py_planets.append(planet_id); }
+            py_planets.append(planet_id);
         return py_planets;
     }
 
     auto SystemGetFleets(int system_id) -> py::list
     {
         py::list py_fleets;
-        auto system = Objects().get<System>(system_id);
+        auto system = Objects().getRaw<const System>(system_id);
         if (!system) {
             ErrorLogger() << "SystemGetFleets : Couldn't get system with ID " << system_id;
             return py_fleets;
         }
         for (int fleet_id : system->FleetIDs())
-        { py_fleets.append(fleet_id); }
+            py_fleets.append(fleet_id);
         return py_fleets;
     }
 
@@ -1091,7 +1091,7 @@ namespace {
     {
         py::list py_starlanes;
         // get source system
-        auto system = Objects().get<System>(system_id);
+        auto system = Objects().getRaw<const System>(system_id);
         if (!system) {
             ErrorLogger() << "SystemGetStarlanes : Couldn't get system with ID " << system_id;
             return py_starlanes;
@@ -1099,12 +1099,11 @@ namespace {
         // get list of systems the source system has starlanes to
         // we actually get a map of ids and a bool indicating if the entry is a starlane (false) or wormhole (true)
         // iterate over the map we got, only copy starlanes to the python list object we are going to return
-        for (const auto& lane : system->StarlanesWormholes()) {
+        for (const auto& [lane_to_id, is_wormhole] : system->StarlanesWormholes()) {
             // if the bool value is false, we have a starlane
             // in this case copy the destination system id to our starlane list
-            if (!(lane.second)) {
-                py_starlanes.append(lane.first);
-            }
+            if (!is_wormhole)
+                py_starlanes.append(lane_to_id);
         }
         return py_starlanes;
     }
@@ -1112,12 +1111,12 @@ namespace {
     void SystemAddStarlane(int from_sys_id, int to_sys_id)
     {
         // get source and destination system, check that both exist
-        auto from_sys = Objects().get<System>(from_sys_id);
+        auto from_sys = Objects().getRaw<System>(from_sys_id);
         if (!from_sys) {
             ErrorLogger() << "SystemAddStarlane : Couldn't find system with ID " << from_sys_id;
             return;
         }
-        auto to_sys = Objects().get<System>(to_sys_id);
+        auto to_sys = Objects().getRaw<System>(to_sys_id);
         if (!to_sys) {
             ErrorLogger() << "SystemAddStarlane : Couldn't find system with ID " << to_sys_id;
             return;
@@ -1130,12 +1129,12 @@ namespace {
     void SystemRemoveStarlane(int from_sys_id, int to_sys_id)
     {
         // get source and destination system, check that both exist
-        auto from_sys = Objects().get<System>(from_sys_id);
+        auto from_sys = Objects().getRaw<System>(from_sys_id);
         if (!from_sys) {
             ErrorLogger() << "SystemRemoveStarlane : Couldn't find system with ID " << from_sys_id;
             return;
         }
-        auto to_sys = Objects().get<System>(to_sys_id);
+        auto to_sys = Objects().getRaw<System>(to_sys_id);
         if (!to_sys) {
             ErrorLogger() << "SystemRemoveStarlane : Couldn't find system with ID " << to_sys_id;
             return;
@@ -1148,7 +1147,7 @@ namespace {
     // Wrapper for Planet class member functions
     auto PlanetGetType(int planet_id) -> PlanetType
     {
-        auto planet = Objects().get<Planet>(planet_id);
+        auto planet = Objects().getRaw<const Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetGetType: Couldn't get planet with ID " << planet_id;
             return PlanetType::INVALID_PLANET_TYPE;
@@ -1158,7 +1157,7 @@ namespace {
 
     void PlanetSetType(int planet_id, PlanetType planet_type)
     {
-        auto planet = Objects().get<Planet>(planet_id);
+        auto planet = Objects().getRaw<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetSetType: Couldn't get planet with ID " << planet_id;
             return;
@@ -1177,7 +1176,7 @@ namespace {
 
     auto PlanetGetSize(int planet_id) -> PlanetSize
     {
-        auto planet = Objects().get<Planet>(planet_id);
+        auto planet = Objects().getRaw<const Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetGetSize: Couldn't get planet with ID " << planet_id;
             return PlanetSize::INVALID_PLANET_SIZE;
@@ -1187,7 +1186,7 @@ namespace {
 
     void PlanetSetSize(int planet_id, PlanetSize planet_size)
     {
-        auto planet = Objects().get<Planet>(planet_id);
+        auto planet = Objects().getRaw<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetSetSize: Couldn't get planet with ID " << planet_id;
             return;
@@ -1204,7 +1203,7 @@ namespace {
 
     auto PlanetGetSpecies(int planet_id) -> py::object
     {
-        auto planet = Objects().get<Planet>(planet_id);
+        auto planet = Objects().getRaw<const Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetGetSpecies: Couldn't get planet with ID " << planet_id;
             return py::object("");
@@ -1214,12 +1213,13 @@ namespace {
 
     void PlanetSetSpecies(int planet_id, const std::string& species_name)
     {
-        auto planet = Objects().get<Planet>(planet_id);
+        ScriptingContext context;
+        auto planet = context.ContextObjects().getRaw<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetSetSpecies: Couldn't get planet with ID " << planet_id;
             return;
         }
-        planet->SetSpecies(species_name);
+        planet->SetSpecies(species_name, context.current_turn);
     }
 
     auto PlanetGetFocus(int planet_id) -> py::object
