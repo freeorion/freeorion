@@ -15,6 +15,7 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
 
+    defaultfocus = "FOCUS_INDUSTRY"
     likes = [
         "PLC_ALLIED_REPAIR"
         "PLC_BUREAUCRACY"

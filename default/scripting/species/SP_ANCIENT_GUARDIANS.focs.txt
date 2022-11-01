@@ -8,6 +8,7 @@ Species
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
     ]
+    defaultfocus = "FOCUS_INDUSTRY"
 
     effectsgroups = [
         // just to make the tags consistent...
