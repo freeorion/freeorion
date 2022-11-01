@@ -2919,7 +2919,7 @@ void MoveTo::Execute(ScriptingContext& context) const {
                 dest_system->Insert(fleet);
 
                 // also move ships of fleet
-                for (auto& ship : objects.findRaw<Ship>(fleet->ShipIDs())) {
+                for (auto* ship : objects.findRaw<Ship>(fleet->ShipIDs())) {
                     if (old_sys)
                         old_sys->Remove(ship->ID());
                     dest_system->Insert(ship);
@@ -2940,7 +2940,7 @@ void MoveTo::Execute(ScriptingContext& context) const {
             fleet->MoveTo(destination);
 
             // also move ships of fleet
-            for (auto& ship : objects.findRaw<Ship>(fleet->ShipIDs())) {
+            for (auto* ship : objects.findRaw<Ship>(fleet->ShipIDs())) {
                 if (old_sys)
                     old_sys->Remove(ship->ID());
                 ship->SetSystem(INVALID_OBJECT_ID);
@@ -3068,7 +3068,7 @@ void MoveTo::Execute(ScriptingContext& context) const {
         dest_system->Insert(planet);  // let system pick an orbit
 
         // also insert buildings of planet into system.
-        for (auto& building : objects.findRaw<Building>(planet->BuildingIDs())) {
+        for (auto* building : objects.findRaw<Building>(planet->BuildingIDs())) {
             if (old_sys)
                 old_sys->Remove(building->ID());
             dest_system->Insert(building);
@@ -3251,7 +3251,7 @@ void MoveInOrbit::Execute(ScriptingContext& context) const {
         fleet->MoveTo(new_x, new_y);
         UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID, context);
 
-        for (auto& ship : context.ContextObjects().findRaw<Ship>(fleet->ShipIDs())) {
+        for (auto* ship : context.ContextObjects().findRaw<Ship>(fleet->ShipIDs())) {
             if (old_sys)
                 old_sys->Remove(ship->ID());
             ship->SetSystem(INVALID_OBJECT_ID);
@@ -3417,7 +3417,7 @@ void MoveTowards::Execute(ScriptingContext& context) const {
             old_sys->Remove(fleet->ID());
         fleet->SetSystem(INVALID_OBJECT_ID);
         fleet->MoveTo(new_x, new_y);
-        for (auto& ship : context.ContextObjects().findRaw<Ship>(fleet->ShipIDs())) {
+        for (auto* ship : context.ContextObjects().findRaw<Ship>(fleet->ShipIDs())) {
             if (old_sys)
                 old_sys->Remove(ship->ID());
             ship->SetSystem(INVALID_OBJECT_ID);

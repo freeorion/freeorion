@@ -312,7 +312,7 @@ bool NewFleetOrder::Check(int empire, const std::string& fleet_name, const std::
     int system_id = INVALID_OBJECT_ID;
 
     std::set<int> arrival_starlane_ids;
-    for (const auto& ship : context.ContextObjects().findRaw<Ship>(ship_ids)) {
+    for (const auto* ship : context.ContextObjects().findRaw<Ship>(ship_ids)) {
         if (!ship) {
             ErrorLogger() << "Empire " << empire << " attempted to create a new fleet (" << fleet_name
                           << ") with an invalid ship";
@@ -333,7 +333,7 @@ bool NewFleetOrder::Check(int empire, const std::string& fleet_name, const std::
     }
 
 
-    for (const auto& ship : context.ContextObjects().findRaw<Ship>(ship_ids)) {
+    for (const auto* ship : context.ContextObjects().findRaw<Ship>(ship_ids)) {
         // verify that empire is not trying to take ships from somebody else's fleet
         if (!ship->OwnedBy(empire)) {
             ErrorLogger() << "Empire " << empire << " attempted to create a new fleet (" << fleet_name

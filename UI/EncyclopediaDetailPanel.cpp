@@ -2868,7 +2868,7 @@ namespace {
                 }
             }
         } else if (fleet_manager.ActiveFleetWnd()) {
-            for (const auto& fleet : objects.findRaw<Fleet>(fleet_manager.ActiveFleetWnd()->SelectedFleetIDs())) {
+            for (const auto* fleet : objects.findRaw<Fleet>(fleet_manager.ActiveFleetWnd()->SelectedFleetIDs())) {
                 if (!fleet)
                     continue;
                 chosen_ships.insert(fleet->ShipIDs().begin(), fleet->ShipIDs().end());

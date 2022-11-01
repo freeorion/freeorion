@@ -701,12 +701,12 @@ public:
 
         // get selected fleet speeds and detection ranges
         std::set<double> fixed_distances;
-        for (const auto& fleet : Objects().findRaw<Fleet>(fleet_ids)) {
+        for (const auto* fleet : Objects().findRaw<Fleet>(fleet_ids)) {
             if (!fleet)
                 continue;
             if (fleet->Speed(Objects()) > 20)
                 fixed_distances.insert(fleet->Speed(Objects()));
-            for (const auto& ship : Objects().findRaw<Ship>(fleet->ShipIDs())) {
+            for (const auto* ship : Objects().findRaw<Ship>(fleet->ShipIDs())) {
                 if (!ship)
                     continue;
                 const float ship_range = ship->GetMeter(MeterType::METER_DETECTION)->Initial();
@@ -718,8 +718,8 @@ public:
             }
         }
         // get detection ranges for planets in the selected system (if any)
-        if (const auto system = Objects().get<System>(sel_system_id).get()) {
-            for (const auto& planet : Objects().findRaw<Planet>(system->PlanetIDs())) {
+        if (const auto* system = Objects().getRaw<System>(sel_system_id)) {
+            for (const auto* planet : Objects().findRaw<Planet>(system->PlanetIDs())) {
                 if (!planet)
                     continue;
                 const float planet_range = planet->GetMeter(MeterType::METER_DETECTION)->Initial();
@@ -2057,7 +2057,7 @@ void MapWnd::RenderSystems() {
         bool has_neutrals = false;
         colony_count_by_empire_id.clear();
 
-        for (const auto& planet : objects.findRaw<const Planet>(system->PlanetIDs())) {
+        for (const auto* planet : objects.findRaw<const Planet>(system->PlanetIDs())) {
             if (known_destroyed_object_ids.count(planet->ID()) > 0)
                 continue;
 
@@ -2498,9 +2498,9 @@ namespace {
     {
         std::unordered_map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt>>, hash_clr> retval;
 
-        for (const auto& fleet : context.ContextObjects().findRaw<Fleet>(fleet_ids)) {
+        for (const auto* fleet : context.ContextObjects().findRaw<Fleet>(fleet_ids)) {
             float fleet_detection_range = 0.0f;
-            for (const auto& ship : context.ContextObjects().findRaw<Ship>(fleet->ShipIDs())) {
+            for (const auto* ship : context.ContextObjects().findRaw<Ship>(fleet->ShipIDs())) {
                 if (const Meter* detection_meter = ship->GetMeter(MeterType::METER_DETECTION))
                     fleet_detection_range = std::max(fleet_detection_range, detection_meter->Current());
             }
@@ -4589,7 +4589,7 @@ void MapWnd::ReselectLastFleet() {
 
     // search through stored selected fleets' ids and remove ids of missing fleets
     std::set<int> missing_fleets;
-    for (const auto& fleet : objects.findRaw<Fleet>(m_selected_fleet_ids)) {
+    for (const auto* fleet : objects.findRaw<Fleet>(m_selected_fleet_ids)) {
         if (fleet)
             missing_fleets.insert(fleet->ID());
     }
@@ -5213,7 +5213,7 @@ void MapWnd::CreateFleetButtonsOfType(FleetButtonMap& type_fleet_buttons,
 
         // sort fleets by position
         std::map<std::pair<double, double>, std::vector<int>> fleet_positions_ids;
-        for (const auto& fleet : Objects().findRaw<Fleet>(fleet_IDs)) {
+        for (const auto* fleet : Objects().findRaw<Fleet>(fleet_IDs)) {
             if (!fleet)
                 continue;
             fleet_positions_ids[{fleet->X(), fleet->Y()}].emplace_back(fleet->ID());
@@ -5496,7 +5496,7 @@ void MapWnd::SystemRightClicked(int system_id, GG::Flags<GG::ModKey> mod_keys) {
             if (!system)
                 return;
 
-            for (auto& obj : Objects().findRaw<const UniverseObject>(system->ContainedObjectIDs())) {
+            for (auto* obj : Objects().findRaw<const UniverseObject>(system->ContainedObjectIDs())) {
                 UniverseObjectType obj_type = obj->ObjectType();
                 if (obj_type >= UniverseObjectType::OBJ_BUILDING && obj_type < UniverseObjectType::OBJ_SYSTEM) {
                     net.SendMessage(ModeratorActionMessage(
@@ -5616,7 +5616,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
     const Universe& universe{context.ContextUniverse()};
 
     // apply to all selected this-player-owned fleets in currently-active FleetWnd
-    for (const auto& fleet : objects.findRaw<Fleet>(fleet_ids)) {
+    for (const auto* fleet : objects.findRaw<Fleet>(fleet_ids)) {
         if (!fleet)
             continue;
 
@@ -5871,7 +5871,7 @@ void MapWnd::FleetButtonRightClicked(const FleetButton* fleet_btn) {
     std::vector<int> sensor_ghosts;
 
     // find sensor ghosts
-    for (const auto& fleet : Objects().findRaw<Fleet>(fleet_ids)) {
+    for (const auto* fleet : Objects().findRaw<Fleet>(fleet_ids)) {
         if (!fleet)
             continue;
         if (fleet->OwnedBy(empire_id))
@@ -7372,7 +7372,7 @@ bool MapWnd::ZoomToSystemWithWastedPP() {
     if (obj_group.empty())
         return false; // shouldn't happen?
     for (const auto& obj_ids : wasted_PP_objects) {
-        for (const auto& obj : Objects().findRaw<UniverseObject>(obj_ids)) {
+        for (const auto* obj : Objects().findRaw<UniverseObject>(obj_ids)) {
             if (obj && obj->SystemID() != INVALID_OBJECT_ID) {
                 // found object with wasted PP that is in a system.  zoom there.
                 CenterOnObject(obj->SystemID());
@@ -7898,7 +7898,7 @@ void MapWnd::DispatchFleetsExploring() {
 
     // clean the fleet list by removing non-existing fleet, and extract the
     // fleets waiting for orders
-    for (const auto& fleet : objects.findRaw<Fleet>(m_fleets_exploring)) {
+    for (const auto* fleet : objects.findRaw<Fleet>(m_fleets_exploring)) {
         if (!fleet)
             continue;
         if (destroyed_objects.count(fleet->ID())) {
@@ -7928,7 +7928,7 @@ void MapWnd::DispatchFleetsExploring() {
 
     // Populate list of unexplored systems
     SystemIDListType unexplored_systems;
-    for (const auto& system : objects.findRaw<System>(candidates_unknown_systems)) {
+    for (const auto* system : objects.findRaw<System>(candidates_unknown_systems)) {
         if (!system)
             continue;
         if (!empire->HasExploredSystem(system->ID()) &&
@@ -7952,7 +7952,7 @@ void MapWnd::DispatchFleetsExploring() {
 
     // Determine fleet routes for each unexplored system
     std::unordered_map<int, int> fleet_route_count;
-    for (const auto& unexplored_system : objects.findRaw<System>(unexplored_systems)) {
+    for (const auto* unexplored_system : objects.findRaw<System>(unexplored_systems)) {
         if (!unexplored_system)
             continue;
 
