@@ -892,7 +892,7 @@ namespace {
     const std::string& GetPlanetTypeName(const Planet* planet)
     { return UserString(to_string(planet->Type())); }
 
-    const std::string& GetPlanetEnvironmentName(const Planet* planet, const std::string& species_name)
+    const std::string& GetPlanetEnvironmentName(const Planet* planet, std::string_view species_name)
     { return UserString(to_string(planet->EnvironmentForSpecies(species_name))); }
 
     const std::string& GetStarTypeName(const System* system) {
@@ -1633,10 +1633,9 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
         bombard_ships.insert(autoselected_bombard_ships.begin(), autoselected_bombard_ships.end());
     }
 
-    static const std::string EMPTY_STRING;
-    auto& colony_ship_species_name{selected_colony_ship ? selected_colony_ship->SpeciesName() : EMPTY_STRING};
+    std::string_view colony_ship_species_name{selected_colony_ship ? selected_colony_ship->SpeciesName() : ""};
     float colony_ship_capacity{selected_colony_ship ? selected_colony_ship->ColonyCapacity(u) : 0.0f};
-    const Species* colony_ship_species = GetSpecies(colony_ship_species_name);
+    const Species* colony_ship_species = context.species.GetSpecies(colony_ship_species_name);
     PlanetEnvironment planet_env_for_colony_species = PlanetEnvironment::PE_UNINHABITABLE;
     if (colony_ship_species)
         planet_env_for_colony_species = colony_ship_species->GetPlanetEnvironment(planet->Type());
@@ -1725,7 +1724,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
             int orig_owner = planet->Owner();
             float orig_initial_target_pop = planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Initial();
             planet->SetOwner(client_empire_id);
-            planet->SetSpecies(colony_ship_species_name, context.current_turn); // const std::string& -> no move
+            planet->SetSpecies(std::string{colony_ship_species_name}, context.current_turn);
             planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Reset();
 
             // temporary meter updates for curently set species

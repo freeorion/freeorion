@@ -219,13 +219,13 @@ void Planet::Init() {
     AddMeter(MeterType::METER_REBEL_TROOPS);
 }
 
-PlanetEnvironment Planet::EnvironmentForSpecies(const std::string& species_name) const {
+PlanetEnvironment Planet::EnvironmentForSpecies(std::string_view species_name) const {
     const Species* species = nullptr;
     if (species_name.empty()) {
-        const std::string& this_planet_species_name = this->SpeciesName();
+        auto& this_planet_species_name = this->SpeciesName();
         if (this_planet_species_name.empty())
             return PlanetEnvironment::PE_UNINHABITABLE;
-        species = GetSpecies(this_planet_species_name);
+        species = GetSpecies(this_planet_species_name); // TODO: use context.species.GetSpecies
     } else {
         species = GetSpecies(species_name);
     }
@@ -242,7 +242,7 @@ PlanetType Planet::NextBestPlanetTypeForSpecies(const std::string& species_name)
         const std::string& this_planet_species_name = this->SpeciesName();
         if (this_planet_species_name.empty())
             return m_type;
-        species = GetSpecies(this_planet_species_name);
+        species = GetSpecies(this_planet_species_name); // TODO: use context.species.GetSpecies
     } else {
         species = GetSpecies(species_name);
     }
@@ -259,7 +259,7 @@ PlanetType Planet::NextBetterPlanetTypeForSpecies(const std::string& species_nam
         const std::string& this_planet_species_name = this->SpeciesName();
         if (this_planet_species_name.empty())
             return m_type;
-        species = GetSpecies(this_planet_species_name);
+        species = GetSpecies(this_planet_species_name); // TODO: use context.species.GetSpecies
     } else {
         species = GetSpecies(species_name);
     }
@@ -492,7 +492,7 @@ bool Planet::ContainedBy(int object_id) const
 
 std::vector<std::string> Planet::AvailableFoci(const ScriptingContext& context) const {
     std::vector<std::string> retval;
-    if (const auto* species = GetSpecies(this->SpeciesName())) {
+    if (const auto* species = context.species.GetSpecies(this->SpeciesName())) {
         retval.reserve(species->Foci().size());
         for (const auto& focus_type : species->Foci()) {
             if (const auto* location = focus_type.Location()) {
@@ -506,7 +506,7 @@ std::vector<std::string> Planet::AvailableFoci(const ScriptingContext& context) 
 }
 
 const std::string& Planet::FocusIcon(const std::string& focus_name) const {
-    if (const Species* species = GetSpecies(this->SpeciesName())) {
+    if (const Species* species = GetSpecies(this->SpeciesName())) { // TODO: use context.species
         for (const FocusType& focus_type : species->Foci()) {
             if (focus_type.Name() == focus_name)
                 return focus_type.Graphic();
@@ -717,7 +717,7 @@ bool Planet::Colonize(int empire_id, std::string species_name, double population
     // if desired pop > 0, we want a colony, not an outpost, so we need to do some checks
     if (population > 0.0) {
         // check if specified species exists and get reference
-        species = GetSpecies(species_name);
+        species = context.species.GetSpecies(species_name);
         if (!species) {
             ErrorLogger() << "Planet::Colonize couldn't get species: " << species_name;
             return false;

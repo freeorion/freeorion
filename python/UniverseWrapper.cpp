@@ -724,7 +724,7 @@ namespace FreeOrionPython {
             .add_property("type",                           &Planet::Type)
             .add_property("originalType",                   &Planet::OriginalType)
             .add_property("distanceFromOriginalType",       &Planet::DistanceFromOriginalType)
-            .def("environmentForSpecies",                   &Planet::EnvironmentForSpecies)
+            .def("environmentForSpecies",                   +[](const Planet& planet, const std::string& species) { return planet.EnvironmentForSpecies(species); })
             .def("nextBetterPlanetTypeForSpecies",          &Planet::NextBetterPlanetTypeForSpecies)
             .add_property("clockwiseNextPlanetType",        &Planet::ClockwiseNextPlanetType)
             .add_property("counterClockwiseNextPlanetType", &Planet::CounterClockwiseNextPlanetType)
