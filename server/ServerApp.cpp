@@ -3256,29 +3256,26 @@ namespace {
 
     /** Destroys suitable objects that have been ordered scrapped.*/
     void HandleScrapping(Universe& universe, EmpireManager& empires) {
-        std::vector<Ship*> scrapped_ships;
         ObjectMap& objects{universe.Objects()};
         const auto& empire_ids = empires.EmpireIDs();
 
-        for (auto* ship : objects.allRaw<Ship>()) {
-            if (ship->OrderedScrapped())
-                scrapped_ships.push_back(ship);
-        }
-
-        for (auto& ship : scrapped_ships) {
+        const auto scrapped_ships = objects.findRaw<Ship>([](const Ship* s) { return s->OrderedScrapped(); });
+        for (const auto* ship : scrapped_ships) {
             DebugLogger() << "... ship: " << ship->ID() << " ordered scrapped";
+            const auto ship_id = ship->ID();
+            const auto fleet_id = ship->FleetID();
+            const auto sys_id = ship->SystemID();
 
-            auto* system = objects.getRaw<System>(ship->SystemID());
+            auto* system = objects.getRaw<System>(sys_id);
             if (system)
-                system->Remove(ship->ID());
+                system->Remove(ship_id);
 
-            auto* fleet = objects.getRaw<Fleet>(ship->FleetID());
-            if (fleet) {
-                fleet->RemoveShips({ship->ID()});
+            if (auto* fleet = objects.getRaw<Fleet>(fleet_id)) {
+                fleet->RemoveShips({ship_id});
                 if (fleet->Empty()) {
                     if (system)
-                        system->Remove(fleet->ID());
-                    universe.Destroy(fleet->ID(), empire_ids);
+                        system->Remove(fleet_id);
+                    universe.Destroy(fleet_id, empire_ids);
                 }
             }
 
@@ -3288,15 +3285,10 @@ namespace {
                 scrapping_empire->RecordShipScrapped(*ship);
 
             //scrapped_object_ids.push_back(ship->ID());
-            universe.Destroy(ship->ID(), empire_ids);
+            universe.Destroy(ship_id, empire_ids);
         }
 
-        std::vector<Building*> scrapped_buildings;
-        for (auto* building : objects.allRaw<Building>()) {
-            if (building->OrderedScrapped())
-                scrapped_buildings.push_back(building);
-        }
-
+        auto scrapped_buildings = objects.findRaw<Building>([](const Building* b) { return b->OrderedScrapped(); });
         for (auto* building : scrapped_buildings) {
             if (auto* planet = objects.getRaw<Planet>(building->PlanetID()))
                 planet->RemoveBuilding(building->ID());
