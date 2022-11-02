@@ -408,14 +408,14 @@ bool ShipPart::operator==(const ShipPart& rhs) const {
 float ShipPart::Capacity() const {
     switch (m_class) {
     case ShipPartClass::PC_ARMOUR:
-        return m_capacity * GetGameRules().Get<double>("RULE_SHIP_STRUCTURE_FACTOR");
+        return m_capacity * (m_add_standard_capacity_effect ? GetGameRules().Get<double>("RULE_SHIP_STRUCTURE_FACTOR") : 1.0f);
         break;
     case ShipPartClass::PC_DIRECT_WEAPON:
     case ShipPartClass::PC_SHIELD:
-        return m_capacity * GetGameRules().Get<double>("RULE_SHIP_WEAPON_DAMAGE_FACTOR");
+        return m_capacity * (m_add_standard_capacity_effect ? GetGameRules().Get<double>("RULE_SHIP_WEAPON_DAMAGE_FACTOR") : 1.0f);
         break;
     case ShipPartClass::PC_SPEED:
-        return m_capacity * GetGameRules().Get<double>("RULE_SHIP_SPEED_FACTOR");
+        return m_capacity * (m_add_standard_capacity_effect ? GetGameRules().Get<double>("RULE_SHIP_SPEED_FACTOR") : 1.0f);
         break;
     default:
         return m_capacity;
@@ -425,7 +425,7 @@ float ShipPart::Capacity() const {
 float ShipPart::SecondaryStat() const {
     switch (m_class) {
     case ShipPartClass::PC_FIGHTER_HANGAR:
-        return m_secondary_stat * GetGameRules().Get<double>("RULE_FIGHTER_DAMAGE_FACTOR");
+        return m_secondary_stat * (m_add_standard_capacity_effect ? GetGameRules().Get<double>("RULE_FIGHTER_DAMAGE_FACTOR") : 1.0f);
         break;
     default:
         return m_secondary_stat;

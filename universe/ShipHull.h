@@ -161,10 +161,13 @@ private:
     float       m_fuel = 0.0f;
     float       m_stealth = 0.0f;
     float       m_structure = 0.0f;
+    bool        m_default_speed_effects = false;
+    bool        m_default_structure_effects = false;
 
+    bool                                                m_producible = false;
     std::unique_ptr<ValueRef::ValueRef<double>>         m_production_cost;
     std::unique_ptr<ValueRef::ValueRef<int>>            m_production_time;
-    bool                                                m_producible = false;
+
     std::vector<Slot>                                   m_slots;
     const std::string                                   m_tags_concatenated;
     const std::vector<std::string_view>                 m_tags;
@@ -175,6 +178,7 @@ private:
     std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
     std::string                                         m_graphic;
     std::string                                         m_icon;
+
 };
 
 

@@ -259,11 +259,14 @@ void ShipHull::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects
         m_effects.push_back(IncreaseMeter(MeterType::METER_MAX_FUEL,      m_fuel));
     if (default_stealth_effects && m_stealth != 0)
         m_effects.push_back(IncreaseMeter(MeterType::METER_STEALTH,       m_stealth));
-    if (default_structure_effects && m_structure != 0)
+    if (default_structure_effects && m_structure != 0) {
+        m_default_structure_effects = default_structure_effects;
         m_effects.push_back(IncreaseMeter(MeterType::METER_MAX_STRUCTURE, m_structure, "RULE_SHIP_STRUCTURE_FACTOR"));
-    if (default_speed_effects && m_speed != 0)
+    }
+    if (default_speed_effects && m_speed != 0) {
+        m_default_speed_effects = default_speed_effects;
         m_effects.push_back(IncreaseMeter(MeterType::METER_SPEED,         m_speed,     "RULE_SHIP_SPEED_FACTOR"));
-
+    }
     if (m_production_cost)
         m_production_cost->SetTopLevelContent(m_name);
     if (m_production_time)
@@ -277,10 +280,10 @@ void ShipHull::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects
 }
 
 float ShipHull::Speed() const
-{ return m_speed * GetGameRules().Get<double>("RULE_SHIP_SPEED_FACTOR"); }
+{ return m_speed * (m_default_speed_effects ? GetGameRules().Get<double>("RULE_SHIP_SPEED_FACTOR") : 1.0f); }
 
 float ShipHull::Structure() const
-{ return m_structure * GetGameRules().Get<double>("RULE_SHIP_STRUCTURE_FACTOR"); }
+{ return m_structure * (m_default_structure_effects ? GetGameRules().Get<double>("RULE_SHIP_STRUCTURE_FACTOR") : 1.0f); }
 
 uint32_t ShipHull::NumSlots(ShipSlotType slot_type) const {
     uint32_t count = 0;
