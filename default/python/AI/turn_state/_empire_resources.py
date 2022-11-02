@@ -45,7 +45,7 @@ class EmpireResources:
 
                 for special in AIDependencies.luxury_specials:
                     if special in planet.specials:
-                        self.luxury_planets.get(special, []).append(planet)
+                        self.luxury_planets.setdefault(special, []).append(planet)
 
                 population = planet.currentMeterValue(fo.meterType.population)
                 if planet.focus == FocusType.FOCUS_INDUSTRY:
