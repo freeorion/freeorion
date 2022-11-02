@@ -219,7 +219,12 @@ bool PlayerConnection::EstablishedPlayer() const noexcept
 { return m_ID != INVALID_PLAYER_ID; }
 
 void PlayerConnection::Start() {
-    m_is_local_connection = m_socket->remote_endpoint().address().is_loopback();
+    try {
+        m_is_local_connection = m_socket->remote_endpoint().address().is_loopback();
+    } catch (const boost::system::system_error& err) {
+        m_is_local_connection = false;
+        ErrorLogger(network) << "PlayerConnection::Start remote endpont error: " << err.what();
+    }
     AsyncReadMessage();
 }
 
@@ -237,8 +242,14 @@ bool PlayerConnection::IsEstablished() const {
 }
 
 std::string PlayerConnection::GetIpAddress() const {
-    if (m_socket)
-        return m_socket->remote_endpoint().address().to_string();
+    if (m_socket) {
+        try {
+            return m_socket->remote_endpoint().address().to_string();
+        } catch (const boost::system::system_error& err) {
+            ErrorLogger(network) << "PlayerConnection::GetIpAddress remote endpont error: " << err.what();
+            return "";
+        }
+    }
     return "";
 }
 
