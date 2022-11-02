@@ -6068,6 +6068,12 @@ Growth
 INDUSTRY_ARTICLE_SHORT_DESC
 Industry
 
+RESEARCH_ARTICLE_SHORT_DESC
+Research
+
+PROTECTION_ARTICLE_SHORT_DESC
+Protection
+
 STOCKPILE_ARTICLE_SHORT_DESC
 Stockpile
 
@@ -9663,7 +9669,7 @@ TIDAL_LOCK_SPECIAL
 Tidally Locked Rotation
 
 TIDAL_LOCK_SPECIAL_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] on this planet by [[value TIDAL_LOCK_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]] when Focus is set to [[metertype METER_INDUSTRY]]. Penalizes [[metertype METER_TARGET_POPULATION]] (regardless of Focus) with [[value TIDAL_LOCK_TARGET_POPULATION_PERSIZE]] per planet size ([[SZ_TINY]] -1, [[SZ_SMALL]] -2, [[SZ_MEDIUM]] -3, [[SZ_LARGE]] -4, [[SZ_HUGE]] -5).
+'''Increases [[metertype METER_TARGET_INDUSTRY]] on this planet by [[value TIDAL_LOCK_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]] when Focus is set to [[encyclopedia INDUSTRY_FOCUS_TITLE]]. Penalizes [[metertype METER_TARGET_POPULATION]] (regardless of Focus) with [[value TIDAL_LOCK_TARGET_POPULATION_PERSIZE]] per planet size ([[SZ_TINY]] -1, [[SZ_SMALL]] -2, [[SZ_MEDIUM]] -3, [[SZ_LARGE]] -4, [[SZ_HUGE]] -5).
 
 This planet is tidally locked with the star it orbits. Its day and year are the same duration, and one half of the planet is perpetually day, the other perpetually night. Population growth is hampered, though industrial capacity benefits from the locally stable surface conditions.'''
 
@@ -9671,7 +9677,7 @@ TEMPORAL_ANOMALY_SPECIAL
 Temporal Anomaly
 
 TEMPORAL_ANOMALY_SPECIAL_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on this planet by [[value TEMPORAL_ANOMALY_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]] when Focus is set to [[metertype METER_RESEARCH]]. Penalizes [[metertype METER_TARGET_POPULATION]] (regardless of Focus) with [[value TEMPORAL_ANOMALY_TARGET_POPULATION_PERSIZE]] per planet size ([[SZ_TINY]] -5, [[SZ_SMALL]] -10, [[SZ_MEDIUM]] -15, [[SZ_LARGE]] -20, [[SZ_HUGE]] -25).
+'''Increases [[metertype METER_TARGET_RESEARCH]] on this planet by [[value TEMPORAL_ANOMALY_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]] when Focus is set to [[encyclopedia RESEARCH_FOCUS_TITLE]]. Penalizes [[metertype METER_TARGET_POPULATION]] (regardless of Focus) with [[value TEMPORAL_ANOMALY_TARGET_POPULATION_PERSIZE]] per planet size ([[SZ_TINY]] -5, [[SZ_SMALL]] -10, [[SZ_MEDIUM]] -15, [[SZ_LARGE]] -20, [[SZ_HUGE]] -25).
 The research bonus requires a stability of [[value TEMPORAL_ANOMALY_MIN_STABILITY]].
 
 The flow of time on this planet is gravely disturbed. Seemingly random local occurences of increases and decreases of the pace of time, induces grave disarrangement in any living being. A social or productive life is nearly impossible. Extreme adaptability and precaution is needed to establish a colony on this planet.
@@ -9719,7 +9725,7 @@ ASTEROID_COATING_SPECIAL
 Asteroid Coating
 
 ASTEROID_COATING_SPECIAL_DESC
-'''An outpost or colony on these asteroids will grant a structure bonus of +10% to all ships with Asteroid hulls in the empire.
+'''An outpost or colony on these asteroids will grant a structure bonus of +10% to all ships of type [[encyclopedia HULL_LINE_ASTEROIDS]] in the empire.
 
 These asteroids are infected by transdimensional worms that eat tunnels through the rock, leaving behind a sticky slime that seems to automatically spread over the whole surface of the affected asteroid and prevents it from breaking apart.
 Applied to ships built with asteroid hulls the slime will naturally increase their durability. While this slime does not last long, these worms will frequently visit the affected ships, replenishing any lost slime before returning to their home. Unable to catch a living specimen, scientists theorize their mode of transport appears linked to our communications in some manner.'''
@@ -12257,8 +12263,8 @@ Terraforming
 PLC_TERRAFORMING_DESC
 '''• Decreases the minimum time to produce Terraforming projects on planets. Projects are unlocked by [[tech GRO_TERRAFORM]].
 • Boosts [[metertype METER_TARGET_HAPPINESS]] on terraformed planets by [[value PLC_TERRAFORMING_TARGET_HAPPINESS_ORIGINAL_FLAT]] per step they have been terraformed away from their original planet type
-• Boosts [[metertype METER_TARGET_INFLUENCE]] on planets set to influence focus by [[value PLC_TERRAFORMING_TARGET_INFLUENCE_ORIGINAL_FLAT]] per step they have been terraformed away from their original planet type
-• Boosts [[metertype METER_TARGET_RESEARCH]] on planets set to research focus by the square root of [[metertype METER_POPULATION]] times [[value PLC_TERRAFORMING_TARGET_RESEARCH_SCALING]] per step they have been terraformed away from their original planet type
+• Boosts [[metertype METER_TARGET_INFLUENCE]] on planets set to [[encyclopedia INFLUENCE_FOCUS_TITLE]] by [[value PLC_TERRAFORMING_TARGET_INFLUENCE_ORIGINAL_FLAT]] per step they have been terraformed away from their original planet type
+• Boosts [[metertype METER_TARGET_RESEARCH]] on planets set to [[encyclopedia RESEARCH_FOCUS_TITLE]] by the square root of [[metertype METER_POPULATION]] times [[value PLC_TERRAFORMING_TARGET_RESEARCH_SCALING]] per step they have been terraformed away from their original planet type
 Artificial planets count as having been terraformed [[value PLC_TERRAFORMING_ARTIFICIAL_PLANET_DISTANCE]] steps regardless of there current environment.'''
 
 PLC_TERRAFORMING_SHORT_DESC
@@ -12304,7 +12310,7 @@ Diversity
 
 PLC_DIVERSITY_DESC
 '''Gives bonuses or penalties to research, stability, and capital influence, dependent on the number of species in the empire.
-The research bonus requires research focus and a stability of [[value PLC_DIVERSITY_MIN_STABILITY]].
+The research bonus requires [[encyclopedia RESEARCH_FOCUS_TITLE]] and a stability of [[value PLC_DIVERSITY_MIN_STABILITY]].
 
 All bonuses or penalties are [[value PLC_DIVERSITY_SCALING]] per species above or below [[value PLC_DIVERSITY_THRESHOLD]] species that are present.'''
 
@@ -12326,7 +12332,7 @@ Exobot Productivity
 PLC_EXOBOT_PRODUCTIVITY_DESC
 '''Increases effective exobot production output on industry-focused worlds from very bad to just bad.
 
-Decreases the stability and production output of non-exobot populated planets set to industry focus by [[value PLC_EXOBOT_OTHER_PLANET_INDUSTRY_PENALTY]].'''
+Decreases the stability and production output of non-exobot populated planets set to [[encyclopedia INDUSTRY_FOCUS_TITLE]] by [[value PLC_EXOBOT_OTHER_PLANET_INDUSTRY_PENALTY]].'''
 
 PLC_EXOBOT_PRODUCTIVITY_SHORT_DESC
 Boosts exobot production
@@ -12441,7 +12447,7 @@ Indoctrination
 PLC_INDOCTRINATION_DESC
 '''• Increases [[metertype METER_TARGET_HAPPINESS]] on planets over time. The bonus grows by [[value PLC_INDOCTRINATION_PER_TURN]] per turn, up to a maximum of [[value PLC_INDOCTRINATION_STRENGTH_MAX]]. Conquered planets start with zero, settled planets get the current maximum.
 • Decreases [[metertype METER_TARGET_INFLUENCE]] by [[value PLC_INDOCTRINATION_INFLUENCE_COST_FLAT]], on planets that receive that boost to [[metertype METER_TARGET_HAPPINESS]].
-• Increases [[metertype METER_TARGET_INFLUENCE]] of the capital or planets with a [[buildingtype BLD_REGIONAL_ADMIN]] that have Influence focus by [[value PLC_INDOCTRINATION_INFLUENCE_FLAT]].'''
+• Increases [[metertype METER_TARGET_INFLUENCE]] of the capital or planets with a [[buildingtype BLD_REGIONAL_ADMIN]] that have [[encyclopedia INFLUENCE_FOCUS_TITLE]] by [[value PLC_INDOCTRINATION_INFLUENCE_FLAT]].'''
 
 PLC_INDOCTRINATION_SHORT_DESC
 Increases stability over time
@@ -12545,7 +12551,7 @@ PLC_CAPITAL_MARKETS
 Capital Markets
 
 PLC_CAPITAL_MARKETS_DESC
-'''• Planets with a luxury resource special and that are set to influence focus will export the resource to supply-connected planets. This boosts the stability of planets with species that like the resource by [[value SPECIAL_CAPITAL_MARKETS_STABILITY_FOCUS_BONUS]].
+'''• Planets with a luxury resource special and that are set to [[encyclopedia INFLUENCE_FOCUS_TITLE]] will export the resource to supply-connected planets. This boosts the stability of planets with species that like the resource by [[value SPECIAL_CAPITAL_MARKETS_STABILITY_FOCUS_BONUS]].
 • Increases [[metertype METER_TARGET_INFLUENCE]] on influence-focused planets with at least [[value CAPITAL_MARKETS_INFLUENCE_MIN_STABILITY]] [[metertype METER_HAPPINESS]] by [[value CAPITAL_MARKETS_INFLUENCE_BONUS_SCALING]] per the lesser of [[metertype METER_CONSTRUCTION]] and [[metertype METER_POPULATION]].
 • Increases the rate of growth or decay of [[metertype METER_INFLUENCE]] and [[metertype METER_HAPPINESS]] by [[value PLC_CAPITAL_MARKETS_INFLUENCE_RATE]] / turn towards [[metertype METER_TARGET_INFLUENCE]] or [[metertype METER_TARGET_HAPPINESS]].
 • Reduces [[metertype METER_TARGET_HAPPINESS]] on populated empire planets by [[value CAPITAL_MARKETS_DEBT_INSTABILITY]] times the size of the empire's influence debt.'''
@@ -12557,7 +12563,7 @@ PLC_BLACK_MARKET
 Black Markets
 
 PLC_BLACK_MARKET_DESC
-Planets with stability of [[value PLC_BLACK_MARKET_MAX_STABILITY]] or less and that are set to influence focus will have [[metertype METER_TARGET_INFLUENCE]] increased by [[value SPECIAL_BLACK_MARKET_INFLUENCE_FOCUS_BONUS]] for each supply connected planet with a luxury resource special that the influence-focused planet's population likes.
+Planets with stability of [[value PLC_BLACK_MARKET_MAX_STABILITY]] or less and that are set to [[encyclopedia INFLUENCE_FOCUS_TITLE]] will have [[metertype METER_TARGET_INFLUENCE]] increased by [[value SPECIAL_BLACK_MARKET_INFLUENCE_FOCUS_BONUS]] for each supply connected planet with a luxury resource special that the influence-focused planet's population likes.
 
 PLC_BLACK_MARKET_SHORT_DESC
 Boosts Influence with resources
@@ -12567,8 +12573,8 @@ Artisan Workshops
 
 PLC_ARTISAN_WORKSHOPS_DESC
 '''Planets with [[encyclopedia ARTISTIC]] species will generate influence by exporting aesthetically pleasing crafts.
-• Increases [[metertype METER_TARGET_INFLUENCE]] on planet set to influence focus with a minimum stability of [[value ARTISANS_MIN_STABILITY_FOCUS]] by [[value ARTISANS_INFLUENCE_FLAT_FOCUS]].
-• Increases [[metertype METER_TARGET_INFLUENCE]] on planet not set to influence focus and a minimum stability of [[value ARTISANS_MIN_STABILITY_NO_FOCUS]] by [[value ARTISANS_INFLUENCE_FLAT_NO_FOCUS]].'''
+• Increases [[metertype METER_TARGET_INFLUENCE]] on planet set to [[encyclopedia INFLUENCE_FOCUS_TITLE]] with a minimum stability of [[value ARTISANS_MIN_STABILITY_FOCUS]] by [[value ARTISANS_INFLUENCE_FLAT_FOCUS]].
+• Increases [[metertype METER_TARGET_INFLUENCE]] on planet not set to [[encyclopedia INFLUENCE_FOCUS_TITLE]] and a minimum stability of [[value ARTISANS_MIN_STABILITY_NO_FOCUS]] by [[value ARTISANS_INFLUENCE_FLAT_NO_FOCUS]].'''
 
 PLC_ARTISAN_WORKSHOPS_SHORT_DESC
 [[encyclopedia ARTISTIC]] species produce luxuries
@@ -12943,7 +12949,7 @@ LRN_QUANT_NET
 Quantum Networking
 
 LRN_QUANT_NET_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with the Research focus by [[value LRN_QUANT_NET_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]].
+'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with the [[encyclopedia RESEARCH_FOCUS_TITLE]] by [[value LRN_QUANT_NET_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]].
 The effect requires a stability of [[value LRN_QUANT_NET_MIN_STABILITY]].
 
 A massive, empire-wide data network able to transfer information instantaneously between any two places, rather than via the lengthy and indirect path of starlanes. This advancement greatly facilitates research throughout the empire.
@@ -13062,7 +13068,7 @@ GRO_ENERGY_META
 Pure-Energy Metabolism
 
 GRO_ENERGY_META_DESC
-'''Increases max [[metertype METER_FUEL]] on all ships by 1 (before scaling by [[encyclopedia FUEL_EFFICIENCY_TITLE]]), max [[metertype METER_DEFENSE]] on all planets by [[value GRO_ENERGY_META_MAX_DEFENSE_FLAT]], max [[metertype METER_SHIELD]] on all planets by [[value GRO_ENERGY_META_MAX_SHIELD_FLAT]], [[metertype METER_TARGET_INDUSTRY]] on all planets with the Industry focus by [[value GRO_ENERGY_META_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]], and [[metertype METER_TARGET_RESEARCH]] on all planets with the Research focus by [[value GRO_ENERGY_META_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]].
+'''Increases max [[metertype METER_FUEL]] on all ships by 1 (before scaling by [[encyclopedia FUEL_EFFICIENCY_TITLE]]), max [[metertype METER_DEFENSE]] on all planets by [[value GRO_ENERGY_META_MAX_DEFENSE_FLAT]], max [[metertype METER_SHIELD]] on all planets by [[value GRO_ENERGY_META_MAX_SHIELD_FLAT]], [[metertype METER_TARGET_INDUSTRY]] on all planets with the [[encyclopedia INDUSTRY_FOCUS_TITLE]] by [[value GRO_ENERGY_META_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]], and [[metertype METER_TARGET_RESEARCH]] on all planets with the [[encyclopedia RESEARCH_FOCUS_TITLE]] by [[value GRO_ENERGY_META_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]].
 Industry and research bonus require a stability of [[value GRO_ENERGY_META_MIN_STABILITY]].
 
 While transforming an entire population into beings of pure energy would be impractical, certain tasks are better suited to individuals able to manifest themselves non-corporeally. Ship's crews for example, would no longer have to waste space with crew quarters or rations storage. Beings with greater energy channeling abilities would be able to enhance planetary shields and defense, and resource production would be generally enhanced.
@@ -13145,7 +13151,7 @@ PRO_ROBOTIC_PROD
 Robotic Production
 
 PRO_ROBOTIC_PROD_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] on all planets with the Industry focus by [[value PRO_ROBOTIC_PROD_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]].
+'''Increases [[metertype METER_TARGET_INDUSTRY]] on all planets with the [[encyclopedia INDUSTRY_FOCUS_TITLE]] by [[value PRO_ROBOTIC_PROD_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]].
 The effect requires a stability of [[value PRO_ROBOTIC_PROD_MIN_STABILITY]].
 
 Robots designed to fulfill nearly any job, in fields as wide ranging as electronics to large-scale construction, improve the performance of the worlds focused primarily on industry.
@@ -13162,7 +13168,7 @@ PRO_FUSION_GEN
 Fusion Generation
 
 PRO_FUSION_GEN_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] on planets with the Industry focus by [[value PRO_FUSION_GEN_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]].
+'''Increases [[metertype METER_TARGET_INDUSTRY]] on planets with the [[encyclopedia INDUSTRY_FOCUS_TITLE]] by [[value PRO_FUSION_GEN_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]].
 The effect requires a stability of [[value PRO_FUSION_GEN_MIN_STABILITY]].
 
 Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.
@@ -13198,7 +13204,7 @@ PRO_SENTIENT_AUTOMATION
 Sentient Automation
 
 PRO_SENTIENT_AUTOMATION_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] on all planets with the Industry focus by [[value PRO_SENTIENT_AUTO_TARGET_INDUSTRY_FLAT]].
+'''Increases [[metertype METER_TARGET_INDUSTRY]] on all planets with the [[encyclopedia INDUSTRY_FOCUS_TITLE]] by [[value PRO_SENTIENT_AUTO_TARGET_INDUSTRY_FLAT]].
 
 Grants 1 extra economic [[encyclopedia ENC_POLICY_SLOTS]].
 
@@ -13767,7 +13773,7 @@ LRN_DISTRIB_THOUGHT
 Distributed Thought Computing
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with research focus, dependent on the distance from the planet to the furthest-away other planet also set to research focus and owned by the same empire. Research is increased by the lesser of:
+'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with [[encyclopedia RESEARCH_FOCUS_TITLE]], dependent on the distance from the planet to the furthest-away other planet also set to [[encyclopedia RESEARCH_FOCUS_TITLE]] and owned by the same empire. Research is increased by the lesser of:
 • [[value DISTRIB_THOUGH_RESEARCH_SCALING]] x the square root of the distance in uu to the furthest research-focused owned planet
 • The target's [[metertype METER_CONSTRUCTION]] x [[value DISTRIB_THOUGH_INFRA_LIMIT_SCALING]]
 The effect requires a stability of [[value LRN_DISTRIB_THOUGHT_MIN_STABILITY]].
@@ -13780,7 +13786,7 @@ LRN_STELLAR_TOMOGRAPHY
 Stellar Tomography
 
 LRN_STELLAR_TOMOGRAPHY_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on planets with the Research focus, depending on the star type and number of planets with research focus in the system:
+'''Increases [[metertype METER_TARGET_RESEARCH]] on planets with the [[encyclopedia RESEARCH_FOCUS_TITLE]], depending on the star type and number of planets with [[encyclopedia RESEARCH_FOCUS_TITLE]] in the system:
 • [[STAR_BLACK]] (+[[value LRN_STELLAR_TOMO_BLACK_TARGET_RESEARCH_PERPLANET]] x number of planets)
 • [[STAR_NEUTRON]] (+[[value LRN_STELLAR_TOMO_NEUTRON_TARGET_RESEARCH_PERPLANET]] x number of planets)
 • [[STAR_BLUE]], [[STAR_WHITE]], [[STAR_YELLOW]], [[STAR_ORANGE]] or [[STAR_RED]] (+[[value LRN_STELLAR_TOMO_NORMAL_STAR_TARGET_RESEARCH_PERPLANET]] x number of planets)
@@ -14855,7 +14861,7 @@ BLD_INDUSTRY_CENTER
 Industrial Center
 
 BLD_INDUSTRY_CENTER_DESC
-'''Initially provides a bonus to [[metertype METER_TARGET_INDUSTRY]] on all [[metertype METER_SUPPLY]] line connected planets with Industry focus by [[value BLD_INDUSTRY_CENTER_1_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]].
+'''Initially provides a bonus to [[metertype METER_TARGET_INDUSTRY]] on all [[metertype METER_SUPPLY]] line connected planets with [[encyclopedia INDUSTRY_FOCUS_TITLE]] by [[value BLD_INDUSTRY_CENTER_1_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]].
 The effect requires a stability of [[value BLD_INDUSTRY_CENTER_1_MIN_STABILITY]].
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
@@ -14924,7 +14930,7 @@ BLD_COLLECTIVE_NET
 Collective Thought Network
 
 BLD_COLLECTIVE_NET_DESC
-'''• Increases [[metertype METER_TARGET_INDUSTRY]] on planets with the Industry focus by [[value BLD_COLLECTIVE_NET_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]], and [[metertype METER_TARGET_RESEARCH]] on Planets with the Research focus by [[value BLD_COLLECTIVE_NET_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]]. Starlane travel within 200 uu will disrupt this building's effectiveness and eliminate these bonuses.
+'''• Increases [[metertype METER_TARGET_INDUSTRY]] on planets with the [[encyclopedia INDUSTRY_FOCUS_TITLE]] by [[value BLD_COLLECTIVE_NET_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]], and [[metertype METER_TARGET_RESEARCH]] on Planets with the [[encyclopedia RESEARCH_FOCUS_TITLE]] by [[value BLD_COLLECTIVE_NET_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]]. Starlane travel within 200 uu will disrupt this building's effectiveness and eliminate these bonuses.
 The effects require a stability of [[value BLD_COLLECTIVE_NET_MIN_STABILITY]].
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 • Increases the maximum stability reached by [[policy PLC_DREAM_RECURSION]] by [[value PLC_INDOCTRINATION_STRENGTH_PER_COLLECTIVE_NET]].
@@ -14943,7 +14949,7 @@ BLD_ENCLAVE_VOID
 Enclave of the Void
 
 BLD_ENCLAVE_VOID_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with the Research focus by [[value BLD_ENCLAVE_VOID_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]].
+'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with the [[encyclopedia RESEARCH_FOCUS_TITLE]] by [[value BLD_ENCLAVE_VOID_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]].
 The effect requires a stability of [[value BLD_ENCLAVE_VOID_MIN_STABILITY]].
 Multiple copies do not stack.
 
@@ -14971,7 +14977,7 @@ BLD_HYPER_DAM
 Hyperspatial Dam
 
 BLD_HYPER_DAM_DESC
-'''For planets not connected to a [[buildingtype BLD_BLACK_HOLE_POW_GEN]], increases [[metertype METER_TARGET_INDUSTRY]] on [[metertype METER_SUPPLY]] line connected planets with the Industry focus by [[value BLD_HYPER_DAM_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]], but [[metertype METER_TARGET_POPULATION]] on such planets is reduced ([[value BLD_HYPER_DAM_TARGET_POPULATION_PERSIZE]] per planet size: [[SZ_TINY]] -1, [[SZ_SMALL]] -2, [[SZ_MEDIUM]] -3, [[SZ_LARGE]] -4, [[SZ_HUGE]] -5).
+'''For planets not connected to a [[buildingtype BLD_BLACK_HOLE_POW_GEN]], increases [[metertype METER_TARGET_INDUSTRY]] on [[metertype METER_SUPPLY]] line connected planets with the [[encyclopedia INDUSTRY_FOCUS_TITLE]] by [[value BLD_HYPER_DAM_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]], but [[metertype METER_TARGET_POPULATION]] on such planets is reduced ([[value BLD_HYPER_DAM_TARGET_POPULATION_PERSIZE]] per planet size: [[SZ_TINY]] -1, [[SZ_SMALL]] -2, [[SZ_MEDIUM]] -3, [[SZ_LARGE]] -4, [[SZ_HUGE]] -5).
 The effect requires a stability of [[value BLD_HYPER_DAM_MIN_STABILITY]].
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
@@ -15122,7 +15128,7 @@ BLD_BLACK_HOLE_POW_GEN
 Black Hole Power Generator
 
 BLD_BLACK_HOLE_POW_GEN_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] on all [[metertype METER_SUPPLY]] line connected planets with the Industry focus by [[value BLD_BLACK_HOLE_POW_GEN_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]].
+'''Increases [[metertype METER_TARGET_INDUSTRY]] on all [[metertype METER_SUPPLY]] line connected planets with the [[encyclopedia INDUSTRY_FOCUS_TITLE]] by [[value BLD_BLACK_HOLE_POW_GEN_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]].
 The effect requires a stability of [[value BLD_BLACK_HOLE_POW_GEN_MIN_STABILITY]].
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
@@ -15215,7 +15221,7 @@ BLD_GAS_GIANT_GEN
 Gas Giant Generator
 
 BLD_GAS_GIANT_GEN_DESC
-'''This building can only be constructed at a [[PT_GASGIANT]]. It gives a [[value BLD_GAS_GIANT_GEN_OUTPOST_TARGET_INDUSTRY_FLAT]] [[metertype METER_INDUSTRY]] bonus to planets with the Industry focus in the same system. If the [[BLD_GAS_GIANT_GEN]] is built on an inhabited gas giant it gives only a [[value BLD_GAS_GIANT_GEN_COLONY_TARGET_INDUSTRY_FLAT]] [[metertype METER_INDUSTRY]] bonus.
+'''This building can only be constructed at a [[PT_GASGIANT]]. It gives a [[value BLD_GAS_GIANT_GEN_OUTPOST_TARGET_INDUSTRY_FLAT]] [[metertype METER_INDUSTRY]] bonus to planets with the [[encyclopedia INDUSTRY_FOCUS_TITLE]] in the same system. If the [[BLD_GAS_GIANT_GEN]] is built on an inhabited gas giant it gives only a [[value BLD_GAS_GIANT_GEN_COLONY_TARGET_INDUSTRY_FLAT]] [[metertype METER_INDUSTRY]] bonus.
 The effect requires a stability of [[value BLD_GAS_GIANT_GEN_MIN_STABILITY]].
 Multiple copies in the same system do not stack.
 
@@ -15246,7 +15252,7 @@ Nearly-Universal Translator
 BLD_TRANSLATOR_DESC
 '''Grants 1 social [[encyclopedia ENC_POLICY_SLOTS]].
 
-Increases influence output on its planet, when that planet is set to influence focus, by [[value TRANSLATOR_PER_SPECIES_INFLUENCE]] times the square root of the number of unique species on planets controlled by the empire that owns this building.'''
+Increases influence output on its planet, when that planet is set to [[encyclopedia INFLUENCE_FOCUS_TITLE]], by [[value TRANSLATOR_PER_SPECIES_INFLUENCE]] times the square root of the number of unique species on planets controlled by the empire that owns this building.'''
 
 BLD_COLONY_BASE
 Colony Base
@@ -17038,7 +17044,7 @@ regardless of planetary [[encyclopedia ENVIRONMENT_TITLE]].
 If this planet is set to the [[encyclopedia GROWTH_FOCUS_TITLE]], the bonus is applied to all [[metertype METER_SUPPLY]] connected worlds inhabited by species with'''
 
 GROWTH_SPECIAL_INDUSTRY_BOOST
-If this planet is set to the Industry Focus, [[metertype METER_TARGET_INDUSTRY]] is increased by 0.2 per [[metertype METER_POPULATION]].
+If this planet is set to the [[encyclopedia INDUSTRY_FOCUS_TITLE]], [[metertype METER_TARGET_INDUSTRY]] is increased by 0.2 per [[metertype METER_POPULATION]].
 
 GROWTH_SPECIALS_ENTRY_LIST
 '''Some specials function for organic species only, some for lithic species only, and some for robotic species only; no other [[encyclopedia METABOLISM_TITLE]] currently has applicable Growth Specials.
