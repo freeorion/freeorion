@@ -28,13 +28,14 @@ def calculate_research(planet: fo.planet, species: fo.species, max_population: f
         return 0.0
 
     bonus_modified = _get_research_bonus_modified(planet, stability)
+    flat_modified = _get_research_flat_modified(stability)
     skill_multiplier = get_species_research(species.name)
     bonus_by_policy = _get_research_bonus_modified_by_policy(stability)
     flat_by_policy = _get_research_flat_modified_by_policy(planet, stability)
     policy_multiplier = _get_policy_multiplier(stability)
     bonus_unmodified = _get_research_bonus_unmodified(planet, stability)
 
-    result = max_population * (AIDependencies.RESEARCH_PER_POP + bonus_modified) * skill_multiplier
+    result = (max_population * (AIDependencies.RESEARCH_PER_POP + bonus_modified) + flat_modified) * skill_multiplier
     result = (result + max_population * bonus_by_policy + flat_by_policy) * policy_multiplier
     result += max_population * bonus_unmodified
     debug_rating(
@@ -50,19 +51,12 @@ def _get_modified_research_bonuses(planet: fo.planet) -> List[Bonus]:
     """
     Get list of per-population bonuses which are added before multiplication with the species skill value.
     """
-    # use fo.getEmpire().researchQueue directly here to simplify caching this function
     specials = planet.specials
     return [
         Bonus(
             AIDependencies.ANCIENT_RUINS_SPECIAL in specials or AIDependencies.ANCIENT_RUINS_SPECIAL2 in specials,
             get_named_real("ANCIENT_RUINS_MIN_STABILITY"),
             get_named_real("ANCIENT_RUINS_TARGET_RESEARCH_PERPOP"),
-        ),
-        Bonus(
-            fo.getEmpire().policyAdopted("PLC_DIVERSITY"),
-            get_named_real("PLC_DIVERSITY_MIN_STABILITY"),
-            (len(get_empire_planets_by_species()) - get_named_int("PLC_DIVERSITY_THRESHOLD"))
-            * get_named_real("PLC_DIVERSITY_SCALING"),
         ),
         Bonus(
             tech_soon_available("GRO_ENERGY_META", 3),
@@ -75,6 +69,21 @@ def _get_modified_research_bonuses(planet: fo.planet) -> List[Bonus]:
             get_named_real("BLD_ENCLAVE_VOID_TARGET_RESEARCH_PERPOP"),
         ),
     ]
+
+
+def _get_research_flat_modified(stability: float) -> float:
+    """
+    Get list of flat bonuses which are added before multiplication with the species skill value.
+    """
+    diversity = (
+        Bonus(
+            fo.getEmpire().policyAdopted("PLC_DIVERSITY"),
+            get_named_real("PLC_DIVERSITY_MIN_STABILITY"),
+            (len(get_empire_planets_by_species()) - get_named_int("PLC_DIVERSITY_THRESHOLD"))
+            * get_named_real("PLC_DIVERSITY_SCALING"),
+        ),
+    )
+    return diversity.get_bonus(stability)
 
 
 def _get_research_bonus_modified(planet: fo.planet, stability: float) -> float:
