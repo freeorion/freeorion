@@ -62,13 +62,10 @@ std::string Hotkey::HotkeyToString(GG::Key key, GG::Flags<GG::ModKey> mod) {
     std::string retval;
     const std::size_t sz = ((mod != GG::MOD_KEY_NONE) + (key > GG::Key::GGK_NONE)) * 24; // guesstimate
     retval.reserve(sz);
-    if (mod != GG::MOD_KEY_NONE) {
-        std::stringstream ss;
-        ss << mod; // TODO: make a possibly faster to_string for Flags<ModKey> ?
-        retval.append(ss.str()).append("+");
-    }
+    if (mod != GG::MOD_KEY_NONE)
+        retval.append(GG::to_string(mod)).append("+");
     if (key > GG::Key::GGK_NONE)
-        retval += to_string(key);
+        retval.append(to_string(key));
     return retval;
 }
 

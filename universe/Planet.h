@@ -77,9 +77,12 @@ public:
 
     [[nodiscard]] bool                HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
 
-    [[nodiscard]] PlanetEnvironment   EnvironmentForSpecies(std::string_view species_name = "") const;
-    [[nodiscard]] PlanetType          NextBestPlanetTypeForSpecies(const std::string& species_name = "") const;
-    [[nodiscard]] PlanetType          NextBetterPlanetTypeForSpecies(const std::string& species_name = "") const;
+    [[nodiscard]] PlanetEnvironment   EnvironmentForSpecies(const ScriptingContext& context,
+                                                            std::string_view species_name = "") const;
+    [[nodiscard]] PlanetType          NextBestPlanetTypeForSpecies(const ScriptingContext& context,
+                                                                   const std::string& species_name = "") const;
+    [[nodiscard]] PlanetType          NextBetterPlanetTypeForSpecies(const ScriptingContext& context,
+                                                                     const std::string& species_name = "") const;
     [[nodiscard]] PlanetType          NextCloserToOriginalPlanetType() const;
     [[nodiscard]] PlanetType          ClockwiseNextPlanetType() const;
     [[nodiscard]] PlanetType          CounterClockwiseNextPlanetType() const;
@@ -111,8 +114,8 @@ public:
     [[nodiscard]] int LastTurnConquered() const noexcept            { return m_turn_last_conquered; }
     [[nodiscard]] int TurnsSinceLastConquered(int current_turn) const;
 
-    [[nodiscard]] const std::string&  SurfaceTexture() const noexcept { return m_surface_texture; }
-    [[nodiscard]] std::string         CardinalSuffix(const ObjectMap& objects) const; ///< returns a roman number representing this planets orbit in relation to other planets
+    [[nodiscard]] const std::string& SurfaceTexture() const noexcept{ return m_surface_texture; }
+    [[nodiscard]] std::string        CardinalSuffix(const ObjectMap& objects) const; ///< returns a roman number representing this planets orbit in relation to other planets
 
     [[nodiscard]] std::map<int, double> EmpireGroundCombatForces() const;
 

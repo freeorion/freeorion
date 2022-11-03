@@ -4286,11 +4286,11 @@ bool PlanetEnvironment::operator==(const Condition& rhs) const {
 namespace {
     struct PlanetEnvironmentSimpleMatch {
         PlanetEnvironmentSimpleMatch(const std::vector< ::PlanetEnvironment>& environments,
-                                     const ObjectMap& objects,
-                                     const std::string& species = "") :
+                                     const ScriptingContext& context,
+                                     std::string_view species = "") :
             m_environments(environments),
             m_species(species),
-            m_objects(objects)
+            m_context(context)
         {}
 
         bool operator()(const UniverseObject* candidate) const {
@@ -4303,19 +4303,19 @@ namespace {
                 planet = static_cast<const ::Planet*>(candidate);
             if (!planet && candidate->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
                 const auto* building = static_cast<const ::Building*>(candidate);
-                planet = m_objects.getRaw<Planet>(building->PlanetID());
+                planet = m_context.ContextObjects().getRaw<Planet>(building->PlanetID());
             }
             if (!planet)
                 return false;
 
             // if no species specified, use planet's own species
-            const auto& species_to_check = m_species.empty() ? planet->SpeciesName() : m_species;
+            std::string_view species_to_check = m_species.empty() ? planet->SpeciesName() : m_species;
             // if no species specified and planet has no species, can't match
             if (species_to_check.empty())
                 return false;
 
             // get plaent's environment for specified species, and check if it matches any of the indicated environments
-            auto planet_env = planet->EnvironmentForSpecies(species_to_check);
+            auto planet_env = planet->EnvironmentForSpecies(m_context, species_to_check);
             for (auto environment : m_environments) {
                 if (environment == planet_env)
                     return true;
@@ -4324,9 +4324,9 @@ namespace {
             return false;
         }
 
-        const std::vector< ::PlanetEnvironment>&    m_environments;
-        const std::string&                          m_species;
-        const ObjectMap&                            m_objects;
+        const std::vector< ::PlanetEnvironment>& m_environments;
+        const std::string_view                   m_species;
+        const ScriptingContext&                  m_context;
     };
 }
 
@@ -4354,7 +4354,7 @@ void PlanetEnvironment::Eval(const ScriptingContext& parent_context,
             environments.push_back(environment->Eval(parent_context));
         std::string species_name{m_species_name ? m_species_name->Eval(parent_context) : ""};
         EvalImpl(matches, non_matches, search_domain,
-                 PlanetEnvironmentSimpleMatch(environments, parent_context.ContextObjects(), species_name));
+                 PlanetEnvironmentSimpleMatch(environments, parent_context, species_name));
     } else {
         // re-evaluate contained objects for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
@@ -4433,7 +4433,7 @@ bool PlanetEnvironment::Match(const ScriptingContext& local_context) const {
     if (m_species_name)
         species_name = m_species_name->Eval(local_context);
 
-    auto env_for_planets_species = planet->EnvironmentForSpecies(species_name);
+    auto env_for_planets_species = planet->EnvironmentForSpecies(local_context, species_name);
     for (auto& environment : m_environments) {
         if (environment->Eval(local_context) == env_for_planets_species)
             return true;
@@ -8357,14 +8357,12 @@ namespace {
                 return false;
 
             // is candidate object close enough to any of the passed-in objects?
-            for (auto* obj : m_from_objects) { // TODO: if_any
-                double delta_x = candidate->X() - obj->X();
-                double delta_y = candidate->Y() - obj->Y();
-                if (delta_x*delta_x + delta_y*delta_y <= m_distance2)
-                    return true;
-            }
-
-            return false;
+            return std::any_of(m_from_objects.begin(), m_from_objects.end(),
+                               [this, x{candidate->X()}, y{candidate->Y()}](const auto* obj) {
+                                    double delta_x = x - obj->X();
+                                    double delta_y = y - obj->Y();
+                                    return (delta_x*delta_x + delta_y*delta_y <= m_distance2);
+                               });
         }
 
         const ObjectSet& m_from_objects;

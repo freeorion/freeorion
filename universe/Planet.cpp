@@ -219,15 +219,17 @@ void Planet::Init() {
     AddMeter(MeterType::METER_REBEL_TROOPS);
 }
 
-PlanetEnvironment Planet::EnvironmentForSpecies(std::string_view species_name) const {
+PlanetEnvironment Planet::EnvironmentForSpecies(const ScriptingContext& context,
+                                                std::string_view species_name) const
+{
     const Species* species = nullptr;
     if (species_name.empty()) {
         auto& this_planet_species_name = this->SpeciesName();
         if (this_planet_species_name.empty())
             return PlanetEnvironment::PE_UNINHABITABLE;
-        species = GetSpecies(this_planet_species_name); // TODO: use context.species.GetSpecies
+        species = context.species.GetSpecies(this_planet_species_name);
     } else {
-        species = GetSpecies(species_name);
+        species = context.species.GetSpecies(species_name);
     }
     if (!species) {
         ErrorLogger() << "Planet::EnvironmentForSpecies couldn't get species with name \"" << species_name << "\"";
@@ -236,15 +238,17 @@ PlanetEnvironment Planet::EnvironmentForSpecies(std::string_view species_name) c
     return species->GetPlanetEnvironment(m_type);
 }
 
-PlanetType Planet::NextBestPlanetTypeForSpecies(const std::string& species_name) const {
+PlanetType Planet::NextBestPlanetTypeForSpecies(const ScriptingContext& context,
+                                                const std::string& species_name) const
+{
     const Species* species = nullptr;
     if (species_name.empty()) {
         const std::string& this_planet_species_name = this->SpeciesName();
         if (this_planet_species_name.empty())
             return m_type;
-        species = GetSpecies(this_planet_species_name); // TODO: use context.species.GetSpecies
+        species = context.species.GetSpecies(this_planet_species_name);
     } else {
-        species = GetSpecies(species_name);
+        species = context.species.GetSpecies(species_name);
     }
     if (!species) {
         ErrorLogger() << "Planet::NextBestPlanetTypeForSpecies couldn't get species with name \"" << species_name << "\"";
@@ -253,15 +257,17 @@ PlanetType Planet::NextBestPlanetTypeForSpecies(const std::string& species_name)
     return species->NextBestPlanetType(m_type);
 }
 
-PlanetType Planet::NextBetterPlanetTypeForSpecies(const std::string& species_name) const {
+PlanetType Planet::NextBetterPlanetTypeForSpecies(const ScriptingContext& context,
+                                                  const std::string& species_name) const
+{
     const Species* species = nullptr;
     if (species_name.empty()) {
         const std::string& this_planet_species_name = this->SpeciesName();
         if (this_planet_species_name.empty())
             return m_type;
-        species = GetSpecies(this_planet_species_name); // TODO: use context.species.GetSpecies
+        species = context.species.GetSpecies(this_planet_species_name);
     } else {
-        species = GetSpecies(species_name);
+        species = context.species.GetSpecies(species_name);
     }
     if (!species) {
         ErrorLogger() << "Planet::NextBetterPlanetTypeForSpecies couldn't get species with name \"" << species_name << "\"";
@@ -723,9 +729,11 @@ bool Planet::Colonize(int empire_id, std::string species_name, double population
             return false;
         }
         // check if specified species can colonize this planet
-        if (EnvironmentForSpecies(species_name) < PlanetEnvironment::PE_HOSTILE) {
-            ErrorLogger() << "Planet::Colonize: can't colonize planet with species " << species_name << " because planet is "
-                          << m_type << " which for that species is environment: " << EnvironmentForSpecies(species_name);
+        if (EnvironmentForSpecies(context, species_name) < PlanetEnvironment::PE_HOSTILE) {
+            ErrorLogger() << "Planet::Colonize: can't colonize planet with species " << species_name
+                          << " because planet is " << m_type 
+                          << " which for that species is environment: "
+                          << EnvironmentForSpecies(context, species_name);
             return false;
         }
     }

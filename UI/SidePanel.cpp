@@ -889,11 +889,12 @@ namespace {
         return UserString(to_string(planet->Size()));
     }
 
-    const std::string& GetPlanetTypeName(const Planet* planet)
+    auto& GetPlanetTypeName(const Planet* planet)
     { return UserString(to_string(planet->Type())); }
 
-    const std::string& GetPlanetEnvironmentName(const Planet* planet, std::string_view species_name)
-    { return UserString(to_string(planet->EnvironmentForSpecies(species_name))); }
+    auto& GetPlanetEnvironmentName(const Planet* planet, std::string_view species_name,
+                                   const ScriptingContext& context)
+    { return UserString(to_string(planet->EnvironmentForSpecies(context, species_name))); }
 
     const std::string& GetStarTypeName(const System* system) {
         if (!system || system->GetStarType() == StarType::INVALID_STAR_TYPE)
@@ -1824,7 +1825,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
             boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE_ENV"))
                            % GetPlanetSizeName(planet_raw)
                            % GetPlanetTypeName(planet_raw)
-                           % GetPlanetEnvironmentName(planet_raw, species_name)
+                           % GetPlanetEnvironmentName(planet_raw, species_name, context)
                            % UserString(species_name))};
     m_env_size->SetText(std::move(env_size_text));
 

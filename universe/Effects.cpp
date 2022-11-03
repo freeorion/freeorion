@@ -1557,10 +1557,9 @@ void SetSpecies::Execute(ScriptingContext& context) const {
         auto available_foci = planet->AvailableFoci(context);
 
         // leave current focus unchanged if available.
-        for (const auto& available_focus : available_foci) { // TODO: any_of
-            if (available_focus == initial_focus)
-                return;
-        }
+        if (std::any_of(available_foci.begin(), available_foci.end(),
+                        [&initial_focus](const auto& af) { return initial_focus == af; }))
+        { return; }
 
         const Species* species = context.species.GetSpecies(planet->SpeciesName());
         static const std::string EMPTY_STRING{};

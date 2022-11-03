@@ -808,7 +808,9 @@ bool ColonizeOrder::Check(int empire_id, int ship_id, int planet_id,
         ErrorLogger() << "ColonizeOrder::Check() : given planet that empire has insufficient visibility of";
         return false;
     }
-    if (colonist_capacity > 0.0f && planet->EnvironmentForSpecies(ship->SpeciesName()) < PlanetEnvironment::PE_HOSTILE) {
+    if (colonist_capacity > 0.0f &&
+        planet->EnvironmentForSpecies(context, ship->SpeciesName()) < PlanetEnvironment::PE_HOSTILE)
+    {
         ErrorLogger() << "ColonizeOrder::Check() : nonzero colonist capacity, " << colonist_capacity
                       << ", and planet " << planet->Name() << " of type, " << planet->Type() << ", that ship's species, "
                       << ship->SpeciesName() << ", can't colonize";

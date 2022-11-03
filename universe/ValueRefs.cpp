@@ -732,9 +732,9 @@ PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const
     else if (property_name == "NextCloserToOriginalPlanetType")
         planet_property = &Planet::NextCloserToOriginalPlanetType;
     else if (property_name == "NextBestPlanetType")
-        planet_property = [](const Planet& planet) { return planet.NextBestPlanetTypeForSpecies(); };
+        planet_property = [&context](const Planet& p) { return p.NextBestPlanetTypeForSpecies(context); };
     else if (property_name == "NextBetterPlanetType")
-        planet_property = [](const Planet& planet) { return planet.NextBetterPlanetTypeForSpecies(); };
+        planet_property = [&context](const Planet& p) { return p.NextBetterPlanetTypeForSpecies(context); };
     else if (property_name == "ClockwiseNextPlanetType")
         planet_property = &Planet::ClockwiseNextPlanetType;
     else if (property_name == "CounterClockwiseNextPlanetType")
@@ -768,7 +768,7 @@ PlanetEnvironment Variable<PlanetEnvironment>::Eval(const ScriptingContext& cont
         }
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             auto p = static_cast<const Planet*>(object);
-            return p->EnvironmentForSpecies();
+            return p->EnvironmentForSpecies(context);
         }
 
         return PlanetEnvironment::INVALID_PLANET_ENVIRONMENT;
@@ -1566,7 +1566,7 @@ PlanetEnvironment ComplexVariable<PlanetEnvironment>::Eval(const ScriptingContex
         std::string species_name;
         if (m_string_ref1)
             species_name = m_string_ref1->Eval(context);
-        return planet->EnvironmentForSpecies(species_name);
+        return planet->EnvironmentForSpecies(context, species_name);
     }
 
     return PlanetEnvironment::INVALID_PLANET_ENVIRONMENT;

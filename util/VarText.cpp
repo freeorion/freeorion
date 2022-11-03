@@ -223,9 +223,9 @@ namespace {
                 // Assume that we have no userstring which is also a number
                 if (UserStringExists(data))
                     return UserString(data);
-                try { // remove lexical_cast<int> ... ?
+                try { // TODO: remove lexical_cast<int> ... ?
                     if (auto planet = context.ContextObjects().getRaw<Planet>(boost::lexical_cast<int>(data)))
-                        return UserString(to_string(planet->EnvironmentForSpecies()));
+                        return UserString(to_string(planet->EnvironmentForSpecies(context)));
                 } catch (...) {}
                 return UserString("UNKNOWN_PLANET");
             }},
