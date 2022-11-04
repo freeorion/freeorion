@@ -1813,16 +1813,11 @@ void DesignWnd::PartPalette::CompleteConstruction() {
     //TempUISoundDisabler sound_disabler;     // should be redundant with disabler in DesignWnd::DesignWnd.  uncomment if this is not the case
     SetChildClippingMode(ChildClippingMode::ClipToClient);
 
-    namespace ph = boost::placeholders;
-
     m_parts_list = GG::Wnd::Create<PartsListBox>(m_availabilities_state);
     AttachChild(m_parts_list);
-    m_parts_list->ShipPartClickedSignal.connect(
-        boost::bind(&DesignWnd::PartPalette::HandleShipPartClicked, this, ph::_1, ph::_2));
-    m_parts_list->ShipPartDoubleClickedSignal.connect(
-        ShipPartDoubleClickedSignal);
-    m_parts_list->ShipPartRightClickedSignal.connect(
-        boost::bind(&DesignWnd::PartPalette::HandleShipPartRightClicked, this, ph::_1, ph::_2));
+    m_parts_list->ShipPartClickedSignal.connect([this](auto* p, auto modkeys) { HandleShipPartClicked(p, modkeys); });
+    m_parts_list->ShipPartDoubleClickedSignal.connect(ShipPartDoubleClickedSignal);
+    m_parts_list->ShipPartRightClickedSignal.connect([this](auto* p, auto pt) { HandleShipPartRightClicked(p, pt); });
     m_parts_list->ClearPartSignal.connect(ClearPartSignal);
 
     const ShipPartManager& part_manager = GetShipPartManager();
@@ -1833,14 +1828,11 @@ void DesignWnd::PartPalette::CompleteConstruction() {
          part_class = ShipPartClass(int(part_class) + 1))
     {
         // are there any parts of this class?
-        bool part_of_this_class_exists = false;
-        for ([[maybe_unused]] auto& [ignored_part_name, part] : part_manager) {
-            (void)ignored_part_name;
-            if (part && part->Class() == part_class) {
-                part_of_this_class_exists = true;
-                break;
-            }
-        }
+        bool part_of_this_class_exists = std::any_of(part_manager.begin(), part_manager.end(),
+                                                     [part_class](auto& name_part) {
+                                                         return name_part.second &&
+                                                             name_part.second->Class() == part_class;
+                                                     });
         if (!part_of_this_class_exists)
             continue;
 
@@ -1849,7 +1841,7 @@ void DesignWnd::PartPalette::CompleteConstruction() {
             std::make_shared<CUILabelButtonRepresenter>());
         AttachChild(m_class_buttons[part_class]);
         m_class_buttons[part_class]->CheckedSignal.connect(
-            boost::bind(&DesignWnd::PartPalette::ToggleClass, this, part_class, true));
+            [part_class, this](bool) { ToggleClass(part_class, true); });
     }
 
 
@@ -1859,30 +1851,26 @@ void DesignWnd::PartPalette::CompleteConstruction() {
     obsolete_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_OBSOLETE"),
                                                       GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(obsolete_button);
-    obsolete_button->CheckedSignal.connect(
-        boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, Availability::Obsolete));
+    obsolete_button->CheckedSignal.connect([this](bool) { ToggleAvailability(Availability::Obsolete); });
     obsolete_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Obsolete));
 
     available_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"),
                                                        GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(available_button);
-    available_button->CheckedSignal.connect(
-        boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, Availability::Available));
+    available_button->CheckedSignal.connect([this](bool) { ToggleAvailability(Availability::Available); });
     available_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Available));
 
     unavailable_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"),
                                                          GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(unavailable_button);
-    unavailable_button->CheckedSignal.connect(
-        boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, Availability::Future));
+    unavailable_button->CheckedSignal.connect([this](bool) { ToggleAvailability(Availability::Future); });
     unavailable_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Future));
 
 
     // superfluous parts button
     m_superfluous_parts_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_REDUNDANT"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_superfluous_parts_button);
-    m_superfluous_parts_button->CheckedSignal.connect(
-        boost::bind(&DesignWnd::PartPalette::ToggleSuperfluous, this, true));
+    m_superfluous_parts_button->CheckedSignal.connect([this](bool) { ToggleSuperfluous(true); });
 
     // default to showing nothing
     ShowAllClasses(false);
@@ -1963,8 +1951,8 @@ void DesignWnd::PartPalette::DoLayout() {
     // place slot type buttons
     col = NUM_CLASS_BUTTONS_PER_ROW;
     row = 0;
-    auto ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
-    auto lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    const auto ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
+    const auto lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
     m_superfluous_parts_button->SizeMove(ul, lr);
 
     // a function to place availability buttons either in a single column below the
@@ -2005,9 +1993,9 @@ void DesignWnd::PartPalette::HandleShipPartClicked(const ShipPart* part, GG::Fla
 
         PartObsolescenceChangedSignal();
         Populate();
-    }
-    else
+    } else {
         ShipPartClickedSignal(part, modkeys);
+    }
 }
 
 void DesignWnd::PartPalette::HandleShipPartRightClicked(const ShipPart* part, const GG::Pt& pt) {
@@ -2164,7 +2152,7 @@ public:
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds,
                              const GG::Wnd* destination) override;
-    virtual void QueueItemMoved(const GG::ListBox::iterator& row_it, 
+    virtual void QueueItemMoved(const GG::ListBox::iterator& row_it,
                                 const GG::ListBox::iterator& original_position_it) {}
     void SetEmpireShown(int empire_id, bool refresh_list = true);
     virtual void Populate();
@@ -2186,8 +2174,7 @@ public:
         void CompleteConstruction() override;
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
-        void Render() override
-        {}
+        void Render() override {}
 
         void SetAvailability(const AvailabilityManager::DisplayedAvailabilies& type);
         void SetDisplayName(std::string name);
@@ -2251,14 +2238,11 @@ protected:
 
     const AvailabilityManager& AvailabilityState() const noexcept { return m_availabilities_state; }
 
-    GG::Pt  ListRowSize();
+    GG::Pt ListRowSize();
 
-    virtual void BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
-    {}
-    virtual void BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
-    {}
-    virtual void BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
-    {}
+    virtual void BaseDoubleClicked(GG::ListBox::iterator, const GG::Pt&, const GG::Flags<GG::ModKey>&) {}
+    virtual void BaseLeftClicked(GG::ListBox::iterator, const GG::Pt&, const GG::Flags<GG::ModKey>&) {}
+    virtual void BaseRightClicked(GG::ListBox::iterator, const GG::Pt&, const GG::Flags<GG::ModKey>&) {}
 
 private:
     void InitRowSizes();
@@ -2402,11 +2386,10 @@ void BasesListBox::CompleteConstruction() {
     InitRowSizes();
     SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
 
-    namespace ph = boost::placeholders;
-
-    DoubleClickedRowSignal.connect(boost::bind(&BasesListBox::BaseDoubleClicked, this, ph::_1, ph::_2, ph::_3));
-    LeftClickedRowSignal.connect(boost::bind(&BasesListBox::BaseLeftClicked, this, ph::_1, ph::_2, ph::_3));
-    MovedRowSignal.connect(boost::bind(&BasesListBox::QueueItemMoved, this, ph::_1, ph::_2));
+    // iterator, const Pt&,const GG::Flags<GG::ModKey>&
+    DoubleClickedRowSignal.connect([this](auto it, auto pt, auto modkeys) { BaseDoubleClicked(it, pt, modkeys); });
+    LeftClickedRowSignal.connect([this](auto it, auto pt, auto modkeys) { BaseLeftClicked(it, pt, modkeys); });
+    MovedRowSignal.connect([this](auto new_it, auto old_it) { QueueItemMoved(new_it, old_it); });
 
     EnableOrderIssuing(false);
 }
@@ -2459,8 +2442,7 @@ void BasesListBox::SetEmpireShown(int empire_id, bool refresh_list) {
 
     // connect signal to update this list if the empire's designs change
     if (const Empire* empire = GetEmpire(m_empire_id_shown))
-        m_empire_designs_changed_signal = empire->ShipDesignsChangedSignal.connect(
-            boost::bind(&BasesListBox::Populate, this));
+        m_empire_designs_changed_signal = empire->ShipDesignsChangedSignal.connect([this]() { Populate(); });
 
     if (refresh_list)
         Populate();
@@ -3377,28 +3359,25 @@ void DesignWnd::BaseSelector::CompleteConstruction() {
     obsolete_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_OBSOLETE"),
                                                       GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(obsolete_button);
-    obsolete_button->CheckedSignal.connect(
-        boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, Availability::Obsolete));
+    obsolete_button->CheckedSignal.connect([this](auto) { ToggleAvailability(Availability::Obsolete); });
     obsolete_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Obsolete));
 
     available_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"),
                                                        GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(available_button);
-    available_button->CheckedSignal.connect(
-        boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, Availability::Available));
+    available_button->CheckedSignal.connect([this](auto) { ToggleAvailability(Availability::Available); });
     available_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Available));
 
     unavailable_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"),
                                                          GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(unavailable_button);
-    unavailable_button->CheckedSignal.connect(
-        boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, Availability::Future));
+    unavailable_button->CheckedSignal.connect([this](auto) { ToggleAvailability(Availability::Future); });
     unavailable_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Future));
 
 
     m_tabs = GG::Wnd::Create<GG::TabWnd>(GG::X(5), GG::Y(2), GG::X(10), GG::Y(10), ClientUI::GetFont(),
                                          ClientUI::WndColor(), ClientUI::TextColor());
-    m_tabs->TabChangedSignal.connect(boost::bind(&DesignWnd::BaseSelector::Reset, this));
+    m_tabs->TabChangedSignal.connect([this](auto) { Reset(); });
     AttachChild(m_tabs);
 
     m_hulls_list = GG::Wnd::Create<EmptyHullsListBox>(m_availabilities_state, HULL_PARTS_ROW_DROP_TYPE_STRING);
@@ -3574,9 +3553,10 @@ public:
     //! Does not emit signal.
     void SetPart(const ShipPart* part = nullptr);
 
-    /** emitted when the contents of a slot are altered by the dragging
-      * a PartControl in or out of the slot.  signal should be caught and the
-      * slot contents set using SetPart accordingly */
+    /** emitted when the contents of a slot are altered by dragging a
+      * PartControl in or out of the slot.  signal should be caught
+      * and the slot contents set using SetPart accordingly. second
+      * parameter indicates that CTRL was held while dropping. */
     mutable boost::signals2::signal<void (const ShipPart*, bool)> SlotContentsAlteredSignal;
 
     mutable boost::signals2::signal<void (const ShipPart*, GG::Flags<GG::ModKey>)> ShipPartClickedSignal;
@@ -4070,16 +4050,14 @@ void DesignWnd::MainPanel::CompleteConstruction() {
     AttachChild(m_confirm_button);
     AttachChild(m_clear_button);
 
-    m_clear_button->LeftClickedSignal.connect(boost::bind(&DesignWnd::MainPanel::ClearParts, this));
-    m_design_name->EditedSignal.connect(
-        boost::bind(&DesignWnd::MainPanel::DesignNameEditedSlot, this, boost::placeholders::_1));
+    m_clear_button->LeftClickedSignal.connect([this]() { ClearParts(); });
+    m_design_name->EditedSignal.connect([this](auto& new_name) { DesignNameEditedSlot(new_name); });
     m_replace_button->LeftClickedSignal.connect(DesignReplacedSignal);
     m_confirm_button->LeftClickedSignal.connect(DesignConfirmedSignal);
-    m_design_description_toggle->CheckedSignal.connect(
-        boost::bind(&DesignWnd::MainPanel::ToggleDescriptionEditor, this));
-    DesignChangedSignal.connect(boost::bind(&DesignWnd::MainPanel::DesignChanged, this));
-    DesignReplacedSignal.connect(boost::bind(&DesignWnd::MainPanel::ReplaceDesign, this));
-    DesignConfirmedSignal.connect(boost::bind(&DesignWnd::MainPanel::AddDesign, this));
+    m_design_description_toggle->CheckedSignal.connect([this](auto) { ToggleDescriptionEditor(); });
+    DesignChangedSignal.connect([this]() { DesignChanged(); });
+    DesignReplacedSignal.connect([this]() { ReplaceDesign();});
+    DesignConfirmedSignal.connect([this]() { AddDesign(); });
 
     DesignChanged(); // Initialize components that rely on the current state of the design.
 
@@ -4518,12 +4496,8 @@ void DesignWnd::MainPanel::Populate() {
         m_slots.push_back(slot_control);
         AttachChild(slot_control);
 
-        namespace ph = boost::placeholders;
-
         slot_control->SlotContentsAlteredSignal.connect(
-            boost::bind(static_cast<void (DesignWnd::MainPanel::*)(
-                const ShipPart*, unsigned int, bool, bool)>(&DesignWnd::MainPanel::SetPart),
-                    this, ph::_1, i, true, ph::_2));
+            [this, slot{i}](auto* part, bool do_similar) { SetPart(part, slot, true, do_similar); });
         slot_control->ShipPartClickedSignal.connect(ShipPartClickedSignal);
     }
 }
@@ -4993,8 +4967,10 @@ void DesignWnd::MainPanel::ReplaceDesign() {
 }
 
 void DesignWnd::MainPanel::ToggleDescriptionEditor() {
-  if (m_design_description_toggle->Checked()) { m_design_description_edit->Show() ; }
-  else { m_design_description_edit->Hide(); }
+    if (m_design_description_toggle->Checked())
+        m_design_description_edit->Show();
+    else
+        m_design_description_edit->Hide();
 }
 
 //////////////////////////////////////////////////
@@ -5017,62 +4993,36 @@ void DesignWnd::CompleteConstruction() {
     m_part_palette = GG::Wnd::Create<PartPalette>(DES_PART_PALETTE_WND_NAME);
     m_base_selector = GG::Wnd::Create<BaseSelector>(DES_BASE_SELECTOR_WND_NAME);
     InitializeWindows();
-    GGHumanClientApp::GetApp()->RepositionWindowsSignal.connect(
-        boost::bind(&DesignWnd::InitializeWindows, this));
+    GGHumanClientApp::GetApp()->RepositionWindowsSignal.connect([this]() { InitializeWindows(); });
 
     AttachChild(m_detail_panel);
 
-    using boost::placeholders::_1;
-    using boost::placeholders::_2;
-
     AttachChild(m_main_panel);
-    m_main_panel->ShipPartClickedSignal.connect(
-        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const ShipPart*)>(
-            &EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
-    m_main_panel->ShipHullClickedSignal.connect(
-        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const ShipHull*)>(
-            &EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
-    m_main_panel->DesignChangedSignal.connect(boost::bind(&DesignWnd::DesignChanged, this));
-    m_main_panel->DesignNameChangedSignal.connect(boost::bind(&DesignWnd::DesignNameChanged, this));
-    m_main_panel->CompleteDesignClickedSignal.connect(
-        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(int)>(
-            &EncyclopediaDetailPanel::SetDesign), m_detail_panel, _1));
+    m_main_panel->ShipPartClickedSignal.connect([this](auto* p, auto) { m_detail_panel->SetItem(p); });
+    m_main_panel->ShipHullClickedSignal.connect([this](auto* h) { m_detail_panel->SetItem(h); });
+    m_main_panel->DesignChangedSignal.connect([this]() { DesignChanged(); });
+    m_main_panel->DesignNameChangedSignal.connect([this]() { DesignNameChanged(); });
+    m_main_panel->CompleteDesignClickedSignal.connect([this](int id) { m_detail_panel->SetDesign(id); });
     //m_main_panel->Sanitize();
 
     AttachChild(m_part_palette);
-    m_part_palette->ShipPartClickedSignal.connect(
-        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const ShipPart*)>(
-            &EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
-    m_part_palette->ShipPartDoubleClickedSignal.connect(
-        boost::bind(&DesignWnd::MainPanel::AddPart, m_main_panel, _1));
-    m_part_palette->ClearPartSignal.connect(
-        boost::bind(&DesignWnd::MainPanel::ClearPart, m_main_panel, _1));
+    m_part_palette->ShipPartClickedSignal.connect([this](auto* p, auto) { m_detail_panel->SetItem(p); });
+    m_part_palette->ShipPartDoubleClickedSignal.connect([this](auto* p) { m_main_panel->AddPart(p); });
+    m_part_palette->ClearPartSignal.connect([this](auto& p) { m_main_panel->ClearPart(p); });
 
     AttachChild(m_base_selector);
-
-    m_base_selector->DesignSelectedSignal.connect(
-        boost::bind(static_cast<void (MainPanel::*)(int)>(&MainPanel::SetDesign), m_main_panel, _1));
-    m_base_selector->DesignUpdatedSignal.connect(
-        boost::bind(static_cast<void (MainPanel::*)()>(&MainPanel::DesignChanged), m_main_panel));
+    m_base_selector->DesignSelectedSignal.connect([this](int id) { m_main_panel->SetDesign(id); });
+    m_base_selector->DesignUpdatedSignal.connect([this](int id) { m_main_panel->DesignChanged(); });
     m_base_selector->DesignComponentsSelectedSignal.connect(
-        boost::bind(static_cast<void (MainPanel::*)(const std::string& hull, const std::vector<std::string>& parts)>(
-            &MainPanel::SetDesignComponents), m_main_panel, _1, _2));
+        [this](auto& hull, auto& parts) { m_main_panel->SetDesignComponents(hull, parts); });
     m_base_selector->SavedDesignSelectedSignal.connect(
-        boost::bind(static_cast<void (MainPanel::*)(const boost::uuids::uuid&)>(
-            &MainPanel::SetDesign), m_main_panel, _1));
-
-    m_base_selector->DesignClickedSignal.connect(
-        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(
-            &EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
-    m_base_selector->HullClickedSignal.connect(
-        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const ShipHull*)>(
-            &EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
-    m_base_selector->TabChangedSignal.connect(boost::bind(
-        &MainPanel::HandleBaseTypeChange, m_main_panel, _1));
+        [this](const auto& uuid) { m_main_panel->SetDesign(uuid); });
+    m_base_selector->DesignClickedSignal.connect([this](auto* d) { m_detail_panel->SetItem(d); });
+    m_base_selector->HullClickedSignal.connect([this](auto* h) { m_detail_panel->SetItem(h); });
+    m_base_selector->TabChangedSignal.connect([this](auto tab) { m_main_panel->HandleBaseTypeChange(tab); });
 
     // Connect signals to re-populate when part obsolescence changes
-    m_part_palette->PartObsolescenceChangedSignal.connect(
-        boost::bind(&BaseSelector::Reset, m_base_selector));
+    m_part_palette->PartObsolescenceChangedSignal.connect([this]() { m_base_selector->Reset(); });
 }
 
 void DesignWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -5103,7 +5053,7 @@ void DesignWnd::InitializeWindows() {
     static constexpr GG::X selector_width = GG::X(300);
     const GG::X main_width = ClientWidth() - selector_width;
 
-    const GG::Pt pedia_ul(selector_width, GG::Y0);
+    static constexpr GG::Pt pedia_ul(selector_width, GG::Y0);
     const GG::Pt pedia_wh(5*main_width/11, 2*ClientHeight()/5);
 
     const GG::Pt main_ul(selector_width, pedia_ul.y + pedia_wh.y);
