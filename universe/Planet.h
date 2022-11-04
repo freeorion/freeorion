@@ -67,7 +67,7 @@ public:
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
     [[nodiscard]] std::vector<std::string>AvailableFoci(const ScriptingContext& context) const override; // TODO: return vector<string_view>
-    [[nodiscard]] const std::string&      FocusIcon(const std::string& focus_name) const override;
+    [[nodiscard]] const std::string&      FocusIcon(const std::string& focus_name, const ScriptingContext& context) const override;
 
     [[nodiscard]] PlanetType          Type() const noexcept            { return m_type; }
     [[nodiscard]] PlanetType          OriginalType() const noexcept    { return m_original_type; }

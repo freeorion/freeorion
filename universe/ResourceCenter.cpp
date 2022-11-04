@@ -72,7 +72,7 @@ int ResourceCenter::TurnsSinceFocusChange(int current_turn) const {
     return current_turn - m_last_turn_focus_changed;
 }
 
-const std::string& ResourceCenter::FocusIcon(const std::string& focus_name) const
+const std::string& ResourceCenter::FocusIcon(const std::string&, const ScriptingContext&) const
 { return EMPTY_STRING; }
 
 std::string ResourceCenter::Dump(uint8_t ntabs) const {

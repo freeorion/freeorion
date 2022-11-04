@@ -1840,7 +1840,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
         rows.reserve(available_foci.size());
         for (const auto& focus_name : available_foci) {
             auto texture = ClientUI::GetTexture(
-                ClientUI::ArtDir() / planet->FocusIcon(focus_name), true);
+                ClientUI::ArtDir() / planet->FocusIcon(focus_name, context), true);
             auto graphic = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             graphic->Resize(GG::Pt(MeterIconSize().x*3/2, MeterIconSize().y*3/2));
             auto row = GG::Wnd::Create<GG::DropDownList::Row>(graphic->Width(), graphic->Height());
