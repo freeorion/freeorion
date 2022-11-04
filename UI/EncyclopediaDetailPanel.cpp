@@ -663,7 +663,7 @@ namespace {
         }
         else if (dir_name == "ENC_FIELD") {
             for (auto* field : objects.allRaw<Field>()) {
-                const std::string& field_name = field->Name();
+                std::string_view field_name = field->Name();
                 retval.emplace_back(std::piecewise_construct,
                                     std::forward_as_tuple(field_name),
                                     std::forward_as_tuple(LinkTaggedIDText(VarText::FIELD_ID_TAG, field->ID(), field_name).append("  "),
@@ -4427,52 +4427,52 @@ void EncyclopediaDetailPanel::SetPlanet(int planet_id) {
     AddItem(PLANET_SUITABILITY_REPORT, ToChars(planet_id));
 }
 
-void EncyclopediaDetailPanel::SetTech(const std::string& tech_name) {
+void EncyclopediaDetailPanel::SetTech(std::string tech_name) {
     if (m_items_it != m_items.end() && tech_name == m_items_it->second)
         return;
-    AddItem("ENC_TECH", tech_name);
+    AddItem("ENC_TECH", std::move(tech_name));
 }
 
-void EncyclopediaDetailPanel::SetPolicy(const std::string& policy_name) {
+void EncyclopediaDetailPanel::SetPolicy(std::string policy_name) {
     if (m_items_it != m_items.end() && policy_name == m_items_it->second)
         return;
-    AddItem("ENC_POLICY", policy_name);
+    AddItem("ENC_POLICY", std::move(policy_name));
 }
 
-void EncyclopediaDetailPanel::SetShipPart(const std::string& part_name) {
+void EncyclopediaDetailPanel::SetShipPart(std::string part_name) {
     if (m_items_it != m_items.end() && part_name == m_items_it->second)
         return;
-    AddItem("ENC_SHIP_PART", part_name);
+    AddItem("ENC_SHIP_PART", std::move(part_name));
 }
 
-void EncyclopediaDetailPanel::SetShipHull(const std::string& hull_name) {
+void EncyclopediaDetailPanel::SetShipHull(std::string hull_name) {
     if (m_items_it != m_items.end() && hull_name == m_items_it->second)
         return;
-    AddItem("ENC_SHIP_HULL", hull_name);
+    AddItem("ENC_SHIP_HULL", std::move(hull_name));
 }
 
-void EncyclopediaDetailPanel::SetBuildingType(const std::string& building_name) {
+void EncyclopediaDetailPanel::SetBuildingType(std::string building_name) {
     if (m_items_it != m_items.end() && building_name == m_items_it->second)
         return;
-    AddItem("ENC_BUILDING_TYPE", building_name);
+    AddItem("ENC_BUILDING_TYPE", std::move(building_name));
 }
 
-void EncyclopediaDetailPanel::SetSpecial(const std::string& special_name) {
+void EncyclopediaDetailPanel::SetSpecial(std::string special_name) {
     if (m_items_it != m_items.end() && special_name == m_items_it->second)
         return;
-    AddItem("ENC_SPECIAL", special_name);
+    AddItem("ENC_SPECIAL", std::move(special_name));
 }
 
-void EncyclopediaDetailPanel::SetSpecies(const std::string& species_name) {
+void EncyclopediaDetailPanel::SetSpecies(std::string species_name) {
     if (m_items_it != m_items.end() && species_name == m_items_it->second)
         return;
-    AddItem("ENC_SPECIES", species_name);
+    AddItem("ENC_SPECIES", std::move(species_name));
 }
 
-void EncyclopediaDetailPanel::SetFieldType(const std::string& field_type_name) {
+void EncyclopediaDetailPanel::SetFieldType(std::string field_type_name) {
     if (m_items_it != m_items.end() && field_type_name == m_items_it->second)
         return;
-    AddItem("ENC_FIELD_TYPE", field_type_name);
+    AddItem("ENC_FIELD_TYPE", std::move(field_type_name));
 }
 
 void EncyclopediaDetailPanel::SetMeterType(std::string meter_string) {
@@ -4492,10 +4492,10 @@ void EncyclopediaDetailPanel::SetObject(int object_id) {
     AddItem(UNIVERSE_OBJECT, ToChars(object_id));
 }
 
-void EncyclopediaDetailPanel::SetObject(const std::string& object_id) {
+void EncyclopediaDetailPanel::SetObject(std::string object_id) {
     if (m_items_it != m_items.end() && object_id == m_items_it->second)
         return;
-    AddItem(UNIVERSE_OBJECT, object_id);
+    AddItem(UNIVERSE_OBJECT, std::move(object_id));
 }
 
 void EncyclopediaDetailPanel::SetEmpire(int empire_id) {
@@ -4505,10 +4505,10 @@ void EncyclopediaDetailPanel::SetEmpire(int empire_id) {
     AddItem("ENC_EMPIRE", ToChars(empire_id));
 }
 
-void EncyclopediaDetailPanel::SetEmpire(const std::string& empire_id) {
+void EncyclopediaDetailPanel::SetEmpire(std::string empire_id) {
     if (m_items_it != m_items.end() && empire_id == m_items_it->second)
         return;
-    AddItem("ENC_EMPIRE", empire_id);
+    AddItem("ENC_EMPIRE", std::move(empire_id));
 }
 
 void EncyclopediaDetailPanel::SetDesign(int design_id) {
@@ -4519,10 +4519,10 @@ void EncyclopediaDetailPanel::SetDesign(int design_id) {
     AddItem("ENC_SHIP_DESIGN", ToChars(design_id));
 }
 
-void EncyclopediaDetailPanel::SetDesign(const std::string& design_id) {
+void EncyclopediaDetailPanel::SetDesign(std::string design_id) {
     if (m_items_it != m_items.end() && design_id == m_items_it->second)
         return;
-    AddItem("ENC_SHIP_DESIGN", design_id);
+    AddItem("ENC_SHIP_DESIGN", std::move(design_id));
 }
 
 void EncyclopediaDetailPanel::SetIncompleteDesign(std::weak_ptr<const ShipDesign> incomplete_design) {
@@ -4536,13 +4536,13 @@ void EncyclopediaDetailPanel::SetIncompleteDesign(std::weak_ptr<const ShipDesign
     }
 }
 
-void EncyclopediaDetailPanel::SetGraph(const std::string& graph_id)
-{ AddItem(TextLinker::GRAPH_TAG, graph_id); }
+void EncyclopediaDetailPanel::SetGraph(std::string graph_id)
+{ AddItem(TextLinker::GRAPH_TAG, std::move(graph_id)); }
 
 void EncyclopediaDetailPanel::SetIndex()
 { AddItem(TextLinker::ENCYCLOPEDIA_TAG, "ENC_INDEX"); }
 
-void EncyclopediaDetailPanel::SetItem(std::shared_ptr<const Planet> planet)
+void EncyclopediaDetailPanel::SetItem(const std::shared_ptr<const Planet>& planet)
 { SetPlanet(planet ? planet->ID() : INVALID_OBJECT_ID); }
 
 void EncyclopediaDetailPanel::SetItem(const Tech* tech)
@@ -4569,7 +4569,7 @@ void EncyclopediaDetailPanel::SetItem(const Species* species)
 void EncyclopediaDetailPanel::SetItem(const FieldType* field_type)
 { SetFieldType(field_type ? field_type->Name() : EMPTY_STRING); }
 
-void EncyclopediaDetailPanel::SetItem(std::shared_ptr<const UniverseObject> obj)
+void EncyclopediaDetailPanel::SetItem(const std::shared_ptr<const UniverseObject>& obj)
 { SetObject(obj ? obj->ID() : INVALID_OBJECT_ID); }
 
 void EncyclopediaDetailPanel::SetItem(const Empire* empire)
@@ -4578,10 +4578,10 @@ void EncyclopediaDetailPanel::SetItem(const Empire* empire)
 void EncyclopediaDetailPanel::SetItem(const ShipDesign* design)
 { SetDesign(design ? design->ID() : INVALID_DESIGN_ID); }
 
-void EncyclopediaDetailPanel::SetItem(const MeterType& meter_type)
+void EncyclopediaDetailPanel::SetItem(MeterType meter_type)
 { SetMeterType(std::string{to_string(meter_type)}); }
 
-void EncyclopediaDetailPanel::SetEncyclopediaArticle(const std::string& name)
+void EncyclopediaDetailPanel::SetEncyclopediaArticle(std::string name)
 { AddItem(TextLinker::ENCYCLOPEDIA_TAG, name); }
 
 void EncyclopediaDetailPanel::OnIndex()
