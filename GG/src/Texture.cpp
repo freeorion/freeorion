@@ -19,11 +19,6 @@
 #if GG_HAVE_LIBPNG
 # include <boost/gil/extension/io/png.hpp>
 #endif
-#if BOOST_VERSION >= 107400
-#include <boost/variant2/variant.hpp>
-#elif BOOST_VERSION >= 107000
-#include <boost/variant/get.hpp>
-#endif
 #include <GG/GLClientAndServerBuffer.h>
 #include <GG/Texture.h>
 #include <GG/utf8/checked.h>
