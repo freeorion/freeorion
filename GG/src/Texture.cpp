@@ -28,7 +28,7 @@ using namespace GG;
 
 namespace {
     template <typename T>
-    T PowerOfTwo(T input)
+    constexpr T PowerOfTwo(T input)
     {
         T value(1);
         while (value < input)
@@ -45,45 +45,6 @@ Texture::Texture()
 
 Texture::~Texture()
 { Clear(); }
-
-const boost::filesystem::path& Texture::Path() const
-{ return m_path; }
-
-GLenum Texture::WrapS() const
-{ return m_wrap_s; }
-
-GLenum Texture::WrapT() const
-{ return m_wrap_t; }
-
-GLenum Texture::MinFilter() const
-{ return m_min_filter; }
-
-GLenum Texture::MagFilter() const
-{ return m_mag_filter; }
-
-unsigned int Texture::BytesPP() const
-{ return m_bytes_pp; }
-
-X Texture::Width() const
-{ return m_width; }
-
-Y Texture::Height() const
-{ return m_height; }
-
-bool Texture::MipMapped() const
-{ return m_mipmaps; }
-
-GLuint Texture::OpenGLId() const
-{ return m_opengl_id; }
-
-const GLfloat* Texture::DefaultTexCoords() const
-{ return m_tex_coords; }
-
-X Texture::DefaultWidth() const
-{ return m_default_width; }
-
-Y Texture::DefaultHeight() const
-{ return m_default_height; }
 
 void Texture::Blit(const GL2DVertexBuffer& vertex_buffer,
                    const GLTexCoordBuffer& tex_coord_buffer,
@@ -124,8 +85,7 @@ void Texture::Blit(const GL2DVertexBuffer& vertex_buffer,
     glPopAttrib();
 }
 
-void Texture::OrthoBlit(const Pt& pt1, const Pt& pt2,
-                        const GLfloat* tex_coords) const
+void Texture::OrthoBlit(Pt pt1, Pt pt2, const GLfloat* tex_coords) const
 {
     if (m_opengl_id == 0)
         return;
@@ -173,7 +133,7 @@ void Texture::InitBuffer(GLTexCoordBuffer& tex_coord_buffer, const GLfloat* tex_
     }
 }
 
-void Texture::OrthoBlit(const Pt& pt) const
+void Texture::OrthoBlit(Pt pt) const
 { OrthoBlit(pt, pt + Pt(m_default_width, m_default_height), m_tex_coords); }
 
 void Texture::Load(const boost::filesystem::path& path, bool mipmap)
@@ -525,10 +485,10 @@ Y SubTexture::Height() const
 const Texture* SubTexture::GetTexture() const
 { return m_texture.get(); }
 
-void SubTexture::OrthoBlit(const Pt& pt1, const Pt& pt2) const
+void SubTexture::OrthoBlit(Pt pt1, Pt pt2) const
 { if (m_texture) m_texture->OrthoBlit(pt1, pt2, m_tex_coords); }
 
-void SubTexture::OrthoBlit(const Pt& pt) const
+void SubTexture::OrthoBlit(Pt pt) const
 { if (m_texture) m_texture->OrthoBlit(pt, pt + Pt(m_width, m_height), m_tex_coords); }
 
 void SubTexture::Clear()

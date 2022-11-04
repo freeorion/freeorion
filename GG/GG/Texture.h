@@ -57,24 +57,24 @@ public:
 
     virtual ~Texture();
 
-    const boost::filesystem::path&  Path() const;   ///< returns the file path from which this texture was loaded (default / empty if this texture was not loaded from a file)
+    auto& Path() const noexcept { return m_path; } ///< file path from which this texture was loaded (default / empty if this texture was not loaded from a file)
 
-    GLenum           WrapS() const;             ///< returns S-wrap mode associated with this opengl texture
-    GLenum           WrapT() const;             ///< returns T-wrap mode associated with this opengl texture
-    GLenum           MinFilter() const;         ///< returns minimization filter modes associated with this opengl texture
-    GLenum           MagFilter() const;         ///< returns maximization filter modes associated with this opengl texture
-    unsigned int     BytesPP() const;           ///< returns the image's color depth in bytes
-    X                Width() const;             ///< returns width of entire texture
-    Y                Height() const;            ///< returns height of entire texture
-    bool             MipMapped() const;         ///< returns true if the texture has mipmaps
-    GLuint           OpenGLId() const;          ///< GLuint "name" of the opengl texture object associated with this object
-    const GLfloat*   DefaultTexCoords() const;  ///< texture coordinates to use by default when blitting this texture
-    X                DefaultWidth() const;      ///< returns width in pixels, based on initial image (0 if texture was not loaded)
-    Y                DefaultHeight() const;     ///< returns height in pixels, based on initial image (0 if texture was not loaded)
+    GLenum           WrapS() const noexcept { return m_wrap_s; }                ///< returns S-wrap mode associated with this opengl texture
+    GLenum           WrapT() const noexcept { return m_wrap_t; }                ///< returns T-wrap mode associated with this opengl texture
+    GLenum           MinFilter() const noexcept { return m_min_filter; }        ///< returns minimization filter modes associated with this opengl texture
+    GLenum           MagFilter() const noexcept { return m_mag_filter; }        ///< returns maximization filter modes associated with this opengl texture
+    unsigned int     BytesPP() const noexcept { return m_bytes_pp; }            ///< returns the image's color depth in bytes
+    X                Width() const noexcept { return m_width; }                 ///< returns width of entire texture
+    Y                Height() const noexcept { return m_height; }               ///< returns height of entire texture
+    bool             MipMapped() const noexcept { return m_mipmaps; }           ///< returns true if the texture has mipmaps
+    GLuint           OpenGLId() const noexcept { return m_opengl_id; }          ///< GLuint "name" of the opengl texture object associated with this object
+    const GLfloat*   DefaultTexCoords() const noexcept { return m_tex_coords; } ///< texture coordinates to use by default when blitting this texture
+    X                DefaultWidth() const noexcept { return m_default_width; }  ///< returns width in pixels, based on initial image (0 if texture was not loaded)
+    Y                DefaultHeight() const noexcept { return m_default_height; }///< returns height in pixels, based on initial image (0 if texture was not loaded)
 
     /** Blit any portion of texture to any place on screen, scaling as
         necessary*/
-    void OrthoBlit(const Pt& pt1, const Pt& pt2, const GLfloat* tex_coords = nullptr) const;
+    void OrthoBlit(Pt pt1, Pt pt2, const GLfloat* tex_coords = nullptr) const;
     void Blit(const GL2DVertexBuffer& vertex_buffer, const GLTexCoordBuffer& tex_coord_buffer,
               bool render_scaled = true) const;
 
@@ -89,7 +89,7 @@ public:
 
     /** Blit default portion of texture unscaled to \a pt (upper left
         corner)*/
-    void OrthoBlit(const Pt& pt) const;
+    void OrthoBlit(Pt pt) const;
 
     // intialization functions
     /** Frees any currently-held memory and loads a texture from file \a
@@ -181,11 +181,11 @@ public:
 
     /** Blit sub-texture to any place on screen, scaling as necessary \see
         GG::Texture::OrthoBlit*/
-    void OrthoBlit(const Pt& pt1, const Pt& pt2) const;
+    void OrthoBlit(Pt pt1, Pt pt2) const;
 
     /** Blit sub-texture unscaled to \a pt (upper left corner) \see
         GG::Texture::OrthoBlit*/
-    void OrthoBlit(const Pt& pt) const;
+    void OrthoBlit(Pt pt) const;
 
     void Clear();
 
