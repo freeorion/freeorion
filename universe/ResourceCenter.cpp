@@ -87,18 +87,18 @@ void ResourceCenter::SetFocus(const std::string& focus, const ScriptingContext& 
         ClearFocus(context.current_turn);
         return;
     }
-    auto avail_foci = AvailableFoci(context);
-    auto foci_it = std::find(avail_foci.begin(), avail_foci.end(), focus); // TODO: use any_of
-    if (foci_it != avail_foci.end()) {
-        m_focus = focus;
-        if (m_focus == m_focus_turn_initial)
-            m_last_turn_focus_changed = m_last_turn_focus_changed_turn_initial;
-        else
-            m_last_turn_focus_changed = context.current_turn;
-        ResourceCenterChangedSignal();
+    if (!FocusAvailable(focus, context)) {
+        ErrorLogger() << "ResourceCenter::SetFocus Exploiter!-- unavailable focus " << focus
+                      << " attempted to be set for object w/ dump string: " << Dump();
         return;
     }
-    ErrorLogger() << "ResourceCenter::SetFocus Exploiter!-- unavailable focus " << focus << " attempted to be set for object w/ dump string: " << Dump();
+
+    m_focus = focus;
+    if (m_focus == m_focus_turn_initial)
+        m_last_turn_focus_changed = m_last_turn_focus_changed_turn_initial;
+    else
+        m_last_turn_focus_changed = context.current_turn;
+    ResourceCenterChangedSignal();
 }
 
 void ResourceCenter::ClearFocus(int current_turn) {

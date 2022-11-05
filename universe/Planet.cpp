@@ -496,6 +496,21 @@ bool Planet::Contains(int object_id) const
 bool Planet::ContainedBy(int object_id) const
 { return object_id != INVALID_OBJECT_ID && this->SystemID() == object_id; }
 
+bool Planet::FocusAvailable(std::string_view focus, const ScriptingContext& context) const {
+    const auto* species = context.species.GetSpecies(this->SpeciesName());
+    if (!species)
+        return false;
+    const auto& foci = species->Foci();
+    const auto it = std::find_if(foci.begin(), foci.end(),
+                                 [focus](const FocusType& focus_type) { return focus_type.Name() == focus; });
+    if (it == foci.end())
+        return false;
+    const auto* location = it->Location();
+    if (!location)
+        return false;
+    return location->Eval(context, this);
+}
+
 std::vector<std::string> Planet::AvailableFoci(const ScriptingContext& context) const {
     std::vector<std::string> retval;
     if (const auto* species = context.species.GetSpecies(this->SpeciesName())) {
