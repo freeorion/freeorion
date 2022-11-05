@@ -90,8 +90,9 @@ namespace {
                           << "  strings: " << [it=first, last]() mutable -> std::string
                             {
                                 std::string retval;
+                                retval.reserve(100); // guesstimate
                                 for (; it != last; ++it)
-                                    retval += *it + " ";
+                                    retval.append(*it).append(" ");
                                 return retval;
                             }()
                           << " source: " << (context.source ? context.source->Name() : "0")
