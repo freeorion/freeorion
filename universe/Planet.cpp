@@ -508,18 +508,25 @@ bool Planet::FocusAvailable(std::string_view focus, const ScriptingContext& cont
     const auto* location = it->Location();
     if (!location)
         return false;
-    return location->Eval(context, this);
+
+    const ScriptingContext planet_context(this, context);
+    return location->Eval(planet_context, this);
 }
 
 std::vector<std::string> Planet::AvailableFoci(const ScriptingContext& context) const {
     std::vector<std::string> retval;
-    if (const auto* species = context.species.GetSpecies(this->SpeciesName())) {
-        retval.reserve(species->Foci().size());
-        for (const auto& focus_type : species->Foci()) {
-            if (const auto* location = focus_type.Location()) {
-                if (location->Eval(context, this))
-                    retval.push_back(focus_type.Name());
-            }
+    const auto* species = context.species.GetSpecies(this->SpeciesName());
+    if (!species)
+        return retval;
+
+    const ScriptingContext planet_context(this, context);
+
+    const auto& foci = species->Foci();
+    retval.reserve(species->Foci().size());
+    for (const auto& focus_type : foci) {
+        if (const auto* location = focus_type.Location()) {
+            if (location->Eval(planet_context, this))
+                retval.push_back(focus_type.Name());
         }
     }
 
