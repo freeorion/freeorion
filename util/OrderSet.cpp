@@ -44,13 +44,18 @@ int OrderSet::IssueOrder(OrderPtr order, ScriptingContext& context) {
 void OrderSet::ApplyOrders(ScriptingContext& context) {
     DebugLogger() << "OrderSet::ApplyOrders() executing " << m_orders.size() << " orders";
     unsigned int executed_count = 0, failed_count = 0, already_executed_count = 0;
+
     for (auto& order : m_orders) {
         if (order.second->Executed()) {
             DebugLogger() << "Order " << order.first << " already executed";
             ++already_executed_count;
         } else {
             try {
-                order.second->Execute(context);
+                const auto order_empire_id = order.second->EmpireID();
+                const auto order_empire = context.GetEmpire(order_empire_id);
+                const auto source = order_empire->Source(context.ContextObjects());
+                ScriptingContext empire_context(source.get(), context);
+                order.second->Execute(empire_context);
                 ++executed_count;
             } catch (const std::exception& e) {
                 ++failed_count;
