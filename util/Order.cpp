@@ -1145,17 +1145,21 @@ bool ChangeFocusOrder::Check(int empire_id, int planet_id, const std::string& fo
     auto planet = context.ContextObjects().getRaw<Planet>(planet_id);
 
     if (!planet) {
-        ErrorLogger() << "Illegal planet id specified in change planet focus order.";
+        ErrorLogger() << "Invalid planet id " << planet_id << " specified in change planet focus order.";
         return false;
     }
 
     if (!planet->OwnedBy(empire_id)) {
-        ErrorLogger() << "Empire attempted to issue change planet focus to another's planet.";
+        ErrorLogger() << "Empire " << empire_id
+                      << " attempted to issue change planet focus to another's planet: " << planet_id;
         return false;
     }
 
-    if constexpr (false) {    // TODO: verify that focus is valid for specified planet
-        ErrorLogger() << "IssueChangeFocusOrder : invalid focus specified";
+    if (!planet->FocusAvailable(focus, context)) {
+        ErrorLogger() << "IssueChangeFocusOrder : invalid focus (" << focus
+                      << ") for specified for planet " << planet_id << " and empire " << empire_id;
+        // TODO: further clarify why invalid? get species and check that it has the focus, and then
+        //       if the location condition fails?
         return false;
     }
 
