@@ -533,7 +533,7 @@ std::vector<std::string> Planet::AvailableFoci(const ScriptingContext& context) 
     return retval;
 }
 
-const std::string& Planet::FocusIcon(const std::string& focus_name,
+const std::string& Planet::FocusIcon(std::string_view focus_name,
                                      const ScriptingContext& context) const
 {
     if (const Species* species = context.species.GetSpecies(this->SpeciesName())) {

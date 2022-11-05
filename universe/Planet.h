@@ -68,7 +68,7 @@ public:
 
     [[nodiscard]] std::vector<std::string>  AvailableFoci(const ScriptingContext& context) const override; // TODO: return vector<string_view> ?
     [[nodiscard]] bool                      FocusAvailable(std::string_view focus, const ScriptingContext& context) const override;
-    [[nodiscard]] const std::string&        FocusIcon(const std::string& focus_name, const ScriptingContext& context) const override;
+    [[nodiscard]] const std::string&        FocusIcon(std::string_view focus_name, const ScriptingContext& context) const override;
 
     [[nodiscard]] PlanetType          Type() const noexcept            { return m_type; }
     [[nodiscard]] PlanetType          OriginalType() const noexcept    { return m_original_type; }

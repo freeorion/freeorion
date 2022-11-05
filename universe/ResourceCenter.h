@@ -32,7 +32,7 @@ public:
     int                              TurnsSinceFocusChange(int current_turn) const;
     virtual std::vector<std::string> AvailableFoci(const ScriptingContext&) const { return {}; }
     virtual bool                     FocusAvailable(std::string_view, const ScriptingContext&) const { return false; }
-    virtual const std::string&       FocusIcon(const std::string& focus_name, const ScriptingContext& context) const;
+    virtual const std::string&       FocusIcon(std::string_view focus_name, const ScriptingContext& context) const;
     std::string                      Dump(uint8_t ntabs = 0) const;
 
     virtual const Meter*             GetMeter(MeterType type) const = 0;             ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
