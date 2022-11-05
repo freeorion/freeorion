@@ -1140,8 +1140,9 @@ std::string ChangeFocusOrder::Dump() const
 { return UserString("ORDER_FOCUS_CHANGE"); }
 
 bool ChangeFocusOrder::Check(int empire_id, int planet_id, const std::string& focus,
-                             const ScriptingContext& context) {
-    auto planet = context.ContextObjects().get<Planet>(planet_id);
+                             const ScriptingContext& context)
+{
+    auto planet = context.ContextObjects().getRaw<Planet>(planet_id);
 
     if (!planet) {
         ErrorLogger() << "Illegal planet id specified in change planet focus order.";
@@ -1153,7 +1154,7 @@ bool ChangeFocusOrder::Check(int empire_id, int planet_id, const std::string& fo
         return false;
     }
 
-    if constexpr (false) {    // todo: verify that focus is valid for specified planet
+    if constexpr (false) {    // TODO: verify that focus is valid for specified planet
         ErrorLogger() << "IssueChangeFocusOrder : invalid focus specified";
         return false;
     }
