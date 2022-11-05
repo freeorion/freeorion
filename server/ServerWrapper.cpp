@@ -1252,9 +1252,9 @@ namespace {
             ErrorLogger() << "PlanetAvailableFoci: Couldn't get planet with ID " << planet_id;
             return py_foci;
         }
-        for (const std::string& focus : planet->AvailableFoci(context)) {
+        for (const std::string& focus : planet->AvailableFoci(context))
             py_foci.append(py::object(focus));
-        }
+
         return py_foci;
     }
 
