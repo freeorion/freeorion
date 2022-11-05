@@ -231,21 +231,13 @@ StarType System::NextYoungerStarType() const {
 }
 
 int System::NumStarlanes() const {
-    int retval = 0;
-    for (const auto& entry : m_starlanes_wormholes) {
-        if (!entry.second)
-            ++retval;
-    }
-    return retval;
+    return std::count_if(m_starlanes_wormholes.begin(), m_starlanes_wormholes.end(),
+                         [](const auto id_whflag) { return !id_whflag.second; });
 }
 
 int System::NumWormholes() const {
-    int retval = 0;
-    for (const auto& entry : m_starlanes_wormholes) {
-        if (entry.second)
-            ++retval;
-    }
-    return retval;
+    return std::count_if(m_starlanes_wormholes.begin(), m_starlanes_wormholes.end(),
+                         [](const auto id_whflag) { return id_whflag.second; });
 }
 
 bool System::HasStarlaneTo(int id) const {
@@ -283,7 +275,7 @@ std::shared_ptr<UniverseObject> System::Accept(const UniverseObjectVisitor& visi
 { return visitor.Visit(std::const_pointer_cast<System>(std::static_pointer_cast<const System>(shared_from_this()))); }
 
 void System::Insert(std::shared_ptr<UniverseObject> obj, int orbit)
-{ Insert (obj.get(), orbit); }
+{ Insert(obj.get(), orbit); }
 
 void System::Insert(UniverseObject* obj, int orbit) {
     if (!obj) {
