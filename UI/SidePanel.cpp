@@ -526,7 +526,7 @@ public:
 
     bool InWindow(const GG::Pt& pt) const override;
 
-    int PlanetID() const { return m_planet_id; }
+    int PlanetID() const noexcept { return m_planet_id; }
 
     void PreRender() override;
 
@@ -934,7 +934,8 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
 
     SetName(UserString("PLANET_PANEL"));
 
-    auto planet = Objects().get<Planet>(m_planet_id).get();
+    const ScriptingContext context;
+    auto* planet = context.ContextObjects().getRaw<const Planet>(m_planet_id);
     if (!planet) {
         ErrorLogger() << "SidePanel::PlanetPanel::PlanetPanel couldn't get latest known planet with ID " << m_planet_id;
         return;
@@ -949,7 +950,7 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     bool capital = false;
 
     // need to check all empires for capitals
-    for (const auto& entry : Empires()) {
+    for (const auto& entry : context.Empires()) {
         const auto& empire = entry.second;
         if (!empire) {
             ErrorLogger() << "PlanetPanel::PlanetPanel got null empire pointer for id " << entry.first;
@@ -1037,8 +1038,8 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
 
     SetChildClippingMode(ChildClippingMode::ClipToWindow);
 
-    ScriptingContext context;
-    Refresh(context);
+    ScriptingContext planet_context(planet, context);
+    Refresh(planet_context);
 
     RequirePreRender();
 }
@@ -3162,7 +3163,7 @@ void SidePanel::PreRender() {
     // save initial scroll position so it can be restored after repopulating the planet panel container
     const int initial_scroll_pos = m_planet_panel_container->ScrollPosition();
 
-    ScriptingContext context;
+    ScriptingContext context; // mutable because RefreshInPreRender modifies universe to simulate effects
 
     // Needs refresh updates all data related to all SizePanels, including system list etc.
     if (s_needs_refresh)
