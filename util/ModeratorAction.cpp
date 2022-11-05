@@ -225,8 +225,10 @@ void Moderator::CreatePlanet::Execute() const {
         return;
     }
 
+    auto current_turn = CurrentTurn();
+
     int orbit = *(free_orbits.begin());
-    location->Insert(std::shared_ptr<UniverseObject>(planet), orbit);
+    location->Insert(std::shared_ptr<UniverseObject>(planet), orbit, current_turn);
 }
 
 std::string Moderator::CreatePlanet::Dump() const {

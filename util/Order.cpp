@@ -413,7 +413,7 @@ void NewFleetOrder::ExecuteImpl(ScriptingContext& context) const {
     // an ID is provided to ensure consistancy between server and client universes
     u.SetEmpireObjectVisibility(EmpireID(), fleet->ID(), Visibility::VIS_FULL_VISIBILITY);
 
-    system->Insert(fleet);
+    system->Insert(fleet, System::NO_ORBIT, context.current_turn);
 
     // new fleet will get same m_arrival_starlane as fleet of the first ship in the list.
     auto first_ship{validated_ships[0]};

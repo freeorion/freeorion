@@ -124,8 +124,9 @@ public:
     void ResetTargetMaxUnpairedMeters() override;
 
     /** adds an object to this system. */
-    void Insert(std::shared_ptr<UniverseObject> obj, int orbit = -1);
-    void Insert(UniverseObject* obj, int orbit = -1);
+    static constexpr int NO_ORBIT = -1;
+    void Insert(std::shared_ptr<UniverseObject> obj, int orbit, int current_turn);
+    void Insert(UniverseObject* obj, int orbit, int current_turn);
 
     /** removes the object with ID number \a id from this system. */
     void Remove(int id);

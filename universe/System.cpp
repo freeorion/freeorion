@@ -25,6 +25,10 @@ namespace {
     bool temp_bool = RegisterGameRules(&AddRules);
 }
 
+namespace {
+    constexpr auto first_orbit = System::NO_ORBIT + 1;
+    static_assert(first_orbit == 0);
+}
 
 System::System(StarType star, std::string name, double x, double y, int current_turn) :
     UniverseObject{UniverseObjectType::OBJ_SYSTEM, std::move(name), x, y, ALL_EMPIRES, current_turn},
@@ -54,7 +58,7 @@ void System::Copy(std::shared_ptr<const UniverseObject> copied_object,
 {
     if (copied_object.get() == this)
         return;
-    std::shared_ptr<const System> copied_system = std::dynamic_pointer_cast<const System>(copied_object);
+    auto copied_system = std::dynamic_pointer_cast<const System>(copied_object);
     if (!copied_system) {
         ErrorLogger() << "System::Copy passed an object that wasn't a System";
         return;
@@ -138,15 +142,15 @@ void System::Copy(std::shared_ptr<const UniverseObject> copied_object,
 
 std::string System::Dump(uint8_t ntabs) const {
     std::string retval = UniverseObject::Dump(ntabs);
-    retval.reserve(2048);
+    retval.reserve(2048); // guesstimate
     retval.append(" star type: ").append(to_string(m_star))
           .append("  last combat on turn: ").append(std::to_string(m_last_turn_battle_here))
           .append("  total orbits: ").append(std::to_string(m_orbits.size()));
 
-    if (m_orbits.size() > 0) {
+    if (!m_orbits.empty()) {
         retval.append("  objects per orbit: ");
 
-        int orbit_index = 0;
+        int orbit_index = first_orbit;
         for (auto it = m_orbits.begin(); it != m_orbits.end();) {
             retval.append("[").append(std::to_string(orbit_index)).append("]")
                   .append(std::to_string(*it));
@@ -274,15 +278,15 @@ bool System::Contains(int object_id) const {
 std::shared_ptr<UniverseObject> System::Accept(const UniverseObjectVisitor& visitor) const
 { return visitor.Visit(std::const_pointer_cast<System>(std::static_pointer_cast<const System>(shared_from_this()))); }
 
-void System::Insert(std::shared_ptr<UniverseObject> obj, int orbit)
-{ Insert(obj.get(), orbit); }
+void System::Insert(std::shared_ptr<UniverseObject> obj, int orbit, int current_turn)
+{ Insert(obj.get(), orbit, current_turn); }
 
-void System::Insert(UniverseObject* obj, int orbit) {
+void System::Insert(UniverseObject* obj, int orbit, int current_turn) {
     if (!obj) {
         ErrorLogger() << "System::Insert() : Attempted to place a null object in a System";
         return;
     }
-    if (orbit < -1 || orbit >= static_cast<int>(m_orbits.size())) {
+    if (orbit < NO_ORBIT || orbit >= static_cast<int>(m_orbits.size())) {
         ErrorLogger() << "System::Insert() : Attempted to place an object in invalid orbit";
         return;
     }
@@ -291,7 +295,7 @@ void System::Insert(UniverseObject* obj, int orbit) {
     obj->SetSystem(this->ID());
 
     if (obj->ObjectType() == UniverseObjectType::OBJ_PLANET) {
-        if (orbit == -1) {
+        if (orbit == NO_ORBIT) {
             bool already_in_orbit = false;
             for (int planet_id : m_orbits) {
                 if (planet_id == obj->ID()) {
@@ -302,7 +306,7 @@ void System::Insert(UniverseObject* obj, int orbit) {
             // if planet already in an orbit, do nothing
             // if planet not in an orbit, find orbit to put planet in
             if (!already_in_orbit) {
-                for (int o = 0; o < static_cast<int>(m_orbits.size()); ++o) {
+                for (int o = first_orbit; o < static_cast<int>(m_orbits.size()); ++o) {
                     if (m_orbits[o] == INVALID_OBJECT_ID) {
                         orbit = o;
                         m_orbits[orbit] = obj->ID();
@@ -319,19 +323,20 @@ void System::Insert(UniverseObject* obj, int orbit) {
             if (!OrbitOccupied(orbit)) {
                 // check if object already in any different orbit
                 // ... if yes, remove it
-                for (int o = 0; o < static_cast<int>(m_orbits.size()); ++o) {
+                for (int o = first_orbit; o < static_cast<int>(m_orbits.size()); ++o) {
                     if (o != orbit && m_orbits[o] == obj->ID())
                         m_orbits[o] = INVALID_OBJECT_ID;
                 }
                 // put object into desired orbit
                 m_orbits[orbit] = obj->ID();
+
             } else {  // Log as an error, if no current orbit attempt to assign to a free orbit
                 ErrorLogger() << "System::Insert() Planet " << obj->ID()
                               << " requested orbit " << orbit
                               << " in system " << ID()
                               << ", which is occupied by" << m_orbits[orbit];
-                const std::set<int>& free_orbits = FreeOrbits();
-                if (free_orbits.size() > 0 && OrbitOfPlanet(obj->ID()) == -1) {
+                const auto& free_orbits = FreeOrbits();
+                if (!free_orbits.empty() && OrbitOfPlanet(obj->ID()) == NO_ORBIT) {
                     int new_orbit = *(free_orbits.begin());
                     m_orbits[new_orbit] = obj->ID();
                     DebugLogger() << "System::Insert() Planet " << obj->ID()
@@ -462,29 +467,29 @@ void System::ResetTargetMaxUnpairedMeters() {
 }
 
 bool System::OrbitOccupied(int orbit) const {
-    if (orbit < 0 || orbit >= static_cast<int>(m_orbits.size()))
+    if (orbit < first_orbit || orbit >= static_cast<int>(m_orbits.size()))
         return false;
     return m_orbits[orbit] != INVALID_OBJECT_ID;
 }
 
 int System::PlanetInOrbit(int orbit) const {
-    if (orbit < 0 || orbit >= static_cast<int>(m_orbits.size()))
+    if (orbit < first_orbit || orbit >= static_cast<int>(m_orbits.size()))
         return INVALID_OBJECT_ID;
     return m_orbits[orbit];
 }
 
 int System::OrbitOfPlanet(int object_id) const {
     if (object_id == INVALID_OBJECT_ID)
-        return -1;
-    for (int o = 0; o < static_cast<int>(m_orbits.size()); ++o)
+        return NO_ORBIT;
+    for (int o = first_orbit; o < static_cast<int>(m_orbits.size()); ++o)
         if (m_orbits[o] == object_id)
             return o;
-    return -1;
+    return NO_ORBIT;
 }
 
 std::set<int> System::FreeOrbits() const {
     std::set<int> retval;
-    for (int o = 0; o < static_cast<int>(m_orbits.size()); ++o)
+    for (int o = first_orbit; o < static_cast<int>(m_orbits.size()); ++o)
         if (m_orbits[o] == INVALID_OBJECT_ID)
             retval.insert(o);
     return retval;
@@ -512,10 +517,10 @@ std::map<int, bool> System::VisibleStarlanesWormholes(int empire_id, const Unive
 
 
     // check if any of the adjacent systems are partial or better visible
-    for (const auto& entry : m_starlanes_wormholes) {
-        int lane_end_sys_id = entry.first;
-        if (universe.GetObjectVisibilityByEmpire(lane_end_sys_id, empire_id) >= Visibility::VIS_PARTIAL_VISIBILITY)
-            retval[lane_end_sys_id] = entry.second;
+    for (const auto& [lane_end_sys_id, is_wormhole] : m_starlanes_wormholes) {
+        if (universe.GetObjectVisibilityByEmpire(lane_end_sys_id, empire_id) >=
+            Visibility::VIS_PARTIAL_VISIBILITY)
+        { retval[lane_end_sys_id] = is_wormhole; }
     }
 
 

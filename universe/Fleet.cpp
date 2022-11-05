@@ -25,14 +25,19 @@ namespace {
 
     void MoveFleetWithShips(Fleet& fleet, double x, double y, ObjectMap& objects) {
         fleet.MoveTo(x, y);
-        for (auto& ship : objects.find<Ship>(fleet.ShipIDs()))
+        for (auto* ship : objects.findRaw<Ship>(fleet.ShipIDs()))
             ship->MoveTo(x, y);
     }
 
-    void InsertFleetWithShips(Fleet& fleet, std::shared_ptr<System>& system, ObjectMap& objects) {
-        system->Insert(fleet.shared_from_this());
-        for (auto& ship : objects.find<Ship>(fleet.ShipIDs()))
-            system->Insert(ship);
+    void InsertFleetWithShips(Fleet* fleet, const std::shared_ptr<System>& system,
+                              ObjectMap& objects, int current_turn)
+    {
+        if (!fleet || !system)
+            return;
+        const auto& ship_ids = fleet->ShipIDs();
+        system->Insert(fleet->shared_from_this(), System::NO_ORBIT, current_turn);
+        for (auto& ship : objects.find<Ship>(ship_ids))
+            system->Insert(std::move(ship), System::NO_ORBIT, current_turn);
     }
 
     /** Return \p full_route terminates at \p last_system or before the first
@@ -1001,7 +1006,7 @@ void Fleet::MovementPhase(ScriptingContext& context) {
             // is system the last node reached this turn?
             if (node_is_next_stop) {
                 // fleet ends turn at this node.  insert fleet and ships into system
-                InsertFleetWithShips(*this, system, objects);
+                InsertFleetWithShips(this, system, objects, context.current_turn);
 
                 current_system = system;
 

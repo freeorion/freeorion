@@ -91,7 +91,7 @@ namespace {
                 old_system->Remove(ship->ID());
                 ship->SetSystem(INVALID_OBJECT_ID);
             }
-            system->Insert(ship);
+            system->Insert(ship, System::NO_ORBIT, context.current_turn);
         }
 
         if (ship->FleetID() != INVALID_OBJECT_ID) {
@@ -101,7 +101,7 @@ namespace {
 
         // create new fleet for ship, and put it in new system
         auto fleet = CreateNewFleet(system->X(), system->Y(), std::move(ship), context, aggression);
-        system->Insert(fleet);
+        system->Insert(fleet, System::NO_ORBIT, context.current_turn);
 
         return fleet;
     }
@@ -1870,7 +1870,7 @@ void CreatePlanet::Execute(ScriptingContext& context) const {
         return;
     }
 
-    system->Insert(planet);   // let system chose an orbit for planet
+    system->Insert(planet, System::NO_ORBIT, context.current_turn); // let system chose an orbit for planet
 
     std::string name_str;
     if (m_name) {
@@ -1994,7 +1994,7 @@ void CreateBuilding::Execute(ScriptingContext& context) const {
 
     auto system = context.ContextObjects().getRaw<System>(location->SystemID());
     if (system)
-        system->Insert(building);
+        system->Insert(building, System::NO_ORBIT, context.current_turn);
 
     if (m_name) {
         std::string name_str = m_name->Eval(context);
@@ -2146,7 +2146,7 @@ void CreateShip::Execute(ScriptingContext& context) const {
     auto ship = context.ContextUniverse().InsertNew<Ship>(
         empire_id, design_id, std::move(species_name), context.ContextUniverse(),
         context.species, ALL_EMPIRES, context.current_turn);
-    system->Insert(ship);
+    system->Insert(ship, System::NO_ORBIT, context.current_turn);
 
     if (m_name) {
         std::string name_str = m_name->Eval(context);
@@ -2321,7 +2321,7 @@ void CreateField::Execute(ScriptingContext& context) const {
     if (target->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
         auto system = static_cast<System*>(target);
         if ((!m_y || y == system->Y()) && (!m_x || x == system->X()))
-            system->Insert(field);
+            system->Insert(field, System::NO_ORBIT, context.current_turn);
     }
 
     std::string name_str;
@@ -2915,13 +2915,13 @@ void MoveTo::Execute(ScriptingContext& context) const {
                 // remove fleet from old system, put into new system
                 if (old_sys)
                     old_sys->Remove(fleet->ID());
-                dest_system->Insert(fleet);
+                dest_system->Insert(fleet, System::NO_ORBIT, context.current_turn);
 
                 // also move ships of fleet
                 for (auto* ship : objects.findRaw<Ship>(fleet->ShipIDs())) {
                     if (old_sys)
                         old_sys->Remove(ship->ID());
-                    dest_system->Insert(ship);
+                    dest_system->Insert(ship, System::NO_ORBIT, context.current_turn);
                 }
 
                 ExploreSystem(dest_system->ID(), fleet, context);
@@ -2997,7 +2997,7 @@ void MoveTo::Execute(ScriptingContext& context) const {
 
             if (auto new_sys = objects.getRaw<System>(dest_sys_id)) {
                 // ship is moving to a new system. insert it.
-                new_sys->Insert(ship);
+                new_sys->Insert(ship, System::NO_ORBIT, context.current_turn);
             } else {
                 // ship is moving to a non-system location. move it there.
                 ship->MoveTo(dest_fleet);
@@ -3064,13 +3064,13 @@ void MoveTo::Execute(ScriptingContext& context) const {
 
         if (old_sys)
             old_sys->Remove(planet->ID());
-        dest_system->Insert(planet);  // let system pick an orbit
+        dest_system->Insert(planet, System::NO_ORBIT, context.current_turn); // let system pick an orbit
 
         // also insert buildings of planet into system.
         for (auto* building : objects.findRaw<Building>(planet->BuildingIDs())) {
             if (old_sys)
                 old_sys->Remove(building->ID());
-            dest_system->Insert(building);
+            dest_system->Insert(building, System::NO_ORBIT, context.current_turn);
         }
 
         // buildings planet should be unchanged by move, as should planet's
@@ -3107,7 +3107,7 @@ void MoveTo::Execute(ScriptingContext& context) const {
         dest_planet->AddBuilding(building->ID());
         building->SetPlanetID(dest_planet->ID());
 
-        dest_system->Insert(building);
+        dest_system->Insert(building, System::NO_ORBIT, context.current_turn);
         ExploreSystem(dest_system->ID(), building, context);
 
 
@@ -3123,17 +3123,17 @@ void MoveTo::Execute(ScriptingContext& context) const {
         system->MoveTo(destination);
 
         if (destination->ObjectType() == UniverseObjectType::OBJ_FIELD)
-            system->Insert(destination);
+            system->Insert(destination, System::NO_ORBIT, context.current_turn);
 
         // find fleets / ships at destination location and insert into system
         for (auto* obj : objects.allRaw<Fleet>()) {
             if (obj->X() == system->X() && obj->Y() == system->Y())
-                system->Insert(obj);
+                system->Insert(obj, System::NO_ORBIT, context.current_turn);
         }
 
         for (auto* obj : objects.allRaw<Ship>()) {
             if (obj->X() == system->X() && obj->Y() == system->Y())
-                system->Insert(obj);
+                system->Insert(obj, System::NO_ORBIT, context.current_turn);
         }
 
 
@@ -3145,7 +3145,7 @@ void MoveTo::Execute(ScriptingContext& context) const {
         field->MoveTo(destination);
         if (destination->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
             auto dest_system = static_cast<System*>(destination);
-            dest_system->Insert(field);
+            dest_system->Insert(field, System::NO_ORBIT, context.current_turn);
         }
     }
 }

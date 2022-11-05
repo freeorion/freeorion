@@ -2301,7 +2301,7 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
                                                          m_id, context.current_turn);
             planet->AddBuilding(building->ID());
             building->SetPlanetID(planet->ID());
-            system->Insert(building);
+            system->Insert(building, System::NO_ORBIT, context.current_turn);
 
             // record building production in empire stats
             m_building_types_produced[elem.item.name]++;
@@ -2349,7 +2349,7 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
                 ship = universe.InsertNew<Ship>(
                     m_id, elem.item.design_id, species_name, universe,
                     context.species, m_id, context.current_turn);
-                system->Insert(ship);
+                system->Insert(ship, System::NO_ORBIT, context.current_turn);
 
                 // record ship production in empire stats
                 if (m_ship_designs_produced.count(elem.item.design_id))
@@ -2383,6 +2383,7 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
                 if (elem.rally_point_id != INVALID_OBJECT_ID)
                     new_ship_rally_point_ids[SHIP_ID] = elem.rally_point_id;
             }
+
             // add sitrep
             if (elem.blocksize == 1) {
                 AddSitRepEntry(CreateShipBuiltSitRep(ship->ID(), system->ID(),
@@ -2465,7 +2466,7 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
                     fleet = universe.InsertNew<Fleet>("", system->X(), system->Y(), m_id,
                                                       context.current_turn);
 
-                    system->Insert(fleet);
+                    system->Insert(fleet, System::NO_ORBIT, context.current_turn);
                     // set prev system to prevent conflicts with CalculateRouteTo used for
                     // rally points below, but leave next system as INVALID_OBJECT_ID so
                     // fleet won't necessarily be disqualified from making blockades if it
@@ -2482,7 +2483,7 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
                         fleet = universe.InsertNew<Fleet>("", system->X(), system->Y(),
                                                           m_id, context.current_turn);
 
-                        system->Insert(fleet);
+                        system->Insert(fleet, System::NO_ORBIT, context.current_turn);
                         // set prev system to prevent conflicts with CalculateRouteTo used for
                         // rally points below, but leave next system as INVALID_OBJECT_ID so
                         // fleet won't necessarily be disqualified from making blockades if it

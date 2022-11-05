@@ -677,7 +677,8 @@ namespace {
 
         // Create system and insert it into the object map
         auto& universe = GetUniverse();
-        auto system = universe.InsertNew<System>(star_type, star_name, x, y, CurrentTurn());
+        int turn = CurrentTurn();
+        auto system = universe.InsertNew<System>(star_type, star_name, x, y, turn);
         if (!system) {
             ErrorLogger() << "CreateSystem : Attempt to insert system into the object map failed";
             return INVALID_OBJECT_ID;
@@ -686,7 +687,8 @@ namespace {
         return system->SystemID();
     }
 
-    auto CreatePlanet(PlanetSize size, PlanetType planet_type, int system_id, int orbit, const std::string& name) -> int
+    auto CreatePlanet(PlanetSize size, PlanetType planet_type, int system_id,
+                      int orbit, const std::string& name) -> int
     {
         auto system = Objects().get<System>(system_id);
 
@@ -723,21 +725,24 @@ namespace {
 
         // Check if planet type and size match
         // if type is gas giant, size must be too, same goes for asteroids
-        if (((planet_type == PlanetType::PT_GASGIANT) && (size != PlanetSize::SZ_GASGIANT)) || ((planet_type == PlanetType::PT_ASTEROIDS) && (size != PlanetSize::SZ_ASTEROIDS))) {
+        if (((planet_type == PlanetType::PT_GASGIANT) && (size != PlanetSize::SZ_GASGIANT)) ||
+            ((planet_type == PlanetType::PT_ASTEROIDS) && (size != PlanetSize::SZ_ASTEROIDS)))
+        {
             ErrorLogger() << "CreatePlanet : Planet of type " << planet_type << " can't have size " << size;
             return INVALID_OBJECT_ID;
         }
 
         // Create planet and insert it into the object map
         auto& universe = GetUniverse();
-        auto planet = universe.InsertNew<Planet>(planet_type, size, CurrentTurn());
+        int turn = CurrentTurn();
+        auto planet = universe.InsertNew<Planet>(planet_type, size, turn);
         if (!planet) {
             ErrorLogger() << "CreateSystem : Attempt to insert planet into the object map failed";
             return INVALID_OBJECT_ID;
         }
 
         // Add planet to system map
-        system->Insert(std::shared_ptr<UniverseObject>(planet), orbit);
+        system->Insert(std::shared_ptr<UniverseObject>(planet), orbit, turn);
 
         // If a name has been specified, set planet name
         if (!(name.empty()))
@@ -775,7 +780,7 @@ namespace {
             return INVALID_OBJECT_ID;
         }
 
-        system->Insert(building);
+        system->Insert(building, System::NO_ORBIT, context.current_turn);
         planet->AddBuilding(building->ID());
         building->SetPlanetID(planet_id);
         return building->ID();
@@ -800,7 +805,8 @@ namespace {
         }
 
         // Insert fleet into specified system
-        system->Insert(fleet);
+        int turn = CurrentTurn();
+        system->Insert(fleet, System::NO_ORBIT, turn);
 
         // check if we got a fleet name...
         if (name.empty()) {
@@ -860,13 +866,14 @@ namespace {
         }
 
         // create new ship
+        int turn = CurrentTurn();
         auto ship = universe.InsertNew<Ship>(empire_id, ship_design->ID(), species, universe,
-                                             GetSpeciesManager(), empire_id, CurrentTurn());
+                                             GetSpeciesManager(), empire_id, turn);
         if (!ship) {
             ErrorLogger() << "CreateShip: couldn't create new ship";
             return INVALID_OBJECT_ID;
         }
-        system->Insert(ship);
+        system->Insert(ship, System::NO_ORBIT, turn);
 
         // set ship name
         // check if we got a ship name...
@@ -953,8 +960,10 @@ namespace {
         auto field = CreateFieldImpl(field_type_name, system->X(), system->Y(), size);
         if (!field)
             return INVALID_OBJECT_ID;
-        system->Insert(field); // insert the field into the system
-        return field->ID();
+        int field_id = field->ID();
+        int turn = CurrentTurn();
+        system->Insert(std::move(field), System::NO_ORBIT, turn);
+        return field_id;
     }
 
     // Return a list of system ids of universe objects with @p obj_ids.
