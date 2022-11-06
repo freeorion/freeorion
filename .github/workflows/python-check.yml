@@ -29,8 +29,8 @@ jobs:
       - name: Lint AI code with flake8
         uses: ./.github/actions/flake8-lint
         with:
-          directories: 'default/python cmake check'
-          args: '--builtins=""'
+          directories: '.'
+          args: '--builtins="" --extend-exclude=default/scripting/*,test-scripting/*'
       - name: Lint FOCS with flake8
         uses: ./.github/actions/flake8-lint
         with:
