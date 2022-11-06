@@ -146,9 +146,6 @@ void ShipDesign::SetName(const std::string& name) {
         m_name = name;
 }
 
-void ShipDesign::SetUUID(const boost::uuids::uuid& uuid)
-{ m_uuid = uuid; }
-
 const std::string& ShipDesign::Description(bool stringtable_lookup) const {
     if (m_name_desc_in_stringtable && stringtable_lookup)
         return UserString(m_description);
@@ -345,7 +342,7 @@ int ShipDesign::PartCount() const {
     return count;
 }
 
-bool ShipDesign::ProductionLocation(int empire_id, int location_id) const { // TODO: pass in ScriptingContext
+bool ShipDesign::ProductionLocation(int empire_id, int location_id, const ScriptingContext& context) const {
     Empire* empire = GetEmpire(empire_id); // TODO: get from context
     if (!empire) {
         DebugLogger() << "ShipDesign::ProductionLocation: Unable to get pointer to empire " << empire_id;

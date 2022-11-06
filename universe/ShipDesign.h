@@ -12,6 +12,7 @@
 #include <unordered_map>
 
 class Universe;
+struct ScriptingContext;
 
 /** ParsedShipDesign holds the results of a parsed ship design which can be
     converted to a ShipDesign. */
@@ -130,25 +131,25 @@ public:
     [[nodiscard]] float AdjustedAttack(float shield) const;
     [[nodiscard]] float Defense() const;
 
-    [[nodiscard]] const std::string&              Hull() const noexcept           { return m_hull; }      ///< returns name of hull on which design is based
-    [[nodiscard]] const std::vector<std::string>& Parts() const noexcept          { return m_parts; }     ///< returns vector of names of all parts in this design, with position in vector corresponding to slot positions
-    [[nodiscard]] std::vector<std::string>        Parts(ShipSlotType slot_type) const;            ///< returns vector of names of parts in slots of indicated type in this design, unrelated to slot positions
-    [[nodiscard]] std::vector<std::string>        Weapons() const;                                ///< returns vector of names of weapon parts in, unrelated to slot positions
+    [[nodiscard]] const auto&              Hull() const noexcept           { return m_hull; }      ///< returns name of hull on which design is based
+    [[nodiscard]] const auto&              Parts() const noexcept          { return m_parts; }     ///< returns vector of names of all parts in this design, with position in vector corresponding to slot positions
+    [[nodiscard]] std::vector<std::string> Parts(ShipSlotType slot_type) const;            ///< returns vector of names of parts in slots of indicated type in this design, unrelated to slot positions
+    [[nodiscard]] std::vector<std::string> Weapons() const;                                ///< returns vector of names of weapon parts in, unrelated to slot positions
 
-    [[nodiscard]] const auto&                     Tags() const noexcept           { return m_tags; };
-    [[nodiscard]] bool                            HasTag(std::string_view tag) const
+    [[nodiscard]] const auto&              Tags() const noexcept           { return m_tags; };
+    [[nodiscard]] bool                     HasTag(std::string_view tag) const
     { return std::any_of(m_tags.begin(), m_tags.end(), [tag](const auto& t) { return t == tag; }); }
 
-    [[nodiscard]] const std::string& Icon() const noexcept                { return m_icon; }      ///< returns filename for small-size icon graphic for design
-    [[nodiscard]] const std::string& Model() const noexcept               { return m_3D_model; }  ///< returns filename of 3D model that represents ships of design
-    [[nodiscard]] bool               LookupInStringtable() const noexcept { return m_name_desc_in_stringtable; }
+    [[nodiscard]] auto& Icon() const noexcept                { return m_icon; }      ///< returns filename for small-size icon graphic for design
+    [[nodiscard]] auto& Model() const noexcept               { return m_3D_model; }  ///< returns filename of 3D model that represents ships of design
+    [[nodiscard]] bool  LookupInStringtable() const noexcept { return m_name_desc_in_stringtable; }
 
     //! Returns number of parts in this ship design, indexed by ShipPart name
-    [[nodiscard]] const std::map<std::string, int>& ShipPartCount() const noexcept { return m_num_ship_parts; }
-    [[nodiscard]] int                               PartCount() const;
+    [[nodiscard]] auto& ShipPartCount() const noexcept { return m_num_ship_parts; }
+    [[nodiscard]] int   PartCount() const;
 
     /** returns number of parts in this ship design, indexed by ShipPartClass */
-    [[nodiscard]] const std::map<ShipPartClass, int>& PartClassCount() const noexcept { return m_num_part_classes; }
+    [[nodiscard]] auto& PartClassCount() const noexcept { return m_num_part_classes; }
 
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const;           ///< returns a data file format representation of this object
 
@@ -162,10 +163,10 @@ public:
 
     friend FO_COMMON_API bool operator ==(const ShipDesign& first, const ShipDesign& second);
 
-    [[nodiscard]] bool ProductionLocation(int empire_id, int location_id) const;   ///< returns true iff the empire with ID empire_id can produce this design at the location with location_id
+    [[nodiscard]] bool ProductionLocation(int empire_id, int location_id, const ScriptingContext& context) const;   ///< returns true iff the empire with ID empire_id can produce this design at the location with location_id
 
     void SetID(int id);                                                  ///< sets the ID number of the design to \a id .  Should only be used by Universe class when inserting new design into Universe.
-    void SetUUID(const boost::uuids::uuid& uuid);
+    void SetUUID(boost::uuids::uuid uuid) { m_uuid = uuid; }
     void Rename(std::string name) noexcept { m_name = std::move(name); } ///< renames this design to \a name
     void SetMonster(const bool is_monster) noexcept { m_is_monster = is_monster; }
 

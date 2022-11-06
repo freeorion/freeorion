@@ -1293,7 +1293,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id,
 
         bool can_see;
         if (!fleet->Unowned())
-            can_see = (GetEmpire(fleet->Owner())->GetMeter("METER_DETECTION_STRENGTH")->Current() >= lowest_ship_stealth);
+            can_see = (context.GetEmpire(fleet->Owner())->GetMeter("METER_DETECTION_STRENGTH")->Current() >= lowest_ship_stealth);
         else
             can_see = (monster_detection >= lowest_ship_stealth);
         if (!can_see)

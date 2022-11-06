@@ -874,12 +874,12 @@ bool Empire::ProducibleItem(BuildType build_type, int design_id, int location,
     if (!ship_design || !ship_design->Producible())
         return false;
 
-    auto build_location = context.ContextObjects().get(location);
+    const auto build_location = context.ContextObjects().getRaw(location);
     if (!build_location) return false;
 
     if (build_type == BuildType::BT_SHIP) {
         // specified location must be a valid production location for this design
-        return ship_design->ProductionLocation(m_id, location);
+        return ship_design->ProductionLocation(m_id, location, context);
 
     } else {
         ErrorLogger() << "Empire::ProducibleItem was passed an invalid BuildType";
