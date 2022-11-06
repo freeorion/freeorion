@@ -30,17 +30,11 @@ repos:
         name: flake8 for AI
         args:
           - --extend-exclude=default/scripting/*,test-scripting/*
-          - --config=default/python/tox.ini
+          - --builtins=''
       - id: flake8
         name: flake8 for scripting
         args:
-          - --extend-exclude=default/python/*,test-scripting/*,cmake/*,doc/*,check/*
-          - --config=default/scripting/tox.ini
-      - id: flake8
-        name: flake8 for test-scripting
-        args:
-          - --extend-exclude=default/python/*,default/scripting/*,cmake/*,doc/*,check/*
-          - --config=test-scripting/tox.ini
+          - '--extend-exclude=default/python/*,cmake/*,doc/*,check/*'
   - repo: local
     hooks:
       - id: string-tables-syntax-check

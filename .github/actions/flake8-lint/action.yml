@@ -1,17 +1,17 @@
 name: 'flake8-lint'
 description: 'Lint directory with the flake8'
 inputs:
-  directory:
-    description: 'Directory to check'
+  directories:
+    description: 'Directories to check'
     required: true
-  config-file:
-    description: 'Flake8 config'
+  args:
+    description: 'Extra arguments'
     required: true
 runs:
   using: "composite"
   steps:
     - run: >
-        flake8 ${{ inputs.directory }}
-        --config=${{ inputs.config-file }}
+        flake8 ${{ inputs.directories }}
+        ${{ inputs.args }}
         --format="::error file=%(path)s,line=%(row)d,col=%(col)d::%(path)s:%(row)d:%(col)d: %(code)s %(text)s"
       shell: bash
