@@ -1542,7 +1542,7 @@ void SetSpecies::Execute(ScriptingContext& context) const {
         auto ship = static_cast<Ship*>(context.effect_target);
         ScriptingContext::CurrentValueVariant cvv{ship->SpeciesName()};
         ScriptingContext name_context{context, cvv};
-        ship->SetSpecies(m_species_name->Eval(name_context));
+        ship->SetSpecies(m_species_name->Eval(name_context), context.species);
         return;
 
     } else if (context.effect_target->ObjectType() == UniverseObjectType::OBJ_PLANET) {
@@ -1550,7 +1550,7 @@ void SetSpecies::Execute(ScriptingContext& context) const {
 
         ScriptingContext::CurrentValueVariant cvv{planet->SpeciesName()};
         ScriptingContext name_context{context, cvv};
-        planet->SetSpecies(m_species_name->Eval(name_context), context.current_turn);
+        planet->SetSpecies(m_species_name->Eval(name_context), context.current_turn, context.species);
 
         // ensure non-empty and permissible focus setting for new species
         auto& initial_focus = planet->Focus();

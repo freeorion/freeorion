@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include "Enums.h"
 #include "Meter.h"
+#include "Species.h"
 #include "UniverseObject.h"
 #include "../util/AppInterface.h"
 #include "../util/Logger.h"
@@ -82,8 +83,8 @@ void PopCenter::Depopulate(int) {
     GetMeter(MeterType::METER_HAPPINESS)->Reset();
 }
 
-void PopCenter::SetSpecies(std::string species_name, int) {
-    if (!species_name.empty() && !GetSpecies(species_name))
+void PopCenter::SetSpecies(std::string species_name, int, const SpeciesManager& sm) {
+    if (!species_name.empty() && !sm.GetSpecies(species_name))
         ErrorLogger() << "PopCenter::SetSpecies couldn't get species with name " << species_name;
     m_species_name = std::move(species_name);
 }

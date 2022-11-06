@@ -95,7 +95,7 @@ public:
     void SetFleetID(int fleet_id); ///< sets the ID of the fleet the ship resides in
     void SetArrivedOnTurn(int turn);
     void Resupply(int turn);
-    void SetSpecies(std::string species_name);
+    void SetSpecies(std::string species_name, const SpeciesManager& sm);
     void SetOrderedScrapped(bool b = true); ///< flags ship for scrapping
     void SetColonizePlanet(int planet_id);  ///< marks ship to colonize the indicated planet
     void ClearColonizePlanet();             ///< marks ship to colonize no planets

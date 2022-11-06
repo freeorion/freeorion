@@ -2896,7 +2896,7 @@ namespace {
 
             // apply various species to ship, re-calculating the meter values for each
             for (std::string& species_name : species_list) {
-                temp->SetSpecies(std::move(species_name));
+                temp->SetSpecies(std::move(species_name), species_manager);
                 universe.UpdateMeterEstimates(temp->ID(), context);
                 temp->Resupply(context.current_turn);
                 detailed_description.append(GetDetailedDescriptionStats(temp, design, enemy_DR, enemy_shots, cost));
@@ -3030,7 +3030,7 @@ namespace {
 
         // apply various species to ship, re-calculating the meter values for each
         for (auto& species_name : additional_species) {
-            temp->SetSpecies(species_name);
+            temp->SetSpecies(species_name, species_manager);
             universe.UpdateMeterEstimates(temp->ID(), context);
             temp->Resupply(context.current_turn);
             detailed_description.append(GetDetailedDescriptionStats(temp, incomplete_design.get(),
@@ -3173,7 +3173,7 @@ namespace {
             // NOTE: Overridding current or initial value of MeterType::METER_TARGET_POPULATION prior to update
             //       results in incorrect estimates for at least effects with a min target population of 0
             try {
-                planet->SetSpecies(std::string{species_name}, context.current_turn);
+                planet->SetSpecies(std::string{species_name}, context.current_turn, context.species);
                 planet->SetOwner(empire_id);
                 universe.ApplyMeterEffectsAndUpdateMeters(planet_id_vec, context, false);
             } catch (const std::exception& e) {
@@ -3198,7 +3198,7 @@ namespace {
 
         try {
             // restore planet to original state
-            planet->SetSpecies(original_planet_species, context.current_turn);
+            planet->SetSpecies(original_planet_species, context.current_turn, context.species);
             planet->SetOwner(original_owner_id);
             planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Set(
                 orig_initial_target_pop, orig_initial_target_pop);

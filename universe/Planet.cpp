@@ -732,10 +732,10 @@ void Planet::Conquer(int conquerer, ScriptingContext& context) {
     GetMeter(MeterType::METER_DETECTION)->BackPropagate();
 }
 
-void Planet::SetSpecies(std::string species_name, int turn) {
+void Planet::SetSpecies(std::string species_name, int turn, const SpeciesManager& sm) {
     if (SpeciesName().empty() && !species_name.empty())
         m_turn_last_colonized = turn;  // if setting species with an effect, not via Colonize, consider it a colonization when there was no previous species set
-    PopCenter::SetSpecies(std::move(species_name), turn);
+    PopCenter::SetSpecies(std::move(species_name), turn, sm);
 }
 
 bool Planet::Colonize(int empire_id, std::string species_name, double population,
@@ -780,7 +780,7 @@ bool Planet::Colonize(int empire_id, std::string species_name, double population
 
     // if desired pop > 0, we want a colony, not an outpost, so we have to set the colony species
     if (population > 0.0)
-        SetSpecies(std::move(species_name), context.current_turn);
+        SetSpecies(std::move(species_name), context.current_turn, context.species);
     m_turn_last_colonized = context.current_turn; // may be redundant with same in SetSpecies, but here occurrs always, whereas in SetSpecies is only done if species is initially empty
 
     // find a default focus. use first defined available focus.

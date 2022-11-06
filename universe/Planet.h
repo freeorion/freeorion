@@ -128,7 +128,7 @@ public:
 
     void Reset(ObjectMap& objects) override;
     void Depopulate(int current_turn) override;
-    void SetSpecies(std::string species_name, int turn) override;
+    void SetSpecies(std::string species_name, int turn, const SpeciesManager& sm) override;
 
     void SetType(PlanetType type);          ///< sets the type of this Planet to \a type
     void SetOriginalType(PlanetType type);  ///< sets the original type of this Planet to \a type

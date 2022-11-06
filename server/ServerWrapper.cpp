@@ -1228,7 +1228,7 @@ namespace {
             ErrorLogger() << "PlanetSetSpecies: Couldn't get planet with ID " << planet_id;
             return;
         }
-        planet->SetSpecies(species_name, context.current_turn);
+        planet->SetSpecies(species_name, context.current_turn, context.species);
     }
 
     auto PlanetGetFocus(int planet_id) -> py::object

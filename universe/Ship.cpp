@@ -605,8 +605,8 @@ void Ship::Resupply(int turn) {
     }
 }
 
-void Ship::SetSpecies(std::string species_name) {
-    if (!GetSpecies(species_name))
+void Ship::SetSpecies(std::string species_name, const SpeciesManager& sm) {
+    if (!sm.GetSpecies(species_name))
         ErrorLogger() << "Ship::SetSpecies couldn't get species with name " << species_name;
     m_species_name = std::move(species_name);
 }
