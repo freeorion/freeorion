@@ -30,7 +30,7 @@ jobs:
         uses: ./.github/actions/flake8-lint
         with:
           directories: 'default/python cmake check'
-          extra_args: '--builtins=""'
+          args: '--builtins=""'
       - name: Lint FOCS with flake8
         uses: ./.github/actions/flake8-lint
         with:
