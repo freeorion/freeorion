@@ -416,14 +416,9 @@ bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::str
 }
 
 boost::optional<std::pair<std::string, std::vector<std::string>>>
-ShipDesign::MaybeInvalidDesign(const std::string& hull_in,
-                               std::vector<std::string>& parts_in,
-                               bool produce_log)
+ShipDesign::MaybeInvalidDesign(std::string hull, std::vector<std::string> parts, bool produce_log)
 {
     bool is_valid = true;
-
-    auto hull = hull_in;
-    auto parts = parts_in;
 
     // ensure hull type exists
     auto ship_hull = GetShipHullManager().GetShipHull(hull);
@@ -443,7 +438,7 @@ ShipDesign::MaybeInvalidDesign(const std::string& hull_in,
                 ErrorLogger() << "Invalid ShipDesign no available hulls ";
             hull.clear();
             parts.clear();
-            return std::make_pair(hull, parts);
+            return std::make_pair(std::move(hull), std::move(parts));
         }
     }
 
@@ -458,7 +453,7 @@ ShipDesign::MaybeInvalidDesign(const std::string& hull_in,
 
     // If parts is smaller than the full hull size pad it and the incoming parts
     if (parts.size() < ship_hull->NumSlots())
-        parts_in.resize(ship_hull->NumSlots(), "");
+        parts.resize(ship_hull->NumSlots(), "");
 
     // Truncate or pad with "" parts.
     parts.resize(ship_hull->NumSlots(), "");
@@ -480,62 +475,72 @@ ShipDesign::MaybeInvalidDesign(const std::string& hull_in,
     }
 
     // check part exclusions against other parts and hull
-    std::unordered_map<std::string, unsigned int> component_name_counts;
-    component_name_counts[hull] = 1;
-    for (auto part_name : parts)
-        component_name_counts[part_name]++;
-    component_name_counts.erase("");
 
+    // find how many of each part and hull are present...
+    boost::container::flat_map<std::string_view, uint8_t> component_counts;
+    component_counts.reserve(parts.size() + 1);
+    component_counts.emplace(hull, 1);
+    for (auto& part : parts)
+        component_counts[part]++;
+
+    auto has_component = [&component_counts](std::string_view sv) -> bool
+    { return component_counts.contains(sv); };
+    auto has_multiples_of_component = [&component_counts](std::string_view sv) -> bool
+    { return component_counts.count(sv) > 1; };
+
+
+    // check each part's existance and exclusions
     for (std::size_t ii = 0; ii < parts.size(); ++ii) {
-        const auto part_name = parts[ii];
-        // Ignore empty slots, which are valid.
-        if (part_name.empty())
+        std::string_view part_name = parts[ii];
+        if (part_name.empty()) // ignore empty slots, which are always valid
             continue;
 
         // Parts must exist...
         const auto ship_part = GetShipPart(part_name);
         if (!ship_part) {
+            is_valid = false;
             if (produce_log)
                 WarnLogger() << "Invalid ShipDesign part \"" << part_name << "\" not found"
                              << ". Removing \"" << part_name <<"\"";
-            is_valid = false;
             continue;
         }
 
         for (const auto& excluded : ship_part->Exclusions()) {
             // confict if a different excluded part is present, or if there are
             // two or more of a part that excludes itself
-            if ((excluded == part_name && component_name_counts[excluded] > 1) ||
-                (excluded != part_name && component_name_counts[excluded] > 0))
+            if ((excluded == part_name && has_multiples_of_component(excluded)) ||
+                (excluded != part_name && has_component(excluded)))
             {
                 is_valid = false;
                 if (produce_log)
                     WarnLogger() << "Invalid ShipDesign part " << part_name << " conflicts with \""
                                  << excluded << "\". Removing \"" << part_name <<"\"";
-                continue;
+                else
+                    break; // don't break if logging, so all conflicts will be logged
             }
         }
+        if (!is_valid && !produce_log)
+            continue; // if not logging, don't also need to check slot moutability
 
         // verify part can mount in indicated slot
-        const ShipSlotType& slot_type = slots[ii].type;
+        const auto slot_type = slots[ii].type;
 
         if (!ship_part->CanMountInSlotType(slot_type)) {
             if (produce_log)
                 DebugLogger() << "Invalid ShipDesign part \"" << part_name << "\" can't be mounted in "
                               << slot_type << " slot. Removing \"" << part_name <<"\"";
             is_valid = false;
-            continue;
         }
     }
 
-    if (is_valid)
+    if (is_valid) // if valid, return none to indicate no modifications needed
         return boost::none;
     else
-        return std::make_pair(hull, parts);
+        return std::make_pair(std::move(hull), std::move(parts)); // return modified design
 }
 
 void ShipDesign::ForceValidDesignOrThrow(const boost::optional<std::invalid_argument>& should_throw,
-                                         bool  produce_log)
+                                         bool produce_log)
 {
     auto force_valid = MaybeInvalidDesign(m_hull, m_parts, produce_log);
     if (!force_valid)
