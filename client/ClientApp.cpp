@@ -37,12 +37,6 @@ ObjectMap& ClientApp::EmpireKnownObjects(int empire_id) {
     return m_universe.Objects();
 }
 
-const ClientNetworking& ClientApp::Networking() const
-{ return *m_networking; }
-
-ClientNetworking& ClientApp::Networking()
-{ return *m_networking; }
-
 int ClientApp::EmpirePlayerID(int empire_id) const {
     for (const auto& [id, info] : m_player_info)
         if (info.empire_id == empire_id)
@@ -93,9 +87,6 @@ std::string ClientApp::GetVisibleObjectName(const UniverseObject& object) {
         return object.PublicName(m_empire_id, m_universe);
     }
 }
-
-ClientApp* ClientApp::GetApp()
-{ return static_cast<ClientApp*>(s_app); }
 
 bool ClientApp::VerifyCheckSum(const Message& msg) {
     std::map<std::string, unsigned int> server_checksums;

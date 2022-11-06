@@ -102,8 +102,8 @@ public:
      * @return A reference to the ClientNetworking object of this client.
      *
      * @{ */
-    [[nodiscard]] ClientNetworking& Networking();
-    [[nodiscard]] const ClientNetworking& Networking() const;
+    [[nodiscard]] ClientNetworking& Networking() { return *m_networking; }
+    [[nodiscard]] const ClientNetworking& Networking() const { return *m_networking; }
     /** @} */
 
     /** @brief Return The Networking::ClientType of this client
@@ -211,7 +211,7 @@ public:
      *
      * @return A pointer to the single ClientApp instance of this client.
      */
-    [[nodiscard]] static ClientApp* GetApp();
+    [[nodiscard]] static ClientApp* GetApp() { return static_cast<ClientApp*>(s_app); }
 
     /** @brief Compare content checksum from server with client content checksum.
      *
