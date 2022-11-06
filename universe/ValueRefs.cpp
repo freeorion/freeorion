@@ -2187,9 +2187,9 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
     std::function<const std::map<int, float>& ()> property_int_key{nullptr};
 
     if (variable_name == "PropagatedSystemSupplyRange") // int_ref2 is system ID
-        property_int_key = []() -> const std::map<int, float>& { return GetSupplyManager().PropagatedSupplyRanges(); };
+        property_int_key = [&sm{context.supply}]() { return sm.PropagatedSupplyRanges(); };
     else if (variable_name == "PropagatedSystemSupplyDistance") // int_ref2 is system ID
-        property_int_key = []() -> const std::map<int, float>& { return GetSupplyManager().PropagatedSupplyDistances(); };
+        property_int_key = [&sm{context.supply}]() { return sm.PropagatedSupplyDistances(); };
 
     if (property_int_key) {
         if (!m_int_ref2)
