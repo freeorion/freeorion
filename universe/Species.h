@@ -135,19 +135,18 @@ public:
 
     /** Returns the EffectsGroups that encapsulate the effects that species of
         this type have. */
-    [[nodiscard]] const auto&        Effects() const noexcept { return m_effects; }
-
-    [[nodiscard]] float              SpawnRate() const       { return m_spawn_rate; }
-    [[nodiscard]] int                SpawnLimit() const      { return m_spawn_limit; }
-    [[nodiscard]] bool               Playable() const        { return m_playable; }          ///< returns whether this species is a suitable starting species for players
-    [[nodiscard]] bool               Native() const          { return m_native; }            ///< returns whether this species is a suitable native species (for non player-controlled planets)
-    [[nodiscard]] bool               CanColonize() const     { return m_can_colonize; }      ///< returns whether this species can colonize planets
-    [[nodiscard]] bool               CanProduceShips() const { return m_can_produce_ships; } ///< returns whether this species can produce ships
+    [[nodiscard]] const auto&        Effects() const noexcept         { return m_effects; }
+    [[nodiscard]] float              SpawnRate() const noexcept       { return m_spawn_rate; }
+    [[nodiscard]] int                SpawnLimit() const noexcept      { return m_spawn_limit; }
+    [[nodiscard]] bool               Playable() const noexcept        { return m_playable; }          ///< returns whether this species is a suitable starting species for players
+    [[nodiscard]] bool               Native() const noexcept          { return m_native; }            ///< returns whether this species is a suitable native species (for non player-controlled planets)
+    [[nodiscard]] bool               CanColonize() const noexcept     { return m_can_colonize; }      ///< returns whether this species can colonize planets
+    [[nodiscard]] bool               CanProduceShips() const noexcept { return m_can_produce_ships; } ///< returns whether this species can produce ships
 
     [[nodiscard]] const auto&        Tags() const noexcept      { return m_tags; }
     [[nodiscard]] const auto&        PediaTags() const noexcept { return m_pedia_tags; }
     [[nodiscard]] bool               HasTag(std::string_view tag) const
-    { return std::any_of(m_tags.begin(), m_tags.end(), [tag](const auto& t) { return t == tag; }); }
+    { return std::any_of(m_tags.begin(), m_tags.end(), [tag](const auto t) { return t == tag; }); }
     [[nodiscard]] const auto&        Likes() const noexcept     { return m_likes; }
     [[nodiscard]] const auto&        Dislikes() const noexcept  { return m_dislikes; }
     [[nodiscard]] const std::string& Graphic() const noexcept   { return m_graphic; }        ///< returns the name of the grapic file for this species
