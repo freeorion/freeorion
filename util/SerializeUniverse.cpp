@@ -451,14 +451,7 @@ void serialize(Archive& ar, UniverseObject& o, unsigned int const version)
     } else {
         ar  & make_nvp("m_specials", o.m_specials);
     }
-    if (version < 2) {
-        std::map<MeterType, Meter> meter_map;
-        ar  & make_nvp("m_meters", meter_map);
-        o.m_meters.reserve(meter_map.size());
-        o.m_meters.insert(meter_map.begin(), meter_map.end());
-    } else {
-        Serialize(ar, o.m_meters, version);
-    }
+    Serialize(ar, o.m_meters, version);
     ar  & make_nvp("m_created_on_turn", o.m_created_on_turn);
 }
 
@@ -537,12 +530,7 @@ void serialize(Archive& ar, Planet& obj, unsigned int const version)
     } else {
         ar   & make_nvp("m_turn_last_colonized", obj.m_turn_last_colonized);
     }
-    if (version < 1) {
-        bool dummy = false;
-        ar   & boost::serialization::make_nvp("m_just_conquered", dummy);
-    } else {
-        ar   & make_nvp("m_turn_last_conquered", obj.m_turn_last_conquered);
-    }
+    ar  & make_nvp("m_turn_last_conquered", obj.m_turn_last_conquered);
     ar  & make_nvp("m_is_about_to_be_colonized", obj.m_is_about_to_be_colonized)
         & make_nvp("m_is_about_to_be_invaded", obj.m_is_about_to_be_invaded)
         & make_nvp("m_is_about_to_be_bombarded", obj.m_is_about_to_be_bombarded)
@@ -587,14 +575,7 @@ void serialize(Archive& ar, Fleet& obj, unsigned int const version)
         & make_nvp("m_prev_system", obj.m_prev_system)
         & make_nvp("m_next_system", obj.m_next_system);
 
-    if (Archive::is_loading::value && version < 5) {
-        bool aggressive = false;
-        ar  & make_nvp("m_aggressive", aggressive);
-        obj.m_aggression = aggressive ? FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_DEFENSIVE;
-
-    } else {
-        ar  & make_nvp("m_aggression", obj.m_aggression);
-    }
+    ar  & make_nvp("m_aggression", obj.m_aggression);
 
     ar  & make_nvp("m_ordered_given_to_empire_id", obj.m_ordered_given_to_empire_id);
     if (version < 6) {
@@ -604,13 +585,7 @@ void serialize(Archive& ar, Fleet& obj, unsigned int const version)
     } else {
         ar & make_nvp("m_travel_route", obj.m_travel_route);
     }
-    if (version < 3) {
-        double dummy_travel_distance = 0.0;
-        ar & boost::serialization::make_nvp("m_travel_distance", dummy_travel_distance);
-    }
-    if (version >= 4) {
-        ar & boost::serialization::make_nvp("m_last_turn_move_ordered", obj.m_last_turn_move_ordered);
-    }
+    ar & boost::serialization::make_nvp("m_last_turn_move_ordered", obj.m_last_turn_move_ordered);
     ar  & make_nvp("m_arrived_this_turn", obj.m_arrived_this_turn)
         & make_nvp("m_arrival_starlane", obj.m_arrival_starlane);
 }
@@ -635,12 +610,8 @@ void serialize(Archive& ar, Ship& obj, unsigned int const version)
         & make_nvp("m_species_name", obj.m_species_name)
         & make_nvp("m_produced_by_empire_id", obj.m_produced_by_empire_id)
         & make_nvp("m_arrived_on_turn", obj.m_arrived_on_turn);
-    if (version >= 1) {
-        ar  & make_nvp("m_last_turn_active_in_combat", obj.m_last_turn_active_in_combat);
-        if (version >= 2) {
-            ar  & make_nvp("m_last_resupplied_on_turn", obj.m_last_resupplied_on_turn);
-        }
-    }
+    ar  & make_nvp("m_last_turn_active_in_combat", obj.m_last_turn_active_in_combat);
+    ar  & make_nvp("m_last_resupplied_on_turn", obj.m_last_resupplied_on_turn);
 }
 
 BOOST_CLASS_EXPORT(Ship)
@@ -657,30 +628,25 @@ void serialize(Archive& ar, ShipDesign& obj, unsigned int const version)
 
     TraceLogger() << "ship design serialize version: " << version << " : " << (Archive::is_saving::value ? "saving" : "loading");
 
-    if (version >= 1) {
-        // Serialization of m_uuid as a primitive doesn't work as expected from
-        // the documentation.  This workaround instead serializes a string
-        // representation.
-        if constexpr (Archive::is_saving::value) {
-            auto string_uuid = boost::uuids::to_string(obj.m_uuid);
-            ar & make_nvp("string_uuid", string_uuid);
-        } else {
-            std::string string_uuid;
-            ar & make_nvp("string_uuid", string_uuid);
-            try {
-                obj.m_uuid = boost::lexical_cast<boost::uuids::uuid>(string_uuid);
-            } catch (const boost::bad_lexical_cast&) {
-                obj.m_uuid = boost::uuids::nil_generator()();
-            }
+    // Serialization of m_uuid as a primitive doesn't work as expected from
+    // the documentation.  This workaround instead serializes a string
+    // representation.
+    if constexpr (Archive::is_saving::value) {
+        auto string_uuid = boost::uuids::to_string(obj.m_uuid);
+        ar & make_nvp("string_uuid", string_uuid);
+    } else {
+        std::string string_uuid;
+        ar & make_nvp("string_uuid", string_uuid);
+        try {
+            obj.m_uuid = boost::lexical_cast<boost::uuids::uuid>(string_uuid);
+        } catch (const boost::bad_lexical_cast&) {
+            obj.m_uuid = boost::uuids::nil_generator()();
         }
-    } else if constexpr (Archive::is_loading::value) {
-        obj.m_uuid = boost::uuids::nil_generator()();
     }
 
     ar  & make_nvp("m_description", obj.m_description)
         & make_nvp("m_designed_on_turn", obj.m_designed_on_turn);
-    if (version >= 2)
-        ar  & make_nvp("m_designed_by_empire", obj.m_designed_by_empire);
+    ar  & make_nvp("m_designed_by_empire", obj.m_designed_by_empire);
     ar  & make_nvp("m_hull", obj.m_hull)
         & make_nvp("m_parts", obj.m_parts)
         & make_nvp("m_is_monster", obj.m_is_monster)

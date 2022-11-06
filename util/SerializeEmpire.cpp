@@ -172,13 +172,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_id)
         & BOOST_SERIALIZATION_NVP(m_name)
         & BOOST_SERIALIZATION_NVP(m_player_name);
-    if (Archive::is_loading::value && version < 5) {
-        CompatColor old_color;
-        ar & boost::serialization::make_nvp("m_color", old_color);
-        m_color = {{old_color.r, old_color.g, old_color.b, old_color.a}};
-    } else {
-        ar & BOOST_SERIALIZATION_NVP(m_color);
-    }
+    ar  & BOOST_SERIALIZATION_NVP(m_color);
     ar  & BOOST_SERIALIZATION_NVP(m_capital_id)
         & BOOST_SERIALIZATION_NVP(m_source_id)
         & BOOST_SERIALIZATION_NVP(m_eliminated)
@@ -341,23 +335,9 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         }
     }
 
-    if (Archive::is_loading::value && version < 3) {
-        m_authenticated = false;
-    } else {
-        ar  & BOOST_SERIALIZATION_NVP(m_authenticated);
-    }
-
-    if (Archive::is_loading::value && version < 4) {
-        m_ready = false;
-    } else {
-        ar  & BOOST_SERIALIZATION_NVP(m_ready);
-    }
-
-    if (Archive::is_loading::value && version < 5) {
-        m_auto_turn_count = 0;
-    } else {
-        ar  & BOOST_SERIALIZATION_NVP(m_auto_turn_count);
-    }
+    ar  & BOOST_SERIALIZATION_NVP(m_authenticated);
+    ar  & BOOST_SERIALIZATION_NVP(m_ready);
+    ar  & BOOST_SERIALIZATION_NVP(m_auto_turn_count);
 
     TraceLogger() << "DONE serializing empire " << m_id << ": " << m_name;
 }
