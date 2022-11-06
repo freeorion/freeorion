@@ -343,14 +343,14 @@ int ShipDesign::PartCount() const {
 }
 
 bool ShipDesign::ProductionLocation(int empire_id, int location_id, const ScriptingContext& context) const {
-    Empire* empire = GetEmpire(empire_id); // TODO: get from context
+    auto empire = context.GetEmpire(empire_id);
     if (!empire) {
         DebugLogger() << "ShipDesign::ProductionLocation: Unable to get pointer to empire " << empire_id;
         return false;
     }
 
     // must own the production location...
-    auto location = Objects().getRaw(location_id); // TODO: get from context
+    auto location = context.ContextObjects().getRaw(location_id);
     if (!location) {
         WarnLogger() << "ShipDesign::ProductionLocation unable to get location object with id " << location_id;
         return false;
@@ -368,7 +368,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id, const Script
     }
     if (species_name.empty())
         return false;
-    const Species* species = GetSpecies(species_name); // TODO: use context.species.GetSpecies
+    const Species* species = context.species.GetSpecies(species_name);
     if (!species)
         return false;
 
@@ -386,7 +386,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id, const Script
         return false;
     }
     // evaluate using location as the source, as it should be an object owned by this empire.
-    ScriptingContext location_as_source_context{location, location};
+    const ScriptingContext location_as_source_context{location, context};
     if (!hull->Location()->Eval(location_as_source_context, location))
         return false;
 
