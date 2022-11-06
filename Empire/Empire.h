@@ -372,7 +372,7 @@ public:
     /** Determines ResourceCenters that can provide resources for this empire and sets
       * the supply groups used for each ResourcePool as appropriate for each resource.
       * call UpdateResourceSupply before calling this. */
-    void InitResourcePools(const ObjectMap& objects);
+    void InitResourcePools(const ObjectMap& objects, const SupplyManager& supply);
 
     /** Resets production of resources and calculates allocated resources (on
       * each item in queues and overall) for each resource by calling

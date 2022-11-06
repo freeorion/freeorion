@@ -720,7 +720,7 @@ namespace {
                 // determine population centers and resource centers of empire, tells resource pools
                 // the centers and groups of systems that can share resources (note that being able to
                 // share resources doesn't mean a system produces resources)
-                empire->InitResourcePools(context.ContextObjects());
+                empire->InitResourcePools(context.ContextObjects(), context.supply);
 
                 // determine how much of each resources is available in each resource sharing group
                 empire->UpdateResourcePools(context);

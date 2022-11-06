@@ -2548,13 +2548,13 @@ void Empire::CheckInfluenceProgress() {
 void Empire::SetColor(const EmpireColor& color)
 { m_color = color; }
 
-void Empire::SetName(const std::string& name)
+void Empire::SetName(const std::string& name) // TODO: pass by value and move
 { m_name = name; }
 
 void Empire::SetPlayerName(const std::string& player_name)
 { m_player_name = player_name; }
 
-void Empire::InitResourcePools(const ObjectMap& objects) {
+void Empire::InitResourcePools(const ObjectMap& objects, const SupplyManager& supply) {
     // get this empire's owned resource centers and ships (which can both produce resources)
     std::vector<int> res_centers;
     res_centers.reserve(objects.allExisting<ResourceCenter>().size());
@@ -2583,7 +2583,7 @@ void Empire::InitResourcePools(const ObjectMap& objects) {
 
 
     // inform the blockadeable resource pools about systems that can share
-    m_resource_pools[ResourceType::RE_INDUSTRY]->SetConnectedSupplyGroups(GetSupplyManager().ResourceSupplyGroups(m_id));
+    m_resource_pools[ResourceType::RE_INDUSTRY]->SetConnectedSupplyGroups(supply.ResourceSupplyGroups(m_id));
 
     // set non-blockadeable resource pools to share resources between all systems
     std::set<std::set<int>> sets_set;
