@@ -95,10 +95,12 @@ Fleet* Fleet::Clone(const Universe& universe, int empire_id) const {
 void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object,
                  const Universe& universe, int empire_id)
 {
-    if (copied_object.get() == this)
+    if (!copied_object || copied_object.get() == this)
         return;
-    auto copied_fleet = std::dynamic_pointer_cast<const Fleet>(copied_object);
-    if (!copied_fleet) {
+    const Fleet* copied_fleet = nullptr;
+    if (copied_object->ObjectType() == UniverseObjectType::OBJ_FLEET) {
+        copied_fleet = static_cast<const Fleet*>(copied_object.get());
+    } else {
         ErrorLogger() << "Fleet::Copy passed an object that wasn't a Fleet";
         return;
     }
@@ -112,9 +114,9 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object,
     if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
         m_ships =               copied_fleet->VisibleContainedObjectIDs(empire_id, universe.GetEmpireObjectVisibility());
 
-        m_next_system =         ((EmpireKnownObjects(empire_id).get<System>(copied_fleet->m_next_system))
+        m_next_system =         ((universe.EmpireKnownObjects(empire_id).getRaw<System>(copied_fleet->m_next_system))
                                     ? copied_fleet->m_next_system : INVALID_OBJECT_ID);
-        m_prev_system =         ((EmpireKnownObjects(empire_id).get<System>(copied_fleet->m_prev_system))
+        m_prev_system =         ((universe.EmpireKnownObjects(empire_id).getRaw<System>(copied_fleet->m_prev_system))
                                     ? copied_fleet->m_prev_system : INVALID_OBJECT_ID);
         m_arrived_this_turn =   copied_fleet->m_arrived_this_turn;
         m_arrival_starlane =    copied_fleet->m_arrival_starlane;
@@ -445,7 +447,7 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
             ++route_it;
             if (route_it != route.end()) {
                 // update next system on route and distance to it from current position
-                next_system = EmpireKnownObjects(this->Owner()).getRaw<System>(*route_it); // TODO !!!
+                next_system = context.ContextUniverse().EmpireKnownObjects(this->Owner()).getRaw<System>(*route_it);
                 if (next_system) {
                     TraceLogger() << "Fleet::MovePath checking unrestriced lane travel from Sys("
                                   <<  cur_system->ID() << ") to Sys(" << (next_system && next_system->ID()) << ")";
