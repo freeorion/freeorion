@@ -177,7 +177,7 @@ class StringTable:
     def items(self):
         return self._entries
 
-    @staticmethod
+    @staticmethod  # noqa: max-complexity
     def set_author(fpath, entries, blames):  # noqa: max-complexity
         blame_cmd = ["git", "blame", "--incremental", fpath]
         git_blame = subprocess.check_output(blame_cmd)
@@ -224,7 +224,7 @@ class StringTable:
     def from_file(fhandle, with_blame=True) -> "StringTable":
         return StringTable.from_text(fhandle.read(), fhandle.name, with_blame=with_blame)
 
-    @staticmethod
+    @staticmethod  # noqa: max-complexity
     def from_text(text, fpath, with_blame=True) -> "StringTable":  # noqa: max-complexity
 
         is_quoted = False
@@ -377,7 +377,7 @@ class StringTable:
             StringTable.set_author(fpath, entries, blames)
         return StringTable(fpath, language, fnotes, includes, entries)
 
-    @staticmethod
+    @staticmethod  # noqa: max-complexity
     def statistic(left: "StringTable", right: "StringTable"):  # noqa: max-complexity
         class STStatistic(NamedTuple):
             left: "StringTable"
