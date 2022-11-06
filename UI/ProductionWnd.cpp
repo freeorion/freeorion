@@ -47,14 +47,15 @@ namespace {
                    GG::Y h, bool inProgress, bool amBlockType) :
             Control(GG::X0, GG::Y0, nwidth, h, GG::NO_WND_FLAGS)
         {
-            GG::Clr txtClr = inProgress ? GG::LightenClr(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
-            std::string nameText;
-            if (amBlockType)
-                nameText = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_MULTIPLES")) % quantity);
-            else
-                nameText = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_REPETITIONS")) % quantity);
-            //nameText += GetUniverse().GetShipDesign(designID)->Name();
-            m_text = GG::Wnd::Create<CUILabel>(nameText, GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
+            const GG::Clr txtClr = inProgress ?
+                GG::LightenClr(ClientUI::ResearchableTechTextAndBorderColor()) :
+                ClientUI::ResearchableTechTextAndBorderColor();
+
+            const auto& template_str = amBlockType ?
+                UserString("PRODUCTION_QUEUE_MULTIPLES") : UserString("PRODUCTION_QUEUE_REPETITIONS");
+
+            m_text = GG::Wnd::Create<CUILabel>(boost::io::str(FlexibleFormat(template_str) % quantity),
+                                               GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
             m_text->SetTextColor(txtClr);
             m_text->OffsetMove(GG::Pt(GG::X0, GG::Y(-3)));
         }
@@ -65,8 +66,7 @@ namespace {
             Resize(GG::Pt(Width(), m_text->Height()));
         }
 
-        void Render() override
-        {}
+        void Render() override {}
 
         std::shared_ptr<CUILabel> m_text;
     };
@@ -125,8 +125,8 @@ namespace {
                                         : ClientUI::ResearchableTechFillColor());
             SetNumCols(1);
 
-            int quantInts[] = {1, 2, 3, 4, 5, 10, 20, 30, 40, 50, 99};
-            std::set<int> myQuantSet(quantInts, quantInts + 11);
+            static constexpr auto quantInts = std::array{1, 2, 3, 4, 5, 10, 20, 30, 40, 50, 99};
+            std::set<int> myQuantSet(quantInts.begin(), quantInts.end());
 
             if (amBlockType)
                 myQuantSet.insert(blocksize); //as currently implemented this one not actually necessary since blocksize has no other way to change
@@ -134,8 +134,9 @@ namespace {
                 myQuantSet.insert(quantity);
 
             for (int droplist_quantity : myQuantSet) {
-                auto row =  GG::Wnd::Create<QuantRow>(droplist_quantity, build.item.design_id, nwidth, h, inProgress, amBlockType);
-                auto latest_it = Insert(row);
+                auto row =  GG::Wnd::Create<QuantRow>(droplist_quantity, build.item.design_id,
+                                                      nwidth, h, inProgress, amBlockType);
+                auto latest_it = Insert(std::move(row));
 
                 if (amBlockType) {
                     if (build.blocksize == droplist_quantity)
@@ -146,8 +147,7 @@ namespace {
                 }
             }
 
-            this->SelChangedSignal.connect(
-                boost::bind(&QuantitySelector::SelectionChanged, this, boost::placeholders::_1));
+            this->SelChangedSignal.connect([this](auto it) { SelectionChanged(it); });
         }
 
         void SelectionChanged(GG::DropDownList::iterator it) {
@@ -228,7 +228,7 @@ namespace {
     // ProductionItemBrowseWnd //
     /////////////////////////////
     std::shared_ptr<GG::BrowseInfoWnd> ProductionItemBrowseWnd(const ProductionQueue::Element& elem) {
-        //const Empire* empire = GetEmpire(elem.empire_id);
+        const ScriptingContext context;
 
         std::string main_text;
         std::string item_name;
@@ -246,7 +246,6 @@ namespace {
                 return nullptr;
             main_text += UserString("OBJ_BUILDING") + "\n";
 
-            ScriptingContext context;
             item_name = UserString(elem.item.name);
             //available = empire->BuildingTypeAvailable(elem.item.name);
             location_ok = building_type->ProductionLocation(elem.empire_id, elem.location, context);
@@ -256,7 +255,7 @@ namespace {
             icon = ClientUI::BuildingIcon(elem.item.name);
 
         } else if (elem.item.build_type == BuildType::BT_SHIP) {
-            const ShipDesign* design = GetUniverse().GetShipDesign(elem.item.design_id);
+            const ShipDesign* design = context.ContextUniverse().GetShipDesign(elem.item.design_id);
             if (!design)
                 return nullptr;
             main_text += UserString("OBJ_SHIP") + "\n";
@@ -268,11 +267,12 @@ namespace {
             total_cost = design->ProductionCost(elem.empire_id, elem.location) * elem.blocksize;
             max_allocation = design->PerTurnCost(elem.empire_id, elem.location) * elem.blocksize;
             icon = ClientUI::ShipDesignIcon(elem.item.design_id);
+
         } else if (elem.item.build_type == BuildType::BT_STOCKPILE) {
             main_text += UserString("BUILD_ITEM_TYPE_PROJECT") + "\n";
 
             item_name = UserString(elem.item.name);
-            auto loc = Objects().get(elem.location);
+            const auto loc = context.ContextObjects().get(elem.location);
             location_ok = loc && loc->OwnedBy(elem.empire_id) && (std::dynamic_pointer_cast<const ResourceCenter>(loc));
 
             total_cost = 1.0;
@@ -280,12 +280,12 @@ namespace {
             icon = ClientUI::MeterIcon(MeterType::METER_STOCKPILE);
         }
 
-        if (auto rally_object = Objects().get(elem.rally_point_id)) {
+        if (const auto rally_object = context.ContextObjects().getRaw(elem.rally_point_id)) {
             main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_RALLIED_TO"))
                                         % rally_object->Name()) + "\n";
         }
 
-        if (auto location = Objects().get(elem.location))
+        if (const auto location = context.ContextObjects().getRaw(elem.location))
             main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_ENQUEUED_ITEM_LOCATION"))
                                         % location->Name()) + "\n";
 
@@ -303,7 +303,7 @@ namespace {
                         % DoubleToString(total_cost, 3, false)
                         % DoubleToString(allocation, 3, false)
                         % DoubleToString(max_allocation, 3, false)) + "\n";
-                        
+
         if (elem.allowed_imperial_stockpile_use)
             main_text += UserString("PRODUCTION_QUEUE_ITEM_STOCKPILE_ENABLED") + "\n";
 
@@ -317,7 +317,7 @@ namespace {
             title_text = std::to_string(elem.blocksize) + "x ";
         title_text += item_name;
 
-        return GG::Wnd::Create<IconTextBrowseWnd>(icon, title_text, main_text);
+        return GG::Wnd::Create<IconTextBrowseWnd>(std::move(icon), std::move(title_text), std::move(main_text));
     }
 
     //////////////////////////////////////////////////
@@ -352,10 +352,8 @@ namespace {
             SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
             SetBrowseInfoWnd(ProductionItemBrowseWnd(elem));
 
-            namespace ph = boost::placeholders;
-
             panel->PanelUpdateQuantSignal.connect(
-                boost::bind(&QueueRow::RowQuantChanged, this, ph::_1, ph::_2));
+                [this](auto quant, auto blocksize) { RowQuantChanged(quant, blocksize); });
 
             RequirePreRender();
         }
@@ -545,10 +543,10 @@ namespace {
 
         if (m_quantity_selector)
             m_quantity_selector->QuantChangedSignal.connect(
-                boost::bind(&QueueProductionItemPanel::ItemQuantityChanged, this, ph::_1, ph::_2));
+                [this](auto quant, auto blocksize) { ItemQuantityChanged(quant, blocksize); });
         if (m_block_size_selector)
             m_block_size_selector->QuantChangedSignal.connect(
-                boost::bind(&QueueProductionItemPanel::ItemBlocksizeChanged, this, ph::_1, ph::_2));
+                [this](auto quant, auto blocksize) { ItemBlocksizeChanged(quant, blocksize); });
 
         RequirePreRender();
     }
