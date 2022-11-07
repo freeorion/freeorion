@@ -6068,6 +6068,12 @@ Croissance
 INDUSTRY_ARTICLE_SHORT_DESC
 Industrie
 
+RESEARCH_ARTICLE_SHORT_DESC
+Recherche
+
+PROTECTION_ARTICLE_SHORT_DESC  # translated
+Protection
+
 STOCKPILE_ARTICLE_SHORT_DESC
 Stock
 
@@ -9663,7 +9669,7 @@ TIDAL_LOCK_SPECIAL
 Rotation Synchrone
 
 TIDAL_LOCK_SPECIAL_DESC
-'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de la planète de [[value TIDAL_LOCK_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]] si le Focus [[metertype METER_INDUSTRY]] est activé. Pénalise la [[metertype METER_TARGET_POPULATION]] (quel que soit le Focus) de [[value TIDAL_LOCK_TARGET_POPULATION_PERSIZE]] par la taille de la planète ([[SZ_TINY]] -1, [[SZ_SMALL]] -2, [[SZ_MEDIUM]] -3, [[SZ_LARGE]] -4, [[SZ_HUGE]] -5).
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de la planète de [[value TIDAL_LOCK_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]] si le [[encyclopedia INDUSTRY_FOCUS_TITLE]] est activé. Pénalise la [[metertype METER_TARGET_POPULATION]] (quel que soit le Focus) de [[value TIDAL_LOCK_TARGET_POPULATION_PERSIZE]] par la taille de la planète ([[SZ_TINY]] -1, [[SZ_SMALL]] -2, [[SZ_MEDIUM]] -3, [[SZ_LARGE]] -4, [[SZ_HUGE]] -5).
 
 Cette planète est en rotation synchrone lors de son orbite autour de son étoile. Les durées du jour et de l'année sont rigoureusement égales, ce qui signifie qu'une face de la planète est perpétuellement diurne tandis que l'autre est perpétuellement nocturne. La croissance de la Population s'en trouve impactée, mais l'Industrie tire profit des conditions stables à la surface de la planète.'''
 
@@ -9671,7 +9677,7 @@ TEMPORAL_ANOMALY_SPECIAL
 Anomalie Temporelle
 
 TEMPORAL_ANOMALY_SPECIAL_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] sur cette planète de [[value TEMPORAL_ANOMALY_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]] si le Focus [[metertype METER_RESEARCH]] est activé. Pénalise la [[metertype METER_TARGET_POPULATION]] (quel que soit le Focus) de [[value TEMPORAL_ANOMALY_TARGET_POPULATION_PERSIZE]] par la taille de la planète ([[SZ_TINY]] -5, [[SZ_SMALL]] -10, [[SZ_MEDIUM]] -15, [[SZ_LARGE]] -20, [[SZ_HUGE]] -25).
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] sur cette planète de [[value TEMPORAL_ANOMALY_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]] si le [[encyclopedia RESEARCH_FOCUS_TITLE]] est activé. Pénalise la [[metertype METER_TARGET_POPULATION]] (quel que soit le Focus) de [[value TEMPORAL_ANOMALY_TARGET_POPULATION_PERSIZE]] par la taille de la planète ([[SZ_TINY]] -5, [[SZ_SMALL]] -10, [[SZ_MEDIUM]] -15, [[SZ_LARGE]] -20, [[SZ_HUGE]] -25).
 Le bonus de Recherche requiert une [[metertype METER_HAPPINESS]] de [[value TEMPORAL_ANOMALY_MIN_STABILITY]].
 
 L'écoulement du temps sur cette planète est fortement perturbé. Des événements apparemment aléatoires provoquent soit une accélération soit un ralentissement de la vitesse du temps, troublant profondément le rythme biologique de tout être vivant et rendant quasiment impossible toute organisation sociale et productive. Une adaptabilité extrême et de grandes précautions sont requises afin d'établir une colonie sur cette planète.
@@ -9943,7 +9949,9 @@ SUCCULENT_BARNACLES_SPECIAL
 Bernacles Succulentes
 
 SUCCULENT_BARNACLES_SPECIAL_DESC
-La planète abrite une colonie de succulentes bernacles pouvant être récoltées et exportées.
+'''La planète abrite une colonie de succulentes bernacles pouvant être récoltées et exportées.
+
+[[LUXURY_SPECIAL]]'''
 
 SUCCULENT_BARNACLES_SPECIAL_IMPORTS
 Import [[SUCCULENT_BARNACLES_SPECIAL]]
@@ -9952,7 +9960,9 @@ FRACTAL_GEODES_SPECIAL
 Géodes Fractales
 
 FRACTAL_GEODES_SPECIAL_DESC
-La planète est jonchée de géodes fractales irisées pouvant être collectées et exportées.
+'''La planète est jonchée de géodes fractales irisées pouvant être collectées et exportées.
+
+[[LUXURY_SPECIAL]]'''
 
 FRACTAL_GEODES_SPECIAL_IMPORTS
 Import [[FRACTAL_GEODES_SPECIAL]]
@@ -9961,7 +9971,9 @@ SHIMMER_SILK_SPECIAL
 Soie Chatoyante
 
 SHIMMER_SILK_SPECIAL_SPECIAL_DESC
-La planète projette à sa surface des feuilles de matière semblables à une soie délicate et chatoyante, pouvant être collectées et exportées.
+'''La planète projette à sa surface des feuilles de matière semblables à une soie délicate et chatoyante, pouvant être collectées et exportées.
+
+[[LUXURY_SPECIAL]]'''
 
 SHIMMER_SILK_SPECIAL_IMPORTS
 Import [[SHIMMER_SILK_SPECIAL]]
@@ -9970,7 +9982,9 @@ SPARK_FOSSILS_SPECIAL
 Fossiles Scintillants
 
 SPARK_FOSSILS_SPECIAL_DESC
-La croûte externe de cette planète est constellée de créatures de cristal fossilisées, parcourues de petites décharges électriques scintillantes lors d'un contact, et pouvant être extraites et exportées.
+'''La croûte externe de cette planète est constellée de créatures de cristal fossilisées, parcourues de petites décharges électriques scintillantes lors d'un contact, et pouvant être extraites et exportées.
+
+[[LUXURY_SPECIAL]]'''
 
 SPARK_FOSSILS_SPECIAL_IMPORTS
 Import [[SPARK_FOSSILS_SPECIAL]]
@@ -9979,10 +9993,16 @@ MIMETIC_ALLOY_SPECIAL
 Alliage Mimétique
 
 MIMETIC_ALLOY_SPECIAL_DESC
-Cette planète présente à sa surface des bassins d'alliage mimétique, lequel à la capacité de se modifier afin de prendre la forme d'un objet placé à proximité, et pouvant être embouteillé et exporté.
+'''Cette planète présente à sa surface des bassins d'alliage mimétique, lequel à la capacité de se modifier afin de prendre la forme d'un objet placé à proximité, et pouvant être embouteillé et exporté.
+
+[[LUXURY_SPECIAL]]'''
 
 MIMETIC_ALLOY_SPECIAL_IMPORTS
 Import [[MIMETIC_ALLOY_SPECIAL]]
+
+LUXURY_SPECIAL
+'''Augmente la [[metertype METER_TARGET_INFLUENCE]] sur cette planète de [[value SPECIAL_INFLUENCE_FOCUS_BONUS]] si le [[encyclopedia INFLUENCE_FOCUS_TITLE]] est activé.
+Fournit des bonus additionnels si l'empire a adopté la Politique [[policy PLC_CAPITAL_MARKETS]] ou [[policy PLC_BLACK_MARKET]].'''
 
 STARLANE_DRIVE_ACTIVATED_SPECIAL
 Script auxiliaire
@@ -12243,8 +12263,8 @@ Terraformation
 PLC_TERRAFORMING_DESC
 '''• Diminue le temps minimum pour mener à bien les projets de Terraformation sur une planète. Ces projets sont débloqués par la technologie [[tech GRO_TERRAFORM]].
 • Améliore la [[metertype METER_TARGET_HAPPINESS]] sur les planètes terraformées de [[value PLC_TERRAFORMING_TARGET_HAPPINESS_ORIGINAL_FLAT]] par palier les séparant de leur type planétaire d'origine après terraformation.
-• Améliore la [[metertype METER_TARGET_INFLUENCE]] sur les planètes en Focus Influence de [[value PLC_TERRAFORMING_TARGET_INFLUENCE_ORIGINAL_FLAT]] par palier les séparant de leur type planétaire d'origine après terraformation.
-• Améliore la [[metertype METER_TARGET_RESEARCH]] sur les planètes en Focus Recherche de la racine carrée de la [[metertype METER_POPULATION]] x [[value PLC_TERRAFORMING_TARGET_RESEARCH_SCALING]] par palier les séparant de leur type planétaire d'origine après terraformation.
+• Améliore la [[metertype METER_TARGET_INFLUENCE]] sur les planètes en [[encyclopedia INFLUENCE_FOCUS_TITLE]] de [[value PLC_TERRAFORMING_TARGET_INFLUENCE_ORIGINAL_FLAT]] par palier les séparant de leur type planétaire d'origine après terraformation.
+• Améliore la [[metertype METER_TARGET_RESEARCH]] sur les planètes en [[encyclopedia RESEARCH_FOCUS_TITLE]] de la racine carrée de la [[metertype METER_POPULATION]] x [[value PLC_TERRAFORMING_TARGET_RESEARCH_SCALING]] par palier les séparant de leur type planétaire d'origine après terraformation.
 Les planètes artificielles comptent comme ayant été terraformées sur [[value PLC_TERRAFORMING_ARTIFICIAL_PLANET_DISTANCE]] paliers, quel que soit leur [[encyclopedia ENVIRONMENT_TITLE]] actuel.'''
 
 PLC_TERRAFORMING_SHORT_DESC
@@ -12290,7 +12310,7 @@ Diversité
 
 PLC_DIVERSITY_DESC
 '''Accorde des bonus ou des pénalités à la Recherche, la Stabilité, et à l'Influence de la Capitale, selon le nombre d'espèces présentes au sein de l'empire.
-Le bonus de Recherche requiert le Focus Recherche et une [[metertype METER_HAPPINESS]] de [[value PLC_DIVERSITY_MIN_STABILITY]].
+Le bonus de Recherche requiert le [[encyclopedia RESEARCH_FOCUS_TITLE]] et une [[metertype METER_HAPPINESS]] de [[value PLC_DIVERSITY_MIN_STABILITY]].
 
 La valeur de tous les bonus ou pénalités est de [[value PLC_DIVERSITY_SCALING]] par espèce, et sera d'autant plus importante que le nombre d'espèces présentes dans l'empire est supérieur ou inférieur à [[value PLC_DIVERSITY_THRESHOLD]].'''
 
@@ -12312,7 +12332,7 @@ Productivité Exobot
 PLC_EXOBOT_PRODUCTIVITY_DESC
 '''Augmente la capacité effective de Production des Exobots sur les planètes en Focus Industrie de "Très Mauvais" à seulement "Mauvais".
 
-Diminue de [[value PLC_EXOBOT_OTHER_PLANET_INDUSTRY_PENALTY]] la Stabilité et la capacité de Production des planètes habitées non-Exobot en Focus Industrie.'''
+Diminue de [[value PLC_EXOBOT_OTHER_PLANET_INDUSTRY_PENALTY]] la Stabilité et la capacité de Production des planètes habitées non-Exobot en [[encyclopedia INDUSTRY_FOCUS_TITLE]].'''
 
 PLC_EXOBOT_PRODUCTIVITY_SHORT_DESC
 Améliore la Production des Exobots
@@ -12427,7 +12447,7 @@ Endoctrinement
 PLC_INDOCTRINATION_DESC
 '''• Augmente progressivement la [[metertype METER_TARGET_HAPPINESS]] des planètes. Le bonus croît de [[value PLC_INDOCTRINATION_PER_TURN]] par tour, jusqu'à un maximum de [[value PLC_INDOCTRINATION_STRENGTH_MAX]]. Les planètes fraîchement conquises démarre à zéro, les planètes déjà colonisées obtiennent le bonus maximum actuel.
 • Diminue la [[metertype METER_TARGET_INFLUENCE]] de [[value PLC_INDOCTRINATION_INFLUENCE_COST_FLAT]], sur les planètes recevant ce bonus de [[metertype METER_TARGET_HAPPINESS]].
-• Augmente la [[metertype METER_TARGET_INFLUENCE]] de la Capitale ou des planètes hébergeant une structure d'[[buildingtype BLD_REGIONAL_ADMIN]], et en Focus Influence, de [[value PLC_INDOCTRINATION_INFLUENCE_FLAT]].'''
+• Augmente la [[metertype METER_TARGET_INFLUENCE]] de la Capitale ou des planètes hébergeant une structure d'[[buildingtype BLD_REGIONAL_ADMIN]], et en [[encyclopedia INFLUENCE_FOCUS_TITLE]], de [[value PLC_INDOCTRINATION_INFLUENCE_FLAT]].'''
 
 PLC_INDOCTRINATION_SHORT_DESC
 Augmente la Stabilité progressivement
@@ -12531,7 +12551,7 @@ PLC_CAPITAL_MARKETS
 Marchés Capitaux
 
 PLC_CAPITAL_MARKETS_DESC
-'''• Les planètes disposant d'une Particularité de ressources de luxe et réglées sur le Focus Influence, exporteront cette ressource vers les planètes reliées par lignes d'[[metertype METER_SUPPLY]]. Cela améliore de [[value SPECIAL_CAPITAL_MARKETS_STABILITY_FOCUS_BONUS]] la [[metertype METER_HAPPINESS]] des planètes peuplées d'espèces aimant cette ressource.
+'''• Les planètes disposant d'une Particularité de ressources de luxe et réglées sur le [[encyclopedia INFLUENCE_FOCUS_TITLE]], exporteront cette ressource vers les planètes reliées par lignes d'[[metertype METER_SUPPLY]]. Cela améliore de [[value SPECIAL_CAPITAL_MARKETS_STABILITY_FOCUS_BONUS]] la [[metertype METER_HAPPINESS]] des planètes peuplées d'espèces aimant cette ressource.
 • Augmente la [[metertype METER_TARGET_INFLUENCE]] des planètes en Focus Influence ayant une [[metertype METER_HAPPINESS]] au moins égale à [[value CAPITAL_MARKETS_INFLUENCE_MIN_STABILITY]], de [[value CAPITAL_MARKETS_INFLUENCE_BONUS_SCALING]] par la valeur la plus faible entre l'[[metertype METER_CONSTRUCTION]] et la [[metertype METER_POPULATION]].
 • Augmente le taux de progression ou de régression de l'[[metertype METER_INFLUENCE]] et de la [[metertype METER_HAPPINESS]] de [[value PLC_CAPITAL_MARKETS_INFLUENCE_RATE]] / tour pour atteindre la valeur de la [[metertype METER_TARGET_INFLUENCE]] ou de la [[metertype METER_TARGET_HAPPINESS]].
 • Réduit la [[metertype METER_TARGET_HAPPINESS]] sur les planètes habitées appartenant à l'empire de [[value CAPITAL_MARKETS_DEBT_INSTABILITY]] fois la valeur de la dette d'Influence de l'empire.'''
@@ -12543,7 +12563,7 @@ PLC_BLACK_MARKET
 Marchés Noirs
 
 PLC_BLACK_MARKET_DESC
-La [[metertype METER_TARGET_INFLUENCE]] des planètes avec une [[metertype METER_HAPPINESS]] de [[value PLC_BLACK_MARKET_MAX_STABILITY]] ou moins, et étant réglées sur le Focus Influence, augmentera de [[value SPECIAL_BLACK_MARKET_INFLUENCE_FOCUS_BONUS]] pour chaque planète reliées par ligne d'[[metertype METER_SUPPLY]] et disposant d'une Particularité de ressources de luxe appréciée par la population de la planète en Focus Influence.
+La [[metertype METER_TARGET_INFLUENCE]] des planètes avec une [[metertype METER_HAPPINESS]] de [[value PLC_BLACK_MARKET_MAX_STABILITY]] ou moins, et étant réglées sur le [[encyclopedia INFLUENCE_FOCUS_TITLE]], augmentera de [[value SPECIAL_BLACK_MARKET_INFLUENCE_FOCUS_BONUS]] pour chaque planète reliées par ligne d'[[metertype METER_SUPPLY]] et disposant d'une Particularité de ressources de luxe appréciée par la population de la planète en Focus Influence.
 
 PLC_BLACK_MARKET_SHORT_DESC
 Améliore l'Influence selon les ressources
@@ -12553,8 +12573,8 @@ Ateliers Artisanaux
 
 PLC_ARTISAN_WORKSHOPS_DESC
 '''Les planètes peuplées d'espèces de type [[encyclopedia ARTISTIC]] généreront de l'Influence en exportant de l'artisanat de luxe. 
-• Augmente de [[value ARTISANS_INFLUENCE_FLAT_FOCUS]] la [[metertype METER_TARGET_INFLUENCE]] sur les planètes en Focus Influence et ayant une [[metertype METER_HAPPINESS]] minimum de [[value ARTISANS_MIN_STABILITY_FOCUS]].
-• Augmente de [[value ARTISANS_INFLUENCE_FLAT_NO_FOCUS]] la [[metertype METER_TARGET_INFLUENCE]] sur les planètes non réglées en Focus Influence et n'ayant pas une Stabilité minimum de [[value ARTISANS_MIN_STABILITY_NO_FOCUS]].'''
+• Augmente de [[value ARTISANS_INFLUENCE_FLAT_FOCUS]] la [[metertype METER_TARGET_INFLUENCE]] sur les planètes en [[encyclopedia INFLUENCE_FOCUS_TITLE]] et ayant une [[metertype METER_HAPPINESS]] minimum de [[value ARTISANS_MIN_STABILITY_FOCUS]].
+• Augmente de [[value ARTISANS_INFLUENCE_FLAT_NO_FOCUS]] la [[metertype METER_TARGET_INFLUENCE]] sur les planètes non réglées en [[encyclopedia INFLUENCE_FOCUS_TITLE]] et n'ayant pas une Stabilité minimum de [[value ARTISANS_MIN_STABILITY_NO_FOCUS]].'''
 
 PLC_ARTISAN_WORKSHOPS_SHORT_DESC
 Production d'objets de luxe par les espèces de type [[encyclopedia ARTISTIC]]
@@ -12720,6 +12740,12 @@ Classe Robotique
 
 ROBOTIC_HULL_TECHS_DESC
 Technologies relatives à la classe Robotique des coques d'astronef.
+
+FLUX_HULL_TECHS
+Classe Flux Spatial
+
+FLUX_HULL_TECHS_DESC
+Technologies relatives à la classe Flux Spatial des coques d'astronef.
 
 SHIP_PARTS_CATEGORY
 Ingénierie Astronef
@@ -12923,7 +12949,7 @@ LRN_QUANT_NET
 Réseau Quantique
 
 LRN_QUANT_NET_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value LRN_QUANT_NET_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Recherche.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value LRN_QUANT_NET_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en [[encyclopedia RESEARCH_FOCUS_TITLE]].
 Cet effet requiert une [[metertype METER_HAPPINESS]] de [[value LRN_QUANT_NET_MIN_STABILITY]].
 
 Un réseau massif de donnés, à l'échelle de l'empire, capable de transférer instantanément des informations entre deux lieux, plutôt que par le système lent et indirect des voies spatiales. Ce progrès facilite grandement la Recherche dans tout l'empire.
@@ -13042,7 +13068,7 @@ GRO_ENERGY_META
 Métabolisme d'Énergie Pure
 
 GRO_ENERGY_META_DESC
-'''Augmente le [[metertype METER_FUEL]] max de 1 sur tous les astronefs (avant mise à l'échelle selon le [[encyclopedia FUEL_EFFICIENCY_TITLE]]), la [[metertype METER_DEFENSE]] max de [[value GRO_ENERGY_META_MAX_DEFENSE_FLAT]] sur toutes les planètes, les [[metertype METER_SHIELD]] max de [[value GRO_ENERGY_META_MAX_SHIELD_FLAT]] sur toutes les planètes, la [[metertype METER_TARGET_INDUSTRY]] de [[value GRO_ENERGY_META_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Industrie, et la [[metertype METER_TARGET_RESEARCH]] de [[value GRO_ENERGY_META_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Recherche.
+'''Augmente le [[metertype METER_FUEL]] max de 1 sur tous les astronefs (avant mise à l'échelle selon le [[encyclopedia FUEL_EFFICIENCY_TITLE]]), la [[metertype METER_DEFENSE]] max de [[value GRO_ENERGY_META_MAX_DEFENSE_FLAT]] sur toutes les planètes, les [[metertype METER_SHIELD]] max de [[value GRO_ENERGY_META_MAX_SHIELD_FLAT]] sur toutes les planètes, la [[metertype METER_TARGET_INDUSTRY]] de [[value GRO_ENERGY_META_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en [[encyclopedia INDUSTRY_FOCUS_TITLE]], et la [[metertype METER_TARGET_RESEARCH]] de [[value GRO_ENERGY_META_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en [[encyclopedia RESEARCH_FOCUS_TITLE]].
 Le bonus d'Industrie et de Recherche requièrent une [[metertype METER_HAPPINESS]] de [[value GRO_ENERGY_META_MIN_STABILITY]].
 
 Tandis que la transformation d'une population entière en êtres de pure énergie s'avérerait peu pertinente, certaines tâches conviennent mieux à des individus dénués de corporalité. L'équipage d'un astronef par exemple, n'aurait plus besoin d'optimiser l'espace disponible pour les quartiers d'équipage ou le stockage des rations. Des êtres dotés d'une capacité de canalisation de l'énergie seraient en mesure d'améliorer les défenses et boucliers planétaires, ainsi que la production de ressources.
@@ -13125,7 +13151,7 @@ PRO_ROBOTIC_PROD
 Production Robotisée
 
 PRO_ROBOTIC_PROD_DESC
-'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de [[value PRO_ROBOTIC_PROD_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Industrie.
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de [[value PRO_ROBOTIC_PROD_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en [[encyclopedia INDUSTRY_FOCUS_TITLE]].
 Cet effet requiert une [[metertype METER_HAPPINESS]] de [[value PRO_ROBOTIC_PROD_MIN_STABILITY]].
 
 Robots conçus pour effectuer n'importe quelle tâche, de l'électronique microscopique à la construction à grande échelle, améliorant ainsi considérablement la performance des mondes privilégiant l'industrie.
@@ -13142,7 +13168,7 @@ PRO_FUSION_GEN
 Génération par Fusion
 
 PRO_FUSION_GEN_DESC
-'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de [[value PRO_FUSION_GEN_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Industrie.
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de [[value PRO_FUSION_GEN_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en [[encyclopedia INDUSTRY_FOCUS_TITLE]].
 Cet effet requiert une [[metertype METER_HAPPINESS]] de [[value PRO_FUSION_GEN_MIN_STABILITY]].
 
 Les réacteurs de fusion nucléaire, bien que coûteux à produire et à entretenir, s'avèrent rentables pour les mondes industrialisés à forte consommation énergétique. La dépendance aux réacteurs basés sur la fission nucléaire deviendra peu à peu une relique du passé.
@@ -13178,7 +13204,7 @@ PRO_SENTIENT_AUTOMATION
 Automates Conscients
 
 PRO_SENTIENT_AUTOMATION_DESC
-'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de [[value PRO_SENTIENT_AUTO_TARGET_INDUSTRY_FLAT]] sur toutes les planètes en Focus Industrie.
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de [[value PRO_SENTIENT_AUTO_TARGET_INDUSTRY_FLAT]] sur toutes les planètes en [[encyclopedia INDUSTRY_FOCUS_TITLE]].
 
 Octroie 1 [[encyclopedia ENC_POLICY_SLOTS]] économique supplémentaire.
 
@@ -13747,7 +13773,7 @@ LRN_DISTRIB_THOUGHT
 Centralisation Cérébrale
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] sur toutes les planètes en Focus Recherche, en fonction de la distance entre la planète et l'autre planète la plus éloignée également en Focus Recherche et appartenant au même empire. La Recherche est augmentée de la valeur la plus faible entre:
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] sur toutes les planètes en [[encyclopedia RESEARCH_FOCUS_TITLE]], en fonction de la distance entre la planète et l'autre planète la plus éloignée également en [[encyclopedia RESEARCH_FOCUS_TITLE]] et appartenant au même empire. La Recherche est augmentée de la valeur la plus faible entre:
 • [[value DISTRIB_THOUGH_RESEARCH_SCALING]] x la racine carrée de la distance en uu de la planète la plus éloignée, en Focus Recherche et appartenant à l'empire
 • L'[[metertype METER_CONSTRUCTION]] de la planète la plus éloignée x [[value DISTRIB_THOUGH_INFRA_LIMIT_SCALING]]
 Cet effet requiert une [[metertype METER_HAPPINESS]] de [[value LRN_DISTRIB_THOUGHT_MIN_STABILITY]].
@@ -13760,7 +13786,7 @@ LRN_STELLAR_TOMOGRAPHY
 Tomographie Stellaire
 
 LRN_STELLAR_TOMOGRAPHY_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] des planètes réglées sur le Focus Recherche, selon le type d'étoile et le nombre de planètes en Focus Recherche au sein du même système:
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] des planètes réglées sur le [[encyclopedia RESEARCH_FOCUS_TITLE]], selon le type d'étoile et le nombre de planètes en [[encyclopedia RESEARCH_FOCUS_TITLE]] au sein du même système:
 • [[STAR_BLACK]] (+[[value LRN_STELLAR_TOMO_BLACK_TARGET_RESEARCH_PERPLANET]] x le nombre de planètes)
 • [[STAR_NEUTRON]] (+[[value LRN_STELLAR_TOMO_NEUTRON_TARGET_RESEARCH_PERPLANET]] x le nombre de planètes)
 • [[STAR_BLUE]], [[STAR_WHITE]], [[STAR_YELLOW]], [[STAR_ORANGE]] ou [[STAR_RED]] (+[[value LRN_STELLAR_TOMO_NORMAL_STAR_TARGET_RESEARCH_PERPLANET]] x le nombre de planètes)
@@ -14835,7 +14861,7 @@ BLD_INDUSTRY_CENTER
 Centre Industriel
 
 BLD_INDUSTRY_CENTER_DESC
-'''Accorde initialement à la [[metertype METER_TARGET_INDUSTRY]] un bonus de [[value BLD_INDUSTRY_CENTER_1_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]] et étant réglées sur le Focus Industrie.
+'''Accorde initialement à la [[metertype METER_TARGET_INDUSTRY]] un bonus de [[value BLD_INDUSTRY_CENTER_1_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]] et étant réglées sur le [[encyclopedia INDUSTRY_FOCUS_TITLE]].
 Cet effet requiert une [[metertype METER_HAPPINESS]] de [[value BLD_INDUSTRY_CENTER_1_MIN_STABILITY]].
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
@@ -14904,7 +14930,7 @@ BLD_COLLECTIVE_NET
 Réseau de Pensée Collective
 
 BLD_COLLECTIVE_NET_DESC
-'''• Augmente la [[metertype METER_TARGET_INDUSTRY]] de [[value BLD_COLLECTIVE_NET_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Industrie, et la [[metertype METER_TARGET_RESEARCH]] de [[value BLD_COLLECTIVE_NET_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Recherche. Tout voyage sur Voies spatiales dans un périmètre de 200 uu affaiblira l'efficacité de cette structure et supprimera tout bonus.
+'''• Augmente la [[metertype METER_TARGET_INDUSTRY]] de [[value BLD_COLLECTIVE_NET_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en [[encyclopedia INDUSTRY_FOCUS_TITLE]], et la [[metertype METER_TARGET_RESEARCH]] de [[value BLD_COLLECTIVE_NET_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en [[encyclopedia RESEARCH_FOCUS_TITLE]]. Tout voyage sur Voies spatiales dans un périmètre de 200 uu affaiblira l'efficacité de cette structure et supprimera tout bonus.
 Ces effets requièrent une [[metertype METER_HAPPINESS]] de [[value BLD_COLLECTIVE_NET_MIN_STABILITY]].
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 • Augmente de [[value PLC_INDOCTRINATION_STRENGTH_PER_COLLECTIVE_NET]] la [[metertype METER_TARGET_HAPPINESS]] maximum atteinte via la Politique [[policy PLC_DREAM_RECURSION]].
@@ -14923,7 +14949,7 @@ BLD_ENCLAVE_VOID
 Enclave Du Vide
 
 BLD_ENCLAVE_VOID_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value BLD_ENCLAVE_VOID_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Recherche.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value BLD_ENCLAVE_VOID_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en [[encyclopedia RESEARCH_FOCUS_TITLE]].
 Cet effet requiert une [[metertype METER_HAPPINESS]] de [[value BLD_ENCLAVE_VOID_MIN_STABILITY]].
 Les bonus de plusieurs exemplaires ne s'additionnent pas.
 
@@ -14951,7 +14977,7 @@ BLD_HYPER_DAM
 Barrage Hyperspatial
 
 BLD_HYPER_DAM_DESC
-'''Pour les planètes non-reliées à un [[buildingtype BLD_BLACK_HOLE_POW_GEN]], augmente la [[metertype METER_TARGET_INDUSTRY]] de [[value BLD_HYPER_DAM_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes reliées par lignes d'[[metertype METER_SUPPLY]] et réglées sur le Focus Industrie, mais la [[metertype METER_TARGET_POPULATION]] de ces planètes est réduite ([[value BLD_HYPER_DAM_TARGET_POPULATION_PERSIZE]] par la taille de la planète: [[SZ_TINY]] -1, [[SZ_SMALL]] -2, [[SZ_MEDIUM]] -3, [[SZ_LARGE]] -4, [[SZ_HUGE]] -5).
+'''Pour les planètes non-reliées à un [[buildingtype BLD_BLACK_HOLE_POW_GEN]], augmente la [[metertype METER_TARGET_INDUSTRY]] de [[value BLD_HYPER_DAM_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes reliées par lignes d'[[metertype METER_SUPPLY]] et réglées sur le [[encyclopedia INDUSTRY_FOCUS_TITLE]], mais la [[metertype METER_TARGET_POPULATION]] de ces planètes est réduite ([[value BLD_HYPER_DAM_TARGET_POPULATION_PERSIZE]] par la taille de la planète: [[SZ_TINY]] -1, [[SZ_SMALL]] -2, [[SZ_MEDIUM]] -3, [[SZ_LARGE]] -4, [[SZ_HUGE]] -5).
 Cet effet requiert une [[metertype METER_HAPPINESS]] de [[value BLD_HYPER_DAM_MIN_STABILITY]].
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
@@ -15102,7 +15128,7 @@ BLD_BLACK_HOLE_POW_GEN
 Générateur de Singularité
 
 BLD_BLACK_HOLE_POW_GEN_DESC
-'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de [[value BLD_BLACK_HOLE_POW_GEN_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]] et étant réglées sur le Focus Industrie.
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de [[value BLD_BLACK_HOLE_POW_GEN_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]] et étant réglées sur le [[encyclopedia INDUSTRY_FOCUS_TITLE]].
 Cet effet requiert une [[metertype METER_HAPPINESS]] de [[value BLD_BLACK_HOLE_POW_GEN_MIN_STABILITY]].
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
@@ -15195,7 +15221,7 @@ BLD_GAS_GIANT_GEN
 Convertisseur de Géante Gazeuse
 
 BLD_GAS_GIANT_GEN_DESC
-'''Cette structure ne peut être construite que sur une [[PT_GASGIANT]]. Elle fournit un bonus de [[value BLD_GAS_GIANT_GEN_OUTPOST_TARGET_INDUSTRY_FLAT]] à la [[metertype METER_TARGET_INDUSTRY]] sur les planètes du même système réglées sur le Focus Industrie. Si le [[BLD_GAS_GIANT_GEN]] est construit sur une [[PT_GASGIANT]] habitée, le bonus de [[metertype METER_TARGET_INDUSTRY]] n'est que de [[value BLD_GAS_GIANT_GEN_COLONY_TARGET_INDUSTRY_FLAT]].
+'''Cette structure ne peut être construite que sur une [[PT_GASGIANT]]. Elle fournit un bonus de [[value BLD_GAS_GIANT_GEN_OUTPOST_TARGET_INDUSTRY_FLAT]] à la [[metertype METER_TARGET_INDUSTRY]] sur les planètes du même système réglées sur le [[encyclopedia INDUSTRY_FOCUS_TITLE]]. Si le [[BLD_GAS_GIANT_GEN]] est construit sur une [[PT_GASGIANT]] habitée, le bonus de [[metertype METER_TARGET_INDUSTRY]] n'est que de [[value BLD_GAS_GIANT_GEN_COLONY_TARGET_INDUSTRY_FLAT]].
 Cet effet requiert une [[metertype METER_HAPPINESS]] de [[value BLD_GAS_GIANT_GEN_MIN_STABILITY]].
 Les bonus de plusieurs exemplaires dans le même système ne s'additionnent pas.
 
@@ -15226,7 +15252,7 @@ Traducteur Quasi-Universel
 BLD_TRANSLATOR_DESC
 '''Octroie 1 [[encyclopedia ENC_POLICY_SLOTS]] sociale.
 
-Augmente la capacité en Influence d'une planète, lorsque celle-ci est réglée sur le Focus Influence, de [[value TRANSLATOR_PER_SPECIES_INFLUENCE]] multiplié par la racine carrée du nombre d'espèces uniques sur les planètes contrôlées par l'empire possédant cette structure.'''
+Augmente la capacité en Influence d'une planète, lorsque celle-ci est réglée sur le [[encyclopedia INFLUENCE_FOCUS_TITLE]], de [[value TRANSLATOR_PER_SPECIES_INFLUENCE]] multiplié par la racine carrée du nombre d'espèces uniques sur les planètes contrôlées par l'empire possédant cette structure.'''
 
 BLD_COLONY_BASE
 Colonisateur Stellaire
@@ -15996,7 +16022,7 @@ SH_ROBOTIC_INTERFACE_SHIELDS
 Boucliers à Interface Robotique
 
 SH_ROBOTIC_INTERFACE_SHIELDS_DESC
-'''Les Boucliers à Interface Robotique ont approximativement une solidité de 36 multipliée par le nombre des autres astronefs situés au même emplacement et équipés du même bouclier, bien que cette valeur tende à diminuer lorsqu'un grand nombre d'astronefs est concerné. La solidité du bouclier ne peut pas dépasser 120, et l'effet ne s'applique qu'aux astronefs de [[encyclopedia HULL_LINE_ROBOTIC]], dont l'équipage est une espèce à [[encyclopedia ROBOTIC_SPECIES_TITLE]].
+'''Les Boucliers à Interface Robotique ont approximativement une solidité de 6 multipliée par le nombre des autres astronefs situés au même emplacement et équipés du même bouclier, bien que cette valeur tende à diminuer lorsqu'un grand nombre d'astronefs est concerné. La solidité du bouclier ne peut pas dépasser 120, et l'effet ne s'applique qu'aux astronefs de [[encyclopedia HULL_LINE_ROBOTIC]], dont l'équipage est une espèce à [[encyclopedia ROBOTIC_SPECIES_TITLE]].
 
 Les Espèces Robotiques ont la capacité intrinsèque de fonctionner en réseau et augmentent ainsi considérablement leur puissance de calcul pure. Les Boucliers à Interface Robotique utilisent ce réseau afin de calculer la trajectoire du feu ennemi et concentrer la solidité du bouclier au point d'impact.
 '''
@@ -17018,7 +17044,7 @@ quel que soit l'[[encyclopedia ENVIRONMENT_TITLE]] planétaire.
 Si cette planète est réglée sur le [[encyclopedia GROWTH_FOCUS_TITLE]], le bonus s'applique également à tous les autres mondes connectés par lignes d'[[metertype METER_SUPPLY]] et peuplés d'espèces à'''
 
 GROWTH_SPECIAL_INDUSTRY_BOOST
-Si cette planète est réglée sur le Focus Industrie, sa [[metertype METER_TARGET_INDUSTRY]] augmente de 0.2 par [[metertype METER_POPULATION]].
+Si cette planète est réglée sur le [[encyclopedia INDUSTRY_FOCUS_TITLE]], sa [[metertype METER_TARGET_INDUSTRY]] augmente de 0.2 par [[metertype METER_POPULATION]].
 
 GROWTH_SPECIALS_ENTRY_LIST
 '''Certaines Particularités ne fonctionnent que pour les espèces organiques, d'autres pour les espèces lithiques, et enfin d'autres pour les espèces robotiques. Aucun autre type de [[encyclopedia METABOLISM_TITLE]] ne dispose actuellement de Particularités de Croissance lui étant exclusivement applicables.
