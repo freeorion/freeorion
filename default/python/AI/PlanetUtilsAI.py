@@ -328,3 +328,20 @@ def stability_with_focus(planet: fo.planet, focus: str) -> float:
         # returning a big negative value here should stop it from considering that focus for anything.
         return -99.0
     return stability - focus_stability_effect(species, planet.focus) + focus_stability_effect(species, focus)
+
+
+def adjust_liberty(planet: fo.planet, population: float) -> float:
+    """
+    Adjust liberty research output for changed stability.
+    UpdateMeterEstimate calculates liberty based on current stability, not on target stability.
+    So this may return a positive or negative adjustment, depending on whether stability goes up or down.
+    """
+    # This one is relatively easy to calculate. Still it would be better to have an adjustMeterUpdate with
+    # modified stability...
+    current_stability = planet.currentMeterValue(fo.meterType.happiness)
+    target_stability = planet.currentMeterValue(fo.meterType.targetHappiness)
+    low = get_named_real("PLC_LIBERTY_MIN_STABILITY")
+    high = get_named_real("PLC_LIBERTY_MAX_STABILITY")
+    difference = max(low, min(high, target_stability)) - max(low, min(high, current_stability))
+    debug(f"adjust_liberty on {planet}: difference={difference}, population={population}")
+    return difference * population * get_named_real("PLC_LIBERTY_RESEARCH_BONUS_SCALING")

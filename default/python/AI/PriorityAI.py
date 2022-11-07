@@ -76,9 +76,6 @@ def calculate_priorities():
     _calculate_industry_priority()  # purely for reporting purposes
     prioritiees_timer.start("setting Exploration Priority")
 
-    aistate.set_priority(PriorityType.RESOURCE_TRADE, 0)
-    aistate.set_priority(PriorityType.RESOURCE_CONSTRUCTION, 0)
-
     aistate.set_priority(PriorityType.PRODUCTION_EXPLORATION, _calculate_exploration_priority())
     prioritiees_timer.start("setting Colony Priority")
     aistate.set_priority(PriorityType.PRODUCTION_COLONISATION, _calculate_colonisation_priority())

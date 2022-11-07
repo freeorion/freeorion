@@ -7,11 +7,11 @@ def check_validity(value):
 
 
 class PriorityType(IntEnum):
-    RESOURCE_GROWTH = 1
+    RESOURCE_GROWTH = 1  # obsolete, but removing it here breaks the save file
     RESOURCE_PRODUCTION = 2
     RESOURCE_RESEARCH = 3
-    RESOURCE_TRADE = 4
-    RESOURCE_CONSTRUCTION = 5
+    RESOURCE_TRADE = 4  # obsolete, but removing it here breaks the save file
+    RESOURCE_CONSTRUCTION = 5  # obsolete, but removing it here breaks the save file
     PRODUCTION_EXPLORATION = 6
     PRODUCTION_OUTPOST = 7
     PRODUCTION_COLONISATION = 8
@@ -34,11 +34,8 @@ class PriorityType(IntEnum):
 
 def get_priority_resource_types():
     return [
-        PriorityType.RESOURCE_GROWTH,
         PriorityType.RESOURCE_PRODUCTION,
         PriorityType.RESOURCE_RESEARCH,
-        PriorityType.RESOURCE_TRADE,
-        PriorityType.RESOURCE_CONSTRUCTION,
         PriorityType.RESOURCE_INFLUENCE,
     ]
 
