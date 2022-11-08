@@ -7,7 +7,7 @@ If you improve it somehow, add usage example to __main__ section.
 from collections import defaultdict
 from itertools import zip_longest
 from math import ceil
-from typing import Any, Callable, Collection, Union
+from typing import Any, Collection, Union
 
 from common.print_utils._base_field import Field
 
@@ -119,11 +119,4 @@ class Table:
         Use  print_table instead.
         """
 
-        return "\n".join(list(self))
-
-    def print_table(self, printer: Callable[[str], None]) -> None:
-        """
-        Pass table row by row to printer.
-        """
-        for line in self:
-            printer(line)
+        return "\n".join(self)

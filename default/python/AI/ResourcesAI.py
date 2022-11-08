@@ -139,7 +139,7 @@ class PlanetFocusManager:
         self.priority_influence = aistate.get_priority(PriorityType.RESOURCE_INFLUENCE)
         self.calculate_planet_infos()
 
-    def set_planetary_foci(self, reporter):
+    def set_planetary_foci(self, reporter: Reporter):
         self.set_planet_growth_specials()
         self.set_planet_production_and_research_specials()
         reporter.capture_section_info("Specials")
@@ -310,7 +310,7 @@ class PlanetFocusManager:
                 output_table_format(pinfo.possible_output[PROTECTION]),
                 output_table_format(pinfo.possible_output[GROWTH]),
             )
-        pinfo_table.print_table(info)
+        info(pinfo_table)
 
     def set_planet_growth_specials(self):  # noqa complexity
         """Consider growth focus for planets with useful growth specials. Remove planets from list of candidates."""
@@ -728,7 +728,7 @@ class Reporter:
                 planet.speciesName,
                 "%.1f/%.1f" % (population, max_population),
             )
-        foci_table.print_table(info)
+        info(foci_table)
         debug(
             "Empire Totals:\nPopulation: %5d \nProduction: %5d\nResearch: %5d\n",
             empire.population(),

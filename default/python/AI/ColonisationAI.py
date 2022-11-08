@@ -414,7 +414,7 @@ def __print_candidate_table(candidates, mission, show_detail=False):
             if show_detail:
                 entries.append(score_tuple[-1])
             candidate_table.add_row(*entries)
-    candidate_table.print_table(info)
+    info(candidate_table)
 
 
 class OrbitalColonizationPlan:

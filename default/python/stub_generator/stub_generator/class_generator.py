@@ -119,7 +119,7 @@ def _report_classes_without_instances(classes_map: Set[str], instance_names: Set
 
     for inst in sorted(missed_instances, key=str.lower):
         table.add_row(inst)
-    table.print_table(warning)
+    warning(table)
 
 
 def generate_classes(

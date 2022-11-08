@@ -45,7 +45,7 @@ def log_planet_count_dist(sys_list):
             sys_count[0],
             100.0 * sys_count[0] / len(sys_list),
         )
-    count_distribution_table.print_table(print)
+    print(count_distribution_table)
     print()
 
     size_distribution = Table(
@@ -60,7 +60,7 @@ def log_planet_count_dist(sys_list):
             planet_count,
             100.0 * planet_count / planet_tally,
         )
-    size_distribution.print_table(print)
+    print(size_distribution)
     print()
 
 
@@ -82,7 +82,7 @@ def log_planet_type_summary(sys_list):
             planet_type.name,
             100.0 * planet_count / planet_total,
         )
-    type_summary_table.print_table(print)
+    print(type_summary_table)
     print()
 
 
@@ -109,7 +109,7 @@ def log_species_summary(native_freq):
             count,
             100.0 * count / num_empires,
         )
-    species_summary_table.print_table(print)
+    print(species_summary_table)
     print()
 
     native_chance = universe_tables.NATIVE_FREQUENCY[native_freq]
@@ -150,7 +150,7 @@ def log_species_summary(native_freq):
                 [str(p_t) for p_t in natives.planet_types_for_natives[species]],
             )
 
-    native_table.print_table(print)
+    print(native_table)
     print()
 
     native_settled_planet_total = sum(settled_native_planet_summary.values())
@@ -174,7 +174,7 @@ def log_species_summary(native_freq):
             potential_percent,
             settled_percent,
         )
-    type_summary_table.print_table(print)
+    print(type_summary_table)
     print()
 
 
@@ -186,7 +186,7 @@ def log_monsters_summary(monster_freq):
     )
     for monster, counter in sorted(monsters_summary):
         monster_place_table.add_row(monster, counter)
-    monster_place_table.print_table(print)
+    print(monster_place_table)
     print()
 
     monster_chance = universe_tables.MONSTER_FREQUENCY[monster_freq]
@@ -211,7 +211,7 @@ def log_monsters_summary(monster_freq):
             tracked_monsters_location_summary[monster],
             tracked_nest_location_summary[monster],
         )
-    monster_table.print_table(print)
+    print(monster_table)
     print()
 
 
@@ -223,7 +223,7 @@ def log_specials_summary():
     )
     for special in sorted(specials_summary):
         special_placement_count_table.add_row(special, specials_summary[special])
-    special_placement_count_table.print_table(print)
+    print(special_placement_count_table)
     print()
 
     special_placement = Table(
@@ -239,7 +239,7 @@ def log_specials_summary():
             tally,
             100.0 * tally / (1e-10 + objects_tally),
         )
-    special_placement.print_table(print)
+    print(special_placement)
     print()
 
 
@@ -263,7 +263,7 @@ def log_systems():
             fo.sys_get_starlanes(sid),
             system.starType.name,
         )
-    systems_table.print_table(print)
+    print(systems_table)
 
 
 def log_planets():
@@ -299,4 +299,4 @@ def log_planets():
                 buildings,
             )
 
-    planets_table.print_table(print)
+    print(planets_table)

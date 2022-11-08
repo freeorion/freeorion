@@ -65,28 +65,9 @@ def make_table():
     return t
 
 
-def test_table_is_printed():
-    table = make_table()
-    io = StringIO()
-
-    def writer(row):
-        io.write(row)
-        io.write("\n")
-
-    table.print_table(writer)
-    assert io.getvalue() == EXPECTED_SIMPLE_TABLE
-
-
 def test_table_is_converted_to_str():
-    io = StringIO()
-
-    def writer(row):
-        io.write(row)
-        io.write("\n")
-
     table = make_table()
-    table.print_table(writer)
-    assert io.getvalue() == EXPECTED_SIMPLE_TABLE
+    assert str(table) == EXPECTED_SIMPLE_TABLE
 
 
 def test_empty_table():
@@ -101,10 +82,10 @@ def test_empty_table():
     io = StringIO()
 
     def writer(row):
-        io.write(row)
+        io.write(str(row))
         io.write("\n")
 
-    empty.print_table(writer)
+    writer(empty)
 
     assert io.getvalue() == EXPECTED_EMPTY_TABLE
 

@@ -238,7 +238,7 @@ def get_invasion_fleets():  # noqa: max-complexity
     for pid, pscore, ptroops in sorted_planets:
         planet = universe.getPlanet(pid)
         invasion_table.add_row(planet, pscore, planet and planet.speciesName or "unknown", ptroops)
-    invasion_table.print_table(info)
+    info(invasion_table)
 
     sorted_planets = [x for x in sorted_planets if x[1] > 0]
     # export opponent planets for other AI modules
