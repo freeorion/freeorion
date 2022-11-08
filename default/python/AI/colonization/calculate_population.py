@@ -74,7 +74,7 @@ def calc_max_pop(planet, species, detail):  # noqa: max-complexity
 
     for _special in planet_specials.intersection(AIDependencies.POP_PROPORTIONAL_MOD_SPECIALS):
         this_mod = AIDependencies.POP_PROPORTIONAL_MOD_SPECIALS[_special]
-        detail.append("%s (maxPop%+.1f)" % (_special, this_mod))
+        detail.append(f"{_special} (maxPop{this_mod:+.1f})")
         base_pop_not_modified_by_species += this_mod
 
     gaia = AIDependencies.GAIA_SPECIAL

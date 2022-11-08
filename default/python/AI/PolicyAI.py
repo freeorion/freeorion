@@ -3,7 +3,7 @@ from __future__ import annotations
 import freeOrionAIInterface as fo
 from copy import copy
 from logging import debug, error
-from typing import Callable, Iterable, NamedTuple, Optional, Set, Tuple, Union
+from typing import Callable, Iterable, NamedTuple
 
 import PlanetUtilsAI
 from AIDependencies import Tags
@@ -122,7 +122,7 @@ class _EmpireOutput:
 class _Alternative(NamedTuple):
     output: _EmpireOutput
     costs: float
-    adopted: Set
+    adopted: set
 
 
 class PolicyManager:
@@ -287,7 +287,7 @@ class PolicyManager:
                 if new_rating - old_rating > rated_cost:
                     self._we_want(new_policy, new_cost, old_policy)
 
-    def _we_want(self, name: str, cost: float, replace: Optional[str] = None) -> None:
+    def _we_want(self, name: str, cost: float, replace: str | None = None) -> None:
         if name not in self._empire.availablePolicies:
             self._try_unlock(name)
             return
@@ -300,7 +300,7 @@ class PolicyManager:
             self._wanted_ip += cost
             debug(f"Adopting {name} failed due to insufficient IP, adding {cost} to wanted_ip")
 
-    def _unlocked_by(self, name: str) -> Union[str, Callable, None]:
+    def _unlocked_by(self, name: str) -> str | Callable | None:
         """
         Returns another policy that unlocks the given policy, a function to unlock it, or None.
         Returned functions can be called with False to check whether it could unlock the given policy.
@@ -445,7 +445,7 @@ class PolicyManager:
             # No alternative was better than current_output with conformance.
             self._adopt(conformance)
 
-    def _try_conformance(self, current_output: _EmpireOutput) -> Tuple[_EmpireOutput, float]:
+    def _try_conformance(self, current_output: _EmpireOutput) -> tuple[_EmpireOutput, float]:
         """
         Try adopting conformance, may replace another social policies.
         Conformance is rather good, but has several exclusions. So this may have to de-adopt all exclusions just
@@ -800,7 +800,7 @@ class PolicyManager:
         else:
             return unlocker(False)
 
-    def _can_adopt(self, name: str, replace: Union[str, Set[str], None] = None) -> bool:
+    def _can_adopt(self, name: str, replace: str | set[str] | None = None) -> bool:
         """
         Can we adopt named policy, possibly by replacing (one of) replace?
         Note that when replace_other is set, this function currently assumes that with
@@ -825,7 +825,7 @@ class PolicyManager:
             and self._empire.policyPrereqsAndExclusionsOK(name)
         )
 
-    def _get_adoptable(self) -> Set[str]:
+    def _get_adoptable(self) -> set[str]:
         """List of adoptable policies with the still available IP."""
         return {p for p in self._empire.availablePolicies if self._can_adopt(p)}
 
@@ -869,7 +869,7 @@ class PolicyManager:
                 self._ip += fo.getPolicy(name).adoptionCost()
             debug(f"Issued deadoption order for {name} turn {fo.currentTurn()}, remaining IP: {self._ip}")
 
-    def _deadopt_one_of(self, names: Set[str]) -> None:
+    def _deadopt_one_of(self, names: set[str]) -> None:
         """
         Deadopt one of the given policies and store its name.
         This can be used after a decision is made, or to temporarily deadopt one for

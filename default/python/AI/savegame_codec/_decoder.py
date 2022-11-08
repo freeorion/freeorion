@@ -76,12 +76,12 @@ def decode(obj):
 class _FreeOrionAISaveGameDecoder(json.JSONDecoder):
     def __init__(self, **kwargs):
         # do not allow control characters
-        super(_FreeOrionAISaveGameDecoder, self).__init__(strict=True, **kwargs)
+        super().__init__(strict=True, **kwargs)
 
     def decode(self, s, _w=None):
         # use the default JSONDecoder to parse the string into a dict
         # then interpret the dict content according to our encoding
-        retval = super(_FreeOrionAISaveGameDecoder, self).decode(s)
+        retval = super().decode(s)
         return self.__interpret(retval)
 
     def __interpret_dict(self, obj):
@@ -93,7 +93,7 @@ class _FreeOrionAISaveGameDecoder(json.JSONDecoder):
         # pop and verify class and module name, then parse the class content
         class_name = obj.pop("__class__")
         module_name = obj.pop("__module__")
-        full_name = "%s.%s" % (module_name, class_name)
+        full_name = f"{module_name}.{class_name}"
         cls = trusted_classes.get(full_name)
         if cls is None:
             raise InvalidSaveGameException("DANGER DANGER - %s not trusted" % full_name)
@@ -186,7 +186,7 @@ class _FreeOrionAISaveGameDecoder(json.JSONDecoder):
             # no special cases apply at this point, should be a standard string
             return x
 
-        raise TypeError("Unexpected type %s (%s)" % (type(x), x))
+        raise TypeError(f"Unexpected type {type(x)} ({x})")
 
 
 def _replace_quote_placeholders(s):

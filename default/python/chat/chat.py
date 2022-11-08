@@ -38,5 +38,5 @@ class ChatHistoryProvider:
         text -- chat text
         text_color -- tuple wit 4 elements
         """
-        info("Chat %s: %s %s" % (player_name, text, text_color))
+        info(f"Chat {player_name}: {text} {text_color}")
         return True

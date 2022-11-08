@@ -34,7 +34,7 @@ def _handle_class(info: ClassInfo) -> str:  # noqa: max-complexity
 
     result = []
     if parents:
-        result.append("class %s(%s):" % (info.name, ", ".join(info.parents)))
+        result.append("class {}({}):".format(info.name, ", ".join(info.parents)))
     else:
         result.append("class %s:" % info.name)
 
@@ -51,7 +51,7 @@ def _handle_class(info: ClassInfo) -> str:  # noqa: max-complexity
         elif attr["type"] in ("<class 'Boost.Python.function'>", "<class 'function'>"):
             instance_methods.append(attr["routine"])
         else:
-            warning("Skipping '%s' (%s): %s" % ((info.name), attr["type"], attr))
+            warning("Skipping '{}' ({}): {}".format((info.name), attr["type"], attr))
 
     for property_name, rtype in properties:
         if not rtype:
@@ -62,10 +62,10 @@ def _handle_class(info: ClassInfo) -> str:  # noqa: max-complexity
         if property_name == "class":
             result.append("    # cant define it via python in that way")
             result.append("    # @property")
-            result.append("    # def %s(self)%s: ..." % (property_name, return_annotation))
+            result.append(f"    # def {property_name}(self){return_annotation}: ...")
         else:
             result.append("    @property")
-            result.append("    def %s(self)%s: ..." % (property_name, return_annotation))
+            result.append(f"    def {property_name}(self){return_annotation}: ...")
 
     for routine_name, routine_docs in instance_methods:
         docs = Docs(routine_docs, 2, is_class=True)
@@ -87,9 +87,9 @@ def _handle_class(info: ClassInfo) -> str:  # noqa: max-complexity
             )
         else:
             for arg_string in arg_strings:
-                result.append("    @overload\n    def %s(%s)%s:%s" % (routine_name, arg_string, return_annotation, end))
+                result.append(f"    @overload\n    def {routine_name}({arg_string}){return_annotation}:{end}")
 
-            result.append("    def %s(*args)%s:%s%s" % (routine_name, return_annotation, doc_string, end))
+            result.append(f"    def {routine_name}(*args){return_annotation}:{doc_string}{end}")
 
     if not (properties or instance_methods):
         result[-1] += " ..."

@@ -48,13 +48,13 @@ def check_species(file):  # noqa: max-complexity
     def issue(text):
         global issues_found
         issues_found = True
-        print("%s: %s" % (file.name, text))
+        print(f"{file.name}: {text}")
 
     effects = False
     foci = False
     tags = set()
     foci_list = set(foci_to_check)
-    with open(file, "r", encoding="utf-8") as f:
+    with open(file, encoding="utf-8") as f:
         for line in f.readlines():
             if re_tags.match(line):
                 strings = line.split('"')
@@ -82,13 +82,13 @@ def check_species(file):  # noqa: max-complexity
                         if focus in foci_list:
                             foci_list.remove(focus)
                             if ("NO_" + focus) in alltags:
-                                issue("%s, but not tag NO_%s" % (value, focus))
+                                issue(f"{value}, but not tag NO_{focus}")
                 elif re_end_list.match(line):
                     effects = False
                     foci = False
     for focus in foci_list:
         if ("NO_" + focus) not in alltags:
-            issue("Not HAS_%s_FOCUS, NO_%s missing in tags" % (focus, focus))
+            issue(f"Not HAS_{focus}_FOCUS, NO_{focus} missing in tags")
     if tags:
         for tag in tags:
             issue("%s in tags, missing in effectgroups" % tag)

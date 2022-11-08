@@ -24,7 +24,7 @@ def get_argument_names(arguments, is_class):
             else:
                 counts[arg_name] = 1
             suffix = str(counts[arg_name])
-        names.append("%s%s" % (arg_name, suffix))
+        names.append(f"{arg_name}{suffix}")
     if is_class:
         names.insert(0, "self")
     return names, types
@@ -150,7 +150,7 @@ class Docs:
                 args = ["self"]
             else:
                 args = []
-            args.extend("%s: %s" % (arg_name, arg_type) for arg_name, arg_type in arg_set[self.is_class :])
+            args.extend(f"{arg_name}: {arg_type}" for arg_name, arg_type in arg_set[self.is_class :])
             yield self._format_arg_string(args)
 
     def get_doc_string(self):
@@ -160,4 +160,4 @@ class Docs:
             doc.extend(self._header)
             doc.append('"""')
 
-        return "\n".join("%s%s" % (" " * 4 * self.indent if x else "", x) for x in doc)
+        return "\n".join("{}{}".format(" " * 4 * self.indent if x else "", x) for x in doc)

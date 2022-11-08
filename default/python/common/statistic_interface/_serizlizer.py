@@ -71,7 +71,7 @@ class DictSerializer(Serializer):
                 return key.strip(), val.strip()
 
             pairs = (extract_pair(x) for x in elements)
-            return dict((k, items[k].deserialize(v)) for (k, v) in pairs)
+            return {k: items[k].deserialize(v) for (k, v) in pairs}
 
         super().__init__(serializer=serializer, deserializer=deserializer)
 

@@ -468,13 +468,13 @@ class PlanetDefenseAllocator(Allocator):
     def allocate(self):
         remaining_rating = self._allocation_helper.remaining_rating
         if remaining_rating > 0:
-            super(PlanetDefenseAllocator, self).allocate()
+            super().allocate()
             return
         if self._minimum_allocation(self._calculate_threat()):
             pass  # raise ReleaseMilitaryException TODO
 
     def _minimum_allocation(self, threat):
-        super_call = super(PlanetDefenseAllocator, self)._minimum_allocation(threat)
+        super_call = super()._minimum_allocation(threat)
         restriction = 0.5 * self._allocation_helper.available_rating
         return min(super_call, restriction)
 
@@ -597,7 +597,7 @@ class BorderSecurityAllocator(LocalThreatAllocator):
     _allocation_group = "accessibleTargets"
 
     def __init__(self, sys_id, allocation_helper):
-        super(BorderSecurityAllocator, self).__init__(sys_id, allocation_helper)
+        super().__init__(sys_id, allocation_helper)
 
     def _maximum_allocation(self, threat):
         return self._max_alloc_factor * self.safety_factor * max(self._local_threat(), self._neighbor_threat())
@@ -871,7 +871,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"): 
     if _verbose_mil_reporting or "Main" in thisround:
         debug(
             "------------------------------\nFinal %s Round Military Allocations: %s \n-----------------------"
-            % (thisround, dict([(sid, alloc) for sid, alloc, _, _, _ in new_allocations]))
+            % (thisround, {sid: alloc for sid, alloc, _, _, _ in new_allocations})
         )
         debug("(Apparently) remaining military rating: %.1f" % remaining_mil_rating)
 

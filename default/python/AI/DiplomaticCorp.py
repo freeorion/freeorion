@@ -21,7 +21,7 @@ def check_gang_up():
                 fo.sendChatMessage(player_id, "Let's gang up to destroy this arrogant player!")
             elif empire_id > fo.empireID():
                 offer = fo.diplomaticMessage(empire_id, fo.empireID(), fo.diplomaticMessageType.peaceProposal)
-                debug("Sending diplomatic message to empire %s of type %s" % (empire_id, offer.type))
+                debug(f"Sending diplomatic message to empire {empire_id} of type {offer.type}")
                 fo.sendDiplomaticMessage(offer)
 
 
@@ -102,7 +102,7 @@ class DiplomaticCorp:
                 diplo_reply = fo.diplomaticMessage(
                     message.recipient, message.sender, fo.diplomaticMessageType.acceptAlliesProposal
                 )
-                debug("Sending diplomatic message to empire %s of type %s" % (message.sender, diplo_reply.type))
+                debug(f"Sending diplomatic message to empire {message.sender} of type {diplo_reply.type}")
                 fo.sendDiplomaticMessage(diplo_reply)
             debug(
                 "sending chat to player %d of empire %d, message body: '%s'"
@@ -147,7 +147,7 @@ class DiplomaticCorp:
                 diplo_reply = fo.diplomaticMessage(
                     message.recipient, message.sender, fo.diplomaticMessageType.acceptPeaceProposal
                 )
-                debug("Sending diplomatic message to empire %s of type %s" % (message.sender, diplo_reply.type))
+                debug(f"Sending diplomatic message to empire {message.sender} of type {diplo_reply.type}")
                 fo.sendDiplomaticMessage(diplo_reply)
             debug(
                 "sending chat to player %d of empire %d, message body: '%s'"

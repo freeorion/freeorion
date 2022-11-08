@@ -34,7 +34,7 @@ def _getmembers(obj, predicate=None):
         except Exception as e:
             message = [
                 "-" * 20,
-                'Error in "%s.%s" with error' % (obj.__class__.__name__, key),
+                f'Error in "{obj.__class__.__name__}.{key}" with error',
                 "..." * 20,
                 "Error info:",
                 str(e),

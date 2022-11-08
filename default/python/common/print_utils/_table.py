@@ -20,7 +20,7 @@ def print_in_columns(items: Collection[Any], columns=2, printer=print):
     a   c
     b   d
     """
-    row_count = int(ceil((len(items) / columns)))
+    row_count = int(ceil(len(items) / columns))
     text_columns = list(zip_longest(*[iter(items)] * row_count, fillvalue=""))
     column_widths = (max(len(x) for x in word) for word in text_columns)
     template = "   ".join("%%-%ss" % w for w in column_widths)
@@ -75,7 +75,7 @@ class Table:
 
         yield self._get_row_separator(self._header_sep, column_widths)
         inner_separator = " %s " % self._vertical_sep
-        yield "%s %s %s" % (
+        yield "{} {} {}".format(
             self._vertical_sep,
             inner_separator.join(h.format_header(width) for h, width in zip(self._headers, column_widths)),
             self._vertical_sep,
@@ -84,7 +84,7 @@ class Table:
         yield self._get_row_separator(self._header_sep, column_widths)
 
         for row in self._rows:
-            yield "%s %s %s" % (
+            yield "{} {} {}".format(
                 self._vertical_sep,
                 inner_separator.join(
                     h.format_cell(item, width) for h, item, width in zip(self._headers, row, column_widths)
@@ -99,7 +99,7 @@ class Table:
                 h.format_cell(self.totals.get(h, " "), width) for h, width in zip(self._headers, column_widths)
             )
 
-            yield "%s %s %s" % (self._vertical_sep, inner, self._vertical_sep)
+            yield f"{self._vertical_sep} {inner} {self._vertical_sep}"
             yield self._get_row_separator(self._header_sep, column_widths)
         else:
             yield self._get_row_separator(self._bottom_sep, column_widths)

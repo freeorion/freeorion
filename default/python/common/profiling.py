@@ -28,7 +28,7 @@ def profile(save_path, sort_by="cumulative"):
             result = function(*args, **kwargs)
             end = time.clock()
             pr.disable()
-            print("Profile %s took %f s, saved to %s" % (function.__name__, end - start, save_path))
+            print(f"Profile {function.__name__} took {end - start:f} s, saved to {save_path}")
             s = StringIO()
             ps = pstats.Stats(pr, stream=s).strip_dirs().sort_stats(sort_by)
             ps.print_stats()

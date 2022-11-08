@@ -25,7 +25,7 @@ def _inspect_instance(instance, location):
 
     for attr_name, member in _getmembers(instance):
         if attr_name not in parent_attrs + ["__module__"]:
-            attrs[attr_name] = _get_member_info("%s.%s" % (instance.__class__.__name__, attr_name), member)
+            attrs[attr_name] = _get_member_info(f"{instance.__class__.__name__}.{attr_name}", member)
     return InstanceInfo(instance.__class__.__name__, attrs, [str(parent.__name__) for parent in parents], location)
 
 

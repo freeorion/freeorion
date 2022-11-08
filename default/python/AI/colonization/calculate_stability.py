@@ -116,7 +116,7 @@ def _count_building(planet: fo.planet) -> Dict[str, Tuple[int, int, int]]:
     universe = fo.getUniverse()
     system = universe.getSystem(planet.systemID)
     planet_pid = {planet.id}
-    system_pids = set(pid for pid in system.planetIDs if pid != planet.id)
+    system_pids = {pid for pid in system.planetIDs if pid != planet.id}
     # TODO: add all buildings to BuildingType, so we get them all here
     result = {}
     for building_type in iterate_buildings_types():

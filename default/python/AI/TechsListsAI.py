@@ -93,7 +93,7 @@ class TechGroup:
                     self._errors.append(msg)
                     continue
             if tech_name in self._tech_queue:
-                msg = "[step %s]: Tech is already in queue: %s" % (step, tech_name)
+                msg = f"[step {step}]: Tech is already in queue: {tech_name}"
                 self._errors.append(msg)
             else:
                 self._tech_queue.append(tech_name)
@@ -109,7 +109,7 @@ class TechGroup:
 
 class TechGroup1(TechGroup):
     def __init__(self):
-        super(TechGroup1, self).__init__()
+        super().__init__()
         self.economy.extend(
             [
                 "LRN_PHYS_BRAIN",
@@ -156,7 +156,7 @@ class TechGroup1(TechGroup):
 
 class TechGroup1a(TechGroup1):
     def __init__(self):
-        super(TechGroup1a, self).__init__()
+        super().__init__()
         self.enqueue(
             self.weapon,
             self.weapon,
@@ -170,7 +170,7 @@ class TechGroup1a(TechGroup1):
 
 class TechGroup1b(TechGroup1):
     def __init__(self):
-        super(TechGroup1b, self).__init__()
+        super().__init__()
         self.enqueue(
             self.weapon,
             self.hull,
@@ -184,7 +184,7 @@ class TechGroup1b(TechGroup1):
 
 class TechGroup1SparseA(TechGroup1):
     def __init__(self):
-        super(TechGroup1SparseA, self).__init__()
+        super().__init__()
         self.enqueue(
             self.economy,
             self.hull,
@@ -199,7 +199,7 @@ class TechGroup1SparseA(TechGroup1):
 
 class TechGroup1SparseB(TechGroup1):
     def __init__(self):
-        super(TechGroup1SparseB, self).__init__()
+        super().__init__()
         self.enqueue(
             self.economy,
             self.weapon,
@@ -233,7 +233,7 @@ class TechGroup1SparseB(TechGroup1):
 
 class TechGroup1SparseC(TechGroup1):
     def __init__(self):
-        super(TechGroup1SparseC, self).__init__()
+        super().__init__()
         self.enqueue(
             self.economy,
             "SHP_ORG_HULL",
@@ -266,7 +266,7 @@ class TechGroup1SparseC(TechGroup1):
 
 class TechGroup2(TechGroup):
     def __init__(self):
-        super(TechGroup2, self).__init__()
+        super().__init__()
         self.economy.extend(
             [
                 "PRO_FUSION_GEN",
@@ -304,7 +304,7 @@ class TechGroup2(TechGroup):
 
 class TechGroup2A(TechGroup2):
     def __init__(self):
-        super(TechGroup2A, self).__init__()
+        super().__init__()
         self.defense.extend(
             [
                 "SPY_DETECT_2",
@@ -334,7 +334,7 @@ class TechGroup2A(TechGroup2):
 
 class TechGroup2B(TechGroup2):
     def __init__(self):
-        super(TechGroup2B, self).__init__()
+        super().__init__()
         self.defense.extend(
             [
                 "LRN_FORCE_FIELD",
@@ -364,7 +364,7 @@ class TechGroup2B(TechGroup2):
 
 class TechGroup2SparseA(TechGroup2):
     def __init__(self):
-        super(TechGroup2SparseA, self).__init__()
+        super().__init__()
         self.enqueue(
             self.armor,
             self.hull,
@@ -385,7 +385,7 @@ class TechGroup2SparseA(TechGroup2):
 
 class TechGroup2SparseB(TechGroup2):
     def __init__(self):
-        super(TechGroup2SparseB, self).__init__()
+        super().__init__()
         self.enqueue(
             self.armor,
             self.hull,
@@ -406,7 +406,7 @@ class TechGroup2SparseB(TechGroup2):
 
 class TechGroup3(TechGroup):
     def __init__(self):
-        super(TechGroup3, self).__init__()
+        super().__init__()
         self.hull.extend(
             [
                 "SHP_ASTEROID_REFORM",
@@ -476,7 +476,7 @@ class TechGroup3(TechGroup):
 
 class TechGroup3A(TechGroup3):
     def __init__(self):
-        super(TechGroup3A, self).__init__()
+        super().__init__()
         self.enqueue(
             self.hull,
             self.economy,
@@ -524,7 +524,7 @@ class TechGroup3A(TechGroup3):
 
 class TechGroup3B(TechGroup3):
     def __init__(self):
-        super(TechGroup3B, self).__init__()
+        super().__init__()
         self.enqueue(
             self.hull,
             self.economy,
@@ -572,7 +572,7 @@ class TechGroup3B(TechGroup3):
 
 class TechGroup3Sparse(TechGroup3):
     def __init__(self):
-        super(TechGroup3Sparse, self).__init__()
+        super().__init__()
         self.enqueue(
             self.hull,
             self.misc,
@@ -620,7 +620,7 @@ class TechGroup3Sparse(TechGroup3):
 
 class TechGroup4(TechGroup):
     def __init__(self):
-        super(TechGroup4, self).__init__()
+        super().__init__()
         self.hull.extend(
             [
                 "SHP_FRC_ENRG_COMP",
@@ -637,7 +637,7 @@ class TechGroup4(TechGroup):
 
 class TechGroup5(TechGroup):
     def __init__(self):
-        super(TechGroup5, self).__init__()
+        super().__init__()
         self._tech_queue.extend(
             [
                 "DEF_GARRISON_4",
@@ -716,7 +716,7 @@ def test_tech_integrity():
         techs = this_group.get_techs()
         for tech in techs:
             if not fo.getTech(tech):
-                warning("In %s: Tech %s seems not to exist!" % (group.__name__, tech))
+                warning(f"In {group.__name__}: Tech {tech} seems not to exist!")
                 error_occured = True
         for err in this_group.get_errors():
             warning(err)

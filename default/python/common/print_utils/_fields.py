@@ -5,7 +5,7 @@ from common.print_utils._base_field import Field
 
 class Text(Field):
     def __init__(self, name, description="", align="<"):
-        super(Text, self).__init__(name, align=align, description=description)
+        super().__init__(name, align=align, description=description)
 
     def convert_value_to_string(self, val: Any) -> str:
         return str(val)
@@ -13,7 +13,7 @@ class Text(Field):
 
 class Number(Field):
     def __init__(self, name, precession=2, align=">", description="", placeholder="", total=False):
-        super(Number, self).__init__(
+        super().__init__(
             name,
             align=align,
             description=description,
@@ -30,7 +30,7 @@ class Bool(Field):
     def __init__(self, name, no_yes=("-", "+"), description=""):
         self.no_yes = no_yes
         assert len(no_yes) == 2
-        super(Bool, self).__init__(name, description=description)
+        super().__init__(name, description=description)
 
     def convert_value_to_string(self, val: Any) -> str:
         return self.no_yes[val]

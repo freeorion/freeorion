@@ -11,7 +11,9 @@ handlers = {
 def _register(function_name, handler, is_post_handler):
     handlers.setdefault(function_name, [[], []])[is_post_handler].append(handler)
     print(
-        'Register "%s" %s "%s" execution' % (handler.__name__, "after" if is_post_handler else "before", function_name)
+        'Register "{}" {} "{}" execution'.format(
+            handler.__name__, "after" if is_post_handler else "before", function_name
+        )
     )
 
 

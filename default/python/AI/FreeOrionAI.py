@@ -342,7 +342,7 @@ def generateOrders():  # pylint: disable=invalid-name
             action()
             generate_order_timer.stop()
         except Exception as e:
-            error("Exception %s while trying to %s" % (e, action.__name__), exc_info=True)
+            error(f"Exception {e} while trying to {action.__name__}", exc_info=True)
 
     aistate.last_turn_played = fo.currentTurn()
     generate_order_timer.stop_print_and_clear()

@@ -161,8 +161,8 @@ def follow_vis_system_connections(start_system_id, home_system_id):  # noqa: max
             visibility_turn_list = sorted(
                 universe.getVisibilityTurnsMap(cur_system_id, empire_id).items(), key=lambda x: x[0].numerator
             )
-            visibility_info = ", ".join("%s: %s" % (vis.name, turn) for vis, turn in visibility_turn_list)
-            debug("%s previously %s. Visibility per turn: %s " % (system_header, pre_vis, visibility_info))
+            visibility_info = ", ".join(f"{vis.name}: {turn}" for vis, turn in visibility_turn_list)
+            debug(f"{system_header} previously {pre_vis}. Visibility per turn: {visibility_info} ")
             status_info = []
         else:
             status_info = [system_header]

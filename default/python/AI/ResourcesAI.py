@@ -14,7 +14,7 @@ from functools import total_ordering
 from itertools import chain
 from logging import debug, info, warning
 from operator import itemgetter
-from typing import NamedTuple, Optional
+from typing import NamedTuple
 
 import AIDependencies
 import PlanetUtilsAI
@@ -208,7 +208,7 @@ class PlanetFocusManager:
             + stability / 10
         )
 
-    def possible_output_with_focus(self, planet: fo.planet, focus: str, stability: Optional[float] = None) -> Output:
+    def possible_output_with_focus(self, planet: fo.planet, focus: str, stability: float | None = None) -> Output:
         """
         Estimate Output of planet, which should have been set to focus and meters should be current.
         Special case: if stability is giving, calculate output from current focus, but with adapted stability.
@@ -339,7 +339,7 @@ class PlanetFocusManager:
             # we will lose the least amount of resource generation when using growth focus.
             def _print_evaluation(evaluation):
                 """Local helper function printing a formatted evaluation."""
-                debug("  - %s %s" % (planet, evaluation))
+                debug(f"  - {planet} {evaluation}")
 
             ranked_planets = []
             for pid in locations:
@@ -354,7 +354,7 @@ class PlanetFocusManager:
                 pop = planet.currentMeterValue(fo.meterType.population)
                 pop_gain = potential_pop_increase - planet.habitableSize
                 if pop > pop_gain:
-                    _print_evaluation("would lose more pop (%.1f) than gain everywhere else (%.1f)." % (pop, pop_gain))
+                    _print_evaluation(f"would lose more pop ({pop:.1f}) than gain everywhere else ({pop_gain:.1f}).")
                     continue
 
                 # If we have a computronium special here, then research focus will have higher priority.
@@ -363,7 +363,9 @@ class PlanetFocusManager:
                     continue
 
                 _print_evaluation(
-                    "considered (pop %.1f, growth gain %.1f, current focus %s)" % (pop, pop_gain, pinfo.current_focus)
+                    "considered (pop {:.1f}, growth gain {:.1f}, current focus {})".format(
+                        pop, pop_gain, pinfo.current_focus
+                    )
                 )
 
                 # add a bias to discourage switching out growth focus to avoid focus change penalties
@@ -669,11 +671,11 @@ class Reporter:
                 debug(
                     Reporter.table_format,
                     "pID (%3d) %22s" % (pid, pinfo.planet.name[-22:]),
-                    "c: %5.1f / %5.1f" % (curren_rp, current_pp),
-                    "cT: %5.1f / %5.1f" % (ot_rp, ot_pp),
+                    f"c: {curren_rp:5.1f} / {current_pp:5.1f}",
+                    f"cT: {ot_rp:5.1f} / {ot_pp:5.1f}",
                     "cF: %8s" % _focus_name(old_focus),
                     "nF: %8s" % _focus_name(new_focus),
-                    "cT: %5.1f / %5.1f" % (nt_rp, nt_pp),
+                    f"cT: {nt_rp:5.1f} / {nt_pp:5.1f}",
                 )
         self.print_table_footer(priority_ratio)
 
@@ -726,7 +728,7 @@ class Reporter:
                 planet.type,
                 "_".join(str(planet.focus).split("_")[1:])[:8],
                 planet.speciesName,
-                "%.1f/%.1f" % (population, max_population),
+                f"{population:.1f}/{max_population:.1f}",
             )
         foci_table.print_table(info)
         debug(

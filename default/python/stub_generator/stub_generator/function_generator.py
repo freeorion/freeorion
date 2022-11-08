@@ -17,12 +17,12 @@ def _handle_function(fun: FunctionInfo):
         end = " ..."
     arg_strings = list(function.get_argument_strings())
     if len(arg_strings) == 1:
-        yield "def %s(%s)%s:%s%s" % (fun.name, arg_strings[0], return_annotation, docstring, end)
+        yield f"def {fun.name}({arg_strings[0]}){return_annotation}:{docstring}{end}"
     else:
         for arg_string in arg_strings:
-            yield "@overload\ndef %s(%s)%s: ...\n" % (fun.name, arg_string, return_annotation)
+            yield f"@overload\ndef {fun.name}({arg_string}){return_annotation}: ...\n"
 
-        yield "def %s(*args)%s:%s%s" % (fun.name, return_annotation, docstring, end)
+        yield f"def {fun.name}(*args){return_annotation}:{docstring}{end}"
 
 
 def generate_functions(functions: List[FunctionInfo]):

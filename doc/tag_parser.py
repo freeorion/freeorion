@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import argparse
 import fnmatch
 import os
@@ -60,7 +58,7 @@ def add_doc_source(_file_name, _line_number, _content, _tags):
 
 
 def parse_file(_parse_file, _tags):  # noqa: max-complexity
-    with open(_parse_file, "r", encoding="utf-8") as f:
+    with open(_parse_file, encoding="utf-8") as f:
         match_line = 0
         content = []
         special_comments_this_file = None
@@ -167,7 +165,7 @@ if args.get("dry_run"):
     print("arguments:")
     for arg in args:
         print("\t", arg, ":", args[arg])
-    print("\nFound {0} tags with {1} total sources".format(len(all_tags.keys()), source_count))
+    print(f"\nFound {len(all_tags.keys())} tags with {source_count} total sources")
 else:
     abs_dir = os.path.dirname(os.path.abspath(args.get("output")))
     if not os.path.exists(abs_dir):

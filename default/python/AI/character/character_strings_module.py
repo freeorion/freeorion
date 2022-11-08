@@ -69,7 +69,7 @@ _aggression_label_suffix = {
 
 def _make_aggression_based_function(prefix, post_process_func=None):
     """Make an aggression _CharacterTableFunction"""
-    table = {key: "%s%s" % (prefix, suffix) for (key, suffix) in _aggression_label_suffix.items()}
+    table = {key: f"{prefix}{suffix}" for (key, suffix) in _aggression_label_suffix.items()}
     table[None] = "UNKNOWN_VALUE_SYMBOL"
     return _CharacterTableFunction(character_package.character_module.Aggression, table, post_process_func)
 

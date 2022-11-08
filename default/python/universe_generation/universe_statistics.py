@@ -286,7 +286,7 @@ def log_planets():
             planet_type = fo.planet_get_type(pid).name
             planet_size = fo.planet_get_size(pid).name
             if planet_type != planet_size:
-                planet_type = "%s %s" % (planet_type, planet_size)
+                planet_type = f"{planet_type} {planet_size}"
 
             buildings = [universe.getBuilding(x).name for x in planet.buildingIDs]
             planets_table.add_row(

@@ -186,7 +186,7 @@ def get_invasion_fleets():  # noqa: max-complexity
             if not col_design:
                 continue
             if loc not in build_choices:
-                warning("Best troop design %s can not be produced at planet with id: %s" % (col_design, build_choices))
+                warning(f"Best troop design {col_design} can not be produced at planet with id: {build_choices}")
                 continue
             n_bases = math.ceil((planet_troops + 1) / troops_per_ship)  # TODO: reconsider this +1 safety factor
             # TODO: evaluate cost and time-to-build of best base trooper here versus cost and time-to-build-and-travel
@@ -608,7 +608,7 @@ def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
             else:
                 these_fleets = found_fleets
         target = TargetPlanet(planet_id)
-        debug("assigning invasion fleets %s to target %s" % (these_fleets, target))
+        debug(f"assigning invasion fleets {these_fleets} to target {target}")
         if target.get_object().currentMeterValue(fo.meterType.maxShield) > 0.0 and not secure_system(sys_id, True):
             continue
         aistate = get_aistate()

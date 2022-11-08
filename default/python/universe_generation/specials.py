@@ -125,7 +125,7 @@ def distribute_specials(specials_freq, universe_objects):  # noqa: max-complexit
         for (obj, system, specials_count) in obj_tuple_needing_specials:
             systems_needing_specials[system].add((obj, system, specials_count))
 
-        print(" Placing in {} locations remaining.".format(len(systems_needing_specials)))
+        print(f" Placing in {len(systems_needing_specials)} locations remaining.")
 
         # Find a list of candidates all spaced GALAXY_DECOUPLING_DISTANCE apart
         candidates = []
