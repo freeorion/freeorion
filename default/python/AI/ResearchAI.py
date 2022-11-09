@@ -2,7 +2,7 @@ from itertools import islice
 
 import freeOrionAIInterface as fo
 import random
-from logging import debug, error, warning
+from logging import debug, error, warning, info
 from typing import List, Mapping
 
 import AIDependencies as Dep
@@ -11,7 +11,7 @@ import ColonisationAI
 import ShipDesignAI
 import TechsListsAI
 from aistate_interface import get_aistate
-from common.print_utils import print_in_columns
+from common.print_utils import as_columns
 from empire.colony_builders import get_colony_builders
 from freeorion_tools import tech_is_complete
 from ProductionAI import translators_wanted
@@ -234,12 +234,12 @@ def generate_classic_research_orders():  # noqa: max-complexity
         debug("\n\nAll techs:")
         debug("=" * 20)
         alltechs = fo.techs()
-        print_in_columns(sorted(fo.techs()), columns=3)
+        info(as_columns(sorted(fo.techs()), columns=3))
 
         debug("\n\nAll unqueued techs:")
         debug("=" * 20)
         # coveredTechs = new_tech+completed_techs
-        print_in_columns([tn for tn in alltechs if tn not in tech_base], columns=3)
+        as_columns([tn for tn in alltechs if tn not in tech_base], columns=3)
         debug("")
 
         if fo.currentTurn() == 1:

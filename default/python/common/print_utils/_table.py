@@ -12,11 +12,11 @@ from typing import Any, Collection, Union
 from common.print_utils._base_field import Field
 
 
-def print_in_columns(items: Collection[Any], columns=2, printer=print):
+def as_columns(items: Collection[Any], columns=2):
     """
     Split flat list to columns and print them.
 
-    >>> print_in_columns(['a', 'b', 'c', 'd', 2])
+    >>> as_columns(['a', 'b', 'c', 'd'], 2)
     a   c
     b   d
     """
@@ -25,8 +25,7 @@ def print_in_columns(items: Collection[Any], columns=2, printer=print):
     column_widths = (max(len(x) for x in word) for word in text_columns)
     template = "   ".join("%%-%ss" % w for w in column_widths)
 
-    for row in zip(*text_columns):
-        printer(template % row)
+    return "\n".join(template % row for row in zip(*text_columns))
 
 
 class Table:

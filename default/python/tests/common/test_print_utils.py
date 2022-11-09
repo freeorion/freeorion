@@ -8,11 +8,14 @@
 
 Process finished with exit code 0
 """
-from common.print_utils import Number, Sequence, Table, Text, print_in_columns
+from common.print_utils import Number, Sequence, Table, Text, as_columns
 
-EXPECTED_COLUMNS = """a   c
-b   d
-"""
+EXPECTED_ITEMS_MULTIPLE_COLUMNS = """a   c
+b   d"""
+
+
+EXPECTED_ITEMS_NOT_MULTIPLE_COLUMNS = """a   c
+b    """
 
 EXPECTED_SIMPLE_TABLE = """Wooho
 ============================================================================
@@ -26,8 +29,7 @@ EXPECTED_SIMPLE_TABLE = """Wooho
 | Plato III        |      21.00 | d                   | a                  |
 ----------------------------------------------------------------------------
 *name   Name for first column
-*value  VValue
-"""
+*value  VValue"""
 
 EXPECTED_EMPTY_TABLE = """Wooho
 =============================================
@@ -38,11 +40,14 @@ EXPECTED_EMPTY_TABLE = """Wooho
 *value  VValue"""
 
 
-# https://pytest.org/latest/capture.html#accessing-captured-output-from-a-test-function
-def test_print_in_columns(capfd):
-    print_in_columns(["a", "b", "c", "d"], 2)
-    out, err = capfd.readouterr()
-    assert out == EXPECTED_COLUMNS
+def test_as_columns_with_items_multiple_columns():
+    out = as_columns(["a", "b", "c", "d"], 2)
+    assert out == EXPECTED_ITEMS_MULTIPLE_COLUMNS
+
+
+def test_as_columns_with_items_not_multiple_columns():
+    out = as_columns(["a", "b", "c"], 2)
+    assert out == EXPECTED_ITEMS_NOT_MULTIPLE_COLUMNS
 
 
 def make_table():
