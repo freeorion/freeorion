@@ -75,13 +75,11 @@ def _get_research_flat_modified(stability: float) -> float:
     """
     Get list of flat bonuses which are added before multiplication with the species skill value.
     """
-    diversity = (
-        Bonus(
-            fo.getEmpire().policyAdopted("PLC_DIVERSITY"),
-            get_named_real("PLC_DIVERSITY_MIN_STABILITY"),
-            (len(get_empire_planets_by_species()) - get_named_int("PLC_DIVERSITY_THRESHOLD"))
-            * get_named_real("PLC_DIVERSITY_SCALING"),
-        ),
+    diversity = Bonus(
+        fo.getEmpire().policyAdopted("PLC_DIVERSITY"),
+        get_named_real("PLC_DIVERSITY_MIN_STABILITY"),
+        (len(get_empire_planets_by_species()) - get_named_int("PLC_DIVERSITY_THRESHOLD"))
+        * get_named_real("PLC_DIVERSITY_SCALING"),
     )
     return diversity.get_bonus(stability)
 
