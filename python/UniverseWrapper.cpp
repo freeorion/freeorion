@@ -707,7 +707,7 @@ namespace FreeOrionPython {
         py::class_<ResourceCenter, boost::noncopyable>("resourceCenter", py::no_init)
             .add_property("focus",                  make_function(&ResourceCenter::Focus,   py::return_value_policy<py::copy_const_reference>()))
             .add_property("turnsSinceFocusChange" , +[](const ResourceCenter& rc) { return rc.TurnsSinceFocusChange(CurrentTurn()); })
-            .add_property("availableFoci",          &ResourceCenter::AvailableFoci)
+            .add_property("availableFoci",          +[](const ResourceCenter& rc) -> std::vector<std::string> { return rc.ResourceCenter::AvailableFoci(ScriptingContext{}); })
         ;
 
         ///////////////////
