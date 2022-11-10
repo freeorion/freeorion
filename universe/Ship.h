@@ -18,9 +18,9 @@ public:
 
     [[nodiscard]] bool HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
 
-    [[nodiscard]] TagVecs            Tags(const ScriptingContext& context) const override;
-    [[nodiscard]] bool               HasTag(std::string_view name, const ScriptingContext& context) const override;
-    [[nodiscard]] std::string        Dump(uint8_t ntabs = 0) const override;
+    [[nodiscard]] TagVecs     Tags(const ScriptingContext& context) const override;
+    [[nodiscard]] bool        HasTag(std::string_view name, const ScriptingContext& context) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
 
     [[nodiscard]] int ContainerObjectID() const noexcept override { return m_fleet_id; }
     [[nodiscard]] bool ContainedBy(int object_id) const override;
