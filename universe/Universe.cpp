@@ -352,7 +352,7 @@ const ShipDesign* Universe::GetShipDesign(int ship_design_id) const {
     return (it != m_ship_designs.end() ? it->second : nullptr);
 }
 
-void Universe::RenameShipDesign(int design_id, const std::string& name,
+void Universe::RenameShipDesign(int design_id, const std::string& name, // TODO: pass by value with move
                                 const std::string& description)
 {
     auto design_it = m_ship_designs.find(design_id);
@@ -483,7 +483,7 @@ bool Universe::InsertShipDesign(ShipDesign* ship_design) {
     return InsertShipDesignID(ship_design, boost::none, GenerateDesignID());
 }
 
-bool Universe::InsertShipDesignID(ShipDesign* ship_design, boost::optional<int> empire_id, int id) {
+bool Universe::InsertShipDesignID(ShipDesign* ship_design, boost::optional<int> empire_id, int id) { // TODO: pass and store ShipDesign as shared_ptr
     if (!ship_design)
         return false;
 

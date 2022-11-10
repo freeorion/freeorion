@@ -98,7 +98,7 @@ public:
 
     //! Returns the number of turns required to produce this hull
     auto ProductionTime(int empire_id, int location_id, const ScriptingContext& parent_context = ScriptingContext{},
-                        int in_design_id = INVALID_DESIGN_ID) const -> int;
+                        int in_design_id = INVALID_DESIGN_ID) const -> int; // TODO: remove default ScriptingContext
 
     //! Returns whether this hull type is producible by players and appears on
     //! the design screen

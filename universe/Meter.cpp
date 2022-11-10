@@ -87,8 +87,9 @@ namespace {
         return retval;
     }
 
+
     template <typename T, std::size_t N>
-    constexpr std::size_t ArrSize(std::array<T, N>)
+    constexpr std::size_t ArrSize(std::array<T, N>) // TODO: replace with std::ssize when available (C++20 ?)
     { return N; }
 }
 
