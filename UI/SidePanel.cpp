@@ -1311,7 +1311,7 @@ namespace {
     }
 }
 
-const Ship* ValidSelectedColonyShip(int system_id) {
+const Ship* ValidSelectedColonyShip(int system_id) { // TODO: pass in context?
     // if not looking in a valid system, no valid colony ship can be available
     if (system_id == INVALID_OBJECT_ID)
         return nullptr;
@@ -1635,7 +1635,9 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
         bombard_ships.insert(autoselected_bombard_ships.begin(), autoselected_bombard_ships.end());
     }
 
-    std::string_view colony_ship_species_name{selected_colony_ship ? selected_colony_ship->SpeciesName() : ""};
+    std::string_view colony_ship_species_name;
+    if (selected_colony_ship)
+        colony_ship_species_name = selected_colony_ship->SpeciesName();
     float colony_ship_capacity{selected_colony_ship ? selected_colony_ship->ColonyCapacity(u) : 0.0f};
     const Species* colony_ship_species = context.species.GetSpecies(colony_ship_species_name);
     PlanetEnvironment planet_env_for_colony_species = PlanetEnvironment::PE_UNINHABITABLE;
@@ -1816,8 +1818,13 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     }
 
     const auto* planet_raw = planet.get();
-    const auto& species_name{!planet_raw->SpeciesName().empty() ? planet_raw->SpeciesName() :
-                             !colony_ship_species_name.empty() ? colony_ship_species_name : ""};
+    const std::string_view planet_species_name = planet_raw->SpeciesName();
+    std::string_view species_name;
+    if (!planet_species_name.empty())
+        species_name = planet_species_name;
+    else if (!colony_ship_species_name.empty())
+        species_name = colony_ship_species_name;
+
     std::string env_size_text{
         species_name.empty() ?
             boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
