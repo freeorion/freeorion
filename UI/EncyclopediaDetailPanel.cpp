@@ -1347,22 +1347,22 @@ namespace {
         return retval;
     }
 
-    [[nodiscard]] int DefaultLocationForEmpire(int empire_id) {
+    [[nodiscard]] int DefaultLocationForEmpire(int empire_id, const ScriptingContext& context) {
         if (empire_id == ALL_EMPIRES)
             return INVALID_OBJECT_ID;
 
-        const Empire* empire = GetEmpire(empire_id);
+        const auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             DebugLogger() << "DefaultLocationForEmpire: Unable to get empire with ID: " << empire_id;
             return INVALID_OBJECT_ID;
         }
         // get a location where the empire might build something.
-        const UniverseObject* location = Objects().getRaw(empire->CapitalID());
+        const UniverseObject* location = context.ContextObjects().getRaw(empire->CapitalID());
         // no capital?  scan through all objects to find one owned by this empire
         // TODO: only loop over planets?
         // TODO: pass in a location condition, and pick a location that matches it if possible
         if (!location) {
-            for (const auto* obj : Objects().allRaw()) {
+            for (const auto* obj : context.ContextObjects().allRaw()) {
                 if (obj->OwnedBy(empire_id)) {
                     location = obj;
                     break;
@@ -1518,12 +1518,13 @@ namespace {
         }
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
+        const ScriptingContext context;
+
         // Ship Parts
         if (!only_description) {
-            const ScriptingContext context;
             name = UserString(item_name);
             texture = ClientUI::PartIcon(item_name);
-            int default_location_id = DefaultLocationForEmpire(client_empire_id);
+            int default_location_id = DefaultLocationForEmpire(client_empire_id, context);
             turns = part->ProductionTime(client_empire_id, default_location_id, context);
             cost = part->ProductionCost(client_empire_id, default_location_id, context);
             cost_units = UserString("ENC_PP");
@@ -1562,8 +1563,8 @@ namespace {
         }
 
         // species that like / dislike part
-        auto species_that_like = GetSpeciesManager().SpeciesThatLike(item_name);
-        auto species_that_dislike = GetSpeciesManager().SpeciesThatDislike(item_name);
+        auto species_that_like = context.species.SpeciesThatLike(item_name);
+        auto species_that_dislike = context.species.SpeciesThatDislike(item_name);
         if (!species_that_like.empty()) {
             detailed_description += "\n\n" + UserString("SPECIES_THAT_LIKE");
             detailed_description.append(LinkList(species_that_like));
@@ -1597,13 +1598,15 @@ namespace {
         }
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
+        const ScriptingContext context;
+
         // Ship Hulls
         if (!only_description) {
             name = UserString(item_name);
             texture = ClientUI::HullTexture(item_name);
-            int default_location_id = DefaultLocationForEmpire(client_empire_id);
-            turns = hull->ProductionTime(client_empire_id, default_location_id);
-            cost = hull->ProductionCost(client_empire_id, default_location_id);
+            int default_location_id = DefaultLocationForEmpire(client_empire_id, context);
+            turns = hull->ProductionTime(client_empire_id, default_location_id, context);
+            cost = hull->ProductionCost(client_empire_id, default_location_id, context);
             cost_units = UserString("ENC_PP");
             general_type = UserString("ENC_SHIP_HULL");
         }
@@ -1648,8 +1651,8 @@ namespace {
         }
 
         // species that like / dislike hull
-        auto species_that_like = GetSpeciesManager().SpeciesThatLike(item_name);
-        auto species_that_dislike = GetSpeciesManager().SpeciesThatDislike(item_name);
+        auto species_that_like = context.species.SpeciesThatLike(item_name);
+        auto species_that_dislike = context.species.SpeciesThatDislike(item_name);
         if (!species_that_like.empty()) {
             detailed_description.append("\n\n").append(UserString("SPECIES_THAT_LIKE"));
             detailed_description.append(LinkList(species_that_like));
@@ -1857,9 +1860,11 @@ namespace {
         }
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
+        const ScriptingContext context;
+
         int this_location_id = ClientUI::GetClientUI()->GetMapWnd()->SelectedPlanetID();
         if (this_location_id == INVALID_OBJECT_ID && !only_description)
-            this_location_id = DefaultLocationForEmpire(client_empire_id);
+            this_location_id = DefaultLocationForEmpire(client_empire_id, context);
 
         // Building types
         if (!only_description) {
@@ -1901,8 +1906,8 @@ namespace {
         }
 
         // species that like / dislike building type
-        auto species_that_like = GetSpeciesManager().SpeciesThatLike(item_name);
-        auto species_that_dislike = GetSpeciesManager().SpeciesThatDislike(item_name);
+        auto species_that_like = context.species.SpeciesThatLike(item_name);
+        auto species_that_dislike = context.species.SpeciesThatDislike(item_name);
         if (!species_that_like.empty()) {
             detailed_description += "\n\n" + UserString("SPECIES_THAT_LIKE");
             detailed_description.append(LinkList(species_that_like));
@@ -2806,9 +2811,9 @@ namespace {
         if (!only_description) {
             name = design->Name();
             texture = ClientUI::ShipDesignIcon(design_id);
-            int default_location_id = DefaultLocationForEmpire(client_empire_id);
-            turns = design->ProductionTime(client_empire_id, default_location_id);
-            cost = design->ProductionCost(client_empire_id, default_location_id);
+            int default_location_id = DefaultLocationForEmpire(client_empire_id, context);
+            turns = design->ProductionTime(client_empire_id, default_location_id, context);
+            cost = design->ProductionCost(client_empire_id, default_location_id, context);
             cost_units = UserString("ENC_PP");
             general_type = design->IsMonster() ? UserString("ENC_MONSTER") : UserString("ENC_SHIP_DESIGN");
         }
@@ -2963,9 +2968,9 @@ namespace {
         else
             texture = ClientUI::GetTexture(ClientUI::ArtDir() / design_icon, true);
 
-        int default_location_id = DefaultLocationForEmpire(client_empire_id);
-        turns = incomplete_design->ProductionTime(client_empire_id, default_location_id);
-        cost = incomplete_design->ProductionCost(client_empire_id, default_location_id);
+        int default_location_id = DefaultLocationForEmpire(client_empire_id, context);
+        turns = incomplete_design->ProductionTime(client_empire_id, default_location_id, context);
+        cost = incomplete_design->ProductionCost(client_empire_id, default_location_id, context);
         cost_units = UserString("ENC_PP");
 
 

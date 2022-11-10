@@ -2278,7 +2278,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         if (m_int_ref3)
             location_id = m_int_ref3->Eval(context);
 
-        return design->ProductionCost(empire_id, location_id);
+        return design->ProductionCost(empire_id, location_id, context);
 
     }
     else if (variable_name == "EmpireMeterValue") {

@@ -377,10 +377,9 @@ std::pair<float, int> ProductionQueue::ProductionItem::ProductionCostAndTime(
                 type->ProductionTime(empire_id, location_id, context)};
 
     } else if (build_type == BuildType::BT_SHIP) {
-        const ShipDesign* design = context.ContextUniverse().GetShipDesign(design_id);
-        if (design)
-            return {design->ProductionCost(empire_id, location_id),
-                    design->ProductionTime(empire_id, location_id)};
+        if (const ShipDesign* design = context.ContextUniverse().GetShipDesign(design_id))
+            return {design->ProductionCost(empire_id, location_id, context),
+                    design->ProductionTime(empire_id, location_id, context)};
         return {-1.0f, -1};
 
     } else if (build_type == BuildType::BT_STOCKPILE) {

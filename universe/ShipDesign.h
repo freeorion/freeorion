@@ -99,9 +99,9 @@ public:
     [[nodiscard]] int DesignedByEmpire() const noexcept { return m_designed_by_empire; };  ///< returns id of empire that created this design
 
     [[nodiscard]] bool  ProductionCostTimeLocationInvariant() const;          ///< returns true if the production cost and time are invariant (does not depend on) the location
-    [[nodiscard]] float ProductionCost(int empire_id, int location_id) const; ///< returns the total cost to build a ship of this design
-    [[nodiscard]] float PerTurnCost(int empire_id, int location_id) const;    ///< returns the maximum per-turn number of production points that can be spent on building a ship of this design
-    [[nodiscard]] int   ProductionTime(int empire_id, int location_id) const; ///< returns the time in turns it takes to build a ship of this design
+    [[nodiscard]] float ProductionCost(int empire_id, int location_id, const ScriptingContext& context) const; ///< returns the total cost to build a ship of this design
+    [[nodiscard]] float PerTurnCost(int empire_id, int location_id, const ScriptingContext& context) const;    ///< returns the maximum per-turn number of production points that can be spent on building a ship of this design
+    [[nodiscard]] int   ProductionTime(int empire_id, int location_id, const ScriptingContext& context) const; ///< returns the time in turns it takes to build a ship of this design
     [[nodiscard]] bool  Producible() const noexcept { return m_producible; }  ///< returns whether this design is producible by players and appears on the production screen list
 
     [[nodiscard]] float Speed() const noexcept          { return m_speed; }                 ///< returns design speed along starlanes
@@ -161,7 +161,7 @@ public:
       * clients and server. */
     [[nodiscard]] uint32_t GetCheckSum() const;
 
-    friend FO_COMMON_API bool operator ==(const ShipDesign& first, const ShipDesign& second);
+    friend FO_COMMON_API bool operator==(const ShipDesign& first, const ShipDesign& second);
 
     [[nodiscard]] bool ProductionLocation(int empire_id, int location_id, const ScriptingContext& context) const;   ///< returns true iff the empire with ID empire_id can produce this design at the location with location_id
 

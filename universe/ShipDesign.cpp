@@ -143,7 +143,7 @@ const std::string& ShipDesign::Name(bool stringtable_lookup) const {
 
 void ShipDesign::SetName(const std::string& name) {
     if (!name.empty() && !m_name.empty())
-        m_name = name;
+        m_name = name; // TODO: pass by value with move
 }
 
 const std::string& ShipDesign::Description(bool stringtable_lookup) const {
@@ -153,7 +153,7 @@ const std::string& ShipDesign::Description(bool stringtable_lookup) const {
         return m_description;
 }
 
-void ShipDesign::SetDescription(const std::string& description)
+void ShipDesign::SetDescription(const std::string& description) // TODO: pass by value with move
 { m_description = description; }
 
 bool ShipDesign::ProductionCostTimeLocationInvariant() const {
@@ -176,11 +176,9 @@ bool ShipDesign::ProductionCostTimeLocationInvariant() const {
     return true;
 }
 
-float ShipDesign::ProductionCost(int empire_id, int location_id) const {
+float ShipDesign::ProductionCost(int empire_id, int location_id, const ScriptingContext& context) const {
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION"))
         return 1.0f;
-
-    ScriptingContext context; // TODO: pass in and use, instead of creating here...
 
     float cost_accumulator = 0.0f;
     if (const ShipHull* hull = GetShipHull(m_hull))
@@ -201,18 +199,18 @@ float ShipDesign::ProductionCost(int empire_id, int location_id) const {
     return std::min(std::max(0.0f, cost_accumulator), ARBITRARY_LARGE_COST);
 }
 
-float ShipDesign::PerTurnCost(int empire_id, int location_id) const
-{ return ProductionCost(empire_id, location_id) / std::max(1, ProductionTime(empire_id, location_id)); }
+float ShipDesign::PerTurnCost(int empire_id, int location_id, const ScriptingContext& context) const {
+    return ProductionCost(empire_id, location_id, context) /
+        std::max(1, ProductionTime(empire_id, location_id, context));
+}
 
-int ShipDesign::ProductionTime(int empire_id, int location_id) const {
+int ShipDesign::ProductionTime(int empire_id, int location_id, const ScriptingContext& context) const {
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION"))
         return 1;
 
-    ScriptingContext context; // TODO: pass in
-
     int time_accumulator = 1;
     if (const ShipHull* hull = GetShipHull(m_hull))
-        time_accumulator = std::max(time_accumulator, hull->ProductionTime(empire_id, location_id));
+        time_accumulator = std::max(time_accumulator, hull->ProductionTime(empire_id, location_id, context));
 
     for (const std::string& part_name : m_parts)
         if (const ShipPart* part = GetShipPart(part_name))
@@ -226,7 +224,7 @@ int ShipDesign::ProductionTime(int empire_id, int location_id) const {
 }
 
 bool ShipDesign::CanColonize() const {
-    for (const std::string& part_name : m_parts) {
+    for (const auto& part_name : m_parts) {
         if (part_name.empty())
             continue;
         if (const ShipPart* part = GetShipPart(part_name))
@@ -240,7 +238,7 @@ float ShipDesign::Defense() const {
     // accumulate defense from defensive parts in design.
     float total_defense = 0.0f;
     const ShipPartManager& part_manager = GetShipPartManager();
-    for (const std::string& part_name : Parts()) {
+    for (const auto& part_name : m_parts) {
         const ShipPart* part = part_manager.GetShipPart(part_name);
         if (part && (part->Class() == ShipPartClass::PC_SHIELD || part->Class() == ShipPartClass::PC_ARMOUR))
             total_defense += part->Capacity();

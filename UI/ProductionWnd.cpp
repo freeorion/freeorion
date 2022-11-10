@@ -264,8 +264,8 @@ namespace {
             //available = empire->ShipDesignAvailable(elem.item.design_id);
             location_ok = design->ProductionLocation(elem.empire_id, elem.location, context);
             //min_turns = design->ProductionTime(elem.empire_id, elem.location);
-            total_cost = design->ProductionCost(elem.empire_id, elem.location) * elem.blocksize;
-            max_allocation = design->PerTurnCost(elem.empire_id, elem.location) * elem.blocksize;
+            total_cost = design->ProductionCost(elem.empire_id, elem.location, context) * elem.blocksize;
+            max_allocation = design->PerTurnCost(elem.empire_id, elem.location, context) * elem.blocksize;
             icon = ClientUI::ShipDesignIcon(elem.item.design_id);
 
         } else if (elem.item.build_type == BuildType::BT_STOCKPILE) {
