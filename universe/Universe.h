@@ -104,8 +104,8 @@ public:
 
 
     /** Returns objects in this Universe. */
-    [[nodiscard]] const ObjectMap& Objects() const { return *m_objects; }
-    [[nodiscard]] ObjectMap&       Objects()       { return *m_objects; }
+    [[nodiscard]] const ObjectMap& Objects() const noexcept { return *m_objects; }
+    [[nodiscard]] ObjectMap&       Objects() noexcept       { return *m_objects; }
 
     /** Returns latest known state of objects for the Empire with
       * id \a empire_id or the true / complete state of all objects in this
