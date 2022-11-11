@@ -2138,10 +2138,10 @@ class BasesListBox : public QueueListBox {
 public:
     static constexpr std::string_view BASES_LIST_BOX_DROP_TYPE = "BasesListBoxRow";
 
-    BasesListBox(AvailabilityManager availabilities_state,
+    BasesListBox(const AvailabilityManager& availabilities_state,
                  boost::optional<std::string_view> drop_type = boost::none,
                  boost::optional<std::string_view> empty_prompt = boost::none);
-    BasesListBox(AvailabilityManager availabilities_state,
+    BasesListBox(const AvailabilityManager& availabilities_state,
                  boost::optional<std::string_view> drop_type,
                  const std::string& empty_prompt) :
         BasesListBox(availabilities_state, std::move(drop_type),
@@ -2371,7 +2371,7 @@ void BasesListBox::CompletedDesignListBoxRow::CompleteConstruction() {
     SetDragDropDataType(COMPLETE_DESIGN_ROW_DROP_STRING);
 }
 
-BasesListBox::BasesListBox(AvailabilityManager availabilities_state,
+BasesListBox::BasesListBox(const AvailabilityManager& availabilities_state,
                            boost::optional<std::string_view> drop_type,
                            boost::optional<std::string_view> empty_prompt) :
     QueueListBox(std::move(drop_type),
@@ -2449,10 +2449,11 @@ void BasesListBox::SetEmpireShown(int empire_id, bool refresh_list) {
 }
 
 void BasesListBox::Populate() {
-    DebugLogger() << "BasesListBox::Populate";
+    const auto avail_state = m_availabilities_state.GetAvailabilities();
 
     // Provide conditional reminder text when the list is empty
-    if (AvailabilityState().GetAvailabilities() == AvailabilityManager::DisplayedAvailabilies(false, false, false))
+    static constexpr auto all_false = AvailabilityManager::DisplayedAvailabilies{false, false, false};
+    if (avail_state == all_false)
         SetEmptyPromptText(UserString("ALL_AVAILABILITY_FILTERS_BLOCKING_PROMPT"));
     else
         this->ResetEmptyListPrompt();
@@ -3458,25 +3459,18 @@ void DesignWnd::BaseSelector::SetEmpireShown(int empire_id, bool refresh_list) {
 }
 
 void DesignWnd::BaseSelector::ToggleAvailability(Availability::Enum type) {
-    std::shared_ptr<CUIStateButton> button;
-    bool state = false;
-    switch (type) {
-    case Availability::Obsolete:
-        m_availabilities_state.ToggleAvailability(Availability::Obsolete);
-        state = m_availabilities_state.GetAvailability(Availability::Obsolete);
-        button = std::get<Availability::Obsolete>(m_availabilities_buttons);
-        break;
-    case Availability::Available:
-        m_availabilities_state.ToggleAvailability(Availability::Available);
-        state = m_availabilities_state.GetAvailability(Availability::Available);
-        button = std::get<Availability::Available>(m_availabilities_buttons);
-        break;
-    case Availability::Future:
-        m_availabilities_state.ToggleAvailability(Availability::Future);
-        state = m_availabilities_state.GetAvailability(Availability::Future);
-        button = std::get<Availability::Future>(m_availabilities_buttons);
-        break;
-    }
+    if (type != Availability::Enum::Obsolete &&
+        type != Availability::Enum::Available &&
+        type != Availability::Enum::Future)
+    { return; }
+    m_availabilities_state.ToggleAvailability(type);
+
+    const std::array<std::shared_ptr<CUIStateButton>, 3> buttons{
+        std::get<0>(m_availabilities_buttons),
+        std::get<1>(m_availabilities_buttons),
+        std::get<2>(m_availabilities_buttons)};
+    bool state = m_availabilities_state.GetAvailability(type);
+    const auto& button = buttons[static_cast<std::size_t>(type)];
 
     button->SetCheck(state);
 
