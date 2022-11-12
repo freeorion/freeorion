@@ -135,10 +135,6 @@ protected:
 [[nodiscard]] inline Universe& GetUniverse() noexcept
 { return IApp::GetApp()->GetUniverse(); }
 
-/** Accessor for the App's universe object */
-[[nodiscard]] inline std::shared_ptr<const Pathfinder> GetPathfinder()
-{ return IApp::GetApp()->GetUniverse().GetPathfinder(); }
-
 /** Accessor for all (on server) or all known (on client) objects ObjectMap */
 [[nodiscard]] inline ObjectMap& Objects() {
     static ObjectMap empty_objects;
