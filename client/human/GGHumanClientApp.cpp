@@ -1239,7 +1239,7 @@ namespace {
             for (auto file_it = files_by_write_time.rbegin();
                  file_it != files_by_write_time.rend(); ++file_it)
             {
-                auto file = file_it->second;
+                const auto& file = file_it->second;
                 // attempt to load header
                 if (SaveFileWithValidHeader(file))
                     return PathToString(file);  // load succeeded, return path to OK file
