@@ -154,10 +154,10 @@ struct FO_COMMON_API SaveGameEmpireData {
     SaveGameEmpireData() = default;
     SaveGameEmpireData(int id, std::string ename, std::string pname,
                        std::array<uint8_t, 4> c, bool a, bool e, bool w) :
-        empire_id(id),
         empire_name(std::move(ename)),
         player_name(std::move(pname)),
         color(c),
+        empire_id(id),
         authenticated(a),
         eliminated(e),
         won(w)
