@@ -1,7 +1,6 @@
 #include "ResourcePool.h"
 
 #include <cassert>
-#include <boost/lexical_cast.hpp>
 #include "../universe/Enums.h"
 #include "../universe/ObjectMap.h"
 #include "../universe/Planet.h"
