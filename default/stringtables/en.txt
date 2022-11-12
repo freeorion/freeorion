@@ -1893,6 +1893,9 @@ OPTIONS_DB_UI_PLANET_STATUS_CONQUERED
 %1% has just been conquered. Stability will probably be reduced.
 
 OPTIONS_DB_UI_PLANET_STATUS_UNHAPPY
+The population on %1% is unhappy. Both [[metertype METER_INDUSTRY]] and [[metertype METER_RESEARCH]] will grow slowly. It can not be used as a source for settlers.
+
+OPTIONS_DB_UI_PLANET_STATUS_VERY_UNHAPPY
 The population on %1% is very unhappy. Neither [[metertype METER_INDUSTRY]] nor [[metertype METER_RESEARCH]] will increase. It can not be used as a source for settlers.
 
 OPTIONS_DB_UI_PLANET_STATUS_NO_SUPPLY

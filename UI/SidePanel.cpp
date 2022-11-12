@@ -1923,9 +1923,17 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
 
         // status: very unhappy
         if ((planet->GetMeter(MeterType::METER_HAPPINESS)->Current() <= 5) && (planet->GetMeter(MeterType::METER_POPULATION)->Current() > 0)) {
-            planet_status_messages.emplace_back(boost::io::str(FlexibleFormat(
-                UserString("OPTIONS_DB_UI_PLANET_STATUS_UNHAPPY")) % planet->Name()));
-            planet_status_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "planet_status_unhappy.png", true);
+
+            if (planet->GetMeter(MeterType::METER_HAPPINESS)->Current() > 0) {
+                planet_status_messages.emplace_back(boost::io::str(FlexibleFormat(
+                    UserString("OPTIONS_DB_UI_PLANET_STATUS_UNHAPPY")) % planet->Name()));
+                planet_status_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "planet_status_unhappy.png", true);
+            }
+            else {
+                planet_status_messages.emplace_back(boost::io::str(FlexibleFormat(
+                    UserString("OPTIONS_DB_UI_PLANET_STATUS_VERY_UNHAPPY")) % planet->Name()));
+                planet_status_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "planet_status_unhappy.png", true);
+            }
         }
 
         // status: bombarded (TBD)
