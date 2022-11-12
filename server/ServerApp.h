@@ -34,11 +34,11 @@ public:
 
     /** Returns a ClientApp pointer to the singleton instance of the app. */
     [[nodiscard]] static ServerApp* GetApp();
-    [[nodiscard]] Universe& GetUniverse() noexcept override;
-    [[nodiscard]] EmpireManager& Empires() override;
+    [[nodiscard]] Universe& GetUniverse() noexcept override { return m_universe; }
+    [[nodiscard]] EmpireManager& Empires() override { return m_empires; }
     [[nodiscard]] Empire* GetEmpire(int id) override;
-    [[nodiscard]] SupplyManager& GetSupplyManager() override;
-    [[nodiscard]] SpeciesManager& GetSpeciesManager() override;
+    [[nodiscard]] SupplyManager& GetSupplyManager() override { return m_supply_manager; }
+    [[nodiscard]] SpeciesManager& GetSpeciesManager() override { return m_species_manager; }
     [[nodiscard]] const Species* GetSpecies(std::string_view name) override;
 
     /** Returns the server's map for known objects of specified empire. */
@@ -46,19 +46,15 @@ public:
 
     [[nodiscard]] std::string GetVisibleObjectName(const UniverseObject& object) override;
 
-    [[nodiscard]] int EmpireID() const override
-    { return ALL_EMPIRES; }
-
-    [[nodiscard]] int CurrentTurn() const override
-    { return m_current_turn; }
+    [[nodiscard]] int EmpireID() const override { return ALL_EMPIRES; }
+    [[nodiscard]] int CurrentTurn() const override { return m_current_turn; }
 
     [[nodiscard]] int SelectedSystemID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
     [[nodiscard]] int SelectedPlanetID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
     [[nodiscard]] int SelectedFleetID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
     [[nodiscard]] int SelectedShipID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
 
-    [[nodiscard]] const GalaxySetupData&  GetGalaxySetupData() const override
-    { return m_galaxy_setup_data; }
+    [[nodiscard]] const GalaxySetupData& GetGalaxySetupData() const override { return m_galaxy_setup_data; }
 
     /** Checks if player with ID \a player_id is a human player
         who's client runs on the same machine as the server */
@@ -219,25 +215,26 @@ public:
                          std::array<uint8_t, 4> text_color,
                          const boost::posix_time::ptime& timestamp);
 
-    [[nodiscard]] ServerNetworking& Networking();     ///< returns the networking object for the server
+    [[nodiscard]] ServerNetworking& Networking() noexcept { return m_networking; };
+
 private:
-    void    Run();          ///< initializes app state, then executes main event handler/render loop (Poll())
+    void Run();          ///< initializes app state, then executes main event handler/render loop (Poll())
 
     /** Initialize the python engine if not already running.*/
-    void    InitializePython();
+    void InitializePython();
 
     /** Called when server process receive termination signal */
-    void    SignalHandler(const boost::system::error_code& error, int signal_number);
+    void SignalHandler(const boost::system::error_code& error, int signal_number);
 
 
     /** Clears any old game stored orders, victors or eliminated players, ads
       * empires to turn processing list, does start-of-turn empire supply and
       * resource pool determination. */
-    void    NewGameInitConcurrentWithJoiners(const GalaxySetupData& galaxy_setup_data,
-                                             const std::vector<PlayerSetupData>& player_setup_data);
+    void NewGameInitConcurrentWithJoiners(const GalaxySetupData& galaxy_setup_data,
+                                          const std::vector<PlayerSetupData>& player_setup_data);
 
     /** Return true if player data is consistent with starting a new game. */
-    bool    NewGameInitVerifyJoiners(const std::vector<PlayerSetupData>& player_setup_data);
+    bool NewGameInitVerifyJoiners(const std::vector<PlayerSetupData>& player_setup_data);
 
     /** Sends out initial new game state to clients, and signals clients to start first turn. */
     void SendNewGameStartMessages();
@@ -248,70 +245,70 @@ private:
       * any UI or AI state information players had saved, and compiles info
       * about all players to send out to all other players are part of game
       * start messages. */
-    void    LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data,
-                         const std::vector<std::pair<int, int>>& player_id_to_save_game_data_index,
-                         std::shared_ptr<ServerSaveGameData> server_save_game_data);
+    void LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data,
+                      const std::vector<std::pair<int, int>>& player_id_to_save_game_data_index,
+                      std::shared_ptr<ServerSaveGameData> server_save_game_data);
 
     /** Calls Python universe generator script.
       * Supposed to be called to create a new universe so it can be used by content
       * scripters to customize universe generation. */
-    void    GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_data);
+    void GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_data);
 
     /** Calls Python turn events script.
       * Supposed to be called every turn so it can be used by content scripters to
       * implement user customizable turn events. */
-    void    ExecuteScriptedTurnEvents();
+    void ExecuteScriptedTurnEvents();
 
-    void    CleanupAIs();   ///< cleans up AI processes: kills the process and empties the container of AI processes
+    void CleanupAIs();   ///< cleans up AI processes: kills the process and empties the container of AI processes
 
     /** Sets the priority for all AI processes */
-    void    SetAIsProcessPriorityToLow(bool set_to_low);
+    void  SetAIsProcessPriorityToLow(bool set_to_low);
 
     /** Get players info map to send it in GameStart message */
     std::map<int, PlayerInfo> GetPlayerInfoMap() const;
 
     /** Handles an incoming message from the server with the appropriate action
       * or response */
-    void    HandleMessage(const Message& msg, PlayerConnectionPtr player_connection);
+    void HandleMessage(const Message& msg, PlayerConnectionPtr player_connection);
 
     /** Checks validity of shut down message from player, then attempts to
       * cleanly shut down this server process. */
-    void    HandleShutdownMessage(const Message& msg, PlayerConnectionPtr player_connection);
+    void HandleShutdownMessage(const Message& msg, PlayerConnectionPtr player_connection);
 
     /** Checks validity of logger config message and then update logger and loggers of all AIs. */
-    void    HandleLoggerConfig(const Message& msg, PlayerConnectionPtr player_connection);
+    void HandleLoggerConfig(const Message& msg, PlayerConnectionPtr player_connection);
 
     /** When Messages arrive from connections that are not established players,
       * they arrive via a call to this function*/
-    void    HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr player_connection);
+    void HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr player_connection);
 
     /** Called by ServerNetworking when a player's TCP connection is closed*/
-    void    PlayerDisconnected(PlayerConnectionPtr player_connection);
+    void PlayerDisconnected(PlayerConnectionPtr player_connection);
 
     /** Handle shutdown timeout by killing all ais. */
     void ShutdownTimedoutHandler(boost::system::error_code error);
 
     /** Called when the host player has disconnected.  Select a new host player*/
-    void    SelectNewHost();
+    void SelectNewHost();
 
     /** Called when this server's EmpireManager changes the diplomatic status
       * between two empires. Updates those empires of the change. */
-    void    HandleDiplomaticStatusChange(int empire1_id, int empire2_id);
+    void HandleDiplomaticStatusChange(int empire1_id, int empire2_id);
 
     /** Called when this sever's EmpireManager changes the diplmatic message
       * between two empires. Updates those empires of the change. */
-    void    HandleDiplomaticMessageChange(int empire1_id, int empire2_id);
+    void HandleDiplomaticMessageChange(int empire1_id, int empire2_id);
 
     /**  Adds an existing empire to turn processing. The position the empire is
       * in the vector is it's position in the turn processing.*/
-    void    AddEmpireTurn(int empire_id, const PlayerSaveGameData& psgd);
+    void AddEmpireTurn(int empire_id, const PlayerSaveGameData& psgd);
 
     /** Removes an empire from turn processing. This is most likely called when
       * an empire is eliminated from the game */
-    void    RemoveEmpireTurn(int empire_id);
+    void RemoveEmpireTurn(int empire_id);
 
     /** Called when asyncio timer ends. Executes Python asyncio callbacks if any was generated. */
-    void    AsyncIOTimedoutHandler(const boost::system::error_code& error);
+    void AsyncIOTimedoutHandler(const boost::system::error_code& error);
 
     boost::asio::io_context m_io_context;
     boost::asio::signal_set m_signals;

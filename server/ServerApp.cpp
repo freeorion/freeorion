@@ -316,29 +316,14 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
 ServerApp* ServerApp::GetApp()
 { return static_cast<ServerApp*>(s_app); }
 
-Universe& ServerApp::GetUniverse() noexcept
-{ return m_universe; }
-
-EmpireManager& ServerApp::Empires()
-{ return m_empires; }
-
 Empire* ServerApp::GetEmpire(int id)
 { return m_empires.GetEmpire(id).get(); }
-
-SupplyManager& ServerApp::GetSupplyManager()
-{ return m_supply_manager; }
-
-SpeciesManager& ServerApp::GetSpeciesManager()
-{ return m_species_manager; }
 
 const Species* ServerApp::GetSpecies(std::string_view name)
 { return m_species_manager.GetSpecies(name); }
 
 ObjectMap& ServerApp::EmpireKnownObjects(int empire_id)
 { return m_universe.EmpireKnownObjects(empire_id); }
-
-ServerNetworking& ServerApp::Networking()
-{ return m_networking; }
 
 std::string ServerApp::GetVisibleObjectName(const UniverseObject& object)
 { return object.Name(); }
