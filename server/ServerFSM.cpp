@@ -180,8 +180,8 @@ namespace {
         return fatal;
     }
 
-    std::string GetAutoSaveFileName(int current_turn) {
-        std::string subdir = GetGalaxySetupData().GetGameUID();
+    std::string GetAutoSaveFileName(int current_turn, const GalaxySetupData& gsd) {
+        const auto& subdir = gsd.GetGameUID();
         boost::filesystem::path autosave_dir_path = GetServerSaveDir() / (subdir.empty() ? "auto" : subdir);
         const auto& extension = MP_SAVE_FILE_EXTENSION;
         // Add timestamp to autosave generated files
@@ -407,7 +407,8 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
                 m_server.CurrentTurn() > 0)
             {
                 // save game on exit
-                std::string save_filename = GetAutoSaveFileName(m_server.CurrentTurn());
+                std::string save_filename = GetAutoSaveFileName(m_server.CurrentTurn(),
+                                                                m_server.GetGalaxySetupData());
                 ServerSaveGameData server_data{m_server.CurrentTurn()};
                 int bytes_written = 0;
                 // save game...
@@ -2741,7 +2742,7 @@ sc::result PlayingGame::react(const ShutdownServer& msg) {
         server.CurrentTurn() > 0)
     {
         // save game on exit
-        std::string save_filename = GetAutoSaveFileName(server.CurrentTurn());
+        std::string save_filename = GetAutoSaveFileName(server.CurrentTurn(), server.GetGalaxySetupData());
         ServerSaveGameData server_data{server.CurrentTurn()};
         int bytes_written = 0;
         // save game...
@@ -3451,7 +3452,9 @@ sc::result WaitingForTurnEnd::react(const CheckTurnEndConditions& c) {
     // save game so orders from the player will be backuped
     if (server.IsHostless() && GetOptionsDB().Get<bool>("save.auto.hostless.each-player.enabled") && server.CurrentTurn() > 0) {
         PlayerConnectionPtr dummy_connection = nullptr;
-        post_event(SaveGameRequest(HostSaveGameInitiateMessage(GetAutoSaveFileName(server.CurrentTurn())), dummy_connection));
+        post_event(SaveGameRequest(HostSaveGameInitiateMessage(
+            GetAutoSaveFileName(server.CurrentTurn(), server.GetGalaxySetupData())),
+            dummy_connection));
     }
 
     return discard_event();
@@ -3520,7 +3523,9 @@ void WaitingForTurnEnd::SaveTimedoutHandler(const boost::system::error_code& err
 
     DebugLogger() << "Save timed out.";
     PlayerConnectionPtr dummy_connection = nullptr;
-    Server().m_fsm->process_event(SaveGameRequest(HostSaveGameInitiateMessage(GetAutoSaveFileName(Server().CurrentTurn())), dummy_connection));
+    Server().m_fsm->process_event(SaveGameRequest(HostSaveGameInitiateMessage(
+        GetAutoSaveFileName(Server().CurrentTurn(), Server().GetGalaxySetupData())),
+        dummy_connection));
     if (GetOptionsDB().Get<int>("save.auto.interval") > 0) {
         m_timeout.expires_after(std::chrono::seconds(GetOptionsDB().Get<int>("save.auto.interval")));
         m_timeout.async_wait(boost::bind(&WaitingForTurnEnd::SaveTimedoutHandler,
@@ -3572,7 +3577,9 @@ sc::result ProcessingTurn::react(const ProcessTurn& u) {
 
     if (server.IsHostless() && GetOptionsDB().Get<bool>("save.auto.hostless.enabled") && server.CurrentTurn() > 0) {
         PlayerConnectionPtr dummy_connection = nullptr;
-        post_event(SaveGameRequest(HostSaveGameInitiateMessage(GetAutoSaveFileName(server.CurrentTurn())), dummy_connection));
+        post_event(SaveGameRequest(HostSaveGameInitiateMessage(GetAutoSaveFileName(
+            server.CurrentTurn(), server.GetGalaxySetupData())),
+            dummy_connection));
     }
     return transit<WaitingForTurnEnd>();
 }
