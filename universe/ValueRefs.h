@@ -19,12 +19,6 @@
 #include "../util/i18n.h"
 #include "../util/Random.h"
 
-std::ostream& operator<<(std::ostream&, PlanetType);
-std::ostream& operator<<(std::ostream&, PlanetSize);
-std::ostream& operator<<(std::ostream&, PlanetEnvironment);
-std::ostream& operator<<(std::ostream&, StarType);
-
-
 namespace CheckSums {
     template <typename T>
     void CheckSumCombine(uint32_t& sum, const typename ValueRef::ValueRef<T>& c)
@@ -532,10 +526,6 @@ T Constant<T>::Eval(const ScriptingContext& context) const
 { return m_value; }
 
 template <typename T>
-std::string Constant<T>::Description() const
-{ return UserString(boost::lexical_cast<std::string, T>(m_value)); }
-
-template <typename T>
 void Constant<T>::SetTopLevelContent(const std::string& content_name)
 {}
 
@@ -546,7 +536,8 @@ uint32_t Constant<T>::GetCheckSum() const
 
     CheckSums::CheckSumCombine(retval, "ValueRef::Constant");
     CheckSums::CheckSumCombine(retval, m_value);
-    TraceLogger() << "GetCheckSum(Constant<T>): " << typeid(*this).name() << " value: " << m_value << " retval: " << retval;
+    TraceLogger() << "GetCheckSum(Constant<T>): " << typeid(*this).name()
+                  << " value: " << Description() << " retval: " << retval;
     return retval;
 }
 
@@ -558,6 +549,24 @@ FO_COMMON_API std::string Constant<double>::Description() const;
 
 template <>
 FO_COMMON_API std::string Constant<std::string>::Description() const;
+
+template <>
+FO_COMMON_API std::string Constant<PlanetType>::Description() const;
+
+template <>
+FO_COMMON_API std::string Constant<PlanetSize>::Description() const;
+
+template <>
+FO_COMMON_API std::string Constant<PlanetEnvironment>::Description() const;
+
+template <>
+FO_COMMON_API std::string Constant<UniverseObjectType>::Description() const;
+
+template <>
+FO_COMMON_API std::string Constant<StarType>::Description() const;
+
+template <>
+FO_COMMON_API std::string Constant<Visibility>::Description() const;
 
 template <>
 FO_COMMON_API std::string Constant<PlanetSize>::Dump(uint8_t ntabs) const;

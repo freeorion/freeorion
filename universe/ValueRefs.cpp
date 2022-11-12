@@ -508,6 +508,30 @@ std::string StatisticDescription(StatisticType stat_type, std::string_view value
 // Constant                                              //
 ///////////////////////////////////////////////////////////
 template <>
+std::string Constant<PlanetType>::Description() const
+{ return UserString(to_string(m_value)); }
+
+template <>
+std::string Constant<PlanetSize>::Description() const
+{ return UserString(to_string(m_value)); }
+
+template <>
+std::string Constant<PlanetEnvironment>::Description() const
+{ return UserString(to_string(m_value)); }
+
+template <>
+std::string Constant<UniverseObjectType>::Description() const
+{ return UserString(to_string(m_value)); }
+
+template <>
+std::string Constant<StarType>::Description() const
+{ return UserString(to_string(m_value)); }
+
+template <>
+std::string Constant<Visibility>::Description() const
+{ return UserString(to_string(m_value)); }
+
+template <>
 std::string Constant<int>::Description() const
 {
     if (std::abs(m_value) < 1000)
