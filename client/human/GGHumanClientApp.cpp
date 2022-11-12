@@ -1043,8 +1043,9 @@ void GGHumanClientApp::UpdateCombatLogs(const Message& msg) {
         ExtractDispatchCombatLogsMessageData(msg, logs);
 
         // Update the combat log manager with the completed logs.
-        for (auto it = logs.begin(); it != logs.end(); ++it)
-            GetCombatLogManager().CompleteLog(it->first, it->second);
+        auto& clm{GetCombatLogManager()};
+        for (auto& [log_id, log] : logs)
+            clm.CompleteLog(log_id, std::move(log));
     } catch (...) {}
 }
 
@@ -1189,15 +1190,18 @@ void GGHumanClientApp::StartGame(bool is_new_game) {
 
 void GGHumanClientApp::UpdateCombatLogManager() {
     auto incomplete_ids = GetCombatLogManager().IncompleteLogIDs();
-    if (incomplete_ids) {
-        for (auto it = incomplete_ids->begin(); it != incomplete_ids->end();) {
-            // request at most 50 logs per message to avoid trying to allocate too much space to send all at once
-            std::vector<int> a_few_log_ids;
-            for (unsigned int count = 0; count < 50 && it != incomplete_ids->end(); ++it, ++count)
-                a_few_log_ids.push_back(*it);
-            DebugLogger() << "Requesting " << a_few_log_ids.size() << " combat logs from server";
-            m_networking->SendMessage(RequestCombatLogsMessage(a_few_log_ids));
-        }
+    if (incomplete_ids.empty())
+        return;
+
+    static constexpr std::size_t log_batch_size = 50;
+    for (auto it = incomplete_ids.begin(); it != incomplete_ids.end();) {
+        // request at most 50 logs per message to avoid trying to allocate too much space to send all at once
+        std::vector<int> a_few_log_ids;
+        a_few_log_ids.reserve(log_batch_size);
+        for (unsigned int count = 0; count < log_batch_size && it != incomplete_ids.end(); ++it, ++count)
+            a_few_log_ids.push_back(*it);
+        DebugLogger() << "Requesting " << a_few_log_ids.size() << " combat logs from server";
+        m_networking->SendMessage(RequestCombatLogsMessage(a_few_log_ids));
     }
 }
 
