@@ -137,9 +137,9 @@ namespace {
     }
 
     boost::optional<std::string> SpeciesString(std::string_view data, const SpeciesManager& sm) {
-        if (const Species* species = sm.GetSpecies(data))
-            return WithTags(species->Name(), VarText::SPECIES_TAG, data);
-        return boost::none;
+        if (!sm.GetSpecies(data))
+            return boost::none;
+        return WithTags(UserString(data), VarText::SPECIES_TAG, data);
     }
 
     boost::optional<std::string> MeterTypeString(std::string_view data, const ScriptingContext&) {
