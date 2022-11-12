@@ -300,7 +300,7 @@ public:
       * updates the record of the last turn on which each empire has visibility
       * of object that can be seen on the current turn with the level of
       * visibility that the empire has this turn. */
-    void UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
+    void UpdateEmpireLatestKnownObjectsAndVisibilityTurns(int current_turn);
 
     /** Checks latest known information about each object for each empire and,
       * in cases when the latest known state (stealth and location) suggests

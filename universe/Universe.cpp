@@ -2745,7 +2745,9 @@ void Universe::UpdateEmpireObjectVisibilities(EmpireManager& empires) {
     ShareVisbilitiesBetweenAllies(*this, empires, m_empire_object_visibility, m_empire_object_visible_specials);
 }
 
-void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() { // TODO: pass in current_turn
+void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns(int current_turn) {
+    if (current_turn == INVALID_GAME_TURN)
+        return;
     //DebugLogger() << "Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns()";
 
     // assumes m_empire_object_visibility has been updated
@@ -2754,10 +2756,6 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() { // TODO: pas
     //      for each empire that can see object this turn
     //          update empire's information about object, based on visibility
     //          update empire's visbilility turn history
-
-    int current_turn = CurrentTurn();
-    if (current_turn == INVALID_GAME_TURN)
-        return;
 
     // for each object in universe
     for (const auto& full_object : m_objects->all()) {
