@@ -9,11 +9,8 @@
 #include "../universe/Fleet.h"
 #include "../universe/Universe.h"
 
-#include <boost/lexical_cast.hpp>
 
 SitRepEntry::SitRepEntry() :
-    VarText(),
-    m_turn(INVALID_GAME_TURN),
     m_icon("/icons/sitrep/generic.png")
 {}
 
@@ -31,17 +28,6 @@ SitRepEntry::SitRepEntry(std::string&& template_string, int turn,
     m_icon(icon.empty() ? "/icons/sitrep/generic.png" : std::move(icon)),
     m_label(std::move(label))
 {}
-
-int SitRepEntry::GetDataIDNumber(const std::string& tag) const {
-    auto elem = m_variables.find(tag);
-    try {
-        if (elem != m_variables.end())
-            return boost::lexical_cast<int>(elem->second);
-    } catch (...) {
-        return -1;
-    }
-    return -1;
-}
 
 const std::string& SitRepEntry::GetDataString(const std::string& tag) const {
     static const std::string EMPTY_STRING;

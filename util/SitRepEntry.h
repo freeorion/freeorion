@@ -5,6 +5,7 @@
 //!     Declares the SitRepEntry calls and related factory functions.
 
 #include "VarText.h"
+#include "../universe/ConstantsFwd.h"
 
 #include <string>
 #include <vector>
@@ -26,7 +27,6 @@ public:
     SitRepEntry(std::string&& template_string, int turn, std::string&& icon,
                 std::string&& label, bool stringtable_lookup);
 
-    [[nodiscard]] int                GetDataIDNumber(const std::string& tag) const;
     [[nodiscard]] const std::string& GetDataString(const std::string& tag) const;
     [[nodiscard]] int                GetTurn() const noexcept        { return m_turn; }
     [[nodiscard]] const std::string& GetIcon() const noexcept        { return m_icon; }
@@ -34,7 +34,7 @@ public:
     [[nodiscard]] std::string        Dump() const;
 
 private:
-    int         m_turn;
+    int         m_turn = INVALID_GAME_TURN;
     std::string m_icon;
     std::string m_label;
 
