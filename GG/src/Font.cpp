@@ -17,7 +17,6 @@
 #include <sstream>
 #include <unordered_set>
 #include <boost/format.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/xpressive/regex_actions.hpp>
 #include <boost/xpressive/xpressive.hpp>
 #include <ft2build.h>
@@ -59,7 +58,7 @@ constexpr std::string_view ALIGN_RIGHT_TAG = "right";
 constexpr std::string_view PRE_TAG = "pre";
 
 template <typename T>
-T NextPowerOfTwo(T input)
+constexpr T NextPowerOfTwo(T input)
 {
     T value(1);
     while (value < input)
@@ -2067,31 +2066,52 @@ X Font::StoreGlyph(const Pt& pt, const Glyph& glyph, const Font::RenderState* re
 }
 
 namespace {
-    std::pair<std::array<GLubyte, 4>, bool> TagParamsToColor(const std::vector<Font::Substring>& params) {
-        std::array<GLubyte, 4> retval{};
-        if (params.size() != 4)
+    constexpr uint8_t CharsToUInt8(std::string_view txt) {
+        if (txt.empty())
+            return 0u;
+
+        uint32_t retval = 0u;
+        for (auto c : txt) {
+            if (c > '9' || c < '0')
+                break;
+            retval *= 10;
+            retval += (c - '0');
+        }
+
+        return static_cast<uint8_t>(retval);
+    }
+    static_assert(CharsToUInt8("") == 0);
+    static_assert(CharsToUInt8("abcdefgh") == 0);
+    static_assert(CharsToUInt8("0") == 0);
+    static_assert(CharsToUInt8("-25") == 0);
+    static_assert(CharsToUInt8("25") == 25);
+    static_assert(CharsToUInt8("00001") == 1);
+    static_assert(CharsToUInt8("888") == 888-3*256);
+    static_assert(CharsToUInt8(std::string_view{one_zero_nine.data()}) == 109);
+    static_assert(CharsToUInt8(std::string_view{three_zero.data()}) == 30);
+
+    std::pair<std::array<GLubyte, 4u>, bool> TagParamsToColor(const std::vector<Font::Substring>& params) {
+        std::array<GLubyte, 4u> retval{};
+        if (params.size() != 4u)
             return {retval, false};
 
-        for (std::size_t n = 0; n < 4; ++n) {
 #if defined(__cpp_lib_to_chars)
+        for (std::size_t n = 0u; n < 4u; ++n) {
             const auto& param{params[n]};
             if (param.empty())
                 return {retval, false};
             auto ec = std::from_chars(param.data(), param.data() + param.size(), retval[n]).ec;
             if (ec != std::errc())
                 return {retval, false};
-#else
-            try {
-                auto temp_colour = boost::lexical_cast<int>(params[n]);
-                if (temp_colour >= 0 && temp_colour <= 255)
-                    retval[n] = temp_colour;
-                else
-                    return {retval, false};
-            } catch (const boost::bad_lexical_cast&) {
-                return {retval, false};
-            }
-#endif
         }
+#else
+        for (std::size_t n = 0u; n < 4u; ++n) {
+            const auto& param{params[n]};
+            if (param.empty())
+                return {retval, false};
+            retval[n] = CharsToUInt8(param);
+        }
+#endif
 
         return {retval, true};
     }
