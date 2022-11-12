@@ -472,7 +472,7 @@ FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
     if (!Check(empire_id, fleet_id, dest_system_id, append, context))
         return;
 
-    auto fleet = context.ContextObjects().get<Fleet>(FleetID()); // TODO: Get from passed-in stuff
+    auto fleet = context.ContextObjects().get<Fleet>(m_fleet);
 
     int start_system = fleet->SystemID();
     if (start_system == INVALID_OBJECT_ID)
@@ -484,13 +484,14 @@ FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
         start_system, m_dest_system, EmpireID(), context.ContextObjects());
     if (short_path.first.empty()) {
         ErrorLogger() << "FleetMoveOrder generated empty shortest path between system " << start_system
-                      << " and " << m_dest_system << " for empire " << EmpireID() << " with fleet " << fleet_id;
+                      << " and " << m_dest_system << " for empire " << EmpireID()
+                      << " with fleet " << m_fleet;
         return;
     }
 
     // if in a system now, don't include it in the route
     if (short_path.first.front() == fleet->SystemID()) {
-        DebugLogger() << "FleetMoveOrder removing fleet " << fleet_id
+        DebugLogger() << "FleetMoveOrder removing fleet " << m_fleet
                       << " current system location " << fleet->SystemID()
                       << " from shortest path to system " << m_dest_system;
         short_path.first.erase(short_path.first.begin()); // pop_front();
@@ -503,14 +504,13 @@ FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
         m_route.push_back(start_system);
 }
 
-std::string FleetMoveOrder::Dump() const {
-    return UserString("ORDER_FLEET_MOVE");
-}
+std::string FleetMoveOrder::Dump() const
+{ return UserString("ORDER_FLEET_MOVE"); }
 
 bool FleetMoveOrder::Check(int empire_id, int fleet_id, int dest_system_id,
                            bool append, const ScriptingContext& context)
 {
-    auto fleet = context.ContextObjects().get<Fleet>(fleet_id);
+    auto fleet = context.ContextObjects().getRaw<Fleet>(fleet_id);
     if (!fleet) {
         ErrorLogger() << "Empire with id " << empire_id << " ordered fleet with id " << fleet_id << " to move, but no such fleet exists";
         return false;
@@ -523,7 +523,7 @@ bool FleetMoveOrder::Check(int empire_id, int fleet_id, int dest_system_id,
 
     const auto& known_objs{AppEmpireID() == ALL_EMPIRES ?
         context.ContextUniverse().EmpireKnownObjects(empire_id) : context.ContextObjects()};
-    auto dest_system = known_objs.get<System>(dest_system_id);
+    auto dest_system = known_objs.getRaw<System>(dest_system_id);
     if (!dest_system) {
         ErrorLogger() << "Empire with id " << empire_id << " ordered fleet to move to system with id " << dest_system_id << " but no such system is known to that empire";
         return false;
