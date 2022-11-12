@@ -816,7 +816,7 @@ namespace FreeOrionPython {
             .def("getPlanetEnvironment",        &Species::GetPlanetEnvironment)
             .def("dump",                        &Species::Dump,                         py::return_value_policy<py::return_by_value>(), "Returns string with debug information, use '0' as argument.")
         ;
-        py::def("getSpecies",                   +[](const std::string& name) { return GetSpecies(name); },
+        py::def("getSpecies",                   +[](const std::string& name) { const ScriptingContext context; return context.species.GetSpecies(name); },
                                                 py::return_value_policy<py::reference_existing_object>(),
                                                 "Returns the species (Species) with the indicated name (string).");
     }
