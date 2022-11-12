@@ -35,10 +35,10 @@ public:
     /** Returns a ClientApp pointer to the singleton instance of the app. */
     [[nodiscard]] static ServerApp* GetApp();
     [[nodiscard]] Universe& GetUniverse() noexcept override { return m_universe; }
-    [[nodiscard]] EmpireManager& Empires() override { return m_empires; }
+    [[nodiscard]] EmpireManager& Empires() noexcept override { return m_empires; }
     [[nodiscard]] Empire* GetEmpire(int id) override;
-    [[nodiscard]] SupplyManager& GetSupplyManager() override { return m_supply_manager; }
-    [[nodiscard]] SpeciesManager& GetSpeciesManager() override { return m_species_manager; }
+    [[nodiscard]] SupplyManager& GetSupplyManager() noexcept override { return m_supply_manager; }
+    [[nodiscard]] SpeciesManager& GetSpeciesManager() noexcept override { return m_species_manager; }
     [[nodiscard]] const Species* GetSpecies(std::string_view name) override;
 
     /** Returns the server's map for known objects of specified empire. */
@@ -46,8 +46,8 @@ public:
 
     [[nodiscard]] std::string GetVisibleObjectName(const UniverseObject& object) override;
 
-    [[nodiscard]] int EmpireID() const override { return ALL_EMPIRES; }
-    [[nodiscard]] int CurrentTurn() const override { return m_current_turn; }
+    [[nodiscard]] int EmpireID() const noexcept override { return ALL_EMPIRES; }
+    [[nodiscard]] int CurrentTurn() const noexcept override { return m_current_turn; }
 
     [[nodiscard]] int SelectedSystemID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
     [[nodiscard]] int SelectedPlanetID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }

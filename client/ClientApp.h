@@ -42,13 +42,13 @@ public:
      *
      * @return An empire identifier.
      */
-    [[nodiscard]] int EmpireID() const override { return m_empire_id; }
+    [[nodiscard]] int EmpireID() const noexcept override { return m_empire_id; }
 
     /** @brief Return the current game turn
      *
      * @return The number representing the current game turn.
      */
-    [[nodiscard]] int CurrentTurn() const override { return m_current_turn; }
+    [[nodiscard]] int CurrentTurn() const noexcept override { return m_current_turn; }
 
     /** @brief Return the player identfier of the player controlling the empire
      *      @a empire_id
@@ -157,7 +157,7 @@ public:
      * @return The EmpireManager instance in charge of maintaining the Empire
      *      object instances.
      * @{ */
-    [[nodiscard]] EmpireManager& Empires() override { return m_empires; }
+    [[nodiscard]] EmpireManager& Empires() noexcept override { return m_empires; }
     [[nodiscard]] const EmpireManager& Empires() const noexcept { return m_empires; }
     /** @} */
 
@@ -171,11 +171,11 @@ public:
      */
     [[nodiscard]] Empire* GetEmpire(int empire_id) override;
 
-    [[nodiscard]] SpeciesManager& GetSpeciesManager() override { return m_species_manager; }
+    [[nodiscard]] SpeciesManager& GetSpeciesManager() noexcept override { return m_species_manager; }
     [[nodiscard]] const SpeciesManager& GetSpeciesManager() const noexcept { return m_species_manager; }
     [[nodiscard]] const Species* GetSpecies(std::string_view name) override;
 
-    [[nodiscard]] SupplyManager& GetSupplyManager() override { return m_supply_manager; }
+    [[nodiscard]] SupplyManager& GetSupplyManager() noexcept override { return m_supply_manager; }
 
     /** @brief Return all Objects known to @a empire_id
      *

@@ -19,16 +19,16 @@ ParserAppFixture::ParserAppFixture() {
     GetOptionsDB().Set<std::string>("resource.path", PathToString(GetBinDir() / "default"));
 }
 
-int ParserAppFixture::EmpireID() const
+int ParserAppFixture::EmpireID() const noexcept
 { return ALL_EMPIRES; }
 
-int ParserAppFixture::CurrentTurn() const
+int ParserAppFixture::CurrentTurn() const noexcept
 { return INVALID_GAME_TURN; }
 
 Universe& ParserAppFixture::GetUniverse() noexcept
 { return m_universe; }
 
-const GalaxySetupData& ParserAppFixture::GetGalaxySetupData() const
+const GalaxySetupData& ParserAppFixture::GetGalaxySetupData() const noexcept
 { return m_galaxy_setup_data; }
 
 Networking::ClientType ParserAppFixture::GetEmpireClientType(int empire_id) const
@@ -40,19 +40,19 @@ Networking::ClientType ParserAppFixture::GetPlayerClientType(int player_id) cons
 std::string ParserAppFixture::GetVisibleObjectName(const UniverseObject& object)
 { return object.Name(); }
 
-EmpireManager& ParserAppFixture::Empires()
+EmpireManager& ParserAppFixture::Empires() noexcept
 { return m_empires; }
 
 Empire* ParserAppFixture::GetEmpire(int empire_id)
 { return m_empires.GetEmpire(empire_id).get(); }
 
-SpeciesManager& ParserAppFixture::GetSpeciesManager()
+SpeciesManager& ParserAppFixture::GetSpeciesManager() noexcept
 { return m_species_manager; }
 
 const Species* ParserAppFixture::GetSpecies(std::string_view name)
 { return m_species_manager.GetSpecies(name); }
 
-SupplyManager& ParserAppFixture::GetSupplyManager()
+SupplyManager& ParserAppFixture::GetSupplyManager() noexcept
 { return m_supply_manager; }
 
 ObjectMap& ParserAppFixture::EmpireKnownObjects(int empire_id)

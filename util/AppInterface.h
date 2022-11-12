@@ -59,15 +59,15 @@ public:
     virtual void StartBackgroundParsing(const PythonParser& python, std::promise<void>&& barrier);
 
     /** Returns the set of known Empires for this application. */
-    [[nodiscard]] virtual EmpireManager& Empires() = 0;
+    [[nodiscard]] virtual EmpireManager& Empires() noexcept = 0;
 
     [[nodiscard]] virtual Empire* GetEmpire(int id) = 0;
 
-    [[nodiscard]] virtual SpeciesManager& GetSpeciesManager() = 0;
+    [[nodiscard]] virtual SpeciesManager& GetSpeciesManager() noexcept = 0;
 
     [[nodiscard]] virtual const Species* GetSpecies(std::string_view name) = 0;
 
-    [[nodiscard]] virtual SupplyManager& GetSupplyManager() = 0;
+    [[nodiscard]] virtual SupplyManager& GetSupplyManager() noexcept = 0;
 
     /** Accessor for known objects of specified empire. */
     [[nodiscard]] virtual ObjectMap& EmpireKnownObjects(int empire_id) = 0;
@@ -76,12 +76,12 @@ public:
 
     /** On server or clients with no player: ALL_EMPIRES
       * On clients with a player: that player's ID */
-    [[nodiscard]] virtual int EmpireID() const = 0;
+    [[nodiscard]] virtual int EmpireID() const noexcept = 0;
 
     //! Returns the current game turn
     //!
     //! @return The number representing the current game turn.
-    [[nodiscard]] virtual int CurrentTurn() const = 0;
+    [[nodiscard]] virtual int CurrentTurn() const noexcept = 0;
 
     /** On server or AI clients, returns INVALID_OBJECT_ID
       * On UI clients, returns the ID of the object currently selected. */
@@ -112,7 +112,7 @@ protected:
 };
 
 /** Accessor for the App's empire manager */
-[[nodiscard]] inline EmpireManager& Empires()
+[[nodiscard]] inline EmpireManager& Empires() noexcept
 { return IApp::GetApp()->Empires(); }
 
 /** Accessor for Empires */
