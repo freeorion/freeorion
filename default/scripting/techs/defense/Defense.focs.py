@@ -67,7 +67,7 @@ Tech(
     tags=["PEDIA_DEFENSE_CATEGORY"],
     prerequisites=["DEF_DEFENSE_NET_1"],
     effectsgroups=EG_SYSTEM_MINES(
-        2 * SYSTEM_MINES_DAMAGE_FACTOR, 75, "EMPIRE"
+        NamedReal(name="SYSTEM_MINES_1", value=2 * SYSTEM_MINES_DAMAGE_FACTOR), 75, "EMPIRE"
     ),  # Priority deliberately not a macro and before all priority macros
     graphic="icons/tech/system_defense_mines.png",
 )
@@ -81,7 +81,7 @@ Tech(
     researchturns=6,
     tags=["PEDIA_DEFENSE_CATEGORY"],
     prerequisites=["DEF_SYST_DEF_MINE_1"],
-    effectsgroups=EG_SYSTEM_MINES(6 * SYSTEM_MINES_DAMAGE_FACTOR, 65, "EMPIRE"),
+    effectsgroups=EG_SYSTEM_MINES(NamedReal(name="SYSTEM_MINES_2", value=6 * SYSTEM_MINES_DAMAGE_FACTOR), 65, "EMPIRE"),
     graphic="icons/tech/system_defense_mines.png",
 )
 
@@ -94,6 +94,8 @@ Tech(
     researchturns=8,
     tags=["PEDIA_DEFENSE_CATEGORY"],
     prerequisites=["DEF_SYST_DEF_MINE_2"],
-    effectsgroups=EG_SYSTEM_MINES(14 * SYSTEM_MINES_DAMAGE_FACTOR, 60, "EMPIRE"),
+    effectsgroups=EG_SYSTEM_MINES(
+        NamedReal(name="SYSTEM_MINES_3", value=14 * SYSTEM_MINES_DAMAGE_FACTOR), 60, "EMPIRE"
+    ),
     graphic="icons/tech/system_defense_mines.png",
 )

@@ -33,7 +33,7 @@ Special
                 SetShield value = Value + ( min(5.0, max(Value, 0.25*Target.Construction)) * [[PLANET_SHIELD_FACTOR]] )
                 SetDefense value = Value + (NamedReal name = "FORTRESS_SPECIAL_DEFENSE_REGEN" value = ( 1 * [[PLANET_DEFENSE_FACTOR]] ))
             ]
-        [[EG_SYSTEM_MINES(3,70,SOURCE)]] //Priority deliberately not a macro
+        [[EG_SYSTEM_MINES((NamedReal name = "FORTRESS_SPECIAL_SYSTEM_MINES" value = (3 * [[SYSTEM_MINES_DAMAGE_FACTOR]])),70,SOURCE)]] //Priority deliberately not a macro
 
         EffectsGroup
             scope = Source
