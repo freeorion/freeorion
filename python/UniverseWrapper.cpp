@@ -790,7 +790,7 @@ namespace FreeOrionPython {
             .add_property("spawnrate",          make_function(&Special::SpawnRate,      py::return_value_policy<py::return_by_value>()))
             .add_property("spawnlimit",         make_function(&Special::SpawnLimit,     py::return_value_policy<py::return_by_value>()))
             .def("dump",                        &Special::Dump,                         py::return_value_policy<py::return_by_value>(), "Returns string with debug information, use '0' as argument.")
-            .def("initialCapacity",             +[](const Special& special, int obj_id) -> float { return special.InitialCapacity(obj_id); })
+            .def("initialCapacity",             +[](const Special& special, int obj_id) -> float { const ScriptingContext context; return special.InitialCapacity(obj_id, context); })
         ;
         py::def("getSpecial",                   +[](const std::string& name) { return ::GetSpecial(name); },
                                                 py::return_value_policy<py::reference_existing_object>(),

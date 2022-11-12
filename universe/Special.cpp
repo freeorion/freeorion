@@ -156,11 +156,9 @@ std::string Special::Description() const {
     result << UserString(m_description) << "\n";
 
     for (auto& effect : m_effects) {
-        const std::string& description = effect->GetDescription();
-
-        if (!description.empty()) {
+        const auto& description = effect->GetDescription();
+        if (!description.empty())
             result << "\n" << UserString(description) << "\n";
-        }
     }
 
     return result.str();
@@ -169,9 +167,8 @@ std::string Special::Description() const {
 void Special::Init() {
     if (m_stealth)
         m_stealth->SetTopLevelContent(m_name);
-    for (auto& effect : m_effects) {
+    for (auto& effect : m_effects)
         effect->SetTopLevelContent(m_name);
-    }
     if (m_initial_capacity)
         m_initial_capacity->SetTopLevelContent(m_name);
     if (m_location)
@@ -212,11 +209,9 @@ std::string Special::Dump(uint8_t ntabs) const {
     return retval;
 }
 
-float Special::InitialCapacity(int object_id) const {
+float Special::InitialCapacity(int object_id, const ScriptingContext& context) const {
     if (!m_initial_capacity)
         return 0.0f;
-
-    const ScriptingContext context; // TODO: pass ScriptingContext and use here...
 
     auto obj = context.ContextObjects().getRaw(object_id);
     if (!obj)

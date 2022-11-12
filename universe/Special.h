@@ -21,6 +21,7 @@ namespace ValueRef {
     template <typename T>
     struct ValueRef;
 }
+struct ScriptingContext;
 
 /** A predefined set of EffectsGroups that can be attached to a UniverseObject
   * (often referred to as the "source" object).  The effects of a Special are
@@ -52,7 +53,7 @@ public:
     [[nodiscard]] float       SpawnRate() const noexcept       { return m_spawn_rate; }
     [[nodiscard]] int         SpawnLimit() const noexcept      { return m_spawn_limit; }
     [[nodiscard]] auto*       InitialCapacity() const noexcept { return m_initial_capacity.get(); } ///< ValueRef to use to set the initial capacity of the special when placed
-    [[nodiscard]] float       InitialCapacity(int object_id) const; ///< evaluates initial capacity ValueRef using the object with specified \a object_id as the object on which the special will be placed
+    [[nodiscard]] float       InitialCapacity(int object_id, const ScriptingContext& context) const; ///< evaluates initial capacity ValueRef using the object with specified \a object_id as the object on which the special will be placed
     [[nodiscard]] const auto* Location() const noexcept        { return m_location.get(); }///< condition that determines whether an UniverseObject can have this special applied during universe creation
     [[nodiscard]] auto&       Graphic() const noexcept         { return m_graphic; };      ///< name of the grapic file for this special
 

@@ -613,10 +613,11 @@ namespace {
         return obj->Owner();
     }
 
-    void AddSpecial(int object_id, std::string special_name)
-    {
+    void AddSpecial(int object_id, std::string special_name) {
+        ScriptingContext context;
+
         // get the universe object and check if it exists
-        auto obj = Objects().get(object_id);
+        auto obj = context.ContextObjects().getRaw(object_id);
         if (!obj) {
             ErrorLogger() << "AddSpecial: Couldn't get object with ID " << object_id;
             return;
@@ -628,15 +629,16 @@ namespace {
             return;
         }
 
-        float capacity = special->InitialCapacity(object_id);
+        float capacity = special->InitialCapacity(object_id, context);
 
-        obj->AddSpecial(std::move(special_name), capacity, CurrentTurn());
+        obj->AddSpecial(std::move(special_name), capacity, context.current_turn);
     }
 
-    void RemoveSpecial(int object_id, const std::string special_name)
-    {
+    void RemoveSpecial(int object_id, const std::string special_name) {
+        ScriptingContext context;
+
         // get the universe object and check if it exists
-        auto obj = Objects().get(object_id);
+        auto obj = context.ContextObjects().getRaw(object_id);
         if (!obj) {
             ErrorLogger() << "RemoveSpecial: Couldn't get object with ID " << object_id;
             return;
@@ -652,23 +654,23 @@ namespace {
     auto GetAllObjects() -> py::list
     {
         py::list py_all_objects;
-        for (const auto& object : Objects().all()) {
+        for (const auto& object : Objects().all())
             py_all_objects.append(object->ID());
-        }
         return py_all_objects;
     }
 
     auto GetSystems() -> py::list
     {
         py::list py_systems;
-        for (const auto& system : Objects().all<System>()) {
+        for (const auto& system : Objects().all<System>())
             py_systems.append(system->ID());
-        }
         return py_systems;
     }
 
     auto CreateSystem(StarType star_type, const std::string& star_name, double x, double y) -> int
     {
+        ScriptingContext context;
+
         // Check if star type is set to valid value
         if ((star_type == StarType::INVALID_STAR_TYPE) || (star_type == StarType::NUM_STAR_TYPES)) {
             ErrorLogger() << "CreateSystem : Can't create a system with a star of type " << star_type;
@@ -676,8 +678,8 @@ namespace {
         }
 
         // Create system and insert it into the object map
-        auto& universe = GetUniverse();
-        int turn = CurrentTurn();
+        auto& universe = context.ContextUniverse();
+        const int turn = context.current_turn;
         auto system = universe.InsertNew<System>(star_type, star_name, x, y, turn);
         if (!system) {
             ErrorLogger() << "CreateSystem : Attempt to insert system into the object map failed";
@@ -690,7 +692,9 @@ namespace {
     auto CreatePlanet(PlanetSize size, PlanetType planet_type, int system_id,
                       int orbit, const std::string& name) -> int
     {
-        auto system = Objects().get<System>(system_id);
+        ScriptingContext context;
+
+        auto system = context.ContextObjects().getRaw<System>(system_id);
 
         // Perform some validity checks
         // Check if system with id system_id exists
@@ -733,8 +737,8 @@ namespace {
         }
 
         // Create planet and insert it into the object map
-        auto& universe = GetUniverse();
-        int turn = CurrentTurn();
+        auto& universe = context.ContextUniverse();
+        int turn = context.current_turn;
         auto planet = universe.InsertNew<Planet>(planet_type, size, turn);
         if (!planet) {
             ErrorLogger() << "CreateSystem : Attempt to insert planet into the object map failed";
@@ -755,13 +759,13 @@ namespace {
     {
         ScriptingContext context;
         ObjectMap& objects = context.ContextObjects();
-        auto planet = objects.get<Planet>(planet_id);
+        auto planet = objects.getRaw<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "CreateBuilding: couldn't get planet with ID " << planet_id;
             return INVALID_OBJECT_ID;
         }
 
-        auto system = objects.get<System>(planet->SystemID());
+        auto system = objects.getRaw<System>(planet->SystemID());
         if (!system) {
             ErrorLogger() << "CreateBuilding: couldn't get system for planet";
             return INVALID_OBJECT_ID;
