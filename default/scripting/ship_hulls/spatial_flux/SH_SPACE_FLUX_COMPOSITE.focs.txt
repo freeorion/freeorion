@@ -7,9 +7,9 @@ Hull
     stealth = 15
     structure = 50
     slots = [
-        Slot type = External position = (0.70, 0.30)
         Slot type = Internal position = (0.40, 0.50)
         Slot type = Core position = (0.55, 0.50)
+        Slot type = External position = (0.70, 0.50)
     ]
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildtime = 2
@@ -38,8 +38,8 @@ Hull
         [[UNOWNED_MOVE]]
     ]
     // FIXME graphic and icon
-    icon = "icons/ship_hulls/agregate_asteroid_hull_small.png"
-    graphic = "hulls_design/agregate_asteroid_hull.png"
+    icon = "icons/ship_hulls/space_flux_composite_hull_small.png"
+    graphic = "hulls_design/space_flux_composite_hull.png"
 
 #include "spatial_flux.macros"
 
