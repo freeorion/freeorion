@@ -3074,7 +3074,8 @@ namespace {
 
             for (int empire_id : all_involved_empires) {
                 if (auto empire = empires.GetEmpire(empire_id))
-                    empire->AddSitRepEntry(CreateGroundCombatSitRep(planet_id, EnemyId(empire_id, all_involved_empires)));
+                    empire->AddSitRepEntry(CreateGroundCombatSitRep(
+                        planet_id, EnemyId(empire_id, all_involved_empires), context.current_turn));
             }
 
 
@@ -3090,7 +3091,7 @@ namespace {
                     // create planet conquered sitrep for all involved empires
                     for (int empire_id : all_involved_empires) {
                         if (auto empire = empires.GetEmpire(empire_id))
-                            empire->AddSitRepEntry(CreatePlanetCapturedSitRep(planet_id, victor_id));
+                            empire->AddSitRepEntry(CreatePlanetCapturedSitRep(planet_id, victor_id, context.current_turn));
                     }
 
                     DebugLogger() << "Empire conquers planet";
@@ -3107,7 +3108,7 @@ namespace {
 
                     for (int empire_id : all_involved_empires) {
                         if (auto empire = empires.GetEmpire(empire_id))
-                            empire->AddSitRepEntry(CreatePlanetRebelledSitRep(planet_id, previous_owner_id));
+                            empire->AddSitRepEntry(CreatePlanetRebelledSitRep(planet_id, previous_owner_id, context.current_turn));
                     }
 
                 } else {

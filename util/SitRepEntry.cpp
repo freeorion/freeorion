@@ -158,7 +158,7 @@ SitRepEntry CreateCombatSitRep(int system_id, int log_id, int enemy_id, int curr
     return sitrep;
 }
 
-SitRepEntry CreateGroundCombatSitRep(int planet_id, int enemy_id) {
+SitRepEntry CreateGroundCombatSitRep(int planet_id, int enemy_id, int current_turn) {
     std::string template_string = (enemy_id == ALL_EMPIRES)
         ? UserStringNop("SITREP_GROUND_BATTLE")
         : UserStringNop("SITREP_GROUND_BATTLE_ENEMY");
@@ -166,32 +166,32 @@ SitRepEntry CreateGroundCombatSitRep(int planet_id, int enemy_id) {
         ? UserStringNop("SITREP_GROUND_BATTLE_LABEL")
         : UserStringNop("SITREP_GROUND_BATTLE_ENEMY_LABEL");
     SitRepEntry sitrep(
-        std::move(template_string), CurrentTurn() + 1,
+        std::move(template_string), current_turn + 1,
         "icons/sitrep/ground_combat.png", std::move(label_string), true);
-    sitrep.AddVariable(VarText::PLANET_ID_TAG,     std::to_string(planet_id));
-    sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     std::to_string(enemy_id));
+    sitrep.AddVariable(VarText::PLANET_ID_TAG, std::to_string(planet_id));
+    sitrep.AddVariable(VarText::EMPIRE_ID_TAG, std::to_string(enemy_id));
     return sitrep;
 }
 
-SitRepEntry CreatePlanetCapturedSitRep(int planet_id, int empire_id) {
+SitRepEntry CreatePlanetCapturedSitRep(int planet_id, int empire_id, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_PLANET_CAPTURED"),
-        CurrentTurn() + 1,
+        current_turn + 1,
         "icons/sitrep/planet_captured.png",
         UserStringNop("SITREP_PLANET_CAPTURED_LABEL"), true);
-    sitrep.AddVariable(VarText::PLANET_ID_TAG,     std::to_string(planet_id));
-    sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     std::to_string(empire_id));
+    sitrep.AddVariable(VarText::PLANET_ID_TAG, std::to_string(planet_id));
+    sitrep.AddVariable(VarText::EMPIRE_ID_TAG, std::to_string(empire_id));
     return sitrep;
 }
 
-SitRepEntry CreatePlanetRebelledSitRep(int planet_id, int empire_id) {
+SitRepEntry CreatePlanetRebelledSitRep(int planet_id, int empire_id, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_PLANET_CAPTURED_NEUTRALS"),
-        CurrentTurn() + 1,
+        current_turn + 1,
         "icons/sitrep/planet_captured.png",
         UserStringNop("SITREP_PLANET_CAPTURED_NEUTRALS_LABEL"), true);
-    sitrep.AddVariable(VarText::PLANET_ID_TAG,     std::to_string(planet_id));
-    sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     std::to_string(empire_id));
+    sitrep.AddVariable(VarText::PLANET_ID_TAG, std::to_string(planet_id));
+    sitrep.AddVariable(VarText::EMPIRE_ID_TAG, std::to_string(empire_id));
     return sitrep;
 }
 
