@@ -43,12 +43,12 @@ class EmpireResources:
                     self.owned_asteroid_coatings += 1
 
                 if AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials and RESEARCH in planet.availableFoci:
-                    self.pids_computronium.append(planet.pid)
+                    self.pids_computronium.append(planet.id)
                     if planet.focus == RESEARCH:
                         self.have_computronium = True
 
                 if AIDependencies.HONEYCOMB_SPECIAL in planet.specials and INDUSTRY in planet.availableFoci:
-                    self.pids_honeycomb.append(planet.pid)
+                    self.pids_honeycomb.append(planet.id)
                     if planet.focus == INDUSTRY:
                         self.have_honeycomb = True
 

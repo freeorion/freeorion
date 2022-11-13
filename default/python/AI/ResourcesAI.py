@@ -422,7 +422,7 @@ class PlanetFocusManager:
         min_stability = get_named_real("COMPUTRONIUM_MIN_STABILITY")
         per_pop = get_named_real("COMPUTRONIUM_TARGET_RESEARCH_PERPOP")
         # TODO: check for supply as well
-        for _, pinfo in self.planet_info:
+        for _, pinfo in self.planet_info.items():
             if pinfo.current_focus == RESEARCH and pinfo.possible_output[RESEARCH].stability >= min_stability:
                 researchers += pinfo.planet.currentMeterValue(fo.meterType.population)
         return researchers * per_pop * self.priority_research > loss
