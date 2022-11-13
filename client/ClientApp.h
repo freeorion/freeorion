@@ -173,7 +173,6 @@ public:
 
     [[nodiscard]] SpeciesManager& GetSpeciesManager() noexcept override { return m_species_manager; }
     [[nodiscard]] const SpeciesManager& GetSpeciesManager() const noexcept { return m_species_manager; }
-    [[nodiscard]] const Species* GetSpecies(std::string_view name) override;
 
     [[nodiscard]] SupplyManager& GetSupplyManager() noexcept override { return m_supply_manager; }
 

@@ -224,7 +224,7 @@ void GodotClientApp::NewSinglePlayerGame() {
         human_player_setup_data.starting_species_name = "SP_HUMAN";   // kludge / bug workaround for bug with options storage and retreival.  Empty-string options are stored, but read in as "true" boolean, and converted to string equal to "1"
 
     if (human_player_setup_data.starting_species_name != "RANDOM" &&
-        !GetSpecies(human_player_setup_data.starting_species_name))
+        !GetSpeciesManager().GetSpecies(human_player_setup_data.starting_species_name))
     {
         const SpeciesManager& sm = GetSpeciesManager();
         if (sm.NumPlayableSpecies() < 1)

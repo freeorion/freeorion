@@ -319,9 +319,6 @@ ServerApp* ServerApp::GetApp()
 Empire* ServerApp::GetEmpire(int id)
 { return m_empires.GetEmpire(id).get(); }
 
-const Species* ServerApp::GetSpecies(std::string_view name)
-{ return m_species_manager.GetSpecies(name); }
-
 ObjectMap& ServerApp::EmpireKnownObjects(int empire_id)
 { return m_universe.EmpireKnownObjects(empire_id); }
 

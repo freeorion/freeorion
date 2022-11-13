@@ -293,7 +293,7 @@ std::shared_ptr<GG::Texture> ClientUI::SpecialIcon(std::string_view special_name
 }
 
 std::shared_ptr<GG::Texture> ClientUI::SpeciesIcon(std::string_view species_name) {
-    const Species* species = GetSpecies(species_name);
+    const Species* species = GetSpeciesManager().GetSpecies(species_name);
     std::string_view texture_name;
     if (species)
         texture_name = species->Graphic();
@@ -967,7 +967,7 @@ bool ClientUI::ZoomToShipPart(const std::string& part_name) {
 }
 
 bool ClientUI::ZoomToSpecies(const std::string& species_name) {
-    if (!GetSpecies(species_name))
+    if (!GetSpeciesManager().GetSpecies(species_name))
         return false;
     GetMapWnd()->ShowSpecies(species_name);
     return true;

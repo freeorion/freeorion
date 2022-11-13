@@ -49,9 +49,6 @@ Empire* ParserAppFixture::GetEmpire(int empire_id)
 SpeciesManager& ParserAppFixture::GetSpeciesManager() noexcept
 { return m_species_manager; }
 
-const Species* ParserAppFixture::GetSpecies(std::string_view name)
-{ return m_species_manager.GetSpecies(name); }
-
 SupplyManager& ParserAppFixture::GetSupplyManager() noexcept
 { return m_supply_manager; }
 

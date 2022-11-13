@@ -4,6 +4,7 @@
 #include "CUIControls.h"
 #include "../Empire/Empire.h"
 #include "../universe/NamedValueRefManager.h"
+#include "../universe/Species.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/ValueRefs.h"
 #include "../util/AppInterface.h"
@@ -588,9 +589,13 @@ void TextLinker::MarkLinks() {
     SetLinkedText(std::move(marked_text));
 }
 
+namespace {
+    auto get_species = [](std::string_view sv) { return GetSpeciesManager().GetSpecies(sv); };
+}
+
 std::string LinkStringIfPossible(std::string_view raw, std::string_view user_string) {
     if      (GetBuildingType(raw)) return LinkTaggedPresetText(VarText::BUILDING_TYPE_TAG, raw, user_string);
-    else if (GetSpecies(raw))      return LinkTaggedPresetText(VarText::SPECIES_TAG,       raw, user_string);
+    else if (get_species(raw))     return LinkTaggedPresetText(VarText::SPECIES_TAG,       raw, user_string);
     else if (GetSpecial(raw))      return LinkTaggedPresetText(VarText::SPECIAL_TAG,       raw, user_string);
     else if (GetPolicy(raw))       return LinkTaggedPresetText(VarText::POLICY_TAG,        raw, user_string);
     else if (GetShipHull(raw))     return LinkTaggedPresetText(VarText::SHIP_HULL_TAG,     raw, user_string);

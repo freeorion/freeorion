@@ -23,9 +23,6 @@ int ClientApp::PlayerID() const
 Empire* ClientApp::GetEmpire(int empire_id)
 { return m_empires.GetEmpire(empire_id).get(); }
 
-const Species* ClientApp::GetSpecies(std::string_view name)
-{ return m_species_manager.GetSpecies(name); }
-
 ObjectMap& ClientApp::EmpireKnownObjects(int empire_id) {
     // observers and moderators should have accurate info about what each empire knows
     if (m_empire_id == ALL_EMPIRES)

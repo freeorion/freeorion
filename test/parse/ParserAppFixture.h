@@ -41,7 +41,6 @@ public:
     Empire* GetEmpire(int empire_id) override;
 
     SpeciesManager& GetSpeciesManager() noexcept override;
-    const Species* GetSpecies(std::string_view name) override;
 
     SupplyManager& GetSupplyManager() noexcept override;
 

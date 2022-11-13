@@ -585,10 +585,10 @@ void GGHumanClientApp::NewSinglePlayerGame(bool quickstart) {
     if (human_player_setup_data.starting_species_name == "1")
         human_player_setup_data.starting_species_name = "SP_HUMAN";   // kludge / bug workaround for bug with options storage and retreival.  Empty-string options are stored, but read in as "true" boolean, and converted to string equal to "1"
 
+    const SpeciesManager& sm = this->GetSpeciesManager();
     if (human_player_setup_data.starting_species_name != "RANDOM" &&
-        !GetSpecies(human_player_setup_data.starting_species_name))
+        !sm.GetSpecies(human_player_setup_data.starting_species_name))
     {
-        const SpeciesManager& sm = this->GetSpeciesManager();
         if (sm.NumPlayableSpecies() < 1)
             human_player_setup_data.starting_species_name.clear();
         else

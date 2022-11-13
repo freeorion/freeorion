@@ -62,8 +62,6 @@ public:
 
     [[nodiscard]] virtual SpeciesManager& GetSpeciesManager() noexcept = 0;
 
-    [[nodiscard]] virtual const Species* GetSpecies(std::string_view name) = 0;
-
     [[nodiscard]] virtual SupplyManager& GetSupplyManager() noexcept = 0;
 
     /** Accessor for known objects of specified empire. */
@@ -119,10 +117,6 @@ protected:
 /** Accessor for the App's species manager */
 [[nodiscard]] inline SpeciesManager& GetSpeciesManager()
 { return IApp::GetApp()->GetSpeciesManager(); }
-
-/** Accessor for Species */
-[[nodiscard]] inline const Species* GetSpecies(std::string_view name)
-{ return IApp::GetApp()->GetSpecies(name); }
 
 /** Accessor for the App's empire supply manager */
 [[nodiscard]] inline SupplyManager& GetSupplyManager()
