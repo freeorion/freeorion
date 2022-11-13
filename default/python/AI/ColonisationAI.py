@@ -285,7 +285,7 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):  # noq
         if score > (0.8 * cost) and score > MINIMUM_COLONY_SCORE
     ]
 
-    debug("Colony/outpost ship matching: fleets %s to planets %s" % (fleet_pool, evaluated_planets))
+    debug(f"Colony/outpost ship matching: fleets {fleet_pool} to planets {evaluated_planets}")
 
     if try_all:
         debug("Trying best matches to current colony ships")
@@ -396,7 +396,7 @@ def __print_candidate_table(candidates, mission, show_detail=False):
         first_column = Number("Score")
         get_first_column_value = itemgetter(0)
     else:
-        warning("__print_candidate_table(%s, %s): Invalid mission type" % (candidates, mission))
+        warning(f"__print_candidate_table({candidates}, {mission}): Invalid mission type")
         return
     columns = [first_column, Text("Planet"), Text("System"), Sequence("Specials")]
     if show_detail:

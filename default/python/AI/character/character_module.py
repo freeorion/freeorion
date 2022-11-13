@@ -766,12 +766,12 @@ def get_trait_bypass_value(name: str, default: int, sentinel: int) -> int:
     :return: The trait
     """
 
-    force_option = "ai.trait.%s.force.enabled" % (name.lower(),)
+    force_option = f"ai.trait.{name.lower()}.force.enabled"
     if not fo.getOptionsDBOptionBool(force_option):
         return default
 
-    per_id_option = "ai.trait.%s.%s" % (name.lower(), fo.playerName().lower())
-    all_id_option = "ai.trait.%s.default" % (name.lower(),)
+    per_id_option = f"ai.trait.{name.lower()}.{fo.playerName().lower()}"
+    all_id_option = f"ai.trait.{name.lower()}.default"
 
     trait = fo.getOptionsDBOptionInt(per_id_option)
     if trait is None or trait == sentinel:

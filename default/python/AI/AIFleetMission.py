@@ -188,7 +188,7 @@ class AIFleetMission:
             if fleet_mission.type != self.type or fleet_mission.target != self.target:
                 debug("Local candidate %s does not have same mission." % fleet_mission)
                 continue
-            FleetUtilsAI.merge_fleet_a_into_b(fid, fleet_id, context="Order %s of mission %s" % (context, self))
+            FleetUtilsAI.merge_fleet_a_into_b(fid, fleet_id, context=f"Order {context} of mission {self}")
 
     def _is_valid_fleet_mission_target(self, mission_type: MissionType, target: Target):  # noqa: max-complexity
         if not target:

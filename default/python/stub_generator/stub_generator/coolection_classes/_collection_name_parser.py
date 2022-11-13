@@ -23,17 +23,17 @@ class Token:
 
 class ScalarToken(Token):
     def __init__(self, value: str, type_: str):
-        super(ScalarToken, self).__init__(value, type_, "", 0)
+        super().__init__(value, type_, "", 0)
 
 
 class SimpleCollectionToken(Token):
     def __init__(self, value: str, type_):
-        super(SimpleCollectionToken, self).__init__(value, f"{type_}[", "]", 1)
+        super().__init__(value, f"{type_}[", "]", 1)
 
 
 class PairToken(SimpleCollectionToken):
     def __init__(self, value: str):
-        super(PairToken, self).__init__(value, "Tuple")
+        super().__init__(value, "Tuple")
 
     def wrap(self, res: str):
         return f"{self.head}{res}, {res}{self.tail}"
@@ -41,7 +41,7 @@ class PairToken(SimpleCollectionToken):
 
 class MapToken(Token):
     def __init__(self, value: str):
-        super(MapToken, self).__init__(value, "Map[", "]", 2)
+        super().__init__(value, "Map[", "]", 2)
 
 
 _tokens: List[Token] = [

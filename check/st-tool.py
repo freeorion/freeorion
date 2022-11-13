@@ -172,7 +172,7 @@ class StringTable:
         return result
 
     def __repr__(self):
-        return "StringTable(fpath={}, language={}, entries={})".format(self.fpath, self.language, self.entries)
+        return f"StringTable(fpath={self.fpath}, language={self.language}, entries={self.entries})"
 
     def items(self):
         return self._entries
@@ -216,7 +216,7 @@ class StringTable:
                     continue
                 if entry.key not in value_times or len(value_times[entry.key]) != len(entry.value_times):
                     raise RuntimeError(
-                        "{}: git blame did not collect any matching author times for key {}".format(fpath, entry.key)
+                        f"{fpath}: git blame did not collect any matching author times for key {entry.key}"
                     )
                 entry.value_times = value_times[entry.key]
 
@@ -265,7 +265,7 @@ class StringTable:
                             StringTableEntry(untranslated_key, untranslated_keyline, None, notes, untranslated_lines)
                         )
                     except ValueError as e:
-                        raise ValueError("{}:{}: {}".format(fpath, keyline, str(e)))
+                        raise ValueError(f"{fpath}:{keyline}: {str(e)}")
                     untranslated_key = None
                     untranslated_keyline = None
                     notes = []
@@ -312,7 +312,7 @@ class StringTable:
                             StringTableEntry(untranslated_key, untranslated_keyline, None, notes, untranslated_lines)
                         )
                     except ValueError as e:
-                        raise ValueError("{}:{}: {}".format(fpath, keyline, str(e)))
+                        raise ValueError(f"{fpath}:{keyline}: {str(e)}")
                     untranslated_key = None
                     untranslated_keyline = None
                     notes = []
@@ -794,7 +794,7 @@ class EditServerHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-Type", "text/plain ; charset=utf-8")
         self.send_header(
-            "Content-Disposition", 'attachment; filename="{}"'.format(os.path.basename(self.server.source_st.fpath))
+            "Content-Disposition", f'attachment; filename="{os.path.basename(self.server.source_st.fpath)}"'
         )
         self.end_headers()
 

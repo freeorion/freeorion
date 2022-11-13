@@ -27,7 +27,7 @@ class Target:
     def __str__(self):
         target = self.get_object()
         if target is None:
-            target = "inaccessible %s_%s<>" % (self.object_name, self.id)
+            target = f"inaccessible {self.object_name}_{self.id}<>"
         return str(target)
 
     def get_object(self) -> Optional["fo.universeObject"]:

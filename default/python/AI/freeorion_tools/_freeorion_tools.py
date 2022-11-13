@@ -1,4 +1,3 @@
-# This Python file uses the following encoding: utf-8
 import freeOrionAIInterface as fo
 import inspect
 import pprint
@@ -309,7 +308,7 @@ def assertion_fails(cond: bool, msg: str = "") -> bool:
     warning("Stack trace (most recent call last): %s", "".join(traceback.format_list(stack)))
     frame = inspect.currentframe().f_back
     local_vars = pprint.pformat(frame.f_locals)
-    warning("Locals inside the {}\n{}".format(frame.f_code.co_name, local_vars))
+    warning(f"Locals inside the {frame.f_code.co_name}\n{local_vars}")
     warning("===\n")
     return True
 

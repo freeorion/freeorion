@@ -53,7 +53,7 @@ class SetStateTester:
     params=[
         int(),
         float(),
-        str(),
+        "",
         bool(),
         1,
         1.2,

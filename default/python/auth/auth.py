@@ -32,9 +32,9 @@ class AuthProvider:
                     else:
                         login, roles, password = line.rsplit(":", 2)
                         self.logins[login] = (password.strip(), self.__parse_roles(roles.strip()))
-        except IOError:
+        except OSError:
             exctype, value = sys.exc_info()[:2]
-            warning("Can't read auth file %s: %s %s" % (fo.get_user_config_dir() + "/auth.txt", exctype, value))
+            warning("Can't read auth file {}: {} {}".format(fo.get_user_config_dir() + "/auth.txt", exctype, value))
             self.default_roles = [
                 fo.roleType.clientTypeModerator,
                 fo.roleType.clientTypePlayer,

@@ -7,7 +7,7 @@ import CombatRatingsAI
 import fleet_orders
 
 trusted_classes = {
-    "%s.%s" % (cls.__module__, cls.__name__): cls
+    f"{cls.__module__}.{cls.__name__}": cls
     for cls in [
         AIFleetMission.AIFleetMission,
         fleet_orders.AIFleetOrder,

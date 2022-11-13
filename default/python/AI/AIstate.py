@@ -525,11 +525,11 @@ class AIstate:
                 if fleet.speed == 0:
                     monster_ratings.append(fleet_rating)
                     if verbose:
-                        debug("\t immobile enemy fleet %s has rating %.1f" % (fleet, fleet_rating))
+                        debug(f"\t immobile enemy fleet {fleet} has rating {fleet_rating:.1f}")
                     continue
 
                 if verbose:
-                    debug("\t mobile enemy fleet %s has rating %.1f" % (fleet, fleet_rating))
+                    debug(f"\t mobile enemy fleet {fleet} has rating {fleet_rating:.1f}")
                 mobile_fleets.append(fid)
                 if fleet.unowned:
                     mob_ratings.append(fleet_rating)
@@ -659,7 +659,7 @@ class AIstate:
                     combine_ratings(sys_status.get("planetThreat", 0), (min_hidden_attack * min_hidden_health)),
                 )
             if verbose and sys_status["fleetThreat"] > 0:
-                debug("%s intermediate status: %s" % (system, sys_status))
+                debug(f"{system} intermediate status: {sys_status}")
 
         enemy_supply, enemy_near_supply = self.assess_enemy_supply()  # TODO: assess change in enemy supply over time
         # assess secondary threats (threats of surrounding systems) and update my fleet rating

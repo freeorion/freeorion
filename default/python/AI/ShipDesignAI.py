@@ -181,7 +181,7 @@ class ShipDesignCache:
         debug("Hull-cache:")
         get_planet = fo.getUniverse().getPlanet
         for pid in planets:
-            debug("%s: %s" % (get_planet(pid).name, self.hulls_for_planets[pid]))
+            debug(f"{get_planet(pid).name}: {self.hulls_for_planets[pid]}")
 
     def print_parts_for_planets(self, pid=None):
         """Print the parts buildable on each planet.
@@ -203,7 +203,7 @@ class ShipDesignCache:
         for pid in planets:
             debug("  %s:" % get_planet(pid).name)
             for slot in self.parts_for_planets[pid]:
-                debug("    %s: %s" % (slot, self.parts_for_planets[pid][slot]))
+                debug(f"    {slot}: {self.parts_for_planets[pid][slot]}")
 
     def print_best_designs(self, print_diff_only: bool = True):
         """Print the best designs that were previously found.
@@ -243,14 +243,14 @@ class ShipDesignCache:
         universe = fo.getUniverse()
         debug("Cached production cost per planet:")
         for pid in self.production_cost:
-            debug("  %s: %s" % (universe.getPlanet(pid).name, self.production_cost[pid]))
+            debug(f"  {universe.getPlanet(pid).name}: {self.production_cost[pid]}")
 
     def print_production_time(self):
         """Print production_time cache."""
         universe = fo.getUniverse()
         debug("Cached production cost per planet:")
         for pid in self.production_time:
-            debug("  %s: %s" % (universe.getPlanet(pid).name, self.production_time[pid]))
+            debug(f"  {universe.getPlanet(pid).name}: {self.production_time[pid]}")
 
     def print_all(self):
         """Print the entire ship design cache."""
@@ -335,7 +335,7 @@ class ShipDesignCache:
                 cached_name = self.part_by_partname[partname].name
                 if cached_name != partname:
                     self.part_by_partname[partname] = fo.getShipPart(partname)
-                    error("Part cache corrupted. Expected: %s, got: %s. Cache was repaired." % (partname, cached_name))
+                    error(f"Part cache corrupted. Expected: {partname}, got: {cached_name}. Cache was repaired.")
         except Exception as e:
             self.part_by_partname.clear()
             error(e, exc_info=True)
@@ -350,7 +350,7 @@ class ShipDesignCache:
             try:
                 cached_name = fo.getShipDesign(self.design_id_by_name[designname]).name
                 if cached_name != designname:
-                    warning("ShipID cache corrupted. Expected: %s, got: %s." % (designname, cached_name))
+                    warning(f"ShipID cache corrupted. Expected: {designname}, got: {cached_name}.")
                     design_id = next(
                         iter(
                             [
@@ -1084,7 +1084,7 @@ class ShipDesigner:
                     best_hull_rating, current_parts = self._filling_algorithm(available_parts_in_hull)
                     design_cache_parts.update({hullname: (best_hull_rating, current_parts)})
                     if verbose:
-                        debug("Best rating for hull %s: %f %s" % (hullname, best_hull_rating, current_parts))
+                        debug(f"Best rating for hull {hullname}: {best_hull_rating:f} {current_parts}")
                 if best_hull_rating > best_rating_for_planet:
                     best_rating_for_planet = best_hull_rating
                     best_hull = hullname
@@ -1107,7 +1107,7 @@ class ShipDesigner:
                 else:
                     error("The best design for %s on planet %d could not be added." % (self.__class__.__name__, pid))
             elif verbose:
-                debug("Could not find a suitable design of type %s for planet %s." % (self.__class__.__name__, planet))
+                debug(f"Could not find a suitable design of type {self.__class__.__name__} for planet {planet}.")
         sorted_design_list = sorted(best_design_list, key=lambda x: x[0], reverse=True)
         return sorted_design_list
 
@@ -1130,7 +1130,7 @@ class ShipDesigner:
         if verbose:
             debug("Available parts:")
             for x in partname_dict:
-                debug("  %s: %s" % (x, partname_dict[x]))
+                debug(f"  {x}: {partname_dict[x]}")
 
         part_dict = {
             slottype: list(zip(partname_dict[slottype], (get_ship_part(x) for x in partname_dict[slottype])))
@@ -1173,7 +1173,7 @@ class ShipDesigner:
                                 and b.capacity >= a.capacity
                             ):
                                 if verbose:
-                                    debug("removing %s because %s is better." % (a.name, b.name))
+                                    debug(f"removing {a.name} because {b.name} is better.")
                                 part_dict[slottype].remove((a.name, a))
                                 break
         for slottype in part_dict:
@@ -1182,7 +1182,7 @@ class ShipDesigner:
         if verbose:
             debug("Available parts after filtering:")
             for x in partname_dict:
-                debug("  %s: %s" % (x, partname_dict[x]))
+                debug(f"  {x}: {partname_dict[x]}")
 
     def _starting_guess(self, available_parts, num_slots):
         """Return an initial guess for the filling of the slots.
@@ -1514,7 +1514,7 @@ class MilitaryShipDesignerBaseClass(ShipDesigner):
     description = "Military Ship"
 
     def __init__(self):
-        super(MilitaryShipDesignerBaseClass, self).__init__()
+        super().__init__()
         self.additional_specifications.minimum_fuel = 2
         self.additional_specifications.minimum_speed = 30
 
@@ -1522,7 +1522,7 @@ class MilitaryShipDesignerBaseClass(ShipDesigner):
         # as military ships are grouped up in fleets, their power rating scales quadratic in numbers.
         # To account for this, we need to maximize rating/cost_squared not rating/cost as usual.
         exponent = get_aistate().character.warship_adjusted_production_cost_exponent()
-        return super(MilitaryShipDesignerBaseClass, self)._adjusted_production_cost() ** exponent
+        return super()._adjusted_production_cost() ** exponent
 
     def _speed_factor(self):
         return 1 + 0.005 * (self.design_stats.speed - 85)
@@ -1576,7 +1576,7 @@ class WarShipDesigner(MilitaryShipDesignerBaseClass):
     )
 
     def __init__(self):
-        super(WarShipDesigner, self).__init__()
+        super().__init__()
         self.additional_specifications.expected_turns_till_fight = 10 if fo.currentTurn() < 50 else 5
 
     def _rating_function(self):
@@ -1676,7 +1676,7 @@ class CarrierShipDesigner(MilitaryShipDesignerBaseClass):
     NAME_THRESHOLDS = sorted([0, 1000])
 
     def __init__(self):
-        super(CarrierShipDesigner, self).__init__()
+        super().__init__()
         self.additional_specifications.expected_turns_till_fight = 10 if fo.currentTurn() < 50 else 5
         self.additional_specifications.minimum_fighter_launch_rate = 1
 
@@ -1719,7 +1719,9 @@ class CarrierShipDesigner(MilitaryShipDesignerBaseClass):
             this_rating, this_partlist = ShipDesigner._filling_algorithm(self, current_available_parts)
             if verbose:
                 debug(
-                    "Best rating for part %s is %.2f with partlist %s" % (this_hangar_part, this_rating, this_partlist)
+                    "Best rating for part {} is {:.2f} with partlist {}".format(
+                        this_hangar_part, this_rating, this_partlist
+                    )
                 )
             if this_rating > best_rating:
                 best_rating = this_rating
@@ -2154,7 +2156,7 @@ def _create_ship_design(
         else:
             warning("Tried to get just created design %s but got None" % design_name)
     else:
-        warning("Tried to add design %s but returned %s, expected 1" % (design_name, res))
+        warning(f"Tried to add design {design_name} but returned {res}, expected 1")
 
     return res
 
@@ -2171,7 +2173,7 @@ def _update_design_by_name_cache(
     design = None
     for design_id in fo.getEmpire().allShipDesigns:
         if verbose:
-            debug("Checking design %s in search for %s" % (fo.getShipDesign(design_id).name, design_name))
+            debug(f"Checking design {fo.getShipDesign(design_id).name} in search for {design_name}")
         if fo.getShipDesign(design_id).name == design_name:
             design = fo.getShipDesign(design_id)
             break
@@ -2220,7 +2222,7 @@ def _build_reference_name(hullname: str, partlist: List[str]) -> str:
     :param partlist: list of part names
     :return: reference name
     """
-    return "%s-%s" % (hullname, "-".join(sorted(partlist)))  # "Hull-Part1-Part2-Part3-Part4"
+    return "{}-{}".format(hullname, "-".join(sorted(partlist)))  # "Hull-Part1-Part2-Part3-Part4"
 
 
 def recursive_dict_diff(

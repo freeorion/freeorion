@@ -36,7 +36,7 @@ def create_move_orders_to_system(fleet: TargetFleet, target: TargetSystem) -> Li
     system_targets = can_travel_to_system(fleet.id, starting_system, target, ensure_return=ensure_return)
     result = [fleet_orders.OrderMove(fleet, system) for system in system_targets]
     if not result and starting_system.id != target.id:
-        warning("fleet %s can't travel to system %s" % (fleet.id, target))
+        warning(f"fleet {fleet.id} can't travel to system {target}")
     return result
 
 
@@ -49,7 +49,7 @@ def can_travel_to_system(
     if start == target:
         return [TargetSystem(start.id)]
 
-    debug("Requesting path for fleet %s from %s to %s" % (fo.getUniverse().getFleet(fleet_id), start, target))
+    debug(f"Requesting path for fleet {fo.getUniverse().getFleet(fleet_id)} from {start} to {target}")
     target_distance_from_supply = -min(get_system_supply(target.id), 0)
 
     # low-aggression AIs may not travel far from supply
@@ -184,5 +184,5 @@ def get_repair_fleet_order(fleet: TargetFleet) -> Optional["fleet_orders.OrderRe
     if drydock_sys_id is None:
         return None
 
-    debug("Ordering fleet %s to %s for repair" % (fleet, fo.getUniverse().getSystem(drydock_sys_id)))
+    debug(f"Ordering fleet {fleet} to {fo.getUniverse().getSystem(drydock_sys_id)} for repair")
     return fleet_orders.OrderRepair(fleet, TargetSystem(drydock_sys_id))

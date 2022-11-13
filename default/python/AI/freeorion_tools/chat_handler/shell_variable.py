@@ -11,4 +11,4 @@ class ShellVariable:
 
     def get_evaluation_command(self) -> str:
         yield from self.imports
-        yield "%s = %s" % (self.name, self.expression)
+        yield f"{self.name} = {self.expression}"

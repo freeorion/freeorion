@@ -60,7 +60,7 @@ def get_module_members(obj):
             continue
         type_key = get_type(member)
         if type_key == MemberType.UNKNOWN:
-            warning("Unknown: '%s' of type '%s': %s" % (name, type(member), member))
+            warning(f"Unknown: '{name}' of type '{type(member)}': {member}")
         else:
             type_inspector = _OBJECT_HANDLERS[type_key]
             module_members[type_key].append(type_inspector(name, member))

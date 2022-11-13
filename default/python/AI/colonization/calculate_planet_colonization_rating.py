@@ -170,7 +170,7 @@ def _path_to_capital(system_id: SystemId):
 def _planet_supply(planet: fo.planet) -> int:
     universe = fo.getUniverse()
     planet_supply = AIDependencies.supply_by_size.get(planet.size, 0)
-    bld_types = set(universe.getBuilding(bldg).buildingTypeName for bldg in planet.buildingIDs).intersection(
+    bld_types = {universe.getBuilding(bldg).buildingTypeName for bldg in planet.buildingIDs}.intersection(
         AIDependencies.building_supply
     )
     planet_supply += sum(
@@ -659,7 +659,7 @@ def _rate_with_growth_focus(
     for special in [spec for spec in planet.specials if spec in AIDependencies.metabolismBoosts]:
         rating = _rate_growth_special(special)
         focus_rating += rating
-        details.append("Bonus for %s: %.1f" % (special, rating))
+        details.append(f"Bonus for {special}: {rating:.1f}")
     flat_rating = _rate_focus_independent(planet, species, stability, max_pop)
     details.append(f"growth: stability={stability} focus={focus_rating}, flat={flat_rating}")
     return focus_rating + flat_rating

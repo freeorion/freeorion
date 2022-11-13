@@ -43,7 +43,7 @@ def print_production_queue(after_turn=False):
             element.name,
             universe.getPlanet(element.locationID),
             "%dx %d" % (element.remaining, element.blocksize),
-            "%.1f / %.1f" % (element.progress * cost, cost),
+            f"{element.progress * cost:.1f} / {cost:.1f}",
             "%.1f" % element.allocation,
             "%d" % element.turnsLeft,
         )

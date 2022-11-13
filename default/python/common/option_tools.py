@@ -71,7 +71,7 @@ def _create_default_config_file(path):
             with open(path, "w") as configfile:
                 config.write(configfile)
             print("default config is dumped to %s" % path)
-        except IOError:
+        except OSError:
             sys.stderr.write("AI Config Error: could not write default config %s\n" % path)
     return config
 
@@ -112,7 +112,7 @@ def parse_config(option_string, config_dir):
     else:
         try:
             config = _create_default_config_file(default_file)
-        except IOError:
+        except OSError:
             sys.stderr.write("AI Config: default file is not present and not writable at location %s\n" % default_file)
             config = _create_default_config_file(os.path.join(config_dir, CONFIG_DEFAULT_FILE))
 

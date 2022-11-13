@@ -496,7 +496,7 @@ def generate_production_orders():  # noqa: max-complexity
                         res = fo.issueRequeueProductionOrder(empire.productionQueue.size - 1, 0)  # move to front
                         debug("Requeueing %s to front of build queue, with result %d", building_name, res)
                 except:  # noqa: E722
-                    debug("problem queueing %s at planet %s" % (building_name, planet_used))
+                    debug(f"problem queueing {building_name} at planet {planet_used}")
 
     building_name = "BLD_BLACK_HOLE_POW_GEN"
     if empire.buildingTypeAvailable(building_name) and aistate.character.may_build_building(building_name):
@@ -650,7 +650,7 @@ def generate_production_orders():  # noqa: max-complexity
                         res = fo.issueRequeueProductionOrder(empire.productionQueue.size - 1, 0)  # move to front
                         debug("Requeueing %s to front of build queue, with result %d", building_name, res)
                 except:  # noqa: E722
-                    warning("problem queueing BLD_NEUTRONIUM_EXTRACTOR at planet %s of system %s" % (use_loc, use_sys))
+                    warning(f"problem queueing BLD_NEUTRONIUM_EXTRACTOR at planet {use_loc} of system {use_sys}")
 
     _build_ship_facilities(Shipyard.GEO)
 
@@ -982,13 +982,13 @@ def generate_production_orders():  # noqa: max-complexity
     for pty in filtered_priorities:
         filtered_priorities[pty] **= scaling_power
 
-    available_pp = dict(
-        [(tuple(el.key()), el.data()) for el in empire.planetsWithAvailablePP]
-    )  # keys are sets of ints; data is doubles
-    allocated_pp = dict(
-        [(tuple(el.key()), el.data()) for el in empire.planetsWithAllocatedPP]
-    )  # keys are sets of ints; data is doubles
-    planets_with_wasted_pp = set([tuple(pidset) for pidset in empire.planetsWithWastedPP])
+    available_pp = {
+        tuple(el.key()): el.data() for el in empire.planetsWithAvailablePP
+    }  # keys are sets of ints; data is doubles
+    allocated_pp = {
+        tuple(el.key()): el.data() for el in empire.planetsWithAllocatedPP
+    }  # keys are sets of ints; data is doubles
+    planets_with_wasted_pp = {tuple(pidset) for pidset in empire.planetsWithWastedPP}
     debug("avail_pp ( <systems> : pp ):")
     for planet_set in available_pp:
         debug(
@@ -1219,7 +1219,7 @@ def _get_queued_buildings(pid: PlanetId) -> List[BuildingName]:
     debug("Buildings already in Production Queue:")
     capital_queued_buildings = _get_queued_buildings_for_planet(pid)
     for bldg in capital_queued_buildings:
-        debug("    %s turns: %s PP: %s" % (bldg.name, bldg.turnsLeft, bldg.allocation))
+        debug(f"    {bldg.name} turns: {bldg.turnsLeft} PP: {bldg.allocation}")
     if not capital_queued_buildings:
         debug("No capital queued buildings")
     queued_building_names = [bldg.name for bldg in capital_queued_buildings]
@@ -1245,7 +1245,7 @@ def update_stockpile_use():
     # TODO: Do a priority and risk evaluation to decide on enabling stockpile draws
     empire = fo.getEmpire()
     production_queue = empire.productionQueue
-    resource_groups = set(tuple(el.key()) for el in empire.planetsWithAvailablePP)
+    resource_groups = {tuple(el.key()) for el in empire.planetsWithAvailablePP}
     planets_in_stockpile_enabled_group = set()
     for queue_index, element in enumerate(production_queue):
         if element.locationID in planets_in_stockpile_enabled_group:
@@ -1289,9 +1289,9 @@ def _build_ship_facilities(building_type: Shipyard, top_pids: Set[PlanetId] = fr
     queued_bld_pids = building_type.queued_at()
     if building_type in Shipyard.get_system_ship_facilities():
         current_coverage = building_type.built_or_queued_at_sys()
-        open_systems = set(
+        open_systems = {
             universe.getPlanet(pid).systemID for pid in get_best_pilot_facilities(Shipyard.BASE.value)
-        ).difference(current_coverage)
+        }.difference(current_coverage)
         try_systems = open_systems & prerequisite_type.built_or_queued_at_sys() if prerequisite_type else open_systems
         try_pids = {pid for sys_id in try_systems for pid in get_owned_planets_in_system(sys_id)}
     else:

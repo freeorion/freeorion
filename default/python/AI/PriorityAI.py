@@ -210,7 +210,7 @@ def _calculate_research_priority():  # noqa: max-complexity
     if got_quant:
         research_priority = min(research_priority + 0.1 * industry_priority, research_priority * 1.3)
     research_priority = int(research_priority)
-    debug("Research Production (current/target) : ( %.1f / %.1f )" % (total_rp, target_rp))
+    debug(f"Research Production (current/target) : ( {total_rp:.1f} / {target_rp:.1f} )")
     debug(
         "Priority for Research: %d (new target ~ %d RP)"
         % (research_priority, total_pp * research_priority / industry_priority)

@@ -28,7 +28,7 @@ class AIFleetOrder:
             error("Order required fleet got %s" % type(fleet))
 
         if not isinstance(target, self.TARGET_TYPE):
-            error("Target is not allowed, got %s expect %s" % (type(target), self.TARGET_TYPE))
+            error(f"Target is not allowed, got {type(target)} expect {self.TARGET_TYPE}")
 
         self.fleet = fleet
         self.target = target
@@ -103,7 +103,7 @@ class AIFleetOrder:
             execute_status = "executed"
         elif self.order_issued:
             execute_status = "order issued"
-        return "[%s] of %s to %s %s" % (
+        return "[{}] of {} to {} {}".format(
             self.ORDER_NAME,
             self.fleet.get_object(),
             self.target.get_object(),
@@ -122,7 +122,7 @@ class OrderMove(AIFleetOrder):
     TARGET_TYPE = TargetSystem
 
     def can_issue_order(self, verbose=False):  # noqa: max-complexity
-        if not super(OrderMove, self).can_issue_order(verbose=verbose):
+        if not super().can_issue_order(verbose=verbose):
             return False
         # TODO: figure out better way to have invasions (& possibly colonizations)
         #       require visibility on target without needing visibility of all intermediate systems
@@ -178,18 +178,16 @@ class OrderMove(AIFleetOrder):
                 is_military and total_rating_vs_planets > 2.5 * p_threat and total_rating > safety_factor * threat
             ):
                 debug(
-                    (
-                        "\tAdvancing fleet %d (rating %d) at system %d (%s) into system %d (%s) with threat %d"
-                        " because of sufficient empire fleet strength already at destination"
-                        % (
-                            self.fleet.id,
-                            fleet_rating,
-                            system_id,
-                            sys1_name,
-                            self.target.id,
-                            target_system_name,
-                            threat,
-                        )
+                    "\tAdvancing fleet %d (rating %d) at system %d (%s) into system %d (%s) with threat %d"
+                    " because of sufficient empire fleet strength already at destination"
+                    % (
+                        self.fleet.id,
+                        fleet_rating,
+                        system_id,
+                        sys1_name,
+                        self.target.id,
+                        target_system_name,
+                        threat,
                     )
                 )
                 return True
@@ -236,7 +234,7 @@ class OrderMove(AIFleetOrder):
                 return False
 
     def issue_order(self):
-        if not super(OrderMove, self).issue_order():
+        if not super().issue_order():
             return False
         fleet_id = self.fleet.id
         system_id = self.target.get_system().id
@@ -244,7 +242,7 @@ class OrderMove(AIFleetOrder):
         if system_id not in [fleet.systemID, fleet.nextSystemID]:
             dest_id = system_id
             fo.issueFleetMoveOrder(fleet_id, dest_id)
-            debug("Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target))
+            debug(f"Order issued: {self.ORDER_NAME} fleet: {self.fleet} target: {self.target}")
         aistate = get_aistate()
         if system_id == fleet.systemID:
             if aistate.get_fleet_role(fleet_id) == MissionType.EXPLORATION:
@@ -260,12 +258,12 @@ class OrderPause(AIFleetOrder):
     TARGET_TYPE = TargetSystem
 
     def is_valid(self):
-        if not super(OrderPause, self).is_valid():
+        if not super().is_valid():
             return False
         return bool(self.target.get_system().get_object())
 
     def issue_order(self):
-        if not super(OrderPause, self).issue_order():
+        if not super().issue_order():
             return False
         # not executed until actually arrives at target system
         self.executed = self.fleet.get_current_system_id() == self.target.get_system().id
@@ -276,12 +274,12 @@ class OrderResupply(AIFleetOrder):
     TARGET_TYPE = TargetSystem
 
     def is_valid(self):
-        if not super(OrderResupply, self).is_valid():
+        if not super().is_valid():
             return False
         return self.target.id in fo.getEmpire().fleetSupplyableSystemIDs
 
     def issue_order(self):
-        if not super(OrderResupply, self).issue_order():
+        if not super().issue_order():
             return False
         fleet_id = self.fleet.id
         system_id = self.target.get_system().id
@@ -302,7 +300,7 @@ class OrderResupply(AIFleetOrder):
                 % (fleet_id, self.ORDER_NAME, universe.getSystem(dest_id), universe.getSystem(system_id))
             )
             fo.issueFleetMoveOrder(fleet_id, dest_id)
-            debug("Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target))
+            debug(f"Order issued: {self.ORDER_NAME} fleet: {self.fleet} target: {self.target}")
         return True
 
 
@@ -311,7 +309,7 @@ class OrderOutpost(AIFleetOrder):
     TARGET_TYPE = TargetPlanet
 
     def is_valid(self):
-        if not super(OrderOutpost, self).is_valid():
+        if not super().is_valid():
             return False
         planet = self.target.get_object()
         if not planet.unowned:
@@ -324,7 +322,7 @@ class OrderOutpost(AIFleetOrder):
 
     def can_issue_order(self, verbose=False):
         # TODO: check for separate fleet holding outpost ships
-        if not super(OrderOutpost, self).can_issue_order(verbose=verbose):
+        if not super().can_issue_order(verbose=verbose):
             return False
         universe = fo.getUniverse()
         ship_id = FleetUtilsAI.get_ship_id_with_role(self.fleet.id, ShipRoleType.CIVILIAN_OUTPOST)
@@ -334,7 +332,7 @@ class OrderOutpost(AIFleetOrder):
         return ship is not None and self.fleet.get_object().systemID == self.target.get_system().id and ship.canColonize
 
     def issue_order(self):
-        if not super(OrderOutpost, self).issue_order():
+        if not super().issue_order():
             return False
         # we can't know yet if the order will actually execute; instead, rely on the fact that if the order does get
         # executed, then next turn it will be invalid
@@ -347,11 +345,11 @@ class OrderOutpost(AIFleetOrder):
         if ship_id is None:
             ship_id = FleetUtilsAI.get_ship_id_with_role(fleet_id, ShipRoleType.BASE_OUTPOST)
         if fo.issueColonizeOrder(ship_id, self.target.id):
-            debug("Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target))
+            debug(f"Order issued: {self.ORDER_NAME} fleet: {self.fleet} target: {self.target}")
             return True
         else:
             self.order_issued = False
-            warning("Order issuance failed: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target))
+            warning(f"Order issuance failed: {self.ORDER_NAME} fleet: {self.fleet} target: {self.target}")
             return False
 
 
@@ -360,7 +358,7 @@ class OrderColonize(AIFleetOrder):
     TARGET_TYPE = TargetPlanet
 
     def issue_order(self):
-        if not super(OrderColonize, self).issue_order():
+        if not super().issue_order():
             return False
         # we can't know yet if the order will actually execute; instead, rely on the fact that if the order does get
         # executed, then next turn it will be invalid
@@ -372,15 +370,15 @@ class OrderColonize(AIFleetOrder):
             ship_id = FleetUtilsAI.get_ship_id_with_role(fleet_id, ShipRoleType.BASE_COLONISATION)
 
         if fo.issueColonizeOrder(ship_id, self.target.id):
-            debug("Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target))
+            debug(f"Order issued: {self.ORDER_NAME} fleet: {self.fleet} target: {self.target}")
             return True
         else:
             self.order_issued = False
-            warning("Order issuance failed: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target))
+            warning(f"Order issuance failed: {self.ORDER_NAME} fleet: {self.fleet} target: {self.target}")
             return False
 
     def is_valid(self):
-        if not super(OrderColonize, self).is_valid():
+        if not super().is_valid():
             return False
         planet = self.target.get_object()
         if (planet.unowned or planet.ownedBy(fo.empireID())) and not planet.currentMeterValue(fo.meterType.population):
@@ -391,7 +389,7 @@ class OrderColonize(AIFleetOrder):
         return False
 
     def can_issue_order(self, verbose=False):
-        if not super(OrderColonize, self).is_valid():
+        if not super().is_valid():
             return False
         # TODO: check for separate fleet holding colony ships
         ship_id = FleetUtilsAI.get_ship_id_with_role(self.fleet.id, ShipRoleType.CIVILIAN_COLONISATION)
@@ -418,7 +416,7 @@ class OrderInvade(AIFleetOrder):
     TARGET_TYPE = TargetPlanet
 
     def is_valid(self):
-        if not super(OrderInvade, self).is_valid():
+        if not super().is_valid():
             return False
         planet = self.target.get_object()
         planet_population = planet.currentMeterValue(fo.meterType.population)
@@ -435,7 +433,7 @@ class OrderInvade(AIFleetOrder):
             return self.fleet.get_object().hasTroopShips
 
     def can_issue_order(self, verbose=False):
-        if not super(OrderInvade, self).is_valid():
+        if not super().is_valid():
             return False
         # TODO: check for separate fleet holding invasion ships
         ship_id = FleetUtilsAI.get_ship_id_with_role(self.fleet.id, ShipRoleType.MILITARY_INVASION, False)
@@ -454,7 +452,7 @@ class OrderInvade(AIFleetOrder):
         )
 
     def issue_order(self):
-        if not super(OrderInvade, self).can_issue_order():
+        if not super().can_issue_order():
             return False
 
         universe = fo.getUniverse()
@@ -464,7 +462,7 @@ class OrderInvade(AIFleetOrder):
 
         invasion_roles = (ShipRoleType.BASE_INVASION, ShipRoleType.MILITARY_INVASION)
 
-        debug("Issuing order: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target))
+        debug(f"Issuing order: {self.ORDER_NAME} fleet: {self.fleet} target: {self.target}")
         # will track if at least one invasion troops successfully deployed
         result = True
         aistate = get_aistate()
@@ -521,7 +519,7 @@ class OrderMilitary(AIFleetOrder):
     TARGET_TYPE = TargetSystem
 
     def is_valid(self):
-        if not super(OrderMilitary, self).is_valid():
+        if not super().is_valid():
             return False
         fleet = self.fleet.get_object()
         # TODO: consider bombardment-only fleets/orders
@@ -540,7 +538,7 @@ class OrderMilitary(AIFleetOrder):
         )
 
     def issue_order(self):
-        if not super(OrderMilitary, self).issue_order():
+        if not super().issue_order():
             return False
         target_sys_id = self.target.id
         fleet = self.target.get_object()
@@ -581,12 +579,12 @@ class OrderRepair(AIFleetOrder):
     TARGET_TYPE = TargetSystem
 
     def is_valid(self):
-        if not super(OrderRepair, self).is_valid():
+        if not super().is_valid():
             return False
         return self.target.id in fo.getEmpire().fleetSupplyableSystemIDs  # TODO: check for drydock still there/owned
 
     def issue_order(self):
-        if not super(OrderRepair, self).issue_order():
+        if not super().issue_order():
             return False
         fleet_id = self.fleet.id
         system_id = self.target.get_system().id
@@ -606,7 +604,7 @@ class OrderRepair(AIFleetOrder):
                 % (fleet_id, self.ORDER_NAME, universe.getSystem(dest_id), universe.getSystem(system_id))
             )
             fo.issueFleetMoveOrder(fleet_id, dest_id)
-            debug("Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target))
+            debug(f"Order issued: {self.ORDER_NAME} fleet: {self.fleet} target: {self.target}")
         ships_cur_health, ships_max_health = FleetUtilsAI.get_current_and_max_structure(fleet_id)
         self.executed = ships_cur_health == ships_max_health
         return True

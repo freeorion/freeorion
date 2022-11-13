@@ -3,7 +3,7 @@ from typing import Generator
 
 
 def get_code_location(generator: Generator) -> str:
-    return "%s:%s" % (os.path.basename(generator.gi_code.co_filename), generator.gi_frame.f_lineno)
+    return f"{os.path.basename(generator.gi_code.co_filename)}:{generator.gi_frame.f_lineno}"
 
 
 def get_item_with_location(generator: Generator) -> Generator:
