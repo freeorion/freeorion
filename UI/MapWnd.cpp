@@ -279,14 +279,18 @@ namespace {
      * objects on the lane is compressed into the space between the apparent
      * ends of the lane, but is proportional to the distance of the actual
      * position along the lane. */
-    boost::optional<std::pair<double, double>> ScreenPosOnStarlane(double X, double Y, int lane_start_sys_id, int lane_end_sys_id, const LaneEndpoints& screen_lane_endpoints) {
+    boost::optional<std::pair<double, double>> ScreenPosOnStarlane(
+        double X, double Y, int lane_start_sys_id, int lane_end_sys_id,
+        LaneEndpoints screen_lane_endpoints)
+    {
         // get endpoints of lane in universe.  may be different because on-
         // screen lanes are drawn between system circles, not system centres
         int empire_id = GGHumanClientApp::GetApp()->EmpireID();
         auto prev = EmpireKnownObjects(empire_id).get(lane_start_sys_id);
         auto next = EmpireKnownObjects(empire_id).get(lane_end_sys_id);
         if (!next || !prev) {
-            ErrorLogger() << "ScreenPosOnStarlane couldn't find next system " << lane_start_sys_id << " or prev system " << lane_end_sys_id;
+            ErrorLogger() << "ScreenPosOnStarlane couldn't find next system " << lane_start_sys_id
+                          << " or prev system " << lane_end_sys_id;
             return boost::none;
         }
 
