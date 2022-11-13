@@ -925,7 +925,7 @@ void Planet::ClampMeters() {
 namespace {
     // sorted pair, so order of empire IDs specified doesn't matter
     std::pair<int, int> DiploKey(int id1, int ind2)
-    { return std::make_pair(std::max(id1, ind2), std::min(id1, ind2)); }
+    { return {std::max(id1, ind2), std::min(id1, ind2)}; }
 }
 
 void Planet::ResolveGroundCombat(std::map<int, double>& empires_troops,
@@ -964,7 +964,7 @@ void Planet::ResolveGroundCombat(std::map<int, double>& empires_troops,
     for (auto highest_loser_it = inverted_empires_troops.rbegin();
          highest_loser_it != inverted_empires_troops.rend(); ++highest_loser_it)
     {
-        const auto& [loser_effective_troops, loser_id] = *highest_loser_it;
+        const auto [loser_effective_troops, loser_id] = *highest_loser_it;
         if (loser_id == victor_id)
             continue;
         auto it = diplo_statuses.find(DiploKey(loser_id, victor_id));
