@@ -61,7 +61,7 @@ GameRule(
     description="RULE_ENABLE_SUPER_TESTER_DESC",
     category="CONTENT",
     type=bool,
-    default=True,
+    default=False,
 )
 
 GameRule(
