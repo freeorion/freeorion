@@ -690,26 +690,11 @@ void SpeciesManager::SetSpeciesSpeciesOpinion(const std::string& opinionated_spe
                                               const std::string& rated_species, float opinion)
 { m_species_species_opinions[opinionated_species][rated_species] = opinion; }
 
-const std::map<std::string, std::set<int>>& SpeciesManager::GetSpeciesHomeworldsMap(
-    int encoding_empire) const
-{
-    if (encoding_empire == ALL_EMPIRES)
-        return m_species_homeworlds;
-    // TODO: filter, output only info about species an empire has observed...?
-    return m_species_homeworlds;
-}
-
-const std::map<std::string, std::map<int, float>>& SpeciesManager::GetSpeciesEmpireOpinionsMap(int encoding_empire) const
-{ return m_species_empire_opinions; }
-
-const std::map<std::string, std::map<std::string, float>>& SpeciesManager::GetSpeciesSpeciesOpinionsMap(int encoding_empire) const
-{ return m_species_species_opinions; }
-
 float SpeciesManager::SpeciesEmpireOpinion(const std::string& species_name, int empire_id) const {
     auto sp_it = m_species_empire_opinions.find(species_name);
     if (sp_it == m_species_empire_opinions.end())
         return 0.0f;
-    const std::map<int, float>& emp_map = sp_it->second;
+    const auto& emp_map = sp_it->second;
     auto emp_it = emp_map.find(empire_id);
     if (emp_it == emp_map.end())
         return 0.0f;
@@ -800,12 +785,6 @@ void SpeciesManager::UpdatePopulationCounter(const ObjectMap& objects) {
         }
     }
 }
-
-const std::map<std::string, std::map<int, float>>& SpeciesManager::SpeciesObjectPopulations(int) const
-{ return m_species_object_populations; }
-
-const std::map<std::string, std::map<std::string, int>>& SpeciesManager::SpeciesShipsDestroyed(int) const
-{ return m_species_species_ships_destroyed; }
 
 void SpeciesManager::SetSpeciesObjectPopulations(std::map<std::string, std::map<int, float>> sop)
 { m_species_object_populations = std::move(sop); }

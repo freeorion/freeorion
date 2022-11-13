@@ -267,13 +267,11 @@ public:
 
     /** returns a map from species name to a set of object IDs that are the
       * homeworld(s) of that species in the current game. */
-    [[nodiscard]] const std::map<std::string, std::set<int>>&
-        GetSpeciesHomeworldsMap(int encoding_empire = ALL_EMPIRES) const;
+    [[nodiscard]] const auto& GetSpeciesHomeworldsMap() const { return m_species_homeworlds; }
 
     /** returns a map from species name to a map from empire id to each the
       * species' opinion of the empire */
-    [[nodiscard]] const std::map<std::string, std::map<int, float>>&
-        GetSpeciesEmpireOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
+    [[nodiscard]] const auto& GetSpeciesEmpireOpinionsMap() const { return m_species_empire_opinions; }
 
     /** returns opinion of species with name \a species_name about empire with
       * id \a empire_id or 0.0 if there is no such opinion yet recorded. */
@@ -281,8 +279,7 @@ public:
 
     /** returns a map from species name to a map from other species names to the
       * opinion of the first species about the other species. */
-    [[nodiscard]] const std::map<std::string, std::map<std::string, float>>&
-        GetSpeciesSpeciesOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
+    [[nodiscard]] const auto& GetSpeciesSpeciesOpinionsMap() const { return m_species_species_opinions; }
 
     /** returns opinion of species with name \a opinionated_species_name about
       * other species with name \a rated_species_name or 0.0 if there is no
@@ -320,8 +317,9 @@ public:
 
     void UpdatePopulationCounter(const ObjectMap& objects);
 
-    [[nodiscard]] const std::map<std::string, std::map<int, float>>&       SpeciesObjectPopulations(int encoding_empire = ALL_EMPIRES) const;
-    [[nodiscard]] const std::map<std::string, std::map<std::string, int>>& SpeciesShipsDestroyed(int encoding_empire = ALL_EMPIRES) const;
+    [[nodiscard]] const auto& SpeciesObjectPopulations() const noexcept { return m_species_object_populations; }
+    [[nodiscard]] const auto& SpeciesShipsDestroyed() const noexcept { return m_species_species_ships_destroyed; }
+
     void SetSpeciesObjectPopulations(std::map<std::string, std::map<int, float>> sop);
     void SetSpeciesShipsDestroyed(std::map<std::string, std::map<std::string, int>> ssd);
 

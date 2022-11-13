@@ -679,11 +679,11 @@ void serialize(Archive& ar, SpeciesManager& sm, unsigned int const version)
     std::map<std::string, std::map<std::string, int>>   species_ships_destroyed;
 
     if constexpr (Archive::is_saving::value) {
-        species_homeworlds = sm.GetSpeciesHomeworldsMap(GlobalSerializationEncodingForEmpire());
-        empire_opinions = sm.GetSpeciesEmpireOpinionsMap(GlobalSerializationEncodingForEmpire());
-        other_species_opinions = sm.GetSpeciesSpeciesOpinionsMap(GlobalSerializationEncodingForEmpire());
-        species_object_populations = sm.SpeciesObjectPopulations(GlobalSerializationEncodingForEmpire());
-        species_ships_destroyed = sm.SpeciesShipsDestroyed(GlobalSerializationEncodingForEmpire());
+        species_homeworlds = sm.GetSpeciesHomeworldsMap();
+        empire_opinions = sm.GetSpeciesEmpireOpinionsMap();
+        other_species_opinions = sm.GetSpeciesSpeciesOpinionsMap();
+        species_object_populations = sm.SpeciesObjectPopulations();
+        species_ships_destroyed = sm.SpeciesShipsDestroyed();
     }
 
     ar  & BOOST_SERIALIZATION_NVP(species_homeworlds)
