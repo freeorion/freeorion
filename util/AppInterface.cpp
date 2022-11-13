@@ -26,7 +26,7 @@
 
 extern template TechManager::TechParseTuple parse::techs<TechManager::TechParseTuple>(const PythonParser& parser, const boost::filesystem::path& path);
 
-IApp*  IApp::s_app = nullptr;
+IApp* IApp::s_app = nullptr;
 
 IApp::IApp() {
     if (s_app)
@@ -38,10 +38,8 @@ IApp::IApp() {
 IApp::~IApp()
 { s_app = nullptr; }
 
-IApp* IApp::GetApp()
-{ return s_app; }
 
-int IApp::MAX_AI_PLAYERS() {
+int IApp::MAX_AI_PLAYERS() noexcept {
     // This is not just a constant to avoid the static initialization
     // order fiasco, because it is used in more than one compilation
     // unit during static initialization, albeit a the moment in two

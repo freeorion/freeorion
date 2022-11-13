@@ -85,7 +85,7 @@ public:
      *
      * @{ */
     [[nodiscard]] GalaxySetupData& GetGalaxySetupData() noexcept { return m_galaxy_setup_data; }
-    [[nodiscard]] const GalaxySetupData& GetGalaxySetupData() const override { return m_galaxy_setup_data; }
+    [[nodiscard]] const GalaxySetupData& GetGalaxySetupData() const noexcept override { return m_galaxy_setup_data; }
     /** @} */
 
     /** @brief Return the OrderSet of this client

@@ -54,7 +54,7 @@ public:
     [[nodiscard]] int SelectedFleetID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
     [[nodiscard]] int SelectedShipID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
 
-    [[nodiscard]] const GalaxySetupData& GetGalaxySetupData() const override { return m_galaxy_setup_data; }
+    [[nodiscard]] const GalaxySetupData& GetGalaxySetupData() const noexcept override { return m_galaxy_setup_data; }
 
     /** Checks if player with ID \a player_id is a human player
         who's client runs on the same machine as the server */

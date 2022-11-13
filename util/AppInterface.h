@@ -30,17 +30,14 @@ protected:
 
 public:
     IApp(const IApp&) = delete;
-
     IApp(IApp&&) = delete;
-
     virtual ~IApp();
 
     const IApp& operator=(const IApp&) = delete;
-
     IApp& operator=(IApp&&) = delete;
 
     /** Returns a IApp pointer to the singleton instance of the app. */
-    static IApp* GetApp();
+    static IApp* GetApp() noexcept { return s_app; };
 
     //! Returns the ::Universe known to this application
     //!
@@ -90,10 +87,10 @@ public:
     [[nodiscard]] virtual int SelectedFleetID() const { return INVALID_OBJECT_ID; }
     [[nodiscard]] virtual int SelectedShipID() const { return INVALID_OBJECT_ID; }
 
-    [[nodiscard]] static int MAX_AI_PLAYERS(); ///<Maximum number of AIs
+    [[nodiscard]] static int MAX_AI_PLAYERS() noexcept;
 
     /** Returns the galaxy setup data used for the current game */
-    [[nodiscard]] virtual const GalaxySetupData& GetGalaxySetupData() const = 0;
+    [[nodiscard]] virtual const GalaxySetupData& GetGalaxySetupData() const noexcept = 0;
 
     /** Returns the networking client type for the given empire_id. */
     [[nodiscard]] virtual Networking::ClientType GetEmpireClientType(int empire_id) const = 0;
@@ -162,7 +159,7 @@ protected:
 { return IApp::GetApp()->CurrentTurn(); }
 
 /** Returns the galaxy setup settings used in the current game. */
-[[nodiscard]] inline const GalaxySetupData& GetGalaxySetupData()
+[[nodiscard]] inline const GalaxySetupData& GetGalaxySetupData() noexcept
 { return IApp::GetApp()->GetGalaxySetupData(); }
 
 [[nodiscard]] inline Networking::ClientType GetEmpireClientType(int empire_id)
