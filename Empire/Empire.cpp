@@ -2640,9 +2640,9 @@ void Empire::UpdateOwnedObjectCounters(const Universe& universe) {
     m_species_ships_owned.clear();
     m_ship_designs_owned.clear();
     for (const auto& entry : objects.allExisting<Ship>()) {
-        if (!entry.second->OwnedBy(this->EmpireID()))
+        if (!entry.second->OwnedBy(m_id))
             continue;
-        auto ship = std::dynamic_pointer_cast<const Ship>(entry.second);
+        const auto* ship = static_cast<const Ship*>(entry.second.get());
         if (!ship)
             continue;
         if (!ship->SpeciesName().empty())
@@ -2653,8 +2653,7 @@ void Empire::UpdateOwnedObjectCounters(const Universe& universe) {
     // ships in the queue for which production started
     m_ship_designs_in_production.clear();
     for (const auto& elem : m_production_queue) {
-        ProductionQueue::ProductionItem item = elem.item;
-
+        const auto& item = elem.item;
         if ((item.build_type == BuildType::BT_SHIP) && (elem.progress > 0.0f))
             m_ship_designs_in_production[item.design_id] += elem.blocksize;
     }
@@ -2662,18 +2661,18 @@ void Empire::UpdateOwnedObjectCounters(const Universe& universe) {
     // update ship part counts
     m_ship_parts_owned.clear();
     m_ship_part_class_owned.clear();
-    for (const auto& design_count : m_ship_designs_owned) {
-        const ShipDesign* design = universe.GetShipDesign(design_count.first);
+    for (const auto [design_id, design_count] : m_ship_designs_owned) {
+        const ShipDesign* design = universe.GetShipDesign(design_id);
         if (!design)
             continue;
 
         // update count of ShipParts
-        for (const auto& ship_part : design->ShipPartCount())
-            m_ship_parts_owned[ship_part.first] += ship_part.second * design_count.second;
+        for (const auto& [part_name, part_count] : design->ShipPartCount())
+            m_ship_parts_owned[part_name] += part_count * design_count;
 
         // update count of ShipPartClasses
         for (const auto& part_class : design->PartClassCount())
-            m_ship_part_class_owned[part_class.first] += part_class.second * design_count.second;
+            m_ship_part_class_owned[part_class.first] += part_class.second * design_count;
     }
 
     // colonies of each species, and unspecified outposts
@@ -2682,7 +2681,7 @@ void Empire::UpdateOwnedObjectCounters(const Universe& universe) {
     for (const auto& entry : objects.allExisting<Planet>()) {
         if (!entry.second->OwnedBy(this->EmpireID()))
             continue;
-        auto planet = std::dynamic_pointer_cast<const Planet>(entry.second);
+        const auto* planet = static_cast<const Planet*>(entry.second.get());
         if (!planet)
             continue;
         if (planet->SpeciesName().empty())
@@ -2696,7 +2695,7 @@ void Empire::UpdateOwnedObjectCounters(const Universe& universe) {
     for (const auto& entry : objects.allExisting<Building>()) {
         if (!entry.second->OwnedBy(this->EmpireID()))
             continue;
-        auto building = std::dynamic_pointer_cast<const Building>(entry.second);
+        const auto building = static_cast<const Building*>(entry.second.get());
         if (!building)
             continue;
         m_building_types_owned[building->BuildingTypeName()]++;
@@ -2706,21 +2705,19 @@ void Empire::UpdateOwnedObjectCounters(const Universe& universe) {
 
 void Empire::CheckObsoleteGameContent() {
     // remove any unrecognized policies and uncategorized policies
-    auto policies_temp = m_adopted_policies;
+    const auto policies_temp = m_adopted_policies;
     for (auto& [policy_name, adoption_info] : policies_temp) {
         const auto* policy = GetPolicy(policy_name);
         if (!policy) {
             ErrorLogger() << "UpdatePolicies couldn't find policy with name: " << policy_name;
             m_adopted_policies.erase(policy_name);
-            continue;
-        }
 
-        if (adoption_info.category.empty()) {
+        } else if (adoption_info.category.empty()) {
             ErrorLogger() << "UpdatePolicies found policy " << policy_name << " in empty category?";
             m_adopted_policies.erase(policy_name);
         }
     }
-    auto policies_temp2 = m_available_policies;
+    const auto policies_temp2 = m_available_policies;
     for (auto& policy_name : policies_temp2) {
         const auto* policy = GetPolicy(policy_name);
         if (!policy) {
