@@ -14847,7 +14847,14 @@ BLD_LIGHTHOUSE
 Phare Interstellaire
 
 BLD_LIGHTHOUSE_DESC
-Diminue de 30 la [[metertype METER_STEALTH]] de tous les objets situés dans le même système et augmente de 20 la [[metertype METER_SPEED]] des astronefs alliés se trouvant à moins de 50 uu au début du tour. [[BUILDING_AVAILABLE_ON_OUTPOSTS]] et peut rendre optimale l'utilisation d'un [[buildingtype BLD_PLANET_DRIVE]].
+'''Diminue la [[metertype METER_STEALTH]] de tous les astronefs situés dans le même système de [[value BLD_LIGHTHOUSE_IMMEDIATE_STEALTH_MALUS]]. De plus, le Phare Interstellaire diminue la [[metertype METER_STEALTH]] de tous les objets d'une valeur égale au nombre de tours depuis sa mise en fonction, jusqu'à un maximum de [[value BLD_LIGHTHOUSE_CATALOG_STEALTH_MALUS]]. Il augmente également la [[metertype METER_SPEED]] des astronefs alliés débutant leur tour dans un périmètre de [[value BLD_LIGHTHOUSE_SPEEDUP_DISTANCE]] uu de [[value BLD_LIGHTHOUSE_SPEEDUP]] pour ce tour. [[BUILDING_AVAILABLE_ON_OUTPOSTS]] et peut rendre optimale l'utilisation d'un [[buildingtype BLD_PLANET_DRIVE]].
+
+Cette structure émet des ondes complexes de pulsations EM et de jets de particules afin de révéler l'emplacement des objets dans un système. Une fois le processus achevé, tous les objets communs dans un système sont enregistrés dans un catalogue, permettant ainsi d'identifier plus efficacement les occurrences inhabituelles.
+
+De par son fonctionnement, la structure s'enregistre elle-même dans le catalogue et s'avère donc très visible, avec une [[metertype METER_STEALTH]] diminuée de [[value BLD_LIGHTHOUSE_SELF_STEALTH_MALUS]].'''
+
+BLD_LIGHTHOUSE_CATALOG_STEALTH_LABEL
+Catalogue du Phare
 
 BLD_SCANNING_FACILITY
 Complexe de Détection
