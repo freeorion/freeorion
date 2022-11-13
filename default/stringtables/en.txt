@@ -6353,7 +6353,7 @@ METER_HAPPINESS_VALUE_LABEL
 Stability
 
 METER_HAPPINESS_VALUE_DESC
-'''The Stability of a colony's population starts out between 1 and 5 after initial colonization depending on how suitable the planet's [[encyclopedia ENVIRONMENT_TITLE]] is for that species. Stability is reduced to 0 after invasion and may also be affected by other factors. A minimum Stability of 5 is necessary for a colony to act as a source of settlers for colonizing other planets. Also [[metertype METER_INDUSTRY]] and [[metertype METER_RESEARCH]] grows slowly if Stability is below 5.
+'''The Stability of a colony's population starts out at 1. Stability is reduced to 0 after invasion and may also be affected by other factors. A minimum Stability of 5 is necessary for a colony to act as a source of settlers for colonizing other planets. Also [[metertype METER_INDUSTRY]] and [[metertype METER_RESEARCH]] grows slowly if Stability is below 5.
 
 The Target Stability is the stable Stability level a planet's population will approach, given the current factors influencing the planetary Stability. Its value is connected to [[encyclopedia ENC_BUILDING_TYPE]]s built on the planet, [[encyclopedia ENC_TECH]] researched by the empire, [[encyclopedia ENC_SPECIAL]]s linked to the planet, and various other game effects. If these factors change, then the Target Stability value is likely to shift.
 
@@ -6362,7 +6362,7 @@ Common stability modifiers:
 '''
 
 STABILITY_MODIFIERS
-'''• -/+ 5 Capital Supply Connection - Based on distance in jumps from Capital or Regional Administration Building. Does not affect [[encyclopedia INDEPENDENT_SPECIES_TRAIT_TEXT]] species and empires that have adopted [[policy PLC_CONFEDERATION]] policy.
+'''• -/+ 5 Capital Supply Connection - Based on distance in jumps from Capital or Regional Administration Building. Does not affect [[encyclopedia INDEPENDENT_SPECIES_TITLE]] species and empires that have adopted [[policy PLC_CONFEDERATION]] policy.
 • +5 Homeworld Species - species on their own homeworld are more stable
 • +5 Capital Species - Colonies with the same species as the capital are more stable. Does not apply on the Capital itself.
 • +10 Capital - Colony contains [[buildingtype BLD_IMPERIAL_PALACE]].
@@ -14998,7 +14998,7 @@ BLD_SOL_ORB_GEN
 Solar Orbital Generator
 
 BLD_SOL_ORB_GEN_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] on [[metertype METER_SUPPLY]] line connected planets, per [[metertype METER_POPULATION]] and depending on the star type:
+'''Increases [[metertype METER_TARGET_INDUSTRY]] on [[metertype METER_SUPPLY]] line connected planets set to [[encyclopedia INDUSTRY_FOCUS_TITLE]], per [[metertype METER_POPULATION]] and depending on the star type:
 • [[STAR_BLUE]] or [[STAR_WHITE]] (x[[value BLD_SOL_ORB_GEN_BRIGHT_TARGET_INDUSTRY_PERPOP]])
 • [[STAR_YELLOW]] or [[STAR_ORANGE]] (x[[value BLD_SOL_ORB_GEN_NORMAL_TARGET_INDUSTRY_PERPOP]])
 • [[STAR_RED]] (x[[value BLD_SOL_ORB_GEN_DIM_TARGET_INDUSTRY_PERPOP]])
