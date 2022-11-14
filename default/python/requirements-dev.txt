@@ -3,3 +3,4 @@ pytest==7.1.3
 pytest-github-actions-annotate-failures==0.1.6
 isort==5.10.1
 black==22.8.0
+pyupgrade==3.2.2
