@@ -173,4 +173,4 @@ def _print_empire_species_roster():
             *[grade_map.get(get_species_tag_grade(species_name, tag).upper(), "o") for tag in grade_tags],
             [tag for tag in species_tags if not any(s in tag for s in grade_tags) and "PEDIA" not in tag],
         )
-    species_table.print_table(info)
+    info(species_table)

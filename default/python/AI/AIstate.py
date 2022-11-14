@@ -306,7 +306,7 @@ class AIstate:
                 sys_status.get("jump2_threat", 0.0),
                 sys_status.get("jump3_threat", 0.0),
             )
-        threat_table.print_table(info)
+        info(threat_table)
 
     def __report_system_defenses(self):
         """Print a table with system defenses to the logfile."""
@@ -336,7 +336,7 @@ class AIstate:
                 sys_status.get("my_jump2_rating", 0.0),
                 sys_status.get("my_jump3_rating", 0.0),
             )
-        defense_table.print_table(info)
+        info(defense_table)
 
     def assess_planet_threat(self, pid, sighting_age=0):
         if sighting_age > 5:
@@ -940,7 +940,7 @@ class AIstate:
                 fleet_status["sysID"] = this_sys.id
             else:
                 warning("Fleet %s has no valid system." % fleet)
-        fleet_table.print_table(info)
+        info(fleet_table)
         debug("Empire standard fighter summary: %s", CombatRatingsAI.get_empire_standard_military_ship_stats())
         debug("------------------------")
 
@@ -988,7 +988,7 @@ class AIstate:
                     FleetUtilsAI.count_troops_in_fleet(fleet_id),
                     mission.target or "-",
                 )
-        mission_table.print_table(info)
+        info(mission_table)
 
     def __split_new_fleets(self):
         """Split any new fleets.

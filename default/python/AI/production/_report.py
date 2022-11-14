@@ -47,7 +47,7 @@ def print_production_queue(after_turn=False):
             "%.1f" % element.allocation,
             "%d" % element.turnsLeft,
         )
-    prod_queue_table.print_table(info)
+    info(prod_queue_table)
 
 
 def print_capital_info(homeworld):
@@ -75,4 +75,4 @@ def print_capital_info(homeworld):
             building.owner,
         )
 
-    table.print_table(info)
+    info(table)
