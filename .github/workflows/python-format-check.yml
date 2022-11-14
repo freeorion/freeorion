@@ -32,3 +32,6 @@ jobs:
       - name: Lint with isort
         run: |
           isort . --check-only --py 37 --diff --quiet
+      - name: Pyupgrade
+        run: |
+          pyupgrade --py37-plus **/*.py
