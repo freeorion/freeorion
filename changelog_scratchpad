@@ -57,7 +57,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -inline some getters
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -66,7 +66,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -mark some functions const and noexcept
     -prefer getRaw over get for UniverseObject lookup
     -avoid free GetSpecies
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -78,7 +78,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming / TODO
+ / TODO
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -91,13 +91,13 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -pass ScriptingContext to Special::InitialCapacity
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -128,13 +128,13 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -avoid call to free GetPathfinder()
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    noexcept
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -154,7 +154,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -163,13 +163,13 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -pass ScriptingContext to ShipDesign::ProductionCost, PerTurnCost, and ProductionTime
     -pass ScriptingContext to DefaultLocationForEmpire in pedia code
     -use context for species instead of free GetSpeciesManager
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    -grooming, avoid EmpireKnownObjects that might be a free function call
+, avoid EmpireKnownObjects that might be a free function call
     -remove unneded GetEmpire call
 
 
@@ -177,7 +177,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -avoid free EmpireKnownObjects function, use Universe member function instead
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -219,26 +219,26 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    noexcept
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -pass ScriptingContext to ShipDesign::ProductionLocation
-    -grooming
 
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    grooming
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
+
+
+Author: geoffthemedio <geoffthemedio@gmail.com>
+
+
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -361,19 +361,19 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
 
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    noexcept
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
+
+
+Author: geoffthemedio <geoffthemedio@gmail.com>
+
+
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -447,7 +447,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: O01eg <o01eg@yandex.ru>
@@ -499,7 +499,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -move SitRepEntry filtering functions into .cpp
     -avoid copying SitRepEntry unnecessarily
-    -grooming, noexcept
+, noexcept
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -508,7 +508,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -get species from context
     -dynamic_cast -> static_cast
     -avoid redundant checks if pointer is null after static_cast
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -523,7 +523,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    noexcept
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -531,7 +531,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -add turn parameter to CreateNewAutosaveFilePath
     -use client's turn member variable instead of calling CurrentTurn()
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -540,7 +540,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -add turn parameter to Resupply, SetSpecies, Depopulate, PopCenterPopGrowthProductionResearchPhase
     -use context species instead of free GetSpecies
     -switch some get to getRaw
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -558,7 +558,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -const Pt& to Pt
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -571,7 +571,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -590,7 +590,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    noexcept and moving getters into headers
+ and moving getters into headers
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -609,7 +609,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -624,7 +624,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -move optionals
     -noexcept
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -659,7 +659,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -factor out some repeated code getting SubTextures
     -take and return string_view instead of strings with WindowNameFromOption
     -pass GG::Pt by value
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -677,7 +677,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -690,7 +690,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -730,7 +730,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -noexcept
-    -grooming
+
 
 
 Author: Grummel7 <muzz@albatross.pond.sub.org>
@@ -798,14 +798,14 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    noexcept and inlining getters
+ and inlining getters
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -noexcept
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -875,7 +875,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    noexcept
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -903,7 +903,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -list -> vector
     -push_back -> emplace_back with move
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -921,7 +921,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -1195,7 +1195,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -pass pair<bool, bool> by value
     -pass rather than discarding force scroll flags to check_adjust_scroll_size_change
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -1208,7 +1208,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    noexcept
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -1220,7 +1220,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -1252,7 +1252,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -1272,7 +1272,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -1605,13 +1605,13 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    noexcept
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming / moved getters / setters into header
+ / moved getters / setters into header
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -1624,7 +1624,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -replace class template specialization with if constexpr
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -1798,7 +1798,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -1837,7 +1837,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -don't need separate const-lvalue-reference and rvalue-ref overloads for InstallEventFilter when the pointer is always copied
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -1854,7 +1854,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -boost::bind to lambdas
     -store connection in scoped connection
     -move BuildingsPanel ScanlineRenderer to file scope
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -1873,7 +1873,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -1881,7 +1881,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -reorder members to hopefully reduce padding bytes
     -move trivial getters into header and make noexcept
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -1896,7 +1896,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -replace boost::bind with lambda
     -pass string with move
     -pass and store function by const reference or with move as appropriate
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -2070,7 +2070,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -2111,7 +2111,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -remove some [[nodiscard]] from Order Check functions
     -add Check* functions to ShipDesignOrder
     -reorder some members to hopefully improve memory layout / reduce padding
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -2130,7 +2130,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -2142,7 +2142,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -2154,7 +2154,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: O01eg <o01eg@yandex.ru>
@@ -2303,7 +2303,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    -grooming
+
     -use unordered_map with custom hasher for GG::Clr
 
 
@@ -2323,7 +2323,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -make GetCheckSum return uint32_t
-    -grooming and noexcept
+ and noexcept
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -2354,7 +2354,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -use function local instead of static / file scope to store colour and depth write masks in BeginStencilClipping
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -2395,7 +2395,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -added or tweak static with constexpr
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -2405,7 +2405,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     =make HexClr a constexpr Clr constructor
     -pass Clr by value not reference
     -store star light colours in directly initialized static const container of array instead of vector
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -2431,14 +2431,14 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -constexpr
     -getRaw instead of get
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -pass flags to ExpensiveParseFromTextToTextElements by value
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -2451,7 +2451,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -2463,7 +2463,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -2508,7 +2508,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -add CircleArcSegments that renders alternating segments of a full circle with fewer GL calls than repeatedly calling CircleArc with incremented angles
-    -grooming
+
 
 
 Merge: 8140ea641 813f2c082
@@ -2598,7 +2598,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -store DiscreteValidator values in a vector
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -2700,7 +2700,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -use MultiByteToWideChar and WideCharToMultiByte to handle command line arguments
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -2767,7 +2767,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -3172,7 +3172,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    noexcept
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -3199,14 +3199,14 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -pass current turn instead of calling free CurrentTurn() function
-    -grooming / noexcept
+ / noexcept
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -get SpeciesManager and SupplyManager from context, client, or server rather than free functions
-    -grooming
+
     -TODO comments
 
 
@@ -3225,7 +3225,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -3238,7 +3238,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -3252,7 +3252,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -add limits to RenameOrder for length of name and what characters can be used
     -moving simple getters into header
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -3270,7 +3270,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -3325,7 +3325,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -4761,7 +4761,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -4771,19 +4771,19 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -refactor Condition::Eval overloads that matched into an input/output parameter to instead return an ObjectSet or TargetSet of matches
     -fix probable bug in ContainedBy::Match where an ObjectSet of candidates to match was being passed in, but ignored and replaced with any matches of the subcondition
     -remove Statistic::GetConditionMatches as a separate function
-    -grooming
 
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    grooming
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
+
+
+Author: geoffthemedio <geoffthemedio@gmail.com>
+
+
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -4795,7 +4795,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: Ouaz <Ouaz@users.noreply.github.com>
@@ -4976,7 +4976,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -5234,7 +5234,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -5265,7 +5265,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -5455,7 +5455,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -limit number of missing string stack to 3 instead of 10
-    -grooming in RomanNumber
+ in RomanNumber
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -5467,7 +5467,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    -grooming
+
     -comment tweak
 
 
@@ -5475,7 +5475,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -revert to storing the results of GetSortedPediaDirEntires in strings instead of partly in string_view since all parts are in some cases generated dynamically within the function, and thus can't be pointed to after it returns
-    -grooming / comments
+ / comments
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -5510,7 +5510,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -5974,7 +5974,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -5986,7 +5986,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -5998,7 +5998,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming, structured binding
+, structured binding
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -6255,7 +6255,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -rename BLOCK_FACTORY_MAP to BlockFactoryMap
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -6321,7 +6321,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -6478,7 +6478,7 @@ Author: Andrey <Cjkjvfnby@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -6502,7 +6502,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -6566,7 +6566,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    -grooming
+
     -[[nodiscard]]
 
 
@@ -6656,7 +6656,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -store tags in vector instead of set
     -rework HasTag and Tags functions for UniverseObject and various content classes
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -6742,7 +6742,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -6752,13 +6752,13 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -handle map<string, int> with or without std::less<> comparator in ComplexVariable<int>::Eval
     -store Empire::m_meters in vector
     -serialization updates
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -6890,7 +6890,7 @@ Author: Axel Groß <axel.gross@iaeste.at>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming/warning reduction
+/warning reduction
 
 
 Author: Ouaz <Ouaz@users.noreply.github.com>
@@ -7168,7 +7168,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -7198,7 +7198,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    -grooming
+
     -count empires with planets with vector instead of map
 
 
@@ -7218,7 +7218,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -reserve
-    -grooming
+
 
 
 Author: David CARLIER <devnexen@gmail.com>
@@ -7255,7 +7255,7 @@ Author: Grummel7 <muzz@albatross.pond.sub.org>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -7287,7 +7287,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -7307,7 +7307,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -unused variable
     -fixed no return value path
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -7387,7 +7387,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -7399,7 +7399,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -7437,7 +7437,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -add revert policies changes order mode
     -repurpose policies window clear button to revert
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -7450,13 +7450,13 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -use passed-in mod_keys
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -7623,7 +7623,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -8280,7 +8280,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    -grooming
+
     -reordering members
 
 
@@ -8293,7 +8293,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming, structured binding
+, structured binding
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -8405,7 +8405,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -add parameter to GG_ENUM and GG_CLASS_ENUM to specify the underlying type
     -make EnumMap store in two arrays instead of two maps, separately tracking its size to ensure not too much is inserted
     -make Flags store bits internally in an unsigned short instead of unsigned int
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -8624,7 +8624,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -avoid free Objects() calls, or make them more explicit
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -8772,7 +8772,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming / commenting
+ / commenting
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -8872,7 +8872,7 @@ Author: Michael Courtney <43386669+MichaelCourtney@users.noreply.github.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -8886,7 +8886,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -constexpr
     -remove unused tag parameter from CreateFromTag functions
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -9036,7 +9036,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    -grooming
+
     -counting tested and removable potential lanes
 
 
@@ -9075,7 +9075,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -9419,14 +9419,14 @@ Author: O01eg <o01eg@yandex.ru>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -switch from std::list and std::map to std::vector and boost::container::flat_map in ConnectedWithin
-    -grooming
+
 
 
 Author: TheSilentOne1 <TheSilentOne1@users.noreply.github.com>
@@ -9518,7 +9518,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -tweak / correct error messages
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -9554,7 +9554,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -9936,7 +9936,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -10255,7 +10255,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -10347,13 +10347,13 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -add SelectedSystemID, SelectedFleetID, and SelectedShipID getters to MapWnd
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -10623,7 +10623,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -structured binding
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -10780,7 +10780,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -10996,7 +10996,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -to_string instead of lexical_cast
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -11112,7 +11112,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -pass config_name for CUIWnd option generation as string_view
     -make some PRODUCTION_ITEM_DROP_TYPE statics constexpr
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -11320,7 +11320,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -11392,7 +11392,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -11796,7 +11796,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -index SubstitutionMap by string_view instead of string copies
-    -grooming / comments
+ / comments
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -11823,7 +11823,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -make TextLinker TAG constant into constexpr string_view
     -store and pass TextLinker link type as string_view
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -12021,7 +12021,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming / comment
+ / comment
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -12159,14 +12159,14 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -pass ScriptingContext into SupplyManager::Update
     -add static Empire::GetEmpireIDsWithDiplomaticStatusWithEmpire overload
     -pass ObjectMap into EmpireTotalSupplyRangeSumInSystem
-    -grooming, structured binding
+, structured binding
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -pass ObjectMap into ResourcePool::Update via Empire::UpdateResearchQueue and Empire::UpdateInfluenceSpending
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -12181,7 +12181,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -passing in Universe rather than global lookups
     -const restricting passed in System pointers
     -structured binding
-    -grooming
+
 
 
 Author: Ouaz <Ouaz@users.noreply.github.com>
@@ -12213,7 +12213,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -12238,7 +12238,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -pass strings into SaveFileColum constructors by forwarding reference
     -return string from SaveFileColumn::Title by const reference, not value
     -remove unneeded default SafeFileRow constructor
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -12246,7 +12246,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -replace raw pointers with unique_ptr
     -remove unused member
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -12530,7 +12530,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -12554,7 +12554,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -getting visibility info from context rather than Universe
     -add ScriptingContext constructor taking visibility info
     -refactor WeaponDamageImpl to not need to modify the visibility info of the main Universe or the passed-in ScriptingContext
-    -grooming
+
 
 
 Author: O01eg <o01eg@yandex.ru>
@@ -12665,7 +12665,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -appending instead of +
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -12733,7 +12733,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -12873,7 +12873,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -13054,7 +13054,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -13076,7 +13076,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -[[nodiscard]]
     -defaulted constructor
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -13094,7 +13094,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -remove unneeded System constructor
     -default values for Planet members
     -use context Universe rather than calling GetUniverse
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -13125,19 +13125,19 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    noexcept, grooming
+, grooming
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    noexcept
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -13164,7 +13164,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -add static_assert to Universe::InsertID to only work for UniverseObject-derived classes, and thereby remove a dynamic_pointer_cast
-    -grooming, removing unnecessary temporaries
+, removing unnecessary temporaries
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -13214,7 +13214,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -fixing another not-constexpr default constructor warning
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -13311,7 +13311,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: Andrey <Cjkjvfnby@gmail.com>
@@ -13337,7 +13337,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    -grooming
+
     -defaulting constructor
     -make getter const
     -make timer actually potentially useful
@@ -13453,7 +13453,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming, auto replacement
+, auto replacement
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -13483,13 +13483,13 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -13507,13 +13507,13 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -13982,7 +13982,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -removed some default values for ObjectMap parameter to various functions
     -prep for further passing of ScriptingContext by explicitly calling the global getters
     -added some checks when passing a ScriptingContext to a Universe member function that the passed-in ScriptingContext contains the same ObjectMap and Universe as the called-upon Universe
-    -grooming
+
 
 
 Merge: 4dca2ec76 0e7b9eb04
@@ -14085,7 +14085,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    -grooming
+
     -nodiscard
 
 
@@ -14104,7 +14104,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: Oberlus <sicofonte@gmail.com>
@@ -14182,7 +14182,7 @@ Author: Ouaz <Ouaz@users.noreply.github.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming, destructor defaulting
+, destructor defaulting
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -14201,13 +14201,13 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming, destructor defaulting
+, destructor defaulting
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming, destructor defaulting
+, destructor defaulting
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -14243,14 +14243,14 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -pass ScriptingContext rather than ObjectMao and Empire<anager separately
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -14377,7 +14377,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming / tweak
+ / tweak
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -14444,7 +14444,7 @@ Author: Grummel7 <muzz@albatross.pond.sub.org>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -14663,7 +14663,7 @@ Author: Grummel7 <muzz@albatross.pond.sub.org>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -14706,14 +14706,14 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming / structured binding
+ / structured binding
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -[[nodiscard]]
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -14824,7 +14824,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -[[fallthrough]]
-    -grooming
+
 
 
 Author: Andrey <Cjkjvfnby@gmail.com>
@@ -14855,7 +14855,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -remove [[maybe_unused]] that was giving warnings
-    -grooming
+
     -default init at declaration
 
 
@@ -14901,7 +14901,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -[[nodiscard]]
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -15315,7 +15315,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -[[nodiscard]]
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -15410,7 +15410,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -re-implemented ValueRefs TurnsSincePolicyAdopted and CumulativeTurnsPolicyAdopted using Empire const reference getters
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -15574,7 +15574,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    -grooming
+
     -structured binding
 
 
@@ -15587,7 +15587,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -15720,7 +15720,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    -grooming
+
     -added ContentType enum values for policies and techs (as yet unused)
 
 
@@ -15811,13 +15811,13 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -[[nodiscard]]
     -tweaking constness of passed shared_ptr
     -structured binding
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -15926,13 +15926,13 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -pass various parameters to Option and Rule by value with move
     -mark some functions [[nodiscard]]
     -move short_names container to file scope
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: Andrey <Cjkjvfnby@gmail.com>
@@ -16013,7 +16013,7 @@ Author: Grummel7 <muzz@albatross.pond.sub.org>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -16101,20 +16101,20 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -probably fix | to ||
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -::type to _t
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -16150,7 +16150,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming / make typedef more consistent
+ / make typedef more consistent
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -16168,7 +16168,7 @@ Author: Andrey <Cjkjvfnby@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -16204,7 +16204,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -16221,7 +16221,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -structured binding
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -16258,7 +16258,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -reference loop variables
-    -grooming
+
 
 
 Author: Andrey <Cjkjvfnby@gmail.com>
@@ -16368,7 +16368,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    -grooming
+
     -space between number and units
 
 
@@ -16402,7 +16402,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -replace Objects(), Empires(), and GetUniverse() calls with single calls at start of function, to facilitate future passing-in
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -16445,7 +16445,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -hopefully fix issue with tech tree controls initially having inconsistent button highlighting
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -16470,7 +16470,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -16604,7 +16604,7 @@ Author: Andrey <Cjkjvfnby@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -16715,7 +16715,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -16733,7 +16733,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming, structured binding
+, structured binding
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -16973,7 +16973,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -17733,7 +17733,7 @@ Author: O01eg <o01eg@yandex.ru>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -18076,7 +18076,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming / TODO
+ / TODO
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -18089,7 +18089,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -fixed overwriting invasion troops with rebel / neutral troops
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -18237,7 +18237,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -18564,14 +18564,14 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -SetEmpireStockpile parsing for which resource to set
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -18591,7 +18591,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -18611,7 +18611,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -18813,13 +18813,13 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -tweak policy slot layout
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -18946,7 +18946,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -19186,7 +19186,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -19270,7 +19270,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -19292,13 +19292,13 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -fixed crash when setting hotkeys, and possibly broken hotkey functionality
     -moved hotkey storage into .cpp and stored by value, not pointer
     -pass some vector instead of set
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -19310,21 +19310,21 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -move file checking into separate function
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -safety error check
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -19348,13 +19348,13 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -19379,7 +19379,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -cleanup / grooming PlaySound
-    -grooming PlayMusic
+ PlayMusic
 
 
 Author: Ouaz <Ouaz@users.noreply.github.com>
@@ -19399,13 +19399,13 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -19419,13 +19419,13 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -remove UpdateCombatLogManager call inGGHumanClientApp::StartGame as it was duplicating the one in PlayingTurn::PlayingTurn and causing combat logs to be requested and sent twice
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming / logging
+ / logging
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -19514,7 +19514,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -replaced IDString template with separate EmpireString and ShipDesignString functions
     -replaced GetPredefinedShipDesign with explicit GetUniverse().GetGenericShipDesign() calls
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -19569,7 +19569,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -return GenerateSitRepMessage parameters by const pointer
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -19658,14 +19658,14 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -implemented Operation and ComplexVariable deep copy constructors
     -used copy constructors for Clone() functions
     -thereby avoided using operator[] on a const vector&
-    -grooming
+
     -tab to spaces
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -19677,7 +19677,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Merge: 7b5353420 8f7310651
@@ -19889,14 +19889,14 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -static const to static constexpr
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -static const to static constexpr
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -19945,7 +19945,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming: mostly constexpr and () to {}
+: mostly constexpr and () to {}
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -20228,7 +20228,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -explicit casting to GLfloat to silence warnings
     -structured binding
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -20867,7 +20867,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -store Universe::m_objects in a unique_ptr to facilitate moving without invalidating references to it
     -move m_pathfinder when moving Universe
     -remove redundant Clear() in ~Universe and clearing in Universe serialization
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -21142,7 +21142,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -pass string by value with move
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -21203,7 +21203,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -21221,13 +21221,13 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -21289,13 +21289,13 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -structured bindings
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    -grooming
+
     -don't move from const
 
 
@@ -21370,7 +21370,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -default initializing
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -21513,7 +21513,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -21623,7 +21623,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -22022,7 +22022,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -moving pointers when passing
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -22034,7 +22034,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -22093,7 +22093,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Merge: e7768d0d5 d1d385a5f
@@ -22157,20 +22157,20 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -pass Universe into DisseminateSystemCombatInfo rather than using global getter
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    -grooming
+
     -removing seemingly unnecessary #includes
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -22183,7 +22183,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Merge: c28d15d77 e3ba0ee86
@@ -22216,7 +22216,7 @@ Author: O01eg <o01eg@yandex.ru>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -22231,7 +22231,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -22287,7 +22287,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -22345,7 +22345,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Merge: 9317bfa2b a41f854a2
@@ -22401,7 +22401,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    -grooming
+
     -added a commented-out plan for future contents of ScriptingContext
 
 
@@ -22854,7 +22854,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -22920,7 +22920,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming: moving and pushing
+: moving and pushing
 
 
 Author: Axel Groß <axel.gross@iaeste.at>
@@ -23446,7 +23446,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -23736,7 +23736,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -use visitor and check_if_any to optimize EmpireEliminated
-    -grooming
+
 
 
 Merge: ee8610a31 9818fcf8d
@@ -23909,7 +23909,7 @@ Author: Axel Groß <axel.gross@iaeste.at>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    -grooming
+
     -TODO
 
 
@@ -23917,7 +23917,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -pass system ids by reference not value
-    -grooming
+
     -commented out declarations of unimplemented functions
 
 
@@ -24010,7 +24010,7 @@ Author: Geoff <geoffthemedio@users.noreply.github.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: Miron Moderau <em3@minions.org.pl>
@@ -24256,7 +24256,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -24305,7 +24305,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -add icons for obstructive fleets in FleetWnd
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -24347,7 +24347,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -24404,7 +24404,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -24559,7 +24559,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -expose template type of Pending as result_type
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -24587,13 +24587,13 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -made CombatLogManager constructor default in header
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -24849,7 +24849,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -get IDs instead of pointers to fleets
     -store raw pointer locally
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -24867,7 +24867,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -pass and store raw pointers locally
     -emplacing
     -reserving
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -24881,7 +24881,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -store raw pointers locally
     -avoid string copy
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -24897,7 +24897,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -moving string
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -24991,7 +24991,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -storing raw pointers locally
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -25014,7 +25014,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -emplacing
     -avoid copy when looping
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -25060,7 +25060,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -pass strings and vectors by value with move
     -reserving
     -emplacing
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -25076,7 +25076,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -don't redundantly set browse time
     -use IconTextBrowseWnd for FleetPanel stat icon tooltips, rather than just text
     -move pointers
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -25088,7 +25088,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -25163,14 +25163,14 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -added parameter to MapWnd::RefreshFleetButtons to control whether to refresh existing fleet buttons or recreate them all
     -made some locals const
     -made some logging trace instead of debug
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -safety checks
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -25196,20 +25196,20 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -moving pointer
     -avoiding copying strings
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -moving pointers
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -25221,7 +25221,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -reworked fleet colour determination
     -moving texture pointers
     -avoiding copying strings
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -25229,14 +25229,14 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -MultiTextureStaticGraphic constructor taking vector&& and moving textures and styles
     -made RotatingGraphic take textures by value and move
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -moving pointer
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -25254,7 +25254,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -25275,7 +25275,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -avoid temporary
     -emplacing
     -reserving
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -25457,7 +25457,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming, defaulting
+, defaulting
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -25509,7 +25509,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -emplacing
     -using and passing raw pointers for local or immediate use
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -25529,7 +25529,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -moving strings
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -25582,7 +25582,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -emplacing
     -storing raw pointers locally
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -25641,7 +25641,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -defaulting some member variables
     -emplacing
     -reserving
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -25700,7 +25700,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -take char* or string&& in SitRepEntry constructor
     -move strings into SitRepEntry when possible
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -25825,7 +25825,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -moving strings
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -25895,7 +25895,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -defaulting default constructor
     -removed seemingly unnecessary virtual destructor
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -25931,7 +25931,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -moving
     -storing raw pointers locally
     -reserving
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -25966,7 +25966,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -safety try-catch when lexical casting
     -using some raw pointers instead of shared_ptr for local variables and containers
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -25979,7 +25979,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -avoid dynamic_pointer_cast
-    -grooming
+
     -emplacing
     -reserving
     -moving
@@ -26056,13 +26056,13 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -don't move from a member variable that's used later, fixes crash clicking on a sitrep combat link
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming, mostly emplacing
+, mostly emplacing
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -26147,13 +26147,13 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming, emplacing
+, emplacing
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming, mostly emplacing
+, mostly emplacing
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -26303,7 +26303,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -26323,7 +26323,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -fix naming issues with policy Availability and AvailabilityManager that were copy-pasted from the ship part equivalent
     -add filtering of policies by restriction within the unavailable filter button
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -26335,7 +26335,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -26365,7 +26365,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Merge: fec67bcbe fdf5a9c73
@@ -26380,7 +26380,7 @@ Author: Geoff <geoffthemedio@users.noreply.github.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming, one emplace
+, one emplace
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -26494,7 +26494,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -save all created OwnerColoredSystemName for a SystemIcon, indexed by font point size, to avoid needing to recreate them when zooming
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -26595,7 +26595,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -26619,7 +26619,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -26631,7 +26631,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -26639,7 +26639,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -capture by reference
     -moving
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -26703,7 +26703,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -generate log text in lambda
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -26745,13 +26745,13 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -moving string
     -don't move from simultaneously with using
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -26787,7 +26787,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -don't pass path through PathToString and then back into a new path before returning.
     -use is_nil() instead of comparing UUIDs to a new UUID constructed from {{0}}
     -use nil_generator instead of constructing UUIDs from {{0}}
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -26805,7 +26805,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -26823,7 +26823,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -moving strings
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -26850,7 +26850,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming, mostly moving strings
+, mostly moving strings
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -27161,13 +27161,13 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming, mostly emplacing
+, mostly emplacing
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -27320,7 +27320,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Merge: 2db745831 3a4c61572
@@ -27349,7 +27349,7 @@ Author: Ouaz <Ouaz@users.noreply.github.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Merge: b28561711 7915b837f
@@ -28341,7 +28341,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming / emplacing
+ / emplacing
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -28398,7 +28398,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     -disable prod queue popup commands for order issuing when the whole production wnd / queue is disabled
     -add IteraterIndex to get the index of an iterator in the ProdQueueListBox that won't get stuck in an infinite loop searching for an iterator that isn't present, which can occur when a queue right-click popup is open while the list is refreshed, which invalidates the iterator for the queue item that was right-clicked
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -28416,7 +28416,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: Axel Gross <axel.gross@iaeste.at>
@@ -28516,7 +28516,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -perfect forward string parameters
-    -grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -28528,14 +28528,14 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    -grooming
+
     -reserving space in containers for parsed items
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -29045,7 +29045,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Merge: ad171bd43 a23591063
@@ -29452,7 +29452,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -29618,20 +29618,20 @@ Author: Rob Gill <rrobgill@protonmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    -grooming
+
     -fixed policy links using tech tag
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming, mostly based on pull request review comments
+, mostly based on pull request review comments
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -29649,7 +29649,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    grooming
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
