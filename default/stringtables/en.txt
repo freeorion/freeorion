@@ -1385,6 +1385,18 @@ Minimum distance monsters start from Capital
 RULE_MINIMUM_MONSTER_DISTANCE_CAPITAL_DESC
 Minimum distance monsters start from Capital
 
+RULE_OWNED_COLONIES_AT_MAXIMUM_UPKEEP
+Owned colonies at maximum upkeep
+
+RULE_OWNED_COLONIES_AT_MAXIMUM_UPKEEP_DESC
+Number of owned colonies at which upkeep per colony reaches its maximum.
+
+RULE_MAXIMUM_COLONY_UPKEEP
+Maximum upkeep per colony
+
+RULE_MAXIMUM_COLONY_UPKEEP_DESC
+Maximum influence upkeep per colony.
+
 RULE_ALLOW_CONCEDE
 Allow Conceding
 

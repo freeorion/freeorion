@@ -1,6 +1,24 @@
 
+// Owned non-exobot colonies + 0.25*(owned exobots and outposts)
+OWNED_PLANETS
+'''((Statistic Count condition = And [
+                            Planet
+                            OwnedBy empire = Source.Owner
+                            Species
+                            Not Species name = "SP_EXOBOT"
+                        ])
+                        + ((NamedReal name = "OUTPOST_RELATIVE_ADMIN_COUNT" value = 0.25)
+                        * Statistic Count condition = And [
+                            Planet
+                            OwnedBy empire = Source.Owner
+                            Or [
+                                Not Species
+                                Species name = "SP_EXOBOT"
+                            ]
+                        ]))'''
+
 BASE_INFLUENCE_COSTS
-'''EffectsGroup      // colonies consume influence, proportional to square-root of how many populated planets and non-populated outposts the empire controls
+'''EffectsGroup  // Influence upkeep per colony
             scope = Source
             activation = And [
                 Planet
@@ -11,24 +29,16 @@ BASE_INFLUENCE_COSTS
             accountinglabel = "COLONY_ADMIN_COSTS_LABEL"
             priority = [[TARGET_LAST_BEFORE_OVERRIDE_PRIORITY]]
             effects = SetTargetInfluence value = Value -
-                (NamedReal name = "COLONY_ADMIN_COSTS_PER_PLANET" value = 0.4) * ((
-                    Statistic Count condition = And [
-                        Planet
-                        OwnedBy empire = Source.Owner
-                        Species
-                        Not Species name = "SP_EXOBOT"
-                    ] +
-                    ((NamedReal name = "OUTPOST_RELATIVE_ADMIN_COUNT" value = 0.25) *
-                        (Statistic Count condition = And [
-                            Planet
-                            OwnedBy empire = Source.Owner
-                            Or [
-                                Not Species
-                                Species name = "SP_EXOBOT"
-                            ]
-                        ])
-                    )
-                )^0.5)
+                (NamedReal name = "MAXIMUM_COLONY_UPKEEP" value = (GameRule name = "RULE_MAXIMUM_COLONY_UPKEEP"))
+                * ( 1.0
+                    - (min(
+                        [[OWNED_PLANETS]],
+                        (NamedInteger
+                            name = "OWNED_COLONIES_AT_MAXIMUM_UPKEEP"
+                            value = (GameRule name = "RULE_OWNED_COLONIES_AT_MAXIMUM_UPKEEP")
+                        )
+                    ) / (NamedIntegerLookup name = "OWNED_COLONIES_AT_MAXIMUM_UPKEEP") - 1.0)^2.0
+                )^0.5
 
         EffectsGroup      // species homeworlds consume more influence
             scope = Source
