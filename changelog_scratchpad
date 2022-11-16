@@ -24975,12 +24975,6 @@ Author: Oberlus <sicofonte@gmail.com>
     Fix changed file mode
 
 
-Author: Oberlus <sicofonte@gmail.com>
-
-
-    Replace Arc Disruptor icons with online-edited versions
-
-
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
@@ -25101,21 +25095,6 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     pass column headers pointer by value and move
-
-
-Merge: 2173a31ea 054db8814
-Author: Geoff <geoffthemedio@users.noreply.github.com>
-
-
-    Merge pull request #3168 from Oberlus/FixBioadaptiveDoc
-    
-    Fix Bio-Adaptive hull regeneration description.
-
-
-Author: Oberlus <sicofonte@gmail.com>
-
-
-    Fix Bio-Adaptive hull regeneration description.
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -26962,9 +26941,7 @@ Author: Axel Groß <axel.gross@iaeste.at>
 - Planets
     - Many building and species balance adjustmens along with new government systems
     - Add precognitive detection to Fulver, giving basic visibility to starlane connected planets
-    - Made Chato BAD_POPULATION
     - Asteroid processor and Asteroid Reformation processor now remove themselves if their planet is not an asteroid
-    - Delayed effects of Experimentor outpost 50 turns
     - Remove InterSpecies academy location requirement dependence on preferred (now default) focus
 
 - Fields
