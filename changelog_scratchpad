@@ -23724,9 +23724,8 @@ Author: Oberlus <sicofonte@gmail.com>
     - Used to adopt policies
     - Going into debt will reduce planet stability
 - Balance adjustments for buildings, techs, policies, and species effects
-- Combats default to 4 bouts, with ship structure and damaged adjusted accordingly
+- Combats default to 4 bouts, with ship structure and damage adjusted accordingly
 - Added additional fleet aggression settings for finer control of blockading, hiding, and combat initiation
-- Python 3.7+ is now supported and required. 
 
 
 ### Detailed Changelog
@@ -23755,15 +23754,15 @@ Author: Oberlus <sicofonte@gmail.com>
 #### Content and Balance
 
 - Government
-    - Added policies
+    - Added numerous policies that empires can adopt
 
 - Ships
     - Ship structure and damage adjusted for 4 bout combats
-    - Added ROBOTIC_HULL tag to Space Flux Bubble hull
-    - Fixed Sly refueling detection of systems with gas giants
-    - Various cost rebalancing
-    - Apply ship weapon damage rule scaling to species weapon bonuses
+    - Added the Flux Lance weapon that is "short range" any only attacks bout 3 (or 2 if the Charge policy is adopted)
+    - Several monster weapons similarly only do damage starting on bout 3
+    - Applied ship weapon damage rule scaling to species weapon bonuses
     - Made blockade checks test that a fleet is set to Obstructive not Aggressive
+    - Various cost rebalancings
 
 - Planets
     - Many building and species balance adjustmens along with new government systems
@@ -23785,6 +23784,7 @@ Author: Oberlus <sicofonte@gmail.com>
     - Adjusted info shared between allied and non-allied empires
 
 - Pedia
+    - Replaced various hard-coded numbers with content script-derived calculated values
     - Fixed placement limit documenation for InterSpecies academy
     - Documented Planetary Starlane Drive
     - Additional entries for planetary focus game concept
@@ -23841,6 +23841,8 @@ Author: Oberlus <sicofonte@gmail.com>
 
 - Dependencies and Versions
     - Raised C++ language version to C++17
-    - Moved to compiling with Visual Studio 2019 or 2022 on Windows
+    - Moved to compiling with Visual Studio 2019 or 2022 on Windows, removed 2017 support
+    - Python 3.7+ is now supported and required. 
+    - Bumped minimum versions of various dependencies and versions included in the FreeOrion SDK
 
 - Added named ValueRefs that can be defined in script and referenced elsewhere in scripts or in stringtable entries
