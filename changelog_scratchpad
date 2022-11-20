@@ -2620,107 +2620,15 @@ Author: Grummel7 <muzz@albatross.pond.sub.org>
     The AI still builds too many troopers (priority calculation sometimes produces strange results) and may ignore good planets (planetary rating also needs work), but these are for another PR.
 
 
-Author: Oberlus <sicofonte@gmail.com>
-
-
-    Fix Propaganda effect on enemies (#3759)
-
-
-Merge: ec969b7bb e2374e7b2
-Author: Morlic-fo <Morlic@gmx.de>
-
-
-    Merge pull request #3755 from Grummel7/twoFixes
-    
-    Two fixes
-
-
-Author: Morlic-fo <Morlic@gmx.de>
-
-
-    Fix ScriptingContext in Tech::ResearchCost (#3750)
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    Bump dev-tools versions (#3752)
-    
-    * Bump dev-tools versions
-    * Fix new warnings
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    Fixed duplicate calls of bake_future_focus
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    unlock with set_colony_builders
-    Unlocking after survey_universe is too late, since it uses
-    get_colony_builders
-
-
-Merge: 82560a62e 5328b927d
-Author: Morlic-fo <Morlic@gmx.de>
-
-
-    Merge pull request #3746 from Morlic-fo/DebugSP
-    
-    Fix #3743
-
-
-Author: Morlic-fo <Morlic@gmx.de>
-
-
-    Fix policy PROPAGANDA script
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Fix char sign definition in enums
-
-
-Merge: 87e2ed334 a0368836b
-Author: Morlic-fo <Morlic@gmx.de>
-
-
-    Merge pull request #3741 from Morlic-fo/RefactorSplitFleet
-    
-    Let split_ship_from_fleet return INVALID_ID on failure
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
 
     [AI] Ensure colony_buildes are initialized before usage (#3744)
 
 
-Author: Morlic-fo <Morlic@gmx.de>
-
 
     Fix reconnection attempts sometimes persisting throughout timeout.
-    
     On expiry of m_deadline_timer, the m_reconnect_timer is canceled. However, if both timers expire in a short enough timeframe, the m_reconnect_timer callback may already have been scheduled and thus can no longer be canceled. To prevent this, let m_deadline_timer set a flag upon expiry and check that flag before attempting to reconnect.
 
 
-Author: Oberlus <sicofonte@gmail.com>
-
-
-    Avoid repeating playable species (#3742)
-
-
-Author: Morlic-fo <Morlic@gmx.de>
-
-
-    Explicitly provide .count() to help some compilers...
-
-
-Author: Morlic-fo <Morlic@gmx.de>
 
 
     Add some TraceLogging to debug #3743
@@ -3166,111 +3074,9 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -EmpireTotalSupplyRange and DistanceBetweenObjects take ObjectMap parameters
 
 
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -avoid free Objects() calls, or make them more explicit
 
 
 
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    passing and using context rather than free GetEmpire() and Objects()
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove GetSourceObjectForEmpire() that was redundant with a Empire::Source
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    clean up some GetUniverse(), Empries(), and GetEmpire() calls
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove default parameter GetUniverse() call
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -remove ~Empire()
-    -pass EmpireColor by value
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    tweak member order to improve packing in memory
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -remove recently-added Universe parameters to UniverseObject constructors, so that UniverseObject are no constructed with a default StateChangedSignal with no combiner set
-    -call SetSignalCombiner on moved-in objects in Universe::operator=
-
-
-Author: Oberlus <sicofonte@gmail.com>
-
-
-    Fix repeated NamedValue (#3724)
-
-
-Author: st-pa-fo <37298400+st-pa-fo@users.noreply.github.com>
-
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -add assignable_blocking_combiner that can be modified after construction by assignment
-    -add UniverseObject::SetSignalCombiner
-    -set the StateChangedSignal combiner when deserializing or inserting objects into a Universe to use that Universe's signal inhibitor flag
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -pass Universe and current turn when constructing UniverseObject and derived classes rather than accessing global getters
-    -default construct UniverseObject derived types in serialize functions
-    -pass by value some copied-anyway parameters like std::string
-    -safety check before using possibly null design pointer in Ship constructor
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove undefined default constructor declaration
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    default destructor
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove empty destructor
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    Adapted basic growth formula. (#3703)
-    
-    The old formula grew quadratic with the planet size,
-    i.e. big planet became full quite quickly, while small ones
-    grew extremely slowly.
 
 
 Author: Andrey <Cjkjvfnby@gmail.com>
@@ -3564,187 +3370,6 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     
-    - rename (only the user-facing part of) all buildings '%SPECIES% Colony' to 'Colony of %SPECIES%'
-
-
-
-
-
-
-
-    
-
-
-Author: TheSilentOne <martin@diergarten.net>
-
-
-    radio buttons change policy card size
-    
-    add icon-style policy size buttons
-
-
-Author: TheSilentOne <martin@diergarten.net>
-
-
-    add new art for policies
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -tweak / correct error messages
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove unnecessary casting of int to double and back to int
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    uniform random operation uses RandomNumber(...) not random(...)
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    round instead of truncate int sine calculations
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    revert to PlanetTypeDifference using FOCS strings instead of text representations of enums
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    cast planet types to int instead of string when parsing
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    store planet_type_parser_rules by value in int_complex_parser_grammar
-
-
-Author: Axel Groß <axel.gross@iaeste.at>
-
-
-    -add parsing for PlanetTypeDifference
-    -use string representations of PlanetType enum values (PT_OCEAN) rather than FOCS names (Ocean) in PlanetTypeDifference ValueRef
-
-
-Author: Roberto Sánchez <33062572+rsf92@users.noreply.github.com>
-
-
-    Translate more strings into spanish (#3680)
-    
-    Translate more strings into spanish
-
-
-Merge: e499e3fa5 4a66283fb
-Author: Geoff <geoffthemedio@users.noreply.github.com>
-
-
-    Merge pull request #3660 from st-pa-fo/stpa-font-change
-    
-    adding unicode glyph U+22C4 "Diamond Operator" to roboto font
-
-
-Author: st.pa <st-pa-fo@web.de>
-
-
-    - adding unicode glyph U+22C5 "Dot Operator" to roboto regular font and adjusting font version number and copyright-notice
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    fix Operation<T>::EvalImpl ignoring value comparison test result when only two operands were specified
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -tweak some statistics to consider all owned objects, not just planets
-    -add influence and production stockpile statistics
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -move ReferenceType enum definition from ValueRefs.h to ValueRef.h
-    -add GetReferenceType() as a virtual function to ValueRef from Variable, default returning INVALID_REFERENCE_TYPE
-    -avoid now-unnecessary dynamic_cast
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -NewMeterValue also returns the affected meter
-    -in the SetMeter::Execute overload, get all new meter values before modifying any meters
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    pre-determine what effects groups will be active before executing them
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    move string
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    trivial grooming
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    pull new meter value calculation out to a mostly-common function NewMeterValue
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    move SetMeter::Execute effect trace-level pre and post object dumping into a separate function
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    pass strings to AccountingInfo by value instead of &&
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    helper function PlanetIDFromObject
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove unused variables when catching exceptions
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -move warning disabling into warnings.props in MSVC2019 project files
@@ -4137,88 +3762,7 @@ Author: Felecarp <82163172+Felecarpp@users.noreply.github.com>
     '''This building can only be constructed at a [[PT_GASGIANT]]. It gives a [[value BLD_GAS_GIANT_GEN_OUTPOST_TARGET_INDUSTRY_FLAT]] [[metertype METER_INDUSTRY]] bonus to planets with the Industry focus in the same system. If the [[BLD_GAS_GIANT_GEN]] is built on an inhabited gas giant it gives only a [[value BLD_GAS_GIANT_GEN_COLONY_TARGET_INDUSTRY_FLAT]] [[metertype METER_INDUSTRY]] bonus.
 
 
-Author: geoffthemedio <geoffthemedio@gmail.com>
 
-
-    -assert -> static_assert
-    -fix comment
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -don't double-check for source-invariance
-    -get a source object if not already specified in context and possible, and then create a new context using that source before evaluating source-dependent ValueRef
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    move ScriptingContext construction after check for null policy
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -add more granular policy availability display filters
-    -refactor policy AvailabilityManager
-    -pass ScriptingContext instead of just ObjectMap to Policy::AdoptionCost and Empire::AdoptPolicy
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    limit number of stack traces logged
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    tweak formatting of float/double to string
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    more network error logging details
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    constexpr
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    higher priority logging
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    more logging when exiting human client
-
-
-Author: st.pa <stephan.pakebusch@zollsoft.de>
-
-
-    - dedentation, more tidier code
-
-
-Author: st.pa <stephan.pakebusch@zollsoft.de>
-
-
-    - better accounting labels for tech effects and specials effects, italics style, planet names etc., starting with grow techs, defense techs, construction techs, worldtree special and computronium special
-    - typo corrected
-    reordering the accountinglabel from effects to effectsgroup
 
 
 Author: st.pa <stephan.pakebusch@zollsoft.de>
@@ -4274,200 +3818,6 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     added SelectedSystemID, SelectedPlanetID, SelectedFleetID, and SelectedShipID getters to AppInterface. should only be used in the human client, such as for UI purposes, as these don't make sense on a server or AI.
 
 
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -add SelectedSystemID, SelectedFleetID, and SelectedShipID getters to MapWnd
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -remove strings for removed policy
-    -removed redundant [[]]
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    fix parser capitalization
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -increase size of influence debt stability penalty
-    -add an influence debt decay effect, which should limit how big the debt and grow, and make it reduce on its own over time
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    allow adopting zero-cost policies even when there is an influence debt
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    Necessity increases (suitably low stability) planet research growth rate by 1
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    make Capital Markets increase the rate of growth or decay of stability towards target
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -add influence output focus bonus to Capital Markets (requires high stability)
-    -add stability penalty from Influence debt to Capital Markets
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    increased cost and reduced influence bonus from Propaganda Broadcasts
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add a social policy slot to the cultural archives
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    tweak Centralization policy:
-    -reduce research bonus
-    -always-active penalties (not capital stability dependent)
-    -higher distance or disconnected stability penalities
-    -comments in script
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    use named references in Continuous Scanning script and pedia description
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add stealth boost to No Supply policy
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove Reserve Tanks policy
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    fix indent
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    merge exploration research effects into exploration
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -expose server API function to set starting resource stockpiles
-    -start with 20 IP
-
-
-Author: MichaelCourtney <wobbly@fredvisions.com>
-
-
-    Make stability penalties for shipyard dislikes work
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    moving instead of copying pointers between containers
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    use GG::Pt::operator std::string() instead of lexical_cast
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add GG::Pt::operator std::string()
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove redundant / null-op lexical_cast
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -make TextControl::GetValue safer with try-catch
-    -use to_string in TextControl::operator<<
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    reimplmement TagParamsToColor using std::from_chars
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    factor out and simplify tag text to color conversion
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove getting and passing of original colour info that was never used in Font::HandleTag
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    reimplement CustomRowCmp using std::from_chars
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    minor grooming
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    Improve Bureacracy SiteRep
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    exclude stale objects from within MapWnd determination of detector ranges
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -4632,74 +3982,21 @@ Author: Axel Groß <axel.gross@iaeste.at>
     ** Bombard parts use Stealth high = Source.Detection
 
 
-Author: Axel Groß <axel.gross@iaeste.at>
+
+
 
 
     Treat neutral (==ALL_EMPIRES) forces like an empire for visibility
 
 
-Author: geoffthemedio <geoffthemedio@gmail.com>
+    
 
 
-    -remove unnecessarily explicitly defaulted SupplyManager constructor
-    -remove incomplete assignment operators for SupplyManager that were leading to some info being lost client-side
 
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add else to mutually exclusive ifs
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -get IDs once rather than each time used
-    -structured binding
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    don't dereference moved-from pointer
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -remove separate isProducibleShip from PythonAPI, which duplicated the results of isEnqueuableShip
-    -add API documentation text
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -add isProducibleBuilding, isEnqueuableBuilding, isProducibleShip, and isEnqueuableShip to Python API
-    -check before attempting to enqueue Scanning Facility and Orbital Drydocks
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    trivial grooming
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add (optional) rendering of future turn's predicted detection range circles for the selected fleet
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add initial implementation of Universe::GetEmpiresPositionNextTurnFleetDetectionRanges that assumes ship detection ranges will be the same after they move
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
+    ===> check if this obsoletes the already-noted change about not showing stale info?
     Use GetEmpiresPositionDetectionRanges rather than MapWnd internal equivalent calculations. This removes some checks for stale or destroyed objects, so might lead to weirdness in some cases, which will need to be fixed if they are actually issues.
+
+
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -4738,133 +4035,19 @@ Author: agrrr3 <axel.gross@iaeste.at>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    added game rule for extrasolar ship detection, defaulting to off
+    
 
 
-Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     fix ships not in systems (unintentionally) giving visibility
 
 
-Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    pass by value and move resource and population centers
 
 
 
-
-
-
-
-
-
-    pass string_view to AddWindowOptions, AddWindowOptions, and InvalidateWindowOptions
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add overloads to Wnd::SetDragDropDataType taking string by value, char*, or string_view-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -store intermediate bits of text as string_view instead of newly allocated string
-    -check if stringtable has an entry before looking it up
-    -use preset text and pass in result of lookup rather than redoing lookup when generating link-tagged text
-    -concatenate with .append
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    structured binding
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    string append instead of operator+ for concatenation
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    fix compile error with MSVC2022
-
-
-Author: Ouaz <Ouaz@users.noreply.github.com>
-
-
-    Update fr.txt
-    
-    - On par with latest en.txt (Nov 19, 2021 - ca58556)
-
-
-Merge: 3bb1884e8 47633648e
-Author: Geoff <geoffthemedio@users.noreply.github.com>
-
-
-    Merge pull request #3605 from agrrr3/20211118_AI_for_spatial_fluxies
-    
-    AI entries for FLUX techs, hulls, and lance
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add overloads of UserStringExists taking a string_view or const char*
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    string copy to string_view
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    structured binding
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    limit StringTable lookup stack traces to 10 to avoid log spam if there are many
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    log stack trace when first lookup up a missing string
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    index source object containers with string_view instead of new string copies
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    make CategoriesSlotsPoliciesAdopted return string_views
-
-
-Author: Axel Groß <axel.gross@iaeste.at>
-
-
-    Format with black
-
-
-Author: Axel Groß <axel.gross@iaeste.at>
-
-
-    Make flake happy
 
 
 Author: Axel Groß <axel.gross@iaeste.at>
@@ -5673,250 +4856,35 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    made Trans-Organic Sentience boost the growth/decay rate of influence meters
+    
 
 
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove meaningless but potentially misleading building description text
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    added Necessity policy that boosts research at low stability planets
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    rewrote Martial Law description
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -made Conformance research penalty not depend on stability
-    -added flat stability boost to Conformance
-    -rewrote stringtable description of Conformance
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    made Border Checkpoint unlock, rather than be a prerequisite for, Martial Law
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove happiness limit from Martial Law
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove Confederation prerequisite from Feudalism
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add ObjectMap parameter to SupplyManager::Dump
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    minor grooming
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -Marine Recruitment increases troop growth rates on planets
-    -unlock Marine Recruitment by adopting Propaganda
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -store EmpireManager reference rather than EmpireManager::const_container_type reference in CombatInfo
-    -thereby reduce use of global getters
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    removing global getter calls
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -removed unused Empire::SourceID()
-    -pass ObjectMap to AddExploredSystem
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -added more ScriptingContext parameters to various functions to avoid calling global getters
-    -removed some default values for ObjectMap parameter to various functions
-    -prep for further passing of ScriptingContext by explicitly calling the global getters
-    -added some checks when passing a ScriptingContext to a Universe member function that the passed-in ScriptingContext contains the same ObjectMap and Universe as the called-upon Universe
-
-
-
-Merge: 4dca2ec76 0e7b9eb04
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Merge pull request #3505 from o01eg/fix-drop-empire-link
     
     Didn't kick out current player connection
-
-
-Author: Oberlus <sicofonte@gmail.com>
 
 
     Fix sign switch on xenophobic self malus (#3537)
 
 
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    relax requirements for artistic species same-system bonus
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -add Liberty and Conformance scaling to species like/dislike effects for policies
-    -clarify stringtable descriptions
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    trivial grooming
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    reduce Translator influence bonus
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    make Indoctrination influence bonus flat and restrict to the capital and regional admin planets with influence focus
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    passing or preparation for passing gamestate into functions rather than using global getters
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -moved translator influence effect to [[TARGET_AFTER_2ND_SCALING_PRIORITY]] priority, similar to Automated History Analyzer
-    -reduced size of effect to depend on the square root of the number of species
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    removed unnecessary And and []
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    added Metropoles policy that boosts a small number of high-population planets, while penalizing others' stability
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    [AI] Add turn type (#3535)
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    trivial grooming
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    pass Universe reference into Clone and Copy functions of UniverseObject
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-
-    -nodiscard
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    pass in ObjectMap
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    pass in ObjectMap
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-
-
-
-
-
-
-
     fix neutral / unowned forces being labelled "Unknown" in combat initial stealth event descriptions
 
 
-
-
     Ignore freshly established colonies for evacuation building effects (#3514)
-    Ignore freshly established colonies for evacuation building effects
-
-
-
 
     
     Didn't kick out current player connection
 
-
-    
-    
-    
     
     -fixed probably long-standing (8 years?) bug with ContainedBy::Match that returned the opposite of what it should have. This probably didn't affect gameplay much, since most or all uses of ContainedBy have subconditions that are OK to evaluate once for checking all candidates, rather than the per-candidate evaluation case that actually calls Match
 
+
     lowered stability requirements of solar orbital generation effects
+
 
     disallow newlines in pedia search edit, which prevents weirdness when pasting in multi-line text
 
 
     -Fix issues with calculation of research bonus in Distributed Thought Computing
-    -Replaced some * with • in various strings
-
 
 
     Base MILITARY_STRENGTH statistic on putting all ships in a single fleet
@@ -6223,13 +5191,15 @@ Author: Axel Groß <axel.gross@iaeste.at>
 - Don't hide meter icons when the output is negative
 - Fixed issue with multiplayer empire lists with eliminated empires when loading games
 - Fixed fleets window scroll resetting when changing fleet aggression
-- Added Unicode glyph U+22C4 "Diamond Operator" to Roboto regular font to use as a neutral bullet point marker
+- Added Unicode glyphs U+22C4 "Diamond Operator" and U+22C5 "Dot Operator" to Roboto regular font to use as a bullet point markers
 - Added options to control for tooltip colours
 - Made big fleet icons bigger
 - Added an option to lock map zoom and panning
 - Show script-derived floating point numbers in UI with only 3 digits
 - Split Attack column on Objects List into Total Structure Damage per Battle and Number of Destroyed Fighters per Battle
 - Replaced field mouseover image
+- Excluded stale objects from within-MapWnd determination of detector ranges
+- Added (optional) rendering of future turn's predicted detection range circles for the selected fleet
 
 
 #### Content and Balance
@@ -6292,6 +5262,9 @@ Author: Axel Groß <axel.gross@iaeste.at>
     - Made protection focus increase troop regeneration rate (if not attacked on previous turn)
     - Made species stability bonus for liking focus not require empire control of planet    
     - Replaced Terraforming (reversion) with targeted Terraforming, allowing Exobots to do Terraforming, but disabling multiple steps in parallel
+    - Made Trans-Organic Sentience tech boost the growth/decay rate of influence meters    
+    - Avoided repeating playable species when placing during universe generation
+    - Reworked the population growth formula so bigger planets don't fill up faster than smaller planets
 
 
 - Fields
@@ -6323,6 +5296,8 @@ Author: Axel Groß <axel.gross@iaeste.at>
     - Updated translations: French
     - Cleaned up some unused strings
     - Avoid referring to the player in the second person ("you", "your")
+    - Added additional custom accounting labels for various effects
+    - Renamed '%SPECIES% Colony' to 'Colony of %SPECIES%'
 
 - Other
     - Adjusted info shared between allied and non-allied empires
@@ -6332,6 +5307,7 @@ Author: Axel Groß <axel.gross@iaeste.at>
     - Fixed issues with Starlane Bore and Starlane Nexus not correctly avoiding existing starlanes when generating new ones
     - Removed Cyborgs tech
     - Removed redundant prerequisite of N-Dimensional Subspace tech
+
 
 #### AI
 
@@ -6356,6 +5332,7 @@ Author: Axel Groß <axel.gross@iaeste.at>
 - Added a game rule that makes basic visibility systems reveal their name and star type
 - Added a game rule that adjusts the tech victory difficulty
 - Added a game rule that sets the minimum monster starting distance
+- Added a game rule for whether extrasolar ships give detection, defaulting to off
 - Made ground combat allow allies to share forces
 - Made planet focus reset when conquered by neutrals or rebels
 - Made meter estimates count ground combat
@@ -6402,5 +5379,4 @@ Author: Axel Groß <axel.gross@iaeste.at>
 - Added named ValueRefs that can be defined in scripts and referenced elsewhere in scripts or in stringtable entries
 - Added a NoOp condition for debugging
 - Salt combat PRNG seeding with the galaxy seed
-
 
