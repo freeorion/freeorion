@@ -639,7 +639,6 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
 
-    Give translator a fixed cost
     Add missing macros to Lambala'Lam (#4130)
     Save on exit in hostless mode even if save on turn disabled
     Tweak small robot RP cost in-line with commit 4085 (#4095)
@@ -650,9 +649,6 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     Give xenophobes (Trith and Eaxaw) great stability (#4086)
 
-    Set default tech cost to 1.0
-
-    Rebalance tech costs to account for influence-constrained growth
 
     Give Krakens extra stealth on Gas Giants
 
@@ -2089,533 +2085,35 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
 
-    -disallow mixing arrival starlanes in a new fleet or in a ship-fleet transfer
-    -check for moving a ship into the fleet it's already in
-
-
-
-    [AI] Remove alternative research approach (#3793)
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    ProductionAI preparations (#3796)
-    
-    * Collect information about all buildings in building_locations.py
-    * Cache get_owned_planets_by_empire and removed argument
-    * Added get_planet_opinion plus typing
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    pass ScriptingContext
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove redundant disconnect of scoped_connection
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -safety check pointer
-    -pass pointer by const reference
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -getRaw instead of get(...).get()
-    -pass pointer by const reference
-    -structured binding
-    -move action lambdas
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    move parameter in
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -use scoped_connection
-    -pass connection and function with move
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    use scoped_connection
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    store scoped connections for sidepanel subcontrol connections
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    store scoped connections
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    use passed-in context ObjectMap
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    trivial grooming
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    use scoped_connection to store signal connection so that after a GUI class is destructed, signals connected to functions that use it won't fire
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    safety checks / error logging in ResourcePanel
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -safety checks
-    -structured binding
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    [AI] Cleanup research (#3792)
-    
-    * Remove debug code
-    * extract header printing to a separate function
-    * Remove unused variable
-    * Inline msg
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Update python in Androdi SDK to 3.9
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    Run formatters before linters (#3795)
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    don't std::move a temporary that's already an rvalue
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    send DependencyVersions with JoinGameMessage
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert techs/defense/BarrierShield.focs
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    Also remove ownership of buildings when abandoning an outpost (#3789)
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    generated python interfaces, fixed AI logging (#3788)
-
-
-Author: Oberlus <sicofonte@gmail.com>
 
 
     Fix priorities of species scaling effects for Industry, Research and Influence (#3773)
 
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    Aligned species tags with effects and provide a checking tool (#3725)
     
     Aligned species tags with effects and provided a checking tool
 
 
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
     [AI] Fix _get_queued_base_troopers (#3791)
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
     [AI] Fixes for drop invasion (#3783)
 
 
-Author: geoffthemedio <geoffthemedio@gmail.com>
 
-
-    expose getNamedValue to Python API
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    expose Species likes, dislikes, and native status to Python API
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert techs/construction/TRANSCEND_ARCH.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert techs/construction/STARGATE.focs
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    make website URL https
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert techs/construction/PLANET_DRIVE.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert techs/construction/OUTPOST.focs
-
-
-Author: Ouaz <Ouaz@users.noreply.github.com>
-
-
-    Update fr.txt
-    
-    - On par with latest en.txt (Apr 2, 2022 - 1421a8b)
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    pass in and use empires
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    use passed-in empires
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -pass EmpireManager to CompileSaveGameEmpireData
-    -in-place construct SaveGameEmpireData
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    use passed-in context ObjectMap
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    pass empire object visibility map to VisibleContainedObjectIDs
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    emplace or push -> insert
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    use vector and minmax_element instead of set begin or rbegin
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    emplace -> insert or push
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    auto
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    don't move from pointer that may be used later
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -emplace -> push
-    -structured binding
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    emplace -> push
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    emplace -> push
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    use piecewise_construct / forward_as_tuple
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    structured binding
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -forward arguments with piecewise_construct
-    -rework MeterValueLabelAndString to return two string_view
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    remove obsolete policies right after loading a game (#3776)
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    avoid capturing ScriptingContext in lambdas and instead create locally
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    create ScriptingContext in lambda rather than capturing context that may be out of scope when the signal that executes the lambda occurs. this should fix a crash in the client when ordering invasion of planets.
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    don't try to cast to int design ID unless the type of thing in the pedia items list is a ship design
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    Fix string_view issue breaking suitability window (#3778)
-    
-    revert most of 4e930bce474abc2d9400ff5713d01cdc623008cc and instead construct sting view from the Species object's name instead of the PopCenter's species name, which is modified in the following code.
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    pass current turn
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    pass current turn
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    pass ObjectMap and ScriptingContext
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    use passed in ObjectMap
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    pass ScriptingContext to CreateFleetArrivedAtDestinationSitRep
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    pass ObjectMap
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -pass ScriptingContext to Colonize
-    -pass ObjectMap to Planet::Reset
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    pass ObjectMap
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -pass rather than create ScriptingContext in UI
-    -pass just ObjectMap when a full ScriptingContext isn't needed
-    -explicitly create and use ScriptingContext rather than calling global getters
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    Fix population reducing effect of planetary drive (#3769)
-    
     Fix population reducing effect of planetary drive
 
 
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -move string
-    -use piecewise_construct / forward_as_tuple
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    Fix string_view issue breaking suitability window
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    Use default WindowsTargetPlatformVersion
-
-
-Author: Morlic-fo <Morlic@gmx.de>
-
-
-    Use default WindowsTargetPlatformVersion
-
-
-Author: Oberlus <sicofonte@gmail.com>
-
-
-    Add game rule to allow repeated species (#3748)
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Enable tests in Ubuntu 21.04 docker
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    Simplify generate orders (#3764)
-    
-    * Simplify generate orders
-    * Reorder commands
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
 
     Move survey_universe to empire module and call it earlier (#3762)
-    
     * Move survey_universe to empire module and call it earlier
     * Removed second survey_universe_lock
     
-    
-    
     This should fix #3760 for good.
-    
     It also makes sense as a refactoring, since survey_universe mostly sets values in the empire module and was completely independent from the rest of ColonisationAI.
-    
     It does also set some value in the colonization module (nice mix of spelling ;-) which should probably be protected by locks as well, but this can be done with a later PR, this one is big enough and is needed as a fix.
 
 
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    update expected checksums
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    Fix incompatibility with Python3.6 (#3761)
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    [AI] Fix _adopt and _deadopt, reduce margin for centralization (#3756)
-    
-    Mostly cosmetic changes, but there were two real bugs that made the AI sometimes adopt and deadopt Centralization repeatedly.
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
 
 
     Improve AI invasion handling (#3754)
-    
     This should fix the three points described in #3745. It should conquer more successfully and waste fewer troopers now.
     The AI still builds too many troopers (priority calculation sometimes produces strange results) and may ignore good planets (planetary rating also needs work), but these are for another PR.
 
@@ -2630,491 +2128,47 @@ Author: Grummel7 <muzz@albatross.pond.sub.org>
 
 
 
-
-    Add some TraceLogging to debug #3743
-
-
-Author: Morlic-fo <Morlic@gmx.de>
-
-
     When loading SP game, assign AIs by name to respective empires (#3738)
 
 
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    Minor fixes (#3740)
-    
-    - remove error log that is not a real error
-    - change the way arguments are supplied to the log function
-    - fix typo
-
-
-Author: Ouaz <Ouaz@users.noreply.github.com>
-
-
-    Update fr.txt
-    
-    - On par with latest en.txt (Mar 12, 2022 - 69075b3)
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    Readd a fixed version of the species check
-
-
-Author: Morlic-fo <Morlic@gmx.de>
-
-
-    Let AIWrapper for IssueNewFleetOrder return INVALID_ID on invalid order
-
-
-Author: Morlic-fo <Morlic@gmx.de>
-
-
-    Return INVALID_ID on split_ship_from_fleet failure
-
-
-Merge: 32ea75d8d adc69386d
-Author: Geoff <geoffthemedio@users.noreply.github.com>
-
-
-    Merge pull request #3736 from Morlic-fo/GitIgnores
-    
-    Add some more files to gitignore
-
-
-Author: Morlic-fo <Morlic@gmx.de>
 
 
     Fix timeout being sometimes ignored in ClientNetworking::Impl::ConnectToServer() (#3620)
-    
     Previous to this patch, small timeout values are effectively ignored. This happens because boost::asio::io_context::run() is a blocking call and the attempt to async_connect() may time out after e.g. 2 seconds on my machine. This means any shorter timeout parameters will effectively be ignored and any longer timeout still only has a resolution of, e.g., 2 seconds.
-    
     The fix here is to introduce an asynchronous timer which will cancel pending operations once timeout occurs.
-
-
-Author: Morlic-fo <Morlic@gmx.de>
-
-
-    Add libpython.py to gitignore
-
-
-Author: Morlic-fo <Morlic@gmx.de>
-
-
-    Add msvc default output directories to gitignore
-
-
-Author: Morlic-fo <Morlic@gmx.de>
-
-
-    Fix return type of ship.colonyCapacity in python API (#3735)
-
-
-Author: Morlic-fo <Morlic@gmx.de>
-
-
-    Fix potential array access out of bounds (#3734)
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    avoiding use of global GetEmpire() and Universe() getters
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    passing ScriptingContext to research and tech-related functions
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-
-    -reordering members
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    pass DiploStatusMap to SystemHasFleetSupply
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-, structured binding
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    pass ScriptingContext to FleetSupplyableSystemIDs
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    make some getters explicitly use the client interface
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    passing empires and IDs instead of using global getters
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add EmpireIDs() function to ScriptingContext and EmpireManager
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    Fixed troopCapacity return value (#3733)
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    limit search range to size of EnumMap
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove MSVC 2017 project files
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    bump AppVeyor to MSVC2019
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -move EnumMap building into constructor
-    -actually store names as string_view instead of string in EnumMap
-    -construct EnumMap at compile time
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -remove default delimeter arguments
-    -simplify loop over chars
-    -fix range of chars to loop over for hex values
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    comment out static_assert some older compilers give error: non-constant condition for static assertion
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -remove default delimeter argument
-    -implement constexpr string_view to EnumType via decimal or two-digit hex parsing
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    refactor EnumMap building to tokenize and store string_view into the passed-in char*
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    move BuildEnumMap into EnumMap as Build
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -move EnumMap definitions into declaration
-    -reimplement EnumMapInsert with string_view
-    -WIP since the call in BuildEnumMap to Insert passes a temporary string
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    use to_string(GG::Key)
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -add parameter to GG_ENUM and GG_CLASS_ENUM to specify the underlying type
-    -make EnumMap store in two arrays instead of two maps, separately tracking its size to ensure not too much is inserted
-    -make Flags store bits internally in an unsigned short instead of unsigned int
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -references instead of copies
-    -explicit type to avoid warning about possibly unintended copy
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    use FO_ENUM instead of GG_ENUM
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    use smaller types for enum class definitions
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    First AI with policies plus minor adoptions (#3729)
-    
-    First AI with policies plus minor adoptions
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     remove (no star) label from starless system names
 
 
-Author: st.pa <st-pa-fo@web.de>
-
-
     -display real system name on map and sidepanel for empty systems
     -label as unexplored system or region after name
 
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    Revert "-don't wait for all parallel activation condition evaluations to finish before starting parallel scope condition evaluations"
-    
-    This reverts commit 94636c87b616dc64f9bc06dd1d3215f71a32a774.
-    
-    This commit seems to have broken numerous effects.
-
-
-Merge: 1cb3f0794 0d04c82eb
-Author: Geoff <geoffthemedio@users.noreply.github.com>
-
-
-    Merge pull request #3722 from MichaelCourtney/hideandguard
     
     Native/Special Defense Tweaks
 
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    Update development docs (#3721)
-    
-    Update readme and development documentation
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    [AI] Remove unused check (#3727)
-    
-    Discussed in the thread: https://www.freeorion.org/forum/viewtopic.php?p=110431#p110431
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    Fix tag parsing (#3723)
-    
-    * Fix tag parser, added influence to species roster
-    * Fix mis-handling of SystemID 0
-    * Fix get_ai_tag_grade, added a test
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add default values and simplify Wnd constructors
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -remove default Empires() parameter and pass explicitly instead
-    -use ServerApp's m_empires instead of calling Empries() (which resolves to the same thing)
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove default parameter Empires() global call
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    GetTech overloads taking char* or string_view
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -don't wait for all parallel activation condition evaluations to finish before starting parallel scope condition evaluations
-    -avoid copying full set of input candidate source objects when no activation condition is specified, and instead just reference that input full set
-    -avoid copying ObjectSets into container for already-dispatched scope evaluations
-    -elaborate comments
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    only find in fleets when looking for moving fleets
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    use passed-in current_turn
-
-
-Author: Ouaz <Ouaz@users.noreply.github.com>
-
-
-    Update fr.txt
-    
-    - On par with latest en.txt (Mar 5, 2022 - 68e44d2)
-
-
-Author: MichaelCourtney <wobbly@fredvisions.com>
-
-
     Sometimes stealth monster nests
-
-
-Author: MichaelCourtney <wobbly@fredvisions.com>
-
 
     Replace 20% of ancient guardians with stealthed planet
 
-
-Author: MichaelCourtney <wobbly@fredvisions.com>
-
-
-    Add asteroid snails to guards
-
-
-Author: MichaelCourtney <wobbly@fredvisions.com>
-
-
     Add some exclusions to High Tech Natives
-
-
-Author: MichaelCourtney <wobbly@fredvisions.com>
-
-
-    Add guards to resource specials
-
-
-Author: MichaelCourtney <wobbly@fredvisions.com>
-
 
     Stop Lembalalam from being both moderate and high tech natives
 
-
-Author: MichaelCourtney <wobbly@fredvisions.com>
-
-
     Add occasional defenses to natives
-     Please enter the commit message for your changes. Lines starting
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
 
 
     Fixed some AI exceptions (#3719)
-    
     This should fix the exceptions mentioned in #3718
-
-
-Author: Oberlus <sicofonte@gmail.com>
-
-
-    Fixes some unused variable warnings (#3728)
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    use passed-in empire_id instead of passed-in produced_by_empire_id to determine the owner of a new Ship
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -InitializeSystemGraph overload that uses this->m_objects
-    -IDAllocator::NewID takes a Universe parameter
-    -GenerateStarlanes takes an EmpireManager parameter
-    -GenerateStarlanes avoids global Objects() calls
-    -EmpireTotalSupplyRange and DistanceBetweenObjects take ObjectMap parameters
-
-
-
-
-
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    [AI] Update python skeletons (#3716)
-
-
-Author: MichaelCourtney <wobbly@fredvisions.com>
-
-
-    Move the default native defenses to native_fortication.macros
-
-
-Author: MichaelCourtney <wobbly@fredvisions.com>
 
 
     Guard Biege Goo and Fiftyseven
 
 
-Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    constexpr
 
 
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -forwarding parameters
-    -string_view instead of string
-    -simplify OptionSection struct
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add rvalue overloads to Validator Clone functions
 
 
 Author: geoffthemedio <geoffthemedio@gmail.com>
@@ -4484,132 +3538,6 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     reorder members
 
 
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove empty and seemingly unnecessary to define destructor
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add planet baseline stability rule
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    store and use ScriptingContext rather than visibility maps in VisibleToEmpireSimpleMatch
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add Visibility getter helper to ScriptingContext
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -add current_turn parameters to some sitrep generators
-    -add current_turn and Universe parameters to some Empire unlock / add / apply functions
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    structured binding and emplace
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    pass Universe to PredefinedShipDesignManager::AddShipDesignsToUniverse
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    pass ObjectMap to SpeciesManager::UpdatePopulationCounter
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    pass Universe to Empire::UpdateOwnedObjectCounters
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -do prefix lookups by function call rather than call-site operator[]
-    -direct initialize prefix maps
-    -store and pass prefixes as std::string_view
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    just get building type name once before looping
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    make static const
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove unused variable
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -use context diplo status
-    -fix unused variable warning
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    use a static const MovingFleetVisitor
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    make move constructors noexcept
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    reorder members
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    structured binding
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    use AppEmpireID() to decide what ObjectMap to use
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -add EmpireID getter to AppInterface and derived classes
-    -add AppEmpireID global getter
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
 
@@ -4624,11 +3552,6 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
 
-    Return false from auth.py result to mark unallowed player names
-
-
-
-
 
     Improve AI systems_connected performance (#3559)
     * Optimize AI systems_connected performance
@@ -4638,224 +3561,6 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     Fix star based colonization value calculation
     The larger boni should apply if the AI does not yet have a star of that type. The defect was introduced in #3484
-
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-    Cache shortest distance and get neighboars (#3553)
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-    Round values to avoid saving too many digist after point to savestring (JSON) (#3551)
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-    [AI] Use caches to speedup invasion calculations (#3548)
-
-
-
-
-
-
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    fixed more policy-check Statistic If FOCS expressions
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    tpyo
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    handle case when stringtable is missing with a hard-coded simpler message
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    Add some hopefully-helpful explanation text to the output of freeorion -h
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    Extract public module variables from ColonizationAI (#3538)
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    Add black formatter (#3531)
-    
-    Reformat support files with black
-    
-    * Add black uncompromised formatter
-    * Make flake8 compatible with black
-    * Update configs
-    * Update CI checks
-    * Improve isort messaging
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    fixed some cost adjustment macros that were checking if any object was owned by an empire that had adopted a policy, rather than if an object owned by the empire doing the production is owned by an empire that has adopted a policy
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    don't evaluate ValueRef if not necessary
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    location condition tweaks
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    tweaked some location condition:
-    -add or move earlier OwnedBy empire = Source.Owner
-    -add explicit Planet conditions
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    only consider ships and planets when searching for any object owned by an empire, so that systems don't get returned
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    store a reference to CurrentValueVariant rather than a separate value in ScriptingContext and default initialize with a reference to a const static empty CurrentValueVariant when none is passed in
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    only get supply range from planets, not all objects. this avoids seemingly costly calls to System::Owner
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    move pointers
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    only evaluate empire_id if needed for applicable test
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    don't need to evaluate the high constraint if the low constraint fails
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove empty MSVC project file filter
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove as-yet-unused InfluenceQueue from Python API
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    added Black Market policy
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -made Trith species on the capital unlock Racial Purity policy
-    -made Racial Purity policy not require adoption of Checkpoints
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -added increased rate of growth or decay of influence to Capital Markets
-    -increased influence boost from Capital Markets exported luxuries to 2
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    added Charge policy
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    Fix calculation for conquered planets (#3543)
-    
-    Of course I forgot to handle planets that were conquered
-    before indoctrination was adopted.
-
-
-Author: Ouaz <Ouaz@users.noreply.github.com>
-
-
-    Update fr.txt
-    
-    - On par with latest en.txt (Aug 8, 2021 - f2ebb02)
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    Defined build and enqueue location for translator (#3542)
-
-
-Merge: 2fbb8f017 f2ebb0254
-Author: Geoff <geoffthemedio@users.noreply.github.com>
-
-
-    Merge pull request #3541 from Grummel7/TurnsSinceLastConquered
-    
-    Added TurnsSinceLastConquered, used in for Indoctrination
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    Some minor documentation improvements
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    Added TurnsSinceLastConquered, used in for Indoctrination
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -clarify Metropoles description re: minimum population
-    -fix copy-paste error in Metropoles description, to clarify that stockpile receives a penalty
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
     
 
 
@@ -4869,7 +3574,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     fix neutral / unowned forces being labelled "Unknown" in combat initial stealth event descriptions
 
 
-    Ignore freshly established colonies for evacuation building effects (#3514)
+    
 
     
     Didn't kick out current player connection
@@ -4881,7 +3586,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     lowered stability requirements of solar orbital generation effects
 
 
-    disallow newlines in pedia search edit, which prevents weirdness when pasting in multi-line text
+    
 
 
     -Fix issues with calculation of research bonus in Distributed Thought Computing
@@ -4918,86 +3623,46 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     ***** if missiles should always be launched or only if there is a visible target - I prefer this, but needs to use combatTargets on launch time
     ***** and if the missile should keep on flying if there is no visible target - if no: could reduce real damage (wont matter for estimation though)
     * one could also model in max/min amount of damage (min amount: fighters get shot down immediatly, max amount: fighters do not get shot down)
-    
     TotalFighterShots valueref should use the context with bout info and decrease fighters in hangars for each launch
-    
     * was using the original context instead of the mutable one
     * did not decrease the number of fighters available
 
 
-Author: Axel Groß <axel.gross@iaeste.at>
 
 
     Damage estimation: Use Shield from ship in context, check fighter in context vs combatTargets
-    
     * uses shield meter from target in default estimation of structural damage
     * can use Value(Target.Shield) in FOCS
-    
     * use combatTargets condition of fighters for default estimation of structural damage or fighter destruction
 
-
-Author: Axel Groß <axel.gross@iaeste.at>
-
-
-    fixup - string lint
-
-
-Author: Axel Groß <axel.gross@iaeste.at>
 
 
     Show number of fighters shot instead of number direct weapon hits in pedia
 
 
-Author: Axel Groß <axel.gross@iaeste.at>
-
-
     Use combatTargets condition in fighter details popup in ship view
 
 
-Author: Axel Groß <axel.gross@iaeste.at>
-
-
     GUI shows split damage/destroy estimation
-    
     damage - refers to the amount of damage against ships
     destroy - refers to the number of shots against fighters
-    
     Unified view in ShipDamageMeterWnd
     Split icons in FleetWnd
+
+
+
     
-    TODO
-    * add a target to context for shield evaluation
-    * cleanup
-    * decide when to include fighters in destroy tally
 
-
-Author: Axel Groß <axel.gross@iaeste.at>
-
-
-    A part has to inflict more than 0 damage to destroy a fighter
-
-
-Author: Axel Groß <axel.gross@iaeste.at>
 
 
     Change damage estimation, split Ships/Fighters, full combat damage
-    
     In the UI, only ShipDamage is shown
-    
     Example content
     * SR_WEAPON_0_1 - no damage against ships
     * SR_WEAPON_1_1 - no damage against fighters
     * SR_JAWS       - Only half the damage against ships (shoots only 2 out of 4 bouts)
-    
     * combat damage gets calculated per combat not per bout
     * also checks for shields (target-dependent ShipDamage)
-    
-    TODO
-    * some valuerefs (attack) can trigger a endless recursion
-
-
-
-
 
 
 
@@ -5024,104 +3689,15 @@ Author: Axel Groß <axel.gross@iaeste.at>
 
 
 
-
-    Improve table printer (#3471)
-    * add placeholder
-    * remove Python 2 artifacts
-    * split code into separate files
-    * add type annotation
-    * add placeholder field
-    * rename Float to Number
-    * add support for long prints
-
-
-
-    hopefully fixed issue with gifting where it was order-dependent for swapping all objects between two empires at a location
-
-
-
-
     use ValidExecutableBinary test when setting server binary executable file on Windows
 
 
 
-    added Nearly-Universal Translator building
-
-
-
-
-    
-
-
-    Adjust damage output on maintenance ship (nerf)
-
-
-    Weaken arc disruptor on maintenance ship (5x1 damage instead of 3x2)
-    mass driver damage                       72 == 1x3x4 x6
-                                            120 == 5x1x4 x 6
-    arc disruptor damage                    144 == 3x2x4 x 6
-    medium hull ship with  no basic armour:  80 == 10    x 8
-    medium hull ship with one basic armour: 128 == 16    x 8
-    medium hull ship with two basic armour: 176 == 22    x 8
-
-
-    Remove one arc disruptor from maintenance ship
-
-
-
-
-
-    render fleets that are (somehow?) not in systems and not moving
-
-
-
-    update all object meters when showing system, not just system contents, since there is apparently a difference in the results, with some effects not applying when updating only some object IDs
-
-
-
-
-    Remove transitive dependency in Techs (#3439)
-    We have two tech paths to LRN_GATEWAY_VOID from LRN_NDIM_SUBSPACE
-    1) LRN_NDIM_SUBSPACE opens LRN_GATEWAY_VOID
-    2) LRN_NDIM_SUBSPACE opens LRN_SPATIAL_DISTORT_GEN opens CON_STARGATE opens LRN_GATEWAY_VOID
-    
-
-
-
-
-
-    fixed some DEF_GARRISON tech effect value references
-
-
-    Make AI aware of self-sustaining restrictions
-    Make AI aware of some restrictions for guards
-
-    Let AI not colonize in unexplored systems
-    Unexplored systems may often contain space monsters. Note that it is possible to detect planets in unexplored systems due to e.g. some species effects in current content.
-
-    Add function to request emergency exploration
-    An emergency exploration may be requested by another part of the AI to prioritize the scouting of a particular system.
-
-
-
-
-    Print internal enums as names (#3393)
-    Python 3.9 and Python 3.6 have different implementations of the __str__.
-    - 3.9 __str__ calls __repr__
-    - 3.6 __str__ does not call __repr__
-    So we need to implement both of them.
-
-
 
     Fix multiplayer issues
-    Correctly get revious player id. Before could get same player just
-    connected.
+    Correctly get revious player id. Before could get same player just connected.
     Fix crash if connection to the game could cause switch to lobby.
 
-
-    Add option to allow human player to take over any AI (#3357)
-    * Add option to allow human player to take over any AI
-    * Assign empire to new human player
 
 
     Kick out other players controls same empire (#3353)
@@ -5200,6 +3776,10 @@ Author: Axel Groß <axel.gross@iaeste.at>
 - Replaced field mouseover image
 - Excluded stale objects from within-MapWnd determination of detector ranges
 - Added (optional) rendering of future turn's predicted detection range circles for the selected fleet
+- Switched to updating all object meters when showing system in the sidepanel, not just system contents, due to different results
+- Started rendering fleets that are (somehow?) not in systems and not moving
+- Added some hopefully-helpful explanation text to the output of "freeorion -h" on the command line
+- Disallowed newlines in pedia search edit to prevents weirdness when pasting multi-line text
 
 
 #### Content and Balance
@@ -5224,11 +3804,11 @@ Author: Axel Groß <axel.gross@iaeste.at>
     - Redesigned various monster ship designs and gave some extra shots or damage to monster hulls for some weapons the designs use
     - Various cost rebalancings
     - Removed prerequisite dependence between fighter and other weapon techs
+    - Required a part to do more than 0 damage to destroy a figher
 
 - Planets
     - Added some luxury resource specials that some species like and thus get stabilitly boosts from
     - Reduced spawn rates of some specials
-    - Many building, species, and tech balance adjustments along with new government systems
     - Made various research and industry bonuses depend on stability
     - Add precognitive detection to Fulver, giving basic visibility to starlane connected planets
     - Asteroid processor and Asteroid Reformation processor now remove themselves if their planet is not an asteroid
@@ -5254,6 +3834,7 @@ Author: Axel Groß <axel.gross@iaeste.at>
     - Reduced Concentration Camp industry boost
     - Added an Abandon Outpost building, which removes an empire's outpost from the planet
     - Added a Colony Independence Decree building, which removes an empire's ownership from the planet but leaves the population as an independent colony
+    - Added the Nearly-Universal Translator building, which boosts influence focus influence resource output and grants a policy slot
     - Renamed Evacuation System building to Evacuation
     - Made the influence focus bonus population-dependent
     - Disabled generation of Head on a Spike from Cultural Archives
@@ -5263,8 +3844,8 @@ Author: Axel Groß <axel.gross@iaeste.at>
     - Made species stability bonus for liking focus not require empire control of planet    
     - Replaced Terraforming (reversion) with targeted Terraforming, allowing Exobots to do Terraforming, but disabling multiple steps in parallel
     - Made Trans-Organic Sentience tech boost the growth/decay rate of influence meters    
-    - Avoided repeating playable species when placing during universe generation
     - Reworked the population growth formula so bigger planets don't fill up faster than smaller planets
+    - Added guard monsters to resource specials
 
 
 - Fields
@@ -5300,6 +3881,7 @@ Author: Axel Groß <axel.gross@iaeste.at>
     - Renamed '%SPECIES% Colony' to 'Colony of %SPECIES%'
 
 - Other
+    - Many building, species, and tech balance adjustments along with new government systems and influence-constrained growth
     - Adjusted info shared between allied and non-allied empires
     - Nerfed Telepathy bonus to Psionics cost
     - Removed the Galactic Infrastructure tech
@@ -5321,8 +3903,11 @@ Author: Axel Groß <axel.gross@iaeste.at>
 - Corrected colony pod turns_to_build when Lifecycle Manipulation is available
 - Fixed issue with weapons that have 0 shots
 - Made AI tech enqueue order more consistent between different machines
-- Stopped AI from attempting to colonize unexplored systems
+- Stopped AI from attempting to colonize unexplored systems (which may contain unobserved monsters)
 - Added an option allowing human players in multiplayer games to take over playing AI empires
+- Made AI aware of self-sustaining species population mechanics
+- Made AI aware of distance restrictions of guard monsters
+
 
 
 #### Other Features
@@ -5339,10 +3924,12 @@ Author: Axel Groß <axel.gross@iaeste.at>
 - Added a game rule that adjusts the tech victory difficulty
 - Added a game rule that sets the minimum monster starting distance
 - Added a game rule for whether extrasolar ships give detection, defaulting to off
+- Added a game rule to enable repeating species during universe generation
+- Added a game rule to adjust planet baseline stability
 - Made ground combat allow allies to share forces
 - Made planet focus reset when conquered by neutrals or rebels
 - Made meter estimates count ground combat
-
+- Ignored freshly established colonies for evacuation building effects
 
 
 #### Other Bug Fixes
@@ -5359,6 +3946,8 @@ Author: Axel Groß <axel.gross@iaeste.at>
     - Fixed bombardment not working if ships only have bombardment weapons
     - Fixed various issues with automatic turn advancing
     - Made simultaneous colonization fail instead of picking one empire based on ID
+    - Fixed issue where two empires gifting eachother everything in a system would have order-dependence problems
+    - Disallowed mixing arrival starlanes in a new fleet or in a ship-fleet transfer
 
 - Content
     - Fixed Gaia special planet type selection
