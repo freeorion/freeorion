@@ -5209,7 +5209,7 @@ Author: Axel Groß <axel.gross@iaeste.at>
 
 - Ships
     - Ship structure and damage adjusted for 4 bout combats
-    - Added the Flux Lance weapon that is "short range", attacking from bout 3 (or 2 if the Charge policy is adopted)
+    - Added the Flux Lance weapon that is "short range", attacking starting from bout 3 (or 2 if the Charge policy is adopted)
     - Added the Graviton Pulsar weapon that has 12 attacks that do 1 damage and targets anything, useful against fighters
     - Rebalanced fighter techs and pilot trait effects
     - Applied ship weapon damage rule scaling rule to species and monster weapon bonuses and 
@@ -5311,12 +5311,18 @@ Author: Axel Groß <axel.gross@iaeste.at>
 
 #### AI
 
-- AI manages influence and adopts policies
+- AI adopts policies
+- AI Manages influence and stability
+- AI builds Regional Administrations and Nearly Universal Translators
+- Improved invasion handling
+- AI no longer uses protection focus for military purposes
+- Many refactorings and adaptations for changed rules and content
 - Devalued Gaia special as Sly
 - Corrected colony pod turns_to_build when Lifecycle Manipulation is available
 - Fixed issue with weapons that have 0 shots
 - Made AI tech enqueue order more consistent between different machines
-
+- Stopped AI from attempting to colonize unexplored systems
+- Added an option allowing human players in multiplayer games to take over playing AI empires
 
 
 #### Other Features
@@ -5379,4 +5385,6 @@ Author: Axel Groß <axel.gross@iaeste.at>
 - Added named ValueRefs that can be defined in scripts and referenced elsewhere in scripts or in stringtable entries
 - Added a NoOp condition for debugging
 - Salt combat PRNG seeding with the galaxy seed
+- Partially implemented an alternative client in Godot with Android support
+- Partially migrated scripted content from custom FreeOrion Content Script to Python scripts
 
