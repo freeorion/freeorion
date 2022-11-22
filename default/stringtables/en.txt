@@ -18057,6 +18057,9 @@ Stylish
 ARTISTIC
 Artistic
 
+INDEPENDENT
+Independent
+
 ORGANIC
 Organic
 
