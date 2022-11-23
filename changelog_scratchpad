@@ -37,9 +37,6 @@
 
 
 
-    ! Add supply traversals for borders for common allies of both suppliers (#4264)
-    
-    ! Add supply traversals for borders for common allies of both suppliers - fix transitive use of allied supply
 
 
 
@@ -94,512 +91,18 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -replace functors with lambdas
 
 
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    replace compile-error-causing using with lambda
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add rounding tests for meter
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -change requirement for adding supply connections to allied systems when an empire's supply propagation into the allied system is obstructed to be that the ally should have propagated supply there, rather than that there be obstructed traversals between systems in both directions.
-    -iterate merging allied supply networked repeatedly
-    -add more trace supply logging
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    additional trace logging in supply updates
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    use std::queue for queues
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
- / moved getters / setters into header
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    use std::queue for a queue
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -replace class template specialization with if constexpr
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    check types before any_cast
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    tpyo
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    set game rules in AI client after extracting from game start message. hopefully addresses #4124
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
 
     require partial visibility to generate an object damage in combat sitrep. might address issue #3536
 
 
-Author: geoffthemedio <geoffthemedio@gmail.com>
 
-
-    tooltip warning about possible rule issue
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    [CI] Fix upload artefact name (#4210)
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    [AI] Update skeleton generator doc parser (#4209)
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    [AI] Fix LGTM warnings (#4204)
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    [CI] Add windows artefact building on master branch (#4203)
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Add more checks for Godot unit tests
-
-
-Author: agrrr3 <axel.gross@iaeste.at>
-
-
-    Fix doc in EffectParser1 (#4192)
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    Fix meter rounding issues (#4206)
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    [AI] Add option to use conformance (#4137)
-    
-    * Add option to use conformance
-    
-    * Review update
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Run godot unit tests in dockerized CI
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Remove use of std::function in Python FOCS parser
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Strip android libraries before packaging
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Detect godot executable in Dockerized CI
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    Extract tech queue header check (#4174)
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Test build of godot client in docker CI
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    [CI] Extract cmake build to action (#4180)
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    [AI] Text cleanup and code folding removal (#4197)
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    Reduce error to warning as agreed in dev meeting (#4196)
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    [AI] Move unused code to special function (#4185)
-
-
-Author: Michael Courtney <43386669+MichaelCourtney@users.noreply.github.com>
-
-
-    Pedia tweaks (#4183)
-    
-    * Tweak Fuel Page
-    
-    * Tweak Detection Strength Page
-    
-    * Add Stealth/Detection Modifiers for star type to Pedia
-    
-    * Add fleet unstealthiness penalty to pedia
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Add Object condition, MoveTowards effect and non equal operation
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    replace boost::bind with lambdas
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    move getter into header
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    disable warning arising from Boost code
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    make GG::Clr constructor from hex colour string more flexible
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    refactor converting hex colours to array of uint8_t in EmpireManager
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -store state changed signal in scoped connection
-    -render BuildingIndicator scanline with a ScanlineControl so that they actually appear
-    -removed redundant GetMeter
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -don't need separate const-lvalue-reference and rvalue-ref overloads for InstallEventFilter when the pointer is always copied
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -add default position and size parameter values to ScanlineControl constructor
-    -reorder members
-    -reposition comment
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -boost::bind to lambdas
-    -store connection in scoped connection
-    -move BuildingsPanel ScanlineRenderer to file scope
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -boost::bind to lambdas
-    -store connection in a scoped connection to prevent dangling reference
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    logging tweaks
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -reorder members to hopefully reduce padding bytes
-    -move trivial getters into header and make noexcept
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    reorder members to reduce padding bytes
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -replace boost::bind with lambda
-    -pass string with move
-    -pass and store function by const reference or with move as appropriate
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    replace boost::bind with lambda
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    [[nodiscard]]
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    replace some boost::bind with lambdas
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    replace some boost::bind with lambdas
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Add WithinDistance condition to Python FOCS parser
-
-
-Author: Ouaz <Ouaz@users.noreply.github.com>
-
-
-    Update fr.txt
-    
-    - On par with latest en.txt (Oct 1, 2022 - 065f16d)
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Implement MoveTo effect in Python FOCS parser
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Autodeploy MacOS installer to SorceForge
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    Fix inconsistant tags (#4178)
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Add WithinStarlaneJumps condition and value ref operators
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    [CI] Add skip for isort to speed it up (#4179)
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    Add cross-reference READMEs to string tables and st-tool (#4170)
-    
-    * Move string tables docs
-    
-    * Add cross-reference to the st-tool
-    
-    * Fix formatting
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    Bum actions and restricts some build runs (#4177)
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    [CI] Use actions for linting (#4176)
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Change operator < to return value test instead of condition
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Add SetStarType effect and ValueRefDouble/float operator
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    [AI][Charting] Fix imports to avoid crashes when collecting tests (#4171)
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    [AI] Bump development tools versions (#4172)
-    
-    * Bump tools version
-    * Bump pre-commit tools versions
-    * Reformat make_versioncpp.py with black
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    [AI]  Played with patch and mock to add some more tests (#4165)
-    
-    * Played with patch and mock to add some more tests
-    
-    * Review changes
-    
-    * More simplifications
-
-
-Author: Michael Courtney <43386669+MichaelCourtney@users.noreply.github.com>
 
 
     Rework Replicon (#4096)
 
 
-Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    remove unused signals
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    store option change signals by value not shared pointer
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    make OptionChangedSignal taking string_view
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    replace ConditionalConnectOption with a lambda. should fix crash when toggling auto repositioning windows option.
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove unnecessary #includes
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-
-
-
-
-
-    reject formatting chars in names in orders
 
 
 
@@ -1550,124 +1053,20 @@ Author: Michael Courtney <43386669+MichaelCourtney@users.noreply.github.com>
     Make Mu Ursh more playable (#3915)
 
 
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    Load python code after rule parsing is done (#3936)
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/production/MICRO_MANUF.focs
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    Fix documentation of technocracy (#3935)
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
 
 
     [AI] calculate_production.py (#3934)
 
 
-Author: O01eg <o01eg@yandex.ru>
 
-
-    Convert default/scripting/techs/production/INTERSTELLAR_ENTANGLEMENT_FACTORY.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/production/INDUSTRY_CENTER_III.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/production/INDUSTRY_CENTER_II.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/production/INDUSTRY_CENTER_I.focs
-
-
-Author: Geoff <geoffthemedio@users.noreply.github.com>
-
-
-    bump CodeQL version to v2 due to deprecation of v1 (#3933)
-
-
-Author: Morlic-fo <Morlic@gmx.de>
-
-
-    Fix Linter
-
-
-Author: Morlic-fo <Morlic@gmx.de>
-
-
-    Move AI Aggression handling from C++ to python code
-
-
-Author: Morlic-fo <Morlic@gmx.de>
 
 
     Set special save_state_string to allow handling special cases.
 
 
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
     [AI] Added within_n_jumps plus annotation (#3923)
 
 
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    [AI] Fix success check of _adopt, plus annotation (#3930)
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    set /utf-8 flags for MSVC builds
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Set python version to 3.7 in format checks
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/production/GENERIC_SUPPLIES.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/production/FUSION_GEN.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/production/EXOBOTS.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/production/ADAPTIVE_AUTOMATION.focs
 
 
 Author: O01eg <o01eg@yandex.ru>
@@ -1711,270 +1110,15 @@ Author: Grummel7 <muzz@albatross.pond.sub.org>
 Author: Grummel7 <muzz@albatross.pond.sub.org>
 
 
-    Added world tree and ast. coating to empire resources. (#3919)
+    [AI] Added world tree and ast. coating to empire resources. (#3919)
 
 
-Author: Grummel7 <muzz@albatross.pond.sub.org>
 
-
-    New AI interface function to query supply groups (#3920)
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/learning/TRANSCEND.focs
-
-
-Author: shikoba-hn <106869459+shikoba-hn@users.noreply.github.com>
-
-
-    Add missing include
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/learning/XENO_ARCH.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/learning/UNIFIED_CONC.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/learning/TRANSLING_THOUGHT.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/learning/TEMPORAL_MECH.focs
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    update include to silence deprecation warning
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    update include to silence deprecation warning
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    disable warning arising from Boost includes for python parser file
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -move workarounds for Boost 1.79 include error into Parsers StdAfx.h
-    -restore MSVC2022 Parsers project to C++20 standard
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    fix potentially returning reference to temporary
-
-
-Author: Vezzra <vezzra@gmx.net>
-
-
-    Add boost_atomic DLL to Windows installer package
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    [AI] Generate skeletons compatiable with black (#3903)
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Lower used language standart
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Add MS VS 2022 project test to Github Actions CI
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Use SDK v13 and Python 3.7
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/learning/STELLAR_TOMOGRAPHY.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/learning/SPATIAL_DISTORT_GEN.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/learning/QUANT_NET.focs
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    Changed Bureaucracy after forum discussion. (#3844)
-    
-    * Changed Bureaucracy after forum discussion https://www.freeorion.org/forum/viewtopic.php?f=28&t=12420&sid=ccc146868760118459489fbe4702cf9a.
-    * Also removed strings from fr.txt
-    * Fix order between bureaucracy and dream recursion
-    * Unlock Reg Admin by Bureaucracy, not Centralization
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    Do not exclude snap on snap changes
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    Do not run workflow if no C++ files changed
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -LeastJumpsPath returns a vector<int> instead of list<int>
-    -replaced some typedefs with auto
-    -just use input system ID instead of reverse looking up the system 1 index
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    expose Fleet route to Python API
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -return vector<int> from ShortestPath
-    -store and pass Fleet travel route as vector<int>
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    use boost::circular_buffer to build shortest path
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    implement single-candidate WithinJumps
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    simpler vector init
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -fix WithinJumps, which seemed to be always returning just the source system
-    -return vector<int> instead of unordered_set<int>
-    -add not-yet-implemented single-search system overload for WithinJumps
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -ImmediateNeighbors returns vector instead of multimap. unsorted result should be OK as it wasn't used except by AI API, which doesn't appear to care if the result is sorted.
-    -default initialize the PathFinder graph pointer and remove the defined constructor
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    make UniverseObject::Type non-virtual
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    [AI] Rename log dumper to statistic (#3896)
-
-
-Author: Geoff <geoffthemedio@users.noreply.github.com>
-
-
-    Remove duplicate getTechCategories from Python API (#3897)
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/learning/PSY_DOM.focs
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    Update log dumper (#3895)
-    
+    [AI] Update log dumper (#3895)
     - drop python compatibility with previous logs
     - drop custom deserialization for specific kyes, and make it more general
     - fix colors for empire plots
     - move the player name to the sidebar
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/learning/DISTRIB_THOUGHT.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Rename If to Conditional in python parser
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Rename Min, Max operations to MinOf, MaxOf in python parser
-    
-    This change allows to not conflict with statistic type enums.
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    avoid lexical_cast for enum MeterType
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
 
 
 
@@ -2000,30 +1144,14 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
 
-
     Add server flag that merges quickstart and load options (#3848)
 
 
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -make various content getters take string_view instead of const std::string&
-    -make various UI functions take string_view
-
-
-
-
-
-
-
-    Make maturing monster keep their names (#3805)
 
 
 
 
     consider both, not just one, fleet in a fleet transfer order, that has arrival starlane -1 to have arrival starlane equal to its current system, to avoid first turn issue with being unable to merge fleets
-
 
 
 
@@ -2170,204 +1298,19 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
 
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
- / commenting
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -branchless sign determination
-    -missing default case
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    fix warnings and avoid unnecessary repeat calculations
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -make Meter functions noexcept
-    -expose value instead of getter to Python
-    -return array of char instead of string from Meter::Dump
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    avoid warning
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -remove five-year-old backwards compatibility code in Meter::serialize
-    -shorten Meter member variable names
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    [[nodiscard]] and constexpr Meter
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    use sprintf in buffer instead of cocatenating result of std::to_string, when std::to_chars is unavailable
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -remove unnecessary use of stringstream for concatenation
-    -default value for member variable
-
-
-Author: Ouaz <Ouaz@users.noreply.github.com>
-
-
-    Update fr.txt
-    
-    - On par with latest en.txt (Feb 25, 2022 - f2010df)
-
-
-Merge: f2010df09 d7a76e471
-Author: Geoff <geoffthemedio@users.noreply.github.com>
-
-
-    Merge pull request #3720 from Oberlus/BalanceColonization
-    
-    Balance colonization and centralization
-
-
-Author: Oberlus <sicofonte@gmail.com>
-
-
-    Make CENTRALIZATION and COLONIZATION colony cost factor 1/3 instead of 1/2
-
-
-Author: Oberlus <sicofonte@gmail.com>
-
-
-    Make Exobot colony building cost 60 instead of 70
-
-
-Author: Oberlus <sicofonte@gmail.com>
-
-
-    Apply COLONIZATION and CENTRALIZATION colony cost factors to colony buildings and outpost ship parts
-
-
-Author: Michael Courtney <43386669+MichaelCourtney@users.noreply.github.com>
-
-
-    Clean up Confederation Policy (#3696)
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    move calculation within if
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -constexpr
-    -remove unused tag parameter from CreateFromTag functions
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    use double-valued GG::Y_d to avoid warning
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove unused constant
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    constexpr
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    disable warning
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    constexpr
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -constexpr in GG_STRONG_INTEGRAL_TYPEDEF
-    -default constructors
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    use is_constant_evaluated() instead of consteval
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    fix compile error in MSVC 2022
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove unnecessary const from by-value return
-
-
-
-
     Hack to allow multi-line commands in debug chat (#3708)
-
-
 
 
     Add species lists to traits pedia pages
 
 
-
-
     fix arrows (remove cut off glow) (#3699)
-
 
 
     Expand Pedia Quick Start Guide (#3659)
 
 
-
     Fix scanning facility pedia entry
-
 
 
     Flux bubble should decrease colony building time (#3690)
@@ -2381,9 +1324,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     - quick fix: reducing probability for natives on roids and GGs by factor five
 
-
     - generic fieldtype pedia pages now list map-clickable known occurances of each field type
-
 
     - adding system special of derelict small troop ships crewed by khakturian, to be randomly stumbled upon players just like the other derelicts
 
@@ -2430,270 +1371,29 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -remove disabling of most warnings in MSVC2019 project files
 
 
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    use to_python_converter instead of custom exposed pair types to Python API
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    fix some broken Python API stuff:
-    -missing class wrappers for stuff that the API returns
-    -incompatible function parameter types (string_view)
-    -add an auto converter from returned string_view to Python-string
-    -separately exposing maps or sets indexed by strings that used a non-standard comparison type and are thus technically a different class
-    -fix binding a reference to a temporary in jumpsToSuppliedSystem
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Provide IP address of logging player to Python API
-
-
-Author: MichaelCourtney <wobbly@fredvisions.com>
-
-
-    Various Species likes/dislikes
-
-
-Author: MichaelCourtney <wobbly@fredvisions.com>
-
-
-    Gisgusgthrim/HappyBday policy likes
-
-
-Author: MichaelCourtney <wobbly@fredvisions.com>
-
-
-    Furthest policy preferences
-
-
-Author: MichaelCourtney <wobbly@fredvisions.com>
-
-
-    remove centralization dislike from george
-
-
-Author: MichaelCourtney <wobbly@fredvisions.com>
-
-
-    George policy preferences
-
-
-Author: MichaelCourtney <wobbly@fredvisions.com>
-
-
-    Gysache policy preferences
-
-
-Author: Geoff <geoffthemedio@users.noreply.github.com>
-
-
-    Update README.md (#3673)
-    
-    -newish builds require Windows 8.1 as far as I'm aware
-    -newish builds require MacOS 10.12
-    -mention probably-supported Ubuntu versions
-
-
-Author: 0x159BABA11227B902 <0xIDENTITY@pm.me>
-
-
-    Updated info about provide at ArchLinux (#3678)
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    combine some namespace specifiers
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    forward return value
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove unused variables in catch blocks
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    tweak MSVC2019 project file warnings
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    move files into filters in project file
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    return const reference from SpeciesManager::GetSpeciesHomeworldsMap
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    evaluate activation conditions with std::async in DispatchEffectsGroupScopeEvaluations
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    separately track timing of ship and planet species during effect evaluation
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    avoid dynamic_pointer_cast
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    avoid dynamic_pointer_cast
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add overload to UniverseObject::MoveTo taking a raw UniversObject*
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    rename EMPTY_CURRENT_VALUE to DEFAULT_CURRENT_VALUE and explicitly initialize to 0, since boost::variant is not default empty
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    replace some dynamic_pointer_cast with static_cast
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -replace dynamic_pointer_cast with check of UniverseObjectType and static_pointer_cast
-    -other grooming
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    mark logger calls with the effects filter
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -remove unnecessary default base class initializers
-    -mark logger calls with the conditions filter
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Remove some unused parser tokens
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Full checksums test
-
-
-Author: Roberto Sánchez <33062572+rsf92@users.noreply.github.com>
-
-
     Some more translations into spanish (#3671)
     
-    Some more translations into spanish
 
-
-Author: Rob Gill <rrobgill@protonmail.com>
-
-
-    Prevent enqueing multiple Regional Administration at same planet (#3674)
-    
-    Signed-off-by: Rob Gill <rrobgill@protonmail.com>
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Add missing fileds to Tech, EffectsGroup, and Named* dump
-
-
-Author: Andrey <andrey.solomatin@clarifai.com>
-
-
-    Print address to console, exit service gracefully (#3669)
-
-
-Author: Michael Courtney <43386669+MichaelCourtney@users.noreply.github.com>
 
 
     Species likes/dislikes tweaks (#3670)
-    
     * Trith like research, isolation, divine authority
     * Add "PLC_BUREAUCRACY" to species likes/dislikes
     * Start Fulver with Confederation unlocked
     * Give Replicon some policy preferences
 
 
-Author: Ouaz <Ouaz@users.noreply.github.com>
-
-
-    Update fr.txt
-    
-    - On par with latest en.txt (Jan 17, 2022 - fd013a6)
-
-
-Author: Geoff <geoffthemedio@users.noreply.github.com>
 
 
     -make snowflake bodies have good instead of excellent vision (#3668)
-    
     -make detection techs increment range in steps of 25 instead of 25 or 50
     -use value reference for tech detection ranges in pedia
     -reduce living hull detection boost from 50 to 40
     -reduce scanning facility range boost from 75 to 50
 
 
-Author: Roberto Sánchez <33062572+rsf92@users.noreply.github.com>
-
-
-    Add some more spanish translations (#3667)
-    
-    Add some more spanish translations
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
 
     fix rendering number with 1 digit of precision rather than to 1 fractional decimal digit of precision
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -merge / simplify FlexibleToString code using if constexpr instead of enable_if SFINAE
@@ -3478,14 +2178,6 @@ Author: O01eg <o01eg@yandex.ru>
 Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
-    add effect to Outposts tech so outpost influence moves towards target influence. outposts otherwise won't get this effect due to lack of a species to get it from.
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add restrictions to Bureaucracy focus change effect, so that it only affects planets of the same empire that have populations. this should hopefully fix an issue where other empires' outposts were getting influence penalties each turn when another empire adopted Bureaucracy.
-
 
 
 
@@ -3498,58 +2190,11 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
 
-
-
-
-
-
-
-
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    Balance policy Metropoles
-    Halfed production and research bonus.
-    Require stability of 12.
-    No more than 1 in 4 of an empires populated planets can become a metropole.
-
-
-Merge: 87a9817f1 6f5bdf9dc
-Author: Geoff <geoffthemedio@users.noreply.github.com>
-
-
-    Merge pull request #3556 from Grummel7/colonizeAfterConquer
-    
-    Colonize after conquer
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -default destructor in header
-    -move default constructor to protected section
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    reorder members
-
-
-
-
-
-
-
     Add support for Python's asyncio
     Embedded Python need to manually calls event loop so coroutines and
     callbacks could be executed.
     It uses approach described in https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.loop.run_forever
     to call olny ready callbacks and then return back to application.
-
-
 
 
 
@@ -3559,7 +2204,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
 
-    Fix star based colonization value calculation
+    [AI] Fix star based colonization value calculation
     The larger boni should apply if the AI does not yet have a star of that type. The defect was introduced in #3484
     
 
@@ -3846,6 +2491,8 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     - Made Trans-Organic Sentience tech boost the growth/decay rate of influence meters    
     - Reworked the population growth formula so bigger planets don't fill up faster than smaller planets
     - Added guard monsters to resource specials
+    - Added an effect to Outposts so their influence moves towards target influence, which otherwise wouldn't happen.
+
 
 
 - Fields
@@ -3883,6 +2530,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 - Other
     - Many building, species, and tech balance adjustments along with new government systems and influence-constrained growth
     - Adjusted info shared between allied and non-allied empires
+    - Reworked how allied and not-mutual-allied supply network sharing and merging handles various situations
     - Nerfed Telepathy bonus to Psionics cost
     - Removed the Galactic Infrastructure tech
     - Added more and rebalanced universe creation frequency options 
@@ -3930,6 +2578,9 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 - Made planet focus reset when conquered by neutrals or rebels
 - Made meter estimates count ground combat
 - Ignored freshly established colonies for evacuation building effects
+- Made maturing monsters keep their names
+- Added some sanitization of user-input text to reject some formatting characters
+-
 
 
 #### Other Bug Fixes
@@ -3960,7 +2611,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 - Fixed Python logging memory leak
 - Fixed issue with Python text encoding on Windows systems
 - Fixed issue with loading stringtables that have many successive lines with just # comments on them
-
+- Fixed issue where AI clients weren't informed of modified game rules
 
 
 #### Technical / Internal
