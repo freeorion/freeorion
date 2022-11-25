@@ -109,15 +109,6 @@
 
 
 
-    Block enqueuing more than one of any colony building on a planet (#3994)
-
-
-    Apply SPATIAL_FLUX_STEALTH_TECH_BONUS boost for all tech upgrades (#3990)
-    * fixes bug found by Oberlus
-      https://freeorion.org/forum/viewtopic.php?p=112255&sid=6279f996d237f31db727cac11366812b#p112255
-      Only SPY_STEALTH_PART_1 was multiplied by SPATIAL_FLUX_STEALTH_TECH_BONUS.
-      Now also the others are multiplied
-
 
 
     Species Ship Shield Trait scaled by shield part (#3979)
@@ -125,12 +116,9 @@
 
     [AI] Limit supply penalty for independant species (#3980)
 
-
     [AI] Fix evaluation of capital species (#3982)
 
-
     Make changes in MaxPopulation affect growth without delay (#3817)
-
 
     Small pedia fixes (#3969)
     * Update Interstellar logistics, it no longer increases speed without a policy
@@ -138,15 +126,9 @@
     * Add page for sneaky species
     * Document that Psychogenic Domination cannot take over domesticated space monsters Fixes #2840
 
-
-    Updated tech short descriptions (#3946)
-
-
     Give white krakens a tentacle attack (#3968)
 
-
     [AI] Remove duplicated dependency and improvments (#3963)
-
 
     [AI] Use forgotten supply factor (#3966)
 
@@ -189,15 +171,9 @@
 
     [AI] Add policies to charting (#3914)
 
-
-    Make Mu Ursh more playable (#3915)
-
-
     [AI] calculate_production.py (#3934)
 
-
     [AI] Added world tree and ast. coating to empire resources. (#3919)
-
 
     [AI] Refactor shipyards using BuildingType (#3857)
     * Refactor shipyard using BuildingType
@@ -206,9 +182,7 @@
     * First round of review changes
     * Fix ShipYardInfo usage
 
-
     [AI] avoid division by zero exception (#3861)
-
 
     AI military policies (#3851)
     * Fixed type BuildingName
@@ -217,13 +191,6 @@
     * First version with military policies
     * Review updates and slightly change _rate_costs
     * Removed obsolete technology
-
-
-
-    Add server flag that merges quickstart and load options (#3848)
-
-
-
 
 
 
@@ -302,10 +269,6 @@
 
 
 
-    Fix population reducing effect of planetary drive
-
-
-
     Move survey_universe to empire module and call it earlier (#3762)
     * Move survey_universe to empire module and call it earlier
     * Removed second survey_universe_lock
@@ -342,7 +305,6 @@
     The fix here is to introduce an asynchronous timer which will cancel pending operations once timeout occurs.
 
 
-    remove (no star) label from starless system names
 
 
     -display real system name on map and sidepanel for empty systems
@@ -361,46 +323,22 @@
 
     Add occasional defenses to natives
 
-
-    Fixed some AI exceptions (#3719)
-    This should fix the exceptions mentioned in #3718
-
-
     Guard Biege Goo and Fiftyseven
-
-
-
-
-
-
 
     Hack to allow multi-line commands in debug chat (#3708)
 
-
     Add species lists to traits pedia pages
-
-
-    fix arrows (remove cut off glow) (#3699)
-
 
     Expand Pedia Quick Start Guide (#3659)
 
 
     Fix scanning facility pedia entry
 
-
-    Flux bubble should decrease colony building time (#3690)
-    * Flux bubble should decrease colony building time
-    * Fix pedia cateogorization of spatial flux hulls
-
-
     
     add native species Nightsiders, Sleepers, Khakturian, Celestephyte
 
 
     - quick fix: reducing probability for natives on roids and GGs by factor five
-
-    - generic fieldtype pedia pages now list map-clickable known occurances of each field type
 
     - adding system special of derelict small troop ships crewed by khakturian, to be randomly stumbled upon players just like the other derelicts
 
@@ -412,12 +350,6 @@
     - noted some todo's related to pedia with possible future improvements
     - fixed some fixme's - they work best when followed by a colon, this will highlight them similar to todo's in modern ide's
     - make list of homeworlds commaseparated in the pedia-homeworlds-page
-
-
-
-
-    - ending every automatically created pedia page with an extra empty line, just in case the previously last bit of text was ment to be a clickable pedia link, which would not have been clickable if the very last thing on the page. this should not hinder the player's reading experience in any way but improve it slightly, wherever pedia pages ended with pedia links before. one example in this pr is the void rift fieldtype page which lists as species that dislike the Celestephyte which is now clickable with this fix here.
-
 
 
     - streamlining the pedia text generating code a little by introducing versatile helper methods to replace some massively redundant code and prettify the player visible output at the same time, admittedly at the expense of a tiny little bit of extra computations every time the player clicks on a pedia link but that is negligible and not really noticeable
@@ -434,95 +366,9 @@
 
     - adding species #4 the Celestephyte, to be continued ...
     - adding new native species #1 Nightsiders, #2 Sleepers and #3 Khakturian
-    - changed condition for availability of FOCUS_PROTECTION so that some native species with that same preferred focus can now do that while not yet conquored
-
-
-
-
-
-    
-
-
-    -move warning disabling into warnings.props in MSVC2019 project files
-    -remove disabling of most warnings in MSVC2019 project files
-
-
-
-
-
-    Species likes/dislikes tweaks (#3670)
-    * Trith like research, isolation, divine authority
-    * Add "PLC_BUREAUCRACY" to species likes/dislikes
-    * Start Fulver with Confederation unlocked
-    * Give Replicon some policy preferences
-
-
-
-
-    -make snowflake bodies have good instead of excellent vision (#3668)
-    -make detection techs increment range in steps of 25 instead of 25 or 50
-    -use value reference for tech detection ranges in pedia
-    -reduce living hull detection boost from 50 to 40
-    -reduce scanning facility range boost from 75 to 50
-
-
-
-    fix rendering number with 1 digit of precision rather than to 1 fractional decimal digit of precision
-
-
-
-    -made fleet unstealthiness work in steps of 5 and be a much larger effect, but also with a threshold of 10 ships to start happening
-    -added some ship stealth bonuses and penalties dependent on star type
-
-
-
-    boosts and penalties to planet and ship detection dependent on star type
-
-
-    adding number of settled worlds to census report (#3648)
-    * - adding a column and labels to the census report to show number of settled worlds per species / per trait / total
-    - always display one decimal digit in census population counts
-    - another label to distinguish current from target population
-
-
-    Unown outposts with Chaos Wave bombardement weapon
-
-
-    Added the Asteroid coating special. (#3649)
-
-
-    -make GetEmpiresPositionDetectionRanges exclude destroyed objects
-    -add GetEmpiresPositionDetectionRanges overload that excludes destroyed objects and objects in a separate set of ids
-
-
-
-    ===> check if this obsoletes the already-noted change about not showing stale info?
-    Use GetEmpiresPositionDetectionRanges rather than MapWnd internal equivalent calculations. This removes some checks for stale or destroyed objects, so might lead to weirdness in some cases, which will need to be fixed if they are actually issues.
-
-
-
-    Make Trith have average environments (RADIATED_STANDARD) (#3623)
-    having some options for adequate environments is a preparation path for terraforming.
-    before restricting self-sustained to good planets this was basically a no-go, now its possible
-
 
 
     [AI] Consider researching space flux hulls if you dont research organics
-
-
-    AI entries for FLUX techs, hulls, and lance; not really used by AI though
-
-
-    -add some missing options DB description strings for colours
-
-
-    spatial flux rework
-
-
-    Add SR_FLUX_LANCE weapon part
-    Add hull SH_SPACE_FLUX_COMPOSITE
-    Make SPACE_FLUX_BUBBLE cheaper and more fragile; Refactor SPATIAL_FLUX_STEALTH_TECH_BONUS
-    Split spatial flux hulls into own hull line (was in robotic)
 
 
     Add support for Python's asyncio
@@ -532,134 +378,14 @@
     to call olny ready callbacks and then return back to application.
 
 
-
-    Improve AI systems_connected performance (#3559)
+    [AI] Improve AI systems_connected performance (#3559)
     * Optimize AI systems_connected performance
     Instead of running a BFS for each pair of system ids, cache the set of systems connected to the capital in a single depth-first-search and check if queried system_ids are within that set. Since most of the visible systems will be connected to the capital, this will cover most cases. Only if both systems are not connected to the capital, we will have to run another BFS. However, the search space will be significantly smaller since -again- most systems will be connected to the capital and thus won't be part of the search.
-
 
 
     [AI] Fix star based colonization value calculation
     The larger boni should apply if the AI does not yet have a star of that type. The defect was introduced in #3484
     
-
-
-    
-    Didn't kick out current player connection
-
-
-    Fix sign switch on xenophobic self malus (#3537)
-
-
-    fix neutral / unowned forces being labelled "Unknown" in combat initial stealth event descriptions
-
-    
-    Didn't kick out current player connection
-
-    
-    -fixed probably long-standing (8 years?) bug with ContainedBy::Match that returned the opposite of what it should have. This probably didn't affect gameplay much, since most or all uses of ContainedBy have subconditions that are OK to evaluate once for checking all candidates, rather than the per-candidate evaluation case that actually calls Match
-
-
-    -Fix issues with calculation of research bonus in Distributed Thought Computing
-
-
-    Base MILITARY_STRENGTH statistic on putting all ships in a single fleet
-    This estimates the power of all your ships now put in a single fleet
-    instead of estimating the power of each ship flying solo and adding that up.
-
-
-    Elaborate labels for damage/destruction by fleet (review-01)
-
-    Include fighters in fleet damage/destruction totals (UI)
-
-    Calculate combat total structural damage/destroyed fighters for carriers
-
-
-
-    TotalFighterShots ValueRef - Calculates the maximum number of shots the fighters of a single carrier shoot in a combat. For use in hangar part damage estimation.
-    * So a striker with a launch bay has 3 fighters and 2 launch capacity so for four combat bouts - TotalFighterShots is 8 (0+2+3+3)
-    ** for that structural damage estimation would be TotalFighterShots*HangarDamage and destroyed fighter estimation would be TotalFighterShots
-    * not sure how to parse it. how to pass the ship id. if the the result should really be int. what the name for the condition should be
-      Source.TotalFighterShots countIf = (CombatBout == 2)
-             TotalFighterShots shootIf =                   id = Source.ID
-             TotalFighterShots condition =
-    * not sure we really want this
-    * in principle targeting could support the time a fighter is already flying/the bout it was launched
-    ** but in the damage estimation one would really have to instantiate/check fighter objects per bout
-    *** so that would mean more calculations, which scales quadratic with the number of combat bouts (OTOH combat is way more expensive)
-        number of tests for 10 bouts w/o  launchBout: 10 (0+1+1+1+1+1+1+1+1+1+1)  n
-        number of tests for 10 bouts with launchBout: 55 (0+1+2+3+4+5+6+7+8+9+10) n/2*(n+1)
-    ** if we had a maximum flight time (e.g. missiles fly a bout without doing damage) we would need some something like that anyway
-    *** not sure how that interacts with stealth though
-    ***** if missiles should always be launched or only if there is a visible target - I prefer this, but needs to use combatTargets on launch time
-    ***** and if the missile should keep on flying if there is no visible target - if no: could reduce real damage (wont matter for estimation though)
-    * one could also model in max/min amount of damage (min amount: fighters get shot down immediatly, max amount: fighters do not get shot down)
-    TotalFighterShots valueref should use the context with bout info and decrease fighters in hangars for each launch
-    * was using the original context instead of the mutable one
-    * did not decrease the number of fighters available
-
-
-    Damage estimation: Use Shield from ship in context, check fighter in context vs combatTargets
-    * uses shield meter from target in default estimation of structural damage
-    * can use Value(Target.Shield) in FOCS
-    * use combatTargets condition of fighters for default estimation of structural damage or fighter destruction
-
-
-    Show number of fighters shot instead of number direct weapon hits in pedia
-
-
-    Use combatTargets condition in fighter details popup in ship view
-
-
-    GUI shows split damage/destroy estimation
-    damage - refers to the amount of damage against ships
-    destroy - refers to the number of shots against fighters
-    Unified view in ShipDamageMeterWnd
-    Split icons in FleetWnd
-
-
-    Change damage estimation, split Ships/Fighters, full combat damage
-    In the UI, only ShipDamage is shown
-    Example content
-    * SR_WEAPON_0_1 - no damage against ships
-    * SR_WEAPON_1_1 - no damage against fighters
-    * SR_JAWS       - Only half the damage against ships (shoots only 2 out of 4 bouts)
-    * combat damage gets calculated per combat not per bout
-    * also checks for shields (target-dependent ShipDamage)
-
-
-    Use secondary stat to display hangar part damage (bugfix)
-
-
-    Add happines species trait plus some rebalance (#3493)
-
-
-    Refactored Fleet Aggression Handling (#3447)
-    Default aggression was used inconsistantly. When a fleet was
-    split, depending on the splitting method split-off battle ships
-    became aggressive or just obstrusive.
-    I defined alias values for default aggression of armed
-    and unarmed ships and used the new values where appropriate.
-    Also did some further cleanup in those methods.
-
-
-    use ValidExecutableBinary test when setting server binary executable file on Windows
-
-
-
-    Fix multiplayer issues
-    Correctly get revious player id. Before could get same player just connected.
-    Fix crash if connection to the game could cause switch to lobby.
-
-
-
-    Kick out other players controls same empire (#3353)
-    Additionally kills AI process if other player was AI.
-
-
-    Kill AI process of eliminated empire
-    Stores AI process indexed by AI name.
-
 
     Allowed AI to delegate player
     Allows locally launched AI to skip authentication.
@@ -732,6 +458,16 @@
 - Added a link to the configuration file directory in the Configuration pedia article
 - Accounted for SI postfixes in text representations of numbers when sorting object list columns
 - Added distance to the selected system or fleet to objects list columns
+- Restricted selectable files to those that are valid and executable when setting server binary executable file on Windows
+- Split ship damage and fighter destruction in ship tooltips
+- Fixed neutral / unowned forces being labelled "Unknown" in combat initial stealth event descriptions
+- Added clickable links in field type articles to fields in universe of those types
+- Reworked automatic fleet aggression selection when splitting fleets
+- Fixed some numbers being rendered as text with 1 digit of precision instead of 1 fractional digit of precision
+- Fixed arrow textures having cut off glow at their edges
+- Added number of worlds settled to the census report tooltip
+- Removed the "No Star" label from the displayed names of starless system
+
 
 
 #### Content and Balance
@@ -743,12 +479,16 @@
     - Ship structure and damage adjusted for 4 bout combats
     - Added the Flux Lance weapon that is "short range", attacking starting from bout 3 (or 2 if the Charge policy is adopted)
     - Added the Graviton Pulsar weapon that has 12 attacks that do 1 damage and targets anything, useful against fighters
+    - Added the Space Flux Composite hull
+    - Split spatial flux hulls into their own hull line (were in robotic)
+    - Made owning a ship with a flux bubble hull decrease colony production time    
     - Rebalanced fighter techs and pilot trait effects
     - Applied ship weapon damage rule scaling rule to species and monster weapon bonuses and 
     - Applied ship structure scaling to tree regeneration
     - Made blockade checks test that a fleet is set to Obstructive not Aggressive
     - Reworked Organic hull to be cheaper with more fuel and less slots
     - Added a stealth stealth penalty to ships with large numbers of ships in the same system owned by the same empire
+    - Added some ship stealth bonuses and penalties dependent on star type
     - Made Laenfa fuel regrow and white or blue stars
     - Made Sly refuel and repair at planets with own species, without a supply network
     - Reworked various monster ship designs
@@ -757,11 +497,16 @@
     - Various cost rebalancings
     - Removed prerequisite dependence between fighter and other weapon techs
     - Required a part to do more than 0 damage to destroy a figher
+    - Made Chaos Wave bombardment remove outposts
+    - Made snowflake bodies have good instead of excellent vision
+    - Reduced living hull detection boost from 50 to 40
+
 
 - Planets
     - Added some luxury resource specials that some species like and thus get stabilitly boosts from
     - Reduced spawn rates of some specials
     - Made various research and industry bonuses depend on stability
+    - Added species traits for varying levels of baseline stability
     - Add precognitive detection to Fulver, giving basic visibility to starlane connected planets
     - Asteroid processor and Asteroid Reformation processor now remove themselves if their planet is not an asteroid
     - Made planet max shields not depend on recent combats in system
@@ -773,7 +518,7 @@
     - Rebalanced troop bonuses from garrison techs
     - Set infrastructure to 1 on just-conquered planets
     - Made self-sustaining metabolism only give population boosts on good planets
-    - Rebalanced Trith species: medium starting planet, bad supply and industry
+    - Rebalanced Trith species: medium starting planet, bad supply and industry, make some planet types average environment
     - Gave player planets at least 6 troops in beginner mode
     - Gave Sly and Laenfa distinct non-distance dependent stability effects
     - Added the Imperial Regional Administration building that acts like a capital for colony supply distance cost calculations
@@ -799,8 +544,9 @@
     - Reworked the population growth formula so bigger planets don't fill up faster than smaller planets
     - Added guard monsters to resource specials
     - Added an effect to Outposts so their influence moves towards target influence, which otherwise wouldn't happen.
-
-
+    - Blocked enqueuing more than one of any colony building on a planet
+    - Reduced scanning facility range boost from 75 to 50
+    - Added some planet stealth bonuses and penalties dependent on star type
 
 - Fields
     - Made made star forming nebulae smaller, reduced speed and detection, increased stealth, limited number generated
@@ -814,13 +560,10 @@
     - Added Field Repellor building
     - Made Nymnmn species attract some fields
 
-
 - Pedia
     - Replaced various hard-coded numbers with content script-derived calculated values
     - Fixed placement limit documenation for InterSpecies academy
     - Documented Planetary Starlane Drive
-    
-    
     - Documented supply network propagation mechanics
     - Additional entries for planetary focus game concept
     - Additional text added for Spatial Distortion, Industry, Logistics, Planet Drive, and Psychic Domination
@@ -835,6 +578,8 @@
     - Avoid referring to the player in the second person ("you", "your")
     - Added additional custom accounting labels for various effects
     - Renamed '%SPECIES% Colony' to 'Colony of %SPECIES%'
+    - Added some missing options description strings for colours
+
 
 - Other
     - Many building, species, and tech balance adjustments along with new government systems and influence-constrained growth
@@ -846,6 +591,8 @@
     - Fixed issues with Starlane Bore and Starlane Nexus not correctly avoiding existing starlanes when generating new ones
     - Removed Cyborgs tech
     - Removed redundant prerequisite of N-Dimensional Subspace tech
+    - Added the the Asteroid coating special that appears on asteroids and gives owned asteroid ships a structure boost
+    - Reworked detection levels to increment in steps of 25 instead of 25 or 50
 
 
 #### AI
@@ -890,6 +637,12 @@
 - Made maturing monsters keep their names
 - Added some sanitization of user-input text to reject some formatting characters
 - Made combat object damaged sitreps require partial (direct via detection) visibility of an object to receive
+- Made the server disconnect AIs if a player joins who previously controlled the AI's empire
+- Made the server kill the process of AI players of eliminated empires
+- Showed number of fighters shot instead of number direct weapon hits in ship design pedia articles
+- Reworked damage estimation and split damage to ships separately from numbers of fighters shot in ship design pedia articles
+- Reworked calculation of empire total military strength
+
 
 #### Other Bug Fixes
 
@@ -908,6 +661,7 @@
     - Fixed issue where two empires gifting eachother everything in a system would have order-dependence problems
     - Disallowed mixing arrival starlanes in a new fleet or in a ship-fleet transfer
     - Made non-empire forces work like an empire for visibility within combat
+    - Fixed population reduction when using planet Starlane Drives
 
 - Content
     - Fixed Gaia special planet type selection
@@ -921,7 +675,7 @@
 - Fixed issue with Python text encoding on Windows systems
 - Fixed issue with loading stringtables that have many successive lines with just # comments on them
 - Fixed issue where AI clients weren't informed of modified game rules
-
+- Added extra newlines to the end of autogenerated pedia pages to avoid issues with clickable links
 
 #### Technical / Internal
 
@@ -936,4 +690,5 @@
 - Salt combat PRNG seeding with the galaxy seed
 - Partially implemented an alternative client in Godot with Android support
 - Partially migrated scripted content from custom FreeOrion Content Script to Python scripts
-
+- Fixed a probably long-standing (8 years?) bug with ContainedBy::Match that returned the opposite of what it should have, but which probably didn't affect any previously-scripted content
+- Added a server flag that merges quickstart and load game options
