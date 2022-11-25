@@ -15,35 +15,11 @@
     Fix pedia for robo shields (#4302)
 
 
-
     Fix alliance victory if diplomacy is forbidden
     If diplomacy is forbidden the empires in peace cannot do anything with
     it and have to wait for tech victory, experimenters victory or
     concede of other.
 
-
-
-    Fix independent colony population special (#4285)
-    
-    population growth happens happens much earlier than the other target meters,
-    so the override needs to be the one for population
-    
-    currently, lembalam and uninhabitable effects also happen at this priority,
-    but it is impossible to mix with independence, so that priority works
-
-
-
-    correct / tweak hint about exobots
-
-
-
-
-
-
-    Remove fuel rounding hacks since meters use fixed point arithmetics (#4268)
-
-
-    Tweak Hyperspatial Dam (#4222)
 
 
     Make it possible to hide the kraken nests from turn 1 and 2 (#4226)
@@ -55,91 +31,27 @@
 
     Tweak stealth and distance to empire of kraken in the ice special (#4248)
 
-    Fix scattered hull pedia entry (#4254)
-
 
     Fix species modifier for Troop Techs (#4221)
-
-
-
-
 
 
     Add stealth bonus info about colonies in SPY_PLANET_STEALTH_MOD_DESC
     Add extra sources of detection to METER_DETECTION_VALUE_DESC
 
-    Move effects checks to last at species parser test
-
-
-
-
-
-    -further tweak allied supply merging to not give allies of allies access to networks if they aren't themselves allies, but to allow mutual allies to connect across several other allies networks
-    -additional trace supply logging
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    boost::bind to lambdas
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -store Wnd children in vector instead of list
-    -replace functors with lambdas
-
-
-
-    require partial visibility to generate an object damage in combat sitrep. might address issue #3536
-
-
-
-
 
     Rework Replicon (#4096)
 
 
-
-
-
-
-
-
-
-    Rework Xenophobic species trait and Racial Purity policy
-    
+    Rework Xenophobic species trait and Racial Purity policy 
     - Xenophobic penalty only to stability, based on number of planets and jump distance, affecting and being affected by other empires and unowned worlds. At distance 0, penalty is -2.5, decreasing by 0.5 by each jump away.
-    
-    - Racial Purity
-     -- removes the penalties of harassment and frenzy between owned planets;
-     -- gives +5 stability to capital species and -10 to other, slowly;
-     -- gives +1 influence to influence-focused capital species;
-     -- gives -1 influence to other species;
-     -- gives +0.05*pop PP to industry-focused, other species;
-     -- disables influence and research foci from other species;
-     -- de-adopting the policy applies -10 stability penalty to owned planets, fading by -0.5 per turn.
-    
     - Trith Bad->Great Influence, Great->Bad Stability and don't dislike Influence.
-    
-    - Eaxaw Great->Average Stability.
-    
+     - Eaxaw Great->Average Stability.
     - Temptative AI code to evaluate stability with xenophobia and racial purity
-
-
-
-
 
 
     Add SetOriginalType, use with Philosopher Planet (#4142)
     Simplified cost reduction of stealth techs
     Fix planet stealth tech cost
-
-
-
-
-
 
 
     Add missing macros to Lambala'Lam (#4130)
@@ -173,7 +85,6 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     -fix probable bug with Condition::Type::GetDefaultInitialCandidateObjects, where if a complicated expression was used for the type, it looked like nothing would be returned
 
 
-
     [AI] Do not invade allies (#4037)
     
     * AI function to query diplomatic status
@@ -182,11 +93,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     * Do not consider allies as threats
 
 
-
-
-
     Make Asteroid Coating Special Rarer (#4032)
-
 
 
     Stop auto-advance turn on error
@@ -205,921 +112,91 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     Block enqueuing more than one of any colony building on a planet (#3994)
 
 
-
-Author: agrrr3 <axel.gross@iaeste.at>
-
-
     Apply SPATIAL_FLUX_STEALTH_TECH_BONUS boost for all tech upgrades (#3990)
-    
     * fixes bug found by Oberlus
       https://freeorion.org/forum/viewtopic.php?p=112255&sid=6279f996d237f31db727cac11366812b#p112255
       Only SPY_STEALTH_PART_1 was multiplied by SPATIAL_FLUX_STEALTH_TECH_BONUS.
       Now also the others are multiplied
 
 
-Author: Michael Courtney <43386669+MichaelCourtney@users.noreply.github.com>
-
 
     Species Ship Shield Trait scaled by shield part (#3979)
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    make CompareTypeString constexpr and return string_view
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -templatize ValueTest Comparison helper function
-    -move testing of subsets of refs into a lambda
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add additional cases for ValueTest simple evaluation
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    make pedia search dir strings constexpr and move near use and remove redundant loop
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove default parameter value comments
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -tweak returned types of ObjectMap::all and ObjectMap::allRaw
-    -add some static_assert tests for those types
-    -move ObjectMap::Map implementations into header
-    -move ObjectMap::SwapMap implementation into header
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -remove Condition::Eval code path using reinterpret_cast when matching a TargetSet and instead copy to a ObjectSet and back
-    -refactor Condition::Eval overloads that matched into an input/output parameter to instead return an ObjectSet or TargetSet of matches
-    -fix probable bug in ContainedBy::Match where an ObjectSet of candidates to match was being passed in, but ignored and replaced with any matches of the subcondition
-    -remove Statistic::GetConditionMatches as a separate function
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    skip redundant copy-init since the ObjectSet will be cleared in subsequent Eval call anyway
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-
-
-
-Author: Ouaz <Ouaz@users.noreply.github.com>
-
-
-    Update fr.txt
-    
-    - On par with latest en.txt (Jul 14, 2022 - f327265)
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/ship_hulls/organic/SHP_CONT_SYMB.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/ship_hulls/organic/SHP_CONT_BIOADAPT.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/ship_hulls/organic/SHP_BIOADAPTIVE_SPEC.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/ship_hulls/energy/SHP_SOLAR_CONT.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/ship_hulls/energy/SHP_QUANT_ENRG_MAG.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/ship_hulls/energy/SHP_FRC_ENRG_COMP.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/ship_hulls/energy/SHP_ENRG_FRIGATE.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/ship_hulls/energy/SHP_ENRG_BOUND_MAN.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/ship_hulls/asteroid/SHP_SCAT_AST_HULL.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/ship_hulls/asteroid/SHP_MONOMOLEC_LATTIC.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/ship_hulls/asteroid/SHP_MINIAST_SWARM.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/ship_hulls/asteroid/SHP_HEAVY_AST_HULL.focs.py
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/ship_hulls/asteroid/SHP_CAMO_AST_HULL.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/ship_hulls/asteroid/SHP_ASTEROID_REFORM.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/ship_hulls/asteroid/SHP_ASTEROID_HULLS.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/ship_hulls/SHP_XENTRONIUM_HULL.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/ship_hulls/SHP_GAL_EXPLO.focs
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add Elapsed getters to ScopedTimer
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
 
 
     [AI] Limit supply penalty for independant species (#3980)
 
 
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
     [AI] Fix evaluation of capital species (#3982)
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
 
 
     Make changes in MaxPopulation affect growth without delay (#3817)
 
 
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    [AI] cleanup production 3 (#3975)
-    
-    * Remove redundant try-except
-    * Remove type check introduced 10 years ago
-    * Extract building queue names to separate function
-
-
-Author: Michael Courtney <43386669+MichaelCourtney@users.noreply.github.com>
-
-
     Small pedia fixes (#3969)
-    
     * Update Interstellar logistics, it no longer increases speed without a policy
     * Update Organic Hull description
     * Add page for sneaky species
     * Document that Psychogenic Domination cannot take over domesticated space monsters Fixes #2840
 
 
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
     Updated tech short descriptions (#3946)
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove redundant std::move for raw pointers
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -replacing std::copy and std::move with insert
-    -remove redundant std::move calls for raw pointers
-    -use vector<uint8_t> instead of vector<bool>
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    replace shared_ptr with raw pointers in various ScriptingContext, Condition, Effect, etc. code
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    tweak some UTF8 micro/mu tests
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    Split loop to get capital building and get allocations (#3972)
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    [AI] Simplify production orders (#3971)
-    
-    Inline variables that could be accessed from any line of code, will greatly simplify the extraction of code parts to functions.
-
-
-Author: Michael Courtney <43386669+MichaelCourtney@users.noreply.github.com>
 
 
     Give white krakens a tentacle attack (#3968)
 
 
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
     [AI] Remove duplicated dependency and improvments (#3963)
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -remove unnecessary temporary
-    -use lambda instead of boost::bind
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -add safety check in Fleet::SetRoute for an empty route before attempting to access its contents
-    -output error messages rather than throwing
-    -remove seemingly pointless UnknownRoute() check in Fleet::SetRoute
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
 
 
     [AI] Use forgotten supply factor (#3966)
 
 
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/production/ROBOTIC_PROD.focs
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    Fix artifact name for github build  (#3951)
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    Fix return type for skeleton (#3965)
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
     [AI] Some fixes and a rough adaption of the invasion rating (#3964)
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
 
 
     [AI] Rework species tags (#3952)
 
 
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/ship_hulls/SHP_DOMESTIC_MONSTER.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/production/ZERO_GEN.focs
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    rework meter XML serialization to use a single string rather than structured boost serialization format
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -add ToChars and FromChars to Meter
-    -use ToChars and FromChars for Meter::serialize
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -store Meter internally as int
-    -add specialized Meter::serializae specializations for XML archives
-
-
-Author: hifron <ondrej.riha@outlook.com>
-
-
-    adding cmake build directory to .gitignore on Windows(VS Code) (#3954)
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/production/VOID_PREDICTION.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/production/TRANS_DESIGN.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/production/SOLAR_ORB_GEN.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/production/SINGULAR_GEN.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/production/SENTIENT_AUTOMATION.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/production/PREDICTIVE_STOCKPILING.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/production/ORBITAL_GEN.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/production/NEUTRONIUM_EXTRACTION.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/production/N_DIM_ASSEM.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert default/scripting/techs/production/NANOTECH_PROD.focs
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
     [AI] Break dependency of buildings on empire (#3949)
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
 
 
     [AI] Planet rating (#3916)
 
 
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    * split getNamedValue to getNamedReal/Int in the Python API, which return 0 when no such named reference exists rather than a Python none object (#3879)
-    
-    * in Python get_named_int and get_named_real wrappers, check that the requested reference exists before evaluating, and return 1 if it doesn't
-    * Allow AI to enqueue a building that cannot be produced at yet
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    Add unique name for binary artefact (#3950)
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    fix checked type
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    [AI] Fix building iteration (#3948)
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    [AI] Refactor building enums (#3908)
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -try-catch around more message Extract calls
-    -call UserStringNop instead of UserString when creating ErrorMessage
-    -pass and put ModeratorAction into unique_ptr rather than relying on calling code to delete
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    wrap message Extract functions in try-catch blocks
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    save message type before potentially modifying while reacting to it
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    reinitialize system graph after moderator actions that could have modified it, preventing a crash when adding systems with a moderator action
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    indenting
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    comment out do-nothing pedia text generation for species empire opinions
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -use findRaw and getRaw to store raw pointers instead of shared_ptr
-    -other grooming
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add findRaw functions to ObjectMap
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    Removed some unused interface functions (#3945)
-
-
-Author: agrrr3 <axel.gross@iaeste.at>
-
 
     Increase growth by 25% (#3621)
-    
     Before introducing growth policy in 5c9b5023f00e047f1b33e260677a13f21d4f6c2b,
         base growth factor was 0.01
         Then it was 0.005, but one could improve it by 50% using the policy
-    
      The new formula introduced in  6a9b32fec516bc2fa0a37f2d079e204948456a17 (#3703)
         divided growth by target population and had base growth factor 0.08
         i.e. it is the same as 0.005 for the previous formula, if the planet has a max population of 16
         for smaller planets it is faster and for bigger planets it is even slower.
-    
      This commit increases base growth by 25% (this might be still a little bit low)
 
 
-Author: Ouaz <Ouaz@users.noreply.github.com>
-
-
-    Update fr.txt
-    
-    - On par with latest en.txt (Jul 1, 2022 - c27a4f3)
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    Update skeleton generator (#3943)
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
 
 
     [Fix] Avoid division by zero (#3944)
 
 
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    [AI] Refactor bonus calculation, fix check (#3942)
-    
-    * Move bonus calculation to the separate class
-    * Fix logic
-    * Update usages
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
     [AI] calculate research and stability, tech_soon_available (#3939)
 
 
-Author: aschuch247 <aschuch247@gmail.com>
-
-
-    Fix typo of 'content'. (#3941)
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Add dependencies data to HOST_* messages (#3887)
-    
-    Make it same as JOIN_GAME message
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    [AI] Impove chart view (#3940)
-    
-    - Add interactive zoom/scrolling.
-    - Allow selecting empire line.
-    - Fix log span for charting.
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    condense setting up stream compression
-
-
-Author: Matthew Lam <sudfiwe@gmail.com>
-
-
     Message compression
-    
     Add compression for large messages. Disable compression for localhost clients. Based on #3870.
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Force to reset after finish message
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Add compression level parameter
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Compress GAME_START message
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
 
 
     [AI] Add policies to charting (#3914)
 
 
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -make locales thread_local
-    -return by reference to avoid copy
-    -make "en_US.UTF-8" the default
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -add GG::Font::Substring::operator!=
-    -make some string constants contexpr
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -pass string_view rather than const references
-    -return vector instead of set
-    -simplify ExtractWords, without seemingly redundant checks for empty words
-    -add FindWordsStringViews that avoids need to separately construct the views
-    -replace for loops with transform calls
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    replace lexical_cast with ToInt
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    don't determine a default location or append production / cost info to article text for BuildingType when requested to output description only
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    trivial grooming
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add constexpr locale-independent string-to-int converter that is independent of the charconv C++ library functions that aren't universally available
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -in pedia code, add ToInt and ToChars functions that use std::to_chars or std::from_chars if available
-    -use ToInt or ToChars in some places
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -limit number of missing string stack to 3 instead of 10
- in RomanNumber
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    warning reduction
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-
-    -comment tweak
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -revert to storing the results of GetSortedPediaDirEntires in strings instead of partly in string_view since all parts are in some cases generated dynamically within the function, and thus can't be pointed to after it returns
- / comments
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    only list orders of client empire on client empire's pedia page, not all empires' pages
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -don't move from string that was passed as a view to an async call
-    -use a mutex-guarded map to hold strings returned as views / references
-    -rewrite UTF8 character as an escape code
-    -add safety checks / error logging if getting an invalid UTF8 string when processing pedia entries during search
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    wrap regex / utf8_wchar_iterator use in try-catch block in FindWordsStringIndices
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -add CustomToLower function that does case conversion for case-insensitive text searches much faster (but somewhat limited compared to) the Boost to_lower function
-    -use boost::locale::to_lower if not all the characters in a string are handled by CustomToLower
-    -use boost::locale::to_lower instead of boost::algorithm::to_lower, as the latter fails for some characters
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    MSVC compatible C++ version check in utf8 code
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -updated to utf8 library 3.2.1
-    -added additional template type to utf8::iterator in order to replace the GG-custom wchar_iterator that GUI.cpp uses
-
-
-Author: Oberlus <sicofonte@gmail.com>
-
-
-    Add NamedValues to Nebula, Ion Storm and Molecular Cloud for Pedia (#3931)
-    
-    NamedValues for Nebula, Ion Storm and Molecular Cloud for Pedia
-
-
-Author: Geoff <geoffthemedio@users.noreply.github.com>
-
-
-    Update README.md
-    
-    minor text tweaks
-
-
-Author: Michael Courtney <43386669+MichaelCourtney@users.noreply.github.com>
-
-
     Make Mu Ursh more playable (#3915)
-
-
 
 
     [AI] calculate_production.py (#3934)
 
 
-
-
-
-    Set special save_state_string to allow handling special cases.
-
-
-    [AI] Added within_n_jumps plus annotation (#3923)
-
-
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Add comment to dump about use of StaticCast and StringCast
-
-
-Author: Ouaz <Ouaz@users.noreply.github.com>
-
-
-    Update fr.txt
-    
-    - On par with latest en.txt (Jun 13, 2022 - 7dd1d6e)
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    [AI] Added helper functions for names values and stability modifier (#3918)
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    More buildings and one more function, (#3924)
-
-
-Author: Andrey <Cjkjvfnby@gmail.com>
-
-
-    Fix log file detection for charting (#3917)
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    [AI] Added helper functions to query supply groups (#3921)
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
     [AI] Added world tree and ast. coating to empire resources. (#3919)
-
-
-
-    [AI] Update log dumper (#3895)
-    - drop python compatibility with previous logs
-    - drop custom deserialization for specific kyes, and make it more general
-    - fix colors for empire plots
-    - move the player name to the sidebar
-
 
 
     [AI] Refactor shipyards using BuildingType (#3857)
@@ -1128,7 +205,6 @@ Author: Grummel7 <muzz@albatross.pond.sub.org>
     fixed character.may_build_building
     * First round of review changes
     * Fix ShipYardInfo usage
-
 
 
     [AI] avoid division by zero exception (#3861)
@@ -1371,8 +447,6 @@ Author: Grummel7 <muzz@albatross.pond.sub.org>
     -remove disabling of most warnings in MSVC2019 project files
 
 
-    Some more translations into spanish (#3671)
-    
 
 
 
@@ -1396,32 +470,6 @@ Author: Grummel7 <muzz@albatross.pond.sub.org>
     fix rendering number with 1 digit of precision rather than to 1 fractional decimal digit of precision
 
 
-    -merge / simplify FlexibleToString code using if constexpr instead of enable_if SFINAE
-    -UserString lookups instead of rendering enums as ints
-
-
-Merge: 4a0e8b19a b4c6a1833
-Author: Vezzra <vezzra@gmx.net>
-
-
-    Merge pull request #3661 from st-pa-fo/stpa-german-translation
-    
-    - add some german translations and correct one other
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add PlanetTypeDifference case to ValueRef::Complex<int> that converts int or string parameters to PlanetType
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -move PlanetTypeToString and PlanetEnvironmentToString from Species.cpp into ValueRefs.cpp and make publicly accessible
-    -add reverse-lookup StringToPlanetType in ValueRef.cpp
-
-
 
     -made fleet unstealthiness work in steps of 5 and be a much larger effect, but also with a threshold of 10 ships to start happening
     -added some ship stealth bonuses and penalties dependent on star type
@@ -1431,319 +479,20 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     boosts and penalties to planet and ship detection dependent on star type
 
 
-
-
     adding number of settled worlds to census report (#3648)
     * - adding a column and labels to the census report to show number of settled worlds per species / per trait / total
     - always display one decimal digit in census population counts
     - another label to distinguish current from target population
 
 
-
-    - add some german translations and correct one other
-    - rename (only the user-facing part of) all buildings '%SPECIES% Colony' to 'Colony of %SPECIES%'
-    --> bunches them together in the buildingtype pedia page instead of smearing all over the list when in default alphabetic sorting order
-
-
-
-
-Author: Roberto Sánchez <33062572+rsf92@users.noreply.github.com>
-
-
-    Translate a few strings into spanish (#3653)
-    
-    Co-authored-by: Roberto Sánchez Fernández <robertosanchez_9@protonmail.com>
-
-
-Author: Ouaz <Ouaz@users.noreply.github.com>
-
-
-    Update fr.txt
-    
-    - On par with latest en.txt (Jan 10, 2022 - a235bfd)
-
-
-Author: oleg <o01eg@yandex.ru>
-
-
-    Add dump of tested tech to Boost.Test log
-
-
-Author: oleg <o01eg@yandex.ru>
-
-
     Unown outposts with Chaos Wave bombardement weapon
 
 
-Author: oleg <o01eg@yandex.ru>
-
-
-    Convert techs/construction/INTERSTELLAR_LOG.focs
-
-
-Author: Geoff <geoffthemedio@users.noreply.github.com>
-
-
     Added the Asteroid coating special. (#3649)
-    
-    Co-authored-by: Sloth <oliver.mecking@web.de>
-
-
-Author: Rob Gill <rrobgill@protonmail.com>
-
-
-    Mark as single window in desktop file (#3650)
-    
-    Signed-off-by: Rob Gill <rrobgill@protonmail.com>
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    missing newline
-
-
-Author: Felecarp <82163172+Felecarpp@users.noreply.github.com>
-
-
-    Fix inhabited/uninhabited french translation error
-    
-    The french word "inhabité" means "uninhabitated", not "inhabited".
-    https://www.wordreference.com/enfr/inhabited
-    https://www.wordreference.com/enfr/uninhabited
-    
-    The original text:
-    '''This building can only be constructed at a [[PT_GASGIANT]]. It gives a [[value BLD_GAS_GIANT_GEN_OUTPOST_TARGET_INDUSTRY_FLAT]] [[metertype METER_INDUSTRY]] bonus to planets with the Industry focus in the same system. If the [[BLD_GAS_GIANT_GEN]] is built on an inhabited gas giant it gives only a [[value BLD_GAS_GIANT_GEN_COLONY_TARGET_INDUSTRY_FLAT]] [[metertype METER_INDUSTRY]] bonus.
-
-
-
-
-
-Author: st.pa <stephan.pakebusch@zollsoft.de>
-
-
-    - add few more names for ships and stars
-    - alphabetic reordering of some ship names
-    - correcting some typos in ship names (mainly umlauts of proper names)
-    - including feedback from https://github.com/freeorion/freeorion/pull/3642
-    - adding parentheses in comments for code foldability
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add distance to selected system or fleet to objects list columns
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    handle SelectedSystemID, SelectedPlanetID, SelectedFleetID, and SelectedPlanetID in Variable<int>::Eval
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    treat DirectDistanceBetween like a position for string representation
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -StringCast<double>::Eval don't apply SI postfixes if number is close to 1 in magnitude
-    -use to_chars when available
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    account for SI postfixes in text representations of numbers when sorting object list columns
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove unused variable
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    added SelectedSystemID, SelectedPlanetID, SelectedFleetID, and SelectedShipID getters to AppInterface. should only be used in the human client, such as for UI purposes, as these don't make sense on a server or AI.
-
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
 
 
     -make GetEmpiresPositionDetectionRanges exclude destroyed objects
     -add GetEmpiresPositionDetectionRanges overload that excludes destroyed objects and objects in a separate set of ids
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add NotInSetsVisitor
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    move some getting and calculations out of the loop over rows
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -de-pointerize RenderCache
-    -don't redundantly create RenderState objects when one was passed into Font::PreRenderText
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    reserve slightly more space in vertex buffer, which was often one smaller than required
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    get Universe from global getter at top of function
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    make another Condition::Eval overload virtual and specialize for Type to avoid re-checking all the objects of a particular type right after collecting them with GetDefaultInitialCandidateObjects
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    make UniverseObject::Owner non-virtual. this means systems are always considered unowned by this getter.
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    pass EmpireManager into HostileVisitor
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    move FLEET_MOVEMENT_EPSILON into header
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add UnownedVisitor
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    only apply target happiness penalty to planets, not ships
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    move UniverseObjectVisitor trivial constructors into header and remove unnecessarily declared destructors
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -structured binding
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove extra space
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    fix planet_id safety check
-
-
-Author: Axel Groß <axel.gross@iaeste.at>
-
-
-    PLC_LIBERTY -2 stability; for stability >= 6 +2 research
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    tpyo
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    make explicit some lambda return types. the PropagatedSystemSupplyRange and PropagatedSystemSupplyDistance cases fix an objects list column issue where the lambda was returning a reference to a temporary when the return type was auto-deduced.
-
-
-Author: oleg <o01eg@yandex.ru>
-
-
-    Convert techs/construction/CONTROL_GRAV_ARCH.focs
-
-
-Author: oleg <o01eg@yandex.ru>
-
-
-    Automatically flattens And and Or conditions
-
-
-Author: oleg <o01eg@yandex.ru>
-
-
-    Fix format
-
-
-Author: Ouaz <Ouaz@users.noreply.github.com>
-
-
-    Update fr.txt
-    
-    - On par with latest en.txt (Dec 23, 2021 - 1ff9ff5)
-
-
-Author: Axel Groß <axel.gross@iaeste.at>
-
-
-    Make unused EmpireObjectVisibility complex ValueRef consistent with VisibleToEmpire Condition (partly consistent with Universe::EmpireObjectVisibility
-
-
-Author: Axel Groß <axel.gross@iaeste.at>
-
-
-    Treat neutral (==ALL_EMPIRES) forces like an empire for visibility ONLY in combat [docs]
-    
-    * the underlying model is: neutral forces per default can see everything
-    * this gets modified/interpreted differently in many places;
-      usually: local monster detection has to be higher than the object's stealth
-    ** initiating combat (ServerApp::GetFleetsVisibleToEmpireAtSystem)
-    ** targeting during combat via FOCS; ship weapons use VisibleToEmpire condition in default/scripting/ship_parts/targeting.macros.
-    ** Bombard parts use Stealth high = Source.Detection
-
-
-
-
-
-
-    Treat neutral (==ALL_EMPIRES) forces like an empire for visibility
-
-
-    
 
 
 
@@ -1752,442 +501,28 @@ Author: Axel Groß <axel.gross@iaeste.at>
 
 
 
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    expose Universe::GetEmpiresPositionDetectionRanges
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    early exit if ship to be duplicated has an invalid design ID
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    don't prohibit creating ships with invalid design IDs, as there are use cases
-
-
-Author: agrrr3 <axel.gross@iaeste.at>
-
-
     Make Trith have average environments (RADIATED_STANDARD) (#3623)
-    
     having some options for adequate environments is a preparation path for terraforming.
     before restricting self-sustained to good planets this was basically a no-go, now its possible
 
 
-Author: geoffthemedio <geoffthemedio@gmail.com>
 
-
-    
-
-
-
-
-    fix ships not in systems (unintentionally) giving visibility
-
-
-
-
-
-
-
-
-
-Author: Axel Groß <axel.gross@iaeste.at>
-
-
-    Handle SR_FLUX_LANCE non-stacking in ShipDesignAI
-
-
-Author: Axel Groß <axel.gross@iaeste.at>
-
-
-    Consider researching space flux hulls if you dont research organics
-
-
-Author: Axel Groß <axel.gross@iaeste.at>
+    [AI] Consider researching space flux hulls if you dont research organics
 
 
     AI entries for FLUX techs, hulls, and lance; not really used by AI though
 
 
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add "browsepath" to stringtable linter optional ref types
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
     -add some missing options DB description strings for colours
-    -add note of the influence cost of Indoctrination to its description
 
 
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    remove unnecessary setting of title that also used a non-existent string
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    fix reference to non-existent string
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -adjust Empire policy-related interface to take and return string_view where possible. this should fix a potential issue where views of temporary strings were being created and passed into DispatchEffectsGroupScopeEvaluations.
-    -store some of the Empire policy-related info in maps with std::less<> comparator to allow heterogeneous lookups
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    fix GetPolicy overload not actually returning anything
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    make ViewMapToStringMap work for maps with non-standard comparators
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    structured binding
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    simplify copy into an iterator-pair initialization
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    string_view instead of string&
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add GetPolicy overloads that take a string_view. should later be reimplemented without temporary string construction.
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add link to configuration file directory in the Configuration pedia article
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -move checks for Linux when handling PathType enums to the macro definition of the enum class
-    -return array<string_view> instead of vector<string> from PathTypeStrings (which gives a list of PathType strings used for LinkText replacement)
-    -add a getter that returns an array of the valid PathType enum values
-    -removed unused GetPath overload taking a string (instead of a PathType enum)
-    -remove const string pathtype constants and moved into a function that returns string_view
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    return vector<string_view> from SpeciesThatLike and SpeciesThatDislike
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -return string_view instead of string
-    -reserve space when building string
-    -append rather than + to concatenate
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    fix dummy parser build
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -store specials in map with std::less<> comparator, to allow heterogeneous comparisons between string and string_view
-    -add GetSpecial overload taking string_view
-    -make SpecialNames() return a vector<string_view>
-    -pass in container that sorts using std::less to GetSortedPediaDirEntires
-    -pass specific_cause_name to StoreTargetsAndCausesOfEffectsGroup as string_view
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    pass string by value with move
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    return vector of string_view from PolicyManager::PolicyNames
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    -return maps containing string_view from Empire::TotalPolicySlots, Empire::EmptyPolicySlots, and PolicyManager::PolicyCategories
-    -move string in Empire::Init
-    -remove redundant namespace qualification in WrapEmpire()
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    default value for Fleet::m_last_turn_move_ordered
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    [[fallthrough]]
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    pass string by value with move
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    make loop variable auto
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    pass string by value with move
-
-
-Author: Ouaz <Ouaz@users.noreply.github.com>
-
-
-    Update fr.txt
-    
-    - On par with latest en.txt (Nov 14, 2021 - ed79c4c)
-
-
-Merge: 716f96fa5 63f1d9b62
-Author: Geoff <geoffthemedio@users.noreply.github.com>
-
-
-    Merge pull request #3600 from agrrr3/20211101_SpatialFluxRework
-    
     spatial flux rework
-
-
-Author: oleg <o01eg@yandex.ru>
-
-
-    Fix format
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert techs/construction/CONC_CAMP.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert techs/construction/ASYMP_MATS.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert techs/construction/ART_PLANET.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert techs/construction/ART_HEAVEN.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert techs/construction/ARCH_PSYCH.focs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Convert techs/construction/ARCH_MONOFIL.focs
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-    add % or remainder (aka modulo) operator to FOCS for int and double
-
-
-Author: agrrr3 <axel.gross@iaeste.at>
-
-
-    Stringtable update flux lance
-    
-    Co-authored-by: Geoff <geoffthemedio@users.noreply.github.com>
-
-
-Author: agrrr3 <axel.gross@iaeste.at>
-
-
-    Stringtable update flux composition hull
-    
-    Co-authored-by: Geoff <geoffthemedio@users.noreply.github.com>
-
-
-Author: agrrr3 <axel.gross@iaeste.at>
-
-
-    Update default/stringtables/en.txt
-    
-    Co-authored-by: Geoff <geoffthemedio@users.noreply.github.com>
-
-
-Author: Grummel7 <muzz@albatross.pond.sub.org>
-
-
-    Some improvements to BUREAUCRACY (#3602)
-    
-    Also do not penalise focus change right after conquering
-    Avoid duplicate value definition
-    Fixed numbers in message
-
-
-Author: oleg <o01eg@yandex.ru>
-
-
-    Use runtime meter type instead of compile-time
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Fix review
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Use emplace_back
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Simplify boost::python::dict forwarding.
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Fix MSVC projects
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Use boost::python::dict forwarded
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Includes cleanup
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Move remaining value refs
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Remove unneded fields from techs grammar
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Move sources/targets/candidates and enums to separate files
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Move value refs to separate file
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Move conditions to separate file
-
-
-Author: O01eg <o01eg@yandex.ru>
-
-
-    Move some effects parser stuff to separate common file
-
-
-Author: geoffthemedio <geoffthemedio@gmail.com>
-
-
-
-
 
 
     Add SR_FLUX_LANCE weapon part
     Add hull SH_SPACE_FLUX_COMPOSITE
     Make SPACE_FLUX_BUBBLE cheaper and more fragile; Refactor SPATIAL_FLUX_STEALTH_TECH_BONUS
     Split spatial flux hulls into own hull line (was in robotic)
-
-
 
 
     Add support for Python's asyncio
@@ -2218,20 +553,11 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 
     fix neutral / unowned forces being labelled "Unknown" in combat initial stealth event descriptions
 
-
-    
-
     
     Didn't kick out current player connection
 
     
     -fixed probably long-standing (8 years?) bug with ContainedBy::Match that returned the opposite of what it should have. This probably didn't affect gameplay much, since most or all uses of ContainedBy have subconditions that are OK to evaluate once for checking all candidates, rather than the per-candidate evaluation case that actually calls Match
-
-
-    lowered stability requirements of solar orbital generation effects
-
-
-    
 
 
     -Fix issues with calculation of research bonus in Distributed Thought Computing
@@ -2273,13 +599,10 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     * did not decrease the number of fighters available
 
 
-
-
     Damage estimation: Use Shield from ship in context, check fighter in context vs combatTargets
     * uses shield meter from target in default estimation of structural damage
     * can use Value(Target.Shield) in FOCS
     * use combatTargets condition of fighters for default estimation of structural damage or fighter destruction
-
 
 
     Show number of fighters shot instead of number direct weapon hits in pedia
@@ -2295,11 +618,6 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     Split icons in FleetWnd
 
 
-
-    
-
-
-
     Change damage estimation, split Ships/Fighters, full combat damage
     In the UI, only ShipDamage is shown
     Example content
@@ -2310,17 +628,10 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     * also checks for shields (target-dependent ShipDamage)
 
 
-
     Use secondary stat to display hangar part damage (bugfix)
 
 
     Add happines species trait plus some rebalance (#3493)
-
-    cast to int to avoid sign/unsigned comparison warning
-
-    don't treat a visibility entry of VIS_NO_VISIBILITY as having visibility of an object when creating combat object damaged sitreps
-
-    -renamed GiveEmpireTech to GiveEmpireContent and added an UnlockableItemType parameter
 
 
     Refactored Fleet Aggression Handling (#3447)
@@ -2332,10 +643,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     Also did some further cleanup in those methods.
 
 
-
-
     use ValidExecutableBinary test when setting server binary executable file on Windows
-
 
 
 
@@ -2357,10 +665,6 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     Allows locally launched AI to skip authentication.
     Allows player or AI to delegate someone without lobby if they have single empire to play.
  
-
-   
-
-
 
 
 
@@ -2425,6 +729,9 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 - Started rendering fleets that are (somehow?) not in systems and not moving
 - Added some hopefully-helpful explanation text to the output of "freeorion -h" on the command line
 - Disallowed newlines in pedia search edit to prevents weirdness when pasting multi-line text
+- Added a link to the configuration file directory in the Configuration pedia article
+- Accounted for SI postfixes in text representations of numbers when sorting object list columns
+- Added distance to the selected system or fleet to objects list columns
 
 
 #### Content and Balance
@@ -2512,6 +819,8 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     - Replaced various hard-coded numbers with content script-derived calculated values
     - Fixed placement limit documenation for InterSpecies academy
     - Documented Planetary Starlane Drive
+    
+    
     - Documented supply network propagation mechanics
     - Additional entries for planetary focus game concept
     - Additional text added for Spatial Distortion, Industry, Logistics, Planet Drive, and Psychic Domination
@@ -2521,7 +830,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     - Removed out-of-universe UI-related motivation for the planet drive beacon
 
 - Stringtables
-    - Updated translations: French
+    - Updated translations: French, German, Spanish
     - Cleaned up some unused strings
     - Avoid referring to the player in the second person ("you", "your")
     - Added additional custom accounting labels for various effects
@@ -2580,8 +889,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
 - Ignored freshly established colonies for evacuation building effects
 - Made maturing monsters keep their names
 - Added some sanitization of user-input text to reject some formatting characters
--
-
+- Made combat object damaged sitreps require partial (direct via detection) visibility of an object to receive
 
 #### Other Bug Fixes
 
@@ -2599,6 +907,7 @@ Author: geoffthemedio <geoffthemedio@gmail.com>
     - Made simultaneous colonization fail instead of picking one empire based on ID
     - Fixed issue where two empires gifting eachother everything in a system would have order-dependence problems
     - Disallowed mixing arrival starlanes in a new fleet or in a ship-fleet transfer
+    - Made non-empire forces work like an empire for visibility within combat
 
 - Content
     - Fixed Gaia special planet type selection
