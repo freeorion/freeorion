@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_TRANSLATOR"
     description = "BLD_TRANSLATOR_DESC"
-    buildcost = 320
+    buildcost = 320 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 10
     location = And [
         Planet
