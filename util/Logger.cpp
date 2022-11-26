@@ -49,30 +49,6 @@ namespace {
             (boost::log::keywords::severity = default_log_level_threshold), \
             (boost::log::keywords::channel = "log"));                       \
     }
-
-    std::stringstream InvalidLogLevelWarning(const std::string& text) {
-        std::stringstream ss;
-        ss << "\"" << text <<"\" is not a valid log level. "
-           << "Valid levels are ";
-
-        for (int ii = static_cast<int>(LogLevel::min); ii <= static_cast<int>(LogLevel::max); ++ii) {
-            auto log_level = static_cast<LogLevel>(ii);
-            auto name = to_string(log_level);
-
-            // Add commas between names
-            if (ii != static_cast<int>(LogLevel::min) && ii != static_cast<int>(LogLevel::max))
-                ss << ", ";
-
-            // Except before the last name
-            if (ii != static_cast<int>(LogLevel::min) && ii == static_cast<int>(LogLevel::max))
-                ss << " and ";
-
-            ss << name;
-        }
-
-        ss << ".";
-        return ss;
-    }
 }
 
 
