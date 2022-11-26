@@ -6359,7 +6359,7 @@ Common stability modifiers:
 '''
 
 STABILITY_MODIFIERS
-'''• -/+ 5 Capital Supply Connection - Based on distance in jumps from Capital or Regional Administration Building. Does not affect [[encyclopedia INDEPENDENT_SPECIES_TRAIT_TEXT]] species and empires that have adopted [[policy PLC_CONFEDERATION]] policy.
+'''• -/+ 5 Capital Supply Connection - Based on distance in jumps from Capital or Regional Administration Building. Does not affect [[encyclopedia INDEPENDENT]] species and empires that have adopted [[policy PLC_CONFEDERATION]] policy.
 • +5 Homeworld Species - species on their own homeworld are more stable
 • +5 Capital Species - Colonies with the same species as the capital are more stable. Does not apply on the Capital itself.
 • +10 Capital - Colony contains [[buildingtype BLD_IMPERIAL_PALACE]].
@@ -17160,7 +17160,7 @@ ULTIMATE_HAPPINESS_DESC
 +++	Ultimate [[metertype METER_HAPPINESS]]: +[[value ULTIMATE_HAPPINESS_VAL]]
 
 INDEPENDENT_HAPPINESS_DESC
-⋄	Independent [[metertype METER_HAPPINESS]]: Baseline Stability unaffected by supply connections
+⋄	[[encyclopedia INDEPENDENT]] [[metertype METER_HAPPINESS]]: Baseline Stability unaffected by supply connections
 
 NO_DEFENSE_TROOPS_DESC
 −−−	No Defensive Ground [[metertype METER_TROOPS]]
@@ -18056,6 +18056,9 @@ Stylish
 
 ARTISTIC
 Artistic
+
+INDEPENDENT
+Independent
 
 ORGANIC
 Organic
