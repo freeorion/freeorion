@@ -1,20 +1,4 @@
 
-    Make the BLD_LIGHTHOUSE effect more gradual and less effective for planets/buildings
-    was -30, now between -20 to -30 for ships and -0 to -10 for all other objects
-
-
-    Replaced graphics for colony base hull. Previous version renamed, adding "-old" to filename. (#4314)
-
-
-    Tweak probability of Ancient Guardians (#4289)
-    * Make ancient guardians less common
-    * Tweak default RULE_MINIMUM_MONSTER_DISTANCE_CAPITAL value
-
-    * Add details to luxury specials in pedia
-
-    Fix pedia for robo shields (#4302)
-
-
     Fix alliance victory if diplomacy is forbidden
     If diplomacy is forbidden the empires in peace cannot do anything with
     it and have to wait for tech victory, experimenters victory or
@@ -22,378 +6,36 @@
 
 
 
-    Make it possible to hide the kraken nests from turn 1 and 2 (#4226)
-    monster nests are supposed to have a chance to go hidden under cloud spawns
-    this does not work correctly for krakens (because those nests can also be created in turns 1 and 2)
-    discussion https://www.freeorion.org/forum/viewtopic.php?p=114618#p114618
-    this fixes this extending the possible turns and at the same time restricting to the turn after the nest was added
-
-
-    Tweak stealth and distance to empire of kraken in the ice special (#4248)
-
-
-    Fix species modifier for Troop Techs (#4221)
-
-
-    Add stealth bonus info about colonies in SPY_PLANET_STEALTH_MOD_DESC
-    Add extra sources of detection to METER_DETECTION_VALUE_DESC
-
-
-    Rework Replicon (#4096)
-
-
-    Rework Xenophobic species trait and Racial Purity policy 
-    - Xenophobic penalty only to stability, based on number of planets and jump distance, affecting and being affected by other empires and unowned worlds. At distance 0, penalty is -2.5, decreasing by 0.5 by each jump away.
-    - Trith Bad->Great Influence, Great->Bad Stability and don't dislike Influence.
-     - Eaxaw Great->Average Stability.
-    - Temptative AI code to evaluate stability with xenophobia and racial purity
-
-
-    Add SetOriginalType, use with Philosopher Planet (#4142)
-    Simplified cost reduction of stealth techs
-    Fix planet stealth tech cost
-
-
-    Add missing macros to Lambala'Lam (#4130)
-    Save on exit in hostless mode even if save on turn disabled
-    Tweak small robot RP cost in-line with commit 4085 (#4095)
-
-    Add Small Robotic Hull
-
-    Destroy building on creation of special (#4041)
-
-    Give xenophobes (Trith and Eaxaw) great stability (#4086)
-
-
-    Give Krakens extra stealth on Gas Giants
-
-    Add Solar Concentrators to snowflakes
-
-
-    add limits to RenameOrder for length of name and what characters can be used
-
-    Fix researchability of tech Planetary Cloaking Device
-
-    Reduce bonus and malus from influence species trait (#4067)
-
-
     [AI] Do not consider Exobot immediately (#4065)
-
-    Nullify influence when evacuating a planet (#4044)
-
-
-    -fix probable bug with Condition::Type::GetDefaultInitialCandidateObjects, where if a complicated expression was used for the type, it looked like nothing would be returned
-
-
-    [AI] Do not invade allies (#4037)
-    
-    * AI function to query diplomatic status
-    * Do not consider friendly planets as invasion targets
-    * Use playerIsAI to identify the human player
-    * Do not consider allies as threats
-
-
-    Make Asteroid Coating Special Rarer (#4032)
-
-
-    Stop auto-advance turn on error
-
-
     [AI] Fix role detection for orbital defense (#4023)
     [AI] Do not calculate colonization values twice (#4020)
     [AI] Use multipage layout for charts(#3978)
     [AI] Fix check for available slots (#4013)
-    Fix description of great/ult. shields (#4012)
     [AI] Adapt for no longer parallel colony buildings (#4002)
-    [AI] annotations (#4003)
-
-
-
-
-
-    Species Ship Shield Trait scaled by shield part (#3979)
-
-
     [AI] Limit supply penalty for independant species (#3980)
-
     [AI] Fix evaluation of capital species (#3982)
-
-    Make changes in MaxPopulation affect growth without delay (#3817)
-
-    Small pedia fixes (#3969)
-    * Update Interstellar logistics, it no longer increases speed without a policy
-    * Update Organic Hull description
-    * Add page for sneaky species
-    * Document that Psychogenic Domination cannot take over domesticated space monsters Fixes #2840
-
-    Give white krakens a tentacle attack (#3968)
-
     [AI] Remove duplicated dependency and improvments (#3963)
-
     [AI] Use forgotten supply factor (#3966)
-
-
     [AI] Some fixes and a rough adaption of the invasion rating (#3964)
-
-
-    [AI] Rework species tags (#3952)
-
-
     [AI] Break dependency of buildings on empire (#3949)
-
-
     [AI] Planet rating (#3916)
-
-
-
-    Increase growth by 25% (#3621)
-    Before introducing growth policy in 5c9b5023f00e047f1b33e260677a13f21d4f6c2b,
-        base growth factor was 0.01
-        Then it was 0.005, but one could improve it by 50% using the policy
-     The new formula introduced in  6a9b32fec516bc2fa0a37f2d079e204948456a17 (#3703)
-        divided growth by target population and had base growth factor 0.08
-        i.e. it is the same as 0.005 for the previous formula, if the planet has a max population of 16
-        for smaller planets it is faster and for bigger planets it is even slower.
-     This commit increases base growth by 25% (this might be still a little bit low)
-
-
-
-
-    [Fix] Avoid division by zero (#3944)
-
-
     [AI] calculate research and stability, tech_soon_available (#3939)
-
-
-    Message compression
-    Add compression for large messages. Disable compression for localhost clients. Based on #3870.
-
-
-    [AI] Add policies to charting (#3914)
-
     [AI] calculate_production.py (#3934)
-
-    [AI] Added world tree and ast. coating to empire resources. (#3919)
-
     [AI] Refactor shipyards using BuildingType (#3857)
-    * Refactor shipyard using BuildingType
-    * Do some dislike checks for shipyards and
-    fixed character.may_build_building
-    * First round of review changes
-    * Fix ShipYardInfo usage
-
+    [AI] Avoid division by zero (#3944)
     [AI] avoid division by zero exception (#3861)
+    [AI] Fix _get_queued_base_troopers (#3791)
+    [AI] Fixes for drop invasion (#3783)
+    [AI] Improve AI invasion handling (#3754)
+    [AI] Ensure colony_buildes are initialized before usage (#3744)
+    [AI] Consider researching space flux hulls if you dont research organics
 
-    AI military policies (#3851)
-    * Fixed type BuildingName
-    * Added military command and fixed planet selection
-    * Added function to query number of ships
-    * First version with military policies
-    * Review updates and slightly change _rate_costs
-    * Removed obsolete technology
-
-
-
-    consider both, not just one, fleet in a fleet transfer order, that has arrival starlane -1 to have arrival starlane equal to its current system, to avoid first turn issue with being unable to merge fleets
-
-
-
-    Popular Terraform using NextBestPlanetType valueref
-
-
-
-
-    Use ASTEROID_COATING_STACK stackinggroup to ensure the effect is applied only once (#3824)
-
-
-
-    Fix crash due not initialized password window (#3823)
-
-
-
-    Add option to allow any player to be an observer
-
-
-
-    make NewFleetOrder and FleetTransferOrder consider fleets with no set arrival starlane as arriving from their current systems. this should fix issues with merging fleets.
-
-
-
-    Sneaky species have easy planetary stealth tech (#1620)
-    * Laenfa are sneaky
-    * All research cost for planet stealth is halved for sneaky species
-
-
-
-
-
-    Add Popular Terraforming (terraform to best environment)
-    * for ease when you dont know the best environment
-    * for mass-terraforming from the object window (where the best environment can be mixed for different species)
-    * micro-management safe by being cheaper than the steps (actually dont know, with the steps you get results earlier)
-    * also added the capability to use %planettype% in sitreps (taking a planet ID or a stringtable key)
-
-
-
-    Mostly FreeBSD build fix. (#3812)
-    - boost stacktrace using backtrace api instead of unwind due to unsupported field.
-    - various initialisation constructors reordering warning fixes/unused var.
 
     [AI] Building refactoring (#3808)
     - Scanning Facility: Don't build it where it is disliked
     - Gas Giant Generator: Completely new logic
 
-
-
-
-    Fix Thenian die-off to affect only Thenian planets (#3806)
-
-
-
-
-    troop pods must also use OFFENSE_TROOPS instead of ATTACKTROOPS (#3802)
-
-
-
-
-
-
-    Fix priorities of species scaling effects for Industry, Research and Influence (#3773)
-
     
-    Aligned species tags with effects and provided a checking tool
-
-
-    [AI] Fix _get_queued_base_troopers (#3791)
-    [AI] Fixes for drop invasion (#3783)
-
-
-
-    Move survey_universe to empire module and call it earlier (#3762)
-    * Move survey_universe to empire module and call it earlier
-    * Removed second survey_universe_lock
-    
-    This should fix #3760 for good.
-    It also makes sense as a refactoring, since survey_universe mostly sets values in the empire module and was completely independent from the rest of ColonisationAI.
-    It does also set some value in the colonization module (nice mix of spelling ;-) which should probably be protected by locks as well, but this can be done with a later PR, this one is big enough and is needed as a fix.
-
-
-
-
-    Improve AI invasion handling (#3754)
-    This should fix the three points described in #3745. It should conquer more successfully and waste fewer troopers now.
-    The AI still builds too many troopers (priority calculation sometimes produces strange results) and may ignore good planets (planetary rating also needs work), but these are for another PR.
-
-
-
-    [AI] Ensure colony_buildes are initialized before usage (#3744)
-
-
-
-    Fix reconnection attempts sometimes persisting throughout timeout.
-    On expiry of m_deadline_timer, the m_reconnect_timer is canceled. However, if both timers expire in a short enough timeframe, the m_reconnect_timer callback may already have been scheduled and thus can no longer be canceled. To prevent this, let m_deadline_timer set a flag upon expiry and check that flag before attempting to reconnect.
-
-
-
-    When loading SP game, assign AIs by name to respective empires (#3738)
-
-
-
-
-    Fix timeout being sometimes ignored in ClientNetworking::Impl::ConnectToServer() (#3620)
-    Previous to this patch, small timeout values are effectively ignored. This happens because boost::asio::io_context::run() is a blocking call and the attempt to async_connect() may time out after e.g. 2 seconds on my machine. This means any shorter timeout parameters will effectively be ignored and any longer timeout still only has a resolution of, e.g., 2 seconds.
-    The fix here is to introduce an asynchronous timer which will cancel pending operations once timeout occurs.
-
-
-
-
-    -display real system name on map and sidepanel for empty systems
-    -label as unexplored system or region after name
-
-    
-    Native/Special Defense Tweaks
-
-    Sometimes stealth monster nests
-
-    Replace 20% of ancient guardians with stealthed planet
-
-    Add some exclusions to High Tech Natives
-
-    Stop Lembalalam from being both moderate and high tech natives
-
-    Add occasional defenses to natives
-
-    Guard Biege Goo and Fiftyseven
-
-    Hack to allow multi-line commands in debug chat (#3708)
-
-    Add species lists to traits pedia pages
-
-    Expand Pedia Quick Start Guide (#3659)
-
-
-    Fix scanning facility pedia entry
-
-    
-    add native species Nightsiders, Sleepers, Khakturian, Celestephyte
-
-
-    - quick fix: reducing probability for natives on roids and GGs by factor five
-
-    - adding system special of derelict small troop ships crewed by khakturian, to be randomly stumbled upon players just like the other derelicts
-
-
-
-
-    - fixing population dieoff effect for species Thenian and the according sitrep message
-    - improved sitrep-message 'new dyson forest growing' with pedia link to dyson forest (for the noobs)
-    - noted some todo's related to pedia with possible future improvements
-    - fixed some fixme's - they work best when followed by a colon, this will highlight them similar to todo's in modern ide's
-    - make list of homeworlds commaseparated in the pedia-homeworlds-page
-
-
-    - streamlining the pedia text generating code a little by introducing versatile helper methods to replace some massively redundant code and prettify the player visible output at the same time, admittedly at the expense of a tiny little bit of extra computations every time the player clicks on a pedia link but that is negligible and not really noticeable
-
-
-
-    - fluffing out sly description some more to account for stealthiness and possible other gaseous beings
-
-    - the Thenian are not only well defended, but now have good planetary stealth too and can not colonize anyway
-
-
-
-    - during universe creation, allow new native species to be placed who have no good habitat but only adequate or poor
-
-    - adding species #4 the Celestephyte, to be continued ...
-    - adding new native species #1 Nightsiders, #2 Sleepers and #3 Khakturian
-
-
-    [AI] Consider researching space flux hulls if you dont research organics
-
-
-    Add support for Python's asyncio
-    Embedded Python need to manually calls event loop so coroutines and
-    callbacks could be executed.
-    It uses approach described in https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.loop.run_forever
-    to call olny ready callbacks and then return back to application.
-
-
-    [AI] Improve AI systems_connected performance (#3559)
-    * Optimize AI systems_connected performance
-    Instead of running a BFS for each pair of system ids, cache the set of systems connected to the capital in a single depth-first-search and check if queried system_ids are within that set. Since most of the visible systems will be connected to the capital, this will cover most cases. Only if both systems are not connected to the capital, we will have to run another BFS. However, the search space will be significantly smaller since -again- most systems will be connected to the capital and thus won't be part of the search.
-
-
-    [AI] Fix star based colonization value calculation
-    The larger boni should apply if the AI does not yet have a star of that type. The defect was introduced in #3484
-    
-
-    Allowed AI to delegate player
-    Allows locally launched AI to skip authentication.
-    Allows player or AI to delegate someone without lobby if they have single empire to play.
- 
-
-
-
 
 
 
@@ -449,7 +91,7 @@
 - Show script-derived floating point numbers in UI with only 3 digits
 - Split Attack column on Objects List into Total Structure Damage per Battle and Number of Destroyed Fighters per Battle
 - Replaced field mouseover image
-- Excluded stale objects from within-MapWnd determination of detector ranges
+- Excluded stale objects from map window determination of detector ranges
 - Added (optional) rendering of future turn's predicted detection range circles for the selected fleet
 - Switched to updating all object meters when showing system in the sidepanel, not just system contents, due to different results
 - Started rendering fleets that are (somehow?) not in systems and not moving
@@ -467,7 +109,10 @@
 - Fixed arrow textures having cut off glow at their edges
 - Added number of worlds settled to the census report tooltip
 - Removed the "No Star" label from the displayed names of starless system
-
+- Displayed real system name on map and sidepanel for empty systems
+- Replaced Colony Base Hull graphic
+- Added lists of species to species traits pedia pages
+- Comma separated list of planets on the homeworlds pedia page
 
 
 #### Content and Balance
@@ -480,6 +125,7 @@
     - Added the Flux Lance weapon that is "short range", attacking starting from bout 3 (or 2 if the Charge policy is adopted)
     - Added the Graviton Pulsar weapon that has 12 attacks that do 1 damage and targets anything, useful against fighters
     - Added the Space Flux Composite hull
+    - Added the Small Robotic Hull
     - Split spatial flux hulls into their own hull line (were in robotic)
     - Made owning a ship with a flux bubble hull decrease colony production time    
     - Rebalanced fighter techs and pilot trait effects
@@ -501,12 +147,11 @@
     - Made snowflake bodies have good instead of excellent vision
     - Reduced living hull detection boost from 50 to 40
 
-
 - Planets
     - Added some luxury resource specials that some species like and thus get stabilitly boosts from
     - Reduced spawn rates of some specials
     - Made various research and industry bonuses depend on stability
-    - Added species traits for varying levels of baseline stability
+    - Added species traits for varying levels of baseline stability, shield strength, influence
     - Add precognitive detection to Fulver, giving basic visibility to starlane connected planets
     - Asteroid processor and Asteroid Reformation processor now remove themselves if their planet is not an asteroid
     - Made planet max shields not depend on recent combats in system
@@ -518,7 +163,8 @@
     - Rebalanced troop bonuses from garrison techs
     - Set infrastructure to 1 on just-conquered planets
     - Made self-sustaining metabolism only give population boosts on good planets
-    - Rebalanced Trith species: medium starting planet, bad supply and industry, make some planet types average environment
+    - Rebalanced Trith species: medium starting planet, bad supply, bad industry, great influence, bad stability, make some planet types average environment
+    - Reworked Replicon species
     - Gave player planets at least 6 troops in beginner mode
     - Gave Sly and Laenfa distinct non-distance dependent stability effects
     - Added the Imperial Regional Administration building that acts like a capital for colony supply distance cost calculations
@@ -539,7 +185,9 @@
     - Rebalanced Force Energy Structures to give fixed 3/turn faster growth or decay of meters
     - Made protection focus increase troop regeneration rate (if not attacked on previous turn)
     - Made species stability bonus for liking focus not require empire control of planet    
-    - Replaced Terraforming (reversion) with targeted Terraforming, allowing Exobots to do Terraforming, but disabling multiple steps in parallel
+    - Removed Terraforming and Terraforming Reversion buildings
+    - Added Popular Terraforming building that goes all the way to the preferred type for the planet's species in one step with suitable cost and time
+    - Added Targeted Terraforming, separate for each target planet type, that doesn't depend on the planet's species to control the target
     - Made Trans-Organic Sentience tech boost the growth/decay rate of influence meters    
     - Reworked the population growth formula so bigger planets don't fill up faster than smaller planets
     - Added guard monsters to resource specials
@@ -547,7 +195,24 @@
     - Blocked enqueuing more than one of any colony building on a planet
     - Reduced scanning facility range boost from 75 to 50
     - Added some planet stealth bonuses and penalties dependent on star type
+    - Reduced probabity for natives spawning on asteroids and gas giants during universe generation
+    - Allowed natives species to spawn on adequate or poor planets if they have no good planet types during universe creation
+    - Adjusted order of effects for species-trait scaling of resource output
+    - Added guards to Biege Goo and Fiftyseven native planets
+    - Added occasional defenses to native planets
+    - Stopped Lembalalam from being both moderate and high tech natives
+    - Added some restrictions to what species research traits can have High Tech Natives specials
+    - Made some monster nests randomly be stealthy from turn to turn
+    - Randomly replaced 20% of ancient guardians creation with applying a stealthed planet special instead
+    - Made ancient guardians less common
+    - Made changes in max population affect growth more promptly
+    - Set influence output to zero when evacuating a planet
+    - Tweaked minimum distance to spawn monsters away from empire capitals
+    - Made kraken under the ice specials harder to detect
+    - Made the Lighthouse effect more gradual and less effective for planets/buildings
+    - Tweaked priority for garrison troop tech effects
 
+    
 - Fields
     - Made made star forming nebulae smaller, reduced speed and detection, increased stealth, limited number generated
     - Added Void rift
@@ -566,11 +231,20 @@
     - Documented Planetary Starlane Drive
     - Documented supply network propagation mechanics
     - Additional entries for planetary focus game concept
-    - Additional text added for Spatial Distortion, Industry, Logistics, Planet Drive, and Psychic Domination
+    - Updated or expanded articles for Spatial Distortion, Industry, Logistics, Planet Drive, Psychic Domination, Organic Hull
     - Added an "All Species" list in the species article
     - Improved imperial stockpile distribution documentation
     - Added lists of native, playable, and all species
     - Removed out-of-universe UI-related motivation for the planet drive beacon
+    - Expanded the quick start guide
+    - Elaborated on Sly description
+    - Fixed robotic shields values
+
+
+    Add stealth bonus info about colonies in SPY_PLANET_STEALTH_MOD_DESC
+    Add extra sources of detection to METER_DETECTION_VALUE_DESC
+
+
 
 - Stringtables
     - Updated translations: French, German, Spanish
@@ -579,7 +253,7 @@
     - Added additional custom accounting labels for various effects
     - Renamed '%SPECIES% Colony' to 'Colony of %SPECIES%'
     - Added some missing options description strings for colours
-
+    - Added a link in the 'new dyson forest growing' sitrep to the Dyson Forest pedia page 
 
 - Other
     - Many building, species, and tech balance adjustments along with new government systems and influence-constrained growth
@@ -593,6 +267,10 @@
     - Removed redundant prerequisite of N-Dimensional Subspace tech
     - Added the the Asteroid coating special that appears on asteroids and gives owned asteroid ships a structure boost
     - Reworked detection levels to increment in steps of 25 instead of 25 or 50
+    - Added native species: Celestephyte, Thenian, Nightsiders, Sleepers, Khakturian
+    - Added a system special of derelict small troop ships crewed by Khakturian, similar to other derelict specials
+    - Made Laenfa sneaky, giving them a halved research cost for planet stealth
+
 
 
 #### AI
@@ -611,6 +289,8 @@
 - Added an option allowing human players in multiplayer games to take over playing AI empires
 - Made AI aware of self-sustaining species population mechanics
 - Made AI aware of distance restrictions of guard monsters
+- Made AI not attempt to invade allied planets
+
 
 
 
@@ -642,6 +322,10 @@
 - Showed number of fighters shot instead of number direct weapon hits in ship design pedia articles
 - Reworked damage estimation and split damage to ships separately from numbers of fighters shot in ship design pedia articles
 - Reworked calculation of empire total military strength
+- Enabled multi-line debug python commands in chat by replacing ; with newlines before
+- Added a server option to allow any player to be an observer
+- Restricted some characters that can be used in player-specified names in orders
+
 
 
 #### Other Bug Fixes
@@ -653,6 +337,7 @@
     - Fixed a crash if a fleet ended up with no previous or next system
     - Fixed crash during turn processing due to a failed check for whether a player connection is local
     - Fixed a crash with big combat logs
+    - Fixed connect to server timout after 2 seconds
 
 - Gameplay
     - Fixed bombardment not working if ships only have bombardment weapons
@@ -662,6 +347,7 @@
     - Disallowed mixing arrival starlanes in a new fleet or in a ship-fleet transfer
     - Made non-empire forces work like an empire for visibility within combat
     - Fixed population reduction when using planet Starlane Drives
+    - Fixed issues with merging fleets arriving from different starlanes or not having arrived from anywhere
 
 - Content
     - Fixed Gaia special planet type selection
@@ -670,6 +356,9 @@
     - Removed some redundant tech prerequisites
     - Fixed multiple sitreps appearing if multiple nova bombs are simultaneously detonated
     - Removed pointless damage boost for piloting for Flak
+    - Fixed issue where kraken nests wouldn't hide under clouds if created after the initial turn
+    - Fixed artificial moon building not removing itself after adding the resonant moon special
+
 
 - Fixed Python logging memory leak
 - Fixed issue with Python text encoding on Windows systems
@@ -692,3 +381,6 @@
 - Partially migrated scripted content from custom FreeOrion Content Script to Python scripts
 - Fixed a probably long-standing (8 years?) bug with ContainedBy::Match that returned the opposite of what it should have, but which probably didn't affect any previously-scripted content
 - Added a server flag that merges quickstart and load game options
+- Compressed data in some larger message types when transmitting from server to clients over a network
+- When loading single player games, assigned AIs to empires based on names in save
+- Stopped client-side auto-turn-advance on errors
