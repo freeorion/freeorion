@@ -12644,8 +12644,10 @@ PLC_NECESSITY
 Necessity
 
 PLC_NECESSITY_DESC
-'''On research focused planets with [[metertype METER_HAPPINESS]] less than [[value PLC_NECESSITY_MAX_STABILITY]]:
-• Increases [[metertype METER_TARGET_RESEARCH]] by the square root of the product of population and how far [[metertype METER_HAPPINESS]] is below [[value PLC_NECESSITY_MAX_STABILITY]].
+'''Necessity is the mother of invention.
+
+On research focused planets with [[metertype METER_HAPPINESS]] less than [[value PLC_NECESSITY_MAX_STABILITY]]:
+• Increases [[metertype METER_TARGET_RESEARCH]] by [[value PLC_NECESSITY_TARGET_RESEARCH_FACTOR]] multiplied by the power to 1.5 of how far [[metertype METER_HAPPINESS]] is below [[value PLC_NECESSITY_MAX_STABILITY]] multiplied by [[metertype METER_POPULATION]].
 • Increases [[metertype METER_RESEARCH]] growth by [[value PLC_NECESSITY_RESEARCH_GROWTH_BOOST]] per turn.'''
 
 PLC_NECESSITY_SHORT_DESC
