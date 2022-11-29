@@ -14,10 +14,12 @@ Policy
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_RESEARCH"
                 Not Happiness low = (NamedReal name = "PLC_NECESSITY_MAX_STABILITY" value = 6)
+                Happiness low = 0
             ]
             effects = [
-                SetTargetResearch value = Value +
-                    (Target.Population * max(0.0, (NamedRealLookup name = "PLC_NECESSITY_MAX_STABILITY") - Target.Happiness))^0.5
+                SetTargetResearch value = Value + Target.Population *
+                    (NamedReal name = "PLC_NECESSITY_TARGET_RESEARCH_FACTOR" value = 0.02) *
+                    max(0.0, (NamedRealLookup name = "PLC_NECESSITY_MAX_STABILITY") - Target.Happiness)^1.5
                 SetResearch value = min(Target.TargetResearch, Value + (NamedReal name = "PLC_NECESSITY_RESEARCH_GROWTH_BOOST" value = 1.0))
             ]
     ]
