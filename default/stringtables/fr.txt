@@ -6359,7 +6359,7 @@ Modificateurs de base de la Stabilité:
 '''
 
 STABILITY_MODIFIERS
-'''• -/+ 5 Connexion par lignes d'[[metertype METER_SUPPLY]] à la Capitale - Dépend de la distance en nombre de Voies Spatiales à la Capitale ou à une structure [[buildingtype BLD_REGIONAL_ADMIN]]. Ne concerne pas les espèces <encyclopedia INDEPENDENT_SPECIES_TITLE>indépendantistes</encyclopedia> et les empires ayant adopté la Politique [[policy PLC_CONFEDERATION]].
+'''• -/+ 5 Connexion par lignes d'[[metertype METER_SUPPLY]] à la Capitale - Dépend de la distance en nombre de Voies Spatiales à la Capitale ou à une structure [[buildingtype BLD_REGIONAL_ADMIN]]. Ne concerne pas les espèces de type [[encyclopedia INDEPENDENT]] et les empires ayant adopté la Politique [[policy PLC_CONFEDERATION]].
 • +5 Monde Natal - les espèces vivant sur leur propre planète natale sont plus stables.
 • +5 Espèce de la Capitale - Les colonies abritant la même espèce que celle de la Capitale sont plus stables. Ne s'applique pas à la Capitale elle-même.
 • +10 Capitale - La colonie abrite une structure [[buildingtype BLD_IMPERIAL_PALACE]].
@@ -6772,12 +6772,12 @@ ARTISTIC_SPECIES_TRAIT_TEXT
 Liste des espèces artistiques:'''
 
 INDEPENDENT_SPECIES_TITLE
-Attribut Indépendantiste
+Attribut Indépendant
 
 INDEPENDENT_SPECIES_TRAIT_TEXT
-'''La [[metertype METER_HAPPINESS]] des espèces indépendantistes n'est pas modifiée par la distance aux Capitales ou aux Administrations Régionales Impériales.
+'''La [[metertype METER_HAPPINESS]] des espèces indépendantes n'est pas modifiée par la distance aux Capitales ou aux Administrations Régionales Impériales.
 
-Liste des espèces indépendantistes:'''
+Liste des espèces indépendantes:'''
 
 SNEAKY_TITLE
 Sournoise
@@ -9535,7 +9535,7 @@ HIGH_TECH_NATIVES_SPECIAL
 Indigènes Techno-Experts
 
 HIGH_TECH_NATIVES_SPECIAL_DESC
-Les indigènes de cette planète ont développé une maîtrise technologique très avancée. Si leur planète n'appartient pas à un empire, cette dernière profite de défenses bien plus puissantes et résiste très bien aux attaques et aux invasions.
+Les indigènes de cette planète ont développé une maîtrise technologique très avancée. Si leur planète est indépendante de tout empire, cette dernière profite de défenses bien plus puissantes et résiste très bien aux attaques et aux invasions.
 
 NATIVE_FORTIFICATION_MINIMAL
 Fortifications indigènes minimes
@@ -17160,7 +17160,7 @@ ULTIMATE_HAPPINESS_DESC
 +++	Parfait en [[metertype METER_HAPPINESS]] : +[[value ULTIMATE_HAPPINESS_VAL]]
 
 INDEPENDENT_HAPPINESS_DESC
-⋄	[[metertype METER_HAPPINESS]] indépendante: la Stabilité de base n'est pas tributaire des connexions aux lignes d'approvisionnement
+⋄	[[metertype METER_HAPPINESS]] [[encyclopedia INDEPENDENT]]e : la Stabilité de base n'est pas tributaire des connexions aux lignes d'approvisionnement
 
 NO_DEFENSE_TROOPS_DESC
 −−−	Pas d'[[metertype METER_TROOPS]] défensive
@@ -18056,6 +18056,9 @@ STYLISH
 
 ARTISTIC
 Artistique
+
+INDEPENDENT
+Indépendant
 
 ORGANIC
 Organique
