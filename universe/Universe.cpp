@@ -1945,12 +1945,18 @@ void Universe::ApplyEffectDerivedVisibilities(EmpireManager& empires) {
 void Universe::ForgetKnownObject(int empire_id, int object_id) {
     // Note: Client calls this with empire_id == ALL_EMPIRES to
     // immediately forget information without waiting for the turn update.
-    auto empire_it = m_empire_latest_known_objects.find(empire_id);
-    if (empire_it != m_empire_latest_known_objects.end()) {
-        ErrorLogger() << "ForgetKnownObject bad empire id: " << empire_id;
-        return;
-    }
-    auto& objects{empire_it->second};
+    ObjectMap& objects = [empire_id, this]() -> ObjectMap& {
+        if (empire_id == ALL_EMPIRES)
+            return *m_objects;
+
+        auto empire_it = m_empire_latest_known_objects.find(empire_id);
+        if (empire_it == m_empire_latest_known_objects.end()) {
+            ErrorLogger() << "ForgetKnownObject bad empire id: " << empire_id;
+            return *m_objects;
+        }
+        return empire_it->second;
+    }();
+
     const auto* const obj = objects.getRaw(object_id);
     if (!obj) {
         ErrorLogger() << "ForgetKnownObject empire: " << empire_id << " bad object id: " << object_id;
@@ -1965,7 +1971,8 @@ void Universe::ForgetKnownObject(int empire_id, int object_id) {
     }
 
     // Remove all contained objects to avoid breaking fleet+ship, system+planet invariants
-    auto contained_ids = obj->ContainedObjectIDs();
+    const auto& contained_ids_set = obj->ContainedObjectIDs();
+    const std::vector<int> contained_ids(contained_ids_set.begin(), contained_ids_set.end()); // copy since forgetting will modify container while iterating over it
     for (int child_id : contained_ids)
         ForgetKnownObject(empire_id, child_id);
 
