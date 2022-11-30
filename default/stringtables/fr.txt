@@ -12644,8 +12644,10 @@ PLC_NECESSITY
 Nécessité
 
 PLC_NECESSITY_DESC
-'''Sur les planètes en Focus Recherche dont la [[metertype METER_HAPPINESS]] est inférieure à [[value PLC_NECESSITY_MAX_STABILITY]]:
-• Augmente la [[metertype METER_TARGET_RESEARCH]] par la racine carrée du produit entre la Population et de combien la [[metertype METER_HAPPINESS]] est inférieure à [[value PLC_NECESSITY_MAX_STABILITY]].
+'''Nécessité est mère d'invention.
+
+Sur les planètes en Focus Recherche dont la [[metertype METER_HAPPINESS]] est inférieure à [[value PLC_NECESSITY_MAX_STABILITY]]:
+• Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value PLC_NECESSITY_TARGET_RESEARCH_FACTOR]] multiplié par exposant 1.5 de combien la [[metertype METER_HAPPINESS]] est inférieure à [[value PLC_NECESSITY_MAX_STABILITY]] multiplié par la [[metertype METER_POPULATION]].
 • Augmente la progression de la [[metertype METER_RESEARCH]] de [[value PLC_NECESSITY_RESEARCH_GROWTH_BOOST]] par tour.'''
 
 PLC_NECESSITY_SHORT_DESC
