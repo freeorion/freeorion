@@ -320,7 +320,7 @@ public:
         Option option{short_name, name, std::move(value), std::forward<T>(default_value),
                       std::move(description), std::move(validator), storable, false, true,
                       std::move(section)};
-        const auto& n_ref = m_options.insert_or_assign(std::move(name), std::move(option)).first->first;
+        [[maybe_unused]] const auto& n_ref = m_options.insert_or_assign(std::move(name), std::move(option)).first->first;
         m_dirty = true;
     }
 
