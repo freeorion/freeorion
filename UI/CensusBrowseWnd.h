@@ -6,7 +6,7 @@
 
 
 /** A popup tooltop for display when mousing over in-game icons.  A title and some detail text.*/
-class CensusBrowseWnd : public GG::BrowseInfoWnd {
+class CensusBrowseWnd final : public GG::BrowseInfoWnd {
 public:
     CensusBrowseWnd(std::string                  title_text,
                    float                        target_population, // take as parameter so as not to have to import empire etc.

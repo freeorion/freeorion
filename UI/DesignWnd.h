@@ -41,7 +41,7 @@ private:
 };
 
 /** Lets the player design ships */
-class DesignWnd : public GG::Wnd {
+class DesignWnd final : public GG::Wnd {
 public:
     DesignWnd(GG::X w, GG::Y h);
     void CompleteConstruction() override;

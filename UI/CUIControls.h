@@ -30,7 +30,7 @@
 struct ScriptingContext;
 
 /** a FreeOrion Label control */
-class CUILabel : public GG::TextControl {
+class CUILabel final : public GG::TextControl {
 public:
     CUILabel(std::string str,
              GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE,
@@ -65,7 +65,7 @@ protected:
     void RenderUnpressed() override;
 };
 
-class SettableInWindowCUIButton : public CUIButton {
+class SettableInWindowCUIButton final : public CUIButton {
 public:
     SettableInWindowCUIButton(GG::SubTexture unpressed, GG::SubTexture pressed, GG::SubTexture rollover,
                               std::function<bool (const SettableInWindowCUIButton*, const GG::Pt&)> in_window_function);
@@ -77,7 +77,7 @@ private:
 };
 
 /** a FreeOrion triangular arrow button */
-class CUIArrowButton : public GG::Button {
+class CUIArrowButton final : public GG::Button {
 public:
     CUIArrowButton(ShapeOrientation orientation, bool fill_background,
                    GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE);
@@ -99,7 +99,7 @@ private:
 };
 
 /** \brief A FreeOrion styled check box state button. */
-class CUICheckBoxRepresenter : public GG::StateButtonRepresenter {
+class CUICheckBoxRepresenter final : public GG::StateButtonRepresenter {
 public:
     void Render(const GG::StateButton& button) const override;
 
@@ -109,7 +109,7 @@ public:
 };
 
 /** \brief A FreeOrion styled radio state button. */
-class CUIRadioRepresenter : public GG::StateButtonRepresenter {
+class CUIRadioRepresenter final : public GG::StateButtonRepresenter {
 public:
     void Render(const GG::StateButton& button) const override;
 
@@ -119,7 +119,7 @@ public:
 };
 
 /** \brief A FreeOrion styled TabBar tab. */
-class CUITabRepresenter : public GG::StateButtonRepresenter {
+class CUITabRepresenter final : public GG::StateButtonRepresenter {
 public:
     void Render(const GG::StateButton& button) const override;
 
@@ -131,7 +131,7 @@ public:
 };
 
 /** @brief A FreeOrion styled label toggle button. */
-class CUILabelButtonRepresenter : public GG::StateButtonRepresenter {
+class CUILabelButtonRepresenter final : public GG::StateButtonRepresenter {
 public:
     void Render(const GG::StateButton& button) const override;
 
@@ -150,7 +150,7 @@ public:
  * hovers over this button, the opposing SubTexture and color are used and
  * highlighted.
  */
-class CUIIconButtonRepresenter : public GG::StateButtonRepresenter {
+class CUIIconButtonRepresenter final : public GG::StateButtonRepresenter {
 public:
     CUIIconButtonRepresenter(std::shared_ptr<GG::SubTexture> icon,
                              const GG::Clr& highlight_clr);
@@ -173,7 +173,7 @@ private:
 
 
 /** a FreeOrion StateButton control */
-class CUIStateButton : public GG::StateButton {
+class CUIStateButton final : public GG::StateButton {
 public:
     CUIStateButton(std::string str, GG::Flags<GG::TextFormat> format,
                    std::shared_ptr<GG::StateButtonRepresenter> representer);
@@ -181,7 +181,7 @@ public:
 };
 
 /** Tab bar with buttons for selecting tabbed windows. */
-class CUITabBar : public GG::TabBar {
+class CUITabBar final : public GG::TabBar {
 public:
     CUITabBar(const std::shared_ptr<GG::Font>& font, GG::Clr color,
               GG::Clr text_color);
@@ -191,10 +191,10 @@ private:
 };
 
 /** a FreeOrion Scroll control */
-class CUIScroll : public GG::Scroll {
+class CUIScroll final : public GG::Scroll {
 public:
     /** represents the tab button for a CUIScroll */
-    class ScrollTab : public GG::Button {
+    class ScrollTab final : public GG::Button {
     public:
         ScrollTab(GG::Orientation orientation, int scroll_width, GG::Clr color, GG::Clr border_color);
 
@@ -290,7 +290,7 @@ private:
 
 /** a FreeOrion Edit control that replaces its displayed characters with a
   * placeholder. Useful for password entry.*/
-class CensoredCUIEdit : public CUIEdit {
+class CensoredCUIEdit final : public CUIEdit {
 public:
     explicit CensoredCUIEdit(std::string str, char display_placeholder = '*');
 
@@ -321,7 +321,7 @@ public:
 };
 
 /** a FreeOrion MultiEdit control that parses its text and makes links within clickable */
-class CUILinkTextMultiEdit : public CUIMultiEdit, public TextLinker {
+class CUILinkTextMultiEdit final : public CUIMultiEdit, public TextLinker {
 public:
     CUILinkTextMultiEdit(std::string str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP);
     void CompleteConstruction() override;
@@ -356,7 +356,7 @@ private:
 
 /** A simple GG::ListBox::Row subclass designed for use in text-only drop-down
   * lists, such as the ones used in the game setup dialogs. */
-struct CUISimpleDropDownListRow : public GG::ListBox::Row {
+struct CUISimpleDropDownListRow final : public GG::ListBox::Row {
     CUISimpleDropDownListRow(std::string row_text, GG::Y row_height = DEFAULT_ROW_HEIGHT);
     void CompleteConstruction() override;
     static constexpr GG::Y DEFAULT_ROW_HEIGHT{22};
@@ -374,7 +374,7 @@ private:
   * Sizing StatisticIcon correctly in the constructor saves time because resizing the value string
   * is processor intensive.
   */
-class StatisticIcon : public GG::Control {
+class StatisticIcon final : public GG::Control {
 public:
     StatisticIcon(std::shared_ptr<GG::Texture> texture,
                   GG::X w = GG::X1, GG::Y h = GG::Y1); ///< initialized with no value (just an icon)
@@ -415,7 +415,7 @@ public:
     mutable boost::signals2::signal<void (const GG::Pt&)> RightClickedSignal;
 
 private:
-    void    DoLayout();
+    void DoLayout();
 
     /// The value, precision and sign of the statistic value
     std::vector<std::tuple<double, int, bool>> m_values;
@@ -423,7 +423,7 @@ private:
     std::shared_ptr<GG::Label>                 m_text;
 };
 
-class CUIToolBar : public GG::Control {
+class CUIToolBar final : public GG::Control {
 public:
     CUIToolBar();
 
@@ -434,7 +434,7 @@ private:
 };
 
 /** A control used to pick from at list of species names. */
-class SpeciesSelector : public CUIDropDownList {
+class SpeciesSelector final : public CUIDropDownList {
 public:
     SpeciesSelector(const std::string& preselect_species, GG::X w, GG::Y h);    ///< populates with all species in SpeciesManager
 
@@ -444,7 +444,7 @@ public:
 };
 
 /** A control used to pick from the empire colors returned by EmpireColors(). */
-class EmpireColorSelector : public CUIDropDownList {
+class EmpireColorSelector final : public CUIDropDownList {
 public:
     explicit EmpireColorSelector(GG::Y h);
 
@@ -456,7 +456,7 @@ public:
 };
 
 /** A control used to pick arbitrary colors using GG::ColorDlg. */
-class ColorSelector : public GG::Control {
+class ColorSelector final : public GG::Control {
 public:
     ColorSelector(GG::Clr color, GG::Clr default_color);
 
@@ -476,7 +476,7 @@ private:
 };
 
 /** A GG file dialog in the FreeOrion style. */
-class FileDlg : public GG::FileDlg {
+class FileDlg final : public GG::FileDlg {
 public:
     FileDlg(const std::string& directory, const std::string& filename, bool save, bool multi,
             std::vector<std::pair<std::string, std::string>> types);
@@ -488,7 +488,7 @@ private:
 
 /** Displays resource and stockpile info on the Researach and Production
     screens. */
-class ResourceInfoPanel : public CUIWnd {
+class ResourceInfoPanel final : public CUIWnd {
 public:
     ResourceInfoPanel(std::string title, std::string point_units_str,
                       const GG::X x, const GG::Y y, const GG::X w, const GG::Y h,
@@ -541,7 +541,7 @@ private:
 };
 
 /** Displays progress that is divided over mulitple turns, as in the Research and Production screens. */
-class MultiTurnProgressBar : public GG::Control {
+class MultiTurnProgressBar final : public GG::Control {
 public:
     /** Ctor
     * @param[in] num_segments Number of segments in the bar
@@ -573,7 +573,7 @@ private:
 };
 
 /** Displays current rendering frames per second. */
-class FPSIndicator : public GG::Label {
+class FPSIndicator final : public GG::Label {
 public:
     FPSIndicator();
 
@@ -588,7 +588,7 @@ private:
 
 /** Functions like a StaticGraphic, except can have multiple textures rendered
   * on top of eachother, rather than just a single texture. */
-class MultiTextureStaticGraphic : public GG::Control {
+class MultiTextureStaticGraphic final : public GG::Control {
 public:
     /** creates a MultiTextureStaticGraphic from multiple pre-existing Textures which are rendered back-to-front in the
       * order they are specified in \a textures with GraphicStyles specified in the same-indexed value of \a styles.
@@ -627,7 +627,7 @@ private:
 
 /** Functions like a StaticGraphic, except can be rotated with a fixed phase
   * and/or at a continuous angular rate. */
-class RotatingGraphic : public GG::StaticGraphic {
+class RotatingGraphic final : public GG::StaticGraphic {
 public:
     RotatingGraphic(std::shared_ptr<GG::Texture> texture,
                     GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_NONE,
@@ -646,7 +646,7 @@ private:
 };
 
 /** Renders scanlines over its area. */
-class ScanlineControl : public GG::Control {
+class ScanlineControl final : public GG::Control {
 public:
     ScanlineControl(GG::X x = GG::X0, GG::Y y = GG::Y0, GG::X w = GG::X1, GG::Y h = GG::Y1,
                     bool square = false, GG::Clr clr = GG::CLR_BLACK);

@@ -15,7 +15,7 @@ struct GalaxySetupData;
 class CUIEdit;
 
 /** Displays game rules options */
-class GameRulesPanel : public GG::Control {
+class GameRulesPanel final : public GG::Control {
 public:
     GameRulesPanel(GG::X w = GG::X1, GG::Y h = GG::Y1);
     void CompleteConstruction() override;
@@ -55,7 +55,7 @@ private:
 
 /** Encapsulates the galaxy setup options so that they may be reused in the
   * GalaxySetupWnd and the MultiPlayerLobbyWnd. */
-class GalaxySetupPanel : public GG::Control {
+class GalaxySetupPanel final : public GG::Control {
 public:
     static const GG::X DefaultWidth();
 
@@ -125,7 +125,7 @@ private:
 
 //! This class is the Galaxy Setup window.  It is a modal window
 //! that allows the user to choose a galaxy style, size, etc.
-class GalaxySetupWnd : public CUIWnd {
+class GalaxySetupWnd final : public CUIWnd {
 public:
     GalaxySetupWnd();
     void CompleteConstruction() override;

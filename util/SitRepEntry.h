@@ -17,7 +17,7 @@ class UniverseObject;
 struct ScriptingContext;
 
 //! Represents a situation report entry for a significant game event.
-class FO_COMMON_API SitRepEntry : public VarText {
+class FO_COMMON_API SitRepEntry final : public VarText {
 public:
     SitRepEntry();
 

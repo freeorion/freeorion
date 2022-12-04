@@ -13,7 +13,7 @@ class RotatingGraphic;
 class ScanlineControl;
 
 /** represents one or more fleets of an empire at a location on the map. */
-class FleetButton : public GG::Button {
+class FleetButton final : public GG::Button {
 public:
     enum class SizeType : uint8_t {
         NONE,

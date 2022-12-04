@@ -4,7 +4,7 @@
 #include "CUIWnd.h"
 
 /** Lets the player design ships */
-class GovernmentWnd : public CUIWnd {
+class GovernmentWnd final : public CUIWnd {
 public:
     explicit GovernmentWnd(std::string_view config_name = "");
     void CompleteConstruction() override;

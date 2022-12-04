@@ -25,7 +25,7 @@ class GraphControl;
 //! UI class that displays in-game encyclopedic information about game content.
 //!
 //! Tech, ShipPart, ShipHull, BuildingType, ShipDesign, etc.
-class EncyclopediaDetailPanel : public CUIWnd {
+class EncyclopediaDetailPanel final : public CUIWnd {
 public:
     EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags = GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE |
                                                            GG::RESIZABLE | CLOSABLE | PINABLE,

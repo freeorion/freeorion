@@ -3,7 +3,7 @@
 
 #include <GG/StyleFactory.h>
 
-class CUIStyle : public GG::StyleFactory
+class CUIStyle final : public GG::StyleFactory
 {
 public:
     std::string Translate(const std::string& text) const override;

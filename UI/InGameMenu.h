@@ -3,7 +3,7 @@
 
 #include "CUIWnd.h"
 
-class InGameMenu : public CUIWnd {
+class InGameMenu final : public CUIWnd {
 public:
     InGameMenu();
     void CompleteConstruction() override;

@@ -19,7 +19,7 @@ namespace detail {
 
 /** a FreeOrion Spin control */
 template <typename T>
-class CUISpin : public GG::Spin<T>
+class CUISpin final : public GG::Spin<T>
 {
 public:
     typedef typename GG::Spin<T>::ValueType ValueType;

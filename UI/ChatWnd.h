@@ -12,7 +12,7 @@
 
 class MessageWndEdit;
 
-class MessageWnd : public CUIWnd {
+class MessageWnd final : public CUIWnd {
 public:
     MessageWnd(GG::Flags<GG::WndFlag> flags, std::string_view config_name = "");
     void CompleteConstruction() override;

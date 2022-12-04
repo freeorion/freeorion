@@ -6,7 +6,7 @@
 #include <GG/Control.h>
 #include <GG/GLClientAndServerBuffer.h>
 
-class GraphControl : public GG::Control {
+class GraphControl final : public GG::Control {
 public:
     GraphControl();
 

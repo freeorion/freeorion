@@ -7,7 +7,7 @@
 
 
 /// Shows a report on a combat
-class CombatReportWnd : public CUIWnd {
+class CombatReportWnd final : public CUIWnd {
 public:
     CombatReportWnd(std::string_view config_name = "");
     void CompleteConstruction() override;

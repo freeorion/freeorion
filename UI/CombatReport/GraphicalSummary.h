@@ -13,7 +13,7 @@ class SideBar;
 class OptionsBar;
 
 /// Shows a graphical summary of the battle results
-class GraphicalSummaryWnd : public GG::Wnd {
+class GraphicalSummaryWnd final : public GG::Wnd {
 public:
     boost::signals2::signal<void()> MinSizeChangedSignal;
 
