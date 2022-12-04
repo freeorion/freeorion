@@ -21,7 +21,7 @@ FO_COMMON_API bool RegisterGameRules(GameRulesFn function);
 /** returns the single instance of the GameRules class */
 FO_COMMON_API GameRules& GetGameRules();
 
-struct FO_COMMON_API GameRule : public OptionsDB::Option {
+struct FO_COMMON_API GameRule final : public OptionsDB::Option {
     enum class Type : int8_t {
         INVALID = -1,
         TOGGLE,

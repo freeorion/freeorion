@@ -25,7 +25,7 @@ struct DiplomaticStatusUpdateInfo;
 
 /** @brief Class allowing AI to recieve basic game events.
  */
-class PythonAI : public PythonBase {
+class PythonAI final : public PythonBase {
 public:
     bool Initialize();
 

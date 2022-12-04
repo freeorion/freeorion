@@ -46,7 +46,7 @@ FO_ENUM(
 
 
 /** a class representing a FreeOrion planet. */
-class FO_COMMON_API Planet :
+class FO_COMMON_API Planet final :
     public UniverseObject,
     public PopCenter,
     public ResourceCenter

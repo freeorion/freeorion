@@ -44,7 +44,7 @@ FO_ENUM(
    functions.  Iteration is available over all starlanes and wormholes
    (together), all system objects, all free system objects (those not in an
    orbit), and all objects in a paricular orbit.*/
-class FO_COMMON_API System : public UniverseObject {
+class FO_COMMON_API System final : public UniverseObject {
 public:
     /** Returns a single empire ID if a single empire controls a planet or
       * planets in this system, or ALL_EMPIRES if no empire controls a planet

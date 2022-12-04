@@ -7,7 +7,7 @@
 
 class CUILinkTextMultiEdit;
 
-class CUILinkTextBlock : public GG::BlockControl {
+class CUILinkTextBlock final : public GG::BlockControl {
 public:
     CUILinkTextBlock(const std::string& str,
                      const std::shared_ptr<GG::Font>& font,
@@ -21,9 +21,9 @@ public:
     void Render() override
     {}
 
-    CUILinkTextMultiEdit& Text();
+    auto& Text() noexcept { return *m_link_text; }
 
-    class Factory: public GG::RichText::IBlockControlFactory {
+    class Factory final : public GG::RichText::IBlockControlFactory {
     public:
         //! Creates a control from the tag (with unparsed parameters) and the content between the tags.
         //! You own the returned control.

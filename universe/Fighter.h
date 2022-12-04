@@ -12,7 +12,7 @@
 ///////////////////////////////////////////////
 /** a class representing a Fighter in combat. Derived from UniverseObject so it
   * can be stored in the same container as other combat objects. */
-class FO_COMMON_API Fighter : public UniverseObject {
+class FO_COMMON_API Fighter final : public UniverseObject {
 public:
     Fighter(int empire_id, int launched_from_id, const std::string& species_name,
             float damage, const ::Condition::Condition* combat_targets/*, int current_turn*/);

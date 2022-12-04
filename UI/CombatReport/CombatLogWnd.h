@@ -7,7 +7,7 @@
 
 
 /// Display a log of combat events with expandable log sections with more details of a combat event
-class CombatLogWnd : public GG::Wnd {
+class CombatLogWnd final : public GG::Wnd {
 public:
     CombatLogWnd(GG::X w, GG::Y h);
 

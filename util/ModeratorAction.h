@@ -37,7 +37,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-class FO_COMMON_API DestroyUniverseObject : public ModeratorAction {
+class FO_COMMON_API DestroyUniverseObject final : public ModeratorAction {
 public:
     DestroyUniverseObject() = default;
     explicit DestroyUniverseObject(int object_id);
@@ -53,7 +53,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-class FO_COMMON_API SetOwner : public ModeratorAction {
+class FO_COMMON_API SetOwner final : public ModeratorAction {
 public:
     SetOwner();
     SetOwner(int object_id, int new_owner_empire_id);
@@ -70,7 +70,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-class FO_COMMON_API AddStarlane : public ModeratorAction {
+class FO_COMMON_API AddStarlane final : public ModeratorAction {
 public:
     AddStarlane();
     AddStarlane(int system_1_id, int system_2_id);
@@ -87,7 +87,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-class FO_COMMON_API RemoveStarlane : public ModeratorAction {
+class FO_COMMON_API RemoveStarlane final : public ModeratorAction {
 public:
     RemoveStarlane();
     RemoveStarlane(int system_1_id, int system_2_id);
@@ -104,7 +104,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-class FO_COMMON_API CreateSystem : public ModeratorAction {
+class FO_COMMON_API CreateSystem final : public ModeratorAction {
 public:
     CreateSystem();
     CreateSystem(double x, double y, StarType star_type);
@@ -122,7 +122,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-class FO_COMMON_API CreatePlanet : public ModeratorAction {
+class FO_COMMON_API CreatePlanet final : public ModeratorAction {
 public:
     CreatePlanet();
     CreatePlanet(int system_id, PlanetType planet_type, PlanetSize planet_size);

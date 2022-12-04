@@ -10,7 +10,7 @@
 class PythonAI;
 
 /** the application framework for an AI player FreeOrion client.*/
-class AIClientApp : public ClientApp {
+class AIClientApp final : public ClientApp {
 public:
     AIClientApp() = delete;
     explicit AIClientApp(const std::vector<std::string>& args);

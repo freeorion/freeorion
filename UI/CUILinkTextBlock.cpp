@@ -36,9 +36,6 @@ GG::Pt CUILinkTextBlock::SetMaxWidth(GG::X width) {
     return size;
 }
 
-CUILinkTextMultiEdit& CUILinkTextBlock::Text()
-{ return *m_link_text; }
-
 std::shared_ptr<GG::BlockControl> CUILinkTextBlock::Factory::CreateFromTag(
     const GG::RichText::TAG_PARAMS&, const std::string& content,
     const std::shared_ptr<GG::Font>& font, const GG::Clr& color, GG::Flags<GG::TextFormat> format)

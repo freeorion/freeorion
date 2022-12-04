@@ -7,7 +7,7 @@
 
 /** a FreeOrion Slider control */
 template <typename T>
-class CUISlider : public GG::Slider<T>
+class CUISlider final : public GG::Slider<T>
 {
 public:
     CUISlider(T min, T max,

@@ -116,7 +116,7 @@ struct Validator : public ValidatorBase
 
 /** a Validator that constrains the range of valid values */
 template <typename T>
-struct RangedValidator : public Validator<T>
+struct RangedValidator final : public Validator<T>
 {
     RangedValidator(T min, T max) :
         m_min(min),
@@ -147,7 +147,7 @@ struct RangedValidator : public Validator<T>
     validated type's default-constructed value, unless another origin
     is specified. */
 template <typename T>
-struct StepValidator : public Validator<T>
+struct StepValidator final : public Validator<T>
 {
     StepValidator(T step, T origin = 0) :
         m_step_size(step),
@@ -175,7 +175,7 @@ struct StepValidator : public Validator<T>
 
 /** a Validator similar to a StepValidator, but that further constrains the valid values to be within a certain range (eg: [25, 50, ..., 200]). */
 template <typename T>
-struct RangedStepValidator : public Validator<T>
+struct RangedStepValidator final : public Validator<T>
 {
 public:
     RangedStepValidator(T step, T min, T max) :
@@ -217,7 +217,7 @@ public:
 /// a Validator that specifies a finite number of valid values.
 /** Probably won't work well with floating point types. */
 template <typename T>
-struct DiscreteValidator : public Validator<T>
+struct DiscreteValidator final : public Validator<T>
 {
     explicit DiscreteValidator(T single_value) :
         m_values{std::move(single_value)}
@@ -268,7 +268,7 @@ struct DiscreteValidator : public Validator<T>
  *  Always calls m_validator_a->Validate(). Only calls m_validator_b->Validate()
  *  if the first one throws. */
 template <typename T>
-struct OrValidator : public Validator<T>
+struct OrValidator final : public Validator<T>
 {
     OrValidator(Validator<T>&& validator_a, Validator<T>&& validator_b) :
         m_validator_a{std::make_unique<Validator<T>>(std::move(validator_a))},

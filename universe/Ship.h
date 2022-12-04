@@ -12,7 +12,7 @@ class ShipDesign;
 class ShipPart;
 
 /** a class representing a single FreeOrion ship */
-class FO_COMMON_API Ship : public UniverseObject {
+class FO_COMMON_API Ship final : public UniverseObject {
 public:
     typedef std::map<std::pair<MeterType, std::string>, Meter> PartMeterMap;
 

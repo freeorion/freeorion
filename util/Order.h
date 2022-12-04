@@ -89,7 +89,7 @@ private:
 // RenameOrder
 /////////////////////////////////////////////////////
 /** the Order subclass that represents the renaming of a UniverseObject. */
-class FO_COMMON_API RenameOrder : public Order {
+class FO_COMMON_API RenameOrder final : public Order {
 public:
     RenameOrder(int empire, int object, std::string name, const ScriptingContext& context);
 
@@ -132,7 +132,7 @@ private:
 /////////////////////////////////////////////////////
 /** the Order subclass that represents forming a new fleet.
     Only one of system or position will be used to place the new fleet.*/
-class FO_COMMON_API NewFleetOrder : public Order {
+class FO_COMMON_API NewFleetOrder final : public Order {
 public:
     NewFleetOrder(int empire, std::string fleet_name,
                   std::vector<int> ship_ids, const ScriptingContext& context,
@@ -186,7 +186,7 @@ private:
 /////////////////////////////////////////////////////
 /** the Order subclass that represents fleet movement
     These orders change the current destination of a fleet */
-class FO_COMMON_API FleetMoveOrder : public Order {
+class FO_COMMON_API FleetMoveOrder final : public Order {
 public:
     FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id, bool append,
                    const ScriptingContext& context);
@@ -237,7 +237,7 @@ private:
 /** The Order subclass that represents transfer of ships between existing fleets
   * A FleetTransferOrder is used to transfer ships from one existing fleet to
   * another. */
-class FO_COMMON_API FleetTransferOrder : public Order {
+class FO_COMMON_API FleetTransferOrder final : public Order {
 public:
     FleetTransferOrder(int empire, int dest_fleet, std::vector<int> ships,
                        const ScriptingContext& context);
@@ -280,7 +280,7 @@ private:
 // ColonizeOrder
 /////////////////////////////////////////////////////
 /** the Order subclass that represents a planet colonization action*/
-class FO_COMMON_API ColonizeOrder : public Order {
+class FO_COMMON_API ColonizeOrder final : public Order {
 public:
     ColonizeOrder(int empire, int ship, int planet, const ScriptingContext& context);
 
@@ -325,7 +325,7 @@ private:
 // InvadeOrder
 /////////////////////////////////////////////////////
 /** the Order subclass that represents a planet invasion action*/
-class FO_COMMON_API InvadeOrder : public Order {
+class FO_COMMON_API InvadeOrder final : public Order {
 public:
     InvadeOrder(int empire, int ship, int planet, const ScriptingContext& context);
 
@@ -370,7 +370,7 @@ private:
 // BombardOrder
 /////////////////////////////////////////////////////
 /** the Order subclass that represents a planet bombardment action*/
-class FO_COMMON_API BombardOrder : public Order {
+class FO_COMMON_API BombardOrder final : public Order {
 public:
     BombardOrder(int empire, int ship, int planet, const ScriptingContext& context);
 
@@ -413,7 +413,7 @@ private:
 // ChangeFocusOrder
 /////////////////////////////////////////////////////
 /** the Order subclass that represents changing a planet focus*/
-class FO_COMMON_API ChangeFocusOrder : public Order {
+class FO_COMMON_API ChangeFocusOrder final : public Order {
 public:
     ChangeFocusOrder(int empire, int planet, std::string focus,
                      const ScriptingContext& context);
@@ -449,7 +449,7 @@ private:
 // PolicyOrder
 /////////////////////////////////////////////////////
 /** the Order subclass that represents the adoptiong imperial polices. */
-class FO_COMMON_API PolicyOrder : public Order {
+class FO_COMMON_API PolicyOrder final : public Order {
 public:
     PolicyOrder(int empire, std::string name, std::string category, bool adopt, int slot = -1);
     PolicyOrder(int empire) : Order(empire), m_revert{true} {};
@@ -485,7 +485,7 @@ private:
 /** The Order subclass that represents changing an empire's research queue.  The
   * 2-arg ctor removes the named tech from \a empire's queue, whereas the 3-arg
   * ctor places \a tech_name at position \a position in \a empire's research queue. */
-class FO_COMMON_API ResearchQueueOrder : public Order {
+class FO_COMMON_API ResearchQueueOrder final : public Order {
 public:
     ResearchQueueOrder(int empire, const std::string& tech_name);
     ResearchQueueOrder(int empire, const std::string& tech_name, int position);
@@ -522,7 +522,7 @@ private:
   * ctor moves an existing build from its current location at \a index to a new
   * one at \a new_index, and the 2-arg ctor removes the build at \a index from
   * \a empire's queue. */
-class FO_COMMON_API ProductionQueueOrder : public Order {
+class FO_COMMON_API ProductionQueueOrder final : public Order {
 public:
     enum class ProdQueueOrderAction : int8_t {
         INVALID_PROD_QUEUE_ACTION = -1,
@@ -588,7 +588,7 @@ private:
   * this design to the \a empire's set of remembered designs.  The new design
   * must be marked as designed by this \a empire.
   */
-class FO_COMMON_API ShipDesignOrder : public Order {
+class FO_COMMON_API ShipDesignOrder final : public Order {
 public:
     ShipDesignOrder(int empire_id, int existing_design_id_to_remember,
                     const ScriptingContext& context);
@@ -669,7 +669,7 @@ private:
 /////////////////////////////////////////////////////
 /** the Order subclass that represents the scrapping / recycling / destroying
   * a building or ship owned by an empire. */
-class FO_COMMON_API ScrapOrder : public Order {
+class FO_COMMON_API ScrapOrder final : public Order {
 public:
     ScrapOrder(int empire, int object_id, const ScriptingContext& context);
 
@@ -707,7 +707,7 @@ private:
 /////////////////////////////////////////////////////
 /** the Order subclass that represents setting the aggression state of objects
   * controlled by an empire. */
-class FO_COMMON_API AggressiveOrder : public Order {
+class FO_COMMON_API AggressiveOrder final : public Order {
 public:
     AggressiveOrder(int empire, int object_id, FleetAggression aggression,
                     const ScriptingContext& context);
@@ -750,7 +750,7 @@ private:
 /////////////////////////////////////////////////////
 /** the Order subclass that represents giving control of a ship to
   * another empire */
-class FO_COMMON_API GiveObjectToEmpireOrder : public Order {
+class FO_COMMON_API GiveObjectToEmpireOrder final : public Order {
 public:
     GiveObjectToEmpireOrder(int empire, int object_id, int recipient,
                             const ScriptingContext& context);
@@ -792,7 +792,7 @@ private:
 // ForgetOrder
 /////////////////////////////////////////////////////
 /** ForgetOrder removes the object from the empire's known objects. */
-class FO_COMMON_API ForgetOrder : public Order {
+class FO_COMMON_API ForgetOrder final : public Order {
 public:
     ForgetOrder(int empire, int object_id);
 

@@ -11,7 +11,7 @@
   * interaction with fields on the galaxy map.  It contains the graphic to
   * display the field, along with the object ID of the UniverseObject
     associated with it. */
-class FieldIcon : public GG::Control {
+class FieldIcon final : public GG::Control {
 public:
     FieldIcon(int field_id);
     ~FieldIcon() = default;

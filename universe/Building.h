@@ -8,7 +8,7 @@
 
 
 /** A Building UniverseObject type. */
-class FO_COMMON_API Building : public UniverseObject {
+class FO_COMMON_API Building final : public UniverseObject {
 public:
     [[nodiscard]] TagVecs     Tags(const ScriptingContext&) const override;
     [[nodiscard]] bool        HasTag(std::string_view name, const ScriptingContext&) const override;

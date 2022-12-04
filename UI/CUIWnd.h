@@ -10,7 +10,7 @@
 
 
 /** a simple minimize/restore button that toggles its appearance between the styles for minimize and restore */
-class CUI_MinRestoreButton : public GG::Button {
+class CUI_MinRestoreButton final : public GG::Button {
 public:
    /** the two modes of operation of this class of button: as a minimize button or as a restore button */
    enum class Mode : uint8_t {
@@ -29,7 +29,7 @@ private:
 };
 
 /** a basic Pin-shaped pin button. */
-class CUI_PinButton : public GG::Button {
+class CUI_PinButton final : public GG::Button {
 public:
     CUI_PinButton();
 
@@ -210,7 +210,7 @@ protected:
 
 // This didn't seem big enough to warrant its own file, so this seemed like a good enough place for it....
 /** provides a convenient modal wnd for getting text user input. */
-class CUIEditWnd : public CUIWnd {
+class CUIEditWnd final : public CUIWnd {
 public:
     CUIEditWnd(GG::X w, std::string prompt_text, std::string edit_text,
                GG::Flags<GG::WndFlag> flags = GG::MODAL);

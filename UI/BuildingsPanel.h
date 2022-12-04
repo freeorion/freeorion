@@ -10,7 +10,7 @@ class MultiTurnProgressBar;
 class ScanlineControl;
 
 /** Contains various BuildingIndicator to represent buildings on a planet. */
-class BuildingsPanel : public AccordionPanel {
+class BuildingsPanel final : public AccordionPanel {
 public:
     BuildingsPanel(GG::X w, int columns, int planet_id);
     ~BuildingsPanel() = default;
@@ -54,7 +54,7 @@ private:
 };
 
 /** Represents and allows some user interaction with a building */
-class BuildingIndicator : public GG::Wnd {
+class BuildingIndicator final : public GG::Wnd {
 public:
     /** Constructor for use when building is completed, shown without progress 
       * bar. */

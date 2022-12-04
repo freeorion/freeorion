@@ -55,7 +55,7 @@ constexpr double FLEET_MOVEMENT_EPSILON = 0.1;  // how close a fleet needs to be
 
 /** Encapsulates data for a FreeOrion fleet.  Fleets are basically a group of
   * ships that travel together. */
-class FO_COMMON_API Fleet : public UniverseObject {
+class FO_COMMON_API Fleet final : public UniverseObject {
 public:
     [[nodiscard]] bool                    HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
 

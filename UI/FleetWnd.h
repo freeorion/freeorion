@@ -82,7 +82,7 @@ private:
 /** This is the top level Fleet UI element.  It shows a list of fleets, a
     new-fleet drop target, and a detail view of the currently selected fleet
     (a FleetDetailPanel). */
-class FleetWnd : public MapWndPopup {
+class FleetWnd final : public MapWndPopup {
 public:
     FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled,
              double allowed_bounding_box_leeway = 0,
