@@ -49,11 +49,11 @@ jobs:
       run: |
         # sudo apt-get -qq -y --no-install-recommends install \
         sudo apt-get install --assume-yes \
-            libboost1.71-all-dev \
+            libboost1.74-all-dev \
             libglew-dev \
             libopenal-dev \
-            zlibc \
-            python3.8 \
+            zlib1g \
+            python3.9 \
             python3-dev \
             libfreetype6-dev \
             libpng-dev \
