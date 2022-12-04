@@ -39,7 +39,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Set minimum window sizes on design screen
 - Improved pedia search performance and noted time to search at end of results
 - Show + or - instead of brackets around second number (change) in StatisticIcon
-- Don't show planet type wheel for asteriods and gas giant pedia pages
+- Don't show planet type wheel for asteroids and gas giant pedia pages
 - Fixed extraneous precision in graph axis labels
 - Allow galaxy setup panel of multiplayer lobby to scale with window size
 - Fixed message color in chat history
@@ -63,7 +63,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Switched to updating all object meters when showing system in the sidepanel, not just system contents, due to different results
 - Started rendering fleets that are (somehow?) not in systems and not moving
 - Added some hopefully-helpful explanation text to the output of "freeorion -h" on the command line
-- Disallowed newlines in pedia search edit to prevents weirdness when pasting multi-line text
+- Disallowed newlines in pedia search edit to prevent weirdness when pasting multi-line text
 - Added a link to the configuration file directory in the Configuration pedia article
 - Accounted for SI postfixes in text representations of numbers when sorting object list columns
 - Added distance to the selected system or fleet to objects list columns
@@ -100,7 +100,7 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Applied ship structure scaling to tree regeneration
     - Made blockade checks test that a fleet is set to Obstructive not Aggressive
     - Reworked Organic hull to be cheaper with more fuel and less slots
-    - Added a stealth stealth penalty to ships with large numbers of ships in the same system owned by the same empire
+    - Added a stealth penalty to ships with large numbers of ships in the same system owned by the same empire
     - Added some ship stealth bonuses and penalties dependent on star type
     - Made Laenfa fuel regrow and white or blue stars
     - Made Sly refuel and repair at planets with own species, without a supply network
@@ -115,7 +115,7 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Reduced living hull detection boost from 50 to 40
 
 - Planets
-    - Added some luxury resource specials that some species like and thus get stabilitly boosts from
+    - Added some luxury resource specials that some species like and thus get stability boosts from
     - Reduced spawn rates of some specials
     - Made various research and industry bonuses depend on stability
     - Added species traits for varying levels of baseline stability, shield strength, influence
@@ -166,7 +166,7 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Allowed natives species to spawn on adequate or poor planets if they have no good planet types during universe creation
     - Adjusted order of effects for species-trait scaling of resource output
     - Added guards to Biege Goo and Fiftyseven native planets
-    - Added occasional defenses to native planets
+    - Added occasional defences to native planets
     - Stopped Lembalalam from being both moderate and high tech natives
     - Added some restrictions to what species research traits can have High Tech Natives specials
     - Made some monster nests randomly be stealthy from turn to turn
@@ -180,7 +180,7 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Tweaked priority for garrison troop tech effects
 
 - Fields
-    - Made made star forming nebulae smaller, reduced speed and detection, increased stealth, limited number generated
+    - Made star forming nebulae smaller, reduced speed and detection, increased stealth, limited number generated
     - Added Void rift
     - Added Nanite Swarm
     - Added Meteor Blizzard
@@ -193,7 +193,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 - Pedia and Stringtables
     - Replaced various hard-coded numbers with content script-derived calculated values
-    - Fixed placement limit documenation for InterSpecies academy
+    - Fixed placement limit documentation for InterSpecies academy
     - Documented Planetary Starlane Drive
     - Documented supply network propagation mechanics
     - Additional entries for planetary focus game concept
@@ -224,7 +224,7 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Fixed issues with Starlane Bore and Starlane Nexus not correctly avoiding existing starlanes when generating new ones
     - Removed Cyborgs tech
     - Removed redundant prerequisite of N-Dimensional Subspace tech
-    - Added the the Asteroid coating special that appears on asteroids and gives owned asteroid ships a structure boost
+    - Added the Asteroid coating special that appears on asteroids and gives owned asteroid ships a structure boost
     - Reworked detection levels to increment in steps of 25 instead of 25 or 50
     - Added native species: Celestephyte, Thenian, Nightsiders, Sleepers, Khakturian
     - Added a system special of derelict small troop ships crewed by Khakturian, similar to other derelict specials
@@ -1203,7 +1203,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Enabled AI use of XenoResurrection Lab and resurrected species.
 - Adjusted AI to further prioritize automation, exobots, and some growth techs.
 - In sparse galaxies, moderated the reduction in AI colonization activity that occurs after spotting enemies.
-- Adjusted AI value for asteriods during first 40 turns.
+- Adjusted AI value for asteroids during first 40 turns.
 - Made neutronium and asteroid armor parts available only to supply connected shipyards.
 - Stopped monsters maturing during combat.
 - Made Cultural Archives required for research bonus of Auto History Analyser.
@@ -2369,7 +2369,7 @@ XDG Base Directory Specification
 - Made colony ships more expensive.
 - Disable production of shipyards at outposts.
 - Adjusted Microgravity Industry to "Increases Industry by +5 on all Industry-
-  focused colonies in system with an asteroid belt outposts. Additional asteriod
+  focused colonies in system with an asteroid belt outposts. Additional asteroid
   outposts do not provide additional benefit."
 - Removed loophole that made Exobot Origin buildings cheaper than building.
   Exobot colony ships on Exobot worlds.
