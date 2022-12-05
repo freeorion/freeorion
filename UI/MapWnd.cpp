@@ -251,7 +251,9 @@ namespace {
      * third point between them is.assumes the "mid" point is between the
      * "start" and "end" points, in which case the returned fraction is between
      * 0.0 and 1.0 */
-    double FractionalDistanceBetweenPoints(double startX, double startY, double midX, double midY, double endX, double endY) {
+    double FractionalDistanceBetweenPoints(double startX, double startY, double midX,
+                                           double midY, double endX, double endY)
+    {
         // get magnitudes of vectors
         double full_deltaX = endX - startX, full_deltaY = endY - startY;
         double mid_deltaX = midX - startX, mid_deltaY = midY - startY;
@@ -264,10 +266,12 @@ namespace {
 
     /* Returns point that is dist ditance away from (X1, Y1) in the direction
      * of (X2, Y2) */
-    std::pair<double, double> PositionFractionalAtDistanceBetweenPoints(double X1, double Y1, double X2, double Y2, double dist) {
+    constexpr auto PositionFractionalAtDistanceBetweenPoints(
+        double X1, double Y1, double X2, double Y2, double dist)
+    {
         double newX = X1 + (X2 - X1) * dist;
         double newY = Y1 + (Y2 - Y1) * dist;
-        return {newX, newY};
+        return std::pair<double, double>{newX, newY};
     }
 
     /* Returns apparent map X and Y position of an object at universe position
@@ -281,13 +285,12 @@ namespace {
      * position along the lane. */
     boost::optional<std::pair<double, double>> ScreenPosOnStarlane(
         double X, double Y, int lane_start_sys_id, int lane_end_sys_id,
-        LaneEndpoints screen_lane_endpoints)
+        LaneEndpoints screen_lane_endpoints, const ScriptingContext& context)
     {
         // get endpoints of lane in universe.  may be different because on-
         // screen lanes are drawn between system circles, not system centres
-        int empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        auto prev = EmpireKnownObjects(empire_id).get(lane_start_sys_id);
-        auto next = EmpireKnownObjects(empire_id).get(lane_end_sys_id);
+        auto prev = context.ContextObjects().get(lane_start_sys_id);
+        auto next = context.ContextObjects().get(lane_end_sys_id);
         if (!next || !prev) {
             ErrorLogger() << "ScreenPosOnStarlane couldn't find next system " << lane_start_sys_id
                           << " or prev system " << lane_end_sys_id;
@@ -295,7 +298,8 @@ namespace {
         }
 
         // get fractional distance along lane that fleet's universe position is
-        double dist_along_lane = FractionalDistanceBetweenPoints(prev->X(), prev->Y(), X, Y, next->X(), next->Y());
+        double dist_along_lane = FractionalDistanceBetweenPoints(
+            prev->X(), prev->Y(), X, Y, next->X(), next->Y());
 
         return PositionFractionalAtDistanceBetweenPoints(screen_lane_endpoints.X1, screen_lane_endpoints.Y1,
                                                          screen_lane_endpoints.X2, screen_lane_endpoints.Y2,
@@ -926,6 +930,7 @@ MapWnd::MovementLineData::MovementLineData(const std::vector<MovePathNode>& path
     int     prev_eta =                  first_node.eta;
     int     next_sys_id =               INVALID_OBJECT_ID;
 
+    const ScriptingContext context;
     const Empire* empire = GetEmpire(empireID);
     std::set<int> unobstructed;
     bool s_flag = false;
@@ -973,8 +978,8 @@ MapWnd::MovementLineData::MovementLineData(const std::vector<MovePathNode>& path
         const LaneEndpoints& lane_endpoints = ends_it->second;
 
         // get on-screen positions of nodes shifted to fit on starlane
-        auto start_xy = ScreenPosOnStarlane(prev_node_x, prev_node_y, prev_sys_id, next_sys_id, lane_endpoints);
-        auto end_xy =   ScreenPosOnStarlane(node.x,      node.y,      prev_sys_id, next_sys_id, lane_endpoints);
+        auto start_xy = ScreenPosOnStarlane(prev_node_x, prev_node_y, prev_sys_id, next_sys_id, lane_endpoints, context);
+        auto end_xy =   ScreenPosOnStarlane(node.x,      node.y,      prev_sys_id, next_sys_id, lane_endpoints, context);
 
         if (!start_xy) {
             ErrorLogger() << "System " << prev_sys_id << " has invalid screen coordinates.";
@@ -4999,10 +5004,12 @@ boost::optional<std::pair<double, double>> MapWnd::MovingFleetMapPositionOnLane(
         return std::make_pair(fleet->X(), fleet->Y());
     }
 
+    const ScriptingContext context;
+
     // return apparent position of fleet on starlane
     const LaneEndpoints& screen_lane_endpoints = endpoints_it->second;
     return ScreenPosOnStarlane(fleet->X(), fleet->Y(), sys1_id, sys2_id,
-                              screen_lane_endpoints);
+                              screen_lane_endpoints, context);
 }
 
 namespace {

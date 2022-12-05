@@ -684,7 +684,7 @@ namespace {
                 continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
 
             // determine which systems can propagate fleet and resource (same for both)
-            empire->UpdateSupplyUnobstructedSystems(context, precombat);
+            empire->UpdateSupplyUnobstructedSystems(context, precombat); // TODO: pass empire ID to use for known objects lookup?
             // set range systems can propagate fleet and resourse supply (separately)
             empire->UpdateSystemSupplyRanges(context.ContextUniverse());
         }
