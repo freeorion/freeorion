@@ -438,7 +438,7 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
             ++route_it;
             if (route_it != route.end()) {
                 // update next system on route and distance to it from current position
-                next_system = context.ContextUniverse().EmpireKnownObjects(this->Owner()).getRaw<System>(*route_it);
+                next_system = context.ContextObjects().getRaw<System>(*route_it); // TODO: filter by known objects for this->Owner()
                 if (next_system) {
                     TraceLogger() << "Fleet::MovePath checking unrestriced lane travel from Sys("
                                   <<  cur_system->ID() << ") to Sys(" << (next_system && next_system->ID()) << ")";
