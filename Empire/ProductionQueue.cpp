@@ -695,7 +695,7 @@ void ProductionQueue::Update(const ScriptingContext& context) {
         int location_id = element.location;
 
         // search through groups to find object
-        for (auto groups_it = available_pp.begin(); true; ++groups_it) { // TODO: structured binding?
+        for (auto groups_it = available_pp.begin(); true; ++groups_it) {
             if (groups_it == available_pp.end()) {
                 // didn't find a group containing this object, so add an empty group as this element's queue element group
                 queue_element_groups.emplace_back();

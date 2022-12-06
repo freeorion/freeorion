@@ -4082,7 +4082,7 @@ void MapWnd::InitFieldRenderingBuffers() {
         const float FIELD_SIZE = field->GetMeter(MeterType::METER_SIZE)->Initial();  // field size is its radius
         if (FIELD_SIZE <= 0)
             continue;
-        auto field_texture = field_icon.second->FieldTexture();
+        const auto& field_texture = field_icon.second->FieldTexture();
         if (!field_texture)
             continue;
 
@@ -4140,18 +4140,17 @@ void MapWnd::InitFieldRenderingBuffers() {
     }
     m_field_scanline_circles.createServerBuffer();
 
-    for (auto& field_buffer : m_field_vertices) {
-        auto field_texture = field_buffer.first;
+    for (auto& [field_texture, buffers] : m_field_vertices) {
         if (!field_texture)
             continue;
 
-        // todo: why the binding here?
+        // TODO: why the binding here?
         glBindTexture(GL_TEXTURE_2D, field_texture->OpenGLId());
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
-        field_buffer.second.first.createServerBuffer();
-        field_buffer.second.second.createServerBuffer();
+        buffers.first.createServerBuffer();
+        buffers.second.createServerBuffer();
     }
     glBindTexture(GL_TEXTURE_2D, 0);
 
