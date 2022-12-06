@@ -2258,17 +2258,17 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
         // only if consumed resources are available, then item can be completd
         bool consumption_impossible = false;
         auto sc = elem.item.CompletionSpecialConsumption(elem.location, context);
-        for (auto& special_type : sc) { // TODO: structured binding
-            if (consumption_impossible)
-                break;
-            for (auto& special_meter : special_type.second) { // TODO: structured binding
-                auto obj = context.ContextObjects().getRaw(special_meter.first);
-                float capacity = obj ? obj->SpecialCapacity(special_type.first) : 0.0f;
-                if (capacity < special_meter.second * elem.blocksize) {
+        for (auto& [special_name, obj_consump] : sc) {
+            for (auto& [spec_obj_id, consump] : obj_consump) {
+                auto obj = context.ContextObjects().getRaw(spec_obj_id);
+                float capacity = obj ? obj->SpecialCapacity(special_name) : 0.0f;
+                if (capacity < consump * elem.blocksize) {
                     consumption_impossible = true;
                     break;
                 }
             }
+            if (consumption_impossible)
+                break;
         }
         auto mc = elem.item.CompletionMeterConsumption(elem.location, context);
         for (auto& meter_type : mc) {
