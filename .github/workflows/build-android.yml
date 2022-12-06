@@ -29,7 +29,7 @@ jobs:
     name: Generate Godot API
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/o01eg/godot:3.5
+      image: ghcr.io/bend-n/godot:3.5
     steps:
       - name: Setup
         uses: bend-n/godot-actions/.github/actions/setup-godot@main
@@ -62,7 +62,7 @@ jobs:
           path: .
       - name: Download SDK
         id: download-sdk
-        uses: suisei-cn/actions-download-file@v1
+        uses: suisei-cn/actions-download-file@v1.3.0
         with:
           url: https://github.com/freeorion/freeorion-sdk/releases/download/v13/FreeOrionSDK_13_Android-${{ matrix.arch }}.zip
           target: ../
