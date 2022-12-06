@@ -2586,15 +2586,6 @@ void Empire::CheckInfluenceProgress() {
     m_resource_pools[ResourceType::RE_INFLUENCE]->SetStockpile(new_stockpile);
 }
 
-void Empire::SetColor(const EmpireColor& color)
-{ m_color = color; }
-
-void Empire::SetName(const std::string& name) // TODO: pass by value and move
-{ m_name = name; }
-
-void Empire::SetPlayerName(const std::string& player_name)
-{ m_player_name = player_name; }
-
 void Empire::InitResourcePools(const ObjectMap& objects, const SupplyManager& supply) {
     // get this empire's owned resource centers and ships (which can both produce resources)
     std::vector<int> res_centers;

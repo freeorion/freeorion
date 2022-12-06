@@ -363,9 +363,9 @@ public:
       * stockpile to account for influence production and expenditures.*/
     void CheckInfluenceProgress();
 
-    void SetColor(const EmpireColor& color);                 ///< Mutator for empire color
-    void SetName(const std::string& name);               ///< Mutator for empire name
-    void SetPlayerName(const std::string& player_name);  ///< Mutator for empire's player name
+    void SetColor(EmpireColor color) noexcept { m_color = color; }
+    void SetName(std::string name) noexcept { m_name = std::move(name); }
+    void SetPlayerName(std::string player_name) { m_player_name = std::move(player_name); }
 
     void SetResourceStockpile(ResourceType resource_type, float stockpile); ///< Sets current \a stockpile amount of indicated \a resource_type
 
