@@ -16284,7 +16284,7 @@ SH_SELF_GRAVITATING
 Self-Gravitating Hull
 
 SH_SELF_GRAVITATING_DESC
-'''This hull is immense in both size and power, with six external slots, two internal slots and one core slot—one of the few hulls able to mount such advanced features. It is also fairly sturdy, having a high max [[metertype METER_STRUCTURE]].
+'''This hull is immense in both size and power, with five external slots, two internal slots and one core slot—one of the few hulls able to mount such advanced features. It is also fairly sturdy, having a high max [[metertype METER_STRUCTURE]].
 
 [[metertype METER_STEALTH]] is low, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
 
