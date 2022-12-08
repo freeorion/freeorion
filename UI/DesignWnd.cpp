@@ -1230,9 +1230,9 @@ public:
     mutable boost::signals2::signal<void (const ShipPart*)> DoubleClickedSignal;
 
 private:
-    std::shared_ptr<GG::StaticGraphic>  m_icon = nullptr;
-    std::shared_ptr<GG::StaticGraphic>  m_background = nullptr;
-    const ShipPart*                     m_part = nullptr;
+    std::shared_ptr<GG::StaticGraphic> m_icon;
+    std::shared_ptr<GG::StaticGraphic> m_background;
+    const ShipPart*                    m_part = nullptr;
 };
 
 PartControl::PartControl(const ShipPart* part) :
@@ -1790,9 +1790,9 @@ private:
     void HandleShipPartClicked(const ShipPart*, GG::Flags<GG::ModKey>);
     void HandleShipPartRightClicked(const ShipPart*, const GG::Pt& pt);
 
-    std::shared_ptr<PartsListBox>                               m_parts_list = nullptr;
-    std::map<ShipPartClass, std::shared_ptr<CUIStateButton>>    m_class_buttons;
-    std::shared_ptr<CUIStateButton>                             m_superfluous_parts_button = nullptr;
+    std::shared_ptr<PartsListBox>                            m_parts_list;
+    std::map<ShipPartClass, std::shared_ptr<CUIStateButton>> m_class_buttons;
+    std::shared_ptr<CUIStateButton>                          m_superfluous_parts_button;
 
     // Holds the state of the availabilities filter.
     AvailabilityManager                         m_availabilities_state;
