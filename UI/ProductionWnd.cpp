@@ -457,7 +457,7 @@ namespace {
 
         const int FONT_PTS = ClientUI::Pts();
 
-        m_icon = nullptr;
+        m_icon.reset();
         if (graphic)
             m_icon = GG::Wnd::Create<GG::StaticGraphic>(
                 std::move(graphic), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
