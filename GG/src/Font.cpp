@@ -840,7 +840,7 @@ public:
     }
 
     /** Add open color tag.*/
-    void AddOpenTag(const Clr& color)
+    void AddOpenTag(Clr color)
     {
         std::vector<std::string> params = { std::to_string(color.r),
                                             std::to_string(color.g),
@@ -908,20 +908,12 @@ Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddNewline()
     return *this;
 }
 
-Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddOpenTag(const Clr& color)
+Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddOpenTag(Clr color)
 {
     m_impl->AddOpenTag(color);
     return *this;
 }
 
-///////////////////////////////////////
-// class GG::Font::LineData
-///////////////////////////////////////
-X Font::LineData::Width() const
-{ return char_data.empty() ? X0 : char_data.back().extent; }
-
-bool Font::LineData::Empty() const
-{ return char_data.empty(); }
 
 ///////////////////////////////////////
 // class GG::Font::RenderState
@@ -952,14 +944,8 @@ void Font::RenderState::PopColor()
         color_index_stack.pop();
 }
 
-int Font::RenderState::CurrentIndex() const
-{ return color_index_stack.top(); }
-
-const Clr& Font::RenderState::CurrentColor() const
+Clr Font::RenderState::CurrentColor() const
 { return used_colors[CurrentIndex()]; }
-
-bool Font::RenderState::ColorsEmpty() const
-{ return color_index_stack.size() <= 1; }
 
 
 ///////////////////////////////////////

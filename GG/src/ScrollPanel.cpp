@@ -88,11 +88,6 @@ void ScrollPanel::ScrollTo(Y pos)
     SignalScroll(*m_vscroll, true);
 }
 
-void ScrollPanel::SetBackgroundColor(const Clr& color)
-{
-    m_background_color = color;
-}
-
 void ScrollPanel::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 {
     m_vscroll->ScrollLineIncr(-move);

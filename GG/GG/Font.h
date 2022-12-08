@@ -288,7 +288,7 @@ public:
         TextAndElementsAssembler& AddNewline();
 
         /** Add an open Clr tag.*/
-        TextAndElementsAssembler& AddOpenTag(const Clr& color);
+        TextAndElementsAssembler& AddOpenTag(Clr color);
 
     private:
         class Impl;
@@ -365,8 +365,8 @@ public:
             std::vector<std::shared_ptr<FormattingTag>> tags;
         };
 
-        X    Width() const; ///< Returns the width of the line.
-        bool Empty() const; ///< Returns true iff char_data has size 0.
+        X    Width() const noexcept { return char_data.empty() ? X0 : char_data.back().extent; }
+        bool Empty() const noexcept { return char_data.empty(); }
 
         /** Data on each individual glyph. */
         std::vector<CharData> char_data;
@@ -412,12 +412,12 @@ public:
         void PopColor();
 
         /// Return the index of the current color in used_colors
-        int CurrentIndex() const;
+        int CurrentIndex() const noexcept { return color_index_stack.top(); }
 
-        const Clr& CurrentColor()  const;
+        Clr CurrentColor() const;
 
         /// Return true if there are no more colors to pop.
-        bool ColorsEmpty() const;
+        bool ColorsEmpty() const noexcept { return color_index_stack.size() <= 1; }
     };
 
     /** \brief Holds precomputed glyph position information for rendering.
