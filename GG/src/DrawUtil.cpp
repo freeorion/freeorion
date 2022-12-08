@@ -529,7 +529,7 @@ void BubbleRectangle(Pt ul, Pt lr, Clr color1, Clr color2, Clr color3, unsigned 
 }
 
 
-void glColor(const Clr clr)
+void glColor(Clr clr)
 { glColor4ub(clr.r, clr.g, clr.b, clr.a); }
 
 Clr GG::DisabledColor(Clr clr)
