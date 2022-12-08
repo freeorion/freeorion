@@ -18,13 +18,13 @@ using namespace GG;
 // GG::TextControl
 ////////////////////////////////////////////////
 TextControl::TextControl(X x, Y y, X w, Y h, std::string str,
-                         const std::shared_ptr<Font>& font, Clr color,
+                         std::shared_ptr<Font> font, Clr color,
                          Flags<TextFormat> format,
                          Flags<WndFlag> flags) :
     Control(x, y, w, h, flags),
     m_format(format),
     m_text_color(color),
-    m_font(font)
+    m_font(std::move(font))
 {
     ValidateFormat();
     SetText(std::move(str));
@@ -32,13 +32,13 @@ TextControl::TextControl(X x, Y y, X w, Y h, std::string str,
 
 TextControl::TextControl(X x, Y y, X w, Y h, std::string str,
                          std::vector<std::shared_ptr<Font::TextElement>> text_elements,
-                         const std::shared_ptr<Font>& font,
+                         std::shared_ptr<Font> font,
                          Clr color, Flags<TextFormat> format,
                          Flags<WndFlag> flags) :
     Control(x, y, w, h, flags),
     m_format(format),
     m_text_color(color),
-    m_font(font)
+    m_font(std::move(font))
 {
     ValidateFormat();
     SetText(std::move(str), std::move(text_elements));

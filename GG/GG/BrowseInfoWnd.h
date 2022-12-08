@@ -52,7 +52,7 @@ public:
     void Update(std::size_t mode, const Wnd* target);
 
     /** Sets the current cursor position to the one given. */
-    void SetCursorPosition(const Pt& cursor_pos);
+    void SetCursorPosition(Pt cursor_pos) noexcept { m_cursor_pos = cursor_pos; }
 
     /** If set by the user, this function is used to determine the position of
         this BrowseInfoWnd.  It takes the current cursor position, the
@@ -64,12 +64,14 @@ public:
     > PositionWnd;
 
 protected:
-    BrowseInfoWnd(X x, Y y, X w, Y h);
+    BrowseInfoWnd(X x, Y y, X w, Y h) :
+        Wnd(x, y, w, h)
+    {}
 
 private:
     Pt m_cursor_pos;
 
-    virtual void UpdateImpl(std::size_t mode, const Wnd* target);
+    virtual void UpdateImpl(std::size_t mode, const Wnd* target) {}
 };
 
 
@@ -90,17 +92,17 @@ public:
 
     [[nodiscard]] bool                         WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override;
 
-    [[nodiscard]] bool                         TextFromTarget() const; ///< returns true iff the text to display will be read from the target wnd
-    [[nodiscard]] const std::string&           Text() const;           ///< returns the text currently set for display
+    [[nodiscard]] bool                         TextFromTarget() const noexcept { return m_text_from_target; } ///< true iff the text to display will be read from the target wnd
+    [[nodiscard]] const std::string&           Text() const; ///< text currently set for display
 
     /** Returns the Font used to display text. */
-    [[nodiscard]] const std::shared_ptr<Font>& GetFont() const;
+    [[nodiscard]] const auto&                  GetFont() const noexcept { return m_font; }
 
-    [[nodiscard]] Clr                          Color() const;          ///< returns the color used to render the text box
-    [[nodiscard]] Clr                          BorderColor() const;    ///< returns the color used to render the text box border
+    [[nodiscard]] Clr                          Color() const noexcept { return m_color; }               ///< color used to render the text box
+    [[nodiscard]] Clr                          BorderColor() const noexcept { return m_border_color; }  ///< color used to render the text box border
     [[nodiscard]] Clr                          TextColor() const;      ///< returns the color used to render the text
     [[nodiscard]] Flags<TextFormat>            GetTextFormat() const;  ///< returns the text format used to render the text
-    [[nodiscard]] unsigned int                 BorderWidth() const;    ///< returns the width of the text box border
+    [[nodiscard]] unsigned int                 BorderWidth() const noexcept { return m_border_width; }  ///< width of the text box border
     [[nodiscard]] unsigned int                 TextMargin() const;     ///< returns the margin to leave between the text and the text box
 
     void SetText(std::string str);
@@ -110,7 +112,7 @@ public:
     void SetTextFromTarget(bool b);                    ///< sets the text display mode to static (\a b == true) or dynamic (read from the target Wnd, \a b == false)
 
     /** Sets the Font used to display text. */
-    void SetFont(const std::shared_ptr<Font>& font);
+    void SetFont(std::shared_ptr<Font> font);
 
     void SetColor(Clr color);                          ///< sets the color used to render the text box
     void SetBorderColor(Clr border_color);             ///< sets the color used to render the text box border

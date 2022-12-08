@@ -95,8 +95,7 @@ std::string read_quoted(std::string::const_iterator& it,
 }
 
 //! Extracts key="value" pairs from a string to a map.
-void ExtractParameters(const std::string& params_string,
-                       RichText::TAG_PARAMS& tag_params)
+void ExtractParameters(const std::string& params_string, RichText::TAG_PARAMS& tag_params)
 {
     // Next key to be stored.
     std::string key;
@@ -264,7 +263,7 @@ void RichTextPrivate::CreateBlocks(std::vector<RichTextTag> tags)
         ExtractParameters(tag.tag_params, params);
 
         auto block_factory{FactoryMap()[std::move(tag.tag)]};
-        auto block = block_factory->CreateFromTag(params, tag.content, m_font, m_color, m_format);
+        auto block = block_factory->CreateFromTag(params, std::move(tag.content), m_font, m_color, m_format);
         if (block)
             m_blocks.push_back(std::move(block));
     }

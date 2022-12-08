@@ -498,28 +498,28 @@ public:
 
     /** Unformatted text rendering; repeatedly calls RenderGlyph, then returns
         advance of entire string. */
-    X    RenderText(const Pt& pt, const std::string& text) const;
+    X    RenderText(Pt pt, const std::string& text) const;
 
     /** Formatted text rendering. */
-    void RenderText(const Pt& pt1, const Pt& pt2, const std::string& text, Flags<TextFormat>& format,
+    void RenderText(Pt pt1, Pt pt2, const std::string& text, Flags<TextFormat>& format,
                     const std::vector<LineData>& line_data, RenderState* render_state = nullptr) const;
 
     /** Formatted text rendering over a subset of lines and code points.  The
         glyphs rendered are in the range [CodePointIndexOf(<i>begin_line</i>,
         <i>begin_char</i>, <i>line_data</i>), CodePointIndexOf(<i>end_line</i> -
         1, <i>end_char</i>, <i>line_data</i>)). */
-    void RenderText(const Pt& pt1, const Pt& pt2, const std::string& text, Flags<TextFormat>& format,
+    void RenderText(Pt pt1, Pt pt2, const std::string& text, Flags<TextFormat>& format,
                     const std::vector<LineData>& line_data, RenderState& render_state,
                     std::size_t begin_line, CPSize begin_char,
                     std::size_t end_line, CPSize end_char) const;
 
     /** Wrapper around PreRenderText that provides dummy values for line start and end values.*/
-    void PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
+    void PreRenderText(Pt ul, Pt lr, const std::string& text, Flags<TextFormat>& format,
                        RenderCache& cache, const std::vector<LineData>& line_data,
                        RenderState* render_state = nullptr) const;
 
     /** Fill the \p cache with glyphs corresponding to the passed in \p text and \p line_data.*/
-    void PreRenderText(const Pt& pt1, const Pt& pt2, const std::string& text,
+    void PreRenderText(Pt pt1, Pt pt2, const std::string& text,
                        Flags<TextFormat>& format, const std::vector<LineData>& line_data,
                        RenderState& render_state, std::size_t begin_line, CPSize begin_char,
                        std::size_t end_line, CPSize end_char, RenderCache& cache) const;
@@ -661,7 +661,7 @@ private:
     {
         Glyph() = default;
 
-        Glyph(const std::shared_ptr<Texture>& texture, const Pt& ul, const Pt& lr,
+        Glyph(const std::shared_ptr<Texture>& texture, Pt ul, Pt lr,
               Y y_ofs, X lb, X adv);
 
         SubTexture  sub_texture;       ///< The subtexture containing just this glyph
@@ -682,12 +682,12 @@ private:
 
     void              ValidateFormat(Flags<TextFormat>& format) const;
 
-    X                 StoreGlyph(const Pt& pt, const Glyph& glyph, const RenderState* render_state,
+    X                 StoreGlyph(Pt pt, const Glyph& glyph, const RenderState* render_state,
                                  RenderCache& cache) const;
-    void              StoreGlyphImpl(RenderCache& cache, GG::Clr color, const Pt& pt,
+    void              StoreGlyphImpl(RenderCache& cache, GG::Clr color, Pt pt,
                                      const Glyph& glyph, int x_top_offset,
                                      int y_shift) const;
-    void              StoreUnderlineImpl(RenderCache& cache, GG::Clr color, const Pt& pt,
+    void              StoreUnderlineImpl(RenderCache& cache, GG::Clr color, Pt pt,
                                          const Glyph& glyph, Y descent, Y height,
                                          Y underline_height, Y underline_offset) const;
 
