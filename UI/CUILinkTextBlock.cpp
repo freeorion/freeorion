@@ -3,13 +3,13 @@
 #include "../util/VarText.h"
 #include "CUIControls.h"
 
-CUILinkTextBlock::CUILinkTextBlock(const std::string& str, const std::shared_ptr<GG::Font>& font,
-                                   GG::Flags<GG::TextFormat> format, const GG::Clr& color,
+CUILinkTextBlock::CUILinkTextBlock(std::string str, GG::Flags<GG::TextFormat> format, GG::Clr color,
                                    GG::Flags<GG::WndFlag> flags) :
     GG::BlockControl(GG::X0, GG::Y0, GG::X1, flags | GG::INTERACTIVE),
-    m_link_text(GG::Wnd::Create<CUILinkTextMultiEdit>(str, GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY | GG::MULTI_LEFT |
-                                                      GG::MULTI_LINEWRAP | GG::MULTI_TOP | GG::MULTI_NO_HSCROLL |
-                                                      GG::MULTI_NO_VSCROLL))
+    m_link_text(GG::Wnd::Create<CUILinkTextMultiEdit>(
+        std::move(str),
+        GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY | GG::MULTI_LEFT | GG::MULTI_LINEWRAP |
+        GG::MULTI_TOP | GG::MULTI_NO_HSCROLL | GG::MULTI_NO_VSCROLL))
 {}
 
 void CUILinkTextBlock::CompleteConstruction() {
@@ -37,10 +37,10 @@ GG::Pt CUILinkTextBlock::SetMaxWidth(GG::X width) {
 }
 
 std::shared_ptr<GG::BlockControl> CUILinkTextBlock::Factory::CreateFromTag(
-    const GG::RichText::TAG_PARAMS&, const std::string& content,
-    const std::shared_ptr<GG::Font>& font, const GG::Clr& color, GG::Flags<GG::TextFormat> format)
+    const GG::RichText::TAG_PARAMS&, std::string content,
+    std::shared_ptr<GG::Font>, GG::Clr color, GG::Flags<GG::TextFormat> format)
 {
-    auto block = GG::Wnd::Create<CUILinkTextBlock>(content, font, format, color, GG::NO_WND_FLAGS);
+    auto block = GG::Wnd::Create<CUILinkTextBlock>(std::move(content), format, color, GG::NO_WND_FLAGS);
 
     // Wire the block's signals to come through us.
     block->m_link_text->LinkClickedSignal.connect(this->LinkClickedSignal);

@@ -71,7 +71,7 @@ constexpr T NextPowerOfTwo(T input)
 struct TempGlyphData
 {
     TempGlyphData() {}
-    TempGlyphData(const Pt& ul_, const Pt& lr_, Y y_ofs, X lb, X a) :
+    TempGlyphData(Pt ul_, Pt lr_, Y y_ofs, X lb, X a) :
         ul(ul_), lr(lr_), y_offset(y_ofs), left_b(lb), adv(a) {}
     Pt ul, lr;   ///< area of glyph subtexture within texture
     Y  y_offset; ///< vertical offset to draw texture (may be negative!)
@@ -981,7 +981,7 @@ Font::LineData::CharData::CharData(X extent_, StrSize str_index, StrSize str_siz
 ///////////////////////////////////////
 // struct GG::Font::Glyph
 ///////////////////////////////////////
-Font::Glyph::Glyph(const std::shared_ptr<Texture>& texture, const Pt& ul, const Pt& lr,
+Font::Glyph::Glyph(const std::shared_ptr<Texture>& texture, Pt ul, Pt lr,
                    Y y_ofs, X lb, X adv) :
     sub_texture(texture, ul.x, ul.y, lr.x, lr.y),
     y_offset(y_ofs),
@@ -1041,7 +1041,7 @@ Y Font::Lineskip() const
 X Font::SpaceWidth() const
 { return m_space_width; }
 
-X Font::RenderText(const Pt& pt_, const std::string& text) const
+X Font::RenderText(Pt pt_, const std::string& text) const
 {
     Pt pt = pt_;
     X orig_x = pt.x;
@@ -1069,7 +1069,7 @@ X Font::RenderText(const Pt& pt_, const std::string& text) const
     return pt.x - orig_x;
 }
 
-void Font::RenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
+void Font::RenderText(Pt ul, Pt lr, const std::string& text, Flags<TextFormat>& format,
                       const std::vector<LineData>& line_data, RenderState* render_state) const
 {
     RenderState state;
@@ -1081,7 +1081,7 @@ void Font::RenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags
                line_data.empty() ? CP0 : CPSize(line_data.back().char_data.size()));
 }
 
-void Font::RenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
+void Font::RenderText(Pt ul, Pt lr, const std::string& text, Flags<TextFormat>& format,
                       const std::vector<LineData>& line_data, RenderState& render_state,
                       std::size_t begin_line, CPSize begin_char,
                       std::size_t end_line, CPSize end_char) const
@@ -1091,7 +1091,7 @@ void Font::RenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags
     RenderCachedText(cache);
 }
 
-void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
+void Font::PreRenderText(Pt ul, Pt lr, const std::string& text, Flags<TextFormat>& format,
                          RenderCache& cache,
                          const std::vector<LineData>& line_data, RenderState* render_state) const
 {
@@ -1105,7 +1105,7 @@ void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Fl
     }
 }
 
-void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
+void Font::PreRenderText(Pt ul, Pt lr, const std::string& text, Flags<TextFormat>& format,
                          const std::vector<LineData>& line_data, RenderState& render_state,
                          std::size_t begin_line, CPSize begin_char,
                          std::size_t end_line, CPSize end_char,
@@ -1966,7 +1966,7 @@ void Font::ValidateFormat(Flags<TextFormat>& format) const
         format &= ~FORMAT_LINEWRAP;
 }
 
-void Font::StoreGlyphImpl(Font::RenderCache& cache, Clr color, const Pt& pt,
+void Font::StoreGlyphImpl(Font::RenderCache& cache, Clr color, Pt pt,
                           const Glyph& glyph, int x_top_offset, int y_shift) const
 {
     cache.coordinates->store(glyph.sub_texture.TexCoords()[0], glyph.sub_texture.TexCoords()[1]);
@@ -1989,7 +1989,7 @@ void Font::StoreGlyphImpl(Font::RenderCache& cache, Clr color, const Pt& pt,
     cache.colors->store(color);
 }
 
-void Font::StoreUnderlineImpl(Font::RenderCache& cache, Clr color, const Pt& pt, const Glyph& glyph,
+void Font::StoreUnderlineImpl(Font::RenderCache& cache, Clr color, Pt pt, const Glyph& glyph,
                               Y descent, Y height, Y underline_height, Y underline_offset) const
 {
     X x1 = pt.x;
@@ -2007,7 +2007,7 @@ void Font::StoreUnderlineImpl(Font::RenderCache& cache, Clr color, const Pt& pt,
     cache.underline_colors->store(color);
 }
 
-X Font::StoreGlyph(const Pt& pt, const Glyph& glyph, const Font::RenderState* render_state,
+X Font::StoreGlyph(Pt pt, const Glyph& glyph, const Font::RenderState* render_state,
                    Font::RenderCache& cache) const
 {
     int italic_top_offset = 0;

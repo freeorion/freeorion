@@ -94,9 +94,8 @@ void ImageBlock::Render()
 class ImageBlockFactory : public RichText::IBlockControlFactory {
 public:
     //! Create a Text block from a plain text tag.
-    std::shared_ptr<BlockControl> CreateFromTag(const RichText::TAG_PARAMS& params, const std::string&,
-                                                const std::shared_ptr<Font>&, const Clr&,
-                                                Flags<TextFormat>) override
+    std::shared_ptr<BlockControl> CreateFromTag(const RichText::TAG_PARAMS& params, std::string,
+                                                std::shared_ptr<Font>, Clr, Flags<TextFormat>) override
     {
         // Get the path from the parameters.
         fs::path param_path = ExtractPath(params);

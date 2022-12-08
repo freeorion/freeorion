@@ -22,10 +22,6 @@ using namespace GG;
 ////////////////////////////////////////////////
 // GG::BrowseInfoWnd
 ////////////////////////////////////////////////
-BrowseInfoWnd::BrowseInfoWnd(X x, Y y, X w, Y h) :
-    Wnd(x, y, w, h)
-{}
-
 void BrowseInfoWnd::Update(std::size_t mode, const Wnd* target)
 {
     UpdateImpl(mode, target);
@@ -48,12 +44,6 @@ void BrowseInfoWnd::Update(std::size_t mode, const Wnd* target)
         ul.y = Y0;
     MoveTo(ul);
 }
-
-void BrowseInfoWnd::SetCursorPosition(const Pt& cursor_pos)
-{ m_cursor_pos = cursor_pos; }
-
-void BrowseInfoWnd::UpdateImpl(std::size_t mode, const Wnd* target)
-{}
 
 
 ////////////////////////////////////////////////
@@ -88,29 +78,14 @@ bool TextBoxBrowseInfoWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) co
     return !wnd->BrowseInfoText(mode).empty();
 }
 
-bool TextBoxBrowseInfoWnd::TextFromTarget() const
-{ return m_text_from_target; }
-
 const std::string& TextBoxBrowseInfoWnd::Text() const
 { return m_text_control->Text(); }
-
-const std::shared_ptr<Font>& TextBoxBrowseInfoWnd::GetFont() const
-{ return m_font; }
-
-Clr TextBoxBrowseInfoWnd::Color() const
-{ return m_color; }
 
 Clr TextBoxBrowseInfoWnd::TextColor() const
 { return m_text_control->TextColor(); }
 
 Flags<TextFormat> TextBoxBrowseInfoWnd::GetTextFormat() const
 { return m_text_control->GetTextFormat(); }
-
-Clr TextBoxBrowseInfoWnd::BorderColor() const
-{ return m_border_color; }
-
-unsigned int TextBoxBrowseInfoWnd::BorderWidth() const
-{ return m_border_width; }
 
 unsigned int TextBoxBrowseInfoWnd::TextMargin() const
 { return GetLayout()->BorderMargin(); }
@@ -180,8 +155,8 @@ void TextBoxBrowseInfoWnd::Render()
 void TextBoxBrowseInfoWnd::SetTextFromTarget(bool b)
 { m_text_from_target = b; }
 
-void TextBoxBrowseInfoWnd::SetFont(const std::shared_ptr<Font>& font)
-{ m_font = font; }
+void TextBoxBrowseInfoWnd::SetFont(std::shared_ptr<Font> font)
+{ m_font = std::move(font); }
 
 void TextBoxBrowseInfoWnd::SetColor(Clr color)
 { m_color = color; }

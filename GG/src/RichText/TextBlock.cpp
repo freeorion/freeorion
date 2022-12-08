@@ -14,17 +14,17 @@
 
 using namespace GG;
 
-TextBlock::TextBlock(X x, Y y, X w, const std::string& str,
-                        const std::shared_ptr<Font>& font,
-                        Clr color, Flags<TextFormat> format,
-                        Flags<WndFlag> flags) :
+TextBlock::TextBlock(X x, Y y, X w, std::string str,
+                     std::shared_ptr<Font> font,
+                     Clr color, Flags<TextFormat> format,
+                     Flags<WndFlag> flags) :
     BlockControl(x, y, w, flags)
 {
     // Construct the text control. Activate full text wrapping features,
     // and make it stick to the top.
     // With these setting the height is largely ignored, so we set it to one.
-    m_text = Wnd::Create<TextControl>(GG::X0, GG::Y0, w, Y1, str, font, color,
-                                        format | FORMAT_WORDBREAK | FORMAT_LINEWRAP | FORMAT_TOP, flags);
+    m_text = Wnd::Create<TextControl>(GG::X0, GG::Y0, w, Y1, std::move(str), std::move(font), color,
+                                      format | FORMAT_WORDBREAK | FORMAT_LINEWRAP | FORMAT_TOP, flags);
 }
 
 void TextBlock::CompleteConstruction()
@@ -49,12 +49,13 @@ class TextBlockFactory: public RichText::IBlockControlFactory {
 public:
     //! Create a Text block from a plain text tag.
     std::shared_ptr<BlockControl> CreateFromTag(const RichText::TAG_PARAMS& params,
-                                                const std::string& content,
-                                                const std::shared_ptr<Font>& font,
-                                                const Clr& color,
+                                                std::string content,
+                                                std::shared_ptr<Font> font,
+                                                Clr color,
                                                 Flags<TextFormat> format) override
     {
-        return Wnd::Create<TextBlock>(X0, Y0, X1, content, font, color, format, NO_WND_FLAGS);
+        return Wnd::Create<TextBlock>(X0, Y0, X1, std::move(content), std::move(font),
+                                      color, format, NO_WND_FLAGS);
     }
 };
 

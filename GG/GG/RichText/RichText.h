@@ -37,8 +37,8 @@ public:
         virtual ~IBlockControlFactory() = default;
         //! Creates a control from the tag (with unparsed parameters) and the content between the tags.
         //! You own the returned control.
-        virtual std::shared_ptr<BlockControl> CreateFromTag(const TAG_PARAMS&, const std::string&,
-                                                            const std::shared_ptr<Font>&, const Clr&,
+        virtual std::shared_ptr<BlockControl> CreateFromTag(const TAG_PARAMS&, std::string,
+                                                            std::shared_ptr<Font>, Clr,
                                                             Flags<TextFormat>) = 0;
     };
 
