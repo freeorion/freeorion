@@ -469,7 +469,7 @@ namespace {
         void HandleScrolledAndStopped(int start_pos, int end_post, int min_pos, int max_pos)
         { HandleMaybeVisible(); }
 
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr)  override {
+        void SizeMove(GG::Pt ul, GG::Pt lr)  override {
             LinkText::SizeMove(ul, lr);
             if (! m_signals.empty())
                 HandleMaybeVisible();

@@ -1452,7 +1452,7 @@ public:
     void Select(bool b)
     { m_selected = b; }
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+    void SizeMove(GG::Pt ul, GG::Pt lr) override {
         const GG::Pt old_size = Size();
         GG::Control::SizeMove(ul, lr);
         if (old_size != Size())
@@ -1656,7 +1656,7 @@ public:
     void Update()
     { m_panel->RequirePreRender(); }
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+    void SizeMove(GG::Pt ul, GG::Pt lr) override {
         const GG::Pt old_size = Size();
         GG::ListBox::Row::SizeMove(ul, lr);
         if (!empty() && old_size != Size() && m_panel){
@@ -1690,7 +1690,7 @@ public:
         SetChildClippingMode(ChildClippingMode::ClipToClient);
     }
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+    void SizeMove(GG::Pt ul, GG::Pt lr) override {
         const GG::Pt old_size = Size();
         GG::Control::SizeMove(ul, lr);
         if (old_size != Size())
@@ -1836,7 +1836,7 @@ public:
         m_panel->ColumnsChangedSignal.connect(ColumnsChangedSignal);
     }
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+    void SizeMove(GG::Pt ul, GG::Pt lr) override {
         const GG::Pt old_size = Size();
         GG::ListBox::Row::SizeMove(ul, lr);
         //std::cout << "ObjectRow::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
@@ -1970,7 +1970,7 @@ public:
         ListBox::AdjustScrolls(true);
     }
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+    void SizeMove(GG::Pt ul, GG::Pt lr) override {
         const GG::Pt old_size = Size();
         Wnd::SizeMove(ul, lr);
         if (old_size != Size())
@@ -2509,7 +2509,7 @@ void ObjectListWnd::DoLayout() {
         m_collapse_button->SetText(UserString("COLLAPSE_ALL"));
 }
 
-void ObjectListWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void ObjectListWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
     CUIWnd::SizeMove(ul, lr);

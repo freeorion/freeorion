@@ -52,7 +52,7 @@ namespace {
             DoLayout();
         }
 
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+        void SizeMove(GG::Pt ul, GG::Pt lr) override {
             const GG::Pt old_size = Size();
             GG::Control::SizeMove(ul, lr);
             if (old_size != Size())
@@ -93,7 +93,7 @@ namespace {
                 push_back(m_contents);
         }
 
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+        void SizeMove(GG::Pt ul, GG::Pt lr) override {
             //std::cout << "RuleListRow::SizeMove(" << ul << ", " << lr << ")" << std::endl;
             const GG::Pt old_size = Size();
             GG::ListBox::Row::SizeMove(ul, lr);
@@ -119,7 +119,7 @@ namespace {
             SetVScrollWheelIncrement(ClientUI::Pts() * 10);
         }
 
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+        void SizeMove(GG::Pt ul, GG::Pt lr) override {
             const GG::Pt old_size = Size();
             CUIListBox::SizeMove(ul, lr);
             if (old_size != Size()) {
@@ -218,7 +218,7 @@ std::map<std::string, std::string> GameRulesPanel::GetRulesAsStrings() const {
     return retval;
 }
 
-void GameRulesPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void GameRulesPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Control::SizeMove(ul, lr);
     DoLayout();
 }
@@ -822,7 +822,7 @@ Aggression GalaxySetupPanel::GetAIAggression() const
 std::shared_ptr<GG::Texture> GalaxySetupPanel::PreviewImage() const
 { return m_textures[int(GetShape())]; }
 
-void GalaxySetupPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void GalaxySetupPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Control::SizeMove(ul, lr);
     DoLayout();
 }
@@ -1099,7 +1099,7 @@ void GalaxySetupWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Fla
         CancelClicked();
 }
 
-void GalaxySetupWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void GalaxySetupWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
     CUIWnd::SizeMove(ul, lr);
     DoLayout();
 }

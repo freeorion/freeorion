@@ -33,7 +33,7 @@ public:
     StarType                SelectedStarType() const;
     int                     SelectedEmpire() const;
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     void Refresh();
     void EnableActions(bool enable = true);

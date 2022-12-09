@@ -831,7 +831,7 @@ void ListBox::Render()
         GUI::GetGUI()->RenderWindow(m_hscroll.get());
 }
 
-void ListBox::SizeMove(const Pt& ul, const Pt& lr)
+void ListBox::SizeMove(Pt ul, Pt lr)
 {
     const GG::Pt old_size = Size();
     Wnd::SizeMove(ul, lr);

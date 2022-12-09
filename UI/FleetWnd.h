@@ -108,7 +108,7 @@ public:
 
     void PreRender() override;
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     /** Deselect all fleets. */
     void DeselectAllFleets();

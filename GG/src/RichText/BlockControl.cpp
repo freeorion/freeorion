@@ -20,7 +20,7 @@ BlockControl::BlockControl(X x, Y y, X w, GG::Flags<GG::WndFlag> flags):
     Control(x, y, w, Y0, flags)
 {}
 
-void BlockControl::SizeMove(const Pt& ul, const Pt& lr)
+void BlockControl::SizeMove(Pt ul, Pt lr)
 {
     Pt previous_ul = UpperLeft();
     Pt previous_lr = LowerRight();

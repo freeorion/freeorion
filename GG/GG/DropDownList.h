@@ -126,7 +126,7 @@ public:
     void Render() override;
     /** Resizes the control, ensuring the proper height is maintained based on
         the list's row height. */
-    void SizeMove(const Pt& ul, const Pt& lr) override;
+    void SizeMove(Pt ul, Pt lr) override;
     void SetColor(Clr c) override;
 
     /** Insertion sorts \a row into a sorted list, or inserts into an unsorted

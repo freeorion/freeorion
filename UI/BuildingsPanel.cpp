@@ -353,7 +353,7 @@ void BuildingIndicator::Refresh() {
     DoLayout();
 }
 
-void BuildingIndicator::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void BuildingIndicator::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Pt old_size = Size();
 
     GG::Wnd::SizeMove(ul, lr);

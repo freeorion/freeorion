@@ -106,7 +106,7 @@ namespace {
             GG::FlatRectangle(UpperLeft(), LowerRight(), background_clr, ClientUI::WndOuterBorderColor(), 1u);
         }
 
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+        void SizeMove(GG::Pt ul, GG::Pt lr) override {
             const GG::Pt old_size = Size();
             GG::Control::SizeMove(ul, lr);
             if (old_size != Size())
@@ -554,7 +554,7 @@ namespace {
         const ProductionQueue::ProductionItem& Item() const
         { return m_item; }
 
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+        void SizeMove(GG::Pt ul, GG::Pt lr) override {
             const GG::Pt old_size = Size();
             GG::ListBox::Row::SizeMove(ul, lr);
             if (!empty() && old_size != Size() && m_panel)
@@ -584,7 +584,7 @@ namespace {
             SetVScrollWheelIncrement(Value(ListRowHeight())*3);
         }
 
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+        void SizeMove(GG::Pt ul, GG::Pt lr) override {
             const GG::Pt old_size = Size();
             CUIListBox::SizeMove(ul, lr);
             if (old_size != Size()) {
@@ -616,7 +616,7 @@ public:
     /** .first -> available items; .second -> unavailable items */
     const std::pair<bool, bool>& GetAvailabilitiesShown() const;
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     /** Sets build location for this selector, which may be used to filter
       * items in the list or enable / disable them at some point in the
@@ -779,7 +779,7 @@ void BuildDesignatorWnd::BuildSelector::DoLayout() {
                                 ClientSize() - GG::Pt(GG::X0, GG::Y(INNER_BORDER_ANGLE_OFFSET)));
 }
 
-void BuildDesignatorWnd::BuildSelector::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void BuildDesignatorWnd::BuildSelector::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Pt old_size = GG::Wnd::Size();
     CUIWnd::SizeMove(ul, lr);
     if (old_size != GG::Wnd::Size())
@@ -1237,7 +1237,7 @@ bool BuildDesignatorWnd::InClient(const GG::Pt& pt) const
 int BuildDesignatorWnd::SelectedPlanetID() const
 { return m_side_panel->SelectedPlanetID(); }
 
-void BuildDesignatorWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void BuildDesignatorWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
     const GG::Pt old_size = Size();
     GG::Wnd::SizeMove(ul, lr);
     if (old_size != Size()) {

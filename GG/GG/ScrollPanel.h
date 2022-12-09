@@ -37,7 +37,7 @@ public:
     ~ScrollPanel() = default;
     void CompleteConstruction() override;
 
-    void SizeMove(const Pt& ul, const Pt& lr) override;
+    void SizeMove(Pt ul, Pt lr) override;
     void Render() override;
 
     //! Set the scroll position

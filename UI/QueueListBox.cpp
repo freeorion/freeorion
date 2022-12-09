@@ -29,7 +29,7 @@ void PromptRow::CompleteConstruction() {
     push_back(m_prompt);
 }
 
-void PromptRow::SizeMove(const GG::Pt& ul, const GG::Pt& lr)  {
+void PromptRow::SizeMove(GG::Pt ul, GG::Pt lr)  {
     const GG::Pt old_size = Size();
     GG::ListBox::Row::SizeMove(ul, lr);
     if (!empty() && old_size != Size() && m_prompt)
@@ -123,7 +123,7 @@ void QueueListBox::Render() {
     }
 }
 
-void QueueListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void QueueListBox::SizeMove(GG::Pt ul, GG::Pt lr) {
     const GG::Pt old_size = Size();
     CUIListBox::SizeMove(ul, lr);
     if (old_size != Size() && !Empty()) {

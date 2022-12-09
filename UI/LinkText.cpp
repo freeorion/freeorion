@@ -234,7 +234,7 @@ void LinkText::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 void LinkText::MouseLeave()
 { TextLinker::MouseLeave_(); }
 
-void LinkText::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void LinkText::SizeMove(GG::Pt ul, GG::Pt lr) {
     bool resized = Size() != (lr-ul);
     GG::TextControl::SizeMove(ul, lr);
     if (resized)

@@ -23,14 +23,8 @@ void Dialog::CompleteConstruction()
 
 void Dialog::Render() {
     GG::Wnd::Render();
-    GG::FlatRectangle ( UpperLeft(), LowerRight(),
-                        GG::CLR_GRAY, GG::CLR_SHADOW, 1u );
+    GG::FlatRectangle(UpperLeft(), LowerRight(), GG::CLR_GRAY, GG::CLR_SHADOW, 1u);
 }
 
-GG::Pt Dialog::ClientLowerRight() const {
-    return LowerRight() - GG::Pt(GG::X(10), GG::Y(10) );
-}
-
-void Dialog::SizeMove( const GG::Pt& ul, const GG::Pt& lr) {
-    GG::Wnd::SizeMove( ul, lr );
-}
+GG::Pt Dialog::ClientLowerRight() const
+{ return LowerRight() - GG::Pt(GG::X(10), GG::Y(10)); }

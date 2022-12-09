@@ -740,7 +740,7 @@ void DropDownList::RenderDisplayedRow()
         current_item->Hide();
 }
 
-void DropDownList::SizeMove(const Pt& ul, const Pt& lr)
+void DropDownList::SizeMove(Pt ul, Pt lr)
 {
     // adjust size to keep correct height based on row height, etc.
     GG::Pt old_ul = RelativeUpperLeft();

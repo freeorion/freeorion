@@ -271,7 +271,7 @@ namespace {
                               background_clr, ClientUI::WndOuterBorderColor(), 1u);
         }
 
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+        void SizeMove(GG::Pt ul, GG::Pt lr) override {
             if (ul != ClientUpperLeft() || (lr.x - ul.x) != Width())
                 DoLayout(ul, lr.x - ul.x);
         }
@@ -352,7 +352,7 @@ namespace {
             GG::ListBox::Row::Resize(m_panel->Size() + border);
         }
 
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+        void SizeMove(GG::Pt ul, GG::Pt lr) override {
             if (!m_panel || (Size() != (lr - ul)))
                 RequirePreRender();
             GG::ListBox::Row::SizeMove(ul, lr);
@@ -458,7 +458,7 @@ void SitRepPanel::KeyPress(GG::Key key, std::uint32_t key_code_point,
     }
 }
 
-void SitRepPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void SitRepPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Pt old_size = GG::Wnd::Size();
     std::size_t first_visible_queue_row = std::distance(m_sitreps_lb->begin(),
                                                         m_sitreps_lb->FirstRowShown());

@@ -238,7 +238,7 @@ void TextControl::SetFont(std::shared_ptr<Font> font)
     SetText(std::move(m_text));
 }
 
-void TextControl::SizeMove(const Pt& ul, const Pt& lr)
+void TextControl::SizeMove(Pt ul, Pt lr)
 {
     GG::Pt old_size = Size();
     Wnd::SizeMove(ul, lr);

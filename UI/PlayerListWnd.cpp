@@ -358,7 +358,7 @@ namespace {
         void Select(bool b)
         { m_selected = b; }
 
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+        void SizeMove(GG::Pt ul, GG::Pt lr) override {
             const GG::Pt old_size = Size();
             GG::Control::SizeMove(ul, lr);
             if (old_size != Size())
@@ -644,7 +644,7 @@ namespace {
 
         /** This function overridden because otherwise, rows don't expand
           * larger than their initial size when resizing the list. */
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+        void SizeMove(GG::Pt ul, GG::Pt lr) override {
             const GG::Pt old_size = Size();
             GG::ListBox::Row::SizeMove(ul, lr);
             //std::cout << "PlayerRow::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
@@ -674,7 +674,7 @@ public:
         LockColWidths();
     }
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+    void SizeMove(GG::Pt ul, GG::Pt lr) override {
         const GG::Pt old_size = Size();
         CUIListBox::SizeMove(ul, lr);
         if (old_size != Size()) {
@@ -850,7 +850,7 @@ void PlayerListWnd::SetSelectedPlayers(const std::set<int>& player_ids) {
 void PlayerListWnd::Clear()
 { m_player_list->Clear(); }
 
-void PlayerListWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void PlayerListWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
     const GG::Pt old_size = Size();
     CUIWnd::SizeMove(ul, lr);
     if (old_size != Size())

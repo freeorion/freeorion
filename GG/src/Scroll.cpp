@@ -153,7 +153,7 @@ void Scroll::Render()
     glDisableClientState(GL_VERTEX_ARRAY);
 }
 
-void Scroll::SizeMove(const Pt& ul, const Pt& lr)
+void Scroll::SizeMove(Pt ul, Pt lr)
 {
     Pt old_size = Size();
 

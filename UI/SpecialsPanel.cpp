@@ -47,7 +47,7 @@ void SpecialsPanel::Render()
 void SpecialsPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void SpecialsPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void SpecialsPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
     GG::Wnd::SizeMove(ul, lr);

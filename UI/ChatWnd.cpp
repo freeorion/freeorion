@@ -349,7 +349,7 @@ void MessageWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKe
 std::string MessageWnd::GetText() const
 { return *m_display; }
 
-void MessageWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void MessageWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
     const GG::Pt old_size = Size();
     CUIWnd::SizeMove(ul, lr);
     if (old_size != Size())

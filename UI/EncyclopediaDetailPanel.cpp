@@ -1062,7 +1062,7 @@ void EncyclopediaDetailPanel::DoLayout() {
     MoveChildUp(m_close_button);    // so it's over top of the top-right icon
 }
 
-void EncyclopediaDetailPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void EncyclopediaDetailPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
     CUIWnd::SizeMove(ul, lr);

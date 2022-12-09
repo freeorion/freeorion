@@ -186,7 +186,7 @@ public:
     Clr TextColor() const;
 
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
-    void SizeMove(const Pt& ul, const Pt& lr) override;
+    void SizeMove(Pt ul, Pt lr) override;
     void Render() override;
 
     virtual void DoLayout();

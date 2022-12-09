@@ -223,7 +223,7 @@ public:
 
     void Render() override;
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
 protected:
     GG::Clr m_border_color;
@@ -339,7 +339,7 @@ public:
     void MouseLeave() override;
 
     /** Needed primarily so the SetText call will take a RawText. */
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     /** sets the text to \a str; may resize the window.  If the window was
         constructed to fit the size of the text (i.e. if the second ctor type
@@ -392,7 +392,7 @@ public:
     void Render() override
     {}
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     void LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void RButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
@@ -465,7 +465,7 @@ public:
     void Render() override;
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     mutable boost::signals2::signal<void (GG::Clr)> ColorChangedSignal;
 
@@ -497,7 +497,7 @@ public:
 
     GG::Pt  MinUsableSize() const override;
 
-    void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void    SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     void    SetTotalPointsCost(float total_points, float total_cost, const ScriptingContext& context);
     void    SetStockpileCost(float stockpile, float stockpile_use, float stockpile_use_max);

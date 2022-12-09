@@ -303,7 +303,7 @@ void FleetButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     }
 }
 
-void FleetButton::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void FleetButton::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Pt sz = Size();
 
     Button::SizeMove(ul, lr);

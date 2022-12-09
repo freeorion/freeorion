@@ -562,7 +562,7 @@ public:
 
     /** Resizes and/or moves window to new upper-left and lower right
         boundaries. */
-    virtual void SizeMove(const Pt& ul, const Pt& lr);
+    virtual void SizeMove(Pt ul, Pt lr);
 
     /** Resizes window without moving upper-left corner. */
     void Resize(Pt sz);

@@ -230,7 +230,7 @@ void OwnerColoredSystemName::CompleteConstruction() {
 void OwnerColoredSystemName::Render()
 {}
 
-void OwnerColoredSystemName::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void OwnerColoredSystemName::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Control::SizeMove(ul, lr);
 
     // Center text
@@ -433,7 +433,7 @@ GG::Pt SystemIcon::NthFleetButtonUpperLeft(unsigned int button_number, bool movi
 int SystemIcon::EnclosingCircleDiameter() const
 { return static_cast<const int>(Value(Width()) * GetOptionsDB().Get<double>("ui.map.system.circle.size")) + 1; }
 
-void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void SystemIcon::SizeMove(GG::Pt ul, GG::Pt lr) {
     Wnd::SizeMove(ul, lr);
 
     const bool USE_TINY_GRAPHICS = Value(Width()) < GetOptionsDB().Get<int>("ui.map.system.icon.tiny.threshold");

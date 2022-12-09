@@ -29,7 +29,7 @@ public:
 
     int SelectedPlanetID() const;
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     /** Centres map wnd on location of item on queue with index \a queue_idx
       * and displays info about that item in encyclopedia window

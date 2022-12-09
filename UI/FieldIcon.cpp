@@ -47,7 +47,7 @@ void FieldIcon::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey
 void FieldIcon::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void FieldIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void FieldIcon::SizeMove(GG::Pt ul, GG::Pt lr) {
     Wnd::SizeMove(ul, lr);
 
     GG::Pt middle = GG::Pt(Width() / 2, Height() / 2);

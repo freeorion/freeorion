@@ -84,7 +84,7 @@ void AccordionPanel::Render() {
 void AccordionPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void AccordionPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void AccordionPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
     GG::Wnd::SizeMove(ul, lr);

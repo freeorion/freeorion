@@ -14,8 +14,8 @@ public:
     ObjectListWnd(std::string_view config_name = "");
     void CompleteConstruction() override;
 
-    void            SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
-    void            Refresh();
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
+    void Refresh();
 
     mutable boost::signals2::signal<void ()>    SelectedObjectsChangedSignal;
     mutable boost::signals2::signal<void (int)> ObjectDoubleClickedSignal;

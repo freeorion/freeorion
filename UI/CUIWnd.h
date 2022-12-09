@@ -107,7 +107,7 @@ public:
     GG::Y   BottomBorder() const;               //!< the distance at the bottom between the outer edge of the window and the inner border
 
     void SetName(std::string name) override;
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
     void Render() override;
     void LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) override;

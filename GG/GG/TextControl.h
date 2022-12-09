@@ -181,7 +181,7 @@ public:
 
     void Render() override;
 
-    void SizeMove(const Pt& ul, const Pt& lr) override;
+    void SizeMove(Pt ul, Pt lr) override;
 
     /** Just like Control::SetColor(), except that this one also adjusts the
         text color. */

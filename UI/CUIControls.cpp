@@ -719,7 +719,7 @@ void CUIScroll::Render() {
     glDisableClientState(GL_VERTEX_ARRAY);
 }
 
-void CUIScroll::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void CUIScroll::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Pt old_sz = Size();
     Wnd::SizeMove(ul, lr);
 
@@ -1231,7 +1231,7 @@ void CUILinkTextMultiEdit::MouseLeave() {
     TextLinker::MouseLeave_();
 }
 
-void CUILinkTextMultiEdit::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void CUILinkTextMultiEdit::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Pt lower_right = lr;
     if (Style() & GG::MULTI_INTEGRAL_HEIGHT)
         lower_right.y -= ((lr.y - ul.y) - (2 * PIXEL_MARGIN)) % GetFont()->Lineskip();
@@ -1403,7 +1403,7 @@ void StatisticIcon::SetValue(double value, std::size_t index) {
     DoLayout();
 }
 
-void StatisticIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void StatisticIcon::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
     GG::Wnd::SizeMove(ul, lr);
@@ -1648,7 +1648,7 @@ namespace {
             push_back(m_color_square);
         }
 
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+        void SizeMove(GG::Pt ul, GG::Pt lr) override {
             // Prevent the width from changing
             GG::Control::SizeMove(ul, GG::Pt(ul.x + Width(), lr.y));
         }
@@ -1728,7 +1728,7 @@ void ColorSelector::Render() {
     glDisableClientState(GL_VERTEX_ARRAY);
 }
 
-void ColorSelector::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void ColorSelector::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Pt old_size = GG::Control::Size();
 
     GG::Control::SizeMove(ul, lr);
@@ -1841,7 +1841,7 @@ GG::Pt ResourceInfoPanel::MinUsableSize() const {
     return GG::Pt(min_x, min_y);
 }
 
-void ResourceInfoPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void ResourceInfoPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
     CUIWnd::SizeMove(ul, lr);

@@ -312,7 +312,7 @@ void TabBar::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
     }
 }
 
-void TabBar::SizeMove(const Pt& ul, const Pt& lr)
+void TabBar::SizeMove(Pt ul, Pt lr)
 {
     Pt old_size = Size();
 

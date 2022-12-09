@@ -70,7 +70,7 @@ public:
 
     void Render() override;
 
-    void SizeMove(const Pt& ul, const Pt& lr) override;
+    void SizeMove(Pt ul, Pt lr) override;
 
     //! Use this to customize the handling of tags in the text on a per-object basis.
     void SetBlockFactoryMap(std::shared_ptr<BlockFactoryMap> block_factory_map);

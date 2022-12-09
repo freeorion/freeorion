@@ -21,7 +21,7 @@ DeferredLayout::DeferredLayout(X x, Y y, X w, Y h, std::size_t rows, std::size_t
     m_make_resize_immediate_during_prerender(false)
 {}
 
-void DeferredLayout::SizeMove(const Pt& ul, const Pt& lr)
+void DeferredLayout::SizeMove(Pt ul, Pt lr)
 {
     if (m_make_resize_immediate_during_prerender) {
         if (ul != m_ul_prerender || lr != m_lr_prerender)

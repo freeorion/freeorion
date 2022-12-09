@@ -120,7 +120,7 @@ void TextBoxBrowseInfoWnd::InitBuffer()
     m_buffer.createServerBuffer();
 }
 
-void TextBoxBrowseInfoWnd::SizeMove(const Pt& ul, const Pt& lr)
+void TextBoxBrowseInfoWnd::SizeMove(Pt ul, Pt lr)
 {
     Pt sz = Size();
     BrowseInfoWnd::SizeMove(ul, lr);

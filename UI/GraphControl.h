@@ -10,7 +10,7 @@ class GraphControl final : public GG::Control {
 public:
     GraphControl();
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
 
     void Render() override;

@@ -225,7 +225,7 @@ void MultiEdit::Render()
     EndScissorClipping();
 }
 
-void MultiEdit::SizeMove(const Pt& ul, const Pt& lr)
+void MultiEdit::SizeMove(Pt ul, Pt lr)
 {
     Pt lower_right = lr;
     if (m_style & MULTI_INTEGRAL_HEIGHT)

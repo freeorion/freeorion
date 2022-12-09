@@ -24,7 +24,7 @@ public:
 
     mutable boost::signals2::signal<void ()> SettingsChangedSignal;
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
     void Render() override;
     void Disable(bool b = true) override;
 
@@ -83,7 +83,7 @@ public:
     /** the image changed signal object for this GalaxySetupPanel */
     mutable boost::signals2::signal<void (std::shared_ptr<GG::Texture>)> ImageChangedSignal;
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
     void Render() override {}
     void Disable(bool b = true) override;
     void SetFromSetupData(const GalaxySetupData& setup_data); ///< sets the controls from a GalaxySetupData
@@ -143,7 +143,7 @@ public:
 
     void Render() override;
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
 protected:
     GG::Rect CalculatePosition() const override;

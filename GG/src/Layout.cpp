@@ -161,7 +161,7 @@ void Layout::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* desti
         parent->ChildrenDraggedAway(wnds, destination);
 }
 
-void Layout::SizeMove(const Pt& ul, const Pt& lr)
+void Layout::SizeMove(Pt ul, Pt lr)
 { DoLayout(ul, lr); }
 
 void Layout::DoLayout(Pt ul, Pt lr)

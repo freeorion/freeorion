@@ -195,7 +195,7 @@ namespace {
         void CompleteConstruction() override;
         void PreRender() override;
         void Render() override;
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+        void SizeMove(GG::Pt ul, GG::Pt lr) override;
         void ItemQuantityChanged(int quant, int blocksize);
         void ItemBlocksizeChanged(int quant, int blocksize);
 
@@ -648,7 +648,7 @@ namespace {
         PartlyRoundedRect(UpperLeft(), LowerRight() - LINE_WIDTH, CORNER_RADIUS, true, false, true, false, fill);
     }
 
-    void QueueProductionItemPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    void QueueProductionItemPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
         const GG::Pt old_size = Size();
         GG::Control::SizeMove(ul, lr);
         if (Size() != old_size)
@@ -811,7 +811,7 @@ public:
         SaveDefaultedOptions();
     }
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+    void SizeMove(GG::Pt ul, GG::Pt lr) override {
         GG::Pt sz = Size();
         CUIWnd::SizeMove(ul, lr);
         if (Size() != sz)
@@ -911,7 +911,7 @@ bool ProductionWnd::InWindow(const GG::Pt& pt) const
 bool ProductionWnd::InClient(const GG::Pt& pt) const
 { return m_production_info_panel->InClient(pt) || m_queue_wnd->InClient(pt) || m_build_designator_wnd->InClient(pt); }
 
-void ProductionWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void ProductionWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
     const GG::Pt old_size = Size();
     GG::Wnd::SizeMove(ul, lr);
     if (old_size != Size())

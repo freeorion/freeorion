@@ -9,7 +9,7 @@
 struct PromptRow : GG::ListBox::Row {
     PromptRow(GG::X w, const std::string& prompt_str);
     void CompleteConstruction() override;
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
 private:
      std::shared_ptr<GG::Label> m_prompt;
@@ -26,7 +26,7 @@ public:
     void CompleteConstruction() override;
 
     void Render() override;
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
     void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
                      GG::Flags<GG::ModKey> mod_keys) override;
     void DragDropHere(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
