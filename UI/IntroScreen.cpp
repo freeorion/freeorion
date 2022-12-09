@@ -407,7 +407,7 @@ void IntroScreen::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<
 void IntroScreen::Close()
 { OnExitGame(); }
 
-void IntroScreen::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void IntroScreen::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
     GG::Wnd::SizeMove(ul, lr);

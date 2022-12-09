@@ -42,7 +42,7 @@ public:
 
     void PreRender() override;
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     /** Updates contents of sidepanel, but doesn't recreate contents or check
       * that object pointers are still valid.  All SidePanels' are updated */

@@ -43,7 +43,7 @@ namespace {
         void CompleteConstruction() override;
         void Render() override;
 
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+        void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
         static GG::Y DefaultHeight();
 
@@ -111,7 +111,7 @@ namespace {
             GG::ListBox::Row::Resize(panel->Size() + border);
         }
 
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+        void SizeMove(GG::Pt ul, GG::Pt lr) override {
             if (panel) {
                 GG::Pt border(GG::X(2 * GetLayout()->BorderMargin()), GG::Y(2 * GetLayout()->BorderMargin()));
                 panel->Resize(lr - ul - border);
@@ -256,7 +256,7 @@ namespace {
         PartlyRoundedRect(UpperLeft(), LowerRight() - LINE_WIDTH, CORNER_RADIUS, true, false, true, false, fill);
     }
 
-    void QueueTechPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    void QueueTechPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
         GG::Pt old_size(Size());
         GG::Control::SizeMove(ul, lr);
         if (Size() != old_size) {
@@ -380,7 +380,7 @@ public:
         SaveOptions();
     }
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+    void SizeMove(GG::Pt ul, GG::Pt lr) override {
         GG::Pt sz = Size();
         CUIWnd::SizeMove(ul, lr);
         if (Size() != sz)
@@ -456,7 +456,7 @@ void ResearchWnd::CompleteConstruction() {
     m_refresh_needed.store(true);
 }
 
-void ResearchWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void ResearchWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
     const GG::Pt old_size = Size();
     GG::Wnd::SizeMove(ul, lr);
     if (old_size != Size())

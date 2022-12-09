@@ -87,7 +87,7 @@ public:
     mutable ValueChangedSignalType ValueChangedSignal; ///< the value changed signal object for this Spin
 
     void Render() override;
-    void SizeMove(const Pt& ul, const Pt& lr) override;
+    void SizeMove(Pt ul, Pt lr) override;
     void Disable(bool b = true) override;
     void SetColor(Clr c) override;
     void Incr();  ///< increments the value of the control's text by StepSize(), up to at most MaxValue()
@@ -241,7 +241,7 @@ void Spin<T>::Render()
 }
 
 template <typename T>
-void Spin<T>::SizeMove(const Pt& ul, const Pt& lr)
+void Spin<T>::SizeMove(Pt ul, Pt lr)
 {
     Wnd::SizeMove(ul, lr);
     const X BUTTON_X_POS = Width() - m_button_width - BORDER_THICK;

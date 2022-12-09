@@ -14,7 +14,7 @@ public:
     virtual ~CombatReportWnd(); // Must have explicit destructor since Impl is incomplete here
 
     void CloseClicked() override;
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
     void SetLog(int log_id);
 
 private:

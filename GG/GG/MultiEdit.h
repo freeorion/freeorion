@@ -73,7 +73,7 @@ public:
 
     void Render() override;
 
-    void SizeMove(const Pt& ul, const Pt& lr) override;
+    void SizeMove(Pt ul, Pt lr) override;
 
     void SelectAll() override;
     void DeselectAll() override;

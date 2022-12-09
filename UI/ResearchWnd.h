@@ -20,7 +20,7 @@ public:
     int  ShownEmpireID() const { return m_empire_shown_id; };
     bool PediaVisible();
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     void Render() override;
 

@@ -347,7 +347,7 @@ public:
     const std::set<std::string>&    GetCategoriesShown() const;
     const AvailabilityManager&      AvailabilityState() const { return m_availabilities_state; }
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
     void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
                      GG::Flags<GG::ModKey> mod_keys) override;
     void Populate();
@@ -437,7 +437,7 @@ PoliciesListBox::PoliciesListBox(const AvailabilityManager& availabilities_state
 const std::set<std::string>& PoliciesListBox::GetCategoriesShown() const
 { return m_policy_categories_shown; }
 
-void PoliciesListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void PoliciesListBox::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
     auto policy_palette = Parent();
@@ -620,7 +620,7 @@ public:
     PolicyPalette(GG::X w, GG::Y h);
     void CompleteConstruction() override;
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     void ShowCategory(const std::string& category, bool refresh_list = true);
     void ShowAllCategories(bool refresh_list = true);
@@ -707,7 +707,7 @@ void GovernmentWnd::PolicyPalette::CompleteConstruction() {
     GG::Wnd::CompleteConstruction();
 }
 
-void GovernmentWnd::PolicyPalette::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void GovernmentWnd::PolicyPalette::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Wnd::SizeMove(ul, lr);
     DoLayout();
 }
@@ -1195,7 +1195,7 @@ public:
 
     //void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
     void Sanitize();
     void Refresh();
 
@@ -1255,7 +1255,7 @@ std::vector<std::string> GovernmentWnd::MainPanel::Policies() const {
     return retval;
 }
 
-void GovernmentWnd::MainPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void GovernmentWnd::MainPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
     const GG::Pt old_size = Size();
     GG::Wnd::SizeMove(ul, lr);
     if (old_size != Size())
@@ -1645,7 +1645,7 @@ void GovernmentWnd::CompleteConstruction() {
     DoLayout();
 }
 
-void GovernmentWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void GovernmentWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
     const GG::Pt old_size = Size();
     CUIWnd::SizeMove(ul, lr);
     if (old_size != Size())

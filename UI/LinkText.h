@@ -157,7 +157,7 @@ public:
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void MouseLeave() override;
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     /** sets the text to \a str; may resize the window.  If the window was
         constructed to fit the size of the text (i.e. if the second ctor type

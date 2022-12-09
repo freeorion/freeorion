@@ -536,7 +536,7 @@ public:
     void LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     void Select(bool selected);
 
@@ -618,7 +618,7 @@ public:
     int                     ScrollPosition() const;
 
     void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) override;
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     void PreRender() override;
 
@@ -2033,7 +2033,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
         }, boost::signals2::at_front);
 }
 
-void SidePanel::PlanetPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void SidePanel::PlanetPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
     GG::Wnd::SizeMove(ul, lr);
@@ -2866,7 +2866,7 @@ void SidePanel::PlanetPanelContainer::ShowScrollbar()
 void SidePanel::PlanetPanelContainer::HideScrollbar()
 { DetachChild(m_vscroll); }
 
-void SidePanel::PlanetPanelContainer::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void SidePanel::PlanetPanelContainer::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
     GG::Wnd::SizeMove(ul, lr);
@@ -3521,7 +3521,7 @@ void SidePanel::DoLayout() {
     }
 }
 
-void SidePanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void SidePanel::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
     CUIWnd::SizeMove(ul, lr);

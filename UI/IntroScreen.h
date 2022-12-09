@@ -25,7 +25,7 @@ public:
        the Continue and Load buttons when a player might have deleted the last
        savegame. */
     void PreRender() override;
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     void OnContinue();
     void OnSinglePlayer();  //!< called when single player is clicked

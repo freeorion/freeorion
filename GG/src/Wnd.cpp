@@ -362,7 +362,7 @@ void Wnd::MoveTo(Pt pt)
 void Wnd::OffsetMove(Pt pt)
 { SizeMove(m_upperleft + pt, m_lowerright + pt); }
 
-void Wnd::SizeMove(const Pt& ul_, const Pt& lr_)
+void Wnd::SizeMove(Pt ul_, Pt lr_)
 {
     Pt ul = ul_, lr = lr_;
     Pt original_sz = Size();

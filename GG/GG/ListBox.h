@@ -298,7 +298,7 @@ public:
     void Render() override;
 
     /** Resizes the control, then resizes the scrollbars as needed. */
-    void SizeMove(const Pt& ul, const Pt& lr) override;
+    void SizeMove(Pt ul, Pt lr) override;
 
     /** Show the  list box.  If \p show_children is true then show the rows that are within the
         boundaries of the list box.*/

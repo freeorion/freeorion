@@ -118,7 +118,7 @@ public:
     void StartingChildDragDrop(const Wnd* wnd, const Pt& offset) override;
     void CancellingChildDragDrop(const std::vector<const Wnd*>& wnds) override;
     void ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination) override;
-    void SizeMove(const Pt& ul, const Pt& lr) override;
+    void SizeMove(Pt ul, Pt lr) override;
     void Render() override;
 
     //! Inserts \a w into the layout in the indicated cell, expanding the

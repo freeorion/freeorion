@@ -1314,7 +1314,7 @@ public:
     const AvailabilityManager&      AvailabilityState() const { return m_availabilities_state; }
     bool                            GetShowingSuperfluous() const { return m_show_superfluous_parts; }
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
     void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
                      GG::Flags<GG::ModKey> mod_keys) override;
     void Populate();
@@ -1411,7 +1411,7 @@ PartsListBox::PartsListBox(const AvailabilityManager& availabilities_state) :
 const std::set<ShipPartClass>& PartsListBox::GetClassesShown() const
 { return m_part_classes_shown; }
 
-void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void PartsListBox::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
     // maybe later do something interesting with docking
@@ -1760,7 +1760,7 @@ public:
     PartPalette(std::string_view config_name);
     void CompleteConstruction() override;
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     void ShowClass(ShipPartClass part_class, bool refresh_list = true);
     void ShowAllClasses(bool refresh_list = true);
@@ -1885,7 +1885,7 @@ void DesignWnd::PartPalette::CompleteConstruction() {
     SaveDefaultedOptions();
 }
 
-void DesignWnd::PartPalette::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void DesignWnd::PartPalette::SizeMove(GG::Pt ul, GG::Pt lr) {
     CUIWnd::SizeMove(ul, lr);
     DoLayout();
 }
@@ -2149,7 +2149,7 @@ public:
     {}
     void CompleteConstruction() override;
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
     void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds,
                              const GG::Wnd* destination) override;
     virtual void QueueItemMoved(const GG::ListBox::iterator& row_it,
@@ -2172,7 +2172,7 @@ public:
         HullAndNamePanel(GG::X w, GG::Y h, const std::string& hull, std::string name);
 
         void CompleteConstruction() override;
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+        void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
         void Render() override {}
 
@@ -2191,7 +2191,7 @@ public:
         void CompleteConstruction() override;
         void Render() override;
 
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+        void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
         virtual void SetAvailability(const AvailabilityManager::DisplayedAvailabilies& type);
         virtual void SetDisplayName(std::string name);
@@ -2271,7 +2271,7 @@ void BasesListBox::HullAndNamePanel::CompleteConstruction() {
     AttachChild(m_name);
 }
 
-void BasesListBox::HullAndNamePanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void BasesListBox::HullAndNamePanel::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Control::SizeMove(ul, lr);
     m_graphic->Resize(Size());
     m_name->Resize(Size());
@@ -2320,7 +2320,7 @@ void BasesListBox::BasesListBoxRow::Render() {
                       (Disabled() ? DisabledColor(GG::CLR_WHITE) : GG::CLR_WHITE), 1);
 }
 
-void BasesListBox::BasesListBoxRow::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void BasesListBox::BasesListBoxRow::SizeMove(GG::Pt ul, GG::Pt lr) {
     const GG::Pt old_size = Size();
     CUIListBox::Row::SizeMove(ul, lr);
     if (!empty() && old_size != Size())
@@ -2394,7 +2394,7 @@ void BasesListBox::CompleteConstruction() {
     EnableOrderIssuing(false);
 }
 
-void BasesListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void BasesListBox::SizeMove(GG::Pt ul, GG::Pt lr) {
     const GG::Pt old_size = Size();
     CUIListBox::SizeMove(ul, lr);
     if (old_size != Size()) {
@@ -3313,7 +3313,7 @@ public:
     BaseSelector(std::string_view config_name);
     void CompleteConstruction() override;
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     void Reset();
     void ToggleAvailability(const Availability::Enum type);
@@ -3421,7 +3421,7 @@ void DesignWnd::BaseSelector::CompleteConstruction() {
     SaveDefaultedOptions();
 }
 
-void DesignWnd::BaseSelector::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void DesignWnd::BaseSelector::SizeMove(GG::Pt ul, GG::Pt lr) {
     const GG::Pt old_size = Size();
     CUIWnd::SizeMove(ul, lr);
     if (old_size != Size())
@@ -3864,7 +3864,7 @@ public:
 
     void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     void Sanitize();
 
@@ -4177,7 +4177,7 @@ void DesignWnd::MainPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_ke
     CUIWnd::LClick(pt, mod_keys);
 }
 
-void DesignWnd::MainPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void DesignWnd::MainPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
     CUIWnd::SizeMove(ul, lr);
     DoLayout();
 }
@@ -5019,7 +5019,7 @@ void DesignWnd::CompleteConstruction() {
     m_part_palette->PartObsolescenceChangedSignal.connect([this]() { m_base_selector->Reset(); });
 }
 
-void DesignWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void DesignWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
     const GG::Pt old_size = Size();
     GG::Wnd::SizeMove(ul, lr);
     if (old_size != Size()) {

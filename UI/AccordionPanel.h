@@ -20,7 +20,7 @@ public:
 
     void Render() override;
     void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     /** Sets the interior color of the box. */
     void SetInteriorColor(GG::Clr c);

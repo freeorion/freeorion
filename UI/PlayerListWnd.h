@@ -14,7 +14,7 @@ public:
 
     std::set<int>   SelectedPlayerIDs() const;
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     void            HandleDiplomaticMessageChange(int empire1_id, int empire2_id);
     void            Update();

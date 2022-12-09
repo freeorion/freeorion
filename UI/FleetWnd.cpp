@@ -625,7 +625,7 @@ namespace {
         void Render() override;
         void PreRender() override;
 
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+        void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
         void Select(bool b);
 
@@ -724,7 +724,7 @@ namespace {
             m_design_name_text->SetTextColor(text_color_to_use);
     }
 
-    void ShipDataPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    void ShipDataPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
         const GG::Pt old_size = Size();
         GG::Control::SizeMove(ul, lr);
         if (old_size != Size())
@@ -1018,7 +1018,7 @@ namespace {
             push_back(m_panel);
         }
 
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+        void SizeMove(GG::Pt ul, GG::Pt lr) override {
             const GG::Pt old_size = Size();
             GG::ListBox::Row::SizeMove(ul, lr);
             if (!empty() && old_size != Size() && m_panel)
@@ -1061,7 +1061,7 @@ public:
 
     void DragDropLeave() override;
     void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     bool                Selected() const;
     FleetAggression     GetFleetAggression() const;
@@ -1315,7 +1315,7 @@ void FleetDataPanel::Select(bool b) {
 void FleetDataPanel::SetSystemID(int id)
 { m_system_id = id; }
 
-void FleetDataPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void FleetDataPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
     const GG::Pt old_size = Size();
     GG::Control::SizeMove(ul, lr);
     if (old_size != Size())
@@ -1852,7 +1852,7 @@ namespace {
             push_back(m_panel);
         }
 
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+        void SizeMove(GG::Pt ul, GG::Pt lr) override {
             const GG::Pt old_size = Size();
             GG::ListBox::Row::SizeMove(ul, lr);
             if (!empty() && old_size != Size() && m_panel)
@@ -2090,7 +2090,7 @@ public:
         ClearHighlighting();
     }
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+    void SizeMove(GG::Pt ul, GG::Pt lr) override {
         const GG::Pt old_size = Size();
         CUIListBox::SizeMove(ul, lr);
         if (old_size != Size()) {
@@ -2387,7 +2387,7 @@ public:
             context);
     }
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+    void SizeMove(GG::Pt ul, GG::Pt lr) override {
         const GG::Pt old_size = Size();
         CUIListBox::SizeMove(ul, lr);
         if (old_size != Size()) {
@@ -2415,7 +2415,7 @@ public:
     FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_issuing_enabled, GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS);
 
     void CompleteConstruction() override;
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     int             FleetID() const;
     std::set<int>   SelectedShipIDs() const;    ///< returns ids of ships selected in the detail panel's ShipsListBox
@@ -2563,7 +2563,7 @@ std::set<int> FleetDetailPanel::SelectedShipIDs() const {
     return retval;
 }
 
-void FleetDetailPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void FleetDetailPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
     const GG::Pt old_size = Size();
     GG::Wnd::SizeMove(ul, lr);
     if (old_size != Size())
@@ -3349,7 +3349,7 @@ void FleetWnd::SelectFleets(const std::set<int>& fleet_ids) {
 void FleetWnd::SelectShips(const std::set<int>& ship_ids)
 { m_fleet_detail_panel->SelectShips(ship_ids); }
 
-void FleetWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void FleetWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Pt old_size = Size();
     MapWndPopup::SizeMove(ul, lr);
     if (Size() != old_size)

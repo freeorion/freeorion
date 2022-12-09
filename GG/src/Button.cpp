@@ -88,7 +88,7 @@ void Button::Render()
     }
 }
 
-void Button::SizeMove(const Pt& ul, const Pt& lr)
+void Button::SizeMove(Pt ul, Pt lr)
 {
     GG::Pt sz = Size();
     Wnd::SizeMove(ul, lr);
@@ -345,7 +345,7 @@ void StateButton::SetState(ButtonState next_state) {
     }
 }
 
-void StateButton::SizeMove(const Pt& ul, const Pt& lr)
+void StateButton::SizeMove(Pt ul, Pt lr)
 {
     Control::SizeMove(ul, lr);
     m_label->Resize(Size());

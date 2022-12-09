@@ -62,7 +62,7 @@ namespace {
             DoLayout();
         }
 
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+        void SizeMove(GG::Pt ul, GG::Pt lr) override {
             const GG::Pt old_size = Size();
             GG::Control::SizeMove(ul, lr);
             if (old_size != Size())
@@ -289,7 +289,7 @@ namespace {
         }
 
     public:
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+        void SizeMove(GG::Pt ul, GG::Pt lr) override {
             GG::Pt old_size = GG::Wnd::Size();
 
             CUIWnd::SizeMove(ul, lr);
@@ -351,7 +351,7 @@ namespace {
                 push_back(m_contents);
         }
 
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+        void SizeMove(GG::Pt ul, GG::Pt lr) override {
             //std::cout << "OptionsListRow::SizeMove(" << ul << ", " << lr << ")" << std::endl;
             const GG::Pt old_size = Size();
             GG::ListBox::Row::SizeMove(ul, lr);
@@ -378,7 +378,7 @@ namespace {
             SetVScrollWheelIncrement(ClientUI::Pts() * 10);
         }
 
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+        void SizeMove(GG::Pt ul, GG::Pt lr) override {
             const GG::Pt old_size = Size();
             CUIListBox::SizeMove(ul, lr);
             if (old_size != Size()) {
@@ -842,7 +842,7 @@ void OptionsWnd::CompleteConstruction() {
     m_done_button->LeftClickedSignal.connect([this]() { DoneClicked(); });
 }
 
-void OptionsWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void OptionsWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
     const GG::Pt old_size = Size();
     CUIWnd::SizeMove(ul, lr);
     if (old_size != Size())

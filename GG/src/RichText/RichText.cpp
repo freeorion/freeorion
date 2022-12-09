@@ -320,7 +320,7 @@ void RichText::SetPadding(int pixels) { m_self->SetPadding(pixels); }
 
 void RichText::Render() {}
 
-void RichText::SizeMove(const Pt& ul, const Pt& lr) { m_self->SizeMove(ul, lr); }
+void RichText::SizeMove(Pt ul, Pt lr) { m_self->SizeMove(ul, lr); }
 
 void RichText::SetBlockFactoryMap(std::shared_ptr<BlockFactoryMap> block_factory_map)
 { m_self->SetBlockFactoryMap(block_factory_map); }

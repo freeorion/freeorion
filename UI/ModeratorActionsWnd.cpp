@@ -298,7 +298,7 @@ void ModeratorActionsWnd::DoLayout() {
     m_planet_size_drop->SizeMove(GG::Pt(left, top), GG::Pt(left + DROP_WIDTH, top + CONTROL_HEIGHT));
 }
 
-void ModeratorActionsWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void ModeratorActionsWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
     CUIWnd::SizeMove(ul, lr);

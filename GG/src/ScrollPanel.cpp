@@ -33,7 +33,7 @@ X SCROLL_MARGIN_X(2);
 
 }
 
-void ScrollPanel::SizeMove(const Pt& ul, const Pt& lr)
+void ScrollPanel::SizeMove(Pt ul, Pt lr)
 {
     // Store the new size for input to the layout.
     Wnd::SizeMove(ul, lr);

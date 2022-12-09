@@ -227,7 +227,7 @@ public:
     TechTreeControls(std::string_view config_name = "");
     void CompleteConstruction() override;
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     void Render() override;
 
@@ -454,7 +454,7 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout() {
                       TopBorder() + BottomBorder() + UPPER_LEFT_PAD + (++row)*m_row_offset));
 }
 
-void TechTreeWnd::TechTreeControls::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void TechTreeWnd::TechTreeControls::SizeMove(GG::Pt ul, GG::Pt lr) {
     m_config_save = false;
     // maybe later do something interesting with docking
     CUIWnd::SizeMove(ul, lr);                               // set width and upper left as user-requested
@@ -552,7 +552,7 @@ public:
     mutable TechTreeWnd::TechSignalType         TechPediaDisplaySignal;
 
     void Render() override;
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     void Update();
     void Clear();   ///< remove all tech panels
@@ -1183,7 +1183,7 @@ void TechTreeWnd::LayoutPanel::Render() {
     GG::GUI::RenderWindow(m_hscroll);
 }
 
-void TechTreeWnd::LayoutPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void TechTreeWnd::LayoutPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
     const GG::Pt old_size = Size();
     GG::Wnd::SizeMove(ul, lr);
     if (old_size != Size())
@@ -2100,7 +2100,7 @@ void TechTreeWnd::CompleteConstruction() {
     ShowTreeView();
 }
 
-void TechTreeWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void TechTreeWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
     const GG::Pt old_size = Size();
     GG::Wnd::SizeMove(ul, lr);
     if (old_size != Size()) {

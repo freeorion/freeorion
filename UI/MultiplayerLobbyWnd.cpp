@@ -211,7 +211,7 @@ namespace {
                 boost::bind(&TypeSelector::SelectionChanged, this, boost::placeholders::_1));
         }
 
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+        void SizeMove(GG::Pt ul, GG::Pt lr) override {
             GG::Pt old_size(Size());
             CUIDropDownList::SizeMove(ul, lr);
             if (old_size != Size())
@@ -750,7 +750,7 @@ void MultiPlayerLobbyWnd::PlayerLabelRow::Render() {
         GG::FlatRectangle(GG::Pt(cell->UpperLeft().x, ul.y), GG::Pt(cell->LowerRight().x, lr.y), BG_CLR, BORDER_CLR, 1);
 }
 
-void MultiPlayerLobbyWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void MultiPlayerLobbyWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
     CUIWnd::SizeMove(ul, lr);
     DoLayout();
 }

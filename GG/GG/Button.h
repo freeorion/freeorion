@@ -71,7 +71,7 @@ public:
 
     void Show() override;
     void Render() override;
-    void SizeMove(const Pt& ul, const Pt& lr) override;
+    void SizeMove(Pt ul, Pt lr) override;
 
     /** Sets the control's color; does not affect the text color. */
     void SetColor(Clr c) override;
@@ -165,7 +165,7 @@ public:
 
     void Show() override;
     void Render() override;
-    void SizeMove(const Pt& ul, const Pt& lr) override;
+    void SizeMove(Pt ul, Pt lr) override;
 
     void Reset();                 ///< Unchecks button
     void SetCheck(bool b = true); ///< (Un)checks button

@@ -36,7 +36,7 @@ public:
     /** If tech @p tech_name is currently visible */
     bool TechIsVisible(const std::string& tech_name) const;
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+    void SizeMove(GG::Pt ul, GG::Pt lr) override;
     void Show() override;
     void Update();
     void Clear();

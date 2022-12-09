@@ -31,7 +31,7 @@ public:
     virtual Pt SetMaxWidth(X width) = 0;
 
     //! Redirect size move to setmaxwidth.
-    void SizeMove(const Pt& ul, const Pt& lr) override;
+    void SizeMove(Pt ul, Pt lr) override;
 };
 
 }

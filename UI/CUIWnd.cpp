@@ -254,7 +254,7 @@ void CUIWnd::SetName(std::string name) {
         m_title->SetText(std::move(name));
 }
 
-void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void CUIWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Pt old_sz = Size();
     if (m_config_save) {    // can write position/size to OptionsDB
 

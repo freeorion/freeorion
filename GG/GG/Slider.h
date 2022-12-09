@@ -74,7 +74,7 @@ public:
     mutable SlidAndStoppedSignalType SlidAndStoppedSignal; ///< returns the slid-and-stopped signal object for this Slider
 
     void Render() override;
-    void SizeMove(const Pt& ul, const Pt& lr) override;
+    void SizeMove(Pt ul, Pt lr) override;
     void Disable(bool b = true) override;
     void SetColor(Clr c) override;
 
@@ -214,7 +214,7 @@ void Slider<T>::Render()
 }
 
 template <typename T>
-void Slider<T>::SizeMove(const Pt& ul, const Pt& lr)
+void Slider<T>::SizeMove(Pt ul, Pt lr)
 {
     Wnd::SizeMove(ul, lr);
     if (m_orientation == Orientation::VERTICAL)
