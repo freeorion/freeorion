@@ -237,15 +237,15 @@ public:
     const std::string&  PolicyName() const  { return m_policy ? m_policy->Name() : EMPTY_STRING; }
     const Policy*       GetPolicy() const   { return m_policy; }
 
-    void Resize(const GG::Pt& sz, const int pts = ClientUI::Pts());
+    void Resize(GG::Pt sz, const int pts = ClientUI::Pts());
     void Render() override;
 
-    void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void LDoubleClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
 
     mutable boost::signals2::signal<void (const Policy*, GG::Flags<GG::ModKey>)> ClickedSignal;
-    mutable boost::signals2::signal<void (const Policy*, const GG::Pt& pt)> RightClickedSignal;
+    mutable boost::signals2::signal<void (const Policy*, GG::Pt pt)> RightClickedSignal;
     mutable boost::signals2::signal<void (const Policy*)> DoubleClickedSignal;
 
 private:
@@ -299,7 +299,7 @@ void PolicyControl::CompleteConstruction() {
     SetBrowseInfoWnd(PolicyBrowseWnd(m_policy->Name()));
 }
 
-void PolicyControl::Resize(const GG::Pt& sz, const int pts) {
+void PolicyControl::Resize(GG::Pt sz, const int pts) {
     m_background->Resize(sz);
     m_icon->Resize(GG::Pt(sz.x, sz.y * 2/3));
 
@@ -317,13 +317,13 @@ void PolicyControl::Resize(const GG::Pt& sz, const int pts) {
 
 void PolicyControl::Render() {}
 
-void PolicyControl::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void PolicyControl::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 { ClickedSignal(m_policy, mod_keys); }
 
-void PolicyControl::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void PolicyControl::LDoubleClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 { DoubleClickedSignal(m_policy); }
 
-void PolicyControl::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void PolicyControl::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 { RightClickedSignal(m_policy, pt); }
 
 
@@ -348,7 +348,7 @@ public:
     const AvailabilityManager&      AvailabilityState() const { return m_availabilities_state; }
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
-    void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
+    void AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
                      GG::Flags<GG::ModKey> mod_keys) override;
     void Populate();
 
@@ -356,16 +356,16 @@ public:
     void ShowAllCategories(bool refresh_list = true);
     void HideCategory(const std::string& category, bool refresh_list = true);
     void HideAllCategories(bool refresh_list = true);
-    void ResizePolicies(const GG::Pt& sz, const int pts = ClientUI::Pts());
+    void ResizePolicies(GG::Pt sz, const int pts = ClientUI::Pts());
 
-    mutable boost::signals2::signal<void (const Policy*, GG::Flags<GG::ModKey>)>    PolicyClickedSignal;
-    mutable boost::signals2::signal<void (const Policy*)>                           PolicyDoubleClickedSignal;
-    mutable boost::signals2::signal<void (const Policy*, const GG::Pt& pt)>         PolicyRightClickedSignal;
-    mutable boost::signals2::signal<void (const std::string&)>                      ClearPolicySignal;
+    mutable boost::signals2::signal<void (const Policy*, GG::Flags<GG::ModKey>)> PolicyClickedSignal;
+    mutable boost::signals2::signal<void (const Policy*)>                        PolicyDoubleClickedSignal;
+    mutable boost::signals2::signal<void (const Policy*, GG::Pt pt)>             PolicyRightClickedSignal;
+    mutable boost::signals2::signal<void (const std::string&)>                   ClearPolicySignal;
 
 protected:
     void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                         const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const override;
+                         GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) const override;
 
 private:
     // policies indexed by category that conform to current availability state
@@ -461,8 +461,7 @@ void PoliciesListBox::SizeMove(GG::Pt ul, GG::Pt lr) {
     }
 }
 
-void PoliciesListBox::AcceptDrops(const GG::Pt&,
-                                  std::vector<std::shared_ptr<GG::Wnd>> wnds,
+void PoliciesListBox::AcceptDrops(GG::Pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
                                   GG::Flags<GG::ModKey> mod_keys)
 {
     // If ctrl is pressed then signal all policies of the same type to be cleared.
@@ -472,7 +471,7 @@ void PoliciesListBox::AcceptDrops(const GG::Pt&,
     if (wnds.empty())
         return;
 
-    auto control = std::dynamic_pointer_cast<const PolicyControl>(*wnds.begin());
+    auto control = std::dynamic_pointer_cast<const PolicyControl>(wnds.front());
     const Policy* policy_type = control ? control->GetPolicy() : nullptr;
     if (!policy_type)
         return;
@@ -595,7 +594,7 @@ void PoliciesListBox::HideAllCategories(bool refresh_list) {
         Populate();
 }
 
-void PoliciesListBox::ResizePolicies(const GG::Pt& sz, const int pts) {
+void PoliciesListBox::ResizePolicies(GG::Pt sz, const int pts) {
     auto it = begin();
     while (it != end()) {
         const auto& row = *it;
@@ -635,7 +634,7 @@ public:
 
     mutable boost::signals2::signal<void (const Policy*, GG::Flags<GG::ModKey>)> PolicyClickedSignal;
     mutable boost::signals2::signal<void (const Policy*)> PolicyDoubleClickedSignal;
-    mutable boost::signals2::signal<void (const Policy*, const GG::Pt& pt)> PolicyRightClickedSignal;
+    mutable boost::signals2::signal<void (const Policy*, GG::Pt pt)> PolicyRightClickedSignal;
     mutable boost::signals2::signal<void (const std::string&)> ClearPolicySignal;
 
 private:
@@ -643,7 +642,7 @@ private:
 
     /** A policy type click with ctrl obsoletes policy. */
     void HandlePolicyClicked(const Policy*, GG::Flags<GG::ModKey>);
-    void HandlePolicyRightClicked(const Policy*, const GG::Pt& pt);
+    void HandlePolicyRightClicked(const Policy*, GG::Pt pt);
 
     std::shared_ptr<PoliciesListBox>                        m_policies_list;
     std::map<std::string, std::shared_ptr<CUIStateButton>>  m_category_buttons;
@@ -817,7 +816,7 @@ void GovernmentWnd::PolicyPalette::HandlePolicyClicked(const Policy* policy_type
 { PolicyClickedSignal(policy_type, modkeys); }
 
 void GovernmentWnd::PolicyPalette::HandlePolicyRightClicked(const Policy* policy_type,
-                                                            const GG::Pt& pt)
+                                                            GG::Pt pt)
 { PolicyRightClickedSignal(policy_type, pt); }
 
 void GovernmentWnd::PolicyPalette::ShowCategory(const std::string& category,
@@ -916,14 +915,14 @@ public:
 
     void StartingChildDragDrop(const GG::Wnd* wnd, GG::Pt offset) override;
     void CancellingChildDragDrop(const std::vector<const GG::Wnd*>& wnds) override;
-    void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
+    void AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
                      GG::Flags<GG::ModKey> mod_keys) override;
     void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds,
                              const GG::Wnd* destination) override;
-    void DragDropEnter(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
+    void DragDropEnter(GG::Pt pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                        GG::Flags<GG::ModKey> mod_keys) override;
     void DragDropLeave() override;
-    void Resize(const GG::Pt& sz, const int pts = ClientUI::Pts());
+    void Resize(GG::Pt sz, const int pts = ClientUI::Pts());
     void Render() override;
 
     void Highlight(bool actually = true);
@@ -940,7 +939,7 @@ public:
 protected:
     bool EventFilter(GG::Wnd* w, const GG::WndEvent& event) override;
     void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                         const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const override;
+                         GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) const override;
 
 private:
     std::string                        m_slot_category;
@@ -999,7 +998,7 @@ bool PolicySlotControl::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
 }
 
 void PolicySlotControl::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                        const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
+                                        GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) const
 {
     for (DropsAcceptableIter it = first; it != last; ++it)
         it->second = false;
@@ -1065,7 +1064,7 @@ void PolicySlotControl::CancellingChildDragDrop(const std::vector<const GG::Wnd*
     }
 }
 
-void PolicySlotControl::AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
+void PolicySlotControl::AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
                                     GG::Flags<GG::ModKey> mod_keys)
 {
     if (wnds.size() != 1)
@@ -1092,7 +1091,7 @@ void PolicySlotControl::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds,
     SlotContentsAlteredSignal(nullptr, false);
 }
 
-void PolicySlotControl::DragDropEnter(const GG::Pt& pt,
+void PolicySlotControl::DragDropEnter(GG::Pt pt,
                                       std::map<const Wnd*, bool>& drop_wnds_acceptable,
                                       GG::Flags<GG::ModKey> mod_keys)
 {
@@ -1116,7 +1115,7 @@ void PolicySlotControl::DragDropLeave() {
         m_policy_control->Show();
 }
 
-void PolicySlotControl::Resize(const GG::Pt& sz, const int pts) {
+void PolicySlotControl::Resize(GG::Pt sz, const int pts) {
     if (m_policy_control)
         m_policy_control->Resize(sz, pts);
 
@@ -1164,7 +1163,7 @@ void PolicySlotControl::SetPolicy(const Policy* policy) {
 
 /** PoliciesListBox accepts policies that are being removed from a PolicySlotControl.*/
 void PoliciesListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                      const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
+                                      GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) const
 {
     for (DropsAcceptableIter it = first; it != last; ++it)
         it->second = false;
@@ -1193,8 +1192,8 @@ public:
 
     std::vector<std::string> Policies() const; //!< returns vector of names of policies in slots of current shown design.  empty slots are represented with empty string
 
-    //void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;
+    //void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
     void Sanitize();
     void Refresh();
@@ -1217,7 +1216,7 @@ public:
 
 protected:
     void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                         const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const override;
+                         GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) const override;
 
 private:
     void PostChangeBigUpdate();
@@ -1574,7 +1573,7 @@ void GovernmentWnd::MainPanel::DoLayout() {
 
 void GovernmentWnd::MainPanel::DropsAcceptable(DropsAcceptableIter first,
                                                DropsAcceptableIter last,
-                                               const GG::Pt& pt,
+                                               GG::Pt pt,
                                                GG::Flags<GG::ModKey> mod_keys) const
 {
     for (DropsAcceptableIter it = first; it != last; ++it)
@@ -1585,7 +1584,7 @@ void GovernmentWnd::MainPanel::DropsAcceptable(DropsAcceptableIter first,
         return;
 }
 
-void GovernmentWnd::MainPanel::AcceptDrops(const GG::Pt& pt,
+void GovernmentWnd::MainPanel::AcceptDrops(GG::Pt pt,
                                            std::vector<std::shared_ptr<GG::Wnd>> wnds,
                                            GG::Flags<GG::ModKey> mod_keys)
 {}

@@ -34,7 +34,7 @@ public:
     const boost::filesystem::path& Path() const;    ///< returns the file path from which this vector texture was loaded (default / empty if this vector texture was not loaded from a file)
 
     /** Renders to region between \a pt1 and \a pt2 */
-    void Render(const Pt& ul, const Pt& lr) const;
+    void Render(Pt ul, Pt lr) const;
     bool TextureLoaded() const;
     int NumShapes() const;
     Pt Size() const;

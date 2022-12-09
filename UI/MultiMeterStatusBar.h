@@ -15,7 +15,7 @@ public:
 
     void Render() override;
 
-    void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
+    void MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
 
     void Update();
 

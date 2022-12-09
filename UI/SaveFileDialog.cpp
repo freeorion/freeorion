@@ -872,7 +872,7 @@ void SaveFileDialog::AskDelete() {
     }
 }
 
-void SaveFileDialog::DoubleClickRow(GG::ListBox::iterator row, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+void SaveFileDialog::DoubleClickRow(GG::ListBox::iterator row, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) {
     m_file_list->SelectRow(row);
     Confirm();
 }

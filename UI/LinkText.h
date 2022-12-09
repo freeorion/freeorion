@@ -80,10 +80,10 @@ public:
 
 protected:
     void Render_();
-    void LClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    void RClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    void LDoubleClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    void MouseHere_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    void LClick_(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys);
+    void RClick_(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys);
+    void LDoubleClick_(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys);
+    void MouseHere_(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys);
     void MouseLeave_();
 
     virtual const std::vector<GG::Font::LineData>&  GetLineData() const = 0;
@@ -94,10 +94,10 @@ protected:
     virtual void                SetLinkedText(std::string str) = 0;
     virtual const std::string&  RawText() const = 0;    ///< returns text being displayed before any link formatting is added
 
-    void FindLinks();                       ///< finds the links in the text, with which to populate m_links.
-    void LocateLinks();                     ///< calculates the physical locations of the links in m_links
-    void MarkLinks();                       ///< wraps text for each link in text formatting tags so that the links appear visually distinct from other text
-    int  GetLinkUnderPt(const GG::Pt& pt);  ///< returns the index of the link under screen coordinate \a pt, or -1 if none
+    void FindLinks();                ///< finds the links in the text, with which to populate m_links.
+    void LocateLinks();              ///< calculates the physical locations of the links in m_links
+    void MarkLinks();                ///< wraps text for each link in text formatting tags so that the links appear visually distinct from other text
+    int  GetLinkUnderPt(GG::Pt pt);  ///< returns the index of the link under screen coordinate \a pt, or -1 if none
 private:
     struct Link;
 
@@ -153,9 +153,9 @@ public:
     const std::string& RawText() const override;
 
     void Render() override;
-    void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void MouseHere(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void MouseLeave() override;
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
 

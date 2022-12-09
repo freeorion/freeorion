@@ -231,7 +231,7 @@ public:
 
     void Render() override;
 
-    void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) override;
+    void LDrag(GG::Pt pt, GG::Pt move, GG::Flags<GG::ModKey> mod_keys) override;
 
     /** Set checked value of control for TechStatus @p status to @p state */
     void SetTechStatus(TechStatus status, bool state);
@@ -485,7 +485,7 @@ void TechTreeWnd::TechTreeControls::Render() {
     //}
 }
 
-void TechTreeWnd::TechTreeControls::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) {
+void TechTreeWnd::TechTreeControls::LDrag(GG::Pt pt, GG::Pt move, GG::Flags<GG::ModKey> mod_keys) {
     if (m_drag_offset != GG::Pt(-GG::X1, -GG::Y1)) {  // resize-dragging
         GG::Pt new_lr = pt - m_drag_offset;
 
@@ -566,13 +566,13 @@ public:
     void HideStatus(TechStatus status);
     void SelectTech(const std::string& tech_name);
     void CenterOnTech(const std::string& tech_name);
-    void DoZoom(const GG::Pt &pt) const;
+    void DoZoom(GG::Pt pt) const;
     void UndoZoom() const;
 
     // Converts between screen coordinates and virtual coordiantes
     // doing the inverse or same transformation as DoZoom does with gl calls
-    GG::Pt ConvertPtScreenToZoomed(const GG::Pt& pt) const;
-    GG::Pt ConvertPtZoomedToScreen(const GG::Pt& pt) const;
+    GG::Pt ConvertPtScreenToZoomed(GG::Pt pt) const;
+    GG::Pt ConvertPtZoomedToScreen(GG::Pt pt) const;
 
 private:
     class TechPanel;
@@ -583,22 +583,22 @@ private:
             Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE | GG::DRAGABLE)
         {}
 
-        void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) override
+        void LDrag(GG::Pt pt, GG::Pt move, GG::Flags<GG::ModKey> mod_keys) override
         { DraggedSignal(move); }
 
-        void LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override
+        void LButtonDown(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override
         { ButtonDownSignal(pt); }
 
-        void LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override
+        void LButtonUp(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override
         { ButtonUpSignal(pt); }
 
-        void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override
+        void MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys) override
         { ZoomedSignal(move); }
 
-        mutable boost::signals2::signal<void (int)>           ZoomedSignal;
-        mutable boost::signals2::signal<void (const GG::Pt&)> DraggedSignal;
-        mutable boost::signals2::signal<void (const GG::Pt&)> ButtonDownSignal;
-        mutable boost::signals2::signal<void (const GG::Pt&)> ButtonUpSignal;
+        mutable boost::signals2::signal<void (int)>    ZoomedSignal;
+        mutable boost::signals2::signal<void (GG::Pt)> DraggedSignal;
+        mutable boost::signals2::signal<void (GG::Pt)> ButtonDownSignal;
+        mutable boost::signals2::signal<void (GG::Pt)> ButtonUpSignal;
     };
 
     void Layout(bool keep_position);    // lays out tech panels
@@ -607,9 +607,9 @@ private:
 
     void ScrolledSlot(int, int, int, int);
 
-    void TreeDraggedSlot(const GG::Pt& move);
-    void TreeDragBegin(const GG::Pt& move);
-    void TreeDragEnd(const GG::Pt& move);
+    void TreeDraggedSlot(GG::Pt move);
+    void TreeDragBegin(GG::Pt move);
+    void TreeDragEnd(GG::Pt move);
     void TreeZoomedSlot(int move);
     bool TreeZoomInKeyboard();
     bool TreeZoomOutKeyboard();
@@ -652,26 +652,22 @@ public:
     void PreRender() override;
     void Render() override;
 
-    void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) override
+    void LDrag(GG::Pt pt, GG::Pt move, GG::Flags<GG::ModKey> mod_keys) override
     { ForwardEventToParent(); }
 
-    void LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override
+    void LButtonDown(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override
     { ForwardEventToParent(); }
 
-    void LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override
+    void LButtonUp(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override
     { ForwardEventToParent(); }
 
-    void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
-    void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
-    void LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
-    void MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
+    void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void LDoubleClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void MouseEnter(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void MouseLeave() override;
 
-    void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override
+    void MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys) override
     { ForwardEventToParent(); }
 
     void Update();
@@ -907,12 +903,12 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
     m_layout_panel->UndoZoom();
 }
 
-void TechTreeWnd::LayoutPanel::TechPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void TechTreeWnd::LayoutPanel::TechPanel::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (m_layout_panel->m_selected_tech_name != m_tech_name)
         TechLeftClickedSignal(m_tech_name, mod_keys);
 }
 
-void TechTreeWnd::LayoutPanel::TechPanel::RClick(const GG::Pt& pt,
+void TechTreeWnd::LayoutPanel::TechPanel::RClick(GG::Pt pt,
                                                  GG::Flags<GG::ModKey> mod_keys)
 {
     auto dclick_action = [this, pt]() { LDoubleClick(pt, GG::Flags<GG::ModKey>()); };
@@ -931,10 +927,10 @@ void TechTreeWnd::LayoutPanel::TechPanel::RClick(const GG::Pt& pt,
     popup->Run();
 }
 
-void TechTreeWnd::LayoutPanel::TechPanel::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void TechTreeWnd::LayoutPanel::TechPanel::LDoubleClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 { TechDoubleClickedSignal(m_tech_name, mod_keys); }
 
-void TechTreeWnd::LayoutPanel::TechPanel::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void TechTreeWnd::LayoutPanel::TechPanel::MouseEnter(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 { m_browse_highlight = true; }
 
 void TechTreeWnd::LayoutPanel::TechPanel::MouseLeave()
@@ -1298,7 +1294,7 @@ void TechTreeWnd::LayoutPanel::HideStatus(TechStatus status) {
 }
 
 void TechTreeWnd::LayoutPanel::CenterOnTech(const std::string& tech_name) {
-    const auto& it = m_techs.find(tech_name);
+    const auto it = m_techs.find(tech_name);
     if (it == m_techs.end()) {
         DebugLogger() << "TechTreeWnd::LayoutPanel::CenterOnTech couldn't centre on " << tech_name
                                << " due to lack of such a tech panel";
@@ -1313,7 +1309,7 @@ void TechTreeWnd::LayoutPanel::CenterOnTech(const std::string& tech_name) {
     GG::SignalScroll(*m_vscroll, true);
 }
 
-void TechTreeWnd::LayoutPanel::DoZoom(const GG::Pt& pt) const {
+void TechTreeWnd::LayoutPanel::DoZoom(GG::Pt pt) const {
     glPushMatrix();
     //center to panel
     glTranslated(Value(Width()/2.0), Value(Height()/2.0), 0);
@@ -1327,7 +1323,7 @@ void TechTreeWnd::LayoutPanel::DoZoom(const GG::Pt& pt) const {
 void TechTreeWnd::LayoutPanel::UndoZoom() const
 { glPopMatrix(); }
 
-GG::Pt TechTreeWnd::LayoutPanel::ConvertPtScreenToZoomed(const GG::Pt& pt) const {
+GG::Pt TechTreeWnd::LayoutPanel::ConvertPtScreenToZoomed(GG::Pt pt) const {
     double x = Value(pt.x);
     double y = Value(pt.y);
     x -= Value(Width()/2.0);
@@ -1339,7 +1335,7 @@ GG::Pt TechTreeWnd::LayoutPanel::ConvertPtScreenToZoomed(const GG::Pt& pt) const
     return GG::Pt(GG::X(static_cast<int>(x)), GG::Y(static_cast<int>(y)));
 }
 
-GG::Pt TechTreeWnd::LayoutPanel::ConvertPtZoomedToScreen(const GG::Pt& pt) const {
+GG::Pt TechTreeWnd::LayoutPanel::ConvertPtZoomedToScreen(GG::Pt pt) const {
     double x = Value(pt.x);
     double y = Value(pt.y);
     x -= m_scroll_position_x;
@@ -1481,19 +1477,19 @@ void TechTreeWnd::LayoutPanel::SelectTech(const std::string& tech_name)
     TechSelectedSignal(tech_name, GG::Flags<GG::ModKey>());
 }
 
-void TechTreeWnd::LayoutPanel::TreeDraggedSlot(const GG::Pt& move) {
+void TechTreeWnd::LayoutPanel::TreeDraggedSlot(GG::Pt move) {
     m_hscroll->ScrollTo(static_cast<int>(m_drag_scroll_position_x - Value(move.x / m_scale)));
     m_vscroll->ScrollTo(static_cast<int>(m_drag_scroll_position_y - Value(move.y / m_scale)));
     m_scroll_position_x = m_hscroll->PosnRange().first;
     m_scroll_position_y = m_vscroll->PosnRange().first;
 }
 
-void TechTreeWnd::LayoutPanel::TreeDragBegin(const GG::Pt& pt) {
+void TechTreeWnd::LayoutPanel::TreeDragBegin(GG::Pt pt) {
     m_drag_scroll_position_x = m_scroll_position_x;
     m_drag_scroll_position_y = m_scroll_position_y;
 }
 
-void TechTreeWnd::LayoutPanel::TreeDragEnd(const GG::Pt& pt) {
+void TechTreeWnd::LayoutPanel::TreeDragEnd(GG::Pt pt) {
     m_drag_scroll_position_x = m_scroll_position_x;
     m_drag_scroll_position_y = m_scroll_position_y;
 }
@@ -1560,9 +1556,9 @@ private:
     };
 
     void Populate(bool update = true);
-    void TechDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
-    void TechLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
-    void TechRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void TechDoubleClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys);
+    void TechLeftClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys);
+    void TechRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys);
     void ToggleSortCol(unsigned int col);
 
     std::set<std::string>                                       m_categories_shown;
@@ -1958,13 +1954,13 @@ void TechTreeWnd::TechListBox::HideStatus(TechStatus status) {
     }
 }
 
-void TechTreeWnd::TechListBox::TechLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+void TechTreeWnd::TechListBox::TechLeftClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) {
     // determine type of row that was clicked, and emit appropriate signal
     if (TechRow* tech_row = dynamic_cast<TechRow*>(it->get()))
         TechLeftClickedSignal(tech_row->GetTech(), GG::Flags<GG::ModKey>());
 }
 
-void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) {
     if ((*it)->Disabled())
         return;
     const Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
@@ -1997,7 +1993,7 @@ void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const 
     popup->Run();
 }
 
-void TechTreeWnd::TechListBox::TechDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+void TechTreeWnd::TechListBox::TechDoubleClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) {
     // determine type of row that was clicked, and emit appropriate signal
     TechRow* tech_row = dynamic_cast<TechRow*>(it->get());
     if (tech_row)
@@ -2301,7 +2297,7 @@ bool TechTreeWnd::TechIsVisible(const std::string& tech_name) const
 { return TechVisible(tech_name, m_layout_panel->GetCategoriesShown(), m_layout_panel->GetTechStatusesShown()); }
 
 void TechTreeWnd::TechLeftClickedSlot(const std::string& tech_name,
-                                  const GG::Flags<GG::ModKey>& modkeys)
+                                  GG::Flags<GG::ModKey> modkeys)
 {
     if (modkeys & GG::MOD_KEY_SHIFT) {
         AddTechToResearchQueue(tech_name, modkeys & GG::MOD_KEY_CTRL);

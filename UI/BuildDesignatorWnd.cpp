@@ -666,10 +666,10 @@ private:
     void AddBuildItemToQueue(GG::ListBox::iterator it, bool top);
 
     /** respond to the user single-clicking a producible item in the build selector */
-    void BuildItemLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void BuildItemLeftClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys);
 
     /** respond to the user right-clicking a producible item in the build selector */
-    void BuildItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void BuildItemRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys);
 
     std::map<BuildType, std::shared_ptr<CUIStateButton>>    m_build_type_buttons;
     std::vector<std::shared_ptr<CUIStateButton>>            m_availability_buttons;
@@ -718,15 +718,15 @@ void BuildDesignatorWnd::BuildSelector::CompleteConstruction() {
     AttachChild(m_buildable_items);
 
     m_buildable_items->LeftClickedRowSignal.connect(
-        [this](GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+        [this](GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys)
         { BuildItemLeftClicked(it, pt, modkeys); });
 
     m_buildable_items->DoubleClickedRowSignal.connect(
-        [this](GG::ListBox::iterator it, const GG::Pt&, const GG::Flags<GG::ModKey>& modkeys)
+        [this](GG::ListBox::iterator it, GG::Pt, GG::Flags<GG::ModKey> modkeys)
         { AddBuildItemToQueue(it, modkeys & GG::MOD_KEY_CTRL); });
 
     m_buildable_items->RightClickedRowSignal.connect(
-        [this](GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+        [this](GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys)
         { BuildItemRightClicked(it, pt, modkeys); });
 
     //auto header = GG::Wnd::Create<GG::ListBox::Row>();
@@ -1065,7 +1065,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
 }
 
 void BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked(GG::ListBox::iterator it,
-                                                             const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+                                                             GG::Pt pt, GG::Flags<GG::ModKey> modkeys)
 {
     ProductionItemRow* item_row = dynamic_cast<ProductionItemRow*>((*it).get());
     if (!item_row)
@@ -1110,7 +1110,7 @@ void BuildDesignatorWnd::BuildSelector::AddBuildItemToQueue(GG::ListBox::iterato
 }
 
 void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::iterator it,
-                                                              const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+                                                              GG::Pt pt, GG::Flags<GG::ModKey> modkeys)
 {
     ProductionItemRow* item_row = dynamic_cast<ProductionItemRow*>(it->get());
     if (!item_row)

@@ -1220,13 +1220,13 @@ public:
     const std::string&  PartName() const { return m_part ? m_part->Name() : EMPTY_STRING; }
 
     void Render() override;
-    void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void LDoubleClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void SetAvailability(const AvailabilityManager::DisplayedAvailabilies& type);
 
     mutable boost::signals2::signal<void (const ShipPart*, GG::Flags<GG::ModKey>)> ClickedSignal;
-    mutable boost::signals2::signal<void (const ShipPart*, const GG::Pt& pt)> RightClickedSignal;
+    mutable boost::signals2::signal<void (const ShipPart*, GG::Pt pt)> RightClickedSignal;
     mutable boost::signals2::signal<void (const ShipPart*)> DoubleClickedSignal;
 
 private:
@@ -1278,13 +1278,13 @@ void PartControl::CompleteConstruction() {
 
 void PartControl::Render() {}
 
-void PartControl::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void PartControl::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 { ClickedSignal(m_part, mod_keys); }
 
-void PartControl::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void PartControl::LDoubleClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 { DoubleClickedSignal(m_part); }
 
-void PartControl::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void PartControl::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 { RightClickedSignal(m_part, pt); }
 
 void PartControl::SetAvailability(const AvailabilityManager::DisplayedAvailabilies& type) {
@@ -1310,12 +1310,12 @@ public:
 
     explicit PartsListBox(const AvailabilityManager& availabilities_state);
 
-    const std::set<ShipPartClass>&  GetClassesShown() const;
-    const AvailabilityManager&      AvailabilityState() const { return m_availabilities_state; }
-    bool                            GetShowingSuperfluous() const { return m_show_superfluous_parts; }
+    auto& GetClassesShown() const noexcept { return m_part_classes_shown; }
+    auto& AvailabilityState() const noexcept { return m_availabilities_state; }
+    bool  GetShowingSuperfluous() const noexcept { return m_show_superfluous_parts; }
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
-    void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
+    void AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
                      GG::Flags<GG::ModKey> mod_keys) override;
     void Populate();
 
@@ -1328,12 +1328,12 @@ public:
 
     mutable boost::signals2::signal<void (const ShipPart*, GG::Flags<GG::ModKey>)>  ShipPartClickedSignal;
     mutable boost::signals2::signal<void (const ShipPart*)>                         ShipPartDoubleClickedSignal;
-    mutable boost::signals2::signal<void (const ShipPart*, const GG::Pt& pt)>       ShipPartRightClickedSignal;
+    mutable boost::signals2::signal<void (const ShipPart*, GG::Pt pt)>              ShipPartRightClickedSignal;
     mutable boost::signals2::signal<void (const std::string&)>                      ClearPartSignal;
 
 protected:
     void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                         const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const override;
+                         GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) const override;
 
 private:
     PartGroupsType GroupAvailableDisplayableParts(const Empire* empire) const;
@@ -1408,9 +1408,6 @@ PartsListBox::PartsListBox(const AvailabilityManager& availabilities_state) :
     SetStyle(GG::LIST_NOSEL);
 }
 
-const std::set<ShipPartClass>& PartsListBox::GetClassesShown() const
-{ return m_part_classes_shown; }
-
 void PartsListBox::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
@@ -1428,8 +1425,7 @@ void PartsListBox::SizeMove(GG::Pt ul, GG::Pt lr) {
     }
 }
 
-void PartsListBox::AcceptDrops(const GG::Pt&,
-                               std::vector<std::shared_ptr<GG::Wnd>> wnds,
+void PartsListBox::AcceptDrops(GG::Pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
                                GG::Flags<GG::ModKey> mod_keys)
 {
     // Accept parts being discarded from the ship under design
@@ -1779,7 +1775,7 @@ public:
 
     mutable boost::signals2::signal<void (const ShipPart*, GG::Flags<GG::ModKey>)> ShipPartClickedSignal;
     mutable boost::signals2::signal<void (const ShipPart*)> ShipPartDoubleClickedSignal;
-    mutable boost::signals2::signal<void (const ShipPart*, const GG::Pt& pt)> ShipPartRightClickedSignal;
+    mutable boost::signals2::signal<void (const ShipPart*, GG::Pt pt)> ShipPartRightClickedSignal;
     mutable boost::signals2::signal<void ()> PartObsolescenceChangedSignal;
     mutable boost::signals2::signal<void (const std::string&)> ClearPartSignal;
 
@@ -1788,7 +1784,7 @@ private:
 
     /** A part type click with ctrl obsoletes part. */
     void HandleShipPartClicked(const ShipPart*, GG::Flags<GG::ModKey>);
-    void HandleShipPartRightClicked(const ShipPart*, const GG::Pt& pt);
+    void HandleShipPartRightClicked(const ShipPart*, GG::Pt pt);
 
     std::shared_ptr<PartsListBox>                            m_parts_list;
     std::map<ShipPartClass, std::shared_ptr<CUIStateButton>> m_class_buttons;
@@ -1998,7 +1994,7 @@ void DesignWnd::PartPalette::HandleShipPartClicked(const ShipPart* part, GG::Fla
     }
 }
 
-void DesignWnd::PartPalette::HandleShipPartRightClicked(const ShipPart* part, const GG::Pt& pt) {
+void DesignWnd::PartPalette::HandleShipPartRightClicked(const ShipPart* part, GG::Pt pt) {
     // Context menu actions
     auto& manager = GetDisplayedDesignsManager();
     const auto& part_name = part->Name();
@@ -2223,7 +2219,7 @@ public:
     };
 
 protected:
-    void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void ItemRightClickedImpl(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) override;
 
     /** An implementation of BasesListBox provides a PopulateCore to fill itself.*/
     virtual void PopulateCore() = 0;
@@ -2240,9 +2236,9 @@ protected:
 
     GG::Pt ListRowSize();
 
-    virtual void BaseDoubleClicked(GG::ListBox::iterator, const GG::Pt&, const GG::Flags<GG::ModKey>&) {}
-    virtual void BaseLeftClicked(GG::ListBox::iterator, const GG::Pt&, const GG::Flags<GG::ModKey>&) {}
-    virtual void BaseRightClicked(GG::ListBox::iterator, const GG::Pt&, const GG::Flags<GG::ModKey>&) {}
+    virtual void BaseDoubleClicked(GG::ListBox::iterator, GG::Pt, GG::Flags<GG::ModKey>) {}
+    virtual void BaseLeftClicked(GG::ListBox::iterator, GG::Pt, GG::Flags<GG::ModKey>) {}
+    virtual void BaseRightClicked(GG::ListBox::iterator, GG::Pt, GG::Flags<GG::ModKey>) {}
 
 private:
     void InitRowSizes();
@@ -2386,7 +2382,7 @@ void BasesListBox::CompleteConstruction() {
     InitRowSizes();
     SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
 
-    // iterator, const Pt&,const GG::Flags<GG::ModKey>&
+    // iterator, Pt, GG::Flags<GG::ModKey>
     DoubleClickedRowSignal.connect([this](auto it, auto pt, auto modkeys) { BaseDoubleClicked(it, pt, modkeys); });
     LeftClickedRowSignal.connect([this](auto it, auto pt, auto modkeys) { BaseLeftClicked(it, pt, modkeys); });
     MovedRowSignal.connect([this](auto new_it, auto old_it) { QueueItemMoved(new_it, old_it); });
@@ -2482,7 +2478,7 @@ void BasesListBox::InitRowSizes() {
     NormalizeRowsOnInsert(false);
 }
 
-void BasesListBox::ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+void BasesListBox::ItemRightClickedImpl(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys)
 { this->BaseRightClicked(it, pt, modkeys); }
 
 
@@ -2503,9 +2499,9 @@ protected:
     std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
     void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it) override;
 
-    void BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
-    void BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
-    void BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void BaseDoubleClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) override;
+    void BaseLeftClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) override;
+    void BaseRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) override;
 };
 
 class CompletedDesignsListBox : public BasesListBox {
@@ -2520,9 +2516,9 @@ protected:
     void ResetEmptyListPrompt() override;
     std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
     void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it) override;
-    void BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
-    void BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
-    void BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void BaseDoubleClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) override;
+    void BaseLeftClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) override;
+    void BaseRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) override;
 };
 
 class SavedDesignsListBox : public BasesListBox {
@@ -2551,9 +2547,9 @@ protected:
     std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
     void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it) override;
 
-    void BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
-    void BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
-    void BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void BaseDoubleClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) override;
+    void BaseLeftClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) override;
+    void BaseRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) override;
 };
 
 class MonstersListBox : public BasesListBox {
@@ -2569,8 +2565,8 @@ protected:
     void PopulateCore() override;
     std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
 
-    void BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
-    void BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void BaseDoubleClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) override;
+    void BaseLeftClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) override;
 };
 
 class AllDesignsListBox : public BasesListBox {
@@ -2584,8 +2580,8 @@ protected:
     void PopulateCore() override;
     std::shared_ptr<Row> ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
 
-    void BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
-    void BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void BaseDoubleClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) override;
+    void BaseLeftClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) override;
 };
 
 void EmptyHullsListBox::PopulateCore() {
@@ -2837,8 +2833,8 @@ void EmptyHullsListBox::EnableOrderIssuing(bool enable)
 void MonstersListBox::EnableOrderIssuing(bool)
 { QueueListBox::EnableOrderIssuing(false); }
 
-void EmptyHullsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                          const GG::Flags<GG::ModKey>& modkeys)
+void EmptyHullsListBox::BaseDoubleClicked(GG::ListBox::iterator it, GG::Pt pt,
+                                          GG::Flags<GG::ModKey> modkeys)
 {
     const auto hp_row = dynamic_cast<HullAndPartsListBoxRow*>(it->get());
     if (!hp_row)
@@ -2848,8 +2844,8 @@ void EmptyHullsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt
         DesignComponentsSelectedSignal(hp_row->Hull(), hp_row->Parts());
 }
 
-void CompletedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                                const GG::Flags<GG::ModKey>& modkeys)
+void CompletedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, GG::Pt pt,
+                                                GG::Flags<GG::ModKey> modkeys)
 {
     const auto cd_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!cd_row || cd_row->DesignID() == INVALID_DESIGN_ID)
@@ -2858,8 +2854,8 @@ void CompletedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const 
     DesignSelectedSignal(cd_row->DesignID());
 }
 
-void SavedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                            const GG::Flags<GG::ModKey>& modkeys)
+void SavedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, GG::Pt pt,
+                                            GG::Flags<GG::ModKey> modkeys)
 {
     const auto sd_row = dynamic_cast<SavedDesignListBoxRow*>(it->get());
 
@@ -2868,8 +2864,8 @@ void SavedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::
     SavedDesignSelectedSignal(sd_row->DesignUUID());
 }
 
-void MonstersListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                        const GG::Flags<GG::ModKey>& modkeys)
+void MonstersListBox::BaseDoubleClicked(GG::ListBox::iterator it, GG::Pt pt,
+                                        GG::Flags<GG::ModKey> modkeys)
 {
     const auto cd_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!cd_row || cd_row->DesignID() == INVALID_DESIGN_ID)
@@ -2878,8 +2874,8 @@ void MonstersListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& 
     DesignSelectedSignal(cd_row->DesignID());
 }
 
-void AllDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                        const GG::Flags<GG::ModKey>& modkeys)
+void AllDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, GG::Pt pt,
+                                          GG::Flags<GG::ModKey> modkeys)
 {
     const auto cd_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!cd_row || cd_row->DesignID() == INVALID_DESIGN_ID)
@@ -2888,8 +2884,8 @@ void AllDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt
     DesignSelectedSignal(cd_row->DesignID());
 }
 
-void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                        const GG::Flags<GG::ModKey>& modkeys)
+void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it, GG::Pt pt,
+                                        GG::Flags<GG::ModKey> modkeys)
 {
     const auto hull_parts_row = dynamic_cast<HullAndPartsListBoxRow*>(it->get());
     if (!hull_parts_row)
@@ -2909,8 +2905,8 @@ void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& 
         HullClickedSignal(ship_hull);
 }
 
-void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                              const GG::Flags<GG::ModKey>& modkeys)
+void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, GG::Pt pt,
+                                              GG::Flags<GG::ModKey> modkeys)
 {
     const auto design_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!design_row)
@@ -2935,8 +2931,8 @@ void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG
     }
 }
 
-void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                          const GG::Flags<GG::ModKey>& modkeys)
+void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, GG::Pt pt,
+                                          GG::Flags<GG::ModKey> modkeys)
 {
     const auto saved_design_row = dynamic_cast<SavedDesignListBoxRow*>(it->get());
     if (!saved_design_row)
@@ -2952,8 +2948,8 @@ void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt
         DesignClickedSignal(design);
 }
 
-void MonstersListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                      const GG::Flags<GG::ModKey>& modkeys)
+void MonstersListBox::BaseLeftClicked(GG::ListBox::iterator it, GG::Pt pt,
+                                      GG::Flags<GG::ModKey> modkeys)
 {
     const auto design_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!design_row)
@@ -2966,8 +2962,8 @@ void MonstersListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt
     DesignClickedSignal(design);
 }
 
-void AllDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                        const GG::Flags<GG::ModKey>& modkeys)
+void AllDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, GG::Pt pt,
+                                        GG::Flags<GG::ModKey> modkeys)
 {
     const auto design_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!design_row)
@@ -2980,8 +2976,8 @@ void AllDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& 
     DesignClickedSignal(design);
 }
 
-void EmptyHullsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                         const GG::Flags<GG::ModKey>& modkeys)
+void EmptyHullsListBox::BaseRightClicked(GG::ListBox::iterator it, GG::Pt pt,
+                                         GG::Flags<GG::ModKey> modkeys)
 {
     const auto hull_parts_row = dynamic_cast<HullAndPartsListBoxRow*>(it->get());
     if (!hull_parts_row)
@@ -3010,8 +3006,8 @@ void EmptyHullsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt&
     popup->Run();
 }
 
-void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                               const GG::Flags<GG::ModKey>& modkeys)
+void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, GG::Pt pt,
+                                               GG::Flags<GG::ModKey> modkeys)
 {
     const auto design_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!design_row)
@@ -3119,8 +3115,8 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
     popup->Run();
 }
 
-void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                           const GG::Flags<GG::ModKey>& modkeys)
+void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, GG::Pt pt,
+                                           GG::Flags<GG::ModKey> modkeys)
 {
     const auto design_row = dynamic_cast<SavedDesignListBoxRow*>(it->get());
     if (!design_row)
@@ -3530,10 +3526,10 @@ public:
 
     void StartingChildDragDrop(const GG::Wnd* wnd, GG::Pt offset) override;
     void CancellingChildDragDrop(const std::vector<const GG::Wnd*>& wnds) override;
-    void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
+    void AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
                      GG::Flags<GG::ModKey> mod_keys) override;
     void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) override;
-    void DragDropEnter(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
+    void DragDropEnter(GG::Pt pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                        GG::Flags<GG::ModKey> mod_keys) override;
     void DragDropLeave() override;
 
@@ -3558,7 +3554,7 @@ public:
 protected:
     bool EventFilter(GG::Wnd* w, const GG::WndEvent& event) override;
     void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                         const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const override;
+                         GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) const override;
 
 private:
     bool                                m_highlighted = false;
@@ -3622,7 +3618,7 @@ bool SlotControl::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
 }
 
 void SlotControl::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                  const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
+                                  GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) const
 {
     for (DropsAcceptableIter it = first; it != last; ++it)
         it->second = false;
@@ -3688,7 +3684,7 @@ void SlotControl::CancellingChildDragDrop(const std::vector<const GG::Wnd*>& wnd
     }
 }
 
-void SlotControl::AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
+void SlotControl::AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
                               GG::Flags<GG::ModKey> mod_keys)
 {
     if (wnds.size() != 1)
@@ -3713,7 +3709,7 @@ void SlotControl::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds,
     SlotContentsAlteredSignal(nullptr, false);
 }
 
-void SlotControl::DragDropEnter(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
+void SlotControl::DragDropEnter(GG::Pt pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                                 GG::Flags<GG::ModKey> mod_keys) {
 
     if (drop_wnds_acceptable.empty())
@@ -3781,7 +3777,7 @@ void SlotControl::SetPart(const ShipPart* part) {
 }
 
 void PartsListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                   const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
+                                   GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) const
 {
     // PartsListBox accepts parts that are being removed from a SlotControl
 
@@ -3860,9 +3856,9 @@ public:
         design, otherwise return boost::none. */
     boost::optional<const ShipDesign*>        CurrentDesignIsRegistered();
 
-    void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
 
-    void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;
+    void AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
@@ -3956,7 +3952,7 @@ public:
 
 protected:
     void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                         const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const override;
+                         GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) const override;
 
 private:
     void            Populate();                         //!< creates and places SlotControls for current hull
@@ -4171,7 +4167,7 @@ boost::optional<const ShipDesign*> DesignWnd::MainPanel::CurrentDesignIsRegister
     return boost::none;
 }
 
-void DesignWnd::MainPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void DesignWnd::MainPanel::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (m_hull)
         ShipHullClickedSignal(m_hull);
     CUIWnd::LClick(pt, mod_keys);
@@ -4808,7 +4804,7 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
 }
 
 void DesignWnd::MainPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                           const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
+                                           GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) const
 {
     for (DropsAcceptableIter it = first; it != last; ++it)
         it->second = false;
@@ -4821,7 +4817,7 @@ void DesignWnd::MainPanel::DropsAcceptable(DropsAcceptableIter first, DropsAccep
         first->second = true;
 }
 
-void DesignWnd::MainPanel::AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
+void DesignWnd::MainPanel::AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
                                        GG::Flags<GG::ModKey> mod_keys)
 {
     if (wnds.size() != 1)

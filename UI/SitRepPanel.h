@@ -34,10 +34,8 @@ private:
     void NextClicked();
     void LastClicked();
     void FilterClicked();
-    void IgnoreSitRep(GG::ListBox::iterator it, const GG::Pt& pt,
-                      const GG::Flags<GG::ModKey>& mod);
-    void DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt,
-                       const GG::Flags<GG::ModKey>& mod);
+    void IgnoreSitRep(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> mod);
+    void DismissalMenu(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> mod);
     void DoLayout();
 
     std::shared_ptr<GG::ListBox>    m_sitreps_lb;

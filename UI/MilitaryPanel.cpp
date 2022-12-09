@@ -62,7 +62,7 @@ void MilitaryPanel::CompleteConstruction() {
         AttachChild(stat);
         m_meter_stats.emplace_back(meter, stat);
         meters.emplace_back(meter, AssociatedMeterType(meter));
-        stat->RightClickedSignal.connect([meter](const GG::Pt& pt) {
+        stat->RightClickedSignal.connect([meter](GG::Pt pt) {
             auto meter_string = to_string(meter);
 
             auto zoom_action = [meter_string]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(std::string{meter_string}); };

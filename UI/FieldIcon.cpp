@@ -38,13 +38,13 @@ int FieldIcon::FieldID() const
 const std::shared_ptr<GG::Texture>& FieldIcon::FieldTexture() const
 { return m_texture; }
 
-void FieldIcon::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void FieldIcon::LButtonDown(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void FieldIcon::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
+void FieldIcon::LDrag(GG::Pt pt, GG::Pt move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void FieldIcon::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void FieldIcon::LButtonUp(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
 void FieldIcon::SizeMove(GG::Pt ul, GG::Pt lr) {
@@ -84,13 +84,13 @@ void FieldIcon::Refresh() {
 void FieldIcon::Render()
 {}
 
-void FieldIcon::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void FieldIcon::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!Disabled())
         LeftClickedSignal(m_field_id);
     ForwardEventToParent();
 }
 
-void FieldIcon::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void FieldIcon::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!Disabled())
         RightClickedSignal(m_field_id);
 
@@ -109,19 +109,19 @@ void FieldIcon::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     popup->Run();
 }
 
-void FieldIcon::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void FieldIcon::LDoubleClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!Disabled())
         LeftDoubleClickedSignal(m_field_id);
     ForwardEventToParent();
 }
 
-void FieldIcon::RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void FieldIcon::RDoubleClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!Disabled())
         RightDoubleClickedSignal(m_field_id);
     ForwardEventToParent();
 }
 
-void FieldIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void FieldIcon::MouseEnter(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     // indicate mouseover
     if (m_mouseover_indicator) {
         AttachChild(m_mouseover_indicator);
@@ -139,7 +139,7 @@ void FieldIcon::MouseLeave() {
     MouseLeavingSignal(m_field_id);
 }
 
-void FieldIcon::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
+void FieldIcon::MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
 void FieldIcon::SetSelected(bool selected) {

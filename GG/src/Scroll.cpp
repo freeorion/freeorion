@@ -281,7 +281,7 @@ unsigned int Scroll::TabSpace() const
 unsigned int Scroll::TabWidth() const
 { return std::max(static_cast<unsigned int>(TabSpace() / (m_range_max - m_range_min + 1.0) * m_page_sz + 0.5), MIN_TAB_SIZE); }
 
-Scroll::ScrollRegion Scroll::RegionUnder(const Pt& pt)
+Scroll::ScrollRegion Scroll::RegionUnder(Pt pt)
 {
     ScrollRegion retval;
     Pt ul = ClientUpperLeft();
@@ -301,7 +301,7 @@ Button* Scroll::IncrButton() const
 Button* Scroll::DecrButton() const
 { return m_decr.get(); }
 
-void Scroll::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
+void Scroll::LButtonDown(Pt pt, Flags<ModKey> mod_keys)
 {
     if (!Disabled()) {
         // when a button is pressed, record the region of the control the cursor is over
@@ -335,7 +335,7 @@ void Scroll::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
     }
 }
 
-void Scroll::LButtonUp(const Pt& pt, Flags<ModKey> mod_keys)
+void Scroll::LButtonUp(Pt pt, Flags<ModKey> mod_keys)
 {
     if (!Disabled()) {
         if(m_decr)
@@ -347,10 +347,10 @@ void Scroll::LButtonUp(const Pt& pt, Flags<ModKey> mod_keys)
     }
 }
 
-void Scroll::LClick(const Pt& pt, Flags<ModKey> mod_keys)
+void Scroll::LClick(Pt pt, Flags<ModKey> mod_keys)
 { LButtonUp(pt, mod_keys); }
 
-void Scroll::MouseHere(const Pt& pt, Flags<ModKey> mod_keys)
+void Scroll::MouseHere(Pt pt, Flags<ModKey> mod_keys)
 { LButtonUp(pt, mod_keys); }
 
 bool Scroll::EventFilter(Wnd* w, const WndEvent& event)

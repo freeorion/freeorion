@@ -185,7 +185,7 @@ void MultiMeterStatusBar::Render() {
     }
 }
 
-void MultiMeterStatusBar::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
+void MultiMeterStatusBar::MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
 void MultiMeterStatusBar::Update() {

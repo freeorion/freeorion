@@ -72,7 +72,7 @@ CUILabel::CUILabel(std::string str, std::vector<std::shared_ptr<GG::Font::TextEl
                 ClientUI::GetFont(), ClientUI::TextColor(), format, flags)
 {}
 
-void CUILabel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void CUILabel::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     auto copy_wnd_action = [this]() { GG::GUI::GetGUI()->CopyWndText(this); };
     // create popup menu
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
@@ -110,7 +110,7 @@ bool CUIButton::InWindow(GG::Pt pt) const {
     return InAngledCornerRect(pt, ul, lr, CUIBUTTON_ANGLE_OFFSET);
 }
 
-void CUIButton::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void CUIButton::MouseEnter(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     Button::MouseEnter(pt, mod_keys);
     if (!Disabled())
          PlayButtonRolloverSound();
@@ -195,7 +195,7 @@ void CUIButton::RenderUnpressed() {
 SettableInWindowCUIButton::SettableInWindowCUIButton(GG::SubTexture unpressed,
                                                      GG::SubTexture pressed,
                                                      GG::SubTexture rollover,
-                                                     std::function<bool (const SettableInWindowCUIButton*, const GG::Pt&)> in_window_function) :
+                                                     std::function<bool (const SettableInWindowCUIButton*, GG::Pt)> in_window_function) :
     CUIButton(std::move(unpressed), std::move(pressed), std::move(rollover))
 { m_in_window_func = in_window_function; }
 
@@ -229,7 +229,7 @@ bool CUIArrowButton::InWindow(GG::Pt pt) const {
     }
 }
 
-void CUIArrowButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void CUIArrowButton::MouseHere(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!Disabled()) {
         if (State() != ButtonState::BN_ROLLOVER)
             PlayButtonRolloverSound();
@@ -663,19 +663,19 @@ void CUIScroll::ScrollTab::Render() {
     AngledCornerRectangle(ul, lr, background_color, border_color, CUISCROLL_ANGLE_OFFSET, 1);
 }
 
-void CUIScroll::ScrollTab::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void CUIScroll::ScrollTab::LButtonDown(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 { m_being_dragged = true; }
 
-void CUIScroll::ScrollTab::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void CUIScroll::ScrollTab::LButtonUp(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     m_being_dragged = false;
     if (!InWindow(GG::GUI::GetGUI()->MousePosition()))
         m_mouse_here = false;
 }
 
-void CUIScroll::ScrollTab::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void CUIScroll::ScrollTab::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 { m_being_dragged = false; }
 
-void CUIScroll::ScrollTab::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void CUIScroll::ScrollTab::MouseEnter(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!m_being_dragged && !m_mouse_here) {
         PlayButtonRolloverSound();
         m_mouse_here = true;
@@ -861,13 +861,13 @@ GG::Pt CUIDropDownList::ClientLowerRight() const
 GG::X CUIDropDownList::DroppedRowWidth() const
 { return (DropDownList::ClientLowerRight().x - DropDownList::ClientUpperLeft().x); }
 
-void CUIDropDownList::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void CUIDropDownList::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!Disabled())
         PlayDropDownListOpenSound();
     DropDownList::LClick(pt, mod_keys);
 }
 
-void CUIDropDownList::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void CUIDropDownList::MouseEnter(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!Disabled())
         PlayButtonRolloverSound();
     m_mouse_here = true;
@@ -901,7 +901,7 @@ void CUIEdit::CompleteConstruction() {
     hkm->RebuildShortcuts();
 }
 
-void CUIEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void CUIEdit::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     auto hotkey_cut_action        = [this]() { GG::GUI::GetGUI()->CutWndText(this); };
     auto hotkey_copy_action       = [this]() { GG::GUI::GetGUI()->CopyWndText(this); };
     auto hotkey_paste_action      = [this]() { GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText()); };
@@ -999,7 +999,7 @@ CensoredCUIEdit::CensoredCUIEdit(std::string str, char display_placeholder) :
 const std::string& CensoredCUIEdit::RawText() const
 { return m_raw_text; }
 
-void CensoredCUIEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void CensoredCUIEdit::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     auto hotkey_paste_action      = [this]() { GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText()); };
     auto hotkey_select_all_action = [this]() { GG::GUI::GetGUI()->WndSelectAll(this); };
     auto hotkey_deselect_action   = [this]() { GG::GUI::GetGUI()->WndDeselect(this); };
@@ -1125,7 +1125,7 @@ void CUIMultiEdit::Render() {
     SetColor(color);
 }
 
-void CUIMultiEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void CUIMultiEdit::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     auto hotkey_cut_action        = [this]() { GG::GUI::GetGUI()->CutWndText(this); };
     auto hotkey_copy_action       = [this]() { GG::GUI::GetGUI()->CopyWndText(this); };
     auto hotkey_paste_action      = [this]() { GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText()); };
@@ -1189,12 +1189,12 @@ void CUILinkTextMultiEdit::Render() {
     TextLinker::Render_();
 }
 
-void CUILinkTextMultiEdit::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void CUILinkTextMultiEdit::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     CUIMultiEdit::LClick(pt, mod_keys);
     TextLinker::LClick_(pt, mod_keys);
 }
 
-void CUILinkTextMultiEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void CUILinkTextMultiEdit::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     auto rclick_action = [this, pt, mod_keys]() { TextLinker::RClick_(pt, mod_keys); };
     auto hotkey_cut_action        = [this]() { GG::GUI::GetGUI()->CutWndText(this); };
     auto hotkey_copy_action       = [this]() { GG::GUI::GetGUI()->CopyWndText(this); };
@@ -1221,7 +1221,7 @@ void CUILinkTextMultiEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_ke
     // todo: italicize, underline, or colour selected text
 }
 
-void CUILinkTextMultiEdit::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void CUILinkTextMultiEdit::MouseHere(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     CUIMultiEdit::MouseHere(pt, mod_keys);
     TextLinker::MouseHere_(pt, mod_keys);
 }
@@ -1412,39 +1412,39 @@ void StatisticIcon::SizeMove(GG::Pt ul, GG::Pt lr) {
         RequirePreRender();
 }
 
-void StatisticIcon::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void StatisticIcon::LButtonDown(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void StatisticIcon::RButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void StatisticIcon::RButtonDown(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void StatisticIcon::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void StatisticIcon::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (Disabled())
         return;
     LeftClickedSignal(pt);
 }
 
-void StatisticIcon::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void StatisticIcon::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (Disabled())
         return;
     RightClickedSignal(pt);
 }
 
-void StatisticIcon::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
+void StatisticIcon::MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void StatisticIcon::AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys)
+void StatisticIcon::AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void StatisticIcon::DragDropEnter(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+void StatisticIcon::DragDropEnter(GG::Pt pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
                                   GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void StatisticIcon::DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+void StatisticIcon::DragDropHere(GG::Pt pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
                                  GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void StatisticIcon::CheckDrops(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable, GG::Flags<GG::ModKey> mod_keys)
+void StatisticIcon::CheckDrops(GG::Pt pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
 void StatisticIcon::DragDropLeave()
@@ -1737,7 +1737,7 @@ void ColorSelector::SizeMove(GG::Pt ul, GG::Pt lr) {
         InitBuffer();
 }
 
-void ColorSelector::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void ColorSelector::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     GG::X x = std::min(pt.x, GG::GUI::GetGUI()->AppWidth() - 315);    // 315 is width of ColorDlg from GG::ColorDlg:::ColorDlg
     GG::Y y = std::min(pt.y, GG::GUI::GetGUI()->AppHeight() - 300);   // 300 is height of ColorDlg from GG::ColorDlg:::ColorDlg
     auto dlg = GG::Wnd::Create<GG::ColorDlg>(x, y, Color(), ClientUI::GetFont(),
@@ -1751,7 +1751,7 @@ void ColorSelector::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     }
 }
 
-void ColorSelector::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void ColorSelector::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     auto reset_color_action = [this]() {
         SetColor(m_default_color);
         ColorChangedSignal(m_default_color);

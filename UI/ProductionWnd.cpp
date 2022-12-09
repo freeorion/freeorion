@@ -173,7 +173,7 @@ namespace {
         bool    amBlockType;
         GG::Y   h;
 
-        void LButtonDown(const GG::Pt&  pt, GG::Flags<GG::ModKey> mod_keys) override {
+        void LButtonDown(GG::Pt  pt, GG::Flags<GG::ModKey> mod_keys) override {
             if (this->Disabled())
                 return;
 
@@ -681,7 +681,7 @@ namespace {
         boost::signals2::signal<void (GG::ListBox::iterator, bool)> QueueItemUseImperialPPSignal;
 
     protected:
-        void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override {
+        void ItemRightClickedImpl(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) override {
             // mostly duplicated equivalent in QueueListBox, but with extra commands...
             auto rally_to_action = [&it, this]() { this->QueueItemRalliedToSignal(it, SidePanel::SystemID()); };
 
@@ -1282,7 +1282,7 @@ void ProductionWnd::DeleteQueueItem(GG::ListBox::iterator it) {
     empire->UpdateProductionQueue(context);
 }
 
-void ProductionWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+void ProductionWnd::QueueItemClickedSlot(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) {
     if (m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems()) {
         if (modkeys & GG::MOD_KEY_CTRL)
             DeleteQueueItem(it);
@@ -1291,7 +1291,7 @@ void ProductionWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt&
     }
 }
 
-void ProductionWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+void ProductionWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) {
     if (m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems())
         m_build_designator_wnd->CenterOnBuild(m_queue_wnd->GetQueueListBox()->IteraterIndex(it), true);
 }

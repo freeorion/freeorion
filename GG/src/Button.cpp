@@ -120,7 +120,7 @@ void Button::SetPressedGraphic(SubTexture st)
 void Button::SetRolloverGraphic(SubTexture st)
 { m_rollover_graphic = std::move(st); }
 
-void Button::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
+void Button::LButtonDown(Pt pt, Flags<ModKey> mod_keys)
 {
     if (Disabled())
         return;
@@ -133,20 +133,20 @@ void Button::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
         LeftPressedSignal();
 }
 
-void Button::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
+void Button::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
 {
     if (!Disabled())
         m_state = ButtonState::BN_PRESSED;
     Wnd::LDrag(pt, move, mod_keys);
 }
 
-void Button::LButtonUp(const Pt& pt, Flags<ModKey> mod_keys)
+void Button::LButtonUp(Pt pt, Flags<ModKey> mod_keys)
 {
     if (!Disabled())
         m_state = ButtonState::BN_UNPRESSED;
 }
 
-void Button::LClick(const Pt& pt, Flags<ModKey> mod_keys)
+void Button::LClick(Pt pt, Flags<ModKey> mod_keys)
 {
     if (!Disabled()) {
         m_state = ButtonState::BN_ROLLOVER;
@@ -154,7 +154,7 @@ void Button::LClick(const Pt& pt, Flags<ModKey> mod_keys)
     }
 }
 
-void Button::RButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
+void Button::RButtonDown(Pt pt, Flags<ModKey> mod_keys)
 {
     if (Disabled())
         return;
@@ -167,20 +167,20 @@ void Button::RButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
         RightPressedSignal();
 }
 
-void Button::RDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
+void Button::RDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
 {
     if (!Disabled())
         m_state = ButtonState::BN_PRESSED;
     Wnd::LDrag(pt, move, mod_keys);
 }
 
-void Button::RButtonUp(const Pt& pt, Flags<ModKey> mod_keys)
+void Button::RButtonUp(Pt pt, Flags<ModKey> mod_keys)
 {
     if (!Disabled())
         m_state = ButtonState::BN_UNPRESSED;
 }
 
-void Button::RClick(const Pt& pt, Flags<ModKey> mod_keys)
+void Button::RClick(Pt pt, Flags<ModKey> mod_keys)
 {
     if (!Disabled()) {
         m_state = ButtonState::BN_ROLLOVER;
@@ -188,13 +188,13 @@ void Button::RClick(const Pt& pt, Flags<ModKey> mod_keys)
     }
 }
 
-void Button::MouseEnter(const Pt& pt, Flags<ModKey> mod_keys)
+void Button::MouseEnter(Pt pt, Flags<ModKey> mod_keys)
 {
     if (!Disabled())
         m_state = ButtonState::BN_ROLLOVER;
 }
 
-void Button::MouseHere(const Pt& pt, Flags<ModKey> mod_keys)
+void Button::MouseHere(Pt pt, Flags<ModKey> mod_keys)
 {
     if (!Disabled())
         m_state = ButtonState::BN_ROLLOVER;
@@ -308,19 +308,19 @@ void StateButton::Show()
     m_label->Hide();
 }
 
-void StateButton::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
+void StateButton::LButtonDown(Pt pt, Flags<ModKey> mod_keys)
 { SetState(ButtonState::BN_PRESSED); }
 
-void StateButton::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
+void StateButton::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
 {
     SetState(ButtonState::BN_PRESSED);
     Wnd::LDrag(pt, move, mod_keys);
 }
 
-void StateButton::LButtonUp(const Pt& pt, Flags<ModKey> mod_keys)
+void StateButton::LButtonUp(Pt pt, Flags<ModKey> mod_keys)
 { SetState(ButtonState::BN_UNPRESSED); }
 
-void StateButton::LClick(const Pt& pt, Flags<ModKey> mod_keys)
+void StateButton::LClick(Pt pt, Flags<ModKey> mod_keys)
 {
     if (!Disabled()) {
         SetCheck(!m_checked);
@@ -330,7 +330,7 @@ void StateButton::LClick(const Pt& pt, Flags<ModKey> mod_keys)
     }
 }
 
-void StateButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void StateButton::MouseHere(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 { SetState(ButtonState::BN_ROLLOVER); }
 
 void StateButton::MouseLeave()

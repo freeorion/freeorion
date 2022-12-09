@@ -355,13 +355,13 @@ void CUIWnd::Render() {
     glPopMatrix();
 }
 
-void CUIWnd::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void CUIWnd::LButtonDown(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!InResizeTab(pt))
         return;
     m_drag_offset = pt - LowerRight();
 }
 
-bool CUIWnd::InResizeTab(const GG::Pt& pt) const {
+bool CUIWnd::InResizeTab(GG::Pt pt) const {
     if (!m_resizable || m_minimized)
         return false;
 
@@ -373,7 +373,7 @@ bool CUIWnd::InResizeTab(const GG::Pt& pt) const {
     return false;
 }
 
-void CUIWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) {
+void CUIWnd::LDrag(GG::Pt pt, GG::Pt move, GG::Flags<GG::ModKey> mod_keys) {
     if (m_pinned)
         return;
 
@@ -401,17 +401,17 @@ void CUIWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> m
     }
 }
 
-void CUIWnd::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void CUIWnd::LButtonUp(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     m_drag_offset = GG::Pt(-GG::X1, -GG::Y1);
     SaveOptions();
 }
 
-void CUIWnd::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void CUIWnd::MouseEnter(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     m_mouse_in_resize_tab = InResizeTab(pt);
     Wnd::MouseEnter(pt, mod_keys);
 }
 
-void CUIWnd::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void CUIWnd::MouseHere(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     m_mouse_in_resize_tab = InResizeTab(pt);
     Wnd::MouseHere(pt, mod_keys);
 }

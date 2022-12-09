@@ -659,7 +659,7 @@ void Layout::SetMinimumColumnWidths(std::vector<X> widths)
 void Layout::RenderOutline(bool render_outline)
 { m_render_outline = render_outline; }
 
-void Layout::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
+void Layout::MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys)
 { ForwardEventToParent(); }
 
 void Layout::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)

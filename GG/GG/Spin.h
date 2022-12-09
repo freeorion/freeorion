@@ -117,7 +117,7 @@ protected:
     Edit*   GetEdit() const;    ///< returns a pointer to the Edit control used to render this control's text and accept keyboard input
 
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
-    void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
+    void MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys) override;
     bool EventFilter(Wnd* w, const WndEvent& event) override;
     virtual void SetEditTextFromValue();
 
@@ -375,7 +375,7 @@ void Spin<T>::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_
 }
 
 template <typename T>
-void Spin<T>::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
+void Spin<T>::MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys)
 {
     if (Disabled()) {
         Control::MouseWheel(pt, move, mod_keys);

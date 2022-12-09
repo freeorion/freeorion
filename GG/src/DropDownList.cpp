@@ -42,7 +42,7 @@ public:
         not adjust a visible window, or if there is no relative to window. */
     void CorrectListSize();
 
-    void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void LClick(Pt pt, Flags<ModKey> mod_keys) override;
     void ModalInit() override;
 
     ListBox* LB() noexcept { return m_lb_wnd.get(); }
@@ -70,7 +70,7 @@ public:
     /** A common MouseWheel() for both ModalListPicker and its DropDownList.
         Examine \p pt and \p move and then return the new list iterator or none.*/
     [[nodiscard]] boost::optional<DropDownList::iterator> MouseWheelCommon(
-        const Pt& pt, int move, Flags<ModKey> mod_keys);
+        Pt pt, int move, Flags<ModKey> mod_keys);
 
     /** Set the drop down list to only mouse scroll if it is dropped. */
     void SetOnlyMouseScrollWhenDropped(bool enable);
@@ -82,7 +82,7 @@ protected:
 
     /** ModalListPicker needs to process its own mouse events because modal windows in GG can't
         have parents.*/
-    void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
+    void MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys) override;
 
     /** Force the m_lb_wnd mouse wheel events to be forwarded. */
     bool EventFilter(GG::Wnd* w, const GG::WndEvent& event) override;
@@ -90,14 +90,14 @@ protected:
 private:
     void LBSelChangedSlot(const ListBox::SelectionSet& rows);
 
-    void LBLeftClickSlot(ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void LBLeftClickSlot(ListBox::iterator it, GG::Pt pt, Flags<ModKey> modkeys);
 
     /** Close the drop down if the app resizes, to prevent the modal drop down
         list location not tracking the anchor.*/
     void WindowResizedSlot(X x, Y y);
 
     /** Used by CorrectListSize() to determine the list height from the current first shown row. */
-    Pt DetermineListHeight(const Pt& drop_down_size);
+    Pt DetermineListHeight(Pt drop_down_size);
 
     std::shared_ptr<ListBox> m_lb_wnd;
     const std::size_t        m_num_shown_rows = 1u;
@@ -284,7 +284,7 @@ void ModalListPicker::SignalChanged(boost::optional<DropDownList::iterator> it)
     }
 }
 
-Pt ModalListPicker::DetermineListHeight(const Pt& _drop_down_size) {
+Pt ModalListPicker::DetermineListHeight(Pt _drop_down_size) {
     auto drop_down_size = _drop_down_size;
 
     // Determine the expected height
@@ -444,7 +444,7 @@ void ModalListPicker::SetOnlyMouseScrollWhenDropped(bool enable)
 { m_only_mouse_scroll_when_dropped = enable; }
 
 boost::optional<DropDownList::iterator> ModalListPicker::MouseWheelCommon(
-    const Pt& pt, int move, Flags<ModKey> mod_keys)
+    Pt pt, int move, Flags<ModKey> mod_keys)
 {
     if (m_only_mouse_scroll_when_dropped && !Dropped())
         return boost::none;
@@ -486,7 +486,7 @@ bool ModalListPicker::EventFilter(Wnd* w, const WndEvent& event) {
     return false;
 }
 
-void ModalListPicker::LClick(const Pt& pt, Flags<ModKey> mod_keys)
+void ModalListPicker::LClick(Pt pt, Flags<ModKey> mod_keys)
 { EndRun(); }
 
 void ModalListPicker::LBSelChangedSlot(const ListBox::SelectionSet& rows)
@@ -499,7 +499,7 @@ void ModalListPicker::LBSelChangedSlot(const ListBox::SelectionSet& rows)
     }
 }
 
-void ModalListPicker::LBLeftClickSlot(ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+void ModalListPicker::LBLeftClickSlot(ListBox::iterator it, GG::Pt pt, Flags<ModKey> modkeys)
 { EndRun(); }
 
 void ModalListPicker::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
@@ -507,7 +507,7 @@ void ModalListPicker::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModK
     SignalChanged(Select(KeyPressCommon(key, key_code_point, mod_keys)));
 }
 
-void ModalListPicker::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
+void ModalListPicker::MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys)
 {
     bool in_anchor_or_dropped_list = (LB()->InWindow(pt) || (m_relative_to_wnd && m_relative_to_wnd->InWindow(pt)));
     if (!in_anchor_or_dropped_list)
@@ -874,7 +874,7 @@ void DropDownList::SetColStretch(std::size_t n, double stretch)
 void DropDownList::NormalizeRowsOnInsert(bool enable)
 { LB()->NormalizeRowsOnInsert(enable); }
 
-void DropDownList::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
+void DropDownList::LButtonDown(Pt pt, Flags<ModKey> mod_keys)
 {
     if (Disabled())
         return;
@@ -907,7 +907,7 @@ void DropDownList::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey>
     }
 }
 
-void DropDownList::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
+void DropDownList::MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys)
 {
     if (!Disabled()) {
         auto corrected_move = (LB()->InWindow(pt)? move : -move);

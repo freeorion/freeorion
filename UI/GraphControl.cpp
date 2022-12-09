@@ -138,7 +138,7 @@ void GraphControl::SizeMove(GG::Pt ul, GG::Pt lr) {
         DoLayout();
 }
 
-void GraphControl::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void GraphControl::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
     auto set_log_scale = [this]()

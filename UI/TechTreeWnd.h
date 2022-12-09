@@ -19,7 +19,7 @@ class TechTreeWnd : public GG::Wnd {
 public:
     typedef boost::signals2::signal<void (const std::string&)>                   TechSignalType;
     typedef boost::signals2::signal<void (const std::string&,
-                                          const GG::Flags<GG::ModKey>&)>         TechClickSignalType;
+                                          GG::Flags<GG::ModKey>)>         TechClickSignalType;
     typedef boost::signals2::signal<void (const std::vector<std::string>&, int)> QueueAddTechsSignalType;
 
     /** TechTreeWnd contructor is usually called before client has
@@ -71,7 +71,7 @@ private:
     class TechListBox;
 
     void TechLeftClickedSlot(const std::string& tech_name,
-                             const GG::Flags<GG::ModKey>& modkeys);
+                             GG::Flags<GG::ModKey> modkeys);
     void AddTechToResearchQueue(const std::string& tech_name,
                                 bool to_front);
     void TechPediaDisplaySlot(const std::string& tech_name);

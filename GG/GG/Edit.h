@@ -165,10 +165,10 @@ protected:
      Allows index based Edit to handle empty line data.*/
     std::vector<GG::Font::LineData>::size_type NumLines() const;
 
-    void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
-    void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
-    void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys) override;
-    void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void LButtonDown(Pt pt, Flags<ModKey> mod_keys) override;
+    void LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys) override;
+    void LButtonUp(Pt pt, Flags<ModKey> mod_keys) override;
+    void LClick(Pt pt, Flags<ModKey> mod_keys) override;
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     void TextInput(const std::string& text) override;
     void GainingFocus() override;

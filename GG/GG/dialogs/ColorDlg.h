@@ -154,9 +154,9 @@ public:
 
     void Render() override;
 
-    void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void LButtonDown(Pt pt, Flags<ModKey> mod_keys) override;
 
-    void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
+    void LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys) override;
 
     void SetHueSaturation(double hue, double saturation); ///< sets the current hue and saturation.  Note that this does not cause a signal to be emitted.
 
@@ -183,8 +183,8 @@ public:
     ValuePicker(X x, Y y, X w, Y h, Clr arrow_color);
 
     void Render() override;
-    void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
-    void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
+    void LButtonDown(Pt pt, Flags<ModKey> mod_keys) override;
+    void LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys) override;
 
     /** Sets the current hue and saturation.  These are only used to render
         the control, and do not otherwise influence its operation. */

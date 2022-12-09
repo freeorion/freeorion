@@ -205,10 +205,10 @@ namespace {
                        GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE, GG::Clr color = GG::CLR_BLACK) :
             LinkText(x, y, w, str, font, format, color) {}
 
-        mutable boost::signals2::signal<void(const GG::Pt&, GG::Flags<GG::ModKey>)> RightClickedSignal;
+        mutable boost::signals2::signal<void(GG::Pt, GG::Flags<GG::ModKey>)> RightClickedSignal;
 
     protected:
-        void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override {
+        void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override {
             if (GetLinkUnderPt(pt) != -1) {
                 LinkText::RClick(pt, mod_keys);
             } else {
@@ -278,14 +278,14 @@ namespace {
 
         const SitRepEntry& GetSitRepEntry() const noexcept { return m_sitrep_entry; }
 
-        mutable boost::signals2::signal<void(const GG::Pt&, GG::Flags<GG::ModKey>)> RightClickedSignal;
+        mutable boost::signals2::signal<void(GG::Pt, GG::Flags<GG::ModKey>)> RightClickedSignal;
 
     protected:
-        void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod) override
+        void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod) override
         { RightClickedSignal(pt, mod); }
 
     private:
-        void DoLayout(const GG::Pt& ul, const GG::X& width) {
+        void DoLayout(GG::Pt ul, GG::X width) {
             // Resize the text
             GG::Pt spacer = GG::Pt(GG::X(sitrep_edge_to_content_spacing), GG::Y(sitrep_edge_to_content_spacing));
             GG::X icon_left(ul.x + spacer.x);
@@ -644,7 +644,7 @@ void SitRepPanel::FilterClicked() {
     Update();
 }
 
-void SitRepPanel::IgnoreSitRep(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& mod) {
+void SitRepPanel::IgnoreSitRep(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> mod) {
     SitRepRow* sitrep_row = dynamic_cast<SitRepRow*>(it->get());
     if (!sitrep_row)
         return;
@@ -657,7 +657,7 @@ void SitRepPanel::IgnoreSitRep(GG::ListBox::iterator it, const GG::Pt& pt, const
     Update();
 }
 
-void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& mod) {
+void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> mod) {
     GG::MenuItem menu_contents, submenu_ignore, submenu_block, separator_item;
     std::string sitrep_text, sitrep_template;
     std::string entry_margin("  ");

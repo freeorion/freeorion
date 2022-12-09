@@ -109,15 +109,15 @@ public:
     void SetName(std::string name) override;
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
     void Render() override;
-    void LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) override;
-    void LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void LButtonDown(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void LDrag(GG::Pt pt, GG::Pt move, GG::Flags<GG::ModKey> mod_keys) override;
+    void LButtonUp(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
 
-    void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override
+    void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override
     { return LButtonUp(pt, mod_keys); }
 
-    void MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void MouseEnter(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void MouseHere(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void MouseLeave() override;
     void Hide() override;
     void Show() override;
@@ -139,7 +139,7 @@ public:
 protected:
     virtual GG::Pt     MinimizedSize() const;              //!< the size of a minimized CUIWnd
     int                InnerBorderAngleOffset() const;     //!< the distance from where the lower right corner of the inner border should be to where the angled portion of the inner border meets the right and bottom lines of the border
-    bool               InResizeTab(const GG::Pt& pt) const;//!< returns true iff the specified \a pt is in the region where dragging will resize this Wnd
+    bool               InResizeTab(GG::Pt pt) const;//!< returns true iff the specified \a pt is in the region where dragging will resize this Wnd
     void               SaveOptions() const;                //!< saves options for this window to the OptionsDB if config_name was specified in the constructor
 
     virtual GG::Rect   CalculatePosition() const;          //!< override this if a class determines its own position/size and return the calculated values, called by ResetDefaultPosition()

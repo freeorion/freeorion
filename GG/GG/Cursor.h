@@ -37,7 +37,7 @@ public:
 
     /** Renders the cursor at the specified location.  Subclasses should take
         care to ensure that the cursor's "hotspot" is rendered at \a pt. */
-    virtual void Render(const Pt& pt) = 0;
+    virtual void Render(Pt pt) = 0;
 };
 
 /** \brief TextureCursor is a very simple subclass of Cursor.
@@ -60,7 +60,7 @@ public:
     /** Returns the position within Texture() of the cursor hotspot. */
     [[nodiscard]] Pt Hotspot() const noexcept { return m_hotspot; }
 
-    void Render(const Pt& pt) override;
+    void Render(Pt pt) override;
 
 private:
     std::shared_ptr<Texture> m_texture;

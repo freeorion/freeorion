@@ -95,7 +95,7 @@ public:
         Ideally it reports the actual desktop height using all displays.*/
     static int MaximumPossibleHeight();
 protected:
-    void SetAppSize(const GG::Pt& size);
+    void SetAppSize(GG::Pt size);
 
     // these are called at the beginning of the gui's execution
     /** Initializes SDL, FE, and SDL OpenGL functionality. */

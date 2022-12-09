@@ -47,7 +47,7 @@ protected:
     Control();
     Control(X x, Y y, X w, Y h, Flags<WndFlag> flags = INTERACTIVE);
 
-    void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
+    void MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys) override;
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     void KeyRelease(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
 

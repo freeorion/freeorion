@@ -556,19 +556,19 @@ void SystemIcon::RenderOverlay(double zoom_factor) {
     m_overlay_texture->OrthoBlit(overlay_ul, overlay_lr);
 }
 
-void SystemIcon::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void SystemIcon::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 { if (!Disabled()) LeftClickedSignal(m_system_id); }
 
-void SystemIcon::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void SystemIcon::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 { if (!Disabled()) RightClickedSignal(m_system_id, mod_keys); }
 
-void SystemIcon::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void SystemIcon::LDoubleClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 { if (!Disabled()) LeftDoubleClickedSignal(m_system_id); }
 
-void SystemIcon::RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void SystemIcon::RDoubleClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 { if (!Disabled()) RightDoubleClickedSignal(m_system_id); }
 
-void SystemIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void SystemIcon::MouseEnter(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     const bool USE_TINY_MOUSEOVER_INDICATOR = m_tiny_mouseover_indicator &&
                                               (Value(Width()) < m_tiny_mouseover_indicator->Width());
     // indicate mouseover
@@ -631,7 +631,7 @@ void SystemIcon::MouseLeave() {
     MouseLeavingSignal(m_system_id);
 }
 
-void SystemIcon::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
+void SystemIcon::MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
 void SystemIcon::SetSelected(bool selected) {

@@ -73,7 +73,7 @@ void PopulationPanel::CompleteConstruction() {
     for (const auto& meter_stat : m_meter_stats) {
         MeterType meter_type = meter_stat.first;
 
-        meter_stat.second->RightClickedSignal.connect([this, meter_type](const GG::Pt& pt) {
+        meter_stat.second->RightClickedSignal.connect([this, meter_type](GG::Pt pt) {
             auto meter_string = to_string(meter_type);
 
             auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
