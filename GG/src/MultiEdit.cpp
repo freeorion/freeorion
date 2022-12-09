@@ -435,12 +435,12 @@ X MultiEdit::RightMargin() const
 Y MultiEdit::BottomMargin() const
 { return Y(m_hscroll ? SCROLL_WIDTH : 0); }
 
-std::pair<std::size_t, CPSize> MultiEdit::CharAt(const Pt& pt) const
+std::pair<std::size_t, CPSize> MultiEdit::CharAt(Pt pt) const
 {
-    if (GetLineData().empty())
-        return std::pair<std::size_t, CPSize>(0, CP0);
+    std::pair<std::size_t, CPSize> retval{0, CP0};
 
-    std::pair<std::size_t, CPSize> retval;
+    if (GetLineData().empty())
+        return retval;
 
     std::size_t row = RowAt(pt.y);
     retval.first = std::min(row, GetLineData().size() - 1);

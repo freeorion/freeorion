@@ -717,7 +717,7 @@ private:
 };
 
 /** Stream output operator for Font::Substring. */
-GG_API std::ostream& operator<<(std::ostream& os, const Font::Substring& substr);
+GG_API std::ostream& operator<<(std::ostream& os, Font::Substring substr);
 
 /** Returns the code point index of the <i>index</i>-th code point on line \a
     line within the text represented by \a line_data.  Returns the index of

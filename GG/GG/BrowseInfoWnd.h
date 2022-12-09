@@ -60,7 +60,7 @@ public:
         displaying this BrowseInfoWnd as parameters, and returns the desired
         upper-left corner of this BrowseInfoWnd. */
     mutable std::function<
-        Pt (const Pt&, const std::shared_ptr<Cursor>&, const BrowseInfoWnd&, const Wnd&)
+        Pt (Pt, const std::shared_ptr<Cursor>&, const BrowseInfoWnd&, const Wnd&)
     > PositionWnd;
 
 protected:
