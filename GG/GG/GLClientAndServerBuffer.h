@@ -148,9 +148,9 @@ public:
     using base_t = GLClientAndServerBufferBase<float, 2>;
     GL2DVertexBuffer() = default;
     void store(const Pt pt) { store(pt.x, pt.y); }
-    void store(X x, Y y) { base_t::store(Value(x), Value(y)); }
-    void store(X x, float y) { base_t::store(Value(x), y); }
-    void store(float x, Y y) { base_t::store(x, Value(y)); }
+    void store(X x, Y y) { base_t::store(static_cast<float>(Value(x)), static_cast<float>(Value(y))); }
+    void store(X x, float y) { base_t::store(static_cast<float>(Value(x)), y); }
+    void store(float x, Y y) { base_t::store(x, static_cast<float>(Value(y))); }
     void store(float x, float y) { base_t::store(x, y); }
     void activate() const override;
 };
