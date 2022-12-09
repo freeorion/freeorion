@@ -44,7 +44,7 @@ bool SpecialsPanel::InWindow(GG::Pt pt) const {
 void SpecialsPanel::Render()
 {}
 
-void SpecialsPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
+void SpecialsPanel::MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
 void SpecialsPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
@@ -105,7 +105,7 @@ void SpecialsPanel::Update() {
             ClientUI::SpecialIcon(special->Name()), UserString(special->Name()), desc));
         m_icons[special_name] = graphic;
 
-        graphic->RightClickedSignal.connect([name{special_name}](const GG::Pt& pt) {
+        graphic->RightClickedSignal.connect([name{special_name}](GG::Pt pt) {
             auto zoom_action = [name]() {
                 ClientUI::GetClientUI()->ZoomToSpecial(name);
             };

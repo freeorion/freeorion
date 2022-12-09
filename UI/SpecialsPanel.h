@@ -15,7 +15,7 @@ public:
     int  ObjectID() const { return m_object_id; }
 
     void Render() override;
-    void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
+    void MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
     void Update();          ///< regenerates indicators according specials on object
 

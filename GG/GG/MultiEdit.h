@@ -167,9 +167,9 @@ protected:
     /** Returns the lesser of m_cursor_begin and m_cursor_end. */
     std::pair<std::size_t, CPSize> LowCursorPos() const;
 
-    void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
-    void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
-    void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
+    void LButtonDown(Pt pt, Flags<ModKey> mod_keys) override;
+    void LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys) override;
+    void MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys) override;
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     void TextInput(const std::string& text) override;
 

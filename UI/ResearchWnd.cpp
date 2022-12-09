@@ -306,7 +306,7 @@ public:
     boost::signals2::signal<void (GG::ListBox::iterator, bool)> QueueItemPausedSignal;
 
 protected:
-    void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override {
+    void ItemRightClickedImpl(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) override {
         // mostly duplicated equivalent in QueueListBox, but with an extra command...
         auto pedia_action = [&it, this, pt, modkeys]() {
             ShowPediaSignal();
@@ -695,7 +695,7 @@ void ResearchWnd::DeleteQueueItem(GG::ListBox::iterator it) {
         empire->UpdateResearchQueue(context);
 }
 
-void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) {
     if (m_queue_wnd->GetQueueListBox()->IteraterIndex(it) < 0 || !m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems())
         return;
 
@@ -708,7 +708,7 @@ void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& p
     }
 }
 
-void ResearchWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+void ResearchWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) {
     if (m_queue_wnd->GetQueueListBox()->IteraterIndex(it) < 0 || !m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems())
         return;
 

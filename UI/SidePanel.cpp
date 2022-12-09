@@ -364,7 +364,7 @@ namespace {
         return white;
     }
 
-    void RenderPlanet(const GG::Pt& center, int diameter, std::shared_ptr<GG::Texture> texture,
+    void RenderPlanet(GG::Pt center, int diameter, std::shared_ptr<GG::Texture> texture,
                       std::shared_ptr<GG::Texture> overlay_texture,
                       double initial_rotation, double RPM, double axial_tilt, double shininess,
                       StarType star_type)
@@ -532,10 +532,10 @@ public:
 
     void Render() override;
 
-    void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
+    void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void LDoubleClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     void Select(bool selected);
@@ -611,13 +611,13 @@ public:
 
     bool InWindow(GG::Pt pt) const override;
 
-    void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
+    void MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
 
     int                     SelectedPlanetID() const    {return m_selected_planet_id;}
     const std::set<int>&    SelectionCandidates() const {return m_candidate_ids;}
     int                     ScrollPosition() const;
 
-    void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) override;
+    void LDrag(GG::Pt pt, GG::Pt move, GG::Flags<GG::ModKey> mod_keys) override;
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     void PreRender() override;
@@ -824,7 +824,7 @@ class SidePanel::SystemNameDropDownList : public CUIDropDownList {
     void EnableOrderIssuing(bool enable = true)
     { m_order_issuing_enabled = enable; }
 
-    void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override {
+    void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override {
         if (CurrentItem() == end())
             return;
 
@@ -2088,18 +2088,18 @@ bool SidePanel::PlanetPanel::InWindow(GG::Pt pt) const {
     return true;
 }
 
-void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void SidePanel::PlanetPanel::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     //std::cout << "SidePanel::PlanetPanel::LClick m_planet_id: " << m_planet_id << std::endl;
     if (!Disabled())
         LeftClickedSignal(m_planet_id);
 }
 
-void SidePanel::PlanetPanel::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void SidePanel::PlanetPanel::LDoubleClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!Disabled())
         LeftDoubleClickedSignal(m_planet_id);
 }
 
-void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void SidePanel::PlanetPanel::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
     ScriptingContext context;
@@ -2214,7 +2214,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
     popup->Run();
 }
 
-void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
+void SidePanel::PlanetPanel::MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
 void SidePanel::PlanetPanel::PreRender() {
@@ -2585,7 +2585,7 @@ bool SidePanel::PlanetPanelContainer::InWindow(GG::Pt pt) const {
     return UpperLeft() + GG::Pt(GG::X(MaxPlanetDiameter()), GG::Y0) <= pt && pt < LowerRight();
 }
 
-void SidePanel::PlanetPanelContainer::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) {
+void SidePanel::PlanetPanelContainer::MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys) {
     if (m_vscroll && m_vscroll->Parent().get() == this) {
         const std::pair<int, int> initial_pos = m_vscroll->PosnRange();
         if (move < 0)
@@ -2597,7 +2597,7 @@ void SidePanel::PlanetPanelContainer::MouseWheel(const GG::Pt& pt, int move, GG:
     }
 }
 
-void SidePanel::PlanetPanelContainer::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
+void SidePanel::PlanetPanelContainer::LDrag(GG::Pt pt, GG::Pt move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
 int SidePanel::PlanetPanelContainer::ScrollPosition() const {

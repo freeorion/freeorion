@@ -108,10 +108,10 @@ void HueSaturationPicker::Render()
     glEnable(GL_TEXTURE_2D);
 }
 
-void HueSaturationPicker::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
+void HueSaturationPicker::LButtonDown(Pt pt, Flags<ModKey> mod_keys)
 { SetHueSaturationFromPt(pt); }
 
-void HueSaturationPicker::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
+void HueSaturationPicker::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
 { SetHueSaturationFromPt(pt); }
 
 void HueSaturationPicker::SetHueSaturation(double hue, double saturation)
@@ -211,10 +211,10 @@ void ValuePicker::Render()
     glEnable(GL_TEXTURE_2D);
 }
 
-void ValuePicker::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
+void ValuePicker::LButtonDown(Pt pt, Flags<ModKey> mod_keys)
 { SetValueFromPt(pt); }
 
-void ValuePicker::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
+void ValuePicker::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
 { SetValueFromPt(pt); }
 
 void ValuePicker::SetHueSaturation(double hue, double saturation)

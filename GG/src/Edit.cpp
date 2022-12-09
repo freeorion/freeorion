@@ -342,7 +342,7 @@ std::vector<GG::Font::LineData>::size_type Edit::NumLines() const {
                     GetLineData().size() - 1);
 }
 
-void Edit::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
+void Edit::LButtonDown(Pt pt, Flags<ModKey> mod_keys)
 {
     if (Disabled())
         return;
@@ -358,7 +358,7 @@ void Edit::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
         m_cursor_pos = word_indices;
 }
 
-void Edit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
+void Edit::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
 {
     if (Disabled())
         return;
@@ -399,10 +399,10 @@ void Edit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
     //std::cout << "LDrag selected from: " << m_cursor_pos.first << "  to: " << m_cursor_pos.second << std::endl;
 }
 
-void Edit::LButtonUp(const Pt& pt, Flags<ModKey> mod_keys)
+void Edit::LButtonUp(Pt pt, Flags<ModKey> mod_keys)
 { ClearDoubleButtonDownMode(); }
 
-void Edit::LClick(const Pt& pt, Flags<ModKey> mod_keys)
+void Edit::LClick(Pt pt, Flags<ModKey> mod_keys)
 { ClearDoubleButtonDownMode(); }
 
 void Edit::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)

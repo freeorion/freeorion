@@ -85,16 +85,16 @@ public:
     void SetRolloverGraphic(SubTexture st);     ///< Sets the SubTexture to be used as the image of the button when it contains the cursor, but is not pressed
 
 protected:
-    void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
-    void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
-    void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys) override;
-    void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
-    void RButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
-    void RDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
-    void RButtonUp(const Pt& pt, Flags<ModKey> mod_keys) override;
-    void RClick(const Pt& pt, Flags<ModKey> mod_keys) override;
-    void MouseEnter(const Pt& pt, Flags<ModKey> mod_keys) override;
-    void MouseHere(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void LButtonDown(Pt pt, Flags<ModKey> mod_keys) override;
+    void LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys) override;
+    void LButtonUp(Pt pt, Flags<ModKey> mod_keys) override;
+    void LClick(Pt pt, Flags<ModKey> mod_keys) override;
+    void RButtonDown(Pt pt, Flags<ModKey> mod_keys) override;
+    void RDrag(Pt pt, Pt move, Flags<ModKey> mod_keys) override;
+    void RButtonUp(Pt pt, Flags<ModKey> mod_keys) override;
+    void RClick(Pt pt, Flags<ModKey> mod_keys) override;
+    void MouseEnter(Pt pt, Flags<ModKey> mod_keys) override;
+    void MouseHere(Pt pt, Flags<ModKey> mod_keys) override;
     void MouseLeave() override;
 
     /** Draws the button unpressed.  If an unpressed graphic has been supplied, it is used. */
@@ -157,7 +157,7 @@ public:
 
     const std::string&  Text() const;        ///< Returns the label to be used as the button label
 
-    bool                Checked() const;       ///< Returns true if button is checked
+    bool                Checked() const;     ///< Returns true if button is checked
 
     TextControl*        GetLabel() const;
 
@@ -172,11 +172,11 @@ public:
     void SetTextColor(Clr c); ///< Sets the color of the box label text
 
 protected:
-    void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
-    void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
-    void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys) override;
-    void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
-    void MouseHere(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void LButtonDown(Pt pt, Flags<ModKey> mod_keys) override;
+    void LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys) override;
+    void LButtonUp(Pt pt, Flags<ModKey> mod_keys) override;
+    void LClick(Pt pt, Flags<ModKey> mod_keys) override;
+    void MouseHere(Pt pt, Flags<ModKey> mod_keys) override;
     void MouseLeave() override;
 
     /** Sets button state programmatically \see ButtonState */

@@ -36,7 +36,7 @@ void Control::SetColor(Clr c)
 void Control::Disable(bool b)
 { m_disabled = b; }
 
-void Control::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
+void Control::MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys)
 { ForwardEventToParent(); }
 
 void Control::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)

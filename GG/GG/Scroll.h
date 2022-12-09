@@ -102,16 +102,16 @@ public:
 protected:
     unsigned int  TabSpace() const;          ///< returns the space the tab has to move about in (the control's width less the width of the incr & decr buttons)
     unsigned int  TabWidth() const;          ///< returns the calculated width of the tab, based on PageSize() and the logical size of the control, in pixels
-    ScrollRegion  RegionUnder(const Pt& pt); ///< determines whether a pt is in the incr or decr or tab buttons, or in PgUp/PgDn regions in between
+    ScrollRegion  RegionUnder(Pt pt); ///< determines whether a pt is in the incr or decr or tab buttons, or in PgUp/PgDn regions in between
 
     Button*       TabButton() const;     ///< returns the button representing the tab
     Button*       IncrButton() const;    ///< returns the increase button (line down/line right)
     Button*       DecrButton() const;    ///< returns the decrease button (line up/line left)
 
-    void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
-    void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys) override;
-    void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
-    void MouseHere(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void LButtonDown(Pt pt, Flags<ModKey> mod_keys) override;
+    void LButtonUp(Pt pt, Flags<ModKey> mod_keys) override;
+    void LClick(Pt pt, Flags<ModKey> mod_keys) override;
+    void MouseHere(Pt pt, Flags<ModKey> mod_keys) override;
     bool EventFilter(Wnd* w, const WndEvent& event) override;
 
     virtual void InitBuffer();

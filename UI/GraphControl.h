@@ -11,7 +11,7 @@ public:
     GraphControl();
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
-    void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
 
     void Render() override;
 

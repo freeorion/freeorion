@@ -88,7 +88,7 @@ void ScrollPanel::ScrollTo(Y pos)
     SignalScroll(*m_vscroll, true);
 }
 
-void ScrollPanel::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
+void ScrollPanel::MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys)
 {
     m_vscroll->ScrollLineIncr(-move);
     SignalScroll(*m_vscroll, true);

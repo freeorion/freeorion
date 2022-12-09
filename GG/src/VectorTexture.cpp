@@ -93,7 +93,7 @@ public:
         }
     }
 
-    void Render(const Pt& ul, const Pt& lr)
+    void Render(Pt ul, Pt lr)
     {
         if (!nsvg_image)
             return;
@@ -197,7 +197,7 @@ int VectorTexture::NumShapes() const
 Pt VectorTexture::Size() const
 { return m_impl->Size(); }
 
-void VectorTexture::Render(const Pt& ul, const Pt& lr) const
+void VectorTexture::Render(Pt ul, Pt lr) const
 { m_impl->Render(ul, lr); }
 
 void VectorTexture::Load(const boost::filesystem::path& path)

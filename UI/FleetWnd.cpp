@@ -1053,14 +1053,14 @@ public:
     void PreRender() override;
     void Render() override;
 
-    void DragDropHere(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
+    void DragDropHere(GG::Pt pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                       GG::Flags<GG::ModKey> mod_keys) override;
 
-    void CheckDrops(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
+    void CheckDrops(GG::Pt pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                     GG::Flags<GG::ModKey> mod_keys) override;
 
     void DragDropLeave() override;
-    void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;
+    void AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     bool                Selected() const;
@@ -1075,7 +1075,7 @@ public:
 
 protected:
     void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                         const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const override;
+                         GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) const override;
 
 private:
     void ToggleAggression();
@@ -1174,7 +1174,7 @@ void FleetDataPanel::Render() {
     GG::FlatRectangle(text_ul,  text_lr,    border_colour,      GG::CLR_ZERO,  0);                  // title background box
 }
 
-void FleetDataPanel::DragDropHere(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
+void FleetDataPanel::DragDropHere(GG::Pt pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                                   GG::Flags<GG::ModKey> mod_keys)
 {
     if (!m_is_new_fleet_drop_target) {
@@ -1207,7 +1207,7 @@ void FleetDataPanel::DragDropHere(const GG::Pt& pt, std::map<const Wnd*, bool>& 
     }
 }
 
-void FleetDataPanel::CheckDrops(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
+void FleetDataPanel::CheckDrops(GG::Pt pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                                 GG::Flags<GG::ModKey> mod_keys)
 {
     if (!m_is_new_fleet_drop_target) {
@@ -1222,7 +1222,7 @@ void FleetDataPanel::DragDropLeave()
 { Select(false); }
 
 void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                     const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
+                                     GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) const
 {
     if (!m_is_new_fleet_drop_target) {
         // reject all
@@ -1277,7 +1277,7 @@ void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableI
     }
 }
 
-void FleetDataPanel::AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) {
+void FleetDataPanel::AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) {
     if (!m_is_new_fleet_drop_target && Parent()) {
         // normally the containing row (or the listbox that contains that) will
         // handle drag-drops
@@ -1785,7 +1785,7 @@ void FleetDataPanel::Init() {
             stat_icon->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
                 std::move(icon), UserString(to_string(meter_type)), UserString(text)));
 
-            stat_icon->RightClickedSignal.connect([meter_type{meter_type}](const GG::Pt& pt){
+            stat_icon->RightClickedSignal.connect([meter_type{meter_type}](GG::Pt pt){
                 auto zoom_article_action = [meter_type]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_type); };
 
                 auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
@@ -1884,7 +1884,7 @@ public:
         m_order_issuing_enabled = enable;
     }
 
-    void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
+    void AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
                      GG::Flags<GG::ModKey> mod_keys) override
     {
         //DebugLogger() << "FleetsListBox::AcceptDrops";
@@ -1998,7 +1998,7 @@ public:
                 context);
     }
 
-    void DragDropHere(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
+    void DragDropHere(GG::Pt pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                       GG::Flags<GG::ModKey> mod_keys) override
     {
         CUIListBox::DragDropHere(pt, drop_wnds_acceptable, mod_keys);
@@ -2105,7 +2105,7 @@ public:
 
 protected:
     void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                         const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const override
+                         GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) const override
     {
         // default result, possibly to be updated later: reject all drops
         for (DropsAcceptableIter it = first; it != last; ++it)
@@ -2324,7 +2324,7 @@ public:
     }
 
     void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                         const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const override
+                         GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) const override
     {
         for (DropsAcceptableIter it = first; it != last; ++it) {
             it->second = false; // default
@@ -2356,7 +2356,7 @@ public:
         }
     }
 
-    void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
+    void AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
                      GG::Flags<GG::ModKey> mod_keys) override
     {
         if (wnds.empty())
@@ -2434,7 +2434,7 @@ private:
     void DoLayout();
     void UniverseObjectDeleted(const std::shared_ptr<const UniverseObject>& obj);
     void ShipSelectionChanged(const GG::ListBox::SelectionSet& rows);
-    void ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void ShipRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys);
     int  ShipInRow(GG::ListBox::iterator it) const;
 
     int                                m_fleet_id = INVALID_OBJECT_ID;
@@ -2611,8 +2611,8 @@ void FleetDetailPanel::ShipSelectionChanged(const GG::ListBox::SelectionSet& row
     SelectedShipsChangedSignal(rows);
 }
 
-void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                        const GG::Flags<GG::ModKey>& modkeys)
+void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, GG::Pt pt,
+                                        GG::Flags<GG::ModKey> modkeys)
 {
     // get ship that was clicked, aborting if problems arise doing so
     ShipRow* ship_row = dynamic_cast<ShipRow*>(it->get());
@@ -3201,7 +3201,7 @@ void FleetWnd::Refresh() {
 void FleetWnd::CloseClicked()
 { CUIWnd::CloseClicked(); }
 
-void FleetWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void FleetWnd::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     MapWndPopup::LClick(pt, mod_keys);
     ClickedSignal(std::static_pointer_cast<FleetWnd>(shared_from_this()));
 }
@@ -3451,8 +3451,8 @@ void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows) {
     SelectedFleetsChangedSignal();
 }
 
-void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                 const GG::Flags<GG::ModKey>& modkeys)
+void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt,
+                                 GG::Flags<GG::ModKey> modkeys)
 {
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
@@ -3775,12 +3775,12 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt,
     popup->Run();
 }
 
-void FleetWnd::FleetLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                const GG::Flags<GG::ModKey>& modkeys)
+void FleetWnd::FleetLeftClicked(GG::ListBox::iterator it, GG::Pt pt,
+                                GG::Flags<GG::ModKey> modkeys)
 { ClickedSignal(std::static_pointer_cast<FleetWnd>(shared_from_this())); }
 
-void FleetWnd::FleetDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
-                                  const GG::Flags<GG::ModKey>& modkeys)
+void FleetWnd::FleetDoubleClicked(GG::ListBox::iterator it, GG::Pt pt,
+                                  GG::Flags<GG::ModKey> modkeys)
 { ClickedSignal(std::static_pointer_cast<FleetWnd>(shared_from_this())); }
 
 int FleetWnd::FleetInRow(GG::ListBox::iterator it) const {

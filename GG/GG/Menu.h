@@ -73,7 +73,7 @@ class GG_API PopupMenu : public Wnd
 public:
     /** Ctor.  Parameter \a m should contain the desired menu in its
         next_level member. */
-    PopupMenu(X x, Y y, const std::shared_ptr<Font>& font,
+    PopupMenu(X x, Y y, std::shared_ptr<Font> font,
               Clr text_color = CLR_WHITE, Clr border_color = CLR_BLACK,
               Clr interior_color = CLR_SHADOW, Clr hilite_color = CLR_GRAY);
 
@@ -91,12 +91,12 @@ public:
                      std::function<void()> selected_on_close_callback = std::function<void()>());
 
     void Render() override;
-    void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys) override;
-    void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
-    void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
-    void RButtonUp(const Pt& pt, Flags<ModKey> mod_keys) override;
-    void RClick(const Pt& pt, Flags<ModKey> mod_keys) override;
-    void MouseHere(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void LButtonUp(Pt pt, Flags<ModKey> mod_keys) override;
+    void LClick(Pt pt, Flags<ModKey> mod_keys) override;
+    void LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys) override;
+    void RButtonUp(Pt pt, Flags<ModKey> mod_keys) override;
+    void RClick(Pt pt, Flags<ModKey> mod_keys) override;
+    void MouseHere(Pt pt, Flags<ModKey> mod_keys) override;
 
     bool Run() override;
 

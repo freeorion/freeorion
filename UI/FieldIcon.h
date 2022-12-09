@@ -25,18 +25,18 @@ public:
     /** Returns the field texture. */
     const std::shared_ptr<GG::Texture>& FieldTexture() const;
 
-    void LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) override;
-    void LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void LButtonDown(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void LDrag(GG::Pt pt, GG::Pt move, GG::Flags<GG::ModKey> mod_keys) override;
+    void LButtonUp(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
     void Render() override;
-    void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void LDoubleClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void RDoubleClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void MouseEnter(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void MouseLeave() override;
-    void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
+    void MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
     void Refresh();
     void SetSelected(bool selected = true);   //!< shows/hides the selection indicator over this field
 

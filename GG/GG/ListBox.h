@@ -162,7 +162,7 @@ public:
     protected:
         /** Add elements to m_col_widths, m_col_stretches and m_col_alignments until they reach size nn. */
         void GrowWidthsStretchesAlignmentsTo(std::size_t nn);
-        void RClick(const Pt& pt, GG::Flags<GG::ModKey> mod) override;
+        void RClick(Pt pt, GG::Flags<GG::ModKey> mod) override;
 
         std::vector<std::shared_ptr<Control>>   m_cells;                    ///< the Controls in this Row (each may be null)
         Alignment                               m_row_alignment;            ///< row alignment; one of ALIGN_TOP, ALIGN_VCENTER, or ALIGN_BOTTOM
@@ -292,7 +292,7 @@ public:
     mutable BrowsedRowSignalType         BrowsedRowSignal;         ///< the browsed signal object for this ListBox
 
     void StartingChildDragDrop(const Wnd* wnd, Pt offset) override;
-    void AcceptDrops(const Pt& pt, std::vector<std::shared_ptr<Wnd>> wnds, Flags<ModKey> mod_keys) override;
+    void AcceptDrops(Pt pt, std::vector<std::shared_ptr<Wnd>> wnds, Flags<ModKey> mod_keys) override;
     void ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination) override;
     void PreRender() override;
     void Render() override;
@@ -468,9 +468,9 @@ protected:
     bool            AutoScrollingRight() const noexcept { return m_auto_scrolling_right; } ///< returns true iff the list is being autoscrolled right due to drag-and-drop
 
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
-    void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
-    void DragDropEnter(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys) override;
-    void DragDropHere(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys) override;
+    void MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys) override;
+    void DragDropEnter(Pt pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys) override;
+    void DragDropHere(Pt pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys) override;
     void DragDropLeave() override;
     void CancellingChildDragDrop(const std::vector<const Wnd*>& wnds) override;
     void TimerFiring(unsigned int ticks, Timer* timer) override;
@@ -498,7 +498,7 @@ protected:
     void AdjustScrolls(bool adjust_for_resize, std::pair<bool, bool> force_hv = {false, false});
 
     void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                         const Pt& pt, Flags<ModKey> mod_keys) const override;
+                         Pt pt, Flags<ModKey> mod_keys) const override;
     void HandleRowRightClicked(Pt pt, Flags<ModKey> mod);
 
 private:

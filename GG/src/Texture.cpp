@@ -102,7 +102,7 @@ void Texture::OrthoBlit(Pt pt1, Pt pt2, const GLfloat* tex_coords) const
     Blit(vertex_buffer, tex_coord_buffer, render_scaled);
 }
 
-void Texture::InitBuffer(GL2DVertexBuffer& vertex_buffer, const Pt& pt1, const Pt& pt2)
+void Texture::InitBuffer(GL2DVertexBuffer& vertex_buffer, Pt pt1, Pt pt2)
 {
     vertex_buffer.store(pt2.x, pt1.y);
     vertex_buffer.store(pt1.x, pt1.y);

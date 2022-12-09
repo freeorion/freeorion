@@ -43,7 +43,7 @@ public:
              GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS,
              GG::X x = GG::X0, GG::Y y = GG::Y0, GG::X w = GG::X1, GG::Y h = GG::Y1);
 
-    void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
 };
 
 /** a FreeOrion Button control */
@@ -58,7 +58,7 @@ public:
     bool InWindow(GG::Pt pt) const override;
 
 protected:
-    void MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void MouseEnter(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
 
     void RenderPressed() override;
     void RenderRollover() override;
@@ -68,12 +68,12 @@ protected:
 class SettableInWindowCUIButton final : public CUIButton {
 public:
     SettableInWindowCUIButton(GG::SubTexture unpressed, GG::SubTexture pressed, GG::SubTexture rollover,
-                              std::function<bool (const SettableInWindowCUIButton*, const GG::Pt&)> in_window_function);
+                              std::function<bool (const SettableInWindowCUIButton*, GG::Pt)> in_window_function);
 
     bool InWindow(GG::Pt pt) const override;
 
 private:
-    std::function<bool (const SettableInWindowCUIButton*, const GG::Pt&)> m_in_window_func;
+    std::function<bool (const SettableInWindowCUIButton*, GG::Pt)> m_in_window_func;
 };
 
 /** a FreeOrion triangular arrow button */
@@ -84,7 +84,7 @@ public:
 
     bool InWindow(GG::Pt pt) const override;
 
-    void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void MouseHere(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
 
 protected:
     void RenderPressed() override;
@@ -201,15 +201,10 @@ public:
         void SetColor(GG::Clr c) override;
 
         void Render() override;
-
-        void LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
-        void LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
-        void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
-        void MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
+        void LButtonDown(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+        void LButtonUp(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+        void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+        void MouseEnter(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
         void MouseLeave() override;
 
     private:
@@ -247,21 +242,18 @@ public:
     GG::Pt ClientLowerRight() const override;
 
     void Render() override;
-
-    void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
-    void MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
+    void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void MouseEnter(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void MouseLeave() override;
 
-    void            DisableDropArrow();  ///< disables rendering of the small downward-facing arrow on the right of the control
-    void            EnableDropArrow();   ///< enables rendering of the small downward-facing arrow on the right of the control
+    void DisableDropArrow();  ///< disables rendering of the small downward-facing arrow on the right of the control
+    void EnableDropArrow();   ///< enables rendering of the small downward-facing arrow on the right of the control
 
 private:
     void InitBuffer() override;
 
-    bool    m_render_drop_arrow;
-    bool    m_mouse_here;
+    bool m_render_drop_arrow = false;
+    bool m_mouse_here = false;
 };
 
 /** a FreeOrion Edit control */
@@ -271,7 +263,7 @@ public:
 
     void CompleteConstruction() override;
 
-    void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void KeyPress(GG::Key key, std::uint32_t key_code_point,
                   GG::Flags<GG::ModKey> mod_keys) override;
     void AcceptPastedText(const std::string& text) override;
@@ -296,7 +288,7 @@ public:
 
     const std::string& RawText() const;
 
-    void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void SetText(std::string str) override;
     void AcceptPastedText(const std::string& text) override;
 
@@ -317,7 +309,7 @@ public:
     void CompleteConstruction() override;
 
     void Render() override;
-    void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
 };
 
 /** a FreeOrion MultiEdit control that parses its text and makes links within clickable */
@@ -333,9 +325,9 @@ public:
     const std::string& RawText() const override;
 
     void Render() override;
-    void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void MouseHere(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void MouseLeave() override;
 
     /** Needed primarily so the SetText call will take a RawText. */
@@ -394,25 +386,25 @@ public:
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
-    void LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void RButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
+    void LButtonDown(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void RButtonDown(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
 
-    void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;
-    void DragDropEnter(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+    void AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;
+    void DragDropEnter(GG::Pt pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
                        GG::Flags<GG::ModKey> mod_keys) override;
-    void DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+    void DragDropHere(GG::Pt pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
                       GG::Flags<GG::ModKey> mod_keys) override;
-    void CheckDrops(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+    void CheckDrops(GG::Pt pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
                     GG::Flags<GG::ModKey> mod_keys) override;
     void DragDropLeave() override;
 
     void SetValue(double value, std::size_t index = 0);  ///< sets displayed \a value with \a index
 
-    mutable boost::signals2::signal<void (const GG::Pt&)> LeftClickedSignal;
-    mutable boost::signals2::signal<void (const GG::Pt&)> RightClickedSignal;
+    mutable boost::signals2::signal<void (GG::Pt)> LeftClickedSignal;
+    mutable boost::signals2::signal<void (GG::Pt)> RightClickedSignal;
 
 private:
     void DoLayout();
@@ -463,8 +455,8 @@ public:
     virtual ~ColorSelector();
 
     void Render() override;
-    void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     mutable boost::signals2::signal<void (GG::Clr)> ColorChangedSignal;

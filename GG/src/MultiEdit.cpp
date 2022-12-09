@@ -699,7 +699,7 @@ std::pair<CPSize, CPSize> MultiEdit::GetDoubleButtonDownWordIndices(CPSize char_
     return this->m_double_click_cursor_pos;
 }
 
-void MultiEdit::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
+void MultiEdit::LButtonDown(Pt pt, Flags<ModKey> mod_keys)
 {
     if (Disabled())
         return;
@@ -724,7 +724,7 @@ void MultiEdit::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
     //    this->m_cursor_pos = word_indices;
 }
 
-void MultiEdit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
+void MultiEdit::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
 {
     if (Disabled())
         return;
@@ -781,7 +781,7 @@ void MultiEdit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
     { AdjustView(); }
 }
 
-void MultiEdit::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
+void MultiEdit::MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys)
 {
     if (Disabled() || !m_vscroll) {
         ForwardEventToParent();

@@ -214,7 +214,7 @@ public:
     static constexpr unsigned int INVALID_CELL_MARGIN = std::numeric_limits<unsigned int>::max();
 
 protected:
-    void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
+    void MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys) override;
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     void KeyRelease(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
 

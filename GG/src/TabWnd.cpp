@@ -300,7 +300,7 @@ std::size_t TabBar::CurrentTabIndex() const
 Clr TabBar::TextColor() const
 { return m_text_color; }
 
-void TabBar::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
+void TabBar::MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys)
 {
     if (move < 0 && m_right_button && !m_right_button->Disabled()) {
         RightClicked();

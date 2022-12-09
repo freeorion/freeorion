@@ -25,7 +25,7 @@ public:
     bool Empty() const;
 
     void Render() override;
-    void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
+    void MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
     void Update();
     void SetToolTip(MeterType meter_type, const std::shared_ptr<GG::BrowseInfoWnd>& browse_wnd);
     void ClearToolTip(MeterType meter_type);

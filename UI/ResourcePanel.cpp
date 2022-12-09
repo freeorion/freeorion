@@ -80,7 +80,7 @@ void ResourcePanel::CompleteConstruction() {
         AttachChild(stat);
         m_meter_stats.emplace_back(meter, stat);
         meters.emplace_back(meter, assoc_meter);
-        stat->RightClickedSignal.connect([meter](const GG::Pt& pt) {
+        stat->RightClickedSignal.connect([meter](GG::Pt pt) {
             auto meter_string = to_string(meter);
 
             auto pedia_zoom_to_article_action = [meter_string]() {

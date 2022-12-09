@@ -65,7 +65,7 @@ void MultiIconValueIndicator::CompleteConstruction() {
         m_icons.back()->SizeMove(icon_ul, icon_lr);
         auto meter = meter_type.first;
         auto meter_string = to_string(meter_type.first);
-        m_icons.back()->RightClickedSignal.connect([this, meter, meter_string](const GG::Pt& pt) {
+        m_icons.back()->RightClickedSignal.connect([this, meter, meter_string](GG::Pt pt) {
             auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
             auto pc = Objects().get<PopCenter>(*(this->m_object_ids.begin()));
@@ -107,7 +107,7 @@ void MultiIconValueIndicator::Render() {
     GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
 }
 
-void MultiIconValueIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
+void MultiIconValueIndicator::MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
 void MultiIconValueIndicator::Update() {

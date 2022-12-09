@@ -294,7 +294,7 @@ bool FleetButton::InWindow(GG::Pt pt) const {
     return distx*distx + disty*disty <= RADIUS2;
 }
 
-void FleetButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void FleetButton::MouseHere(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
     if (!Disabled() && (!map_wnd || !map_wnd->InProductionViewMode())) {
         if (State() != ButtonState::BN_ROLLOVER)

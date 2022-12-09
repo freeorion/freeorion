@@ -206,8 +206,8 @@ namespace {
             }
         }
 
-        void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override { ForwardEventToParent(); }
-        void RButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override { ForwardEventToParent(); }
+        void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override { ForwardEventToParent(); }
+        void RButtonDown(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override { ForwardEventToParent(); }
 
     private:
         int                                        m_empire_id;
@@ -867,12 +867,12 @@ void PlayerListWnd::CloseClicked() {
     StopFlash();
 }
 
-void PlayerListWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void PlayerListWnd::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     CUIWnd::LClick(pt, mod_keys);
     StopFlash();
 }
 
-void PlayerListWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) {
+void PlayerListWnd::LDrag(GG::Pt pt, GG::Pt move, GG::Flags<GG::ModKey> mod_keys) {
     CUIWnd::LDrag(pt, move, mod_keys);
     StopFlash();
 }
@@ -906,7 +906,7 @@ void PlayerListWnd::PlayerSelectionChanged(const GG::ListBox::SelectionSet& rows
     SelectedPlayersChangedSignal();
 }
 
-void PlayerListWnd::PlayerDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+void PlayerListWnd::PlayerDoubleClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) {
     int player_id = PlayerInRow(it);
     if (player_id != Networking::INVALID_PLAYER_ID)
         PlayerDoubleClickedSignal(player_id);
@@ -923,7 +923,7 @@ namespace {
     }
 }
 
-void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) {
     // check that a valid player was clicked and that it wasn't this client's own player
     int clicked_empire_id = EmpireInRow(it);
     if (clicked_empire_id == ALL_EMPIRES)

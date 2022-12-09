@@ -512,7 +512,7 @@ public:
 
         The shared_ptrs are passed by value to allow the compiler to move rvalues.
     */
-    virtual void AcceptDrops(const Pt& pt, std::vector<std::shared_ptr<Wnd>> wnds, Flags<ModKey> mod_keys);
+    virtual void AcceptDrops(Pt pt, std::vector<std::shared_ptr<Wnd>> wnds, Flags<ModKey> mod_keys);
 
     /** Handles the cancellation of the dragging of one or more child windows,
         whose dragging was established by the most recent call to
@@ -568,10 +568,10 @@ public:
     void Resize(Pt sz);
 
     /** Sets the minimum allowable size of window \a pt. */
-    virtual void SetMinSize(const Pt& sz);
+    virtual void SetMinSize(Pt sz);
 
     /** Sets the maximum allowable size of window \a pt. */
-    virtual void SetMaxSize(const Pt& sz);
+    virtual void SetMaxSize(Pt sz);
 
     /** Places \a wnd in child ptr list, sets's child's \a m_parent member to
         \a this. This takes ownership of \p wnd. */
@@ -746,7 +746,7 @@ protected:
         indicating whether the Wnd in the \a first member would be accepted if
         dropped on this Wnd at \a pt. */
     virtual void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                 const Pt& pt, Flags<ModKey> mod_keys) const;
+                                 Pt, Flags<ModKey> mod_keys) const;
 
     /** The states a Wnd may be in, with respect to drag-and-drop operations.
         Wnds may wish to consider the current state when rendering to provide
@@ -784,7 +784,7 @@ protected:
         \note If this Wnd was created with the REPEAT_BUTTON_DOWN flag, this
         method may be called multiple times during a single button
         press-release cycle.  \see GG::GUI */
-    virtual void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys);
+    virtual void LButtonDown(Pt, Flags<ModKey> mod_keys);
 
     /** Respond to left button drag msg (even if this Wnd is not dragable).
         Drag messages are only sent to the window over which the button was
@@ -792,19 +792,19 @@ protected:
         any input device button is down and the cursor is moving while over
         the window.  The window will also receive drag messages when the mouse
         is being dragged outside the window's area. */
-    virtual void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys);
+    virtual void LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys);
 
     /** Respond to release of left mouse button outside this Wnd, if it was
         originally depressed over this Wnd.  A Wnd will receive an LButtonUp()
         message whenever a drag that started over its area ends, even if the
         cursor is not currently over the window when this happens. */
-    virtual void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys);
+    virtual void LButtonUp(Pt pt, Flags<ModKey> mod_keys);
 
     /** Respond to release of left mouse button over this Wnd, if it was also
         originally depressed over this Wnd.  A Wnd will receive an LButtonUp()
         message whenever a drag that started over its area ends over its area
         as well. */
-    virtual void LClick(const Pt& pt, Flags<ModKey> mod_keys);
+    virtual void LClick(Pt pt, Flags<ModKey> mod_keys);
 
     /** Respond to second left click in window within the time limit.  A
         window will receive an LDoubleClick() message instead of an
@@ -813,67 +813,67 @@ protected:
         interval.  Note that this means a double click is always preceded by a
         click.  For a double click to occur, no other window may have received
         a *Click() or *ButtonDown() message in during the interval. */
-    virtual void LDoubleClick(const Pt& pt, Flags<ModKey> mod_keys);
+    virtual void LDoubleClick(Pt, Flags<ModKey> mod_keys);
 
     /** Respond to middle button down msg.  \see LButtonDown() */
-    virtual void MButtonDown(const Pt& pt, Flags<ModKey> mod_keys);
+    virtual void MButtonDown(Pt, Flags<ModKey> mod_keys);
 
     /** Respond to middle button drag msg (even if this Wnd is not dragable).
         \see LDrag() */
-    virtual void MDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys);
+    virtual void MDrag(Pt, Pt move, Flags<ModKey> mod_keys);
 
     /** Respond to release of middle mouse button outside this Wnd, if it was
         originally depressed over this Wnd.  \see LButtonUp()  */
-    virtual void MButtonUp(const Pt& pt, Flags<ModKey> mod_keys);
+    virtual void MButtonUp(Pt, Flags<ModKey> mod_keys);
 
     /** Respond to release of middle mouse button over this Wnd, if it was
         also originally depressed over this Wnd.  \see LClick()  */
-    virtual void MClick(const Pt& pt, Flags<ModKey> mod_keys);
+    virtual void MClick(Pt, Flags<ModKey> mod_keys);
 
     /** Respond to second middle click in window within the time limit.  \see
         LDoubleClick() */
-    virtual void MDoubleClick(const Pt& pt, Flags<ModKey> mod_keys);
+    virtual void MDoubleClick(Pt, Flags<ModKey> mod_keys);
 
     /** Respond to right button down msg.  \see LButtonDown() */
-    virtual void RButtonDown(const Pt& pt, Flags<ModKey> mod_keys);
+    virtual void RButtonDown(Pt, Flags<ModKey> mod_keys);
 
     /** Respond to right button drag msg (even if this Wnd is not dragable).
         \see LDrag() */
-    virtual void RDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys);
+    virtual void RDrag(Pt, Pt move, Flags<ModKey> mod_keys);
 
     /** Respond to release of right mouse button outside this Wnd, if it was
         originally depressed over this Wnd.  \see LButtonUp()  */
-    virtual void RButtonUp(const Pt& pt, Flags<ModKey> mod_keys);
+    virtual void RButtonUp(Pt pt, Flags<ModKey> mod_keys);
 
     /** Respond to release of right mouse button over this Wnd, if it was also
         originally depressed over this Wnd.  \see LClick()  */
-    virtual void RClick(const Pt& pt, Flags<ModKey> mod_keys);
+    virtual void RClick(Pt pt, Flags<ModKey> mod_keys);
 
     /** Respond to second right click in window within the time limit.  \see
         LDoubleClick() */
-    virtual void RDoubleClick(const Pt& pt, Flags<ModKey> mod_keys);
+    virtual void RDoubleClick(Pt, Flags<ModKey> mod_keys);
 
     /** Respond to cursor entering window's coords. */
-    virtual void MouseEnter(const Pt& pt, Flags<ModKey> mod_keys);
+    virtual void MouseEnter(Pt, Flags<ModKey> mod_keys);
 
     /** Respond to cursor moving about within the Wnd, or to cursor lingering
         within the Wnd for a long period of time.  A MouseHere() message will
         not be generated the first time the cursor enters the window's area.
         In that case, a MouseEnter() message is generated. */
-    virtual void MouseHere(const Pt& pt, Flags<ModKey> mod_keys);
+    virtual void MouseHere(Pt pt, Flags<ModKey> mod_keys);
 
     /** Respond to cursor leaving window's coords. */
     virtual void MouseLeave();
 
     /** Respond to movement of the mouse wheel (move > 0 indicates the wheel
         is rolled up, < 0 indicates down) */
-    virtual void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys);
+    virtual void MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys);
 
     /** Respond to the cursor entering the Wnd's coords while dragging
         drag-and-drop Wnds.  \a drop_wnds_acceptable will have the bools
         set to true or valse to indicate whether this Wnd can accept the
         dragged wnds as a drop. */
-    virtual void DragDropEnter(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
+    virtual void DragDropEnter(Pt pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                                Flags<ModKey> mod_keys);
 
     /** Respond to cursor moving about within the Wnd, or to cursor lingering
@@ -883,12 +883,12 @@ protected:
         message is generated.  \a drop_wnds_acceptable will have the bools
         set to true or valse to indicate whether this Wnd can accept the
         dragged wnds as a drop. */
-    virtual void DragDropHere(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
+    virtual void DragDropHere(Pt pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                               Flags<ModKey> mod_keys);
 
     /** Polls this Wnd about whether the Wnds in \a drop_wnds_acceptable will
         be accpeted by this Wnd by calling DropsAcceptable(...) */
-    virtual void CheckDrops(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
+    virtual void CheckDrops(Pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                             Flags<ModKey> mod_keys);
 
     /** Respond to cursor leaving the Wnd's bounds while dragging

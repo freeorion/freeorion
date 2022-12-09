@@ -185,7 +185,7 @@ public:
     /** Returns the color used to render the text in this TabBar. */
     Clr TextColor() const;
 
-    void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
+    void MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys) override;
     void SizeMove(Pt ul, Pt lr) override;
     void Render() override;
 

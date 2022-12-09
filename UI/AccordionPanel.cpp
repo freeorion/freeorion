@@ -81,7 +81,7 @@ void AccordionPanel::Render() {
     glDisableClientState(GL_VERTEX_ARRAY);
 }
 
-void AccordionPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
+void AccordionPanel::MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
 void AccordionPanel::SizeMove(GG::Pt ul, GG::Pt lr) {

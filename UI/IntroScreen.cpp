@@ -51,9 +51,9 @@ public:
 
     void Render() override;
 
-    void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override
+    void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override
     { OnExit(); }
-    void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override
+    void MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys) override
     { m_scroll_offset -= move * 2000; }
 
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override {

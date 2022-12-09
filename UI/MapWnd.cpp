@@ -1236,7 +1236,7 @@ void MapWnd::CompleteConstruction() {
     m_industry = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(MeterType::METER_INDUSTRY),
                                                 0, 3, false, ICON_SINGLE_WIDTH, m_btn_turn->Height());
     m_industry->SetName("Industry StatisticIcon");
-    m_industry->LeftClickedSignal.connect([this](auto&) { ToggleProduction(); });
+    m_industry->LeftClickedSignal.connect([this](auto) { ToggleProduction(); });
 
     m_stockpile = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(MeterType::METER_STOCKPILE),
                                                  0, 3, false, ICON_DUAL_WIDTH, m_btn_turn->Height());
@@ -1245,12 +1245,12 @@ void MapWnd::CompleteConstruction() {
     m_research = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(MeterType::METER_RESEARCH),
                                                 0, 3, false, ICON_SINGLE_WIDTH, m_btn_turn->Height());
     m_research->SetName("Research StatisticIcon");
-    m_research->LeftClickedSignal.connect([this](auto&) { ToggleResearch(ScriptingContext{}); });
+    m_research->LeftClickedSignal.connect([this](auto) { ToggleResearch(ScriptingContext{}); });
 
     m_influence = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(MeterType::METER_INFLUENCE),
                                                  0, 3, false, ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_influence->SetName("Influence StatisticIcon");
-    m_influence->LeftClickedSignal.connect([this](auto&) { ToggleGovernment(); });
+    m_influence->LeftClickedSignal.connect([this](auto) { ToggleGovernment(); });
 
     m_fleet = GG::Wnd::Create<StatisticIcon>(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png"),
                                              0, 3, false, ICON_SINGLE_WIDTH, m_btn_turn->Height());
@@ -2700,10 +2700,10 @@ bool MapWnd::PanY(GG::Y y) {
     return true;
 }
 
-void MapWnd::LButtonDown(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys)
+void MapWnd::LButtonDown(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 { m_drag_offset = pt - ClientUpperLeft(); }
 
-void MapWnd::LDrag(const GG::Pt &pt, const GG::Pt &move, GG::Flags<GG::ModKey> mod_keys) {
+void MapWnd::LDrag(GG::Pt pt, GG::Pt move, GG::Flags<GG::ModKey> mod_keys) {
     if (GetOptionsDB().Get<bool>("ui.map.lock"))
         return;
 
@@ -2714,12 +2714,12 @@ void MapWnd::LDrag(const GG::Pt &pt, const GG::Pt &move, GG::Flags<GG::ModKey> m
     m_dragged = true;
 }
 
-void MapWnd::LButtonUp(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys) {
+void MapWnd::LButtonUp(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     m_drag_offset = GG::Pt(-GG::X1, -GG::Y1);
     m_dragged = false;
 }
 
-void MapWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void MapWnd::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     m_drag_offset = GG::Pt(-GG::X1, -GG::Y1);
     FleetUIManager& manager = FleetUIManager::GetFleetUIManager();
     const auto fleet_wnd = manager.ActiveFleetWnd();
@@ -2735,7 +2735,7 @@ void MapWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     m_dragged = false;
 }
 
-void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+void MapWnd::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     // if in moderator mode, treat as moderator action click
     if (ClientPlayerIsModerator()) {
         // only supported action on empty map location at present is creating a system
@@ -2792,7 +2792,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     }
 }
 
-void MapWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) {
+void MapWnd::MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys) {
     if (move)
         Zoom(move, pt);
 }

@@ -93,9 +93,9 @@ public:
 
 protected:
     Button* Tab() const;                  ///< returns a pointer to the Button used as this control's sliding tab
-    T       PtToPosn(const Pt& pt) const; ///< maps an arbitrary screen point to its nearest logical slider position
+    T       PtToPosn(Pt pt) const; ///< maps an arbitrary screen point to its nearest logical slider position
 
-    void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void LClick(Pt pt, Flags<ModKey> mod_keys) override;
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     bool EventFilter(Wnd* w, const WndEvent& event) override;
 
@@ -273,7 +273,7 @@ Button* Slider<T>::Tab() const
 { return m_tab.get(); }
 
 template <typename T>
-T Slider<T>::PtToPosn(const Pt& pt) const
+T Slider<T>::PtToPosn(Pt pt) const
 {
     Pt ul = UpperLeft(), lr = LowerRight();
     int line_min = 0;
@@ -293,7 +293,7 @@ T Slider<T>::PtToPosn(const Pt& pt) const
 }
 
 template <typename T>
-void Slider<T>::LClick(const Pt& pt, Flags<ModKey> mod_keys)
+void Slider<T>::LClick(Pt pt, Flags<ModKey> mod_keys)
 { SlideToImpl(m_posn < PtToPosn(pt) ? m_posn + PageSize() : m_posn - PageSize(), true); }
 
 template <typename T>
