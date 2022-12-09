@@ -291,7 +291,7 @@ public:
     mutable AfterEraseRowSignalType      AfterEraseRowSignal;      ///< the after erase signal object for this ListBox
     mutable BrowsedRowSignalType         BrowsedRowSignal;         ///< the browsed signal object for this ListBox
 
-    void StartingChildDragDrop(const Wnd* wnd, const GG::Pt& offset) override;
+    void StartingChildDragDrop(const Wnd* wnd, Pt offset) override;
     void AcceptDrops(const Pt& pt, std::vector<std::shared_ptr<Wnd>> wnds, Flags<ModKey> mod_keys) override;
     void ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination) override;
     void PreRender() override;

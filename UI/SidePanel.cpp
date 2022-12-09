@@ -524,7 +524,7 @@ public:
     PlanetPanel(GG::X w, int planet_id, StarType star_type);
     void CompleteConstruction() override;
 
-    bool InWindow(const GG::Pt& pt) const override;
+    bool InWindow(GG::Pt pt) const override;
 
     int PlanetID() const noexcept { return m_planet_id; }
 
@@ -609,7 +609,7 @@ class SidePanel::PlanetPanelContainer : public GG::Wnd {
 public:
     PlanetPanelContainer();
 
-    bool InWindow(const GG::Pt& pt) const override;
+    bool InWindow(GG::Pt pt) const override;
 
     void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
 
@@ -2056,7 +2056,7 @@ void SidePanel::PlanetPanel::SetFocus(const std::string& focus) {
         context);
 }
 
-bool SidePanel::PlanetPanel::InWindow(const GG::Pt& pt) const {
+bool SidePanel::PlanetPanel::InWindow(GG::Pt pt) const {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     if (!(ul <= pt && pt < lr))
         return false;
@@ -2566,7 +2566,7 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer() :
     RequirePreRender();
 }
 
-bool SidePanel::PlanetPanelContainer::InWindow(const GG::Pt& pt) const {
+bool SidePanel::PlanetPanelContainer::InWindow(GG::Pt pt) const {
     // ensure pt is below top of container
     if (pt.y < Top())
         return false;
@@ -3088,7 +3088,7 @@ SidePanel::~SidePanel() {
     }
 }
 
-bool SidePanel::InWindow(const GG::Pt& pt) const {
+bool SidePanel::InWindow(GG::Pt pt) const {
     return (UpperLeft() + GG::Pt(GG::X(MaxPlanetDiameter()), GG::Y0) <= pt && pt < LowerRight())
            || (m_planet_panel_container && m_planet_panel_container->InWindow(pt))
            || (m_system_resource_summary && m_system_resource_summary->Parent().get() == this && m_system_resource_summary->InWindow(pt));

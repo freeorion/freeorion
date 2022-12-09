@@ -147,7 +147,7 @@ void FieldIcon::SetSelected(bool selected) {
     Resize(Size());
 }
 
-bool FieldIcon::InWindow(const GG::Pt& pt) const {
+bool FieldIcon::InWindow(GG::Pt pt) const {
     // find if cursor is within required distance of centre of icon
     const int RADIUS = Value(Width())/2;
     const int RADIUS2 = RADIUS*RADIUS;

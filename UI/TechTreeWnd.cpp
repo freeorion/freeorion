@@ -646,7 +646,7 @@ public:
     TechPanel(const std::string& tech_name, const TechTreeWnd::LayoutPanel* panel);
     void CompleteConstruction() override;
 
-    bool InWindow(const GG::Pt& pt) const override;
+    bool InWindow(GG::Pt pt) const override;
 
     /** Update layout and format only if required.*/
     void PreRender() override;
@@ -732,7 +732,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::CompleteConstruction() {
 int TechTreeWnd::LayoutPanel::TechPanel::FontSize() const
 { return ClientUI::Pts() * 3 / 2; }
 
-bool TechTreeWnd::LayoutPanel::TechPanel::InWindow(const GG::Pt& pt) const {
+bool TechTreeWnd::LayoutPanel::TechPanel::InWindow(GG::Pt pt) const {
     const GG::Pt p = m_layout_panel->ConvertPtScreenToZoomed(pt) - UpperLeft();
     if (m_icon->InWindow(p))
         return true;

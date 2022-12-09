@@ -427,7 +427,7 @@ GG::Pt CUIWnd::ClientUpperLeft() const
 GG::Pt CUIWnd::ClientLowerRight() const
 { return m_minimized ? LowerRight() : LowerRight() - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM); }
 
-bool CUIWnd::InWindow(const GG::Pt& pt) const {
+bool CUIWnd::InWindow(GG::Pt pt) const {
     GG::Pt lr = LowerRight();
     if (m_resizable) {
         return UpperLeft() <= pt && pt < lr;

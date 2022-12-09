@@ -278,7 +278,7 @@ void FleetButton::Refresh(SizeType size_type) {
         DetachChild(m_scanline_control);
 }
 
-bool FleetButton::InWindow(const GG::Pt& pt) const {
+bool FleetButton::InWindow(GG::Pt pt) const {
     // find if cursor is within required distance of centre of icon
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     const float midX = Value(ul.x + lr.x)/2.0f;

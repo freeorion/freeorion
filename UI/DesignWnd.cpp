@@ -3528,7 +3528,7 @@ public:
     double          YPositionFraction() const;
     const ShipPart* GetPart() const;
 
-    void StartingChildDragDrop(const GG::Wnd* wnd, const GG::Pt& offset) override;
+    void StartingChildDragDrop(const GG::Wnd* wnd, GG::Pt offset) override;
     void CancellingChildDragDrop(const std::vector<const GG::Wnd*>& wnds) override;
     void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
                      GG::Flags<GG::ModKey> mod_keys) override;
@@ -3662,7 +3662,7 @@ const ShipPart* SlotControl::GetPart() const {
         return nullptr;
 }
 
-void SlotControl::StartingChildDragDrop(const GG::Wnd* wnd, const GG::Pt& offset) {
+void SlotControl::StartingChildDragDrop(const GG::Wnd* wnd, GG::Pt offset) {
     if (!m_part_control)
         return;
 

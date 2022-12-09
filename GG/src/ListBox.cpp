@@ -608,7 +608,7 @@ bool ListBox::AllowedDropType(const std::string& type) const
 unsigned int ListBox::AutoScrollInterval() const noexcept
 { return m_auto_scroll_timer.Interval(); }
 
-void ListBox::StartingChildDragDrop(const Wnd* wnd, const Pt& offset)
+void ListBox::StartingChildDragDrop(const Wnd* wnd, Pt offset)
 {
     if (m_selections.empty())
         return;

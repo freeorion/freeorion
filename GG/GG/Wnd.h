@@ -441,11 +441,11 @@ public:
 
     /** Returns true if screen-coordinate point \a pt falls within the
         window. */
-    virtual bool InWindow(const Pt& pt) const;
+    virtual bool InWindow(Pt pt) const;
 
     /** Returns true if screen-coordinate point \a pt falls within the
         window's client area. */
-    virtual bool InClient(const Pt& pt) const;
+    virtual bool InClient(Pt pt) const;
 
     /** Returns child list; the list is const, but the children may be
         manipulated. */
@@ -485,7 +485,7 @@ public:
     const std::shared_ptr<StyleFactory>& GetStyleFactory() const;
 
     /** Returns the region under point \a pt. */
-    virtual WndRegion WindowRegion(const Pt& pt) const;
+    virtual WndRegion WindowRegion(Pt pt) const;
 
     /** Adjusts \p ul and \p lr to correct for minsize and maxsize.*/
     void ClampRectWithMinAndMaxSize(Pt& ul, Pt& lr) const;
@@ -502,7 +502,7 @@ public:
         associated drag-and-drop Wnds (see GUI::RegisterDragDropWnd()).  \a
         offset indicates the position of the mouse relative to \a wnd's
         UpperLeft(). */
-    virtual void StartingChildDragDrop(const Wnd* wnd, const Pt& offset) {}
+    virtual void StartingChildDragDrop(const Wnd* wnd, Pt offset) {}
 
     /** When the user drops Wnds onto this Wnd, a DragDropHere event is
         generated, which determines which of the dropped Wnds are acceptable

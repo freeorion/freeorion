@@ -11,7 +11,7 @@ public:
     SpecialsPanel(GG::X w, int object_id);
     void CompleteConstruction() override;
 
-    bool InWindow(const GG::Pt& pt) const override;
+    bool InWindow(GG::Pt pt) const override;
     int  ObjectID() const { return m_object_id; }
 
     void Render() override;

@@ -24,7 +24,7 @@ public:
     void CompleteConstruction() override;
     ~SidePanel();
 
-    bool InWindow(const GG::Pt& pt) const override;
+    bool InWindow(GG::Pt pt) const override;
 
     GG::Pt ClientUpperLeft() const override;
 

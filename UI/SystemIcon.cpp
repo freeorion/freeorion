@@ -720,7 +720,7 @@ void SystemIcon::PositionSystemName(int pts) {
     name.second->MoveTo(GG::Pt(name_left, name_top));
 }
 
-bool SystemIcon::InWindow(const GG::Pt& pt) const {
+bool SystemIcon::InWindow(GG::Pt pt) const {
     // find if cursor is within required distance of centre of icon
     const int RADIUS = EnclosingCircleDiameter() / 2;
     const int RADIUS2 = RADIUS*RADIUS;

@@ -30,7 +30,7 @@ void SpecialsPanel::CompleteConstruction() {
     Update();
 }
 
-bool SpecialsPanel::InWindow(const GG::Pt& pt) const {
+bool SpecialsPanel::InWindow(GG::Pt pt) const {
     bool retval = false;
     for (const auto& entry : m_icons) {
         if (entry.second->InWindow(pt)) {

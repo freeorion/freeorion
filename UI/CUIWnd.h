@@ -100,7 +100,7 @@ public:
     bool    Minimized() const noexcept { return m_minimized; } //!< true if window is minimized
     GG::Pt  ClientUpperLeft() const override;
     GG::Pt  ClientLowerRight() const override;
-    bool    InWindow(const GG::Pt& pt) const override;
+    bool    InWindow(GG::Pt pt) const override;
     GG::X   LeftBorder() const;                 //!< the distance on the left side between the outer edge of the window and the inner border
     GG::Y   TopBorder() const;                  //!< the distance at the top between the outer edge of the window and the inner border
     GG::X   RightBorder() const;                //!< the distance on the right side between the outer edge of the window and the inner border
