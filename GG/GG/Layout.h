@@ -115,7 +115,7 @@ public:
     //! debugging purposes
     Clr    OutlineColor() const;
 
-    void StartingChildDragDrop(const Wnd* wnd, const Pt& offset) override;
+    void StartingChildDragDrop(const Wnd* wnd, Pt offset) override;
     void CancellingChildDragDrop(const std::vector<const Wnd*>& wnds) override;
     void ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination) override;
     void SizeMove(Pt ul, Pt lr) override;

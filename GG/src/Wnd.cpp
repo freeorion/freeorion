@@ -221,10 +221,10 @@ Pt Wnd::ScreenToWindow(Pt pt) const
 Pt Wnd::ScreenToClient(Pt pt) const
 { return pt - ClientUpperLeft(); }
 
-bool Wnd::InWindow(const Pt& pt) const
+bool Wnd::InWindow(Pt pt) const
 { return pt >= UpperLeft() && pt < LowerRight(); }
 
-bool Wnd::InClient(const Pt& pt) const
+bool Wnd::InClient(Pt pt) const
 { return pt >= ClientUpperLeft() && pt < ClientLowerRight(); }
 
 std::shared_ptr<Wnd> Wnd::Parent() const
@@ -264,7 +264,7 @@ Layout* Wnd::ContainingLayout() const
 const std::shared_ptr<StyleFactory>& Wnd::GetStyleFactory() const
 { return m_style_factory ? m_style_factory : GUI::GetGUI()->GetStyleFactory(); }
 
-WndRegion Wnd::WindowRegion(const Pt& pt) const
+WndRegion Wnd::WindowRegion(Pt pt) const
 {
     static constexpr int LEFT = 0;
     static constexpr int MIDDLE = 1;

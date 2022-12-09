@@ -19,7 +19,7 @@ public:
 
     /** Checks to see if point lies inside in-system fleet buttons before
         checking parent InWindow method. */
-    bool InWindow(const GG::Pt& pt) const override;
+    bool InWindow(GG::Pt pt) const override;
     int  FieldID() const;                        //!< returns ID of system this icon represents
 
     /** Returns the field texture. */

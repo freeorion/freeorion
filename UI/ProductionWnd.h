@@ -21,8 +21,8 @@ public:
     int SelectedPlanetID() const;
     int ShownEmpireID() const { return m_empire_shown_id; }
 
-    bool InWindow(const GG::Pt& pt) const override;
-    bool InClient(const GG::Pt& pt) const override;
+    bool InWindow(GG::Pt pt) const override;
+    bool InClient(GG::Pt pt) const override;
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     void Render() override;

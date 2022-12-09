@@ -55,7 +55,7 @@ public:
 
     GG::Pt MinUsableSize() const override;
 
-    bool InWindow(const GG::Pt& pt) const override;
+    bool InWindow(GG::Pt pt) const override;
 
 protected:
     void MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
@@ -70,7 +70,7 @@ public:
     SettableInWindowCUIButton(GG::SubTexture unpressed, GG::SubTexture pressed, GG::SubTexture rollover,
                               std::function<bool (const SettableInWindowCUIButton*, const GG::Pt&)> in_window_function);
 
-    bool InWindow(const GG::Pt& pt) const override;
+    bool InWindow(GG::Pt pt) const override;
 
 private:
     std::function<bool (const SettableInWindowCUIButton*, const GG::Pt&)> m_in_window_func;
@@ -82,7 +82,7 @@ public:
     CUIArrowButton(ShapeOrientation orientation, bool fill_background,
                    GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE);
 
-    bool InWindow(const GG::Pt& pt) const override;
+    bool InWindow(GG::Pt pt) const override;
 
     void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
 
@@ -427,7 +427,7 @@ class CUIToolBar final : public GG::Control {
 public:
     CUIToolBar();
 
-    bool InWindow(const GG::Pt& pt) const override;
+    bool InWindow(GG::Pt pt) const override;
 
     void Render() override;
 private:

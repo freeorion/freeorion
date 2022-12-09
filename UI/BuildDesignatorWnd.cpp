@@ -1228,10 +1228,10 @@ const std::set<BuildType>& BuildDesignatorWnd::GetBuildTypesShown() const
 const std::pair<bool, bool>& BuildDesignatorWnd::GetAvailabilitiesShown() const
 { return m_build_selector->GetAvailabilitiesShown(); }
 
-bool BuildDesignatorWnd::InWindow(const GG::Pt& pt) const
+bool BuildDesignatorWnd::InWindow(GG::Pt pt) const
 { return (m_enc_detail_panel->InWindow(pt) && m_enc_detail_panel->Visible()) || m_build_selector->InWindow(pt) || m_side_panel->InWindow(pt); }
 
-bool BuildDesignatorWnd::InClient(const GG::Pt& pt) const
+bool BuildDesignatorWnd::InClient(GG::Pt pt) const
 { return m_enc_detail_panel->InClient(pt) || m_build_selector->InClient(pt) || m_side_panel->InClient(pt); }
 
 int BuildDesignatorWnd::SelectedPlanetID() const

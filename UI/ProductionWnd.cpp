@@ -905,10 +905,10 @@ void ProductionWnd::CompleteConstruction() {
 int ProductionWnd::SelectedPlanetID() const
 { return m_build_designator_wnd->SelectedPlanetID(); }
 
-bool ProductionWnd::InWindow(const GG::Pt& pt) const
+bool ProductionWnd::InWindow(GG::Pt pt) const
 { return m_production_info_panel->InWindow(pt) || m_queue_wnd->InWindow(pt) || m_build_designator_wnd->InWindow(pt); }
 
-bool ProductionWnd::InClient(const GG::Pt& pt) const
+bool ProductionWnd::InClient(GG::Pt pt) const
 { return m_production_info_panel->InClient(pt) || m_queue_wnd->InClient(pt) || m_build_designator_wnd->InClient(pt); }
 
 void ProductionWnd::SizeMove(GG::Pt ul, GG::Pt lr) {

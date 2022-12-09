@@ -18,8 +18,8 @@ public:
     BuildDesignatorWnd(GG::X w, GG::Y h);
     void CompleteConstruction() override;
 
-    bool InWindow(const GG::Pt& pt) const override;
-    bool InClient(const GG::Pt& pt) const override;
+    bool InWindow(GG::Pt pt) const override;
+    bool InClient(GG::Pt pt) const override;
 
     /** returns set of BulldType shown in this selector */
     const std::set<BuildType>&      GetBuildTypesShown() const;

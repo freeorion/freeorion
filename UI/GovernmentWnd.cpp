@@ -914,7 +914,7 @@ public:
     [[nodiscard]] auto          CategoryIndex() const noexcept { return m_category_index; }
     [[nodiscard]] auto          SlotIndex() const noexcept     { return m_slot_index; }
 
-    void StartingChildDragDrop(const GG::Wnd* wnd, const GG::Pt& offset) override;
+    void StartingChildDragDrop(const GG::Wnd* wnd, GG::Pt offset) override;
     void CancellingChildDragDrop(const std::vector<const GG::Wnd*>& wnds) override;
     void AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
                      GG::Flags<GG::ModKey> mod_keys) override;
@@ -1039,7 +1039,7 @@ const Policy* PolicySlotControl::GetPolicy() const {
         return nullptr;
 }
 
-void PolicySlotControl::StartingChildDragDrop(const GG::Wnd* wnd, const GG::Pt& offset) {
+void PolicySlotControl::StartingChildDragDrop(const GG::Wnd* wnd, GG::Pt offset) {
     if (!m_policy_control)
         return;
 

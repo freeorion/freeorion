@@ -143,7 +143,7 @@ std::vector<std::vector<Rect>> Layout::RelativeCellRects() const
 bool Layout::RenderOutline() const
 { return m_render_outline; }
 
-void Layout::StartingChildDragDrop(const Wnd* wnd, const Pt& offset)
+void Layout::StartingChildDragDrop(const Wnd* wnd, Pt offset)
 {
     if (auto&& parent = Parent())
         parent->StartingChildDragDrop(wnd, offset);

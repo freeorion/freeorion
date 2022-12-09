@@ -104,7 +104,7 @@ CUIButton::CUIButton(GG::SubTexture unpressed, GG::SubTexture pressed,
     LeftClickedSignal.connect(-1, &PlayButtonClickSound);
 }
 
-bool CUIButton::InWindow(const GG::Pt& pt) const {
+bool CUIButton::InWindow(GG::Pt pt) const {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
     return InAngledCornerRect(pt, ul, lr, CUIBUTTON_ANGLE_OFFSET);
@@ -199,7 +199,7 @@ SettableInWindowCUIButton::SettableInWindowCUIButton(GG::SubTexture unpressed,
     CUIButton(std::move(unpressed), std::move(pressed), std::move(rollover))
 { m_in_window_func = in_window_function; }
 
-bool SettableInWindowCUIButton::InWindow(const GG::Pt& pt) const {
+bool SettableInWindowCUIButton::InWindow(GG::Pt pt) const {
     if (m_in_window_func)
         return m_in_window_func(this, pt);
     else
@@ -220,7 +220,7 @@ CUIArrowButton::CUIArrowButton(ShapeOrientation orientation, bool fill_backgroun
         &PlayButtonClickSound);
 }
 
-bool CUIArrowButton::InWindow(const GG::Pt& pt) const {
+bool CUIArrowButton::InWindow(GG::Pt pt) const {
     if (m_fill_background_with_wnd_color) {
         return Button::InWindow(pt);
     } else {
@@ -1492,7 +1492,7 @@ CUIToolBar::CUIToolBar() :
     GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::ONTOP | GG::INTERACTIVE)
 {}
 
-bool CUIToolBar::InWindow(const GG::Pt& pt) const {
+bool CUIToolBar::InWindow(GG::Pt pt) const {
     for (auto& wnd : Children())
         if (wnd->InWindow(pt))
             return true;
