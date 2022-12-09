@@ -109,7 +109,7 @@ protected:
 
     /** Returns row and character index of \a pt, or (0, 0) if \a pt falls
         outside the text.  \a pt is in client-space coordinates. */
-    std::pair<std::size_t, CPSize> CharAt(const Pt& pt) const;
+    std::pair<std::size_t, CPSize> CharAt(Pt pt) const;
 
     /** Returns row and character index of char at \a idx, or (0, 0) if \a idx
         falls outside the text, or if \a idx refers to a non-visible

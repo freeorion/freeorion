@@ -379,7 +379,7 @@ Font::Substring& Font::Substring::operator+=(const IterPair& rhs)
 ///////////////////////////////////////
 // Free Functions
 ///////////////////////////////////////
-std::ostream& GG::operator<<(std::ostream& os, const Font::Substring& substr)
+std::ostream& GG::operator<<(std::ostream& os, Font::Substring substr)
 {
     std::ostream_iterator<char> out_it(os);
     std::copy(substr.begin(), substr.end(), out_it);

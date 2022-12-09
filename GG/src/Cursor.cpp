@@ -17,20 +17,13 @@ namespace {
     constexpr bool OUTLINE_CURSOR = false;
 }
 
-TextureCursor::TextureCursor(std::shared_ptr<Texture> texture,
-                             const Pt& hotspot) :
+TextureCursor::TextureCursor(std::shared_ptr<Texture> texture, Pt hotspot) :
     m_texture(std::move(texture)),
     m_hotspot(hotspot)
 {
     m_hotspot.x = std::max(X0, std::min(m_hotspot.x, m_texture->DefaultWidth() - 1));
     m_hotspot.y = std::max(Y0, std::min(m_hotspot.y, m_texture->DefaultHeight() - 1));
 }
-
-const std::shared_ptr<Texture>& TextureCursor::GetTexture() const
-{ return m_texture; }
-
-const Pt& TextureCursor::Hotspot() const
-{ return m_hotspot; }
 
 void TextureCursor::Render(const Pt& pt)
 {

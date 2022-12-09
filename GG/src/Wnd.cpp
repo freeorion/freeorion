@@ -215,10 +215,10 @@ X Wnd::ClientWidth() const
 Y Wnd::ClientHeight() const
 { return ClientLowerRight().y - ClientUpperLeft().y; }
 
-Pt Wnd::ScreenToWindow(const Pt& pt) const
+Pt Wnd::ScreenToWindow(Pt pt) const
 { return pt - UpperLeft(); }
 
-Pt Wnd::ScreenToClient(const Pt& pt) const
+Pt Wnd::ScreenToClient(Pt pt) const
 { return pt - ClientUpperLeft(); }
 
 bool Wnd::InWindow(const Pt& pt) const
@@ -356,10 +356,10 @@ void Wnd::Show()
         child->Show();
 }
 
-void Wnd::MoveTo(const Pt& pt)
+void Wnd::MoveTo(Pt pt)
 { SizeMove(pt, pt + Size()); }
 
-void Wnd::OffsetMove(const Pt& pt)
+void Wnd::OffsetMove(Pt pt)
 { SizeMove(m_upperleft + pt, m_lowerright + pt); }
 
 void Wnd::SizeMove(const Pt& ul_, const Pt& lr_)
@@ -383,7 +383,7 @@ void Wnd::SizeMove(const Pt& ul_, const Pt& lr_)
     }
 }
 
-void Wnd::Resize(const Pt& sz)
+void Wnd::Resize(Pt sz)
 { SizeMove(m_upperleft, m_upperleft + sz); }
 
 void Wnd::SetMinSize(const Pt& sz)

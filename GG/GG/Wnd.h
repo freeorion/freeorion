@@ -434,10 +434,10 @@ public:
     Y ClientHeight() const; ///< Returns the height of the client area.
 
     /** Returns \a pt translated from screen- to window-coordinates. */
-    Pt ScreenToWindow(const Pt& pt) const;
+    Pt ScreenToWindow(Pt pt) const;
 
     /** Returns \a pt translated from screen- to client-coordinates. */
-    Pt ScreenToClient(const Pt& pt) const;
+    Pt ScreenToClient(Pt pt) const;
 
     /** Returns true if screen-coordinate point \a pt falls within the
         window. */
@@ -557,15 +557,15 @@ public:
         its parent, for clipping purposes.  \see ChildClippingMode. */
     void NonClientChild(bool b) noexcept { m_non_client_child = b; }
 
-    void MoveTo(const Pt& pt);     ///< Moves upper-left corner of window to \a pt.
-    void OffsetMove(const Pt& pt); ///< Moves window by \a pt pixels.
+    void MoveTo(Pt pt);     ///< Moves upper-left corner of window to \a pt.
+    void OffsetMove(Pt pt); ///< Moves window by \a pt pixels.
 
     /** Resizes and/or moves window to new upper-left and lower right
         boundaries. */
     virtual void SizeMove(const Pt& ul, const Pt& lr);
 
     /** Resizes window without moving upper-left corner. */
-    void Resize(const Pt& sz);
+    void Resize(Pt sz);
 
     /** Sets the minimum allowable size of window \a pt. */
     virtual void SetMinSize(const Pt& sz);

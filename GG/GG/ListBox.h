@@ -157,7 +157,7 @@ public:
         /** Set normalized.  Used by ListBox to track normalization.*/
         void         SetNormalized(bool normalized);
 
-        boost::signals2::signal<void(const Pt&, GG::Flags<GG::ModKey>)> RightClickedSignal;
+        boost::signals2::signal<void(Pt, GG::Flags<GG::ModKey>)> RightClickedSignal;
 
     protected:
         /** Add elements to m_col_widths, m_col_stretches and m_col_alignments until they reach size nn. */
@@ -185,17 +185,17 @@ public:
     typedef std::unordered_set<iterator, IteratorHash> SelectionSet;
 
     /** emitted when the list box is cleared */
-    typedef boost::signals2::signal<void ()>                                                ClearedRowsSignalType;
+    typedef boost::signals2::signal<void ()>                                   ClearedRowsSignalType;
     /** emitted when one or more rows are selected or deselected */
-    typedef boost::signals2::signal<void (const SelectionSet&)>                             SelRowsChangedSignalType;
+    typedef boost::signals2::signal<void (const SelectionSet&)>                SelRowsChangedSignalType;
     /** the signature of row-change-notification signals */
-    typedef boost::signals2::signal<void (iterator)>                                        RowSignalType;
+    typedef boost::signals2::signal<void (iterator)>                           RowSignalType;
     /** the signature of const row-change-notification signals */
-    typedef boost::signals2::signal<void (const_iterator)>                                  ConstRowSignalType;
+    typedef boost::signals2::signal<void (const_iterator)>                     ConstRowSignalType;
     /** the signature of row-click-notification signals */
-    typedef boost::signals2::signal<void(iterator, const Pt&,const GG::Flags<GG::ModKey>&)> RowClickSignalType;
+    typedef boost::signals2::signal<void(iterator, Pt, GG::Flags<GG::ModKey>)> RowClickSignalType;
     /** the signature of row-move-notification signals */
-    typedef boost::signals2::signal<void (iterator, iterator)>                              MovedRowSignalType;
+    typedef boost::signals2::signal<void (iterator, iterator)>                 MovedRowSignalType;
 
     typedef RowSignalType      BeforeInsertRowSignalType;   ///< emitted before a row is inserted into the list box
     typedef RowSignalType      AfterInsertRowSignalType;    ///< emitted after a row is inserted into the list box

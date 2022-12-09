@@ -17,7 +17,7 @@ using namespace GG;
 ////////////////////////////////////////////////
 // GG::Pt
 ////////////////////////////////////////////////
-std::ostream& GG::operator<<(std::ostream& os, const Pt& pt)
+std::ostream& GG::operator<<(std::ostream& os, Pt pt)
 {
     os << "(" << pt.x << ", " << pt.y << ")";
     return os;
@@ -47,7 +47,7 @@ GG::Pt::operator std::string() const {
 ////////////////////////////////////////////////
 // GG::Rect
 ////////////////////////////////////////////////
-std::ostream& GG::operator<<(std::ostream& os, const Rect& rect)
+std::ostream& GG::operator<<(std::ostream& os, Rect rect)
 {
     os << "[" << rect.ul << " - " << rect.lr << "]";
     return os;
