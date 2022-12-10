@@ -32,12 +32,6 @@ void FieldIcon::CompleteConstruction() {
     Refresh();
 }
 
-int FieldIcon::FieldID() const
-{ return m_field_id; }
-
-const std::shared_ptr<GG::Texture>& FieldIcon::FieldTexture() const
-{ return m_texture; }
-
 void FieldIcon::LButtonDown(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
@@ -80,9 +74,6 @@ void FieldIcon::Refresh() {
     if (auto field = Objects().get<Field>(m_field_id))
         m_texture = ClientUI::FieldTexture(field->FieldTypeName());
 }
-
-void FieldIcon::Render()
-{}
 
 void FieldIcon::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!Disabled())
@@ -147,7 +138,7 @@ void FieldIcon::SetSelected(bool selected) {
     Resize(Size());
 }
 
-bool FieldIcon::InWindow(GG::Pt pt) const {
+bool FieldIcon::InWindow(GG::Pt pt) const noexcept {
     // find if cursor is within required distance of centre of icon
     const int RADIUS = Value(Width())/2;
     const int RADIUS2 = RADIUS*RADIUS;

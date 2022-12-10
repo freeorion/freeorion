@@ -1017,30 +1017,6 @@ Font::Font(std::string font_filename, unsigned int pts,
     Init(wrapper.m_face);
 }
 
-const std::string& Font::FontName() const
-{ return m_font_filename; }
-
-unsigned int Font::PointSize() const
-{ return m_pt_sz; }
-
-const std::vector<UnicodeCharset>& Font::UnicodeCharsets() const
-{ return m_charsets; }
-
-Y Font::Ascent() const
-{ return m_ascent; }
-
-Y Font::Descent() const
-{ return m_descent; }
-
-Y Font::Height() const
-{ return m_height; }
-
-Y Font::Lineskip() const
-{ return m_lineskip; }
-
-X Font::SpaceWidth() const
-{ return m_space_width; }
-
 X Font::RenderText(Pt pt_, const std::string& text) const
 {
     Pt pt = pt_;

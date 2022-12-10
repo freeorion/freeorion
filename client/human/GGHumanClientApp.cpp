@@ -1625,11 +1625,8 @@ void GGHumanClientApp::DisconnectedFromServer() {
     m_fsm->process_event(Disconnection());
 }
 
-GGHumanClientApp* GGHumanClientApp::GetApp()
+GGHumanClientApp* GGHumanClientApp::GetApp() noexcept
 { return static_cast<GGHumanClientApp*>(GG::GUI::GetGUI()); }
-
-void GGHumanClientApp::Initialize()
-{}
 
 void GGHumanClientApp::OpenURL(const std::string& url) {
     // make sure it's a legit url

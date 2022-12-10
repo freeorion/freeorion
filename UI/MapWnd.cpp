@@ -318,13 +318,13 @@ namespace {
         };
     }
 
-    GG::X AppWidth() {
-        if (GGHumanClientApp* app = GGHumanClientApp::GetApp())
+    GG::X AppWidth() noexcept {
+        if (const auto* app = GGHumanClientApp::GetApp())
             return app->AppWidth();
         return GG::X0;
     }
 
-    GG::Y AppHeight() {
+    GG::Y AppHeight() noexcept {
         if (GGHumanClientApp* app = GGHumanClientApp::GetApp())
             return app->AppHeight();
         return GG::Y0;
@@ -1607,7 +1607,7 @@ void MapWnd::InitializeWindows() {
     m_government_wnd->   InitSizeMove(gov_ul,           gov_ul + gov_wh);
 }
 
-GG::Pt MapWnd::ClientUpperLeft() const
+GG::Pt MapWnd::ClientUpperLeft() const noexcept
 { return UpperLeft() + GG::Pt(AppWidth(), AppHeight()); }
 
 double MapWnd::ZoomFactor() const

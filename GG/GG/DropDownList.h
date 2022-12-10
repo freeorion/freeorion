@@ -82,28 +82,28 @@ public:
     [[nodiscard]] const Row&      GetRow(std::size_t n) const;    ///< returns a const reference to the row at index \a n; not range-checked.  \note This function is O(n).
     [[nodiscard]] bool            Selected(iterator it) const;    ///< returns true if row \a it is selected
     [[nodiscard]] bool            Selected(std::size_t n) const;  ///< returns true if row at position \a n is selected
-    [[nodiscard]] Clr             InteriorColor() const;          ///< returns the color painted into the client area of the control
+    [[nodiscard]] Clr             InteriorColor() const noexcept; ///< returns the color painted into the client area of the control
 
-    [[nodiscard]] Y               DropHeight() const;             ///< returns the height of the drop-down list
-    [[nodiscard]] bool            Dropped() const;                ///< Return true if the drop down list is open.
+    [[nodiscard]] Y               DropHeight() const noexcept;    ///< returns the height of the drop-down list
+    [[nodiscard]] bool            Dropped() const noexcept;       ///< Return true if the drop down list is open.
 
     /** Returns the style flags of the list \see GG::ListBoxStyle */
-    [[nodiscard]] Flags<ListBoxStyle> Style() const;
+    [[nodiscard]] Flags<ListBoxStyle> Style() const noexcept;
 
-    [[nodiscard]] std::size_t     NumRows() const;          ///< returns the total number of items in the list
-    [[nodiscard]] std::size_t     NumCols() const;          ///< returns the total number of columns in each list item
+    [[nodiscard]] std::size_t     NumRows() const noexcept;       ///< returns the total number of items in the list
+    [[nodiscard]] std::size_t     NumCols() const noexcept;       ///< returns the total number of columns in each list item
 
     /** Returns the index of the column used to sort items, when sorting is
         enabled.  \note The sort column is not range checked when it is set by
         the user; it may be >= NumCols(). */
-    [[nodiscard]] std::size_t     SortCol() const;
+    [[nodiscard]] std::size_t     SortCol() const noexcept;
 
     [[nodiscard]] X               ColWidth(std::size_t n) const;     ///< returns the width of column \a n in pixels; not range-checked
     [[nodiscard]] Alignment       ColAlignment(std::size_t n) const; ///< returns the alignment of column \a n; must be LIST_LEFT, LIST_CENTER, or LIST_RIGHT; not range-checked
     [[nodiscard]] Alignment       RowAlignment(iterator it) const;   ///< returns the alignment of row \a n; must be LIST_TOP, LIST_VCENTER, or LIST_BOTTOM; not range-checked
 
-    [[nodiscard]] Pt ClientUpperLeft() const override;
-    [[nodiscard]] Pt ClientLowerRight() const override;
+    [[nodiscard]] Pt ClientUpperLeft() const noexcept override { return UpperLeft() + Pt(X(ListBox::BORDER_THICK), Y(ListBox::BORDER_THICK)); }
+    [[nodiscard]] Pt ClientLowerRight() const noexcept override { return LowerRight() - Pt(X(ListBox::BORDER_THICK), Y(ListBox::BORDER_THICK)); }
 
     /** Return the width of the displayed row.  Override this function if the displayed row is a
         different width than the client width.*/
@@ -206,15 +206,15 @@ protected:
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     void MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys) override;
 
-    ListBox*        LB();                ///< returns the ListBox used to render the selected row and the popup list
+    ListBox* LB() noexcept; ///< ListBox used to render the selected row and the popup list
 
     virtual void InitBuffer();
     virtual void RenderDisplayedRow();
 
-    GL2DVertexBuffer    m_buffer;
+    GL2DVertexBuffer m_buffer;
 
 private:
-    const ListBox*  LB() const;
+    const ListBox* LB() const noexcept;
 
     const std::shared_ptr<ModalListPicker> m_modal_picker;
 };

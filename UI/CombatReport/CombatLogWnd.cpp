@@ -636,10 +636,10 @@ void CombatLogWnd::SetFont(std::shared_ptr<GG::Font> font)
 void CombatLogWnd::SetLog(int log_id)
 { m_impl->SetLog(log_id); }
 
-GG::Pt CombatLogWnd::ClientUpperLeft() const
+GG::Pt CombatLogWnd::ClientUpperLeft() const noexcept
 { return UpperLeft() + GG::Pt(GG::X(MARGIN), GG::Y(MARGIN)); }
 
-GG::Pt CombatLogWnd::ClientLowerRight() const
+GG::Pt CombatLogWnd::ClientLowerRight() const noexcept 
 { return LowerRight() - GG::Pt(GG::X(MARGIN), GG::Y(MARGIN)); }
 
 GG::Pt CombatLogWnd::MinUsableSize() const

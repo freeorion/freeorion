@@ -114,7 +114,7 @@ public:
     [[nodiscard]] static std::pair<int, int> GetWindowWidthHeight();
     [[nodiscard]] static std::pair<int, int> GetWindowLeftTop();
 
-    [[nodiscard]] static GGHumanClientApp*   GetApp(); ///< returns GGHumanClientApp pointer to the single instance of the app
+    [[nodiscard]] static GGHumanClientApp* GetApp() noexcept; ///< returns GGHumanClientApp pointer to the single instance of the app
 
     /** Adds window dimension options to OptionsDB after the start of main, but before GGHumanClientApp constructor.
         OSX will not tolerate static initialization of SDL, to check screen size. */
@@ -130,7 +130,7 @@ public:
     void PostDeferredEvent(boost::intrusive_ptr<const boost::statechart::event_base> event);
 
 protected:
-    void Initialize() override;
+    void Initialize() noexcept override {};
 
 private:
     /** Starts a server process on localhost.

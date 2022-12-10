@@ -201,15 +201,6 @@ GG::Pt LinkText::TextUpperLeft() const
 GG::Pt LinkText::TextLowerRight() const
 { return GG::TextControl::TextLowerRight(); }
 
-const std::vector<GG::Font::LineData>& LinkText::GetLineData() const
-{ return GG::TextControl::GetLineData(); }
-
-const std::shared_ptr<GG::Font>& LinkText::GetFont() const
-{ return GG::TextControl::GetFont(); }
-
-const std::string& LinkText::RawText() const
-{ return m_raw_text; }
-
 void LinkText::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 { TextLinker::LClick_(pt, mod_keys); }
 

@@ -19,17 +19,17 @@ public:
 
     /** Checks to see if point lies inside in-system fleet buttons before
         checking parent InWindow method. */
-    bool InWindow(GG::Pt pt) const override;
-    int  FieldID() const;                        //!< returns ID of system this icon represents
+    bool InWindow(GG::Pt pt) const noexcept override;
+    int  FieldID() const noexcept { return m_field_id; }
 
     /** Returns the field texture. */
-    const std::shared_ptr<GG::Texture>& FieldTexture() const;
+    const auto& FieldTexture() const noexcept { return m_texture; }
 
     void LButtonDown(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void LDrag(GG::Pt pt, GG::Pt move, GG::Flags<GG::ModKey> mod_keys) override;
     void LButtonUp(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
-    void Render() override;
+    void Render() override {}
     void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void LDoubleClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;

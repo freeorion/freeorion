@@ -53,20 +53,20 @@ public:
     ~MultiEdit() = default;
     void CompleteConstruction() override;
 
-    Pt MinUsableSize() const override;
+    Pt MinUsableSize() const noexcept override;
 
-    Pt ClientLowerRight() const override;
+    Pt ClientLowerRight() const noexcept override { return Edit::ClientLowerRight() - Pt(RightMargin(), BottomMargin()); }
 
     /** Returns the size to show the whole text without scrollbars. */
-    Pt FullSize() const;
+    Pt FullSize() const noexcept { return Pt(Width(), m_contents_sz.y + Y(PIXEL_MARGIN) * 2); }
 
     /** Returns the style flags for this MultiEdit. */
-    Flags<MultiEditStyle> Style() const;
+    auto Style() const noexcept { return m_style; }
 
     /** Returns the maximum number of lines of text that the control
         keeps. This number includes the lines that are visible in the control.
         A value of ALL_LINES indicates that there is no limit. */
-    std::size_t MaxLinesOfHistory() const;
+    auto MaxLinesOfHistory() const noexcept { return m_max_lines_history; }
 
     /** Returns the positions of the scrollbars. */
     Pt ScrollPosition() const;
@@ -97,15 +97,15 @@ public:
 
 protected:
     /** Returns true if >= 1 characters are selected. */
-    bool MultiSelected() const override;
+    bool MultiSelected() const noexcept override { return m_cursor_begin != m_cursor_end; }
 
     /** Returns the width of the scrollbar on the right side of the control (0
         if none). */
-    X RightMargin() const;
+    X RightMargin() const noexcept;
 
     /** Returns the width of the scrollbar at the bottom of the control (0 if
         none). */
-    Y BottomMargin() const;
+    Y BottomMargin() const noexcept;
 
     /** Returns row and character index of \a pt, or (0, 0) if \a pt falls
         outside the text.  \a pt is in client-space coordinates. */

@@ -40,7 +40,7 @@ public:
 
     /** Need to redefine this so that icons and name can be put at the top of
       * the Wnd, rather than being restricted to the client area of a CUIWnd */
-    GG::Pt ClientUpperLeft() const override;
+    GG::Pt ClientUpperLeft() const noexcept override { return GG::Wnd::UpperLeft(); }
 
     void AddItem(std::string_view type, std::string name); // adds a new item to m_items
     void PopItem();

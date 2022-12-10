@@ -201,20 +201,8 @@ SDLGUI::SDLGUI(int w, int h, bool calc_FPS, std::string app_name, int x, int y,
 SDLGUI::~SDLGUI()
 { SDLQuit(); }
 
-X SDLGUI::AppWidth() const
-{ return m_app_width; }
-
-Y SDLGUI::AppHeight() const
-{ return m_app_height; }
-
 unsigned int SDLGUI::Ticks() const
 { return SDL_GetTicks(); }
-
-bool SDLGUI::Fullscreen() const
-{ return m_fullscreen; }
-
-bool SDLGUI::FakeModeChange() const
-{ return m_fake_mode_change; }
 
 std::string SDLGUI::ClipboardText() const {
     if (SDL_HasClipboardText()) {

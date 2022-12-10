@@ -36,7 +36,7 @@ public:
     void EndRun() override;
     void Render() override {}
 
-    [[nodiscard]] bool Dropped() const;
+    [[nodiscard]] bool Dropped() const noexcept { return m_dropped; }
 
     /** Adjust the m_lb_wnd size so that there are no more than m_num_shown_rows shown. It will
         not adjust a visible window, or if there is no relative to window. */
@@ -238,9 +238,6 @@ void ModalListPicker::WindowResizedSlot(X x, Y y)
     if (m_dropped)
         EndRun();
 }
-
-bool ModalListPicker::Dropped() const
-{ return m_dropped; }
 
 DropDownList::iterator ModalListPicker::CurrentItem()
 { return (LB()->Selections().empty()) ?  LB()->end() : (*LB()->Selections().begin()); }
@@ -580,25 +577,25 @@ bool DropDownList::Selected(iterator it) const
 bool DropDownList::Selected(std::size_t n) const
 { return n < LB()->NumRows() ? LB()->Selected(std::next(m_modal_picker->LB()->begin(), n)) : false; }
 
-Clr DropDownList::InteriorColor() const
+Clr DropDownList::InteriorColor() const noexcept
 { return LB()->InteriorColor(); }
 
-bool DropDownList::Dropped() const
+bool DropDownList::Dropped() const noexcept
 { return m_modal_picker->Dropped(); }
 
-Y DropDownList::DropHeight() const
+Y DropDownList::DropHeight() const noexcept
 { return LB()->Height(); }
 
-Flags<ListBoxStyle> DropDownList::Style() const
+Flags<ListBoxStyle> DropDownList::Style() const noexcept
 { return LB()->Style(); }
 
-std::size_t DropDownList::NumRows() const
+std::size_t DropDownList::NumRows() const noexcept
 { return LB()->NumRows(); }
 
-std::size_t DropDownList::NumCols() const
+std::size_t DropDownList::NumCols() const noexcept
 { return LB()->NumCols(); }
 
-std::size_t DropDownList::SortCol() const
+std::size_t DropDownList::SortCol() const noexcept
 { return LB()->SortCol(); }
 
 X DropDownList::ColWidth(std::size_t n) const
@@ -609,12 +606,6 @@ Alignment DropDownList::ColAlignment(std::size_t n) const
 
 Alignment DropDownList::RowAlignment(iterator it) const
 { return LB()->RowAlignment(it); }
-
-Pt DropDownList::ClientUpperLeft() const
-{ return UpperLeft() + Pt(X(ListBox::BORDER_THICK), Y(ListBox::BORDER_THICK)); }
-
-Pt DropDownList::ClientLowerRight() const
-{ return LowerRight() - Pt(X(ListBox::BORDER_THICK), Y(ListBox::BORDER_THICK)); }
 
 void DropDownList::InitBuffer()
 {
@@ -921,8 +912,8 @@ void DropDownList::MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys)
 void DropDownList::SetOnlyMouseScrollWhenDropped(bool enable)
 { m_modal_picker->SetOnlyMouseScrollWhenDropped(enable); }
 
-ListBox* DropDownList::LB()
+ListBox* DropDownList::LB() noexcept
 { return m_modal_picker->LB(); }
 
-const ListBox* DropDownList::LB() const
+const ListBox* DropDownList::LB() const noexcept
 { return m_modal_picker->LB(); }

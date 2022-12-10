@@ -67,13 +67,15 @@ protected:
 
 class SettableInWindowCUIButton final : public CUIButton {
 public:
+    using TestFuncT = std::function<bool (const SettableInWindowCUIButton*, GG::Pt)>;
+
     SettableInWindowCUIButton(GG::SubTexture unpressed, GG::SubTexture pressed, GG::SubTexture rollover,
-                              std::function<bool (const SettableInWindowCUIButton*, GG::Pt)> in_window_function);
+                              TestFuncT in_window_function);
 
     bool InWindow(GG::Pt pt) const override;
 
 private:
-    std::function<bool (const SettableInWindowCUIButton*, GG::Pt)> m_in_window_func;
+    TestFuncT m_in_window_func;
 };
 
 /** a FreeOrion triangular arrow button */
@@ -239,7 +241,7 @@ public:
     /** Return the width of the dropped row which excludes the DropArrow. */
     GG::X DroppedRowWidth() const override;
 
-    GG::Pt ClientLowerRight() const override;
+    GG::Pt ClientLowerRight() const noexcept override;
 
     void Render() override;
     void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
@@ -286,7 +288,7 @@ class CensoredCUIEdit final : public CUIEdit {
 public:
     explicit CensoredCUIEdit(std::string str, char display_placeholder = '*');
 
-    const std::string& RawText() const;
+    const auto& RawText() const noexcept { return m_raw_text; }
 
     void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void SetText(std::string str) override;
@@ -318,11 +320,12 @@ public:
     CUILinkTextMultiEdit(std::string str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP);
     void CompleteConstruction() override;
 
-    const std::vector<GG::Font::LineData>& GetLineData() const override;
-    const std::shared_ptr<GG::Font>& GetFont() const override;
+    const std::vector<GG::Font::LineData>& GetLineData() const noexcept override { return CUIMultiEdit::GetLineData(); }
+    const std::shared_ptr<GG::Font>& GetFont() const noexcept override { return CUIMultiEdit::GetFont(); }
+
     GG::Pt TextUpperLeft() const override;
     GG::Pt TextLowerRight() const override;
-    const std::string& RawText() const override;
+    const std::string& RawText() const noexcept override { return m_raw_text; }
 
     void Render() override;
     void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;

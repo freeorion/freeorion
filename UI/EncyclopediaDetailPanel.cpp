@@ -1083,9 +1083,6 @@ void EncyclopediaDetailPanel::KeyPress(GG::Key key, std::uint32_t key_code_point
     }
 }
 
-GG::Pt EncyclopediaDetailPanel::ClientUpperLeft() const
-{ return GG::Wnd::UpperLeft(); }
-
 void EncyclopediaDetailPanel::Render() {
     CUIWnd::Render();
 

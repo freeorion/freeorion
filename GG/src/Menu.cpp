@@ -41,33 +41,13 @@ PopupMenu::PopupMenu(X x, Y y, std::shared_ptr<Font> font, Clr text_color,
     m_sel_text_color(text_color),
     m_caret(1, INVALID_CARET),
     m_origin(x, y)
-{
-    m_open_levels.resize(1);
-}
+{ m_open_levels.resize(1); }
 
 void PopupMenu::AddMenuItem(MenuItem&& menu_item)
 { m_menu_data.next_level.push_back(std::move(menu_item)); }
 
 void PopupMenu::AddMenuItem(std::string str, bool disable, bool check, std::function<void()> selected_on_close_callback)
 { m_menu_data.next_level.emplace_back(std::move(str), disable, check, selected_on_close_callback); }
-
-Pt PopupMenu::ClientUpperLeft() const
-{ return m_origin; }
-
-Clr PopupMenu::BorderColor() const
-{ return m_border_color; }
-
-Clr PopupMenu::InteriorColor() const
-{ return m_int_color; }
-
-Clr PopupMenu::TextColor() const
-{ return m_text_color; }
-
-Clr PopupMenu::HiliteColor() const
-{ return m_hilite_color; }
-
-Clr PopupMenu::SelectedTextColor() const
-{ return m_sel_text_color; }
 
 void PopupMenu::Render()
 {

@@ -165,7 +165,7 @@ bool Wnd::PreRenderRequired() const
     if (m_needs_prerender)
         return true;
 
-    auto&& layout = GetLayout();
+    auto layout = GetLayout();
 
     return (layout && layout->m_needs_prerender);
 }
@@ -178,15 +178,15 @@ void Wnd::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
         it->second = false;
 }
 
-Pt Wnd::UpperLeft() const
+Pt Wnd::UpperLeft() const noexcept
 {
     Pt retval = m_upperleft;
-    if (auto&& parent = Parent())
+    if (auto parent = Parent())
         retval += parent->ClientUpperLeft();
     return retval;
 }
 
-Pt Wnd::LowerRight() const
+Pt Wnd::LowerRight() const noexcept
 {
     Pt retval = m_lowerright;
     if (auto&& parent = Parent())
@@ -196,41 +196,14 @@ Pt Wnd::LowerRight() const
 
 Pt Wnd::MinUsableSize() const
 {
-    auto&& layout = GetLayout();
+    auto layout = GetLayout();
     return layout ? layout->MinUsableSize() : Size();
 }
 
-Pt Wnd::ClientUpperLeft() const
-{ return UpperLeft(); }
-
-Pt Wnd::ClientLowerRight() const
-{ return LowerRight(); }
-
-Pt Wnd::ClientSize() const
-{ return ClientLowerRight() - ClientUpperLeft(); }
-
-X Wnd::ClientWidth() const
-{ return ClientLowerRight().x - ClientUpperLeft().x; }
-
-Y Wnd::ClientHeight() const
-{ return ClientLowerRight().y - ClientUpperLeft().y; }
-
-Pt Wnd::ScreenToWindow(Pt pt) const
-{ return pt - UpperLeft(); }
-
-Pt Wnd::ScreenToClient(Pt pt) const
-{ return pt - ClientUpperLeft(); }
-
-bool Wnd::InWindow(Pt pt) const
-{ return pt >= UpperLeft() && pt < LowerRight(); }
-
-bool Wnd::InClient(Pt pt) const
-{ return pt >= ClientUpperLeft() && pt < ClientLowerRight(); }
-
-std::shared_ptr<Wnd> Wnd::Parent() const
+std::shared_ptr<Wnd> Wnd::Parent() const noexcept
 { return LockAndResetIfExpired(m_parent); }
 
-bool Wnd::IsAncestorOf(const std::shared_ptr<Wnd>& wnd) const
+bool Wnd::IsAncestorOf(const std::shared_ptr<Wnd>& wnd) const noexcept
 {
     // Is this Wnd one of wnd's (direct or indirect) parents?
     if (!wnd)
@@ -244,7 +217,7 @@ bool Wnd::IsAncestorOf(const std::shared_ptr<Wnd>& wnd) const
     return false;
 }
 
-std::shared_ptr<Wnd> Wnd::RootParent() const
+std::shared_ptr<Wnd> Wnd::RootParent() const noexcept
 {
     auto parent{Parent()};
     auto gparent{parent ? parent->Parent() : nullptr};
@@ -255,10 +228,10 @@ std::shared_ptr<Wnd> Wnd::RootParent() const
     return parent;
 }
 
-std::shared_ptr<Layout> Wnd::GetLayout() const
+std::shared_ptr<Layout> Wnd::GetLayout() const noexcept
 { return LockAndResetIfExpired(m_layout); }
 
-Layout* Wnd::ContainingLayout() const
+Layout* Wnd::ContainingLayout() const noexcept
 { return LockAndResetIfExpired(m_containing_layout).get(); }
 
 const std::shared_ptr<StyleFactory>& Wnd::GetStyleFactory() const
@@ -782,11 +755,6 @@ void Wnd::PreRender()
     if (layout->m_needs_prerender)
         layout->PreRender();
 }
-
-void Wnd::RequirePreRender()
-{ m_needs_prerender = true; }
-
-void Wnd::Render() {}
 
 bool Wnd::Run()
 {

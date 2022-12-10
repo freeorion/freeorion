@@ -54,31 +54,31 @@ public:
     typedef boost::signals2::signal<void (const std::string&)> FocusUpdateSignalType;
 
     /** Ctor. Height is determined from the font and point size used. */
-    Edit(std::string str, const std::shared_ptr<Font>& font, Clr color,
+    Edit(std::string str, std::shared_ptr<Font> font, Clr color,
          Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO);
 
-    Pt MinUsableSize() const override;
-    Pt ClientUpperLeft() const override;
-    Pt ClientLowerRight() const override;
+    Pt MinUsableSize() const noexcept override;
+    Pt ClientUpperLeft() const noexcept override { return UpperLeft() + Pt(X(PIXEL_MARGIN), Y(PIXEL_MARGIN)); }
+    Pt ClientLowerRight() const noexcept override { return LowerRight() - Pt(X(PIXEL_MARGIN), Y(PIXEL_MARGIN)); }
 
     /** Returns the minimum usable size if the text were reflowed into a \a width box.*/
-    Pt MinUsableSize(X width) const override;
+    Pt MinUsableSize(X width) const override { return MinUsableSize(); }
 
     /** Returns the current position of the cursor (first selected character
         to one past the last selected one). */
-    const std::pair<CPSize, CPSize>& CursorPosn() const;
+    auto CursorPosn() const noexcept { return m_cursor_pos; }
 
     /** Returns the text that is selected in this control. */
-    std::string_view SelectedText() const;
+    std::string_view SelectedText() const { return Text(m_cursor_pos.first, m_cursor_pos.second); }
 
     /** Returns the color used to render the iterior of the control. */
-    Clr InteriorColor() const;
+    Clr InteriorColor() const noexcept { return m_int_color; }
 
     /** Returns the color used to render hiliting around selected text. */
-    Clr HiliteColor() const;
+    Clr HiliteColor() const noexcept { return m_hilite_color; }
 
     /** Returns the color used to render selected text. */
-    Clr SelectedTextColor() const;
+    Clr SelectedTextColor() const noexcept { return m_sel_text_color; }
 
     /** The edited signal object for this Edit. */
     mutable EditedSignalType EditedSignal;
@@ -125,14 +125,14 @@ public:
 
 protected:
     /** Returns true if >= 1 characters selected. */
-    virtual bool MultiSelected() const;
+    virtual bool MultiSelected() const noexcept { return m_cursor_pos.first != m_cursor_pos.second; }
 
     /** Returns the index of the first character visible in the Edit. */
-    CPSize FirstCharShown() const;
+    CPSize FirstCharShown() const noexcept { return m_first_char_shown; }
 
     /** Returns true iff the contents have been changed since the last time
         the focus was gained. */
-    bool RecentlyEdited() const;
+    bool RecentlyEdited() const noexcept { return m_recently_edited; }
 
     /** Returns the index of the code point \a x pixels from left edge of
         visible portion of string. */
@@ -146,20 +146,19 @@ protected:
         index \a idx. */
     X ScreenPosOfChar(CPSize idx) const;
 
-    /** Returns the last visible char (\a not one past the last visible
-        char). */
+    /** Returns the last visible char (\a not one past the last visible char). */
     CPSize LastVisibleChar() const;
 
     /** Returns the value of GUI::Ticks() at the last left button press. */
-    unsigned int LastButtonDownTime() const;
+    auto LastButtonDownTime() const noexcept { return m_last_button_down_time; }
 
     /** Returns true iff the button is still down after being pressed twice
         within GUI::DoubleClickInterval() ticks. */
-    bool InDoubleButtonDownMode() const;
+    bool InDoubleButtonDownMode() const noexcept { return m_in_double_click_mode; }
 
     /** Returns the cursor position at the time of the most recent
         double-button-down. */
-    std::pair<CPSize, CPSize> DoubleButtonDownCursorPos() const;
+    auto DoubleButtonDownCursorPos() const noexcept { return m_double_click_cursor_pos; }
 
     /** Return the index of the last LineData() or 0 if LineData is empty.
      Allows index based Edit to handle empty line data.*/

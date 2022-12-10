@@ -468,33 +468,32 @@ public:
     ~Font() = default;
 
     /** Returns the name of the file from which this font was created. */
-    const std::string& FontName() const;
+    const auto& FontName() const noexcept { return m_font_filename; }
 
     /** Returns the point size in which the characters in the font object are
         rendered. */
-    unsigned int PointSize() const;
+    unsigned int PointSize() const noexcept { return m_pt_sz; }
 
-    const std::shared_ptr<Texture> GetTexture() const
-    { return m_texture; }
+    const auto& GetTexture() const noexcept { return m_texture; }
 
     /** Returns the range(s) of code points rendered in the font */
-    const std::vector<UnicodeCharset>& UnicodeCharsets() const;
+    const auto& UnicodeCharsets() const noexcept { return m_charsets; }
 
     /** Returns the maximum amount above the baseline the text can go. */
-    Y    Ascent() const;
+    Y    Ascent() const noexcept { return m_ascent; }
 
     /** Returns the maximum amount below the baseline the text can go. */
-    Y    Descent() const;
+    Y    Descent() const noexcept { return m_descent; }
 
     /** Returns (Ascent() - Descent()). */
-    Y    Height() const;
+    Y    Height() const noexcept { return m_height; }
 
     /** Returns the distance that should be placed between lines.  This is
         usually not equal to Height(). */
-    Y    Lineskip() const;
+    Y    Lineskip() const noexcept { return m_lineskip; }
 
     /** Returns the width of the glyph for the space character. */
-    X    SpaceWidth() const;
+    X    SpaceWidth() const noexcept { return m_space_width; }
 
     /** Unformatted text rendering; repeatedly calls RenderGlyph, then returns
         advance of entire string. */

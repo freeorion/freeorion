@@ -82,7 +82,7 @@ TextControl& TextControl::operator=(const TextControl& that)
     return *this;
 }
 
-Pt TextControl::MinUsableSize() const
+Pt TextControl::MinUsableSize() const noexcept
 { return m_text_lr - m_text_ul; }
 
 Pt TextControl::MinUsableSize(X width) const
@@ -229,9 +229,6 @@ void TextControl::RecomputeLineData() {
     m_cached_minusable_size_width = X0;
 }
 
-const std::shared_ptr<Font>& TextControl::GetFont() const
-{ return m_font; }
-
 void TextControl::SetFont(std::shared_ptr<Font> font)
 {
     m_font = font;
@@ -377,9 +374,6 @@ void TextControl::Erase(std::size_t line1, CPSize pos1, std::size_t line2, CPSiz
     m_text.erase(it, end_it);
     SetText(std::move(m_text));
 }
-
-const std::vector<Font::LineData>& TextControl::GetLineData() const
-{ return m_line_data; }
 
 void TextControl::ValidateFormat()
 {
