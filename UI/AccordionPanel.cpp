@@ -45,10 +45,10 @@ void AccordionPanel::InitBuffer() {
     m_border_buffer.createServerBuffer();
 }
 
-GG::Pt AccordionPanel::ClientUpperLeft() const
+GG::Pt AccordionPanel::ClientUpperLeft() const noexcept
 { return UpperLeft() + GG::Pt((m_is_left ? GG::X(EXPAND_BUTTON_SIZE + m_border_margin) : GG::X0), GG::Y0); }
 
-GG::Pt AccordionPanel::ClientLowerRight() const
+GG::Pt AccordionPanel::ClientLowerRight() const noexcept
 { return LowerRight() - GG::Pt((m_is_left ? GG::X0 : GG::X(EXPAND_BUTTON_SIZE + m_border_margin)), GG::Y0); }
 
 void AccordionPanel::SetInteriorColor(GG::Clr c)

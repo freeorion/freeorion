@@ -33,18 +33,18 @@ namespace {
         const CPSize m_value;
     };
 
-    Y HeightFromFont(const std::shared_ptr<Font>& font, unsigned int pixel_margin)
-    {  return font->Height() + 2 * static_cast<int>(pixel_margin); }
+    Y HeightFromFont(const std::shared_ptr<Font>& font, unsigned int pixel_margin) noexcept
+    { return font->Height() + 2 * static_cast<int>(pixel_margin); }
 }
 
 ////////////////////////////////////////////////
 // GG::Edit
 ////////////////////////////////////////////////
 
-Edit::Edit(std::string str, const std::shared_ptr<Font>& font,
+Edit::Edit(std::string str, std::shared_ptr<Font> font,
            Clr color, Clr text_color, Clr interior) :
-    TextControl(X0, Y0, X1, HeightFromFont(font, PIXEL_MARGIN), std::move(str), font, text_color,
-                FORMAT_LEFT | FORMAT_IGNORETAGS, INTERACTIVE | REPEAT_KEY_PRESS),
+    TextControl(X0, Y0, X1, HeightFromFont(font, PIXEL_MARGIN), std::move(str), std::move(font),
+                text_color, FORMAT_LEFT | FORMAT_IGNORETAGS, INTERACTIVE | REPEAT_KEY_PRESS),
     m_int_color(interior)
 {
     SetColor(color);
@@ -55,32 +55,8 @@ Edit::Edit(std::string str, const std::shared_ptr<Font>& font,
     }
 }
 
-Pt Edit::MinUsableSize() const
+Pt Edit::MinUsableSize() const noexcept
 { return Pt(X(4 * PIXEL_MARGIN), HeightFromFont(GetFont(), PIXEL_MARGIN)); }
-
-Pt Edit::MinUsableSize(X width) const
-{ return MinUsableSize(); }
-
-Pt Edit::ClientUpperLeft() const
-{ return UpperLeft() + Pt(X(PIXEL_MARGIN), Y(PIXEL_MARGIN)); }
-
-Pt Edit::ClientLowerRight() const
-{ return LowerRight() - Pt(X(PIXEL_MARGIN), Y(PIXEL_MARGIN)); }
-
-const std::pair<CPSize, CPSize>& Edit::CursorPosn() const
-{ return m_cursor_pos; }
-
-std::string_view Edit::SelectedText() const
-{ return Text(m_cursor_pos.first, m_cursor_pos.second); }
-
-Clr Edit::InteriorColor() const
-{ return m_int_color; }
-
-Clr Edit::HiliteColor() const
-{ return m_hilite_color; }
-
-Clr Edit::SelectedTextColor() const
-{ return m_sel_text_color; }
 
 void Edit::Render()
 {
@@ -241,15 +217,6 @@ void Edit::AcceptPastedText(const std::string& text)
     }
 }
 
-bool Edit::MultiSelected() const
-{ return m_cursor_pos.first != m_cursor_pos.second; }
-
-CPSize Edit::FirstCharShown() const
-{ return m_first_char_shown; }
-
-bool Edit::RecentlyEdited() const
-{ return m_recently_edited; }
-
 CPSize Edit::CharIndexOf(X x) const
 {
     CPSize retval;
@@ -327,15 +294,6 @@ CPSize Edit::LastVisibleChar() const
     }
     return retval;
 }
-
-unsigned int Edit::LastButtonDownTime() const
-{ return m_last_button_down_time; }
-
-bool Edit::InDoubleButtonDownMode() const
-{ return m_in_double_click_mode; }
-
-std::pair<CPSize, CPSize> Edit::DoubleButtonDownCursorPos() const
-{ return m_double_click_cursor_pos; }
 
 std::vector<GG::Font::LineData>::size_type Edit::NumLines() const {
     return std::max(std::vector<GG::Font::LineData>::size_type(0),

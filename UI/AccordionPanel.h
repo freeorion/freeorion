@@ -15,8 +15,8 @@ public:
     ~AccordionPanel();
 
     void CompleteConstruction() override;
-    GG::Pt ClientUpperLeft() const override;
-    GG::Pt ClientLowerRight() const override;
+    GG::Pt ClientUpperLeft() const noexcept override;
+    GG::Pt ClientLowerRight() const noexcept override;
 
     void Render() override;
     void MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys) override;

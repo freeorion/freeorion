@@ -77,13 +77,13 @@ public:
               Clr text_color = CLR_WHITE, Clr border_color = CLR_BLACK,
               Clr interior_color = CLR_SHADOW, Clr hilite_color = CLR_GRAY);
 
-    Pt ClientUpperLeft() const override;
+    Pt ClientUpperLeft() const noexcept override { return m_origin; }
 
-    Clr BorderColor() const;       ///< returns the color used to render the border of the control
-    Clr InteriorColor() const;     ///< returns the color used to render the interior of the control
-    Clr TextColor() const;         ///< returns the color used to render menu item text
-    Clr HiliteColor() const;       ///< returns the color used to indicate a hilited menu item
-    Clr SelectedTextColor() const; ///< returns the color used to render a hilited menu item's text
+    Clr BorderColor() const noexcept { return m_border_color; }         ///< returns the color used to render the border of the control
+    Clr InteriorColor() const noexcept { return m_int_color; }          ///< returns the color used to render the interior of the control
+    Clr TextColor() const noexcept { return m_text_color; }             ///< returns the color used to render menu item text
+    Clr HiliteColor() const noexcept { return m_hilite_color; }         ///< returns the color used to indicate a hilited menu item
+    Clr SelectedTextColor() const noexcept { return m_sel_text_color; } ///< returns the color used to render a hilited menu item's text
 
     /** Add \p menu_item to the end of the popup menu and store its callback.*/
     void AddMenuItem(MenuItem&& menu_item);

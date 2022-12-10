@@ -195,9 +195,9 @@ void CUIButton::RenderUnpressed() {
 SettableInWindowCUIButton::SettableInWindowCUIButton(GG::SubTexture unpressed,
                                                      GG::SubTexture pressed,
                                                      GG::SubTexture rollover,
-                                                     std::function<bool (const SettableInWindowCUIButton*, GG::Pt)> in_window_function) :
+                                                     SettableInWindowCUIButton::TestFuncT in_window_function) :
     CUIButton(std::move(unpressed), std::move(pressed), std::move(rollover))
-{ m_in_window_func = in_window_function; }
+{ m_in_window_func = std::move(in_window_function); }
 
 bool SettableInWindowCUIButton::InWindow(GG::Pt pt) const {
     if (m_in_window_func)
@@ -224,7 +224,8 @@ bool CUIArrowButton::InWindow(GG::Pt pt) const {
     if (m_fill_background_with_wnd_color) {
         return Button::InWindow(pt);
     } else {
-        GG::Pt ul = UpperLeft() + GG::Pt(GG::X(3), GG::Y(1)), lr = LowerRight() - GG::Pt(GG::X(2), GG::Y(1));
+        const GG::Pt ul = UpperLeft() + GG::Pt(GG::X(3), GG::Y(1));
+        const GG::Pt lr = LowerRight() - GG::Pt(GG::X(2), GG::Y(1));
         return InIsoscelesTriangle(pt, ul, lr, m_orientation);
     }
 }
@@ -848,7 +849,7 @@ void CUIDropDownList::Render() {
     RenderDisplayedRow();
 }
 
-GG::Pt CUIDropDownList::ClientLowerRight() const
+GG::Pt CUIDropDownList::ClientLowerRight() const noexcept
 {
     GG::Pt sz = Size();
     int margin = 3;
@@ -995,9 +996,6 @@ CensoredCUIEdit::CensoredCUIEdit(std::string str, char display_placeholder) :
     if (m_placeholder == 0)
         m_placeholder = ' ';
 }
-
-const std::string& CensoredCUIEdit::RawText() const
-{ return m_raw_text; }
 
 void CensoredCUIEdit::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     auto hotkey_paste_action      = [this]() { GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText()); };
@@ -1169,20 +1167,11 @@ void CUILinkTextMultiEdit::CompleteConstruction() {
     MarkLinks();
 }
 
-const std::vector<GG::Font::LineData>& CUILinkTextMultiEdit::GetLineData() const
-{ return CUIMultiEdit::GetLineData(); }
-
-const std::shared_ptr<GG::Font>& CUILinkTextMultiEdit::GetFont() const
-{ return CUIMultiEdit::GetFont(); }
-
 GG::Pt CUILinkTextMultiEdit::TextUpperLeft() const
 { return CUIMultiEdit::TextUpperLeft() - ScrollPosition() + GG::Pt(GG::X(5), GG::Y(5)); }
 
 GG::Pt CUILinkTextMultiEdit::TextLowerRight() const
 { return CUIMultiEdit::TextLowerRight() - ScrollPosition() + GG::Pt(GG::X(5), GG::Y(5)); }
-
-const std::string& CUILinkTextMultiEdit::RawText() const
-{ return m_raw_text; }
 
 void CUILinkTextMultiEdit::Render() {
     CUIMultiEdit::Render();

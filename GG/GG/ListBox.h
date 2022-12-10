@@ -214,9 +214,9 @@ public:
     ~ListBox() = default;
     void CompleteConstruction() override;
 
-    Pt MinUsableSize() const override;
-    Pt ClientUpperLeft() const override;
-    Pt ClientLowerRight() const override;
+    Pt MinUsableSize() const noexcept override;
+    Pt ClientUpperLeft() const noexcept override;
+    Pt ClientLowerRight() const noexcept override;
 
     bool           Empty() const noexcept { return m_rows.empty(); }
     const_iterator begin() const noexcept { return m_rows.begin(); }

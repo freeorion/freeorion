@@ -616,9 +616,9 @@ namespace {
         ShipDataPanel(GG::X w, GG::Y h, int ship_id);
 
         /** Excludes border from the client area. */
-        GG::Pt ClientUpperLeft() const override;
+        GG::Pt ClientUpperLeft() const noexcept override;
         /** Excludes border from the client area. */
-        GG::Pt ClientLowerRight() const override;
+        GG::Pt ClientLowerRight() const noexcept override;
 
         /** Renders black panel background, border with color depending on the
          *current state and a background for the ship's name text. */
@@ -664,10 +664,10 @@ namespace {
         RequireRefresh();
     }
 
-    GG::Pt ShipDataPanel::ClientUpperLeft() const
+    GG::Pt ShipDataPanel::ClientUpperLeft() const noexcept
     { return UpperLeft() + GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER)); }
 
-    GG::Pt ShipDataPanel::ClientLowerRight() const
+    GG::Pt ShipDataPanel::ClientLowerRight() const noexcept
     { return LowerRight() - GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER));  }
 
     void ShipDataPanel::RequireRefresh() {
@@ -1045,10 +1045,10 @@ public:
     ~FleetDataPanel() = default;
 
     /** Upper left plus border insets. */
-    GG::Pt ClientUpperLeft() const override;
+    GG::Pt ClientUpperLeft() const noexcept override;
 
     /** Lower right minus border insets. */
-    GG::Pt ClientLowerRight() const override;
+    GG::Pt ClientLowerRight() const noexcept  override;
 
     void PreRender() override;
     void Render() override;
@@ -1063,13 +1063,13 @@ public:
     void AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
-    bool                Selected() const;
-    FleetAggression     GetFleetAggression() const;
+    bool                Selected() const noexcept { return m_selected; }
+    FleetAggression     GetFleetAggression() const noexcept { return m_new_fleet_aggression; }
     void                Select(bool b);
     void                SetSystemID(int id);
 
     /** Indicate fleet data has changed and needs refresh. */
-    void RequireRefresh();
+    void RequireRefresh() noexcept;
 
     mutable boost::signals2::signal<void (const std::vector<int>&)> NewFleetFromShipsSignal;
 
@@ -1128,19 +1128,13 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_d
     SetChildClippingMode(ChildClippingMode::ClipToClient);
 }
 
-GG::Pt FleetDataPanel::ClientUpperLeft() const
+GG::Pt FleetDataPanel::ClientUpperLeft() const noexcept
 { return UpperLeft() + GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER)); }
 
-GG::Pt FleetDataPanel::ClientLowerRight() const
+GG::Pt FleetDataPanel::ClientLowerRight() const noexcept
 { return LowerRight() - GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER));  }
 
-bool FleetDataPanel::Selected() const
-{ return m_selected; }
-
-FleetAggression FleetDataPanel::GetFleetAggression() const
-{ return m_new_fleet_aggression; }
-
-void FleetDataPanel::RequireRefresh() {
+void FleetDataPanel::RequireRefresh() noexcept {
     m_needs_refresh = true;
     RequirePreRender();
 }

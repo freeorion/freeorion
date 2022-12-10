@@ -1577,7 +1577,7 @@ bool GUI::FocusWndDeselect()
     return WndDeselect(focus_wnd.get());
 }
 
-GUI* GUI::GetGUI()
+GUI* GUI::GetGUI() noexcept
 { return s_gui; }
 
 void GUI::PreRenderWindow(const std::shared_ptr<Wnd>& wnd, bool even_if_not_visible)

@@ -26,7 +26,7 @@ public:
 
     bool InWindow(GG::Pt pt) const override;
 
-    GG::Pt ClientUpperLeft() const override;
+    GG::Pt ClientUpperLeft() const noexcept override;
 
     /** Returns the id of the system shown in the SidePanels, or
       * INVALID_OBJECT_ID if no system is shown */

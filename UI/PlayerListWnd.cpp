@@ -270,11 +270,11 @@ namespace {
         }
 
         /** Excludes border from the client area. */
-        GG::Pt ClientUpperLeft() const override
+        GG::Pt ClientUpperLeft() const noexcept override
         { return UpperLeft() + GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER)); }
 
         /** Excludes border from the client area. */
-        GG::Pt ClientLowerRight() const override
+        GG::Pt ClientLowerRight() const noexcept override
         { return LowerRight() - GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER)); }
 
         /** Renders panel background, border with color depending on the current state. */

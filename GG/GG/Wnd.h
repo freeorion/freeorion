@@ -300,7 +300,7 @@ public:
         derived from Wnd.  It requires that the T constructor followed by
         T->CompleteConstruction() produce a correct T. */
     template <typename T, typename... Args>
-    static std::shared_ptr<T> Create(Args&&... args)
+    [[nodiscard]] static std::shared_ptr<T> Create(Args&&... args)
     {
         // This intentionally doesn't use std::make_shared in order to make lazy cleanup of
         // weak_ptrs a low priority.
@@ -332,80 +332,80 @@ public:
     /** Returns true iff a click over this window does not pass through.  Note
         that this also determines whether a mouse-over will detect this window
         or the ones under it. */
-    bool Interactive() const noexcept { return m_flags & INTERACTIVE; }
+    [[nodiscard]] bool Interactive() const noexcept { return m_flags & INTERACTIVE; }
 
     /** Returns true iff holding a keyboard key while this Wnd has the input
         focus generates multiple key-press messages. */
-    bool RepeatKeyPress() const noexcept { return m_flags & REPEAT_KEY_PRESS; }
+    [[nodiscard]] bool RepeatKeyPress() const noexcept { return m_flags & REPEAT_KEY_PRESS; }
 
     /** Returns true iff holding a mouse button down over this Wnd generates
         multiple button-down messages. */
-    bool RepeatButtonDown() const noexcept { return m_flags & REPEAT_BUTTON_DOWN; }
+    [[nodiscard]] bool RepeatButtonDown() const noexcept { return m_flags & REPEAT_BUTTON_DOWN; }
 
     /** Returns true iff this Wnd be dragged by the user. */
-    bool Dragable() const noexcept { return m_flags & DRAGABLE; }
+    [[nodiscard]] bool Dragable() const noexcept { return m_flags & DRAGABLE; }
 
     /** Returns true iff this Wnd can be resized by the user. */
-    bool Resizable() const noexcept { return m_flags & RESIZABLE; }
+    [[nodiscard]] bool Resizable() const noexcept { return m_flags & RESIZABLE; }
 
     /** Returns true iff this Wnd is an on-top Wnd. */
-    bool OnTop() const { return !Parent() && m_flags & ONTOP; }
+    [[nodiscard]] bool OnTop() const noexcept { return !Parent() && m_flags & ONTOP; }
 
     /** Returns true iff this Wnd is a modal Wnd. */
-    bool Modal() const { return !Parent() && m_flags & MODAL; }
+    [[nodiscard]] bool Modal() const noexcept { return !Parent() && m_flags & MODAL; }
 
     /** Returns the mode to use for child clipping. */
-    ChildClippingMode GetChildClippingMode() const noexcept { return m_child_clipping_mode; }
+    [[nodiscard]] ChildClippingMode GetChildClippingMode() const noexcept { return m_child_clipping_mode; }
 
     /** Returns true iff this Wnd should be considered a non-client-area child
         of its parent, for clipping purposes.  \see ChildClippingMode. */
-    bool NonClientChild() const noexcept { return m_non_client_child; }
+    [[nodiscard]] bool NonClientChild() const noexcept { return m_non_client_child; }
 
     /** Returns true iff this Wnd will be rendered if it is registered. */
-    bool Visible() const noexcept { return m_visible; }
+    [[nodiscard]] bool Visible() const noexcept { return m_visible; }
 
     /** Returns true if this Wnd will be pre-rendered. */
-    bool PreRenderRequired() const;
+    [[nodiscard]] bool PreRenderRequired() const;
 
     /** Returns the name of this Wnd.  This name is not used by GG in any way;
         it only exists for user convenience. */
-    const auto& Name() const noexcept { return m_name; }
+    [[nodiscard]] const auto& Name() const noexcept { return m_name; }
 
     /** Returns the string key that defines the type of data that this Wnd
         represents in drag-and-drop drags.  Returns an empty string when this
         Wnd cannot be drag-and-dropped. */
-    const auto& DragDropDataType() const noexcept { return m_drag_drop_data_type; }
+    [[nodiscard]] const auto& DragDropDataType() const noexcept { return m_drag_drop_data_type; }
 
     /** Returns the upper-left corner of window in \a screen \a coordinates
         (taking into account parent's screen position, if any) */
-    Pt UpperLeft() const;
-    X Left() const { return UpperLeft().x; }
-    Y Top() const { return UpperLeft().y; }
+    [[nodiscard]] Pt UpperLeft() const noexcept;
+    [[nodiscard]] X Left() const noexcept { return UpperLeft().x; }
+    [[nodiscard]] Y Top() const noexcept { return UpperLeft().y; }
 
     /** Returns (one pixel past) the lower-right corner of window in \a screen
         \a coordinates (taking into account parent's screen position, if
         any) */
-    Pt LowerRight() const;
-    X Right() const { return LowerRight().x; }
-    Y Bottom() const { return LowerRight().y; }
+    [[nodiscard]] Pt LowerRight() const noexcept;
+    [[nodiscard]] X Right() const noexcept { return LowerRight().x; }
+    [[nodiscard]] Y Bottom() const noexcept { return LowerRight().y; }
 
     /** Returns the upper-left corner of window, relative to its parent's
         client area, or in screen coordinates if no parent exists. */
-    Pt RelativeUpperLeft() const noexcept { return m_upperleft; }
+    [[nodiscard]] Pt RelativeUpperLeft() const noexcept { return m_upperleft; }
 
     /** Returns (one pixel past) the lower-right corner of window, relative to
         its parent's client area, or in screen coordinates if no parent
         exists. */
-    Pt RelativeLowerRight() const noexcept { return m_lowerright; }
+    [[nodiscard]] Pt RelativeLowerRight() const noexcept { return m_lowerright; }
 
-    X Width() const noexcept { return m_lowerright.x - m_upperleft.x; }
-    Y Height() const noexcept { return m_lowerright.y - m_upperleft.y; }
+    [[nodiscard]] X Width() const noexcept { return m_lowerright.x - m_upperleft.x; }
+    [[nodiscard]] Y Height() const noexcept { return m_lowerright.y - m_upperleft.y; }
 
     /** Returns a \a Pt packed with width in \a x and height in \a y. */
-    Pt Size() const noexcept { return Pt(m_lowerright.x - m_upperleft.x, m_lowerright.y - m_upperleft.y); }
+    [[nodiscard]] Pt Size() const noexcept { return Pt(m_lowerright.x - m_upperleft.x, m_lowerright.y - m_upperleft.y); }
 
-    Pt MinSize() const noexcept { return m_min_size; } ///< Returns the minimum allowable size of window.
-    Pt MaxSize() const noexcept { return m_max_size; } ///< Returns the maximum allowable size of window.
+    [[nodiscard]] Pt MinSize() const noexcept { return m_min_size; } ///< Returns the minimum allowable size of window.
+    [[nodiscard]] Pt MaxSize() const noexcept { return m_max_size; } ///< Returns the maximum allowable size of window.
 
     /** Returns the size of the minimum bounding box that can enclose the Wnd
         and still show all of its elements, plus enough room for interaction
@@ -413,58 +413,58 @@ public:
         MinUsableSize() is just the area of its text, and a Scroll's
         MinUsableSize() is the combined sizes of its up-button, down-button,
         and tab (plus a bit of room in which to drag the tab). */
-    virtual Pt MinUsableSize() const;
+    [[nodiscard]] virtual Pt MinUsableSize() const;
 
     /** Returns upper-left corner of window's client area in screen
         coordinates (or of the entire area, if no client area is specified).
         Virtual because different windows have different shapes (and so ways
         of calculating client area). */
-    virtual Pt ClientUpperLeft() const;
+    [[nodiscard]] virtual Pt ClientUpperLeft() const noexcept { return UpperLeft(); }
 
     /** Returns (one pixel past) lower-right corner of window's client area in
         screen coordinates (or of the entire area, if no client area is
         specified).  Virtual because different windows have different shapes
         (and so ways of calculating client area). */
-    virtual Pt ClientLowerRight() const;
+    [[nodiscard]] virtual Pt ClientLowerRight() const { return LowerRight(); }
 
     /** Returns the size of the client area \see Size(). */
-    Pt ClientSize() const;
+    [[nodiscard]] Pt ClientSize() const noexcept { return ClientLowerRight() - ClientUpperLeft(); }
 
-    X ClientWidth() const;  ///< Returns the width of the client area.
-    Y ClientHeight() const; ///< Returns the height of the client area.
+    [[nodiscard]] X ClientWidth() const noexcept { return ClientLowerRight().x - ClientUpperLeft().x; }
+    [[nodiscard]] Y ClientHeight() const noexcept { return ClientLowerRight().y - ClientUpperLeft().y; }
 
     /** Returns \a pt translated from screen- to window-coordinates. */
-    Pt ScreenToWindow(Pt pt) const;
+    [[nodiscard]] Pt ScreenToWindow(Pt pt) const noexcept { return pt - UpperLeft(); }
 
     /** Returns \a pt translated from screen- to client-coordinates. */
-    Pt ScreenToClient(Pt pt) const;
+    [[nodiscard]] Pt ScreenToClient(Pt pt) const noexcept { return pt - ClientUpperLeft(); }
 
     /** Returns true if screen-coordinate point \a pt falls within the
         window. */
-    virtual bool InWindow(Pt pt) const;
+    [[nodiscard]] virtual bool InWindow(Pt pt) const { return pt >= UpperLeft() && pt < LowerRight(); }
 
     /** Returns true if screen-coordinate point \a pt falls within the
         window's client area. */
-    virtual bool InClient(Pt pt) const;
+    [[nodiscard]] virtual bool InClient(Pt pt) const { return pt >= ClientUpperLeft() && pt < ClientLowerRight(); }
 
     /** Returns child list; the list is const, but the children may be
         manipulated. */
-    const auto& Children() const noexcept { return m_children; }
+    [[nodiscard]] const auto& Children() const noexcept { return m_children; }
 
     /** Returns the window's parent (may be null). */
-    std::shared_ptr<Wnd> Parent() const;
+    [[nodiscard]] std::shared_ptr<Wnd> Parent() const noexcept;
 
     /** Returns true iff \a wnd is an ancestor (indirect parent) of this wnd. */
-    bool IsAncestorOf(const std::shared_ptr<Wnd>& wnd) const;
+    [[nodiscard]] bool IsAncestorOf(const std::shared_ptr<Wnd>& wnd) const noexcept;
 
     /** Returns the earliest ancestor window (may be null). */
-    std::shared_ptr<Wnd> RootParent() const;
+    [[nodiscard]] std::shared_ptr<Wnd> RootParent() const noexcept;
 
     /** Returns the layout for the window, if any. */
-    std::shared_ptr<Layout> GetLayout() const;
+    [[nodiscard]] std::shared_ptr<Layout> GetLayout() const noexcept;
 
     /** Returns the layout containing the window, if any. */
-    Layout* ContainingLayout() const;
+    [[nodiscard]] Layout* ContainingLayout() const noexcept;
 
     /** Returns the browse modes for the Wnd, including time cutoffs (in
         milliseconds), the BrowseInfoWnds to be displayed for each browse info
@@ -473,19 +473,19 @@ public:
         corresponding Wnd is shown superimposed over this Wnd and its
         children.  Set the first time cutoff to 0 for immediate browse info
         display. */
-    const auto& BrowseModes() const noexcept { return m_browse_modes; }
+    [[nodiscard]] const auto& BrowseModes() const noexcept { return m_browse_modes; }
 
     /** Returns the text to display for browse info mode \a mode.  \throw
         std::out_of_range May throw std::out_of_range if \a mode is not a
         valid browse mode. */
-    const auto& BrowseInfoText(std::size_t mode) const { return m_browse_modes.at(mode).text; }
+    [[nodiscard]] const auto& BrowseInfoText(std::size_t mode) const { return m_browse_modes.at(mode).text; }
 
     /** Returns the currently-installed style factory if none exists, or the
         GUI-wide one otherwise. */
-    const std::shared_ptr<StyleFactory>& GetStyleFactory() const;
+    [[nodiscard]] const std::shared_ptr<StyleFactory>& GetStyleFactory() const;
 
     /** Returns the region under point \a pt. */
-    virtual WndRegion WindowRegion(Pt pt) const;
+    [[nodiscard]] virtual WndRegion WindowRegion(Pt pt) const;
 
     /** Adjusts \p ul and \p lr to correct for minsize and maxsize.*/
     void ClampRectWithMinAndMaxSize(Pt& ul, Pt& lr) const;
@@ -661,7 +661,7 @@ public:
     virtual void PreRender();
 
     /** Require that PreRender() be called to update layout before the next Render(). */
-    virtual void RequirePreRender();
+    virtual void RequirePreRender() noexcept { m_needs_prerender = true; }
 
     /** Draws this Wnd.  Note that Wnds being dragged for a drag-and-drop
         operation are rendered twice -- once in-place as normal, once in the
@@ -669,7 +669,7 @@ public:
         wish to render themselves differently in those two cases.  To
         determine which render is being performed, they can call
         GUI::GetGUI()->RenderingDragDropWnds(). */
-    virtual void Render();
+    virtual void Render() {}
 
     /** This executes a modal window and gives it its modality.  For non-modal
         windows, this function is a no-op.  It returns false if the window is

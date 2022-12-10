@@ -54,15 +54,15 @@ public:
 
     virtual ~SDLGUI();
 
-    GG::X AppWidth() const override;
-    GG::Y AppHeight() const override;
+    GG::X AppWidth() const noexcept override { return m_app_width; }
+    GG::Y AppHeight() const noexcept override { return m_app_height; }
     unsigned int Ticks() const override;
     std::string ClipboardText() const override;
     virtual std::vector<std::string> GetSupportedResolutions() const override;
     virtual GG::Pt GetDefaultResolution (int display_id) const override;
 
-    virtual bool Fullscreen() const final;
-    virtual bool FakeModeChange() const final;
+    virtual bool Fullscreen() const noexcept final { return m_fullscreen; }
+    virtual bool FakeModeChange() const noexcept final { return m_fake_mode_change; }
 
     void ExitApp(int code = 0) override;
     bool SetClipboardText(std::string text) override;

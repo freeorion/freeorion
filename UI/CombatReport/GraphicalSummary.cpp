@@ -413,14 +413,14 @@ public:
         DoLayout();
     }
 
-    GG::Pt RelativeClientUpperLeft() const {
+    GG::Pt RelativeClientUpperLeft() const noexcept {
         GG::Pt ul{ GG::X0, GG::Y0 };
         ul.x += AXIS_WIDTH + m_y_axis_label->MinUsableSize().x + Y_AXIS_LABEL_MARGIN;
         ul.y += SIDE_BAR_UP_MARGIN + AXIS_HEIGHT + X_AXIS_LABEL_MARGIN;
         return ul;
     }
 
-    GG::Pt ClientUpperLeft() const override
+    GG::Pt ClientUpperLeft() const noexcept override
     { return GG::Wnd::UpperLeft() + RelativeClientUpperLeft(); }
 
 private:

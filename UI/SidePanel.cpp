@@ -3094,7 +3094,7 @@ bool SidePanel::InWindow(GG::Pt pt) const {
            || (m_system_resource_summary && m_system_resource_summary->Parent().get() == this && m_system_resource_summary->InWindow(pt));
 }
 
-GG::Pt SidePanel::ClientUpperLeft() const
+GG::Pt SidePanel::ClientUpperLeft() const noexcept
 { return GG::Wnd::UpperLeft() + GG::Pt(BORDER_LEFT, BORDER_BOTTOM); }
 
 void SidePanel::InitBuffers() {

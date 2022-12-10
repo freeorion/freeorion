@@ -51,7 +51,7 @@ void BufferStoreAngledCornerRectangleVertices(GG::GL2DVertexBuffer& buffer, cons
   * angled corners not catching the point. If \a upper_left_angled == false,
   * the upper left corner is treated as a normal corner. */
 bool InAngledCornerRect(const GG::Pt pt, const GG::Pt ul, const GG::Pt lr, int angle_offset,
-                        bool upper_left_angled = true, bool lower_right_angled = true);
+                        bool upper_left_angled = true, bool lower_right_angled = true) noexcept;
 
 /** the orientations used to render some shapes used in the UI; the orientations
   * usually refer to the direction in which the shape is pointing */
@@ -61,7 +61,7 @@ enum class ShapeOrientation : uint8_t {UP, DOWN, LEFT, RIGHT};
 void Triangle(const GG::Pt pt1, const GG::Pt pt2, const GG::Pt pt3, GG::Clr color, bool border = true);
 
 /** returns true iff \a pt lies within the triangle described by the other parameters */
-bool InTriangle(const GG::Pt pt, const GG::Pt pt1, const GG::Pt pt2, const GG::Pt pt3);
+bool InTriangle(const GG::Pt pt, const GG::Pt pt1, const GG::Pt pt2, const GG::Pt pt3) noexcept;
 
 /** renders a triangle with two equal-length sides, oriented in the desired
   * direction.  The triangle will have a base length of one of
@@ -76,7 +76,7 @@ void BufferStoreIsoscelesTriangle(GG::GL2DVertexBuffer& buffer, const GG::Pt ul,
 
 /** returns true iff \a pt falls within the isosceles triangle described by the other parameters */
 bool InIsoscelesTriangle(const GG::Pt pt, const GG::Pt ul, const GG::Pt lr,
-                         ShapeOrientation orientation);
+                         ShapeOrientation orientation) noexcept;
 
 /** Draws a filled portion of a circle when \a filled_shape is true or an
   * unfilled portion when \a filled_shape is false. */

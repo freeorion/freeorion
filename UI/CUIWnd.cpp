@@ -421,10 +421,10 @@ void CUIWnd::MouseLeave() {
     Wnd::MouseLeave();
 }
 
-GG::Pt CUIWnd::ClientUpperLeft() const
+GG::Pt CUIWnd::ClientUpperLeft() const noexcept
 { return m_minimized ? UpperLeft() : UpperLeft() + GG::Pt(BORDER_LEFT, TopBorder()); }
 
-GG::Pt CUIWnd::ClientLowerRight() const
+GG::Pt CUIWnd::ClientLowerRight() const noexcept
 { return m_minimized ? LowerRight() : LowerRight() - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM); }
 
 bool CUIWnd::InWindow(GG::Pt pt) const {
@@ -495,23 +495,8 @@ void CUIWnd::InitButtons() {
     PositionButtons();
 }
 
-GG::Pt CUIWnd::MinimizedSize() const
-{ return GG::Pt(MINIMIZED_WND_WIDTH, TopBorder()); }
-
-GG::X CUIWnd::LeftBorder() const
-{ return BORDER_LEFT; }
-
 GG::Y CUIWnd::TopBorder() const
 { return GG::Y(ClientUI::TitlePts() + TITLE_OFFSET*4); }
-
-GG::X CUIWnd::RightBorder() const
-{ return BORDER_RIGHT; }
-
-GG::Y CUIWnd::BottomBorder() const
-{ return BORDER_BOTTOM; }
-
-int CUIWnd::InnerBorderAngleOffset() const
-{ return INNER_BORDER_ANGLE_OFFSET; }
 
 void CUIWnd::CloseClicked() {
     m_done = true;

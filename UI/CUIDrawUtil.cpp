@@ -11,9 +11,9 @@
 
 
 namespace {
-    void FindIsoscelesTriangleVertices(const GG::Pt ul, const GG::Pt lr,
-                                       ShapeOrientation orientation, double& x1_, double& y1_,
-                                       double& x2_, double& y2_, double& x3_, double& y3_)
+    constexpr void FindIsoscelesTriangleVertices(const GG::Pt ul, const GG::Pt lr,
+                                                 ShapeOrientation orientation, double& x1_, double& y1_,
+                                                 double& x2_, double& y2_, double& x3_, double& y3_) noexcept
     {
         switch (orientation) {
         case ShapeOrientation::UP:
@@ -41,7 +41,6 @@ namespace {
             y3_ = Value((ul.y + lr.y) / 2.0);
             break;
         default:
-            ErrorLogger() << "FindIsoscelesTriangleVertices passed invalid orientation";
             [[fallthrough]];
         case ShapeOrientation::RIGHT:
             x1_ = Value(ul.x);
@@ -282,7 +281,7 @@ void BufferStoreAngledCornerRectangleVertices(GG::GL2DVertexBuffer& buffer, cons
 }
 
 bool InAngledCornerRect(const GG::Pt pt, const GG::Pt ul, const GG::Pt lr, int angle_offset,
-                        bool upper_left_angled, bool lower_right_angled)
+                        bool upper_left_angled, bool lower_right_angled) noexcept
 {
     bool retval = false;
     if ((retval = ((ul <= pt) && (pt < lr)))) {
@@ -305,7 +304,7 @@ void Triangle(double x1, double y1, double x2, double y2, double x3, double y3, 
                  color, border ? border_clr : GG::CLR_ZERO);
 }
 
-bool InTriangle(const GG::Pt pt, double x1, double y1, double x2, double y2, double x3, double y3) {
+bool InTriangle(const GG::Pt pt, double x1, double y1, double x2, double y2, double x3, double y3) noexcept {
     double vec_A_x = x2 - x1; // side A is the vector from pt1 to pt2
     double vec_A_y = y2 - y1; // side A is the vector from pt1 to pt2
     double vec_B_x = x3 - x2; // side B is the vector from pt2 to pt3
@@ -315,7 +314,7 @@ bool InTriangle(const GG::Pt pt, double x1, double y1, double x2, double y2, dou
     int pt_x = Value(pt.x);
     int pt_y = Value(pt.y);
     // take dot products of perpendicular vectors (normals of sides) with point pt, and sum the signs of these products
-    int sum = (0 < (pt_x - x1) * vec_A_y + (pt_y - y1) * -vec_A_x ? 1 : 0) + 
+    int sum = (0 < (pt_x - x1) * vec_A_y + (pt_y - y1) * -vec_A_x ? 1 : 0) +
               (0 < (pt_x - x2) * vec_B_y + (pt_y - y2) * -vec_B_x ? 1 : 0) +
               (0 < (pt_x - x3) * vec_C_y + (pt_y - y3) * -vec_C_x ? 1 : 0);
     // if the products are all the same sign, the point is in the triangle
@@ -341,7 +340,7 @@ void BufferStoreIsoscelesTriangle(GG::GL2DVertexBuffer& buffer, const GG::Pt ul,
 }
 
 bool InIsoscelesTriangle(const GG::Pt pt, const GG::Pt ul, const GG::Pt lr,
-                         ShapeOrientation orientation)
+                         ShapeOrientation orientation) noexcept
 {
     double x1_, y1_, x2_, y2_, x3_, y3_;
     FindIsoscelesTriangleVertices(ul, lr, orientation, x1_, y1_, x2_, y2_, x3_, y3_);

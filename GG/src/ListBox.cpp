@@ -528,19 +528,19 @@ void ListBox::HandleRowRightClicked(Pt pt, GG::Flags<GG::ModKey> mod) {
     }
 }
 
-Pt ListBox::MinUsableSize() const
+Pt ListBox::MinUsableSize() const noexcept
 {
     return Pt(X(5 * SCROLL_WIDTH + 2 * BORDER_THICK),
               Y(5 * SCROLL_WIDTH + 2 * BORDER_THICK));
 }
 
-Pt ListBox::ClientUpperLeft() const
+Pt ListBox::ClientUpperLeft() const noexcept
 {
     return UpperLeft() +
         Pt(X(BORDER_THICK), static_cast<int>(BORDER_THICK) + (m_header_row->empty() ? Y0 : m_header_row->Height()));
 }
 
-Pt ListBox::ClientLowerRight() const
+Pt ListBox::ClientLowerRight() const noexcept
 { return LowerRight() - Pt(static_cast<int>(BORDER_THICK) + RightMargin(), static_cast<int>(BORDER_THICK) + BottomMargin()); }
 
 const ListBox::Row& ListBox::GetRow(std::size_t n) const

@@ -85,25 +85,11 @@ MultiEdit::MultiEdit(std::string str, const std::shared_ptr<Font>& font, Clr col
     SizeMove(UpperLeft(), LowerRight()); // do this to set up the scrolls, and in case MULTI_INTEGRAL_HEIGHT is in effect
 }
 
-Pt MultiEdit::MinUsableSize() const
+Pt MultiEdit::MinUsableSize() const noexcept
 {
     return Pt(X(4 * SCROLL_WIDTH + 2 * BORDER_THICK),
               Y(4 * SCROLL_WIDTH + 2 * BORDER_THICK));
 }
-
-Pt MultiEdit::FullSize() const
-{
-  return Pt(Width(), m_contents_sz.y + Y(PIXEL_MARGIN) * 2);
-}
-
-Pt MultiEdit::ClientLowerRight() const
-{ return Edit::ClientLowerRight() - Pt(RightMargin(), BottomMargin()); }
-
-Flags<MultiEditStyle> MultiEdit::Style() const
-{ return m_style; }
-
-std::size_t MultiEdit::MaxLinesOfHistory() const
-{ return m_max_lines_history; }
 
 void MultiEdit::Render()
 {
@@ -426,30 +412,28 @@ void MultiEdit::SetHScrollWheelIncrement(unsigned int increment)
     AdjustScrolls();
 }
 
-bool MultiEdit::MultiSelected() const
-{ return m_cursor_begin != m_cursor_end; }
-
-X MultiEdit::RightMargin() const
+X MultiEdit::RightMargin() const noexcept
 { return X(m_vscroll ? SCROLL_WIDTH : 0); }
 
-Y MultiEdit::BottomMargin() const
+Y MultiEdit::BottomMargin() const noexcept
 { return Y(m_hscroll ? SCROLL_WIDTH : 0); }
 
 std::pair<std::size_t, CPSize> MultiEdit::CharAt(Pt pt) const
 {
     std::pair<std::size_t, CPSize> retval{0, CP0};
+    const auto& line_data = GetLineData();
 
-    if (GetLineData().empty())
+    if (line_data.empty())
         return retval;
 
     std::size_t row = RowAt(pt.y);
-    retval.first = std::min(row, GetLineData().size() - 1);
+    retval.first = std::min(row, line_data.size() - 1);
 
     if (row > retval.first)
-        retval.second = CPSize(GetLineData()[retval.first].char_data.size());
+        retval.second = CPSize(line_data[retval.first].char_data.size());
     else
         retval.second = std::min(CharAt(row, pt.x),
-                                 CPSize(GetLineData()[retval.first].char_data.size()));
+                                 CPSize(line_data[retval.first].char_data.size()));
 
     return retval;
 }
@@ -546,7 +530,7 @@ X MultiEdit::CharXOffset(std::size_t row, CPSize idx) const
 std::size_t MultiEdit::RowAt(Y y) const
 {
     std::size_t retval = 0;
-    Flags<TextFormat> format = GetTextFormat();
+    const Flags<TextFormat> format = GetTextFormat();
     y += m_first_row_shown;
     if ((format & FORMAT_TOP) || m_contents_sz.y - ClientSize().y < 0) {
         retval = Value(y / GetFont()->Lineskip());

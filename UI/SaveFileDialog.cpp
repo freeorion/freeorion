@@ -318,13 +318,13 @@ public:
     }
 
     /** Excludes border from the client area. */
-    GG::Pt ClientUpperLeft() const override {
+    GG::Pt ClientUpperLeft() const noexcept override {
         return UpperLeft() + GG::Pt(GG::X(SAVE_FILE_CELL_MARGIN),
                                     GG::Y(SAVE_FILE_CELL_MARGIN));
     }
 
     /** Excludes border from the client area. */
-    GG::Pt ClientLowerRight() const override {
+    GG::Pt ClientLowerRight() const noexcept override {
         return LowerRight() - GG::Pt(GG::X(SAVE_FILE_CELL_MARGIN * 2),
                                      GG::Y(SAVE_FILE_CELL_MARGIN));
     }

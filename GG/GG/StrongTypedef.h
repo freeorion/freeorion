@@ -171,8 +171,8 @@ inline constexpr std::size_t Value(std::size_t s)
 #define GG_STRONG_DOUBLE_TYPEDEF(name, type)                            \
     class name;                                                         \
     class name ## _d;                                                   \
-    constexpr type Value(name x);                                       \
-    constexpr double Value(name ## _d x);                               \
+    constexpr type Value(name x) noexcept;                              \
+    constexpr double Value(name ## _d x) noexcept;                      \
                                                                         \
     class name ## _d                                                    \
     {                                                                   \
@@ -206,7 +206,7 @@ inline constexpr std::size_t Value(std::size_t s)
     private:                                                            \
         double m_value = 0.0;                                           \
                                                                         \
-        friend constexpr double Value(name ## _d x);                    \
+        friend constexpr double Value(name ## _d x) noexcept;           \
     };                                                                  \
                                                                         \
     GG_NONMEMBER_ARITH_OPS_SELF_TYPE(name ## _d);                       \
@@ -217,7 +217,7 @@ inline constexpr std::size_t Value(std::size_t s)
                                                                         \
     GG_NONMEMBER_REVERSED_ARITH_OP_SET(double, name ## _d);             \
                                                                         \
-    inline constexpr double Value(name ## _d x)                         \
+    inline constexpr double Value(name ## _d x) noexcept                \
     { return x.m_value; }                                               \
                                                                         \
     inline std::ostream& operator<<(std::ostream& os, name ## _d x)     \
@@ -244,7 +244,7 @@ inline constexpr std::size_t Value(std::size_t s)
 #define GG_STRONG_INTEGRAL_TYPEDEF(name, type)                          \
     GG_STRONG_DOUBLE_TYPEDEF(name, type);                               \
                                                                         \
-    constexpr type Value(name x);                                       \
+    constexpr type Value(name x) noexcept;                              \
                                                                         \
     class name                                                          \
     {                                                                   \
@@ -290,7 +290,7 @@ inline constexpr std::size_t Value(std::size_t s)
         type m_value = 0;                                               \
                                                                         \
         friend class name ## _d;                                        \
-        friend constexpr type Value(name x);                            \
+        friend constexpr type Value(name x) noexcept;                   \
     };                                                                  \
                                                                         \
     GG_NONMEMBER_ARITH_OPS_SELF_TYPE(name);                             \
@@ -321,7 +321,7 @@ inline constexpr std::size_t Value(std::size_t s)
     inline constexpr name ## _d operator*(double x, name y)             \
     { return x * name ## _d(Value(y)); }                                \
                                                                         \
-    inline constexpr type Value(name x)                                 \
+    inline constexpr type Value(name x) noexcept                        \
     { return x.m_value; }                                               \
                                                                         \
     inline std::ostream& operator<<(std::ostream& os, name x)           \
@@ -359,7 +359,7 @@ inline constexpr std::size_t Value(std::size_t s)
     interarithemtic with and comparable to objects of type std::size_t. */
 #define GG_STRONG_SIZE_TYPEDEF(name)                                    \
     class name;                                                         \
-    constexpr std::size_t Value(name x);                                \
+    constexpr std::size_t Value(name x) noexcept;                       \
                                                                         \
     class name                                                          \
     {                                                                   \
@@ -391,7 +391,7 @@ inline constexpr std::size_t Value(std::size_t s)
         std::size_t m_value = 0;                                        \
                                                                         \
         friend class name ## _d;                                        \
-        friend constexpr std::size_t Value(name x);                     \
+        friend constexpr std::size_t Value(name x) noexcept;            \
     };                                                                  \
                                                                         \
     GG_NONMEMBER_ARITH_OPS_SELF_TYPE(name);                             \
@@ -404,7 +404,7 @@ inline constexpr std::size_t Value(std::size_t s)
                                                                         \
     GG_NONMEMBER_REVERSED_ARITH_OP_SET(std::size_t, name);              \
                                                                         \
-    inline constexpr std::size_t Value(name x)                          \
+    inline constexpr std::size_t Value(name x) noexcept                 \
     { return x.m_value; }                                               \
                                                                         \
     inline std::ostream& operator<<(std::ostream& os, name x)           \

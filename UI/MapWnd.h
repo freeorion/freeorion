@@ -58,7 +58,7 @@ public:
     MapWnd();
     void CompleteConstruction() override;
 
-    GG::Pt ClientUpperLeft() const override;
+    GG::Pt ClientUpperLeft() const noexcept override;
 
     double ZoomFactor() const;
     int    SystemIconSize() const;

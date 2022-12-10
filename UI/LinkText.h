@@ -86,13 +86,13 @@ protected:
     void MouseHere_(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys);
     void MouseLeave_();
 
-    virtual const std::vector<GG::Font::LineData>&  GetLineData() const = 0;
-    virtual const std::shared_ptr<GG::Font>&        GetFont() const = 0;
+    virtual const std::vector<GG::Font::LineData>&  GetLineData() const noexcept = 0;
+    virtual const std::shared_ptr<GG::Font>&        GetFont() const noexcept = 0;
 
     virtual GG::Pt              TextUpperLeft() const = 0;
     virtual GG::Pt              TextLowerRight() const = 0;
     virtual void                SetLinkedText(std::string str) = 0;
-    virtual const std::string&  RawText() const = 0;    ///< returns text being displayed before any link formatting is added
+    virtual const std::string&  RawText() const noexcept = 0;    ///< returns text being displayed before any link formatting is added
 
     void FindLinks();                ///< finds the links in the text, with which to populate m_links.
     void LocateLinks();              ///< calculates the physical locations of the links in m_links
@@ -146,11 +146,11 @@ public:
     GG::Pt TextUpperLeft() const override;
     GG::Pt TextLowerRight() const override;
 
-    const std::vector<GG::Font::LineData>& GetLineData() const override;
-    const std::shared_ptr<GG::Font>& GetFont() const override;
+    const std::vector<GG::Font::LineData>& GetLineData() const noexcept override { return GG::TextControl::GetLineData(); }
+    const std::shared_ptr<GG::Font>& GetFont() const noexcept override { return GG::TextControl::GetFont(); }
 
     /** Returns text displayed before link formatting is added. */
-    const std::string& RawText() const override;
+    const std::string& RawText() const noexcept override { return m_raw_text; }
 
     void Render() override;
     void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;

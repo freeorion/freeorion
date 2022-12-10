@@ -50,7 +50,7 @@ void GroupBox::CompleteConstruction()
     }
 }
 
-Pt GroupBox::ClientUpperLeft() const
+Pt GroupBox::ClientUpperLeft() const noexcept
 {
     Pt retval = UpperLeft();
     if (!m_set_client_corners_equal_to_box_corners)
@@ -59,7 +59,7 @@ Pt GroupBox::ClientUpperLeft() const
     return retval;
 }
 
-Pt GroupBox::ClientLowerRight() const
+Pt GroupBox::ClientLowerRight() const noexcept
 {
     Pt retval = LowerRight();
     if (!m_set_client_corners_equal_to_box_corners)
