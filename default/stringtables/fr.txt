@@ -16286,7 +16286,7 @@ SH_SELF_GRAVITATING
 Coque Auto-Gravitationnelle
 
 SH_SELF_GRAVITATING_DESC
-'''Cette coque immense, à la fois en taille et en puissance, est dotée de six niches externes, de deux niches internes, et d'une niche centrale - faisant de celle-ci l'une des rares capable d'accueillir les équipements d'astronef les plus avancés. Sa [[metertype METER_STRUCTURE]] max élevée en fait également une coque des plus robustes.
+'''Cette coque immense, à la fois en taille et en puissance, est dotée de cinq niches externes, de deux niches internes, et d'une niche centrale - faisant de celle-ci l'une des rares capable d'accueillir les équipements d'astronef les plus avancés. Sa [[metertype METER_STRUCTURE]] max élevée en fait également une coque des plus robustes.
 
 Sa [[metertype METER_STEALTH]] est cependant faible, son [[metertype METER_DETECTION]] standard, tandis que sa [[metertype METER_SPEED]] est moyenne.
 
