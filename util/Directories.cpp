@@ -679,6 +679,7 @@ auto GetResourceDir() -> fs::path const
 {
     std::scoped_lock res_dir_lock(res_dir_mutex);
     if (init) {
+        [[unlikely]]
         init = false;
         res_dir = FilenameToPath(GetOptionsDB().Get<std::string>("resource.path"));
         if (!fs::exists(res_dir) || !fs::is_directory(res_dir))
@@ -735,9 +736,9 @@ auto RelativePath(fs::path const& from, fs::path const& to) -> fs::path
         ++to_it;
     }
     for (; from_it != end_from_it; ++from_it)
-    { retval /= ".."; }
+        retval /= "..";
     for (; to_it != end_to_it; ++to_it)
-    { retval /= *to_it; }
+        retval /= *to_it;
     return retval;
 }
 
@@ -881,9 +882,8 @@ auto ListDir(const fs::path& path, std::function<bool (const fs::path&)> predica
     }
 #endif
 
-    if (retval.empty()) {
+    if (retval.empty())
         DebugLogger() << "ListDir: No paths found for " << path.string();
-    }
 
     return retval;
 }
