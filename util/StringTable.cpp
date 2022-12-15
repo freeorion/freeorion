@@ -34,16 +34,17 @@ namespace {
 
 StringTable::StringTable(std::string filename, std::shared_ptr<const StringTable> fallback):
     m_filename(std::move(filename))
-{ Load(fallback); }
+{ Load(std::move(fallback)); }
 
+#if BOOST_VERSION >= 107900
 bool StringTable::StringExists(const std::string& key) const
-{ return m_strings.find(key) != m_strings.end(); }
+{ return m_strings.contains(key); }
 
 bool StringTable::StringExists(const std::string_view key) const
-{ return m_strings.find(key) != m_strings.end(); }
+{ return m_strings.contains(key); }
 
 bool StringTable::StringExists(const char* key) const
-{ return m_strings.find(key) != m_strings.end(); }
+{ return m_strings.contains(key); }
 
 std::pair<bool, const std::string&> StringTable::CheckGet(const std::string& key) const {
     auto it = m_strings.find(key);
@@ -63,6 +64,36 @@ std::pair<bool, const std::string&> StringTable::CheckGet(const char* key) const
     return {found_string, found_string ? it->second : EMPTY_STRING};
 }
 
+#else
+
+bool StringTable::StringExists(const std::string& key) const
+{ return m_strings.find(key, m_strings.hash_function(), m_strings.key_eq()) != m_strings.end(); }
+
+bool StringTable::StringExists(const std::string_view key) const
+{ return m_strings.find(key, m_strings.hash_function(), m_strings.key_eq()) != m_strings.end(); }
+
+bool StringTable::StringExists(const char* key) const
+{ return m_strings.find(key, m_strings.hash_function(), m_strings.key_eq()) != m_strings.end(); }
+
+std::pair<bool, const std::string&> StringTable::CheckGet(const std::string& key) const {
+    auto it = m_strings.find(key, m_strings.hash_function(), m_strings.key_eq());
+    bool found_string = it != m_strings.end();
+    return {found_string, found_string ? it->second : EMPTY_STRING};
+}
+
+std::pair<bool, const std::string&> StringTable::CheckGet(const std::string_view key) const {
+    auto it = m_strings.find(key, m_strings.hash_function(), m_strings.key_eq());
+    bool found_string = it != m_strings.end();
+    return {found_string, found_string ? it->second : EMPTY_STRING};
+}
+
+std::pair<bool, const std::string&> StringTable::CheckGet(const char* key) const {
+    auto it = m_strings.find(key, m_strings.hash_function(), m_strings.key_eq());
+    bool found_string = it != m_strings.end();
+    return {found_string, found_string ? it->second : EMPTY_STRING};
+}
+#endif
+
 const std::string& StringTable::Add(std::string key, std::string value)
 { return m_strings.emplace(std::move(key), std::move(value)).first->second; }
 
@@ -76,6 +107,7 @@ namespace {
 
 void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
     if (fallback && !fallback->m_initialized) {
+        [[unlikely]]
         // this prevents deadlock if two stringtables were to be loaded
         // simultaneously with eachother as fallback tables
         ErrorLogger() << "StringTable::Load given uninitialized stringtable as fallback. Ignoring.";
@@ -87,6 +119,7 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
 
     bool read_success = ReadFile(path, file_contents);
     if (!read_success) {
+        [[unlikely]]
         ErrorLogger() << "StringTable::Load failed to read file at path: " << path.string();
         //m_initialized intentionally left false
         return;
@@ -221,12 +254,22 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
                     //DebugLogger() << "Pushing to cyclic ref check: " << match[1];
                     cyclic_reference_check[match[1]] = position + match.length();
 
+#if BOOST_VERSION >= 107900
                     auto map_lookup_it = m_strings.find(MatchLookupKey(match, 1u));
+#else
+                    auto map_lookup_it = m_strings.find(MatchLookupKey(match, 1u), m_strings.hash_function(),
+                                                        m_strings.key_eq());
+#endif
                     bool foundmatch = map_lookup_it != m_strings.end();
                     if (!foundmatch && !fallback_lookup_strings.empty()) {
                         DebugLogger() << "Key expansion: " << match[1] << " not found in primary stringtable: " << m_filename
                                       << "; checking in fallback file: " << fallback_table_file;
+#if BOOST_VERSION >= 107900
                         map_lookup_it = fallback_lookup_strings.find(MatchLookupKey(match, 1u));
+#else
+                        map_lookup_it = fallback_lookup_strings.find(
+                            MatchLookupKey(match, 1u), m_strings.hash_function(), m_strings.key_eq());
+#endif
                         foundmatch = map_lookup_it != fallback_lookup_strings.end();
                     }
                     if (foundmatch) {
@@ -259,17 +302,28 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
             smatch match;
             while (regex_search(user_read_entry.begin() + position, user_read_entry.end(), match, REFERENCE)) {
                 position += match.position();
+#if BOOST_VERSION >= 107900
                 auto map_lookup_it = m_strings.find(MatchLookupKey(match, 2u));
+#else
+                auto map_lookup_it = m_strings.find(MatchLookupKey(match, 2u), m_strings.hash_function(),
+                                                    m_strings.key_eq());
+#endif
                 bool foundmatch = map_lookup_it != m_strings.end();
                 if (!foundmatch && !fallback_lookup_strings.empty()) {
                     DebugLogger() << "Key reference: " << match[2] << " not found in primary stringtable: " << m_filename
                                   << "; checking in fallback file: " << fallback_table_file;
+#if BOOST_VERSION >= 107900
                     map_lookup_it = fallback_lookup_strings.find(MatchLookupKey(match, 2u));
+#else
+                    map_lookup_it = fallback_lookup_strings.find(
+                        MatchLookupKey(match, 2u), m_strings.hash_function(), m_strings.key_eq());
+#endif
                     foundmatch = map_lookup_it != fallback_lookup_strings.end();
                 }
                 if (foundmatch) {
                     const std::string substitution =
-                        '<' + match[1].str() + ' ' + match[2].str() + '>' + map_lookup_it->second + "</" + match[1].str() + '>';
+                        '<' + match[1].str() + ' ' + match[2].str() + '>' +
+                        map_lookup_it->second + "</" + match[1].str() + '>';
                     user_read_entry.replace(position, match.length(), substitution);
                     position += substitution.length();
                 } else {

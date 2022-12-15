@@ -7,6 +7,9 @@
 #include <shared_mutex>
 
 #include <boost/format.hpp>
+#include <boost/unordered_map.hpp>
+
+#include "StringTable.h"
 
 #include "Export.h"
 
@@ -21,7 +24,8 @@
 [[nodiscard]] FO_COMMON_API const std::string& UserString(const char* str);
 
 /** Returns all entries in current stringtable */
-[[nodiscard]] FO_COMMON_API const std::map<std::string, std::string, std::less<>>& AllStringtableEntries(bool default_table = false);
+using AllStringsResultT = decltype(std::declval<StringTable>().AllStrings());
+[[nodiscard]] FO_COMMON_API const AllStringsResultT& AllStringtableEntries(bool default_table = false);
 
 /** Returns a language-specific vector of strings for given @a key. */
 [[nodiscard]] FO_COMMON_API std::vector<std::string> UserStringList(const std::string& key);

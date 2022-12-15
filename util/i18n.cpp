@@ -295,15 +295,12 @@ void FlushLoadedStringTables() {
     stringtables.clear();
 }
 
-const std::map<std::string, std::string, std::less<>>& AllStringtableEntries(bool default_table) {
+const AllStringsResultT& AllStringtableEntries(bool default_table) {
     std::shared_lock stringtable_lock(stringtable_access_mutex);
-    if (default_table) {
-        auto& retval = GetDevDefaultStringTable(stringtable_lock).AllStrings();
-        return retval;
-    } else {
-        auto& retval = GetStringTable(stringtable_lock).AllStrings();
-        return retval;
-    }
+    if (default_table)
+        return GetDevDefaultStringTable(stringtable_lock).AllStrings();
+    else
+        return GetStringTable(stringtable_lock).AllStrings();
 }
 
 const std::string& UserString(const std::string& str) {
