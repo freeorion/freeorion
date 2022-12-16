@@ -900,9 +900,15 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec,
         }
     }
 
-    TraceLogger(effects) << "UpdateMeterEstimatesImpl after resetting meters objects:";
-    for (auto& obj : object_ptrs)
-        TraceLogger(effects) << obj->Dump();
+    auto dump_objs = [&object_ptrs]() -> std::string {
+        std::string retval;
+        retval.reserve(object_ptrs.size() * 400); // guesstimate
+        for (auto& obj : object_ptrs)
+            retval.append(obj->Dump()).append("\n");
+        return retval;
+    };
+
+    TraceLogger(effects) << "UpdateMeterEstimatesImpl after resetting meters objects:\n" << dump_objs();
 
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
@@ -912,9 +918,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec,
     // Apply and record effect meter adjustments
     ExecuteEffects(source_effects_targets_causes, context, do_accounting, true, false, false, false);
 
-    TraceLogger(effects) << "UpdateMeterEstimatesImpl after executing effects objects:";
-    for (auto& obj : object_ptrs)
-        TraceLogger(effects) << obj->Dump();
+    TraceLogger(effects) << "UpdateMeterEstimatesImpl after executing effects objects:\n" << dump_objs();
 
     // Apply known discrepancies between expected and calculated meter maxes at start of turn.  This
     // accounts for the unknown effects on the meter, and brings the estimate in line with the actual
@@ -954,9 +958,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec,
         obj->ClampMeters();
     }
 
-    TraceLogger(effects) << "UpdateMeterEstimatesImpl after discrepancies and clamping objects:";
-    for (auto& obj : object_ptrs)
-        TraceLogger(effects) << obj->Dump();
+    TraceLogger(effects) << "UpdateMeterEstimatesImpl after discrepancies and clamping objects:\n" << dump_objs();
 }
 
 void Universe::BackPropagateObjectMeters() {
