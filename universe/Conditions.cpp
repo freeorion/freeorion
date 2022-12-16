@@ -1788,7 +1788,7 @@ void Capital::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         }
 
     } else {
-        auto is_capital = [&capitals](const UniverseObject* obj) {
+        auto is_capital = [capitals](const UniverseObject* obj) {
             return std::any_of(capitals.begin(), capitals.end(),
                                [obj_id{obj->ID()}](int cap_id) { return cap_id == obj_id; });
         };
