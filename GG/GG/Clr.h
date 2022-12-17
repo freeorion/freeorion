@@ -46,10 +46,9 @@ struct Clr
 
     /** ctor that constructs a Clr from a string that represents the color
         channels in the format 'RRGGBB', 'RRGGBBAA' where each channel value
-        ranges from 00 to FF.  When the alpha component is left out, the alpha
-        value FF is assumed.  When characters out of the range 0-9 and A-F are
+        ranges from 00 to FF. When the alpha component is left out, the alpha
+        value FF is assumed. When characters out of the range 0-9 and A-F are
         passed, results are undefined.
-        @throws std::invalid_argument if the hex_colour string is not well formed
     */
     constexpr Clr(std::string_view hex_colour)
     {

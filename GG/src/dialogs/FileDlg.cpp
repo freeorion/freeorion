@@ -219,15 +219,6 @@ void FileDlg::CompleteConstruction()
     }
 }
 
-std::set<std::string> FileDlg::Result() const
-{ return m_result; }
-
-bool FileDlg::SelectDirectories() const
-{ return m_select_directories; }
-
-bool FileDlg::AppendMissingSaveExtension() const
-{ return m_append_missing_save_extension; }
-
 void FileDlg::Render()
 {
     FlatRectangle(UpperLeft(), LowerRight(), m_color, m_border_color, 1);
@@ -267,9 +258,6 @@ void FileDlg::SetFileFilters(const std::vector<std::pair<std::string, std::strin
     PopulateFilters();
     UpdateList();
 }
-
-const fs::path& FileDlg::WorkingDirectory()
-{ return s_working_dir; }
 
 const boost::filesystem::path FileDlg::StringToPath(const std::string& str) {
 #if defined(_WIN32)
