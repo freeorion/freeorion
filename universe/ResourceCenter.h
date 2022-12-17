@@ -40,8 +40,8 @@ public:
     /** the state changed signal object for this ResourceCenter */
     mutable boost::signals2::signal<void ()> ResourceCenterChangedSignal;
 
-    void Copy(std::shared_ptr<const ResourceCenter> copied_object, Visibility vis);
-    void Copy(std::shared_ptr<const ResourceCenter> copied_object);
+    void Copy(const ResourceCenter& copied_object, Visibility vis);
+    void Copy(const ResourceCenter& copied_object);
 
     void SetFocus(const std::string& focus, const ScriptingContext& context);
     void ClearFocus(int current_turn);

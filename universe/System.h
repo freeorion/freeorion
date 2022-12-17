@@ -111,8 +111,8 @@ public:
     /** fleets are removed from system */
     mutable boost::signals2::signal<void (const std::vector<const Fleet*>&)> FleetsRemovedSignal;
 
-    void Copy(std::shared_ptr<const UniverseObject> copied_object,
-              const Universe& universe, int empire_id = ALL_EMPIRES) override;
+    void Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id = ALL_EMPIRES) override;
+    void Copy(const System& copied_system, const Universe& universe, int empire_id = ALL_EMPIRES);
 
     void SetID(int id) override {
         this->m_system_id = id;
@@ -148,7 +148,7 @@ private:
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
     /** Returns new copy of this System. */
-    [[nodiscard]] System* Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const override;
+    [[nodiscard]] std::shared_ptr<UniverseObject> Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const override;
 
     StarType            m_star = StarType::INVALID_STAR_TYPE;
     std::vector<int>    m_orbits = std::vector<int>(SYSTEM_ORBITS, INVALID_OBJECT_ID);  ///< indexed by orbit number, indicates the id of the planet in that orbit

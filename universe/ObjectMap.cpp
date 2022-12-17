@@ -398,15 +398,15 @@ void ObjectMap::CopyObject(std::shared_ptr<const UniverseObject> source,
         return;
 
     if (auto destination = this->get(source_id)) {
-        destination->Copy(std::move(source), universe, empire_id); // there already is a version of this object present in this ObjectMap, so just update it
+        destination->Copy(*source, universe, empire_id); // there already is a version of this object present in this ObjectMap, so just update it
     } else {
         bool destroyed = universe.DestroyedObjectIds().count(source_id);
         // this object is not yet present in this ObjectMap, so add a new UniverseObject object for it
         if (source->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             auto plt = static_cast<const Planet*>(source.get());
-            insertCore(std::shared_ptr<Planet>(plt->Clone(universe)), destroyed);
+            insertCore(std::static_pointer_cast<Planet>(plt->Clone(universe)), destroyed);
         } else {
-            insertCore(std::shared_ptr<UniverseObject>(source->Clone(universe)), destroyed);
+            insertCore(source->Clone(universe), destroyed);
         }
     }
 }

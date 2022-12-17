@@ -43,19 +43,15 @@ assignable_blocking_combiner::assignable_blocking_combiner(const Universe& unive
 void UniverseObject::SetSignalCombiner(const Universe& universe)
 { StateChangedSignal.set_combiner(CombinerType{universe}); }
 
-void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object,
+void UniverseObject::Copy(const UniverseObject& copied_object,
                           Visibility vis, const std::set<std::string>& visible_specials,
                           const Universe&)
 {
-    if (copied_object.get() == this)
+    if (&copied_object == this)
         return;
-    if (!copied_object) {
-        ErrorLogger() << "UniverseObject::Copy passed a null object";
-        return;
-    }
 
-    auto censored_meters = copied_object->CensoredMeters(vis);
-    for (auto& [type, copied_meter] : copied_object->m_meters) {
+    auto censored_meters = copied_object.CensoredMeters(vis);
+    for (auto& [type, copied_meter] : copied_object.m_meters) {
         (void)copied_meter;
 
         // get existing meter in this object, or create a default one
@@ -88,25 +84,25 @@ void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object,
 
 
     if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
-        this->m_type =                  copied_object->m_type;
-        this->m_id =                    copied_object->m_id;
-        this->m_system_id =             copied_object->m_system_id;
-        this->m_x =                     copied_object->m_x;
-        this->m_y =                     copied_object->m_y;
+        this->m_type =                  copied_object.m_type;
+        this->m_id =                    copied_object.m_id;
+        this->m_system_id =             copied_object.m_system_id;
+        this->m_x =                     copied_object.m_x;
+        this->m_y =                     copied_object.m_y;
 
         this->m_specials.clear();
-        this->m_specials.reserve(copied_object->m_specials.size());
-        for (const auto& [entry_special_name, entry_special] : copied_object->m_specials) {
+        this->m_specials.reserve(copied_object.m_specials.size());
+        for (const auto& [entry_special_name, entry_special] : copied_object.m_specials) {
             if (visible_specials.count(entry_special_name))
                 this->m_specials[entry_special_name] = entry_special;
         }
 
         if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
-            this->m_owner_empire_id =   copied_object->m_owner_empire_id;
-            this->m_created_on_turn =   copied_object->m_created_on_turn;
+            this->m_owner_empire_id =   copied_object.m_owner_empire_id;
+            this->m_created_on_turn =   copied_object.m_created_on_turn;
 
             if (vis >= Visibility::VIS_FULL_VISIBILITY)
-                this->m_name =          copied_object->m_name;
+                this->m_name =          copied_object.m_name;
         }
     }
 }

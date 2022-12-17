@@ -2796,11 +2796,16 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns(int current_turn
             // update empire's latest known data about object, based on current visibility and historical visibility and knowledge of object
 
             // is there already last known version of an UniverseObject stored for this empire?
-            if (auto known_obj = known_object_map.get(object_id)) {
-                known_obj->Copy(full_object, *this, empire_id); // already a stored version of this object for this empire.  update it, limited by visibility this empire has for this object this turn
+            if (auto known_obj = known_object_map.getRaw(object_id)) {
+                // already a stored version of this object for this empire.  update it,
+                // limited by visibility this empire has for this object this turn
+                known_obj->Copy(*full_object, *this, empire_id);
             } else {
-                if (auto new_obj = std::shared_ptr<UniverseObject>(full_object->Clone(*this, empire_id)))   // no previously-recorded version of this object for this empire.  create a new one, copying only the information limtied by visibility, leaving the rest as default values
-                    known_object_map.insert(std::move(new_obj), known_destroyed_ids.count(object_id));
+                // no previously-recorded version of this object for this empire.
+                // create a new one, copying only the information limtied by visibility,
+                // leaving the rest as default values
+                const bool destroyed = known_destroyed_ids.count(object_id) > 0;
+                known_object_map.insert(full_object->Clone(*this, empire_id), destroyed);
             }
 
             //DebugLogger() << "Empire " << empire_id << " can see object " << object_id << " with vis level " << vis;

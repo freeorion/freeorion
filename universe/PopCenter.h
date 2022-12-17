@@ -31,8 +31,9 @@ public:
     virtual Meter*      GetMeter(MeterType type) = 0;       ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
     virtual const Meter*GetMeter(MeterType type) const = 0; ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
 
-    void                Copy(std::shared_ptr<const PopCenter> copied_object, Visibility vis);
-    void                Copy(std::shared_ptr<const PopCenter> copied_object);
+    void                Copy(const PopCenter& copied_object, Visibility vis);
+    void                Copy(const PopCenter& copied_object);
+
     virtual void        SetSpecies(std::string species_name, int turn, const SpeciesManager& sm); ///< sets the species of the population to \a species_name
     virtual void        Reset(ObjectMap&); ///< sets all meters to 0, clears race name
     virtual void        Depopulate(int);   ///< removes population
