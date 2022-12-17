@@ -194,7 +194,6 @@ namespace {
         SS&& filename, std::shared_lock<std::shared_mutex>& access_lock,
         std::shared_ptr<const StringTable> fallback = nullptr)
     {
-
         if (auto it = stringtables.find(filename); it != stringtables.end())
             return it->second;
 
