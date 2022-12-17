@@ -20,45 +20,49 @@ Building::Building(int empire_id, std::string building_type, int produced_by_emp
     UniverseObject::Init();
 }
 
-Building* Building::Clone(const Universe& universe, int empire_id) const {
-    Visibility vis = universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
+std::shared_ptr<UniverseObject> Building::Clone(const Universe& universe, int empire_id) const {
+    const Visibility vis = universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
         return nullptr;
 
-    auto retval = std::make_unique<Building>();
-    retval->Copy(shared_from_this(), universe, empire_id);
-    return retval.release();
+    auto retval = std::make_shared<Building>();
+    retval->Copy(*this, universe, empire_id);
+    return retval;
 }
 
-void Building::Copy(std::shared_ptr<const UniverseObject> copied_object,
-                    const Universe& universe, int empire_id)
-{
-    if (copied_object.get() == this)
+void Building::Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id) {
+    if (&copied_object == this)
         return;
-    auto copied_building = std::dynamic_pointer_cast<const Building>(copied_object);
-    if (!copied_building) {
+    if (copied_object.ObjectType() != UniverseObjectType::OBJ_BUILDING) {
         ErrorLogger() << "Building::Copy passed an object that wasn't a Building";
         return;
     }
 
-    int copied_object_id = copied_object->ID();
-    Visibility vis = universe.GetObjectVisibilityByEmpire(copied_object_id, empire_id);
-    auto visible_specials = universe.GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
+    Copy(static_cast<const Building&>(copied_object), universe, empire_id);
+}
 
-    UniverseObject::Copy(std::move(copied_object), vis, visible_specials, universe);
+void Building::Copy(const Building& copied_building, const Universe& universe, int empire_id) {
+    if (&copied_building == this)
+        return;
+
+    const int copied_object_id = copied_building.ID();
+    const Visibility vis = universe.GetObjectVisibilityByEmpire(copied_object_id, empire_id);
+    const auto visible_specials = universe.GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
+
+    UniverseObject::Copy(copied_building, vis, visible_specials, universe);
 
     if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
-        this->m_planet_id =                 copied_building->m_planet_id;
+        this->m_planet_id =                 copied_building.m_planet_id;
 
         if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
-            this->m_name =                  copied_building->m_name;
+            this->m_name =                  copied_building.m_name;
 
-            this->m_building_type =         copied_building->m_building_type;
-            this->m_produced_by_empire_id = copied_building->m_produced_by_empire_id;
+            this->m_building_type =         copied_building.m_building_type;
+            this->m_produced_by_empire_id = copied_building.m_produced_by_empire_id;
 
             if (vis >= Visibility::VIS_FULL_VISIBILITY)
-                this->m_ordered_scrapped =  copied_building->m_ordered_scrapped;
+                this->m_ordered_scrapped =  copied_building.m_ordered_scrapped;
         }
     }
 }

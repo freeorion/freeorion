@@ -42,99 +42,104 @@ System::System(StarType star, std::string name, double x, double y, int current_
     UniverseObject::Init();
 }
 
-System* System::Clone(const Universe& universe, int empire_id) const {
+std::shared_ptr<UniverseObject> System::Clone(const Universe& universe, int empire_id) const {
     Visibility vis = universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
         return nullptr;
 
-    auto retval = std::make_unique<System>();
-    retval->Copy(shared_from_this(), universe, empire_id);
-    return retval.release();
+    auto retval = std::make_shared<System>();
+    retval->Copy(*this, universe, empire_id);
+    return retval;
 }
 
-void System::Copy(std::shared_ptr<const UniverseObject> copied_object,
-                  const Universe& universe, int empire_id)
-{
-    if (copied_object.get() == this)
+void System::Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id) {
+    if (&copied_object == this)
         return;
-    auto copied_system = std::dynamic_pointer_cast<const System>(copied_object);
-    if (!copied_system) {
+    if (copied_object.ObjectType() != UniverseObjectType::OBJ_SYSTEM) {
         ErrorLogger() << "System::Copy passed an object that wasn't a System";
         return;
     }
 
-    int copied_object_id = copied_object->ID();
-    Visibility vis = universe.GetObjectVisibilityByEmpire(copied_object_id, empire_id);
-    auto visible_specials = universe.GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
+    Copy(static_cast<const System&>(copied_object), universe, empire_id);
+}
 
-    UniverseObject::Copy(std::move(copied_object), vis, visible_specials, universe);
+void System::Copy(const System& copied_system, const Universe& universe, int empire_id) {
+    if (&copied_system == this)
+        return;
+
+    const int copied_object_id = copied_system.ID();
+    const Visibility vis = universe.GetObjectVisibilityByEmpire(copied_object_id, empire_id);
+    const auto visible_specials = universe.GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
+
+    UniverseObject::Copy(copied_system, vis, visible_specials, universe);
 
     if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
-        if (GetGameRules().Get<bool>("RULE_BASIC_VIS_SYSTEM_INFO_SHOWN")) {
-            this->m_name = copied_system->m_name;
-            this->m_star = copied_system->m_star;
-        }
-
         // copy visible info of visible contained objects
-        this->m_objects = copied_system->VisibleContainedObjectIDs(empire_id, universe.GetEmpireObjectVisibility());
+        this->m_objects = copied_system.VisibleContainedObjectIDs(
+            empire_id, universe.GetEmpireObjectVisibility());
 
         // only copy orbit info for visible planets
         auto orbits_size = m_orbits.size();
         m_orbits.clear();
         m_orbits.assign(orbits_size, INVALID_OBJECT_ID);
-        for (std::size_t o = 0u; o < copied_system->m_orbits.size(); ++o) {
-            int planet_id = copied_system->m_orbits[o];
+        for (std::size_t o = 0u; o < copied_system.m_orbits.size(); ++o) {
+            int planet_id = copied_system.m_orbits[o];
             if (m_objects.count(planet_id))
                 m_orbits[o] = planet_id;
         }
 
         // copy visible contained object per-type info
         m_planets.clear();
-        for (int planet_id : copied_system->m_planets) {
+        for (int planet_id : copied_system.m_planets) {
             if (m_objects.count(planet_id))
                 m_planets.insert(planet_id);
         }
 
         m_buildings.clear();
-        for (int building_id : copied_system->m_buildings) {
+        for (int building_id : copied_system.m_buildings) {
             if (m_objects.count(building_id))
                 m_buildings.insert(building_id);
         }
 
         m_fleets.clear();
-        for (int fleet_id : copied_system->m_fleets) {
+        for (int fleet_id : copied_system.m_fleets) {
             if (m_objects.count(fleet_id))
                 m_fleets.insert(fleet_id);
         }
 
         m_ships.clear();
-        for (int ship_id : copied_system->m_ships) {
+        for (int ship_id : copied_system.m_ships) {
             if (m_objects.count(ship_id))
                 m_ships.insert(ship_id);
         }
 
         m_fields.clear();
-        for (int field_id : copied_system->m_fields) {
+        for (int field_id : copied_system.m_fields) {
             if (m_objects.count(field_id))
                 m_fields.insert(field_id);
         }
 
 
         if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
-            this->m_name =                  copied_system->m_name;
-            this->m_star =                  copied_system->m_star;
-            this->m_last_turn_battle_here = copied_system->m_last_turn_battle_here;
+            this->m_name =                  copied_system.m_name;
+            this->m_star =                  copied_system.m_star;
+            this->m_last_turn_battle_here = copied_system.m_last_turn_battle_here;
 
             // update lanes to be just those that are visible, erasing any
             // previously known that aren't visible now, as these are thus
             // known not to exist any more
-            this->m_starlanes_wormholes = copied_system->VisibleStarlanesWormholes(empire_id, universe);
+            this->m_starlanes_wormholes = copied_system.VisibleStarlanesWormholes(empire_id, universe);
 
         } else {
+            if (GetGameRules().Get<bool>("RULE_BASIC_VIS_SYSTEM_INFO_SHOWN")) {
+                this->m_name = copied_system.m_name;
+                this->m_star = copied_system.m_star;
+            }
+
             // add any visible lanes, without removing existing entries
             for (const auto& [lane_id, lane_or_hole] :
-                 copied_system->VisibleStarlanesWormholes(empire_id, universe))
+                 copied_system.VisibleStarlanesWormholes(empire_id, universe))
             { this->m_starlanes_wormholes[lane_id] = lane_or_hole; }
         }
     }
@@ -213,10 +218,10 @@ std::string System::ApparentName(int empire_id, const Universe& u,
         return m_name + UserString("EMPTY_SPACE");
     }
 
-    return this->PublicName(empire_id, u); // todo get Objects from inputs
+    return this->PublicName(empire_id, u);
 }
 
-StarType System::NextOlderStarType() const {
+StarType System::NextOlderStarType() const { // TODO: noexcept
     if (m_star <= StarType::INVALID_STAR_TYPE || m_star >= StarType::NUM_STAR_TYPES)
         return StarType::INVALID_STAR_TYPE;
     if (m_star >= StarType::STAR_RED)

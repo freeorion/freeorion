@@ -95,55 +95,60 @@ Ship::Ship(int empire_id, int design_id, std::string species_name,
     }
 }
 
-Ship* Ship::Clone(const Universe& universe, int empire_id) const {
+std::shared_ptr<UniverseObject> Ship::Clone(const Universe& universe, int empire_id) const {
     Visibility vis = universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
         return nullptr;
 
-    auto retval = std::make_unique<Ship>();
-    retval->Copy(shared_from_this(), universe, empire_id);
-    return retval.release();
+    auto retval = std::make_shared<Ship>();
+    retval->Copy(*this, universe, empire_id);
+    return retval;
 }
 
-void Ship::Copy(std::shared_ptr<const UniverseObject> copied_object,
-                const Universe& universe, int empire_id)
-{
-    if (copied_object.get() == this)
+void Ship::Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id) {
+    if (&copied_object == this)
         return;
-    auto copied_ship = std::dynamic_pointer_cast<const Ship>(copied_object);
-    if (!copied_ship) {
+
+    if (copied_object.ObjectType() != UniverseObjectType::OBJ_SHIP) {
         ErrorLogger() << "Ship::Copy passed an object that wasn't a Ship";
         return;
     }
 
-    int copied_object_id = copied_object->ID();
-    Visibility vis = universe.GetObjectVisibilityByEmpire(copied_object_id, empire_id);
-    auto visible_specials = universe.GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
+    Copy(static_cast<const Ship&>(copied_object), universe, empire_id);
+}
 
-    UniverseObject::Copy(std::move(copied_object), vis, visible_specials, universe);
+void Ship::Copy(const Ship& copied_ship, const Universe& universe, int empire_id) {
+    if (&copied_ship == this)
+        return;
+
+    const int copied_object_id = copied_ship.ID();
+    const Visibility vis = universe.GetObjectVisibilityByEmpire(copied_object_id, empire_id);
+    const auto visible_specials = universe.GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
+
+    UniverseObject::Copy(copied_ship, vis, visible_specials, universe);
 
     if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
-        this->m_fleet_id =                      copied_ship->m_fleet_id;
+        this->m_fleet_id =                      copied_ship.m_fleet_id;
 
         if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
             if (this->Unowned())
-                this->m_name =                  copied_ship->m_name;
+                this->m_name =                  copied_ship.m_name;
 
-            this->m_design_id =                 copied_ship->m_design_id;
-            this->m_part_meters =               copied_ship->m_part_meters;
-            this->m_species_name =              copied_ship->m_species_name;
+            this->m_design_id =                 copied_ship.m_design_id;
+            this->m_part_meters =               copied_ship.m_part_meters;
+            this->m_species_name =              copied_ship.m_species_name;
 
-            this->m_last_turn_active_in_combat= copied_ship->m_last_turn_active_in_combat;
-            this->m_produced_by_empire_id =     copied_ship->m_produced_by_empire_id;
-            this->m_arrived_on_turn =           copied_ship->m_arrived_on_turn;
-            this->m_last_resupplied_on_turn =   copied_ship->m_last_resupplied_on_turn;
+            this->m_last_turn_active_in_combat= copied_ship.m_last_turn_active_in_combat;
+            this->m_produced_by_empire_id =     copied_ship.m_produced_by_empire_id;
+            this->m_arrived_on_turn =           copied_ship.m_arrived_on_turn;
+            this->m_last_resupplied_on_turn =   copied_ship.m_last_resupplied_on_turn;
 
             if (vis >= Visibility::VIS_FULL_VISIBILITY) {
-                this->m_ordered_scrapped =          copied_ship->m_ordered_scrapped;
-                this->m_ordered_colonize_planet_id= copied_ship->m_ordered_colonize_planet_id;
-                this->m_ordered_invade_planet_id  = copied_ship->m_ordered_invade_planet_id;
-                this->m_ordered_bombard_planet_id = copied_ship->m_ordered_bombard_planet_id;
+                this->m_ordered_scrapped =          copied_ship.m_ordered_scrapped;
+                this->m_ordered_colonize_planet_id= copied_ship.m_ordered_colonize_planet_id;
+                this->m_ordered_invade_planet_id  = copied_ship.m_ordered_invade_planet_id;
+                this->m_ordered_bombard_planet_id = copied_ship.m_ordered_bombard_planet_id;
             }
         }
     }

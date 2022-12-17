@@ -19,20 +19,15 @@ PopCenter::PopCenter(const std::string& species_name) :
     m_species_name(species_name)
 {}
 
-void PopCenter::Copy(std::shared_ptr<const PopCenter> copied_object, Visibility vis) {
-    if (copied_object.get() == this)
+void PopCenter::Copy(const PopCenter& copied_object, Visibility vis) {
+    if (&copied_object == this)
         return;
-    if (!copied_object) {
-        ErrorLogger() << "PopCenter::Copy passed a null object";
-        return;
-    }
 
-    if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
-        this->m_species_name = copied_object->m_species_name;
-    }
+    if (vis >= Visibility::VIS_PARTIAL_VISIBILITY)
+        this->m_species_name = copied_object.m_species_name;
 }
 
-void PopCenter::Copy(std::shared_ptr<const PopCenter> copied_object)
+void PopCenter::Copy(const PopCenter& copied_object)
 { Copy(copied_object, Visibility::VIS_FULL_VISIBILITY); }
 
 void PopCenter::Init() {

@@ -29,23 +29,19 @@ ResourceCenter::ResourceCenter(const ResourceCenter& rhs) :
     m_last_turn_focus_changed_turn_initial(rhs.m_last_turn_focus_changed_turn_initial)
 {}
 
-void ResourceCenter::Copy(std::shared_ptr<const ResourceCenter> copied_object, Visibility vis) {
-    if (copied_object.get() == this)
+void ResourceCenter::Copy(const ResourceCenter& copied_object, Visibility vis) {
+    if (&copied_object == this)
         return;
-    if (!copied_object) {
-        ErrorLogger() << "ResourceCenter::Copy passed a null object";
-        return;
-    }
 
     if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
-        this->m_focus = copied_object->m_focus;
-        this->m_last_turn_focus_changed = copied_object->m_last_turn_focus_changed;
-        this->m_focus_turn_initial = copied_object->m_focus_turn_initial;
-        this->m_last_turn_focus_changed_turn_initial = copied_object->m_last_turn_focus_changed_turn_initial;
+        this->m_focus = copied_object.m_focus;
+        this->m_last_turn_focus_changed = copied_object.m_last_turn_focus_changed;
+        this->m_focus_turn_initial = copied_object.m_focus_turn_initial;
+        this->m_last_turn_focus_changed_turn_initial = copied_object.m_last_turn_focus_changed_turn_initial;
     }
 }
 
-void ResourceCenter::Copy(std::shared_ptr<const ResourceCenter> copied_object)
+void ResourceCenter::Copy(const ResourceCenter& copied_object)
 { Copy(copied_object, Visibility::VIS_FULL_VISIBILITY); }
 
 void ResourceCenter::Init() {

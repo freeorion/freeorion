@@ -103,7 +103,7 @@ public:
     /** @returns an angle in degree. */
     [[nodiscard]] float AxialTilt() const noexcept                  { return m_axial_tilt; }
 
-    [[nodiscard]] const std::set<int>& BuildingIDs() const noexcept { return m_buildings; }
+    [[nodiscard]] const auto& BuildingIDs() const noexcept          { return m_buildings; }
 
     [[nodiscard]] bool IsAboutToBeColonized() const noexcept        { return m_is_about_to_be_colonized; }
     [[nodiscard]] bool IsAboutToBeInvaded() const noexcept          { return m_is_about_to_be_invaded; }
@@ -120,9 +120,8 @@ public:
 
     [[nodiscard]] std::map<int, double> EmpireGroundCombatForces() const;
 
-
-    void Copy(std::shared_ptr<const UniverseObject> copied_object,
-              const Universe& universe, int empire_id = ALL_EMPIRES) override;
+    void Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id = ALL_EMPIRES) override;
+    void Copy(const Planet& copied_planet, const Universe& universe, int empire_id = ALL_EMPIRES);
 
     [[nodiscard]] Meter* GetMeter(MeterType type) override { return UniverseObject::GetMeter(type); }
 
@@ -168,7 +167,7 @@ public:
     Planet() : UniverseObject(UniverseObjectType::OBJ_PLANET) {}
 
     /** returns new copy of this Planet. */
-    [[nodiscard]] Planet* Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const override;
+    [[nodiscard]] std::shared_ptr<UniverseObject> Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const override;
 
 private:
     friend class ObjectMap;
@@ -176,8 +175,7 @@ private:
 
     void Init();
 
-    void AddMeter(MeterType meter_type) override
-    { UniverseObject::AddMeter(meter_type); }
+    void AddMeter(MeterType meter_type) override { UniverseObject::AddMeter(meter_type); }
 
     void PopGrowthProductionResearchPhase(ScriptingContext& context) override;
 

@@ -72,64 +72,66 @@ Fleet::Fleet(std::string name, double x, double y, int owner_id, int creation_tu
     UniverseObject{UniverseObjectType::OBJ_FLEET, std::move(name), owner_id, creation_turn}
 { UniverseObject::Init(); }
 
-Fleet* Fleet::Clone(const Universe& universe, int empire_id) const {
+std::shared_ptr<UniverseObject> Fleet::Clone(const Universe& universe, int empire_id) const {
     Visibility vis = universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
         return nullptr;
 
-    auto retval = std::make_unique<Fleet>();
-    retval->Copy(shared_from_this(), universe, empire_id);
-    return retval.release();
+    auto retval = std::make_shared<Fleet>();
+    retval->Copy(*this, universe, empire_id);
+    return retval;
 }
 
-void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object,
-                 const Universe& universe, int empire_id)
-{
-    if (!copied_object || copied_object.get() == this)
+void Fleet::Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id) {
+    if (&copied_object == this)
         return;
-    const Fleet* copied_fleet = nullptr;
-    if (copied_object->ObjectType() == UniverseObjectType::OBJ_FLEET) {
-        copied_fleet = static_cast<const Fleet*>(copied_object.get());
-    } else {
+    if (copied_object.ObjectType() != UniverseObjectType::OBJ_FLEET) {
         ErrorLogger() << "Fleet::Copy passed an object that wasn't a Fleet";
         return;
     }
 
-    int copied_object_id = copied_object->ID();
-    Visibility vis = universe.GetObjectVisibilityByEmpire(copied_object_id, empire_id);
-    auto visible_specials = universe.GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
+    Copy(static_cast<const Fleet&>(copied_object), universe, empire_id);
+}
 
-    UniverseObject::Copy(std::move(copied_object), vis, visible_specials, universe);
+void Fleet::Copy(const Fleet& copied_fleet, const Universe& universe, int empire_id) {
+    if (&copied_fleet == this)
+        return;
+
+    const int copied_object_id = copied_fleet.ID();
+    const Visibility vis = universe.GetObjectVisibilityByEmpire(copied_object_id, empire_id);
+    const auto visible_specials = universe.GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
+
+    UniverseObject::Copy(copied_fleet, vis, visible_specials, universe);
 
     if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
-        m_ships =               copied_fleet->VisibleContainedObjectIDs(empire_id, universe.GetEmpireObjectVisibility());
+        m_ships =               copied_fleet.VisibleContainedObjectIDs(empire_id, universe.GetEmpireObjectVisibility());
 
-        m_next_system =         ((universe.EmpireKnownObjects(empire_id).getRaw<System>(copied_fleet->m_next_system))
-                                    ? copied_fleet->m_next_system : INVALID_OBJECT_ID);
-        m_prev_system =         ((universe.EmpireKnownObjects(empire_id).getRaw<System>(copied_fleet->m_prev_system))
-                                    ? copied_fleet->m_prev_system : INVALID_OBJECT_ID);
-        m_arrived_this_turn =   copied_fleet->m_arrived_this_turn;
-        m_arrival_starlane =    copied_fleet->m_arrival_starlane;
+        m_next_system =         ((universe.EmpireKnownObjects(empire_id).getRaw<System>(copied_fleet.m_next_system))
+                                    ? copied_fleet.m_next_system : INVALID_OBJECT_ID);
+        m_prev_system =         ((universe.EmpireKnownObjects(empire_id).getRaw<System>(copied_fleet.m_prev_system))
+                                    ? copied_fleet.m_prev_system : INVALID_OBJECT_ID);
+        m_arrived_this_turn =   copied_fleet.m_arrived_this_turn;
+        m_arrival_starlane =    copied_fleet.m_arrival_starlane;
 
         if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
-            m_aggression =      copied_fleet->m_aggression;
+            m_aggression =      copied_fleet.m_aggression;
             if (Unowned())
-                m_name =        copied_fleet->m_name;
+                m_name =        copied_fleet.m_name;
 
             // Truncate the travel route to only systems known to empire_id
             int moving_to = (vis >= Visibility::VIS_FULL_VISIBILITY
-                             ? (!copied_fleet->m_travel_route.empty()
-                                ? copied_fleet->m_travel_route.back()
+                             ? (!copied_fleet.m_travel_route.empty()
+                                ? copied_fleet.m_travel_route.back()
                                 : INVALID_OBJECT_ID)
                              : m_next_system);
 
-            m_travel_route = TruncateRouteToEndAtSystem(copied_fleet->m_travel_route, universe, moving_to);
+            m_travel_route = TruncateRouteToEndAtSystem(copied_fleet.m_travel_route, universe, moving_to);
 
 
             if (vis >= Visibility::VIS_FULL_VISIBILITY) {
-                m_ordered_given_to_empire_id =  copied_fleet->m_ordered_given_to_empire_id;
-                m_last_turn_move_ordered =      copied_fleet->m_last_turn_move_ordered;
+                m_ordered_given_to_empire_id =  copied_fleet.m_ordered_given_to_empire_id;
+                m_last_turn_move_ordered =      copied_fleet.m_last_turn_move_ordered;
             }
         }
     }
@@ -807,7 +809,7 @@ void Fleet::SetAggression(FleetAggression aggression) {
 
 void Fleet::AddShips(const std::vector<int>& ship_ids) {
     auto old_ships_size = m_ships.size();
-    std::copy(ship_ids.begin(), ship_ids.end(), std::inserter(m_ships, m_ships.end()));
+    std::copy(ship_ids.begin(), ship_ids.end(), std::inserter(m_ships, m_ships.end())); // TODO: insert?
     if (old_ships_size != m_ships.size())
         StateChangedSignal();
 }

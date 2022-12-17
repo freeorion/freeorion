@@ -67,63 +67,68 @@ Planet::Planet(PlanetType type, PlanetSize size, int creation_turn) :
         m_rotational_period = -m_rotational_period;
 }
 
-Planet* Planet::Clone(const Universe& universe, int empire_id) const {
+std::shared_ptr<UniverseObject> Planet::Clone(const Universe& universe, int empire_id) const {
     Visibility vis = universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
         return nullptr;
 
-    auto retval = std::make_unique<Planet>();
-    retval->Copy(UniverseObject::shared_from_this(), universe, empire_id);
-    return retval.release();
+    auto retval = std::make_shared<Planet>();
+    retval->Copy(*this, universe, empire_id);
+    return retval;
 }
 
-void Planet::Copy(std::shared_ptr<const UniverseObject> copied_object,
-                  const Universe& universe, int empire_id)
-{
-    if (copied_object.get() == this)
+void Planet::Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id) {
+    if (&copied_object == this)
         return;
-    auto copied_planet = std::dynamic_pointer_cast<const Planet>(copied_object);
-    if (!copied_planet) {
+
+    if (copied_object.ObjectType() != UniverseObjectType::OBJ_PLANET) {
         ErrorLogger() << "Planet::Copy passed an object that wasn't a Planet";
         return;
     }
 
-    int copied_object_id = copied_object->ID();
-    Visibility vis = universe.GetObjectVisibilityByEmpire(copied_object_id, empire_id);
-    auto visible_specials = universe.GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
+    Copy(static_cast<const Planet&>(copied_object), universe, empire_id);
+}
 
-    UniverseObject::Copy(std::move(copied_object), vis, visible_specials, universe);
+void Planet::Copy(const Planet& copied_planet, const Universe& universe, int empire_id) {
+    if (&copied_planet == this)
+        return;
+
+    const int copied_object_id = copied_planet.ID();
+    const Visibility vis = universe.GetObjectVisibilityByEmpire(copied_object_id, empire_id);
+    const auto visible_specials = universe.GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
+
+    UniverseObject::Copy(copied_planet, vis, visible_specials, universe);
     PopCenter::Copy(copied_planet, vis);
     ResourceCenter::Copy(copied_planet, vis);
 
     if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
-        this->m_name =                      copied_planet->m_name;
+        this->m_name =                      copied_planet.m_name;
 
-        this->m_buildings =                 copied_planet->VisibleContainedObjectIDs(empire_id, universe.GetEmpireObjectVisibility());
-        this->m_type =                      copied_planet->m_type;
-        this->m_original_type =             copied_planet->m_original_type;
-        this->m_size =                      copied_planet->m_size;
-        this->m_orbital_period =            copied_planet->m_orbital_period;
-        this->m_initial_orbital_position =  copied_planet->m_initial_orbital_position;
-        this->m_rotational_period =         copied_planet->m_rotational_period;
-        this->m_axial_tilt =                copied_planet->m_axial_tilt;
-        this->m_turn_last_conquered =       copied_planet->m_turn_last_conquered;
-        this->m_turn_last_colonized =       copied_planet->m_turn_last_colonized;
+        this->m_buildings =                 copied_planet.VisibleContainedObjectIDs(empire_id, universe.GetEmpireObjectVisibility());
+        this->m_type =                      copied_planet.m_type;
+        this->m_original_type =             copied_planet.m_original_type;
+        this->m_size =                      copied_planet.m_size;
+        this->m_orbital_period =            copied_planet.m_orbital_period;
+        this->m_initial_orbital_position =  copied_planet.m_initial_orbital_position;
+        this->m_rotational_period =         copied_planet.m_rotational_period;
+        this->m_axial_tilt =                copied_planet.m_axial_tilt;
+        this->m_turn_last_conquered =       copied_planet.m_turn_last_conquered;
+        this->m_turn_last_colonized =       copied_planet.m_turn_last_colonized;
 
 
         if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
             if (vis >= Visibility::VIS_FULL_VISIBILITY) {
-                this->m_is_about_to_be_colonized =  copied_planet->m_is_about_to_be_colonized;
-                this->m_is_about_to_be_invaded   =  copied_planet->m_is_about_to_be_invaded;
-                this->m_is_about_to_be_bombarded =  copied_planet->m_is_about_to_be_bombarded;
-                this->m_ordered_given_to_empire_id =copied_planet->m_ordered_given_to_empire_id;
-                this->m_last_turn_attacked_by_ship= copied_planet->m_last_turn_attacked_by_ship;
+                this->m_is_about_to_be_colonized =  copied_planet.m_is_about_to_be_colonized;
+                this->m_is_about_to_be_invaded   =  copied_planet.m_is_about_to_be_invaded;
+                this->m_is_about_to_be_bombarded =  copied_planet.m_is_about_to_be_bombarded;
+                this->m_ordered_given_to_empire_id =copied_planet.m_ordered_given_to_empire_id;
+                this->m_last_turn_attacked_by_ship= copied_planet.m_last_turn_attacked_by_ship;
             } else {
                 // copy system name if at partial visibility, as it won't be copied
                 // by UniverseObject::Copy unless at full visibility, but players
                 // should know planet names even if they don't own the planet
-                m_name = copied_planet->Name();
+                m_name = copied_planet.Name();
             }
         }
     }
