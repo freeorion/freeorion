@@ -11,26 +11,6 @@
 #include <vector>
 
 
-
-// these are needed by the StepValidator
-namespace details {
-    template <typename T>
-    inline T mod (T dividend, T divisor)
-    { return (dividend % divisor); }
-
-    template <>
-    inline float mod<float>(float dividend, float divisor)
-    { return std::fmod(dividend, divisor); }
-
-    template <>
-    inline double mod<double>(double dividend, double divisor)
-    { return std::fmod(dividend, divisor); }
-
-    template <>
-    inline long double mod<long double>(long double dividend, long double divisor)
-    { return std::fmod(dividend, divisor); }
-}
-
 /** Interface base class for all OptionsDB validators. Simply provides the basic interface. */
 struct ValidatorBase {
     virtual ~ValidatorBase() = default;
@@ -58,8 +38,7 @@ FO_COMMON_API std::vector<std::string> StringToList(const std::string& input_str
 template <typename T>
 struct Validator : public ValidatorBase
 {
-    boost::any Validate(const std::string& str) const override
-    {
+    boost::any Validate(const std::string& str) const override {
         if constexpr (std::is_same_v<T, std::vector<std::string>>)
             return boost::any(StringToList(str));
         else if constexpr (std::is_same_v<T, std::string>)
@@ -68,8 +47,7 @@ struct Validator : public ValidatorBase
             return boost::any(boost::lexical_cast<T>(str));
     }
 
-    boost::any Validate(std::string_view str) const override
-    {
+    boost::any Validate(std::string_view str) const override {
         if constexpr (std::is_same_v<T, std::vector<std::string>>)
             return boost::any(StringToList(str));
         else if constexpr (std::is_same_v<T, std::string>)
@@ -78,8 +56,7 @@ struct Validator : public ValidatorBase
             return boost::any(boost::lexical_cast<T>(str));
     }
 
-    [[nodiscard]] std::string String(const boost::any& value) const override
-    {
+    [[nodiscard]] std::string String(const boost::any& value) const override {
         if constexpr (std::is_same_v<T, std::string>) {
             if (value.type() == typeid(std::string))
                 return boost::any_cast<std::string>(value);
@@ -121,7 +98,10 @@ struct RangedValidator final : public Validator<T>
     RangedValidator(T min, T max) :
         m_min(min),
         m_max(max)
-    {}
+    {
+        if (max < min)
+            throw std::invalid_argument("RangedValidator given max < min");
+    }
     RangedValidator(RangedValidator&& rhs) noexcept = default;
 
     boost::any Validate(const std::string& str) const override {
@@ -137,8 +117,8 @@ struct RangedValidator final : public Validator<T>
     [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() && override
     { return std::make_unique<RangedValidator>(std::move(*this)); }
 
-    T m_min;
-    T m_max;
+    const T m_min;
+    const T m_max;
     static_assert(std::is_arithmetic_v<T> || std::is_enum_v<T>);
 };
 
@@ -152,13 +132,24 @@ struct StepValidator final : public Validator<T>
     StepValidator(T step, T origin = 0) :
         m_step_size(step),
         m_origin(origin)
-    {}
+    {
+        if (m_step_size <= 0)
+            throw std::invalid_argument("StepValidator constructed with step <= 0");
+    }
     StepValidator(StepValidator&& rhs) noexcept = default;
 
     boost::any Validate(const std::string& str) const override {
-        T val = boost::lexical_cast<T>(str);
-        if (std::abs(details::mod((val - m_origin), m_step_size)) > std::numeric_limits<T>::epsilon())
-            throw boost::bad_lexical_cast();
+        const T val = boost::lexical_cast<T>(str);
+        const T diff = val - m_origin;
+        if constexpr (std::is_integral_v<T>) {
+            if (diff % m_step_size != T(0))
+                throw boost::bad_lexical_cast();
+
+        } else {
+            static constexpr T epsilon = std::numeric_limits<T>::epsilon();
+            if (std::abs(std::fmod(diff, m_step_size)) > epsilon)
+                throw boost::bad_lexical_cast();
+        }
         return boost::any(val);
     }
 
@@ -168,8 +159,8 @@ struct StepValidator final : public Validator<T>
     [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() && override
     { return std::make_unique<StepValidator>(std::move(*this)); }
 
-    T m_step_size;
-    T m_origin;
+    const T m_step_size;
+    const T m_origin;
     static_assert(std::is_arithmetic_v<T>);
 };
 
@@ -183,21 +174,46 @@ public:
         m_origin(T()),
         m_min(min),
         m_max(max)
-    {}
+    {
+        if (m_step_size <= 0)
+            throw std::invalid_argument("RangedStepValidator constructed with step <= 0");
+        if (max < min)
+            throw std::invalid_argument("RangedStepValidator given max < min");
+    }
+
     RangedStepValidator(T step, T origin, T min, T max) :
         m_step_size (step),
         m_origin(origin),
         m_min(min),
         m_max(max)
-    {}
+    {
+        if (m_step_size <= 0)
+            throw std::invalid_argument("RangedStepValidator constructed with step <= 0");
+        if (max < min)
+            throw std::invalid_argument("RangedStepValidator given max < min");
+    }
+
     RangedStepValidator(RangedStepValidator&& rhs) noexcept = default;
 
     boost::any Validate(const std::string& str) const override {
-        T val = boost::lexical_cast<T>(str);
-        if ((val < m_min) || (val > m_max) ||
-            ((std::abs(details::mod<T>(val - m_origin, m_step_size)) > std::numeric_limits<T>::epsilon()) &&
-             (std::abs(m_step_size - details::mod<T>(val - m_origin, m_step_size)) > std::numeric_limits<T>::epsilon())))
+        const T val = boost::lexical_cast<T>(str);
+        if ((val < m_min) || (val > m_max))
             throw boost::bad_lexical_cast();
+
+        const T diff = val - m_origin;
+
+        if constexpr (std::is_integral_v<T>) {
+            if (diff % m_step_size != T(0))
+                throw boost::bad_lexical_cast();
+
+        } else {
+            static constexpr T epsilon = std::numeric_limits<T>::epsilon();
+            const T remainder = std::fmod(diff, m_step_size);
+            if ((std::abs(remainder) > epsilon) &&
+                (std::abs(m_step_size - remainder) > epsilon))
+            { throw boost::bad_lexical_cast(); }
+        }
+
         return boost::any(val);
     }
 
@@ -207,10 +223,10 @@ public:
     [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() && override
     { return std::make_unique<RangedStepValidator>(std::move(*this)); }
 
-    T m_step_size;
-    T m_origin;
-    T m_min;
-    T m_max;
+    const T m_step_size;
+    const T m_origin;
+    const T m_min;
+    const T m_max;
     static_assert(std::is_arithmetic_v<T>);
 };
 
@@ -300,14 +316,10 @@ struct OrValidator final : public Validator<T>
         if (!m_validator_a || !m_validator_b)
             return nullptr;
 
-        std::unique_ptr<ValidatorBase> up_base_a = m_validator_a->Clone();
-        std::unique_ptr<ValidatorBase> up_base_b = m_validator_b->Clone();
+        std::unique_ptr<Validator<T>> val_a{static_cast<Validator<T>*>(m_validator_a->Clone().release())};
+        std::unique_ptr<Validator<T>> val_b{static_cast<Validator<T>*>(m_validator_b->Clone().release())};
 
-        Validator<T>* val_a = static_cast<Validator<T>*>(up_base_a.release());
-        Validator<T>* val_b = static_cast<Validator<T>*>(up_base_b.release());
-
-        return std::make_unique<OrValidator<T>>(std::unique_ptr<Validator<T>>{val_a},
-                                                std::unique_ptr<Validator<T>>{val_b});
+        return std::make_unique<OrValidator<T>>(std::move(val_a), std::move(val_b));
     }
 
     [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() && override
