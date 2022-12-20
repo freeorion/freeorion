@@ -165,6 +165,7 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
     smatch matches;
     bool well_formed = false;
     std::string key, prev_key;
+
     try {
         // grab first line of file, which should be the name of this language
         well_formed = regex_search(it, end, matches, SINGLE_LINE_VALUE, regex_constants::match_continuous);
@@ -206,6 +207,7 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
         it = end - matches.suffix().length();
 
         well_formed = it == end;
+
     } catch (const std::exception& e) {
         ErrorLogger() << "Exception caught regex parsing Stringtable: " << e.what();
         ErrorLogger() << "Last and prior keys matched: " << key << ", " << prev_key;
@@ -217,12 +219,12 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
 
     if (well_formed) {
         // recursively expand keys -- replace [[KEY]] by the text resulting from expanding everything in the definition for KEY
-        for (auto& [key, user_read_entry] : m_strings) {
+        for (auto& [loop_key, user_read_entry] : m_strings) {
             //DebugLogger() << "Checking key expansion for: " << key;
             std::size_t position = 0; // position in the definition string, past the already processed part
             smatch match;
             std::map<std::string, std::size_t> cyclic_reference_check;
-            cyclic_reference_check[key] = user_read_entry.length();
+            cyclic_reference_check[loop_key] = user_read_entry.length();
             std::string rawtext = user_read_entry;
             std::string cumulative_subsititions;
 
@@ -243,7 +245,7 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
                         ErrorLogger() << "Expansion error in key expansion: [[" << ref_check_it->first << "]] having end " << ref_check_it->second;
                         ErrorLogger() << "         currently at expansion text position " << position << " with match length: " << match.length();
                         ErrorLogger() << "         of current expansion text: " << user_read_entry;
-                        ErrorLogger() << "         from keyword "<< key << " with raw text: " << rawtext;
+                        ErrorLogger() << "         from keyword "<< loop_key << " with raw text: " << rawtext;
                         ErrorLogger() << "         and cumulative substitions: " << cumulative_subsititions;
                         // will also trigger further error logging below
                         ++ref_check_it;
@@ -288,7 +290,7 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
                     ErrorLogger() << "Cyclic key expansion: " << match[1] << " in: " << m_filename << "."
                                   << "         at expansion text position " << position;
                     ErrorLogger() << "         of current expansion text: " << user_read_entry;
-                    ErrorLogger() << "         from keyword "<< key << " with raw text: " << rawtext;
+                    ErrorLogger() << "         from keyword "<< loop_key << " with raw text: " << rawtext;
                     ErrorLogger() << "         and cumulative substitions: " << cumulative_subsititions;
                     position += match.length();
                 }
