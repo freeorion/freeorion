@@ -278,9 +278,9 @@ const std::locale& GetLocale(std::string_view name) {
         static boost::locale::generator locale_gen(locale_backend);
         locale_gen.locale_cache_enabled(true);
         try {
-            auto retval = locale_gen.generate(name_str);
-            std::use_facet<boost::locale::info>(retval);
-            return retval;
+            auto retval2 = locale_gen.generate(name_str);
+            std::use_facet<boost::locale::info>(retval2);
+            return retval2;
         } catch (...) {
             return std::locale::classic();
         }
