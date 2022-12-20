@@ -440,8 +440,8 @@ void System::AddWormhole(int id) {
 }
 
 bool System::RemoveStarlane(int id) {
-    bool retval = false;
-    if ((retval = HasStarlaneTo(id))) {
+    const bool retval = HasStarlaneTo(id);
+    if (retval) {
         m_starlanes_wormholes.erase(id);
         StateChangedSignal();
     }
@@ -449,8 +449,8 @@ bool System::RemoveStarlane(int id) {
 }
 
 bool System::RemoveWormhole(int id) {
-    bool retval = false;
-    if ((retval = HasWormholeTo(id))) {
+    const bool retval = HasWormholeTo(id);
+    if (retval) {
         m_starlanes_wormholes.erase(id);
         StateChangedSignal();
     }

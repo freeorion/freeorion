@@ -16,35 +16,35 @@ namespace {
 
     constexpr Meter r1{65000.001f};
     constexpr Meter r2 = []() {
-        Meter r2 = r1;
-        r2.AddToCurrent(-1.0f);
-        return r2;
+        Meter r2r = r1;
+        r2r.AddToCurrent(-1.0f);
+        return r2r;
     }();
     static_assert(r2.Current() == 64999.001f);
     constexpr Meter r3 = []() {
-        Meter r3 = r2;
-        r3.AddToCurrent(-0.01f);
-        return r3;
+        Meter r3r = r2;
+        r3r.AddToCurrent(-0.01f);
+        return r3r;
     }();
     static_assert(r3.Current() == 64998.991f);
     constexpr Meter r4 = []() {
-        Meter r4 = r3;
-        r4.AddToCurrent(40.009f);
-        return r4;
+        Meter r4r = r3;
+        r4r.AddToCurrent(40.009f);
+        return r4r;
     }();
     static_assert(r4.Current() == 65039.0f);
 
     constexpr Meter q1{2.01f};
     constexpr Meter q2 = []() {
-        Meter q2 = q1;
-        q2.AddToCurrent(-1.0f);
-        return q2;
+        Meter q2r = q1;
+        q2r.AddToCurrent(-1.0f);
+        return q2r;
     }();
     static_assert(q2.Current() == 1.01f);
     constexpr Meter q3 = []() {
-        Meter q3 = q2;
-        q3.AddToCurrent(-1.0f);
-        return q3;
+        Meter q3r = q2;
+        q3r.AddToCurrent(-1.0f);
+        return q3r;
     }();
     static_assert(q3.Current() == 0.01f);
 }
