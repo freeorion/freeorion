@@ -81,12 +81,12 @@ namespace {
            Comment, CDSect, CharRef, EntityRef, EncName, Name, Comment1, S;
 
     //! XML Character classes
-    chset_t Char("\x9\xA\xD\x20-\xFF");
-    chset_t Letter("\x41-\x5A\x61-\x7A\xC0-\xD6\xD8-\xF6\xF8-\xFF");
-    chset_t Digit("0-9");
-    chset_t Extender('\xB7');
-    chset_t NameChar = Letter | Digit | chset_t("._:-") | Extender;
-    chset_t Sch("\x20\x9\xD\xA");
+    const chset_t Char("\x9\xA\xD\x20-\xFF");
+    const chset_t Letter("\x41-\x5A\x61-\x7A\xC0-\xD6\xD8-\xF6\xF8-\xFF");
+    const chset_t Digit("0-9");
+    const chset_t Extender(static_cast<uint8_t>('\xB7'));
+    const chset_t NameChar = Letter | Digit | chset_t("._:-") | Extender;
+    const chset_t Sch("\x20\x9\xD\xA");
 }
 
 
