@@ -2005,10 +2005,8 @@ namespace {
                 return candidate->ObjectType() == m_type;
                 break;
             case UniverseObjectType::OBJ_POP_CENTER:
-                return (bool)dynamic_cast<const PopCenter*>(candidate);
-                break;
             case UniverseObjectType::OBJ_PROD_CENTER:
-                return (bool)dynamic_cast<const ResourceCenter*>(candidate);
+                return candidate->ObjectType() == UniverseObjectType::OBJ_PLANET; // only planets can be resource or prod centres currently
                 break;
             default:
                 break;
@@ -4211,16 +4209,17 @@ bool PlanetSize::Match(const ScriptingContext& local_context) const {
         return false;
     }
 
-    auto planet = dynamic_cast<const Planet*>(candidate);
-    const ::Building* building = nullptr;
-    if (!planet && (building = dynamic_cast<const ::Building*>(candidate)))
-        planet = local_context.ContextObjects().getRaw<Planet>(building->PlanetID());
+    const Planet* planet = candidate->ObjectType() == UniverseObjectType::OBJ_PLANET ?
+        static_cast<const Planet*>(candidate) : nullptr;
+    if (!planet && candidate->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
+        auto plt_id = static_cast<const ::Building*>(candidate)->PlanetID();
+        planet = local_context.ContextObjects().getRaw<Planet>(plt_id);
+    }
 
     if (planet) {
-        for (auto& size : m_sizes) {
-            if (size->Eval(local_context) == planet->Size())
-                return true;
-        }
+        return std::any_of(m_sizes.begin(), m_sizes.end(),
+                           [&local_context, plt_sz{planet->Size()}](const auto& sz)
+                           { return sz->Eval(local_context) == plt_sz; });
     }
     return false;
 }
@@ -4422,10 +4421,12 @@ bool PlanetEnvironment::Match(const ScriptingContext& local_context) const {
     }
 
     // is it a planet or on a planet? TODO: factor out
-    auto planet = dynamic_cast<const Planet*>(candidate);
-    const ::Building* building = nullptr;
-    if (!planet && (building = dynamic_cast<const ::Building*>(candidate)))
-        planet = local_context.ContextObjects().getRaw<Planet>(building->PlanetID());
+    const Planet* planet = candidate->ObjectType() == UniverseObjectType::OBJ_PLANET ?
+        static_cast<const Planet*>(candidate) : nullptr;
+    if (!planet && candidate->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
+        auto plt_id = static_cast<const ::Building*>(candidate)->PlanetID();
+        planet = local_context.ContextObjects().getRaw<Planet>(plt_id);
+    }
     if (!planet)
         return false;
 
@@ -4433,11 +4434,11 @@ bool PlanetEnvironment::Match(const ScriptingContext& local_context) const {
     if (m_species_name)
         species_name = m_species_name->Eval(local_context);
 
-    auto env_for_planets_species = planet->EnvironmentForSpecies(local_context, species_name);
-    for (auto& environment : m_environments) {
-        if (environment->Eval(local_context) == env_for_planets_species)
-            return true;
-    }
+    const auto env_for_planets_species = planet->EnvironmentForSpecies(local_context, species_name);
+    return std::any_of(m_environments.begin(), m_environments.end(),
+                       [&local_context, env_for_planets_species](const auto& env)
+    { return env->Eval(local_context) == env_for_planets_species; });
+
     return false;
 }
 
@@ -6365,13 +6366,14 @@ namespace {
                 return false;
             if (m_design_id == INVALID_DESIGN_ID)
                 return false;
-            if (auto ship = dynamic_cast<const Ship*>(candidate))
-                if (ship->DesignID() == m_design_id)
+            if (candidate->ObjectType() == UniverseObjectType::OBJ_SHIP) {
+                if (static_cast<const Ship*>(candidate)->DesignID() == m_design_id)
                     return true;
+            }
             return false;
         }
 
-        int m_design_id;
+        const int m_design_id;
     };
 }
 
@@ -6468,15 +6470,14 @@ namespace {
         bool operator()(const UniverseObject* candidate) const {
             if (!candidate)
                 return false;
-
-            if (auto ship = dynamic_cast<const ::Ship*>(candidate))
-                return ship->ProducedByEmpireID() == m_empire_id;
-            else if (auto building = dynamic_cast<const ::Building*>(candidate))
-                return building->ProducedByEmpireID() == m_empire_id;
+            if (candidate->ObjectType() == UniverseObjectType::OBJ_SHIP)
+                return static_cast<const Ship*>(candidate)->ProducedByEmpireID() == m_empire_id;
+            else if (candidate->ObjectType() == UniverseObjectType::OBJ_BUILDING)
+                return static_cast<const ::Building*>(candidate)->ProducedByEmpireID() == m_empire_id;
             return false;
         }
 
-        int m_empire_id;
+        const int m_empire_id;
     };
 }
 
@@ -6889,9 +6890,9 @@ namespace {
         bool operator()(const UniverseObject* candidate) const {
             if (!candidate)
                 return false;
-            auto ship = dynamic_cast<const Ship*>(candidate);
-            if (!ship)
+            if (candidate->ObjectType() != UniverseObjectType::OBJ_SHIP)
                 return false;
+            const auto* ship = static_cast<const Ship*>(candidate);
             const Meter* meter = ship->GetPartMeter(m_meter, m_part_name);
             if (!meter)
                 return false;
@@ -6900,9 +6901,9 @@ namespace {
         }
 
         const std::string& m_part_name;
-        float              m_low;
-        float              m_high;
-        MeterType          m_meter;
+        const float        m_low;
+        const float        m_high;
+        const MeterType    m_meter;
     };
 }
 
@@ -9172,18 +9173,22 @@ bool Stationary::Match(const ScriptingContext& local_context) const {
     // the only objects that can move are fleets and the ships in them.  so,
     // attempt to cast the candidate object to a fleet or ship, and if it's a ship
     // get the fleet of that ship
-    auto fleet = dynamic_cast<const Fleet*>(candidate);
+    const Fleet* fleet = candidate->ObjectType() == UniverseObjectType::OBJ_FLEET ?
+        static_cast<const Fleet*>(candidate) : nullptr;
+    if (!fleet && candidate->ObjectType() == UniverseObjectType::OBJ_SHIP) {
+        auto flt_id = static_cast<const ::Ship*>(candidate)->FleetID();
+        fleet = local_context.ContextObjects().getRaw<Fleet>(flt_id);
+    }
     if (!fleet)
-        if (auto ship = dynamic_cast<const Ship*>(candidate))
-            fleet = local_context.ContextObjects().getRaw<Fleet>(ship->FleetID());
+        return false;
 
     if (fleet) {
         // if a fleet is available, it is "moving", or not stationary, if it's
         // next system is a system and isn't the current system.  This will
         // mean fleets that have arrived at a system on the current turn will
         // be stationary, but fleets departing won't be stationary.
-        int next_id = fleet->NextSystemID();
-        int cur_id = fleet->SystemID();
+        const int next_id = fleet->NextSystemID();
+        const int cur_id = fleet->SystemID();
         if (next_id != INVALID_OBJECT_ID && next_id != cur_id)
             return false;
     }
@@ -9444,27 +9449,28 @@ namespace {
             // is candidate object connected to a subcondition matching object by resource supply?
             // first check if candidate object is (or is a building on) a blockaded planet
             // "isolated" objects are anything not in a non-blockaded system
-            bool is_isolated = true;
-            for (const auto& group : groups) {
-                if (group.count(candidate->SystemID())) {
-                    is_isolated = false;
-                    break;
-                }
-            }
+            const bool is_isolated = std::none_of(groups.begin(), groups.end(),
+                                                  [sys_id{candidate->SystemID()}](const auto& group) {
+                                                      return group.count(sys_id) > 0;
+                                                  });
             if (is_isolated) {
                 // planets are still supply-connected to themselves even if blockaded
-                auto candidate_planet = dynamic_cast<const Planet*>(candidate);
-                const ::Building* building = nullptr;
-                if (!candidate_planet && (building = dynamic_cast<const ::Building*>(candidate)))
-                    candidate_planet = m_objects.getRaw<Planet>(building->PlanetID());
+                const auto* candidate_planet = candidate->ObjectType() == UniverseObjectType::OBJ_PLANET ?
+                    static_cast<const ::Planet*>(candidate) : nullptr;
+                if (!candidate_planet && candidate->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
+                    const auto plt_id = static_cast<const ::Building*>(candidate)->PlanetID();
+                    candidate_planet = m_objects.getRaw<Planet>(plt_id);
+                }
                 if (candidate_planet) {
                     int candidate_planet_id = candidate_planet->ID();
                     // can only match if the from_object is (or is on) the same planet
-                    for (auto& from_object : m_from_objects) {
-                        auto from_obj_planet = dynamic_cast<const Planet*>(from_object);
-                        const ::Building* from_building = nullptr;
-                        if (!from_obj_planet && (from_building = dynamic_cast<const ::Building*>(from_object)))
-                            from_obj_planet = m_objects.getRaw<Planet>(from_building->PlanetID());
+                    for (const auto* from_object : m_from_objects) {
+                        const auto* from_obj_planet = from_object->ObjectType() == UniverseObjectType::OBJ_PLANET ?
+                            static_cast<const ::Planet*>(from_object) : nullptr;
+                        if (!from_obj_planet && from_object->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
+                            const auto plt_id = static_cast<const ::Building*>(from_object)->PlanetID();
+                            from_obj_planet = m_objects.getRaw<Planet>(plt_id);
+                        }
                         if (from_obj_planet && from_obj_planet->ID() == candidate_planet_id)
                             return true;
                     }
@@ -9762,19 +9768,17 @@ namespace {
                 return false;
             if (m_by_objects.empty())
                 return false;
-            auto planet = dynamic_cast<const Planet*>(candidate);
-            if (!planet)
+            if (candidate->ObjectType() != UniverseObjectType::OBJ_PLANET)
                 return false;
-            int planet_id = planet->ID();
+            const int planet_id = candidate->ID();
             if (planet_id == INVALID_OBJECT_ID)
                 return false;
 
             // check if any of the by_objects is ordered to bombard the candidate planet
             for (auto* obj : m_by_objects) {
-                auto ship = dynamic_cast<const Ship*>(obj);
-                if (!ship)
+                if (obj->ObjectType() != UniverseObjectType::OBJ_SHIP)
                     continue;
-                if (ship->OrderedBombardPlanet() == planet_id)
+                if (static_cast<const Ship*>(obj)->OrderedBombardPlanet() == planet_id)
                     return true;
             }
             return false;
