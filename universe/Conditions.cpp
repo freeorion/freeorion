@@ -1187,7 +1187,7 @@ namespace {
         {}
 
         // is it necessary to evaluate and pass in a non-default empire id?
-        static bool AffiliationTypeUsesEmpireID(EmpireAffiliationType affiliation) {
+        static bool AffiliationTypeUsesEmpireID(EmpireAffiliationType affiliation) noexcept {
             switch (affiliation) {
             case EmpireAffiliationType::AFFIL_SELF:
             case EmpireAffiliationType::AFFIL_ENEMY:
@@ -1270,8 +1270,8 @@ namespace {
             }
         }
 
-        int m_empire_id = ALL_EMPIRES;
-        EmpireAffiliationType m_affiliation;
+        const int m_empire_id = ALL_EMPIRES;
+        const EmpireAffiliationType m_affiliation;
         const ScriptingContext& m_context;
     };
 }
@@ -1990,7 +1990,7 @@ namespace {
             m_type(type)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const UniverseObject* candidate) const noexcept {
             if (!candidate)
                 return false;
 
@@ -2014,7 +2014,7 @@ namespace {
             return false;
         }
 
-        UniverseObjectType m_type;
+        const UniverseObjectType m_type;
     };
 }
 
@@ -2026,7 +2026,7 @@ void Type::Eval(const ScriptingContext& parent_context,
                             (m_type->LocalCandidateInvariant() &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
-        UniverseObjectType type = m_type->Eval(parent_context);
+        const UniverseObjectType type = m_type->Eval(parent_context);
         EvalImpl(matches, non_matches, search_domain, TypeSimpleMatch(type));
     } else {
         // re-evaluate allowed turn range for each candidate object
@@ -2170,7 +2170,7 @@ namespace {
             m_name(name)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const UniverseObject* candidate) const noexcept {
             if (!candidate)
                 return false;
 
@@ -2601,11 +2601,11 @@ namespace {
                 && special_capacity <= m_high_cap;
         }
 
-        const std::string&  m_name;
-        float               m_low_cap;
-        float               m_high_cap;
-        int                 m_low_turn;
-        int                 m_high_turn;
+        const std::string& m_name;
+        const float        m_low_cap;
+        const float        m_high_cap;
+        const int          m_low_turn;
+        const int          m_high_turn;
     };
 }
 
@@ -2802,7 +2802,7 @@ namespace {
             return candidate->HasTag(m_name, m_context);
         }
 
-        bool                    m_any_tag_ok;
+        const bool              m_any_tag_ok;
         const std::string&      m_name;
         const ScriptingContext& m_context;
     };
@@ -2916,15 +2916,15 @@ namespace {
             m_high(high)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const UniverseObject* candidate) const noexcept {
             if (!candidate)
                 return false;
-            int turn = candidate->CreationTurn();
+            const int turn = candidate->CreationTurn();
             return m_low <= turn && turn <= m_high;
         }
 
-        int m_low;
-        int m_high;
+        const int m_low;
+        const int m_high;
     };
 }
 
@@ -3035,25 +3035,27 @@ bool Contains::operator==(const Condition& rhs) const {
 namespace {
     struct ContainsSimpleMatch {
         ContainsSimpleMatch(const ObjectSet& subcondition_matches) :
-            m_subcondition_matches_ids()
-        {
-            // We need a sorted container for efficiently intersecting
-            // subcondition_matches with the set of objects contained in some
-            // candidate object.
-            // We only need ids, not objects, so we can do that conversion
-            // here as well, simplifying later code.
-            // Note that this constructor is called only once per
-            // Contains::Eval(), its work cannot help performance when executed
-            // for each candidate.
-            m_subcondition_matches_ids.reserve(subcondition_matches.size());
-            // gather the ids
-            for (auto* obj : subcondition_matches) {
-                if (obj)
-                    m_subcondition_matches_ids.push_back(obj->ID());
-            }
-            // sort them
-            std::sort(m_subcondition_matches_ids.begin(), m_subcondition_matches_ids.end());
-        }
+            m_subcondition_matches_ids([&subcondition_matches]() {
+                // We need a sorted container for efficiently intersecting
+                // subcondition_matches with the set of objects contained in some
+                // candidate object.
+                // We only need ids, not objects, so we can do that conversion
+                // here as well, simplifying later code.
+                // Note that this constructor is called only once per
+                // Contains::Eval(), its work cannot help performance when executed
+                // for each candidate.
+                std::vector<int> m;
+                m.reserve(subcondition_matches.size());
+                // gather the ids
+                for (auto* obj : subcondition_matches) {
+                    if (obj)
+                        m.push_back(obj->ID());
+                }
+                // sort them
+                std::sort(m.begin(), m.end());
+                return m;
+            }())
+        {}
 
         bool operator()(const UniverseObject* candidate) const {
             if (!candidate)
@@ -3089,7 +3091,7 @@ namespace {
             return match;
         }
 
-        std::vector<int> m_subcondition_matches_ids;
+        const std::vector<int> m_subcondition_matches_ids;
     };
 }
 
@@ -3235,24 +3237,28 @@ bool ContainedBy::operator==(const Condition& rhs) const {
 
 namespace {
     struct ContainedBySimpleMatch {
-        ContainedBySimpleMatch(const ObjectSet& subcondition_matches) {
-            // We need a sorted container for efficiently intersecting
-            // subcondition_matches with the set of objects containing some
-            // candidate object.
-            // We only need ids, not objects, so we can do that conversion
-            // here as well, simplifying later code.
-            // Note that this constructor is called only once per
-            // ContainedBy::Eval(), its work cannot help performance when
-            // executed for each candidate.
-            m_subcondition_matches_ids.reserve(subcondition_matches.size());
-            // gather the ids
-            for (auto* obj : subcondition_matches) {
-                if (obj)
-                    m_subcondition_matches_ids.push_back(obj->ID());
-            }
-            // sort them
-            std::sort(m_subcondition_matches_ids.begin(), m_subcondition_matches_ids.end());
-        }
+        ContainedBySimpleMatch(const ObjectSet& subcondition_matches) :
+            m_subcondition_matches_ids{[&subcondition_matches]() {
+                // We need a sorted container for efficiently intersecting
+                // subcondition_matches with the set of objects containing some
+                // candidate object.
+                // We only need ids, not objects, so we can do that conversion
+                // here as well, simplifying later code.
+                // Note that this constructor is called only once per
+                // ContainedBy::Eval(), its work cannot help performance when
+                // executed for each candidate.
+                std::vector<int> m;
+                m.reserve(subcondition_matches.size());
+                // gather the ids
+                for (auto* obj : subcondition_matches) {
+                    if (obj)
+                        m.push_back(obj->ID());
+                }
+                // sort them
+                std::sort(m.begin(), m.end());
+                return m;
+            }()}
+        {}
 
         bool operator()(const UniverseObject* candidate) const {
             if (!candidate)
@@ -3295,7 +3301,7 @@ namespace {
             return match;
         }
 
-        std::vector<int> m_subcondition_matches_ids;
+        const std::vector<int> m_subcondition_matches_ids;
     };
 }
 
@@ -3465,7 +3471,7 @@ namespace {
             m_system_id(system_id)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const UniverseObject* candidate) const noexcept {
             if (!candidate)
                 return false;
             if (m_system_id == INVALID_OBJECT_ID)
@@ -3474,7 +3480,7 @@ namespace {
                 return candidate->SystemID() == m_system_id;        // match objects in specified system (including that system itself)
         }
 
-        int m_system_id;
+        const int m_system_id;
     };
 }
 
@@ -3627,7 +3633,7 @@ namespace {
             m_planet_id(planet_id)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const UniverseObject* candidate) const noexcept {
             if (!candidate)
                 return false;
             if (candidate->ObjectType() != UniverseObjectType::OBJ_BUILDING)
@@ -3640,7 +3646,7 @@ namespace {
                 return building->PlanetID() == m_planet_id;        // match objects on specified planet
         }
 
-        int m_planet_id;
+        const int m_planet_id;
     };
 }
 
@@ -3786,13 +3792,13 @@ namespace {
             m_object_id(object_id)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const UniverseObject* candidate) const noexcept {
             return candidate &&
                 m_object_id != INVALID_OBJECT_ID &&
                 candidate->ID() == m_object_id;
         }
 
-        int m_object_id;
+        const int m_object_id;
     };
 }
 
@@ -4314,13 +4320,9 @@ namespace {
                 return false;
 
             // get plaent's environment for specified species, and check if it matches any of the indicated environments
-            auto planet_env = planet->EnvironmentForSpecies(m_context, species_to_check);
-            for (auto environment : m_environments) {
-                if (environment == planet_env)
-                    return true;
-            }
-
-            return false;
+            const auto planet_env = planet->EnvironmentForSpecies(m_context, species_to_check);
+            return std::any_of(m_environments.begin(), m_environments.end(),
+                               [planet_env](const auto env) { return env == planet_env; });
         }
 
         const std::vector< ::PlanetEnvironment>& m_environments;
@@ -5183,12 +5185,12 @@ namespace {
             return (m_low <= count && count <= m_high);
         }
 
-        BuildType               m_build_type;
+        const BuildType         m_build_type;
         const std::string&      m_name;
-        int                     m_design_id;
-        int                     m_empire_id;
-        int                     m_low;
-        int                     m_high;
+        const int               m_design_id;
+        const int               m_empire_id;
+        const int               m_low;
+        const int               m_high;
         const ScriptingContext& m_context;
     };
 }
@@ -5583,9 +5585,11 @@ namespace {
 
             if (candidate->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
                 auto system = static_cast<const System*>(candidate);
-                return std::count(m_types.begin(), m_types.end(), system->GetStarType());
+                return std::any_of(m_types.begin(), m_types.end(),
+                                   [st{system->GetStarType()}] (const auto t) { return st == t; });
             } else if (auto system = m_objects.getRaw<System>(candidate->SystemID())) {
-                return std::count(m_types.begin(), m_types.end(), system->GetStarType());
+                return std::any_of(m_types.begin(), m_types.end(),
+                                   [st{system->GetStarType()}] (const auto t) { return st == t; });
             } else {
                 return false;
             }
@@ -5904,10 +5908,10 @@ namespace {
             return (m_low <= count && count <= m_high);
         }
 
-        int                 m_low;
-        int                 m_high;
-        const std::string&  m_name;
-        const Universe&     m_universe;
+        const int          m_low;
+        const int          m_high;
+        const std::string& m_name;
+        const Universe&    m_universe;
     };
 }
 
@@ -6087,10 +6091,10 @@ namespace {
             return (m_low <= count && count <= m_high);
         }
 
-        int             m_low;
-        int             m_high;
-        ShipPartClass   m_part_class;
-        const Universe& m_universe;
+        const int           m_low;
+        const int           m_high;
+        const ShipPartClass m_part_class;
+        const Universe&     m_universe;
     };
 }
 
@@ -6249,7 +6253,7 @@ namespace {
             return (m_name == candidate_design->Name(false)); // don't look up in stringtable; predefined designs are stored by stringtable entry key
         }
 
-        bool               m_any_predef_design_ok;
+        const bool         m_any_predef_design_ok;
         const std::string& m_name;
         const Universe&    m_u;
     };
@@ -6361,7 +6365,7 @@ namespace {
             m_design_id(design_id)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const UniverseObject* candidate) const noexcept {
             if (!candidate)
                 return false;
             if (m_design_id == INVALID_DESIGN_ID)
@@ -6467,7 +6471,7 @@ namespace {
             m_empire_id(empire_id)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const UniverseObject* candidate) const noexcept {
             if (!candidate)
                 return false;
             if (candidate->ObjectType() == UniverseObjectType::OBJ_SHIP)
@@ -6581,7 +6585,7 @@ namespace {
         bool operator()(const UniverseObject*) const
         { return RandZeroToOne() <= m_chance; }
 
-        float m_chance;
+        const float m_chance;
     };
 }
 
@@ -6701,7 +6705,7 @@ namespace {
         MeterType m_meter_type;
     };
 
-    std::string MeterTypeDumpString(MeterType meter) {
+    constexpr std::string_view MeterTypeDumpString(MeterType meter) noexcept {
         switch (meter) {
         case MeterType::INVALID_METER_TYPE:        return "INVALID_METER_TYPE"; break;
         case MeterType::METER_TARGET_POPULATION:   return "TargetPopulation";   break;
@@ -9856,7 +9860,7 @@ std::unique_ptr<Condition> OrderedBombarded::Clone() const
 ///////////////////////////////////////////////////////////
 namespace {
     template <typename T, std::enable_if<std::is_arithmetic_v<T>>* = nullptr>
-    constexpr bool Comparison(T val1, ComparisonType comp, T val2) {
+    constexpr bool Comparison(T val1, ComparisonType comp, T val2) noexcept {
         switch (comp) {
             case ComparisonType::EQUAL:                 return val1 == val2;
             case ComparisonType::GREATER_THAN:          return val1 > val2;
@@ -9869,7 +9873,7 @@ namespace {
     }
 
     constexpr bool Comparison(const std::string& val1, ComparisonType comp,
-                              const std::string& val2)
+                              const std::string& val2) noexcept
     {
         switch (comp) {
             case ComparisonType::EQUAL:     return val1 == val2;
@@ -9906,7 +9910,7 @@ namespace {
         return retval;
     }
 
-    constexpr ComparisonType SwapSides(ComparisonType comp) {
+    constexpr ComparisonType SwapSides(ComparisonType comp) noexcept {
         switch (comp) {
         case ComparisonType::GREATER_THAN:          return ComparisonType::LESS_THAN;           break;
         case ComparisonType::GREATER_THAN_OR_EQUAL: return ComparisonType::LESS_THAN_OR_EQUAL;  break;
@@ -9984,7 +9988,7 @@ namespace {
                     const std::vector<std::string>& vals2)
     { return Comparison(vals2, SwapSides(comp), val1); }
 
-    constexpr std::string_view CompareTypeString(ComparisonType comp) {
+    constexpr std::string_view CompareTypeString(ComparisonType comp) noexcept {
         switch (comp) {
         case ComparisonType::EQUAL:                 return "=";
         case ComparisonType::GREATER_THAN:          return ">";
