@@ -1957,7 +1957,7 @@ void Universe::ForgetKnownObject(int empire_id, int object_id) {
         return empire_it->second;
     }();
 
-    const auto* const obj = objects.getRaw(object_id);
+    const auto obj = objects.get(object_id); // shared to ensure remains valid to end of this function
     if (!obj) {
         ErrorLogger() << "ForgetKnownObject empire: " << empire_id << " bad object id: " << object_id;
         return;
@@ -1976,7 +1976,7 @@ void Universe::ForgetKnownObject(int empire_id, int object_id) {
     const int container_id = obj->ContainerObjectID();
 
     for (int child_id : contained_ids)
-        ForgetKnownObject(empire_id, child_id);
+        ForgetKnownObject(empire_id, child_id); // may remove / erase this object
 
     if (container_id != INVALID_OBJECT_ID) {
         if (auto* container = objects.getRaw(container_id)) {
