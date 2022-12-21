@@ -58,9 +58,8 @@ namespace {
         static std::atomic<int> string_error_lookup_count = 0;
         if (string_error_lookup_count++ > 10)
             return "";
-        std::stringstream ss;
-        ss << "stacktrace:\n" << boost::stacktrace::stacktrace();
-        return ss.str();
+        using namespace boost::stacktrace;
+        return "stacktrace:\n" + to_string(stacktrace());
     }
 
     const UniverseObject* FollowReference(
@@ -653,25 +652,6 @@ std::string Constant<double>::Dump(uint8_t ntabs) const
 template <>
 std::string Constant<std::string>::Dump(uint8_t ntabs) const
 { return "\"" + Description() + "\""; }
-
-template <>
-std::string Constant<std::string>::Eval(const ScriptingContext& context) const
-{
-    if (m_value == "CurrentContent")
-        return m_top_level_content;
-    return m_value;
-}
-
-template <>
-void Constant<std::string>::SetTopLevelContent(const std::string& content_name)
-{
-    if (m_value == "CurrentContent" && content_name == "THERE_IS_NO_TOP_LEVEL_CONTENT")
-        ErrorLogger() << "Constant<std::string>::SetTopLevelContent()  Scripted Content illegal. Trying to set THERE_IS_NO_TOP_LEVEL_CONTENT for CurrentContent (maybe you tried to use CurrentContent in named_values.focs.txt)";
-    if (!m_top_level_content.empty()) // expected to happen if this value ref is part of a non-named-in-the-middle named value ref 
-        DebugLogger() << "Constant<std::string>::SetTopLevelContent()  Skip overwriting top level content from '" << m_top_level_content << "' to '" << content_name << "'";
-    else
-        m_top_level_content = content_name;
-}
 
 ///////////////////////////////////////////////////////////
 // Variable                                              //
@@ -1479,7 +1459,8 @@ std::string Statistic<std::string, std::string>::Eval(const ScriptingContext& co
 ///////////////////////////////////////////////////////////
 // TotalFighterShots (of a carrier during one battle)    //
 ///////////////////////////////////////////////////////////
-TotalFighterShots::TotalFighterShots(std::unique_ptr<ValueRef<int>>&& carrier_id, std::unique_ptr<Condition::Condition>&& sampling_condition) :
+TotalFighterShots::TotalFighterShots(std::unique_ptr<ValueRef<int>>&& carrier_id,
+                                     std::unique_ptr<Condition::Condition>&& sampling_condition) :
     Variable<int>(ReferenceType::NON_OBJECT_REFERENCE),
     m_carrier_id(std::move(carrier_id)),
     m_sampling_condition(std::move(sampling_condition))
