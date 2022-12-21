@@ -1973,10 +1973,11 @@ void Universe::ForgetKnownObject(int empire_id, int object_id) {
     // Remove all contained objects to avoid breaking fleet+ship, system+planet invariants
     const auto& contained_ids_set = obj->ContainedObjectIDs();
     const std::vector<int> contained_ids(contained_ids_set.begin(), contained_ids_set.end()); // copy since forgetting will modify container while iterating over it
+    const int container_id = obj->ContainerObjectID();
+
     for (int child_id : contained_ids)
         ForgetKnownObject(empire_id, child_id);
 
-    const int container_id = obj->ContainerObjectID();
     if (container_id != INVALID_OBJECT_ID) {
         if (auto* container = objects.getRaw(container_id)) {
             if (container->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
@@ -1991,7 +1992,7 @@ void Universe::ForgetKnownObject(int empire_id, int object_id) {
                 auto* fleet = static_cast<Fleet*>(container);
                 fleet->RemoveShips({object_id});
                 if (fleet->Empty())
-                    objects.erase(fleet->ID());
+                    objects.erase(container_id);
             }
         }
     }
