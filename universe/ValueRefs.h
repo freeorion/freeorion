@@ -41,14 +41,20 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
     explicit Constant(TT&& value);
 
     [[nodiscard]] bool operator==(const ValueRef<T>& rhs) const override;
-    [[nodiscard]] T    Eval(const ScriptingContext& context) const override;
+    [[nodiscard]] T    Eval(const ScriptingContext& context) const noexcept(noexcept(T{})) override {
+        if constexpr (std::is_same_v<T, std::string>) {
+            if (m_value == "CurrentContent")
+                return m_top_level_content;
+        }
+        return m_value;
+    }
 
     [[nodiscard]] std::string Description() const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    [[nodiscard]] T Value() const;
+    [[nodiscard]] T Value() const noexcept(noexcept(T{})) { return m_value; };
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override {
@@ -57,7 +63,7 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
         return retval;
     }
 private:
-    T           m_value;
+    const T     m_value{};
     std::string m_top_level_content;    // in the special case that T is std::string and m_value is "CurrentContent", return this instead
 };
 
@@ -105,9 +111,9 @@ struct FO_COMMON_API Variable : public ValueRef<T>
 protected:
     void InitInvariants();
 
-    ReferenceType               m_ref_type = ReferenceType::INVALID_REFERENCE_TYPE;
-    std::vector<std::string>    m_property_name;
-    bool                        m_return_immediate_value = false;
+    const ReferenceType            m_ref_type = ReferenceType::INVALID_REFERENCE_TYPE;
+    const std::vector<std::string> m_property_name;
+    const bool                     m_return_immediate_value = false;
 };
 
 /** The variable statistic class.   The value returned by this node is
@@ -129,14 +135,11 @@ struct FO_COMMON_API Statistic final : public Variable<T>
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    [[nodiscard]] StatisticType GetStatisticType() const
-    { return m_stat_type; }
+    [[nodiscard]] StatisticType GetStatisticType() const noexcept { return m_stat_type; }
 
-    [[nodiscard]] const Condition::Condition* GetSamplingCondition() const
-    { return m_sampling_condition.get(); }
+    [[nodiscard]] const auto* GetSamplingCondition() const noexcept { return m_sampling_condition.get(); }
 
-    [[nodiscard]] const ValueRef<V>* GetValueRef() const
-    { return m_value_ref.get(); }
+    [[nodiscard]] const auto* GetValueRef() const noexcept { return m_value_ref.get(); }
 
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
@@ -152,9 +155,9 @@ protected:
                                            const Condition::ObjectSet& objects) const;
 
 private:
-    StatisticType                         m_stat_type;
-    std::unique_ptr<Condition::Condition> m_sampling_condition;
-    std::unique_ptr<ValueRef<V>>          m_value_ref;
+    const StatisticType                         m_stat_type;
+    const std::unique_ptr<Condition::Condition> m_sampling_condition;
+    const std::unique_ptr<ValueRef<V>>          m_value_ref;
 };
 
 /** The variable TotalFighterShots class. The value returned by this node is
@@ -163,7 +166,8 @@ private:
   * in which the given \a sampling_condition matches. */
 struct FO_COMMON_API TotalFighterShots final : public Variable<int>
 {
-    TotalFighterShots(std::unique_ptr<ValueRef<int>>&& carrier_id, std::unique_ptr<Condition::Condition>&& sampling_condition = nullptr);
+    TotalFighterShots(std::unique_ptr<ValueRef<int>>&& carrier_id,
+                      std::unique_ptr<Condition::Condition>&& sampling_condition = nullptr);
 
     bool                      operator==(const ValueRef<int>& rhs) const override;
     [[nodiscard]] int         Eval(const ScriptingContext& context) const override;
@@ -171,8 +175,7 @@ struct FO_COMMON_API TotalFighterShots final : public Variable<int>
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void                      SetTopLevelContent(const std::string& content_name) override;
 
-    [[nodiscard]] const Condition::Condition* GetSamplingCondition() const
-    { return m_sampling_condition.get(); }
+    [[nodiscard]] const auto* GetSamplingCondition() const noexcept { return m_sampling_condition.get(); }
 
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
@@ -180,8 +183,8 @@ struct FO_COMMON_API TotalFighterShots final : public Variable<int>
     { return std::make_unique<TotalFighterShots>(CloneUnique(m_carrier_id), CloneUnique(m_sampling_condition)); }
 
 private:
-    std::unique_ptr<ValueRef<int>>        m_carrier_id;
-    std::unique_ptr<Condition::Condition> m_sampling_condition;
+    const std::unique_ptr<ValueRef<int>>        m_carrier_id;
+    const std::unique_ptr<Condition::Condition> m_sampling_condition;
 };
 
 /** The complex variable ValueRef class. The value returned by this node
@@ -215,12 +218,12 @@ struct FO_COMMON_API ComplexVariable final : public Variable<T>
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    [[nodiscard]] const ValueRef<int>*         IntRef1() const noexcept;
-    [[nodiscard]] const ValueRef<int>*         IntRef2() const noexcept;
-    [[nodiscard]] const ValueRef<int>*         IntRef3() const noexcept;
-    [[nodiscard]] const ValueRef<std::string>* StringRef1() const noexcept;
-    [[nodiscard]] const ValueRef<std::string>* StringRef2() const noexcept;
-    [[nodiscard]] uint32_t                     GetCheckSum() const override;
+    [[nodiscard]] const auto* IntRef1() const noexcept { return m_int_ref1.get(); }
+    [[nodiscard]] const auto* IntRef2() const noexcept { return m_int_ref2.get(); }
+    [[nodiscard]] const auto* IntRef3() const noexcept { return m_int_ref3.get(); }
+    [[nodiscard]] const auto* StringRef1() const noexcept { return m_string_ref1.get(); }
+    [[nodiscard]] const auto* StringRef2() const noexcept { return m_string_ref2.get(); }
+    [[nodiscard]] uint32_t    GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override
     { return std::make_unique<ComplexVariable<T>>(*this); }
@@ -228,11 +231,11 @@ struct FO_COMMON_API ComplexVariable final : public Variable<T>
 protected:
     void InitInvariants();
 
-    std::unique_ptr<ValueRef<int>> m_int_ref1;
-    std::unique_ptr<ValueRef<int>> m_int_ref2;
-    std::unique_ptr<ValueRef<int>> m_int_ref3;
-    std::unique_ptr<ValueRef<std::string>> m_string_ref1;
-    std::unique_ptr<ValueRef<std::string>> m_string_ref2;
+    const std::unique_ptr<ValueRef<int>> m_int_ref1;
+    const std::unique_ptr<ValueRef<int>> m_int_ref2;
+    const std::unique_ptr<ValueRef<int>> m_int_ref3;
+    const std::unique_ptr<ValueRef<std::string>> m_string_ref1;
+    const std::unique_ptr<ValueRef<std::string>> m_string_ref2;
 };
 
 /** The variable static_cast class.  The value returned by this node is taken
@@ -258,8 +261,7 @@ struct FO_COMMON_API StaticCast final : public Variable<ToType>
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    [[nodiscard]] const ValueRef<FromType>* GetValueRef() const
-    { return m_value_ref.get(); }
+    [[nodiscard]] const auto* GetValueRef() const noexcept { return m_value_ref.get(); }
 
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
@@ -285,8 +287,7 @@ struct FO_COMMON_API StringCast final : public Variable<std::string>
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    [[nodiscard]] const ValueRef<FromType>* GetValueRef() const
-    { return m_value_ref; }
+    [[nodiscard]] const auto* GetValueRef() const noexcept { return m_value_ref.get(); }
 
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
@@ -294,7 +295,7 @@ struct FO_COMMON_API StringCast final : public Variable<std::string>
     { return std::make_unique<StringCast<FromType>>(CloneUnique(m_value_ref)); }
 
 private:
-    std::unique_ptr<ValueRef<FromType>> m_value_ref;
+    const std::unique_ptr<ValueRef<FromType>> m_value_ref;
 };
 
 /** Looks up a string ValueRef or vector of string ValueRefs, and returns
@@ -310,8 +311,7 @@ struct FO_COMMON_API UserStringLookup final : public Variable<std::string> {
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    [[nodiscard]] const ValueRef<FromType>* GetValueRef() const
-    { return m_value_ref; }
+    [[nodiscard]] const auto* GetValueRef() const noexcept { return m_value_ref; }
 
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
@@ -319,7 +319,7 @@ struct FO_COMMON_API UserStringLookup final : public Variable<std::string> {
     { return std::make_unique<UserStringLookup<FromType>>(CloneUnique(m_value_ref)); }
 
 private:
-    std::unique_ptr<ValueRef<FromType>> m_value_ref;
+    const std::unique_ptr<ValueRef<FromType>> m_value_ref;
 };
 
 /** Returns the in-game name of the object / empire / etc. with a specified id. */
@@ -340,11 +340,9 @@ struct FO_COMMON_API NameLookup final : public Variable<std::string> {
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    [[nodiscard]] const ValueRef<int>* GetValueRef() const
-    { return m_value_ref.get(); }
+    [[nodiscard]] const auto* GetValueRef() const noexcept { return m_value_ref.get(); }
 
-    [[nodiscard]] LookupType GetLookupType() const
-    { return m_lookup_type; }
+    [[nodiscard]] LookupType GetLookupType() const noexcept { return m_lookup_type; }
 
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
@@ -352,8 +350,8 @@ struct FO_COMMON_API NameLookup final : public Variable<std::string> {
     { return std::make_unique<NameLookup>(CloneUnique(m_value_ref), m_lookup_type); }
 
 private:
-    std::unique_ptr<ValueRef<int>> m_value_ref;
-    LookupType m_lookup_type;
+    const std::unique_ptr<ValueRef<int>> m_value_ref;
+    const LookupType m_lookup_type;
 };
 
 enum class OpType : uint8_t {
@@ -414,8 +412,8 @@ struct FO_COMMON_API Operation final : public ValueRef<T>
 
     [[nodiscard]] static T    EvalImpl(OpType op_type, T lhs, T rhs);
 
-    [[nodiscard]] const ValueRef<T>*              LHS() const; // 1st operand (or nullptr if none exists)
-    [[nodiscard]] const ValueRef<T>*              RHS() const; // 2nd operand (or nullptr if no 2nd operand exists)
+    [[nodiscard]] const auto* LHS() const { return m_operands.empty() ? nullptr : m_operands.front().get(); } // 1st operand (or nullptr if none exists)
+    [[nodiscard]] const auto* RHS() const { return m_operands.size() < 2 ? nullptr : m_operands[1].get(); } // 2nd operand (or nullptr if no 2nd operand exists)
     [[nodiscard]] const std::vector<ValueRef<T>*> Operands() const; // all operands
 
     [[nodiscard]] uint32_t GetCheckSum() const override;
@@ -435,9 +433,9 @@ private:
 
     [[nodiscard]] T EvalImpl(const ScriptingContext& context) const;
 
-    OpType                                      m_op_type = OpType::TIMES;
-    std::vector<std::unique_ptr<ValueRef<T>>>   m_operands;
-    T                                           m_cached_const_value = T();
+    const OpType                                    m_op_type = OpType::TIMES;
+    const std::vector<std::unique_ptr<ValueRef<T>>> m_operands;
+    T                                               m_cached_const_value = T();
 };
 
 /* Convert between names and MeterType. Names are scripting token, like Population
@@ -518,16 +516,17 @@ bool Constant<T>::operator==(const ValueRef<T>& rhs) const
 }
 
 template <typename T>
-T Constant<T>::Value() const
-{ return m_value; }
-
-template <typename T>
-T Constant<T>::Eval(const ScriptingContext& context) const
-{ return m_value; }
-
-template <typename T>
 void Constant<T>::SetTopLevelContent(const std::string& content_name)
-{}
+{
+    if constexpr (std::is_same_v<T, std::string>) {
+        if (m_value == "CurrentContent" && content_name == "THERE_IS_NO_TOP_LEVEL_CONTENT")
+            ErrorLogger() << "Constant<std::string>::SetTopLevelContent()  Scripted Content illegal. Trying to set THERE_IS_NO_TOP_LEVEL_CONTENT for CurrentContent (maybe you tried to use CurrentContent in named_values.focs.txt)";
+        if (!m_top_level_content.empty()) // expected to happen if this value ref is part of a non-named-in-the-middle named value ref 
+            DebugLogger() << "Constant<std::string>::SetTopLevelContent()  Skip overwriting top level content from '" << m_top_level_content << "' to '" << content_name << "'";
+        else
+            m_top_level_content = content_name;
+    }
+}
 
 template <typename T>
 uint32_t Constant<T>::GetCheckSum() const
@@ -595,12 +594,6 @@ FO_COMMON_API std::string Constant<int>::Dump(uint8_t ntabs) const;
 template <>
 FO_COMMON_API std::string Constant<std::string>::Dump(uint8_t ntabs) const;
 
-template <>
-FO_COMMON_API std::string Constant<std::string>::Eval(const ScriptingContext& context) const;
-
-template <>
-FO_COMMON_API void Constant<std::string>::SetTopLevelContent(const std::string& content_name);
-
 ///////////////////////////////////////////////////////////
 // Variable                                              //
 ///////////////////////////////////////////////////////////
@@ -651,12 +644,17 @@ Variable<T>::Variable(ReferenceType ref_type,
                       bool return_immediate_value) :
     ValueRef<T>(),
     m_ref_type(ref_type),
+    m_property_name([&container_name, &property_name]() -> std::vector<std::string> {
+        std::vector<std::string> pn;
+        const bool cnhs = container_name.has_value();
+        pn.reserve(1 + cnhs);
+        if (cnhs)
+            pn.push_back(std::move(*container_name));
+        pn.push_back(std::forward<S>(property_name));
+        return pn;
+    }()),
     m_return_immediate_value(return_immediate_value)
 {
-    if (container_name)
-        m_property_name.push_back(std::move(*container_name));
-    m_property_name.push_back(std::forward<S>(property_name));
-
     InitInvariants();
 }
 
@@ -1331,26 +1329,6 @@ bool ComplexVariable<T>::operator==(const ValueRef<T>& rhs) const
 }
 
 template <typename T>
-const ValueRef<int>* ComplexVariable<T>::IntRef1() const noexcept
-{ return m_int_ref1.get(); }
-
-template <typename T>
-const ValueRef<int>* ComplexVariable<T>::IntRef2() const noexcept
-{ return m_int_ref2.get(); }
-
-template <typename T>
-const ValueRef<int>* ComplexVariable<T>::IntRef3() const noexcept
-{ return m_int_ref3.get(); }
-
-template <typename T>
-const ValueRef<std::string>* ComplexVariable<T>::StringRef1() const noexcept
-{ return m_string_ref1.get(); }
-
-template <typename T>
-const ValueRef<std::string>* ComplexVariable<T>::StringRef2() const noexcept
-{ return m_string_ref2.get(); }
-
-template <typename T>
 std::string ComplexVariable<T>::Description() const
 {
     std::string retval = ComplexVariableDescription(
@@ -1547,18 +1525,21 @@ uint32_t StaticCast<FromType, ToType>::GetCheckSum() const
 ///////////////////////////////////////////////////////////
 template <typename FromType>
 StringCast<FromType>::StringCast(std::unique_ptr<ValueRef<FromType>>&& value_ref) :
-    Variable<std::string>(ReferenceType::NON_OBJECT_REFERENCE),
+    Variable<std::string>(
+        [ref{value_ref.get()}]() -> ReferenceType {
+            if (auto var_ref = dynamic_cast<Variable<FromType>*>(ref))
+                return var_ref->GetReferenceType();
+            else
+                return ReferenceType::NON_OBJECT_REFERENCE;
+        }(),
+        [ref{value_ref.get()}]() -> std::vector<std::string> {
+            if (auto var_ref = dynamic_cast<Variable<FromType>*>(ref))
+                return var_ref->PropertyName();
+            else
+                return {};
+        }()),
     m_value_ref(std::move(value_ref))
 {
-    auto raw_ref_ptr = m_value_ref.get();
-    // if looking up a the results of ValueRef::Variable::Eval, can copy that
-    // ValueRef's internals to expose the reference type and property name from
-    // this ValueRef
-    if (auto var_ref = dynamic_cast<Variable<FromType>*>(raw_ref_ptr)) {
-        this->m_ref_type = var_ref->GetReferenceType();
-        this->m_property_name = var_ref->PropertyName();
-    }
-
     this->m_root_candidate_invariant = !m_value_ref || m_value_ref->RootCandidateInvariant();
     this->m_local_candidate_invariant = !m_value_ref || m_value_ref->LocalCandidateInvariant();
     this->m_target_invariant = !m_value_ref || m_value_ref->TargetInvariant();
@@ -1574,8 +1555,7 @@ bool StringCast<FromType>::operator==(const ValueRef<std::string>& rhs) const
         return true;
     if (typeid(rhs) != typeid(*this))
         return false;
-    const StringCast<FromType>& rhs_ =
-        static_cast<const StringCast<FromType>&>(rhs);
+    auto& rhs_ = static_cast<const StringCast<FromType>&>(rhs);
 
     if (m_value_ref == rhs_.m_value_ref) {
         // check next member
@@ -1594,7 +1574,7 @@ std::string StringCast<FromType>::Eval(const ScriptingContext& context) const
 {
     if (!m_value_ref)
         return "";
-    auto value = m_value_ref->Eval(context);
+    const auto value = m_value_ref->Eval(context);
 
     if constexpr (std::is_same_v<FromType, std::string>) {
         return value;
@@ -1643,7 +1623,10 @@ std::string StringCast<FromType>::Description() const
 
 template <typename FromType>
 std::string StringCast<FromType>::Dump(uint8_t ntabs) const
-{ return "(" + m_value_ref->Dump(ntabs) + ") // StringCast{" + typeid(FromType).name() + "}\n" + DumpIndent(ntabs + 1); }
+{
+    return "(" + m_value_ref->Dump(ntabs) + ") // StringCast{"
+        + typeid(FromType).name() + "}\n" + DumpIndent(ntabs + 1);
+}
 
 template <typename FromType>
 void StringCast<FromType>::SetTopLevelContent(const std::string& content_name) {
@@ -1657,18 +1640,21 @@ void StringCast<FromType>::SetTopLevelContent(const std::string& content_name) {
 ///////////////////////////////////////////////////////////
 template <typename FromType>
 UserStringLookup<FromType>::UserStringLookup(std::unique_ptr<ValueRef<FromType>>&& value_ref) :
-    Variable<std::string>(ReferenceType::NON_OBJECT_REFERENCE),
+    Variable<std::string>(
+        [ref{value_ref.get()}]() -> ReferenceType {
+            if (auto var_ref = dynamic_cast<Variable<FromType>*>(ref))
+                return var_ref->GetReferenceType();
+            else
+                return ReferenceType::NON_OBJECT_REFERENCE;
+        }(),
+        [ref{value_ref.get()}]() -> std::vector<std::string> {
+            if (auto var_ref = dynamic_cast<Variable<FromType>*>(ref))
+                return var_ref->PropertyName();
+            else
+                return {};
+        }()),
     m_value_ref(std::move(value_ref))
 {
-    auto raw_ref_ptr = m_value_ref.get();
-    // if looking up a the results of ValueRef::Variable::Eval, can copy that
-    // ValueRef's internals to expose the reference type and property name from
-    // this ValueRef
-    if (auto var_ref = dynamic_cast<Variable<FromType>*>(raw_ref_ptr)) {
-        this->m_ref_type = var_ref->GetReferenceType();
-        this->m_property_name = var_ref->PropertyName();
-    }
-
     this->m_root_candidate_invariant = !m_value_ref || m_value_ref->RootCandidateInvariant();
     this->m_local_candidate_invariant = !m_value_ref || m_value_ref->LocalCandidateInvariant();
     this->m_target_invariant = !m_value_ref || m_value_ref->TargetInvariant();
@@ -1717,18 +1703,15 @@ FO_COMMON_API std::string UserStringLookup<std::vector<std::string>>::Eval(const
 
 template <typename FromType>
 std::string UserStringLookup<FromType>::Description() const
-{
-    return m_value_ref->Description();
-}
+{ return m_value_ref->Description(); }
 
 template <typename FromType>
 std::string UserStringLookup<FromType>::Dump(uint8_t ntabs) const
-{
-    return m_value_ref->Dump(ntabs);
-}
+{ return m_value_ref->Dump(ntabs); }
 
 template <typename FromType>
-void UserStringLookup<FromType>::SetTopLevelContent(const std::string& content_name) {
+void UserStringLookup<FromType>::SetTopLevelContent(const std::string& content_name)
+{
     if (m_value_ref)
         m_value_ref->SetTopLevelContent(content_name);
 }
@@ -1752,33 +1735,31 @@ template <typename T>
 Operation<T>::Operation(OpType op_type,
                         std::unique_ptr<ValueRef<T>>&& operand1,
                         std::unique_ptr<ValueRef<T>>&& operand2) :
-    ValueRef<T>(),
-    m_op_type(op_type)
-{
-    if (operand1)
-        m_operands.push_back(std::move(operand1));
-    if (operand2)
-        m_operands.push_back(std::move(operand2));
-    InitConstInvariants();
-    CacheConstValue();
-}
+    Operation(op_type, [&operand1, &operand2]() {
+                std::remove_const_t<decltype(m_operands)> retval{};
+                retval.reserve(2);
+                retval.push_back(std::move(operand1));
+                retval.push_back(std::move(operand2));
+                return retval;
+              }())
+{}
 
 template <typename T>
 Operation<T>::Operation(OpType op_type, std::unique_ptr<ValueRef<T>>&& operand) :
-    ValueRef<T>(),
-    m_op_type(op_type)
-{
-    if (operand)
-        m_operands.push_back(std::move(operand));
-    InitConstInvariants();
-    CacheConstValue();
-}
+    Operation(op_type, [&operand]() {
+                std::remove_const_t<decltype(m_operands)> retval{};
+                retval.push_back(std::move(operand));
+                return retval;
+              }())
+{}
 
 template <typename T>
 Operation<T>::Operation(OpType op_type, std::vector<std::unique_ptr<ValueRef<T>>>&& operands) :
     m_op_type(op_type),
     m_operands(std::move(operands))
 {
+    if (std::any_of(m_operands.begin(), m_operands.end(), [](const auto& op) -> bool { return !op; }))
+        throw std::invalid_argument("Operation passed null operand");
     InitConstInvariants();
     CacheConstValue();
 }
@@ -1885,14 +1866,6 @@ bool Operation<T>::operator==(const ValueRef<T>& rhs) const
 
     return true;
 }
-
-template <typename T>
-const ValueRef<T>* Operation<T>::LHS() const
-{ return m_operands.empty() ? nullptr : m_operands.front().get(); }
-
-template <typename T>
-const ValueRef<T>* Operation<T>::RHS() const
-{ return m_operands.size() < 2 ? nullptr : m_operands[1].get(); }
 
 template <typename T>
 const std::vector<ValueRef<T>*> Operation<T>::Operands() const
