@@ -2469,8 +2469,8 @@ namespace {
 
 ScanlineControl::ScanlineControl(GG::X x, GG::Y y, GG::X w, GG::Y h, bool square, GG::Clr clr):
     Control(x, y, w, h, GG::NO_WND_FLAGS),
-    m_square(square),
-    m_color(clr)
+    m_color(clr),
+    m_square(square)
 {}
 
 void ScanlineControl::Render() {
