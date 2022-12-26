@@ -25,24 +25,6 @@ bool Fighter::HostileToEmpire(int empire_id, const EmpireManager& empires) const
         empires.GetDiplomaticStatus(Owner(), empire_id) == DiplomaticStatus::DIPLO_WAR;
 }
 
-const ::Condition::Condition* Fighter::CombatTargets() const
-{ return m_combat_targets; }
-
-float Fighter::Damage() const
-{ return m_damage; }
-
-bool Fighter::Destroyed() const
-{ return m_destroyed; }
-
-int Fighter::LaunchedFrom() const
-{ return m_launched_from_id; }
-
-const std::string& Fighter::SpeciesName() const
-{ return m_species_name; }
-
-void Fighter::SetDestroyed(bool destroyed)
-{ m_destroyed = destroyed; }
-
 std::string Fighter::Dump(uint8_t ntabs) const {
     std::stringstream os;
     os << UniverseObject::Dump(ntabs);

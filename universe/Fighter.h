@@ -26,13 +26,13 @@ public:
     void Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id = ALL_EMPIRES) override;
     void Copy(const Fighter& copied_fighter, const Universe& universe, int empire_id = ALL_EMPIRES);
 
-    [[nodiscard]] const ::Condition::Condition* CombatTargets() const;
-    [[nodiscard]] float                         Damage() const;
-    [[nodiscard]] bool                          Destroyed() const;
-    [[nodiscard]] int                           LaunchedFrom() const;
-    [[nodiscard]] const std::string&            SpeciesName() const;
+    [[nodiscard]] auto* CombatTargets() const noexcept { return m_combat_targets; }
+    [[nodiscard]] float Damage() const noexcept { return m_damage; }
+    [[nodiscard]] bool  Destroyed() const noexcept { return m_destroyed; }
+    [[nodiscard]] int   LaunchedFrom() const noexcept { return m_launched_from_id; }
+    [[nodiscard]] auto& SpeciesName() const noexcept { return m_species_name; }
 
-    void SetDestroyed(bool destroyed = true);
+    void SetDestroyed(bool destroyed = true) noexcept { m_destroyed = destroyed; }
 
 private:
     [[nodiscard]] std::shared_ptr<UniverseObject> Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const override;
