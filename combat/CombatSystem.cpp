@@ -918,7 +918,7 @@ namespace {
             } else if (part_class == ShipPartClass::PC_FIGHTER_HANGAR) {
                 // hangar max-capacity-modification effects stack, so only add capacity for each hangar type once
                 if (!seen_hangar_ship_parts.count(part_name)) {
-                    available_fighters += ship->CurrentPartMeterValue(MeterType::METER_CAPACITY, part_name);
+                    available_fighters += static_cast<int>(ship->CurrentPartMeterValue(MeterType::METER_CAPACITY, part_name));
                     seen_hangar_ship_parts.insert(part_name);
 
                     if (!part_combat_targets)
@@ -937,7 +937,7 @@ namespace {
                 }
 
             } else if (part_class == ShipPartClass::PC_FIGHTER_BAY) {
-                part_fighter_launch_capacities[part_name] += ship->CurrentPartMeterValue(MeterType::METER_CAPACITY, part_name);
+                part_fighter_launch_capacities[part_name] += static_cast<int>(ship->CurrentPartMeterValue(MeterType::METER_CAPACITY, part_name));
             }
         }
 
@@ -1584,9 +1584,10 @@ namespace {
 
 
             // reduce hangar capacity (contents) corresponding to launched fighters
-            int num_launched = new_fighter_ids.size();
+            const int num_launched = new_fighter_ids.size();
             if (attacker_ship)
-                ReduceStoredFighterCount(attacker_ship, num_launched, combat_state.combat_info.universe);
+                ReduceStoredFighterCount(attacker_ship, static_cast<float>(num_launched),
+                                         combat_state.combat_info.universe);
 
             // launching fighters counts as a ship being active in combat
             if (!new_fighter_ids.empty())
@@ -1683,7 +1684,7 @@ namespace {
             IncreaseStoredFighterCount(ship, fighter_count, combat_info.universe);
             // launching negative ships indicates recovery of them
             launches_event->AddEvent(std::make_shared<FighterLaunchEvent>(
-                bout, ship_id, ship->Owner(), -fighter_count));
+                bout, ship_id, ship->Owner(), -static_cast<int>(fighter_count)));
         }
     }
 
