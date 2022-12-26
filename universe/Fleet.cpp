@@ -857,25 +857,28 @@ void Fleet::MovementPhase(ScriptingContext& context) {
     if (!move_path.empty()) {
         DebugLogger() << "Fleet::MovementPhase " << this->Name() << " (" << this->ID()
                       << ")  route:" << [&]() {
-            std::stringstream ss;
+            std::string ss;
+            ss.reserve(this->TravelRoute().size() * 32); // guesstimate
             for (auto sys_id : this->TravelRoute()) {
-                if (auto sys = objects.getRaw<System>(sys_id))
-                    ss << "  " << sys->Name() << " (" << sys_id << ")";
+                if (auto sys = objects.getRaw<const System>(sys_id))
+                    ss.append("  ").append(sys->Name()).append(" (")
+                      .append(std::to_string(sys_id)).append(")");
                 else
-                    ss << "  (???) (" << sys_id << ")";
+                    ss.append("  (?) (").append(std::to_string(sys_id)).append(")");
             }
-            return ss.str();
+            return ss;
         }()
                       << "   move path:" << [&]() {
-            std::stringstream ss;
+            std::string ss;
+            ss.reserve(move_path.size() * 32); // guesstimate
             for (const auto& node : move_path) {
-                auto sys = context.ContextObjects().getRaw<System>(node.object_id);
-                if (sys)
-                    ss << "  " << sys->Name() << " (" << node.object_id << ")";
+                if (auto sys = context.ContextObjects().getRaw<const System>(node.object_id))
+                    ss.append("  ").append(sys->Name()).append(" (")
+                      .append(std::to_string(node.object_id)).append(")");
                 else
-                    ss << "  (-)";
+                    ss.append("  (-)");
             }
-            return ss.str();
+            return ss;
         }();
     } else {
         // enforce m_next_system and m_prev_system being INVALID_OBJECT_ID when
