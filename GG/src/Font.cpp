@@ -1363,7 +1363,8 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, Flags<TextFo
         sub_match<std::string::const_iterator> const* text_match;
         while (it != end_it
                && (text_match = &(*it)[text_tag])
-               && text_match->matched) {
+               && text_match->matched)
+        {
             need_increment = false;
             if (combined_text.empty())
                 combined_text = Substring(text, *text_match);
