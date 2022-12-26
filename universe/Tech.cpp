@@ -167,7 +167,6 @@ Tech::Tech(std::string&& name, std::string&& description,
         std::size_t next_idx = 0;
         retval.reserve(tags.size());
         std::string_view sv{m_tags_concatenated};
-        static constexpr auto len{TAG_PEDIA_PREFIX.length()};
 
         // store views into concatenated tags string
         std::for_each(tags.begin(), tags.end(),
@@ -175,6 +174,7 @@ Tech::Tech(std::string&& name, std::string&& description,
         {
             std::string upper_t = boost::to_upper_copy<std::string>(t);
             auto tag = sv.substr(next_idx, upper_t.size());
+            static constexpr auto len{TAG_PEDIA_PREFIX.length()};
             if (tag.substr(0, len) == TAG_PEDIA_PREFIX)
                 retval.push_back(tag);
             next_idx += upper_t.size();

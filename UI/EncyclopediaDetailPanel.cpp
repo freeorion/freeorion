@@ -85,8 +85,8 @@ namespace {
     // that have the TAG_PEDIA_PREFIX as their first few chars
     template <typename StringContainer>
     bool HasCustomCategory(const StringContainer& tags) {
-        static constexpr auto len{TAG_PEDIA_PREFIX.length()};
         return std::any_of(tags.begin(), tags.end(), [](std::string_view sv) {
+            static constexpr auto len{TAG_PEDIA_PREFIX.length()};
             return sv.substr(0, len) == TAG_PEDIA_PREFIX;
         });
     }

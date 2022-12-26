@@ -124,13 +124,13 @@ namespace {
         retval.reserve(tags.size());
 
         std::size_t next_idx = 0;
-        static constexpr auto len{TAG_PEDIA_PREFIX.length()};
 
         // store views into concatenated tags/likes string
         std::for_each(tags.begin(), tags.end(),
                       [&next_idx, &retval, concat_tags] (const auto tag)
         {
             std::string upper_t = boost::to_upper_copy<std::string>(tag);
+            static constexpr auto len{TAG_PEDIA_PREFIX.length()};
             if (tag.substr(0, len) == TAG_PEDIA_PREFIX) {
                 // store string views into the pedia tag after the "PEDIA" prefix
                 auto full_tag = concat_tags.substr(next_idx, upper_t.size());
