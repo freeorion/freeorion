@@ -209,7 +209,19 @@ EffectsGroup::EffectsGroup(std::unique_ptr<Condition::Condition>&& scope,
     m_accounting_label(std::move(accounting_label)),
     m_priority(priority),
     m_description(std::move(description)),
-    m_content_name(std::move(content_name))
+    m_content_name(std::move(content_name)),
+    m_has_meter_effects([this]() {
+        return std::any_of(m_effects.begin(), m_effects.end(),
+                           [](const auto& e) noexcept { return e->IsMeterEffect(); });
+    }()),
+    m_has_appearance_effects([this]() {
+        return std::any_of(m_effects.begin(), m_effects.end(),
+                           [](const auto& e) noexcept { return e->IsAppearanceEffect(); });
+    }()),
+    m_has_sitrep_effects([this]() {
+        return std::any_of(m_effects.begin(), m_effects.end(),
+                           [](const auto& e) noexcept { return e->IsSitrepEffect(); });
+    }())
 {}
 
 EffectsGroup::~EffectsGroup() = default;
@@ -291,8 +303,8 @@ void EffectsGroup::Execute(ScriptingContext& context,
     }
 }
 
-const std::vector<Effect*> EffectsGroup::EffectsList() const {
-    std::vector<Effect*> retval;
+std::vector<const Effect*> EffectsGroup::EffectsList() const {
+    std::vector<const Effect*> retval;
     retval.reserve(m_effects.size());
     std::transform(m_effects.begin(), m_effects.end(), std::back_inserter(retval),
                    [](const std::unique_ptr<Effect>& xx) {return xx.get();});
@@ -328,38 +340,14 @@ std::string EffectsGroup::Dump(uint8_t ntabs) const {
     return retval;
 }
 
-bool EffectsGroup::HasMeterEffects() const noexcept {
-    for (auto& effect : m_effects) { // TODO: cache
-        if (effect->IsMeterEffect())
-            return true;
-    }
-    return false;
-}
-
-bool EffectsGroup::HasAppearanceEffects() const noexcept {
-    for (auto& effect : m_effects) {
-        if (effect->IsAppearanceEffect())
-            return true;
-    }
-    return false;
-}
-
-bool EffectsGroup::HasSitrepEffects() const noexcept {
-    for (auto& effect : m_effects) {
-        if (effect->IsSitrepEffect())
-            return true;
-    }
-    return false;
-}
-
-void EffectsGroup::SetTopLevelContent(const std::string& content_name) {
-    m_content_name = content_name;
+void EffectsGroup::SetTopLevelContent(std::string content_name) {
     if (m_scope)
         m_scope->SetTopLevelContent(content_name);
     if (m_activation)
         m_activation->SetTopLevelContent(content_name);
     for (auto& effect : m_effects)
         effect->SetTopLevelContent(content_name);
+    m_content_name = std::move(content_name);
 }
 
 uint32_t EffectsGroup::GetCheckSum() const {

@@ -213,22 +213,23 @@ namespace Effect {
                      bool include_empire_meter_effects = false,
                      bool only_generate_sitrep_effects = false) const;
 
-        const std::string&              StackingGroup() const noexcept   { return m_stacking_group; }
-        Condition::Condition*           Scope() const noexcept           { return m_scope.get(); }
-        Condition::Condition*           Activation() const noexcept      { return m_activation.get(); }
-        const std::vector<Effect*>      EffectsList() const;
-        const std::string&              GetDescription() const noexcept  { return m_description; }
-        const std::string&              AccountingLabel() const noexcept { return m_accounting_label; }
-        int                             Priority() const noexcept        { return m_priority; }
-        std::string                     Dump(uint8_t ntabs = 0) const;
-        bool                            HasMeterEffects() const noexcept;
-        bool                            HasAppearanceEffects() const noexcept;
-        bool                            HasSitrepEffects() const noexcept;
+        [[nodiscard]] auto& StackingGroup() const noexcept   { return m_stacking_group; }
+        [[nodiscard]] auto* Scope() const noexcept           { return m_scope.get(); }
+        [[nodiscard]] auto* Activation() const noexcept      { return m_activation.get(); }
+        [[nodiscard]] auto& GetDescription() const noexcept  { return m_description; }
+        [[nodiscard]] auto& AccountingLabel() const noexcept { return m_accounting_label; }
+        [[nodiscard]] int   Priority() const noexcept        { return m_priority; }
+        [[nodiscard]] bool  HasMeterEffects() const noexcept      { return m_has_meter_effects; }
+        [[nodiscard]] bool  HasAppearanceEffects() const noexcept { return m_has_appearance_effects; }
+        [[nodiscard]] bool  HasSitrepEffects() const noexcept     { return m_has_sitrep_effects; }
 
-        void                            SetTopLevelContent(const std::string& content_name);
-        const std::string&              TopLevelContent() const noexcept { return m_content_name; }
+        void SetTopLevelContent(std::string content_name);
 
-        virtual uint32_t                GetCheckSum() const;
+        [[nodiscard]] auto& TopLevelContent() const noexcept { return m_content_name; }
+
+        [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const;
+        [[nodiscard]] std::vector<const Effect*> EffectsList() const;
+        [[nodiscard]] virtual uint32_t           GetCheckSum() const;
 
     protected:
         std::unique_ptr<Condition::Condition>   m_scope;
@@ -236,9 +237,12 @@ namespace Effect {
         std::string                             m_stacking_group;
         std::vector<std::unique_ptr<Effect>>    m_effects;
         std::string                             m_accounting_label;
-        int                                     m_priority; // constructor sets this, so don't need a default value here
+        const int                               m_priority; // constructor sets this, so don't need a default value here
         std::string                             m_description;
         std::string                             m_content_name;
+        const bool                              m_has_meter_effects;
+        const bool                              m_has_appearance_effects;
+        const bool                              m_has_sitrep_effects;
     };
 
     /** Returns a single string which `Dump`s a vector of EffectsGroups. */
