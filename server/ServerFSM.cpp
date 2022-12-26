@@ -3687,7 +3687,7 @@ sc::result ShuttingDownServer::react(const CheckEndConditions& u) {
     return discard_event();
 }
 
-sc::result ShuttingDownServer::react(const DisconnectClients& u) {
+sc::result ShuttingDownServer::react(const DisconnectClients&) {
     TraceLogger(FSM) << "(ServerFSM) ShuttingDownServer.DisconnectClients";
     ServerApp& server = Server();
 
@@ -3700,7 +3700,6 @@ sc::result ShuttingDownServer::react(const DisconnectClients& u) {
     throw ServerApp::NormalExitException();
 
     // Never reached.
-    return discard_event();
 }
 
 sc::result ShuttingDownServer::react(const Error& msg) {

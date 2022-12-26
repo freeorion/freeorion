@@ -405,7 +405,7 @@ struct ShuttingDownServer : sc::state<ShuttingDownServer, ServerFSM> {
 
     sc::result react(const LeaveGame& msg);
     sc::result react(const CheckEndConditions& u);
-    sc::result react(const DisconnectClients& u);
+    [[noreturn]] sc::result react(const DisconnectClients&);
     sc::result react(const Disconnection& d);
     sc::result react(const Error& msg);
 
