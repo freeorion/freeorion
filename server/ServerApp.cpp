@@ -715,7 +715,7 @@ namespace {
 
 void ServerApp::NewGameInitConcurrentWithJoiners(
     const GalaxySetupData& galaxy_setup_data,
-    const std::vector<PlayerSetupData>& player_setup_data)
+    const std::vector<PlayerSetupData>& player_setup_data_in)
 {
     DebugLogger() << "ServerApp::NewGameInitConcurrentWithJoiners";
 
@@ -727,7 +727,7 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     // validate some connection info / determine which players need empires created
     std::map<int, PlayerSetupData> active_empire_id_setup_data;
     int next_empire_id = 1;
-    for (const auto& psd : player_setup_data) {
+    for (const auto& psd : player_setup_data_in) {
         if (!psd.player_name.empty()
             && (psd.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER
                 || psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER))
@@ -764,7 +764,8 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     // after all game initialization stuff has been created, set current turn to 0 and apply only GenerateSitRep Effects
     // so that a set of SitReps intended as the player's initial greeting will be segregated
     m_current_turn = 0;
-    ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data, m_species_manager, m_supply_manager};
+    ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data,
+                             m_species_manager, m_supply_manager};
     m_universe.ApplyGenerateSitRepEffects(context);
 
     //can set current turn to 1 for start of game
@@ -773,15 +774,15 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     // record empires for each active player. Note: active_empire_id_setup_data
     // contains only data of players who control an empire; observers and
     // moderators are not included.
-    for (auto& [empire_id, player_setup_data] : active_empire_id_setup_data) {
-        if (player_setup_data.player_id != Networking::INVALID_PLAYER_ID)
-            m_player_empire_ids[player_setup_data.player_id] = empire_id;
+    for (auto& [empire_id, psd] : active_empire_id_setup_data) {
+        if (psd.player_id != Networking::INVALID_PLAYER_ID)
+            m_player_empire_ids[psd.player_id] = empire_id;
 
         // add empires to turn processing
         if (auto empire = m_empires.GetEmpire(empire_id)) {
-            AddEmpireTurn(empire_id, PlayerSaveGameData(player_setup_data.player_name, empire_id,
+            AddEmpireTurn(empire_id, PlayerSaveGameData(psd.player_name, empire_id,
                                                         nullptr, nullptr, std::string(),
-                                                        player_setup_data.client_type));
+                                                        psd.client_type));
             empire->SetReady(false);
         }
     }
