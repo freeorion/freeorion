@@ -9591,11 +9591,9 @@ std::unique_ptr<Condition> ResourceSupplyConnectedByEmpire::Clone() const {
 ///////////////////////////////////////////////////////////
 // CanColonize                                           //
 ///////////////////////////////////////////////////////////
-CanColonize::CanColonize() {
-    m_root_candidate_invariant = true;
-    m_target_invariant = true;
-    m_source_invariant = true;
-}
+CanColonize::CanColonize() :
+    Condition(true, true, true)
+{}
 
 bool CanColonize::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
@@ -9661,11 +9659,9 @@ std::unique_ptr<Condition> CanColonize::Clone() const
 ///////////////////////////////////////////////////////////
 // CanProduceShips                                       //
 ///////////////////////////////////////////////////////////
-CanProduceShips::CanProduceShips() {
-    m_root_candidate_invariant = true;
-    m_target_invariant = true;
-    m_source_invariant = true;
-}
+CanProduceShips::CanProduceShips() :
+    Condition(true, true, true)
+{}
 
 bool CanProduceShips::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
@@ -9732,12 +9728,11 @@ std::unique_ptr<Condition> CanProduceShips::Clone() const
 // OrderedBombarded                                      //
 ///////////////////////////////////////////////////////////
 OrderedBombarded::OrderedBombarded(std::unique_ptr<Condition>&& by_object_condition) :
+    Condition(!by_object_condition || by_object_condition->RootCandidateInvariant(),
+              !by_object_condition || by_object_condition->TargetInvariant(),
+              !by_object_condition || by_object_condition->SourceInvariant()),
     m_by_object_condition(std::move(by_object_condition))
-{
-    m_root_candidate_invariant = !m_by_object_condition || m_by_object_condition->RootCandidateInvariant();
-    m_target_invariant = !m_by_object_condition || m_by_object_condition->TargetInvariant();
-    m_source_invariant = !m_by_object_condition || m_by_object_condition->SourceInvariant();
-}
+{}
 
 bool OrderedBombarded::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -9998,51 +9993,63 @@ ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<double>>&& value_ref1,
                      std::unique_ptr<ValueRef::ValueRef<double>>&& value_ref2,
                      ComparisonType comp2,
                      std::unique_ptr<ValueRef::ValueRef<double>>&& value_ref3) :
+    Condition((!value_ref1 || value_ref1->RootCandidateInvariant()) &&
+              (!value_ref2 || value_ref2->RootCandidateInvariant()) &&
+              (!value_ref3 || value_ref3->RootCandidateInvariant()),
+              (!value_ref1 || value_ref1->TargetInvariant()) &&
+              (!value_ref2 || value_ref2->TargetInvariant()) &&
+              (!value_ref3 || value_ref3->TargetInvariant()),
+              (!value_ref1 || value_ref1->SourceInvariant()) &&
+              (!value_ref2 || value_ref2->SourceInvariant()) &&
+              (!value_ref3 || value_ref3->SourceInvariant())),
     m_value_ref1(std::move(value_ref1)),
     m_value_ref2(std::move(value_ref2)),
     m_value_ref3(std::move(value_ref3)),
     m_compare_type1(comp1),
     m_compare_type2(comp2)
-{
-    auto operands = {m_value_ref1.get(), m_value_ref2.get(), m_value_ref3.get()};
-    m_root_candidate_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); });
-    m_target_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); });
-    m_source_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); });
-}
+{}
 
 ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<std::string>>&& value_ref1,
                      ComparisonType comp1,
                      std::unique_ptr<ValueRef::ValueRef<std::string>>&& value_ref2,
                      ComparisonType comp2,
                      std::unique_ptr<ValueRef::ValueRef<std::string>>&& value_ref3) :
+    Condition((!value_ref1 || value_ref1->RootCandidateInvariant()) &&
+              (!value_ref2 || value_ref2->RootCandidateInvariant()) &&
+              (!value_ref3 || value_ref3->RootCandidateInvariant()),
+              (!value_ref1 || value_ref1->TargetInvariant()) &&
+              (!value_ref2 || value_ref2->TargetInvariant()) &&
+              (!value_ref3 || value_ref3->TargetInvariant()),
+              (!value_ref1 || value_ref1->SourceInvariant()) &&
+              (!value_ref2 || value_ref2->SourceInvariant()) &&
+              (!value_ref3 || value_ref3->SourceInvariant())),
     m_string_value_ref1(std::move(value_ref1)),
     m_string_value_ref2(std::move(value_ref2)),
     m_string_value_ref3(std::move(value_ref3)),
     m_compare_type1(comp1),
     m_compare_type2(comp2)
-{
-    auto operands = {m_string_value_ref1.get(), m_string_value_ref2.get(), m_string_value_ref3.get()};
-    m_root_candidate_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); });
-    m_target_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); });
-    m_source_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); });
-}
+{}
 
 ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref1,
                      ComparisonType comp1,
                      std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref2,
                      ComparisonType comp2,
                      std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref3) :
+    Condition((!value_ref1 || value_ref1->RootCandidateInvariant()) &&
+              (!value_ref2 || value_ref2->RootCandidateInvariant()) &&
+              (!value_ref3 || value_ref3->RootCandidateInvariant()),
+              (!value_ref1 || value_ref1->TargetInvariant()) &&
+              (!value_ref2 || value_ref2->TargetInvariant()) &&
+              (!value_ref3 || value_ref3->TargetInvariant()),
+              (!value_ref1 || value_ref1->SourceInvariant()) &&
+              (!value_ref2 || value_ref2->SourceInvariant()) &&
+              (!value_ref3 || value_ref3->SourceInvariant())),
     m_int_value_ref1(std::move(value_ref1)),
     m_int_value_ref2(std::move(value_ref2)),
     m_int_value_ref3(std::move(value_ref3)),
     m_compare_type1(comp1),
     m_compare_type2(comp2)
-{
-    auto operands = {m_int_value_ref1.get(), m_int_value_ref2.get(), m_int_value_ref3.get()};
-    m_root_candidate_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); });
-    m_target_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); });
-    m_source_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); });
-}
+{}
 
 ValueTest::ValueTest(const ValueTest& rhs) :
     Condition(rhs),
@@ -10581,15 +10588,16 @@ namespace {
 Location::Location(ContentType content_type,
                    std::unique_ptr<ValueRef::ValueRef<std::string>>&& name1,
                    std::unique_ptr<ValueRef::ValueRef<std::string>>&& name2) :
+    Condition((!name1 || name1->RootCandidateInvariant()) &&
+              (!name2 || name2->RootCandidateInvariant()),
+              (!name1 || name1->TargetInvariant()) &&
+              (!name2 || name2->TargetInvariant()),
+              (!name1 || name1->SourceInvariant()) &&
+              (!name2 || name2->SourceInvariant())),
     m_name1(std::move(name1)),
     m_name2(std::move(name2)),
     m_content_type(content_type)
-{
-    std::array<const ValueRef::ValueRefBase*, 2> operands = {{m_name1.get(), m_name2.get()}};
-    m_root_candidate_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); });
-    m_target_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); });
-    m_source_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); });
-}
+{}
 
 bool Location::operator==(const Condition& rhs) const {
     if (this == &rhs)
