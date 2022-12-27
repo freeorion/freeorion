@@ -171,7 +171,7 @@ struct FO_COMMON_API None final : public Condition {
     { /* efficient rejection of everything. */ }
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) override {}
+    void SetTopLevelContent(const std::string& content_name) noexcept override {}
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
@@ -185,7 +185,7 @@ struct FO_COMMON_API NoOp final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) override {}
+    void SetTopLevelContent(const std::string& content_name) noexcept override {}
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
@@ -228,7 +228,7 @@ struct FO_COMMON_API RootCandidate final : public Condition {
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) override {}
+    void SetTopLevelContent(const std::string& content_name) noexcept override {}
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
@@ -248,7 +248,7 @@ struct FO_COMMON_API Target final : public Condition {
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) override {}
+    void SetTopLevelContent(const std::string& content_name) noexcept override {}
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
@@ -293,7 +293,7 @@ struct FO_COMMON_API Capital final : public Condition {
 
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) override {}
+    void SetTopLevelContent(const std::string& content_name) noexcept override {}
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
@@ -310,8 +310,7 @@ struct FO_COMMON_API Monster final : public Condition {
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) override
-    {}
+    void SetTopLevelContent(const std::string& content_name) noexcept override {}
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
@@ -326,8 +325,7 @@ struct FO_COMMON_API Armed final : public Condition {
     bool operator==(const Condition& rhs) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) override
-    {}
+    void SetTopLevelContent(const std::string& content_name) noexcept override {}
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
@@ -1329,8 +1327,7 @@ struct FO_COMMON_API Stationary final : public Condition {
     bool operator==(const Condition& rhs) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) override
-    {}
+    void SetTopLevelContent(const std::string& content_name) noexcept override {}
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
@@ -1347,7 +1344,7 @@ struct FO_COMMON_API Aggressive final : public Condition {
     bool operator==(const Condition& rhs) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) override {}
+    void SetTopLevelContent(const std::string& content_name) noexcept override {}
     [[nodiscard]] bool GetAggressive() const { return m_aggressive; }
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
@@ -1411,8 +1408,7 @@ struct FO_COMMON_API CanColonize final : public Condition {
     bool operator==(const Condition& rhs) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) override
-    {}
+    void SetTopLevelContent(const std::string&) noexcept override {}
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
@@ -1428,8 +1424,7 @@ struct FO_COMMON_API CanProduceShips final : public Condition {
     bool operator==(const Condition& rhs) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) override
-    {}
+    void SetTopLevelContent(const std::string&) noexcept override {}
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
@@ -1491,16 +1486,16 @@ struct FO_COMMON_API ValueTest final : public Condition {
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
-    [[nodiscard]] std::array<const ValueRef::ValueRef<double>*, 3> ValuesDouble() const
+    [[nodiscard]] std::array<const ValueRef::ValueRef<double>*, 3> ValuesDouble() const noexcept
     { return {m_value_ref1.get(), m_value_ref2.get(), m_value_ref3.get()}; }
 
-    [[nodiscard]] std::array<const ValueRef::ValueRef<std::string>*, 3> ValuesString() const
+    [[nodiscard]] std::array<const ValueRef::ValueRef<std::string>*, 3> ValuesString() const noexcept
     { return {m_string_value_ref1.get(), m_string_value_ref2.get(), m_string_value_ref3.get()}; }
 
-    [[nodiscard]] std::array<const ValueRef::ValueRef<int>*, 3> ValuesInt() const
+    [[nodiscard]] std::array<const ValueRef::ValueRef<int>*, 3> ValuesInt() const noexcept
     { return {m_int_value_ref1.get(), m_int_value_ref2.get(), m_int_value_ref3.get()}; }
 
-    [[nodiscard]] std::array<ComparisonType, 2> CompareTypes() const
+    [[nodiscard]] std::array<ComparisonType, 2> CompareTypes() const noexcept
     { return {m_compare_type1, m_compare_type2}; }
 
 private:
