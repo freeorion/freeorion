@@ -91,6 +91,17 @@ struct FO_COMMON_API Condition {
 
 protected:
     Condition() = default;
+    Condition(bool root_invariant, bool target_invariant, bool source_invariant, bool init_all_match) :
+        m_root_candidate_invariant(root_invariant),
+        m_target_invariant(target_invariant),
+        m_source_invariant(source_invariant),
+        m_initial_candidates_all_match(init_all_match)
+    {}
+    Condition(bool root_invariant, bool target_invariant, bool source_invariant) :
+        m_root_candidate_invariant(root_invariant),
+        m_target_invariant(target_invariant),
+        m_source_invariant(source_invariant)
+    {}
     //! Copies invariants from other Condition
     Condition(const Condition& rhs) = default;
     Condition(Condition&& rhs) = delete;
