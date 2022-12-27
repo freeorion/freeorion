@@ -3253,11 +3253,24 @@ namespace {
 
                     gifted_obj->SetOwner(recipient_empire_id);
 
-                    if (auto empire = empires.GetEmpire(recipient_empire_id)) {
-                        if (obj_type == UniverseObjectType::OBJ_PLANET)
+                    using ObjsT = std::decay_t<decltype(*gifted_obj)>;
+                    static_assert(!std::is_same_v<ObjsT, UniverseObject>);
+                    static_assert(std::is_same_v<ObjsT, Planet> || std::is_same_v<ObjsT, Building> ||
+                                  std::is_same_v<ObjsT, Fleet> || std::is_same_v<ObjsT, Ship>);
+
+                    if constexpr (std::is_same_v<ObjsT, Planet>) {
+                        if (auto empire = empires.GetEmpire(recipient_empire_id))
                             empire->AddSitRepEntry(CreatePlanetGiftedSitRep(gifted_obj_id, initial_owner_empire_id));
-                        else if (obj_type == UniverseObjectType::OBJ_FLEET)
+                    } else if constexpr (std::is_same_v<ObjsT, Fleet>) {
+                        if (auto empire = empires.GetEmpire(recipient_empire_id))
                             empire->AddSitRepEntry(CreateFleetGiftedSitRep(gifted_obj_id, initial_owner_empire_id));
+                    } else if constexpr (std::is_same_v<ObjsT, Ship>) {
+                        gifted_obj->SetOrderedScrapped(false);
+                        gifted_obj->ClearColonizePlanet();
+                        gifted_obj->ClearInvadePlanet();
+                        gifted_obj->ClearBombardPlanet();
+                    } else if constexpr (std::is_same_v<ObjsT, Building>) {
+                        gifted_obj->SetOrderedScrapped(false);
                     }
 
                     Empire::ConquerProductionQueueItemsAtLocation(gifted_obj_id, recipient_empire_id, empires);
