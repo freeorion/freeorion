@@ -241,20 +241,22 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
 
     // determine all systems where fleet(s) can be resupplied if fuel runs out
     auto empire = context.GetEmpire(this->Owner());
-    auto fleet_supplied_systems = context.supply.FleetSupplyableSystemIDs(
+    const auto fleet_supplied_systems = context.supply.FleetSupplyableSystemIDs(
         this->Owner(), ALLOW_ALLIED_SUPPLY, context);
     auto& unobstructed_systems = empire ? empire->SupplyUnobstructedSystems() : EMPTY_SET;
 
     // determine if, given fuel available and supplyable systems, fleet will ever be able to move
     if (fuel < 1.0f &&
         this->SystemID() != INVALID_OBJECT_ID &&
-        !fleet_supplied_systems.count(this->SystemID()))
+        std::none_of(fleet_supplied_systems.begin(), fleet_supplied_systems.end(),
+                     [sys_id{this->SystemID()}] (const auto fss) { return fss == sys_id; }))
     {
+        // no fuel and out of supply => can't move => path is just this system with explanatory ETA
         retval.emplace_back(this->X(), this->Y(), true, ETA_OUT_OF_RANGE,
                             this->SystemID(),
                             INVALID_OBJECT_ID,
                             INVALID_OBJECT_ID);
-        return retval;      // can't move => path is just this system with explanatory ETA
+        return retval;
     }
 
 
@@ -341,27 +343,24 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
 
         // Make sure that there actually still is a starlane between the two systems
         // we are between
-        const System* prev_or_cur = nullptr;
-        if (cur_system) {
-            prev_or_cur = cur_system;
-        } else if (prev_system) {
-            prev_or_cur = prev_system;
-        } else {
-            ErrorLogger() << "Fleet::MovePath: No previous or current system!?";
-        }
+        const System* const prev_or_cur = cur_system ? cur_system : prev_system ? prev_system : nullptr;
         if (prev_or_cur && !prev_or_cur->HasStarlaneTo(next_system->ID())) {
             DebugLogger() << "Fleet::MovePath for Fleet " << this->Name() << " (" << this->ID()
                             << ") No starlane connection between systems " << prev_or_cur->Name() << "(" << prev_or_cur->ID()
                             << ")  and " << next_system->Name() << "(" << next_system->ID()
                             << "). Abandoning the rest of the route. Route was: " << RouteNums();
             return retval;
+        } else if (!prev_or_cur) {
+            ErrorLogger() << "Fleet::MovePath: No previous or current system!?";
         }
 
 
         // check if fuel limits movement or current system refuels passing fleet
         if (cur_system) {
             // check if current system has fuel supply available
-            if (fleet_supplied_systems.count(cur_system->ID())) {
+            if (std::any_of(fleet_supplied_systems.begin(), fleet_supplied_systems.end(),
+                            [csid{cur_system->ID()}](const auto fss) { return csid == fss; }))
+            {
                 // current system has fuel supply.  replenish fleet's supply and don't restrict movement
                 fuel = max_fuel;
                 //DebugLogger() << " ... at system with fuel supply.  replenishing and continuing movement";

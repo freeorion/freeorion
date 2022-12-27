@@ -4,6 +4,7 @@
 #include <map>
 #include <set>
 #include <string>
+#include <vector>
 #include <boost/serialization/access.hpp>
 #include "../universe/ConstantsFwd.h"
 #include "../universe/EnumsFwd.h"
@@ -31,7 +32,7 @@ public:
       * and blockade). */
     [[nodiscard]] auto&                FleetSupplyableSystemIDs() const noexcept { return m_fleet_supplyable_system_ids; }
     [[nodiscard]] const std::set<int>& FleetSupplyableSystemIDs(int empire_id) const;
-    [[nodiscard]] std::set<int>        FleetSupplyableSystemIDs(int empire_id, bool include_allies, const ScriptingContext& context) const;
+    [[nodiscard]] std::vector<int>     FleetSupplyableSystemIDs(int empire_id, bool include_allies, const ScriptingContext& context) const;
     [[nodiscard]] int                  EmpireThatCanSupplyAt(int system_id) const;
 
     /** Returns set of sets of systems that can share industry (systems in

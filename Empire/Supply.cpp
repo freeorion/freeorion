@@ -44,21 +44,28 @@ const std::set<int>& SupplyManager::FleetSupplyableSystemIDs(int empire_id) cons
     return EMPTY_INT_SET;
 }
 
-std::set<int> SupplyManager::FleetSupplyableSystemIDs(
+std::vector<int> SupplyManager::FleetSupplyableSystemIDs(
     int empire_id, bool include_allies, const ScriptingContext& context) const
 {
-    std::set<int> retval = FleetSupplyableSystemIDs(empire_id);
+    auto& direct_sys = FleetSupplyableSystemIDs(empire_id);
     if (!include_allies)
-        return retval;
+        return {direct_sys.begin(), direct_sys.end()};
 
+    std::vector<int> retval;
+    retval.reserve(context.ContextObjects().size<System>());
     // add supplyable systems of all allies
     for (auto& [other_empire_id, systems] : m_fleet_supplyable_system_ids) {
         if (other_empire_id == empire_id)
             continue;
-        if (systems.empty() || context.ContextDiploStatus(empire_id, other_empire_id) != DiplomaticStatus::DIPLO_ALLIED)
+        if (systems.empty())
             continue;
-        retval.insert(systems.begin(), systems.end());
+        if (context.ContextDiploStatus(empire_id, other_empire_id) != DiplomaticStatus::DIPLO_ALLIED)
+            continue;
+        retval.insert(retval.end(), systems.begin(), systems.end());
     }
+    std::sort(retval.begin(), retval.end());
+    auto unique_it = std::unique(retval.begin(), retval.end());
+    retval.resize(std::distance(retval.begin(), unique_it));
     return retval;
 }
 
