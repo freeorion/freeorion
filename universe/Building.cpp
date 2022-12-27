@@ -85,7 +85,7 @@ bool Building::HasTag(std::string_view name, const ScriptingContext&) const {
     return type && type->HasTag(name);
 }
 
-bool Building::ContainedBy(int object_id) const {
+bool Building::ContainedBy(int object_id) const noexcept {
     return object_id != INVALID_OBJECT_ID
         && (    object_id == m_planet_id
             ||  object_id == this->SystemID());
