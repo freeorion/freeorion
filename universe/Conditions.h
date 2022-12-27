@@ -357,6 +357,9 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<UniverseObjectType>> m_type;
+
+    const bool m_type_const;
+    const bool m_type_local_invariant;
 };
 
 /** Matches all Building objects that are one of the building types specified
@@ -380,6 +383,7 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
+    const bool m_names_local_invariant;
 };
 
 /** Matches all Field objects that are one of the field types specified

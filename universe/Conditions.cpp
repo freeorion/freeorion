@@ -1951,17 +1951,17 @@ std::unique_ptr<Condition> Armed::Clone() const
 // Type                                                  //
 ///////////////////////////////////////////////////////////
 Type::Type(std::unique_ptr<ValueRef::ValueRef<UniverseObjectType>>&& type) :
-    m_type(std::move(type))
-{
-    m_root_candidate_invariant = !m_type || m_type->RootCandidateInvariant();
-    m_target_invariant = !m_type || m_type->TargetInvariant();
-    m_source_invariant = !m_type || m_type->SourceInvariant();
-    m_initial_candidates_all_match =
-        m_type && (
-            m_type->ConstantExpr() || (
-                m_type->LocalCandidateInvariant() &&
-                RootCandidateInvariant()));
-}
+    Condition(!type || type->RootCandidateInvariant(),
+              !type || type->TargetInvariant(),
+              !type || type->SourceInvariant(),
+              type && (
+                  type->ConstantExpr() || (
+                      type->LocalCandidateInvariant() &&
+                      type->RootCandidateInvariant()))),
+    m_type(std::move(type)),
+    m_type_const(m_type && m_type->ConstantExpr()),
+    m_type_local_invariant(m_type && m_type->LocalCandidateInvariant())
+{}
 
 Type::Type(UniverseObjectType type) :
     Type(std::make_unique<ValueRef::Constant<UniverseObjectType>>(type))
@@ -2014,13 +2014,12 @@ namespace {
     };
 }
 
-void Type::Eval(const ScriptingContext& parent_context,
-                ObjectSet& matches, ObjectSet& non_matches,
+void Type::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                 SearchDomain search_domain) const
 {
-    bool simple_eval_safe = m_type->ConstantExpr() ||
-                            (m_type->LocalCandidateInvariant() &&
-                            (parent_context.condition_root_candidate || RootCandidateInvariant()));
+    const bool simple_eval_safe = m_type_const || (m_type_local_invariant &&
+                                                   (this->m_root_candidate_invariant ||
+                                                    parent_context.condition_root_candidate));
     if (simple_eval_safe) {
         const UniverseObjectType type = m_type->Eval(parent_context);
         EvalImpl(matches, non_matches, search_domain, TypeSimpleMatch(type));
@@ -2135,7 +2134,9 @@ Building::Building(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>
     Condition(std::all_of(names.begin(), names.end(), [](auto& e){ return e->RootCandidateInvariant(); }),
               std::all_of(names.begin(), names.end(), [](auto& e){ return e->TargetInvariant(); }),
               std::all_of(names.begin(), names.end(), [](auto& e){ return e->SourceInvariant(); })),
-    m_names(std::move(names))
+    m_names(std::move(names)),
+    m_names_local_invariant(std::all_of(m_names.begin(), m_names.end(),
+                                        [](const auto& e) { return e->LocalCandidateInvariant(); }))
 {}
 
 bool Building::operator==(const Condition& rhs) const {
@@ -2213,16 +2214,8 @@ void Building::Eval(const ScriptingContext& parent_context,
                     ObjectSet& matches, ObjectSet& non_matches,
                     SearchDomain search_domain) const
 {
-    bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
-    if (simple_eval_safe) {
-        // check each valueref for invariance to local candidate
-        for (auto& name : m_names) {
-            if (!name->LocalCandidateInvariant()) {
-                simple_eval_safe = false;
-                break;
-            }
-        }
-    }
+    const bool simple_eval_safe = m_names_local_invariant &&
+        (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         if (m_names.size() == 1) {
             auto match_name = m_names.front()->Eval(parent_context);
