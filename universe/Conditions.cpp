@@ -185,10 +185,11 @@ bool Condition::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
 
-    if (typeid(*this) != typeid(rhs))
+    try {
+        return typeid(*this) == typeid(rhs);
+    } catch (...) {
         return false;
-
-    return true;
+    }
 }
 
 void Condition::Eval(const ScriptingContext& parent_context,
@@ -244,9 +245,7 @@ Effect::TargetSet Condition::Eval(ScriptingContext& parent_context) const
     return retval;
 }
 
-bool Condition::Eval(const ScriptingContext& parent_context,
-                     const UniverseObject* candidate) const
-{
+bool Condition::Eval(const ScriptingContext& parent_context, const UniverseObject* candidate) const {
     if (!candidate)
         return false;
     ObjectSet non_matches{candidate}, matches;
@@ -292,8 +291,12 @@ Number::Number(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
 bool Number::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-    if (typeid(*this) != typeid(rhs))
+    try {
+        if (typeid(*this) != typeid(rhs))
+            return false;
+    } catch (...) {
         return false;
+    }
 
     const Number& rhs_ = static_cast<const Number&>(rhs);
 
@@ -393,10 +396,10 @@ bool Number::Match(const ScriptingContext& local_context) const {
     int matched = condition_matches.size();
 
     // get acceptable range of subcondition matches for candidate
-    int low = (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
+    const int low = (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
     if (low > matched)
         return false;
-    int high = (m_high ? std::min(m_high->Eval(local_context), INT_MAX) : INT_MAX);
+    const int high = (m_high ? std::min(m_high->Eval(local_context), INT_MAX) : INT_MAX);
     return matched <= high;
 }
 
@@ -1756,12 +1759,9 @@ std::unique_ptr<Condition> Homeworld::Clone() const
 ///////////////////////////////////////////////////////////
 // Capital                                               //
 ///////////////////////////////////////////////////////////
-Capital::Capital() {
-    m_root_candidate_invariant = true;
-    m_target_invariant = true;
-    m_source_invariant = true;
-    m_initial_candidates_all_match = true;
-}
+Capital::Capital() :
+    Condition(true, true, true, true)
+{}
 
 bool Capital::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
@@ -1852,11 +1852,9 @@ std::unique_ptr<Condition> Capital::Clone() const
 ///////////////////////////////////////////////////////////
 // Monster                                               //
 ///////////////////////////////////////////////////////////
-Monster::Monster() {
-    m_root_candidate_invariant = true;
-    m_target_invariant = true;
-    m_source_invariant = true;
-}
+Monster::Monster() :
+    Condition(true, true, true)
+{}
 
 bool Monster::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
@@ -1905,11 +1903,9 @@ std::unique_ptr<Condition> Monster::Clone() const
 ///////////////////////////////////////////////////////////
 // Armed                                                 //
 ///////////////////////////////////////////////////////////
-Armed::Armed() {
-    m_root_candidate_invariant = true;
-    m_target_invariant = true;
-    m_source_invariant = true;
-}
+Armed::Armed() :
+    Condition(true, true, true)
+{}
 
 bool Armed::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
@@ -2136,12 +2132,11 @@ std::unique_ptr<Condition> Type::Clone() const
 // Building                                              //
 ///////////////////////////////////////////////////////////
 Building::Building(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
+    Condition(std::all_of(names.begin(), names.end(), [](auto& e){ return e->RootCandidateInvariant(); }),
+              std::all_of(names.begin(), names.end(), [](auto& e){ return e->TargetInvariant(); }),
+              std::all_of(names.begin(), names.end(), [](auto& e){ return e->SourceInvariant(); })),
     m_names(std::move(names))
-{
-    m_root_candidate_invariant = std::all_of(m_names.begin(), m_names.end(), [](auto& e){ return e->RootCandidateInvariant(); });
-    m_target_invariant = std::all_of(m_names.begin(), m_names.end(), [](auto& e){ return e->TargetInvariant(); });
-    m_source_invariant = std::all_of(m_names.begin(), m_names.end(), [](auto& e){ return e->SourceInvariant(); });
-}
+{}
 
 bool Building::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -2301,14 +2296,10 @@ bool Building::Match(const ScriptingContext& local_context) const {
     if (m_names.empty())
         return true;
 
-    // match one of the specified building types
-    const auto& btn{building->BuildingTypeName()};
-    for (auto& name : m_names) {
-        if (name->Eval(local_context) == btn)
-            return true;
-    }
-
-    return false;
+    // match any of the specified building types
+    return std::any_of(m_names.begin(), m_names.end(),
+                       [&local_context, &btn{building->BuildingTypeName()}] (const auto& name)
+                       { return name->Eval(local_context) == btn; });
 }
 
 void Building::SetTopLevelContent(const std::string& content_name) {
