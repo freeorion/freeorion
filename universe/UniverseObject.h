@@ -85,25 +85,25 @@ public:
     using CombinerType = assignable_blocking_combiner;
     using StateChangedSignalType = boost::signals2::signal<void (), CombinerType>;
 
-    [[nodiscard]] int                           ID() const noexcept { return m_id; }    ///< returns the ID number of this object.  Each object in FreeOrion has a unique ID number.
-    [[nodiscard]] const std::string&            Name() const noexcept { return m_name; }///< returns the name of this object; some valid objects will have no name
-    [[nodiscard]] double                        X() const noexcept { return m_x; }      ///< the X-coordinate of this object
-    [[nodiscard]] double                        Y() const noexcept { return m_y; }      ///< the Y-coordinate of this object
+    [[nodiscard]] int          ID() const noexcept { return m_id; }    ///< returns the ID number of this object.  Each object in FreeOrion has a unique ID number.
+    [[nodiscard]] auto&        Name() const noexcept { return m_name; }///< returns the name of this object; some valid objects will have no name
+    [[nodiscard]] double       X() const noexcept { return m_x; }      ///< the X-coordinate of this object
+    [[nodiscard]] double       Y() const noexcept { return m_y; }      ///< the Y-coordinate of this object
 
-    [[nodiscard]] int                           Owner() const noexcept   { return m_owner_empire_id; };               ///< returns the ID of the empire that owns this object, or ALL_EMPIRES if there is no owner
-    [[nodiscard]] bool                          Unowned() const noexcept { return m_owner_empire_id == ALL_EMPIRES; } ///< returns true iff there are no owners of this object
-    [[nodiscard]] bool                          OwnedBy(int empire) const noexcept { return empire != ALL_EMPIRES && empire == m_owner_empire_id; }; ///< returns true iff the empire with id \a empire owns this object; unowned objects always return false;
+    [[nodiscard]] int          Owner() const noexcept   { return m_owner_empire_id; };               ///< returns the ID of the empire that owns this object, or ALL_EMPIRES if there is no owner
+    [[nodiscard]] bool         Unowned() const noexcept { return m_owner_empire_id == ALL_EMPIRES; } ///< returns true iff there are no owners of this object
+    [[nodiscard]] bool         OwnedBy(int empire) const noexcept { return empire != ALL_EMPIRES && empire == m_owner_empire_id; }; ///< returns true iff the empire with id \a empire owns this object; unowned objects always return false;
     /** Object owner is at war with empire @p empire_id */
-    [[nodiscard]] virtual bool                  HostileToEmpire(int empire_id, const EmpireManager& empires) const { return false; }
+    [[nodiscard]] virtual bool HostileToEmpire(int empire_id, const EmpireManager& empires) const { return false; }
 
-    [[nodiscard]] int                           SystemID() const noexcept { return m_system_id; };  ///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
+    [[nodiscard]] int          SystemID() const noexcept { return m_system_id; };  ///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
 
-    [[nodiscard]] const auto&                   Specials() const noexcept { return m_specials; };   ///< returns the Specials attached to this object
-    [[nodiscard]] bool                          HasSpecial(std::string_view name) const;            ///< returns true iff this object has a special with the indicated \a name
-    [[nodiscard]] int                           SpecialAddedOnTurn(std::string_view name) const;    ///< returns the turn on which the special with name \a name was added to this object, or INVALID_GAME_TURN if that special is not present
-    [[nodiscard]] float                         SpecialCapacity(std::string_view name) const;       ///> returns the capacity of the special with name \a name or 0 if that special is not present
+    [[nodiscard]] auto&        Specials() const noexcept { return m_specials; };   ///< returns the Specials attached to this object
+    [[nodiscard]] bool         HasSpecial(std::string_view name) const;            ///< returns true iff this object has a special with the indicated \a name
+    [[nodiscard]] int          SpecialAddedOnTurn(std::string_view name) const;    ///< returns the turn on which the special with name \a name was added to this object, or INVALID_GAME_TURN if that special is not present
+    [[nodiscard]] float        SpecialCapacity(std::string_view name) const;       ///> returns the capacity of the special with name \a name or 0 if that special is not present
 
-    struct TagVecs {
+    struct [[nodiscard]] TagVecs {
         TagVecs() = default;
         TagVecs(const std::vector<std::string_view>& vec) :
             first(vec)
@@ -112,8 +112,8 @@ public:
             first(vec1),
             second(vec2)
         {}
-        bool empty() const noexcept { return first.empty() && second.empty(); }
-        auto size() const noexcept { return first.size() + second.size(); }
+        [[nodiscard]] bool empty() const noexcept { return first.empty() && second.empty(); }
+        [[nodiscard]] auto size() const noexcept { return first.size() + second.size(); }
         const std::vector<std::string_view>& first = EMPTY_STRING_VEC;
         const std::vector<std::string_view>& second = EMPTY_STRING_VEC;
         static const inline std::vector<std::string_view> EMPTY_STRING_VEC{};
@@ -132,7 +132,7 @@ public:
     [[nodiscard]] virtual int                 ContainerObjectID() const noexcept { return INVALID_OBJECT_ID; }
 
     /** Returns ids of objects contained within this object. */
-    [[nodiscard]] virtual const std::set<int>&ContainedObjectIDs() const;
+    [[nodiscard]] virtual const std::set<int>&ContainedObjectIDs() const; // TODO: noexcept, maybe inline?
 
     /** Returns true if there is an object with id \a object_id is contained
         within this UniverseObject. */
