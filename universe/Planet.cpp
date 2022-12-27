@@ -693,6 +693,7 @@ void Planet::Conquer(int conquerer, ScriptingContext& context) {
         if (cap_result == CaptureResult::CR_CAPTURE) {
             // replace ownership
             building->SetOwner(conquerer);
+            building->SetOrderedScrapped(false);
         } else if (cap_result == CaptureResult::CR_DESTROY) {
             // destroy object
             //DebugLogger() << "Planet::Conquer destroying object: " << building->Name();
@@ -701,12 +702,13 @@ void Planet::Conquer(int conquerer, ScriptingContext& context) {
                 system->Remove(building->ID());
             context.ContextUniverse().Destroy(building->ID(), empire_ids);
         } else if (cap_result == CaptureResult::CR_RETAIN) {
-            // do nothing
+            // do nothing, including leaving scrapping state
         }
     }
 
     // replace ownership
     SetOwner(conquerer);
+    ClearGiveToEmpire();
 
     if (conquerer == ALL_EMPIRES) {
         if (const auto species = context.species.GetSpecies(SpeciesName()))
