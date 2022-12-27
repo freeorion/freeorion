@@ -2297,8 +2297,9 @@ bool Building::Match(const ScriptingContext& local_context) const {
         return true;
 
     // match any of the specified building types
+    const auto& btn{building->BuildingTypeName()};
     return std::any_of(m_names.begin(), m_names.end(),
-                       [&local_context, &btn{building->BuildingTypeName()}] (const auto& name)
+                       [&local_context, &btn] (const auto& name)
                        { return name->Eval(local_context) == btn; });
 }
 
