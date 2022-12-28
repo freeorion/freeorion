@@ -53,7 +53,7 @@ public:
 
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
 
-    [[nodiscard]] const std::set<int>& ContainedObjectIDs() const override { return m_objects; }
+    [[nodiscard]] const std::set<int>& ContainedObjectIDs() const noexcept override { return m_objects; }
 
     [[nodiscard]] bool Contains(int object_id) const override;
 

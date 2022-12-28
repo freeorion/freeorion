@@ -760,6 +760,8 @@ template void Deserialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ia, st
 template void Deserialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ia, std::map<int, std::shared_ptr<UniverseObject>>& objects);
 
 namespace boost::serialization {
+    using namespace boost::container;
+
     template<class Archive, class Key, class Value>
     void save(Archive& ar, const flat_map<Key, Value>& m, const unsigned int)
     { stl::save_collection<Archive, flat_map<Key, Value>>(ar, m); }

@@ -187,13 +187,6 @@ std::string UniverseObject::Dump(uint8_t ntabs) const {
     return retval;
 }
 
-namespace {
-    std::set<int> EMPTY_SET;
-}
-
-const std::set<int>& UniverseObject::ContainedObjectIDs() const
-{ return EMPTY_SET; }
-
 std::set<int> UniverseObject::VisibleContainedObjectIDs(
     int empire_id, const EmpireObjectVisMap& vis) const
 {
