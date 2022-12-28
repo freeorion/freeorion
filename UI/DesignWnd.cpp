@@ -4083,8 +4083,7 @@ std::vector<std::string> DesignWnd::MainPanel::Parts() const {
     std::vector<std::string> retval;
     retval.reserve(m_slots.size());
     for (const auto& slot : m_slots) {
-        const ShipPart* part = slot->GetPart();
-        if (part)
+        if (const ShipPart* part = slot->GetPart())
             retval.emplace_back(part->Name());
         else
             retval.emplace_back("");
@@ -4100,8 +4099,23 @@ const std::string& DesignWnd::MainPanel::Hull() const {
 }
 
 bool DesignWnd::MainPanel::IsDesignNameValid() const {
-    // TODO: All whitespace probably shouldn't be OK either.
-    return !m_design_name->Text().empty();
+    const auto& name = m_design_name->Text();
+    if (name.empty())
+        return false;
+
+    // disallow formatting characters
+    if (std::any_of(name.begin(), name.end(),
+                    [](const auto c) {
+                        return std::any_of(formatting_chars.begin(), formatting_chars.end(),
+                                           [c](const auto f) { return f == c; });
+                    }))
+    { return false; }
+
+    // disallow leading and trailing spaces
+    if (name.front() == ' ' || name.back() == ' ')
+        return false;
+
+    return true;
 }
 
 std::pair<DesignWnd::MainPanel::I18nString, DesignWnd::MainPanel::I18nString>
