@@ -472,7 +472,7 @@ namespace {
 
             GG::Y height{ClientUI::Pts()};
             // center format for title label
-            m_labels.emplace(descr, std::make_pair(
+            m_labels.emplace(descr, std::pair(
                 GG::Wnd::Create<CUILabel>(UserString(descr),
                                           title ? GG::FORMAT_CENTER : GG::FORMAT_RIGHT,
                                           GG::NO_WND_FLAGS, GG::X0, GG::Y0,
@@ -5000,7 +5000,7 @@ boost::optional<std::pair<double, double>> MapWnd::MovingFleetMapPositionOnLane(
         // couldn't find an entry for the lane this fleet is one, so just
         // return actual position of fleet on starlane - ignore the distance
         // away from the star centre at which starlane endpoints should appear
-        return std::make_pair(fleet->X(), fleet->Y());
+        return std::pair(fleet->X(), fleet->Y());
     }
 
     const ScriptingContext context;
@@ -5090,7 +5090,7 @@ namespace {
         if (!sys1)
             return boost::none;
         if (sys1->HasStarlaneTo(sys2_id))
-            return std::make_pair(std::min(sys1_id, sys2_id), std::max(sys1_id, sys2_id));
+            return std::pair(std::min(sys1_id, sys2_id), std::max(sys1_id, sys2_id));
 
         return boost::none;
     }
@@ -7171,7 +7171,7 @@ bool MapWnd::ZoomToPrevOwnedSystem() {
     auto sel_sys = Objects().get<System>(SidePanel::SystemID());
     if (sel_sys) {
         it = std::find(system_names_ids.rbegin(), system_names_ids.rend(),
-                       std::make_pair(sel_sys->Name(), sel_sys->ID()));
+                       std::pair(sel_sys->Name(), sel_sys->ID()));
         if (it != system_names_ids.rend())
             ++it;
     }
@@ -7198,7 +7198,7 @@ bool MapWnd::ZoomToNextOwnedSystem() {
     auto sel_sys = Objects().get<System>(SidePanel::SystemID());
     if (sel_sys) {
         it = std::find(system_names_ids.begin(), system_names_ids.end(),
-                       std::make_pair(sel_sys->Name(), sel_sys->ID()));
+                       std::pair(sel_sys->Name(), sel_sys->ID()));
         if (it != system_names_ids.end())
             ++it;
     }
@@ -7223,7 +7223,7 @@ bool MapWnd::ZoomToPrevSystem() {
     auto sel_sys = Objects().get<System>(SidePanel::SystemID());
     if (sel_sys) {
         it = std::find(system_names_ids.rbegin(), system_names_ids.rend(),
-                       std::make_pair(sel_sys->Name(), sel_sys->ID()));
+                       std::pair(sel_sys->Name(), sel_sys->ID()));
         if (it != system_names_ids.rend())
             ++it;
     }
@@ -7249,7 +7249,7 @@ bool MapWnd::ZoomToNextSystem() {
     auto sel_sys = Objects().get<System>(SidePanel::SystemID());
     if (sel_sys) {
         it = std::find(system_names_ids.begin(), system_names_ids.end(),
-                       std::make_pair(sel_sys->Name(), sel_sys->ID()));
+                       std::pair(sel_sys->Name(), sel_sys->ID()));
         if (it != system_names_ids.end())
             ++it;
     }

@@ -438,8 +438,8 @@ void OptionsDB::GetUsage(std::ostream& os, std::string_view command_line, bool a
         if (!section_list.empty())
             os << UserString("COMMAND_LINE_SECTIONS") << ":\n";
 
-        auto indents = std::make_pair(2, name_col_width + 4);
-        auto widths = std::make_pair(TERMINAL_LINE_WIDTH - name_col_width, TERMINAL_LINE_WIDTH);
+        auto indents = std::pair(2, name_col_width + 4);
+        auto widths = std::pair(TERMINAL_LINE_WIDTH - name_col_width, TERMINAL_LINE_WIDTH);
         for (std::string_view section : section_list) {
             if (section == "misc") {
                 print_misc_section = true;

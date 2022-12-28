@@ -436,7 +436,7 @@ ShipDesign::MaybeInvalidDesign(std::string hull, std::vector<std::string> parts,
                 ErrorLogger() << "Invalid ShipDesign no available hulls ";
             hull.clear();
             parts.clear();
-            return std::make_pair(std::move(hull), std::move(parts));
+            return std::pair(std::move(hull), std::move(parts));
         }
     }
 
@@ -534,7 +534,7 @@ ShipDesign::MaybeInvalidDesign(std::string hull, std::vector<std::string> parts,
     if (is_valid) // if valid, return none to indicate no modifications needed
         return boost::none;
     else
-        return std::make_pair(std::move(hull), std::move(parts)); // return modified design
+        return std::pair(std::move(hull), std::move(parts)); // return modified design
 }
 
 void ShipDesign::ForceValidDesignOrThrow(const boost::optional<std::invalid_argument>& should_throw,
@@ -861,7 +861,7 @@ uint32_t PredefinedShipDesignManager::GetCheckSum() const {
         for (auto const& uuid : ordering) {
             auto it = m_designs.find(uuid);
             if (it != m_designs.end())
-                CheckSums::CheckSumCombine(retval, std::make_pair(it->second->Name(false), *it->second));
+                CheckSums::CheckSumCombine(retval, std::pair(it->second->Name(false), *it->second));
         }
         CheckSums::CheckSumCombine(retval, ordering.size());
     };
@@ -1008,7 +1008,7 @@ LoadShipDesignsAndManifestOrderFromParseResults(
             TraceLogger() << "Added saved design UUID " << design->UUID()
                           << " with name " << design->Name();
             auto uuid = design->UUID();
-            saved_designs.emplace(std::move(uuid), std::make_pair(std::move(design), design_and_path.second));
+            saved_designs.emplace(std::move(uuid), std::pair(std::move(design), design_and_path.second));
         } else {
             WarnLogger() << "Duplicate ship design UUID " << design->UUID()
                          << " found for ship design " << design->Name()

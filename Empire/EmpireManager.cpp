@@ -12,7 +12,7 @@
 namespace {
     // sorted pair, so order of empire IDs specified doesn't matter
     std::pair<int, int> DiploKey(int id1, int ind2)
-    { return std::make_pair(std::max(id1, ind2), std::min(id1, ind2)); }
+    { return std::pair(std::max(id1, ind2), std::min(id1, ind2)); }
 
     const std::string EMPTY_STRING;
 }

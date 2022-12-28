@@ -3046,7 +3046,7 @@ void FleetWnd::Refresh() {
         fleets_bounding_box = CreateOrGrowBox(fleets_that_exist.empty(), fleets_bounding_box, fleet_loc);
 
         fleets_that_exist.insert(fleet->ID());
-        fleet_locations_ids.emplace(std::make_pair(fleet->SystemID(), fleet_loc), fleet->ID());
+        fleet_locations_ids.emplace(std::pair(fleet->SystemID(), fleet_loc), fleet->ID());
     }
 
     auto bounding_box_center = GG::Pt(fleets_bounding_box.MidX(), fleets_bounding_box.MidY());
@@ -3066,7 +3066,7 @@ void FleetWnd::Refresh() {
         // Grow the selected fleets bounding box
         selected_fleets_bounding_box = CreateOrGrowBox(selected_fleet_locations_ids.empty(),
                                                        selected_fleets_bounding_box, fleet_loc);
-        selected_fleet_locations_ids.emplace(std::make_pair(fleet->SystemID(), fleet_loc), fleet->ID());
+        selected_fleet_locations_ids.emplace(std::pair(fleet->SystemID(), fleet_loc), fleet->ID());
     }
     auto selected_bounding_box_center = GG::Pt(selected_fleets_bounding_box.MidX(),
                                                selected_fleets_bounding_box.MidY());

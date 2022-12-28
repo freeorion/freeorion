@@ -352,7 +352,7 @@ template void Empire::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&,
 
 namespace {
     std::pair<int, int> DiploKey(int id1, int ind2)
-    { return std::make_pair(std::max(id1, ind2), std::min(id1, ind2)); }
+    { return std::pair(std::max(id1, ind2), std::min(id1, ind2)); }
 }
 
 template <typename Archive>

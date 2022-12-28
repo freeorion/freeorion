@@ -714,7 +714,7 @@ namespace {
         const auto insert_before_it = (is_valid_next_id ? next_it->second.second :m_ordered_design_ids.end());
         const auto inserted_it = m_ordered_design_ids.insert(insert_before_it, id);
 
-        m_id_to_obsolete_and_loc[id] = std::make_pair(boost::none, inserted_it);
+        m_id_to_obsolete_and_loc[id] = std::pair(boost::none, inserted_it);
     }
 
     bool DisplayedShipDesignManager::MoveBefore(const int moved_id, const int next_id) {
@@ -776,7 +776,7 @@ namespace {
         const auto inserted_it = m_ordered_hulls.insert(insert_before_it, hull);
 
         m_hull_to_obsolete_and_loc[hull] =
-            std::make_pair(std::make_pair(false, NextUIObsoleteEvent()), inserted_it);
+            std::pair(std::pair(false, NextUIObsoleteEvent()), inserted_it);
     }
 
     bool DisplayedShipDesignManager::IsKnown(const int id) const
@@ -851,7 +851,7 @@ namespace {
         if (it == m_id_to_obsolete_and_loc.end())
             return;
 
-        it->second.first = std::make_pair(obsolete, NextUIObsoleteEvent());
+        it->second.first = std::pair(obsolete, NextUIObsoleteEvent());
     }
 
     void DisplayedShipDesignManager::SetHullObsolete(const std::string& name, const bool obsolete) {
@@ -902,7 +902,7 @@ namespace {
                               << m_obsolete_ui_event_count;
             }
             m_ordered_design_ids.push_back(id);
-            m_id_to_obsolete_and_loc[id] = std::make_pair(obsolete, --m_ordered_design_ids.end());
+            m_id_to_obsolete_and_loc[id] = std::pair(obsolete, --m_ordered_design_ids.end());
         }
 
         // Clear and load the ship hulls
@@ -921,7 +921,7 @@ namespace {
                               << " which does not satisfy 0 < obsolete_ui_event_count < m_obsolete_ui_event_count = "
                               << m_obsolete_ui_event_count;
             m_ordered_hulls.push_back(name);
-            m_hull_to_obsolete_and_loc[name] = std::make_pair(obsolete, --m_ordered_hulls.end());
+            m_hull_to_obsolete_and_loc[name] = std::pair(obsolete, --m_ordered_hulls.end());
         }
 
         // Clear and load the ship parts
@@ -1488,7 +1488,7 @@ namespace {
     bool PartALocationSubsumesPartB(const ShipPart* check_part, const ShipPart* ref_part) {
         static std::map<std::pair<std::string, std::string>, bool> part_loc_comparison_map;
 
-        auto part_pair = std::make_pair(check_part->Name(), ref_part->Name());
+        auto part_pair = std::pair(check_part->Name(), ref_part->Name());
         auto map_it = part_loc_comparison_map.find(part_pair);
         if (map_it != part_loc_comparison_map.end())
             return map_it->second;
@@ -4126,11 +4126,11 @@ DesignWnd::MainPanel::ValidatedNameAndDescription() const
 
     // Are both the title and the description string table lookup values
     if (!name_index.empty() && !desc_index.empty())
-        return std::make_pair(
+        return std::pair(
             I18nString(true, name_index),
             I18nString(true, desc_index));
 
-    return std::make_pair(
+    return std::pair(
         I18nString(false, (IsDesignNameValid()) ? m_design_name->Text() : UserString("DESIGN_NAME_DEFAULT")),
         I18nString(false, m_design_description_edit->Text()));
 }
@@ -4891,7 +4891,7 @@ std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
 
         DebugLogger() << "Added new design: " << design.Name();
 
-        return std::make_pair(new_design_id, new_uuid);
+        return std::pair(new_design_id, new_uuid);
 
     } catch (const std::invalid_argument&) {
         ErrorLogger() << "DesignWnd::AddDesign tried to add an invalid ShipDesign";

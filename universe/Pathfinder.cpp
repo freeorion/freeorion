@@ -836,7 +836,7 @@ namespace {
         }
 
         if (auto fleet = FleetFromObject(obj, objects)) {
-            auto fleet_sys_pair = std::make_pair(fleet->PreviousSystemID(), fleet->NextSystemID());
+            auto fleet_sys_pair = std::pair(fleet->PreviousSystemID(), fleet->NextSystemID());
             if (fleet_sys_pair.first == INVALID_OBJECT_ID || fleet_sys_pair.second == INVALID_OBJECT_ID) {
                 ErrorLogger() << "GeneralizedLocation of " << obj->Name() << " (" << obj->ID()
                               << ") is between " << fleet_sys_pair.first << " and " << fleet_sys_pair.second;

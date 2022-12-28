@@ -1392,7 +1392,7 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
             continue;
         int ship_id = ship->ID();
         float planet_capacity = -999.9f;
-        auto this_pair = std::make_pair(ship_id, target_planet_id);
+        auto this_pair = std::pair(ship_id, target_planet_id);
         auto pair_it = colony_projections.find(this_pair);
         if (pair_it != colony_projections.end()) {
             planet_capacity = pair_it->second;
@@ -1715,7 +1715,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
         // colony_projections map.
         AttachChild(m_colonize_button);
         double planet_capacity;
-        auto this_pair = std::make_pair(selected_colony_ship->ID(), m_planet_id);
+        auto this_pair = std::pair(selected_colony_ship->ID(), m_planet_id);
         auto pair_it = colony_projections.find(this_pair);
         if (pair_it != colony_projections.end()) {
             planet_capacity = pair_it->second;

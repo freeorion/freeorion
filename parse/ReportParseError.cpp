@@ -144,7 +144,7 @@ std::pair<parse::text_iterator, unsigned int> parse::report_error_::line_start_a
 {
     //DebugLogger() << "line_start_and_line_number start ... looking for: " << std::string(error_position, error_position + 20);
     if (error_position == begin)
-        return std::make_pair(begin, 1);
+        return std::pair(begin, 1);
 
     std::vector<parse::text_iterator> line_starts = LineStarts(begin, end);
 
@@ -153,13 +153,13 @@ std::pair<parse::text_iterator, unsigned int> parse::report_error_::line_start_a
     for (unsigned int index = 0; index < line_starts.size(); ++index) {
         if (std::distance(line_starts[index], error_position) < 0 && index > 0) {
             //DebugLogger() << "line_start_and_line_number early end";
-            return std::make_pair(line_starts[index-1], index); // return start of previous line, which contained the error_position text
+            return std::pair(line_starts[index-1], index); // return start of previous line, which contained the error_position text
         }
         //DebugLogger() << "line: " << index + 1 << " distance: " << std::distance(line_starts[index], error_position) << " : " << get_line(line_starts[index]);
     }
 
     //DebugLogger() << "line_start_and_line_number end";
-    return std::make_pair(begin, 1);
+    return std::pair(begin, 1);
 }
 
 std::string parse::report_error_::get_line(const parse::text_iterator& end, text_iterator line_start) const {
