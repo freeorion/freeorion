@@ -77,20 +77,20 @@ public:
 
     //! Returns the field type with the name \a name; you should use the free
     //! free function GetFieldType(...) instead, mainly to save some typing.
-    auto GetFieldType(std::string_view name) const -> const FieldType*;
+    [[nodiscard]] auto GetFieldType(std::string_view name) const -> const FieldType*;
 
     //! iterator to the first field type
-    FO_COMMON_API auto begin() const -> iterator;
+    [[nodiscard]] FO_COMMON_API auto begin() const -> iterator;
 
     //! iterator to the last + 1th field type
-    FO_COMMON_API auto end() const -> iterator;
+    [[nodiscard]] FO_COMMON_API auto end() const -> iterator;
 
     //! How many types are known?
-    FO_COMMON_API auto size() const -> std::size_t;
+    [[nodiscard]] FO_COMMON_API auto size() const -> std::size_t;
 
     //! Returns the instance of this singleton class; you should use the free
     //! function GetFieldTypeManager() instead
-    static auto GetFieldTypeManager() -> FieldTypeManager&;
+    [[nodiscard]] static auto GetFieldTypeManager() -> FieldTypeManager&;
 
     //! Returns a number, calculated from the contained data, which should be
     //! different for different contained data, and must be the same for
@@ -98,7 +98,7 @@ public:
     //! and executions of the program and the function. Useful to verify that
     //! the parsed content is consistent without sending it all between
     //! clients and server.
-    auto GetCheckSum() const -> uint32_t;
+    [[nodiscard]] auto GetCheckSum() const -> uint32_t;
 
     //! Sets types to the value of @p future.
     FO_COMMON_API void SetFieldTypes(Pending::Pending<container_type>&& future);
@@ -120,11 +120,11 @@ private:
 
 
 //! Returns the singleton field type manager
-FO_COMMON_API auto GetFieldTypeManager() -> FieldTypeManager&;
+[[nodiscard]] FO_COMMON_API auto GetFieldTypeManager() -> FieldTypeManager&;
 
 //! Returns the BuildingType specification object for a field of
 //! type @p name.  If no such FieldType exists, nullptr is returned instead.
-FO_COMMON_API auto GetFieldType(std::string_view name) -> const FieldType*;
+[[nodiscard]] FO_COMMON_API auto GetFieldType(std::string_view name) -> const FieldType*;
 
 
 #endif

@@ -191,20 +191,20 @@ public:
 
     //! Returns the hull type with the name @a name; you should use the free
     //! function GetShipHull() instead
-    auto GetShipHull(std::string_view name) const -> const ShipHull*;
+    [[nodiscard]] auto GetShipHull(std::string_view name) const -> const ShipHull*;
 
     //! iterator to the first hull type
-    auto begin() const -> iterator;
+    [[nodiscard]] auto begin() const -> iterator;
 
     //! iterator to the last + 1th hull type
-    auto end() const -> iterator;
+    [[nodiscard]] auto end() const -> iterator;
 
     //! How many hulls are known?
-    auto size() const -> std::size_t;
+    [[nodiscard]] auto size() const -> std::size_t;
 
     //! Returns the instance of this singleton class; you should use the free
     //! function GetShipHullManager() instead
-    static auto GetShipHullManager() -> ShipHullManager&;
+    [[nodiscard]] static auto GetShipHullManager() -> ShipHullManager&;
 
     //! Returns a number, calculated from the contained data, which should be
     //! different for different contained data, and must be the same for
@@ -212,7 +212,7 @@ public:
     //! and executions of the program and the function. Useful to verify that
     //! the parsed content is consistent without sending it all between
     //! clients and server.
-    auto GetCheckSum() const -> uint32_t;
+    [[nodiscard]] auto GetCheckSum() const -> uint32_t;
 
     //! Sets hull types to the future value of \p pending_ship_hulls.
     FO_COMMON_API void SetShipHulls(Pending::Pending<container_type>&& pending_ship_hulls);
@@ -234,10 +234,10 @@ private:
 
 
 //! Returns the singleton hull type manager
-FO_COMMON_API auto GetShipHullManager() -> ShipHullManager&;
+[[nodiscard]] FO_COMMON_API auto GetShipHullManager() -> ShipHullManager&;
 
 //! Returns the ship ShipHull specification object with name @p name.  If no
 //! such ShipHull exists, nullptr is returned instead.
-FO_COMMON_API auto GetShipHull(std::string_view name) -> const ShipHull*;
+[[nodiscard]] FO_COMMON_API auto GetShipHull(std::string_view name) -> const ShipHull*;
 
 #endif

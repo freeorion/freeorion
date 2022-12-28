@@ -167,19 +167,19 @@ public:
 
     //! Returns the building type with the name @p name; you should use the
     //! free function GetBuildingType(...) instead, mainly to save some typing.
-    auto GetBuildingType(std::string_view name) const -> const BuildingType*;
+    [[nodiscard]] auto GetBuildingType(std::string_view name) const -> const BuildingType*;
 
-    auto NumBuildingTypes() const noexcept { return m_building_types.size(); }
+    [[nodiscard]] auto NumBuildingTypes() const noexcept { return m_building_types.size(); }
 
     //! iterator to the first building type
-    FO_COMMON_API auto begin() const -> iterator;
+    [[nodiscard]] FO_COMMON_API auto begin() const -> iterator;
 
     //! iterator to the last + 1th building type
-    FO_COMMON_API auto end() const -> iterator;
+    [[nodiscard]] FO_COMMON_API auto end() const -> iterator;
 
     //! Returns the instance of this singleton class; you should use the free
     //! function GetBuildingTypeManager() instead
-    static auto GetBuildingTypeManager() -> BuildingTypeManager&;
+    [[nodiscard]] static auto GetBuildingTypeManager() -> BuildingTypeManager&;
 
     //! Returns a number, calculated from the contained data, which should be
     //! different for different contained data, and must be the same for
@@ -187,7 +187,7 @@ public:
     //! and executions of the program and the function. Useful to verify that
     //! the parsed content is consistent without sending it all between
     //! clients and server.
-    auto GetCheckSum() const -> uint32_t;
+    [[nodiscard]] auto GetCheckSum() const -> uint32_t;
 
     //! Sets building types to the future value of \p pending_building_types.
     FO_COMMON_API void SetBuildingTypes(Pending::Pending<container_type>&& pending_building_types);
@@ -210,11 +210,11 @@ private:
 };
 
 //! Returns the singleton building type manager
-FO_COMMON_API auto GetBuildingTypeManager() -> BuildingTypeManager&;
+[[nodiscard]] FO_COMMON_API auto GetBuildingTypeManager() -> BuildingTypeManager&;
 
 //! Returns the BuildingType specification object for a building of type
 //! @p name.  If no such BuildingType exists, nullptr is returned instead.
-FO_COMMON_API auto GetBuildingType(std::string_view name) -> const BuildingType*;
+[[nodiscard]] FO_COMMON_API auto GetBuildingType(std::string_view name) -> const BuildingType*;
 
 
 #endif

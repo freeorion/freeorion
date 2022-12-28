@@ -5,7 +5,7 @@
 #include <thread>
 #include "ValueRef.h"
 
-FO_COMMON_API const std::string& UserString(const std::string& str);
+[[nodiscard]] FO_COMMON_API const std::string& UserString(const std::string& str);
 
 namespace CheckSums {
     FO_COMMON_API void CheckSumCombine(uint32_t& sum, const char* s);
@@ -13,11 +13,11 @@ namespace CheckSums {
 }
 
 class NamedValueRefManager;
-FO_COMMON_API auto GetNamedValueRefManager() -> NamedValueRefManager&;
+[[nodiscard]] FO_COMMON_API auto GetNamedValueRefManager() -> NamedValueRefManager&;
 
 template <typename T>
-FO_COMMON_API const ValueRef::ValueRef<T>* GetValueRef(std::string_view name,
-                                                       bool wait_for_named_value_focs_txt_parse = false);
+[[nodiscard]] FO_COMMON_API const ValueRef::ValueRef<T>* GetValueRef(
+    std::string_view name, bool wait_for_named_value_focs_txt_parse = false);
 
 namespace ValueRef {
 
@@ -313,24 +313,26 @@ private:
 // NamedValueRefManager                                  //
 ///////////////////////////////////////////////////////////
 template<>
-FO_COMMON_API void NamedValueRefManager::RegisterValueRef(std::string&& name,
-                                                          std::unique_ptr<ValueRef::ValueRef<PlanetType>>&& vref);
+FO_COMMON_API void NamedValueRefManager::RegisterValueRef(
+    std::string&& name, std::unique_ptr<ValueRef::ValueRef<PlanetType>>&& vref);
 
 template<>
-FO_COMMON_API void NamedValueRefManager::RegisterValueRef(std::string&& name,
-                                                          std::unique_ptr<ValueRef::ValueRef<PlanetEnvironment>>&& vref);
+FO_COMMON_API void NamedValueRefManager::RegisterValueRef(
+    std::string&& name, std::unique_ptr<ValueRef::ValueRef<PlanetEnvironment>>&& vref);
 
 template<>
-FO_COMMON_API const ValueRef::ValueRef<int>* NamedValueRefManager::GetValueRef(std::string_view, bool) const;
+[[nodiscard]] FO_COMMON_API const ValueRef::ValueRef<int>* NamedValueRefManager::GetValueRef(
+    std::string_view, bool) const;
 
 template<>
-FO_COMMON_API const ValueRef::ValueRef<double>* NamedValueRefManager::GetValueRef(std::string_view, bool) const;
+[[nodiscard]] FO_COMMON_API const ValueRef::ValueRef<double>* NamedValueRefManager::GetValueRef(
+    std::string_view, bool) const;
 
 template<>
-ValueRef::ValueRef<int>* NamedValueRefManager::GetMutableValueRef(std::string_view, bool);
+[[nodiscard]] ValueRef::ValueRef<int>* NamedValueRefManager::GetMutableValueRef(std::string_view, bool);
 
 template<>
-ValueRef::ValueRef<double>* NamedValueRefManager::GetMutableValueRef(std::string_view, bool);
+[[nodiscard]] ValueRef::ValueRef<double>* NamedValueRefManager::GetMutableValueRef(std::string_view, bool);
 
 
 ///////////////////////////////////////////////////////////
@@ -359,18 +361,19 @@ void ::ValueRef::NamedRef<T>::SetTopLevelContent(const std::string& content_name
 
 //! Returns the ValueRef object registered with the given
 //! @p name.  If no such ValueRef exists, nullptr is returned instead.
-FO_COMMON_API const ValueRef::ValueRefBase* GetValueRefBase(std::string_view name);
+[[nodiscard]] FO_COMMON_API const ValueRef::ValueRefBase* GetValueRefBase(std::string_view name);
 
 //! Returns the ValueRef object registered with the given
 //! @p name in the registry matching the given type T.  If no such ValueRef exists, nullptr is returned instead.
 template <typename T>
-FO_COMMON_API const ValueRef::ValueRef<T>* GetValueRef(std::string_view name,
-                                                       bool wait_for_named_value_focs_txt_parse)
+[[nodiscard]] FO_COMMON_API const ValueRef::ValueRef<T>* GetValueRef(
+    std::string_view name, bool wait_for_named_value_focs_txt_parse)
 { return GetNamedValueRefManager().GetValueRef<T>(name, wait_for_named_value_focs_txt_parse); }
 
 //! Register and take possesion of the ValueRef object @p vref under the given @p name.
 template <typename T>
-FO_COMMON_API void RegisterValueRef(std::string name, std::unique_ptr<ValueRef::ValueRef<T>>&& vref)
+FO_COMMON_API void RegisterValueRef(
+    std::string name, std::unique_ptr<ValueRef::ValueRef<T>>&& vref)
 { return GetNamedValueRefManager().RegisterValueRef<T>(std::move(name), std::move(vref)); }
 
 #endif // _ValueRefManager_h_

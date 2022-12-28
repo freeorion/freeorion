@@ -251,15 +251,15 @@ public:
     >;
 
     /** Return pointers the ShipDesigns in order.*/
-    std::vector<const ShipDesign*> GetOrderedShipDesigns() const;
+    [[nodiscard]] std::vector<const ShipDesign*> GetOrderedShipDesigns() const;
 
     /** Return pointers the ShipDesigns in order.*/
-    std::vector<const ShipDesign*> GetOrderedMonsterDesigns() const;
+    [[nodiscard]] std::vector<const ShipDesign*> GetOrderedMonsterDesigns() const;
 
     /** Returns the ID for the design in the Universe for the predefined design
       * with the specified \a name.  If there is generic design available for
       * the specified \a name, then INVALID_DESIGN_ID is returned. */
-    int GetDesignID(const std::string& name) const;
+    [[nodiscard]] int GetDesignID(const std::string& name) const;
 
     /** Returns a number, calculated from the contained data, which should be
       * different for different contained data, and must be the same for
@@ -267,7 +267,7 @@ public:
       * and executions of the program and the function. Useful to verify that
       * the parsed content is consistent without sending it all between
       * clients and server. */
-    uint32_t GetCheckSum() const;
+    [[nodiscard]] uint32_t GetCheckSum() const;
 
     /** Adds designs in this manager to the universe with the design creator
       * left as no empire. */
@@ -275,7 +275,7 @@ public:
 
     /** Returns the predefined ShipDesign with the name \a name.  If no such
       * ship design exists, 0 is returned instead. */
-    static PredefinedShipDesignManager& GetPredefinedShipDesignManager();
+    [[nodiscard]] static PredefinedShipDesignManager& GetPredefinedShipDesignManager();
 
     /** Sets ship design types to the future value of \p pending_designs
         found in \p subdir. */
@@ -311,13 +311,13 @@ private:
 };
 
 /** returns the singleton predefined ship design manager type manager */
-FO_COMMON_API PredefinedShipDesignManager& GetPredefinedShipDesignManager();
+[[nodiscard]] FO_COMMON_API PredefinedShipDesignManager& GetPredefinedShipDesignManager();
 
 
 /** Load all ship designs in \p parsed and return a tuple is_error, the map
     from uuid to ship design and path and the ship ordering from the
     manifest. */
-FO_COMMON_API std::tuple<
+[[nodiscard]] FO_COMMON_API std::tuple<
     bool,
     std::unordered_map<boost::uuids::uuid,
         std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>,
