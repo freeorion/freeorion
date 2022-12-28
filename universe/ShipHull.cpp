@@ -282,7 +282,7 @@ float ShipHull::Speed() const
 float ShipHull::Structure() const
 { return m_structure * GetGameRules().Get<double>("RULE_SHIP_STRUCTURE_FACTOR"); }
 
-uint32_t ShipHull::NumSlots(ShipSlotType slot_type) const {
+uint32_t ShipHull::NumSlots(ShipSlotType slot_type) const noexcept {
     uint32_t count = 0;
     for (const Slot& slot : m_slots)
         if (slot.type == slot_type)
