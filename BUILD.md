@@ -40,7 +40,7 @@ FreeOrion depends on the following libraries or APIs to run:
   * OpenAL - It's recommended to use the [OpenAL Soft] implementation
   * [Boost] - 1.69 or later
   * [zlib]
-  * [libpython] - 3.6.* or later
+  * [libpython] - 3.7 or later
   * [FreeType2]
   * [libpng]
   * [libogg]
