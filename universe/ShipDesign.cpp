@@ -408,10 +408,8 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id, const Script
 void ShipDesign::SetID(int id)
 { m_id = id; }
 
-bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::string>& parts_in) {
-    auto parts = parts_in;
-    return !MaybeInvalidDesign(hull, parts, true);
-}
+bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::string>& parts_in)
+{ return !MaybeInvalidDesign(hull, std::vector<std::string>(parts_in), true); }
 
 boost::optional<std::pair<std::string, std::vector<std::string>>>
 ShipDesign::MaybeInvalidDesign(std::string hull, std::vector<std::string> parts, bool produce_log)
