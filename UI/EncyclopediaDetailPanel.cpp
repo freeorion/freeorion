@@ -1925,14 +1925,12 @@ namespace {
                     detailed_description += "\n\n" + str(FlexibleFormat(time_template) % building_type->Time()->Dump());
             }
 
-            // TODO: Consider using UserString instead of hard-coded english text here...
-            // Not a high priority as it's mainly inteded for debugging.
             if (building_type->EnqueueLocation())
-                detailed_description += "\n\nEnqueue Requirement:\n" + building_type->EnqueueLocation()->Dump();
+                detailed_description += "\n\n" + UserString("ENC_ENQUEUE_LOCATION_REQUIREMENTS") + building_type->EnqueueLocation()->Dump();
             if (building_type->Location())
-                detailed_description += "\n\nLocation Requirement:\n" + building_type->Location()->Dump();
+                detailed_description += "\n\n" + UserString("ENC_PRODUCTION_LOCATION_REQUIREMENTS") + building_type->Location()->Dump();
             if (!building_type->Effects().empty())
-                detailed_description += "\n\nEffects:\n" + Dump(building_type->Effects());
+                detailed_description += "\n\n" + UserString("ENC_EFFECTS") + Dump(building_type->Effects());
         }
         detailed_description.append("\n");
     }

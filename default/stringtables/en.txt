@@ -5782,6 +5782,18 @@ ENC_UNLOCKS
 '''Unlocks:
 '''
 
+ENC_PRODUCTION_LOCATION_REQUIREMENTS
+'''Production Location Requirements:
+'''
+
+ENC_ENQUEUE_LOCATION_REQUIREMENTS
+'''Enqueue Requirements:
+'''
+
+ENC_EFFECTS
+'''Effects:
+'''
+
 ENC_SHIP_PART_CAN_MOUNT_IN_SLOT_TYPES
 '''Can mount in: '''
 
