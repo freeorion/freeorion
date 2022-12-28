@@ -92,7 +92,7 @@ public:
     typedef std::map<int, std::set<std::string>>    ObjectSpecialsMap;              ///< map from object id to names of specials on an object
     typedef std::map<int, ObjectSpecialsMap>        EmpireObjectSpecialsMap;        ///< map from empire id to ObjectSpecialsMap of known specials for objects for that empire
 
-    typedef std::map<int, ShipDesign*>              ShipDesignMap;                  ///< ShipDesigns in universe; keyed by design id
+    typedef std::map<int, ShipDesign>               ShipDesignMap;                  ///< ShipDesigns in universe; keyed by design id
     typedef ShipDesignMap::const_iterator           ship_design_iterator;           ///< const iterator over ship designs created by players that are known by this client
 
     /** emitted just before the UniverseObject is deleted */
@@ -137,7 +137,7 @@ public:
 
     [[nodiscard]] const ShipDesign* GetShipDesign(int ship_design_id) const;    ///< returns the ship design with id \a ship_design id, or 0 if non exists
 
-    void RenameShipDesign(int design_id, const std::string& name = "", const std::string& description = "");
+    void RenameShipDesign(int design_id, std::string name = "", std::string description = "");
 
     [[nodiscard]] const auto& ShipDesigns() const noexcept { return m_ship_designs; }
 
@@ -201,17 +201,17 @@ public:
 
     mutable UniverseObjectDeleteSignalType UniverseObjectDeleteSignal; ///< the state changed signal object for this UniverseObject
 
-    /** Inserts \a ship_design into the universe. Return true on success. The
-        ship design's id will be the newly assigned id.
-        \note Universe gains ownership of \a ship_design once inserted. */
-    bool InsertShipDesign(ShipDesign* ship_design);
+    /** Inserts \a ship_design into the universe. Return the design's assigned
+      * ID on success, or INVALID_DESIGN_ID on failure.
+      * \note Universe gains ownership of \a ship_design once inserted. */
+    int InsertShipDesign(ShipDesign ship_design);
 
     /** Inserts \a ship_design into the universe with given \a id; returns true
       * on success, or false on failure.  An empire id of none indicates that
       * the server is allocating an id on behalf of itself.  This can be removed
       * when no longer supporting legacy id allocation in pending Orders. \note
       * Universe gains ownership of \a ship_design once inserted. */
-    bool InsertShipDesignID(ShipDesign* ship_design, boost::optional<int> empire_id, int id);
+    bool InsertShipDesignID(ShipDesign ship_design, boost::optional<int> empire_id, int id);
 
    /** Reset object and ship design id allocation for a new game. */
     void ResetAllIDAllocation(const std::vector<int>& empire_ids = std::vector<int>());
@@ -568,7 +568,7 @@ private:
     /** Fills \a designs_to_serialize with ShipDesigns known to the empire with
       * the ID \a encoding empire.  If encoding_empire is ALL_EMPIRES, then all
       * designs are included. */
-    void GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize, int encoding_empire) const;
+    const ShipDesignMap& GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize, int encoding_empire) const;
 
     /** Fills \a objects with copies of UniverseObjects that should be sent
       * to the empire with id \a encoding_empires */

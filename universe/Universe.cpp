@@ -182,9 +182,6 @@ void Universe::Clear() {
     m_marked_destroyed.clear();
     m_destroyed_object_ids.clear();
 
-    // clean up ship designs
-    for (auto& entry : m_ship_designs)
-        delete entry.second;
     m_ship_designs.clear();
 
     m_empire_object_visibility.clear();
@@ -349,30 +346,28 @@ const ShipDesign* Universe::GetShipDesign(int ship_design_id) const {
     if (ship_design_id == INVALID_DESIGN_ID)
         return nullptr;
     ship_design_iterator it = m_ship_designs.find(ship_design_id);
-    return (it != m_ship_designs.end() ? it->second : nullptr);
+    return (it != m_ship_designs.end() ? &it->second : nullptr);
 }
 
-void Universe::RenameShipDesign(int design_id, const std::string& name, // TODO: pass by value with move
-                                const std::string& description)
-{
+void Universe::RenameShipDesign(int design_id, std::string name, std::string description) {
     auto design_it = m_ship_designs.find(design_id);
     if (design_it == m_ship_designs.end()) {
         DebugLogger() << "Universe::RenameShipDesign tried to rename a ship design that doesn't exist!";
         return;
     }
-    ShipDesign* design = design_it->second;
+    auto& design = design_it->second;
 
-    design->SetName(name);
-    design->SetDescription(description);
+    design.SetName(std::move(name));
+    design.SetDescription(std::move(description));
 }
 
 const ShipDesign* Universe::GetGenericShipDesign(std::string_view name) const {
     if (name.empty())
         return nullptr;
-    for (const auto& entry : m_ship_designs) {
-        const ShipDesign* design = entry.second;
-        if (name == design->Name(false))
-            return design;
+    for (const auto& [design_id, design] : m_ship_designs) {
+        (void)design_id;
+        if (name == design.Name(false))
+            return &design;
     }
     return nullptr;
 }
@@ -475,18 +470,16 @@ void Universe::InsertIDCore(std::shared_ptr<UniverseObject> obj, int id) {
     m_objects->insert(std::move(obj), m_destroyed_object_ids.count(id));
 }
 
-bool Universe::InsertShipDesign(ShipDesign* ship_design) {
-    if (!ship_design
-        || (ship_design->ID() != INVALID_DESIGN_ID && m_ship_designs.count(ship_design->ID())))
-    { return false; }
+int Universe::InsertShipDesign(ShipDesign ship_design) {
+    if (ship_design.ID() != INVALID_DESIGN_ID && m_ship_designs.count(ship_design.ID()))
+        return INVALID_DESIGN_ID; // already have a design with that ID
 
-    return InsertShipDesignID(ship_design, boost::none, GenerateDesignID());
+    const auto new_id = GenerateDesignID();
+    const auto success = InsertShipDesignID(std::move(ship_design), boost::none, new_id);
+    return success ? new_id : INVALID_DESIGN_ID;
 }
 
-bool Universe::InsertShipDesignID(ShipDesign* ship_design, boost::optional<int> empire_id, int id) { // TODO: pass and store ShipDesign as shared_ptr
-    if (!ship_design)
-        return false;
-
+bool Universe::InsertShipDesignID(ShipDesign ship_design, boost::optional<int> empire_id, int id) {
     if (!m_design_id_allocator->UpdateIDAndCheckIfOwned(id)) {
         ErrorLogger() << "Ship design id " << id << " is invalid.";
         return false;
@@ -498,8 +491,10 @@ bool Universe::InsertShipDesignID(ShipDesign* ship_design, boost::optional<int> 
         ErrorLogger() << "Ship design id " << id << " already exists.";
         return false;
     }
-    ship_design->SetID(id);
-    m_ship_designs[id] = ship_design;
+
+    ship_design.SetID(id);
+    m_ship_designs[id] = std::move(ship_design);
+
     return true;
 }
 
@@ -3179,36 +3174,39 @@ void Universe::UpdateStatRecords(const ScriptingContext& context) {
     }
 }
 
-void Universe::GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize, int encoding_empire) const {
-    if (encoding_empire == ALL_EMPIRES) {
-        designs_to_serialize = m_ship_designs;
-    } else {
-        designs_to_serialize.clear();
+const Universe::ShipDesignMap& Universe::GetShipDesignsToSerialize(
+    ShipDesignMap& designs_to_serialize, int encoding_empire) const
+{
+    if (encoding_empire == ALL_EMPIRES)
+        return m_ship_designs;
 
-        // add generic monster ship designs so they always appear in players' pedias
-        for (const auto& [design_id, design] : m_ship_designs) {
-            if (design->IsMonster() && design->DesignedByEmpire() == ALL_EMPIRES)
-                designs_to_serialize.emplace(design_id, design);
-        }
+    designs_to_serialize.clear();
 
-        // get empire's known ship designs
-        auto it = m_empire_known_ship_design_ids.find(encoding_empire);
-        if (it == m_empire_known_ship_design_ids.end())
-            return; // no known designs to serialize
+    // add generic monster ship designs so they always appear in players' pedias
+    for (const auto& [design_id, design] : m_ship_designs) {
+        if (design.IsMonster() && design.DesignedByEmpire() == ALL_EMPIRES)
+            designs_to_serialize.emplace(design_id, design);
+    }
 
-        const std::set<int>& empire_designs = it->second;
+    // get empire's known ship designs
+    auto it = m_empire_known_ship_design_ids.find(encoding_empire);
+    if (it == m_empire_known_ship_design_ids.end())
+        return designs_to_serialize;
 
-        // add all ship designs of ships this empire knows about
-        for (int design_id : empire_designs) {
-            auto universe_design_it = m_ship_designs.find(design_id);
-            if (universe_design_it != m_ship_designs.end())
-                designs_to_serialize.emplace(design_id, universe_design_it->second);
-            else
-                ErrorLogger() << "Universe::GetShipDesignsToSerialize empire " << encoding_empire
-                              << " should know about design with id " << design_id
-                              << " but no such design exists in the Universe!";
+    // add all ship designs of ships this empire knows about
+    const auto& empire_designs = it->second;
+    for (int design_id : empire_designs) {
+        auto universe_design_it = m_ship_designs.find(design_id);
+        if (universe_design_it != m_ship_designs.end()) {
+            designs_to_serialize.emplace(design_id, universe_design_it->second);
+        } else {
+            ErrorLogger() << "Universe::GetShipDesignsToSerialize empire " << encoding_empire
+                            << " should know about design with id " << design_id
+                            << " but no such design exists in the Universe!";
         }
     }
+
+    return designs_to_serialize;
 }
 
 void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) const {

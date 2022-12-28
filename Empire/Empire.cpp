@@ -1858,8 +1858,9 @@ void Empire::AddShipDesign(int ship_design_id, const Universe& universe, int nex
     if (ship_design_id == next_design_id)
         return;
 
-    const ShipDesign* ship_design = universe.GetShipDesign(ship_design_id);
-    if (ship_design) {  // don't check if design is producible; adding a ship design is useful for more than just producing it
+    // don't check if design is producible; adding a ship design is useful for more than just producing it
+
+    if (const ShipDesign* ship_design = universe.GetShipDesign(ship_design_id)) {
         // design is valid, so just add the id to empire's set of ids that it knows about
         if (!m_known_ship_designs.count(ship_design_id)) {
             m_known_ship_designs.insert(ship_design_id);
@@ -1875,27 +1876,27 @@ void Empire::AddShipDesign(int ship_design_id, const Universe& universe, int nex
     }
 }
 
-int Empire::AddShipDesign(ShipDesign* ship_design, Universe& universe) {
-    /* check if there already exists this same design in the universe.  On clients, this checks whether this empire
-       knows of this exact design and is trying to re-add it.  On the server, this checks whether this exact design
-       exists at all yet */
-    auto it = std::find_if(universe.ShipDesigns().begin(), universe.ShipDesigns().end(),
-                           [ship_design](const auto& id_design) { return ship_design == id_design.second; });
+int Empire::AddShipDesign(ShipDesign ship_design, Universe& universe) {
+    /* check if there already exists this same design in the universe.
+     * On clients, this checks whether this empire knows of this exact
+     * design and is trying to re-add it.  On the server, this checks
+     * whether this exact design exists at all yet */
+    const auto it = std::find_if(universe.ShipDesigns().begin(), universe.ShipDesigns().end(),
+                                 [&ship_design](const auto& id_design) { return ship_design == id_design.second; });
     if (it != universe.ShipDesigns().end()) {
         // ship design is already present in universe.  just need to add it to the empire's set of ship designs
-        int ship_design_id = it->first;
+        const int ship_design_id = it->first;
         AddShipDesign(ship_design_id, universe);
         return ship_design_id;
     }
 
-    bool success = universe.InsertShipDesign(ship_design);
+    const auto new_design_id = universe.InsertShipDesign(std::move(ship_design));
 
-    if (!success) {
+    if (new_design_id == INVALID_DESIGN_ID) {
         ErrorLogger() << "Empire::AddShipDesign Unable to add new design to universe";
-        return INVALID_OBJECT_ID;
+        return INVALID_DESIGN_ID;
     }
 
-    auto new_design_id = ship_design->ID();
     AddShipDesign(new_design_id, universe);
 
     return new_design_id;

@@ -407,24 +407,23 @@ namespace {
 
         // copy parts list from Python list to C++ vector
         std::vector<std::string> parts;
-        for (int i = 0; i < len(py_parts); i++) {
+        for (int i = 0; i < len(py_parts); i++)
             parts.push_back(py::extract<std::string>(py_parts[i]));
-        }
+
 
         // Create the design and add it to the universe
-        ShipDesign* design;
         try {
-            design = new ShipDesign(std::invalid_argument(""), name, description,
-                                    BEFORE_FIRST_TURN, ALL_EMPIRES,
-                                    hull, parts, icon, model, true, monster);
+            ShipDesign design(std::invalid_argument(""), name, description, BEFORE_FIRST_TURN,
+                              ALL_EMPIRES, hull, parts, icon, model, true, monster);
+
+            const auto new_id = universe.InsertShipDesign(design);
+            if (new_id == INVALID_DESIGN_ID) {
+                ErrorLogger() << "CreateShipDesign: couldn't insert ship design into universe";
+                return false;
+            }
+
         } catch (const std::invalid_argument&) {
             ErrorLogger() << "CreateShipDesign: invalid ship design";
-            return false;
-        }
-
-        if (!universe.InsertShipDesign(design)) {
-            ErrorLogger() << "CreateShipDesign: couldn't insert ship design into universe";
-            delete design;
             return false;
         }
 
@@ -471,14 +470,12 @@ namespace {
 
         py::list ShipDesigns() {
             py::list py_designs;
-            for (const auto& design_name : m_fleet_plan->ShipDesigns()) {
+            for (const auto& design_name : m_fleet_plan->ShipDesigns())
                 py_designs.append(py::object(design_name));
-            }
             return py::list(py_designs);
         }
 
-        const FleetPlan& GetFleetPlan() const noexcept
-        { return *m_fleet_plan; }
+        const auto& GetFleetPlan() const noexcept { return *m_fleet_plan; }
 
     private:
         // Use shared_ptr insead of unique_ptr because boost::python requires a deleter

@@ -749,10 +749,10 @@ bool operator ==(const ShipDesign& first, const ShipDesign& second) {
 
     // don't care if order is different, as long as the types and numbers of parts is the same
     for (const std::string& part_name : first.Parts())
-    { ++first_parts[part_name]; }
+        ++first_parts[part_name];
 
     for (const std::string& part_name : second.Parts())
-    { ++second_parts[part_name]; }
+        ++second_parts[part_name];
 
     return first_parts == second_parts;
 }
@@ -779,35 +779,24 @@ namespace {
             return;
 
         /* check if there already exists this same design in the universe. */
-        for (auto [existing_id, existing_design] : universe.ShipDesigns()) {
-            (void)existing_id;
-            if (!existing_design) {
-                ErrorLogger() << "PredefinedShipDesignManager::AddShipDesignsToUniverse found an invalid design in the Universe";
-                continue;
-            }
-
-            if (DesignsTheSame(*existing_design, *design)) {
+        for (const auto& [existing_id, existing_design] : universe.ShipDesigns()) {
+            if (DesignsTheSame(existing_design, *design)) {
                 WarnLogger() << "AddShipDesignsToUniverse found an exact duplicate of ship design "
                              << design->Name() << "to be added, so is not re-adding it";
-                design_generic_ids[design->Name(false)] = existing_design->ID();
+                design_generic_ids[design->Name(false)] = existing_id;
                 return; // design already added; don't need to do so again
             }
         }
 
         // duplicate design to add to Universe
-        ShipDesign* copy = new ShipDesign(*design);
-
-        bool success = universe.InsertShipDesign(copy);
-        if (!success) {
+        const auto new_design_id = universe.InsertShipDesign(*design);
+        if (new_design_id == INVALID_DESIGN_ID) {
             ErrorLogger() << "Empire::AddShipDesign Unable to add new design to universe";
-            delete copy;
             return;
         }
 
-        auto new_design_id = copy->ID();
         design_generic_ids[design->Name(false)] = new_design_id;
-        TraceLogger() << "AddShipDesignsToUniverse added ship design "
-                      << design->Name() << " to universe.";
+        TraceLogger() << "AddShipDesignsToUniverse added ship design " << design->Name() << " to universe.";
     };
 }
 

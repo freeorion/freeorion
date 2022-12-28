@@ -1505,33 +1505,35 @@ void ShipDesignOrder::ExecuteImpl(ScriptingContext& context) const {
         if (!CheckNew(EmpireID(), m_name, m_description, m_hull, m_parts, context))
             return;
 
-        // TODO: put into unique_ptr and pass as such...
-        ShipDesign* new_ship_design = nullptr;
         try {
-            new_ship_design = new ShipDesign(std::invalid_argument(""), m_name, m_description,
-                                             m_designed_on_turn, EmpireID(), m_hull, m_parts,
-                                             m_icon, m_3D_model, m_name_desc_in_stringtable,
-                                             m_is_monster, m_uuid);
+            ShipDesign new_ship_design(std::invalid_argument(""), m_name, m_description,
+                                       m_designed_on_turn, EmpireID(), m_hull, m_parts,
+                                       m_icon, m_3D_model, m_name_desc_in_stringtable,
+                                       m_is_monster, m_uuid);
+
+            if (m_design_id == INVALID_DESIGN_ID) {
+                // On the client create a new design id
+                m_design_id = universe.InsertShipDesign(std::move(new_ship_design));
+                DebugLogger() << "ShipDesignOrder::ExecuteImpl inserted new ship design ID " << m_design_id;
+
+            } else {
+                // On the server use the design id passed from the client
+                const auto success = universe.InsertShipDesignID(std::move(new_ship_design), EmpireID(),
+                                                                 m_design_id);
+                if (!success) {
+                    ErrorLogger() << "Couldn't insert ship design by ID " << m_design_id;
+                    return;
+                }
+            }
+
+            universe.SetEmpireKnowledgeOfShipDesign(m_design_id, EmpireID());
+            empire->AddShipDesign(m_design_id, universe);
+
+
         } catch (const std::exception& e) {
             ErrorLogger() << "Couldn't create ship design: " << e.what();
             return;
         }
-
-        if (m_design_id == INVALID_DESIGN_ID) {
-            // On the client create a new design id
-            universe.InsertShipDesign(new_ship_design);
-            m_design_id = new_ship_design->ID();
-            DebugLogger() << "ShipDesignOrder::ExecuteImpl inserted new ship design ID " << m_design_id;
-        } else {
-            // On the server use the design id passed from the client
-            if (!universe.InsertShipDesignID(new_ship_design, EmpireID(), m_design_id)) {
-                ErrorLogger() << "Couldn't insert ship design by ID " << m_design_id;
-                return;
-            }
-        }
-
-        universe.SetEmpireKnowledgeOfShipDesign(m_design_id, EmpireID());
-        empire->AddShipDesign(m_design_id, universe);
 
     } else if (m_update_name_or_description) {
         if (!CheckRename(EmpireID(), m_design_id, m_name, m_description, context))

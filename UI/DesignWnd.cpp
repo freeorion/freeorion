@@ -2651,11 +2651,11 @@ void CompletedDesignsListBox::PopulateCore() {
 
     } else if (showing_available) {
         // add all known / existing designs
-        for (const auto [des_id, design] : universe.ShipDesigns()) {
+        for (const auto& [des_id, design] : universe.ShipDesigns()) {
             (void)des_id;
-            if (!design->Producible())
+            if (!design.Producible())
                 continue;
-            auto row = GG::Wnd::Create<CompletedDesignListBoxRow>(row_size.x, row_size.y, *design);
+            auto row = GG::Wnd::Create<CompletedDesignListBoxRow>(row_size.x, row_size.y, design);
             Insert(row);
             row->Resize(row_size);
         }
@@ -2688,11 +2688,11 @@ void MonstersListBox::PopulateCore() {
 
     const GG::Pt row_size = ListRowSize();
 
-    for (auto [des_id, design] : universe.ShipDesigns()) {
+    for (const auto& [des_id, design] : universe.ShipDesigns()) {
         (void)des_id;
-        if (!design->IsMonster())
+        if (!design.IsMonster())
             continue;
-        auto row = GG::Wnd::Create<CompletedDesignListBoxRow>(row_size.x, row_size.y, *design);
+        auto row = GG::Wnd::Create<CompletedDesignListBoxRow>(row_size.x, row_size.y, design);
         Insert(row);
         row->Resize(row_size);
     }
@@ -2702,12 +2702,11 @@ void AllDesignsListBox::PopulateCore() {
     ScopedTimer scoped_timer("All::PopulateCore");
 
     const Universe& universe = GetUniverse();
+    const auto row_size = ListRowSize();
 
-    const GG::Pt row_size = ListRowSize();
-
-    for (auto [des_id, design] : universe.ShipDesigns()) {
+    for (const auto& [des_id, design] : universe.ShipDesigns()) {
         (void)des_id;
-        auto row = GG::Wnd::Create<CompletedDesignListBoxRow>(row_size.x, row_size.y, *design);
+        auto row = GG::Wnd::Create<CompletedDesignListBoxRow>(row_size.x, row_size.y, design);
         Insert(row);
         row->Resize(row_size);
     }
@@ -4765,11 +4764,9 @@ std::string DesignWnd::MainPanel::GetCleanDesignDump(const ShipDesign* ship_desi
 }
 
 void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
-    auto name_and_description = ValidatedNameAndDescription();
-    auto& name = name_and_description.first;
-    auto& description = name_and_description.second;
+    auto [name, description] = ValidatedNameAndDescription();
 
-    if (ShipDesign* design = m_incomplete_design.get()) {
+    if (const ShipDesign* design = m_incomplete_design.get()) {
         if (design->Hull() ==             Hull() &&
             design->Name(false) ==        name.StoredString() &&
             design->Description(false) == description.StoredString() &&

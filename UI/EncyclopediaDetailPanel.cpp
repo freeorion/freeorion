@@ -579,12 +579,12 @@ namespace {
 
         }
         else if (dir_name == "ENC_SHIP_DESIGN") {
-            for (auto [design_id, design] : universe.ShipDesigns()) {
-                if (design->IsMonster())
+            for (const auto& [design_id, design] : universe.ShipDesigns()) {
+                if (design.IsMonster())
                     continue;
                 retval.emplace_back(std::piecewise_construct,
-                                    std::forward_as_tuple(design->Name()),
-                                    std::forward_as_tuple(LinkTaggedIDText(VarText::DESIGN_ID_TAG, design_id, design->Name()).append("\n"),
+                                    std::forward_as_tuple(design.Name()),
+                                    std::forward_as_tuple(LinkTaggedIDText(VarText::DESIGN_ID_TAG, design_id, design.Name()).append("\n"),
                                                           ToChars(design_id)));
             }
 
@@ -612,11 +612,11 @@ namespace {
 
         }
         else if (dir_name == "ENC_MONSTER_TYPE") {
-            for (auto [design_id, design] : universe.ShipDesigns()) {
-                if (design && design->IsMonster())
+            for (const auto& [design_id, design] : universe.ShipDesigns()) {
+                if (design.IsMonster())
                     retval.emplace_back(std::piecewise_construct,
-                                        std::forward_as_tuple(design->Name()),
-                                        std::forward_as_tuple(LinkTaggedIDText(VarText::DESIGN_ID_TAG, design_id, design->Name()).append("\n"),
+                                        std::forward_as_tuple(design.Name()),
+                                        std::forward_as_tuple(LinkTaggedIDText(VarText::DESIGN_ID_TAG, design_id, design.Name()).append("\n"),
                                                               ToChars(design_id)));
             }
 
@@ -2704,14 +2704,14 @@ namespace {
             detailed_description += meter_value_label;
     }
 
-    std::string GetDetailedDescriptionBase(const ShipDesign* design) {
+    std::string GetDetailedDescriptionBase(const ShipDesign& design) {
         std::string hull_link;
-        if (!design->Hull().empty())
-            hull_link = LinkTaggedPresetText(VarText::SHIP_HULL_TAG, design->Hull(), UserString(design->Hull()));
+        if (!design.Hull().empty())
+            hull_link = LinkTaggedPresetText(VarText::SHIP_HULL_TAG, design.Hull(), UserString(design.Hull()));
 
         std::string parts_list;
-        std::map<std::string, int> non_empty_parts_count;
-        for (const std::string& part_name : design->Parts()) {
+        std::map<std::string, int> non_empty_parts_count; // TODO: can key be string_view ?
+        for (const auto& part_name : design.Parts()) {
             if (part_name.empty())
                 continue;
             non_empty_parts_count[part_name]++;
@@ -2727,15 +2727,13 @@ namespace {
                 parts_list.append(" x").append(ToChars(part_count));
         }
         return str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_BASE_STR"))
-            % design->Description()
+            % design.Description()
             % hull_link
             % parts_list);
     }
 
     std::string GetDetailedDescriptionStats(const std::shared_ptr<Ship>& ship,
-                                            const ShipDesign* design,
-                                            float enemy_DR,
-                                            std::set<float> enemy_shots, float cost)
+                                            float enemy_DR, std::set<float> enemy_shots, float cost)
     {
         //The strength of a fleet is approximately weapons * armor, or
         //(weapons - enemyShield) * armor / (enemyWeapons - shield). This
@@ -2749,13 +2747,13 @@ namespace {
         const ScriptingContext context{universe, Empires()};
 
         auto& species = ship->SpeciesName().empty() ? "Generic" : UserString(ship->SpeciesName());
-        float structure = ship->GetMeter(MeterType::METER_MAX_STRUCTURE)->Current();
-        float shield = ship->GetMeter(MeterType::METER_MAX_SHIELD)->Current();
-        float attack = ship->TotalWeaponsShipDamage(context);
-        float destruction = ship->TotalWeaponsFighterDamage(context);
-        float strength = std::pow(attack * structure, 0.6f);
-        float typical_shot = enemy_shots.empty() ? 0.0f : *std::max_element(enemy_shots.begin(), enemy_shots.end()); // TODO: cbegin, cend (also elsewhere)
-        float typical_strength = std::pow(ship->TotalWeaponsShipDamage(context, enemy_DR) * structure * typical_shot / std::max(typical_shot - shield, 0.001f), 0.6f); // FIXME: TotalWeaponsFighterDamage 
+        const float structure = ship->GetMeter(MeterType::METER_MAX_STRUCTURE)->Current();
+        const float shield = ship->GetMeter(MeterType::METER_MAX_SHIELD)->Current();
+        const float attack = ship->TotalWeaponsShipDamage(context);
+        const float destruction = ship->TotalWeaponsFighterDamage(context);
+        const float strength = std::pow(attack * structure, 0.6f);
+        const float typical_shot = enemy_shots.empty() ? 0.0f : *std::max_element(enemy_shots.begin(), enemy_shots.end()); // TODO: cbegin, cend (also elsewhere)
+        const float typical_strength = std::pow(ship->TotalWeaponsShipDamage(context, enemy_DR) * structure * typical_shot / std::max(typical_shot - shield, 0.001f), 0.6f); // FIXME: TotalWeaponsFighterDamage 
         return (FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR"))
             % species
             % attack
@@ -2793,24 +2791,25 @@ namespace {
         ObjectMap& objects = context.ContextObjects();
         const SpeciesManager& species_manager = context.species;
 
-        const ShipDesign* design = universe.GetShipDesign(design_id);
-        if (!design) {
+        const ShipDesign* design_ptr = universe.GetShipDesign(design_id);
+        if (!design_ptr) {
             ErrorLogger() << "RefreshDetailPanelShipDesignTag couldn't find ShipDesign with id " << design_id;
             return;
         }
+        const auto& design = *design_ptr;
 
         universe.InhibitUniverseObjectSignals(true);
 
 
         // Ship Designs
         if (!only_description) {
-            name = design->Name();
+            name = design.Name();
             texture = ClientUI::ShipDesignIcon(design_id);
             int default_location_id = DefaultLocationForEmpire(client_empire_id, context);
-            turns = design->ProductionTime(client_empire_id, default_location_id, context);
-            cost = design->ProductionCost(client_empire_id, default_location_id, context);
+            turns = design.ProductionTime(client_empire_id, default_location_id, context);
+            cost = design.ProductionCost(client_empire_id, default_location_id, context);
             cost_units = UserString("ENC_PP");
-            general_type = design->IsMonster() ? UserString("ENC_MONSTER") : UserString("ENC_SHIP_DESIGN");
+            general_type = design.IsMonster() ? UserString("ENC_MONSTER") : UserString("ENC_SHIP_DESIGN");
         }
 
         float tech_level = boost::algorithm::clamp(context.current_turn / 400.0f, 0.0f, 1.0f);
@@ -2892,14 +2891,14 @@ namespace {
             // apply empty species for 'Generic' entry
             universe.UpdateMeterEstimates(temp->ID(), context);
             temp->Resupply(context.current_turn);
-            detailed_description.append(GetDetailedDescriptionStats(temp, design, enemy_DR, enemy_shots, cost));
+            detailed_description.append(GetDetailedDescriptionStats(temp, enemy_DR, enemy_shots, cost));
 
             // apply various species to ship, re-calculating the meter values for each
             for (std::string& species_name : species_list) {
                 temp->SetSpecies(std::move(species_name), species_manager);
                 universe.UpdateMeterEstimates(temp->ID(), context);
                 temp->Resupply(context.current_turn);
-                detailed_description.append(GetDetailedDescriptionStats(temp, design, enemy_DR, enemy_shots, cost));
+                detailed_description.append(GetDetailedDescriptionStats(temp, enemy_DR, enemy_shots, cost));
             }
 
             universe.Delete(temp->ID());
@@ -2942,7 +2941,7 @@ namespace {
             return;
 
         if (only_description) {
-            detailed_description = GetDetailedDescriptionBase(incomplete_design.get());
+            detailed_description = GetDetailedDescriptionBase(*incomplete_design);
             return;
         }
 
@@ -2957,42 +2956,46 @@ namespace {
         // incomplete design.  not yet in game universe; being created on design screen
         name = incomplete_design->Name();
 
-        const std::string& design_icon = incomplete_design->Icon();
+        const auto& design_icon = incomplete_design->Icon();
         if (design_icon.empty())
             texture = ClientUI::HullIcon(incomplete_design->Hull());
         else
             texture = ClientUI::GetTexture(ClientUI::ArtDir() / design_icon, true);
 
-        int default_location_id = DefaultLocationForEmpire(client_empire_id, context);
+        const int default_location_id = DefaultLocationForEmpire(client_empire_id, context);
         turns = incomplete_design->ProductionTime(client_empire_id, default_location_id, context);
         cost = incomplete_design->ProductionCost(client_empire_id, default_location_id, context);
         cost_units = UserString("ENC_PP");
 
 
-        universe.InsertShipDesignID(new ShipDesign(*incomplete_design), client_empire_id, incomplete_design->ID());
-        detailed_description = GetDetailedDescriptionBase(incomplete_design.get());
-        float tech_level = boost::algorithm::clamp(context.current_turn / 400.0f, 0.0f, 1.0f);
-        float typical_shot = 3 + 27 * tech_level;
+        const bool insert_success = universe.InsertShipDesignID(
+            *incomplete_design, client_empire_id, incomplete_design->ID());
+        detailed_description = GetDetailedDescriptionBase(*incomplete_design);
+
+        // baseline values, may be overridden
+        const float tech_level = boost::algorithm::clamp(context.current_turn / 400.0f, 0.0f, 1.0f);
+        const float typical_shot = 3 + 27 * tech_level;
         float enemy_DR = 20 * tech_level;
         DebugLogger() << "default enemy stats:: tech_level: " << tech_level
                       << "   DR: " << enemy_DR << "   attack: " << typical_shot;
-        std::set<float> enemy_shots;
-        enemy_shots.insert(typical_shot);
+        std::set<float> enemy_shots{typical_shot};
+
         std::set<std::string> additional_species; // TODO: from currently selected planet and ship, if any
         const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
-        if (const auto planet = objects.get<Planet>(map_wnd->SelectedPlanetID())) {
+        if (const auto* planet = objects.getRaw<Planet>(map_wnd->SelectedPlanetID())) {
             if (!planet->SpeciesName().empty())
                 additional_species.insert(planet->SpeciesName());
         }
+
         FleetUIManager& fleet_manager = FleetUIManager::GetFleetUIManager();
         std::set<int> chosen_ships;
-        int selected_ship = fleet_manager.SelectedShipID();
+        const int selected_ship = fleet_manager.SelectedShipID();
         if (selected_ship != INVALID_OBJECT_ID) {
             chosen_ships.insert(selected_ship);
-            if (auto this_ship = objects.get<const Ship>(selected_ship)) {
+            if (auto this_ship = objects.getRaw<const Ship>(selected_ship)) {
                 if (!additional_species.empty() && (
-                        (this_ship->GetMeter(MeterType::METER_MAX_SHIELD)->Initial() > 0) ||
-                         !this_ship->OwnedBy(client_empire_id)))
+                    (this_ship->GetMeter(MeterType::METER_MAX_SHIELD)->Initial() > 0) ||
+                    !this_ship->OwnedBy(client_empire_id)))
                 {
                     enemy_DR = this_ship->GetMeter(MeterType::METER_MAX_SHIELD)->Initial();
                     DebugLogger() << "Using selected ship for enemy values, DR: " << enemy_DR;
@@ -3003,6 +3006,7 @@ namespace {
                     enemy_shots.insert(this_damage.begin(), this_damage.end());
                 }
             }
+
         } else if (fleet_manager.ActiveFleetWnd()) {
             for (const auto& fleet : objects.find<const Fleet>(fleet_manager.ActiveFleetWnd()->SelectedFleetIDs())) {
                 if (!fleet)
@@ -3011,10 +3015,10 @@ namespace {
                 chosen_ships.insert(fleet_ship_ids.begin(), fleet_ship_ids.end());
             }
         }
-        for (const auto& this_ship : objects.find<const Ship>(chosen_ships)) {
-            if (!this_ship || !this_ship->SpeciesName().empty())
-                continue;
-            additional_species.insert(this_ship->SpeciesName());
+
+        for (const auto* this_ship : objects.findRaw<const Ship>(chosen_ships)) {
+            if (this_ship && !this_ship->SpeciesName().empty())
+                additional_species.insert(this_ship->SpeciesName());
         }
 
         // temporary ship to use for estimating design's meter values
@@ -3025,16 +3029,14 @@ namespace {
         // apply empty species for 'Generic' entry
         universe.UpdateMeterEstimates(temp->ID(), context);
         temp->Resupply(context.current_turn);
-        detailed_description.append(GetDetailedDescriptionStats(temp, incomplete_design.get(),
-                                                                enemy_DR, enemy_shots, cost));
+        detailed_description.append(GetDetailedDescriptionStats(temp, enemy_DR, enemy_shots, cost));
 
         // apply various species to ship, re-calculating the meter values for each
         for (auto& species_name : additional_species) {
             temp->SetSpecies(species_name, species_manager);
             universe.UpdateMeterEstimates(temp->ID(), context);
             temp->Resupply(context.current_turn);
-            detailed_description.append(GetDetailedDescriptionStats(temp, incomplete_design.get(),
-                                                                    enemy_DR, enemy_shots, cost));
+            detailed_description.append(GetDetailedDescriptionStats(temp, enemy_DR, enemy_shots, cost));
         }
 
         universe.Delete(temp->ID());

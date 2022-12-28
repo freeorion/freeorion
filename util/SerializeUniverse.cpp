@@ -35,7 +35,7 @@ namespace {
 
 BOOST_CLASS_EXPORT(Field)
 BOOST_CLASS_EXPORT(Universe)
-BOOST_CLASS_VERSION(Universe, 2)
+BOOST_CLASS_VERSION(Universe, 3)
 
 template <typename Archive>
 void serialize(Archive& ar, PopCenter& p, unsigned int const version)
@@ -89,7 +89,7 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
     Universe::EmpireObjectVisibilityTurnMap   empire_object_visibility_turns;
     Universe::ObjectKnowledgeMap              empire_known_destroyed_object_ids;
     Universe::ObjectKnowledgeMap              empire_stale_knowledge_object_ids;
-    Universe::ShipDesignMap                   ship_designs;
+    Universe::ShipDesignMap                   ship_designs_scratch;
 
     ar.template register_type<System>();
 
@@ -107,9 +107,22 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
         u.GetEmpireObjectVisibilityTurnMap(   empire_object_visibility_turns,     GlobalSerializationEncodingForEmpire());
         u.GetEmpireKnownDestroyedObjects(     empire_known_destroyed_object_ids,  GlobalSerializationEncodingForEmpire());
         u.GetEmpireStaleKnowledgeObjects(     empire_stale_knowledge_object_ids,  GlobalSerializationEncodingForEmpire());
-        u.GetShipDesignsToSerialize(          ship_designs,                       GlobalSerializationEncodingForEmpire());
-        timer.EnterSection("");
     }
+
+    const auto& designs_to_serialize = [&timer, &ship_designs_scratch, &u]() {
+        if constexpr(Archive::is_saving::value) {
+            // when saving, get a reference to either the full universe ship designs map or
+            // a filtered subset to be encoded for a particular empire. this call may
+            // fill ship_designs_scratch and return it, or just retern a universe internal
+            // map of ShipDesign
+            const auto& retval = u.GetShipDesignsToSerialize(ship_designs_scratch,
+                                                             GlobalSerializationEncodingForEmpire());
+            timer.EnterSection("");
+            return retval;
+        } else {
+            return ship_designs_scratch;
+        }
+    }();
 
     if constexpr (Archive::is_loading::value) {
         // clean up any existing dynamically allocated contents before replacing
@@ -121,10 +134,26 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
     DebugLogger() << "Universe::serialize : " << serializing_label << " universe width: " << u.m_universe_width;
 
     timer.EnterSection("designs");
-    ar  & make_nvp("ship_designs", ship_designs);
-    if constexpr (Archive::is_loading::value)
-        u.m_ship_designs.swap(ship_designs);
-    DebugLogger() << "Universe::serialize : " << serializing_label << " " << ship_designs.size() << " ship designs";
+    if constexpr (Archive::is_loading::value) {
+        if (version >= 3) {
+            ar >> make_nvp("ship_designs", ship_designs_scratch);
+
+        } else {
+            std::map<int, ShipDesign*> design_ptrs;
+            ar  & make_nvp("ship_designs", design_ptrs);
+            for (auto [id, ptr] : design_ptrs) {
+                ship_designs_scratch.emplace(id, std::move(*ptr));
+                delete ptr;
+            }
+        }
+
+        u.m_ship_designs.swap(ship_designs_scratch);
+        DebugLogger() << "Universe::deserialized : " << serializing_label << " " << u.m_ship_designs.size() << " ship designs";
+
+    } else { // saving
+        ar << make_nvp("ship_designs", designs_to_serialize);
+        DebugLogger() << "Universe::serialized : " << serializing_label << " " << designs_to_serialize.size() << " ship designs";
+    }
 
     ar  & make_nvp("m_empire_known_ship_design_ids", u.m_empire_known_ship_design_ids);
 

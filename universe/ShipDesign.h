@@ -212,7 +212,7 @@ private:
     std::string                   m_tags_concatenated;
     std::vector<std::string_view> m_tags;
 
-    float   m_detection = 0.0f;
+    float   m_detection = 0.0f; // TODO: const all these?
     float   m_colony_capacity = 0.0f;
     float   m_troop_capacity = 0.0f;
     float   m_stealth = 0.0f;
@@ -297,7 +297,7 @@ private:
     mutable boost::optional<Pending::Pending<ParsedShipDesignsType>> m_pending_monsters = boost::none;
 
     mutable std::unordered_map<boost::uuids::uuid, std::unique_ptr<ShipDesign>,
-                               boost::hash<boost::uuids::uuid>>  m_designs;
+                               boost::hash<boost::uuids::uuid>> m_designs;
 
     mutable std::unordered_map<std::string, boost::uuids::uuid> m_name_to_ship_design;
     mutable std::unordered_map<std::string, boost::uuids::uuid> m_name_to_monster_design;
