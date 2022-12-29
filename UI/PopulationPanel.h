@@ -9,7 +9,6 @@
 
 class MultiIconValueIndicator;
 class MultiMeterStatusBar;
-class PopCenter;
 class StatisticIcon;
 
 /** Shows population with meter bars */

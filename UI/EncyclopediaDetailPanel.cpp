@@ -1418,7 +1418,6 @@ namespace {
         case UniverseObjectType::OBJ_BUILDING:      return UserString("ENC_BUILDING");      break;
         case UniverseObjectType::OBJ_SYSTEM:        return UserString("ENC_SYSTEM");        break;
         case UniverseObjectType::OBJ_FIELD:         return UserString("ENC_FIELD");         break;
-        case UniverseObjectType::OBJ_POP_CENTER:    return UserString("ENC_POP_CENTER");    break;
         case UniverseObjectType::OBJ_PROD_CENTER:   return UserString("ENC_PROD_CENTER");   break;
         case UniverseObjectType::OBJ_FIGHTER:       return UserString("ENC_FIGHTER");       break;
         default:                return EMPTY_STRING;
@@ -3118,11 +3117,11 @@ namespace {
             }
         }
 
-        for (const auto& pop_center : objects.find<PopCenter>(empire->GetPopulationPool().PopCenterIDs())) {
-            if (!pop_center)
+        for (const auto& planet : objects.find<Planet>(empire->GetPopulationPool().PopCenterIDs())) {
+            if (!planet)
                 continue;
 
-            const std::string& species_name = pop_center->SpeciesName();
+            const std::string& species_name = planet->SpeciesName();
             if (species_name.empty() ||
                 std::any_of(retval.begin(), retval.end(),
                             [&species_name](std::string_view s) { return s == species_name; }))

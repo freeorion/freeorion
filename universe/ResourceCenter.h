@@ -20,8 +20,7 @@ struct ScriptingContext;
   *
   * Planet is the most obvious class to inherit ResourceCenter, but other
   * classes could be made from it as well (e.g., a trade-ship or mining vessel,
-  * or a non-Planet UniverseObject- and PopCenter- derived object of some
-  * sort. */
+  * or a non-Planet UniverseObject-derived object of some sort. */
 class FO_COMMON_API ResourceCenter : virtual public std::enable_shared_from_this<UniverseObject> {
 public:
     ResourceCenter();

@@ -7061,14 +7061,14 @@ void MapWnd::RefreshPopulationIndicator() {
     const SpeciesManager& sm = GetSpeciesManager();
 
     //tally up all species population counts
-    for (const auto* pc : objects.findRaw<PopCenter>(pop_center_ids)) {
+    for (const auto* pc : objects.findRaw<Planet>(pop_center_ids)) {
         if (!pc)
             continue;
 
         const auto& species_name = pc->SpeciesName();
         if (species_name.empty())
             continue;
-        float this_pop = pc->GetMeter(MeterType::METER_POPULATION)->Initial();
+        const float this_pop = pc->UniverseObject::GetMeter(MeterType::METER_POPULATION)->Initial();
         population_counts[species_name] += this_pop;
         population_worlds[species_name] += 1;
         if (const Species* species = sm.GetSpecies(species_name) ) {

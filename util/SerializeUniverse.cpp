@@ -38,18 +38,6 @@ BOOST_CLASS_EXPORT(Universe)
 BOOST_CLASS_VERSION(Universe, 3)
 
 template <typename Archive>
-void serialize(Archive& ar, PopCenter& p, unsigned int const version)
-{
-    ar  & boost::serialization::make_nvp("m_species_name", p.m_species_name);
-}
-
-template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, PopCenter&, unsigned int const);
-template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, PopCenter&, unsigned int const);
-template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, PopCenter&, unsigned int const);
-template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, PopCenter&, unsigned int const);
-
-
-template <typename Archive>
 void serialize(Archive& ar, ResourceCenter& rs, unsigned int const version)
 {
     using namespace boost::serialization;
@@ -535,14 +523,33 @@ template <typename Archive>
 void load_construct_data(Archive& ar, Planet* obj, unsigned int const version)
 { ::new(obj)Planet(); }
 
+namespace {
+    // backwards compatability
+    struct PopCenter { std::string m_species_name; };
+
+    template <typename Archive>
+    void serialize(Archive& ar, PopCenter& pop, unsigned int const version)
+    { ar & boost::serialization::make_nvp("m_species_name", pop.m_species_name); }
+}
+
 template <typename Archive>
 void serialize(Archive& ar, Planet& obj, unsigned int const version)
 {
     using namespace boost::serialization;
 
-    ar  & make_nvp("UniverseObject", base_object<UniverseObject>(obj))
-        & make_nvp("PopCenter", base_object<PopCenter>(obj))
-        & make_nvp("ResourceCenter", base_object<ResourceCenter>(obj))
+    ar  & make_nvp("UniverseObject", base_object<UniverseObject>(obj));
+    if constexpr (Archive::is_loading::value) {
+        if (version < 3) {
+            PopCenter pop;
+            ar  & make_nvp("PopCenter", pop);
+            obj.m_species_name = std::move(pop.m_species_name);
+        } else {
+            ar  & make_nvp("m_species_name", obj.m_species_name);
+        }
+    } else {
+        ar  & make_nvp("m_species_name", obj.m_species_name);
+    }
+    ar  & make_nvp("ResourceCenter", base_object<ResourceCenter>(obj))
         & make_nvp("m_type", obj.m_type)
         & make_nvp("m_original_type", obj.m_original_type)
         & make_nvp("m_size", obj.m_size)
@@ -551,14 +558,7 @@ void serialize(Archive& ar, Planet& obj, unsigned int const version)
         & make_nvp("m_rotational_period", obj.m_rotational_period)
         & make_nvp("m_axial_tilt", obj.m_axial_tilt)
         & make_nvp("m_buildings", obj.m_buildings);
-    if (version < 2) {
-        // if deserializing an old save, default to standard default never-colonized turn
-        obj.m_turn_last_colonized = INVALID_GAME_TURN;
-        if (!obj.SpeciesName().empty()) // but if a planet has a species, it must have been colonized, so default to the previous turn
-            obj.m_turn_last_colonized = CurrentTurn() - 1;
-    } else {
-        ar   & make_nvp("m_turn_last_colonized", obj.m_turn_last_colonized);
-    }
+    ar  & make_nvp("m_turn_last_colonized", obj.m_turn_last_colonized);
     ar  & make_nvp("m_turn_last_conquered", obj.m_turn_last_conquered);
     ar  & make_nvp("m_is_about_to_be_colonized", obj.m_is_about_to_be_colonized)
         & make_nvp("m_is_about_to_be_invaded", obj.m_is_about_to_be_invaded)
@@ -568,7 +568,7 @@ void serialize(Archive& ar, Planet& obj, unsigned int const version)
 }
 
 BOOST_CLASS_EXPORT(Planet)
-BOOST_CLASS_VERSION(Planet, 2)
+BOOST_CLASS_VERSION(Planet, 3)
 
 
 template <typename Archive>

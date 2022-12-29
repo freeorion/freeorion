@@ -6,7 +6,6 @@
 #include "../universe/Building.h"
 #include "../universe/Effect.h"
 #include "../universe/Planet.h"
-#include "../universe/PopCenter.h"
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/ShipPart.h"
@@ -147,7 +146,7 @@ void MeterBrowseWnd::Initialize() {
         std::string summary_title_text;
         if (m_primary_meter_type == MeterType::METER_POPULATION) {
             std::string human_readable_species_name;
-            if (auto pop = std::dynamic_pointer_cast<const PopCenter>(obj)) {
+            if (auto pop = std::dynamic_pointer_cast<const Planet>(obj)) {
                 const std::string& species_name = pop->SpeciesName();
                 if (!species_name.empty())
                     human_readable_species_name = UserString(species_name);

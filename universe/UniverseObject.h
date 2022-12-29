@@ -37,7 +37,6 @@ FO_ENUM(
     ((OBJ_SHIP))
     ((OBJ_FLEET))
     ((OBJ_PLANET))
-    ((OBJ_POP_CENTER))
     ((OBJ_PROD_CENTER))
     ((OBJ_SYSTEM))
     ((OBJ_FIELD))

@@ -17,7 +17,6 @@
 class Universe;
 class UniverseObject;
 class ResourceCenter;
-class PopCenter;
 class Ship;
 class Fleet;
 class Planet;
@@ -186,8 +185,6 @@ public:
             return m_existing_objects;
         else if constexpr (std::is_same_v<DecayT, ResourceCenter>)
             return m_existing_resource_centers;
-        else if constexpr (std::is_same_v<DecayT, PopCenter>)
-            return m_existing_pop_centers;
         else if constexpr (std::is_same_v<DecayT, Ship>)
             return m_existing_ships;
         else if constexpr (std::is_same_v<DecayT, Fleet>)
@@ -215,8 +212,6 @@ public:
             return m_existing_object_vec;
         else if constexpr (std::is_same_v<DecayT, ResourceCenter>)
             return m_existing_resource_center_vec;
-        else if constexpr (std::is_same_v<DecayT, PopCenter>)
-            return m_existing_pop_center_vec;
         else if constexpr (std::is_same_v<DecayT, Ship>)
             return m_existing_ship_vec;
         else if constexpr (std::is_same_v<DecayT, Fleet>)
@@ -314,8 +309,6 @@ private:
             return m_objects;
         else if constexpr (std::is_same_v<DecayT, ResourceCenter>)
             return m_resource_centers;
-        else if constexpr (std::is_same_v<DecayT, PopCenter>)
-            return m_pop_centers;
         else if constexpr (std::is_same_v<DecayT, Ship>)
             return m_ships;
         else if constexpr (std::is_same_v<DecayT, Fleet>)
@@ -344,8 +337,6 @@ private:
             return m_objects;
         else if constexpr (std::is_same_v<DecayT, ResourceCenter>)
             return m_resource_centers;
-        else if constexpr (std::is_same_v<DecayT, PopCenter>)
-            return m_pop_centers;
         else if constexpr (std::is_same_v<DecayT, Ship>)
             return m_ships;
         else if constexpr (std::is_same_v<DecayT, Fleet>)
@@ -370,7 +361,6 @@ private:
 
     container_type<UniverseObject>  m_objects;
     container_type<ResourceCenter>  m_resource_centers;
-    container_type<PopCenter>       m_pop_centers;
     container_type<Ship>            m_ships;
     container_type<Fleet>           m_fleets;
     container_type<Planet>          m_planets;
@@ -380,7 +370,6 @@ private:
 
     container_type<const UniverseObject> m_existing_objects;
     container_type<const UniverseObject> m_existing_resource_centers;
-    container_type<const UniverseObject> m_existing_pop_centers;
     container_type<const UniverseObject> m_existing_ships;
     container_type<const UniverseObject> m_existing_fleets;
     container_type<const UniverseObject> m_existing_planets;
@@ -390,7 +379,6 @@ private:
 
     std::vector<const UniverseObject*> m_existing_object_vec;
     std::vector<const UniverseObject*> m_existing_resource_center_vec;
-    std::vector<const UniverseObject*> m_existing_pop_center_vec;
     std::vector<const UniverseObject*> m_existing_ship_vec;
     std::vector<const UniverseObject*> m_existing_fleet_vec;
     std::vector<const UniverseObject*> m_existing_planet_vec;

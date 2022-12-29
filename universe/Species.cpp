@@ -5,7 +5,6 @@
 #include "Conditions.h"
 #include "CommonParams.h"
 #include "Effect.h"
-#include "PopCenter.h"
 #include "Planet.h"
 #include "Ship.h"
 #include "UniverseObject.h"
@@ -326,7 +325,7 @@ void Species::Init() {
                         std::move(environments), std::move(this_species_name_ref)))));
 
         auto type_cond = std::make_unique<Condition::Type>(
-            std::make_unique<ValueRef::Constant<UniverseObjectType>>(UniverseObjectType::OBJ_POP_CENTER));
+            std::make_unique<ValueRef::Constant<UniverseObjectType>>(UniverseObjectType::OBJ_PLANET));
 
         m_location = std::unique_ptr<Condition::Condition>(std::make_unique<Condition::And>(
             std::move(enviro_cond), std::move(type_cond)));
@@ -768,11 +767,10 @@ void SpeciesManager::UpdatePopulationCounter(const ObjectMap& objects) {
     // ships of each species and design
     m_species_object_populations.clear();
     for (const auto& [obj_id, obj] : objects.allExisting()) {
-        if (obj->ObjectType() != UniverseObjectType::OBJ_PLANET &&
-            obj->ObjectType() != UniverseObjectType::OBJ_POP_CENTER)
-        { continue; }
+        if (obj->ObjectType() != UniverseObjectType::OBJ_PLANET)
+            continue;
 
-        auto pop_center = std::dynamic_pointer_cast<const PopCenter>(obj);
+        auto pop_center = std::dynamic_pointer_cast<const Planet>(obj); // TODO: static_cast
         const std::string& species = pop_center->SpeciesName();
         if (species.empty())
             continue;
@@ -780,9 +778,7 @@ void SpeciesManager::UpdatePopulationCounter(const ObjectMap& objects) {
         try {
             m_species_object_populations[species][obj_id] +=
                 obj->GetMeter(MeterType::METER_POPULATION)->Current();
-        } catch (...) {
-            continue;
-        }
+        } catch (...) {}
     }
 }
 

@@ -23,6 +23,7 @@
 namespace {
     // high tilt is arbitrarily taken to mean 45 degrees or more
     constexpr float HIGH_TILT_THERESHOLD = 45.0f;
+    constexpr double MINIMUM_POP_CENTER_POPULATION = 0.01001;  // rounds up to 0.1 when showing 2 digits, down to 0.05 or 50.0 when showing 3
 
     float SizeRotationFactor(PlanetSize size) {
         switch (size) {
@@ -38,7 +39,7 @@ namespace {
 
     static const std::string EMPTY_STRING;
 
-    /** @content_tag{CTRL_STAT_SKIP_DEPOP} Do not count PopCenter%s with this tag for SpeciesPlanetsDepoped stat */
+    /** @content_tag{CTRL_STAT_SKIP_DEPOP} Do not count Planets with this tag for SpeciesPlanetsDepoped stat */
     const std::string TAG_STAT_SKIP_DEPOP = "CTRL_STAT_SKIP_DEPOP";
 }
 
@@ -56,7 +57,6 @@ Planet::Planet(PlanetType type, PlanetSize size, int creation_turn) :
 {
     //DebugLogger() << "Planet::Planet(" << type << ", " << size <<")";
     UniverseObject::Init();
-    PopCenter::Init();
     ResourceCenter::Init();
     Planet::Init();
 
@@ -99,8 +99,8 @@ void Planet::Copy(const Planet& copied_planet, const Universe& universe, int emp
     const auto visible_specials = universe.GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
 
     UniverseObject::Copy(copied_planet, vis, visible_specials, universe);
-    PopCenter::Copy(copied_planet, vis);
     ResourceCenter::Copy(copied_planet, vis);
+
 
     if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
         this->m_name =                      copied_planet.m_name;
@@ -118,6 +118,8 @@ void Planet::Copy(const Planet& copied_planet, const Universe& universe, int emp
 
 
         if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
+            this->m_species_name = copied_planet.m_species_name;
+
             if (vis >= Visibility::VIS_FULL_VISIBILITY) {
                 this->m_is_about_to_be_colonized =  copied_planet.m_is_about_to_be_colonized;
                 this->m_is_about_to_be_invaded   =  copied_planet.m_is_about_to_be_invaded;
@@ -143,7 +145,7 @@ bool Planet::HostileToEmpire(int empire_id, const EmpireManager& empires) const 
         return !Unowned();
 
     // Unowned planets are only considered hostile if populated
-    auto pop_meter = GetMeter(MeterType::METER_TARGET_POPULATION);
+    auto pop_meter = UniverseObject::GetMeter(MeterType::METER_TARGET_POPULATION);
     if (Unowned())
         return pop_meter && (pop_meter->Current() != 0.0f);
 
@@ -165,7 +167,7 @@ bool Planet::HasTag(std::string_view name, const ScriptingContext& context) cons
 std::string Planet::Dump(uint8_t ntabs) const {
     std::string retval = UniverseObject::Dump(ntabs);
     retval.reserve(2048);
-    retval += PopCenter::Dump(ntabs);
+    retval.append(" species: ").append(m_species_name).append("  ");
     retval += ResourceCenter::Dump(ntabs);
     retval.append(" type: ").append(to_string(m_type))
           .append(" original type: ").append(to_string(m_original_type))
@@ -195,6 +197,9 @@ std::string Planet::Dump(uint8_t ntabs) const {
     return retval;
 }
 
+bool Planet::Populated() const
+{ return UniverseObject::GetMeter(MeterType::METER_POPULATION)->Current() >= MINIMUM_POP_CENTER_POPULATION; }
+
 int Planet::HabitableSize() const {
     auto& gr = GetGameRules();
     switch (m_size) {
@@ -210,6 +215,11 @@ int Planet::HabitableSize() const {
 }
 
 void Planet::Init() {
+    AddMeter(MeterType::METER_POPULATION);
+    AddMeter(MeterType::METER_TARGET_POPULATION);
+    AddMeter(MeterType::METER_HAPPINESS);
+    AddMeter(MeterType::METER_TARGET_HAPPINESS);
+
     AddMeter(MeterType::METER_SUPPLY);
     AddMeter(MeterType::METER_MAX_SUPPLY);
     AddMeter(MeterType::METER_STOCKPILE);
@@ -552,13 +562,13 @@ const std::string& Planet::FocusIcon(std::string_view focus_name,
 
 std::map<int, double> Planet::EmpireGroundCombatForces() const {
     std::map<int, double> empire_troops;
-    if (GetMeter(MeterType::METER_TROOPS)->Initial() > 0.0f) {
+    if (UniverseObject::GetMeter(MeterType::METER_TROOPS)->Initial() > 0.0f) {
         // empires may have garrisons on planets
-        empire_troops[Owner()] += GetMeter(MeterType::METER_TROOPS)->Initial() + 0.0001; // small bonus to ensure ties are won by initial owner
+        empire_troops[Owner()] += UniverseObject::GetMeter(MeterType::METER_TROOPS)->Initial() + 0.0001; // small bonus to ensure ties are won by initial owner
     }
-    if (!Unowned() && GetMeter(MeterType::METER_REBEL_TROOPS)->Initial() > 0.0f) {
+    if (!Unowned() && UniverseObject::GetMeter(MeterType::METER_REBEL_TROOPS)->Initial() > 0.0f) {
         // rebels may be present on empire-owned planets
-        empire_troops[ALL_EMPIRES] += GetMeter(MeterType::METER_REBEL_TROOPS)->Initial();
+        empire_troops[ALL_EMPIRES] += UniverseObject::GetMeter(MeterType::METER_REBEL_TROOPS)->Initial();
     }
     return empire_troops;
 }
@@ -632,7 +642,12 @@ bool Planet::RemoveBuilding(int building_id) {
 }
 
 void Planet::Reset(ObjectMap& objects) {
-    PopCenter::Reset(objects);
+    GetMeter(MeterType::METER_POPULATION)->Reset();
+    GetMeter(MeterType::METER_TARGET_POPULATION)->Reset();
+    GetMeter(MeterType::METER_HAPPINESS)->Reset();
+    GetMeter(MeterType::METER_TARGET_HAPPINESS)->Reset();
+    m_species_name.clear();
+
     ResourceCenter::Reset(objects);
 
     GetMeter(MeterType::METER_SUPPLY)->Reset();
@@ -663,8 +678,8 @@ void Planet::Reset(ObjectMap& objects) {
 }
 
 void Planet::Depopulate(int current_turn) {
-    PopCenter::Depopulate(current_turn);
-
+    GetMeter(MeterType::METER_POPULATION)->Reset();
+    GetMeter(MeterType::METER_HAPPINESS)->Reset();
     GetMeter(MeterType::METER_INDUSTRY)->Reset();
     GetMeter(MeterType::METER_RESEARCH)->Reset();
     GetMeter(MeterType::METER_INFLUENCE)->Reset();
@@ -738,9 +753,13 @@ void Planet::Conquer(int conquerer, ScriptingContext& context) {
 }
 
 void Planet::SetSpecies(std::string species_name, int turn, const SpeciesManager& sm) {
-    if (SpeciesName().empty() && !species_name.empty())
+    if (m_species_name.empty() && !species_name.empty())
         m_turn_last_colonized = turn;  // if setting species with an effect, not via Colonize, consider it a colonization when there was no previous species set
-    PopCenter::SetSpecies(std::move(species_name), turn, sm);
+
+    if (!species_name.empty() && !sm.GetSpecies(species_name))
+        ErrorLogger() << "Planet::SetSpecies couldn't get species with name " << species_name;
+
+    m_species_name = std::move(species_name);
 }
 
 bool Planet::Colonize(int empire_id, std::string species_name, double population,
@@ -770,8 +789,14 @@ bool Planet::Colonize(int empire_id, std::string species_name, double population
     // reset the planet to unowned/unpopulated
     if (!OwnedBy(empire_id)) {
         Reset(objects);
+
     } else {
-        PopCenter::Reset(objects);
+        GetMeter(MeterType::METER_POPULATION)->Reset();
+        GetMeter(MeterType::METER_TARGET_POPULATION)->Reset();
+        GetMeter(MeterType::METER_HAPPINESS)->Reset();
+        GetMeter(MeterType::METER_TARGET_HAPPINESS)->Reset();
+        m_species_name.clear();
+
         for (auto* building : objects.findRaw<Building>(m_buildings)) {
             if (!building)
                 continue;
@@ -780,11 +805,12 @@ bool Planet::Colonize(int empire_id, std::string species_name, double population
         m_is_about_to_be_colonized = false;
         m_is_about_to_be_invaded = false;
         m_is_about_to_be_bombarded = false;
+        m_ordered_given_to_empire_id = ALL_EMPIRES;
         SetOwner(ALL_EMPIRES);
     }
 
     // if desired pop > 0, we want a colony, not an outpost, so we have to set the colony species
-    if (population > 0.0)
+    if (population > MINIMUM_POP_CENTER_POPULATION)
         SetSpecies(std::move(species_name), context.current_turn, context.species);
     m_turn_last_colonized = context.current_turn; // may be redundant with same in SetSpecies, but here occurrs always, whereas in SetSpecies is only done if species is initially empty
 
@@ -874,12 +900,18 @@ void Planet::SetSurfaceTexture(const std::string& texture) {
 
 void Planet::PopGrowthProductionResearchPhase(ScriptingContext& context) {
     UniverseObject::PopGrowthProductionResearchPhase(context);
-    PopCenterPopGrowthProductionResearchPhase(context.current_turn);
 
-    // should be run after a meter update, but before a backpropagation, so check current, not initial, meter values
+    if (!m_species_name.empty() && !Populated()) {
+        // Should be run after meter update but before a backpropagation,
+        // so check current, not initial, meter values. If population falls
+        // below threshold, kill off the remainder
+        Depopulate(context.current_turn);
+    }
 
     // check for colonies without positive population, and change to outposts
-    if (!SpeciesName().empty() && GetMeter(MeterType::METER_POPULATION)->Current() <= 0.0f) {
+    if (!SpeciesName().empty() &&
+        GetMeter(MeterType::METER_POPULATION)->Current() <= MINIMUM_POP_CENTER_POPULATION)
+    {
         if (auto empire = context.GetEmpire(this->Owner())) {
             empire->AddSitRepEntry(CreatePlanetDepopulatedSitRep(this->ID()));
 
@@ -887,7 +919,11 @@ void Planet::PopGrowthProductionResearchPhase(ScriptingContext& context) {
                 empire->RecordPlanetDepopulated(*this);
         }
         // remove species
-        PopCenter::Reset(context.ContextObjects());
+        GetMeter(MeterType::METER_POPULATION)->Reset();
+        GetMeter(MeterType::METER_TARGET_POPULATION)->Reset();
+        GetMeter(MeterType::METER_HAPPINESS)->Reset();
+        GetMeter(MeterType::METER_TARGET_HAPPINESS)->Reset();
+        m_species_name.clear();
     }
 
     StateChangedSignal();
@@ -896,7 +932,9 @@ void Planet::PopGrowthProductionResearchPhase(ScriptingContext& context) {
 void Planet::ResetTargetMaxUnpairedMeters() {
     UniverseObject::ResetTargetMaxUnpairedMeters();
     ResourceCenterResetTargetMaxUnpairedMeters();
-    PopCenterResetTargetMaxUnpairedMeters();
+
+    GetMeter(MeterType::METER_TARGET_POPULATION)->ResetCurrent();
+    GetMeter(MeterType::METER_TARGET_HAPPINESS)->ResetCurrent();
 
     GetMeter(MeterType::METER_MAX_SUPPLY)->ResetCurrent();
     GetMeter(MeterType::METER_MAX_STOCKPILE)->ResetCurrent();
@@ -910,7 +948,8 @@ void Planet::ResetTargetMaxUnpairedMeters() {
 void Planet::ClampMeters() {
     UniverseObject::ClampMeters();
     ResourceCenterClampMeters();
-    PopCenterClampMeters();
+
+    UniverseObject::GetMeter(MeterType::METER_POPULATION)->ClampCurrentToRange();
 
     UniverseObject::GetMeter(MeterType::METER_MAX_SHIELD)->ClampCurrentToRange();
     UniverseObject::GetMeter(MeterType::METER_SHIELD)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(MeterType::METER_MAX_SHIELD)->Current());

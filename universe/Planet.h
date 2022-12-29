@@ -4,7 +4,6 @@
 
 #include "EnumsFwd.h"
 #include "Meter.h"
-#include "PopCenter.h"
 #include "ResourceCenter.h"
 #include "UniverseObject.h"
 #include "../Empire/EmpireManager.h"
@@ -48,7 +47,6 @@ FO_ENUM(
 /** a class representing a FreeOrion planet. */
 class FO_COMMON_API Planet final :
     public UniverseObject,
-    public PopCenter,
     public ResourceCenter
 {
 public:
@@ -62,13 +60,14 @@ public:
     [[nodiscard]] bool                    Contains(int object_id) const override;
     [[nodiscard]] bool                    ContainedBy(int object_id) const override;
 
-    [[nodiscard]] const Meter*            GetMeter(MeterType type) const override { return UniverseObject::GetMeter(type); }
-
     std::shared_ptr<UniverseObject>       Accept(const UniverseObjectVisitor& visitor) const override;
 
-    [[nodiscard]] std::vector<std::string_view> AvailableFoci(const ScriptingContext& context) const override;
-    [[nodiscard]] bool                          FocusAvailable(std::string_view focus, const ScriptingContext& context) const override;
-    [[nodiscard]] const std::string&            FocusIcon(std::string_view focus_name, const ScriptingContext& context) const override;
+    [[nodiscard]] std::vector<std::string_view> AvailableFoci(const ScriptingContext& context) const;
+    [[nodiscard]] bool                          FocusAvailable(std::string_view focus, const ScriptingContext& context) const;
+    [[nodiscard]] const std::string&            FocusIcon(std::string_view focus_name, const ScriptingContext& context) const;
+
+    [[nodiscard]] bool                Populated() const;
+    [[nodiscard]] auto&               SpeciesName() const noexcept { return m_species_name; }
 
     [[nodiscard]] PlanetType          Type() const noexcept            { return m_type; }
     [[nodiscard]] PlanetType          OriginalType() const noexcept    { return m_original_type; }
@@ -124,10 +123,11 @@ public:
     void Copy(const Planet& copied_planet, const Universe& universe, int empire_id = ALL_EMPIRES);
 
     [[nodiscard]] Meter* GetMeter(MeterType type) override { return UniverseObject::GetMeter(type); }
+    [[nodiscard]] const Meter* GetMeter(MeterType type) const { return UniverseObject::GetMeter(type); }
 
     void Reset(ObjectMap& objects) override;
-    void Depopulate(int current_turn) override;
-    void SetSpecies(std::string species_name, int turn, const SpeciesManager& sm) override;
+    void Depopulate(int current_turn);
+    void SetSpecies(std::string species_name, int turn, const SpeciesManager& sm);
 
     void SetType(PlanetType type);          ///< sets the type of this Planet to \a type
     void SetOriginalType(PlanetType type);  ///< sets the original type of this Planet to \a type
@@ -180,6 +180,8 @@ private:
     void PopGrowthProductionResearchPhase(ScriptingContext& context) override;
 
     void ClampMeters() override;
+
+    std::string     m_species_name;
 
     PlanetType      m_type = PlanetType::PT_SWAMP;
     PlanetType      m_original_type = PlanetType::PT_SWAMP;

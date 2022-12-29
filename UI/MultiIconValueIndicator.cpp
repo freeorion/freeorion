@@ -4,8 +4,8 @@
 
 #include "../util/i18n.h"
 #include "../util/Logger.h"
-#include "../universe/PopCenter.h"
 #include "../universe/UniverseObject.h"
+#include "../universe/Planet.h"
 #include "../universe/Enums.h"
 #include "../client/human/GGHumanClientApp.h"
 #include "ClientUI.h"
@@ -14,12 +14,9 @@
 namespace {
     constexpr int EDGE_PAD(3);
 
-    int IconSpacing()
-    { return ClientUI::Pts(); }
-    GG::X IconWidth()
-    { return GG::X(IconSpacing()*2); }
-    GG::Y IconHeight()
-    { return GG::Y(IconSpacing()*2); }
+    int IconSpacing() { return ClientUI::Pts(); }
+    GG::X IconWidth() { return GG::X(IconSpacing()*2); }
+    GG::Y IconHeight() { return GG::Y(IconSpacing()*2); }
 }
 
 MultiIconValueIndicator::MultiIconValueIndicator(GG::X w) :
@@ -54,21 +51,21 @@ void MultiIconValueIndicator::CompleteConstruction() {
         // special case for population meter for an indicator showing only a
         // single popcenter: icon is species icon, rather than generic pop icon
         if (PRIMARY_METER_TYPE == MeterType::METER_POPULATION && m_object_ids.size() == 1) {
-            if (auto pc = Objects().get<PopCenter>(*m_object_ids.begin()))
+            if (auto pc = Objects().get<Planet>(m_object_ids.front()))
                 texture = ClientUI::SpeciesIcon(pc->SpeciesName());
         }
 
         m_icons.push_back(GG::Wnd::Create<StatisticIcon>(std::move(texture), 0.0, 3, false,
                                                          IconWidth(), IconHeight()));
-        GG::Pt icon_ul(x, GG::Y(EDGE_PAD));
-        GG::Pt icon_lr = icon_ul + GG::Pt(IconWidth(), IconHeight() + ClientUI::Pts()*3/2);
+        const GG::Pt icon_ul(x, GG::Y(EDGE_PAD));
+        const GG::Pt icon_lr = icon_ul + GG::Pt(IconWidth(), IconHeight() + ClientUI::Pts()*3/2);
         m_icons.back()->SizeMove(icon_ul, icon_lr);
-        auto meter = meter_type.first;
-        auto meter_string = to_string(meter_type.first);
+        const auto meter = meter_type.first;
+        const auto meter_string = to_string(meter_type.first);
         m_icons.back()->RightClickedSignal.connect([this, meter, meter_string](GG::Pt pt) {
             auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
-            auto pc = Objects().get<PopCenter>(*(this->m_object_ids.begin()));
+            auto pc = Objects().get<Planet>(this->m_object_ids.front());
             if (meter == MeterType::METER_POPULATION && pc && this->m_object_ids.size() == 1) {
                 auto species_name = pc->SpeciesName();  // intentionally making a copy for use in lambda
                 if (!species_name.empty()) {

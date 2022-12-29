@@ -22,7 +22,6 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/NamedValueRefManager.h
         ${CMAKE_CURRENT_LIST_DIR}/ObjectMap.h
         ${CMAKE_CURRENT_LIST_DIR}/Planet.h
-        ${CMAKE_CURRENT_LIST_DIR}/PopCenter.h
         ${CMAKE_CURRENT_LIST_DIR}/ResourceCenter.h
         ${CMAKE_CURRENT_LIST_DIR}/ScriptingContext.h
         ${CMAKE_CURRENT_LIST_DIR}/Ship.h
@@ -59,7 +58,6 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/NamedValueRefManager.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ObjectMap.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Planet.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/PopCenter.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ResourceCenter.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Ship.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ShipDesign.cpp
