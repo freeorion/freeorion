@@ -1995,7 +1995,6 @@ namespace {
             case UniverseObjectType::OBJ_FIGHTER:
                 return candidate->ObjectType() == m_type;
                 break;
-            case UniverseObjectType::OBJ_POP_CENTER:
             case UniverseObjectType::OBJ_PROD_CENTER:
                 return candidate->ObjectType() == UniverseObjectType::OBJ_PLANET; // only planets can be resource or prod centres currently
                 break;
@@ -2042,7 +2041,6 @@ std::string Type::Dump(uint8_t ntabs) const {
         case UniverseObjectType::OBJ_SHIP:        retval += "Ship\n"; break;
         case UniverseObjectType::OBJ_FLEET:       retval += "Fleet\n"; break;
         case UniverseObjectType::OBJ_PLANET:      retval += "Planet\n"; break;
-        case UniverseObjectType::OBJ_POP_CENTER:  retval += "PopulationCenter\n"; break;
         case UniverseObjectType::OBJ_PROD_CENTER: retval += "ProductionCenter\n"; break;
         case UniverseObjectType::OBJ_SYSTEM:      retval += "System\n"; break;
         case UniverseObjectType::OBJ_FIELD:       retval += "Field\n"; break;
@@ -2085,9 +2083,6 @@ void Type::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_cont
             break;
         case UniverseObjectType::OBJ_PLANET:
             AddAllObjectsSet<Planet>(parent_context.ContextObjects(), condition_non_targets);
-            break;
-        case UniverseObjectType::OBJ_POP_CENTER:
-            AddAllObjectsSet<PopCenter>(parent_context.ContextObjects(), condition_non_targets);
             break;
         case UniverseObjectType::OBJ_PROD_CENTER:
             AddAllObjectsSet<ResourceCenter>(parent_context.ContextObjects(), condition_non_targets);

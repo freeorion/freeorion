@@ -23,7 +23,6 @@ namespace parse { namespace detail {
             |   tok.Ship_               [ _val = UniverseObjectType::OBJ_SHIP ]
             |   tok.Fleet_              [ _val = UniverseObjectType::OBJ_FLEET ]
             |   tok.Planet_             [ _val = UniverseObjectType::OBJ_PLANET ]
-            |   tok.PopulationCenter_   [ _val = UniverseObjectType::OBJ_POP_CENTER ]
             |   tok.ProductionCenter_   [ _val = UniverseObjectType::OBJ_PROD_CENTER ]
             |   tok.System_             [ _val = UniverseObjectType::OBJ_SYSTEM ]
             |   tok.Field_              [ _val = UniverseObjectType::OBJ_FIELD ]

@@ -43,7 +43,6 @@ namespace {
         }
 
 
-        //std::shared_ptr<const PopCenter> pc;
         double prod_queue_allocation_sum = 0.0;
         std::shared_ptr<const Building> building;
 

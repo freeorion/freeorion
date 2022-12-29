@@ -14,7 +14,6 @@ class Universe;
 class UniverseObject;
 class ObjectMap;
 class ResourceCenter;
-class PopCenter;
 class Planet;
 class System;
 class Ship;

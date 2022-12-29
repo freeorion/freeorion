@@ -611,7 +611,7 @@ float ProductionQueue::StockpileCapacity(const ObjectMap& objects) const {
     auto owned_planets = objects.find<Planet>([empire_id{m_empire_id}](const Planet* p)
                                               { return p->OwnedBy(empire_id); });
     for (const auto& obj : owned_planets) {
-        if (const auto* meter = obj->GetMeter(MeterType::METER_STOCKPILE))
+        if (const auto* meter = obj->UniverseObject::GetMeter(MeterType::METER_STOCKPILE))
             retval += meter->Current();
     }
     return retval;

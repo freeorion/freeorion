@@ -14,7 +14,6 @@
 #include "../universe/NamedValueRefManager.h"
 #include "../universe/Pathfinder.h"
 #include "../universe/Planet.h"
-#include "../universe/PopCenter.h"
 #include "../universe/ResourceCenter.h"
 #include "../universe/ScriptingContext.h"
 #include "../universe/ShipDesign.h"
@@ -717,17 +716,11 @@ namespace FreeOrionPython {
             .add_property("availableFoci",          +[](const ResourceCenter& rc) -> std::vector<std::string> { return ViewsToStrings(rc.AvailableFoci(ScriptingContext{})); })
         ;
 
-        ///////////////////
-        //   PopCenter   //
-        ///////////////////
-        py::class_<PopCenter, boost::noncopyable>("popCenter", py::no_init)
-            .add_property("speciesName",        make_function(&PopCenter::SpeciesName,      py::return_value_policy<py::copy_const_reference>()))
-        ;
-
         //////////////////
         //    Planet    //
         //////////////////
-        py::class_<Planet, py::bases<UniverseObject, PopCenter, ResourceCenter>, boost::noncopyable>("planet", py::no_init)
+        py::class_<Planet, py::bases<UniverseObject, ResourceCenter>, boost::noncopyable>("planet", py::no_init)
+            .add_property("speciesName",                    make_function(&Planet::SpeciesName, py::return_value_policy<py::copy_const_reference>()))
             .add_property("size",                           &Planet::Size)
             .add_property("type",                           &Planet::Type)
             .add_property("originalType",                   &Planet::OriginalType)

@@ -2364,13 +2364,14 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
             // is a valid capital, or otherwise ???
             // TODO: Add more fallbacks if necessary
             std::string species_name;
-            if (auto location_pop_center = std::dynamic_pointer_cast<const PopCenter>(build_location))
-                species_name = location_pop_center->SpeciesName();
+            if (auto location_planet = std::dynamic_pointer_cast<const Planet>(build_location))
+                species_name = location_planet->SpeciesName();
             else if (auto location_ship = std::dynamic_pointer_cast<const Ship>(build_location))
                 species_name = location_ship->SpeciesName();
             else if (auto capital_planet = context.ContextObjects().getRaw<Planet>(this->CapitalID()))
                 species_name = capital_planet->SpeciesName();
             // else give up...
+
             if (species_name.empty()) {
                 // only really a problem for colony ships, which need to have a species to function
                 const auto* design = universe.GetShipDesign(elem.item.design_id);
@@ -2605,14 +2606,14 @@ void Empire::InitResourcePools(const ObjectMap& objects, const SupplyManager& su
     m_resource_pools[ResourceType::RE_INDUSTRY]->SetObjects(res_centers);
     m_resource_pools[ResourceType::RE_INFLUENCE]->SetObjects(std::move(res_centers));
 
-    // get this empire's owned population centers
-    std::vector<int> pop_centers;
-    pop_centers.reserve(objects.allExisting<PopCenter>().size());
-    for (const auto& [res_id, res] : objects.allExisting<PopCenter>()) {
+    // get this empire's owned planets
+    std::vector<int> planets;
+    planets.reserve(objects.allExisting<Planet>().size());
+    for (const auto& [res_id, res] : objects.allExisting<Planet>()) {
         if (res->OwnedBy(m_id))
-            pop_centers.push_back(res_id);
+            planets.push_back(res_id);
     }
-    m_population_pool.SetPopCenters(std::move(pop_centers));
+    m_population_pool.SetPopCenters(std::move(planets));
 
 
     // inform the blockadeable resource pools about systems that can share
