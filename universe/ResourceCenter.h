@@ -28,14 +28,14 @@ public:
     ResourceCenter(const ResourceCenter& rhs);
     virtual ~ResourceCenter();
 
-    const auto&                      Focus() const noexcept { return m_focus; }
-    int                              TurnsSinceFocusChange(int current_turn) const;
-    virtual std::vector<std::string> AvailableFoci(const ScriptingContext&) const { return {}; }
-    virtual bool                     FocusAvailable(std::string_view, const ScriptingContext&) const { return false; }
-    virtual const std::string&       FocusIcon(std::string_view focus_name, const ScriptingContext& context) const;
-    std::string                      Dump(uint8_t ntabs = 0) const;
+    const auto&                           Focus() const noexcept { return m_focus; }
+    int                                   TurnsSinceFocusChange(int current_turn) const;
+    virtual std::vector<std::string_view> AvailableFoci(const ScriptingContext&) const { return {}; }
+    virtual bool                          FocusAvailable(std::string_view, const ScriptingContext&) const { return false; }
+    virtual const std::string&            FocusIcon(std::string_view focus_name, const ScriptingContext& context) const;
+    std::string                           Dump(uint8_t ntabs = 0) const;
 
-    virtual const Meter*             GetMeter(MeterType type) const = 0;             ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
+    virtual const Meter* GetMeter(MeterType type) const = 0;             ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
 
     /** the state changed signal object for this ResourceCenter */
     mutable boost::signals2::signal<void ()> ResourceCenterChangedSignal;
@@ -43,7 +43,7 @@ public:
     void Copy(const ResourceCenter& copied_object, Visibility vis);
     void Copy(const ResourceCenter& copied_object);
 
-    void SetFocus(const std::string& focus, const ScriptingContext& context);
+    void SetFocus(std::string focus, const ScriptingContext& context);
     void ClearFocus(int current_turn);
     void UpdateFocusHistory();
 

@@ -1270,7 +1270,8 @@ std::vector<std::string> Variable<std::vector<std::string>>::Eval(
     else if (property_name == "AvailableFoci") {
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             auto planet = static_cast<const Planet*>(object);
-            return planet->AvailableFoci(context);
+            auto foci_views = planet->AvailableFoci(context);
+            return {foci_views.begin(), foci_views.end()};
         }
         return {};
     }

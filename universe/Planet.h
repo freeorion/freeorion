@@ -57,18 +57,18 @@ public:
 
     [[nodiscard]] std::string             Dump(uint8_t ntabs = 0) const override;
 
-    [[nodiscard]] int                       ContainerObjectID() const noexcept  override { return this->SystemID(); }
-    [[nodiscard]] const std::set<int>&      ContainedObjectIDs() const noexcept override { return m_buildings; }
-    [[nodiscard]] bool                      Contains(int object_id) const override;
-    [[nodiscard]] bool                      ContainedBy(int object_id) const override;
+    [[nodiscard]] int                     ContainerObjectID() const noexcept  override { return this->SystemID(); }
+    [[nodiscard]] const std::set<int>&    ContainedObjectIDs() const noexcept override { return m_buildings; }
+    [[nodiscard]] bool                    Contains(int object_id) const override;
+    [[nodiscard]] bool                    ContainedBy(int object_id) const override;
 
-    [[nodiscard]] const Meter*              GetMeter(MeterType type) const override { return UniverseObject::GetMeter(type); }
+    [[nodiscard]] const Meter*            GetMeter(MeterType type) const override { return UniverseObject::GetMeter(type); }
 
-    std::shared_ptr<UniverseObject>         Accept(const UniverseObjectVisitor& visitor) const override;
+    std::shared_ptr<UniverseObject>       Accept(const UniverseObjectVisitor& visitor) const override;
 
-    [[nodiscard]] std::vector<std::string>  AvailableFoci(const ScriptingContext& context) const override; // TODO: return vector<string_view> ?
-    [[nodiscard]] bool                      FocusAvailable(std::string_view focus, const ScriptingContext& context) const override;
-    [[nodiscard]] const std::string&        FocusIcon(std::string_view focus_name, const ScriptingContext& context) const override;
+    [[nodiscard]] std::vector<std::string_view> AvailableFoci(const ScriptingContext& context) const override;
+    [[nodiscard]] bool                          FocusAvailable(std::string_view focus, const ScriptingContext& context) const override;
+    [[nodiscard]] const std::string&            FocusIcon(std::string_view focus_name, const ScriptingContext& context) const override;
 
     [[nodiscard]] PlanetType          Type() const noexcept            { return m_type; }
     [[nodiscard]] PlanetType          OriginalType() const noexcept    { return m_original_type; }

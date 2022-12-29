@@ -76,7 +76,7 @@ std::string ResourceCenter::Dump(uint8_t ntabs) const {
         .append(" last changed on turn: ").append(std::to_string(m_last_turn_focus_changed));
 }
 
-void ResourceCenter::SetFocus(const std::string& focus, const ScriptingContext& context) {
+void ResourceCenter::SetFocus(std::string focus, const ScriptingContext& context) {
     if (focus == m_focus)
         return;
     if (focus.empty()) {
@@ -89,7 +89,7 @@ void ResourceCenter::SetFocus(const std::string& focus, const ScriptingContext& 
         return;
     }
 
-    m_focus = focus;
+    m_focus = std::move(focus);
     if (m_focus == m_focus_turn_initial)
         m_last_turn_focus_changed = m_last_turn_focus_changed_turn_initial;
     else

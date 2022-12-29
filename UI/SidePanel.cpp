@@ -562,7 +562,7 @@ public:
     mutable boost::signals2::signal<void ()> ResizedSignal;
 
     /** emitted when focus is changed */
-    mutable boost::signals2::signal<void (const std::string&)> FocusChangedSignal;
+    mutable boost::signals2::signal<void (std::string_view)> FocusChangedSignal;
 
     mutable boost::signals2::signal<void (int)> BuildingRightClickedSignal;
 
@@ -573,10 +573,10 @@ public:
 private:
     void DoLayout();
     void RefreshPlanetGraphic();
-    void SetFocus(const std::string& focus); ///< set the focus of the planet to \a focus
-    void ClickColonize();                    ///< called if colonize button is pressed
-    void ClickInvade();                      ///< called if invade button is pressed
-    void ClickBombard();                     ///< called if bombard button is pressed
+    void SetFocus(std::string focus); ///< set the focus of the planet to \a focus
+    void ClickColonize();             ///< called if colonize button is pressed
+    void ClickInvade();               ///< called if invade button is pressed
+    void ClickBombard();              ///< called if bombard button is pressed
 
     void FocusDropListSelectionChangedSlot(GG::DropDownList::iterator selected); ///< called when droplist selection changes, emits FocusChangedSignal
 
@@ -974,15 +974,11 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     m_planet_name->Resize(m_planet_name->MinUsableSize());
     AttachChild(m_planet_name);
 
-    using boost::placeholders::_1;
 
     // focus-selection droplist
     m_focus_drop = GG::Wnd::Create<CUIDropDownList>(6);
     AttachChild(m_focus_drop);
-    m_focus_drop->SelChangedSignal.connect(
-        boost::bind(&SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot, this, _1));
-    this->FocusChangedSignal.connect(
-        boost::bind(&SidePanel::PlanetPanel::SetFocus, this, _1));
+    m_focus_drop->SelChangedSignal.connect([this](auto it) { FocusDropListSelectionChangedSlot(it); });
     m_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_focus_drop->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
     m_focus_drop->ManuallyManageColProps();
@@ -992,6 +988,7 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     m_focus_drop->SetColStretch(1, 1.0);
     m_focus_drop->SetOnlyMouseScrollWhenDropped(true);
 
+    this->FocusChangedSignal.connect([this](std::string_view sv) { SetFocus(std::string{sv}); });
 
     // meter panels
     m_population_panel = GG::Wnd::Create<PopulationPanel>(panel_width, m_planet_id);
@@ -2042,17 +2039,18 @@ void SidePanel::PlanetPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
         RequirePreRender();
 }
 
-void SidePanel::PlanetPanel::SetFocus(const std::string& focus) {
+void SidePanel::PlanetPanel::SetFocus(std::string focus) {
     ScriptingContext context;
     const ObjectMap& objects{context.ContextObjects()};
     auto planet = objects.get<Planet>(m_planet_id);
     if (!planet || !planet->OwnedBy(GGHumanClientApp::GetApp()->EmpireID()))
         return;
+    const int app_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     // todo: if focus is already equal to planet's focus, return early.
     colony_projections.clear();// in case new or old focus was Growth (important that be cleared BEFORE Order is issued)
     species_colony_projections.clear();
     GGHumanClientApp::GetApp()->Orders().IssueOrder(
-        std::make_shared<ChangeFocusOrder>(GGHumanClientApp::GetApp()->EmpireID(), planet->ID(), focus, context),
+        std::make_shared<ChangeFocusOrder>(app_empire_id, planet->ID(), std::move(focus), context),
         context);
 }
 

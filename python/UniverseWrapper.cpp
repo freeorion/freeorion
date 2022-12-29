@@ -234,6 +234,13 @@ namespace {
         return retval;
     }
 
+    std::vector<std::string> ViewsToStrings(const std::vector<std::string_view>& svs) {
+        std::vector<std::string> retval;
+        retval.reserve(svs.size());
+        std::transform(svs.begin(), svs.end(), std::back_inserter(retval),
+                       [](const auto& sv) { return std::string{sv}; });
+        return retval;
+    }
 }
 
 namespace FreeOrionPython {
@@ -707,7 +714,7 @@ namespace FreeOrionPython {
         py::class_<ResourceCenter, boost::noncopyable>("resourceCenter", py::no_init)
             .add_property("focus",                  make_function(&ResourceCenter::Focus,   py::return_value_policy<py::copy_const_reference>()))
             .add_property("turnsSinceFocusChange" , +[](const ResourceCenter& rc) { return rc.TurnsSinceFocusChange(CurrentTurn()); })
-            .add_property("availableFoci",          +[](const ResourceCenter& rc) -> std::vector<std::string> { return rc.AvailableFoci(ScriptingContext{}); })
+            .add_property("availableFoci",          +[](const ResourceCenter& rc) -> std::vector<std::string> { return ViewsToStrings(rc.AvailableFoci(ScriptingContext{})); })
         ;
 
         ///////////////////

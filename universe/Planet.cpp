@@ -518,8 +518,8 @@ bool Planet::FocusAvailable(std::string_view focus, const ScriptingContext& cont
     return location->Eval(planet_context, this);
 }
 
-std::vector<std::string> Planet::AvailableFoci(const ScriptingContext& context) const {
-    std::vector<std::string> retval;
+std::vector<std::string_view> Planet::AvailableFoci(const ScriptingContext& context) const {
+    std::vector<std::string_view> retval;
     const auto* species = context.species.GetSpecies(this->SpeciesName());
     if (!species)
         return retval;
@@ -531,7 +531,7 @@ std::vector<std::string> Planet::AvailableFoci(const ScriptingContext& context) 
     for (const auto& focus_type : foci) {
         if (const auto* location = focus_type.Location()) {
             if (location->Eval(planet_context, this))
-                retval.push_back(focus_type.Name());
+                retval.emplace_back(focus_type.Name());
         }
     }
 
@@ -794,16 +794,16 @@ bool Planet::Colonize(int empire_id, std::string species_name, double population
     auto available_foci = AvailableFoci(context);
     if (species && !available_foci.empty()) {
         bool found_preference = false;
-        for (const auto& focus : available_foci) {
+        for (const auto focus : available_foci) {
             if (!focus.empty() && focus == species->DefaultFocus()) {
-                SetFocus(focus, context);
+                SetFocus(std::string{focus}, context);
                 found_preference = true;
                 break;
             }
         }
 
         if (!found_preference)
-            SetFocus(*available_foci.begin(), context);
+            SetFocus(std::string{available_foci.front()}, context);
     } else {
         DebugLogger() << "Planet::Colonize unable to find a focus to set for species "
                       << this->SpeciesName();

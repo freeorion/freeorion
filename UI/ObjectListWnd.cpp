@@ -2644,8 +2644,8 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
 
             auto one_planet = universe.Objects().getRaw<const Planet>(row->ObjectID());
             if (one_planet && one_planet->OwnedBy(app->EmpireID())) {
-                for (auto& planet_focus : one_planet->AvailableFoci(context))
-                    all_foci[std::move(planet_focus)]++;
+                for (const auto& planet_focus : one_planet->AvailableFoci(context))
+                    all_foci[std::string{planet_focus}]++;
 
                 for (int ship_design_id : cur_empire->AvailableShipDesigns(GetUniverse())) {
                     if (cur_empire->ProducibleItem(BuildType::BT_SHIP, ship_design_id,
