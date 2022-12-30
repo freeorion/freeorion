@@ -243,8 +243,7 @@ ObjectSet Condition::Eval(const ScriptingContext& parent_context) const {
     return matches;
 }
 
-Effect::TargetSet Condition::Eval(ScriptingContext& parent_context) const
-{
+Effect::TargetSet Condition::Eval(ScriptingContext& parent_context) const {
     ObjectSet matches_as_objectset{this->Eval(std::as_const(parent_context))};
     Effect::TargetSet retval;
     retval.reserve(matches_as_objectset.size());
@@ -3069,28 +3068,23 @@ void Contains::Eval(const ScriptingContext& parent_context,
 
     } else if (search_domain_size == 1u) {
         // evaluate subcondition on objects contained by the candidate
-        ScriptingContext local_context{
-            parent_context, search_domain == SearchDomain::MATCHES ? *matches.begin() : *non_matches.begin()};
+        const auto* candidate = search_domain == SearchDomain::MATCHES ? matches.front() : non_matches.front();
+        const ScriptingContext local_context{parent_context, candidate};
 
         // initialize subcondition candidates from local candidate's contents
-        const ObjectMap& objects = parent_context.ContextObjects();
-        ObjectSet subcondition_matches = objects.findRaw(local_context.condition_local_candidate->ContainedObjectIDs());
-
-        // apply subcondition to candidates
-        if (!subcondition_matches.empty()) {
-            ObjectSet dummy;
-            m_condition->Eval(local_context, subcondition_matches, dummy, SearchDomain::MATCHES);
-        }
+        const auto& contained_ids = candidate->ContainedObjectIDs();
+        const ObjectSet contained_objects = parent_context.ContextObjects().findRaw(contained_ids);
+        const bool contained_match_exists = m_condition->EvalAny(local_context, contained_objects);
 
         // move single local candidate as appropriate...
-        if (search_domain == SearchDomain::MATCHES && subcondition_matches.empty()) {
+        if (search_domain == SearchDomain::MATCHES && !contained_match_exists) {
             // move to non_matches
             matches.clear();
-            non_matches.push_back(local_context.condition_local_candidate);
-        } else if (search_domain == SearchDomain::NON_MATCHES && !subcondition_matches.empty()) {
+            non_matches.push_back(candidate);
+        } else if (search_domain == SearchDomain::NON_MATCHES && contained_match_exists) {
             // move to matches
             non_matches.clear();
-            matches.push_back(local_context.condition_local_candidate);
+            matches.push_back(candidate);
         }
 
     } else {
