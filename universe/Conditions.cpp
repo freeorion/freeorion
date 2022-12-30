@@ -204,6 +204,15 @@ void Condition::Eval(const ScriptingContext& parent_context,
     });
 }
 
+bool Condition::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
+    return std::any_of(candidates.begin(), candidates.end(),
+                       [cond{this}, &parent_context](const UniverseObject* candidate) -> bool
+    {
+        const ScriptingContext candidate_context{parent_context, candidate};
+        return cond->Match(candidate_context);
+    });
+}
+
 void Condition::Eval(ScriptingContext& parent_context,
                      Effect::TargetSet& matches, Effect::TargetSet& non_matches,
                      SearchDomain search_domain) const
@@ -1011,12 +1020,6 @@ std::unique_ptr<Condition> SortedNumberOf::Clone() const {
 ///////////////////////////////////////////////////////////
 // All                                                   //
 ///////////////////////////////////////////////////////////
-All::All() {
-    m_root_candidate_invariant = true;
-    m_target_invariant = true;
-    m_source_invariant = true;
-}
-
 void All::Eval(const ScriptingContext& parent_context,
                ObjectSet& matches, ObjectSet& non_matches,
                SearchDomain search_domain) const
@@ -1114,6 +1117,11 @@ void NoOp::Eval(const ScriptingContext& parent_context,
 {
     // does not modify input ObjectSets
     DebugLogger(conditions) << "NoOp::Eval(" << matches.size() << " input matches, " << non_matches.size() << " input non-matches)";
+}
+
+bool NoOp::EvalAny(const ScriptingContext&, const ObjectSet& candidates) const {
+    DebugLogger(conditions) << "NoOp::EvalAny(" << candidates.size() << " candidates";
+    return false;
 }
 
 bool NoOp::operator==(const Condition& rhs) const
@@ -1457,12 +1465,6 @@ std::unique_ptr<Condition> Source::Clone() const
 ///////////////////////////////////////////////////////////
 // RootCandidate                                         //
 ///////////////////////////////////////////////////////////
-RootCandidate::RootCandidate() {
-    m_root_candidate_invariant = false;
-    m_target_invariant = true;
-    m_source_invariant = true;
-}
-
 bool RootCandidate::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
@@ -1503,12 +1505,6 @@ std::unique_ptr<Condition> RootCandidate::Clone() const
 ///////////////////////////////////////////////////////////
 // Target                                                //
 ///////////////////////////////////////////////////////////
-Target::Target() {
-    m_root_candidate_invariant = true;
-    m_target_invariant = false;
-    m_source_invariant = true;
-}
-
 bool Target::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
@@ -1580,7 +1576,7 @@ bool Homeworld::operator==(const Condition& rhs) const {
 
 namespace {
     // gets a planet ID from \a obj considering obj as a planet or a building on a planet
-    int PlanetIDFromObject(const UniverseObject* obj) {
+    int PlanetIDFromObject(const UniverseObject* obj) noexcept {
         if (obj->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             return obj->ID();
 
@@ -1759,10 +1755,6 @@ std::unique_ptr<Condition> Homeworld::Clone() const
 ///////////////////////////////////////////////////////////
 // Capital                                               //
 ///////////////////////////////////////////////////////////
-Capital::Capital() :
-    Condition(true, true, true, true)
-{}
-
 bool Capital::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
@@ -1847,10 +1839,6 @@ std::unique_ptr<Condition> Capital::Clone() const
 ///////////////////////////////////////////////////////////
 // Monster                                               //
 ///////////////////////////////////////////////////////////
-Monster::Monster() :
-    Condition(true, true, true)
-{}
-
 bool Monster::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
@@ -1898,10 +1886,6 @@ std::unique_ptr<Condition> Monster::Clone() const
 ///////////////////////////////////////////////////////////
 // Armed                                                 //
 ///////////////////////////////////////////////////////////
-Armed::Armed() :
-    Condition(true, true, true)
-{}
-
 bool Armed::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
@@ -1977,7 +1961,7 @@ bool Type::operator==(const Condition& rhs) const {
 
 namespace {
     struct TypeSimpleMatch {
-        constexpr explicit TypeSimpleMatch(UniverseObjectType type) :
+        constexpr explicit TypeSimpleMatch(UniverseObjectType type) noexcept :
             m_type(type)
         {}
 
@@ -2000,6 +1984,24 @@ void Type::Eval(const ScriptingContext& parent_context, ObjectSet& matches, Obje
     } else {
         // re-evaluate allowed turn range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+bool Type::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
+    const bool simple_eval_safe = m_type_const || (m_type_local_invariant &&
+                                                   (this->m_root_candidate_invariant ||
+                                                    parent_context.condition_root_candidate));
+    if (simple_eval_safe) {
+        const UniverseObjectType type = m_type->Eval(parent_context);
+        return std::any_of(candidates.begin(), candidates.end(),
+                           [type](const UniverseObject* obj) { return obj->ObjectType() == type; });
+    } else {
+        // re-evaluate allowed turn range for each candidate object
+        return std::any_of(candidates.begin(), candidates.end(),
+                           [this, &parent_context](const UniverseObject* obj) {
+                               const ScriptingContext candidate_context{parent_context, obj};
+                               return obj->ObjectType() == m_type->Eval(candidate_context);
+                           });
     }
 }
 
@@ -2128,7 +2130,7 @@ namespace {
     template<>
     struct BuildingSimpleMatch<std::string>
     {
-        BuildingSimpleMatch(const std::string& name) :
+        BuildingSimpleMatch(const std::string& name) noexcept :
             m_name(name)
         {}
 
@@ -2150,7 +2152,7 @@ namespace {
     template<>
     struct BuildingSimpleMatch<std::vector<std::string>>
     {
-        BuildingSimpleMatch(const std::vector<std::string>& names) :
+        BuildingSimpleMatch(const std::vector<std::string>& names) noexcept :
             m_names(names)
         {}
 
@@ -2286,12 +2288,11 @@ std::unique_ptr<Condition> Building::Clone() const
 // Field                                                 //
 ///////////////////////////////////////////////////////////
 Field::Field(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
+    Condition(std::all_of(names.begin(), names.end(), [](auto& e){ return e->RootCandidateInvariant(); }),
+              std::all_of(names.begin(), names.end(), [](auto& e){ return e->TargetInvariant(); }),
+              std::all_of(names.begin(), names.end(), [](auto& e){ return e->SourceInvariant(); })),
     m_names(std::move(names))
-{
-    m_root_candidate_invariant = std::all_of(m_names.begin(), m_names.end(), [](auto& e){ return e->RootCandidateInvariant(); });
-    m_target_invariant = std::all_of(m_names.begin(), m_names.end(), [](auto& e){ return e->TargetInvariant(); });
-    m_source_invariant = std::all_of(m_names.begin(), m_names.end(), [](auto& e){ return e->SourceInvariant(); });
-}
+{}
 
 bool Field::operator==(const Condition& rhs) const {
     if (this == &rhs)

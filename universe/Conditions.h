@@ -166,6 +166,7 @@ struct FO_COMMON_API None final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalAny(const ScriptingContext&, const ObjectSet&) const noexcept override { return false; }
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override
     { /* efficient rejection of everything. */ }
@@ -183,6 +184,7 @@ struct FO_COMMON_API NoOp final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    bool EvalAny(const ScriptingContext&, const ObjectSet& candidates) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) noexcept override {}
@@ -214,7 +216,7 @@ private:
     [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
-    EmpireAffiliationType m_affiliation;
+    const EmpireAffiliationType m_affiliation;
 };
 
 /** Matches the root candidate object in a condition tree.  This is useful
@@ -222,7 +224,7 @@ private:
   * whole compound condition, rather than an object just being matched in a
   * subcondition in order to evaluate the outer condition. */
 struct FO_COMMON_API RootCandidate final : public Condition {
-    RootCandidate();
+    RootCandidate() noexcept : Condition(false, true, true) {}
     bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
@@ -242,7 +244,7 @@ private:
 
 /** Matches the target of an effect being executed. */
 struct FO_COMMON_API Target final : public Condition {
-    Target();
+    Target() noexcept : Condition(true, false, true) {}
     bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
@@ -263,7 +265,6 @@ private:
 struct FO_COMMON_API Homeworld final : public Condition {
     Homeworld();
     explicit Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names);
-
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
@@ -284,13 +285,12 @@ private:
 
 /** Matches planets that are an empire's capital. */
 struct FO_COMMON_API Capital final : public Condition {
-    Capital();
+    Capital() noexcept : Condition(true, true, true, true) {}
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) noexcept override {}
@@ -304,7 +304,7 @@ private:
 
 /** Matches space monsters. */
 struct FO_COMMON_API Monster final : public Condition {
-    Monster();
+    Monster() noexcept :  Condition(true, true, true) {}
     bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
@@ -321,7 +321,7 @@ private:
 
 /** Matches armed ships and monsters. */
 struct FO_COMMON_API Armed final : public Condition {
-    Armed();
+    Armed() noexcept : Condition(true, true, true) {}
     bool operator==(const Condition& rhs) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
@@ -342,7 +342,7 @@ struct FO_COMMON_API Type final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
-
+    [[nodiscard]] bool EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
 

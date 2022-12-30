@@ -33,16 +33,19 @@ struct FO_COMMON_API Condition {
     { return !(*this == rhs); }
 
     virtual void Eval(const ScriptingContext& parent_context,
-                      ObjectSet& matches,
-                      ObjectSet& non_matches,
+                      ObjectSet& matches, ObjectSet& non_matches,
                       SearchDomain search_domain = SearchDomain::NON_MATCHES) const;
 
+    /** Returns true iff at least one object in \a candidates matches this condition.
+      * Returns false for an empty candiates list. */
+    virtual bool EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const;
+
+    /** Overload for mutable TargetSet input/output. */
     void Eval(ScriptingContext& parent_context,
-              Effect::TargetSet& matches,
-              Effect::TargetSet& non_matches,
+              Effect::TargetSet& matches, Effect::TargetSet& non_matches,
               SearchDomain search_domain = SearchDomain::NON_MATCHES) const;
 
-    /** Tests all objects in \a parent_context and returns those that match. */
+    /** Tests all objects in \a parent_context ObjectMap and returns those that match. */
     [[nodiscard]] ObjectSet Eval(const ScriptingContext& parent_context) const;
     [[nodiscard]] Effect::TargetSet Eval(ScriptingContext& parent_context) const;
 
@@ -91,13 +94,13 @@ struct FO_COMMON_API Condition {
 
 protected:
     Condition() = default;
-    Condition(bool root_invariant, bool target_invariant, bool source_invariant, bool init_all_match) :
+    Condition(bool root_invariant, bool target_invariant, bool source_invariant, bool init_all_match) noexcept :
         m_root_candidate_invariant(root_invariant),
         m_target_invariant(target_invariant),
         m_source_invariant(source_invariant),
         m_initial_candidates_all_match(init_all_match)
     {}
-    Condition(bool root_invariant, bool target_invariant, bool source_invariant) :
+    Condition(bool root_invariant, bool target_invariant, bool source_invariant) noexcept :
         m_root_candidate_invariant(root_invariant),
         m_target_invariant(target_invariant),
         m_source_invariant(source_invariant)
