@@ -46,17 +46,18 @@ FO_ENUM(
 /** a class representing a FreeOrion planet. */
 class FO_COMMON_API Planet final : public UniverseObject {
 public:
-    [[nodiscard]] TagVecs                 Tags(const ScriptingContext& context) const override;
-    [[nodiscard]] bool                    HasTag(std::string_view name, const ScriptingContext& context) const override;
+    [[nodiscard]] TagVecs      Tags(const ScriptingContext& context) const override;
+    [[nodiscard]] bool         HasTag(std::string_view name, const ScriptingContext& context) const override;
 
-    [[nodiscard]] std::string             Dump(uint8_t ntabs = 0) const override;
+    [[nodiscard]] std::string  Dump(uint8_t ntabs = 0) const override;
 
-    [[nodiscard]] int                     ContainerObjectID() const noexcept  override { return this->SystemID(); }
-    [[nodiscard]] const std::set<int>&    ContainedObjectIDs() const noexcept override { return m_buildings; }
-    [[nodiscard]] bool                    Contains(int object_id) const override;
-    [[nodiscard]] bool                    ContainedBy(int object_id) const override;
+    using UniverseObject::IDSet;
+    [[nodiscard]] int          ContainerObjectID() const noexcept  override { return this->SystemID(); }
+    [[nodiscard]] const IDSet& ContainedObjectIDs() const noexcept override { return m_buildings; }
+    [[nodiscard]] bool         Contains(int object_id) const override;
+    [[nodiscard]] bool         ContainedBy(int object_id) const override;
 
-    std::shared_ptr<UniverseObject>       Accept(const UniverseObjectVisitor& visitor) const override;
+    std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
     [[nodiscard]] const auto&                   Focus() const noexcept { return m_focus; }
     [[nodiscard]] int                           TurnsSinceFocusChange(int current_turn) const;
@@ -196,17 +197,18 @@ private:
     float           m_rotational_period = 1.0f;
     float           m_axial_tilt = 23.0f;
 
-    std::set<int>   m_buildings;
+    IDSet       m_buildings;
 
-    int             m_turn_last_colonized = INVALID_GAME_TURN;
-    int             m_turn_last_conquered = INVALID_GAME_TURN;
-    bool            m_is_about_to_be_colonized = false;
-    bool            m_is_about_to_be_invaded = false;
-    bool            m_is_about_to_be_bombarded = false;
-    int             m_ordered_given_to_empire_id = ALL_EMPIRES;
-    int             m_last_turn_attacked_by_ship = -1;
+    int         m_turn_last_colonized = INVALID_GAME_TURN;
+    int         m_turn_last_conquered = INVALID_GAME_TURN;
+    int         m_ordered_given_to_empire_id = ALL_EMPIRES;
+    int         m_last_turn_attacked_by_ship = -1;
 
-    std::string     m_surface_texture;  // intentionally not serialized; set by local effects
+    std::string m_surface_texture;  // intentionally not serialized; set by local effects
+
+    bool        m_is_about_to_be_colonized = false;
+    bool        m_is_about_to_be_invaded = false;
+    bool        m_is_about_to_be_bombarded = false;
 
     template <typename Archive>
     friend void serialize(Archive&, Planet&, unsigned int const);

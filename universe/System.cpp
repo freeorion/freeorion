@@ -277,7 +277,7 @@ int System::EffectiveOwner(const ObjectMap& objects) const {
 bool System::Contains(int object_id) const {
     if (object_id == INVALID_OBJECT_ID)
         return false;
-    return m_objects.count(object_id);
+    return m_objects.contains(object_id);
 }
 
 std::shared_ptr<UniverseObject> System::Accept(const UniverseObjectVisitor& visitor) const

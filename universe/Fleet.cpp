@@ -628,14 +628,15 @@ int Fleet::PreviousToFinalDestinationID() const {
 }
 
 namespace {
-    template <typename ShipPredicate>
-    bool HasXShips(const ShipPredicate& pred, const std::set<int>& ship_ids, const ObjectMap& objects) {
+    template <typename ShipPredicate, typename IDContainer>
+    bool HasXShips(const ShipPredicate& pred, const IDContainer& ship_ids, const ObjectMap& objects) {
         // Searching for each Ship one at a time is possibly faster than find(ship_ids),
         // because an early exit avoids searching the remaining ids.
-        return std::any_of(ship_ids.begin(), ship_ids.end(), [&pred, &objects](const int ship_id) {
-            const auto ship = objects.getRaw<const Ship>(ship_id);
-            return ship && pred(ship);
-        });
+        return std::any_of(ship_ids.begin(), ship_ids.end(),
+                           [&pred, &objects](const int ship_id) {
+                               const auto ship = objects.getRaw<const Ship>(ship_id);
+                               return ship && pred(ship);
+                           });
     }
 }
 
@@ -715,9 +716,6 @@ float Fleet::ResourceOutput(ResourceType type, const ObjectMap& objects) const {
 
     return output;
 }
-
-bool Fleet::ArrivedThisTurn() const
-{ return m_arrived_this_turn; }
 
 bool Fleet::UnknownRoute() const
 { return m_travel_route.size() == 1 && m_travel_route.front() == INVALID_OBJECT_ID; }
@@ -808,7 +806,7 @@ void Fleet::SetAggression(FleetAggression aggression) {
 
 void Fleet::AddShips(const std::vector<int>& ship_ids) {
     auto old_ships_size = m_ships.size();
-    std::copy(ship_ids.begin(), ship_ids.end(), std::inserter(m_ships, m_ships.end())); // TODO: insert?
+    m_ships.insert(ship_ids.begin(), ship_ids.end());
     if (old_ships_size != m_ships.size())
         StateChangedSignal();
 }

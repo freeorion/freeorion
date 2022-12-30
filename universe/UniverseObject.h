@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <boost/container/flat_map.hpp>
+#include <boost/container/flat_set.hpp>
 #include <boost/python/detail/destroy.hpp>
 #include <boost/signals2/optional_last_value.hpp>
 #include <boost/signals2/signal.hpp>
@@ -78,6 +79,8 @@ public:
     static_assert(std::is_same_v<boost::container::flat_map<MeterType, Meter, std::less<MeterType>>, MeterMap>);
     using SpecialMap = boost::container::flat_map<std::string, std::pair<int, float>>;
 
+    using IDSet = boost::container::flat_set<int32_t>;
+
     using CombinerType = assignable_blocking_combiner;
     using StateChangedSignalType = boost::signals2::signal<void (), CombinerType>;
 
@@ -128,7 +131,7 @@ public:
     [[nodiscard]] virtual int                 ContainerObjectID() const noexcept { return INVALID_OBJECT_ID; }
 
     /** Returns ids of objects contained within this object. */
-    [[nodiscard]] virtual const std::set<int>&ContainedObjectIDs() const noexcept { return EMPTY_INT_SET; }
+    [[nodiscard]] virtual const IDSet&        ContainedObjectIDs() const noexcept { return EMPTY_INT_SET; }
 
     /** Returns true if there is an object with id \a object_id is contained
         within this UniverseObject. */
@@ -139,7 +142,7 @@ public:
     [[nodiscard]] virtual bool                ContainedBy(int object_id) const { return false; }
 
     using EmpireObjectVisMap = std::map<int, std::map<int, Visibility>>;
-    [[nodiscard]] std::set<int>               VisibleContainedObjectIDs(int empire_id, const EmpireObjectVisMap& vis) const; ///< returns the subset of contained object IDs that is visible to empire with id \a empire_id
+    [[nodiscard]] IDSet                       VisibleContainedObjectIDs(int empire_id, const EmpireObjectVisMap& vis) const; ///< returns the subset of contained object IDs that is visible to empire with id \a empire_id
 
     [[nodiscard]] const MeterMap&             Meters() const noexcept { return m_meters; }    ///< returns this UniverseObject's meters
     [[nodiscard]] const Meter*                GetMeter(MeterType type) const;                 ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
@@ -264,7 +267,7 @@ private:
 
     UniverseObjectType m_type = UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE;
 
-    static const inline std::set<int> EMPTY_INT_SET{};
+    static const inline IDSet EMPTY_INT_SET{};
 
     template <typename Archive>
     friend void serialize(Archive&, UniverseObject&, unsigned int const);

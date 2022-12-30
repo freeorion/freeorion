@@ -53,7 +53,8 @@ public:
 
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
 
-    [[nodiscard]] const std::set<int>& ContainedObjectIDs() const noexcept override { return m_objects; }
+    using UniverseObject::IDSet;
+    [[nodiscard]] const IDSet& ContainedObjectIDs() const noexcept override { return m_objects; }
 
     [[nodiscard]] bool Contains(int object_id) const override;
 
@@ -152,12 +153,12 @@ private:
 
     StarType            m_star = StarType::INVALID_STAR_TYPE;
     std::vector<int>    m_orbits = std::vector<int>(SYSTEM_ORBITS, INVALID_OBJECT_ID);  ///< indexed by orbit number, indicates the id of the planet in that orbit
-    std::set<int>       m_objects;
-    std::set<int>       m_planets;
-    std::set<int>       m_buildings;
-    std::set<int>       m_fleets;
-    std::set<int>       m_ships;
-    std::set<int>       m_fields;
+    IDSet               m_objects;
+    IDSet               m_planets;
+    IDSet               m_buildings;
+    IDSet               m_fleets;
+    IDSet               m_ships;
+    IDSet               m_fields;
     std::map<int, bool> m_starlanes_wormholes;      ///< the ints represent the IDs of other connected systems; the bools indicate whether the connection is a wormhole (true) or a starlane (false)
     int                 m_last_turn_battle_here = INVALID_GAME_TURN;  ///< the turn on which there was last a battle in this system
 

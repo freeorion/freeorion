@@ -344,8 +344,7 @@ namespace {
     { ar & boost::serialization::make_nvp("m_meters", meters); }
 
     template <>
-    void Serialize(boost::archive::xml_oarchive& ar, UniverseObject::MeterMap& meters,
-                   unsigned int const)
+    void Serialize(boost::archive::xml_oarchive& ar, UniverseObject::MeterMap& meters, unsigned int const)
     {
         using namespace boost::serialization;
 
@@ -353,7 +352,7 @@ namespace {
         static_assert(buffer_size > 100);
 
         std::array<std::string::value_type, buffer_size> buffer{};
-        char* buffer_next = buffer.data();
+        char* buffer_next = buffer.data(); // TODO: char* -> auto* ?
         char* buffer_end = buffer.data() + buffer.size();
 
         // store number of meters
@@ -370,8 +369,7 @@ namespace {
     }
 
     template <>
-    void Serialize(boost::archive::xml_iarchive& ar, UniverseObject::MeterMap& meters,
-                   unsigned int const version)
+    void Serialize(boost::archive::xml_iarchive& ar, UniverseObject::MeterMap& meters, unsigned int const version)
     {
         using namespace boost::serialization;
 
@@ -428,6 +426,16 @@ namespace {
                 ++next;
         }
     }
+
+    template <typename Archive>
+    void DeserializeSetIntoFlatSet(Archive& ar, const char* name, boost::container::flat_set<int>& c)
+    {
+        static_assert(Archive::is_loading::value);
+        std::set<int> temp;
+        ar >> boost::serialization::make_nvp(name, temp);
+        c.clear();
+        c.insert(boost::container::ordered_unique_range, temp.begin(), temp.end());
+    }
 }
 
 BOOST_CLASS_EXPORT(UniverseObject)
@@ -465,23 +473,45 @@ template <typename Archive>
 void serialize(Archive& ar, System& obj, unsigned int const version)
 {
     using namespace boost::serialization;
+    using namespace boost::container;
 
     ar  & make_nvp("UniverseObject", base_object<UniverseObject>(obj))
         & make_nvp("m_star", obj.m_star)
-        & make_nvp("m_orbits", obj.m_orbits)
-        & make_nvp("m_objects", obj.m_objects)
-        & make_nvp("m_planets", obj.m_planets)
-        & make_nvp("m_buildings", obj.m_buildings)
-        & make_nvp("m_fleets", obj.m_fleets)
-        & make_nvp("m_ships", obj.m_ships)
-        & make_nvp("m_fields", obj.m_fields)
-        & make_nvp("m_starlanes_wormholes", obj.m_starlanes_wormholes)
-        & make_nvp("m_last_turn_battle_here", obj.m_last_turn_battle_here);
+        & make_nvp("m_orbits", obj.m_orbits);
+
+    if constexpr (Archive::is_loading::value) {
+        if (version < 1) {
+            DeserializeSetIntoFlatSet(ar, "m_objects", obj.m_objects);
+            DeserializeSetIntoFlatSet(ar, "m_planets", obj.m_planets);
+            DeserializeSetIntoFlatSet(ar, "m_buildings", obj.m_buildings);
+            DeserializeSetIntoFlatSet(ar, "m_fleets", obj.m_fleets);
+            DeserializeSetIntoFlatSet(ar, "m_ships", obj.m_ships);
+            DeserializeSetIntoFlatSet(ar, "m_fields", obj.m_fields);
+        } else {
+            ar >> make_nvp("m_objects", obj.m_objects)
+               >> make_nvp("m_planets", obj.m_planets)
+               >> make_nvp("m_buildings", obj.m_buildings)
+               >> make_nvp("m_fleets", obj.m_fleets)
+               >> make_nvp("m_ships", obj.m_ships)
+               >> make_nvp("m_fields", obj.m_fields);
+        }
+    } else {
+        ar << make_nvp("m_objects", obj.m_objects)
+           << make_nvp("m_planets", obj.m_planets)
+           << make_nvp("m_buildings", obj.m_buildings)
+           << make_nvp("m_fleets", obj.m_fleets)
+           << make_nvp("m_ships", obj.m_ships)
+           << make_nvp("m_fields", obj.m_fields);
+    }
+
+    ar  & make_nvp("m_starlanes_wormholes", obj.m_starlanes_wormholes);
+    ar  & make_nvp("m_last_turn_battle_here", obj.m_last_turn_battle_here);
     if constexpr (Archive::is_loading::value)
         obj.m_system_id = obj.ID(); // override old value that was stored differently previously...
 }
 
 BOOST_CLASS_EXPORT(System)
+BOOST_CLASS_VERSION(System, 1)
 
 template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, System&, unsigned int const);
 template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, System&, unsigned int const);
@@ -578,8 +608,15 @@ void serialize(Archive& ar, Planet& obj, unsigned int const version)
         & make_nvp("m_orbital_period", obj.m_orbital_period)
         & make_nvp("m_initial_orbital_position", obj.m_initial_orbital_position)
         & make_nvp("m_rotational_period", obj.m_rotational_period)
-        & make_nvp("m_axial_tilt", obj.m_axial_tilt)
-        & make_nvp("m_buildings", obj.m_buildings);
+        & make_nvp("m_axial_tilt", obj.m_axial_tilt);
+    if constexpr (Archive::is_loading::value) {
+        if (version < 5)
+            DeserializeSetIntoFlatSet(ar, "m_buildings", obj.m_buildings);
+        else
+            ar >> make_nvp("m_buildings", obj.m_buildings);
+    } else {
+        ar << make_nvp("m_buildings", obj.m_buildings);
+    }
     ar  & make_nvp("m_turn_last_colonized", obj.m_turn_last_colonized);
     ar  & make_nvp("m_turn_last_conquered", obj.m_turn_last_conquered);
     ar  & make_nvp("m_is_about_to_be_colonized", obj.m_is_about_to_be_colonized)
@@ -590,7 +627,7 @@ void serialize(Archive& ar, Planet& obj, unsigned int const version)
 }
 
 BOOST_CLASS_EXPORT(Planet)
-BOOST_CLASS_VERSION(Planet, 4)
+BOOST_CLASS_VERSION(Planet, 5)
 
 
 template <typename Archive>
@@ -621,9 +658,18 @@ void serialize(Archive& ar, Fleet& obj, unsigned int const version)
 {
     using namespace boost::serialization;
 
-    ar  & make_nvp("UniverseObject", base_object<UniverseObject>(obj))
-        & make_nvp("m_ships", obj.m_ships)
-        & make_nvp("m_prev_system", obj.m_prev_system)
+    ar  & make_nvp("UniverseObject", base_object<UniverseObject>(obj));
+
+    if constexpr (Archive::is_loading::value) {
+        if (version < 7)
+            DeserializeSetIntoFlatSet(ar, "m_ships", obj.m_ships);
+        else
+            ar >> make_nvp("m_ships", obj.m_ships);
+    } else {
+        ar << make_nvp("m_ships", obj.m_ships);
+    }
+
+    ar  & make_nvp("m_prev_system", obj.m_prev_system)
         & make_nvp("m_next_system", obj.m_next_system);
 
     ar  & make_nvp("m_aggression", obj.m_aggression);
@@ -642,7 +688,7 @@ void serialize(Archive& ar, Fleet& obj, unsigned int const version)
 }
 
 BOOST_CLASS_EXPORT(Fleet)
-BOOST_CLASS_VERSION(Fleet, 6)
+BOOST_CLASS_VERSION(Fleet, 7)
 
 
 template <typename Archive>
@@ -799,4 +845,16 @@ namespace boost::serialization {
     // Note: I tried loading the internal vector of a flat_map instead of
     //       loading it as a map and constructing elements on the stack.
     //       The result was similar or slightly slower than the stack loader.
+
+    template<class Archive, class Value>
+    void save(Archive& ar, const flat_set<Value>& s, const unsigned int)
+    { stl::save_collection(ar, s); }
+
+    template<class Archive, class Value>
+    void load(Archive& ar, flat_set<Value>& s, const unsigned int)
+    { load_set_collection(ar, s); }
+
+    template<class Archive, class Value>
+    void serialize(Archive& ar, flat_set<Value>& s, const unsigned int file_version)
+    { split_free(ar, s, file_version); }
 }

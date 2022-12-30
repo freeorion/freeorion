@@ -57,32 +57,33 @@ constexpr double FLEET_MOVEMENT_EPSILON = 0.1;  // how close a fleet needs to be
   * ships that travel together. */
 class FO_COMMON_API Fleet final : public UniverseObject {
 public:
-    [[nodiscard]] bool                    HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
+    [[nodiscard]] bool         HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
 
-    [[nodiscard]] std::string             Dump(uint8_t ntabs = 0) const override;
+    [[nodiscard]] std::string  Dump(uint8_t ntabs = 0) const override;
 
-    [[nodiscard]] int                     ContainerObjectID() const noexcept override { return this->SystemID(); }
-    [[nodiscard]] const std::set<int>&    ContainedObjectIDs() const noexcept override { return m_ships; }
-    [[nodiscard]] bool                    Contains(int object_id) const override;
-    [[nodiscard]] bool                    ContainedBy(int object_id) const override;
+    using UniverseObject::IDSet;
+    [[nodiscard]] int          ContainerObjectID() const noexcept override { return this->SystemID(); }
+    [[nodiscard]] const IDSet& ContainedObjectIDs() const noexcept override { return m_ships; }
+    [[nodiscard]] bool         Contains(int object_id) const override;
+    [[nodiscard]] bool         ContainedBy(int object_id) const override;
 
-    [[nodiscard]] const std::string&      PublicName(int empire_id, const Universe& universe) const override;
+    [[nodiscard]] const std::string& PublicName(int empire_id, const Universe& universe) const override;
 
-    std::shared_ptr<UniverseObject>       Accept(const UniverseObjectVisitor& visitor) const override;
+    std::shared_ptr<UniverseObject>  Accept(const UniverseObjectVisitor& visitor) const override;
 
-    [[nodiscard]] const std::set<int>&    ShipIDs() const noexcept { return m_ships; } ///< returns set of IDs of ships in fleet.
-    [[nodiscard]] int                     MaxShipAgeInTurns(const ObjectMap& objects, int current_turn) const; ///< Returns the age of the oldest ship in the fleet
+    [[nodiscard]] const auto&        ShipIDs() const noexcept { return m_ships; } ///< returns set of IDs of ships in fleet.
+    [[nodiscard]] int                MaxShipAgeInTurns(const ObjectMap& objects, int current_turn) const; ///< Returns the age of the oldest ship in the fleet
 
     /** Returns the list of systems that this fleet will move through en route
       * to its destination (may be empty).  If this fleet is currently at a
       * system, that system will be the first one in the list. */
-    [[nodiscard]] const auto&             TravelRoute() const noexcept { return m_travel_route; };
-    [[nodiscard]] int                     OrderedGivenToEmpire() const noexcept { return m_ordered_given_to_empire_id; }   ///< returns the ID of the empire this fleet has been ordered given to, or ALL_EMPIRES if this fleet hasn't been ordered given to an empire
-    [[nodiscard]] int                     LastTurnMoveOrdered() const noexcept { return m_last_turn_move_ordered; }
-    [[nodiscard]] bool                    Aggressive() const noexcept { return m_aggression >= FleetAggression::FLEET_AGGRESSIVE; }
-    [[nodiscard]] bool                    Obstructive() const noexcept { return m_aggression >= FleetAggression::FLEET_OBSTRUCTIVE; }
-    [[nodiscard]] bool                    Passive() const noexcept { return m_aggression <= FleetAggression::FLEET_PASSIVE; }
-    [[nodiscard]] FleetAggression         Aggression() const noexcept { return m_aggression; }
+    [[nodiscard]] const auto&        TravelRoute() const noexcept { return m_travel_route; };
+    [[nodiscard]] int                OrderedGivenToEmpire() const noexcept { return m_ordered_given_to_empire_id; }   ///< returns the ID of the empire this fleet has been ordered given to, or ALL_EMPIRES if this fleet hasn't been ordered given to an empire
+    [[nodiscard]] int                LastTurnMoveOrdered() const noexcept { return m_last_turn_move_ordered; }
+    [[nodiscard]] bool               Aggressive() const noexcept { return m_aggression >= FleetAggression::FLEET_AGGRESSIVE; }
+    [[nodiscard]] bool               Obstructive() const noexcept { return m_aggression >= FleetAggression::FLEET_OBSTRUCTIVE; }
+    [[nodiscard]] bool               Passive() const noexcept { return m_aggression <= FleetAggression::FLEET_PASSIVE; }
+    [[nodiscard]] FleetAggression    Aggression() const noexcept { return m_aggression; }
 
     /** Returns a list of locations at which notable events will occur along the fleet's path if it follows the
         specified route.  It is assumed in the calculation that the fleet starts its move path at its actual current
@@ -119,7 +120,7 @@ public:
     [[nodiscard]] bool    HasTroopShips(const Universe& universe) const;              ///< Returns true if there is at least one troop ship in the fleet.
     [[nodiscard]] bool    HasShipsOrderedScrapped(const Universe& universe) const;    ///< Returns true if there is at least one ship ordered scrapped in the fleet.
     [[nodiscard]] bool    HasShipsWithoutScrapOrders(const Universe& universe) const; ///< Returns true if there is at least one ship without any scrap orders in the fleet.
-    [[nodiscard]] int     NumShips() const noexcept { return m_ships.size(); }        ///< Returns number of ships in fleet.
+    [[nodiscard]] auto    NumShips() const noexcept { return m_ships.size(); }        ///< Returns number of ships in fleet.
     [[nodiscard]] bool    Empty() const noexcept    { return m_ships.empty(); }       ///< Returns true if fleet contains no ships, false otherwise.
     [[nodiscard]] float   ResourceOutput(ResourceType type, const ObjectMap& objects) const;
 
@@ -130,14 +131,14 @@ public:
     [[nodiscard]] bool UnknownRoute() const;
 
     /** Returns true iff this fleet arrived at its current System this turn. */
-    [[nodiscard]] bool ArrivedThisTurn() const;
+    [[nodiscard]] bool ArrivedThisTurn() const noexcept { return m_arrived_this_turn; }
 
     /** Returns the ID of the starlane that this fleet arrived on, if it arrived
       * into a blockade which is not yet broken. If in a system and not
       * blockaded, the value is the current system ID. The blockade intent is
       * that you can't break a blockade unless you beat the blockaders
       * (via combat or they retreat). **/
-    [[nodiscard]] int ArrivalStarlane() const { return m_arrival_starlane; }
+    [[nodiscard]] int ArrivalStarlane() const noexcept { return m_arrival_starlane; }
 
     void Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id = ALL_EMPIRES) override;
     void Copy(const Fleet& copied_fleet, const Universe& universe, int empire_id = ALL_EMPIRES);
@@ -185,7 +186,7 @@ private:
     /** Returns new copy of this Fleet. */
     [[nodiscard]] std::shared_ptr<UniverseObject> Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const override;
 
-    std::set<int>   m_ships;
+    IDSet m_ships;
 
     // these two uniquely describe the starlane graph edge the fleet is on, if it it's on one
     int             m_prev_system = INVALID_OBJECT_ID;  ///< the previous system in the route, if any

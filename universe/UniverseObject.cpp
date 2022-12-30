@@ -187,7 +187,7 @@ std::string UniverseObject::Dump(uint8_t ntabs) const {
     return retval;
 }
 
-std::set<int> UniverseObject::VisibleContainedObjectIDs(
+UniverseObject::IDSet UniverseObject::VisibleContainedObjectIDs(
     int empire_id, const EmpireObjectVisMap& vis) const
 {
     auto object_id_visible = [empire_id, &vis](int object_id) -> bool {
@@ -199,7 +199,8 @@ std::set<int> UniverseObject::VisibleContainedObjectIDs(
             && obj_it->second >= Visibility::VIS_BASIC_VISIBILITY;
     };
 
-    std::set<int> retval;
+    IDSet retval;
+    retval.reserve(ContainedObjectIDs().size());
     for (int object_id : ContainedObjectIDs()) {
         if (object_id_visible(object_id))
             retval.insert(object_id);

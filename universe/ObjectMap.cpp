@@ -441,15 +441,15 @@ void ObjectMap::AuditContainment(const std::unordered_set<int>& destroyed_object
         if (destroyed_object_ids.count(contained->ID()))
             continue;
 
-        int contained_id = contained->ID();
-        int sys_id = contained->SystemID();
-        int alt_id = contained->ContainerObjectID();    // planet or fleet id for a building or ship, or system id again for a fleet, field, or planet
-        UniverseObjectType type = contained->ObjectType();
+        const int contained_id = contained->ID();
+        const int sys_id = contained->SystemID();
+        const int alt_id = contained->ContainerObjectID(); // planet or fleet id for a building or ship, or system id again for a fleet, field, or planet
+        const UniverseObjectType type = contained->ObjectType();
         if (type == UniverseObjectType::OBJ_SYSTEM)
             continue;
 
         // store systems' contained objects
-        if (this->get(sys_id)) { // although this is expected to be a system, can't use Object<System> here due to CopyForSerialize not copying the type-specific objects info
+        if (this->getRaw(sys_id)) { // although this is expected to be a system, can't use Object<System> here due to CopyForSerialize not copying the type-specific objects info
             contained_objs[sys_id].insert(contained_id);
 
             if (type == UniverseObjectType::OBJ_PLANET)
@@ -465,13 +465,16 @@ void ObjectMap::AuditContainment(const std::unordered_set<int>& destroyed_object
         }
 
         // store planets' contained buildings
-        if (type == UniverseObjectType::OBJ_BUILDING && this->get(alt_id))
+        if (type == UniverseObjectType::OBJ_BUILDING && this->getRaw(alt_id))
             contained_buildings[alt_id].insert(contained_id);
 
         // store fleets' contained ships
-        if (type == UniverseObjectType::OBJ_SHIP && this->get(alt_id))
+        if (type == UniverseObjectType::OBJ_SHIP && this->getRaw(alt_id))
             contained_ships[alt_id].insert(contained_id);
     }
+
+    auto to_flat_set = [](const auto& container)
+    { return UniverseObject::IDSet(container.begin(), container.end()); };
 
     // set contained objects of all possible containers
     for (auto* obj : allRaw()) {
@@ -479,20 +482,20 @@ void ObjectMap::AuditContainment(const std::unordered_set<int>& destroyed_object
         const auto TYPE = obj->ObjectType();
         if (TYPE == UniverseObjectType::OBJ_SYSTEM) {
             auto sys = static_cast<System*>(obj);
-            sys->m_objects =    contained_objs[ID];
-            sys->m_planets =    contained_planets[ID];
-            sys->m_buildings =  contained_buildings[ID];
-            sys->m_fleets =     contained_fleets[ID];
-            sys->m_ships =      contained_ships[ID];
-            sys->m_fields =     contained_fields[ID];
+            sys->m_objects =   to_flat_set(contained_objs[ID]);
+            sys->m_planets =   to_flat_set( contained_planets[ID]);
+            sys->m_buildings = to_flat_set(contained_buildings[ID]);
+            sys->m_fleets =    to_flat_set(contained_fleets[ID]);
+            sys->m_ships =     to_flat_set(contained_ships[ID]);
+            sys->m_fields =    to_flat_set(contained_fields[ID]);
 
         } else if (TYPE == UniverseObjectType::OBJ_PLANET) {
             auto plt = static_cast<Planet*>(obj);
-            plt->m_buildings =  contained_buildings[ID];
+            plt->m_buildings = to_flat_set(contained_buildings[ID]);
 
         } else if (TYPE == UniverseObjectType::OBJ_FLEET) {
             auto flt = static_cast<Fleet*>(obj);
-            flt->m_ships =      contained_ships[ID];
+            flt->m_ships =     to_flat_set(contained_ships[ID]);
         }
     }
 }

@@ -39,11 +39,6 @@ std::shared_ptr<const UniverseObject> EmpireManager::GetSource(int id, const Obj
     return it != m_const_empire_map.end() ? it->second->Source(objects) : nullptr;
 }
 
-const std::string& EmpireManager::GetEmpireName(int id) const {
-    auto it = m_const_empire_map.find(id);
-    return it == m_const_empire_map.end() ? EMPTY_STRING : it->second->Name();
-}
-
 int EmpireManager::NumEliminatedEmpires() const {
     int eliminated_count = 0;
 

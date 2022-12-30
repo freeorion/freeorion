@@ -233,7 +233,8 @@ namespace {
             context);
     }
 
-    void CreateNewFleetFromShipsWithDesign(const std::set<int>& ship_ids,
+    template <typename ShipIDSet>
+    void CreateNewFleetFromShipsWithDesign(const ShipIDSet& ship_ids,
                                            int design_id, FleetAggression aggression,
                                            ScriptingContext& context)
     {
@@ -256,7 +257,8 @@ namespace {
         CreateNewFleetFromShips(ships_of_design_ids, aggression, context);
     }
 
-    void CreateNewFleetsFromShipsForEachDesign(const std::set<int>& ship_ids,
+    template <typename ShipIDSet>
+    void CreateNewFleetsFromShipsForEachDesign(const ShipIDSet& ship_ids,
                                                FleetAggression aggression,
                                                ScriptingContext& context)
     {
@@ -331,7 +333,7 @@ namespace {
     }
 
    /** Returns map from object ID to issued colonize orders affecting it. */
-    auto PendingScrapOrders() {
+    auto PendingScrapOrders() { // TODO: return vector<pair> ?
         std::map<int, int> retval;
         const ClientApp* app = ClientApp::GetApp();
         if (!app)
@@ -3459,7 +3461,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt,
         return;
 
     auto system = o.get<System>(fleet->SystemID());
-    std::set<int> ship_ids_set = fleet->ShipIDs();
+    const auto ship_ids_set{fleet->ShipIDs()};
 
     std::vector<int> damaged_ship_ids;
     std::vector<int> unfueled_ship_ids;
@@ -3667,9 +3669,9 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt,
         && fleet->OwnedBy(client_empire_id))
     {
         auto scrap_action = [fleet, client_empire_id]() {
-            std::set<int> ship_ids = fleet->ShipIDs();
+            const auto ship_ids{fleet->ShipIDs()};
             ScriptingContext context;
-            for (int ship_id : ship_ids) {
+            for (const auto ship_id : ship_ids) {
                 GGHumanClientApp::GetApp()->Orders().IssueOrder(
                     std::make_shared<ScrapOrder>(client_empire_id, ship_id, context),
                     context);
