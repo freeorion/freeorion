@@ -12,7 +12,7 @@ Tech(
     prerequisites=["LRN_FORCE_FIELD", "CON_ARCH_PSYCH"],
     effectsgroups=[
         EffectsGroup(
-            scope=ProductionCenter & OwnedBy(empire=Source.Owner),
+            scope=Planet() & OwnedBy(empire=Source.Owner),
             accountinglabel="CON_TECH_ACCOUNTING_LABEL",
             priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=[

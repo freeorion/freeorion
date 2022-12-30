@@ -12,7 +12,7 @@ Tech(
     prerequisites=["LRN_ALGO_ELEGANCE"],
     effectsgroups=[
         EffectsGroup(
-            scope=ProductionCenter
+            scope=Planet()
             & OwnedBy(empire=Source.Owner)
             & TargetPopulation(low=0.0001)
             & Happiness(low=NamedReal(name="LRN_NASCENT_AI_MIN_STABILITY", value=10)),

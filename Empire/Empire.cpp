@@ -804,7 +804,7 @@ bool Empire::ProducibleItem(BuildType build_type, int location_id,
         return false;
 
     // must own the production location...
-    auto location = context.ContextObjects().get(location_id);
+    auto location = context.ContextObjects().getRaw(location_id);
     if (!location) {
         WarnLogger() << "Empire::ProducibleItem for BT_STOCKPILE unable to get location object with id " << location_id;
         return false;
@@ -813,7 +813,7 @@ bool Empire::ProducibleItem(BuildType build_type, int location_id,
     if (!location->OwnedBy(m_id))
         return false;
 
-    if (!std::dynamic_pointer_cast<const ResourceCenter>(location))
+    if (location->ObjectType() != UniverseObjectType::OBJ_PLANET)
         return false;
 
     if (build_type == BuildType::BT_STOCKPILE) {
@@ -2589,31 +2589,27 @@ void Empire::CheckInfluenceProgress() {
 }
 
 void Empire::InitResourcePools(const ObjectMap& objects, const SupplyManager& supply) {
-    // get this empire's owned resource centers and ships (which can both produce resources)
-    std::vector<int> res_centers;
-    res_centers.reserve(objects.allExisting<ResourceCenter>().size());
-    for (const auto& [rc_id, rc] : objects.allExisting<ResourceCenter>()) {
-        if (!rc->OwnedBy(m_id))
-            continue;
-        res_centers.push_back(rc_id);
-    }
-    for (const auto& [ship_id, ship] : objects.allExisting<Ship>()) {
-        if (!ship->OwnedBy(m_id))
-            continue;
-        res_centers.push_back(ship_id);
-    }
-    m_resource_pools[ResourceType::RE_RESEARCH]->SetObjects(res_centers);
-    m_resource_pools[ResourceType::RE_INDUSTRY]->SetObjects(res_centers);
-    m_resource_pools[ResourceType::RE_INFLUENCE]->SetObjects(std::move(res_centers));
-
     // get this empire's owned planets
     std::vector<int> planets;
+    std::vector<int> planets_and_ships;
     planets.reserve(objects.allExisting<Planet>().size());
+    planets_and_ships.reserve(objects.allExisting<Planet>().size() + objects.allExisting<Ship>().size());
+
     for (const auto& [res_id, res] : objects.allExisting<Planet>()) {
         if (res->OwnedBy(m_id))
             planets.push_back(res_id);
     }
+    planets_and_ships.insert(planets_and_ships.end(), planets.begin(), planets.end());
     m_population_pool.SetPopCenters(std::move(planets));
+
+    // add this empire's owned ships. planets and ships can produce resources
+    for (const auto& [ship_id, ship] : objects.allExisting<Ship>()) {
+        if (ship->OwnedBy(m_id))
+            planets_and_ships.push_back(ship_id);
+    }
+    m_resource_pools[ResourceType::RE_RESEARCH]->SetObjects(planets_and_ships);
+    m_resource_pools[ResourceType::RE_INDUSTRY]->SetObjects(planets_and_ships);
+    m_resource_pools[ResourceType::RE_INFLUENCE]->SetObjects(std::move(planets_and_ships));
 
 
     // inform the blockadeable resource pools about systems that can share

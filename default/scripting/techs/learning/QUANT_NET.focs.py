@@ -12,7 +12,7 @@ Tech(
     prerequisites=["LRN_NDIM_SUBSPACE"],
     effectsgroups=[
         EffectsGroup(
-            scope=ProductionCenter
+            scope=Planet()
             & OwnedBy(empire=Source.Owner)
             & Focus(type=["FOCUS_RESEARCH"])
             & Happiness(low=NamedReal(name="LRN_QUANT_NET_MIN_STABILITY", value=10)),

@@ -1981,28 +1981,8 @@ namespace {
             m_type(type)
         {}
 
-        bool operator()(const UniverseObject* candidate) const noexcept {
-            if (!candidate)
-                return false;
-
-            switch (m_type) {
-            case UniverseObjectType::OBJ_BUILDING:
-            case UniverseObjectType::OBJ_SHIP:
-            case UniverseObjectType::OBJ_FLEET:
-            case UniverseObjectType::OBJ_PLANET:
-            case UniverseObjectType::OBJ_SYSTEM:
-            case UniverseObjectType::OBJ_FIELD:
-            case UniverseObjectType::OBJ_FIGHTER:
-                return candidate->ObjectType() == m_type;
-                break;
-            case UniverseObjectType::OBJ_PROD_CENTER:
-                return candidate->ObjectType() == UniverseObjectType::OBJ_PLANET; // only planets can be resource or prod centres currently
-                break;
-            default:
-                break;
-            }
-            return false;
-        }
+        bool operator()(const UniverseObject* candidate) const noexcept
+        { return candidate && candidate->ObjectType() == m_type; }
 
         const UniverseObjectType m_type;
     };
@@ -2041,7 +2021,6 @@ std::string Type::Dump(uint8_t ntabs) const {
         case UniverseObjectType::OBJ_SHIP:        retval += "Ship\n"; break;
         case UniverseObjectType::OBJ_FLEET:       retval += "Fleet\n"; break;
         case UniverseObjectType::OBJ_PLANET:      retval += "Planet\n"; break;
-        case UniverseObjectType::OBJ_PROD_CENTER: retval += "ProductionCenter\n"; break;
         case UniverseObjectType::OBJ_SYSTEM:      retval += "System\n"; break;
         case UniverseObjectType::OBJ_FIELD:       retval += "Field\n"; break;
         case UniverseObjectType::OBJ_FIGHTER:     retval += "Fighter\n"; break;
@@ -2083,9 +2062,6 @@ void Type::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_cont
             break;
         case UniverseObjectType::OBJ_PLANET:
             AddAllObjectsSet<Planet>(parent_context.ContextObjects(), condition_non_targets);
-            break;
-        case UniverseObjectType::OBJ_PROD_CENTER:
-            AddAllObjectsSet<ResourceCenter>(parent_context.ContextObjects(), condition_non_targets);
             break;
         case UniverseObjectType::OBJ_SHIP:
             AddAllObjectsSet<Ship>(parent_context.ContextObjects(), condition_non_targets);

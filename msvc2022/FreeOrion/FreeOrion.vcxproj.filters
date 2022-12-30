@@ -309,9 +309,6 @@
     <ClInclude Include="..\..\universe\Planet.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\universe\ResourceCenter.h">
-      <Filter>Header Files\universe</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\universe\Ship.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>

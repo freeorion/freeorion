@@ -13,7 +13,7 @@ Tech(
     prerequisites=["PRO_ROBOTIC_PROD"],
     effectsgroups=[
         EffectsGroup(
-            scope=ProductionCenter
+            scope=Planet()
             & OwnedBy(empire=Source.Owner)
             & Focus(type=["FOCUS_INDUSTRY"])
             & Happiness(low=NamedReal(name="PRO_FUSION_GEN_MIN_STABILITY", value=18)),

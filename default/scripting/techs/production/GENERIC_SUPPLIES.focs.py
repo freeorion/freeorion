@@ -19,14 +19,14 @@ Tech(
             effects=SetMaxStockpile(value=Value + 2, accountinglabel="GENERIC_SUPPLIES_FIXED_BONUS_LABEL"),
         ),
         EffectsGroup(
-            scope=ProductionCenter & OwnedBy(empire=Source.Owner) & HasSpecies(),
+            scope=Planet() & OwnedBy(empire=Source.Owner) & HasSpecies(),
             effects=SetMaxStockpile(
                 value=(Value + 0.5 * Target.Population * STOCKPILE_PER_POP),
                 accountinglabel="GENERIC_SUPPLIES_POPULATION_BONUS_LABEL",
             ),
         ),
         EffectsGroup(
-            scope=ProductionCenter & OwnedBy(empire=Source.Owner) & Focus(type=["FOCUS_STOCKPILE"]),
+            scope=Planet() & OwnedBy(empire=Source.Owner) & Focus(type=["FOCUS_STOCKPILE"]),
             effects=SetMaxStockpile(value=Value + 3, accountinglabel="GENERIC_SUPPLIES_FOCUS_BONUS_LABEL"),
         ),
     ],

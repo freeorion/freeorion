@@ -12,7 +12,7 @@ Tech(
     prerequisites=["CON_ORBITAL_CON"],
     effectsgroups=[
         EffectsGroup(
-            scope=ProductionCenter
+            scope=Planet()
             & OwnedBy(empire=Source.Owner)
             & ~Population(high=0)
             & Focus(type=["FOCUS_INDUSTRY"])

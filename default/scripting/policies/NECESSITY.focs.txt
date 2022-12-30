@@ -10,7 +10,7 @@ Policy
         // boosts research on planets with low stability
         EffectsGroup
             scope = And [
-                ProductionCenter
+                Planet
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_RESEARCH"
                 Not Happiness low = (NamedReal name = "PLC_NECESSITY_MAX_STABILITY" value = 6)

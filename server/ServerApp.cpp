@@ -3377,7 +3377,7 @@ void ServerApp::PreCombatProcessTurns() {
     // clean up orders, which are no longer needed
     ClearEmpireTurnOrders();
 
-    // update ResourceCenter focus history info
+    // update focus history info
     UpdateResourceCenterFocusHistoryInfo(context.ContextObjects());
 
     // validate adopted policies, and update Empire Policy history

@@ -12,7 +12,7 @@ Tech(
     prerequisites=["LRN_PSIONICS", "PRO_ADAPTIVE_AUTOMATION"],
     effectsgroups=[
         EffectsGroup(
-            scope=ProductionCenter
+            scope=Planet()
             & OwnedBy(empire=Source.Owner)
             & TargetPopulation(low=0.0001)
             & Focus(type=["FOCUS_INDUSTRY"])

@@ -12,12 +12,12 @@ Tech(
     unlock=Item(type=UnlockBuilding, name="BLD_STOCKPILING_CENTER"),
     effectsgroups=[
         EffectsGroup(
-            scope=ProductionCenter & OwnedBy(empire=Source.Owner) & HasSpecies(),
+            scope=Planet() & OwnedBy(empire=Source.Owner) & HasSpecies(),
             accountinglabel="INTERSTELLAR_ENTANGLEMENT_FACTORY_POPULATION_BONUS_LABEL",
             effects=SetMaxStockpile(value=Value + 1.0 * Target.Population * STOCKPILE_PER_POP),
         ),
         EffectsGroup(
-            scope=ProductionCenter & OwnedBy(empire=Source.Owner) & Focus(type=["FOCUS_STOCKPILE"]),
+            scope=Planet() & OwnedBy(empire=Source.Owner) & Focus(type=["FOCUS_STOCKPILE"]),
             accountinglabel="INTERSTELLAR_ENTANGLEMENT_FACTORY_FIXED_BONUS_LABEL",
             effects=SetMaxStockpile(value=Value + 6),
         ),

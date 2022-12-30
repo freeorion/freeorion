@@ -14,7 +14,6 @@
 #include "../universe/NamedValueRefManager.h"
 #include "../universe/Pathfinder.h"
 #include "../universe/Planet.h"
-#include "../universe/ResourceCenter.h"
 #include "../universe/ScriptingContext.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/Ship.h"
@@ -707,20 +706,15 @@ namespace FreeOrionPython {
         py::def("getBuildingType",              +[](const std::string& name) { return GetBuildingType(name); },
                                                 py::return_value_policy<py::reference_existing_object>(),
                                                 "Returns the building type (BuildingType) with the indicated name (string).");
-        ////////////////////
-        // ResourceCenter //
-        ////////////////////
-        py::class_<ResourceCenter, boost::noncopyable>("resourceCenter", py::no_init)
-            .add_property("focus",                  make_function(&ResourceCenter::Focus,   py::return_value_policy<py::copy_const_reference>()))
-            .add_property("turnsSinceFocusChange" , +[](const ResourceCenter& rc) { return rc.TurnsSinceFocusChange(CurrentTurn()); })
-            .add_property("availableFoci",          +[](const ResourceCenter& rc) -> std::vector<std::string> { return ViewsToStrings(rc.AvailableFoci(ScriptingContext{})); })
-        ;
 
         //////////////////
         //    Planet    //
         //////////////////
-        py::class_<Planet, py::bases<UniverseObject, ResourceCenter>, boost::noncopyable>("planet", py::no_init)
+        py::class_<Planet, py::bases<UniverseObject>, boost::noncopyable>("planet", py::no_init)
             .add_property("speciesName",                    make_function(&Planet::SpeciesName, py::return_value_policy<py::copy_const_reference>()))
+            .add_property("focus",                          make_function(&Planet::Focus,       py::return_value_policy<py::copy_const_reference>()))
+            .add_property("turnsSinceFocusChange" ,         +[](const Planet& rc) { return rc.TurnsSinceFocusChange(CurrentTurn()); })
+            .add_property("availableFoci",                  +[](const Planet& rc) -> std::vector<std::string> { return ViewsToStrings(rc.AvailableFoci(ScriptingContext{})); })
             .add_property("size",                           &Planet::Size)
             .add_property("type",                           &Planet::Type)
             .add_property("originalType",                   &Planet::OriginalType)

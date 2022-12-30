@@ -4,7 +4,6 @@
 
 #include "EnumsFwd.h"
 #include "Meter.h"
-#include "ResourceCenter.h"
 #include "UniverseObject.h"
 #include "../Empire/EmpireManager.h"
 #include "../util/Export.h"
@@ -45,10 +44,7 @@ FO_ENUM(
 
 
 /** a class representing a FreeOrion planet. */
-class FO_COMMON_API Planet final :
-    public UniverseObject,
-    public ResourceCenter
-{
+class FO_COMMON_API Planet final : public UniverseObject {
 public:
     [[nodiscard]] TagVecs                 Tags(const ScriptingContext& context) const override;
     [[nodiscard]] bool                    HasTag(std::string_view name, const ScriptingContext& context) const override;
@@ -62,6 +58,8 @@ public:
 
     std::shared_ptr<UniverseObject>       Accept(const UniverseObjectVisitor& visitor) const override;
 
+    [[nodiscard]] const auto&                   Focus() const noexcept { return m_focus; }
+    [[nodiscard]] int                           TurnsSinceFocusChange(int current_turn) const;
     [[nodiscard]] std::vector<std::string_view> AvailableFoci(const ScriptingContext& context) const;
     [[nodiscard]] bool                          FocusAvailable(std::string_view focus, const ScriptingContext& context) const;
     [[nodiscard]] const std::string&            FocusIcon(std::string_view focus_name, const ScriptingContext& context) const;
@@ -122,12 +120,14 @@ public:
     void Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id = ALL_EMPIRES) override;
     void Copy(const Planet& copied_planet, const Universe& universe, int empire_id = ALL_EMPIRES);
 
-    [[nodiscard]] Meter* GetMeter(MeterType type) override { return UniverseObject::GetMeter(type); }
-    [[nodiscard]] const Meter* GetMeter(MeterType type) const { return UniverseObject::GetMeter(type); }
+    void Reset(ObjectMap& objects);
 
-    void Reset(ObjectMap& objects) override;
     void Depopulate(int current_turn);
     void SetSpecies(std::string species_name, int turn, const SpeciesManager& sm);
+
+    void SetFocus(std::string focus, const ScriptingContext& context);
+    void ClearFocus(int current_turn);
+    void UpdateFocusHistory();
 
     void SetType(PlanetType type);          ///< sets the type of this Planet to \a type
     void SetOriginalType(PlanetType type);  ///< sets the original type of this Planet to \a type
@@ -169,19 +169,24 @@ public:
     /** returns new copy of this Planet. */
     [[nodiscard]] std::shared_ptr<UniverseObject> Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const override;
 
+    mutable boost::signals2::signal<void ()> ResourceCenterChangedSignal;
+
 private:
     friend class ObjectMap;
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
     void Init();
 
-    void AddMeter(MeterType meter_type) override { UniverseObject::AddMeter(meter_type); }
-
     void PopGrowthProductionResearchPhase(ScriptingContext& context) override;
 
     void ClampMeters() override;
 
     std::string     m_species_name;
+
+    std::string     m_focus;
+    int             m_last_turn_focus_changed = INVALID_GAME_TURN;
+    std::string     m_focus_turn_initial;
+    int             m_last_turn_focus_changed_turn_initial = INVALID_GAME_TURN;
 
     PlanetType      m_type = PlanetType::PT_SWAMP;
     PlanetType      m_original_type = PlanetType::PT_SWAMP;

@@ -605,7 +605,6 @@ std::string Constant<UniverseObjectType>::Dump(uint8_t ntabs) const
     case UniverseObjectType::OBJ_SHIP:        return "Ship";
     case UniverseObjectType::OBJ_FLEET:       return "Fleet"; 
     case UniverseObjectType::OBJ_PLANET:      return "Planet";
-    case UniverseObjectType::OBJ_PROD_CENTER: return "ProductionCenter";
     case UniverseObjectType::OBJ_SYSTEM:      return "System";
     case UniverseObjectType::OBJ_FIELD:       return "Field";
     default:                                  return "?";

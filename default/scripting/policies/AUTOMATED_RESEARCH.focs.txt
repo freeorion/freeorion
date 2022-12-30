@@ -10,7 +10,7 @@ Policy
     
         EffectsGroup
             scope = And [
-                ProductionCenter
+                Planet
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_RESEARCH"
                 Happiness low = (NamedReal name = "LRN_ALGO_RESEARCH_MIN_STABILITY" value = 8)

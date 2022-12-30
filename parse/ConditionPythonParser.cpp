@@ -695,7 +695,6 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     globals["Ship"] = condition_wrapper(std::make_shared<Condition::Type>(UniverseObjectType::OBJ_SHIP));
     globals["System"] = condition_wrapper(std::make_shared<Condition::Type>(UniverseObjectType::OBJ_SYSTEM));
     globals["Fleet"] = condition_wrapper(std::make_shared<Condition::Type>(UniverseObjectType::OBJ_FLEET));
-    globals["ProductionCenter"] = condition_wrapper(std::make_shared<Condition::Type>(UniverseObjectType::OBJ_PROD_CENTER));
     globals["Monster"] = condition_wrapper(std::make_shared<Condition::Monster>());
     globals["Capital"] = condition_wrapper(std::make_shared<Condition::Capital>());
     globals["Stationary"] = condition_wrapper(std::make_shared<Condition::Stationary>());

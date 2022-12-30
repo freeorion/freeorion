@@ -1406,8 +1406,8 @@ public:
         m_has_contents(has_contents)
     {
         SetChildClippingMode(ChildClippingMode::ClipToClient);
-        if (auto rcobj = std::dynamic_pointer_cast<const ResourceCenter>(obj))
-            rcobj->ResourceCenterChangedSignal.connect(
+        if (auto rcobj = std::dynamic_pointer_cast<const Planet>(obj))
+            rcobj->ResourceCenterChangedSignal.connect( // TODO: store connection as member, use lambda
                 boost::bind(&ObjectPanel::ResourceCenterChanged, this));
 
         RequirePreRender();

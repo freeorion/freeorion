@@ -127,9 +127,6 @@
     <ClInclude Include="..\..\universe\UniverseObjectVisitors.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\universe\ResourceCenter.h">
-      <Filter>Header Files\universe</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\universe\Ship.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
@@ -428,9 +425,6 @@
       <Filter>Source Files\universe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\universe\UniverseObjectVisitors.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\ResourceCenter.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\universe\Ship.cpp">

@@ -13,7 +13,7 @@ Tech(
     unlock=Item(type=UnlockPolicy, name="PLC_TERRAFORMING"),
     effectsgroups=[
         EffectsGroup(
-            scope=ProductionCenter & OwnedBy(empire=Source.Owner),
+            scope=Planet() & OwnedBy(empire=Source.Owner),
             priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=Conditional(
                 condition=(Value(LocalCandidate.Influence) <= Value(LocalCandidate.TargetInfluence)),

@@ -38,8 +38,8 @@ FO_ENUM(
 )
 
 
-/** A setting that a ResourceCenter can be assigned to influence what it
-  * produces.  Doesn't directly affect the ResourceCenter, but effectsgroups
+/** A setting that a Planet can be assigned to influence what it
+  * produces.  Doesn't directly affect the Planet, but effectsgroups
   * can use activation or scope conditions that check whether a potential
   * target has a particular focus.  By this method, techs or buildings or
   * species can act on planets or other ResourceCenters depending what their

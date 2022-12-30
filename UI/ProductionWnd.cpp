@@ -273,7 +273,9 @@ namespace {
 
             item_name = UserString(elem.item.name);
             const auto loc = context.ContextObjects().get(elem.location);
-            location_ok = loc && loc->OwnedBy(elem.empire_id) && (std::dynamic_pointer_cast<const ResourceCenter>(loc));
+            location_ok = loc &&
+                loc->OwnedBy(elem.empire_id) &&
+                loc->ObjectType() == UniverseObjectType::OBJ_PLANET;
 
             total_cost = 1.0;
             max_allocation = total_cost * elem.blocksize;
