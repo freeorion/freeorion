@@ -82,7 +82,7 @@ struct Clr
         return retval;
     }
 
-    operator std::string() const
+    explicit operator std::string() const
     {
         std::string retval;
         retval.reserve(1 + 4*3 + 3*2 + 1 + 1);
@@ -91,6 +91,9 @@ struct Clr
               .append(")");
         return retval;
     }
+
+    constexpr std::array<uint8_t, 4> RGBA() const noexcept
+    { return {r, g, b, a}; }
 
     uint8_t r = 0;    ///< the red channel
     uint8_t g = 0;    ///< the green channel
