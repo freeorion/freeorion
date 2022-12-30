@@ -11,7 +11,7 @@ Tech(
     tags=["PEDIA_PRODUCTION_CATEGORY"],
     effectsgroups=[
         EffectsGroup(
-            scope=ProductionCenter
+            scope=Planet()
             & OwnedBy(empire=Source.Owner)
             & Focus(type=["FOCUS_INDUSTRY"])
             & Happiness(low=NamedReal(name="PRO_ROBOTIC_PROD_MIN_STABILITY", value=5)),

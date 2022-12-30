@@ -7,7 +7,6 @@
 #include "CUIControls.h"
 #include "CUIWnd.h"
 #include "../universe/Planet.h"
-#include "../universe/ResourceCenter.h"
 #include "../universe/System.h"
 
 

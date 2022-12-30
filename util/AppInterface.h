@@ -13,7 +13,6 @@ class SupplyManager;
 class Universe;
 class UniverseObject;
 class ObjectMap;
-class ResourceCenter;
 class Planet;
 class System;
 class Ship;

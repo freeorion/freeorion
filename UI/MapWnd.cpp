@@ -1400,11 +1400,11 @@ void MapWnd::CompleteConstruction() {
     SidePanel::PlanetRightClickedSignal.connect(    boost::bind(&MapWnd::PlanetRightClicked, this, _1));
     SidePanel::BuildingRightClickedSignal.connect(  boost::bind(&MapWnd::BuildingRightClicked, this, _1));
 
-    // not strictly necessary, as in principle whenever any ResourceCenter
+    // not strictly necessary, as in principle whenever any Planet
     // changes, all meter estimates and resource pools should / could be
     // updated.  however, this is a convenience to limit the updates to
     // what is actually being shown in the sidepanel right now, which is
-    // useful since most ResourceCenter changes will be due to focus
+    // useful since most Planet changes will be due to focus
     // changes on the sidepanel, and most differences in meter estimates
     // and resource pools due to this will be in the same system
     SidePanel::ResourceCenterChangedSignal.connect([this](){

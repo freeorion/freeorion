@@ -42,7 +42,7 @@ BuildingType
             accountinglabel = "BLD_STOCKPILING_CENTER_LABEL"
             effects = [
                 SetMaxStockpile value = Value + (0.1 * Statistic Sum value = LocalCandidate.Industry condition = And [
-                    ProductionCenter
+                    Planet
                     OwnedBy empire = Source.Owner
                 ])
             ]

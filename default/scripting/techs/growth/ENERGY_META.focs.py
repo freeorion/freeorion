@@ -42,7 +42,7 @@ Tech(
             ),
         ),
         EffectsGroup(
-            scope=ProductionCenter
+            scope=Planet()
             & OwnedBy(empire=Source.Owner)
             & Focus(type=["FOCUS_INDUSTRY"])
             & Happiness(low=NamedReal(name="GRO_ENERGY_META_MIN_STABILITY", value=20)),
@@ -54,7 +54,7 @@ Tech(
             ),
         ),
         EffectsGroup(
-            scope=ProductionCenter
+            scope=Planet()
             & OwnedBy(empire=Source.Owner)
             & Focus(type=["FOCUS_RESEARCH"])
             & Happiness(low=NamedRealLookup(name="GRO_ENERGY_META_MIN_STABILITY")),

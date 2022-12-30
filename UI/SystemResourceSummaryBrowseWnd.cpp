@@ -2,7 +2,7 @@
 
 #include "../util/i18n.h"
 #include "../util/Logger.h"
-#include "../universe/ResourceCenter.h"
+#include "../universe/Planet.h"
 #include "../universe/System.h"
 #include "../Empire/Empire.h"
 #include "../client/human/GGHumanClientApp.h"
@@ -167,7 +167,7 @@ void SystemResourceSummaryBrowseWnd::Initialize() {
 }
 
 void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
-    // adds pairs of labels for ResourceCenter name and production of resource starting at vertical position \a top
+    // adds pairs of labels for Planet name and production of resource starting at vertical position \a top
     // and updates \a top to the vertical position after the last entry
     for (const auto& [first, second] : m_production_labels_and_amounts) {
         DetachChild(first);
@@ -175,33 +175,29 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
     }
     m_production_labels_and_amounts.clear();
 
-    auto system = Objects().get<System>(m_system_id);
+    auto system = Objects().get<const System>(m_system_id);
     if (!system || m_resource_type == ResourceType::INVALID_RESOURCE_TYPE)
         return;
-
 
     m_production = 0.0;
 
 
-    // add label-value pair for each resource-producing object in system to indicate amount of resource produced
-    auto objects = Objects().find<const UniverseObject>(system->ContainedObjectIDs());
+    // add label-value pair for each planet object in system to
+    // indicate amount of resource produced
+    auto planets = Objects().find<const Planet>(system->ContainedObjectIDs());
 
-    for (auto& obj : objects) {
+    for (auto& planet : planets) {
         // display information only for the requested player
-        if (m_empire_id != ALL_EMPIRES && !obj->OwnedBy(m_empire_id))
+        if (m_empire_id != ALL_EMPIRES && !planet->OwnedBy(m_empire_id))
             continue;   // if m_empire_id == -1, display resource production for all empires.  otherwise, skip this resource production if it's not owned by the requested player
 
-        auto rc = std::dynamic_pointer_cast<const ResourceCenter>(obj);
-        if (!rc) continue;
-
-        auto& name = obj->Name();
-        double production = rc->GetMeter(ResourceToMeter(m_resource_type))->Initial();
+        const double production = planet->GetMeter(ResourceToMeter(m_resource_type))->Initial();
         m_production += production;
 
         std::string amount_text = DoubleToString(production, 3, false);
 
 
-        auto label = GG::Wnd::Create<CUILabel>(name, GG::FORMAT_RIGHT);
+        auto label = GG::Wnd::Create<CUILabel>(planet->Name(), GG::FORMAT_RIGHT);
         label->MoveTo(GG::Pt(GG::X0, top));
         label->Resize(GG::Pt(LabelWidth(), row_height));
         AttachChild(label);

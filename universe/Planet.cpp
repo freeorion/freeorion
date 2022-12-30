@@ -57,7 +57,6 @@ Planet::Planet(PlanetType type, PlanetSize size, int creation_turn) :
 {
     //DebugLogger() << "Planet::Planet(" << type << ", " << size <<")";
     UniverseObject::Init();
-    ResourceCenter::Init();
     Planet::Init();
 
     static constexpr double SPIN_STD_DEV = 0.1;
@@ -99,8 +98,6 @@ void Planet::Copy(const Planet& copied_planet, const Universe& universe, int emp
     const auto visible_specials = universe.GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
 
     UniverseObject::Copy(copied_planet, vis, visible_specials, universe);
-    ResourceCenter::Copy(copied_planet, vis);
-
 
     if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
         this->m_name =                      copied_planet.m_name;
@@ -116,9 +113,12 @@ void Planet::Copy(const Planet& copied_planet, const Universe& universe, int emp
         this->m_turn_last_conquered =       copied_planet.m_turn_last_conquered;
         this->m_turn_last_colonized =       copied_planet.m_turn_last_colonized;
 
-
         if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
-            this->m_species_name = copied_planet.m_species_name;
+            this->m_species_name =                          copied_planet.m_species_name;
+            this->m_focus =                                 copied_planet.m_focus;
+            this->m_last_turn_focus_changed =               copied_planet.m_last_turn_focus_changed;
+            this->m_focus_turn_initial =                    copied_planet.m_focus_turn_initial;
+            this->m_last_turn_focus_changed_turn_initial =  copied_planet.m_last_turn_focus_changed_turn_initial;
 
             if (vis >= Visibility::VIS_FULL_VISIBILITY) {
                 this->m_is_about_to_be_colonized =  copied_planet.m_is_about_to_be_colonized;
@@ -168,7 +168,8 @@ std::string Planet::Dump(uint8_t ntabs) const {
     std::string retval = UniverseObject::Dump(ntabs);
     retval.reserve(2048);
     retval.append(" species: ").append(m_species_name).append("  ");
-    retval += ResourceCenter::Dump(ntabs);
+    retval.append(" focus: ").append(m_focus).append(" last changed on turn: ")
+          .append(std::to_string(m_last_turn_focus_changed));
     retval.append(" type: ").append(to_string(m_type))
           .append(" original type: ").append(to_string(m_original_type))
           .append(" size: ").append(to_string(m_size))
@@ -220,6 +221,15 @@ void Planet::Init() {
     AddMeter(MeterType::METER_HAPPINESS);
     AddMeter(MeterType::METER_TARGET_HAPPINESS);
 
+    AddMeter(MeterType::METER_INDUSTRY);
+    AddMeter(MeterType::METER_RESEARCH);
+    AddMeter(MeterType::METER_INFLUENCE);
+    AddMeter(MeterType::METER_CONSTRUCTION);
+    AddMeter(MeterType::METER_TARGET_INDUSTRY);
+    AddMeter(MeterType::METER_TARGET_RESEARCH);
+    AddMeter(MeterType::METER_TARGET_INFLUENCE);
+    AddMeter(MeterType::METER_TARGET_CONSTRUCTION);
+
     AddMeter(MeterType::METER_SUPPLY);
     AddMeter(MeterType::METER_MAX_SUPPLY);
     AddMeter(MeterType::METER_STOCKPILE);
@@ -232,6 +242,14 @@ void Planet::Init() {
     AddMeter(MeterType::METER_MAX_TROOPS);
     AddMeter(MeterType::METER_DETECTION);
     AddMeter(MeterType::METER_REBEL_TROOPS);
+}
+
+int Planet::TurnsSinceFocusChange(int current_turn) const {
+    if (m_last_turn_focus_changed == INVALID_GAME_TURN)
+        return 0;
+    if (current_turn == INVALID_GAME_TURN)
+        return 0;
+    return current_turn - m_last_turn_focus_changed;
 }
 
 PlanetEnvironment Planet::EnvironmentForSpecies(const ScriptingContext& context,
@@ -648,7 +666,18 @@ void Planet::Reset(ObjectMap& objects) {
     GetMeter(MeterType::METER_TARGET_HAPPINESS)->Reset();
     m_species_name.clear();
 
-    ResourceCenter::Reset(objects);
+    m_focus.clear();
+    m_last_turn_focus_changed = INVALID_GAME_TURN;
+
+    GetMeter(MeterType::METER_INDUSTRY)->Reset();
+    GetMeter(MeterType::METER_RESEARCH)->Reset();
+    GetMeter(MeterType::METER_INFLUENCE)->Reset();
+    GetMeter(MeterType::METER_CONSTRUCTION)->Reset();
+
+    GetMeter(MeterType::METER_TARGET_INDUSTRY)->Reset();
+    GetMeter(MeterType::METER_TARGET_RESEARCH)->Reset();
+    GetMeter(MeterType::METER_TARGET_INFLUENCE)->Reset();
+    GetMeter(MeterType::METER_TARGET_CONSTRUCTION)->Reset();
 
     GetMeter(MeterType::METER_SUPPLY)->Reset();
     GetMeter(MeterType::METER_MAX_SUPPLY)->Reset();
@@ -674,6 +703,7 @@ void Planet::Reset(ObjectMap& objects) {
     m_is_about_to_be_colonized = false;
     m_is_about_to_be_invaded = false;
     m_is_about_to_be_bombarded = false;
+    m_ordered_given_to_empire_id = ALL_EMPIRES;
     SetOwner(ALL_EMPIRES);
 }
 
@@ -729,7 +759,7 @@ void Planet::Conquer(int conquerer, ScriptingContext& context) {
         if (const auto species = context.species.GetSpecies(SpeciesName()))
             SetFocus(species->DefaultFocus(), context);
         else
-            ClearFocus(context.current_turn);
+            ClearFocus(m_turn_last_conquered);
     }
 
     GetMeter(MeterType::METER_SUPPLY)->SetCurrent(0.0f);
@@ -762,6 +792,43 @@ void Planet::SetSpecies(std::string species_name, int turn, const SpeciesManager
         ErrorLogger() << "Planet::SetSpecies couldn't get species with name " << species_name;
 
     m_species_name = std::move(species_name);
+}
+
+void Planet::SetFocus(std::string focus, const ScriptingContext& context) {
+    if (focus == m_focus)
+        return;
+    if (focus.empty()) {
+        ClearFocus(context.current_turn);
+        return;
+    }
+    if (!FocusAvailable(focus, context)) {
+        ErrorLogger() << "Planet::SetFocus Exploiter!-- unavailable focus " << focus
+                      << " attempted to be set for object w/ dump string: " << Dump();
+        return;
+    }
+
+    m_focus = std::move(focus);
+    if (m_focus == m_focus_turn_initial)
+        m_last_turn_focus_changed = m_last_turn_focus_changed_turn_initial;
+    else
+        m_last_turn_focus_changed = context.current_turn;
+    ResourceCenterChangedSignal();
+}
+
+void Planet::ClearFocus(int current_turn) {
+    m_focus.clear();
+    m_last_turn_focus_changed = current_turn;
+    ResourceCenterChangedSignal();
+}
+
+void Planet::UpdateFocusHistory() {
+    TraceLogger() << "Planet::UpdateFocusHistory: focus: " << m_focus
+        << "  initial focus: " << m_focus_turn_initial
+        << "  turns since change initial: " << m_last_turn_focus_changed_turn_initial;
+    if (m_focus != m_focus_turn_initial) {
+        m_focus_turn_initial = m_focus;
+        m_last_turn_focus_changed_turn_initial = m_last_turn_focus_changed;
+    }
 }
 
 bool Planet::Colonize(int empire_id, std::string species_name, double population,
@@ -884,9 +951,10 @@ void Planet::ResetIsAboutToBeBombarded()
 { SetIsAboutToBeBombarded(false); }
 
 void Planet::SetGiveToEmpire(int empire_id) {
-    if (empire_id == m_ordered_given_to_empire_id) return;
-    m_ordered_given_to_empire_id = empire_id;
-    StateChangedSignal();
+    if (empire_id != m_ordered_given_to_empire_id) {
+        m_ordered_given_to_empire_id = empire_id;
+        StateChangedSignal();
+    }
 }
 
 void Planet::ClearGiveToEmpire()
@@ -933,7 +1001,11 @@ void Planet::PopGrowthProductionResearchPhase(ScriptingContext& context) {
 
 void Planet::ResetTargetMaxUnpairedMeters() {
     UniverseObject::ResetTargetMaxUnpairedMeters();
-    ResourceCenterResetTargetMaxUnpairedMeters();
+
+    GetMeter(MeterType::METER_TARGET_INDUSTRY)->ResetCurrent();
+    GetMeter(MeterType::METER_TARGET_RESEARCH)->ResetCurrent();
+    GetMeter(MeterType::METER_TARGET_INFLUENCE)->ResetCurrent();
+    GetMeter(MeterType::METER_TARGET_CONSTRUCTION)->ResetCurrent();
 
     GetMeter(MeterType::METER_TARGET_POPULATION)->ResetCurrent();
     GetMeter(MeterType::METER_TARGET_HAPPINESS)->ResetCurrent();
@@ -949,7 +1021,16 @@ void Planet::ResetTargetMaxUnpairedMeters() {
 
 void Planet::ClampMeters() {
     UniverseObject::ClampMeters();
-    ResourceCenterClampMeters();
+
+    GetMeter(MeterType::METER_TARGET_INDUSTRY)->ClampCurrentToRange();
+    GetMeter(MeterType::METER_TARGET_RESEARCH)->ClampCurrentToRange();
+    //GetMeter(MeterType::METER_TARGET_INFLUENCE)->ClampCurrentToRange(-Meter::LARGE_VALUE, Meter::LARGE_VALUE);
+    GetMeter(MeterType::METER_TARGET_CONSTRUCTION)->ClampCurrentToRange();
+
+    GetMeter(MeterType::METER_INDUSTRY)->ClampCurrentToRange();
+    GetMeter(MeterType::METER_RESEARCH)->ClampCurrentToRange();
+    //GetMeter(MeterType::METER_INFLUENCE)->ClampCurrentToRange(-Meter::LARGE_VALUE, Meter::LARGE_VALUE);
+    GetMeter(MeterType::METER_CONSTRUCTION)->ClampCurrentToRange();
 
     UniverseObject::GetMeter(MeterType::METER_POPULATION)->ClampCurrentToRange();
 

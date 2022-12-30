@@ -12,7 +12,7 @@ Tech(
     prerequisites=["LRN_ALGO_ELEGANCE", "PRO_NANOTECH_PROD"],
     effectsgroups=[
         EffectsGroup(
-            scope=ProductionCenter
+            scope=Planet()
             & OwnedBy(empire=Source.Owner)
             & TargetPopulation(low=0.0001)
             & Happiness(low=NamedReal(name="PRO_ADAPTIVE_AUTO_MIN_STABILITY", value=10)),

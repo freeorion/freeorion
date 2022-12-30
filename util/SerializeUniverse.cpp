@@ -37,22 +37,6 @@ BOOST_CLASS_EXPORT(Field)
 BOOST_CLASS_EXPORT(Universe)
 BOOST_CLASS_VERSION(Universe, 3)
 
-template <typename Archive>
-void serialize(Archive& ar, ResourceCenter& rs, unsigned int const version)
-{
-    using namespace boost::serialization;
-
-    ar  & make_nvp("m_focus", rs.m_focus)
-        & make_nvp("m_last_turn_focus_changed", rs.m_last_turn_focus_changed)
-        & make_nvp("m_focus_turn_initial", rs.m_focus_turn_initial)
-        & make_nvp("m_last_turn_focus_changed_turn_initial", rs.m_last_turn_focus_changed_turn_initial);
-}
-
-template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, ResourceCenter&, unsigned int const);
-template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, ResourceCenter&, unsigned int const);
-template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, ResourceCenter&, unsigned int const);
-template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, ResourceCenter&, unsigned int const);
-
 
 template <typename Archive>
 void serialize(Archive& ar, ObjectMap& objmap, unsigned int const version)
@@ -530,6 +514,24 @@ namespace {
     template <typename Archive>
     void serialize(Archive& ar, PopCenter& pop, unsigned int const version)
     { ar & boost::serialization::make_nvp("m_species_name", pop.m_species_name); }
+
+    struct ResourceCenter {
+        std::string m_focus;
+        int         m_last_turn_focus_changed = INVALID_GAME_TURN;
+        std::string m_focus_turn_initial;
+        int         m_last_turn_focus_changed_turn_initial = INVALID_GAME_TURN;
+    };
+
+    template <typename Archive>
+    void serialize(Archive& ar, ResourceCenter& rs, unsigned int const version)
+    {
+        using namespace boost::serialization;
+
+        ar  & make_nvp("m_focus", rs.m_focus)
+            & make_nvp("m_last_turn_focus_changed", rs.m_last_turn_focus_changed)
+            & make_nvp("m_focus_turn_initial", rs.m_focus_turn_initial)
+            & make_nvp("m_last_turn_focus_changed_turn_initial", rs.m_last_turn_focus_changed_turn_initial);
+    }
 }
 
 template <typename Archive>
@@ -546,11 +548,31 @@ void serialize(Archive& ar, Planet& obj, unsigned int const version)
         } else {
             ar  & make_nvp("m_species_name", obj.m_species_name);
         }
+
+        if (version < 4) {
+            ResourceCenter res;
+            ar  & make_nvp("ResourceCenter", res);
+            obj.m_focus;
+            obj.m_last_turn_focus_changed;
+            obj.m_focus_turn_initial;
+            obj.m_last_turn_focus_changed_turn_initial;
+        } else {
+            ar  & make_nvp("m_focus", obj.m_focus)
+                & make_nvp("m_last_turn_focus_changed", obj.m_last_turn_focus_changed)
+                & make_nvp("m_focus_turn_initial", obj.m_focus_turn_initial)
+                & make_nvp("m_last_turn_focus_changed_turn_initial", obj.m_last_turn_focus_changed_turn_initial);
+        }
+
     } else {
         ar  & make_nvp("m_species_name", obj.m_species_name);
+
+        ar  & make_nvp("m_focus", obj.m_focus)
+            & make_nvp("m_last_turn_focus_changed", obj.m_last_turn_focus_changed)
+            & make_nvp("m_focus_turn_initial", obj.m_focus_turn_initial)
+            & make_nvp("m_last_turn_focus_changed_turn_initial", obj.m_last_turn_focus_changed_turn_initial);
     }
-    ar  & make_nvp("ResourceCenter", base_object<ResourceCenter>(obj))
-        & make_nvp("m_type", obj.m_type)
+
+    ar  & make_nvp("m_type", obj.m_type)
         & make_nvp("m_original_type", obj.m_original_type)
         & make_nvp("m_size", obj.m_size)
         & make_nvp("m_orbital_period", obj.m_orbital_period)
@@ -568,7 +590,7 @@ void serialize(Archive& ar, Planet& obj, unsigned int const version)
 }
 
 BOOST_CLASS_EXPORT(Planet)
-BOOST_CLASS_VERSION(Planet, 3)
+BOOST_CLASS_VERSION(Planet, 4)
 
 
 template <typename Archive>

@@ -59,7 +59,7 @@ STANDARD_STOCKPILE
         // increase stockpile for species if Homeworld is set to stockpile focus
         EffectsGroup
             scope = And [
-                ProductionCenter
+                Planet
                 OwnedBy empire = Source.Owner
                 Species name = Source.Species
                 Not Homeworld name = Source.Species

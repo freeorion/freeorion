@@ -3,13 +3,13 @@
 
 #include "AccordionPanel.h"
 #include "../universe/EnumsFwd.h"
+#include "../universe/ConstantsFwd.h"
 
 #include <memory>
 
 
 class MultiIconValueIndicator;
 class MultiMeterStatusBar;
-class ResourceCenter;
 class StatisticIcon;
 
 /** Shows resource meters with meter-bars */
@@ -38,8 +38,8 @@ private:
     /** toggles panel expanded or collapsed */
     void ExpandCollapseButtonPressed();
 
-    /** object id for the ResourceCenter that this panel displays */
-    int m_rescenter_id;
+    /** object id for the planet that this panel displays */
+    int m_rescenter_id = INVALID_OBJECT_ID;
 
     /** Icons for the associated meter type. */
     std::vector<std::pair<MeterType, std::shared_ptr<StatisticIcon>>> m_meter_stats;

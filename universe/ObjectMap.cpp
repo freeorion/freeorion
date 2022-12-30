@@ -13,8 +13,7 @@
 
 class Fighter;
 
-#define FOR_EACH_SPECIALIZED_MAP(f, ...)  { f<UniverseObjectType::OBJ_PROD_CENTER>(m_resource_centers, ##__VA_ARGS__); \
-                                            f<UniverseObjectType::OBJ_SHIP>(m_ships, ##__VA_ARGS__);                   \
+#define FOR_EACH_SPECIALIZED_MAP(f, ...)  { f<UniverseObjectType::OBJ_SHIP>(m_ships, ##__VA_ARGS__);                   \
                                             f<UniverseObjectType::OBJ_FLEET>(m_fleets, ##__VA_ARGS__);                 \
                                             f<UniverseObjectType::OBJ_PLANET>(m_planets, ##__VA_ARGS__);               \
                                             f<UniverseObjectType::OBJ_SYSTEM>(m_systems, ##__VA_ARGS__);               \
@@ -25,7 +24,6 @@ class Fighter;
                                             FOR_EACH_SPECIALIZED_MAP(f, ##__VA_ARGS__); }
 
 #define FOR_EACH_EXISTING_MAP(f, ...)     { f(m_existing_objects, ##__VA_ARGS__);                                               \
-                                            f<UniverseObjectType::OBJ_PROD_CENTER>(m_existing_resource_centers, ##__VA_ARGS__); \
                                             f<UniverseObjectType::OBJ_SHIP>(m_existing_ships, ##__VA_ARGS__);                   \
                                             f<UniverseObjectType::OBJ_FLEET>(m_existing_fleets, ##__VA_ARGS__);                 \
                                             f<UniverseObjectType::OBJ_PLANET>(m_existing_planets, ##__VA_ARGS__);               \
@@ -34,7 +32,6 @@ class Fighter;
                                             f<UniverseObjectType::OBJ_FIELD>(m_existing_fields, ##__VA_ARGS__); }
 
 #define FOR_EACH_EXISTING_VEC(f, ...)     { f(m_existing_object_vec, ##__VA_ARGS__);                                               \
-                                            f<UniverseObjectType::OBJ_PROD_CENTER>(m_existing_resource_center_vec, ##__VA_ARGS__); \
                                             f<UniverseObjectType::OBJ_SHIP>(m_existing_ship_vec, ##__VA_ARGS__);                   \
                                             f<UniverseObjectType::OBJ_FLEET>(m_existing_fleet_vec, ##__VA_ARGS__);                 \
                                             f<UniverseObjectType::OBJ_PLANET>(m_existing_planet_vec, ##__VA_ARGS__);               \
@@ -57,8 +54,7 @@ namespace {
     // UniverseObject class type to enum UniverseObjectType
     template <typename UniverseObject_t>
     constexpr UniverseObjectType UniverseObjectClassTypeToEnum() {
-        static_assert(std::is_base_of_v<UniverseObject, UniverseObject_t> ||
-                      std::is_same_v<ResourceCenter, UniverseObject_t>);
+        static_assert(std::is_base_of_v<UniverseObject, UniverseObject_t>);
 
         if constexpr (std::is_same_v<UniverseObject_t, Building>)            return UniverseObjectType::OBJ_BUILDING;
         else if constexpr (std::is_same_v<UniverseObject_t, Ship>)           return UniverseObjectType::OBJ_SHIP;
@@ -67,7 +63,6 @@ namespace {
         else if constexpr (std::is_same_v<UniverseObject_t, System>)         return UniverseObjectType::OBJ_SYSTEM;
         else if constexpr (std::is_same_v<UniverseObject_t, Field>)          return UniverseObjectType::OBJ_FIELD;
         else if constexpr (std::is_same_v<UniverseObject_t, Fighter>)        return UniverseObjectType::OBJ_FIGHTER;
-        else if constexpr (std::is_same_v<UniverseObject_t, ResourceCenter>) return UniverseObjectType::OBJ_PROD_CENTER;
         else                                                                 return UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE;
     }
     template <typename T>
@@ -84,9 +79,8 @@ namespace {
         using PtrElementType = typename PtrTypeBare::element_type; // should be UniverseObject
         static_assert(std::is_same_v<PtrElementType, UniverseObject>);
 
-        using MapTypeBare = std::remove_const_t<MappedObjectType>; // eg. Planet, ResourceCenter, UniverseObject
-        static_assert(std::is_base_of_v<UniverseObject, MapTypeBare> ||
-                      std::is_same_v<ResourceCenter, MapTypeBare>);
+        using MapTypeBare = std::remove_const_t<MappedObjectType>; // eg. Planet, UniverseObject
+        static_assert(std::is_base_of_v<UniverseObject, MapTypeBare>);
 
         if (!item)
             return false;
@@ -95,13 +89,6 @@ namespace {
         if constexpr (obj_type_filter == UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE) {
             // any pointed-to object type is acceptable, as long as it is convertable into
             // the MappedObjectType and thus insertable into the input map
-
-        } else if constexpr (obj_type_filter == UniverseObjectType::OBJ_PROD_CENTER) {
-            // only ResourceCenter objects are acceptable, which
-            // as of this writing can only be planets, so don't need to dynamic cast
-            // or otherwise try to convert to a specialized base class
-            if (item->ObjectType() != UniverseObjectType::OBJ_PLANET)
-                return false;
 
         } else {
             // only the specified object type is acceptable
@@ -128,17 +115,6 @@ namespace {
             }
             return false;
 
-        } else if constexpr (std::is_same_v<ResourceCenter, MapTypeBare>) {
-            // passed a map of ResourceCenter, which is not a related class to UniverseObject,
-            // and passed a pointer to UniverseObject. need to check its actual type...
-            if (item->ObjectType() == UniverseObjectType::OBJ_PLANET) {
-                auto ID = item->ID();
-                map.insert_or_assign(ID, std::static_pointer_cast<MapTypeBare>(
-                    std::static_pointer_cast<Planet>(std::forward<PtrType>(item))));
-                return true;
-            }
-            return false;
-
         } else {
             // shouldn't be possible to instantiate with this block enabled, but if so,
             // try to generate some useful compiler error messages to indicate what
@@ -157,9 +133,8 @@ namespace {
               typename VectorValueType>
     bool TryInsertIntoVec(std::vector<VectorValueType*>& vec, const std::shared_ptr<UniverseObject>& item)
     {
-        using VecTypeBare = std::remove_const_t<VectorValueType>; // eg. Planet, ResourceCenter, UniverseObject
-        static_assert(std::is_base_of_v<UniverseObject, VecTypeBare> ||
-                      std::is_same_v<ResourceCenter, VecTypeBare>);
+        using VecTypeBare = std::remove_const_t<VectorValueType>; // eg. Planet, UniverseObject
+        static_assert(std::is_base_of_v<UniverseObject, VecTypeBare>);
 
         if (!item)
             return false;
@@ -168,13 +143,6 @@ namespace {
         if constexpr (obj_type_filter == UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE) {
             // any pointed-to object type is acceptable, as long as it is convertable into
             // the VectorValueType and thus insertable into the input map
-
-        } else if constexpr (obj_type_filter == UniverseObjectType::OBJ_PROD_CENTER) {
-            // only ResourceCenter objects are acceptable, which
-            // as of this writing can only be planets, so don't need to dynamic cast
-            // or otherwise try to convert to a specialized base class
-            if (item->ObjectType() != UniverseObjectType::OBJ_PLANET)
-                return false;
 
         } else {
             // only the specified object type is acceptable
@@ -205,17 +173,6 @@ namespace {
             vec.push_back(obj);
             return true;
 
-        } else if constexpr (std::is_same_v<ResourceCenter, VecTypeBare>) {
-            // passed a vector of ResourceCenter, which are not related classes to UniverseObject,
-            // and passed a pointer to UniverseObject. need to check its actual type...
-            if (item->ObjectType() != UniverseObjectType::OBJ_PLANET)
-                return false;
-            const auto obj = static_cast<const VecTypeBare*>(static_cast<const Planet*>(item.get()));
-            if (std::any_of(vec.begin(), vec.end(), [obj](const auto* v) { return v == obj; }))
-                return false;
-            vec.push_back(obj);
-            return true;
-
         } else {
             // shouldn't be possible to instantiate with this block enabled, but if so,
             // try to generate some useful compiler error messages to indicate what
@@ -229,9 +186,8 @@ namespace {
               typename VectorValueType>
     bool TryInsertIntoVec(std::vector<VectorValueType*>& vec, const UniverseObject* obj)
     {
-        using VecTypeBare = std::remove_const_t<VectorValueType>; // eg. Planet, ResourceCenter, UniverseObject
-        static_assert(std::is_base_of_v<UniverseObject, VecTypeBare> ||
-                      std::is_same_v<ResourceCenter, VecTypeBare>);
+        using VecTypeBare = std::remove_const_t<VectorValueType>; // eg. Planet, UniverseObject
+        static_assert(std::is_base_of_v<UniverseObject, VecTypeBare>);
 
         if (!obj)
             return false;
@@ -240,13 +196,6 @@ namespace {
         if constexpr (obj_type_filter == UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE) {
             // any pointed-to object type is acceptable, as long as it is convertable into
             // the VectorValueType and thus insertable into the input map
-
-        } else if constexpr (obj_type_filter == UniverseObjectType::OBJ_PROD_CENTER) {
-            // only ResourceCenter objects are acceptable, which
-            // as of this writing can only be planets, so don't need to dynamic cast
-            // or otherwise try to convert to a specialized base class
-            if (obj->ObjectType() != UniverseObjectType::OBJ_PLANET)
-                return false;
 
         } else {
             // only the specified object type is acceptable
@@ -271,17 +220,6 @@ namespace {
             if (obj->ObjectType() != uot_enum_v<VecTypeBare>)
                 return false;
             const auto vec_obj = static_cast<VecTypeBare*>(obj);
-            if (std::any_of(vec.begin(), vec.end(), [vec_obj](const auto* v) { return v == vec_obj; }))
-                return false;
-            vec.push_back(vec_obj);
-            return true;
-
-        } else if constexpr (std::is_same_v<ResourceCenter, VecTypeBare>) {
-            // passed a vector of ResourceCenter, which are not related classes to UniverseObject,
-            // and passed a pointer to UniverseObject. need to check its actual type...
-            if (obj->ObjectType() != UniverseObjectType::OBJ_PLANET)
-                return false;
-            const auto vec_obj = static_cast<const VecTypeBare*>(static_cast<const Planet*>(obj));
             if (std::any_of(vec.begin(), vec.end(), [vec_obj](const auto* v) { return v == vec_obj; }))
                 return false;
             vec.push_back(vec_obj);
@@ -435,14 +373,11 @@ void ObjectMap::insertCore(std::shared_ptr<Planet> obj, bool destroyed) {
         return;
     const auto ID = obj->ID();
 
-    m_resource_centers.insert_or_assign(ID, obj);
     m_planets.insert_or_assign(ID, obj);
     if (!destroyed) {
-        m_existing_resource_centers.insert_or_assign(ID, obj);
         m_existing_planets.insert_or_assign(ID, obj);
         m_existing_objects.insert_or_assign(ID, obj);
 
-        m_existing_resource_center_vec.push_back(obj.get());
         m_existing_object_vec.push_back(obj.get());
         m_existing_planet_vec.push_back(obj.get());
     }

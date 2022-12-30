@@ -12,7 +12,7 @@ Tech(
     prerequisites=["LRN_PSIONICS"],
     effectsgroups=[
         EffectsGroup(
-            scope=ProductionCenter
+            scope=Planet()
             & OwnedBy(empire=Source.Owner)
             & Focus(type=["FOCUS_RESEARCH"])
             & Happiness(low=NamedReal(name="LRN_DISTRIB_THOUGHT_MIN_STABILITY", value=10)),

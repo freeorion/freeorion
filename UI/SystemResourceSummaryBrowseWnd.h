@@ -23,7 +23,7 @@ private:
     void Clear();
     void Initialize();
 
-    void UpdateProduction(GG::Y& top);  // adds pairs of labels for ResourceCenter name and production of resource starting at vertical position \a top and updates \a top to the vertical position after the last entry
+    void UpdateProduction(GG::Y& top);  // adds pairs of labels for Planet name and production of resource starting at vertical position \a top and updates \a top to the vertical position after the last entry
     void UpdateAllocation(GG::Y& top);  // adds pairs of labels for allocation of resources in system, starting at vertical position \a top and updates \a top to be the vertical position after the last entry
     void UpdateImportExport(GG::Y& top);// sets m_import_export_label and m_import_export text and amount to indicate how much resource is being imported or exported from this system, and moves them to vertical position \a top and updates \a top to be the vertical position below these labels
 

@@ -11,7 +11,7 @@ Policy
         // boost influence focus output
         EffectsGroup
             scope = And [
-                ProductionCenter
+                Planet
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_INFLUENCE"
                 Happiness low = (NamedReal name = "CAPITAL_MARKETS_INFLUENCE_MIN_STABILITY" value = 20.0)
@@ -40,7 +40,7 @@ Policy
         // grow influence and stability meters faster
         EffectsGroup
             scope = And [
-                ProductionCenter
+                Planet
                 OwnedBy empire = Source.Owner
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]

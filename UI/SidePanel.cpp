@@ -2511,21 +2511,21 @@ void SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot(GG::DropDownList:
 
     const ScriptingContext context;
 
-    auto res = context.ContextObjects().get<ResourceCenter>(m_planet_id);
+    const auto res = context.ContextObjects().get<Planet>(m_planet_id);
     if (!res) {
-        ErrorLogger() << "PlanetPanel::FocusDropListSelectionChanged couldn't convert object with id " << m_planet_id << " to a ResourceCenter";
+        ErrorLogger() << "PlanetPanel::FocusDropListSelectionChanged couldn't get planet with id " << m_planet_id;
         return;
     }
 
-    auto foci = res->AvailableFoci(context);
+    const auto foci = res->AvailableFoci(context);
 
-    std::size_t i = m_focus_drop->IteratorToIndex(selected);
-    if (i >= foci.size()) {
+    const auto i = m_focus_drop->IteratorToIndex(selected);
+    if (i >= foci.size() || i < 0) {
         ErrorLogger() << "PlanetPanel::FocusDropListSelectionChanged got invalid focus selected index: " << i;
         return;
     }
 
-    Sound::TempUISoundDisabler sound_disabler;
+    const Sound::TempUISoundDisabler sound_disabler;
     DebugLogger() << "About to send focus-changed signal.";
     FocusChangedSignal(foci[i]);
     DebugLogger() << "Returned from sending focus-changed signal.";
