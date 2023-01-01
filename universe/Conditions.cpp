@@ -1753,9 +1753,9 @@ void Capital::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
 {
     auto sz = (search_domain == SearchDomain::MATCHES) ? matches.size() : non_matches.size();
     auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const UniverseObject* obj) {
-    return std::any_of(
-        capitals.begin(), capitals.end(),
-        [obj_id{obj->ID()}](const int cap_id) noexcept { return cap_id == obj_id; });
+        return std::any_of(
+            capitals.begin(), capitals.end(),
+            [obj_id{obj->ID()}](const int cap_id) noexcept { return cap_id == obj_id; });
     };
 
     if (sz == 1) { // in testing, this was faster for a single candidate than setting up the loop stuff
