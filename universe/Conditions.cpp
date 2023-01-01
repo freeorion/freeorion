@@ -265,15 +265,6 @@ void Condition::GetDefaultInitialCandidateObjects(const ScriptingContext& parent
                                                   ObjectSet& condition_non_targets) const
 { AddAllObjectsSet(parent_context.ContextObjects(), condition_non_targets); }
 
-std::string Condition::Description(bool negated) const
-{ return ""; }
-
-std::string Condition::Dump(uint8_t ntabs) const
-{ return ""; }
-
-bool Condition::Match(const ScriptingContext& local_context) const
-{ return false; }
-
 ///////////////////////////////////////////////////////////
 // Number                                                //
 ///////////////////////////////////////////////////////////

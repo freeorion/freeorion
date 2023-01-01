@@ -83,9 +83,10 @@ struct FO_COMMON_API Condition {
     //! source object.
     [[nodiscard]] bool SourceInvariant() const noexcept { return m_source_invariant; }
 
-    [[nodiscard]] virtual std::string Description(bool negated = false) const = 0;
-    [[nodiscard]] virtual std::string Dump(uint8_t ntabs = 0) const = 0;
-    virtual void SetTopLevelContent(const std::string& content_name) = 0;
+    [[nodiscard]] virtual std::string Description(bool negated = false) const { return ""; }
+    [[nodiscard]] virtual std::string Dump(uint8_t ntabs = 0) const { return ""; }
+
+    virtual void SetTopLevelContent(const std::string& content_name) {}
     [[nodiscard]] virtual uint32_t GetCheckSum() const { return 0; }
 
     //! Makes a clone of this Condition in a new owning pointer. Required for
@@ -117,7 +118,7 @@ protected:
     bool m_initial_candidates_all_match = false;
 
 private:
-    virtual bool Match(const ScriptingContext& local_context) const;
+    virtual bool Match(const ScriptingContext& local_context) const { return false; }
 };
 
 }
