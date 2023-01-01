@@ -1751,13 +1751,13 @@ bool Capital::operator==(const Condition& rhs) const
 void Capital::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                    ObjectSet& non_matches, SearchDomain search_domain) const
 {
-    auto sz = (search_domain == SearchDomain::MATCHES) ? matches.size() : non_matches.size();
     auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const UniverseObject* obj) {
         return std::any_of(
             capitals.begin(), capitals.end(),
             [obj_id{obj->ID()}](const int cap_id) noexcept { return cap_id == obj_id; });
     };
 
+    const auto sz = (search_domain == SearchDomain::MATCHES) ? matches.size() : non_matches.size();
     if (sz == 1) { // in testing, this was faster for a single candidate than setting up the loop stuff
         const bool test_val = search_domain == SearchDomain::MATCHES;
         auto& from = test_val ? matches : non_matches;
@@ -1789,22 +1789,15 @@ bool Capital::Match(const ScriptingContext& local_context) const {
         ErrorLogger(conditions) << "Capital::Match passed no candidate object";
         return false;
     }
-    int candidate_id = candidate->ID();
-
-    // check if any empire's capital's ID is that candidate object's id.
-    // if it is, the candidate object is a capital.
-    for ([[maybe_unused]] auto& [ignored_id, empire] : local_context.Empires()) {
-        (void)ignored_id;
-        if (empire->CapitalID() == candidate_id)
-            return true;
-    }
-    return false;
+    const auto capitals{local_context.Empires().CapitalIDs()};
+    return std::any_of(capitals.begin(), capitals.end(),
+                       [candidate_id{candidate->ID()}](const auto cap_id) { return cap_id == candidate_id; });
 }
 
 void Capital::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                 ObjectSet& condition_non_targets) const
 {
-    const auto& capital_ids = parent_context.Empires().CapitalIDs();
+    const auto capital_ids{parent_context.Empires().CapitalIDs()};
     condition_non_targets.reserve(condition_non_targets.size() + capital_ids.size());
     const auto& existing_objects = parent_context.ContextObjects().allExisting();
     for (const auto& [obj_id, obj] : existing_objects) {
