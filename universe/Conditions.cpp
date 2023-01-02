@@ -71,41 +71,17 @@ namespace {
         from_set.erase(part_it, from_set.end());
     }
 
-    [[nodiscard]] std::vector<const Condition::Condition*> FlattenAndNestedConditions(
-        const std::vector<const Condition::Condition*>& input_conditions)
-    {
-        std::vector<const Condition::Condition*> retval;
-        retval.reserve(input_conditions.size() * 2);    // bit extra for some subconditions
-        for (const Condition::Condition* condition : input_conditions) {
-            if (const Condition::And* and_condition = dynamic_cast<const Condition::And*>(condition)) {
-                auto flattened_operands = FlattenAndNestedConditions(and_condition->Operands());
-                retval.insert(retval.end(), flattened_operands.begin(), flattened_operands.end());
-            } else if (condition) {
-                retval.push_back(condition);
-            }
-        }
-        return retval;
-    }
-
-    [[nodiscard]] std::map<std::string, bool> ConditionDescriptionAndTest(
+    /** Description text for input conditions, and true/false whether
+      * \a candidate_object is matched by each condition */
+    [[nodiscard]] auto ConditionDescriptionAndTest(
         const std::vector<const Condition::Condition*>& conditions,
         const ScriptingContext& parent_context,
         const UniverseObject* candidate_object)
     {
-        std::map<std::string, bool> retval;
-
-        std::vector<const Condition::Condition*> flattened_conditions;
-        if (conditions.empty())
-            return retval;
-        else if (conditions.size() > 1 || dynamic_cast<const Condition::And*>(*conditions.begin()))
-            flattened_conditions = FlattenAndNestedConditions(conditions);
-        //else if (dynamic_cast<const Condition::Or*>(*conditions.begin()))
-        //    flattened_conditions = FlattenOrNestedConditions(conditions);
-        else
-            flattened_conditions = conditions;
-
-        for (const Condition::Condition* condition : flattened_conditions)
-            retval.emplace(condition->Description(), condition->Eval(parent_context, candidate_object));
+        std::vector<std::pair<std::string, bool>> retval;
+        retval.reserve(conditions.size());
+        for (const auto* condition : conditions)
+            retval.emplace_back(condition->Description(), condition->Eval(parent_context, candidate_object));
         return retval;
     }
 }
@@ -156,6 +132,7 @@ std::string ConditionDescription(const std::vector<const Condition*>& conditions
     if (conditions.size() > 1 || dynamic_cast<const And*>(*conditions.begin())) {
         retval += UserString("ALL_OF") + " ";
         retval += (all_conditions_match_candidate ? UserString("PASSED") : UserString("FAILED")) + "\n";
+
     } else if (dynamic_cast<const Or*>(*conditions.begin())) {
         retval += UserString("ANY_OF") + " ";
         retval += (at_least_one_condition_matches_candidate ? UserString("PASSED") : UserString("FAILED")) + "\n";
@@ -1409,12 +1386,6 @@ std::unique_ptr<Condition> EmpireAffiliation::Clone() const {
 ///////////////////////////////////////////////////////////
 // Source                                                //
 ///////////////////////////////////////////////////////////
-Source::Source() {
-    m_root_candidate_invariant = true;
-    m_target_invariant = true;
-    m_source_invariant = false;
-}
-
 bool Source::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
@@ -9079,12 +9050,6 @@ std::unique_ptr<Condition> ExploredByEmpire::Clone() const
 ///////////////////////////////////////////////////////////
 // Stationary                                            //
 ///////////////////////////////////////////////////////////
-Stationary::Stationary() {
-    m_root_candidate_invariant = true;
-    m_target_invariant = true;
-    m_source_invariant = true;
-}
-
 bool Stationary::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
@@ -10833,38 +10798,51 @@ std::unique_ptr<Condition> CombatTarget::Clone() const {
 ///////////////////////////////////////////////////////////
 // And                                                   //
 ///////////////////////////////////////////////////////////
-And::And(std::vector<std::unique_ptr<Condition>>&& operands) :
-    m_operands(std::move(operands))
-{
-    m_root_candidate_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); });
-    m_target_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->TargetInvariant(); });
-    m_source_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->SourceInvariant(); });
-    m_initial_candidates_all_match = m_operands.size() == 1 && m_operands[0]->InitialCandidatesAllMatch();
+namespace {
+    // flattens any nested And conditions by extracting contained operands
+    std::vector<std::unique_ptr<Condition>> DenestOps(std::vector<std::unique_ptr<Condition>>& in) {
+        std::vector<std::unique_ptr<Condition>> retval;
+        retval.reserve(in.size());
+
+        for (auto& op : in) {
+            if (!op)
+                continue;
+            if (And* op_and = dynamic_cast<And*>(op.get())) {
+                auto sub_ops = DenestOps(op_and->Operands());
+                retval.insert(retval.end(), std::make_move_iterator(sub_ops.begin()),
+                              std::make_move_iterator(sub_ops.end()));
+            } else {
+                retval.push_back(std::move(op));
+            }
+        };
+        return retval;
+    }
+
+    auto Vectorize(std::unique_ptr<Condition>&& op1, std::unique_ptr<Condition>&& op2,
+                   std::unique_ptr<Condition>&& op3, std::unique_ptr<Condition>&& op4)
+    {
+        std::vector<std::unique_ptr<Condition>> retval;
+        retval.reserve(4);
+        retval.push_back(std::move(op1));
+        retval.push_back(std::move(op2));
+        retval.push_back(std::move(op3));
+        retval.push_back(std::move(op4));
+        return retval;
+    }
 }
+
+And::And(std::vector<std::unique_ptr<Condition>>&& operands) :
+    Condition(std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); }),
+              std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); }),
+              std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); })),
+              // assuming more than one operand exists, and thus m_initial_candidates_all_match = false
+        m_operands(DenestOps(operands))
+{}
 
 And::And(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& operand2,
-         std::unique_ptr<Condition>&& operand3, std::unique_ptr<Condition>&& operand4)
-{
-    // would prefer to initialize the vector m_operands in the initializer list, but this is difficult with non-copyable unique_ptr parameters
-    if (operand1) {
-        if (And* operand1_and = dynamic_cast<And*>(operand1.get())) {
-            m_operands = std::move(operand1_and->m_operands);
-        } else {
-            m_operands.push_back(std::move(operand1));
-        }
-    }
-    if (operand2)
-        m_operands.push_back(std::move(operand2));
-    if (operand3)
-        m_operands.push_back(std::move(operand3));
-    if (operand4)
-        m_operands.push_back(std::move(operand4));
-
-    m_root_candidate_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); });
-    m_target_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->TargetInvariant(); });
-    m_source_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->SourceInvariant(); });
-    m_initial_candidates_all_match = m_operands.size() == 1 && m_operands[0]->InitialCandidatesAllMatch();
-}
+         std::unique_ptr<Condition>&& operand3, std::unique_ptr<Condition>&& operand4) :
+    And(Vectorize(std::move(operand1), std::move(operand2), std::move(operand3), std::move(operand4)))
+{}
 
 bool And::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -11038,7 +11016,7 @@ uint32_t And::GetCheckSum() const {
     return retval;
 }
 
-std::vector<const Condition*> And::Operands() const {
+std::vector<const Condition*> And::OperandsRaw() const {
     std::vector<const Condition*> retval;
     retval.reserve(m_operands.size());
     std::transform(m_operands.begin(), m_operands.end(), std::back_inserter(retval),

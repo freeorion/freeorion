@@ -224,7 +224,7 @@ private:
   * whole compound condition, rather than an object just being matched in a
   * subcondition in order to evaluate the outer condition. */
 struct FO_COMMON_API RootCandidate final : public Condition {
-    RootCandidate() noexcept : Condition(false, true, true) {}
+    constexpr RootCandidate() noexcept : Condition(false, true, true) {}
     bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
@@ -244,7 +244,7 @@ private:
 
 /** Matches the target of an effect being executed. */
 struct FO_COMMON_API Target final : public Condition {
-    Target() noexcept : Condition(true, false, true) {}
+    constexpr Target() noexcept : Condition(true, false, true) {}
     bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
@@ -285,7 +285,7 @@ private:
 
 /** Matches planets that are an empire's capital. */
 struct FO_COMMON_API Capital final : public Condition {
-    Capital() noexcept : Condition(true, true, true, true) {}
+    constexpr Capital() noexcept : Condition(true, true, true, true) {}
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
@@ -304,7 +304,7 @@ private:
 
 /** Matches space monsters. */
 struct FO_COMMON_API Monster final : public Condition {
-    Monster() noexcept :  Condition(true, true, true) {}
+    constexpr Monster() noexcept :  Condition(true, true, true) {}
     bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
@@ -321,7 +321,7 @@ private:
 
 /** Matches armed ships and monsters. */
 struct FO_COMMON_API Armed final : public Condition {
-    Armed() noexcept : Condition(true, true, true) {}
+    constexpr Armed() noexcept : Condition(true, true, true) {}
     bool operator==(const Condition& rhs) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
@@ -536,7 +536,7 @@ private:
   * or that are that system. If \a system_id is INVALID_OBJECT_ID then matches
   * all objects in any system*/
 struct FO_COMMON_API InOrIsSystem final : public Condition {
-    InOrIsSystem(std::unique_ptr<ValueRef::ValueRef<int>>&& system_id);
+    explicit InOrIsSystem(std::unique_ptr<ValueRef::ValueRef<int>>&& system_id);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1326,7 +1326,9 @@ private:
 /** Matches objects that are moving. ... What does that mean?  Departing this
   * turn, or were located somewhere else last turn...? */
 struct FO_COMMON_API Stationary final : public Condition {
-    Stationary();
+    constexpr Stationary() noexcept :
+        Condition(true, true, true)
+    {}
 
     bool operator==(const Condition& rhs) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
@@ -1586,7 +1588,8 @@ struct FO_COMMON_API And final : public Condition {
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
-    [[nodiscard]] std::vector<const Condition*> Operands() const;
+    [[nodiscard]] std::vector<const Condition*> OperandsRaw() const;
+    [[nodiscard]] auto& Operands() noexcept { return m_operands; }
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;

@@ -60,28 +60,28 @@ struct FO_COMMON_API Condition {
     /** Derived Condition classes can override this to true if all objects returned
       * by GetDefaultInitialCandidateObject() are guaranteed to also match this
       * condition. */
-    [[nodiscard]] bool InitialCandidatesAllMatch() const noexcept { return m_initial_candidates_all_match; }
+    [[nodiscard]] constexpr bool InitialCandidatesAllMatch() const noexcept { return m_initial_candidates_all_match; }
 
     //! Returns true iff this condition's evaluation does not reference
     //! the RootCandidate objects.  This requirement ensures that if this
     //! condition is a subcondition to another Condition or a ValueRef, this
     //! condition may be evaluated once and its result used to match all local
     //! candidates to that condition.
-    [[nodiscard]] bool RootCandidateInvariant() const noexcept { return m_root_candidate_invariant; }
+    [[nodiscard]] constexpr bool RootCandidateInvariant() const noexcept { return m_root_candidate_invariant; }
 
     //! (Almost) all conditions are varying with local candidates; this is the
     //! point of evaluating a condition.  This funciton is provided for
     //! consistency with ValueRef, which may not depend on the local candidiate
     //! of an enclosing condition.
-    [[nodiscard]] bool LocalCandidateInvariant() const noexcept { return false; }
+    [[nodiscard]] constexpr bool LocalCandidateInvariant() const noexcept { return false; }
 
     //! Returns true iff this condition's evaluation does not reference the
     //! target object.
-    [[nodiscard]] bool TargetInvariant() const noexcept { return m_target_invariant; }
+    [[nodiscard]] constexpr bool TargetInvariant() const noexcept { return m_target_invariant; }
 
     //! Returns true iff this condition's evaluation does not reference the
     //! source object.
-    [[nodiscard]] bool SourceInvariant() const noexcept { return m_source_invariant; }
+    [[nodiscard]] constexpr bool SourceInvariant() const noexcept { return m_source_invariant; }
 
     [[nodiscard]] virtual std::string Description(bool negated = false) const { return ""; }
     [[nodiscard]] virtual std::string Dump(uint8_t ntabs = 0) const { return ""; }
@@ -94,20 +94,21 @@ struct FO_COMMON_API Condition {
     [[nodiscard]] virtual std::unique_ptr<Condition> Clone() const = 0;
 
 protected:
-    Condition() = default;
-    Condition(bool root_invariant, bool target_invariant, bool source_invariant, bool init_all_match) noexcept :
+    constexpr Condition() = default;
+    constexpr Condition(bool root_invariant, bool target_invariant,
+                        bool source_invariant, bool init_all_match) noexcept :
         m_root_candidate_invariant(root_invariant),
         m_target_invariant(target_invariant),
         m_source_invariant(source_invariant),
         m_initial_candidates_all_match(init_all_match)
     {}
-    Condition(bool root_invariant, bool target_invariant, bool source_invariant) noexcept :
+    constexpr Condition(bool root_invariant, bool target_invariant, bool source_invariant) noexcept :
         m_root_candidate_invariant(root_invariant),
         m_target_invariant(target_invariant),
         m_source_invariant(source_invariant)
     {}
     //! Copies invariants from other Condition
-    Condition(const Condition& rhs) = default;
+    constexpr Condition(const Condition& rhs) = default;
     Condition(Condition&& rhs) = delete;
     Condition& operator=(const Condition& rhs) = delete;
     Condition& operator=(Condition&& rhs) = delete;
