@@ -172,6 +172,7 @@ namespace {
     static_assert(std::numeric_limits<int>::max() > 0);
 
     // how many base-10 digits are needed to represent a number as text
+    // note that numeric_limits<>::digits10 is how many base 10 digits can be represented by this type
     template<typename T, std::enable_if<std::is_integral_v<T>>* = nullptr>
     constexpr std::size_t Digits(T t) {
         std::size_t retval = 1;
@@ -189,8 +190,10 @@ namespace {
             return retval;
         }
     }
+
     constexpr auto digits_int_max = Digits(std::numeric_limits<int>::max());
     constexpr auto digits_int_min = Digits(std::numeric_limits<int>::min());
+    static_assert(digits_int_min >= std::numeric_limits<int>::digits10);
     static_assert(digits_int_min <= 22 && digits_int_max <= 15);
     constexpr auto digits_long_long_int_max = Digits(std::numeric_limits<long long int>::max());
     constexpr auto digits_long_long_int_min = Digits(std::numeric_limits<long long int>::min());
@@ -198,31 +201,24 @@ namespace {
 
     // wrapper for converting number to string/string_view
     template<typename T, std::enable_if<std::is_integral_v<T>>* = nullptr>
-    auto ToChars(T t) {
-#if !defined(__cpp_lib_to_chars)
-        return std::to_string(t);
-#else
+    auto ToChars(T t) noexcept(std::is_same_v<T, bool>) {
         if constexpr (std::is_same_v<T, bool>) {
             return t ? std::string_view{"true"} : std::string_view{"false"};
-
-        } else if constexpr (Digits(std::numeric_limits<T>::min()) < 15 &&
-                             Digits(std::numeric_limits<T>::max()) < 15)
-        {
-            std::array<std::string::value_type, 15> buf{};
-            std::to_chars(buf.data(), buf.data() + buf.size(), t);
-            return std::string{buf.data()};
-
-        } else if constexpr (Digits(std::numeric_limits<T>::min()) < 24 &&
-                             Digits(std::numeric_limits<T>::max()) < 24)
-        {
-            std::array<std::string::value_type, 24> buf{};
-            std::to_chars(buf.data(), buf.data() + buf.size(), t);
-            return std::string{buf.data()};
-
         } else {
-            std::to_string(t);
-        }
+#if !defined(__cpp_lib_to_chars)
+            return std::to_string(t);
+#else
+            // to_chars + string construction is faster than calling to_string in my benchmarks.
+            // allocating just enough local buffer space for the input type might also allow
+            // small string optimization of string storage to work better when <= 15 or <= 23
+            // chars are required for a given type, depending on the standard library used
+            static constexpr auto digits = std::max(Digits(std::numeric_limits<T>::min()),
+                                                    Digits(std::numeric_limits<T>::max()));
+            std::array<std::string::value_type, digits> buf; // uninitialized since result.ptr should suffice
+            const auto result = std::to_chars(buf.data(), buf.data() + buf.size(), t);
+            return std::string(buf.data(), result.ptr);
 #endif
+        }
     }
 }
 
