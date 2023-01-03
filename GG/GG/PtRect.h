@@ -26,13 +26,13 @@ namespace GG {
     \brief The x-coordinate value type.
 
     X has an underlying value type of int.  \see GG_STRONG_INTEGRAL_TYPEDEF */
-GG_STRONG_INTEGRAL_TYPEDEF(X, int);
+GG_STRONG_INTEGRAL_TYPEDEF(X, int32_t);
 
 /** \class GG::Y
     \brief The y-coordinate value type.
 
     Y has an underlying value type of int.  \see GG_STRONG_INTEGRAL_TYPEDEF */
-GG_STRONG_INTEGRAL_TYPEDEF(Y, int);
+GG_STRONG_INTEGRAL_TYPEDEF(Y, int32_t);
 
 // some useful coordinate constants
 constexpr X X0{0};
