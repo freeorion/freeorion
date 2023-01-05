@@ -265,7 +265,9 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
 
 
 namespace {
-    std::size_t ToChars(std::size_t num, char* buffer, char* buffer_end) {
+    template<typename T, std::enable_if<std::is_integral_v<T>>* = nullptr>
+    auto ToChars(T num, char* buffer, char* buffer_end)
+    {
 #if defined(__cpp_lib_to_chars)
         auto result_ptr = std::to_chars(buffer, buffer_end, num).ptr;
         return std::distance(buffer, result_ptr);
@@ -479,30 +481,21 @@ void serialize(Archive& ar, System& obj, unsigned int const version)
         & make_nvp("m_star", obj.m_star)
         & make_nvp("m_orbits", obj.m_orbits);
 
-    if constexpr (Archive::is_loading::value) {
-        if (version < 1) {
-            DeserializeSetIntoFlatSet(ar, "m_objects", obj.m_objects);
-            DeserializeSetIntoFlatSet(ar, "m_planets", obj.m_planets);
-            DeserializeSetIntoFlatSet(ar, "m_buildings", obj.m_buildings);
-            DeserializeSetIntoFlatSet(ar, "m_fleets", obj.m_fleets);
-            DeserializeSetIntoFlatSet(ar, "m_ships", obj.m_ships);
-            DeserializeSetIntoFlatSet(ar, "m_fields", obj.m_fields);
+    using SV_IDSet_pair = std::pair<std::string_view, UniverseObject::IDSet&>;
+    std::array<SV_IDSet_pair, 6> id_sets{{
+        {"m_objects", obj.m_objects}, {"m_planets", obj.m_planets}, {"m_buildings", obj.m_buildings},
+        {"m_fleets", obj.m_fleets}, {"m_ships", obj.m_ships}, {"m_fields", obj.m_fields}}};
+    auto serialize_flat_set = [&ar, version](SV_IDSet_pair& name_ids) {
+        if constexpr (Archive::is_loading::value) {
+            if (version < 1)
+                DeserializeSetIntoFlatSet(ar, name_ids.first.data(), name_ids.second);
+            else
+                ar >> make_nvp(name_ids.first.data(), name_ids.second);
         } else {
-            ar >> make_nvp("m_objects", obj.m_objects)
-               >> make_nvp("m_planets", obj.m_planets)
-               >> make_nvp("m_buildings", obj.m_buildings)
-               >> make_nvp("m_fleets", obj.m_fleets)
-               >> make_nvp("m_ships", obj.m_ships)
-               >> make_nvp("m_fields", obj.m_fields);
+            ar << make_nvp(name_ids.first.data(), name_ids.second);
         }
-    } else {
-        ar << make_nvp("m_objects", obj.m_objects)
-           << make_nvp("m_planets", obj.m_planets)
-           << make_nvp("m_buildings", obj.m_buildings)
-           << make_nvp("m_fleets", obj.m_fleets)
-           << make_nvp("m_ships", obj.m_ships)
-           << make_nvp("m_fields", obj.m_fields);
-    }
+    };
+    std::for_each(id_sets.begin(), id_sets.end(), serialize_flat_set);
 
     ar  & make_nvp("m_starlanes_wormholes", obj.m_starlanes_wormholes);
     ar  & make_nvp("m_last_turn_battle_here", obj.m_last_turn_battle_here);
