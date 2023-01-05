@@ -44,14 +44,11 @@ Policy
                         Planet
                         OwnedBy empire = Source.Owner
                         Focus type = "FOCUS_INDUSTRY"
-                        ResourceSupplyConnected empire = Source.Owner condition = And [
-                            Not InSystem id = RootCandidate.SystemID
-                            Planet
-                            Species
-                            OwnedBy empire = Source.Owner
-                            Focus type = "FOCUS_INDUSTRY"
-                            WithinStarlaneJumps jumps = 3 condition = RootCandidate
-                        ]
+                        // TODO: this should actually be: a jump route not longer than 3 jumps where all hops are supplied
+                        //       currently one reaps benefits through blockades as long as both endpoints are in the same supply
+                        //       this would need a new condition able to exclude planets/ a filter based on the hops
+                        WithinStarlaneJumps jumps = 3 condition = RootCandidate
+                        ResourceSupplyConnected empire = Source.Owner condition = RootCandidate
                     ]))
                     condition = And [ // collect industry from neutral populated planets that are within 3 jumps and that are resource supply connected to the target planet
                         Not InSystem id = Target.SystemID
