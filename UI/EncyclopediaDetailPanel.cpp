@@ -2810,11 +2810,12 @@ namespace {
             general_type = design.IsMonster() ? UserString("ENC_MONSTER") : UserString("ENC_SHIP_DESIGN");
         }
 
-        float tech_level = boost::algorithm::clamp(context.current_turn / 400.0f, 0.0f, 1.0f);
-        float typical_shot = 3 + 27 * tech_level;
-        float enemy_DR = 20 * tech_level;
-        TraceLogger() << "RefreshDetailPanelShipDesignTag default enemy stats:: tech_level: "
-                      << tech_level << "   DR: " << enemy_DR << "   attack: " << typical_shot;
+        const float tech_level = boost::algorithm::clamp(context.current_turn / 400.0f, 0.0f, 1.0f);
+        const double scaling = GetGameRules().Get<double>("RULE_SHIP_WEAPON_DAMAGE_FACTOR");
+        const float typical_shot = (3 + 27 * tech_level) * scaling;
+        float enemy_DR = 20 * tech_level * scaling;
+        TraceLogger() << "RefreshDetailPanelShipDesignTag default enemy stats:: tech_level: " << tech_level
+                      << "   DR: " << enemy_DR << "   attack: " << typical_shot << "  incl.scaling: " << scaling;
         std::set<float> enemy_shots{typical_shot};
 
 
@@ -2972,10 +2973,11 @@ namespace {
 
         // baseline values, may be overridden
         const float tech_level = boost::algorithm::clamp(context.current_turn / 400.0f, 0.0f, 1.0f);
-        const float typical_shot = 3 + 27 * tech_level;
-        float enemy_DR = 20 * tech_level;
+        const double scaling = GetGameRules().Get<double>("RULE_SHIP_WEAPON_DAMAGE_FACTOR");
+        const float typical_shot = (3 + 27 * tech_level) * scaling;
+        float enemy_DR = 20 * tech_level * scaling;
         DebugLogger() << "default enemy stats:: tech_level: " << tech_level
-                      << "   DR: " << enemy_DR << "   attack: " << typical_shot;
+                      << "   DR: " << enemy_DR << "   attack: " << typical_shot << "  incl.scaling: " << scaling;
         std::set<float> enemy_shots{typical_shot};
 
         std::set<std::string> additional_species; // TODO: from currently selected planet and ship, if any
