@@ -1386,7 +1386,7 @@ std::string Source::Description(bool negated) const {
 std::string Source::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "Source\n"; }
 
-bool Source::Match(const ScriptingContext& local_context) const {
+bool Source::Match(const ScriptingContext& local_context) const noexcept {
     if (!local_context.source)
         return false;
     return local_context.source == local_context.condition_local_candidate;
@@ -1426,7 +1426,7 @@ std::string RootCandidate::Description(bool negated) const {
 std::string RootCandidate::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "RootCandidate\n"; }
 
-bool RootCandidate::Match(const ScriptingContext& local_context) const {
+bool RootCandidate::Match(const ScriptingContext& local_context) const noexcept {
     if (!local_context.condition_root_candidate)
         return false;
     return local_context.condition_root_candidate == local_context.condition_local_candidate;
@@ -1466,7 +1466,7 @@ std::string Target::Description(bool negated) const {
 std::string Target::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "Target\n"; }
 
-bool Target::Match(const ScriptingContext& local_context) const {
+bool Target::Match(const ScriptingContext& local_context) const noexcept {
     if (!local_context.effect_target)
         return false;
     return local_context.effect_target == local_context.condition_local_candidate;
@@ -6542,15 +6542,15 @@ std::unique_ptr<Condition> Chance::Clone() const
 MeterValue::MeterValue(MeterType meter,
                        std::unique_ptr<ValueRef::ValueRef<double>>&& low,
                        std::unique_ptr<ValueRef::ValueRef<double>>&& high) :
+    Condition((!low || low->RootCandidateInvariant()) && (!high || high->RootCandidateInvariant()),
+              (!low || low->TargetInvariant()) && (!high || high->TargetInvariant()),
+              (!low || low->SourceInvariant()) && (!high || high->SourceInvariant())),
     m_meter(meter),
     m_low(std::move(low)),
-    m_high(std::move(high))
-{
-    std::array<const ValueRef::ValueRefBase*, 2> operands = {{m_low.get(), m_high.get()}};
-    m_root_candidate_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); });
-    m_target_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); });
-    m_source_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); });
-}
+    m_high(std::move(high)),
+    m_low_high_local_invariant((!m_low || m_low->LocalCandidateInvariant()) &&
+                               (!m_high || m_high->LocalCandidateInvariant()))
+{}
 
 bool MeterValue::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -6571,7 +6571,7 @@ bool MeterValue::operator==(const Condition& rhs) const {
 
 namespace {
     struct MeterValueSimpleMatch {
-        MeterValueSimpleMatch(float low, float high, MeterType meter_type) :
+        constexpr MeterValueSimpleMatch(float low, float high, MeterType meter_type) noexcept :
             m_low(low),
             m_high(high),
             m_meter_type(meter_type)
@@ -6582,16 +6582,16 @@ namespace {
                 return false;
 
             if (const Meter* meter = candidate->GetMeter(m_meter_type)) {
-                float value = meter->Initial();    // match Initial rather than Current to make results reproducible in a given turn, until back propagation happens
+                const float value = meter->Initial();    // match Initial rather than Current to make results reproducible in a given turn, until back propagation happens
                 return m_low <= value && value <= m_high;
             }
 
             return false;
         }
 
-        float m_low;
-        float m_high;
-        MeterType m_meter_type;
+        const float m_low;
+        const float m_high;
+        const MeterType m_meter_type;
     };
 
     constexpr std::string_view MeterTypeDumpString(MeterType meter) noexcept {
@@ -6641,9 +6641,8 @@ void MeterValue::Eval(const ScriptingContext& parent_context,
                       ObjectSet& matches, ObjectSet& non_matches,
                       SearchDomain search_domain) const
 {
-    bool simple_eval_safe = ((!m_low || m_low->LocalCandidateInvariant()) &&
-                             (!m_high || m_high->LocalCandidateInvariant()) &&
-                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
+    const bool simple_eval_safe = m_low_high_local_invariant &&
+        (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
         const float low = (m_low ? m_low->Eval(parent_context) : -Meter::LARGE_VALUE);

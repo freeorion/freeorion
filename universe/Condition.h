@@ -38,7 +38,7 @@ struct FO_COMMON_API Condition {
 
     /** Returns true iff at least one object in \a candidates matches this condition.
       * Returns false for an empty candiates list. */
-    virtual bool EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const;
+    [[nodiscard]] virtual bool EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const;
 
     /** Overload for mutable TargetSet input/output. */
     void Eval(ScriptingContext& parent_context,

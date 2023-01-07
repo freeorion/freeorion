@@ -12,7 +12,7 @@ namespace Condition {
 
 /** Matches the source object only. */
 struct FO_COMMON_API Source final : public Condition {
-    constexpr Source() :
+    constexpr Source() noexcept :
         Condition(true, true, false)
     {}
 
@@ -27,7 +27,7 @@ struct FO_COMMON_API Source final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const noexcept override;
 };
 
 }

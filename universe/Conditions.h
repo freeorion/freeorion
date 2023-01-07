@@ -184,7 +184,7 @@ struct FO_COMMON_API NoOp final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
-    bool EvalAny(const ScriptingContext&, const ObjectSet& candidates) const override;
+    bool EvalAny(const ScriptingContext&, const ObjectSet& candidates) const override; // no noexcept due to logging
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) noexcept override {}
@@ -236,7 +236,7 @@ struct FO_COMMON_API RootCandidate final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const noexcept override;
 };
 
 /** There is no LocalCandidate condition. To match any local candidate object,
@@ -256,7 +256,7 @@ struct FO_COMMON_API Target final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const noexcept override;
 };
 
 /** Matches planets that are a homeworld for any of the species specified in
@@ -987,9 +987,10 @@ struct FO_COMMON_API MeterValue final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    MeterType m_meter;
+    const MeterType m_meter;
     std::unique_ptr<ValueRef::ValueRef<double>> m_low;
     std::unique_ptr<ValueRef::ValueRef<double>> m_high;
+    const bool m_low_high_local_invariant;
 };
 
 /** Matches ships that have a ship part meter of type \a meter for part \a part
