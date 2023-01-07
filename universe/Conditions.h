@@ -162,7 +162,7 @@ private:
 /** Matches no objects. Currently only has an experimental use for efficient immediate rejection as the top-line condition.
  *  Essentially the entire point of this Condition is to provide the specialized GetDefaultInitialCandidateObjects() */
 struct FO_COMMON_API None final : public Condition {
-    None();
+    constexpr None() noexcept : Condition(true, true, true) {}
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
@@ -180,7 +180,7 @@ struct FO_COMMON_API None final : public Condition {
 
 /** Does not modify the input ObjectSets. */
 struct FO_COMMON_API NoOp final : public Condition {
-    NoOp();
+    constexpr NoOp() noexcept : Condition(true, true, true) {}
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
@@ -1615,6 +1615,8 @@ struct FO_COMMON_API Or final : public Condition {
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     virtual void SetTopLevelContent(const std::string& content_name) override;
+    [[nodiscard]] std::vector<const Condition*> OperandsRaw() const;
+    [[nodiscard]] auto& Operands() noexcept { return m_operands; }
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;

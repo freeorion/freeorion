@@ -1027,12 +1027,6 @@ std::unique_ptr<Condition> All::Clone() const
 ///////////////////////////////////////////////////////////
 // None                                                  //
 ///////////////////////////////////////////////////////////
-None::None() {
-    m_root_candidate_invariant = true;
-    m_target_invariant = true;
-    m_source_invariant = true;
-}
-
 void None::Eval(const ScriptingContext& parent_context,
                 ObjectSet& matches, ObjectSet& non_matches,
                 SearchDomain search_domain) const
@@ -1072,12 +1066,6 @@ std::unique_ptr<Condition> None::Clone() const
 ///////////////////////////////////////////////////////////
 // NoOp                                                  //
 ///////////////////////////////////////////////////////////
-NoOp::NoOp() {
-    m_root_candidate_invariant = true;
-    m_target_invariant = true;
-    m_source_invariant = true;
-}
-
 void NoOp::Eval(const ScriptingContext& parent_context,
                 ObjectSet& matches, ObjectSet& non_matches,
                 SearchDomain search_domain) const
@@ -10799,7 +10787,12 @@ std::unique_ptr<Condition> CombatTarget::Clone() const {
 // And                                                   //
 ///////////////////////////////////////////////////////////
 namespace {
-    // flattens any nested And conditions by extracting contained operands
+    // flattens nested conditions by extracting contained operands, and
+    // also removes any null operands
+    template <typename ContainingCondition,
+              std::enable_if<std::is_same_v<ContainingCondition, And> ||
+                             std::is_same_v<ContainingCondition, Or>
+                            >* = nullptr>
     std::vector<std::unique_ptr<Condition>> DenestOps(std::vector<std::unique_ptr<Condition>>& in) {
         std::vector<std::unique_ptr<Condition>> retval;
         retval.reserve(in.size());
@@ -10807,8 +10800,8 @@ namespace {
         for (auto& op : in) {
             if (!op)
                 continue;
-            if (And* op_and = dynamic_cast<And*>(op.get())) {
-                auto sub_ops = DenestOps(op_and->Operands());
+            if (auto* op_and = dynamic_cast<ContainingCondition*>(op.get())) {
+                auto sub_ops = DenestOps<ContainingCondition>(op_and->Operands());
                 retval.insert(retval.end(), std::make_move_iterator(sub_ops.begin()),
                               std::make_move_iterator(sub_ops.end()));
             } else {
@@ -10836,7 +10829,7 @@ And::And(std::vector<std::unique_ptr<Condition>>&& operands) :
               std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); }),
               std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); })),
               // assuming more than one operand exists, and thus m_initial_candidates_all_match = false
-        m_operands(DenestOps(operands))
+        m_operands(DenestOps<And>(operands))
 {}
 
 And::And(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& operand2,
@@ -10864,16 +10857,9 @@ bool And::operator==(const Condition& rhs) const {
 void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                ObjectSet& non_matches, SearchDomain search_domain) const
 {
-    if (m_operands.empty()) {
-        ErrorLogger(conditions) << "And::Eval given no operands!";
+    if (m_operands.empty())
         return;
-    }
-    for (auto& operand : m_operands) {
-        if (!operand) {
-            ErrorLogger(conditions) << "And::Eval given null operand!";
-            return;
-        }
-    }
+
 
     // TODO: Enable if TraceLogger is needed
     /*
@@ -10937,7 +10923,7 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         // check all operand conditions on all objects in the matches set, moving those
         // that don't pass a condition to the non-matches set
 
-        for (auto& operand : m_operands) {
+        for (const auto& operand : m_operands) {
             if (matches.empty()) break;
             operand->Eval(parent_context, matches, non_matches, SearchDomain::MATCHES);
             /*
@@ -11001,9 +10987,8 @@ void And::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_conte
 }
 
 void And::SetTopLevelContent(const std::string& content_name) {
-    for (auto& operand : m_operands) {
+    for (auto& operand : m_operands)
         operand->SetTopLevelContent(content_name);
-    }
 }
 
 uint32_t And::GetCheckSum() const {
@@ -11031,37 +11016,17 @@ std::unique_ptr<Condition> And::Clone() const
 // Or                                                    //
 ///////////////////////////////////////////////////////////
 Or::Or(std::vector<std::unique_ptr<Condition>>&& operands) :
-    m_operands(std::move(operands))
-{
-    m_root_candidate_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); });
-    m_target_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->TargetInvariant(); });
-    m_source_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->SourceInvariant(); });
-    m_initial_candidates_all_match = m_operands.size() == 1 && m_operands[0]->InitialCandidatesAllMatch();
-}
+    Condition(std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); }),
+              std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); }),
+              std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); })),
+    // assuming more than one operand exists, and thus m_initial_candidates_all_match = false
+    m_operands(DenestOps<Or>(operands))
+{}
 
 Or::Or(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& operand2,
-       std::unique_ptr<Condition>&& operand3, std::unique_ptr<Condition>&& operand4)
-{
-    // would prefer to initialize the vector m_operands in the initializer list, but this is difficult with non-copyable unique_ptr parameters
-    if (operand1) {
-        if (Or* operand1_or = dynamic_cast<Or*>(operand1.get())) {
-            m_operands = std::move(operand1_or->m_operands);
-        } else {
-            m_operands.push_back(std::move(operand1));
-        }
-    }
-    if (operand2)
-        m_operands.push_back(std::move(operand2));
-    if (operand3)
-        m_operands.push_back(std::move(operand3));
-    if (operand4)
-        m_operands.push_back(std::move(operand4));
-
-    m_root_candidate_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); });
-    m_target_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->TargetInvariant(); });
-    m_source_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->SourceInvariant(); });
-    m_initial_candidates_all_match = m_operands.size() == 1 && m_operands[0]->InitialCandidatesAllMatch();
-}
+       std::unique_ptr<Condition>&& operand3, std::unique_ptr<Condition>&& operand4) :
+    Or(Vectorize(std::move(operand1), std::move(operand2), std::move(operand3), std::move(operand4)))
+{}
 
 bool Or::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -11083,23 +11048,15 @@ bool Or::operator==(const Condition& rhs) const {
 void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain) const
 {
-    if (m_operands.empty()) {
-        ErrorLogger(conditions) << "Or::Eval given no operands!";
+    if (m_operands.empty())
         return;
-    }
-    for (auto& operand : m_operands) {
-        if (!operand) {
-            ErrorLogger(conditions) << "Or::Eval given null operand!";
-            return;
-        }
-    }
 
     if (search_domain == SearchDomain::NON_MATCHES) {
         // check each item in the non-matches set against each of the operand conditions
         // if a non-candidate item matches an operand condition, move the item to the
         // matches set.
 
-        for (auto& operand : m_operands) {
+        for (const auto& operand : m_operands) {
             if (non_matches.empty()) break;
             operand->Eval(parent_context, matches, non_matches, SearchDomain::NON_MATCHES);
         }
@@ -11111,12 +11068,12 @@ void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         ObjectSet partly_checked_matches;
         partly_checked_matches.reserve(matches.size());
 
-        // move items in matches set the fail the first operand condition into
+        // move items that are in matches set, which fail the first operand condition, into
         // partly_checked_matches set
         m_operands[0]->Eval(parent_context, matches, partly_checked_matches, SearchDomain::MATCHES);
 
         // move items that pass any of the other conditions back into matches
-        for (auto& operand : m_operands) {
+        for (const auto& operand : m_operands) {
             if (partly_checked_matches.empty()) break;
             operand->Eval(parent_context, matches, partly_checked_matches, SearchDomain::NON_MATCHES);
         }
@@ -11222,6 +11179,14 @@ uint32_t Or::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_operands);
 
     TraceLogger(conditions) << "GetCheckSum(Or): retval: " << retval;
+    return retval;
+}
+
+std::vector<const Condition*> Or::OperandsRaw() const {
+    std::vector<const Condition*> retval;
+    retval.reserve(m_operands.size());
+    std::transform(m_operands.begin(), m_operands.end(), std::back_inserter(retval),
+                   [](auto& xx) {return xx.get();});
     return retval;
 }
 
