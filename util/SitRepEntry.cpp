@@ -360,7 +360,7 @@ SitRepEntry CreateCombatDestroyedObjectSitRep(const UniverseObject* obj, int com
     return sitrep;
 }
 
-SitRepEntry CreatePlanetDepopulatedSitRep(int planet_id) {
+SitRepEntry CreatePlanetDepopulatedSitRep(int planet_id) { // TODO: pass current_turn
     SitRepEntry sitrep(
         UserStringNop("SITREP_PLANET_DEPOPULATED"),
         CurrentTurn() + 1,
@@ -370,7 +370,7 @@ SitRepEntry CreatePlanetDepopulatedSitRep(int planet_id) {
     return sitrep;
 }
 
-SitRepEntry CreatePlanetColonizedSitRep(int planet_id, const std::string& species) {
+SitRepEntry CreatePlanetColonizedSitRep(int planet_id, const std::string& species) { // TODO: pass current_turn
     SitRepEntry sitrep(
         UserStringNop("SITREP_PLANET_COLONIZED"),
         CurrentTurn() + 1,
@@ -381,7 +381,7 @@ SitRepEntry CreatePlanetColonizedSitRep(int planet_id, const std::string& specie
     return sitrep;
 }
 
-SitRepEntry CreatePlanetOutpostedSitRep(int planet_id) {
+SitRepEntry CreatePlanetOutpostedSitRep(int planet_id) { // TODO: pass current_turn
     SitRepEntry sitrep(
         UserStringNop("SITREP_PLANET_OUTPOSTED"),
         CurrentTurn() + 1,
@@ -391,7 +391,7 @@ SitRepEntry CreatePlanetOutpostedSitRep(int planet_id) {
     return sitrep;
 }
 
-SitRepEntry CreatePlanetGiftedSitRep(int planet_id, int empire_id) {
+SitRepEntry CreatePlanetGiftedSitRep(int planet_id, int empire_id) { // TODO: pass current_turn
     SitRepEntry sitrep(
         UserStringNop("SITREP_PLANET_GIFTED"),
         CurrentTurn() + 1,
@@ -402,7 +402,7 @@ SitRepEntry CreatePlanetGiftedSitRep(int planet_id, int empire_id) {
     return sitrep;
 }
 
-SitRepEntry CreateFleetGiftedSitRep(int fleet_id, int empire_id) {
+SitRepEntry CreateFleetGiftedSitRep(int fleet_id, int empire_id) { // TODO: pass current_turn
     SitRepEntry sitrep(
         UserStringNop("SITREP_FLEET_GIFTED"),
         CurrentTurn() + 1,
@@ -539,7 +539,7 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id,
     }
 }
 
-SitRepEntry CreateEmpireEliminatedSitRep(int empire_id) {
+SitRepEntry CreateEmpireEliminatedSitRep(int empire_id) { // TODO: pass current_turn
     SitRepEntry sitrep(
         UserStringNop("SITREP_EMPIRE_ELIMINATED"),
         CurrentTurn() + 1,
@@ -549,8 +549,8 @@ SitRepEntry CreateEmpireEliminatedSitRep(int empire_id) {
     return sitrep;
 }
 
-SitRepEntry CreateVictorySitRep(const std::string& reason_string, int empire_id) {
-    SitRepEntry sitrep(reason_string.c_str(), CurrentTurn() + 1,
+SitRepEntry CreateVictorySitRep(const std::string& reason_string, int empire_id) { // TODO: pass string with move
+    SitRepEntry sitrep(reason_string.c_str(), CurrentTurn() + 1,  // TODO: pass current_turn
                        "icons/sitrep/victory.png", UserStringNop("SITREP_VICTORY_LABEL"), true);
     sitrep.AddVariable(VarText::EMPIRE_ID_TAG, std::to_string(empire_id));
     return sitrep;

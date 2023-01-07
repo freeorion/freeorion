@@ -231,9 +231,14 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_policy_adoption_total_duration);
 
     if (Archive::is_loading::value && version < 7) {
+        const auto* app = IApp::GetApp();
+        const auto current_turn = app ? app->CurrentTurn() : INVALID_GAME_TURN;
+
         m_policy_adoption_current_duration.clear();
-        for (auto& [policy_name, adoption_info] : m_adopted_policies)
-            m_policy_adoption_current_duration[policy_name] = CurrentTurn() - adoption_info.adoption_turn;
+        for (auto& [policy_name, adoption_info] : m_adopted_policies) {
+            m_policy_adoption_current_duration[policy_name] =
+                app ? (current_turn - adoption_info.adoption_turn) : 0;
+        }
     } else {
         ar  & BOOST_SERIALIZATION_NVP(m_policy_adoption_current_duration);
     }

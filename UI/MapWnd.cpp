@@ -2836,7 +2836,7 @@ void MapWnd::EnableOrderIssuing(bool enable) {
         button_label = UserString("MAP_BTN_TURN_UPDATE");
     }
 
-    m_btn_turn->SetText(boost::io::str(FlexibleFormat(button_label) % std::to_string(CurrentTurn())));
+    m_btn_turn->SetText(boost::io::str(FlexibleFormat(button_label) % std::to_string(app->CurrentTurn())));
     RefreshTurnButtonTooltip();
     m_side_panel->EnableOrderIssuing(enable);
     m_production_wnd->EnableOrderIssuing(enable);
@@ -2924,16 +2924,14 @@ void MapWnd::InitTurn(ScriptingContext& context) {
 
     timer.EnterSection("sitreps");
     // are there any sitreps to show?
-    bool show_intro_sitreps = CurrentTurn() == 1 &&
+    bool show_intro_sitreps = context.current_turn == 1 &&
         GetOptionsDB().Get<Aggression>("setup.ai.aggression") <= Aggression::TYPICAL;
     DebugLogger() << "showing intro sitreps : " << show_intro_sitreps;
     if (show_intro_sitreps || m_sitrep_panel->NumVisibleSitrepsThisTurn() > 0) {
-        m_sitrep_panel->ShowSitRepsForTurn(CurrentTurn());
+        m_sitrep_panel->ShowSitRepsForTurn(context.current_turn);
         if (!m_design_wnd->Visible() && !m_research_wnd->Visible()
             && !m_production_wnd->Visible())
-        {
-            ShowSitRep();
-        }
+        { ShowSitRep(); }
     }
 
     if (m_sitrep_panel->Visible()) {
@@ -4069,12 +4067,14 @@ void MapWnd::InitFieldRenderingBuffers() {
     ClearFieldRenderingBuffers();
 
     const Universe& universe = GetUniverse();
-    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const auto* app = GGHumanClientApp::GetApp();
+    const auto empire_id = app->EmpireID();
+    const auto current_turn = app->CurrentTurn();
 
 
     for (auto& field_icon : m_field_icons) {
         bool current_field_visible = universe.GetObjectVisibilityByEmpire(field_icon.first, empire_id) > Visibility::VIS_BASIC_VISIBILITY;
-        auto field = Objects().get<Field>(field_icon.first);
+        auto field = universe.Objects().get<Field>(field_icon.first);
         if (!field)
             continue;
         const float FIELD_SIZE = field->GetMeter(MeterType::METER_SIZE)->Initial();  // field size is its radius
@@ -4093,7 +4093,7 @@ void MapWnd::InitFieldRenderingBuffers() {
         // per-turn rotation of texture. TODO: make depend on something scriptable
         float rotation_speed = 0.03f;               // arbitrary rotation rate in radians
         if (rotation_speed != 0.0f)
-            rotation_angle += CurrentTurn() * rotation_speed;
+            rotation_angle += current_turn * rotation_speed;
 
         const float COS_THETA = std::cos(rotation_angle);
         const float SIN_THETA = std::sin(rotation_angle);
@@ -4197,18 +4197,18 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
             continue;
         }
 
-        for (const auto& [centre, radius] : detection_circles) {
+        for (const auto [centre, radius] : detection_circles) {
             if (radius < 5.0f || radius > 2048.0f)  // hide uselessly small and ridiculously large circles. the latter so super-testers don't have an empire-coloured haze over the whole map.
                 continue;
-            const auto& [X, Y] = centre;
+            const auto [X, Y] = centre;
 
             GG::Clr circle_colour = empire->Color();
             circle_colour.a = 8*GetOptionsDB().Get<int>("ui.map.detection.range.opacity");
 
-            GG::Pt circle_centre = GG::Pt{GG::X(X), GG::Y(Y)};
-            GG::Pt rad_pt{GG::X(radius), GG::Y(radius)};
-            GG::Pt ul = circle_centre - rad_pt;
-            GG::Pt lr = circle_centre + rad_pt;
+            const GG::Pt circle_centre = GG::Pt{GG::X(X), GG::Y(Y)};
+            const GG::Pt rad_pt{GG::X(radius), GG::Y(radius)};
+            const GG::Pt ul = circle_centre - rad_pt;
+            const GG::Pt lr = circle_centre + rad_pt;
 
             circles[circle_colour].emplace_back(ul, lr);
         }
@@ -4224,8 +4224,8 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
         border_colour.a = std::min(255, border_colour.a + 80);
         AdjustBrightness(border_colour, 2.0, true);
 
-        std::size_t radii_start_index = m_visibility_radii_vertices.size();
-        std::size_t border_start_index = m_visibility_radii_border_vertices.size();
+        const std::size_t radii_start_index = m_visibility_radii_vertices.size();
+        const std::size_t border_start_index = m_visibility_radii_border_vertices.size();
 
         for (const auto& [ul, lr] : ul_lrs) {
             static constexpr std::size_t verts_per_circle = 36;

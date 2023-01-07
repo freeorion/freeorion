@@ -357,7 +357,7 @@ void System::Insert(UniverseObject* obj, int orbit, int current_turn) {
     case UniverseObjectType::OBJ_SHIP: {
         m_ships.insert(obj->ID());
         if (auto ship = static_cast<Ship*>(obj))
-            ship->SetArrivedOnTurn(CurrentTurn());
+            ship->SetArrivedOnTurn(current_turn);
         break;
     }
     case UniverseObjectType::OBJ_FLEET: {

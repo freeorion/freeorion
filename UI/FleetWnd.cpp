@@ -3756,15 +3756,16 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt,
 
     // Allow dismissal of stale visibility information
     if (!fleet->OwnedBy(client_empire_id)) {
-        auto forget_fleet_action = [fleet]()
-        { ClientUI::GetClientUI()->GetMapWnd()->ForgetObject(fleet->ID()); };
-        auto visibility_turn_map = u.GetObjectVisibilityTurnMapByEmpire(fleet->ID(), client_empire_id);
+        auto forget_fleet_action = [fleet]() { ClientUI::GetClientUI()->GetMapWnd()->ForgetObject(fleet->ID()); };
+        const auto& visibility_turn_map = u.GetObjectVisibilityTurnMapByEmpire(fleet->ID(), client_empire_id);
         auto last_turn_visible_it = visibility_turn_map.find(Visibility::VIS_BASIC_VISIBILITY);
-        if (last_turn_visible_it != visibility_turn_map.end()
-            && last_turn_visible_it->second < CurrentTurn())
-        {
-            popup->AddMenuItem(GG::MenuItem(UserString("FW_ORDER_DISMISS_SENSOR_GHOST"),
-                                            false, false, std::move(forget_fleet_action)));
+        if (const ClientApp* app = ClientApp::GetApp()) {
+            if (last_turn_visible_it != visibility_turn_map.end()
+                && last_turn_visible_it->second < app->CurrentTurn())
+            {
+                popup->AddMenuItem(GG::MenuItem(UserString("FW_ORDER_DISMISS_SENSOR_GHOST"),
+                                                false, false, std::move(forget_fleet_action)));
+            }
         }
     }
 

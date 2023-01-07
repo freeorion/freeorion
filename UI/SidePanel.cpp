@@ -1905,14 +1905,14 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
         }
 
         // status: attacked on previous turn
-        if (planet->LastTurnAttackedByShip() == CurrentTurn() - 1) {
+        if (planet->LastTurnAttackedByShip() == context.current_turn - 1) {
             planet_status_messages.emplace_back(boost::io::str(FlexibleFormat(
                                                 UserString("OPTIONS_DB_UI_PLANET_STATUS_ATTACKED")) % planet->Name()));
             planet_status_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "planet_status_attacked.png", true);
         }
 
         // status: conquered on previous turn
-        if (planet->LastTurnConquered() == CurrentTurn() - 1) {
+        if (planet->LastTurnConquered() == context.current_turn - 1) {
             planet_status_messages.emplace_back(boost::io::str(FlexibleFormat(
                                                 UserString("OPTIONS_DB_UI_PLANET_STATUS_CONQUERED")) % planet->Name()));
             planet_status_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "planet_status_conquered.png", true);

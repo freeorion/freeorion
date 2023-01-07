@@ -8,7 +8,6 @@
 #include "Logger.h"
 #include "i18n.h"
 
-#include <boost/lexical_cast.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/filesystem/fstream.hpp>
 
@@ -150,14 +149,14 @@ Moderator::CreateSystem::CreateSystem(double x, double y, StarType star_type) :
 {}
 
 namespace {
-    std::string GenerateSystemName() {
+    std::string GenerateSystemName(const ObjectMap& objects) {
         static std::vector<std::string> star_names = UserStringList("STAR_NAMES");
 
         // pick a name for the system
         for (const std::string& star_name : star_names) {
             // does an existing system have this name?
             bool dupe = false;
-            for (auto* system : Objects().allRaw<System>()) {
+            for (auto* system : objects.allRaw<System>()) {
                 if (system->Name() == star_name) {
                     dupe = true;
                     break;  // another system has this name. skip to next potential name.
@@ -171,9 +170,13 @@ namespace {
 }
 
 void Moderator::CreateSystem::Execute() const {
-    auto system = GetUniverse().InsertNew<System>(m_star_type, GenerateSystemName(),
-                                                  m_x, m_y, CurrentTurn());
-    GetUniverse().InitializeSystemGraph(Empires());
+    auto* app = IApp::GetApp();
+    const auto current_turn = app->CurrentTurn();
+    auto& universe = app->GetUniverse();
+
+    auto system = universe.InsertNew<System>(m_star_type, GenerateSystemName(universe.Objects()),
+                                             m_x, m_y, current_turn);
+    universe.InitializeSystemGraph(app->Empires());
     if (!system) {
         ErrorLogger() << "CreateSystem::Execute couldn't create system!";
         return;
@@ -205,7 +208,10 @@ Moderator::CreatePlanet::CreatePlanet(int system_id, PlanetType planet_type, Pla
 {}
 
 void Moderator::CreatePlanet::Execute() const {
-    auto location = Objects().get<System>(m_system_id);
+    auto* app = IApp::GetApp();
+    const auto current_turn = app->CurrentTurn();
+    auto& universe = app->GetUniverse();
+    auto location = app->GetUniverse().Objects().get<System>(m_system_id);
     if (!location) {
         ErrorLogger() << "CreatePlanet::Execute couldn't get a System object at which to create the planet";
         return;
@@ -218,17 +224,14 @@ void Moderator::CreatePlanet::Execute() const {
         return;
     }
 
-    auto& universe = GetUniverse();
-    auto planet = universe.InsertNew<Planet>(m_planet_type, m_planet_size, CurrentTurn());
+    auto planet = universe.InsertNew<Planet>(m_planet_type, m_planet_size, current_turn);
     if (!planet) {
         ErrorLogger() << "CreatePlanet::Execute unable to create new Planet object";
         return;
     }
 
-    auto current_turn = CurrentTurn();
-
-    int orbit = *(free_orbits.begin());
-    location->Insert(std::shared_ptr<UniverseObject>(planet), orbit, current_turn);
+    const int orbit = *(free_orbits.begin());
+    location->Insert(std::static_pointer_cast<UniverseObject>(std::move(planet)), orbit, current_turn);
 }
 
 std::string Moderator::CreatePlanet::Dump() const {

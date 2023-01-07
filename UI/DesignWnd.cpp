@@ -4805,7 +4805,7 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
         m_incomplete_design = std::make_shared<ShipDesign>(
             std::invalid_argument(""),
             name.StoredString(), description.StoredString(),
-            CurrentTurn(), ClientApp::GetApp()->EmpireID(),
+            ClientApp::GetApp()->CurrentTurn(), ClientApp::GetApp()->EmpireID(),
             hull, Parts(), icon, "", name.IsInStringtable(),
             false, std::move(uuid));
         m_incomplete_design->SetID(INCOMPLETE_DESIGN_ID);
@@ -4872,7 +4872,7 @@ std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
         // create design from stuff chosen in UI
         ShipDesign design(std::invalid_argument(""),
                           name.StoredString(), description.StoredString(),
-                          CurrentTurn(), ClientApp::GetApp()->EmpireID(),
+                          ClientApp::GetApp()->CurrentTurn(), ClientApp::GetApp()->EmpireID(),
                           hull_name, parts, icon, "some model", name.IsInStringtable(),
                           false, new_uuid);
 

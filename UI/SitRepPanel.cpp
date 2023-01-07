@@ -577,7 +577,8 @@ void SitRepPanel::NextClicked() {
 void SitRepPanel::LastClicked() {
     auto turns = GetUnvalidatedSitRepsSortedByTurn(GGHumanClientApp::GetApp()->EmpireID());
     // search backwards from current turn for a non-empty sitrep turn
-    ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(turns, CurrentTurn() + 1, false, m_hidden_sitrep_templates));
+    ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(turns, GGHumanClientApp::GetApp()->CurrentTurn() + 1,
+                                                  false, m_hidden_sitrep_templates));
 }
 
 void SitRepPanel::FilterClicked() {
@@ -863,7 +864,7 @@ void SitRepPanel::SetHiddenSitRepTemplates(const std::set<std::string>& template
 
 int SitRepPanel::NumVisibleSitrepsThisTurn() const {
     auto turns = GetUnvalidatedSitRepsSortedByTurn(GGHumanClientApp::GetApp()->EmpireID());
-    auto& this_turn_sitreps = turns[CurrentTurn()];
+    auto& this_turn_sitreps = turns[GGHumanClientApp::GetApp()->CurrentTurn()];
     auto is_valid = [this](const auto* s) { return s && !IsSitRepInvalid(*s, m_hidden_sitrep_templates); };
 
     return std::count_if(this_turn_sitreps.begin(), this_turn_sitreps.end(), is_valid);
