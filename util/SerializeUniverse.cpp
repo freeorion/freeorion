@@ -24,7 +24,7 @@
 #if __has_include(<charconv>)
 #include <charconv>
 #else
-#include <stdio.h>
+#include <cstdio>
 #endif
 
 namespace {
@@ -327,11 +327,15 @@ namespace {
 
     /** Write text representation of meter type, current, and initial value.
       * Return number of consumed chars. */
-    std::size_t ToChars(const UniverseObject::MeterMap::value_type& val, char* const buffer, char* const buffer_end) {
-        const auto& [type, m] = val;
+    auto ToChars(const UniverseObject::MeterMap::value_type& val,
+                 char* const buffer, char* const buffer_end)
+    {
+        using retval_t = decltype(std::distance(buffer, buffer_end));
 
         if (std::distance(buffer, buffer_end) < 10)
-            return 0;
+            return retval_t{0};
+
+        const auto& [type, m] = val;
         std::copy_n(MeterTypeTag(type).data(), 3, buffer); // tags should all be 3 chars
         auto result_ptr = buffer + 3;
 
@@ -348,14 +352,12 @@ namespace {
     template <>
     void Serialize(boost::archive::xml_oarchive& ar, UniverseObject::MeterMap& meters, unsigned int const)
     {
-        using namespace boost::serialization;
-
         static constexpr std::size_t buffer_size = num_meters_possible * single_meter_text_size;
         static_assert(buffer_size > 100);
 
         std::array<std::string::value_type, buffer_size> buffer{};
-        char* buffer_next = buffer.data(); // TODO: char* -> auto* ?
-        char* buffer_end = buffer.data() + buffer.size();
+        auto* buffer_next = buffer.data(); // TODO: char* -> auto* ?
+        auto* buffer_end = buffer.data() + buffer.size();
 
         // store number of meters
         buffer_next += ToChars(meters.size(), buffer_next, buffer_end);
@@ -367,24 +369,23 @@ namespace {
         }
 
         std::string s{buffer.data()};
-        ar << make_nvp("meters", s);
+        ar << boost::serialization::make_nvp("meters", s);
     }
 
     template <>
-    void Serialize(boost::archive::xml_iarchive& ar, UniverseObject::MeterMap& meters, unsigned int const version)
+    void Serialize(boost::archive::xml_iarchive& ar, UniverseObject::MeterMap& meters,
+                   unsigned int const version)
     {
-        using namespace boost::serialization;
-
         static constexpr std::size_t buffer_size = num_meters_possible * single_meter_text_size;
 
         if (version < 4) {
-            ar >> make_nvp("m_meters", meters);
+            ar >> boost::serialization::make_nvp("m_meters", meters);
             return;
         }
 
         std::string buffer;
         buffer.reserve(buffer_size);
-        ar >> make_nvp("meters", buffer);
+        ar >> boost::serialization::make_nvp("meters", buffer);
 
         unsigned int count = 0U;
         const char* const buffer_end = buffer.c_str() + buffer.size();
@@ -417,7 +418,7 @@ namespace {
                 ++next;
 
             Meter meter;
-            auto consumed = meter.SetFromChars(std::string_view(next, std::distance(next, buffer_end)));
+            const auto consumed = meter.SetFromChars(std::string_view(next, std::distance(next, buffer_end)));
             if (consumed < 1)
                 return;
 
@@ -427,16 +428,6 @@ namespace {
             while (std::distance(next, buffer_end) > 0 && *next == ' ')
                 ++next;
         }
-    }
-
-    template <typename Archive>
-    void DeserializeSetIntoFlatSet(Archive& ar, const char* name, boost::container::flat_set<int>& c)
-    {
-        static_assert(Archive::is_loading::value);
-        std::set<int> temp;
-        ar >> boost::serialization::make_nvp(name, temp);
-        c.clear();
-        c.insert(boost::container::ordered_unique_range, temp.begin(), temp.end());
     }
 }
 
@@ -466,6 +457,125 @@ void serialize(Archive& ar, UniverseObject& o, unsigned int const version)
     ar  & make_nvp("m_created_on_turn", o.m_created_on_turn);
 }
 
+namespace {
+    template<typename T, std::enable_if<std::is_integral_v<T>>* = nullptr>
+    constexpr std::size_t Digits(T t) {
+        std::size_t retval = 1;
+
+        if constexpr (std::is_same_v<T, bool>) {
+            return 5; // for "false"
+        } else {
+            if constexpr (std::is_signed_v<T>)
+                retval += (t < 0);
+
+            while (t != 0) {
+                retval += 1;
+                t /= 10;
+            }
+            return retval;
+        }
+    }
+    constexpr auto digits_id_max = Digits(std::numeric_limits<UniverseObject::IDSet::value_type>::max());
+    constexpr auto digits_id_min = Digits(std::numeric_limits<UniverseObject::IDSet::value_type>::min());
+    constexpr auto digits_id = std::max(digits_id_max, digits_id_min);
+    using flat_set_size_t = boost::container::flat_set<UniverseObject::IDSet::value_type>::size_type;
+    constexpr auto digits_size_t = Digits(std::numeric_limits<flat_set_size_t>::max());
+
+
+    template <typename Archive>
+    void Serialize(Archive& ar, const char* name, boost::container::flat_set<int32_t>& fs)
+    { ar & boost::serialization::make_nvp(name, fs); }
+
+    template <>
+    void Serialize(boost::archive::xml_oarchive& ar, const char* name, boost::container::flat_set<int32_t>& fs)
+    {
+        std::string buffer;
+        // space for a size of container value, for each ID number, a space pads between each, and a bit extra
+        const auto space_needed = (digits_id + 1)*fs.size() + digits_size_t + 1 + 3;
+        buffer.reserve(space_needed);
+
+        // small buffer for each number to be written as text before appending to main buffer
+        static constexpr auto num_buf_sz = std::max(digits_id, digits_size_t) + 2;
+        std::array<std::string::value_type, num_buf_sz> sz_buf{};
+        auto written_chars = ToChars(fs.size(), sz_buf.data(), sz_buf.data() + sz_buf.size());
+        buffer.append(sz_buf.data(), written_chars);
+
+        for (auto i : fs) {
+            // small buffer for each number to be written as text before appending to main buffer
+            std::array<std::string::value_type, num_buf_sz> number_buf{" "};
+            written_chars = ToChars(i, number_buf.data() + 1, number_buf.data() + number_buf.size());
+            buffer.append(number_buf.data(), written_chars + 1);
+        }
+
+        ar << boost::serialization::make_nvp(name, buffer);
+    }
+
+    template <>
+    void Serialize(boost::archive::xml_iarchive& ar, const char* name,
+                   boost::container::flat_set<int32_t>& fs)
+    {
+        std::string buffer;
+        ar >> boost::serialization::make_nvp(name, buffer);
+
+        flat_set_size_t count = 0U;
+        const auto* next = buffer.c_str();
+        const auto* const buffer_end = buffer.c_str() + buffer.size();
+
+#if defined(__cpp_lib_to_chars)
+        auto result = std::from_chars(next, buffer_end, count);
+        if (result.ec != std::errc())
+            return;
+        next = result.ptr;
+#else
+        int chars_consumed = 0;
+        auto matched = std::sscanf(next, "%u%n", &count, &chars_consumed);
+        if (matched < 1)
+            return;
+        next += chars_consumed;
+#endif
+        fs.reserve(fs.size() + count);
+        using ID_t = std::decay_t<decltype(fs)>::value_type;
+        std::vector<ID_t> maybe_unsorted_buffer;
+        maybe_unsorted_buffer.reserve(count);
+
+        for (decltype(count) idx = 0u; idx < count; ++idx) {
+            // advance to next bit of non-whitespace
+            while (std::distance(next, buffer_end) > 0 && *next == ' ')
+                ++next;
+
+            ID_t id = INVALID_OBJECT_ID;
+
+#if defined(__cpp_lib_to_chars)
+            auto result = std::from_chars(next, buffer_end, id);
+            if (result.ec != std::errc())
+                return;
+            next = result.ptr;
+#else
+            int chars_consumed = 0;
+            auto matched = std::sscanf(next, "%d%n", &id, &chars_consumed);
+            if (matched < 1)
+                return;
+            next += chars_consumed;
+#endif
+
+            if (id != INVALID_OBJECT_ID)
+                maybe_unsorted_buffer.push_back(id);
+        }
+        std::sort(maybe_unsorted_buffer.begin(), maybe_unsorted_buffer.end());
+        auto unique_it = std::unique(maybe_unsorted_buffer.begin(), maybe_unsorted_buffer.end());
+        fs.insert(boost::container::ordered_unique_range, maybe_unsorted_buffer.begin(), unique_it);
+    }
+
+    template <typename Archive>
+    void DeserializeSetIntoFlatSet(Archive& ar, const char* name, boost::container::flat_set<int>& c)
+    {
+        static_assert(Archive::is_loading::value);
+        std::set<int> temp;
+        ar >> boost::serialization::make_nvp(name, temp);
+        c.clear();
+        c.insert(boost::container::ordered_unique_range, temp.begin(), temp.end());
+    }
+}
 
 template <typename Archive>
 void load_construct_data(Archive& ar, System* obj, unsigned int const version)
@@ -490,9 +600,9 @@ void serialize(Archive& ar, System& obj, unsigned int const version)
             if (version < 1)
                 DeserializeSetIntoFlatSet(ar, name_ids.first.data(), name_ids.second);
             else
-                ar >> make_nvp(name_ids.first.data(), name_ids.second);
+                Serialize(ar, name_ids.first.data(), name_ids.second);
         } else {
-            ar << make_nvp(name_ids.first.data(), name_ids.second);
+            Serialize(ar, name_ids.first.data(), name_ids.second);
         }
     };
     std::for_each(id_sets.begin(), id_sets.end(), serialize_flat_set);
@@ -606,9 +716,9 @@ void serialize(Archive& ar, Planet& obj, unsigned int const version)
         if (version < 5)
             DeserializeSetIntoFlatSet(ar, "m_buildings", obj.m_buildings);
         else
-            ar >> make_nvp("m_buildings", obj.m_buildings);
+            Serialize(ar, "m_buildings", obj.m_buildings);
     } else {
-        ar << make_nvp("m_buildings", obj.m_buildings);
+        Serialize(ar, "m_buildings", obj.m_buildings);
     }
     ar  & make_nvp("m_turn_last_colonized", obj.m_turn_last_colonized);
     ar  & make_nvp("m_turn_last_conquered", obj.m_turn_last_conquered);
@@ -657,9 +767,9 @@ void serialize(Archive& ar, Fleet& obj, unsigned int const version)
         if (version < 7)
             DeserializeSetIntoFlatSet(ar, "m_ships", obj.m_ships);
         else
-            ar >> make_nvp("m_ships", obj.m_ships);
+            Serialize(ar, "m_ships", obj.m_ships);
     } else {
-        ar << make_nvp("m_ships", obj.m_ships);
+        Serialize(ar, "m_ships", obj.m_ships);
     }
 
     ar  & make_nvp("m_prev_system", obj.m_prev_system)

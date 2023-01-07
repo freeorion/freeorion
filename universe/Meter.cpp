@@ -5,10 +5,8 @@
 #include <algorithm>
 #include <array>
 
-#if __has_include(<charconv>)
-#include <charconv>
-#else
-#include <stdio.h>
+#if !__has_include(<charconv>)
+#include <cstdio>
 #endif
 
 namespace {
@@ -52,17 +50,17 @@ namespace {
 std::array<std::string::value_type, 64> Meter::Dump(uint8_t ntabs) const noexcept {
     std::array<std::string::value_type, 64> buffer{"Cur: "}; // rest should be nulls
 #if defined(__cpp_lib_to_chars)
-    auto ToChars = [buf_end{buffer.data() + buffer.size()}](char* buf_start, float num) -> char * {
+    auto ToChars4Dump = [buf_end{buffer.data() + buffer.size()}](char* buf_start, float num) -> char * {
         int precision = num < 10 ? 2 : 1;
         return std::to_chars(buf_start, buf_end, num, std::chars_format::fixed, precision).ptr;
     };
 #else
-    auto ToChars = [buf_end{buffer.data() + buffer.size()}](char* buf_start, float num) -> char * {
+    auto ToChars4Dump = [buf_end{buffer.data() + buffer.size()}](char* buf_start, float num) -> char * {
         auto count = snprintf(buf_start, 10, num < 10 ? "%1.2f" : "%5.1f", num);
         return buf_start + std::max(0, count);
     };
 #endif
-    auto result_ptr = ToChars(buffer.data() + 5, FromInt(cur));
+    auto result_ptr = ToChars4Dump(buffer.data() + 5, FromInt(cur));
     // due to decimal precision of at most 2, the biggest result of to_chars
     // should be like "-65535.99" or 9 chars per number, if constrained by
     // LARGE_VALUE, but Meter can be initialized with larger values, so
@@ -70,7 +68,7 @@ std::array<std::string::value_type, 64> Meter::Dump(uint8_t ntabs) const noexcep
     static constexpr std::string_view init_label = " Init: ";
     std::copy_n(init_label.data(), init_label.size(), result_ptr);
     result_ptr += init_label.size();
-    ToChars(result_ptr, FromInt(init));
+    ToChars4Dump(result_ptr, FromInt(init));
 
     return buffer;
 }
@@ -89,11 +87,11 @@ namespace {
 
 
     template <typename T, std::size_t N>
-    constexpr std::size_t ArrSize(std::array<T, N>) // TODO: replace with std::ssize when available (C++20 ?)
+    constexpr std::size_t ArrSize(std::array<T, N>) noexcept // TODO: replace with std::ssize when available (C++20 ?)
     { return N; }
 }
 
-Meter::ToCharsArrayT Meter::ToChars() const {
+Meter::ToCharsArrayT Meter::ToChars() const noexcept(have_noexcept_to_chars) {
     static constexpr auto max_val = std::numeric_limits<int>::max();
     static_assert(max_val < Pow(10LL, 10LL)); // ensure serialized form of int can fit in 11 digits
     static_assert(max_val > Pow(10, 9));
@@ -106,12 +104,14 @@ Meter::ToCharsArrayT Meter::ToChars() const {
     return buffer;
 }
 
-size_t Meter::ToChars(char* buffer, char* buffer_end) const {
+int Meter::ToChars(char* buffer, char* const buffer_end) const noexcept(have_noexcept_to_chars) {
 #if defined(__cpp_lib_to_chars)
     auto result_ptr = std::to_chars(buffer, buffer_end, cur).ptr;
     *result_ptr++ = ' ';
-    result_ptr = std::to_chars(result_ptr, buffer_end, init).ptr;
-    return std::distance(buffer, result_ptr);
+    const auto result_ptr2 = std::to_chars(result_ptr, buffer_end, init).ptr;
+    static_assert(noexcept(result_ptr2 - buffer));
+
+    return result_ptr2 - buffer;
 #else
     std::size_t buffer_sz = std::distance(buffer, buffer_end);
     auto temp = std::to_string(cur);
@@ -128,18 +128,20 @@ size_t Meter::ToChars(char* buffer, char* buffer_end) const {
 #endif
 }
 
-size_t Meter::SetFromChars(std::string_view chars) {
+int Meter::SetFromChars(std::string_view chars) noexcept(have_noexcept_to_chars) {
 #if defined(__cpp_lib_to_chars)
-    auto buffer_end = chars.data() + chars.size();
+    const auto buffer_end = chars.data() + chars.size();
     auto result = std::from_chars(chars.data(), buffer_end, cur);
     if (result.ec == std::errc()) {
         ++result.ptr; // for ' ' separator
         result = std::from_chars(result.ptr, buffer_end, init);
     }
-    return std::distance(chars.data(), result.ptr);
+    return result.ptr - chars.data();
+
+    static_assert(noexcept(result.ptr - chars.data()));
 #else
     int chars_consumed = 0;
-    sscanf(chars.data(), "%d %d%n", &cur, &init, &chars_consumed);
+    std::sscanf(chars.data(), "%d %d%n", &cur, &init, &chars_consumed);
     return chars_consumed;
 #endif
 }

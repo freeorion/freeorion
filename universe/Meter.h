@@ -1,6 +1,10 @@
 #ifndef _Meter_h_
 #define _Meter_h_
 
+#if __has_include(<charconv>)
+#include <charconv>
+#endif
+
 #include <array>
 #include <string>
 #include <boost/serialization/access.hpp>
@@ -8,12 +12,11 @@
 #include <boost/serialization/version.hpp>
 #include "../util/Export.h"
 
-
 /** A Meter is a value and associated initial value that is used to track information
   * about gamestate. A typical example is the population meter of a planet. */
 class FO_COMMON_API Meter {
 public:
-    Meter() = default;
+    constexpr Meter() = default;
     constexpr explicit Meter(float v) :
         cur(FromFloat(v)),
         init(FromFloat(v))
@@ -55,9 +58,19 @@ public:
     constexpr void BackPropagate() noexcept { init = cur; }
 
     using ToCharsArrayT = std::array<std::string::value_type, 24>;
-    [[nodiscard]] ToCharsArrayT ToChars() const;
-    std::size_t ToChars(char* buffer, char* buffer_end) const;
-    std::size_t SetFromChars(std::string_view chars);
+private:
+    static constexpr bool have_noexcept_to_chars =
+#if defined(__cpp_lib_to_chars)
+        noexcept(std::from_chars(static_cast<const char*>(nullptr),
+                                 static_cast<const char*>(nullptr),
+                                 std::declval<int&>()));
+#else
+        false;
+#endif
+public:
+    int ToChars(char* buffer, char* const buffer_end) const noexcept(have_noexcept_to_chars);
+    int SetFromChars(std::string_view chars) noexcept(have_noexcept_to_chars);
+    [[nodiscard]] ToCharsArrayT ToChars() const noexcept(have_noexcept_to_chars);
 
     static constexpr float DEFAULT_VALUE = 0.0f;                        ///< value assigned to current or initial when resetting or when no value is specified in a constructor
     static constexpr float LARGE_VALUE = static_cast<float>(2 << 15);   ///< a very large number, which is useful to set current to when it will be later clamped, to ensure that the result is the max value in the clamp range
