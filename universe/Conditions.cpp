@@ -6646,8 +6646,8 @@ void MeterValue::Eval(const ScriptingContext& parent_context,
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
-        float low = (m_low ? m_low->Eval(parent_context) : -Meter::LARGE_VALUE);
-        float high = (m_high ? m_high->Eval(parent_context) : Meter::LARGE_VALUE);
+        const float low = (m_low ? m_low->Eval(parent_context) : -Meter::LARGE_VALUE);
+        const float high = (m_high ? m_high->Eval(parent_context) : Meter::LARGE_VALUE);
         EvalImpl(matches, non_matches, search_domain, MeterValueSimpleMatch(low, high, m_meter));
     } else {
         // re-evaluate allowed turn range for each candidate object
@@ -11197,12 +11197,14 @@ std::unique_ptr<Condition> Or::Clone() const
 // Not                                                   //
 ///////////////////////////////////////////////////////////
 Not::Not(std::unique_ptr<Condition>&& operand) :
+    Condition(!operand || operand->RootCandidateInvariant(),
+              !operand || operand->TargetInvariant(),
+              !operand || operand->SourceInvariant()),
+    // have no prepared sets of things that eg. aren't ships, and conditions have no
+    // InitialNonCandidates function, so there is no way to get a useful starting set
+    // candidates that will be guaranteed to NOT match the subcondition...
     m_operand(std::move(operand))
-{
-    m_root_candidate_invariant = !m_operand || m_operand->RootCandidateInvariant();
-    m_target_invariant = !m_operand || m_operand->TargetInvariant();
-    m_source_invariant = !m_operand || m_operand->SourceInvariant();
-}
+{}
 
 bool Not::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -11220,10 +11222,8 @@ bool Not::operator==(const Condition& rhs) const {
 void Not::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                SearchDomain search_domain) const
 {
-    if (!m_operand) {
-        ErrorLogger(conditions) << "Not::Eval found no subcondition to evaluate!";
+    if (!m_operand)
         return;
-    }
 
     if (search_domain == SearchDomain::NON_MATCHES) {
         // search non_matches set for items that don't meet the operand
