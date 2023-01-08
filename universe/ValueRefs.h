@@ -889,6 +889,7 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
         case StatisticType::UNIQUE_COUNT: {
             // how many unique values appear
             std::unordered_set<V> observed_values;
+            observed_values.reserve(object_property_values.size());
             for (auto entry : object_property_values)
                 observed_values.insert(entry);
 
@@ -899,6 +900,7 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
         case StatisticType::HISTO_MAX: {
             // number of times the most common value appears
             std::unordered_map<V, unsigned int> observed_values;
+            observed_values.reserve(object_property_values.size());
             for (auto entry : object_property_values)
                 observed_values[entry]++;
 
@@ -912,6 +914,7 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
         case StatisticType::HISTO_MIN: {
             // number of times the least common value appears
             std::unordered_map<V, unsigned int> observed_values;
+            observed_values.reserve(object_property_values.size());
             for (auto entry : object_property_values)
                 observed_values[entry]++;
 
@@ -925,6 +928,7 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
         case StatisticType::HISTO_SPREAD: {
             // positive difference between the number of times the most and least common values appear
             std::unordered_map<V, unsigned int> observed_values;
+            observed_values.reserve(object_property_values.size());
             for (auto entry : object_property_values)
                 observed_values[entry]++;
 
@@ -1057,6 +1061,7 @@ T ReduceData(StatisticType stat_type, std::vector<T> object_property_values)
         case StatisticType::MODE: {
             // value that appears the most often
             std::unordered_map<T, unsigned int> observed_values;
+            observed_values.reserve(object_property_values.size());
             for (auto entry : object_property_values)
                 observed_values[entry]++;
 
@@ -1105,6 +1110,7 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
         case StatisticType::UNIQUE_COUNT: {
             // how many unique values appear
             std::unordered_set<V> observed_values;
+            observed_values.reserve(object_property_values.size());
             for (auto& entry : object_property_values)
                 observed_values.insert(std::move(entry));
 
@@ -1115,6 +1121,7 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
         case StatisticType::HISTO_MAX: {
             // number of times the most common value appears
             std::unordered_map<V, unsigned int> observed_values;
+            observed_values.reserve(object_property_values.size());
             for (auto& entry : object_property_values)
                 observed_values[std::move(entry)]++;
 
@@ -1128,6 +1135,7 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
         case StatisticType::HISTO_MIN: {
             // number of times the least common value appears
             std::unordered_map<V, unsigned int> observed_values;
+            observed_values.reserve(object_property_values.size());
             for (auto& entry : object_property_values)
                 observed_values[std::move(entry)]++;
 
@@ -1141,6 +1149,7 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
         case StatisticType::HISTO_SPREAD: {
             // positive difference between the number of times the most and least common values appear
             std::unordered_map<V, unsigned int> observed_values;
+            observed_values.reserve(object_property_values.size());
             for (auto& entry : object_property_values)
                 observed_values[std::move(entry)]++;
 
@@ -1161,15 +1170,16 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
 template <typename T, typename V>
 T Statistic<T, V>::Eval(const ScriptingContext& context) const
 {
-    const auto* scond = m_sampling_condition.get();
-    Condition::ObjectSet condition_matches = scond ? scond->Eval(context) : Condition::ObjectSet{};
-
     // these two statistic types don't depend on the object property values,
     // so can be evaluated without getting those values.
+    if (m_stat_type == StatisticType::IF)
+        return (m_sampling_condition && m_sampling_condition->EvalAny(context)) ? T{1} : T{0};
+
+    const auto condition_matches = m_sampling_condition ?
+        m_sampling_condition->Eval(context) : Condition::ObjectSet{};
+
     if (m_stat_type == StatisticType::COUNT)
         return static_cast<T>(condition_matches.size());
-    if (m_stat_type == StatisticType::IF)
-        return condition_matches.empty() ? T{0} : T{1};
 
     // evaluate property for each condition-matched object
     return ReduceData<T, V>(m_stat_type, GetObjectPropertyValues(context, condition_matches));

@@ -1422,16 +1422,10 @@ std::string Statistic<std::string, std::string>::Eval(const ScriptingContext& co
     const auto* scond = m_sampling_condition.get();
     if (!scond)
         return "";
-    Condition::ObjectSet condition_matches = scond->Eval(context);
-
-    if (condition_matches.empty())
-        return "";  // empty string
 
     // special case for IF statistic... return a non-empty string for true
     if (m_stat_type == StatisticType::IF)
-        return " "; // not an empty string
-
-    // todo: consider allowing MAX and MIN using string sorting?
+        return scond->EvalAny(context) ? " " : "";
 
     // the only other statistic that can be computed on non-number property
     // types and that is itself of a non-number type is the most common value
@@ -1440,12 +1434,18 @@ std::string Statistic<std::string, std::string>::Eval(const ScriptingContext& co
                       << m_stat_type;
         return "";
     }
+    // TODO: consider allowing MAX and MIN using string sorting?
+
+    const Condition::ObjectSet condition_matches = scond->Eval(context);
+    if (condition_matches.empty())
+        return "";  // empty string
 
     // evaluate property for each condition-matched object
     auto object_property_values = GetObjectPropertyValues(context, condition_matches);
 
     // count appearances to determine the value that appears the most often
     std::unordered_map<std::string, uint32_t> observed_values;
+    observed_values.reserve(object_property_values.size());
     for (auto& entry : object_property_values)
         observed_values[std::move(entry)]++;
 
