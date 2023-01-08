@@ -1675,6 +1675,7 @@ struct FO_COMMON_API Described final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    bool EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override
     { return m_condition ? m_condition->Dump(ntabs) : ""; }

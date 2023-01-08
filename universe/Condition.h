@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <stdexcept>
 #include "../util/Export.h"
 
 
@@ -39,6 +40,7 @@ struct FO_COMMON_API Condition {
     /** Returns true iff at least one object in \a candidates matches this condition.
       * Returns false for an empty candiates list. */
     [[nodiscard]] virtual bool EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const;
+    [[nodiscard]] bool EvalAny(const ScriptingContext& parent_context) const;
 
     /** Overload for mutable TargetSet input/output. */
     void Eval(ScriptingContext& parent_context,
@@ -113,13 +115,13 @@ protected:
     Condition& operator=(const Condition& rhs) = delete;
     Condition& operator=(Condition&& rhs) = delete;
 
-    bool m_root_candidate_invariant = false;
+    bool m_root_candidate_invariant = false; // TODO: make these const once all derived classes initialize them in their constructors
     bool m_target_invariant = false;
     bool m_source_invariant = false;
     bool m_initial_candidates_all_match = false;
 
 private:
-    virtual bool Match(const ScriptingContext& local_context) const { return false; }
+    virtual bool Match(const ScriptingContext& local_context) const { throw std::runtime_error("default Condition::Match called... Override missing?"); }
 };
 
 }

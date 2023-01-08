@@ -33,6 +33,19 @@
 #include "../util/ScopedTimer.h"
 #include "../util/i18n.h"
 
+// define needed on Windows due to conflict with windows.h and std::min and std::max
+#ifndef NOMINMAX
+#  define NOMINMAX
+#endif
+// define needed in GCC
+#ifndef _GNU_SOURCE
+#  define _GNU_SOURCE
+#endif
+#if defined(_MSC_VER) && _MSC_VER >= 1930
+struct IUnknown; // Workaround for "combaseapi.h(229,21): error C2760: syntax error: 'identifier' was unexpected here; expected 'type specifier'"
+#endif
+
+#include <boost/stacktrace.hpp>
 
 using boost::io::str;
 
@@ -182,12 +195,37 @@ void Condition::Eval(const ScriptingContext& parent_context,
 }
 
 bool Condition::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
-    return std::any_of(candidates.begin(), candidates.end(),
-                       [cond{this}, &parent_context](const UniverseObject* candidate) -> bool
-    {
-        const ScriptingContext candidate_context{parent_context, candidate};
-        return cond->Match(candidate_context);
-    });
+    try {
+        return std::any_of(candidates.begin(), candidates.end(),
+                           [cond{this}, &parent_context](const UniverseObject* candidate) -> bool
+        {
+            const ScriptingContext candidate_context{parent_context, candidate};
+            return cond->Match(candidate_context);
+        });
+    } catch (const std::exception& e) {
+        static std::atomic<uint32_t> fail_count = 0;
+        if (fail_count < 10) {
+            fail_count++;
+            ErrorLogger() << "EvalAny caught: " << e.what();
+            ErrorLogger() << to_string(boost::stacktrace::stacktrace());
+        }
+
+        // can't assume that derived-class Match will be overridden so fall back to Eval
+        ObjectSet matches{candidates}, non_matches;
+        non_matches.reserve(candidates.size());
+        this->Eval(parent_context, matches, non_matches, SearchDomain::MATCHES);
+        return !matches.empty();
+    }
+}
+
+bool Condition::EvalAny(const ScriptingContext& parent_context) const {
+    ObjectSet candidates;
+    GetDefaultInitialCandidateObjects(parent_context, candidates);
+
+    if (InitialCandidatesAllMatch())
+        return !candidates.empty(); // don't need to evaluate condition further
+
+    return EvalAny(parent_context, candidates);
 }
 
 void Condition::Eval(ScriptingContext& parent_context,
@@ -369,7 +407,7 @@ bool Number::Match(const ScriptingContext& local_context) const {
     ObjectSet condition_matches = m_condition->Eval(local_context);
 
     // compare number of objects that satisfy m_condition to the acceptable range of such objects
-    int matched = condition_matches.size();
+    const int matched = condition_matches.size();
 
     // get acceptable range of subcondition matches for candidate
     const int low = (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
@@ -5875,9 +5913,7 @@ bool DesignHasPart::Match(const ScriptingContext& local_context) const {
 
 void DesignHasPart::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                       ObjectSet& condition_non_targets) const
-{
-    AddAllObjectsSet<Ship>(parent_context.ContextObjects(), condition_non_targets);
-}
+{ AddAllObjectsSet<Ship>(parent_context.ContextObjects(), condition_non_targets); }
 
 void DesignHasPart::SetTopLevelContent(const std::string& content_name) {
     if (m_low)
@@ -7220,14 +7256,14 @@ bool EmpireStockpileValue::Match(const ScriptingContext& local_context) const {
         return false;
     }
 
-    auto empire = local_context.GetEmpire(empire_id);
+    const auto empire = local_context.GetEmpire(empire_id);
     if (!empire)
          return false;
 
     try {
-        float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
-        float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
-        float amount = empire->ResourceStockpile(m_stockpile);
+        const float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
+        const float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
+        const float amount = empire->ResourceStockpile(m_stockpile);
         return (low <= amount && amount <= high);
     } catch (...) {
         return false;
@@ -11544,9 +11580,12 @@ void Described::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
 {
     if (!m_condition)
         ErrorLogger(conditions) << "Described::Eval found no subcondition to evaluate!";
-    else
+    else [[likely]]
         m_condition->Eval(parent_context, matches, non_matches, search_domain);
 }
+
+bool Described::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const
+{ return m_condition && m_condition->EvalAny(parent_context, candidates); }
 
 std::string Described::Description(bool negated) const {
     if (!m_desc_stringtable_key.empty() && UserStringExists(m_desc_stringtable_key))
@@ -11572,9 +11611,7 @@ uint32_t Described::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> Described::Clone() const {
-    return std::make_unique<Described>(ValueRef::CloneUnique(m_condition),
-                                       m_desc_stringtable_key);
-}
+std::unique_ptr<Condition> Described::Clone() const
+{ return std::make_unique<Described>(ValueRef::CloneUnique(m_condition), m_desc_stringtable_key); }
 
 }
