@@ -1075,9 +1075,10 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>>    m_empire_id;
-    ResourceType                                m_stockpile;
     std::unique_ptr<ValueRef::ValueRef<double>> m_low;
     std::unique_ptr<ValueRef::ValueRef<double>> m_high;
+    const ResourceType                          m_stockpile;
+    const bool                                  m_refs_local_invariant;
 };
 
 /** Matches all objects if the empire with id \a empire_id has adopted the
@@ -1364,7 +1365,7 @@ struct FO_COMMON_API Aggressive final : public Condition {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    bool m_aggressive;   // false to match passive ships/fleets
+    const bool m_aggressive;   // false to match passive ships/fleets
 };
 
 /** Matches objects that are in systems that can be fleet supplied by the

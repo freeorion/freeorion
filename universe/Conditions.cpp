@@ -7083,9 +7083,9 @@ bool EmpireMeterValue::Match(const ScriptingContext& local_context) const {
     if (!meter)
         return false;
 
-    float meter_current = meter->Current();
-    float low =  (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
-    float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
+    const float meter_current = meter->Current();
+    const float low =  (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
+    const float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
 
     return (low <= meter_current && meter_current <= high);
 }
@@ -7132,16 +7132,23 @@ EmpireStockpileValue::EmpireStockpileValue(std::unique_ptr<ValueRef::ValueRef<in
                                            ResourceType stockpile,
                                            std::unique_ptr<ValueRef::ValueRef<double>>&& low,
                                            std::unique_ptr<ValueRef::ValueRef<double>>&& high) :
+    Condition((!empire_id || empire_id->RootCandidateInvariant()) &&
+              (!low || low->RootCandidateInvariant()) &&
+              (!high || high->RootCandidateInvariant()),
+              (!empire_id || empire_id->TargetInvariant()) &&
+              (!low || low->TargetInvariant()) &&
+              (!high || high->TargetInvariant()),
+              (!empire_id || empire_id->SourceInvariant()) &&
+              (!low || low->SourceInvariant()) &&
+              (!high || high->SourceInvariant())),
     m_empire_id(std::move(empire_id)),
-    m_stockpile(stockpile),
     m_low(std::move(low)),
-    m_high(std::move(high))
-{
-    std::array<const ValueRef::ValueRefBase*, 3> operands = {{m_empire_id.get(), m_low.get(), m_high.get()}};
-    m_root_candidate_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); });
-    m_target_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); });
-    m_source_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); });
-}
+    m_high(std::move(high)),
+    m_stockpile(stockpile),
+    m_refs_local_invariant((!empire_id || empire_id->LocalCandidateInvariant()) &&
+                           (!low || low->LocalCandidateInvariant()) &&
+                           (!high || high->LocalCandidateInvariant()))
+{}
 
 bool EmpireStockpileValue::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -7167,16 +7174,15 @@ void EmpireStockpileValue::Eval(const ScriptingContext& parent_context,
                                 SearchDomain search_domain) const
 {
     // if m_empire_id not set, the local candidate's owner is used, which is not target invariant
-    bool simple_eval_safe = ((m_empire_id && m_empire_id->LocalCandidateInvariant()) &&
-                             (!m_low || m_low->LocalCandidateInvariant()) &&
-                             (!m_high || m_high->LocalCandidateInvariant()) &&
-                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
+    const bool simple_eval_safe = m_refs_local_invariant &&
+        (parent_context.condition_root_candidate || RootCandidateInvariant());
+
     if (simple_eval_safe) {
         // If m_empire_id is specified (not null), and all parameters are
         // local-candidate-invariant, then matching for this condition doesn't
         // need to check each candidate object separately for matching, so
         // don't need to use EvalImpl and can instead do a simpler transfer
-        bool match = Match(parent_context);
+        const bool match = Match(parent_context);
 
         // transfer objects to or from candidate set, according to whether the
         // specified empire meter was in the requested range
