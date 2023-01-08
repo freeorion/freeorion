@@ -685,10 +685,10 @@ void serialize(Archive& ar, Planet& obj, unsigned int const version)
         if (version < 4) {
             ResourceCenter res;
             ar  & make_nvp("ResourceCenter", res);
-            obj.m_focus;
-            obj.m_last_turn_focus_changed;
-            obj.m_focus_turn_initial;
-            obj.m_last_turn_focus_changed_turn_initial;
+            obj.m_focus = std::move(res.m_focus);
+            obj.m_last_turn_focus_changed = res.m_last_turn_focus_changed;
+            obj.m_focus_turn_initial = std::move(res.m_focus_turn_initial);
+            obj.m_last_turn_focus_changed_turn_initial = res.m_last_turn_focus_changed_turn_initial;
         } else {
             ar  & make_nvp("m_focus", obj.m_focus)
                 & make_nvp("m_last_turn_focus_changed", obj.m_last_turn_focus_changed)
