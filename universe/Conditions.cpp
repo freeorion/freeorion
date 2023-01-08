@@ -2993,23 +2993,16 @@ void Contains::Eval(const ScriptingContext& parent_context,
                     ObjectSet& matches, ObjectSet& non_matches,
                     SearchDomain search_domain) const
 {
-    auto search_domain_size = (search_domain == SearchDomain::MATCHES ? matches.size() : non_matches.size());
-    bool simple_eval_safe = parent_context.condition_root_candidate ||
-                            RootCandidateInvariant() ||
-                            search_domain_size < 2;
-    if (!simple_eval_safe) {
+    const auto search_domain_size = (search_domain == SearchDomain::MATCHES ?
+                                     matches.size() : non_matches.size());
+    const bool simple_eval_safe = parent_context.condition_root_candidate ||
+                                  RootCandidateInvariant() || search_domain_size < 2;
+    if (!simple_eval_safe) [[unlikely]] {
         // re-evaluate contained objects for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
         return;
-    }
 
-    // how complicated is this containment test?
-    if (((search_domain == SearchDomain::MATCHES) && matches.empty()) ||
-        ((search_domain == SearchDomain::NON_MATCHES) && non_matches.empty()))
-    {
-        // don't need to evaluate anything...
-
-    } else if (search_domain_size == 1u) {
+    } else if (search_domain_size == 1u) [[likely]] {
         // evaluate subcondition on objects contained by the candidate
         const auto* candidate = search_domain == SearchDomain::MATCHES ? matches.front() : non_matches.front();
         const ScriptingContext local_context{parent_context, candidate};
@@ -3030,7 +3023,7 @@ void Contains::Eval(const ScriptingContext& parent_context,
             matches.push_back(candidate);
         }
 
-    } else {
+    } else if (search_domain_size > 1u) {
         // evaluate contained objects once using default initial candidates
         // of subcondition to find all subcondition matches in the Universe
         static constexpr UniverseObject* const no_object = nullptr;
@@ -8240,7 +8233,7 @@ bool WithinDistance::operator==(const Condition& rhs) const {
 
 namespace {
     struct WithinDistanceSimpleMatch {
-        WithinDistanceSimpleMatch(const ObjectSet& from_objects, double distance) :
+        WithinDistanceSimpleMatch(const ObjectSet& from_objects, double distance) noexcept :
             m_from_objects(from_objects),
             m_distance2(distance*distance)
         {}
@@ -8259,7 +8252,7 @@ namespace {
         }
 
         const ObjectSet& m_from_objects;
-        double m_distance2;
+        const double m_distance2;
     };
 }
 
@@ -8267,20 +8260,77 @@ void WithinDistance::Eval(const ScriptingContext& parent_context,
                           ObjectSet& matches, ObjectSet& non_matches,
                           SearchDomain search_domain) const
 {
-    bool simple_eval_safe = m_distance->LocalCandidateInvariant() &&
-                            (parent_context.condition_root_candidate || RootCandidateInvariant());
+    // don't need to check if m_condition is local candidate invariant. conditions are
+    // always considered local candidate invariatn, as they match the candidates that
+    // are passed into them. conditions can't refer directly to the local candidate of
+    // and enclosing condition, but rather only to the source, target, or root candidate.
+    // if there is to be any variation of the subcondition matches between objects
+    // being matched by an enclosing condition, it would have to be dependent on the
+    // root candidate, which is checked here.
+    const bool simple_eval_safe = m_distance->LocalCandidateInvariant() &&
+        (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate contained objects and distance once and check for all candidates
-
-        // get subcondition matches
-        ObjectSet subcondition_matches = m_condition->Eval(parent_context);
-        double distance = m_distance->Eval(parent_context);
+        const ObjectSet subcondition_matches = m_condition->Eval(parent_context);
+        const double distance = m_distance->Eval(parent_context);
 
         // need to check locations (with respect to subcondition matches) of candidates separately
         EvalImpl(matches, non_matches, search_domain, WithinDistanceSimpleMatch(subcondition_matches, distance));
+
+    //} else if (m_distance->LocalCandidateInvariant()) {
+
+    //} else if (parent_context.condition_root_candidate || RootCandidateInvariant()) {
+
     } else {
-        // re-evaluate contained objects for each candidate object
-        Condition::Eval(parent_context, matches, non_matches, search_domain);
+        // re-evaluate subcondition matches and distance for each candidate object
+        EvalImpl(matches, non_matches, search_domain,
+                 [this, &parent_context](const UniverseObject* candidate) -> bool
+        {
+            if (!candidate)
+                return false;
+            const ScriptingContext candidate_context{parent_context, candidate};
+            const ObjectSet subcondition_matches = m_condition->Eval(candidate_context);
+            if (subcondition_matches.empty())
+                return false;
+            const double distance = m_distance->Eval(candidate_context);
+
+            return WithinDistanceSimpleMatch(subcondition_matches, distance)(candidate);
+        });
+    }
+}
+
+bool WithinDistance::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
+    const bool simple_eval_safe = m_distance->LocalCandidateInvariant() &&
+        (parent_context.condition_root_candidate || RootCandidateInvariant());
+
+    if (simple_eval_safe) {
+        // evaluate contained objects and distance once and check for all candidates
+        const double distance = m_distance->Eval(parent_context);
+        // in principle, don't need all the subcondition matches to start checking
+        // if any are within the distance to any of the candidates, but
+        const ObjectSet subcondition_matches = m_condition->Eval(parent_context);
+
+        return std::any_of(candidates.begin(), candidates.end(),
+                           WithinDistanceSimpleMatch(subcondition_matches, distance));
+
+    //} else if (m_distance->LocalCandidateInvariant()) {
+
+    //} else if (parent_context.condition_root_candidate || RootCandidateInvariant()) {
+
+    } else {
+        // re-evaluate distance and contained objects for each candidate object
+        return std::any_of(candidates.begin(), candidates.end(),
+                           [this, &parent_context](const UniverseObject* candidate) -> bool
+        {
+            if (!candidate)
+                return false;
+            const ScriptingContext candidate_context{parent_context, candidate};
+            const ObjectSet subcondition_matches = m_condition->Eval(candidate_context);
+            if (subcondition_matches.empty())
+                return false;
+            const auto distance = m_distance->Eval(candidate_context);
+            return WithinDistanceSimpleMatch(subcondition_matches, distance)(candidate);
+        });
     }
 }
 
@@ -8303,17 +8353,15 @@ std::string WithinDistance::Dump(uint8_t ntabs) const {
 
 bool WithinDistance::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
-    if (!candidate) {
-        ErrorLogger(conditions) << "WithinDistance::Match passed no candidate object";
+    if (!candidate)
         return false;
-    }
 
-    // get subcondition matches
-    ObjectSet subcondition_matches = m_condition->Eval(local_context);
+    const ObjectSet subcondition_matches = m_condition->Eval(local_context);
     if (subcondition_matches.empty())
         return false;
+    const double distance = m_distance->Eval(local_context);
 
-    return WithinDistanceSimpleMatch(subcondition_matches, m_distance->Eval(local_context))(candidate);
+    return WithinDistanceSimpleMatch(subcondition_matches, distance)(candidate);
 }
 
 void WithinDistance::SetTopLevelContent(const std::string& content_name) {
