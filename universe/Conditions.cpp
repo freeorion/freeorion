@@ -9181,18 +9181,6 @@ std::unique_ptr<Condition> Stationary::Clone() const
 ///////////////////////////////////////////////////////////
 // Aggressive                                            //
 ///////////////////////////////////////////////////////////
-Aggressive::Aggressive() :
-    Aggressive(true)
-{}
-
-Aggressive::Aggressive(bool aggressive) :
-    m_aggressive(aggressive)
-{
-    m_root_candidate_invariant = true;
-    m_target_invariant = true;
-    m_source_invariant = true;
-}
-
 bool Aggressive::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
@@ -9981,7 +9969,10 @@ ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<double>>&& value_ref1,
     m_value_ref2(std::move(value_ref2)),
     m_value_ref3(std::move(value_ref3)),
     m_compare_type1(comp1),
-    m_compare_type2(comp2)
+    m_compare_type2(comp2),
+    m_refs_local_invariant((!value_ref1 || value_ref1->LocalCandidateInvariant()) &&
+                           (!value_ref2 || value_ref2->LocalCandidateInvariant()) &&
+                           (!value_ref3 || value_ref3->LocalCandidateInvariant()))
 {}
 
 ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<std::string>>&& value_ref1,
@@ -10002,7 +9993,10 @@ ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<std::string>>&& value_re
     m_string_value_ref2(std::move(value_ref2)),
     m_string_value_ref3(std::move(value_ref3)),
     m_compare_type1(comp1),
-    m_compare_type2(comp2)
+    m_compare_type2(comp2),
+    m_refs_local_invariant((!value_ref1 || value_ref1->LocalCandidateInvariant()) &&
+                           (!value_ref2 || value_ref2->LocalCandidateInvariant()) &&
+                           (!value_ref3 || value_ref3->LocalCandidateInvariant()))
 {}
 
 ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref1,
@@ -10023,7 +10017,10 @@ ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref1,
     m_int_value_ref2(std::move(value_ref2)),
     m_int_value_ref3(std::move(value_ref3)),
     m_compare_type1(comp1),
-    m_compare_type2(comp2)
+    m_compare_type2(comp2),
+    m_refs_local_invariant((!value_ref1 || value_ref1->LocalCandidateInvariant()) &&
+                           (!value_ref2 || value_ref2->LocalCandidateInvariant()) &&
+                           (!value_ref3 || value_ref3->LocalCandidateInvariant()))
 {}
 
 ValueTest::ValueTest(const ValueTest& rhs) :
@@ -10038,7 +10035,8 @@ ValueTest::ValueTest(const ValueTest& rhs) :
     m_int_value_ref2(ValueRef::CloneUnique(rhs.m_int_value_ref2)),
     m_int_value_ref3(ValueRef::CloneUnique(rhs.m_int_value_ref3)),
     m_compare_type1(rhs.m_compare_type1),
-    m_compare_type2(rhs.m_compare_type2)
+    m_compare_type2(rhs.m_compare_type2),
+    m_refs_local_invariant(rhs.m_refs_local_invariant)
 {}
 
 bool ValueTest::operator==(const Condition& rhs) const {
@@ -10072,16 +10070,8 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
                      SearchDomain search_domain) const
 {
     // not-defined and local candidate invariant refs can be evaluated just once for all candidates
-    bool simple_eval_safe = ((!m_value_ref1         || m_value_ref1->LocalCandidateInvariant()) &&
-                             (!m_value_ref2         || m_value_ref2->LocalCandidateInvariant()) &&
-                             (!m_value_ref3         || m_value_ref3->LocalCandidateInvariant()) &&
-                             (!m_string_value_ref1  || m_string_value_ref1->LocalCandidateInvariant()) &&
-                             (!m_string_value_ref2  || m_string_value_ref2->LocalCandidateInvariant()) &&
-                             (!m_string_value_ref3  || m_string_value_ref3->LocalCandidateInvariant()) &&
-                             (!m_int_value_ref1     || m_int_value_ref1->LocalCandidateInvariant()) &&
-                             (!m_int_value_ref2     || m_int_value_ref2->LocalCandidateInvariant()) &&
-                             (!m_int_value_ref3     || m_int_value_ref3->LocalCandidateInvariant()) &&
-                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
+    bool simple_eval_safe = m_refs_local_invariant &&
+        (parent_context.condition_root_candidate || RootCandidateInvariant());
 
     // if there is no pair of values to compare, then nothing matches,
     // even if the present values aren't invariant
@@ -10162,14 +10152,14 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
 
         // if ref1_in is not invariant but ref3_in is invariant, then swap them
         // so that the simpler to evaluate case is handled first
-        bool swap_1_3 = ref3 &&
+        const bool swap_1_3 = ref3 &&
             ref3->LocalCandidateInvariant() &&
             (context.condition_root_candidate || ref3->RootCandidateInvariant()) &&
             !ref1->LocalCandidateInvariant();
         if (swap_1_3)
             std::swap(ref1, ref3);
-        auto c12 = swap_1_3 ? SwapSides(c23_in) : c12_in;
-        auto c23 = swap_1_3 ? SwapSides(c12_in) : c23_in;
+        const auto c12 = swap_1_3 ? SwapSides(c23_in) : c12_in;
+        const auto c23 = swap_1_3 ? SwapSides(c12_in) : c23_in;
 
 
         // remaining cases:
@@ -10285,7 +10275,7 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
             else // if (ref2_lci)
                 return Comparison(vals1, c12, ref2_val);
         }();
-        static_assert(std::is_same_v<std::vector<uint8_t>, decltype(passed)>);
+        static_assert(std::is_same_v<std::vector<uint8_t>, std::decay_t<decltype(passed)>>);
 
 
         // if there is no 3rd reference to compare to, or if all candidates
@@ -10304,7 +10294,7 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
         // with additional filter: objects with 0 in "passed" don't need ref3 value to be calculated
 
         // safety check
-        bool ref3_lci = ref3->LocalCandidateInvariant() &&
+        const bool ref3_lci = ref3->LocalCandidateInvariant() &&
             (context.condition_root_candidate || ref3->RootCandidateInvariant());
         if (ref2_lci && ref3_lci) {
             ErrorLogger() << "Shouldn't have both ref1 and ref3 invariant here!";
@@ -10319,7 +10309,7 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
         // compare ref2 and ref3 results, except when passed is 0, in which case
         // the comparison can be skipped
         if (ref3_lci) {
-            auto ref3_val = ref3->Eval(context);
+            const auto ref3_val = ref3->Eval(context);
             auto v2_it = vals2.begin();
             for (; p_it != p_end; ++p_it, ++v2_it)
                 *p_it = (*p_it != 0) && Comparison(*v2_it, c23, ref3_val);
@@ -11550,14 +11540,13 @@ std::unique_ptr<Condition> OrderedAlternativesOf::Clone() const
 ///////////////////////////////////////////////////////////
 // Described                                             //
 ///////////////////////////////////////////////////////////
-Described::Described(std::unique_ptr<Condition>&& condition, const std::string& desc_stringtable_key) :
+Described::Described(std::unique_ptr<Condition>&& condition, std::string desc_stringtable_key) :
+    Condition(!m_condition || m_condition->RootCandidateInvariant(),
+              !m_condition || m_condition->TargetInvariant(),
+              !m_condition || m_condition->SourceInvariant()),
     m_condition(std::move(condition)),
-    m_desc_stringtable_key(desc_stringtable_key)
-{
-    m_root_candidate_invariant = !m_condition || m_condition->RootCandidateInvariant();
-    m_target_invariant = !m_condition || m_condition->TargetInvariant();
-    m_source_invariant = !m_condition || m_condition->SourceInvariant();
-}
+    m_desc_stringtable_key(std::move(desc_stringtable_key))
+{}
 
 bool Described::operator==(const Condition& rhs) const {
     if (this == &rhs)

@@ -1346,8 +1346,11 @@ private:
 
 /** Matches objects that are aggressive fleets or are in aggressive fleets. */
 struct FO_COMMON_API Aggressive final : public Condition {
-    Aggressive();
-    explicit Aggressive(bool aggressive);
+    constexpr Aggressive() noexcept : Aggressive(true) {}
+    constexpr explicit Aggressive(bool aggressive) noexcept :
+        Condition(true, true, true),
+        m_aggressive(aggressive)
+    {}
 
     bool operator==(const Condition& rhs) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
@@ -1521,6 +1524,8 @@ private:
 
     ComparisonType m_compare_type1 = ComparisonType::INVALID_COMPARISON;
     ComparisonType m_compare_type2 = ComparisonType::INVALID_COMPARISON;
+
+    const bool m_refs_local_invariant;
 };
 
 /** Matches objects that match the location condition of the specified
@@ -1670,7 +1675,7 @@ private:
 /** Matches whatever its subcondition matches, but has a customized description
   * string that is returned by Description() by looking up in the stringtable. */
 struct FO_COMMON_API Described final : public Condition {
-    Described(std::unique_ptr<Condition>&& condition, const std::string& desc_stringtable_key);
+    Described(std::unique_ptr<Condition>&& condition, std::string desc_stringtable_key);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
