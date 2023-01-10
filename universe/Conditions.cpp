@@ -10072,7 +10072,7 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
     // even if the present values aren't invariant
     simple_eval_safe = simple_eval_safe ||
         (m_value_ref1 && !m_value_ref2) ||
-        (!m_value_ref1 && m_string_value_ref1 && !m_string_value_ref1) ||
+        (!m_value_ref1 && m_string_value_ref1 && !m_string_value_ref2) ||
         (!m_value_ref1 && !m_string_value_ref1 && m_int_value_ref1 && !m_int_value_ref2) ||
         (m_compare_type1 == ComparisonType::INVALID_COMPARISON);
 
@@ -10405,7 +10405,7 @@ bool ValueTest::Match(const ScriptingContext& local_context) const {
     if (m_compare_type1 == ComparisonType::INVALID_COMPARISON)
         return false;
 
-    // simple evaluation should have only local-candidate-invariation sub-value-refs
+    // simple evaluation should have only local-candidate-invariant sub-valuerefs
     // base class evaulation should have defined local candidate
     auto test_compare_refs = [c12{m_compare_type1}, c23{m_compare_type2}]
         (const auto& ref1, const auto& ref2, const auto& ref3, const ScriptingContext& cx)
