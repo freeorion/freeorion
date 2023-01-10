@@ -811,7 +811,7 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
     // before the subcondition is evaluated, so the local context that is
     // passed to the subcondition should have a null local candidate.
     static constexpr UniverseObject* const no_object = nullptr;
-    ScriptingContext local_context{parent_context, no_object};
+    const ScriptingContext local_context{parent_context, no_object};
 
     // which input matches match the subcondition?
     ObjectSet subcondition_matching_matches;
@@ -842,7 +842,7 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
                                     subcondition_matching_non_matches.end());
 
     // how many subcondition matches to select as matches to this condition
-    int number = m_number->Eval(local_context);
+    const int number = m_number->Eval(local_context);
 
     // compile single set of all objects that are matched by this condition.
     // these are the objects that should be transferred from non_matches into
@@ -912,6 +912,23 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
         // this leaves the original contents of non_matches unchanged, other than
         // possibly having transferred some objects into non_matches from matches
     }
+}
+
+bool SortedNumberOf::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
+    if (!m_condition || !m_number || candidates.empty())
+        return false;
+
+    static constexpr UniverseObject* const no_object = nullptr;
+    const ScriptingContext local_context{parent_context, no_object};
+
+    // just need to check if at least one object was requested and
+    // if anything is matched by the sub-condition
+    if (m_number->Eval(local_context) < 1)
+        return false;
+    if (!m_condition->EvalAny(local_context, candidates))
+        return false;
+
+    return true;
 }
 
 std::string SortedNumberOf::Description(bool negated) const {
@@ -9976,9 +9993,11 @@ ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<double>>&& value_ref1,
     m_value_ref3(std::move(value_ref3)),
     m_compare_type1(comp1),
     m_compare_type2(comp2),
-    m_refs_local_invariant((!value_ref1 || value_ref1->LocalCandidateInvariant()) &&
-                           (!value_ref2 || value_ref2->LocalCandidateInvariant()) &&
-                           (!value_ref3 || value_ref3->LocalCandidateInvariant()))
+    m_refs_local_invariant((!m_value_ref1 || m_value_ref1->LocalCandidateInvariant()) &&
+                           (!m_value_ref2 || m_value_ref2->LocalCandidateInvariant()) &&
+                           (!m_value_ref3 || m_value_ref3->LocalCandidateInvariant())),
+    m_no_refs12_comparable((m_value_ref1 && !m_value_ref2) ||
+                           (m_compare_type1 == ComparisonType::INVALID_COMPARISON))
 {}
 
 ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<std::string>>&& value_ref1,
@@ -10000,9 +10019,11 @@ ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<std::string>>&& value_re
     m_string_value_ref3(std::move(value_ref3)),
     m_compare_type1(comp1),
     m_compare_type2(comp2),
-    m_refs_local_invariant((!value_ref1 || value_ref1->LocalCandidateInvariant()) &&
-                           (!value_ref2 || value_ref2->LocalCandidateInvariant()) &&
-                           (!value_ref3 || value_ref3->LocalCandidateInvariant()))
+    m_refs_local_invariant((!m_string_value_ref1 || m_string_value_ref1->LocalCandidateInvariant()) &&
+                           (!m_string_value_ref2 || m_string_value_ref2->LocalCandidateInvariant()) &&
+                           (!m_string_value_ref3 || m_string_value_ref3->LocalCandidateInvariant())),
+    m_no_refs12_comparable((m_string_value_ref1 && !m_string_value_ref2) ||
+                           (m_compare_type1 == ComparisonType::INVALID_COMPARISON))
 {}
 
 ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref1,
@@ -10024,9 +10045,11 @@ ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref1,
     m_int_value_ref3(std::move(value_ref3)),
     m_compare_type1(comp1),
     m_compare_type2(comp2),
-    m_refs_local_invariant((!value_ref1 || value_ref1->LocalCandidateInvariant()) &&
-                           (!value_ref2 || value_ref2->LocalCandidateInvariant()) &&
-                           (!value_ref3 || value_ref3->LocalCandidateInvariant()))
+    m_refs_local_invariant((!m_int_value_ref1 || m_int_value_ref1->LocalCandidateInvariant()) &&
+                           (!m_int_value_ref2 || m_int_value_ref2->LocalCandidateInvariant()) &&
+                           (!m_int_value_ref3 || m_int_value_ref3->LocalCandidateInvariant())),
+    m_no_refs12_comparable((m_int_value_ref1 && !m_int_value_ref2) ||
+                           (m_compare_type1 == ComparisonType::INVALID_COMPARISON))
 {}
 
 ValueTest::ValueTest(const ValueTest& rhs) :
@@ -10042,7 +10065,8 @@ ValueTest::ValueTest(const ValueTest& rhs) :
     m_int_value_ref3(ValueRef::CloneUnique(rhs.m_int_value_ref3)),
     m_compare_type1(rhs.m_compare_type1),
     m_compare_type2(rhs.m_compare_type2),
-    m_refs_local_invariant(rhs.m_refs_local_invariant)
+    m_refs_local_invariant(rhs.m_refs_local_invariant),
+    m_no_refs12_comparable(rhs.m_no_refs12_comparable)
 {}
 
 bool ValueTest::operator==(const Condition& rhs) const {
@@ -10071,25 +10095,17 @@ bool ValueTest::operator==(const Condition& rhs) const {
     return true;
 }
 
-void ValueTest::Eval(const ScriptingContext& parent_context,
-                     ObjectSet& matches, ObjectSet& non_matches,
+void ValueTest::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                      SearchDomain search_domain) const
 {
     // not-defined and local candidate invariant refs can be evaluated just once for all candidates
-    bool simple_eval_safe = m_refs_local_invariant &&
-        (parent_context.condition_root_candidate || RootCandidateInvariant());
-
-    // if there is no pair of values to compare, then nothing matches,
-    // even if the present values aren't invariant
-    simple_eval_safe = simple_eval_safe ||
-        (m_value_ref1 && !m_value_ref2) ||
-        (!m_value_ref1 && m_string_value_ref1 && !m_string_value_ref2) ||
-        (!m_value_ref1 && !m_string_value_ref1 && m_int_value_ref1 && !m_int_value_ref2) ||
-        (m_compare_type1 == ComparisonType::INVALID_COMPARISON);
+    const bool simple_eval_safe = (m_refs_local_invariant &&
+        (parent_context.condition_root_candidate || RootCandidateInvariant())) ||
+        m_no_refs12_comparable; // if there is no pair of values to compare, then nothing matches, even if the present values aren't invariant
 
     if (simple_eval_safe) {
         // evaluate value and range limits once, use to match all candidates
-        bool match = Match(parent_context);
+        const bool match = Match(parent_context);
 
         // transfer objects to or from candidate set, according to whether the value comparisons were true
         if (search_domain == SearchDomain::MATCHES && !match) {
@@ -10131,22 +10147,22 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
         static_assert(std::is_same_v<decltype(std::declval<decltype(ref3)>()->Eval()), RefT>);
 
         // safety checks
-        if (!ref1) {
+        if (!ref1) [[unlikely]] {
             ErrorLogger() << "no first reference!";
             match_none();
             return;
-        } else if (!ref2) {
+        } else if (!ref2) [[unlikely]] {
             ErrorLogger() << "no second reference!";
             match_none();
             return;
-        } else if (c12_in == ComparisonType::INVALID_COMPARISON) {
+        } else if (c12_in == ComparisonType::INVALID_COMPARISON) [[unlikely]] {
             ErrorLogger() << "invalid ref1-ref2 comparison type!";
             match_none();
             return;
-        } else if (ref3 && c23_in == ComparisonType::INVALID_COMPARISON) {
+        } else if (ref3 && c23_in == ComparisonType::INVALID_COMPARISON) [[unlikely]] {
             ErrorLogger() << "third reference present but invalid ref2-ref3 comparison type!";
             ref3 = nullptr;
-        } else if (!ref3 && c23_in != ComparisonType::INVALID_COMPARISON) {
+        } else if (!ref3 && c23_in != ComparisonType::INVALID_COMPARISON) [[unlikely]] {
             ErrorLogger() << "no third reference present but valid ref2-ref3 comparison specified?";
         }
 
@@ -10238,7 +10254,7 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
         //                 1inv 2var 3var, 1var 2inv 3var, 1var 2var 3var
 
         // safety check
-        if (ref1_lci && ref2_lci) {
+        if (ref1_lci && ref2_lci) [[unlikely]] {
             ErrorLogger() << "Shouldn't have both ref1 and ref2 invariant here!";
             match_none();
             return;
@@ -10302,7 +10318,7 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
         // safety check
         const bool ref3_lci = ref3->LocalCandidateInvariant() &&
             (context.condition_root_candidate || ref3->RootCandidateInvariant());
-        if (ref2_lci && ref3_lci) {
+        if (ref2_lci && ref3_lci) [[unlikely]] {
             ErrorLogger() << "Shouldn't have both ref1 and ref3 invariant here!";
             match_none();
             return;
@@ -10416,8 +10432,10 @@ bool ValueTest::Match(const ScriptingContext& local_context) const {
     if (m_compare_type1 == ComparisonType::INVALID_COMPARISON)
         return false;
 
-    // simple evaluation should have only local-candidate-invariant sub-valuerefs
-    // base class evaulation should have defined local candidate
+    // this function, Match(...) could be called in two cases:
+    // - from the simple case of ValueTest::Eval, which should have only null or local-candidate-invariant valuerefs
+    // - from Condition::Eval or Condition::EvalAny, which should have passed a context with a valid local candidate
+    // either way, evaluating the this lambda should be OK
     auto test_compare_refs = [c12{m_compare_type1}, c23{m_compare_type2}]
         (const auto& ref1, const auto& ref2, const auto& ref3, const ScriptingContext& cx)
     {
@@ -11020,6 +11038,31 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
     */
 }
 
+bool And::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
+    if (m_operands.empty())
+        return false;
+
+    // check candidates against all operands and return true if any candidate is matched by all operands
+    ObjectSet matches{candidates};
+    ObjectSet non_matches;
+    non_matches.reserve(candidates.size());
+    for (const auto& op : m_operands) {
+        if (matches.empty())
+            return false;
+        op->Eval(parent_context, matches, non_matches, SearchDomain::MATCHES);
+    }
+    return !matches.empty();
+    // or:
+    /*
+    return std::any_of(candidates.begin(), candidates.end(),
+                       [&parent_context, this](const auto* candidate) {
+                           return std::all_of(m_operands.begin(), m_operands.end(),
+                                              [&parent_context, candidate](const auto& op)
+                                              { return op->Eval(parent_context, candidate); });
+                       });
+    */
+}
+
 std::string And::Description(bool negated) const {
     std::string values_str;
     if (m_operands.size() == 1) {
@@ -11164,6 +11207,28 @@ void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         // non_matches set even if they pass one or more of the operand
         // conditions
     }
+}
+
+bool Or::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
+    if (m_operands.empty())
+        return false;
+
+    // check operands until one is found that matches any of the candidates
+    return std::any_of(m_operands.begin(), m_operands.end(),
+                       [&parent_context, &candidates](const auto& operand)
+                       { return operand->EvalAny(parent_context, candidates); });
+    // or:
+    /*
+    ObjectSet non_matches{candidates};
+    ObjectSet matches;
+    matches.reserve(candidates.size());
+    for (const auto& op : m_operands) {
+        op->Eval(parent_context, matches, non_matches, SearchDomain::NON_MATCHES);
+        if (!matches.empty())
+            return true;
+    }
+    return false;
+    */
 }
 
 std::string Or::Description(bool negated) const {
@@ -11315,6 +11380,23 @@ void Not::Eval(const ScriptingContext& parent_context, ObjectSet& matches, Objec
     }
 }
 
+bool Not::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
+    // need to determine if anything does not match the subcondition. that's not the same
+    // as the case of nothing matching the subcondition.
+    //
+    // eg. Capital::EvalAny would return true iff there is any candidate that is a capital
+    // Not(Capital)::EvalAny would return true iff there is any candidate that is not a capital
+    return std::any_of(candidates.begin(), candidates.end(),
+                       [&parent_context, this](const auto* candidate)
+                       { return !m_operand->Eval(parent_context, candidate); });
+    // or:
+    //ObjectSet potential_matches{candidates};
+    //ObjectSet non_matches;
+    //non_matches.reserve(candidates.size());
+    //m_operand->Eval(parent_context, potential_matches, non_matches, SearchDomain::MATCHES);
+    //return !non_matches.empty(); // if non_matches is not empty, than something initially in potential_matches was not matched by m_operand
+}
+
 std::string Not::Description(bool negated) const
 { return m_operand->Description(!negated); }
 
@@ -11386,7 +11468,7 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
         ErrorLogger(conditions) << "OrderedAlternativesOf::Eval given no operands!";
         return;
     }
-    for (auto& operand : m_operands) {
+    for (auto& operand : m_operands) { // TODO: exclude null operands in constructor and remove this
         if (!operand) {
             ErrorLogger(conditions) << "OrderedAlternativesOf::Eval given null operand!";
             return;
@@ -11476,6 +11558,27 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
     }
 }
 
+bool OrderedAlternativesOf::EvalAny(const ScriptingContext& parent_context,
+                                    const ObjectSet& candidates) const
+{
+    if (m_operands.empty()) {
+        ErrorLogger(conditions) << "OrderedAlternativesOf::EvalAny given no operands!";
+        return false;
+    }
+    for (auto& operand : m_operands) { // TODO: exclude null operands in constructor and remove this
+        if (!operand) {
+            ErrorLogger(conditions) << "OrderedAlternativesOf::EvalAny given null operand!";
+            return false;
+        }
+    }
+
+    // for matching any candidate, this condition effectively becomes equivalent to
+    // the Or condition, needing any candidate to match any operand condition
+    return std::any_of(m_operands.begin(), m_operands.end(),
+                       [&parent_context, &candidates](const auto& operand)
+                       { return operand->EvalAny(parent_context, candidates); });
+}
+
 std::string OrderedAlternativesOf::Description(bool negated) const {
     std::string values_str;
     if (m_operands.size() == 1) {
@@ -11547,9 +11650,9 @@ std::unique_ptr<Condition> OrderedAlternativesOf::Clone() const
 // Described                                             //
 ///////////////////////////////////////////////////////////
 Described::Described(std::unique_ptr<Condition>&& condition, std::string desc_stringtable_key) :
-    Condition(!m_condition || m_condition->RootCandidateInvariant(),
-              !m_condition || m_condition->TargetInvariant(),
-              !m_condition || m_condition->SourceInvariant()),
+    Condition(!condition || condition->RootCandidateInvariant(),
+              !condition || condition->TargetInvariant(),
+              !condition || condition->SourceInvariant()),
     m_condition(std::move(condition)),
     m_desc_stringtable_key(std::move(desc_stringtable_key))
 {}
