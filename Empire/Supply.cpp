@@ -48,10 +48,10 @@ std::vector<int> SupplyManager::FleetSupplyableSystemIDs(
     int empire_id, bool include_allies, const ScriptingContext& context) const
 {
     auto& direct_sys = FleetSupplyableSystemIDs(empire_id);
+    std::vector<int> retval(direct_sys.begin(), direct_sys.end());
     if (!include_allies)
-        return {direct_sys.begin(), direct_sys.end()};
+        return retval;
 
-    std::vector<int> retval;
     retval.reserve(context.ContextObjects().size<System>());
     // add supplyable systems of all allies
     for (auto& [other_empire_id, systems] : m_fleet_supplyable_system_ids) {
