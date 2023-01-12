@@ -58,11 +58,11 @@ public:
     GG::Y AppHeight() const noexcept override { return m_app_height; }
     unsigned int Ticks() const override;
     std::string ClipboardText() const override;
-    virtual std::vector<std::string> GetSupportedResolutions() const override;
-    virtual GG::Pt GetDefaultResolution (int display_id) const override;
+    std::vector<std::string> GetSupportedResolutions() const override;
+    GG::Pt GetDefaultResolution (int display_id) const override;
 
-    virtual bool Fullscreen() const noexcept final { return m_fullscreen; }
-    virtual bool FakeModeChange() const noexcept final { return m_fake_mode_change; }
+    bool Fullscreen() const noexcept { return m_fullscreen; }
+    bool FakeModeChange() const noexcept { return m_fake_mode_change; }
 
     void ExitApp(int code = 0) override;
     bool SetClipboardText(std::string text) override;
@@ -79,8 +79,8 @@ public:
 
     bool AppHasMouseFocus() const override;
 
-    void            SetWindowTitle(const std::string& title);
-    void            SetVideoMode(GG::X width, GG::Y height, bool fullscreen, bool fake_mode_change);
+    void SetWindowTitle(const std::string& title);
+    void SetVideoMode(GG::X width, GG::Y height, bool fullscreen, bool fake_mode_change);
 
     static SDLGUI*  GetGUI();                             ///< allows any code to access the gui framework by calling SDLGUI::GetGUI()
 
