@@ -322,7 +322,7 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id, const Scri
     if (!m_location)
         return true;
 
-    auto location = context.ContextObjects().getRaw(location_id);
+    const auto* location = context.ContextObjects().getRaw(location_id);
     if (!location)
         return false;
 
@@ -331,10 +331,10 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id, const Scri
     if (!source)
         return false;
 
-    const ScriptingContext local_context{context, source.get(), const_cast<UniverseObject*>(location),
-                                         INVALID_DESIGN_ID, 1};
+    UniverseObject* target = const_cast<UniverseObject*>(location); // ... hopefully OK, as evaluating condition should not modify the object
+    const ScriptingContext local_context{context, source.get(), target, INVALID_DESIGN_ID, 1};
 
-    return m_location->Eval(local_context, location);
+    return m_location->EvalOne(local_context, location);
 }
 
 bool BuildingType::EnqueueLocation(int empire_id, int location_id, const ScriptingContext& context) const {
@@ -350,10 +350,10 @@ bool BuildingType::EnqueueLocation(int empire_id, int location_id, const Scripti
     if (!source)
         return false;
 
-    const ScriptingContext local_context{context, source.get(), const_cast<UniverseObject*>(location),
-                                         INVALID_DESIGN_ID, 1};
+    UniverseObject* target = const_cast<UniverseObject*>(location); // ... hopefully OK, as evaluating condition should not modify the object
+    const ScriptingContext local_context{context, source.get(), target, INVALID_DESIGN_ID, 1};
 
-    return m_enqueue_location->Eval(local_context, location);
+    return m_enqueue_location->EvalOne(local_context, location);
 }
 
 uint32_t BuildingType::GetCheckSum() const {

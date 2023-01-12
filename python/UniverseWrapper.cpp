@@ -197,24 +197,24 @@ namespace {
 
     auto HullProductionLocation(const ShipHull& hull, int location_id) -> bool
     {
-        auto location = Objects().getRaw(location_id);
+        UniverseObject* location = Objects().getRaw(location_id); // intentionally getting a mutable pointer to construct context with
         if (!location) {
             ErrorLogger() << "UniverseWrapper::HullProductionLocation Could not find location with id " << location_id;
             return false;
         }
-        ScriptingContext location_as_source_context{location, location};
-        return hull.Location()->Eval(location_as_source_context, location);
+        const ScriptingContext location_as_source_context{location, location};
+        return hull.Location()->EvalOne(location_as_source_context, location);
     }
 
     auto ShipPartProductionLocation(const ShipPart& part_type, int location_id) -> bool
     {
-        auto location = Objects().getRaw(location_id);
+        UniverseObject*  location = Objects().getRaw(location_id);
         if (!location) {
             ErrorLogger() << "UniverseWrapper::PartTypeProductionLocation Could not find location with id " << location_id;
             return false;
         }
-        ScriptingContext location_as_source_context{location, location};
-        return part_type.Location()->Eval(location_as_source_context, location);
+        const ScriptingContext location_as_source_context{location, location};
+        return part_type.Location()->EvalOne(location_as_source_context, location);
     }
 
     template <typename X>

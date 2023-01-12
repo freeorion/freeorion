@@ -2039,12 +2039,12 @@ public:
         if (!obj)
             return false;
 
-        if (m_filter_condition && !m_filter_condition->Eval(context, obj))
+        if (m_filter_condition && !m_filter_condition->EvalOne(context, obj))
             return false;
 
-        int object_id = obj->ID();
-        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        UniverseObjectType type = obj->ObjectType();
+        const int object_id = obj->ID();
+        const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+        const UniverseObjectType type = obj->ObjectType();
 
         if (context.ContextUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id).count(object_id))
             return m_visibilities[type].count(VIS_DISPLAY::SHOW_DESTROYED);
@@ -2063,9 +2063,9 @@ public:
 
     void Refresh() {
         SectionedScopedTimer timer("ObjectListBox::Refresh");
-        std::size_t first_visible_queue_row = std::distance(this->begin(), this->FirstRowShown());
+        const std::size_t first_visible_queue_row = std::distance(this->begin(), this->FirstRowShown());
         ClearContents();
-        auto initial_style = this->Style();
+        const auto initial_style = this->Style();
         this->SetStyle(GG::LIST_NOSORT);    // to avoid sorting while inserting
 
         m_header_row->Update();

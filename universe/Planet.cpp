@@ -543,7 +543,7 @@ bool Planet::FocusAvailable(std::string_view focus, const ScriptingContext& cont
         return false;
 
     const ScriptingContext planet_context(this, context);
-    return location->Eval(planet_context, this);
+    return location->EvalOne(planet_context, this);
 }
 
 std::vector<std::string_view> Planet::AvailableFoci(const ScriptingContext& context) const {
@@ -558,7 +558,7 @@ std::vector<std::string_view> Planet::AvailableFoci(const ScriptingContext& cont
     retval.reserve(species->Foci().size());
     for (const auto& focus_type : foci) {
         if (const auto* location = focus_type.Location()) {
-            if (location->Eval(planet_context, this))
+            if (location->EvalOne(planet_context, this))
                 retval.emplace_back(focus_type.Name());
         }
     }

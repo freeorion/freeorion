@@ -385,7 +385,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id, const Script
     }
     // evaluate using location as the source, as it should be an object owned by this empire.
     const ScriptingContext location_as_source_context{location, context};
-    if (!hull->Location()->Eval(location_as_source_context, location))
+    if (!hull->Location()->EvalOne(location_as_source_context, location))
         return false;
 
     // apply external and internal parts' location conditions to potential location
@@ -398,7 +398,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id, const Script
             ErrorLogger() << "ShipDesign::ProductionLocation  ShipDesign couldn't get part with name " << part_name;
             return false;
         }
-        if (!part->Location()->Eval(location_as_source_context, location))
+        if (!part->Location()->EvalOne(location_as_source_context, location))
             return false;
     }
     // location matched all hull and part conditions, so is a valid build location

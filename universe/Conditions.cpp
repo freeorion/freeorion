@@ -94,7 +94,8 @@ namespace {
         std::vector<std::pair<std::string, bool>> retval;
         retval.reserve(conditions.size());
         for (const auto* condition : conditions)
-            retval.emplace_back(condition->Description(), condition->Eval(parent_context, candidate_object));
+            retval.emplace_back(condition->Description(),
+                                condition->EvalOne(parent_context, candidate_object));
         return retval;
     }
 }
@@ -122,9 +123,9 @@ namespace Condition {
     return retval;
 }
 
-std::string ConditionDescription(const std::vector<const Condition*>& conditions,
-                                 const UniverseObject* candidate_object,
-                                 const UniverseObject* source_object)
+[[nodiscard]] std::string ConditionDescription(const std::vector<const Condition*>& conditions,
+                                               const UniverseObject* candidate_object,
+                                               const UniverseObject* source_object)
 {
     if (conditions.empty())
         return UserString("NONE");
@@ -190,7 +191,7 @@ void Condition::Eval(const ScriptingContext& parent_context,
              [cond{this}, &parent_context](const UniverseObject* candidate) -> bool
     {
         const ScriptingContext candidate_context{parent_context, candidate};
-        return cond->Match(candidate_context);
+        return cond->Match(candidate_context); // this requies a derived Condition class to override either this Eval or Match
     });
 }
 
@@ -200,32 +201,23 @@ bool Condition::EvalAny(const ScriptingContext& parent_context, const ObjectSet&
                            [cond{this}, &parent_context](const UniverseObject* candidate) -> bool
         {
             const ScriptingContext candidate_context{parent_context, candidate};
-            return cond->Match(candidate_context);
+            return cond->Match(candidate_context); // this requies a derived Condition class to override either this EvalAny or Match
         });
+
     } catch (const std::exception& e) {
         static std::atomic<uint32_t> fail_count = 0;
-        if (fail_count < 10) {
+        if (fail_count < 8u) {
             fail_count++;
             ErrorLogger() << "EvalAny caught: " << e.what();
             ErrorLogger() << to_string(boost::stacktrace::stacktrace());
         }
 
-        // can't assume that derived-class Match will be overridden so fall back to Eval
+        // don't assume that derived-class Match will be overridden -> fall back to Eval
         ObjectSet matches{candidates}, non_matches;
         non_matches.reserve(candidates.size());
         this->Eval(parent_context, matches, non_matches, SearchDomain::MATCHES);
         return !matches.empty();
     }
-}
-
-bool Condition::EvalAny(const ScriptingContext& parent_context) const {
-    ObjectSet candidates;
-    GetDefaultInitialCandidateObjects(parent_context, candidates);
-
-    if (InitialCandidatesAllMatch())
-        return !candidates.empty(); // don't need to evaluate condition further
-
-    return EvalAny(parent_context, candidates);
 }
 
 void Condition::Eval(ScriptingContext& parent_context,
@@ -266,14 +258,6 @@ Effect::TargetSet Condition::Eval(ScriptingContext& parent_context) const {
                    std::back_inserter(retval),
                    [](auto&& o) { return const_cast<UniverseObject*>(o); });
     return retval;
-}
-
-bool Condition::Eval(const ScriptingContext& parent_context, const UniverseObject* candidate) const {
-    if (!candidate)
-        return false;
-    ObjectSet non_matches{candidate}, matches;
-    Eval(parent_context, matches, non_matches);
-    return non_matches.empty(); // if candidate has been matched, non_matches will now be empty
 }
 
 void Condition::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -3119,6 +3103,8 @@ bool Contains::Match(const ScriptingContext& local_context) const {
         return false;
     }
 
+    // TODO: invert this... get contents and return m_condition->EvalAny(local_context, contents);
+
     // get subcondition matches
     ObjectSet subcondition_matches = m_condition->Eval(local_context);
 
@@ -5165,9 +5151,8 @@ void Enqueued::Eval(const ScriptingContext& parent_context,
 
         // need to test each candidate separately using EvalImpl and EnqueuedSimpleMatch
         // because the test checks that something is enqueued at the candidate location
-        EvalImpl(matches, non_matches, search_domain, EnqueuedSimpleMatch(m_build_type, name, design_id,
-                                                                          empire_id, low, high,
-                                                                          parent_context));
+        EvalImpl(matches, non_matches, search_domain,
+                 EnqueuedSimpleMatch(m_build_type, name, design_id, empire_id, low, high, parent_context));
     } else {
         // re-evaluate allowed building types range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
@@ -5180,7 +5165,7 @@ std::string Enqueued::Description(bool negated) const {
         int empire_id = ALL_EMPIRES;
         if (m_empire_id->ConstantExpr())
             empire_id = m_empire_id->Eval();
-        ScriptingContext context;
+        const ScriptingContext context;
         if (auto empire = context.GetEmpire(empire_id))
             empire_str = empire->Name();
         else
@@ -8592,11 +8577,13 @@ bool CanAddStarlaneConnection::operator==(const Condition& rhs) const {
 }
 
 namespace {
+    constexpr bool abs_sqrt_noexcept = noexcept(std::abs(-2353.56f) / std::sqrt(-842.5f));
+
     // check if two destination systems, connected to the same origin system
     // would have starlanes too close angularly to eachother
     bool LanesAngularlyTooClose(const UniverseObject* sys1,
                                 const UniverseObject* lane1_sys2,
-                                const UniverseObject* lane2_sys2)
+                                const UniverseObject* lane2_sys2) noexcept(abs_sqrt_noexcept)
     {
         if (!sys1 || !lane1_sys2 || !lane2_sys2)
             return true;
@@ -8636,9 +8623,8 @@ namespace {
     // are to eachother. if the third system is further than the endpoints, than
     // the distance to the line is not considered and the lane is considered
     // acceptable
-    bool ObjectTooCloseToLane(const UniverseObject* lane_end_sys1,
-                              const UniverseObject* lane_end_sys2,
-                              const UniverseObject* obj)
+    bool ObjectTooCloseToLane(const UniverseObject* lane_end_sys1, const UniverseObject* lane_end_sys2,
+                              const UniverseObject* obj) noexcept(abs_sqrt_noexcept)
     {
         if (!lane_end_sys1 || !lane_end_sys2 || !obj)
             return true;
@@ -8695,13 +8681,11 @@ namespace {
         return perp_dist < MIN_PERP_DIST;
     }
 
-    inline float CrossProduct(float dx1, float dy1, float dx2, float dy2)
+    constexpr float CrossProduct(float dx1, float dy1, float dx2, float dy2) noexcept
     { return dx1*dy2 - dy1*dx2; }
 
-    bool LanesCross(const System* lane1_end_sys1,
-                    const System* lane1_end_sys2,
-                    const System* lane2_end_sys1,
-                    const System* lane2_end_sys2)
+    bool LanesCross(const System* lane1_end_sys1, const System* lane1_end_sys2,
+                    const System* lane2_end_sys1, const System* lane2_end_sys2) noexcept
     {
         // are all endpoints valid systems?
         if (!lane1_end_sys1 || !lane1_end_sys2 || !lane2_end_sys1 || !lane2_end_sys2)
@@ -8763,8 +8747,7 @@ namespace {
         return true;
     }
 
-    bool LaneCrossesExistingLane(const System* lane_end_sys1,
-                                 const System* lane_end_sys2,
+    bool LaneCrossesExistingLane(const System* lane_end_sys1, const System* lane_end_sys2,
                                  const ObjectMap& objects)
     {
         if (!lane_end_sys1 || !lane_end_sys2 || lane_end_sys1 == lane_end_sys2)
@@ -8799,8 +8782,7 @@ namespace {
         return false;
     }
 
-    bool LaneTooCloseToOtherSystem(const System* lane_end_sys1,
-                                   const System* lane_end_sys2,
+    bool LaneTooCloseToOtherSystem(const System* lane_end_sys1, const System* lane_end_sys2,
                                    const ObjectMap& objects)
     {
         if (!lane_end_sys1 || !lane_end_sys2 || lane_end_sys1 == lane_end_sys2)
@@ -8864,7 +8846,7 @@ namespace {
 
             // check if candidate is one of the destination systems
             if (std::any_of(m_destination_systems.begin(), m_destination_systems.end(),
-                [can_id{candidate_sys->ID()}](const auto* d) { return can_id == d->ID(); }))
+                [can_id{candidate_sys->ID()}](const auto* d) noexcept { return can_id == d->ID(); }))
             { return false; }
 
 
@@ -10695,7 +10677,7 @@ bool Location::Match(const ScriptingContext& local_context) const {
 
     // other Conditions' Match functions not directly callable, so can't do any
     // better than just calling Eval for each candidate...
-    return condition->Eval(local_context, candidate);
+    return condition->EvalOne(local_context, candidate);
 }
 
 void Location::SetTopLevelContent(const std::string& content_name) {
@@ -10856,7 +10838,7 @@ bool CombatTarget::Match(const ScriptingContext& local_context) const {
 
     // other Conditions' Match functions not directly callable, so can't do any
     // better than just calling Eval for each candidate...
-    return condition->Eval(local_context, candidate);
+    return condition->EvalOne(local_context, candidate);
 }
 
 void CombatTarget::SetTopLevelContent(const std::string& content_name) {
@@ -10957,7 +10939,6 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
     if (m_operands.empty())
         return;
 
-
     // TODO: Enable if TraceLogger is needed
     /*
     auto ObjList = [](const ObjectSet& objs) -> std::string {
@@ -11038,29 +11019,35 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
     */
 }
 
+
 bool And::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
-    if (m_operands.empty())
+    if (m_operands.empty() || candidates.empty())
+        return false;
+    if (candidates.size() == 1 && !candidates.front())
         return false;
 
-    // check candidates against all operands and return true if any candidate is matched by all operands
+    static constexpr auto random_pick = false;
+    if constexpr (random_pick) {
+        if (RandInt(1, 10000) >= 5000) {
+            return std::any_of(candidates.begin(), candidates.end(),
+                               [&parent_context, this](const auto* candidate) {
+                                   return std::all_of(m_operands.begin(), m_operands.end(),
+                                                      [&parent_context, candidate](const auto& op)
+                                                      { return op->EvalOne(parent_context, candidate); });
+                               });
+        }
+    }
+
     ObjectSet matches{candidates};
     ObjectSet non_matches;
     non_matches.reserve(candidates.size());
+    // check candidates against all operands and return true if any candidate is matched by all operands
     for (const auto& op : m_operands) {
+        op->Eval(parent_context, matches, non_matches, SearchDomain::MATCHES);
         if (matches.empty())
             return false;
-        op->Eval(parent_context, matches, non_matches, SearchDomain::MATCHES);
     }
-    return !matches.empty();
-    // or:
-    /*
-    return std::any_of(candidates.begin(), candidates.end(),
-                       [&parent_context, this](const auto* candidate) {
-                           return std::all_of(m_operands.begin(), m_operands.end(),
-                                              [&parent_context, candidate](const auto& op)
-                                              { return op->Eval(parent_context, candidate); });
-                       });
-    */
+    return true;
 }
 
 std::string And::Description(bool negated) const {
@@ -11381,14 +11368,14 @@ void Not::Eval(const ScriptingContext& parent_context, ObjectSet& matches, Objec
 }
 
 bool Not::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
-    // need to determine if anything does not match the subcondition. that's not the same
-    // as the case of nothing matching the subcondition.
+    // need to determine if (anything does not match the subcondition). that's not the same
+    // as (nothing matches the subcondition).
     //
     // eg. Capital::EvalAny would return true iff there is any candidate that is a capital
     // Not(Capital)::EvalAny would return true iff there is any candidate that is not a capital
     return std::any_of(candidates.begin(), candidates.end(),
                        [&parent_context, this](const auto* candidate)
-                       { return !m_operand->Eval(parent_context, candidate); });
+                       { return !m_operand->EvalOne(parent_context, candidate); });
     // or:
     //ObjectSet potential_matches{candidates};
     //ObjectSet non_matches;

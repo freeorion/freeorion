@@ -39,8 +39,17 @@ struct FO_COMMON_API Condition {
 
     /** Returns true iff at least one object in \a candidates matches this condition.
       * Returns false for an empty candiates list. */
-    [[nodiscard]] virtual bool EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const;
-    [[nodiscard]] bool EvalAny(const ScriptingContext& parent_context) const;
+    [[nodiscard]] virtual bool EvalAny(const ScriptingContext& parent_context,
+                                       const ObjectSet& candidates) const;
+    [[nodiscard]] bool EvalAny(const ScriptingContext& parent_context) const {
+        ObjectSet candidates;
+        GetDefaultInitialCandidateObjects(parent_context, candidates);
+
+        if (InitialCandidatesAllMatch())
+            return !candidates.empty(); // don't need to evaluate condition further
+
+        return EvalAny(parent_context, candidates);
+    }
 
     /** Overload for mutable TargetSet input/output. */
     void Eval(ScriptingContext& parent_context,
@@ -52,7 +61,15 @@ struct FO_COMMON_API Condition {
     [[nodiscard]] Effect::TargetSet Eval(ScriptingContext& parent_context) const;
 
     /** Tests single candidate object, returning true iff it matches condition. */
-    [[nodiscard]] bool Eval(const ScriptingContext& parent_context, const UniverseObject* candidate) const;
+    [[nodiscard]] virtual bool EvalOne(const ScriptingContext& parent_context,
+                                       const UniverseObject* candidate) const
+    {
+        if (!candidate)
+            return false;
+        ObjectSet non_matches{candidate}, matches;
+        Eval(parent_context, matches, non_matches);
+        return non_matches.empty(); // if candidate has been matched, non_matches will now be empty
+    }
 
     /** Initializes \a condition_non_targets with a set of objects that could
       * match this condition, without checking if they all actually do. */

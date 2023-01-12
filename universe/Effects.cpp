@@ -4392,7 +4392,7 @@ void Conditional::Execute(ScriptingContext& context) const {
     if (!context.effect_target)
         return;
 
-    if (!m_target_condition || m_target_condition->Eval(context, context.effect_target)) {
+    if (!m_target_condition || m_target_condition->EvalOne(context, context.effect_target)) {
         for (auto& effect : m_true_effects) {
             if (effect)
                 effect->Execute(context);

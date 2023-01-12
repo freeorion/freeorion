@@ -398,7 +398,7 @@ bool ProductionQueue::ProductionItem::EnqueueConditionPassedAt(int location_id, 
                 return true;
             auto location_obj = context.ContextObjects().getRaw(location_id);
             const ScriptingContext location_context(location_obj, context);
-            return c->Eval(location_context, location_obj);
+            return c->EvalOne(location_context, location_obj);
         }
         return true;
         break;

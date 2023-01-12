@@ -71,7 +71,7 @@ namespace {
                     // as TotalFighterDamage contains the damage from all fighters, do not further include fighter
                     include_fighters = false;
                 } else if (part->CombatTargets() && context.effect_target &&
-                           part->CombatTargets()->Eval(context, context.effect_target))
+                           part->CombatTargets()->EvalOne(context, context.effect_target))
                 {
                     fighter_damage = ship->CurrentPartMeterValue(SECONDARY_METER, part_name);
                     available_fighters = std::max(0, static_cast<int>(
@@ -232,7 +232,7 @@ std::map<int, Combat::FighterBoutInfo> Combat::ResolveFighterBouts(
         }
         // calc damage this bout, apply to total
         int shots_this_bout = retval[bout].attacking;
-        if (combat_targets && !combat_targets->Eval(ship_target_context, ship_target_context.effect_target))
+        if (combat_targets && !combat_targets->EvalOne(ship_target_context, ship_target_context.effect_target))
             shots_this_bout = 0;
         retval[bout].damage = shots_this_bout * fighter_damage;
         retval[bout].total_damage += retval[bout].damage;

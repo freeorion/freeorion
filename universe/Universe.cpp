@@ -1150,7 +1150,7 @@ namespace {
                     retval.reserve(source_objects.size());
                     for (auto& obj : source_objects) {
                         source_context.source = obj;
-                        if (activation->Eval(source_context, obj))
+                        if (activation->EvalOne(source_context, obj))
                             retval.push_back(std::move(source_context.source));
                     }
                 }
