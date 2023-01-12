@@ -36,6 +36,7 @@ jobs:
         sudo snap install --dangerous ${{ steps.snapcraft.outputs.snap }}
     - name: Install dependencies for test launch
       run: |
+        sudo apt update -y
         sudo apt install -y mesa-utils libgl1-mesa-dri libglx-mesa0
     - name: Test freeorion launch
       uses: GabrielBB/xvfb-action@v1.5
