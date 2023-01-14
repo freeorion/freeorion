@@ -1,7 +1,7 @@
 //! GiGi - A GUI for OpenGL
 //!
 //!  Copyright (C) 2003-2008 T. Zachary Laine <whatwasthataddress@gmail.com>
-//!  Copyright (C) 2013-2020 The FreeOrion Project
+//!  Copyright (C) 2013-2023 The FreeOrion Project
 //!
 //! Released under the GNU Lesser General Public License 2.1 or later.
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
@@ -99,37 +99,99 @@ public:
         TimerFiring
     };
 
-    WndEvent(EventType type, Pt pt, Flags<ModKey> mod_keys);
-    WndEvent(EventType type, Pt pt, Pt move, Flags<ModKey> mod_keys);
-    WndEvent(EventType type, Pt pt, int move, Flags<ModKey> mod_keys);
-    WndEvent(EventType type, Pt pt, const std::vector<std::shared_ptr<Wnd>>& drag_drop_wnds, Flags<ModKey> mod_keys);
-    WndEvent(EventType type, Pt pt, const std::map<std::shared_ptr<Wnd>, Pt>& drag_drop_wnds, Flags<ModKey> mod_keys);
-    WndEvent(EventType type, Pt pt, const Wnd* const drag_wnd, Flags<ModKey> mod_keys);
-    WndEvent(EventType type, Key key, std::uint32_t code_point, Flags<ModKey> mod_keys);
-    WndEvent(EventType type, unsigned int ticks, Timer* timer);
-    WndEvent(EventType type, std::string text);
-    explicit WndEvent(EventType type);
+    WndEvent(EventType type, Pt pt, Flags<ModKey> mod_keys) :
+        m_type(type),
+        m_point(pt),
+        m_mod_keys(mod_keys)
+    {}
 
-    EventType Type() const noexcept { return m_type; }   ///< type of WndEvent
-    Pt        Point() const noexcept { return m_point; } ///< point where the event took place, if any
-    Key       GetKey() const noexcept { return m_key; }  ///< key pressed or released in the WndEvent, if any
+    WndEvent(EventType type, Pt pt, Pt move, Flags<ModKey> mod_keys) :
+        m_type(type),
+        m_point(pt),
+        m_mod_keys(mod_keys),
+        m_drag_move(move)
+    {}
+
+    WndEvent(EventType type, Pt pt, int move, Flags<ModKey> mod_keys) :
+        m_type(type),
+        m_point(pt),
+        m_mod_keys(mod_keys),
+        m_wheel_move(move)
+    {}
+
+    WndEvent(EventType type, Pt pt, std::vector<std::shared_ptr<Wnd>> drag_drop_wnds, Flags<ModKey> mod_keys) :
+        m_type(type),
+        m_point(pt),
+        m_mod_keys(mod_keys),
+        m_dropped_wnds(std::move(drag_drop_wnds))
+    {}
+
+    WndEvent(EventType type, Pt pt, const std::map<std::shared_ptr<Wnd>, Pt>& drag_drop_wnds,
+             Flags<ModKey> mod_keys) :
+        m_type(type),
+        m_point(pt),
+        m_mod_keys(mod_keys)
+    {
+        // initialize storage for acceptable Wnds
+        for (const auto& drag_drop_wnd : drag_drop_wnds) {
+            m_drag_drop_wnds[drag_drop_wnd.first.get()] = drag_drop_wnd.second;
+            m_acceptable_drop_wnds[drag_drop_wnd.first.get()] = false;
+        }
+    }
+
+    WndEvent(EventType type, Key key, std::uint32_t code_point, Flags<ModKey> mod_keys) :
+        m_type(type),
+        m_key_code_point(code_point),
+        m_mod_keys(mod_keys),
+        m_key(key)
+    {}
+
+    WndEvent(EventType type, unsigned int ticks, Timer* timer) :
+        m_type(type),
+        m_ticks(ticks),
+        m_timer(timer)
+    {}
+
+    WndEvent (WndEvent::EventType type, std::string text):
+        m_type(type),
+        m_text(std::move(text))
+    {}
+
+    explicit WndEvent(EventType type) :
+        m_type(type)
+    {}
+
+    WndEvent(EventType type, Pt pt, const Wnd* const drag_wnd, Flags<ModKey> mod_keys) :
+        m_type(type),
+        m_point(pt),
+        m_mod_keys(mod_keys)
+    {
+        // initialize storage for single dragged Wnd
+        m_drag_drop_wnds[drag_wnd] = pt;
+        m_acceptable_drop_wnds[drag_wnd] = false;
+    }
+
+
+    [[nodiscard]] EventType Type() const noexcept { return m_type; }   ///< type of WndEvent
+    [[nodiscard]] Pt        Point() const noexcept { return m_point; } ///< point where the event took place, if any
+    [[nodiscard]] Key       GetKey() const noexcept { return m_key; }  ///< key pressed or released in the WndEvent, if any
 
     /** Returns the Unicode code point for the key pressed or released in the
         WndEvent, if any.
 
         @note  This may be zero, even in a KeyPress or KeyRelease event, if
         Unicode support is unavailable. */
-    std::uint32_t KeyCodePoint() const noexcept { return m_key_code_point; }
+    [[nodiscard]] std::uint32_t KeyCodePoint() const noexcept { return m_key_code_point; }
 
-    Flags<ModKey> ModKeys() const noexcept { return m_mod_keys; }   ///< modifiers to the WndEvent's keypress, if any
-    Pt            DragMove() const noexcept { return m_drag_move; } ///< amount of drag movement represented by the WndEvent, if any
-    int           WheelMove() const noexcept { return m_wheel_move;}///< amount of mouse wheel movement represented by the WndEvent, if any
-    unsigned int  Ticks() const noexcept { return m_ticks; }        ///< number of ticks represented by the WndEvent. if any
-    Timer*        GetTimer() const noexcept { return m_timer; }     ///< Timer represented by the WndEvent. if any
-    auto&         GetText() const noexcept { return m_text; }       ///< utf8 text represented by the WndEvent, if any
-    auto&         DragDropWnds() const noexcept { return m_drag_drop_wnds; } ///< drag-and-drop wnds represented by the WndEvent, if any
-    auto&         GetDragDropWnds() const noexcept { return m_dropped_wnds; }
-    auto&         GetAcceptableDropWnds() const noexcept { return m_acceptable_drop_wnds; }
+    [[nodiscard]] Flags<ModKey> ModKeys() const noexcept { return m_mod_keys; }   ///< modifiers to the WndEvent's keypress, if any
+    [[nodiscard]] Pt            DragMove() const noexcept { return m_drag_move; } ///< amount of drag movement represented by the WndEvent, if any
+    [[nodiscard]] int           WheelMove() const noexcept { return m_wheel_move;}///< amount of mouse wheel movement represented by the WndEvent, if any
+    [[nodiscard]] unsigned int  Ticks() const noexcept { return m_ticks; }        ///< number of ticks represented by the WndEvent. if any
+    [[nodiscard]] Timer*        GetTimer() const noexcept { return m_timer; }     ///< Timer represented by the WndEvent. if any
+    [[nodiscard]] auto&         GetText() const noexcept { return m_text; }       ///< utf8 text represented by the WndEvent, if any
+    [[nodiscard]] auto&         DragDropWnds() const noexcept { return m_drag_drop_wnds; } ///< drag-and-drop wnds represented by the WndEvent, if any
+    [[nodiscard]] auto&         GetDragDropWnds() const noexcept { return m_dropped_wnds; }
+    [[nodiscard]] auto&         GetAcceptableDropWnds() const noexcept { return m_acceptable_drop_wnds; }
 
 private:
     EventType                       m_type;
