@@ -1277,10 +1277,10 @@ void GalaxySetupWnd::OkClicked() {
     TraceLogger() << "GalaxySetupWnd::OkClicked end";
 
     m_ended_with_ok = true;
-    m_done = true;
+    m_modal_done.store(true);
 }
 
 void GalaxySetupWnd::CancelClicked() {
     m_ended_with_ok = false;
-    m_done = true;
+    m_modal_done.store(true);
 }

@@ -215,7 +215,7 @@ namespace {
             m_mods = mod_keys;
             // exit modal loop only if not a modifier
             if (GG::Key::GGK_LCONTROL > m_key || GG::Key::GGK_RGUI < m_key)
-                m_done = true;
+                m_modal_done.store(true);
 
             /// @todo Clean up, ie transform LCTRL or RCTRL into CTRL and
             /// the like...
@@ -1472,7 +1472,7 @@ void OptionsWnd::KeyPress(GG::Key key, std::uint32_t key_code_point,
 
 void OptionsWnd::DoneClicked() {
     GetOptionsDB().Commit();
-    m_done = true;
+    m_modal_done.store(true);
 }
 
 void OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked(bool checked) {

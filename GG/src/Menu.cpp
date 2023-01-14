@@ -179,10 +179,10 @@ void PopupMenu::LButtonUp(Pt pt, Flags<ModKey> mod_keys)
         }
         if (!menu_ptr->disabled && !menu_ptr->separator) {
             m_item_selected = menu_ptr;
-            m_done = true;
+            m_modal_done.store(true);
         }
     } else {
-        m_done = true;
+        m_modal_done.store(true);
     }
 }
 

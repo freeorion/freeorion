@@ -877,7 +877,7 @@ std::shared_ptr<Wnd> GUI::PrevFocusInteractiveWnd() const
     const auto& siblings = parent_of_focus_wnd->Children();
 
     // find current focus wnd in siblings...
-    const auto& focus_it = std::find(siblings.rbegin(), siblings.rend(), focus_wnd);
+    const auto focus_it = std::find(siblings.rbegin(), siblings.rend(), focus_wnd);
     if (focus_it == siblings.rend())
         return focus_wnd;
 
@@ -919,7 +919,7 @@ std::shared_ptr<Wnd> GUI::NextFocusInteractiveWnd() const
     const auto& siblings = parent_of_focus_wnd->Children();
 
     // find current focus wnd in siblings...
-    auto focus_it = std::find(siblings.begin(), siblings.end(), focus_wnd);
+    const auto focus_it = std::find(siblings.begin(), siblings.end(), focus_wnd);
     if (focus_it == siblings.end())
         return focus_wnd;
 
@@ -1271,9 +1271,26 @@ void GUI::RegisterModal(std::shared_ptr<Wnd> wnd)
     }
 }
 
-void GUI::RunModal(std::shared_ptr<Wnd> wnd, bool& done)
+void GUI::RunModal(const bool& done)
 {
     while (!done) {
+        HandleSystemEvents();
+        // send an idle message, so that the gui has timely updates for triggering browse info windows, etc.
+        HandleGGEvent(GUI::EventType::IDLE, Key::GGK_NONE, 0, m_impl->m_mod_keys, m_impl->m_mouse_pos, Pt());
+        PreRender();
+        RenderBegin();
+        Render();
+        RenderEnd();
+        m_impl->GouvernFPS();
+    }
+}
+
+void GUI::RunModal(std::shared_ptr<Wnd> wnd)
+{
+    if (!wnd)
+        return;
+    //std::cout << "RunModal start on " << wnd->Name() << "  at: " << &*wnd << "\n";
+    while (!wnd->ModalDone()) {
         HandleSystemEvents();
         // send an idle message, so that the gui has timely updates for triggering browse info windows, etc.
         HandleGGEvent(GUI::EventType::IDLE, Key::GGK_NONE, 0, m_impl->m_mod_keys, m_impl->m_mouse_pos, Pt());

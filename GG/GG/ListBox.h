@@ -187,7 +187,7 @@ public:
     /** emitted when the list box is cleared */
     typedef boost::signals2::signal<void ()>                                   ClearedRowsSignalType;
     /** emitted when one or more rows are selected or deselected */
-    typedef boost::signals2::signal<void (const SelectionSet&)>                SelRowsChangedSignalType;
+    typedef boost::signals2::signal<void (SelectionSet)>                       SelRowsChangedSignalType;
     /** the signature of row-change-notification signals */
     typedef boost::signals2::signal<void (iterator)>                           RowSignalType;
     /** the signature of const row-change-notification signals */

@@ -36,7 +36,7 @@ public:
     void EndRun() override;
     void Render() override {}
 
-    [[nodiscard]] bool Dropped() const noexcept { return m_dropped; }
+    [[nodiscard]] bool Dropped() const noexcept { return m_dropped.load(); }
 
     /** Adjust the m_lb_wnd size so that there are no more than m_num_shown_rows shown. It will
         not adjust a visible window, or if there is no relative to window. */
@@ -45,8 +45,8 @@ public:
     void LClick(Pt pt, Flags<ModKey> mod_keys) override;
     void ModalInit() override;
 
-    ListBox* LB() noexcept { return m_lb_wnd.get(); }
-    const ListBox* LB() const noexcept { return m_lb_wnd.get(); }
+    [[nodiscard]] auto* LB() noexcept { return m_lb_wnd.get(); }
+    [[nodiscard]] const auto* LB() const noexcept { return m_lb_wnd.get(); }
 
     /** The selection change signal while not running the modal drop down box.*/
     mutable SelChangedSignalType SelChangedSignal;
@@ -88,7 +88,7 @@ protected:
     bool EventFilter(GG::Wnd* w, const GG::WndEvent& event) override;
 
 private:
-    void LBSelChangedSlot(const ListBox::SelectionSet& rows);
+    void LBSelChangedSlot(ListBox::SelectionSet rows);
 
     void LBLeftClickSlot(ListBox::iterator it, GG::Pt pt, Flags<ModKey> modkeys);
 
@@ -102,7 +102,12 @@ private:
     std::shared_ptr<ListBox> m_lb_wnd;
     const std::size_t        m_num_shown_rows = 1u;
     const DropDownList*      m_relative_to_wnd = nullptr;
-    bool                     m_dropped = false; ///< Is the drop down list open.
+
+    boost::signals2::scoped_connection m_lclick_connection;
+    boost::signals2::scoped_connection m_sel_change_connection;
+    boost::signals2::scoped_connection m_resize_connection;
+
+    std::atomic<bool>        m_dropped = false; ///< Is the drop down list open.
 
     /** Should the list wnd scroll only when dropped? */
     bool                     m_only_mouse_scroll_when_dropped = false;
@@ -155,12 +160,14 @@ void ModalListPicker::CompleteConstruction()
 {
     namespace ph = boost::placeholders;
 
-    m_lb_wnd->SelRowsChangedSignal.connect(
+    m_lclick_connection = m_lb_wnd->SelRowsChangedSignal.connect(
         boost::bind(&ModalListPicker::LBSelChangedSlot, this, ph::_1));
-    m_lb_wnd->LeftClickedRowSignal.connect(
+    m_sel_change_connection = m_lb_wnd->LeftClickedRowSignal.connect(
         boost::bind(&ModalListPicker::LBLeftClickSlot, this, ph::_1, ph::_2, ph::_3));
-    GUI::GetGUI()->WindowResizedSignal.connect(
+
+    m_resize_connection = GUI::GetGUI()->WindowResizedSignal.connect(
         boost::bind(&ModalListPicker::WindowResizedSlot, this, ph::_1, ph::_2));
+
     AttachChild(m_lb_wnd);
     m_lb_wnd->InstallEventFilter(shared_from_this());
 
@@ -174,38 +181,33 @@ void ModalListPicker::CompleteConstruction()
 }
 
 ModalListPicker::~ModalListPicker()
-{
-    // Exit the modal run
-    EndRun();
-}
+{ EndRun(); }
 
 bool ModalListPicker::RunAndCheckSelfDestruction()
 {
     //    const std::shared_ptr<ModalListPicker> leash_holder_prevents_destruction = leash;
     const auto keep_alive = shared_from_this();
-
-    auto old_current_item = CurrentItem();
+    const auto old_current_item = CurrentItem();
     Wnd::Run();
-    m_dropped = false;
-
-    // If keep_alive.use_count is less than 2 then the parent is not still
-    // holding a shared pointer to this, so return false to indicate that the
-    // stack needs to be unrolled without referring to any destroyed objects.
+    const auto new_current_item = CurrentItem();
+    m_dropped.store(false);
     if (keep_alive.use_count() < 2)
         return false;
-    if (old_current_item != CurrentItem())
-        SignalChanged(CurrentItem());
+    if (old_current_item != new_current_item)
+        SignalChanged(new_current_item);
     return true;
 }
 
 void ModalListPicker::ModalInit()
 {
-    m_dropped = true;
+    m_modal_done.store(true);
+    m_dropped.store(true);
 
     // Try to center the current item unless within half the number of
     // shown rows from the top or bottom
-    if (CurrentItem() != m_lb_wnd->end() && !m_lb_wnd->Empty()) {
-        std::size_t current_ii(std::distance(m_lb_wnd->begin(), CurrentItem()));
+    const auto current_item = CurrentItem();
+    if (current_item != m_lb_wnd->end() && !m_lb_wnd->Empty()) {
+        std::size_t current_ii(std::distance(m_lb_wnd->begin(), current_item));
         std::size_t half_shown((m_num_shown_rows / 2));
         std::size_t even_extra_one((m_num_shown_rows % 2 == 0) ? 1 : 0);
 
@@ -226,8 +228,10 @@ void ModalListPicker::ModalInit()
 
 void ModalListPicker::EndRun()
 {
-    Wnd::EndRun();
+    m_modal_done.store(true);
+    m_dropped.store(false);
     m_lb_wnd->Hide();
+    Hide();
 }
 
 void ModalListPicker::WindowResizedSlot(X x, Y y)
@@ -235,14 +239,26 @@ void ModalListPicker::WindowResizedSlot(X x, Y y)
     // Keep the ModalListPicker full app sized so that the drop down list
     // can be placed anywhere.
     Control::Resize(Pt(x, y));
-    if (m_dropped)
+    if (m_dropped.load())
         EndRun();
 }
 
 DropDownList::iterator ModalListPicker::CurrentItem()
-{ return (LB()->Selections().empty()) ?  LB()->end() : (*LB()->Selections().begin()); }
+{
+    const auto start = m_lb_wnd->begin(), end = m_lb_wnd->end();
+    if (start == end)
+        return end;
+    const auto sel{m_lb_wnd->Selections()};
+    if (sel.empty())
+        return end;
+    const auto sel_it{*sel.begin()};
+    for (auto find_it = start; find_it != end; ++find_it)
+        if (find_it == sel_it)
+            return find_it;
+    return end;
+}
 
-boost::optional<DropDownList::iterator>  ModalListPicker::Select(boost::optional<DropDownList::iterator> it)
+boost::optional<DropDownList::iterator> ModalListPicker::Select(boost::optional<DropDownList::iterator> it)
 {
     if (!it)
         return boost::none;
@@ -264,7 +280,7 @@ void ModalListPicker::SignalChanged(boost::optional<DropDownList::iterator> it)
 
     const auto weak_this(weak_from_this());
 
-    if (Dropped()) {
+    if (m_dropped.load()) {
         // There will be at least 2 shared_ptr, one held by parent and one by Run(), if the parent
         // has not already destroyed itself.  This can happen while in the modal event pump.
         if (weak_this.use_count() < 2)
@@ -486,27 +502,24 @@ bool ModalListPicker::EventFilter(Wnd* w, const WndEvent& event) {
 void ModalListPicker::LClick(Pt pt, Flags<ModKey> mod_keys)
 { EndRun(); }
 
-void ModalListPicker::LBSelChangedSlot(const ListBox::SelectionSet& rows)
+void ModalListPicker::LBSelChangedSlot(ListBox::SelectionSet rows)
 {
-    if (rows.empty()) {
+    if (rows.empty())
         SignalChanged(m_lb_wnd->end());
-    } else {
-        auto sel_it = *rows.begin();
-        SignalChanged(sel_it);
-    }
+    else
+        SignalChanged(*rows.begin());
 }
 
 void ModalListPicker::LBLeftClickSlot(ListBox::iterator it, GG::Pt pt, Flags<ModKey> modkeys)
 { EndRun(); }
 
 void ModalListPicker::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
-{
-    SignalChanged(Select(KeyPressCommon(key, key_code_point, mod_keys)));
-}
+{ SignalChanged(Select(KeyPressCommon(key, key_code_point, mod_keys))); }
 
 void ModalListPicker::MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys)
 {
-    bool in_anchor_or_dropped_list = (LB()->InWindow(pt) || (m_relative_to_wnd && m_relative_to_wnd->InWindow(pt)));
+    const bool in_anchor_or_dropped_list = (LB()->InWindow(pt) ||
+                                            (m_relative_to_wnd && m_relative_to_wnd->InWindow(pt)));
     if (!in_anchor_or_dropped_list)
         return;
 
@@ -514,18 +527,18 @@ void ModalListPicker::MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys)
     SignalChanged(Select(MouseWheelCommon(pt, corrected_move, mod_keys)));
 }
 
+
 ////////////////////////////////////////////////
 // GG::DropDownList
 ////////////////////////////////////////////////
 DropDownList::DropDownList(std::size_t num_shown_elements, Clr color) :
     Control(X0, Y0, X(1 + 2 * ListBox::BORDER_THICK),
             Y(1 + 2 * ListBox::BORDER_THICK), INTERACTIVE),
-    m_modal_picker(Wnd::Create<ModalListPicker>(color, this, num_shown_elements))
+    m_modal_picker(Wnd::Create<ModalListPicker>(color, this, num_shown_elements)),
+    m_sel_changed_con(m_modal_picker->SelChangedSignal.connect(SelChangedSignal)),
+    m_sel_changed_dropped_con(m_modal_picker->SelChangedWhileDroppedSignal.connect(SelChangedWhileDroppedSignal))
 {
     SetStyle(LIST_SINGLESEL);
-
-    m_modal_picker->SelChangedSignal.connect(SelChangedSignal);
-    m_modal_picker->SelChangedWhileDroppedSignal.connect(SelChangedWhileDroppedSignal);
 
     if (INSTRUMENT_ALL_SIGNALS)
         SelChangedSignal.connect(DropDownListSelChangedEcho(*this));
@@ -540,12 +553,8 @@ DropDownList::DropDownList(std::size_t num_shown_elements, Clr color) :
     RequirePreRender();
 }
 
-DropDownList::~DropDownList() {
-    if (m_modal_picker)
-        m_modal_picker->EndRun();
-
-    m_buffer.clear();
-}
+DropDownList::~DropDownList()
+{ m_modal_picker->EndRun(); }
 
 DropDownList::iterator DropDownList::CurrentItem() const
 { return m_modal_picker->CurrentItem(); }
@@ -554,19 +563,24 @@ std::size_t DropDownList::CurrentItemIndex() const
 { return IteratorToIndex(CurrentItem()); }
 
 std::size_t DropDownList::IteratorToIndex(iterator it) const
-{ return it == m_modal_picker->LB()->end() ? -1 : std::distance(m_modal_picker->LB()->begin(), it); }
+{
+    const auto* lb = m_modal_picker->LB();
+    if (!lb)
+        return -1;
+    const auto start = lb->begin(), end = lb->end();
+    if (it == end)
+        return -1;
+    std::size_t dist = 0;
+    for (auto find_it = start; find_it != end; ++find_it) {
+        if (find_it == it)
+            return dist;
+        ++dist;
+    }
+    return -1;
+}
 
 DropDownList::iterator DropDownList::IndexToIterator(std::size_t n) const
 { return n < LB()->NumRows() ? std::next(m_modal_picker->LB()->begin(), n) : m_modal_picker->LB()->end(); }
-
-bool DropDownList::Empty() const
-{ return LB()->Empty(); }
-
-DropDownList::const_iterator DropDownList::begin() const
-{ return LB()->begin(); }
-
-DropDownList::const_iterator DropDownList::end() const
-{ return LB()->end(); }
 
 const DropDownList::Row& DropDownList::GetRow(std::size_t n) const
 { return LB()->GetRow(n); }
@@ -698,15 +712,17 @@ GG::X DropDownList::DisplayedRowWidth() const
 
 void DropDownList::RenderDisplayedRow()
 {
+    const auto current_item_it = CurrentItem();
     // Draw the ListBox::Row of currently displayed item, if any.
-    if (CurrentItem() == LB()->end())
+    if (current_item_it == LB()->end())
+        return;
+    auto* current_item = current_item_it->get();
+    if (!current_item)
         return;
 
     /** The following code possibly renders the selected row twice.  Once in the selected area and
       * also in the drop down list if it is visible.*/
-    auto* current_item = CurrentItem()->get();
-    bool sel_visible = current_item->Visible();
-    //bool lb_visible = LB()->Visible();
+    const bool sel_visible = current_item->Visible();
 
     // neither LB() nor the selected row may be visible and prerendered.
     GUI::GetGUI()->PreRenderWindow(LB(), true);
@@ -715,8 +731,8 @@ void DropDownList::RenderDisplayedRow()
         current_item->Show();
 
     // Vertically center the selected row in the box.
-    Pt offset = GG::Pt(ClientUpperLeft().x - current_item->ClientUpperLeft().x,
-                       Top() + Height() / 2 - (current_item->Top() + current_item->Height() / 2));
+    const Pt offset = GG::Pt(ClientUpperLeft().x - current_item->ClientUpperLeft().x,
+                             Top() + Height() / 2 - (current_item->Top() + current_item->Height() / 2));
     current_item->OffsetMove(offset);
 
     GUI::GetGUI()->PreRenderWindow(current_item);
@@ -864,6 +880,9 @@ void DropDownList::SetColStretch(std::size_t n, double stretch)
 
 void DropDownList::NormalizeRowsOnInsert(bool enable)
 { LB()->NormalizeRowsOnInsert(enable); }
+
+void DropDownList::Close()
+{ m_modal_picker->EndRun(); }
 
 void DropDownList::LButtonDown(Pt pt, Flags<ModKey> mod_keys)
 {

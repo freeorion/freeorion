@@ -241,7 +241,8 @@ public:
     /** Adds \p wnd onto the modal windows "stack".  Modal windows are owned by the GUI as a
         top-level window. */
     void            RegisterModal(std::shared_ptr<Wnd> wnd);
-    void            RunModal(std::shared_ptr<Wnd> wnd, bool& done);
+    void            RunModal(const bool& done);
+    void            RunModal(std::shared_ptr<Wnd> wnd);
     void            Remove(const std::shared_ptr<Wnd>& wnd);               ///< removes \a wnd from the z-list.  Removing a null pointer or removing the same window multiple times is a no-op.
     void            MoveUp(const std::shared_ptr<Wnd>& wnd);               ///< moves \a wnd to the top of the z-list
     void            MoveDown(const std::shared_ptr<Wnd>& wnd);             ///< moves \a wnd to the bottom of the z-list

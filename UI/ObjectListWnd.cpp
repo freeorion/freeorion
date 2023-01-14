@@ -1254,12 +1254,12 @@ GG::Rect FilterDialog::CalculatePosition() const
 
 void FilterDialog::AcceptClicked() {
     m_accept_changes = true;
-    m_done = true;
+    m_modal_done.store(true);
 }
 
 void FilterDialog::CancelClicked() {
     m_accept_changes = false;
-    m_done = true;
+    m_modal_done.store(true);
 }
 
 void FilterDialog::UpdateStateButtonsFromVisFilters() {

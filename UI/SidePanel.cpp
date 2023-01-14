@@ -540,6 +540,7 @@ public:
 
     void Select(bool selected);
 
+    void Clear();
     void Refresh(ScriptingContext& context); ///< updates panels, shows / hides colonize button, redoes layout of infopanels
 
     /** Enables, or disables if \a enable is false, issuing orders via this PlanetPanel. */
@@ -974,11 +975,13 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     m_planet_name->Resize(m_planet_name->MinUsableSize());
     AttachChild(m_planet_name);
 
+    namespace ph = boost::placeholders;
 
     // focus-selection droplist
     m_focus_drop = GG::Wnd::Create<CUIDropDownList>(6);
     AttachChild(m_focus_drop);
-    m_focus_drop->SelChangedSignal.connect([this](auto it) { FocusDropListSelectionChangedSlot(it); });
+    m_focus_drop->SelChangedSignal.connect(boost::bind(
+        &SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot, this, ph::_1));
     m_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_focus_drop->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
     m_focus_drop->ManuallyManageColProps();
@@ -1528,9 +1531,26 @@ std::set<const Ship*> AutomaticallyChosenBombardShips(int target_planet_id) { //
     return retval;
 }
 
-void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
-    int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+void SidePanel::PlanetPanel::Clear() {
     m_planet_connection.disconnect();
+    m_focus_drop->Close();
+
+    DetachChild(m_focus_drop);
+    DetachChild(m_population_panel);
+    DetachChild(m_resource_panel);
+    DetachChild(m_military_panel);
+    DetachChild(m_buildings_panel);
+    DetachChild(m_colonize_button);
+    DetachChild(m_invade_button);
+    DetachChild(m_bombard_button);
+    DetachChild(m_specials_panel);
+    DetachChild(m_planet_status_graphic);
+}
+
+void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
+    Clear();
+
+    int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
     Universe& u = context.ContextUniverse();
     ObjectMap& objects = context.ContextObjects(); // must be mutable to allow setting species and updating to estimate colonize button numbers
@@ -1539,21 +1559,6 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
 
     auto planet = objects.get<Planet>(m_planet_id);
     if (!planet) {
-        DebugLogger() << "PlanetPanel::Refresh couldn't get planet!";
-        // clear / hide everything...
-        DetachChildAndReset(m_planet_name);
-        DetachChildAndReset(m_env_size);
-        DetachChildAndReset(m_focus_drop);
-        DetachChildAndReset(m_population_panel);
-        DetachChildAndReset(m_resource_panel);
-        DetachChildAndReset(m_military_panel);
-        DetachChildAndReset(m_buildings_panel);
-        DetachChildAndReset(m_colonize_button);
-        DetachChildAndReset(m_invade_button);
-        DetachChildAndReset(m_bombard_button);
-        DetachChildAndReset(m_specials_panel);
-        DetachChildAndReset(m_planet_status_graphic);
-
         RequirePreRender();
         return;
     }
@@ -1671,35 +1676,18 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
         AttachChild(m_population_panel);
         if (m_population_panel)
             m_population_panel->Refresh();
-    } else {
-        DetachChild(m_population_panel);
     }
 
     if (populated || has_owner || SHOW_ALL_PLANET_PANELS) {
         AttachChild(m_resource_panel);
         if (m_resource_panel)
             m_resource_panel->Refresh();
-    } else {
-        DetachChild(m_resource_panel);
     }
 
     if (populated || has_owner || has_defenses || SHOW_ALL_PLANET_PANELS) {
         AttachChild(m_military_panel);
         if (m_military_panel)
             m_military_panel->Refresh();
-    } else {
-        DetachChild(m_military_panel);
-    }
-
-
-    DetachChild(m_invade_button);
-    DetachChild(m_colonize_button);
-    DetachChild(m_bombard_button);
-    DetachChild(m_focus_drop);
-
-
-    if (Disabled() || !(can_colonize || being_colonized || invadable || being_invaded)) {
-        // hide everything
     }
 
     if (can_colonize) {
@@ -1840,7 +1828,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
         auto available_foci = planet->AvailableFoci(context);
 
         // refresh items in list
-        m_focus_drop->Clear();
+
         std::vector<std::shared_ptr<GG::DropDownList::Row>> rows;
         rows.reserve(available_foci.size());
         for (const auto& focus_name : available_foci) {
@@ -1859,39 +1847,45 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
             row->push_back(std::move(graphic));
             rows.emplace_back(std::move(row));
         }
-        m_focus_drop->Insert(std::move(rows));
 
-        // set browse text and select appropriate focus in droplist
-        std::string focus_text;
-        if (!planet->Focus().empty()) {
-            for (unsigned int i = 0; i < available_foci.size(); ++i) {
-                if (available_foci[i] == planet->Focus()) {
-                    m_focus_drop->Select(i);
-                    focus_text = boost::io::str(FlexibleFormat(UserString("RP_FOCUS_TOOLTIP"))
-                                                % UserString(planet->Focus()));
-                    break;
+        if (m_focus_drop->Dropped())
+            m_focus_drop->Close();
+
+        if (!m_focus_drop->Dropped()) {
+            m_focus_drop->Clear();
+            m_focus_drop->Insert(std::move(rows));
+
+            // set browse text and select appropriate focus in droplist
+            std::string focus_text;
+            if (!planet->Focus().empty()) {
+                for (unsigned int i = 0; i < available_foci.size(); ++i) {
+                    if (available_foci[i] == planet->Focus()) {
+                        m_focus_drop->Select(i);
+                        focus_text = boost::io::str(FlexibleFormat(UserString("RP_FOCUS_TOOLTIP"))
+                                                    % UserString(planet->Focus()));
+                        break;
+                    }
                 }
+            } else {
+                m_focus_drop->Select(m_focus_drop->end());
             }
-        } else {
-            m_focus_drop->Select(m_focus_drop->end());
-        }
-        m_focus_drop->SetBrowseText(std::move(focus_text));
+            m_focus_drop->SetBrowseText(std::move(focus_text));
 
-        // prevent manipulation for unowned planets
-        if (!planet->OwnedBy(client_empire_id))
-            m_focus_drop->Disable();
+            // prevent manipulation for unowned planets
+            if (!planet->OwnedBy(client_empire_id))
+                m_focus_drop->Disable();
+        }
     }
 
 
     // other panels...
-    if (m_buildings_panel)
-        m_buildings_panel->Refresh();
-    if (m_specials_panel)
-        m_specials_panel->Update();
+    AttachChild(m_buildings_panel);
+    m_buildings_panel->Refresh();
+    AttachChild(m_specials_panel);
+    m_specials_panel->Update();
 
     // create planet status marker
     if (planet->OwnedBy(client_empire_id)) {
-        DetachChild(m_planet_status_graphic);
         std::vector<std::string> planet_status_messages;
         std::shared_ptr<GG::Texture> planet_status_texture;
 
@@ -2615,6 +2609,8 @@ void SidePanel::PlanetPanelContainer::ScrollTo(int pos) {
 }
 
 void SidePanel::PlanetPanelContainer::Clear() {
+    for (auto& pp : m_planet_panels)
+        pp->Clear();
     m_planet_panels.clear();
     m_selected_planet_id = INVALID_OBJECT_ID;
     DetachChildren();

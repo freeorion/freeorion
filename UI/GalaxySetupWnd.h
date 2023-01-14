@@ -131,7 +131,7 @@ public:
     void CompleteConstruction() override;
 
     /** returns true iff the dialog is finished running and it was closed with the "OK" button */
-    bool                    EndedWithOk() const {return m_done && m_ended_with_ok;}
+    bool                    EndedWithOk() const noexcept {return m_modal_done.load() && m_ended_with_ok;}
 
     /** returns the panel containing all the user-chosen options. */
     const std::string&      EmpireName() const;

@@ -158,18 +158,18 @@ std::size_t ThreeButtonDlg::NumButtons() const
 
 void ThreeButtonDlg::Button0Clicked()
 {
-    m_done = true;
+    m_modal_done.store(true);
     m_result = 0;
 }
 
 void ThreeButtonDlg::Button1Clicked()
 {
-    m_done = true;
+    m_modal_done.store(true);
     m_result = 1;
 }
 
 void ThreeButtonDlg::Button2Clicked()
 {
-    m_done = true;
+    m_modal_done.store(true);
     m_result = 2;
 }

@@ -647,11 +647,11 @@ void ColorDlg::ValueSliderChanged(int value, int low, int high)
 void ColorDlg::OkClicked()
 {
     m_color_was_picked = true;
-    m_done = true;
+    m_modal_done.store(true);
 }
 
 void ColorDlg::CancelClicked()
 {
     m_current_color = m_original_color;
-    m_done = true;
+    m_modal_done.store(true);
 }

@@ -700,9 +700,8 @@ void ListBox::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* dest
 
         m_selections = new_selections;
 
-        if (m_selections.size() != initially_selected_rows.size()) {
-            SelRowsChangedSignal(m_selections);
-        }
+        if (m_selections.size() != initially_selected_rows.size())
+            SelRowsChangedSignal(std::move(new_selections));
     }
 }
 

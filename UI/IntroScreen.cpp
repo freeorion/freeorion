@@ -156,7 +156,7 @@ void CreditsWnd::OnExit() {
         glDeleteLists(m_display_list_id, 1);
         m_display_list_id = 0;
     }
-    m_done = true;
+    m_modal_done.store(true);
 }
 
 void CreditsWnd::DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2) {

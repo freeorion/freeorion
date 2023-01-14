@@ -74,10 +74,10 @@ public:
     [[nodiscard]] std::size_t     IteratorToIndex(iterator it) const;     ///< returns the position of \a it within the list (returns -1 if \a it == end())
     [[nodiscard]] iterator        IndexToIterator(std::size_t n) const;   ///< returns an iterator to the row in position \a n (returns end() if \a n is an invalid index)
 
-    [[nodiscard]] bool            Empty() const;                  ///< returns true when the list is empty
+    [[nodiscard]] bool            Empty() const noexcept { return LB()->Empty(); } ///< is the list is empty?
 
-    [[nodiscard]] const_iterator  begin() const;                  ///< returns an iterator to the first list row
-    [[nodiscard]] const_iterator  end() const;                    ///< returns an iterator to the imaginary row one past the last
+    [[nodiscard]] auto            begin() const noexcept { return LB()->begin(); } ///< first list row
+    [[nodiscard]] auto            end() const noexcept { return LB()->end(); }     ///< imaginary row one past the last
 
     [[nodiscard]] const Row&      GetRow(std::size_t n) const;    ///< returns a const reference to the row at index \a n; not range-checked.  \note This function is O(n).
     [[nodiscard]] bool            Selected(iterator it) const;    ///< returns true if row \a it is selected
@@ -201,6 +201,8 @@ public:
     /** Set the drop down list to only mouse scroll if it is dropped. */
     void SetOnlyMouseScrollWhenDropped(bool enable);
 
+    void Close();
+
 protected:
     void LButtonDown(Pt pt, Flags<ModKey> mod_keys) override;
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
@@ -217,6 +219,8 @@ private:
     const ListBox* LB() const noexcept;
 
     const std::shared_ptr<ModalListPicker> m_modal_picker;
+    boost::signals2::scoped_connection m_sel_changed_con;
+    boost::signals2::scoped_connection m_sel_changed_dropped_con;
 };
 
 }

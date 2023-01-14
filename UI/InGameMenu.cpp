@@ -217,4 +217,4 @@ void InGameMenu::Resign() {
 }
 
 void InGameMenu::Done()
-{ m_done = true; }
+{ m_modal_done.store(true); }

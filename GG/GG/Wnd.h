@@ -15,6 +15,7 @@
 #define _GG_Wnd_h_
 
 
+#include <atomic>
 #include <list>
 #include <memory>
 #include <set>
@@ -677,7 +678,9 @@ public:
     virtual bool Run();
 
     /** Ends the current execution of Run(), if any. */
-    virtual void EndRun() { m_done = true; }
+    virtual void EndRun() { m_modal_done.store(true); }
+
+    [[nodiscard]] bool ModalDone() const noexcept { return m_modal_done.load(); }
 
     /** Sets the time cutoff (in milliseconds) for a browse info mode.  If \a
         mode is not less than the current number of modes, extra modes will be
@@ -959,7 +962,7 @@ protected:
     virtual void SetParent(std::shared_ptr<Wnd> wnd) { m_parent = std::move(wnd); }
 
     /** Modal Wnd's set this to true to stop modal loop. */
-    bool m_done = false;
+    std::atomic<bool> m_modal_done{false};
 
 private:
     void ValidateFlags();              ///< Sanity-checks the window creation flags

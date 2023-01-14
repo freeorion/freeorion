@@ -206,6 +206,7 @@ void FileDlg::CompleteConstruction()
 
     namespace ph = boost::placeholders;
 
+    // TODO: store scoped connections in member vector?
     m_ok_button->LeftClickedSignal.connect(boost::bind(&FileDlg::OkClicked, this));
     m_cancel_button->LeftClickedSignal.connect(boost::bind(&FileDlg::CancelClicked, this));
     m_files_list->SelRowsChangedSignal.connect(boost::bind(&FileDlg::FileSetChanged, this, ph::_1));
@@ -411,12 +412,12 @@ void FileDlg::OkHandler(bool double_click)
         }
     }
     if (results_valid)
-        m_done = true;
+        m_modal_done.store(true);
 }
 
 void FileDlg::CancelClicked()
 {
-    m_done = true;
+    m_modal_done.store(true);
     m_result.clear();
 }
 

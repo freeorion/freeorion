@@ -758,18 +758,16 @@ void Wnd::PreRender()
 
 bool Wnd::Run()
 {
-    bool retval = false;
-    auto parent{Parent()};
-    if (!parent && m_flags & MODAL) {
+    if ((m_flags & MODAL) && !Parent()) {
         GUI* gui = GUI::GetGUI();
         gui->RegisterModal(shared_from_this());
         ModalInit();
-        m_done = false;
-        gui->RunModal(shared_from_this(), m_done);
+        m_modal_done.store(false);
+        gui->RunModal(shared_from_this());
         gui->Remove(shared_from_this());
-        retval = true;
+        return true;
     }
-    return retval;
+    return false;
 }
 
 void Wnd::SetBrowseModeTime(unsigned int time, std::size_t mode)

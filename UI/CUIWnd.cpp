@@ -499,7 +499,7 @@ GG::Y CUIWnd::TopBorder() const
 { return GG::Y(ClientUI::TitlePts() + TITLE_OFFSET*4); }
 
 void CUIWnd::CloseClicked() {
-    m_done = true;
+    m_modal_done.store(true);
     if (auto&& parent = Parent())
         parent->DetachChild(this);
     else
