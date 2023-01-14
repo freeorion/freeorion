@@ -29,13 +29,13 @@ namespace {
     }
 
     Pt SetSDLFullscreenSize(SDL_Window* window, int display_id, int width, int height) {
-        SDL_DisplayMode target;
+        SDL_DisplayMode target{};
         target.w = width;
         target.h = height;
         target.format = 0; // DOn't care
         target.driverdata = nullptr;
         target.refresh_rate = 0;
-        SDL_DisplayMode closest;
+        SDL_DisplayMode closest{};
         SDL_GetClosestDisplayMode(display_id, &target, &closest);
         SDL_SetWindowDisplayMode(window, &closest);
         return Pt(X(closest.w), Y(closest.h));
