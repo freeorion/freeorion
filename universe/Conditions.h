@@ -96,6 +96,8 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>> m_low;
     std::unique_ptr<ValueRef::ValueRef<int>> m_high;
     std::unique_ptr<Condition> m_condition;
+    const bool m_high_low_local_invariant;
+    const bool m_high_low_root_invariant;
 };
 
 /** Matches all objects if the current game turn is >= \a low and < \a high. */

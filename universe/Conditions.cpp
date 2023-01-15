@@ -270,21 +270,23 @@ void Condition::GetDefaultInitialCandidateObjects(const ScriptingContext& parent
 Number::Number(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
                std::unique_ptr<ValueRef::ValueRef<int>>&& high,
                std::unique_ptr<Condition>&& condition) :
+    Condition((!low || low->RootCandidateInvariant()) &&
+              (!high || high->RootCandidateInvariant()) &&
+              (!condition || condition->RootCandidateInvariant()),
+              (!low || low->TargetInvariant()) &&
+              (!high || high->TargetInvariant()) &&
+              (!condition || condition->TargetInvariant()),
+              (!low || low->SourceInvariant()) &&
+              (!high || high->SourceInvariant()) &&
+              (!condition || condition->SourceInvariant())),
     m_low(std::move(low)),
     m_high(std::move(high)),
-    m_condition(std::move(condition))
-{
-    std::array<const ValueRef::ValueRefBase*, 2> operands = {{m_low.get(), m_high.get()}};
-    m_root_candidate_invariant =
-        m_condition->RootCandidateInvariant() &&
-        std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); });
-    m_target_invariant =
-        m_condition->TargetInvariant() &&
-        std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); });
-    m_source_invariant =
-        m_condition->SourceInvariant() &&
-        std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); });
-}
+    m_condition(std::move(condition)),
+    m_high_low_local_invariant((!low || low->LocalCandidateInvariant()) &&
+                               (!high || high->LocalCandidateInvariant())),
+    m_high_low_root_invariant((!low || low->RootCandidateInvariant()) &&
+                              (!high || high->RootCandidateInvariant()))
+{}
 
 bool Number::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -342,21 +344,9 @@ void Number::Eval(const ScriptingContext& parent_context,
     // Number does not have a single valid local candidate to be matched, as it
     // will match anything if the proper number of objects match the subcondition.
 
-    if (!(
-                (!m_low  || m_low->LocalCandidateInvariant())
-             && (!m_high || m_high->LocalCandidateInvariant())
-         )
-       )
-    {
+    if (!m_high_low_local_invariant) {
         ErrorLogger(conditions) << "Condition::Number::Eval has local candidate-dependent ValueRefs, but no valid local candidate!";
-    } else if (
-                !parent_context.condition_root_candidate
-                && !(
-                        (!m_low  || m_low->RootCandidateInvariant())
-                     && (!m_high || m_high->RootCandidateInvariant())
-                    )
-              )
-    {
+    } else if (!m_high_low_root_invariant && !parent_context.condition_root_candidate) {
         ErrorLogger(conditions) << "Condition::Number::Eval has root candidate-dependent ValueRefs, but expects local candidate to be the root candidate, and has no valid local candidate!";
     }
 
@@ -370,7 +360,7 @@ void Number::Eval(const ScriptingContext& parent_context,
     } else {
         // Matching for this condition doesn't need to check each candidate object against
         // the number of subcondition matches, so don't need to use EvalImpl
-        bool in_range = Match(parent_context);
+        const bool in_range = Match(parent_context);
 
         // transfer objects to or from candidate set, according to whether
         // number of matches was within the requested range.
