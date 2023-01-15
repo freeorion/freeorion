@@ -11421,14 +11421,20 @@ namespace {
     }
 }
 
-OrderedAlternativesOf::OrderedAlternativesOf(
-    std::vector<std::unique_ptr<Condition>>&& operands) :
-    m_operands(std::move(operands))
-{
-    m_root_candidate_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); });
-    m_target_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->TargetInvariant(); });
-    m_source_invariant = std::all_of(m_operands.begin(), m_operands.end(), [](auto& e){ return !e || e->SourceInvariant(); });
-}
+OrderedAlternativesOf::OrderedAlternativesOf(std::vector<std::unique_ptr<Condition>>&& operands) :
+    Condition(std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); }),
+              std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); }),
+              std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); })),
+        m_operands([&operands]() {
+                    std::vector<std::unique_ptr<Condition>> retval;
+                    retval.reserve(operands.size());
+                    for (auto& op : operands) {
+                        if (op)
+                            retval.push_back(std::move(op));
+                    }
+                    return retval;
+               }())
+{}
 
 bool OrderedAlternativesOf::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -11451,16 +11457,8 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
                                  ObjectSet& matches, ObjectSet& non_matches,
                                  SearchDomain search_domain) const
 {
-    if (m_operands.empty()) {
-        ErrorLogger(conditions) << "OrderedAlternativesOf::Eval given no operands!";
+    if (m_operands.empty())
         return;
-    }
-    for (auto& operand : m_operands) { // TODO: exclude null operands in constructor and remove this
-        if (!operand) {
-            ErrorLogger(conditions) << "OrderedAlternativesOf::Eval given null operand!";
-            return;
-        }
-    }
 
     // OrderedAlternativesOf [ A B C ] matches all candidates which match the topmost condition.
     // If any candidate matches A, then all candidates that match A are matched,
@@ -11548,16 +11546,8 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
 bool OrderedAlternativesOf::EvalAny(const ScriptingContext& parent_context,
                                     const ObjectSet& candidates) const
 {
-    if (m_operands.empty()) {
-        ErrorLogger(conditions) << "OrderedAlternativesOf::EvalAny given no operands!";
+    if (m_operands.empty())
         return false;
-    }
-    for (auto& operand : m_operands) { // TODO: exclude null operands in constructor and remove this
-        if (!operand) {
-            ErrorLogger(conditions) << "OrderedAlternativesOf::EvalAny given null operand!";
-            return false;
-        }
-    }
 
     // for matching any candidate, this condition effectively becomes equivalent to
     // the Or condition, needing any candidate to match any operand condition
