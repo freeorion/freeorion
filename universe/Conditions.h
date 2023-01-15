@@ -284,6 +284,7 @@ private:
     [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
+    const bool m_names_local_invariant;
 };
 
 /** Matches planets that are an empire's capital. */

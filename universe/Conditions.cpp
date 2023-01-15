@@ -1169,20 +1169,20 @@ bool EmpireAffiliation::operator==(const Condition& rhs) const {
 namespace {
     struct EmpireAffiliationSimpleMatch {
         EmpireAffiliationSimpleMatch(int empire_id, EmpireAffiliationType affiliation,
-                                     const ScriptingContext& context) :
+                                     const ScriptingContext& context) noexcept :
             m_empire_id(empire_id),
             m_affiliation(affiliation),
             m_context(context)
         {}
 
         EmpireAffiliationSimpleMatch(EmpireAffiliationType affiliation,
-                                     const ScriptingContext& context) :
+                                     const ScriptingContext& context) noexcept :
             m_affiliation(affiliation),
             m_context(context)
         {}
 
         // is it necessary to evaluate and pass in a non-default empire id?
-        static bool AffiliationTypeUsesEmpireID(EmpireAffiliationType affiliation) noexcept {
+        static constexpr bool AffiliationTypeUsesEmpireID(EmpireAffiliationType affiliation) noexcept {
             switch (affiliation) {
             case EmpireAffiliationType::AFFIL_SELF:
             case EmpireAffiliationType::AFFIL_ENEMY:
@@ -1528,12 +1528,13 @@ Homeworld::Homeworld() :
 {}
 
 Homeworld::Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
-    m_names(std::move(names))
-{
-    m_root_candidate_invariant = std::all_of(m_names.begin(), m_names.end(), [](auto& e){ return e->RootCandidateInvariant(); });
-    m_target_invariant = std::all_of(m_names.begin(), m_names.end(), [](auto& e){ return e->TargetInvariant(); });
-    m_source_invariant = std::all_of(m_names.begin(), m_names.end(), [](auto& e){ return e->SourceInvariant(); });
-}
+    Condition(std::all_of(names.begin(), names.end(), [](auto& e){ return e->RootCandidateInvariant(); }),
+              std::all_of(names.begin(), names.end(), [](auto& e){ return e->TargetInvariant(); }),
+              std::all_of(names.begin(), names.end(), [](auto& e){ return e->SourceInvariant(); })),
+    m_names(std::move(names)),
+    m_names_local_invariant(std::all_of(m_names.begin(), m_names.end(),
+                                        [](const auto& e) { return e->LocalCandidateInvariant(); }))
+{}
 
 bool Homeworld::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -1615,16 +1616,8 @@ void Homeworld::Eval(const ScriptingContext& parent_context,
                      ObjectSet& matches, ObjectSet& non_matches,
                      SearchDomain search_domain) const
 {
-    bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
-    if (simple_eval_safe) {
-        // check each valueref for invariance to local candidate
-        for (auto& name : m_names) {
-            if (!name->LocalCandidateInvariant()) {
-                simple_eval_safe = false;
-                break;
-            }
-        }
-    }
+    const bool simple_eval_safe = m_names_local_invariant &&
+        (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate names once, and use to check all candidate objects
         std::vector<std::string> names;
