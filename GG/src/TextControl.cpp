@@ -89,7 +89,7 @@ Pt TextControl::MinUsableSize(X width) const
 {
     // If the requested width is within one space width of the cached width
     // don't recalculate the size
-    X min_delta = m_font->SpaceWidth();
+    X min_delta = m_font ? m_font->SpaceWidth() : X1;
     X abs_delta_w = X(std::abs(Value(m_cached_minusable_size_width - width)));
     if (m_cached_minusable_size_width != X0 &&  abs_delta_w < min_delta)
         return m_cached_minusable_size;
@@ -97,9 +97,9 @@ Pt TextControl::MinUsableSize(X width) const
     // Calculate and cache the minimum usable size when m_cached_minusable_size is equal to width.
     // Create dummy line data with line breaks added so that lines are not wider than width.
     Flags<TextFormat> dummy_format(m_format);
-    auto dummy_line_data =
-        m_font->DetermineLines(m_text, dummy_format, width, m_text_elements);
-    m_cached_minusable_size = m_font->TextExtent(dummy_line_data)
+    auto dummy_line_data = m_font ?
+        m_font->DetermineLines(m_text, dummy_format, width, m_text_elements) : std::vector<Font::LineData>{};
+    m_cached_minusable_size = (m_font ? m_font->TextExtent(dummy_line_data) : Pt{})
         + (ClientUpperLeft() - UpperLeft()) + (LowerRight() - ClientLowerRight());
     m_cached_minusable_size_width = width;
     return m_cached_minusable_size;
@@ -205,7 +205,8 @@ void TextControl::SetText(std::string str,
 }
 
 void TextControl::ChangeTemplatedText(const std::string& new_text, std::size_t targ_offset) {
-    m_font->ChangeTemplatedText(m_text, m_text_elements, new_text, targ_offset);
+    if (m_font)
+        m_font->ChangeTemplatedText(m_text, m_text_elements, new_text, targ_offset);
     RecomputeLineData();
 }
 
@@ -231,7 +232,7 @@ void TextControl::RecomputeLineData() {
 
 void TextControl::SetFont(std::shared_ptr<Font> font)
 {
-    m_font = font;
+    m_font = std::move(font);
     SetText(std::move(m_text));
 }
 
@@ -258,7 +259,7 @@ void TextControl::SizeMove(Pt ul, Pt lr)
                               (text_width < client_width && 1u < m_line_data.size());
     }
 
-    if (redo_determine_lines) {
+    if (redo_determine_lines && m_font) {
         if (m_text_elements.empty())
             m_text_elements = m_font->ExpensiveParseFromTextToTextElements(m_text, m_format);
         m_line_data = m_font->DetermineLines(m_text, m_format, client_width, m_text_elements);
