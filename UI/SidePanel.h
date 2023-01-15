@@ -29,11 +29,12 @@ public:
 
     /** Returns the id of the system shown in the SidePanels, or
       * INVALID_OBJECT_ID if no system is shown */
-    static int SystemID();
+    static int SystemID() noexcept { return s_system_id; }
 
     /** Returns the id of the currently-selected planet, or
       * INVALID_OBJECT_ID if no planet is selected */
-    int SelectedPlanetID() const;
+    int SelectedPlanetID() const noexcept { return (m_selection_enabled ? s_planet_id : INVALID_OBJECT_ID); }
+
 
     /** Returns whether this SidePanel contains an object with the indicated
       * \a object_id that can be selected within the SidePanel. */
@@ -45,30 +46,30 @@ public:
 
     /** Updates contents of sidepanel, but doesn't recreate contents or check
       * that object pointers are still valid.  All SidePanels' are updated */
-    static void         Update();
+    static void Update();
 
     /** Make refresh of sidepanel and contents happen during
         pre-render. PreRender() Will recreate all contents from the stored
         system id. All SidePanels are refreshed. */
-    static void         Refresh();
+    static void Refresh();
 
     /** Selects the planet with id \a planet_id within the current system, if
       * such a planet exists.  All SidePanels' selected planets are set, if
       * those panels have planet selection enabled. */
-    static void         SelectPlanet(int planet_id, const ObjectMap& objects);
+    static void SelectPlanet(int planet_id, const ObjectMap& objects);
 
     /** Sets the system currently being viewed in all side panels */
-    static void         SetSystem(int system_id);
+    static void SetSystem(int system_id);
 
     /** Enables, or disables if \a enable is false, selection of planet panels
       * within this SidePanel.  Panels that can be selected are those which
       * meet selection conditions that need to be figured out and perhaps
       * made more configurable, but for now are just those planets owned by
       * this client's empire. */
-    void                EnableSelection(bool enable = true);
+    void EnableSelection(bool enable = true) noexcept { m_selection_enabled = enable; }
 
     /** Enables, or disables if \a enable is false, issuing orders via the SidePanel. */
-    void                EnableOrderIssuing(bool enable = true);
+    void EnableOrderIssuing(bool enable = true);
 
     /** emitted when a rotating planet in the side panel is clicked by the
       * user */
