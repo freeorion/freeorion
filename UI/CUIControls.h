@@ -200,20 +200,20 @@ public:
     public:
         ScrollTab(GG::Orientation orientation, int scroll_width, GG::Clr color, GG::Clr border_color);
 
-        void SetColor(GG::Clr c) override;
+        void SetColor(GG::Clr) noexcept override {} // intentionally ignored
 
         void Render() override;
-        void LButtonDown(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+        void LButtonDown(GG::Pt, GG::Flags<GG::ModKey>) noexcept override { m_being_dragged = true; }
         void LButtonUp(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
-        void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+        void LClick(GG::Pt, GG::Flags<GG::ModKey>) noexcept override { m_being_dragged = false; }
         void MouseEnter(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
-        void MouseLeave() override;
+        void MouseLeave() noexcept override  { if (!m_being_dragged) m_mouse_here = false; }
 
     private:
-        GG::Clr m_border_color;
-        GG::Orientation m_orientation;
-        bool m_mouse_here;
-        bool m_being_dragged;
+        const GG::Clr m_border_color;
+        const GG::Orientation m_orientation;
+        bool m_mouse_here = false;
+        bool m_being_dragged = false;
     };
 
     CUIScroll(GG::Orientation orientation);

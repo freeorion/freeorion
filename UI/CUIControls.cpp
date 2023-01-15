@@ -533,7 +533,9 @@ void CUIIconButtonRepresenter::OnChecked(bool checked) const
 { PlayButtonClickSound(); }
 
 void CUIIconButtonRepresenter::Render(const GG::StateButton& button) const {
-    bool render_checked = button.Checked() ^ (GG::StateButton::ButtonState::BN_ROLLOVER == button.State()); // opposite on mouseover
+    const bool checked = button.Checked();
+    const bool rollover = GG::StateButton::ButtonState::BN_ROLLOVER == button.State();
+    const bool render_checked = (checked ^ rollover); // opposite on mouseover
 
     GG::Clr icon_clr((render_checked && !button.Disabled()) ? m_checked_color : m_unchecked_color);
     GG::Clr bg_clr(ClientUI::CtrlColor());
@@ -548,7 +550,9 @@ void CUIIconButtonRepresenter::Render(const GG::StateButton& button) const {
     GG::Pt border_lr = icon_lr;
 
     // tone color for disabled button, or when unchecked and using a single icon with same color
-    if (button.Disabled() || (!render_checked && (m_checked_color == m_unchecked_color) && (m_checked_icon == m_unchecked_icon)))
+    if (button.Disabled() || (!render_checked &&
+                              (m_checked_color == m_unchecked_color) &&
+                              (m_checked_icon == m_unchecked_icon)))
         icon_clr = DisabledColor(icon_clr) * 0.8f;
 
     // highlight on mouseover
@@ -625,11 +629,9 @@ void CUITabBar::DistinguishCurrentTab(const std::vector<GG::StateButton*>& tab_b
 ///////////////////////////////////////
 CUIScroll::ScrollTab::ScrollTab(GG::Orientation orientation, int scroll_width, GG::Clr color,
                                 GG::Clr border_color) :
-    Button("", nullptr, color),
+    Button("ScrollTab", nullptr, color),
     m_border_color(border_color),
-    m_orientation(orientation),
-    m_mouse_here(false),
-    m_being_dragged(false)
+    m_orientation(orientation)
 {
     MoveTo(GG::Pt(GG::X(orientation == GG::Orientation::VERTICAL ? 0 : 2),
                   GG::Y(orientation == GG::Orientation::VERTICAL ? 2 : 0)));
@@ -637,9 +639,6 @@ CUIScroll::ScrollTab::ScrollTab(GG::Orientation orientation, int scroll_width, G
     SetMinSize(GG::Pt(m_orientation == GG::Orientation::VERTICAL ? MinSize().x : GG::X(10),
                       m_orientation == GG::Orientation::VERTICAL ? GG::Y(10) : MinSize().y));
 }
-
-void CUIScroll::ScrollTab::SetColor(GG::Clr c)
-{}  // intentionally ignored
 
 void CUIScroll::ScrollTab::Render() {
     GG::Pt ul = UpperLeft();
@@ -664,28 +663,17 @@ void CUIScroll::ScrollTab::Render() {
     AngledCornerRectangle(ul, lr, background_color, border_color, CUISCROLL_ANGLE_OFFSET, 1);
 }
 
-void CUIScroll::ScrollTab::LButtonDown(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
-{ m_being_dragged = true; }
-
 void CUIScroll::ScrollTab::LButtonUp(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     m_being_dragged = false;
     if (!InWindow(GG::GUI::GetGUI()->MousePosition()))
         m_mouse_here = false;
 }
 
-void CUIScroll::ScrollTab::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
-{ m_being_dragged = false; }
-
 void CUIScroll::ScrollTab::MouseEnter(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!m_being_dragged && !m_mouse_here) {
         PlayButtonRolloverSound();
         m_mouse_here = true;
     }
-}
-
-void CUIScroll::ScrollTab::MouseLeave() {
-    if (!m_being_dragged)
-        m_mouse_here = false;
 }
 
 
