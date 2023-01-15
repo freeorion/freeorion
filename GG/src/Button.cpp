@@ -32,13 +32,13 @@ namespace {
 ////////////////////////////////////////////////
 // GG::Button
 ////////////////////////////////////////////////
-Button::Button(std::string str, const std::shared_ptr<Font>& font, Clr color,
+Button::Button(std::string str, std::shared_ptr<Font> font, Clr color,
                Clr text_color, Flags<WndFlag> flags) :
     Control(X0, Y0, X1, Y1, flags),
     m_label(Wnd::Create<TextControl>(X0, Y0, X1, Y1, str, font,
                                      text_color, FORMAT_NONE, NO_WND_FLAGS)),
     m_label_shadow(Wnd::Create<TextControl>(SHADOW_OFFSET.x, SHADOW_OFFSET.y, X1, Y1, std::move(str),
-                                            font, CLR_SHADOW, FORMAT_NONE, NO_WND_FLAGS))
+                                            std::move(font), CLR_SHADOW, FORMAT_NONE, NO_WND_FLAGS))
 {
     m_color = color;
     m_label->Hide();
@@ -64,20 +64,8 @@ void Button::Show()
     m_label_shadow->Hide();
 }
 
-Button::ButtonState Button::State() const
-{ return m_state; }
-
 const std::string& Button::Text() const
 { return m_label->Text(); }
-
-const SubTexture& Button::UnpressedGraphic() const
-{ return m_unpressed_graphic; }
-
-const SubTexture& Button::PressedGraphic() const
-{ return m_pressed_graphic; }
-
-const SubTexture& Button::RolloverGraphic() const
-{ return m_rollover_graphic; }
 
 void Button::Render()
 {
@@ -90,20 +78,18 @@ void Button::Render()
 
 void Button::SizeMove(Pt ul, Pt lr)
 {
-    GG::Pt sz = Size();
+    const auto sz = Size();
     Wnd::SizeMove(ul, lr);
-    if (sz == Size())
+    const auto new_sz = Size();
+    if (sz == new_sz)
         return;
 
-    m_label->Resize(Size());
-    m_label_shadow->Resize(Size());
+    m_label->Resize(new_sz);
+    m_label_shadow->Resize(new_sz);
 }
 
 void Button::SetColor(Clr c)
 { Control::SetColor(c); }
-
-void Button::SetState(ButtonState state)
-{ m_state = state; }
 
 void Button::SetText(std::string text)
 {
@@ -249,10 +235,8 @@ void Button::RenderRollover()
 
 void Button::RenderDefault()
 {
-    Pt ul = UpperLeft(), lr = LowerRight();
-    BeveledRectangle(ul, lr,
-                     Disabled() ? DisabledColor(m_color) : m_color,
-                     Disabled() ? DisabledColor(m_color) : m_color,
+    const auto clr = Disabled() ? DisabledColor(m_color) : m_color;
+    BeveledRectangle(UpperLeft(), LowerRight(), clr, clr,
                      (m_state != ButtonState::BN_PRESSED), 1);
 }
 

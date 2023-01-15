@@ -46,19 +46,19 @@ public:
     /** Emitted when the button is clicked by the user */
     typedef boost::signals2::signal<void ()> ClickedSignalType;
 
-    Button(std::string str, const std::shared_ptr<Font>& font, Clr color,
+    Button(std::string str, std::shared_ptr<Font> font, Clr color,
            Clr text_color = CLR_BLACK, Flags<WndFlag> flags = INTERACTIVE);
     void CompleteConstruction() override;
 
     Pt MinUsableSize() const override;
 
     /** Returns button state \see ButtonState */
-    ButtonState State() const;
+    ButtonState State() const noexcept { return m_state; }
 
     const std::string& Text() const;             ///< Returns the label to be used as the button label
-    const SubTexture& UnpressedGraphic() const;  ///< Returns the SubTexture to be used as the image of the button when unpressed
-    const SubTexture& PressedGraphic() const;    ///< Returns the SubTexture to be used as the image of the button when pressed
-    const SubTexture& RolloverGraphic() const;   ///< Returns the SubTexture to be used as the image of the button when it contains the cursor, but is not pressed
+    const auto& UnpressedGraphic() const { return m_unpressed_graphic; }
+    const auto& PressedGraphic() const { return m_pressed_graphic; }
+    const SubTexture& RolloverGraphic() const { return m_rollover_graphic; }
 
     /** The left clicked signal object for this Button */
     mutable ClickedSignalType LeftClickedSignal;
@@ -77,7 +77,7 @@ public:
     void SetColor(Clr c) override;
 
     /** Sets button state programmatically \see ButtonState */
-    void SetState(ButtonState state);
+    void SetState(ButtonState state) noexcept { m_state = state; }
 
     void SetText(std::string text);             ///< Sets the text to be used as the button label
     void SetUnpressedGraphic(SubTexture st);    ///< Sets the SubTexture to be used as the image of the button when unpressed
