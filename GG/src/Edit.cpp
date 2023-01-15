@@ -43,7 +43,7 @@ namespace {
 
 Edit::Edit(std::string str, std::shared_ptr<Font> font,
            Clr color, Clr text_color, Clr interior) :
-    TextControl(X0, Y0, X1, HeightFromFont(font, PIXEL_MARGIN), std::move(str), std::move(font),
+    TextControl(X0, Y0, X1, HeightFromFont(font, PIXEL_MARGIN), std::move(str), font,
                 text_color, FORMAT_LEFT | FORMAT_IGNORETAGS, INTERACTIVE | REPEAT_KEY_PRESS),
     m_int_color(interior)
 {
