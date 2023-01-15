@@ -294,7 +294,7 @@ void FlushLoadedStringTables() {
     stringtables.clear();
 }
 
-const AllStringsResultT& AllStringtableEntries(bool default_table) {
+AllStringsResultT& AllStringtableEntries(bool default_table) {
     std::shared_lock stringtable_lock(stringtable_access_mutex);
     if (default_table)
         return GetDevDefaultStringTable(stringtable_lock).AllStrings();
