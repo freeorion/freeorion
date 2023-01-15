@@ -794,16 +794,20 @@ void SetShipPartMeter::Execute(ScriptingContext& context,
     if (only_appearance_effects || only_generate_sitrep_effects)
         return;
 
+    auto dump_targets = [&targets]() {
+        std::string retval;
+        retval.reserve(targets.size() * 2000); // guesstimate
+        for (auto* target : targets)
+            retval.append("\n ... ").append(target->Dump(1));
+        return retval;
+    };
+
     TraceLogger(effects) << "\n\nExecute SetShipPartMeter effect: \n" << Dump();
-    TraceLogger(effects) << "SetShipPartMeter execute targets before: ";
-    for (auto* target : targets)
-        TraceLogger(effects) << " ... " << target->Dump(1);
+    TraceLogger(effects) << "SetShipPartMeter execute targets before: " << dump_targets();
 
     Execute(context, targets);
 
-    TraceLogger(effects) << "SetShipPartMeter execute targets after: ";
-    for (auto* target : targets)
-        TraceLogger(effects) << " ... " << target->Dump(1);
+    TraceLogger(effects) << "SetShipPartMeter execute targets after: " << dump_targets();
 }
 
 void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targets) const {
