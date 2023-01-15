@@ -301,7 +301,7 @@ std::string ValueRefBase::InvariancePattern() const {
         .append(ConstantExpr()                  ? "C" : "c");
 }
 
-constexpr MeterType NameToMeter(const std::string_view name) {
+constexpr MeterType NameToMeterCX(std::string_view name) noexcept {
     for (int i = 0; i < static_cast<int>(NAME_BY_METER.size()); i++) {
         if (NAME_BY_METER[i] == name)
             return static_cast<MeterType>(i - 1);
@@ -309,36 +309,39 @@ constexpr MeterType NameToMeter(const std::string_view name) {
 
     return MeterType::INVALID_METER_TYPE;
 }
+MeterType NameToMeter(std::string_view name) noexcept { return NameToMeterCX(name); }
 
-static_assert(NameToMeter("not a meter") == MeterType::INVALID_METER_TYPE, "Name to Meter conversion failed for invalid meter type!");
-static_assert(NameToMeter("Population") == MeterType::METER_POPULATION, "Name to Meter conversion failed for 'Population' meter!");
-static_assert(NameToMeter("Speed") == MeterType::METER_SPEED, "Name to Meter conversion failed for 'Speed' meter!");
+static_assert(NameToMeterCX("not a meter") == MeterType::INVALID_METER_TYPE, "Name to Meter conversion failed for invalid meter type!");
+static_assert(NameToMeterCX("Population") == MeterType::METER_POPULATION, "Name to Meter conversion failed for 'Population' meter!");
+static_assert(NameToMeterCX("Speed") == MeterType::METER_SPEED, "Name to Meter conversion failed for 'Speed' meter!");
 
-std::string_view MeterToName(const MeterType meter) {
+constexpr std::string_view MeterToNameCX(MeterType meter) noexcept {
     // NOTE: INVALID_METER_TYPE (enum's -1 position) <= meter < NUM_METER_TYPES (enum's final position)
     return NAME_BY_METER[static_cast<std::underlying_type_t<MeterType>>(meter) + 1];
 }
+std::string_view MeterToName(MeterType meter) noexcept { return MeterToNameCX(meter); }
 
-std::string_view PlanetTypeToString(const PlanetType planet) {
+constexpr std::string_view PlanetTypeToStringCX(PlanetType planet) noexcept {
     // NOTE: INVALID_PLANET_TYPE (enum's -1 position) <= planet < NUM_PLANET_TYPES (enum's final position)
     return NAME_BY_PLANET[static_cast<std::underlying_type_t<PlanetType>>(planet) + 1]; 
 }
+std::string_view PlanetTypeToString(PlanetType planet) noexcept { return PlanetTypeToStringCX(planet); }
 
 // @return the correct PlanetType enum for a user friendly planet type string (e.g. "Ocean"), else it returns PlanetType::INVALID_PLANET_TYPE
-constexpr PlanetType StringToPlanetType(const std::string_view name) {
+constexpr PlanetType StringToPlanetTypeCX(std::string_view name) noexcept {
     for (int i = 0; i < static_cast<int>(NAME_BY_PLANET.size()); i++) {
         if (NAME_BY_PLANET[i] == name)
             return static_cast<PlanetType>(i - 1);
     }
-
     return PlanetType::INVALID_PLANET_TYPE;
 }
+PlanetType StringToPlanetType(std::string_view name) noexcept { return StringToPlanetTypeCX(name); }
 
-static_assert(StringToPlanetType("not a planet") == PlanetType::INVALID_PLANET_TYPE, "Name to Planet conversion failed for invalid planet type!");
-static_assert(StringToPlanetType("Swamp") == PlanetType::PT_SWAMP, "Name to Planet conversion failed for 'Swamp' planet!");
-static_assert(StringToPlanetType("GasGiant") == PlanetType::PT_GASGIANT, "Name to Planet conversion failed for 'GasGiant' planet!");
+static_assert(StringToPlanetTypeCX("not a planet") == PlanetType::INVALID_PLANET_TYPE, "Name to Planet conversion failed for invalid planet type!");
+static_assert(StringToPlanetTypeCX("Swamp") == PlanetType::PT_SWAMP, "Name to Planet conversion failed for 'Swamp' planet!");
+static_assert(StringToPlanetTypeCX("GasGiant") == PlanetType::PT_GASGIANT, "Name to Planet conversion failed for 'GasGiant' planet!");
 
-std::string_view PlanetEnvironmentToString(PlanetEnvironment env) {
+constexpr std::string_view PlanetEnvironmentToStringCX(PlanetEnvironment env) noexcept {
     switch (env) {
     case PlanetEnvironment::PE_UNINHABITABLE: return "Uninhabitable";
     case PlanetEnvironment::PE_HOSTILE:       return "Hostile";
@@ -348,10 +351,10 @@ std::string_view PlanetEnvironmentToString(PlanetEnvironment env) {
     default:                                  return "?";
     }
 }
+std::string_view PlanetEnvironmentToString(PlanetEnvironment env) noexcept { return PlanetEnvironmentToStringCX(env); }
 
 std::string ReconstructName(const std::vector<std::string>& property_name,
-                            ReferenceType ref_type,
-                            bool return_immediate_value)
+                            ReferenceType ref_type, bool return_immediate_value)
 {
     std::string retval;
     retval.reserve(64);
@@ -884,7 +887,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         return 0.0;
     }
 
-    MeterType meter_type = NameToMeter(property_name);
+    MeterType meter_type = NameToMeterCX(property_name);
     if (object && meter_type != MeterType::INVALID_METER_TYPE) {
         if (auto* m = object->GetMeter(meter_type)) {
             return m_return_immediate_value ? m->Current() : m->Initial();
@@ -2058,7 +2061,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             pt1 = PlanetType(pt_int1);
         } else if (m_string_ref1) {
             const std::string pt_name1 = m_string_ref1->Eval(context);
-            pt1 = StringToPlanetType(pt_name1);
+            pt1 = StringToPlanetTypeCX(pt_name1);
         } else {
             return 0;
         }
@@ -2069,7 +2072,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             pt2 = PlanetType(pt_int2);
         } else if (m_string_ref2) {
             const std::string pt_name2 = m_string_ref2->Eval(context);
-            pt2 = StringToPlanetType(pt_name2);
+            pt2 = StringToPlanetTypeCX(pt_name2);
         } else {
             return 0;
         }
@@ -2165,7 +2168,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         ResourceType res_type = ResourceType::INVALID_RESOURCE_TYPE;
         if (m_string_ref1) {
             const std::string res_name = m_string_ref1->Eval(context);
-            const auto meter_type = NameToMeter(res_name);
+            const auto meter_type = NameToMeterCX(res_name);
             res_type = MeterToResource(meter_type);
         }
         if (res_type == ResourceType::INVALID_RESOURCE_TYPE)

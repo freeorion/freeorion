@@ -7,7 +7,7 @@
 #include "../util/AppInterface.h"
 #include "../util/Logger.h"
 
-MeterType ResourceToMeter(ResourceType type) {
+MeterType ResourceToMeter(ResourceType type) noexcept {
     switch (type) {
     case ResourceType::RE_INDUSTRY:  return MeterType::METER_INDUSTRY;
     case ResourceType::RE_RESEARCH:  return MeterType::METER_RESEARCH;
@@ -19,7 +19,7 @@ MeterType ResourceToMeter(ResourceType type) {
     }
 }
 
-MeterType ResourceToTargetMeter(ResourceType type) {
+MeterType ResourceToTargetMeter(ResourceType type) noexcept {
     switch (type) {
     case ResourceType::RE_INDUSTRY:  return MeterType::METER_TARGET_INDUSTRY;
     case ResourceType::RE_RESEARCH:  return MeterType::METER_TARGET_RESEARCH;
@@ -31,7 +31,7 @@ MeterType ResourceToTargetMeter(ResourceType type) {
     }
 }
 
-ResourceType MeterToResource(MeterType type) {
+ResourceType MeterToResource(MeterType type) noexcept {
     switch (type) {
     case MeterType::METER_INDUSTRY:  return ResourceType::RE_INDUSTRY;
     case MeterType::METER_RESEARCH:  return ResourceType::RE_RESEARCH;

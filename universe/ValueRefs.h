@@ -440,14 +440,14 @@ private:
 
 /* Convert between names and MeterType. Names are scripting token, like Population
  * and not the MeterType string representations like METER_POPULATION */
-[[nodiscard]] FO_COMMON_API constexpr MeterType     NameToMeter(const std::string_view name);
-[[nodiscard]] FO_COMMON_API std::string_view        MeterToName(const MeterType meter);
+[[nodiscard]] FO_COMMON_API MeterType        NameToMeter(std::string_view name) noexcept;
+[[nodiscard]] FO_COMMON_API std::string_view MeterToName(MeterType meter) noexcept;
 
-[[nodiscard]] FO_COMMON_API std::string_view   PlanetTypeToString(const PlanetType type);
-[[nodiscard]] FO_COMMON_API std::string_view   PlanetEnvironmentToString(PlanetEnvironment env);
-[[nodiscard]] FO_COMMON_API std::string        ReconstructName(const std::vector<std::string>& property_name,
-                                                               ReferenceType ref_type,
-                                                               bool return_immediate_value = false);
+[[nodiscard]] FO_COMMON_API std::string_view PlanetTypeToString(PlanetType type) noexcept;
+[[nodiscard]] FO_COMMON_API std::string_view PlanetEnvironmentToString(PlanetEnvironment env) noexcept;
+[[nodiscard]] FO_COMMON_API std::string      ReconstructName(const std::vector<std::string>& property_name,
+                                                             ReferenceType ref_type,
+                                                             bool return_immediate_value = false);
 
 [[nodiscard]] FO_COMMON_API std::string FormatedDescriptionPropertyNames(
     ReferenceType ref_type, const std::vector<std::string>& property_names,
