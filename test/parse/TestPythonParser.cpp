@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
             "RESEARCH_SHORT_DESC",
             "LEARNING_CATEGORY",
             std::make_unique<ValueRef::Operation<double>>(ValueRef::OpType::TIMES,
-                std::make_unique<ValueRef::Constant<double>>(10),
+                std::make_unique<ValueRef::Constant<double>>(10.0),
                 std::make_unique<ValueRef::ComplexVariable<double>>(
                     "GameRule",
                     nullptr,
@@ -151,7 +151,7 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
                         std::make_unique<ValueRef::Operation<double>>(ValueRef::OpType::PLUS,
                             std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE),
                             std::make_unique<ValueRef::Operation<double>>(ValueRef::OpType::TIMES,
-                                std::make_unique<ValueRef::Constant<double>>(1),
+                                std::make_unique<ValueRef::Constant<double>>(1.0),
                                 std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_REFERENCE, "HabitableSize"))
                         ),
                         std::string("ORBITAL_HAB_LABEL")));
@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
             "POPULATION_SHORT_DESC",
             "GROWTH_CATEGORY",
             std::make_unique<ValueRef::Operation<double>>(ValueRef::OpType::TIMES,
-                std::make_unique<ValueRef::Constant<double>>(250),
+                std::make_unique<ValueRef::Constant<double>>(250.0),
                 std::make_unique<ValueRef::ComplexVariable<double>>(
                     "GameRule",
                     nullptr,

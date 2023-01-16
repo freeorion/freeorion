@@ -12,16 +12,17 @@ class PythonParser;
 
 template<typename T>
 struct value_ref_wrapper {
-    value_ref_wrapper(std::shared_ptr<ValueRef::ValueRef<T>>&& ref)
-        : value_ref(std::move(ref))
-    { }
+    value_ref_wrapper(std::shared_ptr<ValueRef::ValueRef<T>>&& ref) :
+        value_ref(std::move(ref))
+    {}
 
-    value_ref_wrapper(const std::shared_ptr<ValueRef::ValueRef<T>>& ref)
-        : value_ref(ref)
-    { }
+    value_ref_wrapper(const std::shared_ptr<ValueRef::ValueRef<T>>& ref) :
+        value_ref(ref)
+    {}
 
     value_ref_wrapper<T> call(const value_ref_wrapper<T>& var_) const {
-        std::shared_ptr<ValueRef::Variable<T>> var = std::dynamic_pointer_cast<ValueRef::Variable<T>>(var_.value_ref);
+        std::shared_ptr<ValueRef::Variable<T>> var =
+            std::dynamic_pointer_cast<ValueRef::Variable<T>>(var_.value_ref);
         if (var) {
             return value_ref_wrapper<T>(std::make_shared<ValueRef::Variable<T>>(
                                             var->GetReferenceType(),
@@ -36,7 +37,9 @@ struct value_ref_wrapper {
     }
 
     operator condition_wrapper() const {
-        std::shared_ptr<ValueRef::Operation<T>> op = std::dynamic_pointer_cast<ValueRef::Operation<T>>(value_ref);
+        std::shared_ptr<ValueRef::Operation<T>> op =
+            std::dynamic_pointer_cast<ValueRef::Operation<T>>(value_ref);
+
         if (op && op->LHS() && op->RHS()) {
             Condition::ComparisonType cmp_type;
             switch (op->GetOpType()) {
@@ -61,7 +64,8 @@ struct value_ref_wrapper {
                 default:
                     throw std::runtime_error(std::string("Not implemented in ") + __func__ + " op type " + std::to_string(static_cast<int>(op->GetOpType())) + value_ref->Dump());
             }
-            return condition_wrapper(std::make_shared<Condition::ValueTest>(op->LHS()->Clone(),
+            return condition_wrapper(std::make_shared<Condition::ValueTest>(
+                op->LHS()->Clone(),
                 cmp_type,
                 op->RHS()->Clone()));
         } else {

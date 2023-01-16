@@ -8573,27 +8573,27 @@ namespace {
         if (sys1 == lane1_sys2 || sys1 == lane2_sys2 || lane1_sys2 == lane2_sys2)
             return true;
 
-        float dx1 = lane1_sys2->X() - sys1->X();
-        float dy1 = lane1_sys2->Y() - sys1->Y();
-        float mag = std::sqrt(dx1*dx1 + dy1*dy1);
-        if (mag == 0.0f)
+        const auto dx1 = lane1_sys2->X() - sys1->X();
+        const auto dy1 = lane1_sys2->Y() - sys1->Y();
+        const auto mag1 = std::sqrt(dx1*dx1 + dy1*dy1);
+        if (mag1 == 0.0f)
             return true;
-        dx1 /= mag;
-        dy1 /= mag;
+        const auto nx1 = dx1 / mag1;
+        const auto ny1 = dy1 / mag1;
 
-        float dx2 = lane2_sys2->X() - sys1->X();
-        float dy2 = lane2_sys2->Y() - sys1->Y();
-        mag = std::sqrt(dx2*dx2 + dy2*dy2);
-        if (mag == 0.0f)
+        const auto dx2 = lane2_sys2->X() - sys1->X();
+        const auto dy2 = lane2_sys2->Y() - sys1->Y();
+        const auto mag2 = std::sqrt(dx2*dx2 + dy2*dy2);
+        if (mag2 == 0.0f)
             return true;
-        dx2 /= mag;
-        dy2 /= mag;
+        const auto nx2 = dx2 / mag2;
+        const auto ny2 = dy2 / mag2;
 
 
-        static constexpr float MAX_LANE_DOT_PRODUCT = 0.87f; // magic limit adjusted to allow no more than 12 starlanes from a system
-                                                             // arccos(0.87) = 0.515594 rad = 29.5 degrees
+        static constexpr auto MAX_LANE_DOT_PRODUCT = 0.87; // magic limit adjusted to allow no more than 12 starlanes from a system
+                                                           // arccos(0.87) = 0.515594 rad = 29.5 degrees
 
-        float dp = (dx1 * dx2) + (dy1 * dy2);
+        const auto dp = (nx1 * nx2) + (ny1 * ny2);
         //TraceLogger(conditions) << "systems: " << sys1->UniverseObject::Name() << "  " << lane1_sys2->UniverseObject::Name() << "  " << lane2_sys2->UniverseObject::Name() << "  dp: " << dp << "\n";
 
         return dp >= MAX_LANE_DOT_PRODUCT;   // if dot product too high after normalizing vectors, angles are adequately separated
@@ -8606,7 +8606,8 @@ namespace {
     // are to eachother. if the third system is further than the endpoints, than
     // the distance to the line is not considered and the lane is considered
     // acceptable
-    bool ObjectTooCloseToLane(const UniverseObject* lane_end_sys1, const UniverseObject* lane_end_sys2,
+    bool ObjectTooCloseToLane(const UniverseObject* lane_end_sys1,
+                              const UniverseObject* lane_end_sys2,
                               const UniverseObject* obj) noexcept(abs_sqrt_noexcept)
     {
         if (!lane_end_sys1 || !lane_end_sys2 || !obj)
@@ -8615,16 +8616,16 @@ namespace {
             return true;
 
         // check distances (squared) between object and lane-end systems
-        float v_12_x = lane_end_sys2->X() - lane_end_sys1->X();
-        float v_12_y = lane_end_sys2->Y() - lane_end_sys1->Y();
-        float v_o1_x = lane_end_sys1->X() - obj->X();
-        float v_o1_y = lane_end_sys1->Y() - obj->Y();
-        float v_o2_x = lane_end_sys2->X() - obj->X();
-        float v_o2_y = lane_end_sys2->Y() - obj->Y();
+        const auto v_12_x = lane_end_sys2->X() - lane_end_sys1->X();
+        const auto v_12_y = lane_end_sys2->Y() - lane_end_sys1->Y();
+        const auto v_o1_x = lane_end_sys1->X() - obj->X();
+        const auto v_o1_y = lane_end_sys1->Y() - obj->Y();
+        const auto v_o2_x = lane_end_sys2->X() - obj->X();
+        const auto v_o2_y = lane_end_sys2->Y() - obj->Y();
 
-        float dist2_12 = v_12_x*v_12_x + v_12_y*v_12_y;
-        float dist2_o1 = v_o1_x*v_o1_x + v_o1_y*v_o1_y;
-        float dist2_o2 = v_o2_x*v_o2_x + v_o2_y*v_o2_y;
+        const float dist2_12 = v_12_x*v_12_x + v_12_y*v_12_y;
+        const float dist2_o1 = v_o1_x*v_o1_x + v_o1_y*v_o1_y;
+        const float dist2_o2 = v_o2_x*v_o2_x + v_o2_y*v_o2_y;
 
         // object to zero-length lanes
         if (dist2_12 == 0.0f || dist2_o1 == 0.0f || dist2_o2 == 0.0f)
@@ -8640,11 +8641,11 @@ namespace {
         // check right-angle distance between obj and lane
 
         // normalize vector components of lane vector
-        float mag_12 = std::sqrt(dist2_12);
-        if (mag_12 == 0.0f)
+        const auto mag_12 = std::sqrt(dist2_12);
+        if (mag_12 == 0.0)
             return true;
-        v_12_x /= mag_12;
-        v_12_y /= mag_12;
+        const auto n_12_x = v_12_x / mag_12;
+        const auto n_12_y = v_12_y / mag_12;
 
         // distance to point from line from vector projection / cross products
         //       O
@@ -8657,10 +8658,9 @@ namespace {
         // (1O)x(12) = |1O| |12| sin(a)
         // d = |1O| sin(a) = (1O)x(12) / |12|
         // d = (10)x(12 / |12|)
-        static constexpr float MIN_PERP_DIST = 20; // magic limit, in units of universe units (uu)
+        static constexpr auto MIN_PERP_DIST = 20.0; // magic limit, in units of universe units (uu)
 
-        float perp_dist = std::abs(v_o1_x*v_12_y - v_o1_y*v_12_x);
-
+        const auto perp_dist = std::abs(v_o1_x*n_12_y - v_o1_y*n_12_x);
         return perp_dist < MIN_PERP_DIST;
     }
 
@@ -8679,8 +8679,8 @@ namespace {
             return false;
 
         // do the two lanes share endpoints?
-        bool share_endpoint_1 = lane1_end_sys1 == lane2_end_sys1 || lane1_end_sys1 == lane2_end_sys2;
-        bool share_endpoint_2 = lane1_end_sys2 == lane2_end_sys1 || lane1_end_sys2 == lane2_end_sys2;
+        const bool share_endpoint_1 = lane1_end_sys1 == lane2_end_sys1 || lane1_end_sys1 == lane2_end_sys2;
+        const bool share_endpoint_2 = lane1_end_sys2 == lane2_end_sys1 || lane1_end_sys2 == lane2_end_sys2;
         if (share_endpoint_1 && share_endpoint_2)
             return true;    // two copies of the same lane?
         if (share_endpoint_1 || share_endpoint_2)
@@ -8688,39 +8688,39 @@ namespace {
 
         // calculate vector components for lanes
         // lane 1
-        float v_11_12_x = lane1_end_sys2->X() - lane1_end_sys1->X();
-        float v_11_12_y = lane1_end_sys2->Y() - lane1_end_sys1->Y();
+        const auto v_11_12_x = lane1_end_sys2->X() - lane1_end_sys1->X();
+        const auto v_11_12_y = lane1_end_sys2->Y() - lane1_end_sys1->Y();
         // lane 2
-        float v_21_22_x = lane2_end_sys2->X() - lane2_end_sys1->X();
-        float v_21_22_y = lane2_end_sys2->Y() - lane2_end_sys1->Y();
+        const auto v_21_22_x = lane2_end_sys2->X() - lane2_end_sys1->X();
+        const auto v_21_22_y = lane2_end_sys2->Y() - lane2_end_sys1->Y();
 
         // calculate vector components from lane 1 system 1 to lane 2 endpoints
         // lane 1 endpoint 1 to lane 2 endpoint 1
-        float v_11_21_x = lane2_end_sys1->X() - lane1_end_sys1->X();
-        float v_11_21_y = lane2_end_sys1->Y() - lane1_end_sys1->Y();
+        const auto v_11_21_x = lane2_end_sys1->X() - lane1_end_sys1->X();
+        const auto v_11_21_y = lane2_end_sys1->Y() - lane1_end_sys1->Y();
         // lane 1 endpoint 1 to lane 2 endpoint 2
-        float v_11_22_x = lane2_end_sys2->X() - lane1_end_sys1->X();
-        float v_11_22_y = lane2_end_sys2->Y() - lane1_end_sys1->Y();
+        const auto v_11_22_x = lane2_end_sys2->X() - lane1_end_sys1->X();
+        const auto v_11_22_y = lane2_end_sys2->Y() - lane1_end_sys1->Y();
 
         // find cross products of vectors to check on which sides of lane 1 the
         // endpoints of lane 2 are located...
-        float cp_1_21 = CrossProduct(v_11_12_x, v_11_12_y, v_11_21_x, v_11_21_y);
-        float cp_1_22 = CrossProduct(v_11_12_x, v_11_12_y, v_11_22_x, v_11_22_y);
+        const auto cp_1_21 = CrossProduct(v_11_12_x, v_11_12_y, v_11_21_x, v_11_21_y);
+        const auto cp_1_22 = CrossProduct(v_11_12_x, v_11_12_y, v_11_22_x, v_11_22_y);
         if (cp_1_21*cp_1_22 >= 0) // product of same sign numbers is positive, of different sign numbers is negative
             return false;   // if same sign, points are on same side of line, so can't cross it
 
         // calculate vector components from lane 2 system 1 to lane 1 endpoints
         // lane 2 endpoint 1 to lane 1 endpoint 1
-        float v_21_11_x = -v_11_21_x;
-        float v_21_11_y = -v_11_21_y;
+        const auto v_21_11_x = -v_11_21_x;
+        const auto v_21_11_y = -v_11_21_y;
         // lane 2 endpoint 1 to lane 1 endpoint 2
-        float v_21_12_x = lane1_end_sys2->X() - lane2_end_sys1->X();
-        float v_21_12_y = lane1_end_sys2->Y() - lane2_end_sys1->Y();
+        const auto v_21_12_x = lane1_end_sys2->X() - lane2_end_sys1->X();
+        const auto v_21_12_y = lane1_end_sys2->Y() - lane2_end_sys1->Y();
 
         // find cross products of vectors to check on which sides of lane 2 the
         // endpoints of lane 1 are located...
-        float cp_2_11 = CrossProduct(v_21_22_x, v_21_22_y, v_21_11_x, v_21_11_y);
-        float cp_2_12 = CrossProduct(v_21_22_x, v_21_22_y, v_21_12_x, v_21_12_y);
+        const auto cp_2_11 = CrossProduct(v_21_22_x, v_21_22_y, v_21_11_x, v_21_11_y);
+        const auto cp_2_12 = CrossProduct(v_21_22_x, v_21_22_y, v_21_12_x, v_21_12_y);
         if (cp_2_11*cp_2_12 >= 0)
             return false;
 

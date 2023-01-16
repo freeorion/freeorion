@@ -12,7 +12,7 @@ namespace ValueRef {
 //! The common base class for all ValueRef classes. This class provides
 //! some the return-type-independent interface.
 struct FO_COMMON_API ValueRefBase {
-    ValueRefBase() = default;
+    constexpr ValueRefBase() = default;
     virtual ~ValueRefBase() = default;
 
     // these getters can't be noexcept due to a derived class doing complicated stuff
@@ -33,6 +33,10 @@ struct FO_COMMON_API ValueRefBase {
     [[nodiscard]] virtual uint32_t GetCheckSum() const { return 0; }
 
 protected:
+    constexpr explicit ValueRefBase(bool constant_expr) :
+        m_constant_expr(constant_expr)
+    {}
+
     bool m_root_candidate_invariant = false;
     bool m_local_candidate_invariant = false;
     bool m_target_invariant = false;
@@ -93,7 +97,7 @@ enum class ReferenceType : int8_t {
 template <typename T>
 struct FO_COMMON_API ValueRef : public ValueRefBase
 {
-    ValueRef() = default;
+    constexpr ValueRef() = default;
     virtual ~ValueRef() = default;
 
     [[nodiscard]] virtual bool operator==(const ValueRef<T>& rhs) const;
@@ -116,14 +120,23 @@ struct FO_COMMON_API ValueRef : public ValueRefBase
     /** Evaluates the expression tree with an empty context and returns the
       * a string representation of the result value iff the result type is
       * supported. Otherwise returns and empty string. */
-    [[nodiscard]] std::string EvalAsString() const final
-    { return FlexibleToString(Eval()); }
+    [[nodiscard]] std::string EvalAsString() const final { return FlexibleToString(Eval()); }
 
-    [[nodiscard]] virtual ReferenceType GetReferenceType() const noexcept { return ReferenceType::INVALID_REFERENCE_TYPE; }
+    [[nodiscard]] constexpr auto GetReferenceType() const noexcept { return m_ref_type; }
 
     /** Makes a clone of this ValueRef in a new owning pointer. Required for Boost.Python, which
       * doesn't supports move semantics for returned values. */
     [[nodiscard]] virtual std::unique_ptr<ValueRef<T>> Clone() const = 0;
+
+protected:
+    constexpr ValueRef(ReferenceType ref_type) :
+        m_ref_type(ref_type)
+    {}
+    constexpr ValueRef(bool constant_expr) :
+        ValueRefBase(constant_expr)
+    {}
+
+    const ReferenceType m_ref_type = ReferenceType::INVALID_REFERENCE_TYPE;
 };
 
 FO_ENUM(

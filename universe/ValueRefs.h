@@ -7,6 +7,7 @@
 #include <numeric>
 #include <unordered_set>
 #include <unordered_map>
+#include <type_traits>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
@@ -38,10 +39,22 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
 {
     template <typename TT,
               typename std::enable_if_t<std::is_convertible_v<TT, T>>* = nullptr>
-    explicit Constant(TT&& value);
+    constexpr explicit Constant(TT&& value)
+        noexcept(noexcept(std::string{}) && noexcept(T{std::declval<TT>()})) :
+        m_value(std::forward<TT>(value))
+    {
+        static_assert(std::is_nothrow_move_constructible_v<T>);
+        this->m_root_candidate_invariant = true;
+        this->m_local_candidate_invariant = true;
+        this->m_target_invariant = true;
+        this->m_source_invariant = true;
+    }
 
     [[nodiscard]] bool operator==(const ValueRef<T>& rhs) const override;
-    [[nodiscard]] T    Eval(const ScriptingContext& context) const noexcept(noexcept(T{})) override {
+
+    [[nodiscard]] T Eval(const ScriptingContext& context) const
+        noexcept(noexcept(T{std::declval<const T>()})) override
+    {
         if constexpr (std::is_same_v<T, std::string>) {
             if (m_value == "CurrentContent")
                 return m_top_level_content;
@@ -62,8 +75,9 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
         retval->m_top_level_content = m_top_level_content;
         return retval;
     }
+
 private:
-    const T     m_value{};
+    const T m_value{};
     std::string m_top_level_content;    // in the special case that T is std::string and m_value is "CurrentContent", return this instead
 };
 
@@ -99,19 +113,17 @@ struct FO_COMMON_API Variable : public ValueRef<T>
     [[nodiscard]] T Eval(const ScriptingContext& context) const override;
     [[nodiscard]] std::string Description() const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    [[nodiscard]] ReferenceType GetReferenceType() const noexcept override { return m_ref_type; }
-    [[nodiscard]] const std::vector<std::string>& PropertyName() const noexcept { return m_property_name; }
+    [[nodiscard]] auto& PropertyName() const noexcept { return m_property_name; }
     [[nodiscard]] bool ReturnImmediateValue() const noexcept { return m_return_immediate_value; }
 
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override
-    { return std::make_unique<Variable<T>>(m_ref_type, m_property_name, m_return_immediate_value); }
+    { return std::make_unique<Variable<T>>(this->m_ref_type, m_property_name, m_return_immediate_value); }
 
 protected:
     void InitInvariants();
 
-    const ReferenceType            m_ref_type = ReferenceType::INVALID_REFERENCE_TYPE;
     const std::vector<std::string> m_property_name;
     const bool                     m_return_immediate_value = false;
 };
@@ -428,14 +440,13 @@ private:
     Operation& operator=(const Operation<T>& rhs) = delete;
     Operation& operator=(Operation<T>&& rhs) = delete;
 
-    void InitConstInvariants();
-    void CacheConstValue();
+    void InitInvariants();
 
     [[nodiscard]] T EvalImpl(const ScriptingContext& context) const;
 
     const OpType                                    m_op_type = OpType::TIMES;
     const std::vector<std::unique_ptr<ValueRef<T>>> m_operands;
-    T                                               m_cached_const_value = T();
+    const T                                         m_cached_const_value = T();
 };
 
 /* Convert between names and MeterType. Names are scripting token, like Population
@@ -491,19 +502,6 @@ bool ValueRef<T>::operator==(const ValueRef<T>& rhs) const
 // Constant                                              //
 ///////////////////////////////////////////////////////////
 template <typename T>
-template <typename TT,
-          typename std::enable_if_t<std::is_convertible_v<TT, T>>*>
-Constant<T>::Constant(TT&& value) :
-    m_value(std::forward<TT>(value))
-{
-    static_assert(std::is_convertible_v<TT, T>);
-    this->m_root_candidate_invariant = true;
-    this->m_local_candidate_invariant = true;
-    this->m_target_invariant = true;
-    this->m_source_invariant = true;
-}
-
-template <typename T>
 bool Constant<T>::operator==(const ValueRef<T>& rhs) const
 {
     if (&rhs == this)
@@ -512,7 +510,11 @@ bool Constant<T>::operator==(const ValueRef<T>& rhs) const
         return false;
     const Constant<T>& rhs_ = static_cast<const Constant<T>&>(rhs);
 
-    return m_value == rhs_.m_value && m_top_level_content == rhs_.m_top_level_content;
+    if constexpr (std::is_same_v<T, std::string>) {
+        if (m_top_level_content != rhs_.m_top_level_content)
+            return false;
+    }
+    return m_value == rhs_.m_value;
 }
 
 template <typename T>
@@ -600,8 +602,7 @@ FO_COMMON_API std::string Constant<std::string>::Dump(uint8_t ntabs) const;
 template <typename T>
 Variable<T>::Variable(ReferenceType ref_type, std::vector<std::string>&& property_name,
                       bool return_immediate_value) :
-    ValueRef<T>(),
-    m_ref_type(ref_type),
+    ValueRef<T>(ref_type),
     m_property_name(std::move(property_name)),
     m_return_immediate_value(return_immediate_value)
 { InitInvariants(); }
@@ -609,8 +610,7 @@ Variable<T>::Variable(ReferenceType ref_type, std::vector<std::string>&& propert
 template <typename T>
 Variable<T>::Variable(ReferenceType ref_type, const std::vector<std::string>& property_name,
                       bool return_immediate_value) :
-    ValueRef<T>(),
-    m_ref_type(ref_type),
+    ValueRef<T>(ref_type),
     m_property_name(property_name),
     m_return_immediate_value(return_immediate_value)
 { InitInvariants(); }
@@ -630,8 +630,7 @@ template <typename T>
 template <typename S>
 Variable<T>::Variable(ReferenceType ref_type, S&& property_name,
                       bool return_immediate_value) :
-    ValueRef<T>(),
-    m_ref_type(ref_type),
+    ValueRef<T>(ref_type),
     m_property_name{std::forward<S>(property_name)},
     m_return_immediate_value(return_immediate_value)
 { InitInvariants(); }
@@ -642,8 +641,7 @@ Variable<T>::Variable(ReferenceType ref_type,
                       boost::optional<std::string>&& container_name,
                       S&& property_name,
                       bool return_immediate_value) :
-    ValueRef<T>(),
-    m_ref_type(ref_type),
+    ValueRef<T>(ref_type),
     m_property_name([&container_name, &property_name]() -> std::vector<std::string> {
         std::vector<std::string> pn;
         const bool cnhs = container_name.has_value();
@@ -661,10 +659,12 @@ Variable<T>::Variable(ReferenceType ref_type,
 template <typename T>
 void Variable<T>::InitInvariants()
 {
-    this->m_root_candidate_invariant = m_ref_type != ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE;
-    this->m_local_candidate_invariant = m_ref_type != ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE;
-    this->m_target_invariant = m_ref_type != ReferenceType::EFFECT_TARGET_REFERENCE && m_ref_type != ReferenceType::EFFECT_TARGET_VALUE_REFERENCE;
-    this->m_source_invariant = m_ref_type != ReferenceType::SOURCE_REFERENCE;
+    const auto rt = this->m_ref_type;
+    this->m_root_candidate_invariant = rt != ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE;
+    this->m_local_candidate_invariant = rt != ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE;
+    this->m_target_invariant = rt != ReferenceType::EFFECT_TARGET_REFERENCE &&
+                               rt != ReferenceType::EFFECT_TARGET_VALUE_REFERENCE;
+    this->m_source_invariant = rt != ReferenceType::SOURCE_REFERENCE;
 }
 
 template <typename T>
@@ -675,18 +675,18 @@ bool Variable<T>::operator==(const ValueRef<T>& rhs) const
     if (typeid(rhs) != typeid(*this))
         return false;
     const Variable<T>& rhs_ = static_cast<const Variable<T>&>(rhs);
-    return (m_ref_type == rhs_.m_ref_type) &&
+    return (this->m_ref_type == rhs_.m_ref_type) &&
            (m_property_name == rhs_.m_property_name) &&
            (m_return_immediate_value == rhs_.m_return_immediate_value);
 }
 
 template <typename T>
 std::string Variable<T>::Description() const
-{ return FormatedDescriptionPropertyNames(m_ref_type, m_property_name, m_return_immediate_value); }
+{ return FormatedDescriptionPropertyNames(this->m_ref_type, m_property_name, m_return_immediate_value); }
 
 template <typename T>
 std::string Variable<T>::Dump(uint8_t ntabs) const
-{ return ReconstructName(m_property_name, m_ref_type, m_return_immediate_value); }
+{ return ReconstructName(m_property_name, this->m_ref_type, m_return_immediate_value); }
 
 template <typename T>
 uint32_t Variable<T>::GetCheckSum() const
@@ -695,7 +695,7 @@ uint32_t Variable<T>::GetCheckSum() const
 
     CheckSums::CheckSumCombine(retval, "ValueRef::Variable");
     CheckSums::CheckSumCombine(retval, m_property_name);
-    CheckSums::CheckSumCombine(retval, m_ref_type);
+    CheckSums::CheckSumCombine(retval, this->m_ref_type);
     CheckSums::CheckSumCombine(retval, m_return_immediate_value);
     TraceLogger() << "GetCheckSum(Variable<T>): " << typeid(*this).name() << " retval: " << retval;
     return retval;
@@ -1764,17 +1764,6 @@ Operation<T>::Operation(OpType op_type, std::unique_ptr<ValueRef<T>>&& operand) 
 {}
 
 template <typename T>
-Operation<T>::Operation(OpType op_type, std::vector<std::unique_ptr<ValueRef<T>>>&& operands) :
-    m_op_type(op_type),
-    m_operands(std::move(operands))
-{
-    if (std::any_of(m_operands.begin(), m_operands.end(), [](const auto& op) -> bool { return !op; }))
-        throw std::invalid_argument("Operation passed null operand");
-    InitConstInvariants();
-    CacheConstValue();
-}
-
-template <typename T>
 Operation<T>::Operation(const Operation<T>& rhs) :
     m_op_type(rhs.m_op_type),
     m_operands(CloneUnique(rhs.m_operands)),
@@ -1789,7 +1778,7 @@ Operation<T>::Operation(const Operation<T>& rhs) :
 }
 
 template <typename T>
-void Operation<T>::InitConstInvariants()
+void Operation<T>::InitInvariants()
 {
     if (m_op_type == OpType::RANDOM_UNIFORM || m_op_type == OpType::RANDOM_PICK || m_op_type == OpType::NOOP) {
         // all defaults for invariants = false should apply
@@ -1797,13 +1786,9 @@ void Operation<T>::InitConstInvariants()
         //this->m_local_candidate_invariant = false;
         //this->m_target_invariant = false;
         //this->m_source_invariant = false;
-        //this->m_constant_expr = false;
         //this->m_simple_increment = false;
         return;
     }
-
-    this->m_constant_expr = std::all_of(m_operands.begin(), m_operands.end(),
-        [](const auto& operand) { return operand && operand->ConstantExpr(); });
 
     this->m_root_candidate_invariant = std::all_of(m_operands.begin(), m_operands.end(),
         [](const auto& operand) { return operand && operand->RootCandidateInvariant(); });
@@ -1833,15 +1818,8 @@ void Operation<T>::InitConstInvariants()
     if (!rhs->TargetInvariant())
         return;
     // LHS must be just the immediate value of what's being incremented
-    this->m_simple_increment = (lhs->GetReferenceType() == ReferenceType::EFFECT_TARGET_VALUE_REFERENCE);
-}
-
-template <typename T>
-void Operation<T>::CacheConstValue()
-{
-    if (!this->m_constant_expr)
-        return;
-    m_cached_const_value = this->EvalImpl(ScriptingContext{});
+    this->m_simple_increment = !this->m_constant_expr &&
+        (lhs->GetReferenceType() == ReferenceType::EFFECT_TARGET_VALUE_REFERENCE);
 }
 
 template <typename T>
@@ -1885,14 +1863,6 @@ const std::vector<ValueRef<T>*> Operation<T>::Operands() const
     std::transform(m_operands.begin(), m_operands.end(), std::back_inserter(retval),
                    [](const auto& xx){ return xx.get(); });
     return retval;
-}
-
-template <typename T>
-T Operation<T>::Eval(const ScriptingContext& context) const
-{
-    if (this->m_constant_expr)
-        return m_cached_const_value;
-    return this->EvalImpl(context);
 }
 
 template <typename T>
@@ -1958,6 +1928,15 @@ T Operation<T>::EvalImpl(OpType op_type, const T lhs, const T rhs)
     throw std::runtime_error("ValueRef::Operation<T>::EvalImpl evaluated with an unknown or invalid OpType.");
 }
 
+template <>
+FO_COMMON_API std::string Operation<std::string>::EvalImpl(OpType op_type, std::string lhs, std::string rhs);
+
+template <>
+FO_COMMON_API double Operation<double>::EvalImpl(OpType op_type, double lhs, double rhs);
+
+template <>
+FO_COMMON_API double Operation<double>::EvalImpl(const ScriptingContext& context) const;
+
 template <typename T>
 T Operation<T>::EvalImpl(const ScriptingContext& context) const
 {
@@ -2006,11 +1985,11 @@ T Operation<T>::EvalImpl(const ScriptingContext& context) const
     case OpType::RANDOM_PICK: {
         // select one operand, evaluate it, return result
         if (m_operands.empty())
-            return T(-1);   // should be INVALID_T of enum types
+            return T{-1};   // should be INVALID_T of enum types
         auto idx = RandInt(0, m_operands.size() - 1);
         auto& vr = *std::next(m_operands.begin(), idx);
         if (!vr)
-            return T(-1);   // should be INVALID_T of enum types
+            return T{-1};   // should be INVALID_T of enum types
         return vr->Eval(context);
         break;
     }
@@ -2059,6 +2038,14 @@ T Operation<T>::EvalImpl(const ScriptingContext& context) const
 }
 
 template <typename T>
+T Operation<T>::Eval(const ScriptingContext& context) const
+{
+    if (this->m_constant_expr)
+        return m_cached_const_value;
+    return this->EvalImpl(context);
+}
+
+template <typename T>
 uint32_t Operation<T>::GetCheckSum() const
 {
     uint32_t retval{0};
@@ -2072,26 +2059,30 @@ uint32_t Operation<T>::GetCheckSum() const
     return retval;
 }
 
-
-template <>
-FO_COMMON_API std::string Operation<std::string>::EvalImpl(OpType op_type, std::string lhs, std::string rhs);
-
-template <>
-FO_COMMON_API double Operation<double>::EvalImpl(OpType op_type, double lhs, double rhs);
-
 template <>
 FO_COMMON_API int Operation<int>::EvalImpl(OpType op_type, int lhs, int rhs);
-
 
 template <>
 FO_COMMON_API std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) const;
 
 template <>
-FO_COMMON_API double Operation<double>::EvalImpl(const ScriptingContext& context) const;
-
-template <>
 FO_COMMON_API int Operation<int>::EvalImpl(const ScriptingContext& context) const;
 
+template <typename T>
+Operation<T>::Operation(OpType op_type, std::vector<std::unique_ptr<ValueRef<T>>>&& operands) :
+    ValueRef<T>(op_type != OpType::RANDOM_UNIFORM &&
+                op_type != OpType::RANDOM_PICK &&
+                op_type != OpType::NOOP &&
+                std::all_of(operands.begin(), operands.end(),
+                            [](const auto& operand) { return operand && operand->ConstantExpr(); })),
+    m_op_type(op_type),
+    m_operands(std::move(operands)),
+    m_cached_const_value(this->m_constant_expr ? this->EvalImpl(ScriptingContext{}) : T{})
+{
+    if (std::any_of(m_operands.begin(), m_operands.end(), [](const auto& op) -> bool { return !op; }))
+        throw std::invalid_argument("Operation passed null operand");
+    InitInvariants();
+}
 
 template <typename T>
 std::string Operation<T>::Description() const
