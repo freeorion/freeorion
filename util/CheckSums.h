@@ -11,7 +11,7 @@
 #include <vector>
 
 namespace CheckSums {
-    constexpr unsigned int CHECKSUM_MODULUS = 10000000U;    // reasonably big number that should be well below UINT_MAX, which is ~4.29x10^9 for 32 bit unsigned int
+    constexpr uint32_t CHECKSUM_MODULUS = 10000000U;    // reasonably big number that should be well below UINT_MAX, which is ~4.29x10^9 for 32 bit unsigned int
 
     FO_COMMON_API void CheckSumCombine(uint32_t& sum, double t);
     FO_COMMON_API void CheckSumCombine(uint32_t& sum, float t);
@@ -23,14 +23,14 @@ namespace CheckSums {
     void CheckSumCombine(uint32_t& sum, T t,
                          typename std::enable_if_t<std::is_signed_v<T>>* = nullptr)
     {
-        sum += static_cast<unsigned int>(std::abs(t));
+        sum += static_cast<uint32_t>(std::abs(t));
         sum %= CHECKSUM_MODULUS;
     }
     template <typename T>
     void CheckSumCombine(uint32_t& sum, T t,
                          typename std::enable_if_t<std::is_unsigned_v<T>>* = nullptr)
     {
-        sum += static_cast<unsigned int>(t);
+        sum += static_cast<uint32_t>(t);
         sum %= CHECKSUM_MODULUS;
     }
 
