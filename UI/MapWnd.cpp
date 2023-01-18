@@ -1979,7 +1979,7 @@ void MapWnd::RenderSystems() {
     // distance between inner and outer system circle
     const double circle_distance = GetOptionsDB().Get<double>("ui.map.system.circle.distance");
     // width of outer...
-    const double outer_circle_width = GetOptionsDB().Get<double>("ui.map.system.circle.outer.width");
+    //const double outer_circle_width = GetOptionsDB().Get<double>("ui.map.system.circle.outer.width");
     // ... and inner circle line at close zoom
     const double inner_circle_width = GetOptionsDB().Get<double>("ui.map.system.circle.inner.width");
     // width of inner circle line when map is zoomed out
@@ -2334,8 +2334,6 @@ void MapWnd::RenderFleetMovementLines() {
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
     glBindTexture(GL_TEXTURE_2D, move_line_dot_texture->OpenGLId());
-
-    const float dot_half_sz = dot_size / 2.0f;
 
     const auto sz = (m_fleet_lines.size() + m_projected_fleet_lines.size()) * 4;
     m_fleet_move_dot_vertices.clear();

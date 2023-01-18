@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(host_server) {
         // output sitreps
         const auto& my_empire = m_empires.GetEmpire(m_empire_id);
         BOOST_REQUIRE(my_empire != nullptr);
-        for (const auto sitrep : my_empire->SitReps()) {
+        for (const auto& sitrep : my_empire->SitReps()) {
             if (sitrep.GetTurn() == m_current_turn) {
                 BOOST_TEST_MESSAGE("Sitrep: " << sitrep.Dump());
             }
