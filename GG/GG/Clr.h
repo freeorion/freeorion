@@ -15,6 +15,7 @@
 #define _GG_Clr_h_
 
 #include <array>
+#include <cstdint>
 #include <sstream>
 #include <string>
 #include <GG/Export.h>
