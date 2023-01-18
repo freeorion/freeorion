@@ -74,9 +74,7 @@ namespace Pending {
                 return boost::none;
             }
             DebugLogger() << "Retrieve result of parsing \"" << pending.filename << "\".";
-            auto x = std::move(pending.pending->get());
-            DebugLogger() << "Retrieved result of parsing \"" << pending.filename << "\".";
-            return std::move(x);
+            return pending.pending->get();
         } catch (const std::exception& e) {
             ErrorLogger() << "Parsing of \"" << pending.filename << "\" failed with error: " << e.what();
         }
