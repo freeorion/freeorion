@@ -4,6 +4,7 @@
 
 #include "../util/Enum.h"
 #include "../util/Export.h"
+#include <cstdint>
 
 
 /** types of items that can be unlocked for empires */
