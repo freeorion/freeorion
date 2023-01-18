@@ -3,8 +3,9 @@ from typing import Generator
 
 
 def get_code_location(generator: Generator) -> str:
+    if generator.gi_yieldfrom:
+        return get_code_location(generator.gi_yieldfrom)
     return f"{os.path.basename(generator.gi_code.co_filename)}:{generator.gi_frame.f_lineno}"
-
 
 def get_item_with_location(generator: Generator) -> Generator:
     for x in generator:
@@ -60,7 +61,7 @@ def get_common_instances() -> Generator:
     ship_hull = fo.getShipHull("SH_XENTRONIUM")
     yield ship_hull
 
-    yield fo.getSpecies("SP_ABADDONI")
+    yield fo.getSpecies("SP_CRAY")
 
     fleets_int_vector = universe.fleetIDs
 
