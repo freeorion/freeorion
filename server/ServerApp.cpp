@@ -3248,7 +3248,6 @@ namespace {
             for (auto& [recipient_empire_id, objs] : recipients_objs) {
                 for (auto* gifted_obj : objs) {
                     const auto initial_owner_empire_id = gifted_obj->Owner();
-                    const auto obj_type = gifted_obj->ObjectType();
                     const auto gifted_obj_id = gifted_obj->ID();
                     gifted_object_ids.push_back(gifted_obj_id);
 
