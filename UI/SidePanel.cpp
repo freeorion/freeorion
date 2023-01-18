@@ -1547,14 +1547,14 @@ void SidePanel::PlanetPanel::Clear() {
 void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     Clear();
 
-    int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
     Universe& u = context.ContextUniverse();
     ObjectMap& objects = context.ContextObjects(); // must be mutable to allow setting species and updating to estimate colonize button numbers
     const SpeciesManager& sm = context.species;
     const SupplyManager& supply = context.supply;
 
-    auto planet = objects.get<Planet>(m_planet_id);
+    const auto planet = objects.get<const Planet>(m_planet_id);
     if (!planet) {
         RequirePreRender();
         return;
@@ -1637,7 +1637,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     std::string_view colony_ship_species_name;
     if (selected_colony_ship)
         colony_ship_species_name = selected_colony_ship->SpeciesName();
-    float colony_ship_capacity{selected_colony_ship ? selected_colony_ship->ColonyCapacity(u) : 0.0f};
+    const float colony_ship_capacity{selected_colony_ship ? selected_colony_ship->ColonyCapacity(u) : 0.0f};
     const Species* colony_ship_species = context.species.GetSpecies(colony_ship_species_name);
     PlanetEnvironment planet_env_for_colony_species = PlanetEnvironment::PE_UNINHABITABLE;
     if (colony_ship_species)
@@ -1645,29 +1645,29 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
 
 
     // calculate truth tables for planet colonization and invasion
-    bool has_owner =       !planet->Unowned();
-    bool mine =             planet->OwnedBy(client_empire_id);
-    bool populated =        planet->GetMeter(MeterType::METER_POPULATION)->Initial() > 0.0f;
-    bool habitable =        planet_env_for_colony_species >= PlanetEnvironment::PE_HOSTILE &&
-                            planet_env_for_colony_species <= PlanetEnvironment::PE_GOOD;
-    bool visible =          u.GetObjectVisibilityByEmpire(m_planet_id, client_empire_id) >= Visibility::VIS_PARTIAL_VISIBILITY;
-    bool shielded =         planet->GetMeter(MeterType::METER_SHIELD)->Initial() > 0.0f;
-    bool has_defenses =     planet->GetMeter(MeterType::METER_MAX_SHIELD)->Initial() > 0.0f ||
-                            planet->GetMeter(MeterType::METER_MAX_DEFENSE)->Initial() > 0.0f ||
-                            planet->GetMeter(MeterType::METER_MAX_TROOPS)->Initial() > 0.0f;
-    bool being_colonized =  planet->IsAboutToBeColonized();
-    bool outpostable =                   !populated && (  !has_owner /*&& !shielded*/         ) && visible && !being_colonized;
-    bool colonizable =      habitable && !populated && ( (!has_owner /*&& !shielded*/) || mine) && visible && !being_colonized;
-    bool can_colonize =     selected_colony_ship && (   (colonizable  && (colony_ship_capacity > 0.0f))
-                                                     || (outpostable && (colony_ship_capacity == 0.0f)));
+    const bool has_owner =       !planet->Unowned();
+    const bool mine =             planet->OwnedBy(client_empire_id);
+    const bool populated =        planet->GetMeter(MeterType::METER_POPULATION)->Initial() > 0.0f;
+    const bool habitable =        planet_env_for_colony_species >= PlanetEnvironment::PE_HOSTILE &&
+                                  planet_env_for_colony_species <= PlanetEnvironment::PE_GOOD;
+    const bool visible =          u.GetObjectVisibilityByEmpire(m_planet_id, client_empire_id) >= Visibility::VIS_PARTIAL_VISIBILITY;
+    const bool shielded =         planet->GetMeter(MeterType::METER_SHIELD)->Initial() > 0.0f;
+    const bool has_defenses =     planet->GetMeter(MeterType::METER_MAX_SHIELD)->Initial() > 0.0f ||
+                                  planet->GetMeter(MeterType::METER_MAX_DEFENSE)->Initial() > 0.0f ||
+                                  planet->GetMeter(MeterType::METER_MAX_TROOPS)->Initial() > 0.0f;
+    const bool being_colonized =  planet->IsAboutToBeColonized();
+    const bool outpostable =                   !populated && (  !has_owner /*&& !shielded*/         ) && visible && !being_colonized;
+    const bool colonizable =      habitable && !populated && ( (!has_owner /*&& !shielded*/) || mine) && visible && !being_colonized;
+    const bool can_colonize =     selected_colony_ship && (   (colonizable  && (colony_ship_capacity > 0.0f))
+                                                           || (outpostable && (colony_ship_capacity == 0.0f)));
 
-    bool at_war_with_me =   !mine && (populated || (has_owner && context.ContextDiploStatus(client_empire_id, planet->Owner()) == DiplomaticStatus::DIPLO_WAR));
+    const bool at_war_with_me =   !mine && (populated || (has_owner && context.ContextDiploStatus(client_empire_id, planet->Owner()) == DiplomaticStatus::DIPLO_WAR));
 
-    bool being_invaded =    planet->IsAboutToBeInvaded();
-    bool invadable =        at_war_with_me && !shielded && visible && !being_invaded && !invasion_ships.empty();
+    const bool being_invaded =    planet->IsAboutToBeInvaded();
+    const bool invadable =        at_war_with_me && !shielded && visible && !being_invaded && !invasion_ships.empty();
 
-    bool being_bombarded =  planet->IsAboutToBeBombarded();
-    bool bombardable =      at_war_with_me && visible && !being_bombarded && !bombard_ships.empty();
+    const bool being_bombarded =  planet->IsAboutToBeBombarded();
+    const bool bombardable =      at_war_with_me && visible && !being_bombarded && !bombard_ships.empty();
 
     if (populated || SHOW_ALL_PLANET_PANELS) {
         AttachChild(m_population_panel);
@@ -1761,15 +1761,15 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
         for (auto& invasion_ship : invasion_ships)
             invasion_troops += invasion_ship->TroopCapacity(u);
 
-        std::string invasion_troops_text = DoubleToString(invasion_troops, 3, false);
+        const std::string invasion_troops_text = DoubleToString(invasion_troops, 3, false);
 
         // adjust defending troops number before passing into DoubleToString to ensure
         // rounding up, as it's better to slightly overestimate defending troops than
         // underestimate, since one needs to drop more droops than there are defenders
         // to capture a planet
         float defending_troops = planet->GetMeter(MeterType::METER_TROOPS)->Initial();
-        float log10_df = floor(std::log10(defending_troops));
-        float rounding_adjustment = std::pow(10.0f, log10_df - 2.0f);
+        const float log10_df = floor(std::log10(defending_troops));
+        const float rounding_adjustment = std::pow(10.0f, log10_df - 2.0f);
         defending_troops += rounding_adjustment;
 
         std::string defending_troops_text = DoubleToString(defending_troops, 3, false);
@@ -1822,7 +1822,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     if (!planet->SpeciesName().empty()) {
         AttachChild(m_focus_drop);
 
-        auto available_foci = planet->AvailableFoci(context);
+        const auto available_foci = planet->AvailableFoci(context);
 
         // refresh items in list
 
@@ -1943,11 +1943,11 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     ClearBrowseInfoWnd();
 
     if (client_empire_id != ALL_EMPIRES) {
-        auto client_empire = context.GetEmpire(client_empire_id);
-        Visibility visibility = u.GetObjectVisibilityByEmpire(m_planet_id, client_empire_id);
+        const auto client_empire = context.GetEmpire(client_empire_id);
+        const Visibility visibility = u.GetObjectVisibilityByEmpire(m_planet_id, client_empire_id);
         const auto& visibility_turn_map = u.GetObjectVisibilityTurnMapByEmpire(m_planet_id, client_empire_id);
-        float client_empire_detection_strength = client_empire->GetMeter("METER_DETECTION_STRENGTH")->Current();
-        float apparent_stealth = planet->GetMeter(MeterType::METER_STEALTH)->Initial();
+        const float client_empire_detection_strength = client_empire->GetMeter("METER_DETECTION_STRENGTH")->Current();
+        const float apparent_stealth = planet->GetMeter(MeterType::METER_STEALTH)->Initial();
 
         std::string visibility_info;
         std::string detection_info;
@@ -1981,12 +1981,12 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
             }
 
             std::string info = visibility_info + "\n\n" + detection_info;
-            SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("METER_STEALTH"), info));
+            SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("METER_STEALTH"), std::move(info)));
         }
         else if (visibility == Visibility::VIS_BASIC_VISIBILITY) {
             visibility_info = UserString("PL_BASIC_VISIBILITY");
 
-            auto last_turn_visible_it = visibility_turn_map.find(Visibility::VIS_PARTIAL_VISIBILITY);
+            const auto last_turn_visible_it = visibility_turn_map.find(Visibility::VIS_PARTIAL_VISIBILITY);
             if (last_turn_visible_it != visibility_turn_map.end() && last_turn_visible_it->second > 0) {
                 visibility_info += "  " + boost::io::str(FlexibleFormat(UserString("PL_LAST_TURN_SCANNED")) %
                                                                         std::to_string(last_turn_visible_it->second));
@@ -2006,7 +2006,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
             }
 
             std::string info = visibility_info + "\n\n" + detection_info;
-            SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("METER_STEALTH"), info));
+            SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("METER_STEALTH"), std::move(info)));
         }
     }
 
