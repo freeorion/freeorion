@@ -6,6 +6,7 @@
 #endif
 
 #include <array>
+#include <cstdint>
 #include <string>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
