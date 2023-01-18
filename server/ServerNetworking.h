@@ -28,14 +28,13 @@ typedef std::function<void ()> NullaryFn;
 struct CookieData {
     std::string                 player_name;
     boost::posix_time::ptime    expired;
-    Networking::AuthRoles       roles;
-    bool                        authenticated;
+    const Networking::AuthRoles roles;
+    const bool                  authenticated;
 
-    CookieData(std::string player_name_,
-               const boost::posix_time::ptime& expired_,
-               const Networking::AuthRoles& roles_,
-               bool authenticated_) :
-        player_name(std::move(player_name_)),
+    template <typename SS>
+    CookieData(SS&& player_name_, boost::posix_time::ptime expired_,
+               Networking::AuthRoles roles_, bool authenticated_) :
+        player_name(std::forward<SS>(player_name_)),
         expired(expired_),
         roles(roles_),
         authenticated(authenticated_)
