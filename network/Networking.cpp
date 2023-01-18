@@ -25,9 +25,9 @@ namespace Networking {
     int MessagePort()
     { return GetOptionsDB().Get<int>("network.message.port"); }
 
-    AuthRoles::AuthRoles(const std::initializer_list<RoleType>& roles) {
+    AuthRoles::AuthRoles(std::initializer_list<RoleType> roles) {
        for (RoleType r : roles)
-           m_roles.set(int(r), true);
+           m_roles.set(std::size_t(r), true);
     }
 
     void AuthRoles::SetRole(RoleType role, bool value)

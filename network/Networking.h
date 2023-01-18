@@ -41,16 +41,15 @@ namespace Networking {
     class FO_COMMON_API AuthRoles {
     public:
         AuthRoles() = default;
-
-        explicit AuthRoles(const std::initializer_list<RoleType>& roles);
+        explicit AuthRoles(std::initializer_list<RoleType> roles);
 
         void SetRole(RoleType role, bool value = true);
         void Clear();
 
-        bool HasRole(RoleType role) const;
-
+        [[nodiscard]] bool HasRole(RoleType role) const;
         [[nodiscard]] std::string Text() const;
         void SetText(const std::string& text);
+
     private:
         std::bitset<int(RoleType::Roles_Count)> m_roles;
     };
