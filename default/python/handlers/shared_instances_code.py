@@ -7,6 +7,7 @@ def get_code_location(generator: Generator) -> str:
         return get_code_location(generator.gi_yieldfrom)
     return f"{os.path.basename(generator.gi_code.co_filename)}:{generator.gi_frame.f_lineno}"
 
+
 def get_item_with_location(generator: Generator) -> Generator:
     for x in generator:
         yield get_code_location(generator), x

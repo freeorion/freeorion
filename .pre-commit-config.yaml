@@ -21,7 +21,7 @@ repos:
     rev: 22.8.0
     hooks:
       - id: black
-  - repo: https://gitlab.com/pycqa/flake8/
+  - repo: https://github.com/pycqa/flake8/
     rev: 4.0.1
     # We have multiple places where Python code is located
     # The main 3 points are:
