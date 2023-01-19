@@ -26,118 +26,105 @@ namespace {
 
 /** A simple server that listens for FreeOrion-server-discovery UDP datagrams
     on the local network and sends out responses to them. */
-class DiscoveryServer {
-public:
-    DiscoveryServer(boost::asio::io_context& io_context) :
-        m_socket(io_context)
-    {
-        // use a dual stack (ipv6 + ipv4) socket
-        udp::endpoint discovery_endpoint(udp::v6(), Networking::DiscoveryPort());
+ServerNetworking::DiscoveryServer::DiscoveryServer(boost::asio::io_context& io_context) :
+    m_socket(io_context)
+{
+    // use a dual stack (ipv6 + ipv4) socket
+    udp::endpoint discovery_endpoint(udp::v6(), Networking::DiscoveryPort());
 
-        if (GetOptionsDB().Get<bool>("singleplayer")) {
-            // when hosting a single player game only accept connections from
-            // the localhost via the loopback interface instead of the any
-            // interface.
-            // This should prevent unnecessary triggering of Desktop Firewalls as
-            // reported by various users when running single player games.
+    if (GetOptionsDB().Get<bool>("singleplayer")) {
+        // when hosting a single player game only accept connections from
+        // the localhost via the loopback interface instead of the any
+        // interface.
+        // This should prevent unnecessary triggering of Desktop Firewalls as
+        // reported by various users when running single player games.
+        discovery_endpoint.address(boost::asio::ip::address_v4::loopback());
+    }
+
+    try {
+        m_socket = udp::socket(io_context, discovery_endpoint);
+    } catch (const std::exception &e) {
+        ErrorLogger(network) << "DiscoveryServer cannot open IPv6 socket: " << e.what()
+                                << ". Fallback to IPv4";
+        discovery_endpoint = udp::endpoint(udp::v4(), Networking::DiscoveryPort());
+        if (GetOptionsDB().Get<bool>("singleplayer"))
             discovery_endpoint.address(boost::asio::ip::address_v4::loopback());
-        }
 
-        try {
-            m_socket = udp::socket(io_context, discovery_endpoint);
-        } catch (const std::exception &e) {
-            ErrorLogger(network) << "DiscoveryServer cannot open IPv6 socket: " << e.what()
-                                 << ". Fallback to IPv4";
-            discovery_endpoint = udp::endpoint(udp::v4(), Networking::DiscoveryPort());
-            if (GetOptionsDB().Get<bool>("singleplayer"))
-                discovery_endpoint.address(boost::asio::ip::address_v4::loopback());
+        m_socket = udp::socket(io_context, discovery_endpoint);
+    }
 
-            m_socket = udp::socket(io_context, discovery_endpoint);
-        }
+    Listen();
+}
 
+void ServerNetworking::DiscoveryServer::Listen() {
+    m_recv_buffer.fill('\0');
+    m_socket.async_receive_from(
+        boost::asio::buffer(m_recv_buffer),
+        m_remote_endpoint,
+        boost::bind(&DiscoveryServer::HandleReceive, this, boost::asio::placeholders::error));
+}
+
+void ServerNetworking::DiscoveryServer::HandleReceive(boost::system::error_code error) {
+    if (error) {
+        ErrorLogger(network) << "DiscoveryServer received and ignored error: " << error
+                                << "\nfrom: " << m_remote_endpoint;
         Listen();
+        return;
     }
 
-private:
-    void Listen() {
-        m_recv_buffer.fill('\0');
-        m_socket.async_receive_from(
-            boost::asio::buffer(m_recv_buffer),
-            m_remote_endpoint,
-            boost::bind(&DiscoveryServer::HandleReceive, this,
-                        boost::asio::placeholders::error));
-    }
+    auto message = std::string(m_recv_buffer.begin(), m_recv_buffer.end());
+    message.erase(std::find(message.begin(), message.end(), '\0'), message.end());
+    boost::trim(message);
 
-
-    void HandleReceive(const boost::system::error_code& error) {
-        if (error) {
-            ErrorLogger(network) << "DiscoveryServer received and ignored error: " << error
-                                 << "\nfrom: " << m_remote_endpoint;
-            Listen();
-            return;
-        }
-
-        auto message = std::string(m_recv_buffer.begin(), m_recv_buffer.end());
-        message.erase(std::find(message.begin(), message.end(), '\0'), message.end());
-        boost::trim(message);
-
-        if (message == DISCOVERY_QUESTION) {
-            auto reply = DISCOVERY_ANSWER;
-            m_socket.send_to(
-                boost::asio::buffer(reply),
-                m_remote_endpoint);
-            DebugLogger(network) << "DiscoveryServer received from: " << m_remote_endpoint // operator<< outputs "IP:port"
-                                 << "\nmessage: " << message
-                                 << "\nreplied: " << reply;
-            Listen();
-            return;
-        }
-
-        DebugLogger(network) << "DiscoveryServer evaluating FOCS expression: " << message;
-        std::string reply;
-        try {
-            ScriptingContext context;
-            if (parse::int_free_variable(message)) {
-                auto value_ref = std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, message);
-                reply = std::to_string(value_ref->Eval(context));
-                DebugLogger(network) << "DiscoveryServer evaluated expression as integer with result: " << reply;
-
-            } else if (parse::double_free_variable(message)) {
-                auto value_ref = std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, message);
-                reply = std::to_string(value_ref->Eval(context));
-                DebugLogger(network) << "DiscoveryServer evaluated expression as double with result: " << reply;
-
-            } else if (parse::string_free_variable(message)) {
-                auto value_ref = std::make_unique<ValueRef::Variable<std::string>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, message);
-                reply = value_ref->Eval(context);
-                DebugLogger(network) << "DiscoveryServer evaluated expression as string with result: " << reply;
-
-            //} else {
-            //    auto value_ref = std::make_unique<ValueRef::Variable<std::vector<std::string>>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, message);
-            //    auto result = value_ref->Eval(context);
-            //    for (auto entry : result)
-            //        reply += entry + "\n";
-            //    DebugLogger(network) << "DiscoveryServer evaluated expression as string vector with result: " << reply;
-
-            } else {
-                ErrorLogger(network) << "DiscoveryServer couldn't interpret message";
-                reply = "FOCS ERROR";
-            }
-        } catch (...) {
-            ErrorLogger(network) << "DiscoveryServer caught exception processing message";
-            reply = "EXCEPTION ERROR";
-        }
-
-        m_socket.send_to(boost::asio::buffer(reply), m_remote_endpoint);
-
+    if (message == DISCOVERY_QUESTION) {
+        m_socket.send_to(boost::asio::buffer(DISCOVERY_ANSWER), m_remote_endpoint);
+        DebugLogger(network) << "DiscoveryServer received from: " << m_remote_endpoint // operator<< outputs "IP:port"
+                             << "\nmessage: " << message
+                             << "\nreplied: " << DISCOVERY_ANSWER;
         Listen();
+        return;
     }
 
-    boost::asio::ip::udp::socket            m_socket;
-    boost::asio::ip::udp::endpoint          m_remote_endpoint;
+    DebugLogger(network) << "DiscoveryServer evaluating FOCS expression: " << message;
+    std::string reply;
+    try {
+        ScriptingContext context;
+        if (parse::int_free_variable(message)) {
+            auto value_ref = std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, message);
+            reply = std::to_string(value_ref->Eval(context));
+            DebugLogger(network) << "DiscoveryServer evaluated expression as integer with result: " << reply;
 
-    std::array<char, 1024> m_recv_buffer = {};
-};
+        } else if (parse::double_free_variable(message)) {
+            auto value_ref = std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, message);
+            reply = std::to_string(value_ref->Eval(context));
+            DebugLogger(network) << "DiscoveryServer evaluated expression as double with result: " << reply;
+
+        } else if (parse::string_free_variable(message)) {
+            auto value_ref = std::make_unique<ValueRef::Variable<std::string>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, message);
+            reply = value_ref->Eval(context);
+            DebugLogger(network) << "DiscoveryServer evaluated expression as string with result: " << reply;
+
+        //} else {
+        //    auto value_ref = std::make_unique<ValueRef::Variable<std::vector<std::string>>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, message);
+        //    auto result = value_ref->Eval(context);
+        //    for (auto entry : result)
+        //        reply += entry + "\n";
+        //    DebugLogger(network) << "DiscoveryServer evaluated expression as string vector with result: " << reply;
+
+        } else {
+            ErrorLogger(network) << "DiscoveryServer couldn't interpret message";
+            reply = "FOCS ERROR";
+        }
+    } catch (...) {
+        ErrorLogger(network) << "DiscoveryServer caught exception processing message";
+        reply = "EXCEPTION ERROR";
+    }
+
+    m_socket.send_to(boost::asio::buffer(reply), m_remote_endpoint);
+
+    Listen();
+}
+
 
 namespace {
     struct PlayerID {
@@ -595,15 +582,12 @@ ServerNetworking::ServerNetworking(boost::asio::io_context& io_context,
                                    MessageAndConnectionFn nonplayer_message_callback,
                                    MessageAndConnectionFn player_message_callback,
                                    ConnectionFn disconnected_callback) :
-    m_discovery_server(new DiscoveryServer(io_context)),
+    m_discovery_server{io_context},
     m_player_connection_acceptor(io_context),
     m_nonplayer_message_callback(nonplayer_message_callback),
     m_player_message_callback(player_message_callback),
     m_disconnected_callback(disconnected_callback)
 { Init(); }
-
-ServerNetworking::~ServerNetworking()
-{ delete m_discovery_server; }
 
 bool ServerNetworking::empty() const
 { return m_player_connections.empty(); }
@@ -874,7 +858,7 @@ void ServerNetworking::AcceptNextMessagingConnection() {
 }
 
 void ServerNetworking::AcceptPlayerMessagingConnection(PlayerConnectionPtr player_connection,
-                                                       const boost::system::error_code& error)
+                                                       boost::system::error_code error)
 {
     if (!error) {
         DebugLogger(network) << "ServerNetworking::AcceptPlayerMessagingConnection : connected to new player";

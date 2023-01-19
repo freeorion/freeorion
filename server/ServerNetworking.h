@@ -63,8 +63,6 @@ public:
                      MessageAndConnectionFn player_message_callback,
                      ConnectionFn disconnected_callback);
 
-    ~ServerNetworking();
-
     /** Returns true if size() == 0. */
     bool empty() const;
 
@@ -169,26 +167,43 @@ private:
     void Init();
     void AcceptNextMessagingConnection();
     void AcceptPlayerMessagingConnection(PlayerConnectionPtr player_connection,
-                                         const boost::system::error_code& error);
+                                         boost::system::error_code error);
     void DisconnectImpl(PlayerConnectionPtr player_connection);
     void EnqueueEvent(const NullaryFn& fn);
 
-    int                             m_host_player_id = Networking::INVALID_PLAYER_ID;
+    int m_host_player_id = Networking::INVALID_PLAYER_ID;
 
-    DiscoveryServer*                m_discovery_server = nullptr;
+    /** A simple server that listens for FreeOrion-server-discovery UDP datagrams
+    on the local network and sends out responses to them. */
+    class DiscoveryServer {
+    public:
+        explicit DiscoveryServer(boost::asio::io_context& io_context);
+
+    private:
+        void Listen();
+        void HandleReceive(boost::system::error_code error);
+
+        boost::asio::ip::udp::socket   m_socket;
+        boost::asio::ip::udp::endpoint m_remote_endpoint;
+
+        std::array<char, 1024> m_recv_buffer = {};
+    };
+
+    DiscoveryServer m_discovery_server;
+
 #if BOOST_VERSION >= 107000
     boost::asio::basic_socket_acceptor<boost::asio::ip::tcp, boost::asio::io_context::executor_type>
-                                    m_player_connection_acceptor;
+                           m_player_connection_acceptor;
 #else
-    boost::asio::ip::tcp::acceptor  m_player_connection_acceptor;
+    boost::asio::ip::tcp::acceptor m_player_connection_acceptor;
 #endif
-    PlayerConnections               m_player_connections;
-    std::queue<NullaryFn>           m_event_queue;
+    PlayerConnections      m_player_connections;
+    std::queue<NullaryFn>  m_event_queue;
     std::unordered_map<boost::uuids::uuid, CookieData, boost::hash<boost::uuids::uuid>> m_cookies;
 
-    MessageAndConnectionFn          m_nonplayer_message_callback;
-    MessageAndConnectionFn          m_player_message_callback;
-    ConnectionFn                    m_disconnected_callback;
+    MessageAndConnectionFn m_nonplayer_message_callback;
+    MessageAndConnectionFn m_player_message_callback;
+    ConnectionFn           m_disconnected_callback;
 };
 
 /** Encapsulates the connection to a single player.  This object should have
