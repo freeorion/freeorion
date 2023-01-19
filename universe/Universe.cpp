@@ -2142,10 +2142,10 @@ Universe::GetEmpiresPositionNextTurnFleetDetectionRanges(const ScriptingContext&
 
 
         // get next turn position of fleet
-        auto path = fleet->MovePath(false, context);
+        const auto path = fleet->MovePath(false, context);
         if (path.empty())
             continue;
-        auto& next_turn_end_position = [&path]() -> const MovePathNode& {
+        const auto next_turn_end_position = [&path]() -> MovePathNode {
             for (const auto& node : path) {
                 if (node.turn_end)
                     return node;
@@ -2159,9 +2159,9 @@ Universe::GetEmpiresPositionNextTurnFleetDetectionRanges(const ScriptingContext&
         { continue; }
 
         // add detection at next position
-        auto object_owner_empire_id = fleet->Owner();
+        const auto object_owner_empire_id = fleet->Owner();
         auto& retval_empire_pos_range = retval[object_owner_empire_id];
-        std::pair<double, double> object_pos{next_turn_end_position.x, next_turn_end_position.y};
+        const std::pair<double, double> object_pos{next_turn_end_position.x, next_turn_end_position.y};
 
         // store range in output map (if new for location or larger than any
         // previously-found range at this location)
