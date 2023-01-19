@@ -56,7 +56,7 @@ FieldType::FieldType(std::string&& name, std::string&& description,
         std::string_view sv{m_tags_concatenated};
 
         // store views into concatenated tags string
-        std::for_each(tags.begin(), tags.end(), [&next_idx, &retval, this, sv](const auto& t) {
+        std::for_each(tags.begin(), tags.end(), [&next_idx, &retval, sv](const auto& t) {
             std::string upper_t = boost::to_upper_copy<std::string>(t);
             retval.push_back(sv.substr(next_idx, upper_t.size()));
             next_idx += upper_t.size();
