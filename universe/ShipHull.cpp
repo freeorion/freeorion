@@ -136,7 +136,7 @@ ShipHull::ShipHull(float fuel, float speed, float stealth, float structure,
 
         // store views into concatenated tags string
         std::for_each(common_params.tags.begin(), common_params.tags.end(),
-                      [&next_idx, &retval, this, sv](const auto& t)
+                      [&next_idx, &retval, sv](const auto& t)
         {
             retval.push_back(sv.substr(next_idx, t.size()));
             next_idx += t.size();
