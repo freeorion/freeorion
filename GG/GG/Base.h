@@ -15,6 +15,7 @@
 #define _GG_Base_h_
 
 
+#include <functional>
 #include <memory>
 #include <GL/glew.h>
 #include <GG/Clr.h>
