@@ -173,9 +173,9 @@ private:
     void DisconnectImpl(PlayerConnectionPtr player_connection);
     void EnqueueEvent(const NullaryFn& fn);
 
-    int                             m_host_player_id;
+    int                             m_host_player_id = Networking::INVALID_PLAYER_ID;
 
-    DiscoveryServer*                m_discovery_server;
+    DiscoveryServer*                m_discovery_server = nullptr;
 #if BOOST_VERSION >= 107000
     boost::asio::basic_socket_acceptor<boost::asio::ip::tcp, boost::asio::io_context::executor_type>
                                     m_player_connection_acceptor;
@@ -286,7 +286,6 @@ public:
                   MessageAndConnectionFn player_message_callback, ConnectionFn disconnected_callback);
 
 private:
-
     PlayerConnection(boost::asio::io_context& io_context, MessageAndConnectionFn nonplayer_message_callback,
                      MessageAndConnectionFn player_message_callback, ConnectionFn disconnected_callback);
     void HandleMessageBodyRead(boost::system::error_code error, std::size_t bytes_transferred);
