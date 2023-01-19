@@ -360,7 +360,7 @@ namespace {
 
         return {std::move(name),
             std::move(description),
-            std::move(ValueRef::CloneUnique(location.condition)),
+            ValueRef::CloneUnique(location.condition),
             std::move(graphic)};
     }
 }
