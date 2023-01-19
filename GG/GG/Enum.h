@@ -17,6 +17,7 @@
 
 
 #include <climits>
+#include <cstdint>
 #include <cstdlib>
 #include <iostream>
 #include <map>

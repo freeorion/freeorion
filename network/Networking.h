@@ -3,6 +3,7 @@
 
 #include <string>
 #include <bitset>
+#include <cstdint>
 
 #include "../util/Enum.h"
 #include "../util/Export.h"

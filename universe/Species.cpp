@@ -180,7 +180,7 @@ Species::Species(std::string&& name, std::string&& desc,
         std::for_each(m_tags.begin(), m_tags.end(), [&next_idx](const auto& t) { next_idx += t.size(); });
 
         // store views into concatenated tags/likes string
-        std::for_each(likes.begin(), likes.end(), [&next_idx, &retval, this, sv](const auto& t) {
+        std::for_each(likes.begin(), likes.end(), [&next_idx, &retval, sv](const auto& t) {
             std::string upper_t = boost::to_upper_copy<std::string>(t);
             retval.push_back(sv.substr(next_idx, upper_t.size()));
             next_idx += upper_t.size();
@@ -199,7 +199,7 @@ Species::Species(std::string&& name, std::string&& desc,
         std::for_each(m_likes.begin(), m_likes.end(), [&next_idx](const auto& t) { next_idx += t.size(); });
 
         // store views into concatenated tags/likes string
-        std::for_each(dislikes.begin(), dislikes.end(), [&next_idx, &retval, this, sv](const auto& t) {
+        std::for_each(dislikes.begin(), dislikes.end(), [&next_idx, &retval, sv](const auto& t) {
             std::string upper_t = boost::to_upper_copy<std::string>(t);
             retval.push_back(sv.substr(next_idx, upper_t.size()));
             next_idx += upper_t.size();

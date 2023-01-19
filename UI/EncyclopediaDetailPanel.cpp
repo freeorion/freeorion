@@ -2967,8 +2967,7 @@ namespace {
         cost_units = UserString("ENC_PP");
 
 
-        const bool insert_success = universe.InsertShipDesignID(
-            *incomplete_design, client_empire_id, incomplete_design->ID());
+        universe.InsertShipDesignID(*incomplete_design, client_empire_id, incomplete_design->ID());
         detailed_description = GetDetailedDescriptionBase(*incomplete_design);
 
         // baseline values, may be overridden
