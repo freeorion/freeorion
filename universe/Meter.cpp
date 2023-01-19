@@ -11,7 +11,6 @@
 
 namespace {
     // rounding checks
-
     constexpr Meter r1{65000.001f};
     constexpr Meter r2 = []() {
         Meter r2r = r1;
@@ -47,16 +46,18 @@ namespace {
     static_assert(q3.Current() == 0.01f);
 }
 
-std::array<std::string::value_type, 64> Meter::Dump(uint8_t ntabs) const noexcept {
+std::array<std::string::value_type, 64> Meter::Dump(uint8_t ntabs) const noexcept(dump_noexcept) {
     std::array<std::string::value_type, 64> buffer{"Cur: "}; // rest should be nulls
 #if defined(__cpp_lib_to_chars)
-    auto ToChars4Dump = [buf_end{buffer.data() + buffer.size()}](char* buf_start, float num) -> char * {
-        int precision = num < 10 ? 2 : 1;
+    auto ToChars4Dump = [buf_end{buffer.data() + buffer.size()}](char* buf_start, float num)
+        noexcept(have_noexcept_to_chars) -> char *
+    {
+        const int precision = num < 10 ? 2 : 1;
         return std::to_chars(buf_start, buf_end, num, std::chars_format::fixed, precision).ptr;
     };
 #else
     auto ToChars4Dump = [buf_end{buffer.data() + buffer.size()}](char* buf_start, float num) -> char * {
-        auto count = snprintf(buf_start, 10, num < 10 ? "%1.2f" : "%5.1f", num);
+        const auto count = snprintf(buf_start, 10, num < 10 ? "%1.2f" : "%5.1f", num);
         return buf_start + std::max(0, count);
     };
 #endif
@@ -66,14 +67,14 @@ std::array<std::string::value_type, 64> Meter::Dump(uint8_t ntabs) const noexcep
     // LARGE_VALUE, but Meter can be initialized with larger values, so
     // a full 64-char array is used as the buffer and returned.
     static constexpr std::string_view init_label = " Init: ";
-    std::copy_n(init_label.data(), init_label.size(), result_ptr);
+    std::copy_n(init_label.data(), init_label.size(), result_ptr); // assuming noexcept since result_ptr should point into buffer and init_label is constexpr
     result_ptr += init_label.size();
     ToChars4Dump(result_ptr, FromInt(init));
 
     return buffer;
 }
 
-void Meter::ClampCurrentToRange(float min, float max) noexcept
+void Meter::ClampCurrentToRange(float min, float max)
 { cur = std::max(std::min(cur, FromFloat(max)), FromFloat(min)); }
 
 namespace {

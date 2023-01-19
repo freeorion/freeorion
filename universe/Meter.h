@@ -16,21 +16,27 @@
 /** A Meter is a value and associated initial value that is used to track information
   * about gamestate. A typical example is the population meter of a planet. */
 class FO_COMMON_API Meter {
+private:
+    static constexpr float FLOAT_INT_SCALE = 1000.0f;
+    static constexpr bool from_float_noexcept = noexcept(noexcept(
+        static_cast<int32_t>(float{} * FLOAT_INT_SCALE + (float{} > 0 ? 0.5f : -0.5f))));
+
+    static constexpr bool from_int_noexcept = noexcept(noexcept(int32_t{} / FLOAT_INT_SCALE));
+
 public:
     constexpr Meter() = default;
-    constexpr explicit Meter(float v) :
+    constexpr explicit Meter(float v) noexcept(from_float_noexcept) :
         cur(FromFloat(v)),
         init(FromFloat(v))
     {};
-    constexpr Meter(float c, float i) :
+    constexpr Meter(float c, float i) noexcept(from_float_noexcept) :
         cur(FromFloat(c)),
         init(FromFloat(i))
     {}
 
-    [[nodiscard]] constexpr float Current() const noexcept { return FromInt(cur); };
-    [[nodiscard]] constexpr float Initial() const noexcept { return FromInt(init); };
+    [[nodiscard]] constexpr float Current() const noexcept(from_int_noexcept) { return FromInt(cur); };
 
-    [[nodiscard]] std::array<std::string::value_type, 64> Dump(uint8_t ntabs = 0) const noexcept; ///< returns text of meter values
+    [[nodiscard]] constexpr float Initial() const noexcept(from_int_noexcept) { return FromInt(init); };
 
     [[nodiscard]] constexpr bool operator==(const Meter& rhs) const noexcept
     { return cur == rhs.cur && init == rhs.init; }
@@ -38,27 +44,32 @@ public:
     [[nodiscard]] constexpr bool operator<(const Meter& rhs) const noexcept
     { return cur < rhs.cur || (cur == rhs.cur && init < rhs.init); }
 
-    constexpr void SetCurrent(float current_value) noexcept { cur = FromFloat(current_value); }
+    constexpr void SetCurrent(float current_value) noexcept(from_float_noexcept)
+    { cur = FromFloat(current_value); }
 
-    constexpr void Set(float current_value, float initial_value) noexcept {
+    constexpr void Set(float current_value, float initial_value) noexcept(from_float_noexcept) {
         cur = FromFloat(current_value);
         init = FromFloat(initial_value);
     }
 
-    constexpr void ResetCurrent() noexcept { cur = FromFloat(DEFAULT_VALUE); } // initial unchanged
+    constexpr void ResetCurrent() noexcept(from_float_noexcept)
+    { cur = FromFloat(DEFAULT_VALUE); } // initial unchanged
 
-    constexpr void Reset() noexcept {
+    constexpr void Reset() noexcept(from_float_noexcept) {
         cur = FromFloat(DEFAULT_VALUE);
         init = FromFloat(DEFAULT_VALUE);
     }
 
-    constexpr void AddToCurrent(float adjustment) noexcept { cur += FromFloat(adjustment); }
+    constexpr void AddToCurrent(float adjustment) noexcept(from_float_noexcept)
+    { cur += FromFloat(adjustment); }
 
-    void ClampCurrentToRange(float min = DEFAULT_VALUE, float max = LARGE_VALUE) noexcept; ///< ensures the current value falls in the range [\a min, \a max]
+    // no noexcept, even though could be in MSVC, due to issues with definitions
+    // of std::max and std::max causing problems with referring to them in this
+    // header, which means they probably can't be tested with noexcept(...) here
+    void ClampCurrentToRange(float min = DEFAULT_VALUE, float max = LARGE_VALUE); ///< ensures the current value falls in the range [\a min, \a max]
 
     constexpr void BackPropagate() noexcept { init = cur; }
 
-    using ToCharsArrayT = std::array<std::string::value_type, 24>;
 private:
     static constexpr bool have_noexcept_to_chars =
 #if defined(__cpp_lib_to_chars)
@@ -68,21 +79,32 @@ private:
 #else
         false;
 #endif
+
 public:
+    static constexpr bool dump_noexcept = have_noexcept_to_chars && from_int_noexcept;
+    ///< returns text of meter values
+    [[nodiscard]] std::array<std::string::value_type, 64> Dump(uint8_t ntabs = 0) const noexcept(dump_noexcept);
+
     int ToChars(char* buffer, char* const buffer_end) const noexcept(have_noexcept_to_chars);
-    int SetFromChars(std::string_view chars) noexcept(have_noexcept_to_chars);
+
+    using ToCharsArrayT = std::array<std::string::value_type, 24>;
     [[nodiscard]] ToCharsArrayT ToChars() const noexcept(have_noexcept_to_chars);
+
+    int SetFromChars(std::string_view chars) noexcept(have_noexcept_to_chars);
 
     static constexpr float DEFAULT_VALUE = 0.0f;                        ///< value assigned to current or initial when resetting or when no value is specified in a constructor
     static constexpr float LARGE_VALUE = static_cast<float>(2 << 15);   ///< a very large number, which is useful to set current to when it will be later clamped, to ensure that the result is the max value in the clamp range
     static constexpr float INVALID_VALUE = -LARGE_VALUE;                ///< sentinel value to indicate no valid value for this meter
 
 private:
-    static constexpr float FLOAT_INT_SCALE = 1000.0f;
+
     // Value must be rounded, otherwise a calculated increase of 0.99999997 will be truncated to 0.999.
     // Negative values are increased by truncation, so the offset must be negative, too.
-    static constexpr int32_t FromFloat(float f) { return static_cast<int32_t>(f * FLOAT_INT_SCALE + (f > 0 ? 0.5f : -0.5f)); }
-    static constexpr float FromInt(int32_t i) { return i / FLOAT_INT_SCALE; }
+    static constexpr int32_t FromFloat(float f) noexcept(from_float_noexcept)
+    { return static_cast<int32_t>(f * FLOAT_INT_SCALE + (f > 0 ? 0.5f : -0.5f)); }
+
+    static constexpr float FromInt(int32_t i) noexcept(from_int_noexcept)
+    { return i / FLOAT_INT_SCALE; }
 
     int32_t cur = FromFloat(DEFAULT_VALUE);
     int32_t init = FromFloat(DEFAULT_VALUE);
