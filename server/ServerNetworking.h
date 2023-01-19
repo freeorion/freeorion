@@ -64,17 +64,17 @@ public:
                      ConnectionFn disconnected_callback);
 
     /** Returns true if size() == 0. */
-    bool empty() const;
+    bool empty() const noexcept { return m_player_connections.empty(); }
 
     /** Returns the \a total number of PlayerConnections (not just established
         ones). */
-    std::size_t size() const;
+    std::size_t size() const noexcept { return m_player_connections.size(); }
 
     /** Returns an iterator to the first PlayerConnection object. */
-    const_iterator begin() const;
+    const_iterator begin() const noexcept { return m_player_connections.begin(); }
 
     /** Returns an iterator to the one-past-the-last PlayerConnection object. */
-    const_iterator end() const;
+    const_iterator end() const noexcept { return m_player_connections.end(); }
 
     /** Returns the number of established-player PlayerConnections. */
     std::size_t NumEstablishedPlayers() const;
@@ -94,7 +94,7 @@ public:
     int NewPlayerID() const;
 
     /** Returns the ID of the host player, or INVALID_PLAYER_ID if there is no host player. */
-    int HostPlayerID() const;
+    int HostPlayerID() const noexcept { return m_host_player_id; }
 
     /** Returns whether the indicated player ID is the host. */
     bool PlayerIsHost(int player_id) const;
@@ -113,7 +113,7 @@ public:
                      bool& authenticated) const;
 
     /** Returns count of stored cookies so we don't collide with reserved player names. */
-    int GetCookiesSize() const;
+    int GetCookiesSize() const noexcept { return m_cookies.size(); }
 
     /** Sends a synchronous message \a message to the all established players. */
     void SendMessageAll(const Message& message);
@@ -128,10 +128,10 @@ public:
     void DisconnectAll();
 
     /** Returns an iterator to the first PlayerConnection object. */
-    iterator begin();
+    iterator begin() noexcept { return m_player_connections.begin(); }
 
     /** Returns an iterator to the one-past-the-last PlayerConnection object. */
-    iterator end();
+    iterator end() noexcept { return m_player_connections.end(); }
 
     /** Returns an iterator to the established PlayerConnection object with ID
         \a id, or end() if none is found. */
@@ -150,7 +150,7 @@ public:
     void HandleNextEvent();
 
     /** Sets Host player ID. */
-    void SetHostPlayerID(int host_player_id);
+    void SetHostPlayerID(int host_player_id) noexcept { m_host_player_id = host_player_id; }
 
     /** Generate cookies for player's name, roles, and authentication status. */
     boost::uuids::uuid GenerateCookie(std::string player_name,

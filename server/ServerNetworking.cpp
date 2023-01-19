@@ -589,18 +589,6 @@ ServerNetworking::ServerNetworking(boost::asio::io_context& io_context,
     m_disconnected_callback(disconnected_callback)
 { Init(); }
 
-bool ServerNetworking::empty() const
-{ return m_player_connections.empty(); }
-
-std::size_t ServerNetworking::size() const
-{ return m_player_connections.size(); }
-
-ServerNetworking::const_iterator ServerNetworking::begin() const
-{ return m_player_connections.begin(); }
-
-ServerNetworking::const_iterator ServerNetworking::end() const
-{ return m_player_connections.end(); }
-
 std::size_t ServerNetworking::NumEstablishedPlayers() const
 { return std::distance(established_begin(), established_end()); }
 
@@ -628,9 +616,6 @@ int ServerNetworking::NewPlayerID() const {
     }
     return biggest_current_player_id + 1;
 }
-
-int ServerNetworking::HostPlayerID() const
-{ return m_host_player_id; }
 
 bool ServerNetworking::PlayerIsHost(int player_id) const {
     if (player_id == Networking::INVALID_PLAYER_ID)
@@ -675,9 +660,6 @@ bool ServerNetworking::CheckCookie(boost::uuids::uuid cookie,
     return false;
 }
 
-int ServerNetworking::GetCookiesSize() const
-{ return m_cookies.size(); }
-
 void ServerNetworking::SendMessageAll(const Message& message) {
     for (auto player_it = established_begin();
         player_it != established_end(); ++player_it)
@@ -715,12 +697,6 @@ void ServerNetworking::DisconnectAll() {
     }
 }
 
-ServerNetworking::iterator ServerNetworking::begin()
-{ return m_player_connections.begin(); }
-
-ServerNetworking::iterator ServerNetworking::end()
-{ return m_player_connections.end(); }
-
 ServerNetworking::established_iterator ServerNetworking::GetPlayer(int id)
 { return std::find_if(established_begin(), established_end(), PlayerID(id)); }
 
@@ -743,9 +719,6 @@ void ServerNetworking::HandleNextEvent() {
         f();
     }
 }
-
-void ServerNetworking::SetHostPlayerID(int host_player_id)
-{ m_host_player_id = host_player_id; }
 
 boost::uuids::uuid ServerNetworking::GenerateCookie(std::string player_name,
                                                     const Networking::AuthRoles& roles,
