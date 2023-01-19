@@ -3164,7 +3164,7 @@ WaitingForTurnEnd::WaitingForTurnEnd(my_context c) :
 }
 
 WaitingForTurnEnd::~WaitingForTurnEnd() {
-    auto duration = std::chrono::high_resolution_clock::now() - m_start;
+    const auto duration = std::chrono::high_resolution_clock::now() - m_start;
     DebugLogger(FSM) << "WaitingForTurnEnd time: " << std::chrono::duration_cast<std::chrono::seconds>(duration).count() << " s";
 
     TraceLogger(FSM) << "(ServerFSM) ~WaitingForTurnEnd";
@@ -3192,7 +3192,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     }
 
     int player_id = sender->PlayerID();
-    Networking::ClientType client_type = sender->GetClientType();
+    const Networking::ClientType client_type = sender->GetClientType();
 
     // ensure ui data availability flag is consistent with ui data
     if (!ui_data_available)
@@ -3399,7 +3399,7 @@ sc::result WaitingForTurnEnd::react(const RevokeReadiness& msg) {
             return discard_event();
         }
 
-        int empire_id = empire->EmpireID();
+        const int empire_id = empire->EmpireID();
         if (empire->Eliminated()) {
             ErrorLogger(FSM) << "WaitingForTurnEnd::react(RevokeReadiness&) received orders from player " << empire->PlayerName() << "(id: "
                              << player_id << ") who controls empire " << empire_id
@@ -3636,9 +3636,9 @@ ShuttingDownServer::~ShuttingDownServer()
 sc::result ShuttingDownServer::react(const LeaveGame& msg) {
     TraceLogger(FSM) << "(ServerFSM) ShuttingDownServer.LeaveGame";
     const PlayerConnectionPtr& player_connection = msg.m_player_connection;
-    int player_id = player_connection->PlayerID();
+    const int player_id = player_connection->PlayerID();
 
-    auto ack_found = m_player_id_ack_expected.find(player_id);
+    const auto ack_found = m_player_id_ack_expected.find(player_id);
 
     if (ack_found != m_player_id_ack_expected.end()) {
         DebugLogger(FSM) << "Shutdown ACK received for AI " << player_id;
@@ -3654,10 +3654,10 @@ sc::result ShuttingDownServer::react(const LeaveGame& msg) {
 sc::result ShuttingDownServer::react(const Disconnection& d) {
     TraceLogger(FSM) << "(ServerFSM) ShuttingDownServer.Disconnection";
     PlayerConnectionPtr& player_connection = d.m_player_connection;
-    int player_id = player_connection->PlayerID();
+    const int player_id = player_connection->PlayerID();
 
     // Treat disconnection as an implicit ACK.  Otherwise ignore it.
-    auto ack_found = m_player_id_ack_expected.find(player_id);
+    const auto ack_found = m_player_id_ack_expected.find(player_id);
 
     if (ack_found != m_player_id_ack_expected.end()) {
         DebugLogger(FSM) << "Disconnect received for AI " << player_id << ".  Treating it as shutdown ACK.";
@@ -3672,7 +3672,7 @@ sc::result ShuttingDownServer::react(const CheckEndConditions& u) {
     TraceLogger(FSM) << "(ServerFSM) ShuttingDownServer.CheckEndConditions";
     ServerApp& server = Server();
 
-    auto all_acked = m_player_id_ack_expected.empty();
+    const auto all_acked = m_player_id_ack_expected.empty();
 
     if (all_acked) {
         DebugLogger(FSM) << "All " << server.m_ai_client_processes.size() << " AIs acknowledged shutdown request.";
