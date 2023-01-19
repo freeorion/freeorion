@@ -617,13 +617,13 @@ int ServerNetworking::NewPlayerID() const {
     return biggest_current_player_id + 1;
 }
 
-bool ServerNetworking::PlayerIsHost(int player_id) const {
+bool ServerNetworking::PlayerIsHost(int player_id) const noexcept {
     if (player_id == Networking::INVALID_PLAYER_ID)
         return false;
     return player_id == m_host_player_id;
 }
 
-bool ServerNetworking::ModeratorsInGame() const {
+bool ServerNetworking::ModeratorsInGame() const noexcept {
     for (const PlayerConnectionPtr& player : m_player_connections) {
         if (player->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
             return true;

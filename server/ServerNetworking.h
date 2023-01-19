@@ -18,11 +18,10 @@
 
 class DiscoveryServer;
 class PlayerConnection;
-
-typedef std::shared_ptr<PlayerConnection> PlayerConnectionPtr;
-typedef std::function<void (Message, PlayerConnectionPtr)> MessageAndConnectionFn;
-typedef std::function<void (PlayerConnectionPtr)> ConnectionFn;
-typedef std::function<void ()> NullaryFn;
+using PlayerConnectionPtr = std::shared_ptr<PlayerConnection>;
+using MessageAndConnectionFn = std::function<void (Message, PlayerConnectionPtr)>;
+using ConnectionFn = std::function<void (PlayerConnectionPtr)>;
+using NullaryFn = std::function<void ()>;
 
 /** Data associated with cookie */
 struct CookieData {
@@ -97,10 +96,10 @@ public:
     int HostPlayerID() const noexcept { return m_host_player_id; }
 
     /** Returns whether the indicated player ID is the host. */
-    bool PlayerIsHost(int player_id) const;
+    bool PlayerIsHost(int player_id) const noexcept;
 
     /** Returns whether there are any moderators in the game. */
-    bool ModeratorsInGame() const;
+    bool ModeratorsInGame() const noexcept;
 
     /** Returns whether there no non-expired cookie with this player name. */
     bool IsAvailableNameInCookies(const std::string& player_name) const;
