@@ -92,6 +92,7 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
             timer.EnterSection("");
             return retval;
         } else {
+            (void)timer; // silence unused capture warning
             return ship_designs_scratch;
         }
     }();
