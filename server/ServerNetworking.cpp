@@ -126,19 +126,6 @@ void ServerNetworking::DiscoveryServer::HandleReceive(boost::system::error_code 
 }
 
 
-namespace {
-    struct PlayerID {
-        PlayerID(int id) :
-            m_id(id)
-        {}
-
-        bool operator()(const PlayerConnectionPtr& player_connection)
-        { return player_connection->PlayerID() == m_id; }
-
-    private:
-        int m_id;
-    };
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // PlayerConnection
@@ -234,7 +221,6 @@ std::string PlayerConnection::GetIpAddress() const {
             return m_socket->remote_endpoint().address().to_string();
         } catch (const boost::system::system_error& err) {
             ErrorLogger(network) << "PlayerConnection::GetIpAddress remote endpont error: " << err.what();
-            return "";
         }
     }
     return "";
@@ -517,7 +503,7 @@ void PlayerConnection::AsyncReadMessage() {
 }
 
 void PlayerConnection::SendMessageImpl(PlayerConnectionPtr self, Message message) {
-    bool start_write = self->m_outgoing_messages.empty();
+    const bool start_write = self->m_outgoing_messages.empty();
     self->m_outgoing_messages.push(std::move(message));
     if (start_write)
         self->AsyncWriteMessage();
@@ -529,9 +515,9 @@ void PlayerConnection::AsyncWriteMessage() {
                              << ". Socket is closed. Dropping message.";
         return;
     }
-    using namespace boost::asio;
-    using boost::asio::buffer;
     using boost::asio::async_write;
+    using boost::asio::buffer;
+    using boost::asio::const_buffer;
     using boost::asio::placeholders::error;
     using boost::asio::placeholders::bytes_transferred;
 
@@ -558,15 +544,17 @@ void PlayerConnection::HandleMessageWrite(PlayerConnectionPtr self,
         return;
     }
 
-    if (static_cast<int>(bytes_transferred) != static_cast<int>(Message::HeaderBufferSize) + self->m_outgoing_header[Message::Parts::SIZE])
-        return;
+    if (static_cast<int>(bytes_transferred) !=
+        static_cast<int>(Message::HeaderBufferSize) + self->m_outgoing_header[Message::Parts::SIZE])
+    { return; }
 
     self->m_outgoing_messages.pop();
     if (!self->m_outgoing_messages.empty())
         self->AsyncWriteMessage();
 }
 
-void PlayerConnection::AsyncErrorHandler(PlayerConnectionPtr self, boost::system::error_code handled_error,
+void PlayerConnection::AsyncErrorHandler(PlayerConnectionPtr self,
+                                         boost::system::error_code handled_error,
                                          boost::system::error_code error)
 { self->EventSignal(boost::bind(self->m_disconnected_callback, self)); }
 
@@ -574,10 +562,6 @@ void PlayerConnection::AsyncErrorHandler(PlayerConnectionPtr self, boost::system
 ////////////////////////////////////////////////////////////////////////////////
 // ServerNetworking
 ////////////////////////////////////////////////////////////////////////////////
-bool ServerNetworking::EstablishedPlayer::operator()(
-    const PlayerConnectionPtr& player_connection) const
-{ return player_connection->EstablishedPlayer(); }
-
 ServerNetworking::ServerNetworking(boost::asio::io_context& io_context,
                                    MessageAndConnectionFn nonplayer_message_callback,
                                    MessageAndConnectionFn player_message_callback,
@@ -593,16 +577,18 @@ std::size_t ServerNetworking::NumEstablishedPlayers() const
 { return std::distance(established_begin(), established_end()); }
 
 ServerNetworking::const_established_iterator ServerNetworking::GetPlayer(int id) const
-{ return std::find_if(established_begin(), established_end(), PlayerID(id)); }
+{ return std::find_if(established_begin(), established_end(),
+                      [id](const auto& player_con) noexcept { return player_con->PlayerID() == id; });
+}
 
 ServerNetworking::const_established_iterator ServerNetworking::established_begin() const {
-    return const_established_iterator(EstablishedPlayer(),
+    return const_established_iterator(is_established_player,
                                       m_player_connections.begin(),
                                       m_player_connections.end());
 }
 
 ServerNetworking::const_established_iterator ServerNetworking::established_end() const {
-    return const_established_iterator(EstablishedPlayer(),
+    return const_established_iterator(is_established_player,
                                       m_player_connections.end(),
                                       m_player_connections.end());
 }
@@ -610,7 +596,7 @@ ServerNetworking::const_established_iterator ServerNetworking::established_end()
 int ServerNetworking::NewPlayerID() const {
     int biggest_current_player_id(0);
     for (const PlayerConnectionPtr& player : m_player_connections) {
-        int player_id = player->PlayerID();
+        const int player_id = player->PlayerID();
         if (player_id != INVALID_PLAYER_ID && player_id > biggest_current_player_id)
             biggest_current_player_id = player_id;
     }
@@ -661,20 +647,17 @@ bool ServerNetworking::CheckCookie(boost::uuids::uuid cookie,
 }
 
 void ServerNetworking::SendMessageAll(const Message& message) {
-    for (auto player_it = established_begin();
-        player_it != established_end(); ++player_it)
-    {
+    for (auto player_it = established_begin(); player_it != established_end(); ++player_it)
         (*player_it)->SendMessage(message);
-    }
 }
 
 void ServerNetworking::Disconnect(int id) {
-    established_iterator it = GetPlayer(id);
+    const established_iterator it = GetPlayer(id);
     if (it == established_end()) {
         ErrorLogger(network) << "ServerNetworking::Disconnect couldn't find player with id " << id << " to disconnect.  aborting";
         return;
     }
-    PlayerConnectionPtr player = *it;
+    const PlayerConnectionPtr player = *it;
     if (player->PlayerID() != id) {
         ErrorLogger(network) << "ServerNetworking::Disconnect got PlayerConnectionPtr with inconsistent player id (" << player->PlayerID() << ") to what was requrested (" << id << ")";
         return;
@@ -682,32 +665,31 @@ void ServerNetworking::Disconnect(int id) {
     Disconnect(player);
 }
 
-void ServerNetworking::Disconnect(PlayerConnectionPtr player_connection)
-{
+void ServerNetworking::Disconnect(PlayerConnectionPtr player_connection) {
     DebugLogger(network) << "ServerNetworking::Disconnect";
     DisconnectImpl(player_connection);
 }
 
 void ServerNetworking::DisconnectAll() {
     DebugLogger(network) << "ServerNetworking::DisconnectAll";
-    for (const_iterator it = m_player_connections.begin();
-         it != m_player_connections.end(); ) {
-        PlayerConnectionPtr player_connection = *it++;
-        DisconnectImpl(player_connection);
-    }
+    const auto connections_copy{m_player_connections};
+    for (auto& pcon : connections_copy)
+        DisconnectImpl(pcon);
 }
 
-ServerNetworking::established_iterator ServerNetworking::GetPlayer(int id)
-{ return std::find_if(established_begin(), established_end(), PlayerID(id)); }
+ServerNetworking::established_iterator ServerNetworking::GetPlayer(int id) {
+    return std::find_if(established_begin(), established_end(),
+                      [id](const auto& player_con) noexcept { return player_con->PlayerID() == id; });
+}
 
 ServerNetworking::established_iterator ServerNetworking::established_begin() {
-    return established_iterator(EstablishedPlayer(),
+    return established_iterator(is_established_player,
                                 m_player_connections.begin(),
                                 m_player_connections.end());
 }
 
 ServerNetworking::established_iterator ServerNetworking::established_end() {
-    return established_iterator(EstablishedPlayer(),
+    return established_iterator(is_established_player,
                                 m_player_connections.end(),
                                 m_player_connections.end());
 }
@@ -738,7 +720,7 @@ void ServerNetworking::UpdateCookie(boost::uuids::uuid cookie) {
     if (cookie.is_nil())
         return;
 
-    auto it = m_cookies.find(cookie);
+    const auto it = m_cookies.find(cookie);
     if (it != m_cookies.end()) {
         it->second.expired = boost::posix_time::second_clock::local_time() +
             boost::posix_time::minutes(GetOptionsDB().Get<int>("network.server.cookies.expire-minutes"));

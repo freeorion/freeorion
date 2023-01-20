@@ -41,21 +41,160 @@ struct CookieData {
 };
 
 
+/** Encapsulates the connection to a single player.  This object should have
+    nearly the same lifetime as the socket it represents, except that the
+    object is constructed just before the socket connection is made.  A
+    newly-constructed PlayerConnection has no associated player ID, player
+    name, nor host-player status.  Once a PlayerConnection is accepted by the
+    server as an actual player in a game, EstablishPlayer() should be called.
+    This establishes the aforementioned properties. */
+class PlayerConnection :
+    public std::enable_shared_from_this<PlayerConnection>
+{
+public:
+    ~PlayerConnection();
+
+    /** Returns true if EstablishPlayer() successfully has been called on this
+        connection. */
+    [[nodiscard]] bool EstablishedPlayer() const noexcept;
+
+    /** Returns the ID of the player associated with this connection, if
+        any. */
+    [[nodiscard]] int PlayerID() const noexcept { return m_ID; }
+
+    /** Returns the name of the player associated with this connection, if
+        any. */
+    [[nodiscard]] const std::string& PlayerName() const noexcept { return m_player_name; }
+
+    /** Returns the type of client associated with this connection (AI client,
+      * human client, ...) */
+    [[nodiscard]] Networking::ClientType GetClientType() const noexcept { return m_client_type; }
+
+    /** Returns the version string the client provided when joining. */
+    [[nodiscard]] const std::string& ClientVersionString() const noexcept { return m_client_version_string; }
+
+    /** Checks if the server will enable binary serialization for this client's connection. */
+    [[nodiscard]] bool IsBinarySerializationUsed() const;
+
+    /** Checks if client associated with this connection runs on the same
+        physical machine as the server */
+    [[nodiscard]] bool IsLocalConnection() const noexcept { return m_is_local_connection; }
+
+    /** Checks if the player is established, has a valid name, id and client type. */
+    [[nodiscard]] bool IsEstablished() const;
+
+    /** Checks if the player was authenticated. */
+    [[nodiscard]] bool IsAuthenticated() const noexcept { return m_authenticated; }
+
+    /** Checks if the player has a some role */
+    [[nodiscard]] bool HasAuthRole(Networking::RoleType role) const { return m_roles.HasRole(role); }
+
+    /** Get cookie associated with this connection. */
+    [[nodiscard]] boost::uuids::uuid Cookie() const noexcept { return m_cookie; }
+
+    /** Get string representation of remote ip address. */
+    [[nodiscard]] std::string GetIpAddress() const;
+
+    /** Starts the connection reading incoming messages on its socket. */
+    void Start();
+
+    /** Sends \a synchronous message to out on the connection. */
+    void SendMessage(const Message& message);
+
+    /** Set player properties to use them after authentication successed. */
+    void AwaitPlayer(Networking::ClientType client_type,
+                     const std::string& client_version_string);
+
+    /** Establishes a connection as a player with a specific name and id.
+        This function must only be called once. */
+    void EstablishPlayer(int id, const std::string& player_name, Networking::ClientType client_type,
+                         const std::string& client_version_string);
+
+    /** Sets this connection's client type. Useful for already-connected players
+      * changing type such as in the multiplayer lobby. */
+    void SetClientType(Networking::ClientType client_type);
+
+    /** Sets authenticated status for connection. */
+    void SetAuthenticated();
+
+    /** Sets authorization roles and send message to client. */
+    void SetAuthRoles(const std::initializer_list<Networking::RoleType>& roles);
+
+    void SetAuthRoles(const Networking::AuthRoles& roles);
+
+    /** Sets or unset authorizaion role and send message to client. */
+    void SetAuthRole(Networking::RoleType role, bool value = true);
+
+    /** Sets cookie value to this connection to update expire date. */
+    void SetCookie(boost::uuids::uuid cookie);
+
+    mutable boost::signals2::signal<void (const NullaryFn&)> EventSignal;
+
+    /** Creates a new PlayerConnection and returns it as a shared_ptr. */
+    static PlayerConnectionPtr NewConnection(
+        boost::asio::io_context& io_context, MessageAndConnectionFn nonplayer_message_callback,
+        MessageAndConnectionFn player_message_callback, ConnectionFn disconnected_callback);
+
+private:
+    PlayerConnection(boost::asio::io_context& io_context, MessageAndConnectionFn nonplayer_message_callback,
+                     MessageAndConnectionFn player_message_callback, ConnectionFn disconnected_callback);
+    void HandleMessageBodyRead(boost::system::error_code error, std::size_t bytes_transferred);
+    void HandleMessageHeaderRead(boost::system::error_code error, std::size_t bytes_transferred);
+    void AsyncReadMessage();
+    void AsyncWriteMessage();
+    static void HandleMessageWrite(PlayerConnectionPtr self,
+                                   boost::system::error_code error,
+                                   std::size_t bytes_transferred);
+
+    /** Places message to the end of sending queue and start asynchronous write if \a message was
+        first in the queue. */
+    static void SendMessageImpl(PlayerConnectionPtr self, Message message);
+    static void AsyncErrorHandler(PlayerConnectionPtr self, boost::system::error_code handled_error,
+                                  boost::system::error_code error);
+
+    boost::asio::io_context&        m_service;
+    boost::optional<boost::asio::ip::tcp::socket> m_socket;
+    Message::HeaderBuffer           m_incoming_header_buffer = {};
+    Message                         m_incoming_message;
+    Message::HeaderBuffer           m_outgoing_header = {};
+    std::queue<Message>             m_outgoing_messages;
+    int                             m_ID = Networking::INVALID_PLAYER_ID;
+    std::string                     m_player_name;
+    bool                            m_new_connection = true;
+    Networking::ClientType          m_client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
+    std::string                     m_client_version_string;
+    bool                            m_authenticated = false;
+    Networking::AuthRoles           m_roles;
+    boost::uuids::uuid              m_cookie = boost::uuids::nil_uuid();
+    bool                            m_valid = true;
+    bool                            m_is_local_connection = false;
+
+    MessageAndConnectionFn          m_nonplayer_message_callback;
+    MessageAndConnectionFn          m_player_message_callback;
+    ConnectionFn                    m_disconnected_callback;
+
+    friend class ServerNetworking;
+};
+
+
 /** Encapsulates the networking facilities of the server.  This class listens
     for incoming UDP LAN server-discovery requests and TCP player connections.
     The server also sends and receives messages over the TCP player
     connections. */
 class ServerNetworking {
 private:
-    typedef std::set<PlayerConnectionPtr> PlayerConnections;
-    struct EstablishedPlayer
-    { bool operator()(const PlayerConnectionPtr& player_connection) const; };
+    static constexpr struct IsEstablishedPlayer {
+        [[nodiscard]] bool operator()(const PlayerConnectionPtr& player_connection) const
+            noexcept(noexcept(std::declval<PlayerConnectionPtr>()->EstablishedPlayer()))
+        { return player_connection && player_connection->EstablishedPlayer(); }
+    } is_established_player{};
 
 public:
-    typedef std::set<PlayerConnectionPtr>::iterator                                         iterator;
-    typedef std::set<PlayerConnectionPtr>::const_iterator                                   const_iterator;
-    typedef boost::filter_iterator<EstablishedPlayer, PlayerConnections::iterator>          established_iterator;
-    typedef boost::filter_iterator<EstablishedPlayer, PlayerConnections::const_iterator>    const_established_iterator;
+    using PlayerConnections = std::set<PlayerConnectionPtr>;
+    using iterator = PlayerConnections::iterator;
+    using const_iterator = PlayerConnections::const_iterator;
+    using established_iterator = boost::filter_iterator<IsEstablishedPlayer, iterator>;
+    using const_established_iterator= boost::filter_iterator<IsEstablishedPlayer, const_iterator>;
 
     ServerNetworking(boost::asio::io_context& io_context,
                      MessageAndConnectionFn nonplayer_message_callback,
@@ -204,141 +343,5 @@ private:
     MessageAndConnectionFn m_player_message_callback;
     ConnectionFn           m_disconnected_callback;
 };
-
-/** Encapsulates the connection to a single player.  This object should have
-    nearly the same lifetime as the socket it represents, except that the
-    object is constructed just before the socket connection is made.  A
-    newly-constructed PlayerConnection has no associated player ID, player
-    name, nor host-player status.  Once a PlayerConnection is accepted by the
-    server as an actual player in a game, EstablishPlayer() should be called.
-    This establishes the aforementioned properties. */
-class PlayerConnection :
-    public std::enable_shared_from_this<PlayerConnection>
-{
-public:
-    ~PlayerConnection();
-
-    /** Returns true if EstablishPlayer() successfully has been called on this
-        connection. */
-    [[nodiscard]] bool EstablishedPlayer() const noexcept;
-
-    /** Returns the ID of the player associated with this connection, if
-        any. */
-    [[nodiscard]] int PlayerID() const noexcept { return m_ID; }
-
-    /** Returns the name of the player associated with this connection, if
-        any. */
-    [[nodiscard]] const std::string& PlayerName() const noexcept { return m_player_name; }
-
-    /** Returns the type of client associated with this connection (AI client,
-      * human client, ...) */
-    [[nodiscard]] Networking::ClientType GetClientType() const noexcept { return m_client_type; }
-
-    /** Returns the version string the client provided when joining. */
-    [[nodiscard]] const std::string& ClientVersionString() const noexcept { return m_client_version_string; }
-
-    /** Checks if the server will enable binary serialization for this client's connection. */
-    [[nodiscard]] bool IsBinarySerializationUsed() const;
-
-    /** Checks if client associated with this connection runs on the same
-        physical machine as the server */
-    [[nodiscard]] bool IsLocalConnection() const noexcept { return m_is_local_connection; }
-
-    /** Checks if the player is established, has a valid name, id and client type. */
-    [[nodiscard]] bool IsEstablished() const;
-
-    /** Checks if the player was authenticated. */
-    [[nodiscard]] bool IsAuthenticated() const noexcept { return m_authenticated; }
-
-    /** Checks if the player has a some role */
-    [[nodiscard]] bool HasAuthRole(Networking::RoleType role) const { return m_roles.HasRole(role); }
-
-    /** Get cookie associated with this connection. */
-    [[nodiscard]] boost::uuids::uuid Cookie() const noexcept { return m_cookie; }
-
-    /** Get string representation of remote ip address. */
-    [[nodiscard]] std::string GetIpAddress() const;
-
-    /** Starts the connection reading incoming messages on its socket. */
-    void Start();
-
-    /** Sends \a synchronous message to out on the connection. */
-    void SendMessage(const Message& message);
-
-    /** Set player properties to use them after authentication successed. */
-    void AwaitPlayer(Networking::ClientType client_type,
-                     const std::string& client_version_string);
-
-    /** Establishes a connection as a player with a specific name and id.
-        This function must only be called once. */
-    void EstablishPlayer(int id, const std::string& player_name, Networking::ClientType client_type,
-                         const std::string& client_version_string);
-
-    /** Sets this connection's client type. Useful for already-connected players
-      * changing type such as in the multiplayer lobby. */
-    void SetClientType(Networking::ClientType client_type);
-
-    /** Sets authenticated status for connection. */
-    void SetAuthenticated();
-
-    /** Sets authorization roles and send message to client. */
-    void SetAuthRoles(const std::initializer_list<Networking::RoleType>& roles);
-
-    void SetAuthRoles(const Networking::AuthRoles& roles);
-
-    /** Sets or unset authorizaion role and send message to client. */
-    void SetAuthRole(Networking::RoleType role, bool value = true);
-
-    /** Sets cookie value to this connection to update expire date. */
-    void SetCookie(boost::uuids::uuid cookie);
-
-    mutable boost::signals2::signal<void (const NullaryFn&)> EventSignal;
-
-    /** Creates a new PlayerConnection and returns it as a shared_ptr. */
-    static PlayerConnectionPtr
-    NewConnection(boost::asio::io_context& io_context, MessageAndConnectionFn nonplayer_message_callback,
-                  MessageAndConnectionFn player_message_callback, ConnectionFn disconnected_callback);
-
-private:
-    PlayerConnection(boost::asio::io_context& io_context, MessageAndConnectionFn nonplayer_message_callback,
-                     MessageAndConnectionFn player_message_callback, ConnectionFn disconnected_callback);
-    void HandleMessageBodyRead(boost::system::error_code error, std::size_t bytes_transferred);
-    void HandleMessageHeaderRead(boost::system::error_code error, std::size_t bytes_transferred);
-    void AsyncReadMessage();
-    void AsyncWriteMessage();
-    static void HandleMessageWrite(PlayerConnectionPtr self,
-                                   boost::system::error_code error,
-                                   std::size_t bytes_transferred);
-
-    /** Places message to the end of sending queue and start asynchronous write if \a message was
-        first in the queue. */
-    static void SendMessageImpl(PlayerConnectionPtr self, Message message);
-    static void AsyncErrorHandler(PlayerConnectionPtr self, boost::system::error_code handled_error,
-                                  boost::system::error_code error);
-
-    boost::asio::io_context&        m_service;
-    boost::optional<boost::asio::ip::tcp::socket> m_socket;
-    Message::HeaderBuffer           m_incoming_header_buffer = {};
-    Message                         m_incoming_message;
-    Message::HeaderBuffer           m_outgoing_header = {};
-    std::queue<Message>             m_outgoing_messages;
-    int                             m_ID = Networking::INVALID_PLAYER_ID;
-    std::string                     m_player_name;
-    bool                            m_new_connection = true;
-    Networking::ClientType          m_client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
-    std::string                     m_client_version_string;
-    bool                            m_authenticated = false;
-    Networking::AuthRoles           m_roles;
-    boost::uuids::uuid              m_cookie = boost::uuids::nil_uuid();
-    bool                            m_valid = true;
-    bool                            m_is_local_connection = false;
-
-    MessageAndConnectionFn          m_nonplayer_message_callback;
-    MessageAndConnectionFn          m_player_message_callback;
-    ConnectionFn                    m_disconnected_callback;
-
-    friend class ServerNetworking;
-};
-
 
 #endif
