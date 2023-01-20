@@ -24,7 +24,8 @@
 [[nodiscard]] FO_COMMON_API const std::string& UserString(const char* str);
 
 /** Returns all entries in current stringtable */
-using AllStringsResultT = const decltype(std::declval<StringTable>().AllStrings());
+using AllStringsResultT = decltype(std::declval<StringTable>().AllStrings());
+static_assert(std::is_const_v<std::remove_reference_t<AllStringsResultT>>);
 [[nodiscard]] FO_COMMON_API AllStringsResultT& AllStringtableEntries(bool default_table = false);
 
 /** Returns a language-specific vector of strings for given @a key. */
