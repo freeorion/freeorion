@@ -12,7 +12,7 @@
 #include "../util/Directories.h"
 
 #include <boost/spirit/include/qi.hpp>
-#include <boost/spirit/include/phoenix_core.hpp>
+#include <boost/phoenix/core.hpp>
 
 #include <typeinfo>
 
