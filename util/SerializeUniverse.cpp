@@ -517,7 +517,7 @@ namespace {
         std::string buffer;
         ar >> boost::serialization::make_nvp(name, buffer);
 
-        flat_set_size_t count = 0U;
+        unsigned int count = 0U;
         const auto* next = buffer.c_str();
         const auto* const buffer_end = buffer.c_str() + buffer.size();
 
@@ -533,11 +533,12 @@ namespace {
             return;
         next += chars_consumed;
 #endif
-        fs.reserve(fs.size() + count);
+        fs.reserve(fs.size() + static_cast<std::size_t>(count));
         using ID_t = std::decay_t<decltype(fs)>::value_type;
         std::vector<ID_t> maybe_unsorted_buffer;
         maybe_unsorted_buffer.reserve(count);
 
+        // parse count ID_t values
         for (decltype(count) idx = 0u; idx < count; ++idx) {
             // advance to next bit of non-whitespace
             while (std::distance(next, buffer_end) > 0 && *next == ' ')
