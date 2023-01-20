@@ -52,23 +52,24 @@ struct FO_COMMON_API InfluenceQueue {
 
     [[nodiscard]] bool  InQueue(const std::string& name) const;
 
-    [[nodiscard]] int   ProjectsInProgress() const { return m_projects_in_progress; }
-    [[nodiscard]] float TotalIPsSpent() const { return m_total_IPs_spent; };
-    [[nodiscard]] int   EmpireID() const { return m_empire_id; }
+    [[nodiscard]] int   ProjectsInProgress() const noexcept { return m_projects_in_progress; }
+    [[nodiscard]] float TotalIPsSpent() const noexcept { return m_total_IPs_spent; };
+    [[nodiscard]] int   EmpireID() const noexcept { return m_empire_id; }
 
     /** Returns amount of stockpile IP allocated to Influence queue elements. */
-    [[nodiscard]] float AllocatedStockpileIP() const;
+    [[nodiscard]] float AllocatedStockpileIP() const noexcept;
 
     /** Returns the value expected for the Influence Stockpile for the next
       * turn, based on the current InfluenceQueue allocations. */
-    [[nodiscard]] float ExpectedNewStockpileAmount() const { return m_expected_new_stockpile_amount; }
+    [[nodiscard]] float ExpectedNewStockpileAmount() const noexcept { return m_expected_new_stockpile_amount; }
 
 
     // STL container-like interface
-    [[nodiscard]] bool           empty() const { return m_queue.empty(); }
-    [[nodiscard]] unsigned int   size() const { return m_queue.size(); }
-    [[nodiscard]] const_iterator begin() const { return m_queue.begin(); }
-    [[nodiscard]] const_iterator end() const { return m_queue.end(); }
+    [[nodiscard]] auto empty() const noexcept { return m_queue.empty(); }
+    [[nodiscard]] auto size() const noexcept { return m_queue.size(); }
+    [[nodiscard]] auto begin() const noexcept { return m_queue.begin(); }
+    [[nodiscard]] auto end() const noexcept { return m_queue.end(); }
+
     [[nodiscard]] const_iterator find(const std::string& item_name) const;
     [[nodiscard]] const Element& operator[](std::size_t i) const;
     [[nodiscard]] const Element& operator[](int i) const;
@@ -87,8 +88,8 @@ struct FO_COMMON_API InfluenceQueue {
     void                    insert(iterator it, const Element& element) { m_queue.insert(it, element); }
     void                    erase(int i);
     iterator                erase(iterator it) { return m_queue.erase(it); }
-    [[nodiscard]] iterator  begin() { return m_queue.begin(); }
-    [[nodiscard]] iterator  end() { return m_queue.end(); }
+    [[nodiscard]] iterator  begin() noexcept { return m_queue.begin(); }
+    [[nodiscard]] iterator  end() noexcept { return m_queue.end(); }
     [[nodiscard]] iterator  find(const std::string& item_name);
     [[nodiscard]] Element&  operator[](int i);
 
