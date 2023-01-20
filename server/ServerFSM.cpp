@@ -486,11 +486,9 @@ void ServerFSM::UpdateIngameLobby() {
     }
 }
 
-bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
-                                const std::string& player_name,
-                                Networking::ClientType client_type,
-                                const std::string& client_version_string,
-                                const Networking::AuthRoles& roles)
+bool ServerFSM::EstablishPlayer(PlayerConnectionPtr player_connection,
+                                std::string player_name, Networking::ClientType client_type,
+                                std::string client_version_string, Networking::AuthRoles roles)
 {
     std::vector<PlayerConnectionPtr> to_disconnect;
     to_disconnect.reserve(m_server.m_networking.size());
@@ -500,35 +498,30 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
 
     if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER &&
         !player_connection->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_OBSERVER))
-    {
-        client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
-    }
+    { client_type = Networking::ClientType::INVALID_CLIENT_TYPE; }
     if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR &&
         !player_connection->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_MODERATOR))
-    {
-        client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
-    }
+    { client_type = Networking::ClientType::INVALID_CLIENT_TYPE; }
     if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
         !player_connection->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER))
-    {
-        client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
-    }
+    { client_type = Networking::ClientType::INVALID_CLIENT_TYPE; }
 
     if (player_connection->IsAuthenticated() || !player_connection->Cookie().is_nil()) {
         // drop other connection with same name
         for (auto it = m_server.m_networking.established_begin();
              it != m_server.m_networking.established_end(); ++it)
         {
-            if ((*it)->PlayerName() == player_name && player_connection != (*it)) {
-                (*it)->SendMessage(ErrorMessage(UserStringNop("ERROR_CONNECTION_WAS_REPLACED"), true));
-                to_disconnect.push_back(*it);
+            const auto& est_player = *it;
+            if (est_player->PlayerName() == player_name && player_connection != est_player) {
+                est_player->SendMessage(ErrorMessage(UserStringNop("ERROR_CONNECTION_WAS_REPLACED"), true));
+                to_disconnect.push_back(est_player);
 
                 // If we're going to establish Human Player
                 // it will be better to break link with previous connection
                 // so game won't be stopped on disconnection of previous connection.
                 if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
-                    m_server.DropPlayerEmpireLink((*it)->PlayerID());
-                    (*it)->SetClientType(Networking::ClientType::INVALID_CLIENT_TYPE);
+                    m_server.DropPlayerEmpireLink(est_player->PlayerID());
+                    est_player->SetClientType(Networking::ClientType::INVALID_CLIENT_TYPE);
                 }
             }
         }
@@ -541,14 +534,16 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
                      << " and roles: " << roles.Text()
                      << " and is to be disconnected due to the invalid client type";
         player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_CLIENT_TYPE_NOT_ALLOWED"), true));
-        to_disconnect.push_back(player_connection);
+        to_disconnect.push_back(std::move(player_connection));
+
     } else {
         // assign unique player ID to newly connected player
         int player_id = m_server.m_networking.NewPlayerID();
         DebugLogger() << "ServerFSM.EstablishPlayer Assign new player id " << player_id;
 
         // establish player with requested client type and acknowldge via connection
-        player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
+        player_connection->EstablishPlayer(player_id, player_name, client_type,
+                                           std::move(client_version_string));
 
         // save cookie for player name
         boost::uuids::uuid cookie = player_connection->Cookie();
@@ -596,7 +591,7 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
 
     // disconnect "ghost" connection after establishing new
     for (const auto& conn : to_disconnect)
-        m_server.Networking().Disconnect(conn);
+        m_server.Networking().Disconnect(std::move(conn));
 
     return client_type != Networking::ClientType::INVALID_CLIENT_TYPE;
 }
@@ -644,21 +639,23 @@ sc::result Idle::react(const HostMPGame& msg) {
 
     DebugLogger(FSM) << "Idle::react(HostMPGame) about to establish host";
 
-    int host_player_id = server.m_networking.NewPlayerID();
-    player_connection->EstablishPlayer(host_player_id, host_player_name, Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER, client_version_string);
+    const int host_player_id = server.m_networking.NewPlayerID();
+    player_connection->EstablishPlayer(host_player_id, std::move(host_player_name),
+                                       Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER,
+                                       std::move(client_version_string));
     server.m_networking.SetHostPlayerID(host_player_id);
 
     if (!GetOptionsDB().Get<bool>("skip-checksum"))
         player_connection->SendMessage(ContentCheckSumMessage());
 
     DebugLogger(FSM) << "Idle::react(HostMPGame) about to send acknowledgement to host";
-    player_connection->SetAuthRoles({
-        Networking::RoleType::ROLE_HOST,
-        Networking::RoleType::ROLE_CLIENT_TYPE_MODERATOR,
-        Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER,
-        Networking::RoleType::ROLE_CLIENT_TYPE_OBSERVER,
-        Networking::RoleType::ROLE_GALAXY_SETUP
-    });
+    player_connection->SetAuthRoles(Networking::AuthRoles{
+                                        Networking::RoleType::ROLE_HOST,
+                                        Networking::RoleType::ROLE_CLIENT_TYPE_MODERATOR,
+                                        Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER,
+                                        Networking::RoleType::ROLE_CLIENT_TYPE_OBSERVER,
+                                        Networking::RoleType::ROLE_GALAXY_SETUP
+                                    });
     player_connection->SendMessage(HostMPAckMessage(host_player_id));
 
     server.m_single_player_game = false;
@@ -697,21 +694,23 @@ sc::result Idle::react(const HostSPGame& msg) {
     }
 
 
-    int host_player_id = server.m_networking.NewPlayerID();
-    player_connection->EstablishPlayer(host_player_id, host_player_name, Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER, client_version_string);
+    const int host_player_id = server.m_networking.NewPlayerID();
+    player_connection->EstablishPlayer(host_player_id, std::move(host_player_name),
+                                       Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER,
+                                       std::move(client_version_string));
     server.m_networking.SetHostPlayerID(host_player_id);
     if (!GetOptionsDB().Get<bool>("skip-checksum"))
         player_connection->SendMessage(ContentCheckSumMessage());
-    player_connection->SetAuthRoles({
-                    Networking::RoleType::ROLE_HOST,
-                    Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER,
-                    Networking::RoleType::ROLE_GALAXY_SETUP
-                    });
+    player_connection->SetAuthRoles(Networking::AuthRoles{
+                                        Networking::RoleType::ROLE_HOST,
+                                        Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER,
+                                        Networking::RoleType::ROLE_GALAXY_SETUP
+                                    });
     player_connection->SendMessage(HostSPAckMessage(host_player_id));
 
     server.m_single_player_game = true;
 
-    context<ServerFSM>().m_single_player_setup_data = single_player_setup_data;
+    context<ServerFSM>().m_single_player_setup_data = std::move(single_player_setup_data);
 
     return transit<WaitingForSPGameJoiners>();
 }
@@ -1126,22 +1125,17 @@ sc::result MPLobby::react(const Disconnection& d) {
     return discard_event();
 }
 
-void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
-                              const std::string& player_name,
-                              Networking::ClientType client_type,
-                              const std::string& client_version_string,
-                              const Networking::AuthRoles& roles)
+void MPLobby::EstablishPlayer(PlayerConnectionPtr player_connection,
+                              std::string player_name, Networking::ClientType client_type,
+                              std::string client_version_string, Networking::AuthRoles roles)
 {
     ServerApp& server = Server();
     const SpeciesManager& sm = server.GetSpeciesManager();
 
-    if (context<ServerFSM>().EstablishPlayer(player_connection,
-                                             player_name,
-                                             client_type,
-                                             client_version_string,
-                                             roles))
+    if (context<ServerFSM>().EstablishPlayer(player_connection, player_name, client_type,
+                                             client_version_string, roles))
     {
-        int player_id = player_connection->PlayerID();
+        const int player_id = player_connection->PlayerID();
 
         // Inform AI of logging configuration.
         if (client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
@@ -1150,11 +1144,12 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
 
         // assign player info from defaults or from connection to lobby data players list
         PlayerSetupData player_setup_data;
-        player_setup_data.player_name =   player_name;
-        player_setup_data.client_type =   client_type;
-        player_setup_data.empire_name =   (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) ? player_name : GenerateEmpireName(player_name, m_lobby_data->players);
-        player_setup_data.empire_color =  GetUnusedEmpireColour(m_lobby_data->players);
-        if (m_lobby_data->seed != "")
+        player_setup_data.player_name = player_name;
+        player_setup_data.client_type = client_type;
+        player_setup_data.empire_name = (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) ?
+                                         player_name : GenerateEmpireName(player_name, m_lobby_data->players);
+        player_setup_data.empire_color = GetUnusedEmpireColour(m_lobby_data->players);
+        if (m_lobby_data->seed.empty())
             player_setup_data.starting_species_name = sm.RandomPlayableSpeciesName();
         else
             player_setup_data.starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
@@ -1164,10 +1159,11 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
         m_lobby_data->players.push_back({player_id, player_setup_data});
 
         // drop ready player flag at new player
-        for (std::pair<int, PlayerSetupData>& plr : m_lobby_data->players) {
+        for (auto& plr : m_lobby_data->players) {
             if (plr.second.empire_name == player_name) {
                 // change empire name
-                plr.second.empire_name = (plr.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) ? plr.second.player_name : GenerateEmpireName(plr.second.player_name, m_lobby_data->players);
+                plr.second.empire_name = (plr.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) ?
+                                          plr.second.player_name : GenerateEmpireName(plr.second.player_name, m_lobby_data->players);
             }
 
             plr.second.player_ready = false;
@@ -1281,7 +1277,8 @@ sc::result MPLobby::react(const JoinGame& msg) {
         player_name = std::move(new_player_name);
     }
 
-    EstablishPlayer(player_connection, player_name, client_type, client_version_string, roles);
+    EstablishPlayer(player_connection, std::move(player_name), client_type,
+                    std::move(client_version_string), roles);
 
     return discard_event();
 }
@@ -1302,8 +1299,8 @@ sc::result MPLobby::react(const AuthResponse& msg) {
 
     if (!server.IsAuthSuccessAndFillRoles(player_name, auth, roles)) {
         // wrong password
-        player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_WRONG_PASSWORD")) % player_name),
-                                                    true));
+        player_connection->SendMessage(ErrorMessage(
+            str(FlexibleFormat(UserString("ERROR_WRONG_PASSWORD")) % player_name), true));
         server.Networking().Disconnect(player_connection);
         return discard_event();
     }
@@ -1311,11 +1308,8 @@ sc::result MPLobby::react(const AuthResponse& msg) {
 
     Networking::ClientType client_type = player_connection->GetClientType();
 
-    EstablishPlayer(player_connection,
-                    player_name,
-                    client_type,
-                    player_connection->ClientVersionString(),
-                    roles);
+    EstablishPlayer(player_connection, std::move(player_name), client_type,
+                    player_connection->ClientVersionString(), roles);
 
     return discard_event();
 }
@@ -2178,21 +2172,24 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
         if (expected_it == m_expected_ai_names_and_ids.end()) {
             // unexpected ai player
             ErrorLogger(FSM) << "WaitingForSPGameJoiners::react(const JoinGame& msg) received join game message for player \"" << player_name << "\" which was not an expected AI player name.    Terminating connection.";
-            server.m_networking.Disconnect(player_connection);
+            server.m_networking.Disconnect(std::move(player_connection));
+
         } else {
             // expected player
             // let the networking system know what socket this player is on
-            player_connection->EstablishPlayer(expected_it->second, player_name, client_type, client_version_string);
+            player_connection->EstablishPlayer(expected_it->second, player_name, client_type, // player_name used below
+                                               std::move(client_version_string));
             player_connection->SendMessage(JoinAckMessage(expected_it->second, boost::uuids::nil_uuid()));
             if (!GetOptionsDB().Get<bool>("skip-checksum"))
                 player_connection->SendMessage(ContentCheckSumMessage());
 
             // Inform AI of logging configuration.
             player_connection->SendMessage(
-                LoggerConfigMessage(Networking::INVALID_PLAYER_ID, LoggerOptionsLabelsAndLevels(LoggerTypes::both)));
+                LoggerConfigMessage(Networking::INVALID_PLAYER_ID,
+                                    LoggerOptionsLabelsAndLevels(LoggerTypes::both)));
 
             // remove name from expected names list, so as to only allow one connection per AI
-            m_expected_ai_names_and_ids.erase(player_name);
+            m_expected_ai_names_and_ids.erase(std::move(player_name));
         }
 
     } else if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
@@ -2202,12 +2199,13 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
             // too many human players
             ErrorLogger(FSM) << "WaitingForSPGameJoiners::react(const JoinGame& msg): A human player attempted to join the game but there was not enough room.  Terminating connection.";
             // TODO: send message to attempted joiner saying game is full
-            server.m_networking.Disconnect(player_connection);
+            server.m_networking.Disconnect(std::move(player_connection));
 
         } else {
             // unexpected but welcome human player
-            int host_id = server.Networking().HostPlayerID();
-            player_connection->EstablishPlayer(host_id, player_name, client_type, client_version_string);
+            const int host_id = server.Networking().HostPlayerID();
+            player_connection->EstablishPlayer(host_id, std::move(player_name), client_type,
+                                               std::move(client_version_string));
             player_connection->SendMessage(JoinAckMessage(host_id, boost::uuids::nil_uuid()));
             if (!GetOptionsDB().Get<bool>("skip-checksum"))
                 player_connection->SendMessage(ContentCheckSumMessage());
@@ -2348,17 +2346,20 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
             server.m_networking.Disconnect(player_connection);
         } else {
             // expected player
+
+            // remove name from expected names list, so as to only allow one connection per AI
+            m_expected_ai_player_names.erase(player_name);
+
             // let the networking system know what socket this player is on
-            int player_id = server.m_networking.NewPlayerID();
-            player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
+            const int player_id = server.m_networking.NewPlayerID();
+            player_connection->EstablishPlayer(player_id, std::move(player_name), client_type,
+                                               std::move(client_version_string));
             player_connection->SendMessage(JoinAckMessage(player_id, boost::uuids::nil_uuid()));
 
             // Inform AI of logging configuration.
             player_connection->SendMessage(
-                LoggerConfigMessage(Networking::INVALID_PLAYER_ID, LoggerOptionsLabelsAndLevels(LoggerTypes::both)));
-
-            // remove name from expected names list, so as to only allow one connection per AI
-            m_expected_ai_player_names.erase(player_name);
+                LoggerConfigMessage(Networking::INVALID_PLAYER_ID,
+                                    LoggerOptionsLabelsAndLevels(LoggerTypes::both)));
         }
 
     } else if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
@@ -2366,7 +2367,8 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
         Networking::AuthRoles roles;
         bool authenticated;
 
-        DebugLogger() << "WaitingForMPGameJoiners.JoinGame Try to login player " << player_name << " with cookie: " << cookie;
+        DebugLogger() << "WaitingForMPGameJoiners.JoinGame Try to login player " << player_name
+                      << " with cookie: " << cookie;
         if (server.Networking().CheckCookie(cookie, player_name, roles, authenticated)) {
             // if player has correct and non-expired cookies simply establish him
             player_connection->SetCookie(cookie);
@@ -2457,7 +2459,8 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
             }
         }
 
-        fsm.EstablishPlayer(player_connection, new_player_name, client_type, client_version_string, roles);
+        fsm.EstablishPlayer(std::move(player_connection), std::move(new_player_name), client_type,
+                            std::move(client_version_string), roles);
     } else {
         ErrorLogger(FSM) << "WaitingForMPGameJoiners::react(const JoinGame& msg): Received JoinGame message with invalid client type: " << client_type;
         return discard_event();
@@ -2516,7 +2519,7 @@ sc::result WaitingForMPGameJoiners::react(const AuthResponse& msg) {
             }
         }
         for (const auto& conn : to_disconnect)
-            server.Networking().Disconnect(conn);
+            server.Networking().Disconnect(std::move(conn));
 
         // expected human player
         if (!player_connection->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER)) {
@@ -2535,15 +2538,12 @@ sc::result WaitingForMPGameJoiners::react(const AuthResponse& msg) {
             }
         }
 
-        fsm.EstablishPlayer(player_connection,
-                            player_name,
-                            client_type,
-                            player_connection->ClientVersionString(),
-                            roles);
+        fsm.EstablishPlayer(std::move(player_connection), std::move(player_name), client_type,
+                            player_connection->ClientVersionString(), roles);
     } else {
         // non-human player
         ErrorLogger(FSM) << "WaitingForMPGameJoiners.AuthResponse : A non-human player attempted to join the game.";
-        server.m_networking.Disconnect(player_connection);
+        server.m_networking.Disconnect(std::move(player_connection));
     }
 
     // force immediate check if all expected AIs are present, so that the FSM
@@ -2782,22 +2782,17 @@ sc::result PlayingGame::react(const RequestCombatLogs& msg) {
     return discard_event();
 }
 
-void PlayingGame::EstablishPlayer(const PlayerConnectionPtr& player_connection,
-                                  const std::string& player_name,
-                                  Networking::ClientType client_type,
-                                  const std::string& client_version_string,
-                                  const Networking::AuthRoles& roles)
+void PlayingGame::EstablishPlayer(PlayerConnectionPtr player_connection, std::string player_name,
+                                  Networking::ClientType client_type, std::string client_version_string,
+                                  Networking::AuthRoles roles)
 {
     ServerApp& server = Server();
     // due disconnection could cause `delete this` in transition
     // to MPLobby or ShuttingDownServer gets context before disconnection
     ServerFSM& fsm = context<ServerFSM>();
 
-    if (fsm.EstablishPlayer(player_connection,
-                            player_name,
-                            client_type,
-                            player_connection->ClientVersionString(),
-                            roles))
+    if (fsm.EstablishPlayer(player_connection, std::move(player_name), client_type,
+                            player_connection->ClientVersionString(), roles))
     {
         // it possible to be not in PlayingGame here
         bool is_in_mplobby = false;
@@ -2833,8 +2828,10 @@ void PlayingGame::EstablishPlayer(const PlayerConnectionPtr& player_connection,
             fsm.UpdateIngameLobby();
 
             // send timeout data
-            if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0 && !Server().IsHaveWinner()) {
-                auto remaining = m_turn_timeout.expires_from_now();
+            if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0 &&
+                !Server().IsHaveWinner())
+            {
+                const auto remaining = m_turn_timeout.expires_from_now();
                 player_connection->SendMessage(TurnTimeoutMessage(remaining.total_seconds()));
             } else {
                 player_connection->SendMessage(TurnTimeoutMessage(0));
@@ -2847,7 +2844,7 @@ sc::result PlayingGame::react(const JoinGame& msg) {
     DebugLogger(FSM) << "(ServerFSM) PlayingGame::JoinGame message received";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
-    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
+    PlayerConnectionPtr player_connection = msg.m_player_connection;
 
     std::string player_name;
     Networking::ClientType client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
@@ -2929,8 +2926,8 @@ sc::result PlayingGame::react(const JoinGame& msg) {
         player_name = std::move(new_player_name);
     }
 
-    EstablishPlayer(player_connection, player_name, client_type,
-                    client_version_string, roles);
+    EstablishPlayer(std::move(player_connection), std::move(player_name), client_type,
+                    std::move(client_version_string), roles);
 
     return discard_event();
 }
@@ -2939,7 +2936,7 @@ sc::result PlayingGame::react(const AuthResponse& msg) {
     DebugLogger(FSM) << "(ServerFSM) PlayingGame::AuthResponse message received";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
-    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
+    PlayerConnectionPtr player_connection = msg.m_player_connection;
 
     std::string player_name;
     std::string auth;
@@ -2958,9 +2955,9 @@ sc::result PlayingGame::react(const AuthResponse& msg) {
     }
 
     player_connection->SetAuthenticated();
-    Networking::ClientType client_type = player_connection->GetClientType();
+    const Networking::ClientType client_type = player_connection->GetClientType();
 
-    EstablishPlayer(player_connection, player_name, client_type,
+    EstablishPlayer(player_connection, std::move(player_name), client_type,
                     player_connection->ClientVersionString(), roles);
 
     return discard_event();
@@ -2969,7 +2966,7 @@ sc::result PlayingGame::react(const AuthResponse& msg) {
 sc::result PlayingGame::react(const EliminateSelf& msg) {
     DebugLogger(FSM) << "(ServerFSM) PlayingGame::EliminateSelf message received";
     ServerApp& server = Server();
-    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
+    PlayerConnectionPtr player_connection = msg.m_player_connection;
 
     if (player_connection->GetClientType() != Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER
         && player_connection->GetClientType() != Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
@@ -2981,11 +2978,12 @@ sc::result PlayingGame::react(const EliminateSelf& msg) {
     }
 
     if (!server.EliminatePlayer(player_connection)) {
-        WarnLogger(FSM) << "(ServerFSM) PlayingGame::EliminateSelf player " << player_connection->PlayerID() << " not allowed to concede";
+        WarnLogger(FSM) << "(ServerFSM) PlayingGame::EliminateSelf player " << player_connection->PlayerID()
+                        << " not allowed to concede";
         return discard_event();
     }
 
-    server.Networking().Disconnect(player_connection);
+    server.Networking().Disconnect(std::move(player_connection));
 
     // check conditions for ending this turn
     post_event(CheckTurnEndConditions());
@@ -3097,7 +3095,7 @@ sc::result PlayingGame::react(const LobbyUpdate& msg) {
     return discard_event();
 }
 
-void PlayingGame::TurnTimedoutHandler(const boost::system::error_code& error) {
+void PlayingGame::TurnTimedoutHandler(boost::system::error_code error) {
     DebugLogger(FSM) << "(ServerFSM) PlayingGame::TurnTimedoutHandler";
 
     if (error) {

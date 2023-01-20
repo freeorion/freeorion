@@ -226,9 +226,7 @@ std::string PlayerConnection::GetIpAddress() const {
     return "";
 }
 
-void PlayerConnection::AwaitPlayer(Networking::ClientType client_type,
-                                   const std::string& client_version_string)
-{
+void PlayerConnection::AwaitPlayer(Networking::ClientType client_type, std::string client_version_string) {
     TraceLogger(network) << "PlayerConnection(@ " << this << ")::AwaitPlayer("
                          << client_type << ", " << client_version_string << ")";
     if (m_client_type != Networking::ClientType::INVALID_CLIENT_TYPE) {
@@ -240,11 +238,11 @@ void PlayerConnection::AwaitPlayer(Networking::ClientType client_type,
         return;
     }
     m_client_type = client_type;
-    m_client_version_string = client_version_string;
+    m_client_version_string = std::move(client_version_string);
 }
 
-void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, Networking::ClientType client_type,
-                                       const std::string& client_version_string)
+void PlayerConnection::EstablishPlayer(int id, std::string player_name, Networking::ClientType client_type,
+                                       std::string client_version_string)
 {
     TraceLogger(network) << "PlayerConnection(@ " << this << ")::EstablishPlayer("
                          << id << ", " << player_name << ", "
@@ -273,9 +271,9 @@ void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, N
         return;
     }
     m_ID = id;
-    m_player_name = player_name;
+    m_player_name = std::move(player_name);
     m_client_type = client_type;
-    m_client_version_string = client_version_string;
+    m_client_version_string = std::move(client_version_string);
 }
 
 void PlayerConnection::SetClientType(Networking::ClientType client_type) {
@@ -288,12 +286,7 @@ void PlayerConnection::SetAuthenticated() {
     m_authenticated = true;
 }
 
-void PlayerConnection::SetAuthRoles(const std::initializer_list<Networking::RoleType>& roles) {
-    m_roles = Networking::AuthRoles(roles);
-    SendMessage(SetAuthorizationRolesMessage(m_roles));
-}
-
-void PlayerConnection::SetAuthRoles(const Networking::AuthRoles& roles) {
+void PlayerConnection::SetAuthRoles(Networking::AuthRoles roles) {
     m_roles = roles;
     SendMessage(SetAuthorizationRolesMessage(m_roles));
 }

@@ -102,13 +102,12 @@ public:
     void SendMessage(const Message& message);
 
     /** Set player properties to use them after authentication successed. */
-    void AwaitPlayer(Networking::ClientType client_type,
-                     const std::string& client_version_string);
+    void AwaitPlayer(Networking::ClientType client_type, std::string client_version_string);
 
     /** Establishes a connection as a player with a specific name and id.
         This function must only be called once. */
-    void EstablishPlayer(int id, const std::string& player_name, Networking::ClientType client_type,
-                         const std::string& client_version_string);
+    void EstablishPlayer(int id, std::string player_name, Networking::ClientType client_type,
+                         std::string client_version_string);
 
     /** Sets this connection's client type. Useful for already-connected players
       * changing type such as in the multiplayer lobby. */
@@ -117,10 +116,7 @@ public:
     /** Sets authenticated status for connection. */
     void SetAuthenticated();
 
-    /** Sets authorization roles and send message to client. */
-    void SetAuthRoles(const std::initializer_list<Networking::RoleType>& roles);
-
-    void SetAuthRoles(const Networking::AuthRoles& roles);
+    void SetAuthRoles(Networking::AuthRoles roles);
 
     /** Sets or unset authorizaion role and send message to client. */
     void SetAuthRole(Networking::RoleType role, bool value = true);
@@ -201,11 +197,9 @@ public:
                      MessageAndConnectionFn player_message_callback,
                      ConnectionFn disconnected_callback);
 
-    /** Returns true if size() == 0. */
     bool empty() const noexcept { return m_player_connections.empty(); }
 
-    /** Returns the \a total number of PlayerConnections (not just established
-        ones). */
+    /** Returns the \a total number of PlayerConnections (not just established ones). */
     std::size_t size() const noexcept { return m_player_connections.size(); }
 
     /** Returns an iterator to the first PlayerConnection object. */

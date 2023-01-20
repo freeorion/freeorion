@@ -129,11 +129,9 @@ struct ServerFSM : sc::state_machine<ServerFSM, Idle> {
     ServerApp& Server() noexcept { return m_server; }
     void HandleNonLobbyDisconnection(const Disconnection& d);
     void UpdateIngameLobby();
-    bool EstablishPlayer(const PlayerConnectionPtr& player_connection,
-                         const std::string& player_name,
-                         Networking::ClientType client_type,
-                         const std::string& client_version_string,
-                         const Networking::AuthRoles& roles);
+    bool EstablishPlayer(PlayerConnectionPtr player_connection,
+                         std::string player_name, Networking::ClientType client_type,
+                         std::string client_version_string, Networking::AuthRoles roles);
 
     std::shared_ptr<MultiplayerLobbyData>   m_lobby_data;
     std::shared_ptr<SinglePlayerSetupData>  m_single_player_setup_data;
@@ -204,11 +202,9 @@ struct MPLobby : sc::state<MPLobby, ServerFSM> {
     int                                     m_ai_next_index;
 
 private:
-    void EstablishPlayer(const PlayerConnectionPtr& player_connection,
-                         const std::string& player_name,
-                         Networking::ClientType client_type,
-                         const std::string& client_version_string,
-                         const Networking::AuthRoles& roles);
+    void EstablishPlayer(PlayerConnectionPtr player_connection,
+                         std::string player_name, Networking::ClientType client_type,
+                         std::string client_version_string, Networking::AuthRoles roles);
     void ValidateClientLimits();
 
     SERVER_ACCESSOR
@@ -318,12 +314,10 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
     sc::result react(const Error& msg);
     sc::result react(const LobbyUpdate& msg);
 
-    void EstablishPlayer(const PlayerConnectionPtr& player_connection,
-                         const std::string& player_name,
-                         Networking::ClientType client_type,
-                         const std::string& client_version_string,
-                         const Networking::AuthRoles& roles);
-    void TurnTimedoutHandler(const boost::system::error_code& error);
+    void EstablishPlayer(PlayerConnectionPtr player_connection,
+                         std::string player_name, Networking::ClientType client_type,
+                         std::string client_version_string, Networking::AuthRoles roles);
+    void TurnTimedoutHandler(boost::system::error_code error);
 
     boost::asio::deadline_timer                     m_turn_timeout;
     std::chrono::high_resolution_clock::time_point  m_start;
