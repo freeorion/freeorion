@@ -761,7 +761,7 @@ Message AuthResponseMessage(const std::string& player_name, const std::string& a
     return Message{Message::MessageType::AUTH_RESPONSE, std::move(os).str()};
 }
 
-Message SetAuthorizationRolesMessage(const Networking::AuthRoles& roles)
+Message SetAuthorizationRolesMessage(Networking::AuthRoles roles)
 { return Message{Message::MessageType::SET_AUTH_ROLES, roles.Text()}; }
 
 Message EliminateSelfMessage()

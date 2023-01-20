@@ -363,7 +363,7 @@ FO_COMMON_API Message AuthRequestMessage(const std::string& player_name, const s
 FO_COMMON_API Message AuthResponseMessage(const std::string& player_name, const std::string& auth);
 
 /** notifies client about changes in his authorization \a roles. */
-FO_COMMON_API Message SetAuthorizationRolesMessage(const Networking::AuthRoles& roles);
+FO_COMMON_API Message SetAuthorizationRolesMessage(Networking::AuthRoles roles);
 
 /** creates a ELIMINATE_SELF message to resign from the game. */
 FO_COMMON_API Message EliminateSelfMessage();
