@@ -91,8 +91,8 @@ bool InfluenceQueue::InQueue(const std::string& name) const {
                        [name](const Element& e){ return e.name == name; });
 }
 
-float InfluenceQueue::AllocatedStockpileIP() const
-{ return 0.0f; } // todo
+float InfluenceQueue::AllocatedStockpileIP() const noexcept
+{ return 0.0f; } // TODO: implement this...
 
 InfluenceQueue::const_iterator InfluenceQueue::find(const std::string& item_name) const
 { return std::find_if(begin(), end(), [&](const auto& e) { return e.name == item_name; }); }
@@ -116,14 +116,14 @@ void InfluenceQueue::Update(const ScriptingContext& context) {
 
     ScopedTimer update_timer("InfluenceQueue::Update");
 
-    float available_IP = empire->ResourceOutput(ResourceType::RE_INFLUENCE);
-    float stockpiled_IP = empire->ResourceStockpile(ResourceType::RE_INFLUENCE);
+    const float available_IP = empire->ResourceOutput(ResourceType::RE_INFLUENCE);
+    const float stockpiled_IP = empire->ResourceStockpile(ResourceType::RE_INFLUENCE);
 
     float spending_on_policy_adoption_ip = 0.0f;
     for (const auto& [policy_name, adoption_turn] : empire->TurnsPoliciesAdopted()) {
         if (adoption_turn != context.current_turn)
             continue;
-        auto policy = GetPolicy(policy_name);
+        const auto policy = GetPolicy(policy_name);
         if (!policy) {
             ErrorLogger() << "InfluenceQueue::Update couldn't get policy supposedly adopted this turn: " << policy_name;
             continue;
