@@ -37,7 +37,7 @@ public:
     [[nodiscard]] std::shared_ptr<const Empire>         GetEmpire(int id) const;  //!< Returns the empire whose ID is \a id, or nullptr if none exist
     [[nodiscard]] std::shared_ptr<const UniverseObject> GetSource(int id, const ObjectMap& objects) const;  //!< Return the empire source or nullptr if the empire or source doesn't exist
 
-    [[nodiscard]] int                       NumEmpires() const noexcept { return m_const_empire_map.size(); }
+    [[nodiscard]] int                       NumEmpires() const noexcept { return static_cast<int>(m_const_empire_map.size()); }
     [[nodiscard]] int                       NumEliminatedEmpires() const;
 
     [[nodiscard]] const std::vector<int>&   CapitalIDs() const noexcept { return m_capital_ids; }
