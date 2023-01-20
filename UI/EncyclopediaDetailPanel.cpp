@@ -2644,15 +2644,12 @@ namespace {
         const ScriptingContext context;
         const Universe& u = GetUniverse();
         const ObjectMap& objects = u.Objects();
-        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        std::vector<const Field*> current_fields;
-        current_fields.reserve(objects.size());
-        for (const auto* field : objects.allRaw<Field>())
-            if (field->FieldTypeName() == name)
-                current_fields.push_back(field);
+        const auto current_fields = objects.findRaw<Field>(
+            [item_name](auto* f) { return f->FieldTypeName() == item_name; });
 
         detailed_description.append("\n\n").append(UserString("KNOWN_FIELDS_OF_THIS_TYPE")).append("\n");
         if (!current_fields.empty()) {
+            const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
             for (auto& obj : current_fields) {
                 auto TEXT_TAG = VarText::FIELD_ID_TAG;
                 detailed_description.append(
@@ -2668,7 +2665,9 @@ namespace {
                 detailed_description.append(", Y=").append(ssy.str());
                 detailed_description.append("\n");
             }
-        } else detailed_description.append(UserString("NO_KNOWN_FIELDS"));
+        } else {
+            detailed_description.append(UserString("NO_KNOWN_FIELDS"));
+        }
         detailed_description.append("\n");
     }
 
