@@ -108,10 +108,10 @@ private:
         GG::Pt sz = Size();
         m_buffer.clear();
 
-        m_buffer.store(0.0f,        0.0f);
-        m_buffer.store(Value(sz.x), 0.0f);
-        m_buffer.store(Value(sz.x), Value(sz.y));
-        m_buffer.store(0.0f,        Value(sz.y));
+        m_buffer.store(0.0f,                            0.0f);
+        m_buffer.store(static_cast<float>(Value(sz.x)), 0.0f);
+        m_buffer.store(static_cast<float>(Value(sz.x)), static_cast<float>(Value(sz.y)));
+        m_buffer.store(0.0f,                            static_cast<float>(Value(sz.y)));
         m_buffer.createServerBuffer();
     }
 
@@ -278,13 +278,13 @@ void CensusBrowseWnd::InitBuffer() {
 
     m_buffer.clear();
 
-    m_buffer.store(Value(sz.x), Value(ROW_HEIGHT));
-    m_buffer.store(0.0f,        Value(ROW_HEIGHT));
+    m_buffer.store(static_cast<float>(Value(sz.x)), static_cast<float>(Value(ROW_HEIGHT)));
+    m_buffer.store(0.0f,                            static_cast<float>(Value(ROW_HEIGHT)));
 
-    m_buffer.store(0.0f,        0.0f);
-    m_buffer.store(Value(sz.x), 0.0f);
-    m_buffer.store(Value(sz.x), Value(sz.y));
-    m_buffer.store(0.0f,        Value(sz.y));
+    m_buffer.store(0.0f,                            0.0f);
+    m_buffer.store(static_cast<float>(Value(sz.x)), 0.0f);
+    m_buffer.store(static_cast<float>(Value(sz.x)), static_cast<float>(Value(sz.y)));
+    m_buffer.store(0.0f,                            static_cast<float>(Value(sz.y)));
     m_buffer.createServerBuffer();
 }
 
