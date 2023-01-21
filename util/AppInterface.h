@@ -113,11 +113,11 @@ protected:
 { return IApp::GetApp()->GetEmpire(id); }
 
 /** Accessor for the App's species manager */
-[[nodiscard]] inline SpeciesManager& GetSpeciesManager()
+[[nodiscard]] inline SpeciesManager& GetSpeciesManager() noexcept
 { return IApp::GetApp()->GetSpeciesManager(); }
 
 /** Accessor for the App's empire supply manager */
-[[nodiscard]] inline SupplyManager& GetSupplyManager()
+[[nodiscard]] inline SupplyManager& GetSupplyManager() noexcept
 { return IApp::GetApp()->GetSupplyManager(); }
 
 /** Accessor for the App's universe object */
@@ -142,12 +142,12 @@ protected:
 
 /** Returns app's empire ID. This may be an actual empire ID or may be
   * ALL_EMPIRES. */
-[[nodiscard]] inline int AppEmpireID()
+[[nodiscard]] inline int AppEmpireID() noexcept
 { return IApp::GetApp()->EmpireID(); }
 
 /** Returns current game turn.  This is >= 1 during a game, BEFORE_FIRST_TURN
   * during galaxy setup, or is INVALID_GAME_TURN at other times */
-[[nodiscard]] inline int CurrentTurn()
+[[nodiscard]] inline int CurrentTurn() noexcept
 { return IApp::GetApp()->CurrentTurn(); }
 
 /** Returns the galaxy setup settings used in the current game. */
