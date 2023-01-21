@@ -286,7 +286,7 @@ public:
 
     /** Generate cookies for player's name, roles, and authentication status. */
     boost::uuids::uuid GenerateCookie(std::string player_name,
-                                      const Networking::AuthRoles& roles,
+                                      Networking::AuthRoles roles,
                                       bool authenticated);
 
     /** Bump cookie's expired date. */
@@ -301,7 +301,7 @@ private:
     void AcceptPlayerMessagingConnection(PlayerConnectionPtr player_connection,
                                          boost::system::error_code error);
     void DisconnectImpl(PlayerConnectionPtr player_connection);
-    void EnqueueEvent(const NullaryFn& fn);
+    void EnqueueEvent(NullaryFn fn);
 
     int m_host_player_id = Networking::INVALID_PLAYER_ID;
 

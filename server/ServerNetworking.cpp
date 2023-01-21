@@ -233,7 +233,9 @@ void PlayerConnection::AwaitPlayer(Networking::ClientType client_type, std::stri
         ErrorLogger(network) << "PlayerConnection::AwaitPlayer attempting to re-await an already awaiting connection.";
         return;
     }
-    if (client_type == Networking::ClientType::INVALID_CLIENT_TYPE || client_type >= Networking::ClientType::NUM_CLIENT_TYPES) {
+    if (client_type == Networking::ClientType::INVALID_CLIENT_TYPE ||
+        client_type >= Networking::ClientType::NUM_CLIENT_TYPES)
+    {
         ErrorLogger(network) << "PlayerConnection::EstablishPlayer passed invalid client type: " << client_type;
         return;
     }
@@ -627,9 +629,9 @@ bool ServerNetworking::CheckCookie(boost::uuids::uuid cookie,
     if (cookie.is_nil())
         return false;
 
-    auto it = m_cookies.find(cookie);
+    const auto it = m_cookies.find(cookie);
     if (it != m_cookies.end() && player_name == it->second.player_name) {
-        boost::posix_time::ptime now = boost::posix_time::second_clock::local_time();
+        const boost::posix_time::ptime now = boost::posix_time::second_clock::local_time();
         if (it->second.expired >= now) {
             roles = it->second.roles;
             authenticated = it->second.authenticated;
@@ -696,7 +698,7 @@ void ServerNetworking::HandleNextEvent() {
 }
 
 boost::uuids::uuid ServerNetworking::GenerateCookie(std::string player_name,
-                                                    const Networking::AuthRoles& roles,
+                                                    Networking::AuthRoles roles,
                                                     bool authenticated)
 {
     boost::uuids::uuid cookie = boost::uuids::random_generator()();
@@ -825,5 +827,5 @@ void ServerNetworking::DisconnectImpl(PlayerConnectionPtr player_connection) {
     m_disconnected_callback(player_connection);
 }
 
-void ServerNetworking::EnqueueEvent(const NullaryFn& fn)
-{ m_event_queue.push(fn); }
+void ServerNetworking::EnqueueEvent(NullaryFn fn)
+{ m_event_queue.push(std::move(fn)); }
