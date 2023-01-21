@@ -177,17 +177,16 @@ public:
         attempts will be made until \a timeout seconds has elapsed. If \p
         expect_timeout is true, timeout is not reported as an error. */
     bool ConnectToServer(const ClientNetworking* const self,
-                         const std::string& ip_address,
-                         const std::chrono::milliseconds& timeout = std::chrono::seconds(10),
+                         std::string ip_address,
+                         std::chrono::milliseconds timeout = std::chrono::seconds(10),
                          bool expect_timeout = false);
 
     /** Connects to the server on the client's host.  On failure, repeated
         attempts will be made until \a timeout seconds has elapsed. If \p
         expect_timeout is true, timeout is not reported as an error.*/
-    bool ConnectToLocalHostServer(
-        const ClientNetworking* const self,
-        const std::chrono::milliseconds& timeout = std::chrono::seconds(10),
-        bool expect_timeout = false);
+    bool ConnectToLocalHostServer(const ClientNetworking* const self,
+                                  std::chrono::milliseconds timeout = std::chrono::seconds(10),
+                                  bool expect_timeout = false);
 
     /** Sends \a message to the server. This function actually just enqueues
         the message for sending and returns immediately. */
@@ -229,20 +228,19 @@ private:
     void AsyncWriteMessage();
     void SendMessageImpl(Message message);
     void DisconnectFromServerImpl();
-    bool _IsConnected() const;  // Non-thread-safe: Return true iff the client is full duplex connected to the server.
     bool CloseSocketIfNotConnected();  // Close the socket iff the client is not fully duplex connected to the server.
     void LaunchNetworkThread(const ClientNetworking* const self);
 
-    int                             m_player_id = Networking::INVALID_PLAYER_ID;
-    int                             m_host_player_id = Networking::INVALID_PLAYER_ID;
-    Networking::AuthRoles           m_roles;
+    int                   m_player_id = Networking::INVALID_PLAYER_ID;
+    int                   m_host_player_id = Networking::INVALID_PLAYER_ID;
+    Networking::AuthRoles m_roles;
 
     boost::asio::io_context            m_io_context;
     boost::asio::ip::tcp::socket       m_socket;
     boost::asio::high_resolution_timer m_deadline_timer;
     boost::asio::high_resolution_timer m_reconnect_timer;
     tcp::resolver::iterator            m_resolver_results;
-    bool                               m_deadline_has_expired{ false };
+    bool                               m_deadline_has_expired = false;
 
     // m_mutex guards m_incoming_message, m_rx_connected and m_tx_connected which are written by
     // the networking thread and read by the main thread to check incoming messages and connection
@@ -276,16 +274,12 @@ ClientNetworking::Impl::Impl() :
 
 bool ClientNetworking::Impl::IsConnected() const {
     std::scoped_lock lock(m_mutex);
-    return _IsConnected();
-}
-
-bool ClientNetworking::Impl::_IsConnected() const {
     return m_rx_connected && m_tx_connected;
 }
 
 bool ClientNetworking::Impl::CloseSocketIfNotConnected() {
     std::scoped_lock lock(m_mutex);
-    bool do_close = !_IsConnected();
+    const bool do_close = !(m_rx_connected && m_tx_connected);
     if (do_close)
         m_socket.close();
     return do_close;
@@ -347,22 +341,22 @@ void ClientNetworking::Impl::LaunchNetworkThread(const ClientNetworking* const s
 }
 
 
-bool ClientNetworking::Impl::ConnectToServer(
-    const ClientNetworking* const self,
-    const std::string& ip_address,
-    const std::chrono::milliseconds& timeout,
-    bool expect_timeout)
+bool ClientNetworking::Impl::ConnectToServer(const ClientNetworking* const self,
+                                             std::string ip_address,
+                                             std::chrono::milliseconds timeout,
+                                             bool expect_timeout)
 {
-    TraceLogger(network) << "ClientNetworking::Impl::ConnectToServer(" << self << ", " << ip_address << ", " << timeout.count() << ", " << expect_timeout << ")";
+    TraceLogger(network) << "ClientNetworking::Impl::ConnectToServer(" << self
+                         << ", " << ip_address << ", " << timeout.count() << ", " << expect_timeout << ")";
     using Clock = std::chrono::high_resolution_clock;
-    Clock::time_point start_time = Clock::now();
+    const Clock::time_point start_time = Clock::now();
 
     using namespace boost::asio::ip;
     tcp::resolver resolver(m_io_context);
     tcp::resolver::query query(ip_address,
                                std::to_string(Networking::MessagePort()),
                                resolver_query_base::numeric_service);
-    
+
     // Resolve the query - will try to connect on success.
     resolver.async_resolve(query, [this](const auto& err, const auto& results) {
         HandleResolve(err, results); 
@@ -375,16 +369,16 @@ bool ClientNetworking::Impl::ConnectToServer(
     m_deadline_has_expired = false;
     m_deadline_timer.expires_from_now(timeout);
     m_deadline_timer.async_wait([this](const auto& err) { HandleDeadlineTimeout(err); });
-    
+
     try {
         TraceLogger(network) << "ClientNetworking::Impl::ConnectToServer() - Starting asio event loop";
         m_io_context.run(); // blocks until connection or timeout
         m_io_context.reset();
 
         if (IsConnected()) {
-            auto connection_time = Clock::now() - start_time;
-            DebugLogger(network) << "Connecting to server took "
-                << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
+            const auto connection_time = Clock::now() - start_time;
+            const auto time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count();
+            DebugLogger(network) << "Connecting to server took " << time_ms << " ms.";
             LaunchNetworkThread(self);
         }
         else {
@@ -403,17 +397,18 @@ bool ClientNetworking::Impl::ConnectToServer(
     return IsConnected();
 }
 
-bool ClientNetworking::Impl::ConnectToLocalHostServer(
-    const ClientNetworking* const self,
-    const std::chrono::milliseconds& timeout,
-    bool expect_timeout)
+bool ClientNetworking::Impl::ConnectToLocalHostServer(const ClientNetworking* const self,
+                                                      std::chrono::milliseconds timeout,
+                                                      bool expect_timeout)
 {
-    TraceLogger(network) << "ClientNetworking::Impl::ConnectToLocalHostServer(" << self << ", " << timeout.count() << ", " << expect_timeout << ")";
+    TraceLogger(network) << "ClientNetworking::Impl::ConnectToLocalHostServer(" << self
+                         << ", " << timeout.count() << ", " << expect_timeout << ")";
     bool retval = false;
 #if FREEORION_WIN32
     try {
 #endif
-        retval = ConnectToServer(self, "127.0.0.1", timeout, expect_timeout);
+        static const std::string localhost_ip{"127.0.0.1"};
+        retval = ConnectToServer(self, localhost_ip, timeout, expect_timeout);
 #if FREEORION_WIN32
     } catch (const boost::system::system_error& e) {
         if (e.code().value() != WSAEADDRNOTAVAIL)
@@ -604,7 +599,8 @@ void ClientNetworking::Impl::NetworkingThread(const std::shared_ptr<const Client
 }
 
 void ClientNetworking::Impl::HandleMessageBodyRead(const std::shared_ptr<const ClientNetworking>& keep_alive,
-                                                   boost::system::error_code error, std::size_t bytes_transferred)
+                                                   boost::system::error_code error,
+                                                   std::size_t bytes_transferred)
 {
     if (error)
         throw boost::system::system_error(error);
@@ -617,7 +613,8 @@ void ClientNetworking::Impl::HandleMessageBodyRead(const std::shared_ptr<const C
 }
 
 void ClientNetworking::Impl::HandleMessageHeaderRead(const std::shared_ptr<const ClientNetworking>& keep_alive,
-                                                     boost::system::error_code error, std::size_t bytes_transferred)
+                                                     boost::system::error_code error,
+                                                     std::size_t bytes_transferred)
 {
     if (error)
         throw boost::system::system_error(error);
@@ -771,22 +768,17 @@ const std::string& ClientNetworking::Destination() const
 ClientNetworking::ServerNames ClientNetworking::DiscoverLANServerNames()
 { return m_impl->DiscoverLANServerNames(); }
 
-bool ClientNetworking::ConnectToServer(
-    const std::string& ip_address,
-    const std::chrono::milliseconds& timeout)
-{ return m_impl->ConnectToServer(this, ip_address, timeout); }
+bool ClientNetworking::ConnectToServer(std::string ip_address,
+                                       std::chrono::milliseconds timeout)
+{ return m_impl->ConnectToServer(this, std::move(ip_address), timeout); }
 
-bool ClientNetworking::ConnectToLocalHostServer(
-    const std::chrono::milliseconds& timeout)
+bool ClientNetworking::ConnectToLocalHostServer(std::chrono::milliseconds timeout)
 { return m_impl->ConnectToLocalHostServer(this, timeout); }
 
-bool ClientNetworking::PingServer(
-    const std::string& ip_address,
-    const std::chrono::milliseconds& timeout)
-{ return m_impl->ConnectToServer(this, ip_address, timeout, true /*expect_timeout*/); }
+bool ClientNetworking::PingServer(std::string ip_address, std::chrono::milliseconds timeout)
+{ return m_impl->ConnectToServer(this, std::move(ip_address), timeout, true /*expect_timeout*/); }
 
-bool ClientNetworking::PingLocalHostServer(
-    const std::chrono::milliseconds& timeout)
+bool ClientNetworking::PingLocalHostServer(std::chrono::milliseconds timeout)
 { return m_impl->ConnectToLocalHostServer(this, timeout, true /*expect_timeout*/); }
 
 void ClientNetworking::DisconnectFromServer()

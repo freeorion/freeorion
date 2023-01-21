@@ -75,22 +75,18 @@ public:
 
     /** Connects to the server at \a ip_address.  On failure, repeated
         attempts will be made until \a timeout seconds has elapsed. */
-    bool ConnectToServer(const std::string& ip_address,
-                         const std::chrono::milliseconds& timeout = std::chrono::seconds(10));
+    bool ConnectToServer(std::string ip_address,
+                         std::chrono::milliseconds timeout = std::chrono::seconds(10));
 
     /** Connects to the server on the client's host.  On failure, repeated
         attempts will be made until \a timeout seconds has elapsed. */
-    bool ConnectToLocalHostServer(
-        const std::chrono::milliseconds& timeout = std::chrono::seconds(10));
+    bool ConnectToLocalHostServer(std::chrono::milliseconds timeout = std::chrono::seconds(10));
 
     /** Return true if the server can be connected to within \p timeout seconds. */
-    bool PingServer(
-        const std::string& ip_address,
-        const std::chrono::milliseconds& timeout = std::chrono::seconds(10));
+    bool PingServer(std::string ip_address, std::chrono::milliseconds timeout = std::chrono::seconds(10));
 
     /** Return true if the local server can be connected to within \p timeout seconds. */
-    bool PingLocalHostServer(
-        const std::chrono::milliseconds& timeout = std::chrono::seconds(10));
+    bool PingLocalHostServer(std::chrono::milliseconds timeout = std::chrono::seconds(10));
 
     /** Sends \a message to the server.  This function actually just enqueues
         the message for sending and returns immediately. */
