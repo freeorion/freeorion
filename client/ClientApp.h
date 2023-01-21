@@ -220,23 +220,23 @@ public:
 
 protected:
     // Gamestate...
-    Universe                    m_universe;
-    GalaxySetupData             m_galaxy_setup_data;
-    EmpireManager               m_empires;
-    SpeciesManager              m_species_manager;
-    SupplyManager               m_supply_manager;
+    Universe        m_universe;
+    GalaxySetupData m_galaxy_setup_data;
+    EmpireManager   m_empires;
+    SpeciesManager  m_species_manager;
+    SupplyManager   m_supply_manager;
     // End Gamestate
 
     // client local order storage
-    OrderSet                    m_orders;
+    OrderSet m_orders;
 
     // other client local info
-    std::shared_ptr<ClientNetworking>   m_networking;
-    int                                 m_empire_id = ALL_EMPIRES;
-    int                                 m_current_turn = INVALID_GAME_TURN;
-    /** Indexed by player id, contains info about all players in the game */
+    std::shared_ptr<ClientNetworking> m_networking;
+    int                               m_empire_id = ALL_EMPIRES;
+    int                               m_current_turn = INVALID_GAME_TURN;
 
-    std::map<int, PlayerInfo>   m_player_info;
+    /** Indexed by player id, contains info about all players in the game */
+    std::map<int, PlayerInfo>         m_player_info;
 };
 
 
