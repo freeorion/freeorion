@@ -39,7 +39,7 @@ jobs:
         sudo apt update -y
         sudo apt install -y mesa-utils libgl1-mesa-dri libglx-mesa0
     - name: Test freeorion launch
-      uses: GabrielBB/xvfb-action@v1.5
+      uses: coactions/setup-xvfb@v1
       with:
         run: /bin/bash .github/snap-xvfb-launch.sh
 
