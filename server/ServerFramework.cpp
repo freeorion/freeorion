@@ -114,7 +114,8 @@ auto PythonServer::InitModules() -> bool
     return true;
 }
 
-auto PythonServer::IsRequireAuthOrReturnRoles(const std::string& player_name, const std::string& ip_address, bool &result, Networking::AuthRoles& roles) const -> bool
+auto PythonServer::IsRequireAuthOrReturnRoles(const std::string& player_name, const std::string& ip_address,
+                                              bool &result, Networking::AuthRoles& roles) const -> bool
 {
     py::object auth_provider = m_python_module_auth.attr("__dict__")["auth_provider"];
     if (!auth_provider) {
@@ -140,7 +141,8 @@ auto PythonServer::IsRequireAuthOrReturnRoles(const std::string& player_name, co
     return true;
 }
 
-auto PythonServer::IsSuccessAuthAndReturnRoles(const std::string& player_name, const std::string& auth, bool &result, Networking::AuthRoles& roles) const -> bool
+auto PythonServer::IsSuccessAuthAndReturnRoles(const std::string& player_name, const std::string& auth,
+                                               bool &result, Networking::AuthRoles& roles) const -> bool
 {
     py::object auth_provider = m_python_module_auth.attr("__dict__")["auth_provider"];
     if (!auth_provider) {

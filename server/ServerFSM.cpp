@@ -2900,7 +2900,10 @@ sc::result PlayingGame::react(const JoinGame& msg) {
         {
             collision = false;
             roles.Clear();
-            if (!server.IsAvailableName(new_player_name) || (!relaxed_auth && server.IsAuthRequiredOrFillRoles(new_player_name, player_connection->GetIpAddress(), roles))) {
+            if (!server.IsAvailableName(new_player_name) ||
+                (!relaxed_auth && server.IsAuthRequiredOrFillRoles(new_player_name,
+                                                                   player_connection->GetIpAddress(), roles)))
+            {
                 collision = true;
             } else {
                 for (auto& plr : server.Empires() ) {

@@ -1749,7 +1749,9 @@ bool ServerApp::IsAuthRequiredOrFillRoles(const std::string& player_name, const 
     return result;
 }
 
-bool ServerApp::IsAuthSuccessAndFillRoles(const std::string& player_name, const std::string& auth, Networking::AuthRoles& roles) {
+bool ServerApp::IsAuthSuccessAndFillRoles(const std::string& player_name,
+                                          const std::string& auth, Networking::AuthRoles& roles)
+{
     bool result = false;
     bool success = false;
     try {
