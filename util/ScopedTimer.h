@@ -36,11 +36,11 @@ public:
     ScopedTimer(std::function<std::string ()> output_text_fn, std::chrono::microseconds threshold); // defaults to logging output on destruction
     ~ScopedTimer();
 
-    void restart();
+    void restart() noexcept;
 
-    [[nodiscard]] double duration() const;
+    [[nodiscard]] double duration() const noexcept;
     [[nodiscard]] std::string DurationString() const;
-    [[nodiscard]] std::chrono::nanoseconds Elapsed() const;
+    [[nodiscard]] std::chrono::nanoseconds Elapsed() const noexcept;
 
     class Impl;
 
@@ -129,7 +129,7 @@ public:
     //! strucures.
     void EnterSection(const std::string& section_name);
 
-    [[nodiscard]] std::chrono::nanoseconds Elapsed() const;
+    [[nodiscard]] std::chrono::nanoseconds Elapsed() const noexcept;
 
 private:
     class Impl;
