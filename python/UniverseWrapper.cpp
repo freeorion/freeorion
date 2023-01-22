@@ -99,11 +99,10 @@ namespace {
         return it->second;
     }
 
-    void UpdateMetersWrapper(Universe& universe, const py::object& objIter)
+    void UpdateMetersWrapper(Universe& universe, const py::object&)
     {
-        py::stl_input_iterator<int> begin(objIter), end;
-        std::vector<int> objvec(begin, end);
-        ScriptingContext context{universe, Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
+        ScriptingContext context{universe, Empires(), GetGalaxySetupData(),
+                                 GetSpeciesManager(), GetSupplyManager()};
         universe.UpdateMeterEstimates(context);
     }
 
