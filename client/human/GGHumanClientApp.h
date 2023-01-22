@@ -17,7 +17,7 @@ class MultiPlayerLobbyWnd;
 struct PreviewInformation;
 
 /** the application framework class for the human player FreeOrion client. */
-class GGHumanClientApp :
+class GGHumanClientApp final :
     public ClientApp,
     public SDLGUI
 {
@@ -114,7 +114,7 @@ public:
     [[nodiscard]] static std::pair<int, int> GetWindowWidthHeight();
     [[nodiscard]] static std::pair<int, int> GetWindowLeftTop();
 
-    [[nodiscard]] static GGHumanClientApp* GetApp() noexcept; ///< returns GGHumanClientApp pointer to the single instance of the app
+    [[nodiscard]] static GGHumanClientApp* GetApp() noexcept { return static_cast<GGHumanClientApp*>(GG::GUI::GetGUI()); }
 
     /** Adds window dimension options to OptionsDB after the start of main, but before GGHumanClientApp constructor.
         OSX will not tolerate static initialization of SDL, to check screen size. */
