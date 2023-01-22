@@ -161,7 +161,7 @@ public:
     int HostPlayerID() const noexcept { return m_host_player_id; }
 
     /** Returns whether the indicated player ID is the host. */
-    bool PlayerIsHost(int player_id) const;
+    bool PlayerIsHost(int player_id) const noexcept;
 
     /** Checks if the client has some authorization \a role. */
     bool HasAuthRole(Networking::RoleType role) const;
@@ -295,7 +295,7 @@ bool ClientNetworking::Impl::IsTxConnected() const {
     return m_tx_connected;
 }
 
-bool ClientNetworking::Impl::PlayerIsHost(int player_id) const {
+bool ClientNetworking::Impl::PlayerIsHost(int player_id) const noexcept {
     if (player_id == Networking::INVALID_PLAYER_ID)
         return false;
     return player_id == m_host_player_id;
@@ -578,7 +578,7 @@ void ClientNetworking::Impl::HandleException(const boost::system::system_error& 
 }
 
 void ClientNetworking::Impl::NetworkingThread(const std::shared_ptr<const ClientNetworking> self) {
-    auto protect_from_destruction_in_other_thread = self;
+    const auto protect_from_destruction_in_other_thread{self};
     try {
         if (!m_outgoing_messages.empty())
             AsyncWriteMessage();
@@ -750,10 +750,10 @@ bool ClientNetworking::IsRxConnected() const
 bool ClientNetworking::IsTxConnected() const
 { return m_impl->IsTxConnected(); }
 
-int ClientNetworking::PlayerID() const
+int ClientNetworking::PlayerID() const noexcept
 { return m_impl->PlayerID(); }
 
-int ClientNetworking::HostPlayerID() const
+int ClientNetworking::HostPlayerID() const noexcept
 { return m_impl->HostPlayerID(); }
 
 bool ClientNetworking::PlayerIsHost(int player_id) const

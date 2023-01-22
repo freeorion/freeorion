@@ -55,10 +55,10 @@ public:
     [[nodiscard]] bool IsTxConnected() const;
 
     /** Returns the ID of the player on this client. */
-    [[nodiscard]] int PlayerID() const;
+    [[nodiscard]] int PlayerID() const noexcept;
 
     /** Returns the ID of the host player, or INVALID_PLAYER_ID if there is no host player. */
-    [[nodiscard]] int HostPlayerID() const;
+    [[nodiscard]] int HostPlayerID() const noexcept;
 
     /** Returns whether the indicated player ID is the host. */
     [[nodiscard]] bool PlayerIsHost(int player_id) const;
