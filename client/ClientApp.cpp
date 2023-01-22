@@ -46,7 +46,7 @@ Networking::ClientType ClientApp::GetEmpireClientType(int empire_id) const
 Networking::ClientType ClientApp::GetPlayerClientType(int player_id) const {
     if (player_id == Networking::INVALID_PLAYER_ID)
         return Networking::ClientType::INVALID_CLIENT_TYPE;
-    auto it = m_player_info.find(player_id);
+    const auto it = m_player_info.find(player_id);
     if (it != m_player_info.end())
         return it->second.client_type;
     return Networking::ClientType::INVALID_CLIENT_TYPE;
