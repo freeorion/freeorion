@@ -224,7 +224,7 @@ void CombatInfo::InitializeObjectVisibility() {
 }
 
 
-ScriptingContext::ScriptingContext(CombatInfo& info, UniverseObject* attacker_as_source) :
+ScriptingContext::ScriptingContext(CombatInfo& info, UniverseObject* attacker_as_source) noexcept :
     source(                 attacker_as_source),
     combat_bout(            info.bout),
     galaxy_setup_data(      info.galaxy_setup_data),

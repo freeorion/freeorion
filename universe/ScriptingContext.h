@@ -16,19 +16,19 @@ struct [[nodiscard]] ScriptingContext {
     > CurrentValueVariant;
     inline static const CurrentValueVariant DEFAULT_CURRENT_VALUE{0};
 
-    ScriptingContext() :
+    ScriptingContext() noexcept :
         ScriptingContext(GetUniverse(), ::Empires(), GetGalaxySetupData(),
                          GetSpeciesManager(), GetSupplyManager())
     {}
 
     ScriptingContext(const ScriptingContext& parent_context,
-                     const UniverseObject* condition_local_candidate_) :
+                     const UniverseObject* condition_local_candidate_) noexcept :
         source(                   parent_context.source),
         effect_target(            parent_context.effect_target),
         condition_root_candidate( parent_context.condition_root_candidate ?
                                       parent_context.condition_root_candidate :
                                       condition_local_candidate_), // if parent context doesn't already have a root candidate, the new local candidate is the root
-        condition_local_candidate(std::move(condition_local_candidate_)),
+        condition_local_candidate(condition_local_candidate_),
         current_value(            parent_context.current_value),
         combat_bout(              parent_context.combat_bout),
         current_turn(             parent_context.current_turn),
@@ -48,7 +48,7 @@ struct [[nodiscard]] ScriptingContext {
         diplo_statuses(           parent_context.diplo_statuses)
     {}
 
-    explicit ScriptingContext(const UniverseObject* source_) :
+    explicit ScriptingContext(const UniverseObject* source_) noexcept :
         source(           source_),
         galaxy_setup_data(GetGalaxySetupData()),
         species(          GetSpeciesManager()),
@@ -61,7 +61,7 @@ struct [[nodiscard]] ScriptingContext {
     {}
 
     ScriptingContext(const UniverseObject* source_,
-                     const ScriptingContext& parent_context) :
+                     const ScriptingContext& parent_context) noexcept :
         source(                   source_),
         effect_target(            parent_context.effect_target),
         condition_root_candidate( parent_context.condition_root_candidate),
@@ -89,7 +89,7 @@ struct [[nodiscard]] ScriptingContext {
                      const Universe::EmpireObjectVisibilityMap& vis,
                      const Universe::EmpireObjectVisibilityTurnMap& vis_turns,
                      const UniverseObject* source_ = nullptr,
-                     UniverseObject* target_ = nullptr) :
+                     UniverseObject* target_ = nullptr) noexcept :
         source(                   source_),
         effect_target(            target_),
         condition_root_candidate( parent_context.condition_root_candidate),
@@ -114,7 +114,7 @@ struct [[nodiscard]] ScriptingContext {
     {}
 
     ScriptingContext(const ScriptingContext& parent_context,
-                     const CurrentValueVariant& current_value_) :
+                     const CurrentValueVariant& current_value_) noexcept :
         source(                   parent_context.source),
         effect_target(            parent_context.effect_target),
         condition_root_candidate( parent_context.condition_root_candidate),
@@ -139,7 +139,7 @@ struct [[nodiscard]] ScriptingContext {
     {}
 
     ScriptingContext(ScriptingContext&& parent_context,
-                     const CurrentValueVariant& current_value_) :
+                     const CurrentValueVariant& current_value_) noexcept :
         source(                   parent_context.source),
         effect_target(            parent_context.effect_target),
         condition_root_candidate( parent_context.condition_root_candidate),
@@ -189,7 +189,7 @@ struct [[nodiscard]] ScriptingContext {
     ScriptingContext(const ScriptingContext& parent_context,
                      const UniverseObject* source_,
                      UniverseObject* target_,
-                     int in_design_id_, int production_block_size_) :
+                     int in_design_id_, int production_block_size_) noexcept :
         source(                   source_),
         effect_target(            target_),
         condition_root_candidate( parent_context.condition_root_candidate),
@@ -215,7 +215,7 @@ struct [[nodiscard]] ScriptingContext {
 
     ScriptingContext(const ScriptingContext& parent_context,
                      UniverseObject* target_,
-                     const CurrentValueVariant& current_value_) :
+                     const CurrentValueVariant& current_value_) noexcept :
         source(                   parent_context.source),
         effect_target(            target_),
         condition_root_candidate( parent_context.condition_root_candidate),
@@ -241,7 +241,7 @@ struct [[nodiscard]] ScriptingContext {
 
     ScriptingContext(ScriptingContext&& parent_context,
                      UniverseObject* target_,
-                     const CurrentValueVariant& current_value_) :
+                     const CurrentValueVariant& current_value_) noexcept :
         source(                   parent_context.source),
         effect_target(            target_),
         condition_root_candidate( parent_context.condition_root_candidate),
@@ -288,7 +288,7 @@ struct [[nodiscard]] ScriptingContext {
     ScriptingContext(ScriptingContext&&, UniverseObject*, std::vector<std::string>) = delete;
     ScriptingContext(const ScriptingContext&, UniverseObject*, std::vector<std::string>) = delete;
 
-    ScriptingContext(const UniverseObject* source_, UniverseObject* target_) :
+    ScriptingContext(const UniverseObject* source_, UniverseObject* target_) noexcept :
         source(           source_),
         effect_target(    target_),
         galaxy_setup_data(GetGalaxySetupData()),
@@ -304,7 +304,7 @@ struct [[nodiscard]] ScriptingContext {
     ScriptingContext(Universe& universe, EmpireManager& empires_,
                      const GalaxySetupData& galaxy_setup_data_ = GetGalaxySetupData(),
                      SpeciesManager& species_ = GetSpeciesManager(),
-                     const SupplyManager& supply_ = GetSupplyManager()) :
+                     const SupplyManager& supply_ = GetSupplyManager()) noexcept :
         galaxy_setup_data(galaxy_setup_data_),
         species(          species_),
         supply(           supply_),
@@ -316,12 +316,12 @@ struct [[nodiscard]] ScriptingContext {
     {}
 
     explicit ScriptingContext(CombatInfo& info, // in CombatSystem.cpp
-                              UniverseObject* attacker_as_source = nullptr);
+                              UniverseObject* attacker_as_source = nullptr) noexcept;
 
     ScriptingContext(const Universe& universe, const EmpireManager& empires_,
                      const UniverseObject* source_ = nullptr,
                      UniverseObject* target_ = nullptr,
-                     const CurrentValueVariant& current_value_ = DEFAULT_CURRENT_VALUE) :
+                     const CurrentValueVariant& current_value_ = DEFAULT_CURRENT_VALUE) noexcept :
         source(        source_),
         effect_target( target_),
         current_value( current_value_),
@@ -361,8 +361,8 @@ struct [[nodiscard]] ScriptingContext {
     [[nodiscard]] DiplomaticStatus ContextDiploStatus(int empire1, int empire2) const {
         if (empire1 == ALL_EMPIRES || empire2 == ALL_EMPIRES || empire1 == empire2)
             return DiplomaticStatus::INVALID_DIPLOMATIC_STATUS;
-        auto high_low_ids = empire1 > empire2 ? std::pair{empire1, empire2} : std::pair{empire2, empire1};
-        auto it = diplo_statuses.find(high_low_ids);
+        const auto high_low_ids = empire1 > empire2 ? std::pair{empire1, empire2} : std::pair{empire2, empire1};
+        const auto it = diplo_statuses.find(high_low_ids);
         return it == diplo_statuses.end() ? DiplomaticStatus::INVALID_DIPLOMATIC_STATUS : it->second;
     }
 
@@ -374,10 +374,10 @@ struct [[nodiscard]] ScriptingContext {
     }
 
     [[nodiscard]] Visibility ContextVis(int object_id, int empire_id) const {
-        auto empire_it = empire_object_vis.find(empire_id);
+        const auto empire_it = empire_object_vis.find(empire_id);
         if (empire_it == empire_object_vis.end())
             return Visibility::VIS_NO_VISIBILITY;
-        auto object_it = empire_it->second.find(object_id);
+        const auto object_it = empire_it->second.find(object_id);
         if (object_it == empire_it->second.end())
             return Visibility::VIS_NO_VISIBILITY;
         return object_it->second;
