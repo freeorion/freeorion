@@ -61,13 +61,13 @@ public:
     [[nodiscard]] int HostPlayerID() const noexcept;
 
     /** Returns whether the indicated player ID is the host. */
-    [[nodiscard]] bool PlayerIsHost(int player_id) const;
+    [[nodiscard]] bool PlayerIsHost(int player_id) const noexcept;
 
     /** Checks if the client has some authorization \a role. */
     [[nodiscard]] bool HasAuthRole(Networking::RoleType role) const;
 
     /** Returns address of multiplayer server entered by player. */
-    [[nodiscard]] const std::string& Destination() const;
+    [[nodiscard]] const std::string& Destination() const noexcept;
 
     /** Returns a list of the addresses and names of all servers on the Local
         Area Network. */
@@ -106,7 +106,7 @@ public:
     void SetPlayerID(int player_id);
 
     /** Sets Host player ID. */
-    void SetHostPlayerID(int host_player_id);
+    void SetHostPlayerID(int host_player_id) noexcept;
 
     /** Access to client's authorization roles */
     [[nodiscard]] Networking::AuthRoles& AuthorizationRoles();

@@ -206,10 +206,10 @@ public:
     void SetPlayerID(int player_id);
 
     /** Sets Host player ID. */
-    void SetHostPlayerID(int host_player_id);
+    void SetHostPlayerID(int host_player_id) noexcept { m_host_player_id = host_player_id; }
 
     /** Get authorization roles access. */
-    Networking::AuthRoles& AuthorizationRoles();
+    Networking::AuthRoles& AuthorizationRoles() noexcept { return m_roles; }
 
 private:
     void HandleException(const boost::system::system_error& error);
@@ -310,9 +310,8 @@ ClientNetworking::ServerNames ClientNetworking::Impl::DiscoverLANServerNames() {
     ServerDiscoverer discoverer(m_io_context);
     discoverer.DiscoverServers();
     ServerNames names;
-    for (const auto& server : discoverer.Servers()) {
+    for (const auto& server : discoverer.Servers())
         names.push_back(server.second);
-    }
     return names;
 }
 
@@ -436,12 +435,6 @@ void ClientNetworking::Impl::SetPlayerID(int player_id) {
     m_player_id = player_id;
 }
 
-void ClientNetworking::Impl::SetHostPlayerID(int host_player_id)
-{ m_host_player_id = host_player_id; }
-
-Networking::AuthRoles& ClientNetworking::Impl::AuthorizationRoles()
-{ return m_roles; }
-
 void ClientNetworking::Impl::SendMessage(Message&& message) {
     if (!IsTxConnected()) {
         ErrorLogger(network) << "ClientNetworking::SendMessage can't send message when not transmit connected";
@@ -544,8 +537,7 @@ void ClientNetworking::Impl::HandleResolve(const boost::system::error_code& erro
 void ClientNetworking::Impl::HandleDeadlineTimeout(const boost::system::error_code& error)
 {
     TraceLogger(network) << "ClientNetworking::Impl::HandleDeadlineTimeout(" << error << ")";
-    if (error == boost::asio::error::operation_aborted)
-    {
+    if (error == boost::asio::error::operation_aborted) {
         // Canceled e.g. due to successfull connection
         DebugLogger(network) << "ConnectToServer() : Deadline timer cancelled.";
         return;
@@ -555,9 +547,7 @@ void ClientNetworking::Impl::HandleDeadlineTimeout(const boost::system::error_co
     m_reconnect_timer.cancel();
     bool did_close_socket = CloseSocketIfNotConnected();
     if (did_close_socket)
-    {
         DebugLogger(network) << "ConnectToServer() : Timeout.";
-    }
     TraceLogger(network) << "Return from ClientNetworking::Impl::HandleDeadlineTimeout()";
 }
 
@@ -565,12 +555,11 @@ void ClientNetworking::Impl::HandleException(const boost::system::system_error& 
     if (error.code() == boost::asio::error::eof) {
         DebugLogger(network) << "Client connection disconnected by EOF from server.";
         m_socket.close();
-    }
-    else if (error.code() == boost::asio::error::connection_reset)
+    } else if (error.code() == boost::asio::error::connection_reset) {
         DebugLogger(network) << "Client connection disconnected, due to connection reset from server.";
-    else if (error.code() == boost::asio::error::operation_aborted)
+    } else if (error.code() == boost::asio::error::operation_aborted) {
         DebugLogger(network) << "Client connection closed by client.";
-    else {
+    } else {
         ErrorLogger(network) << "ClientNetworking::NetworkingThread() : Networking thread will be terminated "
                              << "due to unhandled exception error #" << error.code().value() << " \""
                              << error.code().message() << "\"";
@@ -756,13 +745,13 @@ int ClientNetworking::PlayerID() const noexcept
 int ClientNetworking::HostPlayerID() const noexcept
 { return m_impl->HostPlayerID(); }
 
-bool ClientNetworking::PlayerIsHost(int player_id) const
+bool ClientNetworking::PlayerIsHost(int player_id) const noexcept
 { return m_impl->PlayerIsHost(player_id); }
 
 bool ClientNetworking::HasAuthRole(Networking::RoleType role) const
 { return m_impl->HasAuthRole(role); }
 
-const std::string& ClientNetworking::Destination() const
+const std::string& ClientNetworking::Destination() const noexcept
 { return m_impl->Destination(); }
 
 ClientNetworking::ServerNames ClientNetworking::DiscoverLANServerNames()
@@ -787,7 +776,7 @@ void ClientNetworking::DisconnectFromServer()
 void ClientNetworking::SetPlayerID(int player_id)
 { return m_impl->SetPlayerID(player_id); }
 
-void ClientNetworking::SetHostPlayerID(int host_player_id)
+void ClientNetworking::SetHostPlayerID(int host_player_id) noexcept
 { return m_impl->SetHostPlayerID(host_player_id); }
 
 Networking::AuthRoles& ClientNetworking::AuthorizationRoles()
