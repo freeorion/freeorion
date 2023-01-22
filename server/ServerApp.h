@@ -22,7 +22,7 @@ struct SaveGameUIData;
 struct ServerFSM;
 
 /** the application framework class for the FreeOrion server. */
-class ServerApp : public IApp {
+class ServerApp final : public IApp {
 public:
     ServerApp();
     ServerApp(const ServerApp&) = delete;
@@ -33,7 +33,7 @@ public:
     ServerApp& operator=(IApp&&) = delete;
 
     /** Returns a ClientApp pointer to the singleton instance of the app. */
-    [[nodiscard]] static ServerApp* GetApp();
+    [[nodiscard]] static ServerApp* GetApp() noexcept { return static_cast<ServerApp*>(s_app); }
     [[nodiscard]] Universe& GetUniverse() noexcept override { return m_universe; }
     [[nodiscard]] EmpireManager& Empires() noexcept override { return m_empires; }
     [[nodiscard]] Empire* GetEmpire(int id) override;

@@ -313,9 +313,6 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
     SetAIsProcessPriorityToLow(true);
 }
 
-ServerApp* ServerApp::GetApp()
-{ return static_cast<ServerApp*>(s_app); }
-
 Empire* ServerApp::GetEmpire(int id)
 { return m_empires.GetEmpire(id).get(); }
 
