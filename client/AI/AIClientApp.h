@@ -24,7 +24,7 @@ public:
     //! Executes main event handler
     void Run();
     void ExitApp(int code = 0); ///< does basic clean-up, then calls exit(); callable from anywhere in user code via GetApp()
-    void SetPlayerName(std::string player_name) { m_player_name = std::move(player_name); }
+    void SetPlayerName(std::string player_name) noexcept { m_player_name = std::move(player_name); }
 
     [[nodiscard]] [[noreturn]] int SelectedSystemID() const override { throw std::runtime_error{"AI client cannot access selected object ID"}; }
     [[nodiscard]] [[noreturn]] int SelectedPlanetID() const override { throw std::runtime_error{"AI client cannot access selected object ID"}; }
@@ -37,11 +37,10 @@ public:
      * @return An UTF-8 encoded and NUL terminated string containing the player
      *      name of this client.
      */
-    [[nodiscard]] const std::string& PlayerName() const
-    { return m_player_name; }
+    [[nodiscard]] const auto& PlayerName() const noexcept { return m_player_name; }
 
-    static AIClientApp* GetApp();       ///< returns a AIClientApp pointer to the singleton instance of the app
-    const PythonAI*     GetAI();        ///< returns pointer to AIBase implementation of AI for this client
+    static AIClientApp* GetApp() noexcept { return static_cast<AIClientApp*>(s_app); }
+    const PythonAI*     GetAI() noexcept { return m_AI.get(); }
 
 private:
     void ConnectToServer();

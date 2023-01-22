@@ -123,12 +123,6 @@ void AIClientApp::ExitApp(int code) {
 int AIClientApp::EffectsProcessingThreads() const
 { return GetOptionsDB().Get<int>("effects.ai.threads"); }
 
-AIClientApp* AIClientApp::GetApp()
-{ return static_cast<AIClientApp*>(s_app); }
-
-const PythonAI* AIClientApp::GetAI()
-{ return m_AI.get(); }
-
 void AIClientApp::Run() {
     ConnectToServer();
 
