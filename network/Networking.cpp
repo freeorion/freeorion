@@ -24,24 +24,4 @@ namespace Networking {
     { return GetOptionsDB().Get<int>("network.discovery.port"); }
     int MessagePort()
     { return GetOptionsDB().Get<int>("network.message.port"); }
-
-    AuthRoles::AuthRoles(std::initializer_list<RoleType> roles) {
-       for (RoleType r : roles)
-           m_roles.set(std::size_t(r), true);
-    }
-
-    void AuthRoles::SetRole(RoleType role, bool value)
-    { m_roles.set(std::size_t(role), value); }
-
-    void AuthRoles::Clear()
-    { m_roles = std::bitset<std::size_t(RoleType::Roles_Count)>(); }
-
-    bool AuthRoles::HasRole(RoleType role) const
-    { return m_roles.test(std::size_t(role)); }
-
-    std::string AuthRoles::Text() const
-    { return m_roles.to_string(); }
-
-    void AuthRoles::SetText(const std::string& text)
-    { m_roles = std::bitset<int(RoleType::Roles_Count)>(text); }
 }
