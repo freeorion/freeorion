@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from common.configure_logging import redirect_logging_to_freeorion_logger
 
 # Logging is redirected before other imports so that import errors appear in log files.
@@ -23,7 +25,7 @@ from universe_tables import MAX_JUMPS_BETWEEN_SYSTEMS, MAX_STARLANE_LENGTH
 
 from util import error_list, int_hash, report_error, seed_rng
 
-parse_config(fo.get_options_db_option_str("ai-config"), fo.get_user_config_dir())
+parse_config(fo.get_options_db_option_str("ai-config"), Path(fo.get_user_config_dir()))
 init_handlers(fo.get_options_db_option_str("ai-config"), None)
 
 

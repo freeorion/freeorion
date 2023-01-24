@@ -3,6 +3,7 @@ import sys
 from collections import OrderedDict as odict
 from configparser import ConfigParser
 from pathlib import Path
+from typing import Optional
 
 DEFAULT_SUB_DIR = Path("AI", "default")
 CONFIG_DEFAULT_FILE = "config.ini"
@@ -16,19 +17,18 @@ HANDLERS = "handlers"
 flat_options = odict()
 
 
-def _get_option_file(config_dir: Path):
+def _get_option_file(config_dir: Path) -> Optional[Path]:
     # hack to allow lunch this code separately to dump default config
     ai_path = _get_default_file_path(config_dir)
     option_file = CONFIG_DEFAULT_FILE
     if ai_path and option_file:
-        return os.path.join(ai_path, option_file)
+        return ai_path / option_file
     else:
         return None
 
 
-def _get_default_file_path(config_dir: Path):
+def _get_default_file_path(config_dir: Path) -> Path:
     config_default_dir = config_dir / DEFAULT_SUB_DIR
-
     try:
         if config_dir.is_dir() and not config_default_dir.is_dir():
             config_default_dir.mkdir(parents=True)
@@ -55,7 +55,7 @@ def _get_preset_default_ai_options():
     )
 
 
-def _create_default_config_file(path: Path):
+def _create_default_config_file(path: Path) -> ConfigParser:
     """
     Writes default config to file.
     """
