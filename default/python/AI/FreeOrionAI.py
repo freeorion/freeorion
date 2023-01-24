@@ -2,6 +2,7 @@
 these methods in turn activate other portions of the python AI code."""
 from functools import wraps
 from logging import debug, error, fatal, info
+from pathlib import Path
 
 from common.configure_logging import redirect_logging_to_freeorion_logger
 
@@ -14,7 +15,7 @@ import sys
 
 from common.option_tools import parse_config
 
-parse_config(fo.getOptionsDBOptionStr("ai-config"), fo.getUserConfigDir())
+parse_config(fo.getOptionsDBOptionStr("ai-config"), Path(fo.getUserConfigDir()))
 
 from freeorion_tools.fo_chat_handler import configure_debug_chat, process_chat_message
 from freeorion_tools.patch_interface import patch_interface
