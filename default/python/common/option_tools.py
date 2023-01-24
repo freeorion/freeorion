@@ -3,7 +3,7 @@ import sys
 from collections import OrderedDict as odict
 from configparser import ConfigParser
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Any
 
 DEFAULT_SUB_DIR = Path("AI", "default")
 CONFIG_DEFAULT_FILE = "config.ini"
@@ -87,7 +87,8 @@ def get_option_dict():
     return flat_options
 
 
-def parse_config(option_string: str, config_dir: Path):
+def parse_config(option_string: Any, config_dir: str):
+    config_dir = Path(config_dir)
 
     if option_string is not None and not isinstance(option_string, str):
         # probably called by unit test
