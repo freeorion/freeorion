@@ -52,12 +52,12 @@ public:
         init = FromFloat(initial_value);
     }
 
-    constexpr void ResetCurrent() noexcept(from_float_noexcept)
-    { cur = FromFloat(DEFAULT_VALUE); } // initial unchanged
+    constexpr void ResetCurrent() noexcept
+    { cur = DEFAULT_INT; } // initial unchanged
 
-    constexpr void Reset() noexcept(from_float_noexcept) {
-        cur = FromFloat(DEFAULT_VALUE);
-        init = FromFloat(DEFAULT_VALUE);
+    constexpr void Reset() noexcept {
+        cur = DEFAULT_INT;
+        init = DEFAULT_INT;
     }
 
     constexpr void AddToCurrent(float adjustment) noexcept(from_float_noexcept)
@@ -97,7 +97,6 @@ public:
     static constexpr float INVALID_VALUE = -LARGE_VALUE;                ///< sentinel value to indicate no valid value for this meter
 
 private:
-
     // Value must be rounded, otherwise a calculated increase of 0.99999997 will be truncated to 0.999.
     // Negative values are increased by truncation, so the offset must be negative, too.
     static constexpr int32_t FromFloat(float f) noexcept(from_float_noexcept)
@@ -106,8 +105,10 @@ private:
     static constexpr float FromInt(int32_t i) noexcept(from_int_noexcept)
     { return i / FLOAT_INT_SCALE; }
 
-    int32_t cur = FromFloat(DEFAULT_VALUE);
-    int32_t init = FromFloat(DEFAULT_VALUE);
+    static constexpr auto DEFAULT_INT = 0; // should be equal to Meter::FromFloat(DEFAULT_VALUE);
+
+    int32_t cur = DEFAULT_INT;
+    int32_t init = DEFAULT_INT;
 
     friend class boost::serialization::access;
     template <typename Archive>

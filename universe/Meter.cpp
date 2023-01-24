@@ -74,7 +74,7 @@ std::array<std::string::value_type, 64> Meter::Dump(uint8_t ntabs) const noexcep
     return buffer;
 }
 
-void Meter::ClampCurrentToRange(float min, float max)
+void Meter::ClampCurrentToRange(float min, float max) // no noexcept because using std::max and std::min in header cause symbol definintion problems on Windows
 { cur = std::max(std::min(cur, FromFloat(max)), FromFloat(min)); }
 
 namespace {
@@ -85,7 +85,6 @@ namespace {
             retval *= base;
         return retval;
     }
-
 
     template <typename T, std::size_t N>
     constexpr std::size_t ArrSize(std::array<T, N>) noexcept // TODO: replace with std::ssize when available (C++20 ?)
@@ -145,6 +144,8 @@ int Meter::SetFromChars(std::string_view chars) noexcept(have_noexcept_to_chars)
     std::sscanf(chars.data(), "%d %d%n", &cur, &init, &chars_consumed);
     return chars_consumed;
 #endif
+
+    static_assert(DEFAULT_INT == FromFloat(DEFAULT_VALUE));
 }
 
 template <>
