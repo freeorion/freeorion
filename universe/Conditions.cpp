@@ -69,8 +69,8 @@ namespace {
       * or be transferred from the \a search_domain specified set into the
       * other. */
     template <typename Pred>
-    void EvalImpl(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
-                  Condition::SearchDomain search_domain, const Pred& pred)
+    inline void EvalImpl(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                         Condition::SearchDomain search_domain, const Pred& pred)
     {
         bool domain_matches = search_domain == Condition::SearchDomain::MATCHES;
         auto& from_set = domain_matches ? matches : non_matches;
@@ -536,11 +536,11 @@ std::string Turn::Dump(uint8_t ntabs) const {
 }
 
 bool Turn::Match(const ScriptingContext& local_context) const {
-    int turn = local_context.current_turn;
-    int low =  (m_low ?  std::max(BEFORE_FIRST_TURN,           m_low->Eval(local_context)) : BEFORE_FIRST_TURN);
+    const int turn = local_context.current_turn;
+    const int low =  (m_low ?  std::max(BEFORE_FIRST_TURN,           m_low->Eval(local_context)) : BEFORE_FIRST_TURN);
     if (low > turn)
         return false;
-    int high = (m_high ? std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN) :      IMPOSSIBLY_LARGE_TURN);
+    const int high = (m_high ? std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN) :      IMPOSSIBLY_LARGE_TURN);
     return turn <= high;
 }
 
@@ -1580,7 +1580,7 @@ namespace {
             if (!candidate)
                 return false;
 
-            int planet_id = PlanetIDFromObject(candidate);
+            const int planet_id = PlanetIDFromObject(candidate);
             if (planet_id == INVALID_OBJECT_ID)
                 return false;
 
@@ -1594,7 +1594,7 @@ namespace {
             } else {
                 // match any of the species specified
                 if (std::any_of(m_names.begin(), m_names.end(), [planet_id, this](const auto& name) {
-                    auto it = m_species_homeworlds.find(name);
+                    const auto it = m_species_homeworlds.find(name);
                     if (it == m_species_homeworlds.end())
                         return false;
                     const auto& planet_ids = it->second;
@@ -1675,7 +1675,7 @@ bool Homeworld::Match(const ScriptingContext& local_context) const {
     }
 
     // is it a planet or a building on a planet?
-    int planet_id = PlanetIDFromObject(candidate);
+    const int planet_id = PlanetIDFromObject(candidate);
     if (planet_id == INVALID_OBJECT_ID)
         return false;
 
@@ -1823,7 +1823,7 @@ bool Monster::Match(const ScriptingContext& local_context) const {
     }
 
     if (candidate->ObjectType() == UniverseObjectType::OBJ_SHIP) {
-        auto* ship = static_cast<const Ship*>(candidate);
+        const auto* ship = static_cast<const Ship*>(candidate);
         if (ship->IsMonster(local_context.ContextUniverse()))
             return true;
     }
@@ -1870,7 +1870,7 @@ bool Armed::Match(const ScriptingContext& local_context) const {
     }
 
     if (candidate->ObjectType() == UniverseObjectType::OBJ_SHIP) {
-        auto* ship = static_cast<const Ship*>(candidate);
+        const auto* ship = static_cast<const Ship*>(candidate);
         if (ship->IsArmed(local_context))
             return true;
     }
@@ -2437,30 +2437,42 @@ HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) 
 HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
                        std::unique_ptr<ValueRef::ValueRef<int>>&& since_turn_low,
                        std::unique_ptr<ValueRef::ValueRef<int>>&& since_turn_high) :
+    Condition((!name || name->RootCandidateInvariant()) &&
+              (!since_turn_low || since_turn_low->RootCandidateInvariant()) &&
+              (!since_turn_high || since_turn_high->RootCandidateInvariant()),
+              (!name || name->TargetInvariant()) &&
+              (!since_turn_low || since_turn_low->TargetInvariant()) &&
+              (!since_turn_high || since_turn_high->TargetInvariant()),
+              (!name || name->SourceInvariant()) &&
+              (!since_turn_low || since_turn_low->SourceInvariant()) &&
+              (!since_turn_high || since_turn_high->SourceInvariant())),
     m_name(std::move(name)),
     m_since_turn_low(std::move(since_turn_low)),
-    m_since_turn_high(std::move(since_turn_high))
-{
-    std::array<const ValueRef::ValueRefBase*, 3> operands =
-        {{m_name.get(), m_since_turn_low.get(), m_since_turn_high.get()}};
-    m_root_candidate_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); });
-    m_target_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); });
-    m_source_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); });
-}
+    m_since_turn_high(std::move(since_turn_high)),
+    m_refs_local_invariant((!name || name->LocalCandidateInvariant()) &&
+                           (!since_turn_low || since_turn_low->LocalCandidateInvariant()) &&
+                           (!since_turn_high || since_turn_high->LocalCandidateInvariant()))
+{}
 
 HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
                        std::unique_ptr<ValueRef::ValueRef<double>>&& capacity_low,
                        std::unique_ptr<ValueRef::ValueRef<double>>&& capacity_high) :
+    Condition((!name || name->RootCandidateInvariant()) &&
+              (!capacity_low || capacity_low->RootCandidateInvariant()) &&
+              (!capacity_high || capacity_high->RootCandidateInvariant()),
+              (!name || name->TargetInvariant()) &&
+              (!capacity_low || capacity_low->TargetInvariant()) &&
+              (!capacity_high || capacity_high->TargetInvariant()),
+              (!name || name->SourceInvariant()) &&
+              (!capacity_low || capacity_low->SourceInvariant()) &&
+              (!capacity_high || capacity_high->SourceInvariant())),
     m_name(std::move(name)),
     m_capacity_low(std::move(capacity_low)),
-    m_capacity_high(std::move(capacity_high))
-{
-    std::array<const ValueRef::ValueRefBase*, 3> operands =
-        {{m_name.get(), m_capacity_low.get(), m_capacity_high.get()}};
-    m_root_candidate_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); });
-    m_target_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); });
-    m_source_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); });
-}
+    m_capacity_high(std::move(capacity_high)),
+    m_refs_local_invariant((!name || name->LocalCandidateInvariant()) &&
+                           (!capacity_low || capacity_low->LocalCandidateInvariant()) &&
+                           (!capacity_high || capacity_high->LocalCandidateInvariant()))
+{}
 
 HasSpecial::HasSpecial(const HasSpecial& rhs) :
     Condition(rhs),
@@ -2468,7 +2480,8 @@ HasSpecial::HasSpecial(const HasSpecial& rhs) :
     m_capacity_low(ValueRef::CloneUnique(rhs.m_capacity_low)),
     m_capacity_high(ValueRef::CloneUnique(rhs.m_capacity_high)),
     m_since_turn_low(ValueRef::CloneUnique(rhs.m_since_turn_low)),
-    m_since_turn_high(ValueRef::CloneUnique(rhs.m_since_turn_high))
+    m_since_turn_high(ValueRef::CloneUnique(rhs.m_since_turn_high)),
+    m_refs_local_invariant(rhs.m_refs_local_invariant)
 {}
 
 bool HasSpecial::operator==(const Condition& rhs) const {
@@ -2506,7 +2519,7 @@ namespace {
             if (m_name.empty())
                 return !candidate->Specials().empty();
 
-            auto it = candidate->Specials().find(m_name);
+            const auto it = candidate->Specials().find(m_name);
             if (it == candidate->Specials().end())
                 return false;
 
@@ -2529,19 +2542,15 @@ void HasSpecial::Eval(const ScriptingContext& parent_context,
                       ObjectSet& matches, ObjectSet& non_matches,
                       SearchDomain search_domain) const
 {
-    bool simple_eval_safe = ((!m_name || m_name->LocalCandidateInvariant()) &&
-                             (!m_capacity_low || m_capacity_low->LocalCandidateInvariant()) &&
-                             (!m_capacity_high || m_capacity_high->LocalCandidateInvariant()) &&
-                             (!m_since_turn_low || m_since_turn_low->LocalCandidateInvariant()) &&
-                             (!m_since_turn_high || m_since_turn_high->LocalCandidateInvariant()) &&
-                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
+    const bool simple_eval_safe = (m_refs_local_invariant &&
+                                   (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate turn limits and capacities once, pass to simple match for all candidates
-        std::string name = (m_name ? m_name->Eval(parent_context) : "");
-        float low_cap = (m_capacity_low ? m_capacity_low->Eval(parent_context) : -FLT_MAX);
-        float high_cap = (m_capacity_high ? m_capacity_high->Eval(parent_context) : FLT_MAX);
-        int low_turn = (m_since_turn_low ? m_since_turn_low->Eval(parent_context) : BEFORE_FIRST_TURN);
-        int high_turn = (m_since_turn_high ? m_since_turn_high->Eval(parent_context) : IMPOSSIBLY_LARGE_TURN);
+        const std::string name = (m_name ? m_name->Eval(parent_context) : "");
+        const float low_cap = (m_capacity_low ? m_capacity_low->Eval(parent_context) : -FLT_MAX);
+        const float high_cap = (m_capacity_high ? m_capacity_high->Eval(parent_context) : FLT_MAX);
+        const int low_turn = (m_since_turn_low ? m_since_turn_low->Eval(parent_context) : BEFORE_FIRST_TURN);
+        const int high_turn = (m_since_turn_high ? m_since_turn_high->Eval(parent_context) : IMPOSSIBLY_LARGE_TURN);
         EvalImpl(matches, non_matches, search_domain, HasSpecialSimpleMatch(name, low_cap, high_cap, low_turn, high_turn));
     } else {
         // re-evaluate allowed turn range for each candidate object

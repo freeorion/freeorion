@@ -444,6 +444,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<double>>         m_capacity_high;
     std::unique_ptr<ValueRef::ValueRef<int>>            m_since_turn_low;
     std::unique_ptr<ValueRef::ValueRef<int>>            m_since_turn_high;
+    const bool                                          m_refs_local_invariant;
 };
 
 /** Matches all objects that have the tag \a tag. */
