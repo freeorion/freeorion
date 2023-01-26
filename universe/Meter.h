@@ -38,10 +38,10 @@ public:
 
     [[nodiscard]] constexpr float Initial() const noexcept(from_int_noexcept) { return FromInt(init); };
 
-    [[nodiscard]] constexpr bool operator==(const Meter& rhs) const noexcept
+    [[nodiscard]] constexpr bool operator==(const Meter rhs) const noexcept
     { return cur == rhs.cur && init == rhs.init; }
 
-    [[nodiscard]] constexpr bool operator<(const Meter& rhs) const noexcept
+    [[nodiscard]] constexpr bool operator<(const Meter rhs) const noexcept
     { return cur < rhs.cur || (cur == rhs.cur && init < rhs.init); }
 
     constexpr void SetCurrent(float current_value) noexcept(from_float_noexcept)
