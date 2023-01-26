@@ -13,17 +13,13 @@ namespace {
         if (object.ObjectType() == UniverseObjectType::OBJ_SHIP) {
             return object.GetMeter(MeterType::METER_MAX_STRUCTURE)->Current();
 
-        } else if ( object.ObjectType() == UniverseObjectType::OBJ_PLANET ) {
-            const Meter* defense = object.GetMeter(MeterType::METER_MAX_DEFENSE);
-            const Meter* shield = object.GetMeter(MeterType::METER_MAX_SHIELD);
-            const Meter* construction = object.GetMeter(MeterType::METER_TARGET_CONSTRUCTION);
-
+        } else if (object.ObjectType() == UniverseObjectType::OBJ_PLANET) {
             float ret = 0.0f;
-            if (defense)
+            if (const Meter* defense = object.GetMeter(MeterType::METER_MAX_DEFENSE))
                 ret += defense->Current();
-            if (shield)
+            if (const Meter* shield = object.GetMeter(MeterType::METER_MAX_SHIELD))
                 ret += shield->Current();
-            if (construction)
+            if (const Meter* construction = object.GetMeter(MeterType::METER_TARGET_CONSTRUCTION))
                 ret += construction->Current();
             return ret;
         }
