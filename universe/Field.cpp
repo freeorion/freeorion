@@ -111,9 +111,10 @@ bool Field::InField(double x, double y) const {
     return dist2 < radius*radius;
 }
 
-void Field::ResetTargetMaxUnpairedMeters() {
+void Field::ResetTargetMaxUnpairedMeters() noexcept(UniverseObject::noexcept_rtmum) {
     UniverseObject::ResetTargetMaxUnpairedMeters();
 
+    static_assert(noexcept(GetMeter(MeterType::METER_SPEED)->ResetCurrent()));
     GetMeter(MeterType::METER_SPEED)->ResetCurrent();
     // intentionally not resetting size, so that it is presistant
 }

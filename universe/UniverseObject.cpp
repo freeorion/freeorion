@@ -208,10 +208,17 @@ UniverseObject::IDSet UniverseObject::VisibleContainedObjectIDs(
     return retval;
 }
 
-const Meter* UniverseObject::GetMeter(MeterType type) const {
-    auto it = m_meters.find(type);
-    if (it != m_meters.end())
-        return &(it->second);
+const Meter* UniverseObject::GetMeter(MeterType type) const noexcept {
+    if constexpr (noexcept(m_meters.find(type))) {
+        const auto it = m_meters.find(type);
+        if (it != m_meters.end())
+            return &(it->second);
+    } else {
+        const auto end_it = m_meters.end();
+        for (auto it = m_meters.begin(); it != end_it; ++it)
+            if (it->first == type)
+                return &it->second;
+    }
     return nullptr;
 }
 
@@ -285,10 +292,17 @@ void UniverseObject::MoveTo(double x, double y) {
     StateChangedSignal();
 }
 
-Meter* UniverseObject::GetMeter(MeterType type) {
-    auto it = m_meters.find(type);
-    if (it != m_meters.end())
-        return &(it->second);
+Meter* UniverseObject::GetMeter(MeterType type) noexcept {
+    if constexpr (noexcept(m_meters.find(type))) {
+        const auto it = m_meters.find(type);
+        if (it != m_meters.end())
+            return &(it->second);
+    } else {
+        const auto end_it = m_meters.end();
+        for (auto it = m_meters.begin(); it != end_it; ++it)
+            if (it->first == type)
+                return &it->second;
+    }
     return nullptr;
 }
 
@@ -340,13 +354,20 @@ UniverseObject::MeterMap UniverseObject::CensoredMeters(Visibility vis) const {
     return retval;
 }
 
-void UniverseObject::ResetTargetMaxUnpairedMeters() {
-    auto it = m_meters.find(MeterType::METER_STEALTH);
-    if (it != m_meters.end())
-        it->second.ResetCurrent();
+void UniverseObject::ResetTargetMaxUnpairedMeters() noexcept(UniverseObject::noexcept_rtmum) {
+    if constexpr (noexcept(m_meters.find(MeterType::METER_STEALTH))) {
+        const auto it = m_meters.find(MeterType::METER_STEALTH);
+        if (it != m_meters.end())
+            it->second.ResetCurrent();
+    } else {
+        const auto end_it = m_meters.end();
+        for (auto it = m_meters.begin(); it != end_it; ++it)
+            if (it->first == MeterType::METER_STEALTH)
+                return it->second.ResetCurrent();
+    }
 }
 
-void UniverseObject::ResetPairedActiveMeters() {
+void UniverseObject::ResetPairedActiveMeters() noexcept(noexcept(Meter{}.SetCurrent(Meter{}.Initial()))) {
     // iterate over paired active meters (those that have an associated max or
     // target meter.  if another paired meter type is added to Enums.h, it
     // should be added here as well.

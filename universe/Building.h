@@ -32,7 +32,7 @@ public:
     void SetPlanetID(int planet_id);         ///< sets the planet on which the building is located
     void Reset();                            ///< resets any building state, and removes owners
     void SetOrderedScrapped(bool b = true);  ///< flags building for scrapping
-    void ResetTargetMaxUnpairedMeters() override;
+    void ResetTargetMaxUnpairedMeters() noexcept(UniverseObject::noexcept_rtmum) override;
 
     Building(int empire_id, std::string building_type,
              int produced_by_empire_id, int creation_turn);

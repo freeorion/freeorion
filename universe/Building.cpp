@@ -109,7 +109,7 @@ void Building::SetPlanetID(int planet_id) {
     }
 }
 
-void Building::ResetTargetMaxUnpairedMeters() {
+void Building::ResetTargetMaxUnpairedMeters() noexcept(UniverseObject::noexcept_rtmum) {
     UniverseObject::ResetTargetMaxUnpairedMeters();
 
     //// give buildings base stealth slightly above 0, so that they can't be seen from a distance without high detection ability

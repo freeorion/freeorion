@@ -36,7 +36,7 @@ public:
     void Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id = ALL_EMPIRES) override;
     void Copy(const Field& copied_field, const Universe& universe, int empire_id = ALL_EMPIRES);
 
-    void ResetTargetMaxUnpairedMeters() override;
+    void ResetTargetMaxUnpairedMeters() noexcept(UniverseObject::noexcept_rtmum) override;
     void ClampMeters() override;
 
     Field(std::string field_type, double x, double y, double radius, int creation_turn);

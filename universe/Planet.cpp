@@ -999,7 +999,7 @@ void Planet::PopGrowthProductionResearchPhase(ScriptingContext& context) {
     StateChangedSignal();
 }
 
-void Planet::ResetTargetMaxUnpairedMeters() {
+void Planet::ResetTargetMaxUnpairedMeters() noexcept(UniverseObject::noexcept_rtmum) {
     UniverseObject::ResetTargetMaxUnpairedMeters();
 
     GetMeter(MeterType::METER_TARGET_INDUSTRY)->ResetCurrent();

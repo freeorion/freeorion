@@ -122,7 +122,7 @@ public:
 
     void SetOwner(int id) override {} // no-op for systems
 
-    void ResetTargetMaxUnpairedMeters() override;
+    void ResetTargetMaxUnpairedMeters() noexcept(UniverseObject::noexcept_rtmum) override;
 
     /** adds an object to this system. */
     static constexpr int NO_ORBIT = -1;
@@ -138,7 +138,7 @@ public:
     bool RemoveStarlane(int id);         ///< removes a starlane between this system and the system with ID number \a id.  Returns false if there was no starlane from this system to system \a id.
     bool RemoveWormhole(int id);         ///< removes a wormhole between this system and the system with ID number \a id.  Returns false if there was no wormhole from this system to system \a id.
 
-    void SetLastTurnBattleHere(int turn);///< Sets the last turn there was a battle at this system
+    void SetLastTurnBattleHere(int turn) noexcept { m_last_turn_battle_here = turn; }
 
     void SetOverlayTexture(const std::string& texture, double size);
 

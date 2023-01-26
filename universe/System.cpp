@@ -457,12 +457,10 @@ bool System::RemoveWormhole(int id) {
     return retval;
 }
 
-void System::SetLastTurnBattleHere(int turn)
-{ m_last_turn_battle_here = turn; }
-
-void System::ResetTargetMaxUnpairedMeters() {
+void System::ResetTargetMaxUnpairedMeters() noexcept(UniverseObject::noexcept_rtmum) {
     UniverseObject::ResetTargetMaxUnpairedMeters();
 
+    static_assert(noexcept(GetMeter(MeterType::METER_STEALTH)->ResetCurrent()));
     // give systems base stealth slightly above zero, so that they can't be
     // seen from a distance without high detection ability
     if (Meter* stealth = GetMeter(MeterType::METER_STEALTH)) {

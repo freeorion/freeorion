@@ -33,8 +33,8 @@ public:
     /** Back propagates part meters (which UniverseObject equivalent doesn't). */
     void BackPropagateMeters() override;
 
-    void ResetTargetMaxUnpairedMeters() override;
-    void ResetPairedActiveMeters() override;
+    void ResetTargetMaxUnpairedMeters() noexcept(UniverseObject::noexcept_rtmum) override;
+    void ResetPairedActiveMeters() noexcept(UniverseObject::noexcept_rpam) override;
     void ClampMeters() override;
 
     /** Returns new copy of this Ship. */

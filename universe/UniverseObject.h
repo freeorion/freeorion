@@ -104,10 +104,11 @@ public:
 
     struct [[nodiscard]] TagVecs {
         TagVecs() = default;
-        TagVecs(const std::vector<std::string_view>& vec) :
+        TagVecs(const std::vector<std::string_view>& vec) noexcept :
             first(vec)
         {}
-        TagVecs(const std::vector<std::string_view>& vec1, const std::vector<std::string_view>& vec2) :
+        TagVecs(const std::vector<std::string_view>& vec1,
+                const std::vector<std::string_view>& vec2) noexcept:
             first(vec1),
             second(vec2)
         {}
@@ -145,7 +146,7 @@ public:
     [[nodiscard]] IDSet                       VisibleContainedObjectIDs(int empire_id, const EmpireObjectVisMap& vis) const; ///< returns the subset of contained object IDs that is visible to empire with id \a empire_id
 
     [[nodiscard]] const MeterMap&             Meters() const noexcept { return m_meters; }    ///< returns this UniverseObject's meters
-    [[nodiscard]] const Meter*                GetMeter(MeterType type) const;                 ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
+    [[nodiscard]] const Meter*                GetMeter(MeterType type) const noexcept;        ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
 
     using EmpireIDtoObjectIDtoVisMap = std::map<int, std::map<int, Visibility>>; // duplicates Universe::EmpireObjectVisibilityMap
     [[nodiscard]] Visibility                  GetVisibility(int empire_id, const EmpireIDtoObjectIDtoVisMap& v) const;
@@ -182,7 +183,7 @@ public:
     void            MoveTo(double x, double y);
 
     [[nodiscard]] MeterMap& Meters() noexcept { return m_meters; }  ///< returns this UniverseObject's meters
-    [[nodiscard]] Meter*    GetMeter(MeterType type);               ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
+    [[nodiscard]] Meter*    GetMeter(MeterType type) noexcept;      ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
 
     /** Sets all this UniverseObject's meters' initial values equal to their
         current values. */
@@ -196,15 +197,20 @@ public:
     void RemoveSpecial(const std::string& name);                    ///< removes the Special \a name from this object, if it is already present
     void SetSpecialCapacity(std::string name, float capacity, int turn);
 
+protected:
+    static constexpr bool noexcept_rtmum = noexcept(noexcept(Meter{}.ResetCurrent()));
+    static constexpr bool noexcept_rpam = noexcept(Meter{}.SetCurrent(Meter{}.Initial()));
+
+public:
     /** Sets current value of max, target and unpaired meters in in this
       * UniverseObject to Meter::DEFAULT_VALUE.  This should be done before any
       * Effects that alter these meter(s) act on the object. */
-    virtual void ResetTargetMaxUnpairedMeters();
+    virtual void ResetTargetMaxUnpairedMeters() noexcept(noexcept_rtmum);
 
     /** Sets current value of active paired meters (the non-max non-target
       * meters that have a max or target meter associated with them) back to
       * the initial value the meter had at the start of this turn. */
-    virtual void ResetPairedActiveMeters();
+    virtual void ResetPairedActiveMeters() noexcept(noexcept_rpam);
 
     /** calls Clamp(min, max) on meters each meter in this UniverseObject, to
       * ensure that meter current values aren't outside the valid range for

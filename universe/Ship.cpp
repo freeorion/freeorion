@@ -649,7 +649,7 @@ void Ship::SetBombardPlanet(int planet_id) {
 void Ship::ClearBombardPlanet()
 { SetBombardPlanet(INVALID_OBJECT_ID); }
 
-void Ship::ResetTargetMaxUnpairedMeters() {
+void Ship::ResetTargetMaxUnpairedMeters() noexcept(UniverseObject::noexcept_rtmum) {
     UniverseObject::ResetTargetMaxUnpairedMeters();
 
     UniverseObject::GetMeter(MeterType::METER_MAX_FUEL)->ResetCurrent();
@@ -681,16 +681,22 @@ void Ship::ResetTargetMaxUnpairedMeters() {
             break;
         }
 
-        auto max_it = m_part_meters.find({paired_meter_type, part_name});
-        if (max_it != m_part_meters.end())
-            continue;   // is a max/target meter associated with the meter, so don't treat this a target/max
+        bool found_secondary_meter = false;
+        for (auto& [type_str2, meter2] : m_part_meters) {
+            if (type_str2.first == paired_meter_type && type_str2.second == part_name) {
+                found_secondary_meter = true;
+                break;
+            }
+        }
+        if (found_secondary_meter)
+            continue; // s a max/target meter associated with the meter, so don't treat this a target/max
 
         // no associated target/max meter, so treat this meter as unpaired
         meter.ResetCurrent();
     }
 }
 
-void Ship::ResetPairedActiveMeters() {
+void Ship::ResetPairedActiveMeters() noexcept(UniverseObject::noexcept_rpam) {
     UniverseObject::ResetPairedActiveMeters();
 
     // meters are paired only if they are not max/target meters, and there is an
@@ -698,8 +704,8 @@ void Ship::ResetPairedActiveMeters() {
     for (auto& [type_str, meter] : m_part_meters) {
         (void)meter;
         const auto& [meter_type, part_name] = type_str;
-        MeterType paired_meter_type = MeterType::INVALID_METER_TYPE;
 
+        MeterType paired_meter_type = MeterType::INVALID_METER_TYPE;
         switch(meter_type) {
         case MeterType::METER_MAX_CAPACITY:
         case MeterType::METER_MAX_SECONDARY_STAT:
@@ -712,12 +718,18 @@ void Ship::ResetPairedActiveMeters() {
             break;
         }
 
-        auto max_it = m_part_meters.find({paired_meter_type, part_name});
-        if (max_it == m_part_meters.end())
-            continue;   // no associated max/target meter
+        bool found_secondary_meter = false;
+        for (auto& [type_str2, meter2] : m_part_meters) {
+            if (type_str2.first == paired_meter_type && type_str2.second == part_name) {
+                found_secondary_meter = true;
+                break;
+            }
+        }
+        if (!found_secondary_meter)
+            continue; // no associated max/target meter
+
 
         // has an associated max/target meter.
-        //std::map<std::pair<MeterType, std::string>, Meter>::iterator
         meter.SetCurrent(meter.Initial());
     }
 }

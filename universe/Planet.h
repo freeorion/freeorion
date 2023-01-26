@@ -154,7 +154,7 @@ public:
 
     void SetLastTurnAttackedByShip(int turn);///< Sets the last turn this planet was attacked by a ship
     void SetSurfaceTexture(const std::string& texture);
-    void ResetTargetMaxUnpairedMeters() override;
+    void ResetTargetMaxUnpairedMeters() noexcept(UniverseObject::noexcept_rtmum) override;
 
     [[nodiscard]] static int TypeDifference(PlanetType type1, PlanetType type2);
 
