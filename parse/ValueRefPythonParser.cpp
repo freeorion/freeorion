@@ -800,7 +800,7 @@ namespace {
             std::move(empire),
             nullptr,
             nullptr,
-            std::move(std::make_unique<ValueRef::Constant<std::string>>(meter)),
+            std::make_unique<ValueRef::Constant<std::string>>(meter),
             nullptr
         ));
     }
@@ -831,7 +831,7 @@ namespace {
             std::move(empire),
             nullptr,
             nullptr,
-            std::move(std::make_unique<ValueRef::Constant<std::string>>(resource_str)),
+            std::make_unique<ValueRef::Constant<std::string>>(resource_str),
             nullptr
         ));
     }
