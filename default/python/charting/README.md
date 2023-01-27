@@ -10,7 +10,7 @@ All operation are relative to this folder.
 pip install requirements_charts.txt
 ```
 
-## Run  
+## Run
 
 Execute in repo root:
 ```shell
