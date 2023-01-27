@@ -83,6 +83,9 @@ struct FO_COMMON_API Number final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -108,6 +111,9 @@ struct FO_COMMON_API Turn final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -208,6 +214,9 @@ struct FO_COMMON_API EmpireAffiliation final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -229,6 +238,9 @@ private:
 struct FO_COMMON_API RootCandidate final : public Condition {
     constexpr RootCandidate() noexcept : Condition(false, true, true) {}
     bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const noexcept override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
@@ -249,6 +261,9 @@ private:
 struct FO_COMMON_API Target final : public Condition {
     constexpr Target() noexcept : Condition(true, false, true) {}
     bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const noexcept override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
@@ -271,6 +286,9 @@ struct FO_COMMON_API Homeworld final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
@@ -296,7 +314,8 @@ struct FO_COMMON_API Capital final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     bool EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const override;
-    bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
 
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
@@ -317,6 +336,9 @@ private:
 struct FO_COMMON_API Monster final : public Condition {
     constexpr Monster() noexcept :  Condition(true, true, true) {}
     bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
@@ -327,13 +349,16 @@ struct FO_COMMON_API Monster final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 };
 
 /** Matches armed ships and monsters. */
 struct FO_COMMON_API Armed final : public Condition {
     constexpr Armed() noexcept : Condition(true, true, true) {}
     bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) noexcept override {}
@@ -342,7 +367,7 @@ struct FO_COMMON_API Armed final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 };
 
 /** Matches all objects that are of UniverseObjectType \a type. */
@@ -353,6 +378,9 @@ struct FO_COMMON_API Type final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] bool EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
@@ -365,7 +393,7 @@ struct FO_COMMON_API Type final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<UniverseObjectType>> m_type;
 
@@ -381,6 +409,9 @@ struct FO_COMMON_API Building final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
@@ -391,7 +422,7 @@ struct FO_COMMON_API Building final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
     const bool m_names_local_invariant;
@@ -405,6 +436,9 @@ struct FO_COMMON_API Field final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
@@ -415,7 +449,7 @@ struct FO_COMMON_API Field final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
 };
@@ -436,6 +470,9 @@ struct FO_COMMON_API HasSpecial final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -444,7 +481,7 @@ struct FO_COMMON_API HasSpecial final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
     std::unique_ptr<ValueRef::ValueRef<double>>         m_capacity_low;
@@ -463,6 +500,9 @@ struct FO_COMMON_API HasTag final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -471,7 +511,7 @@ struct FO_COMMON_API HasTag final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
 };
@@ -484,6 +524,9 @@ struct FO_COMMON_API CreatedOnTurn final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -492,7 +535,7 @@ struct FO_COMMON_API CreatedOnTurn final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_low;
     std::unique_ptr<ValueRef::ValueRef<int>> m_high;
@@ -506,6 +549,9 @@ struct FO_COMMON_API Contains final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
@@ -516,7 +562,7 @@ struct FO_COMMON_API Contains final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<Condition> m_condition;
 };
@@ -529,6 +575,9 @@ struct FO_COMMON_API ContainedBy final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
@@ -539,7 +588,7 @@ struct FO_COMMON_API ContainedBy final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<Condition> m_condition;
 };
@@ -553,6 +602,9 @@ struct FO_COMMON_API InOrIsSystem final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
 
@@ -564,7 +616,7 @@ struct FO_COMMON_API InOrIsSystem final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_system_id;
 };
@@ -578,6 +630,9 @@ struct FO_COMMON_API OnPlanet final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
 
@@ -589,7 +644,7 @@ struct FO_COMMON_API OnPlanet final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_planet_id;
 };
@@ -601,6 +656,9 @@ struct FO_COMMON_API ObjectID final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
 
@@ -612,7 +670,7 @@ struct FO_COMMON_API ObjectID final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_object_id;
 };
@@ -626,6 +684,9 @@ struct FO_COMMON_API PlanetType final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
@@ -636,7 +697,7 @@ struct FO_COMMON_API PlanetType final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::vector<std::unique_ptr<ValueRef::ValueRef<::PlanetType>>> m_types;
 };
@@ -650,6 +711,9 @@ struct FO_COMMON_API PlanetSize final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
@@ -660,7 +724,7 @@ struct FO_COMMON_API PlanetSize final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::vector<std::unique_ptr<ValueRef::ValueRef<::PlanetSize>>> m_sizes;
 };
@@ -675,6 +739,9 @@ struct FO_COMMON_API PlanetEnvironment final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
@@ -685,7 +752,7 @@ struct FO_COMMON_API PlanetEnvironment final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::vector<std::unique_ptr<ValueRef::ValueRef<::PlanetEnvironment>>> m_environments;
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_species_name;
@@ -701,6 +768,9 @@ struct FO_COMMON_API Species final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
@@ -711,7 +781,7 @@ struct FO_COMMON_API Species final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
 };
@@ -726,6 +796,9 @@ struct FO_COMMON_API SpeciesOpinion final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -734,7 +807,7 @@ struct FO_COMMON_API SpeciesOpinion final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_species;
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_content;
@@ -759,6 +832,9 @@ struct FO_COMMON_API Enqueued final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
@@ -769,7 +845,7 @@ struct FO_COMMON_API Enqueued final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     BuildType m_build_type;
     std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
@@ -786,6 +862,9 @@ struct FO_COMMON_API FocusType final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -796,7 +875,7 @@ struct FO_COMMON_API FocusType final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
 };
@@ -809,6 +888,9 @@ struct FO_COMMON_API StarType final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -817,7 +899,7 @@ struct FO_COMMON_API StarType final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::vector<std::unique_ptr<ValueRef::ValueRef<::StarType>>> m_types;
 };
@@ -829,6 +911,9 @@ struct FO_COMMON_API DesignHasHull final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
@@ -839,7 +924,7 @@ struct FO_COMMON_API DesignHasHull final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
 };
@@ -854,6 +939,9 @@ struct FO_COMMON_API DesignHasPart final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
@@ -864,7 +952,7 @@ struct FO_COMMON_API DesignHasPart final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_low;
     std::unique_ptr<ValueRef::ValueRef<int>> m_high;
@@ -881,6 +969,9 @@ struct FO_COMMON_API DesignHasPartClass final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
@@ -891,7 +982,7 @@ struct FO_COMMON_API DesignHasPartClass final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_low;
     std::unique_ptr<ValueRef::ValueRef<int>> m_high;
@@ -906,6 +997,9 @@ struct FO_COMMON_API PredefinedShipDesign final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -914,7 +1008,7 @@ struct FO_COMMON_API PredefinedShipDesign final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
 };
@@ -926,6 +1020,9 @@ struct FO_COMMON_API NumberedShipDesign final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -934,7 +1031,7 @@ struct FO_COMMON_API NumberedShipDesign final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_design_id;
 };
@@ -946,6 +1043,9 @@ struct FO_COMMON_API ProducedByEmpire final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -954,7 +1054,7 @@ struct FO_COMMON_API ProducedByEmpire final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
 };
@@ -966,6 +1066,9 @@ struct FO_COMMON_API Chance final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -974,7 +1077,7 @@ struct FO_COMMON_API Chance final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<double>> m_chance;
 };
@@ -989,6 +1092,9 @@ struct FO_COMMON_API MeterValue final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -997,7 +1103,7 @@ struct FO_COMMON_API MeterValue final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     const MeterType m_meter;
     std::unique_ptr<ValueRef::ValueRef<double>> m_low;
@@ -1016,6 +1122,9 @@ struct FO_COMMON_API ShipPartMeterValue final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1024,7 +1133,7 @@ struct FO_COMMON_API ShipPartMeterValue final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_part_name;
     MeterType m_meter;
@@ -1046,6 +1155,9 @@ struct FO_COMMON_API EmpireMeterValue final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1054,7 +1166,7 @@ struct FO_COMMON_API EmpireMeterValue final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
     const std::string m_meter;
@@ -1076,6 +1188,9 @@ struct FO_COMMON_API EmpireStockpileValue final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1084,7 +1199,7 @@ struct FO_COMMON_API EmpireStockpileValue final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>>    m_empire_id;
     std::unique_ptr<ValueRef::ValueRef<double>> m_low;
@@ -1105,6 +1220,8 @@ struct FO_COMMON_API EmpireHasAdoptedPolicy final : public Condition {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
 
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
@@ -1115,13 +1232,14 @@ struct FO_COMMON_API EmpireHasAdoptedPolicy final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
     std::unique_ptr<ValueRef::ValueRef<int>>            m_empire_id;
 };
 
-/** Matches all objects whose owner who has tech \a name. */
+/** Matches all objects whose owner who has tech \a name or all objects when the
+  * specified empire has tech \a name. */
 struct FO_COMMON_API OwnerHasTech final : public Condition {
     OwnerHasTech(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
                  std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
@@ -1130,6 +1248,9 @@ struct FO_COMMON_API OwnerHasTech final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1138,7 +1259,7 @@ struct FO_COMMON_API OwnerHasTech final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
     std::unique_ptr<ValueRef::ValueRef<int>>         m_empire_id;
@@ -1154,6 +1275,9 @@ struct FO_COMMON_API OwnerHasBuildingTypeAvailable final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1162,7 +1286,7 @@ struct FO_COMMON_API OwnerHasBuildingTypeAvailable final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
     std::unique_ptr<ValueRef::ValueRef<int>>         m_empire_id;
@@ -1178,6 +1302,9 @@ struct FO_COMMON_API OwnerHasShipDesignAvailable final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1186,7 +1313,7 @@ struct FO_COMMON_API OwnerHasShipDesignAvailable final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_id;
     std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
@@ -1202,6 +1329,9 @@ struct FO_COMMON_API OwnerHasShipPartAvailable final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1210,7 +1340,7 @@ struct FO_COMMON_API OwnerHasShipPartAvailable final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
     std::unique_ptr<ValueRef::ValueRef<int>>         m_empire_id;
@@ -1226,6 +1356,9 @@ struct FO_COMMON_API VisibleToEmpire final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1234,7 +1367,7 @@ struct FO_COMMON_API VisibleToEmpire final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
     std::unique_ptr<ValueRef::ValueRef<int>> m_since_turn;
@@ -1253,6 +1386,9 @@ struct FO_COMMON_API WithinDistance final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalAny(const ScriptingContext&, const ObjectSet& candidates) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1261,7 +1397,7 @@ struct FO_COMMON_API WithinDistance final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<double>> m_distance;
     std::unique_ptr<Condition> m_condition;
@@ -1278,6 +1414,9 @@ struct FO_COMMON_API WithinStarlaneJumps final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1286,7 +1425,7 @@ struct FO_COMMON_API WithinStarlaneJumps final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_jumps;
     std::unique_ptr<Condition> m_condition;
@@ -1304,6 +1443,9 @@ struct FO_COMMON_API CanAddStarlaneConnection : Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1312,7 +1454,7 @@ struct FO_COMMON_API CanAddStarlaneConnection : Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<Condition> m_condition;
 };
@@ -1325,6 +1467,9 @@ struct FO_COMMON_API ExploredByEmpire final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1333,7 +1478,7 @@ struct FO_COMMON_API ExploredByEmpire final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
 };
@@ -1346,6 +1491,9 @@ struct FO_COMMON_API Stationary final : public Condition {
     {}
 
     bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) noexcept override {}
@@ -1354,7 +1502,7 @@ struct FO_COMMON_API Stationary final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 };
 
 /** Matches objects that are aggressive fleets or are in aggressive fleets. */
@@ -1366,16 +1514,19 @@ struct FO_COMMON_API Aggressive final : public Condition {
     {}
 
     bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) noexcept override {}
-    [[nodiscard]] bool GetAggressive() const { return m_aggressive; }
+    [[nodiscard]] bool GetAggressive() const noexcept { return m_aggressive; }
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     const bool m_aggressive;   // false to match passive ships/fleets
 };
@@ -1388,6 +1539,9 @@ struct FO_COMMON_API FleetSupplyableByEmpire final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1396,7 +1550,7 @@ struct FO_COMMON_API FleetSupplyableByEmpire final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
 };
@@ -1411,6 +1565,9 @@ struct FO_COMMON_API ResourceSupplyConnectedByEmpire final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1419,7 +1576,7 @@ struct FO_COMMON_API ResourceSupplyConnectedByEmpire final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
     std::unique_ptr<Condition> m_condition;
@@ -1430,6 +1587,9 @@ struct FO_COMMON_API CanColonize final : public Condition {
     CanColonize();
 
     bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string&) noexcept override {}
@@ -1438,14 +1598,19 @@ struct FO_COMMON_API CanColonize final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 };
 
 /** Matches objects whose species has the ability to produce ships. */
 struct FO_COMMON_API CanProduceShips final : public Condition {
-    CanProduceShips();
+    constexpr CanProduceShips() noexcept:
+        Condition(true, true, true)
+    {}
 
     bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string&) noexcept override {}
@@ -1454,7 +1619,7 @@ struct FO_COMMON_API CanProduceShips final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 };
 
 /** Matches the objects that have been targeted for bombardment by at least one
@@ -1465,6 +1630,9 @@ struct FO_COMMON_API OrderedBombarded final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     virtual void SetTopLevelContent(const std::string& content_name) override;
@@ -1473,7 +1641,7 @@ struct FO_COMMON_API OrderedBombarded final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<Condition> m_by_object_condition;
 };
@@ -1503,6 +1671,9 @@ struct FO_COMMON_API ValueTest final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1523,7 +1694,7 @@ struct FO_COMMON_API ValueTest final : public Condition {
     { return {m_compare_type1, m_compare_type2}; }
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<double>> m_value_ref1;
     std::unique_ptr<ValueRef::ValueRef<double>> m_value_ref2;
@@ -1553,6 +1724,9 @@ public:
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1561,11 +1735,11 @@ public:
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name1;
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name2;
-    ContentType                                      m_content_type;
+    const ContentType                                m_content_type;
 };
 
 /** Matches objects that match the combat targeting condition of the specified
@@ -1578,6 +1752,9 @@ public:
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1586,10 +1763,10 @@ public:
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
-    ContentType m_content_type;
+    const ContentType                                m_content_type;
 };
 
 /** Matches all objects that match every Condition in \a operands. */

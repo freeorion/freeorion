@@ -1846,22 +1846,6 @@ bool Capital::EvalAny(const ScriptingContext& parent_context, const ObjectSet& c
     }
 }
 
-bool Capital::EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const {
-    if (!candidate)
-        return false;
-    if (m_empire_id) {
-        const ScriptingContext candidate_context{parent_context, candidate};
-        const auto empire_id = m_empire_id->Eval(candidate_context);
-        const auto empire = parent_context.GetEmpire(empire_id);
-        return empire && empire->CapitalID() == candidate->ID();
-
-    } else {
-        const auto& capital_ids{parent_context.Empires().CapitalIDs()};
-        return std::any_of(capital_ids.begin(), capital_ids.end(),
-                           [id{candidate->ID()}](const auto cid) { return cid == id; });
-    }
-}
-
 std::string Capital::Description(bool negated) const {
     return (!negated)
         ? UserString("DESC_CAPITAL")
@@ -1873,10 +1857,8 @@ std::string Capital::Dump(uint8_t ntabs) const
 
 bool Capital::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
-    if (!candidate) {
-        ErrorLogger(conditions) << "Capital::Match passed no candidate object";
+    if (!candidate)
         return false;
-    }
     if (m_empire_id) {
         const auto empire = local_context.GetEmpire(m_empire_id->Eval(local_context));
         return empire && empire->CapitalID() == candidate->ID();
@@ -2116,12 +2098,7 @@ std::string Type::Dump(uint8_t ntabs) const {
 
 bool Type::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
-    if (!candidate) {
-        ErrorLogger(conditions) << "Type::Match passed no candidate object";
-        return false;
-    }
-
-    return TypeSimpleMatch(m_type->Eval(local_context))(candidate);
+    return candidate && TypeSimpleMatch(m_type->Eval(local_context))(candidate);
 }
 
 void Type::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -2323,10 +2300,8 @@ void Building::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
 
 bool Building::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
-    if (!candidate) {
-        ErrorLogger(conditions) << "Building::Match passed no candidate object";
+    if (!candidate)
         return false;
-    }
 
     // is it a building?
     if (candidate->ObjectType() != UniverseObjectType::OBJ_BUILDING)
@@ -2486,10 +2461,8 @@ void Field::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_con
 
 bool Field::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
-    if (!candidate) {
-        ErrorLogger(conditions) << "Field::Match passed no candidate object";
+    if (!candidate)
         return false;
-    }
 
     // is it a field?
     if (candidate->ObjectType() != UniverseObjectType::OBJ_FIELD)
@@ -2620,7 +2593,7 @@ bool HasSpecial::operator==(const Condition& rhs) const {
 namespace {
     struct HasSpecialSimpleMatch {
         HasSpecialSimpleMatch(const std::string& name, float low_cap, float high_cap,
-                              int low_turn, int high_turn) :
+                              int low_turn, int high_turn) noexcept:
             m_name(name),
             m_low_cap(low_cap),
             m_high_cap(high_cap),
@@ -2744,15 +2717,13 @@ std::string HasSpecial::Dump(uint8_t ntabs) const {
 
 bool HasSpecial::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
-    if (!candidate) {
-        ErrorLogger(conditions) << "HasSpecial::Match passed no candidate object";
+    if (!candidate) [[unlikely]]
         return false;
-    }
-    std::string name = (m_name ? m_name->Eval(local_context) : "");
-    float low_cap = (m_capacity_low ? m_capacity_low->Eval(local_context) : -FLT_MAX);
-    float high_cap = (m_capacity_high ? m_capacity_high->Eval(local_context) : FLT_MAX);
-    int low_turn = (m_since_turn_low ? m_since_turn_low->Eval(local_context) : BEFORE_FIRST_TURN);
-    int high_turn = (m_since_turn_high ? m_since_turn_high->Eval(local_context) : IMPOSSIBLY_LARGE_TURN);
+    const std::string name = (m_name ? m_name->Eval(local_context) : "");
+    const float low_cap = (m_capacity_low ? m_capacity_low->Eval(local_context) : -FLT_MAX);
+    const float high_cap = (m_capacity_high ? m_capacity_high->Eval(local_context) : FLT_MAX);
+    const int low_turn = (m_since_turn_low ? m_since_turn_low->Eval(local_context) : BEFORE_FIRST_TURN);
+    const int high_turn = (m_since_turn_high ? m_since_turn_high->Eval(local_context) : IMPOSSIBLY_LARGE_TURN);
 
     return HasSpecialSimpleMatch(name, low_cap, high_cap, low_turn, high_turn)(candidate);
 }
@@ -2821,13 +2792,13 @@ bool HasTag::operator==(const Condition& rhs) const {
 
 namespace {
     struct HasTagSimpleMatch {
-        HasTagSimpleMatch(const ScriptingContext& context) :
+        HasTagSimpleMatch(const ScriptingContext& context) noexcept:
             m_any_tag_ok(true),
             m_name(EMPTY_STRING),
             m_context(context)
         {}
 
-        HasTagSimpleMatch(const std::string& name, const ScriptingContext& context) :
+        HasTagSimpleMatch(const std::string& name, const ScriptingContext& context) noexcept:
             m_any_tag_ok(false),
             m_name(name),
             m_context(context)
@@ -2892,10 +2863,8 @@ std::string HasTag::Dump(uint8_t ntabs) const {
 
 bool HasTag::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
-    if (!candidate) {
-        ErrorLogger(conditions) << "HasTag::Match passed no candidate object";
+    if (!candidate)
         return false;
-    }
 
     if (!m_name)
         return HasTagSimpleMatch(local_context)(candidate);
@@ -2973,12 +2942,12 @@ void CreatedOnTurn::Eval(const ScriptingContext& parent_context,
                          ObjectSet& matches, ObjectSet& non_matches,
                          SearchDomain search_domain) const
 {
-    bool simple_eval_safe = ((!m_low || m_low->LocalCandidateInvariant()) &&
-                             (!m_high || m_high->LocalCandidateInvariant()) &&
-                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
+    const bool simple_eval_safe = ((!m_low || m_low->LocalCandidateInvariant()) &&
+                                   (!m_high || m_high->LocalCandidateInvariant()) &&
+                                   (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
-        int low = (m_low ? m_low->Eval(parent_context) : BEFORE_FIRST_TURN);
-        int high = (m_high ? m_high->Eval(parent_context) : IMPOSSIBLY_LARGE_TURN);
+        const int low = (m_low ? m_low->Eval(parent_context) : BEFORE_FIRST_TURN);
+        const int high = (m_high ? m_high->Eval(parent_context) : IMPOSSIBLY_LARGE_TURN);
         EvalImpl(matches, non_matches, search_domain, CreatedOnTurnSimpleMatch(low, high));
     } else {
         // re-evaluate allowed turn range for each candidate object
@@ -3150,6 +3119,7 @@ void Contains::Eval(const ScriptingContext& parent_context,
         return;
 
     } else if (search_domain_size == 1u) [[likely]] {
+        // TODO: can call Match or EvalOne to test object?
         // evaluate subcondition on objects contained by the candidate
         const auto* candidate = search_domain == SearchDomain::MATCHES ? matches.front() : non_matches.front();
         const ScriptingContext local_context{parent_context, candidate};
@@ -3206,22 +3176,13 @@ void Contains::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
 
 bool Contains::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
-    if (!candidate) {
-        ErrorLogger(conditions) << "Contains::Match passed no candidate object";
+    if (!candidate)
         return false;
-    }
 
-    // TODO: invert this... get contents and return m_condition->EvalAny(local_context, contents);
-
-    // get subcondition matches
-    ObjectSet subcondition_matches = m_condition->Eval(local_context);
-
-    // does candidate object contain any subcondition matches?
-    for (auto* obj : subcondition_matches)
-        if (candidate->Contains(obj->ID()))
-            return true;
-
-    return false;
+    // evaluate subcondition on objects contained by the candidate
+    // initialize subcondition candidates from local candidate's contents
+    const ObjectSet contained_objects = local_context.ContextObjects().findRaw(candidate->ContainedObjectIDs());
+    return m_condition->EvalAny(local_context, contained_objects);
 }
 
 void Contains::SetTopLevelContent(const std::string& content_name) {
@@ -3426,27 +3387,20 @@ void ContainedBy::GetDefaultInitialCandidateObjects(const ScriptingContext& pare
 
 bool ContainedBy::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
-    if (!candidate) {
-        ErrorLogger(conditions) << "ContainedBy::Match passed no candidate object";
+    if (!candidate)
         return false;
-    }
 
     // get containing objects
-    std::set<int> containers;
+    std::vector<int> containers;
+    containers.reserve(2);
     if (candidate->SystemID() != INVALID_OBJECT_ID)
-        containers.insert(candidate->SystemID());
+        containers.push_back(candidate->SystemID());
     if (candidate->ContainerObjectID() != INVALID_OBJECT_ID && candidate->ContainerObjectID() != candidate->SystemID())
-        containers.insert(candidate->ContainerObjectID());
-
-    ObjectSet container_objects = local_context.ContextObjects().findRaw<const UniverseObject>(containers);
-    if (container_objects.empty())
-        return false;   // if no containers, don't need to check them
+        containers.push_back(candidate->ContainerObjectID());
 
     // do any containers match the subcondition?
-    ObjectSet non_matches;
-    m_condition->Eval(local_context, container_objects, non_matches, SearchDomain::MATCHES);
-
-    return !container_objects.empty();
+    const ObjectSet container_objects = local_context.ContextObjects().findRaw<const UniverseObject>(containers);
+    return m_condition->EvalAny(local_context, container_objects);
 }
 
 void ContainedBy::SetTopLevelContent(const std::string& content_name) {
@@ -3498,7 +3452,7 @@ bool InOrIsSystem::operator==(const Condition& rhs) const {
 
 namespace {
     struct InSystemSimpleMatch {
-        InSystemSimpleMatch(int system_id) :
+        constexpr InSystemSimpleMatch(int system_id) noexcept :
             m_system_id(system_id)
         {}
 
@@ -3603,11 +3557,9 @@ void InOrIsSystem::GetDefaultInitialCandidateObjects(const ScriptingContext& par
 
 bool InOrIsSystem::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
-    if (!candidate) {
-        ErrorLogger(conditions) << "InOrIsSystem::Match passed no candidate object";
+    if (!candidate)
         return false;
-    }
-    int system_id = (m_system_id ? m_system_id->Eval(local_context) : INVALID_OBJECT_ID);
+    const int system_id = (m_system_id ? m_system_id->Eval(local_context) : INVALID_OBJECT_ID);
     return InSystemSimpleMatch(system_id)(candidate);
 }
 
@@ -3660,7 +3612,7 @@ bool OnPlanet::operator==(const Condition& rhs) const {
 
 namespace {
     struct OnPlanetSimpleMatch {
-        OnPlanetSimpleMatch(int planet_id) :
+        constexpr OnPlanetSimpleMatch(int planet_id) noexcept:
             m_planet_id(planet_id)
         {}
 
@@ -3763,11 +3715,9 @@ void OnPlanet::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
 
 bool OnPlanet::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
-    if (!candidate) {
-        ErrorLogger(conditions) << "OnPlanet::Match passed no candidate object";
+    if (!candidate)
         return false;
-    }
-    int planet_id = (m_planet_id ? m_planet_id->Eval(local_context) : INVALID_OBJECT_ID);
+    const int planet_id = (m_planet_id ? m_planet_id->Eval(local_context) : INVALID_OBJECT_ID);
     return OnPlanetSimpleMatch(planet_id)(candidate);
 }
 
@@ -3900,10 +3850,8 @@ void ObjectID::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
 
 bool ObjectID::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
-    if (!candidate) {
-        ErrorLogger(conditions) << "ObjectID::Match passed no candidate object";
+    if (!candidate)
         return false;
-    }
 
     return ObjectIDSimpleMatch(m_object_id->Eval(local_context))(candidate);
 }
@@ -3971,7 +3919,7 @@ namespace {
     }
 
     struct PlanetTypeSimpleMatch {
-        PlanetTypeSimpleMatch(const std::vector< ::PlanetType>& types, const ObjectMap& objects) :
+        PlanetTypeSimpleMatch(const std::vector< ::PlanetType>& types, const ObjectMap& objects) noexcept:
             m_types(types),
             m_objects(objects)
         {}
@@ -3980,7 +3928,7 @@ namespace {
             if (!candidate)
                 return false;
 
-            auto pt = PlanetTypeFromObject(candidate, m_objects);
+            const auto pt = PlanetTypeFromObject(candidate, m_objects);
             if (pt == ::PlanetType::INVALID_PLANET_TYPE)
                 return false;
             return std::count(m_types.begin(), m_types.end(), pt);
@@ -4062,10 +4010,8 @@ void PlanetType::GetDefaultInitialCandidateObjects(const ScriptingContext& paren
 
 bool PlanetType::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
-    if (!candidate) {
-        ErrorLogger(conditions) << "PlanetType::Match passed no candidate object";
+    if (!candidate)
         return false;
-    }
 
     const Planet* planet = nullptr;
     if (candidate->ObjectType() == UniverseObjectType::OBJ_PLANET) {
@@ -5530,22 +5476,17 @@ std::string FocusType::Dump(uint8_t ntabs) const {
 
 bool FocusType::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
-    if (!candidate) {
-        ErrorLogger(conditions) << "FocusType::Match passed no candidate object";
+    if (!candidate)
         return false;
-    }
 
     auto& focus_name{GetCandidateFocus(candidate, local_context.ContextObjects())};
 
     if (m_names.empty())
         return !focus_name.empty();
 
-    for (auto& name : m_names) {
-        if (name->Eval(local_context) == focus_name)
-            return true;
-    }
-
-    return false;
+    return std::any_of(m_names.begin(), m_names.end(),
+                       [&focus_name, &local_context](const auto& name)
+                       { return name->Eval(local_context) == focus_name; });
 }
 
 void FocusType::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -8460,7 +8401,9 @@ bool WithinDistance::EvalAny(const ScriptingContext& parent_context, const Objec
         // evaluate contained objects and distance once and check for all candidates
         const double distance = m_distance->Eval(parent_context);
         // in principle, don't need all the subcondition matches to start checking
-        // if any are within the distance to any of the candidates, but
+        // if any are within the distance to any of the candidates.
+        // TODO: lazy evaluate subcondition matches as each is checked for distance
+        // TODO: or, create another condition that has a single object id ref instead of a subcondition
         const ObjectSet subcondition_matches = m_condition->Eval(parent_context);
 
         return std::any_of(candidates.begin(), candidates.end(),
@@ -9249,10 +9192,8 @@ std::string Stationary::Dump(uint8_t ntabs) const
 
 bool Stationary::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
-    if (!candidate) {
-        ErrorLogger(conditions) << "Stationary::Match passed no candidate object";
+    if (!candidate)
         return false;
-    }
 
     // the only objects that can move are fleets and the ships in them.  so,
     // attempt to cast the candidate object to a fleet or ship, and if it's a ship
@@ -9260,7 +9201,7 @@ bool Stationary::Match(const ScriptingContext& local_context) const {
     const Fleet* fleet = candidate->ObjectType() == UniverseObjectType::OBJ_FLEET ?
         static_cast<const Fleet*>(candidate) : nullptr;
     if (!fleet && candidate->ObjectType() == UniverseObjectType::OBJ_SHIP) {
-        auto flt_id = static_cast<const ::Ship*>(candidate)->FleetID();
+        const auto flt_id = static_cast<const ::Ship*>(candidate)->FleetID();
         fleet = local_context.ContextObjects().getRaw<Fleet>(flt_id);
     }
     if (!fleet)
@@ -9736,10 +9677,6 @@ std::unique_ptr<Condition> CanColonize::Clone() const
 ///////////////////////////////////////////////////////////
 // CanProduceShips                                       //
 ///////////////////////////////////////////////////////////
-CanProduceShips::CanProduceShips() :
-    Condition(true, true, true)
-{}
-
 bool CanProduceShips::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
@@ -10525,7 +10462,7 @@ bool ValueTest::Match(const ScriptingContext& local_context) const {
 
     // this function, Match(...) could be called in two cases:
     // - from the simple case of ValueTest::Eval, which should have only null or local-candidate-invariant valuerefs
-    // - from Condition::Eval or Condition::EvalAny, which should have passed a context with a valid local candidate
+    // - from Condition::Eval, Condition::EvalAny, or ValueTest::EvalOne which should have passed a context with a valid local candidate
     // either way, evaluating the this lambda should be OK
     auto test_compare_refs = [c12{m_compare_type1}, c23{m_compare_type2}]
         (const auto& ref1, const auto& ref2, const auto& ref3, const ScriptingContext& cx)
