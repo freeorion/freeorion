@@ -76,7 +76,7 @@ namespace {
         auto& from_set = domain_matches ? matches : non_matches;
         auto& to_set = domain_matches ? non_matches : matches;
 
-        // checking for from_set.size() == 1 and/or to_set.empty() and early exiting didn't seem to speed up evaluation
+        // checking for from_set.size() == 1 and/or to_set.empty() and early exiting didn't seem to speed up evaluation in general case
 
         auto part_it = std::stable_partition(from_set.begin(), from_set.end(),
             [pred, domain_matches](const auto* o) { return pred(o) == domain_matches; });
@@ -1726,32 +1726,139 @@ std::unique_ptr<Condition> Homeworld::Clone() const
 ///////////////////////////////////////////////////////////
 // Capital                                               //
 ///////////////////////////////////////////////////////////
-bool Capital::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
+Capital::Capital(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
+    Condition(!empire_id || empire_id->RootCandidateInvariant(),
+              !empire_id || empire_id->TargetInvariant(),
+              !empire_id || empire_id->SourceInvariant()),
+    m_empire_id(std::move(empire_id))
+{}
+
+bool Capital::operator==(const Condition& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Capital& rhs_ = static_cast<const Capital&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_empire_id)
+
+    return true;
+}
 
 void Capital::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                    ObjectSet& non_matches, SearchDomain search_domain) const
 {
-    auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const UniverseObject* obj) {
-        return std::any_of(
-            capitals.begin(), capitals.end(),
-            [obj_id{obj->ID()}](const int cap_id) noexcept { return cap_id == obj_id; });
-    };
+    if (m_empire_id) {
+        const bool simple_eval_safe = m_empire_id->ConstantExpr() ||
+            (m_empire_id->LocalCandidateInvariant() &&
+             (parent_context.condition_root_candidate || RootCandidateInvariant()));
 
-    const auto sz = (search_domain == SearchDomain::MATCHES) ? matches.size() : non_matches.size();
-    if (sz == 1) { // in testing, this was faster for a single candidate than setting up the loop stuff
-        const bool test_val = search_domain == SearchDomain::MATCHES;
-        auto& from = test_val ? matches : non_matches;
-        auto& to = test_val ? non_matches : matches;
-        auto* obj = from.front();
+        if (simple_eval_safe) {
+            const auto empire = parent_context.GetEmpire(m_empire_id->Eval(parent_context));
+            if (!empire) {
+                // no such empire, match nothing
+                if (search_domain == SearchDomain::MATCHES) {
+                    // move all objects from matches to non_matches
+                    non_matches.insert(non_matches.end(), matches.begin(), matches.end());
+                    matches.clear();
+                }
+            } else {
+                // match only objects with ID same as the empire's capital
+                const auto capital_id = empire->CapitalID();
+                EvalImpl(matches, non_matches, search_domain,
+                        [capital_id](const auto* obj) { return obj->ID() == capital_id; });
+            }
+        } else {
+            // ID of empire can be different for each candidate object, so need to
+            // get empire ID (and thus its capital ID) separately for each object
+            auto is_specific_capital = [this, &parent_context](const auto* candidate) {
+                const ScriptingContext local_context{parent_context, candidate};
+                const auto empire = local_context.GetEmpire(m_empire_id->Eval(local_context));
+                return empire && empire->CapitalID() == candidate->ID();
+            };
 
-        if (is_capital(obj) != test_val) {
-            to.push_back(obj);
-            from.clear();
+            EvalImpl(matches, non_matches, search_domain, is_specific_capital);
         }
 
     } else {
-        EvalImpl(matches, non_matches, search_domain, is_capital);
+        // check if candidates are capitals of any empire
+        auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const UniverseObject* obj) {
+            return std::any_of(
+                capitals.begin(), capitals.end(),
+                [obj_id{obj->ID()}](const int cap_id) noexcept { return cap_id == obj_id; });
+        };
+
+        const auto sz = (search_domain == SearchDomain::MATCHES) ? matches.size() : non_matches.size();
+        if (sz == 1) { // in testing, this was faster for a single candidate than setting up the loop stuff
+            const bool test_val = search_domain == SearchDomain::MATCHES;
+            auto& from = test_val ? matches : non_matches;
+            auto& to = test_val ? non_matches : matches;
+            auto* obj = from.front();
+
+            if (is_capital(obj) != test_val) {
+                to.push_back(obj);
+                from.clear();
+            }
+
+        } else {
+            EvalImpl(matches, non_matches, search_domain, is_capital);
+        }
+    }
+}
+
+bool Capital::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
+    if (m_empire_id) {
+        const bool simple_eval_safe = m_empire_id->ConstantExpr() ||
+            (m_empire_id->LocalCandidateInvariant() &&
+             (parent_context.condition_root_candidate || RootCandidateInvariant()));
+
+        if (simple_eval_safe) {
+            // match object with ID of the specified empire's capital
+            const auto empire = parent_context.GetEmpire(m_empire_id->Eval(parent_context));
+            if (!empire)
+                return false;
+            const auto cid = empire->CapitalID();
+            return std::any_of(candidates.begin(), candidates.end(),
+                               [cid](const auto* candidate) { return candidate->ID() == cid; });
+
+        } else {
+            // ID of empire can be different for each candidate object, so need to
+            // get empire ID (and thus its capital ID) separately for each object
+            auto is_specific_capital = [this, &parent_context](const auto* candidate) {
+                const ScriptingContext local_context{parent_context, candidate};
+                const auto empire = local_context.GetEmpire(m_empire_id->Eval(local_context));
+                return empire && empire->CapitalID() == candidate->ID();
+            };
+
+            return std::any_of(candidates.begin(), candidates.end(), is_specific_capital);
+        }
+
+    } else {
+        // check if candidates are capitals of any empire
+        auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const UniverseObject* obj) {
+            return std::any_of(
+                capitals.begin(), capitals.end(),
+                [obj_id{obj->ID()}](const int cap_id) noexcept { return cap_id == obj_id; });
+        };
+
+        return std::any_of(candidates.begin(), candidates.end(), is_capital);
+    }
+}
+
+bool Capital::EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const {
+    if (!candidate)
+        return false;
+    if (m_empire_id) {
+        const ScriptingContext candidate_context{parent_context, candidate};
+        const auto empire_id = m_empire_id->Eval(candidate_context);
+        const auto empire = parent_context.GetEmpire(empire_id);
+        return empire && empire->CapitalID() == candidate->ID();
+
+    } else {
+        const auto& capital_ids{parent_context.Empires().CapitalIDs()};
+        return std::any_of(capital_ids.begin(), capital_ids.end(),
+                           [id{candidate->ID()}](const auto cid) { return cid == id; });
     }
 }
 
@@ -1770,9 +1877,14 @@ bool Capital::Match(const ScriptingContext& local_context) const {
         ErrorLogger(conditions) << "Capital::Match passed no candidate object";
         return false;
     }
-    const auto capitals{local_context.Empires().CapitalIDs()};
-    return std::any_of(capitals.begin(), capitals.end(),
-                       [candidate_id{candidate->ID()}](const auto cap_id) { return cap_id == candidate_id; });
+    if (m_empire_id) {
+        const auto empire = local_context.GetEmpire(m_empire_id->Eval(local_context));
+        return empire && empire->CapitalID() == candidate->ID();
+    } else {
+        const auto capitals{local_context.Empires().CapitalIDs()};
+        return std::any_of(capitals.begin(), capitals.end(),
+                           [candidate_id{candidate->ID()}](const auto cap_id) { return cap_id == candidate_id; });
+    }
 }
 
 void Capital::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -1797,8 +1909,12 @@ uint32_t Capital::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> Capital::Clone() const
-{ return std::make_unique<Capital>(); }
+std::unique_ptr<Condition> Capital::Clone() const {
+    if (m_empire_id)
+        return std::make_unique<Capital>(m_empire_id->Clone());
+    else
+        return std::make_unique<Capital>();
+}
 
 ///////////////////////////////////////////////////////////
 // Monster                                               //
@@ -5031,9 +5147,9 @@ bool Enqueued::operator==(const Condition& rhs) const {
 }
 
 namespace {
-    int NumberOnQueue(const ProductionQueue& queue, BuildType build_type, const int location_id,
-                      const Universe& universe,
-                      const std::string& name = "", int design_id = INVALID_DESIGN_ID)
+    [[nodiscard]] int NumberOnQueue(const ProductionQueue& queue, const BuildType build_type,
+                                    const int location_id, const Universe& universe,
+                                    const std::string& name = "", const int design_id = INVALID_DESIGN_ID)
     {
         int retval = 0;
         for (const auto& element : queue) {
@@ -5066,7 +5182,7 @@ namespace {
 
     struct EnqueuedSimpleMatch {
         EnqueuedSimpleMatch(BuildType build_type, const std::string& name, int design_id,
-                            int empire_id, int low, int high, const ScriptingContext& context) :
+                            int empire_id, int low, int high, const ScriptingContext& context) noexcept :
             m_build_type(build_type),
             m_name(name),
             m_design_id(design_id),
@@ -5075,6 +5191,7 @@ namespace {
             m_high(high),
             m_context(context)
         {}
+
         bool operator()(const UniverseObject* candidate) const {
             if (!candidate)
                 return false;
@@ -11011,14 +11128,13 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
     */
 }
 
-
 bool And::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
     if (m_operands.empty() || candidates.empty())
         return false;
     if (candidates.size() == 1 && !candidates.front())
         return false;
 
-    static constexpr auto random_pick = false;
+    static constexpr auto random_pick = false; // enable to A/B test looping over candidates first instead of operands first
     if constexpr (random_pick) {
         if (RandInt(1, 10000) >= 5000) {
             return std::any_of(candidates.begin(), candidates.end(),
@@ -11040,6 +11156,13 @@ bool And::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candi
             return false;
     }
     return true;
+}
+
+bool And::EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const {
+    return candidate &&
+        std::all_of(m_operands.begin(), m_operands.end(),
+                    [candidate, &parent_context](const auto& op)
+                    { return op->EvalOne(parent_context, candidate); });
 }
 
 std::string And::Description(bool negated) const {
@@ -11210,6 +11333,13 @@ bool Or::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candid
     */
 }
 
+bool Or::EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const {
+    return candidate &&
+        std::any_of(m_operands.begin(), m_operands.end(),
+                    [candidate, &parent_context](const auto& op)
+                    { return op->EvalOne(parent_context, candidate); });
+}
+
 std::string Or::Description(bool negated) const {
     std::string values_str;
     if (m_operands.size() == 1) {
@@ -11375,6 +11505,9 @@ bool Not::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candi
     //m_operand->Eval(parent_context, potential_matches, non_matches, SearchDomain::MATCHES);
     //return !non_matches.empty(); // if non_matches is not empty, than something initially in potential_matches was not matched by m_operand
 }
+
+bool Not::EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const
+{ return !m_operand->EvalOne(parent_context, candidate); }
 
 std::string Not::Description(bool negated) const
 { return m_operand->Description(!negated); }
