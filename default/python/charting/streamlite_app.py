@@ -25,7 +25,7 @@ def plot_for_attribute(ais_data, attribute):
         alt.Chart(source)
         .mark_line(interpolate="basis")
         .encode(
-            x=alt.X("turn", axis=alt.Axis(grid=True)),
+            x=alt.X("turn", axis=alt.Axis(grid=True, tickMinStep=1)),
             y=f"{attribute}:Q",
             color=alt.Color("empire_id:N", sort=empires),
             opacity=alt.condition(selection, alt.value(1), alt.value(0.2)),
@@ -36,6 +36,7 @@ def plot_for_attribute(ais_data, attribute):
     )
 
     st.altair_chart(chart, use_container_width=True)
+    # st.line_chart(data=ais_data, *, x=, y=None, width=0, height=0, use_container_width=True)
 
 
 def get_source(ais_data, attribute):

@@ -10,7 +10,9 @@ All operation are relative to this folder.
 pip install requirements_charts.txt
 ```
 
-## Run
+## Run  
+
+Execute in repo root:
 ```shell
-streamlit run charting\streamlite_app.py
+streamlit run default/python/charting/streamlite_app.py
 ```
