@@ -322,30 +322,20 @@ namespace {
     }
 }
 
-
-ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_) :
-    build_type(build_type_)
-{
-    if (build_type_ == BuildType::BT_STOCKPILE)
-        name = UserStringNop("PROJECT_BT_STOCKPILE");
-}
-
-ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, std::string name_) :
+ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, int design_id_,
+                                                const Universe& universe) :
     build_type(build_type_),
-    name(name_)
+    design_id(design_id_),
+    name([bt{build_type_}, id{design_id_}](const Universe& u) -> std::string {
+            if (bt == BuildType::BT_SHIP) {
+                try {
+                    if (const ShipDesign* ship_design = u.GetShipDesign(id))
+                        return ship_design->Name();
+                } catch (...) {}
+            }
+            return std::string{};
+         }(universe))
 {}
-
-ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, int design_id_, const Universe& universe) :
-    build_type(build_type_),
-    design_id(design_id_)
-{
-    if (build_type == BuildType::BT_SHIP) {
-        if (const ShipDesign* ship_design = universe.GetShipDesign(design_id))
-            name = ship_design->Name();
-        else
-            ErrorLogger() << "ProductionItem::ProductionItem couldn't get ship design with id: " << design_id;
-    }
-}
 
 bool ProductionQueue::ProductionItem::CostIsProductionLocationInvariant(const Universe& universe) const {
     if (build_type == BuildType::BT_BUILDING) {
@@ -389,7 +379,9 @@ std::pair<float, int> ProductionQueue::ProductionItem::ProductionCostAndTime(
     return {-1.0f, -1};
 }
 
-bool ProductionQueue::ProductionItem::EnqueueConditionPassedAt(int location_id, const ScriptingContext& context) const {
+bool ProductionQueue::ProductionItem::EnqueueConditionPassedAt(int location_id,
+                                                               const ScriptingContext& context) const
+{
     switch (build_type) {
     case BuildType::BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
@@ -410,7 +402,7 @@ bool ProductionQueue::ProductionItem::EnqueueConditionPassedAt(int location_id, 
     }
 }
 
-bool ProductionQueue::ProductionItem::operator<(const ProductionItem& rhs) const {
+bool ProductionQueue::ProductionItem::operator<(const ProductionItem& rhs) const noexcept {
     if (build_type < rhs.build_type)
         return true;
     if (build_type > rhs.build_type)
