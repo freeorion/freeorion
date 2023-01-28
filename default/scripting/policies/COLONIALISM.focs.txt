@@ -23,38 +23,38 @@ Policy
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 
-        // industry-focused planets collect industry output from neutral planets that are in nearby systems in the supply network
-        EffectsGroup
+        EffectsGroup // increase industry of industry-focused planets planets when there are neutral planets nearby and supply-connected
+            // targets need to be connected to at least one neutral planet to take industry from...
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_INDUSTRY"
-                ResourceSupplyConnected empire = Source.Owner condition = And [ // needs to be connected to at least one candidate to take industry from...
-                    Not InSystem id = RootCandidate.SystemID
+                ResourceSupplyConnected empire = Source.Owner condition = And [
                     Planet
                     Species
                     Unowned
                     WithinStarlaneJumps jumps = 3 condition = RootCandidate
                 ]
             ]
+
+            // add to the industry of planets when taking from nearby planets, splitting the taken industry evenly for multiple takers
             effects = SetTargetIndustry value = Value +
-                (Statistic Sum
-                    value = (LocalCandidate.Industry / max(1.0, Statistic Count condition = And [ // adjust industry of planets that are collected from by the number of planets that might be simultaneously taking from them
-                        Not InSystem id = RootCandidate.SystemID
-                        Planet
-                        OwnedBy empire = Source.Owner
-                        Focus type = "FOCUS_INDUSTRY"
-                        ResourceSupplyConnected empire = Source.Owner condition = And [
-                            Not InSystem id = RootCandidate.SystemID
+                (Statistic Sum  // add up industry of taken-from planets
+                    value = (LocalCandidate.Industry
+                        / max(1.0, Statistic Count condition = And [
+                            // adjust industry of planets that are taken from, by the number of planets that might be simultaneously taking from them
                             Planet
-                            Species
                             OwnedBy empire = Source.Owner
                             Focus type = "FOCUS_INDUSTRY"
-                            WithinStarlaneJumps jumps = 3 condition = RootCandidate
-                        ]
-                    ]))
+                            ResourceSupplyConnected empire = Source.Owner condition = And [
+                                Planet
+                                Species
+                                OwnedBy empire = Source.Owner
+                                Focus type = "FOCUS_INDUSTRY"
+                                WithinStarlaneJumps jumps = 3 condition = RootCandidate
+                            ]
+                        ]))
                     condition = And [ // collect industry from neutral populated planets that are within 3 jumps and that are resource supply connected to the target planet
-                        Not InSystem id = Target.SystemID
                         Planet
                         Unowned
                         Species
