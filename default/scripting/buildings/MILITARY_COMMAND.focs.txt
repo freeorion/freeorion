@@ -19,7 +19,11 @@ BuildingType
         [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
     
         EffectsGroup
-            scope = Source
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Capital
+            ]
             activation = ContainedBy And [
                 Object id = Source.PlanetID
                 OwnedBy empire = Source.Owner
@@ -28,7 +32,11 @@ BuildingType
             effects = SetEmpireMeter empire = Source.Owner meter = "MILITARY_CATEGORY_NUM_POLICY_SLOTS" value = Value + 1
 
         EffectsGroup
-            scope = Source
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Capital                
+            ]
             activation = (5 <= SpeciesShipsDestroyed empire = Source.Owner)
             stackinggroup = "MILITARY_COMMAND_SLOT_METER_EFFECT2"
             effects =
