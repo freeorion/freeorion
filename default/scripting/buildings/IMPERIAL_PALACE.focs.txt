@@ -57,7 +57,12 @@ BuildingType
 
         // one economic policy slot
         EffectsGroup
-            scope = Source
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+                Capital
+            ]
+            stackinggroup = "IMPERIAL_PALACE_ECO_SLOT"
             effects = SetEmpireMeter empire = Source.Owner
                                      meter = "ECONOMIC_CATEGORY_NUM_POLICY_SLOTS" value = Value + 1
 
@@ -67,6 +72,7 @@ BuildingType
                 Object id = Source.PlanetID
                 Planet
                 OwnedBy empire = Source.ProducedByEmpireID
+                Capital
             ]
             stackinggroup = "IMPERIAL_PALACE_SUPPLY_EFFECT"
             effects = SetMaxSupply value = Value
@@ -78,6 +84,7 @@ BuildingType
                 Object id = Source.PlanetID
                 Planet
                 OwnedBy empire = Source.ProducedByEmpireID
+                Capital
             ]
             activation = Not Number low = 1 condition = And [
                 Building name = "BLD_MEGALITH"
