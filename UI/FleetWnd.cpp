@@ -2965,7 +2965,7 @@ void FleetWnd::SetStatIconValues() {
 
             if (universe.GetShipDesign(ship->DesignID())) {
                 ship_count++;
-                damage_tally += ship->TotalWeaponsShipDamage(context, 0.0f, false);
+                damage_tally += ship->TotalWeaponsShipDamage(context, 0.0f, true);
                 destroy_tally += ship->TotalWeaponsFighterDamage(context, true); // TODO: Is it inconsistent to count fighters killing fighters here?
                 fighters_tally += ship->FighterCount();
                 structure_tally += ship->GetMeter(MeterType::METER_STRUCTURE)->Initial();
