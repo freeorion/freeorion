@@ -15911,7 +15911,9 @@ FU_ZERO_FUEL
 Zero-Point Fuel Generator
 
 FU_ZERO_FUEL_DESC
-Generates energy using Zero-Point generation and converts it into [[metertype METER_FUEL]] using matter-energy conversion techniques.
+'''Refills its ship's fuel every turn.
+
+Generates energy using Zero-Point generation and converts it into [[metertype METER_FUEL]] using matter-energy conversion.'''
 
 FU_RAMSCOOP
 Ramscoop

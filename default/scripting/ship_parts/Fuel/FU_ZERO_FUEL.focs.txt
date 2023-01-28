@@ -3,8 +3,7 @@ Part
     description = "FU_ZERO_FUEL_DESC"
     exclusions = "SH_COLONY_BASE"
     class = Fuel
-    capacity = 0
-    NoDefaultCapacityEffect
+    capacity = 20
     mountableSlotTypes = Core
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 5
