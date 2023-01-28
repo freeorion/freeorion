@@ -1801,8 +1801,18 @@ bool GiveObjectToEmpireOrder::Check(int empire_id, int object_id, int recipient_
         ErrorLogger() << "IssueGiveObjectToEmpireOrder : given invalid recipient empire id";
         return false;
     }
+    const auto giver_empire = context.GetEmpire(empire_id);
+    if (!giver_empire) {
+        ErrorLogger() << "IssueGiveObjectToEmpireOrder : given invalid giver empire id";
+        return false;
+    }
+    if (giver_empire->CapitalID() == object_id) {
+        ErrorLogger() << "IssueGiverObjectToEmpireOrder : giving away capital not allowed";
+        return false;
+    }
 
-    auto dip = context.ContextDiploStatus(empire_id, recipient_empire_id);
+
+    const auto dip = context.ContextDiploStatus(empire_id, recipient_empire_id);
     if (dip < DiplomaticStatus::DIPLO_PEACE) {
         ErrorLogger() << "IssueGiveObjectToEmpireOrder : attempting to give to empire not at peace";
         return false;
@@ -1810,7 +1820,7 @@ bool GiveObjectToEmpireOrder::Check(int empire_id, int object_id, int recipient_
 
     const ObjectMap& objects{context.ContextObjects()};
 
-    auto obj = objects.get(object_id);
+    const auto obj = objects.get(object_id);
     if (!obj) {
         ErrorLogger() << "IssueGiveObjectToEmpireOrder : passed invalid object id";
         return false;
@@ -1821,7 +1831,7 @@ bool GiveObjectToEmpireOrder::Check(int empire_id, int object_id, int recipient_
         return false;
     }
 
-    auto system = objects.get<System>(obj->SystemID());
+    const auto system = objects.get<System>(obj->SystemID());
     if (!system) {
         ErrorLogger() << "IssueGiveObjectToEmpireOrder : couldn't get system of object";
         return false;
@@ -1834,7 +1844,7 @@ bool GiveObjectToEmpireOrder::Check(int empire_id, int object_id, int recipient_
         return false;
     }
 
-    auto system_objects = objects.findRaw<const UniverseObject>(system->ObjectIDs());
+    const auto system_objects = objects.findRaw<const UniverseObject>(system->ObjectIDs());
     if (!std::any_of(system_objects.begin(), system_objects.end(),
                      [recipient_empire_id](const auto& o){ return o->Owner() == recipient_empire_id; }))
     {
