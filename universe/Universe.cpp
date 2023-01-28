@@ -3017,7 +3017,7 @@ std::set<int> Universe::RecursiveDestroy(int object_id, const std::vector<int>& 
         Destroy(object_id, empire_ids);
         retval.insert(object_id);
 
-    } else if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP) {
+    } else if (obj->ObjectType() == UniverseObjectType::OBJ_FLEET) {
         auto obj_fleet = std::static_pointer_cast<Fleet>(std::move(obj));
         for (int ship_id : obj_fleet->ShipIDs()) {
             if (system)
