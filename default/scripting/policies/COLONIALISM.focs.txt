@@ -41,19 +41,14 @@ Policy
             effects = SetTargetIndustry value = Value +
                 (Statistic Sum  // add up industry of taken-from planets
                     value = (LocalCandidate.Industry
-                        / max(1.0, Statistic Count condition = And [
+                        / max(1.0, (Statistic Count condition = And [
                             // adjust industry of planets that are taken from, by the number of planets that might be simultaneously taking from them
                             Planet
                             OwnedBy empire = Source.Owner
                             Focus type = "FOCUS_INDUSTRY"
-                            ResourceSupplyConnected empire = Source.Owner condition = And [
-                                Planet
-                                Species
-                                OwnedBy empire = Source.Owner
-                                Focus type = "FOCUS_INDUSTRY"
-                                WithinStarlaneJumps jumps = 3 condition = RootCandidate
-                            ]
-                        ]))
+                            WithinStarlaneJumps jumps = 3 condition = RootCandidate
+                            ResourceSupplyConnected empire = Source.Owner condition = RootCandidate
+                        ])))
                     condition = And [ // collect industry from neutral populated planets that are within 3 jumps and that are resource supply connected to the target planet
                         Planet
                         Unowned
