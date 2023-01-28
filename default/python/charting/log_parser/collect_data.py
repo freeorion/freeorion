@@ -1,7 +1,7 @@
 import streamlit as st
-from extract_data import process_state
-from file_reader import return_file_list
-from log_tokenizer import tokenize_log
+from log_parser.extract_data import process_state
+from log_parser.file_reader import return_file_list
+from log_parser.log_tokenizer import tokenize_log
 
 
 def get_ais_data():
