@@ -2770,21 +2770,24 @@ int FleetDetailPanel::ShipInRow(GG::ListBox::iterator it) const {
 ////////////////////////////////////////////////
 namespace {
     /** \p create or grow a bounding \p box from \p pt. */
-    GG::Rect CreateOrGrowBox(bool create, const GG::Rect box, const GG::Pt pt) {
-        if (create)
-            return GG::Rect(pt, pt);
-        else
-            return GG::Rect(
+    [[nodiscard]] constexpr GG::Rect CreateOrGrowBox(bool create, const GG::Rect box, const GG::Pt pt)
+        noexcept(noexcept(std::min(GG::Y1, GG::Y0)) && noexcept(GG::Rect{GG::Pt{GG::X0, GG::Y1}, GG::Pt{GG::X1, GG::Y0}}))
+    {
+        if (create) {
+            return GG::Rect{pt, pt};
+        } else {
+            return GG::Rect{
                 std::min(box.Left(),    pt.x),
                 std::min(box.Top(),     pt.y),
                 std::max(box.Right(),   pt.x),
-                std::max(box.Bottom(),  pt.y));
+                std::max(box.Bottom(),  pt.y)
+            };
+        }
     }
 
     /** Is \p ll smaller or equal to the size of \p rr? */
-    bool SmallerOrEqual(GG::Rect ll, GG::Rect rr) {
-        return (ll.Width() <= rr.Width() && ll.Height() <= rr.Height());
-    }
+    [[nodiscard]] constexpr bool SmallerOrEqual(const GG::Rect ll, const GG::Rect rr) noexcept
+    { return (ll.Width() <= rr.Width() && ll.Height() <= rr.Height()); }
 }
 
 FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled,
@@ -2815,15 +2818,14 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
         if (!fleet)
             continue;
 
-        auto fleet_loc = GG::Pt(GG::X(fleet->X()), GG::Y(fleet->Y()));
+        const auto fleet_loc = GG::Pt(GG::X(fleet->X()), GG::Y(fleet->Y()));
         // Grow the fleets bounding box
         m_bounding_box = CreateOrGrowBox(is_first_fleet, m_bounding_box, fleet_loc);
         is_first_fleet = false;
     }
     m_bounding_box = GG::Rect(m_bounding_box.UpperLeft(),
-                              m_bounding_box.LowerRight()
-                              + GG::Pt(GG::X(allowed_bounding_box_leeway),
-                                       GG::Y(allowed_bounding_box_leeway)));
+                              m_bounding_box.LowerRight() +
+                              GG::Pt(GG::X(allowed_bounding_box_leeway), GG::Y(allowed_bounding_box_leeway)));
 
     m_fleet_detail_panel = GG::Wnd::Create<FleetDetailPanel>(GG::X1, GG::Y1, selected_fleet_id,
                                                              m_order_issuing_enabled);
@@ -2833,7 +2835,8 @@ void FleetWnd::CompleteConstruction() {
     Sound::TempUISoundDisabler sound_disabler;
 
     // add fleet aggregate stat icons
-    int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
+    const int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
+    const auto si_sz = StatIconSize();
 
     m_stat_icons.reserve(7);
     for (auto [meter_type, icon, text] : {
@@ -2847,7 +2850,7 @@ void FleetWnd::CompleteConstruction() {
             std::make_tuple(MeterType::METER_POPULATION,    ColonyIcon(),       UserStringNop("FW_FLEET_COLONY_SUMMARY")),
         })
     {
-        auto stat_icon = GG::Wnd::Create<StatisticIcon>(icon, 0, 0, false, StatIconSize().x, StatIconSize().y);
+        auto stat_icon = GG::Wnd::Create<StatisticIcon>(std::move(icon), 0, 0, false, si_sz.x, si_sz.y);
         m_stat_icons.emplace_back(meter_type, stat_icon);
         stat_icon->SetBrowseModeTime(tooltip_delay);
         stat_icon->SetBrowseText(UserString(text));
