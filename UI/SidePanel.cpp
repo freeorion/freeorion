@@ -1689,12 +1689,11 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
 
     if (can_colonize) {
         // show colonize button; in case the chosen colony ship is not actually
-        // selected, but has been chosen by AutomaticallyChosenColonyShip,
-        // determine what population capacity to put on the conolnize buttone by
-        // temporarily setting ownership (for tech) and species of the planet,
-        // reading the target population, then setting the planet back as it was.
-        // The results are cached for the duration of the turn in the
-        // colony_projections map.
+        // selected, but has been chosen by AutomaticallyChosenColonyShip, determine
+        // what population capacity to put on the colonize button by temporarily
+        // setting ownership and species of the planet, calculating the target
+        // population, then setting the planet back as it was. The results are
+        // cached for the duration of the turn in the colony_projections map.
         AttachChild(m_colonize_button);
         double planet_capacity;
         auto this_pair = std::pair(selected_colony_ship->ID(), m_planet_id);
