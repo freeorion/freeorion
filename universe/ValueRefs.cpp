@@ -1048,6 +1048,8 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         ship_property = &Ship::LastTurnActiveInCombat;
     else if (property_name == "LastTurnResupplied")
         ship_property = &Ship::LastResuppliedOnTurn;
+    else if (property_name == "OrderedColonizePlanetID")
+        ship_property = &Ship::OrderedColonizePlanet;
 
     if (ship_property) {
         if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {

@@ -313,6 +313,7 @@
     (Orbit)                                     \
     (OrderedAlternativesOf)                     \
     (OrderedBombardedBy)                        \
+    (OrderedColonizePlanetID)                   \
     (OriginalType)                              \
     (OutpostsOwned)                             \
     (OwnedBy)                                   \
