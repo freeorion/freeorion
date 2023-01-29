@@ -54,6 +54,7 @@ parse::detail::simple_int_parser_rules::simple_int_parser_rules(const parse::lex
         |   tok.TurnsSinceLastConquered_
         |   tok.ETA_
         |   tok.LaunchedFrom_
+        |   tok.OrderedColonizePlanetID_
         ;
 
     free_variable_name
