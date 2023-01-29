@@ -1888,7 +1888,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     int base_seed = 123454321; // arbitrary number
     if (GetGameRules().Get<bool>("RULE_RESEED_PRNG_SERVER")) {
         base_seed += std::hash<std::string>{}(combat_info.galaxy_setup_data.GetSeed()); // probably not consistent across different platforms, but that's OK for this use
-        base_seed += (*combat_info.objects.allRaw().begin())->ID() + combat_info.turn;
+        base_seed += combat_info.objects.allWithIDs().begin()->first + combat_info.turn;
     }
 
     // compile list of valid objects to attack or be attacked in this combat
