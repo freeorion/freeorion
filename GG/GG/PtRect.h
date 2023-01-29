@@ -72,10 +72,10 @@ struct GG_API Pt
     { return x < rhs.x ? true : (x == rhs.x ? (y < rhs.y ? true : false) : false); }
 
     [[nodiscard]] constexpr Pt operator-() const noexcept { return Pt(-x, -y); }
-    constexpr Pt& operator+=(Pt rhs)            { x += rhs.x; y += rhs.y; return *this; }
-    constexpr Pt& operator-=(Pt rhs)            { x -= rhs.x; y -= rhs.y; return *this; }
-    constexpr Pt& operator/=(const double rhs)  { x /= rhs;   y /= rhs;   return *this; }
-    constexpr Pt& operator*=(const double rhs)  { x *= rhs;   y *= rhs;   return *this; }
+    constexpr Pt& operator+=(Pt rhs) noexcept             { x += rhs.x; y += rhs.y; return *this; }
+    constexpr Pt& operator-=(Pt rhs) noexcept             { x -= rhs.x; y -= rhs.y; return *this; }
+    constexpr Pt& operator/=(const double rhs) noexcept   { x /= rhs;   y /= rhs;   return *this; }
+    constexpr Pt& operator*=(const double rhs) noexcept   { x *= rhs;   y *= rhs;   return *this; }
 
     [[nodiscard]] operator std::string() const;
 
@@ -85,16 +85,16 @@ struct GG_API Pt
 
 GG_API std::ostream& operator<<(std::ostream& os, Pt pt);
 
-[[nodiscard]] GG_API constexpr inline bool operator==(Pt lhs, Pt rhs) noexcept { return lhs.x == rhs.x && lhs.y == rhs.y; } ///< returns true if \a lhs is identical to \a rhs
-[[nodiscard]] GG_API constexpr inline bool operator!=(Pt lhs, Pt rhs) noexcept { return !(lhs == rhs); }                    ///< returns true if \a lhs differs from \a rhs
-[[nodiscard]] GG_API constexpr inline bool operator<(Pt lhs, Pt rhs) noexcept  { return lhs.x < rhs.x && lhs.y < rhs.y; }   ///< returns true if \a lhs.x and \a lhs.y are both less than the corresponding components of \a rhs
-[[nodiscard]] GG_API constexpr inline bool operator>(Pt lhs, Pt rhs) noexcept  { return lhs.x > rhs.x && lhs.y > rhs.y; }   ///< returns true if \a lhs.x and \a lhs.y are both greater than the corresponding components of \a rhs
-[[nodiscard]] GG_API constexpr inline bool operator<=(Pt lhs, Pt rhs) noexcept { return lhs.x <= rhs.x && lhs.y <= rhs.y; } ///< returns true if \a lhs.x and \a lhs.y are both less than or equal to the corresponding components of \a rhs
-[[nodiscard]] GG_API constexpr inline bool operator>=(Pt lhs, Pt rhs) noexcept { return lhs.x >= rhs.x && lhs.y >= rhs.y; } ///< returns true if \a lhs.x and \a lhs.y are both greater than or equal to the corresponding components of \a rhs
-[[nodiscard]] GG_API constexpr inline Pt   operator+(Pt lhs, Pt rhs)           { return Pt{lhs.x + rhs.x, lhs.y + rhs.y}; } ///< returns the vector sum of \a lhs and \a rhs
-[[nodiscard]] GG_API constexpr inline Pt   operator-(Pt lhs, Pt rhs)           { return Pt{lhs.x - rhs.x, lhs.y - rhs.y}; } ///< returns the vector difference of \a lhs and \a rhs
-[[nodiscard]] GG_API constexpr inline Pt   operator*(Pt lhs, double rhs)              { return Pt{lhs.x * rhs, lhs.y * rhs}; }     ///< returns the vector with components multiplied by \a rhs
-[[nodiscard]] GG_API constexpr inline Pt   operator/(Pt lhs, double rhs)              { return Pt{lhs.x / rhs, lhs.y / rhs}; }     ///< returns the vector with components divided by \a rhs
+[[nodiscard]] GG_API constexpr inline bool operator==(Pt lhs, Pt rhs) noexcept    { return lhs.x == rhs.x && lhs.y == rhs.y; } ///< returns true if \a lhs is identical to \a rhs
+[[nodiscard]] GG_API constexpr inline bool operator!=(Pt lhs, Pt rhs) noexcept    { return !(lhs == rhs); }                    ///< returns true if \a lhs differs from \a rhs
+[[nodiscard]] GG_API constexpr inline bool operator<(Pt lhs, Pt rhs) noexcept     { return lhs.x < rhs.x && lhs.y < rhs.y; }   ///< returns true if \a lhs.x and \a lhs.y are both less than the corresponding components of \a rhs
+[[nodiscard]] GG_API constexpr inline bool operator>(Pt lhs, Pt rhs) noexcept     { return lhs.x > rhs.x && lhs.y > rhs.y; }   ///< returns true if \a lhs.x and \a lhs.y are both greater than the corresponding components of \a rhs
+[[nodiscard]] GG_API constexpr inline bool operator<=(Pt lhs, Pt rhs) noexcept    { return lhs.x <= rhs.x && lhs.y <= rhs.y; } ///< returns true if \a lhs.x and \a lhs.y are both less than or equal to the corresponding components of \a rhs
+[[nodiscard]] GG_API constexpr inline bool operator>=(Pt lhs, Pt rhs) noexcept    { return lhs.x >= rhs.x && lhs.y >= rhs.y; } ///< returns true if \a lhs.x and \a lhs.y are both greater than or equal to the corresponding components of \a rhs
+[[nodiscard]] GG_API constexpr inline Pt   operator+(Pt lhs, Pt rhs) noexcept     { return Pt{lhs.x + rhs.x, lhs.y + rhs.y}; } ///< returns the vector sum of \a lhs and \a rhs
+[[nodiscard]] GG_API constexpr inline Pt   operator-(Pt lhs, Pt rhs) noexcept     { return Pt{lhs.x - rhs.x, lhs.y - rhs.y}; } ///< returns the vector difference of \a lhs and \a rhs
+[[nodiscard]] GG_API constexpr inline Pt   operator*(Pt lhs, double rhs) noexcept { return Pt{lhs.x * rhs, lhs.y * rhs}; }     ///< returns the vector with components multiplied by \a rhs
+[[nodiscard]] GG_API constexpr inline Pt   operator/(Pt lhs, double rhs) noexcept { return Pt{lhs.x / rhs, lhs.y / rhs}; }     ///< returns the vector with components divided by \a rhs
 
 /** \brief A GG rectangle class.
 
@@ -103,12 +103,12 @@ struct GG_API Rect
 {
     constexpr Rect() = default;
 
-    constexpr Rect(Pt pt1, Pt pt2) :
+    constexpr Rect(const Pt pt1, const Pt pt2) noexcept(noexcept(std::min(X0, X1))) :
         ul{std::min(pt1.x, pt2.x), std::min(pt1.y, pt2.y)},
         lr{std::max(pt1.x, pt2.x), std::max(pt1.y, pt2.y)}
     {}
 
-    constexpr Rect(X x1, Y y1, X x2, Y y2) :
+    constexpr Rect(X x1, Y y1, X x2, Y y2) noexcept :
         ul{x1, y1},
         lr{x2, y2}
     {}
@@ -126,8 +126,8 @@ struct GG_API Rect
 
     [[nodiscard]] constexpr bool Contains(Pt pt) const noexcept { return ul <= pt && pt < lr; }
 
-    constexpr Rect& operator+=(Pt pt) { ul += pt; lr += pt; return *this; } ///< shifts the Rect by adding \a pt to each corner
-    constexpr Rect& operator-=(Pt pt) { ul -= pt; lr -= pt; return *this; } ///< shifts the Rect by subtracting \a pt from each corner
+    constexpr Rect& operator+=(Pt pt) noexcept { ul += pt; lr += pt; return *this; } ///< shifts the Rect by adding \a pt to each corner
+    constexpr Rect& operator-=(Pt pt) noexcept { ul -= pt; lr -= pt; return *this; } ///< shifts the Rect by subtracting \a pt from each corner
 
     Pt ul; ///< the upper-left corner of the Rect
     Pt lr; ///< the lower-right corner of the Rect
@@ -141,10 +141,10 @@ GG_API std::ostream& operator<<(std::ostream& os, Pt pt); ///< Pt stream-output 
 /** returns true if \a lhs differs from \a rhs */
 [[nodiscard]] GG_API inline constexpr bool operator!=(Rect lhs, Rect rhs) noexcept { return !(lhs == rhs); }
 
-[[nodiscard]] GG_API inline constexpr Rect operator+(Rect rect, Pt pt) { return Rect(rect.ul + pt, rect.lr + pt); } ///< returns \a rect shifted by adding \a pt to each corner
-[[nodiscard]] GG_API inline constexpr Rect operator-(Rect rect, Pt pt) { return Rect(rect.ul - pt, rect.lr - pt); } ///< returns \a rect shifted by subtracting \a pt from each corner
-[[nodiscard]] GG_API inline constexpr Rect operator+(Pt pt, Rect rect) { return rect + pt; } ///< returns \a rect shifted by adding \a pt to each corner
-[[nodiscard]] GG_API inline constexpr Rect operator-(Pt pt, Rect rect) { return rect - pt; } ///< returns \a rect shifted by subtracting \a pt from each corner
+[[nodiscard]] GG_API inline constexpr Rect operator+(Rect rect, Pt pt) noexcept { return Rect(rect.ul + pt, rect.lr + pt); } ///< returns \a rect shifted by adding \a pt to each corner
+[[nodiscard]] GG_API inline constexpr Rect operator-(Rect rect, Pt pt) noexcept { return Rect(rect.ul - pt, rect.lr - pt); } ///< returns \a rect shifted by subtracting \a pt from each corner
+[[nodiscard]] GG_API inline constexpr Rect operator+(Pt pt, Rect rect) noexcept { return rect + pt; } ///< returns \a rect shifted by adding \a pt to each corner
+[[nodiscard]] GG_API inline constexpr Rect operator-(Pt pt, Rect rect) noexcept { return rect - pt; } ///< returns \a rect shifted by subtracting \a pt from each corner
 
 GG_API std::ostream& operator<<(std::ostream& os, Rect rect); ///< Rect stream-output operator for debug output
 
