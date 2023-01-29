@@ -18,6 +18,11 @@ BASE_INFLUENCE_COSTS
                         Species
                         Not Species name = "SP_EXOBOT"
                     ] +
+                    Statistic Count condition = And [
+                        Ship
+                        OwnedBy empire = Source.Owner
+                        (LocalCandidate.OrderedColonizePlanetID != -1)
+                    ] +
                     ((NamedReal name = "OUTPOST_RELATIVE_ADMIN_COUNT" value = 0.25) *
                         (Statistic Count condition = And [
                             Planet
