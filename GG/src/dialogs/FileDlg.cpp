@@ -45,75 +45,84 @@ using namespace boost::spirit::classic;
 // these functors are used by the if_p, while_p, and for_p parsers in UpdateList()
 struct LeadingWildcard
 {
-    LeadingWildcard(const std::string& str) : m_value(!str.empty() && *str.begin() == '*') {}
-    bool operator()() const {return m_value;}
-    bool m_value;
+    constexpr LeadingWildcard(std::string_view str) noexcept :
+        m_value(!str.empty() && str.front() == '*')
+    {}
+    constexpr bool operator()() const noexcept { return m_value; }
+    const bool m_value;
 };
 struct TrailingWildcard
 {
-    TrailingWildcard(const std::string& str) : m_value(!str.empty() && *str.rbegin() == '*') {}
-    bool operator()() const {return m_value;}
-    bool m_value;
+    constexpr TrailingWildcard(std::string_view str) noexcept :
+        m_value(!str.empty() && *str.rbegin() == '*')
+    {}
+    constexpr bool operator()() const noexcept { return m_value; }
+    const bool m_value;
 };
 
 struct Index
 {
-    Index(int i = 0) : m_initial_value(i) {}
-    void operator()() const {value = m_initial_value;}
-    int m_initial_value;
+    constexpr Index(int i = 0) noexcept :
+        m_initial_value(i)
+    {}
+    void operator()() const noexcept { value = m_initial_value; }
+    const int m_initial_value;
     static int value;
 };
 int Index::value;
 struct IndexLess
 {
-    IndexLess(int val) : m_value(val) {}
-    bool operator()() const {return Index::value <  m_value;}
-    int m_value;
+    constexpr IndexLess(int val) noexcept :
+        m_value(val)
+    {}
+    bool operator()() const noexcept { return Index::value <  m_value; }
+    const int m_value;
 };
 struct IndexIncr
 {
-    void operator()() const {++Index::value;}
+    void operator()() const noexcept { ++Index::value; }
 };
 
 struct FrontStringBegin
 {
-    FrontStringBegin(const std::shared_ptr<std::vector<std::string>>& strings) :
-        m_strings(strings)
+    FrontStringBegin(std::shared_ptr<std::vector<std::string>> strings) noexcept :
+        m_strings(std::move(strings))
     {}
 
-    const char* operator()() const {return m_strings->front().c_str();}
+    const char* operator()() const noexcept {return m_strings->front().c_str(); }
 
-    std::shared_ptr<std::vector<std::string>> m_strings;
+    const std::shared_ptr<std::vector<std::string>> m_strings;
 };
 struct FrontStringEnd
 {
-    FrontStringEnd(const std::shared_ptr<std::vector<std::string>>& strings) :
-        m_strings(strings)
+    FrontStringEnd(std::shared_ptr<std::vector<std::string>> strings) noexcept :
+        m_strings(std::move(strings))
     {}
 
-    const char* operator()() const {return m_strings->front().c_str() + m_strings->front().size();}
+    const char* operator()() const noexcept { return m_strings->front().c_str() + m_strings->front().size(); }
 
-    std::shared_ptr<std::vector<std::string>> m_strings;
+    const std::shared_ptr<std::vector<std::string>> m_strings;
 };
 struct IndexedStringBegin
 {
-    IndexedStringBegin(const std::shared_ptr<std::vector<std::string>>& strings) :
-        m_strings(strings)
+    IndexedStringBegin(std::shared_ptr<std::vector<std::string>> strings) noexcept :
+        m_strings(std::move(strings))
     {}
 
-    const char* operator()() const {return (*m_strings)[Index::value].c_str();}
+    const char* operator()() const noexcept { return (*m_strings)[Index::value].c_str(); }
 
-    std::shared_ptr<std::vector<std::string>> m_strings;
+    const std::shared_ptr<std::vector<std::string>> m_strings;
 };
 struct IndexedStringEnd
 {
-    IndexedStringEnd(const std::shared_ptr<std::vector<std::string>>& strings) :
-        m_strings(strings)
+    IndexedStringEnd(const std::shared_ptr<std::vector<std::string>>& strings) noexcept :
+        m_strings(std::move(strings))
     {}
 
-    const char* operator()() const {return (*m_strings)[Index::value].c_str() + (*m_strings)[Index::value].size();}
+    const char* operator()() const noexcept
+    { return (*m_strings)[Index::value].c_str() + (*m_strings)[Index::value].size(); }
 
-    std::shared_ptr<std::vector<std::string>> m_strings;
+    const std::shared_ptr<std::vector<std::string>> m_strings;
 };
 
 bool WindowsRoot(const std::string& root_name)
@@ -327,7 +336,7 @@ void FileDlg::OkHandler(bool double_click)
             OpenDirectory();
         } else if (files.size() == 1) {
             results_valid = true;
-            std::string save_file = *files.begin();
+            std::string save_file = files.front();
             if (m_append_missing_save_extension &&
                 m_file_filters.size() == 1 &&
                 std::count(m_file_filters[0].second.begin(), m_file_filters[0].second.end(), '*') == 1 &&
@@ -668,8 +677,8 @@ void FileDlg::OpenDirectory()
     if (sels.empty())
         return;
 
-    std::string directory;
-    directory = !(***sels.begin()).empty() ? boost::polymorphic_downcast<TextControl*>((***sels.begin()).at(0))->Text() : "";
+    const auto& sels_front = ***sels.begin();
+    auto directory = !sels_front.empty() ? boost::polymorphic_downcast<TextControl*>(sels_front.at(0))->Text() : "";
 
     if (directory.size() < 2 || directory[0] != '[')
         return;
