@@ -35,7 +35,10 @@ namespace {
     }
 
     /// Adds color tags to name_o according to the empires in owner_empire_ids
-    std::string ColorNameByOwners(const std::string& name_o, std::set<int>& owner_empire_ids, const EmpireManager& empires) {
+    std::string ColorNameByOwners(const std::string& name_o,
+                                  std::set<int>& owner_empire_ids,
+                                  const EmpireManager& empires)
+    {
         if (owner_empire_ids.size() < 1) {
             return name_o;
 

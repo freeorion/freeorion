@@ -281,22 +281,22 @@ namespace {
         void StartParsingDesignsFromFileSystem(bool is_new_game);
         void CheckPendingDesigns() const;
 
-        const ShipDesign* GetDesign(const boost::uuids::uuid& uuid) const;
+        const ShipDesign* GetDesign(boost::uuids::uuid uuid) const;
 
         void SaveManifest();
 
         std::list<boost::uuids::uuid>::const_iterator
         InsertBefore(const ShipDesign& design, std::list<boost::uuids::uuid>::const_iterator next);
-        bool MoveBefore(const boost::uuids::uuid& moved_uuid, const boost::uuids::uuid& next_uuid);
-        void Erase(const boost::uuids::uuid& erased_uuid);
+        bool MoveBefore(boost::uuids::uuid moved_uuid, boost::uuids::uuid next_uuid);
+        void Erase(boost::uuids::uuid erased_uuid);
 
     private:
         /** Save the design with the original filename or throw out_of_range. */
-        void SaveDesign(const boost::uuids::uuid &uuid);
+        void SaveDesign(boost::uuids::uuid uuid);
 
         /** SaveDesignConst allows CheckPendingDesigns to correct the designs
             in the saved directory.*/
-        void SaveDesignConst(const boost::uuids::uuid &uuid) const;
+        void SaveDesignConst(boost::uuids::uuid uuid) const;
 
         /** A const version of SaveManifest to allow CheckPendingDesigns to
             correct and save the loaded designs. */
@@ -347,9 +347,7 @@ namespace {
     }
 
     /** Add \p design to the \p is_front of \p empire_id's list of current designs. */
-    void AddSavedDesignToDisplayedDesigns(const boost::uuids::uuid& uuid, int empire_id,
-                                          bool is_front = true)
-    {
+    void AddSavedDesignToDisplayedDesigns(boost::uuids::uuid uuid, int empire_id, bool is_front = true) {
         ScriptingContext context;
 
         const auto empire = context.GetEmpire(empire_id);
@@ -382,7 +380,7 @@ namespace {
 
         auto& current_manager = GetDisplayedDesignsManager();
         const auto& all_ids = current_manager.AllOrderedIDs();
-        const int before_id = (all_ids.empty() || !is_front) ? INVALID_OBJECT_ID : *all_ids.begin() ;
+        const int before_id = (all_ids.empty() || !is_front) ? INVALID_OBJECT_ID : all_ids.front() ;
         current_manager.InsertBefore(order->DesignID(), before_id);
     }
 
@@ -542,9 +540,9 @@ namespace {
         }
     }
 
-    const ShipDesign* SavedDesignsManager::GetDesign(const boost::uuids::uuid& uuid) const {
+    const ShipDesign* SavedDesignsManager::GetDesign(boost::uuids::uuid uuid) const {
         CheckPendingDesigns();
-        const auto& it = m_saved_designs.find(uuid);
+        const auto it = m_saved_designs.find(uuid);
         if (it == m_saved_designs.end())
             return nullptr;
         return it->second.first.get();
@@ -598,9 +596,7 @@ namespace {
         return retval;
     }
 
-    bool SavedDesignsManager::MoveBefore(const boost::uuids::uuid& moved_uuid,
-                                         const boost::uuids::uuid& next_uuid)
-    {
+    bool SavedDesignsManager::MoveBefore(boost::uuids::uuid moved_uuid, boost::uuids::uuid next_uuid) {
         if (moved_uuid == next_uuid)
             return false;
 
@@ -631,7 +627,7 @@ namespace {
         return true;
     }
 
-    void SavedDesignsManager::Erase(const boost::uuids::uuid& erased_uuid) {
+    void SavedDesignsManager::Erase(boost::uuids::uuid erased_uuid) {
         CheckPendingDesigns();
         const auto& saved_design_it = m_saved_designs.find(erased_uuid);
         if (saved_design_it != m_saved_designs.end()) {
@@ -640,15 +636,14 @@ namespace {
             m_saved_designs.erase(erased_uuid);
         }
 
-        const auto& uuid_it = std::find(m_ordered_uuids.begin(), m_ordered_uuids.end(), erased_uuid);
+        const auto uuid_it = std::find(m_ordered_uuids.begin(), m_ordered_uuids.end(), erased_uuid);
         m_ordered_uuids.erase(uuid_it);
     }
 
-    void SavedDesignsManager::SaveDesign(const boost::uuids::uuid &uuid)
-    { SaveDesignConst(uuid); }
+    void SavedDesignsManager::SaveDesign(boost::uuids::uuid uuid) { SaveDesignConst(uuid); }
 
     /** Save the design with the original filename or throw out_of_range..*/
-    void SavedDesignsManager::SaveDesignConst(const boost::uuids::uuid &uuid) const {
+    void SavedDesignsManager::SaveDesignConst(boost::uuids::uuid uuid) const {
         CheckPendingDesigns();
         const auto& design_and_path = m_saved_designs.at(uuid);
 
@@ -2408,13 +2403,12 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
     if (wnds.size() != 1)
         ErrorLogger() << "BasesListBox::ChildrenDraggedAway unexpected informed that multiple Wnds were dragged away...";
     const GG::Wnd* wnd = wnds.front();  // should only be one wnd in list as BasesListBost doesn't allow selection, so dragging is only one-at-a-time
-    const auto control = dynamic_cast<const GG::Control*>(wnd);
-    if (!control)
+    auto* original_row = dynamic_cast<const Row*>(wnd);
+    if (!original_row)
         return;
 
-    Row* original_row = boost::polymorphic_downcast<Row*>(*wnds.begin());
     iterator insertion_point = std::find_if(
-        begin(), end(), [&original_row](const std::shared_ptr<Row>& xx){return xx.get() == original_row;});
+        begin(), end(), [&original_row](const auto& xx){return xx.get() == original_row;});
     if (insertion_point != end())
         ++insertion_point;
 
@@ -3058,7 +3052,7 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, GG::Pt 
     };
 
     auto movetotop_design_action = [id{design->ID()}, this]() {
-        GetDisplayedDesignsManager().MoveBefore(id, *GetDisplayedDesignsManager().OrderedIDs().begin());
+        GetDisplayedDesignsManager().MoveBefore(id, GetDisplayedDesignsManager().OrderedIDs().front());
         Populate();
     };
 
@@ -3145,7 +3139,7 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, GG::Pt pt,
     };
 
     auto movetotop_design_action = [&design, this]() {
-        GetSavedDesignsManager().MoveBefore(design->UUID(), *GetSavedDesignsManager().OrderedDesignUUIDs().begin());
+        GetSavedDesignsManager().MoveBefore(design->UUID(), GetSavedDesignsManager().OrderedDesignUUIDs().front());
         Populate();
     };
 
@@ -3689,8 +3683,7 @@ void SlotControl::AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> w
     if (wnds.size() != 1)
         ErrorLogger() << "SlotControl::AcceptDrops given multiple wnds unexpectedly...";
 
-    const auto wnd = *(wnds.begin());
-    if (const PartControl* control = boost::polymorphic_downcast<const PartControl*>(wnd.get()))
+    if (const PartControl* control = boost::polymorphic_downcast<const PartControl*>(wnds.front().get()))
         if (const ShipPart* part = control->Part())
             SlotContentsAlteredSignal(part, mod_keys & GG::MOD_KEY_CTRL);
 }
@@ -4834,21 +4827,21 @@ void DesignWnd::MainPanel::AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG
     if (wnds.size() != 1)
         ErrorLogger() << "DesignWnd::MainPanel::AcceptDrops given multiple wnds unexpectedly...";
 
-    const auto& wnd = *(wnds.begin());
+    const auto* wnd = wnds.front().get();
     if (!wnd)
         return;
 
-    if (const auto completed_design_row = dynamic_cast<const BasesListBox::CompletedDesignListBoxRow*>(wnd.get())) {
+    if (const auto completed_design_row = dynamic_cast<const BasesListBox::CompletedDesignListBoxRow*>(wnd)) {
         SetDesign(GetUniverse().GetShipDesign(completed_design_row->DesignID()));
-    }
-    else if (const auto hullandparts_row = dynamic_cast<const BasesListBox::HullAndPartsListBoxRow*>(wnd.get())) {
+
+    } else if (const auto hullandparts_row = dynamic_cast<const BasesListBox::HullAndPartsListBoxRow*>(wnd)) {
         const std::string& hull = hullandparts_row->Hull();
         const std::vector<std::string>& parts = hullandparts_row->Parts();
 
         SetDesignComponents(hull, parts);
-    }
-    else if (const auto saved_design_row = dynamic_cast<const SavedDesignsListBox::SavedDesignListBoxRow*>(wnd.get())) {
-        const auto& uuid = saved_design_row->DesignUUID();
+
+    } else if (const auto saved_design_row = dynamic_cast<const SavedDesignsListBox::SavedDesignListBoxRow*>(wnd)) {
+        const auto uuid = saved_design_row->DesignUUID();
         SetDesign(GetSavedDesignsManager().GetDesign(uuid));
     }
 }
@@ -4880,7 +4873,7 @@ std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
         if (m_type_to_create == DesignWnd::BaseSelector::BaseSelectorTab::Saved) {
             auto& manager = GetSavedDesignsManager();
             manager.InsertBefore(design, manager.OrderedDesignUUIDs().begin());
-            new_uuid = *manager.OrderedDesignUUIDs().begin();
+            new_uuid = manager.OrderedDesignUUIDs().front();
 
         // Otherwise insert into current empire designs
         } else {
@@ -4895,7 +4888,7 @@ std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
 
             auto& manager = GetDisplayedDesignsManager();
             const auto& all_ids = manager.AllOrderedIDs();
-            manager.InsertBefore(new_design_id, all_ids.empty() ? INVALID_DESIGN_ID : *all_ids.begin());
+            manager.InsertBefore(new_design_id, all_ids.empty() ? INVALID_DESIGN_ID : all_ids.front());
         }
 
         DesignChangedSignal();

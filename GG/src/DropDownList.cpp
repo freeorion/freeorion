@@ -248,10 +248,9 @@ DropDownList::iterator ModalListPicker::CurrentItem()
     const auto start = m_lb_wnd->begin(), end = m_lb_wnd->end();
     if (start == end)
         return end;
-    const auto sel{m_lb_wnd->Selections()};
-    if (sel.empty())
+    if (m_lb_wnd->Selections().empty())
         return end;
-    const auto sel_it{*sel.begin()};
+    const auto sel_it{*m_lb_wnd->Selections().begin()};
     for (auto find_it = start; find_it != end; ++find_it)
         if (find_it == sel_it)
             return find_it;
