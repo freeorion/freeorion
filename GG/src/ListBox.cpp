@@ -712,9 +712,9 @@ void ListBox::PreRender()
         && m_manage_column_props
         && (m_col_widths.empty() || !m_keep_col_widths))
     {
-        DefineColWidths(*(*m_rows.begin()));
-        DefineColAlignments(*(*m_rows.begin()));
-        DefineColStretches(*(*m_rows.begin()));
+        DefineColWidths(*(m_rows.front()));
+        DefineColAlignments(*(m_rows.front()));
+        DefineColStretches(*(m_rows.front()));
     }
 
     if (m_normalize_rows_on_insert) {

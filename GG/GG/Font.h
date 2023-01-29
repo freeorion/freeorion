@@ -143,6 +143,8 @@ public:
 
         [[nodiscard]] auto data() const noexcept { return str->data() + first; }
 
+        [[nodiscard]] const auto& front() const noexcept { return *(str->data() + first); }
+
         /** Returns an iterator to the beginning of the substring. */
         [[nodiscard]] auto begin() const { return std::next(str->begin(), first); }
 

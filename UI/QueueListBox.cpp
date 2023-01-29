@@ -92,15 +92,14 @@ void QueueListBox::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags
 void QueueListBox::AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) {
     if (wnds.size() > 1)
         ErrorLogger() << "QueueListBox::AcceptDrops given multiple wnds unexpectedly...";
-    auto& wnd = *wnds.begin();
-    const std::string& drop_type = wnd->DragDropDataType();
-    const auto& row = std::dynamic_pointer_cast<GG::ListBox::Row>(wnd);
-    if (!AllowedDropType(drop_type) ||
-        !row ||
-        !std::count(begin(), end(), row))
-    {
+    auto& wnd = wnds.front();
+    if (!AllowedDropType(wnd->DragDropDataType()))
         return;
-    }
+
+    const auto row = std::dynamic_pointer_cast<GG::ListBox::Row>(wnd);
+    if (!row || !std::count(begin(), end(), row))
+        return;
+
     ListBox::AcceptDrops(pt, std::vector<std::shared_ptr<GG::Wnd>>{wnd}, mod_keys);
 }
 

@@ -4942,12 +4942,12 @@ void MapWnd::DoFleetButtonsLayout() {
             std::shared_ptr<const Fleet> fleet;
 
             // skip button if it has no fleets (somehow...?) or if the first fleet in the button is 0
-            if (fb->Fleets().empty() || !(fleet = objects.get<Fleet>(*fb->Fleets().begin()))) {
+            if (fb->Fleets().empty() || !(fleet = objects.get<Fleet>(fb->Fleets().front()))) {
                 ErrorLogger() << "DoFleetButtonsLayout couldn't get first fleet for button";
                 continue;
             }
 
-            auto button_pos = MovingFleetMapPositionOnLane(fleet);
+            const auto button_pos = MovingFleetMapPositionOnLane(fleet);
             if (!button_pos)
                 continue;
 
@@ -4966,7 +4966,7 @@ void MapWnd::DoFleetButtonsLayout() {
             std::shared_ptr<const Fleet> fleet;
 
             // skip button if it has no fleets (somehow...?) or if the first fleet in the button is 0
-            if (fb->Fleets().empty() || !(fleet = objects.get<Fleet>(*fb->Fleets().begin()))) {
+            if (fb->Fleets().empty() || !(fleet = objects.get<Fleet>(fb->Fleets().front()))) {
                 ErrorLogger() << "DoFleetButtonsLayout couldn't get first fleet for button";
                 continue;
             }

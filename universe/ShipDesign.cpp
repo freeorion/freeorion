@@ -706,7 +706,7 @@ std::string ShipDesign::Dump(uint8_t ntabs) const {
     if (m_parts.empty()) {
         retval += "[]\n";
     } else if (m_parts.size() == 1) {
-        retval += "\"" + *m_parts.begin() + "\"\n";
+        retval += "\"" + m_parts.front() + "\"\n";
     } else {
         retval += "[\n";
         for (const std::string& part_name : m_parts) {

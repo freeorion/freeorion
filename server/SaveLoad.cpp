@@ -55,15 +55,15 @@ namespace {
 
         } else {
             // Consider the first player the main player
-            const PlayerSaveGameData* player = &(*player_save_game_data.begin());
+            const PlayerSaveGameData* player = &player_save_game_data.front();
 
             // If there are human players, the first of them should be the main player
             int16_t humans = 0;
             for (const PlayerSaveGameData& psgd : player_save_game_data) {
                 if (psgd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
                     if (player->client_type != Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
-                       player->client_type != Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER &&
-                       player->client_type != Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
+                        player->client_type != Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER &&
+                        player->client_type != Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
                     {
                         player = &psgd;
                     }
@@ -104,7 +104,7 @@ std::map<int, SaveGameEmpireData> CompileSaveGameEmpireData(const EmpireManager&
 }
 
 namespace {
-    constexpr std::size_t Pow(std::size_t base, std::size_t exp) {
+    constexpr std::size_t Pow(std::size_t base, std::size_t exp) noexcept {
         std::size_t retval = 1;
         while (exp--)
             retval *= base;

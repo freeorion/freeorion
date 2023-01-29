@@ -1369,7 +1369,7 @@ namespace {
         if (capable_and_available_colony_ships.empty())
             return INVALID_OBJECT_ID;
         if (capable_and_available_colony_ships.size() == 1)
-            return (*capable_and_available_colony_ships.begin())->ID();
+            return capable_and_available_colony_ships.front()->ID();
 
         // have more than one ship capable and available to colonize.
         // pick the "best" one.

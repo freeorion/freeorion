@@ -1070,8 +1070,8 @@ void PolicySlotControl::AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::W
     if (wnds.size() != 1)
         ErrorLogger() << "PolicySlotControl::AcceptDrops given multiple wnds unexpectedly...";
 
-    const auto& wnd = *(wnds.begin());
-    auto* control = boost::polymorphic_downcast<const PolicyControl*>(wnd.get());
+    const auto* wnd = wnds.front().get();
+    auto* control = boost::polymorphic_downcast<const PolicyControl*>(wnd);
     const Policy* policy_type = control ? control->GetPolicy() : nullptr;
 
     if (policy_type)

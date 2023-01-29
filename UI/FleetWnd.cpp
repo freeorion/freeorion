@@ -203,19 +203,19 @@ namespace {
         ObjectMap& objects{context.ContextObjects()};
 
         // validate ships in each group, and generate fleet names for those ships
-        const auto ships = objects.find<const Ship>(ship_ids);
+        const auto ships = objects.findRaw<const Ship>(ship_ids);
         if (ships.empty())
             return;
 
-        const auto first_ship = (*ships.begin()).get();
-        const auto system = objects.get<System>(first_ship->SystemID()).get();
+        const auto first_ship = ships.front();
+        const auto system = objects.getRaw<System>(first_ship->SystemID());
         if (!system)
             return;
 
         // validate that ships are in the same system and all owned by this
         // client's empire.
         // also record the fleets from which ships are taken
-        for (const auto& ship : ships) {
+        for (const auto* ship : ships) {
              if (ship->SystemID() != system->ID()) {
                  ErrorLogger() << "CreateNewFleetFromShips passed ships with inconsistent system ids";
                  continue;

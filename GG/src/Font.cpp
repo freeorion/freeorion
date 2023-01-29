@@ -1257,21 +1257,20 @@ namespace DebugOutput {
         for (auto& elem : text_elements) {
             if (auto tag_elem = std::dynamic_pointer_cast<Font::FormattingTag>(elem)) {
                 std::cout << "FormattingTag\n    text=\"" << tag_elem->text << "\" (@ "
-                          << static_cast<const void*>(&*tag_elem->text.begin()) << ")\n    widths=";
-                for (const X& width : tag_elem->widths) {
+                          << static_cast<const void*>(&tag_elem->text.front()) << ")\n    widths=";
+                for (const X& width : tag_elem->widths)
                     std::cout << width << " ";
-                }
-                std::cout << "\n    whitespace=" << tag_elem->whitespace << "\n    newline=" << tag_elem->newline << "\n    params=\n";
-                for (const Font::Substring& param : tag_elem->params) {
+                std::cout << "\n    whitespace=" << tag_elem->whitespace << "\n    newline="
+                          << tag_elem->newline << "\n    params=\n";
+                for (const Font::Substring& param : tag_elem->params)
                     std::cout << "        \"" << param << "\"\n";
-                }
-                std::cout << "    tag_name=\"" << tag_elem->tag_name << "\"\n    close_tag=" << tag_elem->close_tag << "\n";
+                std::cout << "    tag_name=\"" << tag_elem->tag_name << "\"\n    close_tag="
+                          << tag_elem->close_tag << "\n";
             } else {
                 std::cout << "TextElement\n    text=\"" << elem->text << "\" (@ "
-                          << static_cast<const void*>(&*elem->text.begin()) << ")\n    widths=";
-                for (const X& width : elem->widths) {
+                          << static_cast<const void*>(&elem->text.front()) << ")\n    widths=";
+                for (const X& width : elem->widths)
                     std::cout << width << " ";
-                }
                 std::cout << "\n    whitespace=" << elem->whitespace << "\n    newline=" << elem->newline << "\n";
             }
             std::cout << "    string_size=" << elem->StringSize() << "\n";
@@ -1286,40 +1285,34 @@ namespace DebugOutput {
                             const std::vector<Font::LineData>& line_data)
     {
         std::cout << "Font::DetermineLines(text=\"" << text << "\" (@ "
-                  << static_cast<const void*>(&*text.begin()) << ") format="
+                  << static_cast<const void*>(&text.front()) << ") format="
                   << format << " box_width=" << box_width << ")" << std::endl;
 
         std::cout << "Line breakdown:\n";
         for (std::size_t i = 0; i < line_data.size(); ++i) {
             std::cout << "Line " << i << ":\n    extents=";
-            for (const auto& character : line_data[i].char_data) {
+            for (const auto& character : line_data[i].char_data)
                 std::cout << character.extent << " ";
-            }
             std::cout << "\n    string indices=";
-            for (const auto& character : line_data[i].char_data) {
+            for (const auto& character : line_data[i].char_data)
                 std::cout << character.string_index << " ";
-            }
             std::cout << "\n    code point indices=";
-            for (const auto& character : line_data[i].char_data) {
+            for (const auto& character : line_data[i].char_data)
                 std::cout << character.code_point_index << " ";
-            }
             std::cout << "\n    chars on line: \"";
-            for (const auto& character : line_data[i].char_data) {
+            for (const auto& character : line_data[i].char_data)
                 std::cout << text[Value(character.string_index)];
-            }
             std::cout << "\"\n";
             for (std::size_t j = 0; j < line_data[i].char_data.size(); ++j) {
                 for (auto& tag_elem : line_data[i].char_data[j].tags) {
                     if (tag_elem) {
                         std::cout << "FormattingTag @" << j << "\n    text=\"" << tag_elem->text << "\"\n    widths=";
-                        for (const X& width : tag_elem->widths) {
+                        for (const X& width : tag_elem->widths)
                             std::cout << width << " ";
-                        }
                         std::cout << "\n    whitespace=" << tag_elem->whitespace
                                   << "\n    newline=" << tag_elem->newline << "\n    params=\n";
-                        for (const auto& param : tag_elem->params) {
+                        for (const auto& param : tag_elem->params)
                             std::cout << "        \"" << param << "\"\n";
-                        }
                         std::cout << "    tag_name=\"" << tag_elem->tag_name << "\"\n    close_tag="
                                   << tag_elem->close_tag << "\n";
                     }

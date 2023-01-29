@@ -339,7 +339,7 @@ void FleetButton::LayoutIcons() {
             return;
 
         // can just pick first fleet because all fleets in system should have same exits
-        auto fleet = context.ContextObjects().get<Fleet>(*m_fleets.begin());
+        auto fleet = context.ContextObjects().get<Fleet>(m_fleets.front());
 
         std::string available_exits;
         int available_exits_count = 0;

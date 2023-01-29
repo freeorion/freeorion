@@ -3206,7 +3206,7 @@ void MoveInOrbit::Execute(ScriptingContext& context) const {
         Condition::ObjectSet matches = m_focal_point_condition->Eval(std::as_const(context));
         if (matches.empty())
             return;
-        const auto& focus_object = *matches.begin();
+        const auto* focus_object = matches.front();
         focus_x = focus_object->X();
         focus_y = focus_object->Y();
     }

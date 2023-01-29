@@ -74,7 +74,7 @@ namespace {
             return std::make_unique<Condition::None>();
 
         if (object_types.size() == 1)
-            return std::make_unique<Condition::Type>(*object_types.begin());
+            return std::make_unique<Condition::Type>(object_types.front());
 
         std::vector<std::unique_ptr<Condition::Condition>> subconditions;
         for (auto obj_type : object_types)
