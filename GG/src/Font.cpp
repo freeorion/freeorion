@@ -206,7 +206,8 @@ struct PushSubmatchOntoStackP
 };
 const boost::xpressive::function<PushSubmatchOntoStackP>::type PushP = {{}};
 
-void SetJustification(bool& last_line_of_curr_just, Font::LineData& line_data, Alignment orig_just, Alignment prev_just)
+void SetJustification(bool& last_line_of_curr_just, Font::LineData& line_data,
+                      Alignment orig_just, Alignment prev_just) noexcept
 {
     if (last_line_of_curr_just) {
         line_data.justification = orig_just;
@@ -236,7 +237,8 @@ constexpr std::array<std::pair<std::uint32_t, std::uint32_t>, 7> PRINTABLE_ASCII
 namespace {
     // writes 1-3 chars, starting at to_it, and outputs how many were written
     // written chars represent \a n as decimal digits
-    constexpr auto ToChars = [](auto& to_it, uint8_t n) {
+    constexpr auto ToChars = [](auto& to_it, uint8_t n) noexcept
+    {
         uint8_t hundreds = n / 100;
         uint8_t remainder = n % 100;
         uint8_t tens = remainder / 10;
@@ -248,6 +250,9 @@ namespace {
         to_it += (hundreds > 0 || tens > 0);
         (*to_it) = ('0' + ones);
         ++to_it;
+
+        static_assert(noexcept((*std::declval<decltype(to_it)>()) += ('0' + uint8_t(24))));
+        static_assert(noexcept(++std::declval<decltype(to_it)>()));
     };
     constexpr auto one_zero_nine = []() {
         std::array<char, 4> retval = {};
@@ -273,6 +278,8 @@ std::string GG::RgbaTag(Clr c)
 {
     std::array<std::string::value_type, 6 + 4*4 + 1> buffer{"<rgba "}; // rest should be nulls
     auto it = buffer.data() + 6;
+    static_assert(noexcept(*(it++) = ' ') && noexcept(buffer.data() + 6));
+
     ToChars(it, c.r);
     *(it++) = ' ';
     ToChars(it, c.g);
@@ -320,7 +327,7 @@ namespace {
     const std::string EMPTY_STRING;
 }
 
-Font::Substring::Substring() :
+Font::Substring::Substring() noexcept :
     str(&EMPTY_STRING)
 {}
 
@@ -346,7 +353,7 @@ Font::Substring::Substring(const std::string& str_, const IterPair& pair) :
     second = std::distance(str->begin(), pair.second);
 }
 
-void Font::Substring::Bind(const std::string& str_)
+void Font::Substring::Bind(const std::string& str_) noexcept
 {
     assert(std::distance(str_.begin(), str_.end()) >= second);
     str = &str_;

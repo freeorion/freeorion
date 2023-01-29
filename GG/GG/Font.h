@@ -123,7 +123,7 @@ public:
     public:
         typedef std::pair<std::string::const_iterator, std::string::const_iterator> IterPair;
 
-        Substring();
+        Substring() noexcept;
 
         /** Ctor.  \a first_ must be <= \a second_. */
         Substring(const std::string& str_,
@@ -139,7 +139,7 @@ public:
             This changes the iterators from pointing into the previous
             std::string to pointing into \p str_.
         */
-        void Bind(const std::string& str_);
+        void Bind(const std::string& str_) noexcept;
 
         [[nodiscard]] auto data() const noexcept { return str->data() + first; }
 
@@ -157,7 +157,8 @@ public:
 
         /** Implicit conversion to std::string. */
         [[nodiscard]] operator std::string() const { return std::string(begin(), end()); }
-        [[nodiscard]] operator std::string_view() const { return {data(), size()}; }
+        static constexpr bool op_sv_nox = noexcept(std::string_view{(const char*)(nullptr), std::size_t{}});
+        [[nodiscard]] operator std::string_view() const noexcept(op_sv_nox) { return {data(), size()}; }
 
         /** Comparison with std::string. */
         bool operator==(const std::string& rhs) const;
