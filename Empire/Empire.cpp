@@ -2497,10 +2497,11 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
 
                 // create a single fleet for combat ships and individual
                 // fleets for non-combat ships
-                bool individual_fleets = !(   (*ships.begin())->IsArmed(context)
-                                           || (*ships.begin())->HasFighters(universe)
-                                           || (*ships.begin())->CanHaveTroops(universe)
-                                           || (*ships.begin())->CanBombard(universe));
+                const auto* first_ship = ships.front();
+                const bool individual_fleets = !(first_ship->IsArmed(context)
+                                              || first_ship->HasFighters(universe)
+                                              || first_ship->CanHaveTroops(universe)
+                                              || first_ship->CanBombard(universe));
 
                 std::vector<Fleet*> fleets;
                 std::shared_ptr<Fleet> fleet;

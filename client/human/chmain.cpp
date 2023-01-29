@@ -111,7 +111,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
 
 
 int mainConfigOptionsSetup(const std::vector<std::string>& args) {
-    InitDirs((args.empty() ? "" : *args.begin()));
+    InitDirs((args.empty() ? "" : args.front()));
 
     // read and process command-line arguments, if any
 #ifndef FREEORION_CHMAIN_KEEP_STACKTRACE

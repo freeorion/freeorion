@@ -56,7 +56,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
             std::cerr << "main() couldn't convert argument to UTF8" << std::endl;
         }
     }
-    InitDirs((args.empty() ? "" : *args.begin()));
+    InitDirs((args.empty() ? "" : args.front()));
 #endif
 
     GetOptionsDB().AddFlag("testing", UserStringNop("OPTIONS_DB_TESTING"), false);

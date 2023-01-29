@@ -143,11 +143,11 @@ namespace Condition {
 
     // concatenate (non-duplicated) single-description results
     std::string retval;
-    if (conditions.size() > 1 || dynamic_cast<const And*>(*conditions.begin())) {
+    if (conditions.size() > 1 || dynamic_cast<const And*>(conditions.front())) {
         retval += UserString("ALL_OF") + " ";
         retval += (all_conditions_match_candidate ? UserString("PASSED") : UserString("FAILED")) + "\n";
 
-    } else if (dynamic_cast<const Or*>(*conditions.begin())) {
+    } else if (dynamic_cast<const Or*>(conditions.front())) {
         retval += UserString("ANY_OF") + " ";
         retval += (at_least_one_condition_matches_candidate ? UserString("PASSED") : UserString("FAILED")) + "\n";
     }
@@ -3324,7 +3324,7 @@ void ContainedBy::Eval(const ScriptingContext& parent_context,
     } else if (search_domain_size == 1) {
         // evaluate subcondition on objects that contain the candidate
         const ScriptingContext local_context{
-            parent_context, search_domain == SearchDomain::MATCHES ? *matches.begin() : *non_matches.begin()};
+            parent_context, search_domain == SearchDomain::MATCHES ? matches.front() : non_matches.front()};
 
         // initialize subcondition candidates from local candidate's containers
         std::set<int> container_object_ids;

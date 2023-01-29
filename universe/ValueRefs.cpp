@@ -2657,11 +2657,11 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         if (!empire2)
             return "";
 
-        std::vector<std::string> sendable_techs = TransferrableTechs(empire1_id, empire2_id, context);
+        auto sendable_techs = TransferrableTechs(empire1_id, empire2_id, context);
         if (sendable_techs.empty())
             return "";
 
-        std::string retval = *sendable_techs.begin();   // pick first tech by default, hopefully to be replaced below
+        std::string retval = sendable_techs.front();   // pick first tech by default, hopefully to be replaced below
         int position_of_top_found_tech = INT_MAX;
 
         // search queue to find which transferrable tech is at the top of the list
@@ -3570,10 +3570,10 @@ std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) co
         // insert string into other string in place of %1% or similar placeholder
         if (m_operands.empty())
             return "";
-        auto& template_op = *(m_operands.begin());
+        auto& template_op = m_operands.front();
         if (!template_op)
             return "";
-        std::string template_str = template_op->Eval(context);
+        const std::string template_str = template_op->Eval(context);
 
         boost::format formatter = FlexibleFormat(template_str);
 
