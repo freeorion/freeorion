@@ -106,32 +106,26 @@ public:
     }
 
     /// Access point \x, \y without any checks
-    T& get(X x, Y y)
+    T& get(X x, Y y) noexcept(noexcept(std::declval<std::vector<T>>()[Value(X{})*Value(X{}) + Value(Y{})]))
     { return m_data[Value(m_capacity_width)*Value(y) + Value(x)]; }
 
     /// Returns the current highest x the user has requested to exist
-    X CurrentWidth() const
-    { return m_current_width; }
+    X CurrentWidth() const noexcept { return m_current_width; }
 
     /// Returns the current highest y the user has requested to exist
-    Y CurrentHeight() const
-    { return m_capacity_height; }
+    Y CurrentHeight() const noexcept { return m_capacity_height; }
 
     /// Returns the actual width of the storage area allocated so far
-    X BufferWidth() const
-    { return m_capacity_width; }
+    X BufferWidth() const noexcept { return m_capacity_width; }
 
     /// Returns the actual height of the storage area allocated so far
-    Y BufferHeight() const
-    { return m_capacity_height; }
+    Y BufferHeight() const noexcept { return m_capacity_height; }
 
     /// Return a pointer to the storage buffer where the data is kept
-    T* Buffer()
-    { return &*m_data.begin(); }
+    T* Buffer() noexcept { return &m_data.front(); }
 
     /// Returns the size of the storage buffer where the data is kept
-    std::size_t BufferSize() const
-    { return m_data.size(); }
+    auto BufferSize() const noexcept { return m_data.size(); }
 
     /// Makes the size of the underlying buffer the smallest power of power of two
     /// rectangle that can accommodate CurrentWidth() and CurrentHeight()
