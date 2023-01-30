@@ -310,7 +310,7 @@ namespace {
             stockpile_limit_per_turn = empire->GetProductionQueue().StockpileCapacity(context.ContextObjects());
         }
 
-        auto obj = Objects().getRaw(candidate_object_id);
+        auto obj = context.ContextObjects().getRaw(candidate_object_id);
         std::string candidate_name = obj ? obj->Name() : "";
         if (GetOptionsDB().Get<bool>("ui.name.id.shown"))
             candidate_name += " (" + std::to_string(candidate_object_id) + ")";
@@ -327,8 +327,9 @@ namespace {
 
             if (obj || building_type->ProductionCostTimeLocationInvariant()) {
                 // if location object is available, or cost and time are invariation to location, can safely evaluate cost and time
-                float total_cost = building_type->ProductionCost(empire_id, candidate_object_id);
-                int minimum_production_time = std::max(1, building_type->ProductionTime(empire_id, candidate_object_id));
+                const float total_cost = building_type->ProductionCost(empire_id, candidate_object_id, context);
+                const int minimum_production_time = std::max(1, building_type->ProductionTime(
+                    empire_id, candidate_object_id, context));
 
                 if (obj) {
                     // if location object is available, can evaluate production time at that location
@@ -352,7 +353,8 @@ namespace {
             } else {
                 // no location object, but have location-dependent cost or time
 
-                int minimum_production_time = std::max(1, building_type->ProductionTime(empire_id, candidate_object_id));
+                const int minimum_production_time =
+                    std::max(1, building_type->ProductionTime(empire_id, candidate_object_id, context));
                 // 9999 is arbitrary large time returned for evaluation failure due to lack of location object but object-dependent time
                 if (minimum_production_time >= 9999) {
                     main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM")) %
@@ -362,7 +364,7 @@ namespace {
                                                        std::to_string(minimum_production_time));
                 }
 
-                float total_cost = building_type->ProductionCost(empire_id, candidate_object_id);
+                const float total_cost = building_type->ProductionCost(empire_id, candidate_object_id, context);
                 // 999999.9f is arbitrary large cost returned for evaluation failure due to lack of location object but object-dependnet cost
                 if (total_cost >= 999999.9f) {
                     main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %

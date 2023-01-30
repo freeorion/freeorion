@@ -1861,8 +1861,8 @@ namespace {
         if (!only_description) {
             name = UserString(item_name);
             texture = ClientUI::BuildingIcon(item_name);
-            turns = building_type->ProductionTime(client_empire_id, this_location_id);
-            cost = building_type->ProductionCost(client_empire_id, this_location_id);
+            turns = building_type->ProductionTime(client_empire_id, this_location_id, context);
+            cost = building_type->ProductionCost(client_empire_id, this_location_id, context);
             cost_units = UserString("ENC_PP");
             general_type = UserString("ENC_BUILDING_TYPE");
         }
@@ -1874,9 +1874,9 @@ namespace {
             detailed_description += str(FlexibleFormat(UserString("ENC_AUTO_TIME_COST_INVARIANT_STR")) % UserString("ENC_VERB_PRODUCE_STR"));
         } else {
             detailed_description += str(FlexibleFormat(UserString("ENC_AUTO_TIME_COST_VARIABLE_STR")) % UserString("ENC_VERB_PRODUCE_STR"));
-            if (auto* planet = Objects().getRaw<Planet>(this_location_id)) {
-                int local_cost = only_description ? 1 : building_type->ProductionCost(client_empire_id, this_location_id);
-                int local_time = only_description ? 1 : building_type->ProductionTime(client_empire_id, this_location_id);
+            if (auto* planet = context.ContextObjects().getRaw<Planet>(this_location_id)) {
+                const int local_cost = only_description ? 1 : building_type->ProductionCost(client_empire_id, this_location_id, context);
+                const int local_time = only_description ? 1 : building_type->ProductionTime(client_empire_id, this_location_id, context);
                 auto& local_name = planet->Name();
                 detailed_description += str(FlexibleFormat(UserString("ENC_AUTO_TIME_COST_VARIABLE_DETAIL_STR"))
                                             % local_name % local_cost % cost_units % local_time);
@@ -3074,12 +3074,13 @@ namespace {
     std::vector<std::string_view> ReportedSpeciesForPlanet(Planet& planet) {
         std::vector<std::string_view> retval;
 
-        const ObjectMap& objects = Objects();
-        const SpeciesManager& species_manager = GetSpeciesManager();
-        const EmpireManager& empires = Empires();
+        const ScriptingContext context;
+        const ObjectMap& objects = context.ContextObjects();
+        const SpeciesManager& species_manager = context.species;
+        const EmpireManager& empires = context.Empires();
 
-        auto empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        auto empire = empires.GetEmpire(empire_id);
+        const auto empire_id = GGHumanClientApp::GetApp()->EmpireID();
+        const auto empire = empires.GetEmpire(empire_id);
         if (!empire)
             return retval;
 

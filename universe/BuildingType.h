@@ -67,18 +67,15 @@ public:
 
     //! Returns the number of production points required to build this building
     //! at this location by this empire
-    auto ProductionCost(int empire_id, int location_id,
-                        const ScriptingContext& context = ScriptingContext{}) const -> float;
+    auto ProductionCost(int empire_id, int location_id, const ScriptingContext& context) const -> float;
 
     //! Returns the maximum number of production points per turn that can be
     //! spend on this building
-    auto PerTurnCost(int empire_id, int location_id,
-                     const ScriptingContext& context = ScriptingContext{}) const -> float;
+    auto PerTurnCost(int empire_id, int location_id, const ScriptingContext& context) const -> float;
 
     //! Returns the number of turns required to build this building at this
     //! location by this empire
-    auto ProductionTime(int empire_id, int location_id,
-                        const ScriptingContext& context = ScriptingContext{}) const -> int;
+    auto ProductionTime(int empire_id, int location_id, const ScriptingContext& context) const -> int;
 
     //! Returns the ValueRef that determines ProductionCost()
     const auto* Cost() const noexcept { return m_production_cost.get(); }
