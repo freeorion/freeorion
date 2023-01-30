@@ -7746,6 +7746,12 @@ SITREP_PLANET_OUTPOSTED
 SITREP_PLANET_OUTPOSTED_LABEL
 Planet Outposted
 
+SITREP_PLANET_ESTABLISH_FAILED
+Ship %ship% failed to establish colony or outpost on %planet%.
+
+SITREP_PLANET_ESTABLISH_FAILED_LABEL
+Ship Failed to Esablish on Planet
+
 SITREP_OUTPOST_ABANDONED_PREPARATION
 Outpost on %planet% prepares to be abandoned in turn %rawtext%.
 
