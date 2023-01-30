@@ -117,7 +117,7 @@ struct GG_API Rect
     [[nodiscard]] constexpr X  Right() const noexcept      { return lr.x; }            ///< returns the right boundary of the Rect
     [[nodiscard]] constexpr Y  Top() const  noexcept       { return ul.y; }            ///< returns the top boundary of the Rect
     [[nodiscard]] constexpr Y  Bottom() const noexcept     { return lr.y; }            ///< returns the bottom boundary of the Rect
-    [[nodiscard]] constexpr Pt UpperLeft() const  noexcept { return ul; }              ///< returns the upper-left corner of the Rect
+    [[nodiscard]] constexpr Pt UpperLeft() const noexcept  { return ul; }              ///< returns the upper-left corner of the Rect
     [[nodiscard]] constexpr Pt LowerRight() const noexcept { return lr; }              ///< returns the lower-right corner of the Rect
     [[nodiscard]] constexpr X  Width() const noexcept      { return lr.x - ul.x; }     ///< returns the width of the Rect
     [[nodiscard]] constexpr Y  Height() const noexcept     { return lr.y - ul.y; }     ///< returns the height of the Rect
