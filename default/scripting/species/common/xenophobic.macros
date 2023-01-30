@@ -46,7 +46,7 @@ XENOPHOBIC_SELF
 
             effects = SetTargetPopulation value = Value + max(
                 -3 * Target.HabitableSize,  // Cap malus at the self-sustaining bonus
-                (NamedReal name = "XENOPHOBIC_TARGET_POPULATION_PERJUMP" value = -0.2)
+                Target.HabitableSize * (NamedReal name = "XENOPHOBIC_TARGET_POPULATION_PERJUMP" value = -0.2)
                 * Statistic Sum
                     value = (1 + NamedIntegerLookup name = "XENOPHOBIC_MAX_JUMPS"
                         - JumpsBetween object = Target.ID object = LocalCandidate.ID)

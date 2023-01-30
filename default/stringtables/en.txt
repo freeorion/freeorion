@@ -6744,21 +6744,24 @@ XENOPHOBIC_SPECIES_TITLE
 Xenophobic
 
 XENOPHOBIC_SPECIES_TEXT
-'''Xenophobic species get upset by the nearby pressence of other intelligent species, and will divert some of their efforts into harassing them, reducing both species' [[metertype METER_TARGET_HAPPINESS]] dependent on the distance between their planets. At a distance of [[value XENOPHOBIC_MAX_JUMPS]] jumps, the penalty is [[value XENOPHOBIC_TARGET_STABILITY_PERJUMP]], and grows by that amount per starlane jump closer. The penalty is cumulative for each offending planet nearby:
+'''Xenophobic species get upset by the nearby presence of other intelligent species, and will divert some of their efforts into harassing them, reducing both species' [[metertype METER_TARGET_HAPPINESS]] dependent on the distance between their planets. At a distance of [[value XENOPHOBIC_MAX_JUMPS]] jumps, the penalty is [[value XENOPHOBIC_TARGET_STABILITY_PERJUMP]], and grows by that amount per starlane jump closer. The penalty is cumulative for each offending planet nearby:
 • 4 jumps: -0.5 stability
 • 3 jumps: -1.0 stability
 • 2 jumps: -1.5 stability
 • 1 jumps: -2.0 stability
 • In same system: -2.5 stability
 
-A Xenophobic species of [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]] will also find the presence of fully conscious alien species nearby to be disruptive to its natural balances, reducing the xenophobic species' [[metertype METER_TARGET_POPULATION]] per jump by [[value XENOPHOBIC_TARGET_POPULATION_PERJUMP]] similar to stability:
-• 4 jumps: -0.2 target population
-• 3 jumps: -0.4 target population
-• 2 jumps: -0.6 target population
-• 1 jumps: -0.8 target population
-• In same system: -1.0 target population
+A Xenophobic species of [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]] will also find the presence of fully conscious alien species nearby to be disruptive to its natural balances, reducing the self-sustaining species' [[metertype METER_TARGET_POPULATION]] bonus. The reduction depends on the [[HABITABLE_SIZE]] of the xenophobic colony is cumulative for each disruptive planet nearby, depending on jump distance (by [[value XENOPHOBIC_TARGET_POPULATION_PERJUMP]] per jump) similar to stability:
+• 4 jumps: -0.2  * [[HABITABLE_SIZE]]
+• 3 jumps: -0.4  * [[HABITABLE_SIZE]]
+• 2 jumps: -0.7  * [[HABITABLE_SIZE]]
+• 1 jumps: -0.8  * [[HABITABLE_SIZE]]
+• In same system: -1.0  * [[HABITABLE_SIZE]]
+Note the reduction is never higher than the population bonus for [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]].
 
 Species without full conscience like [[species SP_EXOBOT]] or [[species SP_ANCIENT_GUARDIANS]] ([[LOW_BRAINPOWER]] species) are not disruptive enough to cause any such malus to stability or population.
+
+
 
 Xenophobic species start with [[tech CON_CONC_CAMP]].
 
