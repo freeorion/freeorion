@@ -24,6 +24,7 @@ XENOPHOBIC_SELF
                         Species
                         Not Species name = Source.Species
                         Not Species name = "SP_EXOBOT"
+                        Not Species name = "SP_ANCIENT_GUARDIANS"
                         Not Contains Building name = "BLD_CONC_CAMP"
                         Or [
                             Not OwnedBy empire = RootCandidate.Owner
@@ -56,6 +57,7 @@ XENOPHOBIC_SELFSUSTAINING_QUALIFYING_PLANET_COUNT
                     Not Or [
                         Species name = Source.Species
                         Species name = "SP_EXOBOT"
+                        Species name = "SP_ANCIENT_GUARDIANS"
                     ]
                     WithinStarlaneJumps jumps = 5 condition = Source
                     WithinStarlaneJumps jumps = 2 condition = ExploredByEmpire empire = Source.Owner
@@ -95,6 +97,7 @@ CONDITION_OTHER_SPECIES_NEARBY
                 Species
                 Not Species name = Source.Species
                 Not Species name = "SP_EXOBOT"
+                Not Species name = "SP_ANCIENT_GUARDIANS"
                 Not Contains Building name = "BLD_CONC_CAMP"
                 VisibleToEmpire empire = Source.Owner
                 Or [
