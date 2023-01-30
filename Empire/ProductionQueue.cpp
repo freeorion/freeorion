@@ -719,7 +719,7 @@ void ProductionQueue::Update(const ScriptingContext& context) {
         auto key = std::pair{elem.item, location_id};
 
         if (!queue_item_costs_and_times.count(key))
-            queue_item_costs_and_times[key] = elem.ProductionCostAndTime();
+            queue_item_costs_and_times[key] = elem.ProductionCostAndTime(context);
 
         elem.turns_left_to_next_item = -1;
         elem.turns_left_to_completion = -1;

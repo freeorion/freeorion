@@ -334,12 +334,12 @@ namespace {
             queue_index(queue_index_),
             elem(elem_)
         {
+            const ScriptingContext context;
+
             SetDragDropDataType(BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE);
-            auto [total_cost, minimum_turns] = elem.ProductionCostAndTime();
+            auto [total_cost, minimum_turns] = elem.ProductionCostAndTime(context);
             total_cost *= elem.blocksize;
 
-            const ScriptingContext context{GetUniverse(), Empires(), GetGalaxySetupData(),
-                                           GetSpeciesManager(), GetSupplyManager()};
             auto empire = context.GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
             float pp_accumulated = empire ? empire->ProductionStatus(queue_index, context) : 0.0f; // returns as PP
             if (pp_accumulated == -1.0f)

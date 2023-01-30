@@ -102,8 +102,7 @@ struct FO_COMMON_API ProductionQueue {
         /** Returns the total cost per item (blocksize 1) and the minimum number of
           * turns required to produce the indicated item, or (-1.0, -1) if the item
           * is unknown, unavailable, or invalid. */
-        [[nodiscard]] std::pair<float, int> ProductionCostAndTime(
-            const ScriptingContext& context = ScriptingContext{}) const;
+        [[nodiscard]] std::pair<float, int> ProductionCostAndTime(const ScriptingContext& context) const;
 
 
         ProductionItem      item;

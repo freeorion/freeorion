@@ -7611,7 +7611,7 @@ namespace {
             WarnLogger() << "Invalid fleet or system";
             return {};
         }
-        if ((fleet->Fuel(objects) < 1.0f) || !fleet->MovePath().empty()) {
+        if ((fleet->Fuel(objects) < 1.0f) || !fleet->MovePath(false, context).empty()) {
             WarnLogger() << "Fleet has no fuel or non-empty move path";
             return {};
         }
