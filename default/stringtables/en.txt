@@ -18058,6 +18058,7 @@ Orbital
 LOW_BRAINPOWER
 Half-Conscious
 
+
 ##
 ## AI strings
 ##
