@@ -2,9 +2,10 @@ import os
 import sys
 from collections import OrderedDict as odict
 from configparser import ConfigParser
+from pathlib import Path
+from typing import Optional, Any
 
-AI_SUB_DIR = "AI"
-DEFAULT_SUB_DIR = os.path.join(AI_SUB_DIR, "default")
+DEFAULT_SUB_DIR = Path("AI", "default")
 CONFIG_DEFAULT_FILE = "config.ini"
 
 # CONFIG KEYS
@@ -14,29 +15,27 @@ HANDLERS = "handlers"
 
 
 flat_options = odict()
-sectioned_options = odict()
 
 
-def _get_option_file(config_dir):
+def _get_option_file(config_dir: Path) -> Optional[Path]:
     # hack to allow lunch this code separately to dump default config
     ai_path = _get_default_file_path(config_dir)
     option_file = CONFIG_DEFAULT_FILE
     if ai_path and option_file:
-        return os.path.join(ai_path, option_file)
+        return ai_path / option_file
     else:
         return None
 
 
-def _get_default_file_path(config_dir):
-    CONFIG_DEFAULT_DIR = os.path.join(config_dir, DEFAULT_SUB_DIR)
-
+def _get_default_file_path(config_dir: Path) -> Path:
+    config_default_dir = config_dir / DEFAULT_SUB_DIR
     try:
-        if os.path.isdir(config_dir) and not os.path.isdir(CONFIG_DEFAULT_DIR):
-            os.makedirs(CONFIG_DEFAULT_DIR)
+        if config_dir.is_dir() and not config_default_dir.is_dir():
+            config_default_dir.mkdir(parents=True)
     except OSError:
-        sys.stderr.write("AI Config Error: could not create path %s\n" % CONFIG_DEFAULT_DIR)
+        sys.stderr.write(f"AI Config Error: could not create path {config_default_dir}\n")
         return config_dir
-    return CONFIG_DEFAULT_DIR
+    return config_default_dir
 
 
 def _get_preset_default_ai_options():
@@ -56,7 +55,7 @@ def _get_preset_default_ai_options():
     )
 
 
-def _create_default_config_file(path):
+def _create_default_config_file(path: Path) -> ConfigParser:
     """
     Writes default config to file.
     """
@@ -70,9 +69,9 @@ def _create_default_config_file(path):
         try:
             with open(path, "w") as configfile:
                 config.write(configfile)
-            print("default config is dumped to %s" % path)
+            print(f"default config is dumped to {path}")
         except OSError:
-            sys.stderr.write("AI Config Error: could not write default config %s\n" % path)
+            sys.stderr.write(f"AI Config Error: could not write default config {path}\n")
     return config
 
 
@@ -88,15 +87,8 @@ def get_option_dict():
     return flat_options
 
 
-def get_sectioned_option_dict():
-    """
-    Return options for AI
-    :return: ordered dict of ordered dicts of options
-    """
-    return sectioned_options
-
-
-def parse_config(option_string, config_dir):
+def parse_config(option_string: Any, config_dir: str):
+    config_dir = Path(config_dir)
 
     if option_string is not None and not isinstance(option_string, str):
         # probably called by unit test
@@ -114,7 +106,7 @@ def parse_config(option_string, config_dir):
             config = _create_default_config_file(default_file)
         except OSError:
             sys.stderr.write("AI Config: default file is not present and not writable at location %s\n" % default_file)
-            config = _create_default_config_file(os.path.join(config_dir, CONFIG_DEFAULT_FILE))
+            config = _create_default_config_file(config_dir / CONFIG_DEFAULT_FILE)
 
     if option_string:
         config_files = [option_string]
@@ -126,7 +118,5 @@ def parse_config(option_string, config_dir):
                 % list(set(config_files).difference(configs_read))
             )
     for section in config.sections():
-        sectioned_options.setdefault(section, odict())
         for k, v in config.items(section):
             flat_options[k] = v
-            sectioned_options[section][k] = v

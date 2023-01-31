@@ -144,7 +144,7 @@ you could even reload some python files with `reload()`
 Result is printed both to the chat and logs.
 
 - Go to "logs and config" directory
-- Open AI/config.in
+- Open AI/default/config.ini
 - Add `allow_debug_chat=1` to main section
   ```ini
   [main]
