@@ -1,8 +1,7 @@
 from collections import Counter, OrderedDict, defaultdict
 
 import streamlit as st
-from collect_data import get_ais_data  # noqa: E402
-from widgets import DIFF_ADD, DIFF_REMOVE, colored_span, span_with_hint, to_hex_color
+from tabs.widgets import DIFF_ADD, DIFF_REMOVE, colored_span, span_with_hint, to_hex_color
 
 
 def gather_policies_data(ais_data):
@@ -50,7 +49,7 @@ def show_summary(existing_empires, summary_stats):
     summary = []
     for empire_id, counts in summary_stats.items():
         counts = sorted([name for name, added in counts.items() if added])
-        counts = ", ".join(to_policy_span(x, DIFF_ADD) for x in counts)
+        counts = ", ".join(to_policy_span(x, "") for x in counts)
         empire_id = colored_span(empire_id, to_hex_color(existing_empires[empire_id]))
         summary.append(f"- {empire_id}: {counts}")
 
@@ -99,12 +98,8 @@ def show_policies_table(data, existing_empires):
 
 def plot_policy_adoptions(ais_data):
     data, existing_empires, summary_stats = gather_policies_data(ais_data)
-    st.header("Policies")
     if not data:
         return
 
     show_policies_table(data, existing_empires)
     show_summary(existing_empires, summary_stats)
-
-
-plot_policy_adoptions(get_ais_data())

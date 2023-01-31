@@ -11,6 +11,8 @@ pip install requirements_charts.txt
 ```
 
 ## Run
+
+Execute in repo root:
 ```shell
-streamlit run charting\streamlite_app.py
+streamlit run default/python/charting/streamlite_app.py
 ```
