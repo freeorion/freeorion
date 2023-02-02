@@ -31,7 +31,7 @@ SitRepEntry::SitRepEntry(std::string&& template_string, int turn,
 
 const std::string& SitRepEntry::GetDataString(const std::string& tag) const {
     static const std::string EMPTY_STRING;
-    auto elem = m_variables.find(tag);
+    const auto elem = m_variables.find(tag);
     if (elem == m_variables.end())
         return EMPTY_STRING;
     return elem->second;
@@ -47,13 +47,13 @@ std::string SitRepEntry::Dump() const {
     return retval;
 }
 
-SitRepEntry CreateTechResearchedSitRep(const std::string& tech_name, int current_turn) {
+SitRepEntry CreateTechResearchedSitRep(std::string tech_name, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_TECH_RESEARCHED"),
         current_turn,
         "icons/sitrep/tech_researched.png",
         UserStringNop("SITREP_TECH_RESEARCHED_LABEL"), true);
-    sitrep.AddVariable(VarText::TECH_TAG, tech_name);
+    sitrep.AddVariable(VarText::TECH_TAG, std::move(tech_name));
     return sitrep;
 }
 
@@ -92,53 +92,53 @@ SitRepEntry CreateBuildingBuiltSitRep(int building_id, int planet_id, int curren
     return sitrep;
 }
 
-SitRepEntry CreateTechUnlockedSitRep(const std::string& tech_name, int current_turn) {
+SitRepEntry CreateTechUnlockedSitRep(std::string tech_name, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_TECH_UNLOCKED"),
         current_turn,
         "icons/sitrep/tech_unlocked.png",
         UserStringNop("SITREP_TECH_UNLOCKED_LABEL"), true);
-    sitrep.AddVariable(VarText::TECH_TAG, tech_name);
+    sitrep.AddVariable(VarText::TECH_TAG, std::move(tech_name));
     return sitrep;
 }
 
-SitRepEntry CreatePolicyUnlockedSitRep(const std::string& policy_name, int current_turn) {
+SitRepEntry CreatePolicyUnlockedSitRep(std::string policy_name, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_POLICY_UNLOCKED"),
         current_turn + 1,
         "icons/sitrep/policy_unlocked.png",
         UserStringNop("SITREP_POLICY_UNLOCKED_LABEL"), true);
-    sitrep.AddVariable(VarText::POLICY_TAG, policy_name);
+    sitrep.AddVariable(VarText::POLICY_TAG, std::move(policy_name));
     return sitrep;
 }
 
-SitRepEntry CreateBuildingTypeUnlockedSitRep(const std::string& building_type_name, int current_turn) {
+SitRepEntry CreateBuildingTypeUnlockedSitRep(std::string building_type_name, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_BUILDING_TYPE_UNLOCKED"),
         current_turn,
         "icons/sitrep/building_type_unlocked.png",
         UserStringNop("SITREP_BUILDING_TYPE_UNLOCKED_LABEL"), true);
-    sitrep.AddVariable(VarText::BUILDING_TYPE_TAG, building_type_name);
+    sitrep.AddVariable(VarText::BUILDING_TYPE_TAG, std::move(building_type_name));
     return sitrep;
 }
 
-SitRepEntry CreateShipHullUnlockedSitRep(const std::string& ship_hull_name, int current_turn) {
+SitRepEntry CreateShipHullUnlockedSitRep(std::string ship_hull_name, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_SHIP_HULL_UNLOCKED"),
         current_turn,
         "icons/sitrep/ship_hull_unlocked.png",
         UserStringNop("SITREP_SHIP_HULL_UNLOCKED_LABEL"), true);
-    sitrep.AddVariable(VarText::SHIP_HULL_TAG, ship_hull_name);
+    sitrep.AddVariable(VarText::SHIP_HULL_TAG, std::move(ship_hull_name));
     return sitrep;
 }
 
-SitRepEntry CreateShipPartUnlockedSitRep(const std::string& ship_part_name, int current_turn) {
+SitRepEntry CreateShipPartUnlockedSitRep(std::string ship_part_name, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_SHIP_PART_UNLOCKED"),
         current_turn,
         "icons/sitrep/ship_part_unlocked.png",
         UserStringNop("SITREP_SHIP_PART_UNLOCKED_LABEL"), true);
-    sitrep.AddVariable(VarText::SHIP_PART_TAG, ship_part_name);
+    sitrep.AddVariable(VarText::SHIP_PART_TAG, std::move(ship_part_name));
     return sitrep;
 }
 
@@ -274,7 +274,7 @@ SitRepEntry CreateCombatDestroyedObjectSitRep(const UniverseObject* obj, int com
         DebugLogger() << "CreateCombatDestroyedObjectSitRep: passed null object";
         return GenericCombatDestroyedObjectSitrep(combat_system_id, current_turn);
     }
-    int object_id = obj->ID();
+    const int object_id = obj->ID();
 
     SitRepEntry sitrep;
 
@@ -370,14 +370,14 @@ SitRepEntry CreatePlanetDepopulatedSitRep(int planet_id) { // TODO: pass current
     return sitrep;
 }
 
-SitRepEntry CreatePlanetColonizedSitRep(int planet_id, const std::string& species) { // TODO: pass current_turn
+SitRepEntry CreatePlanetColonizedSitRep(int planet_id, std::string species) { // TODO: pass current_turn
     SitRepEntry sitrep(
         UserStringNop("SITREP_PLANET_COLONIZED"),
         CurrentTurn() + 1,
         "icons/sitrep/planet_colonized.png",
         UserStringNop("SITREP_PLANET_COLONIZED_LABEL"), true);
     sitrep.AddVariable(VarText::PLANET_ID_TAG,  std::to_string(planet_id));
-    sitrep.AddVariable(VarText::SPECIES_TAG,    species);
+    sitrep.AddVariable(VarText::SPECIES_TAG,    std::move(species));
     return sitrep;
 }
 
@@ -448,14 +448,13 @@ SitRepEntry CreateFleetGiftedSitRep(int fleet_id, int empire_id) { // TODO: pass
     return sitrep;
 }
 
-SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id,
-                                                  int recipient_empire_id,
+SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, int recipient_empire_id,
                                                   const ScriptingContext& context)
 {
     const ObjectMap& o = context.ContextObjects();
     const Universe& u = context.ContextUniverse();
 
-    auto fleet = o.get<Fleet>(fleet_id);
+    const auto fleet = o.get<Fleet>(fleet_id);
 
     //bool system_contains_recipient_empire_planets = false;
     //if (const System* system = o.get<System>(system_id)) {
@@ -527,7 +526,7 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id,
             sitrep.AddVariable(VarText::SYSTEM_ID_TAG,     std::to_string(system_id));
             sitrep.AddVariable(VarText::FLEET_ID_TAG,      std::to_string(fleet_id));
             sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     std::to_string(fleet->Owner()));
-            int ship_id = *fleet->ShipIDs().begin();
+            const int ship_id = *fleet->ShipIDs().begin();
             sitrep.AddVariable(VarText::SHIP_ID_TAG,       std::to_string(ship_id));
             if (auto ship = o.get<Ship>(ship_id))
                 sitrep.AddVariable(VarText::DESIGN_ID_TAG, std::to_string(ship->DesignID()));
@@ -554,9 +553,9 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id,
             sitrep.AddVariable(VarText::SYSTEM_ID_TAG,     std::to_string(system_id));
             sitrep.AddVariable(VarText::FLEET_ID_TAG,      std::to_string(fleet_id));
             sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     std::to_string(fleet->Owner()));
-            int ship_id = *fleet->ShipIDs().begin();
+            const int ship_id = *fleet->ShipIDs().begin();
             sitrep.AddVariable(VarText::SHIP_ID_TAG,       std::to_string(ship_id));
-            if (auto ship = o.get<Ship>(ship_id))
+            if (auto ship = o.getRaw<Ship>(ship_id))
                 sitrep.AddVariable(VarText::DESIGN_ID_TAG, std::to_string(ship->DesignID()));
             return sitrep;
         } else {
@@ -584,19 +583,18 @@ SitRepEntry CreateEmpireEliminatedSitRep(int empire_id) { // TODO: pass current_
     return sitrep;
 }
 
-SitRepEntry CreateVictorySitRep(const std::string& reason_string, int empire_id) { // TODO: pass string with move
-    SitRepEntry sitrep(reason_string.c_str(), CurrentTurn() + 1,  // TODO: pass current_turn
+SitRepEntry CreateVictorySitRep(std::string reason_string, int empire_id) {
+    SitRepEntry sitrep(std::move(reason_string), CurrentTurn() + 1,  // TODO: pass current_turn
                        "icons/sitrep/victory.png", UserStringNop("SITREP_VICTORY_LABEL"), true);
     sitrep.AddVariable(VarText::EMPIRE_ID_TAG, std::to_string(empire_id));
     return sitrep;
 }
 
-SitRepEntry CreateSitRep(const std::string& template_string, int turn, const std::string& icon,
+SitRepEntry CreateSitRep(std::string template_string, int turn, std::string icon,
                          std::vector<std::pair<std::string, std::string>> parameters,
-                         const std::string& label, bool stringtable_lookup)
+                         std::string label, bool stringtable_lookup)
 {
-    SitRepEntry sitrep(template_string.c_str(), turn, icon.c_str(),
-                       label.c_str(), stringtable_lookup);
+    SitRepEntry sitrep(std::move(template_string), turn, std::move(icon), std::move(label), stringtable_lookup);
     sitrep.AddVariables(std::move(parameters));
     return sitrep;
 }
