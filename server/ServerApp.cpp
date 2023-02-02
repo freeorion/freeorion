@@ -2912,12 +2912,50 @@ namespace {
 
             // can't colonize if multiple empires attempting to do so on same turn
             if (empires_ships_colonizing.size() != 1) {
+                // generate sitreps for every empire that tried to colonize this planet
                 for (const auto& [empire_id, colonizing_ships] : empires_ships_colonizing) {
-                    if (const auto empire = context.GetEmpire(empire_id)) {
-                        for (int ship_id : colonizing_ships)
-                            empire->AddSitRepEntry(CreatePlanetEstablishFailedSitRep(planet_id, ship_id));
-                    } else {
+                    const auto empire = context.GetEmpire(empire_id);
+                    if (!empire) {
                         ErrorLogger() << "HandleColonization couldn't get empire with id " << empire_id;
+                        continue;
+                    }
+
+                    const auto is_visible =
+                        [empire_it{context.empire_object_vis.find(empire_id)},
+                         end_it{context.empire_object_vis.end()}](const int obj_id) -> bool
+                    {
+                        if (empire_it == end_it)
+                            return false;
+                        const auto obj_it = empire_it->second.find(obj_id);
+                        if (obj_it == empire_it->second.end())
+                            return false;
+                        return obj_it->second >= Visibility::VIS_BASIC_VISIBILITY;
+                    };
+
+                    for (const int ship_id : colonizing_ships) {
+                        bool created_empire_specific_message = false;
+
+
+                        // check other ships colonizing here...
+                        for (const auto& [other_empire_id, other_empire_colonizing_ships] : empires_ships_colonizing) {
+                            for (const auto other_ship_id : other_empire_colonizing_ships) {
+                                if (!is_visible(other_ship_id))
+                                    continue;
+                                if (other_ship_id == ship_id)
+                                    continue;
+                                empire->AddSitRepEntry(CreatePlanetEstablishFailedVisibleOtherSitRep(planet_id, ship_id, other_empire_id));
+                                created_empire_specific_message = true;
+                                break;
+                            }
+                        }
+                        // can this empire see another ship that attempted to colonize the same planet?
+                        // SITREP_PLANET_ESTABLISH_FAILED_VISIBLE
+                        //Ship %ship% failed to establish a colony or outpost on %planet% because the %empire% also attempted to establish on the same planet.
+                        //SITREP_PLANET_ESTABLISH_FAILED_VISIBLE_LABEL
+
+                        // no, just issue generic message
+                        if (!created_empire_specific_message)
+                            empire->AddSitRepEntry(CreatePlanetEstablishFailedSitRep(planet_id, ship_id));
                     }
                 }
                 continue;
@@ -2943,22 +2981,18 @@ namespace {
                 if (armed_ship_empire_id == colonizing_empire_id)
                     continue;
                 if (armed_ship_empire_id == ALL_EMPIRES ||
-                    context.ContextDiploStatus(colonizing_empire_id, armed_ship_empire_id) ==
-                        DiplomaticStatus::DIPLO_WAR)
+                    context.ContextDiploStatus(colonizing_empire_id, armed_ship_empire_id) == DiplomaticStatus::DIPLO_WAR)
                 {
+                    if (empire)
+                        empire->AddSitRepEntry(CreatePlanetEstablishFailedArmedSitRep(
+                            planet_id, colonizing_ship_id, armed_ship_empire_id));
                     colonize_blocked = true;
                     break;
                 }
             }
 
-            if (colonize_blocked) {
-                if (!empire) {
-                    ErrorLogger() << "HandleColonization couldn't get empire with id " << colonizing_empire_id;
-                } else {
-                    empire->AddSitRepEntry(CreatePlanetEstablishFailedSitRep(planet_id, colonizing_ship_id));
-                }
+            if (colonize_blocked)
                 continue;
-            }
 
             // before actual colonization, which deletes the colony ship, store ship info for later use with sitrep generation
             auto* ship = objects.getRaw<Ship>(colonizing_ship_id);

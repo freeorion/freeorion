@@ -72,6 +72,8 @@ private:
 [[nodiscard]] FO_COMMON_API SitRepEntry CreatePlanetColonizedSitRep(int planet_id, const std::string& species);
 [[nodiscard]] FO_COMMON_API SitRepEntry CreatePlanetOutpostedSitRep(int planet_id);
 [[nodiscard]] FO_COMMON_API SitRepEntry CreatePlanetEstablishFailedSitRep(int planet_id, int ship_id);
+[[nodiscard]] FO_COMMON_API SitRepEntry CreatePlanetEstablishFailedVisibleOtherSitRep(int planet_id, int ship_id, int other_empire_id);
+[[nodiscard]] FO_COMMON_API SitRepEntry CreatePlanetEstablishFailedArmedSitRep(int planet_id, int ship_id, int other_empire_id);
 
 [[nodiscard]] FO_COMMON_API SitRepEntry CreatePlanetGiftedSitRep(int planet_id, int empire_id);
 [[nodiscard]] FO_COMMON_API SitRepEntry CreateFleetGiftedSitRep(int fleet_id, int empire_id);

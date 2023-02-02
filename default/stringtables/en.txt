@@ -7757,9 +7757,21 @@ SITREP_PLANET_OUTPOSTED_LABEL
 Planet Outposted
 
 SITREP_PLANET_ESTABLISH_FAILED
-Ship %ship% failed to establish colony or outpost on %planet%.
+Ship %ship% failed to establish a colony or outpost on %planet%.
 
 SITREP_PLANET_ESTABLISH_FAILED_LABEL
+Ship Failed to Esablish on Planet
+
+SITREP_PLANET_ESTABLISH_FAILED_VISIBLE_OTHER
+Ship %ship% failed to establish a colony or outpost on %planet% because the %empire% also attempted to establish on the same planet.
+
+SITREP_PLANET_ESTABLISH_FAILED_VISIBLE_OTHER_LABEL
+Ship Failed to Esablish on Planet
+
+SITREP_PLANET_ESTABLISH_FAILED_ARMED
+Ship %ship% failed to establish a colony or outpost on %planet% because the %empire% has armed ships in system.
+
+SITREP_PLANET_ESTABLISH_FAILED_ARMED_LABEL
 Ship Failed to Esablish on Planet
 
 SITREP_OUTPOST_ABANDONED_PREPARATION
