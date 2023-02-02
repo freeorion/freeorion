@@ -23,7 +23,7 @@ XENOPHOBIC_SELF
                         VisibleToEmpire empire = Source.Owner
                         Species
                         Not Species name = Source.Species
-                        Not Species name = "SP_EXOBOT"
+                        Not HasTag name = "LOW_BRAINPOWER"
                         Not Contains Building name = "BLD_CONC_CAMP"
                         Or [
                             Not OwnedBy empire = RootCandidate.Owner
@@ -43,9 +43,20 @@ XENOPHOBIC_SELF
             stackinggroup = "XENOPHOBIC_POP_SELF"
             accountinglabel = "XENOPHOBIC_LABEL_SELF"
             priority = [[TARGET_POPULATION_LAST_BEFORE_OVERRIDE_PRIORITY]]
-            effects = SetTargetPopulation value = Value - min(
-                    max(Value, 0) * 0.4 * (1 - 0.8^[[XENOPHOBIC_SELFSUSTAINING_QUALIFYING_PLANET_COUNT]]),
-                    3 * Target.HabitableSize  // Cap malus at the self-sustaining bonus
+
+            effects = SetTargetPopulation value = Value + max(
+                -3 * Target.HabitableSize,  // Cap malus at the self-sustaining bonus
+                Target.HabitableSize * (NamedReal name = "XENOPHOBIC_TARGET_POPULATION_PERJUMP" value = -0.2)
+                * Statistic Sum
+                    value = (1 + NamedIntegerLookup name = "XENOPHOBIC_MAX_JUMPS"
+                        - JumpsBetween object = Target.ID object = LocalCandidate.ID)
+                    condition = And [
+                        Planet
+                        Species
+                        Not Species name = Source.Species
+                        Not HasTag name = "LOW_BRAINPOWER"
+                        WithinStarlaneJumps jumps = (NamedIntegerLookup name = "XENOPHOBIC_MAX_JUMPS") condition = Source
+                    ]
                 )
 '''
 
@@ -55,10 +66,9 @@ XENOPHOBIC_SELFSUSTAINING_QUALIFYING_PLANET_COUNT
                     Species
                     Not Or [
                         Species name = Source.Species
-                        Species name = "SP_EXOBOT"
+                        HasTag name = "LOW_BRAINPOWER"
                     ]
-                    WithinStarlaneJumps jumps = 5 condition = Source
-                    WithinStarlaneJumps jumps = 2 condition = ExploredByEmpire empire = Source.Owner
+                    WithinStarlaneJumps jumps = NamedIntegerLookup name = "XENOPHOBIC_MAX_JUMPS" condition = Source
                 ]
 '''
 
@@ -85,7 +95,7 @@ XENOPHOBIC_OTHER
                             Not EmpireHasAdoptedPolicy empire = LocalCandidate.Owner name = "PLC_RACIAL_PURITY"
                         ]
                         WithinStarlaneJumps jumps = (NamedIntegerLookup name = "XENOPHOBIC_MAX_JUMPS") condition = Target
-                    ]             
+                    ]
 '''
 
 
@@ -94,7 +104,7 @@ CONDITION_OTHER_SPECIES_NEARBY
                 Planet
                 Species
                 Not Species name = Source.Species
-                Not Species name = "SP_EXOBOT"
+                Not HasTag name = "LOW_BRAINPOWER"
                 Not Contains Building name = "BLD_CONC_CAMP"
                 VisibleToEmpire empire = Source.Owner
                 Or [
