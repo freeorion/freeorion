@@ -391,6 +391,17 @@ SitRepEntry CreatePlanetOutpostedSitRep(int planet_id) { // TODO: pass current_t
     return sitrep;
 }
 
+SitRepEntry CreatePlanetEstablishFailedSitRep(int planet_id, int ship_id) { // TODO: pass current_turn
+    SitRepEntry sitrep(
+        UserStringNop("SITREP_PLANET_ESTABLISH_FAILED"),
+        CurrentTurn() + 1,
+        "icons/sitrep/planet_colonized.png",
+        UserStringNop("SITREP_PLANET_ESTABLISH_FAILED_LABEL"), true);
+    sitrep.AddVariable(VarText::PLANET_ID_TAG,     std::to_string(planet_id));
+    sitrep.AddVariable(VarText::SHIP_ID_TAG,       std::to_string(ship_id));
+    return sitrep;
+}
+
 SitRepEntry CreatePlanetGiftedSitRep(int planet_id, int empire_id) { // TODO: pass current_turn
     SitRepEntry sitrep(
         UserStringNop("SITREP_PLANET_GIFTED"),
