@@ -2901,17 +2901,6 @@ namespace {
         // 1) an enemy empire has armed aggressive ships in the system
         // 2) multiple empires try to colonize a planet on the same turn
         for (auto& planet_colonization : planet_empire_colonization_ship_ids) {
-            // can't colonize if multiple empires attempting to do so on same turn
-            auto& empires_ships_colonizing = planet_colonization.second;
-            if (empires_ships_colonizing.size() != 1)
-                continue;
-            int colonizing_empire_id = empires_ships_colonizing.begin()->first;
-
-            const auto& empire_ships_colonizing = empires_ships_colonizing.begin()->second;
-            if (empire_ships_colonizing.empty())
-                continue;
-            int colonizing_ship_id = *empire_ships_colonizing.begin();
-
             int planet_id = planet_colonization.first;
             auto* planet = objects.getRaw<Planet>(planet_id);
             if (!planet) {
@@ -2924,6 +2913,30 @@ namespace {
                 ErrorLogger() << "HandleColonization couldn't get system with id " << system_id;
                 continue;
             }
+
+            // can't colonize if multiple empires attempting to do so on same turn
+            auto& empires_ships_colonizing = planet_colonization.second;
+            if (empires_ships_colonizing.size() != 1) {
+                for (const auto& empire_ships : empires_ships_colonizing) {
+                    int empire_id = empire_ships.first;
+                    auto empire = context.GetEmpire(empire_id);
+                    if (!empire) {
+                        ErrorLogger() << "HandleColonization couldn't get empire with id " << empire_id;
+                    } else {
+                        for (int ship_id : empire_ships.second) {
+                            empire->AddSitRepEntry(CreatePlanetEstablishFailedSitRep(planet_id, ship_id));
+                        }
+                    }
+                }
+                continue;
+            }
+            int colonizing_empire_id = empires_ships_colonizing.begin()->first;
+            auto empire = context.GetEmpire(colonizing_empire_id);
+
+            const auto& empire_ships_colonizing = empires_ships_colonizing.begin()->second;
+            if (empire_ships_colonizing.empty())
+                continue;
+            int colonizing_ship_id = *empire_ships_colonizing.begin();
 
             // find which empires have obstructive armed ships in system
             std::set<int> empires_with_armed_ships_in_system;
@@ -2946,8 +2959,14 @@ namespace {
                 }
             }
 
-            if (colonize_blocked)
+            if (colonize_blocked) {
+                if (!empire) {
+                    ErrorLogger() << "HandleColonization couldn't get empire with id " << colonizing_empire_id;
+                } else {
+                    empire->AddSitRepEntry(CreatePlanetEstablishFailedSitRep(planet_id, colonizing_ship_id));
+                }
                 continue;
+            }
 
             // before actual colonization, which deletes the colony ship, store ship info for later use with sitrep generation
             auto* ship = objects.getRaw<Ship>(colonizing_ship_id);
@@ -2955,7 +2974,6 @@ namespace {
                 ErrorLogger() << "HandleColonization couldn't get ship with id " << colonizing_ship_id;
             const auto& species_name = ship ? ship->SpeciesName() : "";
             float colonist_capacity = ship ? ship->ColonyCapacity(universe) : 0.0f;
-
 
             // do colonization
             if (!ColonizePlanet(colonizing_ship_id, planet_id, context, empire_ids))
@@ -2966,7 +2984,6 @@ namespace {
             colonizing_ship_ids.push_back(colonizing_ship_id);
 
             // sitrep about colonization / outposting
-            auto empire = context.GetEmpire(colonizing_empire_id);
             if (!empire) {
                 ErrorLogger() << "HandleColonization couldn't get empire with id " << colonizing_empire_id;
             } else {
