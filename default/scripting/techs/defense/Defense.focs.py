@@ -19,7 +19,7 @@ Tech(
         EffectsGroup(
             scope=Planet() & OwnedBy(empire=Source.Owner),
             stackinggroup="PLANET_SHIELDS_STACK_ROOT",
-            effects=SetMaxShield(value=Value + 1, accountinglabel="DEF_ROOT_DEFENSE"),
+            effects=SetMaxShield(value=Value + PLANET_SHIELD_FACTOR, accountinglabel="DEF_ROOT_DEFENSE"),
         ),
         EffectsGroup(  # base regeneration of troops, defense and shields if not attacked
             scope=Planet()
