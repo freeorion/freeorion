@@ -413,7 +413,7 @@ void NewFleetOrder::ExecuteImpl(ScriptingContext& context) const {
     // an ID is provided to ensure consistancy between server and client universes
     u.SetEmpireObjectVisibility(EmpireID(), fleet->ID(), Visibility::VIS_FULL_VISIBILITY);
 
-    system->Insert(fleet, System::NO_ORBIT, context.current_turn);
+    system->Insert(fleet, System::NO_ORBIT, context.current_turn, o);
 
     // new fleet will get same m_arrival_starlane as fleet of the first ship in the list.
     auto first_ship{validated_ships[0]};
@@ -442,8 +442,7 @@ void NewFleetOrder::ExecuteImpl(ScriptingContext& context) const {
 
     u.InhibitUniverseObjectSignals(false);
 
-    std::vector<const Fleet*> created_fleets{fleet.get()};
-    system->FleetsInsertedSignal(created_fleets);
+    system->FleetsInsertedSignal(std::vector<int>{fleet->ID()}, o);
     system->StateChangedSignal();
 
     // Signal changed state of modified fleets and remove any empty fleets.

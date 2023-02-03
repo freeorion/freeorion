@@ -122,10 +122,10 @@ private:
     void PlanetClickedSlot(int planet_id, const ObjectMap& objects);
 
     /** Responds to insertion fleets into system during a turn.  may update colonize buttons. */
-    static void FleetsInserted(const std::vector<const Fleet*>& fleets);
+    static void FleetsInserted(std::vector<int> fleets, const ObjectMap& objects);
 
     /** Responds to removal fleets from system during a turn.  may update colonize buttons. */
-    static void FleetsRemoved(const std::vector<const Fleet*>& fleets);
+    static void FleetsRemoved(std::vector<int> fleets);
 
     class SystemNameDropDownList;
     std::shared_ptr<SystemNameDropDownList>     m_system_name;
@@ -153,8 +153,8 @@ private:
 
     static std::set<std::weak_ptr<SidePanel>, std::owner_less<std::weak_ptr<SidePanel>>> s_side_panels;
 
-    static std::set<boost::signals2::connection>      s_system_connections;
-    static std::map<int, boost::signals2::connection> s_fleet_state_change_signals;
+    static std::set<boost::signals2::scoped_connection>      s_system_connections;
+    static std::map<int, boost::signals2::scoped_connection> s_fleet_state_change_signals;
 };
 
 #endif

@@ -741,15 +741,14 @@ namespace {
 
         // Create planet and insert it into the object map
         auto& universe = context.ContextUniverse();
-        int turn = context.current_turn;
-        auto planet = universe.InsertNew<Planet>(planet_type, size, turn);
+        auto planet = universe.InsertNew<Planet>(planet_type, size, context.current_turn);
         if (!planet) {
             ErrorLogger() << "CreateSystem : Attempt to insert planet into the object map failed";
             return INVALID_OBJECT_ID;
         }
 
         // Add planet to system map
-        system->Insert(std::shared_ptr<UniverseObject>(planet), orbit, turn);
+        system->Insert(planet, orbit, context.current_turn, context.ContextObjects());
 
         // If a name has been specified, set planet name
         if (!(name.empty()))
@@ -787,7 +786,7 @@ namespace {
             return INVALID_OBJECT_ID;
         }
 
-        system->Insert(building, System::NO_ORBIT, context.current_turn);
+        system->Insert(building, System::NO_ORBIT, context.current_turn, context.ContextObjects());
         planet->AddBuilding(building->ID());
         building->SetPlanetID(planet_id);
         return building->ID();
@@ -813,7 +812,7 @@ namespace {
 
         // Insert fleet into specified system
         int turn = CurrentTurn();
-        system->Insert(fleet, System::NO_ORBIT, turn);
+        system->Insert(fleet, System::NO_ORBIT, turn, Objects());
 
         // check if we got a fleet name...
         if (name.empty()) {
@@ -880,7 +879,7 @@ namespace {
             ErrorLogger() << "CreateShip: couldn't create new ship";
             return INVALID_OBJECT_ID;
         }
-        system->Insert(ship, System::NO_ORBIT, turn);
+        system->Insert(ship, System::NO_ORBIT, turn, objects);
 
         // set ship name
         // check if we got a ship name...
@@ -969,7 +968,7 @@ namespace {
             return INVALID_OBJECT_ID;
         int field_id = field->ID();
         int turn = CurrentTurn();
-        system->Insert(std::move(field), System::NO_ORBIT, turn);
+        system->Insert(std::move(field), System::NO_ORBIT, turn, Objects());
         return field_id;
     }
 

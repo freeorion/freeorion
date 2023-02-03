@@ -283,10 +283,10 @@ bool System::Contains(int object_id) const {
 std::shared_ptr<UniverseObject> System::Accept(const UniverseObjectVisitor& visitor) const
 { return visitor.Visit(std::const_pointer_cast<System>(std::static_pointer_cast<const System>(shared_from_this()))); }
 
-void System::Insert(std::shared_ptr<UniverseObject> obj, int orbit, int current_turn)
-{ Insert(obj.get(), orbit, current_turn); }
+void System::Insert(std::shared_ptr<UniverseObject> obj, int orbit, int current_turn, const ObjectMap& objects)
+{ Insert(obj.get(), orbit, current_turn, objects); }
 
-void System::Insert(UniverseObject* obj, int orbit, int current_turn) {
+void System::Insert(UniverseObject* obj, int orbit, int current_turn, const ObjectMap& objects) {
     if (!obj) {
         ErrorLogger() << "System::Insert() : Attempted to place a null object in a System";
         return;
@@ -362,7 +362,7 @@ void System::Insert(UniverseObject* obj, int orbit, int current_turn) {
     }
     case UniverseObjectType::OBJ_FLEET: {
         m_fleets.insert(obj->ID());
-        FleetsInsertedSignal({static_cast<Fleet*>(obj)});
+        FleetsInsertedSignal({obj->ID()}, objects);
         break;
     }
     case UniverseObjectType::OBJ_PLANET:
@@ -410,10 +410,8 @@ void System::Remove(int id) {
     m_buildings.erase(id);
     m_objects.erase(id);
 
-    if (removed_fleet) {
-        if (auto fleet = Objects().getRaw<Fleet>(id))
-            FleetsRemovedSignal({fleet});
-    }
+    if (removed_fleet)
+        FleetsRemovedSignal(std::vector<int>{id});
     StateChangedSignal();
 }
 

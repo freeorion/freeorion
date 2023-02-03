@@ -2979,8 +2979,8 @@ int                                        SidePanel::s_planet_id = INVALID_OBJE
 bool                                       SidePanel::s_needs_update = false;
 bool                                       SidePanel::s_needs_refresh = false;
 std::set<std::weak_ptr<SidePanel>, std::owner_less<std::weak_ptr<SidePanel>>> SidePanel::s_side_panels;
-std::set<boost::signals2::connection>      SidePanel::s_system_connections;
-std::map<int, boost::signals2::connection> SidePanel::s_fleet_state_change_signals;
+std::set<boost::signals2::scoped_connection>      SidePanel::s_system_connections;
+std::map<int, boost::signals2::scoped_connection> SidePanel::s_fleet_state_change_signals;
 boost::signals2::signal<void ()>           SidePanel::ResourceCenterChangedSignal;
 boost::signals2::signal<void (int)>        SidePanel::PlanetSelectedSignal;
 boost::signals2::signal<void (int)>        SidePanel::PlanetRightClickedSignal;
@@ -3252,10 +3252,8 @@ void SidePanel::RefreshInPreRender(ScriptingContext& context) {
     }
 
     //s_system_connections.insert(s_system->StateChangedSignal.connect(&SidePanel::Update));
-    s_system_connections.insert(system->FleetsInsertedSignal.connect(
-        &SidePanel::FleetsInserted));
-    s_system_connections.insert(system->FleetsRemovedSignal.connect(
-        &SidePanel::FleetsRemoved));
+    s_system_connections.insert(system->FleetsInsertedSignal.connect(&SidePanel::FleetsInserted));
+    s_system_connections.insert(system->FleetsRemovedSignal.connect(&SidePanel::FleetsRemoved));
 }
 
 void SidePanel::RefreshSystemNames() {
@@ -3560,23 +3558,17 @@ void SidePanel::PlanetClickedSlot(int planet_id, const ObjectMap& objects) {
         SelectPlanet(planet_id, objects);
 }
 
-void SidePanel::FleetsInserted(const std::vector<const Fleet*>& fleets) {
-    for (auto* fleet : fleets) {
-        s_fleet_state_change_signals[fleet->ID()].disconnect();  // in case already present
-        s_fleet_state_change_signals[fleet->ID()] =
-            fleet->StateChangedSignal.connect(&SidePanel::Update);
+void SidePanel::FleetsInserted(std::vector<int> fleets, const ObjectMap& objects) {
+    for (auto fleet_id: fleets) {
+        if (const auto* fleet = objects.getRaw<Fleet>(fleet_id))
+            s_fleet_state_change_signals[fleet_id] = fleet->StateChangedSignal.connect(&SidePanel::Update);
     }
     SidePanel::Update();
 }
 
-void SidePanel::FleetsRemoved(const std::vector<const Fleet*>& fleets) {
-    for (auto* fleet : fleets) {
-        auto signal_it = s_fleet_state_change_signals.find(fleet->ID());
-        if (signal_it != s_fleet_state_change_signals.end()) {
-            signal_it->second.disconnect();
-            s_fleet_state_change_signals.erase(signal_it);
-        }
-    }
+void SidePanel::FleetsRemoved(std::vector<int> fleets) {
+    for (auto fleet_id : fleets)
+        s_fleet_state_change_signals.erase(fleet_id);
     SidePanel::Update();
 }
 

@@ -2883,24 +2883,19 @@ void MapWnd::InitTurn(ScriptingContext& context) {
     // connect system fleet add and remove signals
     for (auto system : objects.allRaw<System>()) {
         m_system_fleet_insert_remove_signals[system->ID()].emplace_back(system->FleetsInsertedSignal.connect(
-            [this](const std::vector<const Fleet*>& fleets) {
+            [this](std::vector<int>&& fleet_ids, const ObjectMap& objects) {
                 RefreshFleetButtons(true);
-                for (auto fleet : fleets) {
-                    if (!m_fleet_state_change_signals.count(fleet->ID()))
-                        m_fleet_state_change_signals[fleet->ID()] = fleet->StateChangedSignal.connect(
-                            boost::bind(&MapWnd::RefreshFleetButtons, this, true));
+                for (const auto* fleet : objects.findRaw<Fleet>(std::move(fleet_ids))) {
+                    m_fleet_state_change_signals.try_emplace(
+                        fleet->ID(),
+                        fleet->StateChangedSignal.connect(boost::bind(&MapWnd::RefreshFleetButtons, this, true)));
                 }
             }));
         m_system_fleet_insert_remove_signals[system->ID()].emplace_back(system->FleetsRemovedSignal.connect(
-            [this](const std::vector<const Fleet*>& fleets) {
+            [this](std::vector<int>&& fleets) {
                 RefreshFleetButtons(true);
-                for (auto fleet : fleets) {
-                    auto found_signal = m_fleet_state_change_signals.find(fleet->ID());
-                    if (found_signal != m_fleet_state_change_signals.end()) {
-                        found_signal->second.disconnect();
-                        m_fleet_state_change_signals.erase(found_signal);
-                    }
-                }
+                for (const auto fleet_id : fleets)
+                    m_fleet_state_change_signals.erase(fleet_id);
             }));
     }
 

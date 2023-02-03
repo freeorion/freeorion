@@ -211,7 +211,7 @@ void Moderator::CreatePlanet::Execute() const {
     auto* app = IApp::GetApp();
     const auto current_turn = app->CurrentTurn();
     auto& universe = app->GetUniverse();
-    auto location = app->GetUniverse().Objects().get<System>(m_system_id);
+    auto location = universe.Objects().get<System>(m_system_id);
     if (!location) {
         ErrorLogger() << "CreatePlanet::Execute couldn't get a System object at which to create the planet";
         return;
@@ -231,7 +231,8 @@ void Moderator::CreatePlanet::Execute() const {
     }
 
     const int orbit = *(free_orbits.begin());
-    location->Insert(std::static_pointer_cast<UniverseObject>(std::move(planet)), orbit, current_turn);
+    location->Insert(std::static_pointer_cast<UniverseObject>(std::move(planet)),
+                     orbit, current_turn, universe.Objects());
 }
 
 std::string Moderator::CreatePlanet::Dump() const {

@@ -27,9 +27,9 @@ namespace {
     }
 
     void InsertFleetWithShips(Fleet& fleet, System& system, ObjectMap& objects, int current_turn) {
-        system.Insert(fleet.shared_from_this(), System::NO_ORBIT, current_turn);
+        system.Insert(fleet.shared_from_this(), System::NO_ORBIT, current_turn, objects);
         for (auto* ship : objects.findRaw<Ship>(fleet.ShipIDs()))
-            system.Insert(ship, System::NO_ORBIT, current_turn);
+            system.Insert(ship, System::NO_ORBIT, current_turn, objects);
     }
 
     /** Return \p full_route terminates at \p last_system or before the first
