@@ -134,7 +134,7 @@ namespace {
 
         const ObjectMap& objects = context.ContextObjects();
 
-        auto next_system = objects.getRaw<System>(new_next_system);
+        const auto next_system = objects.getRaw<System>(new_next_system);
         if (!next_system) {
             ErrorLogger(effects) << "UpdateFleetRoute couldn't get new next system with id: " << new_next_system;
             return;
@@ -151,7 +151,7 @@ namespace {
         if (start_system == INVALID_OBJECT_ID)
             start_system = new_next_system;
 
-        int dest_system = fleet->FinalDestinationID();
+        const int dest_system = fleet->FinalDestinationID();
 
         auto route_pair = context.ContextUniverse().GetPathfinder()->ShortestPath(
             start_system, dest_system, fleet->Owner(), objects);
@@ -164,7 +164,7 @@ namespace {
 
         // set fleet with newly recalculated route
         try {
-            fleet->SetRoute(route_pair.first, objects);
+            fleet->SetRoute(std::move(route_pair.first), objects);
         } catch (const std::exception& e) {
             ErrorLogger(effects) << "Caught exception updating fleet route in effect code: " << e.what();
         }
@@ -3551,7 +3551,7 @@ void SetDestination::Execute(ScriptingContext& context) const {
         return;
 
     try {
-        target_fleet->SetRoute(route_list, context.ContextObjects());
+        target_fleet->SetRoute(std::move(route_list), context.ContextObjects());
     } catch (const std::exception& e) {
         ErrorLogger(effects) << "Caught exception in Effect::SetDestination setting fleet route: " << e.what();
     }

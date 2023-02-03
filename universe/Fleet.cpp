@@ -723,7 +723,7 @@ bool Fleet::UnknownRoute() const
 std::shared_ptr<UniverseObject> Fleet::Accept(const UniverseObjectVisitor& visitor) const
 { return visitor.Visit(std::const_pointer_cast<Fleet>(std::static_pointer_cast<const Fleet>(shared_from_this()))); }
 
-void Fleet::SetRoute(const std::vector<int>& route, const ObjectMap& objects) { // TODO: pass route by value with move
+void Fleet::SetRoute(std::vector<int> route, const ObjectMap& objects) {
     if (route.empty()) {
         if (SystemID() == INVALID_OBJECT_ID) {
             ErrorLogger() << "Fleet::SetRoute() : Attempted to change fleet " << this->Name()
@@ -739,7 +739,7 @@ void Fleet::SetRoute(const std::vector<int>& route, const ObjectMap& objects) { 
         return;
     }
 
-    m_travel_route = route;
+    m_travel_route = std::move(route);
 
     TraceLogger() << "Fleet::SetRoute: " << this->Name() << " (" << this->ID() << ")  input: " << [&]() {
         std::stringstream ss;
@@ -760,7 +760,7 @@ void Fleet::SetRoute(const std::vector<int>& route, const ObjectMap& objects) { 
         if (m_prev_system != SystemID() && m_prev_system == m_travel_route.front()) {
             // Fleet was ordered to return to its previous system directly
             m_prev_system = m_next_system;
-        } else if (SystemID() == route.front()) {
+        } else if (SystemID() == m_travel_route.front()) {
             // Fleet was ordered to follow a route that starts at its current system
             m_prev_system = SystemID();
         }
@@ -893,7 +893,7 @@ void Fleet::MovementPhase(ScriptingContext& context) {
         const int back_id = move_path.back().object_id;
         auto shortened_route = TruncateRouteToEndAtSystem(m_travel_route, universe, back_id);
         try {
-            SetRoute(shortened_route, objects);
+            SetRoute(std::move(shortened_route), objects);
         } catch (const std::exception& e) {
             ErrorLogger() << "Caught exception in Fleet MovementPhase shorentning route: " << e.what();
         }
@@ -1076,13 +1076,12 @@ void Fleet::ResetTargetMaxUnpairedMeters() noexcept(UniverseObject::noexcept_rtm
 }
 
 void Fleet::CalculateRouteTo(int target_system_id, const Universe& universe) {
-    std::vector<int> route;
     const ObjectMap& objects = universe.Objects();
 
     //DebugLogger() << "Fleet::CalculateRoute";
     if (target_system_id == INVALID_OBJECT_ID) {
         try {
-            SetRoute(route, objects);
+            ClearRoute(objects);
         } catch (const std::exception& e) {
             ErrorLogger() << "Caught exception in Fleet CalculateRouteTo: " << e.what();
         }
@@ -1095,7 +1094,7 @@ void Fleet::CalculateRouteTo(int target_system_id, const Universe& universe) {
         if (!objects.get<System>(target_system_id)) {
             // destination system doesn't exist or doesn't exist in known universe, so can't move to it.  leave route empty.
             try {
-                SetRoute(route, objects);
+                ClearRoute(objects);
             } catch (const std::exception& e) {
                 ErrorLogger() << "Caught exception in Fleet CalculateRouteTo: " << e.what();
             }
@@ -1110,14 +1109,14 @@ void Fleet::CalculateRouteTo(int target_system_id, const Universe& universe) {
                           << " fleet's previous: " << m_prev_system << " or moving to: " << target_system_id;
         }
         try {
-            SetRoute(path.first, objects);
+            SetRoute(std::move(path.first), objects);
         } catch (const std::exception& e) {
             ErrorLogger() << "Caught exception in Fleet CalculateRouteTo: " << e.what();
         }
         return;
     }
 
-    int dest_system_id = target_system_id;
+    const int dest_system_id = target_system_id;
 
     // if we're between systems, the shortest route may be through either one
     if (this->CanChangeDirectionEnRoute()) {
@@ -1133,14 +1132,14 @@ void Fleet::CalculateRouteTo(int target_system_id, const Universe& universe) {
             ErrorLogger() << "Fleet::CalculateRoute got empty route from ShortestPath";
             return;
         }
-        auto obj = objects.get(sys_list1.front());
+        auto obj = objects.getRaw(sys_list1.front());
         if (!obj) {
             ErrorLogger() << "Fleet::CalculateRoute couldn't get path start object with id " << path1.first.front();
             return;
         }
         double dist_x = obj->X() - this->X();
         double dist_y = obj->Y() - this->Y();
-        double dist1 = std::sqrt(dist_x*dist_x + dist_y*dist_y);
+        const double dist1 = std::sqrt(dist_x*dist_x + dist_y*dist_y);
 
         std::pair<std::vector<int>, double> path2;
         try {
@@ -1154,22 +1153,21 @@ void Fleet::CalculateRouteTo(int target_system_id, const Universe& universe) {
             ErrorLogger() << "Fleet::CalculateRoute got empty route from ShortestPath";
             return;
         }
-        obj = objects.get(sys_list2.front());
+        obj = objects.getRaw(sys_list2.front());
         if (!obj) {
             ErrorLogger() << "Fleet::CalculateRoute couldn't get path start object with id " << path2.first.front();
             return;
         }
         dist_x = obj->X() - this->X();
         dist_y = obj->Y() - this->Y();
-        double dist2 = std::sqrt(dist_x*dist_x + dist_y*dist_y);
+        const double dist2 = std::sqrt(dist_x*dist_x + dist_y*dist_y);
 
         try {
             // pick whichever path is quicker
-            if (dist1 + path1.second < dist2 + path2.second) {
-                SetRoute(path1.first, objects);
-            } else {
-                SetRoute(path2.first, objects);
-            }
+            if (dist1 + path1.second < dist2 + path2.second)
+                SetRoute(std::move(path1.first), objects);
+            else
+                SetRoute(std::move(path2.first), objects);
         } catch (const std::exception& e) {
             ErrorLogger() << "Caught exception in Fleet CalculateRouteTo: " << e.what();
         }
@@ -1184,7 +1182,7 @@ void Fleet::CalculateRouteTo(int target_system_id, const Universe& universe) {
                           << " fleet's next: " << m_next_system << " or destination: " << dest_system_id;
         }
         try {
-            SetRoute(path.first, objects);
+            SetRoute(std::move(path).first, objects);
         } catch (const std::exception& e) {
             ErrorLogger() << "Caught exception in Fleet CalculateRouteTo: " << e.what();
         }

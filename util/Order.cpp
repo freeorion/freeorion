@@ -580,14 +580,14 @@ void FleetMoveOrder::ExecuteImpl(ScriptingContext& context) const {
     }
 
     // check destination validity: disallow movement that's out of range
-    auto eta = fleet->ETA(fleet->MovePath(fleet_travel_route, false, context));
+    const auto eta = fleet->ETA(fleet->MovePath(fleet_travel_route, false, context));
     if (eta.first == Fleet::ETA_NEVER || eta.first == Fleet::ETA_OUT_OF_RANGE) {
         DebugLogger() << "FleetMoveOrder::ExecuteImpl rejected out of range move order";
         return;
     }
 
     try {
-        fleet->SetRoute(fleet_travel_route, context.ContextObjects());
+        fleet->SetRoute(std::move(fleet_travel_route), context.ContextObjects());
         fleet->SetMoveOrderedTurn(context.current_turn);
         // todo: set last turn ordered moved
     } catch (const std::exception& e) {

@@ -149,7 +149,8 @@ public:
     void ResetTargetMaxUnpairedMeters() noexcept(UniverseObject::noexcept_rtmum) override;
 
     /** Sets this fleet to move through the series of systems in the list, in order */
-    void SetRoute(const std::vector<int>& route, const ObjectMap& objects);
+    void SetRoute(std::vector<int> route, const ObjectMap& objects);
+    void ClearRoute(const ObjectMap& objects) { SetRoute({}, objects); }
 
     /** Sets this fleet to move through the series of systems that makes the
       * shortest path from its current location to target_system_id */
