@@ -83,7 +83,7 @@ public:
       * the name string is looked up in the stringtable before being returned.
       * otherwise, the raw name string is returned. */
     [[nodiscard]] const std::string& Name(bool stringtable_lookup = true) const;
-    void SetName(const std::string& name);
+    void SetName(std::string name) noexcept;
 
     /** Return the UUID. */
     [[nodiscard]] boost::uuids::uuid UUID() const noexcept { return m_uuid; }

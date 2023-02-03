@@ -279,7 +279,7 @@ namespace {
     }
 
     // Wrappers for Empire class member functions
-    void EmpireSetName(int empire_id, const std::string& name)
+    void EmpireSetName(int empire_id, std::string name)
     {
         ScriptingContext context;
         auto empire = context.GetEmpire(empire_id);
@@ -287,7 +287,7 @@ namespace {
             ErrorLogger() << "EmpireSetName: couldn't get empire with ID " << empire_id;
             return;
         }
-        empire->SetName(name);
+        empire->SetName(std::move(name));
     }
 
     auto EmpireSetHomeworld(int empire_id, int planet_id, const std::string& species_name) -> bool
@@ -565,14 +565,14 @@ namespace {
         return py::object(obj->Name());
     }
 
-    void SetName(int object_id, const std::string& name)
+    void SetName(int object_id, std::string name)
     {
         auto obj = Objects().getRaw(object_id);
         if (!obj) {
             ErrorLogger() << "RenameUniverseObject: Couldn't get object with ID " << object_id;
             return;
         }
-        obj->Rename(name);
+        obj->Rename(std::move(name));
     }
 
     auto GetX(int object_id) -> double

@@ -141,9 +141,9 @@ const std::string& ShipDesign::Name(bool stringtable_lookup) const {
         return m_name;
 }
 
-void ShipDesign::SetName(const std::string& name) { // TODO: pass by value, make noexcept
+void ShipDesign::SetName(std::string name) noexcept {
     if (!name.empty() && !m_name.empty())
-        m_name = name; // TODO: pass by value with move
+        m_name = std::move(name);
 }
 
 const std::string& ShipDesign::Description(bool stringtable_lookup) const {
