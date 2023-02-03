@@ -2721,10 +2721,11 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
                         !cur_empire->ProducibleItem(BuildType::BT_SHIP, ship_design,
                                                     row->ObjectID(), context))
                     { continue; }
-                    ProductionQueue::ProductionItem ship_item(BuildType::BT_SHIP, ship_design, universe);
+
                     app->Orders().IssueOrder(std::make_shared<ProductionQueueOrder>(
                         ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE, app->EmpireID(),
-                        ship_item, 1, row->ObjectID(), pos),
+                        ProductionQueue::ProductionItem{BuildType::BT_SHIP, ship_design, universe},
+                        1, row->ObjectID(), pos),
                         context);
                     needs_queue_update = true;
                 }
@@ -2772,10 +2773,10 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
                                                        row->ObjectID(), context))
                     { continue; }
 
-                    ProductionQueue::ProductionItem bld_item(BuildType::BT_BUILDING, building_type_name);
                     app->Orders().IssueOrder(std::make_shared<ProductionQueueOrder>(
                         ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE, app->EmpireID(),
-                        bld_item, 1, row->ObjectID(), pos), // TODO: pass bld_item with move?
+                        ProductionQueue::ProductionItem{BuildType::BT_BUILDING, building_type_name},
+                        1, row->ObjectID(), pos), // TODO: pass bld_item with move?
                         context);
 
                     needs_queue_update = true;

@@ -1254,10 +1254,10 @@ void ResearchQueueOrder::ExecuteImpl(ScriptingContext& context) const {
 // ProductionQueueOrder
 ////////////////////////////////////////////////
 ProductionQueueOrder::ProductionQueueOrder(ProdQueueOrderAction action, int empire,
-                                           const ProductionQueue::ProductionItem& item, // TODO: pass by value and move?
+                                           ProductionQueue::ProductionItem item,
                                            int number, int location, int pos) :
     Order(empire),
-    m_item(item),
+    m_item(std::move(item)),
     m_location(location),
     m_new_quantity(number),
     m_new_index(pos),

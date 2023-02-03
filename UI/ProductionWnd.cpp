@@ -1197,9 +1197,7 @@ void ProductionWnd::UpdateInfoPanel(const ScriptingContext& context) {
                                                 loc_obj->Name(), context);
 }
 
-void ProductionWnd::AddBuildToQueueSlot(const ProductionQueue::ProductionItem& item,
-                                        int number, int location, int pos)
-{
+void ProductionWnd::AddBuildToQueueSlot(ProductionQueue::ProductionItem item, int number, int location, int pos) {
     if (!m_order_issuing_enabled)
         return;
     ScriptingContext context;
@@ -1211,7 +1209,7 @@ void ProductionWnd::AddBuildToQueueSlot(const ProductionQueue::ProductionItem& i
     GGHumanClientApp::GetApp()->Orders().IssueOrder(
         std::make_shared<ProductionQueueOrder>(
             ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE,
-            client_empire_id, item, number, location, pos),
+            client_empire_id, std::move(item), number, location, pos),
         context);
 
     empire->UpdateProductionQueue(context);
@@ -1410,8 +1408,7 @@ void ProductionWnd::QueueItemUseImperialPP(GG::ListBox::iterator it, bool allow)
 
     if (queue_it != empire->GetProductionQueue().end())
         GGHumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(
-                action, client_empire_id, queue_it->uuid),
+            std::make_shared<ProductionQueueOrder>(action, client_empire_id, queue_it->uuid),
             context);
 
     empire->UpdateProductionQueue(context);

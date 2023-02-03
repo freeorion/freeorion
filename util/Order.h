@@ -541,11 +541,10 @@ public:
         NUM_PROD_QUEUE_ACTIONS
     };
 
-    ProductionQueueOrder(ProdQueueOrderAction action, int empire,
-                         const ProductionQueue::ProductionItem& item,
+    ProductionQueueOrder(ProdQueueOrderAction action, int empire, ProductionQueue::ProductionItem item,
                          int number, int location, int pos = -1);
-    ProductionQueueOrder(ProdQueueOrderAction action, int empire,
-                         boost::uuids::uuid uuid,
+    // num1 and num2 may be quantity and blocksize, or just quantity, or rally point id, or new index in queue
+    ProductionQueueOrder(ProdQueueOrderAction action, int empire, boost::uuids::uuid uuid,
                          int num1 = -1, int num2 = -1);
 
     [[nodiscard]] std::string Dump() const override;

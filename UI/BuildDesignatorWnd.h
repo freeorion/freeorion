@@ -22,10 +22,10 @@ public:
     bool InClient(GG::Pt pt) const override;
 
     /** returns set of BulldType shown in this selector */
-    const std::set<BuildType>&      GetBuildTypesShown() const;
+    const std::set<BuildType>& GetBuildTypesShown() const;
 
     /** .first -> available items; .second -> unavailable items */
-    const std::pair<bool, bool>&    GetAvailabilitiesShown() const;
+    std::pair<bool, bool> GetAvailabilitiesShown() const;
 
     int SelectedPlanetID() const;
 
@@ -99,23 +99,22 @@ public:
     bool PediaVisible();
 
     /** emitted when the indicated build is indicated by the user */
-    mutable boost::signals2::signal<void (const ProductionQueue::ProductionItem&, int, int, int)>
-                                                        AddBuildToQueueSignal;
+    mutable boost::signals2::signal<void (ProductionQueue::ProductionItem, int, int, int)> AddBuildToQueueSignal;
     /** emitted when the quantity of items in a single build queue item is
       * changed by the user */
-    mutable boost::signals2::signal<void (int, int)>    BuildQuantityChangedSignal;
+    mutable boost::signals2::signal<void (int, int)> BuildQuantityChangedSignal;
     /** emitted when the user selects a system from within this Wnd (but not
       * when this Wnd's system is set programatically) */
-    mutable boost::signals2::signal<void (int)>         SystemSelectedSignal;
+    mutable boost::signals2::signal<void (int)> SystemSelectedSignal;
     /** emitted when the user changes the planet selection from within this
       * Wnd (but not when this Wnd's selected planet is set programatically) */
-    mutable boost::signals2::signal<void (int)>         PlanetSelectedSignal;
+    mutable boost::signals2::signal<void (int)> PlanetSelectedSignal;
 
 private:
     class BuildSelector;
 
     int BuildLocation() const;
-    void BuildItemRequested(const ProductionQueue::ProductionItem& item, int num_to_build, int pos);
+    void BuildItemRequested(ProductionQueue::ProductionItem item, int num_to_build, int pos);
     void BuildQuantityChanged(int queue_idx, int quantity);
     void SetBuild(int queue_idx);
     void InitializeWindows();

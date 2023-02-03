@@ -551,8 +551,7 @@ namespace {
             push_back(m_panel);
         }
 
-        const ProductionQueue::ProductionItem& Item() const
-        { return m_item; }
+        const ProductionQueue::ProductionItem& Item() const noexcept { return m_item; }
 
         void SizeMove(GG::Pt ul, GG::Pt lr) override {
             const GG::Pt old_size = Size();
@@ -611,10 +610,10 @@ public:
     void CompleteConstruction() override;
 
     /** returns set of BulldType shown in this selector */
-    const std::set<BuildType>&   GetBuildTypesShown() const;
+    const auto& GetBuildTypesShown() const noexcept { return m_build_types_shown; }
 
     /** .first -> available items; .second -> unavailable items */
-    const std::pair<bool, bool>& GetAvailabilitiesShown() const;
+    auto GetAvailabilitiesShown() const noexcept { return m_availabilities_shown; }
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
@@ -645,7 +644,7 @@ public:
     mutable boost::signals2::signal<void (const BuildingType*)> DisplayBuildingTypeSignal;
     mutable boost::signals2::signal<void (const ShipDesign*)>   DisplayShipDesignSignal;
     mutable boost::signals2::signal<void ()>                    DisplayStockpileProjectSignal;
-    mutable boost::signals2::signal<void (const ProductionQueue::ProductionItem&, int, int)>
+    mutable boost::signals2::signal<void (ProductionQueue::ProductionItem, int, int)>
                                                                 RequestBuildItemSignal;
     mutable boost::signals2::signal<void ()>                    ShowPediaSignal;
 
@@ -753,12 +752,6 @@ void BuildDesignatorWnd::BuildSelector::CompleteConstruction() {
     DoLayout();
     SaveDefaultedOptions();
 }
-
-const std::set<BuildType>& BuildDesignatorWnd::BuildSelector::GetBuildTypesShown() const
-{ return m_build_types_shown; }
-
-const std::pair<bool, bool>& BuildDesignatorWnd::BuildSelector::GetAvailabilitiesShown() const
-{ return m_availabilities_shown; }
 
 void BuildDesignatorWnd::BuildSelector::DoLayout() {
     int num_buttons = 4;
@@ -902,9 +895,7 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
     return true;
 }
 
-bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_type,
-                                                             const std::string& name)
-{
+bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_type, const std::string& name) {
     if (build_type != BuildType::BT_BUILDING)
         throw std::invalid_argument("BuildableItemVisible was passed an invalid build type with a name");
 
@@ -1101,12 +1092,8 @@ void BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked(GG::ListBox::iterat
 void BuildDesignatorWnd::BuildSelector::AddBuildItemToQueue(GG::ListBox::iterator it, bool top) {
     if ((*it)->Disabled())
         return;
-    ProductionItemRow* item_row = dynamic_cast<ProductionItemRow*>(it->get());
-    if (!item_row)
-        return;
-    const ProductionQueue::ProductionItem& item = item_row->Item();
-
-    RequestBuildItemSignal(item, 1, top ? 0 : -1);
+    if (ProductionItemRow* item_row = dynamic_cast<ProductionItemRow*>(it->get()))
+        RequestBuildItemSignal(item_row->Item(), 1, top ? 0 : -1);
 }
 
 void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::iterator it,
@@ -1190,8 +1177,8 @@ void BuildDesignatorWnd::CompleteConstruction() {
     m_build_selector->ShowPediaSignal.connect([this]() { ShowPedia(); });
 
     m_build_selector->RequestBuildItemSignal.connect(
-        [this](const ProductionQueue::ProductionItem& item, int num, int pos)
-        { BuildItemRequested(item, num, pos); });
+        [this](ProductionQueue::ProductionItem item, int num, int pos)
+        { BuildItemRequested(std::move(item), num, pos); });
 
     SidePanel::PlanetSelectedSignal.connect(PlanetSelectedSignal);
     SidePanel::SystemSelectedSignal.connect(SystemSelectedSignal);
@@ -1225,7 +1212,7 @@ void BuildDesignatorWnd::CompleteConstruction() {
 const std::set<BuildType>& BuildDesignatorWnd::GetBuildTypesShown() const
 { return m_build_selector->GetBuildTypesShown(); }
 
-const std::pair<bool, bool>& BuildDesignatorWnd::GetAvailabilitiesShown() const
+std::pair<bool, bool> BuildDesignatorWnd::GetAvailabilitiesShown() const
 { return m_build_selector->GetAvailabilitiesShown(); }
 
 bool BuildDesignatorWnd::InWindow(GG::Pt pt) const
@@ -1447,7 +1434,7 @@ void BuildDesignatorWnd::HideAvailability(bool available, bool refresh_list) {
 }
 
 void BuildDesignatorWnd::ToggleAvailabilitly(bool available, bool refresh_list) {
-    const std::pair<bool, bool>& avail_shown = m_build_selector->GetAvailabilitiesShown();
+    const auto avail_shown = m_build_selector->GetAvailabilitiesShown();
     if (available) {
         if (avail_shown.first)
             HideAvailability(true, refresh_list);
@@ -1519,13 +1506,13 @@ bool BuildDesignatorWnd::PediaVisible()
 int BuildDesignatorWnd::BuildLocation() const
 { return m_side_panel->SelectedPlanetID(); }
 
-void BuildDesignatorWnd::BuildItemRequested(const ProductionQueue::ProductionItem& item,
+void BuildDesignatorWnd::BuildItemRequested(ProductionQueue::ProductionItem item,
                                             int num_to_build, int pos)
 {
     const ScriptingContext context;
     auto empire = context.GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
     if (empire && empire->EnqueuableItem(item, BuildLocation(), context))
-        AddBuildToQueueSignal(item, num_to_build, BuildLocation(), pos);
+        AddBuildToQueueSignal(std::move(item), num_to_build, BuildLocation(), pos);
 }
 
 void BuildDesignatorWnd::BuildQuantityChanged(int queue_idx, int quantity)

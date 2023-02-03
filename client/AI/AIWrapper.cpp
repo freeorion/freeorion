@@ -399,11 +399,11 @@ namespace {
             return 0;
         }
 
-        auto item = ProductionQueue::ProductionItem(BuildType::BT_BUILDING, item_name);
-
         AIClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE,
-                                                   empire_id, item, 1, location_id),
+                                                   empire_id,
+                                                   ProductionQueue::ProductionItem(BuildType::BT_BUILDING, item_name),
+                                                   1, location_id),
             context);
 
         return 1;
@@ -439,11 +439,11 @@ namespace {
             return 0;
         }
 
-        auto item = ProductionQueue::ProductionItem(BuildType::BT_SHIP, design_id, universe);
-
         AIClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE,
-                                                   empire_id, item, 1, location_id),
+                                                   empire_id,
+                                                   ProductionQueue::ProductionItem(BuildType::BT_SHIP, design_id, universe),
+                                                   1, location_id),
             context);
 
         return 1;
@@ -474,9 +474,9 @@ namespace {
 
         if (queue_it != empire->GetProductionQueue().end())
             AIClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::SET_QUANTITY_AND_BLOCK_SIZE,
-                                                       empire_id, queue_it->uuid,
-                                                       new_quantity, new_blocksize),
+                std::make_shared<ProductionQueueOrder>(
+                    ProductionQueueOrder::ProdQueueOrderAction::SET_QUANTITY_AND_BLOCK_SIZE,
+                    empire_id, queue_it->uuid, new_quantity, new_blocksize),
                 context);
 
         return 1;
