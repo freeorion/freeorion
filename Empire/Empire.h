@@ -292,13 +292,13 @@ public:
     void AddShipDesign(int ship_design_id, const Universe& universe, int next_design_id = INVALID_DESIGN_ID);
     int AddShipDesign(ShipDesign ship_design, Universe& universe); ///< inserts given ShipDesign into the Universe, adds the design's id to the Empire's set of ids, and returns the new design's id, which is INVALID_OBJECT_ID on failure.  If successful, universe takes ownership of passed ShipDesign.
 
-    [[nodiscard]] std::string NewShipName();         ///< generates a random ship name, appending II, III, etc., to it if it has been used before by this empire
-    void Eliminate(EmpireManager& empires);          ///< Marks empire as eliminated and cleans up empire after it is eliminated.  Queues are cleared, capital is reset, and other state info not relevant to an eliminated empire is cleared
-    /** Marks this empire as having won for this reason, and sends the appropriate sitreps */
-    void Win(const std::string& reason, const EmpireManager::container_type& empires);
-    void SetReady(bool ready);                       ///< Marks this empire with readiness status
-    void AutoTurnSetReady();                         ///< Decreases auto-turn counter and set empire ready if not expired or set unready
-    void SetAutoTurn(int turns_count);               ///< Set auto-turn counter
+    [[nodiscard]] std::string NewShipName(); ///< generates a random ship name, appending II, III, etc., to it if it has been used before by this empire
+    void Eliminate(EmpireManager& empires, int current_turn);                         ///< Marks empire as eliminated and cleans up empire after it is eliminated.  Queues are cleared, capital is reset, and other state info not relevant to an eliminated empire is cleared
+    void Win(const std::string& reason, const EmpireManager::container_type& empires, ///< Marks this empire as having won for this reason, and sends the appropriate sitreps
+             int current_turn);
+    void SetReady(bool ready);               ///< Marks this empire with readiness status
+    void AutoTurnSetReady();                 ///< Decreases auto-turn counter and set empire ready if not expired or set unready
+    void SetAutoTurn(int turns_count);       ///< Set auto-turn counter
 
     /** Inserts the given SitRep entry into the empire's sitrep list. */
     void AddSitRepEntry(const SitRepEntry& entry);

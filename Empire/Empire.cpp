@@ -941,11 +941,11 @@ int Empire::NumSitRepEntries(int turn) const {
     return count;
 }
 
-void Empire::Eliminate(EmpireManager& empires) {
+void Empire::Eliminate(EmpireManager& empires, int current_turn) {
     m_eliminated = true;
 
     for (auto& entry : empires)
-        entry.second->AddSitRepEntry(CreateEmpireEliminatedSitRep(EmpireID()));
+        entry.second->AddSitRepEntry(CreateEmpireEliminatedSitRep(EmpireID(), current_turn));
 
     // some Empire data not cleared when eliminating since it might be useful
     // to remember later, and having it doesn't hurt anything (as opposed to
@@ -975,10 +975,10 @@ void Empire::Eliminate(EmpireManager& empires) {
     m_supply_unobstructed_systems.clear();
 }
 
-void Empire::Win(const std::string& reason, const EmpireManager::container_type& empires) {
+void Empire::Win(const std::string& reason, const EmpireManager::container_type& empires, int current_turn) {
     if (m_victories.insert(reason).second) {
         for (auto& entry : empires)
-            entry.second->AddSitRepEntry(CreateVictorySitRep(reason, EmpireID()));
+            entry.second->AddSitRepEntry(CreateVictorySitRep(reason, EmpireID(), current_turn));
     }
 }
 
@@ -1839,9 +1839,9 @@ std::string Empire::NewShipName() {
         ship_names.push_back(UserString("OBJ_SHIP"));
 
     // select name randomly from list
-    int ship_name_idx = RandInt(0, static_cast<int>(ship_names.size()) - 1);
+    const int ship_name_idx = RandInt(0, static_cast<int>(ship_names.size()) - 1);
     std::string retval = ship_names[ship_name_idx];
-    int times_name_used = ++m_ship_names_used[retval];
+    const int times_name_used = ++m_ship_names_used[retval];
     if (1 < times_name_used)
         retval += " " + RomanNumber(times_name_used);
     return retval;

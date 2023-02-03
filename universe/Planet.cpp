@@ -983,7 +983,7 @@ void Planet::PopGrowthProductionResearchPhase(ScriptingContext& context) {
         GetMeter(MeterType::METER_POPULATION)->Current() <= MINIMUM_POP_CENTER_POPULATION)
     {
         if (auto empire = context.GetEmpire(this->Owner())) {
-            empire->AddSitRepEntry(CreatePlanetDepopulatedSitRep(this->ID()));
+            empire->AddSitRepEntry(CreatePlanetDepopulatedSitRep(this->ID(), context.current_turn));
 
             if (!HasTag(TAG_STAT_SKIP_DEPOP, context))
                 empire->RecordPlanetDepopulated(*this);
