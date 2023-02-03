@@ -535,7 +535,8 @@ public:
     virtual void ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination);
 
     /** Sets a name for this Wnd.  This name is not used by GG in any way; it
-        only exists for user convenience. */
+        only exists for user convenience. not noexcept because overrides might
+        need to allocate if duplicating \a name */
     virtual void SetName(std::string name) { m_name = std::move(name); }
 
     /** Suppresses rendering of this window (and possibly its children) during
