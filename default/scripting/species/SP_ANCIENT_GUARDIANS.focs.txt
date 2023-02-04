@@ -6,13 +6,13 @@ Species
     tags = [ "ROBOTIC" "LOW_BRAINPOWER" "NO_RESEARCH" "NO_INFLUENCE" "AVERAGE_SUPPLY" "DESTROYED_ON_CONQUEST" "CTRL_STAT_SKIP_DEPOP" "PEDIA_ROBOTIC_SPECIES_CLASS" ]
 
     foci = [
-        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
     ]
-    defaultfocus = "FOCUS_INDUSTRY"
+    defaultfocus = "FOCUS_PROTECTION"
 
     effectsgroups = [
         // just to make the tags consistent...
-        [[AVERAGE_INDUSTRY]]
+        [[NO_INDUSTRY]]
         [[NO_RESEARCH]]
         [[NO_INFLUENCE]]
         [[NO_STOCKPILE]]
@@ -34,7 +34,7 @@ Species
                 Source
                 Planet
             ]
-            effects = SetMaxShield value = Value + ( 500 * [[PLANET_SHIELD_FACTOR]] )
+            effects = SetMaxShield value = Value + ( NamedReal name = "ANCIENT_PLANETARY_SHIELD" value = 250 * [[PLANET_SHIELD_FACTOR]] )
 
         // huge bonus to ground troops
         EffectsGroup
@@ -43,7 +43,7 @@ Species
                 Source
                 Planet
             ]
-            effects = SetMaxTroops value = Value + Target.Population * 10
+            effects = SetMaxTroops value = Value + (Target.Population * ( NamedReal name = "ANCIENT_PLANETARY_TROOPS" value = 5 ))
 
         // set population to max
         EffectsGroup
