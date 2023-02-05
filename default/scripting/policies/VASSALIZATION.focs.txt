@@ -43,7 +43,7 @@ Policy
                 ]
             ]
             effects = SetTargetInfluence value = Value +
-                (NamedReal name = "PLC_VASSALIZATION_INFLUENCE_SCALING" value = 3.0) *
+                (NamedReal name = "PLC_VASSALIZATION_INFLUENCE_SCALING" value = 2.0) *
                 (Statistic Sum value = LocalCandidate.Population condition = And [
                     InSystem id = Target.SystemID
                     Planet
