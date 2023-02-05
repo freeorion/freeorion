@@ -30,6 +30,29 @@ NATIVE_FORTIFICATION_MINIMAL
 FORTICATION_PROBABILITY
 '''0.1 * max(0.2 * Source.TargetPopulation, Source.Research + Source.Industry)'''
 
+ADVANCED_NATIVE_DEFENSE
+'''[[AVERAGE_PLANETARY_SHIELDS]]
+[[AVERAGE_PLANETARY_DEFENSE]]
+[[NATIVE_PLANETARY_DETECTION(10)]]
+[[NATIVE_PLANETARY_DEFENSE(10*[[PLANET_DEFENSE_FACTOR]])]]
+[[NATIVE_PLANETARY_SHIELDS(10*[[PLANET_SHIELD_FACTOR]])]]
+
+EffectsGroup
+            scope = And [
+                Source
+                Turn low = 1 high = 1
+                (GalaxyMaxAIAggression >= 1)
+                ]
+            activation = Planet
+            effects = [
+                If condition = Not ContainedBy Contains Or [
+                    And [Planet HasSpecial name = "MODERATE_TECH_NATIVES_SPECIAL"]
+                    And [Planet HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL"]
+                    ]
+                    effects = AddSpecial name = OneOf("NATIVE_FORTIFICATION_LOW", "NATIVE_FORTIFICATION_MEDIUM", "CLOUD_COVER_MASTER_SPECIAL", "VOLCANIC_ASH_MASTER_SPECIAL")
+            ]
+'''
+
 DEFAULT_NATIVE_DEFENSE
 '''[[AVERAGE_PLANETARY_SHIELDS]]
 [[AVERAGE_PLANETARY_DEFENSE]]
