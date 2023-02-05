@@ -5782,6 +5782,18 @@ ENC_UNLOCKS
 '''Débloque : 
 '''
 
+ENC_PRODUCTION_LOCATION_REQUIREMENTS
+'''Requis sur le lieu de production :
+'''
+
+ENC_ENQUEUE_LOCATION_REQUIREMENTS
+'''Requis pour ajout à la file d'attente :
+'''
+
+ENC_EFFECTS
+'''Effets :
+'''
+
 ENC_SHIP_PART_CAN_MOUNT_IN_SLOT_TYPES
 '''Se monte dans : '''
 
@@ -6359,7 +6371,7 @@ Modificateurs de base de la Stabilité:
 '''
 
 STABILITY_MODIFIERS
-'''• -/+ 5 Connexion par lignes d'[[metertype METER_SUPPLY]] à la Capitale - Dépend de la distance en nombre de Voies Spatiales à la Capitale ou à une structure [[buildingtype BLD_REGIONAL_ADMIN]]. Ne concerne pas les espèces <encyclopedia INDEPENDENT_SPECIES_TITLE>indépendantistes</encyclopedia> et les empires ayant adopté la Politique [[policy PLC_CONFEDERATION]].
+'''• -/+ 5 Connexion par lignes d'[[metertype METER_SUPPLY]] à la Capitale - Dépend de la distance en nombre de Voies Spatiales à la Capitale ou à une structure [[buildingtype BLD_REGIONAL_ADMIN]]. Ne concerne pas les espèces de type [[encyclopedia INDEPENDENT]] et les empires ayant adopté la Politique [[policy PLC_CONFEDERATION]].
 • +5 Monde Natal - les espèces vivant sur leur propre planète natale sont plus stables.
 • +5 Espèce de la Capitale - Les colonies abritant la même espèce que celle de la Capitale sont plus stables. Ne s'applique pas à la Capitale elle-même.
 • +10 Capitale - La colonie abrite une structure [[buildingtype BLD_IMPERIAL_PALACE]].
@@ -6757,7 +6769,17 @@ XENOPHOBIC_SPECIES_TEXT
 • Distance 1 Voie   : -2.0 Stabilité
 • Dans le même système : -2.5 Stabilité
 
-Une espèce Xénophobe et de [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]] considère également la présence d'espèces étrangères à proximité comme une entrave à son équilibre naturel, ce qui entraîne une diminution de sa [[metertype METER_TARGET_POPULATION]].
+Une espèce Xénophobe et à [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]] considère également la présence d'espèces étrangères pleinement conscientes à proximité comme une entrave à son équilibre naturel, diminuant le bonus de [[metertype METER_TARGET_POPULATION]] de l'espèce autosuffisante. La diminution dépend de la [[HABITABLE_SIZE]] de la colonie xénophobe et se cumule avec chaque planète perturbatrice à proximité, selon leur distance (de [[value XENOPHOBIC_TARGET_POPULATION_PERJUMP]] par Voie spatiale), de la même manière que la Stabilité:
+• Distance 4 Voies : -0.2  * [[HABITABLE_SIZE]]
+• Distance 3 Voies : -0.4  * [[HABITABLE_SIZE]]
+• Distance 2 Voies : -0.7  * [[HABITABLE_SIZE]]
+• Distance 1 Voie   : -0.8  * [[HABITABLE_SIZE]]
+• Dans le même système : -1.0  * [[HABITABLE_SIZE]]
+À noter que cette diminution ne peut jamais être supérieure au bonus de population pour l'espèce à [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]].
+
+Les espèces n'étant pas pleinement conscientes, telles les espèces [[species SP_EXOBOT]] ou [[species SP_ANCIENT_GUARDIANS]] (espèces de type [[LOW_BRAINPOWER]]), ne sont pas assez perturbatrices pour infliger un malus à la Stabilité ou Population.
+
+
 
 La technologie [[tech CON_CONC_CAMP]] est disponible par défaut pour les espèces xénophobes.
 
@@ -6772,12 +6794,12 @@ ARTISTIC_SPECIES_TRAIT_TEXT
 Liste des espèces artistiques:'''
 
 INDEPENDENT_SPECIES_TITLE
-Attribut Indépendantiste
+Attribut Indépendant
 
 INDEPENDENT_SPECIES_TRAIT_TEXT
-'''La [[metertype METER_HAPPINESS]] des espèces indépendantistes n'est pas modifiée par la distance aux Capitales ou aux Administrations Régionales Impériales.
+'''La [[metertype METER_HAPPINESS]] des espèces indépendantes n'est pas modifiée par la distance aux Capitales ou aux Administrations Régionales Impériales.
 
-Liste des espèces indépendantistes:'''
+Liste des espèces indépendantes:'''
 
 SNEAKY_TITLE
 Sournoise
@@ -7734,6 +7756,24 @@ La planète %planet% dispose à présent d'un avant-poste.
 SITREP_PLANET_OUTPOSTED_LABEL
 Planète Avant-Poste
 
+SITREP_PLANET_ESTABLISH_FAILED
+L'astronef %ship% n'a pas réussi à établir une colonie ou un avant-poste sur la planète %planet%.
+
+SITREP_PLANET_ESTABLISH_FAILED_LABEL
+Astronef échoue à s'établir sur une planète
+
+SITREP_PLANET_ESTABLISH_FAILED_VISIBLE_OTHER
+L'astronef %ship% n'a pas réussi à établir une colonie ou un avant-poste sur la planète %planet% en raison de %empire% ayant également essayé de s'établir sur la même planète.
+
+SITREP_PLANET_ESTABLISH_FAILED_VISIBLE_OTHER_LABEL
+Astronef échoue à s'établir sur une planète
+
+SITREP_PLANET_ESTABLISH_FAILED_ARMED
+L'astronef %ship% n'a pas réussi à établir une colonie ou un avant-poste sur la planète %planet% en raison de %empire% ayant des astronefs armés dans le système.
+
+SITREP_PLANET_ESTABLISH_FAILED_ARMED_LABEL
+Astronef échoue à s'établir sur une planète
+
 SITREP_OUTPOST_ABANDONED_PREPARATION
 L'avant-poste de la planète %planet% se prépare à être abandonné au tour %rawtext%.
 
@@ -8568,7 +8608,7 @@ SP_TRITH_DESC
 Les Trith sont un mélange de matière et d'énergie psychique. Leur physionomie est vaguement humanoïde. Tous les Trith sont télépathes, ceci expliquant la raison de leur colère: alors que les Thrith peuvent apprendre à contenir leurs propres pensées, il leur est impossible de réprimer celles des autres. Si pour un Trith adulte, cela est déjà très irritant, l'issue peut s'avérer fatal pour un jeune Trith. En effet, les Thrith développant ce pouvoir avant leur adolescence ne sont parfois pas préparés à endurer les pensées combinées de toutes les espèces intelligentes à travers l'Univers. Cette concentration subite d'influx spirituel peut les mener à la folie ou, dans le pire des cas, à la mort.
 
 Structure sociale:
-La société Trith est une théocratie dominée par les prêtres de Quaran-Dor (le Dieu de l'Esprit). Ils ont prêté le serment solennel de réduire au silence toutes les autres espèces pensantes, afin d'atténuer le fracas spirituel incessant qui parcourt l'Univers.
+La société Trith est une théocratie dominée par les prêtres de Quaran-Dor (le Dieu de l'Esprit). Ils ont prêté le serment solennel de réduire au silence toutes les autres espèces pensantes, afin d'atténuer le fracas spirituel incessant qui parcourt l'Univers. Les seules espèces dont les Trith peuvent s'accommoder sont les espèces de type [[LOW_BRAINPOWER]] telles les espèces [[SP_EXOBOT]] ou [[SP_ANCIENT_GUARDIANS]].
 <img src="species/trith.png"></img>
 '''
 
@@ -9535,7 +9575,7 @@ HIGH_TECH_NATIVES_SPECIAL
 Indigènes Techno-Experts
 
 HIGH_TECH_NATIVES_SPECIAL_DESC
-Les indigènes de cette planète ont développé une maîtrise technologique très avancée. Si leur planète n'appartient pas à un empire, cette dernière profite de défenses bien plus puissantes et résiste très bien aux attaques et aux invasions.
+Les indigènes de cette planète ont développé une maîtrise technologique très avancée. Si leur planète est indépendante de tout empire, cette dernière profite de défenses bien plus puissantes et résiste très bien aux attaques et aux invasions.
 
 NATIVE_FORTIFICATION_MINIMAL
 Fortifications indigènes minimes
@@ -12644,8 +12684,10 @@ PLC_NECESSITY
 Nécessité
 
 PLC_NECESSITY_DESC
-'''Sur les planètes en Focus Recherche dont la [[metertype METER_HAPPINESS]] est inférieure à [[value PLC_NECESSITY_MAX_STABILITY]]:
-• Augmente la [[metertype METER_TARGET_RESEARCH]] par la racine carrée du produit entre la Population et de combien la [[metertype METER_HAPPINESS]] est inférieure à [[value PLC_NECESSITY_MAX_STABILITY]].
+'''Nécessité est mère d'invention.
+
+Sur les planètes en Focus Recherche dont la [[metertype METER_HAPPINESS]] est inférieure à [[value PLC_NECESSITY_MAX_STABILITY]]:
+• Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value PLC_NECESSITY_TARGET_RESEARCH_FACTOR]] multiplié par exposant 1.5 de combien la [[metertype METER_HAPPINESS]] est inférieure à [[value PLC_NECESSITY_MAX_STABILITY]] multiplié par la [[metertype METER_POPULATION]].
 • Augmente la progression de la [[metertype METER_RESEARCH]] de [[value PLC_NECESSITY_RESEARCH_GROWTH_BOOST]] par tour.'''
 
 PLC_NECESSITY_SHORT_DESC
@@ -15897,7 +15939,9 @@ FU_ZERO_FUEL
 Générateur Zero-Point de Carburant
 
 FU_ZERO_FUEL_DESC
-Produit de l'énergie grâce à la génération Zero-Point et la transforme en [[metertype METER_FUEL]] selon des équations de conversion énergie-matière, approvisionnant ainsi automatiquement un astronef.
+'''Ravitaille l'astronef en carburant à chaque tour.
+
+Produit de l'énergie grâce à la génération Zero-Point et la transforme en [[metertype METER_FUEL]] selon des équations de conversion énergie-matière, ravitaillant ainsi automatiquement un astronef.'''
 
 FU_RAMSCOOP
 Réservoir Collecteur
@@ -16284,7 +16328,7 @@ SH_SELF_GRAVITATING
 Coque Auto-Gravitationnelle
 
 SH_SELF_GRAVITATING_DESC
-'''Cette coque immense, à la fois en taille et en puissance, est dotée de six niches externes, de deux niches internes, et d'une niche centrale - faisant de celle-ci l'une des rares capable d'accueillir les équipements d'astronef les plus avancés. Sa [[metertype METER_STRUCTURE]] max élevée en fait également une coque des plus robustes.
+'''Cette coque immense, à la fois en taille et en puissance, est dotée de cinq niches externes, de deux niches internes, et d'une niche centrale - faisant de celle-ci l'une des rares capable d'accueillir les équipements d'astronef les plus avancés. Sa [[metertype METER_STRUCTURE]] max élevée en fait également une coque des plus robustes.
 
 Sa [[metertype METER_STEALTH]] est cependant faible, son [[metertype METER_DETECTION]] standard, tandis que sa [[metertype METER_SPEED]] est moyenne.
 
@@ -17160,7 +17204,7 @@ ULTIMATE_HAPPINESS_DESC
 +++	Parfait en [[metertype METER_HAPPINESS]] : +[[value ULTIMATE_HAPPINESS_VAL]]
 
 INDEPENDENT_HAPPINESS_DESC
-⋄	[[metertype METER_HAPPINESS]] indépendante: la Stabilité de base n'est pas tributaire des connexions aux lignes d'approvisionnement
+⋄	[[metertype METER_HAPPINESS]] [[encyclopedia INDEPENDENT]]e : la Stabilité de base n'est pas tributaire des connexions aux lignes d'approvisionnement
 
 NO_DEFENSE_TROOPS_DESC
 −−−	Pas d'[[metertype METER_TROOPS]] défensive
@@ -18057,6 +18101,9 @@ STYLISH
 ARTISTIC
 Artistique
 
+INDEPENDENT
+Indépendant
+
 ORGANIC
 Organique
 
@@ -18080,6 +18127,9 @@ Gazeux
 
 ORBITAL  # translated
 Orbital
+
+LOW_BRAINPOWER
+Semi-Conscient
 
 
 ##
