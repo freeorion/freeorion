@@ -6757,7 +6757,17 @@ XENOPHOBIC_SPECIES_TEXT
 • Distance 1 Voie   : -2.0 Stabilité
 • Dans le même système : -2.5 Stabilité
 
-Une espèce Xénophobe et de [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]] considère également la présence d'espèces étrangères à proximité comme une entrave à son équilibre naturel, ce qui entraîne une diminution de sa [[metertype METER_TARGET_POPULATION]].
+Une espèce Xénophobe et à [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]] considère également la présence d'espèces étrangères pleinement conscientes à proximité comme une entrave à son équilibre naturel, diminuant le bonus de [[metertype METER_TARGET_POPULATION]] de l'espèce autosuffisante. La diminution dépend de la [[HABITABLE_SIZE]] de la colonie xénophobe et se cumule avec chaque planète perturbatrice à proximité, selon leur distance (de [[value XENOPHOBIC_TARGET_POPULATION_PERJUMP]] par Voie spatiale), de la même manière que la Stabilité:
+• Distance 4 Voies : -0.2  * [[HABITABLE_SIZE]]
+• Distance 3 Voies : -0.4  * [[HABITABLE_SIZE]]
+• Distance 2 Voies : -0.7  * [[HABITABLE_SIZE]]
+• Distance 1 Voie   : -0.8  * [[HABITABLE_SIZE]]
+• Dans le même système : -1.0  * [[HABITABLE_SIZE]]
+À noter que cette diminution ne peut jamais être supérieure au bonus de population pour l'espèce à [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]].
+
+Les espèces n'étant pas pleinement conscientes, telles les espèces [[species SP_EXOBOT]] ou [[species SP_ANCIENT_GUARDIANS]] (espèces de type [[LOW_BRAINPOWER]]), ne sont pas assez perturbatrices pour infliger un malus à la Stabilité ou Population.
+
+
 
 La technologie [[tech CON_CONC_CAMP]] est disponible par défaut pour les espèces xénophobes.
 
@@ -7734,6 +7744,12 @@ La planète %planet% dispose à présent d'un avant-poste.
 SITREP_PLANET_OUTPOSTED_LABEL
 Planète Avant-Poste
 
+SITREP_PLANET_ESTABLISH_FAILED
+L'astronef %ship% n'a pas réussi à établir une colonie ou un avant-poste sur la planète %planet%.
+
+SITREP_PLANET_ESTABLISH_FAILED_LABEL
+Astronef échoue à s'établir sur une planète
+
 SITREP_OUTPOST_ABANDONED_PREPARATION
 L'avant-poste de la planète %planet% se prépare à être abandonné au tour %rawtext%.
 
@@ -8568,7 +8584,7 @@ SP_TRITH_DESC
 Les Trith sont un mélange de matière et d'énergie psychique. Leur physionomie est vaguement humanoïde. Tous les Trith sont télépathes, ceci expliquant la raison de leur colère: alors que les Thrith peuvent apprendre à contenir leurs propres pensées, il leur est impossible de réprimer celles des autres. Si pour un Trith adulte, cela est déjà très irritant, l'issue peut s'avérer fatal pour un jeune Trith. En effet, les Thrith développant ce pouvoir avant leur adolescence ne sont parfois pas préparés à endurer les pensées combinées de toutes les espèces intelligentes à travers l'Univers. Cette concentration subite d'influx spirituel peut les mener à la folie ou, dans le pire des cas, à la mort.
 
 Structure sociale:
-La société Trith est une théocratie dominée par les prêtres de Quaran-Dor (le Dieu de l'Esprit). Ils ont prêté le serment solennel de réduire au silence toutes les autres espèces pensantes, afin d'atténuer le fracas spirituel incessant qui parcourt l'Univers.
+La société Trith est une théocratie dominée par les prêtres de Quaran-Dor (le Dieu de l'Esprit). Ils ont prêté le serment solennel de réduire au silence toutes les autres espèces pensantes, afin d'atténuer le fracas spirituel incessant qui parcourt l'Univers. Les seules espèces dont les Trith peuvent s'accommoder sont les espèces de type [[LOW_BRAINPOWER]] telles les espèces [[SP_EXOBOT]] ou [[SP_ANCIENT_GUARDIANS]].
 <img src="species/trith.png"></img>
 '''
 
@@ -15899,7 +15915,9 @@ FU_ZERO_FUEL
 Générateur Zero-Point de Carburant
 
 FU_ZERO_FUEL_DESC
-Produit de l'énergie grâce à la génération Zero-Point et la transforme en [[metertype METER_FUEL]] selon des équations de conversion énergie-matière, approvisionnant ainsi automatiquement un astronef.
+'''Ravitaille l'astronef en carburant à chaque tour.
+
+Produit de l'énergie grâce à la génération Zero-Point et la transforme en [[metertype METER_FUEL]] selon des équations de conversion énergie-matière, ravitaillant ainsi automatiquement un astronef.'''
 
 FU_RAMSCOOP
 Réservoir Collecteur
@@ -18085,6 +18103,9 @@ Gazeux
 
 ORBITAL  # translated
 Orbital
+
+LOW_BRAINPOWER
+Semi-Conscient
 
 
 ##
