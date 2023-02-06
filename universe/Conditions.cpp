@@ -5069,8 +5069,7 @@ Enqueued::Enqueued(const Enqueued& rhs) :
     m_empire_id(ValueRef::CloneUnique(rhs.m_empire_id)),
     m_low(ValueRef::CloneUnique(rhs.m_low)),
     m_high(ValueRef::CloneUnique(rhs.m_high))
-{
-}
+{}
 
 bool Enqueued::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -5305,6 +5304,9 @@ bool Enqueued::Match(const ScriptingContext& local_context) const {
     int design_id =     (m_design_id ?  m_design_id->Eval(local_context) :  INVALID_DESIGN_ID);
     int low =           (m_low ?        m_low->Eval(local_context) :        0);
     int high =          (m_high ?       m_high->Eval(local_context) :       INT_MAX);
+    // special case, see Eval comment
+    if (!m_low && !m_high)
+        low = 1;
     return EnqueuedSimpleMatch(m_build_type, name, design_id, empire_id, low, high, local_context)(candidate);
 }
 
@@ -5898,8 +5900,11 @@ void DesignHasPart::Eval(const ScriptingContext& parent_context,
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
         std::string name = (m_name ? m_name->Eval(parent_context) : "");
-        int low =          (m_low ? std::max(0, m_low->Eval(parent_context)) : 1);
+        int low =          (m_low ? std::max(0, m_low->Eval(parent_context)) : 0);
         int high =         (m_high ? std::min(m_high->Eval(parent_context), INT_MAX) : INT_MAX);
+        // if no range specified, require at least one
+        if (!m_low && !m_high)
+            low = 1;
 
         // need to test each candidate separately using EvalImpl and because the
         // design of the candidate object is tested
@@ -5911,7 +5916,7 @@ void DesignHasPart::Eval(const ScriptingContext& parent_context,
 }
 
 std::string DesignHasPart::Description(bool negated) const {
-    std::string low_str = "1";
+    std::string low_str = "0";
     if (m_low) {
         low_str = m_low->ConstantExpr() ?
                     std::to_string(m_low->Eval()) :
@@ -5923,6 +5928,9 @@ std::string DesignHasPart::Description(bool negated) const {
                     std::to_string(m_high->Eval()) :
                     m_high->Description();
     };
+    // if no range specified, require at least one
+    if (!m_low && !m_high)
+        low_str = "1";
     std::string name_str;
     if (m_name) {
         name_str = m_name->Description();
@@ -5958,6 +5966,9 @@ bool DesignHasPart::Match(const ScriptingContext& local_context) const {
 
     int low =  (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
     int high = (m_high ? std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN) : IMPOSSIBLY_LARGE_TURN);
+    // if no range specified, require at least one
+    if (!m_low && !m_high)
+        low = 1;
     std::string name = (m_name ? m_name->Eval(local_context) : "");
 
     return DesignHasPartSimpleMatch(low, high, name, local_context.ContextUniverse())(candidate);
@@ -6077,8 +6088,11 @@ void DesignHasPartClass::Eval(const ScriptingContext& parent_context,
                             (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
-        int low =          (m_low ? std::max(0, m_low->Eval(parent_context)) : 1);
+        int low =          (m_low ? std::max(0, m_low->Eval(parent_context)) : 0);
         int high =         (m_high ? std::min(m_high->Eval(parent_context), INT_MAX) : INT_MAX);
+        // if no range specified, require at least one
+        if (!m_low && !m_high)
+            low = 1;
 
         // need to test each candidate separately using EvalImpl and because the
         // design of the candidate object is tested
@@ -6091,7 +6105,7 @@ void DesignHasPartClass::Eval(const ScriptingContext& parent_context,
 }
 
 std::string DesignHasPartClass::Description(bool negated) const {
-    std::string low_str = "1";
+    std::string low_str = "0";
     if (m_low) {
         low_str = m_low->ConstantExpr() ?
                     std::to_string(m_low->Eval()) :
@@ -6103,6 +6117,10 @@ std::string DesignHasPartClass::Description(bool negated) const {
                     std::to_string(m_high->Eval()) :
                     m_high->Description();
     }
+    // if no range specified, require at least one
+    if (!m_low && !m_high)
+        low_str = "1";
+
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_DESIGN_HAS_PART_CLASS")
         : UserString("DESC_DESIGN_HAS_PART_CLASS_NOT"))
@@ -6131,6 +6149,9 @@ bool DesignHasPartClass::Match(const ScriptingContext& local_context) const {
 
     int low =  (m_low ? m_low->Eval(local_context) : 0);
     int high = (m_high ? m_high->Eval(local_context) : INT_MAX);
+    // if no range specified, require at least one
+    if (!m_low && !m_high)
+        low = 1;
 
     return DesignHasPartClassSimpleMatch(low, high, m_class, local_context.ContextUniverse())(candidate);
 }
