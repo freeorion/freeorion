@@ -1105,7 +1105,12 @@ void NoOp::Eval(const ScriptingContext& parent_context,
 
 bool NoOp::EvalAny(const ScriptingContext&, const ObjectSet& candidates) const {
     DebugLogger(conditions) << "NoOp::EvalAny(" << candidates.size() << " candidates";
-    return false;
+    return !candidates.empty();
+}
+
+bool NoOp::EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const {
+    DebugLogger(conditions) << "NoOp::EvalOne(" << candidate << ")";
+    return candidate;
 }
 
 bool NoOp::operator==(const Condition& rhs) const
