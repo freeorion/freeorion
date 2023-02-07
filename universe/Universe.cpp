@@ -3101,9 +3101,12 @@ std::set<int> Universe::RecursiveDestroy(int object_id, const std::vector<int>& 
         retval.insert(object_id);
         break;
     }
+
+    default:
+        // ??? object is of some type unknown or unexpected type as of this writing.
+        break;
     }
 
-    // else ??? object is of some type unknown as of this writing.
     return retval;
 }
 

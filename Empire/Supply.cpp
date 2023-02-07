@@ -877,7 +877,6 @@ void SupplyManager::Update(const ScriptingContext& context) {
         // allies can use eachothers' supply networks
         for (auto& [empire_id, traversals] : ally_merged_supply_starlane_traversals) {
             const auto ally_ids = allies_of(empire_id);
-            const auto& unobstructed_systems = empire_supply_unobstructed_systems[empire_id];
 
             for (auto& [prior_empire_id, prior_traversals] : initial) {
                 if (!ally_ids.count(prior_empire_id))

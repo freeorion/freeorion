@@ -198,7 +198,7 @@ ShipPart::ShipPart(ShipPartClass part_class, double capacity, double stat2,
         std::size_t next_idx = 0;
         retval.reserve(common_params.tags.size());
         std::string_view sv{m_tags_concatenated};
-        static constexpr auto len{TAG_PEDIA_PREFIX.length()};
+        [[maybe_unused]] static constexpr auto len{TAG_PEDIA_PREFIX.length()}; // g++12 gives warnings about this being unused, despite it being used in the for_each lambda below...
 
         // store views into concatenated tags string
         std::for_each(common_params.tags.begin(), common_params.tags.end(),
