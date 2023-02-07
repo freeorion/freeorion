@@ -291,9 +291,9 @@ void AIClientApp::HandleMessage(const Message& msg) {
     case Message::MessageType::TURN_UPDATE: {
         m_orders.Reset();
         //DebugLogger() << "AIClientApp::HandleMessage : extracting turn update message data";
-        ExtractTurnUpdateMessageData(msg,                     m_empire_id,        m_current_turn,
-                                     m_empires,               m_universe,         GetSpeciesManager(),
-                                     GetCombatLogManager(),   GetSupplyManager(), m_player_info);
+        ExtractTurnUpdateMessageData(msg,                   m_empire_id,      m_current_turn,
+                                     m_empires,             m_universe,       m_species_manager,
+                                     GetCombatLogManager(), m_supply_manager, m_player_info);
         //DebugLogger() << "AIClientApp::HandleMessage : generating orders";
         m_universe.InitializeSystemGraph(m_empires, m_universe.Objects());
         m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(m_empires);

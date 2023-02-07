@@ -1793,9 +1793,9 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 player_setup_data.empire_name =   empire_data_it->second.empire_name;
                 player_setup_data.empire_color =  empire_data_it->second.color;
                 if (m_lobby_data->seed != "")
-                    player_setup_data.starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
+                    player_setup_data.starting_species_name = server.GetSpeciesManager().RandomPlayableSpeciesName();
                 else
-                    player_setup_data.starting_species_name = GetSpeciesManager().SequentialPlayableSpeciesName(m_ai_next_index);
+                    player_setup_data.starting_species_name = server.GetSpeciesManager().SequentialPlayableSpeciesName(m_ai_next_index);
                 m_lobby_data->players.push_back({Networking::INVALID_PLAYER_ID, player_setup_data});
             }
 
