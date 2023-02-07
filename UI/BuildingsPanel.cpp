@@ -97,10 +97,10 @@ void BuildingsPanel::Update() {
 
     const int indicator_size = static_cast<int>(Value(Width() * 1.0 / m_columns));
 
-    int this_client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    const auto& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
-    const auto& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
-    const ScriptingContext context{GetUniverse(), Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
+    const int this_client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const ScriptingContext context;
+    const auto& this_client_known_destroyed_objects = context.ContextUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
+    const auto& this_client_stale_object_info = context.ContextUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
 
     // get existing / finished buildings and use them to create building indicators
     for (int object_id : planet->BuildingIDs()) {
