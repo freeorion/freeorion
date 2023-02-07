@@ -12439,7 +12439,10 @@ PLC_VASSALIZATION
 Vassalization
 
 PLC_VASSALIZATION_DESC
-Increases [[metertype METER_TARGET_INFLUENCE]] of influence-focused planets that are in systems with unowned planets that have a different species from the empire capital and from the influence-focused planet, by [[value PLC_VASSALIZATION_INFLUENCE_SCALING]] times the square root of the total population of those unowned planets.
+'''Increases [[metertype METER_TARGET_INFLUENCE]] of influence-focused planets that are in systems with unowned planets that have a different species from the empire capital and from the influence-focused planet, by [[value PLC_VASSALIZATION_INFLUENCE_SCALING]] times the square root of the total population of those unowned planets.
+
+[[species SP_ANCIENT_GUARDIANS]] are unable to be vassalized.
+'''
 
 PLC_VASSALIZATION_SHORT_DESC
 Neutral Planets Boost Influence

@@ -50,7 +50,8 @@ Policy
                     Unowned
                     Species
                     Not Species name = Source.Species
-                    Not Species name = Target.Species                    
+                    Not Species name = Target.Species
+                    Not Species name = "SP_ANCIENT_GUARDIANS"
                 ] ^ 0.5) / max(1.0,
                 (Statistic Count condition = And [ // spreads bonus over eligible recipient planets in system
                     Planet
