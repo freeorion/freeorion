@@ -83,7 +83,6 @@ namespace {
     {
         if (!system || !ship)
             return nullptr;
-        Universe& universe = context.ContextUniverse();
 
         // remove ship from old fleet / system, put into new system if necessary
         if (ship->SystemID() != system->ID()) {
