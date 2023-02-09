@@ -459,17 +459,13 @@ namespace SystemPathing {
     {
         const auto& edge_weight_map = boost::get(boost::edge_weight, graph);
         const auto& sys_id_property_map = boost::get(vertex_system_id_t(), graph);
-
-        using OutEdgeIterator = typename Graph::out_edge_iterator;
-        OutEdgeIterator first_edge, last_edge;
-        std::tie(first_edge, last_edge) = boost::out_edges(id_to_graph_index.at(system_id), graph);
+        auto [first_edge, last_edge] = boost::out_edges(id_to_graph_index.at(system_id), graph);
 
         using val_t = std::pair<double, int>;
         std::vector<val_t> retval;
         retval.reserve(std::distance(first_edge, last_edge));
 
-        using EdgeInfo = decltype(*std::declval<OutEdgeIterator>());
-        std::transform(first_edge, last_edge, std::back_inserter(retval), [&](const EdgeInfo& e) -> val_t
+        std::transform(first_edge, last_edge, std::back_inserter(retval), [&](const auto& e) -> val_t
                        { return {edge_weight_map[e], sys_id_property_map[boost::target(e, graph)]}; });
         return retval;
     }
