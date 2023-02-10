@@ -1491,15 +1491,13 @@ namespace {
 
     // row type used in the SpeciesSelector
     struct SpeciesRow : public GG::ListBox::Row {
-        SpeciesRow(const Species* species, GG::X w, GG::Y h) :
+        SpeciesRow(const Species& species, GG::X w, GG::Y h) :
             GG::ListBox::Row(w, h)
         {
             SetMargin(0);
-            if (!species)
-                return;
-            const std::string& species_name = species->Name();
+            const std::string& species_name = species.Name();
             GG::Wnd::SetName(species_name);
-            Init(species_name, UserString(species_name), species->GameplayDescription(), w, h,
+            Init(species_name, UserString(species_name), species.GameplayDescription(), w, h,
                  ClientUI::SpeciesIcon(species_name));
         };
 
@@ -1561,7 +1559,7 @@ SpeciesSelector::SpeciesSelector(const std::string& preselect_species, GG::X w, 
 
     const SpeciesManager& sm = GetSpeciesManager();
     for (auto it = sm.playable_begin(); it != sm.playable_end(); ++it) {
-        auto row_it = Insert(GG::Wnd::Create<SpeciesRow>(it->second.get(), w, h - 4));
+        auto row_it = Insert(GG::Wnd::Create<SpeciesRow>(it->second, w, h - 4));
         if (it->first == preselect_species)
             Select(row_it);
     }

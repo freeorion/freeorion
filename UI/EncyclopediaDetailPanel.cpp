@@ -778,9 +778,9 @@ namespace {
             // species
             for (auto& [species_name, species] : GetSpeciesManager())
                 if (dir_name == "ALL_SPECIES" ||
-                   (dir_name == "NATIVE_SPECIES" && species->Native()) ||
-                   (dir_name == "PLAYABLE_SPECIES" && species->Playable()) ||
-                    HasCustomCategoryNoPrefixes(species->PediaTags(), dir_name))
+                   (dir_name == "NATIVE_SPECIES" && species.Native()) ||
+                   (dir_name == "PLAYABLE_SPECIES" && species.Playable()) ||
+                    HasCustomCategoryNoPrefixes(species.PediaTags(), dir_name))
                 {
                     dir_entries.emplace_back(std::piecewise_construct,
                                              std::forward_as_tuple(UserString(species_name)),
@@ -2417,7 +2417,7 @@ namespace {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find species with name " << item_name;
             return;
         }
-        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+        const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
         const Universe& universe = GetUniverse();
         const ObjectMap& objects = universe.Objects();
@@ -3090,13 +3090,11 @@ namespace {
         // start by building roster-- any species tagged as 'ALWAYS_REPORT' plus any species
         // represented in this empire's PopCenters
         for (auto& [species_str, species] : species_manager) {
-            if (!species)
-                continue;
-            if (species->HasTag(TAG_ALWAYS_REPORT)) {
+            if (species.HasTag(TAG_ALWAYS_REPORT)) {
                 retval.push_back(species_str);
                 continue;
             }
-            if (species->HasTag(TAG_EXTINCT)) {
+            if (species.HasTag(TAG_EXTINCT)) {
                 for (auto& [tech_name, turn_researched] : empire->ResearchedTechs()) {
                     // Check for presence of tags in tech
                     auto tech = GetTech(tech_name);

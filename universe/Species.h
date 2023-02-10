@@ -113,6 +113,9 @@ public:
             double spawn_rate = 1.0, int spawn_limit = 99999);
 
     ~Species();
+    Species() = delete;
+    Species(const Species&) = delete;
+    Species(Species&&) = default;
 
     bool operator==(const Species& rhs) const;
     bool operator!=(const Species& rhs) const
@@ -188,7 +191,7 @@ private:
     std::string                             m_default_focus;
     std::map<PlanetType, PlanetEnvironment> m_planet_environments;
 
-    std::vector<std::unique_ptr<Effect::EffectsGroup>> m_effects;
+    std::vector<std::unique_ptr<Effect::EffectsGroup>> m_effects; // TODO: store by value?
     std::unique_ptr<Condition::Condition>              m_location;
     std::unique_ptr<Condition::Condition>              m_combat_targets;
 
@@ -199,29 +202,29 @@ private:
     float m_spawn_rate = 1.0;
     int   m_spawn_limit = 99999;
 
-    const std::string                   m_tags_concatenated;
-    const std::vector<std::string_view> m_tags;
-    const std::vector<std::string_view> m_pedia_tags;
-    std::vector<std::string_view>       m_likes;
-    std::vector<std::string_view>       m_dislikes;
-    std::string                         m_graphic;
+    std::string                   m_tags_concatenated;
+    std::vector<std::string_view> m_tags;
+    std::vector<std::string_view> m_pedia_tags;
+    std::vector<std::string_view> m_likes;
+    std::vector<std::string_view> m_dislikes;
+    std::string                   m_graphic;
 };
 
 
 /** Holds all FreeOrion species.  Types may be looked up by name. */
 class FO_COMMON_API SpeciesManager {
 public:
-    using SpeciesTypeMap = std::map<std::string, std::unique_ptr<Species>, std::less<>>;
+    using SpeciesTypeMap = std::map<std::string, const Species, std::less<>>;
     using iterator = typename SpeciesTypeMap::const_iterator;
 
 private:
     using species_entry_t = typename iterator::value_type;
 
     struct FO_COMMON_API PlayableSpecies
-    { bool operator()(const species_entry_t& species_entry) const noexcept { return species_entry.second->Playable(); } };
+    { bool operator()(const species_entry_t& species_entry) const noexcept { return species_entry.second.Playable(); } };
 
     struct FO_COMMON_API NativeSpecies
-    { bool operator()(const species_entry_t& species_entry) const noexcept { return species_entry.second->Native(); } };
+    { bool operator()(const species_entry_t& species_entry) const noexcept { return species_entry.second.Native(); } };
 
 public:
     using CensusOrder = std::vector<std::string>;
@@ -329,7 +332,7 @@ public:
     void SetSpeciesShipsDestroyed(std::map<std::string, std::map<std::string, int>> ssd);
 
     /** Sets species types to the value of \p future. */
-    void SetSpeciesTypes(Pending::Pending<std::pair<SpeciesTypeMap, CensusOrder>>&& future);
+    void SetSpeciesTypes(Pending::Pending<std::pair<std::map<std::string, Species>, CensusOrder>>&& future);
 
 private:
     /** sets the homeworld ids of species in this SpeciesManager to those

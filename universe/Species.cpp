@@ -548,8 +548,9 @@ uint32_t Species::GetCheckSum() const {
 // SpeciesManager                              //
 /////////////////////////////////////////////////
 namespace {
+    // TODO: move these into manager class, not static
     boost::optional<Pending::Pending<
-        std::pair<SpeciesManager::SpeciesTypeMap,
+        std::pair<std::map<std::string, Species>,
                   SpeciesManager::CensusOrder>>> s_pending_types;
     SpeciesManager::SpeciesTypeMap s_species;
     SpeciesManager::CensusOrder s_census_order;
@@ -558,19 +559,19 @@ namespace {
 const Species* SpeciesManager::GetSpecies(std::string_view name) const {
     CheckPendingSpeciesTypes();
     const auto it = s_species.find(name);
-    return it != s_species.end() ? it->second.get() : nullptr;
+    return it != s_species.end() ? &(it->second) : nullptr;
 }
 
 const Species* SpeciesManager::GetSpeciesUnchecked(std::string_view name) const {
     const auto it = s_species.find(name);
-    return it != s_species.end() ? it->second.get() : nullptr;
+    return it != s_species.end() ? &(it->second) : nullptr;
 }
 
 namespace {
     std::mutex species_mutex;
 }
 
-void SpeciesManager::SetSpeciesTypes(Pending::Pending<std::pair<SpeciesTypeMap, CensusOrder>>&& future) {
+void SpeciesManager::SetSpeciesTypes(Pending::Pending<std::pair<std::map<std::string, Species>, CensusOrder>>&& future) {
     std::scoped_lock lock(species_mutex);
     s_pending_types = std::move(future);
 }
@@ -587,7 +588,9 @@ void SpeciesManager::CheckPendingSpeciesTypes() {
     decltype(s_pending_types)::value_type::result_type container;
     Pending::SwapPending(s_pending_types, container);
 
-    s_species = std::move(container.first);
+    s_species.clear();
+    s_species.insert(std::make_move_iterator(container.first.begin()),
+                     std::make_move_iterator(container.first.end()));
     s_census_order = std::move(container.second);
 }
 
@@ -710,7 +713,7 @@ std::vector<std::string_view> SpeciesManager::SpeciesThatLike(std::string_view c
     std::vector<std::string_view> retval;
     retval.reserve(s_species.size());
     std::for_each(s_species.begin(), s_species.end(), [&retval, content_name](const auto& s) {
-        const auto& likes = s.second->Likes();
+        const auto& likes = s.second.Likes();
         if (std::any_of(likes.begin(), likes.end(), [content_name](const auto& l) { return l == content_name; }))
             retval.emplace_back(s.first);
     });
@@ -722,7 +725,7 @@ std::vector<std::string_view> SpeciesManager::SpeciesThatDislike(std::string_vie
     std::vector<std::string_view> retval;
     retval.reserve(s_species.size());
     std::for_each(s_species.begin(), s_species.end(), [&retval, content_name](const auto& s) {
-        const auto& dislikes = s.second->Dislikes();
+        const auto& dislikes = s.second.Dislikes();
         if (std::any_of(dislikes.begin(), dislikes.end(), [content_name](const auto& l) { return l == content_name; }))
             retval.emplace_back(s.first);
     });

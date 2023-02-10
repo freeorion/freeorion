@@ -1398,7 +1398,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
             continue;
 
         DispatchEffectsGroupScopeEvaluations(EffectsCauseType::ECT_SPECIES, species_name,
-                                             source_objects, species->Effects(),
+                                             source_objects, species.Effects(),
                                              only_meter_effects,
                                              context, potential_targets,
                                              potential_ids_set,
@@ -1435,7 +1435,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
             continue;
 
         DispatchEffectsGroupScopeEvaluations(EffectsCauseType::ECT_SPECIES, species_name,
-                                             source_objects, species->Effects(),
+                                             source_objects, species.Effects(),
                                              only_meter_effects,
                                              context, potential_targets,
                                              potential_ids_set,
