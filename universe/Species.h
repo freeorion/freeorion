@@ -232,6 +232,9 @@ public:
     using native_iterator = boost::filter_iterator<NativeSpecies, iterator>;
 
     SpeciesManager() = default;
+    // extracts and moves homeworlds, opinions, populations, and destroyed
+    // counts, but not species or census or pending
+    SpeciesManager& operator=(SpeciesManager&& rhs);
 
     /** returns the species with the name \a name; you should use the
       * free function GetSpecies() instead, mainly to save some typing. */
@@ -340,13 +343,22 @@ private:
     void SetSpeciesHomeworlds(std::map<std::string, std::set<int>>&& species_homeworld_ids);
 
     /** Assigns any m_pending_types to m_species. */
-    static void CheckPendingSpeciesTypes();
+    void CheckPendingSpeciesTypes() const;
+
+    // these are mutable because they may be updated in CheckPendingSpeciesTypes
+    mutable boost::optional<Pending::Pending<
+        std::pair<std::map<std::string, Species>,
+        SpeciesManager::CensusOrder>>>     m_pending_types;
+    mutable SpeciesManager::SpeciesTypeMap m_species;
+    mutable SpeciesManager::CensusOrder    m_census_order;
 
     std::map<std::string, std::set<int>>                m_species_homeworlds;
     std::map<std::string, std::map<int, float>>         m_species_empire_opinions;
     std::map<std::string, std::map<std::string, float>> m_species_species_opinions;
     std::map<std::string, std::map<int, float>>         m_species_object_populations;
     std::map<std::string, std::map<std::string, int>>   m_species_species_ships_destroyed;
+
+    mutable std::mutex m_species_mutex;
 
     template <typename Archive>
     friend void serialize(Archive&, SpeciesManager&, unsigned int const);

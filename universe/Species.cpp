@@ -547,61 +547,61 @@ uint32_t Species::GetCheckSum() const {
 /////////////////////////////////////////////////
 // SpeciesManager                              //
 /////////////////////////////////////////////////
-namespace {
-    // TODO: move these into manager class, not static
-    boost::optional<Pending::Pending<
-        std::pair<std::map<std::string, Species>,
-                  SpeciesManager::CensusOrder>>> s_pending_types;
-    SpeciesManager::SpeciesTypeMap s_species;
-    SpeciesManager::CensusOrder s_census_order;
+SpeciesManager& SpeciesManager::operator=(SpeciesManager&& rhs) {
+    // intentionally not moving m_pending_types, m_species, or m_census_order
+    // as these are parsed once
+
+    m_species_homeworlds = std::move(m_species_homeworlds);
+    m_species_empire_opinions = std::move(m_species_empire_opinions);
+    m_species_species_opinions = std::move(m_species_species_opinions);
+    m_species_object_populations = std::move(m_species_object_populations);
+    m_species_species_ships_destroyed = std::move(m_species_species_ships_destroyed);
+
+    return *this;
 }
 
 const Species* SpeciesManager::GetSpecies(std::string_view name) const {
     CheckPendingSpeciesTypes();
-    const auto it = s_species.find(name);
-    return it != s_species.end() ? &(it->second) : nullptr;
+    const auto it = m_species.find(name);
+    return it != m_species.end() ? &(it->second) : nullptr;
 }
 
 const Species* SpeciesManager::GetSpeciesUnchecked(std::string_view name) const {
-    const auto it = s_species.find(name);
-    return it != s_species.end() ? &(it->second) : nullptr;
-}
-
-namespace {
-    std::mutex species_mutex;
+    const auto it = m_species.find(name);
+    return it != m_species.end() ? &(it->second) : nullptr;
 }
 
 void SpeciesManager::SetSpeciesTypes(Pending::Pending<std::pair<std::map<std::string, Species>, CensusOrder>>&& future) {
-    std::scoped_lock lock(species_mutex);
-    s_pending_types = std::move(future);
+    std::scoped_lock lock(m_species_mutex);
+    m_pending_types = std::move(future);
 }
 
-void SpeciesManager::CheckPendingSpeciesTypes() {
-    std::scoped_lock lock(species_mutex);
+void SpeciesManager::CheckPendingSpeciesTypes() const {
+    std::scoped_lock lock(m_species_mutex);
 
-    if (!s_pending_types) {
-        if (s_species.empty())
+    if (!m_pending_types) {
+        if (m_species.empty())
             ErrorLogger() << "CheckPendingSpeciesTypes() has no pending species but also no already-parsed species";
         return;
     }
 
-    decltype(s_pending_types)::value_type::result_type container;
-    Pending::SwapPending(s_pending_types, container);
+    decltype(m_pending_types)::value_type::result_type container;
+    Pending::SwapPending(m_pending_types, container); 
 
-    s_species.clear();
-    s_species.insert(std::make_move_iterator(container.first.begin()),
+    m_species.clear();
+    m_species.insert(std::make_move_iterator(container.first.begin()),
                      std::make_move_iterator(container.first.end()));
-    s_census_order = std::move(container.second);
+    m_census_order = std::move(container.second);
 }
 
 SpeciesManager::iterator SpeciesManager::begin() const {
     CheckPendingSpeciesTypes();
-    return s_species.begin();
+    return m_species.begin();
 }
 
 SpeciesManager::iterator SpeciesManager::end() const {
     CheckPendingSpeciesTypes();
-    return s_species.end();
+    return m_species.end();
 }
 
 SpeciesManager::playable_iterator SpeciesManager::playable_begin() const
@@ -618,17 +618,17 @@ SpeciesManager::native_iterator SpeciesManager::native_end() const
 
 const SpeciesManager::CensusOrder& SpeciesManager::census_order() const {
     CheckPendingSpeciesTypes();
-    return s_census_order;
+    return m_census_order;
 }
 
 bool SpeciesManager::empty() const {
     CheckPendingSpeciesTypes();
-    return s_species.empty();
+    return m_species.empty();
 }
 
 int SpeciesManager::NumSpecies() const {
     CheckPendingSpeciesTypes();
-    return s_species.size();
+    return m_species.size();
 }
 
 int SpeciesManager::NumPlayableSpecies() const
@@ -643,10 +643,10 @@ namespace {
 
 const std::string& SpeciesManager::RandomSpeciesName() const {
     CheckPendingSpeciesTypes();
-    if (s_species.empty())
+    if (m_species.empty())
         return EMPTY_STRING;
 
-    int species_idx = RandInt(0, static_cast<int>(s_species.size()) - 1);
+    int species_idx = RandInt(0, static_cast<int>(m_species.size()) - 1);
     return std::next(begin(), species_idx)->first;
 }
 
@@ -685,11 +685,11 @@ void SpeciesManager::SetSpeciesSpeciesOpinion(const std::string& opinionated_spe
 { m_species_species_opinions[opinionated_species][rated_species] = opinion; }
 
 float SpeciesManager::SpeciesEmpireOpinion(const std::string& species_name, int empire_id) const {
-    auto sp_it = m_species_empire_opinions.find(species_name);
+    const auto sp_it = m_species_empire_opinions.find(species_name);
     if (sp_it == m_species_empire_opinions.end())
         return 0.0f;
     const auto& emp_map = sp_it->second;
-    auto emp_it = emp_map.find(empire_id);
+    const auto emp_it = emp_map.find(empire_id);
     if (emp_it == emp_map.end())
         return 0.0f;
     return emp_it->second;
@@ -698,11 +698,11 @@ float SpeciesManager::SpeciesEmpireOpinion(const std::string& species_name, int 
 float SpeciesManager::SpeciesSpeciesOpinion(const std::string& opinionated_species_name,
                                             const std::string& rated_species_name) const
 {
-    auto sp_it = m_species_species_opinions.find(opinionated_species_name);
+    const auto sp_it = m_species_species_opinions.find(opinionated_species_name);
     if (sp_it == m_species_species_opinions.end())
         return 0.0f;
     const auto& ra_sp_map = sp_it->second;
-    auto ra_sp_it = ra_sp_map.find(rated_species_name);
+    const auto ra_sp_it = ra_sp_map.find(rated_species_name);
     if (ra_sp_it == ra_sp_map.end())
         return 0.0f;
     return ra_sp_it->second;
@@ -711,8 +711,8 @@ float SpeciesManager::SpeciesSpeciesOpinion(const std::string& opinionated_speci
 std::vector<std::string_view> SpeciesManager::SpeciesThatLike(std::string_view content_name) const {
     CheckPendingSpeciesTypes();
     std::vector<std::string_view> retval;
-    retval.reserve(s_species.size());
-    std::for_each(s_species.begin(), s_species.end(), [&retval, content_name](const auto& s) {
+    retval.reserve(m_species.size());
+    std::for_each(m_species.begin(), m_species.end(), [&retval, content_name](const auto& s) {
         const auto& likes = s.second.Likes();
         if (std::any_of(likes.begin(), likes.end(), [content_name](const auto& l) { return l == content_name; }))
             retval.emplace_back(s.first);
@@ -723,8 +723,8 @@ std::vector<std::string_view> SpeciesManager::SpeciesThatLike(std::string_view c
 std::vector<std::string_view> SpeciesManager::SpeciesThatDislike(std::string_view content_name) const {
     CheckPendingSpeciesTypes();
     std::vector<std::string_view> retval;
-    retval.reserve(s_species.size());
-    std::for_each(s_species.begin(), s_species.end(), [&retval, content_name](const auto& s) {
+    retval.reserve(m_species.size());
+    std::for_each(m_species.begin(), m_species.end(), [&retval, content_name](const auto& s) {
         const auto& dislikes = s.second.Dislikes();
         if (std::any_of(dislikes.begin(), dislikes.end(), [content_name](const auto& l) { return l == content_name; }))
             retval.emplace_back(s.first);
@@ -783,13 +783,12 @@ void SpeciesManager::SetSpeciesObjectPopulations(std::map<std::string, std::map<
 void SpeciesManager::SetSpeciesShipsDestroyed(std::map<std::string, std::map<std::string, int>> ssd)
 { m_species_species_ships_destroyed = std::move(ssd); }
 
-
 uint32_t SpeciesManager::GetCheckSum() const {
     CheckPendingSpeciesTypes();
     uint32_t retval{0};
-    for (auto const& name_type_pair : s_species)
+    for (auto const& name_type_pair : m_species)
         CheckSums::CheckSumCombine(retval, name_type_pair);
-    CheckSums::CheckSumCombine(retval, s_species.size());
+    CheckSums::CheckSumCombine(retval, m_species.size());
 
     DebugLogger() << "SpeciesManager checksum: " << retval;
     return retval;
