@@ -52,8 +52,5 @@ SpeciesManager& ParserAppFixture::GetSpeciesManager() noexcept
 SupplyManager& ParserAppFixture::GetSupplyManager() noexcept
 { return m_supply_manager; }
 
-ObjectMap& ParserAppFixture::EmpireKnownObjects(int empire_id)
-{ return m_universe.EmpireKnownObjects(empire_id); }
-
 int ParserAppFixture::EffectsProcessingThreads() const
 { return 1; }

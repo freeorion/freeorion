@@ -62,9 +62,6 @@ public:
 
     [[nodiscard]] virtual SupplyManager& GetSupplyManager() noexcept = 0;
 
-    /** Accessor for known objects of specified empire. */
-    [[nodiscard]] virtual ObjectMap& EmpireKnownObjects(int empire_id) = 0;
-
     [[nodiscard]] virtual std::string GetVisibleObjectName(const UniverseObject& object) = 0;
 
     /** On server or clients with no player: ALL_EMPIRES
@@ -130,10 +127,6 @@ protected:
     auto app = IApp::GetApp();
     return app ? app->GetUniverse().Objects() : empty_objects;
 }
-
-/** Accessor for known objects of specified empire. */
-[[nodiscard]] inline ObjectMap& EmpireKnownObjects(int empire_id)
-{ return IApp::GetApp()->EmpireKnownObjects(empire_id); }
 
 /** Returns the object name of the universe object. This can be apperant object
  * name, if the application isn't supposed to see the real object name. */

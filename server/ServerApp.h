@@ -40,9 +40,6 @@ public:
     [[nodiscard]] SupplyManager& GetSupplyManager() noexcept override { return m_supply_manager; }
     [[nodiscard]] SpeciesManager& GetSpeciesManager() noexcept override { return m_species_manager; }
 
-    /** Returns the server's map for known objects of specified empire. */
-    [[nodiscard]] ObjectMap& EmpireKnownObjects(int empire_id) override;
-
     [[nodiscard]] std::string GetVisibleObjectName(const UniverseObject& object) override;
 
     [[nodiscard]] int EmpireID() const noexcept override { return ALL_EMPIRES; }

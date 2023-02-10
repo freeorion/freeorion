@@ -176,15 +176,6 @@ public:
 
     [[nodiscard]] SupplyManager& GetSupplyManager() noexcept override { return m_supply_manager; }
 
-    /** @brief Return all Objects known to @a empire_id
-     *
-     * @param empire_id An empire identifier.
-     *
-     * @return A map containing all Objects known to the ::Empire identified by
-     *      @a empire_id.  If there is no ::Empire an empty map is returned.
-     */
-    [[nodiscard]] ObjectMap& EmpireKnownObjects(int empire_id) override;
-
     /** @brief Set the identifier of the ::Empire controlled by this client to
      *      @a empire_id
      *

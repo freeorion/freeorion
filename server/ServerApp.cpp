@@ -316,9 +316,6 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
 Empire* ServerApp::GetEmpire(int id)
 { return m_empires.GetEmpire(id).get(); }
 
-ObjectMap& ServerApp::EmpireKnownObjects(int empire_id)
-{ return m_universe.EmpireKnownObjects(empire_id); }
-
 std::string ServerApp::GetVisibleObjectName(const UniverseObject& object)
 { return object.Name(); }
 

@@ -23,16 +23,6 @@ int ClientApp::PlayerID() const
 Empire* ClientApp::GetEmpire(int empire_id)
 { return m_empires.GetEmpire(empire_id).get(); }
 
-ObjectMap& ClientApp::EmpireKnownObjects(int empire_id) {
-    // observers and moderators should have accurate info about what each empire knows
-    if (m_empire_id == ALL_EMPIRES)
-        return m_universe.EmpireKnownObjects(empire_id);    // returns player empire's known universe objects if empire_id == ALL_EMPIRES
-
-    // players controlling empires with visibility limitations only know their
-    // own version of the universe, and should use that
-    return m_universe.Objects();
-}
-
 int ClientApp::EmpirePlayerID(int empire_id) const {
     for (const auto& [id, info] : m_player_info)
         if (info.empire_id == empire_id)
