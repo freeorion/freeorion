@@ -210,18 +210,23 @@ private:
 
 /** Holds all FreeOrion species.  Types may be looked up by name. */
 class FO_COMMON_API SpeciesManager {
-private:
-    struct FO_COMMON_API PlayableSpecies
-    { bool operator()(const std::map<std::string, std::unique_ptr<Species>>::value_type& species_entry) const; };
-    struct FO_COMMON_API NativeSpecies
-    { bool operator()(const std::map<std::string, std::unique_ptr<Species>>::value_type& species_entry) const; };
-
 public:
     using SpeciesTypeMap = std::map<std::string, std::unique_ptr<Species>, std::less<>>;
+    using iterator = typename SpeciesTypeMap::const_iterator;
+
+private:
+    using species_entry_t = typename iterator::value_type;
+
+    struct FO_COMMON_API PlayableSpecies
+    { bool operator()(const species_entry_t& species_entry) const noexcept { return species_entry.second->Playable(); } };
+
+    struct FO_COMMON_API NativeSpecies
+    { bool operator()(const species_entry_t& species_entry) const noexcept { return species_entry.second->Native(); } };
+
+public:
     using CensusOrder = std::vector<std::string>;
-    using iterator = SpeciesTypeMap::const_iterator;
-    typedef boost::filter_iterator<PlayableSpecies, iterator> playable_iterator;
-    typedef boost::filter_iterator<NativeSpecies, iterator>   native_iterator;
+    using playable_iterator = boost::filter_iterator<PlayableSpecies, iterator>;
+    using native_iterator = boost::filter_iterator<NativeSpecies, iterator>;
 
     SpeciesManager() = default;
 

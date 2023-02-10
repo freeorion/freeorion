@@ -555,14 +555,6 @@ namespace {
     SpeciesManager::CensusOrder s_census_order;
 }
 
-bool SpeciesManager::PlayableSpecies::operator()(
-    const std::map<std::string, std::unique_ptr<Species>>::value_type& species_entry) const
-{ return species_entry.second->Playable(); }
-
-bool SpeciesManager::NativeSpecies::operator()(
-    const std::map<std::string, std::unique_ptr<Species>>::value_type& species_entry) const
-{ return species_entry.second->Native(); }
-
 const Species* SpeciesManager::GetSpecies(std::string_view name) const {
     CheckPendingSpeciesTypes();
     const auto it = s_species.find(name);
