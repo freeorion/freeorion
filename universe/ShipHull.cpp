@@ -106,9 +106,9 @@ ShipHull::ShipHull(float fuel, float speed, float stealth, float structure,
     m_fuel(fuel),
     m_stealth(stealth),
     m_structure(structure),
+    m_producible(common_params.producible),
     m_production_cost(std::move(common_params.production_cost)),
     m_production_time(std::move(common_params.production_time)),
-    m_producible(common_params.producible),
     m_slots(std::move(slots)),
     m_tags_concatenated([&common_params]() {
         // ensure tags are all upper-case
