@@ -457,12 +457,18 @@ namespace SystemPathing {
     auto ImmediateNeighborsImpl(
         const Graph& graph, int system_id, const boost::container::flat_map<int, std::size_t>& id_to_graph_index)
     {
-        const auto& edge_weight_map = boost::get(boost::edge_weight, graph);
-        const auto& sys_id_property_map = boost::get(vertex_system_id_t(), graph);
-        auto [first_edge, last_edge] = boost::out_edges(id_to_graph_index.at(system_id), graph);
+        using edge_weights_t = decltype(boost::get(boost::edge_weight, graph));
+        using vertex_sys_id_t = decltype(boost::get(vertex_system_id_t(), graph));
+        static_assert(!std::is_reference_v<edge_weights_t>);
+        static_assert(!std::is_reference_v<vertex_sys_id_t>);
 
-        using val_t = std::pair<double, int>;
-        std::vector<val_t> retval;
+        const auto edge_weight_map = boost::get(boost::edge_weight, graph);
+        const auto sys_id_property_map = boost::get(vertex_system_id_t(), graph);
+        const auto [first_edge, last_edge] = boost::out_edges(id_to_graph_index.at(system_id), graph);
+
+        using val_t = std::pair<std::decay_t<decltype(edge_weight_map[*first_edge])>,
+                                std::decay_t<decltype(sys_id_property_map[boost::target(*first_edge, graph)])>>;
+        std::vector<val_t> retval; // probably vector<pair<double, int>>
         retval.reserve(std::distance(first_edge, last_edge));
 
         std::transform(first_edge, last_edge, std::back_inserter(retval), [&](const auto& e) -> val_t
