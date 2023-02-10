@@ -180,7 +180,7 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
         BOOST_REQUIRE_EQUAL(m_ai_empires.size(), num_AIs);
 
         start_time = boost::posix_time::microsec_clock::local_time();
-        while (! m_ai_waiting.empty()) {
+        while (!m_ai_waiting.empty()) {
             BOOST_REQUIRE(ProcessMessages(start_time, MAX_WAITING_SEC));
         }
 
@@ -234,7 +234,7 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
                 break;
             }
             bool have_winner = false;
-            for (auto empire : m_empires) {
+            for (auto& empire : m_empires) {
                 if (empire.second->Won()) {
                     have_winner = true;
                     break;
@@ -247,7 +247,7 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
 
             BOOST_TEST_MESSAGE("Waiting AI for turns...");
             start_time = boost::posix_time::microsec_clock::local_time();
-            while (! m_ai_waiting.empty()) {
+            while (!m_ai_waiting.empty()) {
                 BOOST_REQUIRE(ProcessMessages(start_time, MAX_WAITING_SEC));
             }
         }
