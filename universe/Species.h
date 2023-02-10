@@ -267,11 +267,11 @@ public:
 
     /** returns a map from species name to a set of object IDs that are the
       * homeworld(s) of that species in the current game. */
-    [[nodiscard]] const auto& GetSpeciesHomeworldsMap() const { return m_species_homeworlds; }
+    [[nodiscard]] const auto& GetSpeciesHomeworldsMap() const noexcept { return m_species_homeworlds; }
 
     /** returns a map from species name to a map from empire id to each the
       * species' opinion of the empire */
-    [[nodiscard]] const auto& GetSpeciesEmpireOpinionsMap() const { return m_species_empire_opinions; }
+    [[nodiscard]] const auto& GetSpeciesEmpireOpinionsMap() const noexcept { return m_species_empire_opinions; }
 
     /** returns opinion of species with name \a species_name about empire with
       * id \a empire_id or 0.0 if there is no such opinion yet recorded. */
@@ -279,7 +279,7 @@ public:
 
     /** returns a map from species name to a map from other species names to the
       * opinion of the first species about the other species. */
-    [[nodiscard]] const auto& GetSpeciesSpeciesOpinionsMap() const { return m_species_species_opinions; }
+    [[nodiscard]] const auto& GetSpeciesSpeciesOpinionsMap() const noexcept { return m_species_species_opinions; }
 
     /** returns opinion of species with name \a opinionated_species_name about
       * other species with name \a rated_species_name or 0.0 if there is no

@@ -565,12 +565,12 @@ bool SpeciesManager::NativeSpecies::operator()(
 
 const Species* SpeciesManager::GetSpecies(std::string_view name) const {
     CheckPendingSpeciesTypes();
-    auto it = s_species.find(name);
+    const auto it = s_species.find(name);
     return it != s_species.end() ? it->second.get() : nullptr;
 }
 
 const Species* SpeciesManager::GetSpeciesUnchecked(std::string_view name) const {
-    auto it = s_species.find(name);
+    const auto it = s_species.find(name);
     return it != s_species.end() ? it->second.get() : nullptr;
 }
 
