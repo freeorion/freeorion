@@ -14,12 +14,6 @@ namespace Condition {
     using ObjectSet = std::vector<const UniverseObject*>;
 }
 
-#ifdef FREEORION_WIN32
-// because the linker gets confused about Win32 API functions...
-#  undef GetObject
-#  undef GetObjectA
-#endif
-
 /** The Pathfinder  class contains the locations of systems, the
   * starlanes and functions to determine pathing and trip duration
   * around the Universe. */
