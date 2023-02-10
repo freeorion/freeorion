@@ -409,8 +409,8 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
     m_color_buttons_layout = Wnd::Create<Layout>(X0, m_color_squares_layout->Bottom() + 5,
                                                  m_pickers_layout->Width(), Y(80),
                                                  COLOR_BUTTON_ROWS, COLOR_BUTTON_COLS, 0, 4);
-    for (int i = 0; i < COLOR_BUTTON_ROWS; ++i) {
-        for (int j = 0; j < COLOR_BUTTON_COLS; ++j) {
+    for (std::size_t i = 0u; i < COLOR_BUTTON_ROWS; ++i) {
+        for (std::size_t j = 0u; j < COLOR_BUTTON_COLS; ++j) {
             m_color_buttons.push_back(Wnd::Create<ColorButton>(m_color));
             m_color_buttons.back()->SetRepresentedColor(custom_colors[i * COLOR_BUTTON_COLS + j]);
             m_color_buttons_layout->Add(m_color_buttons.back(), i, j);

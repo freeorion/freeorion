@@ -291,9 +291,9 @@ PlayerSaveGameData::PlayerSaveGameData(std::string name, int empire_id,
                                        std::string save_state_string_, 
                                        Networking::ClientType client_type):
     PlayerSaveHeaderData{ std::move(name), empire_id, client_type },
+    save_state_string(std::move(save_state_string_)),
     orders(std::move(orders_)),
-    ui_data(std::move(ui_data_)),
-    save_state_string(std::move(save_state_string_)) 
+    ui_data(std::move(ui_data_))
 {
     if (client_type != Networking::ClientType::CLIENT_TYPE_AI_PLAYER
         && save_state_string.empty())
