@@ -340,7 +340,6 @@ namespace {
                 push_back(GG::Wnd::Create<CUILabel>(""));
             }
             at(6)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
-
         }
 
     private:
@@ -987,9 +986,11 @@ void MultiPlayerLobbyWnd::PlayerDataChangedLocally() {
         } else if (const LoadGameEmpireRow* empire_row = dynamic_cast<const LoadGameEmpireRow*>(player_row)) {
             if (empire_row->m_player_data.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
                 m_lobby_data.players.emplace_back(Networking::INVALID_PLAYER_ID, empire_row->m_player_data);
+
         } else if (player_row) {
             // all other row types pass along data directly
             m_lobby_data.players.emplace_back(player_row->m_player_id, player_row->m_player_data);
+
         } else {
             ErrorLogger() << "PlayerDataChangedLocally got null player row?";
         }
@@ -1014,10 +1015,7 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
     bool is_other_ready = true;
 
     // repopulate list with rows built from current lobby data
-    for (std::pair<int, PlayerSetupData>& entry : m_lobby_data.players) {
-        int data_player_id = entry.first;
-        PlayerSetupData& psd = entry.second;
-
+    for (auto& [data_player_id, psd] : m_lobby_data.players) {
         if (m_lobby_data.new_game) {
             bool immutable_row =
                 !HasAuthRole(Networking::RoleType::ROLE_HOST) &&
@@ -1100,9 +1098,9 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
     }
 
     // restore list scroll position
-    GG::ListBox::iterator first_row_it = m_players_lb->FirstRowShown();
-    int first_row_to_show = std::max<int>(0, std::min<int>(initial_list_scroll_pos,
-                                                           m_players_lb->NumRows() - 1));
+    auto first_row_it = m_players_lb->FirstRowShown();
+    const auto first_row_to_show = std::max<int>(0, std::min<int>(initial_list_scroll_pos,
+                                                                  m_players_lb->NumRows() - 1));
     std::advance(first_row_it, first_row_to_show);
     m_players_lb->SetFirstRowShown(first_row_it);
 

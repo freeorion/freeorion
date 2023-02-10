@@ -465,7 +465,7 @@ void ServerFSM::UpdateIngameLobby() {
             player_setup_data.empire_color = {{255, 255, 255, 255}};
         }
         player_setup_data.authenticated = (*player_it)->IsAuthenticated();
-        dummy_lobby_data.players.push_back({player_id, player_setup_data});
+        dummy_lobby_data.players.emplace_back(player_id, player_setup_data);
     }
     dummy_lobby_data.start_lock_cause = UserStringNop("SERVER_ALREADY_PLAYING_GAME");
 
@@ -1876,7 +1876,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
          player_connection_it != server.m_networking.established_end(); ++player_connection_it)
     {
         const PlayerConnectionPtr& player_connection = *player_connection_it;
-        int player_id = player_connection->PlayerID();
+        const int player_id = player_connection->PlayerID();
         // new save file update needs to be sent to everyone, as does an update
         // after a player is added or dropped.  otherwise, messages can just go
         // to players who didn't send the message that this function is

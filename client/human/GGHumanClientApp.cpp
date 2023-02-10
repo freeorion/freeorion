@@ -599,7 +599,7 @@ void GGHumanClientApp::NewSinglePlayerGame(bool quickstart) {
     human_player_setup_data.client_type = Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER;
 
     // add to setup data players
-    setup_data.players.push_back(human_player_setup_data);
+    setup_data.players.push_back(std::move(human_player_setup_data));
 
 
     // AI player setup data.  One entry for each requested AI
