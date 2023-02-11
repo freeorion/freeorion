@@ -3292,7 +3292,7 @@ namespace {
         auto do_giving = [&gifted_object_ids, &empires, current_turn](auto& recipients_objs) {
             for (auto& [recipient_empire_id, objs] : recipients_objs) {
                 for (auto* gifted_obj : objs) {
-                    const auto initial_owner_empire_id = gifted_obj->Owner();
+                    [[maybe_unused]] const auto initial_owner_empire_id = gifted_obj->Owner();
                     const auto gifted_obj_id = gifted_obj->ID();
                     gifted_object_ids.push_back(gifted_obj_id);
 
@@ -3307,15 +3307,18 @@ namespace {
                         if (auto empire = empires.GetEmpire(recipient_empire_id))
                             empire->AddSitRepEntry(CreatePlanetGiftedSitRep(gifted_obj_id, initial_owner_empire_id,
                                                                             current_turn));
+
                     } else if constexpr (std::is_same_v<ObjsT, Fleet>) {
                         if (auto empire = empires.GetEmpire(recipient_empire_id))
                             empire->AddSitRepEntry(CreateFleetGiftedSitRep(gifted_obj_id, initial_owner_empire_id,
                                                                            current_turn));
+
                     } else if constexpr (std::is_same_v<ObjsT, Ship>) {
                         gifted_obj->SetOrderedScrapped(false);
                         gifted_obj->ClearColonizePlanet();
                         gifted_obj->ClearInvadePlanet();
                         gifted_obj->ClearBombardPlanet();
+
                     } else if constexpr (std::is_same_v<ObjsT, Building>) {
                         gifted_obj->SetOrderedScrapped(false);
                     }
