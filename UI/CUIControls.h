@@ -644,17 +644,20 @@ private:
 class ScanlineControl final : public GG::Control {
 public:
     ScanlineControl(GG::X x = GG::X0, GG::Y y = GG::Y0, GG::X w = GG::X1, GG::Y h = GG::Y1,
-                    bool square = false, GG::Clr clr = GG::CLR_BLACK);
+                    bool square = false, GG::Clr clr = GG::CLR_BLACK) :
+        Control(x, y, w, h, GG::NO_WND_FLAGS),
+        m_color(clr),
+        m_square(square)
+    {}
 
     void Render() override;
 
     /** Changes the color used to draw the scanlines. */
-    void SetColor(GG::Clr clr) override
-    { m_color = clr; };
+    void SetColor(GG::Clr clr) noexcept override { m_color = clr; };
 
 private:
     GG::Clr m_color = GG::CLR_WHITE;
-    bool m_square = false;
+    const bool m_square = false;
 };
 
 /** Consistently rendered popup menu */
