@@ -46,8 +46,8 @@ EffectsGroup
             activation = Planet
             effects = [
                 If condition = Not ContainedBy Contains Or [
-                    And [Planet HasSpecial name = "MODERATE_TECH_NATIVES_SPECIAL"]
-                    And [Planet HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL"]
+                        And [Planet HasSpecial name = "MODERATE_TECH_NATIVES_SPECIAL"]
+                        And [Planet HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL"]
                     ]
                     effects = AddSpecial name = OneOf("NATIVE_FORTIFICATION_LOW", "NATIVE_FORTIFICATION_MEDIUM", "CLOUD_COVER_MASTER_SPECIAL", "VOLCANIC_ASH_MASTER_SPECIAL")
             ]
