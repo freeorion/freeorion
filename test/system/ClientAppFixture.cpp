@@ -213,7 +213,7 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
         InfoLogger() << "Extracted GameStart message for turn: " << m_current_turn << " with empire: " << m_empire_id;
 
         m_ai_empires.clear();
-        for (const auto& empire : Empires()) {
+        for (const auto& empire : m_empires) {
             if (GetEmpireClientType(empire.first) == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
                 m_ai_empires.insert(empire.first);
         }

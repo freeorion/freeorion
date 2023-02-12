@@ -360,7 +360,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
     int empire_connected_plr_cnt = 0;
     // count of active (non-eliminated) empires, which currently have a unconnected human players
     int empire_unconnected_plr_cnt = 0;
-    for (const auto& empire : Empires()) {
+    for (const auto& empire : m_server.Empires()) {
         if (!empire.second->Eliminated()) {
             switch (m_server.GetEmpireClientType(empire.first)) {
             case Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER:
