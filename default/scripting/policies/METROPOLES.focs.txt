@@ -20,12 +20,13 @@ Policy
                                                            OwnedBy empire = Source.Owner
                                                            Species
                                                        ] / (NamedInteger name = "METROPOLES_MIN_PLANETS" value = 4)))
-                                    sortkey = LocalCandidate.Population condition = And [
-                Planet
-                OwnedBy empire = Source.Owner
-                Population low = (NamedReal name = "METROPOLES_MINIMUM_POPULATION" value = 20.0)
-                Happiness low = (NamedReal name = "METROPOLES_MIN_STABILITY" value = 12)
-            ]
+                                    sortkey = LocalCandidate.Population
+                                    condition = And [
+                                        Planet
+                                        OwnedBy empire = Source.Owner
+                                        Population low = (NamedReal name = "METROPOLES_MINIMUM_POPULATION" value = 20.0)
+                                        Happiness low = (NamedReal name = "METROPOLES_MIN_STABILITY" value = 12)
+                                    ]
             effects = [
                 SetTargetIndustry value = Value + Target.Population
                     * (NamedReal name = "METROPOLES_TARGET_INDUSTRY_PERPOP"
