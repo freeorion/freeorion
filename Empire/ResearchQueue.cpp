@@ -23,9 +23,8 @@ namespace {
         for (ResearchQueue::Element& elem : queue) {
             elem.allocated_rp = 0.0f;    // default, may be modified below
 
-            if (elem.paused) {
+            if (elem.paused)
                 continue;
-            }
 
             // get details on what is being researched...
             const Tech* tech = GetTech(elem.name);
@@ -33,22 +32,22 @@ namespace {
                 ErrorLogger() << "SetTechQueueElementSpending found null tech on research queue?!";
                 continue;
             }
-            auto status_it = research_status.find(elem.name);
+            const auto status_it = research_status.find(elem.name);
             if (status_it == research_status.end()) {
                 ErrorLogger() << "SetTechQueueElementSpending couldn't find tech with name " << elem.name << " in the research status map";
                 continue;
             }
-            bool researchable = status_it->second == TechStatus::TS_RESEARCHABLE;
+            const bool researchable = status_it->second == TechStatus::TS_RESEARCHABLE;
 
             if (researchable && !elem.paused) {
-                auto progress_it = research_progress.find(elem.name);
-                float tech_cost = tech->ResearchCost(empire_id, context);
-                float progress = progress_it == research_progress.end() ? 0.0f : progress_it->second;
-                float RPs_needed = tech_cost - progress*tech_cost;
-                int tech_min_turns = std::max(1, tech ? tech->ResearchTime(empire_id, context) : 1);
+                const auto progress_it = research_progress.find(elem.name);
+                const float tech_cost = tech->ResearchCost(empire_id, context);
+                const float progress = progress_it == research_progress.end() ? 0.0f : progress_it->second;
+                const float RPs_needed = tech_cost - progress*tech_cost;
+                const int tech_min_turns = std::max(1, tech ? tech->ResearchTime(empire_id, context) : 1);
 
-                float RPs_per_turn_limit = tech ? (tech_cost / tech_min_turns) : 1.0f;
-                float RPs_to_spend = std::min(RPs_needed, RPs_per_turn_limit);
+                const float RPs_per_turn_limit = tech ? (tech_cost / tech_min_turns) : 1.0f;
+                const float RPs_to_spend = std::min(RPs_needed, RPs_per_turn_limit);
 
                 if (total_RPs_spent + RPs_to_spend <= RPs - EPSILON) {
                     elem.allocated_rp = RPs_to_spend;
@@ -229,7 +228,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
         } else if (dpsim_tech_status_map[techname] == TechStatus::TS_UNRESEARCHABLE ||
                    dpsim_tech_status_map[techname] == TechStatus::TS_HAS_RESEARCHED_PREREQ)
         {
-            std::set<std::string> these_prereqs = tech->Prerequisites();
+            auto these_prereqs = tech->Prerequisites();
             for (auto ptech_it = these_prereqs.begin(); ptech_it != these_prereqs.end();) {
                 if (dpsim_tech_status_map[*ptech_it] != TechStatus::TS_COMPLETE) {
                     ++ptech_it;
@@ -239,7 +238,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
                     these_prereqs.erase(erase_it);
                 }
             }
-            waiting_for_prereqs[techname] = these_prereqs;
+            waiting_for_prereqs[techname] = std::move(these_prereqs);
         }
     }
 
@@ -255,75 +254,76 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
         }
         auto cur_tech_it = dp_researchable_techs.begin();
         while ((rp_still_available[dp_turns-1] > EPSILON)) { // try to use up this turns RPs
-            if (cur_tech_it == dp_researchable_techs.end()) {
-                break; //will be wasting some RP this turn
-            }
-            int cur_tech = *cur_tech_it;
+            if (cur_tech_it == dp_researchable_techs.end())
+                break; // will be wasting some RP this turn
+
+            const int cur_tech = *cur_tech_it;
             if (already_processed[cur_tech]) {
                 ++cur_tech_it;
                 continue;
             }
+
             already_processed[cur_tech] = true;
-            const std::string& tech_name = m_queue[cur_tech].name;
+            const auto& tech_name = m_queue[cur_tech].name;
             const Tech* tech = GetTech(tech_name);
             float progress = dpsim_research_progress[cur_tech];
-            float tech_cost = tech ? tech->ResearchCost(m_empire_id, context) : 0.0f;
-            int tech_min_turns = std::max(1, tech ? tech->ResearchTime(m_empire_id, context) : 1);
 
-            float RPs_needed = tech ? tech_cost * (1.0f - std::min(progress, 1.0f)) : 0.0f;
-            float RPs_per_turn_limit = tech ? (tech_cost / tech_min_turns) : 1.0f;
+            const float tech_cost = tech ? tech->ResearchCost(m_empire_id, context) : 1.0f;
+            const int tech_min_turns = std::max(1, tech ? tech->ResearchTime(m_empire_id, context) : 1);
+            const float RPs_needed = tech_cost * (1.0f - std::min(progress, 1.0f));
+            const float RPs_per_turn_limit = tech_cost / tech_min_turns;
 
-            float RPs_to_spend = std::min(std::min(RPs_needed, RPs_per_turn_limit), rp_still_available[dp_turns-1]);
+            const float RPs_to_spend = std::min(std::min(RPs_needed, RPs_per_turn_limit), rp_still_available[dp_turns-1]);
             progress += RPs_to_spend / std::max(EPSILON, tech_cost);
             dpsim_research_progress[cur_tech] = progress;
             rp_still_available[dp_turns-1] -= RPs_to_spend;
-            auto next_res_tech_it = cur_tech_it;
-            int next_res_tech_idx;
-            if (++next_res_tech_it == dp_researchable_techs.end()) {
-                next_res_tech_idx = m_queue.size()+1;
-            } else {
-                next_res_tech_idx = *(next_res_tech_it);
-            }
 
-            if (tech_cost - EPSILON <= progress * tech_cost) {
+            auto next_res_tech_it = cur_tech_it;
+            int next_res_tech_idx = 0;
+            if (++next_res_tech_it == dp_researchable_techs.end())
+                next_res_tech_idx = m_queue.size() + 1;
+            else
+                next_res_tech_idx = *(next_res_tech_it);
+
+            const bool tech_completed = (tech_cost - EPSILON <= progress * tech_cost);
+
+
+            if (tech_completed) {
                 dpsim_tech_status_map[tech_name] = TechStatus::TS_COMPLETE;
                 dpsimulation_results[cur_tech] = dp_turns;
-#ifndef ORIG_RES_SIMULATOR
+
                 m_queue[cur_tech].turns_left = dp_turns;
-#endif
                 dp_researchable_techs.erase(cur_tech_it);
+
                 std::set<std::string> unlocked_techs;
                 if (tech)
                     unlocked_techs = tech->UnlockedTechs();
+
                 for (std::string u_tech_name : unlocked_techs) {
                     auto prereq_tech_it = waiting_for_prereqs.find(u_tech_name);
                     if (prereq_tech_it != waiting_for_prereqs.end() ){
-                        std::set<std::string>& these_prereqs = prereq_tech_it->second;
-                        auto just_finished_it = these_prereqs.find(tech_name);
-                        if (just_finished_it != these_prereqs.end() ) {  //should always find it
+                        auto& these_prereqs = prereq_tech_it->second;
+                        const auto just_finished_it = these_prereqs.find(tech_name);
+                        if (just_finished_it != these_prereqs.end() ) { // should always find it
                             these_prereqs.erase(just_finished_it);
                             if (these_prereqs.empty()) { // tech now fully unlocked
-                                int this_tech_idx = orig_queue_order[u_tech_name];
+                                const int this_tech_idx = orig_queue_order[u_tech_name];
                                 dp_researchable_techs.insert(this_tech_idx);
                                 waiting_for_prereqs.erase(prereq_tech_it);
-                                already_processed[this_tech_idx] = true;    //doesn't get any allocation on current turn
-                                if (this_tech_idx < next_res_tech_idx ) {
+                                already_processed[this_tech_idx] = true; // doesn't get any allocation on current turn
+                                if (this_tech_idx < next_res_tech_idx )
                                     next_res_tech_idx = this_tech_idx;
-                                }
                             }
+
                         } else { //couldnt find tech_name in prereqs list
                             DebugLogger() << "ResearchQueue::Update tech unlocking problem:"<< tech_name << "thought it was a prereq for " << u_tech_name << "but the latter disagreed";
                         }
-                    } //else { //tech_name thinks itself a prereq for ytechName, but u_tech_name not in prereqs -- not a problem so long as u_tech_name not in our queue at all
-                      //  DebugLogger() << "ResearchQueue::Update tech unlocking problem:"<< tech_name << "thought it was a prereq for " << u_tech_name << "but the latter disagreed";
-                      //}
+                    }
                 }
-            }// if (tech->ResearchCost() - EPSILON <= progress * tech_cost)
+            }
             cur_tech_it = dp_researchable_techs.find(next_res_tech_idx);
-        }//while ((rp_still_available[dp_turns-1]> EPSILON))
-        //dp_time = dpsim_queue_timer.elapsed() * 1000;
-        // DebugLogger() << "ProductionQueue::Update queue dynamic programming sim time: " << dpsim_queue_timer.elapsed() * 1000.0;
-    } // while ((dp_turns < DP_TURNS ) && !(dp_researchable_techs.empty() ) )
+        }
+    }
 
     ResearchQueueChangedSignal();
 }
