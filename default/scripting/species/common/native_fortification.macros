@@ -42,7 +42,7 @@ EffectsGroup
                 Source
                 Turn low = 1 high = 1
                 (GalaxyMaxAIAggression >= 1)
-                ]
+            ]
             activation = Planet
             effects = [
                 If condition = Not ContainedBy Contains Or [
