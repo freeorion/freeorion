@@ -69,6 +69,7 @@ EffectsGroup
                 Not ContainedBy Contains Or [
                     And [Planet HasSpecial name = "MODERATE_TECH_NATIVES_SPECIAL"]
                     And [Planet HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL"]
+                    And [Planet HasSpecial name = "PIRATE_NATIVES_SPECIAL"]
                     And [Species HasTag name = "PRIMITIVE"]
                     ]
             ]

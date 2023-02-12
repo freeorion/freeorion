@@ -1,0 +1,11 @@
+ShipDesign
+    name = "SM_PIRATE"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca40"
+    description = "SM_PIRATE_DESC"
+    hull = "SH_PIRATE_HULL"
+    parts = [
+        "SR_WEAPON_1_1"
+        "DT_DETECTOR_2"
+    ]
+    icon = "icons/ship_hulls/spatial_flux_hull_small.png"
+    model = "seed"

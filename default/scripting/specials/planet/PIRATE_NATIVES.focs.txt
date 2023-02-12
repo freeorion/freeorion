@@ -1,0 +1,85 @@
+Special
+    name = "PIRATE_NATIVES_SPECIAL"
+    description = "PIRATE_NATIVES_SPECIAL_DESC"
+    stealth = 25
+    spawnrate = 75
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Unowned
+        Species
+        Not HasTag name = "PACIFIST"
+        CanProduceShips
+        Not HasSpecial name = "MODERATE_TECH_NATIVES_SPECIAL"
+        Not HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL"
+        (GalaxyMaxAIAggression >= 1)
+        (GalaxyMonsterFrequency >= 1)
+        [[MINIMUM_DISTANCE_EMPIRE_CHECK]]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Unowned
+            effects = [
+                SetMaxDefense value = Value + ( 5 * [[PLANET_DEFENSE_FACTOR]] )
+                SetMaxShield value = Value + ( 5 * [[PLANET_SHIELD_FACTOR]] )
+                SetStealth value = Value + [[LOW_STEALTH]]
+                SetDetection value = Value + 20
+            ]
+
+        EffectsGroup
+            scope = And [
+                OnPlanet id = Source.PlanetID
+                Building
+            ]
+            effects = SetStealth value = Value + 20
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Unowned
+                Turn low = 1 high = 1
+                Not Contains Building name = "BLD_SHIPYARD_BASE"
+            ]
+            effects = [
+                CreateBuilding type = "BLD_SHIPYARD_BASE"
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Unowned
+                Turn low = 1 high = 1
+                Not Contains Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+            ]
+            effects = [
+                CreateBuilding type = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+            ]
+
+        EffectsGroup
+            scope = And [
+                System
+                InSystem id = Source.SystemID
+                // Limits the pirate base to producing only when there are less than 4 pirate ships in system
+                Number high = 4 condition = And [
+                    Ship
+                    InSystem id = Source.SystemID
+                    DesignHasHull name = "SH_PIRATE_HULL"
+                ]
+            ]
+            activation = Random probability = 0.07
+            effects = CreateShip designname = "SM_PIRATE" species = Source.Species
+
+        EffectsGroup
+            scope = Source
+            activation = Or [
+                OwnedBy affiliation = AnyEmpire
+                Not Species
+            ]
+            effects = RemoveSpecial name = "PIRATE_NATIVES_SPECIAL"
+    ]
+    // TODO: Replace placeholder graphic
+    graphic = "icons/ship_hulls/spatial_flux_hull_small.png"
+
+#include "/scripting/common/misc.macros"
+#include "/scripting/common/stealth.macros"
