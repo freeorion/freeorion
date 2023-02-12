@@ -1827,7 +1827,7 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
     }
 
     const auto& empire_ids = context.EmpireIDs();
-
+    auto& empires = context.Empires().GetEmpires();
 
     // actually do destroy effect action.  Executing the effect just marks
     // objects to be destroyed, but doesn't actually do so in order to ensure
@@ -1840,8 +1840,6 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
         auto obj = m_objects->get(obj_id);
         if (!obj)
             continue;
-
-        auto& empires = context.Empires().GetEmpires();
 
         // recording of what species/empire destroyed what other stuff in
         // empire statistics for this destroyed object and any contained objects

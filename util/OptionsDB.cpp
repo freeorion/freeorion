@@ -20,7 +20,7 @@
 #include <boost/tokenizer.hpp>
 
 namespace {
-    std::vector<OptionsDBFn>& OptionsRegistry() {
+    std::vector<OptionsDBFn>& OptionsRegistry() noexcept {
         static std::vector<OptionsDBFn> options_db_registry;
         return options_db_registry;
     }
