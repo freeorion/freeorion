@@ -17228,7 +17228,7 @@ ULTIMATE_DEFENSE_TROOPS_DESC
 +++	Ultimate Defensive Ground [[metertype METER_TROOPS]]: 300%
 
 ANCIENT_DEFENSE_TROOPS_DESC
-+++	Ancient Defensive Ground [[metertype METER_TROOPS]]: +10 per [[metertype METER_POPULATION]]
++++	Ancient Defensive Ground [[metertype METER_TROOPS]]: +[[value ANCIENT_PLANETARY_TROOPS]] per [[metertype METER_POPULATION]]
 
 NO_OFFENSE_TROOPS_DESC
 −−−	No Offensive Ground [[metertype METER_TROOPS]]
@@ -17365,7 +17365,7 @@ GOOD_PLANETARY_SHIELD_DESC
 +	Good planetary [[metertype METER_SHIELD]]: +40
 
 ANCIENT_PLANETARY_SHIELD_DESC
-+++	Ancient planetary [[metertype METER_SHIELD]]: +4000
++++	Ancient planetary [[metertype METER_SHIELD]]: +[[value ANCIENT_PLANETARY_SHIELD]]
 
 GOOD_PLANETARY_DEFENSE_DESC
 +	Good planetary [[metertype METER_DEFENSE]]: +30
