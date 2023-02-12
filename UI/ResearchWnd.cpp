@@ -50,7 +50,7 @@ namespace {
     private:
         void Draw(GG::Clr clr, bool fill);
 
-        std::string_view                        m_tech_name;
+        std::string_view                        m_tech_name = "";
         std::shared_ptr<GG::Label>              m_name_text;
         std::shared_ptr<GG::Label>              m_RPs_and_turns_text;
         std::shared_ptr<GG::Label>              m_turns_remaining_text;

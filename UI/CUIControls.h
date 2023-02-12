@@ -285,7 +285,7 @@ public:
     mutable boost::signals2::signal<void ()> LosingFocusSignal;
 
 private:
-    std::string_view m_disallowed_chars;
+    std::string_view m_disallowed_chars = "";
 };
 
 /** a FreeOrion Edit control that replaces its displayed characters with a

@@ -78,7 +78,7 @@ namespace {
         }
 
         if (!obj) {
-            std::string_view type_string;
+            std::string_view type_string = "";
             switch (ref_type) {
             case ValueRef::ReferenceType::SOURCE_REFERENCE:                    type_string = "Source";         break;
             case ValueRef::ReferenceType::EFFECT_TARGET_REFERENCE:             type_string = "Target";         break;

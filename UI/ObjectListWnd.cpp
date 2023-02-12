@@ -374,7 +374,7 @@ namespace {
 
     enum class VIS_DISPLAY : uint8_t { SHOW_VISIBLE, SHOW_PREVIOUSLY_VISIBLE, SHOW_DESTROYED };
 
-    constexpr std::string_view EMPTY_STRING;
+    constexpr std::string_view EMPTY_STRING = "";
     constexpr std::string_view ALL_CONDITION(UserStringNop("CONDITION_ALL"));
     constexpr std::string_view EMPIREAFFILIATION_CONDITION(UserStringNop("CONDITION_EMPIREAFFILIATION"));
     constexpr std::string_view HOMEWORLD_CONDITION(UserStringNop("CONDITION_HOMEWORLD"));

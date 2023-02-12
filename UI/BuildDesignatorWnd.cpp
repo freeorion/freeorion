@@ -1120,7 +1120,7 @@ void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::itera
     ScriptingContext context;
     const Universe& universe{context.ContextUniverse()};
 
-    std::string_view item_name;
+    std::string_view item_name = "";
     if (item.build_type == BuildType::BT_BUILDING) {
         item_name = item.name;
     } else if (item.build_type == BuildType::BT_SHIP) {
