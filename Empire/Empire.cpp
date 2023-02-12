@@ -2133,7 +2133,7 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
         const int location_id = INVALID_OBJECT_ID;
         const BuildType build_type = BuildType::INVALID_BUILD_TYPE;
         const int design_id = INVALID_DESIGN_ID;
-        const std::string_view name;
+        const std::string_view name = "";
         const float cost = 0.0f;
         const int time = 0;
     };

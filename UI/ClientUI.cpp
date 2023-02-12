@@ -131,7 +131,7 @@ bool        ClientUI::DisplayTimestamp()                { return GetOptionsDB().
 
 
 std::shared_ptr<GG::Texture> ClientUI::PlanetIcon(PlanetType planet_type) {
-    std::string_view icon_filename;
+    std::string_view icon_filename = "";
     switch (planet_type) {
     case PlanetType::PT_SWAMP:
         icon_filename = "swamp.png";    break;
@@ -162,7 +162,7 @@ std::shared_ptr<GG::Texture> ClientUI::PlanetIcon(PlanetType planet_type) {
 }
 
 std::shared_ptr<GG::Texture> ClientUI::PlanetSizeIcon(PlanetSize planet_size) {
-    std::string_view icon_filename;
+    std::string_view icon_filename = "";
     switch (planet_size) {
     case PlanetSize::SZ_TINY:
         icon_filename = "tiny.png";    break;
@@ -185,7 +185,7 @@ std::shared_ptr<GG::Texture> ClientUI::PlanetSizeIcon(PlanetSize planet_size) {
 }
 
 std::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
-    std::string_view icon_filename;
+    std::string_view icon_filename = "";
     switch (meter_type) {
     case MeterType::METER_POPULATION:
     case MeterType::METER_TARGET_POPULATION:
@@ -248,7 +248,7 @@ std::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
 
 std::shared_ptr<GG::Texture> ClientUI::BuildingIcon(std::string_view building_type_name) {
     const BuildingType* building_type = GetBuildingType(building_type_name);
-    std::string_view graphic_name;
+    std::string_view graphic_name = "";
     if (building_type)
         graphic_name = building_type->Icon();
     if (graphic_name.empty())
@@ -265,7 +265,7 @@ std::shared_ptr<GG::Texture> ClientUI::CategoryIcon(std::string_view category_na
 
 std::shared_ptr<GG::Texture> ClientUI::TechIcon(std::string_view tech_name) {
     const Tech* tech = GetTechManager().GetTech(tech_name);
-    std::string_view texture_name;
+    std::string_view texture_name = "";
     if (tech) {
         texture_name = tech->Graphic();
         if (texture_name.empty())
@@ -276,7 +276,7 @@ std::shared_ptr<GG::Texture> ClientUI::TechIcon(std::string_view tech_name) {
 
 std::shared_ptr<GG::Texture> ClientUI::PolicyIcon(std::string_view policy_name) {
     const Policy* policy = GetPolicyManager().GetPolicy(policy_name);
-    std::string_view texture_name;
+    std::string_view texture_name = "";
     if (policy)
         texture_name = policy->Graphic();
     return ClientUI::GetTexture(ArtDir() / texture_name.data(), true);
@@ -284,7 +284,7 @@ std::shared_ptr<GG::Texture> ClientUI::PolicyIcon(std::string_view policy_name) 
 
 std::shared_ptr<GG::Texture> ClientUI::SpecialIcon(std::string_view special_name) {
     const Special* special = GetSpecial(special_name);
-    std::string_view texture_name;
+    std::string_view texture_name = "";
     if (special)
         texture_name = special->Graphic();
     if (texture_name.empty())
@@ -294,7 +294,7 @@ std::shared_ptr<GG::Texture> ClientUI::SpecialIcon(std::string_view special_name
 
 std::shared_ptr<GG::Texture> ClientUI::SpeciesIcon(std::string_view species_name) {
     const Species* species = GetSpeciesManager().GetSpecies(species_name);
-    std::string_view texture_name;
+    std::string_view texture_name = "";
     if (species)
         texture_name = species->Graphic();
     if (texture_name.empty())
@@ -304,7 +304,7 @@ std::shared_ptr<GG::Texture> ClientUI::SpeciesIcon(std::string_view species_name
 
 std::shared_ptr<GG::Texture> ClientUI::FieldTexture(std::string_view field_type_name) {
     const FieldType* type = GetFieldType(field_type_name);
-    std::string_view texture_name;
+    std::string_view texture_name = "";
     if (type)
         texture_name = type->Graphic();
     if (texture_name.empty())
@@ -314,7 +314,7 @@ std::shared_ptr<GG::Texture> ClientUI::FieldTexture(std::string_view field_type_
 
 std::shared_ptr<GG::Texture> ClientUI::PartIcon(std::string_view part_name) {
     const ShipPart* part = GetShipPart(part_name);
-    std::string_view texture_name;
+    std::string_view texture_name = "";
     if (part)
         texture_name = part->Icon();
     if (texture_name.empty())
@@ -324,7 +324,7 @@ std::shared_ptr<GG::Texture> ClientUI::PartIcon(std::string_view part_name) {
 
 std::shared_ptr<GG::Texture> ClientUI::HullTexture(std::string_view hull_name) {
     const ShipHull* hull = GetShipHull(hull_name);
-    std::string_view texture_name;
+    std::string_view texture_name = "";
     if (hull) {
         texture_name = hull->Graphic();
         if (texture_name.empty())
@@ -337,7 +337,7 @@ std::shared_ptr<GG::Texture> ClientUI::HullTexture(std::string_view hull_name) {
 
 std::shared_ptr<GG::Texture> ClientUI::HullIcon(std::string_view hull_name) {
     const ShipHull* hull = GetShipHull(hull_name);
-    std::string_view texture_name;
+    std::string_view texture_name = "";
     if (hull) {
         texture_name = hull->Icon();
         if (texture_name.empty())

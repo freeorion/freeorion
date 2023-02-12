@@ -356,14 +356,12 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id, const Script
     if (!location->OwnedBy(empire_id))
         return false;
 
-    std::string_view species_name;
-    if (location->ObjectType() == UniverseObjectType::OBJ_PLANET) {
-        auto planet = static_cast<const Planet*>(location);
-        species_name = planet->SpeciesName();
-    } else if (location->ObjectType() == UniverseObjectType::OBJ_SHIP) {
-        auto ship = static_cast<const Ship*>(location);
-        species_name = ship->SpeciesName();
-    }
+    std::string_view species_name = "";
+    if (location->ObjectType() == UniverseObjectType::OBJ_PLANET)
+        species_name = static_cast<const Planet*>(location)->SpeciesName();
+    else if (location->ObjectType() == UniverseObjectType::OBJ_SHIP)
+        species_name = static_cast<const Ship*>(location)->SpeciesName();
+
     if (species_name.empty())
         return false;
     const Species* species = context.species.GetSpecies(species_name);

@@ -1634,7 +1634,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
         bombard_ships.insert(autoselected_bombard_ships.begin(), autoselected_bombard_ships.end());
     }
 
-    std::string_view colony_ship_species_name;
+    std::string_view colony_ship_species_name = "";
     if (selected_colony_ship)
         colony_ship_species_name = selected_colony_ship->SpeciesName();
     const float colony_ship_capacity{selected_colony_ship ? selected_colony_ship->ColonyCapacity(u) : 0.0f};
@@ -1800,7 +1800,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
 
     const auto* planet_raw = planet.get();
     const std::string_view planet_species_name = planet_raw->SpeciesName();
-    std::string_view species_name;
+    std::string_view species_name = "";
     if (!planet_species_name.empty())
         species_name = planet_species_name;
     else if (!colony_ship_species_name.empty())

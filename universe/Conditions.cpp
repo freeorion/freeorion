@@ -4306,7 +4306,7 @@ namespace {
         }
 
         const std::vector< ::PlanetEnvironment>& m_environments;
-        const std::string_view                   m_species;
+        const std::string_view                   m_species = "";
         const ScriptingContext&                  m_context;
     };
 }
@@ -9657,7 +9657,7 @@ bool CanColonize::Match(const ScriptingContext& local_context) const {
     }
 
     // is it a ship, a planet, or a building on a planet?
-    std::string_view species_name;
+    std::string_view species_name = "";
     if (candidate->ObjectType() == UniverseObjectType::OBJ_PLANET) {
         auto planet = static_cast<const Planet*>(candidate);
         species_name = planet->SpeciesName();
@@ -9721,7 +9721,7 @@ bool CanProduceShips::Match(const ScriptingContext& local_context) const {
     }
 
     // is it a ship, a planet, or a building on a planet?
-    std::string_view species_name;
+    std::string_view species_name = "";
     if (candidate->ObjectType() == UniverseObjectType::OBJ_PLANET) {
         auto planet = static_cast<const Planet*>(candidate);
         species_name = planet->SpeciesName();
