@@ -74,7 +74,7 @@ Hull
                     ]
                     empire = Source.Owner
             ]
-        [[GOOD_VISION]]
+        [[VERY_GOOD_VISION]]
     ]
     icon = ""
     graphic = "icons/monsters/snowflake-1.png"

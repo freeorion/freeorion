@@ -17978,6 +17978,9 @@ Moderate Vision
 GOOD_VISION_LABEL
 Good Vision
 
+VERY_GOOD_VISION_LABEL
+Very Good Vision
+
 EXCELLENT_VISION_LABEL
 Excellent Vision
 
