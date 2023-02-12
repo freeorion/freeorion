@@ -8870,7 +8870,7 @@ Replicon
 SP_REPLICON_GAMEPLAY_DESC
 '''Barely-sentient self replicating robots.
 Prefer [[PT_RADIATED]] planets.
-[[encyclopedia ROBOTIC_SPECIES_TITLE]]
+[[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia ADAPTIVE_TITLE]]
 '''
 
 SP_REPLICON_DESC
