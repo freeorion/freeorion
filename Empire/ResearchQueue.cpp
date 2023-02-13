@@ -216,6 +216,9 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
     std::map<std::string, std::set<std::string>> waiting_for_prereqs;
     std::set<int> dp_researchable_techs;
 
+    boost::container::flat_map<int, std::pair<float, int>> tech_cost_time;
+    tech_cost_time.reserve(m_queue.size());
+
     for (unsigned int i = 0; i < m_queue.size(); ++i) {
         std::string techname = m_queue[i].name;
         if (m_queue[i].paused)
@@ -223,10 +226,20 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
         const Tech* tech = GetTech(techname);
         if (!tech)
             continue;
+
+        tech_cost_time.emplace(std::piecewise_construct,
+                               std::forward_as_tuple(i),
+                               std::forward_as_tuple(
+                                   tech ? tech->ResearchCost(m_empire_id, context) : 1.0f,
+                                   std::max(1, tech ? tech->ResearchTime(m_empire_id, context) : 1)));
+
         if (dpsim_tech_status_map[techname] == TechStatus::TS_RESEARCHABLE) {
             dp_researchable_techs.insert(i);
-        } else if (dpsim_tech_status_map[techname] == TechStatus::TS_UNRESEARCHABLE ||
-                   dpsim_tech_status_map[techname] == TechStatus::TS_HAS_RESEARCHED_PREREQ)
+            continue;
+        }
+
+        if (dpsim_tech_status_map[techname] == TechStatus::TS_UNRESEARCHABLE ||
+            dpsim_tech_status_map[techname] == TechStatus::TS_HAS_RESEARCHED_PREREQ)
         {
             auto these_prereqs = tech->Prerequisites();
             for (auto ptech_it = these_prereqs.begin(); ptech_it != these_prereqs.end();) {
@@ -246,12 +259,13 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
     //pp_still_available[turn-1] gives the RP still available in this resource pool at turn "turn"
     std::vector<float> rp_still_available(DP_TURNS, RPs);  // initialize to the  full RP allocation for every turn
 
+
     while ((dp_turns < DP_TURNS) && !(dp_researchable_techs.empty())) {// if we haven't used up our turns and still have techs to process
         ++dp_turns;
         std::map<int, bool> already_processed;
-        for (int tech_id : dp_researchable_techs) {
-            already_processed[tech_id] = false;
-        }
+        for (int tech_id : dp_researchable_techs)
+            already_processed.emplace(tech_id, false);
+
         auto cur_tech_it = dp_researchable_techs.begin();
         while ((rp_still_available[dp_turns-1] > EPSILON)) { // try to use up this turns RPs
             if (cur_tech_it == dp_researchable_techs.end())
@@ -268,8 +282,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
             const Tech* tech = GetTech(tech_name);
             float progress = dpsim_research_progress[cur_tech];
 
-            const float tech_cost = tech ? tech->ResearchCost(m_empire_id, context) : 1.0f;
-            const int tech_min_turns = std::max(1, tech ? tech->ResearchTime(m_empire_id, context) : 1);
+            const auto [tech_cost, tech_min_turns] = tech_cost_time[cur_tech];
             const float RPs_needed = tech_cost * (1.0f - std::min(progress, 1.0f));
             const float RPs_per_turn_limit = tech_cost / tech_min_turns;
 
