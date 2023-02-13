@@ -57,32 +57,11 @@ std::ostream& operator<<(std::ostream& os, const Message& msg) {
 ////////////////////////////////////////////////
 // Message
 ////////////////////////////////////////////////
-Message::Message(MessageType type, std::string text) :
-    m_type(type),
-    m_message_size(text.size()),
-    m_message_text(std::move(text))
-{}
-
-Message::MessageType Message::Type() const noexcept
-{ return m_type; }
-
-std::size_t Message::Size() const noexcept
-{ return m_message_size; }
-
-const char* Message::Data() const noexcept
-{ return m_message_text.data(); }
-
-const std::string& Message::Text() const
-{ return m_message_text; }
-
 void Message::Resize(std::size_t size) {
     m_message_size = size;
     m_message_text.clear();
     m_message_text.resize(size);
 }
-
-char* Message::Data() noexcept
-{ return m_message_text.data(); }
 
 void Message::Swap(Message& rhs) noexcept {
     std::swap(m_type, rhs.m_type);
@@ -96,16 +75,13 @@ void Message::Reset() noexcept {
     m_message_text.clear();
 }
 
-bool operator==(const Message& lhs, const Message& rhs) {
-    return
-        lhs.Type() == rhs.Type() &&
-        lhs.Text() == rhs.Text();
-}
+bool operator==(const Message& lhs, const Message& rhs) noexcept
+{ return lhs.Type() == rhs.Type() && lhs.Text() == rhs.Text(); }
 
-bool operator!=(const Message& lhs, const Message& rhs)
+bool operator!=(const Message& lhs, const Message& rhs) noexcept
 { return !(lhs == rhs); }
 
-void swap(Message& lhs, Message& rhs)
+void swap(Message& lhs, Message& rhs) noexcept
 { lhs.Swap(rhs); }
 
 void BufferToHeader(const Message::HeaderBuffer& buffer, Message& message) {

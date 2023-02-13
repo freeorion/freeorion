@@ -138,17 +138,21 @@ public:
     )
 
     Message() = default;
-    Message(MessageType message_type, std::string text);
+    Message(MessageType type, std::string text) noexcept :
+        m_type(type),
+        m_message_size(text.size()),
+        m_message_text(std::move(text))
+    {}
 
-    MessageType        Type() const noexcept;      ///< Returns the type of the message.
-    std::size_t        Size() const noexcept;      ///< Returns the size of the underlying buffer.
-    const char*        Data() const noexcept;      ///< Returns the underlying buffer.
-    const std::string& Text() const;               ///< Returns the underlying buffer as a std::string.
+    MessageType Type() const noexcept { return m_type; };
+    std::size_t Size() const noexcept { return m_message_size; }
+    auto&       Text() const noexcept { return m_message_text; }
+    auto        Data() const noexcept { return m_message_text.data(); }
+    auto        Data() noexcept       { return m_message_text.data(); }
 
-    void               Resize(std::size_t size);   ///< Resizes the underlying char buffer to \a size uninitialized bytes.
-    char*              Data() noexcept;            ///< Returns the underlying buffer.
-    void               Swap(Message& rhs) noexcept;///< Swaps the contents of \a *this with \a rhs.  Does not throw.
-    void               Reset() noexcept;           ///< Reverts message to same state as after default constructor
+    void Resize(std::size_t size);   ///< Resizes the underlying char buffer to \a size uninitialized bytes.
+    void Swap(Message& rhs) noexcept;
+    void Reset() noexcept;           ///< Reverts message to same state as after default constructor
 
 private:
     MessageType                 m_type = MessageType::UNDEFINED;
@@ -164,10 +168,10 @@ FO_COMMON_API void BufferToHeader(const Message::HeaderBuffer& buffer, Message& 
 /** Fills \a header_buf from the relevant portions of \a message. */
 FO_COMMON_API void HeaderToBuffer(const Message& message, Message::HeaderBuffer& buffer);
 
-bool operator==(const Message& lhs, const Message& rhs);
-bool operator!=(const Message& lhs, const Message& rhs);
+bool operator==(const Message& lhs, const Message& rhs) noexcept;
+bool operator!=(const Message& lhs, const Message& rhs) noexcept;
 
-FO_COMMON_API void swap(Message& lhs, Message& rhs); ///< Swaps the contents of \a lhs and \a rhs.  Does not throw.
+FO_COMMON_API void swap(Message& lhs, Message& rhs) noexcept;
 
 
 ////////////////////////////////////////////////
