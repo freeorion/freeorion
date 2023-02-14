@@ -682,7 +682,7 @@ private:
   * target object has multiple owners, nothing is done. */
 class FO_COMMON_API Victory final : public Effect {
 public:
-    explicit Victory(std::string& reason_string); // TODO: Make this a ValueRef<std::string>*
+    explicit Victory(std::string reason_string); // TODO: Make this a ValueRef<std::string>*
 
     void                      Execute(ScriptingContext& context) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
@@ -746,19 +746,19 @@ public:
     using MessageParams =  std::vector<std::pair<
         std::string, std::unique_ptr<ValueRef::ValueRef<std::string>>>>;
 
-    GenerateSitRepMessage(std::string& message_string, std::string& icon,
+    GenerateSitRepMessage(std::string message_string, std::string icon,
                           MessageParams&& message_parameters,
                           std::unique_ptr<ValueRef::ValueRef<int>>&& recipient_empire_id,
                           EmpireAffiliationType affiliation,
                           std::string label = "",
                           bool stringtable_lookup = true);
-    GenerateSitRepMessage(std::string& message_string, std::string& icon,
+    GenerateSitRepMessage(std::string message_string, std::string icon,
                           MessageParams&& message_parameters,
                           EmpireAffiliationType affiliation,
                           std::unique_ptr<Condition::Condition>&& condition,
                           std::string label = "",
                           bool stringtable_lookup = true);
-    GenerateSitRepMessage(std::string& message_string, std::string& icon,
+    GenerateSitRepMessage(std::string message_string, std::string icon,
                           MessageParams&& message_parameters,
                           EmpireAffiliationType affiliation,
                           std::string label = "",

@@ -3628,7 +3628,7 @@ std::unique_ptr<Effect> SetAggression::Clone() const
 ///////////////////////////////////////////////////////////
 // Victory                                               //
 ///////////////////////////////////////////////////////////
-Victory::Victory(std::string& reason_string) :
+Victory::Victory(std::string reason_string) :
     m_reason_string(std::move(reason_string))
 {}
 
@@ -3656,10 +3656,8 @@ uint32_t Victory::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Effect> Victory::Clone() const {
-    auto reason_string = m_reason_string;
-    return std::make_unique<Victory>(reason_string);
-}
+std::unique_ptr<Effect> Victory::Clone() const
+{ return std::make_unique<Victory>(m_reason_string); }
 
 
 ///////////////////////////////////////////////////////////
@@ -3835,8 +3833,8 @@ std::unique_ptr<Effect> GiveEmpireContent::Clone() const {
 ///////////////////////////////////////////////////////////
 // GenerateSitRepMessage                                 //
 ///////////////////////////////////////////////////////////
-GenerateSitRepMessage::GenerateSitRepMessage(std::string& message_string,
-                                             std::string& icon,
+GenerateSitRepMessage::GenerateSitRepMessage(std::string message_string,
+                                             std::string icon,
                                              MessageParams&& message_parameters,
                                              std::unique_ptr<ValueRef::ValueRef<int>>&& recipient_empire_id,
                                              EmpireAffiliationType affiliation,
@@ -3851,8 +3849,8 @@ GenerateSitRepMessage::GenerateSitRepMessage(std::string& message_string,
     m_stringtable_lookup(stringtable_lookup)
 {}
 
-GenerateSitRepMessage::GenerateSitRepMessage(std::string& message_string,
-                                             std::string& icon,
+GenerateSitRepMessage::GenerateSitRepMessage(std::string message_string,
+                                             std::string icon,
                                              MessageParams&& message_parameters,
                                              EmpireAffiliationType affiliation,
                                              std::unique_ptr<Condition::Condition>&& condition,
@@ -3867,11 +3865,12 @@ GenerateSitRepMessage::GenerateSitRepMessage(std::string& message_string,
     m_stringtable_lookup(stringtable_lookup)
 {}
 
-GenerateSitRepMessage::GenerateSitRepMessage(std::string& message_string, std::string& icon,
+GenerateSitRepMessage::GenerateSitRepMessage(std::string message_string,
+                                             std::string icon,
                                              MessageParams&& message_parameters,
                                              EmpireAffiliationType affiliation,
                                              std::string label,
-                                             bool stringtable_lookup):
+                                             bool stringtable_lookup) :
     m_message_string(std::move(message_string)),
     m_icon(std::move(icon)),
     m_message_parameters(std::move(message_parameters)),
@@ -4092,10 +4091,8 @@ GenerateSitRepMessage::MessageParameters() const {
 }
 
 std::unique_ptr<Effect> GenerateSitRepMessage::Clone() const {
-    auto message_string = m_message_string;
-    auto icon = m_icon;
     auto retval = std::make_unique<GenerateSitRepMessage>(
-        message_string, icon, ValueRef::CloneUnique(m_message_parameters),
+        m_message_string, m_icon, ValueRef::CloneUnique(m_message_parameters),
         ValueRef::CloneUnique(m_recipient_empire_id), m_affiliation,
         m_label, m_stringtable_lookup);
     retval->m_condition = ValueRef::CloneUnique(m_condition);
