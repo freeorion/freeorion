@@ -140,20 +140,20 @@ public:
 private:
     void Init();
 
-    std::string                                         m_name;
-    std::string                                         m_description;
-    std::unique_ptr<ValueRef::ValueRef<double>>         m_production_cost;
-    std::unique_ptr<ValueRef::ValueRef<int>>            m_production_time;
-    bool                                                m_producible = true;
-    CaptureResult                                       m_capture_result;
-    const std::string                                   m_tags_concatenated;
-    const std::vector<std::string_view>                 m_tags;
-    ConsumptionMap<MeterType>                           m_production_meter_consumption;
-    ConsumptionMap<std::string>                         m_production_special_consumption;
-    std::unique_ptr<Condition::Condition>               m_location;
-    std::unique_ptr<Condition::Condition>               m_enqueue_location;
-    std::vector<std::unique_ptr<Effect::EffectsGroup>>  m_effects;
-    std::string                                         m_icon;
+    std::string                                 m_name;
+    std::string                                 m_description;
+    std::unique_ptr<ValueRef::ValueRef<double>> m_production_cost;
+    std::unique_ptr<ValueRef::ValueRef<int>>    m_production_time;
+    bool                                        m_producible = true;
+    CaptureResult                               m_capture_result;
+    const std::string                           m_tags_concatenated;
+    const std::vector<std::string_view>         m_tags;
+    ConsumptionMap<MeterType>                   m_production_meter_consumption;
+    ConsumptionMap<std::string>                 m_production_special_consumption;
+    std::unique_ptr<Condition::Condition>       m_location;
+    std::unique_ptr<Condition::Condition>       m_enqueue_location;
+    std::vector<Effect::EffectsGroup>           m_effects;
+    std::string                                 m_icon;
 };
 
 //! Holds all FreeOrion BuildingType%s.  Types may be looked up by name.

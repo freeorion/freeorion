@@ -11,14 +11,13 @@
 #include "Effect.h"
 #include "ValueRef.h"
 
-#define CHECK_COND_VREF_MEMBER(m_ptr) { if (m_ptr == rhs.m_ptr) {           \
-                                            /* check next member */         \
-                                        } else if (!m_ptr || !rhs.m_ptr) {  \
-                                            return false;                   \
-                                        } else {                            \
-                                            if (*m_ptr != *(rhs.m_ptr))     \
-                                                return false;               \
-                                        }   }
+#define CHECK_COND_VREF_MEMBER(m_ptr) if (m_ptr == rhs.m_ptr) {            \
+                                          /* check next member */          \
+                                      } else if (!m_ptr || !rhs.m_ptr) {   \
+                                          return false;                    \
+                                      } else if (*m_ptr != *(rhs.m_ptr)) { \
+                                          return false;                    \
+                                      }
 
 namespace {
     #define UserStringNop(key) key
@@ -79,7 +78,13 @@ BuildingType::BuildingType(std::string&& name, std::string&& description,
     m_production_special_consumption(std::move(common_params.production_special_consumption)),
     m_location(std::move(common_params.location)),
     m_enqueue_location(std::move(common_params.enqueue_location)),
-    m_effects(std::move(common_params.effects)),
+    m_effects([effects{std::move(common_params.effects)}]() {
+        std::vector<Effect::EffectsGroup> retval;
+        retval.reserve(effects.size());
+        for (auto& e : effects)
+            retval.push_back(std::move(*e));
+        return retval;
+    }()),
     m_icon(std::move(icon))
 {
     Init();
@@ -104,26 +109,11 @@ bool BuildingType::operator==(const BuildingType& rhs) const {
     CHECK_COND_VREF_MEMBER(m_location)
     CHECK_COND_VREF_MEMBER(m_enqueue_location)
 
-    if (m_effects.size() != rhs.m_effects.size())
+    if (m_effects != rhs.m_effects)
         return false;
-    try {
-        for (std::size_t idx = 0; idx < m_effects.size(); ++idx) {
-            const auto& my_op = m_effects.at(idx);
-            const auto& rhs_op = rhs.m_effects.at(idx);
-
-            if (my_op == rhs_op) // could both be nullptr
-                continue;
-            if (!my_op || !rhs_op)
-                return false;
-            if (*my_op != *rhs_op)
-                return false;
-        }
-    } catch (...) {
-        return false;
-    }
-
     if (m_production_meter_consumption.size() != rhs.m_production_meter_consumption.size())
         return false;
+
     try {
         for (auto& [meter_type, my_refs_cond_pair] : m_production_meter_consumption) {
             auto& [my_ref, my_cond] = my_refs_cond_pair;
@@ -181,7 +171,7 @@ void BuildingType::Init() {
     if (m_enqueue_location)
         m_enqueue_location->SetTopLevelContent(m_name);
     for (auto& effect : m_effects)
-        effect->SetTopLevelContent(m_name);
+        effect.SetTopLevelContent(m_name);
 }
 
 std::string BuildingType::Dump(uint8_t ntabs) const {
@@ -218,11 +208,11 @@ std::string BuildingType::Dump(uint8_t ntabs) const {
 
     if (m_effects.size() == 1) {
         retval += DumpIndent(ntabs+1) + "effectsgroups =\n";
-        retval += m_effects[0]->Dump(ntabs+2);
+        retval += m_effects.front().Dump(ntabs+2);
     } else {
         retval += DumpIndent(ntabs+1) + "effectsgroups = [\n";
         for (auto& effect : m_effects)
-            retval += effect->Dump(ntabs+2);
+            retval += effect.Dump(ntabs+2);
         retval += DumpIndent(ntabs+1) + "]\n";
     }
     retval += DumpIndent(ntabs+1) + "icon = \"" + m_icon + "\"\n";
