@@ -9,6 +9,7 @@
 #include <vector>
 #include <boost/container/flat_map.hpp>
 #include "ConstantsFwd.h"
+#include "Condition.h"
 #include "EnumsFwd.h"
 #include "../util/Enum.h"
 #include "../util/Export.h"
@@ -16,10 +17,6 @@
 
 class UniverseObject;
 struct ScriptingContext;
-
-namespace Condition {
-    struct Condition;
-}
 
 //! Types of in-game things that might contain an EffectsGroup, or "cause"
 //! effects to occur
@@ -52,12 +49,13 @@ namespace Effect {
     struct FO_COMMON_API EffectCause {
         EffectCause() = default;
 
-        EffectCause(EffectsCauseType cause_type_) :
+        explicit EffectCause(EffectsCauseType cause_type_) noexcept(noexcept(std::string{})) :
             cause_type(cause_type_)
         {}
 
         template <typename S1, typename S2>
-        EffectCause(EffectsCauseType cause_type_, S1&& specific_cause_, S2&& custom_label_ = "") :
+        EffectCause(EffectsCauseType cause_type_, S1&& specific_cause_, S2&& custom_label_ = "") 
+            noexcept(noexcept(std::string{std::declval<S1>()}) && noexcept(std::string{std::declval<S2>()})) :
             cause_type(cause_type_),
             specific_cause(std::forward<S1>(specific_cause_)),
             custom_label(std::forward<S2>(custom_label_))
@@ -145,7 +143,8 @@ namespace Effect {
     struct FO_COMMON_API AccountingInfo : public EffectCause {
         AccountingInfo() = default;
 
-        AccountingInfo(float meter_change_, float running_meter_total_) :
+        AccountingInfo(float meter_change_, float running_meter_total_)
+            noexcept(noexcept(EffectCause{EffectsCauseType::ECT_UNKNOWN_CAUSE})) :
             EffectCause(EffectsCauseType::ECT_UNKNOWN_CAUSE),
             source_id(INVALID_OBJECT_ID),
             meter_change(meter_change_),
@@ -153,7 +152,8 @@ namespace Effect {
         {}
 
         AccountingInfo(int source_id_, EffectsCauseType cause_type_, float meter_change_,
-                       float running_meter_total_) :
+                       float running_meter_total_)
+            noexcept(noexcept(EffectCause{std::declval<EffectsCauseType>()})) :
             EffectCause(cause_type_),
             source_id(source_id_),
             meter_change(meter_change_),
@@ -162,14 +162,15 @@ namespace Effect {
 
         template <typename S1, typename S2 = const char*>
         AccountingInfo(int source_id_, EffectsCauseType cause_type_, float meter_change_,
-                       float running_meter_total_, S1&& specific_cause_, S2&& custom_label_ = "") :
+                       float running_meter_total_, S1&& specific_cause_, S2&& custom_label_ = "")
+            noexcept(noexcept(EffectCause{std::declval<EffectsCauseType>(), std::declval<S1>(), std::declval<S2>()})) :
             EffectCause(cause_type_, std::forward<S1>(specific_cause_), std::forward<S2>(custom_label_)),
             source_id(source_id_),
             meter_change(meter_change_),
             running_meter_total(running_meter_total_)
         {}
 
-        bool operator==(const AccountingInfo& rhs) const;
+        bool operator==(const AccountingInfo& rhs) const noexcept;
 
         int     source_id = INVALID_OBJECT_ID;  ///< source object of effect
         float   meter_change = 0.0f;            ///< net change on meter due to this effect, as best known by client's empire

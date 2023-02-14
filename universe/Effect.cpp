@@ -4,7 +4,7 @@
 #include "ObjectMap.h"
 #include "UniverseObject.h"
 
-bool Effect::AccountingInfo::operator==(const AccountingInfo& rhs) const {
+bool Effect::AccountingInfo::operator==(const AccountingInfo& rhs) const noexcept {
     return
         cause_type == rhs.cause_type &&
         specific_cause == rhs.specific_cause &&
