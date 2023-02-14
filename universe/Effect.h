@@ -249,6 +249,7 @@ namespace Effect {
     /** Returns a single string which `Dump`s a vector of EffectsGroups. */
     FO_COMMON_API std::string Dump(const std::vector<std::shared_ptr<EffectsGroup>>& effects_groups);
     FO_COMMON_API std::string Dump(const std::vector<std::unique_ptr<EffectsGroup>>& effects_groups);
+    FO_COMMON_API std::string Dump(const std::vector<EffectsGroup>& effects_groups);
 }
 
 #endif

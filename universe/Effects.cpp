@@ -387,6 +387,16 @@ std::string Dump(const std::vector<std::unique_ptr<EffectsGroup>>& effects_group
     return retval.str();
 }
 
+std::string Dump(const std::vector<EffectsGroup>& effects_groups) {
+    std::stringstream retval;
+
+    for (auto& effects_group : effects_groups)
+        retval << "\n" << effects_group.Dump();
+
+    return retval.str();
+}
+
+
 
 ///////////////////////////////////////////////////////////
 // Effect                                                //
