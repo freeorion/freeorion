@@ -8870,7 +8870,7 @@ Replicon
 SP_REPLICON_GAMEPLAY_DESC
 '''Robots auto-réplicants à peine sentients.
 Préfèrent les Planètes [[PT_RADIATED]]s.
-[[encyclopedia ROBOTIC_SPECIES_TITLE]]
+[[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia ADAPTIVE_TITLE]]
 '''
 
 SP_REPLICON_DESC
@@ -9668,7 +9668,7 @@ FORTRESS_SPECIAL
 Forteresse
 
 FORTRESS_SPECIAL_DESC
-'''Augmente les [[metertype METER_SHIELD]] de +[[value FORTRESS_SPECIAL_SHIELD_BONUS]], la [[metertype METER_DEFENSE]] de +[[value FORTRESS_SPECIAL_DEFENSE_BONUS]], l'[[metertype METER_TROOPS]] de +[[value FORTRESS_SPECIAL_TROOPS_BONUS]] et le [[metertype METER_DETECTION]] de +[[value FORTRESS_SPECIAL_DETECTION_BONUS]]. Les Boucliers se régénèrent de 40 par tour et la Défense de [[value FORTRESS_SPECIAL_DEFENSE_REGEN]] par tour. Les Mines réduisent la [[metertype METER_STRUCTURE]] des astronefs ennemis situés dans le système de 24 par tour. À chaque tour, il y a 5% de chance qu'un Factionnaire apparaisse pour protéger le système, à moins qu'un spécimen soit déjà présent.
+'''Augmente les [[metertype METER_SHIELD]] de +[[value FORTRESS_SPECIAL_SHIELD_BONUS]], la [[metertype METER_DEFENSE]] de +[[value FORTRESS_SPECIAL_DEFENSE_BONUS]], l'[[metertype METER_TROOPS]] de +[[value FORTRESS_SPECIAL_TROOPS_BONUS]] et le [[metertype METER_DETECTION]] de +[[value FORTRESS_SPECIAL_DETECTION_BONUS]]. Les Boucliers se régénèrent de 40 par tour et la Défense de [[value FORTRESS_SPECIAL_DEFENSE_REGEN]] par tour. Les Mines réduisent la [[metertype METER_STRUCTURE]] des astronefs ennemis situés dans le système de [[value FORTRESS_SPECIAL_SYSTEM_MINES]] par tour. À chaque tour, il y a 5% de chance qu'un Factionnaire apparaisse pour protéger le système, à moins qu'un spécimen soit déjà présent.
 
 La défense de cette planète fut conçue par l'une des anciennes civilisations de Précurseurs. Elle comprend des boucliers planétaires solides, des armements redoutables et des équipements de détection performants, l'ensemble permettant de faire face à tout type de siège. Les installations sont encore totalement fonctionnelles et étonnamment très simples d'utilisation.'''
 
@@ -13944,7 +13944,7 @@ Mines Défensives 1
 DEF_SYST_DEF_MINE_1_DESC
 '''Lorsqu'aucun astronef allié n'est présent dans un système stellaire, les astronefs ennemis ont tout loisir de procéder à un blocus, interrompant ainsi l'acheminement de ressources, et ce en évitant de se mettre à portée des défenses planétaires, et donc sans subir de dégâts. Un réseau spatial de mines défensives, endommageant à chaque tour les astronefs ennemis se trouvant dans le système, peut les dissuader d'adopter cette tactique.
 
-La [[metertype METER_STRUCTURE]] de tous les astronefs ennemis présents dans un système stellaire abritant une planète de l'empire maîtrisant cette technologie, sera réduite au rythme de 16 par tour.
+La [[metertype METER_STRUCTURE]] de tous les astronefs ennemis présents dans un système stellaire abritant une planète de l'empire maîtrisant cette technologie, sera réduite au rythme de [[value DEF_SYST_DEF_MINE_1_DAMAGE]] par tour.
 
 Les mines sont renouvelées à chaque tour et leur utilisation n'entraîne pas un épuisement des stocks de munitions, ces derniers étant constamment approvisionnés.'''
 
@@ -13952,13 +13952,13 @@ DEF_SYST_DEF_MINE_2
 Mines Défensives 2
 
 DEF_SYST_DEF_MINE_2_DESC
-Réduit la [[metertype METER_STRUCTURE]] des astronefs ennemis de 32 en plus par tour, cumulables avec les dommages des [[tech DEF_SYST_DEF_MINE_1]].
+Amélioration de la technologie [[tech DEF_SYST_DEF_MINE_1]]. Les mines améliorées réduisent la [[metertype METER_STRUCTURE]] des astronefs ennemis d'un total de [[value DEF_SYST_DEF_MINE_2_DAMAGE]] par tour.
 
 DEF_SYST_DEF_MINE_3
 Mines Défensives 3
 
 DEF_SYST_DEF_MINE_3_DESC
-Réduit la [[metertype METER_STRUCTURE]] des astronefs ennemis de 64 en plus par tour, cumulables avec les précédentes technologies de mines défensives.
+Amélioration de la technologie [[tech DEF_SYST_DEF_MINE_2]]. Les mines améliorées réduisent la [[metertype METER_STRUCTURE]] des astronefs ennemis d'un total de [[value DEF_SYST_DEF_MINE_3_DAMAGE]] par tour.
 
 DEF_ROOT_DEFENSE
 Auto-défense
@@ -15020,7 +15020,7 @@ BLD_SOL_ORB_GEN
 Générateur Orbital Solaire
 
 BLD_SOL_ORB_GEN_DESC
-'''Augmente la [[metertype METER_TARGET_INDUSTRY]] sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]], par [[metertype METER_POPULATION]] et selon le type d'étoile:
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]] et réglées sur le [[encyclopedia INDUSTRY_FOCUS_TITLE]], par [[metertype METER_POPULATION]] et selon le type d'étoile du système où se situe la structure:
 • [[STAR_BLUE]] ou [[STAR_WHITE]] (x[[value BLD_SOL_ORB_GEN_BRIGHT_TARGET_INDUSTRY_PERPOP]])
 • [[STAR_YELLOW]] ou [[STAR_ORANGE]] (x[[value BLD_SOL_ORB_GEN_NORMAL_TARGET_INDUSTRY_PERPOP]])
 • [[STAR_RED]] (x[[value BLD_SOL_ORB_GEN_DIM_TARGET_INDUSTRY_PERPOP]])
