@@ -13971,7 +13971,7 @@ System Defense Mines 1
 DEF_SYST_DEF_MINE_1_DESC
 '''When friendly ships are not present in a system, enemy ships are free to blockade the system, stopping the transfer of resources without directly engaging the planet's defenses, thus with no risk of damage to themselves. A network of system defense mines can deter these tactics by damaging enemy ships each turn they are in the system.
 
-The [[metertype METER_STRUCTURE]] of all ships belonging to an enemy empire which are present in a system containing a planet owned by the empire that possesses this technology will be reduced at a rate of 16 per turn.
+The [[metertype METER_STRUCTURE]] of all ships belonging to an enemy empire which are present in a system containing a planet owned by the empire that possesses this technology will be reduced at a rate of [[value DEF_SYST_DEF_MINE_1_DAMAGE]] per turn.
 
 Mines regenerate each turn, so are not depleted by use.'''
 
@@ -13979,13 +13979,13 @@ DEF_SYST_DEF_MINE_2
 System Defense Mines 2
 
 DEF_SYST_DEF_MINE_2_DESC
-Reduces the [[metertype METER_STRUCTURE]] of enemy ships by an additional 32 per turn, cumulative with [[tech DEF_SYST_DEF_MINE_1]].
+Upgrade for [[tech DEF_SYST_DEF_MINE_1]]. Upgraded mines reduce the [[metertype METER_STRUCTURE]] of enemy ships by a total of [[value DEF_SYST_DEF_MINE_2_DAMAGE]] per turn.
 
 DEF_SYST_DEF_MINE_3
 System Defense Mines 3
 
 DEF_SYST_DEF_MINE_3_DESC
-Reduces the [[metertype METER_STRUCTURE]] of enemy ships by an additional 64 per turn, cumulative with prerequisite defense mine techs.
+Upgrade for [[tech DEF_SYST_DEF_MINE_2]]. Upgraded mines reduce the [[metertype METER_STRUCTURE]] of enemy ships by a total of [[value DEF_SYST_DEF_MINE_3_DAMAGE]] per turn.
 
 DEF_ROOT_DEFENSE
 Self Defense
