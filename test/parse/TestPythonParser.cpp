@@ -257,7 +257,7 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_CHECK_EQUAL("icons/species/abaddonnian.png", species.Graphic());
 
         BOOST_REQUIRE_EQUAL(98, species.Effects().size());
-        const auto& effect_group = *(species.Effects()[0]);
+        const auto& effect_group = *species.Effects().front();
         BOOST_REQUIRE_EQUAL("", effect_group.StackingGroup());
         BOOST_REQUIRE_EQUAL("", effect_group.GetDescription());
         BOOST_REQUIRE_EQUAL("FOCUS_INDUSTRY_LABEL", effect_group.AccountingLabel());
@@ -271,7 +271,7 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_REQUIRE_NE(nullptr, effect_group.Activation());
 
         BOOST_REQUIRE_EQUAL(1, effect_group.EffectsList().size());
-        const auto& effect = *(effect_group.EffectsList()[0]);
+        const auto& effect = *(effect_group.EffectsList().front());
         BOOST_REQUIRE_EQUAL(true, effect.IsMeterEffect());
         BOOST_REQUIRE_EQUAL(false, effect.IsEmpireMeterEffect());
         BOOST_REQUIRE_EQUAL(false, effect.IsAppearanceEffect());
@@ -283,7 +283,7 @@ BOOST_AUTO_TEST_CASE(parse_species) {
 
         BOOST_REQUIRE_EQUAL(2460986, species.GetCheckSum());
 
-        Species test_species{"SP_ABADDONI",
+        const Species test_species{"SP_ABADDONI",
             "SP_ABADDONI_DESC",
             "SP_ABADDONI_GAMEPLAY_DESC",
             {
@@ -408,6 +408,13 @@ BOOST_AUTO_TEST_CASE(parse_species) {
             1.0,
             9999};
         BOOST_WARN(test_species == species);
+        BOOST_WARN(test_species.Name() == species.Name());
+        BOOST_WARN(test_species.Effects() == species.Effects());
+        BOOST_WARN(test_species.Likes() == species.Likes());
+        BOOST_WARN(test_species.Dislikes() == species.Dislikes());
+        BOOST_WARN(test_species.CombatTargets() == species.CombatTargets());
+        BOOST_WARN(test_species.Tags() == species.Tags());
+        BOOST_WARN(test_species.Foci() == species.Foci());
     }
 
     // test it last
