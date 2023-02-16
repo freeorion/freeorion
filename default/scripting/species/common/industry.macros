@@ -37,7 +37,6 @@ VERY_BAD_INDUSTRY
             activation = And [
                 Planet
                 TargetIndustry low = 0
-                Happiness low = 0
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "VERY_BAD_INDUSTRY_LABEL"
@@ -56,7 +55,6 @@ BAD_INDUSTRY
             activation = And [
                 Planet
                 TargetIndustry low = 0
-                Happiness low = 0
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "BAD_INDUSTRY_LABEL"
@@ -79,7 +77,6 @@ GOOD_INDUSTRY
             activation = And [
                 Planet
                 TargetIndustry low = 0
-                Happiness low = 0
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "GOOD_INDUSTRY_LABEL"
@@ -98,7 +95,6 @@ GREAT_INDUSTRY
             activation = And [
                 Planet
                 TargetIndustry low = 0
-                Happiness low = 0
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "GREAT_INDUSTRY_LABEL"
@@ -117,7 +113,6 @@ ULTIMATE_INDUSTRY
             activation = And [
                 Planet
                 TargetIndustry low = 0
-                Happiness low = 0
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "ULTIMATE_INDUSTRY_LABEL"

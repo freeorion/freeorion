@@ -68,7 +68,6 @@ GOOD_RESEARCH
             activation = And [
                 Planet
                 Focus type = "FOCUS_RESEARCH"
-                Happiness low = 2
             ]
             accountinglabel = "GOOD_RESEARCH_LABEL"
             priority = [[TARGET_SCALING_PRIORITY]]
@@ -84,7 +83,6 @@ GREAT_RESEARCH
             activation = And [
                 Planet
                 Focus type = "FOCUS_RESEARCH"
-                Happiness low = 0
             ]
             accountinglabel = "GREAT_RESEARCH_LABEL"
             priority = [[TARGET_SCALING_PRIORITY]]
