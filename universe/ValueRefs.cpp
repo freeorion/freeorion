@@ -548,7 +548,7 @@ std::string Constant<double>::Description() const
 template <>
 std::string Constant<std::string>::Description() const
 {
-    if (m_value == "CurrentContent")
+    if (m_value == current_content)
         return m_top_level_content;
     return m_value;
 }

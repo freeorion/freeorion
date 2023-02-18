@@ -52,11 +52,14 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
 
     [[nodiscard]] bool operator==(const ValueRef<T>& rhs) const override;
 
+    static constexpr std::string_view current_content = "CurrentContent";
+    static constexpr std::string_view no_current_content = "THERE_IS_NO_TOP_LEVEL_CONTENT";
+
     [[nodiscard]] T Eval(const ScriptingContext& context) const
         noexcept(noexcept(T{std::declval<const T>()})) override
     {
         if constexpr (std::is_same_v<T, std::string>) {
-            if (m_value == "CurrentContent")
+            if (m_value == current_content)
                 return m_top_level_content;
         }
         return m_value;
@@ -521,9 +524,13 @@ template <typename T>
 void Constant<T>::SetTopLevelContent(const std::string& content_name)
 {
     if constexpr (std::is_same_v<T, std::string>) {
-        if (m_value == "CurrentContent" && content_name == "THERE_IS_NO_TOP_LEVEL_CONTENT")
-            ErrorLogger() << "Constant<std::string>::SetTopLevelContent()  Scripted Content illegal. Trying to set THERE_IS_NO_TOP_LEVEL_CONTENT for CurrentContent (maybe you tried to use CurrentContent in named_values.focs.txt)";
-        if (!m_top_level_content.empty())
+        if (m_value == current_content && content_name == no_current_content) {
+            ErrorLogger() << "Constant<std::string>::SetTopLevelContent()  Scripted Content illegal.  Trying to set "
+                          << no_current_content << " for "
+                          << current_content << " (maybe you tried to use "
+                          << current_content << " in named_values.focs.txt)";
+        }
+        if (!m_top_level_content.empty() && m_top_level_content != no_current_content)
             ErrorLogger() << "Constant<std::string>::SetTopLevelContent()  Tried to overwrite top level content from '" << m_top_level_content << "' to '" << content_name << "'";
         else
             m_top_level_content = content_name;

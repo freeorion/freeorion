@@ -38,7 +38,7 @@ namespace parse {
         const boost::phoenix::function<detail::deconstruct_movable> deconstruct_movable_;
         const boost::phoenix::function<parse::detail::deconstruct_movable_vector> deconstruct_movable_vector_;
 
-        const std::string TOK_CURRENT_CONTENT{"CurrentContent"};
+        const std::string TOK_CURRENT_CONTENT{ValueRef::Constant<std::string>::current_content};
 
         bound_variable_name
             %=   tok.Name_
@@ -166,7 +166,7 @@ namespace parse {
             ;
 
         bound_variable_name.name("string bound_variable name (e.g., Name)");
-        constant.name("quoted string or CurrentContent");
+        constant.name(std::string{"quoted string or "}.append(ValueRef::Constant<std::string>::current_content));
         free_variable.name("free string variable");
         bound_variable.name("string bound_variable");
         statistic.name("string statistic");

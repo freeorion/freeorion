@@ -610,7 +610,7 @@ namespace {
     }
 
     boost::python::object insert_game_rule_(const PythonParser& parser, const boost::python::tuple& args, const boost::python::dict& kw) {
-        auto name = boost::python::extract<std::string>(kw["name"])();
+        auto name{boost::python::extract<std::string>(kw["name"])()};
         auto type_ = kw["type"];
 
         if (type_ == parser.type_int) {
@@ -619,7 +619,7 @@ namespace {
                 nullptr,
                 nullptr,
                 nullptr,
-                std::make_unique<ValueRef::Constant<std::string>>(name),
+                std::make_unique<ValueRef::Constant<std::string>>(std::move(name)),
                 nullptr)));
         } else if (type_ == parser.type_float) {
             return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::ComplexVariable<double>>(
@@ -627,10 +627,11 @@ namespace {
                 nullptr,
                 nullptr,
                 nullptr,
-                std::make_unique<ValueRef::Constant<std::string>>(name),
+                std::make_unique<ValueRef::Constant<std::string>>(std::move(name)),
                 nullptr)));
         } else {
-            ErrorLogger() << "Unsupported type for rule " << name << ": " << boost::python::extract<std::string>(boost::python::str(type_))();
+            ErrorLogger() << "Unsupported type for rule " << name << ": "
+                          << boost::python::extract<std::string>(boost::python::str(type_))();
 
             throw std::runtime_error(std::string("Not implemented ") + __func__);
         }
@@ -638,7 +639,10 @@ namespace {
         return boost::python::object();
     }
 
-    boost::python::object insert_int_complex_variable_(const char* variable, const boost::python::tuple& args, const boost::python::dict& kw) {
+    boost::python::object insert_int_complex_variable_(const char* variable,
+                                                       const boost::python::tuple& args,
+                                                       const boost::python::dict& kw)
+    {
         std::unique_ptr<ValueRef::ValueRef<int>> empire;
         if (kw.has_key("empire")) {
             auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
@@ -912,8 +916,9 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
     }
 
     // CurrentContent
-    const auto current_content = value_ref_wrapper<std::string>(std::make_shared<ValueRef::Constant<std::string>>("CurrentContent"));
-    for (const char* variable : {"CurrentContent",
+    const auto current_content = value_ref_wrapper<std::string>(
+        std::make_shared<ValueRef::Constant<std::string>>(std::string{ValueRef::Constant<std::string>::current_content}));
+    for (const char* variable : {ValueRef::Constant<std::string>::current_content.data(),
                                  "ThisBuilding",
                                  "ThisField",
                                  "ThisHull",
