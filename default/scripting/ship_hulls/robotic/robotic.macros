@@ -12,5 +12,5 @@ ROBOTIC_REPAIR
         ]
         Structure high = LocalCandidate.MaxStructure - 0.001
     ]
-    effects = SetStructure value = Value + (NamedReal name = "SHP_ROBOTIC_REPAIR" value = (2 * [[SHIP_STRUCTURE_FACTOR]]))
+    effects = SetStructure value = Value + (NamedRealLookup name = "SHP_ROBOTIC_REPAIR")
 '''
