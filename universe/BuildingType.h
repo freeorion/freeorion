@@ -138,22 +138,20 @@ public:
     auto GetCheckSum() const -> uint32_t;
 
 private:
-    void Init();
-
-    std::string                                 m_name;
-    std::string                                 m_description;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_production_cost;
-    std::unique_ptr<ValueRef::ValueRef<int>>    m_production_time;
-    bool                                        m_producible = true;
-    CaptureResult                               m_capture_result;
-    const std::string                           m_tags_concatenated;
-    const std::vector<std::string_view>         m_tags;
-    ConsumptionMap<MeterType>                   m_production_meter_consumption;
-    ConsumptionMap<std::string>                 m_production_special_consumption;
-    std::unique_ptr<Condition::Condition>       m_location;
-    std::unique_ptr<Condition::Condition>       m_enqueue_location;
-    const std::vector<Effect::EffectsGroup>     m_effects;
-    std::string                                 m_icon;
+    const std::string                                 m_name;
+    const std::string                                 m_description;
+    const std::unique_ptr<const ValueRef::ValueRef<double>> m_production_cost;
+    const std::unique_ptr<const ValueRef::ValueRef<int>>    m_production_time;
+    const bool                                        m_producible = true;
+    const CaptureResult                               m_capture_result;
+    const std::string                                 m_tags_concatenated;
+    const std::vector<std::string_view>               m_tags;
+    const ConsumptionMap<MeterType>                   m_production_meter_consumption;
+    const ConsumptionMap<std::string>                 m_production_special_consumption;
+    const std::unique_ptr<const Condition::Condition> m_location;
+    const std::unique_ptr<const Condition::Condition> m_enqueue_location;
+    const std::vector<Effect::EffectsGroup>           m_effects;
+    const std::string                                 m_icon;
 };
 
 //! Holds all FreeOrion BuildingType%s.  Types may be looked up by name.

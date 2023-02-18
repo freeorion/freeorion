@@ -37,48 +37,56 @@ BuildingType::BuildingType(std::string&& name, std::string&& description,
                            std::string&& icon) :
     m_name(name), // intentional copy so name is usable later in member initializers
     m_description(std::move(description)),
-    m_production_cost(std::move(common_params.production_cost)),
-    m_production_time(std::move(common_params.production_time)),
+    m_production_cost([](auto&& pc, const auto& name) {
+        pc->SetTopLevelContent(name);
+        return std::move(pc);
+    }(std::move(common_params.production_cost), name)),
+    m_production_time([](auto&& pt, const auto& name) {
+        pt->SetTopLevelContent(name);
+        return std::move(pt);
+    }(std::move(common_params.production_time), name)),
     m_producible(common_params.producible),
     m_capture_result(capture_result),
-    m_tags_concatenated([&common_params]() {
+    m_tags_concatenated([](auto& tags) {
         // ensure tags are all upper-case
-        std::for_each(common_params.tags.begin(), common_params.tags.end(),
+        std::for_each(tags.begin(), tags.end(),
                       [](auto& t) { boost::to_upper<std::string>(t); });
 
         // allocate storage for concatenated tags
         std::string retval;
         // TODO: transform_reduce when available on all platforms...
         std::size_t params_sz = 0;
-        for (const auto& t : common_params.tags)
+        for (const auto& t : tags)
             params_sz += t.size();
         retval.reserve(params_sz);
 
         // concatenate tags
-        std::for_each(common_params.tags.begin(), common_params.tags.end(),
-                      [&retval](const auto& t) { retval.append(t); });
+        std::for_each(tags.begin(), tags.end(), [&retval](const auto& t) { retval.append(t); });
         return retval;
-    }()),
-    m_tags([&common_params, this]() {
+    }(common_params.tags)),
+    m_tags([](const auto& tags, const std::string_view tags_concatenated) {
         std::vector<std::string_view> retval;
         std::size_t next_idx = 0;
-        retval.reserve(common_params.tags.size());
-        std::string_view sv{m_tags_concatenated};
+        retval.reserve(tags.size());
 
         // store views into concatenated tags string
-        std::for_each(common_params.tags.begin(), common_params.tags.end(),
-                      [&next_idx, &retval, sv](const auto& t)
-        {
-            retval.push_back(sv.substr(next_idx, t.size()));
+        std::for_each(tags.begin(), tags.end(), [&next_idx, &retval, tags_concatenated](const auto& t) {
+            retval.push_back(tags_concatenated.substr(next_idx, t.size()));
             next_idx += t.size();
         });
         return retval;
-    }()),
+    }(common_params.tags, m_tags_concatenated)),
     m_production_meter_consumption(std::move(common_params.production_meter_consumption)),
     m_production_special_consumption(std::move(common_params.production_special_consumption)),
-    m_location(std::move(common_params.location)),
-    m_enqueue_location(std::move(common_params.enqueue_location)),
-    m_effects([effects{std::move(common_params.effects)}, name{std::move(name)}]() {
+    m_location([](auto&& l, const auto& name) {
+        l->SetTopLevelContent(name);
+        return std::move(l);
+    }(std::move(common_params.location), name)),
+    m_enqueue_location([](auto&& el, const auto& name) {
+        el->SetTopLevelContent(name);
+        return std::move(el);
+    }(std::move(common_params.enqueue_location), name)),
+    m_effects([](auto&& effects, const auto& name) {
         std::vector<Effect::EffectsGroup> retval;
         retval.reserve(effects.size());
         for (auto& e : effects) {
@@ -86,11 +94,9 @@ BuildingType::BuildingType(std::string&& name, std::string&& description,
             retval.push_back(std::move(*e));
         }
         return retval;
-    }()),
+    }(std::move(common_params.effects), name)),
     m_icon(std::move(icon))
-{
-    Init();
-}
+{}
 
 BuildingType::~BuildingType() = default;
 
@@ -161,17 +167,6 @@ bool BuildingType::operator==(const BuildingType& rhs) const {
     }
 
     return true;
-}
-
-void BuildingType::Init() {
-    if (m_production_cost)
-        m_production_cost->SetTopLevelContent(m_name);
-    if (m_production_time)
-        m_production_time->SetTopLevelContent(m_name);
-    if (m_location)
-        m_location->SetTopLevelContent(m_name);
-    if (m_enqueue_location)
-        m_enqueue_location->SetTopLevelContent(m_name);
 }
 
 std::string BuildingType::Dump(uint8_t ntabs) const {
