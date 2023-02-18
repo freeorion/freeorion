@@ -374,7 +374,7 @@ BuildingTypeManager::BuildingTypeManager() {
 
 const BuildingType* BuildingTypeManager::GetBuildingType(std::string_view name) const {
     CheckPendingBuildingTypes();
-    const auto& it = m_building_types.find(name);
+    const auto it = m_building_types.find(name);
     return it != m_building_types.end() ? it->second.get() : nullptr;
 }
 

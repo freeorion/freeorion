@@ -450,7 +450,7 @@ namespace {
         CheckPendingDesigns();
         std::vector<int> retval;
         for (const auto& uuid : m_ordered_uuids) {
-            const auto& it = m_saved_designs.find(uuid);
+            const auto it = m_saved_designs.find(uuid);
             if (it == m_saved_designs.end())
                 continue;
             retval.push_back(it->second.first->ID());

@@ -832,7 +832,7 @@ std::vector<const ShipDesign*> PredefinedShipDesignManager::GetOrderedMonsterDes
 
 int PredefinedShipDesignManager::GetDesignID(const std::string& name) const {
     CheckPendingDesignsTypes();
-    const auto& it = m_design_generic_ids.find(name);
+    const auto it = m_design_generic_ids.find(name);
     if (it == m_design_generic_ids.end())
         return INVALID_DESIGN_ID;
     return it->second;
