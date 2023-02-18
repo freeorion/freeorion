@@ -57,5 +57,7 @@ NamedReal name = "SHP_LIVING_HULL_REPAIR" value = (2 * [[SHIP_STRUCTURE_FACTOR]]
 NamedReal name = "SHP_LIVING_HULL_FUEL_REGEN" value = 0.3
 NamedReal name = "SHP_ROBOTIC_REPAIR" value = (2 * [[SHIP_STRUCTURE_FACTOR]])
 
+NamedReal name = "FORTRESS_SPECIAL_SYSTEM_MINES" value = 3 * [[SYSTEM_MINES_DAMAGE_FACTOR]]
+
 #include "/scripting/common/misc.macros"
 #include "/scripting/common/base_prod.macros"
