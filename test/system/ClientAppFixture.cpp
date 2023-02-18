@@ -29,12 +29,17 @@ ClientAppFixture::ClientAppFixture() :
 #endif
     //InitLoggingOptionsDBSystem();
 
+    static constexpr auto server_path_option = "misc.server-local-binary.path";
+    static constexpr auto server_filename =
 #ifdef FREEORION_WIN32
-    if (!GetOptionsDB().OptionExists("misc.server-local-binary.path"))
-        GetOptionsDB().Add<std::string>("misc.server-local-binary.path", UserStringNop("OPTIONS_DB_FREEORIOND_PATH"),        PathToString(GetBinDir() / "freeoriond.exe"));
+        "freeoriond.exe";
 #else
-    GetOptionsDB().Add<std::string>("misc.server-local-binary.path", UserStringNop("OPTIONS_DB_FREEORIOND_PATH"),        PathToString(GetBinDir() / "freeoriond"));
+        "freeoriond";
 #endif
+    if (!GetOptionsDB().OptionExists(server_path_option)) {
+        auto server_path = PathToString(GetBinDir() / server_filename);
+        GetOptionsDB().Add<std::string>(server_path_option, UserStringNop("OPTIONS_DB_FREEORIOND_PATH"), std::move(server_path));
+    }
 
     InfoLogger() << FreeOrionVersionString();
     DebugLogger() << "Test client initialized";
