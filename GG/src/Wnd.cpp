@@ -498,8 +498,8 @@ void Wnd::RemoveEventFilter(const std::shared_ptr<Wnd>& wnd)
 {
     if (!wnd)
         return;
-    const auto& it = std::find_if(m_filters.begin(), m_filters.end(),
-                                  [&wnd](const std::weak_ptr<Wnd>& x){ return x.lock() == wnd; });
+    const auto it = std::find_if(m_filters.begin(), m_filters.end(),
+                                 [&wnd](const std::weak_ptr<Wnd>& x){ return x.lock() == wnd; });
     if (it != m_filters.end())
         m_filters.erase(it);
     wnd->m_filtering.erase(shared_from_this());

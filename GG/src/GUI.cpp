@@ -1011,7 +1011,7 @@ bool GUI::AcceptedDragDropWnd(const Wnd* wnd) const
 {
     if (!wnd)
         return false;
-    const auto& it = m_impl->m_drag_drop_wnds_acceptable.find(wnd);
+    const auto it = m_impl->m_drag_drop_wnds_acceptable.find(wnd);
     return it != m_impl->m_drag_drop_wnds_acceptable.end() && it->second;
 }
 
