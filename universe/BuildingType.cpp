@@ -35,7 +35,7 @@ namespace {
 BuildingType::BuildingType(std::string&& name, std::string&& description,
                            CommonParams&& common_params, CaptureResult capture_result,
                            std::string&& icon) :
-    m_name(std::move(name)),
+    m_name(name), // intentional copy so name is usable later in member initializers
     m_description(std::move(description)),
     m_production_cost(std::move(common_params.production_cost)),
     m_production_time(std::move(common_params.production_time)),
@@ -78,11 +78,13 @@ BuildingType::BuildingType(std::string&& name, std::string&& description,
     m_production_special_consumption(std::move(common_params.production_special_consumption)),
     m_location(std::move(common_params.location)),
     m_enqueue_location(std::move(common_params.enqueue_location)),
-    m_effects([effects{std::move(common_params.effects)}]() {
+    m_effects([effects{std::move(common_params.effects)}, name{std::move(name)}]() {
         std::vector<Effect::EffectsGroup> retval;
         retval.reserve(effects.size());
-        for (auto& e : effects)
+        for (auto& e : effects) {
+            e->SetTopLevelContent(name);
             retval.push_back(std::move(*e));
+        }
         return retval;
     }()),
     m_icon(std::move(icon))
@@ -170,8 +172,6 @@ void BuildingType::Init() {
         m_location->SetTopLevelContent(m_name);
     if (m_enqueue_location)
         m_enqueue_location->SetTopLevelContent(m_name);
-    for (auto& effect : m_effects)
-        effect.SetTopLevelContent(m_name);
 }
 
 std::string BuildingType::Dump(uint8_t ntabs) const {
