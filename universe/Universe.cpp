@@ -103,6 +103,9 @@ namespace {
         if (&context_objects != &universe_objects)
             ErrorLogger() << "Universe member function passed context different ObjectMap from this Universe";
     }
+
+    using ReorderBufferT = std::deque<std::pair<Effect::SourcesEffectsTargetsAndCausesVec,
+                                                Effect::SourcesEffectsTargetsAndCausesVec*>>;
 }
 
 namespace boost {
@@ -968,14 +971,13 @@ namespace {
       * the default candidate objects for the scope condition is used. Stores
       * the objects that matched the effects group's scope condition, for each
       * source object, as a separate entry in \a targets_cases_out */
-    template <typename IntSetT>
     void StoreTargetsAndCausesOfEffectsGroup(
         ScriptingContext&                           context,
-        const Effect::EffectsGroup*                 effects_group,
+        const Effect::EffectsGroup&                 effects_group,
         const Condition::ObjectSet&                 source_objects,
         EffectsCauseType                            effect_cause_type,
         std::string_view                            specific_cause_name,
-        IntSetT&                                    candidate_object_ids,   // TODO: Can this be removed along with scope is source test?
+        const boost::container::flat_set<int>&      candidate_object_ids,   // TODO: Can this be removed along with scope is source test?
         Effect::TargetSet&                          candidate_objects_in,   // may be empty: indicates to test for full universe of objects
         Effect::SourcesEffectsTargetsAndCausesVec&  source_effects_targets_causes_out,
         int n)
@@ -989,15 +991,12 @@ namespace {
                 .append("  candidate objects (").append(std::to_string(candidate_objects_in.size())).append(")");
         }();
 
-        auto scope = effects_group ? effects_group->Scope() : nullptr;
+        const auto* scope = effects_group.Scope();
         if (!scope) {
-            if (!effects_group)
-                ErrorLogger(effects) << "StoreTargetsAndCausesOfEffectsGroup < " + std::to_string(n) + " > has null effects_group !?";
-            else
-                ErrorLogger(effects) << "StoreTargetsAndCausesOfEffectsGroup < " + std::to_string(n) + " > has no scope !?";
+            ErrorLogger(effects) << "StoreTargetsAndCausesOfEffectsGroup < " + std::to_string(n) + " > has no scope !?";
             return;
         }
-        bool scope_is_just_source = dynamic_cast<Condition::Source*>(scope);
+        const bool scope_is_just_source = dynamic_cast<const Condition::Source*>(scope);
 
         ScopedTimer timer(
             [
@@ -1026,10 +1025,10 @@ namespace {
             // typedef std::vector<std::pair<SourcedEffectsGroup, TargetsAndCause>> SourcesEffectsTargetsAndCausesVec;
             source_effects_targets_causes_out.emplace_back(
                 std::piecewise_construct,
-                std::forward_as_tuple(source->ID(), effects_group),
+                std::forward_as_tuple(source->ID(), &effects_group),
                 std::forward_as_tuple(effect_cause_type,
                                       std::string{specific_cause_name},
-                                      effects_group->AccountingLabel()));
+                                      effects_group.AccountingLabel()));
 
             // extract output Effect::TargetSet
             Effect::TargetSet& matched_targets{source_effects_targets_causes_out.back().second.target_set};
@@ -1069,7 +1068,7 @@ namespace {
     /** Collect info for scope condition evaluations and dispatch those
       * evaluations to \a thread_pool. Not thread-safe, but the individual
       * condition evaluations should be safe to evaluate in parallel. */
-    template <typename ReorderBufferT, typename IntSetT, typename EffectsGroups>
+    template <typename EffectsGroups>
     void DispatchEffectsGroupScopeEvaluations(
         EffectsCauseType effect_cause_type,
         std::string_view specific_cause_name,
@@ -1078,7 +1077,7 @@ namespace {
         bool only_meter_effects,
         ScriptingContext context,
         const Condition::ObjectSet& potential_targets,
-        const IntSetT& potential_target_ids,
+        const boost::container::flat_set<int>& potential_target_ids,
         ReorderBufferT& source_effects_targets_causes_reorder_buffer_out,
         boost::asio::thread_pool& thread_pool,
         int& n)
@@ -1100,15 +1099,27 @@ namespace {
         std::vector<std::pair<std::size_t, std::future<Condition::ObjectSet>>> futures;
         futures.reserve(active_sources.size());
 
+        auto get_eg = [&effects_groups](std::size_t i) -> const Effect::EffectsGroup& {
+            using eg_t = std::decay_t<decltype(effects_groups.front())>;
+            if constexpr (std::is_same_v<std::shared_ptr<Effect::EffectsGroup>, eg_t> ||
+                          std::is_same_v<std::unique_ptr<Effect::EffectsGroup>, eg_t>)
+            {
+                return *(effects_groups[i]);
+            } else {
+                static_assert(std::is_same_v<Effect::EffectsGroup, eg_t>);
+                return effects_groups[i];
+            }
+        };
 
         for (std::size_t i = 0; i < effects_groups.size(); ++i) {
-            const auto* effects_group = effects_groups.at(i).get();
-            if (only_meter_effects && !effects_group->HasMeterEffects())
+            const Effect::EffectsGroup& effects_group = get_eg(i);
+
+            if (only_meter_effects && !effects_group.HasMeterEffects())
                 continue;
-            if (!effects_group->Scope())
+            if (!effects_group.Scope())
                 continue;
 
-            if (!effects_group->Activation()) {
+            if (!effects_group.Activation()) {
                 // no activation condition, leave all sources active
                 active_sources[i] = source_objects;
                 continue;
@@ -1117,7 +1128,7 @@ namespace {
             // check if this activation condition has already been evaluated
             bool cache_hit = false;
             for (const auto& cond_idx : already_evaluated_activation_condition_idx) {
-                if (*cond_idx.first == *(effects_group->Activation())) {
+                if (*cond_idx.first == *(effects_group.Activation())) {
                     // get later after everything has evaluated...
                     //active_sources[i] = active_sources[cond_idx.second];    // copy previous condition evaluation result
                     cache_hit = true;
@@ -1131,7 +1142,7 @@ namespace {
             auto eval_active_sources = [
                 &source_objects,
                 &context,
-                activation{effects_group->Activation()}
+                activation{effects_group.Activation()}
             ]() -> Condition::ObjectSet
             {
                 Condition::ObjectSet retval;
@@ -1161,7 +1172,7 @@ namespace {
             futures.emplace_back(i, std::async(std::launch::async, eval_active_sources));
 
             // save evaluation lookup index in cache
-            already_evaluated_activation_condition_idx.emplace_back(effects_group->Activation(), i);
+            already_evaluated_activation_condition_idx.emplace_back(effects_group.Activation(), i);
         }
 
         for (auto& [i, fut] : futures)
@@ -1170,14 +1181,14 @@ namespace {
 
         // loop over effects groups again, copying the cached results
         for (std::size_t i = 0; i < effects_groups.size(); ++i) {
-            const auto* effects_group = effects_groups.at(i).get();
-            if (only_meter_effects && !effects_group->HasMeterEffects())
+            const Effect::EffectsGroup& effects_group = get_eg(i);
+            if (only_meter_effects && !effects_group.HasMeterEffects())
                 continue;
-            if (!effects_group->Scope() || !effects_group->Activation())
+            if (!effects_group.Scope() || !effects_group.Activation())
                 continue;
 
             for (const auto& cond_idx : already_evaluated_activation_condition_idx) {
-                if (*cond_idx.first == *(effects_group->Activation())) {
+                if (*cond_idx.first == *(effects_group.Activation())) {
                     active_sources[i] = active_sources[cond_idx.second];    // copy previous condition evaluation result
                     break;
                 }
@@ -1217,8 +1228,8 @@ namespace {
             TraceLogger(effects) << "Handing active sources set of size: " << active_sources[i].size();
 
             // can assume these pointers are non-null due to previous use
-            const auto* effects_group = effects_groups.at(i).get();
-            auto* scope = effects_group->Scope();
+            const Effect::EffectsGroup& effects_group = get_eg(i);
+            auto* scope = effects_group.Scope();
 
 
             n++;
@@ -1255,10 +1266,10 @@ namespace {
 
                     vec_out.emplace_back(
                         std::piecewise_construct,
-                        std::forward_as_tuple(source->ID(), effects_group),
+                        std::forward_as_tuple(source->ID(), &effects_group),
                         std::forward_as_tuple(effect_cause_type,
                                               std::string{specific_cause_name},
-                                              effects_group->AccountingLabel()));
+                                              effects_group.AccountingLabel()));
                 }
 
                 cache_hit = true;
@@ -1306,7 +1317,7 @@ namespace {
                 thread_pool,
                 [
                     context,
-                    effects_group,
+                    &effects_group,
                     active_source_objects{active_sources[i]},
                     effect_cause_type,
                     specific_cause_name,
@@ -1360,8 +1371,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     // to another earlier entry in this list, which contains the results of
     // evaluating the same scope condition on the same set of activation-passing
     // source objects, and which should be copied into the paired Vec
-    std::deque<std::pair<Effect::SourcesEffectsTargetsAndCausesVec,
-                         Effect::SourcesEffectsTargetsAndCausesVec*>> source_effects_targets_causes_reorder_buffer;
+    ReorderBufferT source_effects_targets_causes_reorder_buffer;
 
 
     const unsigned int num_threads = static_cast<unsigned int>(std::max(1, EffectsProcessingThreads()));
