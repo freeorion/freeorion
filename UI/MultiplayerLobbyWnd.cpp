@@ -474,16 +474,17 @@ namespace {
                 return;
             }
             const std::string& empire_name = boost::polymorphic_downcast<GG::Label*>((*selected_it)->at(0))->Text();
-            for (const auto& it : m_save_game_empire_data) {
-                if (it.second.empire_name == empire_name) {
+            for (const auto& [ignored, sged] : m_save_game_empire_data) {
+                (void)ignored;
+                if (sged.empire_name == empire_name) {
                     m_player_data.empire_name = empire_name;
-                    m_player_data.empire_color = it.second.color;
-                    m_player_data.save_game_empire_id = it.second.empire_id;
+                    m_player_data.empire_color = sged.color;
+                    m_player_data.save_game_empire_id = sged.empire_id;
                     m_color_selector->SelectColor(m_player_data.empire_color);
 
                     // set previous player name indication
                     if (size() >= 5)
-                        boost::polymorphic_downcast<GG::Label*>(at(4))->SetText(it.second.player_name);
+                        boost::polymorphic_downcast<GG::Label*>(at(4))->SetText(sged.player_name);
 
                     DataChangedSignal();
                     return;

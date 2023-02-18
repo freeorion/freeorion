@@ -4532,7 +4532,7 @@ void MapWnd::SelectSystem(int system_id) {
     if (SidePanel::SystemID() != system_id) {
         // remove map selection indicator from previously selected system
         if (SidePanel::SystemID() != INVALID_OBJECT_ID) {
-            const auto& it = m_system_icons.find(SidePanel::SystemID());
+            const auto it = m_system_icons.find(SidePanel::SystemID());
             if (it != m_system_icons.end())
                 it->second->SetSelected(false);
         }
@@ -4545,7 +4545,7 @@ void MapWnd::SelectSystem(int system_id) {
 
         // place map selection indicator on newly selected system
         if (SidePanel::SystemID() != INVALID_OBJECT_ID) {
-            const auto& it = m_system_icons.find(SidePanel::SystemID());
+            const auto it = m_system_icons.find(SidePanel::SystemID());
             if (it != m_system_icons.end())
                 it->second->SetSelected(true);
         }
@@ -5680,21 +5680,20 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
 std::vector<int> MapWnd::FleetIDsOfFleetButtonsOverlapping(int fleet_id) const {
     std::vector<int> fleet_ids;
 
-    auto fleet = Objects().get<Fleet>(fleet_id);
+    const auto fleet = Objects().get<Fleet>(fleet_id);
     if (!fleet) {
         ErrorLogger() << "MapWnd::FleetIDsOfFleetButtonsOverlapping: Fleet id "
                       << fleet_id << " does not exist.";
         return fleet_ids;
     }
 
-    const auto& it = m_fleet_buttons.find(fleet_id);
+    const auto it = m_fleet_buttons.find(fleet_id);
     if (it == m_fleet_buttons.end()) {
         // Log that a FleetButton could not be found for the requested fleet, and include when the fleet was last seen
-        int empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        auto vis_turn_map = GetUniverse().GetObjectVisibilityTurnMapByEmpire(fleet_id, empire_id);
-        int vis_turn = -1;
-        if (vis_turn_map.find(Visibility::VIS_BASIC_VISIBILITY) != vis_turn_map.end())
-            vis_turn = vis_turn_map[Visibility::VIS_BASIC_VISIBILITY];
+        const int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+        const auto& vis_turn_map = GetUniverse().GetObjectVisibilityTurnMapByEmpire(fleet_id, empire_id);
+        const auto vis_it = vis_turn_map.find(Visibility::VIS_BASIC_VISIBILITY);
+        const int vis_turn = (vis_it != vis_turn_map.end()) ? vis_it->second : -1;
         ErrorLogger() << "Couldn't find a FleetButton for fleet " << fleet_id
                       << " with last basic vis turn " << vis_turn;
         return fleet_ids;
