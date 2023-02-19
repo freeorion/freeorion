@@ -268,18 +268,16 @@ bool Species::operator==(const Species& rhs) const {
         // check next member
     } else if (!m_location || !rhs.m_location) {
         return false;
-    } else {
-        if (*m_location != *(rhs.m_location))
-            return false;
+    } else if (*m_location != *(rhs.m_location)) {
+        return false;
     }
 
     if (m_combat_targets == rhs.m_combat_targets) { // could be nullptr
         // check next member
     } else if (!m_combat_targets || !rhs.m_combat_targets) {
         return false;
-    } else {
-        if (*m_combat_targets != *(rhs.m_combat_targets))
-            return false;
+    } else if (*m_combat_targets != *(rhs.m_combat_targets)) {
+        return false;
     }
 
     if (m_effects.size() != rhs.m_effects.size())
