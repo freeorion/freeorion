@@ -12,13 +12,12 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index_container.hpp>
 #include <boost/optional/optional.hpp>
+#include "Effect.h"
 #include "EnumsFwd.h"
 #include "../util/Export.h"
 #include "../util/Pending.h"
 
 
-namespace Effect
-{ class EffectsGroup; }
 namespace ValueRef {
     template <typename T>
     struct ValueRef;
@@ -107,11 +106,11 @@ private:
     std::string                     m_category;
     std::unique_ptr<ValueRef::ValueRef<double>> m_research_cost;
     std::unique_ptr<ValueRef::ValueRef<int>>    m_research_turns;
-    const bool                      m_researchable = false;
+    const bool                          m_researchable = false;
     const std::string                   m_tags_concatenated;
     const std::vector<std::string_view> m_tags;
     const std::vector<std::string_view> m_pedia_tags;
-    std::vector<std::shared_ptr<Effect::EffectsGroup>> m_effects;
+    std::vector<Effect::EffectsGroup>   m_effects;
     std::set<std::string>           m_prerequisites;
     std::vector<UnlockableItem>     m_unlocked_items;
     std::string                     m_graphic;

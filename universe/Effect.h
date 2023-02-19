@@ -217,6 +217,7 @@ namespace Effect {
         [[nodiscard]] auto& StackingGroup() const noexcept   { return m_stacking_group; }
         [[nodiscard]] auto* Scope() const noexcept           { return m_scope.get(); }
         [[nodiscard]] auto* Activation() const noexcept      { return m_activation.get(); }
+        [[nodiscard]] auto& Effects() const noexcept         { return m_effects; }
         [[nodiscard]] auto& GetDescription() const noexcept  { return m_description; }
         [[nodiscard]] auto& AccountingLabel() const noexcept { return m_accounting_label; }
         [[nodiscard]] int   Priority() const noexcept        { return m_priority; }
@@ -228,9 +229,8 @@ namespace Effect {
 
         [[nodiscard]] auto& TopLevelContent() const noexcept { return m_content_name; }
 
-        [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const;
-        [[nodiscard]] std::vector<const Effect*> EffectsList() const;
-        [[nodiscard]] virtual uint32_t           GetCheckSum() const;
+        [[nodiscard]] std::string      Dump(uint8_t ntabs = 0) const;
+        [[nodiscard]] virtual uint32_t GetCheckSum() const;
 
     protected:
         std::unique_ptr<Condition::Condition>   m_scope;

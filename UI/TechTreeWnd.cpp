@@ -1007,18 +1007,18 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
             std::set<MeterType> meters_affected;
             std::set<std::string> specials_affected;
             std::set<std::string> parts_whose_meters_are_affected;
-            for (auto& effects_group : tech->Effects()) {
-                for (const auto* effect : effects_group->EffectsList()) {
-                    if (const Effect::SetMeter* set_meter_effect = dynamic_cast<const Effect::SetMeter*>(effect)) {
+            for (const auto& effects_group : tech->Effects()) {
+                for (const auto& effect : effects_group.Effects()) {
+                    if (auto set_meter_effect = dynamic_cast<const Effect::SetMeter*>(effect.get())) {
                         meters_affected.insert(set_meter_effect->GetMeterType());
 
-                    } else if (const Effect::SetShipPartMeter* set_ship_part_meter_effect = dynamic_cast<const Effect::SetShipPartMeter*>(effect)) {
-                        const ValueRef::ValueRef<std::string>* part_name = set_ship_part_meter_effect->GetPartName();
+                    } else if (auto set_ship_part_meter_effect = dynamic_cast<const Effect::SetShipPartMeter*>(effect.get())) {
+                        auto part_name = set_ship_part_meter_effect->GetPartName();
                         if (part_name && part_name->ConstantExpr())
                             parts_whose_meters_are_affected.insert(part_name->Eval());
 
-                    } else if (const Effect::AddSpecial* add_special_effect = dynamic_cast<const Effect::AddSpecial*>(effect)) {
-                        const ValueRef::ValueRef<std::string>* special_name = add_special_effect->GetSpecialName();
+                    } else if (auto add_special_effect = dynamic_cast<const Effect::AddSpecial*>(effect.get())) {
+                        auto special_name = add_special_effect->GetSpecialName();
                         if (special_name && special_name->ConstantExpr())
                             specials_affected.insert(special_name->Eval());
                     }
@@ -1035,9 +1035,10 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
                 }
             }
             for (MeterType meter_type : meters_affected) {
-                std::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(meter_type);
+                auto texture = ClientUI::MeterIcon(meter_type);
                 if (texture) {
-                    auto graphic = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+                    auto graphic = GG::Wnd::Create<GG::StaticGraphic>(std::move(texture),
+                                                                      GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
                     m_unlock_icons.push_back(graphic);
                     graphic->SizeMove(GG::Pt(icon_left, icon_top), GG::Pt(icon_left + icon_width, icon_top + icon_height));
                     icon_left += icon_width + PAD;
@@ -1045,9 +1046,10 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
             }
 
             for (const std::string& special_name : specials_affected) {
-                std::shared_ptr<GG::Texture> texture = ClientUI::SpecialIcon(special_name);
+                auto texture = ClientUI::SpecialIcon(special_name);
                 if (texture) {
-                    auto graphic = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+                    auto graphic = GG::Wnd::Create<GG::StaticGraphic>(std::move(texture),
+                                                                      GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
                     m_unlock_icons.push_back(graphic);
                     graphic->SizeMove(GG::Pt(icon_left, icon_top), GG::Pt(icon_left + icon_width, icon_top + icon_height));
                     icon_left += icon_width + PAD;

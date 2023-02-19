@@ -117,34 +117,35 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
         BOOST_REQUIRE(techs.get<TechManager::NameIndex>().end() != tech_it);
 
         BOOST_REQUIRE_EQUAL(1, (*tech_it)->Effects().size());
-        const auto& tech_effect_gr = (*tech_it)->Effects()[0];
-        BOOST_REQUIRE_EQUAL("", tech_effect_gr->StackingGroup());
-        BOOST_REQUIRE_EQUAL("", tech_effect_gr->GetDescription());
-        BOOST_REQUIRE_EQUAL("", tech_effect_gr->AccountingLabel());
-        BOOST_REQUIRE_EQUAL(17, tech_effect_gr->Priority());
+        const auto& tech_effect_gr = (*tech_it)->Effects().front();
+        BOOST_REQUIRE_EQUAL("", tech_effect_gr.StackingGroup());
+        BOOST_REQUIRE_EQUAL("", tech_effect_gr.GetDescription());
+        BOOST_REQUIRE_EQUAL("", tech_effect_gr.AccountingLabel());
+        BOOST_REQUIRE_EQUAL(17, tech_effect_gr.Priority());
 
         // scope
-        const auto tech_effect_scope = tech_effect_gr->Scope();
+        const auto tech_effect_scope = tech_effect_gr.Scope();
         BOOST_REQUIRE_EQUAL(true, tech_effect_scope->RootCandidateInvariant());
         BOOST_REQUIRE_EQUAL(false, tech_effect_scope->LocalCandidateInvariant());
         BOOST_REQUIRE_EQUAL(true, tech_effect_scope->TargetInvariant());
         BOOST_REQUIRE_EQUAL(false, tech_effect_scope->SourceInvariant());
 
-        Condition::And *tech_effect_scope_and = dynamic_cast<Condition::And*>(tech_effect_scope);
+        const auto tech_effect_scope_and = dynamic_cast<Condition::And*>(tech_effect_scope);
         BOOST_REQUIRE(tech_effect_scope_and != nullptr);
         BOOST_REQUIRE_EQUAL(2, tech_effect_scope_and->Operands().size());
 
         // effects list
-        BOOST_REQUIRE_EQUAL(1, tech_effect_gr->EffectsList().size());
-        const auto tech_effect = tech_effect_gr->EffectsList()[0];
+        BOOST_REQUIRE_EQUAL(1, tech_effect_gr.Effects().size());
+        const auto& tech_effect = tech_effect_gr.Effects().front();
         BOOST_REQUIRE_EQUAL(true, tech_effect->IsMeterEffect());
         BOOST_REQUIRE_EQUAL(false, tech_effect->IsEmpireMeterEffect());
         BOOST_REQUIRE_EQUAL(false, tech_effect->IsAppearanceEffect());
         BOOST_REQUIRE_EQUAL(false, tech_effect->IsSitrepEffect());
         BOOST_REQUIRE_EQUAL(false, tech_effect->IsConditionalEffect());
 
-        BOOST_REQUIRE_EQUAL(1, (*tech_it)->Prerequisites().size());
-        BOOST_REQUIRE_EQUAL(1, (*tech_it)->Prerequisites().count("PRO_MICROGRAV_MAN"));
+        const auto& prereqs = (*tech_it)->Prerequisites();
+        BOOST_REQUIRE_EQUAL(1, prereqs.size());
+        BOOST_REQUIRE_EQUAL(1, std::count(prereqs.begin(), prereqs.end(), "PRO_MICROGRAV_MAN"));
 
         std::vector<std::unique_ptr<Effect::Effect>> effects;
         effects.push_back(std::make_unique<Effect::SetMeter>(MeterType::METER_TARGET_POPULATION,
@@ -270,13 +271,13 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_REQUIRE_NE(nullptr, effect_group.Scope());
         BOOST_REQUIRE_NE(nullptr, effect_group.Activation());
 
-        BOOST_REQUIRE_EQUAL(1, effect_group.EffectsList().size());
-        const auto& effect = *(effect_group.EffectsList().front());
-        BOOST_REQUIRE_EQUAL(true, effect.IsMeterEffect());
-        BOOST_REQUIRE_EQUAL(false, effect.IsEmpireMeterEffect());
-        BOOST_REQUIRE_EQUAL(false, effect.IsAppearanceEffect());
-        BOOST_REQUIRE_EQUAL(false, effect.IsSitrepEffect());
-        BOOST_REQUIRE_EQUAL(false, effect.IsConditionalEffect());
+        BOOST_REQUIRE_EQUAL(1, effect_group.Effects().size());
+        const auto& effect = effect_group.Effects().front();
+        BOOST_REQUIRE_EQUAL(true, effect->IsMeterEffect());
+        BOOST_REQUIRE_EQUAL(false, effect->IsEmpireMeterEffect());
+        BOOST_REQUIRE_EQUAL(false, effect->IsAppearanceEffect());
+        BOOST_REQUIRE_EQUAL(false, effect->IsSitrepEffect());
+        BOOST_REQUIRE_EQUAL(false, effect->IsConditionalEffect());
 
         BOOST_TEST_MESSAGE("Dump " << species.Name() << ":");
         BOOST_TEST_MESSAGE(species.Dump(0));
@@ -409,7 +410,7 @@ BOOST_AUTO_TEST_CASE(parse_species) {
             9999};
         BOOST_WARN(test_species == species);
         BOOST_WARN(test_species.Name() == species.Name());
-        BOOST_WARN(test_species.Effects() == species.Effects());
+        // TODO: test equality of Effects once they are stored by value not pointer
         BOOST_WARN(test_species.Likes() == species.Likes());
         BOOST_WARN(test_species.Dislikes() == species.Dislikes());
         BOOST_WARN(test_species.CombatTargets() == species.CombatTargets());

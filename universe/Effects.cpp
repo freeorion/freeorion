@@ -302,14 +302,6 @@ void EffectsGroup::Execute(ScriptingContext& context,
     }
 }
 
-std::vector<const Effect*> EffectsGroup::EffectsList() const {
-    std::vector<const Effect*> retval;
-    retval.reserve(m_effects.size());
-    std::transform(m_effects.begin(), m_effects.end(), std::back_inserter(retval),
-                   [](const std::unique_ptr<Effect>& xx) {return xx.get();});
-    return retval;
-}
-
 std::string EffectsGroup::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs) + "EffectsGroup";
     if (!m_content_name.empty())

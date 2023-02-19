@@ -125,7 +125,7 @@ Tech::Tech(std::string&& name, std::string&& description,
            std::set<std::string>&& prerequisites,
            std::vector<UnlockableItem>&& unlocked_items,
            std::string&& graphic) :
-    m_name(std::move(name)),
+    m_name(name), // not a move so it can be used later in member intializer list
     m_description(std::move(description)),
     m_short_description(std::move(short_description)),
     m_category(std::move(category)),
@@ -181,7 +181,16 @@ Tech::Tech(std::string&& name, std::string&& description,
         });
         return retval;
     }()),
-    m_effects(std::move(effects)),
+    m_effects([](auto& effects_p, const auto& name) {
+
+        std::vector<Effect::EffectsGroup> retval;
+        retval.reserve(effects_p.size());
+        for (auto& e : effects_p) {
+            e->SetTopLevelContent(name);
+            retval.push_back(std::move(*e));
+        }
+        return retval;
+    }(effects, name)),
     m_prerequisites(std::move(prerequisites)),
     m_unlocked_items(std::move(unlocked_items)),
     m_graphic(std::move(graphic))
@@ -194,9 +203,6 @@ void Tech::Init() {
         m_research_cost->SetTopLevelContent(m_name);
     if (m_research_turns)
         m_research_turns->SetTopLevelContent(m_name);
-
-    for (auto& effect : m_effects)
-        effect->SetTopLevelContent(m_name);
 }
 
 bool Tech::operator==(const Tech& rhs) const {
@@ -219,39 +225,19 @@ bool Tech::operator==(const Tech& rhs) const {
         // check next member
     } else if (!m_research_cost || !rhs.m_research_cost) {
         return false;
-    } else {
-        if (*m_research_cost != *(rhs.m_research_cost))
-            return false;
+    } else if (*m_research_cost != *(rhs.m_research_cost)) {
+        return false;
     }
 
     if (m_research_turns == rhs.m_research_turns) { // could be nullptr
         // check next member
     } else if (!m_research_turns || !rhs.m_research_turns) {
         return false;
-    } else {
-        if (*m_research_turns != *(rhs.m_research_turns))
-            return false;
-    }
-
-    if (m_effects.size() != rhs.m_effects.size())
-        return false;
-    try {
-        for (std::size_t idx = 0; idx < m_effects.size(); ++idx) {
-            const auto& my_op = m_effects.at(idx);
-            const auto& rhs_op = rhs.m_effects.at(idx);
-
-            if (my_op == rhs_op)
-                continue;
-            if (!my_op || !rhs_op)
-                return false;
-            if (*my_op != *rhs_op)
-                return false;
-        }
-    } catch (...) {
+    } else if (*m_research_turns != *(rhs.m_research_turns)) {
         return false;
     }
 
-    return true;
+    return m_effects == rhs.m_effects;
 }
 
 std::string Tech::Dump(uint8_t ntabs) const {
@@ -268,7 +254,7 @@ std::string Tech::Dump(uint8_t ntabs) const {
             retval.append("[ \"").append(m_tags.front()).append("\" ]\n");
         } else {
             retval += "[\n";
-            for (auto tag : m_tags)
+            for (const auto& tag : m_tags)
                 retval.append(DumpIndent(ntabs+2)).append("\"").append(tag).append("\"\n");
             retval += DumpIndent(ntabs+1) + "]\n";
         }
@@ -298,11 +284,11 @@ std::string Tech::Dump(uint8_t ntabs) const {
     if (!m_effects.empty()) {
         if (m_effects.size() == 1) {
             retval += DumpIndent(ntabs+1) + "effectsgroups =\n";
-            retval += m_effects[0]->Dump(ntabs+2);
+            retval += m_effects.front().Dump(ntabs+2);
         } else {
             retval += DumpIndent(ntabs+1) + "effectsgroups = [\n";
             for (auto& effect : m_effects)
-                retval += effect->Dump(ntabs+2);
+                retval += effect.Dump(ntabs+2);
             retval += DumpIndent(ntabs+1) + "]\n";
         }
     }
