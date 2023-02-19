@@ -111,10 +111,10 @@ private:
     const std::vector<std::string_view> m_tags;
     const std::vector<std::string_view> m_pedia_tags;
     std::vector<Effect::EffectsGroup>   m_effects;
-    std::set<std::string>           m_prerequisites;
-    std::vector<UnlockableItem>     m_unlocked_items;
-    std::string                     m_graphic;
-    std::set<std::string>           m_unlocked_techs;
+    std::vector<std::string>            m_prerequisites;
+    std::vector<UnlockableItem>         m_unlocked_items;
+    std::string                         m_graphic;
+    std::vector<std::string>            m_unlocked_techs;
 
     friend class TechManager;
 };

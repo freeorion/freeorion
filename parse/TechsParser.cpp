@@ -34,7 +34,8 @@ namespace {
             ErrorLogger() <<  "More than one tech has the name " << tech->Name();
             retval = false;
         }
-        if (tech->Prerequisites().count(tech->Name())) {
+        const auto& prereqs = tech->Prerequisites();
+        if (std::count(prereqs.begin(), prereqs.end(), tech->Name())) {
             ErrorLogger() << "Tech " << tech->Name() << " depends on itself!";
             retval = false;
         }

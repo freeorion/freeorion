@@ -191,7 +191,7 @@ Tech::Tech(std::string&& name, std::string&& description,
         }
         return retval;
     }(effects, name)),
-    m_prerequisites(std::move(prerequisites)),
+    m_prerequisites{prerequisites.begin(), prerequisites.end()},
     m_unlocked_items(std::move(unlocked_items)),
     m_graphic(std::move(graphic))
 {
@@ -548,9 +548,9 @@ void TechManager::CheckPendingTechs() const {
 
     // fill in the unlocked techs data for each loaded tech
     for (const auto& tech : m_techs) {
-        for (const std::string& prereq : tech->Prerequisites()) {
+        for (const auto& prereq : tech->Prerequisites()) {
             if (Tech* prereq_tech = const_cast<Tech*>(GetTech(prereq)))
-                prereq_tech->m_unlocked_techs.insert(tech->Name());
+                prereq_tech->m_unlocked_techs.push_back(tech->Name());
         }
     }
 
@@ -607,37 +607,35 @@ std::string TechManager::FindFirstDependencyCycle() const {
             // of its prerequisite techs have already been checked, pop it off the stack and mark it as
             // checked; otherwise, push all its unchecked prerequisites onto the stack.
             const Tech* current_tech = stack.back();
-            unsigned int starting_stack_size = stack.size();
+            auto starting_stack_size = stack.size();
 
-            const std::set<std::string>& prereqs = (current_tech ? current_tech->Prerequisites() : EMPTY_STRING_SET);
-            for (const std::string& prereq_name : prereqs) {
-                const Tech* prereq_tech = GetTech(prereq_name);
-                if (!prereq_tech || checked_techs.count(prereq_tech))
-                    continue;
+            if (current_tech) {
+                for (auto& prereq_name : current_tech->Prerequisites()) {
+                    const Tech* prereq_tech = GetTech(prereq_name);
+                    if (!prereq_tech || checked_techs.count(prereq_tech))
+                        continue;
 
-                // since this is not a checked prereq, see if it is already in the stack somewhere; if so, we have a cycle
-                std::vector<const Tech*>::reverse_iterator stack_duplicate_it =
-                    std::find(stack.rbegin(), stack.rend(), prereq_tech);
-                if (stack_duplicate_it != stack.rend()) {
-                    std::stringstream stream;
-                    std::string current_tech_name = prereq_tech->Name();
-                    stream << "ERROR: Tech dependency cycle found (A <-- B means A is a prerequisite of B): \""
-                            << current_tech_name << "\"";
-                    for (std::vector<const Tech*>::reverse_iterator stack_it = stack.rbegin();
-                            stack_it != stack_duplicate_it;
-                            ++stack_it) {
-                        if ((*stack_it)->Prerequisites().count(current_tech_name)) {
-                            current_tech_name = (*stack_it)->Name();
-                            stream << " <-- \"" << current_tech_name << "\"";
+                    // since this is not a checked prereq, see if it is already in the stack somewhere; if so, we have a cycle
+                    auto stack_duplicate_it = std::find(stack.rbegin(), stack.rend(), prereq_tech);
+                    if (stack_duplicate_it != stack.rend()) {
+                        std::stringstream stream;
+                        std::string current_tech_name = prereq_tech->Name();
+                        stream << "ERROR: Tech dependency cycle found (A <-- B means A is a prerequisite of B): \""
+                                << current_tech_name << "\"";
+                        for (auto stack_it = stack.rbegin(); stack_it != stack_duplicate_it; ++stack_it) {
+                            const auto& prereqs = (*stack_it)->Prerequisites();
+                            if (std::count(prereqs.begin(), prereqs.end(), current_tech_name)) {
+                                current_tech_name = (*stack_it)->Name();
+                                stream << " <-- \"" << current_tech_name << "\"";
+                            }
                         }
+                        stream << " <-- \"" << prereq_tech->Name() << "\" ... ";
+                        return stream.str();
+                    } else {
+                        stack.push_back(prereq_tech);
                     }
-                    stream << " <-- \"" << prereq_tech->Name() << "\" ... ";
-                    return stream.str();
-                } else {
-                    stack.emplace_back(prereq_tech);
                 }
             }
-
             if (starting_stack_size == stack.size()) {
                 stack.pop_back();
                 checked_techs.insert(current_tech);
@@ -657,9 +655,9 @@ std::string TechManager::FindRedundantDependency() const {
             stream << "ERROR: Missing referenced tech for unknown reasons...";
             return stream.str();
         }
-        std::set<std::string> prereqs = tech->Prerequisites();
+        const auto& prereqs = tech->Prerequisites();
         std::map<std::string, std::string> techs_unlocked_by_prereqs;
-        for (const std::string& prereq_name : prereqs) {
+        for (const auto& prereq_name : prereqs) {
             const Tech* prereq_tech = GetTech(prereq_name);
             if (!prereq_tech) {
                 std::stringstream stream;
@@ -668,7 +666,7 @@ std::string TechManager::FindRedundantDependency() const {
             }
             AllChildren(prereq_tech, techs_unlocked_by_prereqs);
         }
-        for (const std::string& prereq_name : prereqs) {
+        for (const auto& prereq_name : prereqs) {
             auto map_it = techs_unlocked_by_prereqs.find(prereq_name);
             if (map_it != techs_unlocked_by_prereqs.end()) {
                 std::stringstream stream;
