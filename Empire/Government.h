@@ -29,21 +29,18 @@ public:
            std::vector<UnlockableItem>&& unlocked_items,
            std::string graphic);
 
-    [[nodiscard]] const std::string&  Name() const noexcept             { return m_name; }
-    [[nodiscard]] const std::string&  Description() const noexcept      { return m_description; }
-    [[nodiscard]] const std::string&  ShortDescription() const noexcept { return m_short_description; }
-    [[nodiscard]] std::string         Dump(uint8_t ntabs = 0) const;
-    [[nodiscard]] const std::string&  Category() const noexcept         { return m_category; }
-    [[nodiscard]] float               AdoptionCost(int empire_id, const ScriptingContext& context) const;
+    [[nodiscard]] const auto& Name() const noexcept             { return m_name; }
+    [[nodiscard]] const auto& Description() const noexcept      { return m_description; }
+    [[nodiscard]] const auto& ShortDescription() const noexcept { return m_short_description; }
+    [[nodiscard]] const auto& Category() const noexcept         { return m_category; }
+    [[nodiscard]] const auto& Prerequisites() const noexcept    { return m_prerequisites; }
+    [[nodiscard]] const auto& Exclusions() const noexcept       { return m_exclusions; }
+    [[nodiscard]] const auto& Effects() const noexcept          { return m_effects; }
+    [[nodiscard]] const auto& Graphic() const noexcept          { return m_graphic; }
+    [[nodiscard]] const auto& UnlockedItems() const noexcept    { return m_unlocked_items; }
 
-    [[nodiscard]] const std::set<std::string>& Prerequisites() const noexcept { return m_prerequisites; }
-    [[nodiscard]] const std::set<std::string>& Exclusions() const noexcept { return m_exclusions; }
-
-    //! returns the effects that are applied to the discovering empire's capital
-    //! when this policy is adopted.
-    [[nodiscard]] const std::vector<std::shared_ptr<Effect::EffectsGroup>>& Effects() const noexcept { return m_effects; }
-    [[nodiscard]] const std::string& Graphic() const noexcept { return m_graphic; }
-    [[nodiscard]] const std::vector<UnlockableItem>& UnlockedItems() const noexcept { return m_unlocked_items; }
+    [[nodiscard]] float       AdoptionCost(int empire_id, const ScriptingContext& context) const;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const;
 
     //! Returns a number, calculated from the contained data, which should be
     //! different for different contained data, and must be the same for
