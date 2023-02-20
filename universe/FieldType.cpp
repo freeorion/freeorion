@@ -31,7 +31,7 @@ FieldType::FieldType(std::string&& name, std::string&& description,
                      float stealth, const std::set<std::string>& tags,
                      std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
                      std::string&& graphic) :
-    m_name(std::move(name)),
+    m_name(name), // not a move so available later in member initializer list
     m_description(std::move(description)),
     m_stealth(stealth),
     m_tags_concatenated([&tags]() {
@@ -62,16 +62,19 @@ FieldType::FieldType(std::string&& name, std::string&& description,
         });
         return retval;
     }()),
+    m_effects([](auto& effects, const auto& name) {
+        std::vector<Effect::EffectsGroup> retval;
+        retval.reserve(effects.size());
+        for (auto& e : effects) {
+            e->SetTopLevelContent(name);
+            retval.push_back(std::move(*e));
+        }
+        return retval;
+    }(effects, name)),
     m_graphic(std::move(graphic))
 {
-    for (auto&& effect : effects)
-        m_effects.push_back(std::move(*effect));
-
     if (m_stealth != 0.0f)
         m_effects.push_back(IncreaseMeter(MeterType::METER_STEALTH, m_stealth));
-
-    for (auto& effect : m_effects)
-        effect.SetTopLevelContent(m_name);
 }
 
 bool FieldType::operator==(const FieldType& rhs) const {
