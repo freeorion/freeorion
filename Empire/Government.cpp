@@ -71,7 +71,7 @@ std::string Policy::Dump(uint8_t ntabs) const {
     retval += DumpIndent(ntabs+1) + "adoptioncost = " + m_adoption_cost->Dump(ntabs+1) + "\n";
 
     if (m_prerequisites.size() == 1) {
-        retval += DumpIndent(ntabs+1) + "prerequisites = \"" + *m_prerequisites.begin() + "\"\n";
+        retval += DumpIndent(ntabs+1) + "prerequisites = \"" + m_prerequisites.front() + "\"\n";
     } else if (m_prerequisites.size() > 1) {
         retval += DumpIndent(ntabs+1) + "prerequisites = [\n";
         for (const std::string& prerequisite : m_prerequisites)
@@ -80,7 +80,7 @@ std::string Policy::Dump(uint8_t ntabs) const {
     }
 
     if (m_exclusions.size() == 1) {
-        retval += DumpIndent(ntabs+1) + "exclusions = \"" + *m_exclusions.begin() + "\"\n";
+        retval += DumpIndent(ntabs+1) + "exclusions = \"" + m_exclusions.front() + "\"\n";
     } else if (m_exclusions.size() > 1) {
         retval += DumpIndent(ntabs+1) + "exclusions = [\n";
         for (const std::string& exclusion : m_exclusions)
