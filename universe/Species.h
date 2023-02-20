@@ -164,8 +164,6 @@ public:
     [[nodiscard]] uint32_t GetCheckSum() const;
 
 private:
-    void Init();
-
     /** This does the heavy lifting for finding the next better or next best planet type.
       * the callback apply_for_best_forward_backward takes three arguments:
       * 1) the best PlanetType easiest to terraform to for this species for the initial_planet_type

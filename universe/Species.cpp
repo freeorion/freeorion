@@ -140,6 +140,32 @@ namespace {
         });
         return retval;
     }
+
+    auto InitLocation(const std::string& name) {
+        // set up a Condition structure to match Planets that have
+        // (not uninhabitable) environment for this species
+
+        std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetEnvironment>>> environments;
+        environments.push_back(
+            std::make_unique<ValueRef::Constant<PlanetEnvironment>>(PlanetEnvironment::PE_UNINHABITABLE));
+
+        auto this_species_name_ref =
+            std::make_unique<ValueRef::Constant<std::string>>(name); // name specifies this species
+
+        auto enviro_cond = std::unique_ptr<Condition::Condition>(
+            std::make_unique<Condition::Not>(
+                std::unique_ptr<Condition::Condition>(
+                    std::make_unique<Condition::PlanetEnvironment>(
+                        std::move(environments), std::move(this_species_name_ref)))));
+
+        auto type_cond = std::make_unique<Condition::Type>(
+            std::make_unique<ValueRef::Constant<UniverseObjectType>>(UniverseObjectType::OBJ_PLANET));
+
+        auto retval = std::make_unique<Condition::And>(std::move(enviro_cond), std::move(type_cond));
+        retval->SetTopLevelContent(name);
+
+        return retval;
+    }
 }
 
 Species::Species(std::string&& name, std::string&& desc,
@@ -168,7 +194,12 @@ Species::Species(std::string&& name, std::string&& desc,
         }
         return retval;
     }(effects, name)),
-    m_combat_targets(std::move(combat_targets)),
+    m_location(InitLocation(name)),
+    m_combat_targets([](auto&& cond, const auto& name) {
+        if (cond)
+            cond->SetTopLevelContent(name);
+        return std::move(cond);
+    }(std::move(combat_targets), name)),
     m_playable(playable),
     m_native(native),
     m_can_colonize(can_colonize),
@@ -216,9 +247,7 @@ Species::Species(std::string&& name, std::string&& desc,
         return retval;
     }()),
     m_graphic(std::move(graphic))
-{
-    Init();
-}
+{}
 
 Species::Species(std::string&& name, std::string&& desc,
                  std::string&& gameplay_desc, std::vector<FocusType>&& foci,
@@ -289,38 +318,6 @@ bool Species::operator==(const Species& rhs) const {
     }
 
     return m_effects == rhs.m_effects;
-}
-
-void Species::Init() {
-    if (!m_location) {
-        // set up a Condition structure to match popcenters that have
-        // (not uninhabitable) environment for this species
-
-        std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetEnvironment>>> environments;
-        environments.push_back(
-            std::make_unique<ValueRef::Constant<PlanetEnvironment>>(PlanetEnvironment::PE_UNINHABITABLE));
-
-        auto this_species_name_ref =
-            std::make_unique<ValueRef::Constant<std::string>>(m_name);  // m_name specifies this species
-
-        auto enviro_cond = std::unique_ptr<Condition::Condition>(
-            std::make_unique<Condition::Not>(
-                std::unique_ptr<Condition::Condition>(
-                    std::make_unique<Condition::PlanetEnvironment>(
-                        std::move(environments), std::move(this_species_name_ref)))));
-
-        auto type_cond = std::make_unique<Condition::Type>(
-            std::make_unique<ValueRef::Constant<UniverseObjectType>>(UniverseObjectType::OBJ_PLANET));
-
-        m_location = std::unique_ptr<Condition::Condition>(std::make_unique<Condition::And>(
-            std::move(enviro_cond), std::move(type_cond)));
-    }
-    m_location->SetTopLevelContent(m_name);
-
-    if (m_combat_targets)
-        m_combat_targets->SetTopLevelContent(m_name);
-
-    TraceLogger() << "Species::Init: " << Dump();
 }
 
 std::string Species::Dump(uint8_t ntabs) const {
