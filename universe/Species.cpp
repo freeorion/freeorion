@@ -153,13 +153,21 @@ Species::Species(std::string&& name, std::string&& desc,
                  std::set<std::string>&& likes, std::set<std::string>&& dislikes,
                  std::string&& graphic,
                  double spawn_rate, int spawn_limit) :
-    m_name(std::move(name)),
+    m_name(name), // not moving so available later in member initializer list
     m_description(std::move(desc)),
     m_gameplay_description(std::move(gameplay_desc)),
     m_foci(std::move(foci)),
     m_default_focus(std::move(default_focus)),
     m_planet_environments(std::move(planet_environments)),
-    m_effects(std::move(effects)),
+    m_effects([](auto&& effects, const auto& name) {
+        std::vector<Effect::EffectsGroup> retval;
+        retval.reserve(effects.size());
+        for (auto& e : effects) {
+            e->SetTopLevelContent(name);
+            retval.push_back(std::move(*e));
+        }
+        return retval;
+    }(effects, name)),
     m_combat_targets(std::move(combat_targets)),
     m_playable(playable),
     m_native(native),
@@ -280,31 +288,10 @@ bool Species::operator==(const Species& rhs) const {
         return false;
     }
 
-    if (m_effects.size() != rhs.m_effects.size())
-        return false;
-    try {
-        for (std::size_t idx = 0; idx < m_effects.size(); ++idx) {
-            const auto& my_op = m_effects.at(idx);
-            const auto& rhs_op = rhs.m_effects.at(idx);
-
-            if (my_op == rhs_op)
-                continue;
-            if (!my_op || !rhs_op)
-                return false;
-            if (*my_op != *rhs_op)
-                return false;
-        }
-    } catch (...) {
-        return false;
-    }
-
-    return true;
+    return m_effects == rhs.m_effects;
 }
 
 void Species::Init() {
-    for (auto& effect : m_effects)
-        effect->SetTopLevelContent(m_name);
-
     if (!m_location) {
         // set up a Condition structure to match popcenters that have
         // (not uninhabitable) environment for this species
@@ -362,11 +349,11 @@ std::string Species::Dump(uint8_t ntabs) const {
     }
     if (m_effects.size() == 1) {
         retval += DumpIndent(ntabs+1) + "effectsgroups =\n";
-        retval += m_effects[0]->Dump(ntabs+2);
+        retval += m_effects.front().Dump(ntabs+2);
     } else {
         retval += DumpIndent(ntabs+1) + "effectsgroups = [\n";
         for (auto& effect : m_effects)
-            retval += effect->Dump(ntabs+2);
+            retval += effect.Dump(ntabs+2);
         retval += DumpIndent(ntabs+1) + "]\n";
     }
     if (m_combat_targets)
@@ -406,7 +393,7 @@ std::string Species::GameplayDescription() const {
     bool requires_separator = true;
 
     for (auto& effect : m_effects) {
-        const std::string& description = effect->GetDescription();
+        const std::string& description = effect.GetDescription();
         if (description.empty())
             continue;
 
@@ -430,13 +417,13 @@ PlanetEnvironment Species::GetPlanetEnvironment(PlanetType planet_type) const {
 }
 
 namespace {
-    PlanetType RingNextPlanetType(PlanetType current_type) {
+    constexpr PlanetType RingNextPlanetType(PlanetType current_type) noexcept {
         PlanetType next(PlanetType(int(current_type)+1));
         if (next >= PlanetType::PT_ASTEROIDS)
             next = PlanetType::PT_SWAMP;
         return next;
     }
-    PlanetType RingPreviousPlanetType(PlanetType current_type) {
+    constexpr PlanetType RingPreviousPlanetType(PlanetType current_type) noexcept {
         PlanetType next(PlanetType(int(current_type)-1));
         if (next <= PlanetType::INVALID_PLANET_TYPE)
             next = PlanetType::PT_OCEAN;
@@ -445,7 +432,9 @@ namespace {
 }
 
 template <typename Func>
-PlanetType Species::TheNextBestPlanetTypeApply(PlanetType initial_planet_type, Func apply_for_best_forward_backward) const {
+PlanetType Species::TheNextBestPlanetTypeApply(PlanetType initial_planet_type,
+                                               Func apply_for_best_forward_backward) const
+{
     // some types can't be terraformed
     if (initial_planet_type == PlanetType::PT_GASGIANT)
         return PlanetType::PT_GASGIANT;
@@ -482,7 +471,9 @@ PlanetType Species::TheNextBestPlanetTypeApply(PlanetType initial_planet_type, F
 
     int forward_steps_to_best = 0;
     PlanetType next_best_planet_type = initial_planet_type;
-    for (PlanetType type = RingNextPlanetType(initial_planet_type); type != initial_planet_type; type = RingNextPlanetType(type)) {
+    for (PlanetType type = RingNextPlanetType(initial_planet_type);
+         type != initial_planet_type; type = RingNextPlanetType(type))
+    {
         forward_steps_to_best++;
         if (GetPlanetEnvironment(type) == best_environment) {
             next_best_planet_type = type;
@@ -490,7 +481,9 @@ PlanetType Species::TheNextBestPlanetTypeApply(PlanetType initial_planet_type, F
         }
     }
     int backward_steps_to_best = 0;
-    for (PlanetType type = RingPreviousPlanetType(initial_planet_type); type != initial_planet_type; type = RingPreviousPlanetType(type)) {
+    for (PlanetType type = RingPreviousPlanetType(initial_planet_type);
+         type != initial_planet_type; type = RingPreviousPlanetType(type))
+    {
         backward_steps_to_best++;
         if (GetPlanetEnvironment(type) == best_environment) {
             if (backward_steps_to_best < forward_steps_to_best)
@@ -503,13 +496,15 @@ PlanetType Species::TheNextBestPlanetTypeApply(PlanetType initial_planet_type, F
 }
 
 PlanetType Species::NextBestPlanetType(PlanetType initial_planet_type) const {
-    return TheNextBestPlanetTypeApply(initial_planet_type, [](PlanetType best_planet_type, int forward_steps_to_best, int backward_steps_to_best) {
-        return best_planet_type;
-    });
+    return TheNextBestPlanetTypeApply(initial_planet_type,
+                                      [](PlanetType best_planet_type, int forward_steps_to_best, int backward_steps_to_best)
+                                      { return best_planet_type; });
 }
 
 PlanetType Species::NextBetterPlanetType(PlanetType initial_planet_type) const {
-    return TheNextBestPlanetTypeApply(initial_planet_type, [initial_planet_type](PlanetType best_planet_type, int forward_steps_to_best, int backward_steps_to_best) {
+    return TheNextBestPlanetTypeApply(initial_planet_type,
+        [initial_planet_type](PlanetType best_planet_type, int forward_steps_to_best, int backward_steps_to_best)
+    {
         if (forward_steps_to_best <= backward_steps_to_best)
             return RingNextPlanetType(initial_planet_type);
         else

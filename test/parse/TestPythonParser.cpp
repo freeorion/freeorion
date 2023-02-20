@@ -258,7 +258,7 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_CHECK_EQUAL("icons/species/abaddonnian.png", species.Graphic());
 
         BOOST_REQUIRE_EQUAL(98, species.Effects().size());
-        const auto& effect_group = *species.Effects().front();
+        const auto& effect_group = species.Effects().front();
         BOOST_REQUIRE_EQUAL("", effect_group.StackingGroup());
         BOOST_REQUIRE_EQUAL("", effect_group.GetDescription());
         BOOST_REQUIRE_EQUAL("FOCUS_INDUSTRY_LABEL", effect_group.AccountingLabel());

@@ -181,7 +181,8 @@ private:
       * current planet type needs to be returned.
       */
     template <typename Func>
-    [[nodiscard]] PlanetType TheNextBestPlanetTypeApply(PlanetType initial_planet_type, Func apply_for_best_forward_backward) const;
+    [[nodiscard]] PlanetType TheNextBestPlanetTypeApply(PlanetType initial_planet_type,
+                                                        Func apply_for_best_forward_backward) const;
 
     std::string m_name;
     std::string m_description;
@@ -190,10 +191,9 @@ private:
     std::vector<FocusType>                  m_foci;
     std::string                             m_default_focus;
     std::map<PlanetType, PlanetEnvironment> m_planet_environments;
-
-    std::vector<std::unique_ptr<Effect::EffectsGroup>> m_effects; // TODO: store by value?
-    std::unique_ptr<Condition::Condition>              m_location;
-    std::unique_ptr<Condition::Condition>              m_combat_targets;
+    std::vector<Effect::EffectsGroup>       m_effects;
+    std::unique_ptr<Condition::Condition>   m_location;
+    std::unique_ptr<Condition::Condition>   m_combat_targets;
 
     bool  m_playable = true;
     bool  m_native = true;
