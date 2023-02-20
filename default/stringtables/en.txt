@@ -12280,7 +12280,10 @@ Moderation
 PLC_MODERATION_DESC
 '''Gives a bonus to the empire's capital's influence output and stability that is larger when the the most-commonly-used focus setting in the empire is used less. How often other focus settings are used does not matter for this bonus; only the number of planets using the most-commonly used focus setting and the total number of owned planets affect it.
 
-Outposts with no focus selected also count as a focus, and may be the most popular focus setting, which may make getting large bonuses difficult.'''
+Outposts with no focus selected also count as a focus, and may be the most popular focus setting, which may make getting large bonuses difficult.
+
+Stability bonus is equal to [[value PLC_MODERATION_STABILITY_SCALING]] times the ratio: (( Owned Planets / Most Common Focus ) - 1)
+Influence bonus is equal to [[value PLC_MODERATION_INFLUENCE_SCALING]] times the ratio: (( Owned Planets / Most Common Focus ) - 1)'''
 
 PLC_MODERATION_SHORT_DESC
 Increases capital influence and stability
