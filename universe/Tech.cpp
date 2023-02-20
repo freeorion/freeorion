@@ -549,12 +549,19 @@ void TechManager::CheckPendingTechs() const {
     // fill in the unlocked techs data for each loaded tech
     for (const auto& tech : m_techs) {
         for (const auto& prereq : tech->Prerequisites()) {
-            if (Tech* prereq_tech = const_cast<Tech*>(GetTech(prereq)))
+            if (Tech* prereq_tech = const_cast<Tech*>(this->GetTech(prereq)))
                 prereq_tech->m_unlocked_techs.push_back(tech->Name());
         }
     }
+    // sort and remove duplicates
+    for (const auto& tech : m_techs) {
+         auto& unlocks = tech->m_unlocked_techs;
+         std::sort(unlocks.begin(), unlocks.end());
+         auto unique_it = std::unique(unlocks.begin(), unlocks.end());
+         unlocks.erase(unique_it, unlocks.end());
+    }
 
-    std::string redundant_dependency = FindRedundantDependency();
+    const std::string redundant_dependency = FindRedundantDependency();
     if (!redundant_dependency.empty())
         ErrorLogger() << redundant_dependency;
 
