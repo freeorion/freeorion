@@ -10,13 +10,12 @@
 #include "../util/CheckSums.h"
 #include "../util/GameRules.h"
 
-#define CHECK_COND_VREF_MEMBER(m_ptr) { if (m_ptr == rhs.m_ptr) {           \
-                                            /* check next member */         \
-                                        } else if (!m_ptr || !rhs.m_ptr) {  \
-                                            return false;                   \
-                                        } else {                            \
-                                            if (*m_ptr != *(rhs.m_ptr))     \
-                                                return false;               \
+#define CHECK_COND_VREF_MEMBER(m_ptr) { if (m_ptr == rhs.m_ptr) {            \
+                                            /* check next member */          \
+                                        } else if (!m_ptr || !rhs.m_ptr) {   \
+                                            return false;                    \
+                                        } else if (*m_ptr != *(rhs.m_ptr)) { \
+                                            return false;                    \
                                         }   }
 
 namespace {
@@ -25,30 +24,26 @@ namespace {
 
     // create effectsgroup that increases the value of \a meter_type
     // by the result of evalulating \a increase_vr
-    std::shared_ptr<Effect::EffectsGroup>
-    IncreaseMeter(MeterType meter_type,
-                  std::unique_ptr<ValueRef::ValueRef<double>>&& increase_vr)
+    auto IncreaseMeter(MeterType meter_type,
+                       std::unique_ptr<ValueRef::ValueRef<double>>&& increase_vr)
     {
         auto scope = std::make_unique<Condition::Source>();
         auto activation = std::make_unique<Condition::Source>();
 
-        auto vr =
-            std::make_unique<ValueRef::Operation<double>>(
-                ValueRef::OpType::PLUS,
-                std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE),
-                std::move(increase_vr)
-            );
+        auto vr = std::make_unique<ValueRef::Operation<double>>(
+            ValueRef::OpType::PLUS,
+            std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE),
+            std::move(increase_vr)
+        );
         std::vector<std::unique_ptr<Effect::Effect>> effects;
-        effects.emplace_back(std::make_unique<Effect::SetMeter>(meter_type, std::move(vr)));
+        effects.push_back(std::make_unique<Effect::SetMeter>(meter_type, std::move(vr)));
 
-        return std::make_shared<Effect::EffectsGroup>(std::move(scope), std::move(activation),
-                                                      std::move(effects));
+        return Effect::EffectsGroup{std::move(scope), std::move(activation), std::move(effects)};
     }
 
     // create effectsgroup that increases the value of \a meter_type
     // by the specified amount \a fixed_increase
-    std::shared_ptr<Effect::EffectsGroup>
-    IncreaseMeter(MeterType meter_type, float fixed_increase) {
+    auto IncreaseMeter(MeterType meter_type, float fixed_increase) {
         auto increase_vr = std::make_unique<ValueRef::Constant<double>>(fixed_increase);
         return IncreaseMeter(meter_type, std::move(increase_vr));
     }
@@ -56,9 +51,8 @@ namespace {
     // create effectsgroup that increases the value of the part meter
     // of type \a meter_type for part name \a part_name
     // by the result of evalulating \a increase_vr
-    std::shared_ptr<Effect::EffectsGroup>
-    IncreaseMeter(MeterType meter_type, const std::string& part_name,
-                  std::unique_ptr<ValueRef::ValueRef<double>>&& increase_vr, bool allow_stacking = true)
+    auto IncreaseMeter(MeterType meter_type, const std::string& part_name,
+                       std::unique_ptr<ValueRef::ValueRef<double>>&& increase_vr, bool allow_stacking = true)
     {
         auto scope = std::make_unique<Condition::Source>();
         auto activation = std::make_unique<Condition::Source>();
@@ -79,16 +73,15 @@ namespace {
         effects.emplace_back(std::make_unique<Effect::SetShipPartMeter>(
             meter_type, std::move(part_name_vr), std::move(value_vr)));
 
-        return std::make_shared<Effect::EffectsGroup>(
-            std::move(scope), std::move(activation), std::move(effects), part_name, stacking_group);
+        return Effect::EffectsGroup{std::move(scope), std::move(activation), std::move(effects),
+                                    part_name, stacking_group};
     }
 
     // create effectsgroup that increases the value of \a meter_type
     // by the product of \a base_increase and the value of the game
     // rule of type double with the name \a scaling_factor_rule_name
-    std::shared_ptr<Effect::EffectsGroup>
-    IncreaseMeterRuleScaled(MeterType meter_type, float base_increase,
-                  const std::string& scaling_factor_rule_name)
+    auto IncreaseMeterRuleScaled(MeterType meter_type, float base_increase,
+                                 const std::string& scaling_factor_rule_name)
     {
         // if no rule specified, revert to fixed constant increase
         if (scaling_factor_rule_name.empty())
@@ -109,9 +102,8 @@ namespace {
     // create effectsgroup that increases the value of the part meter
     // of type \a meter_type for part name \a part_name by the fixed
     // amount \a fixed_increase
-    std::shared_ptr<Effect::EffectsGroup>
-    IncreaseMeter(MeterType meter_type, const std::string& part_name,
-                  float fixed_increase, bool allow_stacking = true)
+    auto IncreaseMeter(MeterType meter_type, const std::string& part_name,
+                       float fixed_increase, bool allow_stacking = true)
     {
         auto increase_vr = std::make_unique<ValueRef::Constant<double>>(fixed_increase);
         return IncreaseMeter(meter_type, part_name, std::move(increase_vr), allow_stacking);
@@ -121,9 +113,9 @@ namespace {
     // of type \a meter_type for part name \a part_name by the fixed
     // amount \a base_increase and the value of the game
     // rule of type double with the name \a scaling_factor_rule_name
-    std::shared_ptr<Effect::EffectsGroup>
-    IncreaseMeterRuleScaled(MeterType meter_type, const std::string& part_name,
-                  float base_increase, const std::string& scaling_factor_rule_name, bool allow_stacking = true)
+    auto IncreaseMeterRuleScaled(MeterType meter_type, const std::string& part_name,
+                                 float base_increase, const std::string& scaling_factor_rule_name,
+                                 bool allow_stacking = true)
     {
         // if no rule specified, revert to fixed constant increase
         if (scaling_factor_rule_name.empty())
@@ -139,6 +131,83 @@ namespace {
         );
 
         return IncreaseMeter(meter_type, part_name, std::move(increase_vr), allow_stacking);
+    }
+
+    auto InitEffects(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
+                     const std::string& name, bool add_standard_capacity_effect,
+                     float capacity, float secondary_stat, ShipPartClass part_class)
+    {
+        std::vector<Effect::EffectsGroup> retval;
+        retval.reserve(effects.size() + 2);
+
+        if ((capacity != 0 || secondary_stat != 0) && add_standard_capacity_effect) {
+            switch (part_class) {
+            case ShipPartClass::PC_COLONY:
+            case ShipPartClass::PC_TROOPS:
+                retval.push_back(IncreaseMeter(MeterType::METER_CAPACITY,                     name, capacity, false));
+                break;
+            case ShipPartClass::PC_FIGHTER_HANGAR: {   // capacity indicates how many fighters are stored in this type of part (combined for all copies of the part)
+                retval.push_back(IncreaseMeter(MeterType::METER_MAX_CAPACITY,                 name, capacity, true));         // stacking capacities allowed for this part, so each part contributes to the total capacity
+                retval.push_back(IncreaseMeterRuleScaled(MeterType::METER_MAX_SECONDARY_STAT, name, secondary_stat, "RULE_FIGHTER_DAMAGE_FACTOR",     false));  // stacking damage not allowed, as damage per shot should be the same regardless of number of shots
+                break;
+            }
+            case ShipPartClass::PC_FIGHTER_BAY: {      // capacity indicates how many fighters each instance of the part can launch per combat bout...
+                retval.push_back(IncreaseMeter(MeterType::METER_MAX_CAPACITY,                 name, capacity, false));
+                retval.push_back(IncreaseMeter(MeterType::METER_MAX_SECONDARY_STAT,           name, secondary_stat, false));
+                break;
+            }
+            case ShipPartClass::PC_DIRECT_WEAPON: {    // capacity indicates weapon damage per shot
+                retval.push_back(IncreaseMeterRuleScaled(MeterType::METER_MAX_CAPACITY,       name, capacity,       "RULE_SHIP_WEAPON_DAMAGE_FACTOR", false));
+                retval.push_back(IncreaseMeter(MeterType::METER_MAX_SECONDARY_STAT,           name, secondary_stat, false));
+                break;
+            }
+            case ShipPartClass::PC_SHIELD: {
+                retval.push_back(IncreaseMeterRuleScaled(MeterType::METER_MAX_SHIELD,    capacity,     "RULE_SHIP_WEAPON_DAMAGE_FACTOR"));
+                break;
+            }
+            case ShipPartClass::PC_DETECTION: {
+                retval.push_back(IncreaseMeter(MeterType::METER_DETECTION,               capacity));
+                break;
+            }
+            case ShipPartClass::PC_STEALTH: {
+                retval.push_back(IncreaseMeter(MeterType::METER_STEALTH,                 capacity));
+                break;
+            }
+            case ShipPartClass::PC_FUEL: {
+                retval.push_back(IncreaseMeter(MeterType::METER_MAX_FUEL,                capacity));
+                break;
+            }
+            case ShipPartClass::PC_ARMOUR: {
+                retval.push_back(IncreaseMeterRuleScaled(MeterType::METER_MAX_STRUCTURE, capacity,     "RULE_SHIP_STRUCTURE_FACTOR"));
+                break;
+            }
+            case ShipPartClass::PC_SPEED: {
+                retval.push_back(IncreaseMeterRuleScaled(MeterType::METER_SPEED,         capacity,     "RULE_SHIP_SPEED_FACTOR"));
+                break;
+            }
+            case ShipPartClass::PC_RESEARCH: {
+                retval.push_back(IncreaseMeter(MeterType::METER_TARGET_RESEARCH,         capacity));
+                break;
+            }
+            case ShipPartClass::PC_INDUSTRY: {
+                retval.push_back(IncreaseMeter(MeterType::METER_TARGET_INDUSTRY,         capacity));
+                break;
+            }
+            case ShipPartClass::PC_INFLUENCE: {
+                retval.push_back(IncreaseMeter(MeterType::METER_TARGET_INFLUENCE,        capacity));
+                break;
+            }
+            default:
+                break;
+            }
+        }
+
+        for (auto& effect : effects) {
+            effect->SetTopLevelContent(name);
+            retval.push_back(std::move(*effect));
+        }
+
+        return retval;
     }
 }
 
@@ -215,6 +284,9 @@ ShipPart::ShipPart(ShipPartClass part_class, double capacity, double stat2,
     m_production_special_consumption(std::move(common_params.production_special_consumption)),
     m_location(std::move(common_params.location)),
     m_exclusions(std::move(exclusions)),
+    m_effects(InitEffects(std::move(common_params.effects), name,
+                          add_standard_capacity_effect,
+                          capacity, stat2, part_class)),
     m_icon(std::move(icon)),
     m_combat_targets(std::move(combat_targets)),
     m_total_fighter_damage(std::move(total_fighter_damage)),
@@ -222,82 +294,6 @@ ShipPart::ShipPart(ShipPartClass part_class, double capacity, double stat2,
     m_add_standard_capacity_effect(add_standard_capacity_effect),
     m_producible(common_params.producible)
 {
-    Init(std::move(common_params.effects));
-
-    TraceLogger() << "ShipPart::ShipPart: name: " << m_name
-                  << " description: " << m_description
-                  << " class: " << m_class
-                  << " capacity: " << m_capacity
-                  << " secondary stat: " << m_secondary_stat
-                  //<< " prod cost: " << m_production_cost
-                  //<< " prod time: " << m_production_time
-                  << " producible: " << m_producible
-                  //<< " mountable slot types: " << m_mountable_slot_types
-                  //<< " tags: " << m_tags
-                  //<< " prod meter consump: " << m_production_meter_consumption
-                  //<< " prod special consump: " << m_production_special_consumption
-                  //<< " location: " << m_location
-                  //<< " exclusions: " << m_exclusions
-                  //<< " effects: " << m_effects
-                  << " icon: " << m_icon
-                  << " add standard cap effect: " << m_add_standard_capacity_effect;
-}
-
-void ShipPart::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects) {
-    m_effects.reserve(effects.size() + 2);
-    if ((m_capacity != 0 || m_secondary_stat != 0) && m_add_standard_capacity_effect) {
-        switch (m_class) {
-        case ShipPartClass::PC_COLONY:
-        case ShipPartClass::PC_TROOPS:
-            m_effects.push_back(IncreaseMeter(MeterType::METER_CAPACITY,                     m_name, m_capacity, false));
-            break;
-        case ShipPartClass::PC_FIGHTER_HANGAR: {   // capacity indicates how many fighters are stored in this type of part (combined for all copies of the part)
-            m_effects.push_back(IncreaseMeter(MeterType::METER_MAX_CAPACITY,                 m_name, m_capacity, true));         // stacking capacities allowed for this part, so each part contributes to the total capacity
-            m_effects.push_back(IncreaseMeterRuleScaled(MeterType::METER_MAX_SECONDARY_STAT, m_name, m_secondary_stat, "RULE_FIGHTER_DAMAGE_FACTOR",     false));  // stacking damage not allowed, as damage per shot should be the same regardless of number of shots
-            break;
-        }
-        case ShipPartClass::PC_FIGHTER_BAY: {      // capacity indicates how many fighters each instance of the part can launch per combat bout...
-            m_effects.push_back(IncreaseMeter(MeterType::METER_MAX_CAPACITY,                 m_name, m_capacity, false));
-            m_effects.push_back(IncreaseMeter(MeterType::METER_MAX_SECONDARY_STAT,           m_name, m_secondary_stat, false));
-            break;
-        }
-        case ShipPartClass::PC_DIRECT_WEAPON: {    // capacity indicates weapon damage per shot
-            m_effects.push_back(IncreaseMeterRuleScaled(MeterType::METER_MAX_CAPACITY,       m_name, m_capacity,       "RULE_SHIP_WEAPON_DAMAGE_FACTOR", false));
-            m_effects.push_back(IncreaseMeter(MeterType::METER_MAX_SECONDARY_STAT,           m_name, m_secondary_stat, false));
-            break;
-        }
-        case ShipPartClass::PC_SHIELD:
-            m_effects.push_back(IncreaseMeterRuleScaled(MeterType::METER_MAX_SHIELD,    m_capacity,     "RULE_SHIP_WEAPON_DAMAGE_FACTOR"));
-            break;
-        case ShipPartClass::PC_DETECTION:
-            m_effects.push_back(IncreaseMeter(MeterType::METER_DETECTION,               m_capacity));
-            break;
-        case ShipPartClass::PC_STEALTH:
-            m_effects.push_back(IncreaseMeter(MeterType::METER_STEALTH,                 m_capacity));
-            break;
-        case ShipPartClass::PC_FUEL:
-            m_effects.push_back(IncreaseMeter(MeterType::METER_MAX_FUEL,                m_capacity));
-            break;
-        case ShipPartClass::PC_ARMOUR:
-            m_effects.push_back(IncreaseMeterRuleScaled(MeterType::METER_MAX_STRUCTURE, m_capacity,     "RULE_SHIP_STRUCTURE_FACTOR"));
-            break;
-        case ShipPartClass::PC_SPEED:
-            m_effects.push_back(IncreaseMeterRuleScaled(MeterType::METER_SPEED,         m_capacity,     "RULE_SHIP_SPEED_FACTOR"));
-            break;
-        case ShipPartClass::PC_RESEARCH:
-            m_effects.push_back(IncreaseMeter(MeterType::METER_TARGET_RESEARCH,         m_capacity));
-            break;
-        case ShipPartClass::PC_INDUSTRY:
-            m_effects.push_back(IncreaseMeter(MeterType::METER_TARGET_INDUSTRY,         m_capacity));
-            break;
-        case ShipPartClass::PC_INFLUENCE:
-            m_effects.push_back(IncreaseMeter(MeterType::METER_TARGET_INFLUENCE,        m_capacity));
-            break;
-        default:
-            break;
-        }
-    }
-
     if (m_production_cost)
         m_production_cost->SetTopLevelContent(m_name);
     if (m_production_time)
@@ -306,10 +302,6 @@ void ShipPart::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects
         m_location->SetTopLevelContent(m_name);
     if (m_combat_targets)
         m_combat_targets->SetTopLevelContent(m_name);
-    for (auto&& effect : effects) {
-        effect->SetTopLevelContent(m_name);
-        m_effects.push_back(std::move(effect));
-    }
 }
 
 ShipPart::~ShipPart() = default;
@@ -338,23 +330,8 @@ bool ShipPart::operator==(const ShipPart& rhs) const {
     CHECK_COND_VREF_MEMBER(m_total_ship_damage)
     CHECK_COND_VREF_MEMBER(m_combat_targets)
 
-    if (m_effects.size() != rhs.m_effects.size())
+    if (m_effects != rhs.m_effects)
         return false;
-    try {
-        for (std::size_t idx = 0; idx < m_effects.size(); ++idx) {
-            const auto& my_op = m_effects.at(idx);
-            const auto& rhs_op = rhs.m_effects.at(idx);
-
-            if (my_op == rhs_op) // could both be nullptr
-                continue;
-            if (!my_op || !rhs_op)
-                return false;
-            if (*my_op != *rhs_op)
-                return false;
-        }
-    } catch (...) {
-        return false;
-    }
 
     if (m_production_meter_consumption.size() != rhs.m_production_meter_consumption.size())
         return false;

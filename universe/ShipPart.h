@@ -54,43 +54,30 @@ public:
     bool operator!=(const ShipPart& rhs) const
     { return !(*this == rhs); }
 
-    //! Returns name of part
-    [[nodiscard]] auto Name() const noexcept -> const std::string& { return m_name; }
-
-    //! Returns description string, generally a UserString key.
-    [[nodiscard]] auto Description() const noexcept -> const std::string& { return m_description; }
-
-    //! Returns that class of part that this is.
-    [[nodiscard]] auto Class() const noexcept -> ShipPartClass { return m_class; }
-
+    [[nodiscard]] auto& Name() const noexcept { return m_name; }
+    [[nodiscard]] auto& Description() const noexcept { return m_description; }
+    [[nodiscard]] auto Class() const noexcept { return m_class; }
     [[nodiscard]] auto Capacity() const -> float;
 
-    //! Returns a translated description of the part capacity, with numeric
-    //! value
-    [[nodiscard]] auto CapacityDescription() const -> std::string;
+    //! translated description of the part capacity, with numeric value
+    [[nodiscard]] std::string CapacityDescription() const;
+    [[nodiscard]] float SecondaryStat() const;
 
-    [[nodiscard]] auto SecondaryStat() const -> float;
+    //! true if this part can be placed in a slot of the indicated type
+    [[nodiscard]] bool CanMountInSlotType(ShipSlotType slot_type) const;
 
-    //! Returns true if this part can be placed in a slot of the indicated type
-    [[nodiscard]] auto CanMountInSlotType(ShipSlotType slot_type) const -> bool;
-
-    //! Returns the value ref estimating maximum damage against fighters in a combat.
+    //! value ref estimating maximum damage against fighters in a combat.
     //! may be nullptr if no value ref was specified
-    [[nodiscard]] auto TotalFighterDamage() const noexcept -> const ValueRef::ValueRef<double>*
-    { return m_total_fighter_damage.get(); }
+    [[nodiscard]] const auto* TotalFighterDamage() const noexcept { return m_total_fighter_damage.get(); }
 
-    //! Returns the value ref estimating maximum damage against ships in a combat.
+    //! value ref estimating maximum damage against ships in a combat.
     //! may be nullptr if no value ref was specified
-    [[nodiscard]] auto TotalShipDamage() const noexcept -> const ValueRef::ValueRef<double>*
-    { return m_total_ship_damage.get(); }
+    [[nodiscard]] const auto* TotalShipDamage() const noexcept { return m_total_ship_damage.get(); }
 
-    //! Returns the condition for possible targets. may be nullptr if no
-    //! condition was specified.
-    [[nodiscard]] auto CombatTargets() const noexcept -> const Condition::Condition*
-    { return m_combat_targets.get(); }
+    //! condition for possible targets. may be nullptr if no condition was specified.
+    [[nodiscard]] const auto* CombatTargets() const noexcept { return m_combat_targets.get(); }
 
-    [[nodiscard]] auto MountableSlotTypes() const noexcept -> const std::vector<ShipSlotType>&
-    { return m_mountable_slot_types; }
+    [[nodiscard]] auto& MountableSlotTypes() const noexcept { return m_mountable_slot_types; }
 
     //! Returns true if the production cost and time are invariant
     //! (does not depend on) the location
@@ -104,15 +91,11 @@ public:
     [[nodiscard]] auto ProductionTime(int empire_id, int location_id, const ScriptingContext& context,
                                       int in_design_id = INVALID_DESIGN_ID) const -> int;
 
-    //! Returns whether this part type is producible by players and appears on
-    //! the design screen
-    [[nodiscard]] auto Producible() const noexcept -> bool { return m_producible; }
+    //! Returns whether this part type is producible by players and appears on the design screen
+    [[nodiscard]] auto Producible() const noexcept { return m_producible; }
 
-    [[nodiscard]] auto ProductionMeterConsumption() const noexcept -> const ConsumptionMap<MeterType>&
-    { return m_production_meter_consumption; }
-
-    [[nodiscard]] auto ProductionSpecialConsumption() const noexcept -> const ConsumptionMap<std::string>&
-    { return m_production_special_consumption; }
+    [[nodiscard]] auto& ProductionMeterConsumption() const noexcept { return m_production_meter_consumption; }
+    [[nodiscard]] auto& ProductionSpecialConsumption() const noexcept { return m_production_special_consumption; }
 
     [[nodiscard]] const auto& Tags() const noexcept { return m_tags; }
     [[nodiscard]] const auto& PediaTags() const noexcept { return m_pedia_tags; }
@@ -122,20 +105,11 @@ public:
 
     //! Returns the condition that determines the locations where ShipDesign
     //! containing part can be produced
-    [[nodiscard]] auto Location() const noexcept -> const Condition::Condition*
-    { return m_location.get(); }
+    [[nodiscard]] auto* Location() const noexcept { return m_location.get(); }
 
-    //! Returns the names of other content that cannot be used in the same
-    //! ship design as this part
-    [[nodiscard]] auto Exclusions() const noexcept -> const std::set<std::string>&
-    { return m_exclusions; }
-
-    //! Returns the EffectsGroups that encapsulate the effects this part has.
-    [[nodiscard]] auto Effects() const noexcept -> const std::vector<std::shared_ptr<Effect::EffectsGroup>>&
-    { return m_effects; }
-
-    //! Returns icon graphic that represents part in UI
-    [[nodiscard]] auto Icon() const noexcept -> const std::string& { return m_icon; }
+    [[nodiscard]] auto& Exclusions() const noexcept { return m_exclusions; }
+    [[nodiscard]] auto& Effects() const noexcept { return m_effects; }
+    [[nodiscard]] auto& Icon() const noexcept { return m_icon; }
 
     //! Returns a number, calculated from the contained data, which should be
     //! different for different contained data, and must be the same for
@@ -147,8 +121,6 @@ public:
     //@}
 
 private:
-    void Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects);
-
     std::string     m_name;
     std::string     m_description;
     ShipPartClass   m_class = ShipPartClass::INVALID_SHIP_PART_CLASS;
@@ -156,23 +128,23 @@ private:
     //! Damage for a hangar bay, shots per turn for a weapon, etc.
     float           m_secondary_stat = 0.0f;
 
-    std::unique_ptr<ValueRef::ValueRef<double>>         m_production_cost;
-    std::unique_ptr<ValueRef::ValueRef<int>>            m_production_time;
-    std::vector<ShipSlotType>                           m_mountable_slot_types;
-    const std::string                                   m_tags_concatenated;
-    const std::vector<std::string_view>                 m_tags;
-    const std::vector<std::string_view>                 m_pedia_tags;
-    ConsumptionMap<MeterType>                           m_production_meter_consumption;
-    ConsumptionMap<std::string>                         m_production_special_consumption;
-    std::unique_ptr<Condition::Condition>               m_location;
-    std::set<std::string>                               m_exclusions;
-    std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
-    std::string                                         m_icon;
-    std::unique_ptr<Condition::Condition>               m_combat_targets;
-    std::unique_ptr<ValueRef::ValueRef<double>>         m_total_fighter_damage;
-    std::unique_ptr<ValueRef::ValueRef<double>>         m_total_ship_damage;
-    bool                                                m_add_standard_capacity_effect = false;
-    bool                                                m_producible = false;
+    std::unique_ptr<ValueRef::ValueRef<double>> m_production_cost;
+    std::unique_ptr<ValueRef::ValueRef<int>>    m_production_time;
+    std::vector<ShipSlotType>                   m_mountable_slot_types;
+    const std::string                           m_tags_concatenated;
+    const std::vector<std::string_view>         m_tags;
+    const std::vector<std::string_view>         m_pedia_tags;
+    ConsumptionMap<MeterType>                   m_production_meter_consumption;
+    ConsumptionMap<std::string>                 m_production_special_consumption;
+    std::unique_ptr<Condition::Condition>       m_location;
+    std::set<std::string>                       m_exclusions;
+    std::vector<Effect::EffectsGroup>           m_effects;
+    std::string                                 m_icon;
+    std::unique_ptr<Condition::Condition>       m_combat_targets;
+    std::unique_ptr<ValueRef::ValueRef<double>> m_total_fighter_damage;
+    std::unique_ptr<ValueRef::ValueRef<double>> m_total_ship_damage;
+    bool                                        m_add_standard_capacity_effect = false;
+    bool                                        m_producible = false;
 };
 
 
