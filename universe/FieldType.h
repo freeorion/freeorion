@@ -57,13 +57,13 @@ public:
     auto GetCheckSum() const -> uint32_t;
 
 private:
-    std::string                                         m_name;
-    std::string                                         m_description;
-    float                                               m_stealth;
-    const std::string                                   m_tags_concatenated;
-    const std::vector<std::string_view>                 m_tags;
-    std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
-    std::string                                         m_graphic;
+    std::string                         m_name;
+    std::string                         m_description;
+    float                               m_stealth;
+    const std::string                   m_tags_concatenated;
+    const std::vector<std::string_view> m_tags;
+    std::vector<Effect::EffectsGroup>   m_effects;
+    std::string                         m_graphic;
 };
 
 
