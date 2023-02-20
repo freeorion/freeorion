@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <boost/algorithm/string/case_conv.hpp>
+#include <boost/container/flat_map.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/optional/optional.hpp>
 #include "ConstantsFwd.h"
@@ -190,7 +191,10 @@ private:
 
     std::vector<FocusType>                  m_foci;
     std::string                             m_default_focus;
-    std::map<PlanetType, PlanetEnvironment> m_planet_environments;
+
+    using pt_pe_map = boost::container::flat_map<PlanetType, PlanetEnvironment>;
+    pt_pe_map                               m_planet_environments;
+
     std::vector<Effect::EffectsGroup>       m_effects;
     std::unique_ptr<Condition::Condition>   m_location;
     std::unique_ptr<Condition::Condition>   m_combat_targets;

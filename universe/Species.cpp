@@ -158,7 +158,7 @@ Species::Species(std::string&& name, std::string&& desc,
     m_gameplay_description(std::move(gameplay_desc)),
     m_foci(std::move(foci)),
     m_default_focus(std::move(default_focus)),
-    m_planet_environments(std::move(planet_environments)),
+    m_planet_environments(planet_environments.begin(), planet_environments.end()),
     m_effects([](auto&& effects, const auto& name) {
         std::vector<Effect::EffectsGroup> retval;
         retval.reserve(effects.size());
@@ -452,14 +452,14 @@ PlanetType Species::TheNextBestPlanetTypeApply(PlanetType initial_planet_type,
     // excluding gas giants and asteroids
     PlanetEnvironment best_environment = PlanetEnvironment::PE_UNINHABITABLE;
     //std::set<PlanetType> best_types;
-    for (const auto& entry : m_planet_environments) {
-        if (entry.first < PlanetType::PT_ASTEROIDS) {
-            if (entry.second == best_environment) {
-                //best_types.insert(entry.first);
-            } else if (entry.second > best_environment) {
-                best_environment = entry.second;
+    for (const auto& [pt, pe] : m_planet_environments) {
+        if (pt < PlanetType::PT_ASTEROIDS) {
+            if (pe == best_environment) {
+                //best_types.insert(pt);
+            } else if (pe > best_environment) {
+                best_environment = pe;
                 //best_types.clear();
-                //best_types.insert(entry.first);
+                //best_types.insert(pt);
             }
         }
     }
