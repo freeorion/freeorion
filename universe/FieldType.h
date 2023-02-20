@@ -28,28 +28,25 @@ public:
     bool operator!=(const FieldType& rhs) const { return !(*this == rhs); }
 
     //! Returns the unique name for this type of field
-    auto Name() const -> const std::string& { return m_name; }
+    const auto& Name() const { return m_name; }
 
     //! Returns a text description of this type of building
-    auto Description() const -> const std::string& { return m_description; }
+    const auto& Description() const noexcept { return m_description; }
 
     //! Returns a data file format representation of this object
     auto Dump(uint8_t ntabs = 0) const -> std::string;
 
     //! Returns stealth of field type
-    auto Stealth() const -> float { return m_stealth; }
+    auto Stealth() const noexcept { return m_stealth; }
 
-    const auto& Tags() const { return m_tags; }
+    const auto& Tags() const noexcept { return m_tags; }
 
-    auto HasTag(std::string_view tag) const -> bool
+    auto HasTag(std::string_view tag) const
     { return std::any_of(m_tags.begin(), m_tags.end(), [tag](const auto& t) { return t == tag; }); }
 
-    //! Returns the EffectsGroups that encapsulate the effects of this
-    //! FieldType.
-    auto Effects() const -> const std::vector<std::shared_ptr<Effect::EffectsGroup>>& { return m_effects; }
+    const auto& Effects() const noexcept { return m_effects; }
 
-    //! Returns the name of the grapic file for this field type
-    auto Graphic() const -> const std::string& { return m_graphic; }
+    const auto& Graphic() const noexcept { return m_graphic; }
 
     //! Returns a number, calculated from the contained data, which should be
     //! different for different contained data, and must be the same for
