@@ -361,24 +361,6 @@ uint32_t EffectsGroup::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Dump function                                         //
 ///////////////////////////////////////////////////////////
-std::string Dump(const std::vector<std::shared_ptr<EffectsGroup>>& effects_groups) {
-    std::stringstream retval;
-
-    for (auto& effects_group : effects_groups)
-        retval << "\n" << effects_group->Dump();
-
-    return retval.str();
-}
-
-std::string Dump(const std::vector<std::unique_ptr<EffectsGroup>>& effects_groups) {
-    std::stringstream retval;
-
-    for (auto& effects_group : effects_groups)
-        retval << "\n" << effects_group->Dump();
-
-    return retval.str();
-}
-
 std::string Dump(const std::vector<EffectsGroup>& effects_groups) {
     std::stringstream retval;
 
