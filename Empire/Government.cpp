@@ -44,8 +44,8 @@ Policy::Policy(std::string name, std::string description,
     m_short_description(std::move(short_description)),
     m_category(std::move(category)),
     m_adoption_cost(std::move(adoption_cost)),
-    m_prerequisites(std::move(prerequisites)),
-    m_exclusions(std::move(exclusions)),
+    m_prerequisites(prerequisites.begin(), prerequisites.end()),
+    m_exclusions(exclusions.begin(), exclusions.end()),
     m_effects([](auto&& effects, const auto& name) {
         std::vector<Effect::EffectsGroup> retval;
         retval.reserve(effects.size());

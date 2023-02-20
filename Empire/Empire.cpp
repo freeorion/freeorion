@@ -434,11 +434,14 @@ bool Empire::PolicyPrereqsAndExclusionsOK(std::string_view name, int current_tur
     const Policy* policy_to_adopt = GetPolicy(name);
     if (!policy_to_adopt)
         return false;
+    const auto& to_adopt_exclusions = policy_to_adopt->Exclusions();
 
     // is there an exclusion conflict?
     for (auto& [already_adopted_policy_name, ignored] : m_adopted_policies) {
         (void)ignored; // quiet warning
-        if (policy_to_adopt->Exclusions().count(already_adopted_policy_name)) {
+        if (std::any_of(to_adopt_exclusions.begin(), to_adopt_exclusions.end(),
+                        [a{already_adopted_policy_name}](auto& x) { return x == a; }))
+        {
             // policy to be adopted has an exclusion with an already-adopted policy
             return false;
         }
@@ -448,9 +451,11 @@ bool Empire::PolicyPrereqsAndExclusionsOK(std::string_view name, int current_tur
             ErrorLogger() << "Couldn't get already adopted policy: " << already_adopted_policy_name;
             continue;
         }
-        const auto& excl = already_adopted_policy->Exclusions();
-        if (std::any_of(excl.begin(), excl.end(), [name](const auto& x) { return name == x; })) {
-            // already adopted policy has an exclusion with the policy to be adopted
+        const auto& adopted_exclusions = already_adopted_policy->Exclusions();
+        if (std::any_of(adopted_exclusions.begin(), adopted_exclusions.end(),
+                        [name](const auto& x) { return name == x; }))
+        {
+            // already-adopted policy has an exclusion with the policy to be adopted
             return false;
         }
     }

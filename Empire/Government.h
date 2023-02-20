@@ -59,8 +59,8 @@ private:
     std::string                                 m_short_description;
     std::string                                 m_category;
     std::unique_ptr<ValueRef::ValueRef<double>> m_adoption_cost;
-    std::set<std::string>                       m_prerequisites;
-    std::set<std::string>                       m_exclusions;
+    std::vector<std::string>                    m_prerequisites;
+    std::vector<std::string>                    m_exclusions;
     std::vector<Effect::EffectsGroup>           m_effects;
     std::vector<UnlockableItem>                 m_unlocked_items;
     std::string                                 m_graphic;
