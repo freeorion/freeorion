@@ -149,28 +149,28 @@ public:
     [[nodiscard]] auto GetCheckSum() const -> uint32_t;
 
 private:
-    std::string m_name;
-    std::string m_description;
-    float       m_speed = 1.0f;
-    float       m_fuel = 0.0f;
-    float       m_stealth = 0.0f;
-    float       m_structure = 0.0f;
-    bool        m_default_speed_effects = false;
-    bool        m_default_structure_effects = false;
+    const std::string m_name;
+    const std::string m_description;
+    const float       m_speed = 1.0f;
+    const float       m_fuel = 0.0f;
+    const float       m_stealth = 0.0f;
+    const float       m_structure = 0.0f;
+    const bool        m_default_speed_effects = false;
+    const bool        m_default_structure_effects = false;
 
-    bool                                        m_producible = false;
-    std::unique_ptr<ValueRef::ValueRef<double>> m_production_cost;
-    std::unique_ptr<ValueRef::ValueRef<int>>    m_production_time;
-    std::vector<Slot>                           m_slots;
-    const std::string                           m_tags_concatenated;
-    const std::vector<std::string_view>         m_tags;
-    ConsumptionMap<MeterType>                   m_production_meter_consumption;
-    ConsumptionMap<std::string>                 m_production_special_consumption;
-    std::unique_ptr<Condition::Condition>       m_location;
-    std::set<std::string>                       m_exclusions;
-    std::vector<Effect::EffectsGroup>           m_effects;
-    std::string                                 m_graphic;
-    std::string                                 m_icon;
+    const bool                                              m_producible = false;
+    const std::unique_ptr<const ValueRef::ValueRef<double>> m_production_cost;
+    const std::unique_ptr<const ValueRef::ValueRef<int>>    m_production_time;
+    const std::vector<Slot>                                 m_slots;
+    const std::string                                       m_tags_concatenated;
+    const std::vector<std::string_view>                     m_tags;
+    const ConsumptionMap<MeterType>                         m_production_meter_consumption;
+    const ConsumptionMap<std::string>                       m_production_special_consumption;
+    const std::unique_ptr<const Condition::Condition>       m_location;
+    const std::set<std::string>                             m_exclusions;
+    const std::vector<Effect::EffectsGroup>                 m_effects;
+    const std::string                                       m_graphic;
+    const std::string                                       m_icon;
 };
 
 

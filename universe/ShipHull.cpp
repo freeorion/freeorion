@@ -129,8 +129,16 @@ ShipHull::ShipHull(float fuel, float speed, float stealth, float structure,
     m_default_speed_effects(default_speed_effects && speed != 0),
     m_default_structure_effects(default_structure_effects && structure != 0),
     m_producible(common_params.producible),
-    m_production_cost(std::move(common_params.production_cost)),
-    m_production_time(std::move(common_params.production_time)),
+    m_production_cost([](auto&& pc, const std::string& name) {
+        if (pc)
+            pc->SetTopLevelContent(name);
+        return std::move(pc);
+    }(std::move(common_params.production_cost), name)),
+    m_production_time([](auto&& pt, const std::string& name) {
+        if (pt)
+            pt->SetTopLevelContent(name);
+        return std::move(pt);
+    }(std::move(common_params.production_time), name)),
     m_slots(std::move(slots)),
     m_tags_concatenated([&common_params]() {
         // ensure tags are all upper-case
@@ -167,7 +175,11 @@ ShipHull::ShipHull(float fuel, float speed, float stealth, float structure,
     }()),
     m_production_meter_consumption(std::move(common_params.production_meter_consumption)),
     m_production_special_consumption(std::move(common_params.production_special_consumption)),
-    m_location(std::move(common_params.location)),
+    m_location([](auto&& l, const std::string& name) {
+        if (l)
+            l->SetTopLevelContent(name);
+        return std::move(l);
+    }(std::move(common_params.location), name)),
     m_exclusions(std::move(exclusions)),
     m_effects(InitEffects(std::move(common_params.effects), name,
                           default_fuel_effects, default_speed_effects,
@@ -175,14 +187,7 @@ ShipHull::ShipHull(float fuel, float speed, float stealth, float structure,
                           fuel, stealth, structure, speed)),
     m_graphic(std::move(graphic)),
     m_icon(std::move(icon))
-{
-    if (m_production_cost)
-        m_production_cost->SetTopLevelContent(name);
-    if (m_production_time)
-        m_production_time->SetTopLevelContent(name);
-    if (m_location)
-        m_location->SetTopLevelContent(name);
-}
+{}
 
 ShipHull::~ShipHull() = default;
 
