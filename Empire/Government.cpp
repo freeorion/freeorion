@@ -43,7 +43,11 @@ Policy::Policy(std::string name, std::string description,
     m_description(std::move(description)),
     m_short_description(std::move(short_description)),
     m_category(std::move(category)),
-    m_adoption_cost(std::move(adoption_cost)),
+    m_adoption_cost([](auto&& c, const std::string& name) {
+        if (c)
+            c->SetTopLevelContent(name);
+        return std::move(c);
+    }(std::move(adoption_cost), name)),
     m_prerequisites(prerequisites.begin(), prerequisites.end()),
     m_exclusions(exclusions.begin(), exclusions.end()),
     m_effects([](auto&& effects, const auto& name) {
@@ -57,10 +61,7 @@ Policy::Policy(std::string name, std::string description,
     }(effects, name)),
     m_unlocked_items(std::move(unlocked_items)),
     m_graphic(std::move(graphic))
-{
-    if (m_adoption_cost)
-        m_adoption_cost->SetTopLevelContent(m_name);
-}
+{}
 
 std::string Policy::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs) + "Policy\n";
