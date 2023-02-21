@@ -73,7 +73,7 @@ parts:
       snapcraftctl pull
       branchn="$(git rev-parse --abbrev-ref HEAD)"
       daterev="$(git log -n1 --date=short --format='%cd.%h' $branchn)"
-      longtagn="$(git describe --tags)"
+      longtagn="$(git describe --tags || echo none)"
       case $longtagn in
         v*) version=${longtagn} ;;
         *) case $daterev in
