@@ -17,10 +17,9 @@ std::shared_ptr<GG::BrowseInfoWnd> TechRowBrowseWnd(const std::string& tech_name
   * the tech layout, the tech navigator, and the tech detail window. */
 class TechTreeWnd : public GG::Wnd {
 public:
-    typedef boost::signals2::signal<void (const std::string&)>                   TechSignalType;
-    typedef boost::signals2::signal<void (const std::string&,
-                                          GG::Flags<GG::ModKey>)>         TechClickSignalType;
-    typedef boost::signals2::signal<void (const std::vector<std::string>&, int)> QueueAddTechsSignalType;
+    typedef boost::signals2::signal<void (const std::string&)>                        TechSignalType;
+    typedef boost::signals2::signal<void (const std::string&, GG::Flags<GG::ModKey>)> TechClickSignalType;
+    typedef boost::signals2::signal<void (const std::vector<std::string>&, int)>      QueueAddTechsSignalType;
 
     /** TechTreeWnd contructor is usually called before client has
         access to techs.  Attempting to show the tech tree takes a long
