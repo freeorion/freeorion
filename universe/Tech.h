@@ -208,11 +208,7 @@ public:
         int empire_id, const ScriptingContext& context);
 
     [[nodiscard]] std::size_t              size() const;
-
-    /** iterator to the first tech */
     [[nodiscard]] iterator                 begin() const;
-
-    /** iterator to the last + 1th tech */
     [[nodiscard]] iterator                 end() const;
 
     /** iterator to the first tech in category \a name */
@@ -244,13 +240,7 @@ public:
     /** Sets types to the value of \p future. */
     FO_COMMON_API void SetTechs(Pending::Pending<TechParseTuple>&& future);
 
-
-    /** returns the instance of this singleton class; you should use the free function GetTechManager() instead */
-    [[nodiscard]] static TechManager& GetTechManager();
-
 private:
-    TechManager();
-
     /** Assigns any m_pending_types to m_techs. */
     void CheckPendingTechs() const;
 
@@ -274,8 +264,6 @@ private:
 
     mutable TechCategoryMap m_categories;
     mutable TechContainer   m_techs;
-
-    static TechManager*     s_instance;
 };
 
 /** returns the singleton tech manager */

@@ -378,9 +378,6 @@ uint32_t Tech::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // TechManager                                           //
 ///////////////////////////////////////////////////////////
-// static(s)
-TechManager* TechManager::s_instance = nullptr;
-
 const Tech* TechManager::GetTech(std::string_view name) const {
     CheckPendingTechs();
     iterator it = m_techs.get<NameIndex>().find(name, std::less<>());
@@ -456,8 +453,10 @@ const Tech* TechManager::CheapestNextTechTowards(const std::set<std::string>& kn
                                                  int empire_id, const ScriptingContext& context)
 { return Cheapest(NextTechsTowards(known_techs, desired_tech, empire_id), empire_id, context); }
 
-size_t TechManager::size() const
-{ return m_techs.size(); }
+size_t TechManager::size() const {
+    CheckPendingTechs();
+    return m_techs.size();
+}
 
 TechManager::iterator TechManager::begin() const {
     CheckPendingTechs();
@@ -477,14 +476,6 @@ TechManager::category_iterator TechManager::category_begin(const std::string& na
 TechManager::category_iterator TechManager::category_end(const std::string& name) const {
     CheckPendingTechs();
     return m_techs.get<CategoryIndex>().upper_bound(name);
-}
-
-TechManager::TechManager() {
-    if (s_instance)
-        throw std::runtime_error("Attempted to create more than one TechManager.");
-
-    // Only update the global pointer on sucessful construction.
-    s_instance = this;
 }
 
 void TechManager::SetTechs(Pending::Pending<TechManager::TechParseTuple>&& future)
@@ -701,11 +692,6 @@ void TechManager::AllChildren(const Tech* tech, std::map<std::string, std::strin
     }
 }
 
-TechManager& TechManager::GetTechManager() {
-    static TechManager manager;
-    return manager;
-}
-
 std::vector<std::string> TechManager::RecursivePrereqs(
     const std::string& tech_name, int empire_id, bool min_required,
     const ScriptingContext& context) const
@@ -771,11 +757,15 @@ uint32_t TechManager::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Free Functions                                        //
 ///////////////////////////////////////////////////////////
+namespace {
+    TechManager tech_manager;
+}
+
 TechManager& GetTechManager()
-{ return TechManager::GetTechManager(); }
+{ return tech_manager; }
 
 const Tech* GetTech(std::string_view name)
-{ return GetTechManager().GetTech(name); }
+{ return tech_manager.GetTech(name); }
 
 const TechCategory* GetTechCategory(std::string_view name)
-{ return GetTechManager().GetTechCategory(name); }
+{ return tech_manager.GetTechCategory(name); }

@@ -1371,7 +1371,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
     DebugLogger() << "Tech Tree Layout Preparing Tech Data";
 
     // create a node for every tech
-    TechManager& manager = GetTechManager();
+    const TechManager& manager = GetTechManager();
     for (const auto& tech : manager) {
         if (!tech) continue;
         const std::string& tech_name = tech->Name();
@@ -2334,7 +2334,7 @@ void TechTreeWnd::AddTechToResearchQueue(const std::string& tech_name, bool to_f
     { return; }
 
     // if tech can't yet be researched, add any prerequisites it requires (recursively) and then add it
-    TechManager& manager = GetTechManager();
+    const TechManager& manager = GetTechManager();
     int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     auto tech_vec = manager.RecursivePrereqs(tech_name, empire_id, true, context);
     tech_vec.push_back(tech_name);
