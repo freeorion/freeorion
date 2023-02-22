@@ -920,13 +920,13 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec,
     // Apply known discrepancies between expected and calculated meter maxes at start of turn.  This
     // accounts for the unknown effects on the meter, and brings the estimate in line with the actual
     // max at the start of the turn
-    auto& discrepancy_map = this->m_effect_discrepancy_map;
+    const auto& discrepancy_map = this->m_effect_discrepancy_map;
     if (!discrepancy_map.empty() && do_accounting) {
         for (auto& obj : object_ptrs) {
             // check if this object has any discrepancies
-            auto dis_it = discrepancy_map.find(obj->ID());
+            const auto dis_it = discrepancy_map.find(obj->ID());
             if (dis_it == discrepancy_map.end())
-                continue;   // no discrepancy, so skip to next object
+                continue; // no discrepancy, so skip to next object
 
             auto& account_map = accounting_map[obj->ID()]; // reserving space now should be redundant with previous manipulations
 
@@ -936,7 +936,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec,
                 if (!meter)
                     continue;
 
-                TraceLogger(effects) << "object " << obj->ID() << " has meter " << type
+                TraceLogger(effects) << "object " << obj->Name() << "(" << obj->ID() << ") has meter " << type
                                      << ": discrepancy: " << discrepancy << " and : " << meter->Dump().data();
 
                 meter->AddToCurrent(discrepancy);
