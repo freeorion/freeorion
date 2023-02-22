@@ -714,8 +714,6 @@ void Universe::InitMeterEstimatesAndDiscrepancies(ScriptingContext& context) {
         if (obj->Meters().empty())
             continue;
 
-        TraceLogger(effects) << "... discrepancies for " << obj->Name() << " (" << object_id << "):";
-
         account_map.reserve(obj->Meters().size());
 
         // discrepancies should be empty before this loop, so emplacing / assigning should be fine here (without overwriting existing data)
@@ -727,9 +725,10 @@ void Universe::InitMeterEstimatesAndDiscrepancies(ScriptingContext& context) {
         auto& start_map = starting_current_meter_values[object_id];
         start_map.reserve(obj->Meters().size());
 
-        TraceLogger(effects) << "For object " << object_id << " initial accounting map size: "
-                             << account_map.size() << "  discrep map size: " << discrep_map.size()
-                             << "  and starting meters map size: " << start_map.size();
+        if (!discrep_map.empty())
+            TraceLogger(effects) << "For " << obj->Name() << "(" << object_id << ") initial accounting map size: "
+                                 << account_map.size() << "  discrep map size: " << discrep_map.size()
+                                 << "  and starting meters map size: " << start_map.size();
 
         // every meter has a value at the start of the turn, and a value after
         // updating with known effects
