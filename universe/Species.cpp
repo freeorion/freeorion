@@ -541,11 +541,11 @@ SpeciesManager& SpeciesManager::operator=(SpeciesManager&& rhs) {
     // intentionally not moving m_pending_types, m_species, or m_census_order
     // as these are parsed once
 
-    m_species_homeworlds = std::move(m_species_homeworlds);
-    m_species_empire_opinions = std::move(m_species_empire_opinions);
-    m_species_species_opinions = std::move(m_species_species_opinions);
-    m_species_object_populations = std::move(m_species_object_populations);
-    m_species_species_ships_destroyed = std::move(m_species_species_ships_destroyed);
+    m_species_homeworlds = std::move(rhs.m_species_homeworlds);
+    m_species_empire_opinions = std::move(rhs.m_species_empire_opinions);
+    m_species_species_opinions = std::move(rhs.m_species_species_opinions);
+    m_species_object_populations = std::move(rhs.m_species_object_populations);
+    m_species_species_ships_destroyed = std::move(rhs.m_species_species_ships_destroyed);
 
     return *this;
 }
