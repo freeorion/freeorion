@@ -180,7 +180,7 @@ ShipHull::ShipHull(float fuel, float speed, float stealth, float structure,
             l->SetTopLevelContent(name);
         return std::move(l);
     }(std::move(common_params.location), name)),
-    m_exclusions(std::move(exclusions)),
+    m_exclusions(exclusions.begin(), exclusions.end()),
     m_effects(InitEffects(std::move(common_params.effects), name,
                           default_fuel_effects, default_speed_effects,
                           default_stealth_effects, default_structure_effects,

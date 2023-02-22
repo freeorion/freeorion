@@ -137,7 +137,7 @@ private:
     ConsumptionMap<MeterType>                   m_production_meter_consumption;
     ConsumptionMap<std::string>                 m_production_special_consumption;
     std::unique_ptr<Condition::Condition>       m_location;
-    std::set<std::string>                       m_exclusions;
+    std::vector<std::string>                    m_exclusions;
     std::vector<Effect::EffectsGroup>           m_effects;
     std::string                                 m_icon;
     std::unique_ptr<Condition::Condition>       m_combat_targets;

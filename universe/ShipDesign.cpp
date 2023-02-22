@@ -459,7 +459,7 @@ ShipDesign::MaybeInvalidDesign(std::string hull, std::vector<std::string> parts,
     for (auto& part_name : parts) {
         if (part_name.empty())
             continue;
-        if (hull_exclusions.count(part_name)) {
+        if (std::count(hull_exclusions.begin(), hull_exclusions.end(), part_name)) {
             is_valid = false;
             if (produce_log)
                 WarnLogger() << "Invalid ShipDesign part \"" << part_name << "\" is excluded by \""

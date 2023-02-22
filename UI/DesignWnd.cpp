@@ -4602,11 +4602,11 @@ void DesignWnd::MainPanel::DesignChanged() {
         std::pair<std::string, std::string> problematic_components;
 
         // check hull exclusions against all parts...
-        const std::set<std::string>& hull_exclusions = m_hull->Exclusions();
-        for (const std::string& part_name : Parts()) {
+        const auto& hull_exclusions = m_hull->Exclusions();
+        for (const std::string& part_name : Parts()) { // TODO: could habe mutable ref and move?
             if (part_name.empty())
                 continue;
-            if (hull_exclusions.count(part_name)) {
+            if (std::count(hull_exclusions.begin(), hull_exclusions.end(), part_name)) {
                 m_disabled_by_part_conflict = true;
                 problematic_components.first = m_hull->Name();
                 problematic_components.second = part_name;
