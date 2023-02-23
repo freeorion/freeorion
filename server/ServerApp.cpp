@@ -1581,8 +1581,8 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
 
     TraceLogger(effects) << "After First turn meter effect applying: " << m_universe.Objects().Dump();
     // Set active meters to targets or maxes after first meter effects application
+    m_universe.BackPropagateObjectMeters();
     SetActiveMetersToTargetMaxCurrentValues(m_universe.Objects());
-
     m_universe.UpdateMeterEstimates(context);
     m_universe.BackPropagateObjectMeters();
     SetActiveMetersToTargetMaxCurrentValues(m_universe.Objects());
