@@ -220,13 +220,21 @@ ShipPart::ShipPart(ShipPartClass part_class, double capacity, double stat2,
                    std::unique_ptr<Condition::Condition>&& combat_targets,
                    std::unique_ptr<ValueRef::ValueRef<double>>&& total_fighter_damage,
                    std::unique_ptr<ValueRef::ValueRef<double>>&& total_ship_damage) :
-    m_name(std::move(name)),
+    m_name(name), // no move so available below
     m_description(std::move(description)),
     m_class(part_class),
     m_capacity(capacity),
     m_secondary_stat(stat2),
-    m_production_cost(std::move(common_params.production_cost)),
-    m_production_time(std::move(common_params.production_time)),
+    m_production_cost([](auto&& pc, const std::string& name) {
+        if (pc)
+            pc->SetTopLevelContent(name);
+        return std::move(pc);
+    }(std::move(common_params.production_cost), name)),
+    m_production_time([](auto&& pt, const std::string& name) {
+        if (pt)
+            pt->SetTopLevelContent(name);
+        return std::move(pt);
+    }(std::move(common_params.production_time), name)),
     m_mountable_slot_types(std::move(mountable_slot_types)),
     m_tags_concatenated([&common_params]() {
         // ensure tags are all upper-case
@@ -282,27 +290,26 @@ ShipPart::ShipPart(ShipPartClass part_class, double capacity, double stat2,
     }()),
     m_production_meter_consumption(std::move(common_params.production_meter_consumption)),
     m_production_special_consumption(std::move(common_params.production_special_consumption)),
-    m_location(std::move(common_params.location)),
+    m_location([](auto&& l, const std::string& name) {
+        if (l)
+            l->SetTopLevelContent(name);
+        return std::move(l);
+    }(std::move(common_params.location), name)),
     m_exclusions(exclusions.begin(), exclusions.end()),
     m_effects(InitEffects(std::move(common_params.effects), name,
                           add_standard_capacity_effect,
                           capacity, stat2, part_class)),
     m_icon(std::move(icon)),
-    m_combat_targets(std::move(combat_targets)),
+    m_combat_targets([](auto&& c, const std::string& name) {
+        if (c)
+            c->SetTopLevelContent(name);
+        return std::move(c);
+    }(std::move(combat_targets), name)),
     m_total_fighter_damage(std::move(total_fighter_damage)),
     m_total_ship_damage(std::move(total_ship_damage)),
     m_add_standard_capacity_effect(add_standard_capacity_effect),
     m_producible(common_params.producible)
-{
-    if (m_production_cost)
-        m_production_cost->SetTopLevelContent(m_name);
-    if (m_production_time)
-        m_production_time->SetTopLevelContent(m_name);
-    if (m_location)
-        m_location->SetTopLevelContent(m_name);
-    if (m_combat_targets)
-        m_combat_targets->SetTopLevelContent(m_name);
-}
+{}
 
 ShipPart::~ShipPart() = default;
 
