@@ -12282,8 +12282,8 @@ PLC_MODERATION_DESC
 
 Outposts with no focus selected also count as a focus, and may be the most popular focus setting, which may make getting large bonuses difficult.
 
-Stability bonus is equal to [[value PLC_MODERATION_STABILITY_SCALING]] times the ratio: (( Owned Planets / Most Common Focus ) - 1)
-Influence bonus is equal to [[value PLC_MODERATION_INFLUENCE_SCALING]] times the ratio: (( Owned Planets / Most Common Focus ) - 1)'''
+Stability bonus is equal to [[value PLC_MODERATION_STABILITY_SCALING]] times the ratio: (( Owned Planets / Uses of Most Common Focus ) - 1)
+Influence bonus is equal to [[value PLC_MODERATION_INFLUENCE_SCALING]] times the ratio: (( Owned Planets / Uses of Most Common Focus ) - 1)'''
 
 PLC_MODERATION_SHORT_DESC
 Increases capital influence and stability
