@@ -1208,21 +1208,21 @@ void PolicyOrder::ExecuteImpl(ScriptingContext& context) const {
 ////////////////////////////////////////////////
 // ResearchQueueOrder
 ////////////////////////////////////////////////
-ResearchQueueOrder::ResearchQueueOrder(int empire, const std::string& tech_name) :
+ResearchQueueOrder::ResearchQueueOrder(int empire, std::string tech_name) :
     Order(empire),
-    m_tech_name(tech_name),
+    m_tech_name(std::move(tech_name)),
     m_remove(true)
 {}
 
-ResearchQueueOrder::ResearchQueueOrder(int empire, const std::string& tech_name, int position) :
+ResearchQueueOrder::ResearchQueueOrder(int empire, std::string tech_name, int position) :
     Order(empire),
-    m_tech_name(tech_name),
+    m_tech_name(std::move(tech_name)),
     m_position(position)
 {}
 
-ResearchQueueOrder::ResearchQueueOrder(int empire, const std::string& tech_name, bool pause, float dummy) :
+ResearchQueueOrder::ResearchQueueOrder(int empire, std::string tech_name, bool pause, float dummy) :
     Order(empire),
-    m_tech_name(tech_name),
+    m_tech_name(std::move(tech_name)),
     m_pause(pause ? PAUSE : RESUME)
 {}
 

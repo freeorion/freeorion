@@ -487,9 +487,9 @@ private:
   * ctor places \a tech_name at position \a position in \a empire's research queue. */
 class FO_COMMON_API ResearchQueueOrder final : public Order {
 public:
-    ResearchQueueOrder(int empire, const std::string& tech_name);
-    ResearchQueueOrder(int empire, const std::string& tech_name, int position);
-    ResearchQueueOrder(int empire, const std::string& tech_name, bool pause, float dummy);
+    ResearchQueueOrder(int empire, std::string tech_name);
+    ResearchQueueOrder(int empire, std::string tech_name, int position);
+    ResearchQueueOrder(int empire, std::string tech_name, bool pause, float dummy);
 
     [[nodiscard]] std::string Dump() const override;
 
