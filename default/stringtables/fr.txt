@@ -16377,7 +16377,7 @@ SH_HEAVY_ASTEROID
 Coque Astéroïdale Massive
 
 SH_HEAVY_ASTEROID_DESC
-'''Cette coque est conçue à partir d'un gigantesque astéroïde, et dispose par conséquent de six niches externes et de trois niches internes.
+'''Cette coque est conçue à partir d'un gigantesque astéroïde, et dispose par conséquent de six niches externes et de deux niches internes.
 
 Sa [[metertype METER_STEALTH]] est standard mais cette coque bénéficie d'un bonus conséquent de Furtivité lorsqu'elle se trouve dans un système abritant une Ceinture d'Astéroïdes, ou en combat lorsqu'elle se dissimule dans une Ceinture d'Astéroïdes. Son [[metertype METER_DETECTION]] est standard et sa [[metertype METER_SPEED]] est faible.
 
