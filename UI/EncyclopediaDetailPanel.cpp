@@ -760,9 +760,8 @@ namespace {
                                              std::forward_as_tuple(VarText::SHIP_HULL_TAG, hull_name));
 
             // techs
-            for (const auto& tech : GetTechManager()) {
-                const auto& tech_name = tech->Name();
-                if (HasCustomCategoryNoPrefixCheck(tech->PediaTags(), dir_name))
+            for (const auto& [tech_name, tech] : GetTechManager()) {
+                if (HasCustomCategoryNoPrefixCheck(tech.PediaTags(), dir_name))
                     dir_entries.emplace_back(std::piecewise_construct,
                                              std::forward_as_tuple(UserString(tech_name)),
                                              std::forward_as_tuple(VarText::TECH_TAG, tech_name));
@@ -1369,18 +1368,12 @@ namespace {
         std::vector<std::string> retval;
         retval.reserve(GetTechManager().size()); // rough guesstimate
 
-        for (const auto& tech : GetTechManager()) {
-            if (!tech) continue;
-
-            bool found_item = false;
-            for (const UnlockableItem& unlocked_item : tech->UnlockedItems()) {
-                if (unlocked_item == item) {
-                    found_item = true;
-                    break;
-                }
-            }
-            if (found_item)
-                retval.push_back(tech->Name());
+        // transform_if
+        for (const auto& [tech_name, tech] : GetTechManager()) {
+            const auto& tech_items = tech.UnlockedItems();
+            auto it = std::find(tech_items.begin(), tech_items.end(), item);
+            if (it != tech_items.end())
+                retval.push_back(tech_name);
         }
 
         return retval;

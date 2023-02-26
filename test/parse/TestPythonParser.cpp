@@ -48,10 +48,10 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
     const auto cat_it = tech_categories.find("CONSTRUCTION_CATEGORY");
     BOOST_REQUIRE(tech_categories.end() != cat_it);
 
-    BOOST_REQUIRE_EQUAL("CONSTRUCTION_CATEGORY", cat_it->second->name);
-    BOOST_REQUIRE_EQUAL("construction.png", cat_it->second->graphic);
-    const std::array<uint8_t, 4> test_colour{241, 233, 87, 255};
-    BOOST_REQUIRE(test_colour == cat_it->second->colour);
+    BOOST_REQUIRE_EQUAL("CONSTRUCTION_CATEGORY", cat_it->second.name);
+    BOOST_REQUIRE_EQUAL("construction.png", cat_it->second.graphic);
+    static constexpr std::array<uint8_t, 4> test_colour{241, 233, 87, 255};
+    BOOST_REQUIRE(test_colour == cat_it->second.colour);
 
     BOOST_REQUIRE(!techs.empty());
     BOOST_REQUIRE(!categories_seen.empty());
@@ -60,28 +60,28 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
     BOOST_REQUIRE_EQUAL(1, categories_seen.count("GROWTH_CATEGORY"));
 
     {
-        const auto tech_it = techs.get<TechManager::NameIndex>().find("LRN_ALGO_ELEGANCE");
-        BOOST_REQUIRE(techs.get<TechManager::NameIndex>().end() != tech_it);
-        BOOST_REQUIRE_EQUAL("LRN_ALGO_ELEGANCE", (*tech_it)->Name());
-        BOOST_REQUIRE_EQUAL("LRN_ALGO_ELEGANCE_DESC", (*tech_it)->Description());
-        BOOST_REQUIRE_EQUAL("RESEARCH_SHORT_DESC", (*tech_it)->ShortDescription());
-        BOOST_REQUIRE_EQUAL("LEARNING_CATEGORY", (*tech_it)->Category());
-        BOOST_REQUIRE_EQUAL(true, (*tech_it)->Researchable());
-        BOOST_REQUIRE_EQUAL("icons/tech/algorithmic_elegance.png", (*tech_it)->Graphic());
+        const auto tech_it = techs.find("LRN_ALGO_ELEGANCE");
+        BOOST_REQUIRE(techs.end() != tech_it);
+        BOOST_REQUIRE_EQUAL("LRN_ALGO_ELEGANCE", tech_it->second.Name());
+        BOOST_REQUIRE_EQUAL("LRN_ALGO_ELEGANCE_DESC", tech_it->second.Description());
+        BOOST_REQUIRE_EQUAL("RESEARCH_SHORT_DESC", tech_it->second.ShortDescription());
+        BOOST_REQUIRE_EQUAL("LEARNING_CATEGORY", tech_it->second.Category());
+        BOOST_REQUIRE_EQUAL(true, tech_it->second.Researchable());
+        BOOST_REQUIRE_EQUAL("icons/tech/algorithmic_elegance.png", tech_it->second.Graphic());
 
         const ScriptingContext context;
 
-        BOOST_REQUIRE_CLOSE(0.0, (*tech_it)->ResearchCost(ALL_EMPIRES, context), 0.1);
-        BOOST_REQUIRE_EQUAL(3, (*tech_it)->ResearchTime(ALL_EMPIRES, context));
-        BOOST_REQUIRE_EQUAL(0, (*tech_it)->Effects().size());
-        BOOST_REQUIRE_EQUAL(0, (*tech_it)->UnlockedTechs().size());
-        BOOST_REQUIRE_EQUAL(0, (*tech_it)->Prerequisites().size());
+        BOOST_REQUIRE_CLOSE(0.0, tech_it->second.ResearchCost(ALL_EMPIRES, context), 0.1);
+        BOOST_REQUIRE_EQUAL(3, tech_it->second.ResearchTime(ALL_EMPIRES, context));
+        BOOST_REQUIRE_EQUAL(0, tech_it->second.Effects().size());
+        BOOST_REQUIRE_EQUAL(0, tech_it->second.UnlockedTechs().size());
+        BOOST_REQUIRE_EQUAL(0, tech_it->second.Prerequisites().size());
 
-        const auto& tech_tags = (*tech_it)->Tags();
+        const auto& tech_tags = tech_it->second.Tags();
         BOOST_REQUIRE_EQUAL(1, tech_tags.size());
-        BOOST_REQUIRE((*tech_it)->HasTag("PEDIA_LEARNING_CATEGORY"));
+        BOOST_REQUIRE(tech_it->second.HasTag("PEDIA_LEARNING_CATEGORY"));
 
-        const auto& tech_items = (*tech_it)->UnlockedItems();
+        const auto& tech_items = tech_it->second.UnlockedItems();
         BOOST_REQUIRE_EQUAL(1, tech_items.size());
         BOOST_REQUIRE_EQUAL(UnlockableItemType::UIT_POLICY, tech_items[0].type);
         BOOST_REQUIRE_EQUAL("PLC_ALGORITHMIC_RESEARCH", tech_items[0].name);
@@ -109,15 +109,15 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
             {UnlockableItem{UnlockableItemType::UIT_POLICY, "PLC_ALGORITHMIC_RESEARCH"}},
             "icons/tech/algorithmic_elegance.png"
         };
-        BOOST_REQUIRE(tech == (**tech_it));
+        BOOST_REQUIRE(tech == tech_it->second);
     }
 
     {
-        const auto tech_it = techs.get<TechManager::NameIndex>().find("CON_ORBITAL_HAB");
-        BOOST_REQUIRE(techs.get<TechManager::NameIndex>().end() != tech_it);
+        const auto tech_it = techs.find("CON_ORBITAL_HAB");
+        BOOST_REQUIRE(techs.end() != tech_it);
 
-        BOOST_REQUIRE_EQUAL(1, (*tech_it)->Effects().size());
-        const auto& tech_effect_gr = (*tech_it)->Effects().front();
+        BOOST_REQUIRE_EQUAL(1, tech_it->second.Effects().size());
+        const auto& tech_effect_gr = tech_it->second.Effects().front();
         BOOST_REQUIRE_EQUAL("", tech_effect_gr.StackingGroup());
         BOOST_REQUIRE_EQUAL("", tech_effect_gr.GetDescription());
         BOOST_REQUIRE_EQUAL("", tech_effect_gr.AccountingLabel());
@@ -143,7 +143,7 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
         BOOST_REQUIRE_EQUAL(false, tech_effect->IsSitrepEffect());
         BOOST_REQUIRE_EQUAL(false, tech_effect->IsConditionalEffect());
 
-        const auto& prereqs = (*tech_it)->Prerequisites();
+        const auto& prereqs = tech_it->second.Prerequisites();
         BOOST_REQUIRE_EQUAL(1, prereqs.size());
         BOOST_REQUIRE_EQUAL(1, std::count(prereqs.begin(), prereqs.end(), "PRO_MICROGRAV_MAN"));
 
@@ -196,7 +196,7 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
             {},
             "icons/tech/orbital_gardens.png"
         };
-        BOOST_REQUIRE(tech == (**tech_it));
+        BOOST_REQUIRE(tech == tech_it->second);
 
     }
 
@@ -449,13 +449,13 @@ BOOST_AUTO_TEST_CASE(parse_techs_full) {
     BOOST_REQUIRE_EQUAL(9, tech_categories.size());
     BOOST_REQUIRE_EQUAL(9, categories_seen.size());
 
-    if (const char *tech_name = std::getenv("FO_CHECKSUM_TECH_NAME")) {
-        const auto tech_it = techs.get<TechManager::NameIndex>().find(tech_name);
-        BOOST_REQUIRE(techs.get<TechManager::NameIndex>().end() != tech_it);
-        BOOST_REQUIRE_EQUAL(tech_name, (*tech_it)->Name());
+    if (const char* tech_name = std::getenv("FO_CHECKSUM_TECH_NAME")) {
+        const auto tech_it = techs.find(tech_name);
+        BOOST_REQUIRE(techs.end() != tech_it);
+        BOOST_REQUIRE_EQUAL(tech_name, tech_it->second.Name());
 
         BOOST_TEST_MESSAGE("Dump " << tech_name << ":");
-        BOOST_TEST_MESSAGE((*tech_it)->Dump(0));
+        BOOST_TEST_MESSAGE(tech_it->second.Dump(0));
 
         if (const char *tech_checksum_str = std::getenv("FO_CHECKSUM_TECH_VALUE")) {
             unsigned int tech_checksum = boost::lexical_cast<unsigned int>(tech_checksum_str);

@@ -35,14 +35,14 @@ struct FO_COMMON_API UnlockableItem {
         name(std::forward<S>(name_))
     {}
 
+    bool operator<(const UnlockableItem& rhs) const noexcept
+    { return (type < rhs.type) || (type == rhs.type && name < rhs.name); }
+
     //! Returns a data file format representation of this object
     auto Dump(uint8_t ntabs = 0) const -> std::string;
 
-    //! The kind of item this is
-    UnlockableItemType type = UnlockableItemType::INVALID_UNLOCKABLE_ITEM_TYPE;
-
-    //! the exact item this is
-    std::string name;
+    UnlockableItemType type = UnlockableItemType::INVALID_UNLOCKABLE_ITEM_TYPE; //! The kind of item this is
+    std::string name; //! the exact item this is
 };
 
 

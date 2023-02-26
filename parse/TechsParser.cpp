@@ -27,21 +27,6 @@ namespace {
     std::set<std::string>* g_categories_seen = nullptr;
     std::map<std::string, std::unique_ptr<TechCategory>, std::less<>>* g_categories = nullptr;
 
-    /// Check if the tech will be unique.
-    bool check_tech(TechManager::TechContainer& techs, const std::unique_ptr<Tech>& tech) {
-        auto retval = true;
-        if (techs.get<TechManager::NameIndex>().count(tech->Name())) {
-            ErrorLogger() <<  "More than one tech has the name " << tech->Name();
-            retval = false;
-        }
-        const auto& prereqs = tech->Prerequisites();
-        if (std::count(prereqs.begin(), prereqs.end(), tech->Name())) {
-            ErrorLogger() << "Tech " << tech->Name() << " depends on itself!";
-            retval = false;
-        }
-        return retval;
-    }
-
     void insert_category(std::map<std::string, std::unique_ptr<TechCategory>, std::less<>>& categories,
                          std::string& name, std::string& graphic, std::array<uint8_t, 4> color)
     {
@@ -77,8 +62,16 @@ namespace {
         }
     };
 
-    boost::python::object py_insert_tech_(TechManager::TechContainer& techs, const boost::python::tuple& args, const boost::python::dict& kw) {
+    boost::python::object py_insert_tech_(TechManager::TechContainer& techs,
+                                          const boost::python::tuple& args,
+                                          const boost::python::dict& kw)
+    {
         auto name = boost::python::extract<std::string>(kw["name"])();
+        if (techs.contains(name)) {
+            ErrorLogger() <<  "A tech already exists with name " << name;
+            return boost::python::object();
+        }
+
         auto description = boost::python::extract<std::string>(kw["description"])();
         auto short_description = boost::python::extract<std::string>(kw["short_description"])();
         auto category = boost::python::extract<std::string>(kw["category"])();
@@ -100,9 +93,8 @@ namespace {
         }
 
         bool researchable = true;
-        if (kw.has_key("researchable")) {
+        if (kw.has_key("researchable"))
             researchable = boost::python::extract<bool>(kw["researchable"])();
-        }
 
         std::set<std::string> tags;
         auto tags_args = boost::python::extract<boost::python::list>(kw["tags"])();
@@ -113,15 +105,18 @@ namespace {
         std::vector<std::shared_ptr<Effect::EffectsGroup>> effectsgroups;
         if (kw.has_key("effectsgroups")) {
             boost::python::stl_input_iterator<effect_group_wrapper> effectsgroups_begin(kw["effectsgroups"]), effectsgroups_end;
-            for (auto it = effectsgroups_begin; it != effectsgroups_end; ++it) {
+            for (auto it = effectsgroups_begin; it != effectsgroups_end; ++it)
                 effectsgroups.push_back(it->effects_group);
-            }
         }
 
         std::set<std::string> prerequisites;
         if (kw.has_key("prerequisites")) {
             prerequisites.insert(boost::python::stl_input_iterator<std::string>(kw["prerequisites"]),
                 boost::python::stl_input_iterator<std::string>());
+        }
+        if (std::count(prerequisites.begin(), prerequisites.end(), name)) {
+            ErrorLogger() << "Tech " << name << " depends on itself!";
+            return boost::python::object();
         }
 
         std::vector<UnlockableItem> unlock;
@@ -140,21 +135,18 @@ namespace {
         if (kw.has_key("graphic"))
             graphic = boost::python::extract<std::string>(kw["graphic"])();
 
-        auto tech_ptr = std::make_unique<Tech>(std::move(name), std::move(description),
-                                               std::move(short_description), std::move(category),
-                                               std::move(researchcost),
-                                               std::move(researchturns),
-                                               researchable,
-                                               std::move(tags),
-                                               std::move(effectsgroups),
-                                               std::move(prerequisites),
-                                               std::move(unlock),
-                                               std::move(graphic));
 
-        if (check_tech(techs, tech_ptr)) {
-            g_categories_seen->emplace(tech_ptr->Category());
-            techs.emplace(std::move(tech_ptr));
-        }
+        g_categories_seen->emplace(category);
+
+        auto name_copy{name};
+        techs.emplace(std::piecewise_construct,
+                      std::forward_as_tuple(std::move(name_copy)),
+                      std::forward_as_tuple(std::move(name), std::move(description),
+                                            std::move(short_description), std::move(category),
+                                            std::move(researchcost), std::move(researchturns),
+                                            researchable, std::move(tags), std::move(effectsgroups),
+                                            std::move(prerequisites), std::move(unlock),
+                                            std::move(graphic)));
 
         return boost::python::object();
     }
@@ -174,12 +166,12 @@ namespace {
             RegisterGlobalsSources(globals);
             RegisterGlobalsEnums(globals);
 
-            globals["Tech"] = boost::python::raw_function([&techs](const boost::python::tuple& args, const boost::python::dict& kw) { return py_insert_tech_(techs, args, kw); });
+            globals["Tech"] = boost::python::raw_function(
+                [&techs](const boost::python::tuple& args, const boost::python::dict& kw)
+                { return py_insert_tech_(techs, args, kw); });
         }
 
-        boost::python::dict operator()() const
-        { return globals; }
-
+        boost::python::dict operator()() const { return globals; }
     };
 }
 
@@ -195,18 +187,27 @@ namespace parse {
 
         ScopedTimer timer("Techs Parsing");
 
-        py_parse::detail::parse_file<py_grammar_category, TechManager::TechContainer>(parser, path / "Categories.inf.py", py_grammar_category(), techs_);
+        py_parse::detail::parse_file<py_grammar_category, TechManager::TechContainer>(
+            parser, path / "Categories.inf.py", py_grammar_category(), techs_);
 
         py_grammar_techs p = py_grammar_techs(parser, techs_);
 
         for (const auto& file : ListDir(path, IsFOCPyScript))
             py_parse::detail::parse_file<py_grammar_techs>(parser, file, p);
 
-        return std::make_tuple(std::move(techs_), std::move(categories), categories_seen);
+        TechManager::TechCategoryContainer cats;
+        cats.reserve(categories.size());
+        const auto extract_cats = [](auto& name_catptr) -> TechManager::TechCategoryContainer::value_type
+        { return {name_catptr.first, std::move(*name_catptr.second)}; };
+
+        std::transform(categories.begin(), categories.end(), std::inserter(cats, cats.end()), extract_cats);
+
+        return std::make_tuple(std::move(techs_), std::move(cats), categories_seen);
     }
 }
 
 // explicitly instantiate techs.
 // This allows Tech.h to only be included in this .cpp file and not Parse.h
 // which recompiles all parsers if Tech.h changes.
-template FO_PARSE_API TechManager::TechParseTuple parse::techs<TechManager::TechParseTuple>(const PythonParser& parser, const boost::filesystem::path& path);
+template FO_PARSE_API TechManager::TechParseTuple parse::techs<TechManager::TechParseTuple>(
+    const PythonParser& parser, const boost::filesystem::path& path);

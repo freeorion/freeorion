@@ -601,7 +601,7 @@ float Empire::ResearchProgress(const std::string& name, const ScriptingContext& 
 }
 
 bool Empire::TechResearched(const std::string& name) const
-{ return m_techs.count(name); }
+{ return m_techs.count(name); } // TODO: use any_of?
 
 TechStatus Empire::GetTechStatus(const std::string& name) const {
     if (TechResearched(name)) return TechStatus::TS_COMPLETE;
@@ -2036,16 +2036,15 @@ std::vector<std::string> Empire::CheckResearchProgress(const ScriptingContext& c
     // for all available and suitable techs, store ordered by cost to complete
     std::vector<std::pair<double, std::string>> costs_to_complete_available_unpaused_techs;
     costs_to_complete_available_unpaused_techs.reserve(GetTechManager().size());
-    for (const auto& tech : GetTechManager()) {
-        const std::string& tech_name = tech->Name();
+    for (const auto& [tech_name, tech] : GetTechManager()) {
         if (techs_not_suitable_for_auto_allocation.count(tech_name) > 0)
             continue;
         if (this->GetTechStatus(tech_name) != TechStatus::TS_RESEARCHABLE)
             continue;
-        if (!tech->Researchable())
+        if (!tech.Researchable())
             continue;
         double progress = this->ResearchProgress(tech_name, context);
-        double total_cost = tech->ResearchCost(m_id, context);
+        double total_cost = tech.ResearchCost(m_id, context);
         if (progress >= total_cost)
             continue;
         costs_to_complete_available_unpaused_techs.emplace_back(total_cost - progress, tech_name);

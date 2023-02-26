@@ -12,7 +12,7 @@ namespace {
       * determines total number of spent RP (returning by reference in
       * total_RPs_spent) */
     void SetTechQueueElementSpending(
-        float RPs, const std::map<std::string, float>& research_progress,
+        float RPs, const std::map<std::string, float>& research_progress, // TODO: make flat_map<std::string_view, float> ?
         const std::map<std::string, TechStatus>& research_status,
         ResearchQueue::QueueType& queue, float& total_RPs_spent,
         int& projects_in_progress, int empire_id, const ScriptingContext& context)
@@ -154,7 +154,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
                            const ScriptingContext& context)
 {
     // status of all techs for this empire
-    auto empire = context.GetEmpire(m_empire_id);
+    const auto empire = context.GetEmpire(m_empire_id);
     if (!empire) {
         ErrorLogger() << "ResearchQueue::Update passed null empire.  doing nothing.";
         m_projects_in_progress = 0;
@@ -162,11 +162,12 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
         return;
     }
 
+    const auto& tm{GetTechManager()};
     std::map<std::string, TechStatus> sim_tech_status_map;
-    for (const auto& tech : GetTechManager()) {
-        const std::string& tech_name = tech->Name();
-        sim_tech_status_map[tech_name] = empire->GetTechStatus(tech_name);
-    }
+    using STSM_vt = decltype(sim_tech_status_map)::value_type;
+    std::transform(tm.begin(), tm.end(), std::inserter(sim_tech_status_map, sim_tech_status_map.end()),
+                   [&empire](const auto& name_tech)
+                   { return STSM_vt{name_tech.first, empire->GetTechStatus(name_tech.first)}; });
 
     SetTechQueueElementSpending(RPs, research_progress, sim_tech_status_map, m_queue,
                                 m_total_RPs_spent, m_projects_in_progress, m_empire_id,

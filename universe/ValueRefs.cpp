@@ -2451,9 +2451,11 @@ namespace {
         if (!empire) return retval;
 
         retval.reserve(GetTechManager().size());
-        for (const auto& tech : GetTechManager()) {
-            if (tech && empire->ResearchableTech(tech->Name()))
-                retval.push_back(tech->Name());
+        // transform_if
+        for (const auto& [tech_name, ignored] : GetTechManager()) {
+            (void)ignored;
+            if (empire->ResearchableTech(tech_name))
+                retval.push_back(tech_name);
         }
         return retval;
     }

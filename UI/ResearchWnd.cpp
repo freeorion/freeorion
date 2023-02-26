@@ -638,7 +638,7 @@ void ResearchWnd::UpdateInfoPanel(const ScriptingContext& context) {
     //empire->GetResearchResPool().ChangedSignal();
 }
 
-void ResearchWnd::AddTechsToQueueSlot(const std::vector<std::string>& tech_vec, int pos) {
+void ResearchWnd::AddTechsToQueueSlot(std::vector<std::string> tech_vec, int pos) {
     if (!m_enabled)
         return;
 
@@ -650,7 +650,7 @@ void ResearchWnd::AddTechsToQueueSlot(const std::vector<std::string>& tech_vec, 
         return;
     const ResearchQueue& queue = empire->GetResearchQueue();
     OrderSet& orders = GGHumanClientApp::GetApp()->Orders();
-    for (const std::string& tech_name : tech_vec) {
+    for (std::string& tech_name : tech_vec) {
         if (empire->TechResearched(tech_name))
             continue;
         // AddTechsToQueueSlot is currently used for (i) adding a tech and any not-yet-queued prereqs to the
@@ -666,11 +666,11 @@ void ResearchWnd::AddTechsToQueueSlot(const std::vector<std::string>& tech_vec, 
         // or that we skipped because it happened to already be in the right spot.
         if (pos == -1) {
             if (!queue.InQueue(tech_name)) {
-                orders.IssueOrder(std::make_shared<ResearchQueueOrder>(empire_id, tech_name, pos),
+                orders.IssueOrder(std::make_shared<ResearchQueueOrder>(empire_id, std::move(tech_name), pos),
                                   context);
             }
         } else if (!queue.InQueue(tech_name) || ((queue.find(tech_name) - queue.begin()) > pos)) {
-            orders.IssueOrder(std::make_shared<ResearchQueueOrder>(empire_id, tech_name, pos),
+            orders.IssueOrder(std::make_shared<ResearchQueueOrder>(empire_id, std::move(tech_name), pos),
                               context);
             pos += 1;
         } else {

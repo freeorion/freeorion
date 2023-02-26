@@ -8,9 +8,6 @@
 #include <string>
 #include <vector>
 #include <boost/algorithm/string/case_conv.hpp>
-#include <boost/multi_index/key_extractors.hpp>
-#include <boost/multi_index/ordered_index.hpp>
-#include <boost/multi_index_container.hpp>
 #include <boost/optional/optional.hpp>
 #include "Effect.h"
 #include "EnumsFwd.h"
@@ -61,8 +58,11 @@ public:
          std::string&& graphic);
 
     bool operator==(const Tech& rhs) const;
-    bool operator!=(const Tech& rhs) const
-    { return !(*this == rhs); }
+    bool operator!=(const Tech& rhs) const { return !(*this == rhs); }
+    Tech(const Tech&) = delete;
+    Tech(Tech&&) = default;
+    Tech& operator=(const Tech&) = delete;
+    Tech& operator=(Tech&&) = default;
 
     [[nodiscard]] const auto& Name() const noexcept             { return m_name; }
     [[nodiscard]] const auto& Description() const noexcept      { return m_description; }
@@ -96,25 +96,23 @@ public:
     [[nodiscard]] uint32_t GetCheckSum() const;
 
 private:
-    Tech(const Tech&) = delete;
-    Tech& operator=(const Tech&) = delete;
     void Init();
 
-    std::string                     m_name;
-    std::string                     m_description;
-    std::string                     m_short_description;
-    std::string                     m_category;
+    std::string                       m_name;
+    std::string                       m_description;
+    std::string                       m_short_description;
+    std::string                       m_category;
     std::unique_ptr<ValueRef::ValueRef<double>> m_research_cost;
     std::unique_ptr<ValueRef::ValueRef<int>>    m_research_turns;
-    const bool                          m_researchable = false;
-    const std::string                   m_tags_concatenated;
-    const std::vector<std::string_view> m_tags;
-    const std::vector<std::string_view> m_pedia_tags;
-    std::vector<Effect::EffectsGroup>   m_effects;
-    std::vector<std::string>            m_prerequisites;
-    std::vector<UnlockableItem>         m_unlocked_items;
-    std::string                         m_graphic;
-    std::vector<std::string>            m_unlocked_techs;
+    bool                              m_researchable = false;
+    std::string                       m_tags_concatenated;
+    std::vector<std::string_view>     m_tags;
+    std::vector<std::string_view>     m_pedia_tags;
+    std::vector<Effect::EffectsGroup> m_effects;
+    std::vector<std::string>          m_prerequisites;
+    std::vector<UnlockableItem>       m_unlocked_items;
+    std::string                       m_graphic;
+    std::vector<std::string>          m_unlocked_techs;
 
     friend class TechManager;
 };
@@ -129,9 +127,9 @@ struct FO_COMMON_API TechCategory {
         graphic(std::move(graphic_)),
         colour(colour_)
     {}
-    const std::string            name;                           ///< name of category
-    const std::string            graphic;                        ///< icon that represents catetegory
-    const std::array<uint8_t, 4> colour{{255, 255, 255, 255}};   ///< colour associatied with category
+    std::string            name;                           ///< name of category
+    std::string            graphic;                        ///< icon that represents catetegory
+    std::array<uint8_t, 4> colour{{255, 255, 255, 255}};   ///< colour associatied with category
 };
 
 namespace CheckSums {
@@ -142,43 +140,15 @@ namespace CheckSums {
     given a set of currently-known techs. */
 class FO_COMMON_API TechManager {
 public:
-    struct CategoryIndex {};
-    struct NameIndex {};
-    typedef boost::multi_index_container<
-        std::unique_ptr<Tech>,
-        boost::multi_index::indexed_by<
-            boost::multi_index::ordered_non_unique<
-                boost::multi_index::tag<CategoryIndex>,
-                boost::multi_index::const_mem_fun<
-                    Tech,
-                    const std::string&,
-                    &Tech::Category
-                >
-            >,
-            boost::multi_index::ordered_unique<
-                boost::multi_index::tag<NameIndex>,
-                boost::multi_index::const_mem_fun<
-                    Tech,
-                    const std::string&,
-                    &Tech::Name
-                >
-            >
-        >
-    > TechContainer;
-
-    using TechCategoryMap = std::map<std::string, std::unique_ptr<TechCategory>, std::less<>>;
-
-    /** iterator that runs over techs within a category */
-    typedef TechContainer::index<CategoryIndex>::type::const_iterator category_iterator;
-
-    /** iterator that runs over all techs */
-    typedef TechContainer::index<NameIndex>::type::const_iterator iterator;
+    using TechContainer = boost::container::flat_map<std::string, Tech, std::less<>>;
+    using iterator = TechContainer::const_iterator;
+    using TechCategoryContainer = boost::container::flat_map<std::string, TechCategory, std::less<>>;
 
     /** returns the tech with the name \a name; you should use the free function GetTech() instead */
-    [[nodiscard]] const Tech*              GetTech(std::string_view name) const;
+    [[nodiscard]] const Tech* GetTech(std::string_view name) const;
 
     /** returns the tech category with the name \a name; you should use the free function GetTechCategory() instead */
-    [[nodiscard]] const TechCategory*      GetTechCategory(std::string_view name) const;
+    [[nodiscard]] const TechCategory* GetTechCategory(std::string_view name) const;
 
     /** returns the list of category names */
     [[nodiscard]] std::vector<std::string_view> CategoryNames() const;
@@ -187,42 +157,23 @@ public:
     [[nodiscard]] std::vector<std::string_view> TechNames() const;
 
     /** returns list of names of techs in specified category */
-    [[nodiscard]] std::vector<std::string_view> TechNames(const std::string& name) const;
+    [[nodiscard]] std::vector<std::string_view> TechNames(std::string_view name) const;
 
     /** returns all researchable techs */
-    [[nodiscard]] std::vector<const Tech*> AllNextTechs(const std::set<std::string>& known_techs);
+    [[nodiscard]] std::vector<const Tech*> AllNextTechs(const std::vector<std::string_view>& researched_techs);
 
     /** returns the cheapest researchable tech */
     [[nodiscard]] const Tech* CheapestNextTech(
-        const std::set<std::string>& known_techs, int empire_id,
-        const ScriptingContext& context);
+        const std::vector<std::string_view>& researched_techs, int empire_id, const ScriptingContext& context);
 
-    /** returns all researchable techs that progress from the given known techs to the given desired tech */
-    [[nodiscard]] std::vector<const Tech*> NextTechsTowards(
-        const std::set<std::string>& known_techs,
-        const std::string& desired_tech, int empire_id);
-
-    /** returns the cheapest researchable tech that progresses from the given known techs to the given desired tech */
-    [[nodiscard]] const Tech* CheapestNextTechTowards(
-        const std::set<std::string>& known_techs, const std::string& desired_tech,
-        int empire_id, const ScriptingContext& context);
-
-    [[nodiscard]] std::size_t              size() const;
-    [[nodiscard]] iterator                 begin() const;
-    [[nodiscard]] iterator                 end() const;
-
-    /** iterator to the first tech in category \a name */
-    [[nodiscard]] category_iterator        category_begin(const std::string& name) const;
-
-    /** iterator to the last + 1th tech in category \a name */
-    [[nodiscard]] category_iterator        category_end(const std::string& name) const;
+    [[nodiscard]] TechContainer::size_type size() const;
+    [[nodiscard]] iterator begin() const;
+    [[nodiscard]] iterator end() const;
 
     /** Returns names of indicated tech's prerequisites, and all prereqs of
-      * those techs, etc. recursively. If \a min_required is false then prereqs
-      * will be included and recursed into even if already known to the empire. */
+      * those techs, etc. recursively. */
     [[nodiscard]] std::vector<std::string> RecursivePrereqs(
-        const std::string& tech_name, int empire_id, bool min_required,
-        const ScriptingContext& context) const;
+        std::string_view tech_name, int empire_id, const ScriptingContext& context) const;
 
     /** Returns a number, calculated from the contained data, which should be
       * different for different contained data, and must be the same for
@@ -233,9 +184,9 @@ public:
     [[nodiscard]] uint32_t GetCheckSum() const;
 
     using TechParseTuple = std::tuple<
-        TechManager::TechContainer, // techs_
-        std::map<std::string, std::unique_ptr<TechCategory>, std::less<>>, // tech_categories,
-        std::set<std::string> // categories_seen
+        TechContainer,          // techs
+        TechCategoryContainer,  // tech_categories,
+        std::set<std::string>   // categories_seen
         >;
     /** Sets types to the value of \p future. */
     FO_COMMON_API void SetTechs(Pending::Pending<TechParseTuple>&& future);
@@ -262,8 +213,8 @@ private:
         be assigned to m_species_types when completed.*/
     mutable boost::optional<Pending::Pending<TechParseTuple>> m_pending_types = boost::none;
 
-    mutable TechCategoryMap m_categories;
-    mutable TechContainer   m_techs;
+    mutable TechContainer         m_techs;
+    mutable TechCategoryContainer m_categories;
 };
 
 /** returns the singleton tech manager */

@@ -30,36 +30,29 @@ namespace {
 }
 
 namespace {
-    void NextTechs(std::vector<const Tech*>& retval, const std::set<std::string>& known_techs,
-                   std::set<const Tech*>& checked_techs,
-                   TechManager::iterator it, TechManager::iterator end_it)
-    {
-        if (checked_techs.count(it->get()))
-            return;
+    // returns techs in \a techs that are not in \a researched_techs
+    // and of which all prereqs are in \a researched_techs
+    auto NextTechs(const std::vector<std::string_view> researched_techs, const TechManager::TechContainer& techs) {
+        const auto is_researched = [rt{std::move(researched_techs)}](const auto& tech)
+        { return std::find(rt.begin(), rt.end(), tech) != rt.end(); };
 
-        if (!known_techs.count((*it)->Name()) && it != end_it) {
-            std::vector<const Tech*> stack;
-            stack.push_back(it->get());
-            while (!stack.empty()) {
-                const Tech* current_tech = stack.back();
-                std::size_t starting_stack_size = stack.size();
-                bool all_prereqs_known = true;
-                for (const std::string& prereq_name : current_tech->Prerequisites()) {
-                    const Tech* prereq_tech = GetTech(prereq_name);
-                    bool prereq_unknown = !known_techs.count(prereq_tech->Name());
-                    if (prereq_unknown)
-                        all_prereqs_known = false;
-                    if (!checked_techs.count(prereq_tech) && prereq_unknown)
-                        stack.push_back(prereq_tech);
-                }
-                if (starting_stack_size == stack.size()) {
-                    stack.pop_back();
-                    checked_techs.insert(current_tech);
-                    if (all_prereqs_known)
-                        retval.push_back(current_tech);
-                }
-            }
+        // are prereqs researched but not itself researched
+        const auto is_researchable_now = [is_researched](const auto& name_tech) -> bool {
+            if (!name_tech.second.Researchable() || is_researched(name_tech.first))
+                return false;
+            const auto& prereqs = name_tech.second.Prerequisites();
+            return std::all_of(prereqs.begin(), prereqs.end(), is_researched);
+        };
+
+        std::vector<const Tech*> retval;
+        retval.reserve(techs.size());
+        // transform_if
+        for (const auto& name_tech : techs) {
+            if (is_researchable_now(name_tech))
+                retval.push_back(&name_tech.second);
         }
+
+        return retval;
     }
 
     const Tech* Cheapest(const std::vector<const Tech*>& next_techs, int empire_id,
@@ -67,18 +60,17 @@ namespace {
     {
         if (next_techs.empty())
             return nullptr;
-
-        float min_price = next_techs[0]->ResearchCost(empire_id, context);
-        int min_index = 0;
-        for (std::size_t i = 0; i < next_techs.size(); ++i) {
-            float price = next_techs[i]->ResearchCost(empire_id, context);
-            if (price < min_price) {
-                min_price = price;
-                min_index = i;
-            }
-        }
-
-        return next_techs[min_index];
+        std::vector<float> costs;
+        costs.reserve(next_techs.size());
+        static constexpr float BIG_COST = std::numeric_limits<float>::max();
+        std::transform(next_techs.begin(), next_techs.end(), std::back_inserter(costs),
+                       [&context, empire_id](const Tech* tech)
+                       { return tech ? tech->ResearchCost(empire_id, context) : BIG_COST; });
+        const auto min_cost_it = std::min_element(costs.begin(), costs.end());
+        if (min_cost_it == costs.end() || *min_cost_it == BIG_COST)
+            return nullptr;
+        const auto idx = std::distance(costs.begin(), min_cost_it);
+        return next_techs[idx];
     }
 }
 
@@ -182,7 +174,6 @@ Tech::Tech(std::string&& name, std::string&& description,
         return retval;
     }()),
     m_effects([](auto& effects_p, const auto& name) {
-
         std::vector<Effect::EffectsGroup> retval;
         retval.reserve(effects_p.size());
         for (auto& e : effects_p) {
@@ -192,7 +183,13 @@ Tech::Tech(std::string&& name, std::string&& description,
         return retval;
     }(effects, name)),
     m_prerequisites{prerequisites.begin(), prerequisites.end()},
-    m_unlocked_items(std::move(unlocked_items)),
+    m_unlocked_items([](auto& unlocked_items) {
+        // ensure uniqueness
+        std::sort(unlocked_items.begin(), unlocked_items.end());
+        auto unique_it = std::unique(unlocked_items.begin(), unlocked_items.end());
+        unlocked_items.erase(unique_it, unlocked_items.end());
+        return std::move(unlocked_items);
+    }(unlocked_items)),
     m_graphic(std::move(graphic))
 {
     Init();
@@ -380,22 +377,22 @@ uint32_t Tech::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 const Tech* TechManager::GetTech(std::string_view name) const {
     CheckPendingTechs();
-    iterator it = m_techs.get<NameIndex>().find(name, std::less<>());
-    return it == m_techs.get<NameIndex>().end() ? nullptr : it->get();
+    const auto it = m_techs.find(name);
+    return it == m_techs.end() ? nullptr : &it->second;
 }
 
 const TechCategory* TechManager::GetTechCategory(std::string_view name) const {
     CheckPendingTechs();
-    auto it = m_categories.find(name);
-    return it == m_categories.end() ? nullptr : it->second.get();
+    const auto it = m_categories.find(name);
+    return it == m_categories.end() ? nullptr : &it->second;
 }
 
 std::vector<std::string_view> TechManager::CategoryNames() const {
     CheckPendingTechs();
     std::vector<std::string_view> retval;
     retval.reserve(m_categories.size());
-    for (const auto& entry : m_categories)
-        retval.emplace_back(entry.first);
+    std::transform(m_categories.begin(), m_categories.end(), std::back_inserter(retval),
+                   [](const auto& name_cat) -> std::string_view { return name_cat.first; });
     return retval;
 }
 
@@ -403,79 +400,47 @@ std::vector<std::string_view> TechManager::TechNames() const {
     CheckPendingTechs();
     std::vector<std::string_view> retval;
     retval.reserve(m_techs.size());
-    for (const auto& tech : m_techs.get<NameIndex>())
-        retval.emplace_back(tech->Name());
+    std::transform(m_techs.begin(), m_techs.end(), std::back_inserter(retval),
+                   [](const auto& name_tech) -> std::string_view { return name_tech.first; });
     return retval;
 }
 
-std::vector<std::string_view> TechManager::TechNames(const std::string& name) const {
+std::vector<std::string_view> TechManager::TechNames(std::string_view name) const {
     CheckPendingTechs();
     std::vector<std::string_view> retval;
     retval.reserve(m_techs.size());
-    for (TechManager::category_iterator it = category_begin(name); it != category_end(name); ++it)
-        retval.emplace_back((*it)->Name());
+    // transform_if
+    for (const auto& name_tech : m_techs)
+        if (name_tech.second.Category() == name)
+            retval.emplace_back(name_tech.first);
     return retval;
 }
 
-std::vector<const Tech*> TechManager::AllNextTechs(const std::set<std::string>& known_techs) {
+std::vector<const Tech*> TechManager::AllNextTechs(const std::vector<std::string_view>& researched_techs) {
     CheckPendingTechs();
-    std::vector<const Tech*> retval;
-    retval.reserve(known_techs.size() * 3); // rough guesstimate
-    std::set<const Tech*> checked_techs;
-    iterator end_it = m_techs.get<NameIndex>().end();
-    for (iterator it = m_techs.get<NameIndex>().begin(); it != end_it; ++it)
-        NextTechs(retval, known_techs, checked_techs, it, end_it);
-    return retval;
+    return NextTechs(researched_techs, m_techs);
 }
 
-const Tech* TechManager::CheapestNextTech(const std::set<std::string>& known_techs,
+const Tech* TechManager::CheapestNextTech(const std::vector<std::string_view>& researched_techs,
                                           int empire_id, const ScriptingContext& context)
 {
     CheckPendingTechs();
-    return Cheapest(AllNextTechs(known_techs), empire_id, context);
+    return Cheapest(NextTechs(researched_techs, m_techs), empire_id, context);
 }
 
-std::vector<const Tech*> TechManager::NextTechsTowards(const std::set<std::string>& known_techs,
-                                                       const std::string& desired_tech,
-                                                       int empire_id)
-{
-    CheckPendingTechs();
-    std::vector<const Tech*> retval;
-    retval.reserve(10); // rough guesstimate
-    std::set<const Tech*> checked_techs;
-    NextTechs(retval, known_techs, checked_techs, m_techs.get<NameIndex>().find(desired_tech),
-              m_techs.get<NameIndex>().end());
-    return retval;
-}
-
-const Tech* TechManager::CheapestNextTechTowards(const std::set<std::string>& known_techs,
-                                                 const std::string& desired_tech,
-                                                 int empire_id, const ScriptingContext& context)
-{ return Cheapest(NextTechsTowards(known_techs, desired_tech, empire_id), empire_id, context); }
-
-size_t TechManager::size() const {
+TechManager::TechContainer::size_type TechManager::size() const {
     CheckPendingTechs();
     return m_techs.size();
 }
 
 TechManager::iterator TechManager::begin() const {
     CheckPendingTechs();
-    return m_techs.get<NameIndex>().begin();
+    return m_techs.begin();
 }
 
 TechManager::iterator TechManager::end() const {
     CheckPendingTechs();
-    return m_techs.get<NameIndex>().end();
-}
-
-TechManager::category_iterator TechManager::category_begin(const std::string& name) const {
-    CheckPendingTechs();
-    return m_techs.get<CategoryIndex>().lower_bound(name);
-}
-
-TechManager::category_iterator TechManager::category_end(const std::string& name) const {
-    CheckPendingTechs();
-    return m_techs.get<CategoryIndex>().upper_bound(name);
+    return m_techs.end();
 }
 
 void TechManager::SetTechs(Pending::Pending<TechManager::TechParseTuple>&& future)
@@ -505,9 +470,8 @@ void TechManager::CheckPendingTechs() const {
 
     if (!empty_defined_categories.empty()) {
         std::stringstream stream;
-        for (const std::string& empty_defined_category : empty_defined_categories) {
+        for (const std::string& empty_defined_category : empty_defined_categories)
             stream << " \"" << empty_defined_category << "\"";
-        }
         std::string error_str = "ERROR: The following tech categories were defined, but no "
             "techs were defined that fell within them:" + stream.str();
         ErrorLogger() << error_str;
@@ -516,9 +480,8 @@ void TechManager::CheckPendingTechs() const {
 
     if (!categories_seen_in_techs.empty()) {
         std::stringstream stream;
-        for (const std::string& category_seen_in_techs : categories_seen_in_techs) {
+        for (const std::string& category_seen_in_techs : categories_seen_in_techs)
             stream << " \"" << category_seen_in_techs << "\"";
-        }
         std::string error_str = "ERROR: The following tech categories were never defined, but some "
             "techs were defined that fell within them:" + stream.str();
         ErrorLogger() << error_str;
@@ -537,52 +500,29 @@ void TechManager::CheckPendingTechs() const {
         throw std::runtime_error(cycle_str.c_str());
     }
 
-    // fill in the unlocked techs data for each loaded tech
-    for (const auto& tech : m_techs) {
-        for (const auto& prereq : tech->Prerequisites()) {
+    // fill in the unlocked techs data for each loaded tech TODO: do without const cast
+    for (const auto& [tech_name, tech] : m_techs) {
+        for (const auto& prereq : tech.Prerequisites()) {
             if (Tech* prereq_tech = const_cast<Tech*>(this->GetTech(prereq)))
-                prereq_tech->m_unlocked_techs.push_back(tech->Name());
+                prereq_tech->m_unlocked_techs.push_back(tech_name);
         }
     }
-    // sort and remove duplicates
-    for (const auto& tech : m_techs) {
-         auto& unlocks = tech->m_unlocked_techs;
-         std::sort(unlocks.begin(), unlocks.end());
-         auto unique_it = std::unique(unlocks.begin(), unlocks.end());
-         unlocks.erase(unique_it, unlocks.end());
-    }
-
     const std::string redundant_dependency = FindRedundantDependency();
     if (!redundant_dependency.empty())
         ErrorLogger() << redundant_dependency;
-
-#ifdef OUTPUT_TECH_LIST
-    for (const Tech* tech : m_techs.get<NameIndex>()) {
-        std::cerr << UserString(tech->Name()) << " ("
-                  << UserString(tech->Category()) << ") - "
-                  << tech->Graphic() << std::endl;
-    }
-#endif
 }
 
 std::string TechManager::FindIllegalDependencies() const {
     CheckPendingTechs();
     assert(!m_techs.empty());
     std::string retval;
-    for (const auto& tech : m_techs) {
-        if (!tech) {
-            std::stringstream stream;
-            stream << "ERROR: Missing tech referenced in other tech, for unknown reasons...";
-            return stream.str();
-        }
-
-        for (const std::string& prereq : tech->Prerequisites()) {
-            const Tech* prereq_tech = GetTech(prereq);
-            if (!prereq_tech) {
-                std::stringstream stream;
-                stream << "ERROR: Tech \"" << tech->Name() << "\" requires a missing or malformed tech \"" << prereq << "\" as its prerequisite.";
-                return stream.str();
-            }
+    for (const auto& [tech_name, tech] : m_techs) {
+        for (const auto& prereq_name : tech.Prerequisites()) {
+            const Tech* prereq_tech = GetTech(prereq_name);
+            if (!prereq_tech)
+                return std::string{"ERROR: Tech \""}.append(tech.Name())
+                    .append("\" requires a missing or malformed tech \"").append(prereq_name)
+                    .append("\" as its prerequisite.");
         }
     }
     return retval;
@@ -594,44 +534,48 @@ std::string TechManager::FindFirstDependencyCycle() const {
     static const std::set<std::string> EMPTY_STRING_SET;    // used in case an invalid tech is processed
 
     std::set<const Tech*> checked_techs; // the list of techs that are not part of any cycle
-    for (const auto& tech : *this) {
-        if (checked_techs.count(tech.get()))
+    for (const auto& [tech_name, tech] : m_techs) {
+        if (checked_techs.count(&tech))
             continue;
 
         std::vector<const Tech*> stack;
-        stack.emplace_back(tech.get());
+        stack.reserve(m_techs.size());
+        stack.push_back(&tech);
         while (!stack.empty()) {
             // Examine the tech on top of the stack.  If the tech has no prerequisite techs, or if all
             // of its prerequisite techs have already been checked, pop it off the stack and mark it as
             // checked; otherwise, push all its unchecked prerequisites onto the stack.
             const Tech* current_tech = stack.back();
-            auto starting_stack_size = stack.size();
+            const auto starting_stack_size = stack.size();
 
             if (current_tech) {
                 for (auto& prereq_name : current_tech->Prerequisites()) {
-                    const Tech* prereq_tech = GetTech(prereq_name);
+                    const Tech* prereq_tech = this->GetTech(prereq_name);
                     if (!prereq_tech || checked_techs.count(prereq_tech))
                         continue;
 
-                    // since this is not a checked prereq, see if it is already in the stack somewhere; if so, we have a cycle
-                    auto stack_duplicate_it = std::find(stack.rbegin(), stack.rend(), prereq_tech);
-                    if (stack_duplicate_it != stack.rend()) {
-                        std::stringstream stream;
-                        std::string current_tech_name = prereq_tech->Name();
-                        stream << "ERROR: Tech dependency cycle found (A <-- B means A is a prerequisite of B): \""
-                                << current_tech_name << "\"";
-                        for (auto stack_it = stack.rbegin(); stack_it != stack_duplicate_it; ++stack_it) {
-                            const auto& prereqs = (*stack_it)->Prerequisites();
-                            if (std::count(prereqs.begin(), prereqs.end(), current_tech_name)) {
-                                current_tech_name = (*stack_it)->Name();
-                                stream << " <-- \"" << current_tech_name << "\"";
-                            }
-                        }
-                        stream << " <-- \"" << prereq_tech->Name() << "\" ... ";
-                        return stream.str();
-                    } else {
+                    // since this is not a checked prereq, see if it is already in the stack somewhere;
+                    // if it is, we have a cycle
+                    const auto stack_duplicate_it = std::find(stack.rbegin(), stack.rend(), prereq_tech);
+                    if (stack_duplicate_it == stack.rend()) {
+                        // OK! no cycle, move to next prereq
                         stack.push_back(prereq_tech);
+                        continue;
                     }
+
+                    std::string_view current_tech_name = prereq_tech->Name();
+                    std::stringstream stream;
+                    stream << "ERROR: Tech dependency cycle found (A <-- B means A is a prerequisite of B): \""
+                           << current_tech_name << "\"";
+                    for (auto stack_it = stack.rbegin(); stack_it != stack_duplicate_it; ++stack_it) {
+                        const auto& prereqs = (*stack_it)->Prerequisites();
+                        if (std::count(prereqs.begin(), prereqs.end(), current_tech_name)) {
+                            current_tech_name = (*stack_it)->Name();
+                            stream << " <-- \"" << current_tech_name << "\"";
+                        }
+                    }
+                    stream << " <-- \"" << prereq_tech->Name() << "\" ... ";
+                    return stream.str();
                 }
             }
             if (starting_stack_size == stack.size()) {
@@ -647,34 +591,27 @@ std::string TechManager::FindRedundantDependency() const {
     CheckPendingTechs();
     assert(!m_techs.empty());
 
-    for (const auto& tech : m_techs) {
-        if (!tech) {
-            std::stringstream stream;
-            stream << "ERROR: Missing referenced tech for unknown reasons...";
-            return stream.str();
-        }
-        const auto& prereqs = tech->Prerequisites();
+    for (const auto& [tech_name, tech] : m_techs) {
+        const auto& prereqs = tech.Prerequisites();
         std::map<std::string, std::string> techs_unlocked_by_prereqs;
         for (const auto& prereq_name : prereqs) {
             const Tech* prereq_tech = GetTech(prereq_name);
-            if (!prereq_tech) {
-                std::stringstream stream;
-                stream << "ERROR: Tech \"" << tech->Name() << "\" requires a missing or malformed tech \"" << prereq_name << "\" as its prerequisite.";
-                return stream.str();
-            }
+            if (!prereq_tech)
+                return std::string{"ERROR: Tech \""}.append(tech_name)
+                    .append("\" requires a missing or malformed tech \"")
+                    .append(prereq_name).append("\" as its prerequisite.");
             AllChildren(prereq_tech, techs_unlocked_by_prereqs);
         }
         for (const auto& prereq_name : prereqs) {
-            auto map_it = techs_unlocked_by_prereqs.find(prereq_name);
-            if (map_it != techs_unlocked_by_prereqs.end()) {
-                std::stringstream stream;
-                stream << "ERROR: Redundant tech dependency found (A <-- B means A is a prerequisite of B): "
-                       << map_it->second << " <-- " << map_it->first << ", "
-                       << map_it->first << " <-- " << tech->Name() << ", "
-                       << map_it->second << " <-- " << tech->Name() << "; remove the " << map_it->second << " <-- " << tech->Name()
-                       << " dependency.";
-                return stream.str();
-            }
+            const auto map_it = techs_unlocked_by_prereqs.find(prereq_name);
+            if (map_it == techs_unlocked_by_prereqs.end())
+                continue;
+
+            return std::string{"ERROR: Redundant tech dependency found (A <-- B means A is a prerequisite of B): "}
+                .append(map_it->second).append(" <-- ").append(map_it->first).append(", ")
+                .append(map_it->first).append(" <-- ").append(tech_name).append(", ")
+                .append(map_it->second).append(" <-- ").append(tech_name).append("; remove the ")
+                .append(map_it->second).append(" <-- ").append(tech_name).append(" dependency.");
         }
     }
     return "";
@@ -692,30 +629,23 @@ void TechManager::AllChildren(const Tech* tech, std::map<std::string, std::strin
     }
 }
 
-std::vector<std::string> TechManager::RecursivePrereqs(
-    const std::string& tech_name, int empire_id, bool min_required,
-    const ScriptingContext& context) const
+std::vector<std::string> TechManager::RecursivePrereqs(std::string_view tech_name, int empire_id,
+                                                       const ScriptingContext& context) const
 {
-    std::vector<std::string> retval;
     const Tech* initial_tech = this->GetTech(tech_name);
     if (!initial_tech)
-        return retval;
+        return {};
 
     // compile set of recursive prereqs
     std::list<std::string> prereqs_list{initial_tech->Prerequisites().begin(), // working list of prereqs as being processed.  may contain duplicates
                                         initial_tech->Prerequisites().end()};  // initialized with 1st order prereqs
     std::set<std::string> prereqs_set;                                         // set of (unique) prereqs leading to tech
     std::multimap<float, std::string> techs_to_add_map;                        // indexed and sorted by cost per turn
-    auto empire = context.GetEmpire(empire_id);
 
     // traverse list, appending new prereqs to it, and putting unique prereqs into set
     for (std::string& cur_name : prereqs_list) {
         // check if this tech is already in the map of prereqs.  If so, it has already been processed, and can be skipped.
         if (prereqs_set.count(cur_name))
-            continue;
-
-        // if this tech is already known and min_required==true, can skip.
-        if (min_required && empire && (empire->GetTechStatus(cur_name) == TechStatus::TS_COMPLETE))
             continue;
 
         // tech is new, so put it into the set of already-processed prereqs
@@ -731,6 +661,7 @@ std::vector<std::string> TechManager::RecursivePrereqs(
     }
 
     // extract sorted techs into vector, to be passed to signal...
+    std::vector<std::string> retval;
     retval.reserve(techs_to_add_map.size());
     for (auto& tech_to_add : techs_to_add_map)
         retval.push_back(std::move(tech_to_add.second));
