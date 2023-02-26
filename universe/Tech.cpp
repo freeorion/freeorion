@@ -121,8 +121,16 @@ Tech::Tech(std::string&& name, std::string&& description,
     m_description(std::move(description)),
     m_short_description(std::move(short_description)),
     m_category(std::move(category)),
-    m_research_cost(std::move(research_cost)),
-    m_research_turns(std::move(research_turns)),
+    m_research_cost([](auto&& rc, const auto& name) {
+        if (rc)
+            rc->SetTopLevelContent(name);
+        return std::move(rc);
+    }(std::move(research_cost), name)),
+    m_research_turns([](auto&& rt, const auto& name) {
+        if (rt)
+            rt->SetTopLevelContent(name);
+        return std::move(rt);
+    }(std::move(research_turns), name)),
     m_researchable(researchable),
     m_tags_concatenated([&tags]() {
         // allocate storage for concatenated tags
@@ -191,16 +199,7 @@ Tech::Tech(std::string&& name, std::string&& description,
         return std::move(unlocked_items);
     }(unlocked_items)),
     m_graphic(std::move(graphic))
-{
-    Init();
-}
-
-void Tech::Init() {
-    if (m_research_cost)
-        m_research_cost->SetTopLevelContent(m_name);
-    if (m_research_turns)
-        m_research_turns->SetTopLevelContent(m_name);
-}
+{}
 
 bool Tech::operator==(const Tech& rhs) const {
     if (&rhs == this)

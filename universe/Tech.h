@@ -96,8 +96,6 @@ public:
     [[nodiscard]] uint32_t GetCheckSum() const;
 
 private:
-    void Init();
-
     std::string                       m_name;
     std::string                       m_description;
     std::string                       m_short_description;
