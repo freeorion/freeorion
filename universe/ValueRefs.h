@@ -1184,11 +1184,6 @@ uint32_t Statistic<T, V>::GetCheckSum() const
 template <>
 FO_COMMON_API std::string Statistic<std::string, std::string>::Eval(const ScriptingContext& context) const;
 
-template struct Statistic<double, double>;
-template struct Statistic<double, std::string>;
-template struct Statistic<int, int>;
-template struct Statistic<int, std::string>;
-
 ///////////////////////////////////////////////////////////
 // TotalFighterShots (of a carrier during one battle)    //
 ///////////////////////////////////////////////////////////
