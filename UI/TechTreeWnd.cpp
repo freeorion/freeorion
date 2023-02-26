@@ -1985,8 +1985,7 @@ void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, GG::Pt
 
 void TechTreeWnd::TechListBox::TechDoubleClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) {
     // determine type of row that was clicked, and emit appropriate signal
-    TechRow* tech_row = dynamic_cast<TechRow*>(it->get());
-    if (tech_row)
+    if (TechRow* tech_row = dynamic_cast<TechRow*>(it->get()))
         TechDoubleClickedSignal(tech_row->GetTech(), modkeys);
 }
 
@@ -2010,16 +2009,16 @@ void TechTreeWnd::CompleteConstruction() {
     m_layout_panel = GG::Wnd::Create<LayoutPanel>(Width(), Height());
     m_layout_panel->TechSelectedSignal.connect(boost::bind(&TechTreeWnd::TechLeftClickedSlot, this, _1, _2));
     m_layout_panel->TechDoubleClickedSignal.connect(
-        [this](const std::string& tech_name, GG::Flags<GG::ModKey> modkeys)
-    { this->AddTechToResearchQueue(tech_name, modkeys & GG::MOD_KEY_CTRL); });
+        [this](std::string tech_name, GG::Flags<GG::ModKey> modkeys)
+    { this->AddTechToResearchQueue(std::move(tech_name), modkeys & GG::MOD_KEY_CTRL); });
     m_layout_panel->TechPediaDisplaySignal.connect(boost::bind(&TechTreeWnd::TechPediaDisplaySlot, this, _1));
     AttachChild(m_layout_panel);
 
     m_tech_list = GG::Wnd::Create<TechListBox>(Width(), Height());
     m_tech_list->TechLeftClickedSignal.connect(boost::bind(&TechTreeWnd::TechLeftClickedSlot, this, _1, _2));
     m_tech_list->TechDoubleClickedSignal.connect(
-        [this](const std::string& tech_name, GG::Flags<GG::ModKey> modkeys)
-    { this->AddTechToResearchQueue(tech_name, modkeys & GG::MOD_KEY_CTRL); });
+        [this](std::string tech_name, GG::Flags<GG::ModKey> modkeys)
+    { this->AddTechToResearchQueue(std::move(tech_name), modkeys & GG::MOD_KEY_CTRL); });
     m_tech_list->TechPediaDisplaySignal.connect(
         boost::bind(&TechTreeWnd::TechPediaDisplaySlot, this, _1));
 
@@ -2151,9 +2150,9 @@ void TechTreeWnd::ShowCategory(const std::string& category) {
     m_layout_panel->ShowCategory(category);
     m_tech_list->ShowCategory(category);
 
-    const auto& maybe_button = m_tech_tree_controls->m_cat_buttons.find(category);
-    if (maybe_button != m_tech_tree_controls->m_cat_buttons.end())
-        maybe_button->second->SetCheck(true);
+    const auto button_it = m_tech_tree_controls->m_cat_buttons.find(category);
+    if (button_it != m_tech_tree_controls->m_cat_buttons.end())
+        button_it->second->SetCheck(true);
 }
 
 void TechTreeWnd::ShowAllCategories() {
@@ -2168,9 +2167,9 @@ void TechTreeWnd::HideCategory(const std::string& category) {
     m_layout_panel->HideCategory(category);
     m_tech_list->HideCategory(category);
 
-    const auto& maybe_button = m_tech_tree_controls->m_cat_buttons.find(category);
-    if (maybe_button != m_tech_tree_controls->m_cat_buttons.end())
-        maybe_button->second->SetCheck(false);
+    const auto button_it = m_tech_tree_controls->m_cat_buttons.find(category);
+    if (button_it != m_tech_tree_controls->m_cat_buttons.end())
+        button_it->second->SetCheck(false);
 }
 
 void TechTreeWnd::HideAllCategories() {
@@ -2178,14 +2177,14 @@ void TechTreeWnd::HideAllCategories() {
     m_tech_list->HideAllCategories();
 
     for (auto& cat_button : m_tech_tree_controls->m_cat_buttons)
-    { cat_button.second->SetCheck(false); }
+        cat_button.second->SetCheck(false);
 }
 
 void TechTreeWnd::ToggleAllCategories() {
-    std::set<std::string> shown_cats = m_layout_panel->GetCategoriesShown();
-    auto all_cats = GetTechManager().CategoryNames();
+    const auto num_casts_shown = m_layout_panel->GetCategoriesShown().size();
+    const auto num_cats = GetTechManager().CategoryNames().size();
 
-    if (shown_cats.size() == all_cats.size())
+    if (num_casts_shown == num_cats)
         HideAllCategories();
     else
         ShowAllCategories();
@@ -2243,8 +2242,7 @@ void TechTreeWnd::CenterOnTech(const std::string& tech_name) {
     // ensure tech exists and is visible
     const Tech* tech = ::GetTech(tech_name);
     if (!tech) return;
-    const Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
-    if (empire)
+    if (const Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID()))
         SetTechStatus(empire->GetTechStatus(tech_name), true);
     ShowCategory(tech->Category());
 
