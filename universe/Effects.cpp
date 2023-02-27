@@ -2727,32 +2727,28 @@ void RemoveStarlanes::Execute(ScriptingContext& context) const {
         target_system = context.ContextObjects().getRaw<System>(context.effect_target->SystemID());
     if (!target_system)
         return; // nothing to do!
+    const int target_system_id = target_system->ID();
 
     // get other endpoint systems...
 
     // apply endpoints condition to determine objects whose systems should be
     // connected to the source system
-    Condition::ObjectSet endpoint_objects =
-        m_other_lane_endpoint_condition->Eval(std::as_const(context));
+    const auto endpoint_objects = m_other_lane_endpoint_condition->Eval(std::as_const(context));
 
-    // early exit if there are no valid locations - can't move anything if there's nowhere to move to
-    if (endpoint_objects.empty())
-        return; // nothing to do!
-
-    // get systems containing at least one endpoint object
-    std::set<System*> endpoint_systems;
-    for (auto& endpoint_object : endpoint_objects) {
-        auto endpoint_system = dynamic_cast<const System*>(endpoint_object);
-        if (!endpoint_system)
-            endpoint_system = context.ContextObjects().getRaw<System>(endpoint_object->SystemID());
-        if (!endpoint_system)
-            continue;
-        endpoint_systems.insert(const_cast<System*>(endpoint_system));
-    }
+    // get system IDs of those objects
+    std::vector<int> endpoint_system_ids;
+    endpoint_system_ids.reserve(endpoint_objects.size());
+    std::transform(endpoint_objects.begin(), endpoint_objects.end(), std::back_inserter(endpoint_system_ids),
+                   [](const UniverseObject* obj) { return obj ? obj->SystemID() : INVALID_OBJECT_ID; });
+    // uniquify
+    std::sort(endpoint_system_ids.begin(), endpoint_system_ids.end());
+    auto unique_it = std::unique(endpoint_system_ids.begin(), endpoint_system_ids.end());
+    endpoint_system_ids.erase(unique_it, endpoint_system_ids.end());
+    // get all those systems
+    auto endpoint_systems = context.ContextObjects().findRaw<System>(endpoint_system_ids);
 
     // remove starlanes from target to endpoint systems
-    int target_system_id = target_system->ID();
-    for (auto& endpoint_system : endpoint_systems) {
+    for (auto* endpoint_system : endpoint_systems) {
         target_system->RemoveStarlane(endpoint_system->ID());
         endpoint_system->RemoveStarlane(target_system_id);
     }
