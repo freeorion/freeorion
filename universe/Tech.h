@@ -193,10 +193,6 @@ private:
     /** Assigns any m_pending_types to m_techs. */
     void CheckPendingTechs() const;
 
-    /** returns an error string indicating the first instance of an illegal prerequisite relationship between
-        two techs in m_techs, or an empty string if there are no illegal dependencies  */
-    [[nodiscard]] std::string FindIllegalDependencies() const;
-
     /** returns an error string indicating the first prerequisite dependency cycle found in m_techs, or an
         empty string if there are no dependency cycles */
     [[nodiscard]] std::string FindFirstDependencyCycle() const;

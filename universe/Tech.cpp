@@ -456,30 +456,55 @@ void TechManager::CheckPendingTechs() const {
     std::set<std::string> categories_seen_in_techs;
     std::tie(m_techs, m_categories, categories_seen_in_techs) = std::move(*parsed);
 
+    // check for missing prerequisites
+    for (const auto& [tech_name, tech] : m_techs) {
+        for (const auto& prereq_name : tech.Prerequisites()) {
+            if (m_techs.find(prereq_name) != m_techs.end())
+                continue; // prereq exists
 
-    std::set<std::string> empty_defined_categories;
-    for (const auto& map : m_categories) {
-        auto set_it = categories_seen_in_techs.find(map.first);
-        if (set_it == categories_seen_in_techs.end()) {
-            empty_defined_categories.insert(map.first);
-        } else {
-            categories_seen_in_techs.erase(set_it);
+            std::string error_str = "ERROR: Tech \"" + tech_name + "\" requires a missing or malformed tech \"" +
+                prereq_name + "\" as its prerequisite.";
+            ErrorLogger() << error_str;
+            throw std::runtime_error(error_str.c_str());
         }
     }
 
+    // fill in the unlocked techs data for each tech
+    for (auto& [tech_name, tech] : m_techs) {
+        for (auto& prereq_name : tech.Prerequisites()) {
+            auto prereq_it = m_techs.find(prereq_name);
+            if (prereq_it == m_techs.end()) {
+                // shouldn't reach here if previous check for missing prereqs worked
+                ErrorLogger() << "Couldn't find prerequisite tech " << prereq_name << " of tech " << tech_name;
+                continue;
+            }
+            prereq_it->second.m_unlocked_techs.push_back(tech_name);
+        }
+    }
+
+    // check for empty categories
+    std::vector<std::string> empty_defined_categories;
+    empty_defined_categories.reserve(m_categories.size());
+    for (const auto& [cat_name, ignored] : m_categories) {
+        (void)ignored;
+        auto set_it = categories_seen_in_techs.find(cat_name);
+        if (set_it == categories_seen_in_techs.end())
+            empty_defined_categories.push_back(cat_name);
+        else
+            categories_seen_in_techs.erase(set_it);
+    }
     if (!empty_defined_categories.empty()) {
         std::stringstream stream;
-        for (const std::string& empty_defined_category : empty_defined_categories)
+        for (const auto& empty_defined_category : empty_defined_categories)
             stream << " \"" << empty_defined_category << "\"";
         std::string error_str = "ERROR: The following tech categories were defined, but no "
             "techs were defined that fell within them:" + stream.str();
         ErrorLogger() << error_str;
         std::cerr << error_str << std::endl;
     }
-
     if (!categories_seen_in_techs.empty()) {
         std::stringstream stream;
-        for (const std::string& category_seen_in_techs : categories_seen_in_techs)
+        for (const auto& category_seen_in_techs : categories_seen_in_techs)
             stream << " \"" << category_seen_in_techs << "\"";
         std::string error_str = "ERROR: The following tech categories were never defined, but some "
             "techs were defined that fell within them:" + stream.str();
@@ -487,44 +512,16 @@ void TechManager::CheckPendingTechs() const {
         std::cerr << error_str << std::endl;
     }
 
-    std::string illegal_dependency_str = FindIllegalDependencies();
-    if (!illegal_dependency_str.empty()) {
-        ErrorLogger() << illegal_dependency_str;
-        throw std::runtime_error(illegal_dependency_str.c_str());
-    }
-
-    std::string cycle_str = FindFirstDependencyCycle();
+    // find cyclical dependencies
+    const std::string cycle_str = FindFirstDependencyCycle();
     if (!cycle_str.empty()) {
         ErrorLogger() << cycle_str;
         throw std::runtime_error(cycle_str.c_str());
     }
 
-    // fill in the unlocked techs data for each loaded tech TODO: do without const cast
-    for (const auto& [tech_name, tech] : m_techs) {
-        for (const auto& prereq : tech.Prerequisites()) {
-            if (Tech* prereq_tech = const_cast<Tech*>(this->GetTech(prereq)))
-                prereq_tech->m_unlocked_techs.push_back(tech_name);
-        }
-    }
     const std::string redundant_dependency = FindRedundantDependency();
     if (!redundant_dependency.empty())
         ErrorLogger() << redundant_dependency;
-}
-
-std::string TechManager::FindIllegalDependencies() const {
-    CheckPendingTechs();
-    assert(!m_techs.empty());
-    std::string retval;
-    for (const auto& [tech_name, tech] : m_techs) {
-        for (const auto& prereq_name : tech.Prerequisites()) {
-            const Tech* prereq_tech = GetTech(prereq_name);
-            if (!prereq_tech)
-                return std::string{"ERROR: Tech \""}.append(tech.Name())
-                    .append("\" requires a missing or malformed tech \"").append(prereq_name)
-                    .append("\" as its prerequisite.");
-        }
-    }
-    return retval;
 }
 
 std::string TechManager::FindFirstDependencyCycle() const {
