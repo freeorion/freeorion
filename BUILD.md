@@ -15,7 +15,7 @@ developed for x86 compatible processor architectures; other architectures
 haven't been tested.
 
 The FreeOrion source code makes heavy use of templates and requires much memory
-to compile; 8 GiB RAM or more is recommended. Expect up to 45 minutes on a Intel
+to compile; 16 GiB RAM or more is recommended. Expect up to 45 minutes on a Intel
 Core i5 system, or about 5 min on a 12-core AMD Ryzen 9 3.8 GHz system.
 
 
