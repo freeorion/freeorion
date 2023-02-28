@@ -11,11 +11,11 @@ Hardware and OS Requirements
 FreeOrion should compile on Windows 8.1 (or later), Mac OS X 10.10 (or later) and
 Linux operating systems. Other operating systems have reported to work, but
 support is not actively maintained by the FreeOrion developers. FreeOrion is
-developed for x86 compatible processor architectures, other architectures
+developed for x86 compatible processor architectures; other architectures
 haven't been tested.
 
 The FreeOrion source code makes heavy use of templates and requires much memory
-to compile ; 8 GiB RAM or more is recommended. Expect up to 45 minutes on a Intel
+to compile; 8 GiB RAM or more is recommended. Expect up to 45 minutes on a Intel
 Core i5 system, or about 5 min on a 12-core AMD Ryzen 9 3.8 GHz system.
 
 
@@ -38,7 +38,7 @@ FreeOrion depends on the following libraries or APIs to run:
   * OpenGL - 2.1 or later ; usually provided by the graphic card driver or
     Operating System
   * OpenAL - It's recommended to use the [OpenAL Soft] implementation
-  * [Boost] - 1.69 or later
+  * [Boost] - 1.69 or later, 1.79 should work
   * [zlib]
   * [libpython] - 3.7 or later
   * [FreeType2]
