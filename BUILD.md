@@ -51,16 +51,16 @@ FreeOrion depends on the following libraries or APIs to run:
 Obtaining FreeOrion Source Code and Software Dependencies
 ---------------------------------------------------------
 
-For Windows and Mac OS X a [Software Development Kit] is provided as download to
-compile FreeOrion from source. It contains the preconfigured and -compiled build
-and runtime dependencies for the Visual Studio v141 toolchain on Windows and
+For Windows and Mac OS X, a [Software Development Kit] is provided as download to
+assist with compiling FreeOrion from source. The SDK contains the preconfigured and
+-compiled build and runtime dependencies for Visual Studio on Windows and the
 Mac OS X 10.9 SDK with Xcode 6.4 or later on Mac OS X.
 
-For Linux or other Operating Systems the build and runtime dependencies should
+For Linux or other Operating Systems, the build and runtime dependencies should
 be installed by the preferred way for the respective OS (e.g. via Package
 manager or compiling from source).
 
-Step by step procedure:
+Step by step procedure for the v0.5 release and development versions near then:
 
  * On Windows:
    * Download the [FreeOrionSDK v13] from the FreeOrionSDK respository releases.
