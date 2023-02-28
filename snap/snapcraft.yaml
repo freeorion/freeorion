@@ -71,14 +71,17 @@ parts:
     #cmake-parameters: [-DBUILD_TESTING=ON]
     override-pull: |
       snapcraftctl pull
-      # this versioning works for e.g. weekly-test-builds
       branchn="$(git rev-parse --abbrev-ref HEAD)"
-      version="$(git log -n1 --date=short --format='%cd.%h' $branchn)"
-      case $version in
-        v*) version=$(echo $version | tail -c +2) ;;
-        *)  version=$(echo $version | head -c 32) ;;
+      daterev="$(git log -n1 --date=short --format='%cd.%h' $branchn)"
+      longtagn="$(git describe --tags || echo none)"
+      case $longtagn in
+        v*) version=${longtagn} ;;
+        *) case $daterev in
+          v*) version=$(echo $daterev | tail -c +2) ;;
+          *)  version=$(echo $daterev | head -c 32) ;;
+        esac ;;
       esac
-      [ -n "$(echo $version | grep '-')" ] && grade=devel || grade=stable
+      [ -n "$(echo $version | grep '^[0-9]+-')" ] && grade=devel || grade=stable
       snapcraftctl set-version "$version"
       snapcraftctl set-grade "$grade"
     override-prime: |
