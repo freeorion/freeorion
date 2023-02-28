@@ -63,9 +63,9 @@ manager or compiling from source).
 Step by step procedure:
 
  * On Windows:
-   * Download the [FreeOrionSDK v12] from the FreeOrionSDK respository releases.
+   * Download the [FreeOrionSDK v13] from the FreeOrionSDK respository releases.
  * On Mac OS X:
-   * The [FreeOrionSDK v12] is downloaded automatically when CMake creates the
+   * The [FreeOrionSDK v13] is downloaded automatically when CMake creates the
      build environment.
  * Linux and other Operating Systems:
    * Install build and runtime dependencies by the preferred way for the
@@ -250,7 +250,7 @@ To get logs run:
 adb exec-out run-as org.godotengine.freeoriongodotclient cat files/freeorion-godot.log
 ```
 
-[Visual Studio]: https://visualstudio.microsoft.com/vs/older-downloads/
+[Visual Studio]: https://visualstudio.microsoft.com/vs/
 [Xcode]: https://itunes.apple.com/de/app/xcode/id497799835?mt=12
 [CMake]: https://cmake.org/download/
 [GNU GCC]: https://gcc.gnu.org/releases.html
@@ -267,9 +267,9 @@ adb exec-out run-as org.godotengine.freeoriongodotclient cat files/freeorion-god
 [libvorbis]: https://xiph.org/downloads/
 [SDL2]: https://www.libsdl.org/download-2.0.php
 [Software Development Kit]: https://github.com/freeorion/freeorion-sdk
-[FreeOrionSDK v12]: https://github.com/freeorion/freeorion-sdk/releases/tag/v12
+[FreeOrionSDK v13]: https://github.com/freeorion/freeorion-sdk/releases/tag/v13
 [FreeOrion Releases]: https://github.com/freeorion/freeorion/releases
 [make jobs]: https://www.gnu.org/software/make/manual/html_node/Parallel.html
 [Python-For-Android]: https://github.com/python-cmake-buildsystem/python-cmake-buildsystem/pull/262
 [Boost-For-Android]: https://github.com/moritz-wundke/Boost-for-Android
-[FreeOrion v0.4.10 BUILD.md]: https://github.com/freeorion/freeorion/blob/release-v0.4.10/BUILD.md
+[FreeOrion v0.5 BUILD.md]: https://github.com/freeorion/freeorion/blob/release-v0.5/BUILD.md
