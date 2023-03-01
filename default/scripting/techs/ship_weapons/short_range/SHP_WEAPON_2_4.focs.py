@@ -10,6 +10,6 @@ Tech(
     researchturns=2,
     tags=["PEDIA_SR_WEAPON_TECHS"],
     prerequisites=["SHP_WEAPON_2_3"],
-    effectsgroups=WEAPON_UPGRADE_CAPACITY_EFFECTS("SR_WEAPON_2_1", 2),
+    effectsgroups=WEAPON_UPGRADE_CAPACITY_EFFECTS("SHP_WEAPON_2_4", "SR_WEAPON_2_1", 2),
     graphic="icons/ship_parts/laser-4.png",
 )

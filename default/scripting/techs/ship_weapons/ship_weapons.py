@@ -13,8 +13,16 @@ def WEAPON_BASE_EFFECTS(part_name: str):
             scope=EMPIRE_OWNED_SHIP_WITH_PART(part_name),
             accountinglabel=part_name,
             effects=[
-                SetMaxCapacity(partname=part_name, value=Value + PartCapacity(name=part_name)),
-                SetMaxSecondaryStat(partname=part_name, value=Value + PartSecondaryStat(name=part_name)),
+                # XXX these NamedReals exist for the pedia; if the pedia gets better support for looking up part capacity etc these should be removed
+                SetMaxCapacity(
+                    partname=part_name,
+                    value=Value + NamedReal(name=part_name + "_PART_CAPACITY", value=PartCapacity(name=part_name)),
+                ),
+                SetMaxSecondaryStat(
+                    partname=part_name,
+                    value=Value
+                    + NamedReal(name=part_name + "_PART_SECONDARY_STAT", value=PartSecondaryStat(name=part_name)),
+                ),
             ],
         ),
         # The following is really only needed on the first resupplied turn after an upgrade is researched, since the resupply currently
@@ -30,7 +38,10 @@ def WEAPON_BASE_EFFECTS(part_name: str):
 
 # @1@ part name
 # @2@ value added to max capacity
-def WEAPON_UPGRADE_CAPACITY_EFFECTS(part_name: str, value: int):
+def WEAPON_UPGRADE_CAPACITY_EFFECTS(tech_name: str, part_name: str, value: int, upgraded_damage_override: int = -1):
+    # the following recursive lookup works, but is not acceptable because of delays. as long as the parser is sequential, the parallel waiting feature is kind of a bug
+    # previous_upgrade_effect = PartCapacity(name=part_name) if (tech_name[-1] == "2") else NamedRealLookup(name = tech_name[0:-1] + "2_UPGRADED_DAMAGE")  # + str(int(tech_name[-1]) - 1))
+    upgraded_damage = upgraded_damage_override if upgraded_damage_override != -1 else value * (int(tech_name[-1]) - 1)
     return [
         EffectsGroup(
             scope=EMPIRE_OWNED_SHIP_WITH_PART(part_name) & SHIP_PART_UPGRADE_RESUPPLY_CHECK(CurrentContent),
@@ -49,7 +60,12 @@ def WEAPON_UPGRADE_CAPACITY_EFFECTS(part_name: str, value: int):
                     "empire": Source.Owner,
                     "shippart": part_name,
                     "tech": CurrentContent,
-                    "dam": value * SHIP_WEAPON_DAMAGE_FACTOR,
+                    # str(CurrentContent) -> <ValueRefString object at 0x...>
+                    "dam": NamedReal(name=tech_name + "_UPGRADE_DAMAGE", value=value * SHIP_WEAPON_DAMAGE_FACTOR),
+                    "sum": NamedReal(
+                        name=tech_name + "_UPGRADED_DAMAGE",
+                        value=PartCapacity(name=part_name) + (SHIP_WEAPON_DAMAGE_FACTOR * upgraded_damage),
+                    ),
                 },
                 empire=Target.Owner,
             ),
