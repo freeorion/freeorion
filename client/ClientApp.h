@@ -57,7 +57,7 @@ public:
      *
      * @return The player identifier of the client controlling the empire.
      */
-    [[nodiscard]] int EmpirePlayerID(int empire_id) const;
+    [[nodiscard]] int EmpirePlayerID(int empire_id) const noexcept;
 
     /** @brief Return the players in game as ::PlayerInfo map
      *
@@ -65,8 +65,8 @@ public:
      *      their player identifier as key.
      *
      * @{ */
-    [[nodiscard]] std::map<int, PlayerInfo>& Players() noexcept { return m_player_info; }
-    [[nodiscard]] const std::map<int, PlayerInfo>& Players() const noexcept { return m_player_info; }
+    [[nodiscard]] auto& Players() noexcept { return m_player_info; }
+    [[nodiscard]] const auto& Players() const noexcept { return m_player_info; }
     /** @} */
 
     /** @brief Return the ::Universe known to this client
