@@ -125,6 +125,9 @@ value_ref_wrapper<int> operator==(const value_ref_wrapper<int>&, const value_ref
 value_ref_wrapper<int> operator==(const value_ref_wrapper<int>&, int);
 value_ref_wrapper<int> operator!=(const value_ref_wrapper<int>&, int);
 
+value_ref_wrapper<std::string> operator+(const value_ref_wrapper<std::string>&, const std::string&);
+value_ref_wrapper<std::string> operator+(const std::string&, const value_ref_wrapper<std::string>&);
+
 void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& parser);
 
 #endif // _ValueRefPythonParser_h_

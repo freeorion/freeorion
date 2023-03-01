@@ -455,6 +455,24 @@ value_ref_wrapper<int> operator!=(const value_ref_wrapper<int>& lhs, int rhs) {
     );
 }
 
+value_ref_wrapper<std::string> operator+(const value_ref_wrapper<std::string>& lhs, const std::string& rhs) {
+    return value_ref_wrapper<std::string>(
+        std::make_shared<ValueRef::Operation<std::string>>(
+            ValueRef::OpType::PLUS,
+            ValueRef::CloneUnique(lhs.value_ref),
+            std::make_unique<ValueRef::Constant<std::string>>(rhs))
+    );
+}
+
+value_ref_wrapper<std::string> operator+(const std::string& lhs, const value_ref_wrapper<std::string>& rhs) {
+    return value_ref_wrapper<std::string>(
+        std::make_shared<ValueRef::Operation<std::string>>(
+            ValueRef::OpType::PLUS,
+            std::make_unique<ValueRef::Constant<std::string>>(lhs),
+            ValueRef::CloneUnique(rhs.value_ref))
+    );
+}
+
 namespace {
     template<typename T>
     value_ref_wrapper<T> insert_named_lookup_(const boost::python::tuple& args, const boost::python::dict& kw) {
