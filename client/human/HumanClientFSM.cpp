@@ -700,7 +700,7 @@ boost::statechart::result PlayingGame::react(const PlayerChat& msg) {
         auto player_it = players.find(sending_player_id);
         if (player_it != players.end()) {
             player_name = player_it->second.name;
-            if (auto empire = GetEmpire(player_it->second.empire_id))
+            if (auto empire = Client().GetEmpire(player_it->second.empire_id))
                 text_color = empire->Color();
         }
     } else {
