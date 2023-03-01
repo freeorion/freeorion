@@ -5,6 +5,8 @@
 #include "Enums.h"
 #include "Pathfinder.h"
 #include "ScriptingContext.h"
+#include "Condition.h"
+#include "ValueRef.h"
 #include "Special.h"
 #include "System.h"
 #include "UniverseObjectVisitor.h"

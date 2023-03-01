@@ -22,6 +22,7 @@
 #include "../universe/ShipDesign.h"
 #include "../universe/ShipPart.h"
 #include "../universe/ShipHull.h"
+#include "../universe/ValueRef.h"
 
 #include <GG/StaticGraphic.h>
 #include <GG/TabWnd.h>

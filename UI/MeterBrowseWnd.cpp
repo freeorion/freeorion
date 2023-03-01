@@ -10,6 +10,7 @@
 #include "../universe/ShipDesign.h"
 #include "../universe/ShipPart.h"
 #include "../universe/UniverseObject.h"
+#include "../universe/ValueRef.h"
 #include "../Empire/Empire.h"
 #include "../combat/CombatDamage.h"
 #include "../client/human/GGHumanClientApp.h"

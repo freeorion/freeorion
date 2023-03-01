@@ -5,6 +5,7 @@
 #include "../util/OptionsDB.h"
 #include "../universe/Effect.h"
 #include "../universe/Special.h"
+#include "../universe/ValueRef.h"
 #include "../universe/UniverseObject.h"
 #include "../client/human/GGHumanClientApp.h"
 #include "ClientUI.h"

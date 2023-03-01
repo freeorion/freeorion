@@ -1,4 +1,5 @@
 #include "../universe/BuildingType.h"
+#include "../universe/Condition.h"
 #include "../universe/Effect.h"
 #include "../universe/Enums.h"
 #include "../universe/Fleet.h"
@@ -7,6 +8,7 @@
 #include "../universe/ShipPart.h"
 #include "../universe/Species.h"
 #include "../universe/System.h"
+#include "../universe/ValueRef.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/UnlockableItem.h"
 #include "../Empire/Diplomacy.h"
