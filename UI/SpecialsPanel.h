@@ -14,16 +14,14 @@ public:
     bool InWindow(GG::Pt pt) const override;
     int  ObjectID() const { return m_object_id; }
 
-    void Render() override;
+    void Render() noexcept override {}
     void MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
     void Update();          ///< regenerates indicators according specials on object
 
 private:
-    void SpecialRightClicked(const std::string& name);
-
-    int                                                     m_object_id;    ///< id for the Object whose specials this panel displays
-    std::map<std::string, std::shared_ptr<StatisticIcon>>   m_icons;
+    const int m_object_id; ///< id for the Object whose specials this panel displays
+    std::vector<std::pair<std::string, std::shared_ptr<StatisticIcon>>> m_icons;
 };
 
 #endif

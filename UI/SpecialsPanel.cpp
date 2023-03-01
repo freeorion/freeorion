@@ -19,10 +19,9 @@ namespace {
 
 SpecialsPanel::SpecialsPanel(GG::X w, int object_id) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y(32), GG::INTERACTIVE),
-    m_object_id(object_id),
-    m_icons()
+    m_object_id(object_id)
 {
-    SetName("SpecialsPanel");
+    SetName("SpecialsPanel"); // TODO: add a Wnd constructor that takes a name so this isn't needed
 }
 
 void SpecialsPanel::CompleteConstruction() {
@@ -31,18 +30,9 @@ void SpecialsPanel::CompleteConstruction() {
 }
 
 bool SpecialsPanel::InWindow(GG::Pt pt) const {
-    bool retval = false;
-    for (const auto& entry : m_icons) {
-        if (entry.second->InWindow(pt)) {
-            retval = true;
-            break;
-        }
-    }
-    return retval;
+    return std::any_of(m_icons.begin(), m_icons.end(),
+                       [pt](const auto& name_icon) { return name_icon.second->InWindow(pt); });
 }
-
-void SpecialsPanel::Render()
-{}
 
 void SpecialsPanel::MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
@@ -97,13 +87,12 @@ void SpecialsPanel::Update() {
         else
             desc += "\n" + UserString("ADDED_ON_INITIAL_TURN");
 
-        if (GetOptionsDB().Get<bool>("resource.effects.description.shown") && !special->Effects().empty()) {
+        if (GetOptionsDB().Get<bool>("resource.effects.description.shown") && !special->Effects().empty())
             desc += "\n" + Dump(special->Effects());
-        }
 
         graphic->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
             ClientUI::SpecialIcon(special->Name()), UserString(special->Name()), desc));
-        m_icons[special_name] = graphic;
+        m_icons.emplace_back(special_name, graphic);
 
         graphic->RightClickedSignal.connect([name{special_name}](GG::Pt pt) {
             auto zoom_action = [name]() {
