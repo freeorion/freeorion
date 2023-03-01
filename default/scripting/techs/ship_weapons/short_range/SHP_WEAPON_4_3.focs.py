@@ -10,6 +10,6 @@ Tech(
     researchturns=3,
     tags=["PEDIA_SR_WEAPON_TECHS"],
     prerequisites=["SHP_WEAPON_4_2"],
-    effectsgroups=WEAPON_UPGRADE_CAPACITY_EFFECTS("SR_WEAPON_4_1", 5),
+    effectsgroups=WEAPON_UPGRADE_CAPACITY_EFFECTS("SHP_WEAPON_4_3", "SR_WEAPON_4_1", 5),
     graphic="icons/ship_parts/death-ray-3.png",
 )

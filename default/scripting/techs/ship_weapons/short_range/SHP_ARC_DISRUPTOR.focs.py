@@ -4,6 +4,10 @@ from techs.ship_weapons.ship_weapons import (
     WEAPON_UPGRADE_CAPACITY_EFFECTS,
 )
 
+AD_2_upgrade = 2
+AD_3_upgrade = 3
+AD_2_plus_3_upgrade = AD_2_upgrade + AD_3_upgrade
+
 # In absense of shields this weapon can get almost as good as Plasma. Against shields its pretty useless
 Tech(
     name="SHP_WEAPON_ARC_DISRUPTOR_1",
@@ -28,7 +32,7 @@ Tech(
     researchturns=8,
     tags=["PEDIA_SR_WEAPON_TECHS"],
     prerequisites=["SHP_WEAPON_ARC_DISRUPTOR_1"],
-    effectsgroups=WEAPON_UPGRADE_CAPACITY_EFFECTS("SR_ARC_DISRUPTOR", 2),
+    effectsgroups=WEAPON_UPGRADE_CAPACITY_EFFECTS("SHP_WEAPON_ARC_DISRUPTOR_2", "SR_ARC_DISRUPTOR", AD_2_upgrade),
     graphic="icons/ship_parts/pulse-laser-2.png",
 )
 
@@ -42,6 +46,8 @@ Tech(
     researchturns=12,
     tags=["PEDIA_SR_WEAPON_TECHS"],
     prerequisites=["SHP_WEAPON_ARC_DISRUPTOR_2"],
-    effectsgroups=WEAPON_UPGRADE_CAPACITY_EFFECTS("SR_ARC_DISRUPTOR", 3),
+    effectsgroups=WEAPON_UPGRADE_CAPACITY_EFFECTS(
+        "SHP_WEAPON_ARC_DISRUPTOR_3", "SR_ARC_DISRUPTOR", AD_3_upgrade, upgraded_damage_override=AD_2_plus_3_upgrade
+    ),
     graphic="icons/ship_parts/pulse-laser-3.png",
 )
