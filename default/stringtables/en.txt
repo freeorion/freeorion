@@ -14079,19 +14079,19 @@ SHP_WEAPON_1_2
 Mass Driver 2
 
 SHP_WEAPON_1_2_DESC
-Upgrades [[shippart SR_WEAPON_1_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 24.
+Upgrades [[shippart SR_WEAPON_1_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of [[value SHP_WEAPON_1_2_UPGRADED_DAMAGE]].
 
 SHP_WEAPON_1_3
 Mass Driver 3
 
 SHP_WEAPON_1_3_DESC
-Upgrades [[shippart SR_WEAPON_1_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 30.
+Upgrades [[shippart SR_WEAPON_1_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of [[value SHP_WEAPON_1_3_UPGRADED_DAMAGE]].
 
 SHP_WEAPON_1_4
 Mass Driver 4
 
 SHP_WEAPON_1_4_DESC
-Upgrades [[shippart SR_WEAPON_1_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 36.
+Upgrades [[shippart SR_WEAPON_1_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of [[value SHP_WEAPON_1_4_UPGRADED_DAMAGE]].
 
 SHP_WEAPON_2_1
 Laser Weapons
@@ -14103,19 +14103,19 @@ SHP_WEAPON_2_2
 Laser 2
 
 SHP_WEAPON_2_2_DESC
-Upgrades [[shippart SR_WEAPON_2_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 42.
+Upgrades [[shippart SR_WEAPON_2_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of [[value SHP_WEAPON_2_2_UPGRADED_DAMAGE]].
 
 SHP_WEAPON_2_3
 Laser 3
 
 SHP_WEAPON_2_3_DESC
-Upgrades [[shippart SR_WEAPON_2_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 54.
+Upgrades [[shippart SR_WEAPON_2_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of [[value SHP_WEAPON_2_3_UPGRADED_DAMAGE]].
 
 SHP_WEAPON_2_4
 Laser 4
 
 SHP_WEAPON_2_4_DESC
-Upgrades [[shippart SR_WEAPON_2_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 66.
+Upgrades [[shippart SR_WEAPON_2_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of [[value SHP_WEAPON_2_4_UPGRADED_DAMAGE]].
 
 SHP_WEAPON_3_1
 Plasma Cannons
@@ -14127,19 +14127,19 @@ SHP_WEAPON_3_2
 Plasma Cannon 2
 
 SHP_WEAPON_3_2_DESC
-Upgrades [[shippart SR_WEAPON_3_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 72.
+Upgrades [[shippart SR_WEAPON_3_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of [[value SHP_WEAPON_3_2_UPGRADED_DAMAGE]].
 
 SHP_WEAPON_3_3
 Plasma Cannon 3
 
 SHP_WEAPON_3_3_DESC
-Upgrades [[shippart SR_WEAPON_3_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 90.
+Upgrades [[shippart SR_WEAPON_3_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of [[value SHP_WEAPON_3_3_UPGRADED_DAMAGE]].
 
 SHP_WEAPON_3_4
 Plasma Cannon 4
 
 SHP_WEAPON_3_4_DESC
-Upgrades [[shippart SR_WEAPON_3_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 108.
+Upgrades [[shippart SR_WEAPON_3_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of [[value SHP_WEAPON_3_4_UPGRADED_DAMAGE]].
 
 SHP_WEAPON_4_1
 Death Rays
@@ -14151,37 +14151,37 @@ SHP_WEAPON_4_2
 Death Ray 2
 
 SHP_WEAPON_4_2_DESC
-Upgrades [[shippart SR_WEAPON_4_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 120.
+Upgrades [[shippart SR_WEAPON_4_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of [[value SHP_WEAPON_4_2_UPGRADED_DAMAGE]].
 
 SHP_WEAPON_4_3
 Death Ray 3
 
 SHP_WEAPON_4_3_DESC
-Upgrades [[shippart SR_WEAPON_4_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 150.
+Upgrades [[shippart SR_WEAPON_4_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of [[value SHP_WEAPON_4_3_UPGRADED_DAMAGE]].
 
 SHP_WEAPON_4_4
 Death Ray 4
 
 SHP_WEAPON_4_4_DESC
-Upgrades [[shippart SR_WEAPON_4_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 180.
+Upgrades [[shippart SR_WEAPON_4_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of [[value SHP_WEAPON_4_4_UPGRADED_DAMAGE]].
 
 SHP_WEAPON_ARC_DISRUPTOR_1
 Arc Disruptors
 
 SHP_WEAPON_ARC_DISRUPTOR_1_DESC
-Unlocks the [[shippart SR_ARC_DISRUPTOR]], an automated weapon system doing low damage to multiple targets. The base weapon part has shot damage 12.
+Unlocks the [[shippart SR_ARC_DISRUPTOR]], an automated weapon system doing low damage to multiple targets. The base weapon part has shot damage [[value SR_ARC_DISRUPTOR_PART_CAPACITY]].
 
 SHP_WEAPON_ARC_DISRUPTOR_2
 Arc Disruptor 2
 
 SHP_WEAPON_ARC_DISRUPTOR_2_DESC
-Upgrades [[shippart SR_ARC_DISRUPTOR]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 24.
+Upgrades [[shippart SR_ARC_DISRUPTOR]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of [[value SHP_WEAPON_ARC_DISRUPTOR_2_UPGRADED_DAMAGE]].
 
 SHP_WEAPON_ARC_DISRUPTOR_3
 Arc Disruptor 3
 
 SHP_WEAPON_ARC_DISRUPTOR_3_DESC
-Upgrades [[shippart SR_ARC_DISRUPTOR]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 42.
+Upgrades [[shippart SR_ARC_DISRUPTOR]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of [[value SHP_WEAPON_ARC_DISRUPTOR_3_UPGRADED_DAMAGE]].
 
 SHP_ION_CANNON
 Ion Cannon
@@ -15636,7 +15636,7 @@ SR_WEAPON_1_1_DESC
 
 Upgrading the weapon technology will increase the shot damage.
 
-The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each mass driver on a ship built by a species with the piloting trait will do an additional 6 damage per piloting level (-6 for Bad Pilots).'''
+The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each mass driver on a ship built by a species with the piloting trait will do an additional 6 damage per piloting level (-6 for Bad Pilots). The Mass Driver has [[value SR_WEAPON_1_1_PART_CAPACITY]] basic shot damage. Upgrade tech [[tech SHP_WEAPON_1_2]] increases this by [[value SHP_WEAPON_1_2_UPGRADE_DAMAGE]].'''
 
 SR_WEAPON_2_1
 Laser Weapon
@@ -15646,7 +15646,7 @@ SR_WEAPON_2_1_DESC
 
 Upgrading the weapon technology will increase the shot damage.
 
-The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each laser weapon on a ship built by a species with the piloting trait will do an additional 12 damage per piloting level (-12 for Bad Pilots). Laser weapon damage can also be enhanced on [[shiphull SH_ORGANIC]] ships with a [[shippart SP_SOLAR_CONCENTRATOR]].'''
+The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each laser weapon on a ship built by a species with the piloting trait will do an additional 12 damage per piloting level (-12 for Bad Pilots). The Laser has [[value SR_WEAPON_2_1_PART_CAPACITY]] basic shot damage. Upgrade tech [[tech SHP_WEAPON_2_2]] increases this by [[value SHP_WEAPON_2_2_UPGRADE_DAMAGE]]. Laser weapon damage can also be enhanced on [[shiphull SH_ORGANIC]] ships with a [[shippart SP_SOLAR_CONCENTRATOR]].'''
 
 SR_WEAPON_3_1
 Plasma Cannons
@@ -15656,7 +15656,7 @@ SR_WEAPON_3_1_DESC
 
 Upgrading the weapon technology will increase the shot damage.
 
-The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each plasma cannon on a ship built by a species with the piloting trait will do an additional 18 damage per piloting level (-18 for Bad Pilots).'''
+The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each plasma cannon on a ship built by a species with the piloting trait will do an additional 18 damage per piloting level (-18 for Bad Pilots). The Plasma Cannon has [[value SR_WEAPON_3_1_PART_CAPACITY]] basic shot damage. Upgrade tech [[tech SHP_WEAPON_3_2]] increases this by [[value SHP_WEAPON_3_2_UPGRADE_DAMAGE]].'''
 
 SR_WEAPON_4_1
 Death Ray
@@ -15666,7 +15666,7 @@ SR_WEAPON_4_1_DESC
 
 Upgrading the weapon technology will increase the shot damage.
 
-The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each death ray on a ship built by a species with the piloting trait will do an additional 30 damage per piloting level (-30 for Bad Pilots).'''
+The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each death ray on a ship built by a species with the piloting trait will do an additional 30 damage per piloting level (-30 for Bad Pilots). The Death Ray has [[value SR_WEAPON_4_1_PART_CAPACITY]] basic shot damage. Upgrade tech [[tech SHP_WEAPON_4_2]] increases this by [[value SHP_WEAPON_4_2_UPGRADE_DAMAGE]].'''
 
 SR_ARC_DISRUPTOR
 Arc Disruptor
@@ -15678,7 +15678,7 @@ Charged polaron capacitors generate a molecular disruption flux wave that arcs t
 
 Upgrading the weapon technology will increase the shot damage.
 
-The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Piloting trait does not affect damage.'''
+The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Piloting trait does not affect damage. The Arc Disruptor has [[value SR_ARC_DISRUPTOR_PART_CAPACITY]] basic shot damage. Upgrade tech [[tech SHP_WEAPON_ARC_DISRUPTOR_2]] increases this by [[value SHP_WEAPON_ARC_DISRUPTOR_2_UPGRADE_DAMAGE]].'''
 
 SR_SPINAL_ANTIMATTER
 Spinal Antimatter Cannon

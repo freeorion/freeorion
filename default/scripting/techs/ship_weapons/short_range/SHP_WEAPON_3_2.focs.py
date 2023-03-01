@@ -10,6 +10,6 @@ Tech(
     researchturns=2,
     tags=["PEDIA_SR_WEAPON_TECHS"],
     prerequisites=["SHP_WEAPON_3_1"],
-    effectsgroups=WEAPON_UPGRADE_CAPACITY_EFFECTS("SR_WEAPON_3_1", 3),
+    effectsgroups=WEAPON_UPGRADE_CAPACITY_EFFECTS("SHP_WEAPON_3_2", "SR_WEAPON_3_1", 3),
     graphic="icons/ship_parts/plasma-2.png",
 )

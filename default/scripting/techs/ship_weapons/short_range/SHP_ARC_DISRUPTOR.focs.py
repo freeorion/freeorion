@@ -28,7 +28,7 @@ Tech(
     researchturns=8,
     tags=["PEDIA_SR_WEAPON_TECHS"],
     prerequisites=["SHP_WEAPON_ARC_DISRUPTOR_1"],
-    effectsgroups=WEAPON_UPGRADE_CAPACITY_EFFECTS("SR_ARC_DISRUPTOR", 2),
+    effectsgroups=WEAPON_UPGRADE_CAPACITY_EFFECTS("SHP_WEAPON_ARC_DISRUPTOR_2", "SR_ARC_DISRUPTOR", 2),
     graphic="icons/ship_parts/pulse-laser-2.png",
 )
 
@@ -42,6 +42,6 @@ Tech(
     researchturns=12,
     tags=["PEDIA_SR_WEAPON_TECHS"],
     prerequisites=["SHP_WEAPON_ARC_DISRUPTOR_2"],
-    effectsgroups=WEAPON_UPGRADE_CAPACITY_EFFECTS("SR_ARC_DISRUPTOR", 3),
+    effectsgroups=WEAPON_UPGRADE_CAPACITY_EFFECTS("SHP_WEAPON_ARC_DISRUPTOR_3", "SR_ARC_DISRUPTOR", 3, 5),
     graphic="icons/ship_parts/pulse-laser-3.png",
 )
