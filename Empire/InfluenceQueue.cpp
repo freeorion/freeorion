@@ -22,7 +22,7 @@ namespace {
     //                                     float available_IP, float allocated_IP, float allocated_stockpile_IP)
     //{
     //    TraceLogger() << "CalculateNewInfluenceStockpile for empire " << empire_id;
-    //    const Empire* empire = GetEmpire(empire_id);
+    //    const Empire* empire = GetEmpire(empire_id); // TODO: get from input context?
     //    if (!empire) {
     //        ErrorLogger() << "CalculateNewInfluenceStockpile() passed null empire.  doing nothing.";
     //        return 0.0f;

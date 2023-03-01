@@ -186,7 +186,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     bool allied_visible = visible;
     if constexpr (Archive::is_saving::value)
         allied_visible = allied_visible || Empires().GetDiplomaticStatus(m_id, GlobalSerializationEncodingForEmpire()) ==
-            DiplomaticStatus::DIPLO_ALLIED;
+            DiplomaticStatus::DIPLO_ALLIED; // TODO: pass in diplo status map?
 
     TraceLogger() << "serializing empire " << m_id << ": " << m_name;
     TraceLogger() << "encoding empire: " << encoding_empire;
