@@ -21,7 +21,7 @@ public:
 
 private:
     const int m_object_id; ///< id for the Object whose specials this panel displays
-    std::vector<std::pair<std::string, std::shared_ptr<StatisticIcon>>> m_icons;
+    std::vector<std::shared_ptr<StatisticIcon>> m_icons;
 };
 
 #endif

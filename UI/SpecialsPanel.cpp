@@ -32,7 +32,7 @@ void SpecialsPanel::CompleteConstruction() {
 
 bool SpecialsPanel::InWindow(GG::Pt pt) const {
     return std::any_of(m_icons.begin(), m_icons.end(),
-                       [pt](const auto& name_icon) { return name_icon.second->InWindow(pt); });
+                       [pt](const auto& icon) { return icon->InWindow(pt); });
 }
 
 void SpecialsPanel::MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys)
@@ -49,8 +49,8 @@ void SpecialsPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
 
 void SpecialsPanel::Update() {
     //std::cout << "SpecialsPanel::Update" << std::endl;
-    for (auto& entry : m_icons)
-        DetachChild(entry.second);
+    for (auto& icon : m_icons)
+        DetachChild(icon);
     m_icons.clear();
 
 
@@ -60,6 +60,7 @@ void SpecialsPanel::Update() {
         ErrorLogger() << "SpecialsPanel::Update couldn't get object with id " << m_object_id;
         return;
     }
+    m_icons.reserve(obj->Specials().size());
 
     // get specials and use them to create specials icons
     // for specials with a nonzero
@@ -92,17 +93,15 @@ void SpecialsPanel::Update() {
             desc += "\n" + Dump(special->Effects());
 
         graphic->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
-            ClientUI::SpecialIcon(special->Name()), UserString(special->Name()), desc));
-        m_icons.emplace_back(special_name, graphic);
+            ClientUI::SpecialIcon(special_name), UserString(special_name), desc));
+        m_icons.push_back(graphic);
 
         graphic->RightClickedSignal.connect([name{special_name}](GG::Pt pt) {
-            auto zoom_action = [name]() {
-                ClientUI::GetClientUI()->ZoomToSpecial(name);
-            };
 
             auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
             std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(name));
 
+            auto zoom_action = [name]() { ClientUI::GetClientUI()->ZoomToSpecial(name); };
             popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false, zoom_action));
 
             popup->Run();
@@ -113,8 +112,7 @@ void SpecialsPanel::Update() {
     GG::X x(EDGE_PAD);
     GG::Y y(EDGE_PAD);
 
-    for (auto& [icon_name, icon] : m_icons) {
-        (void)icon_name; // quiet ignored warning
+    for (auto& icon : m_icons) {
         icon->SizeMove(GG::Pt(x, y), GG::Pt(x,y) + GG::Pt(SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT));
         AttachChild(icon);
 
