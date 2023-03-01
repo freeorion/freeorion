@@ -2098,10 +2098,10 @@ Networking::ClientType ServerApp::GetPlayerClientType(int player_id) const {
     if (player_id == Networking::INVALID_PLAYER_ID)
         return Networking::ClientType::INVALID_CLIENT_TYPE;
 
-   auto it = m_networking.GetPlayer(player_id);
+    const auto it = m_networking.GetPlayer(player_id);
     if (it == m_networking.established_end())
         return Networking::ClientType::INVALID_CLIENT_TYPE;
-    PlayerConnectionPtr player_connection = *it;
+    const auto& player_connection = *it;
     return player_connection->GetClientType();
 }
 
