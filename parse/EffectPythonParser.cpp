@@ -352,6 +352,76 @@ namespace {
         return effect_wrapper(std::make_shared<Effect::RemoveSpecial>(std::move(name)));
     }
 
+    effect_wrapper create_ship(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<int>> empire_id;
+        if (kw.has_key("empire")) {
+            auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
+            if (empire_args.check()) {
+                empire_id = ValueRef::CloneUnique(empire_args().value_ref);
+            } else {
+                empire_id = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
+            }
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<std::string>> species_name;
+        if (kw.has_key("species")) {
+            auto species_name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["species"]);
+            if (species_name_args.check()) {
+                species_name = ValueRef::CloneUnique(species_name_args().value_ref);
+            } else {
+                species_name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["species"])());
+            }
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<std::string>> ship_name;
+        if (kw.has_key("name")) {
+            auto ship_name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
+            if (ship_name_args.check()) {
+                ship_name = ValueRef::CloneUnique(ship_name_args().value_ref);
+            } else {
+                ship_name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
+            }
+        }
+
+        std::vector<std::unique_ptr<Effect::Effect>> effects_to_apply_after;
+        if (kw.has_key("effects")) {
+            boost::python::stl_input_iterator<effect_wrapper> it_begin(kw["effects"]), it_end;
+            for (auto it = it_begin; it != it_end; ++it) {
+                effects_to_apply_after.push_back(ValueRef::CloneUnique(it->effect));
+            }
+        }
+
+        if (kw.has_key("designid")) {
+            std::unique_ptr<ValueRef::ValueRef<int>> ship_design_id;
+            auto designid_args = boost::python::extract<value_ref_wrapper<int>>(kw["designid"]);
+            if (designid_args.check()) {
+                ship_design_id = ValueRef::CloneUnique(designid_args().value_ref);
+            } else {
+                ship_design_id = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["designid"])());
+            }
+            return effect_wrapper(std::make_shared<Effect::CreateShip>(std::move(ship_design_id),
+                std::move(empire_id),
+                std::move(species_name),
+                std::move(ship_name),
+                std::move(effects_to_apply_after)));
+        } else if (kw.has_key("designname")) {
+            std::unique_ptr<ValueRef::ValueRef<std::string>> predefined_ship_design_name;
+            auto designname_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["designname"]);
+            if (designname_args.check()) {
+                predefined_ship_design_name = ValueRef::CloneUnique(designname_args().value_ref);
+            } else {
+                predefined_ship_design_name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["designname"])());
+            }
+            return effect_wrapper(std::make_shared<Effect::CreateShip>(std::move(predefined_ship_design_name),
+                std::move(empire_id),
+                std::move(species_name),
+                std::move(ship_name),
+                std::move(effects_to_apply_after)));
+        } else {
+            throw std::runtime_error(std::string(" ") + __func__);
+        }
+    }
+
     FocusType insert_focus_type_(const boost::python::tuple& args, const boost::python::dict& kw) {
         auto name = boost::python::extract<std::string>(kw["name"])();
         auto description = boost::python::extract<std::string>(kw["description"])();
@@ -381,6 +451,7 @@ void RegisterGlobalsEffects(py::dict& globals) {
     globals["Victory"] = py::raw_function(victory);
     globals["AddSpecial"] = py::raw_function(add_special);
     globals["RemoveSpecial"] = py::raw_function(remove_special);
+    globals["CreateShip"] = py::raw_function(create_ship);
 
     // set_non_ship_part_meter_enum_grammar
     for (const auto& meter : std::initializer_list<std::pair<const char*, MeterType>>{
