@@ -48,10 +48,10 @@ std::shared_ptr<GG::BlockControl> CUILinkTextBlock::Factory::CreateFromTag(
     block->m_link_text->LinkRightClickedSignal.connect(this->LinkRightClickedSignal);
 
     // Color ships and planets by their owner empires.
-    block->m_link_text->SetDecorator(VarText::SHIP_ID_TAG, new ColorByOwner());
-    block->m_link_text->SetDecorator(VarText::PLANET_ID_TAG, new ColorByOwner());
-    block->m_link_text->SetDecorator(TextLinker::BROWSE_PATH_TAG, new PathTypeDecorator());
-    block->m_link_text->SetDecorator(VarText::FOCS_VALUE_TAG, new ValueRefDecorator());
+    block->m_link_text->SetDecorator(VarText::SHIP_ID_TAG, TextLinker::DecoratorType::ColorByOwner);
+    block->m_link_text->SetDecorator(VarText::PLANET_ID_TAG, TextLinker::DecoratorType::ColorByOwner);
+    block->m_link_text->SetDecorator(TextLinker::BROWSE_PATH_TAG, TextLinker::DecoratorType::PathType);
+    block->m_link_text->SetDecorator(VarText::FOCS_VALUE_TAG, TextLinker::DecoratorType::ValueRef);
 
     return block;
 }

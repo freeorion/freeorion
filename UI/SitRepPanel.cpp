@@ -184,26 +184,15 @@ namespace {
         GetOptionsDB().Commit();
     }
 
-    class ColorEmpire : public LinkDecorator {
-    public:
-        std::string Decorate(const std::string& target, const std::string& content) const override {
-            GG::Clr color = ClientUI::DefaultLinkColor();
-            int id = CastStringToInt(target);
-            Empire* empire = GetEmpire(id);
-            if (empire)
-                color = empire->Color();
-            return GG::RgbaTag(color) + content + "</rgba>";
-        }
-    };
-
     //////////////////////////////////
     // SitRepLinkText
     //////////////////////////////////
-    class SitRepLinkText : public LinkText {
+    class SitRepLinkText final : public LinkText {
     public:
-        SitRepLinkText(GG::X x, GG::Y y, GG::X w, const std::string& str, const std::shared_ptr<GG::Font>& font,
+        SitRepLinkText(GG::X x, GG::Y y, GG::X w, std::string str, std::shared_ptr<GG::Font> font,
                        GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE, GG::Clr color = GG::CLR_BLACK) :
-            LinkText(x, y, w, str, font, format, color) {}
+            LinkText(x, y, w, std::move(str), std::move(font), format, color)
+        {}
 
         mutable boost::signals2::signal<void(GG::Pt, GG::Flags<GG::ModKey>)> RightClickedSignal;
 
@@ -248,9 +237,9 @@ namespace {
             m_link_text = GG::Wnd::Create<SitRepLinkText>(
                 GG::X0, GG::Y0, text_width, m_sitrep_entry.GetText() + " ", ClientUI::GetFont(),
                 GG::FORMAT_LEFT | GG::FORMAT_VCENTER | GG::FORMAT_WORDBREAK, ClientUI::TextColor());
-            m_link_text->SetDecorator(VarText::EMPIRE_ID_TAG, new ColorEmpire());
-            m_link_text->SetDecorator(TextLinker::BROWSE_PATH_TAG, new PathTypeDecorator());
-            m_link_text->SetDecorator(VarText::FOCS_VALUE_TAG, new ValueRefDecorator());
+            m_link_text->SetDecorator(VarText::EMPIRE_ID_TAG, TextLinker::DecoratorType::ColorByEmpire);
+            m_link_text->SetDecorator(TextLinker::BROWSE_PATH_TAG, TextLinker::DecoratorType::PathType);
+            m_link_text->SetDecorator(VarText::FOCS_VALUE_TAG, TextLinker::DecoratorType::ValueRef);
             AttachChild(m_link_text);
 
             namespace ph = boost::placeholders;

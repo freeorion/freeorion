@@ -487,10 +487,10 @@ std::shared_ptr<LinkText> CombatLogWnd::Impl::DecorateLinkText(std::string text)
 
     links->SetTextFormat(m_text_format_flags);
 
-    links->SetDecorator(VarText::SHIP_ID_TAG, new ColorByOwner());
-    links->SetDecorator(VarText::PLANET_ID_TAG, new ColorByOwner());
-    links->SetDecorator(VarText::SYSTEM_ID_TAG, new ColorByOwner());
-    links->SetDecorator(VarText::EMPIRE_ID_TAG, new ColorByOwner());
+    links->SetDecorator(VarText::SHIP_ID_TAG, TextLinker::DecoratorType::ColorByOwner);
+    links->SetDecorator(VarText::PLANET_ID_TAG, TextLinker::DecoratorType::ColorByOwner);
+    links->SetDecorator(VarText::SYSTEM_ID_TAG, TextLinker::DecoratorType::ColorByOwner);
+    links->SetDecorator(VarText::EMPIRE_ID_TAG, TextLinker::DecoratorType::ColorByOwner);
 
     links->LinkClickedSignal.connect(m_wnd.LinkClickedSignal);
     links->LinkDoubleClickedSignal.connect(m_wnd.LinkDoubleClickedSignal);

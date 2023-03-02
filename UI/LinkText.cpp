@@ -38,7 +38,6 @@ const ShipPart*     GetShipPart(std::string_view name);
 namespace {
     constexpr bool RENDER_DEBUGGING_LINK_RECTS = false;
     constexpr std::string_view LINK_FORMAT_CLOSE = "</rgba>"; // closing format tag
-    const LinkDecorator DEFAULT_DECORATOR;
 
     std::string AllParamsAsString(const std::vector<GG::Font::Substring>& params) {
         std::string retval;
@@ -160,22 +159,21 @@ std::string ValueRefLinkText(const std::string& text, const bool add_explanation
 ///////////////////////////////////////
 // LinkText
 ///////////////////////////////////////
-LinkText::LinkText(GG::X x, GG::Y y, GG::X w, const std::string& str, const std::shared_ptr<GG::Font>& font,
+LinkText::LinkText(GG::X x, GG::Y y, GG::X w, std::string str, std::shared_ptr<GG::Font> font,
                    GG::Flags<GG::TextFormat> format, GG::Clr color) :
-    GG::TextControl(x, y, w, GG::Y1, str, font, color, format, GG::INTERACTIVE),
+    GG::TextControl(x, y, w, GG::Y1, str, std::move(font), color, format, GG::INTERACTIVE),
     TextLinker(),
-    m_raw_text(str)
+    m_raw_text(std::move(str))
 {
     Resize(TextLowerRight() - TextUpperLeft());
     FindLinks();
     MarkLinks();
 }
 
-LinkText::LinkText(GG::X x, GG::Y y, const std::string& str, const std::shared_ptr<GG::Font>& font,
-                   GG::Clr color) :
-    GG::TextControl(x, y, GG::X1, GG::Y1, str, font, color, GG::FORMAT_NOWRAP, GG::INTERACTIVE),
+LinkText::LinkText(GG::X x, GG::Y y, std::string str, std::shared_ptr<GG::Font> font, GG::Clr color) :
+    GG::TextControl(x, y, GG::X1, GG::Y1, str, std::move(font), color, GG::FORMAT_NOWRAP, GG::INTERACTIVE),
     TextLinker(),
-    m_raw_text(str)
+    m_raw_text(std::move(str))
 {
     FindLinks();
     MarkLinks();
@@ -235,59 +233,99 @@ void LinkText::SizeMove(GG::Pt ul, GG::Pt lr) {
 ///////////////////////////////////////
 // LinkDecorator
 ///////////////////////////////////////
+namespace {
+    std::string LinkDecoratorDefaultDecorate(const std::string& target, const std::string& content)
+    { return GG::RgbaTag(ClientUI::DefaultLinkColor()).append(content).append(LINK_FORMAT_CLOSE); }
 
-std::string LinkDecorator::Decorate(const std::string& target, const std::string& content) const
-{ return GG::RgbaTag(ClientUI::DefaultLinkColor()).append(content).append(LINK_FORMAT_CLOSE); }
+    std::string LinkDecoratorDefaultDecorateRollover(const std::string& target, const std::string& content)
+    { return GG::RgbaTag(ClientUI::RolloverLinkColor()).append(content).append(LINK_FORMAT_CLOSE); }
 
-std::string LinkDecorator::DecorateRollover(const std::string& target, const std::string& content) const
-{ return GG::RgbaTag(ClientUI::RolloverLinkColor()).append(content).append(LINK_FORMAT_CLOSE); }
+    int CastStringToInt(const std::string& str) {
+        // Try to convert str to int. Returns -1 if str conversion to an int fails.
+        std::stringstream ss;
+        ss << str;
+        int retval = -1;
+        ss >> retval;
 
-int LinkDecorator::CastStringToInt(const std::string& str) {
-    std::stringstream ss;
-    ss << str;
-    int retval = -1;
-    ss >> retval;
+        if (ss.eof())
+            return retval;
 
-    if (ss.eof())
-        return retval;
+        return -1;
+    }
 
-    return -1;
+    std::string ColorByEmpireDecorate(const std::string& empire_id, const std::string& content) {
+        const int id = CastStringToInt(empire_id);
+        const Empire* empire = GetEmpire(id);
+        const GG::Clr color = empire ? empire->Color() : ClientUI::DefaultLinkColor();
+        return GG::RgbaTag(color) + content + "</rgba>";
+    }
+
+    std::string ColorByOwnerDecorate(const std::string& object_id_str, const std::string& content) {
+        GG::Clr color = ClientUI::DefaultLinkColor();
+        // get object indicated by object_id, and then get object's owner, if any
+        int object_id = CastStringToInt(object_id_str);
+        auto object = Objects().get(object_id);
+        if (object && !object->Unowned())
+            if (auto empire = Empires().GetEmpire(object->Owner()))
+                color = empire->Color();
+        return GG::RgbaTag(color).append(content).append("</rgba>");
+    }
+
+    std::string PathTypeDecorate(const std::string& path_type, const std::string& content)
+    { return LinkDecoratorDefaultDecorate(path_type, BrowsePathLinkText(content)); }
+
+    std::string PathTypeDecorateRollover(const std::string& path_type, const std::string& content)
+    { return LinkDecoratorDefaultDecorateRollover(path_type, BrowsePathLinkText(content)); }
+
+    std::string ValueRefDecorate(const std::string& value_ref_name, const std::string& content)
+    { return GG::RgbaTag(ClientUI::DefaultTooltipColor()).append(::ValueRefLinkText(content, false)).append(LINK_FORMAT_CLOSE); }
+
+    std::string ValueRefDecorateRollover(const std::string& value_ref_name, const std::string& content)
+    { return GG::RgbaTag(ClientUI::RolloverTooltipColor()).append(::ValueRefLinkText(content, true)).append(LINK_FORMAT_CLOSE); }
+
+    /// The return value is shown to the user as the link.
+    /// The default wraps content in an rgba tag that colors it by ClientUI::DefaultLinkColor
+    /// \param target The target of the link. Usually an id of something or the name of an encyclopedia entry.
+    /// \param content The text the link tag was wrapped around.
+    /// \returns The text that should be shown to the user in the place of content
+    std::string Decorate(TextLinker::DecoratorType type, const std::string& target, const std::string& content) {
+        switch (type) {
+        case TextLinker::DecoratorType::ColorByOwner:
+            return ColorByOwnerDecorate(target, content);
+            break;
+        case TextLinker::DecoratorType::ColorByEmpire:
+            return ColorByEmpireDecorate(target, content);
+            break;
+        case TextLinker::DecoratorType::PathType:
+            return PathTypeDecorate(target, content);
+            break;
+        case TextLinker::DecoratorType::ValueRef:
+            return ValueRefDecorate(target, content);
+            break;
+        default: [[likely]]
+            return LinkDecoratorDefaultDecorate(target, content);
+        }
+    }
+
+    /// Gets called when the mouse hovers over a link of the type this decorator is assigned to.
+    /// The return value is shown to the user as the link.
+    /// The default wraps content in an rgba tag that colors it by ClientUI::RolloverLinkColor
+    /// \param target The target of the link. Usually an id of something or the name of an encyclopedia entry.
+    /// \param content The text the link tag was wrapped around.
+    /// \returns The text that should be shown to the user in the place of content
+    std::string DecorateRollover(TextLinker::DecoratorType type, const std::string& target, const std::string& content) {
+        switch (type) {
+        case TextLinker::DecoratorType::PathType:
+            return PathTypeDecorateRollover(target, content);
+            break;
+        case TextLinker::DecoratorType::ValueRef:
+            return ValueRefDecorateRollover(target, content);
+            break;
+        default: [[likely]]
+            return LinkDecoratorDefaultDecorateRollover(target, content);
+        }
+    }
 }
-
-std::string ColorByOwner::Decorate(const std::string& object_id_str, const std::string& content) const {
-    GG::Clr color = ClientUI::DefaultLinkColor();
-    // get object indicated by object_id, and then get object's owner, if any
-    int object_id = CastStringToInt(object_id_str);
-    auto object = Objects().get(object_id);
-    if (object && !object->Unowned())
-        if (auto empire = Empires().GetEmpire(object->Owner()))
-            color = empire->Color();
-    return GG::RgbaTag(color).append(content).append("</rgba>");
-}
-
-std::string PathTypeDecorator::Decorate(const std::string& path_type, const std::string& content) const
-{ return LinkDecorator::Decorate(path_type, BrowsePathLinkText(content)); }
-
-std::string PathTypeDecorator::DecorateRollover(const std::string& path_type, const std::string& content) const
-{ return LinkDecorator::DecorateRollover(path_type, BrowsePathLinkText(content)); }
-
-std::string ValueRefDecorator::Decorate(const std::string& value_ref_name, const std::string& content) const
-{ return GG::RgbaTag(ClientUI::DefaultTooltipColor()).append(::ValueRefLinkText(content, false)).append(LINK_FORMAT_CLOSE); }
-
-std::string ValueRefDecorator::DecorateRollover(const std::string& value_ref_name, const std::string& content) const
-{ return GG::RgbaTag(ClientUI::RolloverTooltipColor()).append(::ValueRefLinkText(content, true)).append(LINK_FORMAT_CLOSE); }
-
-
-///////////////////////////////////////
-// TextLinker::Link
-///////////////////////////////////////
-struct TextLinker::Link {
-    std::string           type;           ///< contents of type field of link tag (eg "planet" in <planet 3>)
-    std::string           data;           ///< contents of data field of link tag (eg "3" in <planet 3>)
-    std::vector<GG::Rect> rects;          ///< the rectangles in which this link falls, in window coordinates (some links may span more than one line)
-    std::pair<int, int>   text_posn;      ///< the index of the first (.first) and last + 1 (.second) characters in the raw link text
-    std::pair<int, int>   real_text_posn; ///< the index of the first and last + 1 characters in the current (potentially decorated) content string
-};
 
 
 ///////////////////////////////////////
@@ -296,31 +334,28 @@ struct TextLinker::Link {
 TextLinker::TextLinker()
 { RegisterLinkTags(); }
 
-TextLinker::~TextLinker() = default;
-
-void TextLinker::SetDecorator(std::string_view link_type, LinkDecorator* decorator) {
-    m_decorators[link_type] = std::shared_ptr<LinkDecorator>(decorator);
+void TextLinker::SetDecorator(std::string_view link_type, DecoratorType dt) {
+    auto it = std::find_if(m_decorators.begin(), m_decorators.end(),
+                           [link_type](const auto& deco) { return deco.first == link_type; });
+    if (it != m_decorators.end())
+        it->second = dt;
+    else
+        m_decorators.emplace_back(link_type, dt);
     MarkLinks();
 }
 
 std::string TextLinker::LinkDefaultFormatTag(const Link& link, const std::string& content) const {
-    const LinkDecorator* decorator = &DEFAULT_DECORATOR;
-
-    auto it = m_decorators.find(link.type);
-    if (it != m_decorators.end())
-        decorator = it->second.get();
-
-    return decorator->Decorate(link.data, content);
+    const auto it = std::find_if(m_decorators.begin(), m_decorators.end(),
+                                 [dt{link.type}](const auto& deco) { return deco.first == dt; });
+    const auto dt = (it != m_decorators.end() ? it->second : DecoratorType::Default);
+    return Decorate(dt, link.data, content);
 }
 
 std::string TextLinker::LinkRolloverFormatTag(const Link& link, const std::string& content) const {
-    const LinkDecorator* decorator = &DEFAULT_DECORATOR;
-
-    auto it = m_decorators.find(link.type);
-    if (it != m_decorators.end())
-        decorator = it->second.get();
-
-    return decorator->DecorateRollover(link.data, content);
+    const auto it = std::find_if(m_decorators.begin(), m_decorators.end(),
+                                 [dt{link.type}](const auto& deco) { return deco.first == dt; });
+    const auto dt = (it != m_decorators.end() ? it->second : DecoratorType::Default);
+    return DecorateRollover(dt, link.data, content);
 }
 
 void TextLinker::Render_() {
@@ -334,7 +369,7 @@ void TextLinker::Render_() {
     // draw red box around individual linkified bits of text within block
     for (const Link& link : m_links) {
         for (const GG::Rect& rect : link.rects) {
-            GG::Rect r = TextUpperLeft() + rect;
+            const GG::Rect r = TextUpperLeft() + rect;
             FlatRectangle(r.ul, r.lr, GG::CLR_ZERO, GG::CLR_RED, 1);
         }
     }
@@ -354,7 +389,7 @@ void TextLinker::LClick_(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
 }
 
 void TextLinker::RClick_(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
-    int sel_link = GetLinkUnderPt(pt);
+    const int sel_link = GetLinkUnderPt(pt);
     if (sel_link == -1)
         return;
     if (sel_link < 0 || sel_link >= static_cast<int>(m_links.size())) {
@@ -367,7 +402,7 @@ void TextLinker::RClick_(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
 }
 
 void TextLinker::LDoubleClick_(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
-    int sel_link = GetLinkUnderPt(pt);
+    const int sel_link = GetLinkUnderPt(pt);
     if (sel_link == -1)
         return;
     if (sel_link < 0 || sel_link >= static_cast<int>(m_links.size())) {
@@ -401,64 +436,53 @@ void TextLinker::FindLinks() {
     // the raw text and not the marked text set in MarkText().
     SetLinkedText(RawText());
 
+    static constexpr auto is_link_tag = [](const auto& tag) -> bool {
+        static constexpr std::array<std::string_view, 24> link_tags = {
+            VarText::PLANET_ID_TAG,         VarText::SYSTEM_ID_TAG,   VarText::SHIP_ID_TAG,
+            VarText::FLEET_ID_TAG,          VarText::BUILDING_ID_TAG, VarText::FIELD_ID_TAG,
+            VarText::COMBAT_ID_TAG,         VarText::EMPIRE_ID_TAG,   VarText::DESIGN_ID_TAG,
+            VarText::PREDEFINED_DESIGN_TAG, VarText::TECH_TAG,        VarText::POLICY_TAG,
+            VarText::BUILDING_TYPE_TAG,     VarText::SPECIAL_TAG,     VarText::SHIP_HULL_TAG,
+            VarText::SHIP_PART_TAG,         VarText::SPECIES_TAG,     VarText::FIELD_TYPE_TAG,
+            VarText::METER_TYPE_TAG,        VarText::FOCS_VALUE_TAG,  TextLinker::ENCYCLOPEDIA_TAG,
+            TextLinker::GRAPH_TAG,          TextLinker::URL_TAG,      TextLinker::BROWSE_PATH_TAG};
+        return std::find(link_tags.begin(), link_tags.end(), tag) != link_tags.end();
+    };
+
     for (const auto& curr_line : GetLineData()) {
         for (const auto& curr_char : curr_line.char_data) {
             for (const auto& tag : curr_char.tags) {
-                if (tag->tag_name == VarText::PLANET_ID_TAG ||
-                    tag->tag_name == VarText::SYSTEM_ID_TAG ||
-                    tag->tag_name == VarText::SHIP_ID_TAG ||
-                    tag->tag_name == VarText::FLEET_ID_TAG ||
-                    tag->tag_name == VarText::BUILDING_ID_TAG ||
-                    tag->tag_name == VarText::FIELD_ID_TAG ||
-                    tag->tag_name == VarText::COMBAT_ID_TAG ||
-                    tag->tag_name == VarText::EMPIRE_ID_TAG ||
-                    tag->tag_name == VarText::DESIGN_ID_TAG ||
-                    tag->tag_name == VarText::PREDEFINED_DESIGN_TAG ||
-                    tag->tag_name == VarText::TECH_TAG ||
-                    tag->tag_name == VarText::POLICY_TAG ||
-                    tag->tag_name == VarText::BUILDING_TYPE_TAG ||
-                    tag->tag_name == VarText::SPECIAL_TAG ||
-                    tag->tag_name == VarText::SHIP_HULL_TAG ||
-                    tag->tag_name == VarText::SHIP_PART_TAG ||
-                    tag->tag_name == VarText::SPECIES_TAG ||
-                    tag->tag_name == VarText::FIELD_TYPE_TAG ||
-                    tag->tag_name == VarText::METER_TYPE_TAG ||
-                    tag->tag_name == VarText::FOCS_VALUE_TAG ||
-                    tag->tag_name == TextLinker::ENCYCLOPEDIA_TAG ||
-                    tag->tag_name == TextLinker::GRAPH_TAG ||
-                    tag->tag_name == TextLinker::URL_TAG ||
-                    tag->tag_name == TextLinker::BROWSE_PATH_TAG)
-                {
-                    link.type = tag->tag_name;
-                    if (tag->close_tag) {
-                        link.text_posn.second = Value(curr_char.string_index);
-                        m_links.emplace_back(std::move(link));
-                        link = Link();
-                    } else {
-                        if (!tag->params.empty()) {
-                            if (tag->tag_name == TextLinker::BROWSE_PATH_TAG) {
-                                auto all_param_str(AllParamsAsString(tag->params));
-                                link.data = ResolveNestedPathTypes(all_param_str);
-                                // BROWSE_PATH_TAG requires a PathType within param
-                                if (link.data == all_param_str) {
-                                    ErrorLogger() << "Invalid param \"" << link.data << "\" for tag "
-                                                  << TextLinker::BROWSE_PATH_TAG;
-                                    link.data = PathTypeToString(PathType::PATH_INVALID);
-                                }
-                            } else {
-                                link.data = tag->params[0];
+                if (!is_link_tag(tag->tag_name))
+                    continue;
+
+                link.type = tag->tag_name;
+                if (tag->close_tag) {
+                    link.text_posn.second = Value(curr_char.string_index);
+                    m_links.emplace_back(std::move(link));
+                    link = Link();
+                } else {
+                    if (!tag->params.empty()) {
+                        if (tag->tag_name == TextLinker::BROWSE_PATH_TAG) {
+                            auto all_param_str(AllParamsAsString(tag->params));
+                            link.data = ResolveNestedPathTypes(all_param_str);
+                            // BROWSE_PATH_TAG requires a PathType within param
+                            if (link.data == all_param_str) {
+                                ErrorLogger() << "Invalid param \"" << link.data
+                                              << "\" for tag " << TextLinker::BROWSE_PATH_TAG;
+                                link.data = PathTypeToString(PathType::PATH_INVALID);
                             }
                         } else {
-                            link.data.clear();
+                            link.data = tag->params[0];
                         }
-                        link.text_posn.first = Value(curr_char.string_index);
-                        for (auto& itag : curr_char.tags) {
-                            link.text_posn.first -= Value(itag->StringSize());
-                        }
+                    } else {
+                        link.data.clear();
                     }
-                    // Before decoration, the real positions are the same as the raw ones
-                    link.real_text_posn = link.text_posn;
+                    link.text_posn.first = Value(curr_char.string_index);
+                    for (auto& itag : curr_char.tags)
+                        link.text_posn.first -= Value(itag->StringSize());
                 }
+                // Before decoration, the real positions are the same as the raw ones
+                link.real_text_posn = link.text_posn;
             }
         }
     }
