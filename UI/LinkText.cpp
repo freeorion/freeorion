@@ -110,7 +110,6 @@ namespace {
 
         return retval;
     }
-
 }
 
 /** Parses VarText::FOCS_VALUE_TAG%s within @p text, replacing value ref name%s with
