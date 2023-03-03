@@ -192,11 +192,15 @@ std::vector<std::string_view> PolicyManager::PolicyNames(const std::string& cate
     return retval;
 }
 
-std::set<std::string_view> PolicyManager::PolicyCategories() const {
+std::vector<std::string_view> PolicyManager::PolicyCategories() const {
     CheckPendingPolicies();
-    std::set<std::string_view> retval;
-    for (const auto& policy : m_policies)
-        retval.emplace(policy.second->Category());
+    std::vector<std::string_view> retval;
+    retval.reserve(12); // guesstimate
+    std::transform(m_policies.begin(), m_policies.end(), std::back_inserter(retval),
+                   [](const auto& name_policy) -> std::string_view { return name_policy.second->Category(); });
+    std::sort(retval.begin(), retval.end());
+    auto unique_it = std::unique(retval.begin(), retval.end());
+    retval.erase(unique_it, retval.end());
     return retval;
 }
 

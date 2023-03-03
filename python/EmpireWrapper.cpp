@@ -502,7 +502,7 @@ namespace FreeOrionPython {
             "Returns the policy (Policy) with the indicated name (string).");
 
         def("policyCategories",
-            +[]() -> std::vector<std::string> { return ViewSetToStringVec(GetPolicyManager().PolicyCategories()); },
+            +[]() -> std::vector<std::string> { return ViewVecToStringVec(GetPolicyManager().PolicyCategories()); },
             py::return_value_policy<py::return_by_value>(),
             "Returns the names of all policy categories (StringVec).");
 

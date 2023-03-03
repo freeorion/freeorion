@@ -576,7 +576,7 @@ void PoliciesListBox::ShowCategory(const std::string& category, bool refresh_lis
 }
 
 void PoliciesListBox::ShowAllCategories(bool refresh_list) {
-    auto cats = GetPolicyManager().PolicyCategories();
+    const auto cats = GetPolicyManager().PolicyCategories();
     std::transform(cats.begin(), cats.end(), std::inserter(m_policy_categories_shown, m_policy_categories_shown.end()),
                    [](const auto sv) { return std::string{sv}; });
     if (refresh_list)

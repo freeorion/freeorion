@@ -71,7 +71,7 @@ private:
 //! Keeps track of policies that can be chosen by empires.
 class FO_COMMON_API PolicyManager {
 public:
-    using PoliciesTypeMap = std::map<std::string, std::unique_ptr<Policy>, std::less<>>;
+    using PoliciesTypeMap = std::map<std::string, std::unique_ptr<Policy>, std::less<>>; // TODO: flat map, by value
     using iterator = PoliciesTypeMap::const_iterator;
 
     //! returns the policy with the name \a name; you should use the free
@@ -80,7 +80,7 @@ public:
     [[nodiscard]] std::vector<std::string_view> PolicyNames() const;
     //! returns list of names of policies in specified category
     [[nodiscard]] std::vector<std::string_view> PolicyNames(const std::string& category_name) const;
-    [[nodiscard]] std::set<std::string_view>    PolicyCategories() const;
+    [[nodiscard]] std::vector<std::string_view> PolicyCategories() const; // sorted
     [[nodiscard]] uint32_t                      GetCheckSum() const;
 
     [[nodiscard]] iterator begin() const; //! iterator to the first policy

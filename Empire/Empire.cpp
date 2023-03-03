@@ -38,10 +38,12 @@ namespace {
 
     auto PolicyCategoriesSlotsMeters() {
         std::vector<std::pair<std::string_view, std::string>> retval;
-
+        const auto cats = GetPolicyManager().PolicyCategories();
+        retval.reserve(cats.size());
         // derive meters from PolicyManager parsed policies' categories
-        for (auto& cat : GetPolicyManager().PolicyCategories())
-            retval.emplace_back(cat, cat + "_NUM_POLICY_SLOTS");
+        std::transform(cats.begin(), cats.end(), std::back_inserter(retval),
+                       [](std::string_view cat) -> std::pair<std::string_view, std::string>
+                       { return {cat, cat + "_NUM_POLICY_SLOTS"}; });
         return retval;
     }
 
