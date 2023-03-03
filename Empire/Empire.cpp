@@ -326,27 +326,38 @@ void Empire::UpdatePolicies(bool update_cumulative_adoption_time, int current_tu
     for (const auto& cat : categories_needing_rearrangement) {
         DebugLogger() << "Rearranging poilicies in category " << cat << ":";
 
-        auto policies_temp = m_adopted_policies;
+        auto policies_temp{m_adopted_policies};
 
         // all adopted policies in this category, sorted by slot and adoption turn (lower first)
-        std::multimap<std::pair<int, int>, std::string> slots_turns_policies;
+        std::vector<std::tuple<int, int, std::string>> slots_turns_policies;
+        slots_turns_policies.reserve(m_adopted_policies.size());
         for (auto& [temp_policy_name, temp_adoption_info] : policies_temp) {
-            const auto& [turn, slot, temp_category] = temp_adoption_info;  // PolicyAdoptionInfo { int adoption_turn; int slot_in_category; std::string category; }
+            auto& [turn, slot, temp_category] = temp_adoption_info;  // PolicyAdoptionInfo { int adoption_turn; int slot_in_category; std::string category; }
             if (temp_category != cat)
                 continue;
-            slots_turns_policies.emplace(std::pair(slot, turn), temp_policy_name);
-            m_adopted_policies.erase(temp_policy_name);    // remove everything from adopted policies in this category...
             DebugLogger() << "... Policy " << temp_policy_name << " was in slot " << slot;
+            m_adopted_policies.erase(temp_policy_name); // remove everything from adopted policies in this category...
+            slots_turns_policies.emplace_back(slot, turn, std::move(temp_policy_name));
         }
+
+        auto slot_turn_comp = [](const auto& lhs, const auto& rhs) {
+            auto& [l_slot, l_turn, l_ignored] = lhs;
+            auto& [r_slot, r_turn, r_ignored] = rhs;
+            (void)l_ignored;
+            (void)r_ignored;
+            return (l_slot < r_slot) || ((l_slot == r_slot) && (l_turn < r_turn));
+        };
+        std::sort(slots_turns_policies.begin(), slots_turns_policies.end(), slot_turn_comp);
+
         // re-add in category up to limit, ordered priority by original slot and adoption turn
         int added = 0;
-        for (auto& [slot_turn, policy_name] : slots_turns_policies) {
-            const auto& turn = slot_turn.second;
+        for (auto& [ignored, turn, policy_name] : slots_turns_policies) {
+            (void)ignored;
             if (added >= total_category_slot_counts[cat])
                 break;  // can't add more...
             int new_slot = added++;
+            DebugLogger() << "... Policy " << policy_name << " re-added in slot " << new_slot;
             m_adopted_policies[std::move(policy_name)] = PolicyAdoptionInfo{turn, std::string{cat}, new_slot};
-            DebugLogger() << "... Policy " << policy_name << " was re-added in slot " << new_slot;
         }
     }
 
