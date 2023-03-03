@@ -119,7 +119,7 @@
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <AdditionalOptions>/utf-8</AdditionalOptions>
       <ForcedIncludeFiles>StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <ShowIncludes>false</ShowIncludes>
       <DisableSpecificWarnings>4244; 4251; 4275</DisableSpecificWarnings>
     </ClCompile>
