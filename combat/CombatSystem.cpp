@@ -995,8 +995,8 @@ namespace {
 
     /// A collection of information the autoresolution must keep around
     struct AutoresolveInfo {
-        std::set<int>                   valid_attacker_object_ids;  // all objects that can attack
-        std::map<int, EmpireCombatInfo> empire_infos;               // empire specific information, indexed by empire id
+        boost::container::flat_set<int>                   valid_attacker_object_ids;  // all objects that can attack
+        boost::container::flat_map<int, EmpireCombatInfo> empire_infos;               // empire specific information, indexed by empire id
         CombatInfo&                     combat_info;
         int                             next_fighter_id = -1000001; // give fighters negative ids so as to avoid clashes with any positive-id of persistent UniverseObjects
         std::set<int>                   destroyed_object_ids;       // objects that have been destroyed so far during this combat
@@ -1597,47 +1597,47 @@ namespace {
         } // end for over weapons
     }
 
-    void IncreaseStoredFighterCount(std::shared_ptr<Ship>& ship, float recovered_fighters, const Universe& universe) {
-        if (!ship || recovered_fighters <= 0)
+    void IncreaseStoredFighterCount(Ship& ship, float recovered_fighters, const Universe& universe) {
+        if (recovered_fighters <= 0)
             return;
 
         // get how many fighters are initialy in each part type...
         // may be multiple hangar part types, each with different capacity (number of stored fighters)
         std::map<std::string, std::pair<Meter*, Meter*>> ship_part_fighter_hangar_capacities;
 
-        const ShipDesign* design = universe.GetShipDesign(ship->DesignID());
+        const ShipDesign* design = universe.GetShipDesign(ship.DesignID());
         if (!design) {
-            ErrorLogger(combat) << "IncreaseStoredFighterCount couldn't get ship design with id " << ship->DesignID();;
+            ErrorLogger(combat) << "IncreaseStoredFighterCount couldn't get ship design with id " << ship.DesignID();;
             return;
         }
 
         // get hangar part meter values
         for (const std::string& part_name : design->Parts()) {
             const ShipPart* part = GetShipPart(part_name);
-            if (!part)
+            if (!part || part->Class() != ShipPartClass::PC_FIGHTER_HANGAR)
                 continue;
-            if (part->Class() != ShipPartClass::PC_FIGHTER_HANGAR)
-                continue;
-            ship_part_fighter_hangar_capacities[part_name].first = ship->GetPartMeter(MeterType::METER_CAPACITY, part_name);
-            ship_part_fighter_hangar_capacities[part_name].second = ship->GetPartMeter(MeterType::METER_MAX_CAPACITY, part_name);
+            ship_part_fighter_hangar_capacities.try_emplace(
+                part_name,
+                ship.GetPartMeter(MeterType::METER_CAPACITY, part_name),
+                ship.GetPartMeter(MeterType::METER_MAX_CAPACITY, part_name));
         }
 
         // increase capacity meters until requested fighter allocation is
         // recovered. ioesn't matter which part's capacity meters are increased,
         // since all fighters are the same on the ship
-        for (auto& part : ship_part_fighter_hangar_capacities) {
-            if (!part.second.first || !part.second.second)
+        for (auto& [part_name, cap_max] : ship_part_fighter_hangar_capacities) {
+            if (!cap_max.first || !cap_max.second)
                 continue;
-            float space = part.second.second->Current() - part.second.first->Current();
+            float space = cap_max.second->Current() - cap_max.first->Current();
             float increase = std::min(space, recovered_fighters);
             recovered_fighters -= increase;
 
-            DebugLogger() << "Increasing stored fighter count of ship " << ship->Name()
-                          << " (" << ship->ID() << ") from " << part.second.first->Current()
+            DebugLogger() << "Increasing stored fighter count of ship " << ship.Name()
+                          << " (" << ship.ID() << ") from " << cap_max.first->Current()
                           << " by " << increase << " towards max of "
-                          << part.second.second->Current();
+                          << cap_max.second->Current();
 
-            part.second.first->AddToCurrent(increase);
+            cap_max.first->AddToCurrent(increase);
 
             // stop if all fighters recovered
             if (recovered_fighters <= 0.0f)
@@ -1670,18 +1670,18 @@ namespace {
             ships_fighters_to_add_back[launched_from_id]++;
         }
         DebugLogger() << "Fighters left at end of combat:";
-        for (auto [ship_id, fighter_count] : ships_fighters_to_add_back)
+        for (const auto [ship_id, fighter_count] : ships_fighters_to_add_back)
             DebugLogger() << " ... from ship id " << ship_id << " : " << fighter_count;
 
 
         DebugLogger() << "Returning fighters to ships:";
-        for (auto [ship_id, fighter_count] : ships_fighters_to_add_back) {
-            auto ship = combat_info.objects.get<Ship>(ship_id);
+        for (const auto [ship_id, fighter_count] : ships_fighters_to_add_back) {
+            auto ship = combat_info.objects.getRaw<Ship>(ship_id);
             if (!ship) {
                 ErrorLogger(combat) << "Couldn't get ship with id " << ship_id << " for fighter to return to...";
                 continue;
             }
-            IncreaseStoredFighterCount(ship, fighter_count, combat_info.universe);
+            IncreaseStoredFighterCount(*ship, fighter_count, combat_info.universe);
             // launching negative ships indicates recovery of them
             launches_event->AddEvent(std::make_shared<FighterLaunchEvent>(
                 bout, ship_id, ship->Owner(), -static_cast<int>(fighter_count)));
