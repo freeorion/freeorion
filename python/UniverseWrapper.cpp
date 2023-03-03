@@ -290,8 +290,10 @@ namespace FreeOrionPython {
 
         py::to_python_converter<std::pair<MeterType, std::string>,
                                 PairToTupleConverter<std::pair<MeterType, std::string>>>();
+        py::to_python_converter<std::pair<std::string, MeterType>,
+                                PairToTupleConverter<std::pair<std::string, MeterType>>>();
 
-        py::class_<Ship::PartMeterMap>("MeterTypeStringPairMeterMap")
+        py::class_<Ship::PartMeterMap>("StringMeterTypePairMeterMap")
             .def(py::map_indexing_suite<Ship::PartMeterMap>())
         ;
 

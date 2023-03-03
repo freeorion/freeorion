@@ -114,7 +114,7 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
         } else {
             std::map<int, ShipDesign*> design_ptrs;
             ar  & make_nvp("ship_designs", design_ptrs);
-            for (auto [id, ptr] : design_ptrs) {
+            for (auto& [id, ptr] : design_ptrs) {
                 ship_designs_scratch.emplace(id, std::move(*ptr));
                 delete ptr;
             }
@@ -267,6 +267,9 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
 
 namespace {
     template<typename T, std::enable_if<std::is_integral_v<T>>* = nullptr>
+#if defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
+    constexpr
+#endif
     auto ToChars(T num, char* buffer, char* buffer_end)
     {
 #if defined(__cpp_lib_to_chars)
@@ -285,15 +288,15 @@ namespace {
     constexpr std::size_t single_meter_text_size{ArrSize(Meter::ToCharsArrayT())};
 
     constexpr std::array<std::string_view, num_meters_possible + 2> tags{
-        "inv",
-        "POP", "IND", "RES", "INF", "CON", "STB",
+        "inv", // invalid
+        "POP", "IND", "RES", "INF", "CON", "STB", // target/max meters
         "CAP", "SEC",
         "FUL", "SHD", "STR", "DEF", "SUP", "STO", "TRP",
-        "pop", "ind", "res", "inf", "con", "stb",
+        "pop", "ind", "res", "inf", "con", "stb", // paired active/current meters
         "cap", "sec",
-        "ful", "shd", "str", "def", "sup", "sto", "trp",
+        "ful", "shd", "str", "def", "sup", "sto", "trp", // unpaired meters
         "reb", "siz", "slt", "det", "spd",
-        "num"};
+        "num"}; // num meter types
     static_assert([]() -> bool {
         for (const auto& tag : tags)
             if (tag.size() != 3)
@@ -314,10 +317,11 @@ namespace {
 
     constexpr MeterType MeterTypeFromTag(std::string_view sv) {
         using mt_under = std::underlying_type_t<MeterType>;
+        static_assert(std::is_signed_v<mt_under>);
 
         for (std::size_t idx = 0; idx < tags.size(); ++idx) {
             if (tags[idx] == sv)
-                return MeterType(static_cast<mt_under>(idx) - 1);
+                return MeterType(static_cast<mt_under>(idx) - 1); // tag at index 0 corresponds to INVALID_METER_TYPE = -1
         }
         return MeterType::INVALID_METER_TYPE;
     }
@@ -327,22 +331,55 @@ namespace {
 
 
     /** Write text representation of meter type, current, and initial value.
-      * Return number of consumed chars. */
-    auto ToChars(const UniverseObject::MeterMap::value_type& val,
-                 char* const buffer, char* const buffer_end)
-    {
+      * Return number of written chars. */
+    inline auto ToChars(MeterType type, const Meter& m, char* const buffer, char* const buffer_end) {
         using retval_t = decltype(std::distance(buffer, buffer_end));
 
         if (std::distance(buffer, buffer_end) < 10)
             return retval_t{0};
 
-        const auto& [type, m] = val;
         std::copy_n(MeterTypeTag(type).data(), 3, buffer); // tags should all be 3 chars
         auto result_ptr = buffer + 3;
 
         *result_ptr++ = ' ';
-        result_ptr += m.ToChars(result_ptr, buffer_end);
+        result_ptr += m.ToChars(result_ptr, buffer_end); // Meter::ToChars is currently not constexpr, making this whole function not constexpr
         return std::distance(buffer, result_ptr);
+    }
+
+    inline auto ToChars(const UniverseObject::MeterMap::value_type& val, char* const buffer, char* const buffer_end)
+    { return ToChars(val.first, val.second, buffer, buffer_end); }
+
+    constexpr bool have_to_chars_lib =
+#if defined(__cpp_lib_to_chars)
+        true;
+#else
+        false;
+#endif
+
+    template <typename T>
+    inline constexpr const auto* GetFormatString() {
+        if constexpr(std::is_unsigned_v<T>)
+            return "%u%n";
+        else if constexpr(std::is_signed_v<T>)
+            return "%d%n";
+        else
+            return "";
+    }
+
+    // returns { next unconsumed char*, true/false did the parse succeed }
+    // parsed value returned in result
+    template <typename T>
+    inline auto FromChars(const char* start, const char* end, T& val_out) -> std::pair<const char*, bool>
+    {
+        if constexpr(have_to_chars_lib) {
+            const auto result = std::from_chars(start, end, val_out);
+            return {result.ptr, result.ec == std::errc()};
+
+        } else {
+            int chars_consumed = 0;
+            const auto matched = sscanf(start, GetFormatString<T>(), &val_out, &chars_consumed);
+            return {start + chars_consumed, matched >= 1};
+        }
     }
 
 
@@ -357,7 +394,7 @@ namespace {
         static_assert(buffer_size > 100);
 
         std::array<std::string::value_type, buffer_size> buffer{};
-        auto* buffer_next = buffer.data(); // TODO: char* -> auto* ?
+        auto* buffer_next = buffer.data();
         auto* buffer_end = buffer.data() + buffer.size();
 
         // store number of meters
@@ -380,9 +417,12 @@ namespace {
         static constexpr std::size_t buffer_size = num_meters_possible * single_meter_text_size;
 
         if (version < 4) {
+            // old format used the default serialization for maps
             ar >> boost::serialization::make_nvp("m_meters", meters);
             return;
         }
+
+        // interpret custom string representation of meters
 
         std::string buffer;
         buffer.reserve(buffer_size);
@@ -391,22 +431,12 @@ namespace {
         unsigned int count = 0U;
         const char* const buffer_end = buffer.c_str() + buffer.size();
 
-#if defined(__cpp_lib_to_chars)
-        auto result = std::from_chars(buffer.c_str(), buffer_end, count);
-        count = std::min(count, static_cast<unsigned int>(num_meters_possible));
-        if (result.ec != std::errc())
+        auto [next, success] = FromChars(buffer.c_str(), buffer_end, count);
+        if (!success)
             return;
-        auto next{result.ptr};
-#else
-        int chars_consumed = 0;
-        const char* next = buffer.data();
-        auto matched = sscanf(next, "%u%n", &count, &chars_consumed);
-        if (matched < 1)
-            return;
+        count = std::min<unsigned int>(count, num_meters_possible);
+        meters.reserve(count);
 
-        count = std::min(count, static_cast<unsigned int>(num_meters_possible));
-        next += chars_consumed;
-#endif
         while (std::distance(next, buffer_end) > 0 && *next == ' ')
             ++next;
 
@@ -428,6 +458,170 @@ namespace {
             next += consumed;
             while (std::distance(next, buffer_end) > 0 && *next == ' ')
                 ++next;
+        }
+    }
+
+
+    template <typename Archive>
+    void Serialize(Archive& ar, Ship::PartMeterMap& meters, unsigned int const version)
+    { ar & boost::serialization::make_nvp("m_part_meters", meters); }
+
+    template <>
+    void Serialize(boost::archive::xml_oarchive& ar, Ship::PartMeterMap& meters, unsigned int const)
+    {
+        // need enough space to store meter representations and part meter name strings.
+
+        // size of just the Meter representation, without part names
+        const auto meter_text_size = meters.size() * (single_meter_text_size + 2);
+
+        // size of part names
+        const auto part_names_size = [&meters]() { // transform_reduce sum of lengths of all part names to store. will be an overestimate since the part name doesn't need to be stored once per meter, but just once per part type that has meters
+            std::size_t retval = 0;
+            for (auto& [mt_name, ignored] : meters)
+                retval += mt_name.first.size();
+            return retval;
+        }();
+
+        std::vector<std::string::value_type> buffer(meter_text_size + part_names_size + 4, // 4 extra for safety padding
+                                                    std::string::value_type{0});
+
+        auto* buffer_next = buffer.data();
+        auto* buffer_end = buffer.data() + buffer.size();
+
+        // store number of meters
+        buffer_next += ToChars(meters.size(), buffer_next, buffer_end);
+
+
+        // store part name, count of meters, then each meter as triple of metertype, current, initial
+        const auto end_it = meters.end();
+        auto first_of_part_it = meters.begin();
+
+        while (first_of_part_it != end_it) {
+            *buffer_next++ = ' ';
+
+            // store part name
+            const auto& part_name = first_of_part_it->first.first;
+            const auto name_sz = part_name.size();
+            std::copy_n(part_name.c_str(), name_sz, buffer_next);
+            buffer_next += name_sz;
+            *buffer_next++ = ' ';
+
+            // find range of meters for current part
+            const auto first_of_next_part_it = std::find_if_not(first_of_part_it, end_it,
+                                                                [&part_name](const auto& pn_mt_m) noexcept -> bool
+                                                                { return pn_mt_m.first.first == part_name; });
+            const auto part_meter_count = std::distance(first_of_part_it, first_of_next_part_it);
+
+            // store number of meters for part
+            buffer_next += ToChars(part_meter_count, buffer_next, buffer_end);
+
+            // store each meter type, current, and initial values for part meters
+            for (auto m_it{first_of_part_it}; m_it != first_of_next_part_it; ++m_it) {
+                *buffer_next++ = ' ';
+                buffer_next += ToChars(m_it->first.second, m_it->second, buffer_next, buffer_end);
+            }
+
+            first_of_part_it = first_of_next_part_it;
+        }
+
+
+        std::string s{buffer.data()};
+        ar << boost::serialization::make_nvp("part_meters", s);
+
+        DebugLogger() << "part meter sz: " << s.size() << " buf cap: " << buffer.size() << " txt:" << s;
+    }
+
+    template <>
+    void Serialize(boost::archive::xml_iarchive& ar, Ship::PartMeterMap& meters,
+                   unsigned int const version)
+    {
+        static constexpr std::size_t buffer_capacity = num_meters_possible * (single_meter_text_size + 50); // guesstimate. number of of part meters and sizes of part type names is scriptable
+
+        if (version < 3) {
+            std::map<std::pair<MeterType, std::string>, Meter> scratch;
+            ar >> boost::serialization::make_nvp("m_part_meters", scratch);
+            for (auto& [mt_pn, meter] : scratch) {
+                meters.emplace(std::piecewise_construct,
+                               std::forward_as_tuple(mt_pn.second, mt_pn.first),
+                               std::forward_as_tuple(meter));
+            }
+        }
+
+        // interpret custom string representation of part meters
+
+        std::string buffer;
+        buffer.reserve(buffer_capacity);
+        ar >> boost::serialization::make_nvp("part_meters", buffer);
+
+        // buffer should contain a text representation of a series of part meters, formatted like
+        // 10 FT_BAY_KRILL 2 CAP 4000 4000 cap 4000 4000 FT_HANGAR_KRILL 4 CAP 0 0 SEC 6000 6000 cap 0 0 sec 6000 6000 SR_WEAPON_1_1 4 CAP 3000 3000 SEC 1000 1000 cap 3000 3000 sec 1000 1000
+        // where
+        // 10 = total number of part meters
+        // FT_BAY_KRILL = name of first part with meters
+        // 2 = number of meters for first part
+        // CAP = type of meter (Max Capacity)
+        // 4000 4000 = current and initial values of meter
+
+        // get total number of meters
+        unsigned int total_meter_count = 0U;
+        const auto* const buffer_end = buffer.c_str() + buffer.size();
+
+        auto [next, success] = FromChars(buffer.c_str(), buffer_end, total_meter_count);
+        if (!success)
+            return;
+        meters.reserve(meters.size() + static_cast<std::size_t>(total_meter_count));
+
+        // loop over meters
+        unsigned int extracted_meters = 0U;
+        while (next != buffer_end && extracted_meters < total_meter_count) {
+            // skip whitespace
+            while (std::distance(next, buffer_end) > 0 && *next == ' ')
+                ++next;
+
+            // get part name
+            auto part_name_end_it = std::find(next, buffer_end, ' ');
+            std::string part_name{next, part_name_end_it};
+            if (part_name.empty())
+                return;
+
+            // skip whitespace
+            while (std::distance(next, buffer_end) > 0 && *next == ' ')
+                ++next;
+
+            // get part meter count
+            unsigned int part_meter_count = 0;
+            std::tie(next, success) = FromChars(next, buffer_end, part_meter_count);
+            if (!success || next == buffer_end)
+                return;
+
+            for (decltype(part_meter_count) part_idx = 0U; part_idx < part_meter_count; ++part_idx) {
+                // skip whitespace
+                while (std::distance(next, buffer_end) > 0 && *next == ' ')
+                    ++next;
+
+                // get part meter
+                if (std::distance(next, buffer_end) < 7) // 7 is enough for "POP 0 0" or similar
+                    return;
+                const auto mt = MeterTypeFromTag(std::string_view(next, 3));
+                next += 3;
+
+                // skip whitespace
+                while (std::distance(next, buffer_end) > 0 && *next == ' ')
+                    ++next;
+
+                // get meter values
+                Meter meter;
+                const auto consumed = meter.SetFromChars(std::string_view(next, std::distance(next, buffer_end)));
+                if (consumed < 1)
+                    return;
+                next += consumed;
+
+                // store meter
+                static_assert(std::is_same_v<Ship::PartMeterMap::key_type, std::pair<std::string, MeterType>>);
+                meters.emplace(std::piecewise_construct,
+                               std::forward_as_tuple(part_name, mt),
+                               std::forward_as_tuple(std::move(meter)));
+            }
         }
     }
 }
@@ -512,28 +706,18 @@ namespace {
     }
 
     template <>
-    void Serialize(boost::archive::xml_iarchive& ar, const char* name,
-                   boost::container::flat_set<int32_t>& fs)
+    void Serialize(boost::archive::xml_iarchive& ar, const char* name, boost::container::flat_set<int32_t>& fs)
     {
         std::string buffer;
         ar >> boost::serialization::make_nvp(name, buffer);
 
         unsigned int count = 0U;
-        const auto* next = buffer.c_str();
         const auto* const buffer_end = buffer.c_str() + buffer.size();
 
-#if defined(__cpp_lib_to_chars)
-        auto result = std::from_chars(next, buffer_end, count);
-        if (result.ec != std::errc())
+        auto [next, success] = FromChars(buffer.c_str(), buffer_end, count);
+        if (!success)
             return;
-        next = result.ptr;
-#else
-        int chars_consumed = 0;
-        auto matched = std::sscanf(next, "%u%n", &count, &chars_consumed);
-        if (matched < 1)
-            return;
-        next += chars_consumed;
-#endif
+
         fs.reserve(fs.size() + static_cast<std::size_t>(count));
         using ID_t = std::decay_t<decltype(fs)>::value_type;
         std::vector<ID_t> maybe_unsorted_buffer;
@@ -546,19 +730,9 @@ namespace {
                 ++next;
 
             ID_t id = INVALID_OBJECT_ID;
-
-#if defined(__cpp_lib_to_chars)
-            auto result = std::from_chars(next, buffer_end, id);
-            if (result.ec != std::errc())
+            std::tie(next, success) = FromChars(next, buffer_end, id);
+            if (!success)
                 return;
-            next = result.ptr;
-#else
-            int chars_consumed = 0;
-            auto matched = std::sscanf(next, "%d%n", &id, &chars_consumed);
-            if (matched < 1)
-                return;
-            next += chars_consumed;
-#endif
 
             if (id != INVALID_OBJECT_ID)
                 maybe_unsorted_buffer.push_back(id);
@@ -807,9 +981,9 @@ void serialize(Archive& ar, Ship& obj, unsigned int const version)
         & make_nvp("m_ordered_scrapped", obj.m_ordered_scrapped)
         & make_nvp("m_ordered_colonize_planet_id", obj.m_ordered_colonize_planet_id)
         & make_nvp("m_ordered_invade_planet_id", obj.m_ordered_invade_planet_id)
-        & make_nvp("m_ordered_bombard_planet_id", obj.m_ordered_bombard_planet_id)
-        & make_nvp("m_part_meters", obj.m_part_meters)
-        & make_nvp("m_species_name", obj.m_species_name)
+        & make_nvp("m_ordered_bombard_planet_id", obj.m_ordered_bombard_planet_id);
+    Serialize(ar, obj.m_part_meters, version);
+    ar  & make_nvp("m_species_name", obj.m_species_name)
         & make_nvp("m_produced_by_empire_id", obj.m_produced_by_empire_id)
         & make_nvp("m_arrived_on_turn", obj.m_arrived_on_turn);
     ar  & make_nvp("m_last_turn_active_in_combat", obj.m_last_turn_active_in_combat);
@@ -817,7 +991,7 @@ void serialize(Archive& ar, Ship& obj, unsigned int const version)
 }
 
 BOOST_CLASS_EXPORT(Ship)
-BOOST_CLASS_VERSION(Ship, 2)
+BOOST_CLASS_VERSION(Ship, 3)
 
 
 template <typename Archive>
@@ -935,16 +1109,16 @@ template void Deserialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ia, st
 namespace boost::serialization {
     using namespace boost::container;
 
-    template<class Archive, class Key, class Value>
-    void save(Archive& ar, const flat_map<Key, Value>& m, const unsigned int)
-    { stl::save_collection<Archive, flat_map<Key, Value>>(ar, m); }
+    template<class Archive, class Key, class Value, class OtherStuff>
+    void save(Archive& ar, const flat_map<Key, Value, OtherStuff>& m, const unsigned int)
+    { stl::save_collection<Archive, flat_map<Key, Value, OtherStuff>>(ar, m); }
 
-    template<class Archive, class Key, class Value>
-    void load(Archive& ar, flat_map<Key, Value>& m, const unsigned int)
+    template<class Archive, class Key, class Value, class OtherStuff>
+    void load(Archive& ar, flat_map<Key, Value, OtherStuff>& m, const unsigned int)
     { load_map_collection(ar, m); }
 
-    template<class Archive, class Key, class Value>
-    void serialize(Archive& ar, flat_map<Key, Value>& m, const unsigned int file_version)
+    template<class Archive, class Key, class Value, class OtherStuff>
+    void serialize(Archive& ar, flat_map<Key, Value, OtherStuff>& m, const unsigned int file_version)
     { split_free(ar, m, file_version); }
 
     // Note: I tried loading the internal vector of a flat_map instead of
