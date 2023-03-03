@@ -200,7 +200,8 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
                                      "TurnsSinceFocusChange",
                                      "TurnsSinceLastConquered",
                                      "ETA",
-                                     "LaunchedFrom"})
+                                     "LaunchedFrom",
+                                     "OrderedColonizePlanetID"})
         {
             py_variable_wrapper.add_property(property, py::make_function(
                 [property] (const variable_wrapper& w) { return w.get_int_property(property); },
