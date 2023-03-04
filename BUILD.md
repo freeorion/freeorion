@@ -25,7 +25,7 @@ Required Software Dependencies
 FreeOrion depends on the following software to build:
 
   * [Visual Studio] - 2019 or 2022 for Windows Desktop ; Windows only
-  * [Xcode] - 10.1 or later ; Mac OS X only
+  * [Xcode] - 10.1 or later ; MacOS only
   * [CMake] - 3.8 or 3.16 (Windows) or later
   * A C++17 compliant compiler - Other Operating Systems
     * [GNU GCC] - 8.0 or later
@@ -51,10 +51,10 @@ FreeOrion depends on the following libraries or APIs to run:
 Obtaining FreeOrion Source Code and Software Dependencies
 ---------------------------------------------------------
 
-For Windows and Mac OS X, a [Software Development Kit] is provided as download to
+For Windows and MacOS, a [Software Development Kit] is provided as download to
 assist with compiling FreeOrion from source. The SDK contains the preconfigured and
 -compiled build and runtime dependencies for Visual Studio on Windows and the
-macOS 10.12 SDK with Xcode 10.1 or later on macOS.
+MacOS 10.12 SDK with Xcode 10.1 or later on macOS.
 
 For Linux or other Operating Systems, the build and runtime dependencies should
 be installed by the preferred way for the respective OS (e.g. via Package
@@ -64,7 +64,7 @@ Step by step procedure for the v0.5 release and development versions near then:
 
  * On Windows:
    * Download the [FreeOrionSDK v13] from the FreeOrionSDK respository releases.
- * On Mac OS X:
+ * On MacOS:
    * The [FreeOrionSDK v13] is downloaded automatically when CMake creates the
      build environment.
  * Linux and other Operating Systems:
@@ -78,7 +78,7 @@ Step by step procedure for the v0.5 release and development versions near then:
    * If you want to create an out-of-source build using CMake, you should run 
      `git clone https://github.com/freeorion/freeorion.git FreeOrion` in the 
      `freeorion-project` directory, instead of running `bootstrap.bat`.
- * On Max OS X, Linux and other Operating Systems:
+ * On MaxOS, Linux and other Operating Systems:
    * Navigate into the project directory.
    * Clone the project via Git:
      ```
@@ -89,7 +89,7 @@ This will leave you with the latest development branch `master` and the
 FreeOrion source code in:
 
  * `freeorion-project/FreeOrion/` on Windows.
- * `freeorion-project/freeorion/` on Mac OS X, Linux and other Operating
+ * `freeorion-project/freeorion/` on MacOS, Linux and other Operating
    Systems.
 
 This directory will be referred to as _source directory_ in the rest of the
