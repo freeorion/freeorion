@@ -8,7 +8,7 @@ corresponding release branch, eg. [FreeOrion v0.5 BUILD.md]
 Hardware and OS Requirements
 ----------------------------
 
-FreeOrion should compile on Windows 8.1 (or later), Mac OS X 10.10 (or later) and
+FreeOrion should compile on Windows 8.1 (or later), macOS 10.12 (or later) and
 Linux operating systems. Other operating systems have reported to work, but
 support is not actively maintained by the FreeOrion developers. FreeOrion is
 developed for x86 compatible processor architectures; other architectures
