@@ -54,7 +54,7 @@ Obtaining FreeOrion Source Code and Software Dependencies
 For Windows and Mac OS X, a [Software Development Kit] is provided as download to
 assist with compiling FreeOrion from source. The SDK contains the preconfigured and
 -compiled build and runtime dependencies for Visual Studio on Windows and the
-Mac OS X 10.9 SDK with Xcode 6.4 or later on Mac OS X.
+macOS 10.12 SDK with Xcode 10.1 or later on macOS.
 
 For Linux or other Operating Systems, the build and runtime dependencies should
 be installed by the preferred way for the respective OS (e.g. via Package
