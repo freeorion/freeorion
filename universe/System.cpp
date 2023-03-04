@@ -455,7 +455,7 @@ bool System::RemoveWormhole(int id) {
     return retval;
 }
 
-void System::ResetTargetMaxUnpairedMeters() noexcept(UniverseObject::noexcept_rtmum) {
+void System::ResetTargetMaxUnpairedMeters() {
     UniverseObject::ResetTargetMaxUnpairedMeters();
 
     static_assert(noexcept(GetMeter(MeterType::METER_STEALTH)->ResetCurrent()));

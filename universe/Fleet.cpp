@@ -1063,7 +1063,7 @@ void Fleet::MovementPhase(ScriptingContext& context) {
     }
 }
 
-void Fleet::ResetTargetMaxUnpairedMeters() noexcept(UniverseObject::noexcept_rtmum) {
+void Fleet::ResetTargetMaxUnpairedMeters() {
     UniverseObject::ResetTargetMaxUnpairedMeters();
 
     // give fleets base stealth very high, so that they can (almost?) never be

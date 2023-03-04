@@ -122,7 +122,7 @@ public:
 
     void SetOwner(int id) override {} // no-op for systems
 
-    void ResetTargetMaxUnpairedMeters() noexcept(UniverseObject::noexcept_rtmum) override;
+    void ResetTargetMaxUnpairedMeters() override;
 
     /** adds an object to this system. */
     static constexpr int NO_ORBIT = -1;

@@ -145,7 +145,7 @@ public:
     /** Moves fleet, its ships, and sets systems as explored for empires. */
     void MovementPhase(ScriptingContext& context);
 
-    void ResetTargetMaxUnpairedMeters() noexcept(UniverseObject::noexcept_rtmum) override;
+    void ResetTargetMaxUnpairedMeters() override;
 
     /** Sets this fleet to move through the series of systems in the list, in order */
     void SetRoute(std::vector<int> route, const ObjectMap& objects);

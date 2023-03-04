@@ -14,7 +14,14 @@ class ShipPart;
 /** a class representing a single FreeOrion ship */
 class FO_COMMON_API Ship final : public UniverseObject {
 public:
-    using PartMeterMap = boost::container::flat_map<std::pair<std::string, MeterType>, Meter, std::less<>>;
+    struct string_metertype_pair_less {
+        template <typename S1, typename S2>
+        bool operator()(const std::pair<S1, MeterType>& lhs, const std::pair<S2, MeterType>& rhs) const noexcept
+        { return (lhs.first < rhs.first) || ((lhs.first == rhs.first) && (lhs.second < rhs.second)); }
+
+        using is_transparent = int;
+    };
+    using PartMeterMap = boost::container::flat_map<std::pair<std::string, MeterType>, Meter, string_metertype_pair_less>;
 
     [[nodiscard]] bool HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
 
@@ -33,8 +40,8 @@ public:
     /** Back propagates part meters (which UniverseObject equivalent doesn't). */
     void BackPropagateMeters() override;
 
-    void ResetTargetMaxUnpairedMeters() noexcept(UniverseObject::noexcept_rtmum) override;
-    void ResetPairedActiveMeters() noexcept(UniverseObject::noexcept_rpam) override;
+    void ResetTargetMaxUnpairedMeters() override;
+    void ResetPairedActiveMeters() override;
     void ClampMeters() override;
 
     /** Returns new copy of this Ship. */
