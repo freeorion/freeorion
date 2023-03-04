@@ -1383,16 +1383,10 @@ namespace {
         std::vector<std::string> retval;
 
         for (auto& [policy_name, policy] : GetPolicyManager()) {
-            if (!policy) continue;
-
-            bool found_item = false;
-            for (const UnlockableItem& unlocked_item : policy->UnlockedItems()) {
-                if (unlocked_item == item) {
-                    found_item = true;
-                    break;
-                }
-            }
-            if (found_item)
+            // transform_if
+            const auto& unlocks = policy.UnlockedItems();
+            const auto it = std::find(unlocks.begin(), unlocks.end(), item);
+            if (it != unlocks.end())
                 retval.push_back(policy_name);
         }
 

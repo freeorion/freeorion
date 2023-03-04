@@ -1669,37 +1669,34 @@ void Empire::ConquerProductionQueueItemsAtLocation(int location_id, int empire_i
         ProductionQueue& queue = from_empire->m_production_queue;
 
         for (auto queue_it = queue.begin(); queue_it != queue.end(); ) {
-            auto elem = *queue_it;
+            const auto& elem = *queue_it;
             if (elem.location != location_id) {
                 ++queue_it;
                 continue; // skip projects with wrong location
             }
 
-            ProductionQueue::ProductionItem item = elem.item;
-
-            if (item.build_type == BuildType::BT_BUILDING) {
-                std::string name = item.name;
-                const BuildingType* type = GetBuildingType(name);
+            if (elem.item.build_type == BuildType::BT_BUILDING) {
+                const BuildingType* type = GetBuildingType(elem.item.name);
                 if (!type) {
-                    ErrorLogger() << "ConquerProductionQueueItemsAtLocation couldn't get building with name " << name;
+                    ErrorLogger() << "ConquerProductionQueueItemsAtLocation couldn't get building with name " << elem.item.name;
                     continue;
                 }
 
-                CaptureResult result = type->GetCaptureResult(from_empire_id, empire_id, location_id, true);
+                const CaptureResult result = type->GetCaptureResult(from_empire_id, empire_id, location_id, true);
 
                 if (result == CaptureResult::CR_DESTROY) {
                     // item removed from current queue, NOT added to conquerer's queue
-                    queue_it = queue.erase(queue_it);
+                    queue_it = queue.erase(queue_it); // invalidates elem reference
 
                 } else if (result == CaptureResult::CR_CAPTURE) {
                     if (to_empire) {
                         // item removed from current queue, added to conquerer's queue
-                        ProductionQueue::Element new_elem(item, empire_id, elem.uuid, elem.ordered,
+                        ProductionQueue::Element new_elem(elem.item, empire_id, elem.uuid, elem.ordered,
                                                           elem.remaining, 1, location_id);
                         new_elem.progress = elem.progress;
-                        to_empire->m_production_queue.push_back(new_elem);
+                        to_empire->m_production_queue.push_back(std::move(new_elem));
 
-                        queue_it = queue.erase(queue_it);
+                        queue_it = queue.erase(queue_it); // invalidates queue_it and elem reference
                     } else {
                         // else do nothing; no empire can't capure things
                         ++queue_it;
@@ -1707,6 +1704,7 @@ void Empire::ConquerProductionQueueItemsAtLocation(int location_id, int empire_i
 
                 } else if (result == CaptureResult::INVALID_CAPTURE_RESULT) {
                     ErrorLogger() << "Empire::ConquerBuildsAtLocationFromEmpire: BuildingType had an invalid CaptureResult";
+
                 } else {
                     ++queue_it;
                 }
@@ -2753,10 +2751,9 @@ void Empire::UpdateOwnedObjectCounters(const Universe& universe) {
 
 void Empire::CheckObsoleteGameContent() {
     // remove any unrecognized policies and uncategorized policies
-    const auto policies_temp = m_adopted_policies;
+    const auto policies_temp{m_adopted_policies};
     for (auto& [policy_name, adoption_info] : policies_temp) {
-        const auto* policy = GetPolicy(policy_name);
-        if (!policy) {
+        if (!GetPolicy(policy_name)) {
             ErrorLogger() << "UpdatePolicies couldn't find policy with name: " << policy_name;
             m_adopted_policies.erase(policy_name);
 
@@ -2765,10 +2762,9 @@ void Empire::CheckObsoleteGameContent() {
             m_adopted_policies.erase(policy_name);
         }
     }
-    const auto policies_temp2 = m_available_policies;
+    const auto policies_temp2{m_available_policies};
     for (auto& policy_name : policies_temp2) {
-        const auto* policy = GetPolicy(policy_name);
-        if (!policy) {
+        if (!GetPolicy(policy_name)) {
             ErrorLogger() << "UpdatePolicies couldn't find policy with name: " << policy_name;
             m_available_policies.erase(policy_name);
         }

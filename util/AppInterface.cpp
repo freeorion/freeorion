@@ -72,7 +72,7 @@ void IApp::StartBackgroundParsing(const PythonParser& python, std::promise<void>
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/buildings").string();
 
     if (IsExistingDir(rdir / "scripting/policies"))
-        GetPolicyManager().SetPolicies(Pending::StartAsyncParsing(parse::policies, rdir / "scripting/policies"));
+        GetPolicyManager().SetPolicies(Pending::StartAsyncParsing(parse::policies<std::vector<Policy>>, rdir / "scripting/policies"));
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/policies").string();
 

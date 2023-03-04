@@ -8,6 +8,7 @@
 #include <array>
 
 #include <boost/algorithm/string/case_conv.hpp>
+#include <boost/container/flat_map.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/spirit/include/qi.hpp>
 
@@ -20,17 +21,43 @@ namespace Effect {
 }
 
 namespace parse::detail {
-    /// A functor to determine if \p key will be unique in \p map of \p type, and log an error otherwise.
+    template<typename ... Types> struct is_vector : std::false_type {};
+    template<typename ... Types> struct is_vector<std::vector<Types...>> : std::true_type {};
+    template<typename ... Types> constexpr bool is_vector_v = is_vector<Types...>::value;
+
+    template<typename ... Types> struct is_map : std::false_type {};
+    template<typename ... Types> struct is_map<std::map<Types...>> : std::true_type {};
+    template<typename ... Types> struct is_map<boost::container::flat_map<Types...>> : std::true_type {};
+    template<typename ... Types> constexpr bool is_map_v = is_map<Types...>::value;
+
+
+    /// A functor to determine if \p key will be unique in \p container of \p type, and log an error otherwise.
     struct is_unique {
         typedef bool result_type;
 
-        template <typename Map>
-        result_type operator() (const Map& map, const std::string& type, const std::string& key) const {
+        template <typename Container>
+        result_type operator() (const Container& container, const std::string& type, const std::string& key) const {
             // Will this key be unique?
-            auto will_be_unique = (map.count(key) == 0);
+            bool will_be_unique = false;
+
+            if constexpr (is_map_v<Container>) {
+                using key_type = typename Container::key_type;
+                static_assert(std::is_same_v<std::string, key_type>);
+                will_be_unique = (container.find(key) == container.end());
+
+            } else if constexpr (is_vector_v<Container>) {
+                using value_type = typename Container::value_type;
+                static_assert(!std::is_pointer_v<value_type>); // doesn't check for unique_ptr
+                will_be_unique = container.end() == std::find_if(container.begin(), container.end(),
+                                              [&key](const auto& entry) { return entry.Name() == key; });
+
+            } else {
+                static_assert(is_map_v<Container>, "unknown container, can't check for uniqueness of parsed content...");
+            }
+
             if (!will_be_unique)
-                ErrorLogger() << "More than one " <<  boost::algorithm::to_lower_copy(type)
-                              << " has the same name, " << key << ".";
+                ErrorLogger() << "More than one parsed " << type << " has the same name: " << key << ".";
+
             return will_be_unique;
         }
     };

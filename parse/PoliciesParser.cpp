@@ -72,21 +72,14 @@ namespace {
         std::string             graphic;
     };
 
-    void insert_policy(PolicyManager::PoliciesTypeMap& policies, policy_pod policy_, bool& pass) {
-        auto policy_ptr = std::make_unique<Policy>(
-            std::move(policy_.name),
-            std::move(policy_.description),
-            std::move(policy_.short_description),
-            std::move(policy_.category),
-            (policy_.adoption_cost ? policy_.adoption_cost->OpenEnvelope(pass) : nullptr),
-            std::move(policy_.prerequisites),
-            std::move(policy_.exclusions),
-            (policy_.effects ? OpenEnvelopes(*policy_.effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>{}),
-            (policy_.unlocked_items ? std::move(*policy_.unlocked_items) : std::vector<UnlockableItem>{}),
-            std::move(policy_.graphic));
-
-        auto& policy_name = policy_ptr->Name();
-        policies.emplace(policy_name, std::move(policy_ptr));
+    void insert_policy(std::vector<Policy>& policies, policy_pod policy_, bool& pass) {
+        policies.emplace_back(std::move(policy_.name), std::move(policy_.description),
+                              std::move(policy_.short_description), std::move(policy_.category),
+                              (policy_.adoption_cost ? policy_.adoption_cost->OpenEnvelope(pass) : nullptr),
+                              std::move(policy_.prerequisites), std::move(policy_.exclusions),
+                              (policy_.effects ? OpenEnvelopes(*policy_.effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>{}),
+                              (policy_.unlocked_items ? std::move(*policy_.unlocked_items) : std::vector<UnlockableItem>{}),
+                              std::move(policy_.graphic));
     }
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_policy_, insert_policy, 3)
@@ -126,7 +119,7 @@ namespace {
         parse::detail::single_or_repeated_string<std::set<std::string>> one_or_more_string_tokens;
     };
 
-    using start_rule_payload = PolicyManager::PoliciesTypeMap;
+    using start_rule_payload = std::vector<Policy>;
     using start_rule_signature = void(start_rule_payload&);
 
     struct grammar : public parse::detail::grammar<start_rule_signature> {
@@ -226,8 +219,10 @@ namespace {
 
 
 namespace parse {
-    start_rule_payload policies(const boost::filesystem::path& path) {
-        start_rule_payload policies_;
+    template <typename P>
+    P policies(const boost::filesystem::path& path) {
+        static_assert(std::is_same_v<P, std::vector<Policy>>);
+        std::vector<Policy> policies_;
 
         ScopedTimer timer("Policies Parsing");
 
@@ -237,3 +232,10 @@ namespace parse {
         return policies_;
     }
 }
+
+// explicitly instantiate policies parser.
+// This allows Tech.h to only be included in this .cpp file and not Parse.h
+// which recompiles all parsers if Tech.h changes.
+template FO_PARSE_API std::vector<Policy> parse::policies<std::vector<Policy>>(
+    const boost::filesystem::path& path);
+

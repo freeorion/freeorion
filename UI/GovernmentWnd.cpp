@@ -88,7 +88,7 @@ namespace {
         /** Given the GUI's displayed availabilities as stored in this
             AvailabilityManager, return the displayed state of the \p policy.
             Return none if the \p policy should not be displayed. */
-        bool PolicyDisplayed(const Policy* policy, int empire_id = GGHumanClientApp::GetApp()->EmpireID()) const;
+        bool PolicyDisplayed(const Policy& policy, int empire_id = GGHumanClientApp::GetApp()->EmpireID()) const;
 
     private:
         // A tuple of the toogle state of the 3-tuple of coupled
@@ -120,21 +120,19 @@ namespace {
     void AvailabilityManager::ToggleAvailability(const Availability type)
     { SetAvailability(type, !GetAvailability(type)); }
 
-    bool AvailabilityManager::PolicyDisplayed(const Policy* policy, int empire_id) const {
-        if (!policy)
-            return false;
+    bool AvailabilityManager::PolicyDisplayed(const Policy& policy, int empire_id) const {
         const auto [show_adopted, show_adoptable, show_unaffordable, show_restricted, show_locked] = m_availabilities;
 
-        ScriptingContext context;
+        const ScriptingContext context;
         auto empire = context.GetEmpire(empire_id);
         if (!empire)
             return true;
-        context.source = empire->Source(context.ContextObjects()).get();
+        const ScriptingContext source_context{empire->Source(context.ContextObjects()).get()};
 
-        bool policy_adopted = empire->PolicyAdopted(policy->Name());
-        bool policy_affordable = empire->PolicyAffordable(policy->Name(), context);
-        bool policy_restricted = !empire->PolicyPrereqsAndExclusionsOK(policy->Name(), context.current_turn);
-        bool policy_locked = !empire->PolicyAvailable(policy->Name());
+        const bool policy_adopted = empire->PolicyAdopted(policy.Name());
+        const bool policy_affordable = empire->PolicyAffordable(policy.Name(), source_context);
+        const bool policy_restricted = !empire->PolicyPrereqsAndExclusionsOK(policy.Name(), context.current_turn);
+        const bool policy_locked = !empire->PolicyAvailable(policy.Name());
 
         if (policy_adopted && show_adopted)
             return true;
@@ -480,21 +478,21 @@ void PoliciesListBox::AcceptDrops(GG::Pt, std::vector<std::shared_ptr<GG::Wnd>> 
 }
 
 std::map<std::string, std::vector<const Policy*>>
-PoliciesListBox::GroupAvailableDisplayablePolicies(const Empire* empire) const {
+PoliciesListBox::GroupAvailableDisplayablePolicies(const Empire*) const {
     std::map<std::string, std::vector<const Policy*>> policies_categorized;
 
     // loop through all possible policies
     for (auto& [policy_name, policy] : GetPolicyManager()) {
         (void)policy_name; // quiet warning
-        const auto& category = policy->Category();
+        const auto& category = policy.Category();
 
         // check whether this policy should be shown in list
         if (!m_policy_categories_shown.count(category))
             continue;   // policies of this category are not requested to be shown
 
         // Check if part satisfies availability
-        if (m_availabilities_state.PolicyDisplayed(policy.get()))
-            policies_categorized[category].push_back(policy.get());
+        if (m_availabilities_state.PolicyDisplayed(policy))
+            policies_categorized[category].push_back(&policy);
     }
     return policies_categorized;
 }
@@ -672,7 +670,7 @@ void GovernmentWnd::PolicyPalette::CompleteConstruction() {
     for (auto& cat_view : GetPolicyManager().PolicyCategories()) {
         // are there any policies of this class?
         if (std::none_of(GetPolicyManager().begin(), GetPolicyManager().end(),
-                         [cat_view](auto& e){ return e.second && cat_view == e.second->Category(); }))
+                         [cat_view](auto& e){ return cat_view == e.second.Category(); }))
         { continue; }
 
         const auto& us_cateory{UserString(cat_view)};

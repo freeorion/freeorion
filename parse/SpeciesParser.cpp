@@ -357,7 +357,9 @@ namespace {
             ordering.push_back(*it);
     }
 
-    boost::python::object py_insert_species_(start_rule_payload::first_type& species_, const boost::python::tuple& args, const boost::python::dict& kw) {
+    boost::python::object py_insert_species_(start_rule_payload::first_type& species_, const boost::python::tuple& args,
+                                             const boost::python::dict& kw)
+    {
         auto name = boost::python::extract<std::string>(kw["name"])();
         auto description = boost::python::extract<std::string>(kw["description"])();
         auto gameplay_description = boost::python::extract<std::string>(kw["gameplay_description"])();
