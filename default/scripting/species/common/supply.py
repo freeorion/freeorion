@@ -15,3 +15,14 @@ AVERAGE_SUPPLY = [
     ),
     STANDARD_SUPPLY_GROWTH,
 ]
+
+GREAT_SUPPLY = [
+    EffectsGroup(
+        description="GREAT_SUPPLY_DESC",
+        scope=Source,
+        activation=Planet(),
+        accountinglabel="GREAT_SUPPLY_LABEL",
+        effects=SetMaxSupply(value=Value + 2),
+    ),
+    STANDARD_SUPPLY_GROWTH,
+]

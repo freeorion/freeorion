@@ -15,6 +15,10 @@ def STOCKPILE_PER_POP_EFFECTSGROUP__SNIP(label: str, value) -> dict:
     }
 
 
+def STOCKPILE_PER_POP_EFFECTSGROUP(label: str, value):
+    return EffectsGroup(description=label + "_STOCKPILE_DESC", **STOCKPILE_PER_POP_EFFECTSGROUP__SNIP(label, value))
+
+
 STANDARD_STOCKPILE = [
     EffectsGroup(  # increase or decrease towards target meter, when not recently conquered
         scope=Source,
@@ -48,5 +52,10 @@ AVERAGE_STOCKPILE = [
         # Skip the AVERAGE_STOCKPILE_DESC, same as for the other *_STOCKPILE macros
         **STOCKPILE_PER_POP_EFFECTSGROUP__SNIP("AVERAGE", Value + 1 * Target.Population * STOCKPILE_PER_POP)
     ),
+    *STANDARD_STOCKPILE,
+]
+
+GREAT_STOCKPILE = [
+    STOCKPILE_PER_POP_EFFECTSGROUP("GREAT", Value + 10 * Target.Population * STOCKPILE_PER_POP),
     *STANDARD_STOCKPILE,
 ]

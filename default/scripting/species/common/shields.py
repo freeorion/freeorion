@@ -17,3 +17,19 @@ STANDARD_SHIP_SHIELDS = [
         effects=SetShield(value=Target.MaxShield),
     ),
 ]
+
+ULTIMATE_SHIP_SHIELDS = [
+    *STANDARD_SHIP_SHIELDS,
+    EffectsGroup(
+        description="ULTIMATE_SHIP_SHIELD_DESC",
+        scope=Source & Ship,
+        effects=SetMaxShield(
+            value=Value
+            + (1.5 * SHIP_SHIELD_FACTOR * StatisticIf(float, condition=Source & DesignHasPart(name="SH_DEFENSE_GRID")))
+            + (3.0 * SHIP_SHIELD_FACTOR * StatisticIf(float, condition=Source & DesignHasPart(name="SH_DEFLECTOR")))
+            + (4.5 * SHIP_SHIELD_FACTOR * StatisticIf(float, condition=Source & DesignHasPart(name="SH_PLASMA")))
+            + (6.0 * SHIP_SHIELD_FACTOR * StatisticIf(float, condition=Source & DesignHasPart(name="SH_MULTISPEC")))
+            + (7.5 * SHIP_SHIELD_FACTOR * StatisticIf(float, condition=Source & DesignHasPart(name="SH_BLACK")))
+        ),
+    ),
+]

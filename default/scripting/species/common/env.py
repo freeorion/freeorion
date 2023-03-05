@@ -21,3 +21,19 @@ INFERNO_BROAD_EP = {
         GasGiantType: Uninhabitable,
     }
 }
+
+RADIATED_STANDARD_EP = {
+    "environments": {
+        Swamp: Hostile,
+        Toxic: Poor,
+        Inferno: Adequate,
+        Radiated: Good,
+        Barren: Adequate,
+        Tundra: Poor,
+        Desert: Hostile,
+        Terran: Hostile,
+        Ocean: Hostile,
+        AsteroidsType: Uninhabitable,
+        GasGiantType: Uninhabitable,
+    }
+}
