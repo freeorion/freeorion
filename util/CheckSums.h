@@ -2,19 +2,24 @@
 #define _CheckSums_h_
 
 #include "Export.h"
-#include "Logger.h"
 
+#include <cmath>
 #include <iostream>
-#include <typeinfo>
-#include <set>
 #include <map>
+#include <memory>
+#include <set>
+#include <typeinfo>
 #include <vector>
 
 namespace CheckSums {
     constexpr uint32_t CHECKSUM_MODULUS = 10000000U;    // reasonably big number that should be well below UINT_MAX, which is ~4.29x10^9 for 32 bit unsigned int
 
-    FO_COMMON_API void CheckSumCombine(uint32_t& sum, double t);
-    FO_COMMON_API void CheckSumCombine(uint32_t& sum, float t);
+    constexpr bool csc_double = noexcept(noexcept(std::log10(std::abs(43.0))));
+    FO_COMMON_API void CheckSumCombine(uint32_t& sum, double t) noexcept(csc_double);
+
+    constexpr bool csc_float = noexcept(noexcept(std::log10(std::abs(43.0f))));
+    FO_COMMON_API void CheckSumCombine(uint32_t& sum, float t) noexcept(csc_float);
+
     FO_COMMON_API void CheckSumCombine(uint32_t& sum, const char* s);
     FO_COMMON_API void CheckSumCombine(uint32_t& sum, const std::string& c);
 
@@ -27,9 +32,10 @@ namespace CheckSums {
         sum %= CHECKSUM_MODULUS;
     }
     template <typename T>
-    void CheckSumCombine(uint32_t& sum, T t,
-                         typename std::enable_if_t<std::is_unsigned_v<T>>* = nullptr)
+    constexpr void CheckSumCombine(uint32_t& sum, T t,
+                                   typename std::enable_if_t<std::is_unsigned_v<T>>* = nullptr) noexcept
     {
+        static_assert(noexcept(sum + static_cast<uint32_t>(t)) && noexcept(sum % CHECKSUM_MODULUS));
         sum += static_cast<uint32_t>(t);
         sum %= CHECKSUM_MODULUS;
     }
@@ -39,7 +45,6 @@ namespace CheckSums {
     void CheckSumCombine(uint32_t& sum, const C& c,
                          decltype(std::declval<C>().GetCheckSum())* = nullptr)
     {
-        TraceLogger() << "CheckSumCombine(C with GetCheckSum): " << typeid(c).name();
         sum += c.GetCheckSum();
         sum %= CHECKSUM_MODULUS;
     }
@@ -48,30 +53,24 @@ namespace CheckSums {
     template <typename T>
     void CheckSumCombine(uint32_t& sum, T t,
                          typename std::enable_if_t<std::is_enum_v<T>>* = nullptr)
-    {
-        TraceLogger() << "CheckSumCombine(enum): " << typeid(t).name();
-        CheckSumCombine(sum, static_cast<int>(t) + 10);
-    }
+    { CheckSumCombine(sum, static_cast<int>(t) + 10); }
 
     // pointer types
     template <typename T>
     void CheckSumCombine(uint32_t& sum, const T* p)
     {
-        TraceLogger() << "CheckSumCombine(T*): " << typeid(p).name();
         if (p)
             CheckSumCombine(sum, *p);
     }
     template <typename T>
     void CheckSumCombine(uint32_t& sum, const typename std::shared_ptr<T>& p)
     {
-        TraceLogger() << "CheckSumCombine(shared_ptr<T>): " << typeid(p).name();
         if (p)
             CheckSumCombine(sum, *p);
     }
     template <typename T>
     void CheckSumCombine(uint32_t& sum, const typename std::unique_ptr<T>& p)
     {
-        TraceLogger() << "CheckSumCombine(unique_ptr<T>): " << typeid(p).name();
         if (p)
             CheckSumCombine(sum, *p);
     }
@@ -80,7 +79,6 @@ namespace CheckSums {
     template <typename C, typename D>
     void CheckSumCombine(uint32_t& sum, const std::pair<C, D>& p)
     {
-        TraceLogger() << "CheckSumCombine(pair): " << typeid(p).name();
         CheckSumCombine(sum, p.first);
         CheckSumCombine(sum, p.second);
     }
@@ -91,7 +89,6 @@ namespace CheckSums {
                          decltype(std::declval<C>().begin())* = nullptr,
                          decltype(std::declval<C>().end())* = nullptr)
     {
-        TraceLogger() << "CheckSumCombine(Container C): " << typeid(c).name();
         for (const auto& t : c)
             CheckSumCombine(sum, t);
         sum += c.size();

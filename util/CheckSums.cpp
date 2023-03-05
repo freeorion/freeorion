@@ -3,20 +3,25 @@
 #include <cassert>
 #include <cmath>
 #include <float.h>
+#include <limits>
 
 namespace CheckSums {
     void CheckSumCombine(uint32_t& sum, const char* s)
     { CheckSumCombine(sum, std::string(s)); }
 
+    static_assert(CHECKSUM_MODULUS < std::numeric_limits<uint32_t>::max());
+    static_assert(CHECKSUM_MODULUS < std::numeric_limits<int32_t>::max());
+
     void CheckSumCombine(uint32_t& sum, const std::string& c) {
-        TraceLogger() << "CheckSumCombine(std::string): " << c;
         for (auto& t : c)
             CheckSumCombine(sum, t);
         sum += c.size();
         sum %= CHECKSUM_MODULUS;
     }
 
-    void CheckSumCombine(uint32_t& sum, double t) {
+    static_assert(noexcept(99253 + static_cast<unsigned int>(43.0)));
+    static_assert(noexcept(73423 % CHECKSUM_MODULUS));
+    void CheckSumCombine(uint32_t& sum, double t) noexcept(csc_double) {
         static_assert(DBL_MAX_10_EXP < 400);
         if (t == 0.0)
             return;
@@ -28,7 +33,8 @@ namespace CheckSums {
         sum %= CHECKSUM_MODULUS;
     }
 
-    void CheckSumCombine(uint32_t& sum, float t) {
+    static_assert(noexcept(99837 + static_cast<unsigned int>(43.0f)));
+    void CheckSumCombine(uint32_t& sum, float t) noexcept {
         static_assert(FLT_MAX_10_EXP < 40);
         if (t == 0.0f)
             return;
