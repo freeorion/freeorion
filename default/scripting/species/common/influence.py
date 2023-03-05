@@ -24,6 +24,50 @@ BASE_INFLUENCE_COSTS = [
                         & HasSpecies()
                         & ~HasSpecies(name=["SP_EXOBOT"]),
                     )
+                    + StatisticCount(
+                        float,
+                        condition=Ship & OwnedBy(empire=Source.Owner) & (LocalCandidate.OrderedColonizePlanetID != -1),
+                    )
+                    + StatisticCount(
+                        float,
+                        condition=IsBuilding()
+                        & OwnedBy(empire=Source.Owner)
+                        & IsBuilding(
+                            name=[
+                                "BLD_COL_SUPER_TEST",
+                                "BLD_COL_ABADDONI",
+                                "BLD_COL_BANFORO",
+                                "BLD_COL_CHATO",
+                                "BLD_COL_CRAY",
+                                "BLD_COL_DERTHREAN",
+                                "BLD_COL_EAXAW",
+                                "BLD_COL_EGASSEM",
+                                "BLD_COL_ETTY",
+                                "BLD_COL_FULVER",
+                                "BLD_COL_FURTHEST",
+                                "BLD_COL_GEORGE",
+                                "BLD_COL_GYSACHE",
+                                "BLD_COL_HAPPY",
+                                "BLD_COL_HHHOH",
+                                "BLD_COL_HUMAN",
+                                "BLD_COL_KILANDOW",
+                                "BLD_COL_KOBUNTURA",
+                                "BLD_COL_LAENFA",
+                                "BLD_COL_MISIORLA",
+                                "BLD_COL_MUURSH",
+                                "BLD_COL_PHINNERT",
+                                "BLD_COL_SCYLIOR",
+                                "BLD_COL_SETINON",
+                                "BLD_COL_SILEXIAN",
+                                "BLD_COL_SLY",
+                                "BLD_COL_SSLITH",
+                                "BLD_COL_TAEGHIRUS",
+                                "BLD_COL_TRITH",
+                                "BLD_COL_REPLICON",
+                                "BLD_COL_UGMORS",
+                            ]
+                        ),
+                    )
                     + (
                         NamedReal(name="OUTPOST_RELATIVE_ADMIN_COUNT", value=0.25)
                         * (
@@ -119,6 +163,18 @@ BASIC_INFLUENCE = [
     ),
     *BASE_INFLUENCE_COSTS,
     *ARTISANS_INFLUENCE_STABILITY,
+]
+
+GOOD_INFLUENCE = [
+    *BASIC_INFLUENCE,
+    EffectsGroup(
+        description="GOOD_INFLUENCE_DESC",
+        scope=Source,
+        activation=Planet() & Focus(type=["FOCUS_INFLUENCE"]),
+        accountinglabel="GOOD_INFLUENCE_LABEL",
+        priority=TARGET_SCALING_PRIORITY,
+        effects=SetTargetInfluence(value=Value + (1.25 - 1.0) * Abs(float, Value)),
+    ),
 ]
 
 GREAT_INFLUENCE = [
