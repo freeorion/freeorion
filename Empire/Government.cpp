@@ -222,12 +222,18 @@ void PolicyManager::CheckPendingPolicies() const {
     auto parsed = WaitForPending(m_pending_types);
     if (!parsed)
         return;
+    auto parsed_vec{std::move(*parsed)};
+    if (parsed_vec.empty())
+        return;
 
-    m_policies.reserve(parsed->size());
+    std::sort(parsed_vec.begin(), parsed_vec.end(),
+              [](const auto& lhs, const auto& rhs) { return lhs.Name() < rhs.Name(); });
 
-    for (auto& policy : *parsed) {
+    m_policies.reserve(parsed_vec.size());
+
+    for (auto& policy : parsed_vec) {
         auto name{policy.Name()};
-        m_policies.try_emplace(std::move(name), std::move(policy));
+        m_policies.try_emplace(m_policies.end(), std::move(name), std::move(policy));
     }
 }
 
