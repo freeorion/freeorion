@@ -295,10 +295,12 @@ namespace {
                 const auto& variable_value = elem->second;
                 if (auto substitution = substitution_func(variable_value, context))
                     return *substitution; // optional<std::string> contains a temporary string, which can't be returned by reference
+                ErrorLogger() << "Substitute::operator(): substitution for tag: " << tag
+                              << " and value: " << variable_value << " but returned empty optional<string>";
+            } else {
+                ErrorLogger() << "Substitute::operator(): No substitution found for tag: " << tag
+                              << " from token: " << match.str();
             }
-
-            ErrorLogger() << "Substitute::operator(): No substitution executed for tag: " << tag
-                          << " from token: " << match.str();
             m_valid = false;
             return UserString("ERROR");
         }
