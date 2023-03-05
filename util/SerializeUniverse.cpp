@@ -527,8 +527,6 @@ namespace {
 
         std::string s{buffer.data()};
         ar << boost::serialization::make_nvp("part_meters", s);
-
-        DebugLogger() << "part meter sz: " << s.size() << " buf cap: " << buffer.size() << " txt:" << s;
     }
 
     template <>
@@ -538,13 +536,21 @@ namespace {
         static constexpr std::size_t buffer_capacity = num_meters_possible * (single_meter_text_size + 50); // guesstimate. number of of part meters and sizes of part type names is scriptable
 
         if (version < 3) {
-            std::map<std::pair<MeterType, std::string>, Meter> scratch;
+            std::vector<std::pair<std::pair<MeterType, std::string>, Meter>> scratch;
+            scratch.reserve(20); // guesstimate
             ar >> boost::serialization::make_nvp("m_part_meters", scratch);
+            // reorder to match PartMeterMap sorting (first by name, then by MeterType)
+            std::sort(scratch.begin(), scratch.end(),
+                      [](const auto& lhs, const auto& rhs) {
+                          return (lhs.first.second < rhs.first.second) || (
+                              (lhs.first.second == rhs.first.second) && rhs.first.first < rhs.first.first);
+                      });
             for (auto& [mt_pn, meter] : scratch) {
                 meters.emplace(std::piecewise_construct,
-                               std::forward_as_tuple(mt_pn.second, mt_pn.first),
-                               std::forward_as_tuple(meter));
+                               std::forward_as_tuple(std::move(mt_pn.second), std::move(mt_pn.first)),
+                               std::forward_as_tuple(std::move(meter)));
             }
+            return;
         }
 
         // interpret custom string representation of part meters
