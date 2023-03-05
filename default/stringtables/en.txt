@@ -7062,7 +7062,7 @@ The [[metertype METER_RESEARCH]] Queue shows the progress of your current [[mete
 
 The [[metertype METER_RESEARCH]] Display toolbar allows you to toggle various options; for example if you can see all possible [[metertype METER_RESEARCH]] targets or only those that are researchable next.
 
-The Technology Tree has individual blocks for each of the [[encyclopedia ENC_TECH]] and each block has color codes to indicate their status. Generally their overall color indicates a primary technology type; green for techs that allow better colony growth, dark blue for techs for improving colony defense, red for production techs, etc. Blocks for [[encyclopedia ENC_TECH]] that your empire knows are in brighter shades and techs that you have not finished researching are in darker shades. Lines between the technology blocks indicate prerequisite techs that lead to later techs.'''
+The Technology Tree has individual blocks for each of the [[encyclopedia ENC_TECH]] and each block has color codes to indicate their status. Generally, their overall color indicates a primary technology type; green for techs that allow better colony growth, dark blue for techs for improving colony defense, red for production techs, etc. Blocks for [[encyclopedia ENC_TECH]] that your empire knows are in brighter shades and techs that you have not finished researching are in darker shades. Curves between the technology blocks indicate prerequisite techs that lead to later techs.'''
 
 RESEARCH_TECH_GUIDE_ALLOCATING_RESEARCH_POINTS
 '''<u>Allocating Research Points (RP)</u>
