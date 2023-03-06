@@ -5537,13 +5537,13 @@ NO_BUILDINGS_AVAILABLE
 Aucune Structure disponible
 
 OWNED_PLANETS
-'''Planètes impériales : '''
+'''Planètes possédées : '''
 
 NO_OWNED_PLANETS_KNOWN
 Aucune Planète impériale connue
 
 OWNED_FLEETS
-'''Flottes impériales : '''
+'''Flottes possédées : '''
 
 # %1% link to a fleet.
 # %2% link to a system.
@@ -12256,7 +12256,10 @@ Modération
 PLC_MODERATION_DESC
 '''Accorde un bonus d'Influence et de Stabilité à la Capitale impériale d'autant plus important lorsque le réglage de Focus le plus commun dans l'empire est moins utilisé. Le nombre d'utilisations des autres réglages de Focus n'entre pas en compte pour ce bonus; seul le nombre de nombre planètes utilisant le réglage de Focus le plus commun ainsi que le nombre total de planètes appartenant à l'empire entrent en ligne de compte.
 
-Les Avant-Postes sans Focus défini comptent également comme un Focus, ce dernier pouvant alors représenter le réglage de Focus le plus commun, rendant par conséquent difficile l'obtention de bonus élevés.'''
+Les Avant-Postes sans Focus défini comptent également comme un Focus, ce dernier pouvant alors représenter le réglage de Focus le plus commun, rendant par conséquent difficile l'obtention de bonus élevés.
+
+Le bonus de Stabilité est égal à [[value PLC_MODERATION_STABILITY_SCALING]] fois le rapport : (( Planètes possédées / Utilisations du Focus le plus commun ) - 1)
+Le bonus d'Influence est égal à [[value PLC_MODERATION_INFLUENCE_SCALING]] fois le rapport : (( Planètes possédées / Utilisations du Focus le plus commun ) - 1)'''
 
 PLC_MODERATION_SHORT_DESC
 Augmente l'Influence et la Stabilité de la Capitale impériale
