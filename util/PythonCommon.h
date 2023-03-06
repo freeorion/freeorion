@@ -40,6 +40,7 @@ private:
     // A copy of the systemExit exception to compare with returned
     // exceptions.  It can't be created in the exception handler.
     boost::python::object m_system_exit;
+    boost::python::object m_traceback_format_exception;
 };
 
 #endif /* defined(__FreeOrion__Util__PythonCommon__) */
