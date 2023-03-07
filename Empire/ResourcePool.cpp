@@ -46,29 +46,12 @@ ResourceType MeterToResource(MeterType type) noexcept {
 //////////////////////////////////////////////////
 // ResourcePool
 //////////////////////////////////////////////////
-ResourcePool::ResourcePool() :
-    m_type(ResourceType::INVALID_RESOURCE_TYPE)
-{}
-
-ResourcePool::ResourcePool(ResourceType type) :
-    m_type(type)
-{}
-
-const std::vector<int>& ResourcePool::ObjectIDs() const
-{ return m_object_ids; }
-
-float ResourcePool::Stockpile() const
-{ return m_stockpile; }
-
 float ResourcePool::TotalOutput() const {
     float retval = 0.0f;
     for (const auto& entry : m_connected_object_groups_resource_output)
         retval += entry.second;
     return retval;
 }
-
-const std::map<std::set<int>, float>& ResourcePool::Output() const
-{ return m_connected_object_groups_resource_output; }
 
 float ResourcePool::GroupOutput(int object_id) const {
     // find group containing specified object
@@ -107,9 +90,6 @@ float ResourcePool::TotalAvailable() const {
         retval += entry.second;
     return retval;
 }
-
-std::map<std::set<int>, float> ResourcePool::Available() const
-{ return m_connected_object_groups_resource_output; }
 
 float ResourcePool::GroupAvailable(int object_id) const {
     TraceLogger() << "ResourcePool::GroupAvailable(" << object_id << ")";

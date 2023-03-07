@@ -165,8 +165,7 @@ struct FO_COMMON_API ProductionQueue {
     [[nodiscard]] float ExpectedProjectTransferToStockpile() const noexcept { return m_expected_project_transfer_to_stockpile; }
 
     /** Returns sets of object ids that have more available than allocated PP */
-    [[nodiscard]] std::set<std::set<int>> ObjectsWithWastedPP(
-        const std::shared_ptr<const ResourcePool>& industry_pool) const;
+    [[nodiscard]] std::set<std::set<int>> ObjectsWithWastedPP(const ResourcePool& industry_pool) const;
 
     // STL container-like interface
     [[nodiscard]] bool           empty() const noexcept { return !m_queue.size(); }

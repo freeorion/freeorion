@@ -609,14 +609,16 @@ float ProductionQueue::StockpileCapacity(const ObjectMap& objects) const {
     return retval;
 }
 
-std::set<std::set<int>> ProductionQueue::ObjectsWithWastedPP(const std::shared_ptr<const ResourcePool>& industry_pool) const {
+std::set<std::set<int>> ProductionQueue::ObjectsWithWastedPP(const ResourcePool& industry_pool) const {
     std::set<std::set<int>> retval;
-    if (!industry_pool) {
+
+    if (industry_pool.Type() != ResourceType::RE_INDUSTRY) {
         ErrorLogger() << "ProductionQueue::ObjectsWithWastedPP passed invalid industry resource pool";
         return retval;
     }
 
-    for (auto& [group, avail_pp_in_group] : industry_pool->Output()) {
+
+    for (auto& [group, avail_pp_in_group] : industry_pool.Output()) {
         //std::cout << "available PP groups size: " << avail_pp.first.size() << " pp: " << avail_pp.second << std::endl;
 
         if (avail_pp_in_group <= 0)
@@ -671,9 +673,9 @@ void ProductionQueue::Update(const ScriptingContext& context) {
     SectionedScopedTimer update_timer("ProductionQueue::Update");
     update_timer.EnterSection("Get PP");
 
-    auto industry_resource_pool = empire->GetResourcePool(ResourceType::RE_INDUSTRY);
-    auto& available_pp = industry_resource_pool->Output();
-    float pp_in_stockpile = industry_resource_pool->Stockpile();
+    auto& industry_resource_pool = empire->GetIndustryPool();
+    auto& available_pp = industry_resource_pool.Output();
+    float pp_in_stockpile = industry_resource_pool.Stockpile();
     TraceLogger() << "========= pp_in_stockpile:     " << pp_in_stockpile << " ========";
     float stockpile_limit = StockpileCapacity(context.ContextObjects());
     float available_stockpile = std::min(pp_in_stockpile, stockpile_limit);

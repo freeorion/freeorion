@@ -184,10 +184,10 @@ namespace {
             // cost / turn, and minimum production turns
             if (empire) {
                 // from industry output
-                local_pp_output = empire->GetResourcePool(ResourceType::RE_INDUSTRY)->GroupAvailable(m_location_id);
+                local_pp_output = empire->GetIndustryPool().GroupAvailable(m_location_id);
 
                 // from stockpile
-                stockpile = empire->GetResourcePool(ResourceType::RE_INDUSTRY)->Stockpile();
+                stockpile = empire->GetIndustryPool().Stockpile();
                 stockpile_limit_per_turn = empire->GetProductionQueue().StockpileCapacity(context.ContextObjects());
 
                 auto [total_cost, minimum_production_time] = m_item.ProductionCostAndTime(m_empire_id, m_location_id, context);
@@ -303,10 +303,10 @@ namespace {
         float stockpile_limit_per_turn = 0.0f;
         if (auto empire = context.GetEmpire(empire_id)) {
             // from industry output
-            local_pp_output = empire->GetResourcePool(ResourceType::RE_INDUSTRY)->GroupAvailable(candidate_object_id);
+            local_pp_output = empire->GetIndustryPool().GroupAvailable(candidate_object_id);
 
             // from stockpile
-            stockpile = empire->GetResourcePool(ResourceType::RE_INDUSTRY)->Stockpile();
+            stockpile = empire->GetIndustryPool().Stockpile();
             stockpile_limit_per_turn = empire->GetProductionQueue().StockpileCapacity(context.ContextObjects());
         }
 

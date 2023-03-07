@@ -2958,11 +2958,11 @@ void MapWnd::InitTurn(ScriptingContext& context) {
     // (unlike connections to signals from the sidepanel)
     auto this_client_empire = context.GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
     if (this_client_empire) {
-        this_client_empire->GetResourcePool(ResourceType::RE_INFLUENCE)->ChangedSignal.connect(
+        this_client_empire->GetInfluencePool().ChangedSignal.connect(
             boost::bind(&MapWnd::RefreshInfluenceResourceIndicator, this));
-        this_client_empire->GetResourcePool(ResourceType::RE_RESEARCH)->ChangedSignal.connect(
+        this_client_empire->GetResearchPool().ChangedSignal.connect(
             boost::bind(&MapWnd::RefreshResearchResourceIndicator, this));
-        this_client_empire->GetResourcePool(ResourceType::RE_INDUSTRY)->ChangedSignal.connect(
+        this_client_empire->GetIndustryPool().ChangedSignal.connect(
             boost::bind(&MapWnd::RefreshIndustryResourceIndicator, this));
         this_client_empire->GetPopulationPool().ChangedSignal.connect(
             boost::bind(&MapWnd::RefreshPopulationIndicator, this));
@@ -3613,11 +3613,8 @@ namespace {
             return;
 
         const ProductionQueue& queue = empire->GetProductionQueue();
-        const auto& allocated_pp(queue.AllocatedPP());
-        auto industry_pool{empire->GetResourcePool(ResourceType::RE_INDUSTRY)};
-        if (!industry_pool)
-            return;
-        const auto& available_pp(industry_pool->Output());
+        auto& allocated_pp(queue.AllocatedPP());
+        auto& available_pp(empire->GetIndustryPool().Output());
         // For each industry set,
         // add all planet's systems to res_pool_systems[industry set]
         for (const auto& available_pp_group : available_pp) {
@@ -6852,9 +6849,9 @@ void MapWnd::RefreshInfluenceResourceIndicator() {
         return;
     }
     double total_IP_spent = empire->GetInfluenceQueue().TotalIPsSpent();
-    double total_IP_output = empire->GetResourcePool(ResourceType::RE_INFLUENCE)->TotalOutput();
-    double total_IP_target_output = empire->GetResourcePool(ResourceType::RE_INFLUENCE)->TargetOutput();
-    float  stockpile = empire->GetResourcePool(ResourceType::RE_INFLUENCE)->Stockpile();
+    double total_IP_output = empire->GetInfluencePool().TotalOutput();
+    double total_IP_target_output = empire->GetInfluencePool().TargetOutput();
+    float  stockpile = empire->GetInfluencePool().Stockpile();
     float  stockpile_used = empire->GetInfluenceQueue().AllocatedStockpileIP();
     float  expected_stockpile = empire->GetInfluenceQueue().ExpectedNewStockpileAmount();
 
@@ -6908,9 +6905,9 @@ void MapWnd::RefreshResearchResourceIndicator() {
     m_research->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
     float total_RP_spent = empire->GetResearchQueue().TotalRPsSpent();
-    float total_RP_output = empire->GetResourcePool(ResourceType::RE_RESEARCH)->TotalOutput();
+    float total_RP_output = empire->GetResearchPool().TotalOutput();
     float total_RP_wasted = total_RP_output - total_RP_spent;
-    float total_RP_target_output = empire->GetResourcePool(ResourceType::RE_RESEARCH)->TargetOutput();
+    float total_RP_target_output = empire->GetResearchPool().TargetOutput();
 
     m_research->SetBrowseInfoWnd(GG::Wnd::Create<ResourceBrowseWnd>(
         UserString("MAP_RESEARCH_TITLE"), UserString("RESEARCH_INFO_RP"),
@@ -6959,9 +6956,9 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     m_industry->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
     double total_PP_spent = empire->GetProductionQueue().TotalPPsSpent();
-    double total_PP_output = empire->GetResourcePool(ResourceType::RE_INDUSTRY)->TotalOutput();
-    double total_PP_target_output = empire->GetResourcePool(ResourceType::RE_INDUSTRY)->TargetOutput();
-    float  stockpile = empire->GetResourcePool(ResourceType::RE_INDUSTRY)->Stockpile();
+    double total_PP_output = empire->GetIndustryPool().TotalOutput();
+    double total_PP_target_output = empire->GetIndustryPool().TargetOutput();
+    float  stockpile = empire->GetIndustryPool().Stockpile();
     float  stockpile_used = boost::accumulate(empire->GetProductionQueue().AllocatedStockpilePP() | boost::adaptors::map_values, 0.0f);
     float  stockpile_use_capacity = empire->GetProductionQueue().StockpileCapacity(context.ContextObjects());
     float  expected_stockpile = empire->GetProductionQueue().ExpectedNewStockpileAmount();
@@ -7362,9 +7359,7 @@ bool MapWnd::ZoomToSystemWithWastedPP() {
         return false;
 
     const ProductionQueue& queue = empire->GetProductionQueue();
-    const auto pool = empire->GetResourcePool(ResourceType::RE_INDUSTRY);
-    if (!pool)
-        return false;
+    const auto& pool = empire->GetIndustryPool();
     auto wasted_PP_objects(queue.ObjectsWithWastedPP(pool));
     if (wasted_PP_objects.empty())
         return false;

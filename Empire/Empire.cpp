@@ -70,18 +70,11 @@ Empire::Empire(std::string name, std::string player_name,
     m_influence_queue(m_id),
     m_authenticated(authenticated)
 {
-    DebugLogger() << "Empire::Empire(" << m_name << ", " << m_player_name
-                  << ", " << empire_id << ", colour)";
+    DebugLogger() << "Empire::Empire(" << m_name << ", " << m_player_name << ", " << empire_id << ", colour)";
     Init();
 }
 
 void Empire::Init() {
-    m_resource_pools[ResourceType::RE_RESEARCH] = std::make_shared<ResourcePool>(ResourceType::RE_RESEARCH);
-    m_resource_pools[ResourceType::RE_INDUSTRY] = std::make_shared<ResourcePool>(ResourceType::RE_INDUSTRY);
-    m_resource_pools[ResourceType::RE_INFLUENCE]= std::make_shared<ResourcePool>(ResourceType::RE_INFLUENCE);
-
-    m_eliminated = false;
-
     m_meters.emplace_back(std::piecewise_construct,
                           std::forward_as_tuple(UserStringNop("METER_DETECTION_STRENGTH")),
                           std::forward_as_tuple());
@@ -984,9 +977,10 @@ void Empire::Eliminate(EmpireManager& empires, int current_turn) {
     // m_explored_systems;
     // m_known_ship_designs;
     m_sitrep_entries.clear();
-    for (auto& entry : m_resource_pools)
-        entry.second->SetObjects(std::vector<int>());
-    m_population_pool.SetPopCenters(std::vector<int>());
+    m_industry_pool.SetObjects({});
+    m_research_pool.SetObjects({});
+    m_influence_pool.SetObjects({});
+    m_population_pool.SetPopCenters({});
 
     // m_ship_names_used;
     m_supply_system_ranges.clear();
@@ -1362,42 +1356,36 @@ std::map<int, std::set<int>> Empire::VisibleStarlanes(const Universe& universe) 
 float Empire::ProductionPoints() const
 { return ResourceOutput(ResourceType::RE_INDUSTRY); }
 
-std::shared_ptr<const ResourcePool> Empire::GetResourcePool(ResourceType resource_type) const {
-    auto it = m_resource_pools.find(resource_type);
-    if (it == m_resource_pools.end())
-        return nullptr;
-    return it->second;
+const ResourcePool& Empire::GetResourcePool(ResourceType type) const {
+    switch (type) {
+    case ResourceType::RE_INDUSTRY: return m_industry_pool; break;
+    case ResourceType::RE_RESEARCH: return m_research_pool; break;
+    case ResourceType::RE_INFLUENCE: return m_influence_pool; break;
+    default:
+        throw std::invalid_argument("Empire::GetResourcePool passed invalid ResourceType");
+    }
 }
 
-float Empire::ResourceStockpile(ResourceType type) const {
-    auto it = m_resource_pools.find(type);
-    if (it == m_resource_pools.end())
-        throw std::invalid_argument("Empire::ResourceStockpile passed invalid ResourceType");
-    return it->second->Stockpile();
-}
+float Empire::ResourceStockpile(ResourceType type) const
+{ return GetResourcePool(type).Stockpile(); }
 
-float Empire::ResourceOutput(ResourceType type) const {
-    auto it = m_resource_pools.find(type);
-    if (it == m_resource_pools.end())
-        throw std::invalid_argument("Empire::ResourceOutput passed invalid ResourceType");
-    return it->second->TotalOutput();
-}
+float Empire::ResourceOutput(ResourceType type) const
+{ return GetResourcePool(type).TotalOutput(); }
 
-float Empire::ResourceAvailable(ResourceType type) const {
-    auto it = m_resource_pools.find(type);
-    if (it == m_resource_pools.end())
-        throw std::invalid_argument("Empire::ResourceAvailable passed invalid ResourceType");
-    return it->second->TotalAvailable();
-}
+float Empire::ResourceAvailable(ResourceType type) const
+{ return GetResourcePool(type).TotalAvailable(); }
 
 float Empire::Population() const
 { return m_population_pool.Population(); }
 
-void Empire::SetResourceStockpile(ResourceType resource_type, float stockpile) {
-    auto it = m_resource_pools.find(resource_type);
-    if (it == m_resource_pools.end())
+void Empire::SetResourceStockpile(ResourceType type, float stockpile) {
+    switch (type) {
+    case ResourceType::RE_INDUSTRY: m_industry_pool.SetStockpile(stockpile); break;
+    case ResourceType::RE_RESEARCH: m_research_pool.SetStockpile(stockpile); break;
+    case ResourceType::RE_INFLUENCE: m_influence_pool.SetStockpile(stockpile); break;
+    default:
         throw std::invalid_argument("Empire::SetResourceStockpile passed invalid ResourceType");
-    return it->second->SetStockpile(stockpile);
+    }
 }
 
 void Empire::PlaceTechInQueue(const std::string& name, int pos) {
@@ -2013,7 +2001,7 @@ std::vector<std::string> Empire::CheckResearchProgress(const ScriptingContext& c
     SanitizeResearchQueue(m_research_queue);
 
     float spent_rp{0.0f};
-    float total_rp_available = m_resource_pools[ResourceType::RE_RESEARCH]->TotalAvailable();
+    float total_rp_available = m_research_pool.TotalAvailable();
 
     // process items on queue
     std::vector<std::string> to_erase_from_queue_and_grant_next_turn;
@@ -2601,7 +2589,7 @@ void Empire::CheckInfluenceProgress() {
     auto new_stockpile = m_influence_queue.ExpectedNewStockpileAmount();
     DebugLogger() << "Empire::CheckInfluenceProgress spending " << spending << " and setting stockpile to " << new_stockpile;
 
-    m_resource_pools[ResourceType::RE_INFLUENCE]->SetStockpile(new_stockpile);
+    m_influence_pool.SetStockpile(new_stockpile);
 }
 
 void Empire::InitResourcePools(const ObjectMap& objects, const SupplyManager& supply) {
@@ -2623,13 +2611,13 @@ void Empire::InitResourcePools(const ObjectMap& objects, const SupplyManager& su
         if (ship->OwnedBy(m_id))
             planets_and_ships.push_back(ship_id);
     }
-    m_resource_pools[ResourceType::RE_RESEARCH]->SetObjects(planets_and_ships);
-    m_resource_pools[ResourceType::RE_INDUSTRY]->SetObjects(planets_and_ships);
-    m_resource_pools[ResourceType::RE_INFLUENCE]->SetObjects(std::move(planets_and_ships));
+    m_research_pool.SetObjects(planets_and_ships);
+    m_industry_pool.SetObjects(planets_and_ships);
+    m_influence_pool.SetObjects(std::move(planets_and_ships));
 
 
     // inform the blockadeable resource pools about systems that can share
-    m_resource_pools[ResourceType::RE_INDUSTRY]->SetConnectedSupplyGroups(supply.ResourceSupplyGroups(m_id));
+    m_industry_pool.SetConnectedSupplyGroups(supply.ResourceSupplyGroups(m_id));
 
     // set non-blockadeable resource pools to share resources between all systems
     std::set<std::set<int>> sets_set;
@@ -2637,8 +2625,8 @@ void Empire::InitResourcePools(const ObjectMap& objects, const SupplyManager& su
     for (const auto& entry : objects.allExisting<System>())
         all_systems_set.insert(entry.first);
     sets_set.insert(std::move(all_systems_set));
-    m_resource_pools[ResourceType::RE_RESEARCH]->SetConnectedSupplyGroups(sets_set);
-    m_resource_pools[ResourceType::RE_INFLUENCE]->SetConnectedSupplyGroups(sets_set);
+    m_research_pool.SetConnectedSupplyGroups(sets_set);
+    m_influence_pool.SetConnectedSupplyGroups(sets_set);
 }
 
 void Empire::UpdateResourcePools(const ScriptingContext& context) {
@@ -2652,24 +2640,24 @@ void Empire::UpdateResourcePools(const ScriptingContext& context) {
 }
 
 void Empire::UpdateResearchQueue(const ScriptingContext& context) {
-    m_resource_pools[ResourceType::RE_RESEARCH]->Update(context.ContextObjects());
-    m_research_queue.Update(m_resource_pools[ResourceType::RE_RESEARCH]->TotalAvailable(),
+    m_research_pool.Update(context.ContextObjects());
+    m_research_queue.Update(m_research_pool.TotalAvailable(),
                             m_research_progress, context);
-    m_resource_pools[ResourceType::RE_RESEARCH]->ChangedSignal();
+    m_research_pool.ChangedSignal();
 }
 
 void Empire::UpdateProductionQueue(const ScriptingContext& context) {
     DebugLogger() << "========= Production Update for empire: " << EmpireID() << " ========";
 
-    m_resource_pools[ResourceType::RE_INDUSTRY]->Update(context.ContextObjects());
+    m_industry_pool.Update(context.ContextObjects());
     m_production_queue.Update(context);
-    m_resource_pools[ResourceType::RE_INDUSTRY]->ChangedSignal();
+    m_industry_pool.ChangedSignal();
 }
 
 void Empire::UpdateInfluenceSpending(const ScriptingContext& context) {
-    m_resource_pools[ResourceType::RE_INFLUENCE]->Update(context.ContextObjects()); // recalculate total influence production
+    m_influence_pool.Update(context.ContextObjects()); // recalculate total influence production
     m_influence_queue.Update(context);
-    m_resource_pools[ResourceType::RE_INFLUENCE]->ChangedSignal();
+    m_influence_pool.ChangedSignal();
 }
 
 void Empire::UpdatePopulationGrowth(const ObjectMap& objects)

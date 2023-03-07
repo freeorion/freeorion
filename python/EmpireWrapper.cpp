@@ -95,13 +95,12 @@ namespace {
 
     auto PlanetsWithAvailablePP(const Empire& empire) -> std::map<std::set<int>, float>
     {
-        auto industry_pool{empire.GetResourcePool(ResourceType::RE_INDUSTRY)};
         std::map<std::set<int>, float> planets_with_available_pp;
 
         // filter industry pool output to get just planet IDs
-        for (auto& [object_ids, PP] : industry_pool->Output()) {
+        for (auto& [object_ids, PP] : empire.GetIndustryPool().Output()) {
             std::set<int> planet_ids;
-            for (const auto& planet : Objects().find<Planet>(object_ids)) {
+            for (const auto* planet : Objects().findRaw<Planet>(object_ids)) {
                 if (planet)
                     planet_ids.insert(planet->ID());
             }
@@ -130,12 +129,11 @@ namespace {
 
     auto PlanetsWithWastedPP(const Empire& empire) -> std::set<std::set<int>>
     {
-        auto industry_pool{empire.GetResourcePool(ResourceType::RE_INDUSTRY)};
         const ProductionQueue& prod_queue = empire.GetProductionQueue();
         std::set<std::set<int>> planets_with_wasted_pp;
-        for (const auto& object_ids : prod_queue.ObjectsWithWastedPP(industry_pool)) {
+        for (const auto& object_ids : prod_queue.ObjectsWithWastedPP(empire.GetIndustryPool())) {
             std::set<int> planet_ids;
-            for (const auto& planet : Objects().find<Planet>(object_ids)) {
+            for (const auto& planet : Objects().findRaw<Planet>(object_ids)) {
                 if (planet)
                     planet_ids.insert(planet->ID());
             }

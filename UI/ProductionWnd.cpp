@@ -1140,7 +1140,7 @@ void ProductionWnd::UpdateInfoPanel(const ScriptingContext& context) {
     const ProductionQueue& queue = empire->GetProductionQueue();
     float PPs = empire->ResourceOutput(ResourceType::RE_INDUSTRY);
     float total_queue_cost = queue.TotalPPsSpent();
-    float stockpile = empire->GetResourcePool(ResourceType::RE_INDUSTRY)->Stockpile();
+    float stockpile = empire->GetIndustryPool().Stockpile();
     float stockpile_use = boost::accumulate(empire->GetProductionQueue().AllocatedStockpilePP() | boost::adaptors::map_values, 0.0f);
     float stockpile_use_max = queue.StockpileCapacity(objects);
     m_production_info_panel->SetTotalPointsCost(PPs, total_queue_cost, context);
@@ -1159,11 +1159,8 @@ void ProductionWnd::UpdateInfoPanel(const ScriptingContext& context) {
     // resource availability
 
     // find available and allocated PP at selected production location
-    auto industry_pool{empire->GetResourcePool(ResourceType::RE_INDUSTRY)};
-    if (!industry_pool)
-        return;
-    const auto& available_pp = industry_pool->Output();
-    const auto& allocated_pp = queue.AllocatedPP();
+    auto& available_pp = empire->GetIndustryPool().Output();
+    auto& allocated_pp = queue.AllocatedPP();
 
     float available_pp_at_loc = 0.0f;
     float allocated_pp_at_loc = 0.0f;
