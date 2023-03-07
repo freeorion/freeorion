@@ -79,7 +79,7 @@ GodotClientApp::GodotClientApp() {
         DebugLogger() << "Started background parser thread";
         PythonCommon python;
         python.Initialize();
-        StartBackgroundParsing(PythonParser(python, GetResourceDir() / "scripting"), std::move(b));
+        StartBackgroundParsing(PythonParser(python, GetResourceDir() / "scripting", false), std::move(b));
     }, std::move(barrier));
     background.detach();
     barrier_future.wait();

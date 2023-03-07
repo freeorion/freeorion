@@ -138,7 +138,7 @@ void AIClientApp::Run() {
         // Start parsing content
         std::promise<void> barrier;
         std::future<void> barrier_future = barrier.get_future();
-        StartBackgroundParsing(PythonParser(*m_AI, GetResourceDir() / "scripting"), std::move(barrier));
+        StartBackgroundParsing(PythonParser(*m_AI, GetResourceDir() / "scripting", false), std::move(barrier));
         barrier_future.wait();
 
         // Import python main module only after game content has been parsed, allowing
