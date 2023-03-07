@@ -221,12 +221,11 @@ namespace {
 
             SetChildClippingMode(ChildClippingMode::ClipToClient);
 
-            int icon_dim = GetIconSize();
+            const int icon_dim = GetIconSize();
             std::string icon_texture = (m_sitrep_entry.GetIcon().empty() ?
                 "/icons/sitrep/generic.png" : m_sitrep_entry.GetIcon());
-            std::shared_ptr<GG::Texture> icon = ClientUI::GetTexture(
-                ClientUI::ArtDir() / icon_texture, true);
-            m_icon = GG::Wnd::Create<GG::StaticGraphic>(icon, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            std::shared_ptr<GG::Texture> icon = ClientUI::GetTexture(ClientUI::ArtDir() / icon_texture, true);
+            m_icon = GG::Wnd::Create<GG::StaticGraphic>(std::move(icon), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             AttachChild(m_icon);
             m_icon->Resize(GG::Pt(GG::X(icon_dim), GG::Y(icon_dim)));
 
@@ -234,8 +233,10 @@ namespace {
             GG::X icon_left(spacer.x);
             GG::X text_left(icon_left + GG::X(icon_dim) + sitrep_spacing);
             GG::X text_width(ClientWidth() - text_left - spacer.x);
+            const ScriptingContext context;
+
             m_link_text = GG::Wnd::Create<SitRepLinkText>(
-                GG::X0, GG::Y0, text_width, m_sitrep_entry.GetText() + " ", ClientUI::GetFont(),
+                GG::X0, GG::Y0, text_width, m_sitrep_entry.GetText(context) + " ", ClientUI::GetFont(),
                 GG::FORMAT_LEFT | GG::FORMAT_VCENTER | GG::FORMAT_WORDBREAK, ClientUI::TextColor());
             m_link_text->SetDecorator(VarText::EMPIRE_ID_TAG, TextLinker::DecoratorType::ColorByEmpire);
             m_link_text->SetDecorator(TextLinker::BROWSE_PATH_TAG, TextLinker::DecoratorType::PathType);
@@ -496,19 +497,21 @@ namespace {
         if (hidden_templates.count(label))
             return true;
 
+        const ScriptingContext context;
+
         // Validation is time consuming because all variables are substituted.
         // Having ui.map.sitrep.invalid.shown off / disabled will hide sitreps that do not
         // validate. Having it on will skip the validation check.
-        if (!GetOptionsDB().Get<bool>("ui.map.sitrep.invalid.shown") && !sitrep.Validate())
+        if (!GetOptionsDB().Get<bool>("ui.map.sitrep.invalid.shown") && !sitrep.Validate(context))
             return true;
 
         // Check for snoozing.
-        if (permanently_snoozed_sitreps.count(sitrep.GetText()))
+        if (permanently_snoozed_sitreps.count(sitrep.GetText(context)))
             return true;
 
         auto sitrep_set_it = snoozed_sitreps.find(sitrep.GetTurn());
         if (sitrep_set_it != snoozed_sitreps.end()
-            && sitrep_set_it->second.count(sitrep.GetText()))
+            && sitrep_set_it->second.count(sitrep.GetText(context)))
         { return true; }
 
         return false;
@@ -642,7 +645,9 @@ void SitRepPanel::IgnoreSitRep(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG
     const SitRepEntry& sitrep = sitrep_row->GetSitRepEntry();
     if (sitrep.GetTurn() <= 0)
         return;
-    snoozed_sitreps[sitrep.GetTurn()].insert(sitrep.GetText());
+
+    const ScriptingContext context;
+    snoozed_sitreps[sitrep.GetTurn()].insert(sitrep.GetText(context));
 
     Update();
 }
@@ -657,9 +662,11 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<G
     if (it != m_sitreps_lb->end()) 
         sitrep_row = dynamic_cast<SitRepRow*>(it->get());
     submenu_ignore.label = entry_margin + UserString("SITREP_IGNORE_MENU");
+
     if (sitrep_row) {
+        const ScriptingContext context;
         const SitRepEntry& sitrep_entry = sitrep_row->GetSitRepEntry();
-        sitrep_text = sitrep_entry.GetText();
+        sitrep_text = sitrep_entry.GetText(context);
         start_turn = sitrep_entry.GetTurn();
         if (start_turn > 0) {
             auto snooze5_action = [&sitrep_text, start_turn]() { SnoozeSitRepForNTurns(sitrep_text, start_turn, 5); };

@@ -13,6 +13,8 @@
 
 #include "Export.h"
 
+struct ScriptingContext;
+
 //! Provides a lazy evaluated template string with named variable tags.
 //!
 //! VarText is a template string tagged with variable names which are
@@ -82,19 +84,19 @@ public:
     //! @param  stringtable_lookup  @see #m_stringtable_lookup_flag
     explicit VarText(std::string template_string, bool stringtable_lookup = true);
 
-    //! Return the text generated after substituting all variables.
+    //! Return the text generated after substituting all variables, with or without a ScriptingContext
+    [[nodiscard]] const std::string& GetText(const ScriptingContext& context) const;
     [[nodiscard]] const std::string& GetText() const;
 
-    //! Return if the text substitution was successful.
+    //! Return if the text substitution was successful, with or without a ScriptingContext
+    bool Validate(const ScriptingContext& context) const;
     bool Validate() const;
 
     //! Return the #m_template_string
-    [[nodiscard]] const std::string& GetTemplateString() const noexcept
-    { return m_template_string; }
+    [[nodiscard]] const std::string& GetTemplateString() const noexcept { return m_template_string; }
 
     //! Return the #m_stringtable_lookup_flag
-    [[nodiscard]] bool GetStringtableLookupFlag() const noexcept
-    { return m_stringtable_lookup_flag; }
+    [[nodiscard]] bool GetStringtableLookupFlag() const noexcept { return m_stringtable_lookup_flag; }
 
     //! Return the variables available for substitution.
     [[nodiscard]] std::vector<std::string_view> GetVariableTags() const;
@@ -115,8 +117,7 @@ public:
     //! @param  data
     //!     Data value of the #m_variables set.
     void AddVariable(std::string tag, std::string data);
-    void AddVariable(std::string_view tag, std::string data)
-    { AddVariable(std::string{tag}, std::move(data)); }
+    void AddVariable(std::string_view tag, std::string data) { AddVariable(std::string{tag}, std::move(data)); }
 
     //! Assign @p data as tags. Does not overwrite or replace data of existing tags.
     //!
@@ -190,8 +191,10 @@ public:
 
 protected:
     //! Combines the template with the variables contained in object to
-    //! create a string with variables replaced with text.
-    void GenerateVarText() const;
+    //! create a string with variables replaced with text. If a
+    //! ScriptingContext is provided, then additional variables can be
+    //! substituted.
+    void GenerateVarText(const ScriptingContext* context) const;
 
     //! The template text used by this VarText, into which variables are
     //! substituted to render the text as user-readable.
