@@ -14079,19 +14079,19 @@ SHP_WEAPON_1_2
 Canon Mitrailleur 2
 
 SHP_WEAPON_1_2_DESC
-Améliore l'équipement [[shippart SR_WEAPON_1_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 24 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_WEAPON_1_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de [[value SHP_WEAPON_1_2_UPGRADED_DAMAGE]] une fois l'équipement amélioré.
 
 SHP_WEAPON_1_3
 Canon Mitrailleur 3
 
 SHP_WEAPON_1_3_DESC
-Améliore l'équipement [[shippart SR_WEAPON_1_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 30 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_WEAPON_1_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de [[value SHP_WEAPON_1_3_UPGRADED_DAMAGE]] une fois l'équipement amélioré.
 
 SHP_WEAPON_1_4
 Canon Mitrailleur 4
 
 SHP_WEAPON_1_4_DESC
-Améliore l'équipement [[shippart SR_WEAPON_1_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 36 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_WEAPON_1_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de [[value SHP_WEAPON_1_4_UPGRADED_DAMAGE]] une fois l'équipement amélioré.
 
 SHP_WEAPON_2_1
 Canons Laser
@@ -14103,19 +14103,19 @@ SHP_WEAPON_2_2
 Canon Laser 2
 
 SHP_WEAPON_2_2_DESC
-Améliore l'équipement [[shippart SR_WEAPON_2_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 42 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_WEAPON_2_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de [[value SHP_WEAPON_2_2_UPGRADED_DAMAGE]] une fois l'équipement amélioré.
 
 SHP_WEAPON_2_3
 Canon Laser 3
 
 SHP_WEAPON_2_3_DESC
-Améliore l'équipement [[shippart SR_WEAPON_2_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 54 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_WEAPON_2_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de [[value SHP_WEAPON_2_3_UPGRADED_DAMAGE]] une fois l'équipement amélioré.
 
 SHP_WEAPON_2_4
 Canon Laser 4
 
 SHP_WEAPON_2_4_DESC
-Améliore l'équipement [[shippart SR_WEAPON_2_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 66 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_WEAPON_2_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de [[value SHP_WEAPON_2_4_UPGRADED_DAMAGE]] une fois l'équipement amélioré.
 
 SHP_WEAPON_3_1
 Canons Plasma
@@ -14127,19 +14127,19 @@ SHP_WEAPON_3_2
 Canon Plasma 2
 
 SHP_WEAPON_3_2_DESC
-Améliore l'équipement [[shippart SR_WEAPON_3_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 72 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_WEAPON_3_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de [[value SHP_WEAPON_3_2_UPGRADED_DAMAGE]] une fois l'équipement amélioré.
 
 SHP_WEAPON_3_3
 Canon Plasma 3
 
 SHP_WEAPON_3_3_DESC
-Améliore l'équipement [[shippart SR_WEAPON_3_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 90 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_WEAPON_3_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de [[value SHP_WEAPON_3_3_UPGRADED_DAMAGE]] une fois l'équipement amélioré.
 
 SHP_WEAPON_3_4
 Canon Plasma 4
 
 SHP_WEAPON_3_4_DESC
-Améliore l'équipement [[shippart SR_WEAPON_3_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 108 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_WEAPON_3_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de [[value SHP_WEAPON_3_4_UPGRADED_DAMAGE]] une fois l'équipement amélioré.
 
 SHP_WEAPON_4_1
 Rayons Gamma
@@ -14151,37 +14151,37 @@ SHP_WEAPON_4_2
 Rayon Gamma 2
 
 SHP_WEAPON_4_2_DESC
-Améliore l'équipement [[shippart SR_WEAPON_4_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 120 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_WEAPON_4_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de [[value SHP_WEAPON_4_2_UPGRADED_DAMAGE]] une fois l'équipement amélioré.
 
 SHP_WEAPON_4_3
 Rayon Gamma 3
 
 SHP_WEAPON_4_3_DESC
-Améliore l'équipement [[shippart SR_WEAPON_4_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 150 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_WEAPON_4_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de [[value SHP_WEAPON_4_3_UPGRADED_DAMAGE]] une fois l'équipement amélioré.
 
 SHP_WEAPON_4_4
 Rayon Gamma 4
 
 SHP_WEAPON_4_4_DESC
-Améliore l'équipement [[shippart SR_WEAPON_4_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 180 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_WEAPON_4_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de [[value SHP_WEAPON_4_4_UPGRADED_DAMAGE]] une fois l'équipement amélioré.
 
 SHP_WEAPON_ARC_DISRUPTOR_1
 Perturbateurs Électro-Conducteurs
 
 SHP_WEAPON_ARC_DISRUPTOR_1_DESC
-Débloque l'équipement [[shippart SR_ARC_DISRUPTOR]], un système automatique d'armement infligeant de faibles dommages à de multiples cibles simultanément. Les [[encyclopedia DAMAGE_TITLE]] de l'équipement de base sont de 12 par tir.
+Débloque l'équipement [[shippart SR_ARC_DISRUPTOR]], un système automatique d'armement infligeant de faibles dommages à de multiples cibles simultanément. Les [[encyclopedia DAMAGE_TITLE]] de l'équipement de base sont de [[value SR_ARC_DISRUPTOR_PART_CAPACITY]] par tir.
 
 SHP_WEAPON_ARC_DISRUPTOR_2
 Perturbateurs Électro-Conducteurs 2
 
 SHP_WEAPON_ARC_DISRUPTOR_2_DESC
-Améliore l'équipement [[shippart SR_ARC_DISRUPTOR]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 24 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_ARC_DISRUPTOR]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de [[value SHP_WEAPON_ARC_DISRUPTOR_2_UPGRADED_DAMAGE]] une fois l'équipement amélioré.
 
 SHP_WEAPON_ARC_DISRUPTOR_3
 Perturbateurs Électro-Conducteurs 3
 
 SHP_WEAPON_ARC_DISRUPTOR_3_DESC
-Améliore l'équipement [[shippart SR_ARC_DISRUPTOR]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 42 une fois l'équipement amélioré.
+Améliore l'équipement [[shippart SR_ARC_DISRUPTOR]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de [[value SHP_WEAPON_ARC_DISRUPTOR_3_UPGRADED_DAMAGE]] une fois l'équipement amélioré.
 
 SHP_ION_CANNON
 Canon Ionique
@@ -15636,7 +15636,7 @@ SR_WEAPON_1_1_DESC
 
 Améliorer la technologie de cet armement augmentera la valeur des dommages par tir.
 
-Les [[encyclopedia DAMAGE_TITLE]] de cet armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Canon Mitrailleur monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 6 par rang de Pilotes (-6 pour "Mauvais Pilotes").'''
+Les [[encyclopedia DAMAGE_TITLE]] de cet armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Canon Mitrailleur monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 6 par rang de Pilotes (-6 pour "Mauvais Pilotes").Le Canon Mitrailleur inflige de base des dommages de [[value SR_WEAPON_1_1_PART_CAPACITY]] par tir. La technologie améliorée [[tech SHP_WEAPON_1_2]] augmente cette valeur de [[value SHP_WEAPON_1_2_UPGRADE_DAMAGE]].'''
 
 SR_WEAPON_2_1
 Canon Laser
@@ -15646,7 +15646,7 @@ SR_WEAPON_2_1_DESC
 
 Améliorer la technologie de cet armement augmentera la valeur des dommages par tir.
 
-Les [[encyclopedia DAMAGE_TITLE]] de cet armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Canon Laser monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 12 par rang de Pilotes (-12 pour "Mauvais Pilotes"). Les dommages du Canon Laser peuvent également être améliorés sur les astronefs dotés d'une [[shiphull SH_ORGANIC]] couplée à un [[shippart SP_SOLAR_CONCENTRATOR]].'''
+Les [[encyclopedia DAMAGE_TITLE]] de cet armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Canon Laser monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 12 par rang de Pilotes (-12 pour "Mauvais Pilotes"). Le Canon Laser inflige de base des dommages de [[value SR_WEAPON_2_1_PART_CAPACITY]] par tir. La technologie améliorée [[tech SHP_WEAPON_2_2]] augmente cette valeur de [[value SHP_WEAPON_2_2_UPGRADE_DAMAGE]]. Les dommages du Canon Laser peuvent également être améliorés sur les astronefs dotés d'une [[shiphull SH_ORGANIC]] couplée à un [[shippart SP_SOLAR_CONCENTRATOR]].'''
 
 SR_WEAPON_3_1
 Canon Plasma
@@ -15656,7 +15656,7 @@ SR_WEAPON_3_1_DESC
 
 Améliorer la technologie de cet armement augmentera la valeur des dommages par tir.
 
-Les [[encyclopedia DAMAGE_TITLE]] de cet armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Canon Plasma monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 18 par rang de Pilotes (-18 pour "Mauvais Pilotes").'''
+Les [[encyclopedia DAMAGE_TITLE]] de cet armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Canon Plasma monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 18 par rang de Pilotes (-18 pour "Mauvais Pilotes"). Le Canon Plasma inflige de base des dommages de [[value SR_WEAPON_3_1_PART_CAPACITY]] par tir. La technologie améliorée [[tech SHP_WEAPON_3_2]] augmente cette valeur de [[value SHP_WEAPON_3_2_UPGRADE_DAMAGE]].'''
 
 SR_WEAPON_4_1
 Rayon Gamma
@@ -15666,7 +15666,7 @@ SR_WEAPON_4_1_DESC
 
 Améliorer la technologie de cet armement augmentera la valeur des dommages par tir.
 
-Les [[encyclopedia DAMAGE_TITLE]] de cet armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Rayon Gamma monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 30 par rang de Pilotes (-30 pour "Mauvais Pilotes").'''
+Les [[encyclopedia DAMAGE_TITLE]] de cet armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Rayon Gamma monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 30 par rang de Pilotes (-30 pour "Mauvais Pilotes"). Le Rayon Gamma inflige de base des dommages de [[value SR_WEAPON_4_1_PART_CAPACITY]] par tir. La technologie améliorée [[tech SHP_WEAPON_4_2]] augmente cette valeur de [[value SHP_WEAPON_4_2_UPGRADE_DAMAGE]].'''
 
 SR_ARC_DISRUPTOR
 Perturbateur Électro-Conducteur
@@ -15678,7 +15678,7 @@ Des condensateurs de polaron chargés génèrent une perturbation moléculaire s
 
 Améliorer la technologie de cet armement augmentera la valeur des dommages par tir.
 
-Les [[encyclopedia DAMAGE_TITLE]] de cet armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Les attributs "Pilotes" n'affectent pas les dommages de cet armement.'''
+Les [[encyclopedia DAMAGE_TITLE]] de cet armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Les attributs "Pilotes" n'affectent pas les dommages de cet armement. Le Perturbateur Électro-Conducteur inflige de base des dommages de [[value SR_ARC_DISRUPTOR_PART_CAPACITY]] par tir. La technologie améliorée [[tech SHP_WEAPON_ARC_DISRUPTOR_2]] augmente cette valeur de [[value SHP_WEAPON_ARC_DISRUPTOR_2_UPGRADE_DAMAGE]].'''
 
 SR_SPINAL_ANTIMATTER
 Canon Anti-Matière
