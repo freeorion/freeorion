@@ -3,19 +3,19 @@ Building FreeOrion
 
 These notes are applicable for building the master development Git branch
 of FreeOrion. For building numbered FreeOrion releases, consult the
-corresponding release branch, eg. [FreeOrion v0.4.10 BUILD.md]
+corresponding release branch, eg. [FreeOrion v0.5 BUILD.md]
 
 Hardware and OS Requirements
 ----------------------------
 
-FreeOrion should compile on Windows 7 (or later), Mac OS X 10.10 (or later) and
+FreeOrion should compile on Windows 8.1 (or later), macOS 10.12 (or later) and
 Linux operating systems. Other operating systems have reported to work, but
 support is not actively maintained by the FreeOrion developers. FreeOrion is
-developed for x86 compatible processor architectures, other architectures
+developed for x86 compatible processor architectures; other architectures
 haven't been tested.
 
 The FreeOrion source code makes heavy use of templates and requires much memory
-to compile ; 8 GiB RAM or more is recommended. Expect up to 45 minutes on a Intel
+to compile; 16 GiB RAM or more is recommended. Expect up to 45 minutes on a Intel
 Core i5 system, or about 5 min on a 12-core AMD Ryzen 9 3.8 GHz system.
 
 
@@ -25,8 +25,8 @@ Required Software Dependencies
 FreeOrion depends on the following software to build:
 
   * [Visual Studio] - 2019 or 2022 for Windows Desktop ; Windows only
-  * [Xcode] - 10.1 or later ; Mac OS X only
-  * [CMake] - 3.4 (Mac OS X) ; 3.1 or later (Other non-Windows)
+  * [Xcode] - 10.1 or later ; MacOS only
+  * [CMake] - 3.8 or 3.16 (Windows) or later
   * A C++17 compliant compiler - Other Operating Systems
     * [GNU GCC] - 8.0 or later
     * [Clang] - 5 or later
@@ -38,7 +38,7 @@ FreeOrion depends on the following libraries or APIs to run:
   * OpenGL - 2.1 or later ; usually provided by the graphic card driver or
     Operating System
   * OpenAL - It's recommended to use the [OpenAL Soft] implementation
-  * [Boost] - 1.69 or later
+  * [Boost] - 1.69 or later, 1.79 should work
   * [zlib]
   * [libpython] - 3.7 or later
   * [FreeType2]
@@ -51,21 +51,21 @@ FreeOrion depends on the following libraries or APIs to run:
 Obtaining FreeOrion Source Code and Software Dependencies
 ---------------------------------------------------------
 
-For Windows and Mac OS X a [Software Development Kit] is provided as download to
-compile FreeOrion from source. It contains the preconfigured and -compiled build
-and runtime dependencies for the Visual Studio v141 toolchain on Windows and
-Mac OS X 10.9 SDK with Xcode 6.4 or later on Mac OS X.
+For Windows and MacOS, a [Software Development Kit] is provided as download to
+assist with compiling FreeOrion from source. The SDK contains the preconfigured and
+-compiled build and runtime dependencies for Visual Studio on Windows and the
+MacOS 10.12 SDK with Xcode 10.1 or later on macOS.
 
-For Linux or other Operating Systems the build and runtime dependencies should
+For Linux or other Operating Systems, the build and runtime dependencies should
 be installed by the preferred way for the respective OS (e.g. via Package
 manager or compiling from source).
 
-Step by step procedure:
+Step by step procedure for the v0.5 release and development versions near then:
 
  * On Windows:
-   * Download the [FreeOrionSDK v12] from the FreeOrionSDK respository releases.
- * On Mac OS X:
-   * The [FreeOrionSDK v12] is downloaded automatically when CMake creates the
+   * Download the [FreeOrionSDK v13] from the FreeOrionSDK respository releases.
+ * On MacOS:
+   * The [FreeOrionSDK v13] is downloaded automatically when CMake creates the
      build environment.
  * Linux and other Operating Systems:
    * Install build and runtime dependencies by the preferred way for the
@@ -78,7 +78,7 @@ Step by step procedure:
    * If you want to create an out-of-source build using CMake, you should run 
      `git clone https://github.com/freeorion/freeorion.git FreeOrion` in the 
      `freeorion-project` directory, instead of running `bootstrap.bat`.
- * On Max OS X, Linux and other Operating Systems:
+ * On MaxOS, Linux and other Operating Systems:
    * Navigate into the project directory.
    * Clone the project via Git:
      ```
@@ -89,7 +89,7 @@ This will leave you with the latest development branch `master` and the
 FreeOrion source code in:
 
  * `freeorion-project/FreeOrion/` on Windows.
- * `freeorion-project/freeorion/` on Mac OS X, Linux and other Operating
+ * `freeorion-project/freeorion/` on MacOS, Linux and other Operating
    Systems.
 
 This directory will be referred to as _source directory_ in the rest of the
@@ -250,7 +250,7 @@ To get logs run:
 adb exec-out run-as org.godotengine.freeoriongodotclient cat files/freeorion-godot.log
 ```
 
-[Visual Studio]: https://visualstudio.microsoft.com/vs/older-downloads/
+[Visual Studio]: https://visualstudio.microsoft.com/vs/
 [Xcode]: https://itunes.apple.com/de/app/xcode/id497799835?mt=12
 [CMake]: https://cmake.org/download/
 [GNU GCC]: https://gcc.gnu.org/releases.html
@@ -267,9 +267,9 @@ adb exec-out run-as org.godotengine.freeoriongodotclient cat files/freeorion-god
 [libvorbis]: https://xiph.org/downloads/
 [SDL2]: https://www.libsdl.org/download-2.0.php
 [Software Development Kit]: https://github.com/freeorion/freeorion-sdk
-[FreeOrionSDK v12]: https://github.com/freeorion/freeorion-sdk/releases/tag/v12
+[FreeOrionSDK v13]: https://github.com/freeorion/freeorion-sdk/releases/tag/v13
 [FreeOrion Releases]: https://github.com/freeorion/freeorion/releases
 [make jobs]: https://www.gnu.org/software/make/manual/html_node/Parallel.html
 [Python-For-Android]: https://github.com/python-cmake-buildsystem/python-cmake-buildsystem/pull/262
 [Boost-For-Android]: https://github.com/moritz-wundke/Boost-for-Android
-[FreeOrion v0.4.10 BUILD.md]: https://github.com/freeorion/freeorion/blob/release-v0.4.10/BUILD.md
+[FreeOrion v0.5 BUILD.md]: https://github.com/freeorion/freeorion/blob/release-v0.5/BUILD.md

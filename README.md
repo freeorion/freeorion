@@ -21,7 +21,7 @@ minimum resolution of at least *800x600*.
 
 Recent releases of FreeOrion require at least *Windows 8.1* or later,
 *macOS 10.12* or later or any reasonably recent Linux distribution on x86
-compatible processors, such as *Ubuntu 18.04 or 20.04*.  Other operating
+compatible processors, such as *Ubuntu 20.04 or 22.10*.  Other operating
 systems and architectures have reported to be working by users, but are not
 actively supported by the FreeOrion project.
 
