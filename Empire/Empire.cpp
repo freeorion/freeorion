@@ -1718,7 +1718,7 @@ void Empire::ConquerProductionQueueItemsAtLocation(int location_id, int empire_i
     }
 }
 
-void Empire::AddNewlyResearchedTechToGrantAtStartOfNextTurn(const std::string& name) {
+void Empire::AddNewlyResearchedTechToGrantAtStartOfNextTurn(std::string name) {
     const Tech* tech = GetTech(name);
     if (!tech) {
         ErrorLogger() << "Empire::AddNewlyResearchedTechToGrantAtStartOfNextTurn given an invalid tech: " << name;
@@ -1729,7 +1729,7 @@ void Empire::AddNewlyResearchedTechToGrantAtStartOfNextTurn(const std::string& n
         return;
 
     // Mark given tech to be granted at next turn. If it was already marked, skip writing a SitRep message
-    m_newly_researched_techs.insert(name);
+    m_newly_researched_techs.insert(std::move(name));
 }
 
 void Empire::ApplyNewTechs(Universe& universe, int current_turn) {
@@ -1751,7 +1751,7 @@ void Empire::ApplyNewTechs(Universe& universe, int current_turn) {
     m_newly_researched_techs.clear();
 }
 
-void Empire::AddPolicy(const std::string& name, int current_turn) {
+void Empire::AddPolicy(std::string name, int current_turn) {
     const Policy* policy = GetPolicy(name);
     if (!policy) {
         ErrorLogger() << "Empire::AddPolicy given and invalid policy: " << name;
@@ -1760,7 +1760,7 @@ void Empire::AddPolicy(const std::string& name, int current_turn) {
 
     if (m_available_policies.find(name) == m_available_policies.end()) {
         AddSitRepEntry(CreatePolicyUnlockedSitRep(name, current_turn));
-        m_available_policies.insert(name);
+        m_available_policies.insert(std::move(name));
     }
 }
 
@@ -1804,7 +1804,7 @@ void Empire::UnlockItem(const UnlockableItem& item, Universe& universe, int curr
     }
 }
 
-void Empire::AddBuildingType(const std::string& name, int current_turn) {
+void Empire::AddBuildingType(std::string name, int current_turn) {
     const BuildingType* building_type = GetBuildingType(name);
     if (!building_type) {
         ErrorLogger() << "Empire::AddBuildingType given an invalid building type name: " << name;
@@ -1815,10 +1815,10 @@ void Empire::AddBuildingType(const std::string& name, int current_turn) {
     if (m_available_building_types.count(name))
         return;
     m_available_building_types.insert(name);
-    AddSitRepEntry(CreateBuildingTypeUnlockedSitRep(name, current_turn));
+    AddSitRepEntry(CreateBuildingTypeUnlockedSitRep(std::move(name), current_turn));
 }
 
-void Empire::AddShipPart(const std::string& name, int current_turn) {
+void Empire::AddShipPart(std::string name, int current_turn) {
     const ShipPart* ship_part = GetShipPart(name);
     if (!ship_part) {
         ErrorLogger() << "Empire::AddShipPart given an invalid ship part name: " << name;
@@ -1827,10 +1827,10 @@ void Empire::AddShipPart(const std::string& name, int current_turn) {
     if (!ship_part->Producible())
         return;
     m_available_ship_parts.insert(name);
-    AddSitRepEntry(CreateShipPartUnlockedSitRep(name, current_turn));
+    AddSitRepEntry(CreateShipPartUnlockedSitRep(std::move(name), current_turn));
 }
 
-void Empire::AddShipHull(const std::string& name, int current_turn) {
+void Empire::AddShipHull(std::string name, int current_turn) {
     const ShipHull* ship_hull = GetShipHull(name);
     if (!ship_hull) {
         ErrorLogger() << "Empire::AddShipHull given an invalid hull type name: " << name;
@@ -1839,11 +1839,11 @@ void Empire::AddShipHull(const std::string& name, int current_turn) {
     if (!ship_hull->Producible())
         return;
     m_available_ship_hulls.insert(name);
-    AddSitRepEntry(CreateShipHullUnlockedSitRep(name, current_turn));
+    AddSitRepEntry(CreateShipHullUnlockedSitRep(std::move(name), current_turn));
 }
 
 void Empire::AddExploredSystem(int ID, int turn, const ObjectMap& objects) {
-    if (objects.get<System>(ID))
+    if (objects.getRaw<System>(ID))
         m_explored_systems.emplace(ID, turn);
     else
         ErrorLogger() << "Empire::AddExploredSystem given an invalid system id: " << ID;

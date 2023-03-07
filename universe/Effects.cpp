@@ -3740,24 +3740,22 @@ void GiveEmpireContent::Execute(ScriptingContext& context) const {
     if (!m_content_name)
         return;
 
-    std::string content_name = m_content_name->Eval(context);
-
     switch (m_unlock_type) {
-    case UnlockableItemType::UIT_BUILDING:  empire->AddBuildingType(content_name, context.current_turn); break;
-    case UnlockableItemType::UIT_SHIP_PART: empire->AddShipPart(content_name, context.current_turn);     break;
-    case UnlockableItemType::UIT_SHIP_HULL: empire->AddShipHull(content_name, context.current_turn);     break;
-    case UnlockableItemType::UIT_POLICY:    empire->AddPolicy(content_name, context.current_turn);       break;
+    case UnlockableItemType::UIT_BUILDING:  empire->AddBuildingType(m_content_name->Eval(context), context.current_turn); break;
+    case UnlockableItemType::UIT_SHIP_PART: empire->AddShipPart(m_content_name->Eval(context), context.current_turn);     break;
+    case UnlockableItemType::UIT_SHIP_HULL: empire->AddShipHull(m_content_name->Eval(context), context.current_turn);     break;
+    case UnlockableItemType::UIT_POLICY:    empire->AddPolicy(m_content_name->Eval(context), context.current_turn);       break;
     case UnlockableItemType::UIT_TECH: {
-        const Tech* tech = GetTech(content_name);
-        if (!tech) {
+        auto content_name = m_content_name->Eval(context);
+        if (!GetTech(content_name)) {
             ErrorLogger(effects) << "GiveEmpireContent::Execute couldn't get tech with name: " << content_name;
             return;
         }
-        empire->AddNewlyResearchedTechToGrantAtStartOfNextTurn(content_name);
+        empire->AddNewlyResearchedTechToGrantAtStartOfNextTurn(std::move(content_name));
         break;
     }
     default: {
-        ErrorLogger(effects) << "GiveEmpireContent::Execute given invalid unlockable item type";
+        ErrorLogger(effects) << "GiveEmpireContent::Execute given invalid unlockable item type: " << to_string(m_unlock_type);
     }
     }
 }
