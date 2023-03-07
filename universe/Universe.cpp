@@ -3000,18 +3000,18 @@ void Universe::Destroy(int object_id, const std::vector<int>& empires_ids,
 std::set<int> Universe::RecursiveDestroy(int object_id, const std::vector<int>& empire_ids) {
     std::set<int> retval;
 
-    auto obj = m_objects->get(object_id);
+    auto* obj = m_objects->getRaw(object_id);
     if (!obj) {
         DebugLogger() << "Universe::RecursiveDestroy asked to destroy nonexistant object with id " << object_id;
         return retval;
     }
 
-    auto system = m_objects->get<System>(obj->SystemID());
+    auto* system = m_objects->getRaw<System>(obj->SystemID());
 
     switch (obj->ObjectType()) {
     case UniverseObjectType::OBJ_SHIP: {
-        auto ship = std::static_pointer_cast<Ship>(std::move(obj));
-        if (auto fleet = m_objects->get<Fleet>(ship->FleetID())) {
+        auto* ship = static_cast<Ship*>(obj);
+        if (auto* fleet = m_objects->getRaw<Fleet>(ship->FleetID())) {
             // if a ship is being deleted, and it is the last ship in
             // its fleet, then the empty fleet should also be deleted
             fleet->RemoveShips({ship->ID()});
@@ -3030,7 +3030,7 @@ std::set<int> Universe::RecursiveDestroy(int object_id, const std::vector<int>& 
     }
 
     case UniverseObjectType::OBJ_FLEET: {
-        auto obj_fleet = std::static_pointer_cast<Fleet>(std::move(obj));
+        auto* obj_fleet = static_cast<Fleet*>(obj);
         for (int ship_id : obj_fleet->ShipIDs()) {
             if (system)
                 system->Remove(ship_id);
@@ -3045,7 +3045,7 @@ std::set<int> Universe::RecursiveDestroy(int object_id, const std::vector<int>& 
     }
 
     case UniverseObjectType::OBJ_PLANET: {
-        auto obj_planet = std::static_pointer_cast<Planet>(std::move(obj));
+        auto* obj_planet = static_cast<Planet*>(obj);
         for (int building_id : obj_planet->BuildingIDs()) {
             if (system)
                 system->Remove(building_id);
@@ -3060,7 +3060,7 @@ std::set<int> Universe::RecursiveDestroy(int object_id, const std::vector<int>& 
     }
 
     case UniverseObjectType::OBJ_SYSTEM: {
-        auto obj_system = std::static_pointer_cast<System>(std::move(obj));
+        auto* obj_system = static_cast<System*>(obj);
         // destroy all objects in system
         for (int system_id : obj_system->ObjectIDs()) {
             Destroy(system_id, empire_ids);
@@ -3069,12 +3069,12 @@ std::set<int> Universe::RecursiveDestroy(int object_id, const std::vector<int>& 
 
         // remove any starlane connections to this system
         int this_sys_id = obj_system->ID();
-        for (auto& sys : m_objects->all<System>())
+        for (auto* sys : m_objects->allRaw<System>())
             sys->RemoveStarlane(this_sys_id);
 
         // remove fleets / ships moving along destroyed starlane
-        std::vector<std::shared_ptr<Fleet>> fleets_to_destroy;
-        for (auto& fleet : m_objects->all<Fleet>()) {
+        std::vector<Fleet*> fleets_to_destroy;
+        for (auto* fleet : m_objects->allRaw<Fleet>()) {
             if (fleet->SystemID() == INVALID_OBJECT_ID && (
                 fleet->NextSystemID() == this_sys_id ||
                 fleet->PreviousSystemID() == this_sys_id))
@@ -3092,8 +3092,8 @@ std::set<int> Universe::RecursiveDestroy(int object_id, const std::vector<int>& 
     }
 
     case UniverseObjectType::OBJ_BUILDING: {
-        auto building = std::static_pointer_cast<Building>(std::move(obj));
-        auto planet = m_objects->get<Planet>(building->PlanetID());
+        auto* building = static_cast<Building*>(obj);
+        auto* planet = m_objects->getRaw<Planet>(building->PlanetID());
         if (planet)
             planet->RemoveBuilding(object_id);
         if (system)
@@ -3110,6 +3110,9 @@ std::set<int> Universe::RecursiveDestroy(int object_id, const std::vector<int>& 
         retval.insert(object_id);
         break;
     }
+
+    default:
+        break;
     }
 
     // else ??? object is of some type unknown as of this writing.
