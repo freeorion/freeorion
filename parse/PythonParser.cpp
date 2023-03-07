@@ -55,9 +55,10 @@ struct module_spec {
     const PythonParser& parser;
 };
 
-PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path& scripting_dir) :
+PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path& scripting_dir, bool clean_modules) :
     m_python(_python),
-    m_scripting_dir(scripting_dir)
+    m_scripting_dir(scripting_dir),
+    m_clean_modules(clean_modules)
 {
     if (!m_python.IsPythonRunning()) {
         ErrorLogger() << "Python parse given non-initialized python!";
@@ -288,6 +289,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         m_meta_path = py::extract<py::list>(py::import("sys").attr("meta_path"));
         m_meta_path.append(boost::cref(*this));
 
+        m_modules = py::extract<py::dict>(py::import("sys").attr("modules"))().copy();
     } catch (const boost::python::error_already_set&) {
         m_python.HandleErrorAlreadySet();
         if (!m_python.IsPythonRunning()) {
@@ -307,6 +309,9 @@ PythonParser::~PythonParser() {
         m_meta_path.pop(py::len(m_meta_path) - 1);
         // ToDo: ensure type of removed parser
         // ToDo: clean up sys.modules
+        if (m_clean_modules) {
+            py::import("sys").attr("modules") = m_modules;
+        }
     } catch (const py::error_already_set&) {
         ErrorLogger() << "Python parser destructor throw exception";
         m_python.HandleErrorAlreadySet();

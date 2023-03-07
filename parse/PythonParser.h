@@ -14,7 +14,7 @@ struct module_spec;
 
 class FO_PARSE_API PythonParser {
 public:
-    PythonParser(PythonCommon& _python, const boost::filesystem::path& scripting_dir);
+    PythonParser(PythonCommon& _python, const boost::filesystem::path& scripting_dir, bool clean_modules);
     ~PythonParser();
 
     PythonParser(const PythonParser&) = delete;
@@ -40,7 +40,9 @@ private:
 
     PythonCommon&                  m_python;
     const boost::filesystem::path& m_scripting_dir;
+    const bool                     m_clean_modules;
     boost::python::list            m_meta_path;
+    boost::python::dict            m_modules;
 };
 
 #endif

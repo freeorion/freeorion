@@ -84,9 +84,10 @@ namespace parse {
 
 template FO_PARSE_API TechManager::TechParseTuple parse::techs<TechManager::TechParseTuple>(const PythonParser& parser, const boost::filesystem::path& path);
 
-PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path& scripting_dir) 
+PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path& scripting_dir, bool clean_modules) 
     : m_python(_python)
     , m_scripting_dir(scripting_dir)
+    , m_clean_modules(clean_modules)
 { }
 
 PythonParser::~PythonParser()
