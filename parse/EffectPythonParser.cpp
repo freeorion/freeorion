@@ -422,6 +422,38 @@ namespace {
         }
     }
 
+    effect_wrapper create_building(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<std::string>> type;
+        auto type_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["type"]);
+        if (type_args.check()) {
+            type = ValueRef::CloneUnique(type_args().value_ref);
+        } else {
+            type = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["type"])());
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<std::string>> name;
+        if (kw.has_key("name")) {
+            auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
+            if (name_args.check()) {
+                name = ValueRef::CloneUnique(name_args().value_ref);
+            } else {
+                name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
+            }
+        }
+
+        std::vector<std::unique_ptr<Effect::Effect>> effects_to_apply_after;
+        if (kw.has_key("effects")) {
+            boost::python::stl_input_iterator<effect_wrapper> it_begin(kw["effects"]), it_end;
+            for (auto it = it_begin; it != it_end; ++it) {
+                effects_to_apply_after.push_back(ValueRef::CloneUnique(it->effect));
+            }
+        }
+
+        return effect_wrapper(std::make_shared<Effect::CreateBuilding>(std::move(type),
+            std::move(name),
+            std::move(effects_to_apply_after)));
+    }
+
     FocusType insert_focus_type_(const boost::python::tuple& args, const boost::python::dict& kw) {
         auto name = boost::python::extract<std::string>(kw["name"])();
         auto description = boost::python::extract<std::string>(kw["description"])();
@@ -452,6 +484,7 @@ void RegisterGlobalsEffects(py::dict& globals) {
     globals["AddSpecial"] = py::raw_function(add_special);
     globals["RemoveSpecial"] = py::raw_function(remove_special);
     globals["CreateShip"] = py::raw_function(create_ship);
+    globals["CreateBuilding"] = py::raw_function(create_building);
 
     // set_non_ship_part_meter_enum_grammar
     for (const auto& meter : std::initializer_list<std::pair<const char*, MeterType>>{
