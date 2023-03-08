@@ -335,7 +335,7 @@ private:
 
 /** Matches space monsters. */
 struct FO_COMMON_API Monster final : public Condition {
-    constexpr Monster() noexcept :  Condition(true, true, true) {}
+    constexpr Monster() noexcept : Condition(true, true, true) {}
     bool operator==(const Condition& rhs) const override;
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
     { return Match(ScriptingContext{parent_context, candidate}); }
