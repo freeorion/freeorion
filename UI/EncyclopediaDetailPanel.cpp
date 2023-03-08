@@ -3103,10 +3103,8 @@ namespace {
                 continue;
 
             const std::string& species_name = planet->SpeciesName();
-            if (species_name.empty() ||
-                std::any_of(retval.begin(), retval.end(),
-                            [&species_name](std::string_view s) { return s == species_name; }))
-            { continue; }
+            if (species_name.empty() || std::find(retval.begin(), retval.end(), species_name) != retval.end())
+                continue;
 
             const Species* species = species_manager.GetSpecies(species_name);
             if (!species)
@@ -3283,31 +3281,33 @@ namespace {
             static constexpr auto hair_space_str{u8"\u200A"};
 #endif
 
-            for (auto& it : retval) { // TODO [[]]
-                if (column1_species_extents.count(it.first) != 1) {
-                    ErrorLogger() << "No column1 extent stored for " << it.first;
+            for (auto& [species_name, formatted_col1] : retval) {
+                if (column1_species_extents.count(species_name) != 1) {
+                    ErrorLogger() << "No column1 extent stored for " << species_name;
                     continue;
                 }
-                auto distance = longest_width - column1_species_extents.at(it.first).x;
+                auto distance = longest_width - column1_species_extents.at(species_name).x;
                 std::size_t num_spaces = Value(distance) / Value(hair_space_width);
-                TraceLogger() << it.first << " Num spaces: " << ToChars(Value(longest_width))
-                              << " - " << ToChars(Value(column1_species_extents.at(it.first).x))
+                TraceLogger() << species_name << " Num spaces: " << ToChars(Value(longest_width))
+                              << " - " << ToChars(Value(column1_species_extents.at(species_name).x))
                               << " = " << ToChars(Value(distance))
                               << " / " << ToChars(Value(hair_space_width))
                               << " = " << ToChars(num_spaces);;
                 for (std::size_t i = 0; i < num_spaces; ++i)
-                    it.second.append(hair_space_str);
+                    formatted_col1.append(hair_space_str);
 
-                TraceLogger() << "Species Suitability Column 1:\n\t" << it.first << " \"" << it.second << "\"" << [&]() {
+                TraceLogger() << "Species Suitability Column 1:\n\t" << species_name << " \"" << formatted_col1 << "\""
+                    << [&](const auto& species_name, const auto& formatted_col1)
+                {
                     std::string out;
-                    auto col_val = Value(column1_species_extents.at(it.first).x);
+                    auto col_val = Value(column1_species_extents.at(species_name).x);
                     out.append("\n\t\t(" + ToChars(col_val) + " + (" + ToChars(num_spaces) + " * " + hair_space_width_str);
                     out.append(") = " + ToChars(col_val + (num_spaces * Value(hair_space_width))) + ")");
-                    auto text_elements = font->ExpensiveParseFromTextToTextElements(it.second, format);
-                    auto lines = font->DetermineLines(it.second, format, GG::X(1 << 15), text_elements);
+                    auto text_elements = font->ExpensiveParseFromTextToTextElements(formatted_col1, format);
+                    auto lines = font->DetermineLines(formatted_col1, format, GG::X(1 << 15), text_elements);
                     out.append(" = " + ToChars(Value(font->TextExtent(lines).x)));
                     return out;
-                }();
+                }(species_name, formatted_col1);
             }
         } catch (const std::exception& e) {
             ErrorLogger() << "Caught exception in SpeciesSuitabilityColumn1 when doing hair space and maybe trace stuff?: " << e.what();
