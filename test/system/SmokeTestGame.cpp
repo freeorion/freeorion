@@ -3,9 +3,14 @@
 #include "ClientAppFixture.h"
 #include "Empire/Empire.h"
 #include "universe/Planet.h"
+#include "universe/Ship.h"
+#include "universe/ShipDesign.h"
 #include "util/Directories.h"
+#include "util/Order.h"
 #include "util/Process.h"
 #include "util/SitRepEntry.h"
+
+#include <boost/uuid/uuid_io.hpp>
 
 #ifdef FREEORION_MACOSX
 #include <stdlib.h>
@@ -70,7 +75,7 @@ BOOST_AUTO_TEST_CASE(host_server) {
     BOOST_TEST_MESSAGE("First messages processed. Starting game...");
 
     unsigned int num_AIs = 2;
-    int num_turns = 3;
+    int num_turns = 5;
     bool save_game = true;
 
     const char *env_num_AIs = std::getenv("FO_TEST_GAME_AIS");
@@ -120,6 +125,8 @@ BOOST_AUTO_TEST_CASE(host_server) {
 
     SaveGameUIData ui_data;
 
+    int troop_design_id = INVALID_DESIGN_ID;
+
     while (m_current_turn <= num_turns) {
         SendPartialOrders();
 
@@ -137,7 +144,7 @@ BOOST_AUTO_TEST_CASE(host_server) {
         BOOST_TEST_MESSAGE("Turn updated " << m_current_turn);
 
         // output sitreps
-        const auto& my_empire = m_empires.GetEmpire(m_empire_id);
+        auto my_empire = m_empires.GetEmpire(m_empire_id);
         BOOST_REQUIRE(my_empire != nullptr);
         for (const auto& sitrep : my_empire->SitReps()) {
             if (sitrep.GetTurn() == m_current_turn) {
@@ -145,11 +152,11 @@ BOOST_AUTO_TEST_CASE(host_server) {
             }
         }
 
+        const auto is_owned = [this](const UniverseObject* obj) { return obj->OwnedBy(m_empire_id); };
+
         if (m_current_turn == 2) {
             // check home planet meters
-            bool found_planet = false;
-
-            auto is_owned = [this](const UniverseObject* obj) { return obj->OwnedBy(m_empire_id); };
+            const Planet* home_planet = nullptr;
 
             for (const auto* planet : Objects().findRaw<Planet>(is_owned)) {
                 BOOST_REQUIRE_LT(0.0, planet->GetMeter(MeterType::METER_POPULATION)->Current());
@@ -158,9 +165,46 @@ BOOST_AUTO_TEST_CASE(host_server) {
                 BOOST_TEST_MESSAGE("Industry: " << planet->GetMeter(MeterType::METER_INDUSTRY)->Current());
                 BOOST_REQUIRE_LT(0.0, planet->GetMeter(MeterType::METER_RESEARCH)->Current());
                 BOOST_TEST_MESSAGE("Research: " << planet->GetMeter(MeterType::METER_RESEARCH)->Current());
-                found_planet = true;
+                home_planet = planet;
             }
-            BOOST_REQUIRE(found_planet);
+            BOOST_REQUIRE(home_planet != nullptr);
+
+            // enqueue Troop Ship
+            ScriptingContext context;
+
+            static constexpr boost::uuids::uuid troop_ship_uuid{0x08, 0xa5, 0x8b, 0x08, 0x09, 0x29, 0x49, 0x6d, 0x84, 0xfc, 0xfa, 0xa9, 0x14, 0x24, 0xca, 0x02};
+            for (const auto* design : GetPredefinedShipDesignManager().GetOrderedShipDesigns()) {
+                BOOST_TEST_MESSAGE("Predefined ship design " << design->Name() << " " << design->UUID());
+                if (design->UUID() == troop_ship_uuid) {
+                    BOOST_REQUIRE_EQUAL(troop_design_id, INVALID_DESIGN_ID);
+                    troop_design_id = my_empire->AddShipDesign(*design, context.ContextUniverse());
+                    BOOST_REQUIRE_NE(troop_design_id, INVALID_DESIGN_ID);
+                    BOOST_TEST_MESSAGE("Found predefined troop ship design " << troop_design_id << " " << design->Name() << " " << design->UUID());
+                }
+            }
+
+            BOOST_REQUIRE_NE(troop_design_id, INVALID_DESIGN_ID);
+
+            BOOST_REQUIRE(my_empire->ProducibleItem(BuildType::BT_SHIP, troop_design_id, home_planet->ID(), context));
+
+            m_orders.IssueOrder(std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE,
+                m_empire_id,
+                ProductionQueue::ProductionItem(BuildType::BT_SHIP, troop_design_id, context.ContextUniverse()),
+                1,
+                home_planet->ID()),
+                context);
+        }
+
+        if (m_current_turn > 2) {
+            if (my_empire->GetProductionQueue().empty()) {
+                for (const auto* ship : Objects().findRaw<Ship>(is_owned)) {
+                    if (ship->DesignID() == troop_design_id) {
+                        ScriptingContext context;
+                        BOOST_TEST_MESSAGE("Found troop ship with troops " << ship->TroopCapacity(context.ContextUniverse()));
+                        BOOST_REQUIRE_GT(ship->TroopCapacity(context.ContextUniverse()), 0.0f);
+                    }
+                }
+            }
         }
 
         if (my_empire->Eliminated()) {
