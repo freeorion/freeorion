@@ -3300,6 +3300,7 @@ namespace {
                     << [&](const auto& species_name, const auto& formatted_col1)
                 {
                     std::string out;
+                    out.reserve(1000); // guesstimate
                     auto col_val = Value(column1_species_extents.at(species_name).x);
                     out.append("\n\t\t(" + ToChars(col_val) + " + (" + ToChars(num_spaces) + " * " + hair_space_width_str);
                     out.append(") = " + ToChars(col_val + (num_spaces * Value(hair_space_width))) + ")");
