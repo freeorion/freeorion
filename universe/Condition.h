@@ -49,8 +49,7 @@ struct FO_COMMON_API Condition {
     [[nodiscard]] virtual bool EvalAny(const ScriptingContext& parent_context,
                                        const ObjectSet& candidates) const;
     [[nodiscard]] bool EvalAny(const ScriptingContext& parent_context) const {
-        ObjectSet candidates;
-        GetDefaultInitialCandidateObjects(parent_context, candidates);
+        ObjectSet candidates = GetDefaultInitialCandidateObjects(parent_context);
 
         if (InitialCandidatesAllMatch())
             return !candidates.empty(); // don't need to evaluate condition further
@@ -80,8 +79,7 @@ struct FO_COMMON_API Condition {
 
     /** Initializes \a condition_non_targets with a set of objects that could
       * match this condition, without checking if they all actually do. */
-    virtual void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                   ObjectSet& condition_non_targets) const;
+    virtual ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const;
 
     /** Derived Condition classes can override this to true if all objects returned
       * by GetDefaultInitialCandidateObject() are guaranteed to also match this
