@@ -282,10 +282,10 @@ Number::Number(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
     m_low(std::move(low)),
     m_high(std::move(high)),
     m_condition(std::move(condition)),
-    m_high_low_local_invariant((!low || low->LocalCandidateInvariant()) &&
-                               (!high || high->LocalCandidateInvariant())),
-    m_high_low_root_invariant((!low || low->RootCandidateInvariant()) &&
-                              (!high || high->RootCandidateInvariant()))
+    m_high_low_local_invariant((!m_low || m_low->LocalCandidateInvariant()) &&
+                               (!m_high || m_high->LocalCandidateInvariant())),
+    m_high_low_root_invariant((!m_low || m_low->RootCandidateInvariant()) &&
+                              (!m_high || m_high->RootCandidateInvariant()))
 {}
 
 bool Number::operator==(const Condition& rhs) const {
@@ -2543,9 +2543,9 @@ HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
     m_name(std::move(name)),
     m_since_turn_low(std::move(since_turn_low)),
     m_since_turn_high(std::move(since_turn_high)),
-    m_refs_local_invariant((!name || name->LocalCandidateInvariant()) &&
-                           (!since_turn_low || since_turn_low->LocalCandidateInvariant()) &&
-                           (!since_turn_high || since_turn_high->LocalCandidateInvariant()))
+    m_refs_local_invariant((!m_name || m_name->LocalCandidateInvariant()) &&
+                           (!m_since_turn_low || m_since_turn_low->LocalCandidateInvariant()) &&
+                           (!m_since_turn_high || m_since_turn_high->LocalCandidateInvariant()))
 {}
 
 HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
@@ -2563,9 +2563,9 @@ HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
     m_name(std::move(name)),
     m_capacity_low(std::move(capacity_low)),
     m_capacity_high(std::move(capacity_high)),
-    m_refs_local_invariant((!name || name->LocalCandidateInvariant()) &&
-                           (!capacity_low || capacity_low->LocalCandidateInvariant()) &&
-                           (!capacity_high || capacity_high->LocalCandidateInvariant()))
+    m_refs_local_invariant((!m_name || m_name->LocalCandidateInvariant()) &&
+                           (!m_capacity_low || m_capacity_low->LocalCandidateInvariant()) &&
+                           (!m_capacity_high || m_capacity_high->LocalCandidateInvariant()))
 {}
 
 HasSpecial::HasSpecial(const HasSpecial& rhs) :
@@ -7221,9 +7221,9 @@ EmpireStockpileValue::EmpireStockpileValue(std::unique_ptr<ValueRef::ValueRef<in
     m_low(std::move(low)),
     m_high(std::move(high)),
     m_stockpile(stockpile),
-    m_refs_local_invariant((!empire_id || empire_id->LocalCandidateInvariant()) &&
-                           (!low || low->LocalCandidateInvariant()) &&
-                           (!high || high->LocalCandidateInvariant()))
+    m_refs_local_invariant((!m_empire_id || m_empire_id->LocalCandidateInvariant()) &&
+                           (!m_low || m_low->LocalCandidateInvariant()) &&
+                           (!m_high || m_high->LocalCandidateInvariant()))
 {}
 
 bool EmpireStockpileValue::operator==(const Condition& rhs) const {
