@@ -32,7 +32,7 @@ namespace {
 
     // TODO: Move this code into a common non UI linked location, so that
     // there is no duplicated code between server and clientUI.
-    std::string_view LinkTag(UniverseObjectType obj_type) {
+    constexpr std::string_view LinkTag(UniverseObjectType obj_type) {
         switch (obj_type) {
         case UniverseObjectType::OBJ_SHIP:
             return VarText::SHIP_ID_TAG;
