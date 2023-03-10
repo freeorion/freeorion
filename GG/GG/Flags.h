@@ -190,6 +190,7 @@ class GG_API FlagSpec
     static_assert(is_flag_type_v<FlagType>, "Using FlagsType without GG_FLAG_TYPE macro");
     static_assert(std::is_unsigned_v<typename FlagType::InternalType>);
     static constexpr std::size_t digits = std::numeric_limits<typename FlagType::InternalType>::digits;
+    static_assert(digits > 0);
     using FlagContainerT = std::array<FlagType, digits>;
 
 public:
