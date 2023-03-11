@@ -5462,10 +5462,10 @@ ORDER_FLEET_NEW
 New %3% fleet named %1% with %2% ships
 
 ORDER_FLEET_MOVE
-Fleet Move
+Fleet Move %1% to %2%
 
 ORDER_FLEET_TRANSFER
-Fleet Transfer
+Fleet Transfer %1% to %2%
 
 ORDER_COLONIZE
 Colonize

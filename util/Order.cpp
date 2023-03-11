@@ -504,7 +504,7 @@ FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
 }
 
 std::string FleetMoveOrder::Dump() const
-{ return UserString("ORDER_FLEET_MOVE"); }
+{ return boost::io::str(FlexibleFormat(UserString("ORDER_FLEET_MOVE")) % m_fleet % m_dest_system) + ExecutedTag(this); }
 
 bool FleetMoveOrder::Check(int empire_id, int fleet_id, int dest_system_id,
                            bool append, const ScriptingContext& context)
@@ -607,8 +607,16 @@ FleetTransferOrder::FleetTransferOrder(int empire, int dest_fleet, std::vector<i
         ErrorLogger() << "FleetTransferOrder constructor found problem...";
 }
 
-std::string FleetTransferOrder::Dump() const
-{ return UserString("ORDER_FLEET_TRANSFER"); }
+std::string FleetTransferOrder::Dump() const {
+    std::string ships;
+    if (!m_add_ships.empty()) {
+        ships.reserve(15*m_add_ships.size()); // guesstimate
+        for (auto s : m_add_ships)
+            ships.append(std::to_string(s)).append(" ");
+        ships.resize(ships.length() - 1);
+    }
+    return boost::io::str(FlexibleFormat(UserString("ORDER_FLEET_TRANSFER")) % ships % m_dest_fleet) + ExecutedTag(this);
+}
 
 bool FleetTransferOrder::Check(int empire_id, int dest_fleet_id, const std::vector<int>& ship_ids,
                                const ScriptingContext& context)
