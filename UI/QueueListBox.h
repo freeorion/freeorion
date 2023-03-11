@@ -48,7 +48,7 @@ public:
     /** Change the empty list prompt text. */
     void            SetEmptyPromptText(std::string prompt);
 
-    boost::signals2::signal<void (GG::ListBox::iterator)>           QueueItemDeletedSignal;
+    boost::signals2::signal<void (GG::ListBox::iterator)> QueueItemDeletedSignal;
 
 protected:
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
