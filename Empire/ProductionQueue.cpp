@@ -196,10 +196,9 @@ namespace {
         int i = 0;
         for (auto& queue_element : queue) {
             queue_element.allocated_pp = 0.0f;  // default, to be updated below...
-            if (queue_element.paused) {
-                TraceLogger() << "allocation: " << queue_element.allocated_pp
-                              << "  to: " << queue_element.item.name
-                              << "  due to it being paused";
+            if (queue_element.paused || queue_element.to_be_removed) {
+                TraceLogger() << "allocation: " << queue_element.allocated_pp << "  to: " << queue_element.item.name
+                              << "  due to it being paused or marked to be removed";
                 ++i;
                 continue;
             }
@@ -213,8 +212,7 @@ namespace {
             if ((group_pp_available <= 0) &&
                 (available_stockpile <= 0 || !queue_element.allowed_imperial_stockpile_use))
             {
-                TraceLogger() << "allocation: " << queue_element.allocated_pp
-                              << "  to: " << queue_element.item.name
+                TraceLogger() << "allocation: " << queue_element.allocated_pp << "  to: " << queue_element.item.name
                               << "  due to lack of available PP in group";
                 queue_element.allocated_pp = 0.0f;
                 ++i;
@@ -694,7 +692,7 @@ void ProductionQueue::Update(const ScriptingContext& context) {
     update_timer.EnterSection("Cacheing Costs");
     // cache producibility, and production item costs and times
     // initialize production queue item completion status to 'never'
-    std::map<std::pair<ProductionQueue::ProductionItem, int>,
+    std::map<std::pair<ProductionQueue::ProductionItem, int>,  // TODO: rework as vector, avoid allocations esp. for lookup. see Empire ItemCostAndTime caching stuff
              std::pair<float, int>> queue_item_costs_and_times;
     std::vector<bool> is_producible;
     for (auto& elem : m_queue) {
@@ -704,7 +702,7 @@ void ProductionQueue::Update(const ScriptingContext& context) {
                            INVALID_OBJECT_ID : elem.location);
         auto key = std::pair{elem.item, location_id};
 
-        if (!queue_item_costs_and_times.count(key))
+        if (!queue_item_costs_and_times.count(key)) // TOOD: try_emplace?
             queue_item_costs_and_times[key] = elem.ProductionCostAndTime(context);
 
         elem.turns_left_to_next_item = -1;
@@ -720,7 +718,7 @@ void ProductionQueue::Update(const ScriptingContext& context) {
     update_timer.EnterSection("Set Spending");
     // allocate pp to queue elements, returning updated available pp and updated
     // allocated pp for each group of resource sharing objects
-    float project_transfer_to_stockpile = SetProdQueueElementSpending(
+    const float project_transfer_to_stockpile = SetProdQueueElementSpending(
         available_pp, available_stockpile, stockpile_limit, queue_element_groups,
         queue_item_costs_and_times, is_producible, m_queue,
         m_object_group_allocated_pp, m_object_group_allocated_stockpile_pp,
@@ -736,7 +734,7 @@ void ProductionQueue::Update(const ScriptingContext& context) {
 
     // if at least one resource-sharing system group have available PP, simulate
     // future turns to predict when build items will be finished
-    bool simulate_future = false;
+    bool simulate_future = false; // TODO: use any_of, make const
     for (auto& available : available_pp) {
         if (available.second > EPSILON) {
             simulate_future = true;
@@ -767,9 +765,9 @@ void ProductionQueue::Update(const ScriptingContext& context) {
     // this would also be inaccurate anyway due to player choices or random
     // chance, so for simplicity, it is assumed that building location
     // conditions evaluated at the present turn apply indefinitely.
-    update_timer.EnterSection("Remove Unproducible");
+    update_timer.EnterSection("Remove Unproducible and Marked To Remove");
     for (unsigned int i = 0; i < sim_queue.size(); ++i) {
-        if (sim_queue[i].paused || !is_producible[i]) {
+        if (sim_queue[i].paused || sim_queue[i].to_be_removed || !is_producible[i]) {
             sim_queue.erase(sim_queue.begin() + i);
             is_producible.erase(is_producible.begin() + i);
             queue_element_groups.erase(queue_element_groups.begin() + i);

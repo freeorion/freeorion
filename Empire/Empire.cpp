@@ -2208,6 +2208,12 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
     std::vector<int> to_erase;
     for (unsigned int i = 0; i < m_production_queue.size(); ++i) {
         auto& elem = m_production_queue[i];
+
+        if (elem.to_be_removed) {
+            to_erase.push_back(i);
+            DebugLogger() << "Marking flagged-to-be-removed item " << i << " to be removed from queue";
+        }
+
         const int location_id = (elem.item.CostIsProductionLocationInvariant(universe) ? INVALID_OBJECT_ID : elem.location);
         auto [cost, turns] = get_cost_turns(queue_item_costs_and_times, elem, location_id);
 
@@ -2470,8 +2476,8 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
             break;
         }
 
-        if (!--m_production_queue[i].remaining) {   // decrement number of remaining items to be produced in current queue element
-            to_erase.push_back(i);                  // remember completed element so that it can be removed from queue
+        if (--elem.remaining < 1) { // decrement number of remaining items to be produced in current queue element
+            to_erase.push_back(i);  // remember completed element so that it can be removed from queue
             DebugLogger() << "Marking completed production queue item to be removed from queue";
         }
     }

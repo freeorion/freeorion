@@ -1325,12 +1325,12 @@ void ProductionQueueOrder::ExecuteImpl(ScriptingContext& context) const {
             break;
         }
         case ProdQueueOrderAction::REMOVE_FROM_QUEUE: {
-            auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
+            const auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
             if (idx == -1) {
                 ErrorLogger() << "ProductionQueueOrder asked to remove invalid UUID: " << boost::uuids::to_string(m_uuid);
             } else {
                 DebugLogger() << "ProductionQueueOrder removing item at index: " << idx;
-                empire->RemoveProductionFromQueue(idx);
+                empire->MarkToBeRemoved(idx);
             }
             break;
         }
