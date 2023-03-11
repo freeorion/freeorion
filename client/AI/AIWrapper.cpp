@@ -531,7 +531,7 @@ namespace {
     {
         ScriptingContext context;
 
-        int empire_id = AIClientApp::GetApp()->EmpireID();
+        const int empire_id = AIClientApp::GetApp()->EmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IssueDequeueProductionOrder : couldn't get empire with id " << empire_id;
@@ -544,9 +544,9 @@ namespace {
             return 0;
         }
 
-        auto queue_it = empire->GetProductionQueue().find(queue_index);
+        auto queue_it = queue.find(queue_index);
 
-        if (queue_it != empire->GetProductionQueue().end())
+        if (queue_it != queue.end())
             AIClientApp::GetApp()->Orders().IssueOrder(
                 std::make_shared<ProductionQueueOrder>(
                     ProductionQueueOrder::ProdQueueOrderAction::REMOVE_FROM_QUEUE,
