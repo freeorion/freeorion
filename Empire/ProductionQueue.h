@@ -93,11 +93,18 @@ struct FO_COMMON_API ProductionQueue {
     struct FO_COMMON_API Element {
         Element() = default;
 
-        Element(ProductionItem item_, int empire_id_,
-                boost::uuids::uuid uuid_,
-                int ordered_, int remaining_, int blocksize_,
-                int location_, bool paused_ = false,
-                bool allowed_imperial_stockpile_use_ = true);
+        Element(ProductionItem item_, int empire_id_, boost::uuids::uuid uuid_, int ordered_,
+                int remaining_, int blocksize_, int location_) :
+            item(std::move(item_)),
+            empire_id(empire_id_),
+            ordered(ordered_),
+            blocksize(blocksize_),
+            remaining(remaining_),
+            location(location_),
+            blocksize_memory(blocksize_),
+            allowed_imperial_stockpile_use(item.build_type != BuildType::BT_STOCKPILE),
+            uuid(uuid_)
+        {}
 
         /** Returns the total cost per item (blocksize 1) and the minimum number of
           * turns required to produce the indicated item, or (-1.0, -1) if the item
@@ -119,7 +126,8 @@ struct FO_COMMON_API ProductionQueue {
         int                 turns_left_to_completion = -1;
         int                 rally_point_id = INVALID_OBJECT_ID;
         bool                paused = false;
-        bool                allowed_imperial_stockpile_use = true;
+        bool                to_be_removed = false;
+        bool                allowed_imperial_stockpile_use = false;
         boost::uuids::uuid  uuid = boost::uuids::nil_uuid();
 
         [[nodiscard]] std::string Dump() const;
@@ -187,9 +195,8 @@ struct FO_COMMON_API ProductionQueue {
     void Update(const ScriptingContext& context);
 
     // STL container-like interface
-    void     push_back(const Element& element);
-    void     push_back(Element&& element);
-    void     insert(iterator it, const Element& element);
+    void     push_back(Element element);
+    void     insert(iterator it, Element element);
     void     erase(int i);
     iterator erase(iterator it);
 

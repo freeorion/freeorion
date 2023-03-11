@@ -77,6 +77,12 @@ void ProductionQueue::Element::serialize(Archive& ar, const unsigned int version
         & BOOST_SERIALIZATION_NVP(paused)
         & BOOST_SERIALIZATION_NVP(allowed_imperial_stockpile_use);
 
+    if (Archive::is_loading::value && version < 3) {
+        to_be_removed = false;
+    } else {
+        ar  & BOOST_SERIALIZATION_NVP(to_be_removed);
+    }
+
     if constexpr (Archive::is_saving::value) {
         // Serialization of uuid as a primitive doesn't work as expected from
         // the documentation.  This workaround instead serializes a string
@@ -84,7 +90,7 @@ void ProductionQueue::Element::serialize(Archive& ar, const unsigned int version
         auto string_uuid = boost::uuids::to_string(uuid);
         ar & BOOST_SERIALIZATION_NVP(string_uuid);
 
-     } else if (Archive::is_loading::value && version < 2) {
+    } else if (Archive::is_loading::value && version < 2) {
         // assign a random ID to this element so that future-issued orders can refer to it
         uuid = boost::uuids::random_generator()();
 
@@ -101,7 +107,7 @@ void ProductionQueue::Element::serialize(Archive& ar, const unsigned int version
     }
 }
 
-BOOST_CLASS_VERSION(ProductionQueue::Element, 2)
+BOOST_CLASS_VERSION(ProductionQueue::Element, 3)
 
 template void ProductionQueue::Element::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
 template void ProductionQueue::Element::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);

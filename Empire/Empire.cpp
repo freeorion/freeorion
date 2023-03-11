@@ -1504,12 +1504,11 @@ void Empire::PlaceProductionOnQueue(const ProductionQueue::ProductionItem& item,
         throw std::invalid_argument("Empire::PlaceProductionOnQueue was passed a ProductionQueue::ProductionItem with an invalid BuildType");
     }
 
-    ProductionQueue::Element elem{item, m_id, uuid, number, number, blocksize,
-                                  location, false, item.build_type != BuildType::BT_STOCKPILE};
+    ProductionQueue::Element elem{item, m_id, uuid, number, number, blocksize, location};
     if (pos < 0 || static_cast<int>(m_production_queue.size()) <= pos)
-        m_production_queue.push_back(elem);
+        m_production_queue.push_back(std::move(elem));
     else
-        m_production_queue.insert(m_production_queue.begin() + pos, elem);
+        m_production_queue.insert(m_production_queue.begin() + pos, std::move(elem));
 }
 
 void Empire::SetProductionQuantityAndBlocksize(int index, int quantity, int blocksize) {
@@ -1605,6 +1604,24 @@ void Empire::RemoveProductionFromQueue(int index) {
         return;
     }
     m_production_queue.erase(index);
+}
+
+void Empire::MarkToBeRemoved(int index) {
+    if (index < 0 || static_cast<int>(m_production_queue.size()) <= index) {
+        DebugLogger() << "Empire::MarkToBeRemoved index: " << index << "  queue size: " << m_production_queue.size();
+        ErrorLogger() << "Attempted to mark to be removed a production queue item with an invalid index.";
+        return;
+    }
+    m_production_queue[index].to_be_removed = true;
+}
+
+void Empire::MarkNotToBeRemoved(int index) {
+    if (index < 0 || static_cast<int>(m_production_queue.size()) <= index) {
+        DebugLogger() << "Empire::MarkNotToBeRemoved index: " << index << "  queue size: " << m_production_queue.size();
+        ErrorLogger() << "Attempted to mark not to be removed a production queue item with an invalid index.";
+        return;
+    }
+    m_production_queue[index].to_be_removed = false;
 }
 
 void Empire::PauseProduction(int index) {

@@ -265,11 +265,14 @@ public:
     void SetProductionQuantity(int index, int quantity);     ///< Changes the remaining number to produce for queue item \a index to \a quantity
     void SetProductionQuantityAndBlocksize(int index, int quantity, int blocksize);   ///< Changes the remaining number and blocksize to produce for queue item \a index to \a quantity and \a blocksize
     void SetProductionRallyPoint(int index, int rally_point_id = INVALID_OBJECT_ID);  ///< Sets the rally point for ships produced by this produce, to which they are automatically ordered to move after they are produced.
-    void MoveProductionWithinQueue(int index, int new_index);///< Moves \a tech from the production queue, if it is in the production queue already.
-    void RemoveProductionFromQueue(int index);               ///< Removes the produce at position \a index in the production queue, if such an index exists.
-    void PauseProduction(int index);                         ///< Sets the production of produce at postion \a index paused, if such an index exists
-    void ResumeProduction(int index);                        ///< Sets the production of produce at postion \a index unpaused, if such an index exists
+    void MoveProductionWithinQueue(int index, int new_index);///< Moves queue item at \a index to \a new_index
+    void MarkToBeRemoved(int index);                         ///< Marks the item at positon \a index to be removed from the queue
+    void MarkNotToBeRemoved(int index);                      ///< Marks the item at position \a index not to be removed from the queue
+    void PauseProduction(int index);                         ///< Sets the item at postion \a index paused, if such an index exists
+    void ResumeProduction(int index);                        ///< Sets the item at postion \a index unpaused, if such an index exists
     void AllowUseImperialPP(int index, bool allow=true);     ///< Allows or disallows the use of the imperial stockpile for production
+
+    void RemoveProductionFromQueue(int index);               ///< Removes the produce at position \a index in the production queue, if such an index exists.
 
     void AddNewlyResearchedTechToGrantAtStartOfNextTurn(std::string name); ///< Inserts the given Tech into the Empire's list of innovations. Call ApplyAddedTech to make it effective.
     void ApplyNewTechs(Universe& universe, int current_turn);   ///< Moves all Techs from the Empire's list of innovations into the Empire's list of available technologies.
