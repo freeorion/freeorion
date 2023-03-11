@@ -212,7 +212,7 @@ namespace {
         std::shared_ptr<GG::Label>              m_location_text;
         std::shared_ptr<GG::Label>              m_PPs_and_turns_text;
         std::shared_ptr<GG::Label>              m_turns_remaining_until_next_complete_text;
-        std::shared_ptr<GG::StaticGraphic>      m_icon;
+        std::shared_ptr<GG::Control>            m_icon;
         std::shared_ptr<MultiTurnProgressBar>   m_progress_bar;
         std::shared_ptr<QuantitySelector>       m_quantity_selector;
         std::shared_ptr<QuantitySelector>       m_block_size_selector;
@@ -222,6 +222,8 @@ namespace {
         double                                  m_total_cost = 0.0;
         double                                  m_completed_progress = 0.0;
         bool                                    m_order_issuing_enabled = true;
+        bool                                    m_paused = false;
+        bool                                    m_marked_to_remove = false;
     };
 
     /////////////////////////////
@@ -413,9 +415,8 @@ namespace {
         GG::Control::CompleteConstruction();
         SetChildClippingMode(ChildClippingMode::ClipToClient);
 
-        GG::Clr clr = m_in_progress
-            ? GG::LightenClr(ClientUI::ResearchableTechTextAndBorderColor())
-            : ClientUI::ResearchableTechTextAndBorderColor();
+        const GG::Clr clr = m_in_progress ? GG::LightenClr(ClientUI::ResearchableTechTextAndBorderColor()) :
+            ClientUI::ResearchableTechTextAndBorderColor();
 
         const ScriptingContext context;
 
@@ -425,6 +426,7 @@ namespace {
         if (elem.item.build_type == BuildType::BT_BUILDING) {
             graphic = ClientUI::BuildingIcon(elem.item.name);
             name_text = UserString(elem.item.name);
+
         } else if (elem.item.build_type == BuildType::BT_SHIP) {
             graphic = ClientUI::ShipDesignIcon(elem.item.design_id);
             const ShipDesign* design = context.ContextUniverse().GetShipDesign(elem.item.design_id);
@@ -432,18 +434,53 @@ namespace {
                 name_text = design->Name();
             else
                 ErrorLogger() << "QueueProductionItemPanel unable to get design with id: " << elem.item.design_id;
+
         } else if (elem.item.build_type == BuildType::BT_STOCKPILE) {
             graphic = ClientUI::MeterIcon(MeterType::METER_STOCKPILE);
             name_text = UserString(elem.item.name);
+
         } else {
             graphic = ClientUI::GetTexture(""); // get "missing texture" texture by supply intentionally bad path
             name_text = UserString("FW_UNKNOWN_DESIGN_NAME");
         }
 
+
+        std::vector<std::shared_ptr<GG::Texture>> graphics;
+        graphics.reserve(3);
+        graphics.push_back(std::move(graphic));
+        if (elem.paused)
+            graphics.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "paused.png", true));
+        if (elem.to_be_removed)
+            graphics.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "deleted.png", true));
+
+        const auto graphics_sz = graphics.size();
+        m_icon = GG::Wnd::Create<MultiTextureStaticGraphic>(
+            std::move(graphics),
+            std::vector<GG::Flags<GG::GraphicStyle>>(graphics_sz, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE));
+
+
+        if (elem.item.build_type == BuildType::BT_SHIP || elem.item.build_type == BuildType::BT_STOCKPILE) {
+            const auto FONT_PTS = ClientUI::Pts();
+            m_quantity_selector = GG::Wnd::Create<QuantitySelector>(
+                elem, GG::X1, Y_MARGIN, GG::Y(FONT_PTS-2*Y_MARGIN),
+                m_in_progress, GG::X(FONT_PTS*2.5), false);
+            m_block_size_selector = GG::Wnd::Create<QuantitySelector>(
+                elem, GG::X1, Y_MARGIN, GG::Y(FONT_PTS-2*Y_MARGIN),
+                m_in_progress, GG::X(FONT_PTS*2.5), true);
+            m_quantity_selector->SetOnlyMouseScrollWhenDropped(true);
+            m_block_size_selector->SetOnlyMouseScrollWhenDropped(true);
+        }
+
+
+        m_name_text = GG::Wnd::Create<CUILabel>(std::move(name_text), GG::FORMAT_TOP | GG::FORMAT_LEFT);
+        m_name_text->SetTextColor(clr);
+        m_name_text->ClipText(true);
+
+
         // get location indicator text
         std::string location_text;
         bool system_selected = false;
-        bool rally_dest_selected = (elem.rally_point_id != INVALID_OBJECT_ID && elem.rally_point_id == SidePanel::SystemID());
+        const bool rally_dest_selected = (elem.rally_point_id != INVALID_OBJECT_ID && elem.rally_point_id == SidePanel::SystemID());
         if (const auto location = context.ContextObjects().get(elem.location)) {
             system_selected = (location->SystemID() != INVALID_OBJECT_ID && location ->SystemID() == SidePanel::SystemID());
             if (GetOptionsDB().Get<bool>("ui.queue.production_location.shown")) {
@@ -457,44 +494,20 @@ namespace {
             }
         }
 
-        const int FONT_PTS = ClientUI::Pts();
-
-        m_icon.reset();
-        if (graphic)
-            m_icon = GG::Wnd::Create<GG::StaticGraphic>(
-                std::move(graphic), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-
-        if (elem.item.build_type == BuildType::BT_SHIP || elem.item.build_type == BuildType::BT_STOCKPILE) {
-            m_quantity_selector = GG::Wnd::Create<QuantitySelector>(
-                elem, GG::X1, Y_MARGIN, GG::Y(FONT_PTS-2*Y_MARGIN),
-                m_in_progress, GG::X(FONT_PTS*2.5), false);
-            m_block_size_selector = GG::Wnd::Create<QuantitySelector>(
-                elem, GG::X1, Y_MARGIN, GG::Y(FONT_PTS-2*Y_MARGIN),
-                m_in_progress, GG::X(FONT_PTS*2.5), true);
-            m_quantity_selector->SetOnlyMouseScrollWhenDropped(true);
-            m_block_size_selector->SetOnlyMouseScrollWhenDropped(true);
-        }
-
-        m_name_text = GG::Wnd::Create<CUILabel>(std::move(name_text),
-                                                GG::FORMAT_TOP | GG::FORMAT_LEFT);
-        m_name_text->SetTextColor(clr);
-        m_name_text->ClipText(true);
-
-        GG::Clr location_clr = clr;
-        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        auto this_client_empire = context.GetEmpire(client_empire_id);
+        auto this_client_empire = context.GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
         if (this_client_empire && (system_selected || rally_dest_selected)) {
-            auto empire_color = this_client_empire->Color();
-            auto rally_color = GG::DarkenClr(GG::InvertClr(empire_color));
-            auto location_color = system_selected ? empire_color : rally_color;
+            const auto empire_color = this_client_empire->Color();
+            const auto rally_color = GG::DarkenClr(GG::InvertClr(empire_color));
+            const auto location_color = system_selected ? empire_color : rally_color;
             m_location_text = GG::Wnd::Create<GG::TextControl>(
                 GG::X0, GG::Y0, GG::X1, GG::Y1, "<s>" + location_text + "</s>",
                 ClientUI::GetBoldFont(), location_color, GG::FORMAT_TOP | GG::FORMAT_RIGHT);
         } else {
             m_location_text = GG::Wnd::Create<CUILabel>(std::move(location_text),
                                                         GG::FORMAT_TOP | GG::FORMAT_RIGHT);
-            m_location_text->SetTextColor(location_clr);
+            m_location_text->SetTextColor(clr);
         }
+
 
         double perc_complete = 1.0;
         double next_progress = 0.0;
@@ -502,6 +515,7 @@ namespace {
             perc_complete = m_completed_progress / m_total_cost;
             next_progress = m_turn_spending / std::max(m_turn_spending, m_total_cost);
         }
+
 
         GG::Clr outline_color = ClientUI::ResearchableTechFillColor();
         if (m_in_progress)
@@ -623,6 +637,9 @@ namespace {
 
     void QueueProductionItemPanel::ItemBlocksizeChanged(int quant, int blocksize)
     { if (m_order_issuing_enabled) PanelUpdateQuantSignal(elem.remaining, blocksize); }
+
+    void SetPaused(bool paused);
+    void SetToBeRemoved(bool to_be_removed);
 
     void QueueProductionItemPanel::Render() {
         GG::Clr fill = m_in_progress
