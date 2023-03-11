@@ -692,6 +692,7 @@ namespace {
         boost::signals2::signal<void (GG::ListBox::iterator, int)>  QueueItemRalliedToSignal;
         boost::signals2::signal<void ()>                            ShowPediaSignal;
         boost::signals2::signal<void (GG::ListBox::iterator, bool)> QueueItemPausedSignal;
+        boost::signals2::signal<void (GG::ListBox::iterator, bool)> QueueItemMarkedDeletedSignal;
         boost::signals2::signal<void (GG::ListBox::iterator)>       QueueItemDupedSignal;
         boost::signals2::signal<void (GG::ListBox::iterator)>       QueueItemSplitSignal;
         boost::signals2::signal<void (GG::ListBox::iterator, bool)> QueueItemUseImperialPPSignal;
@@ -709,7 +710,8 @@ namespace {
             auto pause_action = [&it, this]() { this->QueueItemPausedSignal(it, true); };
             auto disallow_stockpile_action = [&it, this]() { this->QueueItemUseImperialPPSignal(it, false); };
             auto allow_stockpile_action = [&it, this]() { this->QueueItemUseImperialPPSignal(it, true); };
-
+            auto mark_delete_action = [&it, this]() { this->QueueItemMarkedDeletedSignal(it, true); };
+            auto mark_undelete_action = [&it, this]() { this->QueueItemMarkedDeletedSignal(it, false); };
             auto dupe_action = [&it, this]() { this->QueueItemDupedSignal(it); };
             auto split_action = [&it, this]() { this->QueueItemSplitSignal(it); };
 
@@ -719,22 +721,22 @@ namespace {
 
             popup->AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   disabled, false, MoveToTopAction(it)));
             popup->AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), disabled, false, MoveToBottomAction(it)));
-            popup->AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    disabled, false, DeleteAction(it)));
 
             // inspect clicked item: was it a ship?
             auto& row = *it;
             QueueRow* queue_row = row ? dynamic_cast<QueueRow*>(row.get()) : nullptr;
 
-            const Universe& u = GetUniverse();
+            const ScriptingContext context;
+            const Universe& u = context.ContextUniverse();
 
             int remaining = 0;
             bool location_passes = true;
             if (queue_row) {
                 ProductionQueue::Element elem = queue_row->elem;
                 remaining = elem.remaining;
-                ScriptingContext context{u, Empires()};
                 location_passes = elem.item.EnqueueConditionPassedAt(elem.location, context);
             }
+
 
             // Check if build type is ok. If not bail out. Note that DeleteAction does make sense in this case.
             BuildType build_type = queue_row ? queue_row->elem.item.build_type : BuildType::INVALID_BUILD_TYPE;
@@ -743,14 +745,20 @@ namespace {
                 return;
             }
 
+
+            if (queue_row && queue_row->elem.to_be_removed)
+                popup->AddMenuItem(GG::MenuItem(UserString("UNDELETE_QUEUE_ITEM"),  disabled, false, mark_undelete_action));
+            else
+                popup->AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    disabled, false, mark_delete_action));
+
+
             popup->AddMenuItem(GG::MenuItem(UserString("DUPLICATE"), disabled || !location_passes, false, dupe_action));
-            if (remaining > 1) {
+            if (remaining > 1)
                 popup->AddMenuItem(GG::MenuItem(UserString("SPLIT_INCOMPLETE"), disabled, false, split_action));
-            }
 
             if (build_type == BuildType::BT_SHIP) {
                 // for ships, add a set rally point command
-                if (auto system = u.Objects().get<System>(SidePanel::SystemID())) {
+                if (auto system = context.ContextObjects().getRaw<System>(SidePanel::SystemID())) {
                     int empire_id = GGHumanClientApp::GetApp()->EmpireID();
                     std::string rally_prompt = boost::io::str(FlexibleFormat(UserString("RALLY_QUEUE_ITEM"))
                                                               % system->PublicName(empire_id, u));
@@ -892,10 +900,13 @@ void ProductionWnd::CompleteConstruction() {
         boost::bind(&ProductionWnd::ChangeBuildQuantitySlot, this, _1, _2));
     m_build_designator_wnd->SystemSelectedSignal.connect(
         SystemSelectedSignal);
+
     m_queue_wnd->GetQueueListBox()->MovedRowSignal.connect(
         boost::bind(&ProductionWnd::QueueItemMoved, this, _1, _2));
     m_queue_wnd->GetQueueListBox()->QueueItemDeletedSignal.connect(
-        boost::bind(&ProductionWnd::DeleteQueueItem, this, _1));
+        boost::bind(&ProductionWnd::DeleteQueueItem, this, _1, true));
+    m_queue_wnd->GetQueueListBox()->QueueItemMarkedDeletedSignal.connect(
+        boost::bind(&ProductionWnd::DeleteQueueItem, this, _1, _2));
     m_queue_wnd->GetQueueListBox()->LeftClickedRowSignal.connect(
         boost::bind(&ProductionWnd::QueueItemClickedSlot, this, _1, _2, _3));
     m_queue_wnd->GetQueueListBox()->DoubleClickedRowSignal.connect(
@@ -1274,7 +1285,7 @@ void ProductionWnd::ChangeBuildQuantityBlockSlot(int queue_idx, int quantity, in
     empire->UpdateProductionQueue(context);
 }
 
-void ProductionWnd::DeleteQueueItem(GG::ListBox::iterator it) {
+void ProductionWnd::DeleteQueueItem(GG::ListBox::iterator it, bool do_delete) {
     if (!m_order_issuing_enabled)
         return;
     const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
@@ -1292,33 +1303,8 @@ void ProductionWnd::DeleteQueueItem(GG::ListBox::iterator it) {
         DebugLogger() << "DeleteQueueItem idx: " << idx << "  item: " << queue_it->Dump();
         GGHumanClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<ProductionQueueOrder>(
-                ProductionQueueOrder::ProdQueueOrderAction::REMOVE_FROM_QUEUE,
-                m_empire_shown_id, queue_it->uuid),
-            context);
-    }
-
-    empire->UpdateProductionQueue(context);
-}
-
-void ProductionWnd::UndeleteQueueItem(GG::ListBox::iterator it) {
-    if (!m_order_issuing_enabled)
-        return;
-    const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    if (client_empire_id != m_empire_shown_id)
-        return;
-    ScriptingContext context;
-    auto empire = context.GetEmpire(m_empire_shown_id);
-    if (!empire)
-        return;
-
-    const auto idx = m_queue_wnd->GetQueueListBox()->IteraterIndex(it);
-    const auto queue_it = empire->GetProductionQueue().find(idx);
-
-    if (queue_it != empire->GetProductionQueue().end()) {
-        DebugLogger() << "UnDeleteQueueItem idx: " << idx << "  item: " << queue_it->Dump();
-        GGHumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(
-                ProductionQueueOrder::ProdQueueOrderAction::UNREMOVE_FROM_QUEUE,
+                do_delete ? ProductionQueueOrder::ProdQueueOrderAction::REMOVE_FROM_QUEUE :
+                    ProductionQueueOrder::ProdQueueOrderAction::UNREMOVE_FROM_QUEUE,
                 m_empire_shown_id, queue_it->uuid),
             context);
     }
@@ -1348,10 +1334,7 @@ void ProductionWnd::QueueItemClickedSlot(GG::ListBox::iterator it, GG::Pt pt, GG
         return;
 
     const bool is_marked_to_remove = queue_it->to_be_removed;
-    if (is_marked_to_remove)
-        UndeleteQueueItem(it);
-    else
-        DeleteQueueItem(it);
+    DeleteQueueItem(it, is_marked_to_remove);
 }
 
 void ProductionWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) {

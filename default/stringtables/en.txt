@@ -4881,7 +4881,10 @@ RALLY_QUEUE_ITEM
 Rally to %1%
 
 DELETE_QUEUE_ITEM
-<rgba 255 0 0 255>Remove from Queue</rgba>
+<rgba 255 64 64 255>Remove from Queue</rgba>
+
+UNDELETE_QUEUE_ITEM
+<rgba 96 255 96 255>Restore to Queue</rgba>
 
 MOVE_UP_QUEUE_ITEM
 Move to Queue Top
