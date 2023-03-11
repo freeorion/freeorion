@@ -154,12 +154,12 @@ struct FO_COMMON_API ProductionQueue {
     /** Returns map from sets of object ids that can share resources to amount
       * of PP allocated to production queue elements that have build locations
       * in systems in the group. */
-    [[nodiscard]] const std::map<std::set<int>, float>& AllocatedPP() const noexcept { return m_object_group_allocated_pp; }
+    [[nodiscard]] auto& AllocatedPP() const noexcept { return m_object_group_allocated_pp; }
 
     /** Returns map from sets of object ids that can share resources to amount
      * of stockpile PP allocated to production queue elements that have build locations
      * in systems in the group. */
-    [[nodiscard]] const std::map<std::set<int>, float>& AllocatedStockpilePP() const noexcept { return m_object_group_allocated_stockpile_pp; }
+    [[nodiscard]] auto& AllocatedStockpilePP() const noexcept { return m_object_group_allocated_stockpile_pp; }
 
     /** Returns sum of stockpile meters of empire-owned objects. */
     [[nodiscard]] float StockpileCapacity(const ObjectMap& objects) const;
@@ -173,7 +173,7 @@ struct FO_COMMON_API ProductionQueue {
     [[nodiscard]] float ExpectedProjectTransferToStockpile() const noexcept { return m_expected_project_transfer_to_stockpile; }
 
     /** Returns sets of object ids that have more available than allocated PP */
-    [[nodiscard]] std::set<std::set<int>> ObjectsWithWastedPP(const ResourcePool& industry_pool) const;
+    [[nodiscard]] std::vector<std::vector<int>> ObjectsWithWastedPP(const ResourcePool& industry_pool) const;
 
     // STL container-like interface
     [[nodiscard]] bool           empty() const noexcept { return !m_queue.size(); }

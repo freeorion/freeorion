@@ -7353,8 +7353,9 @@ bool MapWnd::ZoomToNextFleet() {
 }
 
 bool MapWnd::ZoomToSystemWithWastedPP() {
-    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    const Empire* empire = GetEmpire(empire_id);
+    const ScriptingContext context;
+
+    const Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return false;
 
@@ -7364,19 +7365,19 @@ bool MapWnd::ZoomToSystemWithWastedPP() {
     if (wasted_PP_objects.empty())
         return false;
 
-    // pick first object in first group
-    auto& obj_group = *wasted_PP_objects.begin();
-    if (obj_group.empty())
-        return false; // shouldn't happen?
     for (const auto& obj_ids : wasted_PP_objects) {
-        for (const auto* obj : Objects().findRaw<UniverseObject>(obj_ids)) {
-            if (obj && obj->SystemID() != INVALID_OBJECT_ID) {
-                // found object with wasted PP that is in a system.  zoom there.
-                CenterOnObject(obj->SystemID());
-                SelectSystem(obj->SystemID());
-                ShowProduction();
-                return true;
-            }
+        for (auto id : obj_ids) {
+            const auto* obj = context.ContextObjects().getRaw(id);
+            if (!obj)
+                continue;
+            const auto sys_id = obj->SystemID();
+            if (sys_id == INVALID_OBJECT_ID)
+                continue;
+            // found object with wasted PP that is in a system.  zoom there.
+            CenterOnObject(sys_id);
+            SelectSystem(sys_id);
+            ShowProduction();
+            return true;
         }
     }
     return false;

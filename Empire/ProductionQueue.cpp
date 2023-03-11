@@ -591,15 +591,16 @@ float ProductionQueue::StockpileCapacity(const ObjectMap& objects) const {
     return retval;
 }
 
-std::set<std::set<int>> ProductionQueue::ObjectsWithWastedPP(const ResourcePool& industry_pool) const {
-    std::set<std::set<int>> retval;
+std::vector<std::vector<int>> ProductionQueue::ObjectsWithWastedPP(const ResourcePool& industry_pool) const {
+    std::vector<std::vector<int>> retval;
 
     if (industry_pool.Type() != ResourceType::RE_INDUSTRY) {
         ErrorLogger() << "ProductionQueue::ObjectsWithWastedPP passed invalid industry resource pool";
         return retval;
     }
 
-
+    const auto& output = industry_pool.Output();
+    retval.reserve(output.size());
     for (auto& [group, avail_pp_in_group] : industry_pool.Output()) {
         //std::cout << "available PP groups size: " << avail_pp.first.size() << " pp: " << avail_pp.second << std::endl;
 
@@ -608,10 +609,11 @@ std::set<std::set<int>> ProductionQueue::ObjectsWithWastedPP(const ResourcePool&
 
         // find this group's allocated PP
         auto alloc_it = m_object_group_allocated_pp.find(group);
-        // is less allocated than is available?  if so, some is wasted (assumes stockpile contribuutions can never be lossless)
-        // XXX maybe should check stockpile input ratio
+        // is less allocated than is available? if so, some is wasted
+        // (assuming stockpile contributions can never be lossless)
+        // maybe should check stockpile input ratio
         if (alloc_it == m_object_group_allocated_pp.end() || alloc_it->second < avail_pp_in_group)
-            retval.insert(group);
+            retval.emplace_back(group.begin(), group.end());
     }
     return retval;
 }
