@@ -15,5 +15,5 @@ RUN dnf install -y cmake \
 	libogg-devel \
 	libvorbis-devel \
 	glew-devel \
-    godot-headless
+	godot3-headless
 
