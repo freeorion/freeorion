@@ -1452,30 +1452,20 @@ void FleetDataPanel::Refresh() {
         };
 
         // Add overlays for all ships colonizing, invading etc.
-        std::shared_ptr<GG::Texture> overlay_texture;
         if (all_ships([](const std::shared_ptr<const Ship>& ship) { return ship->OrderedScrapped(); }))
             add_overlay("scrapped.png");
-        if (all_ships(
-                [](const std::shared_ptr<const Ship>& ship)
-                { return ship->OrderedColonizePlanet() != INVALID_OBJECT_ID; })
-           )
-        {
-            add_overlay("colonizing.png");
-        }
-        if (all_ships(
-                [](const std::shared_ptr<const Ship>& ship)
-                { return ship->OrderedInvadePlanet() != INVALID_OBJECT_ID; })
-           )
-        {
-            add_overlay("invading.png");
-        }
-        if (all_ships(
-                [](const std::shared_ptr<const Ship>& ship)
-                { return ship->OrderedBombardPlanet() != INVALID_OBJECT_ID; })
-           )
-        {
-            add_overlay("bombarding.png");
-        }
+
+        if (all_ships([](const std::shared_ptr<const Ship>& ship)
+                      { return ship->OrderedColonizePlanet() != INVALID_OBJECT_ID; }))
+        { add_overlay("colonizing.png"); }
+
+        if (all_ships([](const std::shared_ptr<const Ship>& ship)
+                      { return ship->OrderedInvadePlanet() != INVALID_OBJECT_ID; }))
+        { add_overlay("invading.png"); }
+
+        if (all_ships([](const std::shared_ptr<const Ship>& ship)
+                      { return ship->OrderedBombardPlanet() != INVALID_OBJECT_ID; }))
+        { add_overlay("bombarding.png"); }
 
         // Moving fleets can't be gifted.  The order will be automatically
         // cancelled on the server.  This make the UI appear to cancel the
