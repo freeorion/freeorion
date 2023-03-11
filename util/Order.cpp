@@ -1275,6 +1275,7 @@ ProductionQueueOrder::ProductionQueueOrder(ProdQueueOrderAction action, int empi
 {
     switch(m_action) {
     case ProdQueueOrderAction::REMOVE_FROM_QUEUE:
+    case ProdQueueOrderAction::UNREMOVE_FROM_QUEUE:
         break;
     case ProdQueueOrderAction::SPLIT_INCOMPLETE:
     case ProdQueueOrderAction::DUPLICATE_ITEM:
@@ -1331,6 +1332,16 @@ void ProductionQueueOrder::ExecuteImpl(ScriptingContext& context) const {
             } else {
                 DebugLogger() << "ProductionQueueOrder removing item at index: " << idx;
                 empire->MarkToBeRemoved(idx);
+            }
+            break;
+        }
+        case ProdQueueOrderAction::UNREMOVE_FROM_QUEUE: {
+            const auto idx = empire->GetProductionQueue().IndexOfUUID(m_uuid);
+            if (idx == -1) {
+                ErrorLogger() << "ProductionQueueOrder asked to unremove invalid UUID: " << boost::uuids::to_string(m_uuid);
+            } else {
+                DebugLogger() << "ProductionQueueOrder unremoving item at index: " << idx;
+                empire->MarkNotToBeRemoved(idx);
             }
             break;
         }
