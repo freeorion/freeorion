@@ -5098,6 +5098,8 @@ namespace {
                 continue;
             if (location_id != element.location)
                 continue;
+            if (element.to_be_removed)
+                continue; // treat as already removed
             if (build_type == BuildType::BT_BUILDING) {
                 // if looking for buildings, accept specifically named building
                 // or any building if no name specified
