@@ -2225,40 +2225,26 @@ void FPSIndicator::UpdateEnabled() {
 //////////////////////////////////////////////////
 // MultiTextureStaticGraphic
 //////////////////////////////////////////////////
-MultiTextureStaticGraphic::MultiTextureStaticGraphic(
-    const std::vector<std::shared_ptr<GG::Texture>>& textures,
-    const std::vector<GG::Flags<GG::GraphicStyle>>& styles) :
-    GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
-    m_styles(styles)
-{
-    for (auto& texture : textures)
-        m_graphics.emplace_back(texture, GG::X0, GG::Y0, texture->DefaultWidth(), texture->DefaultHeight());
-    Init();
-}
-
-MultiTextureStaticGraphic::MultiTextureStaticGraphic(
-    std::vector<std::shared_ptr<GG::Texture>>&& textures,
-    std::vector<GG::Flags<GG::GraphicStyle>>&& styles) :
+MultiTextureStaticGraphic::MultiTextureStaticGraphic(std::vector<std::shared_ptr<GG::Texture>> textures,
+                                                     std::vector<GG::Flags<GG::GraphicStyle>> styles) :
     GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
     m_styles(std::move(styles))
 {
     for (auto& texture : textures) {
-        GG::Pt sz{texture->DefaultWidth(), texture->DefaultHeight()};
-        m_graphics.emplace_back(std::move(texture), GG::X0, GG::Y0, sz.x, sz.y);
+        auto w = texture->DefaultWidth();
+        auto h = texture->DefaultHeight();
+        m_graphics.emplace_back(std::move(texture), GG::X0, GG::Y0, w, h);
     }
     Init();
 }
 
-MultiTextureStaticGraphic::MultiTextureStaticGraphic(
-    const std::vector<GG::SubTexture>& subtextures,
-    const std::vector<GG::Flags<GG::GraphicStyle>>& styles) :
-    GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
-    m_graphics(subtextures),
-    m_styles(styles)
-{ Init(); }
 
-MultiTextureStaticGraphic::MultiTextureStaticGraphic()
-{}
+MultiTextureStaticGraphic::MultiTextureStaticGraphic(std::vector<GG::SubTexture> subtextures,
+                                                     std::vector<GG::Flags<GG::GraphicStyle>> styles) :
+    GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
+    m_graphics(std::move(subtextures)),
+    m_styles(std::move(styles))
+{ Init(); }
 
 GG::Rect MultiTextureStaticGraphic::RenderedArea(const GG::SubTexture& subtexture,
                                                  GG::Flags<GG::GraphicStyle> style) const
@@ -2316,10 +2302,10 @@ GG::Rect MultiTextureStaticGraphic::RenderedArea(const GG::SubTexture& subtextur
 }
 
 void MultiTextureStaticGraphic::Render() {
-    GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
+    const GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
     glColor(color_to_use);
-    for (std::vector<GG::SubTexture>::size_type i = 0; i < m_graphics.size(); ++i) {
-        GG::Rect rendered_area = RenderedArea(m_graphics[i], m_styles[i]);
+    for (auto i = 0u; i < m_graphics.size(); ++i) {
+        const GG::Rect rendered_area = RenderedArea(m_graphics[i], m_styles[i]);
         m_graphics[i].OrthoBlit(rendered_area.ul, rendered_area.lr);
     }
 }
@@ -2334,7 +2320,7 @@ void MultiTextureStaticGraphic::ValidateStyles() {
     unsigned int num_graphics = m_graphics.size();
     m_styles.resize(num_graphics, GG::GRAPHIC_CENTER);
 
-    for (GG::Flags<GG::GraphicStyle>& style : m_styles) {
+    for (auto& style : m_styles) {
         int dup_ct = 0;   // duplication count
         if (style & GG::GRAPHIC_LEFT) ++dup_ct;
         if (style & GG::GRAPHIC_RIGHT) ++dup_ct;

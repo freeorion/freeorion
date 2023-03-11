@@ -589,32 +589,30 @@ public:
       * order they are specified in \a textures with GraphicStyles specified in the same-indexed value of \a styles.
       * if \a styles is not specified or contains fewer entres than \a textures, entries in \a textures without 
       * associated styles use the style GRAPHIC_CENTER. */
-    MultiTextureStaticGraphic(const std::vector<std::shared_ptr<GG::Texture>>& textures,
-                              const std::vector<GG::Flags<GG::GraphicStyle>>& styles = std::vector<GG::Flags<GG::GraphicStyle>>());
-    MultiTextureStaticGraphic(std::vector<std::shared_ptr<GG::Texture>>&& textures,
-                              std::vector<GG::Flags<GG::GraphicStyle>>&& styles = std::vector<GG::Flags<GG::GraphicStyle>>());
+    MultiTextureStaticGraphic(std::vector<std::shared_ptr<GG::Texture>> textures,
+                              std::vector<GG::Flags<GG::GraphicStyle>> styles = {});
 
     /** creates a MultiTextureStaticGraphic from multiple pre-existing SubTextures which are rendered back-to-front in the
       * order they are specified in \a subtextures with GraphicStyles specified in the same-indexed value of \a styles.
       * if \a styles is not specified or contains fewer entres than \a subtextures, entries in \a subtextures without 
       * associated styles use the style GRAPHIC_CENTER. */
-    MultiTextureStaticGraphic(const std::vector<GG::SubTexture>& subtextures,
-                              const std::vector<GG::Flags<GG::GraphicStyle>>& styles = std::vector<GG::Flags<GG::GraphicStyle>>());
+    MultiTextureStaticGraphic(std::vector<GG::SubTexture> subtextures,
+                              std::vector<GG::Flags<GG::GraphicStyle>> styles = {});
 
     /** Renders textures in order specified in constructor, back-to-front. */
     void Render() override;
 
 protected:
-    MultiTextureStaticGraphic();
+    MultiTextureStaticGraphic() = default;
 
     /** Returns the area in which the graphic is actually rendered, in
         UpperLeft()-relative coordinates.  This may not be the entire area of
         the StaticGraphic, based on the style being used. */
-    GG::Rect        RenderedArea(const GG::SubTexture& subtexture, GG::Flags<GG::GraphicStyle> style) const;
+    GG::Rect RenderedArea(const GG::SubTexture& subtexture, GG::Flags<GG::GraphicStyle> style) const;
 
 private:
-    void            Init();
-    void            ValidateStyles();      ///< ensures that the style flags are consistent
+    void Init();
+    void ValidateStyles();      ///< ensures that the style flags are consistent
 
     std::vector<GG::SubTexture>                 m_graphics;
     std::vector<GG::Flags<GG::GraphicStyle>>    m_styles;   ///< position of texture wrt the window area
