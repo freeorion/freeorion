@@ -3033,13 +3033,12 @@ namespace {
         const auto& empire_ids = context.EmpireIDs();
 
         // collect ships that are invading and the troops they carry
-        for (auto* ship : objects.allRaw<Ship>()) { // TODO: convert to findRaw
-            if (ship->SystemID() == INVALID_OBJECT_ID)
-                continue;
-            if (ship->OrderedInvadePlanet() == INVALID_OBJECT_ID)
-                continue;
-            if (!ship->HasTroops(universe)) // can't invade without troops
-                continue;
+        for (auto* ship : objects.findRaw<Ship>([&universe](const Ship& s) {
+                                                    return s.SystemID() != INVALID_OBJECT_ID &&
+                                                        s.OrderedInvadePlanet() != INVALID_OBJECT_ID &&
+                                                        s.HasTroops(universe);
+                                                }))
+        {
             invade_ships.push_back(ship);
 
             auto* planet = objects.getRaw<Planet>(ship->OrderedInvadePlanet());
