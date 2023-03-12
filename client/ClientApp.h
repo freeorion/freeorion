@@ -145,6 +145,9 @@ public:
     /** @brief Send the OrderSet and AI state to the server and start a new turn */
     virtual void StartTurn(const std::string& save_state_string);
 
+    /** @brief Send message to revert all orders and request a new turn update */
+    void RevertOrders();
+
     /** @brief Send turn orders updates to server without starting new turn */
     void SendPartialOrders();
 
