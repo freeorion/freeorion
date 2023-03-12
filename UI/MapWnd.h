@@ -368,6 +368,8 @@ private:
     void RemoveFromWndStack(std::shared_ptr<GG::Wnd> wnd);
     bool ReturnToMap();
 
+    bool RevertOrders();
+
     bool EndTurn();
     void ToggleAutoEndTurn();
 

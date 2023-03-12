@@ -311,10 +311,9 @@ namespace {
 
     auto InWndRect(const GG::Wnd* top_wnd) {
         return [top_wnd](const GG::Wnd* wnd, const GG::Pt pt) -> bool {
-            if (!wnd)
-                return false;
-            return InRect(wnd->Left(), top_wnd ? top_wnd->Top() : wnd->Top(),
-                          wnd->Right(), wnd->Bottom(), pt);
+            return wnd && InRect(wnd->Left(), top_wnd ? top_wnd->Top() : wnd->Top(),
+                                 wnd->Right(), wnd->Bottom(),
+                                 pt);
         };
     }
 
@@ -337,9 +336,39 @@ namespace {
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.button.turn.press.sound.path"), true); }
 
     bool ToggleBoolOption(const std::string& option_name) {
-        bool initially_enabled = GetOptionsDB().Get<bool>(option_name);
+        const bool initially_enabled = GetOptionsDB().Get<bool>(option_name);
         GetOptionsDB().Set(option_name, !initially_enabled);
         return !initially_enabled;
+    }
+
+    void ShowTurnButtonPopup(std::shared_ptr<GG::Button> turn_btn,
+                             std::function<void()> end_turn_action,
+                             std::function<void()> revoke_orders_action)
+    {
+        std::cout << "TurnButtonPopup";
+
+        const auto* app = ClientApp::GetApp();
+        if (!app)
+            return;
+        const auto order_count = app->Orders().size();
+        const auto turn = app->CurrentTurn();
+
+
+        // create popup menu with a commands in it
+        const GG::Pt pt = turn_btn ? turn_btn->LowerRight() : GG::Pt{GG::X1, GG::Y1};
+        auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
+
+        //popup->AddMenuItem(GG::MenuItem(true)); // separator
+
+        const bool disable_end_turn = !turn_btn || turn_btn->Disabled();
+        auto start_label = boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_SEND_AND_START")) % turn % order_count);
+        popup->AddMenuItem(GG::MenuItem(std::move(start_label), disable_end_turn, false, end_turn_action));
+
+        const bool disable_revoke = disable_end_turn || order_count < 1;
+        auto revoke_label = boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_REVOKE")) % turn % order_count);
+        popup->AddMenuItem(GG::MenuItem(std::move(revoke_label), disable_end_turn, false, revoke_orders_action));
+
+        popup->Run();
     }
 
     const std::string FLEET_DETAIL_SHIP_COUNT{UserStringNop("MAP_FLEET_SHIP_COUNT")};
@@ -797,8 +826,8 @@ public:
         m_line_length = GG::X(static_cast<int>(shown_length * m_scale_factor));
 
         // update text
-        std::string&& label_text = boost::io::str(FlexibleFormat(UserString("MAP_SCALE_INDICATOR")) %
-                                                  std::to_string(static_cast<int>(shown_length)));
+        auto label_text = boost::io::str(FlexibleFormat(UserString("MAP_SCALE_INDICATOR")) %
+                                         std::to_string(static_cast<int>(shown_length)));
         m_label->SetText(std::move(label_text));
         m_label->Resize(GG::Pt(GG::X(m_line_length), Height()));
     }
@@ -1051,6 +1080,9 @@ void MapWnd::CompleteConstruction() {
     m_btn_turn->Resize(m_btn_turn->MinUsableSize());
     m_btn_turn->LeftClickedSignal.connect([this]() { EndTurn(); });
     m_btn_turn->LeftClickedSignal.connect(&PlayTurnButtonClickSound);
+    m_btn_turn->RightClickedSignal.connect(
+        [this]() { ShowTurnButtonPopup(m_btn_turn, [this]() { EndTurn(); }, [this]() { RevertOrders(); }); });
+
     RefreshTurnButtonTooltip();
 
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
@@ -6249,6 +6281,16 @@ bool MapWnd::ReturnToMap() {
         ErrorLogger() << "Unknown GG::Wnd " << wnd->Name() << " found in MapWnd::m_wnd_stack";
     }
 
+    return true;
+}
+
+bool MapWnd::RevertOrders() {
+    ClientUI* cui = ClientUI::GetClientUI();
+    if (!cui) {
+        ErrorLogger() << "MapWnd::RevertOrders: No client UI available";
+        return false;
+    }
+    GGHumanClientApp::GetApp()->RevertOrders();
     return true;
 }
 

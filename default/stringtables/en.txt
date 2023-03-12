@@ -3554,6 +3554,12 @@ Turn %1%
 MAP_BTN_TURN_UNREADY
 Revise %1%
 
+MAP_BTN_TURN_REVOKE
+Revoke %2% Orders and Restart Turn %1%
+
+MAP_BTN_TURN_SEND_AND_START
+Send %2% Orders and Start Turn %1%
+
 MAP_BTN_TURN_TOOLTIP
 Start Turn
 
