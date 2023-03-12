@@ -3003,7 +3003,7 @@ sc::result PlayingGame::react(const AutoTurn& msg) {
 
     if (player_connection->GetClientType() != Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
         ErrorLogger(FSM) << "PlayingGame::react(AutoTurn&) Only human client can set empire to auto-turn. Got auto-turn issue from " << player_id;
-        player_connection->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
+        player_connection->SendMessage(ErrorMessage(UserStringNop("WRONG_CLIENT_TYPE_AUTOTURN"), false));
         return discard_event();
     }
 
@@ -3052,6 +3052,51 @@ sc::result PlayingGame::react(const AutoTurn& msg) {
     if (empire->Ready()) {
         // check conditions for ending this turn
         post_event(CheckTurnEndConditions());
+    }
+
+    return discard_event();
+}
+
+sc::result PlayingGame::react(const RevertOrders& msg) {
+    DebugLogger(FSM) << "(ServerFSM) PlayingGame::RevertOrders message received";
+    ServerApp& server = Server();
+    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
+
+    const int player_id = player_connection->PlayerID();
+
+    if (player_connection->GetClientType() != Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
+        player_connection->GetClientType() != Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
+    {
+        ErrorLogger(FSM) << "PlayingGame::react(RevertOrders&) Only player clients can revert orders. Got revert order issue from " << player_id;
+        player_connection->SendMessage(ErrorMessage(UserStringNop("WRONG_CLIENT_TYPE_REVERT_ORDERS"), false));
+        return discard_event();
+    }
+
+    const auto empire = server.Empires().GetEmpire(server.PlayerEmpireID(player_id));
+    if (!empire) {
+        ErrorLogger(FSM) << "PlayingGame::react(RevertOrders&) couldn't get empire for player with id:" << player_id;
+        player_connection->SendMessage(ErrorMessage(UserStringNop("EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS"), false));
+        return discard_event();
+    }
+
+    const int empire_id = empire->EmpireID();
+    if (empire->Eliminated()) {
+        ErrorLogger(FSM) << "PlayingGame::react(RevertOrders&) received orders from player " << empire->PlayerName() << "(id: "
+            << player_id << ") who controls empire " << empire_id << " but empire was eliminated";
+        player_connection->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
+        return discard_event();
+    }
+
+    // TODO: reset orders from player and send new turn update
+
+    empire->SetReady(false);
+
+    // notify other player that this empire has not submitted orders
+    for (auto player_it = server.m_networking.established_begin();
+         player_it != server.m_networking.established_end(); ++player_it)
+    {
+        PlayerConnectionPtr player_ctn = *player_it;
+        player_ctn->SendMessage(PlayerStatusMessage(Message::PlayerStatus::PLAYING_TURN, empire_id));
     }
 
     return discard_event();

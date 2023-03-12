@@ -107,6 +107,7 @@ public:
         ((TURN_TIMEOUT))           ///< sent by server to client to notify about remaining time before turn advance
         ((PLAYER_INFO))            ///< sent by server to client to notify about changes in the player data
         ((AUTO_TURN))              ///< sent by client to server to move into auto-turn state
+        ((REVERT_ORDERS))          ///< send by client to server to discard any previously-sent orders this turn and to re-send the turn update message
     )
 
     FO_ENUM(
@@ -381,6 +382,10 @@ FO_COMMON_API Message PlayerInfoMessage(const std::map<int, PlayerInfo>& players
 /** creates a AUTO_TURN message to set empire in auto-turn state for \a turns_count turns,
  *  inifinity turns if -1 or set empire to playing state if 0. */
 FO_COMMON_API Message AutoTurnMessage(int turns_count);
+
+/** create a REVERT_ORDERS message to ask the server to discard any received orders this turn,
+  * and to re-send the turn update message for this turn. */
+FO_COMMON_API Message RevertOrdersMessage();
 
 ////////////////////////////////////////////////
 // Message data extractors

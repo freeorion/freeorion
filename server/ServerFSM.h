@@ -89,6 +89,7 @@ struct MessageEventBase {
     (AuthResponse)                          \
     (EliminateSelf)                         \
     (AutoTurn)                              \
+    (RevertOrders)                          \
     (Error)
 
 
@@ -294,6 +295,7 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
         sc::custom_reaction<AuthResponse>,
         sc::custom_reaction<EliminateSelf>,
         sc::custom_reaction<AutoTurn>,
+        sc::custom_reaction<RevertOrders>,
         sc::custom_reaction<Error>,
         sc::custom_reaction<LobbyUpdate>
     > reactions;
@@ -311,6 +313,7 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
     sc::result react(const AuthResponse& msg);
     sc::result react(const EliminateSelf& msg);
     sc::result react(const AutoTurn& msg);
+    sc::result react(const RevertOrders& msg);
     sc::result react(const Error& msg);
     sc::result react(const LobbyUpdate& msg);
 

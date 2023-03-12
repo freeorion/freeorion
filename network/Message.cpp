@@ -755,9 +755,11 @@ Message PlayerInfoMessage(const std::map<int, PlayerInfo>& players) {
     return Message{Message::MessageType::PLAYER_INFO, std::move(os).str()};
 }
 
-Message AutoTurnMessage(int turns_count) {
-    return Message{Message::MessageType::AUTO_TURN, std::to_string(turns_count)};
-}
+Message AutoTurnMessage(int turns_count)
+{ return Message{Message::MessageType::AUTO_TURN, std::to_string(turns_count)}; }
+
+Message RevertOrdersMessage()
+{ return Message{Message::MessageType::REVERT_ORDERS, DUMMY_EMPTY_MESSAGE}; }
 
 ////////////////////////////////////////////////
 // Message data extractors

@@ -1006,6 +1006,12 @@ Return to Main Menu without saving.
 ABORT_SAVE_AND_EXIT
 Exit FreeOrion without saving.
 
+WRONG_CLIENT_TYPE_AUTOTURN
+Only human players can set automatic cycling.
+
+WRONG_CLIENT_TYPE_REVERT_ORDERS
+Orders cannot be reverted for non-players.
+
 EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS
 No empire is being controlled by this client; orders cannot be issued.
 
