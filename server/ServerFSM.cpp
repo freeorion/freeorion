@@ -716,7 +716,7 @@ sc::result Idle::react(const HostSPGame& msg) {
 }
 
 sc::result Idle::react(const ShutdownServer& msg) {
-    TraceLogger(FSM) << "(ServerFSM) PlayingGame.ShutdownServer";
+    TraceLogger(FSM) << "(ServerFSM) Idle.ShutdownServer";
 
     return transit<ShuttingDownServer>();
 }
@@ -3057,51 +3057,6 @@ sc::result PlayingGame::react(const AutoTurn& msg) {
     return discard_event();
 }
 
-sc::result PlayingGame::react(const RevertOrders& msg) {
-    DebugLogger(FSM) << "(ServerFSM) PlayingGame::RevertOrders message received";
-    ServerApp& server = Server();
-    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
-
-    const int player_id = player_connection->PlayerID();
-
-    if (player_connection->GetClientType() != Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
-        player_connection->GetClientType() != Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
-    {
-        ErrorLogger(FSM) << "PlayingGame::react(RevertOrders&) Only player clients can revert orders. Got revert order issue from " << player_id;
-        player_connection->SendMessage(ErrorMessage(UserStringNop("WRONG_CLIENT_TYPE_REVERT_ORDERS"), false));
-        return discard_event();
-    }
-
-    const auto empire = server.Empires().GetEmpire(server.PlayerEmpireID(player_id));
-    if (!empire) {
-        ErrorLogger(FSM) << "PlayingGame::react(RevertOrders&) couldn't get empire for player with id:" << player_id;
-        player_connection->SendMessage(ErrorMessage(UserStringNop("EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS"), false));
-        return discard_event();
-    }
-
-    const int empire_id = empire->EmpireID();
-    if (empire->Eliminated()) {
-        ErrorLogger(FSM) << "PlayingGame::react(RevertOrders&) received orders from player " << empire->PlayerName() << "(id: "
-            << player_id << ") who controls empire " << empire_id << " but empire was eliminated";
-        player_connection->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
-        return discard_event();
-    }
-
-    // TODO: reset orders from player and send new turn update
-
-    empire->SetReady(false);
-
-    // notify other player that this empire has not submitted orders
-    for (auto player_it = server.m_networking.established_begin();
-         player_it != server.m_networking.established_end(); ++player_it)
-    {
-        PlayerConnectionPtr player_ctn = *player_it;
-        player_ctn->SendMessage(PlayerStatusMessage(Message::PlayerStatus::PLAYING_TURN, empire_id));
-    }
-
-    return discard_event();
-}
-
 sc::result PlayingGame::react(const Error& msg) {
     auto fatal = HandleErrorMessage(msg, Server());
     if (fatal && !Server().IsHostless()) {
@@ -3426,12 +3381,66 @@ sc::result WaitingForTurnEnd::react(const TurnPartialOrders& msg) {
     return discard_event();
 }
 
+sc::result WaitingForTurnEnd::react(const RevertOrders& msg) {
+    DebugLogger(FSM) << "(ServerFSM) WaitingForTurnEnd::RevertOrders message received";
+    ServerApp& server = Server();
+    const PlayerConnectionPtr& sender = msg.m_player_connection;
+
+    const int player_id = sender->PlayerID();
+
+    if (sender->GetClientType() != Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
+        sender->GetClientType() != Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
+    {
+        ErrorLogger(FSM) << "WaitingForTurnEnd::react(RevertOrders&) Only player clients can revert orders. Got revert order issue from " << player_id;
+        sender->SendMessage(ErrorMessage(UserStringNop("WRONG_CLIENT_TYPE_REVERT_ORDERS"), false));
+        return discard_event();
+    }
+
+    const auto empire = server.Empires().GetEmpire(server.PlayerEmpireID(player_id));
+    if (!empire) {
+        ErrorLogger(FSM) << "WaitingForTurnEnd::react(RevertOrders&) couldn't get empire for player with id:" << player_id;
+        sender->SendMessage(ErrorMessage(UserStringNop("EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS"), false));
+        return discard_event();
+    }
+
+    const int empire_id = empire->EmpireID();
+    if (empire->Eliminated()) {
+        ErrorLogger(FSM) << "WaitingForTurnEnd::react(RevertOrders&) received orders from player " << empire->PlayerName() << "(id: "
+            << player_id << ") who controls empire " << empire_id << " but empire was eliminated";
+        sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
+        return discard_event();
+    }
+
+
+    empire->SetReady(false);
+    server.ClearEmpireTurnOrders(empire_id);
+
+    // re-send player initial turn update
+    bool use_binary_serialization = sender->IsBinarySerializationUsed();
+    sender->SendMessage(TurnUpdateMessage(empire_id,                  server.CurrentTurn(),
+                                          server.Empires(),           server.GetUniverse(),
+                                          server.GetSpeciesManager(), GetCombatLogManager(),
+                                          server.GetSupplyManager(),  server.GetPlayerInfoMap(),
+                                          use_binary_serialization,   !sender->IsLocalConnection()));
+
+
+    // notify other players that this empire has not submitted orders
+    for (auto player_it = server.m_networking.established_begin();
+         player_it != server.m_networking.established_end(); ++player_it)
+    {
+        PlayerConnectionPtr player_ctn = *player_it;
+        player_ctn->SendMessage(PlayerStatusMessage(Message::PlayerStatus::PLAYING_TURN, empire_id));
+    }
+
+    return discard_event();
+}
+
 sc::result WaitingForTurnEnd::react(const RevokeReadiness& msg) {
     TraceLogger(FSM) << "(ServerFSM) WaitingForTurnEnd.RevokeReadiness";
     ServerApp& server = Server();
     const PlayerConnectionPtr& sender = msg.m_player_connection;
 
-    int player_id = sender->PlayerID();
+    const int player_id = sender->PlayerID();
     Networking::ClientType client_type = sender->GetClientType();
 
     if (client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER ||
@@ -3462,7 +3471,7 @@ sc::result WaitingForTurnEnd::react(const RevokeReadiness& msg) {
         // inform player who just submitted of acknowledge revoking status.
         sender->SendMessage(msg.m_message);
 
-        // notify other player that this empire revoked orders
+        // notify other players that this empire revoked readiness
         for (auto player_it = server.m_networking.established_begin();
              player_it != server.m_networking.established_end(); ++player_it)
         {
