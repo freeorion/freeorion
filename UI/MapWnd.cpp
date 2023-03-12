@@ -6132,7 +6132,6 @@ void MapWnd::Sanitize() {
     m_projected_fleet_lines.clear();
     m_system_icons.clear();
     m_fleets_exploring.clear();
-    m_line_between_systems = {INVALID_OBJECT_ID, INVALID_OBJECT_ID};
 
     DetachChildren();
 }
