@@ -269,6 +269,11 @@ struct PlayerInfo {
     int                     empire_id = ALL_EMPIRES;
     Networking::ClientType  client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
     bool                    host = false; //! true iff this is the host player
+
+    bool operator==(const PlayerInfo& rhs) noexcept
+    { return name == rhs.name && empire_id == rhs.empire_id && client_type == rhs.client_type && host == rhs.host; }
+    bool operator!=(const PlayerInfo& rhs) noexcept
+    { return !operator==(rhs); }
 };
 
 
