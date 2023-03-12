@@ -17,7 +17,7 @@ Requirements
 ------------
 
 FreeOrion requires an *OpenGL 2.1* capable graphic card and a display with a
-minimum resolution of at least *800x600*.
+suggested minimum resolution of at least *1280x800*.
 
 Recent releases of FreeOrion require at least *Windows 8.1* or later,
 *macOS 10.12* or later or any reasonably recent Linux distribution on x86
