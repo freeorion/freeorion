@@ -2115,18 +2115,15 @@ void ServerApp::AddEmpireTurn(int empire_id, const PlayerSaveGameData& psgd)
 void ServerApp::RemoveEmpireTurn(int empire_id)
 { m_turn_sequence.erase(empire_id); }
 
-void ServerApp::ClearEmpireTurnOrders() {
-    for (auto& [empire_id, save_data] : m_turn_sequence) {
-        (void)empire_id;
-        if (save_data) {
+void ServerApp::ClearEmpireTurnOrders(int empire_id) {
+    for (auto& [stored_empire_id, save_game_data] : m_turn_sequence) {
+        if (empire_id != ALL_EMPIRES && stored_empire_id != empire_id)
+            continue; // all empires, unless a single one was specified
+        if (save_game_data) {
             // reset only orders
             // left UI data and AI state intact
-            save_data->orders.reset();
+            save_game_data->orders.reset();
         }
-    }
-    for (auto& [empire_id, empire] : m_empires) {
-        (void)empire_id;
-        empire->AutoTurnSetReady();
     }
 }
 
@@ -3492,6 +3489,11 @@ void ServerApp::PreCombatProcessTurns() {
 
     // clean up orders, which are no longer needed
     ClearEmpireTurnOrders();
+    // TODO: CHECK THIS: was in ClearEmpireTurnOrders... needed?
+    for (auto& [empire_id, empire] : m_empires) {
+        (void)empire_id;
+        empire->AutoTurnSetReady();
+    }
 
     // update focus history info
     UpdateResourceCenterFocusHistoryInfo(context.ContextObjects());
@@ -3889,12 +3891,29 @@ void ServerApp::PostCombatProcessTurns() {
          player_it != m_networking.established_end(); ++player_it)
     {
         PlayerConnectionPtr player = *player_it;
-        int player_id = player->PlayerID();
+        const int player_id = player->PlayerID();
         players[player_id] = PlayerInfo{player->PlayerName(),
                                         PlayerEmpireID(player_id),
                                         player->GetClientType(),
                                         m_networking.PlayerIsHost(player_id)};
     }
+    // TEST
+    auto server_players = this->GetPlayerInfoMap(); 
+    if (server_players.size() != players.size())
+        WarnLogger() << "PostCombatProcessTurns constructed players has different size than server players";
+    for (auto it1 = server_players.begin(), it2 = players.begin(); it1 != server_players.end(); ++it1, ++it2) {
+        if (it1->first != it2->first)
+            WarnLogger() << "PostCombatProcessTurns constructed player info id " << it1->first
+                         << " differs from server info id " << it2->first;
+        if (it1->second != it2->second) {
+            WarnLogger() << "PostCombatProcessTurns constructed player info differs from server player info:\n" <<
+                it1->second.name << " ? " << it2->second.name << "\n" <<
+                it1->second.empire_id << " ? " << it2->second.empire_id << "\n" <<
+                it1->second.client_type << " ? " << it2->second.client_type << "\n" <<
+                it1->second.host << " ? " << it2->second.host;
+        }
+    }
+    // END TEST
 
     m_universe.ObfuscateIDGenerator();
 
@@ -3905,13 +3924,13 @@ void ServerApp::PostCombatProcessTurns() {
          player_it != m_networking.established_end(); ++player_it)
     {
         PlayerConnectionPtr player = *player_it;
-        int empire_id = PlayerEmpireID(player->PlayerID());
-        auto empire = m_empires.GetEmpire(empire_id);
+        const int empire_id = PlayerEmpireID(player->PlayerID());
+        const auto empire = m_empires.GetEmpire(empire_id);
         if (empire ||
             player->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR ||
             player->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER)
         {
-            bool use_binary_serialization = player->IsBinarySerializationUsed();
+            const bool use_binary_serialization = player->IsBinarySerializationUsed();
             player->SendMessage(TurnUpdateMessage(empire_id,                m_current_turn,
                                                   m_empires,                m_universe,
                                                   m_species_manager,        GetCombatLogManager(),

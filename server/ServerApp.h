@@ -109,7 +109,7 @@ public:
     void RevokeEmpireTurnReadyness(int empire_id);
 
     /** Sets all empire turn orders to an empty set. */
-    void ClearEmpireTurnOrders();
+    void ClearEmpireTurnOrders(int empire_id = ALL_EMPIRES);
 
     /** Determines if all empired have submitted their orders for this turn It
       * will loop the turn squence vector and check for a set order_set. A
