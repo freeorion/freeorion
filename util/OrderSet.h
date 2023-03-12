@@ -28,7 +28,7 @@ typedef std::shared_ptr<Order> OrderPtr;
     on the client do not change the server save game state.
 
     On game reload, reloaded orders need to be re-executed on the client because
-    the client state start from the last saved server state. Orders are
+    the client state starts from the last saved server state. Orders are
     saved/serialized as unexecuted so that when they are loaded they can be
     mixed with newly issued orders and both the loaded and newly issued orders
     will only execute once.
