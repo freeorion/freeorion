@@ -924,11 +924,11 @@ void GGHumanClientApp::StartTurn(const SaveGameUIData& ui_data) {
     DebugLogger() << "GGHumanClientApp::StartTurn";
 
     if (auto empire = m_empires.GetEmpire(EmpireID())) {
-        double RP = empire->ResourceOutput(ResourceType::RE_RESEARCH);
-        double PP = empire->ResourceOutput(ResourceType::RE_INDUSTRY);
-        auto turn_number = this->m_current_turn;
-        auto ratio = RP / std::max(PP, 0.0001);
-        auto [r, g, b, a] = empire->Color();
+        const double RP = empire->ResourceOutput(ResourceType::RE_RESEARCH);
+        const double PP = empire->ResourceOutput(ResourceType::RE_INDUSTRY);
+        const auto turn_number = this->m_current_turn;
+        const auto ratio = RP / std::max(PP, 0.0001);
+        const auto [r, g, b, a] = empire->Color();
         DebugLogger() << "Current Output (turn " << turn_number << ") RP/PP: " << ratio
                       << " (" << RP << "/" << PP << ")";
         DebugLogger() << "EmpireColors: " << static_cast<int>(r) << " " << static_cast<int>(g)
