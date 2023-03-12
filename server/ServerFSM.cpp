@@ -3362,15 +3362,15 @@ sc::result WaitingForTurnEnd::react(const TurnPartialOrders& msg) {
         return discard_event();
     }
 
-    int player_id = sender->PlayerID();
-    Networking::ClientType client_type = sender->GetClientType();
+    const int player_id = sender->PlayerID();
+    const Networking::ClientType client_type = sender->GetClientType();
 
     if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER) {
         // observers cannot submit orders. ignore.
         ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnPartialOrders&) received orders from player "
                          << sender->PlayerName()
                          << "(player id: " << player_id << ") "
-                               << "who is an observer and should not be sending orders. Orders being ignored.";
+                         << "who is an observer and should not be sending orders. Orders being ignored.";
         sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
         return discard_event();
 
