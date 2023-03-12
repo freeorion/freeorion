@@ -215,7 +215,8 @@ std::string GGHumanClientApp::EncodeServerAddressOption(const std::string& serve
 GGHumanClientApp::GGHumanClientApp(int width, int height, bool calculate_fps, std::string name,
                                    int x, int y, bool fullscreen, bool fake_mode_change) :
     ClientApp(),
-    SDLGUI(width, height, calculate_fps, std::move(name), x, y, fullscreen, fake_mode_change)
+    SDLGUI(width, height, calculate_fps, std::move(name), x, y, fullscreen, fake_mode_change),
+    m_fsm(*this)
 {
 #ifdef ENABLE_CRASH_BACKTRACE
     signal(SIGSEGV, SigHandler);
@@ -223,7 +224,6 @@ GGHumanClientApp::GGHumanClientApp(int width, int height, bool calculate_fps, st
 #ifdef FREEORION_MACOSX
     SDL_SetHint(SDL_HINT_MAC_CTRL_CLICK_EMULATE_RIGHT_CLICK, "1");
 #endif
-    m_fsm = std::make_unique<HumanClientFSM>(*this);
 
     // Force the log file if requested.
     if (GetOptionsDB().Get<std::string>("log-file").empty()) {
@@ -354,7 +354,7 @@ GGHumanClientApp::GGHumanClientApp(int width, int height, bool calculate_fps, st
     // Register LinkText tags with GG::Font
     RegisterLinkTags();
 
-    m_fsm->initiate();
+    m_fsm.initiate();
 
     // Start parsing content
     std::promise<void> barrier;
@@ -619,7 +619,7 @@ void GGHumanClientApp::NewSinglePlayerGame(bool quickstart) {
 
     TraceLogger() << "Sending host SP setup message";
     m_networking->SendMessage(HostSPGameMessage(setup_data, DependencyVersions()));
-    m_fsm->process_event(HostSPGameRequested());
+    m_fsm.process_event(HostSPGameRequested());
     TraceLogger() << "GGHumanClientApp::NewSinglePlayerGame done";
 }
 
@@ -668,7 +668,7 @@ void GGHumanClientApp::MultiPlayerGame() {
 
     if (server_connect_wnd->GetResult().server_dest == "HOST GAME SELECTED") {
         m_networking->SendMessage(HostMPGameMessage(server_connect_wnd->GetResult().player_name, DependencyVersions()));
-        m_fsm->process_event(HostMPGameRequested());
+        m_fsm.process_event(HostMPGameRequested());
     } else {
         boost::uuids::uuid cookie = boost::uuids::nil_uuid();
         try {
@@ -692,15 +692,15 @@ void GGHumanClientApp::MultiPlayerGame() {
                                                   server_connect_wnd->GetResult().type,
                                                   DependencyVersions(),
                                                   cookie));
-        m_fsm->process_event(JoinMPGameRequested());
+        m_fsm.process_event(JoinMPGameRequested());
     }
 }
 
 void GGHumanClientApp::StartMultiPlayerGameFromLobby()
-{ m_fsm->process_event(StartMPGameClicked()); }
+{ m_fsm.process_event(StartMPGameClicked()); }
 
 void GGHumanClientApp::CancelMultiplayerGameFromLobby()
-{ m_fsm->process_event(CancelMPGameClicked()); }
+{ m_fsm.process_event(CancelMPGameClicked()); }
 
 void GGHumanClientApp::SaveGame(const std::string& filename) {
     m_game_saves_in_progress.push(filename);
@@ -805,7 +805,7 @@ void GGHumanClientApp::LoadSinglePlayerGame(std::string filename) {
 
 
     m_networking->SendMessage(HostSPGameMessage(setup_data, DependencyVersions()));
-    m_fsm->process_event(HostSPGameRequested());
+    m_fsm.process_event(HostSPGameRequested());
 }
 
 void GGHumanClientApp::RequestSavePreviews(const std::string& relative_directory) {
@@ -942,7 +942,7 @@ void GGHumanClientApp::StartTurn(const SaveGameUIData& ui_data) {
     }
 
     ClientApp::StartTurn(ui_data);
-    m_fsm->process_event(TurnEnded());
+    m_fsm.process_event(TurnEnded());
 }
 
 void GGHumanClientApp::UnreadyTurn()
@@ -981,7 +981,7 @@ void GGHumanClientApp::HandleSystemEvents() {
         m_connected = false;
         DisconnectedFromServer();
     } else if (auto event_ptr = GetDeferredPostedEvent()) {
-        m_fsm->process_event(*event_ptr);
+        m_fsm.process_event(*event_ptr);
     } else if (auto msg = Networking().GetMessage()) {
         HandleMessage(std::move(*msg));
     }
@@ -1000,32 +1000,32 @@ void GGHumanClientApp::HandleMessage(Message&& msg) {
 
     try {
         switch (msg_type) {
-        case Message::MessageType::ERROR_MSG:               m_fsm->process_event(Error(msg));                   break;
-        case Message::MessageType::HOST_MP_GAME:            m_fsm->process_event(HostMPGame(msg));              break;
-        case Message::MessageType::HOST_SP_GAME:            m_fsm->process_event(HostSPGame(msg));              break;
-        case Message::MessageType::JOIN_GAME:               m_fsm->process_event(JoinGame(msg));                break;
-        case Message::MessageType::HOST_ID:                 m_fsm->process_event(HostID(msg));                  break;
-        case Message::MessageType::LOBBY_UPDATE:            m_fsm->process_event(LobbyUpdate(msg));             break;
-        case Message::MessageType::SAVE_GAME_COMPLETE:      m_fsm->process_event(SaveGameComplete(msg));        break;
-        case Message::MessageType::CHECKSUM:                m_fsm->process_event(CheckSum(msg));                break;
-        case Message::MessageType::GAME_START:              m_fsm->process_event(GameStart(msg));               break;
-        case Message::MessageType::TURN_UPDATE:             m_fsm->process_event(TurnUpdate(msg));              break;
-        case Message::MessageType::TURN_PARTIAL_UPDATE:     m_fsm->process_event(TurnPartialUpdate(msg));       break;
-        case Message::MessageType::TURN_PROGRESS:           m_fsm->process_event(TurnProgress(msg));            break;
-        case Message::MessageType::UNREADY:                 m_fsm->process_event(TurnRevoked(msg));             break;
-        case Message::MessageType::PLAYER_STATUS:           m_fsm->process_event(::PlayerStatus(msg));          break;
-        case Message::MessageType::PLAYER_CHAT:             m_fsm->process_event(PlayerChat(msg));              break;
-        case Message::MessageType::DIPLOMACY:               m_fsm->process_event(Diplomacy(msg));               break;
-        case Message::MessageType::DIPLOMATIC_STATUS:       m_fsm->process_event(DiplomaticStatusUpdate(msg));  break;
-        case Message::MessageType::END_GAME:                m_fsm->process_event(::EndGame(msg));               break;
+        case Message::MessageType::ERROR_MSG:               m_fsm.process_event(Error(msg));                   break;
+        case Message::MessageType::HOST_MP_GAME:            m_fsm.process_event(HostMPGame(msg));              break;
+        case Message::MessageType::HOST_SP_GAME:            m_fsm.process_event(HostSPGame(msg));              break;
+        case Message::MessageType::JOIN_GAME:               m_fsm.process_event(JoinGame(msg));                break;
+        case Message::MessageType::HOST_ID:                 m_fsm.process_event(HostID(msg));                  break;
+        case Message::MessageType::LOBBY_UPDATE:            m_fsm.process_event(LobbyUpdate(msg));             break;
+        case Message::MessageType::SAVE_GAME_COMPLETE:      m_fsm.process_event(SaveGameComplete(msg));        break;
+        case Message::MessageType::CHECKSUM:                m_fsm.process_event(CheckSum(msg));                break;
+        case Message::MessageType::GAME_START:              m_fsm.process_event(GameStart(msg));               break;
+        case Message::MessageType::TURN_UPDATE:             m_fsm.process_event(TurnUpdate(msg));              break;
+        case Message::MessageType::TURN_PARTIAL_UPDATE:     m_fsm.process_event(TurnPartialUpdate(msg));       break;
+        case Message::MessageType::TURN_PROGRESS:           m_fsm.process_event(TurnProgress(msg));            break;
+        case Message::MessageType::UNREADY:                 m_fsm.process_event(TurnRevoked(msg));             break;
+        case Message::MessageType::PLAYER_STATUS:           m_fsm.process_event(::PlayerStatus(msg));          break;
+        case Message::MessageType::PLAYER_CHAT:             m_fsm.process_event(PlayerChat(msg));              break;
+        case Message::MessageType::DIPLOMACY:               m_fsm.process_event(Diplomacy(msg));               break;
+        case Message::MessageType::DIPLOMATIC_STATUS:       m_fsm.process_event(DiplomaticStatusUpdate(msg));  break;
+        case Message::MessageType::END_GAME:                m_fsm.process_event(::EndGame(msg));               break;
 
-        case Message::MessageType::DISPATCH_COMBAT_LOGS:    m_fsm->process_event(DispatchCombatLogs(msg));      break;
+        case Message::MessageType::DISPATCH_COMBAT_LOGS:    m_fsm.process_event(DispatchCombatLogs(msg));      break;
         case Message::MessageType::DISPATCH_SAVE_PREVIEWS:  HandleSaveGamePreviews(msg);                        break;
-        case Message::MessageType::AUTH_REQUEST:            m_fsm->process_event(AuthRequest(msg));             break;
-        case Message::MessageType::CHAT_HISTORY:            m_fsm->process_event(ChatHistory(msg));             break;
+        case Message::MessageType::AUTH_REQUEST:            m_fsm.process_event(AuthRequest(msg));             break;
+        case Message::MessageType::CHAT_HISTORY:            m_fsm.process_event(ChatHistory(msg));             break;
         case Message::MessageType::SET_AUTH_ROLES:          HandleSetAuthRoles(msg);                            break;
-        case Message::MessageType::TURN_TIMEOUT:            m_fsm->process_event(TurnTimeout(msg));             break;
-        case Message::MessageType::PLAYER_INFO:             m_fsm->process_event(PlayerInfoMsg(msg));           break;
+        case Message::MessageType::TURN_TIMEOUT:            m_fsm.process_event(TurnTimeout(msg));             break;
+        case Message::MessageType::PLAYER_INFO:             m_fsm.process_event(PlayerInfoMsg(msg));           break;
         default:
             ErrorLogger() << "GGHumanClientApp::HandleMessage : Received an unknown message type \"" << msg_type << "\".";
         }
@@ -1534,7 +1534,7 @@ void GGHumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_c
         // This throws to exit the GUI
         after_server_shutdown_action = boost::bind(&GGHumanClientApp::ExitSDL, this, exit_code);
 
-    m_fsm->process_event(StartQuittingGame(m_server_process, std::move(after_server_shutdown_action)));
+    m_fsm.process_event(StartQuittingGame(m_server_process, std::move(after_server_shutdown_action)));
 
     m_exit_handled = false;
 }
@@ -1623,7 +1623,7 @@ void GGHumanClientApp::HandleResoureDirChange() {
 
 void GGHumanClientApp::DisconnectedFromServer() {
     DebugLogger() << "GGHumanClientApp::DisconnectedFromServer";
-    m_fsm->process_event(Disconnection());
+    m_fsm.process_event(Disconnection());
 }
 
 void GGHumanClientApp::OpenURL(const std::string& url) {

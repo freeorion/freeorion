@@ -6,13 +6,14 @@
 #include "../../UI/SDLGUI.h"
 #include "../../UI/ClientUI.h"
 #include "../../util/OptionsDB.h"
+#include "HumanClientFSM.h"
 #include <boost/statechart/event_base.hpp>
 #include <memory>
 #include <mutex>
 #include <queue>
 #include <string>
 
-struct HumanClientFSM;
+
 class MultiPlayerLobbyWnd;
 struct PreviewInformation;
 
@@ -178,11 +179,8 @@ private:
         games. \p exit_code is the exit code. */
     void ResetOrExitApp(bool reset, bool skip_savegame, int exit_code = 0);
 
-    std::unique_ptr<HumanClientFSM> m_fsm;
-
-
-
-    Process m_server_process;   ///< the server process (when hosting a game or playing single player); will be empty when playing multiplayer as a non-host player
+    HumanClientFSM m_fsm;
+    Process        m_server_process;   ///< the server process (when hosting a game or playing single player); will be empty when playing multiplayer as a non-host player
 
     /** The only instance of the ClientUI. */
     std::unique_ptr<ClientUI> m_ui;
