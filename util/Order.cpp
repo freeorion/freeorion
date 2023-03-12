@@ -757,7 +757,7 @@ ColonizeOrder::ColonizeOrder(int empire, int ship, int planet, const ScriptingCo
 { Check(empire, m_ship, m_planet, context); }
 
 std::string ColonizeOrder::Dump() const
-{ return UserString("ORDER_COLONIZE"); }
+{ return boost::io::str(FlexibleFormat(UserString("ORDER_COLONIZE")) % m_planet % m_ship) + ExecutedTag(this); }
 
 bool ColonizeOrder::Check(int empire_id, int ship_id, int planet_id,
                           const ScriptingContext& context)
@@ -897,7 +897,7 @@ InvadeOrder::InvadeOrder(int empire, int ship, int planet, const ScriptingContex
 { Check(empire, m_ship, m_planet, context); }
 
 std::string InvadeOrder::Dump() const
-{ return UserString("ORDER_INVADE"); }
+{ return boost::io::str(FlexibleFormat(UserString("ORDER_INVADE")) % m_planet % m_ship) + ExecutedTag(this); }
 
 bool InvadeOrder::Check(int empire_id, int ship_id, int planet_id, const ScriptingContext& context) {
     const Universe& u = context.ContextUniverse();
@@ -1031,7 +1031,7 @@ BombardOrder::BombardOrder(int empire, int ship, int planet, const ScriptingCont
 { Check(empire, m_ship, m_planet, context); }
 
 std::string BombardOrder::Dump() const
-{ return UserString("ORDER_BOMBARD"); }
+{ return boost::io::str(FlexibleFormat(UserString("ORDER_BOMBARD")) % m_planet % m_ship) + ExecutedTag(this); }
 
 bool BombardOrder::Check(int empire_id, int ship_id, int planet_id,
                          const ScriptingContext& context)
@@ -1136,15 +1136,14 @@ bool BombardOrder::UndoImpl(ScriptingContext& context) const {
 ////////////////////////////////////////////////
 // ChangeFocusOrder
 ////////////////////////////////////////////////
-ChangeFocusOrder::ChangeFocusOrder(int empire, int planet, std::string focus,
-                                   const ScriptingContext& context) :
+ChangeFocusOrder::ChangeFocusOrder(int empire, int planet, std::string focus, const ScriptingContext& context) :
     Order(empire),
     m_planet(planet),
     m_focus(std::move(focus))
 { Check(empire, m_planet, m_focus, context); }
 
 std::string ChangeFocusOrder::Dump() const
-{ return UserString("ORDER_FOCUS_CHANGE"); }
+{ return boost::io::str(FlexibleFormat(UserString("ORDER_FOCUS_CHANGE")) % m_planet % m_focus) + ExecutedTag(this); }
 
 bool ChangeFocusOrder::Check(int empire_id, int planet_id, const std::string& focus,
                              const ScriptingContext& context)
@@ -1195,8 +1194,14 @@ PolicyOrder::PolicyOrder(int empire, std::string name, std::string category, boo
     m_adopt(adopt)
 {}
 
-std::string PolicyOrder::Dump() const
-{ return m_adopt ? UserString("ORDER_POLICY_ADOPT") : UserString("ORDER_POLICY_ABANDON"); }
+std::string PolicyOrder::Dump() const {
+    if (m_adopt) {
+        return boost::io::str(FlexibleFormat(UserString("ORDER_POLICY_ADOPT"))
+                              % m_policy_name % m_category % m_slot) + ExecutedTag(this);
+    } else {
+        return boost::io::str(FlexibleFormat(UserString("ORDER_POLICY_ABANDON")) % m_policy_name) + ExecutedTag(this);
+    }
+}
 
 void PolicyOrder::ExecuteImpl(ScriptingContext& context) const {
     auto empire = GetValidatedEmpire(context);

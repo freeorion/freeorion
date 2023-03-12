@@ -5468,22 +5468,22 @@ ORDER_FLEET_TRANSFER
 Fleet Transfer %1% to %2%
 
 ORDER_COLONIZE
-Colonize
+Colonize %1% with %2%
 
 ORDER_INVADE
-Invade
+Invade %1% with %2%
 
 ORDER_BOMBARD
-Bombard
+Bombard %1% with %2%
 
 ORDER_FOCUS_CHANGE
-Focus Change
+Focus Change %1% to %2%
 
 ORDER_POLICY_ADOPT
-Adopt Policy
+Adopt Policy %1% in category %2% slot %3%
 
 ORDER_POLICY_ABANDON
-Abandon Policy
+Abandon Policy %1%
 
 ORDER_RESEARCH
 Research
