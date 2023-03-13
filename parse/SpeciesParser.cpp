@@ -397,10 +397,16 @@ namespace {
         }
         boost::python::stl_input_iterator<std::string> tags_begin(kw["tags"]), it_end;
         std::set<std::string> tags(tags_begin, it_end);
-        boost::python::stl_input_iterator<std::string> likes_begin(kw["likes"]);
-        std::set<std::string> likes(likes_begin, it_end);
-        boost::python::stl_input_iterator<std::string> dislikes_begin(kw["dislikes"]);
-        std::set<std::string> dislikes(dislikes_begin, it_end);
+        std::set<std::string> likes;
+        if (kw.has_key("likes")) {
+            boost::python::stl_input_iterator<std::string> likes_begin(kw["likes"]);
+            likes = std::move(std::set<std::string>(likes_begin, it_end));
+        }
+        std::set<std::string> dislikes;
+        if (kw.has_key("dislikes")) {
+            boost::python::stl_input_iterator<std::string> dislikes_begin(kw["dislikes"]);
+            dislikes = std::move(std::set<std::string>(dislikes_begin, it_end));
+        }
         auto graphic = boost::python::extract<std::string>(kw["graphic"])();
         double spawn_rate = 1.0;
         if (kw.has_key("spawnrate")) {
