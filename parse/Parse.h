@@ -37,7 +37,7 @@ namespace ValueRef {
     struct ValueRefBase;
     template <typename T>
     struct ValueRef;
-}
+} 
 
 namespace parse {
     FO_PARSE_API std::map<std::string, std::unique_ptr<BuildingType>, std::less<>> buildings(const boost::filesystem::path& path);
