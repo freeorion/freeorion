@@ -163,6 +163,10 @@ FO_ENUM(
 )
 
 template<typename T>
+[[nodiscard]] inline std::unique_ptr<T> CloneUnique(const T* ptr)
+{ return ptr ? ptr->Clone() : nullptr; }
+
+template<typename T>
 [[nodiscard]] inline std::unique_ptr<T> CloneUnique(const std::unique_ptr<T>& ptr)
 { return ptr ? ptr->Clone() : nullptr; }
 

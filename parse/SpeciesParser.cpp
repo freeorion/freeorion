@@ -377,7 +377,17 @@ namespace {
         std::vector<std::unique_ptr<Effect::EffectsGroup>> effectsgroups;
         boost::python::stl_input_iterator<effect_group_wrapper> effectsgroups_begin(kw["effectsgroups"]), effectsgroups_end;
         for (auto it = effectsgroups_begin; it != effectsgroups_end; ++it) {
-            effectsgroups.push_back(std::make_unique<Effect::EffectsGroup>(std::move(*it->effects_group)));
+            const auto& effects_group = *it->effects_group;
+            effectsgroups.push_back(std::make_unique<Effect::EffectsGroup>(
+                std::move(ValueRef::CloneUnique(effects_group.Scope())),
+                std::move(ValueRef::CloneUnique(effects_group.Activation())),
+                std::move(ValueRef::CloneUnique(effects_group.Effects())),
+                effects_group.AccountingLabel(),
+                effects_group.StackingGroup(),
+                effects_group.Priority(),
+                effects_group.GetDescription(),
+                effects_group.TopLevelContent()
+            ));
         }
         bool playable = false;
         if (kw.has_key("playable")) {
