@@ -7,7 +7,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <PreprocessorDefinitions>_WINSOCK_DEPRECATED_NO_WARNINGS;BOOST_ALL_DYN_LINK;BOOST_AUTO_LINK_NOMANGLE;BOOST_ZLIB_BINARY=zlib.lib;BOOST_GIL_IO_ENABLE_GRAY_ALPHA;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINSOCK_DEPRECATED_NO_WARNINGS;BOOST_ALL_DYN_LINK;BOOST_AUTO_LINK_NOMANGLE;BOOST_ZLIB_BINARY=zlib.lib;BOOST_GIL_IO_ENABLE_GRAY_ALPHA;BOOST_PHOENIX_STL_TUPLE_H_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../../../include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
