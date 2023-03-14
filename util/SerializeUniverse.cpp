@@ -1112,34 +1112,3 @@ void Deserialize(Archive& ia, std::map<int, std::shared_ptr<UniverseObject>>& ob
 template void Deserialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ia, std::map<int, std::shared_ptr<UniverseObject>>& objects);
 template void Deserialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ia, std::map<int, std::shared_ptr<UniverseObject>>& objects);
 
-namespace boost::serialization {
-    using namespace boost::container;
-
-    template<class Archive, class Key, class Value, class OtherStuff>
-    void save(Archive& ar, const flat_map<Key, Value, OtherStuff>& m, const unsigned int)
-    { stl::save_collection<Archive, flat_map<Key, Value, OtherStuff>>(ar, m); }
-
-    template<class Archive, class Key, class Value, class OtherStuff>
-    void load(Archive& ar, flat_map<Key, Value, OtherStuff>& m, const unsigned int)
-    { load_map_collection(ar, m); }
-
-    template<class Archive, class Key, class Value, class OtherStuff>
-    void serialize(Archive& ar, flat_map<Key, Value, OtherStuff>& m, const unsigned int file_version)
-    { split_free(ar, m, file_version); }
-
-    // Note: I tried loading the internal vector of a flat_map instead of
-    //       loading it as a map and constructing elements on the stack.
-    //       The result was similar or slightly slower than the stack loader.
-
-    template<class Archive, class Value>
-    void save(Archive& ar, const flat_set<Value>& s, const unsigned int)
-    { stl::save_collection(ar, s); }
-
-    template<class Archive, class Value>
-    void load(Archive& ar, flat_set<Value>& s, const unsigned int)
-    { load_set_collection(ar, s); }
-
-    template<class Archive, class Value>
-    void serialize(Archive& ar, flat_set<Value>& s, const unsigned int file_version)
-    { split_free(ar, s, file_version); }
-}

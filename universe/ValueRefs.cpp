@@ -1621,12 +1621,14 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
 {
     const std::string& variable_name = m_property_name.back();
 
+    using boost::container::flat_map;
     // empire properties indexed by strings
     std::function<const std::map<std::string, int>&              (const Empire&)> empire_property_string_key {nullptr};
     std::function<const std::map<std::string, int, std::less<>>& (const Empire&)> empire_property_string_key2{nullptr};
+    std::function<const flat_map<std::string, int, std::less<>>& (const Empire&)> empire_property_string_key3{nullptr};
 
     if (variable_name == "TurnTechResearched")
-        empire_property_string_key2 = &Empire::ResearchedTechs;
+        empire_property_string_key3 = &Empire::ResearchedTechs;
 
     else if (variable_name == "BuildingTypesOwned")
         empire_property_string_key = &Empire::BuildingTypesOwned;
@@ -1659,7 +1661,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
     else if (variable_name == "CumulativeTurnsPolicyAdopted")
         empire_property_string_key = &Empire::PolicyTotalAdoptedDurations;
 
-    if (empire_property_string_key || empire_property_string_key2) {
+    if (empire_property_string_key || empire_property_string_key2 || empire_property_string_key3) {
         using namespace boost::adaptors;
 
         std::shared_ptr<const Empire> empire;
@@ -1708,6 +1710,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
                 return boost::accumulate(empire_property_string_key(*empire) | filtered(key_filter) | map_values, 0);
             else if (empire_property_string_key2)
                 return boost::accumulate(empire_property_string_key2(*empire) | filtered(key_filter) | map_values, 0);
+            else if (empire_property_string_key3)
+                return boost::accumulate(empire_property_string_key3(*empire) | filtered(key_filter) | map_values, 0);
         }
 
         int sum = 0;
@@ -1717,6 +1721,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
                 sum += boost::accumulate(empire_property_string_key(*loop_empire) | filtered(key_filter) | map_values, 0);
             else if (empire_property_string_key2)
                 sum += boost::accumulate(empire_property_string_key2(*loop_empire) | filtered(key_filter) | map_values, 0);
+            else if (empire_property_string_key3)
+                sum += boost::accumulate(empire_property_string_key3(*loop_empire) | filtered(key_filter) | map_values, 0);
         }
         return sum;
     }

@@ -181,8 +181,15 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_color);
     ar  & BOOST_SERIALIZATION_NVP(m_capital_id)
         & BOOST_SERIALIZATION_NVP(m_source_id)
-        & BOOST_SERIALIZATION_NVP(m_eliminated)
-        & BOOST_SERIALIZATION_NVP(m_victories);
+        & BOOST_SERIALIZATION_NVP(m_eliminated);
+    if (Archive::is_loading::value && version < 12) {
+        std::set<std::string> victories;
+        ar  & boost::serialization::make_nvp("m_victories", victories);
+        m_victories.clear();
+        m_victories.insert(boost::container::ordered_unique_range, victories.begin(), victories.end());
+    } else {
+        ar  & BOOST_SERIALIZATION_NVP(m_victories);
+    }
 
 
     auto encoding_empire = GlobalSerializationEncodingForEmpire();
@@ -206,7 +213,13 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     if (Archive::is_loading::value && version < 11) {
         std::map<std::string, int> techs;
         ar  & boost::serialization::make_nvp("m_techs", techs);
-        m_techs.merge(std::move(techs));
+        m_techs.insert(boost::container::ordered_unique_range, techs.begin(), techs.end());
+
+    } else if (Archive::is_loading::value && version < 12) {
+        std::map<std::string, int, std::less<>> techs;
+        ar  & boost::serialization::make_nvp("m_techs", techs);
+        m_techs.insert(boost::container::ordered_unique_range, techs.begin(), techs.end());
+
     } else {
         ar  & BOOST_SERIALIZATION_NVP(m_techs);
     }
@@ -252,21 +265,29 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     if (Archive::is_loading::value && version < 11) {
         std::map<std::string, Meter> meters;
         ar  & boost::serialization::make_nvp("m_meters", meters);
-        m_meters.reserve(meters.size());
-        std::copy(meters.begin(), meters.end(), std::back_inserter(m_meters));
+        m_meters.insert(boost::container::ordered_unique_range, meters.begin(), meters.end());
+
+    } else if (Archive::is_loading::value && version < 12) {
+        std::vector<std::pair<std::string, Meter>> meters;
+        ar  & boost::serialization::make_nvp("m_meters", meters);
+        std::sort(meters.begin(), meters.end());
+        m_meters.insert(std::make_move_iterator(meters.begin()), std::make_move_iterator(meters.end()));
+
     } else {
         ar  & BOOST_SERIALIZATION_NVP(m_meters);
     }
-
 
     if (Archive::is_saving::value && !allied_visible) {
         // don't send what other empires building and researching
         // and which building and ship parts are available to them
         ResearchQueue empty_research_queue(m_id);
-        std::map<std::string, float> empty_research_progress;
+        decltype(this->m_research_progress) empty_research_progress;
         ProductionQueue empty_production_queue(m_id);
-        std::set<std::string> empty_string_set;
+        decltype(this->m_available_building_types) empty_string_set;
+        static_assert(std::is_same_v<decltype(empty_string_set), decltype(this->m_available_ship_parts)>);
+        static_assert(std::is_same_v<decltype(empty_string_set), decltype(this->m_available_ship_hulls)>);
         InfluenceQueue empty_influence_queue(m_id);
+
         ar  & boost::serialization::make_nvp("m_research_queue", empty_research_queue)
             & boost::serialization::make_nvp("m_research_progress", empty_research_progress)
             & boost::serialization::make_nvp("m_production_queue", empty_production_queue)
@@ -280,94 +301,103 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         ar  & BOOST_SERIALIZATION_NVP(m_research_queue)
             & BOOST_SERIALIZATION_NVP(m_research_progress)
             & BOOST_SERIALIZATION_NVP(m_production_queue)
-            & BOOST_SERIALIZATION_NVP(m_influence_queue)
-            & BOOST_SERIALIZATION_NVP(m_available_building_types)
-            & boost::serialization::make_nvp("m_available_part_types", m_available_ship_parts)
-            & boost::serialization::make_nvp("m_available_hull_types", m_available_ship_hulls);
+            & BOOST_SERIALIZATION_NVP(m_influence_queue);
+
+        if (Archive::is_loading::value && version < 12) {
+            std::set<std::string> buf;
+            ar  & boost::serialization::make_nvp("m_available_building_types", buf);
+            m_available_building_types.insert(boost::container::ordered_unique_range, buf.begin(), buf.end());
+            ar  & boost::serialization::make_nvp("m_available_part_types", buf);
+            m_available_ship_parts.insert(boost::container::ordered_unique_range, buf.begin(), buf.end());
+            ar  & boost::serialization::make_nvp("m_available_hull_types", buf);
+            m_available_ship_hulls.insert(boost::container::ordered_unique_range, buf.begin(), buf.end());
+
+        } else {
+            ar  & BOOST_SERIALIZATION_NVP(m_available_building_types)
+                & BOOST_SERIALIZATION_NVP(m_available_ship_parts)
+                & BOOST_SERIALIZATION_NVP(m_available_ship_hulls);
+        }
     }
 
-    ar  & BOOST_SERIALIZATION_NVP(m_supply_system_ranges)
-        & BOOST_SERIALIZATION_NVP(m_supply_unobstructed_systems)
-        & BOOST_SERIALIZATION_NVP(m_preserved_system_exit_lanes);
+    ar  & BOOST_SERIALIZATION_NVP(m_supply_system_ranges);
+    ar  & BOOST_SERIALIZATION_NVP(m_supply_unobstructed_systems);
+    ar  & BOOST_SERIALIZATION_NVP(m_preserved_system_exit_lanes);
 
     if (visible) {
         try {
-        ar  & boost::serialization::make_nvp("m_ship_designs", m_known_ship_designs);
-        ar  & BOOST_SERIALIZATION_NVP(m_sitrep_entries);
-        if (Archive::is_loading::value && version < 12) {
-            std::map<ResourceType, std::shared_ptr<ResourcePool>> scratch;
-            ar  & boost::serialization::make_nvp("m_resource_pools", scratch);
-            auto it = scratch.find(ResourceType::RE_INDUSTRY);
-            if (it != scratch.end())
-                m_industry_pool = std::move(*it->second);
-            it = scratch.find(ResourceType::RE_RESEARCH);
-            if (it != scratch.end())
-                m_research_pool = std::move(*it->second);
-            it = scratch.find(ResourceType::RE_INFLUENCE);
-            if (it != scratch.end())
-                m_influence_pool = std::move(*it->second);
+            ar  & boost::serialization::make_nvp("m_ship_designs", m_known_ship_designs);
+            ar  & BOOST_SERIALIZATION_NVP(m_sitrep_entries);
+            if (Archive::is_loading::value && version < 12) {
+                std::map<ResourceType, std::shared_ptr<ResourcePool>> scratch;
+                ar  & boost::serialization::make_nvp("m_resource_pools", scratch);
+                auto it = scratch.find(ResourceType::RE_INDUSTRY);
+                if (it != scratch.end())
+                    m_industry_pool = std::move(*it->second);
+                it = scratch.find(ResourceType::RE_RESEARCH);
+                if (it != scratch.end())
+                    m_research_pool = std::move(*it->second);
+                it = scratch.find(ResourceType::RE_INFLUENCE);
+                if (it != scratch.end())
+                    m_influence_pool = std::move(*it->second);
 
-        } else {
-            ar  & BOOST_SERIALIZATION_NVP(m_industry_pool)
-                & BOOST_SERIALIZATION_NVP(m_research_pool)
-                & BOOST_SERIALIZATION_NVP(m_influence_pool);
-        }
-        ar  & BOOST_SERIALIZATION_NVP(m_population_pool);
+            } else {
+                ar  & BOOST_SERIALIZATION_NVP(m_industry_pool)
+                    & BOOST_SERIALIZATION_NVP(m_research_pool)
+                    & BOOST_SERIALIZATION_NVP(m_influence_pool);
+            }
+            ar  & BOOST_SERIALIZATION_NVP(m_population_pool);
 
-        if (Archive::is_loading::value && version < 8) {
-            std::set<int> explored_system_ids;
-            ar  & boost::serialization::make_nvp("m_explored_systems", explored_system_ids);
-            m_explored_systems.clear();
-            for (auto id : explored_system_ids)
-                m_explored_systems.emplace(id, 0);
-        } else {
-            ar  & BOOST_SERIALIZATION_NVP(m_explored_systems);
-        }
+            if (Archive::is_loading::value && version < 8) {
+                std::set<int> explored_system_ids;
+                ar  & boost::serialization::make_nvp("m_explored_systems", explored_system_ids);
+                m_explored_systems.clear();
+                for (auto id : explored_system_ids)
+                    m_explored_systems.emplace(id, 0);
+            } else {
+                ar  & BOOST_SERIALIZATION_NVP(m_explored_systems);
+            }
 
-        ar  & BOOST_SERIALIZATION_NVP(m_ship_names_used)
+            ar  & BOOST_SERIALIZATION_NVP(m_ship_names_used)
+                & BOOST_SERIALIZATION_NVP(m_species_ships_owned)
+                & BOOST_SERIALIZATION_NVP(m_ship_designs_owned)
+                & boost::serialization::make_nvp("m_ship_part_types_owned", m_ship_parts_owned)
+                & BOOST_SERIALIZATION_NVP(m_ship_part_class_owned)
+                & BOOST_SERIALIZATION_NVP(m_species_colonies_owned)
+                & BOOST_SERIALIZATION_NVP(m_outposts_owned)
+                & BOOST_SERIALIZATION_NVP(m_building_types_owned);
 
-            & BOOST_SERIALIZATION_NVP(m_species_ships_owned)
-            & BOOST_SERIALIZATION_NVP(m_ship_designs_owned)
-            & boost::serialization::make_nvp("m_ship_part_types_owned", m_ship_parts_owned)
-            & BOOST_SERIALIZATION_NVP(m_ship_part_class_owned)
-            & BOOST_SERIALIZATION_NVP(m_species_colonies_owned)
-            & BOOST_SERIALIZATION_NVP(m_outposts_owned)
-            & BOOST_SERIALIZATION_NVP(m_building_types_owned);
+            if (Archive::is_loading::value && version < 9) {
+                m_ships_destroyed.clear();
+            } else {
+                ar  & BOOST_SERIALIZATION_NVP(m_ships_destroyed);
+            }
 
-        if (Archive::is_loading::value && version < 9) {
-            m_ships_destroyed.clear();
-        } else {
-            ar  & BOOST_SERIALIZATION_NVP(m_ships_destroyed);
-        }
+            ar  & BOOST_SERIALIZATION_NVP(m_empire_ships_destroyed)
+                & BOOST_SERIALIZATION_NVP(m_ship_designs_destroyed)
+                & BOOST_SERIALIZATION_NVP(m_species_ships_destroyed)
+                & BOOST_SERIALIZATION_NVP(m_species_planets_invaded)
 
-        ar  & BOOST_SERIALIZATION_NVP(m_empire_ships_destroyed)
-            & BOOST_SERIALIZATION_NVP(m_ship_designs_destroyed)
-            & BOOST_SERIALIZATION_NVP(m_species_ships_destroyed)
-            & BOOST_SERIALIZATION_NVP(m_species_planets_invaded)
+                & BOOST_SERIALIZATION_NVP(m_ship_designs_in_production)
+                & BOOST_SERIALIZATION_NVP(m_species_ships_produced)
+                & BOOST_SERIALIZATION_NVP(m_ship_designs_produced)
+                & BOOST_SERIALIZATION_NVP(m_species_ships_lost)
+                & BOOST_SERIALIZATION_NVP(m_ship_designs_lost)
+                & BOOST_SERIALIZATION_NVP(m_species_ships_scrapped)
+                & BOOST_SERIALIZATION_NVP(m_ship_designs_scrapped)
 
-            & BOOST_SERIALIZATION_NVP(m_ship_designs_in_production)
-            & BOOST_SERIALIZATION_NVP(m_species_ships_produced)
-            & BOOST_SERIALIZATION_NVP(m_ship_designs_produced)
-            & BOOST_SERIALIZATION_NVP(m_species_ships_lost)
-            & BOOST_SERIALIZATION_NVP(m_ship_designs_lost)
-            & BOOST_SERIALIZATION_NVP(m_species_ships_scrapped)
-            & BOOST_SERIALIZATION_NVP(m_ship_designs_scrapped)
+                & BOOST_SERIALIZATION_NVP(m_species_planets_depoped)
+                & BOOST_SERIALIZATION_NVP(m_species_planets_bombed)
 
-            & BOOST_SERIALIZATION_NVP(m_species_planets_depoped)
-            & BOOST_SERIALIZATION_NVP(m_species_planets_bombed)
-
-            & BOOST_SERIALIZATION_NVP(m_building_types_produced)
-            & BOOST_SERIALIZATION_NVP(m_building_types_scrapped);
-        } catch (...) {
-            ErrorLogger() << "Empire::serialize failed to (de)serialize stuff for visible empire";
+                & BOOST_SERIALIZATION_NVP(m_building_types_produced)
+                & BOOST_SERIALIZATION_NVP(m_building_types_scrapped);
+        } catch (const std::exception& e) {
+            ErrorLogger() << "Empire::serialize failed to (de)serialize stuff for visible empire: " << e.what();
         }
     }
 
     ar  & BOOST_SERIALIZATION_NVP(m_authenticated);
     ar  & BOOST_SERIALIZATION_NVP(m_ready);
     ar  & BOOST_SERIALIZATION_NVP(m_auto_turn_count);
-
-    TraceLogger() << "DONE serializing empire " << m_id << ": " << m_name;
 }
 
 BOOST_CLASS_VERSION(Empire, 12)

@@ -65,26 +65,21 @@ Empire::Empire(std::string name, std::string player_name,
     m_name(std::move(name)),
     m_player_name(std::move(player_name)),
     m_color(color),
+    m_meters{{UserStringNop("METER_DETECTION_STRENGTH"), {}}},
     m_research_queue(m_id),
     m_production_queue(m_id),
     m_influence_queue(m_id),
     m_authenticated(authenticated)
 {
-    DebugLogger() << "Empire::Empire(" << m_name << ", " << m_player_name << ", " << empire_id << ", colour)";
+    //DebugLogger() << "Empire::Empire(" << m_name << ", " << m_player_name << ", " << empire_id << ", colour)";
     Init();
 }
 
 void Empire::Init() {
-    m_meters.emplace_back(std::piecewise_construct,
-                          std::forward_as_tuple(UserStringNop("METER_DETECTION_STRENGTH")),
-                          std::forward_as_tuple());
-    //m_meters[UserStringNop("METER_BUILDING_COST_FACTOR")];
-    //m_meters[UserStringNop("METER_SHIP_COST_FACTOR")];
-    //m_meters[UserStringNop("METER_TECH_COST_FACTOR")];
     for (auto& entry : PolicyCategoriesSlotsMeters())
-        m_meters.emplace_back(std::piecewise_construct,
-                              std::forward_as_tuple(std::move(entry.second)),
-                              std::forward_as_tuple());
+        m_meters.emplace(std::piecewise_construct,
+                         std::forward_as_tuple(std::move(entry.second)),
+                         std::forward_as_tuple());
 }
 
 std::shared_ptr<const UniverseObject> Empire::Source(const ObjectMap& objects) const {
