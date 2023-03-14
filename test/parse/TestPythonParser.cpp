@@ -490,6 +490,12 @@ BOOST_AUTO_TEST_CASE(parse_species_full) {
     BOOST_REQUIRE_EQUAL(7, ordering.size());
     BOOST_REQUIRE_EQUAL(50, species.size());
 
+    for (const auto& s : species) {
+        for (const auto& effects : s.second.Effects()) {
+            BOOST_REQUIRE_MESSAGE(effects.Scope(), s.second.Name());
+        }
+    }
+
     if (const char *species_name = std::getenv("FO_CHECKSUM_SPECIES_NAME")) {
         const auto species_it = species.find(species_name);
         BOOST_REQUIRE(species.end() != species_it);
