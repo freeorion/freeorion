@@ -346,6 +346,8 @@ set_property(DIRECTORY APPEND
         $<$<PLATFORM_ID:FreeBSD>:BOOST_DATE_TIME_NO_LOCALE>
         # Forcing backtrace using api for boost stacktrace due to lacking on ::Unwind side
         $<$<PLATFORM_ID:FreeBSD>:BOOST_STACKTRACE_USE_LIBC_BACKTRACE_FUNCTION>
+        # Workaround for boost 1.81 issue https://github.com/boostorg/phoenix/issues/111
+        $<$<VERSION_EQUAL:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.81>:BOOST_PHOENIX_STL_TUPLE_H_>
 )
 
 
