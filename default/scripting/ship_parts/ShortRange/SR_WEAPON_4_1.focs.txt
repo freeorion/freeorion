@@ -3,7 +3,6 @@ Part
     description = "SR_WEAPON_4_1_DESC"
     class = ShortRange
     damage = 15
-    NoDefaultCapacityEffect
     destroyFightersPerBattleMax = 0
     combatTargets = And [
         Or [
@@ -20,8 +19,6 @@ Part
         Planet
         OwnedBy empire = Source.Owner
     ]
-    effectsgroups =
-        [[WEAPON_BASE_DEFAULT_EFFECTS(SR_WEAPON_4_1)]]
     icon = "icons/ship_parts/death-ray.png"
 
 #include "shortrange.macros"

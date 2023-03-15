@@ -4,7 +4,6 @@ Part
     class = ShortRange
     damage = 2
     shots = 3
-    NoDefaultCapacityEffect
     mountableSlotTypes = External
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 1
@@ -13,8 +12,6 @@ Part
         Planet
         OwnedBy empire = Source.Owner
     ]
-    effectsgroups =
-        [[WEAPON_BASE_DEFAULT_EFFECTS(SR_ARC_DISRUPTOR)]]
     icon = "icons/ship_parts/pulse-laser.png"
 
 #include "shortrange.macros"
