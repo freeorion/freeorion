@@ -1,10 +1,13 @@
 from common.base_prod import INDUSTRY_PER_POP
+from common.misc import DESCRIPTION_EFFECTSGROUP_MACRO
 from common.priorities import (
     TARGET_AFTER_SCALING_PRIORITY,
     TARGET_EARLY_BEFORE_SCALING_PRIORITY,
     TARGET_SCALING_PRIORITY,
 )
 from species.common.multiplier import GREAT_MULTIPLIER
+
+NO_INDUSTRY = DESCRIPTION_EFFECTSGROUP_MACRO("NO_INDUSTRY_DESC")
 
 BASIC_INDUSTRY = [
     EffectsGroup(

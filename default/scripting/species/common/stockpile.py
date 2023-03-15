@@ -19,6 +19,8 @@ def STOCKPILE_PER_POP_EFFECTSGROUP(label: str, value):
     return EffectsGroup(description=label + "_STOCKPILE_DESC", **STOCKPILE_PER_POP_EFFECTSGROUP__SNIP(label, value))
 
 
+NO_STOCKPILE = []
+
 STANDARD_STOCKPILE = [
     EffectsGroup(  # increase or decrease towards target meter, when not recently conquered
         scope=Source,
