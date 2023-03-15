@@ -7,7 +7,11 @@ from techs.techs import (
 
 
 # @1@ part name
-def WEAPON_BASE_EFFECTS(part_name: str, emulate_default_effects: bool = False):
+def WEAPON_BASE_EFFECTS(part_name: str):
+    # these NamedReals need to be parsed to be registered in the pedia. XXX remove this when the pedia can look up ship meters/part capacity
+    NamedReal(name=part_name + "_PART_CAPACITY", value=PartCapacity(name=part_name))
+    NamedReal(name=part_name + "_PART_SECONDARY_STAT", value=PartSecondaryStat(name=part_name))
+
     # The following is really only needed on the first resupplied turn after an upgrade is researched, since the resupply currently
     # takes place in a portion of the turn before meters are updated, but currently there is no good way to restrict this to
     # only that first resupply (and it is simply mildly inefficient to repeat the topup later).
@@ -16,48 +20,7 @@ def WEAPON_BASE_EFFECTS(part_name: str, emulate_default_effects: bool = False):
         accountinglabel=part_name,
         effects=SetCapacity(partname=part_name, value=Value + ARBITRARY_BIG_NUMBER_FOR_METER_TOPUP),
     )
-    return (
-        [
-            EffectsGroup(
-                scope=EMPIRE_OWNED_SHIP_WITH_PART(part_name),
-                accountinglabel=part_name,
-                effects=[
-                    # XXX these NamedReals exist for the pedia; if the pedia gets better support for looking up ship meters etc these should be removed
-                    SetMaxCapacity(
-                        partname=part_name,
-                        value=Value
-                        + NamedReal(
-                            name=part_name + "_PART_CAPACITY",
-                            value=PartCapacity(name=part_name) * SHIP_WEAPON_DAMAGE_FACTOR,
-                        ),
-                    ),
-                    SetMaxSecondaryStat(
-                        partname=part_name,
-                        value=Value
-                        + NamedReal(
-                            name=part_name + "_PART_SECONDARY_STAT",
-                            value=PartSecondaryStat(name=part_name) * SHIP_WEAPON_DAMAGE_FACTOR,
-                        ),
-                    ),
-                ],
-            ),
-            topup_effects_group,
-        ]
-        if emulate_default_effects
-        else [
-            # XXX this EffectGroup is fake and only exists to register the NamedReals for the pedia
-            EffectsGroup(
-                scope=Source,
-                activation=None,
-                effects=SetMaxCapacity(
-                    partname=part_name,
-                    value=NamedReal(name=part_name + "_PART_CAPACITY", value=PartCapacity(name=part_name))
-                    + NamedReal(name=part_name + "_PART_SECONDARY_STAT", value=PartSecondaryStat(name=part_name)),
-                ),
-            ),
-            topup_effects_group,
-        ]
-    )
+    return [topup_effects_group]
 
 
 # @1@ part name

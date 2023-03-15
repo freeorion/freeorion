@@ -1,18 +1,1 @@
-// If unowned or owner has not unlocked the ship part yet.
-// @1@ Weapon name
-WEAPON_BASE_DEFAULT_EFFECTS
-'''        EffectsGroup
-            scope = Source
-            activation = Or [
-                Unowned
-                Not OwnerHasShipPartAvailable name = "@1@"
-            ]
-            stackinggroup = "WEAPON_BASE_DEFAULT_EFFECTS_@1@"
-            accountinglabel = "@1@"
-            effects = [
-                SetMaxCapacity partname = "@1@" value = Value + NamedReal name = "@1@_CAPACITY" value = ([[SHIP_WEAPON_DAMAGE_FACTOR]] * PartCapacity name = "@1@")
-                SetMaxSecondaryStat partname = "@1@" value = Value + NamedReal name = "@1@_SECONDARY" value = ([[SHIP_WEAPON_DAMAGE_FACTOR]] * PartSecondaryStat name = "@1@")
-            ]
-'''
-
-#include "/scripting/common/misc.macros"
+// shortrange.macros has currently no effects
