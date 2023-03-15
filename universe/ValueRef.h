@@ -163,15 +163,15 @@ FO_ENUM(
 )
 
 template<typename T>
-[[nodiscard]] inline std::unique_ptr<T> CloneUnique(const T* ptr)
+[[nodiscard]] inline std::unique_ptr<std::remove_const_t<T>> CloneUnique(const T* ptr)
 { return ptr ? ptr->Clone() : nullptr; }
 
 template<typename T>
-[[nodiscard]] inline std::unique_ptr<T> CloneUnique(const std::unique_ptr<T>& ptr)
+[[nodiscard]] inline std::unique_ptr<std::remove_const_t<T>> CloneUnique(const std::unique_ptr<T>& ptr)
 { return ptr ? ptr->Clone() : nullptr; }
 
 template<typename T>
-[[nodiscard]] inline std::unique_ptr<T> CloneUnique(const std::shared_ptr<T>& ptr)
+[[nodiscard]] inline std::unique_ptr<std::remove_const_t<T>> CloneUnique(const std::shared_ptr<T>& ptr)
 { return ptr ? ptr->Clone() : nullptr; }
 
 template<typename T>

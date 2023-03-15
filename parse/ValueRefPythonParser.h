@@ -21,8 +21,7 @@ struct value_ref_wrapper {
     {}
 
     value_ref_wrapper<T> call(const value_ref_wrapper<T>& var_) const {
-        std::shared_ptr<ValueRef::Variable<T>> var =
-            std::dynamic_pointer_cast<ValueRef::Variable<T>>(var_.value_ref);
+        auto var = std::dynamic_pointer_cast<const ValueRef::Variable<T>>(var_.value_ref);
         if (var) {
             return value_ref_wrapper<T>(std::make_shared<ValueRef::Variable<T>>(
                                             var->GetReferenceType(),
@@ -37,8 +36,7 @@ struct value_ref_wrapper {
     }
 
     operator condition_wrapper() const {
-        std::shared_ptr<ValueRef::Operation<T>> op =
-            std::dynamic_pointer_cast<ValueRef::Operation<T>>(value_ref);
+        auto op = std::dynamic_pointer_cast<const ValueRef::Operation<T>>(value_ref);
 
         if (op && op->LHS() && op->RHS()) {
             Condition::ComparisonType cmp_type;
@@ -73,7 +71,7 @@ struct value_ref_wrapper {
         }
     }
 
-    std::shared_ptr<ValueRef::ValueRef<T>> value_ref;
+    const std::shared_ptr<const ValueRef::ValueRef<T>> value_ref;
 };
 
 value_ref_wrapper<double> pow(const value_ref_wrapper<double>& lhs, double rhs);

@@ -78,7 +78,7 @@ condition_wrapper operator&(const variable_wrapper& lhs, const value_ref_wrapper
             throw std::runtime_error(std::string("Not implemented in ") + __func__ + " type " + std::to_string(static_cast<int>(lhs.m_reference_type)) + rhs.value_ref->Dump());
     }
 
-    std::shared_ptr<ValueRef::Operation<double>> rhs_op = std::dynamic_pointer_cast<ValueRef::Operation<double>>(rhs.value_ref);
+    auto rhs_op = std::dynamic_pointer_cast<const ValueRef::Operation<double>>(rhs.value_ref);
 
     if (rhs_op && rhs_op->LHS() && rhs_op->RHS()) {
         Condition::ComparisonType cmp_type;

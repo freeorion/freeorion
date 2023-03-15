@@ -105,8 +105,19 @@ namespace {
         std::vector<std::shared_ptr<Effect::EffectsGroup>> effectsgroups;
         if (kw.has_key("effectsgroups")) {
             boost::python::stl_input_iterator<effect_group_wrapper> effectsgroups_begin(kw["effectsgroups"]), effectsgroups_end;
-            for (auto it = effectsgroups_begin; it != effectsgroups_end; ++it)
-                effectsgroups.push_back(it->effects_group);
+            for (auto it = effectsgroups_begin; it != effectsgroups_end; ++it) {
+                const auto& effects_group = *it->effects_group;
+                effectsgroups.push_back(std::make_shared<Effect::EffectsGroup>(
+                    ValueRef::CloneUnique(effects_group.Scope()),
+                    ValueRef::CloneUnique(effects_group.Activation()),
+                    ValueRef::CloneUnique(effects_group.Effects()),
+                    effects_group.AccountingLabel(),
+                    effects_group.StackingGroup(),
+                    effects_group.Priority(),
+                    effects_group.GetDescription(),
+                    effects_group.TopLevelContent()
+                ));
+            }
         }
 
         std::set<std::string> prerequisites;

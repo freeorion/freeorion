@@ -10,8 +10,8 @@
 #include "ValueRefPythonParser.h"
 
 condition_wrapper operator&(const condition_wrapper& lhs, const condition_wrapper& rhs) {
-    std::shared_ptr<Condition::ValueTest> lhs_cond = std::dynamic_pointer_cast<Condition::ValueTest>(lhs.condition);
-    std::shared_ptr<Condition::ValueTest> rhs_cond = std::dynamic_pointer_cast<Condition::ValueTest>(rhs.condition);
+    auto lhs_cond = std::dynamic_pointer_cast<const Condition::ValueTest>(lhs.condition);
+    auto rhs_cond = std::dynamic_pointer_cast<const Condition::ValueTest>(rhs.condition);
 
     if (lhs_cond && rhs_cond) {
         const auto lhs_vals = lhs_cond->ValuesDouble();
