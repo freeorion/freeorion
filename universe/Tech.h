@@ -57,6 +57,16 @@ public:
          std::vector<UnlockableItem>&& unlocked_items,
          std::string&& graphic);
 
+    Tech(std::string&& name, std::string&& description,
+         std::string&& short_description, std::string&& category,
+         std::unique_ptr<ValueRef::ValueRef<double>>&& research_cost,
+         std::unique_ptr<ValueRef::ValueRef<int>>&& research_turns,
+         bool researchable, std::set<std::string>&& tags,
+         std::vector<Effect::EffectsGroup>&& effects,
+         std::set<std::string>&& prerequisites,
+         std::vector<UnlockableItem>&& unlocked_items,
+         std::string&& graphic);
+
     bool operator==(const Tech& rhs) const;
     bool operator!=(const Tech& rhs) const { return !(*this == rhs); }
     Tech(const Tech&) = delete;

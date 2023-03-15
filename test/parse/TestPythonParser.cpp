@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
             std::make_unique<ValueRef::Constant<int>>(3),
             true,
             {"PEDIA_LEARNING_CATEGORY"},
-            {},
+            std::vector<Effect::EffectsGroup>{},
             {},
             {UnlockableItem{UnlockableItemType::UIT_POLICY, "PLC_ALGORITHMIC_RESEARCH"}},
             "icons/tech/algorithmic_elegance.png"
