@@ -10,7 +10,9 @@ WEAPON_BASE_DEFAULT_EFFECTS
             stackinggroup = "WEAPON_BASE_DEFAULT_EFFECTS_@1@"
             accountinglabel = "@1@"
             effects = [
-                SetMaxCapacity partname = "@1@" value = Value + NamedReal name = "@1@_CAPACITY" value = PartCapacity name = "@1@"
-                SetMaxSecondaryStat partname = "@1@" value = Value + NamedReal name = "@1@_SECONDARY" value = PartSecondaryStat name = "@1@"
+                SetMaxCapacity partname = "@1@" value = Value + NamedReal name = "@1@_CAPACITY" value = ([[SHIP_WEAPON_DAMAGE_FACTOR]] * PartCapacity name = "@1@")
+                SetMaxSecondaryStat partname = "@1@" value = Value + NamedReal name = "@1@_SECONDARY" value = ([[SHIP_WEAPON_DAMAGE_FACTOR]] * PartSecondaryStat name = "@1@")
             ]
 '''
+
+#include "/scripting/common/misc.macros"
