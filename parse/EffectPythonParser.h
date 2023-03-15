@@ -19,7 +19,7 @@ struct effect_wrapper {
         : effect(ref)
     { }
 
-    std::shared_ptr<Effect::Effect> effect;
+    const std::shared_ptr<const Effect::Effect> effect;
 };
 
 struct effect_group_wrapper {
@@ -31,7 +31,7 @@ struct effect_group_wrapper {
         : effects_group(ref)
     { }
 
-    std::shared_ptr<Effect::EffectsGroup> effects_group;
+    const std::shared_ptr<const Effect::EffectsGroup> effects_group;
 };
 
 struct unlockable_item_wrapper {
@@ -43,7 +43,7 @@ struct unlockable_item_wrapper {
         : item(item_)
     { }
 
-    UnlockableItem item;
+    const UnlockableItem item;
 };
 
 void RegisterGlobalsEffects(boost::python::dict& globals);

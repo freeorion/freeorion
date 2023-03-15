@@ -379,9 +379,9 @@ namespace {
         for (auto it = effectsgroups_begin; it != effectsgroups_end; ++it) {
             const auto& effects_group = *it->effects_group;
             effectsgroups.push_back(std::make_unique<Effect::EffectsGroup>(
-                std::move(ValueRef::CloneUnique(effects_group.Scope())),
-                std::move(ValueRef::CloneUnique(effects_group.Activation())),
-                std::move(ValueRef::CloneUnique(effects_group.Effects())),
+                ValueRef::CloneUnique(effects_group.Scope()),
+                ValueRef::CloneUnique(effects_group.Activation()),
+                ValueRef::CloneUnique(effects_group.Effects()),
                 effects_group.AccountingLabel(),
                 effects_group.StackingGroup(),
                 effects_group.Priority(),

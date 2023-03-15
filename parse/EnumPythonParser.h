@@ -11,7 +11,7 @@ template<typename E>
 struct enum_wrapper {
     enum_wrapper(E value_) : value(value_) { }
 
-    E value;
+    const E value;
 
     bool operator==(const enum_wrapper<E>& rhs) {
         return this->value == rhs.value;
