@@ -1,10 +1,13 @@
 from common.base_prod import RESEARCH_PER_POP
+from common.misc import DESCRIPTION_EFFECTSGROUP_MACRO
 from common.priorities import (
     TARGET_AFTER_SCALING_PRIORITY,
     TARGET_EARLY_BEFORE_SCALING_PRIORITY,
     TARGET_SCALING_PRIORITY,
 )
 from species.common.multiplier import BAD_MULTIPLIER, GOOD_MULTIPLIER
+
+NO_RESEARCH = DESCRIPTION_EFFECTSGROUP_MACRO("NO_RESEARCH_DESC")
 
 BASIC_RESEARCH = [
     EffectsGroup(

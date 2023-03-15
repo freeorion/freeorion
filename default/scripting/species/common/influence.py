@@ -1,4 +1,7 @@
-from common.misc import SUPPLY_DISCONNECTED_INFLUENCE_MALUS
+from common.misc import (
+    DESCRIPTION_EFFECTSGROUP_MACRO,
+    SUPPLY_DISCONNECTED_INFLUENCE_MALUS,
+)
 from common.priorities import (
     TARGET_EARLY_BEFORE_SCALING_PRIORITY,
     TARGET_LAST_BEFORE_OVERRIDE_PRIORITY,
@@ -114,6 +117,8 @@ BASE_INFLUENCE_COSTS = [
         effects=SetTargetInfluence(value=Value + 1),
     ),
 ]
+
+NO_INFLUENCE = [DESCRIPTION_EFFECTSGROUP_MACRO("NO_INFLUENCE_DESC"), *BASE_INFLUENCE_COSTS]
 
 ARTISANS_INFLUENCE_STABILITY = [
     EffectsGroup(  # artistic species generate influence when artisans workshops policy adopted
