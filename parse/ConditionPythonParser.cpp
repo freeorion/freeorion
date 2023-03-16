@@ -588,6 +588,20 @@ namespace {
         return condition_wrapper(std::make_shared<Condition::InOrIsSystem>(std::move(system_id)));
     }
 
+    condition_wrapper insert_on_planet_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<int>> planet_id;
+        if (kw.has_key("id")) {
+            auto id_args = boost::python::extract<value_ref_wrapper<int>>(kw["id"]);
+            if (id_args.check()) {
+                planet_id = ValueRef::CloneUnique(id_args().value_ref);
+            } else {
+                planet_id = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["id"])());
+            }
+        }
+
+        return condition_wrapper(std::make_shared<Condition::OnPlanet>(std::move(planet_id)));
+    }
+
     condition_wrapper insert_turn_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<int>> low;
         if (kw.has_key("low")) {
@@ -706,6 +720,7 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     globals["Random"] = boost::python::raw_function(insert_random_);
     globals["Star"] = boost::python::raw_function(insert_star_);
     globals["InSystem"] = boost::python::raw_function(insert_in_system_);
+    globals["OnPlanet"] = boost::python::raw_function(insert_on_planet_);
     globals["ResupplyableBy"] = boost::python::raw_function(insert_resupplyable_by_);
     globals["DesignHasPart"] = boost::python::raw_function(insert_design_has_part_);
     globals["IsBuilding"] = boost::python::raw_function(insert_building_);
