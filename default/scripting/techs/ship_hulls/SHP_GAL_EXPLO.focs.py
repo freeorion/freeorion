@@ -75,7 +75,7 @@ Tech(
             ],
         ),
         EffectsGroup(
-            scope=Source,
+            scope=IsSource,
             activation=Turn(low=0, high=0),
             effects=[
                 GenerateSitRepMessage(

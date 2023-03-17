@@ -19,15 +19,9 @@ struct variable_wrapper {
     value_ref_wrapper<std::string> get_string_property(const char *property) const;
     variable_wrapper get_variable_property(const char *property) const;
 
-    operator condition_wrapper() const;
-
     const ValueRef::ReferenceType m_reference_type;
     const std::vector<std::string> m_container;
 };
-
-condition_wrapper operator&(const variable_wrapper&, const condition_wrapper&);
-condition_wrapper operator&(const variable_wrapper&, const value_ref_wrapper<double>&);
-condition_wrapper operator~(const variable_wrapper&);
 
 void RegisterGlobalsSources(boost::python::dict& globals);
 

@@ -15,7 +15,7 @@ effectsgroups = [
     # however, since it is the primary way we introduce the custom sitrep capability to players, we use stringtable references so that the message and label may be more
     # readily translated into multiple languages as part of our standard distribution.
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Turn(low=0, high=0),
         effects=GenerateSitRepMessage(
             message="CUSTOM_SITREP_INTRODUCTION",
@@ -119,7 +119,7 @@ effectsgroups = [
         ~Contains(
             Ship & (OwnedBy(affiliation=EnemyOf, empire=Source.Owner) | Unowned) & VisibleToEmpire(empire=Source.Owner)
         ),
-        activation=Source,
+        activation=IsSource,
         priority=END_CLEANUP_PRIORITY,
         effects=Conditional(
             condition=Number(
@@ -232,7 +232,7 @@ effectsgroups = [
     # empire = Source.Owner
     # #####     RANDOM BEGINNER HINTS     ######
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Turn(low=0, high=100),
         stackinggroup="HINTSSYSTEM",
         effects=GenerateSitRepMessage(

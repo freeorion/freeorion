@@ -21,18 +21,18 @@ PLANETARY_DRIVE_ACTIVATION = (
             )
             & OwnedBy(empire=Source.Owner)
         )
-        & ~Contains(Source),
+        & ~Contains(IsSource),
     )
 )
 
 ADVANCED_FOCUS_EFFECTS = [
     EffectsGroup(
-        scope=Source, activation=Planet() & Focus(type=["FOCUS_STEALTH"]), effects=SetStealth(value=Value + 15)
+        scope=IsSource, activation=Planet() & Focus(type=["FOCUS_STEALTH"]), effects=SetStealth(value=Value + 15)
     ),
     EffectsGroup(
         scope=Planet()
         & OwnedBy(affiliation=EnemyOf, empire=Source.Owner)
-        & WithinStarlaneJumps(jumps=4, condition=Source)
+        & WithinStarlaneJumps(jumps=4, condition=IsSource)
         & ~Number(low=1, condition=IsBuilding(name=["BLD_GENOME_BANK"]) & OwnedBy(empire=RootCandidate.Owner)),
         activation=Focus(type=["FOCUS_BIOTERROR"]),
         priority=TARGET_POPULATION_AFTER_SCALING_PRIORITY,
@@ -52,11 +52,11 @@ ADVANCED_FOCUS_EFFECTS = [
                 parameters={"fleet": Target.ID, "system": Source.SystemID},
                 empire=Source.Owner,
             ),
-            MoveTo(destination=Contains(Source) & System),
+            MoveTo(destination=Contains(IsSource) & System),
         ],
     ),
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=PLANETARY_DRIVE_ACTIVATION,
         # add the special with higher priority, so it can trigger with the same
         # priotity as the effect below
@@ -64,13 +64,13 @@ ADVANCED_FOCUS_EFFECTS = [
         effects=AddSpecial(name="STARLANE_DRIVE_ACTIVATED_SPECIAL"),
     ),
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=PLANETARY_DRIVE_ACTIVATION,
         priority=POPULATION_DEFAULT_PRIORITY,
         effects=[
             MoveTo(
                 destination=System
-                & WithinStarlaneJumps(jumps=1, condition=Source)
+                & WithinStarlaneJumps(jumps=1, condition=IsSource)
                 & Contains(
                     (
                         IsBuilding(name=["BLD_PLANET_BEACON"])
@@ -82,7 +82,7 @@ ADVANCED_FOCUS_EFFECTS = [
                     )
                     & OwnedBy(empire=Source.Owner)
                 )
-                & ~Contains(Source)
+                & ~Contains(IsSource)
             ),
             GenerateSitRepMessage(
                 message="EFFECT_PLANET_DRIVE",
@@ -95,7 +95,7 @@ ADVANCED_FOCUS_EFFECTS = [
         ],
     ),
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Random(probability=0.5)
         & Planet()
         & Focus(type=["FOCUS_PLANET_DRIVE"])
@@ -113,7 +113,7 @@ ADVANCED_FOCUS_EFFECTS = [
                 )
                 & OwnedBy(empire=Source.Owner)
             )
-            & ~Contains(Source),
+            & ~Contains(IsSource),
         )
         & ~WithinDistance(distance=200, condition=IsBuilding(name=["BLD_LIGHTHOUSE"])),
         effects=[
@@ -168,7 +168,7 @@ ADVANCED_FOCUS_EFFECTS = [
         ),
     ),
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Focus(type=["FOCUS_LOGISTICS"]),
         accountinglabel="SHP_INTSTEL_LOG",
         effects=SetMaxSupply(value=Value + 3),

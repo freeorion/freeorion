@@ -167,10 +167,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         py::class_<enum_wrapper<BuildType>>("__BuildType", py::no_init);
         py::class_<unlockable_item_wrapper>("UnlockableItem", py::no_init);
         py::class_<FocusType>("__FocusType", py::no_init);
-        auto py_variable_wrapper = py::class_<variable_wrapper>("__Variable", py::no_init)
-            .def(py::self_ns::self & py::other<value_ref_wrapper<double>>())
-            .def(py::self_ns::self & py::other<condition_wrapper>())
-            .def(~py::self_ns::self);
+        auto py_variable_wrapper = py::class_<variable_wrapper>("__Variable", py::no_init);
 
         for (const char* property : {"Owner",
                                      "SupplyingEmpire",
@@ -282,7 +279,6 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
                 boost::mpl::vector<variable_wrapper, const variable_wrapper&>()));
         }
 
-        py::implicitly_convertible<variable_wrapper, condition_wrapper>();
         py::implicitly_convertible<value_ref_wrapper<double>, condition_wrapper>();
         py::implicitly_convertible<value_ref_wrapper<int>, condition_wrapper>();
 

@@ -46,7 +46,7 @@ Species(
         # huge bonus to planetary shields
         EffectsGroup(
             description="ANCIENT_PLANETARY_SHIELD_DESC",
-            scope=Source & Planet(),
+            scope=IsSource & Planet(),
             effects=SetMaxShield(
                 value=Value + NamedReal(name="ANCIENT_PLANETARY_SHIELD", value=250 * PLANET_SHIELD_FACTOR)
             ),
@@ -54,21 +54,21 @@ Species(
         # huge bonus to ground troops
         EffectsGroup(
             description="ANCIENT_DEFENSE_TROOPS_DESC",
-            scope=Source & Planet(),
+            scope=IsSource & Planet(),
             effects=SetMaxTroops(
                 value=Value + (Target.Population * NamedReal(name="ANCIENT_PLANETARY_TROOPS", value=5))
             ),
         ),
         # set population to max
         EffectsGroup(
-            scope=Source & Planet(),
+            scope=IsSource & Planet(),
             activation=Turn(high=1),
             priority=POPULATION_OVERRIDE_PRIORITY,
             effects=SetPopulation(value=Target.TargetPopulation),
         ),
         # self-destruct when captured
         EffectsGroup(
-            scope=Source,
+            scope=IsSource,
             activation=Planet() & OwnedBy(affiliation=AnyEmpire),
             priority=POPULATION_OVERRIDE_PRIORITY,
             effects=[

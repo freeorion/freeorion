@@ -3,9 +3,14 @@
 # Values are declared in common/named_values.focs.txt
 POLICY_DISLIKE_SCALING = (
     1.0
-    * (2.0 ** (StatisticIf(float, condition=Source & EmpireHasAdoptedPolicy(empire=Target.Owner, name="PLC_LIBERTY"))))
+    * (
+        2.0
+        ** (StatisticIf(float, condition=IsSource & EmpireHasAdoptedPolicy(empire=Target.Owner, name="PLC_LIBERTY")))
+    )
     * (
         0.5
-        ** (StatisticIf(float, condition=Source & EmpireHasAdoptedPolicy(empire=Target.Owner, name="PLC_CONFORMANCE")))
+        ** (
+            StatisticIf(float, condition=IsSource & EmpireHasAdoptedPolicy(empire=Target.Owner, name="PLC_CONFORMANCE"))
+        )
     )
 )

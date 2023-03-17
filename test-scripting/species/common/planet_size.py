@@ -8,7 +8,7 @@
 #         effects = SetPlanetSize planetsize = Huge
 # '''
 
-LARGE_PLANET = EffectsGroup(scope=Source, activation=Planet() & Turn(high=0), effects=SetPlanetSize(planetsize=Large))
+LARGE_PLANET = EffectsGroup(scope=IsSource, activation=Planet() & Turn(high=0), effects=SetPlanetSize(planetsize=Large))
 
 # MEDIUM_PLANET
 # '''EffectsGroup

@@ -11,14 +11,14 @@ NO_RESEARCH = DESCRIPTION_EFFECTSGROUP_MACRO("NO_RESEARCH_DESC")
 
 BASIC_RESEARCH = [
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & Focus(type=["FOCUS_RESEARCH"]) & Happiness(low=0),
         accountinglabel="FOCUS_RESEARCH_LABEL",
         priority=TARGET_EARLY_BEFORE_SCALING_PRIORITY,
         effects=SetTargetResearch(value=Value + Target.Population * RESEARCH_PER_POP),
     ),
     EffectsGroup(  # gives human bonuses when AI Aggression set to Beginner
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & IsHuman & (GalaxyMaxAIAggression == 0),  # human player, not human species
         accountinglabel="DIFFICULTY",
         priority=TARGET_AFTER_SCALING_PRIORITY,
@@ -30,7 +30,7 @@ BAD_RESEARCH = [
     *BASIC_RESEARCH,
     EffectsGroup(
         description="BAD_RESEARCH_DESC",
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & Focus(type=["FOCUS_RESEARCH"]),
         accountinglabel="BAD_RESEARCH_LABEL",
         priority=TARGET_SCALING_PRIORITY,
@@ -42,7 +42,7 @@ GOOD_RESEARCH = [
     *BASIC_RESEARCH,
     EffectsGroup(
         description="GOOD_RESEARCH_DESC",
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & Focus(type=["FOCUS_RESEARCH"]) & Happiness(low=2),
         accountinglabel="GOOD_RESEARCH_LABEL",
         priority=TARGET_SCALING_PRIORITY,

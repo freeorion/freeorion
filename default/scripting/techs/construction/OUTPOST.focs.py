@@ -40,12 +40,12 @@ Tech(
             effects=SetHappiness(
                 value=Value
                 + MinOf(float, Abs(float, Value(Target.TargetHappiness) - Value), 1)
-                * (1 - 2 * (StatisticIf(float, condition=Target & (Value > Value(Target.TargetHappiness)))))
+                * (1 - 2 * (StatisticIf(float, condition=IsTarget & (Value > Value(Target.TargetHappiness)))))
             ),
         ),
         # Reset influence to 0 if no policies adopted. Not really relevant to Outposts, but I need somewhere to put this...
         EffectsGroup(
-            scope=Source,
+            scope=IsSource,
             activation=HasEmpireStockpile(empire=Source.Owner, resource=Influence, high=0)
             & (NumPoliciesAdopted(empire=Source.Owner) == 0),
             priority=METER_OVERRIDE_PRIORITY,

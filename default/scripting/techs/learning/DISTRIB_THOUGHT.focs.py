@@ -39,7 +39,7 @@ Tech(
             ),
         ),
         EffectsGroup(
-            scope=Source,
+            scope=IsSource,
             effects=SetEmpireMeter(empire=Source.Owner, meter="MILITARY_CATEGORY_NUM_POLICY_SLOTS", value=Value + 1),
         ),
     ],

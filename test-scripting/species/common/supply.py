@@ -5,7 +5,7 @@ from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
 # '''
 
 STANDARD_SUPPLY_GROWTH = EffectsGroup(  # increase 1 per turn, up to max
-    scope=Source,
+    scope=IsSource,
     activation=Planet()
     & (LocalCandidate.LastTurnConquered < CurrentTurn)
     & (LocalCandidate.LastTurnAttackedByShip < CurrentTurn),
@@ -38,7 +38,10 @@ STANDARD_SUPPLY_GROWTH = EffectsGroup(  # increase 1 per turn, up to max
 
 AVERAGE_SUPPLY = [
     EffectsGroup(
-        scope=Source, activation=Planet(), accountinglabel="AVERAGE_SUPPLY_LABEL", effects=SetMaxSupply(value=Value + 1)
+        scope=IsSource,
+        activation=Planet(),
+        accountinglabel="AVERAGE_SUPPLY_LABEL",
+        effects=SetMaxSupply(value=Value + 1),
     ),
     STANDARD_SUPPLY_GROWTH,
 ]

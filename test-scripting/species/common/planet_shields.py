@@ -17,7 +17,7 @@ from common.priorities import (
 # '''
 
 STANDARD_SHIELD_GROWTH = EffectsGroup(  # increase 1 per turn, up to max
-    scope=Source,
+    scope=IsSource,
     activation=Planet()
     & Unowned
     & (LocalCandidate.LastTurnConquered < CurrentTurn)
@@ -29,7 +29,7 @@ STANDARD_SHIELD_GROWTH = EffectsGroup(  # increase 1 per turn, up to max
 
 
 PROTECTION_FOCUS_SHIELDS = EffectsGroup(
-    scope=Source,
+    scope=IsSource,
     activation=Planet() & Focus(type=["FOCUS_PROTECTION"]),
     stackinggroup="FOCUS_PROTECTION_SHIELDS_STACK",
     accountinglabel="FOCUS_PROTECTION_LABEL",

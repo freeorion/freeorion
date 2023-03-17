@@ -6,7 +6,7 @@ IMPOSSIBLY_LARGE_TURN = 2**15
 
 
 def DESCRIPTION_EFFECTSGROUP_MACRO(desc: str):
-    return EffectsGroup(description=desc, scope=Source, activation=None, effects=NoEffect)
+    return EffectsGroup(description=desc, scope=IsSource, activation=None, effects=NoEffect)
 
 
 FIGHTER_DAMAGE_FACTOR = GameRule(type=float, name="RULE_FIGHTER_DAMAGE_FACTOR")

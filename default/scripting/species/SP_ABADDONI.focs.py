@@ -81,7 +81,9 @@ Species(
         *AVERAGE_SUPPLY,
         *BAD_DEFENSE_TROOPS,
         EffectsGroup(
-            scope=Source, activation=Turn(high=1), effects=[GiveEmpireTech(name="GRO_SUBTER_HAB", empire=Target.Owner)]
+            scope=IsSource,
+            activation=Turn(high=1),
+            effects=[GiveEmpireTech(name="GRO_SUBTER_HAB", empire=Target.Owner)],
         ),
         # not for description
         *AVERAGE_PLANETARY_SHIELDS,

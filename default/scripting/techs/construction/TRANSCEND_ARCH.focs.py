@@ -18,7 +18,7 @@ Tech(
     ],
     effectsgroups=[
         EffectsGroup(
-            scope=Source,
+            scope=IsSource,
             effects=SetEmpireMeter(empire=Source.Owner, meter="SOCIAL_CATEGORY_NUM_POLICY_SLOTS", value=Value + 1),
         )
     ],

@@ -68,7 +68,7 @@ Species(
         *AVERAGE_DEFENSE_TROOPS,
         # not for description
         EffectsGroup(
-            scope=Source,
+            scope=IsSource,
             activation=Planet()
             & (
                 Turn(low=10, high=10)
@@ -86,13 +86,13 @@ Species(
         *ULTIMATE_SHIP_SHIELDS,
         EffectsGroup(
             description="GOOD_PLANETARY_DEFENSE_DESC",
-            scope=Source,
+            scope=IsSource,
             activation=Planet(),
             effects=SetMaxDefense(value=Value + (5 * PLANET_DEFENSE_FACTOR)),
         ),
         EffectsGroup(
             description="GOOD_PLANETARY_SHIELD_DESC",
-            scope=Source,
+            scope=IsSource,
             activation=Planet(),
             effects=SetMaxShield(value=Value + (5 * PLANET_SHIELD_FACTOR)),
         ),

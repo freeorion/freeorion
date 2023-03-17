@@ -10,7 +10,7 @@ Tech(
     * (
         1
         - 0.25
-        * StatisticIf(float, condition=Source & EmpireHasAdoptedPolicy(empire=Source.Owner, name="PLC_INDUSTRIALISM"))
+        * StatisticIf(float, condition=IsSource & EmpireHasAdoptedPolicy(empire=Source.Owner, name="PLC_INDUSTRIALISM"))
     ),
     researchturns=7,
     tags=["PEDIA_PRODUCTION_CATEGORY", "THEORY"],

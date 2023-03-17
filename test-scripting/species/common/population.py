@@ -16,14 +16,14 @@ from species.common.general import (
 GROWTH_RATE_FACTOR = (
     0.1
     * (
-        1 - StatisticIf(float, condition=Target & EmpireHasAdoptedPolicy(name="PLC_NO_GROWTH"))
+        1 - StatisticIf(float, condition=IsTarget & EmpireHasAdoptedPolicy(name="PLC_NO_GROWTH"))
     )  # no growth with no-growth policy
     * (
-        1 + 0.5 * StatisticIf(float, condition=Target & EmpireHasAdoptedPolicy(name="PLC_POPULATION"))
+        1 + 0.5 * StatisticIf(float, condition=IsTarget & EmpireHasAdoptedPolicy(name="PLC_POPULATION"))
     )  # +50% growth with population policy
     * (
         1
-        + StatisticIf(float, condition=Target & EmpireHasAdoptedPolicy(name="PLC_AUGMENTATION"))
+        + StatisticIf(float, condition=IsTarget & EmpireHasAdoptedPolicy(name="PLC_AUGMENTATION"))
         # slower growth with augmentation on low-infrastructure planets
         * MinOf(
             float,
@@ -38,7 +38,7 @@ GROWTH_RATE_FACTOR = (
 )
 
 HOMEWORLD_BONUS_POPULATION = EffectsGroup(
-    scope=Source & Homeworld(name=[Source.Species]),
+    scope=IsSource & Homeworld(name=[Source.Species]),
     activation=Planet(),
     stackinggroup="HOMEWORLD_STACK",
     accountinglabel="HOMEWORLD_BONUS",
@@ -51,21 +51,21 @@ HOMEWORLD_BONUS_POPULATION = EffectsGroup(
 
 ENVIRONMENT_MODIFIER = [
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & Planet(environment=[Uninhabitable]),
         accountinglabel="UNINHABTIABLE_ENVIRONMENT_LABEL",
         priority=TARGET_POPULATION_OVERRIDE_PRIORITY,
         effects=SetTargetPopulation(value=-999),
     ),
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & Planet(environment=[Hostile]),
         accountinglabel="HOSTILE_ENVIRONMENT_LABEL",
         priority=TARGET_POPULATION_BEFORE_SCALING_PRIORITY,
         effects=SetTargetPopulation(value=Value - 4 * Source.HabitableSize),
     ),
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & Planet(environment=[Poor]),
         accountinglabel="POOR_ENVIRONMENT_LABEL",
         priority=TARGET_POPULATION_BEFORE_SCALING_PRIORITY,
@@ -81,7 +81,7 @@ ENVIRONMENT_MODIFIER = [
     #             priority = [[TARGET_POPULATION_BEFORE_SCALING_PRIORITY]]
     #             effects = SetTargetPopulation value = Value + 0 * Source.HabitableSize
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Planet(environment=[Good]),
         accountinglabel="GOOD_ENVIRONMENT_LABEL",
         priority=TARGET_POPULATION_BEFORE_SCALING_PRIORITY,
@@ -92,7 +92,7 @@ ENVIRONMENT_MODIFIER = [
 # This is dependent on current placement in population effects calc,
 # just after Homeworld and Environment
 SELF_SUSTAINING_BONUS = EffectsGroup(
-    scope=Source,
+    scope=IsSource,
     activation=Planet(environment=[Good]) & HasTag(name="SELF_SUSTAINING"),
     accountinglabel="SELF_SUSTAINING_LABEL",
     priority=TARGET_POPULATION_AFTER_SCALING_PRIORITY,
@@ -101,7 +101,7 @@ SELF_SUSTAINING_BONUS = EffectsGroup(
 
 PHOTOTROPHIC_BONUS = [
     EffectsGroup(
-        scope=Contains(Source),
+        scope=Contains(IsSource),
         activation=Planet()
         & (
             OwnedBy(affiliation=AnyEmpire)
@@ -113,28 +113,28 @@ PHOTOTROPHIC_BONUS = [
         effects=SetStarType(type=Yellow),  # start with a normal star to be balanced
     ),
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & HasTag(name="PHOTOTROPHIC") & Star(type=[Blue]) & TargetPopulation(low=0),
         accountinglabel="VERY_BRIGHT_STAR",
         priority=TARGET_POPULATION_LAST_BEFORE_OVERRIDE_PRIORITY,
         effects=SetTargetPopulation(value=Value + 3 * Source.HabitableSize),
     ),
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & HasTag(name="PHOTOTROPHIC") & Star(type=[White]) & TargetPopulation(low=0),
         accountinglabel="BRIGHT_STAR",
         priority=TARGET_POPULATION_LAST_BEFORE_OVERRIDE_PRIORITY,
         effects=SetTargetPopulation(value=Value + 1.5 * Source.HabitableSize),
     ),
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & HasTag(name="PHOTOTROPHIC") & Star(type=[Red, Neutron]),
         accountinglabel="DIM_STAR",
         priority=TARGET_POPULATION_LAST_BEFORE_OVERRIDE_PRIORITY,
         effects=SetTargetPopulation(value=Value - 1 * Source.HabitableSize),
     ),
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & HasTag(name="PHOTOTROPHIC") & Star(type=[BlackHole, NoStar]),
         accountinglabel="NO_STAR",
         priority=TARGET_POPULATION_LAST_BEFORE_OVERRIDE_PRIORITY,
@@ -143,7 +143,7 @@ PHOTOTROPHIC_BONUS = [
 ]
 
 GASEOUS_BONUS = EffectsGroup(
-    scope=Source,
+    scope=IsSource,
     activation=Planet(type=[GasGiantType]) & HasTag(name="GASEOUS"),
     accountinglabel="GASEOUS_LABEL",
     priority=TARGET_POPULATION_SCALING_PRIORITY,
@@ -155,7 +155,7 @@ HOMEWORLD_GROWTH_FOCUS_BOOST = EffectsGroup(
     & OwnedBy(empire=Source.Owner)
     & HasSpecies(name=[Source.Species])
     & ~Homeworld(name=[Source.Species])
-    & ResourceSupplyConnected(empire=Source.Owner, condition=Source),
+    & ResourceSupplyConnected(empire=Source.Owner, condition=IsSource),
     activation=Planet() & Focus(type=["FOCUS_GROWTH"]) & Homeworld(),
     stackinggroup="HOMEWORLD_STACK",
     accountinglabel="HOMEWORLD_SUPPLY",
@@ -173,7 +173,7 @@ BASIC_POPULATION = [
     HOMEWORLD_GROWTH_FOCUS_BOOST,
     # population growth or decay towards to target population
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & (LocalCandidate.LastTurnConquered < CurrentTurn),
         priority=POPULATION_FIRST_PRIORITY,
         effects=SetPopulation(

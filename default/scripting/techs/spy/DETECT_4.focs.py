@@ -17,7 +17,7 @@ Tech(
             effects=SetDetection(value=Value + NamedReal(name="SPY_DETECT_4_RANGE", value=125.0)),
         ),
         EffectsGroup(
-            scope=Source,
+            scope=IsSource,
             activation=~OwnerHasTech(name="SPY_DETECT_5"),
             effects=SetEmpireMeter(empire=Source.Owner, meter="METER_DETECTION_STRENGTH", value=Value + 70),
         ),
