@@ -39,7 +39,7 @@ def WEAPON_UPGRADE_CAPACITY_EFFECTS(part_name: str, value: int):
         ),
         # Inform the researching empire that ships in supply will get upgraded before next combat
         EffectsGroup(
-            scope=Source,
+            scope=IsSource,
             activation=(CurrentTurn == TurnTechResearched(empire=Source.Owner, name=CurrentContent)),
             effects=GenerateSitRepMessage(
                 message="SITREP_WEAPONS_UPGRADED",

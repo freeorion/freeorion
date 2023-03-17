@@ -11,7 +11,7 @@ NO_INDUSTRY = DESCRIPTION_EFFECTSGROUP_MACRO("NO_INDUSTRY_DESC")
 
 BASIC_INDUSTRY = [
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & TargetIndustry(low=0) & Happiness(low=0) & Focus(type=["FOCUS_INDUSTRY"]),
         accountinglabel="FOCUS_INDUSTRY_LABEL",
         priority=TARGET_EARLY_BEFORE_SCALING_PRIORITY,
@@ -21,7 +21,7 @@ BASIC_INDUSTRY = [
         ),
     ),
     EffectsGroup(  # gives human bonuses when AI Aggression set to Beginner
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & IsHuman & (GalaxyMaxAIAggression == 0),  # human player, not human species
         accountinglabel="DIFFICULTY",
         priority=TARGET_AFTER_SCALING_PRIORITY,
@@ -35,7 +35,7 @@ GREAT_INDUSTRY = [
     *BASIC_INDUSTRY,
     EffectsGroup(
         description="GREAT_INDUSTRY_DESC",
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & TargetIndustry(low=0) & Happiness(low=0) & Focus(type=["FOCUS_INDUSTRY"]),
         accountinglabel="GREAT_INDUSTRY_LABEL",
         priority=TARGET_SCALING_PRIORITY,

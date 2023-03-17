@@ -19,7 +19,7 @@ Tech(
             effects=SetDetection(value=Value + NamedReal(name="SPY_DETECT_2_RANGE", value=75.0)),
         ),
         EffectsGroup(
-            scope=Source,
+            scope=IsSource,
             activation=~OwnerHasTech(name="SPY_DETECT_3")
             & ~OwnerHasTech(name="SPY_DETECT_4")
             & ~OwnerHasTech(name="SPY_DETECT_5"),

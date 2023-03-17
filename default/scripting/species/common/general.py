@@ -8,7 +8,7 @@ from common.priorities import (
 STANDARD_METER_GROWTH = [
     # increase or decrease towards target meter of planets, when not recently conquered
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & (LocalCandidate.LastTurnConquered < CurrentTurn),
         priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
         effects=[
@@ -66,7 +66,7 @@ STANDARD_METER_GROWTH = [
     ),
     # increase or decrease towards target meter of ships
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Ship,
         priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
         effects=[
@@ -77,7 +77,7 @@ STANDARD_METER_GROWTH = [
     ),
     # removes residual production from a dead planet
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & TargetPopulation(high=0) & Population(high=0.1),
         accountinglabel="DYING_POPULATION_LABEL",
         priority=END_CLEANUP_PRIORITY,
@@ -93,13 +93,13 @@ STANDARD_METER_GROWTH = [
 
 STANDARD_CONSTRUCTION = [
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Planet(),
         accountinglabel="STANDARD_CONSTRUCTION_LABEL",
         effects=SetTargetConstruction(value=Value + 20),
     ),
     EffectsGroup(  # increase or decrease towards target meter, when not recently conquered
-        scope=Source,
+        scope=IsSource,
         activation=Planet()
         & (LocalCandidate.LastTurnConquered < CurrentTurn)
         & (LocalCandidate.LastTurnAttackedByShip < CurrentTurn),
@@ -109,7 +109,7 @@ STANDARD_CONSTRUCTION = [
         ),
     ),
     EffectsGroup(  # always ensure minimum value of one, as this is necessary for being attacked
-        scope=Source,
+        scope=IsSource,
         activation=Planet(),
         # has to happen after e.g. FORCE_ENERGY_STRC effects which also happens at AFTER_ALL_TARGET_MAX_METERS_PRIORITY
         priority=LATE_AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
@@ -123,7 +123,7 @@ FOCUS_CHANGE_PENALTY = [
     # eg. if changing to industry focus, if the new research target is 10 and the research is 20, research will
     # be reduced by 2 to 18. If research is 11, then it will be only reduced to the target (10).
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & ~Focus(type=["FOCUS_INDUSTRY"]) & (LocalCandidate.TurnsSinceFocusChange == 0),
         priority=FOCUS_CHANGE_PENALTY_PRIORITY,
         effects=SetIndustry(
@@ -140,7 +140,7 @@ FOCUS_CHANGE_PENALTY = [
         ),
     ),
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & ~Focus(type=["FOCUS_RESEARCH"]) & (0 == LocalCandidate.TurnsSinceFocusChange),
         priority=FOCUS_CHANGE_PENALTY_PRIORITY,
         effects=SetResearch(
@@ -157,7 +157,7 @@ FOCUS_CHANGE_PENALTY = [
         ),
     ),
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & ~Focus(type=["FOCUS_INFLUENCE"]) & (0 == LocalCandidate.TurnsSinceFocusChange),
         priority=FOCUS_CHANGE_PENALTY_PRIORITY,
         effects=SetInfluence(
@@ -176,7 +176,7 @@ FOCUS_CHANGE_PENALTY = [
     # TODO Delete this whole Stockpile penalty clause if Stockpile is determined to remain as a Max rather than a Target type meter
     # If a decision is made to change Stockpile to a Target type meter, then simply change MaxStockpile below to TargetStockpile
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & ~Focus(type=["FOCUS_STOCKPILE"]) & (0 == LocalCandidate.TurnsSinceFocusChange),
         priority=FOCUS_CHANGE_PENALTY_PRIORITY,
         effects=SetStockpile(

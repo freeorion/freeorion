@@ -8,7 +8,7 @@ from common.priorities import (
 
 UNSTABLE_REBEL_TROOPS = [
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=~Unowned & ~Happiness(low=0),
         accountinglabel="INSTABILITY_REBELLION",
         priority=TARGET_EARLY_BEFORE_SCALING_PRIORITY,
@@ -17,7 +17,7 @@ UNSTABLE_REBEL_TROOPS = [
         effects=SetRebelTroops(value=Value + Abs(float, Target.Happiness) * (Target.Population / 5.0) ** 0.5),
     ),
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & ~Unowned & ~HasEmpireStockpile(empire=Source.Owner, resource=Influence, low=0) & ~Capital
         # TODO: some species trait?
         ,
@@ -28,7 +28,7 @@ UNSTABLE_REBEL_TROOPS = [
         ),
     ),
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & ~Unowned & ~HasEmpireStockpile(empire=Source.Owner, resource=Influence, low=0) & ~Capital,
         accountinglabel="INFLUENCE_DEBT_DECAY",
         priority=TARGET_EARLY_BEFORE_SCALING_PRIORITY,
@@ -40,21 +40,21 @@ UNSTABLE_REBEL_TROOPS = [
         ),
     ),
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Planet(environment=[Adequate]),
         accountinglabel="DEPENDENCE_ON_IMPERIAL_SUPPORT_DUE_TO_ENVIRONMENT",
         priority=TARGET_SCALING_PRIORITY,
         effects=SetRebelTroops(value=MaxOf(float, 0.0, Abs(float, Value / 1.5))),
     ),
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Planet(environment=[Poor]),
         accountinglabel="DEPENDENCE_ON_IMPERIAL_SUPPORT_DUE_TO_ENVIRONMENT",
         priority=TARGET_SCALING_PRIORITY,
         effects=SetRebelTroops(value=MaxOf(float, 0.0, Abs(float, Value / 2.0))),
     ),
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Planet(environment=[Hostile]),
         accountinglabel="DEPENDENCE_ON_IMPERIAL_SUPPORT_DUE_TO_ENVIRONMENT",
         priority=TARGET_SCALING_PRIORITY,
@@ -64,7 +64,7 @@ UNSTABLE_REBEL_TROOPS = [
 
 BASIC_DEFENSE_TROOPS = [
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Homeworld() & ~Unowned,
         stackinggroup="HOMEWORLD_TROOPS_STACK",
         priority=TARGET_EARLY_BEFORE_SCALING_PRIORITY,
@@ -72,14 +72,14 @@ BASIC_DEFENSE_TROOPS = [
         # accountinglabel="HOMEWORLD_LABEL",
     ),
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & ~Unowned,
         accountinglabel="IMPERIAL_GARRISON_LABEL",
         priority=TARGET_EARLY_BEFORE_SCALING_PRIORITY,
         effects=SetMaxTroops(value=Value + NamedRealLookup(name="IMPERIAL_GARRISON_MAX_TROOPS_FLAT")),
     ),
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & Unowned,
         stackinggroup="BASIC_TROOPS_STACK",
         accountinglabel="INDEPENDENT_TROOP_LABEL",
@@ -87,7 +87,7 @@ BASIC_DEFENSE_TROOPS = [
         effects=SetMaxTroops(value=Value + 10),
     ),
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=Planet(),
         stackinggroup="POPULATION_TROOPS_STACK",
         accountinglabel="DEF_ROOT_DEFENSE",
@@ -98,13 +98,13 @@ BASIC_DEFENSE_TROOPS = [
         ),
     ),
     EffectsGroup(  # gives human bonuses when AI Aggression set to Beginner
-        scope=Source,
+        scope=IsSource,
         activation=IsHuman & (GalaxyMaxAIAggression == 0) & Planet(),  # human player, not human species
         accountinglabel="DIFFICULTY",
         effects=SetMaxTroops(value=MaxOf(float, 6, Value * 2)),
     ),
     EffectsGroup(  # base troops regeneration
-        scope=Source,
+        scope=IsSource,
         activation=Planet()
         & (LocalCandidate.LastTurnConquered < CurrentTurn)
         & (LocalCandidate.LastTurnAttackedByShip < CurrentTurn),
@@ -119,7 +119,7 @@ BASIC_DEFENSE_TROOPS = [
 
 PROTECTION_FOCUS_TROOPS = [
     EffectsGroup(  # double max troops
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & Focus(type=["FOCUS_PROTECTION"]),
         stackinggroup="FOCUS_PROTECTION_TROOPS_STACK",
         priority=TARGET_AFTER_2ND_SCALING_PRIORITY,
@@ -127,7 +127,7 @@ PROTECTION_FOCUS_TROOPS = [
         # accountinglabel="FOCUS_PROTECTION_LABEL",
     ),
     EffectsGroup(  # increase troop growth rate
-        scope=Source,
+        scope=IsSource,
         activation=Planet()
         & Focus(type=["FOCUS_PROTECTION"])
         & (LocalCandidate.LastTurnConquered < CurrentTurn)
@@ -146,7 +146,7 @@ BAD_DEFENSE_TROOPS = [
     *BASIC_DEFENSE_TROOPS,
     EffectsGroup(
         description="BAD_DEFENSE_TROOPS_DESC",
-        scope=Source,
+        scope=IsSource,
         activation=Planet(),
         effects=SetMaxTroops(value=Value * 0.5),
         # accountinglabel="BAD_TROOPS_LABEL",

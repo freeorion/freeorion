@@ -12,7 +12,7 @@ Tech(
     unlock=[Item(type=UnlockPolicy, name="PLC_MODERATION"), Item(type=UnlockPolicy, name="PLC_RACIAL_PURITY")],
     effectsgroups=[
         EffectsGroup(
-            scope=Source,
+            scope=IsSource,
             effects=SetEmpireMeter(empire=Source.Owner, meter="SOCIAL_CATEGORY_NUM_POLICY_SLOTS", value=Value + 1),
         )
     ],

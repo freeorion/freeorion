@@ -7,7 +7,7 @@ from common.priorities import (
 
 BASE_INFLUENCE_COSTS = [
     EffectsGroup(  # colonies consume influence, proportional to square-root of how many populated planets and non-populated outposts the empire controls
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & ~Unowned & ~Capital,
         stackinggroup="IMPERIAL_PALACE_MANY_PLANETS_INFLUENCE_PENALTY",
         accountinglabel="COLONY_ADMIN_COSTS_LABEL",
@@ -41,14 +41,14 @@ BASE_INFLUENCE_COSTS = [
         ),
     ),
     EffectsGroup(  # species homeworlds consume more influence
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & ~Unowned & ~Capital & Homeworld(name=[LocalCandidate.Species]),
         accountinglabel="SPECIES_HOMEWORLD_INDEPENDENCE_DESIRE_LABEL",
         priority=TARGET_LAST_BEFORE_OVERRIDE_PRIORITY,
         effects=SetTargetInfluence(value=Value - 1),
     ),
     EffectsGroup(  # colonies consume more influence if not supply connected to empire's capital
-        scope=Source,
+        scope=IsSource,
         activation=Planet()
         & ~Unowned
         & ~EmpireHasAdoptedPolicy(empire=Source.Owner, name="PLC_CONFEDERATION")
@@ -63,7 +63,7 @@ BASE_INFLUENCE_COSTS = [
         ),
     ),
     EffectsGroup(  # gives human bonuses when AI Aggression set to Beginner
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & ~Unowned & IsHuman & (GalaxyMaxAIAggression == 0),  # human player, not human species
         accountinglabel="DIFFICULTY",
         priority=TARGET_LAST_BEFORE_OVERRIDE_PRIORITY,
@@ -78,7 +78,7 @@ BASE_INFLUENCE_COSTS = [
 
 ARTISANS_INFLUENCE_STABILITY = [
     EffectsGroup(  # artistic species generate influence when artisans workshops policy adopted
-        scope=Source,
+        scope=IsSource,
         activation=HasTag(name="ARTISTIC")
         & Happiness(low=NamedReal(name="ARTISANS_MIN_STABILITY_FOCUS", value=1))
         & EmpireHasAdoptedPolicy(empire=Source.Owner, name="PLC_ARTISAN_WORKSHOPS")
@@ -87,7 +87,7 @@ ARTISANS_INFLUENCE_STABILITY = [
         effects=SetTargetInfluence(value=Value + NamedReal(name="ARTISANS_INFLUENCE_FLAT_FOCUS", value=2.0)),
     ),
     EffectsGroup(
-        scope=Source,
+        scope=IsSource,
         activation=HasTag(name="ARTISTIC")
         & Happiness(low=NamedReal(name="ARTISANS_MIN_STABILITY_NO_FOCUS", value=10))
         & EmpireHasAdoptedPolicy(empire=Source.Owner, name="PLC_ARTISAN_WORKSHOPS")
@@ -99,7 +99,7 @@ ARTISANS_INFLUENCE_STABILITY = [
     EffectsGroup(  # artistic species make other planets with different artistic species on them and in the same system system more stable
         scope=Planet()
         & InSystem(id=Source.SystemID)
-        & ~Source
+        & ~IsSource
         & HasSpecies()
         & ~HasSpecies(name=[Source.Species])
         & HasTag(name="ARTISTIC")
@@ -113,7 +113,7 @@ ARTISANS_INFLUENCE_STABILITY = [
 
 BASIC_INFLUENCE = [
     EffectsGroup(  # influence focus generates influence from planets, proportional to sqare-root of population
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & Focus(type=["FOCUS_INFLUENCE"]),
         accountinglabel="FOCUS_INFLUENCE_LABEL",
         priority=TARGET_EARLY_BEFORE_SCALING_PRIORITY,
@@ -195,7 +195,7 @@ GREAT_INFLUENCE = [
     *BASIC_INFLUENCE,
     EffectsGroup(
         description="GREAT_INFLUENCE_DESC",
-        scope=Source,
+        scope=IsSource,
         activation=Planet() & Focus(type=["FOCUS_INFLUENCE"]),
         accountinglabel="GREAT_INFLUENCE_LABEL",
         priority=TARGET_SCALING_PRIORITY,

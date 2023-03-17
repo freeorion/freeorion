@@ -7,7 +7,7 @@ from common.priorities import (
 
 def STOCKPILE_PER_POP_EFFECTSGROUP__SNIP(label: str, value) -> dict:
     return {
-        "scope": Source,
+        "scope": IsSource,
         "activation": Planet(),
         "accountinglabel": label + "_STOCKPILE_LABEL",
         "priority": TARGET_EARLY_BEFORE_SCALING_PRIORITY,
@@ -23,7 +23,7 @@ NO_STOCKPILE = []
 
 STANDARD_STOCKPILE = [
     EffectsGroup(  # increase or decrease towards target meter, when not recently conquered
-        scope=Source,
+        scope=IsSource,
         activation=Planet()
         & (LocalCandidate.LastTurnConquered < CurrentTurn)
         & (LocalCandidate.System.LastTurnBattleHere < CurrentTurn),
@@ -46,7 +46,7 @@ STANDARD_STOCKPILE = [
         effects=SetMaxStockpile(value=(Value + 2 * Target.Population * STOCKPILE_PER_POP)),
     ),
     # removes residual stockpile capacity from a dead planet
-    EffectsGroup(scope=Source, activation=Planet() & TargetPopulation(high=0), effects=SetStockpile(value=0)),
+    EffectsGroup(scope=IsSource, activation=Planet() & TargetPopulation(high=0), effects=SetStockpile(value=0)),
 ]
 
 AVERAGE_STOCKPILE = [
