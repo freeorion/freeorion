@@ -49,8 +49,8 @@ class RotatingPlanetControl;
 
 namespace {
     constexpr int EDGE_PAD(3);
-    std::map<std::pair<int, int>, float, std::less<>>         colony_projections; // TODO: consider making flat_maps?
-    std::map<std::pair<std::string, int>, float, std::less<>> species_colony_projections;
+    boost::container::flat_map<std::pair<int, int>, float, std::less<>>         colony_projections; // indexed by {ship_id, planet_id}
+    boost::container::flat_map<std::pair<std::string, int>, float, std::less<>> species_colony_projections;
 
     /** @content_tag{CTRL_ALWAYS_BOMBARD} Select this ship during automatic ship selection for bombard, regardless of any tags **/
     constexpr std::string_view TAG_BOMBARD_ALWAYS = "CTRL_ALWAYS_BOMBARD";
@@ -106,8 +106,8 @@ namespace {
         std::vector<Atmosphere> atmospheres;     ///< the filenames of the atmosphere images suitable for use with this planet image
     };
 
-    const std::map<PlanetType, std::vector<RotatingPlanetData>>& GetRotatingPlanetData() {
-        static std::map<PlanetType, std::vector<RotatingPlanetData>> data;
+    const auto& GetRotatingPlanetData() {
+        static boost::container::flat_map<PlanetType, std::vector<RotatingPlanetData>> data;
         if (data.empty()) {
             ScopedTimer timer("GetRotatingPlanetData initialization", true);
             XMLDoc doc;
@@ -123,12 +123,9 @@ namespace {
                 const XMLElement& elem = doc.root_node.Child("GLPlanets");
                 for (const XMLElement& planet_definition : elem.children) {
                     if (planet_definition.Tag() == "RotatingPlanetData") {
-                        try {
-                            RotatingPlanetData current_data(planet_definition);
-                            data[current_data.planet_type].push_back(current_data);
-                        } catch(const std::exception& e) {
-                            ErrorLogger() << "GetRotatingPlanetData: unable to load entry: " << e.what();
-                        }
+                        RotatingPlanetData current_data{planet_definition};
+                        auto type = current_data.planet_type;
+                        data[current_data.planet_type].emplace_back(std::move(current_data));
                     }
                 }
             }
@@ -136,8 +133,8 @@ namespace {
         return data;
     }
 
-    const std::map<std::string, PlanetAtmosphereData>& GetPlanetAtmosphereData() {
-        static std::map<std::string, PlanetAtmosphereData> data;
+    const auto& GetPlanetAtmosphereData() {
+        static boost::container::flat_map<std::string, PlanetAtmosphereData> data;
         if (data.empty()) {
             XMLDoc doc;
             boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "atmospheres.xml");
@@ -147,8 +144,9 @@ namespace {
             for (const XMLElement& atmosphere_definition : doc.root_node.children) {
                 if (atmosphere_definition.Tag() == "PlanetAtmosphereData") {
                     try {
-                        PlanetAtmosphereData current_data(atmosphere_definition);
-                        data[current_data.planet_filename] = current_data;
+                        PlanetAtmosphereData current_data{atmosphere_definition};
+                        auto filename = current_data.planet_filename;
+                        data.emplace(std::move(filename), std::move(current_data));
                     } catch (const std::exception& e) {
                         ErrorLogger() << "GetPlanetAtmosphereData: " << e.what();
                     }
@@ -1709,19 +1707,22 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
         // population, then setting the planet back as it was. The results are
         // cached for the duration of the turn in the colony_projections map.
         AttachChild(m_colonize_button);
+
         double planet_capacity;
-        auto this_pair = std::pair(selected_colony_ship->ID(), m_planet_id);
-        auto pair_it = colony_projections.find(this_pair);
+        const std::pair<int, int> ship_id_planet_id{selected_colony_ship->ID(), m_planet_id};
+        auto pair_it = colony_projections.find(ship_id_planet_id);
         if (pair_it != colony_projections.end()) {
             planet_capacity = pair_it->second;
+
         } else if (colony_ship_capacity == 0.0f) {
             planet_capacity = 0.0f;
-            colony_projections[this_pair] = planet_capacity;
+            colony_projections.emplace(ship_id_planet_id, planet_capacity);
+
         } else {
             u.InhibitUniverseObjectSignals(true);
-            auto orig_species{planet->SpeciesName()}; //want to store by value, not reference. should be just ""
-            int orig_owner = planet->Owner();
-            float orig_initial_target_pop = planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Initial();
+            const auto orig_species{planet->SpeciesName()}; //want to store by value, not reference. should be just ""
+            const int orig_owner = planet->Owner();
+            const float orig_initial_target_pop = planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Initial();
             planet->SetOwner(client_empire_id);
             planet->SetSpecies(std::string{colony_ship_species_name}, context.current_turn, context.species);
             planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Reset();
@@ -1735,7 +1736,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
                 orig_initial_target_pop, orig_initial_target_pop);
             u.UpdateMeterEstimates(m_planet_id, context);
 
-            colony_projections[this_pair] = planet_capacity;
+            colony_projections.emplace(ship_id_planet_id, planet_capacity);
             u.InhibitUniverseObjectSignals(false);
         }
 
