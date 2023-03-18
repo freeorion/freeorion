@@ -49,8 +49,8 @@ class RotatingPlanetControl;
 
 namespace {
     constexpr int EDGE_PAD(3);
-    std::map<std::pair<int, int>, float>         colony_projections;
-    std::map<std::pair<std::string, int>, float> species_colony_projections;
+    std::map<std::pair<int, int>, float, std::less<>>         colony_projections; // TODO: consider making flat_maps?
+    std::map<std::pair<std::string, int>, float, std::less<>> species_colony_projections;
 
     /** @content_tag{CTRL_ALWAYS_BOMBARD} Select this ship during automatic ship selection for bombard, regardless of any tags **/
     constexpr std::string_view TAG_BOMBARD_ALWAYS = "CTRL_ALWAYS_BOMBARD";
@@ -1158,51 +1158,56 @@ void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
 }
 
 namespace {
-    bool IsAvailable(const Ship* ship, int system_id, int empire_id) { // TODO: pass in context
+    bool IsAvailable(const Ship* ship, int system_id, int empire_id, const ScriptingContext& context) {
         if (!ship)
             return false;
-        const Universe& universe = GetUniverse();
-        const ObjectMap& objects = universe.Objects();
-        auto fleet = objects.get<Fleet>(ship->FleetID()).get();
-        if (!fleet)
-            return false;
-        return ship->SystemID() == system_id &&
+        const Universe& universe = context.ContextUniverse();
+        const ObjectMap& objects = context.ContextObjects();
+        const auto* fleet = objects.getRaw<Fleet>(ship->FleetID());
+        return fleet &&
+            ship->SystemID() == system_id &&
             ship->OwnedBy(empire_id) &&
             ship->GetVisibility(empire_id, universe) >= Visibility::VIS_PARTIAL_VISIBILITY &&
             ship->OrderedScrapped() == false &&
             fleet->FinalDestinationID() == INVALID_OBJECT_ID;
     }
 
-    bool AvailableToColonize(const Ship* ship, int system_id, int empire_id) { // TODO: pass in context
+    bool AvailableToColonize(const Ship* ship, int system_id, int empire_id,
+                             const ScriptingContext& context)
+    {
         if (!ship)
             return false;
-        const Universe& u = GetUniverse();
-        const SpeciesManager& sm = GetSpeciesManager();
-        if (!u.Objects().get<Fleet>(ship->FleetID()))
-            return false;
-        return IsAvailable(ship, system_id, empire_id) &&
+        const Universe& u = context.ContextUniverse();
+        const ObjectMap& o = context.ContextObjects();
+        const SpeciesManager& sm = context.species;
+        return o.getRaw<Fleet>(ship->FleetID()) &&
+            IsAvailable(ship, system_id, empire_id, context) &&
             ship->CanColonize(u, sm) &&
             ship->OrderedColonizePlanet() == INVALID_OBJECT_ID;
     };
 
-    bool AvailableToInvade(const Ship* ship, int system_id, int empire_id) { // TODO: pass in Universe
+    bool AvailableToInvade(const Ship* ship, int system_id, int empire_id,
+                           const ScriptingContext& context)
+    {
         if (!ship)
             return false;
-        const Universe& u = GetUniverse();
-        if (!u.Objects().get<Fleet>(ship->FleetID()))
-            return false;
-        return IsAvailable(ship, system_id, empire_id) &&
+        const Universe& u = context.ContextUniverse();
+        const ObjectMap& o = context.ContextObjects();
+        return o.getRaw<Fleet>(ship->FleetID()) &&
+            IsAvailable(ship, system_id, empire_id, context) &&
             ship->HasTroops(u) &&
             ship->OrderedInvadePlanet() == INVALID_OBJECT_ID;
     };
 
-    bool AvailableToBombard(const Ship* ship, int system_id, int empire_id) { // TODO: pass in Universe
+    bool AvailableToBombard(const Ship* ship, int system_id, int empire_id,
+                            const ScriptingContext& context)
+    {
         if (!ship)
             return false;
-        const Universe& u = GetUniverse();
-        if (!u.Objects().get<Fleet>(ship->FleetID()))
-            return false;
-        return IsAvailable(ship, system_id, empire_id) &&
+        const Universe& u = context.ContextUniverse();
+        const ObjectMap& o = context.ContextObjects();
+        return o.getRaw<Fleet>(ship->FleetID()) &&
+            IsAvailable(ship, system_id, empire_id, context) &&
             ship->CanBombard(u) &&
             ship->OrderedBombardPlanet() == INVALID_OBJECT_ID;
     };
@@ -1233,13 +1238,13 @@ namespace {
         return retval;
     }
 
-    bool CanColonizePlanetType(const Ship* ship, PlanetType planet_type) {
+    bool CanColonizePlanetType(const Ship* ship, PlanetType planet_type, const ScriptingContext context) {
         if (!ship || planet_type == PlanetType::INVALID_PLANET_TYPE)
             return false;
 
         float colony_ship_capacity = 0.0f;
-        const Universe& universe = GetUniverse();
-        const SpeciesManager& sm = GetSpeciesManager();
+        const Universe& universe = context.ContextUniverse();
+        const SpeciesManager& sm = context.species;
 
         const auto design = universe.GetShipDesign(ship->DesignID());
         if (design) {
@@ -1255,92 +1260,101 @@ namespace {
             // One-Click Colonize planets that are colonizable (even if they are
             // not hospitable), and One-Click Outpost planets that are not
             // colonizable.
-            if (colony_ship_capacity > 0.0f) {
-                return planet_env_for_colony_species >= PlanetEnvironment::PE_HOSTILE && planet_env_for_colony_species <= PlanetEnvironment::PE_GOOD;
-            } else {
-                return planet_env_for_colony_species < PlanetEnvironment::PE_HOSTILE || planet_env_for_colony_species > PlanetEnvironment::PE_GOOD;
-            }
+            if (colony_ship_capacity > 0.0f)
+                return planet_env_for_colony_species >= PlanetEnvironment::PE_HOSTILE &&
+                    planet_env_for_colony_species <= PlanetEnvironment::PE_GOOD;
+            else
+                return planet_env_for_colony_species < PlanetEnvironment::PE_HOSTILE ||
+                    planet_env_for_colony_species > PlanetEnvironment::PE_GOOD;
         }
         return false;
     }
 
-    std::set<const Ship*> ValidSelectedInvasionShips(int system_id) {
-        std::set<const Ship*> retval;
+    auto ValidSelectedInvasionShips(int system_id, const ScriptingContext& context) {
+        std::vector<const Ship*> retval;
 
         // if not looking in a valid system, no valid invasion ship can be available
         if (system_id == INVALID_OBJECT_ID)
             return retval;
 
-        const Universe& u = GetUniverse();
+        const Universe& u = context.ContextUniverse();
+        const ObjectMap& o = context.ContextObjects();
+        const auto client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+        const auto selected_ids = FleetUIManager::GetFleetUIManager().SelectedShipIDs();
+        retval.reserve(selected_ids.size());
 
         // is there a valid single selected ship in the active FleetWnd?
-        for (const auto& ship : u.Objects().find<Ship>(
-            FleetUIManager::GetFleetUIManager().SelectedShipIDs()))
-        {
+        for (const auto* ship : o.findRaw<Ship>(selected_ids)) {
             if (ship &&
                 ship->SystemID() == system_id &&
                 ship->HasTroops(u) &&
-                ship->OwnedBy(GGHumanClientApp::GetApp()->EmpireID()))
-            { retval.insert(ship.get()); }
+                ship->OwnedBy(client_empire_id))
+            { retval.push_back(ship); }
         }
 
         return retval;
     }
 
-    std::set<const Ship*> ValidSelectedBombardShips(int system_id) {
-        std::set<const Ship*> retval;
+    auto ValidSelectedBombardShips(int system_id, const ScriptingContext& context) {
+        std::vector<const Ship*> retval;
 
         // if not looking in a valid system, no valid bombard ship can be available
         if (system_id == INVALID_OBJECT_ID)
             return retval;
 
-        const Universe& u = GetUniverse();
+        const Universe& u = context.ContextUniverse();
+        const ObjectMap& o = context.ContextObjects();
+        const auto client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+        const auto selected_ids = FleetUIManager::GetFleetUIManager().SelectedShipIDs();
+        retval.reserve(selected_ids.size());
 
         // is there a valid single selected ship in the active FleetWnd?
-        for (const auto& ship : u.Objects().find<Ship>(FleetUIManager::GetFleetUIManager().SelectedShipIDs())) {
-            if (!ship || ship->SystemID() != system_id)
-                continue;
-            if (!ship->CanBombard(u) || !ship->OwnedBy(GGHumanClientApp::GetApp()->EmpireID()))
-                continue;
-            retval.insert(ship.get());
+        for (const auto* ship : o.findRaw<Ship>(selected_ids)) {
+            if (ship &&
+                ship->SystemID() != system_id &&
+                ship->CanBombard(u) &&
+                ship->OwnedBy(client_empire_id))
+            { retval.push_back(ship); }
         }
 
         return retval;
     }
 
-    const Ship* ValidSelectedColonyShip(int system_id) { // TODO: pass in context?
+    const Ship* ValidSelectedColonyShip(int system_id, const ScriptingContext& context) {
         // if not looking in a valid system, no valid colony ship can be available
         if (system_id == INVALID_OBJECT_ID)
             return nullptr;
 
-        const Universe& u = GetUniverse();
-        const SpeciesManager& sm = GetSpeciesManager();
+        const SpeciesManager& sm = context.species;
+        const Universe& u = context.ContextUniverse();
+        const ObjectMap& o = context.ContextObjects();
+        const auto client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
         // is there a valid selected ship in the active FleetWnd?
-        for (const auto& ship : Objects().find<Ship>(FleetUIManager::GetFleetUIManager().SelectedShipIDs())) {
-            if (!ship)
-                continue;
-            if (ship->SystemID() == system_id &&
+        for (const auto* ship : o.findRaw<Ship>(FleetUIManager::GetFleetUIManager().SelectedShipIDs())) {
+            if (ship && 
+                ship->SystemID() == system_id &&
                 ship->CanColonize(u, sm) &&
-                ship->OwnedBy(GGHumanClientApp::GetApp()->EmpireID())) 
-            { return ship.get(); }
+                ship->OwnedBy(GGHumanClientApp::GetApp()->EmpireID()))
+            { return ship; }
         }
         return nullptr;
     }
 
-    int AutomaticallyChosenColonyShip(int target_planet_id) {
-        int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    int AutomaticallyChosenColonyShip(int target_planet_id, ScriptingContext& context) {
+        const int empire_id = GGHumanClientApp::GetApp()->EmpireID();
         if (empire_id == ALL_EMPIRES)
             return INVALID_OBJECT_ID;
-        Universe& u = GetUniverse();
+        const Universe& u = context.ContextUniverse();
+        ObjectMap& o = context.ContextObjects(); // mutable to allow sims of planet pop after colonization
 
         if (u.GetObjectVisibilityByEmpire(target_planet_id, empire_id) < Visibility::VIS_PARTIAL_VISIBILITY)
             return INVALID_OBJECT_ID;
-        auto target_planet = u.Objects().get<Planet>(target_planet_id);
+        auto* target_planet = o.getRaw<Planet>(target_planet_id); // mutable to allow sims of pop after colonization
         if (!target_planet)
             return INVALID_OBJECT_ID;
-        int system_id = target_planet->SystemID();
-        auto system = u.Objects().get<System>(system_id);
+        const int system_id = target_planet->SystemID();
+        const auto* system = o.getRaw<const System>(system_id);
         if (!system)
             return INVALID_OBJECT_ID;
         // is planet a valid colonization target?
@@ -1348,21 +1362,21 @@ namespace {
             (!target_planet->Unowned() && !target_planet->OwnedBy(empire_id)))
         { return INVALID_OBJECT_ID; }
 
-        PlanetType target_planet_type = target_planet->Type();
+        const PlanetType target_planet_type = target_planet->Type();
 
-        // todo: return vector of ships from system ids using new Objects().find<Ship>(system->FindObjectIDs())
-        auto ships = u.Objects().find<const Ship>(system->ShipIDs());
+        // TODO: return vector of ships from system ids using new Objects().findRaw<Ship>(system->FindObjectIDs())
+        auto ships = o.findRaw<const Ship>(system->ShipIDs());
         std::vector<const Ship*> capable_and_available_colony_ships;
         capable_and_available_colony_ships.reserve(ships.size());
 
         // get all ships that can colonize and that are free to do so in the
         // specified planet'ssystem and that can colonize the requested planet
-        for (auto& ship : ships) {
-            if (!AvailableToColonize(ship.get(), system_id, empire_id))
+        for (const auto* ship : ships) {
+            if (!AvailableToColonize(ship, system_id, empire_id, context))
                 continue;
-            if (!CanColonizePlanetType(ship.get(), target_planet_type))
+            if (!CanColonizePlanetType(ship, target_planet_type, context))
                 continue;
-            capable_and_available_colony_ships.emplace_back(ship.get());
+            capable_and_available_colony_ships.emplace_back(ship);
         }
 
         // simple case early exits: no ships, or just one capable ship
@@ -1373,36 +1387,36 @@ namespace {
 
         // have more than one ship capable and available to colonize.
         // pick the "best" one.
-        auto& orig_species = target_planet->SpeciesName(); //should be just ""
-        int orig_owner = target_planet->Owner();
-        float orig_initial_target_pop = target_planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Initial();
+        const auto& orig_species = target_planet->SpeciesName(); //should be just ""
+        const int orig_owner = target_planet->Owner();
+        const float orig_initial_target_pop = target_planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Initial();
         int best_ship = INVALID_OBJECT_ID;
         float best_capacity = -999;
         bool changed_planet = false;
 
-        ScriptingContext context{u, Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
+        Universe& universe = context.ContextUniverse();
 
-        u.InhibitUniverseObjectSignals(true);
+        universe.InhibitUniverseObjectSignals(true);
         for (const auto* ship : capable_and_available_colony_ships) {
             // TODO: Also tabulate estimates stabilities of potential colonies
             if (!ship)
                 continue;
-            int ship_id = ship->ID();
+            const int ship_id = ship->ID();
             float planet_capacity = -999.9f;
-            auto this_pair = std::pair(ship_id, target_planet_id);
-            auto pair_it = colony_projections.find(this_pair);
+
+            const auto pair_it = colony_projections.find({ship_id, target_planet_id});
             if (pair_it != colony_projections.end()) {
                 planet_capacity = pair_it->second;
+
             } else {
                 float colony_ship_capacity = 0.0f;
-                const ShipDesign* design = u.GetShipDesign(ship->DesignID());
+                const ShipDesign* design = universe.GetShipDesign(ship->DesignID());
                 if (!design)
                     continue;
                 colony_ship_capacity = design->ColonyCapacity();
                 if (colony_ship_capacity > 0.0f) {
                     auto& ship_species_name = ship->SpeciesName();
-                    auto spec_pair = std::pair{ship_species_name, target_planet_id};
-                    auto spec_pair_it = species_colony_projections.find(spec_pair);
+                    const auto spec_pair_it = species_colony_projections.find({ship_species_name, target_planet_id});
                     if (spec_pair_it != species_colony_projections.end()) {
                         planet_capacity = spec_pair_it->second;
                     } else {
@@ -1417,15 +1431,15 @@ namespace {
                             target_planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Reset();
 
                             // temporary meter update with currently set species
-                            u.UpdateMeterEstimates(target_planet_id, context);
+                            universe.UpdateMeterEstimates(target_planet_id, context);
                             planet_capacity = target_planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Current();  // want value after meter update, so check current, not initial value
                         }
-                        species_colony_projections[std::move(spec_pair)] = planet_capacity;
+                        species_colony_projections[{ship_species_name, target_planet_id}] = planet_capacity;
                     }
                 } else {
                     planet_capacity = 0.0f;
                 }
-                colony_projections[this_pair] = planet_capacity;
+                colony_projections[{ship_id, target_planet_id}] = planet_capacity;
             }
             if (planet_capacity > best_capacity) {
                 best_capacity = planet_capacity;
@@ -1437,27 +1451,28 @@ namespace {
             target_planet->SetSpecies(orig_species, context.current_turn, context.species);
             target_planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Set(orig_initial_target_pop,
                                                                              orig_initial_target_pop);
-            u.UpdateMeterEstimates(target_planet_id, context);
+            universe.UpdateMeterEstimates(target_planet_id, context);
         }
-        u.InhibitUniverseObjectSignals(false);
+        universe.InhibitUniverseObjectSignals(false);
 
         return best_ship;
     }
 
-    std::set<const Ship*> AutomaticallyChosenInvasionShips(int target_planet_id) {
-        std::set<const Ship*> retval;
+    auto AutomaticallyChosenInvasionShips(int target_planet_id, const ScriptingContext& context) {
+        std::vector<const Ship*> retval;
 
-        int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+        const int empire_id = GGHumanClientApp::GetApp()->EmpireID();
         if (empire_id == ALL_EMPIRES)
             return retval;
 
-        const Universe& u = GetUniverse();
+        const Universe& u = context.ContextUniverse();
+        const ObjectMap& o = context.ContextObjects();
 
-        auto target_planet = u.Objects().get<Planet>(target_planet_id).get();
+        const auto* target_planet = o.getRaw<Planet>(target_planet_id);
         if (!target_planet)
             return retval;
-        int system_id = target_planet->SystemID();
-        auto system = u.Objects().get<System>(system_id).get();
+        const int system_id = target_planet->SystemID();
+        const auto* system = o.getRaw<System>(system_id);
         if (!system)
             return retval;
 
@@ -1467,16 +1482,17 @@ namespace {
 
 
         // get "just enough" ships that can invade and that are free to do so
-        double defending_troops = target_planet->GetMeter(MeterType::METER_TROOPS)->Initial();
+        const double defending_troops = target_planet->GetMeter(MeterType::METER_TROOPS)->Initial();
 
+        retval.reserve(10); // guesstimate
         double invasion_troops = 0;
-        for (const auto& ship : u.Objects().all<Ship>()) {
-            if (!AvailableToInvade(ship.get(), system_id, empire_id))
+        for (const auto* ship : o.allRaw<Ship>()) {
+            if (!AvailableToInvade(ship, system_id, empire_id, context))
                 continue;
 
             invasion_troops += ship->TroopCapacity(u);
 
-            retval.insert(ship.get());
+            retval.push_back(ship);
 
             if (invasion_troops > defending_troops)
                 break;
@@ -1487,21 +1503,21 @@ namespace {
 
     /** Returns valid Ship%s capable of bombarding a given Planet.
       * @param target_planet_id ID of Planet to potentially bombard */
-    std::set<const Ship*> AutomaticallyChosenBombardShips(int target_planet_id) { // TODO: pass context
-        std::set<const Ship*> retval;
+    auto AutomaticallyChosenBombardShips(int target_planet_id, const ScriptingContext& context) {
+        std::vector<const Ship*> retval;
 
-        int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+        const int empire_id = GGHumanClientApp::GetApp()->EmpireID();
         if (empire_id == ALL_EMPIRES)
             return retval;
 
-        const Universe& u = GetUniverse();
-        const ScriptingContext context{u, Empires()};
+        const Universe& u = context.ContextUniverse();
+        const ObjectMap& o = context.ContextObjects();
 
-        auto target_planet = u.Objects().get<Planet>(target_planet_id).get();
+        const auto* target_planet = o.getRaw<Planet>(target_planet_id);
         if (!target_planet)
             return retval;
-        int system_id = target_planet->SystemID();
-        auto system = u.Objects().get<System>(system_id).get();
+        const int system_id = target_planet->SystemID();
+        const auto* system = o.getRaw<System>(system_id);
         if (!system)
             return retval;
 
@@ -1509,16 +1525,17 @@ namespace {
         if (target_planet->OwnedBy(empire_id))
             return retval;
 
-        for (const auto& ship : u.Objects().all<Ship>()) {
+        retval.reserve(10); // guesstimate
+        for (const auto* ship : o.allRaw<Ship>()) {
             // owned ship is capable of bombarding a planet in this system
-            if (!AvailableToBombard(ship.get(), system_id, empire_id))
+            if (!AvailableToBombard(ship, system_id, empire_id, context))
                 continue;
 
             // Select ship if the planet contains a content tag specified by the ship,
             // or ship is tagged to always be selected
-            for (std::string_view tag : BombardTagsForShip(ship.get(), context)) {
+            for (std::string_view tag : BombardTagsForShip(ship, context)) {
                 if ((tag == TAG_BOMBARD_ALWAYS) || (target_planet->HasTag(tag, context))) {
-                    retval.insert(ship.get());
+                    retval.push_back(ship);
                     break;
                 }
             }
@@ -1578,9 +1595,8 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     }
 
     // check for shipyard
-    const auto& known_destroyed_object_ids =
-        u.EmpireKnownDestroyedObjectIDs(client_empire_id);
-    for (const auto& building : objects.find<Building>(planet->BuildingIDs())) {
+    const auto& known_destroyed_object_ids = u.EmpireKnownDestroyedObjectIDs(client_empire_id);
+    for (const auto* building : objects.findRaw<const Building>(planet->BuildingIDs())) {
         if (!building || known_destroyed_object_ids.count(building->ID()))
             continue;
         if (building->HasTag(TAG_SHIPYARD, context)) {
@@ -1618,21 +1634,19 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
         }
     }
 
-    auto selected_colony_ship = ValidSelectedColonyShip(SidePanel::SystemID());
+    const auto sys_id = SidePanel::SystemID();
+
+    auto selected_colony_ship = ValidSelectedColonyShip(sys_id, context);
     if (!selected_colony_ship && FleetUIManager::GetFleetUIManager().SelectedShipIDs().empty())
-        selected_colony_ship = objects.getRaw<Ship>(AutomaticallyChosenColonyShip(m_planet_id));
+        selected_colony_ship = objects.getRaw<Ship>(AutomaticallyChosenColonyShip(m_planet_id, context));
 
-    auto invasion_ships = ValidSelectedInvasionShips(SidePanel::SystemID());
-    if (invasion_ships.empty()) {
-        auto autoselected_invasion_ships = AutomaticallyChosenInvasionShips(m_planet_id);
-        invasion_ships.insert(autoselected_invasion_ships.begin(), autoselected_invasion_ships.end());
-    }
+    auto invasion_ships = ValidSelectedInvasionShips(sys_id, context);
+    if (invasion_ships.empty())
+        invasion_ships = AutomaticallyChosenInvasionShips(m_planet_id, context);
 
-    auto bombard_ships = ValidSelectedBombardShips(SidePanel::SystemID());
-    if (bombard_ships.empty()) {
-        auto autoselected_bombard_ships = AutomaticallyChosenBombardShips(m_planet_id);
-        bombard_ships.insert(autoselected_bombard_ships.begin(), autoselected_bombard_ships.end());
-    }
+    auto bombard_ships = ValidSelectedBombardShips(sys_id, context);
+    if (bombard_ships.empty())
+        bombard_ships = AutomaticallyChosenBombardShips(m_planet_id, context);
 
     std::string_view colony_ship_species_name = "";
     if (selected_colony_ship)
@@ -2377,9 +2391,9 @@ void SidePanel::PlanetPanel::ClickColonize() {
 
     } else {
         // find colony ship and order it to colonize
-        auto ship = ValidSelectedColonyShip(SidePanel::SystemID());
+        auto ship = ValidSelectedColonyShip(SidePanel::SystemID(), context);
         if (!ship)
-            ship = objects.get<Ship>(AutomaticallyChosenColonyShip(m_planet_id)).get();
+            ship = objects.getRaw<Ship>(AutomaticallyChosenColonyShip(m_planet_id, context));
 
         if (!ship) {
             ErrorLogger() << "SidePanel::PlanetPanel::ClickColonize valid colony not found!";
@@ -2426,9 +2440,9 @@ void SidePanel::PlanetPanel::ClickInvade() {
 
     } else {
         // order selected invasion ships to invade planet
-        auto invasion_ships = ValidSelectedInvasionShips(planet->SystemID());
+        auto invasion_ships = ValidSelectedInvasionShips(planet->SystemID(), context);
         if (invasion_ships.empty())
-            invasion_ships.merge(AutomaticallyChosenInvasionShips(m_planet_id));
+            invasion_ships = AutomaticallyChosenInvasionShips(m_planet_id, context);
 
         for (const auto* ship : invasion_ships) {
             if (!ship)
@@ -2460,8 +2474,8 @@ void SidePanel::PlanetPanel::ClickBombard() {
     if (empire_id == ALL_EMPIRES)
         return;
 
-    auto pending_bombard_orders = PendingBombardOrders();
-    auto it = pending_bombard_orders.find(m_planet_id);
+    const auto pending_bombard_orders = PendingBombardOrders();
+    const auto it = pending_bombard_orders.find(m_planet_id);
 
     if (it != pending_bombard_orders.end()) {
         auto& planet_bombard_orders = it->second;
@@ -2471,11 +2485,11 @@ void SidePanel::PlanetPanel::ClickBombard() {
 
     } else {
         // order selected bombard ships to bombard planet
-        auto bombard_ships = ValidSelectedBombardShips(planet->SystemID());
+        auto bombard_ships = ValidSelectedBombardShips(planet->SystemID(), context);
         if (bombard_ships.empty())
-            bombard_ships.merge(AutomaticallyChosenBombardShips(m_planet_id));
+            bombard_ships = AutomaticallyChosenBombardShips(m_planet_id, context);
 
-        for (auto& ship : bombard_ships) {
+        for (const auto* ship : bombard_ships) {
             if (!ship)
                 continue;
 
