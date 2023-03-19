@@ -67,7 +67,25 @@ struct FO_COMMON_API ProductionQueue {
         [[nodiscard]] std::pair<float, int> ProductionCostAndTime(int empire_id, int location_id,
                                                                   const ScriptingContext& context) const;
 
-        [[nodiscard]] bool operator<(const ProductionItem& rhs) const noexcept;
+        [[nodiscard]] bool operator<(const ProductionItem& rhs) const noexcept {
+            if (build_type < rhs.build_type)
+                return true;
+            else if (build_type > rhs.build_type)
+                return false;
+            else if (build_type == BuildType::BT_BUILDING)
+                return name < rhs.name;
+            else if (build_type == BuildType::BT_SHIP)
+                return design_id < rhs.design_id;
+            return false;
+        }
+
+        [[nodiscard]] bool operator==(const ProductionItem& rhs) const noexcept {
+            return build_type == rhs.build_type &&
+                design_id == rhs.design_id &&
+                name == rhs.name;
+        }
+        [[nodiscard]] bool operator!=(const ProductionItem& rhs) const noexcept
+        { return !operator==(rhs); }
 
         [[nodiscard]] bool EnqueueConditionPassedAt(int location_id, const ScriptingContext& context) const;
 
@@ -109,7 +127,8 @@ struct FO_COMMON_API ProductionQueue {
         /** Returns the total cost per item (blocksize 1) and the minimum number of
           * turns required to produce the indicated item, or (-1.0, -1) if the item
           * is unknown, unavailable, or invalid. */
-        [[nodiscard]] std::pair<float, int> ProductionCostAndTime(const ScriptingContext& context) const;
+        [[nodiscard]] auto ProductionCostAndTime(const ScriptingContext& context) const
+        { return item.ProductionCostAndTime(empire_id, location, context); }
 
 
         ProductionItem      item;

@@ -156,13 +156,13 @@ namespace {
       * Also checks if elements will be completed this turn. 
       * Returns the amount of PP which gets transferred to the stockpile using 
       * stockpile project build items. */
+    template <typename ItemCostsTimesMap, typename FlagsVec>
     float SetProdQueueElementSpending(
         std::map<std::set<int>, float> available_pp, float available_stockpile,
         float stockpile_limit,
         const std::vector<std::set<int>>& queue_element_resource_sharing_object_groups,
-        const std::map<std::pair<ProductionQueue::ProductionItem, int>,
-                       std::pair<float, int>>& queue_item_costs_and_times,
-        const std::vector<bool>& is_producible,
+        const ItemCostsTimesMap& queue_item_costs_and_times,
+        const FlagsVec& is_producible,
         ProductionQueue::QueueType& queue,
         std::map<std::set<int>, float>& allocated_pp,
         std::map<std::set<int>, float>& allocated_stockpile_pp,
@@ -247,7 +247,7 @@ namespace {
             }
             //DebugLogger() << "item " << queue_element.item.name << " costs " << item_cost << " for " << build_turns << " turns";
 
-            float element_this_turn_limit = CalculateProductionPerTurnLimit(
+            const float element_this_turn_limit = CalculateProductionPerTurnLimit(
                 queue_element, item_cost, build_turns);
 
             // determine how many pp to allocate to this queue element block this turn.  allocation is limited by the
@@ -255,7 +255,7 @@ namespace {
             // total cost remaining to complete the last item in the queue element (eg. the element has all but
             // the last item complete already) and by the total pp available in this element's production location's
             // resource sharing group (including any stockpile availability)
-            float stockpile_available_for_this =
+            const float stockpile_available_for_this =
                 (queue_element.allowed_imperial_stockpile_use) ? available_stockpile : 0;
 
             float allocation = std::max(0.0f,
@@ -278,14 +278,16 @@ namespace {
             queue_element.allocated_pp = std::max(allocation, EPSILON);
 
             // record allocation from group
-            float group_drawdown = std::min(allocation, group_pp_available);
+            const float group_drawdown = std::min(allocation, group_pp_available);
 
             allocated_pp[group] += group_drawdown;  // relies on default initial mapped value of 0.0f
             if (queue_element.item.build_type == BuildType::BT_STOCKPILE)
                 stockpile_transfer += group_drawdown;
             group_pp_available -= group_drawdown;
 
-            float stockpile_drawdown = allocation <= group_drawdown ? 0.0f : (allocation - group_drawdown);
+            const float stockpile_drawdown = std::min(available_stockpile,
+                allocation <= group_drawdown ? 0.0f : (allocation - group_drawdown));
+
             TraceLogger() << "allocation: " << allocation
                           << "  to: " << queue_element.item.name
                           << "  from group: " << group_drawdown
@@ -296,14 +298,13 @@ namespace {
             // record allocation from stockpile
             // protect against any slight mismatch that might possible happen from multiplying
             // and dividing by a very very small stockpile_conversion_rate
-            stockpile_drawdown = std::min(stockpile_drawdown, available_stockpile);
             if (stockpile_drawdown > 0) {
                 allocated_stockpile_pp[group] += stockpile_drawdown;
                 available_stockpile -= stockpile_drawdown;
             }
 
             // check for completion
-            float block_cost = item_cost * queue_element.blocksize;
+            const float block_cost = item_cost * queue_element.blocksize;
             if (block_cost*(1.0f - queue_element.progress) - queue_element.allocated_pp < EPSILON)
                 queue_element.turns_left_to_next_item = 1;
 
@@ -398,19 +399,6 @@ bool ProductionQueue::ProductionItem::EnqueueConditionPassedAt(int location_id,
     default:
         return true;
     }
-}
-
-bool ProductionQueue::ProductionItem::operator<(const ProductionItem& rhs) const noexcept {
-    if (build_type < rhs.build_type)
-        return true;
-    if (build_type > rhs.build_type)
-        return false;
-    if (build_type == BuildType::BT_BUILDING)
-        return name < rhs.name;
-    else if (build_type == BuildType::BT_SHIP)
-        return design_id < rhs.design_id;
-
-    return false;
 }
 
 std::map<std::string, std::map<int, float>>
@@ -549,9 +537,6 @@ std::string ProductionQueue::ProductionItem::Dump() const {
 //////////////////////////////
 // ProductionQueue::Element //
 //////////////////////////////
-std::pair<float, int> ProductionQueue::Element::ProductionCostAndTime(const ScriptingContext& context) const
-{ return item.ProductionCostAndTime(empire_id, location, context); }
-
 std::string ProductionQueue::Element::Dump() const {
     std::string retval = "ProductionQueue::Element (" + item.Dump() + ") (" +
         std::to_string(blocksize) + ") x" + std::to_string(ordered) + " ";
@@ -643,6 +628,31 @@ int ProductionQueue::IndexOfUUID(boost::uuids::uuid uuid) const {
     return std::distance(begin(), it);
 }
 
+namespace {
+    struct PQCacheHasher {
+        using entry_t = std::pair<ProductionQueue::ProductionItem, int>;
+        using build_type_t = decltype(entry_t::first_type::build_type);
+        using name_t = decltype(entry_t::first_type::name);
+        using id_t = decltype(entry_t::first_type::design_id);
+
+        static constexpr std::hash<build_type_t> bt_hasher{};
+        static constexpr std::hash<name_t> name_hasher{};
+        static constexpr std::hash<id_t> id_hasher{};
+        static constexpr bool is_noexcept =
+            noexcept(std::size_t{} ^ name_hasher(std::declval<std::string>()) + 0x9e3779b9 + (53<<6) + (53>>2));
+
+        size_t operator()(const entry_t& key) const noexcept(is_noexcept) {
+            size_t seed = 8334358; // random number
+            // Reimplementation of the boost::hash_range function
+            // using std::hash instead of boost::hash
+            seed ^= bt_hasher(key.first.build_type) + 0x9e3779b9 + (seed<<6) + (seed>>2);
+            seed ^= name_hasher(key.first.name) + 0x9e3779b9 + (seed<<6) + (seed>>2);
+            seed ^= id_hasher(key.first.design_id) + 0x9e3779b9 + (seed<<6) + (seed>>2);
+            return seed;
+        }
+    };
+}
+
 void ProductionQueue::Update(const ScriptingContext& context) {
     const Universe& universe{context.ContextUniverse()};
 
@@ -670,7 +680,7 @@ void ProductionQueue::Update(const ScriptingContext& context) {
     std::vector<std::set<int>> queue_element_groups;
     for (const auto& element : m_queue) {
         // get location object for element
-        int location_id = element.location;
+        const int location_id = element.location;
 
         // search through groups to find object
         for (auto groups_it = available_pp.begin(); true; ++groups_it) {
@@ -694,18 +704,24 @@ void ProductionQueue::Update(const ScriptingContext& context) {
     update_timer.EnterSection("Cacheing Costs");
     // cache producibility, and production item costs and times
     // initialize production queue item completion status to 'never'
-    std::map<std::pair<ProductionQueue::ProductionItem, int>,  // TODO: rework as vector, avoid allocations esp. for lookup. see Empire ItemCostAndTime caching stuff
-             std::pair<float, int>> queue_item_costs_and_times;
-    std::vector<bool> is_producible;
-    for (auto& elem : m_queue) {
-        is_producible.push_back(empire->ProducibleItem(elem.item, elem.location, context));
-        // for items that don't depend on location, only store cost/time once
-        int location_id = (elem.item.CostIsProductionLocationInvariant(universe) ?
-                           INVALID_OBJECT_ID : elem.location);
-        auto key = std::pair{elem.item, location_id};
+    std::vector<uint8_t> is_producible;
+    is_producible.reserve(m_queue.size());
+    std::transform(m_queue.begin(), m_queue.end(), std::back_inserter(is_producible),
+                   [&context, &empire](const auto& elem)
+                   { return empire->ProducibleItem(elem.item, elem.location, context); });
 
-        if (!queue_item_costs_and_times.count(key)) // TOOD: try_emplace?
-            queue_item_costs_and_times[key] = elem.ProductionCostAndTime(context);
+    boost::unordered_map<std::pair<ProductionQueue::ProductionItem, int>,
+                         std::pair<float, int>, PQCacheHasher> queue_item_costs_and_times;
+    queue_item_costs_and_times.reserve(m_queue.size());
+
+    for (auto& elem : m_queue) {
+        // for items that don't depend on location, only store cost/time once
+        const int location_id = elem.item.CostIsProductionLocationInvariant(universe) ?
+            INVALID_OBJECT_ID : elem.location;
+
+        using key_t = decltype(queue_item_costs_and_times)::key_type;
+        queue_item_costs_and_times.try_emplace(key_t{elem.item, location_id},
+                                               elem.ProductionCostAndTime(context));
 
         elem.turns_left_to_next_item = -1;
         elem.turns_left_to_completion = -1;
@@ -713,9 +729,10 @@ void ProductionQueue::Update(const ScriptingContext& context) {
 
     // duplicate production queue state for future simulation
     QueueType sim_queue = m_queue;
-    std::vector<unsigned int> sim_queue_original_indices(sim_queue.size());
-    for (unsigned int i = 0; i < sim_queue_original_indices.size(); ++i)
+    std::vector<size_t> sim_queue_original_indices(sim_queue.size());
+    for (size_t i = 0; i < sim_queue_original_indices.size(); ++i)
         sim_queue_original_indices[i] = i;
+
 
     update_timer.EnterSection("Set Spending");
     // allocate pp to queue elements, returning updated available pp and updated
@@ -736,13 +753,9 @@ void ProductionQueue::Update(const ScriptingContext& context) {
 
     // if at least one resource-sharing system group have available PP, simulate
     // future turns to predict when build items will be finished
-    bool simulate_future = false; // TODO: use any_of, make const
-    for (auto& available : available_pp) {
-        if (available.second > EPSILON) {
-            simulate_future = true;
-            break;
-        }
-    }
+    const bool simulate_future =
+        std::any_of(available_pp.begin(), available_pp.end(),
+                    [](const auto& available) { return available.second > EPSILON; });
 
     if (!simulate_future) {
         update_timer.EnterSection("Signal and Finish");
