@@ -46,9 +46,11 @@ struct FO_COMMON_API UnlockableItem {
 };
 
 
-FO_COMMON_API bool operator==(const UnlockableItem& lhs, const UnlockableItem& rhs);
+FO_COMMON_API inline bool operator==(const UnlockableItem& lhs, const UnlockableItem& rhs) noexcept
+{ return lhs.type == rhs.type && lhs.name == rhs.name; }
 
-bool operator!=(const UnlockableItem& lhs, const UnlockableItem& rhs);
+FO_COMMON_API inline bool operator!=(const UnlockableItem& lhs, const UnlockableItem& rhs) noexcept
+{ return !(lhs == rhs); }
 
 
 namespace CheckSums {

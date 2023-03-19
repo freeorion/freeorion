@@ -18,15 +18,6 @@ std::string UnlockableItem::Dump(uint8_t ntabs) const {
     return retval;
 }
 
-bool operator==(const UnlockableItem& lhs, const UnlockableItem& rhs) {
-    return lhs.type == rhs.type &&
-    lhs.name == rhs.name;
-}
-
-bool operator!=(const UnlockableItem& lhs, const UnlockableItem& rhs)
-{ return !(lhs == rhs); }
-
-
 namespace CheckSums {
     void CheckSumCombine(uint32_t& sum, const UnlockableItem& item) {
         TraceLogger() << "CheckSumCombine(Slot): " << typeid(item).name();
