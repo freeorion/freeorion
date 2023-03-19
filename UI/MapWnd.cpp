@@ -3589,13 +3589,14 @@ namespace {
     // Reimplementation of the boost::hash_range function, embedding
     // boost::hash_combine and using std::hash instead of boost::hash
     struct hash_set {
-        std::size_t operator()(const std::set<int>& set) const {
-            std::size_t seed(0);
-            std::hash<int> hasher;
+        static constexpr std::hash<int> hasher{};
 
+        static constexpr bool is_noexcept =
+            noexcept((std::size_t{} ^ hasher(42)) + 0x9e3779b9 + (13<<6) + (13>>2));
+        std::size_t operator()(const std::set<int>& set) const noexcept(is_noexcept) {
+            std::size_t seed(2283351); // arbitrary number
             for (auto element : set)
                 seed ^= hasher(element) + 0x9e3779b9 + (seed<<6) + (seed>>2);
-
             return seed;
         }
     };
