@@ -64,6 +64,14 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         throw std::runtime_error("Python isn't initialized");
     }
 
+    m_main_thread_state = PyThreadState_Get();
+    m_parser_thread_state = Py_NewInterpreter();
+
+    if (!m_main_thread_state && !m_parser_thread_state) {
+        ErrorLogger() << "Python parser sub-interpreter isn't initialized!";
+        throw std::runtime_error("Python sub-interpreter isn't initialized");
+    }
+
     try {
         type_int = py::import("builtins").attr("int");
         type_float = py::import("builtins").attr("float");
@@ -305,12 +313,18 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
 PythonParser::~PythonParser() {
     try {
         m_meta_path.pop(py::len(m_meta_path) - 1);
-        // ToDo: ensure type of removed parser
-        // ToDo: clean up sys.modules
+        type_int = py::object();
+        type_float = py::object();
+        type_bool = py::object();
+        type_str = py::object();
+        m_meta_path = py::list();
     } catch (const py::error_already_set&) {
         ErrorLogger() << "Python parser destructor throw exception";
         m_python.HandleErrorAlreadySet();
     }
+
+    Py_EndInterpreter(m_parser_thread_state);
+    PyThreadState_Swap(m_main_thread_state);
 }
 
 bool PythonParser::ParseFileCommon(const boost::filesystem::path& path,
