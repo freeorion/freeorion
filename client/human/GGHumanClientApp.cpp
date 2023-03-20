@@ -120,8 +120,8 @@ namespace {
     /** These options can only be validated after the graphics system (SDL) is initialized,
         so that display size can be detected
      */
-    constexpr int DEFAULT_WIDTH = 1024;
-    constexpr int DEFAULT_HEIGHT = 768;
+    constexpr int DEFAULT_WIDTH = 1280;
+    constexpr int DEFAULT_HEIGHT = 800;
     constexpr int DEFAULT_LEFT = static_cast<int>(SDL_WINDOWPOS_CENTERED);
     constexpr int DEFAULT_TOP = 50;
     constexpr int MIN_WIDTH = 800;
