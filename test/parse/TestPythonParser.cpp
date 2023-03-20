@@ -26,7 +26,7 @@ namespace {
 BOOST_FIXTURE_TEST_SUITE(TestPythonParser, ParserAppFixture)
 
 BOOST_AUTO_TEST_CASE(parse_game_rules) {
-    PythonParser parser(m_python, m_scripting_dir, true);
+    PythonParser parser(m_python, m_scripting_dir);
 
     auto game_rules_p = Pending::ParseSynchronously(parse::game_rules, parser,  m_scripting_dir / "game_rules.focs.py");
     auto game_rules = *Pending::WaitForPendingUnlocked(std::move(game_rules_p));
@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE(parse_game_rules) {
 }
 
 BOOST_AUTO_TEST_CASE(parse_techs) {
-    PythonParser parser(m_python, m_scripting_dir, true);
+    PythonParser parser(m_python, m_scripting_dir);
 
     auto techs_p = Pending::ParseSynchronously(parse::techs<TechManager::TechParseTuple>, parser, m_scripting_dir / "techs");
     auto [techs, tech_categories, categories_seen] = *Pending::WaitForPendingUnlocked(std::move(techs_p));
@@ -207,7 +207,7 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
 }
 
 BOOST_AUTO_TEST_CASE(parse_species) {
-    PythonParser parser(m_python, m_scripting_dir, true);
+    PythonParser parser(m_python, m_scripting_dir);
 
     auto species_p = Pending::ParseSynchronously(parse::species, parser, m_scripting_dir / "species");
     const auto [species_map, ordering] = *Pending::WaitForPendingUnlocked(std::move(species_p));
@@ -434,7 +434,7 @@ BOOST_AUTO_TEST_CASE(parse_techs_full) {
     BOOST_REQUIRE(boost::filesystem::exists(scripting_dir));
     BOOST_REQUIRE(boost::filesystem::is_directory(scripting_dir));
 
-    PythonParser parser(m_python, scripting_dir, true);
+    PythonParser parser(m_python, scripting_dir);
 
     auto named_values = Pending::ParseSynchronously(parse::named_value_refs, scripting_dir / "common");
 
@@ -477,7 +477,7 @@ BOOST_AUTO_TEST_CASE(parse_species_full) {
     BOOST_REQUIRE(boost::filesystem::exists(scripting_dir));
     BOOST_REQUIRE(boost::filesystem::is_directory(scripting_dir));
 
-    PythonParser parser(m_python, scripting_dir, true);
+    PythonParser parser(m_python, scripting_dir);
 
     auto named_values = Pending::ParseSynchronously(parse::named_value_refs, scripting_dir / "common");
 
