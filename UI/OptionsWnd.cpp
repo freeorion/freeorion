@@ -1479,35 +1479,31 @@ void OptionsWnd::DoneClicked() {
 }
 
 void OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked(bool checked) {
-    if (checked) {
-        try {
+    try {
+        if (checked) {
             Sound::GetSound().Enable();
             GetOptionsDB().Set("audio.effects.enabled", true);
             Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.button.press.sound.path"), true);
-        } catch (Sound::InitializationFailureException const &e) {
-            SoundInitializationFailure(e);
+        } else {
+            GetOptionsDB().Set("audio.effects.enabled", false);
         }
-    } else {
-        GetOptionsDB().Set("audio.effects.enabled", false);
-        if (!GetOptionsDB().Get<bool>("audio.music.enabled"))
-            Sound::GetSound().Disable();
+    } catch (Sound::InitializationFailureException const &e) {
+        SoundInitializationFailure(e);
     }
 }
 
 void OptionsWnd::SoundOptionsFeedback::MusicClicked(bool checked) {
-    if (checked) {
-        try {
+    try {
+        if (checked) {
             Sound::GetSound().Enable();
             GetOptionsDB().Set("audio.music.enabled", true);
             Sound::GetSound().ResumeMusic();
-        } catch (Sound::InitializationFailureException const &e) {
-            SoundInitializationFailure(e);
+        } else {
+            GetOptionsDB().Set("audio.music.enabled", false);
+            Sound::GetSound().PauseMusic();
         }
-    } else {
-        GetOptionsDB().Set("audio.music.enabled", false);
-        Sound::GetSound().StopMusic();
-        if (!GetOptionsDB().Get<bool>("audio.effects.enabled"))
-            Sound::GetSound().Disable();
+    } catch (Sound::InitializationFailureException const &e) {
+        SoundInitializationFailure(e);
     }
 }
 

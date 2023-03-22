@@ -213,7 +213,7 @@ std::string GGHumanClientApp::EncodeServerAddressOption(const std::string& serve
 }
 
 GGHumanClientApp::GGHumanClientApp(int width, int height, bool calculate_fps, std::string name,
-                                   int x, int y, bool fullscreen, bool fake_mode_change) :
+                                       int x, int y, bool fullscreen, bool fake_mode_change) :
     ClientApp(),
     SDLGUI(width, height, calculate_fps, std::move(name), x, y, fullscreen, fake_mode_change),
     m_fsm(*this)

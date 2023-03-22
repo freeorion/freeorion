@@ -129,6 +129,7 @@ IntroMenu::IntroMenu(my_context ctx) :
     Base(ctx)
 {
     TraceLogger(FSM) << "(HumanClientFSM) IntroMenu";
+    
     Client().GetClientUI().ShowIntroScreen();
     GetGameRules().ResetToDefaults();
 
