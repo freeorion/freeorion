@@ -1006,6 +1006,12 @@ Retourner au Menu Principal sans sauvegarder.
 ABORT_SAVE_AND_EXIT
 Quitter FreeOrion sans sauvegarder.
 
+WRONG_CLIENT_TYPE_AUTOTURN
+Seuls les joueurs humains peuvent définir les tours automatiques.
+
+WRONG_CLIENT_TYPE_REVERT_ORDERS
+Les ordres ne peuvent pas être annulés pour les non-joueurs.
+
 EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS
 Aucun empire n'est contrôlé par ce client; les ordres ne peuvent pas être exécutés.
 
@@ -3548,8 +3554,14 @@ Tour %1%
 MAP_BTN_TURN_UNREADY
 Réviser %1%
 
+MAP_BTN_TURN_REVOKE
+Annuler ordres %2% et relancer tour %1%
+
+MAP_BTN_TURN_SEND_AND_START
+Envoyer ordres %2% et lancer tour %1%
+
 MAP_BTN_TURN_TOOLTIP
-Lancer Tour
+Lancer le tour
 
 MAP_BTN_TURN_TOOLTIP_DESC_SP
 '''Lance le traitement du tour selon la séquence suivante:
@@ -4881,7 +4893,10 @@ RALLY_QUEUE_ITEM
 Rallier %1%
 
 DELETE_QUEUE_ITEM
-<rgba 255 0 0 255>Retirer le projet de la file d'attente</rgba>
+<rgba 255 64 64 255>Retirer le projet de la file d'attente</rgba>
+
+UNDELETE_QUEUE_ITEM
+<rgba 96 255 96 255>Replacer le projet dans la file d'attente</rgba>
 
 MOVE_UP_QUEUE_ITEM
 Déplacer en haut de la file
@@ -5459,28 +5474,28 @@ ORDER_FLEET_NEW
 Nouvelle flotte %3% nommée %1% avec %2% astronefs
 
 ORDER_FLEET_MOVE
-Déplacement Flotte
+Déplacement Flotte %1% vers %2%
 
 ORDER_FLEET_TRANSFER
-Transfert Flotte
+Transfert Flotte %1% dans %2%
 
 ORDER_COLONIZE
-Coloniser
+Coloniser %1% avec %2%
 
 ORDER_INVADE
-Envahir
+Envahir %1% avec %2%
 
 ORDER_BOMBARD
-Bombarder
+Bombarder %1% avec %2%
 
 ORDER_FOCUS_CHANGE
-Changement Focus
+Changement Focus de %1% pour %2%
 
 ORDER_POLICY_ADOPT
-Adopter Politique
+Adopter Politique %1% de la catégorie %2% choix %3%
 
 ORDER_POLICY_ABANDON
-Abandonner Politique
+Abandonner Politique %1%
 
 ORDER_RESEARCH
 Recherche
@@ -5537,13 +5552,13 @@ NO_BUILDINGS_AVAILABLE
 Aucune Structure disponible
 
 OWNED_PLANETS
-'''Planètes impériales : '''
+'''Planètes possédées : '''
 
 NO_OWNED_PLANETS_KNOWN
 Aucune Planète impériale connue
 
 OWNED_FLEETS
-'''Flottes impériales : '''
+'''Flottes possédées : '''
 
 # %1% link to a fleet.
 # %2% link to a system.
@@ -8894,7 +8909,7 @@ Replicon
 SP_REPLICON_GAMEPLAY_DESC
 '''Robots auto-réplicants à peine sentients.
 Préfèrent les Planètes [[PT_RADIATED]]s.
-[[encyclopedia ROBOTIC_SPECIES_TITLE]]
+[[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia ADAPTIVE_TITLE]]
 '''
 
 SP_REPLICON_DESC
@@ -9692,7 +9707,7 @@ FORTRESS_SPECIAL
 Forteresse
 
 FORTRESS_SPECIAL_DESC
-'''Augmente les [[metertype METER_SHIELD]] de +[[value FORTRESS_SPECIAL_SHIELD_BONUS]], la [[metertype METER_DEFENSE]] de +[[value FORTRESS_SPECIAL_DEFENSE_BONUS]], l'[[metertype METER_TROOPS]] de +[[value FORTRESS_SPECIAL_TROOPS_BONUS]] et le [[metertype METER_DETECTION]] de +[[value FORTRESS_SPECIAL_DETECTION_BONUS]]. Les Boucliers se régénèrent de 40 par tour et la Défense de [[value FORTRESS_SPECIAL_DEFENSE_REGEN]] par tour. Les Mines réduisent la [[metertype METER_STRUCTURE]] des astronefs ennemis situés dans le système de 24 par tour. À chaque tour, il y a 5% de chance qu'un Factionnaire apparaisse pour protéger le système, à moins qu'un spécimen soit déjà présent.
+'''Augmente les [[metertype METER_SHIELD]] de +[[value FORTRESS_SPECIAL_SHIELD_BONUS]], la [[metertype METER_DEFENSE]] de +[[value FORTRESS_SPECIAL_DEFENSE_BONUS]], l'[[metertype METER_TROOPS]] de +[[value FORTRESS_SPECIAL_TROOPS_BONUS]] et le [[metertype METER_DETECTION]] de +[[value FORTRESS_SPECIAL_DETECTION_BONUS]]. Les Boucliers se régénèrent de 40 par tour et la Défense de [[value FORTRESS_SPECIAL_DEFENSE_REGEN]] par tour. Les Mines réduisent la [[metertype METER_STRUCTURE]] des astronefs ennemis situés dans le système de [[value FORTRESS_SPECIAL_SYSTEM_MINES]] par tour. À chaque tour, il y a 5% de chance qu'un Factionnaire apparaisse pour protéger le système, à moins qu'un spécimen soit déjà présent.
 
 La défense de cette planète fut conçue par l'une des anciennes civilisations de Précurseurs. Elle comprend des boucliers planétaires solides, des armements redoutables et des équipements de détection performants, l'ensemble permettant de faire face à tout type de siège. Les installations sont encore totalement fonctionnelles et étonnamment très simples d'utilisation.'''
 
@@ -12280,7 +12295,10 @@ Modération
 PLC_MODERATION_DESC
 '''Accorde un bonus d'Influence et de Stabilité à la Capitale impériale d'autant plus important lorsque le réglage de Focus le plus commun dans l'empire est moins utilisé. Le nombre d'utilisations des autres réglages de Focus n'entre pas en compte pour ce bonus; seul le nombre de nombre planètes utilisant le réglage de Focus le plus commun ainsi que le nombre total de planètes appartenant à l'empire entrent en ligne de compte.
 
-Les Avant-Postes sans Focus défini comptent également comme un Focus, ce dernier pouvant alors représenter le réglage de Focus le plus commun, rendant par conséquent difficile l'obtention de bonus élevés.'''
+Les Avant-Postes sans Focus défini comptent également comme un Focus, ce dernier pouvant alors représenter le réglage de Focus le plus commun, rendant par conséquent difficile l'obtention de bonus élevés.
+
+Le bonus de Stabilité est égal à [[value PLC_MODERATION_STABILITY_SCALING]] fois le rapport : (( Planètes possédées / Utilisations du Focus le plus commun ) - 1)
+Le bonus d'Influence est égal à [[value PLC_MODERATION_INFLUENCE_SCALING]] fois le rapport : (( Planètes possédées / Utilisations du Focus le plus commun ) - 1)'''
 
 PLC_MODERATION_SHORT_DESC
 Augmente l'Influence et la Stabilité de la Capitale impériale
@@ -12439,7 +12457,10 @@ PLC_VASSALIZATION
 Vassalisation
 
 PLC_VASSALIZATION_DESC
-Augmente la [[metertype METER_TARGET_INFLUENCE]] des planètes en Focus Influence au sein des systèmes abritant des planètes non-colonisées, dont l'espèce est différente de celle peuplant la Capitale de l'empire et la planète bénéficiaire, de [[value PLC_VASSALIZATION_INFLUENCE_SCALING]] multiplié par la racine carrée du total de la Population sur ces planètes non-colonisées.
+'''Augmente la [[metertype METER_TARGET_INFLUENCE]] des planètes en Focus Influence au sein des systèmes abritant des planètes non-colonisées, dont l'espèce est différente de celle peuplant la Capitale de l'empire et la planète bénéficiaire, de [[value PLC_VASSALIZATION_INFLUENCE_SCALING]] multiplié par la racine carrée du total de la Population sur ces planètes non-colonisées.
+
+L'espèce [[species SP_ANCIENT_GUARDIANS]] ne peut pas être vassalisée.
+'''
 
 PLC_VASSALIZATION_SHORT_DESC
 Les planètes neutres améliorent l'Influence
@@ -13968,7 +13989,7 @@ Mines Défensives 1
 DEF_SYST_DEF_MINE_1_DESC
 '''Lorsqu'aucun astronef allié n'est présent dans un système stellaire, les astronefs ennemis ont tout loisir de procéder à un blocus, interrompant ainsi l'acheminement de ressources, et ce en évitant de se mettre à portée des défenses planétaires, et donc sans subir de dégâts. Un réseau spatial de mines défensives, endommageant à chaque tour les astronefs ennemis se trouvant dans le système, peut les dissuader d'adopter cette tactique.
 
-La [[metertype METER_STRUCTURE]] de tous les astronefs ennemis présents dans un système stellaire abritant une planète de l'empire maîtrisant cette technologie, sera réduite au rythme de 16 par tour.
+La [[metertype METER_STRUCTURE]] de tous les astronefs ennemis présents dans un système stellaire abritant une planète de l'empire maîtrisant cette technologie, sera réduite au rythme de [[value DEF_SYST_DEF_MINE_1_DAMAGE]] par tour.
 
 Les mines sont renouvelées à chaque tour et leur utilisation n'entraîne pas un épuisement des stocks de munitions, ces derniers étant constamment approvisionnés.'''
 
@@ -13976,13 +13997,13 @@ DEF_SYST_DEF_MINE_2
 Mines Défensives 2
 
 DEF_SYST_DEF_MINE_2_DESC
-Réduit la [[metertype METER_STRUCTURE]] des astronefs ennemis de 32 en plus par tour, cumulables avec les dommages des [[tech DEF_SYST_DEF_MINE_1]].
+Amélioration de la technologie [[tech DEF_SYST_DEF_MINE_1]]. Les mines améliorées réduisent la [[metertype METER_STRUCTURE]] des astronefs ennemis d'un total de [[value DEF_SYST_DEF_MINE_2_DAMAGE]] par tour.
 
 DEF_SYST_DEF_MINE_3
 Mines Défensives 3
 
 DEF_SYST_DEF_MINE_3_DESC
-Réduit la [[metertype METER_STRUCTURE]] des astronefs ennemis de 64 en plus par tour, cumulables avec les précédentes technologies de mines défensives.
+Amélioration de la technologie [[tech DEF_SYST_DEF_MINE_2]]. Les mines améliorées réduisent la [[metertype METER_STRUCTURE]] des astronefs ennemis d'un total de [[value DEF_SYST_DEF_MINE_3_DAMAGE]] par tour.
 
 DEF_ROOT_DEFENSE
 Auto-défense
@@ -15044,7 +15065,7 @@ BLD_SOL_ORB_GEN
 Générateur Orbital Solaire
 
 BLD_SOL_ORB_GEN_DESC
-'''Augmente la [[metertype METER_TARGET_INDUSTRY]] sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]], par [[metertype METER_POPULATION]] et selon le type d'étoile:
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]] et réglées sur le [[encyclopedia INDUSTRY_FOCUS_TITLE]], par [[metertype METER_POPULATION]] et selon le type d'étoile du système où se situe la structure:
 • [[STAR_BLUE]] ou [[STAR_WHITE]] (x[[value BLD_SOL_ORB_GEN_BRIGHT_TARGET_INDUSTRY_PERPOP]])
 • [[STAR_YELLOW]] ou [[STAR_ORANGE]] (x[[value BLD_SOL_ORB_GEN_NORMAL_TARGET_INDUSTRY_PERPOP]])
 • [[STAR_RED]] (x[[value BLD_SOL_ORB_GEN_DIM_TARGET_INDUSTRY_PERPOP]])
@@ -17225,7 +17246,7 @@ ULTIMATE_DEFENSE_TROOPS_DESC
 +++	Parfait en [[metertype METER_TROOPS]] défensive : 300%
 
 ANCIENT_DEFENSE_TROOPS_DESC
-+++	[[metertype METER_TROOPS]] ancestrale défensive : +10 par [[metertype METER_POPULATION]]
++++	[[metertype METER_TROOPS]] ancestrale défensive : +[[value ANCIENT_PLANETARY_TROOPS]] par [[metertype METER_POPULATION]]
 
 NO_OFFENSE_TROOPS_DESC
 −−−	Pas d'[[metertype METER_TROOPS]] offensive
@@ -17362,7 +17383,7 @@ GOOD_PLANETARY_SHIELD_DESC
 +	Bon en [[metertype METER_SHIELD]] planétaires : +40
 
 ANCIENT_PLANETARY_SHIELD_DESC
-+++	[[metertype METER_SHIELD]] planétaires ancestraux : +4000
++++	[[metertype METER_SHIELD]] planétaires ancestraux : +[[value ANCIENT_PLANETARY_SHIELD]]
 
 GOOD_PLANETARY_DEFENSE_DESC
 +	Bon en [[metertype METER_DEFENSE]] planétaire : +30
@@ -17974,6 +17995,9 @@ Moyenne Vision
 
 GOOD_VISION_LABEL
 Bonne Vision
+
+VERY_GOOD_VISION_LABEL
+Très Bonne Vision
 
 EXCELLENT_VISION_LABEL
 Excellente Vision
