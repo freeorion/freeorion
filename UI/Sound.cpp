@@ -225,6 +225,7 @@ Sound::Impl::Impl() {
         // Bury the exception because the GetSound() singleton may cause
         // the sound system to initialize at unpredictable times when
         // the user can't be usefully informed of the failure.
+        ErrorLogger() << "Sound enable failed";
     }
 }
 
@@ -234,7 +235,7 @@ Sound::Impl::~Impl()
 void Sound::Impl::Enable() {
     if (m_initialized)
         return;
-
+    
     //Reset playing audio
     m_music_loops = 0;
     m_sound_buffers.clear();
@@ -461,7 +462,7 @@ void Sound::Impl::PlayMusic(const boost::filesystem::path& path, int loops) {
 
     std::string filename = PathToString(path);
     m_music_loops = 0;
-
+    
     if (m_music_name.size() > 0)
         StopMusic();
 
@@ -495,8 +496,9 @@ void Sound::Impl::PlayMusic(const boost::filesystem::path& path, int loops) {
     // fill up the buffers and queue them up for the first time
     auto refill_failed = RefillBuffer(&m_music_ogg_file, m_music_ogg_format, m_music_ogg_freq,
                                       m_music_buffers[0], BUFFER_SIZE, m_music_loops);
-
+    
     if (refill_failed == 0) {
+        // number_of_buffers = 1, Queue buffers onto a source
         alSourceQueueBuffers(m_sources[0], 1, &m_music_buffers[0]); // queue up the buffer if we manage to fill it
         auto openal_error = alGetError();
         if (openal_error != AL_NONE)
@@ -505,6 +507,7 @@ void Sound::Impl::PlayMusic(const boost::filesystem::path& path, int loops) {
         refill_failed = RefillBuffer(&m_music_ogg_file, m_music_ogg_format, m_music_ogg_freq,
                                      m_music_buffers[1], BUFFER_SIZE, m_music_loops);
         if (refill_failed == 0) {
+            // number_of_buffers = 1, Queue buffers onto a source
             alSourceQueueBuffers(m_sources[0], 1, &m_music_buffers[1]);
             m_music_name = filename; //playing something that takes up more than 2 buffers
         } else {
@@ -527,15 +530,23 @@ void Sound::Impl::PlayMusic(const boost::filesystem::path& path, int loops) {
 void Sound::Impl::PauseMusic() {
     if (!m_initialized)
         return;
-    if (alcGetCurrentContext())
-        alSourcePause(m_sources[0]);
+    if (alcGetCurrentContext()) {
+        ALint state;
+        alGetSourcei(m_sources[0], AL_SOURCE_STATE, &state);
+        if (state != AL_PAUSED && state != AL_INITIAL && state != AL_STOPPED)
+            alSourcePause(m_sources[0]);
+    }
 }
 
 void Sound::Impl::ResumeMusic() {
     if (!m_initialized)
         return;
-    if (alcGetCurrentContext())
-        alSourcePlay(m_sources[0]);
+    if (alcGetCurrentContext()) {
+        ALint state;
+        alGetSourcei(m_sources[0], AL_SOURCE_STATE, &state);
+        if (state != AL_PLAYING) // play in AL_PLAYING will start it at beginning(alSourceRewind intended?)
+            alSourcePlay(m_sources[0]);
+    }
 }
 
 void Sound::Impl::StopMusic() {
@@ -544,12 +555,18 @@ void Sound::Impl::StopMusic() {
     if (!alcGetCurrentContext())
         return;
 
-    alSourceStop(m_sources[0]);
+    ALint state;
+    alGetSourcei(m_sources[0], AL_SOURCE_STATE, &state);
+    if (state != AL_STOPPED && state != AL_INITIAL)
+        alSourceStop(m_sources[0]);
+    
     if (m_music_name.size() > 0) {
         m_music_name.clear();  // do this to avoid music being re-started by other functions
         ov_clear(&m_music_ogg_file); // and unload the music file for good measure. the file itself is closed now, don't re-close it again
     }
-    alSourcei(m_sources[0], AL_BUFFER, 0);
+    alGetSourcei(m_sources[0], AL_SOURCE_STATE, &state);
+    if (state != AL_PLAYING && state != AL_PAUSED)
+        alSourcei(m_sources[0], AL_BUFFER, AL_NONE);
 }
 
 void Sound::Impl::PlaySound(const boost::filesystem::path& path, bool is_ui_sound) {
@@ -674,6 +691,7 @@ void Sound::Impl::DoFrame() {
     alGetSourcei(m_sources[0], AL_BUFFERS_PROCESSED, &num_buffers_processed);
     while (num_buffers_processed > 0) {
         ALuint buffer_name_yay;
+        // number_of_buffers = 1, Queue buffers onto a source
         alSourceUnqueueBuffers (m_sources[0], 1, &buffer_name_yay);
         if (RefillBuffer(&m_music_ogg_file, m_music_ogg_format, m_music_ogg_freq,
                          buffer_name_yay, BUFFER_SIZE, m_music_loops))
