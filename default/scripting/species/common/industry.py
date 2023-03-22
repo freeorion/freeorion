@@ -5,7 +5,7 @@ from common.priorities import (
     TARGET_EARLY_BEFORE_SCALING_PRIORITY,
     TARGET_SCALING_PRIORITY,
 )
-from species.common.multiplier import GREAT_MULTIPLIER
+from species.common.multiplier import GOOD_MULTIPLIER, GREAT_MULTIPLIER
 
 NO_INDUSTRY = DESCRIPTION_EFFECTSGROUP_MACRO("NO_INDUSTRY_DESC")
 
@@ -30,6 +30,20 @@ BASIC_INDUSTRY = [
 ]
 
 AVERAGE_INDUSTRY = BASIC_INDUSTRY
+
+GOOD_INDUSTRY = [
+    *BASIC_INDUSTRY,
+    EffectsGroup(
+        description="GOOD_INDUSTRY_DESC",
+        scope=IsSource,
+        activation=Planet() & TargetIndustry(low=0) & Happiness(low=0) & Focus(type=["FOCUS_INDUSTRY"]),
+        accountinglabel="GOOD_INDUSTRY_LABEL",
+        priority=TARGET_SCALING_PRIORITY,
+        effects=SetTargetIndustry(
+            value=Value * NamedReal(name="GOOD_INDUSTRY_TARGET_INDUSTRY_SCALING", value=GOOD_MULTIPLIER)
+        ),
+    ),
+]
 
 GREAT_INDUSTRY = [
     *BASIC_INDUSTRY,
