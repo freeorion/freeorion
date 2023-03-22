@@ -46,6 +46,25 @@ HOMEWORLD_BONUS_POPULATION = EffectsGroup(
     effects=SetTargetPopulation(value=Value + 2 * Target.HabitableSize),
 )
 
+# reduces max population in systems with bright stars
+LIGHT_SENSITIVE = [
+    EffectsGroup(
+        description="LIGHT_SENSITIVE_DESC",
+        scope=IsSource,
+        activation=Planet() & Star(type=[Blue]),
+        accountinglabel="VERY_BRIGHT_STAR",
+        priority=TARGET_POPULATION_AFTER_SCALING_PRIORITY,
+        effects=SetTargetPopulation(value=Value - 2 * Source.HabitableSize),
+    ),
+    EffectsGroup(
+        scope=IsSource,
+        activation=Planet() & Star(type=[White]),
+        accountinglabel="BRIGHT_STAR",
+        priority=TARGET_POPULATION_AFTER_SCALING_PRIORITY,
+        effects=SetTargetPopulation(value=Value - Source.HabitableSize),
+    ),
+]
+
 # Implements environmental modifiers from Growth techs.
 # Changes to the growth tree should take this into account.
 

@@ -38,6 +38,8 @@ BAD_RESEARCH = [
     ),
 ]
 
+AVERAGE_RESEARCH = BASIC_RESEARCH
+
 GOOD_RESEARCH = [
     *BASIC_RESEARCH,
     EffectsGroup(

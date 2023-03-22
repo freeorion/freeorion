@@ -37,3 +37,19 @@ RADIATED_STANDARD_EP = {
         GasGiantType: Uninhabitable,
     }
 }
+
+BARREN_STANDARD_EP = {
+    "environments": {
+        Swamp: Hostile,
+        Toxic: Hostile,
+        Inferno: Poor,
+        Radiated: Adequate,
+        Barren: Good,
+        Tundra: Adequate,
+        Desert: Poor,
+        Terran: Hostile,
+        Ocean: Hostile,
+        AsteroidsType: Uninhabitable,
+        GasGiantType: Uninhabitable,
+    }
+}
