@@ -30,7 +30,7 @@ class ShipCombatStats:
 
         self.structure = structure
         self.shields = shields
-        self.attacks = {} if attacks is None else tuple_to_dict(attacks)  # type: Dict[float, int]
+        self.attacks: Dict[float, int] = {} if attacks is None else tuple_to_dict(attacks)
 
         self.fighter_capacity = fighter_capacity
         self.fighter_launch_rate = fighter_launch_rate
