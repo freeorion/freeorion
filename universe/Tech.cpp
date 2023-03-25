@@ -117,6 +117,28 @@ Tech::Tech(std::string&& name, std::string&& description,
            std::set<std::string>&& prerequisites,
            std::vector<UnlockableItem>&& unlocked_items,
            std::string&& graphic) :
+    Tech(std::move(name), std::move(description), std::move(short_description), std::move(category),
+         std::move(research_cost), std::move(research_turns), researchable, std::move(tags),
+         [](auto& effects) {
+             std::vector<Effect::EffectsGroup> retval;
+             retval.reserve(effects.size());
+             for (auto& e : effects)
+                 retval.push_back(std::move(*e)); // extract from shared_ptr
+             return retval;
+         }(effects),
+         std::move(prerequisites), std::move(unlocked_items), std::move(graphic))
+{}
+
+Tech::Tech(std::string&& name, std::string&& description,
+           std::string&& short_description, std::string&& category,
+           std::unique_ptr<ValueRef::ValueRef<double>>&& research_cost,
+           std::unique_ptr<ValueRef::ValueRef<int>>&& research_turns,
+           bool researchable,
+           std::set<std::string>&& tags,
+           std::vector<Effect::EffectsGroup>&& effects,
+           std::set<std::string>&& prerequisites,
+           std::vector<UnlockableItem>&& unlocked_items,
+           std::string&& graphic) :
     m_name(name), // not a move so it can be used later in member intializer list
     m_description(std::move(description)),
     m_short_description(std::move(short_description)),
@@ -181,14 +203,10 @@ Tech::Tech(std::string&& name, std::string&& description,
         });
         return retval;
     }()),
-    m_effects([](auto& effects_p, const auto& name) {
-        std::vector<Effect::EffectsGroup> retval;
-        retval.reserve(effects_p.size());
-        for (auto& e : effects_p) {
-            e->SetTopLevelContent(name);
-            retval.push_back(std::move(*e));
-        }
-        return retval;
+    m_effects([](auto& effects, const auto& name) {
+        for (auto& e : effects)
+            e.SetTopLevelContent(name);
+        return std::move(effects);
     }(effects, name)),
     m_prerequisites{prerequisites.begin(), prerequisites.end()},
     m_unlocked_items([](auto& unlocked_items) {
