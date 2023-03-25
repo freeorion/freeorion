@@ -68,7 +68,7 @@ namespace {
 
         while (true) {
             const uint8_t c = *it;
-            std::ptrdiff_t sequence_length =
+            const std::ptrdiff_t sequence_length =
                 (c <= 0x7F) ? 1 :
                 (c >= 0xC2 && c <= 0xDF) ? 2 :
                 (c >= 0xE0 && c <= 0xEF) ? 3 :

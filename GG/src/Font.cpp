@@ -1568,11 +1568,11 @@ std::vector<Font::LineData> Font::DetermineLines(
 
         } else if (elem->Type() == TextElement::TextElementType::WHITESPACE) {
             auto it = elem->text.begin();
-            auto end_it = elem->text.end();
+            const auto end_it = elem->text.end();
             while (it != end_it) {
-                StrSize char_index(std::distance(elem->text.begin(), it));
-                std::uint32_t c = utf8::next(it, end_it);
-                StrSize char_size = std::distance(elem->text.begin(), it) - char_index;
+                const StrSize char_index(std::distance(elem->text.begin(), it));
+                const std::uint32_t c = utf8::next(it, end_it);
+                const StrSize char_size = std::distance(elem->text.begin(), it) - char_index;
                 if (c != WIDE_CR && c != WIDE_FF) {
                     X advance_position = x + m_space_width;
                     if (c == WIDE_TAB && expand_tabs)
@@ -1580,8 +1580,8 @@ std::vector<Font::LineData> Font::DetermineLines(
                     else if (c == WIDE_NEWLINE)
                         advance_position = x;
                     X advance = advance_position - x;
-                    // if we're using linewrap and this space won't fit on
-                    // this line
+
+                    // if we're using linewrap and this space won't fit on this line
                     if ((format & FORMAT_LINEWRAP) && box_width < advance_position) {
                         if (!x && box_width < advance) {
                             // if the space is larger than the line and alone
@@ -1635,12 +1635,12 @@ std::vector<Font::LineData> Font::DetermineLines(
                                      line_data[line_data.size() - 2].justification);
                 }
                 auto it = elem->text.begin();
-                auto end_it = elem->text.end();
+                const auto end_it = elem->text.end();
                 std::size_t j = 0;
                 while (it != end_it) {
-                    StrSize char_index(std::distance(elem->text.begin(), it));
+                    const StrSize char_index(std::distance(elem->text.begin(), it));
                     utf8::next(it, end_it);
-                    StrSize char_size = std::distance(elem->text.begin(), it) - char_index;
+                    const StrSize char_size = std::distance(elem->text.begin(), it) - char_index;
                     x += elem->widths[j];
                     line_data.back().char_data.emplace_back(
                         x,
@@ -1654,12 +1654,12 @@ std::vector<Font::LineData> Font::DetermineLines(
                 }
             } else {
                 auto it = elem->text.begin();
-                auto end_it = elem->text.end();
+                const auto end_it = elem->text.end();
                 std::size_t j = 0;
                 while (it != end_it) {
-                    StrSize char_index(std::distance(elem->text.begin(), it));
+                    const StrSize char_index(std::distance(elem->text.begin(), it));
                     utf8::next(it, end_it);
-                    StrSize char_size = std::distance(elem->text.begin(), it) - char_index;
+                    const StrSize char_size = std::distance(elem->text.begin(), it) - char_index;
                     // if the char overruns this line, and isn't alone on this
                     // line, move it down to the next line
                     if ((format & FORMAT_LINEWRAP) && box_width < x + elem->widths[j] && x) {
@@ -1694,7 +1694,7 @@ std::vector<Font::LineData> Font::DetermineLines(
             }
         } else if (elem->Type() == TextElement::TextElementType::OPEN_TAG) {
             assert(std::dynamic_pointer_cast<FormattingTag>(elem));
-            auto elem_as_tag = std::static_pointer_cast<FormattingTag>(elem);
+            const auto elem_as_tag = std::static_pointer_cast<FormattingTag>(elem);
             if (elem_as_tag->tag_name == ALIGN_LEFT_TAG)
                 line_data.back().justification = ALIGN_LEFT;
             else if (elem_as_tag->tag_name == ALIGN_CENTER_TAG)
@@ -1708,7 +1708,7 @@ std::vector<Font::LineData> Font::DetermineLines(
 
         } else if (elem->Type() == TextElement::TextElementType::CLOSE_TAG) {
             assert(std::dynamic_pointer_cast<FormattingTag>(elem));
-            auto elem_as_tag = std::static_pointer_cast<FormattingTag>(elem);
+            const auto elem_as_tag = std::static_pointer_cast<FormattingTag>(elem);
             if ((elem_as_tag->tag_name == ALIGN_LEFT_TAG && line_data.back().justification == ALIGN_LEFT) ||
                 (elem_as_tag->tag_name == ALIGN_CENTER_TAG && line_data.back().justification == ALIGN_CENTER) ||
                 (elem_as_tag->tag_name == ALIGN_RIGHT_TAG && line_data.back().justification == ALIGN_RIGHT))
@@ -1733,10 +1733,7 @@ FT_Error Font::GetFace(FT_Face& face)
 { return FT_New_Face(g_library.m_library, m_font_filename.c_str(), 0, &face); }
 
 FT_Error Font::GetFace(const std::vector<uint8_t>& file_contents, FT_Face& face)
-{
-    return FT_New_Memory_Face(g_library.m_library, &file_contents[0],
-                              file_contents.size(), 0, &face);
-}
+{ return FT_New_Memory_Face(g_library.m_library, &file_contents[0], file_contents.size(), 0, &face); }
 
 void Font::CheckFace(FT_Face face, FT_Error error)
 {
@@ -1750,8 +1747,6 @@ void Font::CheckFace(FT_Face face, FT_Error error)
 
 void Font::Init(FT_Face& face)
 {
-    FT_Fixed scale;
-
     if (!m_pt_sz)
         throw InvalidPointSize("Attempted to create font \"" + m_font_filename + "\" with 0 point size");
 
@@ -1760,7 +1755,7 @@ void Font::Init(FT_Face& face)
         throw BadPointSize("Could not set font size while attempting to create font \"" + m_font_filename + "\"");
 
     // Get the scalable font metrics for this font
-    scale = face->size->metrics.y_scale;
+    const auto scale = face->size->metrics.y_scale;
     m_ascent = Y(static_cast<int>(face->size->metrics.ascender / 64.0)); // convert from fixed-point 26.6 format
     m_descent = Y(static_cast<int>(face->size->metrics.descender / 64.0)); // convert from fixed-point 26.6 format
     m_height = m_ascent - m_descent + 1;
@@ -1799,7 +1794,7 @@ void Font::Init(FT_Face& face)
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &GL_TEX_MAX_SIZE);
     const std::size_t TEX_MAX_SIZE = GL_TEX_MAX_SIZE;
 
-    std::map<std::uint32_t, TempGlyphData> temp_glyph_data;
+    std::map<std::uint32_t, TempGlyphData> temp_glyph_data; // TODO: flat_map?
 
     // Start with width and height of 16,
     // increase them as needed.
@@ -1812,12 +1807,9 @@ void Font::Init(FT_Face& face)
     Y y = Y0;
     X max_x = X0;
     Y max_y = Y0;
-    for (const auto& range : range_vec) {
-        std::uint32_t low = range.first;
-        std::uint32_t high = range.second;
-
-        // copy glyph images
+    for (const auto [low, high] : range_vec) {
         for (std::uint32_t c = low; c < high; ++c) {
+            // copy glyph images
             if (!temp_glyph_data.count(c) && GenerateGlyph(face, c)) {
                 const FT_Bitmap& glyph_bitmap = face->glyph->bitmap;
                 if ((glyph_bitmap.width > TEX_MAX_SIZE) || (glyph_bitmap.rows > TEX_MAX_SIZE))
@@ -1835,12 +1827,12 @@ void Font::Init(FT_Face& face)
                 if (y + Y(glyph_bitmap.rows) > max_y)
                     max_y = y + Y(glyph_bitmap.rows + 1); //Leave a one pixel gap between glyphs
 
-                std::uint8_t*  src_start = glyph_bitmap.buffer;
+                std::uint8_t* const src_start = glyph_bitmap.buffer;
                 // Resize buffer to fit new data
                 buffer.at(x + X(glyph_bitmap.width), y + Y(glyph_bitmap.rows)) = 0;
 
                 for (unsigned int row = 0; row < glyph_bitmap.rows; ++row) {
-                    std::uint8_t*  src = src_start + row * glyph_bitmap.pitch;
+                    std::uint8_t* src = src_start + row * glyph_bitmap.pitch;
                     std::uint16_t* dst = &buffer.get(x, y + Y(row));
                     // Rows are always contiguous, so we can copy along a row using simple incrementation
                     for (unsigned int col = 0; col < glyph_bitmap.width; ++col) {
