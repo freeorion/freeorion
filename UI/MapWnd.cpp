@@ -4222,10 +4222,10 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
             continue;
         }
 
-        for (const auto [centre, radius] : detection_circles) {
+        for (const auto& [centre, radius] : detection_circles) {
             if (radius < 5.0f || radius > 2048.0f)  // hide uselessly small and ridiculously large circles. the latter so super-testers don't have an empire-coloured haze over the whole map.
                 continue;
-            const auto [X, Y] = centre;
+            const auto& [X, Y] = centre;
 
             GG::Clr circle_colour = empire->Color();
             circle_colour.a = 8*GetOptionsDB().Get<int>("ui.map.detection.range.opacity");
