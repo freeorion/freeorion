@@ -2725,16 +2725,16 @@ namespace {
                 auto attacker = combat_objects.get(attack_event->attacker_id);
                 if (!attacker)
                     continue;
-                int attacker_empire_id = attacker->Owner();
+                const int attacker_empire_id = attacker->Owner();
                 auto attacker_empire = context.GetEmpire(attacker_empire_id);
 
                 auto* target_ship = combat_objects.getRaw<Ship>(attack_event->target_id);
                 if (!target_ship)
                     continue;
-                int target_empire_id = target_ship->Owner();
+                const int target_empire_id = target_ship->Owner();
                 auto target_empire = context.GetEmpire(target_empire_id);
 
-                auto attacker_object_type = attacker->ObjectType();
+                const auto attacker_object_type = attacker->ObjectType();
 
                 DebugLogger() << "Attacker " << to_string(attacker_object_type)
                               << " " << attacker->Name() << " (id: " << attacker->ID()
@@ -2762,13 +2762,13 @@ namespace {
                                   EmpireManager& empires, const ObjectMap& objects)
     {
         for (auto& [planet_id, empire_troops] : planet_empire_invasion_troops) {
-            auto* planet = objects.getRaw<Planet>(planet_id);
+            const auto* planet = objects.getRaw<Planet>(planet_id);
             if (!planet || planet->SpeciesName().empty())
                 continue;
 
             for (auto& [invader_empire_id, troops] : empire_troops) {
                 (void)troops; // quiet warning
-                auto invader_empire = empires.GetEmpire(invader_empire_id);
+                const auto invader_empire = empires.GetEmpire(invader_empire_id);
                 if (!invader_empire)
                     continue;
                 invader_empire->RecordPlanetInvaded(*planet);
@@ -2815,7 +2815,7 @@ namespace {
             ErrorLogger() << "ColonizePlanet couldn't get an empire to colonize with";
             return false;
         }
-        int empire_id = ship->Owner();
+        const int empire_id = ship->Owner();
 
         // all checks passed.  proceed with colonization.
 
@@ -2852,7 +2852,7 @@ namespace {
     [[nodiscard]] std::pair<std::vector<int>, std::vector<int>> HandleColonization(ScriptingContext& context) {
         Universe& universe = context.ContextUniverse();
         ObjectMap& objects = context.ContextObjects();
-        const auto& empire_ids = context.EmpireIDs();
+        const auto empire_ids{context.EmpireIDs()};
 
         // collect, for each planet, what ships have been ordered to colonize it
         std::map<int, std::map<int, std::set<int>>> planet_empire_colonization_ship_ids; // map from planet ID to map from empire ID to set of ship IDs
@@ -2860,12 +2860,12 @@ namespace {
         for (auto* ship : objects.allRaw<Ship>()) {
             if (ship->Unowned())
                 continue;
-            int owner_empire_id = ship->Owner();
-            int ship_id = ship->ID();
+            const int owner_empire_id = ship->Owner();
+            const int ship_id = ship->ID();
             if (ship_id == INVALID_OBJECT_ID)
                 continue;
 
-            int colonize_planet_id = ship->OrderedColonizePlanet();
+            const int colonize_planet_id = ship->OrderedColonizePlanet();
             if (colonize_planet_id == INVALID_OBJECT_ID)
                 continue;
 
