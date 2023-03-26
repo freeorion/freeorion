@@ -93,17 +93,17 @@ public:
     [[nodiscard]] bool                         WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override;
 
     [[nodiscard]] bool                         TextFromTarget() const noexcept { return m_text_from_target; } ///< true iff the text to display will be read from the target wnd
-    [[nodiscard]] const std::string&           Text() const; ///< text currently set for display
+    [[nodiscard]] const std::string&           Text() const noexcept; ///< text currently set for display
 
     /** Returns the Font used to display text. */
     [[nodiscard]] const auto&                  GetFont() const noexcept { return m_font; }
 
     [[nodiscard]] Clr                          Color() const noexcept { return m_color; }               ///< color used to render the text box
     [[nodiscard]] Clr                          BorderColor() const noexcept { return m_border_color; }  ///< color used to render the text box border
-    [[nodiscard]] Clr                          TextColor() const;      ///< returns the color used to render the text
-    [[nodiscard]] Flags<TextFormat>            GetTextFormat() const;  ///< returns the text format used to render the text
+    [[nodiscard]] Clr                          TextColor() const noexcept;      ///< returns the color used to render the text
+    [[nodiscard]] Flags<TextFormat>            GetTextFormat() const noexcept;  ///< returns the text format used to render the text
     [[nodiscard]] unsigned int                 BorderWidth() const noexcept { return m_border_width; }  ///< width of the text box border
-    [[nodiscard]] unsigned int                 TextMargin() const;     ///< returns the margin to leave between the text and the text box
+    [[nodiscard]] unsigned int                 TextMargin() const noexcept;     ///< returns the margin to leave between the text and the text box
 
     void SetText(std::string str);
     void Render() override;

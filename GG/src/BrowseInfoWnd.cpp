@@ -29,7 +29,7 @@ void BrowseInfoWnd::Update(std::size_t mode, const Wnd* target)
     if (PositionWnd) {
         new_pos = PositionWnd(m_cursor_pos, GUI::GetGUI()->GetCursor(), *this, *target);
     } else {
-        const Y MARGIN(2);
+        static constexpr Y MARGIN(2);
         new_pos = m_cursor_pos - Pt(Width() / 2, Height() + MARGIN);
     }
     MoveTo(new_pos);
@@ -78,16 +78,16 @@ bool TextBoxBrowseInfoWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) co
     return !wnd->BrowseInfoText(mode).empty();
 }
 
-const std::string& TextBoxBrowseInfoWnd::Text() const
+const std::string& TextBoxBrowseInfoWnd::Text() const noexcept
 { return m_text_control->Text(); }
 
-Clr TextBoxBrowseInfoWnd::TextColor() const
+Clr TextBoxBrowseInfoWnd::TextColor() const noexcept
 { return m_text_control->TextColor(); }
 
-Flags<TextFormat> TextBoxBrowseInfoWnd::GetTextFormat() const
+Flags<TextFormat> TextBoxBrowseInfoWnd::GetTextFormat() const noexcept
 { return m_text_control->GetTextFormat(); }
 
-unsigned int TextBoxBrowseInfoWnd::TextMargin() const
+unsigned int TextBoxBrowseInfoWnd::TextMargin() const noexcept
 { return GetLayout()->BorderMargin(); }
 
 void TextBoxBrowseInfoWnd::SetText(std::string str)

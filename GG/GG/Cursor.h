@@ -45,7 +45,7 @@ public:
     It renders a texture such that the point within the texture that
     represents the hotspot of the cursor is rendered at the click-point of the
     cursor. */
-class GG_API TextureCursor :
+class GG_API TextureCursor final :
     public Cursor
 {
 public:

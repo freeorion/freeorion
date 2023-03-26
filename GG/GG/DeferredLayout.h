@@ -26,7 +26,7 @@ namespace GG {
     A DeferredLayout is a layout that does all of the expensive layout operations once per frame
     during PreRender().
 */
-class GG_API DeferredLayout : public Layout
+class GG_API DeferredLayout final : public Layout
 {
 public:
     /** Ctor. */
@@ -42,7 +42,7 @@ protected:
 private:
     Pt   m_ul_prerender;
     Pt   m_lr_prerender;
-    bool m_make_resize_immediate_during_prerender;
+    bool m_make_resize_immediate_during_prerender = false;
 };
 
 }

@@ -90,13 +90,13 @@ public:
     Layout(X x, Y y, X w, Y h, std::size_t rows, std::size_t columns,
            unsigned int border_margin = 0, unsigned int cell_margin = INVALID_CELL_MARGIN);
 
-    Pt MinUsableSize() const override;
+    Pt               MinUsableSize() const noexcept override { return m_min_usable_size; }
 
-    std::size_t      Rows() const;
+    auto             Rows() const noexcept { return m_cells.size(); }
     std::size_t      Columns() const;
     Flags<Alignment> ChildAlignment(const Wnd* wnd) const;          //! returns the aligment of child \a wnd.  \throw GG::Layout::NoSuchChild Throws if no such child exists.
-    unsigned int     BorderMargin() const;                          //! returns the number of pixels that the layout will leave between its edges and the windows it contains
-    unsigned int     CellMargin() const;                            //! returns the number of pixels the layout leaves between the edges of windows in adjacent cells
+    auto             BorderMargin() const noexcept { return m_border_margin; } //! returns the number of pixels that the layout will leave between its edges and the windows it contains
+    auto             CellMargin() const noexcept { return m_cell_margin; }     //! returns the number of pixels the layout leaves between the edges of windows in adjacent cells
     double           RowStretch(std::size_t row) const;             //! returns the stretch factor for row \a row.  Note that \a row is not range-checked.
     double           ColumnStretch(std::size_t column) const;       //! returns the stretch factor for column \a column.  Note that \a column is not range-checked.
     Y                MinimumRowHeight(std::size_t row) const;       //! returns the minimum height allowed for row \a row.  Note that \a row is not range-checked.
@@ -108,12 +108,7 @@ public:
 
     //! Returns true iff this layout will render an outline of itself; this is
     //! sometimes useful for debugging purposes
-    bool   RenderOutline() const;
-
-    //! Returns the outline color used to render this layout (this is only
-    //! used if RenderOutline() returns true).  This is sometimes useful for
-    //! debugging purposes
-    Clr    OutlineColor() const;
+    auto RenderOutline() const noexcept { return m_render_outline; }
 
     void StartingChildDragDrop(const Wnd* wnd, Pt offset) override;
     void CancellingChildDragDrop(const std::vector<const Wnd*>& wnds) override;

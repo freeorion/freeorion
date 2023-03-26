@@ -17,8 +17,7 @@ DeferredLayout::DeferredLayout(X x, Y y, X w, Y h, std::size_t rows, std::size_t
                                unsigned int cell_margin) :
     Layout(x, y, w, h, rows, columns, border_margin, cell_margin),
     m_ul_prerender(Pt(x, y)),
-    m_lr_prerender(Pt(x + w, y + h)),
-    m_make_resize_immediate_during_prerender(false)
+    m_lr_prerender(Pt(x + w, y + h))
 {}
 
 void DeferredLayout::SizeMove(Pt ul, Pt lr)
