@@ -239,8 +239,9 @@ namespace {
         return retval;
     }
 
-    std::vector<int> ToIntVec(const boost::container::flat_set<int>& in)
-    { return std::vector<int>(in.begin(), in.end()); }
+    template <typename T>
+    std::vector<T> ToVec(const boost::container::flat_set<T>& in)
+    { return std::vector<T>(in.begin(), in.end()); }
 }
 
 namespace FreeOrionPython {
@@ -489,7 +490,7 @@ namespace FreeOrionPython {
             .def("specialAddedOnTurn",          &UniverseObject::SpecialAddedOnTurn)
             .def("contains",                    &UniverseObject::Contains)
             .def("containedBy",                 &UniverseObject::ContainedBy)
-            .add_property("containedObjects",   +[](const UniverseObject& o) { return ToIntVec(o.ContainedObjectIDs()); })
+            .add_property("containedObjects",   +[](const UniverseObject& o) { return ToVec(o.ContainedObjectIDs()); })
             .add_property("containerObject",    &UniverseObject::ContainerObjectID)
             .def("currentMeterValue",           ObjectCurrentMeterValue,             py::return_value_policy<py::return_by_value>())
             .def("initialMeterValue",           ObjectInitialMeterValue,             py::return_value_policy<py::return_by_value>())
@@ -529,7 +530,7 @@ namespace FreeOrionPython {
             .add_property("hasTroopShips",             +[](const Fleet& fleet) -> bool { return fleet.HasTroopShips(GetUniverse()); })
             .add_property("numShips",                  &Fleet::NumShips)
             .add_property("empty",                     &Fleet::Empty)
-            .add_property("shipIDs",                   +[](const Fleet& fleet) { return ToIntVec(fleet.ShipIDs()); })
+            .add_property("shipIDs",                   +[](const Fleet& fleet) { return ToVec(fleet.ShipIDs()); })
         ;
 
         //////////////////
@@ -736,7 +737,7 @@ namespace FreeOrionPython {
             .add_property("LastTurnAttackedByShip",         &Planet::LastTurnAttackedByShip)
             .add_property("LastTurnColonized",              &Planet::LastTurnColonized)
             .add_property("LastTurnConquered",              &Planet::LastTurnConquered)
-            .add_property("buildingIDs",                    +[](const Planet& planet) { return ToIntVec(planet.BuildingIDs()); })
+            .add_property("buildingIDs",                    +[](const Planet& planet) { return ToVec(planet.BuildingIDs()); })
             .add_property("habitableSize",                  &Planet::HabitableSize)
         ;
 
@@ -750,11 +751,11 @@ namespace FreeOrionPython {
             .def("HasStarlaneToSystemID",       &System::HasStarlaneTo)
             .def("HasWormholeToSystemID",       &System::HasWormholeTo, "Currently unused.")
             .add_property("starlanesWormholes", make_function(&System::StarlanesWormholes,  py::return_value_policy<py::return_by_value>()), "Currently unused.")
-            .add_property("planetIDs",          +[](const System& system) { return ToIntVec(system.PlanetIDs()); })
-            .add_property("buildingIDs",        +[](const System& system) { return ToIntVec(system.BuildingIDs()); })
-            .add_property("fleetIDs",           +[](const System& system) { return ToIntVec(system.FleetIDs()); })
-            .add_property("shipIDs",            +[](const System& system) { return ToIntVec(system.ShipIDs()); })
-            .add_property("fieldIDs",           +[](const System& system) { return ToIntVec(system.FieldIDs()); })
+            .add_property("planetIDs",          +[](const System& system) { return ToVec(system.PlanetIDs()); })
+            .add_property("buildingIDs",        +[](const System& system) { return ToVec(system.BuildingIDs()); })
+            .add_property("fleetIDs",           +[](const System& system) { return ToVec(system.FleetIDs()); })
+            .add_property("shipIDs",            +[](const System& system) { return ToVec(system.ShipIDs()); })
+            .add_property("fieldIDs",           +[](const System& system) { return ToVec(system.FieldIDs()); })
             .add_property("lastTurnBattleHere", &System::LastTurnBattleHere)
         ;
 
