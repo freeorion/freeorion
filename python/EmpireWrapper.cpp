@@ -178,6 +178,10 @@ namespace {
                        [](auto view_int) { return std::pair{std::string{view_int.first}, view_int.second}; });
         return out;
     }
+
+    template <typename T, typename AoC>
+    std::vector<T> ToVec(const boost::container::flat_set<T, AoC>& in)
+    { return std::vector<T>(in.begin(), in.end()); }
 }
 
 namespace FreeOrionPython {
@@ -214,10 +218,10 @@ namespace FreeOrionPython {
             .def(py::vector_indexing_suite<std::vector<UnlockableItem>, true>())
         ;
 
-        FreeOrionPython::SetWrapper<std::set<std::set<int>>>::Wrap("IntSetSet");
-        FreeOrionPython::SetWrapper<std::set<int>>::Wrap("IntSet");
-        FreeOrionPython::SetWrapper<std::set<std::string>>::Wrap("StringSet");
-        FreeOrionPython::SetWrapper<std::set<std::string, std::less<>>>::Wrap("StringSet2");
+        ::FreeOrionPython::SetWrapper<std::set<std::set<int>>>::Wrap("IntSetSet");
+        ::FreeOrionPython::SetWrapper<std::set<int>>::Wrap("IntSet");
+        ::FreeOrionPython::SetWrapper<std::set<std::string>>::Wrap("StringSet");
+        ::FreeOrionPython::SetWrapper<std::set<std::string, std::less<>>>::Wrap("StringSet2");
 
         py::class_<std::map<std::string, int>>("StringIntMap")
             .def(py::map_indexing_suite<std::map<std::string, int>, true>())
@@ -256,7 +260,7 @@ namespace FreeOrionPython {
             .add_property("colour",                 +[](const Empire& empire) { EmpireColor color = empire.Color(); return py::make_tuple(std::get<0>(color), std::get<1>(color), std::get<2>(color), std::get<3>(color)); })
 
             .def("buildingTypeAvailable",           &Empire::BuildingTypeAvailable)
-            .add_property("availableBuildingTypes", make_function(&Empire::AvailableBuildingTypes,  py::return_internal_reference<>()))
+            .add_property("availableBuildingTypes", +[](const Empire& empire) { return ToVec(empire.AvailableBuildingTypes()); })
 
             .add_property("totalShipsOwned",        make_function(&Empire::TotalShipsOwned,         py::return_value_policy<py::return_by_value>()))
             .def("shipDesignAvailable",             +[](const Empire& empire, int id) -> bool { return empire.ShipDesignAvailable(id, GetUniverse()); })
@@ -264,8 +268,8 @@ namespace FreeOrionPython {
             .add_property("availableShipDesigns",   +[](const Empire& empire) -> std::set<int> { auto temp{empire.AvailableShipDesigns(GetUniverse())}; return {temp.begin(), temp.end()}; })
 
 
-            .add_property("availableShipParts",     make_function(&Empire::AvailableShipParts,      py::return_value_policy<py::copy_const_reference>()))
-            .add_property("availableShipHulls",     make_function(&Empire::AvailableShipHulls,      py::return_value_policy<py::copy_const_reference>()))
+            .add_property("availableShipParts",     +[](const Empire& empire) { return ToVec(empire.AvailableShipParts()); })
+            .add_property("availableShipHulls",     +[](const Empire& empire) { return ToVec(empire.AvailableShipHulls()); })
 
             .add_property("productionQueue",        make_function(&Empire::GetProductionQueue,      py::return_internal_reference<>()))
             .def("productionCostAndTime",           +[](const Empire& empire, const ProductionQueue::Element& element) -> std::pair<float, int> { return element.ProductionCostAndTime(ScriptingContext{}); },
