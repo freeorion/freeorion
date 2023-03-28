@@ -516,7 +516,7 @@ namespace {
                 // sort and ensure uniqueness of entries before moving into flat_set
                 std::sort(edges_vec.begin(), edges_vec.end());
                 edges_vec.erase(std::unique(edges_vec.begin(), edges_vec.end()), edges_vec.end());
-                edges.adopt_sequence(boost::container::ordered_unique_range_t{}, std::move(edges_vec));
+                edges.adopt_sequence(boost::container::ordered_unique_range, std::move(edges_vec));
             }
 
             template <typename EdgeDescriptor>
@@ -1468,8 +1468,9 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(const ObjectMap& objects,
         system_id_to_graph_idx_vec.emplace_back(system_id, system_index);
     }
     std::sort(system_id_to_graph_idx_vec.begin(), system_id_to_graph_idx_vec.end());
-    m_system_id_to_graph_index.adopt_sequence(boost::container::ordered_unique_range_t{}, std::move(system_id_to_graph_idx_vec));
-    m_system_id_to_graph_index.insert(boost::container::ordered_unique_range_t{},
+    m_system_id_to_graph_index.adopt_sequence(boost::container::ordered_unique_range,
+                                              std::move(system_id_to_graph_idx_vec));
+    m_system_id_to_graph_index.insert(boost::container::ordered_unique_range,
                                       std::make_move_iterator(system_id_to_graph_idx_vec.begin()),
                                       std::make_move_iterator(system_id_to_graph_idx_vec.end()));
 
