@@ -10,7 +10,6 @@
 #include "../universe/Ship.h"
 #include "../universe/Planet.h"
 #include "../universe/ShipDesign.h"
-#include "../universe/Species.h"
 #include "../universe/System.h"
 #include "../universe/Field.h"
 #include "../universe/Universe.h"
@@ -1045,50 +1044,6 @@ void serialize(Archive& ar, ShipDesign& obj, unsigned int const version)
 
 BOOST_CLASS_EXPORT(ShipDesign)
 BOOST_CLASS_VERSION(ShipDesign, 2)
-
-
-template <typename Archive>
-void serialize(Archive& ar, SpeciesManager& sm, unsigned int const version)
-{
-    // Don't need to send all the data about species, as this is derived from
-    // content data files in scripting/species that should be available to any
-    // client or server.  Instead, just need to send the gamestate portion of
-    // species: their homeworlds in the current game, and their opinions of
-    // empires and eachother
-
-    std::map<std::string, std::set<int>>                species_homeworlds;
-    std::map<std::string, std::map<int, float>>         empire_opinions;
-    std::map<std::string, std::map<std::string, float>> other_species_opinions;
-    std::map<std::string, std::map<int, float>>         species_object_populations;
-    std::map<std::string, std::map<std::string, int>>   species_ships_destroyed;
-
-    if constexpr (Archive::is_saving::value) {
-        species_homeworlds = sm.GetSpeciesHomeworldsMap();
-        empire_opinions = sm.GetSpeciesEmpireOpinionsMap();
-        other_species_opinions = sm.GetSpeciesSpeciesOpinionsMap();
-        species_object_populations = sm.SpeciesObjectPopulations();
-        species_ships_destroyed = sm.SpeciesShipsDestroyed();
-    }
-
-    ar  & BOOST_SERIALIZATION_NVP(species_homeworlds)
-        & BOOST_SERIALIZATION_NVP(empire_opinions)
-        & BOOST_SERIALIZATION_NVP(other_species_opinions)
-        & BOOST_SERIALIZATION_NVP(species_object_populations)
-        & BOOST_SERIALIZATION_NVP(species_ships_destroyed);
-
-    if constexpr (Archive::is_loading::value) {
-        sm.SetSpeciesHomeworlds(std::move(species_homeworlds));
-        sm.SetSpeciesEmpireOpinions(std::move(empire_opinions));
-        sm.SetSpeciesSpeciesOpinions(std::move(other_species_opinions));
-        sm.SetSpeciesObjectPopulations(std::move(species_object_populations));
-        sm.SetSpeciesShipsDestroyed(std::move(species_ships_destroyed));
-    }
-}
-
-template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, SpeciesManager&, unsigned int const);
-template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, SpeciesManager&, unsigned int const);
-template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, SpeciesManager&, unsigned int const);
-template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, SpeciesManager&, unsigned int const);
 
 template <typename Archive>
 void Serialize(Archive& oa, const Universe& universe)

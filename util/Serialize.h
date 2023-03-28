@@ -264,6 +264,8 @@ extern template FO_COMMON_API void serialize<freeorion_xml_iarchive>(freeorion_x
 
 class SpeciesManager;
 
+BOOST_CLASS_VERSION(SpeciesManager, 1)
+
 template <typename Archive>
 void serialize(Archive&, SpeciesManager&, unsigned int const);
 

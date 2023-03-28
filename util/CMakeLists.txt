@@ -51,6 +51,7 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/SerializeModeratorAction.cpp
         ${CMAKE_CURRENT_LIST_DIR}/SerializeMultiplayerCommon.cpp
         ${CMAKE_CURRENT_LIST_DIR}/SerializeOrderSet.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/SerializeSpecies.cpp        
         ${CMAKE_CURRENT_LIST_DIR}/SerializeUniverse.cpp
         ${CMAKE_CURRENT_LIST_DIR}/SitRepEntry.cpp
         ${CMAKE_CURRENT_LIST_DIR}/StringTable.cpp

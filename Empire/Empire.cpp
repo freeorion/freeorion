@@ -120,10 +120,8 @@ std::string Empire::Dump() const {
                          " ID: " + std::to_string(m_id) +
                          " Capital ID: " + std::to_string(m_capital_id);
     retval += " meters:\n";
-    for (const auto& [name, meter] : m_meters) {
-        retval += UserString(name) + ": " +
-                  std::to_string(meter.Initial()) + "\n";
-    }
+    for (const auto& [name, meter] : m_meters)
+        retval += UserString(name) + ": " + std::to_string(meter.Initial()) + "\n";
     return retval;
 }
 
@@ -2680,7 +2678,7 @@ void Empire::UpdateInfluenceSpending(const ScriptingContext& context) {
 void Empire::UpdatePopulationGrowth(const ObjectMap& objects)
 { m_population_pool.Update(objects); }
 
-void Empire::ResetMeters() {
+void Empire::ResetMeters() noexcept {
     for (auto& entry : m_meters)
         entry.second.ResetCurrent();
 }

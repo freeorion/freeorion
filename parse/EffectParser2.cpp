@@ -134,14 +134,16 @@ namespace parse { namespace detail {
                     [ _val = construct_movable_(new_<Effect::SetSpeciesEmpireOpinion>(
                             deconstruct_movable_(_a, _pass),
                             deconstruct_movable_(_c, _pass),
-                            deconstruct_movable_(_1, _pass))) ])
+                            deconstruct_movable_(_1, _pass),
+                            true)) ])
                 |
                 (   label(tok.species_) > string_grammar [ _b = _1 ]
                     >   label(tok.opinion_) > double_rules.expr
                     [ _val = construct_movable_(new_<Effect::SetSpeciesSpeciesOpinion>(
                             deconstruct_movable_(_a, _pass),
                             deconstruct_movable_(_b, _pass),
-                            deconstruct_movable_(_1, _pass))) ])
+                            deconstruct_movable_(_1, _pass),
+                            true)) ])
             )
             ;
 

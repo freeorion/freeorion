@@ -20,18 +20,9 @@
 /////////////////////////////////////////////////
 // FocusType                                   //
 /////////////////////////////////////////////////
-FocusType::FocusType(std::string& name, std::string& description,
+FocusType::FocusType(std::string name, std::string description,
                      std::unique_ptr<Condition::Condition>&& location,
-                     std::string& graphic) :
-    m_name(std::move(name)),
-    m_description(std::move(description)),
-    m_location(std::move(location)),
-    m_graphic(std::move(graphic))
-{}
-
-FocusType::FocusType(std::string&& name, std::string&& description,
-                     std::unique_ptr<Condition::Condition>&& location,
-                     std::string&& graphic) :
+                     std::string graphic) :
     m_name(std::move(name)),
     m_description(std::move(description)),
     m_location(std::move(location)),
@@ -53,9 +44,8 @@ bool FocusType::operator==(const FocusType& rhs) const {
         // check next member
     } else if (!m_location || !rhs.m_location) {
         return false;
-    } else {
-        if (*m_location != *(rhs.m_location))
-            return false;
+    } else if (*m_location != *(rhs.m_location)) {
+        return false;
     }
 
     return true;
@@ -544,7 +534,6 @@ SpeciesManager& SpeciesManager::operator=(SpeciesManager&& rhs) {
     m_species_homeworlds = std::move(rhs.m_species_homeworlds);
     m_species_empire_opinions = std::move(rhs.m_species_empire_opinions);
     m_species_species_opinions = std::move(rhs.m_species_species_opinions);
-    m_species_object_populations = std::move(rhs.m_species_object_populations);
     m_species_species_ships_destroyed = std::move(rhs.m_species_species_ships_destroyed);
 
     return *this;
@@ -657,22 +646,57 @@ const std::string& SpeciesManager::SequentialPlayableSpeciesName(int id) const {
     return std::next(playable_begin(), species_idx)->first;
 }
 
-void SpeciesManager::SetSpeciesHomeworlds(std::map<std::string, std::set<int>>&& species_homeworld_ids)
-{ m_species_homeworlds = std::move(species_homeworld_ids); }
-
-void SpeciesManager::SetSpeciesEmpireOpinions(std::map<std::string, std::map<int, float>>&& species_empire_opinions)
-{ m_species_empire_opinions = std::move(species_empire_opinions); }
-
-void SpeciesManager::SetSpeciesEmpireOpinion(const std::string& species_name, int empire_id, float opinion)
-{ m_species_empire_opinions[species_name][empire_id] = opinion; }
-
-void SpeciesManager::SetSpeciesSpeciesOpinions(std::map<std::string,
-                                               std::map<std::string, float>>&& species_species_opinions)
-{ m_species_species_opinions = std::move(species_species_opinions); }
+void SpeciesManager::SetSpeciesHomeworlds(std::map<std::string, std::set<int>>&& species_homeworld_ids) {
+    m_species_homeworlds.clear();
+    using homeworlds_value_t = decltype(m_species_homeworlds)::value_type;
+    std::transform(species_homeworld_ids.begin(), species_homeworld_ids.end(),
+                   std::inserter(m_species_homeworlds, m_species_homeworlds.end()),
+                   [](auto& sp_ids) -> homeworlds_value_t
+                   { return {sp_ids.first, {sp_ids.second.begin(), sp_ids.second.end()}}; });
+}
 
 void SpeciesManager::SetSpeciesSpeciesOpinion(const std::string& opinionated_species,
-                                              const std::string& rated_species, float opinion)
-{ m_species_species_opinions[opinionated_species][rated_species] = opinion; }
+                                              const std::string& rated_species, float opinion, bool target)
+{ // TODO: this
+}
+
+void SpeciesManager::SetSpeciesEmpireOpinion(const std::string& opinionated_species,
+                                             int empire_id, float opinion, bool target)
+{ // TODO: this
+}
+
+void SpeciesManager::ResetSpeciesTargetOpinions() {
+    for (auto& [species, empire_ops] : m_species_empire_opinions) {
+        for (auto& [empire_id, ops] : empire_ops)
+            ops.second.ResetCurrent();
+    }
+
+    for (auto& [opinionated_species, species_ops] : m_species_species_opinions) {
+        for (auto& [about_species, ops] : species_ops) {
+            auto& [op, target_op] = ops;
+            op.BackPropagate();
+            target_op.BackPropagate();
+        }
+    }
+}
+
+void SpeciesManager::BackPropagateOpinions() {
+    for (auto& [species, empire_ops] : m_species_empire_opinions) {
+        for (auto& [empire_id, ops] : empire_ops) {
+            auto& [op, target_op] = ops;
+            op.BackPropagate();
+            target_op.BackPropagate();
+        }
+    }
+
+    for (auto& [opinionated_species, species_ops] : m_species_species_opinions) {
+        for (auto& [about_species, ops] : species_ops) {
+            auto& [op, target_op] = ops;
+            op.BackPropagate();
+            target_op.BackPropagate();
+        }
+    }
+}
 
 float SpeciesManager::SpeciesEmpireOpinion(const std::string& species_name, int empire_id) const {
     const auto sp_it = m_species_empire_opinions.find(species_name);
@@ -682,7 +706,7 @@ float SpeciesManager::SpeciesEmpireOpinion(const std::string& species_name, int 
     const auto emp_it = emp_map.find(empire_id);
     if (emp_it == emp_map.end())
         return 0.0f;
-    return emp_it->second;
+    return emp_it->second.first.Current();
 }
 
 float SpeciesManager::SpeciesSpeciesOpinion(const std::string& opinionated_species_name,
@@ -695,7 +719,7 @@ float SpeciesManager::SpeciesSpeciesOpinion(const std::string& opinionated_speci
     const auto ra_sp_it = ra_sp_map.find(rated_species_name);
     if (ra_sp_it == ra_sp_map.end())
         return 0.0f;
-    return ra_sp_it->second;
+    return ra_sp_it->second.first.Current();
 }
 
 std::vector<std::string_view> SpeciesManager::SpeciesThatLike(std::string_view content_name) const {
@@ -722,11 +746,6 @@ std::vector<std::string_view> SpeciesManager::SpeciesThatDislike(std::string_vie
     return retval;
 }
 
-void SpeciesManager::ClearSpeciesOpinions() {
-    m_species_empire_opinions.clear();
-    m_species_species_opinions.clear();
-}
-
 void SpeciesManager::AddSpeciesHomeworld(std::string species, int homeworld_id) {
     if (homeworld_id == INVALID_OBJECT_ID)
         return;
@@ -748,30 +767,14 @@ void SpeciesManager::RemoveSpeciesHomeworld(const std::string& species, int home
 void SpeciesManager::ClearSpeciesHomeworlds()
 { m_species_homeworlds.clear(); }
 
-void SpeciesManager::UpdatePopulationCounter(const ObjectMap& objects) {
-    // ships of each species and design
-    m_species_object_populations.clear();
-    for (const auto& [obj_id, obj] : objects.allExisting()) {
-        if (obj->ObjectType() != UniverseObjectType::OBJ_PLANET)
-            continue;
-
-        auto pop_center = std::dynamic_pointer_cast<const Planet>(obj); // TODO: static_cast
-        const std::string& species = pop_center->SpeciesName();
-        if (species.empty())
-            continue;
-
-        try {
-            m_species_object_populations[species][obj_id] +=
-                obj->GetMeter(MeterType::METER_POPULATION)->Current();
-        } catch (...) {}
-    }
+void SpeciesManager::SetSpeciesShipsDestroyed(std::map<std::string, std::map<std::string, int>> ssd) {
+    m_species_species_ships_destroyed.clear();
+    using opinions_value_t = decltype(m_species_species_ships_destroyed)::value_type;
+    std::transform(ssd.begin(), ssd.end(),
+                   std::inserter(m_species_species_ships_destroyed, m_species_species_ships_destroyed.end()),
+                   [](auto& sp_objs) -> opinions_value_t
+                   { return {sp_objs.first, {sp_objs.second.begin(), sp_objs.second.end()}}; });
 }
-
-void SpeciesManager::SetSpeciesObjectPopulations(std::map<std::string, std::map<int, float>> sop)
-{ m_species_object_populations = std::move(sop); }
-
-void SpeciesManager::SetSpeciesShipsDestroyed(std::map<std::string, std::map<std::string, int>> ssd)
-{ m_species_species_ships_destroyed = std::move(ssd); }
 
 uint32_t SpeciesManager::GetCheckSum() const {
     CheckPendingSpeciesTypes();
