@@ -124,7 +124,6 @@ namespace {
                 for (const XMLElement& planet_definition : elem.children) {
                     if (planet_definition.Tag() == "RotatingPlanetData") {
                         RotatingPlanetData current_data{planet_definition};
-                        auto type = current_data.planet_type;
                         data[current_data.planet_type].emplace_back(std::move(current_data));
                     }
                 }
@@ -1326,7 +1325,6 @@ namespace {
         const SpeciesManager& sm = context.species;
         const Universe& u = context.ContextUniverse();
         const ObjectMap& o = context.ContextObjects();
-        const auto client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
         // is there a valid selected ship in the active FleetWnd?
         for (const auto* ship : o.findRaw<Ship>(FleetUIManager::GetFleetUIManager().SelectedShipIDs())) {
@@ -1508,7 +1506,6 @@ namespace {
         if (empire_id == ALL_EMPIRES)
             return retval;
 
-        const Universe& u = context.ContextUniverse();
         const ObjectMap& o = context.ContextObjects();
 
         const auto* target_planet = o.getRaw<Planet>(target_planet_id);

@@ -109,10 +109,10 @@ public:
     [[nodiscard]] const auto& ProductionSpecialConsumption() const noexcept { return m_production_special_consumption; }
 
     //! Returns total number of of slots in hull
-    [[nodiscard]] auto NumSlots() const noexcept -> uint32_t { return m_slots.size(); }
+    [[nodiscard]] uint32_t NumSlots() const noexcept { return static_cast<uint32_t>(m_slots.size()); }
 
     //! Returns number of of slots of indicated type in hull
-    [[nodiscard]] auto NumSlots(ShipSlotType slot_type) const noexcept -> uint32_t;
+    [[nodiscard]] uint32_t NumSlots(ShipSlotType slot_type) const noexcept;
 
     //! Returns vector of slots in hull
     [[nodiscard]] const auto& Slots() const noexcept { return m_slots; }

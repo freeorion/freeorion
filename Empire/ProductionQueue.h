@@ -195,10 +195,10 @@ struct FO_COMMON_API ProductionQueue {
     [[nodiscard]] std::vector<std::vector<int>> ObjectsWithWastedPP(const ResourcePool& industry_pool) const;
 
     // STL container-like interface
-    [[nodiscard]] bool           empty() const noexcept { return !m_queue.size(); }
-    [[nodiscard]] unsigned int   size() const noexcept { return m_queue.size(); }
-    [[nodiscard]] const_iterator begin() const noexcept { return m_queue.begin(); }
-    [[nodiscard]] const_iterator end() const noexcept { return m_queue.end(); }
+    [[nodiscard]] bool           empty() const noexcept { return m_queue.empty(); }
+    [[nodiscard]] auto           size() const noexcept { return m_queue.size(); }
+    [[nodiscard]] auto           begin() const noexcept { return m_queue.begin(); }
+    [[nodiscard]] auto           end() const noexcept { return m_queue.end(); }
     [[nodiscard]] const_iterator find(int i) const;
     [[nodiscard]] const Element& operator[](int i) const;
 
@@ -219,8 +219,8 @@ struct FO_COMMON_API ProductionQueue {
     void     erase(int i);
     iterator erase(iterator it);
 
-    [[nodiscard]] iterator begin() noexcept { return m_queue.begin(); }
-    [[nodiscard]] iterator end() noexcept { return m_queue.end(); }
+    [[nodiscard]] auto     begin() noexcept { return m_queue.begin(); }
+    [[nodiscard]] auto     end() noexcept { return m_queue.end(); }
     [[nodiscard]] iterator find(int i);
     Element&               operator[](int i);
 

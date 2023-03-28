@@ -221,7 +221,7 @@ std::string System::ApparentName(int empire_id, const Universe& u,
     return this->PublicName(empire_id, u);
 }
 
-StarType System::NextOlderStarType() const { // TODO: noexcept
+StarType System::NextOlderStarType() const noexcept {
     if (m_star <= StarType::INVALID_STAR_TYPE || m_star >= StarType::NUM_STAR_TYPES)
         return StarType::INVALID_STAR_TYPE;
     if (m_star >= StarType::STAR_RED)
@@ -229,7 +229,7 @@ StarType System::NextOlderStarType() const { // TODO: noexcept
     return StarType(int(m_star) + 1);   // STAR_BLUE -> STAR_WHITE -> STAR_YELLOW -> STAR_ORANGE -> STAR_RED
 }
 
-StarType System::NextYoungerStarType() const {
+StarType System::NextYoungerStarType() const noexcept {
     if (m_star <= StarType::INVALID_STAR_TYPE || m_star >= StarType::NUM_STAR_TYPES)
         return StarType::INVALID_STAR_TYPE;
     if (m_star > StarType::STAR_RED)

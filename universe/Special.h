@@ -92,7 +92,7 @@ class FO_COMMON_API SpecialsManager {
 public:
     using SpecialsTypeMap = std::map<std::string, std::unique_ptr<Special>, std::less<>>;
 
-    [[nodiscard]] int                           NumSpecials() const noexcept { return m_specials.size(); }
+    [[nodiscard]] auto                          NumSpecials() const noexcept { return m_specials.size(); }
     [[nodiscard]] std::vector<std::string_view> SpecialNames() const;
     [[nodiscard]] const Special*                GetSpecial(std::string_view name) const;
     [[nodiscard]] uint32_t                      GetCheckSum() const;

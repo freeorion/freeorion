@@ -58,7 +58,7 @@ public:
 
     [[nodiscard]] bool Contains(int object_id) const override;
 
-    [[nodiscard]] bool ContainedBy(int object_id) const override { return false; }
+    [[nodiscard]] bool ContainedBy(int object_id) const noexcept override { return false; }
 
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
@@ -71,10 +71,10 @@ public:
     [[nodiscard]] std::string   ApparentName(int empire_id, const Universe& u, bool blank_unexplored_and_none = false) const;
 
     [[nodiscard]] StarType      GetStarType() const noexcept { return m_star; }  ///< type of star for this system
-    [[nodiscard]] StarType      NextOlderStarType() const;
-    [[nodiscard]] StarType      NextYoungerStarType() const;
+    [[nodiscard]] StarType      NextOlderStarType() const noexcept;
+    [[nodiscard]] StarType      NextYoungerStarType() const noexcept;
 
-    [[nodiscard]] int           Orbits() const noexcept      { return m_orbits.size(); } ///< number of orbits in this system
+    [[nodiscard]] auto          Orbits() const noexcept      { return m_orbits.size(); } ///< number of orbits in this system
 
     [[nodiscard]] int           NumStarlanes() const;                       ///< returns the number of starlanes from this system to other systems
     [[nodiscard]] int           NumWormholes() const;                       ///< returns the number of wormholes from this system to other systems
