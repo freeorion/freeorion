@@ -204,8 +204,8 @@ std::string parse::report_error_::get_lines_after(
     //DebugLogger() << "get_lines_after start";
 
     std::vector<parse::text_iterator> all_line_starts = LineStarts(begin, end);
-    unsigned int target_line = 1;
-    for (unsigned int line_minus_one = 0; line_minus_one < all_line_starts.size(); ++line_minus_one) {
+    size_t target_line = 1;
+    for (size_t line_minus_one = 0u; line_minus_one < all_line_starts.size(); ++line_minus_one) {
         if (std::distance(all_line_starts[line_minus_one], line_start) < 0) {
             target_line = line_minus_one;   // want line before line that starts past the requested line_start
             break;
@@ -217,9 +217,9 @@ std::string parse::report_error_::get_lines_after(
     }
     //DebugLogger() << "get_lines_after line " << target_line;
 
-    static constexpr unsigned int NUM_LINES = 5;
-    unsigned int retval_first_line = target_line + 1;
-    unsigned int retval_last_line = all_line_starts.size();
+    static constexpr size_t NUM_LINES = 5;
+    const size_t retval_first_line = target_line + 1;
+    size_t retval_last_line = all_line_starts.size();
     if (retval_first_line + NUM_LINES < all_line_starts.size())
         retval_last_line = retval_first_line + NUM_LINES - 1;
 
