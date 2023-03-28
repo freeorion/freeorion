@@ -639,7 +639,7 @@ namespace {
         static constexpr std::hash<name_t> name_hasher{};
         static constexpr std::hash<id_t> id_hasher{};
         static constexpr bool is_noexcept =
-            noexcept(std::size_t{} ^ name_hasher(std::declval<std::string>()) + 0x9e3779b9 + (53<<6) + (53>>2));
+            noexcept((std::size_t{} ^ name_hasher(std::declval<std::string>())) + 0x9e3779b9 + (53<<6) + (53>>2));
 
         size_t operator()(const entry_t& key) const noexcept(is_noexcept) {
             size_t seed = 8334358; // random number

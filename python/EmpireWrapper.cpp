@@ -152,15 +152,6 @@ namespace {
         return out;
     }
 
-    auto ViewSetToStringVec(const std::set<std::string_view>& in) -> std::vector<std::string>
-    {
-        std::vector<std::string> out;
-        out.reserve(in.size());
-        std::transform(in.begin(), in.end(), std::back_inserter(out),
-                       [](auto view) { return std::string{view}; });
-        return out;
-    }
-
     auto ViewVecToStringVec(const std::vector<std::string_view>& in) -> std::vector<std::string>
     {
         std::vector<std::string> out;
