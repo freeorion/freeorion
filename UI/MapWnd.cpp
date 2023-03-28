@@ -366,7 +366,7 @@ namespace {
 
         const bool disable_revoke = disable_end_turn || order_count < 1;
         auto revoke_label = boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_REVOKE")) % turn % order_count);
-        popup->AddMenuItem(GG::MenuItem(std::move(revoke_label), disable_end_turn, false, revoke_orders_action));
+        popup->AddMenuItem(GG::MenuItem(std::move(revoke_label), disable_revoke, false, revoke_orders_action));
 
         popup->Run();
     }
