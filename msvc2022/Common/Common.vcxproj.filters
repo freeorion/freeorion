@@ -536,6 +536,9 @@
     <ClCompile Include="..\..\util\PythonCommon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\util\SerializeSpecies.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\util\Version.cpp.in">

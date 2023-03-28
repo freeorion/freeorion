@@ -3894,7 +3894,6 @@ void ServerApp::PostCombatProcessTurns() {
         (void)ignored_empire_id;    // quiet unused variable warning
         empire->UpdateOwnedObjectCounters(m_universe);
     }
-    m_species_manager.UpdatePopulationCounter(m_universe.Objects());
 
 
     // indicate that the clients are waiting for their new gamestate

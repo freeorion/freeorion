@@ -9,10 +9,12 @@
 #include <vector>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/container/flat_map.hpp>
+#include <boost/container/flat_set.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/optional/optional.hpp>
 #include "ConstantsFwd.h"
 #include "EnumsFwd.h"
+#include "Meter.h"
 #include "../util/Enum.h"
 #include "../util/Export.h"
 #include "../util/Pending.h"
@@ -48,12 +50,9 @@ FO_ENUM(
 class FO_COMMON_API FocusType {
 public:
     FocusType() = default;
-    FocusType(std::string& name, std::string& description,
+    FocusType(std::string name, std::string description,
               std::unique_ptr<Condition::Condition>&& location,
-              std::string& graphic);
-    FocusType(std::string&& name, std::string&& description,
-              std::unique_ptr<Condition::Condition>&& location,
-              std::string&& graphic);
+              std::string graphic);
     ~FocusType(); // needed due to forward-declared Condition held in unique_ptr
 
     bool operator==(const FocusType& rhs) const;
@@ -281,10 +280,12 @@ public:
     /** returns a map from species name to a set of object IDs that are the
       * homeworld(s) of that species in the current game. */
     [[nodiscard]] const auto& GetSpeciesHomeworldsMap() const noexcept { return m_species_homeworlds; }
+    [[nodiscard]] auto& GetSpeciesHomeworldsMap() noexcept { return m_species_homeworlds; }
 
     /** returns a map from species name to a map from empire id to each the
       * species' opinion of the empire */
     [[nodiscard]] const auto& GetSpeciesEmpireOpinionsMap() const noexcept { return m_species_empire_opinions; }
+    [[nodiscard]] auto& GetSpeciesEmpireOpinionsMap() noexcept { return m_species_empire_opinions; }
 
     /** returns opinion of species with name \a species_name about empire with
       * id \a empire_id or 0.0 if there is no such opinion yet recorded. */
@@ -293,6 +294,7 @@ public:
     /** returns a map from species name to a map from other species names to the
       * opinion of the first species about the other species. */
     [[nodiscard]] const auto& GetSpeciesSpeciesOpinionsMap() const noexcept { return m_species_species_opinions; }
+    [[nodiscard]] auto& GetSpeciesSpeciesOpinionsMap() noexcept { return m_species_species_opinions; }
 
     /** returns opinion of species with name \a opinionated_species_name about
       * other species with name \a rated_species_name or 0.0 if there is no
@@ -311,29 +313,22 @@ public:
       * clients and server. */
     [[nodiscard]] uint32_t GetCheckSum() const;
 
-    /** sets the opinions of species (indexed by name string) of empires (indexed
-      * by id) as a double-valued number. */
-    void SetSpeciesEmpireOpinions(std::map<std::string, std::map<int, float>>&& species_empire_opinions);
-    void SetSpeciesEmpireOpinion(const std::string& species_name, int empire_id, float opinion);
-
     /** sets the opinions of species (indexed by name string) of other species
-      * (indexed by name string) as a double-valued number. */
-    void SetSpeciesSpeciesOpinions(std::map<std::string,
-                                   std::map<std::string, float>>&& species_species_opinions);
+      * (indexed by name string) or empires (indexed by id number). */
     void SetSpeciesSpeciesOpinion(const std::string& opinionated_species,
-                                  const std::string& rated_species, float opinion);
-    void ClearSpeciesOpinions();
+                                  const std::string& rated_species, float opinion, bool target);
+    void SetSpeciesEmpireOpinion(const std::string& opinionated_species,
+                                 int empire_id, float opinion, bool target);
+    void ResetSpeciesTargetOpinions();
+    void BackPropagateOpinions();
 
     void AddSpeciesHomeworld(std::string species, int homeworld_id);
     void RemoveSpeciesHomeworld(const std::string& species, int homeworld_id);
     void ClearSpeciesHomeworlds();
 
-    void UpdatePopulationCounter(const ObjectMap& objects);
-
-    [[nodiscard]] const auto& SpeciesObjectPopulations() const noexcept { return m_species_object_populations; }
     [[nodiscard]] const auto& SpeciesShipsDestroyed() const noexcept { return m_species_species_ships_destroyed; }
+    [[nodiscard]] auto& SpeciesShipsDestroyed() noexcept { return m_species_species_ships_destroyed; }
 
-    void SetSpeciesObjectPopulations(std::map<std::string, std::map<int, float>> sop);
     void SetSpeciesShipsDestroyed(std::map<std::string, std::map<std::string, int>> ssd);
 
     /** Sets species types to the value of \p future. */
@@ -354,11 +349,15 @@ private:
     mutable SpeciesManager::SpeciesTypeMap m_species;
     mutable SpeciesManager::CensusOrder    m_census_order;
 
-    std::map<std::string, std::set<int>>                m_species_homeworlds;
-    std::map<std::string, std::map<int, float>>         m_species_empire_opinions;
-    std::map<std::string, std::map<std::string, float>> m_species_species_opinions;
-    std::map<std::string, std::map<int, float>>         m_species_object_populations;
-    std::map<std::string, std::map<std::string, int>>   m_species_species_ships_destroyed;
+    template <typename K, typename V>
+    using flat_map = boost::container::flat_map<K, V, std::less<>>;
+    template <typename V>
+    using flat_set = boost::container::flat_set<V, std::less<>>;
+
+    flat_map<std::string, flat_set<int>>                                  m_species_homeworlds;
+    flat_map<std::string, flat_map<int, std::pair<Meter, Meter>>>         m_species_empire_opinions;
+    flat_map<std::string, flat_map<std::string, std::pair<Meter, Meter>>> m_species_species_opinions;
+    flat_map<std::string, flat_map<std::string, int>>                     m_species_species_ships_destroyed;
 
     mutable std::mutex m_species_mutex;
 

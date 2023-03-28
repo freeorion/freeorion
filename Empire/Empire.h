@@ -397,7 +397,7 @@ public:
     void UpdatePopulationGrowth(const ObjectMap& objects);
 
     /** Resets empire meters. */
-    void ResetMeters();
+    void ResetMeters() noexcept;
 
     void UpdateOwnedObjectCounters(const Universe& universe);
 
@@ -466,7 +466,7 @@ private:
 
     struct PolicyAdoptionInfo {
         PolicyAdoptionInfo() = default;
-        PolicyAdoptionInfo(int turn, std::string cat, int slot) :
+        PolicyAdoptionInfo(int turn, std::string cat, int slot) noexcept :
             adoption_turn(turn),
             slot_in_category(slot),
             category(std::move(cat))
@@ -476,7 +476,7 @@ private:
         int slot_in_category = INVALID_SLOT_INDEX;
         std::string category;
 
-        bool operator==(const PolicyAdoptionInfo& rhs) const {
+        bool operator==(const PolicyAdoptionInfo& rhs) const noexcept {
             return adoption_turn == rhs.adoption_turn &&
                    slot_in_category == rhs.slot_in_category &&
                    category != rhs.category;

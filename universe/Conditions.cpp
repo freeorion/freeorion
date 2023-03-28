@@ -1589,28 +1589,28 @@ namespace {
 
             if (m_names.empty()) {
                 // match homeworlds for any species
-                if (std::any_of(m_species_homeworlds.begin(), m_species_homeworlds.end(),
-                                [planet_id](const auto& name_ids) { return name_ids.second.contains(planet_id); }))
-                { return true; }
+                return (std::any_of(m_species_homeworlds.begin(), m_species_homeworlds.end(),
+                                   [planet_id](const auto& name_ids)
+                                   { return name_ids.second.contains(planet_id); }));
 
             } else {
                 // match any of the species specified
-                if (std::any_of(m_names.begin(), m_names.end(), [planet_id, this](const auto& name) {
+                return (std::any_of(m_names.begin(), m_names.end(), [planet_id, this](const auto& name) {
                     const auto it = m_species_homeworlds.find(name);
                     if (it == m_species_homeworlds.end())
                         return false;
                     const auto& planet_ids = it->second;
                     return planet_ids.contains(planet_id);
-                }))
-                { return true; }
+                }));
             }
 
             return false;
         }
 
+        using homeworlds_t = decltype(std::declval<const SpeciesManager>().GetSpeciesHomeworldsMap());
         const std::vector<std::string>& m_names;
-        const ObjectMap& m_objects;
-        const std::map<std::string, std::set<int>>& m_species_homeworlds;
+        const ObjectMap&                m_objects;
+        const homeworlds_t&             m_species_homeworlds;
     };
 }
 

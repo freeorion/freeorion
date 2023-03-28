@@ -2372,7 +2372,7 @@ namespace {
 
         const Universe& universe = GetUniverse();
         const ObjectMap& objects = universe.Objects();
-        //const EmpireManager& empires = Empires();
+        const EmpireManager& empires = Empires();
 
         if (!only_description) {
             name = UserString(item_name);
@@ -2458,65 +2458,50 @@ namespace {
         }
 
         // occupied planets
-        std::vector<const Planet*> species_occupied_planets;
-        const auto& species_object_populations = sm.SpeciesObjectPopulations();
-        species_occupied_planets.reserve(species_object_populations.size());
-        auto sp_op_it = species_object_populations.find(item_name);
-        if (sp_op_it != species_object_populations.end()) {
-            const auto& object_pops = sp_op_it->second;
-            for (const auto& object_pop : object_pops) {
-                auto plt = objects.getRaw<Planet>(object_pop.first);
-                if (!plt)
-                    continue;
-                if (plt->SpeciesName() != item_name) {
-                    ErrorLogger() << "SpeciesManager SpeciesObjectPopulations suggested planet had a species, but it doesn't?";
-                    continue;
-                }
-                species_occupied_planets.push_back(plt);
-            }
-        }
-
-        if (!species_occupied_planets.empty()) {
+        auto planet_has_species = [item_name](const Planet& p) { return p.SpeciesName() == item_name; };
+        auto planets_with_species = objects.findRaw<const Planet>(planet_has_species);
+        if (!planets_with_species.empty()) {
             detailed_description.append("\n").append(UserString("OCCUPIED_PLANETS")).append("\n");
+            std::sort(planets_with_species.begin(), planets_with_species.end(), // alphabetize
+                      [](const Planet* l, const Planet* r) { return l && r && l->SpeciesName() < r->SpeciesName(); });
             bool first = true;
-            // TODO: alphabetical sorting order to make the list better readable
-            for (auto* planet : species_occupied_planets) {
+            for (auto p : planets_with_species) {
                 if (first)
                     first = false;
                 else
                     detailed_description.append(",  ");
-                detailed_description.append(
-                    LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(),
-                                     planet->PublicName(client_empire_id, universe)));
+                detailed_description.append(LinkTaggedIDText(VarText::PLANET_ID_TAG, p->ID(),
+                                                             p->PublicName(client_empire_id, universe)));
+                detailed_description.append("\n");
             }
-            detailed_description.append("\n");
         }
 
         // empire opinions
-        /*
         const auto& seom = GetSpeciesManager().GetSpeciesEmpireOpinionsMap();
         auto species_it = seom.find(species->Name());
         if (species_it != seom.end()) {
             detailed_description.append("\n").append(UserString("OPINIONS_OF_EMPIRES")).append("\n");
-            for (const auto& entry : species_it->second) {
-                auto empire = empires.GetEmpire(entry.first);
-                if (!empire)
-                    continue;
+            for (const auto& [op_id, op] : species_it->second) {
+                auto empire = empires.GetEmpire(op_id);
+                const auto& [opinion, target] = op;
+                detailed_description.append(empire ? empire->Name() : "???")
+                    .append(" : Opinion: ").append(DoubleToString(opinion.Current(), 3, false))
+                    .append(" : Target Opinion: ").append(DoubleToString(target.Current(), 3, false))
+                    .append("\n");
             }
         }
-        */
 
         // species opinions
         const auto& ssom = sm.GetSpeciesSpeciesOpinionsMap();
         auto species_it2 = ssom.find(species->Name());
         if (species_it2 != ssom.end()) {
             detailed_description.append("\n").append(UserString("OPINIONS_OF_OTHER_SPECIES")).append("\n");
-            for (const auto& entry : species_it2->second) {
-                const Species* species2 = sm.GetSpecies(entry.first);
-                if (!species2)
-                    continue;
-
-                detailed_description += UserString(species2->Name()) + " : " + DoubleToString(entry.second, 3, false) + "\n";
+            for (const auto& [op_name, op] : species_it2->second) {
+                const auto& [opinion, target] = op;
+                detailed_description.append(UserString(op_name))
+                    .append(" : Opinion: ").append(DoubleToString(opinion.Current(), 3, false))
+                    .append("  Target Opinion: ").append(DoubleToString(target.Current(), 3, false))
+                    .append("\n");
             }
         }
 

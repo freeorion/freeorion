@@ -1661,11 +1661,12 @@ std::unique_ptr<Effect> SetOwner::Clone() const
 SetSpeciesEmpireOpinion::SetSpeciesEmpireOpinion(
     std::unique_ptr<ValueRef::ValueRef<std::string>>&& species_name,
     std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-    std::unique_ptr<ValueRef::ValueRef<double>>&& opinion
-) :
+    std::unique_ptr<ValueRef::ValueRef<double>>&& opinion,
+    bool target_opinion) :
     m_species_name(std::move(species_name)),
     m_empire_id(std::move(empire_id)),
-    m_opinion(std::move(opinion))
+    m_opinion(std::move(opinion)),
+    m_target(target_opinion)
 {}
 
 void SetSpeciesEmpireOpinion::Execute(ScriptingContext& context) const {
@@ -1674,7 +1675,7 @@ void SetSpeciesEmpireOpinion::Execute(ScriptingContext& context) const {
     if (!m_species_name || !m_opinion || !m_empire_id)
         return;
 
-    int empire_id = m_empire_id->Eval(context);
+    const int empire_id = m_empire_id->Eval(context);
     if (empire_id == ALL_EMPIRES)
         return;
 
@@ -1687,11 +1688,11 @@ void SetSpeciesEmpireOpinion::Execute(ScriptingContext& context) const {
     ScriptingContext opinion_context{context, cvv};
     float opinion = static_cast<float>(m_opinion->Eval(opinion_context));
 
-    context.species.SetSpeciesEmpireOpinion(species_name, empire_id, opinion);
+    context.species.SetSpeciesEmpireOpinion(species_name, empire_id, opinion, m_target);
 }
 
 std::string SetSpeciesEmpireOpinion::Dump(uint8_t ntabs) const
-{ return DumpIndent(ntabs) + "SetSpeciesEmpireOpinion empire = " + m_empire_id->Dump(ntabs) + "\n"; }
+{ return DumpIndent(ntabs) + "SetSpeciesEmpireOpinion empire = " + m_empire_id->Dump(ntabs) + "\n"; } // TODO: complete this
 
 void SetSpeciesEmpireOpinion::SetTopLevelContent(const std::string& content_name) {
     if (m_empire_id)
@@ -1709,6 +1710,7 @@ uint32_t SetSpeciesEmpireOpinion::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_species_name);
     CheckSums::CheckSumCombine(retval, m_empire_id);
     CheckSums::CheckSumCombine(retval, m_opinion);
+    CheckSums::CheckSumCombine(retval, m_target);
 
     TraceLogger(effects) << "GetCheckSum(SetSpeciesEmpireOpinion): retval: " << retval;
     return retval;
@@ -1717,7 +1719,8 @@ uint32_t SetSpeciesEmpireOpinion::GetCheckSum() const {
 std::unique_ptr<Effect> SetSpeciesEmpireOpinion::Clone() const {
     return std::make_unique<SetSpeciesEmpireOpinion>(ValueRef::CloneUnique(m_species_name),
                                                      ValueRef::CloneUnique(m_empire_id),
-                                                     ValueRef::CloneUnique(m_opinion));
+                                                     ValueRef::CloneUnique(m_opinion),
+                                                     m_target);
 }
 
 
@@ -1727,11 +1730,12 @@ std::unique_ptr<Effect> SetSpeciesEmpireOpinion::Clone() const {
 SetSpeciesSpeciesOpinion::SetSpeciesSpeciesOpinion(
     std::unique_ptr<ValueRef::ValueRef<std::string>>&& opinionated_species_name,
     std::unique_ptr<ValueRef::ValueRef<std::string>>&& rated_species_name,
-    std::unique_ptr<ValueRef::ValueRef<double>>&& opinion
-) :
+    std::unique_ptr<ValueRef::ValueRef<double>>&& opinion,
+    bool target_opinion) :
     m_opinionated_species_name(std::move(opinionated_species_name)),
     m_rated_species_name(std::move(rated_species_name)),
-    m_opinion(std::move(opinion))
+    m_opinion(std::move(opinion)),
+    m_target(target_opinion)
 {}
 
 void SetSpeciesSpeciesOpinion::Execute(ScriptingContext& context) const {
@@ -1753,7 +1757,7 @@ void SetSpeciesSpeciesOpinion::Execute(ScriptingContext& context) const {
     ScriptingContext opinion_context{context, cvv};
     float opinion = static_cast<float>(m_opinion->Eval(opinion_context));
 
-    context.species.SetSpeciesSpeciesOpinion(opinionated_species_name, rated_species_name, opinion);
+    context.species.SetSpeciesSpeciesOpinion(opinionated_species_name, rated_species_name, opinion, m_target);
 }
 
 std::string SetSpeciesSpeciesOpinion::Dump(uint8_t ntabs) const
@@ -1775,6 +1779,7 @@ uint32_t SetSpeciesSpeciesOpinion::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_opinionated_species_name);
     CheckSums::CheckSumCombine(retval, m_rated_species_name);
     CheckSums::CheckSumCombine(retval, m_opinion);
+    CheckSums::CheckSumCombine(retval, m_target);
 
     TraceLogger(effects) << "GetCheckSum(SetSpeciesSpeciesOpinion): retval: " << retval;
     return retval;
@@ -1783,7 +1788,8 @@ uint32_t SetSpeciesSpeciesOpinion::GetCheckSum() const {
 std::unique_ptr<Effect> SetSpeciesSpeciesOpinion::Clone() const {
     return std::make_unique<SetSpeciesSpeciesOpinion>(ValueRef::CloneUnique(m_opinionated_species_name),
                                                       ValueRef::CloneUnique(m_rated_species_name),
-                                                      ValueRef::CloneUnique(m_opinion));
+                                                      ValueRef::CloneUnique(m_opinion),
+                                                      m_target);
 }
 
 
