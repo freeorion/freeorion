@@ -396,6 +396,7 @@ namespace FreeOrionPython {
             .add_property("remaining",              &ProductionQueue::Element::remaining)
             .add_property("blocksize",              &ProductionQueue::Element::blocksize)
             .add_property("paused",                 &ProductionQueue::Element::paused)
+            .add_property("removed",                &ProductionQueue::Element::to_be_removed)
             .add_property("allowedStockpile",       &ProductionQueue::Element::allowed_imperial_stockpile_use)
             ;
 
