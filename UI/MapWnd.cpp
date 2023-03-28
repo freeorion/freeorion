@@ -345,8 +345,6 @@ namespace {
                              std::function<void()> end_turn_action,
                              std::function<void()> revoke_orders_action)
     {
-        std::cout << "TurnButtonPopup";
-
         const auto* app = ClientApp::GetApp();
         if (!app)
             return;
