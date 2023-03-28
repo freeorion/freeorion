@@ -1134,8 +1134,7 @@ void GGHumanClientApp::HandleFocusChange(bool gained_focus) {
         else
             this->SetMaxFPS(0.0);
 
-        if (GetOptionsDB().Get<bool>("audio.music.enabled"))
-            Sound::GetSound().PauseMusic();
+        PauseMusicTheme();
     }
     else {
         if (GetOptionsDB().Get<bool>("video.fps.max.enabled"))
@@ -1143,8 +1142,7 @@ void GGHumanClientApp::HandleFocusChange(bool gained_focus) {
         else
             this->SetMaxFPS(0.0);
 
-        if (GetOptionsDB().Get<bool>("audio.music.enabled"))
-            Sound::GetSound().ResumeMusic();
+        ResumeMusicTheme();
     }
 
     CancelDragDrop();
@@ -1750,4 +1748,45 @@ void GGHumanClientApp::BrowsePath(const boost::filesystem::path& browse_path) {
     if (auto sys_retval = std::system(command.c_str()))
         WarnLogger() << "System call " << command << " returned non-zero value " << sys_retval;
 #endif
+}
+
+void GGHumanClientApp::ChangeMusicTheme(const std::string& music_theme) {
+    m_music_theme = music_theme;
+
+    if ((GetOptionsDB().Get<bool>("audio.music.enabled"))) {
+        Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::string>(music_theme), -1);
+        m_music_theme_is_changed = false;
+    } else {
+        m_music_theme_is_changed = true;
+    }
+}
+
+void GGHumanClientApp::ResumeMusicTheme() {
+    try {
+        if (GetOptionsDB().Get<bool>("audio.music.enabled")) {
+            if (m_music_theme_is_changed) {
+                m_music_theme_is_changed = false;
+                ChangeMusicTheme(m_music_theme);
+            } else {
+                Sound::GetSound().ResumeMusic();
+            }
+        }
+    } catch (Sound::InitializationFailureException const &e) {
+        ErrorLogger() << "error when resuming music theme: " << e.what();
+        GetOptionsDB().Set("audio.effects.enabled", false);
+        GetOptionsDB().Set("audio.music.enabled", false);
+        Sound::GetSound().Disable();
+    }
+}
+
+void GGHumanClientApp::PauseMusicTheme() {
+    try {
+        if (GetOptionsDB().Get<bool>("audio.music.enabled"))
+            Sound::GetSound().PauseMusic();
+    } catch (Sound::InitializationFailureException const &e) {
+        ErrorLogger() << "error when pausing music theme:" << e.what();
+        GetOptionsDB().Set("audio.effects.enabled", false);
+        GetOptionsDB().Set("audio.music.enabled", false);
+        Sound::GetSound().Disable();
+    }
 }

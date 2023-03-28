@@ -132,9 +132,8 @@ IntroMenu::IntroMenu(my_context ctx) :
     
     Client().GetClientUI().ShowIntroScreen();
     GetGameRules().ResetToDefaults();
-
-    if ((GetOptionsDB().Get<bool>("audio.music.enabled")))
-        Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::string>("audio.music.title.path"), -1);
+    
+    Client().ChangeMusicTheme(std::string("audio.music.title.path"));
 }
 
 IntroMenu::~IntroMenu()
@@ -663,8 +662,7 @@ PlayingGame::PlayingGame(my_context ctx) :
     Client().Register(Client().GetClientUI().GetMapWnd());
     Client().GetClientUI().GetMapWnd()->Show();
 
-    if ((GetOptionsDB().Get<bool>("audio.music.enabled")))
-        Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::string>("audio.music.ambiance.path"), -1);
+    Client().ChangeMusicTheme(std::string("audio.music.ambiance.path"));
 }
 
 PlayingGame::~PlayingGame()

@@ -1497,10 +1497,10 @@ void OptionsWnd::SoundOptionsFeedback::MusicClicked(bool checked) {
         if (checked) {
             Sound::GetSound().Enable();
             GetOptionsDB().Set("audio.music.enabled", true);
-            Sound::GetSound().ResumeMusic();
+            GGHumanClientApp::GetApp()->ResumeMusicTheme();
         } else {
+            GGHumanClientApp::GetApp()->PauseMusicTheme();
             GetOptionsDB().Set("audio.music.enabled", false);
-            Sound::GetSound().PauseMusic();
         }
     } catch (Sound::InitializationFailureException const &e) {
         SoundInitializationFailure(e);
@@ -1531,5 +1531,6 @@ void OptionsWnd::SoundOptionsFeedback::SoundInitializationFailure(Sound::Initial
         m_effects_button->SetCheck(false);
     if (m_music_button)
         m_music_button->SetCheck(false);
+    Sound::GetSound().Disable();
     ClientUI::MessageBox(UserString(e.what()), false);
 }

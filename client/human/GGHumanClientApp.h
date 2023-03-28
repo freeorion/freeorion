@@ -130,6 +130,10 @@ public:
     [[nodiscard]] boost::intrusive_ptr<const boost::statechart::event_base> GetDeferredPostedEvent();
     void PostDeferredEvent(boost::intrusive_ptr<const boost::statechart::event_base> event);
 
+    void ChangeMusicTheme(const std::string& music_theme);
+    void PauseMusicTheme();
+    void ResumeMusicTheme();
+
 protected:
     void Initialize() noexcept override {};
 
@@ -191,6 +195,9 @@ private:
     bool m_connected = false;           ///< true if we are in a state in which we are supposed to be connected to the server
     bool m_have_window_focus = true;
     int  m_auto_turns = 0;              ///< auto turn counter
+
+    std::string                         m_music_theme;
+    bool                                m_music_theme_is_changed = false;
 
     /** Filenames of all in progress saves.  There maybe multiple saves in
         progress if a player and an autosave are initiated at the same time. */
