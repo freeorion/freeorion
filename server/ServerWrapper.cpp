@@ -699,7 +699,7 @@ namespace {
         }
 
         // Check if orbit number is within allowed range
-        if ((orbit < 0) || (orbit >= system->Orbits())) {
+        if ((orbit < 0) || (orbit >= static_cast<int>(system->Orbits()))) {
             ErrorLogger() << "CreatePlanet : There is no orbit " << orbit << " in system " << system_id;
             return INVALID_OBJECT_ID;
         }
