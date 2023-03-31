@@ -1,5 +1,4 @@
 find_package(CPPCheck)
-find_package(Flake8)
 find_package(PythonInterp ${MINIMUM_PYTHON_VERSION})
 
 if(TARGET Cppcheck::cppcheck)
@@ -14,28 +13,6 @@ if(TARGET Cppcheck::cppcheck)
     )
 endif()
 
-if(TARGET Flake8::flake8)
-    add_custom_target(check-pep8
-        COMMAND "$<TARGET_FILE:Flake8::flake8>"
-        COMMENT "Check python code for PEP-8 style conformance"
-        VERBATIM
-        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/default/python"
-    )
-
-    add_custom_target(check-pep8-focs
-        COMMAND "$<TARGET_FILE:Flake8::flake8>"
-        COMMENT "Check python FreeOrion content scripts for PEP-8 style conformance"
-        VERBATIM
-        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/default/scripting"
-    )
-
-    add_custom_target(check-pep8-focs-test
-        COMMAND "$<TARGET_FILE:Flake8::flake8>"
-        COMMENT "Check python FreeOrion content scripts for PEP-8 style conformance"
-        VERBATIM
-        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/test-scripting"
-    )
-endif()
 
 if(NOT TARGET check)
     add_custom_target(check
