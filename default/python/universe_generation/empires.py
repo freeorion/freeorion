@@ -103,7 +103,7 @@ class HomeSystemFinder:
         self.system_merit = {}
         self.num_home_systems = _num_home_systems
 
-    def find_home_systems_for_min_jump_distance(self, systems_pool, min_jumps):
+    def find_home_systems_for_min_jump_distance(self, systems_pool, min_jumps):  # noqa: C901
         """
         Return a good list of home systems or an empty list if there are fewer than num_home_systems in the pool.
 
@@ -253,7 +253,7 @@ def find_home_systems(num_home_systems, pool_list, jump_distance, min_jump_dista
     return []
 
 
-def add_planets_to_vicinity(vicinity, num_planets, gsd):
+def add_planets_to_vicinity(vicinity, num_planets, gsd):  # noqa C901
     """
     Adds the specified number of planets to the specified systems.
     """
@@ -485,8 +485,8 @@ def compile_home_system_list(num_home_systems, systems, gsd):  # noqa: max-compl
     return home_systems
 
 
-# flake8: noqa: C901
-def setup_empire(empire, empire_name, home_system, starting_species, player_name):
+# noqa: C901
+def setup_empire(empire, empire_name, home_system, starting_species, player_name):  # noqa: C901
     """
     Sets up various aspects of an empire, like empire name, homeworld, etc.
     """
@@ -610,7 +610,7 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
     return True
 
 
-def home_system_layout(home_systems, systems):
+def home_system_layout(home_systems, systems):  # noqa: C901
     """
     Home systems layout generation to place teams.
     Returns map from home system to neighbor home systems.

@@ -65,7 +65,7 @@ max-complexity = 10
     "F401",
 ]
 "*.pyi" = ["UP006"]  # need to fix in the skeleton generator
-
+"default/python/AI/ResearchAI.py" = ["F821"]  # fix it after release 0.5
 
 [tool.ruff]
 target-version = "py37"
