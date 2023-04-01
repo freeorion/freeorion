@@ -23,7 +23,8 @@ namespace parse { namespace detail {
         condition_parser_rule                  aggressive;
         condition_parser_rule                  can_colonize;
         condition_parser_rule                  can_produce_ships;
-        condition_parser_rule                  capital;
+        condition_parser_rule                  capital1;
+        condition_parser_rule                  capital2;
         condition_parser_rule                  monster;
         condition_parser_rule                  armed;
         condition_parser_rule                  owned_by_1;
