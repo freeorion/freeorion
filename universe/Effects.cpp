@@ -1683,7 +1683,7 @@ void SetSpeciesEmpireOpinion::Execute(ScriptingContext& context) const {
     if (species_name.empty())
         return;
 
-    double initial_opinion = context.species.SpeciesEmpireOpinion(species_name, empire_id);
+    double initial_opinion = context.species.SpeciesEmpireOpinion(species_name, empire_id, m_target);
     ScriptingContext::CurrentValueVariant cvv{initial_opinion};
     ScriptingContext opinion_context{context, cvv};
     float opinion = static_cast<float>(m_opinion->Eval(opinion_context));
@@ -1752,7 +1752,7 @@ void SetSpeciesSpeciesOpinion::Execute(ScriptingContext& context) const {
     if (rated_species_name.empty())
         return;
 
-    float initial_opinion = context.species.SpeciesSpeciesOpinion(opinionated_species_name, rated_species_name);
+    float initial_opinion = context.species.SpeciesSpeciesOpinion(opinionated_species_name, rated_species_name, m_target);
     ScriptingContext::CurrentValueVariant cvv{initial_opinion};
     ScriptingContext opinion_context{context, cvv};
     float opinion = static_cast<float>(m_opinion->Eval(opinion_context));

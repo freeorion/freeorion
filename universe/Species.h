@@ -289,7 +289,7 @@ public:
 
     /** returns opinion of species with name \a species_name about empire with
       * id \a empire_id or 0.0 if there is no such opinion yet recorded. */
-    [[nodiscard]] float SpeciesEmpireOpinion(const std::string& species_name, int empire_id) const;
+    [[nodiscard]] float SpeciesEmpireOpinion(const std::string& species_name, int empire_id, bool target) const;
 
     /** returns a map from species name to a map from other species names to the
       * opinion of the first species about the other species. */
@@ -300,7 +300,7 @@ public:
       * other species with name \a rated_species_name or 0.0 if there is no
       * such opinion yet recorded. */
     [[nodiscard]] float SpeciesSpeciesOpinion(const std::string& opinionated_species_name,
-                                              const std::string& rated_species_name) const;
+                                              const std::string& rated_species_name, bool target) const;
 
     [[nodiscard]] std::vector<std::string_view> SpeciesThatLike(std::string_view content_name) const;
     [[nodiscard]] std::vector<std::string_view> SpeciesThatDislike(std::string_view content_name) const;
