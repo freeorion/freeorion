@@ -83,7 +83,12 @@ namespace parse { namespace detail {
             =   tok.CanProduceShips_ [ _val = construct_movable_(new_<Condition::CanProduceShips>()) ]
             ;
 
-        capital
+        capital1
+            =   (tok.Capital_ >> label(tok.empire_)) > int_rules.expr
+            [ _val = construct_movable_(new_<Condition::Capital>(deconstruct_movable_(_1, _pass))) ]
+            ;
+
+        capital2
             =   tok.Capital_ [ _val = construct_movable_(new_<Condition::Capital>()) ]
             ;
 
@@ -96,9 +101,7 @@ namespace parse { namespace detail {
             ;
 
         owned_by_1
-            =   (   tok.OwnedBy_
-                 >> label(tok.empire_)
-                ) > int_rules.expr
+            =   (tok.OwnedBy_ >> label(tok.empire_)) > int_rules.expr
             [ _val = construct_movable_(new_<Condition::EmpireAffiliation>(deconstruct_movable_(_1, _pass))) ]
             ;
 
@@ -171,7 +174,8 @@ namespace parse { namespace detail {
             |   aggressive
             |   can_colonize
             |   can_produce_ships
-            |   capital
+            |   capital1
+            |   capital2
             |   monster
             |   armed
             |   owned_by
@@ -191,7 +195,8 @@ namespace parse { namespace detail {
         aggressive.name("Aggressive");
         can_colonize.name("CanColonize");
         can_produce_ships.name("CanProduceShips");
-        capital.name("Capital");
+        capital1.name("Capital");
+        capital2.name("Capital");
         monster.name("Monster");
         armed.name("Armed");
         owned_by.name("OwnedBy");  // TODO: Should this be renamed Affilated or similar?
@@ -209,7 +214,8 @@ namespace parse { namespace detail {
         debug(target);
         debug(stationary);
         debug(aggressive);
-        debug(capital);
+        debug(capital1);
+        debug(capital2);
         debug(monster);
         debug(armed);
         debug(owned_by);
