@@ -31,6 +31,7 @@ Species
 
         [[AVERAGE_POPULATION]]
         [[INDEPENDENT_HAPPINESS]]
+        [[COMMON_OPINION_EFFECTS(SP_SLY)]]
         [[VERY_BAD_SUPPLY]]
         [[GREAT_DEFENSE_TROOPS]]
         [[BAD_OFFENSE_TROOPS]]

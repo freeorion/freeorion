@@ -27,6 +27,7 @@ Species
 
         [[AVERAGE_POPULATION]]
         [[GOOD_HAPPINESS]]
+        [[COMMON_OPINION_EFFECTS(SP_GISGUFGTHRIM)]]
         [[AVERAGE_SUPPLY]]
         [[BAD_DEFENSE_TROOPS]]
         [[BAD_OFFENSE_TROOPS]]

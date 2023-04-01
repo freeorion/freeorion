@@ -48,6 +48,7 @@ Species
 
         [[EXTREMELY_BAD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[COMMON_OPINION_EFFECTS(SP_NIGHTSIDERS)]]  // TODO: make like empires with lots of organic population? or just use a standard count of liked species in empire?
         [[AVERAGE_SUPPLY]]
         [[BAD_OFFENSE_TROOPS]]
         [[GREAT_DEFENSE_TROOPS]]

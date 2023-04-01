@@ -51,6 +51,7 @@ Species
 
         [[AVERAGE_POPULATION]]
         [[GOOD_HAPPINESS]]
+        [[COMMON_OPINION_EFFECTS(SP_HHHOH)]]
         [[AVERAGE_SUPPLY]]
         [[GREAT_DEFENSE_TROOPS]]
 

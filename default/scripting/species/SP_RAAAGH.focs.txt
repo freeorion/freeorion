@@ -26,6 +26,7 @@ Species
 
         [[AVERAGE_POPULATION]]
         [[BAD_HAPPINESS]]
+        [[COMMON_OPINION_EFFECTS(SP_RAAAGH)]]
         [[BAD_SUPPLY]]
         [[ULTIMATE_DEFENSE_TROOPS]]
 

@@ -28,6 +28,7 @@ Species
 
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[COMMON_OPINION_EFFECTS(SP_EAXAW)]]
         [[AVERAGE_SUPPLY]]
         [[AVERAGE_DEFENSE_TROOPS]]
 

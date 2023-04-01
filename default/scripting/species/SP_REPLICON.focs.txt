@@ -62,6 +62,7 @@ Species
 
         [[GREAT_POPULATION]]
         [[VERY_BAD_HAPPINESS]]
+        [[COMMON_OPINION_EFFECTS(SP_REPLICON)]]
         [[AVERAGE_SUPPLY]]
         [[AVERAGE_DEFENSE_TROOPS]]
 

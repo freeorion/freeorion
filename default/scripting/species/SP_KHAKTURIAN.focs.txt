@@ -44,6 +44,7 @@ Species
 
         [[BAD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[COMMON_OPINION_EFFECTS(SP_KHAKTURIAN)]]
         [[AVERAGE_SUPPLY]]
         [[GREAT_OFFENSE_TROOPS]]
         [[GREAT_DEFENSE_TROOPS]]

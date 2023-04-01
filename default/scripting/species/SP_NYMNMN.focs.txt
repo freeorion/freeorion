@@ -43,6 +43,7 @@ Species
 
         [[BAD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[COMMON_OPINION_EFFECTS(SP_NYMNMN)]]
         [[BAD_SUPPLY]]
         [[BAD_DEFENSE_TROOPS]]
 

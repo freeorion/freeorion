@@ -28,6 +28,7 @@ Species
 
         [[AVERAGE_POPULATION]]
         [[GOOD_HAPPINESS]]
+        [[COMMON_OPINION_EFFECTS(SP_SILEXIAN)]]
         [[GREAT_SUPPLY]]
         [[AVERAGE_DEFENSE_TROOPS]]
         [[BAD_WEAPONS]]

@@ -62,6 +62,7 @@ Species
 
         [[GOOD_POPULATION]]
         [[INDEPENDENT_HAPPINESS]]
+        [[COMMON_OPINION_EFFECTS(SP_LAENFA)]]
         [[AVERAGE_SUPPLY]]
         [[BAD_DEFENSE_TROOPS]]
         [[BAD_OFFENSE_TROOPS]]

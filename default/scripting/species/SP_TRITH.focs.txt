@@ -43,6 +43,7 @@ Species
 
         [[AVERAGE_POPULATION]]
         [[BAD_HAPPINESS]]
+        [[COMMON_OPINION_EFFECTS(SP_TRITH)]]
         [[AVERAGE_SUPPLY]]
         [[AVERAGE_DEFENSE_TROOPS]]
 

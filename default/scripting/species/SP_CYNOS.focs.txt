@@ -27,6 +27,7 @@ Species
 
         [[AVERAGE_POPULATION]]
         [[GOOD_HAPPINESS]]
+        [[COMMON_OPINION_EFFECTS(SP_CYNOS)]]
         [[AVERAGE_SUPPLY]]
         [[GOOD_DEFENSE_TROOPS]]
 

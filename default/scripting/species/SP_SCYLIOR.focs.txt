@@ -28,6 +28,7 @@ Species
 
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[COMMON_OPINION_EFFECTS(SP_SCYLIOR)]]
         [[BAD_SUPPLY]]
         [[AVERAGE_DEFENSE_TROOPS]]
 

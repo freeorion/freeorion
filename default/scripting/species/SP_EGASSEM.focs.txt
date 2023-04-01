@@ -28,6 +28,7 @@ Species
 
         [[BAD_POPULATION]]
         [[BAD_HAPPINESS]]
+        [[COMMON_OPINION_EFFECTS(SP_EGASSEM)]]
         [[GREAT_SUPPLY]]
         [[GREAT_DEFENSE_TROOPS]]
         [[GREAT_OFFENSE_TROOPS]]

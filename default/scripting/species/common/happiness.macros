@@ -81,16 +81,29 @@ INDEPENDENT_HAPPINESS
 [[COMMON_HAPPINESS_EFFECTS]]
 '''
 
+FIXED_OPINION_EFFECTS
+'''
+        EffectsGroup
+            scope = Capital
+            stackinggroup = "@1@_FIXED_OPINION_OF_EMPIRE"
+            effects = [
+                SetSpeciesTargetOpinion
+                    species = ThisSpecies
+                    empire = Target.Owner
+                    opinion = @2@
+                SetSpeciesOpinion
+                    species = ThisSpecies
+                    empire = Target.Owner
+                    opinion = @2@
+            ]
+'''
+
 COMMON_OPINION_EFFECTS
 '''
         EffectsGroup
-            scope = And [
-                Capital
-                NoOp
-            ]
+            scope = Capital
             stackinggroup = "@1@_TOWARDS_TARGET_OPINION_OF_EMPIRE"
             effects = [
-                NoOp
                 SetSpeciesTargetOpinion
                     species = ThisSpecies
                     empire = Target.Owner
@@ -112,7 +125,6 @@ COMMON_OPINION_EFFECTS
 
 COMMON_HAPPINESS_EFFECTS
 '''
-        [[COMMON_OPINION_EFFECTS]] // TODO: move to species scripts and pass species name as parameter
         [[ENVIRONMENT_STABILITY_MODIFIER]]
         [[PLANET_SIZE_STABILITY_MODIFIER]]
 
