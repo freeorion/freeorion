@@ -1067,12 +1067,11 @@ namespace {
     /** Collect info for scope condition evaluations and dispatch those
       * evaluations to \a thread_pool. Not thread-safe, but the individual
       * condition evaluations should be safe to evaluate in parallel. */
-    template <typename EffectsGroups>
     void DispatchEffectsGroupScopeEvaluations(
         EffectsCauseType effect_cause_type,
         std::string_view specific_cause_name,
         const Condition::ObjectSet& source_objects,
-        const EffectsGroups& effects_groups,
+        const std::vector<Effect::EffectsGroup>& effects_groups,
         bool only_meter_effects,
         ScriptingContext context,
         const Condition::ObjectSet& potential_targets,
@@ -1098,20 +1097,8 @@ namespace {
         std::vector<std::pair<std::size_t, std::future<Condition::ObjectSet>>> futures;
         futures.reserve(active_sources.size());
 
-        auto get_eg = [&effects_groups](std::size_t i) -> const Effect::EffectsGroup& {
-            using eg_t = std::decay_t<decltype(effects_groups.front())>;
-            if constexpr (std::is_same_v<std::shared_ptr<Effect::EffectsGroup>, eg_t> ||
-                          std::is_same_v<std::unique_ptr<Effect::EffectsGroup>, eg_t>)
-            {
-                return *(effects_groups[i]);
-            } else {
-                static_assert(std::is_same_v<Effect::EffectsGroup, eg_t>);
-                return effects_groups[i];
-            }
-        };
-
         for (std::size_t i = 0; i < effects_groups.size(); ++i) {
-            const Effect::EffectsGroup& effects_group = get_eg(i);
+            const Effect::EffectsGroup& effects_group = effects_groups[i];
 
             if (only_meter_effects && !effects_group.HasMeterEffects())
                 continue;
@@ -1180,7 +1167,7 @@ namespace {
 
         // loop over effects groups again, copying the cached results
         for (std::size_t i = 0; i < effects_groups.size(); ++i) {
-            const Effect::EffectsGroup& effects_group = get_eg(i);
+            const Effect::EffectsGroup& effects_group = effects_groups[i];
             if (only_meter_effects && !effects_group.HasMeterEffects())
                 continue;
             if (!effects_group.Scope() || !effects_group.Activation())
@@ -1227,7 +1214,7 @@ namespace {
             TraceLogger(effects) << "Handing active sources set of size: " << active_sources[i].size();
 
             // can assume these pointers are non-null due to previous use
-            const Effect::EffectsGroup& effects_group = get_eg(i);
+            const Effect::EffectsGroup& effects_group = effects_groups[i];
             auto* scope = effects_group.Scope();
 
 
