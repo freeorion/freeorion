@@ -657,12 +657,22 @@ void SpeciesManager::SetSpeciesHomeworlds(std::map<std::string, std::set<int>>&&
 
 void SpeciesManager::SetSpeciesSpeciesOpinion(const std::string& opinionated_species,
                                               const std::string& rated_species, float opinion, bool target)
-{ // TODO: this
+{
+    auto& [opinion_meter, target_meter] = m_species_species_opinions[opinionated_species][rated_species];
+    if (target)
+        target_meter.SetCurrent(opinion);
+    else
+        opinion_meter.SetCurrent(opinion);
 }
 
 void SpeciesManager::SetSpeciesEmpireOpinion(const std::string& opinionated_species,
                                              int empire_id, float opinion, bool target)
-{ // TODO: this
+{
+    auto& [opinion_meter, target_meter] = m_species_empire_opinions[opinionated_species][empire_id];
+    if (target)
+        target_meter.SetCurrent(opinion);
+    else
+        opinion_meter.SetCurrent(opinion);
 }
 
 void SpeciesManager::ResetSpeciesTargetOpinions() {
