@@ -8022,17 +8022,17 @@ void OwnerHasShipPartAvailable::Eval(const ScriptingContext& parent_context,
                                      ObjectSet& matches, ObjectSet& non_matches,
                                      SearchDomain search_domain) const
 {
-    // if m_empire_id not set, the local candidate's owner is used, which is not target invariant
+    // if m_empire_id not set, the local candidate's owner is used, which is not local candidate invariant
     bool simple_eval_safe = ((m_empire_id && m_empire_id->LocalCandidateInvariant()) &&
                              (!m_name || m_name->LocalCandidateInvariant()) &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
-        // evaluate number limits once, use to match all candidates
+        // evaluate empire ID once, use to match all candidates
         int empire_id = m_empire_id->Eval(parent_context);   // check above should ensure m_empire_id is non-null
         std::string name = m_name ? m_name->Eval(parent_context) : "";
         EvalImpl(matches, non_matches, search_domain, OwnerHasShipPartAvailableSimpleMatch(empire_id, name, parent_context));
     } else {
-        // re-evaluate allowed turn range for each candidate object
+        // re-evaluate empire ID for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
