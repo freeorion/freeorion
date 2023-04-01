@@ -37,9 +37,9 @@ Species
         [[VERY_BAD_RESEARCH]]
         [[NO_INFLUENCE]]
         [[NO_STOCKPILE]]
-
         [[BAD_POPULATION]]
         [[GREAT_HAPPINESS]]
+        [[FIXED_OPINION_EFFECTS(SP_EXOBOT,20)]]
         [[BAD_SUPPLY]]
         [[BAD_DEFENSE_TROOPS]]
         [[BAD_OFFENSE_TROOPS]]

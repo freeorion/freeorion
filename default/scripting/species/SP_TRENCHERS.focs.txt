@@ -61,6 +61,7 @@ Species
 
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[COMMON_OPINION_EFFECTS(SP_TRENCHERS)]]
         [[BAD_SUPPLY]]
         [[BAD_DEFENSE_TROOPS]]
 

@@ -63,6 +63,7 @@ Species
 
         [[AVERAGE_POPULATION]]
         [[BAD_HAPPINESS]]
+        [[COMMON_OPINION_EFFECTS(SP_FULVER)]]
         [[AVERAGE_SUPPLY]]
         [[BAD_DEFENSE_TROOPS]]
         [[GOOD_WEAPONS]]

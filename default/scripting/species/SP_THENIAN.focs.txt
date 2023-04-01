@@ -33,6 +33,7 @@ Species
 
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[COMMON_OPINION_EFFECTS(SP_THENIAN)]]
         [[VERY_BAD_SUPPLY]]
         [[NO_OFFENSE_TROOPS]]
         [[GOOD_DEFENSE_TROOPS]]

@@ -28,6 +28,7 @@ Species
 
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[COMMON_OPINION_EFFECTS(SP_ETTY)]]
         [[GREAT_SUPPLY]]
         [[GOOD_DEFENSE_TROOPS]]
 

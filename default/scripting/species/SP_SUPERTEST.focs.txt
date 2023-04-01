@@ -28,6 +28,7 @@ Species
 
         [[GOOD_POPULATION]]
         [[GREAT_HAPPINESS]]
+        [[FIXED_OPINION_EFFECTS(SP_SUPER_TEST, 20)]]
         [[ULTIMATE_SUPPLY]]
         [[GREAT_DEFENSE_TROOPS]]
         [[GREAT_OFFENSE_TROOPS]]

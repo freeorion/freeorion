@@ -28,6 +28,7 @@ Species
 
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[COMMON_OPINION_EFFECTS(SP_SETINON)]]
         [[AVERAGE_SUPPLY]]
         [[NO_DEFENSE_TROOPS]]
         [[NO_OFFENSE_TROOPS]]

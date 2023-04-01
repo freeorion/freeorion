@@ -28,6 +28,7 @@ Species
 
         [[AVERAGE_POPULATION]]
         [[BAD_HAPPINESS]]
+        [[COMMON_OPINION_EFFECTS(SP_DERTHREAN)]]
         [[AVERAGE_SUPPLY]]
         [[AVERAGE_DEFENSE_TROOPS]]
         [[NO_OFFENSE_TROOPS]]

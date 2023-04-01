@@ -39,6 +39,7 @@ Species
 
         [[BAD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[COMMON_OPINION_EFFECTS(SP_SLEEPERS)]]
         [[AVERAGE_SUPPLY]]
         [[BAD_OFFENSE_TROOPS]]
         [[BAD_DEFENSE_TROOPS]]

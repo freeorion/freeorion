@@ -51,6 +51,7 @@ Species
 
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[COMMON_OPINION_EFFECTS(SP_OURBOOLS)]]
         [[BAD_SUPPLY]]
         [[AVERAGE_DEFENSE_TROOPS]]
 

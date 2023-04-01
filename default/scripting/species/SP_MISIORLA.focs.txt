@@ -27,6 +27,7 @@ Species
 
         [[BAD_POPULATION]]
         [[GOOD_HAPPINESS]]
+        [[COMMON_OPINION_EFFECTS(SP_MISIORLA)]]
         [[BAD_SUPPLY]]
         [[BAD_DEFENSE_TROOPS]]
 

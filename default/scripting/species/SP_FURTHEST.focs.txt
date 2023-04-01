@@ -28,6 +28,7 @@ Species
 
         [[BAD_POPULATION]]
         [[INDEPENDENT_HAPPINESS]]
+        [[COMMON_OPINION_EFFECTS(SP_FURTHEST)]]
         [[BAD_SUPPLY]]
         [[GOOD_DEFENSE_TROOPS]]
 

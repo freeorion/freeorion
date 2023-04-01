@@ -39,6 +39,7 @@ Species
 
         [[VERY_BAD_POPULATION]]
         [[BAD_HAPPINESS]]
+        [[COMMON_OPINION_EFFECTS(SP_CELESTEPHYTE)]]
         [[BAD_SUPPLY]]
         [[NO_OFFENSE_TROOPS]]
         [[BAD_DEFENSE_TROOPS]]
