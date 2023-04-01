@@ -1142,14 +1142,11 @@ namespace {
                     activation->Eval(source_context, retval, rejected, Condition::SearchDomain::MATCHES);
 
                 } else {
-                    // need to apply separately to each source object
-                    ScriptingContext source_context{context};
+                    // need to apply separately to each source object, using a context with the object as source
                     retval.reserve(source_objects.size());
-                    for (auto& obj : source_objects) {
-                        source_context.source = obj;
-                        if (activation->EvalOne(source_context, obj))
-                            retval.push_back(std::move(source_context.source));
-                    }
+                    std::copy_if(source_objects.begin(), source_objects.end(), std::back_inserter(retval),
+                                 [&context, activation](const UniverseObject* obj)
+                                 { return activation->EvalOne(ScriptingContext{obj, context}, obj); });
                 }
 
                 return retval;
