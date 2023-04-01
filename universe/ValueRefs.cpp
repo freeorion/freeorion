@@ -2369,28 +2369,20 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         { return 0.0; }
 
     }
-    else if (variable_name == "SpeciesEmpireOpinion") {
-        int empire_id = ALL_EMPIRES;
-        if (m_int_ref1)
-            empire_id = m_int_ref1->Eval(context);
+    else if (variable_name == "SpeciesEmpireOpinion" || variable_name == "SpeciesEmpireTargetOpinion") {
+        const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
+        const std::string species_name = m_string_ref1 ? m_string_ref1->Eval(context) : "";
+        const bool target = variable_name == "SpeciesEmpireTargetOpinion";
 
-        std::string species_name;
-        if (m_string_ref1)
-            species_name = m_string_ref1->Eval(context);
-
-        return context.species.SpeciesEmpireOpinion(species_name, empire_id);
+        return context.species.SpeciesEmpireOpinion(species_name, empire_id, target);
 
     }
-    else if (variable_name == "SpeciesSpeciesOpinion") {
-        std::string opinionated_species_name;
-        if (m_string_ref1)
-            opinionated_species_name = m_string_ref1->Eval(context);
+    else if (variable_name == "SpeciesSpeciesOpinion" || variable_name == "SpeciesSpeciesTargetOpinion") {
+        const std::string opinionated_species_name = m_string_ref1 ? m_string_ref1->Eval(context) : "";
+        const std::string rated_species_name = m_string_ref2 ? m_string_ref2->Eval(context) : "";
+        const bool target = variable_name == "SpeciesSpeciesTargetOpinion";
 
-        std::string rated_species_name;
-        if (m_string_ref2)
-            rated_species_name = m_string_ref2->Eval(context);
-
-        return context.species.SpeciesSpeciesOpinion(opinionated_species_name, rated_species_name);
+        return context.species.SpeciesSpeciesOpinion(opinionated_species_name, rated_species_name, target);
 
     }
     else if (variable_name == "SpecialCapacity") {

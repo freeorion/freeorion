@@ -141,7 +141,8 @@ namespace parse {
             ;
 
         species_empire_opinion
-            = (     tok.SpeciesEmpireOpinion_
+            = (
+                (   tok.SpeciesEmpireOpinion_ | tok.SpeciesEmpireTargetOpinion_ )
                 >   label(tok.species_) > string_grammar
                 >   label(tok.empire_) > simple_int
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
@@ -154,7 +155,8 @@ namespace parse {
             ;
 
         species_species_opinion
-            = (     tok.SpeciesSpeciesOpinion_
+            = (
+                (   tok.SpeciesSpeciesOpinion_ | tok.SpeciesSpeciesTargetOpinion_ )
                 >   label(tok.species_) > string_grammar
                 >   label(tok.species_) > string_grammar
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(

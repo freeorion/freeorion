@@ -501,8 +501,10 @@
     (SpeciesContentOpinion)                     \
     (SpeciesDislikes)                           \
     (SpeciesEmpireOpinion)                      \
+    (SpeciesEmpireTargetOpinion)                \
     (SpeciesLikes)                              \
     (SpeciesSpeciesOpinion)                     \
+    (SpeciesSpeciesTargetOpinion)               \
     (SpeciesPlanetsBombed)
 
 #define TOKEN_SEQ_15                            \
