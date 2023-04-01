@@ -437,6 +437,7 @@
     (SetSpecialCapacity)                        \
     (SetSpecies)                                \
     (SetSpeciesOpinion)                         \
+    (SetSpeciesTargetOpinion)                   \
     (SetSpeed)                                  \
     (SetStarType)                               \
     (SetStealth)                                \

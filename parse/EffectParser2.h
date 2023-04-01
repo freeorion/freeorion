@@ -36,7 +36,8 @@ namespace parse::detail {
             boost::spirit::qi::locals<
                 value_ref_payload<std::string>,
                 value_ref_payload<std::string>,
-                value_ref_payload<int>
+                value_ref_payload<int>,
+                bool
             >
         > string_string_int_rule;
 
