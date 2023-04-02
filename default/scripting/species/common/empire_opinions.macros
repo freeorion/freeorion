@@ -1,0 +1,41 @@
+FIXED_OPINION_EFFECTS
+'''
+        EffectsGroup
+            scope = Capital
+            stackinggroup = "@1@_FIXED_OPINION_OF_EMPIRE"
+            effects = [
+                SetSpeciesTargetOpinion
+                    species = ThisSpecies
+                    empire = Target.Owner
+                    opinion = @2@
+                SetSpeciesOpinion
+                    species = ThisSpecies
+                    empire = Target.Owner
+                    opinion = @2@
+            ]
+'''
+
+COMMON_OPINION_EFFECTS
+'''
+        EffectsGroup
+            scope = Capital
+            stackinggroup = "@1@_TOWARDS_TARGET_OPINION_OF_EMPIRE"
+            effects = [
+                SetSpeciesTargetOpinion
+                    species = ThisSpecies
+                    empire = Target.Owner
+                    opinion = 20
+                SetSpeciesOpinion
+                    species = ThisSpecies
+                    empire = Target.Owner
+                    opinion = Value + 
+                        min(1.0,                // increase by 1 per turn up towards target
+                            max(-1.0,           // decrease by 1 per turn down towards target
+                                (SpeciesEmpireTargetOpinion
+                                    species = ThisSpecies
+                                    empire = Target.Owner
+                                ) - Value
+                            )
+                        )
+            ]
+'''
