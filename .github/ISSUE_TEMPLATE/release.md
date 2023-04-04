@@ -51,7 +51,8 @@ doing the actual release.
 * [ ] Create a new GitHub Issue from `.github/RELEASE_TEMPLATE.md` and follow
       instructions. :wink:
 * [ ] Determine initial milestones and dates for release.
-* [ ] Update `packaging/org.freeorion.FreeOrion.metainfo.xml` and linked screenshots if necessary
+* [ ] Add the new release in `packaging/org.freeorion.FreeOrion.metainfo.xml`
+* [ ] Update the screenshots in `packaging/org.freeorion.FreeOrion.metainfo.xml` if necessary
 * [ ] Create release branch from development branch master by using:
 ```
 git checkout -b release-vX.Y.Z master
@@ -105,7 +106,7 @@ git tag --annotate --message="X.Y.Z Stable Release"  vX.Y.Z
 
 #### Cleanup
 
-* [ ] Cherry-pick updates of `ChangeLog.md` to master. 
+* [ ] Cherry-pick updates of `ChangeLog.md` to master.
 * [ ] Prune release candidate tags.
 * [ ] Prune release branch.
 
