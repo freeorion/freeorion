@@ -653,7 +653,7 @@ namespace {
       * of \a sort_key evaluated on them, with the largest / smallest / most
       * common sort keys chosen, or a random selection chosen, depending on the
       * specified \a sorting_method */
-    void TransferSortedObjects(uint32_t number, ValueRef::ValueRef<double>* sort_key,
+    void TransferSortedObjects(uint32_t number, const ValueRef::ValueRef<double>* sort_key,
                                const ScriptingContext& context, SortingMethod sorting_method,
                                ObjectSet& from_set, ObjectSet& to_set)
     {
@@ -670,94 +670,119 @@ namespace {
         }
 
         // get sort key values for all objects in from_set, and sort by inserting into map
-        std::multimap<float, const UniverseObject*> sort_key_objects;
-        for (auto& from : from_set) {
-            ScriptingContext source_context{context, from};
-            float sort_value = sort_key->Eval(source_context);
-            sort_key_objects.emplace(sort_value, from);
-        }
+        std::vector<std::pair<float, const UniverseObject*>> sort_key_objects;
+        using sort_key_pair_t = decltype(sort_key_objects)::value_type;
+        sort_key_objects.reserve(from_set.size());
+        std::transform(from_set.begin(), from_set.end(), std::back_inserter(sort_key_objects),
+                       [&context, sort_key](const UniverseObject* obj) -> sort_key_pair_t {
+                           const ScriptingContext source_context{context, obj};
+                           return {sort_key->Eval(source_context), obj};
+                       });
 
         // how many objects to select?
         number = std::min<uint32_t>(number, sort_key_objects.size());
         if (number == 0)
             return;
-        uint32_t number_transferred(0);
+        const auto offset = static_cast<decltype(sort_key_objects)::iterator::difference_type>(number);
+
 
         // pick max / min / most common values
         if (sorting_method == SortingMethod::SORT_MIN) {
-            // move (number) objects with smallest sort key (at start of map)
-            // from the from_set into the to_set.
-            for ([[maybe_unused]] auto& [ignored_float, object_to_transfer] : sort_key_objects) {
-                (void)ignored_float;    // quiet unused variable warning
-                auto from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
-                if (from_it != from_set.end()) {
-                    *from_it = from_set.back();
-                    from_set.pop_back();
-                    to_set.push_back(object_to_transfer);
-                    number_transferred++;
-                    if (number_transferred >= number)
-                        return;
-                }
-            }
+            const auto sort_key_obj_less = [](const auto& lhs, const auto& rhs) {
+                return lhs.first < rhs.first ||
+                    (lhs.first == rhs.first && lhs.second && rhs.second && // break ties consistently using object IDs
+                     lhs.second->ID() < rhs.second->ID());
+            };
+
+            // sort smallest sort key first
+            const auto start = sort_key_objects.begin();
+            const auto nth_it = std::next(start, offset);
+            std::nth_element(start, nth_it, sort_key_objects.end(), sort_key_obj_less);
+
+            // append objects with smallest sort keys to the to_set
+            std::transform(start, nth_it, std::back_inserter(to_set),
+                           [](const auto& entry) { return entry.second; });
+
+            // and remove them from from_set. assumes no duplicates were present.
+            const auto from_set_start = from_set.begin();
+            auto from_set_end = from_set.end();
+            for (auto remove_it = start; remove_it != nth_it; ++remove_it)
+                from_set_end = std::remove(from_set_start, from_set_end, remove_it->second);
+            from_set.resize(std::distance(from_set_start, from_set_end));
 
         } else if (sorting_method == SortingMethod::SORT_MAX) {
-            // move (number) objects with largest sort key (at end of map)
-            // from the from_set into the to_set.
-            for (auto sorted_it = sort_key_objects.rbegin();  // would use const_reverse_iterator but this causes a compile error in some compilers
-                 sorted_it != sort_key_objects.rend(); ++sorted_it)
-            {
-                auto* object_to_transfer = sorted_it->second;
-                auto from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
-                if (from_it != from_set.end()) {
-                    *from_it = from_set.back();
-                    from_set.pop_back();
-                    to_set.push_back(object_to_transfer);
-                    number_transferred++;
-                    if (number_transferred >= number)
-                        return;
-                }
-            }
+            const auto sort_key_obj_greater = [](const auto& lhs, const auto& rhs) {
+                return lhs.first > rhs.first ||
+                    (lhs.first == rhs.first && lhs.second && rhs.second && // break ties consistently using object IDs
+                     lhs.second->ID() > rhs.second->ID());
+            };
+
+            // sort largest sort key first
+            const auto start = sort_key_objects.begin();
+            const auto nth_it = std::next(start, offset);
+            std::nth_element(start, nth_it, sort_key_objects.end(), sort_key_obj_greater);
+
+            // append objects with largest sort keys to the to_set
+            std::transform(start, nth_it, std::back_inserter(to_set),
+                           [](const auto& entry) { return entry.second; });
+
+            // and remove them from from_set. assumes no duplicates were present.
+            const auto from_set_start = from_set.begin();
+            auto from_set_end = from_set.end();
+            for (auto remove_it = start; remove_it != nth_it; ++remove_it)
+                from_set_end = std::remove(from_set_start, from_set_end, remove_it->second);
+            from_set.resize(std::distance(from_set_start, from_set_end));
 
         } else if (sorting_method == SortingMethod::SORT_MODE) {
+            // sort input by sort key to make filling histogram faster.
+            // don't need ID fallback for sorting function in this case
+            const auto sort_key_obj_less = [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; };
+            std::stable_sort(sort_key_objects.begin(), sort_key_objects.end(), sort_key_obj_less);
+
             // compile histogram of of number of times each sort key occurs
-            std::unordered_map<float, uint32_t> histogram;
+            boost::container::flat_map<float, uint32_t> histogram;
+            histogram.reserve(sort_key_objects.size());
             for ([[maybe_unused]] auto& [key, ignored_object] : sort_key_objects) {
                 (void)ignored_object;
-                histogram[key]++;
+                histogram[key]++; // TODO: maybe redo with iteration over ranges of each unique key and distance?
             }
 
             // invert histogram to index by number of occurances
-            std::multimap<uint32_t, float> inv_histogram;
-            for (const auto& [key, count] : histogram)
-                inv_histogram.emplace(count, key);
+            std::vector<std::pair<uint32_t, float>> inv_histogram;
+            inv_histogram.reserve(histogram.size());
+            using inv_h_entry_t = decltype(inv_histogram)::value_type;
+            std::transform(histogram.begin(), histogram.end(), std::back_inserter(inv_histogram),
+                           [](const auto& h) { return inv_h_entry_t{h.second, h.first}; });
+            // sort with more common entriest first
+            std::stable_sort(inv_histogram.begin(), inv_histogram.end(), std::greater<>{});
 
-            // reverse-loop through inverted histogram to find which sort keys
-            // occurred most frequently, and transfer objects with those sort
-            // keys from from_set to to_set.
-            for (auto inv_hist_it = inv_histogram.rbegin();  // would use const_reverse_iterator but this causes a compile error in some compilers
-                 inv_hist_it != inv_histogram.rend(); ++inv_hist_it)
-            {
-                float cur_sort_key = inv_hist_it->second;
 
-                // get range of objects with the current sort key
-                auto key_range = sort_key_objects.equal_range(cur_sort_key);
+            // transfer objects with the most common keys
+            uint32_t number_transferred = 0;
+            for (auto& [ignored, cur_sort_key] : inv_histogram) {
+                (void)ignored;
 
-                // loop over range, selecting objects to transfer from from_set to to_set
-                for (auto sorted_it = key_range.first;
-                     sorted_it != key_range.second; ++sorted_it)
-                {
-                    auto* object_to_transfer = sorted_it->second;
+                for (auto& [obj_sort_key, object_to_transfer] : sort_key_objects) {
+                    if (obj_sort_key != cur_sort_key)
+                        continue;
+
+                    // locate in from_set
                     auto from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
-                    if (from_it != from_set.end()) {
-                        *from_it = from_set.back();
-                        from_set.pop_back();
-                        to_set.push_back(object_to_transfer);
-                        number_transferred++;
-                        if (number_transferred >= number)
-                            return;
-                    }
+                    if (from_it == from_set.end())
+                        continue;
+
+                    // put into to_set and remove one from from_set
+                    to_set.push_back(object_to_transfer);
+                    *from_it = from_set.back();
+                    from_set.pop_back();
+
+                    // keep track of count
+                    ++number_transferred;
+                    if (number_transferred >= number)
+                        return; // done
                 }
             }
+        // TODO: SORT_UNIQUE
 
         } else {
              ErrorLogger(conditions) << "TransferSortedObjects given unknown sort method";
