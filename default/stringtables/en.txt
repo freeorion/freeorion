@@ -12062,6 +12062,31 @@ DESC_MODE_NUMBER_OF
 DESC_MODE_NUMBER_OF_NOT
 ''' that is not one of %1% objects with the most common value of%2% and%3%'''
 
+# %1% number of objects to match (upper limit)
+# %2% description of the sort key determined for each object
+# %3% description of the selection condition for potentially matched objects
+DESC_MODE_NUMBER_OF
+''' that is one of %1% objects with the most common value(s) of%2% and%3%'''
+
+# %1% number of objects to match (upper limit)
+# %2% description of the sort key determined for each object
+# %3% description of the selection condition for potentially matched objects
+DESC_MODE_NUMBER_OF_NOT
+''' that is not one of %1% objects with the most common value(s) of%2% and%3%'''
+
+# %1% number of objects to match (upper limit)
+# %2% description of the sort key determined for each object
+# %3% description of the selection condition for potentially matched objects
+DESC_UNIQUE_OF
+''' that is one of %1% objects with distinct values of of%2% and%3%'''
+
+# %1% number of objects to match (upper limit)
+# %2% description of the sort key determined for each object
+# %3% description of the selection condition for potentially matched objects
+DESC_UNIQUE_OF_NOT
+''' that is not one of %1% objects with distinct values of%2% and%3%'''
+
+
 # %1% FIXME
 DESC_VALUE_TEST
 ''' when %1%'''
