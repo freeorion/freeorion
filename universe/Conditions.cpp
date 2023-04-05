@@ -687,7 +687,8 @@ namespace {
 
 
         // pick max / min / most common values
-        if (sorting_method == SortingMethod::SORT_MIN) {
+        switch (sorting_method) {
+        case SortingMethod::SORT_MIN: {
             const auto sort_key_obj_less = [](const auto& lhs, const auto& rhs) {
                 return lhs.first < rhs.first ||
                     (lhs.first == rhs.first && lhs.second && rhs.second && // break ties consistently using object IDs
@@ -709,8 +710,9 @@ namespace {
             for (auto remove_it = start; remove_it != nth_it; ++remove_it)
                 from_set_end = std::remove(from_set_start, from_set_end, remove_it->second);
             from_set.resize(std::distance(from_set_start, from_set_end));
-
-        } else if (sorting_method == SortingMethod::SORT_MAX) {
+            break;
+        }
+        case SortingMethod::SORT_MAX: {
             const auto sort_key_obj_greater = [](const auto& lhs, const auto& rhs) {
                 return lhs.first > rhs.first ||
                     (lhs.first == rhs.first && lhs.second && rhs.second && // break ties consistently using object IDs
@@ -732,8 +734,9 @@ namespace {
             for (auto remove_it = start; remove_it != nth_it; ++remove_it)
                 from_set_end = std::remove(from_set_start, from_set_end, remove_it->second);
             from_set.resize(std::distance(from_set_start, from_set_end));
-
-        } else if (sorting_method == SortingMethod::SORT_MODE) {
+            break;
+        }
+        case SortingMethod::SORT_MODE: {
             // sort input by sort key to make filling histogram faster.
             // don't need ID fallback for sorting function in this case
             const auto sort_key_obj_less = [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; };
@@ -782,10 +785,14 @@ namespace {
                         return; // done
                 }
             }
-        // TODO: SORT_UNIQUE
-
-        } else {
+            break;
+        }
+        case SortingMethod::SORT_UNIQUE: {
+            break;
+        }
+        default: {
              ErrorLogger(conditions) << "TransferSortedObjects given unknown sort method";
+        }
         }
     }
 }
@@ -939,34 +946,29 @@ std::string SortedNumberOf::Description(bool negated) const {
     std::string number_str = m_number->ConstantExpr() ? m_number->Dump() : m_number->Description();
 
     if (m_sorting_method == SortingMethod::SORT_RANDOM) {
-        return str(FlexibleFormat((!negated)
-                                  ? UserString("DESC_NUMBER_OF")
-                                  : UserString("DESC_NUMBER_OF_NOT")
-                                 )
-                   % number_str
-                   % m_condition->Description());
+        return str(FlexibleFormat((!negated) ? UserString("DESC_NUMBER_OF") : UserString("DESC_NUMBER_OF_NOT"))
+                   % number_str % m_condition->Description());
+
     } else {
         std::string sort_key_str = m_sort_key->ConstantExpr() ? m_sort_key->Dump() : m_sort_key->Description();
 
         std::string description_str;
         switch (m_sorting_method) {
         case SortingMethod::SORT_MAX:
-            description_str = (!negated)
-                ? UserString("DESC_MAX_NUMBER_OF")
-                : UserString("DESC_MAX_NUMBER_OF_NOT");
+            description_str = (!negated) ? UserString("DESC_MAX_NUMBER_OF") : UserString("DESC_MAX_NUMBER_OF_NOT");
             break;
 
         case SortingMethod::SORT_MIN:
-            description_str = (!negated)
-                ? UserString("DESC_MIN_NUMBER_OF")
-                : UserString("DESC_MIN_NUMBER_OF_NOT");
+            description_str = (!negated) ? UserString("DESC_MIN_NUMBER_OF") : UserString("DESC_MIN_NUMBER_OF_NOT");
             break;
 
         case SortingMethod::SORT_MODE:
-            description_str = (!negated)
-                ? UserString("DESC_MODE_NUMBER_OF")
-                : UserString("DESC_MODE_NUMBER_OF_NOT");
+            description_str = (!negated) ? UserString("DESC_MODE_NUMBER_OF") : UserString("DESC_MODE_NUMBER_OF_NOT");
             break;
+
+        case SortingMethod::SORT_UNIQUE:
+            description_str = (!negated) ? UserString("DESC_UNIQUE_OF") : UserString("DESC_UNIQUE_OF_NOT");
+
         default:
             break;
         }
@@ -989,6 +991,8 @@ std::string SortedNumberOf::Dump(uint8_t ntabs) const {
         retval += "MinimumNumberOf"; break;
     case SortingMethod::SORT_MODE:
         retval += "ModeNumberOf"; break;
+    case SortingMethod::SORT_UNIQUE:
+        retval += "UniqueOf"; break;
     default:
         retval += "??NumberOf??"; break;
     }

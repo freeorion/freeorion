@@ -28,7 +28,8 @@ enum class SortingMethod : uint8_t {
     SORT_MAX,       ///< Objects with the largest sort key will be selected
     SORT_MIN,       ///< Objects with the smallest sort key will be selected
     SORT_MODE,      ///< Objects with the most common sort key will be selected
-    SORT_RANDOM     ///< Objects will be selected randomly, without consideration of property values
+    SORT_RANDOM,    ///< Objects will be selected randomly, without consideration of property values
+    SORT_UNIQUE     ///< Objects will be sorted by the sort key and one object per unique sort key will be selected
 };
 
 enum class ComparisonType : int8_t {
@@ -167,8 +168,9 @@ private:
     std::unique_ptr<Condition> m_condition;
 };
 
-/** Matches no objects. Currently only has an experimental use for efficient immediate rejection as the top-line condition.
- *  Essentially the entire point of this Condition is to provide the specialized GetDefaultInitialCandidateObjects() */
+/** Matches no objects. Currently only has an experimental use for efficient
+  * immediate rejection as the top-line condition. Essentially, the entire point
+  * of this Condition is to provide the specialized GetDefaultInitialCandidateObjects() */
 struct FO_COMMON_API None final : public Condition {
     constexpr None() noexcept : Condition(true, true, true) {}
     bool operator==(const Condition& rhs) const override;
