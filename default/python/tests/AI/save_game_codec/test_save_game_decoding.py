@@ -1,6 +1,7 @@
 from collections import OrderedDict
 
 import pytest
+
 from ColonisationAI import OrbitalColonizationManager
 from EnumsAI import MissionType
 from savegame_codec import CanNotSaveGameException, load_savegame_string

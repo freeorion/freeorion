@@ -1,6 +1,5 @@
-from typing import List, TextIO, Iterable
-
 from dataclasses import dataclass
+from typing import Iterable, List, TextIO
 
 
 @dataclass

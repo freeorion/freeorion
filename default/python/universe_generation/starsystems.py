@@ -5,7 +5,6 @@ from itertools import product
 
 import planets
 import universe_tables
-
 import util
 
 # tuple of available star types

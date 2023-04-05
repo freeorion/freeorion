@@ -6,11 +6,10 @@ from stub_generator.interface_inspector import (
     FunctionInfo,
     InstanceInfo,
 )
-
 from stub_generator.stub_generator.class_generator import generate_classes
 from stub_generator.stub_generator.enum_generator import generate_enums
 from stub_generator.stub_generator.function_generator import generate_functions
-from stub_generator.stub_generator.result_builder import ResultBuilder, Import
+from stub_generator.stub_generator.result_builder import Import, ResultBuilder
 from stub_generator.stub_generator.rtype import mapping_code
 
 

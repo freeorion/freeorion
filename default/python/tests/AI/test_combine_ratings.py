@@ -1,4 +1,5 @@
 import pytest
+
 from freeorion_tools import combine_ratings
 
 

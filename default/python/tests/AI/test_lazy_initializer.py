@@ -1,4 +1,5 @@
 import pytest
+
 from freeorion_tools.lazy_initializer import InitializerLock
 
 

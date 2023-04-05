@@ -1,14 +1,3 @@
-[tool.isort]
-profile = "black"
-multi_line_output = 3
-skip_gitignore=true
-extra_standard_library=["freeorion", "freeOrionAIInterface"]
-skip=[
-    "client", "cmake", "combat", "Empire", "GG", "godot", "msvc2017",
-    "msvc2019", "msvc2022", "network", "packaging", "parse", "python",
-    "server", "snap", "test", "tmp", "UI", "universe", "util",
-]
-
 [tool.black]
 # do not include pyi files, since they are generated
 include = '\.py?$'
@@ -67,9 +56,22 @@ max-complexity = 10
 "*.pyi" = ["UP006"]  # need to fix in the skeleton generator
 "default/python/AI/ResearchAI.py" = ["F821"]  # fix it after release 0.5
 
+"default/scripting/*" =  ["I"]
+"test-scripting/*" = ["I"]
+
+[tool.ruff.isort]
+extra-standard-library=["freeorion", "freeOrionAIInterface"]
+
+
 [tool.ruff]
 
-src = ["default/python"]
+src = [
+    "default/python",
+    "default/python/AI",
+    "default/python/universe_generation",
+    "default/python/charting",
+]
+
 
 target-version = "py37"
 line-length=120

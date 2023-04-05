@@ -3,7 +3,7 @@ import sys
 from collections import OrderedDict as odict
 from configparser import ConfigParser
 from pathlib import Path
-from typing import Optional, Any
+from typing import Any, Optional
 
 DEFAULT_SUB_DIR = Path("AI", "default")
 CONFIG_DEFAULT_FILE = "config.ini"

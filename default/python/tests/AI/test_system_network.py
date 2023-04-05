@@ -2,8 +2,8 @@ import freeOrionAIInterface as fo
 from unittest.mock import patch
 
 import pytest
-from AIDependencies import INVALID_ID
 
+from AIDependencies import INVALID_ID
 from universe import system_network
 
 

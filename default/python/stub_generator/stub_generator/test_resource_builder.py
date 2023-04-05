@@ -1,5 +1,6 @@
-from stub_generator.stub_generator.result_builder import Import, merge_imports, sort_imports, ResultBuilder
 from io import StringIO
+
+from stub_generator.stub_generator.result_builder import Import, ResultBuilder, merge_imports, sort_imports
 
 
 def test_merge_imports_same_imports_are_merged():

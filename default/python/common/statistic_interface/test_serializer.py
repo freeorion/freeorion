@@ -1,4 +1,5 @@
 import pytest
+
 from common.statistic_interface._serizlizer import (
     DictSerializer,
     to_float,

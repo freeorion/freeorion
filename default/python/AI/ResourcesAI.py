@@ -26,7 +26,7 @@ from common.fo_typing import PlanetId
 from common.print_utils import Table, Text
 from empire.growth_specials import get_growth_specials
 from EnumsAI import FocusType, PriorityType, get_priority_resource_types
-from freeorion_tools import get_named_real, tech_is_complete, get_species_industry, get_species_research
+from freeorion_tools import get_named_real, get_species_industry, get_species_research, tech_is_complete
 from freeorion_tools.bonus_calculation import adjust_direction
 from freeorion_tools.statistics import stats
 from freeorion_tools.timers import AITimer

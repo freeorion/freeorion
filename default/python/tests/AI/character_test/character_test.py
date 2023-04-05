@@ -1,4 +1,5 @@
 import pytest
+
 from character.character_module import Character, Trait
 
 
