@@ -756,9 +756,8 @@ namespace {
             using inv_h_entry_t = decltype(inv_histogram)::value_type;
             std::transform(histogram.begin(), histogram.end(), std::back_inserter(inv_histogram),
                            [](const auto& h) { return inv_h_entry_t{h.second, h.first}; });
-            // sort with more common entriest first
+            // sort with more common entries first
             std::stable_sort(inv_histogram.begin(), inv_histogram.end(), std::greater<>{});
-
 
             // transfer objects with the most common keys
             uint32_t number_transferred = 0;
@@ -788,6 +787,34 @@ namespace {
             break;
         }
         case SortingMethod::SORT_UNIQUE: {
+            const auto start = sort_key_objects.begin();
+            const auto end = sort_key_objects.end();
+
+            // sort input by sort key to group like values for std::unique
+            // don't need ID fallback for sorting function in this case
+            const auto sort_key_obj_less = [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; };
+            std::stable_sort(start, end, sort_key_obj_less);
+
+            // pick one object of each sort key. uniqueness only based on keys, not object pointers.
+            const auto sort_key_obj_eq = [](const auto& lhs, const auto& rhs) { return lhs.first == rhs.first; };
+            const auto unique_it = std::unique(start, end, sort_key_obj_eq);
+
+            // determine range to put into to_set, based on how many unique values are available
+            // and how many objects were requested
+            const auto unique_count = std::distance(start, unique_it);
+            const auto copy_count = std::min(static_cast<decltype(unique_count)>(number), unique_count);
+            const auto copy_it = std::next(start, copy_count);
+
+            // append objects with unique sort keys to the to_set
+            std::transform(start, copy_it, std::back_inserter(to_set),
+                           [](const auto& entry) { return entry.second; });
+
+            // and remove them from from_set. assumes no duplicates were present.
+            const auto from_set_start = from_set.begin();
+            auto from_set_end = from_set.end();
+            for (auto remove_it = start; remove_it != copy_it; ++remove_it)
+                from_set_end = std::remove(from_set_start, from_set_end, remove_it->second);
+            from_set.resize(std::distance(from_set_start, from_set_end));
             break;
         }
         default: {
