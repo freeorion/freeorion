@@ -817,7 +817,7 @@ class ShipDesigner:
                 warning("Can't parse dependent token:" + str(tup))
             return dep_val * value
 
-        def parse_tokens(tokendict: dict, is_hull: bool = False):
+        def parse_tokens(tokendict: dict, is_hull: bool = False):  # noqa: max-complexity
             """Adjust design stats according to the token dict key-value pairs.
 
             :param tokendict: tokens and values
@@ -924,8 +924,8 @@ class ShipDesigner:
             except AttributeError:
                 cached_name = Cache.map_reference_design_name[reference_name]
                 error(
-                    "%s maps to %s in Cache.map_reference_design_name."
-                    " But the design seems not to exist..." % (reference_name, cached_name),
+                    "{} maps to {} in Cache.map_reference_design_name."
+                    " But the design seems not to exist...".format(reference_name, cached_name),
                     exc_info=True,
                 )
                 return None

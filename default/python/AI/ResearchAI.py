@@ -3,7 +3,7 @@ from itertools import islice
 import freeOrionAIInterface as fo
 import random
 from logging import debug, error, warning, info
-from typing import List, Mapping
+from typing import List
 
 import AIDependencies as Dep
 import AIstate
@@ -589,8 +589,7 @@ def _print_research_order_header(resource_production, completed_techs):
     debug("")
 
 
-# flake8: noqa: noqa: F821
-def disabled_research_features():
+def disabled_research_features():  # noqa: C901
     """
     Bunch of code that is disabled but might be restored in the future.
     """
