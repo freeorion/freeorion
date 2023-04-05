@@ -68,6 +68,9 @@ max-complexity = 10
 "default/python/AI/ResearchAI.py" = ["F821"]  # fix it after release 0.5
 
 [tool.ruff]
+
+src = ["default/python"]
+
 target-version = "py37"
 line-length=120
 exclude = [
@@ -86,6 +89,7 @@ select = [
     "F",
     "W",
     "UP",
+    "I",
 ]
 
 builtins = [
