@@ -675,7 +675,7 @@ namespace {
         sort_key_objects.reserve(from_set.size());
         std::transform(from_set.begin(), from_set.end(), std::back_inserter(sort_key_objects),
                        [&context, sort_key](const UniverseObject* obj) -> sort_key_pair_t {
-                           const ScriptingContext source_context{context, obj};
+                           const ScriptingContext source_context{context, obj}; // obj is local candidate
                            return {sort_key->Eval(source_context), obj};
                        });
 

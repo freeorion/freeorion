@@ -201,11 +201,6 @@ namespace parse::detail {
                 deconstruct_movable_(_2, _pass))) ]
             ;
 
-        sorting_operator =
-                tok.MaximumNumberOf_ [ _val = Condition::SortingMethod::SORT_MAX ]
-            |   tok.MinimumNumberOf_ [ _val = Condition::SortingMethod::SORT_MIN ]
-            |   tok.ModeNumberOf_    [ _val = Condition::SortingMethod::SORT_MODE ];
-
         number_of1
             = ( omit_[tok.NumberOf_]
             >   label(tok.number_)    > castable_int_rules.flexible_int
@@ -214,6 +209,23 @@ namespace parse::detail {
                 deconstruct_movable_(_1, _pass),
                 deconstruct_movable_(_2, _pass))) ]
             ;
+
+        unique_of
+            = ( omit_[tok.Unique_]
+            >>  label(tok.sortkey_)   > double_rules.expr
+            >   label(tok.condition_) > condition_parser)
+            [ _val = construct_movable_(new_<Condition::SortedNumberOf>(
+                deconstruct_movable_(construct_movable_(new_<ValueRef::Constant<int>>(std::numeric_limits<int>::max())), _pass),
+                deconstruct_movable_(_1, _pass),
+                Condition::SortingMethod::SORT_UNIQUE,
+                deconstruct_movable_(_2, _pass))) ]
+            ;
+
+        sorting_operator =
+                tok.MaximumNumberOf_ [ _val = Condition::SortingMethod::SORT_MAX ]
+            |   tok.MinimumNumberOf_ [ _val = Condition::SortingMethod::SORT_MIN ]
+            |   tok.ModeNumberOf_    [ _val = Condition::SortingMethod::SORT_MODE ]
+            |   tok.UniqueNumberOf_  [ _val = Condition::SortingMethod::SORT_UNIQUE ];
 
         number_of2
             =  (sorting_operator
@@ -229,6 +241,7 @@ namespace parse::detail {
 
         number_of
             =   number_of1
+            |   unique_of
             |   number_of2
             ;
 

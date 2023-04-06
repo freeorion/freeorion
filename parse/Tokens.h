@@ -581,6 +581,8 @@
     (TurnTechResearched)                        \
     (type)                                      \
     (Uninhabitable)                             \
+    (UniqueNumberOf)                            \
+    (Unique)                                    \
     (UniverseCentreX)                           \
     (UniverseCentreY)                           \
     (UniverseWidth)                             \
