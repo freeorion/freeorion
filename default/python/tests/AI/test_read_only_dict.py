@@ -1,6 +1,7 @@
 import pytest
-from freeorion_tools import ReadOnlyDict
 from pytest import raises
+
+from freeorion_tools import ReadOnlyDict
 
 dict_content = {
     1: -1,

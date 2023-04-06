@@ -1,4 +1,5 @@
 import pytest
+
 from freeorion_tools.bonus_calculation import Bonus, adjust_direction
 
 

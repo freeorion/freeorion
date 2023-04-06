@@ -89,18 +89,13 @@ Notes:
 ### Manual code style check
 You don't need to run this script manually, pre-commit hooks and CI will do it fo you.
 
-We use [flake8](https://pypi.python.org/pypi/flake8) for code style checks.
-Settings for flake8 located in the `tox.ini` across the project.
+We use [ruff](https://github.com/charliermarsh/ruff) for code style checks.
+Settings for ruff are located in the `pyproject.toml`.
 
-Flake should be run from directory where `tox.ini` located:
+You could run ruff in any directory, and it will check the files in that directory only.
+It's recommended to run in from the root.
 ```sh
-cd default/python
-flake8
-```
-We use [isort](https://github.com/PyCQA/isort) to keep imports in the order.
-We use the default setting.
-```shell
-isort .
+ruff .
 ```
 
 We use [black](https://pypi.org/project/black/) for code formatting.

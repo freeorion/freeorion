@@ -1,4 +1,4 @@
-from typing import Iterator, Iterable, Optional, List
+from typing import Iterable, Iterator, List, Optional
 
 
 class UnmatchedType(Exception):

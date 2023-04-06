@@ -29,6 +29,3 @@ jobs:
       - name: Lint with black
         run: |
           black . --check --no-color -t py37 --diff -q
-      - name: Lint with isort
-        run: |
-          isort . --check-only --py 37 --diff --quiet

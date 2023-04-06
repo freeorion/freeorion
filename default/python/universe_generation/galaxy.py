@@ -6,7 +6,6 @@ from random import gauss, randint, random, uniform
 from typing import List, Tuple
 
 import universe_tables
-
 import util
 
 

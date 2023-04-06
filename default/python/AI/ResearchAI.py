@@ -1,8 +1,7 @@
-from itertools import islice
-
 import freeOrionAIInterface as fo
 import random
-from logging import debug, error, warning, info
+from itertools import islice
+from logging import debug, error, info, warning
 from typing import List
 
 import AIDependencies as Dep

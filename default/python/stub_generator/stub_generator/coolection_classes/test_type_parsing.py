@@ -1,6 +1,6 @@
 import pytest
 
-from stub_generator.stub_generator.coolection_classes import make_type, is_collection_type
+from stub_generator.stub_generator.coolection_classes import is_collection_type, make_type
 
 
 @pytest.mark.parametrize(

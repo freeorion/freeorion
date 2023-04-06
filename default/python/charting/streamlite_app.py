@@ -1,7 +1,7 @@
-import streamlit as st
-
 import os
 import sys
+
+import streamlit as st
 
 from tabs.policies import plot_policy_adoptions
 from tabs.stats import draw_plots

@@ -1,5 +1,6 @@
-from freeorion_tools import get_ai_tag_grade
 from pytest import mark
+
+from freeorion_tools import get_ai_tag_grade
 
 
 @mark.parametrize(

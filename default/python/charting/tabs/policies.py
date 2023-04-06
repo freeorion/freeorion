@@ -1,6 +1,7 @@
 from collections import Counter, OrderedDict, defaultdict
 
 import streamlit as st
+
 from tabs.widgets import DIFF_ADD, DIFF_REMOVE, colored_span, span_with_hint, to_hex_color
 
 

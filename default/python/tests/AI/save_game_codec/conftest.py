@@ -1,5 +1,6 @@
-import aistate_interface
 import pytest
+
+import aistate_interface
 from savegame_codec import build_savegame_string
 
 
