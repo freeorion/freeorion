@@ -10,26 +10,36 @@ STABILITY_PER_DISLIKED_POLICY
 SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS
 '''
         EffectsGroup
-            scope = And [
-                Planet
-                OwnedBy empire = Source.Owner
-                Population low = 0.001
-                SpeciesLikes name = ThisPolicy
-            ]
+            scope =
+                Unique
+                    sortkey = LocalCandidate.Species
+                    condition = And [
+                        Planet
+                        SpeciesLikes name = ThisPolicy
+                    ]
+
             accountinglabel = "LIKES_POLICY_LABEL"
             effects =
-                SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_POLICY]]
+                SetSpeciesTargetOpinion
+                    species = Target.Species
+                    empire = Source.Owner
+                    opinion = Value + [[STABILITY_PER_LIKED_POLICY]]
 
         EffectsGroup
-            scope = And [
-                Planet
-                OwnedBy empire = Source.Owner
-                Population low = 0.001
-                SpeciesDislikes name = ThisPolicy
-            ]
-            accountinglabel = "DISLIKES_POLICY_LABEL"
+            scope =
+                Unique
+                    sortkey = LocalCandidate.Species
+                    condition = And [
+                        Planet
+                        SpeciesDislikes name = ThisPolicy
+                    ]
+
+            accountinglabel = "LIKES_POLICY_LABEL"
             effects =
-                SetTargetHappiness value = Value - [[STABILITY_PER_DISLIKED_POLICY]]
+                SetSpeciesTargetOpinion
+                    species = Target.Species
+                    empire = Source.Owner
+                    opinion = Value - [[STABILITY_PER_DISLIKED_POLICY]]
 '''
 
 POPULATION_OWNED_BY_EMPIRE
