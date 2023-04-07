@@ -21,10 +21,10 @@ COMMON_OPINION_EFFECTS
             scope = Capital
             stackinggroup = "@1@_TOWARDS_TARGET_OPINION_OF_EMPIRE"
             effects = [
-                SetSpeciesTargetOpinion
+                SetSpeciesTargetOpinion     // baseline opinion
                     species = ThisSpecies
                     empire = Target.Owner
-                    opinion = 20
+                    opinion = Value + (GameRule name = "RULE_BASELINE_PLANET_STABILITY")
                 SetSpeciesOpinion
                     species = ThisSpecies
                     empire = Target.Owner

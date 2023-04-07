@@ -3,21 +3,18 @@
 STABILITY_PER_LIKED_POLICY
 '''2.0'''
 
-// Policy Liberty doubles de dislike effect, policy Conformance halves it, macro is in common/opinion.macros
+// Policy Liberty doubles the dislike effect, policy Conformance halves it, macro is in common/opinion.macros
 STABILITY_PER_DISLIKED_POLICY
 '''2.0 * [[POLICY_DISLIKE_SCALING]]'''
 
+// Species like empires more or less for each liked or disliked policy it adopts
 SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS
 '''
         EffectsGroup
             scope =
-                Unique
+                Unique      // pick one object per species
                     sortkey = LocalCandidate.Species
-                    condition = And [
-                        Planet
-                        SpeciesLikes name = ThisPolicy
-                    ]
-
+                    condition = SpeciesLikes name = ThisPolicy
             accountinglabel = "LIKES_POLICY_LABEL"
             effects =
                 SetSpeciesTargetOpinion
@@ -29,17 +26,43 @@ SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS
             scope =
                 Unique
                     sortkey = LocalCandidate.Species
-                    condition = And [
-                        Planet
-                        SpeciesDislikes name = ThisPolicy
-                    ]
-
+                    condition = SpeciesDislikes name = ThisPolicy
             accountinglabel = "LIKES_POLICY_LABEL"
             effects =
                 SetSpeciesTargetOpinion
                     species = Target.Species
                     empire = Source.Owner
                     opinion = Value - [[STABILITY_PER_DISLIKED_POLICY]]
+'''
+
+// A particular species (@1@) likes an empire (@2@) by @3@ more in ref named @4@
+ONE_SPECIES_EMIPRE_OPINION_ADJUST
+'''
+        EffectsGroup
+            scope =
+                NumberOf
+                    number = 1
+                    condition = Species name = @1@
+            effects =
+                SetSpeciesTargetOpinion
+                    species = @1@
+                    empire = @2@
+                    opinion = Value + (NamedReal name = "@4@" value = @3@)
+'''
+
+// Species other than (@1@) likes an empire (@2@) by (@3@) more in ref named @4@
+OTHER_SPECIES_EMIPRE_OPINION_ADJUST
+'''
+        EffectsGroup
+            scope =
+                Unique
+                    sortkey = LocalCandidate.Species
+                    condition = Not Species name = @1@
+            effects =
+                SetSpeciesTargetOpinion
+                    species = Target.Species
+                    empire = @2@
+                    opinion = Value + (NamedReal name = "@4@" value = @3@)
 '''
 
 POPULATION_OWNED_BY_EMPIRE

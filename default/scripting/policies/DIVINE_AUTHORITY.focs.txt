@@ -10,6 +10,10 @@ Policy
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 
+        // capital species likes empire more, other species less
+        [[ONE_SPECIES_EMIPRE_OPINION_ADJUST(Source.Species,Source.Owner,3,PLC_DIVINE_AUTHORITY_CAPITAL_SPECIES_OPINION_BOOST)]]
+        [[OTHER_SPECIES_EMIPRE_OPINION_ADJUST(Source.Species,Source.Owner,-3,PLC_DIVINE_AUTHORITY_NOT_CAPITAL_SPECIES_OPINION_PENALTY)]]
+
         // makes all planets more stable and influentential, but impairs research
         EffectsGroup
             scope = And [
