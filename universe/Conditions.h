@@ -148,6 +148,10 @@ struct FO_COMMON_API SortedNumberOf final : public Condition {
                    std::unique_ptr<ValueRef::ValueRef<double>>&& sort_key_ref,
                    SortingMethod sorting_method,
                    std::unique_ptr<Condition>&& condition);
+    SortedNumberOf(std::unique_ptr<ValueRef::ValueRef<int>>&& number,
+                   std::unique_ptr<ValueRef::ValueRef<std::string>>&& sort_key_ref,
+                   SortingMethod sorting_method,
+                   std::unique_ptr<Condition>&& condition);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -164,6 +168,7 @@ struct FO_COMMON_API SortedNumberOf final : public Condition {
 private:
     std::unique_ptr<ValueRef::ValueRef<int>> m_number;
     std::unique_ptr<ValueRef::ValueRef<double>> m_sort_key;
+    std::unique_ptr<ValueRef::ValueRef<std::string>> m_sort_key_string;
     SortingMethod m_sorting_method;
     std::unique_ptr<Condition> m_condition;
 };

@@ -575,7 +575,8 @@ std::unique_ptr<Condition> Turn::Clone() const {
 ///////////////////////////////////////////////////////////
 SortedNumberOf::SortedNumberOf(std::unique_ptr<ValueRef::ValueRef<int>>&& number,
                                std::unique_ptr<Condition>&& condition) :
-    SortedNumberOf(std::move(number), nullptr, SortingMethod::SORT_RANDOM, std::move(condition))
+    SortedNumberOf(std::move(number), std::unique_ptr<ValueRef::ValueRef<double>>{},
+                   SortingMethod::SORT_RANDOM, std::move(condition))
 {}
 
 SortedNumberOf::SortedNumberOf(std::unique_ptr<ValueRef::ValueRef<int>>&& number,
@@ -588,6 +589,26 @@ SortedNumberOf::SortedNumberOf(std::unique_ptr<ValueRef::ValueRef<int>>&& number
     m_condition(std::move(condition))
 {
     std::array<const ValueRef::ValueRefBase*, 2> operands = {{m_number.get(), m_sort_key.get()}};
+    m_root_candidate_invariant =
+        (!m_condition || m_condition->RootCandidateInvariant()) &&
+        std::all_of(operands.begin(), operands.end(), [](const auto& e) { return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = (!m_condition || m_condition->TargetInvariant()) &&
+        std::all_of(operands.begin(), operands.end(), [](const auto& e) { return !e || e->TargetInvariant(); });
+    m_source_invariant =
+        (!m_condition || m_condition->SourceInvariant()) &&
+        std::all_of(operands.begin(), operands.end(), [](const auto& e) { return !e || e->SourceInvariant(); });
+}
+
+SortedNumberOf::SortedNumberOf(std::unique_ptr<ValueRef::ValueRef<int>>&& number,
+                               std::unique_ptr<ValueRef::ValueRef<std::string>>&& sort_key_ref,
+                               SortingMethod sorting_method,
+                               std::unique_ptr<Condition>&& condition) :
+    m_number(std::move(number)),
+    m_sort_key_string(std::move(sort_key_ref)),
+    m_sorting_method(sorting_method),
+    m_condition(std::move(condition))
+{
+    std::array<const ValueRef::ValueRefBase*, 2> operands = {{m_number.get(), m_sort_key_string.get()}};
     m_root_candidate_invariant =
         (!m_condition || m_condition->RootCandidateInvariant()) &&
         std::all_of(operands.begin(), operands.end(), [](const auto& e) { return !e || e->RootCandidateInvariant(); });
@@ -611,6 +632,7 @@ bool SortedNumberOf::operator==(const Condition& rhs) const {
 
     CHECK_COND_VREF_MEMBER(m_number)
     CHECK_COND_VREF_MEMBER(m_sort_key)
+    CHECK_COND_VREF_MEMBER(m_sort_key_string)
     CHECK_COND_VREF_MEMBER(m_condition)
 
     return true;
@@ -653,7 +675,8 @@ namespace {
       * of \a sort_key evaluated on them, with the largest / smallest / most
       * common sort keys chosen, or a random selection chosen, depending on the
       * specified \a sorting_method */
-    void TransferSortedObjects(uint32_t number, const ValueRef::ValueRef<double>* sort_key,
+    template <typename SortKeyType>
+    void TransferSortedObjects(uint32_t number, const ValueRef::ValueRef<SortKeyType>* sort_key,
                                const ScriptingContext& context, SortingMethod sorting_method,
                                ObjectSet& from_set, ObjectSet& to_set)
     {
@@ -670,8 +693,8 @@ namespace {
         }
 
         // get sort key values for all objects in from_set, and sort by inserting into map
-        std::vector<std::pair<float, const UniverseObject*>> sort_key_objects;
-        using sort_key_pair_t = decltype(sort_key_objects)::value_type;
+        std::vector<std::pair<SortKeyType, const UniverseObject*>> sort_key_objects;
+        using sort_key_pair_t = typename decltype(sort_key_objects)::value_type;
         sort_key_objects.reserve(from_set.size());
         std::transform(from_set.begin(), from_set.end(), std::back_inserter(sort_key_objects),
                        [&context, sort_key](const UniverseObject* obj) -> sort_key_pair_t {
@@ -683,7 +706,7 @@ namespace {
         number = std::min<uint32_t>(number, sort_key_objects.size());
         if (number == 0)
             return;
-        const auto offset = static_cast<decltype(sort_key_objects)::iterator::difference_type>(number);
+        const auto offset = static_cast<typename decltype(sort_key_objects)::iterator::difference_type>(number);
 
 
         // pick max / min / most common values
@@ -743,7 +766,7 @@ namespace {
             std::stable_sort(sort_key_objects.begin(), sort_key_objects.end(), sort_key_obj_less);
 
             // compile histogram of of number of times each sort key occurs
-            boost::container::flat_map<float, uint32_t> histogram;
+            boost::container::flat_map<SortKeyType, uint32_t> histogram; // TODO: should this be a string_view if SortKeyType is string?
             histogram.reserve(sort_key_objects.size());
             for ([[maybe_unused]] auto& [key, ignored_object] : sort_key_objects) {
                 (void)ignored_object;
@@ -751,9 +774,9 @@ namespace {
             }
 
             // invert histogram to index by number of occurances
-            std::vector<std::pair<uint32_t, float>> inv_histogram;
+            std::vector<std::pair<uint32_t, SortKeyType>> inv_histogram; // TODO: should this be a string_view if SortKeyType is string?
             inv_histogram.reserve(histogram.size());
-            using inv_h_entry_t = decltype(inv_histogram)::value_type;
+            using inv_h_entry_t = typename decltype(inv_histogram)::value_type;
             std::transform(histogram.begin(), histogram.end(), std::back_inserter(inv_histogram),
                            [](const auto& h) { return inv_h_entry_t{h.second, h.first}; });
             // sort with more common entries first
@@ -886,9 +909,15 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
     // these are the objects that should be transferred from non_matches into
     // matches, or those left in matches while the rest are moved into non_matches
     ObjectSet matched_objects;
-    matched_objects.reserve(number);
-    TransferSortedObjects(number, m_sort_key.get(), parent_context, m_sorting_method,
-                          all_subcondition_matches, matched_objects);
+    const auto space = std::min(static_cast<decltype(all_subcondition_matches.size())>(std::max(0, number)),
+                                all_subcondition_matches.size());
+    matched_objects.reserve(space);
+    if (m_sort_key)
+        TransferSortedObjects(number, m_sort_key.get(), parent_context, m_sorting_method,
+                              all_subcondition_matches, matched_objects);
+    else if (m_sort_key_string)
+        TransferSortedObjects(number, m_sort_key_string.get(), parent_context, m_sorting_method,
+                              all_subcondition_matches, matched_objects);
 
     // put objects back into matches and non_matches as output...
 
@@ -977,7 +1006,12 @@ std::string SortedNumberOf::Description(bool negated) const {
                    % number_str % m_condition->Description());
 
     } else {
-        std::string sort_key_str = m_sort_key->ConstantExpr() ? m_sort_key->Dump() : m_sort_key->Description();
+        std::string sort_key_str =
+            m_sort_key ?
+                m_sort_key->ConstantExpr() ? m_sort_key->Dump() : m_sort_key->Description() :
+            m_sort_key_string ?
+                m_sort_key_string->ConstantExpr() ? m_sort_key_string->Dump() : m_sort_key_string->Description() :
+            "";
 
         std::string description_str;
         switch (m_sorting_method) {
@@ -1027,7 +1061,9 @@ std::string SortedNumberOf::Dump(uint8_t ntabs) const {
     retval += " number = " + m_number->Dump(ntabs);
 
     if (m_sort_key)
-         retval += " sortby = " + m_sort_key->Dump(ntabs);
+        retval += " sortkey = " + m_sort_key->Dump(ntabs);
+    else if (m_sort_key_string)
+        retval += " sortkey = " + m_sort_key_string->Dump(ntabs);
 
     retval += " condition =\n";
     retval += m_condition->Dump(ntabs+1);
@@ -1047,6 +1083,8 @@ void SortedNumberOf::SetTopLevelContent(const std::string& content_name) {
         m_number->SetTopLevelContent(content_name);
     if (m_sort_key)
         m_sort_key->SetTopLevelContent(content_name);
+    if (m_sort_key_string)
+        m_sort_key_string->SetTopLevelContent(content_name);
     if (m_condition)
         m_condition->SetTopLevelContent(content_name);
 }
@@ -1057,6 +1095,7 @@ uint32_t SortedNumberOf::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::SortedNumberOf");
     CheckSums::CheckSumCombine(retval, m_number);
     CheckSums::CheckSumCombine(retval, m_sort_key);
+    CheckSums::CheckSumCombine(retval, m_sort_key_string);
     CheckSums::CheckSumCombine(retval, m_sorting_method);
     CheckSums::CheckSumCombine(retval, m_condition);
 
@@ -1065,10 +1104,16 @@ uint32_t SortedNumberOf::GetCheckSum() const {
 }
 
 std::unique_ptr<Condition> SortedNumberOf::Clone() const {
-    return std::make_unique<SortedNumberOf>(ValueRef::CloneUnique(m_number),
-                                            ValueRef::CloneUnique(m_sort_key),
-                                            m_sorting_method,
-                                            ValueRef::CloneUnique(m_condition));
+    if (m_sort_key_string)
+        return std::make_unique<SortedNumberOf>(ValueRef::CloneUnique(m_number),
+                                                ValueRef::CloneUnique(m_sort_key_string),
+                                                m_sorting_method,
+                                                ValueRef::CloneUnique(m_condition));
+    else
+        return std::make_unique<SortedNumberOf>(ValueRef::CloneUnique(m_number),
+                                                ValueRef::CloneUnique(m_sort_key), // may be nullptr
+                                                m_sorting_method,
+                                                ValueRef::CloneUnique(m_condition));
 }
 
 ///////////////////////////////////////////////////////////
