@@ -682,11 +682,8 @@ void SpeciesManager::ResetSpeciesTargetOpinions() {
     }
 
     for (auto& [opinionated_species, species_ops] : m_species_species_opinions) {
-        for (auto& [about_species, ops] : species_ops) {
-            auto& [op, target_op] = ops;
-            op.BackPropagate();
-            target_op.BackPropagate();
-        }
+        for (auto& [about_species, ops] : species_ops)
+            ops.second.ResetCurrent();
     }
 }
 
