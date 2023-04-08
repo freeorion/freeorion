@@ -56,9 +56,6 @@ max-complexity = 10
 "*.pyi" = ["UP006"]  # need to fix in the skeleton generator
 "default/python/AI/ResearchAI.py" = ["F821"]  # fix it after release 0.5
 
-"default/scripting/*" =  ["I"]
-"test-scripting/*" = ["I"]
-
 [tool.ruff.isort]
 extra-standard-library=["freeorion", "freeOrionAIInterface"]
 
@@ -70,6 +67,8 @@ src = [
     "default/python/AI",
     "default/python/universe_generation",
     "default/python/charting",
+    "default/scripting",
+    "test-scripting"
 ]
 
 
