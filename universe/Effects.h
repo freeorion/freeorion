@@ -299,6 +299,8 @@ public:
 
     void Execute(ScriptingContext& context) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    [[nodiscard]] bool IsMeterEffect() const noexcept override { return true; }
+    [[nodiscard]] bool IsEmpireMeterEffect() const noexcept override { return true; }
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
@@ -322,6 +324,8 @@ public:
 
     void Execute(ScriptingContext& context) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    [[nodiscard]] bool IsMeterEffect() const noexcept override { return true; }
+    [[nodiscard]] bool IsEmpireMeterEffect() const noexcept override { return true; }
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
