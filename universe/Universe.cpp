@@ -552,6 +552,7 @@ void Universe::ApplyAllEffectsAndUpdateMeters(ScriptingContext& context, bool do
     // turn) and active meters have the proper baseline from which to
     // accumulate changes from effects
     ResetAllObjectMeters(true, true);
+    context.species.ResetSpeciesTargetOpinions();
     for ([[maybe_unused]] auto& [empire_id, empire] : context.Empires().GetEmpires()) {
         (void)empire_id;    // quieting unused variable warning
         empire->ResetMeters();
@@ -836,7 +837,8 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec,
     ObjectMap& objects{*m_objects};
 
     auto number_text = std::to_string(objects_vec.empty() ?
-                                      objects.allExisting().size() : objects_vec.size());
+                                      objects.allExisting().size() : objects_vec.size()) + 
+        (objects_vec.empty() ? " (all)" : "");
     ScopedTimer timer("Universe::UpdateMeterEstimatesImpl on " + number_text + " objects", true);
 
 
@@ -860,6 +862,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec,
         obj->ResetTargetMaxUnpairedMeters();
         obj->ResetPairedActiveMeters();
     }
+    context.species.ResetSpeciesTargetOpinions();
 
     if (do_accounting) {
         for (auto& obj : object_ptrs) {

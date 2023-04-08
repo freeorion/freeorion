@@ -1597,16 +1597,20 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     TraceLogger(effects) << "After First turn meter effect applying: " << m_universe.Objects().Dump();
     // Set active meters to targets or maxes after first meter effects application
     m_universe.BackPropagateObjectMeters();
+    m_species_manager.BackPropagateOpinions();
     SetActiveMetersToTargetMaxCurrentValues(m_universe.Objects());
     m_universe.UpdateMeterEstimates(context);
     m_universe.BackPropagateObjectMeters();
+    m_species_manager.BackPropagateOpinions();
     SetActiveMetersToTargetMaxCurrentValues(m_universe.Objects());
     m_universe.BackPropagateObjectMeters();
+    m_species_manager.BackPropagateOpinions();
 
     TraceLogger(effects) << "After First active set to target/max: " << m_universe.Objects().Dump();
 
     m_universe.BackPropagateObjectMeters();
     m_empires.BackPropagateMeters();
+    m_species_manager.BackPropagateOpinions();
 
     DebugLogger() << "Re-applying first turn meter effects and updating meters";
 
@@ -1620,6 +1624,7 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
 
     m_universe.BackPropagateObjectMeters();
     m_empires.BackPropagateMeters();
+    m_species_manager.BackPropagateOpinions();
 
     TraceLogger() << "!!!!!!!!!!!!!!!!!!! After setting active meters to targets";
     TraceLogger() << m_universe.Objects().Dump();
@@ -3477,6 +3482,7 @@ void ServerApp::PreCombatProcessTurns() {
 
     m_universe.ResetAllObjectMeters(false, true);   // revert current meter values to initial values prior to update after incrementing turn number during previous post-combat turn processing.
     m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(m_empires);
+    m_species_manager.ResetSpeciesTargetOpinions();
 
     DebugLogger() << "ServerApp::ProcessTurns executing orders";
 
@@ -3811,6 +3817,7 @@ void ServerApp::PostCombatProcessTurns() {
     // store initial values of meters for this turn.
     m_universe.BackPropagateObjectMeters();
     m_empires.BackPropagateMeters();
+    m_species_manager.BackPropagateOpinions();
 
     // check for loss of empire capitals
     for (auto& [empire_id, empire] : m_empires) {
