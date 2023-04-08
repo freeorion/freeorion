@@ -2485,8 +2485,8 @@ namespace {
                 auto empire = empires.GetEmpire(op_id);
                 const auto& [opinion, target] = op;
                 detailed_description.append(empire ? empire->Name() : "???")
-                    .append(" : Opinion: ").append(DoubleToString(opinion.Current(), 3, false))
-                    .append(" : Target Opinion: ").append(DoubleToString(target.Current(), 3, false))
+                    .append(" : Opinion: ").append(DoubleToString(opinion.Initial(), 3, false))
+                    .append(" : Target Opinion: ").append(DoubleToString(target.Initial(), 3, false))
                     .append("\n");
             }
         }
