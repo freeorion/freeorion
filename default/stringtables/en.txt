@@ -5470,6 +5470,9 @@ Empire ID
 EMPIRE_METERS
 Meters:
 
+UNKNOWN_SPECIES
+Unknown Species
+
 RESEARCHED_TECHS
 '''Researched Techs: '''
 
@@ -8472,6 +8475,9 @@ Opinions of Empires:
 
 OPINIONS_OF_OTHER_SPECIES
 Opinions of Other Species:
+
+SPECIES_OPINIONS
+Species Opinions:
 
 
 ##

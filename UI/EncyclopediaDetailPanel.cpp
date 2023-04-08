@@ -1970,9 +1970,9 @@ namespace {
                                             std::string& specific_type, std::string& detailed_description,
                                             GG::Clr& color, bool only_description = false)
     {
-        int empire_id = ToInt(item_name, ALL_EMPIRES);
+        const int empire_id = ToInt(item_name, ALL_EMPIRES);
         const ScriptingContext context;
-        auto empire = context.GetEmpire(empire_id);
+        const auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find empire with id " << item_name;
             return;
@@ -2028,6 +2028,22 @@ namespace {
             }
         } else {
             detailed_description.append("\n\n").append(UserString("NO_POLICIES_ADOPTED"));
+        }
+
+
+        // Species opinions
+        const auto& seom = context.species.GetSpeciesEmpireOpinionsMap();
+        detailed_description.append("\n\n").append(UserString("SPECIES_OPINIONS")).append("\n");
+        for (const auto& [species_name_, empire_opinions] : seom) {
+            const auto* species = context.species.GetSpecies(species_name_);
+            const auto& species_name = species ? UserString(species->Name()) : UserString("UNKNOWN_SPECIES");
+            for (const auto& [opinion_empire_id, opinion_meters] : empire_opinions) {
+                if (empire_id != opinion_empire_id)
+                    continue;
+                const auto current_opinion = opinion_meters.first.Initial();
+                detailed_description.append(species_name)
+                    .append(" : ").append(DoubleToString(current_opinion, 3, false)).append("\n");
+            }
         }
 
 
