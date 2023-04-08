@@ -705,7 +705,9 @@ void SpeciesManager::BackPropagateOpinions() {
     }
 }
 
-float SpeciesManager::SpeciesEmpireOpinion(const std::string& species_name, int empire_id, bool target) const {
+float SpeciesManager::SpeciesEmpireOpinion(const std::string& species_name, int empire_id,
+                                           bool target, bool current) const
+{
     const auto sp_it = m_species_empire_opinions.find(species_name);
     if (sp_it == m_species_empire_opinions.end())
         return 0.0f;
@@ -713,11 +715,15 @@ float SpeciesManager::SpeciesEmpireOpinion(const std::string& species_name, int 
     const auto emp_it = emp_map.find(empire_id);
     if (emp_it == emp_map.end())
         return 0.0f;
-    return target ? emp_it->second.second.Current() : emp_it->second.first.Current();
+    TraceLogger() << "SpeciesEmpireOpinion " << species_name << ", " << empire_id
+                  << ": " << emp_it->second.first.Dump().data() << " / " << emp_it->second.second.Dump().data();
+    const auto& meter = target ? emp_it->second.second : emp_it->second.first;
+    return current ? meter.Current() : meter.Initial();
 }
 
 float SpeciesManager::SpeciesSpeciesOpinion(const std::string& opinionated_species_name,
-                                            const std::string& rated_species_name, bool target) const
+                                            const std::string& rated_species_name,
+                                            bool target, bool current) const
 {
     const auto sp_it = m_species_species_opinions.find(opinionated_species_name);
     if (sp_it == m_species_species_opinions.end())
@@ -726,7 +732,8 @@ float SpeciesManager::SpeciesSpeciesOpinion(const std::string& opinionated_speci
     const auto ra_sp_it = ra_sp_map.find(rated_species_name);
     if (ra_sp_it == ra_sp_map.end())
         return 0.0f;
-    return target ? ra_sp_it->second.second.Current() : ra_sp_it->second.first.Current();
+    const auto& meter = target ? ra_sp_it->second.second : ra_sp_it->second.first;
+    return current ? meter.Current() : meter.Initial();
 }
 
 std::vector<std::string_view> SpeciesManager::SpeciesThatLike(std::string_view content_name) const {

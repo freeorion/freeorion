@@ -2373,16 +2373,18 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
         const std::string species_name = m_string_ref1 ? m_string_ref1->Eval(context) : "";
         const bool target = variable_name == "SpeciesEmpireTargetOpinion";
+        static constexpr bool current_value = false;
 
-        return context.species.SpeciesEmpireOpinion(species_name, empire_id, target);
+        return context.species.SpeciesEmpireOpinion(species_name, empire_id, target, current_value);
 
     }
     else if (variable_name == "SpeciesSpeciesOpinion" || variable_name == "SpeciesSpeciesTargetOpinion") {
         const std::string opinionated_species_name = m_string_ref1 ? m_string_ref1->Eval(context) : "";
         const std::string rated_species_name = m_string_ref2 ? m_string_ref2->Eval(context) : "";
         const bool target = variable_name == "SpeciesSpeciesTargetOpinion";
+        static constexpr bool current_value = false;
 
-        return context.species.SpeciesSpeciesOpinion(opinionated_species_name, rated_species_name, target);
+        return context.species.SpeciesSpeciesOpinion(opinionated_species_name, rated_species_name, target, current_value);
 
     }
     else if (variable_name == "SpecialCapacity") {

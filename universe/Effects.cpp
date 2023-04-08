@@ -1683,12 +1683,15 @@ void SetSpeciesEmpireOpinion::Execute(ScriptingContext& context) const {
     if (species_name.empty())
         return;
 
-    double initial_opinion = context.species.SpeciesEmpireOpinion(species_name, empire_id, m_target);
-    ScriptingContext::CurrentValueVariant cvv{initial_opinion};
+    double previous_value_opinion = context.species.SpeciesEmpireOpinion(species_name, empire_id, m_target, true);
+    ScriptingContext::CurrentValueVariant cvv{previous_value_opinion};
     ScriptingContext opinion_context{context, cvv};
-    float opinion = static_cast<float>(m_opinion->Eval(opinion_context));
+    float new_value_opinion = static_cast<float>(m_opinion->Eval(opinion_context));
 
-    context.species.SetSpeciesEmpireOpinion(species_name, empire_id, opinion, m_target);
+    TraceLogger(effects) << "SetSpeciesEmpire" << ( m_target ? "Target" : "") << "Opinion "
+                         << " initially: " << previous_value_opinion << " new: " << new_value_opinion;
+
+    context.species.SetSpeciesEmpireOpinion(species_name, empire_id, new_value_opinion, m_target);
 }
 
 std::string SetSpeciesEmpireOpinion::Dump(uint8_t ntabs) const
@@ -1744,20 +1747,21 @@ void SetSpeciesSpeciesOpinion::Execute(ScriptingContext& context) const {
     if (!m_opinionated_species_name || !m_opinion || !m_rated_species_name)
         return;
 
-    std::string opinionated_species_name = m_opinionated_species_name->Eval(context);
+    const std::string opinionated_species_name = m_opinionated_species_name->Eval(context);
     if (opinionated_species_name.empty())
         return;
 
-    std::string rated_species_name = m_rated_species_name->Eval(context);
+    const std::string rated_species_name = m_rated_species_name->Eval(context);
     if (rated_species_name.empty())
         return;
 
-    float initial_opinion = context.species.SpeciesSpeciesOpinion(opinionated_species_name, rated_species_name, m_target);
-    ScriptingContext::CurrentValueVariant cvv{initial_opinion};
-    ScriptingContext opinion_context{context, cvv};
-    float opinion = static_cast<float>(m_opinion->Eval(opinion_context));
+    const float previous_value_opinion = context.species.SpeciesSpeciesOpinion(opinionated_species_name,
+                                                                               rated_species_name, m_target, true);
+    ScriptingContext::CurrentValueVariant cvv{previous_value_opinion};
+    const ScriptingContext opinion_context{context, cvv};
+    const float new_value_opinion = static_cast<float>(m_opinion->Eval(opinion_context));
 
-    context.species.SetSpeciesSpeciesOpinion(opinionated_species_name, rated_species_name, opinion, m_target);
+    context.species.SetSpeciesSpeciesOpinion(opinionated_species_name, rated_species_name, new_value_opinion, m_target);
 }
 
 std::string SetSpeciesSpeciesOpinion::Dump(uint8_t ntabs) const
