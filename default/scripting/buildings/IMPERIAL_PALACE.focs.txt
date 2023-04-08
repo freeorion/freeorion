@@ -115,6 +115,15 @@ BuildingType
             effects = SetTargetHappiness value = Value
                         + (NamedReal name = "BLD_IMPERIAL_PALACE_TARGET_HAPPINESS_FLAT" value = 5)
 
+        // flat bonus to opinion of capital species
+        EffectsGroup
+            scope = Source
+            activation = Not Unowned
+            effects = SetSpeciesTargetOpinion
+                species = Source.Planet.Species
+                empire = Source.Owner
+                opinion = Value + (NamedRealLookup name = "BLD_IMPERIAL_PALACE_TARGET_HAPPINESS_FLAT")
+
         // flat bonus to defense, troops and influence
         EffectsGroup
             scope = And [
