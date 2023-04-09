@@ -14,7 +14,13 @@ SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS
             scope =
                 Unique      // pick one object per species
                     sortkey = LocalCandidate.Species
-                    condition = SpeciesLikes name = ThisPolicy
+                    condition = And [
+                        Or [
+                            Planet
+                            Ship
+                        ]
+                        SpeciesLikes name = ThisPolicy
+                    ]
             accountinglabel = "LIKES_POLICY_LABEL"
             effects =
                 SetSpeciesTargetOpinion
@@ -26,7 +32,13 @@ SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS
             scope =
                 Unique
                     sortkey = LocalCandidate.Species
-                    condition = SpeciesDislikes name = ThisPolicy
+                    condition = And [
+                        Or [
+                            Planet
+                            Ship
+                        ]
+                        SpeciesDislikes name = ThisPolicy
+                    ]
             accountinglabel = "LIKES_POLICY_LABEL"
             effects =
                 SetSpeciesTargetOpinion
