@@ -675,21 +675,30 @@ void SpeciesManager::SetSpeciesEmpireOpinion(const std::string& opinionated_spec
         opinion_meter.SetCurrent(opinion);
 }
 
-void SpeciesManager::ResetSpeciesTargetOpinions() {
+void SpeciesManager::ResetSpeciesOpinions(bool active, bool target) {
     for (auto& [species, empire_ops] : m_species_empire_opinions) {
-        for (auto& [empire_id, ops] : empire_ops)
-            ops.second.ResetCurrent();
+        for (auto& [empire_id, ops] : empire_ops) {
+            if (active)
+                ops.first.SetCurrent(ops.first.Initial());
+            if (target)
+                ops.second.ResetCurrent();
+        }
     }
 
     for (auto& [opinionated_species, species_ops] : m_species_species_opinions) {
-        for (auto& [about_species, ops] : species_ops)
-            ops.second.ResetCurrent();
+        for (auto& [about_species, ops] : species_ops) {
+            if (active)
+                ops.second.SetCurrent(ops.second.Initial());
+            if (target)
+                ops.second.ResetCurrent();
+        }
     }
 }
 
 void SpeciesManager::BackPropagateOpinions() {
     for (auto& [species, empire_ops] : m_species_empire_opinions) {
         for (auto& [empire_id, ops] : empire_ops) {
+            (void)empire_id;
             auto& [op, target_op] = ops;
             op.BackPropagate();
             target_op.BackPropagate();
@@ -698,6 +707,7 @@ void SpeciesManager::BackPropagateOpinions() {
 
     for (auto& [opinionated_species, species_ops] : m_species_species_opinions) {
         for (auto& [about_species, ops] : species_ops) {
+            (void)about_species;
             auto& [op, target_op] = ops;
             op.BackPropagate();
             target_op.BackPropagate();

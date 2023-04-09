@@ -518,17 +518,6 @@ void Universe::ResetAllObjectMeters(bool target_max_unpaired, bool active) {
     }
 }
 
-void Universe::ResetObjectMeters(const std::vector<std::shared_ptr<UniverseObject>>& objects,
-                                 bool target_max_unpaired, bool active)
-{
-    for (const auto& object : objects) {
-        if (target_max_unpaired)
-            object->ResetTargetMaxUnpairedMeters();
-        if (active)
-            object->ResetPairedActiveMeters();
-    }
-}
-
 void Universe::ApplyAllEffectsAndUpdateMeters(ScriptingContext& context, bool do_accounting) {
     CheckContextVsThisUniverse(*this, context);
     ScopedTimer timer("Universe::ApplyAllEffectsAndUpdateMeters");
@@ -552,13 +541,14 @@ void Universe::ApplyAllEffectsAndUpdateMeters(ScriptingContext& context, bool do
     // turn) and active meters have the proper baseline from which to
     // accumulate changes from effects
     ResetAllObjectMeters(true, true);
-    context.species.ResetSpeciesTargetOpinions();
     for ([[maybe_unused]] auto& [empire_id, empire] : context.Empires().GetEmpires()) {
         (void)empire_id;    // quieting unused variable warning
         empire->ResetMeters();
     }
+    context.species.ResetSpeciesOpinions(true, true);
 
     ExecuteEffects(source_effects_targets_causes, context, do_accounting, false, false, true);
+
     // clamp max meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
     // clamp max and target meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
     for (const auto& object : context.ContextObjects().allRaw())
@@ -588,10 +578,13 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
     // value can be calculated (by accumulating all effects' modifications this
     // turn) and active meters have the proper baseline from which to
     // accumulate changes from effects
-    ResetObjectMeters(objects, true, true);
-    // could also reset empire meters here, but unless all objects have meters
-    // recalculated, some targets that lead to empire meters being modified may
-    // be missed, and estimated empire meters would be inaccurate
+    for (const auto& object : context.ContextObjects().findRaw(object_ids)) {
+        object->ResetTargetMaxUnpairedMeters();
+        object->ResetPairedActiveMeters();
+    }
+    // could also reset empire and species meters here, but unless all objects
+    // have meters recalculated, some targets that lead to empire meters being
+    // modified may be missed, and estimated empire meters would be inaccurate
 
     ExecuteEffects(source_effects_targets_causes, context, do_accounting, true);
 
@@ -625,6 +618,8 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(ScriptingContext& context, bool 
         (void)empire_id;    // quieting unused variable warning
         empire->ResetMeters();
     }
+    context.species.ResetSpeciesOpinions(true, true);
+
     ExecuteEffects(source_effects_targets_causes, context, do_accounting, true, false, true);
 
     for (const auto& object : context.ContextObjects().allRaw())
@@ -862,7 +857,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec,
         obj->ResetTargetMaxUnpairedMeters();
         obj->ResetPairedActiveMeters();
     }
-    context.species.ResetSpeciesTargetOpinions();
+    context.species.ResetSpeciesOpinions(true, true);
 
     if (do_accounting) {
         for (auto& obj : object_ptrs) {
