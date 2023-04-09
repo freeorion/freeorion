@@ -2009,14 +2009,18 @@ namespace {
 
 
         // Policies
-        auto policies = empire->AdoptedPolicies();
+        const auto policies = empire->AdoptedPolicies();
         if (!policies.empty()) {
             // re-sort by adoption turn
-            std::multimap<int, std::string_view> turns_policies_adopted;
-            for (auto& policy_name : policies) {
-                int turn = empire->TurnPolicyAdopted(policy_name);
-                turns_policies_adopted.emplace(turn, policy_name);
-            }
+            const auto turns_policies_adopted = [&empire, &policies]() {
+                std::vector<std::pair<int, std::string_view>> turns_policies_adopted;
+                using tpa_val_t = typename decltype(turns_policies_adopted)::value_type;
+                turns_policies_adopted.reserve(policies.size());
+                std::transform(policies.begin(), policies.end(), std::back_inserter(turns_policies_adopted),
+                               [&empire](const auto& policy_name) -> tpa_val_t
+                               { return { empire->TurnPolicyAdopted(policy_name), policy_name}; });
+                return turns_policies_adopted;
+            }();
 
             detailed_description.append("\n").append(UserString("ADOPTED_POLICIES"));
             for (auto& [adoption_turn, policy_name] : turns_policies_adopted) {
@@ -2026,6 +2030,7 @@ namespace {
                 detailed_description.append(LinkTaggedPresetText(VarText::POLICY_TAG, policy_name, UserString(policy_name)))
                     .append(" : ").append(turn_text);
             }
+
         } else {
             detailed_description.append("\n\n").append(UserString("NO_POLICIES_ADOPTED"));
         }
