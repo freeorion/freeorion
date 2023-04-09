@@ -2450,10 +2450,14 @@ namespace {
         if (species_it != seom.end()) {
             detailed_description.append("\n").append(UserString("OPINIONS_OF_EMPIRES")).append("\n");
             for (const auto& [op_id, op] : species_it->second) {
-                auto empire = empires.GetEmpire(op_id);
                 const auto& [opinion, target] = op;
-                detailed_description.append(empire ? empire->Name() : "???")
-                    .append(" : Opinion: ").append(DoubleToString(opinion.Initial(), 3, false))
+                auto empire = empires.GetEmpire(op_id);
+                if (empire)
+                    detailed_description.append(LinkTaggedIDText(VarText::EMPIRE_ID_TAG, op_id, empire->Name()));
+                else
+                    detailed_description.append(boost::io::str(FlexibleFormat(UserString("UNKNOWN_EMPIRE"))
+                                                               % op_id));
+                detailed_description.append(" : Opinion: ").append(DoubleToString(opinion.Initial(), 3, false))
                     .append(" : Target Opinion: ").append(DoubleToString(target.Initial(), 3, false))
                     .append("\n");
             }
