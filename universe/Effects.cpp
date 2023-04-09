@@ -1688,7 +1688,7 @@ void SetSpeciesEmpireOpinion::Execute(ScriptingContext& context) const {
     ScriptingContext opinion_context{context, cvv};
     float new_value_opinion = static_cast<float>(m_opinion->Eval(opinion_context));
 
-    TraceLogger(effects) << "SetSpeciesEmpire" << ( m_target ? "Target" : "") << "Opinion "
+    TraceLogger(effects) << "SetSpeciesEmpire" << (m_target ? "Target" : "") << "Opinion "
                          << " initially: " << previous_value_opinion << " new: " << new_value_opinion;
 
     context.species.SetSpeciesEmpireOpinion(species_name, empire_id, new_value_opinion, m_target);
