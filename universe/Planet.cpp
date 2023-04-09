@@ -25,7 +25,7 @@ namespace {
     constexpr float HIGH_TILT_THERESHOLD = 45.0f;
     constexpr double MINIMUM_POP_CENTER_POPULATION = 0.01001;  // rounds up to 0.1 when showing 2 digits, down to 0.05 or 50.0 when showing 3
 
-    float SizeRotationFactor(PlanetSize size) {
+    constexpr inline float SizeRotationFactor(PlanetSize size) noexcept {
         switch (size) {
         case PlanetSize::SZ_TINY:     return 1.5f;
         case PlanetSize::SZ_SMALL:    return 1.25f;
@@ -40,7 +40,7 @@ namespace {
     static const std::string EMPTY_STRING;
 
     /** @content_tag{CTRL_STAT_SKIP_DEPOP} Do not count Planets with this tag for SpeciesPlanetsDepoped stat */
-    const std::string TAG_STAT_SKIP_DEPOP = "CTRL_STAT_SKIP_DEPOP";
+    constexpr std::string_view TAG_STAT_SKIP_DEPOP = "CTRL_STAT_SKIP_DEPOP";
 }
 
 
@@ -566,9 +566,7 @@ std::vector<std::string_view> Planet::AvailableFoci(const ScriptingContext& cont
     return retval;
 }
 
-const std::string& Planet::FocusIcon(std::string_view focus_name,
-                                     const ScriptingContext& context) const
-{
+const std::string& Planet::FocusIcon(std::string_view focus_name, const ScriptingContext& context) const {
     if (const Species* species = context.species.GetSpecies(this->SpeciesName())) {
         for (const FocusType& focus_type : species->Foci()) {
             if (focus_type.Name() == focus_name)
@@ -1051,7 +1049,8 @@ void Planet::ClampMeters() {
 
 namespace {
     // sorted pair, so order of empire IDs specified doesn't matter
-    std::pair<int, int> DiploKey(int id1, int ind2)
+    constexpr std::pair<int, int> DiploKey(int id1, int ind2)
+        noexcept(noexcept(std::max(1, -3)) && noexcept(std::min(-124, 0)))
     { return {std::max(id1, ind2), std::min(id1, ind2)}; }
 }
 
@@ -1079,9 +1078,7 @@ void Planet::ResolveGroundCombat(std::map<int, double>& empires_troops,
     for (const auto& entry : effective_empires_troops)
         inverted_empires_troops.emplace(entry.second, entry.first);
 
-    int victor_id;
-    float victor_effective_troops;
-    std::tie(victor_effective_troops, victor_id) = *inverted_empires_troops.rbegin();
+    const auto [victor_id, victor_self_troops] = *inverted_empires_troops.rbegin();
 
 
     // victor has effective troops reduced by the effective troop count of
@@ -1094,7 +1091,7 @@ void Planet::ResolveGroundCombat(std::map<int, double>& empires_troops,
         const auto [loser_effective_troops, loser_id] = *highest_loser_it;
         if (loser_id == victor_id)
             continue;
-        auto it = diplo_statuses.find(DiploKey(loser_id, victor_id));
+        const auto it = diplo_statuses.find(DiploKey(loser_id, victor_id));
         if (it != diplo_statuses.end() && it->second == DiplomaticStatus::DIPLO_PEACE)
             continue;
 
@@ -1103,8 +1100,8 @@ void Planet::ResolveGroundCombat(std::map<int, double>& empires_troops,
         break;
     }
 
-    victor_effective_troops -= highest_loser_enemy_effective_troops;
-    float victor_starting_troops = empires_troops[victor_id];
+    const auto victor_effective_troops = victor_self_troops - highest_loser_enemy_effective_troops;
+    const float victor_starting_troops = empires_troops[victor_id];
 
     // every other combatant loses all troops
     empires_troops.clear();
