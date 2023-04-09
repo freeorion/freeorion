@@ -493,9 +493,6 @@ private:
                               const ScriptingContext& context,
                               bool only_meter_effects = false) const;
 
-    void ResetObjectMeters(const std::vector<std::shared_ptr<UniverseObject>>& objects,
-                           bool target_max_unpaired = true, bool active = true);
-
     /** Executes all effects.  For use on server when processing turns.
       * If \a only_meter_effects is true, then only SetMeter effects are
       * executed.  This is useful on server or clients to update meter

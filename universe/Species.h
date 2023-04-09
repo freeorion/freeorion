@@ -323,7 +323,7 @@ public:
                                   const std::string& rated_species, float opinion, bool target);
     void SetSpeciesEmpireOpinion(const std::string& opinionated_species,
                                  int empire_id, float opinion, bool target);
-    void ResetSpeciesTargetOpinions();
+    void ResetSpeciesOpinions(bool active, bool target);
     void BackPropagateOpinions();
 
     void AddSpeciesHomeworld(std::string species, int homeworld_id);

@@ -3480,9 +3480,11 @@ namespace {
 void ServerApp::PreCombatProcessTurns() {
     ScopedTimer timer("ServerApp::PreCombatProcessTurns");
 
-    m_universe.ResetAllObjectMeters(false, true);   // revert current meter values to initial values prior to update after incrementing turn number during previous post-combat turn processing.
+    // revert current meter values to initial values prior to update after
+    // incrementing turn number during previous post-combat turn processing.
+    m_universe.ResetAllObjectMeters(false, true);
+
     m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(m_empires);
-    m_species_manager.ResetSpeciesTargetOpinions();
 
     DebugLogger() << "ServerApp::ProcessTurns executing orders";
 
