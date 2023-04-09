@@ -2040,15 +2040,16 @@ namespace {
         const auto& seom = context.species.GetSpeciesEmpireOpinionsMap();
         detailed_description.append("\n\n").append(UserString("SPECIES_OPINIONS")).append("\n");
         for (const auto& [species_name_, empire_opinions] : seom) {
+            const auto empire_it = empire_opinions.find(empire_id);
+            if (empire_it == empire_opinions.end())
+                continue;
+            const auto current_opinion = empire_it->second.first.Initial();
             const auto* species = context.species.GetSpecies(species_name_);
-            const auto& species_name = species ? UserString(species->Name()) : UserString("UNKNOWN_SPECIES");
-            for (const auto& [opinion_empire_id, opinion_meters] : empire_opinions) {
-                if (empire_id != opinion_empire_id)
-                    continue;
-                const auto current_opinion = opinion_meters.first.Initial();
-                detailed_description.append(species_name)
-                    .append(" : ").append(DoubleToString(current_opinion, 3, false)).append("\n");
-            }
+            if (species)
+                detailed_description.append(LinkTaggedText(VarText::SPECIES_TAG, species->Name()));
+            else
+                detailed_description.append(UserString("UNKNOWN_SPECIES"));
+            detailed_description.append(" : ").append(DoubleToString(current_opinion, 3, false)).append("\n");
         }
 
 
@@ -2163,10 +2164,13 @@ namespace {
         if (!empire_ships_destroyed.empty())
             detailed_description.append("\n\n").append(UserString("EMPIRE_SHIPS_DESTROYED"));
         for (const auto& [empire_id, num] : empire_ships_destroyed) {
-            std::string num_str = ToChars(num);
             const Empire* target_empire = GetEmpire(empire_id);
-            const std::string target_empire_name = target_empire ? target_empire->Name() : UserString("UNOWNED");
-            detailed_description += "\n" + target_empire_name + " : " + num_str;
+            detailed_description.append("\n");
+            if (target_empire)
+                detailed_description.append(LinkTaggedIDText(VarText::EMPIRE_ID_TAG, empire_id, target_empire->Name()));
+            else
+                detailed_description.append(UserString("UNOWNED"));
+            detailed_description.append(" : ").append(ToChars(num));
         }
 
 
