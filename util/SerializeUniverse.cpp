@@ -589,6 +589,7 @@ namespace {
             std::string part_name{next, part_name_end_it};
             if (part_name.empty())
                 return;
+            next = part_name_end_it;
 
             // skip whitespace
             while (std::distance(next, buffer_end) > 0 && *next == ' ')
@@ -617,7 +618,8 @@ namespace {
 
                 // get meter values
                 Meter meter;
-                const auto consumed = meter.SetFromChars(std::string_view(next, std::distance(next, buffer_end)));
+                const std::string_view meter_view(next, std::distance(next, buffer_end));
+                const auto consumed = meter.SetFromChars(meter_view);
                 if (consumed < 1)
                     return;
                 next += consumed;
