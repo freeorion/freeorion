@@ -424,15 +424,27 @@ SitRepEntry CreatePlanetEstablishFailedVisibleOtherSitRep(int planet_id, int shi
 SitRepEntry CreatePlanetEstablishFailedArmedSitRep(int planet_id, int ship_id, int other_empire_id,
                                                    int current_turn)
 {
-    SitRepEntry sitrep(
-        UserStringNop("SITREP_PLANET_ESTABLISH_FAILED_ARMED"),
-        current_turn + 1,
-        "icons/sitrep/planet_colonized.png",
-        UserStringNop("SITREP_PLANET_ESTABLISH_FAILED_ARMED_LABEL"), true);
-    sitrep.AddVariable(VarText::PLANET_ID_TAG,     std::to_string(planet_id));
-    sitrep.AddVariable(VarText::SHIP_ID_TAG,       std::to_string(ship_id));
-    sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     std::to_string(other_empire_id));
-    return sitrep;
+    if (other_empire_id == ALL_EMPIRES) {
+        SitRepEntry sitrep(
+            UserStringNop("SITREP_PLANET_ESTABLISH_FAILED_NEUTRAL_ARMED"),
+            current_turn + 1,
+            "icons/sitrep/planet_colonized.png",
+            UserStringNop("SITREP_PLANET_ESTABLISH_FAILED_ARMED_NEUTRAL_LABEL"), true);
+        sitrep.AddVariable(VarText::PLANET_ID_TAG,     std::to_string(planet_id));
+        sitrep.AddVariable(VarText::SHIP_ID_TAG,       std::to_string(ship_id));
+        return sitrep;
+
+    } else {
+        SitRepEntry sitrep(
+            UserStringNop("SITREP_PLANET_ESTABLISH_FAILED_ARMED"),
+            current_turn + 1,
+            "icons/sitrep/planet_colonized.png",
+            UserStringNop("SITREP_PLANET_ESTABLISH_FAILED_ARMED_LABEL"), true);
+        sitrep.AddVariable(VarText::PLANET_ID_TAG,     std::to_string(planet_id));
+        sitrep.AddVariable(VarText::SHIP_ID_TAG,       std::to_string(ship_id));
+        sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     std::to_string(other_empire_id));
+        return sitrep;
+    }
 }
 
 SitRepEntry CreatePlanetGiftedSitRep(int planet_id, int empire_id, int current_turn) {
