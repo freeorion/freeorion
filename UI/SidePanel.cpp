@@ -518,7 +518,12 @@ namespace {
   * one time in a SidePanel */
 class SidePanel::PlanetPanel : public GG::Control {
 public:
-    PlanetPanel(GG::X w, int planet_id, StarType star_type);
+    PlanetPanel(GG::X w, int planet_id, StarType star_type) :
+        GG::Control(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
+        m_planet_id(planet_id),
+        m_star_type(star_type)
+    {}
+
     void CompleteConstruction() override;
 
     bool InWindow(GG::Pt pt) const override;
@@ -587,7 +592,7 @@ private:
     std::shared_ptr<GG::DynamicGraphic>     m_planet_graphic;               ///< image of the planet (can be a frameset); this is now used only for asteroids;
     std::shared_ptr<GG::StaticGraphic>      m_planet_status_graphic;        ///< gives information about the planet status, like supply disconnection
     std::shared_ptr<RotatingPlanetControl>  m_rotating_planet_graphic;      ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
-    GG::Clr                                 m_empire_colour;                ///< colour to use for empire-specific highlighting.  set based on ownership of planet.
+    GG::Clr                                 m_empire_colour = GG::CLR_ZERO; ///< colour to use for empire-specific highlighting.  set based on ownership of planet.
     std::shared_ptr<GG::DropDownList>       m_focus_drop;                   ///< displays and allows selection of planetary focus;
     std::shared_ptr<PopulationPanel>        m_population_panel;             ///< contains info about population and health
     std::shared_ptr<ResourcePanel>          m_resource_panel;               ///< contains info about resources production and focus selection UI
@@ -597,7 +602,7 @@ private:
     StarType                                m_star_type = StarType::INVALID_STAR_TYPE;
     boost::signals2::scoped_connection      m_planet_connection;
     bool                                    m_selected = false;             ///< is this planet panel selected
-    bool                                    m_order_issuing_enabled = false;///< can orders be issues via this planet panel?
+    bool                                    m_order_issuing_enabled = true; ///< can orders be issues via this planet panel?
 };
 
 /** Container class that holds PlanetPanels.  Creates and destroys PlanetPanel
@@ -913,15 +918,6 @@ namespace {
         return GG::Pt(GG::X(icon_size), GG::Y(icon_size));
     }
 }
-
-SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) :
-    GG::Control(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
-    m_planet_id(planet_id),
-    m_empire_colour(GG::CLR_ZERO),
-    m_star_type(star_type),
-    m_selected(false),
-    m_order_issuing_enabled(true)
-{}
 
 void SidePanel::PlanetPanel::CompleteConstruction() {
     GG::Control::CompleteConstruction();
