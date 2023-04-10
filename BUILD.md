@@ -82,7 +82,7 @@ Step by step procedure for the v0.5 release and development versions near then:
    * Navigate into the project directory.
    * Clone the project via Git:
      ```
-     git clone https://github.com/freeorion/freeorion.git
+     git clone git@github.com:freeorion/freeorion.git
      ```
 
 This will leave you with the latest development branch `master` and the
