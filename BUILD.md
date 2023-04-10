@@ -76,7 +76,7 @@ Step by step procedure for the v0.5 release and development versions near then:
    * Execute the `bootstrap.bat` within the project directory. This will clone
      the FreeOrion repository and place the dependencies at the correct place.
    * If you want to create an out-of-source build using CMake, you should run 
-     `git clone https://github.com/freeorion/freeorion.git FreeOrion` in the 
+     `git clone git@github.com:freeorion/freeorion.git FreeOrion` in the 
      `freeorion-project` directory, instead of running `bootstrap.bat`.
  * On MaxOS, Linux and other Operating Systems:
    * Navigate into the project directory.
