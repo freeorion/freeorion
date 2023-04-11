@@ -190,6 +190,23 @@ Species::Species(std::string&& name, std::string&& desc,
             cond->SetTopLevelContent(name);
         return std::move(cond);
     }(std::move(combat_targets), name)),
+    m_annexation_condition(std::make_unique<Condition::And>(
+        std::make_unique<Condition::EmpireAffiliation>(EmpireAffiliationType::AFFIL_NONE),
+        std::make_unique<Condition::MeterValue>(MeterType::METER_POPULATION,
+                                                std::make_unique<ValueRef::Constant<double>>(0.001),
+                                                nullptr),
+        std::make_unique<Condition::ResourceSupplyConnectedByEmpire>(
+            std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"),
+            std::make_unique<Condition::And>(
+                std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET),
+                std::make_unique<Condition::EmpireAffiliation>(
+                    std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"))
+            )
+        ))),
+    m_annexation_cost(std::make_unique<ValueRef::Operation<double>>(
+        ValueRef::OpType::TIMES,
+        std::make_unique<ValueRef::Constant<double>>(10.0),
+        std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Population"))),
     m_playable(playable),
     m_native(native),
     m_can_colonize(can_colonize),

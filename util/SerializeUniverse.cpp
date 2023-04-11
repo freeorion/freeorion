@@ -903,6 +903,13 @@ void serialize(Archive& ar, Planet& obj, unsigned int const version)
     } else {
         Serialize(ar, "m_buildings", obj.m_buildings);
     }
+    if (Archive::is_loading::value && version < 6) {
+        obj.m_turn_last_annexed = INVALID_GAME_TURN;
+        obj.m_is_about_to_be_annexed = false;
+    } else {
+        ar  & make_nvp("m_turn_last_annexed", obj.m_turn_last_annexed)
+            & make_nvp("m_is_about_to_be_annexed", obj.m_is_about_to_be_annexed);
+    }
     ar  & make_nvp("m_turn_last_colonized", obj.m_turn_last_colonized);
     ar  & make_nvp("m_turn_last_conquered", obj.m_turn_last_conquered);
     ar  & make_nvp("m_is_about_to_be_colonized", obj.m_is_about_to_be_colonized)
@@ -913,7 +920,7 @@ void serialize(Archive& ar, Planet& obj, unsigned int const version)
 }
 
 BOOST_CLASS_EXPORT(Planet)
-BOOST_CLASS_VERSION(Planet, 5)
+BOOST_CLASS_VERSION(Planet, 6)
 
 
 template <typename Archive>

@@ -121,6 +121,7 @@ void Planet::Copy(const Planet& copied_planet, const Universe& universe, int emp
             this->m_last_turn_focus_changed_turn_initial =  copied_planet.m_last_turn_focus_changed_turn_initial;
 
             if (vis >= Visibility::VIS_FULL_VISIBILITY) {
+                this->m_is_about_to_be_annexed =    copied_planet.m_is_about_to_be_annexed;
                 this->m_is_about_to_be_colonized =  copied_planet.m_is_about_to_be_colonized;
                 this->m_is_about_to_be_invaded   =  copied_planet.m_is_about_to_be_invaded;
                 this->m_is_about_to_be_bombarded =  copied_planet.m_is_about_to_be_bombarded;
@@ -181,12 +182,15 @@ std::string Planet::Dump(uint8_t ntabs) const {
         ++it;
         retval.append(std::to_string(building_id)).append(it == m_buildings.end() ? "" : ", ");
     }
+    if (m_is_about_to_be_annexed)
+        retval.append(" (About to be Annexed)");
     if (m_is_about_to_be_colonized)
         retval.append(" (About to be Colonized)");
     if (m_is_about_to_be_invaded)
         retval.append(" (About to be Invaded)");
 
-    retval.append(" colonized on turn: ").append(std::to_string(m_turn_last_colonized))
+    retval.append(" annexed on turn: ").append(std::to_string(m_turn_last_annexed))
+          .append(" colonized on turn: ").append(std::to_string(m_turn_last_colonized))
           .append(" conquered on turn: ").append(std::to_string(m_turn_last_conquered));
     if (m_is_about_to_be_bombarded)
         retval.append(" (About to be Bombarded)");
@@ -696,8 +700,10 @@ void Planet::Reset(ObjectMap& objects) {
         }
     }
 
+    //m_turn_last_annexed left unchanged
     //m_turn_last_colonized left unchanged
     //m_turn_last_conquered left unchanged
+    m_is_about_to_be_annexed = false;
     m_is_about_to_be_colonized = false;
     m_is_about_to_be_invaded = false;
     m_is_about_to_be_bombarded = false;
@@ -869,6 +875,7 @@ bool Planet::Colonize(int empire_id, std::string species_name, double population
                 continue;
             building->Reset();
         }
+        m_is_about_to_be_annexed = false;
         m_is_about_to_be_colonized = false;
         m_is_about_to_be_invaded = false;
         m_is_about_to_be_bombarded = false;
@@ -917,6 +924,16 @@ bool Planet::Colonize(int empire_id, std::string species_name, double population
 
     return true;
 }
+
+void Planet::SetIsAboutToBeAnnexed(bool b) {
+    bool initial_status = m_is_about_to_be_annexed;
+    if (b == initial_status) return;
+    m_is_about_to_be_annexed = b;
+    StateChangedSignal();
+}
+
+void Planet::ResetIsAboutToBeAnnxed()
+{ SetIsAboutToBeAnnexed(false); }
 
 void Planet::SetIsAboutToBeColonized(bool b) {
     bool initial_status = m_is_about_to_be_colonized;

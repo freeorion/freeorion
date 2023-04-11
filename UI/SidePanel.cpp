@@ -30,6 +30,7 @@
 #include "../client/human/GGHumanClientApp.h"
 #include "../Empire/Empire.h"
 #include "../universe/Building.h"
+#include "../universe/Condition.h"
 #include "../universe/Fleet.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/Ship.h"
@@ -332,7 +333,7 @@ namespace {
                 if (it == star_definition.attributes.end())
                     continue;
                 const auto& star_type_name = it->second;
-                const auto star_type = StarTypeFromString(star_type_name);
+                const auto star_type = StarTypeFromString(star_type_name, StarType::INVALID_STAR_TYPE);
                 if (star_type == StarType::INVALID_STAR_TYPE)
                     continue;
 
@@ -577,6 +578,7 @@ private:
     void DoLayout();
     void RefreshPlanetGraphic();
     void SetFocus(std::string focus); ///< set the focus of the planet to \a focus
+    void ClickAnnex();                ///< called if annex button is pressed
     void ClickColonize();             ///< called if colonize button is pressed
     void ClickInvade();               ///< called if invade button is pressed
     void ClickBombard();              ///< called if bombard button is pressed
@@ -586,6 +588,7 @@ private:
     int                                     m_planet_id = INVALID_OBJECT_ID;///< id for the planet with is represented by this planet panel
     std::shared_ptr<GG::TextControl>        m_planet_name;                  ///< planet name;
     std::shared_ptr<GG::Label>              m_env_size;                     ///< indicates size and planet environment rating uncolonized planets;
+    std::shared_ptr<GG::Button>             m_annex_button;                 ///< btn which can be pressed to annex this planet;
     std::shared_ptr<GG::Button>             m_colonize_button;              ///< btn which can be pressed to colonize this planet;
     std::shared_ptr<GG::Button>             m_invade_button;                ///< btn which can be pressed to invade this planet;
     std::shared_ptr<GG::Button>             m_bombard_button;               ///< btn which can be pressed to bombard this planet;
@@ -1012,6 +1015,9 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     m_env_size->MoveTo(GG::Pt(GG::X(MaxPlanetDiameter()), GG::Y0));
     AttachChild(m_env_size);
 
+    m_annex_button = Wnd::Create<CUIButton>(UserString("PL_ANNEX"));
+    m_annex_button ->LeftClickedSignal.connect(
+        boost::bind(&SidePanel::PlanetPanel::ClickAnnex, this));
 
     m_colonize_button = Wnd::Create<CUIButton>(UserString("PL_COLONIZE"));
     m_colonize_button->LeftClickedSignal.connect(
@@ -1053,6 +1059,11 @@ void SidePanel::PlanetPanel::DoLayout() {
         y += m_env_size->Height() + EDGE_PAD;
     }
 
+    if (m_annex_button && m_annex_button->Parent().get() == this) {
+        m_annex_button->MoveTo(GG::Pt(left, y));
+        m_annex_button->Resize(GG::Pt(GG::X(ClientUI::Pts()*15), m_annex_button->MinUsableSize().y));
+        y += m_annex_button->Height() + EDGE_PAD;
+    }
     if (m_colonize_button && m_colonize_button->Parent().get() == this) {
         m_colonize_button->MoveTo(GG::Pt(left, y));
         m_colonize_button->Resize(GG::Pt(GG::X(ClientUI::Pts()*15), m_colonize_button->MinUsableSize().y));
@@ -1543,6 +1554,7 @@ void SidePanel::PlanetPanel::Clear() {
     DetachChild(m_resource_panel);
     DetachChild(m_military_panel);
     DetachChild(m_buildings_panel);
+    DetachChild(m_annex_button);
     DetachChild(m_colonize_button);
     DetachChild(m_invade_button);
     DetachChild(m_bombard_button);
@@ -1554,6 +1566,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     Clear();
 
     const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const auto client_empire = context.GetEmpire(client_empire_id);
 
     Universe& u = context.ContextUniverse();
     ObjectMap& objects = context.ContextObjects(); // must be mutable to allow setting species and updating to estimate colonize button numbers
@@ -1646,6 +1659,10 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     if (colony_ship_species)
         planet_env_for_colony_species = colony_ship_species->GetPlanetEnvironment(planet->Type());
 
+    const auto& planet_species_name = planet->SpeciesName();
+    const Species* species = context.species.GetSpecies(planet_species_name); // may be nullptr
+    const auto* annexation_condition = species ? species->AnnexationCondition() : nullptr;
+    const auto* annexation_cost = species ? species->AnnexationCost() : nullptr;
 
     // calculate truth tables for planet colonization and invasion
     const bool has_owner =       !planet->Unowned();
@@ -1663,11 +1680,21 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     const bool colonizable =      habitable && !populated && ( (!has_owner /*&& !shielded*/) || mine) && visible && !being_colonized;
     const bool can_colonize =     selected_colony_ship && (   (colonizable  && (colony_ship_capacity > 0.0f))
                                                            || (outpostable && (colony_ship_capacity == 0.0f)));
-
     const bool at_war_with_me =   !mine && (populated || (has_owner && context.ContextDiploStatus(client_empire_id, planet->Owner()) == DiplomaticStatus::DIPLO_WAR));
 
     const bool being_invaded =    planet->IsAboutToBeInvaded();
     const bool invadable =        at_war_with_me && !shielded && visible && !being_invaded && !invasion_ships.empty();
+
+    const bool being_annexed =    planet->IsAboutToBeAnnexed();
+    //const bool annexable =        populated && !has_owner && being_invaded && species
+    //                           && [annexation_condition, &context](const auto& planet) {
+    //                                if (!annexation_condition)
+    //                                    return false;
+    //                                if (!annexation_condition)
+    //                                    return false;
+    //                                ScriptingContext planet_context{planet.get(), context};
+    //                                planet_context.condition_local_candidate = 
+    //                              }(planet);
 
     const bool being_bombarded =  planet->IsAboutToBeBombarded();
     const bool bombardable =      at_war_with_me && visible && !being_bombarded && !bombard_ships.empty();
@@ -1690,6 +1717,17 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
             m_military_panel->Refresh();
     }
 
+    //if (annexable) {
+    //    // show annex button, specifying cost
+    //    AttachChild(m_annex_button);
+
+    //    //const
+    //    //const auto annexation_cost = 
+    //    //if (m_annex_button)
+    //    //    m_bombard_button->SetText(UserString("PL_ANNEX"));
+
+    //}
+
     if (can_colonize) {
         // show colonize button; in case the chosen colony ship is not actually
         // selected, but has been chosen by AutomaticallyChosenColonyShip, determine
@@ -1711,7 +1749,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
 
         } else {
             u.InhibitUniverseObjectSignals(true);
-            const auto orig_species{planet->SpeciesName()}; //want to store by value, not reference. should be just ""
+            const auto orig_species{planet_species_name}; //want to store by value, not reference. should be just ""
             const int orig_owner = planet->Owner();
             const float orig_initial_target_pop = planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Initial();
             planet->SetOwner(client_empire_id);
@@ -1805,23 +1843,20 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     }
 
     const auto* planet_raw = planet.get();
-    const std::string_view planet_species_name = planet_raw->SpeciesName();
-    std::string_view species_name = "";
-    if (!planet_species_name.empty())
-        species_name = planet_species_name;
-    else if (!colony_ship_species_name.empty())
-        species_name = colony_ship_species_name;
+
+    const std::string_view type_size_species_name =
+        !planet_species_name.empty() ? planet_species_name : colony_ship_species_name; // may be empty
 
     std::string env_size_text{
-        species_name.empty() ?
+        type_size_species_name.empty() ?
             boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
                            % GetPlanetSizeName(planet_raw)
                            % GetPlanetTypeName(planet_raw)) :
             boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE_ENV"))
                            % GetPlanetSizeName(planet_raw)
                            % GetPlanetTypeName(planet_raw)
-                           % GetPlanetEnvironmentName(planet_raw, species_name, context)
-                           % UserString(species_name))};
+                           % GetPlanetEnvironmentName(planet_raw, type_size_species_name, context)
+                           % UserString(type_size_species_name))};
     m_env_size->SetText(std::move(env_size_text));
 
     if (!planet->SpeciesName().empty()) {
@@ -1948,7 +1983,6 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     ClearBrowseInfoWnd();
 
     if (client_empire_id != ALL_EMPIRES) {
-        const auto client_empire = context.GetEmpire(client_empire_id);
         const Visibility visibility = u.GetObjectVisibilityByEmpire(m_planet_id, client_empire_id);
         const auto& visibility_turn_map = u.GetObjectVisibilityTurnMapByEmpire(m_planet_id, client_empire_id);
         const float client_empire_detection_strength = client_empire->GetMeter("METER_DETECTION_STRENGTH")->Current();
@@ -2357,6 +2391,52 @@ namespace {
             }
         }
     }
+}
+
+void SidePanel::PlanetPanel::ClickAnnex() {
+    // order or cancel annexation, depending on whether it has previously
+    // been ordered
+
+    ScriptingContext context;
+    ObjectMap& objects{context.ContextObjects()};
+
+    auto planet = objects.get<Planet>(m_planet_id);
+    if (!planet || !m_order_issuing_enabled)
+        return;
+
+    const int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    if (empire_id == ALL_EMPIRES)
+        return;
+
+    //auto pending_colonization_orders = PendingColonizationOrders();
+    //auto it = pending_colonization_orders.find(m_planet_id);
+
+    //if (it != pending_colonization_orders.end()) {
+    //    // cancel previous colonization order for planet
+    //    GGHumanClientApp::GetApp()->Orders().RescindOrder(it->second, context);
+
+    //} else {
+    //    // find colony ship and order it to colonize
+    //    auto ship = ValidSelectedColonyShip(SidePanel::SystemID(), context);
+    //    if (!ship)
+    //        ship = objects.getRaw<Ship>(AutomaticallyChosenColonyShip(m_planet_id, context));
+
+    //    if (!ship) {
+    //        ErrorLogger() << "SidePanel::PlanetPanel::ClickColonize valid colony not found!";
+    //        return;
+    //    }
+    //    if (!ship->OwnedBy(empire_id)) {
+    //        ErrorLogger() << "SidePanel::PlanetPanel::ClickColonize selected colony ship not owned by this client's empire.";
+    //        return;
+    //    }
+
+    //    CancelColonizeInvadeBombardScrapShipOrders(ship, context);
+
+    //    GGHumanClientApp::GetApp()->Orders().IssueOrder(
+    //        std::make_shared<ColonizeOrder>(empire_id, ship->ID(), m_planet_id, context),
+    //        context);
+    //}
+    OrderButtonChangedSignal(m_planet_id);
 }
 
 void SidePanel::PlanetPanel::ClickColonize() {
