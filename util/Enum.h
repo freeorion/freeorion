@@ -116,10 +116,6 @@ FO_ENUM_NAME_FROM_TYPENAME(typeName)& value) \
     return stream; \
 }
 
-template<typename E>
-struct EnumIterator {
-};
-
 /** @brief Implementation detail for FO_ENUM */
 #define FO_DEF_ENUM_ITERATE_VALUE(r, data, elem) \
     {data::BOOST_PP_TUPLE_ELEM(0, elem), BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(0, elem)) },
@@ -136,18 +132,7 @@ BOOST_PP_CAT(FO_ENUM_NAME_FROM_TYPENAME(typeName), Values)() noexcept {\
     BOOST_PP_SEQ_FOR_EACH(FO_DEF_ENUM_ITERATE_VALUE, \
         FO_ENUM_NAME_FROM_TYPENAME(typeName), values) \
     }}; \
-}; \
-inline constexpr \
-BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
-        static, \
-        BOOST_PP_EMPTY()) \
-auto \
-IterateEnum(EnumIterator< \
-FO_ENUM_NAME_FROM_TYPENAME(typeName) >){ return \
-BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
-    BOOST_PP_TUPLE_ELEM(0, typeName)::, \
-    BOOST_PP_EMPTY()) \
-BOOST_PP_CAT(FO_ENUM_NAME_FROM_TYPENAME(typeName), Values)();};
+};
 
 /** @brief Implementation detail for FO_ENUM */
 #define FO_DEF_ENUM_ADD_STRING_REPR(s, data, elem) \
@@ -203,7 +188,7 @@ BOOST_PP_CAT(FO_ENUM_NAME_FROM_TYPENAME(typeName), FromString)( \
  *
  * Iterate over values:
  * @code
- * for (const auto& p : IterateEnum(EnumIterator<Animal>{})) {
+ * for (const auto& [val, string_view] : AnimalValues) {
  *    ...
  * }
  * @endcode
@@ -227,7 +212,7 @@ BOOST_PP_CAT(FO_ENUM_NAME_FROM_TYPENAME(typeName), FromString)( \
  *
  * Iterate over values:
  * @code
- * for (const auto& p : AutomaticGearBox::IterateEnum(EnumIterator<AutomaticGearBox::Animal>{})) {
+ * for (const auto& [val, string_view] : AutomaticGearBox::AnimalValues())) {
  *    ...
  * }
  * @endcode
