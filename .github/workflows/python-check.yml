@@ -12,15 +12,17 @@ on:
       - edited
       - reopened
       - synchronize
+
+env:
+  PYTHON_VERSION: '3.7'
+  LATEST_PYTHON_VERSION: '3.10'
+
 jobs:
   lint:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [ '3.7' ]
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
@@ -30,12 +32,12 @@ jobs:
         run: ruff .
       - name: Lint with black
         run: |
-          black . --check --no-color -t py37 --diff -q
+          black . --check --no-color --diff -q
   tests:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.7', '3.10']
+        python-version: ['${{  env.PYTHON_VERSION }}', '${{  env.LATEST_PYTHON_VERSION }}']
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
