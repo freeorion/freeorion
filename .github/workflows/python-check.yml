@@ -12,20 +12,14 @@ on:
       - edited
       - reopened
       - synchronize
-
-env:
-  PYTHON_VERSION: '3.7'
-  LATEST_PYTHON_VERSION: '3.10'
-
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v4
+      - uses: actions/setup-python@v4
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: '3.7'
       - name: Install development dependencies
         run: pip install -r default/python/requirements-dev.txt
       - name: Lint all python code with Ruff
@@ -37,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['${{  env.PYTHON_VERSION }}', '${{  env.LATEST_PYTHON_VERSION }}']
+        python-version: ['3.7', '3.10']
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
