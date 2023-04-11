@@ -234,13 +234,19 @@ namespace {
         using signed_idx_type = std::underlying_type_t<MeterType>;
         static constexpr auto INVALID_IDX = static_cast<signed_idx_type>(MeterType::INVALID_METER_TYPE);
         static_assert(INVALID_IDX == -1);
-        static constexpr auto NUM_IDX = static_cast<signed_idx_type>(MeterType::NUM_METER_TYPES);
-        // TODO: additional static_assert that verifies that the numerical representation of
-        //       all values of MeterType are -1 or higher. would work better with an
-        //       IterateEnum implementation that works constexpr. as of this writing, it
-        //       uses an std::vector, which is not constexpr OK in C++17
+
+
+        static constexpr bool all_gte_neg1 = []() {
+            for (auto& [val, str] : MeterTypeValues()) {
+                if (static_cast<signed_idx_type>(val) < -1)
+                    return false;
+            }
+            return true;
+        }();
+        static_assert(all_gte_neg1);
 
         static const auto label_value_strings = []() {
+            static constexpr auto NUM_IDX = static_cast<signed_idx_type>(MeterType::NUM_METER_TYPES);
             std::array<std::string, NUM_IDX> retval{};
             for (std::size_t idx = 0; idx < NUM_IDX; ++idx)
                 retval[idx] = std::string{to_string(MeterType(static_cast<signed_idx_type>(idx)))}
