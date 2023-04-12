@@ -32,7 +32,7 @@ def make_stub(
 
     res = ResultBuilder(header)
     res.add_built_in_import(Import("enum", ["IntEnum"]))
-    res.add_built_in_import(Import("typing", ["Iterator", "Generic", "Iterable", "Tuple", "TypeVar", "overload"]))
+    res.add_built_in_import(Import("typing", ["Iterator", "Generic", "Iterable", "TypeVar", "overload"]))
 
     res.add_import(
         Import(

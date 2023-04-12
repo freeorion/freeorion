@@ -13,7 +13,7 @@ from stub_generator.stub_generator.coolection_classes import is_collection_type,
         ("String", "str"),
         ("Bool", "bool"),
         # Simple collections
-        ("IntPair", "Tuple[int, int]"),
+        ("IntPair", "tuple[int, int]"),
         ("IntSet", "Set[int]"),
         ("IntVec", "Vec[int]"),
         # Embedded collections
