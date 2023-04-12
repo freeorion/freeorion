@@ -1565,13 +1565,15 @@ void SidePanel::PlanetPanel::Clear() {
 void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     Clear();
 
-    const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    const auto client_empire = context.GetEmpire(client_empire_id);
-
     Universe& u = context.ContextUniverse();
     ObjectMap& objects = context.ContextObjects(); // must be mutable to allow setting species and updating to estimate colonize button numbers
     const SpeciesManager& sm = context.species;
     const SupplyManager& supply = context.supply;
+
+    const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const auto client_empire = context.GetEmpire(client_empire_id);
+    const auto source_for_empire = client_empire->Source(context.ContextObjects());
+
 
     const auto planet = objects.get<const Planet>(m_planet_id);
     if (!planet) {
@@ -1650,19 +1652,17 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     if (bombard_ships.empty())
         bombard_ships = AutomaticallyChosenBombardShips(m_planet_id, context);
 
-    std::string_view colony_ship_species_name = "";
-    if (selected_colony_ship)
-        colony_ship_species_name = selected_colony_ship->SpeciesName();
-    const float colony_ship_capacity{selected_colony_ship ? selected_colony_ship->ColonyCapacity(u) : 0.0f};
+    const std::string_view colony_ship_species_name = selected_colony_ship ? selected_colony_ship->SpeciesName() : "";
+    const float colony_ship_capacity = selected_colony_ship ? selected_colony_ship->ColonyCapacity(u) : 0.0f;
     const Species* colony_ship_species = context.species.GetSpecies(colony_ship_species_name);
-    PlanetEnvironment planet_env_for_colony_species = PlanetEnvironment::PE_UNINHABITABLE;
-    if (colony_ship_species)
-        planet_env_for_colony_species = colony_ship_species->GetPlanetEnvironment(planet->Type());
+    const PlanetEnvironment planet_env_for_colony_species = colony_ship_species ?
+        colony_ship_species->GetPlanetEnvironment(planet->Type()) : PlanetEnvironment::PE_UNINHABITABLE;
 
     const auto& planet_species_name = planet->SpeciesName();
     const Species* species = context.species.GetSpecies(planet_species_name); // may be nullptr
     const auto* annexation_condition = species ? species->AnnexationCondition() : nullptr;
     const auto* annexation_cost = species ? species->AnnexationCost() : nullptr;
+
 
     // calculate truth tables for planet colonization and invasion
     const bool has_owner =       !planet->Unowned();
@@ -1686,15 +1686,9 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     const bool invadable =        at_war_with_me && !shielded && visible && !being_invaded && !invasion_ships.empty();
 
     const bool being_annexed =    planet->IsAboutToBeAnnexed();
-    //const bool annexable =        populated && !has_owner && being_invaded && species
-    //                           && [annexation_condition, &context](const auto& planet) {
-    //                                if (!annexation_condition)
-    //                                    return false;
-    //                                if (!annexation_condition)
-    //                                    return false;
-    //                                ScriptingContext planet_context{planet.get(), context};
-    //                                planet_context.condition_local_candidate = 
-    //                              }(planet);
+    const auto annexability_test = [ac{annexation_condition}, &context, &source_for_empire](const auto* planet)
+    { return ac && ac->EvalOne(ScriptingContext{source_for_empire.get(), context}, planet); };
+    const bool annexable =        populated && !has_owner && !being_invaded && species && annexability_test(planet.get());
 
     const bool being_bombarded =  planet->IsAboutToBeBombarded();
     const bool bombardable =      at_war_with_me && visible && !being_bombarded && !bombard_ships.empty();
@@ -1717,16 +1711,18 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
             m_military_panel->Refresh();
     }
 
-    //if (annexable) {
-    //    // show annex button, specifying cost
-    //    AttachChild(m_annex_button);
+    if (annexable && m_annex_button) {
+        // show annex button, specifying cost
+        AttachChild(m_annex_button);
 
-    //    //const
-    //    //const auto annexation_cost = 
-    //    //if (m_annex_button)
-    //    //    m_bombard_button->SetText(UserString("PL_ANNEX"));
+        const auto annexation_cost = 100.0; // TODO: calculate cost
+        m_annex_button->SetText(UserString("PL_ANNEX")); // TODO: format cost text
 
-    //}
+    } else if (being_annexed && m_annex_button) {
+        // show cancel annexation button
+        AttachChild(m_annex_button);
+        m_annex_button->SetText(UserString("PL_CANCEL_ANNEX"));
+    }
 
     if (can_colonize) {
         // show colonize button; in case the chosen colony ship is not actually
@@ -1739,7 +1735,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
 
         double planet_capacity;
         const std::pair<int, int> ship_id_planet_id{selected_colony_ship->ID(), m_planet_id};
-        auto pair_it = colony_projections.find(ship_id_planet_id);
+        const auto pair_it = colony_projections.find(ship_id_planet_id);
         if (pair_it != colony_projections.end()) {
             planet_capacity = pair_it->second;
 
