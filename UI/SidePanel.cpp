@@ -1653,7 +1653,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     if (bombard_ships.empty())
         bombard_ships = AutomaticallyChosenBombardShips(m_planet_id, context);
 
-    const std::string_view colony_ship_species_name = selected_colony_ship ? selected_colony_ship->SpeciesName() : "";
+    const std::string_view colony_ship_species_name = selected_colony_ship ? selected_colony_ship->SpeciesName() : std::string_view{""};
     const float colony_ship_capacity = selected_colony_ship ? selected_colony_ship->ColonyCapacity(u) : 0.0f;
     const Species* colony_ship_species = context.species.GetSpecies(colony_ship_species_name);
     const PlanetEnvironment planet_env_for_colony_species = colony_ship_species ?
