@@ -1,5 +1,5 @@
 from common.fo_typing import EmpireId, Turn
-from stub_generator.stub_generator.coolection_classes import make_type
+from stub_generator.stub_generator.collection_classes import make_type
 
 _rtypes_map = {
     "currentTurn": Turn.__name__,

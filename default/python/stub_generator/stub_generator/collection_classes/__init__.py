@@ -1,0 +1,1 @@
+from stub_generator.stub_generator.collection_classes._collection_name_parser import is_collection_type, make_type

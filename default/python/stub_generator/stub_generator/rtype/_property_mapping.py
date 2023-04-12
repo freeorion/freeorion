@@ -1,4 +1,4 @@
-from stub_generator.stub_generator.coolection_classes import make_type
+from stub_generator.stub_generator.collection_classes import make_type
 
 _property_map = {
     ("shipIDs", "IntSet"): "Set[ShipId]",
