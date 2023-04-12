@@ -37,6 +37,7 @@
 #include "../universe/Species.h"
 #include "../universe/System.h"
 #include "../universe/UniverseObjectVisitors.h"
+#include "../universe/ValueRef.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
@@ -1661,7 +1662,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     const auto& planet_species_name = planet->SpeciesName();
     const Species* species = context.species.GetSpecies(planet_species_name); // may be nullptr
     const auto* annexation_condition = species ? species->AnnexationCondition() : nullptr;
-    const auto* annexation_cost = species ? species->AnnexationCost() : nullptr;
+    const auto* annexation_cost_ref = species ? species->AnnexationCost() : nullptr;
 
 
     // calculate truth tables for planet colonization and invasion
@@ -1715,8 +1716,20 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
         // show annex button, specifying cost
         AttachChild(m_annex_button);
 
-        const auto annexation_cost = 100.0; // TODO: calculate cost
-        m_annex_button->SetText(UserString("PL_ANNEX")); // TODO: format cost text
+        const auto annexation_cost_ip = [ac{annexation_cost_ref}, &context, &source_for_empire](const auto* planet) -> double {
+            if (!ac)
+                return 0.0;
+            if (ac->ConstantExpr())
+                return ac->Eval();
+            ScriptingContext source_planet_context{source_for_empire.get(), context};
+            source_planet_context.condition_local_candidate = planet;
+            return ac->Eval(source_planet_context);
+        }(planet.get());
+
+        if (annexation_cost_ip == 0.0)
+            m_annex_button->SetText(UserString("PL_ANNEX_FREE"));
+        else
+            m_annex_button->SetText(boost::io::str(FlexibleFormat(UserString("PL_ANNEX")) % annexation_cost_ip));
 
     } else if (being_annexed && m_annex_button) {
         // show cancel annexation button

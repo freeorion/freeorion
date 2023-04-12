@@ -133,7 +133,7 @@ public:
     [[nodiscard]] const auto*        CombatTargets() const noexcept { return m_combat_targets.get(); }  ///< condition for possible targets. may be nullptr if no condition was specified.
 
     [[nodiscard]] const auto*        AnnexationCondition() const noexcept { return m_annexation_condition.get(); }  ///< condition that determines if the empire that owns the source object can annex the localcandidate with this species on it
-    [[nodiscard]] const auto*        AnnexationCost() const noexcept { return m_annexation_cost.get(); }            ///< cost for the empire that owns the source object to annex the target object that has this species on it
+    [[nodiscard]] const auto*        AnnexationCost() const noexcept { return m_annexation_cost.get(); }            ///< cost for the empire that owns the source object to annex the local candidate object that has this species on it
 
     [[nodiscard]] std::string        Dump(uint8_t ntabs = 0) const;                            ///< a data file format representation of this object
     [[nodiscard]] const auto&        Foci() const noexcept { return m_foci; }                  ///< focus types this species can use
