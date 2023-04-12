@@ -212,7 +212,6 @@ namespace FreeOrionPython {
         ::FreeOrionPython::SetWrapper<std::set<std::set<int>>>::Wrap("IntSetSet");
         ::FreeOrionPython::SetWrapper<std::set<int>>::Wrap("IntSet");
         ::FreeOrionPython::SetWrapper<std::set<std::string>>::Wrap("StringSet");
-        ::FreeOrionPython::SetWrapper<std::set<std::string, std::less<>>>::Wrap("StringSet2");
 
         py::class_<std::map<std::string, int>>("StringIntMap")
             .def(py::map_indexing_suite<std::map<std::string, int>, true>())
