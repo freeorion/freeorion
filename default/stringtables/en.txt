@@ -3873,6 +3873,13 @@ Planet Panel
 PL_ASTEROID_BELT_OF_SYSTEM
 %1% Asteroids
 
+# %1% cost in IP to annex this planet
+PL_ANNEX
+Annex (%1% IP)
+
+PL_CANCEL_ANNEX
+Cancel Annexation
+
 # %1% size of the population this planet is colonized with.
 # %2% maximum population this planet can support.
 PL_COLONIZE
