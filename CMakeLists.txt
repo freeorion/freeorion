@@ -717,6 +717,7 @@ if(BUILD_CLIENT_GODOT)
                 -D CMAKE_CONFIGURATION_TYPES=${GODOT_CPP_BUILD_TYPE}
                 -D CMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
                 -D PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}
+                -D Python3_EXECUTABLE=${PYTHON_EXECUTABLE}
                 ${CL_ARGS}
             INSTALL_COMMAND ""
         )
