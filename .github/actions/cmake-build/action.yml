@@ -32,6 +32,7 @@ runs:
     - name: Configure
       shell: pwsh
       run: |
+        Remove-Item -LiteralPath "C:/hostedtoolcache/windows/Python/" -Force -Recurse # Ensure that system Python is not used
         unzip -q ../${{ steps.download-sdk.outputs.filename }} -d ..
         mkdir build
         pushd build
