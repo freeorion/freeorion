@@ -1736,7 +1736,8 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
         if (annexation_cost_ip == 0.0)
             m_annex_button->SetText(UserString("PL_ANNEX_FREE"));
         else
-            m_annex_button->SetText(boost::io::str(FlexibleFormat(UserString("PL_ANNEX")) % annexation_cost_ip));
+            m_annex_button->SetText(boost::io::str(FlexibleFormat(UserString("PL_ANNEX")) %
+                                                   DoubleToString(annexation_cost_ip, 2, false)));
 
     } else if (being_annexed && m_annex_button) {
         // show cancel annexation button
