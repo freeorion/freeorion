@@ -5245,9 +5245,8 @@ void MapWnd::CreateFleetButtonsOfType(FleetButtonMap& type_fleet_buttons,
         // sort fleets by position
         std::map<std::pair<double, double>, std::vector<int>> fleet_positions_ids;
         for (const auto* fleet : Objects().findRaw<Fleet>(fleet_IDs)) {
-            if (!fleet)
-                continue;
-            fleet_positions_ids[{fleet->X(), fleet->Y()}].emplace_back(fleet->ID());
+            if (fleet)
+                fleet_positions_ids[{fleet->X(), fleet->Y()}].emplace_back(fleet->ID());
         }
 
         // create separate FleetButton for each cluster of fleets
@@ -5258,7 +5257,8 @@ void MapWnd::CreateFleetButtonsOfType(FleetButtonMap& type_fleet_buttons,
             auto fb = GG::Wnd::Create<FleetButton>(std::move(ids_in_cluster), fleet_button_size);
 
             // store per type of fleet button.
-            type_fleet_buttons[key].insert(fb);
+            using FBM_key_t = typename FleetButtonMap::key_type;
+            type_fleet_buttons[static_cast<FBM_key_t>(key)].insert(fb);
 
             // store FleetButton for fleets in current cluster
             for (int fleet_id : fb->Fleets())

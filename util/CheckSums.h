@@ -3,6 +3,7 @@
 
 #include "Export.h"
 
+#include <climits>
 #include <cmath>
 #include <iostream>
 #include <map>
@@ -13,6 +14,7 @@
 
 namespace CheckSums {
     constexpr uint32_t CHECKSUM_MODULUS = 10000000U;    // reasonably big number that should be well below UINT_MAX, which is ~4.29x10^9 for 32 bit unsigned int
+    static_assert(CHECKSUM_MODULUS < UINT_MAX/4);
 
     constexpr bool csc_double = noexcept(noexcept(std::log10(std::abs(43.0))));
     FO_COMMON_API void CheckSumCombine(uint32_t& sum, double t) noexcept(csc_double);
@@ -91,7 +93,7 @@ namespace CheckSums {
     {
         for (const auto& t : c)
             CheckSumCombine(sum, t);
-        sum += c.size();
+        sum += static_cast<uint32_t>(c.size());
         sum %= CHECKSUM_MODULUS;
     }
 }

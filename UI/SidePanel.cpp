@@ -714,10 +714,8 @@ public:
         if (!planet) return;
 
         // these values ensure that wierd GLUT-sphere artifacts do not show themselves
-        double period = static_cast<double>(planet->RotationalPeriod());// gives about one rpm for a 1 "Day" rotational period
-        if (std::abs(period) <  0.1)    // prevent divide by zero or extremely fast rotations
-            period = 0.1;
-        m_rpm = 1.0 / period;
+        const double period = static_cast<double>(planet->RotationalPeriod());// gives about one rpm for a 1 "Day" rotational period
+        m_rpm = (std::abs(period) < 0.1) ? 10.0 : (1.0 / period); // prevent divide by zero or extremely fast rotations
         m_diameter = PlanetDiameter(planet->Size());
         m_axial_tilt = std::max(-30.0, std::min(static_cast<double>(planet->AxialTilt()), 60.0));
         m_visibility = GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, GGHumanClientApp::GetApp()->EmpireID());
@@ -725,16 +723,16 @@ public:
         const std::string texture_filename;
         const auto& planet_data = GetRotatingPlanetData();
 
-        auto planet_data_it = planet_data.find(planet->Type());
-        int num_planets_of_type;
-        if (planet_data_it != planet_data.end() && (num_planets_of_type = planet_data.find(planet->Type())->second.size())) {
-            unsigned int hash_value = static_cast<int>(m_planet_id);
+        const auto planet_data_it = planet_data.find(planet->Type());
+        if (planet_data_it != planet_data.end() && planet_data_it->second.size() > 0) {
+            const auto num_planets_of_type = planet_data_it->second.size();
+            const unsigned int hash_value = static_cast<int>(m_planet_id);
             const RotatingPlanetData& rpd = planet_data_it->second[hash_value % num_planets_of_type];
             m_surface_texture = ClientUI::GetTexture(ClientUI::ArtDir() / rpd.filename, true);
             m_shininess = rpd.shininess;
 
             const auto& atmosphere_data = GetPlanetAtmosphereData();
-            auto it = atmosphere_data.find(rpd.filename);
+            const auto it = atmosphere_data.find(rpd.filename);
             if (it != atmosphere_data.end()) {
                 const auto& atmosphere = it->second.atmospheres[RandInt(0, it->second.atmospheres.size() - 1)];
                 m_atmosphere_texture = ClientUI::GetTexture(ClientUI::ArtDir() / atmosphere.filename, true);
