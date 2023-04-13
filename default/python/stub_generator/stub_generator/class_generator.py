@@ -5,7 +5,7 @@ from typing import List, Set
 from common.print_utils import Table, Text
 from stub_generator.interface_inspector import ClassInfo, EnumInfo, InstanceInfo
 from stub_generator.parse_docs import Docs
-from stub_generator.stub_generator.coolection_classes import is_collection_type, make_type
+from stub_generator.stub_generator.collection_classes import is_collection_type, make_type
 from stub_generator.stub_generator.rtype import update_method_rtype, update_property_rtype
 
 

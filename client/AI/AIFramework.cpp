@@ -83,7 +83,6 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
 
     FreeOrionPython::SetWrapper<std::set<int>>::Wrap("IntSet");
     FreeOrionPython::SetWrapper<std::set<std::string>>::Wrap("StringSet");
-    FreeOrionPython::SetWrapper<std::set<std::string, std::less<>>>::Wrap("StringSet2");
 }
 
 //////////////////////
