@@ -277,6 +277,43 @@ private:
 
 
 /////////////////////////////////////////////////////
+// AnnexOrder
+/////////////////////////////////////////////////////
+/** the Order subclass that represents a planet colonization action*/
+class FO_COMMON_API AnnexOrder final : public Order {
+public:
+    AnnexOrder(int empire, int planet, const ScriptingContext& context);
+
+    [[nodiscard]] std::string Dump() const override;
+
+    /** Returns ID of the planet to be colonized. */
+    [[nodiscard]] int PlanetID() const noexcept { return m_planet; }
+
+    static bool Check(int empire_id, int planet_id, const ScriptingContext& context);
+
+private:
+    AnnexOrder() = default;
+
+    /**
+    *  Preconditions:
+    *     - m_planet must be the ID of an un-owned planet.
+    *
+    *  Postconditions:
+    *      - The planet with ID will be marked to be annexed by the empire during the next turn processing.
+    */
+    void ExecuteImpl(ScriptingContext& context) const override;
+
+    bool UndoImpl(ScriptingContext& context) const override;
+
+    int m_planet = INVALID_OBJECT_ID;
+
+    friend class boost::serialization::access;
+    template <typename Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+
+/////////////////////////////////////////////////////
 // ColonizeOrder
 /////////////////////////////////////////////////////
 /** the Order subclass that represents a planet colonization action*/
