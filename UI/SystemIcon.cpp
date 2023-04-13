@@ -203,7 +203,10 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
     GG::Clr text_color = ClientUI::SystemNameTextColor();
     if (has_player_planet) {
         if (owner_empire_ids.size() == 1)
-            text_color = GetEmpire(*owner_empire_ids.begin())->Color();
+            if (const auto* owner_empire = GetEmpire(*owner_empire_ids.begin()))
+                text_color = owner_empire->Color();
+            else
+                DebugLogger() << "OwnerColoredSystemName couldn't get empire with id: " << *owner_empire_ids.begin();
     } else if (has_neutrals) {
         text_color = ClientUI::TextColor();
     }
