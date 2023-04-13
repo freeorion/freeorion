@@ -466,16 +466,96 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
+    auto PendingAnnexationOrders(const ScriptingContext& context) {
+        std::vector<int> retval;
+
+        const ClientApp* app = ClientApp::GetApp();
+        if (!app)
+            return retval;
+
+        for (const auto& [order_id, order] : app->Orders()) {
+            if (auto annex_order = std::dynamic_pointer_cast<AnnexOrder>(order)) {
+                const auto planet_id = annex_order->PlanetID();
+                retval.push_back(planet_id);
+            }
+        }
+        // remove any duplicates
+        std::sort(retval.begin(), retval.end());
+        auto unique_it = std::unique(retval.begin(), retval.end());
+        retval.resize(static_cast<size_t>(std::distance(retval.begin(), unique_it)));
+        return retval;
+    }
+
+    double PlanetAnnexationCost(const Planet* planet, const UniverseObject* source_for_empire,
+                                const ScriptingContext& context)
+    {
+        if (!planet || !source_for_empire)
+            return 0.0;
+        const auto* species = context.species.GetSpecies(planet->SpeciesName());
+        if (!species)
+            return 0.0;
+        const auto* ac = species->AnnexationCost();
+        if (!ac)
+            return 0.0;
+        if (ac->ConstantExpr())
+            return ac->Eval();
+        ScriptingContext source_planet_context{source_for_empire, context};
+        source_planet_context.condition_local_candidate = planet;
+        return ac->Eval(source_planet_context);
+    }
+
+    /** Returns map from planet ID to cost to annex. */
+    auto PendingAnnexationPlanetsCosts(const UniverseObject* source_for_empire, const ScriptingContext& context) {
+        std::vector<std::pair<int, double>> retval;
+
+        const ClientApp* app = ClientApp::GetApp();
+        if (!app)
+            return retval;
+        const auto client_empire_id = app->EmpireID();
+        if (!source_for_empire ||
+            source_for_empire->Owner() == ALL_EMPIRES ||
+            source_for_empire->Owner() != client_empire_id)
+        { return retval; }
+        const auto client_empire = context.GetEmpire(client_empire_id);
+        if (!client_empire)
+            return retval;
+
+        for (const auto& [order_id, order] : app->Orders()) {
+            if (auto annex_order = std::dynamic_pointer_cast<AnnexOrder>(order)) {
+                const auto planet_id = annex_order->PlanetID();
+                const auto* annexed_planet = context.ContextObjects().getRaw<Planet>(planet_id);
+                const double cost = PlanetAnnexationCost(annexed_planet, source_for_empire, context);
+                retval.emplace_back(annex_order->PlanetID(), cost);
+            }
+        }
+        // remove any duplicates
+        std::sort(retval.begin(), retval.end());
+        auto unique_it = std::unique(retval.begin(), retval.end(),
+                                     [](const auto& lhs, const auto& rhs) { return lhs.first == rhs.first; });
+        retval.resize(static_cast<size_t>(std::distance(retval.begin(), unique_it)));
+        return retval;
+    }
+
+    double PendingAnnexationOrderCost(const UniverseObject* source_for_empire, const ScriptingContext& context) {
+        // transform reduce
+        double retval = 0.0;
+        for (auto& [ignored, cost] : PendingAnnexationPlanetsCosts(source_for_empire, context)) {
+            retval += cost;
+            (void)ignored;
+        }
+        return retval;
+    }
+
     /** Returns map from planet ID to issued colonize orders affecting it. There
       * should be only one ship colonzing each planet for this client. */
-    std::map<int, int> PendingColonizationOrders() {
+    auto PendingColonizationOrders() {
         std::map<int, int> retval;
         const ClientApp* app = ClientApp::GetApp();
         if (!app)
             return retval;
-        for (const auto& id_and_order : app->Orders()) {
-            if (auto order = std::dynamic_pointer_cast<ColonizeOrder>(id_and_order.second)) {
-                retval[order->PlanetID()] = id_and_order.first;
+        for (const auto& [order_id, order] : app->Orders()) {
+            if (auto col_order = std::dynamic_pointer_cast<ColonizeOrder>(order)) {
+                retval[col_order->PlanetID()] = order_id;
             }
         }
         return retval;
@@ -483,7 +563,7 @@ namespace {
 
     /** Returns map from planet ID to issued invasion orders affecting it. There
       * may be multiple ships invading a single planet. */
-    std::map<int, std::set<int>> PendingInvadeOrders() {
+    auto PendingInvadeOrders() {
         std::map<int, std::set<int>> retval;
         const ClientApp* app = ClientApp::GetApp();
         if (!app)
@@ -498,7 +578,7 @@ namespace {
 
     /** Returns map from planet ID to issued bombard orders affecting it. There
       * may be multiple ships bombarding a single planet. */
-    std::map<int, std::set<int>> PendingBombardOrders() {
+    auto PendingBombardOrders() {
         std::map<int, std::set<int>> retval;
         const ClientApp* app = ClientApp::GetApp();
         if (!app)
@@ -1573,16 +1653,14 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
 
     const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     const auto client_empire = context.GetEmpire(client_empire_id);
-    const auto source_for_empire = client_empire->Source(context.ContextObjects());
+    const auto* source_for_empire = client_empire->Source(context.ContextObjects()).get();
 
 
-    const auto planet = objects.get<const Planet>(m_planet_id);
+    auto* planet = objects.getRaw<Planet>(m_planet_id); // not const to allow updates for meter estimates
     if (!planet) {
         RequirePreRender();
         return;
     }
-    const auto* planet_raw = planet.get();
-
 
     // set planet name, formatted to indicate presense of shipyards / homeworlds
 
@@ -1690,21 +1768,17 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
 
 
     const bool being_annexed =    planet->IsAboutToBeAnnexed();
-    const auto annexability_test = [ac{annexation_condition}, &context, &source_for_empire](const auto* planet)
-    { return ac && ac->EvalOne(ScriptingContext{source_for_empire.get(), context}, planet); }; // ignores cost
-    const bool potentially_annexable = annexability_test(planet_raw);
-    const auto annexation_cost_ip = !potentially_annexable ? std::numeric_limits<double>::max() :
-        [ac{annexation_cost_ref}, &context, &source_for_empire](const auto* planet) -> double {
-        if (!ac)
-            return 0.0;
-        if (ac->ConstantExpr())
-            return ac->Eval();
-        ScriptingContext source_planet_context{source_for_empire.get(), context};
-        source_planet_context.condition_local_candidate = planet;
-        return ac->Eval(source_planet_context);
-    }(planet_raw);
+    const auto annexability_test = [ac{annexation_condition}, &context, source_for_empire](const auto* planet)
+    { return ac && ac->EvalOne(ScriptingContext{source_for_empire, context}, planet); }; // ignores cost
+    const bool potentially_annexable = annexability_test(planet);
+    const auto this_planet_annexation_cost = PlanetAnnexationCost(planet, source_for_empire, context);
+    const double empire_annexations_cost = PendingAnnexationOrderCost(source_for_empire, context);
+    const double empire_adopted_policies_cost = client_empire->ThisTurnAdoptedPoliciesCost(context);
+    const double total_costs = empire_annexations_cost + empire_adopted_policies_cost + this_planet_annexation_cost;
+    const double available_ip = client_empire->ResourceStockpile(ResourceType::RE_INFLUENCE);
+    const bool annexation_affordable = total_costs <= available_ip;
     const bool annexable =        populated && !has_owner && !being_invaded && species && 
-                                  potentially_annexable; // TODO: have enough IP, similar to policy adoption costs
+                                  potentially_annexable && annexation_affordable;
 
 
     const bool being_bombarded =  planet->IsAboutToBeBombarded();
@@ -1733,16 +1807,16 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
         // show annex button, specifying cost
         AttachChild(m_annex_button);
 
-        if (annexation_cost_ip == 0.0)
+        if (this_planet_annexation_cost == 0.0)
             m_annex_button->SetText(UserString("PL_ANNEX_FREE"));
         else
             m_annex_button->SetText(boost::io::str(FlexibleFormat(UserString("PL_ANNEX")) %
-                                                   DoubleToString(annexation_cost_ip, 2, false)));
+                                                   DoubleToString(this_planet_annexation_cost, 2, false)));
 
     } else if (being_annexed && m_annex_button) {
         // show cancel annexation button
         AttachChild(m_annex_button);
-        m_annex_button->SetText(UserString("PL_CANCEL_ANNEX"));
+        m_annex_button->SetText(UserString("PL_CANCEL_ANNEX")); // TODO: tooltip indicating refundable IP?
     }
 
     if (can_colonize) {
@@ -1865,12 +1939,12 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     std::string env_size_text{
         type_size_species_name.empty() ?
             boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
-                           % GetPlanetSizeName(planet_raw)
-                           % GetPlanetTypeName(planet_raw)) :
+                           % GetPlanetSizeName(planet)
+                           % GetPlanetTypeName(planet)) :
             boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE_ENV"))
-                           % GetPlanetSizeName(planet_raw)
-                           % GetPlanetTypeName(planet_raw)
-                           % GetPlanetEnvironmentName(planet_raw, type_size_species_name, context)
+                           % GetPlanetSizeName(planet)
+                           % GetPlanetTypeName(planet)
+                           % GetPlanetEnvironmentName(planet, type_size_species_name, context)
                            % UserString(type_size_species_name))};
     m_env_size->SetText(std::move(env_size_text));
 
@@ -2423,8 +2497,9 @@ void SidePanel::PlanetPanel::ClickAnnex() {
     if (empire_id == ALL_EMPIRES)
         return;
 
-    //auto pending_colonization_orders = PendingColonizationOrders();
-    //auto it = pending_colonization_orders.find(m_planet_id);
+    const auto pending_annex_orders = PendingAnnexationOrders(context);
+    const auto it = std::find(pending_annex_orders.begin(), pending_annex_orders.end(), m_planet_id);
+
 
     //if (it != pending_colonization_orders.end()) {
     //    // cancel previous colonization order for planet

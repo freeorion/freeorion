@@ -493,6 +493,7 @@ bool Empire::PolicyAffordable(std::string_view name, const ScriptingContext& con
         return false;
     }
 
+    // TODO: include annexation costs in test?
     const double other_this_turn_adopted_policies_cost = ThisTurnAdoptedPoliciesCost(context);
     TraceLogger() << "Empire::PolicyAffordable : Combined already-adopted policies this turn cost "
                   << other_this_turn_adopted_policies_cost;
