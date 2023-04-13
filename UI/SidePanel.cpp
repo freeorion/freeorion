@@ -1581,6 +1581,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
         RequirePreRender();
         return;
     }
+    const auto* planet_raw = planet.get();
 
 
     // set planet name, formatted to indicate presense of shipyards / homeworlds
@@ -1683,16 +1684,32 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
                                                            || (outpostable && (colony_ship_capacity == 0.0f)));
     const bool at_war_with_me =   !mine && (populated || (has_owner && context.ContextDiploStatus(client_empire_id, planet->Owner()) == DiplomaticStatus::DIPLO_WAR));
 
+
     const bool being_invaded =    planet->IsAboutToBeInvaded();
     const bool invadable =        at_war_with_me && !shielded && visible && !being_invaded && !invasion_ships.empty();
 
+
     const bool being_annexed =    planet->IsAboutToBeAnnexed();
     const auto annexability_test = [ac{annexation_condition}, &context, &source_for_empire](const auto* planet)
-    { return ac && ac->EvalOne(ScriptingContext{source_for_empire.get(), context}, planet); };
-    const bool annexable =        populated && !has_owner && !being_invaded && species && annexability_test(planet.get());
+    { return ac && ac->EvalOne(ScriptingContext{source_for_empire.get(), context}, planet); }; // ignores cost
+    const bool potentially_annexable = annexability_test(planet_raw);
+    const auto annexation_cost_ip = !potentially_annexable ? std::numeric_limits<double>::max() :
+        [ac{annexation_cost_ref}, &context, &source_for_empire](const auto* planet) -> double {
+        if (!ac)
+            return 0.0;
+        if (ac->ConstantExpr())
+            return ac->Eval();
+        ScriptingContext source_planet_context{source_for_empire.get(), context};
+        source_planet_context.condition_local_candidate = planet;
+        return ac->Eval(source_planet_context);
+    }(planet_raw);
+    const bool annexable =        populated && !has_owner && !being_invaded && species && 
+                                  potentially_annexable; // TODO: have enough IP, similar to policy adoption costs
+
 
     const bool being_bombarded =  planet->IsAboutToBeBombarded();
     const bool bombardable =      at_war_with_me && visible && !being_bombarded && !bombard_ships.empty();
+
 
     if (populated || SHOW_ALL_PLANET_PANELS) {
         AttachChild(m_population_panel);
@@ -1715,16 +1732,6 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     if (annexable && m_annex_button) {
         // show annex button, specifying cost
         AttachChild(m_annex_button);
-
-        const auto annexation_cost_ip = [ac{annexation_cost_ref}, &context, &source_for_empire](const auto* planet) -> double {
-            if (!ac)
-                return 0.0;
-            if (ac->ConstantExpr())
-                return ac->Eval();
-            ScriptingContext source_planet_context{source_for_empire.get(), context};
-            source_planet_context.condition_local_candidate = planet;
-            return ac->Eval(source_planet_context);
-        }(planet.get());
 
         if (annexation_cost_ip == 0.0)
             m_annex_button->SetText(UserString("PL_ANNEX_FREE"));
@@ -1850,8 +1857,6 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
         if (m_bombard_button)
             m_bombard_button->SetText(UserString("PL_CANCEL_BOMBARD"));
     }
-
-    const auto* planet_raw = planet.get();
 
     const std::string_view type_size_species_name =
         !planet_species_name.empty() ? planet_species_name : colony_ship_species_name; // may be empty
