@@ -124,7 +124,7 @@ namespace {
         const auto [show_adopted, show_adoptable, show_unaffordable, show_restricted, show_locked] = m_availabilities;
 
         const ScriptingContext context;
-        auto empire = context.GetEmpire(empire_id);
+        const auto* empire = context.GetEmpire(empire_id).get();
         if (!empire)
             return true;
         const ScriptingContext source_context{empire->Source(context.ContextObjects()).get()};
@@ -504,14 +504,13 @@ void PoliciesListBox::Populate() {
     GG::Pt slot_size = GG::Pt(SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT);
 
     auto policy_palette = Parent();
-    auto gov_wnd = std::dynamic_pointer_cast<GovernmentWnd>(policy_palette->Parent());
-    if (gov_wnd)
+    if (auto gov_wnd = std::dynamic_pointer_cast<GovernmentWnd>(policy_palette->Parent()))
         slot_size = gov_wnd->GetPolicySlotSize();
 
     const GG::X TOTAL_WIDTH = ClientWidth() - ClientUI::ScrollWidth();
     const int MAX_COLUMNS = std::max(1, Value(TOTAL_WIDTH / (slot_size.x + GG::X(PAD))));
 
-    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     const Empire* empire = GetEmpire(empire_id);  // may be nullptr
 
     m_empire_policies_changed_signal_connection.disconnect();
