@@ -5507,6 +5507,9 @@ Fleet Move %1% to %2%
 ORDER_FLEET_TRANSFER
 Fleet Transfer %1% to %2%
 
+ORDER_ANNEX
+Annex %1%
+
 ORDER_COLONIZE
 Colonize %1% with %2%
 

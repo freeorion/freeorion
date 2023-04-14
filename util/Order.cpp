@@ -755,15 +755,63 @@ AnnexOrder::AnnexOrder(int empire, int planet, const ScriptingContext& context) 
     m_planet(planet)
 { Check(empire, m_planet, context); }
 
-std::string AnnexOrder::Dump() const { return ""; }
+std::string AnnexOrder::Dump() const
+{ return boost::io::str(FlexibleFormat(UserString("ORDER_ANNEX")) % m_planet) + ExecutedTag(this); }
 
-bool AnnexOrder::Check(int empire_id, int planet_id, const ScriptingContext& context)
-{ return true; }
+bool AnnexOrder::Check(int empire_id, int planet_id, const ScriptingContext& context) {
+    const Universe& u = context.ContextUniverse();
+    const ObjectMap& o = context.ContextObjects();
 
-void AnnexOrder::ExecuteImpl(ScriptingContext& context) const {}
+    const auto* planet = o.getRaw<const Planet>(planet_id);
+    if (!planet) {
+        ErrorLogger() << "AnnexOrder::ExecuteImpl couldn't get planet with id " << planet_id;
+        return false;
+    }
 
-bool AnnexOrder::UndoImpl(ScriptingContext& context) const
-{ return false; }
+    if (!planet->Unowned()) {
+        ErrorLogger() << "AnnexOrder::ExecuteImpl given an owned planet";
+        return false;
+    }
+
+    if (planet->Unowned() && planet->GetMeter(MeterType::METER_POPULATION)->Initial() == 0.0f) {
+        ErrorLogger() << "AnnexOrder::ExecuteImpl given unpopulated planet";
+        return false;
+    }
+
+    if (u.GetObjectVisibilityByEmpire(planet_id, empire_id) < Visibility::VIS_BASIC_VISIBILITY) {
+        ErrorLogger() << "AnnexOrder::ExecuteImpl given planet that empire reportedly has insufficient visibility of, but will be allowed to proceed pending investigation";
+        return false;
+    }
+
+    // TODO: check IP costs, like adopting policies
+
+    return true;
+}
+
+void AnnexOrder::ExecuteImpl(ScriptingContext& context) const {
+    GetValidatedEmpire(context);
+
+    if (!Check(EmpireID(), m_planet, context))
+        return;
+
+    ObjectMap& objects{context.ContextObjects()};
+    if (auto* planet = objects.getRaw<Planet>(m_planet))
+        planet->SetIsAboutToBeAnnexed(true); // TODO: need to track which empire is annexing the planet...
+}
+
+bool AnnexOrder::UndoImpl(ScriptingContext& context) const {
+    ObjectMap& objects{context.ContextObjects()};
+
+    auto* planet = objects.getRaw<Planet>(m_planet);
+    if (!planet) {
+        ErrorLogger() << "AnnexOrder::UndoImpl couldn't get planet with id " << m_planet;
+        return false;
+    }
+
+    planet->SetIsAboutToBeAnnexed(false);
+
+    return true;
+}
 
 ////////////////////////////////////////////////
 // ColonizeOrder
@@ -864,7 +912,11 @@ void ColonizeOrder::ExecuteImpl(ScriptingContext& context) const {
 
     ObjectMap& objects{context.ContextObjects()};
     auto ship = objects.get<Ship>(m_ship);
+    if (!ship)
+        return;
     auto planet = objects.get<Planet>(m_planet);
+    if (!planet)
+        return;
 
     planet->SetIsAboutToBeColonized(true);
     ship->SetColonizePlanet(m_planet);
