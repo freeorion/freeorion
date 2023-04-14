@@ -30,12 +30,12 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04]
+        os: [ubuntu-22.04]
         client-gg: ['ON']
         client-godot: ['ON']
         compiler: [gcc, clang]
         include:
-          - os: ubuntu-20.04
+          - os: ubuntu-22.04
             client-gg: 'ON'
             client-godot: 'OFF'
             compiler: clang
