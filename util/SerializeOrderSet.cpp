@@ -98,6 +98,13 @@ void FleetTransferOrder::serialize(Archive& ar, const unsigned int version)
 }
 
 template <typename Archive>
+void AnnexOrder::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
+        & BOOST_SERIALIZATION_NVP(m_planet);
+}
+
+template <typename Archive>
 void ColonizeOrder::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)

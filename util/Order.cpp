@@ -748,6 +748,24 @@ void FleetTransferOrder::ExecuteImpl(ScriptingContext& context) const {
 }
 
 ////////////////////////////////////////////////
+// AnnexOrder
+////////////////////////////////////////////////
+AnnexOrder::AnnexOrder(int empire, int planet, const ScriptingContext& context) :
+    Order(empire),
+    m_planet(planet)
+{ Check(empire, m_planet, context); }
+
+std::string AnnexOrder::Dump() const { return ""; }
+
+bool AnnexOrder::Check(int empire_id, int planet_id, const ScriptingContext& context)
+{ return true; }
+
+void AnnexOrder::ExecuteImpl(ScriptingContext& context) const {}
+
+bool AnnexOrder::UndoImpl(ScriptingContext& context) const
+{ return false; }
+
+////////////////////////////////////////////////
 // ColonizeOrder
 ////////////////////////////////////////////////
 ColonizeOrder::ColonizeOrder(int empire, int ship, int planet, const ScriptingContext& context) :
