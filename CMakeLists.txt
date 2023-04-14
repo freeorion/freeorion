@@ -12,7 +12,7 @@ if(POLICY CMP0072)
 endif()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake ${CMAKE_HOME_DIRECTORY}/GG/cmake)
-set(CMAKE_OSX_DEPLOYMENT_TARGET 10.12 CACHE STRING "Set the minimum OSX deployment target version")
+set(CMAKE_OSX_DEPLOYMENT_TARGET 10.15 CACHE STRING "Set the minimum OSX deployment target version")
 set(CMAKE_OSX_ARCHITECTURES x86_64 CACHE STRING "Set the architecture the universal binaries for OSX should be built for")
 
 IF(CMAKE_GENERATOR STREQUAL "Xcode")
