@@ -3228,7 +3228,7 @@ namespace {
     template <typename IDsT>
     std::vector<int> HandleGifting(EmpireManager& empires, ObjectMap& objects, int current_turn,
                                    const IDsT& invaded_planet_ids, const IDsT& invading_ship_ids,
-                                   const IDsT& colonizing_ship_ids)
+                                   const IDsT& colonizing_ship_ids, const IDsT& annexed_planets_ids) // TODO: disallow annexed planets
     {
         // determine system IDs where empires can receive gifts
         std::map<int, std::set<int>> empire_receiving_locations;
@@ -3356,7 +3356,7 @@ namespace {
     void HandleScrapping(Universe& universe, EmpireManager& empires,
                          const IDsT& invading_ship_ids, const IDsT& invaded_planet_ids,
                          const IDsT& colonizing_ship_ids, const IDsT& colonized_planet_ids,
-                         const IDsT& gifted_ids)
+                         const IDsT& gifted_ids, const IDsT& annexed_planet_ids) // TODO: disallow scrapping during annexation
     {
         ObjectMap& objects{universe.Objects()};
         const auto& empire_ids = empires.EmpireIDs();
@@ -3424,6 +3424,59 @@ namespace {
             //scrapped_object_ids.push_back(building->ID());
             universe.Destroy(building->ID(), empire_ids);
         }
+    }
+
+    /** Determines which planets are ordered annexed by empires, and sets
+      * their new ownership. Returns the IDs of anything annexed. */
+    template <typename IDsT>
+    std::vector<int> HandleAnnexation(EmpireManager& empires, ObjectMap& objects, int current_turn,
+                                      const IDsT& invaded_planet_ids)
+    {
+        // collect planets ordered annexed but that aren't being invaded
+        std::map<int, std::vector<Planet*>> empire_annexed_planets; // indexed by recipient empire id
+        auto annexed_not_invaded_planet = [&invaded_planet_ids](const Planet& p) {
+            return std::none_of(invaded_planet_ids.begin(), invaded_planet_ids.end(),
+                                [pid{p.ID()}](const auto iid) { return iid == pid; }) &&
+                p.IsAboutToBeAnnexed();
+        };
+
+        for (auto* planet : objects.findRaw<Planet>(annexed_not_invaded_planet)) {
+            const auto annexer_empire_id = planet->OrderedAnnexedByEmpire();
+            empire_annexed_planets[annexer_empire_id].push_back(planet);
+        }
+
+
+        // storage for list of all annexed planets
+        auto do_annexation = [&empires, current_turn](auto& empire_annexed_planets) {
+            std::vector<int> retval;
+            for (auto& [annexer_empire_id, planets] : empire_annexed_planets) {
+                auto annexer_empire = empires.GetEmpire(annexer_empire_id);
+
+                for (auto* planet : planets) {
+                    const auto planet_id = planet->ID();
+                    const auto initial_owner_id = planet->Owner();
+                    retval.push_back(planet_id);
+
+                    planet->SetOwner(annexer_empire_id);
+
+                    Empire::ConquerProductionQueueItemsAtLocation(planet_id, annexer_empire_id, empires);
+
+                    if (annexer_empire)
+                        annexer_empire->AddSitRepEntry(CreatePlanetAnnexedSitRep(
+                            planet_id, initial_owner_id, annexer_empire_id, current_turn));
+
+                    if (initial_owner_id != ALL_EMPIRES) {
+                        if (auto initial_owner_empire = empires.GetEmpire(initial_owner_id)) {
+                            initial_owner_empire->AddSitRepEntry(CreatePlanetAnnexedSitRep(
+                                planet_id, initial_owner_id, annexer_empire_id, current_turn));
+                        }
+                    }
+                }
+            }
+            return retval;
+        };
+
+        return do_annexation(empire_annexed_planets);
     }
 
     /** Removes bombardment state info from objects. Actual effects of
@@ -3546,13 +3599,17 @@ void ServerApp::PreCombatProcessTurns() {
     DebugLogger() << "ServerApp::ProcessTurns invasion";
     auto [invaded_planet_ids, invading_ship_ids] = HandleInvasion(context);
 
+    DebugLogger() << "ServerApp::ProcessTurns annexation";
+    auto annexed_ids = HandleAnnexation(m_empires, m_universe.Objects(), context.current_turn,
+                                        invaded_planet_ids);
+
     DebugLogger() << "ServerApp::ProcessTurns gifting";
-    auto gifted_ids = HandleGifting(m_empires, m_universe.Objects(), context.current_turn,
-                                    invaded_planet_ids, invading_ship_ids, colonizing_ship_ids);
+    auto gifted_ids = HandleGifting(m_empires, m_universe.Objects(), context.current_turn, invaded_planet_ids,
+                                    invading_ship_ids, colonizing_ship_ids, annexed_ids);
 
     DebugLogger() << "ServerApp::ProcessTurns scrapping";
     HandleScrapping(m_universe, m_empires, invading_ship_ids, invaded_planet_ids,
-                    colonizing_ship_ids, colonized_planet_ids, gifted_ids);
+                    colonizing_ship_ids, colonized_planet_ids, gifted_ids, annexed_ids);
 
 
     DebugLogger() << "ServerApp::ProcessTurns movement";
