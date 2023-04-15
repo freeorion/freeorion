@@ -466,8 +466,10 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
+    /** Returns map from planet ID to issued annex orders affecting it. There
+      * should be only one ship colonzing each planet for this client. */
     auto PendingAnnexationOrders(const ScriptingContext& context) {
-        std::vector<int> retval;
+        std::vector<std::pair<int, int>> retval;
 
         const ClientApp* app = ClientApp::GetApp();
         if (!app)
@@ -476,13 +478,13 @@ namespace {
         for (const auto& [order_id, order] : app->Orders()) {
             if (auto annex_order = std::dynamic_pointer_cast<AnnexOrder>(order)) {
                 const auto planet_id = annex_order->PlanetID();
-                retval.push_back(planet_id);
+                retval.emplace_back(planet_id, order_id);
             }
         }
-        // remove any duplicates
-        std::sort(retval.begin(), retval.end());
-        auto unique_it = std::unique(retval.begin(), retval.end());
-        retval.resize(static_cast<size_t>(std::distance(retval.begin(), unique_it)));
+        // remove any duplicates.  TODO: limit equality test to planet ID?
+        //std::sort(retval.begin(), retval.end());
+        //auto unique_it = std::unique(retval.begin(), retval.end());
+        //retval.resize(static_cast<size_t>(std::distance(retval.begin(), unique_it)));
         return retval;
     }
 
@@ -1777,7 +1779,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     const double total_costs = empire_annexations_cost + empire_adopted_policies_cost + this_planet_annexation_cost;
     const double available_ip = client_empire->ResourceStockpile(ResourceType::RE_INFLUENCE);
     const bool annexation_affordable = total_costs <= available_ip;
-    const bool annexable =        populated && !has_owner && !being_invaded && species && 
+    const bool annexable =        !being_annexed && populated && !has_owner && !being_invaded && species && 
                                   potentially_annexable && annexation_affordable;
 
 
@@ -1816,7 +1818,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     } else if (being_annexed && m_annex_button) {
         // show cancel annexation button
         AttachChild(m_annex_button);
-        m_annex_button->SetText(UserString("PL_CANCEL_ANNEX")); // TODO: tooltip indicating refundable IP?
+        m_annex_button->SetText(UserString("PL_CANCEL_ANNEX")); // TODO: indicate or tooltip indicating refundable IP?
     }
 
     if (can_colonize) {
@@ -2498,34 +2500,17 @@ void SidePanel::PlanetPanel::ClickAnnex() {
         return;
 
     const auto pending_annex_orders = PendingAnnexationOrders(context);
-    const auto it = std::find(pending_annex_orders.begin(), pending_annex_orders.end(), m_planet_id);
-
-
-    //if (it != pending_colonization_orders.end()) {
-    //    // cancel previous colonization order for planet
-    //    GGHumanClientApp::GetApp()->Orders().RescindOrder(it->second, context);
-
-    //} else {
-    //    // find colony ship and order it to colonize
-    //    auto ship = ValidSelectedColonyShip(SidePanel::SystemID(), context);
-    //    if (!ship)
-    //        ship = objects.getRaw<Ship>(AutomaticallyChosenColonyShip(m_planet_id, context));
-
-    //    if (!ship) {
-    //        ErrorLogger() << "SidePanel::PlanetPanel::ClickColonize valid colony not found!";
-    //        return;
-    //    }
-    //    if (!ship->OwnedBy(empire_id)) {
-    //        ErrorLogger() << "SidePanel::PlanetPanel::ClickColonize selected colony ship not owned by this client's empire.";
-    //        return;
-    //    }
-
-    //    CancelColonizeInvadeBombardScrapShipOrders(ship, context);
-
-    //    GGHumanClientApp::GetApp()->Orders().IssueOrder(
-    //        std::make_shared<ColonizeOrder>(empire_id, ship->ID(), m_planet_id, context),
-    //        context);
-    //}
+    const auto it = std::find_if(pending_annex_orders.begin(), pending_annex_orders.end(),
+                                 [this](const auto& order_id_planet_id)
+                                 { return m_planet_id == order_id_planet_id.first; });
+    if (it != pending_annex_orders.end()) {
+        // cancel previous annex order for planet
+        GGHumanClientApp::GetApp()->Orders().RescindOrder(it->second, context);
+    } else {
+        GGHumanClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<AnnexOrder>(empire_id, m_planet_id, context),
+            context);
+    }
     OrderButtonChangedSignal(m_planet_id);
 }
 
@@ -2700,6 +2685,7 @@ void SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot(GG::DropDownList:
 void SidePanel::PlanetPanel::EnableOrderIssuing(bool enable) {
     m_order_issuing_enabled = enable;
 
+    m_annex_button->Disable(!enable);
     m_colonize_button->Disable(!enable);
     m_invade_button->Disable(!enable);
     m_bombard_button->Disable(!enable);
