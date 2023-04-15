@@ -796,7 +796,7 @@ void AnnexOrder::ExecuteImpl(ScriptingContext& context) const {
 
     ObjectMap& objects{context.ContextObjects()};
     if (auto* planet = objects.getRaw<Planet>(m_planet))
-        planet->SetIsAboutToBeAnnexed(true); // TODO: need to track which empire is annexing the planet...
+        planet->SetIsOrderAnnexedByEmpire(EmpireID());
 }
 
 bool AnnexOrder::UndoImpl(ScriptingContext& context) const {
@@ -808,7 +808,7 @@ bool AnnexOrder::UndoImpl(ScriptingContext& context) const {
         return false;
     }
 
-    planet->SetIsAboutToBeAnnexed(false);
+    planet->ResetBeingAnnxed();
 
     return true;
 }

@@ -905,10 +905,10 @@ void serialize(Archive& ar, Planet& obj, unsigned int const version)
     }
     if (Archive::is_loading::value && version < 6) {
         obj.m_turn_last_annexed = INVALID_GAME_TURN;
-        obj.m_is_about_to_be_annexed = false;
+        obj.m_ordered_annexed_by_empire_id = ALL_EMPIRES;
     } else {
         ar  & make_nvp("m_turn_last_annexed", obj.m_turn_last_annexed)
-            & make_nvp("m_is_about_to_be_annexed", obj.m_is_about_to_be_annexed);
+            & make_nvp("m_ordered_annexed_by_empire_id", obj.m_ordered_annexed_by_empire_id);
     }
     ar  & make_nvp("m_turn_last_colonized", obj.m_turn_last_colonized);
     ar  & make_nvp("m_turn_last_conquered", obj.m_turn_last_conquered);

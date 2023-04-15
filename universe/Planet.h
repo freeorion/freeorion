@@ -103,7 +103,7 @@ public:
 
     [[nodiscard]] const auto& BuildingIDs() const noexcept          { return m_buildings; }
 
-    [[nodiscard]] bool IsAboutToBeAnnexed() const noexcept          { return m_is_about_to_be_annexed; }
+    [[nodiscard]] bool IsAboutToBeAnnexed() const noexcept          { return m_ordered_annexed_by_empire_id != ALL_EMPIRES; }
     [[nodiscard]] bool IsAboutToBeColonized() const noexcept        { return m_is_about_to_be_colonized; }
     [[nodiscard]] bool IsAboutToBeInvaded() const noexcept          { return m_is_about_to_be_invaded; }
     [[nodiscard]] bool IsAboutToBeBombarded() const noexcept        { return m_is_about_to_be_bombarded; }
@@ -148,8 +148,8 @@ public:
     void ResetIsAboutToBeColonized();       ///< Called after colonization, to reset the number of prospective colonizers to 0
     void SetIsAboutToBeInvaded(bool b);     ///< Marks planet as being invaded or not, depending on whether \a b is true or false
     void ResetIsAboutToBeInvaded();         ///< Marks planet as not being invaded
-    void SetIsAboutToBeAnnexed(bool b);
-    void ResetIsAboutToBeAnnxed();
+    void SetIsOrderAnnexedByEmpire(int empire_id);
+    void ResetBeingAnnxed();
     void SetIsAboutToBeBombarded(bool b);   ///< Marks planet as being bombarded or not, depending on whether \a b is true or false
     void ResetIsAboutToBeBombarded();       ///< Marks planet as not being bombarded
     void SetGiveToEmpire(int empire_id);    ///< Marks planet to be given to empire
@@ -210,7 +210,8 @@ private:
 
     std::string m_surface_texture;  // intentionally not serialized; set by local effects
 
-    bool        m_is_about_to_be_annexed = false;
+    int         m_ordered_annexed_by_empire_id = ALL_EMPIRES;
+
     bool        m_is_about_to_be_colonized = false;
     bool        m_is_about_to_be_invaded = false;
     bool        m_is_about_to_be_bombarded = false;
