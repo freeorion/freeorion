@@ -121,12 +121,12 @@ void Planet::Copy(const Planet& copied_planet, const Universe& universe, int emp
             this->m_last_turn_focus_changed_turn_initial =  copied_planet.m_last_turn_focus_changed_turn_initial;
 
             if (vis >= Visibility::VIS_FULL_VISIBILITY) {
-                this->m_is_about_to_be_annexed =    copied_planet.m_is_about_to_be_annexed;
-                this->m_is_about_to_be_colonized =  copied_planet.m_is_about_to_be_colonized;
-                this->m_is_about_to_be_invaded   =  copied_planet.m_is_about_to_be_invaded;
-                this->m_is_about_to_be_bombarded =  copied_planet.m_is_about_to_be_bombarded;
-                this->m_ordered_given_to_empire_id =copied_planet.m_ordered_given_to_empire_id;
-                this->m_last_turn_attacked_by_ship= copied_planet.m_last_turn_attacked_by_ship;
+                this->m_ordered_annexed_by_empire_id = copied_planet.m_ordered_annexed_by_empire_id;
+                this->m_is_about_to_be_colonized =     copied_planet.m_is_about_to_be_colonized;
+                this->m_is_about_to_be_invaded   =     copied_planet.m_is_about_to_be_invaded;
+                this->m_is_about_to_be_bombarded =     copied_planet.m_is_about_to_be_bombarded;
+                this->m_ordered_given_to_empire_id =   copied_planet.m_ordered_given_to_empire_id;
+                this->m_last_turn_attacked_by_ship=    copied_planet.m_last_turn_attacked_by_ship;
             } else {
                 // copy system name if at partial visibility, as it won't be copied
                 // by UniverseObject::Copy unless at full visibility, but players
@@ -182,8 +182,8 @@ std::string Planet::Dump(uint8_t ntabs) const {
         ++it;
         retval.append(std::to_string(building_id)).append(it == m_buildings.end() ? "" : ", ");
     }
-    if (m_is_about_to_be_annexed)
-        retval.append(" (About to be Annexed)");
+    if (m_ordered_annexed_by_empire_id != ALL_EMPIRES)
+        retval.append(" (About to be Annexed by ").append(std::to_string(m_ordered_annexed_by_empire_id)).append(")");
     if (m_is_about_to_be_colonized)
         retval.append(" (About to be Colonized)");
     if (m_is_about_to_be_invaded)
@@ -703,7 +703,7 @@ void Planet::Reset(ObjectMap& objects) {
     //m_turn_last_annexed left unchanged
     //m_turn_last_colonized left unchanged
     //m_turn_last_conquered left unchanged
-    m_is_about_to_be_annexed = false;
+    m_ordered_annexed_by_empire_id = ALL_EMPIRES;
     m_is_about_to_be_colonized = false;
     m_is_about_to_be_invaded = false;
     m_is_about_to_be_bombarded = false;
@@ -875,7 +875,7 @@ bool Planet::Colonize(int empire_id, std::string species_name, double population
                 continue;
             building->Reset();
         }
-        m_is_about_to_be_annexed = false;
+        m_ordered_annexed_by_empire_id = ALL_EMPIRES;
         m_is_about_to_be_colonized = false;
         m_is_about_to_be_invaded = false;
         m_is_about_to_be_bombarded = false;
@@ -925,15 +925,17 @@ bool Planet::Colonize(int empire_id, std::string species_name, double population
     return true;
 }
 
-void Planet::SetIsAboutToBeAnnexed(bool b) {
-    bool initial_status = m_is_about_to_be_annexed;
-    if (b == initial_status) return;
-    m_is_about_to_be_annexed = b;
+void Planet::SetIsOrderAnnexedByEmpire(int empire_id) {
+    const auto initial_empire = m_ordered_annexed_by_empire_id;
+    if (empire_id == initial_empire)
+        return;
+
+    m_ordered_annexed_by_empire_id = empire_id;
     StateChangedSignal();
 }
 
-void Planet::ResetIsAboutToBeAnnxed()
-{ SetIsAboutToBeAnnexed(false); }
+void Planet::ResetBeingAnnxed()
+{ SetIsOrderAnnexedByEmpire(ALL_EMPIRES); }
 
 void Planet::SetIsAboutToBeColonized(bool b) {
     bool initial_status = m_is_about_to_be_colonized;
