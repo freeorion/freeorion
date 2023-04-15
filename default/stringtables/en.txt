@@ -7790,6 +7790,18 @@ The population of %planet% has died out entirely!
 SITREP_PLANET_DEPOPULATED_LABEL
 Planet Destroyed
 
+SITREP_PLANET_ANNEXED
+%planet% has been annexed by %empire%.
+
+SITREP_PLANET_ANNEXED_LABEL
+Neutral Planet Annexed
+
+SITREP_PLANET_ANNEXED_FROM_OTHER_EMPIRE
+%planet% has been annexed by %empire% from %empire%.
+
+SITREP_PLANET_ANNEXED_FROM_OTHER_EMPIRE_LABEL
+Empire Planet Annexed
+
 SITREP_PLANET_COLONIZED
 %planet% has been colonized with %species%.
 
