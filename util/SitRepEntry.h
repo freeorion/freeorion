@@ -69,6 +69,7 @@ private:
 [[nodiscard]] FO_COMMON_API SitRepEntry CreateCombatDestroyedObjectSitRep(
     const UniverseObject* obj, int combat_system_id, int empire_id, int current_turn);
 [[nodiscard]] SitRepEntry               CreatePlanetDepopulatedSitRep(int planet_id, int current_turn);
+[[nodiscard]] FO_COMMON_API SitRepEntry CreatePlanetAnnexedSitRep(int planet_id, int original_owner_id, int annexer_empire_id, int current_turn);
 [[nodiscard]] FO_COMMON_API SitRepEntry CreatePlanetColonizedSitRep(int planet_id, std::string species, int current_turn);
 [[nodiscard]] FO_COMMON_API SitRepEntry CreatePlanetOutpostedSitRep(int planet_id, int current_turn);
 [[nodiscard]] FO_COMMON_API SitRepEntry CreatePlanetEstablishFailedSitRep(int planet_id, int ship_id, int current_turn);
