@@ -18,17 +18,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include <boost/version.hpp>
-#if BOOST_VERSION >= 107900 && defined(_MSC_VER)
-#include <cmath>
-namespace boost::core {
-    // workaround for error in boost/lexical_cast/detail/inf_nan.hpp : error C2039: '_copysign': is not a member of 'boost::core'
-    // this seems to occur because the Python pyconfig.h #defines copysign as _copysign
-    inline float _copysign(float x, float y)
-    { return std::copysignf(x, y); }
-}
-#endif
-
+#include "../../util/boost_fix.h"
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/find_iterator.hpp>

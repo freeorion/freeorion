@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+#include "../util/boost_fix.h"
 #include <boost/container/flat_map.hpp>
 #include <boost/signals2/signal.hpp>
 #include <boost/thread/shared_mutex.hpp>

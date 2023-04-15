@@ -4,6 +4,7 @@
 
 #include <string>
 #include <array>
+#include "boost_fix.h"
 #include <boost/log/sources/global_logger_storage.hpp>
 #include <boost/log/sources/severity_channel_logger.hpp>
 #include <boost/log/utility/manipulators/add_value.hpp>

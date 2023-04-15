@@ -7,6 +7,7 @@
 #   define FO_PARSE_API
 #endif
 
+#include "../util/boost_fix.h"
 #include <boost/filesystem/path.hpp>
 #include <boost/uuid/uuid.hpp>
 

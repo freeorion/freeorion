@@ -1,9 +1,10 @@
 #include "CommonWrappers.h"
 
+#include "../util/boost_fix.h"
 #include <string>
-#include <boost/python.hpp>
 #include "../util/Directories.h"
 #include "../util/OptionsDB.h"
+#include <boost/python.hpp>
 
 namespace py = boost::python;
 
