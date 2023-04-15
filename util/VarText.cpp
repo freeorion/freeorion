@@ -39,7 +39,7 @@ const ShipHull*     GetShipHull(std::string_view name);
 const ShipPart*     GetShipPart(std::string_view name);
 
 namespace {
-    constexpr int ToIntCX(std::string_view sv, int default_result = -1) {
+    constexpr int32_t ToIntCX(std::string_view sv, int default_result = -1) {
         if (sv.empty())
             return default_result;
 
@@ -57,12 +57,12 @@ namespace {
 
         retval *= (is_negative ? -1 : 1);
 
-        constexpr int64_t max_int = std::numeric_limits<int>::max();
-        constexpr int64_t min_int = std::numeric_limits<int>::min();
+        constexpr int32_t max_int = std::numeric_limits<int32_t>::max();
+        constexpr int32_t min_int = std::numeric_limits<int32_t>::min();
 
         return (retval > max_int) ? max_int :
             (retval < min_int) ? min_int :
-            retval;
+            static_cast<int32_t>(retval);
     }
     static_assert(ToIntCX("2147483647") == 2147483647);
     static_assert(ToIntCX("-104") == -104);
