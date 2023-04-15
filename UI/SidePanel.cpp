@@ -1743,7 +1743,6 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     const auto& planet_species_name = planet->SpeciesName();
     const Species* species = context.species.GetSpecies(planet_species_name); // may be nullptr
     const auto* annexation_condition = species ? species->AnnexationCondition() : nullptr;
-    const auto* annexation_cost_ref = species ? species->AnnexationCost() : nullptr;
 
 
     // calculate truth tables for planet colonization and invasion
