@@ -375,6 +375,9 @@ SitRepEntry CreatePlanetDepopulatedSitRep(int planet_id, int current_turn) {
     return sitrep;
 }
 
+SitRepEntry CreatePlanetAnnexedSitRep(int planet_id, int original_owner_id, int annexer_empire_id, int current_turn)
+{ return SitRepEntry{UserStringNop("SITREP_PLANET_ANNEXED"), current_turn + 1, "", "", true}; }
+
 SitRepEntry CreatePlanetColonizedSitRep(int planet_id, std::string species, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_PLANET_COLONIZED"),
