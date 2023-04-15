@@ -13,7 +13,6 @@
 #undef int64_t
 #endif
 
-
 const std::string MP_SAVE_FILE_EXTENSION = ".mps";
 const std::string SP_SAVE_FILE_EXTENSION = ".sav";
 

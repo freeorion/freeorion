@@ -1,6 +1,7 @@
 #ifndef __FreeOrion__Util__PythonCommon__
 #define __FreeOrion__Util__PythonCommon__
 
+#include "../util/boost_fix.h"
 #include <boost/python.hpp>
 
 #include "Export.h"

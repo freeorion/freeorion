@@ -1,6 +1,7 @@
 #ifndef _AppInterface_h_
 #define _AppInterface_h_
 
+#include "boost_fix.h"
 #include "Export.h"
 #include "../universe/Universe.h"
 #include "../network/Networking.h"

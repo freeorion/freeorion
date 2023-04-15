@@ -1,6 +1,8 @@
 #ifndef _MultiplayerCommon_h_
 #define _MultiplayerCommon_h_
 
+#include "boost_fix.h"
+
 #include "../universe/ConstantsFwd.h"
 #include "../universe/EnumsFwd.h"
 #include "../network/Networking.h"

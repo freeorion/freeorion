@@ -1,3 +1,4 @@
+#include "../util/boost_fix.h"
 #include <boost/mpl/vector.hpp>
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>

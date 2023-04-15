@@ -1,6 +1,7 @@
 #ifndef __FreeOrion__Python__PythonBase__
 #define __FreeOrion__Python__PythonBase__
 
+#include "../util/boost_fix.h"
 #include <boost/optional.hpp>
 #include <boost/python.hpp>
 #include <boost/python/dict.hpp>

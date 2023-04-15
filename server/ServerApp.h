@@ -3,6 +3,7 @@
 
 #include <set>
 #include <vector>
+#include "../util/boost_fix.h"
 #include <boost/circular_buffer.hpp>
 #include <boost/asio/high_resolution_timer.hpp>
 #include "ServerFramework.h"
