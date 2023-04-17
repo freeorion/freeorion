@@ -7789,6 +7789,12 @@ L'astronef %ship% n'a pas réussi à établir une colonie ou un avant-poste sur 
 SITREP_PLANET_ESTABLISH_FAILED_ARMED_LABEL
 Astronef échoue à s'établir sur une planète
 
+SITREP_PLANET_ESTABLISH_FAILED_NEUTRAL_ARMED
+L'astronef %ship% n'a pas réussi à établir une colonie ou un avant-poste sur la planète %planet% car des astronefs armés neutres se trouvent dans le système.
+
+SITREP_PLANET_ESTABLISH_FAILED_ARMED_NEUTRAL_LABEL
+Astronef échoue à s'établir sur une planète
+
 SITREP_OUTPOST_ABANDONED_PREPARATION
 L'avant-poste de la planète %planet% se prépare à être abandonné au tour %rawtext%.
 
