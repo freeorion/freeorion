@@ -36,6 +36,18 @@ jobs:
           mvc: '2019'
           generator-name: 'Visual Studio 16 2019'
           toolset-spec: 'v142'
+  build-windows-2022-cmake:
+    name: MSVS 2022 on Windows CMake
+    runs-on: windows-2022
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+      - name: Build with CMake 2022
+        uses: ./.github/actions/cmake-build
+        with:
+          mvc: '2022'
+          generator-name: 'Visual Studio 17 2022'
+          toolset-spec: 'v143'
       - name: Decrypt deploy SSH key
         if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
         run: bash .github/pre-deploy.sh
@@ -55,15 +67,3 @@ jobs:
           name: freeorion-binaries-win32-build-${{ github.run_number }}
           path: build/FreeOrion_*.zip
           retention-days: 7
-  build-windows-2022-cmake:
-    name: MSVS 2022 on Windows CMake
-    runs-on: windows-2022
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v3
-      - name: Build with CMake 2022
-        uses: ./.github/actions/cmake-build
-        with:
-          mvc: '2022'
-          generator-name: 'Visual Studio 17 2022'
-          toolset-spec: 'v143'
