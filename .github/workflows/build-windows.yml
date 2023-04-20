@@ -30,7 +30,10 @@ jobs:
     runs-on: windows-2019
     steps:
       - uses: actions/checkout@v3
+      - id: flags
+        run: python .github/helper_scripts/build_windows_flags.py
       - name: Build with CMake 2019
+        if: ${{ env.SHOULD_BUILD }}
         uses: ./.github/actions/cmake-build
         with:
           mvc: '2019'
@@ -42,26 +45,30 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
+      - id: flags
+        run: python .github/helper_scripts/build_windows_flags.py
       - name: Build with CMake 2022
+        if: ${{ env.SHOULD_BUILD }}
         uses: ./.github/actions/cmake-build
         with:
           mvc: '2022'
           generator-name: 'Visual Studio 17 2022'
           toolset-spec: 'v143'
-      - name: Decrypt deploy SSH key
-        if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
-        run: bash .github/pre-deploy.sh
-        env:
-          DEPLOY_SSH_PASSWORD: ${{ secrets.DEPLOY_SSH_PASSWORD }}
       - name: Generate binaries only
+        if: ${{ env.SHOULD_UPLOAD_WEEKLY_BUILD }} || ${{ env.SHOULD_UPLOAD_BINARIES }}
         run: |
           pushd build
           cpack -V -C Release -G ZIP -D CPACK_ARCHIVE_COMPONENT_INSTALL=ON -D CPACK_MONOLITHIC_INSTALL=OFF -D CPACK_COMPONENTS_ALL=binaries
+      - name: Decrypt deploy SSH key
+        if: ${{ env.SHOULD_UPLOAD_WEEKLY_BUILD }}
+        run: bash .github/pre-deploy.sh
+        env:
+          DEPLOY_SSH_PASSWORD: ${{ secrets.DEPLOY_SSH_PASSWORD }}
       - name: Upload weekly-test binaries only
-        if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
+        if: ${{ env.SHOULD_UPLOAD_WEEKLY_BUILD }}
         run: bash -c 'scp build/FreeOrion_*.zip o01eg@frs.sourceforge.net:/home/frs/project/freeorion/FreeOrion/Test/'
       - name: Upload binaries artefacts
-        if: github.ref == 'refs/heads/master'
+        if: ${{ env.SHOULD_UPLOAD_BINARIES }}
         uses: actions/upload-artifact@v3
         with:
           name: freeorion-binaries-win32-build-${{ github.run_number }}
