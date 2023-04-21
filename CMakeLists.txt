@@ -279,6 +279,8 @@ find_package(Boost ${MINIMUM_BOOST_VERSION}
         thread
     REQUIRED)
 
+message(STATUS "Boost version detected ${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}")
+
 find_package(Boost OPTIONAL_COMPONENTS python${Boost_PYTHON_SUFFIX})
 if(NOT Boost_PYTHON${Boost_PYTHON_SUFFIX}_FOUND)
     # try some strange boost installations
