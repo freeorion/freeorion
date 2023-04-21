@@ -51,18 +51,19 @@ void OrderSet::ApplyOrders(ScriptingContext& context) {
         if (order.second->Executed()) {
             DebugLogger() << "Order " << order.first << " already executed";
             ++already_executed_count;
-        } else {
-            try {
-                const auto order_empire_id = order.second->EmpireID();
-                const auto order_empire = context.GetEmpire(order_empire_id);
-                const auto source = order_empire->Source(context.ContextObjects());
-                ScriptingContext empire_context(source.get(), context);
-                order.second->Execute(empire_context);
-                ++executed_count;
-            } catch (const std::exception& e) {
-                ++failed_count;
-                ErrorLogger() << "Caught exception executing order " << order.first << ": " << e.what();
-            }
+            continue;
+        }
+
+        try {
+            const auto order_empire_id = order.second->EmpireID();
+            const auto order_empire = context.GetEmpire(order_empire_id);
+            const auto source = order_empire->Source(context.ContextObjects());
+            ScriptingContext empire_context(source.get(), context);
+            order.second->Execute(empire_context);
+            ++executed_count;
+        } catch (const std::exception& e) {
+            ++failed_count;
+            ErrorLogger() << "Caught exception executing order " << order.first << ": " << e.what();
         }
     }
     DebugLogger() << "OrderSet::ApplyOrders() successfully executed " << executed_count
