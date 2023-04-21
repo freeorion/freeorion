@@ -593,6 +593,24 @@ std::map<int, double> Planet::EmpireGroundCombatForces() const {
     return empire_troops;
 }
 
+double Planet::AnnexationCost(int empire_id, const ScriptingContext& context) const {
+    if (m_species_name.empty())
+        return 0.0;
+    const auto* species = context.species.GetSpecies(m_species_name);
+    if (!species)
+        return 0.0;
+    const auto* ac = species->AnnexationCost();
+    if (!ac)
+        return 0.0;
+    if (ac->ConstantExpr())
+        return ac->Eval();
+
+    const auto* source_for_empire = context.Empires().GetSource(empire_id, context.ContextObjects()).get();
+    ScriptingContext source_planet_context{source_for_empire, context};
+    source_planet_context.condition_local_candidate = this;
+    return ac->Eval(source_planet_context);
+}
+
 int Planet::TurnsSinceColonization(int current_turn) const {
     if (m_turn_last_colonized == INVALID_GAME_TURN)
         return 0;

@@ -108,6 +108,7 @@ public:
     [[nodiscard]] bool IsAboutToBeInvaded() const noexcept          { return m_is_about_to_be_invaded; }
     [[nodiscard]] bool IsAboutToBeBombarded() const noexcept        { return m_is_about_to_be_bombarded; }
     [[nodiscard]] int OrderedAnnexedByEmpire() const noexcept       { return m_ordered_annexed_by_empire_id; }
+    [[nodiscard]] double AnnexationCost(int empire_id, const ScriptingContext& context) const;
     [[nodiscard]] int OrderedGivenToEmpire() const noexcept         { return m_ordered_given_to_empire_id; }
     [[nodiscard]] int LastTurnAttackedByShip() const noexcept       { return m_last_turn_attacked_by_ship; }
     [[nodiscard]] int LastTurnColonized() const noexcept            { return m_turn_last_colonized; }
