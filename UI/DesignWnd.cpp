@@ -4214,17 +4214,17 @@ void DesignWnd::MainPanel::SetPart(const ShipPart* part, unsigned int slot,
         std::string original_part_name = original_part ? original_part->Name() : "";
 
         if (change_all_similar_parts) {
-            for (auto& slot : m_slots) {
+            for (auto& slot_control : m_slots) {
                 // skip incompatible slots
-                if (!part->CanMountInSlotType(slot->SlotType()))
+                if (!part->CanMountInSlotType(slot_control->SlotType()))
                     continue;
 
                 // skip different type parts
-                const auto replaced_part = slot->GetPart();
+                const auto replaced_part = slot_control->GetPart();
                 if (replaced_part && (replaced_part->Name() != original_part_name))
                     continue;
 
-                slot->SetPart(part);
+                slot_control->SetPart(part);
             }
         }
     }
