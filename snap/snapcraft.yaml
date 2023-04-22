@@ -1,6 +1,6 @@
 ---
 name: freeorion
-base: core20
+base: core22
 summary: turn-based space empire and galactic conquest (4X) computer game
 description: |
   FreeOrion is a free, open source, turn-based space empire and galactic
@@ -16,7 +16,7 @@ architectures:
 apps:
   freeorion:
     command: usr/bin/freeorion -S $SNAP_USER_COMMON/save
-    extensions: [gnome-3-38]
+    extensions: [gnome]
     plugs: [home, pulseaudio, opengl, network, screen-inhibit-control, browser-support, x11]
     desktop: usr/share/applications/org.freeorion.FreeOrion.desktop
     environment:
@@ -26,7 +26,7 @@ apps:
   freeorion-godot:
     # LD_LIBRARY_PATH=$SNAP/usr/lib/x86_64-linux-gnu/freeorion:$SNAP/usr/lib/x86_64-linux-gnu/:$SNAP/usr/lib/x86_64-linux-gnu/pulseaudio LIBGL_DRIVERS_PATH=$SNAP/usr/lib/x86_64-linux-gnu/dri godot3-runner   --resource.path $SNAP/usr/share/freeorion/default/ -S $SNAP_USER_COMMON/save
     command: usr/bin/godot3-runner --main-pack $SNAP/usr/share/freeorion/freeorion.pck --resource.path $SNAP/usr/share/freeorion/default/ -S $SNAP_USER_COMMON/save
-    extensions: [gnome-3-38]
+    extensions: [gnome]
     plugs: [home, pulseaudio, opengl, network, screen-inhibit-control, browser-support, x11]
     desktop: usr/share/applications/org.freeorion.FreeOrion.desktop
     environment:
@@ -94,7 +94,7 @@ parts:
       - dpkg-dev
       - git
       - libalut-dev
-      - libboost1.71-all-dev
+      - libboost1.74-all-dev
       - libfreetype6-dev
       - libgl1-mesa-dev
       - libglew-dev
@@ -113,18 +113,18 @@ parts:
       - libgl1-mesa-dri
       # - python3
       # - libpython3.8
-      - libboost-date-time1.71.0
-      - libboost-filesystem1.71.0
-      - libboost-iostreams1.71.0
-      - libboost-locale1.71.0
-      - libboost-log1.71.0
-      - libboost-python1.71.0
-      - libboost-regex1.71.0
-      - libboost-serialization1.71.0
-      - libboost-system1.71.0
-      - libboost-thread1.71.0
-      - libboost-test1.71.0
-      - libglew2.1
+      - libboost-date-time1.74.0
+      - libboost-filesystem1.74.0
+      - libboost-iostreams1.74.0
+      - libboost-locale1.74.0
+      - libboost-log1.74.0
+      - libboost-python1.74.0
+      - libboost-regex1.74.0
+      - libboost-serialization1.74.0
+      - libboost-system1.74.0
+      - libboost-thread1.74.0
+      - libboost-test1.74.0
+      - libglew2.2
       - libglu1-mesa
       - libopenal1
       - libsdl2-2.0-0
@@ -133,4 +133,5 @@ parts:
       - libpng16-16
       - libfreetype6
       - godot3-runner
+      - libenet7
 
