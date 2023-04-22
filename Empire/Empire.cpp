@@ -2018,8 +2018,8 @@ namespace {
 std::vector<std::string> Empire::CheckResearchProgress(const ScriptingContext& context) {
     SanitizeResearchQueue(m_research_queue);
 
-    float spent_rp{0.0f};
-    float total_rp_available = m_research_pool.TotalAvailable();
+    float spent_rp = 0.0f;
+    const float total_rp_available = m_research_pool.TotalAvailable();
 
     // process items on queue
     std::vector<std::string> to_erase_from_queue_and_grant_next_turn;
@@ -2030,7 +2030,7 @@ std::vector<std::string> Empire::CheckResearchProgress(const ScriptingContext& c
             continue;
         }
         float& progress = m_research_progress[elem.name];
-        float tech_cost = tech->ResearchCost(m_id, context);
+        const float tech_cost = tech->ResearchCost(m_id, context);
         progress += elem.allocated_rp / std::max(EPSILON, tech_cost);
         spent_rp += elem.allocated_rp;
         if (tech_cost - EPSILON <= progress * tech_cost) {
@@ -2081,22 +2081,22 @@ std::vector<std::string> Empire::CheckResearchProgress(const ScriptingContext& c
 
         //DebugLogger() << "extra tech: " << cost_tech.second << " needs: " << cost_tech.first << " more RP to finish";
 
-        float RPs_per_turn_limit = tech->PerTurnCost(m_id, context);
-        float progress_fraction = m_research_progress[tech_name];
+        const float RPs_per_turn_limit = tech->PerTurnCost(m_id, context);
+        const float progress_fraction = m_research_progress[tech_name];
 
-        float progress_fraction_left = 1.0f - progress_fraction;
-        float max_progress_per_turn = RPs_per_turn_limit / static_cast<float>(tech_cost);
-        float progress_possible_with_available_rp = rp_left_to_spend / static_cast<float>(tech_cost);
+        const float progress_fraction_left = 1.0f - progress_fraction;
+        const float max_progress_per_turn = RPs_per_turn_limit / static_cast<float>(tech_cost);
+        const float progress_possible_with_available_rp = rp_left_to_spend / static_cast<float>(tech_cost);
 
         //DebugLogger() << "... progress left: " << progress_fraction_left
         //              << " max per turn: " << max_progress_per_turn
         //              << " progress possible with available rp: " << progress_possible_with_available_rp;
 
-        float progress_increase = std::min(
+        const float progress_increase = std::min(
             progress_fraction_left,
             std::min(max_progress_per_turn, progress_possible_with_available_rp));
 
-        float consumed_rp = progress_increase * static_cast<float>(tech_cost);
+        const float consumed_rp = progress_increase * static_cast<float>(tech_cost);
 
         m_research_progress[tech_name] += progress_increase;
         rp_left_to_spend -= consumed_rp;
