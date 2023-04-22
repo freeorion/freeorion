@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: [ubuntu-22.10, fedora-32, debian-stable, manjaro] # fedora-rawhide
+        image: [ubuntu-22.10, fedora-33, debian-stable, manjaro] # fedora-rawhide
     env:
       CACHE_NAME: linux
     steps:
@@ -102,7 +102,7 @@ jobs:
         run: |
           docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -e FO_TEST_HOSTLESS_GAMES=1 -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake --build . --target unittest
       - name: Run godot
-        if: ${{ matrix.image != 'fedora-32' && matrix.image != 'manjaro'  }} # old Godot 3.1 in Fedora 32 && no headless mode
+        if: ${{ matrix.image != 'manjaro'  }}
         run: |
           docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/ ${{ steps.prep.outputs.tagged_image }} /freeorion/build/godot --disable-render-loop --verbose -s --path godot addons/gut/gut_cmdln.gd -gdir=res://test/ -ginclude_subdirs -gexit
       - name: Run godot
