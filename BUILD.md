@@ -24,7 +24,7 @@ Required Software Dependencies
 
 FreeOrion depends on the following software to build:
 
-  * [Visual Studio] - 2019 or 2022 for Windows Desktop ; Windows only
+  * [Visual Studio] - 2022 for Windows Desktop ; Windows only
   * [Xcode] - 10.1 or later ; MacOS only
   * [CMake] - 3.8 or 3.16 (Windows) or later
   * A C++17 compliant compiler - Other Operating Systems
@@ -116,11 +116,10 @@ maintained Visual Studio Project is used for building.
 ### Windows (Visual Studio)
 
 To build FreeOrion open the `FreeOrion.sln` project solution within
-`_source directory_\msvc2019` or `_source directory_\msvc2022` with
-Visual Studio.  Make sure that the platform configuration (Win32 or
-x64) matches the version of the FreeOrion SDK that you downloaded.
-Compile the whole project by selecting the `Build` -> `Build Solution`
-menu entry.
+`_source directory_\msvc2022` with Visual Studio.  Make sure that the
+platform configuration (Win32 or x64) matches the version of the
+FreeOrion SDK that you downloaded. Compile the whole project by
+selecting the `Build` -> `Build Solution` menu entry.
 
 After the build finished successfully the binaries can be found within
 the `freeorion-project/FreeOrion` directory.
@@ -140,7 +139,7 @@ cd build
 Execute cmake to generate a Visual Studio solution, eg:
 
 ```
-cmake .. -G "Visual Studio 16 2019" -T v141 -A Win32 -DBUILD_TESTING=On -DCMAKE_C_FLAGS=/MP -DCMAKE_CXX_FLAGS=/MP
+cmake .. -G "Visual Studio 17 2022" -T v143 -A x64 -DBUILD_TESTING=On -DCMAKE_C_FLAGS=/MP -DCMAKE_CXX_FLAGS=/MP
 ```
 
 Then run the build:
