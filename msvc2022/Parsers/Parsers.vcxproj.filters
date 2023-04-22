@@ -174,14 +174,14 @@
     <ClCompile Include="..\..\parse\PythonParser.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\parse\ValueRefPythonParser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\parse\ConditionPythonParser.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\parse</Filter>
     </ClCompile>
     <ClCompile Include="..\..\parse\SourcePythonParser.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\ValueRefPythonParser.cpp">
+      <Filter>Source Files\parse</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

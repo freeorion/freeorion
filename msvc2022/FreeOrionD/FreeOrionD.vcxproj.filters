@@ -205,7 +205,7 @@
     </ClInclude>
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="..\..\python\PythonBase.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\python</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -259,7 +259,7 @@
     </ClCompile>
     <ClCompile Include="StdAfx.cpp" />
     <ClCompile Include="..\..\python\PythonBase.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\python</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
