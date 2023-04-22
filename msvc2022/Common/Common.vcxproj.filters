@@ -42,6 +42,12 @@
     <Filter Include="Source Files\cmake">
       <UniqueIdentifier>{6ffe6d1e-98f6-4958-9efb-3ceb8ff2c1c0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\python">
+      <UniqueIdentifier>{cb02b97a-fd06-4cdd-8805-0362cae1f5ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\python">
+      <UniqueIdentifier>{3fba5f7a-f014-4988-9efc-8932ead6f27c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\util\Serialize.ipp">
@@ -303,7 +309,7 @@
       <Filter>Header Files\util</Filter>
     </ClInclude>
     <ClInclude Include="..\..\util\PythonCommon.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\python</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -533,11 +539,11 @@
     <ClCompile Include="..\..\universe\ShipHull.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\util\PythonCommon.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\util\SerializeSpecies.cpp">
       <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\PythonCommon.cpp">
+      <Filter>Source Files\python</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
