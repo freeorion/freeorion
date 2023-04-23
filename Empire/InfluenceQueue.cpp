@@ -2,6 +2,8 @@
 
 #include "Empire.h"
 #include "Government.h"
+#include "../universe/Planet.h"
+#include "../universe/Species.h"
 #include "../universe/ValueRef.h"
 #include "../util/AppInterface.h"
 #include "../util/GameRules.h"
@@ -17,55 +19,7 @@ namespace {
     //void AddRules(GameRules& rules)
     //{}
     //bool temp_bool = RegisterGameRules(&AddRules);
-
-    //float CalculateNewInfluenceStockpile(int empire_id, float starting_stockpile, float project_transfer_to_stockpile,
-    //                                     float available_IP, float allocated_IP, float allocated_stockpile_IP)
-    //{
-    //    TraceLogger() << "CalculateNewInfluenceStockpile for empire " << empire_id;
-    //    const Empire* empire = GetEmpire(empire_id); // TODO: get from input context?
-    //    if (!empire) {
-    //        ErrorLogger() << "CalculateNewInfluenceStockpile() passed null empire.  doing nothing.";
-    //        return 0.0f;
-    //    }
-    //    TraceLogger() << " ... stockpile used: " << allocated_stockpile_IP;
-    //    float new_contributions = available_IP - allocated_IP;
-    //    return starting_stockpile + new_contributions + project_transfer_to_stockpile - allocated_stockpile_IP;
-    //}
-
     const InfluenceQueue::Element EMPTY_ELEMENT;
-
-    /** Sets the allocated_IP value for each Element in the passed
-      * InfluenceQueue \a queue. Elements are allocated IP based on their need,
-      * the limits they can be given per turn, and the amount available to the
-      * empire. Also checks if elements will be completed this turn. */
-    //void SetInfluenceQueueElementSpending(
-    //    float available_IP, float available_stockpile,
-    //    InfluenceQueue::QueueType& queue,
-    //    float& allocated_IP, float& allocated_stockpile_IP,
-    //    int& projects_in_progress, bool simulating)
-    //{
-    //    projects_in_progress = 0;
-    //    allocated_IP = 0.0f;
-    //    allocated_stockpile_IP = 0.0f;
-
-    //    float dummy_IP_source = 0.0f;
-    //    float stockpile_transfer = 0.0f;
-
-    //    //DebugLogger() << "queue size: " << queue.size();
-    //    int i = 0;
-    //    for (auto& queue_element : queue) {
-    //        queue_element.allocated_ip = 0.0f;  // default, to be updated below...
-    //        if (queue_element.paused) {
-    //            TraceLogger() << "allocation: " << queue_element.allocated_ip
-    //                          << "  to: " << queue_element.name
-    //                          << "  due to it being paused";
-    //            ++i;
-    //            continue;
-    //        }
-
-    //        ++i;
-    //    }
-    //}
 }
 
 
@@ -119,6 +73,7 @@ void InfluenceQueue::Update(const ScriptingContext& context) {
     const float available_IP = empire->ResourceOutput(ResourceType::RE_INFLUENCE);
     const float stockpiled_IP = empire->ResourceStockpile(ResourceType::RE_INFLUENCE);
 
+
     float spending_on_policy_adoption_ip = 0.0f;
     for (const auto& [policy_name, adoption_turn] : empire->TurnsPoliciesAdopted()) {
         if (adoption_turn != context.current_turn)
@@ -131,7 +86,17 @@ void InfluenceQueue::Update(const ScriptingContext& context) {
         spending_on_policy_adoption_ip += policy->AdoptionCost(m_empire_id, context);
     }
 
-    m_total_IPs_spent = spending_on_policy_adoption_ip;
+
+    const auto annexed_by_this_empire = [this](const Planet& planet)
+    { return planet.OrderedAnnexedByEmpire() == m_empire_id; };
+
+    float spending_on_annexation = 0.0f;
+    // transform_reduce
+    for (const auto* planet : context.ContextObjects().findRaw<Planet>(annexed_by_this_empire))
+        spending_on_annexation += planet->AnnexationCost(m_empire_id, context);
+
+
+    m_total_IPs_spent = spending_on_policy_adoption_ip + spending_on_annexation;
 
     m_expected_new_stockpile_amount = stockpiled_IP + available_IP - m_total_IPs_spent;
 
