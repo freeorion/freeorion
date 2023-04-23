@@ -44,17 +44,17 @@ struct FO_COMMON_API ResearchQueue {
     [[nodiscard]] bool                     InQueue(const std::string& tech_name) const;///< Returns true iff \a tech is in this queue.
     [[nodiscard]] bool                     Paused(const std::string& tech_name) const; ///< Returns true iff \a tech is in this queue and paused.
     [[nodiscard]] bool                     Paused(int idx) const;                      ///< Returns true iff there are at least \a idx - 1 items in the queue and item with index \a idx is paused
-    [[nodiscard]] int                      ProjectsInProgress() const;                 ///< Returns the number of research projects currently (perhaps partially) funded.
-    [[nodiscard]] float                    TotalRPsSpent() const;                      ///< Returns the number of RPs currently spent on the projects in this queue.
-    [[nodiscard]] int                      EmpireID() const { return m_empire_id; }
+    [[nodiscard]] int                      ProjectsInProgress() const noexcept { return m_projects_in_progress; }
+    [[nodiscard]] float                    TotalRPsSpent() const noexcept { return m_total_RPs_spent; }
+    [[nodiscard]] int                      EmpireID() const noexcept { return m_empire_id; }
     [[nodiscard]] std::vector<std::string> AllEnqueuedProjects() const;
     [[nodiscard]] std::string              Dump() const;
 
     // STL container-like interface
-    [[nodiscard]] bool           empty() const;
-    [[nodiscard]] unsigned int   size() const;
-    [[nodiscard]] const_iterator begin() const;
-    [[nodiscard]] const_iterator end() const;
+    [[nodiscard]] bool           empty() const noexcept { return m_queue.size() > 0; }
+    [[nodiscard]] unsigned int   size() const noexcept { return m_queue.size(); }
+    [[nodiscard]] const_iterator begin() const noexcept { return m_queue.begin(); }
+    [[nodiscard]] const_iterator end() const noexcept { return m_queue.end(); }
     [[nodiscard]] const_iterator find(const std::string& tech_name) const;
     [[nodiscard]] const Element& operator[](int i) const;
 
@@ -71,8 +71,8 @@ struct FO_COMMON_API ResearchQueue {
     void                   push_back(const std::string& tech_name, bool paused = false);
     void                   insert(iterator it, const std::string& tech_name, bool paused = false);
     void                   erase(iterator it);
-    [[nodiscard]] iterator begin();
-    [[nodiscard]] iterator end();
+    [[nodiscard]] iterator begin() noexcept { return m_queue.begin(); }
+    [[nodiscard]] iterator end() noexcept { return m_queue.end(); }
     [[nodiscard]] iterator find(const std::string& tech_name);
     void                   clear();
 
