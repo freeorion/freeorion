@@ -2,10 +2,10 @@ name: "CodeQL C++"
 
 on:
   push:
-    branches: [ master ]
+    branches: [ 'master' ]
   pull_request:
-    # The branches below must be a subset of the branches above
-    branches: [ master ]
+    branches: [ 'master' ]
+    types: ['opened', 'reopened', 'synchronize']
     paths-ignore:
       - 'msvc*/**'
       - 'check/**'

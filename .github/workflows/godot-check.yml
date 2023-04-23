@@ -2,9 +2,12 @@ name: GDScript linters and formatting
 
 on:
   push:
+    branches: [ 'master' ]
     paths:
       - 'godot/**.gd'
   pull_request:
+    branches: [ 'master' ]
+    types: ['opened', 'reopened', 'synchronize']
     paths:
       - 'godot/**.gd'
 

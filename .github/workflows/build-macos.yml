@@ -2,6 +2,7 @@ name: "MacOS"
 
 on:
   push:
+    branches: [ 'master', 'weekly-test-builds' ]
     paths-ignore:
       - 'msvc*/**'
       - 'check/**'
@@ -13,6 +14,8 @@ on:
       - 'default/**'
       - 'test-scripting/**'
   pull_request:
+    branches: [ 'master' ]
+    types: ['opened', 'reopened', 'synchronize']
     paths-ignore:
       - 'msvc*/**'
       - 'check/**'
