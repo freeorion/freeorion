@@ -81,13 +81,11 @@ std::string ResearchQueue::Element::Dump() const {
     return retval.str();
 }
 
-bool ResearchQueue::InQueue(const std::string& tech_name) const {
-    return std::count_if(m_queue.begin(), m_queue.end(),
-                         [tech_name](const Element& e){ return e.name == tech_name; });
-}
+bool ResearchQueue::InQueue(const std::string& tech_name) const
+{ return std::any_of(m_queue.begin(), m_queue.end(), [&tech_name](const Element& e){ return e.name == tech_name; }); }
 
 bool ResearchQueue::Paused(const std::string& tech_name) const {
-    auto it = find(tech_name);
+    const auto it = find(tech_name);
     if (it == end())
         return false;
     return it->paused;
@@ -99,50 +97,28 @@ bool ResearchQueue::Paused(int idx) const {
     return std::next(begin(), idx)->paused;
 }
 
-int ResearchQueue::ProjectsInProgress() const
-{ return m_projects_in_progress; }
-
-float ResearchQueue::TotalRPsSpent() const
-{ return m_total_RPs_spent; }
-
 std::vector<std::string> ResearchQueue::AllEnqueuedProjects() const {
     std::vector<std::string> retval;
-    for (const auto& entry : m_queue)
-        retval.push_back(entry.name);
+    retval.reserve(m_queue.size());
+    std::transform(m_queue.begin(), m_queue.end(), std::back_inserter(retval),
+                   [](const auto& elem) { return elem.name; });
     return retval;
 }
 
 std::string ResearchQueue::Dump() const {
     std::stringstream retval;
     retval << "ResearchQueue:\n";
-    float spent_rp{0.0f};
-    for (const auto& entry : m_queue) {
-        retval << " ... " << entry.Dump();
-        spent_rp += entry.allocated_rp;
+    float spent_rp = 0.0f;
+    for (const auto& elem : m_queue) {
+        retval << " ... " << elem.Dump();
+        spent_rp += elem.allocated_rp;
     }
     retval << "ResearchQueue Total Spent RP: " << spent_rp;
     return retval.str();
 }
 
-bool ResearchQueue::empty() const
-{ return !m_queue.size(); }
-
-unsigned int ResearchQueue::size() const
-{ return m_queue.size(); }
-
-ResearchQueue::const_iterator ResearchQueue::begin() const
-{ return m_queue.begin(); }
-
-ResearchQueue::const_iterator ResearchQueue::end() const
-{ return m_queue.end(); }
-
-ResearchQueue::const_iterator ResearchQueue::find(const std::string& tech_name) const {
-    for (auto it = begin(); it != end(); ++it) {
-        if (it->name == tech_name)
-            return it;
-    }
-    return end();
-}
+ResearchQueue::const_iterator ResearchQueue::find(const std::string& tech_name) const
+{ return std::find_if(begin(), end(), [&tech_name](const auto& elem) { return elem.name == tech_name; }); }
 
 const ResearchQueue::Element& ResearchQueue::operator[](int i) const {
     if (i < 0 || i >= static_cast<int>(m_queue.size()))
@@ -360,12 +336,6 @@ ResearchQueue::iterator ResearchQueue::find(const std::string& tech_name) {
     }
     return end();
 }
-
-ResearchQueue::iterator ResearchQueue::begin()
-{ return m_queue.begin(); }
-
-ResearchQueue::iterator ResearchQueue::end()
-{ return m_queue.end(); }
 
 void ResearchQueue::clear() {
     m_queue.clear();
