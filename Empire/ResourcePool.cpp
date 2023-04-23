@@ -140,8 +140,8 @@ void ResourcePool::Update(const ObjectMap& objects) {
     // of objects.  If no group contains the object, place the object in its own
     // single-object group.
     for (auto* obj : objects.findRaw<const UniverseObject>(m_object_ids)) {
-        int object_id = obj->ID();
-        int object_system_id = obj->SystemID();
+        const int object_id = obj->ID();
+        const int object_system_id = obj->SystemID();
         // can't generate resources when not in a system
         if (object_system_id == INVALID_OBJECT_ID)
             continue;
