@@ -31,11 +31,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - id: flags
-        run: python .github/helper_scripts/set_flags.py
-        with:
-          - SHOULD_BUILD
-          - SHOULD_UPLOAD_WEEKLY_BUILD
-          - SHOULD_UPLOAD_BINARIES
+        run: |
+            python .github/helper_scripts/set_flags.py \
+              SHOULD_BUILD \
+              SHOULD_UPLOAD_WEEKLY_BUILD \
+              SHOULD_UPLOAD_BINARIES
       - name: Build with CMake 2019
         if: ${{ env.SHOULD_BUILD }}
         uses: ./.github/actions/cmake-build
