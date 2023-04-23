@@ -1,6 +1,7 @@
 name: AI linters and tests
 on:
   pull_request:
+    branches: [ 'master' ]
     types: ['opened', 'reopened', 'synchronize']
     paths:
       - '.github/**'
