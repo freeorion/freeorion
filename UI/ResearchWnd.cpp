@@ -76,11 +76,11 @@ namespace {
         }
 
         void Init() {
-            ScriptingContext context;
-            auto empire = context.GetEmpire(elem.empire_id);
+            const ScriptingContext context;
+            const auto empire = context.GetEmpire(elem.empire_id);
 
             const Tech* tech = GetTech(elem.name);
-            double per_turn_cost = tech ? tech->PerTurnCost(elem.empire_id, context) : 1;
+            const double per_turn_cost = tech ? tech->PerTurnCost(elem.empire_id, context) : 1;
             double progress = 0.0;
             if (empire && empire->TechResearched(elem.name))
                 progress = tech ? tech->ResearchCost(elem.empire_id, context) : 0.0;
@@ -92,7 +92,7 @@ namespace {
                                                     ClientWidth(), elem.name, elem.allocated_rp,
                                                     elem.turns_left, progress / per_turn_cost,
                                                     elem.empire_id);
-            push_back(panel);
+            push_back(std::move(panel));
 
             SetDragDropDataType("RESEARCH_QUEUE_ROW");
 
@@ -547,12 +547,12 @@ void ResearchWnd::QueueItemMoved(const GG::ListBox::iterator& row_it,
     ScriptingContext context;
 
     // This precorrects the position for a factor in Empire::PlaceTechInQueue
-    int new_position = m_queue_wnd->GetQueueListBox()->IteraterIndex(row_it);
-    int original_position = m_queue_wnd->GetQueueListBox()->IteraterIndex(original_position_it);
-    auto direction = original_position < new_position;
-    int corrected_new_position = new_position + (direction ? 1 : 0);
+    const int new_position = m_queue_wnd->GetQueueListBox()->IteraterIndex(row_it);
+    const int original_position = m_queue_wnd->GetQueueListBox()->IteraterIndex(original_position_it);
+    const auto direction = original_position < new_position;
+    const int corrected_new_position = new_position + (direction ? 1 : 0);
 
-    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     if (empire_id == ALL_EMPIRES)
         return;
 
@@ -562,7 +562,7 @@ void ResearchWnd::QueueItemMoved(const GG::ListBox::iterator& row_it,
         context);
 
     if (auto empire = context.GetEmpire(empire_id))
-        empire->UpdateResearchQueue(context);
+        empire->UpdateResearchQueue(context, empire->TechCostsTimes(context));
 }
 
 void ResearchWnd::Sanitize()
@@ -644,12 +644,13 @@ void ResearchWnd::AddTechsToQueueSlot(std::vector<std::string> tech_vec, int pos
 
     ScriptingContext context;
 
-    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     auto empire = context.GetEmpire(empire_id);
     if (!empire)
         return;
     const ResearchQueue& queue = empire->GetResearchQueue();
     OrderSet& orders = GGHumanClientApp::GetApp()->Orders();
+
     for (std::string& tech_name : tech_vec) {
         if (empire->TechResearched(tech_name))
             continue;
@@ -678,7 +679,7 @@ void ResearchWnd::AddTechsToQueueSlot(std::vector<std::string> tech_vec, int pos
                 pos += 1;
         }
     }
-    empire->UpdateResearchQueue(context);
+    empire->UpdateResearchQueue(context, empire->TechCostsTimes(context));
 }
 
 void ResearchWnd::DeleteQueueItem(GG::ListBox::iterator it) {
@@ -692,7 +693,7 @@ void ResearchWnd::DeleteQueueItem(GG::ListBox::iterator it) {
     if (auto queue_row = boost::polymorphic_downcast<QueueRow*>(it->get()))
         orders.IssueOrder(std::make_shared<ResearchQueueOrder>(empire_id, queue_row->elem.name), context);
     if (auto empire = context.GetEmpire(empire_id))
-        empire->UpdateResearchQueue(context);
+        empire->UpdateResearchQueue(context, empire->TechCostsTimes(context));
 }
 
 void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) {
@@ -733,7 +734,7 @@ void ResearchWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
             std::make_shared<ResearchQueueOrder>(client_empire_id, queue_row->elem.name, pause, -1.0f),
             context);
 
-    empire->UpdateResearchQueue(context);
+    empire->UpdateResearchQueue(context, empire->TechCostsTimes(context));
 }
 
 void ResearchWnd::EnableOrderIssuing(bool enable) {

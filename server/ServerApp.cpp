@@ -19,6 +19,7 @@
 #include "../combat/CombatLogManager.h"
 #include "../combat/CombatSystem.h"
 #include "../Empire/Empire.h"
+#include "../Empire/Government.h"
 #include "../parse/Parse.h"
 #include "../parse/PythonParser.h"
 #include "../universe/Building.h"
@@ -696,22 +697,31 @@ namespace {
         }
 
         supply.Update(context); // must call after updating supply ranges for all empires
+    }
 
+    void UpdateResourcePools(ScriptingContext& context,
+                             const std::map<int, std::vector<std::tuple<std::string_view, double, int>>>& tech_costs_times)
+    {
         const unsigned int num_threads = static_cast<unsigned int>(std::max(1, EffectsProcessingThreads()));
         boost::asio::thread_pool thread_pool(num_threads);
 
-        for ([[maybe_unused]] auto& [ignored_id, empire] : context.Empires()) {
-            (void)ignored_id; // quiet unused variable warning
+        for ([[maybe_unused]] auto& [empire_id, empire] : context.Empires()) {
             if (empire->Eliminated())
                 continue;
-            boost::asio::post(thread_pool, [&context, empire{empire}]() {
+            const auto ct_it = std::find_if(tech_costs_times.begin(), tech_costs_times.end(),
+                                            [empire_id{empire_id}](const auto& tct) { return empire_id == tct.first; });
+            if (ct_it == tech_costs_times.end()) {
+                ErrorLogger() << "UpdateResourcePools in ServerApp couldn't find costs/times for empire " << empire_id;
+                continue;
+            }
+            boost::asio::post(thread_pool, [&context, empire{empire.get()}, ct_it]() {
                 // determine population centers and resource centers of empire, tells resource pools
                 // the centers and groups of systems that can share resources (note that being able to
                 // share resources doesn't mean a system produces resources)
                 empire->InitResourcePools(context.ContextObjects(), context.supply);
 
                 // determine how much of each resources is available in each resource sharing group
-                empire->UpdateResourcePools(context);
+                empire->UpdateResourcePools(context, ct_it->second);
             });
         }
 
@@ -802,6 +812,8 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
         entry.second->UpdateOwnedObjectCounters(m_universe);
 
     UpdateEmpireSupply(context, m_supply_manager, false);
+    CacheCostsTimes(context);
+    UpdateResourcePools(context, m_cached_empire_research_costs_times);
     m_universe.UpdateStatRecords(context);
 }
 
@@ -1435,8 +1447,10 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
     ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data, m_species_manager,m_supply_manager};
     UpdateEmpireSupply(context, m_supply_manager, true);  // precombat supply update
+    CacheCostsTimes(context);
+    UpdateResourcePools(context, m_cached_empire_research_costs_times);
 
-    std::map<int, PlayerInfo> player_info_map = GetPlayerInfoMap();
+    const auto player_info_map = GetPlayerInfoMap();
 
     // assemble player state information, and send game start messages
     DebugLogger() << "ServerApp::CommonGameInit: Sending GameStartMessages to players";
@@ -3444,6 +3458,8 @@ namespace {
             const auto annexer_empire_id = planet->OrderedAnnexedByEmpire();
             empire_annexed_planets[annexer_empire_id].push_back(planet);
         }
+        for (auto& fleet : objects.all<Planet>())
+            fleet->ResetBeingAnnxed(); // in case things fail, to avoid potential inconsistent state
 
 
         // storage for list of all annexed planets
@@ -3530,6 +3546,65 @@ namespace {
     }
 }
 
+void ServerApp::CacheCostsTimes(const ScriptingContext& context) {
+    m_cached_empire_policy_adoption_costs = [this, &context]() {
+        std::map<int, std::vector<std::pair<std::string_view, double>>> retval;
+        for (const auto& [empire_id, empire] : m_empires) {
+            retval[empire_id].reserve(empire->AdoptedPolicies().size());
+            for (const auto policy_name : empire->AdoptedPolicies()) {
+                if (const auto* policy = GetPolicy(policy_name))
+                    retval[empire_id].emplace_back(
+                        policy_name, policy->AdoptionCost(empire_id, context));
+            }
+        }
+        return retval;
+    }();
+    m_cached_empire_research_costs_times = [this, &context]() {
+        std::map<int, std::vector<std::tuple<std::string_view, double, int>>> retval;
+        const auto& tm = GetTechManager();
+        // cache costs for each empire for techs on queue an that are researchable, which
+        // may be used later when updating the queue
+        for (const auto& [empire_id, empire] : m_empires) {
+            retval[empire_id].reserve(tm.size());
+
+            const auto should_cache = [empire{empire.get()}](const auto tech_name, const auto& tech) {
+                return (tech.Researchable() &&
+                        empire->GetTechStatus(tech_name) == TechStatus::TS_RESEARCHABLE) ||
+                    empire->GetResearchQueue().InQueue(tech_name);
+            };
+
+            for (const auto& [tech_name, tech] : tm) {
+                if (should_cache(tech_name, tech)) {
+                    retval[empire_id].emplace_back(
+                        tech_name, tech.ResearchCost(empire_id, context), tech.ResearchTime(empire_id, context));
+                }
+            }
+        }
+        return retval;
+    }();
+    m_cached_empire_production_costs_times = [this, &context]() {
+        std::map<int, std::vector<std::tuple<std::string_view, int, float, int>>> retval;
+        for (const auto& [empire_id, empire] : m_empires) {
+            retval[empire_id].reserve(empire->GetProductionQueue().size());
+            for (const auto& elem : empire->GetProductionQueue()) {
+                const auto [cost, time] = elem.ProductionCostAndTime(context);
+                retval[empire_id].emplace_back(elem.item.name, elem.item.design_id, cost, time);
+            }
+        }
+        return retval;
+    }();
+    m_cached_empire_annexation_costs = [this, &context]() {
+        // loop over planes, for each being annexed, store its annexation cost
+        std::map<int, std::vector<std::pair<int, double>>> retval;
+        const auto being_annexed = [](const Planet& p) { return p.IsAboutToBeAnnexed(); };
+        for (const auto* p : context.ContextObjects().findRaw<Planet>(being_annexed)) {
+            const auto empire_id = p->OrderedAnnexedByEmpire();
+            retval[empire_id].emplace_back(p->ID(), p->AnnexationCost(empire_id, context));
+        }
+        return retval;
+    }();
+}
+
 void ServerApp::PreCombatProcessTurns() {
     ScopedTimer timer("ServerApp::PreCombatProcessTurns");
 
@@ -3564,6 +3639,13 @@ void ServerApp::PreCombatProcessTurns() {
         save_game_data->orders->ApplyOrders(context);
     }
 
+
+    // cache costs of stuff (policy adoption, research, production, annexation before anything more changes
+    // costs are determined after executing orders, adopting policies, queue manipulations, etc. but before
+    // any production, research, combat, annexation, gifting, etc. happens
+    CacheCostsTimes(context);
+
+
     // clean up orders, which are no longer needed
     ClearEmpireTurnOrders();
     // TODO: CHECK THIS: was in ClearEmpireTurnOrders... needed?
@@ -3572,26 +3654,28 @@ void ServerApp::PreCombatProcessTurns() {
         empire->AutoTurnSetReady();
     }
 
+
     // update focus history info
     UpdateResourceCenterFocusHistoryInfo(context.ContextObjects());
 
     // validate adopted policies, and update Empire Policy history
-    // actual policy adoption and influence consumption occurrs during order
-    // execution above
+    // actual policy adoption occurs during order execution above
     UpdateEmpirePolicies(m_empires, context.current_turn, false);
 
     // clean up empty fleets that empires didn't order deleted
     CleanEmptyFleets(context);
 
     // update production queues after order execution
-    for (auto& entry : m_empires) {
-        if (entry.second->Eliminated())
-            continue;   // skip eliminated empires
-        entry.second->UpdateProductionQueue(context);
+    for (auto& [ignored, empire] : m_empires) {
+        if (!empire->Eliminated())
+            empire->UpdateProductionQueue(context);
+        (void)ignored;
     }
+
 
     // player notifications
     m_networking.SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::COLONIZE_AND_SCRAP));
+
 
     DebugLogger() << "ServerApp::ProcessTurns colonization";
     auto [colonized_planet_ids, colonizing_ship_ids] = HandleColonization(context);
@@ -3617,11 +3701,10 @@ void ServerApp::PreCombatProcessTurns() {
     m_networking.SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::FLEET_MOVEMENT));
 
     // Update system-obstruction after orders, colonization, invasion, gifting, scrapping
-    for (auto& entry : m_empires) {
-        auto& empire = entry.second;
-        if (empire->Eliminated())
-            continue;
-        empire->UpdateSupplyUnobstructedSystems(context, true);
+    for (auto& [ignored, empire] : m_empires) {
+        if (!empire->Eliminated())
+            empire->UpdateSupplyUnobstructedSystems(context, true);
+        (void)ignored;
     }
 
 
@@ -3819,6 +3902,7 @@ void ServerApp::PostCombatProcessTurns() {
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns(context.current_turn);
 
     UpdateEmpireSupply(context, m_supply_manager, false);
+    UpdateResourcePools(context, m_cached_empire_research_costs_times);
 
     // Update fleet travel restrictions (monsters and empire fleets)
     UpdateMonsterTravelRestrictions();
@@ -3839,14 +3923,42 @@ void ServerApp::PostCombatProcessTurns() {
     // objects for completed production and give techs to empires that have
     // researched them
     for ([[maybe_unused]] auto& [empire_id, empire] : m_empires) {
-        (void)empire_id;    // unused variable warning
         if (empire->Eliminated())
             continue;   // skip eliminated empires
 
-        for (const auto& tech : empire->CheckResearchProgress(context))
-            empire->AddNewlyResearchedTechToGrantAtStartOfNextTurn(tech);
-        empire->CheckProductionProgress(context);
-        empire->CheckInfluenceProgress();
+        const auto cached_tech_cost_it = m_cached_empire_research_costs_times.find(empire_id);
+        if (cached_tech_cost_it == m_cached_empire_research_costs_times.end()) {
+            ErrorLogger() << "no cached research costs info for empire " << empire_id;
+        } else {
+            const auto& costs_times = cached_tech_cost_it->second;
+            const auto new_techs = empire->CheckResearchProgress(context, costs_times);
+            for (const auto& tech : new_techs)
+                empire->AddNewlyResearchedTechToGrantAtStartOfNextTurn(tech);
+        }
+
+        const auto cached_prod_cost_it = m_cached_empire_production_costs_times.find(empire_id);
+        if (cached_prod_cost_it == m_cached_empire_production_costs_times.end()) {
+            ErrorLogger() << "no cached production costs info for empire " << empire_id;
+        } else {
+            const auto& costs_times = cached_prod_cost_it->second;
+            empire->CheckProductionProgress(context, costs_times);
+        }
+
+        const auto cached_policy_cost_it = m_cached_empire_policy_adoption_costs.find(empire_id);
+        if (cached_policy_cost_it == m_cached_empire_policy_adoption_costs.end())
+            ErrorLogger() << "no cached policy costs info for empire " << empire_id;
+        static const decltype(cached_policy_cost_it->second) EMPTY_POLICY_COSTS;
+        const auto& policy_costs = (cached_policy_cost_it == m_cached_empire_policy_adoption_costs.end()) ?
+            EMPTY_POLICY_COSTS : cached_policy_cost_it->second;
+
+        const auto cached_annex_cost_it = m_cached_empire_annexation_costs.find(empire_id);
+        if (cached_annex_cost_it == m_cached_empire_annexation_costs.end())
+            ErrorLogger() << "no cached annex costs info for empire " << empire_id;
+        static const decltype(cached_annex_cost_it->second) EMPTY_ANNEX_COSTS;
+        const auto& annex_costs = (cached_annex_cost_it == m_cached_empire_annexation_costs.end()) ?
+            EMPTY_ANNEX_COSTS : cached_annex_cost_it->second;
+
+        empire->CheckInfluenceProgress(/*policy_costs, annex_costs*/);
     }
 
     TraceLogger(effects) << "!!!!!!! AFTER CHECKING QUEUE AND RESOURCE PROGRESS";
@@ -3949,6 +4061,7 @@ void ServerApp::PostCombatProcessTurns() {
 
     // Re-determine supply distribution and exchanging and resource pools for empires
     UpdateEmpireSupply(context, m_supply_manager, true);
+    UpdateResourcePools(context, m_cached_empire_research_costs_times);
 
     // copy latest visible gamestate to each empire's known object state
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns(context.current_turn);
@@ -3978,23 +4091,26 @@ void ServerApp::PostCombatProcessTurns() {
                                         player->GetClientType(),
                                         m_networking.PlayerIsHost(player_id)};
     }
-    // TEST
-    auto server_players = this->GetPlayerInfoMap(); 
-    if (server_players.size() != players.size())
-        WarnLogger() << "PostCombatProcessTurns constructed players has different size than server players";
-    for (auto it1 = server_players.begin(), it2 = players.begin(); it1 != server_players.end(); ++it1, ++it2) {
-        if (it1->first != it2->first)
-            WarnLogger() << "PostCombatProcessTurns constructed player info id " << it1->first
-                         << " differs from server info id " << it2->first;
-        if (it1->second != it2->second) {
-            WarnLogger() << "PostCombatProcessTurns constructed player info differs from server player info:\n" <<
-                it1->second.name << " ? " << it2->second.name << "\n" <<
-                it1->second.empire_id << " ? " << it2->second.empire_id << "\n" <<
-                it1->second.client_type << " ? " << it2->second.client_type << "\n" <<
-                it1->second.host << " ? " << it2->second.host;
+
+
+    { // TEST
+        const auto server_players = this->GetPlayerInfoMap();
+        if (server_players.size() != players.size())
+            WarnLogger() << "PostCombatProcessTurns constructed players has different size than server players";
+        for (auto it1 = server_players.begin(), it2 = players.cbegin(); it1 != server_players.end(); ++it1, ++it2) {
+            if (it1->first != it2->first)
+                WarnLogger() << "PostCombatProcessTurns constructed player info id " << it1->first
+                             << " differs from server info id " << it2->first;
+            if (it1->second != it2->second) {
+                WarnLogger() << "PostCombatProcessTurns constructed player info differs from server player info:\n" <<
+                    it1->second.name << " ? " << it2->second.name << "\n" <<
+                    it1->second.empire_id << " ? " << it2->second.empire_id << "\n" <<
+                    it1->second.client_type << " ? " << it2->second.client_type << "\n" <<
+                    it1->second.host << " ? " << it2->second.host;
+            }
         }
-    }
-    // END TEST
+    } // END TEST
+
 
     m_universe.ObfuscateIDGenerator();
 

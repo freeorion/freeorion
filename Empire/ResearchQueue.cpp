@@ -15,7 +15,9 @@ namespace {
         float RPs, const std::map<std::string, float>& research_progress, // TODO: make flat_map<std::string_view, float> ?
         const std::map<std::string, TechStatus>& research_status,
         ResearchQueue::QueueType& queue, float& total_RPs_spent,
-        int& projects_in_progress, int empire_id, const ScriptingContext& context)
+        int& projects_in_progress, int empire_id,
+        const std::vector<std::tuple<std::string_view, double, int>>& costs_times,
+        const ScriptingContext& context)
     {
         total_RPs_spent = 0.0f;
         projects_in_progress = 0;
@@ -27,11 +29,6 @@ namespace {
                 continue;
 
             // get details on what is being researched...
-            const Tech* tech = GetTech(elem.name);
-            if (!tech) {
-                ErrorLogger() << "SetTechQueueElementSpending found null tech on research queue?!";
-                continue;
-            }
             const auto status_it = research_status.find(elem.name);
             if (status_it == research_status.end()) {
                 ErrorLogger() << "SetTechQueueElementSpending couldn't find tech with name " << elem.name << " in the research status map";
@@ -41,13 +38,21 @@ namespace {
 
             if (researchable && !elem.paused) {
                 const auto progress_it = research_progress.find(elem.name);
-                const float tech_cost = tech->ResearchCost(empire_id, context);
                 const float progress = progress_it == research_progress.end() ? 0.0f : progress_it->second;
-                const float RPs_needed = tech_cost - progress*tech_cost;
-                const int tech_min_turns = std::max(1, tech ? tech->ResearchTime(empire_id, context) : 1);
 
-                const float RPs_per_turn_limit = tech ? (tech_cost / tech_min_turns) : 1.0f;
-                const float RPs_to_spend = std::min(RPs_needed, RPs_per_turn_limit);
+                const auto ct_it = std::find_if(costs_times.begin(), costs_times.end(),
+                                                [t{std::string_view{elem.name}}](const auto& ct)
+                                                { return std::get<0>(ct) == t; });
+                if (ct_it == costs_times.end()) {
+                    ErrorLogger() << "SetTechQueueElementSpending couldn't find cached cost / time for tech " << elem.name;
+                    continue;
+                }
+                const float RPs_to_spend = [ct_it, progress]() {
+                    const auto& [ignored, tech_cost, tech_min_turns] = *ct_it;
+                    const float RPs_needed = tech_cost - progress*tech_cost;
+                    const float RPs_per_turn_limit = tech_cost / std::max(1, tech_min_turns);
+                    return std::min(RPs_needed, RPs_per_turn_limit);
+                }();
 
                 if (total_RPs_spent + RPs_to_spend <= RPs - EPSILON) {
                     elem.allocated_rp = RPs_to_spend;
@@ -127,6 +132,7 @@ const ResearchQueue::Element& ResearchQueue::operator[](int i) const {
 }
 
 void ResearchQueue::Update(float RPs, const std::map<std::string, float>& research_progress,
+                           const std::vector<std::tuple<std::string_view, double, int>>& costs_times,
                            const ScriptingContext& context)
 {
     // status of all techs for this empire
@@ -147,7 +153,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
 
     SetTechQueueElementSpending(RPs, research_progress, sim_tech_status_map, m_queue,
                                 m_total_RPs_spent, m_projects_in_progress, m_empire_id,
-                                context);
+                                costs_times, context);
 
     if (m_queue.empty()) {
         ResearchQueueChangedSignal();
@@ -209,11 +215,17 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
         if (!tech)
             continue;
 
-        tech_cost_time.emplace(std::piecewise_construct,
-                               std::forward_as_tuple(i),
-                               std::forward_as_tuple(
-                                   tech ? tech->ResearchCost(m_empire_id, context) : 1.0f,
-                                   std::max(1, tech ? tech->ResearchTime(m_empire_id, context) : 1)));
+        const auto ct_it = std::find_if(costs_times.begin(), costs_times.end(),
+                                        [t{std::string_view{elem.name}}](const auto& ct) { return t == std::get<0>(ct); });
+        if (ct_it == costs_times.end()) {
+            ErrorLogger() << "ResearchQueue::Update no cost/time for tech " << elem.name;
+            continue;
+        }
+        const auto cost_time = [ct_it]() {
+            const auto& [ignored, cost, time] = *ct_it;
+            return std::pair<float, int>{cost, std::max(1, time)};
+        };
+        tech_cost_time.emplace(i, cost_time());
 
         if (dpsim_tech_status_map[elem.name] == TechStatus::TS_RESEARCHABLE) {
             dp_researchable_techs.insert(i);

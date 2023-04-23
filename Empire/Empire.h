@@ -352,11 +352,13 @@ public:
       * the production queue (which determines how much PP each project receives
       * but does not actually spend them).  This function spends the PP, removes
       * complete items from the queue and creates the results in the universe. */
-    void CheckProductionProgress(ScriptingContext& context);
+    void CheckProductionProgress(
+        ScriptingContext& context, const std::vector<std::tuple<std::string_view, int, float, int>>& costs_times);
 
     /** Checks for tech projects that have been completed, and returns a vector
       * of the techs that should be added to the known techs list. */
-    std::vector<std::string> CheckResearchProgress(const ScriptingContext& context);
+    std::vector<std::string> CheckResearchProgress(
+        const ScriptingContext& context, const std::vector<std::tuple<std::string_view, double, int>>& costs_times);
 
     /** Eventually : Will check for social projects that have been completed and
       * / or process ongoing social projects, and update the empire's influence
@@ -381,10 +383,14 @@ public:
       * to spend.  Actual consumption of resources, removal of items from queue,
       * processing of finished items and population growth happens in various
       * Check(Whatever)Progress functions. */
-    void UpdateResourcePools(const ScriptingContext& context);
+    void UpdateResourcePools(const ScriptingContext& context,
+                             const std::vector<std::tuple<std::string_view, double, int>>& research_costs);
     /** Calls Update() on empire's research queue, which recalculates the RPs
       * spent on and number of turns left for each tech in the queue. */
-    void UpdateResearchQueue(const ScriptingContext& context);
+    void UpdateResearchQueue(const ScriptingContext& context,
+                             const std::vector<std::tuple<std::string_view, double, int>>& costs_times);
+    std::vector<std::tuple<std::string_view, double, int>> TechCostsTimes(const ScriptingContext& context);
+
     /** Calls Update() on empire's production queue, which recalculates the PPs
       * spent on and number of turns left for each project in the queue. */
     void UpdateProductionQueue(const ScriptingContext& context);

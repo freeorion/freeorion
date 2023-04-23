@@ -338,6 +338,14 @@ private:
       * */
     std::map<int, std::unique_ptr<PlayerSaveGameData>> m_turn_sequence;
 
+    // storage for cached costs between pre- and post-combat update steps
+    void CacheCostsTimes(const ScriptingContext& context);
+    std::map<int, std::vector<std::pair<std::string_view, double>>> m_cached_empire_policy_adoption_costs;
+    std::map<int, std::vector<std::tuple<std::string_view, double, int>>> m_cached_empire_research_costs_times;
+    std::map<int, std::vector<std::tuple<std::string_view, int, float, int>>> m_cached_empire_production_costs_times;
+    std::map<int, std::vector<std::pair<int, double>>> m_cached_empire_annexation_costs;
+
+
     // Give FSM and its states direct access.  We are using the FSM code as a
     // control-flow mechanism; it is all notionally part of this class.
     friend struct ServerFSM;
