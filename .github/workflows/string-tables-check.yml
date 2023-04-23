@@ -1,15 +1,12 @@
 name: String tables checks
 on:
   pull_request:
+    types: ['opened', 'reopened', 'synchronize']
     paths:
       - '.github/**'
       - 'check/st-tool.py'
       - 'default/stringtables/**'
-    types:
-      - opened
-      - edited
-      - reopened
-      - synchronize
+
 jobs:
   lint-string-tables:
     runs-on: ubuntu-latest

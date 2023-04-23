@@ -7,6 +7,7 @@ on:
       - 'godot/**.gd'
   pull_request:
     branches: [ 'master' ]
+    types: ['opened', 'reopened', 'synchronize']
     paths:
       - 'godot/**.gd'
 
