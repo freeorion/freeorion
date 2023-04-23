@@ -3079,13 +3079,13 @@ void FleetWnd::Refresh() {
     std::pair<int, GG::Pt> location{INVALID_OBJECT_ID, GG::Pt(GG::X0, GG::Y0)};
     if (!fleet_locations_ids.empty()
         && fleet_locations_ids.begin()->first.first != INVALID_OBJECT_ID
-        && (fleet_locations_ids.contains(fleet_locations_ids.begin()->first) == fleet_locations_ids.size()))
+        && (fleet_locations_ids.count(fleet_locations_ids.begin()->first) == fleet_locations_ids.size()))
     {
         location = fleet_locations_ids.begin()->first;
 
     } else if (!selected_fleet_locations_ids.empty()
                && selected_fleet_locations_ids.begin()->first.first != INVALID_OBJECT_ID
-               && (selected_fleet_locations_ids.contains(selected_fleet_locations_ids.begin()->first)
+               && (selected_fleet_locations_ids.count(selected_fleet_locations_ids.begin()->first)
                    == selected_fleet_locations_ids.size()))
     {
         location = selected_fleet_locations_ids.begin()->first;

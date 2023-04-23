@@ -2047,7 +2047,7 @@ std::vector<std::string> Empire::CheckResearchProgress(const ScriptingContext& c
     std::vector<std::pair<double, std::string>> costs_to_complete_available_unpaused_techs;
     costs_to_complete_available_unpaused_techs.reserve(GetTechManager().size());
     for (const auto& [tech_name, tech] : GetTechManager()) {
-        if (techs_not_suitable_for_auto_allocation.contains(tech_name))
+        if (techs_not_suitable_for_auto_allocation.count(tech_name) > 0)
             continue;
         if (this->GetTechStatus(tech_name) != TechStatus::TS_RESEARCHABLE)
             continue;
