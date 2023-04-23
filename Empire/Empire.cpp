@@ -596,13 +596,13 @@ bool Empire::HasResearchedPrereqAndUnresearchedPrereq(std::string_view name) con
 }
 
 float Empire::ResearchProgress(const std::string& name, const ScriptingContext& context) const {
-    auto it = m_research_progress.find(name);
+    const auto it = m_research_progress.find(name);
     if (it == m_research_progress.end())
         return 0.0f;
     const Tech* tech = GetTech(it->first);
     if (!tech)
         return 0.0f;
-    float tech_cost = tech->ResearchCost(m_id, context);
+    const float tech_cost = tech->ResearchCost(m_id, context);
     return it->second * tech_cost;
 }
 
@@ -2072,6 +2072,16 @@ std::vector<std::string> Empire::CheckResearchProgress(
             continue;
         if (!tech.Researchable())
             continue;
+
+        const auto progress_fraction = [this, tech_name{tech_name}]() { // TODO: avoid copy, make m_research_progess use transparent comparator
+            const auto progress_it = m_research_progress.find(tech_name);
+            if (progress_it == m_research_progress.end())
+                return 0.0f;
+            return progress_it->second;
+        }();
+        if (progress_fraction >= 1.0)
+            continue;
+
         const auto ct_it = std::find_if(costs_times.begin(), costs_times.end(),
                                         [tech_name{tech_name}](const std::tuple<std::string_view, double, int>& ct)
                                         { return std::get<0>(ct) == tech_name; });
@@ -2079,12 +2089,9 @@ std::vector<std::string> Empire::CheckResearchProgress(
             ErrorLogger() << "Missing tech " << tech_name << " cost time in CheckResearchProgress!";
             continue;
         }
-        const double progress = this->ResearchProgress(tech_name, context);
-        const double total_cost = std::get<1>(*ct_it);
 
-        if (progress >= total_cost)
-            continue;
-        costs_to_complete_available_unpaused_techs.emplace_back(total_cost - progress, tech_name);
+        const double remaining_cost = std::get<1>(*ct_it) * (1 - progress_fraction);
+        costs_to_complete_available_unpaused_techs.emplace_back(remaining_cost, tech_name);
     }
     std::sort(costs_to_complete_available_unpaused_techs.begin(),
               costs_to_complete_available_unpaused_techs.end());

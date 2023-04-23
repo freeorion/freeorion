@@ -509,7 +509,7 @@ private:
     MeterMap                        m_meters;                   ///< empire meters
 
     ResearchQueue                   m_research_queue;           ///< the queue of techs being or waiting to be researched
-    std::map<std::string, float>    m_research_progress;        ///< progress of partially-researched techs; fully researched techs are removed
+    std::map<std::string, float>    m_research_progress;        ///< fractional progress (0 to 1) of partially-researched techs; fully researched techs are removed
 
     ProductionQueue                 m_production_queue;         ///< the queue of items being or waiting to be built
     InfluenceQueue                  m_influence_queue;
