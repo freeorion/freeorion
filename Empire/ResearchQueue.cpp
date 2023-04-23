@@ -75,7 +75,6 @@ namespace {
     }
 }
 
-
 std::string ResearchQueue::Element::Dump() const {
     std::stringstream retval;
     retval << "ResearchQueue::Element: tech: " << name << "  empire id: " << empire_id;
