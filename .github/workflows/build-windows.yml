@@ -25,17 +25,6 @@ on:
       - 'test-scripting/**'
 
 jobs:
-  build-windows-2019-cmake:
-    name: MSVS 2019 on Windows CMake
-    runs-on: windows-2019
-    steps:
-      - uses: actions/checkout@v3
-      - name: Build with CMake 2019
-        uses: ./.github/actions/cmake-build
-        with:
-          mvc: '2019'
-          generator-name: 'Visual Studio 16 2019'
-          toolset-spec: 'v142'
   build-windows-2022-cmake:
     name: MSVS 2022 on Windows CMake
     runs-on: windows-2022
