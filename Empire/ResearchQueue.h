@@ -65,6 +65,7 @@ struct FO_COMMON_API ResearchQueue {
       * epsilon > 0; see the implementation for the actual value used for
       * epsilon. */
     void Update(float RPs, const std::map<std::string, float>& research_progress,
+                const std::vector<std::tuple<std::string_view, double, int>>& costs_times,
                 const ScriptingContext& context);
 
     // STL container-like interface

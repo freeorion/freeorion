@@ -188,13 +188,13 @@ namespace {
 
     void UpdateResourcePools() {
         ScriptingContext context;
-        int empire_id = AIClientApp::GetApp()->EmpireID();
+        const int empire_id = AIClientApp::GetApp()->EmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "UpdateResourcePools : couldn't get empire with id " << empire_id;
             return;
         }
-        empire->UpdateResourcePools(context);
+        empire->UpdateResourcePools(context, empire->TechCostsTimes(context));
     }
 
     void UpdateResearchQueue() {
@@ -205,7 +205,7 @@ namespace {
             ErrorLogger() << "UpdateResearchQueue : couldn't get empire with id " << empire_id;
             return;
         }
-        empire->UpdateResearchQueue(context);
+        empire->UpdateResearchQueue(context, empire->TechCostsTimes(context));
     }
 
     void UpdateProductionQueue() {

@@ -22,6 +22,7 @@
 #include "Government.h"
 
 #include <boost/uuid/uuid_io.hpp>
+#include <boost/unordered_set.hpp>
 
 
 namespace {
@@ -2015,7 +2016,9 @@ namespace {
     }
 }
 
-std::vector<std::string> Empire::CheckResearchProgress(const ScriptingContext& context) {
+std::vector<std::string> Empire::CheckResearchProgress(
+    const ScriptingContext& context, const std::vector<std::tuple<std::string_view, double, int>>& costs_times)
+{
     SanitizeResearchQueue(m_research_queue);
 
     float spent_rp = 0.0f;
@@ -2024,13 +2027,18 @@ std::vector<std::string> Empire::CheckResearchProgress(const ScriptingContext& c
     // process items on queue
     std::vector<std::string> to_erase_from_queue_and_grant_next_turn;
     for (auto& elem : m_research_queue) {
-        const Tech* tech = GetTech(elem.name);
-        if (!tech) {
-            ErrorLogger() << "Empire::CheckResearchProgress couldn't find tech on queue, even after sanitizing!";
+        if (elem.allocated_rp <= 0.0)
+            continue;
+        const auto ct_it = std::find_if(costs_times.begin(), costs_times.end(),
+                                        [tech_name{elem.name}](const std::tuple<std::string_view, double, int>& ct)
+                                        { return std::get<0>(ct) == tech_name; });
+        if (ct_it == costs_times.end()) {
+            ErrorLogger() << "Missing tech " << elem.name << " cost time in CheckResearchProgress!";
             continue;
         }
+        const float tech_cost = static_cast<float>(std::get<1>(*ct_it));
+
         float& progress = m_research_progress[elem.name];
-        const float tech_cost = tech->ResearchCost(m_id, context);
         progress += elem.allocated_rp / std::max(EPSILON, tech_cost);
         spent_rp += elem.allocated_rp;
         if (tech_cost - EPSILON <= progress * tech_cost) {
@@ -2046,12 +2054,16 @@ std::vector<std::string> Empire::CheckResearchProgress(const ScriptingContext& c
 
     // if there are left over RPs, any tech on the queue presumably can't
     // have RP allocated to it
-    std::unordered_set<std::string> techs_not_suitable_for_auto_allocation;
-    for (auto& elem : m_research_queue)
-        techs_not_suitable_for_auto_allocation.insert(elem.name);
+    const auto techs_not_suitable_for_auto_allocation = [this]() {
+        boost::unordered_set<std::string_view> retval;
+        retval.reserve(m_research_queue.size());
+        for (auto& elem : m_research_queue)
+            retval.insert(elem.name);
+        return retval;
+    }();
 
     // for all available and suitable techs, store ordered by cost to complete
-    std::vector<std::pair<double, std::string>> costs_to_complete_available_unpaused_techs;
+    std::vector<std::pair<double, std::string_view>> costs_to_complete_available_unpaused_techs;
     costs_to_complete_available_unpaused_techs.reserve(GetTechManager().size());
     for (const auto& [tech_name, tech] : GetTechManager()) {
         if (techs_not_suitable_for_auto_allocation.count(tech_name) > 0)
@@ -2060,8 +2072,16 @@ std::vector<std::string> Empire::CheckResearchProgress(const ScriptingContext& c
             continue;
         if (!tech.Researchable())
             continue;
-        double progress = this->ResearchProgress(tech_name, context);
-        double total_cost = tech.ResearchCost(m_id, context);
+        const auto ct_it = std::find_if(costs_times.begin(), costs_times.end(),
+                                        [tech_name{tech_name}](const std::tuple<std::string_view, double, int>& ct)
+                                        { return std::get<0>(ct) == tech_name; });
+        if (ct_it == costs_times.end()) {
+            ErrorLogger() << "Missing tech " << tech_name << " cost time in CheckResearchProgress!";
+            continue;
+        }
+        const double progress = this->ResearchProgress(tech_name, context);
+        const double total_cost = std::get<1>(*ct_it);
+
         if (progress >= total_cost)
             continue;
         costs_to_complete_available_unpaused_techs.emplace_back(total_cost - progress, tech_name);
@@ -2078,11 +2098,12 @@ std::vector<std::string> Empire::CheckResearchProgress(const ScriptingContext& c
         const Tech* tech = GetTech(tech_name);
         if (!tech)
             continue;
+        std::string tech_name_str{tech_name};
 
         //DebugLogger() << "extra tech: " << cost_tech.second << " needs: " << cost_tech.first << " more RP to finish";
 
         const float RPs_per_turn_limit = tech->PerTurnCost(m_id, context);
-        const float progress_fraction = m_research_progress[tech_name];
+        const float progress_fraction = m_research_progress[tech_name_str];
 
         const float progress_fraction_left = 1.0f - progress_fraction;
         const float max_progress_per_turn = RPs_per_turn_limit / static_cast<float>(tech_cost);
@@ -2098,11 +2119,11 @@ std::vector<std::string> Empire::CheckResearchProgress(const ScriptingContext& c
 
         const float consumed_rp = progress_increase * static_cast<float>(tech_cost);
 
-        m_research_progress[tech_name] += progress_increase;
+        m_research_progress[tech_name_str] += progress_increase;
         rp_left_to_spend -= consumed_rp;
 
-        if (tech_cost - EPSILON <= m_research_progress[tech_name] * tech_cost)
-            to_erase_from_queue_and_grant_next_turn.push_back(tech_name);
+        if (tech_cost - EPSILON <= m_research_progress[tech_name_str] * tech_cost)
+            to_erase_from_queue_and_grant_next_turn.push_back(std::move(tech_name_str));
 
         //DebugLogger() << "... allocated: " << consumed_rp << " to increase progress by: " << progress_increase;
     }
@@ -2120,7 +2141,9 @@ std::vector<std::string> Empire::CheckResearchProgress(const ScriptingContext& c
     return to_erase_from_queue_and_grant_next_turn;
 }
 
-void Empire::CheckProductionProgress(ScriptingContext& context) {
+void Empire::CheckProductionProgress(
+    ScriptingContext& context, const std::vector<std::tuple<std::string_view, int, float, int>>& costs_times)
+{
     DebugLogger() << "========Empire::CheckProductionProgress=======";
     // following commented line should be redundant, as previous call to
     // UpdateResourcePools should have generated necessary info
@@ -2653,20 +2676,42 @@ void Empire::InitResourcePools(const ObjectMap& objects, const SupplyManager& su
     m_influence_pool.SetConnectedSupplyGroups(sets_set);
 }
 
-void Empire::UpdateResourcePools(const ScriptingContext& context) {
+void Empire::UpdateResourcePools(const ScriptingContext& context,
+                                 const std::vector<std::tuple<std::string_view, double, int>>& research_costs)
+{
     // updating queues, allocated_rp, distribution and growth each update their
     // respective pools, (as well as the ways in which the resources are used,
     // which needs to be done simultaneously to keep things consistent)
-    UpdateResearchQueue(context);
+    UpdateResearchQueue(context, research_costs);
     UpdateProductionQueue(context);
     UpdateInfluenceSpending(context);
     UpdatePopulationGrowth(context.ContextObjects());
 }
 
-void Empire::UpdateResearchQueue(const ScriptingContext& context) {
+std::vector<std::tuple<std::string_view, double, int>> Empire::TechCostsTimes(const ScriptingContext& context) {
+    const auto& tm = GetTechManager();
+    std::vector<std::tuple<std::string_view, double, int>> retval;
+    retval.reserve(tm.size());
+
+    // cache costs for empire for techs on queue an that are researchable, which
+    // may be used later when updating the queue
+    const auto should_cache = [this](const auto tech_name, const auto& tech) {
+        return (tech.Researchable() && GetTechStatus(tech_name) == TechStatus::TS_RESEARCHABLE) ||
+            m_research_queue.InQueue(tech_name);
+    };
+
+    for (const auto& [tech_name, tech] : tm) {
+        if (should_cache(tech_name, tech))
+            retval.emplace_back(tech_name, tech.ResearchCost(m_id, context), tech.ResearchTime(m_id, context));
+    }
+    return retval;
+}
+
+void Empire::UpdateResearchQueue(const ScriptingContext& context,
+                                 const std::vector<std::tuple<std::string_view, double, int>>& costs_times)
+{
     m_research_pool.Update(context.ContextObjects());
-    m_research_queue.Update(m_research_pool.TotalAvailable(),
-                            m_research_progress, context);
+    m_research_queue.Update(m_research_pool.TotalAvailable(), m_research_progress, costs_times, context);
     m_research_pool.ChangedSignal();
 }
 
@@ -2760,7 +2805,6 @@ void Empire::UpdateOwnedObjectCounters(const Universe& universe) {
     }
 }
 
-
 void Empire::CheckObsoleteGameContent() {
     // remove any unrecognized policies and uncategorized policies
     const auto policies_temp{m_adopted_policies};
@@ -2782,7 +2826,6 @@ void Empire::CheckObsoleteGameContent() {
         }
     }
 }
-
 
 void Empire::SetAuthenticated(bool authenticated)
 { m_authenticated = authenticated; }
