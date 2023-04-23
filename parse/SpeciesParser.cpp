@@ -410,12 +410,12 @@ namespace {
         std::set<std::string> likes;
         if (kw.has_key("likes")) {
             boost::python::stl_input_iterator<std::string> likes_begin(kw["likes"]);
-            likes = std::move(std::set<std::string>(likes_begin, it_end));
+            likes = std::set<std::string>(likes_begin, it_end);
         }
         std::set<std::string> dislikes;
         if (kw.has_key("dislikes")) {
             boost::python::stl_input_iterator<std::string> dislikes_begin(kw["dislikes"]);
-            dislikes = std::move(std::set<std::string>(dislikes_begin, it_end));
+            dislikes = std::set<std::string>(dislikes_begin, it_end);
         }
         auto graphic = boost::python::extract<std::string>(kw["graphic"])();
         double spawn_rate = 1.0;
