@@ -612,7 +612,7 @@ namespace {
     ////////////////////////////////////////////////
     // ShipDataPanel
     ////////////////////////////////////////////////
-    /** Shows info about a single ship. */
+    /** Shows stats of a single ship. Used in ShipRows in the FleetWnd to show ships of a fleet. */
     class ShipDataPanel : public GG::Control {
     public:
         ShipDataPanel(GG::X w, GG::Y h, int ship_id);

@@ -128,9 +128,9 @@ namespace {
         // use the given design and species as default enemy.
         std::shared_ptr<Ship> target;
         try {
-            target = std::make_shared<Ship>(ALL_EMPIRES, template_ship->DesignID(),
+            target = std::make_shared<Ship>(DUMMY_EVIL_EMPIRE, template_ship->DesignID(),
                                             template_ship->SpeciesName(), context.ContextUniverse(),
-                                            context.species, ALL_EMPIRES, context.current_turn);
+                                            context.species, DUMMY_EVIL_EMPIRE, context.current_turn);
         } catch (...) {
             ErrorLogger() << "Couldn't create temporary ship from template ship: " << template_ship->Dump();
             return nullptr;
@@ -150,7 +150,7 @@ namespace {
                                    const ScriptingContext& context)
     {
         static constexpr auto combat_targets = nullptr;
-        auto target = std::make_shared<Fighter>(ALL_EMPIRES, template_ship->ID(),
+        auto target = std::make_shared<Fighter>(DUMMY_EVIL_EMPIRE, template_ship->ID(),
                                                 template_ship->SpeciesName(), 1.0f, combat_targets);
         target->SetID(TEMPORARY_OBJECT_ID);
         return target;
