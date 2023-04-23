@@ -2,6 +2,7 @@ name: "Windows MS VS build"
 
 on:
   push:
+    branches: [ 'master', 'weekly-test-builds']
     paths-ignore:
       - 'check/**'
       - 'doc/**'
@@ -12,6 +13,7 @@ on:
       - 'default/**'
       - 'test-scripting/**'
   pull_request:
+    branches: [ 'master' ]
     paths-ignore:
       - 'check/**'
       - 'doc/**'

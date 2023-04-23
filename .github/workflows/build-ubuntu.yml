@@ -2,6 +2,7 @@ name: "Ubuntu"
 
 on:
   push:
+    branches: [ 'master' ]
     paths-ignore:
       - 'msvc*/**'
       - 'check/**'
@@ -13,6 +14,7 @@ on:
       - 'default/**'
       - 'test-scripting/**'
   pull_request:
+    branches: [ 'master' ]
     paths-ignore:
       - 'msvc*/**'
       - 'check/**'
