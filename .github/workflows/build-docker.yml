@@ -24,7 +24,7 @@ on:
 
 jobs:
   build-docker:
-    timeout-minutes: 45
+    timeout-minutes: 55
     name: Docker ${{ matrix.image }}
     runs-on: ubuntu-latest
     strategy:
