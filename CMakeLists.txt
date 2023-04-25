@@ -259,7 +259,7 @@ include(TestForBug2795)
 ##
 
 set(MINIMUM_PYTHON_VERSION 3.7)
-set(MINIMUM_BOOST_VERSION 1.69.0)
+set(MINIMUM_BOOST_VERSION 1.73.0)
 
 find_package(Threads)
 find_package(PythonInterp ${MINIMUM_PYTHON_VERSION} REQUIRED)
