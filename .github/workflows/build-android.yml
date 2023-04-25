@@ -67,7 +67,7 @@ jobs:
         id: download-sdk
         uses: suisei-cn/actions-download-file@v1.3.0
         with:
-          url: https://github.com/freeorion/freeorion-sdk/releases/download/v13/FreeOrionSDK_13_Android-${{ matrix.arch }}.zip
+          url: https://github.com/freeorion/freeorion-sdk/releases/download/v14/FreeOrionSDK_14_Android-${{ matrix.arch }}.zip
           target: ../
       - uses: nttld/setup-ndk@v1
         id: setup-ndk
