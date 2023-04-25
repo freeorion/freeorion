@@ -389,7 +389,7 @@ void InitDirs(std::string const& argv0)
     s_root_data_dir =   app_path / "Resources";
     s_user_dir      =   fs::path(getenv("HOME")) / "Library" / "Application Support" / "FreeOrion";
     s_bin_dir       =   app_path / "Executables";
-    s_python_home   =   app_path / "Frameworks" / "Python.framework" / "Versions" / BOOST_PP_STRINGIZE(BOOST_PP_CAT(BOOST_PP_CAT(PY_MAJOR_VERSION, .), PY_MINOR_VERSION));
+    s_python_home   =   app_path / "SharedSupport";
 
     fs::path p = s_user_dir;
     if (!exists(p))
