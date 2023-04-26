@@ -12084,18 +12084,6 @@ DESC_MIN_NUMBER_OF
 DESC_MIN_NUMBER_OF_NOT
 ''' that is not one of %1% objects with the smallest value of%2% and%3%'''
 
-# %1% FIXME
-# %2% FIXME
-# %3% FIXME
-DESC_MODE_NUMBER_OF
-''' that is one of %1% objects with the most common value of%2% and%3%'''
-
-# %1% FIXME
-# %2% FIXME
-# %3% FIXME
-DESC_MODE_NUMBER_OF_NOT
-''' that is not one of %1% objects with the most common value of%2% and%3%'''
-
 # %1% number of objects to match (upper limit)
 # %2% description of the sort key determined for each object
 # %3% description of the selection condition for potentially matched objects
@@ -12119,7 +12107,6 @@ DESC_UNIQUE_OF
 # %3% description of the selection condition for potentially matched objects
 DESC_UNIQUE_OF_NOT
 ''' that is not one of %1% objects with distinct values of%2% and%3%'''
-
 
 # %1% FIXME
 DESC_VALUE_TEST
