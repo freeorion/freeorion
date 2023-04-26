@@ -30,7 +30,7 @@ FreeOrion depends on the following software to build:
   * A C++17 compliant compiler - Other Operating Systems
     * [GNU GCC] - 8.0 or later
     * [Clang] - 5 or later
-  * [Python] - 3.7 or later
+  * [Python] - 3.9 or later
   * [Git]
 
 FreeOrion depends on the following libraries or APIs to run:
@@ -38,9 +38,9 @@ FreeOrion depends on the following libraries or APIs to run:
   * OpenGL - 2.1 or later ; usually provided by the graphic card driver or
     Operating System
   * OpenAL - It's recommended to use the [OpenAL Soft] implementation
-  * [Boost] - 1.73 or later, 1.79+ should work
+  * [Boost] - 1.73 or later
   * [zlib]
-  * [libpython] - 3.7 or later
+  * [libpython] - 3.9 or later
   * [FreeType2]
   * [libpng]
   * [libogg]
@@ -60,12 +60,12 @@ For Linux or other Operating Systems, the build and runtime dependencies should
 be installed by the preferred way for the respective OS (e.g. via Package
 manager or compiling from source).
 
-Step by step procedure for the v0.5 release and development versions near then:
+Step by step procedure for the development master-branch version:
 
  * On Windows:
-   * Download the [FreeOrionSDK v13] from the FreeOrionSDK respository releases.
+   * Download the [FreeOrionSDK v14] from the FreeOrionSDK respository releases.
  * On MacOS:
-   * The [FreeOrionSDK v13] is downloaded automatically when CMake creates the
+   * The [FreeOrionSDK v14] is downloaded automatically when CMake creates the
      build environment.
  * Linux and other Operating Systems:
    * Install build and runtime dependencies by the preferred way for the
@@ -266,7 +266,7 @@ adb exec-out run-as org.godotengine.freeoriongodotclient cat files/freeorion-god
 [libvorbis]: https://xiph.org/downloads/
 [SDL2]: https://www.libsdl.org/download-2.0.php
 [Software Development Kit]: https://github.com/freeorion/freeorion-sdk
-[FreeOrionSDK v13]: https://github.com/freeorion/freeorion-sdk/releases/tag/v13
+[FreeOrionSDK v14]: https://github.com/freeorion/freeorion-sdk/releases/tag/v14
 [FreeOrion Releases]: https://github.com/freeorion/freeorion/releases
 [make jobs]: https://www.gnu.org/software/make/manual/html_node/Parallel.html
 [Python-For-Android]: https://github.com/python-cmake-buildsystem/python-cmake-buildsystem/pull/262
