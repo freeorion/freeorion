@@ -194,7 +194,9 @@ namespace {
             ErrorLogger() << "UpdateResourcePools : couldn't get empire with id " << empire_id;
             return;
         }
-        empire->UpdateResourcePools(context, empire->TechCostsTimes(context));
+        empire->UpdateResourcePools(context, empire->TechCostsTimes(context),
+                                    empire->PlanetAnnexationCosts(context),
+                                    empire->PolicyAdoptionCosts(context));
     }
 
     void UpdateResearchQueue() {
