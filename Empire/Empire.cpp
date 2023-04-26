@@ -2684,7 +2684,9 @@ void Empire::InitResourcePools(const ObjectMap& objects, const SupplyManager& su
 }
 
 void Empire::UpdateResourcePools(const ScriptingContext& context,
-                                 const std::vector<std::tuple<std::string_view, double, int>>& research_costs)
+                                 const std::vector<std::tuple<std::string_view, double, int>>& research_costs,
+                                 const std::vector<std::pair<int, double>>& annex_costs,
+                                 const std::vector<std::pair<std::string_view, double>>& policy_costs)
 {
     // updating queues, allocated_rp, distribution and growth each update their
     // respective pools, (as well as the ways in which the resources are used,
@@ -2695,7 +2697,7 @@ void Empire::UpdateResourcePools(const ScriptingContext& context,
     UpdatePopulationGrowth(context.ContextObjects());
 }
 
-std::vector<std::tuple<std::string_view, double, int>> Empire::TechCostsTimes(const ScriptingContext& context) {
+std::vector<std::tuple<std::string_view, double, int>> Empire::TechCostsTimes(const ScriptingContext& context) const {
     const auto& tm = GetTechManager();
     std::vector<std::tuple<std::string_view, double, int>> retval;
     retval.reserve(tm.size());
@@ -2711,6 +2713,19 @@ std::vector<std::tuple<std::string_view, double, int>> Empire::TechCostsTimes(co
         if (should_cache(tech_name, tech))
             retval.emplace_back(tech_name, tech.ResearchCost(m_id, context), tech.ResearchTime(m_id, context));
     }
+
+    return retval;
+}
+
+std::vector<std::pair<int, double>> Empire::PlanetAnnexationCosts(const ScriptingContext& context) const {
+    std::vector<std::pair<int, double>> retval;
+
+    return retval;
+}
+
+std::vector<std::pair<std::string_view, double>> Empire::PolicyAdoptionCosts(const ScriptingContext& context) const {
+    std::vector<std::pair<std::string_view, double>> retval;
+
     return retval;
 }
 

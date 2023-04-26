@@ -384,12 +384,14 @@ public:
       * processing of finished items and population growth happens in various
       * Check(Whatever)Progress functions. */
     void UpdateResourcePools(const ScriptingContext& context,
-                             const std::vector<std::tuple<std::string_view, double, int>>& research_costs);
+                             const std::vector<std::tuple<std::string_view, double, int>>& research_costs,
+                             const std::vector<std::pair<int, double>>& annex_costs,
+                             const std::vector<std::pair<std::string_view, double>>& policy_costs);
     /** Calls Update() on empire's research queue, which recalculates the RPs
       * spent on and number of turns left for each tech in the queue. */
     void UpdateResearchQueue(const ScriptingContext& context,
                              const std::vector<std::tuple<std::string_view, double, int>>& costs_times);
-    std::vector<std::tuple<std::string_view, double, int>> TechCostsTimes(const ScriptingContext& context);
+    std::vector<std::tuple<std::string_view, double, int>> TechCostsTimes(const ScriptingContext& context) const;
 
     /** Calls Update() on empire's production queue, which recalculates the PPs
       * spent on and number of turns left for each project in the queue. */
@@ -398,9 +400,13 @@ public:
       * spent on social projects and maintenance of buildings.  Later call to
       * CheckInfluenceProgress() will then have the correct allocations of
       * influence. */
+
     void UpdateInfluenceSpending(const ScriptingContext& context);
     /** Has m_population_pool recalculate all PopCenters' and empire's total
       * expected population growth */
+    std::vector<std::pair<int, double>> PlanetAnnexationCosts(const ScriptingContext& context) const;
+    std::vector<std::pair<std::string_view, double>> PolicyAdoptionCosts(const ScriptingContext& context) const;
+
     void UpdatePopulationGrowth(const ObjectMap& objects);
 
     /** Resets empire meters. */

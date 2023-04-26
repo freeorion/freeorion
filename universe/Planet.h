@@ -157,7 +157,8 @@ public:
     void SetGiveToEmpire(int empire_id);    ///< Marks planet to be given to empire
     void ClearGiveToEmpire();               ///< Marks planet not to be given to any empire
 
-    void SetLastTurnAttackedByShip(int turn);///< Sets the last turn this planet was attacked by a ship
+    void SetLastTurnAttackedByShip(int turn) noexcept;///< Sets the last turn this planet was attacked by a ship
+    void SetLastTurnAnnexed(int turn) noexcept;
     void SetSurfaceTexture(const std::string& texture);
     void ResetTargetMaxUnpairedMeters() override;
 

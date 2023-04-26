@@ -700,7 +700,9 @@ namespace {
     }
 
     void UpdateResourcePools(ScriptingContext& context,
-                             const std::map<int, std::vector<std::tuple<std::string_view, double, int>>>& tech_costs_times)
+                             const std::map<int, std::vector<std::tuple<std::string_view, double, int>>>& tech_costs_times,
+                             const std::map<int, std::vector<std::pair<int, double>>>& annex_costs,
+                             const std::map<int, std::vector<std::pair<std::string_view, double>>>& policy_costs)
     {
         const unsigned int num_threads = static_cast<unsigned int>(std::max(1, EffectsProcessingThreads()));
         boost::asio::thread_pool thread_pool(num_threads);
@@ -708,20 +710,36 @@ namespace {
         for ([[maybe_unused]] auto& [empire_id, empire] : context.Empires()) {
             if (empire->Eliminated())
                 continue;
-            const auto ct_it = std::find_if(tech_costs_times.begin(), tech_costs_times.end(),
-                                            [empire_id{empire_id}](const auto& tct) { return empire_id == tct.first; });
-            if (ct_it == tech_costs_times.end()) {
-                ErrorLogger() << "UpdateResourcePools in ServerApp couldn't find costs/times for empire " << empire_id;
+
+            const auto tct_it = std::find_if(tech_costs_times.begin(), tech_costs_times.end(),
+                                             [empire_id{empire_id}](const auto& tct) { return empire_id == tct.first; });
+            if (tct_it == tech_costs_times.end()) {
+                ErrorLogger() << "UpdateResourcePools in ServerApp couldn't find tech costs/times for empire " << empire_id;
                 continue;
             }
-            boost::asio::post(thread_pool, [&context, empire{empire.get()}, ct_it]() {
+
+            const auto ac_it = std::find_if(annex_costs.begin(), annex_costs.end(),
+                                            [empire_id{empire_id}](const auto& ac) { return empire_id == ac.first; });
+            if (ac_it == annex_costs.end()) {
+                ErrorLogger() << "UpdateResourcePools in ServerApp couldn't find annex costs for empire " << empire_id;
+                continue;
+            }
+
+            const auto pc_it = std::find_if(policy_costs.begin(), policy_costs.end(),
+                                            [empire_id{empire_id}](const auto& pc) { return empire_id == pc.first; });
+            if (pc_it == policy_costs.end()) {
+                ErrorLogger() << "UpdateResourcePools in ServerApp couldn't find policy costs for empire " << empire_id;
+                continue;
+            }
+
+            boost::asio::post(thread_pool, [&context, empire{empire.get()}, tct_it, ac_it, pc_it]() {
                 // determine population centers and resource centers of empire, tells resource pools
                 // the centers and groups of systems that can share resources (note that being able to
                 // share resources doesn't mean a system produces resources)
                 empire->InitResourcePools(context.ContextObjects(), context.supply);
 
                 // determine how much of each resources is available in each resource sharing group
-                empire->UpdateResourcePools(context, ct_it->second);
+                empire->UpdateResourcePools(context, tct_it->second, ac_it->second, pc_it->second);
             });
         }
 
@@ -813,7 +831,8 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
 
     UpdateEmpireSupply(context, m_supply_manager, false);
     CacheCostsTimes(context);
-    UpdateResourcePools(context, m_cached_empire_research_costs_times);
+    UpdateResourcePools(context, m_cached_empire_research_costs_times,
+                        m_cached_empire_annexation_costs, m_cached_empire_policy_adoption_costs);
     m_universe.UpdateStatRecords(context);
 }
 
@@ -1448,7 +1467,8 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data, m_species_manager,m_supply_manager};
     UpdateEmpireSupply(context, m_supply_manager, true);  // precombat supply update
     CacheCostsTimes(context);
-    UpdateResourcePools(context, m_cached_empire_research_costs_times);
+    UpdateResourcePools(context, m_cached_empire_research_costs_times,
+                        m_cached_empire_annexation_costs, m_cached_empire_policy_adoption_costs);
 
     const auto player_info_map = GetPlayerInfoMap();
 
@@ -3474,6 +3494,7 @@ namespace {
                     retval.push_back(planet_id);
 
                     planet->SetOwner(annexer_empire_id);
+                    planet->SetLastTurnAnnexed(current_turn);
 
                     Empire::ConquerProductionQueueItemsAtLocation(planet_id, annexer_empire_id, empires);
 
@@ -3902,7 +3923,8 @@ void ServerApp::PostCombatProcessTurns() {
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns(context.current_turn);
 
     UpdateEmpireSupply(context, m_supply_manager, false);
-    UpdateResourcePools(context, m_cached_empire_research_costs_times);
+    UpdateResourcePools(context, m_cached_empire_research_costs_times,
+                        m_cached_empire_annexation_costs, m_cached_empire_policy_adoption_costs);
 
     // Update fleet travel restrictions (monsters and empire fleets)
     UpdateMonsterTravelRestrictions();
@@ -4061,7 +4083,8 @@ void ServerApp::PostCombatProcessTurns() {
 
     // Re-determine supply distribution and exchanging and resource pools for empires
     UpdateEmpireSupply(context, m_supply_manager, true);
-    UpdateResourcePools(context, m_cached_empire_research_costs_times);
+    UpdateResourcePools(context, m_cached_empire_research_costs_times,
+                        m_cached_empire_annexation_costs, m_cached_empire_policy_adoption_costs);
 
     // copy latest visible gamestate to each empire's known object state
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns(context.current_turn);
