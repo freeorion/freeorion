@@ -51,10 +51,10 @@ FreeOrion depends on the following libraries or APIs to run:
 Obtaining FreeOrion Source Code and Software Dependencies
 ---------------------------------------------------------
 
-For Windows and MacOS, a [Software Development Kit] is provided as download to
+For Windows, MacOS, and Android, a [Software Development Kit] is provided as download to
 assist with compiling FreeOrion from source. The SDK contains the preconfigured and
--compiled build and runtime dependencies for Visual Studio on Windows and the
-MacOS 10.12 SDK with Xcode 10.1 or later on macOS.
+-compiled build and runtime dependencies for Visual Studio on Windows, the
+MacOS 10.12 SDK with Xcode 10.1 or later on macOS and Android NDK r24.
 
 For Linux or other Operating Systems, the build and runtime dependencies should
 be installed by the preferred way for the respective OS (e.g. via Package
@@ -67,6 +67,9 @@ Step by step procedure for the development master-branch version:
  * On MacOS:
    * The [FreeOrionSDK v14] is downloaded automatically when CMake creates the
      build environment.
+ * For Android:
+   * Download the [FreeOrionSDK v14] of appropriate architecture and Python standard library
+     from the FreeOrionSDK respository releases.
  * Linux and other Operating Systems:
    * Install build and runtime dependencies by the preferred way for the
      respective OS.
@@ -78,6 +81,8 @@ Step by step procedure for the development master-branch version:
    * If you want to create an out-of-source build using CMake, you should run 
      `git clone git@github.com:freeorion/freeorion.git FreeOrion` in the 
      `freeorion-project` directory, instead of running `bootstrap.bat`.
+ * For Android:
+   * Unzip the SDK archive contents into the project directory.
  * On MaxOS, Linux and other Operating Systems:
    * Navigate into the project directory.
    * Clone the project via Git:
@@ -205,41 +210,26 @@ the `freeorion-project/build` directory.
 
 ### Android
 
-Install Android NDK.
-
-Build [Python-For-Android]. Pack standard library with
-
-```bash
-zip -r -9 -q --exclude=*.pyc --exclude=*.a --exclude=*.so \
-<Project>/godot/default/python/lib/python39.zip .
-```
-
-Build [Boost-For-Android] with iconv support for boost_locale library and python support.
-
-```bash
-./build-android.sh --with-iconv --arch=arm64-v8a --with-python=`readlink -f ../python-install` --layout=system $ANDROID_NDK
-```
-
-Ensure you got `libboost_python<version>.a` and `libboost_locale.a` libraries.
-
 Create a `build` directory aside the _source_directory_ and change into
 this directory. It will contain all compile FreeOrion build artifacs.
 
 ```bash
-<android>/cmake/3.10.2.4988404/bin/cmake -DANDROID_ABI=armeabi-v7a -DANDROID_PLATFORM=21 -DANDROID_NDK=<android>/ndk-bundle/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=<android>/ndk-bundle/build/cmake/android.toolchain.cmake -DCMAKE_CXX_FLAGS=-std=c++14 -DANDROID_ALLOW_UNDEFINED_SYMBOLS=Off -DBUILD_SERVER=OFF -DBUILD_AI=OFF -DBUILD_CLIENT_GG=OFF -DBoost_INCLUDE_DIR=<Boost-for-Android>/build/out/armeabi-v7a/include/ -DBoost_USE_STATIC_LIBS=On -DBoost_LIBRARY_DIR=<Boost-for-Android>/build/out/armeabi-v7a/lib/ -DBUILD_CLIENT_GODOT=On -DICUI18N_LIBRARY=<Boost-for-Android>/libiconv-libicu-android/armeabi-v7a/lib/libicui18n.a -DICUUC_LIBRARY=<Boost-for-Android>/libiconv-libicu-android/armeabi-v7a/lib/libicuuc.a -DICUDATA_LIBRARY=<Boost-for-Android>/libiconv-libicu-android/armeabi-v7a/lib/libicudata.a -DICONV_LIBRARY=<Boost-for-Android>/libiconv-libicu-android/armeabi-v7a/lib/libiconv.so -DPYTHON_LIBRARY=<Python-for-Android>/lib/libpython3.6m.a -DPYTHON_INCLUDE_DIR=<Python-for-Android>/include/python3.6m/ ../freeorion
+cmake -DANDROID_ABI=<android arch> -DANDROID_PLATFORM=24 -DANDROID_NDK=<android ndk path> -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=<android>/build/cmake/android.toolchain.cmake -DCMAKE_CXX_FLAGS=-std=c++14 -DANDROID_ALLOW_UNDEFINED_SYMBOLS=Off -DBUILD_SERVER=OFF -DBUILD_AI=OFF -DBUILD_CLIENT_GG=OFF -DBoost_INCLUDE_DIR=<sdk>/include/ -DBoost_USE_STATIC_LIBS=On -DBoost_LIBRARY_DIR=<sdk>/lib/ -DBUILD_CLIENT_GODOT=On -DICUI18N_LIBRARY=<sdk>/lib/libicui18n.a -DICUUC_LIBRARY=<sdk>/lib/libicuuc.a -DICUDATA_LIBRARY=<sdk>/lib/libicudata.a -DICONV_LIBRARY=<sdk>/lib/libiconv.so -DPYTHON_LIBRARY=<sdk>/lib/libpython3.9.a -DPYTHON_INCLUDE_DIR=<sdk>/include/python3.9/ ../freeorion
 ```
 
 After successfully creating the Makefiles build the whole project by
 calling:
 
 ```bash
-<android>/cmake/3.10.2.4988404/bin/cmake --build . -- -j2 VERBOSE=1
+cmake --build . -- -j2 VERBOSE=1
 ```
 
 After the build finished successfully the godot libraries can be found within
-the `freeorion-project/build` directory and copied to `godot/client/bin/`.
+the `freeorion-project/build` directory and copied to `godot/bin/`.
 
 Call `strip` on those libraries to clean debug symbols.
+
+Copy Python standard library to `godot/default/python/lib/python39.zip`
 
 Export [Godot-Export-Android] with additional `default/*` resources.
 
