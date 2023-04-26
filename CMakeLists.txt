@@ -259,7 +259,7 @@ include(TestForBug2795)
 ## Collect project dependencies.
 ##
 
-set(MINIMUM_PYTHON_VERSION 3.7)
+set(MINIMUM_PYTHON_VERSION 3.9)
 set(MINIMUM_BOOST_VERSION 1.73.0)
 
 find_package(Threads)

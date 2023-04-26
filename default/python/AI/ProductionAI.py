@@ -1,18 +1,12 @@
 import freeOrionAIInterface as fo
 import math
 import random
+from collections.abc import Iterable, Sequence
 from logging import debug, error, warning
 from operator import itemgetter
 from typing import (
-    Dict,
-    FrozenSet,
-    Iterable,
-    List,
     NamedTuple,
     NewType,
-    Sequence,
-    Set,
-    Tuple,
     Union,
 )
 
@@ -75,7 +69,7 @@ from turn_state.design import get_best_ship_info, get_best_ship_ratings
 from universe.system_network import get_neighbors
 
 
-def get_priority_locations() -> FrozenSet[PlanetId]:
+def get_priority_locations() -> frozenset[PlanetId]:
     priority_facilities = [
         "BLD_SHIPYARD_ENRG_SOLAR",
         "BLD_SHIPYARD_CON_GEOINT",
@@ -118,7 +112,7 @@ def translators_wanted() -> int:
     return int(importance)
 
 
-def _get_capital_info() -> Tuple[PlanetId, "fo.planet", SystemId]:
+def _get_capital_info() -> tuple[PlanetId, "fo.planet", SystemId]:
     capital_id = PlanetUtilsAI.get_capital()
     if capital_id is None or capital_id == INVALID_ID:
         homeworld = None
@@ -1215,7 +1209,7 @@ def generate_production_orders():  # noqa: max-complexity
     print_production_queue(after_turn=True)
 
 
-def _get_queued_buildings(pid: PlanetId) -> List[BuildingName]:
+def _get_queued_buildings(pid: PlanetId) -> list[BuildingName]:
     debug("Buildings already in Production Queue:")
     capital_queued_buildings = _get_queued_buildings_for_planet(pid)
     for bldg in capital_queued_buildings:
@@ -1279,7 +1273,7 @@ def already_has_completed_colony_building(planet_id) -> bool:
     return any(universe.getBuilding(bldg).name.startswith("BLD_COL_") for bldg in planet.buildingIDs)
 
 
-def _build_ship_facilities(building_type: Shipyard, top_pids: Set[PlanetId] = frozenset()) -> None:
+def _build_ship_facilities(building_type: Shipyard, top_pids: set[PlanetId] = frozenset()) -> None:
     # TODO: add total_pp checks below, so don't overload queue
     if not building_type.available():
         return
@@ -1332,7 +1326,7 @@ def _build_ship_facilities(building_type: Shipyard, top_pids: Set[PlanetId] = fr
             already_covered.extend(get_owned_planets_in_system(universe.getPlanet(pid).systemID))
 
 
-def find_automatic_historic_analyzer_candidates() -> List[int]:
+def find_automatic_historic_analyzer_candidates() -> list[int]:
     """
     Find possible locations for the BLD_AUTO_HISTORY_ANALYSER building and return a subset of chosen building locations.
 
@@ -1631,7 +1625,7 @@ def _build_regional_administration() -> float:
     return _try_enqueue(building_type, get_owned_planets_in_system(best_sys_id))
 
 
-def _rate_system_for_admin(sys_id: SystemId, systems_that_may_profit: List[Tuple[int, SystemId]]) -> float:
+def _rate_system_for_admin(sys_id: SystemId, systems_that_may_profit: list[tuple[int, SystemId]]) -> float:
     opinion = BuildingType.REGIONAL_ADMIN.get_opinions()
     planets = set(get_owned_planets_in_system(sys_id))
     dislikes = planets & opinion.dislikes
@@ -1676,12 +1670,12 @@ def _build_military_command() -> float:
     return 0.0
 
 
-TopPilotSystems = NewType("TopPilotSystems", Dict[SystemId, List[Tuple[PlanetId, float]]])
+TopPilotSystems = NewType("TopPilotSystems", dict[SystemId, list[tuple[PlanetId, float]]])
 
 
 class ShipYardInfo(NamedTuple):
-    queued_shipyard_pids: List[PlanetId]
-    colony_systems: Dict[PlanetId, SystemId]
+    queued_shipyard_pids: list[PlanetId]
+    colony_systems: dict[PlanetId, SystemId]
     top_pilot_systems: TopPilotSystems
 
 
@@ -1749,11 +1743,11 @@ def _build_basic_shipyards() -> ShipYardInfo:  # noqa: max-complexity
 
 
 def _build_energy_shipyards(  # noqa: max-complexity
-    queued_shipyard_pids: List[PlanetId],
-    colony_systems: Dict[PlanetId, SystemId],
+    queued_shipyard_pids: list[PlanetId],
+    colony_systems: dict[PlanetId, SystemId],
     building_ratio: float,
     building_expense: float,
-) -> Tuple[List[Tuple[float, PlanetId]], List[Tuple[float, PlanetId]], float]:
+) -> tuple[list[tuple[float, PlanetId]], list[tuple[float, PlanetId]], float]:
     """
     Consider building Energy Compressor and Solar Containment Unit.
     Also determines pilot rating for planets in system with red stars and black holes.
@@ -1831,7 +1825,7 @@ def _build_energy_shipyards(  # noqa: max-complexity
 
 
 def _build_asteroid_processor(  # noqa: max-complexity
-    top_pilot_systems: TopPilotSystems, queued_shipyard_pids: List[PlanetId]
+    top_pilot_systems: TopPilotSystems, queued_shipyard_pids: list[PlanetId]
 ) -> float:
     """Consider building asteroid processor, return added turn costs."""
     building_type = Shipyard.ASTEROID

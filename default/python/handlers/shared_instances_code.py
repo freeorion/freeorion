@@ -1,5 +1,5 @@
 import os
-from typing import Generator
+from collections.abc import Generator
 
 
 def get_code_location(generator: Generator) -> str:

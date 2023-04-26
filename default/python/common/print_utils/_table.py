@@ -5,9 +5,10 @@ For test proposes this module is not import any freeorion runtime libraries.
 If you improve it somehow, add usage example to __main__ section.
 """
 from collections import defaultdict
+from collections.abc import Collection
 from itertools import zip_longest
 from math import ceil
-from typing import Any, Collection, Union
+from typing import Any, Union
 
 from common.print_utils._base_field import Field
 

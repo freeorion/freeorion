@@ -18,10 +18,11 @@ from __future__ import annotations
 
 import freeOrionAIInterface as fo
 from collections import defaultdict
+from collections.abc import Iterator, Mapping
 from copy import copy
 from enum import Enum
 from itertools import chain
-from typing import DefaultDict, Iterator, Mapping, NamedTuple
+from typing import NamedTuple
 
 from aistate_interface import get_aistate
 from common.fo_typing import BuildingId, BuildingName, PlanetId, SystemId
@@ -232,7 +233,7 @@ class _BuildingLocations(NamedTuple):
 
 # Cannot use BuildingType as key since not all buildings may have an enum value
 @cache_for_current_turn
-def _get_building_locations() -> DefaultDict[BuildingName, _BuildingLocations]:
+def _get_building_locations() -> defaultdict[BuildingName, _BuildingLocations]:
     universe = fo.getUniverse()
     ret = defaultdict(lambda: _BuildingLocations(set(), set()))
     for pid in get_all_empire_planets():

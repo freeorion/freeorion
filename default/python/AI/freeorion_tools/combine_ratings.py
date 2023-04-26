@@ -1,6 +1,7 @@
+from collections.abc import Iterable
 from functools import reduce
 from itertools import chain
-from typing import Iterable, Union
+from typing import Union
 
 
 def _combine_ratings(rating1: float, rating2: float) -> float:

@@ -46,8 +46,9 @@ import copy
 import freeOrionAIInterface as fo
 import math
 from collections import Counter, defaultdict
+from collections.abc import Iterable, Sequence
 from logging import debug, error, info, warning
-from typing import KT, VT, Dict, Iterable, List, Optional, Sequence, Tuple, Union
+from typing import KT, VT, Optional, Union
 
 import AIDependencies
 import FleetUtilsAI
@@ -800,7 +801,7 @@ class ShipDesigner:
         method to read out all stats.
         """
 
-        def parse_complex_tokens(tup: Tuple) -> float:
+        def parse_complex_tokens(tup: tuple) -> float:
             """Parse complex tokens which have a value dependent on another value
 
             Example usage:
@@ -956,10 +957,10 @@ class ShipDesigner:
         self,
         additional_parts=(),
         additional_hulls: Sequence = (),
-        loc: Optional[Union[int, List[int]]] = None,
+        loc: Optional[Union[int, list[int]]] = None,
         verbose: bool = False,
         consider_fleet_count: bool = True,
-    ) -> List[Tuple[float, int, int, float, DesignStats]]:
+    ) -> list[tuple[float, int, int, float, DesignStats]]:
         """Try to find the optimum designs for the ship class for each planet and add it as game object.
 
         Only designs with a positive rating (i.e. matching the minimum requirements) will be returned.
@@ -2213,7 +2214,7 @@ def _get_design_by_name(design_name, update_invalid=False, looking_for_new_desig
     return design
 
 
-def _build_reference_name(hullname: str, partlist: List[str]) -> str:
+def _build_reference_name(hullname: str, partlist: list[str]) -> str:
     """
     This reference name is used to identify existing designs and is mapped
     by Cache.map_reference_design_name to the ingame design name. Order of components are ignored.
@@ -2226,7 +2227,7 @@ def _build_reference_name(hullname: str, partlist: List[str]) -> str:
 
 
 def recursive_dict_diff(
-    dict_new: Dict[KT, VT], dict_old: Dict[KT, VT], dict_diff: Dict[KT, VT], diff_level_threshold=0
+    dict_new: dict[KT, VT], dict_old: dict[KT, VT], dict_diff: dict[KT, VT], diff_level_threshold=0
 ) -> int:
     """Find the entries in dict_new that are not present in dict_old and store them in dict_diff.
 

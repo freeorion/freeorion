@@ -1,6 +1,5 @@
 from logging import error, warning
 from textwrap import fill
-from typing import List, Set
 
 from common.print_utils import Table, Text
 from stub_generator.interface_inspector import ClassInfo, EnumInfo, InstanceInfo
@@ -96,7 +95,7 @@ def _handle_class(info: ClassInfo) -> str:  # noqa: max-complexity
     return "\n".join(result)
 
 
-def _report_classes_without_instances(classes_map: Set[str], instance_names: Set[str], classes_to_ignore: Set[str]):
+def _report_classes_without_instances(classes_map: set[str], instance_names: set[str], classes_to_ignore: set[str]):
     missed_instances = classes_map.difference(instance_names).difference(classes_to_ignore)
 
     if not missed_instances:
@@ -123,10 +122,10 @@ def _report_classes_without_instances(classes_map: Set[str], instance_names: Set
 
 
 def generate_classes(
-    raw_classes: List[ClassInfo],
-    instances: List[InstanceInfo],
-    classes_to_ignore: Set[str],
-    enums: List[EnumInfo],
+    raw_classes: list[ClassInfo],
+    instances: list[InstanceInfo],
+    classes_to_ignore: set[str],
+    enums: list[EnumInfo],
 ):
     # exclude technical Map classes that are prefixed with map_indexing_suite_ classes
     raw_classes = [x for x in raw_classes if not x.name.startswith("map_indexing_suite_")]

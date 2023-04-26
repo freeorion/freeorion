@@ -1,8 +1,8 @@
 import freeOrionAIInterface as fo
 import math
+from collections.abc import Sequence
 from copy import copy
 from logging import debug, info, warning
-from typing import Sequence, Tuple
 
 import AIDependencies
 import AIstate
@@ -318,7 +318,7 @@ def assign_invasion_values(planet_ids):
 
 
 @cache_for_current_turn
-def _get_path_from_capital(planet: "fo.planet") -> Tuple[Sequence[SystemId], int]:
+def _get_path_from_capital(planet: "fo.planet") -> tuple[Sequence[SystemId], int]:
     """
     Return chain of system from the planet to capital and length.
 

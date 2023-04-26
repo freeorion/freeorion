@@ -20,7 +20,6 @@ Example usage:
     my_industry = AIDependencies.INDUSTRY_PER_POP * my_population
 """
 import freeOrionAIInterface as fo
-from typing import Dict
 
 # Note re common dictionary lookup structure, "PlanetSize-Dependent-Lookup":
 # Many dictionaries herein (a prime example being the building_supply dictionary) have a primary key (such as
@@ -798,7 +797,7 @@ HANGAR_LAUNCH_CAPACITY_MODIFIER_DICT = {
 }
 
 
-def _scale_part_damage(part_damage: Dict[str, int], factor: float) -> Dict[str, float]:
+def _scale_part_damage(part_damage: dict[str, int], factor: float) -> dict[str, float]:
     scaled_part_damage = {weapon_name: (damage * factor) for weapon_name, damage in part_damage.items()}
     return scaled_part_damage
 

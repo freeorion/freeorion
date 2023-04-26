@@ -5,12 +5,12 @@ Log entry samples.
 ##EmpireColors:0, 255, 0, 255
 ##CapitalID:str:927 Name: Imperial Arbol I Species: SP_REPLICON
 """
-from typing import Optional, Tuple
+from typing import Optional
 
 from common.statistic_interface import LOG_PREFIX, StatKey
 
 
-def _get_token_from_line(line: str) -> Optional[Tuple[StatKey, str]]:
+def _get_token_from_line(line: str) -> Optional[tuple[StatKey, str]]:
     """
     Return token from line, if not token present return None.
 

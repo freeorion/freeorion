@@ -1,8 +1,5 @@
-from typing import Dict
-
-
 class EnumInfo:
-    def __init__(self, name: str, attributes: Dict[str, int]):
+    def __init__(self, name: str, attributes: dict[str, int]):
         self.name = name
         self.attributes = attributes
 

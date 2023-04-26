@@ -1,7 +1,8 @@
 import freeOrionAIInterface as fo
 import math
 import random
-from typing import Dict, FrozenSet, Iterable, Iterator, List, Optional, Tuple, Union
+from collections.abc import Iterable, Iterator
+from typing import Optional, Union
 
 import ShipDesignAI
 from empire.ship_builders import get_shipyards
@@ -12,7 +13,7 @@ from turn_state._planet_state import get_inhabited_planets
 
 
 @cache_for_current_turn
-def get_design_repository() -> Dict[PriorityType, Tuple[float, int, int, float]]:
+def get_design_repository() -> dict[PriorityType, tuple[float, int, int, float]]:
     """Calculate the best designs for each ship class available at this turn."""
     design_repository = {}  # dict of tuples (rating,pid,designID,cost) sorted by rating and indexed by priority type
 
@@ -73,7 +74,7 @@ def cur_best_military_design_rating() -> float:
     return 0.001
 
 
-def _get_locations(locations: Union[int, Iterable[int], None]) -> FrozenSet[int]:
+def _get_locations(locations: Union[int, Iterable[int], None]) -> frozenset[int]:
     if locations is None:
         return get_inhabited_planets()
 
@@ -84,7 +85,7 @@ def _get_locations(locations: Union[int, Iterable[int], None]) -> FrozenSet[int]
 
 def get_best_ship_info(
     priority: PriorityType, loc: Union[int, Iterable[int], None] = None
-) -> Tuple[Optional[int], Optional["fo.shipDesign"], Optional[List[int]]]:
+) -> tuple[Optional[int], Optional["fo.shipDesign"], Optional[list[int]]]:
     """Returns 3 item tuple: designID, design, buildLocList."""
     planet_ids = _get_locations(loc)
     if not planet_ids:
@@ -93,8 +94,8 @@ def get_best_ship_info(
 
 
 def _get_best_ship_info(
-    priority: PriorityType, planet_ids: Tuple[int]
-) -> Tuple[Optional[int], Optional["fo.shipDesign"], Optional[List[int]]]:
+    priority: PriorityType, planet_ids: tuple[int]
+) -> tuple[Optional[int], Optional["fo.shipDesign"], Optional[list[int]]]:
     design_repository = get_design_repository()
 
     if priority in design_repository:
@@ -120,7 +121,7 @@ def _get_best_ship_info(
         return None, None, None  # must be missing a Shipyard or other orbital (or missing tech)
 
 
-def get_best_ship_ratings(planet_ids: Tuple[int]) -> List[Tuple[float, int, int, "fo.shipDesign"]]:
+def get_best_ship_ratings(planet_ids: tuple[int]) -> list[tuple[float, int, int, "fo.shipDesign"]]:
     """
     Returns list of [partition, pid, designID, design] tuples, currently only for military ships.
 
@@ -141,7 +142,7 @@ def get_best_ship_ratings(planet_ids: Tuple[int]) -> List[Tuple[float, int, int,
 
 
 @cache_for_current_turn
-def _get_best_ship_ratings(planet_ids: Tuple[int]) -> Iterator[Tuple[float, int, int, "fo.shipDesign"]]:
+def _get_best_ship_ratings(planet_ids: tuple[int]) -> Iterator[tuple[float, int, int, "fo.shipDesign"]]:
     design_repository = get_design_repository()
     priority = PriorityType.PRODUCTION_MILITARY
     planet_ids = set(planet_ids).intersection(get_shipyards())

@@ -32,7 +32,7 @@ client
 | util
 )/
 """
-target-version = ["py37"]
+target-version = ["py39"]
 line-length=120
 
 [tool.ruff.mccabe]
@@ -71,7 +71,7 @@ src = [
 ]
 
 
-target-version = "py37"
+target-version = "py39"
 line-length=120
 exclude = [
     "*_venv/",

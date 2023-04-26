@@ -1,6 +1,6 @@
 import freeOrionAIInterface as fo
 from logging import debug
-from typing import List, NamedTuple, Optional, Tuple
+from typing import NamedTuple, Optional
 
 import AIDependencies
 import EspionageAI
@@ -190,7 +190,7 @@ def _planet_supply(planet: fo.planet) -> int:
 
 @cache_for_current_turn
 # hashing entire planets? Perhaps better us a tuple of pids?
-def _count_producers(candidates: Tuple[fo.planet], min_stability: float, number: bool) -> float:
+def _count_producers(candidates: tuple[fo.planet], min_stability: float, number: bool) -> float:
     """
     Return number of planets (number) or population on planets (not number) amongst candidates,
     which have industry focus and at least min_stability. Actually, since foci may change, planet currently
@@ -206,7 +206,7 @@ def _count_producers(candidates: Tuple[fo.planet], min_stability: float, number:
     return value
 
 
-def _already_have_types(locally_owned_planets: List[fo.planet]) -> Tuple[bool, bool]:
+def _already_have_types(locally_owned_planets: list[fo.planet]) -> tuple[bool, bool]:
     """
     Determine whether list of planets contains asteroids and a gas giant.
     Gas giants are not considered, if they are populated by a species that dislikes GGG and the
@@ -420,7 +420,7 @@ def _rate_supply_extension(system: fo.system, planet_supply: int) -> float:
 
 
 @cache_for_current_turn
-def _rate_supply(system: fo.system, planet_supply: int) -> Tuple[float, float]:
+def _rate_supply(system: fo.system, planet_supply: int) -> tuple[float, float]:
     """
     Evaluate supply situation. Return value for added supply and a factor to multiply the overall rating
     with that is lower for badly supplied planets.
@@ -489,7 +489,7 @@ def _calculate_outpost_rating(planet: fo.planet, supply_modifier: int) -> _Outpo
     return _OutpostValues(rating, planet_supply, supply_factor, local_presence.number, details)
 
 
-def _check_cultural_buildings(planet: fo.planet, stability: float, max_population: float) -> Tuple[float, float]:
+def _check_cultural_buildings(planet: fo.planet, stability: float, max_population: float) -> tuple[float, float]:
     """
     Determines production and research would could get from cultural buildings.
     Checks for Cultural Archive, Cultural Library and Automatic History Analyser.
@@ -764,7 +764,7 @@ def _rate_upkeep(planet: fo.planet, species_name: SpeciesName, details: list) ->
     return result
 
 
-def _calculate_planet_rating(planet: fo.planet, species_name: SpeciesName) -> Tuple[float, list]:
+def _calculate_planet_rating(planet: fo.planet, species_name: SpeciesName) -> tuple[float, list]:
     if not planet:
         return 0.0, ["unknown planet"]
     if not _path_to_capital(planet.systemID):

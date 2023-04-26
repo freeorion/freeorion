@@ -4,9 +4,10 @@ various technologies to help the AI decide which technologies should be
 researched next.
 """
 import freeOrionAIInterface as fo
+from collections.abc import Iterator
 from itertools import zip_longest
 from logging import debug, warning
-from typing import Iterator, List, Union
+from typing import Union
 
 import AIDependencies as Dep
 
@@ -46,7 +47,7 @@ class TechGroup:
         self._errors = []  # exceptions that occured when trying to pop from already empty lists
 
     @staticmethod
-    def _iterate_over_remaining_techs(list_of_tech_lists: List[List[str]]) -> Iterator[str]:
+    def _iterate_over_remaining_techs(list_of_tech_lists: list[list[str]]) -> Iterator[str]:
         """
         Iterate over items in a stable way.
 
@@ -64,7 +65,7 @@ class TechGroup:
             if tech not in self._tech_queue:
                 self._tech_queue.append(tech)
 
-    def get_techs(self) -> List:
+    def get_techs(self) -> list:
         """Get the ordered list of techs defining research order.
 
         :return: Research order
@@ -72,7 +73,7 @@ class TechGroup:
         self._add_remaining()
         return list(self._tech_queue)
 
-    def enqueue(self, *tech_lists: Union[List[str], str]):
+    def enqueue(self, *tech_lists: Union[list[str], str]):
         """
         Pop first entry in the list or take entry if it is string and add it to research orders.
 
@@ -98,7 +99,7 @@ class TechGroup:
             else:
                 self._tech_queue.append(tech_name)
 
-    def get_errors(self) -> List[Exception]:
+    def get_errors(self) -> list[Exception]:
         """
         Return a list of occured exceptions.
         """

@@ -1,6 +1,6 @@
 import re
+from collections.abc import Iterator
 from logging import error
-from typing import Iterator
 
 from stub_generator.stub_generator import normalize_name
 

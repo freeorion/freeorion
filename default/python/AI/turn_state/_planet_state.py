@@ -1,5 +1,6 @@
 import freeOrionAIInterface as fo
-from typing import Callable, FrozenSet, List, Mapping, Set, Tuple
+from collections.abc import Mapping
+from typing import Callable
 
 import AIDependencies
 from common.fo_typing import PlanetId, SpeciesName, SystemId
@@ -36,7 +37,7 @@ def _get_planets_info() -> Mapping[PlanetId, PlanetInfo]:
     return {planet.id: PlanetInfo(planet.id) for planet in planets}
 
 
-def _get_system_planets_map(planet_filter: Callable[[PlanetInfo], bool]) -> Mapping[SystemId, Tuple[PlanetId]]:
+def _get_system_planets_map(planet_filter: Callable[[PlanetInfo], bool]) -> Mapping[SystemId, tuple[PlanetId]]:
     result = {}
     for planet_info in (planet_info for planet_info in _get_planets_info().values() if planet_filter(planet_info)):
         result.setdefault(planet_info.system_id, []).append(planet_info.pid)
@@ -44,7 +45,7 @@ def _get_system_planets_map(planet_filter: Callable[[PlanetInfo], bool]) -> Mapp
 
 
 @cache_for_current_turn
-def get_owned_planets() -> Mapping[SystemId, Tuple[PlanetId]]:
+def get_owned_planets() -> Mapping[SystemId, tuple[PlanetId]]:
     """
     Return map from system id to list of planet ids with colony or outpost.
     """
@@ -52,21 +53,21 @@ def get_owned_planets() -> Mapping[SystemId, Tuple[PlanetId]]:
 
 
 @cache_for_current_turn
-def get_colonized_planets() -> Mapping[SystemId, Tuple[PlanetId]]:
+def get_colonized_planets() -> Mapping[SystemId, tuple[PlanetId]]:
     """
     Return map from system id to list of planet ids with colony only.
     """
     return _get_system_planets_map(PlanetInfo.is_colonized)
 
 
-def get_owned_planets_in_system(sys_id: SystemId) -> Tuple[PlanetId]:
+def get_owned_planets_in_system(sys_id: SystemId) -> tuple[PlanetId]:
     """
     Return list of planet ids with colony or outpost in the system.
     """
     return get_owned_planets().get(sys_id, ())
 
 
-def get_colonized_planets_in_system(sys_id: SystemId) -> Tuple[PlanetId]:
+def get_colonized_planets_in_system(sys_id: SystemId) -> tuple[PlanetId]:
     """
     Return list of planets with colony in the system.
     """
@@ -74,7 +75,7 @@ def get_colonized_planets_in_system(sys_id: SystemId) -> Tuple[PlanetId]:
 
 
 @cache_for_current_turn
-def get_inhabited_planets() -> FrozenSet[PlanetId]:
+def get_inhabited_planets() -> frozenset[PlanetId]:
     """
     Return frozenset of empire planet ids with species.
     """
@@ -82,19 +83,19 @@ def get_inhabited_planets() -> FrozenSet[PlanetId]:
 
 
 @cache_for_current_turn
-def get_empire_outposts() -> Tuple[PlanetId]:
+def get_empire_outposts() -> tuple[PlanetId]:
     all_planets = _get_planets_info().values()
     return tuple(planet_info.pid for planet_info in all_planets if planet_info.has_outpost())
 
 
 @cache_for_current_turn
-def get_all_empire_planets() -> Tuple[PlanetId]:
+def get_all_empire_planets() -> tuple[PlanetId]:
     all_planets = _get_planets_info().values()
     return tuple(planet_info.pid for planet_info in all_planets if planet_info.is_owned_by_empire())
 
 
 @cache_for_current_turn
-def get_empire_planets_by_species() -> Mapping[SpeciesName, List[PlanetId]]:
+def get_empire_planets_by_species() -> Mapping[SpeciesName, list[PlanetId]]:
     """
     Return dict for empire from species to list of planet ids.
     """
@@ -105,7 +106,7 @@ def get_empire_planets_by_species() -> Mapping[SpeciesName, List[PlanetId]]:
     return result
 
 
-def get_unowned_empty_planets() -> Set[PlanetId]:
+def get_unowned_empty_planets() -> set[PlanetId]:
     """
     Return the set of planets that are not owned by any player and have no natives.
     """
@@ -116,7 +117,7 @@ def get_number_of_colonies() -> int:
     return len(get_inhabited_planets())
 
 
-def get_empire_planets_with_species(species_name: str) -> Tuple[PlanetId]:
+def get_empire_planets_with_species(species_name: str) -> tuple[PlanetId]:
     """
     Return empire planet ids with species.
     """

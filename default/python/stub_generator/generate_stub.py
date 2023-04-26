@@ -1,5 +1,3 @@
-from typing import List, Set
-
 from stub_generator.interface_inspector import (
     ClassInfo,
     EnumInfo,
@@ -14,12 +12,12 @@ from stub_generator.stub_generator.rtype import mapping_code
 
 
 def make_stub(
-    classes: List[ClassInfo],
-    enums: List[EnumInfo],
-    functions: List[FunctionInfo],
-    instances: List[InstanceInfo],
+    classes: list[ClassInfo],
+    enums: list[EnumInfo],
+    functions: list[FunctionInfo],
+    instances: list[InstanceInfo],
     result_path,
-    classes_to_ignore: Set[str],
+    classes_to_ignore: set[str],
 ):
 
     header = (

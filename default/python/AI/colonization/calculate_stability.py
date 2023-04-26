@@ -1,5 +1,4 @@
 import freeOrionAIInterface as fo
-from typing import Dict, Tuple
 
 import AIDependencies
 import PolicyAI
@@ -111,7 +110,7 @@ def _evaluate_specials(planet: fo.planet, species: fo.species) -> float:
 
 
 @cache_for_current_turn
-def _count_building(planet: fo.planet) -> Dict[str, Tuple[int, int, int]]:
+def _count_building(planet: fo.planet) -> dict[str, tuple[int, int, int]]:
     """Returns Mapping from BuildingType to number of buildings on planet, in system and elsewhere."""
     universe = fo.getUniverse()
     system = universe.getSystem(planet.systemID)

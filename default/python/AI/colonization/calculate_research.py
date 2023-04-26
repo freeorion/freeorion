@@ -1,5 +1,4 @@
 import freeOrionAIInterface as fo
-from typing import List
 
 import AIDependencies
 from buildings import BuildingType
@@ -47,7 +46,7 @@ def calculate_research(planet: fo.planet, species: fo.species, max_population: f
 
 
 @cache_for_current_turn
-def _get_modified_research_bonuses(planet: fo.planet) -> List[Bonus]:
+def _get_modified_research_bonuses(planet: fo.planet) -> list[Bonus]:
     """
     Get list of per-population bonuses which are added before multiplication with the species skill value.
     """
@@ -92,7 +91,7 @@ def _get_research_bonus_modified(planet: fo.planet, stability: float) -> float:
 
 
 @cache_for_current_turn
-def _get_modified_by_policy_research_bonuses(stability: float) -> List[Bonus]:
+def _get_modified_by_policy_research_bonuses(stability: float) -> list[Bonus]:
     return [
         Bonus(
             tech_soon_available("LRN_QUANT_NET", 3),

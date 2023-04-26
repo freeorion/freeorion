@@ -1,6 +1,6 @@
 import freeOrionAIInterface as fo
 from logging import debug, warning
-from typing import List, Optional
+from typing import Optional
 
 import AIstate
 import fleet_orders
@@ -15,7 +15,7 @@ from target import TargetFleet, TargetSystem
 from turn_state import get_system_supply
 
 
-def create_move_orders_to_system(fleet: TargetFleet, target: TargetSystem) -> List["fleet_orders.OrderMove"]:
+def create_move_orders_to_system(fleet: TargetFleet, target: TargetSystem) -> list["fleet_orders.OrderMove"]:
     """
     Create a list of move orders from the fleet's current system to the target system.
 
@@ -42,7 +42,7 @@ def create_move_orders_to_system(fleet: TargetFleet, target: TargetSystem) -> Li
 
 def can_travel_to_system(
     fleet_id: int, start: TargetSystem, target: TargetSystem, ensure_return: bool = False
-) -> List[TargetSystem]:
+) -> list[TargetSystem]:
     """
     Return list systems to be visited.
     """

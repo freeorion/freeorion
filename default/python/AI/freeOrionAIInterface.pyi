@@ -3,8 +3,9 @@
 # about stub files, see https://www.python.org/dev/peps/pep-0484/#stub-files
 # During execution, the actual module is made available via
 # a C++ Boost-python process as part of the launch.
+from collections.abc import Iterable, Iterator
 from enum import IntEnum
-from typing import Generic, Iterable, Iterator, TypeVar, overload
+from typing import Generic, TypeVar, overload
 
 from common.fo_typing import (
     BuildingId,

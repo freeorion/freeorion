@@ -1,5 +1,4 @@
 from operator import attrgetter
-from typing import List
 
 from stub_generator.interface_inspector import EnumInfo
 
@@ -25,6 +24,6 @@ def _handle_enum(info: EnumInfo):
     return "\n".join(result)
 
 
-def generate_enums(enums: List[EnumInfo]):
+def generate_enums(enums: list[EnumInfo]):
     for enum in sorted(enums, key=attrgetter("name")):
         yield _handle_enum(enum)
