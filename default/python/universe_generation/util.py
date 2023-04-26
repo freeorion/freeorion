@@ -2,8 +2,8 @@ import itertools
 import math
 import random
 import sys
+from collections.abc import Iterable, Iterator
 from hashlib import md5
-from typing import Iterable, Iterator, Tuple
 
 error_list = []
 
@@ -45,7 +45,7 @@ def report_error(msg):
     print(msg, file=sys.stderr)
 
 
-def unique_product(first: Iterable[int], second: Iterable[int]) -> Iterator[Tuple[int, int]]:
+def unique_product(first: Iterable[int], second: Iterable[int]) -> Iterator[tuple[int, int]]:
     """
     Create all possible unique pairs for two iterables.
     Both iterables should consist of comparable objects.

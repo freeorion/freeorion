@@ -3,7 +3,6 @@ import sys
 from collections import defaultdict
 from math import acos, ceil, cos, floor, pi, sin, sqrt
 from random import gauss, randint, random, uniform
-from typing import List, Tuple
 
 import universe_tables
 import util
@@ -544,7 +543,7 @@ def disc_galaxy_calc_positions(positions, adjacency_grid, size, width):
 
 
 def cluster_galaxy_calc_positions(  # noqa: max-complexity
-    positions: List[Tuple[int, int]], adjacency_grid: AdjacencyGrid, size: int, width: float
+    positions: list[tuple[int, int]], adjacency_grid: AdjacencyGrid, size: int, width: float
 ):
     """
     Calculate positions for the cluster galaxy shape and add them to positions.

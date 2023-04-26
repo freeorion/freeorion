@@ -1,4 +1,4 @@
-from typing import Dict, List, Mapping
+from collections.abc import Mapping
 
 from common.fo_typing import PlanetId, SpecialName
 from empire.survey_lock import survey_universe_lock
@@ -10,7 +10,7 @@ def set_growth_special(special: SpecialName, pid: PlanetId):
 
 
 @survey_universe_lock
-def get_growth_specials() -> Mapping[SpecialName, List[PlanetId]]:
+def get_growth_specials() -> Mapping[SpecialName, list[PlanetId]]:
     """
     Return map from a growth special to list of the planets where we have it.
     """
@@ -18,7 +18,7 @@ def get_growth_specials() -> Mapping[SpecialName, List[PlanetId]]:
 
 
 @cache_for_current_turn
-def _get_growth_specials() -> Dict[SpecialName, List[PlanetId]]:
+def _get_growth_specials() -> dict[SpecialName, list[PlanetId]]:
     """
     Return mutable state.
     """

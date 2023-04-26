@@ -2,7 +2,6 @@ import os
 import platform
 from glob import glob
 from pathlib import Path
-from typing import Tuple
 
 
 def _get_log_dir() -> Path:
@@ -30,7 +29,7 @@ def is_close(time_a: float, time_b: float, seconds=60.0):
     return abs(time_a - time_b) < seconds
 
 
-def _list_log_files(data_dir: Path) -> Tuple[float, tuple]:
+def _list_log_files(data_dir: Path) -> tuple[float, tuple]:
     """
     List and filter log files.
 
@@ -45,7 +44,7 @@ def _list_log_files(data_dir: Path) -> Tuple[float, tuple]:
     return latest_time, tuple(file_ for time, file_ in timestamps if is_close(latest_time, time))
 
 
-def return_file_list() -> Tuple[float, tuple]:
+def return_file_list() -> tuple[float, tuple]:
     data_dir = _get_log_dir()
     if not _validate_data_dir(data_dir):
         raise Exception(f"freeorion.log is missed in {data_dir}, please run the game to fix it.")

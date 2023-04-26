@@ -4,7 +4,7 @@ from collections import Counter
 from collections import OrderedDict as odict
 from logging import debug, error, info, warning
 from operator import itemgetter
-from typing import Dict, List, Optional, Tuple
+from typing import Optional
 
 import AIFleetMission
 import ColonisationAI
@@ -368,7 +368,7 @@ class AIstate:
         defense = min(max_defense, init_defense + sighting_age * defense_regen)
         return {"overall": defense * (defense + shields), "attack": defense, "health": (defense + shields)}
 
-    def assess_enemy_supply(self) -> Tuple[Dict[int, List[int]], Dict[int, List[int]]]:
+    def assess_enemy_supply(self) -> tuple[dict[int, list[int]], dict[int, list[int]]]:
         """
         Assesses where enemy empires have Supply
         :return: a tuple of 2 dicts, each of which is keyed by system id, and each of which is a list of empire ids

@@ -1,6 +1,6 @@
 import freeOrionAIInterface as fo
 from collections import defaultdict
-from typing import Mapping, Set
+from collections.abc import Mapping
 
 import AIstate
 from common.fo_typing import SystemId
@@ -26,7 +26,7 @@ def count_claimed_stars(star_type: "fo.starType") -> int:
 
 
 @cache_for_current_turn
-def _get_claimed_stars() -> Mapping["fo.starType", Set[SystemId]]:
+def _get_claimed_stars() -> Mapping["fo.starType", set[SystemId]]:
     """
     Return dictionary of star type: list of colonised and planned to be colonized systems.
     Start type converted to int because `cache_by_turn` store its value in savegame

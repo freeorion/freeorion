@@ -1,5 +1,4 @@
 import freeOrionAIInterface as fo
-from typing import Dict, List
 
 import AIDependencies
 from common.fo_typing import PlanetId
@@ -113,7 +112,7 @@ def have_computronium() -> bool:
     return _get_planet_catalog().have_computronium
 
 
-def computronium_candidates() -> List[PlanetId]:
+def computronium_candidates() -> list[PlanetId]:
     """Return list of own planets that have a computronium moon and a species capable of research."""
     return _get_planet_catalog().pids_computronium
 
@@ -123,7 +122,7 @@ def have_honeycomb() -> bool:
     return _get_planet_catalog().have_honeycomb
 
 
-def honeycomb_candidates() -> List[PlanetId]:
+def honeycomb_candidates() -> list[PlanetId]:
     """Return list of own planets that have the honeycomb special and a species capable of production."""
     return _get_planet_catalog().pids_honeycomb
 
@@ -132,5 +131,5 @@ def have_worldtree() -> bool:
     return _get_planet_catalog().have_worldtree
 
 
-def luxury_resources() -> Dict[str, List[fo.planet]]:
+def luxury_resources() -> dict[str, list[fo.planet]]:
     return _get_planet_catalog().luxury_planets

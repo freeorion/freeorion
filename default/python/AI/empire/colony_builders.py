@@ -1,4 +1,5 @@
-from typing import Dict, List, Mapping, Sequence, Union
+from collections.abc import Mapping, Sequence
+from typing import Union
 
 import AIDependencies
 from common.fo_typing import PlanetId, SpeciesName
@@ -24,7 +25,7 @@ def can_build_colony_for_species(species_name: Union[SpeciesName, str]):
 
 
 @survey_universe_lock
-def get_colony_builder_locations(species_name: SpeciesName) -> List[PlanetId]:
+def get_colony_builder_locations(species_name: SpeciesName) -> list[PlanetId]:
     return get_colony_builders()[species_name]
 
 
@@ -42,7 +43,7 @@ def can_build_only_sly_colonies():
 
 
 @survey_universe_lock
-def get_colony_builders() -> Mapping[SpeciesName, List[PlanetId]]:
+def get_colony_builders() -> Mapping[SpeciesName, list[PlanetId]]:
     """
     Return map from the species to list of the planet where you could build a colony ship with it.
     """
@@ -50,7 +51,7 @@ def get_colony_builders() -> Mapping[SpeciesName, List[PlanetId]]:
 
 
 @cache_for_current_turn
-def get_extra_colony_builders() -> List[str]:
+def get_extra_colony_builders() -> list[str]:
     """
     Returns species the empire can build without having a colony, i.e. Exobots, if (almost) researched, plus
     extinct species that has been enabled.
@@ -65,7 +66,7 @@ def get_extra_colony_builders() -> List[str]:
 
 
 @cache_for_current_turn
-def _get_colony_builders() -> Dict[SpeciesName, List[PlanetId]]:
+def _get_colony_builders() -> dict[SpeciesName, list[PlanetId]]:
     """
     Return mutable state.
     """

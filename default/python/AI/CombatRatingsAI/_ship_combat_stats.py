@@ -1,6 +1,5 @@
 import freeOrionAIInterface as fo
 from logging import warning
-from typing import Dict, Tuple
 
 from AIDependencies import CombatTarget
 from aistate_interface import get_aistate
@@ -16,7 +15,7 @@ class ShipCombatStats:
     def __init__(
         self,
         *,
-        attacks: Tuple[Tuple[float, int]] = None,
+        attacks: tuple[tuple[float, int]] = None,
         structure=1.0,
         shields=0.0,
         fighter_capacity=0,
@@ -30,7 +29,7 @@ class ShipCombatStats:
 
         self.structure = structure
         self.shields = shields
-        self.attacks: Dict[float, int] = {} if attacks is None else tuple_to_dict(attacks)
+        self.attacks: dict[float, int] = {} if attacks is None else tuple_to_dict(attacks)
 
         self.fighter_capacity = fighter_capacity
         self.fighter_launch_rate = fighter_launch_rate

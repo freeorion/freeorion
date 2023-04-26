@@ -1,6 +1,4 @@
-from typing import Dict
-
-_planet_supply_map: Dict[int, int] = {}
+_planet_supply_map: dict[int, int] = {}
 
 
 def get_planet_supply(pid: int, default: int) -> int:

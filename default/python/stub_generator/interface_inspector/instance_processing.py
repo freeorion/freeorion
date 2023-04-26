@@ -1,5 +1,6 @@
+from collections.abc import Iterator
 from logging import error, warning
-from typing import Any, Dict, Iterator, List
+from typing import Any
 
 from stub_generator.interface_inspector.inspection_helpers import (
     _get_member_info,
@@ -10,7 +11,7 @@ _INVALID_CLASSES = {"method"}
 
 
 class InstanceInfo:
-    def __init__(self, class_name: str, attributes: Dict[str, Any], parents: List[str], location: str):
+    def __init__(self, class_name: str, attributes: dict[str, Any], parents: list[str], location: str):
         self.class_name = class_name
         self.attributes = attributes
         self.parents = parents

@@ -1,5 +1,4 @@
 import freeOrionAIInterface as fo
-from typing import List
 
 import AIDependencies
 from buildings import BuildingType
@@ -38,7 +37,7 @@ def calculate_production(planet: fo.planet, species: fo.species, max_population:
 
 
 @cache_for_current_turn
-def _get_modified_industry_bonuses() -> List[Bonus]:
+def _get_modified_industry_bonuses() -> list[Bonus]:
     """
     Get list of per-population bonuses which are added before multiplication with the species skill value.
     """

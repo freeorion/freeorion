@@ -1,4 +1,5 @@
-from typing import Dict, List, Mapping, Set, Union
+from collections.abc import Mapping
+from typing import Union
 
 from common.fo_typing import PlanetId, SpeciesName
 from empire.survey_lock import survey_universe_lock
@@ -11,7 +12,7 @@ def can_build_ship_for_species(species_name: Union[SpeciesName, str]):
 
 
 @survey_universe_lock
-def get_ship_builder_locations(species_name: SpeciesName) -> List[PlanetId]:
+def get_ship_builder_locations(species_name: SpeciesName) -> list[PlanetId]:
     return get_ship_builders().get(species_name, [])
 
 
@@ -27,7 +28,7 @@ def set_ship_builders(species_name: SpeciesName, pid: PlanetId):
 
 
 @survey_universe_lock
-def get_ship_builders() -> Mapping[SpeciesName, List[PlanetId]]:
+def get_ship_builders() -> Mapping[SpeciesName, list[PlanetId]]:
     """
     Return map from the species to list of the planet where you could build a ship with it.
     """
@@ -35,7 +36,7 @@ def get_ship_builders() -> Mapping[SpeciesName, List[PlanetId]]:
 
 
 @cache_for_current_turn
-def _get_ship_builders() -> Dict[SpeciesName, List[PlanetId]]:
+def _get_ship_builders() -> dict[SpeciesName, list[PlanetId]]:
     """
     Return mutable state.
     """
@@ -43,7 +44,7 @@ def _get_ship_builders() -> Dict[SpeciesName, List[PlanetId]]:
 
 
 @cache_for_current_turn
-def get_shipyards() -> Set[PlanetId]:
+def get_shipyards() -> set[PlanetId]:
     return set()
 
 

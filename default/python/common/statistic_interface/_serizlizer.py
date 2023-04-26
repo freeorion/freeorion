@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Callable, Dict, List, TypeVar
+from typing import Callable, TypeVar
 
 Serializable = TypeVar("Serializable")
 
@@ -41,7 +41,7 @@ class _StrSerializer(Serializer):
 
 class ListSerializer(Serializer):
     def __init__(self, item_serializer: Serializer):
-        def serializer(value: List[Serializable]) -> str:
+        def serializer(value: list[Serializable]) -> str:
             return ", ".join(item_serializer.serialize(val) for val in value)
 
         def deserializer(serialized: str) -> Serializable:
@@ -52,8 +52,8 @@ class ListSerializer(Serializer):
 
 
 class DictSerializer(Serializer):
-    def __init__(self, items: Dict[str, Serializer]):
-        def serializer(value: Dict[str, Serializable]) -> str:
+    def __init__(self, items: dict[str, Serializer]):
+        def serializer(value: dict[str, Serializable]) -> str:
             assert set(value) == set(items), f"Keys should match {sorted(value)} != {sorted(items)}"
             serialized_dict = {}
             for key, val in value.items():  # preserve order of values dict

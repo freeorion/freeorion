@@ -1,7 +1,6 @@
 import freeOrionAIInterface as fo
 from logging import debug, error, info, warning
 from operator import itemgetter
-from typing import List
 
 import AIDependencies
 import AIstate
@@ -565,7 +564,7 @@ class OrbitalColonizationManager:
         self._colonization_plans = {}
         self.num_enqueued_bases = 0
 
-    def get_targets(self) -> List[int]:
+    def get_targets(self) -> list[int]:
         """
         Return all planets for which an orbital colonization plan exists.
         """

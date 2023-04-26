@@ -1,4 +1,5 @@
-from typing import Any, Collection
+from collections.abc import Collection
+from typing import Any
 
 from common.print_utils._base_field import Field
 

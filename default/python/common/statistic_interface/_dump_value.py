@@ -1,5 +1,4 @@
 from abc import ABC
-from typing import Dict
 
 from common.statistic_interface._serizlizer import (
     DictSerializer,
@@ -40,7 +39,7 @@ class DumpStr(Dump):
 
 
 class DumpDict(Dump):
-    def __init__(self, name: str, items: Dict[str, Serializer]):
+    def __init__(self, name: str, items: dict[str, Serializer]):
         super().__init__(name, DictSerializer(items))
 
 

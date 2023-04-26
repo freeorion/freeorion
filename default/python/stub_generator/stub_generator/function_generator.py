@@ -1,5 +1,4 @@
 from operator import attrgetter
-from typing import List
 
 from stub_generator.interface_inspector import FunctionInfo
 from stub_generator.parse_docs import Docs
@@ -25,6 +24,6 @@ def _handle_function(fun: FunctionInfo):
         yield f"def {fun.name}(*args){return_annotation}:{docstring}{end}"
 
 
-def generate_functions(functions: List[FunctionInfo]):
+def generate_functions(functions: list[FunctionInfo]):
     for function in sorted(functions, key=attrgetter("name")):
         yield "".join(_handle_function(function))

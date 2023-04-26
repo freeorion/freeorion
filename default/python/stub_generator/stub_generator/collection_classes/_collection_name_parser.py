@@ -1,4 +1,5 @@
-from typing import Iterable, Iterator, List, Optional
+from collections.abc import Iterable, Iterator
+from typing import Optional
 
 
 class UnmatchedType(Exception):
@@ -44,7 +45,7 @@ class MapToken(Token):
         super().__init__(value, "Map[", "]", 2)
 
 
-_tokens: List[Token] = [
+_tokens: list[Token] = [
     SimpleCollectionToken("Vec", "Vec"),
     SimpleCollectionToken("Set", "Set"),
     MapToken("Map"),

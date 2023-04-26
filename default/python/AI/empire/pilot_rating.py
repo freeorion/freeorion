@@ -1,5 +1,5 @@
+from collections.abc import Mapping, Sequence
 from logging import info
-from typing import Dict, Mapping, Sequence
 
 from common.fo_typing import PlanetId
 from empire.survey_lock import survey_universe_lock
@@ -27,7 +27,7 @@ def get_pilot_ratings() -> Mapping[PlanetId, float]:
 
 
 @cache_for_current_turn
-def _get_pilot_ratings() -> Dict[PlanetId, float]:
+def _get_pilot_ratings() -> dict[PlanetId, float]:
     """
     Return mutable state.
     """

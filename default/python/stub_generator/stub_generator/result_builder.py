@@ -1,11 +1,12 @@
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Iterable, List, TextIO
+from typing import TextIO
 
 
 @dataclass
 class Import:
     from_: str
-    items: List[str]
+    items: list[str]
 
 
 def merge_imports(imports):
@@ -55,7 +56,7 @@ class ResultBuilder:
     def _import_string(self, import_: Import):
         return f"from {import_.from_} import {', '.join(import_.items)}"
 
-    def _write_imports(self, file: TextIO, imports: List[Import]):
+    def _write_imports(self, file: TextIO, imports: list[Import]):
         imports = merge_imports(imports)
         sort_imports(imports)
         for i in imports:

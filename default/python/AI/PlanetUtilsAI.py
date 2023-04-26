@@ -1,16 +1,10 @@
 import freeOrionAIInterface as fo
+from collections.abc import Iterable, Mapping, Sequence
 from enum import Enum
 from logging import debug, error
 from typing import (
-    Dict,
-    Iterable,
-    List,
-    Mapping,
     NamedTuple,
     Optional,
-    Sequence,
-    Set,
-    Tuple,
     Union,
 )
 
@@ -108,7 +102,7 @@ def get_capital_sys_id() -> SystemId:
         return fo.getUniverse().getPlanet(cap_id).systemID
 
 
-def get_planets_in__systems_ids(system_ids: Iterable[SystemId]) -> List[PlanetId]:
+def get_planets_in__systems_ids(system_ids: Iterable[SystemId]) -> list[PlanetId]:
     """
     Return list of planet ids for system ids list.
     """
@@ -122,7 +116,7 @@ def get_planets_in__systems_ids(system_ids: Iterable[SystemId]) -> List[PlanetId
 
 
 @cache_for_current_turn
-def get_owned_planets_by_empire() -> List[PlanetId]:
+def get_owned_planets_by_empire() -> list[PlanetId]:
     """
     Return list of all planets owned by empire.
     """
@@ -171,7 +165,7 @@ def get_populated_planet_ids(planet_ids: Sequence[PlanetId]) -> Sequence[PlanetI
 
 
 @cache_for_current_turn
-def get_empire_populated_planets() -> Tuple[fo.planet]:
+def get_empire_populated_planets() -> tuple[fo.planet]:
     universe = fo.getUniverse()
     return tuple(universe.getPlanet(pid) for pid in get_populated_planet_ids(get_owned_planets_by_empire()))
 
@@ -186,9 +180,9 @@ def get_systems(planet_ids: Sequence[PlanetId]) -> Sequence[SystemId]:
 
 
 class Opinion(NamedTuple):
-    likes: Set[PlanetId]
-    neutral: Set[PlanetId]
-    dislikes: Set[PlanetId]
+    likes: set[PlanetId]
+    neutral: set[PlanetId]
+    dislikes: set[PlanetId]
 
     def value(self, pid: PlanetId, like_value: float, neutral_value: float, dislike_value: float) -> float:
         """Returns like_value if pid is in likes, dislike_value if pid is in dislikes, else neutral_value"""
@@ -261,7 +255,7 @@ def _planet_species(pid: PlanetId) -> Optional[fo.species]:
 
 
 @cache_for_current_turn
-def _calculate_get_planet_opinions() -> Dict[str, Opinion]:
+def _calculate_get_planet_opinions() -> dict[str, Opinion]:
     universe = fo.getUniverse()
     all_species = [universe.getPlanet(pid).speciesName for pid in get_owned_planets_by_empire()]
     all_species += get_extra_colony_builders()

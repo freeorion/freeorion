@@ -1,7 +1,8 @@
 import freeOrionAIInterface as fo
 import math
+from collections.abc import Sequence
 from logging import debug, error, warning
-from typing import List, Sequence, Set, Tuple, Union
+from typing import Union
 
 import AIDependencies
 import MoveUtilsAI
@@ -53,7 +54,7 @@ def count_troops_in_fleet(fleet_id: int) -> float:
     return fleet_troop_capacity
 
 
-def get_targeted_planet_ids(planet_ids: Sequence[PlanetId], mission_type: MissionType) -> List[PlanetId]:
+def get_targeted_planet_ids(planet_ids: Sequence[PlanetId], mission_type: MissionType) -> list[PlanetId]:
     """Find the planets that are targets of the specified mission type.
 
     :param planet_ids: planets to be queried
@@ -78,11 +79,11 @@ def get_fleets_for_mission(  # noqa: max-complexity
     min_stats: dict,
     cur_stats: dict,
     starting_system: int,
-    fleet_pool_set: Set[int],
-    fleet_list: List[int],
+    fleet_pool_set: set[int],
+    fleet_list: list[int],
     species: str = "",
     ensure_return: bool = False,
-) -> List[int]:
+) -> list[int]:
     """Get fleets for a mission.
 
     Implements breadth-first search through systems starting at the **starting_sytem**.
@@ -200,7 +201,7 @@ def get_fleets_for_mission(  # noqa: max-complexity
         return []
 
 
-def split_fleet(fleet_id: int) -> List[int]:
+def split_fleet(fleet_id: int) -> list[int]:
     """Split a fleet into its ships.
 
     :param fleet_id: fleet to be split.
@@ -629,7 +630,7 @@ def _print_systems_and_supply(system_ids):
         )
 
 
-def get_fighter_capacity_of_fleet(fleet_id: int) -> Tuple[int, int]:
+def get_fighter_capacity_of_fleet(fleet_id: int) -> tuple[int, int]:
     """
     Return current and max fighter capacity.
     """
@@ -690,7 +691,7 @@ def get_fleet_system(fleet: Union[TargetFleet, int]) -> int:
     return fleet.systemID if fleet.systemID != INVALID_ID else fleet.nextSystemID
 
 
-def get_current_and_max_structure(fleet: int) -> Tuple[float, float]:
+def get_current_and_max_structure(fleet: int) -> tuple[float, float]:
     """Return a 2-tuple of the sums of structure and maxStructure meters of all ships in the fleet."""
 
     universe = fo.getUniverse()

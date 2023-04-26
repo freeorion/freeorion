@@ -1,5 +1,4 @@
 import freeOrionAIInterface as fo
-from typing import List
 
 from CombatRatingsAI._ship_combat_stats import ShipCombatStats, get_ship_combat_stats
 from common.fo_typing import FleetId
@@ -15,7 +14,7 @@ class FleetCombatStats:
         self._max_stats = max_stats
         self._ship_stats = self._get_stats_from_fleet()
 
-    def get_ship_combat_stats(self) -> List[ShipCombatStats]:
+    def get_ship_combat_stats(self) -> list[ShipCombatStats]:
         """Returns list of ShipCombatStats of the fleet."""
         return list(self._ship_stats)
 
@@ -44,5 +43,5 @@ def get_fleet_combat_stats(fleet_id, max_stats=False):
     return FleetCombatStats(fleet_id, max_stats=max_stats)
 
 
-def get_ships_stats_for_fleet(fleet_id, max_stats=False) -> List[ShipCombatStats]:
+def get_ships_stats_for_fleet(fleet_id, max_stats=False) -> list[ShipCombatStats]:
     return get_fleet_combat_stats(fleet_id, max_stats=max_stats).get_ship_combat_stats()
