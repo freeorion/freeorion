@@ -170,13 +170,14 @@ void ServerApp::SignalHandler(const boost::system::error_code& error, int signal
 }
 
 namespace {
-    std::string AIClientExe()
-    {
+    std::string AIClientExe() {
+        static constexpr auto ai_client_exe_filename =
 #ifdef FREEORION_WIN32
-        return (GetBinDir() / "freeorionca.exe").string();
+            "freeorionca.exe";
 #else
-        return (GetBinDir() / "freeorionca").string();
+            "freeorionca";
 #endif
+        return (GetBinDir() / ai_client_exe_filename).string();
     }
 }
 
