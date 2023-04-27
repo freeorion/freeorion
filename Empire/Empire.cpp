@@ -2693,7 +2693,7 @@ void Empire::UpdateResourcePools(const ScriptingContext& context,
     // which needs to be done simultaneously to keep things consistent)
     UpdateResearchQueue(context, research_costs);
     UpdateProductionQueue(context);
-    UpdateInfluenceSpending(context);
+    UpdateInfluenceSpending(context, annex_costs, policy_costs);
     UpdatePopulationGrowth(context.ContextObjects());
 }
 
@@ -2758,9 +2758,11 @@ void Empire::UpdateProductionQueue(const ScriptingContext& context) {
     m_industry_pool.ChangedSignal();
 }
 
-void Empire::UpdateInfluenceSpending(const ScriptingContext& context) {
+void Empire::UpdateInfluenceSpending(const ScriptingContext& context,
+                                     const std::vector<std::pair<int, double>>& annex_costs,
+                                     const std::vector<std::pair<std::string_view, double>>& policy_costs) {
     m_influence_pool.Update(context.ContextObjects()); // recalculate total influence production
-    m_influence_queue.Update(context);
+    m_influence_queue.Update(context, annex_costs, policy_costs);
     m_influence_pool.ChangedSignal();
 }
 
