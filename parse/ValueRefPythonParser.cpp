@@ -710,6 +710,33 @@ namespace {
             nullptr));
     }
 
+    value_ref_wrapper<double> insert_double_complex_variable_species_(const char* variable, const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<std::string>> species;
+        auto species_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["species"]);
+        if (species_args.check()) {
+            species = ValueRef::CloneUnique(species_args().value_ref);
+        } else {
+            species = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["species"])());
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<int>> empire;
+        auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
+        if (empire_args.check()) {
+            empire = ValueRef::CloneUnique(empire_args().value_ref);
+        } else {
+            empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
+        }
+
+        return value_ref_wrapper<double>(std::make_shared<ValueRef::ComplexVariable<double>>(
+            variable,
+            std::move(empire),
+            nullptr,
+            nullptr,
+            std::move(species),
+            nullptr));
+
+    }
+
     value_ref_wrapper<double> insert_direct_distance_between_(boost::python::object arg1, boost::python::object arg2) {
         std::unique_ptr<ValueRef::ValueRef<int>> id1;
         auto id1_args = boost::python::extract<value_ref_wrapper<int>>(arg1);
@@ -916,6 +943,13 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
     {
         const auto f_insert_name_property = [variable](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_double_complex_variable_(variable, args, kw); };
         globals[variable] = boost::python::raw_function(f_insert_name_property);
+    }
+
+    // species_empire_opinion
+    for (const char* variable : {"SpeciesEmpireOpinion",
+                                 "SpeciesEmpireTargetOpinion"})
+    {
+        globals[variable] = boost::python::raw_function([variable](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_double_complex_variable_species_(variable, args, kw); });
     }
 
     // single-parameter math functions
