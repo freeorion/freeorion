@@ -1,3 +1,4 @@
+from species.common.empire_opinions import COMMON_OPINION_EFFECTS
 from species.common.env import BROAD_EP, INFERNO_BROAD_EP
 from species.common.focus import (
     HAS_ADVANCED_FOCI,
@@ -78,6 +79,7 @@ Species(
         *AVERAGE_STOCKPILE,
         *AVERAGE_POPULATION,
         *GOOD_HAPPINESS,
+        COMMON_OPINION_EFFECTS("SP_ABADDONI"),
         *AVERAGE_SUPPLY,
         *BAD_DEFENSE_TROOPS,
         EffectsGroup(

@@ -1,4 +1,5 @@
 from species.common.detection import ULTIMATE_DETECTION
+from species.common.empire_opinions import COMMON_OPINION_EFFECTS
 from species.common.env import BARREN_STANDARD_EP
 from species.common.focus import (
     HAS_ADVANCED_FOCI,
@@ -81,6 +82,7 @@ Species(
         *AVERAGE_STOCKPILE,
         *AVERAGE_POPULATION,
         *GOOD_HAPPINESS,
+        COMMON_OPINION_EFFECTS("SP_BANFORO"),
         *AVERAGE_SUPPLY,
         *AVERAGE_DEFENSE_TROOPS,
         ULTIMATE_DETECTION,
