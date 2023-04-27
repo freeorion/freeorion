@@ -401,7 +401,9 @@ public:
       * CheckInfluenceProgress() will then have the correct allocations of
       * influence. */
 
-    void UpdateInfluenceSpending(const ScriptingContext& context);
+    void UpdateInfluenceSpending(const ScriptingContext& context,
+                                 const std::vector<std::pair<int, double>>& annex_costs,
+                                 const std::vector<std::pair<std::string_view, double>>& policy_costs);
     /** Has m_population_pool recalculate all PopCenters' and empire's total
       * expected population growth */
     std::vector<std::pair<int, double>> PlanetAnnexationCosts(const ScriptingContext& context) const;

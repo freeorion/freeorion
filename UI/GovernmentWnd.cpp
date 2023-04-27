@@ -1376,14 +1376,15 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
 void GovernmentWnd::MainPanel::PostChangeBigUpdate() {
     ScriptingContext context;
 
-    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     auto empire = context.GetEmpire(empire_id);  // may be nullptr
     if (!empire) {
         ErrorLogger() << "GovernmentWnd::MainPanel::SetPolicy has no empire to set policies for";
         return;
     }
 
-    empire->UpdateInfluenceSpending(context);
+    empire->UpdateInfluenceSpending(context, empire->PlanetAnnexationCosts(context),
+                                    empire->PolicyAdoptionCosts(context));
     Populate();
     DoLayout();
     if (auto gov_wnd = std::dynamic_pointer_cast<GovernmentWnd>(Parent()))
