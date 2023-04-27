@@ -313,6 +313,54 @@ namespace {
             std::move(empire)));
     }
 
+    effect_wrapper insert_set_species_opinion_(bool target, const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<std::string>> species_name;
+        auto species_name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["species"]);
+        if (species_name_args.check()) {
+            species_name = ValueRef::CloneUnique(species_name_args().value_ref);
+        } else {
+            species_name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["species"])());
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<double>> opinion;
+        auto opinion_args = boost::python::extract<value_ref_wrapper<double>>(kw["opinion"]);
+        if (opinion_args.check()) {
+            opinion = ValueRef::CloneUnique(opinion_args().value_ref);
+        } else {
+            opinion = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["opinion"])());
+        }
+
+        if (kw.has_key("empire")) {
+            std::unique_ptr<ValueRef::ValueRef<int>> empire;
+            auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
+            if (empire_args.check()) {
+                empire = ValueRef::CloneUnique(empire_args().value_ref);
+            } else {
+                empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
+            }
+
+            return effect_wrapper(std::make_shared<Effect::SetSpeciesEmpireOpinion>(std::move(species_name),
+                std::move(empire),
+                std::move(opinion),
+                target));
+        } else if (kw.has_key("species2")) {
+            std::unique_ptr<ValueRef::ValueRef<std::string>> species2_name;
+            auto species2_name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["species2"]);
+            if (species2_name_args.check()) {
+                species2_name = ValueRef::CloneUnique(species2_name_args().value_ref);
+            } else {
+                species2_name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["species2"])());
+            }
+
+            return effect_wrapper(std::make_shared<Effect::SetSpeciesSpeciesOpinion>(std::move(species_name),
+                std::move(species2_name),
+                std::move(opinion),
+                target));
+        } else {
+            throw std::runtime_error(std::string("Unknown species opinion ") + __func__);
+        }
+    }
+
     effect_wrapper victory(const boost::python::tuple& args, const boost::python::dict& kw) {
         auto reason = boost::python::extract<std::string>(kw["reason"])();
         return effect_wrapper(std::make_shared<Effect::Victory>(reason));
@@ -559,6 +607,15 @@ void RegisterGlobalsEffects(py::dict& globals) {
     {
         const auto u = uit.second;
         globals[uit.first] = py::raw_function([u](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_give_empire_item_(u, args, kw); });
+    }
+
+    // set_species_opinion
+    for (const auto& sso : std::initializer_list<std::pair<const char*, bool>>{
+            {"SetSpeciesOpinion", false},
+            {"SetSpeciesTargetOpinion", true}})
+    {
+        const auto d = sso.second;
+        globals[sso.first] = py::raw_function([d](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_set_species_opinion_(d, args, kw); });
     }
 }
 
