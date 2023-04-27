@@ -2718,14 +2718,27 @@ std::vector<std::tuple<std::string_view, double, int>> Empire::TechCostsTimes(co
 }
 
 std::vector<std::pair<int, double>> Empire::PlanetAnnexationCosts(const ScriptingContext& context) const {
-    std::vector<std::pair<int, double>> retval;
+    const auto being_annexed = [](const Planet& p) { return p.IsAboutToBeAnnexed(); };
+    const auto planets = context.ContextObjects().findRaw<Planet>(being_annexed);
 
+    std::vector<std::pair<int, double>> retval;
+    retval.reserve(planets.size());
+
+    for (const auto* p : planets) {
+        if (p->OrderedAnnexedByEmpire() == m_id)
+            retval.emplace_back(p->ID(), p->AnnexationCost(m_id, context));
+    }
     return retval;
 }
 
 std::vector<std::pair<std::string_view, double>> Empire::PolicyAdoptionCosts(const ScriptingContext& context) const {
     std::vector<std::pair<std::string_view, double>> retval;
+    retval.reserve(m_adopted_policies.size());
 
+    for (const auto& policy_name : m_adopted_policies) {
+        if (const auto* policy = GetPolicy(policy_name.first))
+            retval.emplace_back(policy_name.first, policy->AdoptionCost(m_id, context));
+    }
     return retval;
 }
 
