@@ -1,5 +1,6 @@
 from common.misc import PLANET_SHIELD_FACTOR
 from common.priorities import POPULATION_OVERRIDE_PRIORITY
+from species.common.empire_opinions import FIXED_OPINION_EFFECTS
 from species.common.focus import HAS_ADVANCED_FOCI
 from species.common.happiness import AVERAGE_HAPPINESS
 from species.common.industry import NO_INDUSTRY
@@ -37,6 +38,7 @@ Species(
         *NO_STOCKPILE,
         *AVERAGE_POPULATION,
         *AVERAGE_HAPPINESS,
+        FIXED_OPINION_EFFECTS("SP_ANCIENT_GUARDIANS", 0.0),
         *AVERAGE_SUPPLY,
         *AVERAGE_DEFENSE_TROOPS,
         # not for description

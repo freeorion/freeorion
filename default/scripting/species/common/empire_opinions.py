@@ -17,16 +17,16 @@ def COMMON_OPINION_EFFECTS(name: str):
             SetSpeciesTargetOpinion(  # baseline opinion
                 species=ThisSpecies,
                 empire=Target.Owner,
-                opinion=Value + GameRule(float, name="RULE_BASELINE_PLANET_STABILITY"),
+                opinion=Value + GameRule(type=float, name="RULE_BASELINE_PLANET_STABILITY"),
             ),
             SetSpeciesOpinion(
                 species=ThisSpecies,
                 empire=Target.Owner,
                 opinion=Value
-                + Min(
+                + MinOf(
                     float,
                     1.0,  # increase by 1 per turn up towards target
-                    Max(
+                    MaxOf(
                         float,
                         -1.0,  # decrease by 1 per turn down towards target
                         SpeciesEmpireTargetOpinion(species=ThisSpecies, empire=Target.Owner) - Value,
