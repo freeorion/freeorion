@@ -3571,14 +3571,9 @@ namespace {
 void ServerApp::CacheCostsTimes(const ScriptingContext& context) {
     m_cached_empire_policy_adoption_costs = [this, &context]() {
         std::map<int, std::vector<std::pair<std::string_view, double>>> retval;
-        for (const auto& [empire_id, empire] : m_empires) {
-            retval[empire_id].reserve(empire->AdoptedPolicies().size());
-            for (const auto policy_name : empire->AdoptedPolicies()) {
-                if (const auto* policy = GetPolicy(policy_name))
-                    retval[empire_id].emplace_back(
-                        policy_name, policy->AdoptionCost(empire_id, context));
-            }
-        }
+        std::transform(m_empires.begin(), m_empires.end(), std::inserter(retval, retval.end()),
+                       [&context](const auto& e)
+                       { return std::pair{e.first, e.second->PolicyAdoptionCosts(context)}; });
         return retval;
     }();
     m_cached_empire_research_costs_times = [this, &context]() {
@@ -3616,7 +3611,7 @@ void ServerApp::CacheCostsTimes(const ScriptingContext& context) {
         return retval;
     }();
     m_cached_empire_annexation_costs = [this, &context]() {
-        // loop over planes, for each being annexed, store its annexation cost
+        // loop over planets, for each being annexed, store its annexation cost
         std::map<int, std::vector<std::pair<int, double>>> retval;
         const auto being_annexed = [](const Planet& p) { return p.IsAboutToBeAnnexed(); };
         for (const auto* p : context.ContextObjects().findRaw<Planet>(being_annexed)) {
