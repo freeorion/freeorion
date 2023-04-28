@@ -126,7 +126,7 @@ namespace {
     // how many base-10 digits are needed to represent a number as text
     // note that numeric_limits<>::digits10 is how many base 10 digits can be represented by this type
     template <typename T> requires (std::is_integral_v<T>)
-    [[nodiscard]] constexpr std::size_t Digits(T t) noexcept {
+    [[nodiscard]] consteval std::size_t Digits(T t) noexcept {
         std::size_t retval = 1;
 
         if constexpr (std::is_same_v<T, bool>) {

@@ -661,7 +661,7 @@ void serialize(Archive& ar, UniverseObject& o, unsigned int const version)
 
 namespace {
     template <integral T>
-    constexpr std::size_t Digits(T t) {
+    consteval std::size_t Digits(T t) {
         if constexpr (std::is_same_v<T, bool>) {
             return 5u; // for "false"
 

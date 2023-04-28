@@ -66,7 +66,7 @@
 
 
 namespace {
-    constexpr double Pow(double base, int exp) {
+    consteval double Pow(double base, int exp) {
         double retval = 1.0;
         bool invert = exp < 0;
         std::size_t abs_exp = exp >= 0 ? exp : -exp;
@@ -76,11 +76,11 @@ namespace {
     }
 
     // "Babylonian Method" of finding square roots...
-    constexpr double SqrtIterative2(double a, double c) {
+    consteval double SqrtIterative2(double a, double c) {
         double g = 0.5 * (c + a/c);
         return (g == c) ? g : SqrtIterative2(a, g);
     }
-    constexpr double Sqrt(double a)
+    consteval double Sqrt(double a)
     { return SqrtIterative2(a, a); }
 
     constexpr double ZOOM_STEP_SIZE = Sqrt(Sqrt(2.0));
