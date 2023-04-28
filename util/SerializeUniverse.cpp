@@ -26,8 +26,13 @@
 #else
 #include <cstdio>
 #endif
+#include <type_traits>
 
 namespace {
+    // <concepts> library not fully implemented in XCode 13.2
+    template <class T>
+    concept integral = std::is_integral_v<T>;
+
     template <typename T, std::size_t N>
     constexpr std::size_t ArrSize(std::array<T, N>)  // TODO: replace with std::ssize when available (C++20 ?)
     { return N; }
@@ -266,12 +271,10 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
 
 
 namespace {
-    template<typename T, std::enable_if<std::is_integral_v<T>>* = nullptr>
 #if defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
     constexpr
 #endif
-    auto ToChars(T num, char* buffer, char* buffer_end)
-    {
+    auto ToChars(integral auto num, char* buffer, char* buffer_end) {
 #if defined(__cpp_lib_to_chars)
         auto result_ptr = std::to_chars(buffer, buffer_end, num).ptr;
         return std::distance(buffer, result_ptr);
@@ -356,7 +359,7 @@ namespace {
         false;
 #endif
 
-    template <typename T>
+    template <integral T>
     inline constexpr const auto* GetFormatString() {
         if constexpr(std::is_unsigned_v<T>)
             return "%u%n";
@@ -368,8 +371,7 @@ namespace {
 
     // returns { next unconsumed char*, true/false did the parse succeed }
     // parsed value returned in result
-    template <typename T>
-    inline auto FromChars(const char* start, const char* end, T& val_out) -> std::pair<const char*, bool>
+    inline auto FromChars(const char* start, const char* end, integral auto& val_out) -> std::pair<const char*, bool>
     {
         if constexpr(have_to_chars_lib) {
             const auto result = std::from_chars(start, end, val_out);
@@ -377,7 +379,9 @@ namespace {
 
         } else {
             int chars_consumed = 0;
-            const auto matched = sscanf(start, GetFormatString<T>(), &val_out, &chars_consumed);
+            using val_out_t = std::decay_t<decltype(val_out)>;
+            constexpr auto val_format_str = GetFormatString<val_out_t>();
+            const auto matched = sscanf(start, val_format_str, &val_out, &chars_consumed);
             return {start + chars_consumed, matched >= 1};
         }
     }
@@ -661,19 +665,19 @@ void serialize(Archive& ar, UniverseObject& o, unsigned int const version)
 }
 
 namespace {
-    template<typename T, std::enable_if<std::is_integral_v<T>>* = nullptr>
+    template <integral T>
     constexpr std::size_t Digits(T t) {
-        std::size_t retval = 1;
-
         if constexpr (std::is_same_v<T, bool>) {
-            return 5; // for "false"
-        } else {
-            if constexpr (std::is_signed_v<T>)
-                retval += (t < 0);
+            return 5u; // for "false"
 
-            while (t != 0) {
-                retval += 1;
-                t /= 10;
+        } else {
+            std::size_t retval = 1u;
+            if constexpr (std::is_signed_v<T>)
+                retval += (t < 0u);
+
+            while (t != 0u) {
+                retval += 1u;
+                t /= 10u;
             }
             return retval;
         }
