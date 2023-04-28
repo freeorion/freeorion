@@ -1397,8 +1397,8 @@ void GovernmentWnd::MainPanel::PostChangeBigUpdate() {
 void GovernmentWnd::MainPanel::SetPolicies(const std::vector<std::string>& policies) {
     ClearPolicies();
 
-    unsigned int num_policies = std::min(policies.size(), m_slots.size());
-    for (unsigned int slot = 0; slot < num_policies; ++slot)
+    const auto num_policies = std::min(policies.size(), m_slots.size());
+    for (decltype(policies.size()) slot = 0u; slot < num_policies; ++slot)
         this->SetPolicy(policies[slot], slot, false);
 
     PostChangeBigUpdate();
@@ -1422,7 +1422,7 @@ int GovernmentWnd::MainPanel::FindEmptySlotForPolicy(const Policy* policy) const
         return -1;
 
     const ScriptingContext context;
-    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     auto empire = context.GetEmpire(empire_id);
 
     // reject unavailable and already-adopted policies
@@ -1435,9 +1435,8 @@ int GovernmentWnd::MainPanel::FindEmptySlotForPolicy(const Policy* policy) const
         if (m_slots[i]->GetPolicy())
             continue;   // slot already occupied
         auto& slot_category = m_slots[i]->SlotCategory();
-        if (policy->Category() != slot_category)
-            continue;
-        return i;
+        if (policy->Category() == slot_category)
+            return i;
     }
 
     return -1;
@@ -1446,7 +1445,7 @@ int GovernmentWnd::MainPanel::FindEmptySlotForPolicy(const Policy* policy) const
 void GovernmentWnd::MainPanel::RevertPolicies() {
     ScriptingContext context;
 
-    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     auto empire = context.GetEmpire(empire_id);  // may be nullptr
     if (!empire) {
         ErrorLogger() << "GovernmentWnd::MainPanel::RevertPolicies has no empire to revert policies for";
@@ -1489,12 +1488,12 @@ void GovernmentWnd::MainPanel::Populate() {
     ScriptingContext context;
 
     // loop over policy slots the empire's government has, add slot controls
-    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     auto empire = context.GetEmpire(empire_id);
     if (!empire)
         return;
 
-    auto all_slot_cats = ConcatenatedCategorySlots(empire.get());
+    const auto all_slot_cats = ConcatenatedCategorySlots(empire.get());
     auto categories_slots_policies = empire->CategoriesSlotsPoliciesAdopted();
 
     for (unsigned int n = 0; n < all_slot_cats.size(); ++n) {
