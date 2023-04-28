@@ -443,11 +443,10 @@ namespace {
                 }
 
                 // occupied planets
-                std::vector<const Planet*> species_occupied_planets;
-                for (const auto& planet : objects.allRaw<Planet>()) {
-                    if ((planet->SpeciesName() == entry.first) && !known_homeworlds.contains(planet->ID()))
-                        species_occupied_planets.push_back(planet);
-                }
+                const auto is_species_occupied = [&entry, &known_homeworlds](const auto* planet)
+                { return (planet->SpeciesName() == entry.first) && !known_homeworlds.contains(planet->ID()); };
+                auto species_occupied_planets = objects.findRaw<Planet>(is_species_occupied);
+
                 if (!species_occupied_planets.empty()) {
                     if (species_occupied_planets.size() >= 5) {
                         species_entry.append("  |   ").append(ToChars(species_occupied_planets.size()))
@@ -474,7 +473,7 @@ namespace {
                     retval[idx] = slash_thing_chars[idx];
                 return retval;
             }();
-            static const std::string_view slash_thing(slash_thing_arr.data(), slash_thing_arr.size());
+            static constexpr std::string_view slash_thing(slash_thing_arr.data(), slash_thing_arr.size());
 #else
             static constexpr std::string_view slash_thing = u8"\u20E0 "; // "⃠"  ⃠ Combining Enclosing Circle Backslash
 #endif
