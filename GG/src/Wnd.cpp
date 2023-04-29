@@ -21,6 +21,30 @@
 using namespace GG;
 
 namespace {
+enum class TestEnum : int8_t { INVALID = -1, VALID = 0, MAX = 1, OUT_OF_RANGE, END, ZERO = 0, ONE, TWO, THREE };
+constexpr auto* test_enum_text = "INVALID = -1, VALID = 0, MAX = 1, OUT_OF_RANGE, END";
+
+constexpr auto split_result = GG::EnumMap<TestEnum>::Split(test_enum_text, ',');
+static_assert(split_result.first == "INVALID = -1");
+static_assert(split_result.second == " VALID = 0, MAX = 1, OUT_OF_RANGE, END");
+
+constexpr auto trimmed_result = GG::EnumMap<TestEnum>::Trim(split_result.first);
+static_assert(trimmed_result == "INVALID = -1");
+
+constexpr auto split_apply_result = GG::EnumMap<TestEnum>::SplitApply(
+    test_enum_text, GG::EnumMap<TestEnum>::Trim, ',');
+
+constexpr GG::EnumMap<TestEnum> cmap(test_enum_text);
+static_assert(cmap["MAX"] == TestEnum::MAX);
+static_assert(cmap["OUT_OF_RANGE"] == TestEnum::OUT_OF_RANGE);
+
+
+static constexpr auto em = GG::CGetEnumMap<GG::WndRegion>();
+static constexpr auto qq = em[GG::WndRegion::WR_TOPLEFT];
+static constexpr auto rr = GG::to_string(GG::WndRegion::WR_TOPLEFT);
+static_assert(rr == "WR_TOPLEFT");
+static_assert(rr == qq);
+
 
 namespace mi = boost::multi_index;
 
