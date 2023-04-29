@@ -1,9 +1,9 @@
 #ifndef _OptionValidators_h_
 #define _OptionValidators_h_
 
-#include <boost/any.hpp>
 #include <boost/lexical_cast.hpp>
 
+#include <any>
 #include <cmath>
 #include <memory>
 #include <set>
@@ -16,11 +16,11 @@ struct ValidatorBase {
     virtual ~ValidatorBase() = default;
 
     /** returns normally if \a str is a valid value, or throws otherwise */
-    virtual boost::any Validate(const std::string& str) const = 0;
-    virtual boost::any Validate(std::string_view str) const = 0;
+    virtual std::any Validate(const std::string& str) const = 0;
+    virtual std::any Validate(std::string_view str) const = 0;
 
     /** returns the string representation of \a value */
-    [[nodiscard]] virtual std::string String(const boost::any& value) const = 0;
+    [[nodiscard]] virtual std::string String(const std::any& value) const = 0;
 
     /** returns a dynamically allocated copy of the object. */
     [[nodiscard]] virtual std::unique_ptr<ValidatorBase> Clone() const & = 0;
@@ -38,48 +38,48 @@ FO_COMMON_API std::vector<std::string> StringToList(const std::string& input_str
 template <typename T>
 struct Validator : public ValidatorBase
 {
-    boost::any Validate(const std::string& str) const override {
+    std::any Validate(const std::string& str) const override {
         if constexpr (std::is_same_v<T, std::vector<std::string>>)
-            return boost::any(StringToList(str));
+            return std::any(StringToList(str));
         else if constexpr (std::is_same_v<T, std::string>)
-            return boost::any(std::string{str});
+            return std::any(std::string{str});
         else
-            return boost::any(boost::lexical_cast<T>(str));
+            return std::any(boost::lexical_cast<T>(str));
     }
 
-    boost::any Validate(std::string_view str) const override {
+    std::any Validate(std::string_view str) const override {
         if constexpr (std::is_same_v<T, std::vector<std::string>>)
-            return boost::any(StringToList(str));
+            return std::any(StringToList(str));
         else if constexpr (std::is_same_v<T, std::string>)
-            return boost::any(std::string{str});
+            return std::any(std::string{str});
         else
-            return boost::any(boost::lexical_cast<T>(str));
+            return std::any(boost::lexical_cast<T>(str));
     }
 
-    [[nodiscard]] std::string String(const boost::any& value) const override {
+    [[nodiscard]] std::string String(const std::any& value) const override {
         if constexpr (std::is_same_v<T, std::string>) {
             if (value.type() == typeid(std::string))
-                return boost::any_cast<std::string>(value);
+                return std::any_cast<std::string>(value);
             else if (value.type() == typeid(const char*))
-                return std::string{boost::any_cast<const char*>(value)};
+                return std::string{std::any_cast<const char*>(value)};
             else if (value.type() == typeid(std::string_view))
-                return std::string{boost::any_cast<std::string_view>(value)};
+                return std::string{std::any_cast<std::string_view>(value)};
 
         } else if constexpr (std::is_enum_v<T>) {
             if (value.type() == typeid(T))
-                return std::string{to_string(boost::any_cast<T>(value))};
+                return std::string{to_string(std::any_cast<T>(value))};
 
         } else if constexpr (std::is_arithmetic_v<T>) {
             if (value.type() == typeid(T))
-                return std::to_string(boost::any_cast<T>(value));
+                return std::to_string(std::any_cast<T>(value));
 
         } else if constexpr (std::is_same_v<T, std::vector<std::string>>) {
             if (value.type() == typeid(T))
-                return ListToString(boost::any_cast<std::vector<std::string>>(value));
+                return ListToString(std::any_cast<std::vector<std::string>>(value));
 
         } else {
             if (value.type() == typeid(T))
-                return boost::lexical_cast<std::string>(boost::any_cast<T>(value));
+                return boost::lexical_cast<std::string>(std::any_cast<T>(value));
         }
         return "";
     }
@@ -104,11 +104,11 @@ struct RangedValidator final : public Validator<T>
     }
     RangedValidator(RangedValidator&& rhs) noexcept = default;
 
-    boost::any Validate(const std::string& str) const override {
+    std::any Validate(const std::string& str) const override {
         T val = boost::lexical_cast<T>(str);
         if (val < m_min || val > m_max)
             throw boost::bad_lexical_cast();
-        return boost::any(val);
+        return std::any(val);
     }
 
     [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() const & override
@@ -138,7 +138,7 @@ struct StepValidator final : public Validator<T>
     }
     StepValidator(StepValidator&& rhs) noexcept = default;
 
-    boost::any Validate(const std::string& str) const override {
+    std::any Validate(const std::string& str) const override {
         const T val = boost::lexical_cast<T>(str);
         const T diff = val - m_origin;
         if constexpr (std::is_integral_v<T>) {
@@ -150,7 +150,7 @@ struct StepValidator final : public Validator<T>
             if (std::abs(std::fmod(diff, m_step_size)) > epsilon)
                 throw boost::bad_lexical_cast();
         }
-        return boost::any(val);
+        return std::any(val);
     }
 
     [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() const & override
@@ -195,7 +195,7 @@ public:
 
     RangedStepValidator(RangedStepValidator&& rhs) noexcept = default;
 
-    boost::any Validate(const std::string& str) const override {
+    std::any Validate(const std::string& str) const override {
         const T val = boost::lexical_cast<T>(str);
         if ((val < m_min) || (val > m_max))
             throw boost::bad_lexical_cast();
@@ -214,7 +214,7 @@ public:
             { throw boost::bad_lexical_cast(); }
         }
 
-        return boost::any(val);
+        return std::any(val);
     }
 
     [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() const & override
@@ -256,14 +256,14 @@ struct DiscreteValidator final : public Validator<T>
         m_values(values.begin(), values.end())
     {}
 
-    boost::any Validate(const std::string& str) const override {
+    std::any Validate(const std::string& str) const override {
         if constexpr (std::is_same_v<std::string, T>) {
             if (std::any_of(m_values.begin(), m_values.end(), [&str](const auto& v) { return str == v; }))
-                return boost::any(str);
+                return std::any(str);
         } else {
             T val = boost::lexical_cast<T>(str);
             if (std::any_of(m_values.begin(), m_values.end(), [val](auto v) { return val == v; }))
-                return boost::any(val);
+                return std::any(val);
         }
         throw boost::bad_lexical_cast();
     }
@@ -300,8 +300,8 @@ struct OrValidator final : public Validator<T>
     OrValidator(OrValidator&& rhs) noexcept = default;
     ~OrValidator() override = default;
 
-    boost::any Validate(const std::string& str) const override {
-        boost::any result;
+    std::any Validate(const std::string& str) const override {
+        std::any result;
 
         try {
             result = m_validator_a->Validate(str);

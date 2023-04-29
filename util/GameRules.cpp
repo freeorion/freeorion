@@ -32,8 +32,8 @@ GameRules& GetGameRules() {
 /////////////////////////////////////////////////////
 // GameRule
 /////////////////////////////////////////////////////
-GameRule::GameRule(Type type_, std::string name_, boost::any value_,
-                   boost::any default_value_, std::string description_,
+GameRule::GameRule(Type type_, std::string name_, std::any value_,
+                   std::any default_value_, std::string description_,
                    std::unique_ptr<ValidatorBase>&& validator_, bool engine_internal_,
                    std::string category_) :
     OptionsDB::Option(static_cast<char>(0), std::move(name_), std::move(value_),
@@ -148,7 +148,7 @@ namespace {
         auto option_name = "setup.rules." + rule.name;
         if (!GetOptionsDB().OptionExists(option_name))
             GetOptionsDB().Add<T>(option_name, rule.description,
-                                  boost::any_cast<T>(rule.default_value),
+                                  std::any_cast<T>(rule.default_value),
                                   rule.validator->Clone());
         rule.value = GetOptionsDB().Get<T>(option_name);
     }
