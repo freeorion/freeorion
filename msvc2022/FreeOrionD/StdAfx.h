@@ -34,7 +34,6 @@
 #include <vector>
 
 #include <boost/algorithm/string/case_conv.hpp>
-#include <boost/any.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/xml_iarchive.hpp>

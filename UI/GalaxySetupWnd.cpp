@@ -974,13 +974,13 @@ void GalaxySetupWnd::CompleteConstruction() {
 
     try {
         m_galaxy_setup_panel = GG::Wnd::Create<GalaxySetupPanel>();
-    } catch (const boost::bad_any_cast& e) {
+    } catch (const std::bad_any_cast& e) {
         ErrorLogger() << "bad any cast creating galaxy setup panel: " << e.what();
         throw;
     }
     try {
         m_game_rules_panel = GG::Wnd::Create<GameRulesPanel>();
-    } catch (const boost::bad_any_cast& e) {
+    } catch (const std::bad_any_cast& e) {
         ErrorLogger() << "bad any cast creating game rules panel: " << e.what();
         throw;
     }
