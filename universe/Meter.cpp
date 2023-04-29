@@ -79,7 +79,7 @@ void Meter::ClampCurrentToRange(float min, float max) // no noexcept because usi
 
 namespace {
     template <typename T>
-    constexpr T Pow(T base, T exp) {
+    consteval T Pow(T base, T exp) {
         T retval = 1;
         while (exp--)
             retval *= base;

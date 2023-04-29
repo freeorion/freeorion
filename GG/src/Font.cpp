@@ -1807,7 +1807,7 @@ void Font::Init(FT_Face& face)
     Y y = Y0;
     X max_x = X0;
     Y max_y = Y0;
-    for (const auto [low, high] : range_vec) {
+    for (const auto& [low, high] : range_vec) {
         for (std::uint32_t c = low; c < high; ++c) {
             // copy glyph images
             if (!temp_glyph_data.count(c) && GenerateGlyph(face, c)) {
