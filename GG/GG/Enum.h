@@ -86,20 +86,21 @@ private:
     // and inserts into this map
     constexpr void Insert(std::string_view entry)
     {
-        auto count_trimmed_name_value_str = SplitApply<2>(entry, Trim, '=');
-        static_assert(std::is_same_v<decltype(count_trimmed_name_value_str.first), std::size_t>);
-        static_assert(std::is_same_v<decltype(count_trimmed_name_value_str.second),
-                                     std::array<std::string_view, 2>>);
+        const auto [parts_count, trimmed_strs] = SplitApply<2>(entry, Trim, '='); // separate into parts before and after =
+        static_assert(std::is_same_v<decltype(parts_count), const std::size_t>);
+        static_assert(std::is_same_v<decltype(trimmed_strs), const std::array<std::string_view, 2>>);
 
-        auto count = count_trimmed_name_value_str.first;
-        if (count < 2)
-            return;
-        auto [name, value_str] = count_trimmed_name_value_str.second;
+        const auto name = trimmed_strs[0];
 
-        EnumType value = ToEnumType(value_str);
-        //std::cout << "inserting entry: " << entry << "  as name: " << name
-        //          << "  value string: " << value_str
-        //          << "  value: " << static_cast<int>(value) << std::endl;
+        const auto value = [had_value_specified{parts_count >= 2}, value_str{trimmed_strs[1]}, this]() {
+            if (had_value_specified)
+                return EnumType(ToInt(value_str));
+
+            // increment last-specified value or default to 0 for the first
+            using value_num_t = std::underlying_type_t<EnumType>;
+            const value_num_t next_value_num = (m_size == 0u) ? 0 : (static_cast<value_num_t>(m_values[m_size-1]) + 1);
+            return EnumType(next_value_num);
+        }();
 
         const auto place_idx = m_size++;
         if (m_size >= CAPACITY)
@@ -111,7 +112,7 @@ private:
 
     static constexpr std::size_t CAPACITY = std::numeric_limits<uint8_t>::max();
 
-
+public:
     [[nodiscard]] static constexpr std::pair<std::string_view, std::string_view> Split(
         std::string_view delim_separated_vals, const char delim)
     {
@@ -121,12 +122,14 @@ private:
         return {delim_separated_vals.substr(0, comma_idx),
             delim_separated_vals.substr(comma_idx + 1)};
     }
+private:
 
     static constexpr std::string_view test_cs_names = "123 = 7  , next_thing =   124, last thing  =-1";
     static constexpr auto first_and_rest = Split(test_cs_names, ',');
     static constexpr auto second_and_rest = Split(first_and_rest.second, ',');
     static constexpr auto third_and_rest = Split(second_and_rest.second, ',');
     static constexpr auto fourth_and_rest = Split(third_and_rest.second, ',');
+    static_assert(first_and_rest.first == "123 = 7  ");
     static_assert(fourth_and_rest.first.empty());
     static constexpr std::string_view third_result_expected = " last thing  =-1";
     static_assert(third_and_rest.first == third_result_expected);
@@ -143,7 +146,7 @@ private:
     static constexpr auto comma_count = Count(test_cs_names, ',');
     static_assert(comma_count == 3);
 
-
+public:
     template <std::size_t RETVAL_CAP = CAPACITY, typename F>
     [[nodiscard]] static constexpr std::pair<std::size_t, std::array<std::string_view, RETVAL_CAP>>
         SplitApply(std::string_view comma_separated_names, F&& fn, char delim)
@@ -160,7 +163,6 @@ private:
         return {count, retval};
     }
 
-
     [[nodiscard]] static constexpr std::string_view Trim(std::string_view padded)
     {
         constexpr std::string_view whitespace = " \b\f\n\r\t\v";
@@ -168,6 +170,7 @@ private:
         auto end_idx = padded.find_last_not_of(whitespace);
         return padded.substr(start_idx, end_idx - start_idx + 1);
     }
+private:
     static constexpr std::string_view test_text = " \n\f  something = \t 0x42\b\t  ";
     static constexpr std::string_view trimmed_text_expected = "something = \t 0x42";
     static_assert(Trim(test_text) == trimmed_text_expected);
@@ -254,10 +257,6 @@ private:
     static_assert(ToInt("0xa0") == 160);
     static_assert(ToInt("0x5d") == 93);
     static_assert(ToInt(std::string_view{}) == 0);
-
-
-    [[nodiscard]] static constexpr EnumType ToEnumType(std::string_view str)
-    { return EnumType(ToInt(str)); }
 
 
     std::size_t                            m_size = 0;
