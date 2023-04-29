@@ -80,7 +80,6 @@
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/uuid.hpp>
-#include <boost/variant.hpp>
 
 // ------------------
 // includes from .cpp
