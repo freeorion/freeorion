@@ -730,12 +730,11 @@ Pathfinder::~Pathfinder() = default;
 
 namespace {
     const Fleet* FleetFromObject(const UniverseObject* obj, const ObjectMap& objects) {
-        auto retval = dynamic_cast<const Fleet*>(obj);
-        if (!retval) {
-            if (auto ship = dynamic_cast<const Ship*>(obj))
-                retval = objects.getRaw<Fleet>(ship->FleetID());
-        }
-        return retval;
+        if (obj->ObjectType() == UniverseObjectType::OBJ_FLEET)
+            return static_cast<const Fleet*>(obj);
+        if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP)
+            return objects.getRaw<const Fleet>(static_cast<const Ship*>(obj)->FleetID());
+        return nullptr;
     }
 }
 
@@ -764,18 +763,18 @@ double Pathfinder::LinearDistance(int system1_id, int system2_id, const ObjectMa
 double Pathfinder::PathfinderImpl::LinearDistance(int system1_id, int system2_id,
                                                   const ObjectMap& objects) const
 {
-    const auto system1 = objects.get<System>(system1_id);
+    const auto system1 = objects.getRaw<System>(system1_id);
     if (!system1) {
         ErrorLogger() << "Universe::LinearDistance passed invalid system id: " << system1_id;
         throw std::out_of_range("system1_id invalid");
     }
-    const auto system2 = objects.get<System>(system2_id);
+    const auto system2 = objects.getRaw<System>(system2_id);
     if (!system2) {
         ErrorLogger() << "Universe::LinearDistance passed invalid system id: " << system2_id;
         throw std::out_of_range("system2_id invalid");
     }
-    double x_dist = system2->X() - system1->X();
-    double y_dist = system2->Y() - system1->Y();
+    const double x_dist = system2->X() - system1->X();
+    const double y_dist = system2->Y() - system1->Y();
     return std::sqrt(x_dist*x_dist + y_dist*y_dist);
 }
 
@@ -787,19 +786,18 @@ int16_t Pathfinder::PathfinderImpl::JumpDistanceBetweenSystems(int system1_id, i
         return 0;
 
     try {
-        distance_matrix_cache<distance_matrix_storage<int16_t>> cache(m_system_jumps);
+        const distance_matrix_cache<distance_matrix_storage<int16_t>> cache(m_system_jumps);
 
-        std::size_t system1_index = m_system_id_to_graph_index.at(system1_id);
-        std::size_t system2_index = m_system_id_to_graph_index.at(system2_id);
-        std::size_t smaller_index = std::min(system1_index, system2_index);
-        std::size_t other_index   = std::max(system1_index, system2_index);
+        const std::size_t system1_index = m_system_id_to_graph_index.at(system1_id);
+        const std::size_t system2_index = m_system_id_to_graph_index.at(system2_id);
+        const std::size_t smaller_index = std::min(system1_index, system2_index);
+        const std::size_t other_index   = std::max(system1_index, system2_index);
 
         using row_ref = distance_matrix_storage<short>::row_ref;
 
         // prefer filling the smaller row/column for increased cache locality
-        int16_t jumps = cache.get_T(
-            smaller_index, other_index,
-            [this](size_t ii, row_ref row) { HandleCacheMiss(ii, row); }); // boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, ph::_1, ph::_2));
+        const auto jumps = cache.get_T(smaller_index, other_index,
+                                       [this](size_t ii, row_ref row) { HandleCacheMiss(ii, row); });
         if (jumps == SHRT_MAX)  // value returned for no valid path
             return -1;
         return jumps;
@@ -831,7 +829,7 @@ namespace {
         if (!obj)
             return nullptr;
 
-        if (objects.get<System>(obj->SystemID())) {
+        if (objects.getRaw<System>(obj->SystemID())) {
             TraceLogger() << "GeneralizedLocation of " << obj->Name() << " (" << obj->ID()
                           << ") is system id: " << obj->SystemID();
             return obj->SystemID();
@@ -849,7 +847,7 @@ namespace {
             return fleet_sys_pair;
         }
 
-        if (dynamic_cast<const Field*>(obj))
+        if (obj->ObjectType() == UniverseObjectType::OBJ_FIELD)
             return nullptr;
 
         // Don't generate an error message for temporary objects.
@@ -921,7 +919,7 @@ struct JumpDistanceSys2Visitor : public boost::static_visitor<int> {
     the GeneralizedLocation that it is visiting.*/
 struct JumpDistanceSys1Visitor : public boost::static_visitor<int> {
     JumpDistanceSys1Visitor(const Pathfinder::PathfinderImpl& _pf,
-                            const GeneralizedLocationType& _sys2_ids) :
+                            GeneralizedLocationType _sys2_ids) :
         pf(_pf), sys2_ids(_sys2_ids)
     {}
 
@@ -955,7 +953,7 @@ struct JumpDistanceSys1Visitor : public boost::static_visitor<int> {
         return std::min(jumps1, jumps2);
     }
     const Pathfinder::PathfinderImpl& pf;
-    const GeneralizedLocationType& sys2_ids;
+    const GeneralizedLocationType sys2_ids;
 };
 
 int Pathfinder::JumpDistanceBetweenObjects(int object1_id, int object2_id, const ObjectMap& objects) const
