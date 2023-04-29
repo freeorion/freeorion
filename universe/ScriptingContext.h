@@ -2,18 +2,17 @@
 #define _ScriptingContext_h_
 
 
-#include <boost/variant.hpp>
 #include "Universe.h"
 #include "../Empire/EmpireManager.h"
 #include "../util/AppInterface.h"
+#include <variant>
 
 struct CombatInfo;
 
 struct [[nodiscard]] ScriptingContext {
-    typedef boost::variant<
+    using CurrentValueVariant = std::variant<
         int, double, PlanetType, PlanetSize, ::PlanetEnvironment, StarType,
-        UniverseObjectType, Visibility, std::string, std::vector<std::string>
-    > CurrentValueVariant;
+        UniverseObjectType, Visibility, std::string, std::vector<std::string>>;
     inline static const CurrentValueVariant DEFAULT_CURRENT_VALUE{0};
 
     ScriptingContext() noexcept :

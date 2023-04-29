@@ -660,8 +660,8 @@ std::string Constant<std::string>::Dump(uint8_t ntabs) const
 #define IF_CURRENT_VALUE(T)                                            \
 if (m_ref_type == ReferenceType::EFFECT_TARGET_VALUE_REFERENCE) {      \
     try {                                                              \
-        return boost::get<T>(context.current_value);                   \
-    } catch (const boost::bad_get&) {                                  \
+        return std::get<T>(context.current_value);                     \
+    } catch (const std::bad_variant_access&) {                         \
         throw std::runtime_error(                                      \
             "Variable<" #T ">::Eval(): Value could not be evaluated, " \
             "because the provided current value is not an " #T ".");   \
