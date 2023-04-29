@@ -295,12 +295,7 @@ namespace {
         "ful", "shd", "str", "def", "sup", "sto", "trp", // unpaired meters
         "reb", "siz", "slt", "det", "spd",
         "num"}; // num meter types
-    static_assert([]() -> bool {
-        for (const auto& tag : tags)
-            if (tag.size() != 3)
-                return false;
-        return true;
-    }());
+    static_assert(std::all_of(tags.begin(), tags.end(), [](const auto tag) { return tag.size() == 3; }));
 
     constexpr std::string_view MeterTypeTag(MeterType mt) {
         using mt_under = std::underlying_type_t<MeterType>;
