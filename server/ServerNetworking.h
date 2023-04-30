@@ -41,6 +41,17 @@ struct CookieData {
 };
 
 
+struct OutgoingMessage {
+    OutgoingMessage(Message&& message, std::function<void(bool)>&& callback) :
+       m_message(std::move(message)),
+       m_callback(std::move(callback))
+    {}
+
+    const Message m_message;
+    const std::function<void(bool)> m_callback;
+};
+
+
 /** Encapsulates the connection to a single player.  This object should have
     nearly the same lifetime as the socket it represents, except that the
     object is constructed just before the socket connection is made.  A
@@ -101,6 +112,9 @@ public:
     /** Sends \a synchronous message to out on the connection. */
     void SendMessage(const Message& message);
 
+    /** Sends \a synchronous message to out on the connection. Calls \a callback with true if send successed ot with false if failed. */
+    void SendMessage(const Message& message, std::function<void(bool)> callback);
+
     /** Set player properties to use them after authentication successed. */
     void AwaitPlayer(Networking::ClientType client_type, std::string client_version_string);
 
@@ -140,11 +154,12 @@ private:
     void AsyncWriteMessage();
     static void HandleMessageWrite(PlayerConnectionPtr self,
                                    boost::system::error_code error,
-                                   std::size_t bytes_transferred);
+                                   std::size_t bytes_transferred,
+                                   std::function<void(bool)> callback);
 
     /** Places message to the end of sending queue and start asynchronous write if \a message was
         first in the queue. */
-    static void SendMessageImpl(PlayerConnectionPtr self, Message message);
+    static void SendMessageImpl(PlayerConnectionPtr self, Message message, std::function<void(bool)> callback);
     static void AsyncErrorHandler(PlayerConnectionPtr self, boost::system::error_code handled_error,
                                   boost::system::error_code error);
 
@@ -153,7 +168,7 @@ private:
     Message::HeaderBuffer           m_incoming_header_buffer = {};
     Message                         m_incoming_message;
     Message::HeaderBuffer           m_outgoing_header = {};
-    std::queue<Message>             m_outgoing_messages;
+    std::queue<OutgoingMessage>     m_outgoing_messages;
     int                             m_ID = Networking::INVALID_PLAYER_ID;
     std::string                     m_player_name;
     bool                            m_new_connection = true;

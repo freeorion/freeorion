@@ -207,7 +207,17 @@ void PlayerConnection::SendMessage(const Message& message) {
         ErrorLogger(network) << "PlayerConnection::SendMessage can't send message when not transmit connected";
         return;
     }
-    m_service.post(boost::bind(&PlayerConnection::SendMessageImpl, shared_from_this(), message));
+    m_service.post(boost::bind(&PlayerConnection::SendMessageImpl, shared_from_this(), message, std::function<void(bool)>()));
+}
+
+void PlayerConnection::SendMessage(const Message& message, std::function<void(bool)> callback) {
+    if (!m_valid) {
+        ErrorLogger(network) << "PlayerConnection::SendMessage can't send message when not transmit connected";
+        if (callback)
+            callback(false);
+        return;
+    }
+    m_service.post(boost::bind(&PlayerConnection::SendMessageImpl, shared_from_this(), message, callback));
 }
 
 bool PlayerConnection::IsEstablished() const {
@@ -497,9 +507,9 @@ void PlayerConnection::AsyncReadMessage() {
                                         boost::asio::placeholders::bytes_transferred));
 }
 
-void PlayerConnection::SendMessageImpl(PlayerConnectionPtr self, Message message) {
+void PlayerConnection::SendMessageImpl(PlayerConnectionPtr self, Message message, std::function<void(bool)> callback) {
     const bool start_write = self->m_outgoing_messages.empty();
-    self->m_outgoing_messages.push(std::move(message));
+    self->m_outgoing_messages.push(OutgoingMessage(std::move(message), std::move(callback)));
     if (start_write)
         self->AsyncWriteMessage();
 }
@@ -516,19 +526,20 @@ void PlayerConnection::AsyncWriteMessage() {
     using boost::asio::placeholders::error;
     using boost::asio::placeholders::bytes_transferred;
 
-    HeaderToBuffer(m_outgoing_messages.front(), m_outgoing_header);
+    HeaderToBuffer(m_outgoing_messages.front().m_message, m_outgoing_header);
     std::array<const_buffer, 2> buffers{
         buffer(m_outgoing_header),
-        buffer(m_outgoing_messages.front().Data(), m_outgoing_messages.front().Size())
+        buffer(m_outgoing_messages.front().m_message.Data(), m_outgoing_messages.front().m_message.Size())
     };
     async_write(*m_socket, buffers,
                 boost::bind(&PlayerConnection::HandleMessageWrite, shared_from_this(),
-                            error, bytes_transferred));
+                            error, bytes_transferred, m_outgoing_messages.front().m_callback));
 }
 
 void PlayerConnection::HandleMessageWrite(PlayerConnectionPtr self,
                                           boost::system::error_code error,
-                                          std::size_t bytes_transferred)
+                                          std::size_t bytes_transferred,
+                                          std::function<void(bool)> callback)
 {
     if (error) {
         self->m_valid = false;
@@ -536,12 +547,21 @@ void PlayerConnection::HandleMessageWrite(PlayerConnectionPtr self,
                              << " error #" << error.value() << " \"" << error.message() << "\"";
         boost::asio::high_resolution_timer t(self->m_service);
         t.async_wait(boost::bind(&PlayerConnection::AsyncErrorHandler, self, error, boost::asio::placeholders::error));
+        if (callback)
+            callback(false);
         return;
     }
 
     if (static_cast<int>(bytes_transferred) !=
         static_cast<int>(Message::HeaderBufferSize) + self->m_outgoing_header[Message::Parts::SIZE])
-    { return; }
+    {
+        if (callback)
+            callback(false);
+        return;
+    }
+
+    if (callback)
+        callback(true);
 
     self->m_outgoing_messages.pop();
     if (!self->m_outgoing_messages.empty())
