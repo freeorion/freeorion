@@ -212,7 +212,8 @@ struct FO_COMMON_API ProductionQueue {
       * systems.  Does not actually "spend" the PP; a later call to
       * empire->CheckProductionProgress(...) will actually spend PP, remove
       * items from queue and create them in the universe. */
-    void Update(const ScriptingContext& context);
+    void Update(const ScriptingContext& context,
+                const std::vector<std::tuple<std::string_view, int, float, int>>& prod_costs);
 
     // STL container-like interface
     void     push_back(Element element);

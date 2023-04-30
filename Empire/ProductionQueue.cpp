@@ -653,7 +653,9 @@ namespace {
     };
 }
 
-void ProductionQueue::Update(const ScriptingContext& context) {
+void ProductionQueue::Update(const ScriptingContext& context,
+                             const std::vector<std::tuple<std::string_view, int, float, int>>& prod_costs)
+{
     const Universe& universe{context.ContextUniverse()};
 
     auto empire = context.GetEmpire(m_empire_id);

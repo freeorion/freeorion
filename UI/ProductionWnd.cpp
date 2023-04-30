@@ -1085,7 +1085,7 @@ void ProductionWnd::QueueItemMoved(const GG::ListBox::iterator& row_it,
                 ProductionQueueOrder::ProdQueueOrderAction::MOVE_ITEM_TO_INDEX,
                 m_empire_shown_id, queue_it->uuid, corrected_new_position),
             context);
-    empire->UpdateProductionQueue(context);
+    empire->UpdateProductionQueue(context, empire->ProductionCostsTimes(context));
 }
 
 void ProductionWnd::Sanitize(const ObjectMap& objects)
@@ -1235,7 +1235,7 @@ void ProductionWnd::AddBuildToQueueSlot(ProductionQueue::ProductionItem item, in
             m_empire_shown_id, std::move(item), number, location, pos),
         context);
 
-    empire->UpdateProductionQueue(context);
+    empire->UpdateProductionQueue(context, empire->ProductionCostsTimes(context));
     m_build_designator_wnd->CenterOnBuild(pos >= 0 ? pos : m_queue_wnd->GetQueueListBox()->NumRows() - 1);
 }
 
@@ -1259,7 +1259,7 @@ void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity) {
                 m_empire_shown_id, queue_it->uuid, quantity),
             context);
 
-    empire->UpdateProductionQueue(context);
+    empire->UpdateProductionQueue(context, empire->ProductionCostsTimes(context));
 }
 
 void ProductionWnd::ChangeBuildQuantityBlockSlot(int queue_idx, int quantity, int blocksize) {
@@ -1282,7 +1282,7 @@ void ProductionWnd::ChangeBuildQuantityBlockSlot(int queue_idx, int quantity, in
                 m_empire_shown_id, queue_it->uuid, quantity, blocksize),
             context);
 
-    empire->UpdateProductionQueue(context);
+    empire->UpdateProductionQueue(context, empire->ProductionCostsTimes(context));
 }
 
 void ProductionWnd::DeleteQueueItem(GG::ListBox::iterator it, bool do_delete) {
@@ -1309,7 +1309,7 @@ void ProductionWnd::DeleteQueueItem(GG::ListBox::iterator it, bool do_delete) {
             context);
     }
 
-    empire->UpdateProductionQueue(context);
+    empire->UpdateProductionQueue(context, empire->ProductionCostsTimes(context));
 }
 
 void ProductionWnd::QueueItemClickedSlot(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) {
@@ -1371,7 +1371,7 @@ void ProductionWnd::QueueItemRallied(GG::ListBox::iterator it, int object_id) {
                 m_empire_shown_id, queue_it->uuid, rally_point_id),
             context);
 
-    empire->UpdateProductionQueue(context);
+    empire->UpdateProductionQueue(context, empire->ProductionCostsTimes(context));
 }
 
 void ProductionWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
@@ -1396,7 +1396,7 @@ void ProductionWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
         std::make_shared<ProductionQueueOrder>(action, m_empire_shown_id, queue_it->uuid),
         context);
 
-    empire->UpdateProductionQueue(context);
+    empire->UpdateProductionQueue(context, empire->ProductionCostsTimes(context));
 }
 
 void ProductionWnd::QueueItemDuped(GG::ListBox::iterator it) {
@@ -1420,7 +1420,7 @@ void ProductionWnd::QueueItemDuped(GG::ListBox::iterator it) {
                 m_empire_shown_id, queue_it->uuid),
             context);
 
-    empire->UpdateProductionQueue(context);
+    empire->UpdateProductionQueue(context, empire->ProductionCostsTimes(context));
 }
 
 void ProductionWnd::QueueItemSplit(GG::ListBox::iterator it) {
@@ -1444,7 +1444,7 @@ void ProductionWnd::QueueItemSplit(GG::ListBox::iterator it) {
                 m_empire_shown_id, queue_it->uuid),
             context);
 
-    empire->UpdateProductionQueue(context);
+    empire->UpdateProductionQueue(context, empire->ProductionCostsTimes(context));
 }
 
 void ProductionWnd::QueueItemUseImperialPP(GG::ListBox::iterator it, bool allow) {
@@ -1468,7 +1468,7 @@ void ProductionWnd::QueueItemUseImperialPP(GG::ListBox::iterator it, bool allow)
             std::make_shared<ProductionQueueOrder>(action, m_empire_shown_id, queue_it->uuid),
             context);
 
-    empire->UpdateProductionQueue(context);
+    empire->UpdateProductionQueue(context, empire->ProductionCostsTimes(context));
 }
 
 void ProductionWnd::EnableOrderIssuing(bool enable) {
