@@ -76,44 +76,48 @@ void InfluenceQueue::Update(const ScriptingContext& context,
     const float available_IP = empire->ResourceOutput(ResourceType::RE_INFLUENCE);
     const float stockpiled_IP = empire->ResourceStockpile(ResourceType::RE_INFLUENCE);
 
-
-    float spending_on_policy_adoption_ip = 0.0f;
-    for (const auto& [policy_name, adoption_turn] : empire->TurnsPoliciesAdopted()) {
-        if (adoption_turn != context.current_turn)
-            continue;
-        const auto policy = GetPolicy(policy_name);
-        if (!policy) {
-            ErrorLogger() << "InfluenceQueue::Update couldn't get policy supposedly adopted this turn: " << policy_name;
-            continue;
+    const float spending_on_policy_adoption_IP = [&empire, &context, &policy_costs]() {
+        float spending_on_policy_adoption_IP = 0.0f;
+        for (const auto& [policy_name, adoption_turn] : empire->TurnsPoliciesAdopted()) {
+            if (adoption_turn != context.current_turn)
+                continue;
+            const auto ct_it = std::find_if(policy_costs.begin(), policy_costs.end(),
+                                            [pn{policy_name}](const auto& ct) { return ct.first == pn; });
+            if (ct_it == policy_costs.end()) {
+                ErrorLogger() << "Missing policy " << policy_name << " cost time in InfluenceQueue::Update!";
+                continue;
+            }
+            spending_on_policy_adoption_IP += ct_it->second;;
         }
-        spending_on_policy_adoption_ip += policy->AdoptionCost(m_empire_id, context);
-    }
+        return spending_on_policy_adoption_IP;
+    }();
 
 
     const auto annexed_by_this_empire = [this](const Planet& planet)
     { return planet.OrderedAnnexedByEmpire() == m_empire_id; };
+    const auto annexed_planets = context.ContextObjects().findIDs<Planet>(annexed_by_this_empire);
 
-    float spending_on_annexation = 0.0f;
-    // transform_reduce
-    for (const auto* planet : context.ContextObjects().findRaw<Planet>(annexed_by_this_empire))
-        spending_on_annexation += planet->AnnexationCost(m_empire_id, context);
+    const float spending_on_annexation_IP = [&annexed_planets, &annex_costs]() {
+        float spending_on_annexation_IP = 0.0f;
+        for (const auto planet_id : annexed_planets) {
+            const auto p_it = std::find_if(annex_costs.begin(), annex_costs.end(),
+                                           [planet_id](const auto& pac) { return pac.first == planet_id; });
+            if (p_it == annex_costs.end()) {
+                ErrorLogger() << "Missing annexation cost for plaent " << planet_id << " in InfluenceQueue::Update!";
+                continue;
+            }
+            spending_on_annexation_IP += p_it->second;
+        }
+        return spending_on_annexation_IP;
+    }();
 
 
-    m_total_IPs_spent = spending_on_policy_adoption_ip + spending_on_annexation;
-
+    m_total_IPs_spent = spending_on_policy_adoption_IP + spending_on_annexation_IP;
     m_expected_new_stockpile_amount = stockpiled_IP + available_IP - m_total_IPs_spent;
 
     DebugLogger() << "InfluenceQueue::Update : available IP: " << available_IP << "  stockpiled: "
                   << stockpiled_IP << "  new expected: " << m_expected_new_stockpile_amount << "\n";
 
-    //// cache Influence item costs and times
-    //// initialize Influence queue item completion status to 'never'
-    //boost::posix_time::ptime sim_time_start;
-    //boost::posix_time::ptime sim_time_end;
-
-    //DebugLogger() << "InfluenceQueue::Update: Projections took "
-    //              << ((sim_time_end - sim_time_start).total_microseconds()) << " microseconds with "
-    //              << empire->ResourceOutput(ResourceType::RE_INFLUENCE) << " influence output";
     InfluenceQueueChangedSignal();
 }
 
