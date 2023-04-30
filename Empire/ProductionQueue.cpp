@@ -669,12 +669,12 @@ void ProductionQueue::Update(const ScriptingContext& context,
     SectionedScopedTimer update_timer("ProductionQueue::Update");
     update_timer.EnterSection("Get PP");
 
-    auto& industry_resource_pool = empire->GetIndustryPool();
-    auto& available_pp = industry_resource_pool.Output();
-    float pp_in_stockpile = industry_resource_pool.Stockpile();
+    const auto& industry_resource_pool = empire->GetIndustryPool();
+    const auto& available_pp = industry_resource_pool.Output();
+    const float pp_in_stockpile = industry_resource_pool.Stockpile();
     TraceLogger() << "========= pp_in_stockpile:     " << pp_in_stockpile << " ========";
-    float stockpile_limit = StockpileCapacity(context.ContextObjects());
-    float available_stockpile = std::min(pp_in_stockpile, stockpile_limit);
+    const float stockpile_limit = StockpileCapacity(context.ContextObjects());
+    const float available_stockpile = std::min(pp_in_stockpile, stockpile_limit);
     TraceLogger() << "========= available_stockpile: " << available_stockpile << " ========";
 
     update_timer.EnterSection("Queue Items -> Res Groups");
@@ -792,19 +792,19 @@ void ProductionQueue::Update(const ScriptingContext& context,
         }
     }
 
-    boost::posix_time::ptime sim_time_start;
-    boost::posix_time::ptime sim_time_end;
-    sim_time_start = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
-    std::map<std::set<int>, float>  allocated_pp;
+    const auto sim_time_start = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time());
+
+    std::map<std::set<int>, float> allocated_pp;
     float sim_available_stockpile = available_stockpile;
     float sim_pp_in_stockpile = pp_in_stockpile;
-    std::map<std::set<int>, float>  allocated_stockpile_pp;
+    std::map<std::set<int>, float> allocated_stockpile_pp;
     int dummy_int = 0;
 
     update_timer.EnterSection("Looping over Turns");
     for (int sim_turn = 1; sim_turn <= TOO_MANY_TURNS; sim_turn ++) {
-        int64_t sim_time_until_now = (boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()) - sim_time_start).total_microseconds();
-        if ((sim_time_until_now * 1e-6) >= TOO_LONG_TIME)
+        const auto now_time = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time());
+        const auto sim_time_until_now = (now_time - sim_time_start).total_microseconds();
+        if ((sim_time_until_now * 1e-6f) >= TOO_LONG_TIME)
             break;
 
         TraceLogger() << "sim turn: " << sim_turn << "  sim queue size: " << sim_queue.size();
@@ -814,7 +814,7 @@ void ProductionQueue::Update(const ScriptingContext& context,
         allocated_pp.clear();
         allocated_stockpile_pp.clear();
 
-        float sim_project_transfer_to_stockpile = SetProdQueueElementSpending(
+        const float sim_project_transfer_to_stockpile = SetProdQueueElementSpending(
             available_pp, sim_available_stockpile, stockpile_limit, queue_element_groups,
             queue_item_costs_and_times, is_producible, sim_queue,
             allocated_pp, allocated_stockpile_pp, dummy_int, true, universe);
@@ -823,7 +823,8 @@ void ProductionQueue::Update(const ScriptingContext& context,
         for (unsigned int i = 0; i < sim_queue.size(); i++) {
             ProductionQueue::Element& sim_element = sim_queue[i];
             ProductionQueue::Element& orig_element = m_queue[sim_queue_original_indices[i]];
-            if (sim_element.turns_left_to_next_item != 1) 
+
+            if (sim_element.turns_left_to_next_item != 1)
                 continue;
             sim_element.progress = std::max(0.0f, sim_element.progress - 1.0f);
             if (orig_element.turns_left_to_next_item == -1)
@@ -845,11 +846,11 @@ void ProductionQueue::Update(const ScriptingContext& context,
             context);
         sim_available_stockpile = std::min(sim_pp_in_stockpile, stockpile_limit);
     }
-    update_timer.EnterSection("Logging");
 
-    sim_time_end = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time());
-    int64_t sim_time = (sim_time_end - sim_time_start).total_microseconds();
-    if ((sim_time * 1e-6) >= TOO_LONG_TIME) {
+    update_timer.EnterSection("Logging");
+    const auto sim_time_end = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time());
+    const auto sim_time = (sim_time_end - sim_time_start).total_microseconds();
+    if ((sim_time * 1e-6f) >= TOO_LONG_TIME) {
         DebugLogger()  << "ProductionQueue::Update: Projections timed out after " << sim_time
                        << " microseconds; all remaining items in queue marked completing 'Never'.";
     }
