@@ -386,7 +386,8 @@ public:
     void UpdateResourcePools(const ScriptingContext& context,
                              const std::vector<std::tuple<std::string_view, double, int>>& research_costs,
                              const std::vector<std::pair<int, double>>& annex_costs,
-                             const std::vector<std::pair<std::string_view, double>>& policy_costs);
+                             const std::vector<std::pair<std::string_view, double>>& policy_costs,
+                             const std::vector<std::tuple<std::string_view, int, float, int>>& prod_costs);
     /** Calls Update() on empire's research queue, which recalculates the RPs
       * spent on and number of turns left for each tech in the queue. */
     void UpdateResearchQueue(const ScriptingContext& context,
@@ -395,11 +396,13 @@ public:
 
     /** Calls Update() on empire's production queue, which recalculates the PPs
       * spent on and number of turns left for each project in the queue. */
-    void UpdateProductionQueue(const ScriptingContext& context);
+    void UpdateProductionQueue(const ScriptingContext& context,
+                               const std::vector<std::tuple<std::string_view, int, float, int>>& prod_costs);
     /** Eventually: Calls appropriate subsystem Update to calculate influence
       * spent on social projects and maintenance of buildings.  Later call to
       * CheckInfluenceProgress() will then have the correct allocations of
       * influence. */
+    std::vector<std::tuple<std::string_view, int, float, int>> ProductionCostsTimes(const ScriptingContext& contest) const;
 
     void UpdateInfluenceSpending(const ScriptingContext& context,
                                  const std::vector<std::pair<int, double>>& annex_costs,

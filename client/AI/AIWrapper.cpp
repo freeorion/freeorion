@@ -194,9 +194,11 @@ namespace {
             ErrorLogger() << "UpdateResourcePools : couldn't get empire with id " << empire_id;
             return;
         }
-        empire->UpdateResourcePools(context, empire->TechCostsTimes(context),
+        empire->UpdateResourcePools(context,
+                                    empire->TechCostsTimes(context),
                                     empire->PlanetAnnexationCosts(context),
-                                    empire->PolicyAdoptionCosts(context));
+                                    empire->PolicyAdoptionCosts(context),
+                                    empire->ProductionCostsTimes(context));
     }
 
     void UpdateResearchQueue() {
@@ -212,13 +214,13 @@ namespace {
 
     void UpdateProductionQueue() {
         ScriptingContext context;
-        int empire_id = AIClientApp::GetApp()->EmpireID();
+        const int empire_id = AIClientApp::GetApp()->EmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "UpdateProductionQueue : couldn't get empire with id " << empire_id;
             return;
         }
-        empire->UpdateProductionQueue(context);
+        empire->UpdateProductionQueue(context, empire->ProductionCostsTimes(context));
     }
 
     auto GetUserStringList(const std::string& list_key) -> py::list

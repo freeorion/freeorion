@@ -793,18 +793,15 @@ bool Empire::ShipHullAvailable(const std::string& name) const
 float Empire::ProductionStatus(int i, const ScriptingContext& context) const {
     if (0 > i || i >= static_cast<int>(m_production_queue.size()))
         return -1.0f;
-    float item_progress = m_production_queue[i].progress;
-    [[maybe_unused]] auto [item_cost, item_time] = m_production_queue[i].ProductionCostAndTime(context);
-    (void)item_time; // quiet unused variable warning
+    const float item_progress = m_production_queue[i].progress;
+    const auto item_cost = m_production_queue[i].ProductionCostAndTime(context).first;
     return item_progress * item_cost * m_production_queue[i].blocksize;
 }
 
 bool Empire::HasExploredSystem(int ID) const
 { return m_explored_systems.contains(ID); }
 
-bool Empire::ProducibleItem(BuildType build_type, int location_id,
-                            const ScriptingContext& context) const
-{
+bool Empire::ProducibleItem(BuildType build_type, int location_id, const ScriptingContext& context) const {
     if (build_type == BuildType::BT_SHIP)
         throw std::invalid_argument("Empire::ProducibleItem was passed BuildType BT_SHIP with no further parameters, but ship designs are tracked by number");
 
@@ -1587,22 +1584,22 @@ void Empire::SetProductionQuantity(int index, int quantity) {
 void Empire::MoveProductionWithinQueue(int index, int new_index) {
     if (index < new_index)
         --new_index;
-    if (index < 0 || static_cast<int>(m_production_queue.size()) <= index ||
-        new_index < 0 || static_cast<int>(m_production_queue.size()) <= new_index)
-    {
+    const int queue_size{static_cast<int>(m_production_queue.size())};
+    if (index < 0 || queue_size <= index || new_index < 0 || queue_size <= new_index) {
         DebugLogger() << "Empire::MoveProductionWithinQueue index: " << index << "  new index: "
-                      << new_index << "  queue size: " << m_production_queue.size();
+                      << new_index << "  queue size: " << queue_size;
         ErrorLogger() << "Attempted to move a production queue item to or from an invalid index.";
         return;
     }
-    auto build = m_production_queue[index];
+    auto build{m_production_queue[index]};
     m_production_queue.erase(index);
-    m_production_queue.insert(m_production_queue.begin() + new_index, build);
+    m_production_queue.insert(m_production_queue.begin() + new_index, std::move(build));
 }
 
 void Empire::RemoveProductionFromQueue(int index) {
-    if (index < 0 || static_cast<int>(m_production_queue.size()) <= index) {
-        DebugLogger() << "Empire::RemoveProductionFromQueue index: " << index << "  queue size: " << m_production_queue.size();
+    const int queue_size{static_cast<int>(m_production_queue.size())};
+    if (index < 0 || queue_size <= index) {
+        DebugLogger() << "Empire::RemoveProductionFromQueue index: " << index << "  queue size: " << queue_size;
         ErrorLogger() << "Attempted to delete a production queue item with an invalid index.";
         return;
     }
@@ -1610,8 +1607,9 @@ void Empire::RemoveProductionFromQueue(int index) {
 }
 
 void Empire::MarkToBeRemoved(int index) {
-    if (index < 0 || static_cast<int>(m_production_queue.size()) <= index) {
-        DebugLogger() << "Empire::MarkToBeRemoved index: " << index << "  queue size: " << m_production_queue.size();
+    const int queue_size{static_cast<int>(m_production_queue.size())};
+    if (index < 0 || queue_size <= index) {
+        DebugLogger() << "Empire::MarkToBeRemoved index: " << index << "  queue size: " << queue_size;
         ErrorLogger() << "Attempted to mark to be removed a production queue item with an invalid index.";
         return;
     }
@@ -1619,8 +1617,9 @@ void Empire::MarkToBeRemoved(int index) {
 }
 
 void Empire::MarkNotToBeRemoved(int index) {
-    if (index < 0 || static_cast<int>(m_production_queue.size()) <= index) {
-        DebugLogger() << "Empire::MarkNotToBeRemoved index: " << index << "  queue size: " << m_production_queue.size();
+    const int queue_size{static_cast<int>(m_production_queue.size())};
+    if (index < 0 || queue_size <= index) {
+        DebugLogger() << "Empire::MarkNotToBeRemoved index: " << index << "  queue size: " << queue_size;
         ErrorLogger() << "Attempted to mark not to be removed a production queue item with an invalid index.";
         return;
     }
@@ -1628,8 +1627,9 @@ void Empire::MarkNotToBeRemoved(int index) {
 }
 
 void Empire::PauseProduction(int index) {
-    if (index < 0 || static_cast<int>(m_production_queue.size()) <= index) {
-        DebugLogger() << "Empire::PauseProduction index: " << index << "  queue size: " << m_production_queue.size();
+    const int queue_size{static_cast<int>(m_production_queue.size())};
+    if (index < 0 || queue_size <= index) {
+        DebugLogger() << "Empire::PauseProduction index: " << index << "  queue size: " << queue_size;
         ErrorLogger() << "Attempted pause a production queue item with an invalid index.";
         return;
     }
@@ -1637,8 +1637,9 @@ void Empire::PauseProduction(int index) {
 }
 
 void Empire::ResumeProduction(int index) {
-    if (index < 0 || static_cast<int>(m_production_queue.size()) <= index) {
-        DebugLogger() << "Empire::ResumeProduction index: " << index << "  queue size: " << m_production_queue.size();
+    const int queue_size{static_cast<int>(m_production_queue.size())};
+    if (index < 0 || queue_size <= index) {
+        DebugLogger() << "Empire::ResumeProduction index: " << index << "  queue size: " << queue_size;
         ErrorLogger() << "Attempted resume a production queue item with an invalid index.";
         return;
     }
@@ -1646,8 +1647,9 @@ void Empire::ResumeProduction(int index) {
 }
 
 void Empire::AllowUseImperialPP(int index, bool allow) {
-    if (index < 0 || static_cast<int>(m_production_queue.size()) <= index) {
-        DebugLogger() << "Empire::AllowUseImperialPP index: " << index << "  queue size: " << m_production_queue.size();
+    const int queue_size{static_cast<int>(m_production_queue.size())};
+    if (index < 0 || queue_size <= index) {
+        DebugLogger() << "Empire::AllowUseImperialPP index: " << index << "  queue size: " << queue_size;
         ErrorLogger() << "Attempted allow/disallow use of the imperial PP stockpile for a production queue item with an invalid index.";
         return;
     }
@@ -2686,13 +2688,14 @@ void Empire::InitResourcePools(const ObjectMap& objects, const SupplyManager& su
 void Empire::UpdateResourcePools(const ScriptingContext& context,
                                  const std::vector<std::tuple<std::string_view, double, int>>& research_costs,
                                  const std::vector<std::pair<int, double>>& annex_costs,
-                                 const std::vector<std::pair<std::string_view, double>>& policy_costs)
+                                 const std::vector<std::pair<std::string_view, double>>& policy_costs,
+                                 const std::vector<std::tuple<std::string_view, int, float, int>>& prod_costs)
 {
     // updating queues, allocated_rp, distribution and growth each update their
     // respective pools, (as well as the ways in which the resources are used,
     // which needs to be done simultaneously to keep things consistent)
     UpdateResearchQueue(context, research_costs);
-    UpdateProductionQueue(context);
+    UpdateProductionQueue(context, prod_costs);
     UpdateInfluenceSpending(context, annex_costs, policy_costs);
     UpdatePopulationGrowth(context.ContextObjects());
 }
@@ -2715,6 +2718,10 @@ std::vector<std::tuple<std::string_view, double, int>> Empire::TechCostsTimes(co
     }
 
     return retval;
+}
+
+std::vector<std::tuple<std::string_view, int, float, int>> Empire::ProductionCostsTimes(const ScriptingContext& contest) const {
+    return {};
 }
 
 std::vector<std::pair<int, double>> Empire::PlanetAnnexationCosts(const ScriptingContext& context) const {
@@ -2750,11 +2757,13 @@ void Empire::UpdateResearchQueue(const ScriptingContext& context,
     m_research_pool.ChangedSignal();
 }
 
-void Empire::UpdateProductionQueue(const ScriptingContext& context) {
+void Empire::UpdateProductionQueue(const ScriptingContext& context,
+                                   const std::vector<std::tuple<std::string_view, int, float, int>>& prod_costs)
+{
     DebugLogger() << "========= Production Update for empire: " << EmpireID() << " ========";
 
     m_industry_pool.Update(context.ContextObjects());
-    m_production_queue.Update(context);
+    m_production_queue.Update(context, prod_costs);
     m_industry_pool.ChangedSignal();
 }
 
