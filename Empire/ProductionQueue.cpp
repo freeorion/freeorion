@@ -109,9 +109,9 @@ namespace {
 
     float CalculateNewStockpile(int empire_id, float starting_stockpile,
                                 float project_transfer_to_stockpile,
-                                const std::map<std::set<int>, float>& available_pp,
-                                const std::map<std::set<int>, float>& allocated_pp,
-                                const std::map<std::set<int>, float>& allocated_stockpile_pp,
+                                const std::map<boost::container::flat_set<int>, float>& available_pp,
+                                const std::map<boost::container::flat_set<int>, float>& allocated_pp,
+                                const std::map<boost::container::flat_set<int>, float>& allocated_stockpile_pp,
                                 const ScriptingContext& context)
     {
         TraceLogger() << "CalculateNewStockpile for empire " << empire_id;
@@ -120,8 +120,8 @@ namespace {
             ErrorLogger() << "CalculateStockpileContribution() passed null empire.  doing nothing.";
             return 0.0f;
         }
-        float stockpile_limit = empire->GetProductionQueue().StockpileCapacity(context.ContextObjects());
-        float stockpile_used = boost::accumulate(allocated_stockpile_pp | boost::adaptors::map_values, 0.0f);
+        const float stockpile_limit = empire->GetProductionQueue().StockpileCapacity(context.ContextObjects());
+        const float stockpile_used = boost::accumulate(allocated_stockpile_pp | boost::adaptors::map_values, 0.0f);
         TraceLogger() << " ... stockpile limit: " << stockpile_limit << "  used: " << stockpile_used << "   starting: " << starting_stockpile;
         float new_contributions = 0.0f;
         for (auto const& available_group : available_pp) {
@@ -156,16 +156,17 @@ namespace {
       * Also checks if elements will be completed this turn. 
       * Returns the amount of PP which gets transferred to the stockpile using 
       * stockpile project build items. */
-    template <typename ItemCostsTimesMap, typename FlagsVec>
+    template <typename ItemCostsTimesMap, typename FlagsVec, typename QueueGroups>
     float SetProdQueueElementSpending(
-        std::map<std::set<int>, float> available_pp, float available_stockpile,
+        std::map<boost::container::flat_set<int>, float> available_pp,
+        float available_stockpile,
         float stockpile_limit,
-        const std::vector<std::set<int>>& queue_element_resource_sharing_object_groups,
+        const QueueGroups& queue_element_resource_sharing_object_groups,
         const ItemCostsTimesMap& queue_item_costs_and_times,
         const FlagsVec& is_producible,
         ProductionQueue::QueueType& queue,
-        std::map<std::set<int>, float>& allocated_pp,
-        std::map<std::set<int>, float>& allocated_stockpile_pp,
+        std::map<boost::container::flat_set<int>, float>& allocated_pp,
+        std::map<boost::container::flat_set<int>, float>& allocated_stockpile_pp,
         int& projects_in_progress, bool simulating,
         const Universe& universe)
     {
@@ -193,6 +194,7 @@ namespace {
         float dummy_pp_source = 0.0f;
         float stockpile_transfer = 0.0f;
         //DebugLogger() << "queue size: " << queue.size();
+
         int i = 0;
         for (auto& queue_element : queue) {
             queue_element.allocated_pp = 0.0f;  // default, to be updated below...
@@ -204,7 +206,7 @@ namespace {
             }
 
             // get resource sharing group and amount of resource available to build this item
-            const auto& group = queue_element_resource_sharing_object_groups[i];
+            const boost::container::flat_set<int>& group = queue_element_resource_sharing_object_groups[i];
             auto available_pp_it = available_pp.find(group);
             float& group_pp_available = (available_pp_it != available_pp.end()) ?
                                         available_pp_it->second : dummy_pp_source;
@@ -232,19 +234,21 @@ namespace {
             }
 
             // get max contribution per turn and turns to build at max contribution rate
-            int location_id = (queue_element.item.CostIsProductionLocationInvariant(universe) ?
-                INVALID_OBJECT_ID : queue_element.location);
-            std::pair<ProductionQueue::ProductionItem, int> key(queue_element.item, location_id);
-            float item_cost = 1e6;  // dummy/default value, shouldn't ever really be needed
-            int build_turns = 1;    // dummy/default value, shouldn't ever really be needed
-            auto time_cost_it = queue_item_costs_and_times.find(key);
-            if (time_cost_it != queue_item_costs_and_times.end()) {
-                item_cost = time_cost_it->second.first;
-                build_turns = time_cost_it->second.second;
-            } else {
-                ErrorLogger() << "item: " << queue_element.item.name
-                              << "  somehow failed time cost lookup for location " << location_id;
-            }
+
+            const auto [item_cost, build_turns] = [&queue_item_costs_and_times, &universe](const auto& q_elem) {
+                const int location_id = q_elem.item.CostIsProductionLocationInvariant(universe) ?
+                    INVALID_OBJECT_ID : q_elem.location;
+
+                auto time_cost_it = queue_item_costs_and_times.find({q_elem.item, location_id});
+                if (time_cost_it != queue_item_costs_and_times.end()) {
+                    return time_cost_it->second;
+                } else {
+                    ErrorLogger() << "item: " << q_elem.item.name
+                                  << "  somehow failed time cost lookup for location " << location_id;
+                    return decltype(time_cost_it->second){1e6, 1};
+                }
+            }(queue_element);
+
             //DebugLogger() << "item " << queue_element.item.name << " costs " << item_cost << " for " << build_turns << " turns";
 
             const float element_this_turn_limit = CalculateProductionPerTurnLimit(
@@ -679,29 +683,30 @@ void ProductionQueue::Update(const ScriptingContext& context,
 
     update_timer.EnterSection("Queue Items -> Res Groups");
     // determine which resource sharing group each queue item is located in
-    std::vector<std::set<int>> queue_element_groups;
-    for (const auto& element : m_queue) {
-        // get location object for element
-        const int location_id = element.location;
+    auto queue_element_groups = [this, &available_pp]() {
+        std::vector<boost::container::flat_set<int>> retval;
+        retval.reserve(m_queue.size());
 
-        // search through groups to find object
-        for (auto groups_it = available_pp.begin(); true; ++groups_it) {
-            if (groups_it == available_pp.end()) {
+        for (const auto& element : m_queue) {
+            // get location object for element
+            const int location_id = element.location;
+
+            // search through groups to find object
+            const auto group_it = std::find_if(available_pp.begin(), available_pp.end(),
+                                               [location_id](const auto& group_pp)
+                                               { return group_pp.first.contains(location_id); });
+            if (group_it == available_pp.end()) {
                 // didn't find a group containing this object, so add an empty group as this element's queue element group
-                queue_element_groups.emplace_back();
-                break;
-            }
-
-            // check if location object id is in this group
-            const auto& group = groups_it->first;
-            auto set_it = group.find(location_id);
-            if (set_it != group.end()) {
+                retval.emplace_back();
+            } else {
                 // system is in this group.
-                queue_element_groups.push_back(group); // record this discovery
-                break;                                 // stop searching for a group containing a system, since one has been found
+                const auto& group = group_it->first;
+                retval.emplace_back(boost::container::ordered_unique_range, group.begin(), group.end());
             }
         }
-    }
+        return retval;
+    }();
+
 
     update_timer.EnterSection("Cacheing Costs");
     // cache producibility, and production item costs and times
@@ -794,10 +799,10 @@ void ProductionQueue::Update(const ScriptingContext& context,
 
     const auto sim_time_start = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time());
 
-    std::map<std::set<int>, float> allocated_pp;
+    std::map<int_flat_set, float> allocated_pp;
     float sim_available_stockpile = available_stockpile;
     float sim_pp_in_stockpile = pp_in_stockpile;
-    std::map<std::set<int>, float> allocated_stockpile_pp;
+    std::map<int_flat_set, float> allocated_stockpile_pp;
     int dummy_int = 0;
 
     update_timer.EnterSection("Looping over Turns");

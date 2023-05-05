@@ -270,9 +270,11 @@
     <ClCompile Include="..\..\parse\VisibilityValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\ValueRefPythonParser.cpp">
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4180;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4180</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="..\..\parse\ConditionPythonParser.cpp">
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4180;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4180</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="..\..\parse\SourcePythonParser.cpp" />
     <ClCompile Include="StdAfx.cpp">

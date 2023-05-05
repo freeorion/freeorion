@@ -4,6 +4,7 @@
 
 #include <set>
 #include <vector>
+#include <boost/container/flat_set.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/signals2/signal.hpp>
@@ -74,10 +75,11 @@ public:
 private:
     ResourcePool() = default;
 
+    using int_flat_set = boost::container::flat_set<int>;
     std::vector<int>                m_object_ids;                                       ///< IDs of objects to consider in this pool
     std::set<std::set<int>>         m_connected_system_groups;                          ///< sets of systems between and in which objects can share this pool's resource
-    std::map<std::set<int>, float>  m_connected_object_groups_resource_output;          ///< cached map from connected group of objects that can share resources, to how much resource is output by ResourceCenters in the group.  regenerated during update from other state information. // TODO: flat_map ?
-    std::map<std::set<int>, float>  m_connected_object_groups_resource_target_output;   ///< cached map from connected group of objects that can share resources, to how much resource would, if all meters equaled their target meters, be output by ResourceCenters in the group.  regenerated during update from other state information.
+    std::map<int_flat_set, float>   m_connected_object_groups_resource_output;          ///< cached map from connected group of objects that can share resources, to how much resource is output by ResourceCenters in the group.  regenerated during update from other state information. // TODO: flat_map ?
+    std::map<int_flat_set, float>   m_connected_object_groups_resource_target_output;   ///< cached map from connected group of objects that can share resources, to how much resource would, if all meters equaled their target meters, be output by ResourceCenters in the group.  regenerated during update from other state information.
     float                           m_stockpile = 0.0f;                                 ///< current stockpiled amount of resource
     ResourceType                    m_type = ResourceType::INVALID_RESOURCE_TYPE;       ///< what kind of resource does this pool hold?
 

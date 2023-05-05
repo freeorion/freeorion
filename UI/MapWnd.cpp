@@ -10,6 +10,7 @@
 #include <boost/optional/optional.hpp>
 #include <boost/range/adaptor/map.hpp>
 #include <boost/range/numeric.hpp>
+#include <boost/unordered_set.hpp>
 #include <GG/Layout.h>
 #include <GG/MultiEdit.h>
 #include <GG/PtRect.h>
@@ -3355,77 +3356,6 @@ namespace GetPathsThroughSupplyLanes {
     // corresponding to valid supply lane destinations
     typedef std::unordered_multimap<int,int> SupplyLaneMMap;
 
-
-    /**
-       GetPathsThroughSupplyLanes starts with:
-
-       \p terminal_points are system ids of systems that contain either
-       a resource source or a resource sink.
-
-       \p supply_lanes are pairs of system ids at the end of supply
-       lanes.
-
-       GetPathsThroughSupplyLanes returns a \p good_path.
-
-       The \p good_path is all system ids of systems connecting any \p
-       terminal_point to any other reachable \p terminal_point along the
-       \p supply_lanes. The \p good_path is all systems on a path that
-       could transport a resource from a source to a sink along a
-       starlane that is part of the starlanes through which supply can
-       flow (See Empire/Supply.h for details.). The \p good_path
-       includes the terminal point system ids that are part of the
-       path.  The \p good_path will exclude terminal_points not
-       connected to a supply lane, islands of supply lane not connected
-       to at least two terminal points, and dead-end lengths of supply
-       lane that don't connect between two terminal points.
-
-
-       Algorithm Descrition:
-
-       The algorithm starts with terminal points and supply lanes.  It
-       finds all paths from any terminal point to any other terminal
-       point connected only by supply lanes.
-
-       The algorithm finds and returns all system ids on the \p
-       good_path in two steps:
-       1) find mid points on paths along supply lanes between terminal points,
-       2) return the system ids collected by tracing the paths from
-          mid points to terminal points of the found paths.
-
-
-       In the first part, it starts a breadth first search from every
-       terminal point at once.  It tracks which terminal point each path
-       started from.
-
-       When two paths from different terminal points meet it records
-       both points that met as mid points on a good path between
-       terminal points.
-
-       When two paths meet from the same terminal points it merges them
-       into one path.
-
-
-       In the second part, it starts from the mid points and works its
-       way back to the terminal points, recording every system along the
-       path as part of the good path.  It stops when it reaches a system
-       already in the good path.
-
-
-       The algorithm is fast because neither the first nor the second
-       part visits any system more than once.
-
-       The first part uses visited to track already visited systems.
-
-       The second part stops back tracking along paths when it reaches
-       systems already on the good path.
-
-     */
-    void GetPathsThroughSupplyLanes(
-        std::unordered_set<int>& good_path,
-        const std::unordered_set<int>& terminal_points,
-        const SupplyLaneMMap& supply_lanes);
-
-
     // PathInfo stores the \p ids of systems one hop back on a path
     // toward an \p o originating terminal system.
     struct PathInfo {
@@ -3446,16 +3376,78 @@ namespace GetPathsThroughSupplyLanes {
         int prev, curr, origin;
     };
 
-    void GetPathsThroughSupplyLanes(
-        std::unordered_set<int> & good_path,
-        const std::unordered_set<int> & terminal_points,
-        const SupplyLaneMMap& supply_lanes)
+    /**
+    GetPathsThroughSupplyLanes starts with:
+
+    \p terminal_points are system ids of systems that contain either
+    a resource source or a resource sink.
+
+    \p supply_lanes are pairs of system ids at the end of supply
+    lanes.
+
+    GetPathsThroughSupplyLanes returns a good path.
+
+    The \p good_path is all system ids of systems connecting any \p
+    terminal_point to any other reachable \p terminal_point along the
+    \p supply_lanes. The \p good_path is all systems on a path that
+    could transport a resource from a source to a sink along a
+    starlane that is part of the starlanes through which supply can
+    flow (See Empire/Supply.h for details.). The \p good_path
+    includes the terminal point system ids that are part of the
+    path.  The \p good_path will exclude terminal_points not
+    connected to a supply lane, islands of supply lane not connected
+    to at least two terminal points, and dead-end lengths of supply
+    lane that don't connect between two terminal points.
+
+
+    Algorithm Descrition:
+
+    The algorithm starts with terminal points and supply lanes.  It
+    finds all paths from any terminal point to any other terminal
+    point connected only by supply lanes.
+
+    The algorithm finds and returns all system ids on the \p
+    good_path in two steps:
+    1) find mid points on paths along supply lanes between terminal points,
+    2) return the system ids collected by tracing the paths from
+    mid points to terminal points of the found paths.
+
+
+    In the first part, it starts a breadth first search from every
+    terminal point at once.  It tracks which terminal point each path
+    started from.
+
+    When two paths from different terminal points meet it records
+    both points that met as mid points on a good path between
+    terminal points.
+
+    When two paths meet from the same terminal points it merges them
+    into one path.
+
+
+    In the second part, it starts from the mid points and works its
+    way back to the terminal points, recording every system along the
+    path as part of the good path.  It stops when it reaches a system
+    already in the good path.
+
+
+    The algorithm is fast because neither the first nor the second
+    part visits any system more than once.
+
+    The first part uses visited to track already visited systems.
+
+    The second part stops back tracking along paths when it reaches
+    systems already on the good path.
+
+    */
+    boost::container::flat_set<int> GetPathsThroughSupplyLanes(
+        const std::unordered_set<int> & terminal_points, const SupplyLaneMMap& supply_lanes)
     {
-        good_path.clear();
+        boost::container::flat_set<int> good_path;
 
         // No terminal points, so all paths lead nowhere.
         if (terminal_points.empty())
-            return;
+            return good_path;
 
         // Part One:  Find all reachable mid points between two different
         // terminal points.
@@ -3465,7 +3457,7 @@ namespace GetPathsThroughSupplyLanes {
         std::deque<PrevCurrInfo> try_next;
 
         // visited holds systems already reached by the breadth first search.
-        std::unordered_map<int, PathInfo> visited;
+        boost::unordered_map<int, PathInfo> visited;
 
         // reachable_midpoints holds all systems reachable from at least
         // two different terminal points.
@@ -3545,7 +3537,7 @@ namespace GetPathsThroughSupplyLanes {
 
         // No terminal point has a path to any other terminal point.
         if (reachable_midpoints.empty())
-            return;
+            return good_path;
 
         // Return all systems on any path back to a terminal point.
         // Start from every mid point and back track along all paths
@@ -3554,10 +3546,10 @@ namespace GetPathsThroughSupplyLanes {
         // path.
 
         // All visited systems on the path(s) from this midpoint not yet processed.
-        std::unordered_set<int> unprocessed;
+        boost::unordered_set<int> unprocessed;
 
         for (int reachable_midpoint : reachable_midpoints) {
-            std::unordered_map<int, PathInfo>::const_iterator previous_ii_sys;
+            boost::unordered_map<int, PathInfo>::const_iterator previous_ii_sys;
             int ii_sys;
 
             // Add the mid point to unprocessed, and while there
@@ -3577,7 +3569,8 @@ namespace GetPathsThroughSupplyLanes {
                 }
             }
         }
-        return;
+
+        return good_path;
     }
 }
 
@@ -3624,26 +3617,21 @@ namespace {
         return retval;
     }
 
+    using flat_int_set = boost::container::flat_set<int>;
+    using flat_map_int_sets = boost::container::flat_map<flat_int_set, flat_int_set>;
+    using flat_map_int_int_set = boost::container::flat_map<int, flat_int_set>;
 
-    void GetResPoolLaneInfo(int empire_id,
-                            std::unordered_map<std::set<int>, std::set<int>, hash_set>& res_pool_systems,
-                            std::unordered_map<std::set<int>, std::set<int>, hash_set>& res_group_cores,
-                            std::unordered_set<int>& res_group_core_members,
-                            std::unordered_map<int, std::set<int>>& member_to_core,
-                            std::unordered_set<int>& under_alloc_res_grp_core_members)
-    {
-        res_pool_systems.clear();
-        res_group_cores.clear();
-        res_group_core_members.clear();
-        member_to_core.clear();
-        under_alloc_res_grp_core_members.clear();
-        const Empire* empire = GetEmpire(empire_id);
-        if (!empire)
-            return;
+    auto GetResPoolLaneInfo(const ObjectMap& objects, const Empire& empire, const SupplyManager& supply) {
+        flat_map_int_sets res_pool_systems;
+        flat_map_int_sets res_group_cores;
+        flat_int_set res_group_core_members;
+        flat_map_int_int_set member_to_core;
+        flat_int_set under_alloc_res_grp_core_members;
 
-        const ProductionQueue& queue = empire->GetProductionQueue();
+        const ProductionQueue& queue = empire.GetProductionQueue();
         auto& allocated_pp(queue.AllocatedPP());
-        auto& available_pp(empire->GetIndustryPool().Output());
+        auto& available_pp(empire.GetIndustryPool().Output());
+
         // For each industry set,
         // add all planet's systems to res_pool_systems[industry set]
         for (const auto& available_pp_group : available_pp) {
@@ -3655,14 +3643,14 @@ namespace {
             for (int object_id : available_pp_group.first) {
                 // this_pool += std::to_string(object_id) +", ";
 
-                auto planet = Objects().get<Planet>(object_id).get();
+                auto* planet = objects.getRaw<Planet>(object_id);
                 if (!planet)
                     continue;
 
                 //DebugLogger() << "Empire " << empire_id << "; Planet (" << object_id << ") is named " << planet->Name();
 
                 int system_id = planet->SystemID();
-                auto system = Objects().get<System>(system_id).get();
+                auto* system = objects.getRaw<System>(system_id);
                 if (!system)
                     continue;
 
@@ -3674,38 +3662,28 @@ namespace {
         }
 
 
-        // Convert supply starlanes to non-directional.  This saves half
-        // of the lookups.
+        // Convert supply starlanes to non-directional.  This saves half of the lookups.
         GetPathsThroughSupplyLanes::SupplyLaneMMap resource_supply_lanes_undirected;
-        const auto& resource_supply_lanes_directed =
-            GetSupplyManager().SupplyStarlaneTraversals(empire_id);
+        const auto& resource_supply_lanes_directed = supply.SupplyStarlaneTraversals(empire.EmpireID());
 
         for (const auto& supply_lane : resource_supply_lanes_directed) {
             resource_supply_lanes_undirected.emplace(supply_lane.first, supply_lane.second);
             resource_supply_lanes_undirected.emplace(supply_lane.second, supply_lane.first);
         }
 
-        // For each pool of resources find all paths available through
-        // the supply network.
+        // For each pool of resources find all paths available through the supply network.
 
-        for (auto& res_pool_system : res_pool_systems) {
-            auto& group_core = res_group_cores[res_pool_system.first];
-
-            // All individual resource system are included in the
-            // network on their own.
-            group_core.insert(res_pool_system.second.begin(),
-                              res_pool_system.second.end());
-            res_group_core_members.insert(res_pool_system.second.begin(),
-                                          res_pool_system.second.end());
+        for (auto& [group_core, group_systems] : res_pool_systems) {
+            // All individual resource system are included in the network on their own.
+            group_core.insert(group_systems.begin(), group_systems.end());
+            res_group_core_members.insert(group_systems.begin(), group_systems.end());
 
             // Convert res_pool_system.second from set<int> to
             // unordered_set<int> to improve lookup speed.
-            std::unordered_set<int> terminal_points{res_pool_system.second.begin(),
-                                                    res_pool_system.second.end()};
+            std::unordered_set<int> terminal_points{group_systems.begin(), group_systems.end()};
 
-            std::unordered_set<int> paths;
-            GetPathsThroughSupplyLanes::GetPathsThroughSupplyLanes(
-                paths, terminal_points, resource_supply_lanes_undirected);
+            const auto paths = GetPathsThroughSupplyLanes::GetPathsThroughSupplyLanes(
+                terminal_points, resource_supply_lanes_undirected);
 
             // All systems on the paths are valid end points so they are
             // added to the core group of systems that will be rendered
@@ -3720,7 +3698,7 @@ namespace {
         // Take note of all systems of under-allocated resource groups.
         for (const auto& available_pp_group : available_pp) {
             float group_pp = available_pp_group.second;
-            if (group_pp < 1e-4f)
+            if (group_pp < 0.01f)
                 continue;
 
             auto allocated_it = allocated_pp.find(available_pp_group.first);
@@ -3732,6 +3710,9 @@ namespace {
                 }
             }
         }
+
+        return std::tuple{res_pool_systems, res_group_cores, res_group_core_members,
+                          member_to_core, under_alloc_res_grp_core_members};
     }
 
 
@@ -3821,52 +3802,46 @@ namespace {
     {
         rendered_half_starlanes.clear();
 
-        const Empire* empire = GetEmpire(empire_id);
+        const ScriptingContext context;
+        auto empire = context.GetEmpire(empire_id);
         if (!empire)
             return;
-        GG::Clr lane_colour = empire->Color();
+        const auto lane_colour = empire->Color();
 
-        // map keyed by ResourcePool (set of objects) to the corresponding set of system ids
-        std::unordered_map<std::set<int>, std::set<int>, hash_set> res_pool_systems;
-        // map keyed by ResourcePool to the set of systems considered the core of the corresponding ResGroup
-        std::unordered_map<std::set<int>, std::set<int>, hash_set> res_group_cores;
-        std::unordered_set<int> res_group_core_members;
-        std::unordered_map<int, std::set<int>> member_to_core;
-        std::unordered_set<int> under_alloc_res_grp_core_members;
-        GetResPoolLaneInfo(empire_id, res_pool_systems,
-                           res_group_cores, res_group_core_members,
-                           member_to_core, under_alloc_res_grp_core_members);
+        auto [res_pool_systems, // map keyed by ResourcePool (set of objects) to the corresponding set of system ids
+              res_group_cores,  // map keyed by ResourcePool to the set of systems considered the core of the corresponding ResGroup
+              res_group_core_members,
+              member_to_core,
+              under_alloc_res_grp_core_members] =
+            GetResPoolLaneInfo(context.ContextObjects(), *empire, context.supply);
 
         const auto& this_client_known_destroyed_objects =
-            GetUniverse().EmpireKnownDestroyedObjectIDs(GGHumanClientApp::GetApp()->EmpireID());
+            context.ContextUniverse().EmpireKnownDestroyedObjectIDs(GGHumanClientApp::GetApp()->EmpireID());
         //unused variable const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("ui.map.starlane.color");
 
 
         for (const auto& id_icon : sys_icons) {
-            int system_id = id_icon.first;
+            const int system_id = id_icon.first;
 
             // skip systems that don't actually exist
             if (this_client_known_destroyed_objects.contains(system_id))
                 continue;
 
-            auto start_system = Objects().get<System>(system_id);
+            auto* start_system = context.ContextObjects().getRaw<System>(system_id);
             if (!start_system) {
                 ErrorLogger() << "GetFullLanesToRender couldn't get system with id " << system_id;
                 continue;
             }
 
             // add system's starlanes
-            for (const auto& render_lane : start_system->StarlanesWormholes()) {
-                bool lane_is_wormhole = render_lane.second;
+            for (const auto& [lane_end_sys_id, lane_is_wormhole] : start_system->StarlanesWormholes()) {
                 if (lane_is_wormhole) continue; // at present, not rendering wormholes
-
-                int lane_end_sys_id = render_lane.first;
 
                 // skip lanes to systems that don't actually exist
                 if (this_client_known_destroyed_objects.contains(lane_end_sys_id))
                     continue;
 
-                auto* dest_system = Objects().getRaw<const System>(render_lane.first);
+                auto* dest_system = Objects().getRaw<const System>(lane_end_sys_id);
                 if (!dest_system)
                     continue;
                 //std::cout << "colouring lanes between " << start_system->Name() << " and " << dest_system->Name() << std::endl;
@@ -3887,12 +3862,12 @@ namespace {
 
                 //start system is a res Grp core member for empire -- highlight
                 float indicator_extent = 0.5f;
-                GG::Clr lane_colour_to_use = lane_colour;
+                GG::Clr lane_colour_to_use{lane_colour};
                 if (under_alloc_res_grp_core_members.contains(start_system->ID()))
                     lane_colour_to_use = GG::DarkenClr(GG::InvertClr(lane_colour));
 
-                auto start_core = member_to_core.find(start_system->ID());
-                auto dest_core = member_to_core.find(dest_system->ID());
+                const auto start_core = member_to_core.find(start_system->ID());
+                const auto dest_core = member_to_core.find(dest_system->ID());
                 if (start_core != member_to_core.end() && dest_core != member_to_core.end()
                     && (start_core->second != dest_core->second))
                 { indicator_extent = 0.2f; }
