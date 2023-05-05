@@ -307,6 +307,9 @@ private:
     /** Called when asyncio timer ends. Executes Python asyncio callbacks if any was generated. */
     void AsyncIOTimedoutHandler(const boost::system::error_code& error);
 
+    /** Called when new \a turn state received by player playing \a empire_id. */
+    void UpdateEmpireTurnReceived(int empire_id, int turn, bool success);
+
     boost::asio::io_context m_io_context;
     boost::asio::signal_set m_signals;
     boost::asio::high_resolution_timer m_timer;

@@ -297,6 +297,7 @@ public:
     void SetReady(bool ready);               ///< Marks this empire with readiness status
     void AutoTurnSetReady();                 ///< Decreases auto-turn counter and set empire ready if not expired or set unready
     void SetAutoTurn(int turns_count);       ///< Set auto-turn counter
+    void SetLastTurnReceived(int last_turn_received) noexcept; ///< Set last turn received
 
     /** Inserts the given SitRep entry into the empire's sitrep list. */
     void AddSitRepEntry(const SitRepEntry& entry);
@@ -439,6 +440,7 @@ public:
     [[nodiscard]] auto& BuildingTypesProduced() const noexcept { return m_building_types_produced; }
     [[nodiscard]] auto& BuildingTypesScrapped() const noexcept { return m_building_types_scrapped; }
     [[nodiscard]] auto& TurnsSystemsExplored() const noexcept { return m_explored_systems; }
+    [[nodiscard]] auto LastTurnReceived() const noexcept { return m_last_turn_received; }
 
     /** Processes Builditems on queues of empires other than the indicated
       * empires, at the location with id \a location_id and, as appropriate,
@@ -558,6 +560,7 @@ private:
     std::map<int, std::set<int>>    m_preserved_system_exit_lanes;  ///< for each system known to this empire, the set of exit lanes preserved for fleet travel even if otherwise blockaded
     std::map<int, std::set<int>>    m_pending_system_exit_lanes;    ///< pending updates to m_preserved_system_exit_lanes
     int                             m_auto_turn_count = 0;          ///< auto-turn counter value
+    int                             m_last_turn_received = INVALID_GAME_TURN; ///< last turn empire completedly received game state
 
     /** The source id is the id of any object owned by the empire.  It is
         mutable so that Source() can be const and still cache its result. */

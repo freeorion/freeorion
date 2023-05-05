@@ -370,6 +370,7 @@ namespace FreeOrionPython {
             .def("getMeter",                        +[](const Empire& empire, const std::string& name) -> const Meter* { return empire.GetMeter(name); },
                                                     py::return_internal_reference<>(),
                                                     "Returns the empire meter with the indicated name (string).")
+            .add_property("lastTurnReceived",       &Empire::LastTurnReceived);
         ;
 
         //////////////////////
