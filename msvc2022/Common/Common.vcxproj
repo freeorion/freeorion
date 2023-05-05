@@ -296,6 +296,7 @@
     <ClCompile Include="..\..\util\CheckSums.cpp" />
     <ClCompile Include="..\..\util\SaveGamePreviewUtils.cpp" />
     <ClCompile Include="..\..\util\ScopedTimer.cpp" />
+    <ClCompile Include="..\..\util\SerializeQueues.cpp" />
     <ClCompile Include="..\..\util\SerializeSpecies.cpp" />
     <ClCompile Include="..\..\util\StringTable.cpp" />
     <ClCompile Include="..\..\universe\Building.cpp" />
