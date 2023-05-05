@@ -379,6 +379,14 @@ void ServerApp::AsyncIOTimedoutHandler(const boost::system::error_code& error) {
     }
 }
 
+void ServerApp::UpdateEmpireTurnReceived(int empire_id, int turn, bool success) {
+    if (success) {
+        if (auto empire = m_empires.GetEmpire(empire_id)) {
+            empire->SetLastTurnReceived(turn);
+        }
+    }
+}
+
 void ServerApp::CleanupAIs() {
     if (m_ai_client_processes.empty() && m_networking.empty())
         return;

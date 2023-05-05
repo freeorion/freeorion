@@ -398,9 +398,16 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_authenticated);
     ar  & BOOST_SERIALIZATION_NVP(m_ready);
     ar  & BOOST_SERIALIZATION_NVP(m_auto_turn_count);
+
+    if (Archive::is_loading::value && version < 13) {
+        m_last_turn_received = INVALID_GAME_TURN;
+    } else {
+        ar  & BOOST_SERIALIZATION_NVP(m_last_turn_received);
+    }
+
 }
 
-BOOST_CLASS_VERSION(Empire, 12)
+BOOST_CLASS_VERSION(Empire, 13)
 
 template void Empire::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
 template void Empire::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);

@@ -1001,6 +1001,9 @@ void Empire::AutoTurnSetReady() {
 void Empire::SetAutoTurn(int turns_count)
 { m_auto_turn_count = turns_count; }
 
+void Empire::SetLastTurnReceived(int last_turn_received) noexcept
+{ m_last_turn_received = last_turn_received; }
+
 void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects, const ObjectMap& objects) {
     TraceLogger(supply) << "Empire::UpdateSystemSupplyRanges() for empire " << this->Name();
     m_supply_system_ranges.clear();
