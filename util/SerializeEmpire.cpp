@@ -182,7 +182,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_capital_id)
         & BOOST_SERIALIZATION_NVP(m_source_id)
         & BOOST_SERIALIZATION_NVP(m_eliminated);
-    if (Archive::is_loading::value && version < 12) {
+    if (Archive::is_loading::value && version < 13) {
         std::set<std::string> victories;
         ar  & boost::serialization::make_nvp("m_victories", victories);
         m_victories.clear();
@@ -215,7 +215,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         ar  & boost::serialization::make_nvp("m_techs", techs);
         m_techs.insert(boost::container::ordered_unique_range, techs.begin(), techs.end());
 
-    } else if (Archive::is_loading::value && version < 12) {
+    } else if (Archive::is_loading::value && version < 13) {
         std::map<std::string, int, std::less<>> techs;
         ar  & boost::serialization::make_nvp("m_techs", techs);
         m_techs.insert(boost::container::ordered_unique_range, techs.begin(), techs.end());
@@ -267,7 +267,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         ar  & boost::serialization::make_nvp("m_meters", meters);
         m_meters.insert(boost::container::ordered_unique_range, meters.begin(), meters.end());
 
-    } else if (Archive::is_loading::value && version < 12) {
+    } else if (Archive::is_loading::value && version < 13) {
         std::vector<std::pair<std::string, Meter>> meters;
         ar  & boost::serialization::make_nvp("m_meters", meters);
         std::sort(meters.begin(), meters.end());
@@ -303,7 +303,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
             & BOOST_SERIALIZATION_NVP(m_production_queue)
             & BOOST_SERIALIZATION_NVP(m_influence_queue);
 
-        if (Archive::is_loading::value && version < 12) {
+        if (Archive::is_loading::value && version < 13) {
             std::set<std::string> buf;
             ar  & boost::serialization::make_nvp("m_available_building_types", buf);
             m_available_building_types.insert(boost::container::ordered_unique_range, buf.begin(), buf.end());
