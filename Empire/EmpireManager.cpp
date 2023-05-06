@@ -374,7 +374,7 @@ namespace {
         return val0 + val1;
     };
 
-    EmpireColor HexStringToEmpireColor(std::string_view hex_colour) {
+    constexpr EmpireColor HexStringToEmpireColor(std::string_view hex_colour) noexcept {
         const auto sz = hex_colour.size();
         return {{
             (sz >= 2) ? HexCharsToUInt8(hex_colour.substr(0, 2)) : uint8_t{0u},
