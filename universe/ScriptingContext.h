@@ -434,7 +434,7 @@ private:
     EmpireManager*                                 empires = nullptr;
     const EmpireManager&                           const_empires{empires ? *empires : (::Empires())};
 public:
-    const EmpireManager::DiploStatusMap&           diplo_statuses{::Empires().GetDiplomaticStatuses()};
+    const DiploStatusMap&                          diplo_statuses{::Empires().GetDiplomaticStatuses()};
 };
 
 

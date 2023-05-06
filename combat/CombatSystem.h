@@ -15,7 +15,7 @@ public:
     CombatInfo(int system_id_, int turn_,
                Universe& universe_,
                EmpireManager& empires_,
-               const EmpireManager::DiploStatusMap& diplo_statuses_,
+               const DiploStatusMap& diplo_statuses_,
                const GalaxySetupData& galaxy_setup_data_,
                SpeciesManager& species_,
                const SupplyManager& supply_);
@@ -32,7 +32,7 @@ public:
     const Universe&                                universe; // universe in which combat occurs, used for general info getting, but not object state info
     EmpireManager&                                 empires;
     const Universe::EmpireObjectVisibilityTurnMap& empire_object_vis_turns;
-    const EmpireManager::DiploStatusMap&           diplo_statuses;
+    const DiploStatusMap&                          diplo_statuses;
     const GalaxySetupData&                         galaxy_setup_data;
     SpeciesManager&                                species;
     const SupplyManager&                           supply;

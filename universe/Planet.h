@@ -167,7 +167,7 @@ public:
     /** Given initial set of ground forces on planet, determine ground forces on
       * planet after a turn of ground combat. */
     static void ResolveGroundCombat(std::map<int, double>& empires_troops,
-                                    const EmpireManager::DiploStatusMap& diplo_statuses);
+                                    const DiploStatusMap& diplo_statuses);
 
     /** Create planet from @p type and @p size. */
     Planet(PlanetType type, PlanetSize size, int creation_turn);

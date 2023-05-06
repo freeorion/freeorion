@@ -274,7 +274,7 @@ template void Empire::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&,
 
 
 namespace {
-    std::pair<int, int> DiploKey(int id1, int ind2)
+    constexpr inline auto DiploKey(int id1, int ind2) noexcept
     { return std::pair(std::max(id1, ind2), std::min(id1, ind2)); }
 }
 
@@ -302,7 +302,22 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
     } else if (Archive::is_loading::value && version < 2) {
         ar  & make_nvp("m_empire_map", em.m_empire_map);
         TraceLogger() << "EmpireManager serialized " << em.m_empire_map.size() << " empires";
-        ar  & make_nvp("m_empire_diplomatic_statuses", em.m_empire_diplomatic_statuses);
+
+        std::map<std::pair<int, int>, DiplomaticStatus> diplo_statuses;
+        ar  & make_nvp("m_empire_diplomatic_statuses", diplo_statuses);
+        em.m_empire_diplomatic_statuses.clear();
+        for (auto& ids_status : diplo_statuses)
+            em.m_empire_diplomatic_statuses.emplace(ids_status);
+
+    } else if (Archive::is_loading::value && version < 3) {
+        std::map<std::pair<int, int>, DiplomaticStatus> diplo_statuses;
+        ar  & make_nvp("m_empire_diplomatic_statuses", diplo_statuses);
+        em.m_empire_diplomatic_statuses.clear();
+        for (auto& ids_status : diplo_statuses)
+            em.m_empire_diplomatic_statuses.emplace(ids_status);
+
+        ar  & make_nvp("m_empire_map", em.m_empire_map);
+        TraceLogger() << "EmpireManager serialized " << em.m_empire_map.size() << " empires";
 
     } else {
         ar  & make_nvp("m_empire_diplomatic_statuses", em.m_empire_diplomatic_statuses);
@@ -324,6 +339,7 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
 
         // erase invalid empire diplomatic statuses
         std::vector<std::pair<int, int>> to_erase;
+        to_erase.reserve(em.m_empire_diplomatic_statuses.size());
         for (auto& [ids, diplo_status] : em.m_empire_diplomatic_statuses) {
             (void)diplo_status; // quiet unused warning
             const auto& [e1, e2] = ids;
@@ -342,12 +358,11 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
                 (void)e2_ptr; // quiet warning
                 if (e1_id >= e2_id)
                     continue;
-                auto dk = DiploKey(e1_id, e2_id);
-                if (!em.m_empire_diplomatic_statuses.contains(dk)) {
-                    em.m_empire_diplomatic_statuses[dk] = DiplomaticStatus::DIPLO_WAR;
+                const auto inserted_missing_status = em.m_empire_diplomatic_statuses.try_emplace(
+                    DiploKey(e1_id, e2_id), DiplomaticStatus::DIPLO_WAR).second;
+                if (inserted_missing_status)
                     ErrorLogger() << "Added missing diplomatic status (default WAR) between empires "
                                   << e1_id << " and " << e2_id;
-                }
             }
         }
     }

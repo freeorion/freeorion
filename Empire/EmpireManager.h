@@ -16,7 +16,8 @@
 
 class Empire;
 class UniverseObject;
-typedef std::array<uint8_t, 4> EmpireColor;
+using EmpireColor = std::array<uint8_t, 4>;
+using DiploStatusMap = boost::container::flat_map<std::pair<int, int>, DiplomaticStatus>;
 
 /** Maintains all of the Empire objects that exist in the application. */
 class FO_COMMON_API EmpireManager {
@@ -25,8 +26,6 @@ public:
     using iterator = container_type::iterator;
     using const_container_type = std::map<int, std::shared_ptr<const Empire>>;
     using const_iterator = const_container_type::const_iterator;
-
-    using DiploStatusMap = std::map<std::pair<int, int>, DiplomaticStatus>;
 
     EmpireManager() = default;
     EmpireManager& operator=(EmpireManager&& other) noexcept;
@@ -40,9 +39,9 @@ public:
     [[nodiscard]] int                       NumEmpires() const noexcept { return static_cast<int>(m_const_empire_map.size()); }
     [[nodiscard]] int                       NumEliminatedEmpires() const;
 
-    [[nodiscard]] const std::vector<int>&   CapitalIDs() const noexcept { return m_capital_ids; }
+    [[nodiscard]] const auto&               CapitalIDs() const noexcept { return m_capital_ids; }
 
-    [[nodiscard]] const DiploStatusMap&     GetDiplomaticStatuses() const noexcept { return m_empire_diplomatic_statuses; }
+    [[nodiscard]] const auto&               GetDiplomaticStatuses() const noexcept { return m_empire_diplomatic_statuses; }
     [[nodiscard]] DiplomaticStatus          GetDiplomaticStatus(int empire1, int empire2) const;
     [[nodiscard]] std::set<int>             GetEmpireIDsWithDiplomaticStatusWithEmpire(
         int empire_id, DiplomaticStatus diplo_status) const
@@ -79,7 +78,7 @@ public:
       * caller's responsibility to make sure that universe updates planet
       * ownership. */
     void CreateEmpire(int empire_id, std::string name, std::string player_name,
-                      const EmpireColor& color, bool authenticated);
+                      EmpireColor color, bool authenticated);
 
     /** Removes and deletes all empires from the manager. */
     void Clear() noexcept;
