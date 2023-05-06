@@ -27,9 +27,9 @@ FreeOrion depends on the following software to build:
   * [Visual Studio] - 2022 for Windows Desktop ; Windows only
   * [Xcode] - 13.2 or later ; MacOS only
   * [CMake] - 3.8 or 3.16 (Windows) or later
-  * A C++17 compliant compiler - Other Operating Systems
-    * [GNU GCC] - 8.0 or later
-    * [Clang] - 5 or later
+  * A C++20 compliant compiler - Other Operating Systems
+    * [GNU GCC] - 11 or later
+    * [Clang] - 10 or later
   * [Python] - 3.9 or later
   * [Git]
 
