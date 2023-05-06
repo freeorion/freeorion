@@ -196,17 +196,17 @@ namespace {
     { return IsExistingFile(path) && MP_SAVE_FILE_EXTENSION == path.extension(); }
 
     EmpireColor GetUnusedEmpireColour(const std::list<std::pair<int, PlayerSetupData>>& psd,
-                                  const std::map<int, SaveGameEmpireData> &sged = std::map<int, SaveGameEmpireData>())
+                                      const std::map<int, SaveGameEmpireData>& sged = std::map<int, SaveGameEmpireData>())
     {
         //DebugLogger(FSM) << "finding colours for empire of player " << player_name;
         EmpireColor empire_colour{{192, 192, 192, 255}};
-        for (const EmpireColor& possible_colour : EmpireColors()) {
+        for (const EmpireColor possible_colour : EmpireColors()) {
             //DebugLogger(FSM) << "trying colour " << possible_colour.r << ", " << possible_colour.g << ", " << possible_colour.b;
 
             // check if any other player / empire is using this colour
             bool colour_is_new = true;
             for (const std::pair<int, PlayerSetupData>& entry : psd) {
-                const EmpireColor& player_colour = entry.second.empire_color;
+                const auto player_colour = entry.second.empire_color;
                 if (player_colour == possible_colour) {
                     colour_is_new = false;
                     break;
@@ -215,7 +215,7 @@ namespace {
 
             if (colour_is_new) {
                 for (const auto& entry : sged) {
-                    const EmpireColor& player_colour = entry.second.color;
+                    const auto player_colour = entry.second.color;
                     if (player_colour == possible_colour) {
                         colour_is_new = false;
                         break;

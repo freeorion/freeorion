@@ -836,7 +836,7 @@ void Fleet::MovementPhase(ScriptingContext& context) {
     const auto& universe = context.ContextUniverse();
     const auto& supply = context.supply;
 
-    auto ships = objects.findRaw<Ship>(m_ships);
+    const auto ships = objects.findRaw<Ship>(m_ships);
 
     // if owner of fleet can resupply ships at the location of this fleet, then
     // resupply all ships in this fleet
