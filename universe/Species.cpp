@@ -76,57 +76,46 @@ uint32_t FocusType::GetCheckSum() const {
 // Species                                     //
 /////////////////////////////////////////////////
 namespace {
-    template <typename S1, typename S2, typename S3>
-    std::string ConcatenateAsString(S1&& s1, S2&& s2, S3&& s3)
-    {
+    std::string ConcatenateAsString(auto&& stringset1, auto&& stringset2, auto&& stringset3) {
         std::string retval;
-        for (const auto& s : {s1, s2, s3})
+        for (const auto& s : {stringset1, stringset2, stringset3})
             for (const auto& t : s)
                 retval += boost::to_upper_copy<std::string>(t);
         return retval;
     }
 
-    template <typename S1>
-    std::vector<std::string_view> StringViewsForTags(
-        S1&& tags, std::string_view concat_tags)
-    {
+    std::vector<std::string_view> StringViewsForTags(auto&& tags, std::string_view concat_tags) {
         std::vector<std::string_view> retval;
         retval.reserve(tags.size());
         std::size_t next_idx = 0;
 
         // store views into concatenated tags/likes string
-        std::for_each(tags.begin(), tags.end(),
-                      [&next_idx, &retval, concat_tags](const auto t)
-        {
-            std::string upper_t = boost::to_upper_copy<std::string>(t);
-            retval.push_back(concat_tags.substr(next_idx, upper_t.size()));
-            next_idx += upper_t.size();
+        std::for_each(tags.begin(), tags.end(), [&next_idx, &retval, concat_tags](const auto t) {
+            // determine how much space each tag takes up after being converted to upper case
+            const auto upper_sz = boost::to_upper_copy<std::string>(t).size();
+            retval.push_back(concat_tags.substr(next_idx, upper_sz));
+            next_idx += upper_sz;
         });
         return retval;
     }
 
-    template <typename S1>
-    std::vector<std::string_view> StringViewsForPediaTags(
-        S1&& tags, std::string_view concat_tags)
-    {
+    std::vector<std::string_view> StringViewsForPediaTags(auto&& tags, std::string_view concat_tags) {
         std::vector<std::string_view> retval;
         retval.reserve(tags.size());
 
         std::size_t next_idx = 0;
 
         // store views into concatenated tags/likes string
-        std::for_each(tags.begin(), tags.end(),
-                      [&next_idx, &retval, concat_tags] (const auto tag)
-        {
-            std::string upper_t = boost::to_upper_copy<std::string>(tag);
+        std::for_each(tags.begin(), tags.end(), [&next_idx, &retval, concat_tags] (const auto tag) {
+            const auto upper_sz = boost::to_upper_copy<std::string>(tag).size();
             static constexpr auto len{TAG_PEDIA_PREFIX.length()};
             if (tag.substr(0, len) == TAG_PEDIA_PREFIX) {
                 // store string views into the pedia tag after the "PEDIA" prefix
-                auto full_tag = concat_tags.substr(next_idx, upper_t.size());
-                auto after_prefix_tag = full_tag.substr(len);
+                const auto full_tag = concat_tags.substr(next_idx, upper_sz);
+                const auto after_prefix_tag = full_tag.substr(len);
                 retval.push_back(after_prefix_tag);
             }
-            next_idx += upper_t.size();
+            next_idx += upper_sz;
         });
         return retval;
     }
