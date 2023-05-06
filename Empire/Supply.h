@@ -5,6 +5,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <boost/container/flat_map.hpp>
 #include <boost/serialization/access.hpp>
 #include "../universe/ConstantsFwd.h"
 #include "../universe/EnumsFwd.h"
@@ -12,6 +13,7 @@
 
 class Universe;
 struct ScriptingContext;
+using DiploStatusMap = boost::container::flat_map<std::pair<int, int>, DiplomaticStatus>;
 
 /** Used to calcuate all empires' supply distributions. */
 class FO_COMMON_API SupplyManager {
@@ -59,7 +61,7 @@ public:
       * one of the resource supply groups for empire with id \a empire_id */
     [[nodiscard]] bool SystemHasFleetSupply(int system_id, int empire_id) const;
     [[nodiscard]] bool SystemHasFleetSupply(int system_id, int empire_id, bool include_allies,
-                                            const std::map<std::pair<int, int>, DiplomaticStatus>& diplo_statuses) const;
+                                            const DiploStatusMap& diplo_statuses) const;
 
     [[nodiscard]] std::string Dump(const Universe& u, int empire_id = ALL_EMPIRES) const;
 

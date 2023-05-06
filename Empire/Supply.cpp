@@ -113,11 +113,8 @@ bool SupplyManager::SystemHasFleetSupply(int system_id, int empire_id) const {
 }
 
 bool SupplyManager::SystemHasFleetSupply(int system_id, int empire_id, bool include_allies,
-                                         const std::map<std::pair<int, int>, DiplomaticStatus>& diplo_statuses) const
+                                         const DiploStatusMap& diplo_statuses) const
 {
-    static_assert(std::is_same_v<std::map<std::pair<int, int>, DiplomaticStatus>,
-                                 EmpireManager::DiploStatusMap>);
-
     if (!include_allies)
         return SystemHasFleetSupply(system_id, empire_id);
     if (system_id == INVALID_OBJECT_ID)

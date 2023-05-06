@@ -1100,7 +1100,7 @@ namespace {
 }
 
 void Planet::ResolveGroundCombat(std::map<int, double>& empires_troops,
-                                 const EmpireManager::DiploStatusMap& diplo_statuses)
+                                 const DiploStatusMap& diplo_statuses)
 {
     if (empires_troops.empty() || empires_troops.size() == 1)
         return;
