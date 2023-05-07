@@ -18,6 +18,8 @@
     (All)                                       \
     (AllyOf)                                    \
     (And)                                       \
+    (annexationcondition)                       \
+    (annexationcost)                            \
     (AnyEmpire)                                 \
     (Armed)                                     \
     (Armour)                                    \

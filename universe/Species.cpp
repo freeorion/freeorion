@@ -145,6 +145,30 @@ namespace {
 
         return retval;
     }
+
+    auto DefaultAnnexationCondition() {
+        return std::make_unique<Condition::And>(
+            std::make_unique<Condition::EmpireAffiliation>(EmpireAffiliationType::AFFIL_NONE),
+            std::make_unique<Condition::MeterValue>(MeterType::METER_POPULATION,
+                                                    std::make_unique<ValueRef::Constant<double>>(0.001),
+                                                    nullptr),
+            std::make_unique<Condition::ResourceSupplyConnectedByEmpire>(
+                std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"),
+                std::make_unique<Condition::And>(
+                    std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET),
+                    std::make_unique<Condition::EmpireAffiliation>(
+                        std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"))
+                )
+            ));
+    }
+
+    auto DefaultAnnexationCost() {
+        return std::make_unique<ValueRef::Operation<double>>(
+            ValueRef::OpType::TIMES,
+            std::make_unique<ValueRef::Constant<double>>(5.0),
+            std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE,
+                                                         "Population"));
+    }
 }
 
 Species::Species(std::string&& name, std::string&& desc,
@@ -156,6 +180,8 @@ Species::Species(std::string&& name, std::string&& desc,
                  bool playable, bool native, bool can_colonize, bool can_produce_ships,
                  const std::set<std::string>& tags,
                  std::set<std::string>&& likes, std::set<std::string>&& dislikes,
+                 std::unique_ptr<Condition::Condition>&& annexation_condition,
+                 std::unique_ptr<ValueRef::ValueRef<double>>&& annexation_cost,
                  std::string&& graphic,
                  double spawn_rate, int spawn_limit) :
     m_name(name), // not moving so available later in member initializer list
@@ -179,23 +205,18 @@ Species::Species(std::string&& name, std::string&& desc,
             cond->SetTopLevelContent(name);
         return std::move(cond);
     }(std::move(combat_targets), name)),
-    m_annexation_condition(std::make_unique<Condition::And>(
-        std::make_unique<Condition::EmpireAffiliation>(EmpireAffiliationType::AFFIL_NONE),
-        std::make_unique<Condition::MeterValue>(MeterType::METER_POPULATION,
-                                                std::make_unique<ValueRef::Constant<double>>(0.001),
-                                                nullptr),
-        std::make_unique<Condition::ResourceSupplyConnectedByEmpire>(
-            std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"),
-            std::make_unique<Condition::And>(
-                std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET),
-                std::make_unique<Condition::EmpireAffiliation>(
-                    std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"))
-            )
-        ))),
-    m_annexation_cost(std::make_unique<ValueRef::Operation<double>>(
-        ValueRef::OpType::TIMES,
-        std::make_unique<ValueRef::Constant<double>>(5.0),
-        std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE, "Population"))),
+    m_annexation_condition([](auto&& annexation_condition, const auto& name) {
+        if (!annexation_condition)
+            annexation_condition = DefaultAnnexationCondition();
+        annexation_condition->SetTopLevelContent(name);
+        return std::move(annexation_condition);
+    }(std::move(annexation_condition), name)),
+    m_annexation_cost([](auto&& annexation_cost, const auto& name) {
+        if (!annexation_cost)
+            annexation_cost = DefaultAnnexationCost();
+        annexation_cost->SetTopLevelContent(name);
+        return std::move(annexation_cost);
+    }(std::move(annexation_cost), name)),
     m_playable(playable),
     m_native(native),
     m_can_colonize(can_colonize),
@@ -254,6 +275,8 @@ Species::Species(std::string&& name, std::string&& desc,
                  bool playable, bool native, bool can_colonize, bool can_produce_ships,
                  const std::set<std::string>& tags,
                  std::set<std::string>&& likes, std::set<std::string>&& dislikes,
+                 std::unique_ptr<Condition::Condition>&& annexation_condition,
+                 std::unique_ptr<ValueRef::ValueRef<double>>&& annexation_cost,
                  std::string&& graphic,
                  double spawn_rate, int spawn_limit) :
     Species(
@@ -270,7 +293,9 @@ Species::Species(std::string&& name, std::string&& desc,
             return retval;
         }(),
         std::move(combat_targets), playable, native, can_colonize, can_produce_ships,
-        tags, std::move(likes), std::move(dislikes), std::move(graphic), spawn_rate, spawn_limit)
+        tags, std::move(likes), std::move(dislikes),
+        std::move(annexation_condition), std::move(annexation_cost),
+        std::move(graphic), spawn_rate, spawn_limit)
 {}
 
 Species::~Species() = default;
@@ -516,6 +541,8 @@ uint32_t Species::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_default_focus);
     CheckSums::CheckSumCombine(retval, m_planet_environments);
     CheckSums::CheckSumCombine(retval, m_combat_targets);
+    CheckSums::CheckSumCombine(retval, m_annexation_condition);
+    CheckSums::CheckSumCombine(retval, m_annexation_cost);
     CheckSums::CheckSumCombine(retval, m_effects);
     CheckSums::CheckSumCombine(retval, m_location);
     CheckSums::CheckSumCombine(retval, m_playable);
