@@ -60,6 +60,17 @@ Species
 
     [[VERY_TOLERANT_EP]]
 
+    annexationcondition = And [
+        Unowned
+        Population low = 0.001
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+        ]
+    ]
+
+    annexationcost = 5.0 * LocalCandidate.Population
+
     graphic = "icons/species/other-04.png"
 
 #include "common/*.macros"
