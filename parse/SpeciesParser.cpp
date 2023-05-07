@@ -92,14 +92,20 @@ namespace {
         SpeciesData() = default;
         SpeciesData(boost::optional<double>& spawn_rate_,
                     boost::optional<int>& spawn_limit_,
+                    boost::optional<parse::detail::MovableEnvelope<Condition::Condition>>& annexation_condition_,
+                    boost::optional<parse::detail::MovableEnvelope<ValueRef::ValueRef<double>>>& annexation_cost_,
                     std::string& graphic_) :
             spawn_rate(std::move(spawn_rate_)),
             spawn_limit(std::move(spawn_limit_)),
+            annexation_condition(std::move(annexation_condition_)),
+            annexation_cost(std::move(annexation_cost_)),
             graphic(std::move(graphic_))
         {}
 
         boost::optional<double> spawn_rate;
         boost::optional<int> spawn_limit;
+        boost::optional<parse::detail::MovableEnvelope<Condition::Condition>> annexation_condition;
+        boost::optional<parse::detail::MovableEnvelope<ValueRef::ValueRef<double>>> annexation_cost;
         std::string graphic;
     };
 
@@ -131,6 +137,8 @@ namespace {
                             params.tags,    // intentionally not moved
                             std::move(params.likes),
                             std::move(params.dislikes),
+                            (species_data.annexation_condition ? (*species_data.annexation_condition).OpenEnvelope(pass) : nullptr),
+                            (species_data.annexation_cost ? (*species_data.annexation_cost).OpenEnvelope(pass) : nullptr),
                             std::move(species_data.graphic),
                             (species_data.spawn_rate ? *species_data.spawn_rate : 1.0),
                             (species_data.spawn_limit ? *species_data.spawn_limit : 9999)
@@ -191,6 +199,7 @@ namespace {
             likes(tok, label),
             dislikes(tok, label),
             effects_group_grammar(tok, label, condition_parser, string_grammar),
+            double_rules(tok, label, condition_parser, string_grammar),
             double_rule(tok),
             int_rule(tok),
             one_or_more_foci(focus_type),
@@ -248,10 +257,12 @@ namespace {
                 ;
 
             species_data
-                = (-(label(tok.spawnrate_)      >   double_rule)// _1
-                >  -(label(tok.spawnlimit_)     >   int_rule)   // _2
-                >   label(tok.graphic_)         >   tok.string) // _3
-                [ _val = construct<SpeciesData>(_1, _2, _3) ]
+                = (-(label(tok.spawnrate_)              >   double_rule)        // _1
+                >  -(label(tok.spawnlimit_)             >   int_rule)           // _2
+                >  -(label(tok.annexationcondition_)    >   condition_parser)   // _3
+                >  -(label(tok.annexationcost_)         >   double_rules.expr)  // _4
+                >   label(tok.graphic_)                 >   tok.string)         // _5
+                [ _val = construct<SpeciesData>(_1, _2, _3, _4, _5) ]
                 ;
 
             species_params_and_stuff
@@ -335,6 +346,7 @@ namespace {
         likes_grammar                                              likes;
         dislikes_grammar                                           dislikes;
         parse::effects_group_grammar                               effects_group_grammar;
+        parse::double_parser_rules                                 double_rules;
         parse::detail::double_grammar                              double_rule;
         parse::detail::int_grammar                                 int_rule;
         foci_rule                                                  foci;
@@ -419,17 +431,25 @@ namespace {
         }
         auto graphic = boost::python::extract<std::string>(kw["graphic"])();
         double spawn_rate = 1.0;
-        if (kw.has_key("spawnrate")) {
+        if (kw.has_key("spawnrate"))
             spawn_rate = boost::python::extract<double>(kw["spawnrate"])();
-        }
+
         int spawn_limit = 9999;
-        if (kw.has_key("spawnlimit")) {
+        if (kw.has_key("spawnlimit"))
             spawn_limit = boost::python::extract<int>(kw["spawnlimit"])();
-        }
+
         std::unique_ptr<Condition::Condition> combat_targets;
-        if (kw.has_key("combat_targets")) {
+        if (kw.has_key("combat_targets"))
             combat_targets = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["combat_targets"])().condition);
-        }
+
+        std::unique_ptr<Condition::Condition> annexation_condition;
+        if (kw.has_key("annexation_condition"))
+            annexation_condition = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["annexation_condition"])().condition);
+
+        std::unique_ptr<ValueRef::ValueRef<double>> annexation_cost;
+        if (kw.has_key("annexation_cost"))
+            annexation_cost = ValueRef::CloneUnique(boost::python::extract<value_ref_wrapper<double>>(kw["annexation_cost"])().value_ref);
+
 
         auto species_ptr = std::make_unique<Species>(
             std::move(name), std::move(description), std::move(gameplay_description),
@@ -445,12 +465,14 @@ namespace {
             tags,    // intentionally not moved
             std::move(likes),
             std::move(dislikes),
+            std::move(annexation_condition),
+            std::move(annexation_cost),
             std::move(graphic),
             spawn_rate,
             spawn_limit);
 
-        auto& species_name{species_ptr->Name()};
-        species_.emplace(species_name, std::move(*species_ptr));
+        auto species_name{species_ptr->Name()};
+        species_.emplace(std::move(species_name), std::move(*species_ptr));
 
         return boost::python::object();
     }

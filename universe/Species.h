@@ -101,6 +101,8 @@ public:
             bool playable, bool native, bool can_colonize, bool can_produce_ships,
             const std::set<std::string>& tags,
             std::set<std::string>&& likes, std::set<std::string>&& dislikes,
+            std::unique_ptr<Condition::Condition>&& annexation_condition,
+            std::unique_ptr<ValueRef::ValueRef<double>>&& annexation_cost,
             std::string&& graphic,
             double spawn_rate = 1.0, int spawn_limit = 99999);
 
@@ -113,6 +115,8 @@ public:
             bool playable, bool native, bool can_colonize, bool can_produce_ships,
             const std::set<std::string>& tags,
             std::set<std::string>&& likes, std::set<std::string>&& dislikes,
+            std::unique_ptr<Condition::Condition>&& annexation_condition,
+            std::unique_ptr<ValueRef::ValueRef<double>>&& annexation_cost,
             std::string&& graphic,
             double spawn_rate = 1.0, int spawn_limit = 99999);
 
