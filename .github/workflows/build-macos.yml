@@ -43,6 +43,10 @@ jobs:
         uses: actions/checkout@v3
       - name: Clean up Mono
         run: sudo ./.github/workflows/mono-uninstall.sh
+      - name: Setup - Xcode
+        if: matrix.os == 'macos-11'
+        run: |
+          sudo xcode-select -s /Applications/Xcode_11.7.app
       - name: Prepare ccache timestamp
         id: build-macos-ccache-timestamp
         shell: cmake -P {0}
@@ -77,6 +81,7 @@ jobs:
           cd build
           cmake --build . --config Release -- -parallelizeTargets
       - name: Generate binaries
+        if: matrix.os != 'macos-13'
         run: |
           export PATH="/usr/local/opt/ccache/libexec:$PATH"
           alias cmake="/usr/local/bin/gtimeout 40m /usr/local/bin/cmake"
