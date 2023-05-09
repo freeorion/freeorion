@@ -1020,30 +1020,21 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return 0;
     }
 
-    if (property_name == "Owner") {
+    if (property_name == "Owner")
         return object->Owner();
-    }
-    else if (property_name == "SystemID") {
+    else if (property_name == "SystemID")
         return object->SystemID();
-
-    }
-    else if (property_name == "ContainerID") {
+    else if (property_name == "ContainerID")
         return object->ContainerObjectID();
-
-    }
-    else if (property_name == "SupplyingEmpire") {
+    else if (property_name == "SupplyingEmpire")
         return context.supply.EmpireThatCanSupplyAt(object->SystemID());
-    }
-    else if (property_name == "ID") {
+    else if (property_name == "ID")
         return object->ID();
-    }
-    else if (property_name == "CreationTurn") {
+    else if (property_name == "CreationTurn")
         return object->CreationTurn();
-    }
-    else if (property_name == "Age") {
+    else if (property_name == "Age")
         return object->AgeInTurns(context.current_turn);
 
-    }
 
     std::function<int (const Ship&)> ship_property{nullptr};
 
