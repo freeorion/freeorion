@@ -8,7 +8,7 @@
 #include <memory>
 #include <type_traits>
 
-namespace parse { namespace detail {
+namespace parse::detail {
     /** \p MovableEnvelope enables the boost::spirit parser to handle a
         \p T with move semantics.
 
@@ -82,18 +82,14 @@ namespace parse { namespace detail {
         // nullptr constructor
         MovableEnvelope(std::nullptr_t) {}
 
-        template <typename U,
-                  typename std::enable_if_t<std::is_convertible_v<std::unique_ptr<U>,
-                                                                  std::unique_ptr<T>>>* = nullptr>
+        template <typename U> requires (std::is_convertible_v<std::unique_ptr<U>, std::unique_ptr<T>>)
         explicit MovableEnvelope(std::unique_ptr<U>&& obj_) :
             obj(std::move(obj_)),
             original_obj(obj.get())
         {}
 
         // This takes ownership of obj_
-        template <typename U,
-                  typename std::enable_if_t<std::is_convertible_v<std::unique_ptr<U>,
-                                                                  std::unique_ptr<T>>>* = nullptr>
+        template <typename U> requires (std::is_convertible_v<std::unique_ptr<U>, std::unique_ptr<T>>)
         explicit MovableEnvelope(U* obj_) :
             obj(obj_),
             original_obj(obj.get())
@@ -101,24 +97,18 @@ namespace parse { namespace detail {
 
         // Converting copy constructor
         // This leaves \p other in an emptied state
-        template <typename U,
-                  typename std::enable_if_t<std::is_convertible_v<std::unique_ptr<U>,
-                                                                  std::unique_ptr<T>>>* = nullptr>
+        template <typename U> requires (std::is_convertible_v<std::unique_ptr<U>, std::unique_ptr<T>>)
         MovableEnvelope(const MovableEnvelope<U>& other) :
             MovableEnvelope(std::move(other.obj))
         {}
 
         // Converting move constructor
-        template <typename U,
-                  typename std::enable_if_t<std::is_convertible_v<std::unique_ptr<U>,
-                                                                  std::unique_ptr<T>>>* = nullptr>
+        template <typename U> requires (std::is_convertible_v<std::unique_ptr<U>, std::unique_ptr<T>>)
         MovableEnvelope(MovableEnvelope<U>&& other) :
             MovableEnvelope(std::move(other.obj))
         {}
 
-        template <typename U,
-                  typename std::enable_if_t<std::is_convertible_v<std::unique_ptr<U>,
-                                                                  std::unique_ptr<T>>>* = nullptr>
+        template <typename U> requires (std::is_convertible_v<std::unique_ptr<U>, std::unique_ptr<T>>)
         MovableEnvelope& operator= (MovableEnvelope<U>&& other) {
             obj = std::move(other.obj);
             original_obj = other.original_obj;
@@ -128,9 +118,7 @@ namespace parse { namespace detail {
 
         // Copy operator
         // This leaves \p other in an emptied state
-        template <typename U,
-                  typename std::enable_if_t<std::is_convertible_v<std::unique_ptr<U>,
-                                                                  std::unique_ptr<T>>>* = nullptr>
+        template <typename U> requires (std::is_convertible_v<std::unique_ptr<U>, std::unique_ptr<T>>)
         MovableEnvelope& operator= (const MovableEnvelope<U>& other) {
             obj = std::move(other.obj);
             original_obj = other.original_obj;
@@ -391,9 +379,7 @@ namespace parse { namespace detail {
             return OpenEnvelopes(objs, pass);
         }
     };
-
-    } // end namespace detail
-} // end namespace parse
+}
 
 
 #endif
