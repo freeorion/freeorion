@@ -9873,7 +9873,13 @@ std::unique_ptr<Condition> OrderedBombarded::Clone() const
 // ValueTest                                             //
 ///////////////////////////////////////////////////////////
 namespace {
-    template <typename T, std::enable_if<std::is_arithmetic_v<T>>* = nullptr>
+    namespace {
+        // <concepts> library not fully implemented in XCode 13.2
+        template <class T>
+        concept arithmetic = std::is_arithmetic_v<T>;
+    }
+
+    template <arithmetic T>
     constexpr bool Comparison(T val1, ComparisonType comp, T val2) noexcept {
         switch (comp) {
             case ComparisonType::EQUAL:                 return val1 == val2;
@@ -9896,7 +9902,7 @@ namespace {
         }
     }
 
-    template <typename T, std::enable_if<std::is_arithmetic_v<T>>* = nullptr>
+    template <arithmetic T>
     auto Comparison(const std::vector<T>& vals1, ComparisonType comp, const T val2)
     {
         std::vector<uint8_t> retval(vals1.size(), false);
@@ -9934,7 +9940,7 @@ namespace {
         }
     }
 
-    template <typename T, std::enable_if<std::is_arithmetic_v<T>>* = nullptr>
+    template <arithmetic T>
     auto Comparison(const std::vector<T>& vals1, ComparisonType comp, const std::vector<T>& vals2)
     {
         std::vector<uint8_t> retval(vals1.size(), false);
@@ -9994,7 +10000,7 @@ namespace {
         return retval;
     }
 
-    template <typename T, std::enable_if<std::is_arithmetic_v<T>>* = nullptr>
+    template <arithmetic T>
     auto Comparison(const T val1, ComparisonType comp, const std::vector<T>& vals2)
     { return Comparison(vals2, SwapSides(comp), val1); }
 
@@ -10926,12 +10932,14 @@ std::unique_ptr<Condition> CombatTarget::Clone() const {
 // And                                                   //
 ///////////////////////////////////////////////////////////
 namespace {
+    namespace {
+        template <class Cond>
+        concept and_or_or_condition = std::is_same_v<Cond, And> || std::is_same_v<Cond, Or>;
+    }
+
     // flattens nested conditions by extracting contained operands, and
     // also removes any null operands
-    template <typename ContainingCondition,
-              std::enable_if<std::is_same_v<ContainingCondition, And> ||
-                             std::is_same_v<ContainingCondition, Or>
-                            >* = nullptr>
+    template <and_or_or_condition ContainingCondition>
     std::vector<std::unique_ptr<Condition>> DenestOps(std::vector<std::unique_ptr<Condition>>& in) {
         std::vector<std::unique_ptr<Condition>> retval;
         retval.reserve(in.size());
