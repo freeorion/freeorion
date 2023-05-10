@@ -34,7 +34,6 @@
 #include <climits>
 
 namespace GG {
-
 namespace detail {
     template <typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
     constexpr inline std::size_t OneBits(T num) noexcept
@@ -210,11 +209,11 @@ public:
     [[nodiscard]] static FlagSpec& instance();
 
     /** Returns true iff FlagSpec contains \a flag. */
-    [[nodiscard]] bool contains(FlagType flag) const noexcept { return find(flag) != end(); }
+    [[nodiscard]] constexpr bool contains(FlagType flag) const noexcept { return find(flag) != end(); }
 
     /** Returns an iterator to \a flag, if flag is in the FlagSpec, or end()
       * otherwise. */
-    [[nodiscard]] const_iterator find(FlagType flag) const noexcept
+    [[nodiscard]] constexpr const_iterator find(FlagType flag) const noexcept
     {
         for (const_iterator it = m_flags.cbegin(); it != m_flags.cend(); ++it)
             if (*it == flag)
@@ -222,21 +221,21 @@ public:
         return m_flags.cend();
     }
     /** Returns an iterator to the first flag in the FlagSpec. */
-    [[nodiscard]] const_iterator begin() const noexcept { return m_flags.cbegin(); }
+    [[nodiscard]] constexpr const_iterator begin() const noexcept { return m_flags.cbegin(); }
     /** Returns an iterator to one past the last flag in the FlagSpec. */
-    [[nodiscard]] const_iterator end() const noexcept { return m_flags.cbegin() + m_count; }
+    [[nodiscard]] constexpr const_iterator end() const noexcept { return m_flags.cbegin() + m_count; }
 
     /** Returns the stringification of \a flag provided when \a flag was added
       * to the FlagSpec.  \throw Throws GG::FlagSpec::UnknownFlag if an
       * unknown flag's stringification is requested. */
-    [[nodiscard]] std::string_view ToString(FlagType flag) const
+    [[nodiscard]] constexpr std::string_view ToString(FlagType flag) const
     {
         const auto it = find(flag);
         if (it == end())
             throw UnknownFlag("Could not find string corresponding to unknown flag");
         return m_strings[std::distance(begin(), it)];
     }
-    [[nodiscard]] std::string_view ToString(FlagType flag, std::string_view not_found_value) const
+    [[nodiscard]] constexpr std::string_view ToString(FlagType flag, std::string_view not_found_value) const
     {
         for (std::size_t idx = 0; idx < m_count; ++idx)
             if (m_flags[idx] == flag)
@@ -245,7 +244,7 @@ public:
     }
     /** Returns the flag whose stringification is \a str.  \throw Throws
       * GG::FlagSpec::UnknownString if an unknown string is provided. */
-    [[nodiscard]] FlagType FromString(std::string_view str) const
+    [[nodiscard]] constexpr FlagType FromString(std::string_view str) const
     {
         const auto begin_it = m_strings.cbegin();
         const auto end_it = begin_it + m_count;
@@ -254,7 +253,7 @@ public:
             throw UnknownString("Could not find flag corresponding to unknown string");
         return m_flags[std::distance(begin_it, found_it)];
     }
-    [[nodiscard]] FlagType FromString(std::string_view str, FlagType not_found_value) const noexcept
+    [[nodiscard]] constexpr FlagType FromString(std::string_view str, FlagType not_found_value) const noexcept
     {
         for (std::size_t idx = 0; idx < m_count; ++idx)
             if (m_strings[idx] == str)
@@ -344,17 +343,17 @@ public:
     constexpr bool operator<(Flags<FlagType> rhs) const noexcept
     { return m_flags < rhs.m_flags; }
 
-    constexpr Flags<FlagType>& operator|=(Flags<FlagType> rhs) noexcept
+    constexpr auto& operator|=(Flags<FlagType> rhs) noexcept
     {
         m_flags |= rhs.m_flags;
         return *this;
     }
-    constexpr Flags<FlagType>& operator&=(Flags<FlagType> rhs) noexcept
+    constexpr auto& operator&=(Flags<FlagType> rhs) noexcept
     {
         m_flags &= rhs.m_flags;
         return *this;
     }
-    constexpr Flags<FlagType>& operator^=(Flags<FlagType> rhs) noexcept
+    constexpr auto& operator^=(Flags<FlagType> rhs) noexcept
     {
         m_flags ^= rhs.m_flags;
         return *this;
@@ -375,7 +374,7 @@ std::ostream& operator<<(std::ostream& os, Flags<FlagType> flags)
 }
 
 template <typename FlagType>
-constexpr Flags<FlagType> operator|(Flags<FlagType> lhs, Flags<FlagType> rhs)
+constexpr auto operator|(Flags<FlagType> lhs, Flags<FlagType> rhs)
 {
     Flags<FlagType> retval(lhs);
     retval |= rhs;
@@ -383,21 +382,19 @@ constexpr Flags<FlagType> operator|(Flags<FlagType> lhs, Flags<FlagType> rhs)
 }
 
 template <typename FlagType>
-constexpr Flags<FlagType> operator|(Flags<FlagType> lhs, FlagType rhs)
+constexpr auto operator|(Flags<FlagType> lhs, FlagType rhs)
 { return lhs | Flags<FlagType>(rhs); }
 
 template <typename FlagType>
-constexpr Flags<FlagType> operator|(FlagType lhs, Flags<FlagType> rhs)
+constexpr auto operator|(FlagType lhs, Flags<FlagType> rhs)
 { return Flags<FlagType>(lhs) | rhs; }
 
-template <typename FlagType>
-constexpr
-typename std::enable_if_t<is_flag_type_v<FlagType>, Flags<FlagType>>
-operator|(FlagType lhs, FlagType rhs)
+template <typename FlagType, std::enable_if_t<is_flag_type_v<FlagType>>* = nullptr>
+constexpr auto operator|(FlagType lhs, FlagType rhs)
 { return Flags<FlagType>(lhs) | Flags<FlagType>(rhs); }
 
 template <typename FlagType>
-constexpr Flags<FlagType> operator&(Flags<FlagType> lhs, Flags<FlagType> rhs)
+constexpr auto operator&(Flags<FlagType> lhs, Flags<FlagType> rhs)
 {
     Flags<FlagType> retval(lhs);
     retval &= rhs;
@@ -405,21 +402,19 @@ constexpr Flags<FlagType> operator&(Flags<FlagType> lhs, Flags<FlagType> rhs)
 }
 
 template <typename FlagType>
-constexpr Flags<FlagType> operator&(Flags<FlagType> lhs, FlagType rhs)
+constexpr auto operator&(Flags<FlagType> lhs, FlagType rhs)
 { return lhs & Flags<FlagType>(rhs); }
 
 template <typename FlagType>
-constexpr Flags<FlagType> operator&(FlagType lhs, Flags<FlagType> rhs)
+constexpr auto operator&(FlagType lhs, Flags<FlagType> rhs)
 { return Flags<FlagType>(lhs) & rhs; }
 
-template <typename FlagType>
-constexpr
-typename std::enable_if_t<is_flag_type_v<FlagType>, Flags<FlagType>>
-operator&(FlagType lhs, FlagType rhs)
+template <typename FlagType, std::enable_if_t<is_flag_type_v<FlagType>>* = nullptr>
+constexpr auto operator&(FlagType lhs, FlagType rhs)
 { return Flags<FlagType>(lhs) & Flags<FlagType>(rhs); }
 
 template <typename FlagType>
-constexpr Flags<FlagType> operator^(Flags<FlagType> lhs, Flags<FlagType> rhs)
+constexpr auto operator^(Flags<FlagType> lhs, Flags<FlagType> rhs)
 {
     Flags<FlagType> retval(lhs);
     retval ^= rhs;
@@ -427,20 +422,19 @@ constexpr Flags<FlagType> operator^(Flags<FlagType> lhs, Flags<FlagType> rhs)
 }
 
 template <typename FlagType>
-constexpr Flags<FlagType> operator^(Flags<FlagType> lhs, FlagType rhs)
+constexpr auto operator^(Flags<FlagType> lhs, FlagType rhs)
 { return lhs ^ Flags<FlagType>(rhs); }
 
 template <typename FlagType>
-constexpr Flags<FlagType> operator^(FlagType lhs, Flags<FlagType> rhs)
+constexpr auto operator^(FlagType lhs, Flags<FlagType> rhs)
 { return Flags<FlagType>(lhs) ^ rhs; }
 
-template <typename FlagType>
-constexpr typename std::enable_if_t<is_flag_type_v<FlagType>, Flags<FlagType>>
-operator^(FlagType lhs, FlagType rhs)
+template <typename FlagType, std::enable_if_t<is_flag_type_v<FlagType>>* = nullptr>
+constexpr auto operator^(FlagType lhs, FlagType rhs)
 { return Flags<FlagType>(lhs) ^ Flags<FlagType>(rhs); }
 
 template <typename FlagType>
-constexpr Flags<FlagType> operator~(Flags<FlagType> flags)
+constexpr auto operator~(Flags<FlagType> flags)
 {
     Flags<FlagType> retval;
     for (FlagType flag : FlagSpec<FlagType>::instance()) {
@@ -452,9 +446,8 @@ constexpr Flags<FlagType> operator~(Flags<FlagType> flags)
 
 /** Returns a Flags object that consists of all the flags known to
     FlagSpec<FlagType>::instance() except \a flag. */
-template <typename FlagType>
-constexpr typename std::enable_if_t<is_flag_type_v<FlagType>, Flags<FlagType>>
-operator~(FlagType flag)
+template <typename FlagType, std::enable_if_t<is_flag_type_v<FlagType>>* = nullptr>
+constexpr auto operator~(FlagType flag)
 { return ~Flags<FlagType>(flag); }
 
 }
