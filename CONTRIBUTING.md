@@ -59,13 +59,43 @@ To ensure your PR won't be rejected, please make sure that:
 To build FreeOrion please refer to the [Build Instructions](BUILD.md).
 
 
+Installing pre-commit hooks (optional)
+--------------------------------------
+Pre-commit hook is a good way to get feedback fast.
+Hooks implement a subset of checks that run on the CI, so it will jus save your time.
+
+Hooks work on all operating systems.
+You need to install them once, pre-commit will track config file and update itself in case of changes.
+
+- install git
+- install Python
+- [Install pre-commit](https://pre-commit.com/#install)
+   ```shell
+    pip install pre-commit
+    ```
+- install hooks from the project root
+    ```sh
+    pre-commit install
+    ```
+
+Notes:
+- Hooks might change your files, you will need to add (`git add`) changes to commit.
+- First commit after installation/update of hooks may take some time for installing tools.
+- You can skip checks by adding `-n, --no-verify` to `git commit`. This is useful when you commit partial done job.
+
+When you commit, hooks are run only on the changed files, if you want to run an all files:
+```shell
+pre-commit run --all-files
+```
+
+
 Further documentation
 ---------------------
 
 There are further specialized documents available that should be considered
 when working within the FreeOrion project.  Those are:
 
-* [GitHub Issue/PR Labels] - How to properly label Issues/PRs on Github.
+* [GitHub Issue/PR Labels] - How to properly label Issues/PRs on GitHub.
 * [Release Issue template] - Template for release checklist Issues.
 
 
