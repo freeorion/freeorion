@@ -2117,11 +2117,11 @@ void MapWnd::RenderSystems() {
 
 
         // outer circle in color of supplying empire
-        int supply_empire_id = supply.EmpireThatCanSupplyAt(system_id);
+        const int supply_empire_id = supply.EmpireThatCanSupplyAt(system_id);
         auto pre_sz = m_system_circle_vertices.size();
         BufferStoreCircleArcVertices(m_system_circle_vertices, circle_ul, circle_lr,
                                      0.0, TWO_PI, false, 0, false);
-        std::size_t count = m_system_circle_vertices.size() - pre_sz;
+        const std::size_t count = m_system_circle_vertices.size() - pre_sz;
         const auto clr = get_empire_colour(supply_empire_id);
         for (std::size_t n = 0; n < count; ++n)
             m_system_circle_colours.store(clr);
@@ -2134,12 +2134,12 @@ void MapWnd::RenderSystems() {
 
             pre_sz = m_system_circle_vertices.size();
             for (std::size_t n = 0; n < segments; n = n + 2) {
-                auto theta1 = n * segment_arc;
-                auto theta2 = (n+1) * segment_arc;
+                const auto theta1 = n * segment_arc;
+                const auto theta2 = (n+1) * segment_arc;
                 BufferStoreCircleArcVertices(m_system_circle_vertices, inner_circle_ul, inner_circle_lr,
                                              theta1, theta2, false, 48, false);
             }
-            std::size_t count = m_system_circle_vertices.size() - pre_sz;
+            const std::size_t count = m_system_circle_vertices.size() - pre_sz;
             const auto clr = ClientUI::TextColor();
             for (std::size_t n = 0; n < count; ++n)
                 m_system_circle_colours.store(clr);
@@ -2151,15 +2151,9 @@ void MapWnd::RenderSystems() {
         if (!has_empire_planet)
             continue;
 
-#if (defined(__clang_major__)) || (defined(__GNUC__) && (__GNUC__ < 11))
-        int colonized_planets = 0;
-        for (const auto& e : colony_count_by_empire_id)
-            colonized_planets += e.second;
-#else
-        int colonized_planets = std::transform_reduce(
+        const int colonized_planets = std::transform_reduce(
             colony_count_by_empire_id.begin(), colony_count_by_empire_id.end(),
             0, std::plus<>(), [](const auto& e) { return e.second; });
-#endif
         const std::size_t segments = std::max(colonized_planets, 1);
         const double segment_arc = TWO_PI / segments;
 
@@ -2167,11 +2161,11 @@ void MapWnd::RenderSystems() {
         std::size_t n = 0;
         for (const auto& [empire_id, colony_count] : colony_count_by_empire_id) {
             pre_sz = m_system_circle_vertices.size();
-            auto theta1 = n*segment_arc;
-            auto theta2 = (n + colony_count)*segment_arc;
+            const auto theta1 = n*segment_arc;
+            const auto theta2 = (n + colony_count)*segment_arc;
             BufferStoreCircleArcVertices(m_system_circle_vertices, inner_circle_ul, inner_circle_lr,
                                          theta1, theta2, false, 30, false);
-            std::size_t count = m_system_circle_vertices.size() - pre_sz;
+            const std::size_t count = m_system_circle_vertices.size() - pre_sz;
             n += colony_count;
             const auto clr = (empire_id == ALL_EMPIRES) ?
                 ClientUI::TextColor() : get_empire_colour(empire_id);
