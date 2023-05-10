@@ -410,22 +410,12 @@ std::decay_t<T>* ObjectMap::getRaw(int id)
 }
 
 namespace {
-    template <typename, typename = void>
-    static constexpr bool is_int_iterable = false;
-
     template <typename T>
-    static constexpr bool is_int_iterable<
-        T,
-        std::void_t<
-            decltype(std::declval<T>().begin()),
-            decltype(std::declval<T>().end()),
-            std::enable_if_t<std::is_same_v<typename T::value_type, int>>
-        >
-    > = true;
+    concept int_iterable = std::is_same_v<typename T::value_type, int> && requires(T t) { t.begin(); t.end(); };
 
-    static_assert(!is_int_iterable<int>);
-    static_assert(!is_int_iterable<std::array<float, 5>>);
-    static_assert(is_int_iterable<std::vector<int>>);
+    static_assert(!int_iterable<int>);
+    static_assert(!int_iterable<std::array<float, 5>>);
+    static_assert(int_iterable<std::vector<int>>);
 }
 
 /** Checks whether and how a predicate can be applied to select objects from the ObjectMap.
@@ -447,7 +437,7 @@ constexpr std::array<bool, 11> ObjectMap::CheckTypes()
     static_assert(std::is_convertible_v<EntryT, ConstEntryT>);
 
 
-    constexpr bool is_int_range = is_int_iterable<Pred>;
+    constexpr bool is_int_range = int_iterable<Pred>;
 
 
     constexpr bool is_visitor = std::is_convertible_v<DecayPred, UniverseObjectVisitor>;
