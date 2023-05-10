@@ -37,8 +37,7 @@ namespace ValueRef {
 template <typename T>
 struct FO_COMMON_API Constant final : public ValueRef<T>
 {
-    template <typename TT,
-              typename std::enable_if_t<std::is_convertible_v<TT, T>>* = nullptr>
+    template <typename TT> requires (std::is_convertible_v<TT, T>)
     constexpr explicit Constant(TT&& value)
         noexcept(noexcept(std::string{}) && noexcept(T{std::declval<TT>()})) :
         m_value(std::forward<TT>(value))
@@ -91,26 +90,19 @@ template <typename T>
 struct FO_COMMON_API Variable : public ValueRef<T>
 {
     template <typename S>
-    Variable(ReferenceType ref_type, S&& property_name,
-             bool return_immediate_value = false);
+    Variable(ReferenceType ref_type, S&& property_name, bool return_immediate_value = false);
 
-    Variable(ReferenceType ref_type, const char* property_name,
-             bool return_immediate_value = false);
+    Variable(ReferenceType ref_type, const char* property_name, bool return_immediate_value = false);
 
-    explicit Variable(ReferenceType ref_type,
-             bool return_immediate_value = false);
+    explicit Variable(ReferenceType ref_type, bool return_immediate_value = false);
 
     template <typename S>
-    Variable(ReferenceType ref_type,
-             boost::optional<std::string>&& container_name,
-             S&& property_name,
-             bool return_immediate_value = false);
+    Variable(ReferenceType ref_type,  boost::optional<std::string>&& container_name,
+             S&& property_name, bool return_immediate_value = false);
 
-    Variable(ReferenceType ref_type, std::vector<std::string>&& property_name,
-             bool return_immediate_value = false);
+    Variable(ReferenceType ref_type, std::vector<std::string>&& property_name, bool return_immediate_value = false);
 
-    Variable(ReferenceType ref_type, const std::vector<std::string>& property_name,
-             bool return_immediate_value = false);
+    Variable(ReferenceType ref_type, const std::vector<std::string>& property_name, bool return_immediate_value = false);
 
     [[nodiscard]] bool operator==(const ValueRef<T>& rhs) const override;
     [[nodiscard]] T Eval(const ScriptingContext& context) const override;
@@ -259,15 +251,12 @@ protected:
 template <typename FromType, typename ToType>
 struct FO_COMMON_API StaticCast final : public Variable<ToType>
 {
-    template <typename T>
-    explicit StaticCast(T&& value_ref,
-                        typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<Variable<FromType>>>>* = nullptr);
+    template <typename T> requires (std::is_convertible_v<T, std::unique_ptr<Variable<FromType>>>)
+    explicit StaticCast(T&& value_ref);
 
-    template <typename T>
-    explicit StaticCast(T&& value_ref,
-                        typename std::enable_if_t<
-                        std::is_convertible_v<T, std::unique_ptr<ValueRef<FromType>>>
-                        && !std::is_convertible_v<T, std::unique_ptr<Variable<FromType>>>>* = nullptr);
+    template <typename T> requires (std::is_convertible_v<T, std::unique_ptr<ValueRef<FromType>>> &&
+                                    !std::is_convertible_v<T, std::unique_ptr<Variable<FromType>>>)
+    explicit StaticCast(T&& value_ref);
 
     [[nodiscard]]             bool operator==(const ValueRef<ToType>& rhs) const override;
     [[nodiscard]] ToType      Eval(const ScriptingContext& context) const override;
@@ -867,11 +856,7 @@ void Statistic<T, V>::SetTopLevelContent(const std::string& content_name)
         m_value_ref->SetTopLevelContent(content_name);
 }
 
-template <
-    typename T,
-    typename V,
-    typename std::enable_if_t<std::is_arithmetic_v<T> && std::is_arithmetic_v<V>>* = nullptr
->
+template<typename T, typename V> requires (std::is_arithmetic_v<T> && std::is_arithmetic_v<V>)
 T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
 {
     if (object_property_values.empty())
@@ -1042,12 +1027,7 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
     }
 }
 
-template <
-    typename T,
-    typename V,
-    typename std::enable_if_t<std::is_enum_v<T>>* = nullptr,
-    typename std::enable_if_t<std::is_same_v<T, V>>* = nullptr
->
+template <typename T, typename V> requires (std::is_enum_v<T> && std::is_same_v<T, V>)
 T ReduceData(StatisticType stat_type, std::vector<T> object_property_values)
 {
     if (object_property_values.empty())
@@ -1085,11 +1065,7 @@ T ReduceData(StatisticType stat_type, std::vector<T> object_property_values)
     }
 }
 
-template <
-    typename T,
-    typename V,
-    typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr,
-    typename std::enable_if_t<!std::is_arithmetic_v<V>>* = nullptr>
+template <typename T, typename V> requires (std::is_arithmetic_v<T> && !std::is_arithmetic_v<V>)
 T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
 {
     if (object_property_values.empty())
@@ -1446,10 +1422,8 @@ FO_COMMON_API std::string ComplexVariable<std::string>::Dump(uint8_t ntabs) cons
 // StaticCast                                            //
 ///////////////////////////////////////////////////////////
 template <typename FromType, typename ToType>
-template <typename T>
-StaticCast<FromType, ToType>::StaticCast(
-    T&& value_ref,
-    typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<Variable<FromType>>>>*) :
+template <typename T> requires (std::is_convertible_v<T, std::unique_ptr<Variable<FromType>>>)
+StaticCast<FromType, ToType>::StaticCast(T&& value_ref) :
     Variable<ToType>(value_ref->GetReferenceType(), value_ref->PropertyName()),
     m_value_ref(std::move(value_ref))
 {
@@ -1462,12 +1436,9 @@ StaticCast<FromType, ToType>::StaticCast(
 }
 
 template <typename FromType, typename ToType>
-template <typename T>
-StaticCast<FromType, ToType>::StaticCast(
-    T&& value_ref,
-    typename std::enable_if_t<
-        std::is_convertible_v<T, std::unique_ptr<ValueRef<FromType>>> &&
-        !std::is_convertible_v<T, std::unique_ptr<Variable<FromType>>>>*) :
+template <typename T> requires(std::is_convertible_v<T, std::unique_ptr<ValueRef<FromType>>> &&
+                               !std::is_convertible_v<T, std::unique_ptr<Variable<FromType>>>)
+StaticCast<FromType, ToType>::StaticCast(T&& value_ref) :
     Variable<ToType>(ReferenceType::NON_OBJECT_REFERENCE),
     m_value_ref(std::move(value_ref))
 {
