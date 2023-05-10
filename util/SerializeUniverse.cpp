@@ -32,10 +32,6 @@ namespace {
     // <concepts> library not fully implemented in XCode 13.2
     template <class T>
     concept integral = std::is_integral_v<T>;
-
-    template <typename T, std::size_t N>
-    constexpr std::size_t ArrSize(std::array<T, N>)  // TODO: replace with std::ssize when available (C++20 ?)
-    { return N; }
 }
 
 BOOST_CLASS_EXPORT(Field)
@@ -288,7 +284,7 @@ namespace {
     }
 
     constexpr std::size_t num_meters_possible{static_cast<std::size_t>(MeterType::NUM_METER_TYPES)};
-    constexpr std::size_t single_meter_text_size{ArrSize(Meter::ToCharsArrayT())};
+    constexpr std::size_t single_meter_text_size{std::size(Meter::ToCharsArrayT())};
 
     constexpr std::array<std::string_view, num_meters_possible + 2> tags{
         "inv", // invalid
