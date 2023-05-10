@@ -1,5 +1,6 @@
 #include "EncyclopediaDetailPanel.h"
 
+#include <charconv>
 #include <unordered_map>
 #include <boost/algorithm/clamp.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -53,12 +54,6 @@
 #include "../util/ThreadPool.h"
 #include "../util/VarText.h"
 
-#if __has_include(<charconv>)
-#include <charconv>
-#endif
-
-using boost::io::str;
-
 namespace {
     constexpr int DESCRIPTION_PADDING(3);
 
@@ -94,9 +89,7 @@ namespace {
     constexpr auto prefix_len{TAG_PEDIA_PREFIX.length()};
 
     // Checks content \a tags for custom defined pedia category \a cat
-    bool HasCustomCategory(const std::vector<std::string_view>& tags,
-                           const std::string_view cat)
-    {
+    bool HasCustomCategory(const std::vector<std::string_view>& tags, const std::string_view cat) {
         return std::any_of(tags.begin(), tags.end(), [cat](std::string_view sv) {
             return sv.substr(0, prefix_len) == TAG_PEDIA_PREFIX &&
                 sv.substr(prefix_len) == cat;
@@ -105,67 +98,26 @@ namespace {
 
     // checks \a tags for entries whose substring after the length of the pedia
     // prefix matches \a cat but does not check the portion before that
-    bool HasCustomCategoryNoPrefixCheck(const std::vector<std::string_view>& tags,
-                                        const std::string_view cat)
-    {
+    bool HasCustomCategoryNoPrefixCheck(const std::vector<std::string_view>& tags, const std::string_view cat) {
         return std::any_of(tags.begin(), tags.end(), [cat](std::string_view sv)
                            { return sv.substr(prefix_len) == cat; });
     }
 
     // checks \a tags for entries that match \a cat
-    bool HasCustomCategoryNoPrefixes(const std::vector<std::string_view>& tags,
-                                     const std::string_view cat)
-    {
+    bool HasCustomCategoryNoPrefixes(const std::vector<std::string_view>& tags, const std::string_view cat) {
         return std::any_of(tags.begin(), tags.end(), [cat](std::string_view sv)
                            { return sv == cat; });
     }
 }
 
 namespace {
-    constexpr int ToIntCX(std::string_view sv, int default_result = -1) {
-        if (sv.empty())
-            return default_result;
-
-        bool is_negative = (sv.front() == '-');
-        sv = sv.substr(is_negative);
-        for (auto c : sv)
-            if (c > '9' || c < '0')
-                return default_result;
-
-        int64_t retval = 0;
-        for (auto c : sv) {
-            retval *= 10;
-            retval += (c - '0');
-        }
-
-        retval *= (is_negative ? -1 : 1);
-
-        constexpr int64_t max_int = std::numeric_limits<int>::max();
-        constexpr int64_t min_int = std::numeric_limits<int>::min();
-
-        return (retval > max_int) ? max_int :
-               (retval < min_int) ? min_int :
-               retval;
-    }
-    static_assert(ToIntCX("2147483647") == 2147483647);
-    static_assert(ToIntCX("-104") == -104);
-    static_assert(ToIntCX("banana", -10) == -10);
-    static_assert(ToIntCX("-banana") == -1);
-    static_assert(ToIntCX("-0banana", -20) == -20);
-    static_assert(ToIntCX("") == -1);
-    static_assert(ToIntCX("0") == 0);
-    static_assert(ToIntCX("0000") == 0);
-    static_assert(ToIntCX("-0000") == 0);
-
     // wrapper for converting string to integer
-    int ToInt(std::string_view sv, int default_result = -1) {
-#if defined(__cpp_lib_to_chars)
+    [[nodiscard]] int ToInt(std::string_view sv, int default_result = -1)
+        noexcept(noexcept(std::from_chars("", "", std::declval<int&>())))
+    {
         int retval = default_result;
         std::from_chars(sv.data(), sv.data() + sv.size(), retval);
         return retval;
-#else
-        return ToIntCX(sv, default_result);
-#endif
     }
 
     static_assert(std::numeric_limits<long long>::max() > std::numeric_limits<int>::max());
@@ -173,8 +125,8 @@ namespace {
 
     // how many base-10 digits are needed to represent a number as text
     // note that numeric_limits<>::digits10 is how many base 10 digits can be represented by this type
-    template<typename T, std::enable_if<std::is_integral_v<T>>* = nullptr>
-    constexpr std::size_t Digits(T t) {
+    template <typename T> requires (std::is_integral_v<T>)
+    [[nodiscard]] constexpr std::size_t Digits(T t) noexcept {
         std::size_t retval = 1;
 
         if constexpr (std::is_same_v<T, bool>) {
@@ -199,8 +151,14 @@ namespace {
     constexpr auto digits_long_long_int_min = Digits(std::numeric_limits<long long int>::min());
     static_assert(digits_long_long_int_min <= 22 && digits_long_long_int_max <= 22);
 
+    namespace {
+        // <concepts> library not fully implemented in XCode 13.2
+        template <class T>
+        concept integral = std::is_integral_v<T>;
+    }
+
     // wrapper for converting number to string/string_view
-    template<typename T, std::enable_if<std::is_integral_v<T>>* = nullptr>
+    template <integral T>
     auto ToChars(T t) noexcept(std::is_same_v<T, bool>) {
         if constexpr (std::is_same_v<T, bool>) {
             return t ? std::string_view{"true"} : std::string_view{"false"};
