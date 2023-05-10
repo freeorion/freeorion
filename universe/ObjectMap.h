@@ -149,7 +149,7 @@ public:
     }
 
     /** Returns all the ids and objects of type T */
-    template <typename T, std::enable_if_t<std::is_const_v<T>>* = nullptr>
+    template <typename T> requires (std::is_const_v<T>)
     [[nodiscard]] auto allWithIDs()
     {
         const auto& const_this = *this;
@@ -157,7 +157,7 @@ public:
     }
 
     /** Returns all the ids and objects of type T */
-    template <typename T = UniverseObject, std::enable_if_t<!std::is_const_v<T>>* = nullptr>
+    template <typename T = UniverseObject> requires (!std::is_const_v<T>)
     [[nodiscard]] const auto& allWithIDs() noexcept
     {
         using DecayT = std::decay_t<T>;
@@ -262,8 +262,7 @@ public:
       * is false, then \a obj is also added to this ObjectMap's internal lists of
       * existing (ie. not destroyed) objects, which are returned by the Existing*
       * functions. */
-    template <typename T,
-        typename std::enable_if_t<std::is_base_of_v<UniverseObject, T>>* = nullptr>
+    template <typename T> requires (std::is_base_of_v<UniverseObject, T>)
     void insert(std::shared_ptr<T> obj, bool destroyed)
     { insertCore(std::move(obj), destroyed); }
 
