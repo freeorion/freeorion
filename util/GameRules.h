@@ -158,10 +158,9 @@ public:
         m_game_rules.insert_or_assign(std::move(name), std::move(rule));
     }
 
-    template <typename T, typename V>
+    template <typename T, typename V> requires (std::is_convertible_v<V, Validator<T>>)
     void Add(std::string name, std::string description, std::string category, T default_value,
-             bool engine_internal, V&& validator,
-             typename std::enable_if_t<std::is_convertible_v<V, Validator<T>>>* = nullptr)
+             bool engine_internal, V&& validator)
     {
         Add(std::move(name), std::move(description), std::move(category), std::move(default_value),
             engine_internal, std::make_unique<V>(std::move(validator)));
