@@ -260,9 +260,7 @@ public:
         m_dirty = true;
     }
 
-    template <typename T, typename V,
-              typename std::enable_if_t<!is_unique_ptr_v<V>>* = nullptr,
-              typename std::enable_if_t<!std::is_null_pointer_v<V>>* = nullptr>
+    template <typename T, typename V> requires(!is_unique_ptr_v<V> && !std::is_null_pointer_v<V>)
     void Add(std::string name, std::string description, T&& default_value,
              V&& validator, // validator needs to be wrapped in unique_ptr (eg. by cloning itself)
              bool storable = true, std::string section = "")
@@ -271,12 +269,10 @@ public:
             std::forward<V>(validator).Clone(), storable, std::move(section));
     }
 
-    template <typename T, typename V,
-        typename std::enable_if_t<!is_unique_ptr_v<V>>* = nullptr,
-        typename std::enable_if_t<!std::is_null_pointer_v<V>>* = nullptr>
-        void Add(const char* name, const char* description, T&& default_value,
-                 V&& validator, // validator needs to be wrapped in unique_ptr (eg. by cloning itself)
-                 bool storable = true, const char* section = "")
+    template <typename T, typename V> requires(!is_unique_ptr_v<V> && !std::is_null_pointer_v<V>)
+    void Add(const char* name, const char* description, T&& default_value,
+             V&& validator, // validator needs to be wrapped in unique_ptr (eg. by cloning itself)
+             bool storable = true, const char* section = "")
     {
         Add(name, description, std::forward<T>(default_value),
             std::forward<V>(validator).Clone(), storable, section);
@@ -324,9 +320,7 @@ public:
         m_dirty = true;
     }
 
-    template <typename T, typename V,
-              typename std::enable_if_t<!is_unique_ptr_v<V>>* = nullptr,
-              typename std::enable_if_t<!std::is_null_pointer_v<V>>* = nullptr>
+    template <typename T, typename V> requires(!is_unique_ptr_v<V> && !std::is_null_pointer_v<V>)
     void Add(char short_name, std::string name, std::string description,
              T default_value, V&& validator, // validator should be wrapped in unique_ptr
              bool storable = true, std::string section = "")
