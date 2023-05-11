@@ -43,8 +43,6 @@
 #include <boost/optional/optional.hpp>
 #include <boost/signals2/signal.hpp>
 #include <boost/signals2/trackable.hpp>
-#include <boost/type_traits/is_integral.hpp>
-#include <boost/utility/enable_if.hpp>
 
 #ifdef _MSC_VER
 // Note: This is a workaround for Visual C++ non-conformant pre-processor
