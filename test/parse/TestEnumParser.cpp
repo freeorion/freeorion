@@ -23,19 +23,16 @@ namespace {
 }
 
 struct EnumParserFixture {
-    template <typename Grammar>
-    Grammar& make_grammar(
-        const parse::lexer& lexer,
-        typename std::enable_if_t<std::is_constructible_v<Grammar, const parse::lexer&>>* = nullptr)
+    template <typename Grammar> requires (std::is_constructible_v<Grammar, const parse::lexer&>)
+    Grammar& make_grammar(const parse::lexer& lexer)
     {
         static Grammar grammar(lexer);
         return grammar;
     }
 
     template <typename Grammar>
-    Grammar& make_grammar(
-        const parse::lexer& lexer,
-        typename std::enable_if_t<std::is_constructible_v<Grammar, const parse::lexer&, parse::detail::Labeller&>>* = nullptr)
+        requires (std::is_constructible_v<Grammar, const parse::lexer&, parse::detail::Labeller&>)
+    Grammar& make_grammar(const parse::lexer& lexer)
     {
         parse::detail::Labeller label;
         static Grammar grammar(lexer, label);
@@ -43,10 +40,10 @@ struct EnumParserFixture {
     }
 
     template <typename Grammar>
-    Grammar& make_grammar(
-        const parse::lexer& lexer,
-        typename std::enable_if_t<std::is_constructible_v<Grammar, const parse::lexer&, parse::detail::Labeller&,
-                                                          const parse::detail::condition_parser_grammar&>>* = nullptr)
+        requires (std::is_constructible_v<Grammar,
+                                          const parse::lexer&, parse::detail::Labeller&,
+                                          const parse::detail::condition_parser_grammar&>)
+    Grammar& make_grammar(const parse::lexer& lexer)
     {
         parse::detail::Labeller label;
         parse::conditions_parser_grammar cond(lexer, label);
