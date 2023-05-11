@@ -26,16 +26,14 @@ namespace CheckSums {
     FO_COMMON_API void CheckSumCombine(uint32_t& sum, const std::string& c);
 
     // integeral types
-    template <typename T>
-    void CheckSumCombine(uint32_t& sum, T t,
-                         typename std::enable_if_t<std::is_signed_v<T>>* = nullptr)
+    template <typename T> requires (std::is_signed_v<T>)
+    void CheckSumCombine(uint32_t& sum, T t)
     {
         sum += static_cast<uint32_t>(std::abs(t));
         sum %= CHECKSUM_MODULUS;
     }
-    template <typename T>
-    constexpr void CheckSumCombine(uint32_t& sum, T t,
-                                   typename std::enable_if_t<std::is_unsigned_v<T>>* = nullptr) noexcept
+    template <typename T> requires (std::is_unsigned_v<T>)
+    constexpr void CheckSumCombine(uint32_t& sum, T t) noexcept
     {
         static_assert(noexcept(sum + static_cast<uint32_t>(t)) && noexcept(sum % CHECKSUM_MODULUS));
         sum += static_cast<uint32_t>(t);
@@ -43,7 +41,7 @@ namespace CheckSums {
     }
 
     // classes that have GetCheckSum methods
-    template <typename C>
+    template <typename C> //requires (requires(C c) { c.GetCheckSum(); })
     void CheckSumCombine(uint32_t& sum, const C& c,
                          decltype(std::declval<C>().GetCheckSum())* = nullptr)
     {
@@ -52,9 +50,8 @@ namespace CheckSums {
     }
 
     // enums
-    template <typename T>
-    void CheckSumCombine(uint32_t& sum, T t,
-                         typename std::enable_if_t<std::is_enum_v<T>>* = nullptr)
+    template <typename T> requires (std::is_enum_v<T>)
+    void CheckSumCombine(uint32_t& sum, T t)
     { CheckSumCombine(sum, static_cast<int>(t) + 10); }
 
     // pointer types
@@ -86,7 +83,7 @@ namespace CheckSums {
     }
 
     // iterable containers
-    template <typename C>
+    template <typename C> //requires (requires (C c) { c.begin(); c.end(); })
     void CheckSumCombine(uint32_t& sum, const C& c,
                          decltype(std::declval<C>().begin())* = nullptr,
                          decltype(std::declval<C>().end())* = nullptr)
