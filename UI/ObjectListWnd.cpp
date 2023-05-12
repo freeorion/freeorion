@@ -1855,6 +1855,15 @@ private:
 };
 
 namespace {
+    consteval float Pow(float base, int exp) {
+        float retval = 1.0;
+        const bool invert = exp < 0;
+        std::size_t abs_exp = exp >= 0 ? exp : -exp;
+        while (abs_exp--)
+            retval *= base;
+        return invert ? (1.0f / retval) : retval;
+    }
+
     struct CustomRowCmp {
         static bool StringCompare(const std::string& lhs_key, const std::string& rhs_key) {
 #if defined(FREEORION_MACOSX)
@@ -1870,24 +1879,42 @@ namespace {
             float retval = 0.0f;
             auto result = std::from_chars(key.data(), key.data() + key.size(), retval);
 
+            static constexpr auto micro = u8"\u00B5"; // µ (micro)
+            static constexpr uint8_t microb0 = micro[0];
+            static_assert(microb0 == 0xC2);
+            static constexpr char xC2 = static_cast<char>(microb0);
+            static_assert(xC2 == '\xC2');
+
+            static constexpr auto micro2 = u8"µ";
+            static_assert(micro2[0] == micro[0] && micro2[1] == micro[1]);
+
+            static constexpr auto mu = u8"\u03BC"; // μ (lower case mu)
+            static constexpr uint8_t mub0 = mu[0];
+            static_assert(mub0 == 0xCE);
+            static constexpr char xCE = static_cast<char>(mub0);
+            static_assert(xCE == '\xCE');
+
+
             // adjust for SI postfix
             auto next_char_offset = std::distance(key.data(), result.ptr);
             if (next_char_offset > 0 && static_cast<std::size_t>(next_char_offset) < key.length()) {
                 //std::cout << "key:\"" << key << "\" next char:" << *result.ptr << std::endl;
-                float power = 0.0f;
-                switch (*result.ptr) {
-                case 'f':   power = -15.0f; break;
-                case 'p':   power = -12.0f; break;
-                case 'n':   power = -9.0f; break;
-                case '\xC2':power = -6.0f; break; // first byte of mu in UTF-8
-                case 'm':   power = -3.0f; break;
-                case 'k':   power = 3.0f; break;
-                case 'M':   power = 6.0f; break;
-                case 'G':   power = 9.0f; break;
-                case 'T':   power = 12.0f; break;
-                default: break;
-                }
-                retval *= std::pow(10.0f, power);
+                const float factor = [](auto prefix) {
+                    switch (prefix) {
+                    case 'f': return Pow(10.0f, -15); break;
+                    case 'p': return Pow(10.0f, -12); break;
+                    case 'n': return Pow(10.0f, -9); break;
+                    case xCE: [[fallthrough]];
+                    case xC2: return Pow(10.0f, -6); break;
+                    case 'm': return Pow(10.0f, -3); break;
+                    case 'k': return Pow(10.0f,  3); break;
+                    case 'M': return Pow(10.0f,  6); break;
+                    case 'G': return Pow(10.0f,  9); break;
+                    case 'T': return Pow(10.0f,  1); break;
+                    default:  return 1.0f; break;
+                    }
+                }(*result.ptr);
+                retval *= factor;
             }
 
             return std::pair{retval, result.ec};
