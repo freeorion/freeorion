@@ -85,10 +85,6 @@ namespace {
             retval *= base;
         return retval;
     }
-
-    template <typename T, std::size_t N>
-    constexpr std::size_t ArrSize(std::array<T, N>) noexcept // TODO: replace with std::ssize when available (C++20 ?)
-    { return N; }
 }
 
 Meter::ToCharsArrayT Meter::ToChars() const noexcept(have_noexcept_to_chars) {
@@ -97,7 +93,7 @@ Meter::ToCharsArrayT Meter::ToChars() const noexcept(have_noexcept_to_chars) {
     static_assert(max_val > Pow(10, 9));
     static constexpr auto digits_one_int = 1 + 10;
     static constexpr auto digits_meter = 2*digits_one_int + 1 + 1; // two numbers, one space, one padding to be safe
-    static_assert(ArrSize(ToCharsArrayT()) == digits_meter);
+    static_assert(std::size(ToCharsArrayT()) == digits_meter);
 
     ToCharsArrayT buffer{};
     ToChars(buffer.data(), buffer.data() + buffer.size());
