@@ -255,23 +255,28 @@ namespace {
     std::string LocationConditionDescription(int ship_design_id, int candidate_object_id,
                                              int empire_id, bool only_failed_conditions)
     {
+#if defined(__GNUC__) && (__GNUC__ < 13)
+        // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
+        static constinit const Condition::CanProduceShips can_prod_ship_cond;
+        static constinit const Condition::CanColonize can_colonize_cond;
+#else
+        static constexpr Condition::CanProduceShips can_prod_ship_cond;
+        static constexpr Condition::CanColonize can_colonize_cond;
+#endif
+        const Condition::OwnerHasShipDesignAvailable ship_avail_cond{ship_design_id};
+
         std::vector<const Condition::Condition*> location_conditions;
         location_conditions.reserve(5);
-        auto can_prod_ship_cond = std::make_shared<Condition::CanProduceShips>();
-        location_conditions.push_back(can_prod_ship_cond.get());
-        auto ship_avail_cond = std::make_shared<Condition::OwnerHasShipDesignAvailable>(ship_design_id);
-        location_conditions.push_back(ship_avail_cond.get());
+        location_conditions.push_back(&can_prod_ship_cond);
+        location_conditions.push_back(&ship_avail_cond);
 
-        static const std::shared_ptr<Condition::Condition> can_colonize_cond =
-            std::make_shared<Condition::CanColonize>();
-
-        ScriptingContext context;
+        const ScriptingContext context;
         const Universe& universe = context.ContextUniverse();
         const ObjectMap& objects = context.ContextObjects();
 
         if (const ShipDesign* ship_design = universe.GetShipDesign(ship_design_id)) {
             if (ship_design->CanColonize())
-                location_conditions.push_back(can_colonize_cond.get());
+                location_conditions.push_back(&can_colonize_cond);
             if (const ShipHull* ship_hull = GetShipHull(ship_design->Hull()))
                 location_conditions.push_back(ship_hull->Location());
             for (const std::string& part_name : ship_design->Parts()) {
