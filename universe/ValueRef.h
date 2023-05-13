@@ -129,10 +129,10 @@ struct FO_COMMON_API ValueRef : public ValueRefBase
     [[nodiscard]] virtual std::unique_ptr<ValueRef<T>> Clone() const = 0;
 
 protected:
-    constexpr ValueRef(ReferenceType ref_type) :
+    constexpr explicit ValueRef(ReferenceType ref_type) :
         m_ref_type(ref_type)
     {}
-    constexpr ValueRef(bool constant_expr) :
+    constexpr explicit ValueRef(bool constant_expr) :
         ValueRefBase(constant_expr)
     {}
 
