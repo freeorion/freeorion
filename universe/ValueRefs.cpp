@@ -301,56 +301,69 @@ std::string ValueRefBase::InvariancePattern() const {
         .append(ConstantExpr()                  ? "C" : "c");
 }
 
-constexpr MeterType NameToMeterCX(std::string_view name) noexcept {
-    for (int i = 0; i < static_cast<int>(NAME_BY_METER.size()); i++) {
-        if (NAME_BY_METER[i] == name)
-            return static_cast<MeterType>(i - 1);
-    }
+namespace {
+    constexpr MeterType NameToMeterCX(std::string_view name) noexcept {
+        for (int i = 0; i < static_cast<int>(NAME_BY_METER.size()); i++) {
+            if (NAME_BY_METER[i] == name)
+                return static_cast<MeterType>(i - 1);
+        }
 
-    return MeterType::INVALID_METER_TYPE;
+        return MeterType::INVALID_METER_TYPE;
+    }
+    static_assert(NameToMeterCX("not a meter") == MeterType::INVALID_METER_TYPE, "Name to Meter conversion failed for invalid meter type!");
+    static_assert(NameToMeterCX("Population") == MeterType::METER_POPULATION, "Name to Meter conversion failed for 'Population' meter!");
+    static_assert(NameToMeterCX("Speed") == MeterType::METER_SPEED, "Name to Meter conversion failed for 'Speed' meter!");
 }
+
 MeterType NameToMeter(std::string_view name) noexcept { return NameToMeterCX(name); }
 
-static_assert(NameToMeterCX("not a meter") == MeterType::INVALID_METER_TYPE, "Name to Meter conversion failed for invalid meter type!");
-static_assert(NameToMeterCX("Population") == MeterType::METER_POPULATION, "Name to Meter conversion failed for 'Population' meter!");
-static_assert(NameToMeterCX("Speed") == MeterType::METER_SPEED, "Name to Meter conversion failed for 'Speed' meter!");
-
-constexpr std::string_view MeterToNameCX(MeterType meter) noexcept {
-    // NOTE: INVALID_METER_TYPE (enum's -1 position) <= meter < NUM_METER_TYPES (enum's final position)
-    return NAME_BY_METER[static_cast<std::underlying_type_t<MeterType>>(meter) + 1];
+namespace {
+    constexpr std::string_view MeterToNameCX(MeterType meter) noexcept {
+        // NOTE: INVALID_METER_TYPE (enum's -1 position) <= meter < NUM_METER_TYPES (enum's final position)
+        return NAME_BY_METER[static_cast<std::underlying_type_t<MeterType>>(meter) + 1];
+    }
 }
+
 std::string_view MeterToName(MeterType meter) noexcept { return MeterToNameCX(meter); }
 
-constexpr std::string_view PlanetTypeToStringCX(PlanetType planet) noexcept {
-    // NOTE: INVALID_PLANET_TYPE (enum's -1 position) <= planet < NUM_PLANET_TYPES (enum's final position)
-    return NAME_BY_PLANET[static_cast<std::underlying_type_t<PlanetType>>(planet) + 1]; 
+namespace {
+    constexpr std::string_view PlanetTypeToStringCX(PlanetType planet) noexcept {
+        // NOTE: INVALID_PLANET_TYPE (enum's -1 position) <= planet < NUM_PLANET_TYPES (enum's final position)
+        return NAME_BY_PLANET[static_cast<std::underlying_type_t<PlanetType>>(planet) + 1]; 
+    }
 }
+
 std::string_view PlanetTypeToString(PlanetType planet) noexcept { return PlanetTypeToStringCX(planet); }
 
-// @return the correct PlanetType enum for a user friendly planet type string (e.g. "Ocean"), else it returns PlanetType::INVALID_PLANET_TYPE
-constexpr PlanetType StringToPlanetTypeCX(std::string_view name) noexcept {
-    for (int i = 0; i < static_cast<int>(NAME_BY_PLANET.size()); i++) {
-        if (NAME_BY_PLANET[i] == name)
-            return static_cast<PlanetType>(i - 1);
+namespace {
+    // @return the correct PlanetType enum for a user friendly planet type string (e.g. "Ocean"), else it returns PlanetType::INVALID_PLANET_TYPE
+    constexpr PlanetType StringToPlanetTypeCX(std::string_view name) noexcept {
+        for (int i = 0; i < static_cast<int>(NAME_BY_PLANET.size()); i++) {
+            if (NAME_BY_PLANET[i] == name)
+                return static_cast<PlanetType>(i - 1);
+        }
+        return PlanetType::INVALID_PLANET_TYPE;
     }
-    return PlanetType::INVALID_PLANET_TYPE;
+    static_assert(StringToPlanetTypeCX("not a planet") == PlanetType::INVALID_PLANET_TYPE, "Name to Planet conversion failed for invalid planet type!");
+    static_assert(StringToPlanetTypeCX("Swamp") == PlanetType::PT_SWAMP, "Name to Planet conversion failed for 'Swamp' planet!");
+    static_assert(StringToPlanetTypeCX("GasGiant") == PlanetType::PT_GASGIANT, "Name to Planet conversion failed for 'GasGiant' planet!");
 }
+
 PlanetType StringToPlanetType(std::string_view name) noexcept { return StringToPlanetTypeCX(name); }
 
-static_assert(StringToPlanetTypeCX("not a planet") == PlanetType::INVALID_PLANET_TYPE, "Name to Planet conversion failed for invalid planet type!");
-static_assert(StringToPlanetTypeCX("Swamp") == PlanetType::PT_SWAMP, "Name to Planet conversion failed for 'Swamp' planet!");
-static_assert(StringToPlanetTypeCX("GasGiant") == PlanetType::PT_GASGIANT, "Name to Planet conversion failed for 'GasGiant' planet!");
-
-constexpr std::string_view PlanetEnvironmentToStringCX(PlanetEnvironment env) noexcept {
-    switch (env) {
-    case PlanetEnvironment::PE_UNINHABITABLE: return "Uninhabitable";
-    case PlanetEnvironment::PE_HOSTILE:       return "Hostile";
-    case PlanetEnvironment::PE_POOR:          return "Poor";
-    case PlanetEnvironment::PE_ADEQUATE:      return "Adequate";
-    case PlanetEnvironment::PE_GOOD:          return "Good";
-    default:                                  return "?";
+namespace {
+    constexpr std::string_view PlanetEnvironmentToStringCX(PlanetEnvironment env) noexcept {
+        switch (env) {
+        case PlanetEnvironment::PE_UNINHABITABLE: return "Uninhabitable";
+        case PlanetEnvironment::PE_HOSTILE:       return "Hostile";
+        case PlanetEnvironment::PE_POOR:          return "Poor";
+        case PlanetEnvironment::PE_ADEQUATE:      return "Adequate";
+        case PlanetEnvironment::PE_GOOD:          return "Good";
+        default:                                  return "?";
+        }
     }
 }
+
 std::string_view PlanetEnvironmentToString(PlanetEnvironment env) noexcept { return PlanetEnvironmentToStringCX(env); }
 
 std::string ReconstructName(const std::vector<std::string>& property_name,
