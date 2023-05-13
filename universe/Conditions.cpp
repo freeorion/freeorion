@@ -9722,10 +9722,6 @@ std::unique_ptr<Condition> ResourceSupplyConnectedByEmpire::Clone() const {
 ///////////////////////////////////////////////////////////
 // CanColonize                                           //
 ///////////////////////////////////////////////////////////
-CanColonize::CanColonize() :
-    Condition(true, true, true)
-{}
-
 bool CanColonize::operator==(const Condition& rhs) const
 { return Condition::operator==(rhs); }
 
