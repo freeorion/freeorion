@@ -376,7 +376,7 @@ GG::Clr ClientUI::CategoryColor(std::string_view category_name) {
 }
 
 std::string_view ClientUI::PlanetTypeFilePrefix(PlanetType planet_type) {
-    static const std::map<PlanetType, std::string_view> prefixes{
+    static constexpr std::array<std::pair<PlanetType, std::string_view>, 10> prefixes{{
         {PlanetType::PT_SWAMP,   "Swamp"},
         {PlanetType::PT_TOXIC,   "Toxic"},
         {PlanetType::PT_INFERNO, "Inferno"},
@@ -387,15 +387,14 @@ std::string_view ClientUI::PlanetTypeFilePrefix(PlanetType planet_type) {
         {PlanetType::PT_TERRAN,  "Terran"},
         {PlanetType::PT_OCEAN,   "Ocean"},
         {PlanetType::PT_GASGIANT,"GasGiant"}
-    };
-    auto it = prefixes.find(planet_type);
-    if (it != prefixes.end())
-        return it->second;
-    return "";
+    }};
+    const auto it = std::find_if(prefixes.begin(), prefixes.end(),
+                                 [planet_type](const auto& p) { return planet_type == p.first; });
+    return (it != prefixes.end()) ? it->second : "";
 }
 
 std::string_view ClientUI::StarTypeFilePrefix(StarType star_type) {
-    static const std::map<StarType, std::string_view> prefixes{
+    static constexpr std::array<std::pair<StarType, std::string_view>, 9> prefixes{{
         {StarType::INVALID_STAR_TYPE, "unknown"},
         {StarType::STAR_BLUE,         "blue"},
         {StarType::STAR_WHITE,        "white"},
@@ -405,15 +404,14 @@ std::string_view ClientUI::StarTypeFilePrefix(StarType star_type) {
         {StarType::STAR_NEUTRON,      "neutron"},
         {StarType::STAR_BLACK,        "blackhole"},
         {StarType::STAR_NONE,         "nostar"}
-    };
-    auto it = prefixes.find(star_type);
-    if (it != prefixes.end())
-        return it->second;
-    return "";
+    }};
+    const auto it = std::find_if(prefixes.begin(), prefixes.end(),
+                                 [star_type](const auto& p) { return star_type == p.first; });
+    return (it != prefixes.end()) ? it->second : "";
 }
 
 std::string_view ClientUI::HaloStarTypeFilePrefix(StarType star_type) {
-    static const std::map<StarType, std::string_view> prefixes{
+    static constexpr std::array<std::pair<StarType, std::string_view>, 9> prefixes{{
         {StarType::INVALID_STAR_TYPE, "halo_unknown"},
         {StarType::STAR_BLUE,         "halo_blue"},
         {StarType::STAR_WHITE,        "halo_white"},
@@ -423,11 +421,10 @@ std::string_view ClientUI::HaloStarTypeFilePrefix(StarType star_type) {
         {StarType::STAR_NEUTRON,      "halo_neutron"},
         {StarType::STAR_BLACK,        "halo_blackhole"},
         {StarType::STAR_NONE,         "halo_nostar"}
-    };
-    auto it = prefixes.find(star_type);
-    if (it != prefixes.end())
-        return it->second;
-    return "";
+    }};
+    const auto it = std::find_if(prefixes.begin(), prefixes.end(),
+                                 [star_type](const auto& p) { return star_type == p.first; });
+    return (it != prefixes.end()) ? it->second : "";
 }
 
 
