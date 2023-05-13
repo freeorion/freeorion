@@ -402,21 +402,21 @@ namespace {
             ));
         }
         bool playable = false;
-        if (kw.has_key("playable")) {
+        if (kw.has_key("playable"))
             playable = boost::python::extract<bool>(kw["playable"])();
-        }
+
         bool native = false;
-        if (kw.has_key("native")) {
+        if (kw.has_key("native"))
             native = boost::python::extract<bool>(kw["native"])();
-        }
+
         bool can_colonize = false;
-        if (kw.has_key("can_colonize")) {
+        if (kw.has_key("can_colonize"))
             can_colonize = boost::python::extract<bool>(kw["can_colonize"])();
-        }
+
         bool can_produce_ships = false;
-        if (kw.has_key("can_produce_ships")) {
+        if (kw.has_key("can_produce_ships"))
             can_produce_ships = boost::python::extract<bool>(kw["can_produce_ships"])();
-        }
+
         boost::python::stl_input_iterator<std::string> tags_begin(kw["tags"]), it_end;
         std::set<std::string> tags(tags_begin, it_end);
         std::set<std::string> likes;
