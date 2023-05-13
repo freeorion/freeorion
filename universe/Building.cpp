@@ -76,7 +76,7 @@ bool Building::HostileToEmpire(int empire_id, const EmpireManager& empires) cons
 
 UniverseObject::TagVecs Building::Tags(const ScriptingContext&) const {
     if (const BuildingType* type = ::GetBuildingType(m_building_type))
-        return type->Tags();
+        return TagVecs{type->Tags()};
     return {};
 }
 

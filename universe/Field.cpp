@@ -69,7 +69,7 @@ void Field::Copy(const Field& copied_field, const Universe& universe, int empire
 
 UniverseObject::TagVecs Field::Tags(const ScriptingContext&) const {
     if (const FieldType* type = GetFieldType(m_type_name))
-        return type->Tags();
+        return TagVecs{type->Tags()};
     return {};
 }
 

@@ -966,7 +966,11 @@ namespace {
         return retval;
     }
 
+#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
+    constexpr std::string EMPTY_STRING;
+#else
     const std::string EMPTY_STRING;
+#endif
 
     const std::string& GetPlanetSizeName(const Planet* planet) {
         if (!planet || planet->Size() == PlanetSize::SZ_ASTEROIDS || planet->Size() == PlanetSize::SZ_GASGIANT)

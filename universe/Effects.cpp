@@ -640,7 +640,11 @@ void SetMeter::Execute(ScriptingContext& context,
 }
 
 void SetMeter::Execute(ScriptingContext& context, const TargetSet& targets) const {
+#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
+    static constexpr const EffectCause default_effect_cause;
+#else
     static const EffectCause default_effect_cause;
+#endif
     Execute(context, targets, nullptr, default_effect_cause);
 }
 

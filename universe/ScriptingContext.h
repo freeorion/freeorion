@@ -13,7 +13,7 @@ struct [[nodiscard]] ScriptingContext {
     using CurrentValueVariant = std::variant<
         int, double, PlanetType, PlanetSize, ::PlanetEnvironment, StarType,
         UniverseObjectType, Visibility, std::string, std::vector<std::string>>;
-    inline static const CurrentValueVariant DEFAULT_CURRENT_VALUE{0};
+    inline static CONSTEXPR_VEC const CurrentValueVariant DEFAULT_CURRENT_VALUE{0};
 
     ScriptingContext() noexcept :
         ScriptingContext(GetUniverse(), ::Empires(), GetGalaxySetupData(),

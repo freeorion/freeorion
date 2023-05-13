@@ -1,8 +1,8 @@
 #include "Enums.h"
 
 
-const std::map<MeterType, MeterType>& AssociatedMeterTypes() {
-    static const std::map<MeterType, MeterType> meters = {
+namespace {
+    static constexpr std::array<std::pair<MeterType, MeterType>, 13> assoc_meters = {{
         {MeterType::METER_POPULATION,   MeterType::METER_TARGET_POPULATION},
         {MeterType::METER_INDUSTRY,     MeterType::METER_TARGET_INDUSTRY},
         {MeterType::METER_RESEARCH,     MeterType::METER_TARGET_RESEARCH},
@@ -15,13 +15,14 @@ const std::map<MeterType, MeterType>& AssociatedMeterTypes() {
         {MeterType::METER_DEFENSE,      MeterType::METER_MAX_DEFENSE},
         {MeterType::METER_TROOPS,       MeterType::METER_MAX_TROOPS},
         {MeterType::METER_SUPPLY,       MeterType::METER_MAX_SUPPLY},
-        {MeterType::METER_STOCKPILE,    MeterType::METER_MAX_STOCKPILE}};
-    return meters;
+        {MeterType::METER_STOCKPILE,    MeterType::METER_MAX_STOCKPILE}}};
 }
 
+const std::array<std::pair<MeterType, MeterType>, 13>& AssociatedMeterTypes()
+{ return assoc_meters; }
+
 MeterType AssociatedMeterType(MeterType meter_type) {
-    auto mt_pair_it = AssociatedMeterTypes().find(meter_type);
-    if (mt_pair_it == AssociatedMeterTypes().end())
-        return MeterType::INVALID_METER_TYPE;
-    return mt_pair_it->second;
+    const auto mt_pair_it = std::find_if(assoc_meters.begin(), assoc_meters.end(),
+                                         [&meter_type](const auto& mm) { return meter_type == mm.first; });
+    return (mt_pair_it != assoc_meters.end()) ? mt_pair_it->second : MeterType::INVALID_METER_TYPE;
 }

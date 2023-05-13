@@ -63,7 +63,11 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
+#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
+    constexpr std::string EMPTY_STRING;
+#else
     const std::string EMPTY_STRING;
+#endif
     constexpr std::string_view INCOMPLETE_DESIGN = "incomplete design";
     constexpr std::string_view UNIVERSE_OBJECT = "universe object";
     constexpr std::string_view PLANET_SUITABILITY_REPORT = "planet suitability report";

@@ -37,8 +37,12 @@ enum class Availability : uint8_t {
 };
 
 namespace {
+#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
+    constexpr std::string EMPTY_STRING;
+#else
+    const std::string EMPTY_STRING;
+#endif
     constexpr std::string_view  POLICY_CONTROL_DROP_TYPE_STRING = "Policy Control";
-    const std::string           EMPTY_STRING;
     constexpr GG::X             POLICY_CONTROL_WIDTH{120};
     constexpr GG::Y             POLICY_CONTROL_HEIGHT{180};
     constexpr GG::X             SLOT_CONTROL_WIDTH{120};

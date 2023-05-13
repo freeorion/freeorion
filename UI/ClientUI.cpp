@@ -1165,7 +1165,7 @@ const std::vector<std::shared_ptr<GG::Texture>>& ClientUI::GetPrefixedTextures(
     namespace fs = boost::filesystem;
     if (!fs::is_directory(dir)) {
         ErrorLogger() << "GetPrefixedTextures passed invalid dir: " << dir;
-        static const std::vector<std::shared_ptr<GG::Texture>> EMPTY_VEC;
+        static CONSTEXPR_VEC const std::vector<std::shared_ptr<GG::Texture>> EMPTY_VEC;
         return EMPTY_VEC;
     }
 

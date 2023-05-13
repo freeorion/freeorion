@@ -81,7 +81,7 @@ FO_ENUM(
 
 /** Returns mapping from active to target or max meter types that correspond.
   * eg. MeterType::METER_RESEARCH -> MeterType::METER_TARGET_RESEARCH */
-FO_COMMON_API const std::map<MeterType, MeterType>& AssociatedMeterTypes();
+FO_COMMON_API const std::array<std::pair<MeterType, MeterType>, 13>& AssociatedMeterTypes();
 
 /** Returns the target or max meter type that is associated with the given
   * active meter type.  If no associated meter type exists, MeterType::INVALID_METER_TYPE

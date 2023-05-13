@@ -35,6 +35,14 @@ FO_ENUM(
     ((ECT_POLICY))
 )
 
+#if !defined(CONSTEXPR_STRING)
+#  if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 11)))
+#    define CONSTEXPR_STRING constexpr
+#  else
+#    define CONSTEXPR_STRING
+#  endif
+#endif
+
 namespace Effect {
     struct AccountingInfo;
     class EffectsGroup;
@@ -47,9 +55,9 @@ namespace Effect {
     /** Description of cause of an effect: the general cause type, and the
       * specific cause.  eg. Building and a particular BuildingType. */
     struct FO_COMMON_API EffectCause {
-        EffectCause() = default;
+        CONSTEXPR_STRING EffectCause() = default;
 
-        explicit EffectCause(EffectsCauseType cause_type_) noexcept(noexcept(std::string{})) :
+        CONSTEXPR_STRING explicit EffectCause(EffectsCauseType cause_type_) noexcept(noexcept(std::string{})) :
             cause_type(cause_type_)
         {}
 

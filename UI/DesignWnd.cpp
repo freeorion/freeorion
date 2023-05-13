@@ -55,11 +55,16 @@ struct Availability {
 class CUIEdit;
 
 namespace {
+#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
+    constexpr std::string EMPTY_STRING;
+#else
+    const std::string EMPTY_STRING;
+#endif
+
     constexpr std::string_view PART_CONTROL_DROP_TYPE_STRING = "Part Control";
     constexpr std::string_view HULL_PARTS_ROW_DROP_TYPE_STRING = "Hull and Parts Row";
     constexpr std::string_view COMPLETE_DESIGN_ROW_DROP_STRING = "Complete Design Row";
     constexpr std::string_view SAVED_DESIGN_ROW_DROP_STRING = "Saved Design Row";
-    const     std::string      EMPTY_STRING;
     constexpr std::string_view DES_PEDIA_WND_NAME = "design.pedia";
     constexpr std::string_view DES_MAIN_WND_NAME = "design.edit";
     constexpr std::string_view DES_BASE_SELECTOR_WND_NAME = "design.selector";

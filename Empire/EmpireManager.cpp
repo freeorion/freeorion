@@ -14,7 +14,11 @@ namespace {
     std::pair<int, int> DiploKey(int id1, int ind2)
     { return std::pair(std::max(id1, ind2), std::min(id1, ind2)); }
 
+#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
+    constexpr std::string EMPTY_STRING;
+#else
     const std::string EMPTY_STRING;
+#endif
 }
 
 EmpireManager& EmpireManager::operator=(EmpireManager&& other) noexcept {

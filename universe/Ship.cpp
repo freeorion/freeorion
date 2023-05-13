@@ -174,11 +174,11 @@ UniverseObject::TagVecs Ship::Tags(const ScriptingContext& context) const {
     const Species* species = context.species.GetSpecies(m_species_name);
 
     if (design && species)
-        return {design->Tags(), species->Tags()};
+        return TagVecs{design->Tags(), species->Tags()};
     else if (design)
-        return design->Tags();
+        return TagVecs{design->Tags()};
     else if (species)
-        return species->Tags();
+        return TagVecs{species->Tags()};
     else return {};
 }
 

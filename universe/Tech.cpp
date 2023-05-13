@@ -545,7 +545,6 @@ void TechManager::CheckPendingTechs() const {
 std::string TechManager::FindFirstDependencyCycle() const {
     CheckPendingTechs();
     assert(!m_techs.empty());
-    static const std::set<std::string> EMPTY_STRING_SET;    // used in case an invalid tech is processed
 
     std::set<const Tech*> checked_techs; // the list of techs that are not part of any cycle
     for (const auto& [tech_name, tech] : m_techs) {

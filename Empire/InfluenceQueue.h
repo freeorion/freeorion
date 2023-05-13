@@ -16,11 +16,19 @@
 class ResourcePool;
 
 
+#if !defined(CONSTEXPR_STRING)
+#  if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 11)))
+#    define CONSTEXPR_STRING constexpr
+#  else
+#    define CONSTEXPR_STRING
+#  endif
+#endif
+
 struct FO_COMMON_API InfluenceQueue {
     /** The type of a single element in the Influence queue. */
     struct FO_COMMON_API Element {
-        Element() = default;
-        Element(int empire_id_, std::string name_, bool paused_ = false) :
+        CONSTEXPR_STRING Element() = default;
+        CONSTEXPR_STRING Element(int empire_id_, std::string name_, bool paused_ = false) :
             name(std::move(name_)),
             empire_id(empire_id_),
             paused(paused_)

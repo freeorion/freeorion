@@ -14,12 +14,11 @@
 
 
 namespace {
-    //constexpr float EPSILON = 0.01f;
-
-    //void AddRules(GameRules& rules)
-    //{}
-    //bool temp_bool = RegisterGameRules(&AddRules);
+#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
+    constexpr const InfluenceQueue::Element EMPTY_ELEMENT;
+#else
     const InfluenceQueue::Element EMPTY_ELEMENT;
+#endif
 }
 
 
