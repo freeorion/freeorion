@@ -759,7 +759,7 @@ std::vector<int> ObjectMap::findIDs(Pred pred) const
 
     if constexpr (is_int_range) {
         std::copy_if(pred.begin(), pred.end(), std::back_inserter(result),
-                     [this](int id) { return Map<DecayT>().count(id) != 0; });
+                     [this](int id) { return Map<DecayT>().contains(id); });
 
     } else if constexpr (is_visitor) {
         for (const auto& [id, obj] : Map<DecayT>())
@@ -812,7 +812,7 @@ int ObjectMap::count(Pred pred) const
 
     if constexpr (is_int_range) {
         return std::count_if(pred.begin(), pred.end(),
-                             [this](const int id) { return Map<DecayT>().count(id) != 0; });
+                             [this](const int id) { return Map<DecayT>().contains(id); });
 
     } else if constexpr (is_visitor) {
         return std::count_if(Map<DecayT>().begin(), Map<DecayT>().end(),
@@ -857,7 +857,7 @@ bool ObjectMap::check_if_any(Pred pred) const
 
     if constexpr (is_int_range) {
         return std::any_of(pred.begin(), pred.end(),
-                           [this](int id) { return Map<DecayT>().count(id) != 0; });
+                           [this](int id) { return Map<DecayT>().contains(id); });
 
     } else if constexpr (is_visitor) {
         return std::any_of(Map<DecayT>().begin(), Map<DecayT>().end(),

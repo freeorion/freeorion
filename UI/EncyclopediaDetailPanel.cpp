@@ -484,7 +484,7 @@ namespace {
                                 std::forward_as_tuple("\n\n", "  "));
 
             for (const auto& entry : GetSpeciesManager()) {
-                if (!homeworlds.count(entry.first) || homeworlds.at(entry.first).empty()) {
+                if (!homeworlds.contains(entry.first) || homeworlds.at(entry.first).empty()) {
                     std::string species_entry{
                         LinkTaggedPresetText(VarText::SPECIES_TAG, entry.first, UserString(entry.first))
                         .append(":  ")
@@ -2437,7 +2437,7 @@ namespace {
         // homeworld
         detailed_description += "\n";
         const auto& homeworlds = GetSpeciesManager().GetSpeciesHomeworldsMap();
-        if (!homeworlds.count(species->Name()) || homeworlds.at(species->Name()).empty()) {
+        if (!homeworlds.contains(species->Name()) || homeworlds.at(species->Name()).empty()) {
             detailed_description.append(UserString("NO_HOMEWORLD")).append("\n");
         } else {
             detailed_description.append(UserString("HOMEWORLD")).append("\n");
@@ -3246,7 +3246,7 @@ namespace {
 #endif
 
             for (auto& [species_name, formatted_col1] : retval) {
-                if (column1_species_extents.count(species_name) != 1) {
+                if (!column1_species_extents.contains(species_name)) {
                     ErrorLogger() << "No column1 extent stored for " << species_name;
                     continue;
                 }
