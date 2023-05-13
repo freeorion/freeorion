@@ -31,10 +31,7 @@ typedef boost::spirit::lex::lexertl::position_token<
 typedef boost::spirit::lex::lexertl::actor_lexer<token_type> spirit_lexer_base_type;
 
 /** The script file lexer. */
-struct lexer :
-    boost::spirit::lex::lexer<spirit_lexer_base_type>
-{
-    /** Ctor. */
+struct lexer : boost::spirit::lex::lexer<spirit_lexer_base_type> {
     lexer();
 
     /** \name Comment tokens */ ///@{
