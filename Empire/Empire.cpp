@@ -27,7 +27,12 @@
 
 namespace {
     constexpr float EPSILON = 0.01f;
+
+#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934)))
+    constexpr std::string EMPTY_STRING;
+#else
     const std::string EMPTY_STRING;
+#endif
 
     std::string operator+(const std::string_view sv, const char* c) {
         std::string retval;

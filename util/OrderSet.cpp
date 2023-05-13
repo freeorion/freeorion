@@ -5,7 +5,7 @@
 
 
 namespace {
-    OrderPtr EMPTY_ORDER_PTR;
+    constinit OrderPtr EMPTY_ORDER_PTR;
 }
 
 OrderPtr& OrderSet::operator[](std::size_t i) {

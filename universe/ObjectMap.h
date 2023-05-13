@@ -23,6 +23,14 @@ class System;
 class Building;
 class Field;
 
+#if !defined(CONSTEXPR_VEC)
+#  if defined(__cpp_lib_constexpr_vector)
+#    define CONSTEXPR_VEC constexpr
+#  else
+#    define CONSTEXPR_VEC
+#  endif
+#endif
+
 /** Contains a set of objects that make up a (known or complete) Universe. */
 class FO_COMMON_API ObjectMap {
 public:
@@ -141,7 +149,7 @@ public:
     [[nodiscard]] auto allWithIDs() const
     {
         using DecayT = std::decay_t<T>;
-        static const auto tx = [](const typename container_type<DecayT>::value_type& p)
+        static constexpr auto tx = [](const typename container_type<DecayT>::value_type& p)
             -> typename container_type<const DecayT>::value_type
         { return {p.first, std::const_pointer_cast<const DecayT>(p.second)}; };
 
@@ -196,7 +204,7 @@ public:
             return m_existing_fields;
         else {
             static_assert(std::is_same_v<DecayT, UniverseObject>, "invalid type for allExisting()");
-            static const decltype(m_existing_objects) error_retval{};
+            static const decltype(m_existing_objects) error_retval;
             return error_retval;
         }
     }
@@ -221,7 +229,7 @@ public:
             return m_existing_field_vec;
         else {
             static_assert(std::is_same_v<DecayT, UniverseObject>, "invalid type for allExistingRaw()");
-            static const decltype(m_existing_object_vec) error_retval;
+            static CONSTEXPR_VEC const decltype(m_existing_object_vec) error_retval;
             return error_retval;
         }
     }

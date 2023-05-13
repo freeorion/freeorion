@@ -57,6 +57,14 @@ FO_ENUM(
     ((NUM_VISIBILITIES))
 )
 
+#if !defined(CONSTEXPR_VEC)
+#  if defined(__cpp_lib_constexpr_vector)
+#    define CONSTEXPR_VEC constexpr
+#  else
+#    define CONSTEXPR_VEC
+#  endif
+#endif
+
 
 /** The abstract base class for all objects in the universe
   * The UniverseObject class itself has an ID number, a name, a position, an ID
@@ -103,20 +111,20 @@ public:
     [[nodiscard]] float        SpecialCapacity(std::string_view name) const;       ///> returns the capacity of the special with name \a name or 0 if that special is not present
 
     struct [[nodiscard]] TagVecs {
-        TagVecs() = default;
-        TagVecs(const std::vector<std::string_view>& vec) noexcept :
+        constexpr TagVecs() = default;
+        constexpr explicit TagVecs(const std::vector<std::string_view>& vec) noexcept :
             first(vec)
         {}
-        TagVecs(const std::vector<std::string_view>& vec1,
-                const std::vector<std::string_view>& vec2) noexcept:
+        constexpr TagVecs(const std::vector<std::string_view>& vec1,
+                          const std::vector<std::string_view>& vec2) noexcept:
             first(vec1),
             second(vec2)
         {}
-        [[nodiscard]] bool empty() const noexcept { return first.empty() && second.empty(); }
-        [[nodiscard]] auto size() const noexcept { return first.size() + second.size(); }
+        [[nodiscard]] CONSTEXPR_VEC bool empty() const noexcept { return first.empty() && second.empty(); }
+        [[nodiscard]] CONSTEXPR_VEC auto size() const noexcept { return first.size() + second.size(); }
         const std::vector<std::string_view>& first = EMPTY_STRING_VEC;
         const std::vector<std::string_view>& second = EMPTY_STRING_VEC;
-        static const inline std::vector<std::string_view> EMPTY_STRING_VEC{};
+        static inline CONSTEXPR_VEC const std::vector<std::string_view> EMPTY_STRING_VEC{};
     };
     [[nodiscard]] virtual TagVecs             Tags(const ScriptingContext&) const { return {}; }; ///< Returns all tags this object has
     [[nodiscard]] virtual bool                HasTag(std::string_view name, const ScriptingContext&) const { return false; } ///< Returns true iff this object has the tag with the indicated \a name

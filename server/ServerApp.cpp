@@ -3983,14 +3983,14 @@ void ServerApp::PostCombatProcessTurns() {
         const auto cached_policy_cost_it = m_cached_empire_policy_adoption_costs.find(empire_id);
         if (cached_policy_cost_it == m_cached_empire_policy_adoption_costs.end())
             ErrorLogger() << "no cached policy costs info for empire " << empire_id;
-        static const decltype(cached_policy_cost_it->second) EMPTY_POLICY_COSTS;
+        static CONSTEXPR_VEC const decltype(cached_policy_cost_it->second) EMPTY_POLICY_COSTS;
         const auto& policy_costs = (cached_policy_cost_it == m_cached_empire_policy_adoption_costs.end()) ?
             EMPTY_POLICY_COSTS : cached_policy_cost_it->second;
 
         const auto cached_annex_cost_it = m_cached_empire_annexation_costs.find(empire_id);
         if (cached_annex_cost_it == m_cached_empire_annexation_costs.end())
             ErrorLogger() << "no cached annex costs info for empire " << empire_id;
-        static const decltype(cached_annex_cost_it->second) EMPTY_ANNEX_COSTS;
+        static CONSTEXPR_VEC const decltype(cached_annex_cost_it->second) EMPTY_ANNEX_COSTS;
         const auto& annex_costs = (cached_annex_cost_it == m_cached_empire_annexation_costs.end()) ?
             EMPTY_ANNEX_COSTS : cached_annex_cost_it->second;
 
