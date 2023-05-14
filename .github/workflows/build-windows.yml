@@ -2,19 +2,6 @@ name: "Windows build"
 
 on:
   workflow_call:
-  push:
-    branches: [ 'weekly-test-builds' ]
-    paths-ignore:
-      - 'msvc*/**'
-      - 'check/**'
-      - 'doc/**'
-      - 'packaging/**'
-      - 'snap/**'
-      - '*.md'
-      - 'check/**'
-      - 'default/**'
-      - 'test-scripting/**'
-
 jobs:
   build-windows-2022-cmake:
     name: MSVS 2022 on Windows CMake

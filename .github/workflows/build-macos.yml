@@ -2,9 +2,6 @@ name: "MacOS"
 
 on:
   workflow_call:
-  push:
-    branches: [ 'weekly-test-builds' ]
-
 jobs:
   build-macos:
     name: ${{ matrix.os }} Build FreeOrion
