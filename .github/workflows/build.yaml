@@ -24,3 +24,6 @@ on:
       - 'check/**'
       - 'default/**'
       - 'test-scripting/**'
+
+build:
+  uses: ./.github/workflows/build-android.yaml
