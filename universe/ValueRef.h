@@ -13,15 +13,15 @@ namespace ValueRef {
 //! some the return-type-independent interface.
 struct FO_COMMON_API ValueRefBase {
     constexpr ValueRefBase() = default;
-    virtual ~ValueRefBase() = default;
+    constexpr virtual ~ValueRefBase() = default;
 
     // these getters can't be noexcept due to a derived class doing complicated stuff
-    [[nodiscard]] virtual bool RootCandidateInvariant() const  { return m_root_candidate_invariant; }
-    [[nodiscard]] virtual bool LocalCandidateInvariant() const { return m_local_candidate_invariant; }
-    [[nodiscard]] virtual bool TargetInvariant() const         { return m_target_invariant; }
-    [[nodiscard]] virtual bool SourceInvariant() const         { return m_source_invariant; }
-    [[nodiscard]] virtual bool SimpleIncrement() const         { return m_simple_increment; }
-    [[nodiscard]] virtual bool ConstantExpr() const            { return m_constant_expr; }
+    [[nodiscard]] constexpr virtual bool RootCandidateInvariant() const  { return m_root_candidate_invariant; }
+    [[nodiscard]] constexpr virtual bool LocalCandidateInvariant() const { return m_local_candidate_invariant; }
+    [[nodiscard]] constexpr virtual bool TargetInvariant() const         { return m_target_invariant; }
+    [[nodiscard]] constexpr virtual bool SourceInvariant() const         { return m_source_invariant; }
+    [[nodiscard]] constexpr virtual bool SimpleIncrement() const         { return m_simple_increment; }
+    [[nodiscard]] constexpr virtual bool ConstantExpr() const            { return m_constant_expr; }
 
     [[nodiscard]] std::string         InvariancePattern() const;
     [[nodiscard]] virtual std::string Description() const = 0;              //! Returns a user-readable text description of this ValueRef
@@ -163,11 +163,11 @@ FO_ENUM(
 )
 
 template<typename T>
-[[nodiscard]] inline std::unique_ptr<std::remove_const_t<T>> CloneUnique(const T* ptr)
+[[nodiscard]] inline constexpr std::unique_ptr<std::remove_const_t<T>> CloneUnique(const T* ptr)
 { return ptr ? ptr->Clone() : nullptr; }
 
 template<typename T>
-[[nodiscard]] inline std::unique_ptr<std::remove_const_t<T>> CloneUnique(const std::unique_ptr<T>& ptr)
+[[nodiscard]] inline constexpr std::unique_ptr<std::remove_const_t<T>> CloneUnique(const std::unique_ptr<T>& ptr)
 { return ptr ? ptr->Clone() : nullptr; }
 
 template<typename T>
