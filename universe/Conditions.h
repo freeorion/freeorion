@@ -486,7 +486,9 @@ private:
 
 /** Matches all objects that have the tag \a tag. */
 struct FO_COMMON_API HasTag final : public Condition {
-    HasTag();
+    constexpr HasTag() noexcept :
+        Condition(true, true, true)
+    {}
     explicit HasTag(std::string name);
     explicit HasTag(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
 
