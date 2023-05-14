@@ -1,0 +1,26 @@
+on:
+  push:
+    branches: [ 'master' ]
+    paths-ignore:
+      - 'msvc*/**'
+      - 'check/**'
+      - 'doc/**'
+      - 'packaging/**'
+      - 'snap/**'
+      - '*.md'
+      - 'check/**'
+      - 'default/**'
+      - 'test-scripting/**'
+  pull_request:
+    branches: [ 'master' ]
+    types: ['opened', 'reopened', 'synchronize']
+    paths-ignore:
+      - 'msvc*/**'
+      - 'check/**'
+      - 'doc/**'
+      - 'packaging/**'
+      - 'snap/**'
+      - '*.md'
+      - 'check/**'
+      - 'default/**'
+      - 'test-scripting/**'
