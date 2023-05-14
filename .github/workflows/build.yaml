@@ -24,6 +24,14 @@ on:
       - 'check/**'
       - 'default/**'
       - 'test-scripting/**'
-
-build:
-  uses: ./.github/workflows/build-android.yaml
+jobs:
+  android:
+    uses: ./.github/workflows/build-android.yml
+  macos:
+    uses: ./.github/workflows/build-macos.yml
+  ubuntu:
+    uses: ./.github/workflows/build-ubuntu.yml
+  windows:
+    uses: ./.github/workflows/build-windows.yml
+  windows-msvc:
+    uses: ./.github/workflows/build-windows-msvs.yml

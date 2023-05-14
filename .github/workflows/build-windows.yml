@@ -1,21 +1,9 @@
 name: "Windows build"
 
 on:
+  workflow_call:
   push:
-    branches: [ 'master', 'weekly-test-builds' ]
-    paths-ignore:
-      - 'msvc*/**'
-      - 'check/**'
-      - 'doc/**'
-      - 'packaging/**'
-      - 'snap/**'
-      - '*.md'
-      - 'check/**'
-      - 'default/**'
-      - 'test-scripting/**'
-  pull_request:
-    branches: [ 'master' ]
-    types: ['opened', 'reopened', 'synchronize']
+    branches: [ 'weekly-test-builds' ]
     paths-ignore:
       - 'msvc*/**'
       - 'check/**'
