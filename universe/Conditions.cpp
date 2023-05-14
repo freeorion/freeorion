@@ -2865,10 +2865,6 @@ std::unique_ptr<Condition> HasSpecial::Clone() const
 ///////////////////////////////////////////////////////////
 // HasTag                                                //
 ///////////////////////////////////////////////////////////
-HasTag::HasTag() :
-    HasTag(std::unique_ptr<ValueRef::ValueRef<std::string>>{})
-{}
-
 HasTag::HasTag(std::string name) :
     HasTag(std::make_unique<ValueRef::Constant<std::string>>(std::move(name)))
 {}
