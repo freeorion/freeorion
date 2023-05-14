@@ -3,14 +3,10 @@
 
 #include "Export.h"
 
-#include <climits>
 #include <cmath>
-#include <iostream>
-#include <map>
 #include <memory>
-#include <set>
-#include <typeinfo>
-#include <vector>
+#include <utility>
+#include <string_view>
 
 namespace CheckSums {
     constexpr uint32_t CHECKSUM_MODULUS = 10000000U;    // reasonably big number that should be well below UINT_MAX, which is ~4.29x10^9 for 32 bit unsigned int
@@ -22,14 +18,11 @@ namespace CheckSums {
     constexpr bool csc_float = noexcept(noexcept(std::log10(std::abs(43.0f))));
     FO_COMMON_API void CheckSumCombine(uint32_t& sum, float t) noexcept(csc_float);
 
-    FO_COMMON_API void CheckSumCombine(uint32_t& sum, const char* s);
-    FO_COMMON_API void CheckSumCombine(uint32_t& sum, const std::string& c);
-
     // integeral types
     template <typename T> requires (std::is_signed_v<T>)
-    void CheckSumCombine(uint32_t& sum, T t)
+    constexpr void CheckSumCombine(uint32_t& sum, T t)
     {
-        sum += static_cast<uint32_t>(std::abs(t));
+        sum += static_cast<uint32_t>(t >= 0 ? t : -t);
         sum %= CHECKSUM_MODULUS;
     }
     template <typename T> requires (std::is_unsigned_v<T>)
@@ -39,6 +32,15 @@ namespace CheckSums {
         sum += static_cast<uint32_t>(t);
         sum %= CHECKSUM_MODULUS;
     }
+
+    // strings
+    constexpr inline void CheckSumCombine(uint32_t& sum, std::string_view sv) {
+        for (auto t : sv)
+            CheckSumCombine(sum, t);
+        sum += sv.size();
+        sum %= CHECKSUM_MODULUS;
+    }
+    constexpr inline void CheckSumCombine(uint32_t& sum, const char* s) { CheckSumCombine(sum, std::string_view{s}); }
 
     // classes that have GetCheckSum methods
     template <typename C> //requires (requires(C c) { c.GetCheckSum(); })
@@ -51,12 +53,12 @@ namespace CheckSums {
 
     // enums
     template <typename T> requires (std::is_enum_v<T>)
-    void CheckSumCombine(uint32_t& sum, T t)
+    constexpr void CheckSumCombine(uint32_t& sum, T t)
     { CheckSumCombine(sum, static_cast<int>(t) + 10); }
 
     // pointer types
     template <typename T>
-    void CheckSumCombine(uint32_t& sum, const T* p)
+    constexpr void CheckSumCombine(uint32_t& sum, const T* p)
     {
         if (p)
             CheckSumCombine(sum, *p);
@@ -68,7 +70,7 @@ namespace CheckSums {
             CheckSumCombine(sum, *p);
     }
     template <typename T>
-    void CheckSumCombine(uint32_t& sum, const typename std::unique_ptr<T>& p)
+    constexpr void CheckSumCombine(uint32_t& sum, const typename std::unique_ptr<T>& p)
     {
         if (p)
             CheckSumCombine(sum, *p);
@@ -76,7 +78,7 @@ namespace CheckSums {
 
     // pairs (including map value types)
     template <typename C, typename D>
-    void CheckSumCombine(uint32_t& sum, const std::pair<C, D>& p)
+    constexpr void CheckSumCombine(uint32_t& sum, const std::pair<C, D>& p)
     {
         CheckSumCombine(sum, p.first);
         CheckSumCombine(sum, p.second);

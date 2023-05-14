@@ -6,18 +6,28 @@
 #include <limits>
 
 namespace CheckSums {
-    void CheckSumCombine(uint32_t& sum, const char* s)
-    { CheckSumCombine(sum, std::string(s)); }
+    static constexpr auto char_cs1 = []() {
+        uint32_t sum = 0;
+        CheckSumCombine(sum, 'q');
+        return sum;
+    }();
+    static constexpr auto char_cs2 = []() {
+        uint32_t sum = 0;
+        CheckSumCombine(sum, static_cast<char>(195));
+        return sum;
+    }();
+    static constexpr auto char_cs3 = []() {
+        uint32_t sum = 0;
+        CheckSumCombine(sum, static_cast<char>(-15));
+        return sum;
+    }();
+    static_assert(char_cs1 == 'q');
+    static_assert(char_cs2 == 61);
+    static_assert(char_cs3 == 15);
+
 
     static_assert(CHECKSUM_MODULUS < std::numeric_limits<uint32_t>::max());
     static_assert(CHECKSUM_MODULUS < std::numeric_limits<int32_t>::max());
-
-    void CheckSumCombine(uint32_t& sum, const std::string& c) {
-        for (auto& t : c)
-            CheckSumCombine(sum, t);
-        sum += c.size();
-        sum %= CHECKSUM_MODULUS;
-    }
 
     static_assert(noexcept(99253 + static_cast<unsigned int>(43.0)));
     static_assert(noexcept(73423 % CHECKSUM_MODULUS));
