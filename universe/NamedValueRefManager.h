@@ -4,13 +4,9 @@
 #include <map>
 #include <thread>
 #include "ValueRef.h"
+#include "../util/CheckSums.h"
 
 [[nodiscard]] FO_COMMON_API const std::string& UserString(const std::string& str);
-
-namespace CheckSums {
-    FO_COMMON_API void CheckSumCombine(uint32_t& sum, const char* s);
-    FO_COMMON_API void CheckSumCombine(uint32_t& sum, const std::string& c);
-}
 
 class NamedValueRefManager;
 [[nodiscard]] FO_COMMON_API auto GetNamedValueRefManager() -> NamedValueRefManager&;
