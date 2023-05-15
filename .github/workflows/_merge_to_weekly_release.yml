@@ -12,5 +12,5 @@ jobs:
         with:
           type: now
           from_branch: master
-          target_branch: weekly
+          target_branch: refs/heads/weekly-test-builds
           github_token: ${{ secrets.GITHUB_TOKEN }}
