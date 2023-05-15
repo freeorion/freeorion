@@ -163,7 +163,7 @@ std::string Fleet::Dump(uint8_t ntabs) const {
 }
 
 bool Fleet::Contains(int object_id) const
-{ return object_id != INVALID_OBJECT_ID && m_ships.count(object_id); }
+{ return object_id != INVALID_OBJECT_ID && m_ships.contains(object_id); }
 
 bool Fleet::ContainedBy(int object_id) const
 { return object_id != INVALID_OBJECT_ID && this->SystemID() == object_id; }
@@ -298,7 +298,7 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
                 is_post_blockade = true;
             } else {
                 // blockade debug logging, but only for the more complex situations
-                if (next_system->ID() != m_arrival_starlane && !unobstructed_systems.count(cur_system->ID())) {
+                if (next_system->ID() != m_arrival_starlane && !unobstructed_systems.contains(cur_system->ID())) {
                     TraceLogger() << "Fleet::MovePath checking blockade from "<< cur_system->ID() << " to " << next_system->ID();
                     TraceLogger() << "Fleet::MovePath finds system " << cur_system->Name() << " (" << cur_system->ID()
                                   << ") NOT blockaded for fleet " << this->Name();
@@ -478,7 +478,7 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
         // if new position is an obstructed system, must end turn here
         // on client side, if have stale info on cur_system it may appear blockaded even if not actually obstructed,
         // and so will force a stop in that situation
-        if (cur_system && !unobstructed_systems.count(cur_system->ID())) {
+        if (cur_system && !unobstructed_systems.contains(cur_system->ID())) {
             turn_dist_remaining = 0.0;
             end_turn_at_cur_position = true;
         }
@@ -909,7 +909,7 @@ void Fleet::MovementPhase(ScriptingContext& context) {
     // is the fleet stuck in a system for a whole turn?
     if (current_system) {
         // update m_arrival_starlane if no blockade, if needed
-        if (supply_unobstructed_systems.count(SystemID()))
+        if (supply_unobstructed_systems.contains(SystemID()))
             m_arrival_starlane = SystemID();// allows departure via any starlane
 
         // in a system.  if either:
@@ -1007,7 +1007,7 @@ void Fleet::MovementPhase(ScriptingContext& context) {
 
                 current_system = system;
 
-                if (supply_unobstructed_systems.count(SystemID()))
+                if (supply_unobstructed_systems.contains(SystemID()))
                     m_arrival_starlane = SystemID(); // allows departure via any starlane
 
                 // Add current system to the start of any existing route for next turn
@@ -1244,7 +1244,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id,
 
     auto empire = context.GetEmpire(this->Owner());
     if (empire) {
-        if (empire->SupplyUnobstructedSystems().count(start_system_id))
+        if (empire->SupplyUnobstructedSystems().contains(start_system_id))
             return false;
         if (empire->PreservedLaneTravel(start_system_id, dest_system_id)) {
             return false;

@@ -105,9 +105,9 @@ void BuildingsPanel::Update() {
     // get existing / finished buildings and use them to create building indicators
     for (int object_id : planet->BuildingIDs()) {
         // skip known destroyed and stale info objects
-        if (this_client_known_destroyed_objects.count(object_id))
+        if (this_client_known_destroyed_objects.contains(object_id))
             continue;
-        if (this_client_stale_object_info.count(object_id))
+        if (this_client_stale_object_info.contains(object_id))
             continue;
 
         auto building = Objects().get<Building>(object_id);

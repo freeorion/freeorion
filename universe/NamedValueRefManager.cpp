@@ -154,7 +154,7 @@ namespace {
                               std::string&& valueref_name, std::unique_ptr<VR>&& vref)
     {
         TraceLogger() << "Register " << label << " valueref for " << valueref_name << ": " << vref->Description();
-        if (container.count(valueref_name) > 0) {
+        if (container.contains(valueref_name)) {
             TraceLogger() << "Skip registration for already registered " << label << " valueref for " << valueref_name;
             TraceLogger() << "Number of registered " << label << " ValueRefs: " << container.size();
             return;

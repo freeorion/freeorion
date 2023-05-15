@@ -1596,7 +1596,7 @@ bool ShipDesignOrder::CheckRemember(int empire_id, int existing_design_id_to_rem
 
     // check if the empire can see any objects that have this design (thus enabling it to be copied)
     auto& empire_known_design_ids = context.ContextUniverse().EmpireKnownShipDesignIDs(empire_id);
-    if (empire_known_design_ids.count(existing_design_id_to_remember) < 1) {
+    if (!empire_known_design_ids.contains(existing_design_id_to_remember)) {
         ErrorLogger() << "Empire " << empire_id
                       << " tried to remember a ShipDesign id = " << existing_design_id_to_remember
                       << " that this empire hasn't seen";

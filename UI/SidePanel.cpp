@@ -1581,7 +1581,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     // need to check all species for homeworlds
     for (const auto& entry : sm.GetSpeciesHomeworldsMap()) {
         const auto& homeworld_ids = entry.second;
-        if (homeworld_ids.count(m_planet_id)) {
+        if (homeworld_ids.contains(m_planet_id)) {
             homeworld = true;
             break;
         }
@@ -1590,7 +1590,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     // check for shipyard
     const auto& known_destroyed_object_ids = u.EmpireKnownDestroyedObjectIDs(client_empire_id);
     for (const auto* building : objects.findRaw<const Building>(planet->BuildingIDs())) {
-        if (!building || known_destroyed_object_ids.count(building->ID()))
+        if (!building || known_destroyed_object_ids.contains(building->ID()))
             continue;
         if (building->HasTag(TAG_SHIPYARD, context)) {
             has_shipyard = true;
@@ -2119,7 +2119,7 @@ void SidePanel::PlanetPanel::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
                 continue;
             if (obj->OwnedBy(client_empire_id)|| obj->Unowned())
                 continue;
-            if (peaceful_empires_in_system.count(obj->Owner()))
+            if (peaceful_empires_in_system.contains(obj->Owner()))
                 continue;
             if (context.ContextDiploStatus(client_empire_id, obj->Owner()) < DiplomaticStatus::DIPLO_PEACE)
                 continue;
@@ -2182,7 +2182,7 @@ void SidePanel::PlanetPanel::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
                         client_empire_id, planet->ID(), recipient_empire_id, context),
                     context);
             };
-            if (!peaceful_empires_in_system.count(recipient_empire_id))
+            if (!peaceful_empires_in_system.contains(recipient_empire_id))
                 continue;
             give_away_menu.next_level.emplace_back(entry.second->Name(), false, false, gift_action);
         }
@@ -2774,7 +2774,7 @@ void SidePanel::PlanetPanelContainer::DoLayout() {
 
 void SidePanel::PlanetPanelContainer::SelectPlanet(int planet_id) {
     //std::cout << "SidePanel::PlanetPanelContainer::SelectPlanet(" << planet_id << ")" << std::endl;
-    if (planet_id != m_selected_planet_id && m_candidate_ids.count(planet_id)) {
+    if (planet_id != m_selected_planet_id && m_candidate_ids.contains(planet_id)) {
         m_selected_planet_id = planet_id;
         bool planet_id_match_found = false;
 
@@ -2829,7 +2829,7 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates() {
 
     // disable and enabled appropriate panels
     for (auto& panel : m_planet_panels) {
-        if (disabled_panels.count(panel)) {
+        if (disabled_panels.contains(panel)) {
             panel->Disable(true);
             //std::cout << " ... DISABLING PlanetPanel for planet " << panel->PlanetID() << std::endl;
         } else {
@@ -3591,7 +3591,7 @@ bool SidePanel::PlanetSelectable(int planet_id, const ObjectMap& objects) const 
         return false;
 
     const auto& planet_ids = system->PlanetIDs();
-    if (planet_ids.count(planet_id) == 0)
+    if (!planet_ids.contains(planet_id))
         return false;
 
     auto planet = objects.get<Planet>(planet_id);

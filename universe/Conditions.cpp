@@ -1590,8 +1590,7 @@ namespace {
             if (m_names.empty()) {
                 // match homeworlds for any species
                 if (std::any_of(m_species_homeworlds.begin(), m_species_homeworlds.end(),
-                                [planet_id](const auto& name_ids)
-                                { return name_ids.second.count(planet_id) > 0; }))
+                                [planet_id](const auto& name_ids) { return name_ids.second.contains(planet_id); }))
                 { return true; }
 
             } else {
@@ -1601,7 +1600,7 @@ namespace {
                     if (it == m_species_homeworlds.end())
                         return false;
                     const auto& planet_ids = it->second;
-                    return planet_ids.count(planet_id) > 0;
+                    return planet_ids.contains(planet_id);
                 }))
                 { return true; }
             }
@@ -1685,7 +1684,7 @@ bool Homeworld::Match(const ScriptingContext& local_context) const {
     if (m_names.empty()) {
         // match homeworlds for any species
         for (const auto& entry : local_context.species.GetSpeciesHomeworldsMap()) {
-            if (entry.second.count(planet_id))
+            if (entry.second.contains(planet_id))
                 return true;
         }
 
@@ -1694,7 +1693,7 @@ bool Homeworld::Match(const ScriptingContext& local_context) const {
         const auto& homeworlds = local_context.species.GetSpeciesHomeworldsMap();
         for (const auto& name_ref : m_names) {
             const auto species_name = name_ref->Eval(local_context);
-            if (homeworlds.count(species_name) && homeworlds.at(species_name).count(planet_id))
+            if (homeworlds.contains(species_name) && homeworlds.at(species_name).contains(planet_id))
                 return true;
         }
     }
@@ -9343,7 +9342,7 @@ namespace {
             auto it = empire_supplyable_systems.find(m_empire_id);
             if (it == empire_supplyable_systems.end())
                 return false;
-            return it->second.count(candidate->SystemID());
+            return it->second.contains(candidate->SystemID());
         }
 
         int m_empire_id;
@@ -9477,9 +9476,8 @@ namespace {
             // first check if candidate object is (or is a building on) a blockaded planet
             // "isolated" objects are anything not in a non-blockaded system
             const bool is_isolated = std::none_of(groups.begin(), groups.end(),
-                                                  [sys_id{candidate->SystemID()}](const auto& group) {
-                                                      return group.count(sys_id) > 0;
-                                                  });
+                                                  [sys_id{candidate->SystemID()}](const auto& group)
+                                                  { return group.contains(sys_id); });
             if (is_isolated) {
                 // planets are still supply-connected to themselves even if blockaded
                 const auto* candidate_planet = candidate->ObjectType() == UniverseObjectType::OBJ_PLANET ?
@@ -9508,9 +9506,9 @@ namespace {
             // candidate is not blockaded, so check for system group matches
             for (auto* from_object : m_from_objects) {
                 for (const auto& group : groups) {
-                    if (group.count(from_object->SystemID())) {
+                    if (group.contains(from_object->SystemID())) {
                         // found resource sharing group containing test object system.  Does it also contain candidate?
-                        if (group.count(candidate->SystemID()))
+                        if (group.contains(candidate->SystemID()))
                             return true;    // test object and candidate object are in same resourse sharing group
                         else
                             // test object is not in resource sharing group with candidate

@@ -369,7 +369,7 @@ std::unordered_map<std::string_view, std::set<std::string_view>> OptionsDB::Opti
         if (count > 1)
             options_by_section["root"].insert(std::move(root_name));
 
-        else if (section_name != "misc" && section_name != "root" && !m_sections.count(section_name)) {
+        else if (section_name != "misc" && section_name != "root" && !m_sections.contains(section_name)) {
             // no section found with specified name, so move options in section to misc section
             auto section_options_it = options_by_section.find(section_name);
             if (section_options_it == options_by_section.end())
@@ -392,7 +392,7 @@ void OptionsDB::GetUsage(std::ostream& os, std::string_view command_line, bool a
     auto options_by_section = OptionsBySection(allow_unrecognized);
     if (!command_line.empty() || command_line == "all" || command_line == "raw") {
         // remove the root section if unneeded
-        if (options_by_section.count("root"))
+        if (options_by_section.contains("root"))
             options_by_section.erase("root");
     }
 

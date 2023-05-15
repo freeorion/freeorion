@@ -320,7 +320,7 @@ void ObjectMap::CopyObject(std::shared_ptr<const UniverseObject> source,
     if (auto destination = this->get(source_id)) {
         destination->Copy(*source, universe, empire_id); // there already is a version of this object present in this ObjectMap, so just update it
     } else {
-        bool destroyed = universe.DestroyedObjectIds().count(source_id);
+        bool destroyed = universe.DestroyedObjectIds().contains(source_id);
         // this object is not yet present in this ObjectMap, so add a new UniverseObject object for it
         if (source->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             auto plt = static_cast<const Planet*>(source.get());
@@ -359,7 +359,7 @@ void ObjectMap::insertCore(std::shared_ptr<UniverseObject> obj, bool destroyed) 
         FOR_EACH_EXISTING_VEC(TryInsertIntoVec, obj_raw)
         FOR_EACH_EXISTING_MAP(TryInsertIntoMap, obj)
 
-        bool already_there = m_existing_objects.count(ID);
+        bool already_there = m_existing_objects.contains(ID);
 
         m_existing_objects[ID] = obj;
         if (!already_there)
@@ -420,7 +420,7 @@ void ObjectMap::UpdateCurrentDestroyedObjects(const std::unordered_set<int>& des
     FOR_EACH_EXISTING_VEC(ClearContainer);
     FOR_EACH_EXISTING_MAP(ClearContainer);
     for (const auto& [ID, obj] : m_objects) {
-        if (!obj || destroyed_object_ids.count(ID))
+        if (!obj || destroyed_object_ids.contains(ID))
             continue;
         const auto obj_raw = obj.get();
         FOR_EACH_EXISTING_VEC(TryInsertIntoVec, obj_raw);
@@ -438,7 +438,7 @@ void ObjectMap::AuditContainment(const std::unordered_set<int>& destroyed_object
     std::map<int, std::set<int>> contained_fields;
 
     for (const auto* contained : allRaw()) {
-        if (destroyed_object_ids.count(contained->ID()))
+        if (destroyed_object_ids.contains(contained->ID()))
             continue;
 
         const int contained_id = contained->ID();

@@ -144,7 +144,7 @@ namespace {
 
         // first add only use those ordered templates actually in the current set of sitrep templates
         for (std::string& templ : OrderedSitrepTemplateStrings()) {
-            if (template_set.count(templ) &&
+            if (template_set.contains(templ) &&
                 !std::count(retval.begin(), retval.end(), templ))
             { retval.push_back(std::move(templ)); }
         }
@@ -494,7 +494,7 @@ namespace {
     /** Return true iff the \a sitrep is not hidden, validates and is not snoozed. */
     bool IsSitRepInvalid(const SitRepEntry& sitrep, const std::set<std::string>& hidden_templates) {
         auto& label = sitrep.GetLabelString().empty() ? sitrep.GetTemplateString() : sitrep.GetLabelString();
-        if (hidden_templates.count(label))
+        if (hidden_templates.contains(label))
             return true;
 
         const ScriptingContext context;
@@ -506,12 +506,12 @@ namespace {
             return true;
 
         // Check for snoozing.
-        if (permanently_snoozed_sitreps.count(sitrep.GetText(context)))
+        if (permanently_snoozed_sitreps.contains(sitrep.GetText(context)))
             return true;
 
         auto sitrep_set_it = snoozed_sitreps.find(sitrep.GetTurn());
         if (sitrep_set_it != snoozed_sitreps.end()
-            && sitrep_set_it->second.count(sitrep.GetText(context)))
+            && sitrep_set_it->second.contains(sitrep.GetText(context)))
         { return true; }
 
         return false;
@@ -590,7 +590,7 @@ void SitRepPanel::FilterClicked() {
     for (const std::string& templ : all_templates) {
         menu_index_templates[index] = templ;
         bool check = true;
-        if (m_hidden_sitrep_templates.count(templ)) {
+        if (m_hidden_sitrep_templates.contains(templ)) {
             check = false;
             all_checked = false;
         }

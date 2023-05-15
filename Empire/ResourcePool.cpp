@@ -56,7 +56,7 @@ float ResourcePool::TotalOutput() const {
 float ResourcePool::GroupOutput(int object_id) const {
     // find group containing specified object
     for (const auto& [group, output] : m_connected_object_groups_resource_output) {
-        if (group.count(object_id))
+        if (group.contains(object_id))
             return output;
     }
 
@@ -75,7 +75,7 @@ float ResourcePool::TargetOutput() const {
 float ResourcePool::GroupTargetOutput(int object_id) const {
     // find group containing specified object
     for (const auto& entry : m_connected_object_groups_resource_target_output) {
-        if (entry.first.count(object_id))
+        if (entry.first.contains(object_id))
             return entry.second;
     }
 

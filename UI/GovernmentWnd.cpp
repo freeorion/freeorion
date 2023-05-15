@@ -487,7 +487,7 @@ PoliciesListBox::GroupAvailableDisplayablePolicies(const Empire*) const {
         const auto& category = policy.Category();
 
         // check whether this policy should be shown in list
-        if (!m_policy_categories_shown.count(category))
+        if (!m_policy_categories_shown.contains(category))
             continue;   // policies of this category are not requested to be shown
 
         // Check if part satisfies availability
@@ -566,7 +566,7 @@ void PoliciesListBox::Populate() {
 }
 
 void PoliciesListBox::ShowCategory(const std::string& category, bool refresh_list) {
-    if (!m_policy_categories_shown.count(category)) {
+    if (!m_policy_categories_shown.contains(category)) {
         m_policy_categories_shown.insert(category);
         if (refresh_list)
             Populate();
@@ -820,7 +820,7 @@ void GovernmentWnd::PolicyPalette::HandlePolicyRightClicked(const Policy* policy
 void GovernmentWnd::PolicyPalette::ShowCategory(const std::string& category,
                                                 bool refresh_list)
 {
-    if (!m_category_buttons.count(category)) {
+    if (!m_category_buttons.contains(category)) {
         ErrorLogger() << "PolicyPalette::ShowCategory was passed an invalid category name: " << category;
         return;
     }
@@ -839,7 +839,7 @@ void GovernmentWnd::PolicyPalette::ShowAllCategories(bool refresh_list) {
 void GovernmentWnd::PolicyPalette::HideCategory(const std::string& category,
                                                 bool refresh_list)
 {
-    if (!m_category_buttons.count(category)) {
+    if (!m_category_buttons.contains(category)) {
         ErrorLogger() << "PolicyPalette::HideCategory was passed an invalid category name: " << category;
         return;
     }
@@ -856,13 +856,13 @@ void GovernmentWnd::PolicyPalette::HideAllCategories(bool refresh_list) {
 }
 
 void GovernmentWnd::PolicyPalette::ToggleCategory(const std::string& category, bool refresh_list) {
-    if (!m_category_buttons.count(category)) {
+    if (!m_category_buttons.contains(category)) {
         ErrorLogger() << "PolicyPalette::ToggleCategory was passed an invalid category name: " << category;
         return;
     }
 
     const auto& categories_shown = m_policies_list->GetCategoriesShown();
-    if (categories_shown.count(category))
+    if (categories_shown.contains(category))
         HideCategory(category, refresh_list);
     else
         ShowCategory(category, refresh_list);
@@ -1505,9 +1505,9 @@ void GovernmentWnd::MainPanel::Populate() {
         AttachChild(slot_control);
 
         // assign policy controls to slots that correspond to adopted policies
-        if (categories_slots_policies.count(category_name)) {
+        if (categories_slots_policies.contains(category_name)) {
             const auto& slots = categories_slots_policies[category_name];
-            if (slots.count(category_index))
+            if (slots.contains(category_index))
                 slot_control->SetPolicy(std::string{slots.at(category_index)}); // TODO: avoid string construction if possible...
         }
 

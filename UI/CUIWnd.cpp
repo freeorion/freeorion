@@ -652,38 +652,38 @@ void CUIWnd::SaveDefaultedOptions() {
 
     std::string config_name = config_prefix + window_mode + ".left";
     int int_value = Value(RelativeUpperLeft().x);
-    if (m_defaulted_options.count(config_name))
+    if (m_defaulted_options.contains(config_name))
         db.SetDefault(config_name, int_value);
 
     config_name = config_prefix + window_mode + ".top";
     int_value = Value(RelativeUpperLeft().y);
-    if (m_defaulted_options.count(config_name))
+    if (m_defaulted_options.contains(config_name))
         db.SetDefault(config_name, int_value);
 
     config_name = config_prefix + window_mode + ".width";
     int_value = Value(size.x);
-    if (m_defaulted_options.count(config_name))
+    if (m_defaulted_options.contains(config_name))
         db.SetDefault(config_name, int_value);
 
     config_name = config_prefix + window_mode + ".height";
     int_value = Value(size.y);
-    if (m_defaulted_options.count(config_name))
+    if (m_defaulted_options.contains(config_name))
         db.SetDefault(config_name, int_value);
 
     if (!Modal()) {
         config_name = config_prefix + ".visible";
         bool bool_value = Visible();
-        if (m_defaulted_options.count(config_name))
+        if (m_defaulted_options.contains(config_name))
             db.SetDefault(config_name, bool_value);
 
         config_name = config_prefix + ".pinned";
         bool_value = m_pinned;
-        if (m_defaulted_options.count(config_name))
+        if (m_defaulted_options.contains(config_name))
             db.SetDefault(config_name, bool_value);
 
         config_name = config_prefix + ".minimized";
         bool_value = m_minimized;
-        if (m_defaulted_options.count(config_name))
+        if (m_defaulted_options.contains(config_name))
             db.SetDefault(config_name, bool_value);
     }
 }

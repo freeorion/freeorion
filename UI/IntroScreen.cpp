@@ -114,11 +114,11 @@ CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, int cx, int cy, int c
             credits << group_format % group.attributes.at("name");
             for (const XMLElement& item : group.children) {
                 if (0 == item.Tag().compare("PERSON")) {
-                    if (item.attributes.count("name"))
+                    if (item.attributes.contains("name"))
                         credits << item.attributes.at("name");
-                    if (item.attributes.count("nick") && item.attributes.at("nick").length() > 0)
+                    if (item.attributes.contains("nick") && item.attributes.at("nick").length() > 0)
                         credits << nick_format % item.attributes.at("nick");
-                    if (item.attributes.count("task"))
+                    if (item.attributes.contains("task"))
                         credits << task_format % item.attributes.at("task");
                 }
 
@@ -128,10 +128,10 @@ CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, int cx, int cy, int c
                         % item.attributes.at("title")
                         % UserString("INTRO_CREDITS_LICENSE")
                         % item.attributes.at("license")
-                        % ((item.attributes.count("source"))
+                        % ((item.attributes.contains("source"))
                             ? boost::str(source_format % item.attributes.at("source"))
                             : std::string{});
-                    if (item.attributes.count("notes"))
+                    if (item.attributes.contains("notes"))
                         credits << note_format % item.attributes.at("notes");
                 }
 

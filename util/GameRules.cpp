@@ -64,7 +64,7 @@ std::unordered_map<std::string, GameRule>::const_iterator GameRules::end() {
 
 bool GameRules::RuleExists(const std::string& name) {
     CheckPendingGameRules();
-    return m_game_rules.count(name);
+    return m_game_rules.contains(name);
 }
 
 bool GameRules::RuleExists(const std::string& name, GameRule::Type type) {
@@ -214,7 +214,7 @@ void GameRules::CheckPendingGameRules() {
         return;
 
     for (auto& [name, game_rule] : *parsed_new_rules) {
-        if (m_game_rules.count(name)) {
+        if (m_game_rules.contains(name)) {
             ErrorLogger() << "GameRules::Add<>() : GameRule " << name << " was added twice. Skipping ...";
             continue;
         }

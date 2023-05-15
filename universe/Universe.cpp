@@ -470,11 +470,11 @@ void Universe::InsertIDCore(std::shared_ptr<UniverseObject> obj, int id) {
 
     obj->StateChangedSignal.set_combiner(UniverseObject::CombinerType{*this});
 
-    m_objects->insert(std::move(obj), m_destroyed_object_ids.count(id));
+    m_objects->insert(std::move(obj), m_destroyed_object_ids.contains(id));
 }
 
 int Universe::InsertShipDesign(ShipDesign ship_design) {
-    if (ship_design.ID() != INVALID_DESIGN_ID && m_ship_designs.count(ship_design.ID()))
+    if (ship_design.ID() != INVALID_DESIGN_ID && m_ship_designs.contains(ship_design.ID()))
         return INVALID_DESIGN_ID; // already have a design with that ID
 
     const auto new_id = GenerateDesignID();
@@ -490,7 +490,7 @@ bool Universe::InsertShipDesignID(ShipDesign ship_design, boost::optional<int> e
 
     if (id == INCOMPLETE_DESIGN_ID) {
         TraceLogger() << "Update the incomplete Ship design id " << id;
-    } else if (m_ship_designs.count(id)) {
+    } else if (m_ship_designs.contains(id)) {
         ErrorLogger() << "Ship design id " << id << " already exists.";
         return false;
     }
@@ -703,7 +703,7 @@ void Universe::InitMeterEstimatesAndDiscrepancies(ScriptingContext& context) {
     // determine meter max discrepancies
     for (auto& [object_id, account_map] : m_effect_accounting_map) {
         // skip destroyed objects
-        if (m_destroyed_object_ids.count(object_id))
+        if (m_destroyed_object_ids.contains(object_id))
             continue;
         // get object
         auto obj = m_objects->get(object_id);
@@ -780,7 +780,7 @@ void Universe::UpdateMeterEstimates(int object_id, ScriptingContext& context, bo
         (int cur_id, int container_id)
     {
         // Ignore if already in the set
-        if (collected_ids.count(cur_id))
+        if (collected_ids.contains(cur_id))
             return true;
 
         auto cur_object = m_objects->get(cur_id);
@@ -819,7 +819,7 @@ void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec, Scripti
 
     for (int object_id : objects_vec) {
         // skip destroyed objects
-        if (m_destroyed_object_ids.count(object_id))
+        if (m_destroyed_object_ids.contains(object_id))
             continue;
         m_effect_accounting_map[object_id].clear();
         objects_set.insert(object_id);
@@ -1041,7 +1041,7 @@ namespace {
                 // special case for condition that is just Source when a set of
                 // candidates is specified: only need to put the source in if
                 // it is in the candidates
-                if (candidate_object_ids.count(source->ID()))
+                if (candidate_object_ids.contains(source->ID()))
                     matched_targets.push_back(const_cast<UniverseObject*>(source));
 
             } else {
@@ -1385,7 +1385,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     std::map<std::string_view, std::vector<const UniverseObject*>> species_objects;
     // find each species planets in single pass, maintaining object map order per-species
     for (auto planet : context.ContextObjects().allRaw<Planet>()) {
-        if (destroyed_object_ids.count(planet->ID()))
+        if (destroyed_object_ids.contains(planet->ID()))
             continue;
         const std::string& species_name = planet->SpeciesName();
         if (species_name.empty())
@@ -1422,7 +1422,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for SHIP SPECIES";
     species_objects.clear();
     for (auto ship : context.ContextObjects().allRaw<Ship>()) {
-        if (destroyed_object_ids.count(ship->ID()))
+        if (destroyed_object_ids.contains(ship->ID()))
             continue;
         const std::string& species_name = ship->SpeciesName();
         if (species_name.empty())
@@ -1459,7 +1459,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     std::map<std::string_view, std::vector<const UniverseObject*>> specials_objects;
     // determine objects with specials in a single pass
     for (const auto obj : context.ContextObjects().allRaw()) {
-        if (destroyed_object_ids.count(obj->ID()))
+        if (destroyed_object_ids.contains(obj->ID()))
             continue;
         for (const auto& entry : obj->Specials()) {
             const std::string& special_name = entry.first;
@@ -1555,7 +1555,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     // determine buildings of each type in a single pass
     std::map<std::string_view, std::vector<const UniverseObject*>> buildings_by_type;
     for (const auto& building : context.ContextObjects().allRaw<Building>()) {
-        if (destroyed_object_ids.count(building->ID()))
+        if (destroyed_object_ids.contains(building->ID()))
             continue;
         const std::string& building_type_name = building->BuildingTypeName();
         const BuildingType* building_type = GetBuildingType(building_type_name);
@@ -1595,7 +1595,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     std::map<std::string_view, std::vector<const UniverseObject*>> ships_by_ship_part;
 
     for (const auto ship : context.ContextObjects().allRaw<Ship>()) {
-        if (destroyed_object_ids.count(ship->ID()))
+        if (destroyed_object_ids.contains(ship->ID()))
             continue;
         const ShipDesign* ship_design = context.ContextUniverse().GetShipDesign(ship->DesignID());
         if (!ship_design)
@@ -1661,7 +1661,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     // determine fields of each type in a single pass
     std::map<std::string_view, std::vector<const UniverseObject*>> fields_by_type;
     for (const auto field : context.ContextObjects().allRaw<Field>()) {
-        if (destroyed_object_ids.count(field->ID()))
+        if (destroyed_object_ids.contains(field->ID()))
             continue;
         const std::string& field_type_name = field->FieldTypeName();
         const FieldType* field_type = GetFieldType(field_type_name);
@@ -2087,7 +2087,7 @@ std::map<int, std::map<std::pair<double, double>, float>>
 Universe::GetEmpiresPositionDetectionRanges(const ObjectMap& objects) const
 {
     std::map<int, std::map<std::pair<double, double>, float>> retval;
-    auto not_destroyed = [this](const UniverseObject* obj) { return !m_destroyed_object_ids.count(obj->ID()); };
+    auto not_destroyed = [this](const UniverseObject* obj) { return !m_destroyed_object_ids.contains(obj->ID()); };
 
     CheckObjects(objects.find<Planet>(not_destroyed), retval);
     CheckObjects(objects.find<Ship>(not_destroyed), retval);
@@ -2102,7 +2102,7 @@ Universe::GetEmpiresPositionDetectionRanges(const ObjectMap& objects,
 {
     std::map<int, std::map<std::pair<double, double>, float>> retval;
     auto not_destroyed_or_excluded = [this, &exclude_ids](const UniverseObject* obj)
-    { return !m_destroyed_object_ids.count(obj->ID()) && !exclude_ids.count(obj->ID()); };
+    { return !m_destroyed_object_ids.contains(obj->ID()) && !exclude_ids.contains(obj->ID()); };
 
     CheckObjects(objects.find<Planet>(not_destroyed_or_excluded), retval);
     CheckObjects(objects.find<Ship>(not_destroyed_or_excluded), retval);
@@ -2268,7 +2268,7 @@ namespace {
                 continue;
             }
             const auto& empires_that_know = obj_it->second;
-            if (!empires_that_know.count(empire_id)) {
+            if (!empires_that_know.contains(empire_id)) {
                 ++it;
                 continue;
             }
@@ -2433,7 +2433,7 @@ namespace {
 
             int planet_id = planet->ID();
             for (const auto& [empire_id, empire_systems] : empires_systems_with_owned_objects) {
-                if (!empire_systems.count(system_id))
+                if (!empire_systems.contains(system_id))
                     continue;   // no objects, don't grant any visibility
 
                 if (GetGameRules().Get<bool>("RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE")) {
@@ -2807,7 +2807,7 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns(int current_turn
                 // no previously-recorded version of this object for this empire.
                 // create a new one, copying only the information limtied by visibility,
                 // leaving the rest as default values
-                const bool destroyed = known_destroyed_ids.count(object_id) > 0;
+                const bool destroyed = known_destroyed_ids.contains(object_id);
                 known_object_map.insert(full_object->Clone(*this, empire_id), destroyed);
             }
 
@@ -2848,7 +2848,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge(EmpireManager& empires) {
         // remove stale marking for any known destroyed or currently visible objects
         for (auto stale_it = stale_set.begin(); stale_it != stale_set.end();) {
             int object_id = *stale_it;
-            if (vis_map.count(object_id) || destroyed_set.count(object_id))
+            if (vis_map.contains(object_id) || destroyed_set.contains(object_id))
                 stale_it = stale_set.erase(stale_it);
             else
                 ++stale_it;
@@ -2902,7 +2902,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge(EmpireManager& empires) {
                 continue;
 
             // destroyed? not stale
-            if (destroyed_set.count(fleet->ID())) {
+            if (destroyed_set.contains(fleet->ID())) {
                 stale_set.insert(fleet->ID());
                 continue;
             }
@@ -2922,7 +2922,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge(EmpireManager& empires) {
                     continue;
 
                 // if ship is destroyed, doesn't count
-                if (destroyed_set.count(ship->ID()))
+                if (destroyed_set.contains(ship->ID()))
                     continue;
 
                 // is contained ship visible? If so, fleet is not stale.
@@ -2933,7 +2933,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge(EmpireManager& empires) {
                 }
 
                 // is contained ship not visible and not stale? if so, fleet is not stale
-                if (!stale_set.count(ship->ID())) {
+                if (!stale_set.contains(ship->ID())) {
                     fleet_stale = false;
                     break;
                 }
@@ -3142,7 +3142,7 @@ bool Universe::Delete(int object_id) {
 }
 
 void Universe::EffectDestroy(int object_id, int source_object_id) {
-    if (m_marked_destroyed.count(object_id))
+    if (m_marked_destroyed.contains(object_id))
         return;
     m_marked_destroyed[object_id].insert(source_object_id);
 }

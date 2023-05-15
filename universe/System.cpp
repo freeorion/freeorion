@@ -85,38 +85,38 @@ void System::Copy(const System& copied_system, const Universe& universe, int emp
         m_orbits.assign(orbits_size, INVALID_OBJECT_ID);
         for (std::size_t o = 0u; o < copied_system.m_orbits.size(); ++o) {
             int planet_id = copied_system.m_orbits[o];
-            if (m_objects.count(planet_id))
+            if (m_objects.contains(planet_id))
                 m_orbits[o] = planet_id;
         }
 
         // copy visible contained object per-type info
         m_planets.clear();
         for (int planet_id : copied_system.m_planets) {
-            if (m_objects.count(planet_id))
+            if (m_objects.contains(planet_id))
                 m_planets.insert(planet_id);
         }
 
         m_buildings.clear();
         for (int building_id : copied_system.m_buildings) {
-            if (m_objects.count(building_id))
+            if (m_objects.contains(building_id))
                 m_buildings.insert(building_id);
         }
 
         m_fleets.clear();
         for (int fleet_id : copied_system.m_fleets) {
-            if (m_objects.count(fleet_id))
+            if (m_objects.contains(fleet_id))
                 m_fleets.insert(fleet_id);
         }
 
         m_ships.clear();
         for (int ship_id : copied_system.m_ships) {
-            if (m_objects.count(ship_id))
+            if (m_objects.contains(ship_id))
                 m_ships.insert(ship_id);
         }
 
         m_fields.clear();
         for (int field_id : copied_system.m_fields) {
-            if (m_objects.count(field_id))
+            if (m_objects.contains(field_id))
                 m_fields.insert(field_id);
         }
 
@@ -195,7 +195,7 @@ std::string System::ApparentName(int empire_id, const Universe& u,
 
     // has the indicated empire ever detected this system?
     const auto& vtm = u.GetObjectVisibilityTurnMapByEmpire(this->ID(), empire_id);
-    if (!vtm.count(Visibility::VIS_PARTIAL_VISIBILITY)) {
+    if (!vtm.contains(Visibility::VIS_PARTIAL_VISIBILITY)) {
         if (blank_unexplored_and_none)
             return EMPTY_STRING;
 

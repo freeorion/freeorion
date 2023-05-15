@@ -524,7 +524,7 @@ std::string Planet::CardinalSuffix(const ObjectMap& objects) const {
 }
 
 bool Planet::Contains(int object_id) const
-{ return object_id != INVALID_OBJECT_ID && m_buildings.count(object_id); }
+{ return object_id != INVALID_OBJECT_ID && m_buildings.contains(object_id); }
 
 bool Planet::ContainedBy(int object_id) const
 { return object_id != INVALID_OBJECT_ID && this->SystemID() == object_id; }
@@ -651,7 +651,7 @@ void Planet::AddBuilding(int building_id) {
 }
 
 bool Planet::RemoveBuilding(int building_id) {
-    if (m_buildings.count(building_id)) {
+    if (m_buildings.contains(building_id)) {
         m_buildings.erase(building_id);
         StateChangedSignal();
         return true;

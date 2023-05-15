@@ -549,7 +549,7 @@ std::string TechManager::FindFirstDependencyCycle() const {
 
     std::set<const Tech*> checked_techs; // the list of techs that are not part of any cycle
     for (const auto& [tech_name, tech] : m_techs) {
-        if (checked_techs.count(&tech))
+        if (checked_techs.contains(&tech))
             continue;
 
         std::vector<const Tech*> stack;
@@ -565,7 +565,7 @@ std::string TechManager::FindFirstDependencyCycle() const {
             if (current_tech) {
                 for (auto& prereq_name : current_tech->Prerequisites()) {
                     const Tech* prereq_tech = this->GetTech(prereq_name);
-                    if (!prereq_tech || checked_techs.count(prereq_tech))
+                    if (!prereq_tech || checked_techs.contains(prereq_tech))
                         continue;
 
                     // since this is not a checked prereq, see if it is already in the stack somewhere;
@@ -659,7 +659,7 @@ std::vector<std::string> TechManager::RecursivePrereqs(std::string_view tech_nam
     // traverse list, appending new prereqs to it, and putting unique prereqs into set
     for (std::string& cur_name : prereqs_list) {
         // check if this tech is already in the map of prereqs.  If so, it has already been processed, and can be skipped.
-        if (prereqs_set.count(cur_name))
+        if (prereqs_set.contains(cur_name))
             continue;
 
         // tech is new, so put it into the set of already-processed prereqs

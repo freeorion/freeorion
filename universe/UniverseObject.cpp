@@ -95,7 +95,7 @@ void UniverseObject::Copy(const UniverseObject& copied_object,
         this->m_specials.clear();
         this->m_specials.reserve(copied_object.m_specials.size());
         for (const auto& [entry_special_name, entry_special] : copied_object.m_specials) {
-            if (visible_specials.count(entry_special_name))
+            if (visible_specials.contains(entry_special_name))
                 this->m_specials[entry_special_name] = entry_special;
         }
 
@@ -351,7 +351,7 @@ UniverseObject::MeterMap UniverseObject::CensoredMeters(Visibility vis) const {
     MeterMap retval;
     if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
         retval = m_meters;
-    } else if (vis == Visibility::VIS_BASIC_VISIBILITY && m_meters.count(MeterType::METER_STEALTH))
+    } else if (vis == Visibility::VIS_BASIC_VISIBILITY && m_meters.contains(MeterType::METER_STEALTH))
         retval.emplace(MeterType::METER_STEALTH, Meter{Meter::LARGE_VALUE, Meter::LARGE_VALUE});
     return retval;
 }

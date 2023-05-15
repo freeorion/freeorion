@@ -1189,14 +1189,14 @@ void ProductionWnd::UpdateInfoPanel(const ScriptingContext& context) {
     float available_pp_at_loc = 0.0f;
     float allocated_pp_at_loc = 0.0f;
     for (const auto& map : available_pp) {
-        if (map.first.count(prod_loc_id)) {
+        if (map.first.contains(prod_loc_id)) {
             available_pp_at_loc = map.second;
             break;
         }
     }
 
     for (const auto& map : allocated_pp) {
-        if (map.first.count(prod_loc_id)) {
+        if (map.first.contains(prod_loc_id)) {
             allocated_pp_at_loc = map.second;
             break;
         }
@@ -1207,7 +1207,7 @@ void ProductionWnd::UpdateInfoPanel(const ScriptingContext& context) {
     float stockpile_local_use = 0.0f;
 
     for (const auto& map : empire->GetProductionQueue().AllocatedStockpilePP()) {
-        if (map.first.count(prod_loc_id)) {
+        if (map.first.contains(prod_loc_id)) {
             stockpile_local_use = map.second;
             break;
         }

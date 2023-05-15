@@ -107,14 +107,14 @@ namespace {
             return false;
 
         // check that category is visible
-        if (!categories_shown.count(tech->Category()))
+        if (!categories_shown.contains(tech->Category()))
             return false;
 
         // check tech status
         const Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
         if (!empire)
             return true;    // if no empire, techs have no status, so just return true
-        if (!statuses_shown.count(empire->GetTechStatus(tech_name)))
+        if (!statuses_shown.contains(empire->GetTechStatus(tech_name)))
             return false;
 
         // all tests pass, so tech is visible
@@ -375,7 +375,7 @@ void TechTreeWnd::TechTreeControls::RefreshCategoryButtons(const std::set<std::s
 
         AttachChild(button);
 
-        button->SetCheck(cats_shown.count(category));
+        button->SetCheck(cats_shown.contains(category));
 
         button->CheckedSignal.connect(
             boost::bind(&TechTreeControls::CategoryButtonCheckedSlot, this, std::move(category), boost::placeholders::_1));
@@ -1244,7 +1244,7 @@ void TechTreeWnd::LayoutPanel::SetScale(double scale) {
 }
 
 void TechTreeWnd::LayoutPanel::ShowCategory(const std::string& category) {
-    if (!m_categories_shown.count(category)) {
+    if (!m_categories_shown.contains(category)) {
         m_categories_shown.insert(category);
         Layout(true);
     }
@@ -1275,7 +1275,7 @@ void TechTreeWnd::LayoutPanel::HideAllCategories() {
 }
 
 void TechTreeWnd::LayoutPanel::ShowStatus(TechStatus status) {
-    if (!m_tech_statuses_shown.count(status)) {
+    if (!m_tech_statuses_shown.contains(status)) {
         m_tech_statuses_shown.insert(status);
         Layout(true);
     }
@@ -1425,7 +1425,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
     if (keep_position) {
         m_selected_tech_name = selected_tech;
         // select clicked on tech
-        if (m_techs.count(m_selected_tech_name))
+        if (m_techs.contains(m_selected_tech_name))
             m_techs[m_selected_tech_name]->Select(true);
         double hscroll_page_size_ratio = m_hscroll->PageSize() / initial_hscroll_page_size;
         double vscroll_page_size_ratio = m_vscroll->PageSize() / initial_vscroll_page_size;
@@ -1456,10 +1456,10 @@ void TechTreeWnd::LayoutPanel::ScrolledSlot(int, int, int, int) {
 
 void TechTreeWnd::LayoutPanel::SelectTech(const std::string& tech_name) {
     // deselect previously-selected tech panel
-    if (m_techs.count(m_selected_tech_name))
+    if (m_techs.contains(m_selected_tech_name))
         m_techs[m_selected_tech_name]->Select(false);
     // select clicked on tech
-    if (m_techs.count(tech_name))
+    if (m_techs.contains(tech_name))
         m_techs[tech_name]->Select(true);
     m_selected_tech_name = tech_name;
     TechSelectedSignal(tech_name, GG::Flags<GG::ModKey>());
@@ -1899,7 +1899,7 @@ void TechTreeWnd::TechListBox::Populate(bool update ) {
 }
 
 void TechTreeWnd::TechListBox::ShowCategory(const std::string& category) {
-    if (!m_categories_shown.count(category)) {
+    if (!m_categories_shown.contains(category)) {
         m_categories_shown.insert(category);
         Populate();
     }
@@ -1930,7 +1930,7 @@ void TechTreeWnd::TechListBox::HideAllCategories() {
 }
 
 void TechTreeWnd::TechListBox::ShowStatus(TechStatus status) {
-    if (!m_tech_statuses_shown.count(status)) {
+    if (!m_tech_statuses_shown.contains(status)) {
         m_tech_statuses_shown.insert(status);
         Populate();
     }

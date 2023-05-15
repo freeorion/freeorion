@@ -1406,9 +1406,9 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         std::set<std::string> psd_names;
         std::set<int> psd_ids;
         for (auto& player : incoming_lobby_data.players) {
-            if (psd_colors.count(player.second.empire_color) ||
-                psd_names.count(player.second.empire_name) ||
-                psd_names.count(player.second.player_name))
+            if (psd_colors.contains(player.second.empire_color) ||
+                psd_names.contains(player.second.empire_name) ||
+                psd_names.contains(player.second.player_name))
             {
                 has_collision = true;
                 WarnLogger(FSM) << "Got color, empire's name or player's name collision for player "
@@ -1683,9 +1683,9 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 
                 // if we have collision or unallowed client type
                 // unset ready flag and ignore changes
-                if (psd_colors.count(j_player.second.empire_color) ||
-                    psd_names.count(j_player.second.empire_name) ||
-                    psd_names.count(j_player.second.player_name) ||
+                if (psd_colors.contains(j_player.second.empire_color) ||
+                    psd_names.contains(j_player.second.empire_name) ||
+                    psd_names.contains(j_player.second.player_name) ||
                     (j_player.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
                         !sender->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER)) ||
                     (j_player.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR &&
@@ -2340,7 +2340,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
     // is this an AI?
     if (client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
         // verify that player name was expected
-        if (!m_expected_ai_player_names.count(player_name)) {
+        if (!m_expected_ai_player_names.contains(player_name)) {
             // unexpected ai player
             ErrorLogger(FSM) << "WaitingForMPGameJoiners::react(const JoinGame& msg) received join game message for player \"" << player_name << "\" which was not an expected AI player name.    Terminating connection.";
             server.m_networking.Disconnect(player_connection);

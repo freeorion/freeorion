@@ -117,7 +117,7 @@ void EmpireManager::InsertEmpire(std::shared_ptr<Empire>&& empire) {
 
     int empire_id = empire->EmpireID();
 
-    if (m_empire_map.count(empire_id)) {
+    if (m_empire_map.contains(empire_id)) {
         ErrorLogger() << "EmpireManager::InsertEmpire passed empire with id (" << empire_id << ") for which there already is an empire.";
         return;
     }

@@ -1203,7 +1203,7 @@ void FilterDialog::CompleteConstruction() {
         {
             auto button = GG::Wnd::Create<CUIStateButton>(
                 " ", GG::FORMAT_CENTER, std::make_shared<CUICheckBoxRepresenter>());
-            button->SetCheck(vis_display.count(visibility));
+            button->SetCheck(vis_display.contains(visibility));
             button->CheckedSignal.connect(
                 boost::bind(&FilterDialog::UpdateVisFiltersFromStateButtons, this, boost::placeholders::_1));
             m_filters_layout->Add(button, row, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
@@ -1274,7 +1274,7 @@ void FilterDialog::UpdateStateButtonsFromVisFilters() {
         for (auto& button : entry.second) {
             if (!button.second)
                 continue;
-            button.second->SetCheck(shown_vis.count(button.first));
+            button.second->SetCheck(shown_vis.contains(button.first));
         }
     }
 }
@@ -1314,7 +1314,7 @@ void FilterDialog::UpdateVisFilterFromVisibilityButton(VIS_DISPLAY vis) {
     bool all_on = true;
     for (const auto& entry : m_filter_buttons) {
         auto& type_vis = m_vis_filters[entry.first];
-        if (!type_vis.count(vis)) {
+        if (!type_vis.contains(vis)) {
             all_on = false;
             break;
         }
@@ -2037,7 +2037,7 @@ public:
     }
 
     bool ObjectCollapsed(int object_id) const
-    { return object_id != INVALID_OBJECT_ID && m_collapsed_objects.count(object_id); }
+    { return object_id != INVALID_OBJECT_ID && m_collapsed_objects.contains(object_id); }
 
     bool AnythingCollapsed() const
     { return !m_collapsed_objects.empty(); }
@@ -2073,13 +2073,13 @@ public:
         const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
         const UniverseObjectType type = obj->ObjectType();
 
-        if (context.ContextUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id).count(object_id))
-            return m_visibilities[type].count(VIS_DISPLAY::SHOW_DESTROYED);
+        if (context.ContextUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id).contains(object_id))
+            return m_visibilities[type].contains(VIS_DISPLAY::SHOW_DESTROYED);
 
         if (assume_visible_without_checking || context.ContextUniverse().GetObjectVisibilityByEmpire(object_id, client_empire_id) >= Visibility::VIS_PARTIAL_VISIBILITY)
-            return m_visibilities[type].count(VIS_DISPLAY::SHOW_VISIBLE);
+            return m_visibilities[type].contains(VIS_DISPLAY::SHOW_VISIBLE);
 
-        return m_visibilities[type].count(VIS_DISPLAY::SHOW_PREVIOUSLY_VISIBLE);
+        return m_visibilities[type].contains(VIS_DISPLAY::SHOW_PREVIOUSLY_VISIBLE);
     }
 
     template <typename T>
@@ -2571,7 +2571,7 @@ void ObjectListWnd::ObjectSelectionChanged(const GG::ListBox::SelectionSet& rows
             ErrorLogger() << "ObjectListWnd::ObjectSelectionChanged couldn't get ObjectPanel from control";
             continue;
         }
-        data_panel->Select(rows.count(it));
+        data_panel->Select(rows.contains(it));
     }
 
     SelectedObjectsChangedSignal();
@@ -2601,13 +2601,11 @@ std::set<int> ObjectListWnd::SelectedObjectIDs() const {
 
 void ObjectListWnd::SetSelectedObjects(std::set<int> sel_ids) {
     for (auto it = m_list_box->begin(); it != m_list_box->end(); ++it) {
-        ObjectRow *row = dynamic_cast<ObjectRow *>(it->get());
-        if (row) {
-            int selected_object_id = row->ObjectID();
+        if (auto* row = dynamic_cast<ObjectRow*>(it->get())) {
+            const int selected_object_id = row->ObjectID();
             if (selected_object_id != INVALID_OBJECT_ID) {
-                if (sel_ids.count(selected_object_id)) {
+                if (sel_ids.contains(selected_object_id))
                     m_list_box->SelectRow(it);
-                }
             }
         }
     }

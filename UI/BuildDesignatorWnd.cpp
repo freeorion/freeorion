@@ -459,7 +459,7 @@ namespace {
             std::map<std::string, int> ship_part_names;
 
             for (const std::string& part_name : design->Parts()) {
-                if (ship_part_names.count(part_name))
+                if (ship_part_names.contains(part_name))
                     ship_part_names[part_name]++;
                 else
                     ship_part_names[part_name] = 1;
@@ -825,7 +825,7 @@ void BuildDesignatorWnd::BuildSelector::Refresh() {
 }
 
 void BuildDesignatorWnd::BuildSelector::ShowType(BuildType type, bool refresh_list) {
-    if (!m_build_types_shown.count(type)) {
+    if (!m_build_types_shown.contains(type)) {
         m_build_types_shown.insert(type);
         if (refresh_list)
             Refresh();
@@ -901,7 +901,7 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
     if (build_type != BuildType::BT_BUILDING)
         throw std::invalid_argument("BuildableItemVisible was passed an invalid build type with a name");
 
-    if (!m_build_types_shown.count(build_type))
+    if (!m_build_types_shown.contains(build_type))
         return false;
 
     const BuildingType* building_type = GetBuildingType(name);
@@ -930,7 +930,7 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
     if (build_type != BuildType::BT_SHIP)
         throw std::invalid_argument("BuildableItemVisible was passed an invalid build type with an id");
 
-    if (!m_build_types_shown.count(build_type))
+    if (!m_build_types_shown.contains(build_type))
         return false;
 
     const ShipDesign* design = GetUniverse().GetShipDesign(design_id);
@@ -982,7 +982,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
 
     // populate list with building types
     //DebugLogger() << "BuildDesignatorWnd::BuildSelector::PopulateList() : Adding Buildings ";
-    if (m_build_types_shown.count(BuildType::BT_BUILDING)) {
+    if (m_build_types_shown.contains(BuildType::BT_BUILDING)) {
         BuildingTypeManager& manager = GetBuildingTypeManager();
         // create and insert rows...
         std::vector<std::shared_ptr<GG::ListBox::Row>> rows;
@@ -1002,7 +1002,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
 
     // populate with ship designs
     //DebugLogger() << "BuildDesignatorWnd::BuildSelector::PopulateList() : Adding ship designs";
-    if (m_build_types_shown.count(BuildType::BT_SHIP)) {
+    if (m_build_types_shown.contains(BuildType::BT_SHIP)) {
         // get ids of designs to show... for specific empire, or for all empires
         std::vector<int> design_ids;
         if (empire) {
@@ -1402,7 +1402,7 @@ void BuildDesignatorWnd::HideAllTypes(bool refresh_list) {
 void BuildDesignatorWnd::ToggleType(BuildType type, bool refresh_list) {
     if (type == BuildType::BT_BUILDING || type == BuildType::BT_SHIP) {
         const std::set<BuildType>& types_shown = m_build_selector->GetBuildTypesShown();
-        if (!types_shown.count(type))
+        if (!types_shown.contains(type))
             ShowType(type, refresh_list);
         else
             HideType(type, refresh_list);

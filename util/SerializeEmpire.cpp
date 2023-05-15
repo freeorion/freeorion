@@ -469,7 +469,7 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
         for (auto& [ids, diplo_status] : em.m_empire_diplomatic_statuses) {
             (void)diplo_status; // quiet unused warning
             const auto& [e1, e2] = ids;
-            if (em.m_empire_map.count(e1) < 1 || em.m_empire_map.count(e2) < 1) {
+            if (!em.m_empire_map.contains(e1) || !em.m_empire_map.contains(e2)) {
                 to_erase.emplace_back(e1, e2);
                 ErrorLogger() << "Erased invalid diplomatic status between empires " << e1 << " and " << e2;
             }
@@ -485,7 +485,7 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
                 if (e1_id >= e2_id)
                     continue;
                 auto dk = DiploKey(e1_id, e2_id);
-                if (em.m_empire_diplomatic_statuses.count(dk) < 1) {
+                if (!em.m_empire_diplomatic_statuses.contains(dk)) {
                     em.m_empire_diplomatic_statuses[dk] = DiplomaticStatus::DIPLO_WAR;
                     ErrorLogger() << "Added missing diplomatic status (default WAR) between empires "
                                   << e1_id << " and " << e2_id;

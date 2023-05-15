@@ -121,7 +121,7 @@ private:
                 const std::string& to   = edge->GetTechTo();
                 // Do not show lines leading to techs
                 // we are not showing
-                if (!techs.count(to))
+                if (!techs.contains(to))
                     continue;
                 // Remember what edges we are showing so
                 // we can eventually highlight them

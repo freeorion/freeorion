@@ -426,8 +426,8 @@ namespace {
             if (empire) {
                 for (auto* ship : objects.allRaw<Ship>()) {
                     if (ship->Owner() == empire->EmpireID()
-                        && !this_client_known_destroyed_objects.count(ship->ID())
-                        && !this_client_stale_object_info.count(ship->ID())) {
+                        && !this_client_known_destroyed_objects.contains(ship->ID())
+                        && !this_client_stale_object_info.contains(ship->ID())) {
                             empires_ship_count += 1;
                     }
                 }
@@ -837,7 +837,7 @@ void PlayerListWnd::SetSelectedPlayers(const std::set<int>& player_ids) {
         }
 
         // if this row's player should be selected, so so
-        if (player_ids.count(row->PlayerID())) {
+        if (player_ids.contains(row->PlayerID())) {
             m_player_list->SelectRow(it);
             m_player_list->BringRowIntoView(it);  // may cause earlier rows brought into view to be brought out of view... oh well
         }
@@ -900,7 +900,7 @@ void PlayerListWnd::PlayerSelectionChanged(const GG::ListBox::SelectionSet& rows
             ErrorLogger() << "PlayerListWnd::PlayerSelectionChanged couldn't get PlayerDataPanel from control";
             continue;
         }
-        data_panel->Select(rows.count(it));
+        data_panel->Select(rows.contains(it));
     }
 
     SelectedPlayersChangedSignal();

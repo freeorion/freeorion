@@ -480,7 +480,7 @@ ShipDesign::MaybeInvalidDesign(std::string hull, std::vector<std::string> parts,
     auto has_component = [&component_counts](std::string_view sv) -> bool
     { return component_counts.contains(sv); };
     auto has_multiples_of_component = [&component_counts](std::string_view sv) -> bool
-    { return component_counts.count(sv) > 1; };
+    { return component_counts.contains(sv); };
 
 
     // check each part's existance and exclusions
@@ -888,14 +888,14 @@ namespace {
         for (auto& uuid_and_design : disk_designs) {
             auto& design = uuid_and_design.second.first;
 
-            if (designs.count(design->UUID())) {
+            if (designs.contains(design->UUID())) {
                 ErrorLogger() << design->Name() << " ship design does not have a unique UUID for "
                               << "its type monster or pre-defined. "
                               << designs[design->UUID()]->Name() << " has the same UUID.";
                 continue;
             }
 
-            if (name_to_uuid.count(design->Name())) {
+            if (name_to_uuid.contains(design->Name())) {
                 ErrorLogger() << design->Name() << " ship design does not have a unique name for "
                               << "its type monster or pre-defined.";
                 continue;
@@ -989,7 +989,7 @@ LoadShipDesignsAndManifestOrderFromParseResults(
                           << design->UUID() << " for name " << design->Name();
         }
 
-        if (!saved_designs.count(design->UUID())) {
+        if (!saved_designs.contains(design->UUID())) {
             TraceLogger() << "Added saved design UUID " << design->UUID()
                           << " with name " << design->Name();
             auto uuid = design->UUID();
@@ -1010,7 +1010,7 @@ LoadShipDesignsAndManifestOrderFromParseResults(
         if (uuid.is_nil())
             continue;
 
-        if (!saved_designs.count(uuid)) {
+        if (!saved_designs.contains(uuid)) {
             WarnLogger() << "UUID " << uuid << " is in ship design manifest for "
                          << "a ship design that does not exist.";
             ship_manifest_inconsistent = true;
@@ -1026,7 +1026,7 @@ LoadShipDesignsAndManifestOrderFromParseResults(
             uuids_in_ordering{ordering.begin(), ordering.end()};
         std::map<std::string, boost::uuids::uuid> missing_uuids_sorted_by_name;
         for (auto& uuid_to_design_and_filename : saved_designs) {
-            if (uuids_in_ordering.count(uuid_to_design_and_filename.first))
+            if (uuids_in_ordering.contains(uuid_to_design_and_filename.first))
                 continue;
             ship_manifest_inconsistent = true;
             missing_uuids_sorted_by_name.emplace(

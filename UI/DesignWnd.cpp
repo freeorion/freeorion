@@ -576,7 +576,7 @@ namespace {
         }
 
         CheckPendingDesigns();
-        if (m_saved_designs.count(design.UUID())) {
+        if (m_saved_designs.contains(design.UUID())) {
             // UUID already exists so this is a move.  Remove the old UUID location
             const auto existing_it = std::find(m_ordered_uuids.begin(), m_ordered_uuids.end(),
                                                design.UUID());
@@ -602,12 +602,12 @@ namespace {
             return false;
 
         CheckPendingDesigns();
-        if (!m_saved_designs.count(moved_uuid)) {
+        if (!m_saved_designs.contains(moved_uuid)) {
             ErrorLogger() << "Unable to move saved design because moved design is missing.";
             return false;
         }
 
-        if (!next_uuid.is_nil() && !m_saved_designs.count(next_uuid)) {
+        if (!next_uuid.is_nil() && !m_saved_designs.contains(next_uuid)) {
             ErrorLogger() << "Unable to move saved design because target design is missing.";
             return false;
         }
@@ -776,7 +776,7 @@ namespace {
     }
 
     bool DisplayedShipDesignManager::IsKnown(const int id) const
-    { return m_id_to_obsolete_and_loc.count(id); }
+    { return m_id_to_obsolete_and_loc.contains(id); }
 
 
     boost::optional<bool> DisplayedShipDesignManager::IsObsolete(
@@ -885,7 +885,7 @@ namespace {
         for (const auto& id_and_obsolete : design_ids_and_obsoletes) {
             const auto id = id_and_obsolete.first;
             const auto& obsolete = id_and_obsolete.second;
-            if (m_id_to_obsolete_and_loc.count(id)) {
+            if (m_id_to_obsolete_and_loc.contains(id)) {
                 ErrorLogger() << "DisplayedShipDesignManager::Load duplicate design id = " << id;
                 continue;
             }
@@ -907,7 +907,7 @@ namespace {
         for (const auto& name_and_obsolete : hulls_and_obsoletes) {
             const auto& name = name_and_obsolete.first;
             const auto& obsolete = name_and_obsolete.second;
-            if (m_hull_to_obsolete_and_loc.count(name)) {
+            if (m_hull_to_obsolete_and_loc.contains(name)) {
                 ErrorLogger() << "DisplayedShipDesignManager::Load duplicate hull name = " << name;
                 continue;
             }
@@ -1448,7 +1448,7 @@ PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire
 
         // check whether this part should be shown in list
         ShipPartClass part_class = part->Class();
-        if (!m_part_classes_shown.count(part_class))
+        if (!m_part_classes_shown.contains(part_class))
             continue;   // part of this class is not requested to be shown
 
         // Check if part satisfies availability and obsolecense
@@ -1645,7 +1645,7 @@ void PartsListBox::Populate() {
     for (auto& part_group : part_groups) {
         std::multimap<double, const ShipPart*> sorted_group;
         for (const ShipPart* part : part_group.second) {
-            if (already_added.count(part))
+            if (already_added.contains(part))
                 continue;
             already_added.insert(part);
             sorted_group.emplace(GetMainStat(part), part);
@@ -1694,7 +1694,7 @@ void PartsListBox::Populate() {
 }
 
 void PartsListBox::ShowClass(ShipPartClass part_class, bool refresh_list) {
-    if (!m_part_classes_shown.count(part_class)) {
+    if (!m_part_classes_shown.contains(part_class)) {
         m_part_classes_shown.insert(part_class);
         if (refresh_list)
             Populate();
@@ -2054,7 +2054,7 @@ void DesignWnd::PartPalette::HideAllClasses(bool refresh_list) {
 void DesignWnd::PartPalette::ToggleClass(ShipPartClass part_class, bool refresh_list) {
     if (part_class >= ShipPartClass(0) && part_class < ShipPartClass::NUM_SHIP_PART_CLASSES) {
         const auto& classes_shown = m_parts_list->GetClassesShown();
-        if (!classes_shown.count(part_class))
+        if (!classes_shown.contains(part_class))
             ShowClass(part_class, refresh_list);
         else
             HideClass(part_class, refresh_list);
@@ -4624,7 +4624,7 @@ void DesignWnd::MainPanel::DesignChanged() {
             if (!part)
                 continue;
             for (const std::string& excluded_part : part->Exclusions()) {
-                if (already_seen_component_names.count(excluded_part)) {
+                if (already_seen_component_names.contains(excluded_part)) {
                     m_disabled_by_part_conflict = true;
                     problematic_components.first = part_name;
                     problematic_components.second = excluded_part;

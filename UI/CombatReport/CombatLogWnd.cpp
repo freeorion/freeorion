@@ -101,10 +101,7 @@ namespace {
         decltype(SegregateForces(owners, objects, categories, order)) forces;
 
         for (const auto& object: Objects().find(objects)) {
-            if (!object)
-                continue;
-
-            if (owners.count(object->Owner()) == 0)
+            if (!object || !owners.contains(object->Owner()))
                 continue;
 
             auto& owner_forces = forces[object->Owner()];

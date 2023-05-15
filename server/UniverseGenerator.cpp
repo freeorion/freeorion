@@ -293,8 +293,8 @@ namespace {
         if (system1 == system2) return true; // system is always connected to itself
         if (0 == maxLaneJumps) return false; // no system is connected to any other system by less than 1 jump
 
-        if (!system_lanes.count(system1)) return false;     // start system not in lanes map
-        if (!system_lanes.count(system2)) return false;     // destination system not in lanes map
+        if (!system_lanes.contains(system1)) return false;     // start system not in lanes map
+        if (!system_lanes.contains(system2)) return false;     // destination system not in lanes map
 
         if (system_lanes.at(system1).empty()) return false; // no lanes out of start system
         if (system_lanes.at(system2).empty()) return false; // no lanes out of destination system
@@ -414,7 +414,7 @@ namespace {
                     std::pair{cur_sys_id, dest1} : std::pair{dest1, cur_sys_id}};
 
                 // check if this lane has already been added to the set of lanes to remove
-                if (lanesToRemoveSet.count(lane1)) {
+                if (lanesToRemoveSet.contains(lane1)) {
                     ++laneSetIter1;
                     continue;
                 }
@@ -439,7 +439,7 @@ namespace {
 
                     // check if this lane has already been added to the
                     // set of lanes to remove
-                    if (lanesToRemoveSet.count(lane2)) {
+                    if (lanesToRemoveSet.contains(lane2)) {
                         ++laneSetIter2;
                         continue;
                     }
@@ -567,8 +567,8 @@ namespace {
         // Iterate through set of lanes to remove, and remove them in turn.
         // Lanes are sorted by length, so are processed longest-first
         for (const auto& [dist, lane] : lanes_to_remove) {
-            if (system_lanes[lane.first].count(lane.second) == 0 ||
-                system_lanes[lane.second].count(lane.first) == 0)
+            if (!system_lanes[lane.first].contains(lane.second) ||
+                !system_lanes[lane.second].contains(lane.first))
             { continue; }
 
             // remove lane

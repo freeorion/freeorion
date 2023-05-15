@@ -417,7 +417,7 @@ namespace {
 
                 // TODO: stealthy worlds should be hidden on the server side and not show up as clear text here, only when the empire has sufficient detection strength
                 // homeworld
-                if (!homeworlds.count(entry.first) || homeworlds.at(entry.first).empty()) {
+                if (!homeworlds.contains(entry.first) || homeworlds.at(entry.first).empty()) {
                     continue;
                 } else {
                     const auto& this_species_homeworlds = homeworlds.at(entry.first);
@@ -445,7 +445,7 @@ namespace {
                 // occupied planets
                 std::vector<const Planet*> species_occupied_planets;
                 for (const auto& planet : objects.allRaw<Planet>()) {
-                    if ((planet->SpeciesName() == entry.first) && !known_homeworlds.count(planet->ID()))
+                    if ((planet->SpeciesName() == entry.first) && !known_homeworlds.contains(planet->ID()))
                         species_occupied_planets.push_back(planet);
                 }
                 if (!species_occupied_planets.empty()) {
