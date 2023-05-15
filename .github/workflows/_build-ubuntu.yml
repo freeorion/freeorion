@@ -1,34 +1,10 @@
 name: "Ubuntu"
 
 on:
-  push:
-    branches: [ 'master' ]
-    paths-ignore:
-      - 'msvc*/**'
-      - 'check/**'
-      - 'doc/**'
-      - 'packaging/**'
-      - 'snap/**'
-      - '*.md'
-      - 'check/**'
-      - 'default/**'
-      - 'test-scripting/**'
-  pull_request:
-    branches: [ 'master' ]
-    types: ['opened', 'reopened', 'synchronize']
-    paths-ignore:
-      - 'msvc*/**'
-      - 'check/**'
-      - 'doc/**'
-      - 'packaging/**'
-      - 'snap/**'
-      - '*.md'
-      - 'check/**'
-      - 'default/**'
-      - 'test-scripting/**'
+  workflow_call:
 
 jobs:
-  build-ubuntu:
+  ubuntu:
     name: ${{ matrix.os }} Build FreeOrion GG=${{ matrix.client-gg }} Godot=${{ matrix.client-godot }} compiler ${{ matrix.compiler }}
     runs-on: ${{ matrix.os }}
     strategy:

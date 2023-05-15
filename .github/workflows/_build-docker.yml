@@ -1,32 +1,9 @@
 name: "Dockerized Linux"
 
 on:
-  push:
-    branches: [ 'master' ]
-    paths-ignore:
-      - 'msvc*/**'
-      - 'check/**'
-      - 'doc/**'
-      - 'packaging/**'
-      - 'snap/**'
-      - '*.md'
-      - 'check/**'
-      - 'default/**'
-      - 'test-scripting/**'
-  pull_request:
-    branches: [ 'master' ]
-    types: ['opened', 'reopened', 'synchronize']
-    paths-ignore:
-      - 'msvc*/**'
-      - 'check/**'
-      - 'doc/**'
-      - 'packaging/**'
-      - 'snap/**'
-      - '*.md'
-      - 'check/**'
-
+  workflow_call:
 jobs:
-  build-docker:
+  docker:
     timeout-minutes: 55
     name: Docker ${{ matrix.image }}
     runs-on: ubuntu-latest

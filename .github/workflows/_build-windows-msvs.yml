@@ -1,32 +1,9 @@
-name: "Windows MS VS build"
+name: "Windows MS VS"
 
 on:
-  push:
-    branches: [ 'master', 'weekly-test-builds']
-    paths-ignore:
-      - 'check/**'
-      - 'doc/**'
-      - 'packaging/**'
-      - 'snap/**'
-      - '*.md'
-      - 'check/**'
-      - 'default/**'
-      - 'test-scripting/**'
-  pull_request:
-    branches: [ 'master' ]
-    types: ['opened', 'reopened', 'synchronize']
-    paths-ignore:
-      - 'check/**'
-      - 'doc/**'
-      - 'packaging/**'
-      - 'snap/**'
-      - '*.md'
-      - 'check/**'
-      - 'default/**'
-      - 'test-scripting/**'
-
+  workflow_call:
 jobs:
-  build-windows-2022:
+  windows-2022:
     name: MSVS 2022 on Windows
     runs-on: windows-2022
     steps:
