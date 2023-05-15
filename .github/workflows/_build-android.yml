@@ -1,4 +1,4 @@
-name: "Android build"
+name: "Android"
 
 on:
   workflow_call:
@@ -24,7 +24,7 @@ jobs:
           path: godot-api.json
           if-no-files-found: error
           retention-days: 1
-  build-android:
+  android:
     name: Android ${{ matrix.arch }}
     runs-on: ubuntu-latest
     needs: generate-godot-api

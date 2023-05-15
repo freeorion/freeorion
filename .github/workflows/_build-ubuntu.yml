@@ -4,7 +4,7 @@ on:
   workflow_call:
 
 jobs:
-  build-ubuntu:
+  ubuntu:
     name: ${{ matrix.os }} Build FreeOrion GG=${{ matrix.client-gg }} Godot=${{ matrix.client-godot }} compiler ${{ matrix.compiler }}
     runs-on: ${{ matrix.os }}
     strategy:

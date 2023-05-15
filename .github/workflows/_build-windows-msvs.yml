@@ -1,9 +1,9 @@
-name: "Windows MS VS build"
+name: "Windows MS VS"
 
 on:
   workflow_call:
 jobs:
-  build-windows-2022:
+  windows-2022:
     name: MSVS 2022 on Windows
     runs-on: windows-2022
     steps:

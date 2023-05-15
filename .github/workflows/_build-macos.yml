@@ -3,7 +3,7 @@ name: "MacOS"
 on:
   workflow_call:
 jobs:
-  build-macos:
+  macos:
     name: ${{ matrix.os }} Build FreeOrion
     runs-on: ${{ matrix.os }}
     strategy:

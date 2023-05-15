@@ -3,7 +3,7 @@ name: "Dockerized Linux"
 on:
   workflow_call:
 jobs:
-  build-docker:
+  docker:
     timeout-minutes: 55
     name: Docker ${{ matrix.image }}
     runs-on: ubuntu-latest

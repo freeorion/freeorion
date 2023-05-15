@@ -27,14 +27,16 @@ on:
       - 'test-scripting/**'
 jobs:
   android:
-    uses: ./.github/workflows/build-android.yml
+    uses: ./.github/workflows/_build-android.yml
   macos:
-    uses: ./.github/workflows/build-macos.yml
+    uses: ./.github/workflows/_build-macos.yml
   ubuntu:
-    uses: ./.github/workflows/build-ubuntu.yml
+    uses: ./.github/workflows/_build-ubuntu.yml
   windows:
-    uses: ./.github/workflows/build-windows.yml
+    uses: ./.github/workflows/_build-windows.yml
   windows-msvc:
-    uses: ./.github/workflows/build-windows-msvs.yml
+    uses: ./.github/workflows/_build-windows-msvs.yml
   docker:
-    uses: ./.github/workflows/build-docker.yml
+    uses: ./.github/workflows/_build-docker.yml
+  snapcraft:
+    uses: ./.github/workflows/_build_snapcraft.yml
