@@ -1,0 +1,22 @@
+name: "Build"
+on:
+  push:
+    branches: [ 'master' ]
+    paths-ignore:
+      - 'msvc*/**'
+      - 'check/**'
+      - 'doc/**'
+      - 'packaging/**'
+      - 'snap/**'
+      - '*.md'
+      - 'check/**'
+      - 'default/**'
+      - 'test-scripting/**'
+
+jobs:
+  build:
+    uses: ./.github/workflows/_build-all.yml
+  publish-weekly-release:
+    if: github.ref == 'refs/heads/master'
+    uses: ./.github/workflows/_merge-to-weekly-release.yml
+    needs: [ build ]

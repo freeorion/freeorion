@@ -1,0 +1,18 @@
+name: "Build"
+on:
+  workflow_call:
+jobs:
+  android:
+    uses: ./.github/workflows/_build-android.yml
+  macos:
+    uses: ./.github/workflows/_build-macos.yml
+  ubuntu:
+    uses: ./.github/workflows/_build-ubuntu.yml
+  windows:
+    uses: ./.github/workflows/_build-windows.yml
+  windows-msvc:
+    uses: ./.github/workflows/_build-windows-msvs.yml
+  docker:
+    uses: ./.github/workflows/_build-docker.yml
+  snapcraft:
+    uses: ./.github/workflows/_build_snapcraft.yml

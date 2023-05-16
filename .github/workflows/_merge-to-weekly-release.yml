@@ -1,0 +1,16 @@
+name: Merge master to weekly release
+on:
+  workflow_call:
+jobs:
+  sync-branch:
+    runs-on: ubuntu-latest
+    environment: weekly-build
+    steps:
+      - uses: actions/checkout@v3
+      - name: Merge master -> weekly release
+        uses: devmasx/merge-branch@master
+        with:
+          type: now
+          from_branch: master
+          target_branch: refs/heads/weekly-test-builds
+          github_token: ${{ secrets.GITHUB_TOKEN }}
