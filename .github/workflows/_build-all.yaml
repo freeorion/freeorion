@@ -19,4 +19,11 @@ jobs:
   publish_weekly-release:
     if: github.ref == 'refs/heads/master'
     uses: ./.github/workflows/_merge_to_weekly_release.yml
-    needs: [  android,   macos,   ubuntu,   windows,   windows-msvc,   docker,   snapcraft, ]
+    needs:
+      - android
+      - docker
+      - macos
+      - snapcraft
+      - ubuntu
+      - windows
+      - windows-msvc
