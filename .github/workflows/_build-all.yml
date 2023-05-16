@@ -16,14 +16,3 @@ jobs:
     uses: ./.github/workflows/_build-docker.yml
   snapcraft:
     uses: ./.github/workflows/_build_snapcraft.yml
-  publish_weekly-release:
-    if: github.ref == 'refs/heads/master'
-    uses: ./.github/workflows/_merge_to_weekly_release.yml
-    needs:
-      - android
-      - docker
-      - macos
-      - snapcraft
-      - ubuntu
-      - windows
-      - windows-msvc

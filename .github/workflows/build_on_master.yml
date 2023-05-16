@@ -16,7 +16,7 @@ on:
 jobs:
   build:
     uses: ./.github/workflows/_build-all.yml
-  publish_weekly-release:
+  publish-weekly-release:
     if: github.ref == 'refs/heads/master'
-    uses: ./.github/workflows/_merge_to_weekly_release.yml
+    uses: ./.github/workflows/_merge-to-weekly-release.yml
     needs: [ build ]
