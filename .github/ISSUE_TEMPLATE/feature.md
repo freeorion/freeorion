@@ -26,6 +26,6 @@ Discussion
 
 <!--
 Please create a new forum thread for discussions and link it here;
-to directly open the the "New Topic" form you can use the link below:
+to directly open the "New Topic" form you can use the link below:
 https://www.freeorion.org/forum/posting.php?mode=post&f=6
 -->

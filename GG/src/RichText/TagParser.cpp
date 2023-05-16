@@ -151,7 +151,7 @@ class TagParserImpl {
             const std::string::const_iterator& end,
             std::vector<RichTextTag>* tags)
         {
-            // Use ParseTagsImpl to get the the beginning of the first unmatched end tag.
+            // Use ParseTagsImpl to get the beginning of the first unmatched end tag.
             // We are interested only in the first level tags, so don't pass the vector to populate.
             auto current = ParseTagsImpl(start, end, nullptr);
 

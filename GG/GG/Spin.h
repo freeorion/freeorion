@@ -80,7 +80,7 @@ public:
     X       ButtonWidth() const;        ///< returns the width used for the up and down buttons
 
     Clr     TextColor() const;          ///< returns the text color
-    Clr     InteriorColor() const;      ///< returns the the interior color of the control
+    Clr     InteriorColor() const;      ///< returns the interior color of the control
     Clr     HiliteColor() const;        ///< returns the color used to render hiliting around selected text
     Clr     SelectedTextColor() const;  ///< returns the color used to render selected text
 

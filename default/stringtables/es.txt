@@ -10460,7 +10460,7 @@ DESC_AND_BETWEEN_OPERANDS
 #* <not translated 1970-01-01 01:00:00>
 
 # NOT AND Descriptions for expressions  'NOT AND [ A B C ]'
-# We actually describe the the logically equivalent expression ( (not A) or (not B) or (not C) )
+# We actually describe the logically equivalent expression ( (not A) or (not B) or (not C) )
 # Note: the operands (not A), (not B).. are handled in the descriptions of A, B.. respectively
 #*DESC_NOT_AND_BEFORE_OPERANDS
 #* <not translated 1970-01-01 01:00:00>

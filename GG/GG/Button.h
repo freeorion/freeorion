@@ -124,7 +124,7 @@ class StateButtonRepresenter;
 
     This class is for checkboxes and radio buttons, etc.  The button/checkbox
     area is determined from the text height and format; the button height and
-    width will be the text height, and the the button will be positioned to
+    width will be the text height, and the button will be positioned to
     the left of the text and vertically the same as the text, unless the text
     is centered, in which case the button and text will be centered, and the
     button will appear above or below the text.  Whenever there is not room to

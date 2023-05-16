@@ -6529,7 +6529,7 @@ Detection Range
 METER_DETECTION_VALUE_DESC
 '''The Detection Range represents the distance in uu that sensors can reach. An empire can only see objects that have a [[metertype METER_STEALTH]] value lower than or equal to its [[encyclopedia DETECTION_TITLE]] and are within Detection Range of a controlled space ship or planet.
 
-Space ships and planets have a Detection Range meter. There is the option to display Detection Range circles (in uu) in the Galaxy Map section of the Options menu. To facilitate predictions of what would be within a Detection Range, there are also options to display a standard 'Map Scale Line' as well as a 'Map Scale Circle' centered on the currently selected system and indicating the same distance as the Map Scale Line. They are both responsive to the the map zoom level and can be toggled via hotkeys.
+Space ships and planets have a Detection Range meter. There is the option to display Detection Range circles (in uu) in the Galaxy Map section of the Options menu. To facilitate predictions of what would be within a Detection Range, there are also options to display a standard 'Map Scale Line' as well as a 'Map Scale Circle' centered on the currently selected system and indicating the same distance as the Map Scale Line. They are both responsive to the map zoom level and can be toggled via hotkeys.
 
 Some content may allow vision outside of this range. This includes the species abilities of [[species SP_FULVER]], [[species SP_GEORGE]], [[SP_NIGHTSIDERS]] or [[species SP_TRITH]], the [[buildingtype BLD_SCRYING_SPHERE]], or finding a map in a derelict scout when exploring new systems.
 
@@ -11884,7 +11884,7 @@ DESC_AND_AFTER_SINGLE_OPERAND
 ''''''
 
 # NOT AND Descriptions for expressions  'NOT AND [ A B C ]'
-# We actually describe the the logically equivalent expression ( (not A) or (not B) or (not C) )
+# We actually describe the logically equivalent expression ( (not A) or (not B) or (not C) )
 # Note: the operands (not A), (not B).. are handled in the descriptions of A, B.. respectively
 DESC_NOT_AND_BEFORE_OPERANDS
 [[DESC_NOT_OR_BEFORE_OPERANDS]]
@@ -12299,7 +12299,7 @@ PLC_MODERATION
 Moderation
 
 PLC_MODERATION_DESC
-'''Gives a bonus to the empire's capital's influence output and stability that is larger when the the most-commonly-used focus setting in the empire is used less. How often other focus settings are used does not matter for this bonus; only the number of planets using the most-commonly used focus setting and the total number of owned planets affect it.
+'''Gives a bonus to the empire's capital's influence output and stability that is larger when the most-commonly-used focus setting in the empire is used less. How often other focus settings are used does not matter for this bonus; only the number of planets using the most-commonly used focus setting and the total number of owned planets affect it.
 
 Outposts with no focus selected also count as a focus, and may be the most popular focus setting, which may make getting large bonuses difficult.
 
@@ -12493,7 +12493,7 @@ PLC_THE_HUNT
 The Hunt
 
 PLC_THE_HUNT_DESC
-Boosts [[metertype METER_TARGET_HAPPINESS]] by [[value PLC_THE_HUNT_HAPPINESS_FLAT]], [[metertype METER_TARGET_INFLUENCE]] by [[value PLC_THE_HUNT_INFLUENCE_FLAT]], and [[metertype METER_MAX_TROOPS]] by [[value PLC_THE_HUNT_TROOPS_MAX_FLAT]] on planets in systems that also contain an unowned populated planet, with no [[metertype METER_SHIELD]] or [[metertype METER_DEFENSE]], and with a species other than the species on the benefiting planet or on the the imperial capital.
+Boosts [[metertype METER_TARGET_HAPPINESS]] by [[value PLC_THE_HUNT_HAPPINESS_FLAT]], [[metertype METER_TARGET_INFLUENCE]] by [[value PLC_THE_HUNT_INFLUENCE_FLAT]], and [[metertype METER_MAX_TROOPS]] by [[value PLC_THE_HUNT_TROOPS_MAX_FLAT]] on planets in systems that also contain an unowned populated planet, with no [[metertype METER_SHIELD]] or [[metertype METER_DEFENSE]], and with a species other than the species on the benefiting planet or on the imperial capital.
 
 PLC_THE_HUNT_SHORT_DESC
 Hunting Natives Gives Boosts
