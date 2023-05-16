@@ -753,7 +753,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
 
 
     // add connections into allied empire systems where traversals are
-    // obstructed on one side by the the ally's supply
+    // obstructed on one side by the ally's supply
     for (const auto& [supply_empire_id, empire_obstructed_traversals] : m_supply_starlane_obstructed_traversals) {
         auto& empire_supply_traversals = ally_merged_supply_starlane_traversals[supply_empire_id]; // output
         const auto& supply_empire_baseline_unobstructed_systems =

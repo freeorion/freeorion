@@ -637,7 +637,7 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Fleets window or sidepanel move to the render order top when a fleet or system is shown, even if the shown fleet or system didn't change
 
 - Pedia
-    - Underlined modified rules for the current game on the the pedia page listing game rules
+    - Underlined modified rules for the current game on the pedia page listing game rules
     - Reorganized contents of species pedia pages
     - Hull descriptions list the tags applied to a hull
 

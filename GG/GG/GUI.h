@@ -95,7 +95,7 @@ std::shared_ptr<T> LockAndResetIfExpired(std::weak_ptr<T>& ptr) noexcept {
     individual Wnd.
 
     <p>A note about "button-down-repeat".  When you click on the down-button
-    on a scroll-bar, you probably expect the the button's action (scrolling
+    on a scroll-bar, you probably expect the button's action (scrolling
     down one increment) to repeat when you hold down the button, much like the
     way kestrokes are repeated when you hold down a keyboard key.  This is in
     fact what happens, and it is accomplished by having the scroll and its

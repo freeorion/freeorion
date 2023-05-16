@@ -149,7 +149,7 @@ public:
         m_text(std::move(text))
     {}
 
-    //! Returns the the tag-name of this XMLElement.
+    //! Returns the tag-name of this XMLElement.
     //!
     //! @return
     //!     The tag-name of this XMLElement.  Can be an empty string.

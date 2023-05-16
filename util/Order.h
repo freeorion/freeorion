@@ -300,7 +300,7 @@ private:
     /**
      *  Preconditions:
      *     - m_planet must be the ID of an un-owned planet.
-     *     - m_ship must be the the ID of a ship owned by the issuing empire
+     *     - m_ship must be the ID of a ship owned by the issuing empire
      *     - m_ship must be the ID of a ship that can colonize and that is in
      *       the same system as the planet.
      *
@@ -345,7 +345,7 @@ private:
     /**
      *  Preconditions:
      *     - m_planet must be the ID of a populated planet not owned by the issuing empire
-     *     - m_ship must be the the ID of a ship owned by the issuing empire
+     *     - m_ship must be the ID of a ship owned by the issuing empire
      *     - m_ship must be the ID of a ship that can invade and that is in
      *       the same system as the planet.
      *
@@ -390,7 +390,7 @@ private:
     /**
      *  Preconditions:
      *     - m_planet must be the ID of a planet
-     *     - m_ship must be the the ID of a ship owned by the issuing empire
+     *     - m_ship must be the ID of a ship owned by the issuing empire
      *
      *  Postconditions:
      *      - The ship with ID m_ship will be marked to bombard the planet with

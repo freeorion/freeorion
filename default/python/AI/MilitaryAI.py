@@ -71,7 +71,7 @@ def get_preferred_max_military_portion_for_single_battle() -> float:
     May be used to downgrade various possible actions requiring military support if they would require an excessive
     allocation of military forces.  At the beginning of the game this max portion starts as 1.0, then is slightly
     reduced to account for desire to reserve some defenses for other locations, and then in mid to late game, as the
-    size of the the military grows, this portion is further reduced to promote pursuit of multiple battlefronts in
+    size of the military grows, this portion is further reduced to promote pursuit of multiple battlefronts in
     parallel as opposed to single battlefronts against heavily defended positions.
 
     :return: a number in range (0:1] for preferred max portion of military to be allocated to a single battle

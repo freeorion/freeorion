@@ -125,7 +125,7 @@ protected:
     CPSize CharIndexOf(std::size_t row, CPSize char_idx,
                        const std::vector<Font::LineData>* line_data = nullptr) const;
 
-    /** Returns the the x-coordinate of the beginning of row \a row, in
+    /** Returns the x-coordinate of the beginning of row \a row, in
         cleint-space coordinates.  Not range-checked. */
     X RowStartX(std::size_t row) const;
 

@@ -11884,7 +11884,7 @@ DESC_AND_AFTER_SINGLE_OPERAND
 ''''''
 
 # NOT AND Descriptions for expressions  'NOT AND [ A B C ]'
-# We actually describe the the logically equivalent expression ( (not A) or (not B) or (not C) )
+# We actually describe the logically equivalent expression ( (not A) or (not B) or (not C) )
 # Note: the operands (not A), (not B).. are handled in the descriptions of A, B.. respectively
 DESC_NOT_AND_BEFORE_OPERANDS
 [[DESC_NOT_OR_BEFORE_OPERANDS]]

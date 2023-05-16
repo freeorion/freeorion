@@ -202,7 +202,7 @@ make
 ```
 
 In case you want to utilize multiple CPU cores by running parallel
-compile jobs check out the the [make jobs](`--jobs`) parameter of
+compile jobs check out the [make jobs](`--jobs`) parameter of
 `make`.
 
 After the build finished successfully the binaries can be found within

@@ -28,7 +28,7 @@ GG_FLAG_TYPE(MultiEditStyle);
 
 constexpr MultiEditStyle MULTI_NONE             (0);        ///< Default style selected.
 constexpr MultiEditStyle MULTI_WORDBREAK        (1 << 0);   ///< Breaks words. Lines are automatically broken between words if a word would extend past the edge of the control's bounding rectangle. (As always, a '\\n' also breaks the line.)
-constexpr MultiEditStyle MULTI_LINEWRAP         (1 << 1);   ///< Lines are automatically broken when the next character (or space) would be drawn outside the the text rectangle.
+constexpr MultiEditStyle MULTI_LINEWRAP         (1 << 1);   ///< Lines are automatically broken when the next character (or space) would be drawn outside the text rectangle.
 constexpr MultiEditStyle MULTI_VCENTER          (1 << 2);   ///< Vertically centers text.
 constexpr MultiEditStyle MULTI_TOP              (1 << 3);   ///< Aligns text to the top.
 constexpr MultiEditStyle MULTI_BOTTOM           (1 << 4);   ///< Aligns text to the bottom.

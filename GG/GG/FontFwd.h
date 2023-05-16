@@ -37,7 +37,7 @@ constexpr TextFormat FORMAT_LEFT      (1 << 4); ///< Aligns text to the left.
 constexpr TextFormat FORMAT_RIGHT     (1 << 5); ///< Aligns text to the right.
 constexpr TextFormat FORMAT_NOWRAP    (1 << 6); ///< Resize control to fit text, don't wrap text. Text only breaks at '\\n'.
 constexpr TextFormat FORMAT_WORDBREAK (1 << 7); ///< Breaks words. Lines are automatically broken between words if a word would extend past the edge of the control's bounding rectangle.  As always, a '\\n' also breaks the line.
-constexpr TextFormat FORMAT_LINEWRAP  (1 << 8); ///< Lines are automatically broken when the next glyph would be drawn outside the the text rectangle.  As always, a '\\n' also breaks the line.
+constexpr TextFormat FORMAT_LINEWRAP  (1 << 8); ///< Lines are automatically broken when the next glyph would be drawn outside the text rectangle.  As always, a '\\n' also breaks the line.
 constexpr TextFormat FORMAT_IGNORETAGS(1 << 9); ///< Text formatting tags (e.g. <rgba 0 0 0 255>) are treated as regular text.
 
 
