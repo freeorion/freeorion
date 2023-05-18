@@ -216,6 +216,7 @@
     (label)                                     \
     (Large)                                     \
     (LastTurnActiveInBattle)                    \
+    (LastTurnAnnexed)                           \
     (LastTurnAttackedByShip)                    \
     (LastTurnBattleHere)                        \
     (LastTurnColonized)                         \
@@ -575,6 +576,7 @@
     (turn)                                      \
     (Turn)                                      \
     (TurnPolicyAdopted)                         \
+    (TurnsSinceAnnexation)                      \
     (TurnsSinceColonization)                    \
     (TurnsSinceFocusChange)                     \
     (TurnsSinceLastConquered)                   \
