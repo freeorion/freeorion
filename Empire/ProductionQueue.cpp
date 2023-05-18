@@ -590,7 +590,7 @@ std::vector<std::vector<int>> ProductionQueue::ObjectsWithWastedPP(const Resourc
 
     const auto& output = industry_pool.Output();
     retval.reserve(output.size());
-    for (auto& [group, avail_pp_in_group] : industry_pool.Output()) {
+    for (auto& [group, avail_pp_in_group] : output) {
         //std::cout << "available PP groups size: " << avail_pp.first.size() << " pp: " << avail_pp.second << std::endl;
 
         if (avail_pp_in_group <= 0)
