@@ -9967,6 +9967,57 @@ std::unique_ptr<Condition> OrderedBombarded::Clone() const
 { return std::make_unique<OrderedBombarded>(ValueRef::CloneUnique(m_by_object_condition)); }
 
 ///////////////////////////////////////////////////////////
+// OrderedAnnexed                                        //
+///////////////////////////////////////////////////////////
+bool OrderedAnnexed::operator==(const Condition& rhs) const
+{ return Condition::operator==(rhs); }
+
+std::string OrderedAnnexed::Description(bool negated) const {
+    return str(FlexibleFormat((!negated)
+        ? UserString("DESC_ORDERED_ANNEXED")
+        : UserString("DESC_ORDERED_ANNEXED_NOT")));
+}
+
+std::string OrderedAnnexed::Dump(uint8_t ntabs) const
+{ return DumpIndent(ntabs) + "OrderedAnnexed\n"; }
+
+bool OrderedAnnexed::Match(const ScriptingContext& local_context) const {
+    auto candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        ErrorLogger(conditions) << "OrderedAnnexed::Match passed no candidate object";
+        return false;
+    }
+
+    // is it a planet or a building on a planet?
+    if (candidate->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+        auto planet = static_cast<const Planet*>(candidate);
+        return planet->OrderedAnnexedByEmpire() != ALL_EMPIRES;
+
+    } else if (candidate->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
+        auto building = static_cast<const ::Building*>(candidate);
+        auto planet = local_context.ContextObjects().getRaw<Planet>(building->PlanetID());
+        if (!planet) {
+            ErrorLogger(conditions) << "OrderedAnnexed couldn't get building's planet";
+            return false;
+        }
+        return planet->OrderedAnnexedByEmpire() != ALL_EMPIRES;
+    }
+    return false;
+}
+
+uint32_t OrderedAnnexed::GetCheckSum() const {
+    uint32_t retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::OrderedAnnexed");
+
+    TraceLogger(conditions) << "GetCheckSum(OrderedAnnexed): retval: " << retval;
+    return retval;
+}
+
+std::unique_ptr<Condition> OrderedAnnexed::Clone() const
+{ return std::make_unique<OrderedAnnexed>(); }
+
+///////////////////////////////////////////////////////////
 // ValueTest                                             //
 ///////////////////////////////////////////////////////////
 namespace {

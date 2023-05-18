@@ -1614,6 +1614,28 @@ private:
     std::unique_ptr<Condition> m_by_object_condition;
 };
 
+struct FO_COMMON_API OrderedAnnexed final : public Condition {
+    constexpr OrderedAnnexed() :
+        Condition(true, true, true)
+    {}
+
+    bool operator==(const Condition& rhs) const override;
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
+    [[nodiscard]] std::string Description(bool negated = false) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    virtual void SetTopLevelContent(const std::string& content_name) override;
+    [[nodiscard]] uint32_t GetCheckSum() const override;
+
+    [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
+
+private:
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
+};
+
 /** Matches all objects if the comparisons between values of ValueRefs meet the
   * specified comparison types. */
 struct FO_COMMON_API ValueTest final : public Condition {
