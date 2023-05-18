@@ -115,6 +115,7 @@ public:
     [[nodiscard]] int TurnsSinceColonization(int current_turn) const;
     [[nodiscard]] int LastTurnConquered() const noexcept            { return m_turn_last_conquered; }
     [[nodiscard]] int TurnsSinceLastConquered(int current_turn) const;
+    [[nodiscard]] int OwnerBeforeLastConquered() const noexcept     { return m_owner_before_last_conquered; }
     [[nodiscard]] int LastTurnAnnexed() const noexcept              { return m_turn_last_annexed; }
     [[nodiscard]] int TurnsSinceLastAnnexed(int current_turn) const;
 
@@ -207,6 +208,8 @@ private:
     float       m_axial_tilt = 23.0f;
 
     IDSet       m_buildings;
+
+    int         m_owner_before_last_conquered = ALL_EMPIRES;
 
     int         m_turn_last_annexed = INVALID_GAME_TURN;
     int         m_turn_last_colonized = INVALID_GAME_TURN;

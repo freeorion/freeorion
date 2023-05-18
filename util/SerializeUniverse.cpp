@@ -912,10 +912,15 @@ void serialize(Archive& ar, Planet& obj, unsigned int const version)
         & make_nvp("m_is_about_to_be_bombarded", obj.m_is_about_to_be_bombarded)
         & make_nvp("m_ordered_given_to_empire_id", obj.m_ordered_given_to_empire_id)
         & make_nvp("m_last_turn_attacked_by_ship", obj.m_last_turn_attacked_by_ship);
+    if (Archive::is_loading::value && version < 7) {
+        obj.m_owner_before_last_conquered = obj.Owner();
+    } else {
+        ar  & make_nvp("m_owner_before_last_conquered", obj.m_owner_before_last_conquered);
+    }
 }
 
 BOOST_CLASS_EXPORT(Planet)
-BOOST_CLASS_VERSION(Planet, 6)
+BOOST_CLASS_VERSION(Planet, 7)
 
 
 template <typename Archive>

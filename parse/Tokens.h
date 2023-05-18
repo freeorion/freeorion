@@ -321,6 +321,7 @@
     (OutpostsOwned)                             \
     (OwnedBy)                                   \
     (Owner)                                     \
+    (OwnerBeforeLastConquered)                  \
     (OwnerHasShipPartAvailable)                 \
     (OwnerHasTech)                              \
     (parameters)                                \
