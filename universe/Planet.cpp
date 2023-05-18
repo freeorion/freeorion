@@ -636,6 +636,15 @@ int Planet::TurnsSinceLastConquered(int current_turn) const {
     return current_turn - m_turn_last_conquered;
 }
 
+int Planet::TurnsSinceLastAnnexed(int current_turn) const {
+    if (m_turn_last_annexed == INVALID_GAME_TURN)
+        return 0;
+    if (current_turn == INVALID_GAME_TURN)
+        return 0;
+    return current_turn - m_turn_last_annexed;
+}
+
+
 void Planet::SetType(PlanetType type) {
     if (type <= PlanetType::INVALID_PLANET_TYPE)
         type = PlanetType::PT_SWAMP;
