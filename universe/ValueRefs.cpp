@@ -1117,8 +1117,14 @@ int Variable<int>::Eval(const ScriptingContext& context) const
             auto planet = static_cast<const Planet*>(object);
             return planet->TurnsSinceFocusChange(context.current_turn);
         }
+        return 0; // here, not using planet_property, so that fallback is 0
+    }
+    else if (property_name == "TurnsSinceAnnexation") {
+        if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+            auto planet = static_cast<const Planet*>(object);
+            return planet->TurnsSinceLastAnnexed(context.current_turn);
+        }
         return 0;
-
     }
     else if (property_name == "TurnsSinceColonization") {
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
