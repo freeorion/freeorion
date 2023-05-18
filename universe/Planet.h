@@ -191,20 +191,20 @@ private:
 
     void ClampMeters() override;
 
-    std::string     m_species_name;
+    std::string m_species_name;
 
-    std::string     m_focus;
-    int             m_last_turn_focus_changed = INVALID_GAME_TURN;
-    std::string     m_focus_turn_initial;
-    int             m_last_turn_focus_changed_turn_initial = INVALID_GAME_TURN;
+    std::string m_focus;
+    int         m_last_turn_focus_changed = INVALID_GAME_TURN;
+    std::string m_focus_turn_initial;
+    int         m_last_turn_focus_changed_turn_initial = INVALID_GAME_TURN;
 
-    PlanetType      m_type = PlanetType::PT_SWAMP;
-    PlanetType      m_original_type = PlanetType::PT_SWAMP;
-    PlanetSize      m_size = PlanetSize::SZ_TINY;
-    float           m_orbital_period = 1.0f;
-    float           m_initial_orbital_position = 0.0f;
-    float           m_rotational_period = 1.0f;
-    float           m_axial_tilt = 23.0f;
+    PlanetType  m_type = PlanetType::PT_SWAMP;
+    PlanetType  m_original_type = PlanetType::PT_SWAMP;
+    PlanetSize  m_size = PlanetSize::SZ_TINY;
+    float       m_orbital_period = 1.0f;
+    float       m_initial_orbital_position = 0.0f;
+    float       m_rotational_period = 1.0f;
+    float       m_axial_tilt = 23.0f;
 
     IDSet       m_buildings;
 
