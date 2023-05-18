@@ -115,6 +115,9 @@ public:
     [[nodiscard]] int TurnsSinceColonization(int current_turn) const;
     [[nodiscard]] int LastTurnConquered() const noexcept            { return m_turn_last_conquered; }
     [[nodiscard]] int TurnsSinceLastConquered(int current_turn) const;
+    [[nodiscard]] int LastTurnAnnexed() const noexcept              { return m_turn_last_annexed; }
+    [[nodiscard]] int TurnsSinceLastAnnexed(int current_turn) const;
+
 
     [[nodiscard]] const auto& SurfaceTexture() const noexcept       { return m_surface_texture; }
     [[nodiscard]] std::string CardinalSuffix(const ObjectMap& objects) const; ///< returns a roman number representing this planets orbit in relation to other planets
