@@ -1103,6 +1103,8 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         planet_property = &Planet::LastTurnAnnexed;
     else if (property_name == "OrderedGivenToEmpire")
         planet_property = &Planet::OrderedGivenToEmpire;
+    else if (property_name == "OwnerBeforeLastConquered")
+        planet_property = &Planet::OwnerBeforeLastConquered;
 
     if (planet_property) {
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {

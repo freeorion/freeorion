@@ -129,6 +129,7 @@ void Planet::Copy(const Planet& copied_planet, const Universe& universe, int emp
             this->m_is_about_to_be_colonized =              copied_planet.m_is_about_to_be_colonized;
             this->m_is_about_to_be_invaded =                copied_planet.m_is_about_to_be_invaded;
             this->m_is_about_to_be_bombarded =              copied_planet.m_is_about_to_be_bombarded;
+            this->m_owner_before_last_conquered =           copied_planet.m_owner_before_last_conquered;
 
             if (vis >= Visibility::VIS_FULL_VISIBILITY) {
                 this->m_ordered_given_to_empire_id = copied_planet.m_ordered_given_to_empire_id;
@@ -197,7 +198,8 @@ std::string Planet::Dump(uint8_t ntabs) const {
 
     retval.append(" annexed on turn: ").append(std::to_string(m_turn_last_annexed))
           .append(" colonized on turn: ").append(std::to_string(m_turn_last_colonized))
-          .append(" conquered on turn: ").append(std::to_string(m_turn_last_conquered));
+          .append(" conquered on turn: ").append(std::to_string(m_turn_last_conquered))
+          .append(" owner before being conquered: ").append(std::to_string(m_owner_before_last_conquered));
 
     if (m_is_about_to_be_bombarded)
         retval.append(" (About to be Bombarded)");
@@ -760,6 +762,7 @@ void Planet::Depopulate(int current_turn) {
 
 void Planet::Conquer(int conquerer, ScriptingContext& context) {
     m_turn_last_conquered = context.current_turn;
+    m_owner_before_last_conquered = this->Owner();
 
     // deal with things on production queue located at this planet
     Empire::ConquerProductionQueueItemsAtLocation(ID(), conquerer, context.Empires());

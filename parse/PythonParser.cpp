@@ -177,6 +177,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         auto py_variable_wrapper = py::class_<variable_wrapper>("__Variable", py::no_init);
 
         for (const char* property : {"Owner",
+                                     "OwnerBeforeLastConquered",
                                      "SupplyingEmpire",
                                      "ID",
                                      "CreationTurn",

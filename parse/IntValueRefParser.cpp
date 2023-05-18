@@ -23,6 +23,7 @@ parse::detail::simple_int_parser_rules::simple_int_parser_rules(const parse::lex
     // "NumShips" should not follow.
     bound_variable_name
         =   tok.Owner_
+        |   tok.OwnerBeforeLastConquered_
         |   tok.SupplyingEmpire_
         |   tok.ID_
         |   tok.CreationTurn_
