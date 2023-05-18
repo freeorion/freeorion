@@ -3031,7 +3031,8 @@ namespace {
             }
         }
 
-        for (const auto& planet : objects.find<Planet>(empire->GetPopulationPool().PopCenterIDs())) {
+        const auto empire_planets = [empire_id](const Planet& p) { return p.OwnedBy(empire_id) && p.Populated(); };
+        for (const auto* planet : objects.findRaw<Planet>(empire_planets)) {
             if (!planet)
                 continue;
 
@@ -3056,22 +3057,21 @@ namespace {
         return retval;
     }
 
-    std::multimap<float, std::pair<std::string_view, PlanetEnvironment>>
-        SpeciesEnvByTargetPop(const std::shared_ptr<Planet>& planet,
-                              const std::vector<std::string_view>& species_names)
+    auto SpeciesEnvByTargetPop(const std::shared_ptr<Planet>& planet,
+                               const std::vector<std::string_view>& species_names)
     {
-        std::multimap<float, std::pair<std::string_view, PlanetEnvironment>> retval;
-
+        std::vector<std::tuple<float, std::string_view, PlanetEnvironment>> retval;
         if (species_names.empty() || !planet)
             return retval;
+        retval.reserve(species_names.size());
 
         // store original state of planet
-        auto original_planet_species{planet->SpeciesName()}; // intentional copy
-        auto original_owner_id = planet->Owner();
-        auto orig_initial_target_pop = planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Initial();
+        const auto original_planet_species{planet->SpeciesName()}; // intentional copy
+        const auto original_owner_id = planet->Owner();
+        const auto orig_initial_target_pop = planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Initial();
 
-        std::vector<int> planet_id_vec{planet->ID()};
-        auto empire_id = GGHumanClientApp::GetApp()->EmpireID();
+        const std::vector<int> planet_id_vec{planet->ID()};
+        const auto empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
         Universe& universe = GetUniverse();
         ScriptingContext context{universe, Empires(), GetGalaxySetupData(),
@@ -3096,14 +3096,13 @@ namespace {
 
             try {
                 const auto species = context.species.GetSpecies(species_name);
-                auto planet_environment = species ?
+                const auto planet_environment = species ?
                     species->GetPlanetEnvironment(planet->Type()) : PlanetEnvironment::PE_UNINHABITABLE;
 
                 float planet_capacity = ((planet_environment == PlanetEnvironment::PE_UNINHABITABLE) ?
                                          0.0f : planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Current()); // want value after temporary meter update, so get current, not initial value of meter
 
-                retval.emplace(std::piecewise_construct, std::forward_as_tuple(planet_capacity),
-                               std::forward_as_tuple(species_name, planet_environment));
+                retval.emplace_back(planet_capacity, species_name, planet_environment);
             } catch (const std::exception& e) {
                 ErrorLogger() << "Caught exception emplacing into species env by target pop : " << e.what();
             }
@@ -3125,6 +3124,8 @@ namespace {
         } catch (const std::exception& e) {
             ErrorLogger() << "Caught exception re-applying meter effects to planet after temporary species / owner : " << e.what();
         }
+
+        std::sort(retval.begin(), retval.end());
 
         return retval;
     }
@@ -3380,8 +3381,7 @@ namespace {
 
             for (auto it = target_population_species.rbegin(); it != target_population_species.rend(); ++it) {
 
-                const auto& [target_pop, species_env] = *it;
-                const auto& [species_name, env] = species_env;
+                const auto& [target_pop, species_name, env] = *it;
 
                 auto species_name_column1_it = species_suitability_column1.find(species_name);
                 if (species_name_column1_it == species_suitability_column1.end())
