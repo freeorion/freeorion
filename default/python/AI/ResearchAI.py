@@ -713,7 +713,7 @@ def disabled_research_features():  # noqa: C901
             ),
             ("GRO_SYMBIOTIC_BIO", "SHP_ORG_HULL", "SHP_ZORTRIUM_PLATE", ["GRO_SYMBIOTIC_BIO"]),
         ]
-        for (tech, gate, target_slot, add_tech_list) in params:
+        for tech, gate, target_slot, add_tech_list in params:
             if tech_is_complete(tech):
                 break
             if tech_turns_left.get(gate, 0) not in [

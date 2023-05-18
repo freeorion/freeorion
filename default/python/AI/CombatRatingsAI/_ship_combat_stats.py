@@ -26,7 +26,6 @@ class ShipCombatStats:
         damage_vs_planets=0,
         has_bomber=False,
     ):
-
         self.structure = structure
         self.shields = shields
         self.attacks: dict[float, int] = {} if attacks is None else tuple_to_dict(attacks)
@@ -135,7 +134,7 @@ class ShipCombatStats:
         return damage * (self.structure + self.shields)
 
 
-@cache_for_current_turn  # noqa: max-complexity
+@cache_for_current_turn
 def get_ship_combat_stats(ship_id: ShipId, max_stats=False) -> ShipCombatStats:  # noqa: max-complexity
     """
     Return combat stats for the ship.

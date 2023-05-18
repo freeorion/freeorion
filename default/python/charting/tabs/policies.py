@@ -90,7 +90,6 @@ def show_policies_table(data, existing_empires):
         if is_gap:
             inner_row = " | ".join(["...", *[to_diff(v) for k, v in sorted(empires.items())]])
         else:
-
             inner_row = " | ".join([str(key), *[to_diff(v) for k, v in sorted(empires.items())]])
 
         table.append(f"| {inner_row} |")

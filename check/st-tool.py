@@ -225,9 +225,8 @@ class StringTable:
     def from_file(fhandle, with_blame=True) -> "StringTable":
         return StringTable.from_text(fhandle.read(), fhandle.name, with_blame=with_blame)
 
-    @staticmethod  # noqa: max-complexity
+    @staticmethod
     def from_text(text, fpath, with_blame=True) -> "StringTable":  # noqa: max-complexity
-
         is_quoted = False
 
         language = None
@@ -378,7 +377,7 @@ class StringTable:
             StringTable.set_author(fpath, entries, blames)
         return StringTable(fpath, language, fnotes, includes, entries)
 
-    @staticmethod  # noqa: max-complexity
+    @staticmethod
     def statistic(left: "StringTable", right: "StringTable"):  # noqa: max-complexity
         class STStatistic(NamedTuple):
             left: "StringTable"
@@ -942,7 +941,6 @@ def check_action(args):
                     reference_key = match["key"]
                     references.add(reference_key)
                     if reference_key not in source_st:
-
                         if match["ref_type"].strip() in OPTIONAL_REF_TYPES:
                             continue
 

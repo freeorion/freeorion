@@ -184,6 +184,7 @@ class DisjointSets:
         Check if pos is the root of a cluster otherwise shorten
         the tree while tranversing it and return the root
         """
+
         # traverse tree and fetch parents for compression
         def parents(p1, children):
             # print "pp p1 ", p1.pos, " children a ", children

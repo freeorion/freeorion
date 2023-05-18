@@ -144,7 +144,6 @@ def find_path_with_resupply(
                 chat_human(message)
 
         if path_info and risky_path and risky_path.distance < path_info.distance:
-
             message = "Fleet %d chose safer path %s instead of risky path %s" % (
                 fleet_id,
                 _info_string(path_info),
