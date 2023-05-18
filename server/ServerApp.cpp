@@ -3621,8 +3621,11 @@ void ServerApp::CacheCostsTimes(const ScriptingContext& context) {
         return retval;
     }();
     m_cached_empire_annexation_costs = [this, &context]() {
-        // loop over planets, for each being annexed, store its annexation cost
         std::map<int, std::vector<std::pair<int, double>>> retval;
+        // ensure every empire has an entry, even if empty
+        for (const int id : context.EmpireIDs())
+            retval.emplace(id, decltype(retval)::mapped_type{});
+        // loop over planets, for each being annexed, store its annexation cost
         const auto being_annexed = [](const Planet& p) { return p.IsAboutToBeAnnexed(); };
         for (const auto* p : context.ContextObjects().findRaw<Planet>(being_annexed)) {
             const auto empire_id = p->OrderedAnnexedByEmpire();
