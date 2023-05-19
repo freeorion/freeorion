@@ -430,7 +430,6 @@ class Allocator:
 
 
 class CapitalDefenseAllocator(Allocator):
-
     _allocation_group = "capitol"
     _military_reset_ratio = 0.5
 
@@ -458,7 +457,6 @@ class CapitalDefenseAllocator(Allocator):
 
 
 class PlanetDefenseAllocator(Allocator):
-
     _allocation_group = "occupied"
     _min_alloc_factor = 1.1
     _max_alloc_factor = 1.5
@@ -491,7 +489,6 @@ class PlanetDefenseAllocator(Allocator):
 
 
 class TargetAllocator(Allocator):
-
     _allocation_group = "otherTargets"
     _min_alloc_factor = 1.3
     _max_alloc_factor = 2.5
@@ -553,7 +550,6 @@ class LocalThreatAllocator(Allocator):
     _allocation_group = "otherTargets"
 
     def _calculate_threat(self):
-
         systems_status = get_aistate().systemStatus.get(self.sys_id, {})
         threat = self.safety_factor * combine_ratings(
             systems_status.get("fleetThreat", 0),

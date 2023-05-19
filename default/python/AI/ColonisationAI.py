@@ -243,7 +243,6 @@ def assign_colonisation_values(planet_ids, mission_type, species, detail=None, r
 
 
 def assign_colony_fleets_to_colonise():
-
     aistate = get_aistate()
     aistate.orbital_colonization_manager.assign_bases_to_colonize()
 

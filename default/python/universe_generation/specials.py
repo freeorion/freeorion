@@ -122,7 +122,7 @@ def distribute_specials(specials_freq, universe_objects):  # noqa: max-complexit
 
     while obj_tuple_needing_specials:
         systems_needing_specials = defaultdict(set)
-        for (obj, system, specials_count) in obj_tuple_needing_specials:
+        for obj, system, specials_count in obj_tuple_needing_specials:
             systems_needing_specials[system].add((obj, system, specials_count))
 
         print(f" Placing in {len(systems_needing_specials)} locations remaining.")
@@ -159,7 +159,6 @@ def distribute_specials(specials_freq, universe_objects):  # noqa: max-complexit
         # Attempt to apply a special to each candidate
         # by finding a special that can be applied to it and hasn't been added too many times
         for obj in candidates:
-
             # check if the spawn limit for this special has already been reached (that is, if this special
             # has already been added the maximal allowed number of times)
             specials = [s for s in specials if universe_statistics.specials_summary[s] < fo.special_spawn_limit(s)]

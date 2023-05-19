@@ -31,7 +31,6 @@ class EmpireResources:
         for planet_info in _get_planets_info().values():
             planet = universe.getPlanet(planet_info.pid)
             if planet.ownedBy(empire_id):
-
                 if AIDependencies.ANCIENT_RUINS_SPECIAL in planet.specials:
                     self.have_ruins = True
 

@@ -20,7 +20,6 @@ specials_repeat_dist = {count: 0 for count in [0, 1, 2, 3, 4]}
 
 
 def log_planet_count_dist(sys_list):
-
     planet_count_dist = {}
     planet_size_dist = {size: 0 for size in planets.planet_sizes}
     for system in sys_list:

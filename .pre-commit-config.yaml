@@ -3,17 +3,17 @@ default_stages:
   - manual
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.3.0
+    rev: v4.4.0
     hooks:
       - id: check-merge-conflict
       - id: check-yaml
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: 'v0.0.259'
+    rev: 'v0.0.267'
     hooks:
       - id: ruff
         args: [ --fix, --exit-non-zero-on-fix ]
   - repo: https://github.com/psf/black
-    rev: 22.8.0
+    rev: 23.3.0
     hooks:
       - id: black
   - repo: local
