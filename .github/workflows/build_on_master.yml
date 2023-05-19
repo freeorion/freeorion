@@ -12,7 +12,7 @@ on:
       - 'check/**'
       - 'default/**'
       - 'test-scripting/**'
-
+      - '.github/ISSUE_TEMPLATE/**'
 jobs:
   build:
     uses: ./.github/workflows/_build-all.yml

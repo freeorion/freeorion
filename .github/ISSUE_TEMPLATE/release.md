@@ -48,7 +48,7 @@ doing the actual release.
 
 #### Preparations
 
-* [ ] Create a new GitHub Issue from `.github/RELEASE_TEMPLATE.md` and follow
+* [ ] Create a new GitHub Issue using `Publish release` template and follow
       instructions. :wink:
 * [ ] Determine initial milestones and dates for release.
 * [ ] Add the new release in `packaging/org.freeorion.FreeOrion.metainfo.xml`
