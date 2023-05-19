@@ -28,8 +28,9 @@ def make_stub(
     )
 
     res = ResultBuilder(header)
+    res.add_built_in_import(Import("collections.abc", ["Iterator", "Iterable"]))
     res.add_built_in_import(Import("enum", ["IntEnum"]))
-    res.add_built_in_import(Import("typing", ["Iterator", "Generic", "Iterable", "TypeVar", "overload"]))
+    res.add_built_in_import(Import("typing", ["Generic", "TypeVar", "overload"]))
 
     res.add_import(
         Import(
