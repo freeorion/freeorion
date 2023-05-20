@@ -11,6 +11,7 @@ from options import (
     HS_MIN_PLANETS_IN_VICINITY_PER_SYSTEM,
     HS_MIN_PLANETS_IN_VICINITY_TOTAL,
     HS_MIN_SYSTEMS_IN_VICINITY,
+    HS_MIN_PLANET_TYPES_IN_VICINITY,
     HS_VICINITY_RANGE,
 )
 from planets import (
@@ -78,6 +79,19 @@ def count_planets_in_systems(systems, planet_types_filter=HS_ACCEPTABLE_PLANET_T
     for system in systems:
         num_planets += len([p for p in fo.sys_get_planets(system) if fo.planet_get_type(p) in planet_types_filter])
     return num_planets
+
+
+def count_planet_types_in_systems(systems):
+    """
+    Return the total number of planet types in the specified group of systems.
+    """
+    planet_types_in_systems = []
+    for system in systems:
+        for planet in fo.sys_get_planets(system):
+            planet_types_in_systems.append(fo.planet_get_type(planet))
+
+    num_planet_types = len(set(planet_types_in_systems))
+    return num_planet_types
 
 
 def calculate_home_system_merit(system):
@@ -362,9 +376,11 @@ def compile_home_system_list(num_home_systems, systems, gsd):  # noqa: max-compl
     # the minimum system and planet limit and the jump range that defines the "near vicinity" are controlled by the
     # HS_* option constants in options.py (see there)
 
-    # we start by building two additional pools of systems: one that contains all systems that match the criteria
-    # completely (meets the min systems and planets limit), and one that contains all systems that match the criteria
-    # at least partially (meets the min systems limit)
+    # we start by building three additional pools of systems: one that contains all systems that match the criteria
+    # completely (minimum systems, minimum planets and minimum planet types), one that matches 2 of the criteria
+    # (meets the min systems and planets limit), and one that contains all systems that match the criteria at least
+    # partially (meets the min systems limit).
+    pool_matching_sys_and_planet_and_planet_type_limit = []
     pool_matching_sys_and_planet_limit = []
     pool_matching_sys_limit = []
     for system in systems:
@@ -373,6 +389,13 @@ def compile_home_system_list(num_home_systems, systems, gsd):  # noqa: max-compl
             pool_matching_sys_limit.append(system)
             if count_planets_in_systems(systems_in_vicinity) >= min_planets_in_vicinity_limit(len(systems_in_vicinity)):
                 pool_matching_sys_and_planet_limit.append(system)
+                if (count_planets_in_systems(systems_in_vicinity) >= min_planets_in_vicinity_limit(len(systems_in_vicinity)) and
+                        count_planet_types_in_systems(systems_in_vicinity) >= HS_MIN_PLANET_TYPES_IN_VICINITY):
+                    pool_matching_sys_and_planet_and_planet_type_limit.append(system)
+    print(
+        len(pool_matching_sys_and_planet_and_planet_type_limit),
+        "systems meet the min systems, planets and planet types in the near vicinity limit"
+    )
     print(
         len(pool_matching_sys_and_planet_limit), "systems meet the min systems and planets in the near vicinity limit"
     )
@@ -388,7 +411,9 @@ def compile_home_system_list(num_home_systems, systems, gsd):  # noqa: max-compl
 
     print("First attempt: trying to pick home systems from the filtered pools of preferred systems")
     pool_list = [
-        # the better pool is of course the one where all systems meet BOTH the min systems and planets limit
+        # the best pool is of course the one where all systems meet all 3 criteria
+        (pool_matching_sys_and_planet_and_planet_type_limit, "pool of systems that meet min systems, planets and planet type limit"),
+        # the next best pool is of course the one where all systems meet BOTH the min systems and planets limit
         (pool_matching_sys_and_planet_limit, "pool of systems that meet both the min systems and planets limit"),
         # next the less preferred pool where all systems at least meets the min systems limit
         # specify 0 as number of requested home systems to pick as much systems as possible
@@ -463,12 +488,17 @@ def compile_home_system_list(num_home_systems, systems, gsd):  # noqa: max-compl
         num_systems_in_vicinity = len(systems_in_vicinity)
         num_planets_in_vicinity = count_planets_in_systems(systems_in_vicinity)
         num_planets_to_add = min_planets_in_vicinity_limit(num_systems_in_vicinity) - num_planets_in_vicinity
+        num_planet_types_in_vicinity = count_planet_types_in_systems(systems_in_vicinity)
         print(
             "Home system",
             home_system,
             "has",
             num_systems_in_vicinity,
-            "systems and",
+            "systems,",
+            num_planet_types_in_vicinity,
+            "planet types, required minimum:",
+            HS_MIN_PLANET_TYPES_IN_VICINITY,
+            "and",
             num_planets_in_vicinity,
             "planets in the near vicinity, required minimum:",
             min_planets_in_vicinity_limit(num_systems_in_vicinity),
