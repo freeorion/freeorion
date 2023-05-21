@@ -4,20 +4,20 @@ import random
 import universe_statistics
 from names import get_name_list, random_name
 from options import (
-    HS_ACCEPTABLE_PLANET_SIZES,
     HS_ACCEPTABLE_PLANET_TYPES,
     HS_MAX_JUMP_DISTANCE_LIMIT,
     HS_MIN_DISTANCE_PRIORITY_LIMIT,
+    HS_MIN_PLANET_TYPES_IN_VICINITY,
     HS_MIN_PLANETS_IN_VICINITY_PER_SYSTEM,
     HS_MIN_PLANETS_IN_VICINITY_TOTAL,
     HS_MIN_SYSTEMS_IN_VICINITY,
-    HS_MIN_PLANET_TYPES_IN_VICINITY,
     HS_VICINITY_RANGE,
 )
 from planets import (
     calc_planet_size,
     calc_planet_type,
     planet_sizes_real,
+    planet_types,
     planet_types_real,
 )
 from starsystems import pick_star_type, star_types_real
@@ -81,15 +81,22 @@ def count_planets_in_systems(systems, planet_types_filter=HS_ACCEPTABLE_PLANET_T
     return num_planets
 
 
-def count_planet_types_in_systems(systems):
+def list_planet_types_in_systems(systems):
     """
-    Return the total number of planet types in the specified group of systems.
+    Get a list of planet types in systems
     """
     planet_types_in_systems = []
     for system in systems:
         for planet in fo.sys_get_planets(system):
             planet_types_in_systems.append(fo.planet_get_type(planet))
+    return planet_types_in_systems
 
+
+def count_planet_types_in_systems(systems):
+    """
+    Return the total number of planet types in the specified group of systems.
+    """
+    planet_types_in_systems = list_planet_types_in_systems(systems)
     num_planet_types = len(set(planet_types_in_systems))
     return num_planet_types
 
@@ -266,7 +273,7 @@ def find_home_systems(num_home_systems, pool_list, jump_distance, min_jump_dista
     return []
 
 
-def add_planets_to_vicinity(vicinity, num_planets, gsd):  # noqa C901
+def add_planets_to_vicinity(vicinity, num_planets, acceptable_planet_types, allow_repeat_types, gsd):  # noqa C901
     """
     Adds the specified number of planets to the specified systems.
     """
@@ -331,21 +338,26 @@ def add_planets_to_vicinity(vicinity, num_planets, gsd):  # noqa C901
             print("...change that to", star_type)
             fo.sys_set_star_type(system, star_type)
 
-        # pick a planet size, continue until we get a size that matches the HS_ACCEPTABLE_PLANET_SIZES option
-        planet_size = fo.planetSize.unknown
-        while planet_size not in HS_ACCEPTABLE_PLANET_SIZES:
+        # pick a planet size and type, continue until we get a type from acceptable_planet_types
+        planet_type = fo.planetType.unknown
+        while planet_type not in acceptable_planet_types:
             planet_size = calc_planet_size(star_type, orbit, fo.galaxySetupOptionGeneric.high, gsd.shape)
-
-        # pick an according planet type
-        planet_type = calc_planet_type(star_type, orbit, planet_size)
+            planet_type = calc_planet_type(star_type, orbit, planet_size)
 
         # finally, create the planet in the system and orbit we got
         print("...adding", planet_size, planet_type, "planet to system", system)
         if fo.create_planet(planet_size, planet_type, system, orbit, "") == fo.invalid_object():
             report_error("Python add_planets_to_vicinity: create planet in system %d failed" % system)
 
+        if not allow_repeat_types:
+            acceptable_planet_types.remove(planet_type)
+
         # continue with next planet
         num_planets -= 1
+        # safety check for empty set
+        if not acceptable_planet_types:
+            num_planets = 0
+            print("planet types set is empty")
 
 
 def compile_home_system_list(num_home_systems, systems, gsd):  # noqa: max-complexity
@@ -389,12 +401,15 @@ def compile_home_system_list(num_home_systems, systems, gsd):  # noqa: max-compl
             pool_matching_sys_limit.append(system)
             if count_planets_in_systems(systems_in_vicinity) >= min_planets_in_vicinity_limit(len(systems_in_vicinity)):
                 pool_matching_sys_and_planet_limit.append(system)
-                if (count_planets_in_systems(systems_in_vicinity) >= min_planets_in_vicinity_limit(len(systems_in_vicinity)) and
-                        count_planet_types_in_systems(systems_in_vicinity) >= HS_MIN_PLANET_TYPES_IN_VICINITY):
+                if (
+                    count_planets_in_systems(systems_in_vicinity)
+                    >= min_planets_in_vicinity_limit(len(systems_in_vicinity))
+                    and count_planet_types_in_systems(systems_in_vicinity) >= HS_MIN_PLANET_TYPES_IN_VICINITY
+                ):
                     pool_matching_sys_and_planet_and_planet_type_limit.append(system)
     print(
         len(pool_matching_sys_and_planet_and_planet_type_limit),
-        "systems meet the min systems, planets and planet types in the near vicinity limit"
+        "systems meet the min systems, planets and planet types in the near vicinity limit",
     )
     print(
         len(pool_matching_sys_and_planet_limit), "systems meet the min systems and planets in the near vicinity limit"
@@ -412,7 +427,10 @@ def compile_home_system_list(num_home_systems, systems, gsd):  # noqa: max-compl
     print("First attempt: trying to pick home systems from the filtered pools of preferred systems")
     pool_list = [
         # the best pool is of course the one where all systems meet all 3 criteria
-        (pool_matching_sys_and_planet_and_planet_type_limit, "pool of systems that meet min systems, planets and planet type limit"),
+        (
+            pool_matching_sys_and_planet_and_planet_type_limit,
+            "pool of systems that meet min systems, planets and planet type limit",
+        ),
         # the next best pool is of course the one where all systems meet BOTH the min systems and planets limit
         (pool_matching_sys_and_planet_limit, "pool of systems that meet both the min systems and planets limit"),
         # next the less preferred pool where all systems at least meets the min systems limit
@@ -489,6 +507,7 @@ def compile_home_system_list(num_home_systems, systems, gsd):  # noqa: max-compl
         num_planets_in_vicinity = count_planets_in_systems(systems_in_vicinity)
         num_planets_to_add = min_planets_in_vicinity_limit(num_systems_in_vicinity) - num_planets_in_vicinity
         num_planet_types_in_vicinity = count_planet_types_in_systems(systems_in_vicinity)
+        num_planet_types_to_add = HS_MIN_PLANET_TYPES_IN_VICINITY - num_planet_types_in_vicinity
         print(
             "Home system",
             home_system,
@@ -503,11 +522,25 @@ def compile_home_system_list(num_home_systems, systems, gsd):  # noqa: max-compl
             "planets in the near vicinity, required minimum:",
             min_planets_in_vicinity_limit(num_systems_in_vicinity),
         )
+        planet_types_in_systems = list_planet_types_in_systems(systems_in_vicinity)
+        if num_planet_types_to_add > 0:
+            planet_types_in_systems = list_planet_types_in_systems(systems_in_vicinity)
+            # get the set of missing planet types
+            planet_types_not_in_systems = set(planet_types).difference(planet_types_in_systems)
+            systems_in_vicinity.remove(home_system)  # don't add planets to the home system, so remove it from the list
+            add_planets_to_vicinity(
+                sorted(systems_in_vicinity), num_planet_types_to_add, planet_types_not_in_systems, False, gsd
+            )
+            num_planets_to_add -= num_planet_types_to_add
+            systems_in_vicinity.append(home_system)
+
         if num_planets_to_add > 0:
             systems_in_vicinity.remove(home_system)  # don't add planets to the home system, so remove it from the list
             # sort the systems_in_vicinity before adding, since the C++ engine doesn't guarrantee the same
             # platform independence as python.
-            add_planets_to_vicinity(sorted(systems_in_vicinity), num_planets_to_add, gsd)
+            add_planets_to_vicinity(
+                sorted(systems_in_vicinity), num_planets_to_add, HS_ACCEPTABLE_PLANET_TYPES, True, gsd
+            )
 
     # as we've sorted the home system list before, lets shuffle it to ensure random order and return
     random.shuffle(home_systems)
