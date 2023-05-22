@@ -111,6 +111,7 @@ builtins = [
     "ContainedBy",
     "Contains",
     "ContentFocus",
+    "CreateBuilding",
     "CreateShip",
     "CurrentContent",
     "CurrentTurn",
