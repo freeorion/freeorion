@@ -71,6 +71,14 @@ Species(
         # not for description
         EffectsGroup(
             scope=IsSource,
+            activation=Turn(low=1, high=1),
+            effects=[
+                CreateBuilding(type="BLD_SHIPYARD_BASE"),
+                CreateBuilding(type="BLD_SHIPYARD_ENRG_COMP"),
+            ],
+        ),
+        EffectsGroup(
+            scope=IsSource,
             activation=Planet()
             & (
                 Turn(low=10, high=10)
