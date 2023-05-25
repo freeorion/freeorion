@@ -14,7 +14,7 @@ Policy
                 Ship
                 OwnedBy empire = Source.Owner
                 Armed
-                Speed low = NamedReal name = "PLC_CHARGE_MINIMUM_SPEED" value = 100.0
+                Speed low = NamedReal name = "PLC_CHARGE_MINIMUM_SPEED" value = 120.0
             ]
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = [

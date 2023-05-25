@@ -12,6 +12,7 @@ Tech(
     unlock=[
         Item(type=UnlockShipHull, name="SH_COMPRESSED_ENERGY"),
         Item(type=UnlockBuilding, name="BLD_SHIPYARD_ENRG_COMP"),
+        Item(type=UnlockPolicy, name="PLC_CHARGE"),
     ],
     graphic="icons/ship_hulls/compressed_energy_hull_small.png",
 )
