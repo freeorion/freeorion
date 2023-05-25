@@ -4,6 +4,7 @@
 #include "Export.h"
 
 #include <cmath>
+#include <limits.h>
 #include <memory>
 #include <utility>
 #include <string_view>
