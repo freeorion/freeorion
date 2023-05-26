@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE(parse_game_rules) {
     auto game_rules_p = Pending::ParseSynchronously(parse::game_rules, parser,  m_scripting_dir / "game_rules.focs.py");
     auto game_rules = *Pending::WaitForPendingUnlocked(std::move(game_rules_p));
     BOOST_REQUIRE(!game_rules.empty());
-    BOOST_REQUIRE(game_rules.contains("RULE_HABITABLE_SIZE_MEDIUM") > 0);
+    BOOST_REQUIRE(game_rules.contains("RULE_HABITABLE_SIZE_MEDIUM"));
     BOOST_REQUIRE(GameRule::Type::TOGGLE == game_rules["RULE_ENABLE_ALLIED_REPAIR"].type);
 }
 
@@ -42,8 +42,8 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
     auto [techs, tech_categories, categories_seen] = *Pending::WaitForPendingUnlocked(std::move(techs_p));
     BOOST_REQUIRE(!tech_categories.empty());
 
-    BOOST_REQUIRE_EQUAL(1, tech_categories.contains("PRODUCTION_CATEGORY"));
-    BOOST_REQUIRE_EQUAL(1, tech_categories.contains("GROWTH_CATEGORY"));
+    BOOST_REQUIRE(tech_categories.contains("PRODUCTION_CATEGORY"));
+    BOOST_REQUIRE(tech_categories.contains("GROWTH_CATEGORY"));
 
     const auto cat_it = tech_categories.find("CONSTRUCTION_CATEGORY");
     BOOST_REQUIRE(tech_categories.end() != cat_it);
@@ -56,8 +56,8 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
     BOOST_REQUIRE(!techs.empty());
     BOOST_REQUIRE(!categories_seen.empty());
 
-    BOOST_REQUIRE_EQUAL(0, categories_seen.contains("PRODUCTION_CATEGORY"));
-    BOOST_REQUIRE_EQUAL(1, categories_seen.contains("GROWTH_CATEGORY"));
+    BOOST_REQUIRE(!categories_seen.contains("PRODUCTION_CATEGORY"));
+    BOOST_REQUIRE(categories_seen.contains("GROWTH_CATEGORY"));
 
     {
         const auto tech_it = techs.find("LRN_ALGO_ELEGANCE");
