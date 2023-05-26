@@ -1,3 +1,20 @@
+<p align="center">
+    <a href="https://github.com/freeorion/freeorion/releases">
+        <img src="https://img.shields.io/github/v/tag/freeorion/freeorion"
+            alt="Tag"></a>
+    <a href="https://sourceforge.net/projects/freeorion/">
+        <img src="https://img.shields.io/sourceforge/platform/freeorion"
+            alt="Tag"></a>
+    <a href="https://github.com/freeorion/freeorion/graphs/contributors" >
+        <img src="https://img.shields.io/github/contributors/freeorion/freeorion" alt="Contributors" /></a>
+    <a href="https://github.com/freeorion/freeorion/graphs/commit-activity">
+        <img src="https://img.shields.io/github/commit-activity/m/freeorion/freeorion"  alt="Activity" /></a>
+</p>
+<p align="center">
+    <a href="https://twitter.com/intent/follow?screen_name=Freeorion">
+        <img src="https://img.shields.io/twitter/follow/Freeorion?style=social&logo=twitter" alt="follow on Twitter"></a>
+</p>
+
 FreeOrion
 =========
 
