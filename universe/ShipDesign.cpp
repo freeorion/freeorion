@@ -417,7 +417,7 @@ ShipDesign::MaybeInvalidDesign(std::string hull, std::vector<std::string> parts,
     bool is_valid = true;
 
     // ensure hull type exists
-    auto ship_hull = GetShipHullManager().GetShipHull(hull);
+    const auto* ship_hull = GetShipHullManager().GetShipHull(hull);
     if (!ship_hull) {
         is_valid = false;
         if (produce_log)
@@ -447,16 +447,36 @@ ShipDesign::MaybeInvalidDesign(std::string hull, std::vector<std::string> parts,
                          << (parts.size() - ship_hull->NumSlots()) << " parts.";
     }
 
-    // If parts is smaller than the full hull size pad it and the incoming parts
-    if (parts.size() < ship_hull->NumSlots())
-        parts.resize(ship_hull->NumSlots(), "");
-
-    // Truncate or pad with "" parts.
+    // Truncate or pad with "" parts to match number of slots in hull
     parts.resize(ship_hull->NumSlots(), "");
 
+    // check part slot type mountability
     const auto& slots = ship_hull->Slots();
+    for (decltype(parts.size()) idx = 0u; idx < parts.size(); ++idx) {
+        auto& part_name = parts[idx];
+        if (part_name.empty())
+            continue;
+        const auto ship_part = GetShipPart(part_name);
+        if (!ship_part) {
+            is_valid = false;
+            if (produce_log)
+                WarnLogger() << "Invalid ShipDesign somehow couldn't get part " << part_name;
+            continue;
+        }
+        const auto& slot = slots[idx];
+        // verify part can mount in indicated slot
+        const auto slot_type = slot.type;
 
-    // check hull exclusions against all parts...
+        if (!ship_part->CanMountInSlotType(slot_type)) {
+            is_valid = false;
+            if (produce_log)
+                DebugLogger() << "Invalid ShipDesign part \"" << part_name << "\" can't be mounted in "
+                << slot_type << " slot. Removing \"" << part_name <<"\"";
+            part_name.clear();
+        }
+    }
+
+    // check hull exclusions against all parts. remove excluded parts.
     const auto& hull_exclusions = ship_hull->Exclusions();
     for (auto& part_name : parts) {
         if (part_name.empty())
@@ -464,68 +484,71 @@ ShipDesign::MaybeInvalidDesign(std::string hull, std::vector<std::string> parts,
         if (hull_exclusions.count(part_name)) {
             is_valid = false;
             if (produce_log)
-                WarnLogger() << "Invalid ShipDesign part \"" << part_name << "\" is excluded by \""
-                             << ship_hull->Name() << "\". Removing \"" << part_name <<"\"";
+                WarnLogger() << "Invalid ShipDesign part \"" << part_name << "\" is excluded by hull \""
+                             << hull << "\". Removing \"" << part_name <<"\"";
             part_name.clear();
         }
     }
 
-    // check part exclusions against other parts and hull
-
-    // find how many of each part and hull are present...
-    boost::container::flat_map<std::string_view, uint8_t> component_counts;
-    component_counts.reserve(parts.size() + 1);
-    component_counts.emplace(hull, 1);
-    for (auto& part : parts)
-        component_counts[part]++;
-
-    auto has_component = [&component_counts](std::string_view sv) -> bool
-    { return component_counts.contains(sv); };
-    auto has_multiples_of_component = [&component_counts](std::string_view sv) -> bool
-    { return component_counts.count(sv) > 1; };
-
-
-    // check each part's existance and exclusions
-    for (std::size_t ii = 0; ii < parts.size(); ++ii) {
-        std::string_view part_name = parts[ii];
-        if (part_name.empty()) // ignore empty slots, which are always valid
+    // check part validity, clear invalid parts
+    for (auto& part_name : parts) {
+        if (part_name.empty())
             continue;
-
-        // Parts must exist...
         const auto ship_part = GetShipPart(part_name);
         if (!ship_part) {
             is_valid = false;
             if (produce_log)
-                WarnLogger() << "Invalid ShipDesign part \"" << part_name << "\" not found"
-                             << ". Removing \"" << part_name <<"\"";
+                WarnLogger() << "Invalid ShipDesign unknown part \"" << part_name << "\" removed.";
+            part_name.clear();
+        }
+    }
+
+    // check part exclusions againts hull, remove parts that exlude hull.
+    for (auto& part_name : parts) {
+        if (part_name.empty())
             continue;
-        }
-
-        for (const auto& excluded : ship_part->Exclusions()) {
-            // confict if a different excluded part is present, or if there are
-            // two or more of a part that excludes itself
-            if ((excluded == part_name && has_multiples_of_component(excluded)) ||
-                (excluded != part_name && has_component(excluded)))
-            {
-                is_valid = false;
-                if (produce_log)
-                    WarnLogger() << "Invalid ShipDesign part " << part_name << " conflicts with \""
-                                 << excluded << "\". Removing \"" << part_name <<"\"";
-                else
-                    break; // don't break if logging, so all conflicts will be logged
-            }
-        }
-        if (!is_valid && !produce_log)
-            continue; // if not logging, don't also need to check slot moutability
-
-        // verify part can mount in indicated slot
-        const auto slot_type = slots[ii].type;
-
-        if (!ship_part->CanMountInSlotType(slot_type)) {
-            if (produce_log)
-                DebugLogger() << "Invalid ShipDesign part \"" << part_name << "\" can't be mounted in "
-                              << slot_type << " slot. Removing \"" << part_name <<"\"";
+        const auto ship_part = GetShipPart(part_name);
+        if (!ship_part)
+            continue; // shouldn't happen...
+        const auto& part_exclusions = ship_part->Exclusions();
+        if (std::any_of(part_exclusions.begin(), part_exclusions.end(),
+                        [&hull](const auto& x) { return hull == x; }))
+        {
             is_valid = false;
+            if (produce_log)
+                WarnLogger() << "Invalid ShipDesign part \"" << part_name << "\" excludes hull \""
+                             << hull << "\". Removing \"" << part_name <<"\"";
+            part_name.clear();
+        }
+    }
+
+    // check parts exclusions against other parts, remove conflicts
+    for (auto& part_name : parts) {
+        const auto ship_part = GetShipPart(part_name);
+        if (!ship_part)
+            continue; // shouldn't happen...
+        const auto& part_exclusions = ship_part->Exclusions();
+        for (const auto& x : part_exclusions) {
+            if (x == part_name) {
+                // part excludes itself if there is more than one of it
+                if (std::count(parts.begin(), parts.end(), x) > 1) {
+                    is_valid = false;
+                    if (produce_log)
+                        WarnLogger() << "Invalid ShipDesign part \"" << part_name << "\" excludes itself. Removing first copy.";;
+                    part_name.clear();
+                    break; // don't need to check any later exclusions of removed part
+                }
+            } else {
+                // part excludes another part if both are present
+                if (std::any_of(parts.begin(), parts.end(), [&x](const auto& p) { return x == p; })) {
+                    is_valid = false;
+                    if (produce_log)
+                        WarnLogger() << "Invalid ShipDesign part \"" << part_name << "\" excludes other part \""
+                                     << x << "\". Removing \"" << part_name <<"\"";
+                    part_name.clear();
+                    break; // don't need to check any later exclusions of removed part
+                }
+            }
         }
     }
 
