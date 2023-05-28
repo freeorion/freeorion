@@ -30,8 +30,10 @@ CHANCE_OF_GUARD_1
                             Not Homeworld
                         ]
                         effects = [
-                            SetSpecies name = "SP_ANCIENT_GUARDIANS"
+                            [[SET_NATIVE_GUARD]]
                             SetPopulation value = Target.TargetPopulation
+                            // TODO: SetFocus not yet implemented
+                            // SetFocus name = "FOCUS_DEFENSE"
                         ]
                     else = [
                         AddSpecial name = OneOf("CLOUD_COVER_MASTER_SPECIAL", "VOLCANIC_ASH_MASTER_SPECIAL")
@@ -133,3 +135,4 @@ CHANCE_OF_HIDE_1
 '''
 
 #include "/scripting/common/*.macros"
+#include "native_guard.macros"

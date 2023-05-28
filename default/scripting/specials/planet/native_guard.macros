@@ -1,0 +1,109 @@
+// Criteria for native guards:
+// Not above average industry, research, offensive troops or weapons
+// Not ultimate detection or great influence
+// Has protection focus
+// Species scripting doesn't add buildings or specials
+// Either of >= defensive troops or > average stealth
+// Not non-standard planet size (e.g. VOLP)
+// Not light sensitive or phototrophic
+
+SET_NATIVE_GUARD
+'''If condition = ContainedBy Contains Planet type = Swamp
+        [[SWAMP]]
+    If condition = ContainedBy Contains Planet type = Radiated
+        [[RADIATED]]
+    If condition = ContainedBy Contains Planet type = Toxic
+        [[TOXIC]]
+    If condition = ContainedBy Contains Planet type = Inferno
+        [[INFERNO]]
+    If condition = ContainedBy Contains Planet type = Barren
+        [[BARREN]]
+    If condition = ContainedBy Contains Planet type = Tundra
+        [[TUNDRA]]
+    If condition = ContainedBy Contains Planet type = Desert
+        [[DESERT]]
+    If condition = ContainedBy Contains Planet type = Terran
+        [[TERRAN]]
+    If condition = ContainedBy Contains Planet type = Ocean
+        [[OCEAN]]
+    If condition = ContainedBy Contains Planet type = Asteroids
+        [[ASTEROIDS]]
+    If condition = ContainedBy Contains Planet type = GasGiant
+        [[GASGIANT]]
+    If condition = (GalaxyNativeFrequency <= 0.1)
+        [[LOW_NATIVE]]
+'''
+
+SWAMP
+'''effects = [
+    SetSpecies name = OneOf("SP_ANCIENT_GUARDIANS", "SP_CYNOS", "SP_PHINNERT", "SP_SETINON")
+    ]
+'''
+
+RADIATED
+'''effects = [
+    SetSpecies name = "SP_ANCIENT_GUARDIANS"
+    ]
+'''
+
+TOXIC
+'''effects = [
+    SetSpecies name = "SP_ANCIENT_GUARDIANS"
+    ]
+'''
+
+INFERNO
+'''effects = [
+    SetSpecies name = "SP_ANCIENT_GUARDIANS"
+    ]
+'''
+
+BARREN
+'''effects = [
+    SetSpecies name = "SP_ANCIENT_GUARDIANS"
+    ]
+'''
+
+TUNDRA
+'''effects = [
+    SetSpecies name = OneOf("SP_ANCIENT_GUARDIANS", "SP_FURTHEST", "SP_HHHOH")
+    ]
+'''
+
+DESERT
+'''effects = [
+    SetSpecies name = OneOf("SP_ANCIENT_GUARDIANS", "SP_NYMNMN")
+    ]
+'''
+
+TERRAN
+'''effects = [
+    SetSpecies name = OneOf("SP_ANCIENT_GUARDIANS", "SP_RAAAGH", "SP_SILEXIAN")
+    ]
+'''
+
+OCEAN
+'''effects = [
+    SetSpecies name = "SP_ANCIENT_GUARDIANS"
+    ]
+'''
+
+ASTEROIDS
+'''effects = [
+    SetSpecies name = "SP_ANCIENT_GUARDIANS"
+    ]
+'''
+
+GASGIANT
+'''effects = [
+    SetSpecies name = OneOf("SP_ANCIENT_GUARDIANS", "SP_THENIAN")
+    ]
+'''
+
+LOW_NATIVE
+'''effects = [
+    SetSpecies name = "SP_ANCIENT_GUARDIANS"
+    ]
+'''
+
+#include "/scripting/common/*.macros"
