@@ -1225,6 +1225,12 @@ Allows repeated species
 RULE_ALLOW_REPEATED_SPECIES_DESC
 Allows repeated species when there are less players than playable species. When there are more players than playable species there are always repeated species.
 
+RULE_ENSURE_HABITABLE_PLANET_HW_VICINITY
+Guarantee habitable planet in homeworld vicinity
+
+RULE_ENSURE_HABITABLE_PLANET_HW_VICINITY_DESC
+Guarantees at least 1 planet of adequate environment or better close to the homeworld. Currently occurs before native or special placement.
+
 RULE_STOCKPILE_IMPORT_LIMITED
 Stockpile Import Limited
 

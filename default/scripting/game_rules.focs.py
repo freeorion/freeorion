@@ -308,6 +308,14 @@ GameRule(
 )
 
 GameRule(
+    name="RULE_ENSURE_HABITABLE_PLANET_HW_VICINITY",
+    description="RULE_ENSURE_HABITABLE_PLANET_HW_VICINITY_DESC",
+    category="CONTENT",
+    type=bool,
+    default=False,
+)
+
+GameRule(
     name="RULE_MINIMUM_MONSTER_DISTANCE_CAPITAL",
     description="RULE_MINIMUM_MONSTER_DISTANCE_CAPITAL_DESC",
     category="BALANCE",

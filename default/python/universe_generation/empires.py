@@ -548,7 +548,7 @@ def compile_home_system_list(num_home_systems, systems, gsd):  # noqa: max-compl
 
 
 # noqa: C901
-def setup_empire(empire, empire_name, home_system, starting_species, player_name):  # noqa: C901
+def setup_empire(empire, empire_name, home_system, starting_species, player_name, gsd):  # noqa: C901
     """
     Sets up various aspects of an empire, like empire name, homeworld, etc.
     """
@@ -566,6 +566,24 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
         starting_species = next(starting_species_pool)
     print("Starting species for player", player_name, "is", starting_species)
     universe_statistics.empire_species[starting_species] += 1
+
+    # If game rule "RULE_ENSURE_HABITABLE_PLANET_HW_VICINITY" is set check for an adequate or better planet and
+    # if missing add one
+    if fo.getGameRules().getToggle("RULE_ENSURE_HABITABLE_PLANET_HW_VICINITY"):
+        systems_in_vicinity = fo.systems_within_jumps_unordered(HS_VICINITY_RANGE, [home_system])
+        planet_types_in_vicinity = list_planet_types_in_systems(systems_in_vicinity)
+        acceptable_planet_types = set()
+        for planet_type in planet_types:
+            # if this planet type is an adequate or good environment for the species, add it to the set of acceptable planet types
+            if (
+                fo.species_get_planet_environment(starting_species, planet_type) == fo.planetEnvironment.good
+                or fo.species_get_planet_environment(starting_species, planet_type) == fo.planetEnvironment.adequate
+            ):
+                acceptable_planet_types.add(planet_type)
+        if not set(planet_types_in_vicinity).intersection(acceptable_planet_types):
+            systems_in_vicinity.remove(home_system)  # don't add planets to the home system, so remove it from the list
+            print("Adding a habitable planet")
+            add_planets_to_vicinity(sorted(systems_in_vicinity), 1, acceptable_planet_types, True, gsd)
 
     # pick a planet from the specified home system as homeworld
     planet_list = fo.sys_get_planets(home_system)
