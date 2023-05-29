@@ -11680,7 +11680,7 @@ DESC_METER_VALUE_CURRENT_MIN
 # %1% name of the meter.
 # %2% textual description of the lower limit for the meter value.
 DESC_METER_VALUE_CURRENT_MIN_NOT
-''' ayant un indicateur %1% supérieur à %2%'''
+''' ayant un indicateur %1% inférieur à %2%'''
 
 # %1% name of the meter.
 # %2% textual description of the upper limit for the meter value.
@@ -11690,7 +11690,7 @@ DESC_METER_VALUE_CURRENT_MAX
 # %1% name of the meter.
 # %2% textual description of the upper limit for the meter value.
 DESC_METER_VALUE_CURRENT_MAX_NOT
-''' ayant un indicateur %1% inférieur à %2%'''
+''' ayant un indicateur %1% supérieur à %2%'''
 
 # %1% name of the ship meter.
 # %2% textual description of the ship part.
