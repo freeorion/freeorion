@@ -11329,8 +11329,7 @@ std::string Or::Description(bool negated) const {
     return values_str;
 }
 
-ObjectSet Or::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const
-{
+ObjectSet Or::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const {
     if (m_operands.empty())
         return {};
 
@@ -11375,9 +11374,8 @@ std::string Or::Dump(uint8_t ntabs) const {
 }
 
 void Or::SetTopLevelContent(const std::string& content_name) {
-    for (auto& operand : m_operands) {
+    for (auto& operand : m_operands)
         operand->SetTopLevelContent(content_name);
-    }
 }
 
 uint32_t Or::GetCheckSum() const {
