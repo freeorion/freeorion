@@ -11349,9 +11349,11 @@ ObjectSet Or::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_c
             // TODO: fancier deep inspection of m_operands to determine optimal
             //       way to combine the default candidates...
 
-            if (m_operands[1]->EvalOne(parent_context, parent_context.source))
-                return {parent_context.source};
-            return {};
+            auto retval = m_operands[1]->GetDefaultInitialCandidateObjects(parent_context);
+            if (std::none_of(retval.begin(), retval.end(),
+                             [src{parent_context.source}](const UniverseObject* obj) { return obj == src; }))
+            { retval.push_back(parent_context.source); }
+            return retval;
         }
     }
 
