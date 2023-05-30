@@ -31,26 +31,37 @@ namespace GG {
     of the STL. */
 struct GG_API UnicodeCharset
 {
-    UnicodeCharset();
-    UnicodeCharset(std::string script_name, std::uint32_t first_char, std::uint32_t last_char);
+    static constexpr std::size_t BLOCK_SIZE = 16;
 
-    std::string m_script_name;
-    std::uint32_t m_first_char;
-    std::uint32_t m_last_char;
+    constexpr UnicodeCharset() = default;
+    constexpr UnicodeCharset(std::string_view script_name, std::uint32_t first_char, std::uint32_t last_char) :
+        m_script_name(script_name),
+        m_first_char(first_char),
+        m_last_char(last_char + 1)
+    {
+        assert(script_name != "");
+        assert(m_first_char % BLOCK_SIZE == 0);
+        assert(m_last_char % BLOCK_SIZE == 0);
+        assert(m_first_char < m_last_char);
+    }
+
+    constexpr bool operator<(const UnicodeCharset& rhs) const noexcept
+    { return m_first_char < rhs.m_first_char; }
+
+    constexpr bool operator==(const UnicodeCharset& rhs) const noexcept
+    {
+        return m_script_name == rhs.m_script_name &&
+               m_first_char == rhs.m_first_char &&
+               m_last_char == rhs.m_last_char;
+    }
+
+    std::string_view m_script_name;
+    std::uint32_t m_first_char = 0;
+    std::uint32_t m_last_char = 0;
 };
 
-/** Returns true iff all of \a lhs's and \a rhs's members compare equal. */
-GG_API bool operator==(const UnicodeCharset& lhs, const UnicodeCharset& rhs);
-
-/** Returns true iff \a lhs.m_first_char < \a rhs.m_first_char. */
-GG_API bool operator<(const UnicodeCharset& lhs, const UnicodeCharset& rhs);
-
-
-/** Returns a vector containing all defined UnicodeCharset's. */
-GG_API const std::vector<UnicodeCharset>& AllUnicodeCharsets();
-
 /** Returns the set of the UnicodeCharset's required to render \a str. */
-GG_API std::set<UnicodeCharset> UnicodeCharsetsToRender(const std::string& str);
+GG_API std::vector<UnicodeCharset> UnicodeCharsetsToRender(const std::string& str);
 
 /** Returns the UnicodeCharset in which \a c can be found, or 0 if no such
     UnicodeCharset exists. */

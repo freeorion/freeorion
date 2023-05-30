@@ -12,43 +12,9 @@
 #include <GG/utf8/checked.h>
 
 
-using namespace GG;
-
 namespace {
-
-const std::size_t BLOCK_SIZE = 16;
-
-}
-
-UnicodeCharset::UnicodeCharset() :
-    m_first_char(0),
-    m_last_char(0)
-{}
-
-UnicodeCharset::UnicodeCharset(std::string script_name, std::uint32_t first_char, std::uint32_t last_char) :
-    m_script_name(script_name),
-    m_first_char(first_char),
-    m_last_char(last_char + 1)
-{
-    assert(script_name != "");
-    assert(m_first_char % BLOCK_SIZE == 0);
-    assert(m_last_char % BLOCK_SIZE == 0);
-    assert(m_first_char < m_last_char);
-}
-
-bool GG::operator==(const UnicodeCharset& lhs, const UnicodeCharset& rhs)
-{
-    return lhs.m_script_name == rhs.m_script_name &&
-        lhs.m_first_char == rhs.m_first_char &&
-        lhs.m_last_char == rhs.m_last_char;
-}
-
-bool GG::operator<(const UnicodeCharset& lhs, const UnicodeCharset& rhs)
-{ return lhs.m_first_char < rhs.m_first_char; }
-
-const std::vector<UnicodeCharset>& GG::AllUnicodeCharsets()
-{
-    static const std::vector<UnicodeCharset> ALL_UNICODE_CHARSETS{
+    using GG::UnicodeCharset;
+    constexpr std::array<UnicodeCharset, 135> ALL_UNICODE_CHARSETS{{
         UnicodeCharset("Basic Latin", 0x0000, 0x007F),
         UnicodeCharset("Latin-1 Supplement", 0x0080, 0x00FF),
         UnicodeCharset("Latin Extended-A", 0x0100, 0x017F),
@@ -184,48 +150,44 @@ const std::vector<UnicodeCharset>& GG::AllUnicodeCharsets()
         UnicodeCharset("Arabic Presentation Forms-B", 0xFE70, 0xFEFF),
         UnicodeCharset("Halfwidth and Fullwidth Forms", 0xFF00, 0xFFEF),
         UnicodeCharset("Specials", 0xFFF0, 0xFFFF)
-    };
+    }};
 
-    return ALL_UNICODE_CHARSETS;
+    constexpr auto s_charset_blocks = []() {
+        constexpr auto max_j = ALL_UNICODE_CHARSETS.back().m_last_char / UnicodeCharset::BLOCK_SIZE;
+        std::array<const UnicodeCharset*, max_j> retval{};
+        for (const UnicodeCharset& uchs : ALL_UNICODE_CHARSETS) {
+            std::size_t first_block = uchs.m_first_char / UnicodeCharset::BLOCK_SIZE;
+            std::size_t last_block = uchs.m_last_char / UnicodeCharset::BLOCK_SIZE;
+            for (std::size_t j = first_block; j != last_block; ++j)
+                retval[j] = &uchs;
+        }
+        return retval;
+    }();
 }
 
-std::set<UnicodeCharset> GG::UnicodeCharsetsToRender(const std::string& str)
+std::vector<UnicodeCharset> GG::UnicodeCharsetsToRender(const std::string& str)
 {
-    std::set<UnicodeCharset> retval;
+    std::vector<UnicodeCharset> retval;
     auto it = str.begin();
     auto end_it = str.end();
     while (it != end_it) {
         if (auto charset = CharsetContaining(utf8::next(it, end_it)))
-            retval.insert(*charset);
+            retval.push_back(*charset);
     }
     return retval;
 }
 
 const UnicodeCharset* GG::CharsetContaining(std::uint32_t c)
 {
-    static std::vector<const UnicodeCharset*> s_charset_blocks;
-    if (s_charset_blocks.empty()) {
-        s_charset_blocks.resize(AllUnicodeCharsets().back().m_last_char / BLOCK_SIZE);
-        for (const UnicodeCharset& uchs : AllUnicodeCharsets()) {
-            std::size_t first_block = uchs.m_first_char / BLOCK_SIZE;
-            std::size_t last_block = uchs.m_last_char / BLOCK_SIZE;
-            for (std::size_t j = first_block; j != last_block; ++j) {
-                s_charset_blocks[j] = &uchs;
-            }
-        }
-    }
-    std::size_t block = c / BLOCK_SIZE;
+    const std::size_t block = c / UnicodeCharset::BLOCK_SIZE;
     return block < s_charset_blocks.size() ? s_charset_blocks[block] : nullptr;
 }
 
 const UnicodeCharset* GG::CharsetWithName(const std::string& name)
 {
-    static std::map<std::string, const UnicodeCharset*> s_name_map;
-    if (s_name_map.empty()) {
-        for (const UnicodeCharset& uchs : AllUnicodeCharsets()) {
-            s_name_map[uchs.m_script_name] = &uchs;
-        }
-    }
-    auto it = s_name_map.find(name);
-    return it == s_name_map.end() ? nullptr : it->second;
+    auto it = std::find_if(ALL_UNICODE_CHARSETS.begin(), ALL_UNICODE_CHARSETS.end(),
+                           [&name](const auto& cs) { return cs.m_script_name == name; });
+    if (it != ALL_UNICODE_CHARSETS.end())
+        return &*it;
+    return nullptr;
 }
