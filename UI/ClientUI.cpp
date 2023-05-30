@@ -436,7 +436,7 @@ std::ostream& operator<< (std::ostream& os, const GG::UnicodeCharset& chset) {
 }
 
 namespace {
-    const std::vector<GG::UnicodeCharset>& RequiredCharsets() {
+    const auto& RequiredCharsets() {
         static std::vector<GG::UnicodeCharset> retval;
         if (retval.empty()) {
             // Basic Latin, Latin-1 Supplement, and Latin Extended-A
@@ -1121,41 +1121,49 @@ std::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::path&
 }
 
 std::shared_ptr<GG::Font> ClientUI::GetFont(int pts) {
-     try {
-        return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("ui.font.path"), pts,
-                                          RequiredCharsets().begin(), RequiredCharsets().end());
-     } catch (...) {
-         try {
-            return GG::GUI::GetGUI()->GetFont(GetOptionsDB().GetDefault<std::string>("ui.font.path"),
-                                              pts, RequiredCharsets().begin(), RequiredCharsets().end());
+    const auto& rqcs = RequiredCharsets();
+    auto* gui = GG::GUI::GetGUI();
+    try {
+       return gui->GetFont(GetOptionsDB().Get<std::string>("ui.font.path"),
+                           pts, rqcs.begin(), rqcs.end());
+    } catch (...) {
+        try {
+            return gui->GetFont(GetOptionsDB().GetDefault<std::string>("ui.font.path"),
+                                pts, rqcs.begin(), rqcs.end());
         } catch (...) {
-             return GG::GUI::GetGUI()->GetStyleFactory()->DefaultFont(pts);
+             return gui->GetStyleFactory()->DefaultFont(pts);
         }
     }
 }
 
 std::shared_ptr<GG::Font> ClientUI::GetBoldFont(int pts) {
+    const auto& rqcs = RequiredCharsets();
+    auto* gui = GG::GUI::GetGUI();
     try {
-        return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("ui.font.bold.path"), pts, RequiredCharsets().begin(), RequiredCharsets().end());
+        return gui->GetFont(GetOptionsDB().Get<std::string>("ui.font.bold.path"),
+                            pts, rqcs.begin(), rqcs.end());
     } catch (...) {
         try {
-             return GG::GUI::GetGUI()->GetFont(GetOptionsDB().GetDefault<std::string>("ui.font.bold.path"),
-                                               pts, RequiredCharsets().begin(), RequiredCharsets().end());
+             return gui->GetFont(GetOptionsDB().GetDefault<std::string>("ui.font.bold.path"),
+                                 pts, rqcs.begin(), rqcs.end());
         } catch (...) {
-             return GG::GUI::GetGUI()->GetStyleFactory()->DefaultFont(pts);
+             return gui->GetStyleFactory()->DefaultFont(pts);
         }
     }
 }
 
 std::shared_ptr<GG::Font> ClientUI::GetTitleFont(int pts) {
+    const auto& rqcs = RequiredCharsets();
+    auto* gui = GG::GUI::GetGUI();
     try {
-        return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("ui.font.title.path"), pts, RequiredCharsets().begin(), RequiredCharsets().end());
+        return gui->GetFont(GetOptionsDB().Get<std::string>("ui.font.title.path"),
+                            pts, rqcs.begin(), rqcs.end());
     } catch (...) {
         try {
-            return GG::GUI::GetGUI()->GetFont(GetOptionsDB().GetDefault<std::string>("ui.font.title.path"),
-                                              pts, RequiredCharsets().begin(), RequiredCharsets().end());
+            return gui->GetFont(GetOptionsDB().GetDefault<std::string>("ui.font.title.path"),
+                                pts, rqcs.begin(), rqcs.end());
         } catch (...) {
-             return GG::GUI::GetGUI()->GetStyleFactory()->DefaultFont(pts);
+             return gui->GetStyleFactory()->DefaultFont(pts);
         }
    }
 }
