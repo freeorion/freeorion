@@ -442,7 +442,7 @@ namespace {
             // Basic Latin, Latin-1 Supplement, and Latin Extended-A
             // (character sets needed to display the credits page)
             const std::string CREDITS_STR = "AöŁ";
-            std::set<GG::UnicodeCharset> credits_charsets = GG::UnicodeCharsetsToRender(CREDITS_STR);
+            const auto credits_charsets = GG::UnicodeCharsetsToRender(CREDITS_STR);
 
             std::set<GG::UnicodeCharset> stringtable_charsets;
             {
@@ -455,7 +455,8 @@ namespace {
                     stringtable_str += line;
                     stringtable_str += '\n';
                 }
-                stringtable_charsets = GG::UnicodeCharsetsToRender(stringtable_str);
+                const auto stcs = GG::UnicodeCharsetsToRender(stringtable_str);
+                stringtable_charsets.insert(stcs.begin(), stcs.end());
                 DebugLogger() << "loading " << stringtable_charsets.size() << " charsets for current stringtable characters";
             }
 
@@ -470,10 +471,10 @@ namespace {
                     stringtable_str += line;
                     stringtable_str += '\n';
                 }
-                std::set<GG::UnicodeCharset> default_stringtable_charsets = GG::UnicodeCharsetsToRender(stringtable_str);
+                const auto default_stringtable_charsets = GG::UnicodeCharsetsToRender(stringtable_str);
                 DebugLogger() << "loading " << default_stringtable_charsets.size() << " charsets for default stringtable characters";
 
-                stringtable_charsets.merge(default_stringtable_charsets); // insert(default_stringtable_charsets.begin(), default_stringtable_charsets.end());
+                stringtable_charsets.insert(default_stringtable_charsets.begin(), default_stringtable_charsets.end());
                 DebugLogger() << "combined stringtable charsets have " << stringtable_charsets.size() << " charsets";
             }
 
@@ -483,7 +484,7 @@ namespace {
 
             std::string message_text = "Loading " + std::to_string(retval.size()) + " Unicode charsets: ";
             for (const GG::UnicodeCharset& cs : retval)
-                message_text += cs.m_script_name + ", ";
+                message_text.append(cs.m_script_name).append(", ");
 
             DebugLogger() << message_text;
         }
