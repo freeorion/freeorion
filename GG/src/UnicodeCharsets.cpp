@@ -165,7 +165,7 @@ namespace {
     }();
 }
 
-std::vector<UnicodeCharset> GG::UnicodeCharsetsToRender(const std::string& str)
+std::vector<UnicodeCharset> GG::UnicodeCharsetsToRender(std::string_view str)
 {
     std::vector<UnicodeCharset> retval;
     auto it = str.begin();
@@ -177,17 +177,23 @@ std::vector<UnicodeCharset> GG::UnicodeCharsetsToRender(const std::string& str)
     return retval;
 }
 
-const UnicodeCharset* GG::CharsetContaining(std::uint32_t c)
+const UnicodeCharset* GG::CharsetContaining(std::uint32_t c) noexcept
 {
     const std::size_t block = c / UnicodeCharset::BLOCK_SIZE;
     return block < s_charset_blocks.size() ? s_charset_blocks[block] : nullptr;
 }
 
-const UnicodeCharset* GG::CharsetWithName(const std::string& name)
+const UnicodeCharset* GG::CharsetWithName(std::string_view name) noexcept
 {
-    auto it = std::find_if(ALL_UNICODE_CHARSETS.begin(), ALL_UNICODE_CHARSETS.end(),
-                           [&name](const auto& cs) { return cs.m_script_name == name; });
-    if (it != ALL_UNICODE_CHARSETS.end())
-        return &*it;
+    const auto name_eq = [name](const auto& cs) noexcept { return cs.m_script_name == name; };
+    if constexpr (noexcept(std::find_if(ALL_UNICODE_CHARSETS.begin(), ALL_UNICODE_CHARSETS.end(), name_eq))) {
+        const auto it = std::find_if(ALL_UNICODE_CHARSETS.begin(), ALL_UNICODE_CHARSETS.end(), name_eq);
+        if (it != ALL_UNICODE_CHARSETS.end())
+            return &*it;
+    } else {
+        for (auto it = ALL_UNICODE_CHARSETS.begin(); it != ALL_UNICODE_CHARSETS.end(); ++it)
+            if (name_eq(*it))
+                return &*it;
+    }
     return nullptr;
 }

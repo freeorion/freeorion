@@ -34,7 +34,8 @@ struct GG_API UnicodeCharset
     static constexpr std::size_t BLOCK_SIZE = 16;
 
     constexpr UnicodeCharset() = default;
-    constexpr UnicodeCharset(std::string_view script_name, std::uint32_t first_char, std::uint32_t last_char) :
+    constexpr UnicodeCharset(std::string_view script_name, std::uint32_t first_char,
+                             std::uint32_t last_char) noexcept :
         m_script_name(script_name),
         m_first_char(first_char),
         m_last_char(last_char + 1)
@@ -61,15 +62,15 @@ struct GG_API UnicodeCharset
 };
 
 /** Returns the set of the UnicodeCharset's required to render \a str. */
-GG_API std::vector<UnicodeCharset> UnicodeCharsetsToRender(const std::string& str);
+GG_API std::vector<UnicodeCharset> UnicodeCharsetsToRender(std::string_view str);
 
 /** Returns the UnicodeCharset in which \a c can be found, or 0 if no such
     UnicodeCharset exists. */
-GG_API const UnicodeCharset* CharsetContaining(std::uint32_t c);
+GG_API const UnicodeCharset* CharsetContaining(std::uint32_t c) noexcept;
 
 /** Returns the UnicodeCharset called \a name, or 0 if no such UnicodeCharset
     exists. */
-GG_API const UnicodeCharset* CharsetWithName(const std::string& name);
+GG_API const UnicodeCharset* CharsetWithName(std::string_view name) noexcept;
 
 }
 

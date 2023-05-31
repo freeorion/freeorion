@@ -441,7 +441,7 @@ namespace {
         if (retval.empty()) {
             // Basic Latin, Latin-1 Supplement, and Latin Extended-A
             // (character sets needed to display the credits page)
-            const std::string CREDITS_STR = "AöŁ";
+            const std::string_view CREDITS_STR = "AöŁ";
             const auto credits_charsets = GG::UnicodeCharsetsToRender(CREDITS_STR);
 
             std::set<GG::UnicodeCharset> stringtable_charsets;
