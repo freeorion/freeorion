@@ -375,58 +375,45 @@ GG::Clr ClientUI::CategoryColor(std::string_view category_name) {
     return {};
 }
 
-std::string_view ClientUI::PlanetTypeFilePrefix(PlanetType planet_type) {
-    static constexpr std::array<std::pair<PlanetType, std::string_view>, 10> prefixes{{
-        {PlanetType::PT_SWAMP,   "Swamp"},
-        {PlanetType::PT_TOXIC,   "Toxic"},
-        {PlanetType::PT_INFERNO, "Inferno"},
-        {PlanetType::PT_RADIATED,"Radiated"},
-        {PlanetType::PT_BARREN,  "Barren"},
-        {PlanetType::PT_TUNDRA,  "Tundra"},
-        {PlanetType::PT_DESERT,  "Desert"},
-        {PlanetType::PT_TERRAN,  "Terran"},
-        {PlanetType::PT_OCEAN,   "Ocean"},
-        {PlanetType::PT_GASGIANT,"GasGiant"}
-    }};
-    const auto it = std::find_if(prefixes.begin(), prefixes.end(),
-                                 [planet_type](const auto& p) { return planet_type == p.first; });
-    return (it != prefixes.end()) ? it->second : "";
+namespace {
+    static_assert(static_cast<int>(PlanetType::INVALID_PLANET_TYPE) + 1 == 0);
+    static_assert(static_cast<int>(PlanetType::NUM_PLANET_TYPES) == 11);
+    constexpr std::array<std::string_view, 13> planet_prefixes {
+        "", "Swamp", "Toxic", "Inferno","Radiated", "Barren",
+        "Tundra", "Desert", "Terran", "Ocean", "", "GasGiant", ""};
+    constexpr auto PlanetPrefix(PlanetType star_type)
+    { return planet_prefixes[static_cast<size_t>(static_cast<int>(star_type)+1)]; }
+    static_assert(PlanetPrefix(PlanetType::PT_SWAMP) == "Swamp");
+    static_assert(PlanetPrefix(PlanetType::PT_GASGIANT) == "GasGiant");
+
+    static_assert(static_cast<int>(StarType::INVALID_STAR_TYPE) + 1 == 0);
+    static_assert(static_cast<int>(StarType::NUM_STAR_TYPES) == 8);
+    constexpr std::array<std::string_view, 10> star_prefixes{
+        "unknown", "blue", "white", "yellow", "orange",
+        "red", "neutron", "blackhole", "nostar", ""};
+    constexpr auto StarPrefix(StarType star_type)
+    { return star_prefixes[static_cast<size_t>(static_cast<int>(star_type)+1)]; }
+    static_assert(StarPrefix(StarType::INVALID_STAR_TYPE) == "unknown");
+    static_assert(StarPrefix(StarType::STAR_RED) == "red");
+    static_assert(StarPrefix(StarType::NUM_STAR_TYPES).empty());
+
+    constexpr std::array<std::string_view, 10> halo_prefixes{
+        "halo_unknown", "halo_blue", "halo_white", "halo_yellow", "halo_orange",
+        "halo_red", "halo_neutron", "halo_blackhole", "halo_nostar", "halo_unknown"};
+    constexpr auto HaloPrefix(StarType star_type)
+    { return halo_prefixes[static_cast<size_t>(static_cast<int>(star_type)+1)]; }
+    static_assert(HaloPrefix(StarType::INVALID_STAR_TYPE) == "halo_unknown");
+    static_assert(HaloPrefix(StarType::STAR_NONE) == "halo_nostar");
 }
 
-std::string_view ClientUI::StarTypeFilePrefix(StarType star_type) {
-    static constexpr std::array<std::pair<StarType, std::string_view>, 9> prefixes{{
-        {StarType::INVALID_STAR_TYPE, "unknown"},
-        {StarType::STAR_BLUE,         "blue"},
-        {StarType::STAR_WHITE,        "white"},
-        {StarType::STAR_YELLOW,       "yellow"},
-        {StarType::STAR_ORANGE,       "orange"},
-        {StarType::STAR_RED,          "red"},
-        {StarType::STAR_NEUTRON,      "neutron"},
-        {StarType::STAR_BLACK,        "blackhole"},
-        {StarType::STAR_NONE,         "nostar"}
-    }};
-    const auto it = std::find_if(prefixes.begin(), prefixes.end(),
-                                 [star_type](const auto& p) { return star_type == p.first; });
-    return (it != prefixes.end()) ? it->second : "";
-}
+std::string_view ClientUI::PlanetTypeFilePrefix(PlanetType planet_type) noexcept
+{ return PlanetPrefix(planet_type); }
 
-std::string_view ClientUI::HaloStarTypeFilePrefix(StarType star_type) {
-    static constexpr std::array<std::pair<StarType, std::string_view>, 9> prefixes{{
-        {StarType::INVALID_STAR_TYPE, "halo_unknown"},
-        {StarType::STAR_BLUE,         "halo_blue"},
-        {StarType::STAR_WHITE,        "halo_white"},
-        {StarType::STAR_YELLOW,       "halo_yellow"},
-        {StarType::STAR_ORANGE,       "halo_orange"},
-        {StarType::STAR_RED,          "halo_red"},
-        {StarType::STAR_NEUTRON,      "halo_neutron"},
-        {StarType::STAR_BLACK,        "halo_blackhole"},
-        {StarType::STAR_NONE,         "halo_nostar"}
-    }};
-    const auto it = std::find_if(prefixes.begin(), prefixes.end(),
-                                 [star_type](const auto& p) { return star_type == p.first; });
-    return (it != prefixes.end()) ? it->second : "";
-}
+std::string_view ClientUI::StarTypeFilePrefix(StarType star_type) noexcept
+{ return StarPrefix(star_type); }
 
+std::string_view ClientUI::HaloStarTypeFilePrefix(StarType star_type) noexcept
+{ return HaloPrefix(star_type); }
 
 ClientUI* ClientUI::s_the_UI = nullptr;
 
