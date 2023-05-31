@@ -7,7 +7,6 @@ on:
         required: true
         type: string
       weekly-deploy:
-        required: true
         type: boolean
         default: false
     secrets:
