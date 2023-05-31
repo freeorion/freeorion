@@ -2,13 +2,21 @@ name: "MacOS"
 
 on:
   workflow_call:
+    inputs:
+      os:
+        required: true
+        type: string
+      weekly-deploy:
+        required: true
+        type: boolean
+        default: false
+    secrets:
+      DEPLOY_SSH_PASSWORD:
+        required: true
 jobs:
   macos:
-    name: ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [macos-11, macos-12, macos-13]
+    name: ${{ inputs.os }}
+    runs-on: ${{ inputs.os }}
     env:
       CACHE_NAME: macos-full
       CMAKE_BUILD_PARALLEL_LEVEL: 2
@@ -28,9 +36,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/Library/Caches/
-          key: build-${{ matrix.os }}-ccache-${{ steps.build-macos-ccache-timestamp.outputs.timestamp }}
+          key: build-${{ inputs.os }}-ccache-${{ steps.build-macos-ccache-timestamp.outputs.timestamp }}
           restore-keys: |
-            build-${{ matrix.os }}-ccache-
+            build-${{ inputs.os }}-ccache-
       - name: Show ccache statistics before build
         run: |
           export PATH="/usr/local/opt/ccache/libexec:$PATH"
@@ -52,7 +60,7 @@ jobs:
           cd build
           cmake --build . --config Release -- -parallelizeTargets
       - name: Generate binaries
-        if: matrix.os != 'macos-13'
+        if: inputs.os != 'macos-13'
         run: |
           export PATH="/usr/local/opt/ccache/libexec:$PATH"
           alias cmake="/usr/local/bin/gtimeout 40m /usr/local/bin/cmake"
@@ -61,10 +69,10 @@ jobs:
           ccache --cleanup
           ccache --show-stats || true
       - name: Decrypt deploy SSH key
-        if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push' && matrix.os == 'macos-11'
+        if: ${{ inputs.weekly-deploy }}
         run: bash .github/pre-deploy.sh
         env:
           DEPLOY_SSH_PASSWORD: ${{ secrets.DEPLOY_SSH_PASSWORD }}
       - name: Upload binaries only
-        if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push' && matrix.os == 'macos-11'
+        if: ${{ inputs.weekly-deploy }}
         run: bash -c 'scp build/FreeOrion_*_Test_MacOSX_*.dmg o01eg@frs.sourceforge.net:/home/frs/project/freeorion/FreeOrion/Test/'

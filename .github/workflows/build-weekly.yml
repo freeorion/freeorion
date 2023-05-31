@@ -5,7 +5,13 @@ on:
 jobs:
   macos:
     uses: ./.github/workflows/_build-macos.yml
+    with:
+      os: 'macos-11'
+      weekly-deploy: true
+    secrets: inherit
   windows:
     uses: ./.github/workflows/_build-windows.yml
+    secrets: inherit
   windows-msvc:
     uses: ./.github/workflows/_build-windows-msvs.yml
+    secrets: inherit
