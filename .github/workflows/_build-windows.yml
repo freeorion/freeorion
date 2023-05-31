@@ -4,7 +4,6 @@ on:
   workflow_call:
     secrets:
       DEPLOY_SSH_PASSWORD:
-        required: true
 jobs:
   windows-2022-cmake:
     name: MSVS 2022 on Windows CMake

@@ -10,7 +10,6 @@ on:
         default: false
     secrets:
       DEPLOY_SSH_PASSWORD:
-        required: true
 jobs:
   macos:
     name: ${{ inputs.os }}
