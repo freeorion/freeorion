@@ -206,9 +206,9 @@ public:
     static GG::Clr  TechWndProgressBarColor();
     static GG::Clr  CategoryColor(std::string_view category_name);
 
-    static std::string_view PlanetTypeFilePrefix(PlanetType planet_type);
-    static std::string_view StarTypeFilePrefix(StarType star_type);
-    static std::string_view HaloStarTypeFilePrefix(StarType star_type);
+    static std::string_view PlanetTypeFilePrefix(PlanetType planet_type) noexcept;
+    static std::string_view StarTypeFilePrefix(StarType star_type) noexcept;
+    static std::string_view HaloStarTypeFilePrefix(StarType star_type) noexcept;
     //!@}
 
 private:
