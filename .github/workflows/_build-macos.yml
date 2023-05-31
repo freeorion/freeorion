@@ -4,7 +4,6 @@ on:
   workflow_call:
     inputs:
       os:
-        required: true
         type: string
       weekly-deploy:
         type: boolean
