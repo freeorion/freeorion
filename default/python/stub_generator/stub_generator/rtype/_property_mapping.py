@@ -1,24 +1,27 @@
 from stub_generator.stub_generator.collection_classes import make_type
+from stub_generator.stub_generator.rtype.mapper import Mapper
 
-_property_map = {
-    ("shipIDs", "IntSet"): "Set[ShipId]",
-    ("shipIDs", "IntVec"): "Vec[ShipId]",
-    ("buildingIDs", "IntSet"): "Set[BuildingId]",
-    ("buildingIDs", "IntVec"): "Vec[BuildingId]",
-    ("planetIDs", "IntSet"): "Set[PlanetId]",
-    ("planetIDs", "IntVec"): "Vec[PlanetId]",
-    ("fleetIDs", "IntVec"): "Vec[FleetId]",
-    ("fleetIDs", "IntSet"): "Set[FleetId]",
-    ("systemIDs", "IntVec"): "Vec[SystemId]",
-    ("empireID", "int"): "EmpireId",
-    ("capitalID", "int"): "PlanetId",
-    ("locationID", "int"): "PlanetId",
-    ("owner", "int"): "EmpireId",
-    ("speciesName", "str"): "SpeciesName",
-    ("designedOnTurn", "int"): "Turn",
-    ("buildingTypeName", "str"): "BuildingName",
-    ("parts", "StringVec"): "Vec[PartName]",
-}
+_property_map = Mapper(
+    {
+        ("shipIDs", "IntSet"): "Set[ShipId]",
+        ("shipIDs", "IntVec"): "Vec[ShipId]",
+        ("buildingIDs", "IntSet"): "Set[BuildingId]",
+        ("buildingIDs", "IntVec"): "Vec[BuildingId]",
+        ("planetIDs", "IntSet"): "Set[PlanetId]",
+        ("planetIDs", "IntVec"): "Vec[PlanetId]",
+        ("fleetIDs", "IntVec"): "Vec[FleetId]",
+        ("fleetIDs", "IntSet"): "Set[FleetId]",
+        ("systemIDs", "IntVec"): "Vec[SystemId]",
+        ("empireID", "int"): "EmpireId",
+        ("capitalID", "int"): "PlanetId",
+        ("locationID", "int"): "PlanetId",
+        ("owner", "int"): "EmpireId",
+        ("speciesName", "str"): "SpeciesName",
+        ("designedOnTurn", "int"): "Turn",
+        ("buildingTypeName", "str"): "BuildingName",
+        ("parts", "StringVec"): "Vec[PartName]",
+    }
+)
 
 
 def update_property_rtype(attr_name: str, rtype: str):

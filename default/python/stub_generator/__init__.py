@@ -3,6 +3,7 @@ from logging import debug, error
 
 from stub_generator.generate_stub import make_stub
 from stub_generator.interface_inspector import get_module_info
+from stub_generator.stub_generator.rtype.mapper import report_unused_mapping
 
 
 def generate_stub(obj, instances, classes_to_ignore, path):
@@ -24,6 +25,9 @@ def generate_stub(obj, instances, classes_to_ignore, path):
     result_path = os.path.join(result_folder, "%s.pyi" % obj.__name__)
     classes, enums, functions, instances = get_module_info(obj, instances)
     make_stub(classes, enums, functions, instances, result_path, classes_to_ignore)
+
+    report_unused_mapping()
+
     debug("=" * 20)
     error("Skeleton was created, please exit to the menu")
     debug("Skeleton written to %s" % result_path)

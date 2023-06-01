@@ -1,8 +1,11 @@
 from stub_generator.stub_generator.collection_classes import make_type
+from stub_generator.stub_generator.rtype.mapper import Mapper
 
-_method_map = {
-    ("empire", "supplyProjections"): "Map[SystemId, int]",
-}
+_method_map = Mapper(
+    {
+        ("empire", "supplyProjections"): "Map[SystemId, int]",
+    }
+)
 
 
 def update_method_rtype(class_: str, method_name: str, rtype: str) -> str:
