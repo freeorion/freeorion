@@ -263,7 +263,7 @@ def handleDiplomaticMessage(message):  # pylint: disable=invalid-name
 
 
 @error_handler
-def handleDiplomaticStatusUpdate(status_update):  # pylint: disable=invalid-name
+def handleDiplomaticStatusUpdate(status_update: fo.diplomaticStatusUpdate):  # pylint: disable=invalid-name
     """Called when this player receives an update about the diplomatic status between players, which may
     or may not include this player."""
     empire = fo.getEmpire()

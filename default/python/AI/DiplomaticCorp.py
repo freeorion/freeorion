@@ -167,7 +167,7 @@ class DiplomaticCorp:
             greets = UserStringList("AI_FIRST_TURN_GREETING_BEGINNER")
         return random.choice(greets)
 
-    def handle_diplomatic_status_update(self, status_update):
+    def handle_diplomatic_status_update(self, status_update: fo.diplomaticStatusUpdate):
         """Handle an update about the diplomatic status between players, which may
         or may not include this player."""
         debug(

@@ -23,6 +23,8 @@ def _get_property_return_type_by_name(attr_name: str) -> str:
         "capitalID": "PlaneId",
         "owner": "EmpireId",
         "designedOnTurn": "Turn",
+        "empire1": "EmpireId",
+        "empire2": "EmpireId",
     }
     return property_map.get(attr_name, "")
 
@@ -44,8 +46,8 @@ def _handle_class(info: ClassInfo) -> str:  # noqa: max-complexity
             rtype = attr.get("rtype", "")
             if not rtype:
                 rtype = _get_property_return_type_by_name(attr_name)
-            else:
-                rtype = update_property_rtype(attr_name, rtype)
+
+            rtype = update_property_rtype(attr_name, rtype)
             properties.append((attr_name, rtype))
         elif attr["type"] in ("<class 'Boost.Python.function'>", "<class 'function'>"):
             instance_methods.append(attr["routine"])

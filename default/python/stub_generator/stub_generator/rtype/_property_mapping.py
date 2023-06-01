@@ -20,6 +20,10 @@ _property_map = Mapper(
         ("designedOnTurn", "int"): "Turn",
         ("buildingTypeName", "str"): "BuildingName",
         ("parts", "StringVec"): "Vec[PartName]",
+        ("recipient", "int"): "PlayerId",
+        ("sender", "int"): "PlayerId",
+        ("empire1", "int"): "EmpireId",
+        ("empire2", "int"): "EmpireId",
     }
 )
 

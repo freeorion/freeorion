@@ -1,4 +1,4 @@
-from common.fo_typing import EmpireId, Turn
+from common.fo_typing import EmpireId, PlayerId, Turn
 from stub_generator.stub_generator.collection_classes import make_type
 from stub_generator.stub_generator.rtype.mapper import Mapper
 
@@ -7,6 +7,7 @@ _rtypes_map = Mapper(
         "currentTurn": Turn.__name__,
         "empireID": EmpireId.__name__,
         "allEmpireIDs": f"Vec[{EmpireId.__name__}]",
+        "empirePlayerID": f"{PlayerId.__name__}",
     }
 )
 
