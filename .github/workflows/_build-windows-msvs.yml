@@ -2,6 +2,8 @@ name: "Windows MS VS"
 
 on:
   workflow_call:
+    secrets:
+      DEPLOY_SSH_PASSWORD:
 jobs:
   windows-2022:
     name: MSVS 2022 on Windows

@@ -18,7 +18,12 @@ jobs:
   android:
     uses: ./.github/workflows/_build-android.yml
   macos:
+    strategy:
+      matrix:
+        os: [ macos-11, macos-12, macos-13 ]
     uses: ./.github/workflows/_build-macos.yml
+    with:
+      os: ${{ matrix.os }}
   ubuntu:
     uses: ./.github/workflows/_build-ubuntu.yml
   windows:
