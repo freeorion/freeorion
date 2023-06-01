@@ -41,6 +41,9 @@ _property_map = Mapper(
         ("empire1", ""): EmpireId,
         ("empire2", ""): EmpireId,
         ("status", ""): "diplomaticStatus",
+        ("specials", ""): SpeciesName,
+        ("producedByEmpireID", "int"): EmpireId,
+        ("planetID", "int"): PlanetId,
     }
 )
 
