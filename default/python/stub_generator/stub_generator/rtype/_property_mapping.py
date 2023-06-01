@@ -20,6 +20,7 @@ from stub_generator.stub_generator.rtype.utils import get_name_for_mapping
 _property_map = Mapper(
     {
         ("shipIDs", "IntVec"): Vec[ShipId],
+        ("allObjectIDs", "IntVec"): Vec[ObjectId],
         ("buildingIDs", "IntVec"): Vec[BuildingId],
         ("planetIDs", "IntVec"): Vec[PlanetId],
         ("fleetIDs", "IntVec"): Vec[FleetId],

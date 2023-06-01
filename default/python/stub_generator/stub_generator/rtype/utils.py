@@ -15,3 +15,4 @@ def get_name_for_mapping(property_class) -> str:
         return property_class
     else:
         _, _, rtype = str(property_class).rpartition(".")
+        return rtype
