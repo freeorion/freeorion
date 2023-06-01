@@ -69,7 +69,7 @@ def _handle_class(info: ClassInfo) -> str:  # noqa: max-complexity
     for routine_name, routine_docs in instance_methods:
         docs = Docs(routine_docs, 2, is_class=True)
         # TODO: Subclass map-like classes from dict (or custom class) rather than this hack
-        rtype = update_method_rtype(info.name, routine_name, docs.rtype)
+        rtype = update_method_rtype(routine_name, docs.rtype)
 
         doc_string = docs.get_doc_string()
         if doc_string:
