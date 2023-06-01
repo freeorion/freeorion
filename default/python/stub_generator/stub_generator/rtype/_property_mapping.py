@@ -24,6 +24,18 @@ _property_map = Mapper(
         ("sender", "int"): "PlayerId",
         ("empire1", "int"): "EmpireId",
         ("empire2", "int"): "EmpireId",
+        ("id", ""): "ObjectId",
+        ("systemID", ""): "SystemId",
+        ("systemIDs", ""): "SystemId",
+        ("name", ""): "str",
+        ("empireID", ""): "EmpireId",
+        ("description", ""): "str",
+        ("speciesName", ""): "SpeciesName",
+        ("capitalID", ""): "PlaneId",
+        ("owner", ""): "EmpireId",
+        ("designedOnTurn", ""): "Turn",
+        ("empire1", ""): "EmpireId",
+        ("empire2", ""): "EmpireId",
     }
 )
 
