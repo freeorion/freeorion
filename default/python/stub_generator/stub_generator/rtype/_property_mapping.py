@@ -44,6 +44,7 @@ _property_map = Mapper(
         ("systemID", ""): SystemId,
         ("systemIDs", ""): SystemId,
         ("name", ""): str,
+        ("name", "object"): str,
         ("empireID", ""): EmpireId,
         ("description", ""): str,
         ("speciesName", ""): SpeciesName,

@@ -13,7 +13,7 @@ _rtypes_map = Mapper(
 
 
 def update_function_rtype(name: str, rtype: str) -> str:
-    key = (name,)
+    key = name
     if key in _rtypes_map:
         return _rtypes_map[key]
     else:

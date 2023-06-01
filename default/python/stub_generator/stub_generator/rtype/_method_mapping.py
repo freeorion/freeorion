@@ -2,9 +2,7 @@ from stub_generator.stub_generator.collection_classes import make_type
 from stub_generator.stub_generator.rtype.mapper import Mapper
 
 _method_map = Mapper(
-    {
-        "supplyProjections": "Map[SystemId, int]",
-    }
+    {"supplyProjections": "Map[SystemId, int]", "status": "fo.diplomaticStatus", "turnPolicyAdopted": "Turn"}
 )
 
 
