@@ -140,7 +140,7 @@ class diplomaticStatusUpdate:
     @property
     def empire2(self) -> EmpireId: ...
     @property
-    def status(self): ...
+    def status(self) -> diplomaticStatus: ...
 
 class empire:
     @property
@@ -1035,7 +1035,7 @@ class visibility(IntEnum):
     partial = 2
     full = 3
 
-def allEmpireIDs() -> Vec[int]:
+def allEmpireIDs() -> Vec[EmpireId]:
     """
     Returns an object (intVec) that contains the empire IDs of all empires in the game.
     """
@@ -1050,17 +1050,17 @@ def appendFleetMoveOrder(number1: int, number2: int) -> int:
     Orders the fleet with indicated fleetID (int) to append the system with the indicated destinationID (int) to its possibly already enqueued route. Returns 1 (int) on success or 0 (int) on failure due to not finding the indicated fleet or system.
     """
 
-def currentTurn() -> int:
+def currentTurn() -> Turn:
     """
     Returns the current game turn (int).
     """
 
-def empireID() -> int:
+def empireID() -> EmpireId:
     """
     Returns the empire ID (int) of this AI player's empire.
     """
 
-def empirePlayerID(number: int) -> int:
+def empirePlayerID(number: int) -> PlayerId:
     """
     Returns the player ID (int) of the player who is controlling the empire with the indicated empireID (int).
     """
@@ -1103,22 +1103,22 @@ def getNamedReal(string: str) -> float:
     Returns the named real value of the scripted constant with name (string). If no such named constant exists, returns 0.0.
     """
 
-def getOptionsDBOptionBool(string: str) -> object:
+def getOptionsDBOptionBool(string: str) -> bool:
     """
     Returns the bool value of option in OptionsDB or None if the option does not exist.
     """
 
-def getOptionsDBOptionDouble(string: str) -> object:
+def getOptionsDBOptionDouble(string: str) -> float:
     """
     Returns the double value of option in OptionsDB or None if the option does not exist.
     """
 
-def getOptionsDBOptionInt(string: str) -> object:
+def getOptionsDBOptionInt(string: str) -> int:
     """
     Returns the integer value of option in OptionsDB or None if the option does not exist.
     """
 
-def getOptionsDBOptionStr(string: str) -> object:
+def getOptionsDBOptionStr(string: str) -> str:
     """
     Returns the string value of option in OptionsDB or None if the option does not exist.
     """
