@@ -179,8 +179,9 @@ def avail_mil_needing_repair(  # noqa: max-complexity
                         % (fleet_id, universe.getSystem(fleet.systemID))
                     )
                     debug(
-                        "\t my_local_rating: %.1f ; threat: %.1f"
-                        % (my_local_rating, local_status.get("totalThreat", 0))
+                        "\t my_local_rating: {:.1f} ; threat: {:.1f}".format(
+                            my_local_rating, local_status.get("totalThreat", 0)
+                        )
                     )
                 debug("Selecting fleet %d at %s for repair" % (fleet_id, universe.getSystem(fleet.systemID)))
         fleet_buckets[fleet_ok or bool(safely_needed)].append(fleet_id)
@@ -670,8 +671,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"): 
         already_assigned_rating[sys_id] = combine_ratings(my_defense_rating, already_assigned_rating[sys_id])
         if _verbose_mil_reporting and already_assigned_rating[sys_id]:
             debug(
-                "\t System %s already assigned rating %.1f"
-                % (universe.getSystem(sys_id), already_assigned_rating[sys_id])
+                f"\t System {universe.getSystem(sys_id)} already assigned rating {already_assigned_rating[sys_id]:.1f}"
             )
 
     # get systems to defend
@@ -846,8 +846,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"): 
         _military_allocations = new_allocations
     if _verbose_mil_reporting or "Main" in thisround:
         debug(
-            "------------------------------\nFinal %s Round Military Allocations: %s \n-----------------------"
-            % (thisround, {sid: alloc for sid, alloc, _, _, _ in new_allocations})
+            f"------------------------------\nFinal {thisround} Round Military Allocations: {{sid: alloc for sid, alloc, _, _, _ in new_allocations}} \n-----------------------"
         )
         debug("(Apparently) remaining military rating: %.1f" % remaining_mil_rating)
 

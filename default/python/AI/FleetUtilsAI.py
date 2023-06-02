@@ -622,8 +622,7 @@ def _print_systems_and_supply(system_ids):
     for system_id in system_ids:
         system = universe.getSystem(system_id)
         debug(
-            "  %s%s"
-            % (
+            "  {}{}".format(
                 system if system else "  S_%s<>" % system_id,
                 "supplied" if system_id in fleet_supplyable_system_ids else "",
             )

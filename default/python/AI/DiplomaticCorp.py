@@ -52,8 +52,7 @@ class DiplomaticCorp:
         :return:
         """
         debug(
-            "Received diplomatic %s message from %s to %s."
-            % (
+            "Received diplomatic {} message from {} to {}.".format(
                 message.type,
                 fo.getEmpire(message.sender),
                 "me" if message.recipient == fo.empireID() else fo.getEmpire(message.recipient),
@@ -171,8 +170,7 @@ class DiplomaticCorp:
         """Handle an update about the diplomatic status between players, which may
         or may not include this player."""
         debug(
-            "Received diplomatic status update to %s about empire %s and empire %s"
-            % (status_update.status, status_update.empire1, status_update.empire2)
+            f"Received diplomatic status update to {status_update.status} about empire {status_update.empire1} and empire {status_update.empire2}"
         )
         if status_update.empire2 == fo.empireID() and status_update.status == fo.diplomaticStatus.war:
             get_aistate().log_war_declaration(status_update.empire1, status_update.empire2)

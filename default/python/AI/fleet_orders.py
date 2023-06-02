@@ -63,10 +63,7 @@ class AIFleetOrder:
         if self.fleet and self.target:
             return True
         else:
-            debug(
-                "\t\t order not valid: fleet validity: %s and target validity %s"
-                % (bool(self.fleet), bool(self.target))
-            )
+            debug(f"\t\t order not valid: fleet validity: {bool(self.fleet)} and target validity {bool(self.target)}")
             return False
 
     def can_issue_order(self, verbose=False):
@@ -422,8 +419,7 @@ class OrderInvade(AIFleetOrder):
         planet_population = planet.currentMeterValue(fo.meterType.population)
         if planet.unowned and not planet_population:
             debug(
-                "\t\t invasion order not valid due to target planet status-- owned: %s and population %.1f"
-                % (not planet.unowned, planet_population)
+                f"\t\t invasion order not valid due to target planet status-- owned: {not planet.unowned} and population {planet_population:.1f}"
             )
             # terminate early
             self.executed = True

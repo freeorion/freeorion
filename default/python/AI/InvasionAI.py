@@ -639,8 +639,7 @@ def assign_invasion_bases():
         system = universe.getSystem(sys_id)
         available_planets = set(system.planetIDs).intersection(set(aistate.qualifyingTroopBaseTargets.keys()))
         debug(
-            "Considering Base Troopers in %s, found planets %s and registered targets %s with status %s"
-            % (
+            "Considering Base Troopers in {}, found planets {} and registered targets {} with status {}".format(
                 system.name,
                 list(system.planetIDs),
                 available_planets,

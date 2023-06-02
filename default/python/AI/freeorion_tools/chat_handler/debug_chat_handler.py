@@ -192,8 +192,7 @@ class DebugChatHandler(ChatHandlerBase):
         variables_description = self._interpreter.set_locals()
         for var, name in variables_description:
             start_message.append(
-                "  %s%s%s"
-                % (
+                "  {}{}{}".format(
                     self._formatter.underline(self._formatter.yellow(var)),
                     " " * (3 - len(var)),  # cannot use normal formatting because of tags
                     name,
