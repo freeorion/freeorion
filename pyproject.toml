@@ -79,7 +79,6 @@ exclude = [
 ]
 ignore = [
     "E501",
-    "UP031",  # Nice to fix after release
     # Annotation won't fix
     "ANN101", "ANN202", "ANN204", "ANN102",
 
