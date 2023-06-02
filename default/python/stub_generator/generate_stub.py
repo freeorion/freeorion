@@ -43,6 +43,7 @@ def make_stub(
                 "ObjectId",
                 "PartName",
                 "PlanetId",
+                "PlayerId",
                 "ShipId",
                 "SpeciesName",
                 "SystemId",

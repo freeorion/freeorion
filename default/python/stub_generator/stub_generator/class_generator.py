@@ -8,25 +8,6 @@ from stub_generator.stub_generator.collection_classes import is_collection_type,
 from stub_generator.stub_generator.rtype import update_method_rtype, update_property_rtype
 
 
-def _get_property_return_type_by_name(attr_name: str) -> str:
-    """
-    Match property of unknown type.
-    """
-    property_map = {
-        "id": "ObjectId",
-        "systemID": "SystemId",
-        "systemIDs": "SystemId",
-        "name": "str",
-        "empireID": "EmpireId",
-        "description": "str",
-        "speciesName": "SpeciesName",
-        "capitalID": "PlaneId",
-        "owner": "EmpireId",
-        "designedOnTurn": "Turn",
-    }
-    return property_map.get(attr_name, "")
-
-
 def _handle_class(info: ClassInfo) -> str:  # noqa: max-complexity
     assert not info.doc, "Got docs need to handle it"
     parents = [x for x in info.parents if x != "object"]
@@ -42,10 +23,7 @@ def _handle_class(info: ClassInfo) -> str:  # noqa: max-complexity
     for attr_name, attr in sorted(info.attributes.items()):
         if attr["type"] == "<class 'property'>":
             rtype = attr.get("rtype", "")
-            if not rtype:
-                rtype = _get_property_return_type_by_name(attr_name)
-            else:
-                rtype = update_property_rtype(attr_name, rtype)
+            rtype = update_property_rtype(attr_name, rtype)
             properties.append((attr_name, rtype))
         elif attr["type"] in ("<class 'Boost.Python.function'>", "<class 'function'>"):
             instance_methods.append(attr["routine"])
@@ -69,7 +47,7 @@ def _handle_class(info: ClassInfo) -> str:  # noqa: max-complexity
     for routine_name, routine_docs in instance_methods:
         docs = Docs(routine_docs, 2, is_class=True)
         # TODO: Subclass map-like classes from dict (or custom class) rather than this hack
-        rtype = update_method_rtype(info.name, routine_name, docs.rtype)
+        rtype = update_method_rtype(routine_name, docs.rtype)
 
         doc_string = docs.get_doc_string()
         if doc_string:

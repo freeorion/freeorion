@@ -1,13 +1,19 @@
+from common.fo_typing import Map, SystemId, Turn
 from stub_generator.stub_generator.collection_classes import make_type
+from stub_generator.stub_generator.rtype.mapper import Mapper
+from stub_generator.stub_generator.rtype.utils import get_name_for_mapping
 
-_method_map = {
-    ("empire", "supplyProjections"): "Map[SystemId, int]",
-}
+_method_map = Mapper(
+    {
+        "supplyProjections": Map[SystemId, int],
+        "turnPolicyAdopted": Turn,
+        "name": str,
+    },
+)
 
 
-def update_method_rtype(class_: str, method_name: str, rtype: str) -> str:
-    key = (class_, method_name)
-    if key in _method_map:
-        return _method_map[key]
+def update_method_rtype(method_name: str, rtype: str) -> str:
+    if method_name in _method_map:
+        return get_name_for_mapping(_method_map[method_name])
     else:
         return make_type(rtype)

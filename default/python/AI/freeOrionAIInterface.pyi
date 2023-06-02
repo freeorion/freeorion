@@ -15,6 +15,7 @@ from common.fo_typing import (
     ObjectId,
     PartName,
     PlanetId,
+    PlayerId,
     ShipId,
     SpeciesName,
     SystemId,
@@ -127,19 +128,19 @@ class buildingType:
 
 class diplomaticMessage:
     @property
-    def recipient(self) -> int: ...
+    def recipient(self) -> PlayerId: ...
     @property
-    def sender(self) -> int: ...
+    def sender(self) -> PlayerId: ...
     @property
     def type(self) -> diplomaticMessageType: ...
 
 class diplomaticStatusUpdate:
     @property
-    def empire1(self): ...
+    def empire1(self) -> EmpireId: ...
     @property
-    def empire2(self): ...
+    def empire2(self) -> EmpireId: ...
     @property
-    def status(self): ...
+    def status(self) -> diplomaticStatus: ...
 
 class empire:
     @property
@@ -236,7 +237,7 @@ class empire:
         Returns the (negative) number of jumps (int) away each known system ID (int) is from this empire's supply network. 0 in dicates systems that are fleet supplied. -1 indicates a system that is 1 jump away from a supplied system. -4 indicates a system that is 4 jumps from a supply connection.
         """
     def techResearched(self, string: str) -> bool: ...
-    def turnPolicyAdopted(self, string: str) -> int: ...
+    def turnPolicyAdopted(self, string: str) -> Turn: ...
 
 class fieldType:
     @property
@@ -523,7 +524,7 @@ class tech:
 
 class universe:
     @property
-    def allObjectIDs(self) -> Vec[int]: ...
+    def allObjectIDs(self) -> Vec[ObjectId]: ...
     @property
     def buildingIDs(self) -> Vec[BuildingId]: ...
     @property
@@ -593,7 +594,7 @@ class universeObject:
     @property
     def owner(self) -> EmpireId: ...
     @property
-    def specials(self): ...
+    def specials(self) -> SpeciesName: ...
     @property
     def systemID(self) -> SystemId: ...
     @property
@@ -624,9 +625,9 @@ class building(universeObject):
     @property
     def orderedScrapped(self) -> bool: ...
     @property
-    def planetID(self) -> int: ...
+    def planetID(self) -> PlanetId: ...
     @property
-    def producedByEmpireID(self) -> int: ...
+    def producedByEmpireID(self) -> EmpireId: ...
 
 class field(universeObject):
     @property
@@ -760,7 +761,7 @@ class ship(universeObject):
     @property
     def partMeters(self) -> Map[tuple[meterType, meterType], meter]: ...
     @property
-    def producedByEmpireID(self) -> int: ...
+    def producedByEmpireID(self) -> EmpireId: ...
     @property
     def speciesName(self) -> SpeciesName: ...
     @property
@@ -1034,7 +1035,7 @@ class visibility(IntEnum):
     partial = 2
     full = 3
 
-def allEmpireIDs() -> Vec[int]:
+def allEmpireIDs() -> Vec[EmpireId]:
     """
     Returns an object (intVec) that contains the empire IDs of all empires in the game.
     """
@@ -1049,17 +1050,17 @@ def appendFleetMoveOrder(number1: int, number2: int) -> int:
     Orders the fleet with indicated fleetID (int) to append the system with the indicated destinationID (int) to its possibly already enqueued route. Returns 1 (int) on success or 0 (int) on failure due to not finding the indicated fleet or system.
     """
 
-def currentTurn() -> int:
+def currentTurn() -> Turn:
     """
     Returns the current game turn (int).
     """
 
-def empireID() -> int:
+def empireID() -> EmpireId:
     """
     Returns the empire ID (int) of this AI player's empire.
     """
 
-def empirePlayerID(number: int) -> int:
+def empirePlayerID(number: int) -> PlayerId:
     """
     Returns the player ID (int) of the player who is controlling the empire with the indicated empireID (int).
     """
@@ -1102,22 +1103,22 @@ def getNamedReal(string: str) -> float:
     Returns the named real value of the scripted constant with name (string). If no such named constant exists, returns 0.0.
     """
 
-def getOptionsDBOptionBool(string: str) -> object:
+def getOptionsDBOptionBool(string: str) -> bool:
     """
     Returns the bool value of option in OptionsDB or None if the option does not exist.
     """
 
-def getOptionsDBOptionDouble(string: str) -> object:
+def getOptionsDBOptionDouble(string: str) -> float:
     """
     Returns the double value of option in OptionsDB or None if the option does not exist.
     """
 
-def getOptionsDBOptionInt(string: str) -> object:
+def getOptionsDBOptionInt(string: str) -> int:
     """
     Returns the integer value of option in OptionsDB or None if the option does not exist.
     """
 
-def getOptionsDBOptionStr(string: str) -> object:
+def getOptionsDBOptionStr(string: str) -> str:
     """
     Returns the string value of option in OptionsDB or None if the option does not exist.
     """
