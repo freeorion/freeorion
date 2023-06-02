@@ -14,7 +14,7 @@ def _handle_class(info: ClassInfo) -> str:  # noqa: max-complexity
 
     result = []
     if parents:
-        result.append("class {}({}):".format(info.name, ", ".join(info.parents)))
+        result.append(f"class {info.name}({', '.join(info.parents)}):")
     else:
         result.append("class %s:" % info.name)
 
