@@ -1,6 +1,6 @@
 from abc import ABC
 from enum import Enum
-from typing import Callable, TypeVar, Union
+from typing import Callable, Self, TypeVar, Union
 
 from common.statistic_interface._dump_value import DumpDict, DumpInt, DumpMultiple
 from common.statistic_interface._serizlizer import to_float, to_int, to_str
@@ -55,7 +55,7 @@ class StatKey(Enum):
         return self.value.multi
 
     @classmethod
-    def get_by_value_name(cls, name: str):
+    def get_by_value_name(cls, name: str) -> Self:
         for item in cls:
             if item.value.name == name:
                 return item

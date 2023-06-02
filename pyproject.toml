@@ -80,6 +80,16 @@ exclude = [
 ignore = [
     "E501",
     "UP031",  # Nice to fix after release
+    # Annotation won't fix
+    "ANN101", "ANN202", "ANN204", "ANN102",
+
+    # Annotation nice to fix
+    "ANN0",
+    "ANN201",
+    "ANN205",
+    "ANN401",
+
+
 
 ]
 select = [
@@ -89,6 +99,7 @@ select = [
     "W",
     "UP",
     "I",
+    "ANN",
 ]
 
 builtins = [
