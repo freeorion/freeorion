@@ -40,7 +40,6 @@ from turn_state._empire_resources import (
     luxury_resources,
     owned_asteroid_coatings,
     population_with_industry_focus,
-    population_with_research_focus,
     set_have_asteroids,
     set_have_gas_giant,
     set_have_nest,

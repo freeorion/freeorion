@@ -66,10 +66,6 @@ def _get_planet_catalog() -> EmpireResources:
     return EmpireResources()
 
 
-def population_with_research_focus() -> int:
-    return _get_planet_catalog().num_researchers
-
-
 def population_with_industry_focus() -> int:
     return _get_planet_catalog().num_industrialists
 
