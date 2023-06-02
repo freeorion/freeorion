@@ -12,7 +12,6 @@ from aistate_interface import get_aistate
 from colonization.calculate_planet_colonization_rating import (
     calculate_planet_colonization_rating,
 )
-from colonization.calculate_population import calc_max_pop
 from colonization.colony_score import MINIMUM_COLONY_SCORE
 from colonization.planet_supply import get_planet_supply
 from common.print_utils import Number, Sequence, Table, Text
@@ -24,14 +23,13 @@ from expansion_plans import (
     update_colonisable_outpost_ids,
     update_colonisable_planet_ids,
 )
-from freeorion_tools import get_ship_part, tech_is_complete
-from freeorion_tools.caching import cache_by_turn_persistent, cache_for_current_turn
+from freeorion_tools import get_ship_part
+from freeorion_tools.caching import cache_for_current_turn
 from freeorion_tools.timers import AITimer
 from target import TargetPlanet
 from turn_state import (
     get_colonized_planets_in_system,
     get_empire_outposts,
-    get_empire_planets_by_species,
     get_number_of_colonies,
     get_unowned_empty_planets,
 )
@@ -73,11 +71,6 @@ def galaxy_is_sparse():
     return (setup_data.monsterFrequency <= fo.galaxySetupOptionMonsterFreq.veryLow) and (
         (avg_empire_systems >= 40) or ((avg_empire_systems >= 35) and (setup_data.shape != fo.galaxyShape.elliptical))
     )
-
-
-@cache_by_turn_persistent  # helpful to cache history to debug AI supply progress
-def get_supply_tech_range():
-    return sum(_range for _tech, _range in AIDependencies.supply_range_techs.items() if tech_is_complete(_tech))
 
 
 def get_colony_fleets():
@@ -714,31 +707,3 @@ class OrbitalColonizationManager:
                 success = plan.assign_base(fid)
                 if success:
                     break
-
-
-def test_calc_max_pop():
-    """
-    Verify AI calculation of max population by comparing it with actual client
-    queried values.
-
-    This function may be called in debug mode in a running game and will compare
-    the actual target population meters on all planets owned by this AI with the
-    predicted maximum population. Any mismatch will be reported in chat.
-    """
-    from freeorion_tools import chat_human
-
-    chat_human("Verifying calculation of ColonisationAI.calc_max_pop()")
-    universe = fo.getUniverse()
-    for spec_name, planets in get_empire_planets_by_species().items():
-        species = fo.getSpecies(spec_name)
-        for pid in planets:
-            planet = universe.getPlanet(pid)
-            detail = []
-            predicted = calc_max_pop(planet, species, detail)
-            actual = planet.initialMeterValue(fo.meterType.targetPopulation)
-            if actual != predicted:
-                error(
-                    "Predicted pop of %.2f on %s but actually is %.2f; Details: %s"
-                    % (predicted, planet, actual, "\n".join(detail))
-                )
-    chat_human("Finished verification of ColonisationAI.calc_max_pop()")

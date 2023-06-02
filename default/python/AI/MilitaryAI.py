@@ -535,14 +535,6 @@ class OutpostTargetAllocator(TargetAllocator):
     _max_alloc_factor = 3
 
 
-class BlockadeAllocator(TargetAllocator):
-    _potential_threat_factor = 0.25
-    _max_alloc_factor = 1.5
-
-    def _maximum_allocation(self, threat):
-        return min(self._minimum_allocation(threat), self._allocation_helper.remaining_rating) * self._max_alloc_factor
-
-
 class LocalThreatAllocator(Allocator):
     _potential_threat_factor = 0
     _min_alloc_factor = 1.3
@@ -573,18 +565,6 @@ class InteriorTargetsAllocator(LocalThreatAllocator):
 
     def _take_any(self):
         return self.assigned_rating > 0
-
-
-class ExplorationTargetAllocator(LocalThreatAllocator):
-    _potential_threat_factor = 0.25
-    _max_alloc_factor = 2.0
-    _allocation_group = "exploreTargets"
-
-    def _calculate_threat(self):
-        return self.safety_factor * self._local_threat() + self._potential_threat()
-
-    def _take_any(self):
-        return False
 
 
 class BorderSecurityAllocator(LocalThreatAllocator):

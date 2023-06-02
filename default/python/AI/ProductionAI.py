@@ -1382,33 +1382,6 @@ def find_automatic_historic_analyzer_candidates() -> list[int]:
     return chosen_locations
 
 
-def get_number_of_queued_outpost_and_colony_ships() -> int:
-    """
-    Get the total number of queued outpost/colony ships/bases.
-    """
-    num_ships = 0
-    considered_ship_roles = (
-        ShipRoleType.CIVILIAN_OUTPOST,
-        ShipRoleType.BASE_OUTPOST,
-        ShipRoleType.BASE_COLONISATION,
-        ShipRoleType.CIVILIAN_COLONISATION,
-    )
-    for element in fo.getEmpire().productionQueue:
-        if element.turnsLeft >= 0 and element.buildType == EmpireProductionTypes.BT_SHIP:
-            if get_aistate().get_ship_role(element.designID) in considered_ship_roles:
-                num_ships += element.blocksize
-    return num_ships
-
-
-def get_number_of_existing_outpost_and_colony_ships() -> int:
-    """
-    Get the total number of existing outpost/colony ships/bases.
-    """
-    num_colony_fleets = len(FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.COLONISATION))
-    num_outpost_fleets = len(FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.OUTPOST))
-    return num_outpost_fleets + num_colony_fleets
-
-
 def _location_rating(planet: fo.planet) -> float:
     """Get a rating how good this planet would be for a building"""
     # Simple value so far, should be enhanced, e.g. a scanner should go to the planet with species that

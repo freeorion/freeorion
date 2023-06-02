@@ -191,7 +191,6 @@ class AIstate:
         self.systemStatus = {}
         self.needsEmergencyExploration = []
         self.newlySplitFleets = {}
-        self.militaryRating = 0
         self.shipCount = 4
         self.misc = {}  # Keys: "enemies_sighted" (dict[turn: list[fleetIDs]]),
         #                       "observed_empires" (set[enemy empire IDs]),
