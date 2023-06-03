@@ -16,7 +16,7 @@ import PlanetUtilsAI
 from AIDependencies import INVALID_ID, TECH_NATIVE_SPECIALS
 from character.character_module import Aggression, create_character
 from CombatRatingsAI import ShipCombatStats
-from common.print_utils import Number, Table, Text
+from common.print_utils import Number, Table, Text, dict_to_table
 from DiplomaticCorp import get_diplomatic_status
 from EnumsAI import MissionType, ShipRoleType
 from freeorion_tools import combine_ratings, get_partial_visibility_turn
@@ -940,8 +940,12 @@ class AIstate:
             else:
                 warning("Fleet %s has no valid system." % fleet)
         info(fleet_table)
-        debug("Empire standard fighter summary: %s", CombatRatingsAI.get_empire_standard_military_ship_stats())
-        debug("------------------------")
+        debug(
+            dict_to_table(
+                CombatRatingsAI.get_empire_standard_military_ship_stats().__getstate__(),
+                name="Empire standard fighter summary",
+            )
+        )
 
     def get_explored_system_ids(self):
         return list(self.exploredSystemIDs)
