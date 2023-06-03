@@ -13,7 +13,7 @@ from typing import Any, Union
 from common.print_utils._base_field import Field
 
 
-def as_columns(items: Collection[Any], columns=2):
+def as_columns(items: Collection[Any], columns=2) -> str:
     """
     Split flat list to columns and print them.
 
@@ -53,10 +53,10 @@ class Table:
 
     def add_row(self, *row):
         table_row = []
-        for filed, val in zip(self._headers, row):
-            if filed.total:
-                self.totals[filed] += val
-            table_row.append(filed.make_cell_string(val))
+        for field, val in zip(self._headers, row):
+            if field.total:
+                self.totals[field] += val
+            table_row.append(field.make_cell_string(val))
         self._rows.append(table_row)
 
     def _get_row_separator(self, char, column_widthes):
