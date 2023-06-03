@@ -396,12 +396,10 @@ enum class OpType : uint8_t {
 template <typename T>
 struct FO_COMMON_API Operation final : public ValueRef<T>
 {
-    /** Binary operation ctor. */
+    /** N-ary operation ctor. */
     Operation(OpType op_type, std::unique_ptr<ValueRef<T>>&& operand1,
-              std::unique_ptr<ValueRef<T>>&& operand2);
-
-    /** Unary operation ctor. */
-    Operation(OpType op_type, std::unique_ptr<ValueRef<T>>&& operand);
+              std::unique_ptr<ValueRef<T>>&& operand2 = nullptr,
+              std::unique_ptr<ValueRef<T>>&& operand3 = nullptr);
 
     /* N-ary operation ctor. */
     Operation(OpType op_type, std::vector<std::unique_ptr<ValueRef<T>>>&& operands);
@@ -1717,21 +1715,17 @@ uint32_t UserStringLookup<FromType>::GetCheckSum() const
 template <typename T>
 Operation<T>::Operation(OpType op_type,
                         std::unique_ptr<ValueRef<T>>&& operand1,
-                        std::unique_ptr<ValueRef<T>>&& operand2) :
-    Operation(op_type, [&operand1, &operand2]() {
+                        std::unique_ptr<ValueRef<T>>&& operand2,
+                        std::unique_ptr<ValueRef<T>>&& operand3) :
+    Operation(op_type, [&operand1, &operand2, &operand3]() {
                 std::remove_const_t<decltype(m_operands)> retval{};
-                retval.reserve(2);
-                retval.push_back(std::move(operand1));
-                retval.push_back(std::move(operand2));
-                return retval;
-              }())
-{}
-
-template <typename T>
-Operation<T>::Operation(OpType op_type, std::unique_ptr<ValueRef<T>>&& operand) :
-    Operation(op_type, [&operand]() {
-                std::remove_const_t<decltype(m_operands)> retval{};
-                retval.push_back(std::move(operand));
+                retval.reserve((operand1 != nullptr) + (operand2 != nullptr) + (operand3 != nullptr));
+                if (operand1)
+                    retval.push_back(std::move(operand1));
+                if (operand2)
+                    retval.push_back(std::move(operand2));
+                if (operand3)
+                    retval.push_back(std::move(operand3));
                 return retval;
               }())
 {}
