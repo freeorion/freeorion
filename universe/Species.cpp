@@ -162,12 +162,32 @@ namespace {
             ));
     }
 
+    auto to_vec(auto&& one, auto&& two, auto&& three) {
+        std::vector<std::unique_ptr<ValueRef::ValueRef<double>>> retval;
+        retval.reserve(3);
+        retval.push_back(std::move(one));
+        retval.push_back(std::move(two));
+        retval.push_back(std::move(three));
+        return retval;
+    }
+
     auto DefaultAnnexationCost() {
         return std::make_unique<ValueRef::Operation<double>>(
-            ValueRef::OpType::TIMES,
+            ValueRef::OpType::MAXIMUM,
             std::make_unique<ValueRef::Constant<double>>(5.0),
-            std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE,
-                                                         "Population"));
+            std::make_unique<ValueRef::ComplexVariable<double>>(
+                "SpeciesEmpireOpinion",
+                std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"),
+                nullptr, nullptr,
+                std::make_unique<ValueRef::Variable<std::string>>(ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE,
+                                                                  "Species")
+            ),
+            std::make_unique<ValueRef::Operation<double>>(
+                ValueRef::OpType::TIMES,
+                std::make_unique<ValueRef::Constant<double>>(5.0),
+                std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE,
+                                                             "Population"))
+        );
     }
 }
 
