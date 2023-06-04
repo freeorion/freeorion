@@ -7,11 +7,10 @@
 
 Process finished with exit code 0
 """
-from common.print_utils import Number, Sequence, Table, Text, as_columns
+from common.print_utils import Number, Sequence, Table, Text, as_columns, dict_to_table
 
 EXPECTED_ITEMS_MULTIPLE_COLUMNS = """a   c
 b   d"""
-
 
 EXPECTED_ITEMS_NOT_MULTIPLE_COLUMNS = """a   c
 b    """
@@ -103,4 +102,44 @@ def test_total_is_calculated():
         "============",
         "|  3 |  30 |",
         "============",
+    ]
+
+
+def test_hide_header():
+    table = Table(
+        Number("A", precession=0),
+        Number("B", precession=0),
+        hide_header=True,
+    )
+    table.add_row(1, 10)
+    table.add_row(2, 20)
+    assert list(table) == [
+        "============",
+        "|  1 |  10 |",
+        "|  2 |  20 |",
+        "------------",
+    ]
+
+
+def test_hide_header_with_no_rows():
+    table = Table(
+        Number("A", precession=0),
+        Number("B", precession=0),
+        hide_header=True,
+    )
+    assert list(table) == [
+        "=========",
+        "---------",
+    ]
+
+
+def test_dict_to_table():
+    data = {"1": 10, "2": 20}
+    table = dict_to_table(data)
+
+    assert list(table) == [
+        "==========",
+        "| 1 | 10 |",
+        "| 2 | 20 |",
+        "----------",
     ]
