@@ -1,5 +1,6 @@
 import freeOrionAIInterface as fo
 from logging import warning
+from typing import Optional
 
 from AIDependencies import CombatTarget
 from aistate_interface import get_aistate
@@ -15,7 +16,7 @@ class ShipCombatStats:
     def __init__(
         self,
         *,
-        attacks: dict[AttackDamage, AttackCount] = None,
+        attacks: Optional[dict[AttackDamage, AttackCount]] = None,
         structure=1.0,
         shields=0.0,
         fighter_capacity=0,
