@@ -1,6 +1,4 @@
-import freeorion as fo
-
-from planets import planet_sizes_real, planet_types_real
+from planets import planet_sizes, planet_types
 
 #############################
 # STAR GROUP NAMING OPTIONS #
@@ -36,6 +34,11 @@ HS_MIN_SYSTEMS_IN_VICINITY = 8
 HS_MIN_PLANETS_IN_VICINITY_TOTAL = 10
 HS_MIN_PLANETS_IN_VICINITY_PER_SYSTEM = 1
 
+# The following options is used to determine the minimum spread of planet types in the vicinity of the home systems.
+# Testing suggests around 8 planets is the approximate median without this check in place (based on a 320 system disc
+# with 7 players, and all average settings).
+HS_MIN_PLANET_TYPES_IN_VICINITY = 8
+
 # This option defines the extend of what is considered the "near vicinity" of a home system. This are all systems that
 # are within the number of jumps specified by HS_VICINITY_RANGE.
 HS_VICINITY_RANGE = 3
@@ -56,5 +59,5 @@ HS_MIN_DISTANCE_PRIORITY_LIMIT = 5
 # These two options define which types of planets are counted when determining the number of planets in the near
 # vicinity of a home system. HS_ACCEPTABLE_PLANET_SIZES is actually only needed for the process of adding planets
 # to the near vicinity of a home system in case that's needed to meet the limit.
-HS_ACCEPTABLE_PLANET_TYPES = planet_types_real + (fo.planetType.asteroids,)
-HS_ACCEPTABLE_PLANET_SIZES = planet_sizes_real + (fo.planetSize.asteroids,)
+HS_ACCEPTABLE_PLANET_TYPES = planet_types
+HS_ACCEPTABLE_PLANET_SIZES = planet_sizes

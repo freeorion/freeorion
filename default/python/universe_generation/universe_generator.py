@@ -140,19 +140,21 @@ def create_universe(psd_map):  # noqa: max-complexity
                     psds_new.append((empire, psd))
                 else:
                     placed = True
-                    if not setup_empire(empire, psd.empire_name, home_system, psd.starting_species, psd.player_name):
+                    if not setup_empire(
+                        empire, psd.empire_name, home_system, psd.starting_species, psd.player_name, gsd
+                    ):
                         report_error("Python create_universe: couldn't set up empire for player %s" % psd.player_name)
             if not placed:
                 report_error("Python create_universe: couldn't set up empire for team %d" % team)
             psds = psds_new
         # place leftovers
         for (empire, psd), home_system in zip(psds, hs):
-            if not setup_empire(empire, psd.empire_name, home_system, psd.starting_species, psd.player_name):
+            if not setup_empire(empire, psd.empire_name, home_system, psd.starting_species, psd.player_name, gsd):
                 report_error("Python create_universe: couldn't set up empire for player %s" % psd.player_name)
     else:
         # set up empires for each player
         for empire, psd, home_system in zip(psd_map.keys(), psd_map.values(), home_systems):
-            if not setup_empire(empire, psd.empire_name, home_system, psd.starting_species, psd.player_name):
+            if not setup_empire(empire, psd.empire_name, home_system, psd.starting_species, psd.player_name, gsd):
                 report_error("Python create_universe: couldn't set up empire for player %s" % psd.player_name)
 
     # assign names to all star systems and their planets
