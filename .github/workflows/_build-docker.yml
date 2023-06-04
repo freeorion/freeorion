@@ -9,7 +9,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: [ubuntu-22.10, fedora-33, debian-stable, manjaro, fedora-rawhide]
+        image:
+          - ubuntu-22.10
+          - fedora-33
+          - debian-stable
+          - manjaro
+          # - fedora-rawhide # base image is broken https://github.com/fedora-cloud/docker-brew-fedora/issues/109
     env:
       CACHE_NAME: linux
     steps:
