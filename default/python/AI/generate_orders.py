@@ -14,6 +14,7 @@ from aistate_interface import get_aistate
 from character.character_module import Aggression  # noqa F401
 from character.character_strings_module import get_trait_name_aggression
 from common.option_tools import check_bool, get_option_dict
+from common.print_utils import dict_to_table
 from freeorion_tools.statistics import stats
 
 
@@ -39,10 +40,7 @@ def _once(function):
 def print_existing_rules():
     try:
         rules = fo.getGameRules()
-        debug("Defined game rules:")
-        for rule_name, rule_value in rules.getRulesAsStrings().items():
-            debug("%s: %s", rule_name, rule_value)
-        debug("Rule RULE_NUM_COMBAT_ROUNDS value: " + str(rules.getInt("RULE_NUM_COMBAT_ROUNDS")))
+        debug(dict_to_table(rules.getRulesAsStrings(), name="Defined game rules"))
     except Exception as e:
         error("Exception %s when trying to get game rules" % e, exc_info=True)
 

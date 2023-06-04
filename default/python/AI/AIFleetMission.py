@@ -438,7 +438,6 @@ class AIFleetMission:
                     fleet_order.issue_order()
                 else:
                     debug("NOT issuing (even though can_issue) fleet order %s" % fleet_order)
-
                 issued = "issued" if fleet_order.order_issued else "not issued"
                 executed = "fully executed" if fleet_order.executed else "not fully executed"
                 debug(f"Order {issued} issued and {executed}.")

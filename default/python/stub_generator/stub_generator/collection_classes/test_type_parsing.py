@@ -15,13 +15,13 @@ from stub_generator.stub_generator.collection_classes import is_collection_type,
         # Simple collections
         ("IntPair", "tuple[int, int]"),
         ("IntSet", "Set[int]"),
-        ("IntVec", "Vec[int]"),
+        ("IntVec", "Sequence[int]"),
         # Embedded collections
         ("IntSetSet", "Set[Set[int]]"),
         # mapping
-        ("StringIntMap", "Map[str, int]"),
-        ("IntSetFloatMap", "Map[Set[int], float]"),
-        ("IntMeterTypeAccountingInfoVecMapMap", "Map[int, Map[meterType, Vec[AccountingInfo]]]"),
+        ("StringIntMap", "Mapping[str, int]"),
+        ("IntSetFloatMap", "Mapping[Set[int], float]"),
+        ("IntMeterTypeAccountingInfoVecMapMap", "Mapping[int, Mapping[meterType, Sequence[AccountingInfo]]]"),
         # Not matchable
         ("Hello", "Hello"),
         ("HelloVec", "HelloVec"),
@@ -31,7 +31,7 @@ from stub_generator.stub_generator.collection_classes import is_collection_type,
         # Underscores are ignored
         ("_I_n_t_", "int"),
         ("Int_Set", "Set[int]"),
-        ("Int_MeterType_AccountingInfoVecMapMap", "Map[int, Map[meterType, Vec[AccountingInfo]]]"),
+        ("Int_MeterType_AccountingInfoVecMapMap", "Mapping[int, Mapping[meterType, Sequence[AccountingInfo]]]"),
     ),
 )
 def test_make_type(string, hint):
