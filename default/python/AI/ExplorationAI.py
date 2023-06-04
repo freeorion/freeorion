@@ -196,7 +196,7 @@ def update_explored_systems():
     obs_lanes = empire.obstructedStarlanes()
     obs_lanes_list = [el for el in obs_lanes]  # should result in list of tuples (sys_id1, sys_id2)
     if obs_lanes_list:
-        debug("Obstructed starlanes are: %s" % ", ".join("%s-%s" % item for item in obs_lanes_list))
+        debug("Obstructed starlanes are: %s" % ", ".join("{}-{}".format(*item) for item in obs_lanes_list))
     else:
         debug("No obstructed Starlanes")
     newly_explored = []

@@ -331,8 +331,7 @@ class PlanetFocusManager:
                 continue
 
             debug(
-                "Considering setting growth focus for %s at locations %s for potential population bonus of %.1f"
-                % (special, locations, potential_pop_increase)
+                f"Considering setting growth focus for {special} at locations {locations} for potential population bonus of {potential_pop_increase:.1f}"
             )
 
             # Find the best suited planet to use growth special on, i.e. the planet where

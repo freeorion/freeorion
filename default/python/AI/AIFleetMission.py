@@ -110,10 +110,7 @@ class AIFleetMission:
         if self.type == mission_type and self.target == target:
             return
         if self.type or self.target:
-            debug(
-                "%s: change mission assignment from %s:%s to %s:%s"
-                % (self.fleet, self.type, self.target, mission_type, target)
-            )
+            debug(f"{self.fleet}: change mission assignment from {self.type}:{self.target} to {mission_type}:{target}")
         self.type = mission_type
         self.target = target
 
@@ -441,8 +438,10 @@ class AIFleetMission:
                     fleet_order.issue_order()
                 else:
                     debug("NOT issuing (even though can_issue) fleet order %s" % fleet_order)
-                status_words = tuple(["not", ""][_s] for _s in [fleet_order.order_issued, fleet_order.executed])
-                debug("Order %s issued and %s fully executed." % status_words)
+
+                issued = "issued" if fleet_order.order_issued else "not issued"
+                executed = "fully executed" if fleet_order.executed else "not fully executed"
+                debug(f"Order {issued} issued and {executed}.")
                 if not fleet_order.executed:
                     order_completed = False
             else:  # check that we're not held up by a Big Monster
@@ -499,15 +498,13 @@ class AIFleetMission:
                         )
                         debug("    Order details are %s" % last_order)
                         debug(
-                            "    Order is valid: %s; issued: %s; executed: %s"
-                            % (last_order.is_valid(), last_order.order_issued, last_order.executed)
+                            f"    Order is valid: {last_order.is_valid()}; issued: {last_order.order_issued}; executed: {last_order.executed}"
                         )
                         if not last_order.is_valid():
                             source_target = last_order.fleet
                             target_target = last_order.target
                             debug(
-                                "        source target validity: %s; target target validity: %s "
-                                % (bool(source_target), bool(target_target))
+                                f"        source target validity: {bool(source_target)}; target target validity: {bool(target_target)} "
                             )
                         return  # colonize order must not have completed yet
                 clear_all = True

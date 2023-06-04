@@ -197,8 +197,7 @@ def generate_production_orders():  # noqa: max-complexity
             for type_id in possible_building_type_ids:
                 building_type = fo.getBuildingType(type_id)
                 debug(
-                    "    %s cost: %s  time: %s"
-                    % (
+                    "    {} cost: {}  time: {}".format(
                         building_type.name,
                         building_type.productionCost(empire.empireID, homeworld.id),
                         building_type.productionTime(empire.empireID, homeworld.id),
@@ -729,8 +728,7 @@ def generate_production_orders():  # noqa: max-complexity
                     else:
                         # TODO: enable location condition reporting a la mapwnd BuildDesignatorWnd
                         warning(
-                            "Enqueing Conc Camp at %s despite building_type.canBeProduced(empire.empireID, pid) reporting %s"
-                            % (planet, can_build_camp)
+                            f"Enqueing Conc Camp at {planet} despite building_type.canBeProduced(empire.empireID, pid) reporting {can_build_camp}"
                         )
     building_expense += _build_scanning_facility()
 
@@ -1105,9 +1103,9 @@ def generate_production_orders():  # noqa: max-complexity
                 if best_design is None:
                     warning(
                         "problem with mil_build_choices;"
-                        " with selector (%s) chose loc (%s), "
-                        "best_design_id (%s), best_design (None) "
-                        "from mil_build_choices: %s" % (selector, loc, best_design_id, mil_build_choices)
+                        " with selector ({}) chose loc ({}), "
+                        "best_design_id ({}), best_design (None) "
+                        "from mil_build_choices: {}".format(selector, loc, best_design_id, mil_build_choices)
                     )
                     continue
             else:

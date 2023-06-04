@@ -14,7 +14,7 @@ class ChatFormatter:
 
     @abstractmethod
     def _get_tag_rgb(self, color: (int, int, int, int)) -> (str, str):
-        return "rgba %s %s %s %s" % color, "rgba"
+        return "rgba {} {} {} {}".format(*color), "rgba"
 
     @abstractmethod
     def _get_underline_tag(self) -> (str, str):

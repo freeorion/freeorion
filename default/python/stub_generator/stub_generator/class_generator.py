@@ -14,7 +14,7 @@ def _handle_class(info: ClassInfo) -> str:  # noqa: max-complexity
 
     result = []
     if parents:
-        result.append("class {}({}):".format(info.name, ", ".join(info.parents)))
+        result.append(f"class {info.name}({', '.join(info.parents)}):")
     else:
         result.append("class %s:" % info.name)
 
@@ -59,8 +59,7 @@ def _handle_class(info: ClassInfo) -> str:  # noqa: max-complexity
         arg_strings = list(docs.get_argument_strings())
         if len(arg_strings) == 1:
             result.append(
-                "    def %s(%s)%s:%s%s"
-                % (routine_name, next(docs.get_argument_strings()), return_annotation, doc_string, end)
+                f"    def {routine_name}({next(docs.get_argument_strings())}){return_annotation}:{doc_string}{end}"
             )
         else:
             for arg_string in arg_strings:

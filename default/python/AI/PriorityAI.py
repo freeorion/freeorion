@@ -106,8 +106,7 @@ def _calculate_industry_priority():  # currently only used to print status
 
     debug("")
     debug(
-        "Industry Production (current/target) : ( %.1f / %.1f ) at turn %s"
-        % (industry_production, target_pp, fo.currentTurn())
+        f"Industry Production (current/target) : ( {industry_production:.1f} / {target_pp:.1f} ) at turn {fo.currentTurn()}"
     )
     debug("Priority for Industry: %s" % industry_priority)
     return industry_priority

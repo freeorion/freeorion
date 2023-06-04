@@ -55,7 +55,7 @@ class StatKey(Enum):
         return self.value.multi
 
     @classmethod
-    def get_by_value_name(cls, name: str):
+    def get_by_value_name(cls, name: str) -> "StatKey":
         for item in cls:
             if item.value.name == name:
                 return item

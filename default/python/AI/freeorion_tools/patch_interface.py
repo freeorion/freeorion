@@ -141,7 +141,7 @@ def logger(callable_object, argument_wrappers=None):
 
     def inner(*args, **kwargs):
         arguments = [str(wrapper(arg) if wrapper else arg) for arg, wrapper in zip_longest(args, argument_wrappers)]
-        arguments.extend("%s=%s" % item for item in kwargs.items())
+        arguments.extend("{}={}".format(*item) for item in kwargs.items())
         res = callable_object(*args, **kwargs)
         frame = inspect.currentframe().f_back
         debug(

@@ -635,8 +635,7 @@ class AIstate:
                 )
                 if verbose:
                     debug(
-                        "enemy threat calc parts: enemy rating %.1f, lost fleet rating %.1f, monster_rating %.1f"
-                        % (enemy_rating, lost_fleet_rating, monster_rating)
+                        f"enemy threat calc parts: enemy rating {enemy_rating:.1f}, lost fleet rating {lost_fleet_rating:.1f}, monster_rating {monster_rating:.1f}"
                     )
                 # does NOT include mobile monsters
                 sys_status["enemy_threat"] = max(enemy_rating, 2 * lost_fleet_rating - monster_rating)
@@ -687,8 +686,9 @@ class AIstate:
             this_system = universe.getSystem(sys_id)
             if verbose:
                 debug(
-                    "Regional Assessment for %s with local fleet threat %.1f"
-                    % (this_system, sys_status.get("fleetThreat", 0))
+                    "Regional Assessment for {} with local fleet threat {:.1f}".format(
+                        this_system, sys_status.get("fleetThreat", 0)
+                    )
                 )
             jumps2 = set()
             jumps3 = set()

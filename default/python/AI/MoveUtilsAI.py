@@ -138,14 +138,12 @@ def get_best_drydock_system_id(start_system_id: int, fleet_id: int) -> Optional[
         SAFETY_MARGIN = 10
         if SAFETY_MARGIN * path_rating <= fleet_rating:
             debug(
-                "Drydock recommendation %s from %s for fleet %s with fleet rating %.1f and path rating %.1f."
-                % (dock_system, start_system, universe.getFleet(fleet_id), fleet_rating, path_rating)
+                f"Drydock recommendation {dock_system} from {start_system} for fleet {universe.getFleet(fleet_id)} with fleet rating {fleet_rating:.1f} and path rating {path_rating:.1f}."
             )
             return dock_system.id
 
     debug(
-        "No safe drydock recommendation from %s for fleet %s with fleet rating %.1f."
-        % (start_system, universe.getFleet(fleet_id), fleet_rating)
+        f"No safe drydock recommendation from {start_system} for fleet {universe.getFleet(fleet_id)} with fleet rating {fleet_rating:.1f}."
     )
     return None
 

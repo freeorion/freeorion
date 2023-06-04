@@ -158,10 +158,9 @@ def log_species_summary(native_freq):
         Number("potential (% of tot)", precession=1),
         Number("settled (% of potential)", precession=1),
         table_name=(
-            "Planet Type Summary for Native Planets (native frequency: %.1f%%)\n"
-            "Totals: native_potential_planet_total: %s; native_settled_planet_total %s"
-        )
-        % (100 * native_chance, native_potential_planet_total, native_settled_planet_total),
+            "Planet Type Summary for Native Planets (native frequency: {:.1f}%)\n"
+            "Totals: native_potential_planet_total: {}; native_settled_planet_total {}"
+        ).format(100 * native_chance, native_potential_planet_total, native_settled_planet_total),
     )
 
     for planet_type, planet_count in sorted(potential_native_planet_summary.items()):

@@ -468,8 +468,7 @@ class OrbitalColonizationPlan:
         # enqueue the design at the source planet
         retval = fo.issueEnqueueShipProductionOrder(best_ship, self.source)
         debug(
-            "Enqueueing Outpost Base at %s for %s with result %s"
-            % (universe.getPlanet(self.source), universe.getPlanet(self.target), retval)
+            f"Enqueueing Outpost Base at {universe.getPlanet(self.source)} for {universe.getPlanet(self.target)} with result {retval}"
         )
 
         if not retval:

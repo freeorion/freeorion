@@ -917,8 +917,7 @@ class ShipDesigner:
         if reference_name in Cache.map_reference_design_name:
             if verbose:
                 debug(
-                    "Design with reference name %s is cached: %s"
-                    % (reference_name, Cache.map_reference_design_name[reference_name])
+                    f"Design with reference name {reference_name} is cached: {Cache.map_reference_design_name[reference_name]}"
                 )
             try:
                 return _get_design_by_name(Cache.map_reference_design_name[reference_name]).id
@@ -1077,8 +1076,7 @@ class ShipDesigner:
                     current_parts = cache[1]
                     if verbose:
                         debug(
-                            "Best rating for hull %s: %f (read from Cache) %s"
-                            % (hullname, best_hull_rating, current_parts)
+                            f"Best rating for hull {hullname}: {best_hull_rating:f} (read from Cache) {current_parts}"
                         )
                 else:
                     self.update_hull(hullname)
@@ -1092,8 +1090,7 @@ class ShipDesigner:
                     best_parts = current_parts
             if verbose:
                 debug(
-                    "Best overall rating for this planet: %f (%s with %s)"
-                    % (best_rating_for_planet, best_hull, best_parts)
+                    f"Best overall rating for this planet: {best_rating_for_planet:f} ({best_hull} with {best_parts})"
                 )
             if best_hull:
                 self.update_hull(best_hull)
@@ -2269,11 +2266,10 @@ def _get_tech_bonus(upgrade_dict, part_name):
             _raised_warnings.add(part_name)
             error(
                 (
-                    "WARNING: Encountered unknown part (%s): "
+                    "WARNING: Encountered unknown part ({}): "
                     "The AI can play on but its damage estimates may be incorrect leading to worse decision-making. "
-                    "Please update AIDependencies.py - %s"
-                )
-                % (part_name, upgrade_dict),
+                    "Please update AIDependencies.py - {}"
+                ).format(part_name, upgrade_dict),
                 exc_info=True,
             )
         return 0
