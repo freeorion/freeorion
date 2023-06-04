@@ -42,11 +42,11 @@ class PairToken(SimpleCollectionToken):
 
 class MapToken(Token):
     def __init__(self, value: str):
-        super().__init__(value, "Map[", "]", 2)
+        super().__init__(value, "Mapping[", "]", 2)
 
 
 _tokens: list[Token] = [
-    SimpleCollectionToken("Vec", "Vec"),
+    SimpleCollectionToken("Vec", "Sequence"),
     SimpleCollectionToken("Set", "Set"),
     MapToken("Map"),
     PairToken("Pair"),
@@ -113,4 +113,4 @@ def make_type(string: Optional[str]):
 
 def is_collection_type(type_name: str) -> bool:
     type_ = make_type(type_name)
-    return type_.startswith(("Vec", "Set", "Map", "tuple"))
+    return type_.startswith(("Sequence[", "Set[", "Mapping[", "tuple["))

@@ -1,3 +1,5 @@
+from collections.abc import Sequence
+
 from common.fo_typing import (
     BuildingId,
     BuildingName,
@@ -11,7 +13,6 @@ from common.fo_typing import (
     SpeciesName,
     SystemId,
     Turn,
-    Vec,
 )
 from stub_generator.stub_generator.collection_classes import make_type
 from stub_generator.stub_generator.rtype.mapper import Mapper
@@ -19,19 +20,19 @@ from stub_generator.stub_generator.rtype.utils import get_name_for_mapping
 
 _property_map = Mapper(
     {
-        ("shipIDs", "IntVec"): Vec[ShipId],
-        ("allObjectIDs", "IntVec"): Vec[ObjectId],
-        ("buildingIDs", "IntVec"): Vec[BuildingId],
-        ("planetIDs", "IntVec"): Vec[PlanetId],
-        ("fleetIDs", "IntVec"): Vec[FleetId],
-        ("systemIDs", "IntVec"): Vec[SystemId],
+        ("shipIDs", "IntVec"): Sequence[ShipId],
+        ("allObjectIDs", "IntVec"): Sequence[ObjectId],
+        ("buildingIDs", "IntVec"): Sequence[BuildingId],
+        ("planetIDs", "IntVec"): Sequence[PlanetId],
+        ("fleetIDs", "IntVec"): Sequence[FleetId],
+        ("systemIDs", "IntVec"): Sequence[SystemId],
         ("empireID", "int"): EmpireId,
         ("capitalID", "int"): PlanetId,
         ("locationID", "int"): PlanetId,
         ("speciesName", "str"): SpeciesName,
         ("designedOnTurn", "int"): Turn,
         ("buildingTypeName", "str"): BuildingName,
-        ("parts", "StringVec"): Vec[PartName],
+        ("parts", "StringVec"): Sequence[PartName],
         ("recipient", "int"): PlayerId,
         ("sender", "int"): PlayerId,
         ("id", ""): ObjectId,

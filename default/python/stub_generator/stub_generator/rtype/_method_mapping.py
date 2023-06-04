@@ -1,11 +1,13 @@
-from common.fo_typing import Map, SystemId, Turn
+from collections.abc import Mapping
+
+from common.fo_typing import SystemId, Turn
 from stub_generator.stub_generator.collection_classes import make_type
 from stub_generator.stub_generator.rtype.mapper import Mapper
 from stub_generator.stub_generator.rtype.utils import get_name_for_mapping
 
 _method_map = Mapper(
     {
-        "supplyProjections": Map[SystemId, int],
+        "supplyProjections": Mapping[SystemId, int],
         "turnPolicyAdopted": Turn,
         "name": str,
     },
