@@ -29,7 +29,7 @@ def make_stub(
     res = ResultBuilder(header)
     res.add_built_in_import(Import("collections.abc", ["Mapping", "Sequence", "Set"]))
     res.add_built_in_import(Import("enum", ["IntEnum"]))
-    res.add_built_in_import(Import("typing", ["Generic", "TypeVar", "overload"]))
+    res.add_built_in_import(Import("typing", ["overload"]))
 
     res.add_import(
         Import(
