@@ -51,6 +51,7 @@ class Table:
         self._header_sep = header_sep
         self._vertical_sep = vertical_sep
         self._rows = []
+        self._notes = []  # each row has a not attached for it
         self._headers = fields
         self._hide_headers = hide_header
         self.totals = defaultdict(int)
@@ -58,13 +59,14 @@ class Table:
     def __str__(self):
         return self.get_table()
 
-    def add_row(self, *row):
+    def add_row(self, *row, note: str = ""):
         table_row = []
         for field, val in zip(self._headers, row):
             if field.total:
                 self.totals[field] += val
             table_row.append(field.make_cell_string(val))
         self._rows.append(table_row)
+        self._notes.append(note)
 
     def _get_row_separator(self, char, column_widthes):
         return char * (2 + (len(column_widthes) - 1) * 3 + sum(column_widthes) + 2)
@@ -105,14 +107,14 @@ class Table:
 
         yield self._get_row_separator(self._header_sep, column_widths)
 
-        for row in self._rows:
-            yield "{} {} {}".format(
-                self._vertical_sep,
-                inner_separator.join(
-                    h.format_cell(item, width) for h, item, width in zip(self._headers, row, column_widths)
-                ),
-                self._vertical_sep,
+        for row, note in zip(self._rows, self._notes):
+            if note:
+                note = f"  {note.strip()}"
+
+            row_content = inner_separator.join(
+                h.format_cell(item, width) for h, item, width in zip(self._headers, row, column_widths)
             )
+            yield f"{self._vertical_sep} {row_content} {self._vertical_sep}{note}"
 
         if self.totals:
             yield self._get_row_separator(self._header_sep, column_widths)

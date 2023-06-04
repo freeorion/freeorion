@@ -6,10 +6,10 @@ class Field(ABC):
     def __init__(
         self,
         name: str,
-        align="<",
-        description="",
-        placeholder="",
-        total=False,
+        align: str = "<",
+        description: str = "",
+        placeholder: str = "",
+        total: bool = False,
     ):
         """
         Cell specification.

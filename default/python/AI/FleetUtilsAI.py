@@ -10,6 +10,8 @@ from AIDependencies import INVALID_ID
 from aistate_interface import get_aistate
 from CombatRatingsAI import get_fleet_rating, get_ship_combat_stats, rating_needed
 from common.fo_typing import PlanetId
+from common.print_utils import Sequence as SequenceField
+from common.print_utils import Table, Text
 from EnumsAI import MissionType, ShipRoleType
 from freeorion_tools import assertion_fails, combine_ratings
 from ShipDesignAI import get_ship_part
@@ -479,20 +481,24 @@ def generate_fleet_orders_for_fleet_missions():  # noqa: max-complexity
     """Generates fleet orders from targets."""
     debug("Generating fleet orders")
 
+    table = Table(Text("name"), SequenceField("values"), hide_header=True, table_name="Fleets by Role")
+
     # The following fleet lists are based on *Roles* -- Secure type missions are done by fleets with Military Roles
-    debug("Fleets by Role\n")
-    debug("Exploration Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.EXPLORATION))
-    debug("Colonization Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.COLONISATION))
-    debug("Outpost Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.OUTPOST))
-    debug("Invasion Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.INVASION))
-    debug("Military Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.MILITARY))
-    debug("Orbital Defense Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.ORBITAL_DEFENSE))
-    debug("Outpost Base Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.ORBITAL_OUTPOST))
-    debug("Invasion Base Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.ORBITAL_INVASION))
-    debug(
-        "Securing Fleets: %s  (currently FLEET_MISSION_MILITARY should be used instead of this Role)"
-        % (get_empire_fleet_ids_by_role(MissionType.SECURE))
+    table.add_row("Exploration", get_empire_fleet_ids_by_role(MissionType.EXPLORATION))
+    table.add_row("Colonization", get_empire_fleet_ids_by_role(MissionType.COLONISATION))
+    table.add_row("Outpost", get_empire_fleet_ids_by_role(MissionType.OUTPOST))
+    table.add_row("Invasion", get_empire_fleet_ids_by_role(MissionType.INVASION))
+    table.add_row("Military", get_empire_fleet_ids_by_role(MissionType.MILITARY))
+    table.add_row("Orbital Defense", get_empire_fleet_ids_by_role(MissionType.ORBITAL_DEFENSE))
+    table.add_row("Outpost Base", get_empire_fleet_ids_by_role(MissionType.ORBITAL_OUTPOST))
+    table.add_row("Invasion Base", get_empire_fleet_ids_by_role(MissionType.ORBITAL_INVASION))
+    table.add_row(
+        "Securing",
+        get_empire_fleet_ids_by_role(MissionType.SECURE),
+        note="currently MissionType.MILITARY should be used instead of this role",
     )
+
+    debug(table)
 
     aistate = get_aistate()
     if fo.currentTurn() < 50:

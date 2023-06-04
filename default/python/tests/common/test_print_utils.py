@@ -143,3 +143,21 @@ def test_dict_to_table():
         "| 2 | 20 |",
         "----------",
     ]
+
+
+def test_adding_notes():
+    table = Table(
+        Number("A", precession=0),
+        Number("B", precession=0),
+        hide_header=True,
+    )
+    table.add_row(1, 10)
+    table.add_row(2, 20, note="Hello")
+    table.add_row(3, 30, note="  World  ")
+    assert list(table) == [
+        "============",
+        "|  1 |  10 |",
+        "|  2 |  20 |  Hello",
+        "|  3 |  30 |  World",
+        "------------",
+    ]

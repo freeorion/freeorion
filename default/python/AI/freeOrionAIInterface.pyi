@@ -3,7 +3,7 @@
 # about stub files, see https://www.python.org/dev/peps/pep-0484/#stub-files
 # During execution, the actual module is made available via
 # a C++ Boost-python process as part of the launch.
-from collections.abc import Iterable, Iterator
+from collections.abc import Iterable, Iterator, Mapping
 from enum import IntEnum
 from typing import Generic, TypeVar, overload
 
@@ -44,7 +44,7 @@ class Item(Generic[KT, VT]):
     def key(self) -> KT: ...
     def data(self) -> VT: ...
 
-class Map(Generic[KT, VT]):
+class Map(Mapping[KT, VT]):
     def __contains__(self, key: KT) -> bool: ...
     def __delitem__(self, key: KT) -> None: ...
     def __getitem__(self, key: KT) -> VT: ...
