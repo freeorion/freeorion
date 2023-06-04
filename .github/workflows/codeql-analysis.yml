@@ -16,7 +16,8 @@ on:
       - 'check/**'
       - 'default/**'
       - 'test-scripting/**'
-
+      - '.github/ISSUE_TEMPLATE/**'
+      - "pyproject.toml"
 jobs:
   analyze:
     name: Analyze
