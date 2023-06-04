@@ -1,12 +1,16 @@
 import freeOrionAIInterface as fo
 from logging import warning
+from typing import NewType
 
 from AIDependencies import CombatTarget
 from aistate_interface import get_aistate
 from CombatRatingsAI._targets import get_allowed_targets
 from common.fo_typing import ShipId
-from freeorion_tools import dict_to_tuple, get_ship_part, tuple_to_dict
+from freeorion_tools import get_ship_part
 from freeorion_tools.caching import cache_for_current_turn
+
+AttackDamage = NewType("AttackDamage", float)
+AttackCount = NewType("AttackCount", int)
 
 
 class ShipCombatStats:
@@ -15,7 +19,7 @@ class ShipCombatStats:
     def __init__(
         self,
         *,
-        attacks: tuple[tuple[float, int]] = None,
+        attacks: dict[AttackDamage, AttackCount] = None,
         structure=1.0,
         shields=0.0,
         fighter_capacity=0,
@@ -28,7 +32,7 @@ class ShipCombatStats:
     ):
         self.structure = structure
         self.shields = shields
-        self.attacks: dict[float, int] = {} if attacks is None else tuple_to_dict(attacks)
+        self.attacks: dict[AttackDamage, AttackCount] = {} if attacks is None else attacks
 
         self.fighter_capacity = fighter_capacity
         self.fighter_launch_rate = fighter_launch_rate
@@ -55,7 +59,7 @@ class ShipCombatStats:
         }
 
     def __hash__(self):
-        return hash((dict_to_tuple(self.attacks), self.structure, self.shields))
+        return hash((tuple(self.attacks.items()), self.structure, self.shields))
 
     def __eq__(self, other):
         return self.__getstate__() == other.__getstate__()
@@ -152,7 +156,7 @@ def get_ship_combat_stats(ship_id: ShipId, max_stats=False) -> ShipCombatStats: 
     else:
         structure = ship.initialMeterValue(fo.meterType.structure)
         shields = ship.initialMeterValue(fo.meterType.shield)
-    attacks = {}
+    attacks: dict[AttackDamage, AttackCount] = {}
     fighter_launch_rate = 0
     fighter_capacity = 0
     fighter_damage = 0
@@ -169,10 +173,10 @@ def get_ship_combat_stats(ship_id: ShipId, max_stats=False) -> ShipCombatStats: 
             pc = get_ship_part(partname).partClass
             if pc == fo.shipPartClass.shortRange:
                 allowed_targets = get_allowed_targets(partname)
-                damage = ship.currentPartMeterValue(meter_choice, partname)
-                shots = ship.currentPartMeterValue(fo.meterType.secondaryStat, partname)
+                damage = AttackDamage(ship.currentPartMeterValue(meter_choice, partname))
+                shots = int(ship.currentPartMeterValue(fo.meterType.secondaryStat, partname))
                 if allowed_targets & CombatTarget.SHIP:
-                    attacks[damage] = attacks.get(damage, 0) + shots
+                    attacks[damage] = AttackCount(attacks.get(damage, 0) + shots)
                 if allowed_targets & CombatTarget.FIGHTER:
                     flak_shots += 1
                 if allowed_targets & CombatTarget.PLANET:

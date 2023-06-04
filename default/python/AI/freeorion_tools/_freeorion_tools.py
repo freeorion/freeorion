@@ -150,21 +150,6 @@ def chat_human(message, send_to_logs=True):
         debug("Chat Message to human: %s", remove_tags(message))
 
 
-def dict_to_tuple(dic):
-    return tuple(dic.items())
-
-
-def tuple_to_dict(tup):
-    try:
-        return dict(tup)
-    except TypeError:
-        try:
-            return {k: v for k, v in [tup]}
-        except:  # noqa: E722
-            error("Can't convert tuple_list to dict: %s", tup)
-            return {}
-
-
 @cache_for_current_turn
 def get_partial_visibility_turn(obj_id: int) -> int:
     """Return the last turn an object had at least partial visibility.

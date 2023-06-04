@@ -2,7 +2,7 @@ from collections import Counter
 from typing import Optional
 
 from CombatRatingsAI._fleet_combat_stats import get_fleet_combat_stats
-from CombatRatingsAI._ship_combat_stats import ShipCombatStats, get_ship_combat_stats
+from CombatRatingsAI._ship_combat_stats import AttackCount, AttackDamage, ShipCombatStats, get_ship_combat_stats
 from common.fo_typing import FleetId, ShipId, SpeciesName
 from EnumsAI import MissionType
 from freeorion_tools import get_species_ship_shields
@@ -37,7 +37,7 @@ def default_ship_stats() -> ShipCombatStats:
     :return: Some weak standard ship
     """
     return ShipCombatStats(
-        attacks=((6.0, 1),),
+        attacks={AttackDamage(6.0): AttackCount(1)},
         structure=15,
         shields=0,
         fighter_capacity=0,
