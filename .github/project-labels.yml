@@ -138,3 +138,11 @@
   description: >
     The Issue can't be reproduced or it doesn't contain sufficient information
     to reproduce it.
+- name: changlelog:yes
+  color: "cccccc"
+  description: >
+    The PR contains changes that are worth to be mention in the changelog
+- name: changlelog:no
+  color: "cccccc"
+  description: >
+    The PR contains changes that should not be reflected in change log
