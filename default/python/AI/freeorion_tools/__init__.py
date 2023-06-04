@@ -6,7 +6,6 @@ from ._freeorion_tools import (
     ReadOnlyDict,
     assertion_fails,
     chat_human,
-    dict_to_tuple,
     get_ai_tag_grade,
     get_game_rule_int,
     get_game_rule_real,
@@ -29,5 +28,4 @@ from ._freeorion_tools import (
     ppstring,
     tech_is_complete,
     tech_soon_available,
-    tuple_to_dict,
 )
