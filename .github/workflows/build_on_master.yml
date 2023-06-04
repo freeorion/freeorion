@@ -13,6 +13,7 @@ on:
       - 'default/**'
       - 'test-scripting/**'
       - '.github/ISSUE_TEMPLATE/**'
+      - "pyproject.toml"
 jobs:
   android:
     uses: ./.github/workflows/_build-android.yml
