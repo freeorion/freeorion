@@ -679,8 +679,7 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
             # if the ship couldn't be created, report an error and try to continue with the next ship design
             if fo.create_ship("", ship_design, starting_species, fleet) == fo.invalid_object():
                 report_error(
-                    "Python setup empire: couldn't create ship of design %s for fleet %s"
-                    % (ship_design, fleet_plan.name())
+                    f"Python setup empire: couldn't create ship of design {ship_design} for fleet {fleet_plan.name()}"
                 )
 
     # starting resource stockpiles
