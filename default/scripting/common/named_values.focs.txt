@@ -62,5 +62,7 @@ NamedReal name = "DEF_SYST_DEF_MINE_1_DAMAGE" value = 2 * [[SYSTEM_MINES_DAMAGE_
 NamedReal name = "DEF_SYST_DEF_MINE_2_DAMAGE" value = 6 * [[SYSTEM_MINES_DAMAGE_FACTOR]]
 NamedReal name = "DEF_SYST_DEF_MINE_3_DAMAGE" value = 14 * [[SYSTEM_MINES_DAMAGE_FACTOR]]
 
+NamedReal name = "FU_RAMSCOOP_REFUEL" value = 0.4
+
 #include "/scripting/common/misc.macros"
 #include "/scripting/common/base_prod.macros"

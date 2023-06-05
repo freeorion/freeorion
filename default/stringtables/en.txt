@@ -15974,7 +15974,7 @@ FU_RAMSCOOP
 Ramscoop
 
 FU_RAMSCOOP_DESC
-Slowly generates [[metertype METER_FUEL]] while in systems by collecting hydrogen from the diffuse gas in space.
+Slowly generates [[metertype METER_FUEL]] while in systems by collecting hydrogen from the diffuse gas in space. Increases [[metertype METER_FUEL]] by [[value FU_RAMSCOOP_REFUEL]] if ship is stationary.
 
 ST_CLOAK_1
 Electromagnetic Damper

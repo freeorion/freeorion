@@ -121,7 +121,10 @@ REFUEL_MESSAGE
         (Source.MaxFuel >= 1)
         (Source.Fuel
          + @1@ * (Statistic If condition = And [ Source Turn low = Source.ArrivedOnTurn + 1])
-         + 0.1 * (Statistic If condition = And [ Source DesignHasPart name = "FU_RAMSCOOP"])
+         + (NamedRealLookup name = "FU_RAMSCOOP_REFUEL") * (Statistic If condition = And [
+            Source DesignHasPart name = "FU_RAMSCOOP"
+            Source Turn low = Source.ArrivedOnTurn + 1
+            ] )
          + 0.1 * (Statistic If condition = And [
             Source
             Species name = "SP_SLY"
