@@ -1,11 +1,12 @@
 import freeOrionAIInterface as fo
 from logging import warning
+from typing import Optional
 
 from AIDependencies import CombatTarget
 from aistate_interface import get_aistate
 from CombatRatingsAI._targets import get_allowed_targets
-from common.fo_typing import ShipId
-from freeorion_tools import dict_to_tuple, get_ship_part, tuple_to_dict
+from common.fo_typing import AttackCount, AttackDamage, ShipId
+from freeorion_tools import get_ship_part
 from freeorion_tools.caching import cache_for_current_turn
 
 
@@ -15,7 +16,7 @@ class ShipCombatStats:
     def __init__(
         self,
         *,
-        attacks: tuple[tuple[float, int]] = None,
+        attacks: Optional[dict[AttackDamage, AttackCount]] = None,
         structure=1.0,
         shields=0.0,
         fighter_capacity=0,
@@ -26,36 +27,36 @@ class ShipCombatStats:
         damage_vs_planets=0,
         has_bomber=False,
     ):
-        self.structure = structure
+        self._structure = structure
         self.shields = shields
-        self.attacks: dict[float, int] = {} if attacks is None else tuple_to_dict(attacks)
+        self.attacks: dict[AttackDamage, AttackCount] = {} if attacks is None else attacks
 
-        self.fighter_capacity = fighter_capacity
-        self.fighter_launch_rate = fighter_launch_rate
-        self.fighter_damage = fighter_damage
+        self._fighter_capacity = fighter_capacity
+        self._fighter_launch_rate = fighter_launch_rate
+        self._fighter_damage = fighter_damage
 
-        self.flak_shots = flak_shots
-        self.has_interceptors = has_interceptors
+        self._flak_shots = flak_shots
+        self._has_interceptors = has_interceptors
 
-        self.damage_vs_planets = damage_vs_planets
-        self.has_bomber = has_bomber
+        self._damage_vs_planets = damage_vs_planets
+        self._has_bomber = has_bomber
 
     def __getstate__(self):
         return {
-            "structure": self.structure,
+            "structure": self._structure,
             "shields": self.shields,
             "attacks": self.attacks,
-            "fighter_capacity": self.fighter_capacity,
-            "fighter_launch_rate": self.fighter_launch_rate,
-            "fighter_damage": self.fighter_damage,
-            "flak_shots": self.flak_shots,
-            "has_interceptors": self.has_interceptors,
-            "damage_vs_planets": self.damage_vs_planets,
-            "has_bomber": self.has_bomber,
+            "fighter_capacity": self._fighter_capacity,
+            "fighter_launch_rate": self._fighter_launch_rate,
+            "fighter_damage": self._fighter_damage,
+            "flak_shots": self._flak_shots,
+            "has_interceptors": self._has_interceptors,
+            "damage_vs_planets": self._damage_vs_planets,
+            "has_bomber": self._has_bomber,
         }
 
     def __hash__(self):
-        return hash((dict_to_tuple(self.attacks), self.structure, self.shields))
+        return hash((tuple(self.attacks.items()), self._structure, self.shields))
 
     def __eq__(self, other):
         return self.__getstate__() == other.__getstate__()
@@ -77,7 +78,7 @@ class ShipCombatStats:
         # So, for now, we compare at least against a certain standard enemy.
         enemy_stats = enemy_stats or get_aistate().get_standard_enemy()
 
-        my_hit_points = self.structure
+        my_hit_points = self._structure
         if enemy_stats:
             my_hit_points *= self._calculate_shield_factor(enemy_stats.attacks, self.shields)
             my_total_attack = sum(n * max(dmg - enemy_stats.shields, 0.001) for dmg, n in self.attacks.items())
@@ -89,7 +90,7 @@ class ShipCombatStats:
         # TODO: Consider enemy fighters
         return my_total_attack * my_hit_points
 
-    def _calculate_shield_factor(self, e_attacks: dict, my_shields: float) -> float:
+    def _calculate_shield_factor(self, e_attacks: dict[AttackDamage, AttackCount], my_shields: float) -> float:
         """
         Calculates shield factor based on enemy attacks and our shields.
         It is possible to have e_attacks with number attacks == 0,
@@ -107,9 +108,9 @@ class ShipCombatStats:
             return 1.0
 
     def _estimate_fighter_damage(self):
-        if self.fighter_launch_rate == 0:
+        if self._fighter_launch_rate == 0:
             return 0
-        full_launch_bouts = self.fighter_capacity // self.fighter_launch_rate
+        full_launch_bouts = self._fighter_capacity // self._fighter_launch_rate
         survival_rate = 0.2  # TODO estimate chance of a fighter not to be shot down in a bout
         flying_fighters = 0
         total_fighter_damage = 0
@@ -117,21 +118,23 @@ class ShipCombatStats:
         num_bouts = fo.getGameRules().getInt("RULE_NUM_COMBAT_ROUNDS")
         for firing_bout in range(num_bouts - 1):
             if firing_bout < full_launch_bouts:
-                flying_fighters = (flying_fighters * survival_rate) + self.fighter_launch_rate
+                flying_fighters = (flying_fighters * survival_rate) + self._fighter_launch_rate
             elif firing_bout == full_launch_bouts:
                 # now handle a bout with lower capacity launch
-                flying_fighters = (flying_fighters * survival_rate) + (self.fighter_capacity % self.fighter_launch_rate)
+                flying_fighters = (flying_fighters * survival_rate) + (
+                    self._fighter_capacity % self._fighter_launch_rate
+                )
             else:
                 flying_fighters = flying_fighters * survival_rate
-            total_fighter_damage += self.fighter_damage * flying_fighters
+            total_fighter_damage += self._fighter_damage * flying_fighters
         return total_fighter_damage / num_bouts
 
     def get_rating_vs_planets(self) -> float:
         """Heuristic to estimate combat strength against planets"""
-        damage = self.damage_vs_planets
-        if self.has_bomber:
+        damage = self._damage_vs_planets
+        if self._has_bomber:
             damage += self._estimate_fighter_damage()
-        return damage * (self.structure + self.shields)
+        return damage * (self._structure + self.shields)
 
 
 @cache_for_current_turn
@@ -152,7 +155,7 @@ def get_ship_combat_stats(ship_id: ShipId, max_stats=False) -> ShipCombatStats: 
     else:
         structure = ship.initialMeterValue(fo.meterType.structure)
         shields = ship.initialMeterValue(fo.meterType.shield)
-    attacks = {}
+    attacks: dict[AttackDamage, AttackCount] = {}
     fighter_launch_rate = 0
     fighter_capacity = 0
     fighter_damage = 0
@@ -169,10 +172,10 @@ def get_ship_combat_stats(ship_id: ShipId, max_stats=False) -> ShipCombatStats: 
             pc = get_ship_part(partname).partClass
             if pc == fo.shipPartClass.shortRange:
                 allowed_targets = get_allowed_targets(partname)
-                damage = ship.currentPartMeterValue(meter_choice, partname)
-                shots = ship.currentPartMeterValue(fo.meterType.secondaryStat, partname)
+                damage = AttackDamage(ship.currentPartMeterValue(meter_choice, partname))
+                shots = int(ship.currentPartMeterValue(fo.meterType.secondaryStat, partname))
                 if allowed_targets & CombatTarget.SHIP:
-                    attacks[damage] = attacks.get(damage, 0) + shots
+                    attacks[damage] = AttackCount(attacks.get(damage, 0) + shots)
                 if allowed_targets & CombatTarget.FIGHTER:
                     flak_shots += 1
                 if allowed_targets & CombatTarget.PLANET:
