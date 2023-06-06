@@ -16,10 +16,11 @@ Part
     effectsgroups =
         EffectsGroup
             scope = Source
+            Turn low = LocalCandidate.ArrivedOnTurn + 1
             activation = Stationary
             stackinggroup = "RAMSCOOP_STACK"
             // Update ship_hulls.macros if this number changes
-            effects = SetFuel value = Value + 0.1
+            effects = SetFuel value = Value + (NamedRealLookup name = "FU_RAMSCOOP_REFUEL")
     icon = "icons/ship_parts/antimatter_tank.png"
 
 #include "/scripting/common/upkeep.macros"
