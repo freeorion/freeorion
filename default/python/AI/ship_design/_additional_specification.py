@@ -1,4 +1,5 @@
 from aistate_interface import get_aistate
+from CombatRatingsAI import ShipCombatStats
 from tests.conftest import fo
 
 
@@ -34,7 +35,7 @@ class AdditionalSpecifications:
         self.enemy = None
         self.update_enemy(get_aistate().get_standard_enemy())
 
-    def update_enemy(self, enemy: "ShipCombatStats"):
+    def update_enemy(self, enemy: ShipCombatStats):
         """Read out the enemies stats and save them."""
         self.enemy = enemy
         self.enemy_shields = enemy.shields
