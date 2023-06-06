@@ -1,1 +1,2 @@
 from ship_design._additional_specification import AdditionalSpecifications
+from ship_design._ship_design_cache import ShipDesignCache, build_cache_key
