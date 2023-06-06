@@ -213,7 +213,7 @@ class ShipDesigner:
         """Set stats to default.
 
         Call this if design is invalid to avoid miscalculation of ratings."""
-        self.design_stats.reset()
+        self.design_stats = DesignStats()
         self.production_cost = 9999
         self.production_time = 1
 
