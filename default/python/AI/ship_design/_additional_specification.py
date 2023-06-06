@@ -1,6 +1,7 @@
+import freeOrionAIInterface as fo
+
 from aistate_interface import get_aistate
 from CombatRatingsAI import ShipCombatStats
-from tests.conftest import fo
 
 
 class AdditionalSpecifications:
