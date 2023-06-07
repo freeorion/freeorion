@@ -16,8 +16,10 @@ Part
     effectsgroups =
         EffectsGroup
             scope = Source
-            Turn low = LocalCandidate.ArrivedOnTurn + 1
-            activation = Stationary
+            activation = And [
+                Stationary
+                Turn low = LocalCandidate.ArrivedOnTurn + 1
+            ]
             stackinggroup = "RAMSCOOP_STACK"
             // Update ship_hulls.macros if this number changes
             effects = SetFuel value = Value + (NamedRealLookup name = "FU_RAMSCOOP_REFUEL")
