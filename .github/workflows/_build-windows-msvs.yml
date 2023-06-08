@@ -36,7 +36,7 @@ jobs:
           key: scoop-cache
           path: scoop_cache
       - name: Install NSIS
-        if: true # only for weekly-test-build push
+        if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
         env:
           SCOOP_CACHE: scoop_cache
         run: |
@@ -54,7 +54,7 @@ jobs:
         run: |
           unzip -q ../${{ steps.download-vcredist.outputs.filename }} -d ..
       - name: Generate installer
-        if: true # only for weekly-test-build push
+        if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
         run: |
           makensis packaging/windows_installer.nsi
           mv ../FreeOrion_*_Test_Win32_Setup.exe .
