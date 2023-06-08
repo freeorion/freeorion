@@ -27,7 +27,7 @@ jobs:
           IMAGE="freeorion/freeorion"
           echo tagged_image=${IMAGE}:${TAG} >> $GITHUB_OUTPUT
           echo tag=${TAG} >> $GITHUB_OUTPUT
-      - uses: jpribyl/action-docker-layer-caching@v0.1.1
+      - uses: jpribyl/action-docker-layer-caching@v0.1.11
         # Ignore the failure of a step and avoid terminating the job.
         continue-on-error: true
         with:

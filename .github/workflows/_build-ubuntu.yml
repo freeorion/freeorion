@@ -28,7 +28,7 @@ jobs:
         with:
           path: ${{ runner.temp }}/cache-build-linux-install
           key: build-${{ matrix.os }}-install-cache-key-v1.0
-      - uses: airvzxf/cache-anything-new-action@v1.0
+      - uses: airvzxf/cache-anything-new-action@v1.0.1
         with:
           script: '${{ matrix.os }}-install-build.sh'
           is_cached: ${{ steps.build-ubuntu-install-cache-id.outputs.cache-hit }}
