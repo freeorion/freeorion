@@ -5,7 +5,7 @@ on:
 
 jobs:
   ubuntu:
-    name: ${{ matrix.os }} Build FreeOrion GG=${{ matrix.client-gg }} Godot=${{ matrix.client-godot }} compiler ${{ matrix.compiler }}
+    name: ${{ matrix.os }} Godot=${{ matrix.client-godot }} with ${{ matrix.compiler }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
