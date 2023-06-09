@@ -142,6 +142,9 @@ ServerApp::ServerApp() :
     m_empires.DiplomaticMessageChangedSignal.connect(
         boost::bind(&ServerApp::HandleDiplomaticMessageChange,this, ph::_1, ph::_2));
 
+    m_networking.MessageSentSignal.connect(
+        boost::bind(&ServerApp::UpdateEmpireTurnReceived, this, ph::_1, ph::_2, ph::_3));
+
     m_signals.async_wait(boost::bind(&ServerApp::SignalHandler, this, ph::_1, ph::_2));
 }
 
@@ -379,7 +382,7 @@ void ServerApp::AsyncIOTimedoutHandler(const boost::system::error_code& error) {
     }
 }
 
-void ServerApp::UpdateEmpireTurnReceived(int empire_id, int turn, bool success) {
+void ServerApp::UpdateEmpireTurnReceived(bool success, int empire_id, int turn) {
     if (success) {
         if (auto empire = m_empires.GetEmpire(empire_id)) {
             empire->SetLastTurnReceived(turn);
@@ -900,7 +903,8 @@ void ServerApp::SendNewGameStartMessages() {
                                                         m_universe,              m_species_manager,
                                                         GetCombatLogManager(),   m_supply_manager,
                                                         player_info_map,         m_galaxy_setup_data,
-                                                        use_binary_serialization,!player_connection->IsLocalConnection()));
+                                                        use_binary_serialization,!player_connection->IsLocalConnection()),
+                                       empire_id, m_current_turn);
     }
 }
 
@@ -1481,7 +1485,8 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
                                                             m_species_manager, GetCombatLogManager(),
                                                             m_supply_manager, player_info_map, *orders, sss,
                                                             m_galaxy_setup_data, use_binary_serialization,
-                                                            !player_connection->IsLocalConnection()));
+                                                            !player_connection->IsLocalConnection()),
+                                           empire_id, m_current_turn);
 
         } else if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
             player_connection->SendMessage(GameStartMessage(m_single_player_game, empire_id,
@@ -1490,7 +1495,8 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
                                                             m_supply_manager, player_info_map, *orders,
                                                             psgd.ui_data.get(), m_galaxy_setup_data,
                                                             use_binary_serialization,
-                                                            !player_connection->IsLocalConnection()));
+                                                            !player_connection->IsLocalConnection()),
+                                            empire_id, m_current_turn);
 
         } else if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER ||
                    client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
@@ -2047,7 +2053,9 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
         ui_data,
         m_galaxy_setup_data,
         use_binary_serialization,
-        !player_connection->IsLocalConnection()));
+        !player_connection->IsLocalConnection()),
+        empire_id,
+        m_current_turn);
 
     return empire_id;
 }
@@ -3943,7 +3951,8 @@ void ServerApp::PostCombatProcessTurns() {
                                                   m_empires,                m_universe,
                                                   m_species_manager,        GetCombatLogManager(),
                                                   m_supply_manager,         players,
-                                                  use_binary_serialization, !player->IsLocalConnection()));
+                                                  use_binary_serialization, !player->IsLocalConnection()),
+                                empire_id, m_current_turn);
         }
     }
     m_turn_expired = false;
