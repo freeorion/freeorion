@@ -40,6 +40,17 @@ struct CookieData {
     {}
 };
 
+struct OutgoingMessage {
+    OutgoingMessage(Message&& message, int empire_id, int turn) :
+       m_message(std::move(message)),
+       m_empire_id(empire_id),
+       m_turn(turn)
+    {}
+
+    const Message m_message;
+    const int m_empire_id;
+    const int m_turn;
+};
 
 /** Encapsulates the connection to a single player.  This object should have
     nearly the same lifetime as the socket it represents, except that the
@@ -100,6 +111,7 @@ public:
 
     /** Sends \a synchronous message to out on the connection. */
     void SendMessage(const Message& message);
+    void SendMessage(const Message& message, int empire_id, int turn);
 
     /** Set player properties to use them after authentication successed. */
     void AwaitPlayer(Networking::ClientType client_type, std::string client_version_string);
@@ -128,11 +140,14 @@ public:
 
     /** Creates a new PlayerConnection and returns it as a shared_ptr. */
     static PlayerConnectionPtr NewConnection(
-        boost::asio::io_context& io_context, MessageAndConnectionFn nonplayer_message_callback,
+        boost::asio::io_context& io_context, boost::signals2::signal<void (bool, int, int)>& signal,
+        MessageAndConnectionFn nonplayer_message_callback,
         MessageAndConnectionFn player_message_callback, ConnectionFn disconnected_callback);
 
 private:
-    PlayerConnection(boost::asio::io_context& io_context, MessageAndConnectionFn nonplayer_message_callback,
+    PlayerConnection(boost::asio::io_context& io_context, 
+                     boost::signals2::signal<void (bool, int, int)>& signal,
+                     MessageAndConnectionFn nonplayer_message_callback,
                      MessageAndConnectionFn player_message_callback, ConnectionFn disconnected_callback);
     void HandleMessageBodyRead(boost::system::error_code error, std::size_t bytes_transferred);
     void HandleMessageHeaderRead(boost::system::error_code error, std::size_t bytes_transferred);
@@ -140,20 +155,22 @@ private:
     void AsyncWriteMessage();
     static void HandleMessageWrite(PlayerConnectionPtr self,
                                    boost::system::error_code error,
-                                   std::size_t bytes_transferred);
+                                   std::size_t bytes_transferred,
+                                   int empire_id, int turn);
 
     /** Places message to the end of sending queue and start asynchronous write if \a message was
         first in the queue. */
-    static void SendMessageImpl(PlayerConnectionPtr self, Message message);
+    static void SendMessageImpl(PlayerConnectionPtr self, Message message, int empire_id, int turn);
     static void AsyncErrorHandler(PlayerConnectionPtr self, boost::system::error_code handled_error,
                                   boost::system::error_code error);
 
     boost::asio::io_context&        m_service;
+    boost::signals2::signal<void (bool, int, int)>& MessageSentSignal;
     boost::optional<boost::asio::ip::tcp::socket> m_socket;
     Message::HeaderBuffer           m_incoming_header_buffer = {};
     Message                         m_incoming_message;
     Message::HeaderBuffer           m_outgoing_header = {};
-    std::queue<Message>             m_outgoing_messages;
+    std::queue<OutgoingMessage>     m_outgoing_messages;
     int                             m_ID = Networking::INVALID_PLAYER_ID;
     std::string                     m_player_name;
     bool                            m_new_connection = true;
@@ -294,6 +311,9 @@ public:
 
     /** Clean up expired cookies. */
     void CleanupCookies();
+
+    /** Signal to notify if message sent successfully or failed for empire about turn. */
+    mutable boost::signals2::signal<void (bool, int, int)> MessageSentSignal;
 
 private:
     void Init();
