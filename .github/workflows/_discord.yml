@@ -5,7 +5,7 @@ on:
         type: string
         required: true
     secrets:
-      DISCORD_WEBHOOK:
+      WEBHOOK:
         required: true
 jobs:
 
