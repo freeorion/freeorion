@@ -34,3 +34,20 @@ jobs:
     uses: ./.github/workflows/_build-docker.yml
   snapcraft:
     uses: ./.github/workflows/_build_snapcraft.yml
+  discord-notify-failure:
+    - uses: sarisia/actions-status-discord@v1
+      needs:
+        - android
+        - macos
+        - ubuntu
+        - windows
+        - docker
+        - snapcraft
+      if: failure()
+      with:
+        title: 'FreeOrion build master'
+        webhook: ${{ secrets.DISCORD_WEBHOOK }}
+        color: 0xff0000
+        username: 'FreeOrion Repo'
+        url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        avatar_url: https://github.githubassets.com/images/modules/logos_page/Octocat.png
