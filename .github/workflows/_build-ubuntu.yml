@@ -5,7 +5,7 @@ on:
 
 jobs:
   ubuntu:
-    name: ${{ matrix.os }} Build FreeOrion GG=${{ matrix.client-gg }} Godot=${{ matrix.client-godot }} compiler ${{ matrix.compiler }}
+    name: ${{ matrix.os }} Godot=${{ matrix.client-godot }} with ${{ matrix.compiler }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -28,7 +28,7 @@ jobs:
         with:
           path: ${{ runner.temp }}/cache-build-linux-install
           key: build-${{ matrix.os }}-install-cache-key-v1.0
-      - uses: airvzxf/cache-anything-new-action@v1.0
+      - uses: airvzxf/cache-anything-new-action@v1.0.1
         with:
           script: '${{ matrix.os }}-install-build.sh'
           is_cached: ${{ steps.build-ubuntu-install-cache-id.outputs.cache-hit }}

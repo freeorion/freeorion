@@ -14,7 +14,7 @@ jobs:
           - fedora-33
           - debian-stable
           - manjaro
-          # - fedora-rawhide # base image is broken https://github.com/fedora-cloud/docker-brew-fedora/issues/109
+          - fedora-rawhide
     env:
       CACHE_NAME: linux
     steps:

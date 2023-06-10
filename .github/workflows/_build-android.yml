@@ -41,7 +41,7 @@ jobs:
           path: .
       - name: Download SDK
         id: download-sdk
-        uses: suisei-cn/actions-download-file@v1.3.0
+        uses: suisei-cn/actions-download-file@v1.4.0
         with:
           url: https://github.com/freeorion/freeorion-sdk/releases/download/v14/FreeOrionSDK_14_Android-${{ matrix.arch }}.zip
           target: ../

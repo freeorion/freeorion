@@ -6,6 +6,7 @@ on:
 jobs:
   snapcraft:
     runs-on: ubuntu-latest
+    timeout-minutes: 55
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
