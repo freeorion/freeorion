@@ -1,14 +1,13 @@
-name: "Snapcraft"
-
 on:
   workflow_call:
+    inputs:
+      title:
+        type: string
+        required: true
+    secrets:
+      DISCORD_WEBHOOK:
 jobs:
-  inputs:
-    title:
-      type: string
-      required: true
-  secrets:
-    DISCORD_WEBHOOK:
+
   discord:
     runs-on: ubuntu-latest
     timeout-minutes: 55
@@ -21,4 +20,3 @@ jobs:
           username: 'FreeOrion Repo'
           url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           avatar_url: https://github.githubassets.com/images/modules/logos_page/Octocat.png
-
