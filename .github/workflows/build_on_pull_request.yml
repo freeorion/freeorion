@@ -34,7 +34,7 @@ jobs:
   docker:
     uses: ./.github/workflows/_build-docker.yml
   discord-notify-success:  #  sample messages just for demo purposes
-    - uses: sarisia/actions-status-discord@v1
+    - uses: ./.github/workflows/_discord.yml
       needs:
         - android
         - macos
@@ -46,7 +46,5 @@ jobs:
       with:
         title: 'FreeOrion build master'
         webhook: ${{ secrets.DISCORD_WEBHOOK }}
-        color: 0x00ff00
-        username: 'FreeOrion Repo'
-        url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        avatar_url: https://github.githubassets.com/images/modules/logos_page/Octocat.png
+        secrets:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
