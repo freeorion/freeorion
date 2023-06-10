@@ -6,6 +6,7 @@ on:
         required: true
     secrets:
       DISCORD_WEBHOOK:
+        required: true
 jobs:
 
   discord:
