@@ -45,6 +45,5 @@ jobs:
      if: always()
      with:
        title: 'FreeOrion build master'
-       webhook: ${{ secrets.DISCORD_WEBHOOK }}
      secrets:
        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
