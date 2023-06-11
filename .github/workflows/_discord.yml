@@ -16,7 +16,7 @@ jobs:
       - uses: sarisia/actions-status-discord@v1
         with:
           title: ${{ inputs.title }}
-          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          webhook: ${{ secrets.WEBHOOK }}
           color: 0xff0000
           username: 'FreeOrion Repo'
           url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

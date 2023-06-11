@@ -47,4 +47,4 @@ jobs:
     with:
       title: 'FreeOrion build master'
     secrets:
-      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
