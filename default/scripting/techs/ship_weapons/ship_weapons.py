@@ -4,33 +4,33 @@ from techs.techs import (
     EMPIRE_OWNED_SHIP_WITH_PART,
     SHIP_PART_UPGRADE_RESUPPLY_CHECK,
 )
-
+from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY, DEFAULT_PRIORITY
 
 # @1@ part name
+# @2@ apply the damage scaling rule (may be necessary if NoDefaultCapacity)
 def WEAPON_BASE_EFFECTS(part_name: str):
     # these NamedReals need to be parsed to be registered in the pedia. XXX remove this when the pedia can look up ship meters/part capacity
     NamedReal(name=part_name + "_PART_CAPACITY", value=PartCapacity(name=part_name))
     NamedReal(name=part_name + "_PART_SECONDARY_STAT", value=PartSecondaryStat(name=part_name))
 
-    # TODO: fix temporary changes to capacity/secondary stat (e.g. from PLC_CHARGING) when not being in supply
-    #       https://freeorion.org/forum/viewtopic.php?t=12778&sid=543cf0256e11cd5c604c55d4e093f769
-
     # side-note: set_max_meters_effects_group is not necessary for MaxCapacity iff WEAPON_UPGRADE_CAPACITY_EFFECTS is applied
     set_max_meters_effects_group = EffectsGroup(
-        scope=EMPIRE_OWNED_SHIP_WITH_PART(part_name) & Turn(high=LocalCandidate.LastTurnResupplied),
+        scope=EMPIRE_OWNED_SHIP_WITH_PART(part_name),
         accountinglabel=part_name,
+        priority=DEFAULT_PRIORITY,
         effects=[
             SetMaxCapacity(partname=part_name, value=PartCapacity(name=part_name)),
             SetMaxSecondaryStat(partname=part_name, value=PartSecondaryStat(name=part_name)),
         ]
     )
 
-    # The following is really only needed on the first resupplied turn after an upgrade is researched, since the resupply currently
-    # takes place in a portion of the turn before meters are updated, but currently there is no good way to restrict this to
-    # only that first resupply (and it is simply mildly inefficient to repeat the topup later).
+    # The topup_effects_group is necessary for
+    # 1) first resupplied turn after an upgrade is researched, since the resupply currentlytakes place in a portion of the turn before meters are updated
+    # 2) any turn with an arbitrary "temporary" change of Max values (e.g. PLC_FLANKING); if we had only tech effects we could restrict this
     topup_effects_group = EffectsGroup(
-        scope=EMPIRE_OWNED_SHIP_WITH_PART(part_name) & Turn(high=LocalCandidate.LastTurnResupplied),
+        scope=EMPIRE_OWNED_SHIP_WITH_PART(part_name),
         accountinglabel=part_name,
+        priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
         effects=[
             SetCapacity(partname=part_name, value=Value + ARBITRARY_BIG_NUMBER_FOR_METER_TOPUP),
             SetSecondaryStat(partname=part_name, value=Value + ARBITRARY_BIG_NUMBER_FOR_METER_TOPUP),
