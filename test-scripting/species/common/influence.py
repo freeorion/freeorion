@@ -95,20 +95,6 @@ ARTISANS_INFLUENCE_STABILITY = [
         accountinglabel="PLC_ARTISAN_WORKSHOPS",
         effects=SetTargetInfluence(value=Value + NamedReal(name="ARTISANS_INFLUENCE_FLAT_NO_FOCUS", value=0.5)),
     ),
-    # TODO: should this move to happiness.macros ?
-    EffectsGroup(  # artistic species make other planets with different artistic species on them and in the same system system more stable
-        scope=Planet()
-        & InSystem(id=Source.SystemID)
-        & ~IsSource
-        & HasSpecies()
-        & ~HasSpecies(name=[Source.Species])
-        & HasTag(name="ARTISTIC")
-        # (SpeciesSpeciesOpinion species = LocalCandidate.Species species = Source.Species > 0) # TODO: implement within an Or condition, once species-species opinions are working...
-        ,
-        activation=Planet() & HasSpecies() & HasTag(name="ARTISTIC"),
-        accountinglabel="ARTISAN_APPRECIATION",
-        effects=SetTargetHappiness(value=Value + 1.0),
-    ),
 ]
 
 BASIC_INFLUENCE = [
