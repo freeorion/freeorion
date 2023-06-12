@@ -12,15 +12,31 @@ def WEAPON_BASE_EFFECTS(part_name: str):
     NamedReal(name=part_name + "_PART_CAPACITY", value=PartCapacity(name=part_name))
     NamedReal(name=part_name + "_PART_SECONDARY_STAT", value=PartSecondaryStat(name=part_name))
 
+    # TODO: fix temporary changes to capacity/secondary stat (e.g. from PLC_CHARGING) when not being in supply
+    #       https://freeorion.org/forum/viewtopic.php?t=12778&sid=543cf0256e11cd5c604c55d4e093f769
+
+    # side-note: set_max_meters_effects_group is not necessary for MaxCapacity iff WEAPON_UPGRADE_CAPACITY_EFFECTS is applied
+    set_max_meters_effects_group = EffectsGroup(
+        scope=EMPIRE_OWNED_SHIP_WITH_PART(part_name) & Turn(high=LocalCandidate.LastTurnResupplied),
+        accountinglabel=part_name,
+        effects=[
+            SetMaxCapacity(partname=part_name, value=PartCapacity(name=part_name)),
+            SetMaxSecondaryStat(partname=part_name, value=PartSecondaryStat(name=part_name)),
+        ]
+    )
+
     # The following is really only needed on the first resupplied turn after an upgrade is researched, since the resupply currently
     # takes place in a portion of the turn before meters are updated, but currently there is no good way to restrict this to
     # only that first resupply (and it is simply mildly inefficient to repeat the topup later).
     topup_effects_group = EffectsGroup(
         scope=EMPIRE_OWNED_SHIP_WITH_PART(part_name) & Turn(high=LocalCandidate.LastTurnResupplied),
         accountinglabel=part_name,
-        effects=SetCapacity(partname=part_name, value=Value + ARBITRARY_BIG_NUMBER_FOR_METER_TOPUP),
+        effects=[
+            SetCapacity(partname=part_name, value=Value + ARBITRARY_BIG_NUMBER_FOR_METER_TOPUP),
+            SetSecondaryStat(partname=part_name, value=Value + ARBITRARY_BIG_NUMBER_FOR_METER_TOPUP),
+        ],
     )
-    return [topup_effects_group]
+    return [set_max_meters_effects_group,topup_effects_group]
 
 
 # @1@ part name
