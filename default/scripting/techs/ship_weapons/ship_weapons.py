@@ -1,10 +1,11 @@
 from common.misc import SHIP_WEAPON_DAMAGE_FACTOR
+from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY, DEFAULT_PRIORITY
 from techs.techs import (
     ARBITRARY_BIG_NUMBER_FOR_METER_TOPUP,
     EMPIRE_OWNED_SHIP_WITH_PART,
     SHIP_PART_UPGRADE_RESUPPLY_CHECK,
 )
-from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY, DEFAULT_PRIORITY
+
 
 # @1@ part name
 # @2@ apply the damage scaling rule (may be necessary if NoDefaultCapacity)
