@@ -22,7 +22,7 @@ def WEAPON_BASE_EFFECTS(part_name: str):
         effects=[
             SetMaxCapacity(partname=part_name, value=PartCapacity(name=part_name)),
             SetMaxSecondaryStat(partname=part_name, value=PartSecondaryStat(name=part_name)),
-        ]
+        ],
     )
 
     # The topup_effects_group is necessary for
@@ -37,7 +37,7 @@ def WEAPON_BASE_EFFECTS(part_name: str):
             SetSecondaryStat(partname=part_name, value=Value + ARBITRARY_BIG_NUMBER_FOR_METER_TOPUP),
         ],
     )
-    return [set_max_meters_effects_group,topup_effects_group]
+    return [set_max_meters_effects_group, topup_effects_group]
 
 
 # @1@ part name
