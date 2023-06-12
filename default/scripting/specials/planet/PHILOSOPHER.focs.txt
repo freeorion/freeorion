@@ -2,12 +2,12 @@ Special
     name = "PHILOSOPHER_SPECIAL"
     description = "PHILOSOPHER_SPECIAL_DESC"
     stealth = 0
-    spawnrate = 2.0
+    spawnrate = 25.0
     spawnlimit = 1
     location = And [
         Planet
         Planet size = Tiny
-        Not Planet type = [Asteroids GasGiant]
+        Planet type = Radiated
         Not Species
         ContainedBy And [
             System 
@@ -25,16 +25,6 @@ Special
         ]
     ]
     effectsgroups = [
-        EffectsGroup
-            scope = Source
-            activation = Turn high = 0
-            stackinggroup = "GAME_START_MOD_STACK"
-            priority = [[BEFORE_ANYTHING_ELSE_PRIORITY]]
-            effects = [
-                SetPlanetType type = Radiated
-                SetOriginalType type = Radiated
-            ]
-
         EffectsGroup
             scope = And [
                 Planet
