@@ -8,7 +8,6 @@ from techs.techs import (
 
 
 # @1@ part name
-# @2@ apply the damage scaling rule (may be necessary if NoDefaultCapacity)
 def WEAPON_BASE_EFFECTS(part_name: str):
     # these NamedReals need to be parsed to be registered in the pedia. XXX remove this when the pedia can look up ship meters/part capacity
     NamedReal(name=part_name + "_PART_CAPACITY", value=PartCapacity(name=part_name))
