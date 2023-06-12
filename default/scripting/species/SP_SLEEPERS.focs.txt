@@ -52,7 +52,10 @@ Species
         // they live on eccentric worlds
         EffectsGroup
             scope = Source
-            activation = Turn high = 0
+            activation = And [
+                Turn high = 0
+                Not Star type = [NoStar]
+            ]
             //stackinggroup = "GAME_START_MOD_STACK"
             effects = [
                 AddSpecial name = "ECCENTRIC_ORBIT_SPECIAL"
