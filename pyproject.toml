@@ -226,6 +226,7 @@ builtins = [
     "SetPopulation",
     "SetRebelTroops",
     "SetResearch",
+    "SetSecondaryStat",
     "SetShield",
     "SetStarType",
     "SetStealth",
