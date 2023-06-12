@@ -8,8 +8,8 @@ Special
         Planet
         Not Capital
         Not Planet type = [Asteroids GasGiant]
+        Not Star type = [NoStar]
     ]
-    // TODO: make sure this does not happen at starless worlds
     effectsgroups = [
         EffectsGroup
             scope = Source
@@ -25,6 +25,11 @@ Special
             activation = Not Population high = 0
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = SetMaxSupply value = Value + (NamedReal name = "ECCENTRIC_ORBIT_MAX_SUPPLY_FLAT" value = -2)
+
+        EffectsGroup
+            scope = Source
+            activation = Star type = [NoStar]
+            effects = RemoveSpecial name = "ECCENTRIC_ORBIT_SPECIAL"
 
         [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS]]
     ]
