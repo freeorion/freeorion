@@ -131,12 +131,10 @@ void ServerNetworking::DiscoveryServer::HandleReceive(boost::system::error_code 
 // PlayerConnection
 ////////////////////////////////////////////////////////////////////////////////
 PlayerConnection::PlayerConnection(boost::asio::io_context& io_context,
-                                   boost::signals2::signal<void (bool, int, int)>& signal,
                                    MessageAndConnectionFn nonplayer_message_callback,
                                    MessageAndConnectionFn player_message_callback,
                                    ConnectionFn disconnected_callback) :
     m_service(io_context),
-    MessageSentSignal(signal),
     m_socket(io_context),
     m_cookie(boost::uuids::nil_uuid()),
     m_nonplayer_message_callback(nonplayer_message_callback),
@@ -312,17 +310,6 @@ bool PlayerConnection::IsBinarySerializationUsed() const {
     return GetOptionsDB().Get<bool>("network.server.binary.enabled")
         && !m_client_version_string.empty()
         && m_client_version_string == FreeOrionVersionString();
-}
-
-PlayerConnectionPtr PlayerConnection::NewConnection(boost::asio::io_context& io_context,
-                                                    boost::signals2::signal<void (bool, int, int)>& signal,
-                                                    MessageAndConnectionFn nonplayer_message_callback,
-                                                    MessageAndConnectionFn player_message_callback,
-                                                    ConnectionFn disconnected_callback)
-{
-    return PlayerConnectionPtr(
-        new PlayerConnection(io_context, signal, nonplayer_message_callback, player_message_callback,
-                             disconnected_callback));
 }
 
 namespace {
@@ -805,14 +792,15 @@ void ServerNetworking::Init() {
 void ServerNetworking::AcceptNextMessagingConnection() {
     using boost::placeholders::_1;
 
-    auto next_connection = PlayerConnection::NewConnection(
+    auto next_connection = std::make_shared<PlayerConnection>(
         m_player_connection_acceptor.get_executor().context(),
-        MessageSentSignal,
         m_nonplayer_message_callback,
         m_player_message_callback,
         boost::bind(&ServerNetworking::DisconnectImpl, this, _1));
     next_connection->EventSignal.connect(
         boost::bind(&ServerNetworking::EnqueueEvent, this, _1));
+    next_connection->MessageSentSignal.connect(MessageSentSignal);
+
     m_player_connection_acceptor.async_accept(
         *next_connection->m_socket,
         boost::bind(&ServerNetworking::AcceptPlayerMessagingConnection,
