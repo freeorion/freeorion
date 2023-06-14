@@ -31,5 +31,3 @@ jobs:
     uses: ./.github/workflows/_build-windows.yml
   windows-msvc:
     uses: ./.github/workflows/_build-windows-msvs.yml
-  docker:
-    uses: ./.github/workflows/_build-docker.yml

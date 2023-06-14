@@ -5,19 +5,12 @@ on:
 
 jobs:
   ubuntu:
-    name: ${{ matrix.os }} Godot=${{ matrix.client-godot }} with ${{ matrix.compiler }}
+    name: ${{ matrix.os }} with ${{ matrix.compiler }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-22.04]
-        client-gg: ['ON']
-        client-godot: ['ON']
         compiler: [gcc, clang]
-        include:
-          - os: ubuntu-22.04
-            client-gg: 'ON'
-            client-godot: 'OFF'
-            compiler: clang
     env:
       CACHE_NAME: linux
     steps:
@@ -61,7 +54,7 @@ jobs:
           CCACHE_DIR: ${{ runner.temp }}/ccache
         run: |
           cd build
-          cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=${{ matrix.client-gg }} -DBUILD_CLIENT_GODOT=${{ matrix.client-godot }} ..
+          cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=ON -DBUILD_CLIENT_GODOT=ON ..
       - name: Configure for clang
         if: ${{ matrix.compiler == 'clang' }}
         env:
@@ -72,7 +65,7 @@ jobs:
           CXX: clang++
         run: |
           cd build
-          cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=${{ matrix.client-gg }} -DBUILD_CLIENT_GODOT=${{ matrix.client-godot }} ..
+          cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=ON -DBUILD_CLIENT_GODOT=ON ..
       - name: Build
         env:
           CCACHE_DIR: ${{ runner.temp }}/ccache
