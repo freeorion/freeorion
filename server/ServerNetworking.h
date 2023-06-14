@@ -136,19 +136,14 @@ public:
     /** Sets cookie value to this connection to update expire date. */
     void SetCookie(boost::uuids::uuid cookie);
 
+    mutable boost::signals2::signal<void(bool, int, int)> MessageSentSignal;
     mutable boost::signals2::signal<void (const NullaryFn&)> EventSignal;
 
-    /** Creates a new PlayerConnection and returns it as a shared_ptr. */
-    static PlayerConnectionPtr NewConnection(
-        boost::asio::io_context& io_context, boost::signals2::signal<void (bool, int, int)>& signal,
-        MessageAndConnectionFn nonplayer_message_callback,
-        MessageAndConnectionFn player_message_callback, ConnectionFn disconnected_callback);
-
-private:
-    PlayerConnection(boost::asio::io_context& io_context, 
-                     boost::signals2::signal<void (bool, int, int)>& signal,
+    PlayerConnection(boost::asio::io_context& io_context,
                      MessageAndConnectionFn nonplayer_message_callback,
                      MessageAndConnectionFn player_message_callback, ConnectionFn disconnected_callback);
+
+private:
     void HandleMessageBodyRead(boost::system::error_code error, std::size_t bytes_transferred);
     void HandleMessageHeaderRead(boost::system::error_code error, std::size_t bytes_transferred);
     void AsyncReadMessage();
@@ -165,7 +160,6 @@ private:
                                   boost::system::error_code error);
 
     boost::asio::io_context&        m_service;
-    boost::signals2::signal<void (bool, int, int)>& MessageSentSignal;
     boost::optional<boost::asio::ip::tcp::socket> m_socket;
     Message::HeaderBuffer           m_incoming_header_buffer = {};
     Message                         m_incoming_message;
