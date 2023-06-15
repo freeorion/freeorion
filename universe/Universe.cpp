@@ -2180,13 +2180,17 @@ namespace {
     /** for each empire: for each position, what objects have low enough stealth
       * that the empire could detect them if an detector owned by the empire is in
       * range? */
-    std::map<int, std::map<std::pair<double, double>, std::vector<int>>>
-        GetEmpiresPositionsPotentiallyDetectableObjects(const ObjectMap& objects, const EmpireManager& empires,
-                                                        int empire_id = ALL_EMPIRES)
+    auto GetEmpiresPositionsPotentiallyDetectableObjects(
+        const ObjectMap& objects, const EmpireManager& empires, int empire_id = ALL_EMPIRES)
     {
-        std::map<int, std::map<std::pair<double, double>, std::vector<int>>> retval;
-
-        auto empire_detection_strengths = GetEmpiresDetectionStrengths(empires, empire_id);
+        const auto obj_count = objects.size();
+        const auto empire_detection_strengths = GetEmpiresDetectionStrengths(empires, empire_id);
+        boost::container::flat_map<int, boost::container::flat_map<std::pair<double, double>, std::vector<int>>> retval;
+        retval.reserve(empire_detection_strengths.size());
+        for (const auto& [loop_empire_id, ds] : empire_detection_strengths) {
+            (void)ds;
+            retval[loop_empire_id].reserve(obj_count);
+        }
 
         // filter objects as detectors for this empire or detectable objects
         for (const auto& obj : objects.allRaw()) {
@@ -2210,9 +2214,9 @@ namespace {
 
     /** filters set of objects at locations by which of those locations are
       * within range of a set of detectors and ranges */
-    std::vector<int> FilterObjectPositionsByDetectorPositionsAndRanges(
-        const std::map<std::pair<double, double>, std::vector<int>>& object_positions,
-        const std::map<std::pair<double, double>, float>& detector_position_ranges)
+    auto FilterObjectPositionsByDetectorPositionsAndRanges(
+        const auto& object_positions,
+        const auto& detector_position_ranges)
     {
         std::vector<int> retval;
         // check each detector position and range against each object position
@@ -2311,10 +2315,8 @@ namespace {
       * potentially detectable objects (if in range) and and input empire
       * detection ranges at locations. */
     void SetEmpireObjectVisibilitiesFromRanges(
-        const std::map<int, std::map<std::pair<double, double>, float>>&
-            empire_location_detection_ranges,
-        const std::map<int, std::map<std::pair<double, double>, std::vector<int>>>&
-            empire_location_potentially_detectable_objects,
+        const auto& empire_location_detection_ranges,
+        const auto& empire_location_potentially_detectable_objects,
         Universe& universe)
     {
         for (const auto& [detecting_empire_id, detector_position_ranges] : empire_location_detection_ranges) {

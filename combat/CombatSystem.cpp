@@ -123,12 +123,12 @@ float CombatInfo::GetMonsterDetection() const {
 
 namespace {
     // collect detection strengths of all empires (and neutrals) in \a combat_info
-    std::map<int, float> GetEmpiresDetectionStrengths(const CombatInfo& combat_info) {
-        std::map<int, float> retval;
+    auto GetEmpiresDetectionStrengths(const CombatInfo& combat_info) {
+        std::vector<std::pair<int, float>> retval;
+        retval.reserve(combat_info.empire_ids.size());
         for (auto empire_id : combat_info.empire_ids) { // loop over participating empires
-            retval.emplace(empire_id, 0.0f);   // to be replaced...
             if (empire_id == ALL_EMPIRES) {
-                retval[ALL_EMPIRES] = combat_info.GetMonsterDetection();
+                retval.emplace_back(ALL_EMPIRES, combat_info.GetMonsterDetection());
                 continue;
             }
             const auto empire = combat_info.GetEmpire(empire_id);
@@ -140,9 +140,11 @@ namespace {
             if (!meter)
                 ErrorLogger() << "GetEmpiresDetectionStrengths(CombatInfo) found empire with no detection meter?";
             else
-                retval[empire_id] = meter->Current();
+                retval.emplace_back(empire_id, meter->Current());
         }
 
+        std::sort(retval.begin(), retval.end(),
+                  [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first;});
         return retval;
     }
 
@@ -158,15 +160,20 @@ namespace {
 void CombatInfo::InitializeObjectVisibility() {
     // initialize combat-local visibility of objects by empires and combat-local
     // empire ObjectMaps with object state info that empires know at start of battle
-    auto det_strengths = GetEmpiresDetectionStrengths(*this);
+    const auto det_strengths = GetEmpiresDetectionStrengths(*this);
 
     for (int empire_id : empire_ids) {
         DebugLogger() << "Initializing CombatInfo object visibility and known objects for empire: " << empire_id;
 
-        float empire_detection = det_strengths[empire_id];
+        float empire_detection = [empire_id, &det_strengths]() {
+            const auto it = std::find_if(det_strengths.begin(), det_strengths.end(),
+                                         [empire_id](auto& id_ds) { return empire_id == id_ds.first; });
+            if (it != det_strengths.end())
+                return it->second;
+            return 0.0f;
+        }();
 
         for (const auto* obj : objects.allRaw()) {
-
             if (obj->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
                 // systems always visible to empires with objects in them
                 empire_object_visibility[empire_id][obj->ID()] = Visibility::VIS_PARTIAL_VISIBILITY;
