@@ -46,11 +46,6 @@ FO_ENUM(
    orbit), and all objects in a paricular orbit.*/
 class FO_COMMON_API System final : public UniverseObject {
 public:
-    /** Returns a single empire ID if a single empire controls a planet or
-      * planets in this system, or ALL_EMPIRES if no empire controls a planet
-      * or if multiple empires control planet(s). */
-    [[nodiscard]] int EffectiveOwner(const ObjectMap& objects) const;
-
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
 
     using UniverseObject::IDSet;
