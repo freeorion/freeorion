@@ -57,6 +57,16 @@ GameRule(
 )
 
 GameRule(
+    name="RULE_EXPERIMENTORS_SPAWN_BASE_TURN",
+    description="RULE_EXPERIMENTORS_SPAWN_BASE_TURN_DESC",
+    category="CONTENT",
+    type=int,
+    default=250,
+    min=0,
+    max=500,
+)
+
+GameRule(
     name="RULE_ENABLE_SUPER_TESTER",
     description="RULE_ENABLE_SUPER_TESTER_DESC",
     category="CONTENT",
