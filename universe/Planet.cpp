@@ -130,6 +130,7 @@ void Planet::Copy(const Planet& copied_planet, const Universe& universe, int emp
             this->m_is_about_to_be_invaded =                copied_planet.m_is_about_to_be_invaded;
             this->m_is_about_to_be_bombarded =              copied_planet.m_is_about_to_be_bombarded;
             this->m_owner_before_last_conquered =           copied_planet.m_owner_before_last_conquered;
+            this->m_last_invaded_by_empire_id =             copied_planet.m_last_invaded_by_empire_id;
 
             if (vis >= Visibility::VIS_FULL_VISIBILITY) {
                 this->m_ordered_given_to_empire_id = copied_planet.m_ordered_given_to_empire_id;
@@ -199,7 +200,8 @@ std::string Planet::Dump(uint8_t ntabs) const {
     retval.append(" annexed on turn: ").append(std::to_string(m_turn_last_annexed))
           .append(" colonized on turn: ").append(std::to_string(m_turn_last_colonized))
           .append(" conquered on turn: ").append(std::to_string(m_turn_last_conquered))
-          .append(" owner before being conquered: ").append(std::to_string(m_owner_before_last_conquered));
+          .append(" owner before being conquered: ").append(std::to_string(m_owner_before_last_conquered))
+          .append(" last invaded by: ").append(std::to_string(m_last_invaded_by_empire_id));
 
     if (m_is_about_to_be_bombarded)
         retval.append(" (About to be Bombarded)");
@@ -746,6 +748,7 @@ void Planet::Reset(ObjectMap& objects) {
     m_is_about_to_be_invaded = false;
     m_is_about_to_be_bombarded = false;
     m_ordered_given_to_empire_id = ALL_EMPIRES;
+    m_last_invaded_by_empire_id = ALL_EMPIRES;
     SetOwner(ALL_EMPIRES);
 }
 
@@ -796,6 +799,7 @@ void Planet::Conquer(int conquerer, ScriptingContext& context) {
 
     // replace ownership
     SetOwner(conquerer);
+    m_last_invaded_by_empire_id = conquerer;
     ClearGiveToEmpire();
 
     if (conquerer == ALL_EMPIRES) {
@@ -919,6 +923,7 @@ bool Planet::Colonize(int empire_id, std::string species_name, double population
         m_is_about_to_be_invaded = false;
         m_is_about_to_be_bombarded = false;
         m_ordered_given_to_empire_id = ALL_EMPIRES;
+        m_last_invaded_by_empire_id = ALL_EMPIRES;
         SetOwner(ALL_EMPIRES);
     }
 
@@ -995,6 +1000,13 @@ void Planet::SetIsAboutToBeInvaded(bool b) {
 
 void Planet::ResetIsAboutToBeInvaded()
 { SetIsAboutToBeInvaded(false); }
+
+void Planet::SetLastInvadedByEmpire(int id) {
+    const auto initial_empire_id = m_last_invaded_by_empire_id;
+    if (initial_empire_id == id) return;
+    m_last_invaded_by_empire_id = id;
+    StateChangedSignal();
+}
 
 void Planet::SetIsAboutToBeBombarded(bool b) {
     bool initial_status = m_is_about_to_be_bombarded;

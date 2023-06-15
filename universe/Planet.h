@@ -116,6 +116,7 @@ public:
     [[nodiscard]] int LastTurnConquered() const noexcept            { return m_turn_last_conquered; }
     [[nodiscard]] int TurnsSinceLastConquered(int current_turn) const;
     [[nodiscard]] int OwnerBeforeLastConquered() const noexcept     { return m_owner_before_last_conquered; }
+    [[nodiscard]] int LastInvadedByEmpire() const noexcept          { return m_last_invaded_by_empire_id; }
     [[nodiscard]] int LastTurnAnnexed() const noexcept              { return m_turn_last_annexed; }
     [[nodiscard]] int TurnsSinceLastAnnexed(int current_turn) const;
 
@@ -153,6 +154,7 @@ public:
     void SetIsAboutToBeColonized(bool b);   ///< Called during colonization when a planet is about to be colonized
     void ResetIsAboutToBeColonized();       ///< Called after colonization, to reset the number of prospective colonizers to 0
     void SetIsAboutToBeInvaded(bool b);     ///< Marks planet as being invaded or not, depending on whether \a b is true or false
+    void SetLastInvadedByEmpire(int id);    ///< Records the empire (or no empire) that most recently invaded a planet.
     void ResetIsAboutToBeInvaded();         ///< Marks planet as not being invaded
     void SetIsOrderAnnexedByEmpire(int empire_id);
     void ResetBeingAnnxed();
@@ -210,6 +212,7 @@ private:
     IDSet       m_buildings;
 
     int         m_owner_before_last_conquered = ALL_EMPIRES;
+    int         m_last_invaded_by_empire_id = ALL_EMPIRES;
 
     int         m_turn_last_annexed = INVALID_GAME_TURN;
     int         m_turn_last_colonized = INVALID_GAME_TURN;

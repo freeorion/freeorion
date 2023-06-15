@@ -3087,7 +3087,7 @@ namespace {
 
     /** Determines which ships ordered to invade planets, does invasion and
       * ground combat resolution. Returns IDs of planets that had ground combat
-      * occur on them and of ships that invaded a planet. */
+      * occur on them and IDs of ships that invaded a planet. */
     [[nodiscard]] std::pair<std::vector<int>, std::vector<int>> HandleInvasion(ScriptingContext& context) {
         std::map<int, std::map<int, double>> planet_empire_troops;  // map from planet ID to map from empire ID to pair consisting of set of ship IDs and amount of troops empires have at planet
         std::vector<Ship*> invade_ships;
@@ -3169,20 +3169,52 @@ namespace {
             if (empires_troops.empty())
                 continue;
 
-            auto planet = objects.get<Planet>(planet_id);
             std::set<int> all_involved_empires;
             for (auto& [empire_id, ignored]: empires_troops) {
                 (void)ignored; // quiet warning
                 if (empire_id != ALL_EMPIRES)
                     all_involved_empires.insert(empire_id);
             }
-            int planet_initial_owner_id = planet->Owner();
+            auto planet = objects.get<Planet>(planet_id);
+            if (!planet) {
+                ErrorLogger() << "Ground combat couldn't get planet with id " << planet_id;
+                continue;
+            }
+            const int planet_initial_owner_id = planet->Owner();
             if (planet_initial_owner_id != ALL_EMPIRES)
                 all_involved_empires.insert(planet_initial_owner_id);
 
+            {
+                // find which, if any, empire has invaded with the most troops, excluding
+                // the current owner, no empire / rebels, and any ally of the current owner
+                const int biggest_new_invader =
+                    [&context, planet_initial_owner_id](const auto& empires_troops)
+                {
+                    int biggest_troop_count = 0;
+                    int biggest_empire_id = ALL_EMPIRES;
+                    for (auto& [empire_id, troop_count] : empires_troops) {
+                        if (empire_id == planet_initial_owner_id)
+                            continue; // self defense of a planet with troops doesn't erase another empire having previous invaded
+                        if (empire_id == ALL_EMPIRES)
+                            continue; // rebels reclaiming a planet doesn't erase the last empire that invaded it
+                        const auto ds = context.ContextDiploStatus(planet_initial_owner_id, empire_id);
+                        if (ds == DiplomaticStatus::DIPLO_PEACE)
+                            continue; // not sure how this would happen, but ignore...
+                        if (ds == DiplomaticStatus::DIPLO_ALLIED)
+                            continue; // if assisting in defense, is not an invasion
+                        if (troop_count > biggest_troop_count) {
+                            biggest_troop_count = troop_count;
+                            biggest_empire_id = empire_id;
+                        }
+                    }
+                    return biggest_empire_id;
+                }(empires_troops);
+                if (biggest_new_invader != ALL_EMPIRES)
+                    planet->SetLastInvadedByEmpire(biggest_new_invader);
+            }
 
             if (empires_troops.size() == 1) {
-                int empire_with_troops_id = empires_troops.begin()->first;
+                const int empire_with_troops_id = empires_troops.begin()->first;
                 if (planet->Unowned() && empire_with_troops_id == ALL_EMPIRES)
                     continue;   // if troops are neutral and planet is unowned, not a combat.
                 if (planet->OwnedBy(empire_with_troops_id))
