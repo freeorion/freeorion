@@ -1197,7 +1197,7 @@ ShipDesignManager::Designs* ShipDesignManager::DisplayedDesigns() {
 
 ShipDesignManager::Designs* ShipDesignManager::SavedDesigns() {
     auto retval = m_saved_designs.get();
-    if (retval == nullptr) {
+    if (!retval) {
         ErrorLogger() << "ShipDesignManager m_saved_designs was not correctly initialized "
                       << "with ShipDesignManager::GameStart().";
         m_saved_designs = std::make_unique<SavedDesignsManager>();

@@ -85,7 +85,7 @@ void PythonCommon::HandleErrorAlreadySet() {
     PyObject *extype, *value, *traceback;
     PyErr_Fetch(&extype, &value, &traceback);
     PyErr_NormalizeException(&extype, &value, &traceback);
-    if (extype == nullptr) {
+    if (!extype) {
         ErrorLogger() << "Missing python exception type";
         return;
     }

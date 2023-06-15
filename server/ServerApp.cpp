@@ -2001,7 +2001,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
             }
         }
         // Assign player to empire if he doesn't have own empire and delegates signle
-        if (delegation.size() == 1 && empire == nullptr) {
+        if (delegation.size() == 1 && !empire) {
             for (auto& [loop_empire_id, loop_empire] : m_empires) {
                 if (loop_empire->PlayerName() == delegation.front()) {
                     empire_id = loop_empire_id;
@@ -2034,7 +2034,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
         }
     }
 
-    if (empire_id == ALL_EMPIRES || empire == nullptr)
+    if (empire_id == ALL_EMPIRES || !empire)
         return ALL_EMPIRES;
 
     if (empire->Eliminated())
