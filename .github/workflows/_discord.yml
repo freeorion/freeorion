@@ -8,7 +8,6 @@ on:
       WEBHOOK:
         required: true
 jobs:
-
   discord:
     runs-on: ubuntu-latest
     timeout-minutes: 55
