@@ -262,21 +262,6 @@ bool System::HasWormholeTo(int id) const {
     return (it == m_starlanes_wormholes.end() ? false : it->second == true);
 }
 
-int System::EffectiveOwner(const ObjectMap& objects) const {
-    // Check if all of the owners are the same empire.
-    int first_owner_found = ALL_EMPIRES;
-    for (const auto* planet : objects.findRaw<Planet>(m_planets)) {
-        const int owner = planet->Owner();
-        if (owner == ALL_EMPIRES)
-            continue;
-        if (first_owner_found == ALL_EMPIRES)
-            first_owner_found = owner;
-        if (first_owner_found != owner)
-            return ALL_EMPIRES;
-    }
-    return first_owner_found;
-}
-
 bool System::Contains(int object_id) const {
     if (object_id == INVALID_OBJECT_ID)
         return false;
