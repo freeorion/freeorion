@@ -732,11 +732,10 @@ void Planet::Reset(ObjectMap& objects) {
     GetMeter(MeterType::METER_DETECTION)->Reset();
     GetMeter(MeterType::METER_REBEL_TROOPS)->Reset();
 
-    if (m_is_about_to_be_colonized && !OwnedBy(ALL_EMPIRES)) {
-        for (const auto& building : objects.find<Building>(m_buildings)) {
-            if (!building)
-                continue;
-            building->Reset();
+    if (m_is_about_to_be_colonized) {
+        for (auto* building : objects.findRaw<Building>(m_buildings)) {
+            if (building)
+                building->Reset();
         }
     }
 
