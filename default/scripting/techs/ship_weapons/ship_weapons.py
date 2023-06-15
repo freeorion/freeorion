@@ -25,7 +25,7 @@ def WEAPON_BASE_EFFECTS(part_name: str):
     )
 
     # The topup_effects_group is necessary for
-    # 1) first resupplied turn after an upgrade is researched, since the resupply currentlytakes place in a portion of the turn before meters are updated
+    # 1) first resupplied turn after an upgrade is researched, since the resupply currently takes place in a portion of the turn before meters are updated
     # 2) any turn with an arbitrary "temporary" change of Max values (e.g. PLC_FLANKING); if we had only tech effects we could restrict this
     topup_effects_group = EffectsGroup(
         scope=EMPIRE_OWNED_SHIP_WITH_PART(part_name),
