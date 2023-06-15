@@ -860,7 +860,7 @@ void OptionsDB::AddSection(const char* name, std::string description,
     if (!insert_result.second) {
         if (!description.empty() && insert_result.first->second.description.empty())
             insert_result.first->second.description = std::move(description);
-        if (option_predicate != nullptr && insert_result.first->second.option_predicate == nullptr)
+        if (!option_predicate && insert_result.first->second.option_predicate == nullptr)
             insert_result.first->second.option_predicate = std::move(option_predicate);
     }
 }
