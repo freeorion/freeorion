@@ -221,6 +221,7 @@
     (LastTurnBattleHere)                        \
     (LastTurnColonized)                         \
     (LastTurnConquered)                         \
+    (LastInvadedByEmpire)                       \
     (LastTurnMoveOrdered)                       \
     (LastTurnResupplied)                        \
     (LaunchedFrom)                              \
