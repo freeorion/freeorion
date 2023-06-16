@@ -92,7 +92,7 @@ namespace {
                                                     ClientWidth(), elem.name, elem.allocated_rp,
                                                     elem.turns_left, progress / per_turn_cost,
                                                     elem.empire_id);
-            push_back(std::move(panel));
+            push_back(panel); // DO NOT MOVE; panel is a member
 
             SetDragDropDataType("RESEARCH_QUEUE_ROW");
 
@@ -105,6 +105,10 @@ namespace {
 
             if (!panel)
                 Init();
+            if (!panel) {
+                ErrorLogger() << "Didn't create a panel in QueueRow::PreRender?";
+                return;
+            }
 
             GG::Pt border(GG::X(2 * GetLayout()->BorderMargin()), GG::Y(2 * GetLayout()->BorderMargin()));
             panel->Resize(Size() - border);
