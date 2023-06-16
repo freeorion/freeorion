@@ -1150,13 +1150,14 @@ void Planet::ResolveGroundCombat(std::map<int, double>& empires_troops,
     for (const auto& entry : effective_empires_troops)
         inverted_empires_troops.emplace(entry.second, entry.first);
 
-    const auto [victor_id, victor_self_troops] = *inverted_empires_troops.rbegin();
+    const auto [victor_self_troops, victor_id] = *inverted_empires_troops.rbegin();
+    static_assert(std::is_integral_v<decltype(victor_id)>);
 
 
     // victor has effective troops reduced by the effective troop count of
     // the strongest enemy combatant (allied and at-peace co-combatants are
     // ignored for this reduction)
-    float highest_loser_enemy_effective_troops = 0.0f;
+    double highest_loser_enemy_effective_troops = 0.0f;
     for (auto highest_loser_it = inverted_empires_troops.rbegin();
          highest_loser_it != inverted_empires_troops.rend(); ++highest_loser_it)
     {
@@ -1173,7 +1174,7 @@ void Planet::ResolveGroundCombat(std::map<int, double>& empires_troops,
     }
 
     const auto victor_effective_troops = victor_self_troops - highest_loser_enemy_effective_troops;
-    const float victor_starting_troops = empires_troops[victor_id];
+    const auto victor_starting_troops = empires_troops[victor_id];
 
     // every other combatant loses all troops
     empires_troops.clear();
