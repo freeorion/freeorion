@@ -73,8 +73,12 @@ BuildingType
             ]
             priority = [[CONCENTRATION_CAMP_PRIORITY]]
             effects = [
-                SetPopulation value = min(Value, Target.Population + (NamedReal
-                                                 name = "BLD_CONC_CAMP_POPULATION_FLAT" value = -3))
+                SetSpeciesOpinion
+                    species = Target.Species
+                    empire = Source.Owner
+                    opinion = Value - (NamedReal name = "BLD_CONC_CAMP_TARGET_SPECIES_OPINION_PENALTY" value = 3.0)
+
+                SetPopulation value = min(Value, Target.Population + (NamedReal name = "BLD_CONC_CAMP_POPULATION_FLAT" value = -3))
                 SetIndustry value = Target.TargetIndustry
             ]
 
