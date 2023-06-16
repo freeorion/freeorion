@@ -55,7 +55,7 @@ namespace {
 
         std::transform(tags.first.begin(), tags.first.end(), std::back_inserter(result),
                        [](std::string_view sv) { return std::string{sv}; });
-        std::transform(tags.first.begin(), tags.first.end(), std::back_inserter(result),
+        std::transform(tags.second.begin(), tags.second.end(), std::back_inserter(result),
                        [](std::string_view sv) { return std::string{sv}; });
         return result;
     }
