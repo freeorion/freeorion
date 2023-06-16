@@ -1325,6 +1325,12 @@ Planet Stability Baseline
 RULE_BASELINE_PLANET_STABILITY_DESC
 Baseline level of planet [[METER_HAPPINESS]].
 
+RULE_INVASION_OPINION_PENALTY_SCALING
+Planet invasion species opinion scaling
+
+RULE_INVASION_OPINION_PENALTY_SCALING_DESC
+Scales penalty to species opinion of an empire that was the most recent invader of planets with species
+
 RULE_PROTECTION_FOCUS_STABILITY
 Protection Focus Stability Bonus
 

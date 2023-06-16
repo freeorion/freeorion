@@ -164,6 +164,16 @@ GameRule(
 )
 
 GameRule(
+    name="RULE_INVASION_OPINION_PENALTY_SCALING",
+    description="RULE_INVASION_OPINION_PENALTY_SCALING_DESC",
+    category="BALANCE_STABILITY",
+    type=float,
+    default=-2.0,
+    min=-50.0,
+    max=25.0,
+)
+
+GameRule(
     name="RULE_PROTECTION_FOCUS_STABILITY",
     description="RULE_PROTECTION_FOCUS_STABILITY_DESC",
     category="BALANCE_STABILITY",
