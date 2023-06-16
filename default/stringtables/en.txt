@@ -11379,6 +11379,12 @@ DESC_NONE_NOT
 DESC_NOOP
 (NoOp)
 
+DESC_EMPIRE_HAS_ADOPTED_POLICY
+''' that belongs to an empire that has adopted %1%'''
+
+DESC_EMPIRE_HAS_ADOPTED_POLICY_NOT
+''' that belongs to an empire that has not adopted %1%'''
+
 # %1% name of the empire this condition applies to.
 DESC_EMPIRE_AFFILIATION_SELF
 ''' that belongs to %1% empire'''
