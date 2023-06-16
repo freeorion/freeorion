@@ -1151,10 +1151,7 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
         // server should have added the default design ids to an empire's known
         // designs. Loop over these, and add them to "current" designs.
         DebugLogger() << "Add default designs to empire's current designs";
-        const auto& ids = empire->ShipDesigns();
-        std::set<int> ordered_ids(ids.begin(), ids.end());
-
-        displayed_designs->InsertOrderedIDs(ordered_ids);
+        displayed_designs->InsertOrderedIDs(empire->ShipDesigns());
 
     } else {
         // Remove the default designs from the empire's current designs.
