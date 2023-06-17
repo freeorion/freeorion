@@ -1331,6 +1331,12 @@ Planet invasion species opinion scaling
 RULE_INVASION_OPINION_PENALTY_SCALING_DESC
 Scales penalty to species opinion of an empire that was the most recent invader of planets with species
 
+RULE_SHIPS_LOST_DESTROYED_PENALTY_SCALING
+Ship loss or destruction species opinion scaling
+
+RULE_SHIPS_LOST_DESTROYED_PENALTY_SCALING_DESC
+Scales penalty to species opinion of an empire that loses or destroys in combat ships of a species
+
 RULE_PROTECTION_FOCUS_STABILITY
 Protection Focus Stability Bonus
 

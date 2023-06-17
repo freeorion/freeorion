@@ -174,6 +174,16 @@ GameRule(
 )
 
 GameRule(
+    name="RULE_SHIPS_LOST_DESTROYED_PENALTY_SCALING",
+    description="RULE_SHIPS_LOST_DESTROYED_PENALTY_SCALING_DESC",
+    category="BALANCE_STABILITY",
+    type=float,
+    default=-0.5,
+    min=-50.0,
+    max=25.0,
+)
+
+GameRule(
     name="RULE_PROTECTION_FOCUS_STABILITY",
     description="RULE_PROTECTION_FOCUS_STABILITY_DESC",
     category="BALANCE_STABILITY",
