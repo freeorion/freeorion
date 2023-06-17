@@ -21,19 +21,22 @@ COMMON_OPINION_EFFECTS
             scope = Capital
             stackinggroup = "@1@_TOWARDS_TARGET_OPINION_OF_EMPIRE"
             effects = [
-			    NoOp
+                NoOp
                 SetSpeciesTargetOpinion     // baseline opinion
                     species = ThisSpecies
                     empire = Target.Owner
                     opinion = Value + (GameRule name = "RULE_BASELINE_PLANET_STABILITY")
-						+ ((GameRule name = "RULE_INVASION_OPINION_PENALTY_SCALING") *
-						   (Statistic Count condition = And [
-								Planet
-								NoOp
-								Species name = ThisSpecies
-								(LocalCandidate.LastInvadedByEmpire == Target.Owner)
-							]
-						   ) ^ 0.5)
+                        + ((GameRule name = "RULE_INVASION_OPINION_PENALTY_SCALING") *
+                           (Statistic Count condition = And [
+                                Planet
+                                Species name = ThisSpecies
+                                (LocalCandidate.LastInvadedByEmpire == Target.Owner)
+                            ]
+                           ) ^ 0.5)
+                        + ((GameRule name = "RULE_SHIPS_LOST_DESTROYED_PENALTY_SCALING") *
+                              ( SpeciesShipsDestroyed empire = Target.Owner name = ThisSpecies
+                              + SpeciesShipsLost empire = Target.Owner name = ThisSpecies
+                          ) ^ 0.5)
 
                 SetSpeciesOpinion
                     species = ThisSpecies
