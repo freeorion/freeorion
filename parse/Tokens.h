@@ -215,13 +215,14 @@
 #define TOKEN_SEQ_6                             \
     (label)                                     \
     (Large)                                     \
+    (LastColonizedByEmpire)                     \
+    (LastInvadedByEmpire)                       \
     (LastTurnActiveInBattle)                    \
     (LastTurnAnnexed)                           \
     (LastTurnAttackedByShip)                    \
     (LastTurnBattleHere)                        \
     (LastTurnColonized)                         \
     (LastTurnConquered)                         \
-    (LastInvadedByEmpire)                       \
     (LastTurnMoveOrdered)                       \
     (LastTurnResupplied)                        \
     (LaunchedFrom)                              \

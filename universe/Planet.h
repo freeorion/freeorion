@@ -113,6 +113,7 @@ public:
     [[nodiscard]] int LastTurnAttackedByShip() const noexcept       { return m_last_turn_attacked_by_ship; }
     [[nodiscard]] int LastTurnColonized() const noexcept            { return m_turn_last_colonized; }
     [[nodiscard]] int TurnsSinceColonization(int current_turn) const;
+    [[nodiscard]] int LastColonizedByEmpire() const                 { return m_last_colonized_by_empire_id; }
     [[nodiscard]] int LastTurnConquered() const noexcept            { return m_turn_last_conquered; }
     [[nodiscard]] int TurnsSinceLastConquered(int current_turn) const;
     [[nodiscard]] int OwnerBeforeLastConquered() const noexcept     { return m_owner_before_last_conquered; }
@@ -213,6 +214,7 @@ private:
 
     int         m_owner_before_last_conquered = ALL_EMPIRES;
     int         m_last_invaded_by_empire_id = ALL_EMPIRES;
+    int         m_last_colonized_by_empire_id = ALL_EMPIRES;
 
     int         m_turn_last_annexed = INVALID_GAME_TURN;
     int         m_turn_last_colonized = INVALID_GAME_TURN;
