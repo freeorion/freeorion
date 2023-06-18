@@ -1107,6 +1107,8 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         planet_property = &Planet::OwnerBeforeLastConquered;
     else if (property_name == "LastInvadedByEmpire")
         planet_property = &Planet::LastInvadedByEmpire;
+    else if (property_name == "LastColonizedByEmpire")
+        planet_property = &Planet::LastColonizedByEmpire;
 
     if (planet_property) {
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {

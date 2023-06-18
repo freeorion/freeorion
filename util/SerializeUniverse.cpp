@@ -922,10 +922,15 @@ void serialize(Archive& ar, Planet& obj, unsigned int const version)
     } else {
         ar  & make_nvp("m_last_invaded_by_empire_id", obj.m_last_invaded_by_empire_id);
     }
+    if (Archive::is_loading::value && version < 9) {
+        obj.m_last_colonized_by_empire_id = ALL_EMPIRES;
+    } else {
+        ar  & make_nvp("m_last_colonized_by_empire_id", obj.m_last_colonized_by_empire_id);
+    }
 }
 
 BOOST_CLASS_EXPORT(Planet)
-BOOST_CLASS_VERSION(Planet, 8)
+BOOST_CLASS_VERSION(Planet, 9)
 
 
 template <typename Archive>

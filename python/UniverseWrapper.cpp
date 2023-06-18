@@ -740,6 +740,7 @@ namespace FreeOrionPython {
             .add_property("lastTurnConquered",              &Planet::LastTurnConquered)
             .add_property("ownerBeforeLastConquered",       &Planet::OwnerBeforeLastConquered)
             .add_property("lastInvadedByEmpire",            &Planet::LastInvadedByEmpire)
+            .add_property("lastColonizedByEmpire",          &Planet::LastColonizedByEmpire)
             .add_property("buildingIDs",                    +[](const Planet& planet) { return ToVec(planet.BuildingIDs()); })
             .add_property("habitableSize",                  &Planet::HabitableSize)
         ;
