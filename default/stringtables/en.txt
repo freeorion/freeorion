@@ -1317,7 +1317,7 @@ RULE_HABITABLE_SIZE_GASGIANT
 Gas Giants Habitable size
 
 RULE_HABITABLE_SIZE_DESC
-Value used to adjust for [[METER_POPULATION]] changes on a planet of this size.
+Value used to adjust for [[METER_POPULATION]] changes on a planet of this size
 
 RULE_BASELINE_PLANET_STABILITY
 Planet Stability Baseline
@@ -1336,6 +1336,12 @@ Ship loss or destruction species opinion scaling
 
 RULE_SHIPS_LOST_DESTROYED_PENALTY_SCALING_DESC
 Scales penalty to species opinion of an empire that loses or destroys in combat ships of a species
+
+RULE_COLONIES_FOUNDED_BONUS_SCALING
+Colonies founded opinion scaling
+
+RULE_COLONIES_FOUNDED_BONUS_SCALING_DESC
+Scales bonus to species opinion of an empire that founds colonies with that species
 
 RULE_PROTECTION_FOCUS_STABILITY
 Protection Focus Stability Bonus

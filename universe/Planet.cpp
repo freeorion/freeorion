@@ -994,6 +994,20 @@ void Planet::SetIsAboutToBeColonized(bool b) {
 void Planet::ResetIsAboutToBeColonized()
 { SetIsAboutToBeColonized(false); }
 
+void Planet::SetLastColonizedByEmpire(int id) {
+    const auto initial_empire_id = m_last_colonized_by_empire_id;
+    if (initial_empire_id == id) return;
+    m_last_colonized_by_empire_id = id;
+    StateChangedSignal();
+}
+
+void Planet::SetTurnLastColonized(int turn) {
+    const auto initial_turn = m_turn_last_colonized;
+    if (initial_turn == turn) return;
+    m_turn_last_colonized = turn;
+    StateChangedSignal();
+}
+
 void Planet::SetIsAboutToBeInvaded(bool b) {
     bool initial_status = m_is_about_to_be_invaded;
     if (b == initial_status) return;

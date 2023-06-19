@@ -27,16 +27,22 @@ COMMON_OPINION_EFFECTS
                     empire = Target.Owner
                     opinion = Value + (GameRule name = "RULE_BASELINE_PLANET_STABILITY")
                         + ((GameRule name = "RULE_INVASION_OPINION_PENALTY_SCALING") *
-                           (Statistic Count condition = And [
+							(Statistic Count condition = And [
                                 Planet
                                 Species name = ThisSpecies
                                 (LocalCandidate.LastInvadedByEmpire == Target.Owner)
-                            ]
-                           ) ^ 0.5)
+                             ]) ^ 0.5)
                         + ((GameRule name = "RULE_SHIPS_LOST_DESTROYED_PENALTY_SCALING") *
-                              ( SpeciesShipsDestroyed empire = Target.Owner name = ThisSpecies
+                             (( SpeciesShipsDestroyed empire = Target.Owner name = ThisSpecies
                               + SpeciesShipsLost empire = Target.Owner name = ThisSpecies
-                          ) ^ 0.5)
+							  ) ^ 0.5))
+						+ ((GameRule name = "RULE_COLONIES_FOUNDED_BONUS_SCALING") *
+                             (Statistic Count condition = And [
+								Planet
+								Species name = ThisSpecies
+								Population low = 0.001
+								(LocalCandidate.LastColonizedByEmpire == Target.Owner)
+							 ]))
 
                 SetSpeciesOpinion
                     species = ThisSpecies
