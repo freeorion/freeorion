@@ -200,6 +200,16 @@ namespace {
         );
     }
 
+    std::unique_ptr<ValueRef::Variable<std::string>> LastTurnVisibileToThisClientEmpire() {
+        return std::make_unique<ValueRef::StringCast<int>>(
+            std::make_unique<ValueRef::ComplexVariable<int>>(
+                "EmpireObjectVisibilityTurn",
+                std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, "ThisClientEmpireID"),
+                std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "ID")
+            )
+        );
+    }
+
     std::unique_ptr<ValueRef::ValueRef<std::string>> PlanetEnvForSpecies(const std::string& species_name) {
         return ObjectTypeFilteredRef<std::string>({UniverseObjectType::OBJ_PLANET},
             std::make_unique<ValueRef::UserStringLookup<PlanetEnvironment>>(
@@ -251,6 +261,7 @@ namespace {
             col_types[{UserStringNop("OBJECT_TYPE"),                 ""}] = UserStringValueRef("TypeName");
             col_types[{UserStringNop("ID"),                          ""}] = StringCastedValueRef<int>("ID");
             col_types[{UserStringNop("VISIBILITY"),                  ""}] = VisibilityToThisClientEmpire();
+            col_types[{UserStringNop("LAST_VISIBILITY_TURN"),        ""}] = LastTurnVisibileToThisClientEmpire();
             col_types[{UserStringNop("CREATION_TURN"),               ""}] = StringCastedValueRef<int>("CreationTurn");
             col_types[{UserStringNop("AGE"),                         ""}] = StringCastedValueRef<int>("Age");
             col_types[{UserStringNop("SYSTEM"),                      ""}] = ObjectNameValueRef("SystemID");

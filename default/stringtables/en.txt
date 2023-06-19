@@ -3941,6 +3941,9 @@ PL_TYPE_SIZE_ENV
 VISIBILITY
 Visibility
 
+LAST_VISIBILITY_TURN
+Last Turn Visible
+
 PL_NO_VISIBILITY
 Planet is not currently visible.
 
