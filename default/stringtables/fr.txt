@@ -1213,6 +1213,12 @@ Activer Expérimentateurs
 RULE_ENABLE_EXPERIMENTORS_DESC
 Active les Expérimentateurs lors de la génération de la galaxie
 
+RULE_EXPERIMENTORS_SPAWN_BASE_TURN
+Tour apparition des Expérimentateurs
+
+RULE_EXPERIMENTORS_SPAWN_BASE_TURN_DESC
+Tour minimum avant l'apparition des Expérimentateurs. Dépend de la taille de la galaxie et du Niveau d'Agressivité de l'IA.
+
 RULE_ENABLE_SUPER_TESTER
 Activer Invasion Super-Testeurs
 
@@ -1224,6 +1230,12 @@ Autoriser les doublons d'espèces
 
 RULE_ALLOW_REPEATED_SPECIES_DESC
 Autorise les doublons d'espèces si le nombre de joueurs est inférieur au nombre d'espèces jouables. Quand le nombre de joueurs est supérieur au nombre d'espèces jouables, les doublons d'espèces sont toujours activés.
+
+RULE_ENSURE_HABITABLE_PLANET_HW_VICINITY
+Garantir planète habitable proche du monde natal
+
+RULE_ENSURE_HABITABLE_PLANET_HW_VICINITY_DESC
+Garantit au moins 1 planète d'environnement convenable ou mieux à proximité du monde natal. Est appliqué avant le placement des espèces indigènes ou des particularités.
 
 RULE_STOCKPILE_IMPORT_LIMITED
 Limite Import Stock
@@ -15974,7 +15986,7 @@ FU_RAMSCOOP
 Réservoir Collecteur
 
 FU_RAMSCOOP_DESC
-Génère lentement du [[metertype METER_FUEL]] lorsque l'astronef se trouve dans un système stellaire, en collectant l'hydrogène diffus se trouvant dans l'espace.
+Génère lentement du [[metertype METER_FUEL]] lorsque l'astronef se trouve dans un système stellaire, en collectant l'hydrogène diffus se trouvant dans l'espace. Régénère le [[metertype METER_FUEL]] de [[value FU_RAMSCOOP_REFUEL]] si l'astronef est stationnaire.
 
 ST_CLOAK_1
 Affaiblisseur Électromagnétique
