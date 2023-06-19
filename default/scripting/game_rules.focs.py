@@ -184,6 +184,16 @@ GameRule(
 )
 
 GameRule(
+    name="RULE_COLONIES_FOUNDED_BONUS_SCALING",
+    description="RULE_COLONIES_FOUNDED_BONUS_SCALING_DESC",
+    category="BALANCE_STABILITY",
+    type=float,
+    default=1.0,
+    min=-25.0,
+    max=50.0,
+)
+
+GameRule(
     name="RULE_PROTECTION_FOCUS_STABILITY",
     description="RULE_PROTECTION_FOCUS_STABILITY_DESC",
     category="BALANCE_STABILITY",

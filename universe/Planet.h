@@ -154,6 +154,8 @@ public:
                   double population, ScriptingContext& context);
     void SetIsAboutToBeColonized(bool b);   ///< Called during colonization when a planet is about to be colonized
     void ResetIsAboutToBeColonized();       ///< Called after colonization, to reset the number of prospective colonizers to 0
+    void SetLastColonizedByEmpire(int id);  ///< Records the empire (or no empire) that most recently colonized this planet.
+    void SetTurnLastColonized(int turn);    ///< Sets the last turn this planet was colonized
     void SetIsAboutToBeInvaded(bool b);     ///< Marks planet as being invaded or not, depending on whether \a b is true or false
     void SetLastInvadedByEmpire(int id);    ///< Records the empire (or no empire) that most recently invaded a planet.
     void ResetIsAboutToBeInvaded();         ///< Marks planet as not being invaded
