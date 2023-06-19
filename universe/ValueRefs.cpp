@@ -1017,6 +1017,8 @@ int Variable<int>::Eval(const ScriptingContext& context) const
             return IApp::GetApp()->SelectedFleetID();
         if (property_name == "SelectedPlanetID")
             return IApp::GetApp()->SelectedPlanetID();
+        if (property_name == "ThisClientEmpireID")
+            return IApp::GetApp()->EmpireID();
 
         // add more non-object reference int functions here
 
