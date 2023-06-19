@@ -3938,6 +3938,9 @@ PL_TYPE_SIZE
 PL_TYPE_SIZE_ENV
 %1% %2% (%4%: %3%)
 
+VISIBILITY
+Visibility
+
 PL_NO_VISIBILITY
 Planet is not currently visible.
 
