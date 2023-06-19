@@ -1213,6 +1213,12 @@ Enable Experimentors
 RULE_ENABLE_EXPERIMENTORS_DESC
 Enables Experimentors during galaxy generation
 
+RULE_EXPERIMENTORS_SPAWN_BASE_TURN
+Experimentors spawn base turn
+
+RULE_EXPERIMENTORS_SPAWN_BASE_TURN_DESC
+Minimum turn experimentors spawn. Modified by galaxy size and AI Agression.
+
 RULE_ENABLE_SUPER_TESTER
 Enable Super-Tester Takeover
 
