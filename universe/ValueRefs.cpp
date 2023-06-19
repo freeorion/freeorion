@@ -1645,7 +1645,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
 
     using boost::container::flat_map;
     // empire properties indexed by strings
-    std::function<const std::map<std::string, int>&              (const Empire&)> empire_property_string_key {nullptr};
+    std::function<const std::map<std::string, int>& (const Empire&)> empire_property_string_key {nullptr};
     std::function<const std::map<std::string, int, std::less<>>& (const Empire&)> empire_property_string_key2{nullptr};
     std::function<const flat_map<std::string, int, std::less<>>& (const Empire&)> empire_property_string_key3{nullptr};
 
@@ -1694,7 +1694,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             empire = context.GetEmpire(empire_id);
         }
 
-        std::function<bool (const std::map<std::string, int>::value_type&)> key_filter{nullptr};
+        std::function<bool(const std::map<std::string, int>::value_type&)> key_filter{nullptr};
         key_filter = [](auto e) -> bool { return true; };
 
         if (m_string_ref1) {
@@ -1712,9 +1712,11 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             int key_int = m_int_ref2->Eval(context);
             if (key_int <= int(ShipPartClass::INVALID_SHIP_PART_CLASS) ||
                 key_int >= int(ShipPartClass::NUM_SHIP_PART_CLASSES))
-            { return 0; }
+            {
+                return 0;
+            }
 
-            auto key_filter_class = [part_class = ShipPartClass(key_int)](const std::map<ShipPartClass, int>::value_type& e){ return e.first == part_class; };
+            auto key_filter_class = [part_class = ShipPartClass(key_int)](const std::map<ShipPartClass, int>::value_type& e) { return e.first == part_class; };
 
             if (empire)
                 return boost::accumulate(empire->ShipPartClassOwned() | filtered(key_filter_class) | map_values, 0);
@@ -1781,7 +1783,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             empire = context.GetEmpire(empire_id);
         }
 
-        std::function<bool (const std::map<int, int>::value_type&)> key_filter{nullptr};
+        std::function<bool(const std::map<int, int>::value_type&)> key_filter{nullptr};
         key_filter = [](auto e) -> bool { return true; };
 
         // if a key integer specified, get just that entry (for single empire or sum of all empires)
@@ -1829,7 +1831,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
                 return 0;
         }
 
-        std::function<int (const Empire*)> empire_property{nullptr};
+        std::function<int(const Empire*)> empire_property{nullptr};
         empire_property = &Empire::OutpostsOwned;
 
         using namespace boost::adaptors;
@@ -1837,7 +1839,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
 
         if (!empire) {
             return boost::accumulate(context.Empires() | map_values | transformed(GetRawPtr) |
-                                     transformed(empire_property), 0);
+                transformed(empire_property), 0);
         }
 
         return empire_property(empire.get());
@@ -1871,7 +1873,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             default:
                 break;
             }
-        } catch (...) {
+        }
+        catch (...) {
         }
         return 0;
     }
@@ -1881,7 +1884,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             design_id = m_int_ref1->Eval(context);
             if (design_id == INVALID_DESIGN_ID)
                 return 0;
-        } else {
+        }
+        else {
             return 0;
         }
 
@@ -1909,7 +1913,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             design_id = m_int_ref1->Eval(context);
             if (design_id == INVALID_DESIGN_ID)
                 return 0;
-        } else {
+        }
+        else {
             return 0;
         }
 
@@ -1920,13 +1925,15 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         std::string part_class_name;
         if (m_string_ref1) {
             part_class_name = m_string_ref1->Eval(context);
-        } else {
+        }
+        else {
             return 0;
         }
         ShipPartClass part_class = ShipPartClass::INVALID_SHIP_PART_CLASS;
         try {
             part_class = boost::lexical_cast<ShipPartClass>(part_class_name);
-        } catch (...) {
+        }
+        catch (...) {
             return 0;
         }
 
@@ -1985,7 +1992,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             ship_hull = GetShipHull(hull_name);
             if (!ship_hull)
                 return 0;
-        } else {
+        }
+        else {
             return 0;
         }
         return ship_hull->Slots().size();
@@ -1996,7 +2004,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             design_id = m_int_ref1->Eval(context);
             if (design_id == INVALID_DESIGN_ID)
                 return 0;
-        } else {
+        }
+        else {
             return 0;
         }
 
@@ -2070,7 +2079,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             }
             return count;
 
-        } else {
+        }
+        else {
             for (auto& [cat_name, policy_names_turns] : empire->CategoriesSlotsPoliciesAdopted()) {
                 if (cat_name == policy_category_name) {
                     for (auto& [ignored_turn, policy_name] : policy_names_turns) {
@@ -2089,10 +2099,12 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         if (m_int_ref1) {
             int pt_int1 = m_int_ref1->Eval(context);
             pt1 = PlanetType(pt_int1);
-        } else if (m_string_ref1) {
+        }
+        else if (m_string_ref1) {
             const std::string pt_name1 = m_string_ref1->Eval(context);
             pt1 = StringToPlanetTypeCX(pt_name1);
-        } else {
+        }
+        else {
             return 0;
         }
 
@@ -2100,14 +2112,38 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         if (m_int_ref2) {
             int pt_int2 = m_int_ref2->Eval(context);
             pt2 = PlanetType(pt_int2);
-        } else if (m_string_ref2) {
+        }
+        else if (m_string_ref2) {
             const std::string pt_name2 = m_string_ref2->Eval(context);
             pt2 = StringToPlanetTypeCX(pt_name2);
-        } else {
+        }
+        else {
             return 0;
         }
 
         return Planet::TypeDifference(pt1, pt2);
+    }
+    else if (variable_name == "EmpireObjectVisibilityTurn") {
+        if (!m_int_ref1 || !m_int_ref2)
+            return 0;
+        const auto& vis_turn_map{ context.empire_object_vis_turns };
+
+        const int empire_id = m_int_ref1->Eval(context);
+        const auto empire_it = vis_turn_map.find(empire_id);
+        if (empire_it == vis_turn_map.end())
+            return 0;
+        const auto& object_vis_turns_map = empire_it->second;
+
+        const int object_id = m_int_ref2->Eval(context);
+        const auto object_it = object_vis_turns_map.find(object_id);
+        if (object_it == object_vis_turns_map.end())
+            return 0;
+
+        const auto& vis_turns = object_it->second;
+        const auto vis_it = vis_turns.find(Visibility::VIS_BASIC_VISIBILITY);
+        if (vis_it == vis_turns.end())
+            return 0;
+        return vis_it->second;
     }
 
     return 0;
