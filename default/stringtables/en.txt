@@ -1219,6 +1219,30 @@ Experimentors spawn base turn
 RULE_EXPERIMENTORS_SPAWN_BASE_TURN_DESC
 Minimum turn experimentors spawn. Modified by galaxy size and AI Agression.
 
+RULE_NESTS_ALWAYS_SPAWN_WILD
+Nests always spawn wild monsters
+
+RULE_NESTS_ALWAYS_SPAWN_WILD_DESC
+Monster nests will always spawn wild monsters, even when outposted
+
+RULE_WANDERING_MONSTERS_CAN_STOP_INSYSTEM
+Wandering monsters ocassionally stop insystem
+
+RULE_WANDERING_MONSTERS_CAN_STOP_INSYSTEM_DESC
+Wandering monsters ocassionally stop insystem
+
+RULE_WILD_NEST_MONSTER_SPAWN_FACTOR
+Wild nest monster spawn factor
+
+RULE_WILD_NEST_MONSTER_SPAWN_FACTOR_DESC
+Multiplies the probability of a nest spawning a wild monster
+
+RULE_DOMESTIC_NEST_MONSTER_SPAWN_FACTOR
+Domestic nest monster spawn factor
+
+RULE_DOMESTIC_NEST_MONSTER_SPAWN_FACTOR_DESC
+Multiplies the probability of a nest spawning a domesticated monster
+
 RULE_ENABLE_SUPER_TESTER
 Enable Super-Tester Takeover
 

@@ -17,6 +17,10 @@ MONSTER_MOVE_ALWAYS
                 Turn low = 10
                 Stationary
                 Unowned
+                Or [
+                    ((GameRule name = "RULE_WANDERING_MONSTERS_CAN_STOP_INSYSTEM") = 0)
+                    Random probability = 0.7
+                ]
             ]
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             accountinglabel = "MONSTER_MOVE_ALWAYS_LABEL"

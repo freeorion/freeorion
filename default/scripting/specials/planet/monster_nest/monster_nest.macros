@@ -8,10 +8,11 @@ MONSTER_NEST
         EffectsGroup
             scope = Source
             activation = And [
+                ((GameRule name = "RULE_NESTS_ALWAYS_SPAWN_WILD") = 0)
                 Planet
                 OwnedBy affiliation = AnyEmpire
                 OwnerHasTech name = "SHP_DOMESTIC_MONSTER"
-                Random probability = @3@
+                Random probability = @3@ * (GameRule name = "RULE_DOMESTIC_NEST_MONSTER_SPAWN_FACTOR")
             ]
             stackinggroup = "@1@_NEST_STACK"  // groups with BLD_NEST_ERADICATOR
             effects = [
@@ -31,8 +32,11 @@ MONSTER_NEST
             activation = And [
                 Planet
                 Turn low = 10
-                Unowned
-                Random probability = 0.12 * GalaxyMonsterFrequency / 2.0
+                Or [
+                    Unowned
+                    ((GameRule name = "RULE_NESTS_ALWAYS_SPAWN_WILD") > 0)
+                ]
+                Random probability = 0.12 * (GameRule name = "RULE_WILD_NEST_MONSTER_SPAWN_FACTOR") * GalaxyMonsterFrequency / 2.0
             ]
             stackinggroup = "@1@_NEST_STACK"
             effects = CreateShip designname = "SM_@1@_1"
