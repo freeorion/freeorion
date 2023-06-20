@@ -67,6 +67,42 @@ GameRule(
 )
 
 GameRule(
+    name="RULE_NESTS_ALWAYS_SPAWN_WILD",
+    description="RULE_NESTS_ALWAYS_SPAWN_WILD_DESC",
+    category="CONTENT",
+    type=bool,
+    default=False,
+)
+
+GameRule(
+    name="RULE_WANDERING_MONSTERS_CAN_STOP_INSYSTEM",
+    description="RULE_WANDERING_MONSTERS_CAN_STOP_INSYSTEM_DESC",
+    category="CONTENT",
+    type=bool,
+    default=False,
+)
+
+GameRule(
+    name="RULE_WILD_NEST_MONSTER_SPAWN_FACTOR",
+    description="RULE_WILD_NEST_MONSTER_SPAWN_FACTOR_DESC",
+    category="CONTENT",
+    type=float,
+    default=1.0,
+    min=0.0,
+    max=10.0,
+)
+
+GameRule(
+    name="RULE_DOMESTIC_NEST_MONSTER_SPAWN_FACTOR",
+    description="RULE_DOMESTIC_NEST_MONSTER_SPAWN_FACTOR_DESC",
+    category="CONTENT",
+    type=float,
+    default=1.0,
+    min=0.0,
+    max=10.0,
+)
+
+GameRule(
     name="RULE_ENABLE_SUPER_TESTER",
     description="RULE_ENABLE_SUPER_TESTER_DESC",
     category="CONTENT",
