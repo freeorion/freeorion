@@ -178,6 +178,7 @@ builtins = [
     "NamedRealLookup",
     "Neutron",
     "NoEffect",
+    "NoObject",
     "NoOp",
     "NoStar",
     "NumPoliciesAdopted",
