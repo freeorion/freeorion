@@ -99,4 +99,5 @@ Species(
         GasGiantType: Good,
     },
     graphic="icons/species/robotic-08.png",
+    annexation_condition=NoObject(),
 )
