@@ -13,6 +13,16 @@
 #include "EnumPythonParser.h"
 #include "PythonParser.h"
 
+value_ref_wrapper<double> pow(const value_ref_wrapper<int>& lhs, double rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(
+            ValueRef::OpType::EXPONENTIATE,
+            std::make_unique<ValueRef::StaticCast<int, double>>(ValueRef::CloneUnique(lhs.value_ref)),
+            std::make_unique<ValueRef::Constant<double>>(rhs)
+        )
+    );
+}
+
 value_ref_wrapper<double> pow(const value_ref_wrapper<double>& lhs, double rhs) {
     return value_ref_wrapper<double>(
         std::make_shared<ValueRef::Operation<double>>(

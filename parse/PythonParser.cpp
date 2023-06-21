@@ -111,7 +111,8 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def(double() - py::self_ns::self)
             .def(py::self_ns::self == int())
             .def(py::self_ns::self != int())
-            .def(py::self_ns::self | py::self_ns::self);
+            .def(py::self_ns::self | py::self_ns::self)
+            .def(py::self_ns::pow(py::self_ns::self, double()));
         py::class_<value_ref_wrapper<double>>("ValueRefDouble", py::no_init)
             .def("__call__", &value_ref_wrapper<double>::call)
             .def(int() * py::self_ns::self)
@@ -211,7 +212,10 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
                                      "TurnsSinceLastConquered",
                                      "ETA",
                                      "LaunchedFrom",
-                                     "OrderedColonizePlanetID"})
+                                     "OrderedColonizePlanetID",
+                                     "OwnerBeforeLastConquered",
+                                     "LastInvadedByEmpire",
+                                     "LastColonizedByEmpire"})
         {
             py_variable_wrapper.add_property(property, py::make_function(
                 [property] (const variable_wrapper& w) { return w.get_int_property(property); },
