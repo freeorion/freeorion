@@ -43,16 +43,16 @@ class ShipCombatStats:
 
     def __getstate__(self):
         return {
-            "structure": self._structure,
+            "_structure": self._structure,
             "shields": self.shields,
             "attacks": self.attacks,
-            "fighter_capacity": self._fighter_capacity,
-            "fighter_launch_rate": self._fighter_launch_rate,
-            "fighter_damage": self._fighter_damage,
-            "flak_shots": self._flak_shots,
-            "has_interceptors": self._has_interceptors,
-            "damage_vs_planets": self._damage_vs_planets,
-            "has_bomber": self._has_bomber,
+            "_fighter_capacity": self._fighter_capacity,
+            "_fighter_launch_rate": self._fighter_launch_rate,
+            "_fighter_damage": self._fighter_damage,
+            "_flak_shots": self._flak_shots,
+            "_has_interceptors": self._has_interceptors,
+            "_damage_vs_planets": self._damage_vs_planets,
+            "_has_bomber": self._has_bomber,
         }
 
     def __hash__(self):
