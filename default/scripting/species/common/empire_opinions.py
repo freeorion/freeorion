@@ -14,10 +14,40 @@ def COMMON_OPINION_EFFECTS(name: str):
         scope=Capital,
         stackinggroup="%s_TOWARDS_TARGET_OPINION_OF_EMPIRE" % name,
         effects=[
+            NoEffect,
             SetSpeciesTargetOpinion(  # baseline opinion
                 species=ThisSpecies,
                 empire=Target.Owner,
-                opinion=Value + GameRule(type=float, name="RULE_BASELINE_PLANET_STABILITY"),
+                opinion=Value
+                + GameRule(type=float, name="RULE_BASELINE_PLANET_STABILITY")
+                + (
+                    GameRule(type=float, name="RULE_INVASION_OPINION_PENALTY_SCALING")
+                    * StatisticCount(
+                        float,
+                        condition=Planet()
+                        & HasSpecies(name=[ThisSpecies])
+                        & (LocalCandidate.LastInvadedByEmpire == Target.Owner),
+                    )
+                    ** 0.5
+                )
+                + (
+                    GameRule(type=float, name="RULE_SHIPS_LOST_DESTROYED_PENALTY_SCALING")
+                    * (
+                        SpeciesShipsDestroyed(empire=Target.Owner, name=ThisSpecies)
+                        + SpeciesShipsLost(empire=Target.Owner, name=ThisSpecies)
+                    )
+                    ** 0.5
+                )
+                + (
+                    GameRule(type=float, name="RULE_COLONIES_FOUNDED_BONUS_SCALING")
+                    * StatisticCount(
+                        float,
+                        condition=Planet()
+                        & HasSpecies(name=[ThisSpecies])
+                        & Population(low=0.001)
+                        & (LocalCandidate.LastColonizedByEmpire == Target.Owner),
+                    )
+                ),
             ),
             SetSpeciesOpinion(
                 species=ThisSpecies,

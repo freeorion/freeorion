@@ -250,6 +250,8 @@ builtins = [
     "SpeciesDislikes",
     "SpeciesEmpireTargetOpinion",
     "SpeciesLikes",
+    "SpeciesShipsDestroyed",
+    "SpeciesShipsLost",
     "Star",
     "Stationary",
     "Statistic",

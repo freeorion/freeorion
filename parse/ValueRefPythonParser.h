@@ -74,6 +74,7 @@ struct value_ref_wrapper {
     const std::shared_ptr<const ValueRef::ValueRef<T>> value_ref;
 };
 
+value_ref_wrapper<double> pow(const value_ref_wrapper<int>& lhs, double rhs);
 value_ref_wrapper<double> pow(const value_ref_wrapper<double>& lhs, double rhs);
 value_ref_wrapper<double> pow(double lhs, const value_ref_wrapper<double>& rhs);
 value_ref_wrapper<double> pow(const value_ref_wrapper<double>& lhs, const value_ref_wrapper<double>& rhs);
