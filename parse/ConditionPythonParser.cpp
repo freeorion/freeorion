@@ -788,6 +788,8 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     globals["IsSource"] = condition_wrapper(std::make_shared<Condition::Source>());
     globals["IsTarget"] = condition_wrapper(std::make_shared<Condition::Target>());
     globals["IsRootCandidate"] = condition_wrapper(std::make_shared<Condition::RootCandidate>());
+    globals["IsAnyObject"] = condition_wrapper(std::make_shared<Condition::All>());
+    globals["NoObject"] = condition_wrapper(std::make_shared<Condition::None>());
 
     globals["HasTag"] = boost::python::raw_function(insert_has_tag_);
     globals["Planet"] = boost::python::raw_function(insert_planet_);
