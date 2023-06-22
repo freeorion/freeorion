@@ -12,8 +12,8 @@ BuildingType
     ]
     enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
-		[[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
-    
+        [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
+
         EffectsGroup
             scope = Source
             activation = Not Planet type = Asteroids
