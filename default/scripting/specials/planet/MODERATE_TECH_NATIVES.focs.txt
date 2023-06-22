@@ -13,6 +13,7 @@ Special
         Not HasTag name = "NO_RESEARCH"
         Not HasTag name = "VERY_BAD_RESEARCH"
         Not HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL"
+        Not HasSpecial name = "PIRATE_NATIVES_SPECIAL"
     ]
     effectsgroups = [
         EffectsGroup

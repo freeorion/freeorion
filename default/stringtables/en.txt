@@ -661,6 +661,12 @@ Vacuum Dragon
 SM_DRAGON_DESC
 A terrifying giant monster that prowls space for prey, wreaking havoc on populated areas.
 
+SM_PIRATE
+Pirate Ship
+
+SM_PIRATE_DESC
+A pirate corvette, out hunting for merchant ships.
+
 SM_DRONE
 Drone
 
@@ -9610,6 +9616,12 @@ High Tech Natives
 HIGH_TECH_NATIVES_SPECIAL_DESC
 The natives on this planet have developed very advanced technology, giving their planet much stronger defenses against attack and invasion when independent of an empire.
 
+PIRATE_NATIVES_SPECIAL
+Native Pirates
+
+PIRATE_NATIVES_SPECIAL_DESC
+The natives on this planet are pirates.
+
 NATIVE_FORTIFICATION_MINIMAL
 Minimal Native Fortifications
 
@@ -16755,6 +16767,12 @@ Dragon Body
 
 SH_STRONG_MONSTER_BODY_DESC
 Large strong body with fearsome natural weapons and strong natural armor.
+
+SH_PIRATE_HULL
+Pirate Ship Hull
+
+SH_PIRATE_HULL_DESC
+[[SH_SPATIAL_FLUX_DESC]]
 
 SH_GUARD_MONSTER_BODY
 Guard Hull

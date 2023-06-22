@@ -1,0 +1,32 @@
+Hull
+    name = "SH_PIRATE_HULL"
+    description = "SH_PIRATE_HULL_DESC"
+    speed = 80
+    fuel = 8
+    NoDefaultFuelEffect
+    stealth = 25
+    structure = 3
+    slots = [
+        Slot type = External position = (0.40, 0.50)
+        Slot type = External position = (0.60, 0.50)
+    ]
+    buildcost = 1
+    buildtime = 2
+    Unproducible
+    tags = [ "UNOWNED_FRIENDLY" "PEDIA_HULL_MONSTER_GUARD" ]
+    location = All
+    effectsgroups = [
+        [[MONSTER_SHIELD_REGENERATION]]
+        [[UNOWNED_OWNED_VISION_BONUS(MODERATE,25,25)]]
+        [[SPATIAL_FLUX_STEALTH_EFFECTS]]
+        [[MONSTER_MOVE_PIRATE(0.2)]]
+        [[INFINITE_FUEL]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
+    ]
+    icon = ""
+    graphic = "hulls_design/spatial_flux_hull.png"
+
+#include "/scripting/ship_hulls/spatial_flux/spatial_flux.macros"
+#include "../ship_hulls.macros"
+#include "monster.macros"
+#include "/scripting/common/misc.macros"

@@ -28,6 +28,37 @@ MONSTER_MOVE_ALWAYS
             ]
 '''
 
+//  Macro to set move probability
+// arg1 probability of moving
+MONSTER_MOVE_PIRATE
+'''EffectsGroup
+            scope = And [
+                Object id = Source.FleetID
+                Fleet
+            ]
+            activation = And [
+                Turn low = 10
+                Stationary
+                Unowned
+                Random probability = @1@
+            ]
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            accountinglabel = "MONSTER_MOVE_PIRATE_LABEL"
+            effects = SetDestination destination = And [
+                System
+                Not Object id = Source.SystemID
+                WithinStarlaneJumps jumps = 1 condition = Source
+                Not Contains Building name = "BLD_EXPERIMENTOR_OUTPOST"
+                Not Contains And [
+                    Ship
+                    Armed
+                    OwnedBy affiliation = AnyEmpire
+                    Stealth high = Source.Detection
+                    WithinDistance distance = Source.Detection condition = Source
+                ]
+            ]
+'''
+
 MONSTER_MOVE_PRE
 '''EffectsGroup
             scope = And [
