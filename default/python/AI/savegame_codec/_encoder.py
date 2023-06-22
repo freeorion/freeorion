@@ -70,7 +70,6 @@ def encode(o: Any) -> str:
     except KeyError:
         if issubclass(o_type, IntEnum):
             return _encode_with_prefix(ENUM_PREFIX, f"{o.__class__.__name__}.{o.name}")
-
         else:
             return _encode_object(o)
     else:
