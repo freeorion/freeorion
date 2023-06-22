@@ -1,4 +1,5 @@
 from common.misc import SHIP_WEAPON_DAMAGE_FACTOR
+from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY, DEFAULT_PRIORITY
 from techs.techs import (
     ARBITRARY_BIG_NUMBER_FOR_METER_TOPUP,
     EMPIRE_OWNED_SHIP_WITH_PART,
@@ -6,34 +7,66 @@ from techs.techs import (
 )
 
 
+# Tech based setting of damage and number of shots of a weapon. Registers named reals for use in the pedia.
+# Be careful the effect does not show in the ship damage/shot estimates in the ship designer UI if the tech is not researched yet.
 # @1@ part name
 def WEAPON_BASE_EFFECTS(part_name: str):
     # these NamedReals need to be parsed to be registered in the pedia. XXX remove this when the pedia can look up ship meters/part capacity
     NamedReal(name=part_name + "_PART_CAPACITY", value=PartCapacity(name=part_name))
     NamedReal(name=part_name + "_PART_SECONDARY_STAT", value=PartSecondaryStat(name=part_name))
 
-    # The following is really only needed on the first resupplied turn after an upgrade is researched, since the resupply currently
-    # takes place in a portion of the turn before meters are updated, but currently there is no good way to restrict this to
-    # only that first resupply (and it is simply mildly inefficient to repeat the topup later).
-    topup_effects_group = EffectsGroup(
-        scope=EMPIRE_OWNED_SHIP_WITH_PART(part_name) & Turn(high=LocalCandidate.LastTurnResupplied),
+    # Set the max meters for damage and number of shots to the base value from the ship part specification.
+    # The default effects of a direct weapon part sets the capacity to a scaled value
+    # The default effects of a fighter hangar part sets the secondary stat to a scaled value
+    # Note: So direct weapon parts with NoDefaultCapacityEffect will not have the damage/PartCapacity scaled by SHIP_DAMAGE_WEAPON_FACTOR.
+    set_max_meters_effects_group = EffectsGroup(
+        scope=EMPIRE_OWNED_SHIP_WITH_PART(part_name),
         accountinglabel=part_name,
-        effects=SetCapacity(partname=part_name, value=Value + ARBITRARY_BIG_NUMBER_FOR_METER_TOPUP),
+        priority=DEFAULT_PRIORITY,
+        effects=[
+            SetMaxCapacity(partname=part_name, value=PartCapacity(name=part_name)),
+            SetMaxSecondaryStat(partname=part_name, value=PartSecondaryStat(name=part_name)),
+        ],
     )
-    return [topup_effects_group]
+
+    # Set the damage and shot meters to the max values every turn.
+    # The topup_effects_group is necessary..
+    # 1) the first turn after an upgrade is researched, since the resupply currently takes place in a portion of the turn before meters are updated
+    # 2) for any arbitrary "temporary" change of Max values (e.g. PLC_FLANKING); "permanent" changes could be modeled differently
+    topup_effects_group = EffectsGroup(
+        scope=EMPIRE_OWNED_SHIP_WITH_PART(part_name),
+        accountinglabel=part_name,
+        priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
+        effects=[
+            SetCapacity(partname=part_name, value=Value + ARBITRARY_BIG_NUMBER_FOR_METER_TOPUP),
+            SetSecondaryStat(partname=part_name, value=Value + ARBITRARY_BIG_NUMBER_FOR_METER_TOPUP),
+        ],
+    )
+    return [set_max_meters_effects_group, topup_effects_group]
 
 
-# @1@ part name
-# @2@ value added to max capacity
-def WEAPON_UPGRADE_CAPACITY_EFFECTS(tech_name: str, part_name: str, value: int, upgraded_damage_override: int = -1):
+# Tech Upgrade a direct weapon damage each turn if it was resupplied after the tech was researched.
+# Be careful this does show in the ship damage/shot estimates in the ship designer UI if the tech is not researched.
+# This can correctly estimate the total sum of all related weapon techs up to this tech if
+# * following the tech naming scheme TECH_NAME_X with X being the level of the upgrade (and X being in 2..9)
+# * and all tech level upgrade give the same amount of upgrade ( so the total sum is X * unscaled_upgrade)
+# @1@ tech name
+# @2@ part name
+# @3@ unscaled_upgrade gets added to max capacity after scaling it with SHIP_WEAPON_DAMAGE_FACTOR
+# @4@ upgraded_damage_override if given overrides the total sum over the researched techs shown in the upgrade info sitrep
+def WEAPON_UPGRADE_CAPACITY_EFFECTS(
+    tech_name: str, part_name: str, unscaled_upgrade: int, upgraded_damage_override: int = -1
+):
     # the following recursive lookup works, but is not acceptable because of delays. as long as the parser is sequential, the parallel waiting feature is kind of a bug
     # previous_upgrade_effect = PartCapacity(name=part_name) if (tech_name[-1] == "2") else NamedRealLookup(name = tech_name[0:-1] + "2_UPGRADED_DAMAGE")  # + str(int(tech_name[-1]) - 1))
-    upgraded_damage = upgraded_damage_override if upgraded_damage_override != -1 else value * (int(tech_name[-1]) - 1)
+    upgraded_damage = (
+        upgraded_damage_override if upgraded_damage_override != -1 else unscaled_upgrade * (int(tech_name[-1]) - 1)
+    )
     return [
         EffectsGroup(
             scope=EMPIRE_OWNED_SHIP_WITH_PART(part_name) & SHIP_PART_UPGRADE_RESUPPLY_CHECK(CurrentContent),
             accountinglabel=part_name,
-            effects=SetMaxCapacity(partname=part_name, value=Value + value * SHIP_WEAPON_DAMAGE_FACTOR),
+            effects=SetMaxCapacity(partname=part_name, value=Value + unscaled_upgrade * SHIP_WEAPON_DAMAGE_FACTOR),
         ),
         # Inform the researching empire that ships in supply will get upgraded before next combat
         EffectsGroup(
@@ -48,7 +81,9 @@ def WEAPON_UPGRADE_CAPACITY_EFFECTS(tech_name: str, part_name: str, value: int, 
                     "shippart": part_name,
                     "tech": CurrentContent,
                     # str(CurrentContent) -> <ValueRefString object at 0x...>
-                    "dam": NamedReal(name=tech_name + "_UPGRADE_DAMAGE", value=value * SHIP_WEAPON_DAMAGE_FACTOR),
+                    "dam": NamedReal(
+                        name=tech_name + "_UPGRADE_DAMAGE", value=unscaled_upgrade * SHIP_WEAPON_DAMAGE_FACTOR
+                    ),
                     "sum": NamedReal(
                         name=tech_name + "_UPGRADED_DAMAGE",
                         value=PartCapacity(name=part_name) + (SHIP_WEAPON_DAMAGE_FACTOR * upgraded_damage),
