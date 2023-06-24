@@ -1142,10 +1142,10 @@ void ListBox::SetHScrollWheelIncrement(unsigned int increment)
     AdjustScrolls(false);
 }
 
-void ListBox::SetInteriorColor(Clr c)
+void ListBox::SetInteriorColor(Clr c) noexcept
 { m_int_color = c; }
 
-void ListBox::SetHiliteColor(Clr c)
+void ListBox::SetHiliteColor(Clr c) noexcept
 { m_hilite_color = c; }
 
 void ListBox::SetStyle(Flags<ListBoxStyle> s)

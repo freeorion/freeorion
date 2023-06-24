@@ -351,8 +351,8 @@ public:
     void SetVScrollWheelIncrement(unsigned int increment);
     void SetHScrollWheelIncrement(unsigned int increment);
 
-    void SetInteriorColor(Clr c);                       ///< sets the color painted into the client area of the control
-    void SetHiliteColor(Clr c);                         ///< sets the color behind selected line items
+    void SetInteriorColor(Clr c) noexcept;              ///< sets the color painted into the client area of the control
+    void SetHiliteColor(Clr c) noexcept;                ///< sets the color behind selected line items
 
     /** sets the style flags for the ListBox to \a s. \see GG::ListBoxStyle */
     void SetStyle(Flags<ListBoxStyle> s);
