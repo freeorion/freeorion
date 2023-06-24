@@ -197,11 +197,10 @@ void MultiEdit::Render()
         // if there's no selected text, but this row contains the caret (and
         // MULTI_READ_ONLY is not in effect)
         if (is_caret_row) {
-            X caret_x = X0;
-            if (!line.Empty()) {
-                auto caret_char_idx = Value(m_cursor_begin.second - 1);
-                if (caret_char_idx > 0)
-                    caret_x = line.char_data[caret_char_idx].extent + initial_text_x_pos;
+            X caret_x = initial_text_x_pos;
+            if (!line.Empty() && m_cursor_begin.second > 0) {
+                const auto caret_char_idx = Value(m_cursor_begin.second - 1);
+                caret_x += line.char_data[caret_char_idx].extent;
             }
             glColor(text_color_to_use);
             Line(caret_x, row_y_pos, caret_x, row_y_pos + LINESKIP);
