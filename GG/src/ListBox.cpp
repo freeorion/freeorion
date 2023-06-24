@@ -1028,10 +1028,10 @@ void ListBox::DeselectAll(bool signal)
         SelRowsChangedSignal(m_selections);
 }
 
-ListBox::iterator ListBox::begin()
+ListBox::iterator ListBox::begin() noexcept
 { return m_rows.begin(); }
 
-ListBox::iterator ListBox::end()
+ListBox::iterator ListBox::end() noexcept
 { return m_rows.end(); }
 
 ListBox::Row& ListBox::GetRow(std::size_t n)
