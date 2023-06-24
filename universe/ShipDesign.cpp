@@ -896,10 +896,9 @@ void PredefinedShipDesignManager::SetMonsterDesignTypes(
 { m_pending_monsters = std::move(pending_designs); }
 
 namespace {
-    template <typename Map1, typename Map2, typename Ordering>
     void FillDesignsOrderingAndNameTables(
         PredefinedShipDesignManager::ParsedShipDesignsType& parsed_designs,
-        Map1& designs, Ordering& ordering, Map2& name_to_uuid)
+        auto& designs, auto& ordering, auto& name_to_uuid)
     {
         // Remove the old designs
         for (const auto& name_and_uuid: name_to_uuid)
@@ -935,9 +934,8 @@ namespace {
         }
     }
 
-    template <typename PendingShips, typename Map1, typename Map2, typename Ordering>
     void CheckPendingAndFillDesignsOrderingAndNameTables(
-        PendingShips& pending, Map1& designs, Ordering& ordering, Map2& name_to_uuid, bool are_monsters)
+        auto& pending, auto& designs, auto& ordering, auto& name_to_uuid, bool are_monsters)
     {
         if (!pending)
             return;
@@ -949,8 +947,7 @@ namespace {
         DebugLogger() << "Populating pre-defined ships with "
                       << std::string(are_monsters ? "monster" : "ship") << " designs.";
 
-        FillDesignsOrderingAndNameTables(
-            *parsed, designs, ordering, name_to_uuid);
+        FillDesignsOrderingAndNameTables(*parsed, designs, ordering, name_to_uuid);
 
         // Make the monsters monstrous
         if (are_monsters)

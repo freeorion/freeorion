@@ -37,7 +37,6 @@ class CombatLogManager;
 
 
 namespace {
-
     /** AddTraitBypassOption creates a set of options for debugging of
         the form:
         ai.trait.\<trait name\>.force.enabled  -- If true use the following options to bypass the trait
@@ -46,9 +45,8 @@ namespace {
         ...
         ai.trait.\<trait name\>.ai_40          -- Use for AI_40
      */
-    template <typename T>
     void AddTraitBypassOption(OptionsDB& db, std::string const & root, std::string ROOT,
-                              T def, const ValidatorBase& validator)
+                              auto def, const ValidatorBase& validator)
     {
         const std::string option_root = "ai.trait." + root + ".";
         const std::string user_string_root = "OPTIONS_DB_AI_CONFIG_TRAIT_" + ROOT;

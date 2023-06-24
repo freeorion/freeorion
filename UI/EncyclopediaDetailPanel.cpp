@@ -80,17 +80,14 @@ namespace {
 }
 
 namespace {
+    constexpr auto prefix_len{TAG_PEDIA_PREFIX.length()};
+
     // Checks content \a tags for any custom pedia categories, which are tags
     // that have the TAG_PEDIA_PREFIX as their first few chars
-    template <typename StringContainer>
-    bool HasCustomCategory(const StringContainer& tags) {
-        return std::any_of(tags.begin(), tags.end(), [](std::string_view sv) {
-            static constexpr auto len{TAG_PEDIA_PREFIX.length()};
-            return sv.substr(0, len) == TAG_PEDIA_PREFIX;
-        });
+    bool HasCustomCategory(const auto& tags) {
+        return std::any_of(tags.begin(), tags.end(), [](std::string_view sv)
+                           { return sv.substr(0, prefix_len) == TAG_PEDIA_PREFIX; });
     }
-
-    constexpr auto prefix_len{TAG_PEDIA_PREFIX.length()};
 
     // Checks content \a tags for custom defined pedia category \a cat
     bool HasCustomCategory(const std::vector<std::string_view>& tags, const std::string_view cat) {

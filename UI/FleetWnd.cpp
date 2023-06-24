@@ -233,8 +233,7 @@ namespace {
             context);
     }
 
-    template <typename ShipIDSet>
-    void CreateNewFleetFromShipsWithDesign(const ShipIDSet& ship_ids,
+    void CreateNewFleetFromShipsWithDesign(const auto& ship_ids,
                                            int design_id, FleetAggression aggression,
                                            ScriptingContext& context)
     {
@@ -257,8 +256,7 @@ namespace {
         CreateNewFleetFromShips(ships_of_design_ids, aggression, context);
     }
 
-    template <typename ShipIDSet>
-    void CreateNewFleetsFromShipsForEachDesign(const ShipIDSet& ship_ids,
+    void CreateNewFleetsFromShipsForEachDesign(const auto& ship_ids,
                                                FleetAggression aggression,
                                                ScriptingContext& context)
     {
