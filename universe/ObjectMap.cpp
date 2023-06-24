@@ -119,7 +119,8 @@ namespace {
             // shouldn't be possible to instantiate with this block enabled, but if so,
             // try to generate some useful compiler error messages to indicate what
             // type MappedObjectType is
-            using GenerateCompileError = typename MappedObjectType::not_a_member_zi23tg;
+            static_assert(std::is_same_v<UniverseObject, MapTypeBare> || std::is_base_of_v<UniverseObject, MapTypeBare>,
+                          "Non-UniverseObject related type in map");
             return false;
         }
     }
