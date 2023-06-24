@@ -149,7 +149,7 @@ void PolicyOrder::serialize(Archive& ar, const unsigned int version)
         ar  & BOOST_SERIALIZATION_NVP(m_revert);
 }
 
-template <class Archive>
+template <typename Archive>
 void ResearchQueueOrder::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)

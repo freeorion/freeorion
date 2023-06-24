@@ -501,7 +501,7 @@ private:
         }
 
         friend class boost::serialization::access;
-        template <class Archive>
+        template <typename Archive>
         void serialize(Archive& ar, const unsigned int version);
     };
     std::map<std::string, PolicyAdoptionInfo, std::less<>> m_adopted_policies;                 ///< map from policy name to turn, category, and slot in/on which it was adopted

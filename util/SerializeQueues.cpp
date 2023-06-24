@@ -161,7 +161,7 @@ template void InfluenceQueue::Element::serialize<freeorion_bin_iarchive>(freeori
 template void InfluenceQueue::Element::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
 template void InfluenceQueue::Element::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
-template <class Archive>
+template <typename Archive>
 void InfluenceQueue::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_queue)
