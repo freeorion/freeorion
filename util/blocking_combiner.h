@@ -25,7 +25,7 @@ struct blocking_combiner
     template <typename input_iterator>
     result_type operator()(input_iterator first, input_iterator last)
     {
-        if(first != last && !m_blocking)
+        if (first != last && !m_blocking)
             return m_combiner(first, last);
         else
             return result_type();
