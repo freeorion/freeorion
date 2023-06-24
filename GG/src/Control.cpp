@@ -16,26 +16,6 @@ using namespace GG;
 ////////////////////////////////////////////////
 // GG::Control
 ////////////////////////////////////////////////
-Control::Control() :
-    Wnd()
-{}
-
-Control::Control(X x, Y y, X w, Y h, Flags<WndFlag> flags) :
-    Wnd(x, y, w, h, flags)
-{}
-
-Clr Control::Color() const
-{ return m_color; }
-
-bool Control::Disabled() const
-{ return m_disabled; }
-
-void Control::SetColor(Clr c)
-{ m_color = c; }
-
-void Control::Disable(bool b)
-{ m_disabled = b; }
-
 void Control::MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys)
 { ForwardEventToParent(); }
 
