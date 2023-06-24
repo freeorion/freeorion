@@ -250,12 +250,15 @@ namespace {
             ValueRef::NameLookup::LookupType::SHIP_DESIGN_NAME);
     }
 
-    const std::map<std::pair<std::string, std::string>,
-                   std::unique_ptr<ValueRef::ValueRef<std::string>>>& AvailableColumnTypes()
-    {
-        static std::map<std::pair<std::string, std::string>,
-                        std::unique_ptr<ValueRef::ValueRef<std::string>>> col_types;
-        if (col_types.empty()) {
+    using column_ref_type = std::unique_ptr<ValueRef::ValueRef<std::string>>;
+    using column_ref_raw_ptr = const column_ref_type::element_type*;
+
+    const auto& AvailableColumnTypes() {
+        static const auto col_types = []() {
+            boost::container::flat_map<std::pair<std::string_view, std::string_view>, column_ref_type> col_types;
+            col_types.reserve(static_cast<size_t>(MeterType::METER_SPEED) + 1 +
+                              GetSpeciesManager().NumSpecies() + 65); // roughly enough as of this writing
+
             // General
             col_types[{UserStringNop("NAME"),                        ""}] = StringValueRef("Name");
             col_types[{UserStringNop("OBJECT_TYPE"),                 ""}] = UserStringValueRef("TypeName");
@@ -331,14 +334,15 @@ namespace {
             // all meters
             for (MeterType meter = MeterType(0); meter <= MeterType::METER_SPEED;  // the meter(s) after MeterType::METER_SPEED are part-specific
                  meter = MeterType(int(meter) + 1))
-            {
-                col_types[{std::string{to_string(meter)},           UserStringNop("METERS_SUBMENU")}] = StringCastedImmediateValueRef(std::string{ValueRef::MeterToName(meter)});
-            }
-        }
+            { col_types[{to_string(meter),                        UserStringNop("METERS_SUBMENU")}] = StringCastedImmediateValueRef(std::string{ValueRef::MeterToName(meter)}); }
+
+            DebugLogger() << "col_types.size(): " << col_types.size();
+            return col_types;
+        }();
         return col_types;
     }
 
-    const ValueRef::ValueRef<std::string>* GetValueRefByName(const std::string& name) {
+    column_ref_raw_ptr GetValueRefByName(const std::string& name) {
         for (const auto& [column_stringtable_key_and_submenu, val_ref] : AvailableColumnTypes()) {
             if (column_stringtable_key_and_submenu.first == name)
                 return val_ref.get();
@@ -374,21 +378,21 @@ namespace {
         return "";
     }
 
-    void SetColumnName(int column, const std::string& name) {
+    void SetColumnName(int column, std::string name) {
         if (column < 0)
             return;
-        std::string option_name = "ui.objects.columns.c" + std::to_string(column) + ".stringkey";
+        const std::string option_name = "ui.objects.columns.c" + std::to_string(column) + ".stringkey";
         if (GetOptionsDB().OptionExists(option_name))
-            GetOptionsDB().Set(option_name, name);
+            GetOptionsDB().Set(option_name, std::move(name));
     }
 
-    const ValueRef::ValueRef<std::string>* GetColumnValueRef(int column) {
+    column_ref_raw_ptr GetColumnValueRef(int column) {
         if (column < 0)
             return nullptr;
-        std::string option_name = "ui.objects.columns.c" + std::to_string(column) + ".stringkey";
+        const std::string option_name = "ui.objects.columns.c" + std::to_string(column) + ".stringkey";
         if (!GetOptionsDB().OptionExists(option_name))
             return nullptr;
-        std::string column_ref_name = GetOptionsDB().Get<std::string>(option_name);
+        const std::string column_ref_name = GetOptionsDB().Get<std::string>(option_name);
         return GetValueRefByName(column_ref_name);
     }
 
@@ -428,7 +432,7 @@ namespace {
     constexpr std::string_view FILTER_OPTIONS_WND_NAME = "object-list-filter";
 
     template <typename enumT>
-    std::unique_ptr<ValueRef::ValueRef<enumT>> CopyEnumValueRef(const ValueRef::ValueRef<enumT>* const value_ref) {
+    auto CopyEnumValueRef(const ValueRef::ValueRef<enumT>* const value_ref) {
         if (auto constant = dynamic_cast<const ValueRef::Constant<enumT>*>(value_ref))
             return std::make_unique<ValueRef::Constant<enumT>>(constant->Value());
         return std::make_unique<ValueRef::Constant<enumT>>(enumT(-1));
@@ -497,7 +501,7 @@ namespace {
     }
 
     template <typename enumT>
-    std::vector<std::string> StringsFromEnums(const std::vector<enumT>& enum_vals) {
+    auto StringsFromEnums(const std::vector<enumT>& enum_vals) {
         std::vector<std::string> retval;
         retval.reserve(enum_vals.size());
         for (const enumT& enum_val : enum_vals)
@@ -536,6 +540,146 @@ public:
         // TODO: set newly created parameter controls' values based on init condition
     }
 
+    void Render() override
+    { GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::CtrlColor(), ClientUI::CtrlBorderColor()); }
+
+private:
+    class ConditionRow : public GG::ListBox::Row {
+    public:
+        ConditionRow(const std::string& key, GG::Y row_height) :
+            GG::ListBox::Row(GG::X1, row_height),
+            m_condition_key(key),
+            m_label(GG::Wnd::Create<CUILabel>(UserString(m_condition_key), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP))
+        {}
+
+        void CompleteConstruction() override {
+            GG::ListBox::Row::CompleteConstruction();
+
+            SetChildClippingMode(ChildClippingMode::ClipToClient);
+            push_back(m_label);
+        }
+
+        const std::string&  GetKey() const { return m_condition_key; }
+    private:
+        std::string m_condition_key;
+        std::shared_ptr<CUILabel> m_label;
+    };
+
+    class StringRow : public GG::ListBox::Row {
+    public:
+        StringRow(std::string text, GG::Y row_height, bool stringtable_lookup = true) :
+            GG::ListBox::Row(GG::X1, row_height),
+            m_string(std::move(text))
+        {
+            auto label = std::string{m_string.empty() ? EMPTY_STRING :
+                stringtable_lookup ? UserString(m_string) :
+                m_string};
+            m_label = GG::Wnd::Create<CUILabel>(std::move(label), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
+        }
+
+        void CompleteConstruction() override {
+            GG::ListBox::Row::CompleteConstruction();
+
+            SetChildClippingMode(ChildClippingMode::ClipToClient);
+            push_back(m_label);
+        }
+
+        const auto& Text() const noexcept { return m_string; }
+
+    private:
+        std::string m_string;
+        std::shared_ptr<CUILabel> m_label;
+    };
+
+    std::string_view GetString() const noexcept {
+        if (!m_string_drop)
+            return EMPTY_STRING;
+        auto row_it = m_string_drop->CurrentItem();
+        if (row_it == m_string_drop->end())
+            return EMPTY_STRING;
+        auto string_row = dynamic_cast<const StringRow*>(row_it->get());
+        if (!string_row)
+            return EMPTY_STRING;
+        return string_row->Text();
+    }
+
+    auto GetStringValueRef() const
+    { return std::make_unique<ValueRef::Constant<std::string>>(std::string{GetString()}); }
+
+    auto GetStringValueRefVec() const {
+        std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> retval;
+        retval.emplace_back(GetStringValueRef());
+        return retval;
+    }
+
+    int GetInt1() const {
+        if (m_param_spin1)
+            return m_param_spin1->Value();
+        else
+            return 0;
+    }
+
+    auto GetInt1ValueRef() const
+    { return std::make_unique<ValueRef::Constant<int>>(GetInt1()); }
+
+    int GetInt2() const {
+        if (m_param_spin2)
+            return m_param_spin2->Value();
+        else
+            return 0;
+    }
+
+    auto GetInt2ValueRef() const
+    { return std::make_unique<ValueRef::Constant<int>>(GetInt2()); }
+
+    double GetDouble1() const {
+        if (m_param_spin1)
+            return m_param_spin1->Value();
+        else
+            return 0;
+    }
+
+    auto GetDouble1ValueRef() const
+    { return std::make_unique<ValueRef::Constant<double>>(GetDouble1()); }
+
+    double GetDouble2() const {
+        if (m_param_spin2)
+            return m_param_spin2->Value();
+        else
+            return 0;
+    }
+
+    auto GetDouble2ValueRef() const
+    { return std::make_unique<ValueRef::Constant<double>>(GetDouble2()); }
+
+    template <typename T>
+    T GetEnum() const {
+        auto text = GetString();
+        if constexpr (std::is_same_v<T, MeterType>) {
+            return MeterTypeFromString(text, MeterType::INVALID_METER_TYPE);
+        } else {
+            T enum_val = T(-1);
+            try {
+                enum_val = boost::lexical_cast<T>(text);
+            } catch (...) {
+                ErrorLogger() << "ConditionWidget::GetEnum unable to convert text to enum type: " << text;
+            }
+            return enum_val;
+        }
+    }
+
+    template <typename T>
+    auto GetEnumValueRef() const
+    { return std::make_unique<ValueRef::Constant<T>>(GetEnum<T>()); }
+
+    template <typename T>
+    auto GetEnumValueRefVec() const {
+        std::vector<std::unique_ptr<ValueRef::ValueRef<T>>> retval;
+        retval.emplace_back(GetEnumValueRef<T>());
+        return retval;
+    }
+
+public:
     std::unique_ptr<Condition::Condition> GetCondition() {
         auto row_it = m_class_drop->CurrentItem();
         if (row_it == m_class_drop->end())
@@ -665,150 +809,14 @@ public:
             return std::make_unique<Condition::StarType>(GetEnumValueRefVec< ::StarType>());
 
         } else if (condition_key == METERVALUE_CONDITION) {
-            return std::make_unique<Condition::MeterValue>(GetEnum< ::MeterType>(), GetDouble1ValueRef(), GetDouble2ValueRef());
+            return std::make_unique<Condition::MeterValue>(GetEnum< ::MeterType>(), GetDouble1ValueRef(),
+                                                           GetDouble2ValueRef());
         }
 
         return std::make_unique<Condition::All>();
     }
 
-    void Render() override
-    { GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::CtrlColor(), ClientUI::CtrlBorderColor()); }
-
 private:
-    class ConditionRow : public GG::ListBox::Row {
-    public:
-        ConditionRow(const std::string& key, GG::Y row_height) :
-            GG::ListBox::Row(GG::X1, row_height),
-            m_condition_key(key),
-            m_label(GG::Wnd::Create<CUILabel>(UserString(m_condition_key), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP))
-        {}
-
-        void CompleteConstruction() override {
-            GG::ListBox::Row::CompleteConstruction();
-
-            SetChildClippingMode(ChildClippingMode::ClipToClient);
-            push_back(m_label);
-        }
-
-        const std::string&  GetKey() const { return m_condition_key; }
-    private:
-        std::string m_condition_key;
-        std::shared_ptr<CUILabel> m_label;
-    };
-
-    class StringRow : public GG::ListBox::Row {
-    public:
-        StringRow(std::string text, GG::Y row_height, bool stringtable_lookup = true) :
-            GG::ListBox::Row(GG::X1, row_height),
-            m_string(std::move(text))
-        {
-            auto label = std::string{m_string.empty() ? EMPTY_STRING :
-                                     stringtable_lookup ? UserString(m_string) :
-                                     m_string};
-            m_label = GG::Wnd::Create<CUILabel>(std::move(label), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
-        }
-
-        void CompleteConstruction() override {
-            GG::ListBox::Row::CompleteConstruction();
-
-            SetChildClippingMode(ChildClippingMode::ClipToClient);
-            push_back(m_label);
-        }
-
-        const std::string& Text() const { return m_string; }
-    private:
-        std::string m_string;
-        std::shared_ptr<CUILabel> m_label;
-    };
-
-    std::string_view GetString() {
-        if (!m_string_drop)
-            return EMPTY_STRING;
-        auto row_it = m_string_drop->CurrentItem();
-        if (row_it == m_string_drop->end())
-            return EMPTY_STRING;
-        StringRow* string_row = dynamic_cast<StringRow*>(row_it->get());
-        if (!string_row)
-            return EMPTY_STRING;
-        return string_row->Text();
-    }
-
-    std::unique_ptr<ValueRef::ValueRef<std::string>> GetStringValueRef()
-    { return std::make_unique<ValueRef::Constant<std::string>>(std::string{GetString()}); }
-
-    std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> GetStringValueRefVec() {
-        std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> retval;
-        retval.emplace_back(GetStringValueRef());
-        return retval;
-    }
-
-    int GetInt1() {
-        if (m_param_spin1)
-            return m_param_spin1->Value();
-        else
-            return 0;
-    }
-
-    std::unique_ptr<ValueRef::ValueRef<int>> GetInt1ValueRef()
-    { return std::make_unique<ValueRef::Constant<int>>(GetInt1()); }
-
-    int GetInt2() {
-        if (m_param_spin2)
-            return m_param_spin2->Value();
-        else
-            return 0;
-    }
-
-    std::unique_ptr<ValueRef::ValueRef<int>> GetInt2ValueRef()
-    { return std::make_unique<ValueRef::Constant<int>>(GetInt2()); }
-
-    double GetDouble1() {
-        if (m_param_spin1)
-            return m_param_spin1->Value();
-        else
-            return 0;
-    }
-
-    std::unique_ptr<ValueRef::ValueRef<double>> GetDouble1ValueRef()
-    { return std::make_unique<ValueRef::Constant<double>>(GetDouble1()); }
-
-    double GetDouble2() {
-        if (m_param_spin2)
-            return m_param_spin2->Value();
-        else
-            return 0;
-    }
-
-    std::unique_ptr<ValueRef::ValueRef<double>> GetDouble2ValueRef()
-    { return std::make_unique<ValueRef::Constant<double>>(GetDouble2()); }
-
-    template <typename T>
-    T GetEnum() {
-        auto text = GetString();
-        if constexpr (std::is_same_v<T, MeterType>) {
-            return MeterTypeFromString(text, MeterType::INVALID_METER_TYPE);
-        } else {
-            T enum_val = T(-1);
-            try {
-                enum_val = boost::lexical_cast<T>(text);
-            } catch (...) {
-                ErrorLogger() << "ConditionWidget::GetEnum unable to convert text to enum type: " << text;
-            }
-            return enum_val;
-        }
-    }
-
-    template <typename T>
-    std::unique_ptr<ValueRef::ValueRef<T>> GetEnumValueRef()
-    { return std::make_unique<ValueRef::Constant<T>>(GetEnum<T>()); }
-
-    template <typename T>
-    std::vector<std::unique_ptr<ValueRef::ValueRef<T>>> GetEnumValueRefVec() {
-        std::vector<std::unique_ptr<ValueRef::ValueRef<T>>> retval;
-        retval.emplace_back(GetEnumValueRef<T>());
-        return retval;
-    }
-
     GG::X DropListWidth() const
     { return GG::X(ClientUI::Pts()*15); }
 
@@ -821,7 +829,7 @@ private:
     GG::Y DropListHeight() const
     { return GG::Y(ClientUI::Pts() + 4); }
 
-    int DropListDropHeight() const
+    int DropListDropHeight() const noexcept
     { return 12; }
 
     void Init(const Condition::Condition* init_condition) {
@@ -1772,7 +1780,7 @@ private:
         if (!clicked_button)
             return;
 
-        std::string current_column_type = GetColumnName(column_id);
+        const auto current_column_type = GetColumnName(column_id);
         const auto& available_column_types = AvailableColumnTypes();
 
         auto popup = GG::Wnd::Create<CUIPopupMenu>(clicked_button->Left(), clicked_button->Bottom());
@@ -1788,27 +1796,29 @@ private:
         GG::MenuItem env_submenu(UserString("PLANET_ENVIRONMENTS_SUBMENU"), false, false);
         GG::MenuItem fleets_submenu(UserString("FLEETS_SUBMENU"),           false, false);
 
-        for (const auto& entry : available_column_types) {
-            const auto& new_column_type = entry.first.first;
-            bool check = (current_column_type == new_column_type);
-            const std::string& menu_label = UserString(new_column_type);
+        for (const auto& [name_submenu, ref] : available_column_types) {
+            (void)ref;
+            const std::string_view new_column_type = name_submenu.first; // structured binding causes problems with captures below
+            const bool check = (current_column_type == new_column_type);
+            const auto& menu_label = UserString(new_column_type);
 
             auto col_action = [this, column_id, new_column_type]() {
                 // set clicked column to show the selected column type info
-                SetColumnName(column_id, new_column_type);
+                SetColumnName(column_id, std::string{new_column_type});
                 ColumnsChangedSignal();
             };
 
             // put meters into root or submenus...
-            if (entry.first.second.empty())
+            const std::string_view submenu = name_submenu.second;
+            if (submenu.empty())
                 popup->AddMenuItem(menu_label, false, check, col_action);
-            else if (entry.first.second == "METERS_SUBMENU")
+            else if (submenu == "METERS_SUBMENU")
                 meters_submenu.next_level.emplace_back(menu_label, false, check, col_action);
-            else if (entry.first.second == "PLANETS_SUBMENU")
+            else if (submenu == "PLANETS_SUBMENU")
                 planets_submenu.next_level.emplace_back(menu_label, false, check, col_action);
-            else if (entry.first.second == "PLANET_ENVIRONMENTS_SUBMENU")
+            else if (submenu == "PLANET_ENVIRONMENTS_SUBMENU")
                 env_submenu.next_level.emplace_back(menu_label, false, check, col_action);
-            else if (entry.first.second == "FLEETS_SUBMENU")
+            else if (submenu == "FLEETS_SUBMENU")
                 fleets_submenu.next_level.emplace_back(menu_label, false, check, col_action);
         }
         popup->AddMenuItem(std::move(meters_submenu));
