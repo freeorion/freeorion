@@ -20,8 +20,8 @@ BuildingType
     ]
     enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
-		[[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
-		
+        [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
+
         // ZERO-POP : With no pop, no repair or sitrep messages
         EffectsGroup
             scope = And [

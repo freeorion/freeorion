@@ -12,9 +12,9 @@ BuildingType
         [[LOCATION_ALLOW_BUILD_IF_PREREQ_ENQUEUED(BLD_SHIPYARD_ORG_ORB_INC)]]
     ]
     enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
-	effectsgroups = [
-		[[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
-	]	
+    effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
+    ]
     icon = "icons/building/cellular-growth-chamber.png"
 
 #include "/scripting/common/enqueue.macros"

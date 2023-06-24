@@ -12,9 +12,9 @@ BuildingType
         OwnedBy empire = Source.Owner
     ]
     enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
-	effectsgroups = [
-		[[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
-	]	
+    effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
+    ]
     icon = "icons/building/shipyard-3.png"
 
 #include "/scripting/common/enqueue.macros"
