@@ -53,7 +53,7 @@ public:
     /** The selection change signal while running the modal drop down box.*/
     mutable SelChangedSignalType SelChangedWhileDroppedSignal;
 
-    [[nodiscard]] DropDownList::iterator CurrentItem();
+    [[nodiscard]] DropDownList::iterator CurrentItem() noexcept;
 
     /** If \p it is not none then select \p it in the LB().  Return the newly selected iterator or none if
         the selection did not change.*/
@@ -207,9 +207,9 @@ void ModalListPicker::ModalInit()
     // shown rows from the top or bottom
     const auto current_item = CurrentItem();
     if (current_item != m_lb_wnd->end() && !m_lb_wnd->Empty()) {
-        std::size_t current_ii(std::distance(m_lb_wnd->begin(), current_item));
-        std::size_t half_shown((m_num_shown_rows / 2));
-        std::size_t even_extra_one((m_num_shown_rows % 2 == 0) ? 1 : 0);
+        const std::size_t current_ii(std::distance(m_lb_wnd->begin(), current_item));
+        const std::size_t half_shown((m_num_shown_rows / 2));
+        const std::size_t even_extra_one((m_num_shown_rows % 2 == 0) ? 1 : 0);
 
         m_lb_wnd->SetFirstRowShown(m_lb_wnd->begin());
         if (current_ii >= (m_lb_wnd->NumRows() - 1 - half_shown)) {
@@ -243,7 +243,7 @@ void ModalListPicker::WindowResizedSlot(X x, Y y)
         EndRun();
 }
 
-DropDownList::iterator ModalListPicker::CurrentItem()
+DropDownList::iterator ModalListPicker::CurrentItem() noexcept
 {
     const auto start = m_lb_wnd->begin(), end = m_lb_wnd->end();
     if (start == end)
@@ -555,13 +555,13 @@ DropDownList::DropDownList(std::size_t num_shown_elements, Clr color) :
 DropDownList::~DropDownList()
 { m_modal_picker->EndRun(); }
 
-DropDownList::iterator DropDownList::CurrentItem() const
+DropDownList::iterator DropDownList::CurrentItem() const noexcept
 { return m_modal_picker->CurrentItem(); }
 
-std::size_t DropDownList::CurrentItemIndex() const
+std::size_t DropDownList::CurrentItemIndex() const noexcept
 { return IteratorToIndex(CurrentItem()); }
 
-std::size_t DropDownList::IteratorToIndex(iterator it) const
+std::size_t DropDownList::IteratorToIndex(iterator it) const noexcept
 {
     const auto* lb = m_modal_picker->LB();
     if (!lb)

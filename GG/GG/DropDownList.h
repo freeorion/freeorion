@@ -68,24 +68,24 @@ public:
     DropDownList(std::size_t num_shown_elements, Clr color);
     ~DropDownList();
 
-    [[nodiscard]] iterator        CurrentItem() const;            ///< returns the currently selected list item (returns end() if none is selected)
-    [[nodiscard]] std::size_t     CurrentItemIndex() const;       ///< returns the position of the currently selected list item within the list (returns -1 if none is selected)
+    [[nodiscard]] iterator        CurrentItem() const noexcept;                 ///< the currently selected list item (returns end() if none is selected)
+    [[nodiscard]] std::size_t     CurrentItemIndex() const noexcept;            ///< the position of the currently selected list item within the list (returns -1 if none is selected)
 
-    [[nodiscard]] std::size_t     IteratorToIndex(iterator it) const;     ///< returns the position of \a it within the list (returns -1 if \a it == end())
-    [[nodiscard]] iterator        IndexToIterator(std::size_t n) const;   ///< returns an iterator to the row in position \a n (returns end() if \a n is an invalid index)
+    [[nodiscard]] std::size_t     IteratorToIndex(iterator it) const noexcept;  ///< the position of \a it within the list (returns -1 if \a it == end())
+    [[nodiscard]] iterator        IndexToIterator(std::size_t n) const;         ///< iterator to the row in position \a n (returns end() if \a n is an invalid index)
 
     [[nodiscard]] bool            Empty() const noexcept { return LB()->Empty(); } ///< is the list is empty?
 
     [[nodiscard]] auto            begin() const noexcept { return LB()->begin(); } ///< first list row
     [[nodiscard]] auto            end() const noexcept { return LB()->end(); }     ///< imaginary row one past the last
 
-    [[nodiscard]] const Row&      GetRow(std::size_t n) const;    ///< returns a const reference to the row at index \a n; not range-checked.  \note This function is O(n).
-    [[nodiscard]] bool            Selected(iterator it) const;    ///< returns true if row \a it is selected
-    [[nodiscard]] bool            Selected(std::size_t n) const;  ///< returns true if row at position \a n is selected
-    [[nodiscard]] Clr             InteriorColor() const noexcept; ///< returns the color painted into the client area of the control
+    [[nodiscard]] const Row&      GetRow(std::size_t n) const;    ///< a const reference to the row at index \a n; not range-checked.  \note This function is O(n).
+    [[nodiscard]] bool            Selected(iterator it) const;    ///< true if row \a it is selected
+    [[nodiscard]] bool            Selected(std::size_t n) const;  ///< true if row at position \a n is selected
+    [[nodiscard]] Clr             InteriorColor() const noexcept; ///< the color painted into the client area of the control
 
-    [[nodiscard]] Y               DropHeight() const noexcept;    ///< returns the height of the drop-down list
-    [[nodiscard]] bool            Dropped() const noexcept;       ///< Return true if the drop down list is open.
+    [[nodiscard]] Y               DropHeight() const noexcept;    ///< the height of the drop-down list
+    [[nodiscard]] bool            Dropped() const noexcept;       ///< true if the drop down list is open.
 
     /** Returns the style flags of the list \see GG::ListBoxStyle */
     [[nodiscard]] Flags<ListBoxStyle> Style() const noexcept;
