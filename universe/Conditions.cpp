@@ -74,22 +74,20 @@ namespace {
     { return objects.allExistingRaw<T>(); }
 
 
-    /** Used by 4-parameter Condition::Eval function, and some of its
-      * overrides, to scan through \a matches or \a non_matches set and apply
-      * \a pred to each object, to test if it should remain in its current set
-      * or be transferred from the \a search_domain specified set into the
-      * other. */
-    template <typename Pred>
+    /** Used by 4-parameter Condition::Eval function, and some of its overrides,
+      * to scan through \a matches or \a non_matches set and apply \a pred to
+      * each object, to test if it should remain in its current set or be
+      * transferred from the \a search_domain specified set into the other. */
     inline void EvalImpl(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
-                         Condition::SearchDomain search_domain, const Pred& pred)
+                         Condition::SearchDomain search_domain, const auto& pred)
     {
-        bool domain_matches = search_domain == Condition::SearchDomain::MATCHES;
+        const bool domain_matches = search_domain == Condition::SearchDomain::MATCHES;
         auto& from_set = domain_matches ? matches : non_matches;
         auto& to_set = domain_matches ? non_matches : matches;
 
         // checking for from_set.size() == 1 and/or to_set.empty() and early exiting didn't seem to speed up evaluation in general case
 
-        auto part_it = std::stable_partition(from_set.begin(), from_set.end(),
+        const auto part_it = std::stable_partition(from_set.begin(), from_set.end(),
             [pred, domain_matches](const auto* o) { return pred(o) == domain_matches; });
         to_set.insert(to_set.end(), part_it, from_set.end());
         from_set.erase(part_it, from_set.end());
@@ -681,11 +679,13 @@ namespace {
       * of \a sort_key evaluated on them, with the largest / smallest / most
       * common sort keys chosen, or a random selection chosen, depending on the
       * specified \a sorting_method */
-    template <typename SortKeyType>
-    void TransferSortedObjects(uint32_t number, const ValueRef::ValueRef<SortKeyType>* sort_key,
+    void TransferSortedObjects(uint32_t number, const auto* sort_key,
                                const ScriptingContext& context, SortingMethod sorting_method,
                                ObjectSet& from_set, ObjectSet& to_set)
+        requires(requires { sort_key->Eval(context); })
     {
+        using SortKeyType = decltype(sort_key->Eval());
+
         // handle random case, which doesn't need sorting key
         if (sorting_method == SortingMethod::SORT_RANDOM) {
             TransferRandomObjects(number, from_set, to_set);
@@ -4793,14 +4793,11 @@ namespace {
         }
     }
 
-    template <typename M>
     void MoveBasedOnMask(SearchDomain search_domain, ObjectSet& matches,
-                         ObjectSet& non_matches, const M& mask)
+                         ObjectSet& non_matches, const auto& mask)
+        requires(requires { mask.begin(); } && std::is_convertible_v<decltype(*mask.begin()), bool>)
     {
-        using M_val_t = typename M::value_type;
-        static_assert(std::is_convertible_v<M_val_t, bool>);
-
-        const std::decay_t<M_val_t> test_val = search_domain == SearchDomain::MATCHES;
+        const bool test_val = (search_domain == SearchDomain::MATCHES);
         auto& from = test_val ? matches : non_matches;
         auto& to = test_val ? non_matches : matches;
 
@@ -4819,12 +4816,11 @@ namespace {
         from.erase(from_dest, from.end());  // remove any remaining stuff past last used output position in from set
     };
 
-    template <typename V, typename Pred>
     void MoveBasedOnPairedValPredicate(SearchDomain search_domain, ObjectSet& matches,
-                                       ObjectSet& non_matches, const std::vector<V>& vals,
-                                       Pred pred)
+                                       ObjectSet& non_matches, const auto& vals,
+                                       const auto& pred)
     {
-        using pred_retval_t = std::decay_t<decltype(pred(V{}))>;
+        using pred_retval_t = std::decay_t<decltype(pred(*vals.begin()))>;
         static_assert(std::is_convertible_v<pred_retval_t, uint8_t>);
         static_assert(std::is_convertible_v<pred_retval_t, bool>);
 
