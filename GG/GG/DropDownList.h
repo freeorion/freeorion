@@ -155,15 +155,15 @@ public:
     std::shared_ptr<Row> Erase(iterator it, bool signal = false); ///< removes and returns \a it from the list, or 0 if no such row exists
     void Clear();                               ///< empties the list
 
-    [[nodiscard]] iterator begin();             ///< returns an iterator to the first list row
-    [[nodiscard]] iterator end();               ///< returns an iterator to the imaginary row one past the last one
+    [[nodiscard]] iterator begin() noexcept;    ///< returns an iterator to the first list row
+    [[nodiscard]] iterator end() noexcept;      ///< returns an iterator to the imaginary row one past the last one
 
     [[nodiscard]] Row& GetRow(std::size_t n);   ///< returns a reference to the Row at row index \a n; not range-checked.  \note This function is O(n).
 
-    void Select(iterator it);            ///< selects row-item \a it in the list
-    void Select(std::size_t n);          ///< selects row-item \a it in the list
+    void Select(iterator it);                   ///< selects row-item \a it in the list
+    void Select(std::size_t n);                 ///< selects row-item \a it in the list
 
-    void SetInteriorColor(Clr c);        ///< sets the color painted into the client area of the control
+    void SetInteriorColor(Clr c) noexcept;      ///< sets the color painted into the client area of the control
 
     /** sets the style flags for the list to \a s (invalidates currently
         selected item). \see GG::ListBoxStyle */

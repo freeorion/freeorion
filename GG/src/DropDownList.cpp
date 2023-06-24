@@ -825,10 +825,10 @@ void DropDownList::Clear()
     RequirePreRender();
 }
 
-DropDownList::iterator DropDownList::begin()
+DropDownList::iterator DropDownList::begin() noexcept
 { return LB()->begin(); }
 
-DropDownList::iterator DropDownList::end()
+DropDownList::iterator DropDownList::end() noexcept
 { return LB()->end(); }
 
 DropDownList::Row& DropDownList::GetRow(std::size_t n)
@@ -840,7 +840,7 @@ void DropDownList::Select(iterator it)
 void DropDownList::Select(std::size_t n)
 { m_modal_picker->Select(n < LB()->NumRows() ? std::next(LB()->begin(), n) : LB()->end()); }
 
-void DropDownList::SetInteriorColor(Clr c)
+void DropDownList::SetInteriorColor(Clr c) noexcept
 { LB()->SetInteriorColor(c); }
 
 void DropDownList::SetStyle(Flags<ListBoxStyle> s)
