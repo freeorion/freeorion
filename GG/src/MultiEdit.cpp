@@ -154,34 +154,41 @@ void MultiEdit::Render()
             if (multiselected && low_cursor_pos.first <= row && row <= high_cursor_pos.first) {
                 // idx0 to idx1 is unhilited, idx1 to idx2 is hilited, and
                 // idx2 to idx3 is unhilited; each range may be empty
-                CPSize idx0(0);
-                CPSize idx1 = low_cursor_pos.first == row ? std::max(idx0, low_cursor_pos.second) : idx0;
-                CPSize idx3(line.char_data.size());
-                // TODO: review if the following adjustment to idx3 is truly necessary; tests suggest it is not
-                // if it is determined necessary, please comment why
-                if (LineEndsWithEndlineCharacter(lines, row, text))
-                    --idx3;
-                CPSize idx2 = high_cursor_pos.first == row ? std::min(high_cursor_pos.second, idx3) : idx3;
+                const CPSize idx0{0};
+                const CPSize idx1 = low_cursor_pos.first == row ? std::max(idx0, low_cursor_pos.second) : idx0;
+                const bool ends_with_newline = LineEndsWithEndlineCharacter(lines, row, text);
+                // TODO: review if the following adjustment to idx3 is truly necessary; tests suggest it is not. if it is determined necessary, please comment why
+                const CPSize idx3{line.char_data.size() - (ends_with_newline ? 1u : 0u)}; 
+                const CPSize idx2 = high_cursor_pos.first == row ? std::min(high_cursor_pos.second, idx3) : idx3;
 
                 // draw text
                 glColor(text_color_to_use);
-                Pt text_lr((idx0 != idx1 ? initial_text_x_pos + line.char_data[Value(idx1 - 1)].extent : text_pos.x), text_pos.y + HEIGHT);
+                const X text_l = (idx0 == idx1) ? text_pos.x :
+                                                  initial_text_x_pos + line.char_data[Value(idx1 - 1)].extent;
+                Pt text_lr{text_l, text_pos.y + HEIGHT};
                 font->RenderText(text_pos, text_lr, text, text_format, lines, state, row, idx0, row + 1, idx1);
                 text_pos.x = text_lr.x;
 
                 // draw hiliting
-                text_lr.x = idx1 != idx2 ? initial_text_x_pos + line.char_data[Value(idx2 - 1)].extent : text_lr.x;
+                if (idx1 != idx2)
+                    text_lr.x = initial_text_x_pos + line.char_data[Value(idx2 - 1)].extent;
                 FlatRectangle(text_pos, Pt(text_lr.x, text_pos.y + LINESKIP), hilite_color_to_use, CLR_ZERO, 0);
+
                 // draw hilited text
                 glColor(sel_text_color_to_use);
                 font->RenderText(text_pos, text_lr, text, text_format, lines, state, row, idx1, row + 1, idx2);
                 text_pos.x = text_lr.x;
 
                 glColor(text_color_to_use);
-                text_lr.x = idx2 != idx3 ? initial_text_x_pos + line.char_data[Value(idx3 - 1)].extent : text_lr.x;
-                // render the following all the way through to the end of the line, even if ends with newline,
-                // so that any tages associated with that finel character will be processed.
-                font->RenderText(text_pos, text_lr, text, text_format, lines, state, row, idx2, row + 1, CPSize(line.char_data.size()));
+                if (idx2 != idx3) {
+                    text_lr.x = initial_text_x_pos + line.char_data[Value(idx3 - 1)].extent;
+
+                    // render the text after the highlighted text, all the way through to the end
+                    // of the line, even if ends with newline, so that any tags associated with that
+                    // final character will be processed.
+                    font->RenderText(text_pos, text_lr, text, text_format, lines, state,
+                                     row, idx2, row + 1, CPSize(line.char_data.size()));
+                }
 
             } else { // just draw normal text on this line
                 Pt text_lr = text_pos + Pt(line.char_data.back().extent, HEIGHT);
