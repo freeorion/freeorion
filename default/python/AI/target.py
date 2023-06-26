@@ -60,7 +60,7 @@ class TargetPlanet(Target):
         planet = universe.getPlanet(self.id)
         return TargetSystem(planet.systemID)
 
-    def get_object(self):
+    def get_object(self) -> "fo.planet":
         """
         :rtype fo.planet:
         """
@@ -80,7 +80,7 @@ class TargetSystem(Target):
         """
         return self
 
-    def get_object(self):
+    def get_object(self) -> "fo.system":
         return fo.getUniverse().getSystem(self.id)
 
 
