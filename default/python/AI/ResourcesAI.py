@@ -114,7 +114,11 @@ class PlanetFocusInfo:
         If focus produces best, return a positive rating, giving how much its output is better than second best.
         If another focus produces better, returns a negative rating, giving how much it is worse than best.
         """
+
         sqrt_population = min(1.0, self.planet.currentMeterValue(fo.meterType.population)) ** 0.5
+        if sqrt_population == 0:
+            sqrt_population = 0.0001  # prevent Zero division
+
         if focus == self.rated_foci[0][1]:
             return self.best_over_second() / sqrt_population
         else:
@@ -184,7 +188,7 @@ class PlanetFocusManager:
         if bureaucracy not in fo.getEmpire().adoptedPolicies or focus == pinfo.current_focus:
             return False  # No bureaucracy or no change
         last_turn = fo.currentTurn() - 1
-        if pinfo.planet.LastTurnColonized == last_turn or pinfo.planet.LastTurnConquered == last_turn:
+        if pinfo.planet.lastTurnColonized == last_turn or pinfo.planet.lastTurnConquered == last_turn:
             return False  # no penalty for newly settled/conquered planets
         if pinfo.current_output.influence + 0.5 < pinfo.possible_output[pinfo.current_focus].influence:
             # avoid repeated focus changes: When influence production already is below target, do not
