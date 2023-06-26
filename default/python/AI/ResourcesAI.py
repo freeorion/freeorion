@@ -114,7 +114,6 @@ class PlanetFocusInfo:
         If focus produces best, return a positive rating, giving how much its output is better than second best.
         If another focus produces better, returns a negative rating, giving how much it is worse than best.
         """
-
         sqrt_population = min(1.0, self.planet.currentMeterValue(fo.meterType.population)) ** 0.5
         if sqrt_population == 0:
             sqrt_population = 0.0001  # prevent Zero division
