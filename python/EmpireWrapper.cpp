@@ -170,6 +170,16 @@ namespace {
         return out;
     }
 
+    auto MapFlatSetFloatToMapSetFloat(const auto& in) -> std::map<std::set<int>, float>
+    {
+        std::map<std::set<int>, float> out;
+        std::transform(in.begin(), in.end(), std::inserter(out, out.end()),
+                       [](auto set_float)
+                       { return std::pair{std::set<int>{set_float.first.begin(), set_float.first.end()},
+                                          set_float.second}; });
+        return out;
+    }
+
     template <typename T, typename AoC>
     std::vector<T> ToVec(const boost::container::flat_set<T, AoC>& in)
     { return std::vector<T>(in.begin(), in.end()); }
@@ -410,7 +420,7 @@ namespace FreeOrionPython {
             .add_property("totalSpent",             &ProductionQueue::TotalPPsSpent)
             .add_property("empireID",               &ProductionQueue::EmpireID)
 
-            .add_property("allocatedPP",            make_function(&ProductionQueue::AllocatedPP,        py::return_internal_reference<>()))
+            .add_property("allocatedPP",            +[](const ProductionQueue& p) -> std::map<std::set<int>, float> { return MapFlatSetFloatToMapSetFloat(p.AllocatedPP()); })
         ;
 
         ////////////////////
