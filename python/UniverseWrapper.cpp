@@ -403,7 +403,6 @@ namespace FreeOrionPython {
                                                 py::return_value_policy<py::reference_existing_object>(),
                                                 "Returns the ship design (ShipDesign) with the indicated name (string).")
 
-            .add_property("allObjectIDs",       make_function(ObjectIDs<UniverseObject>,py::return_value_policy<py::return_by_value>()))
             .add_property("fleetIDs",           make_function(ObjectIDs<Fleet>,         py::return_value_policy<py::return_by_value>()))
             .add_property("systemIDs",          make_function(ObjectIDs<System>,        py::return_value_policy<py::return_by_value>()))
             .add_property("fieldIDs",           make_function(ObjectIDs<Field>,         py::return_value_policy<py::return_by_value>()))
@@ -731,10 +730,7 @@ namespace FreeOrionPython {
             .add_property("counterClockwiseNextPlanetType", &Planet::CounterClockwiseNextPlanetType)
             .add_property("nextLargerPlanetSize",           &Planet::NextLargerPlanetSize)
             .add_property("nextSmallerPlanetSize",          &Planet::NextSmallerPlanetSize)
-            .add_property("orbitalPeriod",                  &Planet::OrbitalPeriod)
-            .add_property("initialOrbitalPosition",         &Planet::InitialOrbitalPosition)
             .def("OrbitalPositionOnTurn",                   &Planet::OrbitalPositionOnTurn)
-            .add_property("rotationalPeriod",               &Planet::RotationalPeriod)
             .add_property("lastTurnAttackedByShip",         &Planet::LastTurnAttackedByShip)
             .add_property("lastTurnColonized",              &Planet::LastTurnColonized)
             .add_property("lastTurnConquered",              &Planet::LastTurnConquered)
