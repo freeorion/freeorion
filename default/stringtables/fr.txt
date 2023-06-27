@@ -1325,6 +1325,24 @@ Stabilité planétaire de base
 RULE_BASELINE_PLANET_STABILITY_DESC
 Niveau de base de la [[METER_HAPPINESS]] d'une planète.
 
+RULE_INVASION_OPINION_PENALTY_SCALING
+Variation opinion d'une espèce après invasion planétaire
+
+RULE_INVASION_OPINION_PENALTY_SCALING_DESC
+Définit la pénalité d'opinion d'une espèce sur l'empire étant l'envahisseur le plus récent de planètes abritant l'espèce.
+
+RULE_SHIPS_LOST_DESTROYED_PENALTY_SCALING
+Variation opinion d'une espèce après perte ou destruction d'astronefs
+
+RULE_SHIPS_LOST_DESTROYED_PENALTY_SCALING_DESC
+Définit la pénalité d'opinion d'une espèce sur l'empire perdant ou détruisant des astronefs de combat de l'espèce.
+
+RULE_COLONIES_FOUNDED_BONUS_SCALING
+Variation opinion après colonisation
+
+RULE_COLONIES_FOUNDED_BONUS_SCALING_DESC
+Définit le bonus d'opinion d'une espèce sur l'empire fondant des colonies avec cette espèce.
+
 RULE_PROTECTION_FOCUS_STABILITY
 Bonus Stabilité du Focus Protection
 
@@ -3873,6 +3891,16 @@ Panneau planétaire
 PL_ASTEROID_BELT_OF_SYSTEM
 Astéroïdes %1%
 
+# %1% cost in IP to annex this planet
+PL_ANNEX
+Annexer (%1% PI)
+
+PL_ANNEX_FREE
+Annexer
+
+PL_CANCEL_ANNEX
+Annuler Annexion
+
 # %1% size of the population this planet is colonized with.
 # %2% maximum population this planet can support.
 PL_COLONIZE
@@ -3909,6 +3937,12 @@ PL_TYPE_SIZE
 # %4% species name for which suitability applies (Human, Trith, ...).
 PL_TYPE_SIZE_ENV
 %1% %2% (%4% : %3%)
+
+VISIBILITY
+Visibilité
+
+LAST_VISIBILITY_TURN
+Dern. Tour Visible
 
 PL_NO_VISIBILITY
 La planète n'est pas visible actuellement.
@@ -5470,6 +5504,12 @@ ID Empire
 EMPIRE_METERS
 Indicateurs :
 
+UNKNOWN_SPECIES
+Espèce inconnue
+
+UNKNOWN_EMPIRE
+Empire inconnu (%1%)
+
 RESEARCHED_TECHS
 '''Technologies recherchées : '''
 
@@ -5490,6 +5530,9 @@ Déplacement Flotte %1% vers %2%
 
 ORDER_FLEET_TRANSFER
 Transfert Flotte %1% dans %2%
+
+ORDER_ANNEX
+Annexer %1%
 
 ORDER_COLONIZE
 Coloniser %1% avec %2%
@@ -7771,6 +7814,18 @@ La population de la planète %planet% a été totalement décimée!
 SITREP_PLANET_DEPOPULATED_LABEL
 Planète détruite
 
+SITREP_PLANET_ANNEXED
+La planète %planet% a été annexée par %empire%.
+
+SITREP_PLANET_ANNEXED_LABEL
+Planète neutre annexée
+
+SITREP_PLANET_ANNEXED_FROM_OTHER_EMPIRE
+La planète %planet% a été annexée par %empire% (appartenait à %empire%).
+
+SITREP_PLANET_ANNEXED_FROM_OTHER_EMPIRE_LABEL
+Planète d'un empire annexée
+
 SITREP_PLANET_COLONIZED
 La planète %planet% a été colonisée par l'espèce %species%.
 
@@ -8472,6 +8527,9 @@ Opinions des Empires :
 
 OPINIONS_OF_OTHER_SPECIES
 Opinions des autres Espèces :
+
+SPECIES_OPINIONS
+Opinions de l'Espèce :
 
 
 ##
@@ -11339,6 +11397,12 @@ DESC_NONE_NOT  # translated
 DESC_NOOP  # translated
 (NoOp)
 
+DESC_EMPIRE_HAS_ADOPTED_POLICY
+''' appartenant à un empire ayant adopté %1%'''
+
+DESC_EMPIRE_HAS_ADOPTED_POLICY_NOT
+''' appartenant à un empire n'ayant pas adopté %1%'''
+
 # %1% name of the empire this condition applies to.
 DESC_EMPIRE_AFFILIATION_SELF
 ''' appartenant à l'empire %1%'''
@@ -11859,6 +11923,12 @@ DESC_ORDERED_BOMBARDED
 DESC_ORDERED_BOMBARDED_NOT
 ''' n'étant pas bombardé par un objet %1%'''
 
+DESC_ORDERED_ANNEXED
+''' étant annexé'''
+
+DESC_ORDERED_ANNEXED_NOT
+''' n'étant pas annexé'''
+
 # %1% content type description, eg. species, building, focus, tech
 # %2% name of specific scripted content, eg. Human, Imperial Palace, Industry Focus, The Physicsal Brain
 DESC_LOCATION
@@ -12030,37 +12100,49 @@ DESC_NUMBER_OF_NOT
 # %2% FIXME
 # %3% FIXME
 DESC_MAX_NUMBER_OF
-''' qui est un des objets %1% ayant la plus grande valeur de%2% et de%3%'''
+''' étant un des %1% objets ayant la plus grande valeur de%2% et%3%'''
 
 # %1% FIXME
 # %2% FIXME
 # %3% FIXME
 DESC_MAX_NUMBER_OF_NOT
-''' n'étant pas un des objets %1% ayant la plus grande valeur de%2% et de%3%'''
+''' n'étant pas un des %1% objets ayant la plus grande valeur de%2% et%3%'''
 
 # %1% FIXME
 # %2% FIXME
 # %3% FIXME
 DESC_MIN_NUMBER_OF
-''' qui est un des objets %1% ayant la plus faible valeur de%2% et de%3%'''
+''' étant un des %1% objets ayant la plus faible valeur de%2% et%3%'''
 
 # %1% FIXME
 # %2% FIXME
 # %3% FIXME
 DESC_MIN_NUMBER_OF_NOT
-''' n'étant pas un des objets %1% ayant la plus faible valeur de%2% et de%3%'''
+''' n'étant pas un des %1% objets ayant la plus faible valeur de%2% et%3%'''
 
-# %1% FIXME
-# %2% FIXME
-# %3% FIXME
+# %1% number of objects to match (upper limit)
+# %2% description of the sort key determined for each object
+# %3% description of the selection condition for potentially matched objects
 DESC_MODE_NUMBER_OF
-''' qui est un des objets %1% ayant la valeur la plus répandue de%2% et de%3%'''
+''' étant un des %1% objets ayant la(les) valeur(s) la plus répandue de%2% et%3%'''
 
-# %1% FIXME
-# %2% FIXME
-# %3% FIXME
+# %1% number of objects to match (upper limit)
+# %2% description of the sort key determined for each object
+# %3% description of the selection condition for potentially matched objects
 DESC_MODE_NUMBER_OF_NOT
-''' n'étant pas un des objets %1% ayant la valeur la plus répandue de%2% et de%3%'''
+''' n'étant pas un des %1% objets ayant la(les) valeur(s) la plus répandue de%2% et%3%'''
+
+# %1% number of objects to match (upper limit)
+# %2% description of the sort key determined for each object
+# %3% description of the selection condition for potentially matched objects
+DESC_UNIQUE_OF
+''' étant un des %1% objets ayant des valeurs uniques de%2% et%3%'''
+
+# %1% number of objects to match (upper limit)
+# %2% description of the sort key determined for each object
+# %3% description of the selection condition for potentially matched objects
+DESC_UNIQUE_OF_NOT
+''' n'étant pas un des %1% objets ayant des valeurs uniques de%2% et%3%'''
 
 # %1% FIXME
 DESC_VALUE_TEST
@@ -16755,6 +16837,12 @@ Corps Dragon
 
 SH_STRONG_MONSTER_BODY_DESC
 Corps massif disposant d'armes naturelles terrifiantes et d'une carapace résistante.
+
+SH_GUARD_ACIREMA_BODY
+Coque Gardien Acirema
+
+SH_GUARD_ACIREMA_BODY_DESC
+[[SH_ENERGY_FRIGATE_DESC]]
 
 SH_GUARD_MONSTER_BODY
 Coque Gardien
