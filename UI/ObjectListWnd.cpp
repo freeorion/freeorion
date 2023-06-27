@@ -559,7 +559,7 @@ private:
             push_back(m_label);
         }
 
-        const std::string&  GetKey() const { return m_condition_key; }
+        const auto& GetKey() const noexcept { return m_condition_key; }
     private:
         std::string m_condition_key;
         std::shared_ptr<CUILabel> m_label;

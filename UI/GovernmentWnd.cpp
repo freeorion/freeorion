@@ -1277,7 +1277,7 @@ void GovernmentWnd::MainPanel::SetPolicy(const std::string& policy_name, unsigne
 
 namespace {
     // returns vector of category names and indices within category
-    std::vector<std::pair<int, std::string_view>> ConcatenatedCategorySlots(const Empire* empire) {
+    auto ConcatenatedCategorySlots(const Empire* empire) {
         std::vector<std::pair<int, std::string_view>> retval;
         if (!empire)
             return retval;
@@ -1297,7 +1297,7 @@ namespace {
             return {0, ""};
 
         auto empire_slots = ConcatenatedCategorySlots(empire);
-        if (overall_slot >= static_cast<int>(empire_slots.size()))
+        if (overall_slot >= static_cast<int>(empire_slots.size()) || overall_slot < 0)
             return {0, ""};
 
         return empire_slots[overall_slot];
