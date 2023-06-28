@@ -20,6 +20,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/uuid/nil_generator.hpp>
 
+#include <numeric>
 #if __has_include(<charconv>)
 #include <charconv>
 #else
@@ -260,7 +261,13 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
                 elko.second.UpdateCurrentDestroyedObjects(destroyed_ids_it->second);
         }
     }
-    DebugLogger() << "Universe " << serializing_label << " done";
+    DebugLogger() << "Universe " << serializing_label << " done. Objects take at least: " <<
+        [&u]() {
+            const auto& objs = u.Objects().allWithIDs();
+            auto sz = std::transform_reduce(objs.begin(), objs.end(), 0u, std::plus<>{},
+                                            [](const auto& obj) { return sizeof(obj) + obj.second->SizeInMemory(); });
+            return sz;
+        }()/1024u << " kB";
 }
 
 
