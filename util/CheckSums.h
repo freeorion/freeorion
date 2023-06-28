@@ -19,6 +19,14 @@ namespace CheckSums {
     constexpr bool csc_float = noexcept(noexcept(std::log10(std::abs(43.0f))));
     FO_COMMON_API void CheckSumCombine(uint32_t& sum, float t) noexcept(csc_float);
 
+    // unify char checksum for archs with singed and unsigned char
+    constexpr void CheckSumCombine(uint32_t& sum, char c)
+    {
+        signed char t = static_cast<signed char>(c);
+        sum += static_cast<uint32_t>(t >= 0 ? t : -t);
+        sum %= CHECKSUM_MODULUS;
+    }
+
     // integeral types
     template <typename T> requires (std::is_signed_v<T>)
     constexpr void CheckSumCombine(uint32_t& sum, T t)
