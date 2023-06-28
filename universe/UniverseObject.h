@@ -169,6 +169,8 @@ public:
     [[nodiscard]] int                         CreationTurn() const noexcept { return m_created_on_turn; }; ///< returns game turn on which object was created
     [[nodiscard]] int                         AgeInTurns(int current_turn) const;   ///< returns elapsed number of turns between turn object was created and current game turn
 
+    [[nodiscard]] virtual std::size_t         SizeInMemory() const;
+
     mutable StateChangedSignalType StateChangedSignal; ///< emitted when the UniverseObject is altered in any way
 
     /** copies data from \a copied_object to this object, limited to only copy
@@ -205,7 +207,6 @@ public:
     void RemoveSpecial(const std::string& name);                    ///< removes the Special \a name from this object, if it is already present
     void SetSpecialCapacity(std::string name, float capacity, int turn);
 
-public:
     /** Sets current value of max, target and unpaired meters in in this
       * UniverseObject to Meter::DEFAULT_VALUE.  This should be done before any
       * Effects that alter these meter(s) act on the object. */

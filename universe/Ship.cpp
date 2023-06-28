@@ -552,6 +552,18 @@ std::vector<float> Ship::AllWeaponsMaxShipDamage(const ScriptingContext& context
                                     shield_DR, true, launch_fighters);
 }
 
+std::size_t Ship::SizeInMemory() const {
+    std::size_t retval = UniverseObject::SizeInMemory();
+    retval += sizeof(Ship) - sizeof(UniverseObject);
+
+    retval += sizeof(PartMeterMap::value_type)*m_part_meters.capacity();
+    for (const auto& [name_type, ignored] : m_part_meters)
+        retval += name_type.first.capacity()*sizeof(decltype(name_type.first)::value_type);
+    retval += m_species_name.capacity()*sizeof(decltype(m_species_name)::value_type);
+
+    return retval;
+}
+
 void Ship::SetFleetID(int fleet_id) {
     if (m_fleet_id != fleet_id) {
         m_fleet_id = fleet_id;

@@ -99,6 +99,8 @@ public:
       * assuming the ship has been resupplied recently (i.e. this uses Max*Meters) */
     [[nodiscard]] std::vector<float> AllWeaponsMaxShipDamage(const ScriptingContext& context, float shield_DR = 0.0f, bool include_fighters = true) const;
 
+    [[nodiscard]] std::size_t        SizeInMemory() const override;
+
     void SetFleetID(int fleet_id); ///< sets the ID of the fleet the ship resides in
     void SetArrivedOnTurn(int turn);
     void Resupply(int turn);

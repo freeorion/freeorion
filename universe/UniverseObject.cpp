@@ -344,6 +344,16 @@ void UniverseObject::SetSpecialCapacity(std::string name, float capacity, int tu
                            std::forward_as_tuple(turn, capacity));
 }
 
+std::size_t UniverseObject::SizeInMemory() const {
+    std::size_t retval = 0;
+    retval += sizeof(UniverseObject);
+    retval += sizeof(MeterMap::value_type)*m_meters.capacity();
+    retval += sizeof(SpecialMap::value_type)*m_specials.capacity();
+    for (const auto& [name, ignored] : m_specials)
+        retval += name.capacity()*sizeof(decltype(name)::value_type);
+    return retval;
+}
+
 void UniverseObject::RemoveSpecial(const std::string& name)
 { m_specials.erase(name); }
 
