@@ -169,6 +169,13 @@ namespace {
                        [](auto view_int) { return std::pair{std::string{view_int.first}, view_int.second}; });
         return out;
     }
+    auto ViewVecToStringMap(const std::vector<std::pair<std::string_view, int>>& in) -> std::map<std::string, int>
+    {
+        std::map<std::string, int> out;
+        std::transform(in.begin(), in.end(), std::inserter(out, out.end()),
+                       [](auto view_int) { return std::pair{std::string{view_int.first}, view_int.second}; });
+        return out;
+    }
 
     auto MapFlatSetFloatToMapSetFloat(const auto& in) -> std::map<std::set<int>, float>
     {
@@ -335,12 +342,12 @@ namespace FreeOrionPython {
 
             .add_property("totalPolicySlots",       make_function(
                                                         +[](const Empire& e) -> std::map<std::string, int>
-                                                        { return ViewMapToStringMap(e.TotalPolicySlots()); },
+                                                        { return ViewVecToStringMap(e.TotalPolicySlots()); },
                                                         py::return_value_policy<py::return_by_value>()
                                                     ))
             .add_property("emptyPolicySlots",       make_function(
                                                         +[](const Empire& e) -> std::map<std::string, int>
-                                                        { return ViewMapToStringMap(e.EmptyPolicySlots()); },
+                                                        { return ViewVecToStringMap(e.EmptyPolicySlots()); },
                                                         py::return_value_policy<py::return_by_value>()
                                                     ))
 

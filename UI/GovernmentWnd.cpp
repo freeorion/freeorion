@@ -1316,7 +1316,7 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
 
     ScriptingContext context;
 
-    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     auto empire = context.GetEmpire(empire_id);  // may be nullptr
     if (!empire) {
         ErrorLogger() << "GovernmentWnd::MainPanel::SetPolicy has no empire to set policies for";
@@ -1324,15 +1324,17 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
     }
 
     // what category and slot is policy being adopted in
-    auto [adopt_in_category_slot, adopt_in_category] = OverallSlotToCategoryAndSlot(empire.get(), slot);
+    const auto [adopt_in_category_slot, adopt_in_category] = OverallSlotToCategoryAndSlot(empire.get(), slot);
     if (adopt_in_category.empty()) {
         ErrorLogger() << "GovernmentWnd::MainPanel::SetPolicy specified invalid slot: " << slot;
         return;
     }
 
     // what slots are available...
-    auto total_policy_slots = empire->TotalPolicySlots();
-    auto total_policy_slots_it = total_policy_slots.find(adopt_in_category);
+    const auto total_policy_slots = empire->TotalPolicySlots();
+    const auto total_policy_slots_it = std::find_if(total_policy_slots.begin(), total_policy_slots.end(),
+                                                    [aic{adopt_in_category}](const auto& cat_slots)
+                                                    { return cat_slots.first == aic; });
     if (total_policy_slots_it == total_policy_slots.end()) {
         ErrorLogger() << "GovernmentWnd::MainPanel::SetPolicy asked to adopt in category " << adopt_in_category << " which has no slots";
         return;
@@ -1348,11 +1350,11 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
     // category -> slot in category -> policy in slot
     auto initial_cats_slots_policy_adopted = empire->CategoriesSlotsPoliciesAdopted();
     auto& init_slots_adopted{initial_cats_slots_policy_adopted[adopt_in_category]};
-    std::string_view initial_policy_name{init_slots_adopted[adopt_in_category_slot]};
+    const std::string_view initial_policy_name{init_slots_adopted[adopt_in_category_slot]};
 
     // check if adopting or revoking a policy. If adopting, then pass along the name of
     // the policy to adopt. If de-adeopting, then pass the name of the policy to de-adopt.
-    bool adopt = policy;
+    const bool adopt = policy;
 
     if (!adopt && initial_policy_name.empty()) {
         DebugLogger() << "GovernmentWnd::MainPanel::SetPolicy requested to de-adopt policy in slot " << slot

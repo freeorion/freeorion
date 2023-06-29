@@ -93,8 +93,8 @@ public:
     [[nodiscard]] bool        PolicyPrereqsAndExclusionsOK(std::string_view name, int current_turn) const;
     [[nodiscard]] bool        PolicyAffordable(std::string_view name, const ScriptingContext& context) const;
     [[nodiscard]] double      ThisTurnAdoptedPoliciesCost(const ScriptingContext& context) const;
-    [[nodiscard]] std::map<std::string_view, int, std::less<>> TotalPolicySlots() const; // how many total slots does this empire have in each category
-    [[nodiscard]] std::map<std::string_view, int, std::less<>> EmptyPolicySlots() const; // how many empty slots does this empire have in each category
+    [[nodiscard]] std::vector<std::pair<std::string_view, int>> TotalPolicySlots() const; // how many total slots does this empire have in each category
+    [[nodiscard]] std::vector<std::pair<std::string_view, int>> EmptyPolicySlots() const; // how many empty slots does this empire have in each category
 
     /** Returns the set of Tech names available to this empire and the turns on
       * which they were researched. */

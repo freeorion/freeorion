@@ -212,7 +212,15 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
     }
 
     // get slots for category requested for policy to be adopted in
-    const auto total_slots_in_category = TotalPolicySlots()[category];
+    const auto total_slots = TotalPolicySlots();
+    const auto cat_slot_it = std::find_if(total_slots.begin(), total_slots.end(),
+                                          [category](const auto& cat_slots) { return cat_slots.first == category; });
+    if (cat_slot_it == total_slots.end()) {
+        ErrorLogger() << "Empire::AdoptPolicy can't adopt policy: " << name
+                      << " into unrecognized category " << category;
+        return;
+    }
+    const auto total_slots_in_category = cat_slot_it->second;
     if (total_slots_in_category < 1 || slot >= total_slots_in_category) {
         ErrorLogger() << "Empire::AdoptPolicy can't adopt policy: " << name
                       << "  into category: " << category << "  in slot: " << slot
@@ -308,7 +316,11 @@ void Empire::UpdatePolicies(bool update_cumulative_adoption_time, int current_tu
         const auto& [adoption_turn, slot_in_category, category] = adoption_info;
         (void)adoption_turn; // quiet warning
         const auto& slot_count = category_slot_policy_counts[category][slot_in_category]++; // count how many policies in this slot of this category...
-        if (slot_count > 1 || slot_in_category >= total_category_slot_counts[category])     // if multiple policies in a slot, or slot a policy is in is too high, mark category as problematic...
+        const auto cat_slot_it = std::find_if(total_category_slot_counts.begin(), total_category_slot_counts.end(),
+                                              [cat{std::string_view{category}}](const auto& cat_slots)
+                                              { return cat_slots.first == cat; });
+        const auto cat_slots_count = (cat_slot_it != total_category_slot_counts.end()) ? cat_slot_it->second : 0;
+        if (slot_count > 1 || slot_in_category >= cat_slots_count) // if multiple policies in a slot, or slot a policy is in is too high, mark category as problematic...
             categories_needing_rearrangement.insert(category);
     }
 
@@ -316,6 +328,9 @@ void Empire::UpdatePolicies(bool update_cumulative_adoption_time, int current_tu
     // and remove the excess policies
     for (const auto& cat : categories_needing_rearrangement) {
         DebugLogger() << "Rearranging poilicies in category " << cat << ":";
+        const auto cat_slots_it = std::find_if(total_category_slot_counts.begin(), total_category_slot_counts.end(),
+                                               [cat](const auto& cat_slots){ return cat == cat_slots.first; });
+        const auto cat_slot_count = (cat_slots_it != total_category_slot_counts.end()) ? cat_slots_it->second : 0;
 
         auto policies_temp{m_adopted_policies};
 
@@ -344,7 +359,7 @@ void Empire::UpdatePolicies(bool update_cumulative_adoption_time, int current_tu
         int added = 0;
         for (auto& [ignored, turn, policy_name] : slots_turns_policies) {
             (void)ignored;
-            if (added >= total_category_slot_counts[cat])
+            if (added >= cat_slot_count)
                 break;  // can't add more...
             int new_slot = added++;
             DebugLogger() << "... Policy " << policy_name << " re-added in slot " << new_slot;
@@ -528,29 +543,38 @@ bool Empire::PolicyAffordable(std::string_view name, const ScriptingContext& con
     }
 }
 
-std::map<std::string_view, int, std::less<>> Empire::TotalPolicySlots() const { // TODO: return flat_map
-    std::map<std::string_view, int, std::less<>> retval;
+std::vector<std::pair<std::string_view, int>> Empire::TotalPolicySlots() const {
+    const auto cats_slot_meters = PolicyCategoriesSlotsMeters();
+    std::vector<std::pair<std::string_view, int>> retval;
+    retval.reserve(cats_slot_meters.size());
+
     // collect policy slot category meter values and return
-    for (auto& cat_and_slot_strings : PolicyCategoriesSlotsMeters()) {
+    for (auto& [cat, cat_slots_meter_string] : cats_slot_meters) {
+        const std::string_view csms{cat_slots_meter_string};
         auto it = std::find_if(m_meters.begin(), m_meters.end(),
-                               [&](const auto& e) { return e.first == cat_and_slot_strings.second; });
+                               [csms](const auto& e) { return e.first == csms; });
         if (it == m_meters.end()) {
-            ErrorLogger() << "Empire doesn't have policy category slot meter with name: " << cat_and_slot_strings.second;
+            ErrorLogger() << "Empire doesn't have policy category slot meter with name: " << cat_slots_meter_string;
             continue;
         }
-        retval[cat_and_slot_strings.first] = static_cast<int>(it->second.Initial());
+        retval.emplace_back(cat, static_cast<int>(it->second.Initial()));
     }
+    std::sort(retval.begin(), retval.end());
     return retval;
 }
 
-std::map<std::string_view, int, std::less<>> Empire::EmptyPolicySlots() const {
+std::vector<std::pair<std::string_view, int>> Empire::EmptyPolicySlots() const {
     // get total slots empire has available
     auto retval = TotalPolicySlots();
 
     // subtract used policy categories
     for (auto& [ignored, adoption_info] : m_adopted_policies) {
         (void)ignored; // quiet warning
-        retval[adoption_info.category]--;
+        const std::string_view cat = adoption_info.category;
+        const auto it = std::find_if(retval.begin(), retval.end(),
+                                     [cat](const auto& rv) { return rv.first == cat; });
+        if (it != retval.end())
+            it->second--;
     }
 
     // return difference

@@ -349,8 +349,10 @@ std::size_t UniverseObject::SizeInMemory() const {
     retval += sizeof(UniverseObject);
     retval += sizeof(MeterMap::value_type)*m_meters.capacity();
     retval += sizeof(SpecialMap::value_type)*m_specials.capacity();
-    for (const auto& [name, ignored] : m_specials)
-        retval += name.capacity()*sizeof(decltype(name)::value_type);
+    for (const auto& [name, ignored] : m_specials) {
+        (void)ignored;
+        retval += sizeof(decltype(name)::value_type)*name.capacity();
+    }
     return retval;
 }
 

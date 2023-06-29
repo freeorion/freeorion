@@ -608,6 +608,19 @@ std::map<int, double> Planet::EmpireGroundCombatForces() const {
     return empire_troops;
 }
 
+std::size_t Planet::SizeInMemory() const {
+    std::size_t retval = UniverseObject::SizeInMemory();
+    retval += sizeof(Planet) - sizeof(UniverseObject);
+
+    retval += sizeof(decltype(m_species_name)::value_type)*m_species_name.capacity();
+    retval += sizeof(decltype(m_focus)::value_type)*m_focus.capacity();
+    retval += sizeof(decltype(m_focus_turn_initial)::value_type)*m_focus_turn_initial.capacity();
+    retval += sizeof(decltype(m_buildings)::value_type)*m_buildings.capacity();
+    retval += sizeof(decltype(m_surface_texture)::value_type)*m_surface_texture.capacity();
+
+    return retval;
+}
+
 double Planet::AnnexationCost(int empire_id, const ScriptingContext& context) const {
     if (m_species_name.empty())
         return 0.0;
