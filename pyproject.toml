@@ -177,6 +177,7 @@ builtins = [
     "MoveTowards",
     "NamedReal",
     "NamedRealLookup",
+    "NamedIntegerLookup",
     "Neutron",
     "NoEffect",
     "NoObject",
@@ -287,4 +288,5 @@ builtins = [
     "WithinDistance",
     "WithinStarlaneJumps",
     "Yellow",
+    "GalaxyMonsterFrequency",
 ]

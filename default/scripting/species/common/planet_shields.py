@@ -4,6 +4,16 @@ from common.priorities import (
     TARGET_AFTER_2ND_SCALING_PRIORITY,
 )
 
+
+def NATIVE_PLANETARY_SHIELDS(strength: int):
+    return EffectsGroup(
+        scope=IsSource,
+        activation=Planet() & Unowned,
+        accountinglabel="NATIVE_PLANETARY_SHIELDS_LABEL",
+        effects=(SetMaxShield(value=Value + strength)),
+    )
+
+
 STANDARD_SHIELD_GROWTH = EffectsGroup(  # increase 1 per turn, up to max
     scope=IsSource,
     activation=Planet()

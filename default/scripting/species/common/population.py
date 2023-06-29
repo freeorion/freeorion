@@ -223,3 +223,15 @@ BASIC_POPULATION = [
 ]
 
 AVERAGE_POPULATION = BASIC_POPULATION
+
+GOOD_POPULATION = [
+    *BASIC_POPULATION,
+    EffectsGroup(
+        description="GOOD_POPULATION_DESC",
+        scope=IsSource,
+        activation=Planet(),
+        accountinglabel="GOOD_POPULATION_LABEL",
+        priority=TARGET_POPULATION_SCALING_PRIORITY,
+        effects=SetTargetPopulation(value=Value + 0.25 * Abs(float, Value)),
+    ),
+]

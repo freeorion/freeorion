@@ -160,3 +160,16 @@ AVERAGE_DEFENSE_TROOPS = [
     *UNSTABLE_REBEL_TROOPS,
     *PROTECTION_FOCUS_TROOPS,
 ]
+
+GREAT_DEFENSE_TROOPS = [
+    *BASIC_DEFENSE_TROOPS,
+    EffectsGroup(
+        description="GREAT_DEFENSE_TROOPS_DESC",
+        scope=IsSource,
+        activation=Planet(),
+        effects=SetMaxTroops(value=Value * 2),
+        accountinglabel="GREAT_TROOPS_LABEL",
+    ),
+    *UNSTABLE_REBEL_TROOPS,
+    *PROTECTION_FOCUS_TROOPS,
+]
