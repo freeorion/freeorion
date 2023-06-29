@@ -27,3 +27,9 @@ SUPPLY_DISCONNECTED_INFLUENCE_MALUS = 1
 
 # empire id used for unowned planets/ships - as defined in Universe.cpp(?)
 UNOWNED_EMPIRE_ID = -1
+
+
+MINIMUM_DISTANCE_EMPIRE_CHECK = ~WithinStarlaneJumps(
+    jumps=NamedIntegerLookup(name="MIN_MONSTER_DISTANCE"),
+    condition=System & Contains(Planet() & OwnedBy(affiliation=AnyEmpire)),
+)

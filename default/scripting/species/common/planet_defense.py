@@ -30,3 +30,12 @@ AVERAGE_PLANETARY_DEFENSE = [
     PROTECTION_FOCUS_DEFENSE,
     STANDARD_DEFENSE_GROWTH,
 ]
+
+
+def NATIVE_PLANETARY_DEFENSE(defence: int):
+    return EffectsGroup(
+        scope=IsSource,
+        activation=Planet() & Unowned,
+        accountinglabel="NATIVE_PLANETARY_DEFENSE_LABEL",
+        effects=SetMaxDefense(value=Value + defence),
+    )
