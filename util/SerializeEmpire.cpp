@@ -171,9 +171,9 @@ void Empire::serialize(Archive& ar, const unsigned int version)
             m_available_ship_hulls.insert(boost::container::ordered_unique_range, buf.begin(), buf.end());
 
         } else {
-            ar  & BOOST_SERIALIZATION_NVP(m_available_building_types)
-                & BOOST_SERIALIZATION_NVP(m_available_ship_parts)
-                & BOOST_SERIALIZATION_NVP(m_available_ship_hulls);
+            ar  & boost::serialization::make_nvp("m_available_building_types", m_available_building_types)
+                & boost::serialization::make_nvp("m_available_part_types", m_available_ship_parts)
+                & boost::serialization::make_nvp("m_available_hull_types", m_available_ship_hulls);
         }
     }
 
