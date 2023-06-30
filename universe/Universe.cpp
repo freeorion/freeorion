@@ -2536,17 +2536,12 @@ namespace {
                     continue;
 
                 // get all starlanes emanating from this system, and loop through them
-                for (auto& lane : system->StarlanesWormholes()) {
-                    bool is_wormhole = lane.second;
-                    if (is_wormhole)
-                        continue;
-
+                for (const auto lane_end_sys_id : system->Starlanes()) {
                     // find entry for system on other end of starlane in visibility
                     // map, and upgrade to basic visibility if not already at that
                     // leve, so that starlanes will be visible if either system it
                     // ends at is partially visible or better
-                    int lane_end_sys_id = lane.first;
-                    auto lane_end_vis_it = vis_map.find(lane_end_sys_id);
+                    const auto lane_end_vis_it = vis_map.find(lane_end_sys_id);
                     if (lane_end_vis_it == vis_map.end())
                         vis_map[lane_end_sys_id] = Visibility::VIS_BASIC_VISIBILITY;
                     else if (lane_end_vis_it->second < Visibility::VIS_BASIC_VISIBILITY)

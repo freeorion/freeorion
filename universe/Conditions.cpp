@@ -8923,12 +8923,9 @@ namespace {
             if (system == lane_end_sys1 || system == lane_end_sys2)
                 continue;
 
-            const auto& sys_existing_lanes = system->StarlanesWormholes();
-
             // check all existing lanes of currently-being-checked system
-            for (const auto& [land_end_3_id, is_wormhole] : sys_existing_lanes) {
-                (void)is_wormhole;
-                auto lane_end_sys3 = objects.getRaw<System>(land_end_3_id);
+            for (const auto& land_end_3_id : system->Starlanes()) {
+                const auto* lane_end_sys3 = objects.getRaw<System>(land_end_3_id);
                 if (!lane_end_sys3)
                     continue;
                 // don't need to check against existing lanes that include one
@@ -9023,16 +9020,14 @@ namespace {
             // check if any of the proposed lanes are too close to any already-
             // present lanes of the candidate system
             //TraceLogger(conditions) << "... Checking lanes of candidate system: " << candidate->UniverseObject::Name() << "\n";
-            for (const auto& lane : candidate_sys->StarlanesWormholes()) {
-                auto candidate_existing_lane_end_sys = m_objects.getRaw<System>(lane.first);
+            for (const auto& lane : candidate_sys->Starlanes()) {
+                auto candidate_existing_lane_end_sys = m_objects.getRaw<System>(lane);
                 if (!candidate_existing_lane_end_sys)
                     continue;
 
                 // check this existing lane against potential lanes to all destination systems
                 for (auto* dest_sys : m_destination_systems) {
-                    if (LanesAngularlyTooClose(candidate_sys, candidate_existing_lane_end_sys,
-                                               dest_sys))
-                    {
+                    if (LanesAngularlyTooClose(candidate_sys, candidate_existing_lane_end_sys, dest_sys)) {
                         //TraceLogger(conditions) << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << dest_sys->UniverseObject::Name() << " due to existing lane to " << candidate_existing_lane_end_sys->UniverseObject::Name() << "\n";
                         return false;
                     }
@@ -9046,8 +9041,8 @@ namespace {
             for (auto* dest_sys : m_destination_systems) {
                 // check this destination system's existing lanes against a lane
                 // to the candidate system
-                for (const auto& dest_lane : dest_sys->StarlanesWormholes()) {
-                    auto dest_lane_end_sys = m_objects.getRaw<const System>(dest_lane.first);
+                for (const auto& dest_lane : dest_sys->Starlanes()) {
+                    auto dest_lane_end_sys = m_objects.getRaw<const System>(dest_lane);
                     if (!dest_lane_end_sys)
                         continue;
 

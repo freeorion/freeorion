@@ -69,12 +69,10 @@ public:
     [[nodiscard]] StarType      NextOlderStarType() const noexcept;
     [[nodiscard]] StarType      NextYoungerStarType() const noexcept;
 
-    [[nodiscard]] auto          Orbits() const noexcept      { return m_orbits.size(); } ///< number of orbits in this system
+    [[nodiscard]] auto          Orbits() const noexcept       { return m_orbits.size(); }     ///< number of orbits in this system
 
-    [[nodiscard]] int           NumStarlanes() const;                       ///< returns the number of starlanes from this system to other systems
-    [[nodiscard]] int           NumWormholes() const;                       ///< returns the number of wormholes from this system to other systems
-    [[nodiscard]] bool          HasStarlaneTo(int id) const;                ///< returns true if there is a starlane from this system to the system with ID number \a id
-    [[nodiscard]] bool          HasWormholeTo(int id) const;                ///< returns true if there is a wormhole from this system to the system with ID number \a id
+    [[nodiscard]] int           NumStarlanes() const noexcept { return m_starlanes.size(); }; ///< number of starlanes from this system to other systems
+    [[nodiscard]] bool          HasStarlaneTo(int id) const; ///< true if there is a starlane from this system to the system with ID number \a id
 
     [[nodiscard]] auto&         ObjectIDs() const noexcept        { return m_objects; }
     [[nodiscard]] auto&         PlanetIDs() const noexcept        { return m_planets; }
@@ -89,13 +87,8 @@ public:
     [[nodiscard]] bool          OrbitOccupied(int orbit) const;             ///< returns true if there is an object in \a orbit
     [[nodiscard]] std::set<int> FreeOrbits() const;                         ///< returns the set of orbit numbers that are unoccupied
 
-    [[nodiscard]] auto&         StarlanesWormholes() const noexcept { return m_starlanes_wormholes; } ///< returns map of all starlanes and wormholes; map contains keys that are IDs of connected systems, and bool values indicating whether each is a starlane (false) or a wormhole (true)
-
-    /** returns a map of the starlanes and wormholes visible to empire
-      * \a empire_id; the map contains keys that are IDs of connected systems,
-      * and bool values indicating whether each is a starlane (false) or a
-      * wormhole (true)*/
-    [[nodiscard]] std::map<int, bool>     VisibleStarlanesWormholes(int empire_id, const Universe& universe) const;
+    [[nodiscard]] auto&         Starlanes() const noexcept { return m_starlanes; }
+    [[nodiscard]] IDSet         VisibleStarlanes(int empire_id, const Universe& universe) const;
 
     [[nodiscard]] int                     LastTurnBattleHere() const noexcept { return m_last_turn_battle_here; }
 
@@ -129,9 +122,7 @@ public:
 
     void SetStarType(StarType type);     ///< sets the type of the star in this Systems to \a StarType
     void AddStarlane(int id);            ///< adds a starlane between this system and the system with ID number \a id.  \note Adding a starlane to a system to which there is already a wormhole erases the wormhole; you may want to check for a wormhole before calling this function.
-    void AddWormhole(int id);            ///< adds a wormhole between this system and the system with ID number \a id  \note Adding a wormhole to a system to which there is already a starlane erases the starlane; you may want to check for a starlane before calling this function.
     bool RemoveStarlane(int id);         ///< removes a starlane between this system and the system with ID number \a id.  Returns false if there was no starlane from this system to system \a id.
-    bool RemoveWormhole(int id);         ///< removes a wormhole between this system and the system with ID number \a id.  Returns false if there was no wormhole from this system to system \a id.
 
     void SetLastTurnBattleHere(int turn) noexcept { m_last_turn_battle_here = turn; }
 
@@ -154,7 +145,7 @@ private:
     IDSet               m_fleets;
     IDSet               m_ships;
     IDSet               m_fields;
-    std::map<int, bool> m_starlanes_wormholes;      ///< the ints represent the IDs of other connected systems; the bools indicate whether the connection is a wormhole (true) or a starlane (false)
+    IDSet               m_starlanes; ///< IDs of other connected systems
     int                 m_last_turn_battle_here = INVALID_GAME_TURN;  ///< the turn on which there was last a battle in this system
 
     std::string         m_overlay_texture;          // intentionally not serialized; set by local effects

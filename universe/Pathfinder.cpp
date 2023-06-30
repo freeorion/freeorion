@@ -24,10 +24,6 @@
 
 
 namespace {
-    constexpr double WORMHOLE_TRAVEL_DISTANCE = 0.1; // the effective distance for ships travelling along a wormhole, for determining how much of their speed is consumed by the jump
-}
-
-namespace {
     /** distance_matrix_storage implements the storage and the mutexes
         for distance in number of hops from system to system.
 
@@ -507,11 +503,9 @@ namespace {
                 decltype(edges)::sequence_type edges_vec;
                 edges_vec.reserve(objects.size<System>() * 10); // guesstimate
                 for (const auto& sys : objects.allRaw<System>()) {
-                    auto sys_id{sys->ID()};
-                    for (auto& [lane_id, is_wormhole] : sys->StarlanesWormholes()) {
-                        (void)is_wormhole; // quiet unused variable_warning
+                    const auto sys_id{sys->ID()};
+                    for (auto lane_id : sys->Starlanes())
                         edges_vec.emplace_back(std::min(sys_id, lane_id), std::max(sys_id, lane_id));
-                    }
                 }
                 // sort and ensure uniqueness of entries before moving into flat_set
                 std::sort(edges_vec.begin(), edges_vec.end());
@@ -1149,7 +1143,7 @@ bool Pathfinder::SystemHasVisibleStarlanes(int system_id, const ObjectMap& objec
 
 bool Pathfinder::PathfinderImpl::SystemHasVisibleStarlanes(int system_id, const ObjectMap& objects) const {
     if (auto system = objects.get<System>(system_id))
-        if (!system->StarlanesWormholes().empty())
+        if (system->NumStarlanes() > 0)
             return true;
     return false;
 }
@@ -1478,7 +1472,7 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(const ObjectMap& objects,
         auto system1 = objects.get<System>(system1_id);
 
         // add edges and edge weights
-        for (auto const& [lane_dest_id, is_wormhole] : system1->StarlanesWormholes()) {
+        for (auto const lane_dest_id : system1->Starlanes()) {
 
             // skip null lanes and only add edges in one direction, to avoid
             // duplicating edges ( since this is an undirected graph, A->B
@@ -1496,12 +1490,8 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(const ObjectMap& objects,
                 boost::add_edge(system1_index, lane_dest_graph_index, new_graph_impl->system_graph);
             //DebugLogger() << "Adding graph edge from " << system1_id << " to " << lane_dest_id;
 
-            if (add_success) {   // if this is a non-duplicate starlane or wormhole
-                if (is_wormhole)
-                    edge_weight_map[std::move(edge_descriptor)] = WORMHOLE_TRAVEL_DISTANCE;
-                else
-                    edge_weight_map[std::move(edge_descriptor)] = LinearDistance(system1_id, lane_dest_id, objects);
-            }
+            if (add_success) // if this is a non-duplicate starlane or wormhole
+                edge_weight_map[std::move(edge_descriptor)] = LinearDistance(system1_id, lane_dest_id, objects);
         }
     }
 

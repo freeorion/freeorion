@@ -1104,14 +1104,8 @@ namespace {
             return py_starlanes;
         }
         // get list of systems the source system has starlanes to
-        // we actually get a map of ids and a bool indicating if the entry is a starlane (false) or wormhole (true)
-        // iterate over the map we got, only copy starlanes to the python list object we are going to return
-        for (const auto& [lane_to_id, is_wormhole] : system->StarlanesWormholes()) {
-            // if the bool value is false, we have a starlane
-            // in this case copy the destination system id to our starlane list
-            if (!is_wormhole)
-                py_starlanes.append(lane_to_id);
-        }
+        for (const auto lane_to_id : system->Starlanes())
+            py_starlanes.append(lane_to_id);
         return py_starlanes;
     }
 

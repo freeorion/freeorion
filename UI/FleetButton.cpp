@@ -333,24 +333,27 @@ void FleetButton::LayoutIcons() {
         m_selection_indicator->SizeMove(graphic_ul, graphic_ul + subtexture_sz);
     }
 
+    const auto client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const auto& u{context.ContextUniverse()};
+    const auto& o{context.ContextObjects()};
+
     // refresh fleet button tooltip
     if (m_fleet_blockaded) {
         if (m_fleets.empty())
             return;
 
         // can just pick first fleet because all fleets in system should have same exits
-        auto fleet = context.ContextObjects().get<Fleet>(m_fleets.front());
+        const auto fleet = o.get<Fleet>(m_fleets.front());
 
         std::string available_exits;
         int available_exits_count = 0;
 
-        for (const auto& target_system_id : context.ContextObjects().get<System>(fleet->SystemID())->StarlanesWormholes()) {
-            if (fleet->BlockadedAtSystem(fleet->SystemID(), target_system_id.first, context))
+        for (const auto target_system_id : o.get<System>(fleet->SystemID())->Starlanes()) {
+            if (fleet->BlockadedAtSystem(fleet->SystemID(), target_system_id, context))
                 continue;
 
-            if (auto target_system = context.ContextObjects().get<System>(target_system_id.first)) {
-                available_exits.append("\n").append(target_system->ApparentName(
-                    GGHumanClientApp::GetApp()->EmpireID(), context.ContextUniverse()));
+            if (auto target_system = o.get<System>(target_system_id)) {
+                available_exits.append("\n").append(target_system->ApparentName(client_empire_id, u));
                 available_exits_count++;
             }
         }

@@ -1293,9 +1293,10 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
 void Empire::RecordPendingLaneUpdate(int start_system_id, int dest_system_id, const ObjectMap& objects) {
     if (!m_supply_unobstructed_systems.contains(start_system_id)) {
         m_pending_system_exit_lanes[start_system_id].insert(dest_system_id);
-    } else { // if the system is unobstructed, mark all its lanes as avilable
-        for (const auto& lane : objects.getRaw<System>(start_system_id)->StarlanesWormholes())
-            m_pending_system_exit_lanes[start_system_id].insert(lane.first); // will add both starlanes and wormholes
+    } else if (const auto* sys = objects.getRaw<System>(start_system_id)) {
+        // if the system is unobstructed, mark all its lanes as avilable
+        const auto& lanes = sys->Starlanes();
+        m_pending_system_exit_lanes[start_system_id].insert(lanes.begin(), lanes.end());
     }
 }
 
@@ -1334,7 +1335,7 @@ std::map<int, std::set<int>> Empire::KnownStarlanes(const Universe& universe) co
     auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
     for (const auto& sys : universe.Objects().allRaw<System>()) {
         int start_id = sys->ID();
-        TraceLogger(supply) << "system " << start_id << " has up to " << sys->StarlanesWormholes().size() << " lanes / wormholes";
+        TraceLogger(supply) << "system " << start_id << " has up to " << sys->NumStarlanes() << " lanes / wormholes";
 
         // exclude lanes starting at systems known to be destroyed
         if (known_destroyed_objects.contains(start_id)) {
@@ -1342,10 +1343,8 @@ std::map<int, std::set<int>> Empire::KnownStarlanes(const Universe& universe) co
             continue;
         }
 
-        for (const auto& lane : sys->StarlanesWormholes()) {
-            int end_id = lane.first;
-            bool is_wormhole = lane.second;
-            if (is_wormhole || known_destroyed_objects.contains(end_id))
+        for (const auto& end_id : sys->Starlanes()) {
+            if (known_destroyed_objects.contains(end_id))
                 continue;   // is a wormhole, not a starlane, or is connected to a known destroyed system
             retval[start_id].insert(end_id);
             retval[end_id].insert(start_id);
@@ -1358,22 +1357,20 @@ std::map<int, std::set<int>> Empire::KnownStarlanes(const Universe& universe) co
     return retval;
 }
 
-std::map<int, std::set<int>> Empire::VisibleStarlanes(const Universe& universe) const {
+std::map<int, std::set<int>> Empire::VisibleStarlanes(const Universe& universe) const { // TODO: return better type
     std::map<int, std::set<int>> retval;   // compile starlanes leading into or out of each system
 
     const ObjectMap& objects = universe.Objects();
 
-    for (const auto& sys : objects.allRaw<System>()) {
-        int start_id = sys->ID();
+    for (const auto* sys : objects.allRaw<System>()) {
+        const auto start_id = sys->ID();
 
         // is system visible to this empire?
         if (universe.GetObjectVisibilityByEmpire(start_id, m_id) <= Visibility::VIS_NO_VISIBILITY)
             continue;
 
         // get system's visible lanes for this empire
-        for (auto& [other_end_id, is_wormhole] : sys->VisibleStarlanesWormholes(m_id, universe)) {
-            if (is_wormhole)
-                continue;   // is a wormhole, not a starlane
+        for (const auto& other_end_id : sys->VisibleStarlanes(m_id, universe)) {
             retval[start_id].insert(other_end_id);
             retval[other_end_id].insert(start_id);
         }

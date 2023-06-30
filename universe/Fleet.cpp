@@ -1198,8 +1198,8 @@ bool Fleet::Blockaded(const ScriptingContext& context) const {
     if (m_next_system != INVALID_OBJECT_ID)
         return BlockadedAtSystem(SystemID(), m_next_system, context);
 
-    for (const auto& target_system : system->StarlanesWormholes()) {
-        if (BlockadedAtSystem(this->SystemID(), target_system.first, context))
+    for (const auto target_system : system->Starlanes()) {
+        if (BlockadedAtSystem(this->SystemID(), target_system, context))
             return true;
     }
 

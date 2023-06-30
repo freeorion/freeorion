@@ -3722,6 +3722,9 @@ namespace {
     {
         const auto& this_client_known_destroyed_objects =
             GetUniverse().EmpireKnownDestroyedObjectIDs(GGHumanClientApp::GetApp()->EmpireID());
+        const auto& empires = Empires();
+        const auto& sm = GetSupplyManager();
+        const auto& o = Objects();
         const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("ui.map.starlane.color");
 
         std::set<std::pair<int, int>> already_rendered_full_lanes;
@@ -3733,24 +3736,19 @@ namespace {
             if (this_client_known_destroyed_objects.contains(system_id))
                 continue;
 
-            auto start_system = Objects().get<System>(system_id);
+            auto start_system = o.get<System>(system_id);
             if (!start_system) {
                 ErrorLogger() << "GetFullLanesToRender couldn't get system with id " << system_id;
                 continue;
             }
 
             // add system's starlanes
-            for (const auto& render_lane : start_system->StarlanesWormholes()) {
-                bool lane_is_wormhole = render_lane.second;
-                if (lane_is_wormhole) continue; // at present, not rendering wormholes
-
-                int lane_end_sys_id = render_lane.first;
-
+            for (const auto lane_end_sys_id : start_system->Starlanes()) {
                 // skip lanes to systems that don't actually exist
                 if (this_client_known_destroyed_objects.contains(lane_end_sys_id))
                     continue;
 
-                auto* dest_system = Objects().getRaw<const System>(render_lane.first);
+                auto* dest_system = o.getRaw<const System>(lane_end_sys_id);
                 if (!dest_system)
                     continue;
 
@@ -3771,9 +3769,8 @@ namespace {
                 // determine colour(s) for lane based on which empire(s) can transfer resources along the lane.
                 // todo: multiple rendered lanes (one for each empire) when multiple empires use the same lane.
                 GG::Clr lane_colour = UNOWNED_LANE_COLOUR;    // default colour if no empires transfer resources along starlane
-                for (const auto& entry : Empires()) {
-                    const auto& empire = entry.second;
-                    const auto& resource_supply_lanes = GetSupplyManager().SupplyStarlaneTraversals(entry.first);
+                for (const auto& [empire_id, empire] : empires) {
+                    const auto& resource_supply_lanes = sm.SupplyStarlaneTraversals(empire_id);
 
                     std::pair<int, int> lane_forward{start_system->ID(), dest_system->ID()};
                     std::pair<int, int> lane_backward{dest_system->ID(), start_system->ID()};
@@ -3827,21 +3824,19 @@ namespace {
             if (this_client_known_destroyed_objects.contains(system_id))
                 continue;
 
-            auto* start_system = context.ContextObjects().getRaw<System>(system_id);
+            const auto* const start_system = context.ContextObjects().getRaw<System>(system_id);
             if (!start_system) {
                 ErrorLogger() << "GetFullLanesToRender couldn't get system with id " << system_id;
                 continue;
             }
 
             // add system's starlanes
-            for (const auto& [lane_end_sys_id, lane_is_wormhole] : start_system->StarlanesWormholes()) {
-                if (lane_is_wormhole) continue; // at present, not rendering wormholes
-
+            for (const auto lane_end_sys_id : start_system->Starlanes()) {
                 // skip lanes to systems that don't actually exist
                 if (this_client_known_destroyed_objects.contains(lane_end_sys_id))
                     continue;
 
-                auto* dest_system = Objects().getRaw<const System>(lane_end_sys_id);
+                const auto* const dest_system = context.ContextObjects().getRaw<const System>(lane_end_sys_id);
                 if (!dest_system)
                     continue;
                 //std::cout << "colouring lanes between " << start_system->Name() << " and " << dest_system->Name() << std::endl;
@@ -3882,12 +3877,14 @@ namespace {
         }
     }
 
-    void PrepObstructedLaneTraversalsToRender(const std::unordered_map<int, std::shared_ptr<SystemIcon>>& sys_icons,
-                                              int empire_id,
-                                              std::set<std::pair<int, int>>& rendered_half_starlanes,
+    void PrepObstructedLaneTraversalsToRender(const auto& sys_icons, int empire_id,
+                                              std::set<std::pair<int, int>>& rendered_half_starlanes, // TODO: pass as better container...
                                               GG::GL2DVertexBuffer& starlane_vertices,
                                               GG::GLRGBAColorBuffer& starlane_colors)
     {
+        static_assert(std::is_same_v<int, std::decay_t<decltype(sys_icons.begin()->first)>>);
+        static_assert(std::is_same_v<SystemIcon, std::decay_t<decltype(*sys_icons.begin()->second)>>);
+
         auto this_empire = GetEmpire(empire_id);
         if (!this_empire)
             return;
@@ -3914,17 +3911,12 @@ namespace {
             }
 
             // add system's starlanes
-            for (const auto& render_lane : start_system->StarlanesWormholes()) {
-                bool lane_is_wormhole = render_lane.second;
-                if (lane_is_wormhole) continue; // at present, not rendering wormholes
-
-                int lane_end_sys_id = render_lane.first;
-
+            for (const auto lane_end_sys_id : start_system->Starlanes()) {
                 // skip lanes to systems that don't actually exist
                 if (this_client_known_destroyed_objects.contains(lane_end_sys_id))
                     continue;
 
-                auto dest_system = Objects().get<System>(render_lane.first);
+                auto dest_system = Objects().get<System>(lane_end_sys_id);
                 if (!dest_system)
                     continue;
                 //std::cout << "colouring lanes between " << start_system->Name() << " and " << dest_system->Name() << std::endl;
@@ -3988,17 +3980,12 @@ namespace {
             }
 
             // add system's starlanes
-            for (const auto& render_lane : start_system->StarlanesWormholes()) {
-                bool lane_is_wormhole = render_lane.second;
-                if (lane_is_wormhole) continue; // at present, not rendering wormholes
-
-                const int lane_end_sys_id = render_lane.first;
-
+            for (const auto lane_end_sys_id : start_system->Starlanes()) {
                 // skip lanes to systems that don't actually exist
                 if (this_client_known_destroyed_objects.contains(lane_end_sys_id))
                     continue;
 
-                auto dest_system = Objects().get<System>(render_lane.first);
+                auto dest_system = Objects().get<System>(lane_end_sys_id);
                 if (!dest_system)
                     continue;
 
@@ -5654,9 +5641,8 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
             int end_id = route.back();
             auto end_sys = objects.get<System>(end_id);
 
-            if (!begin_sys->HasStarlaneTo(end_id) && !begin_sys->HasWormholeTo(end_id) &&
-                !end_sys->HasStarlaneTo(begin_id) && !end_sys->HasWormholeTo(begin_id))
-            { continue; }
+            if (!begin_sys->HasStarlaneTo(end_id) && !end_sys->HasStarlaneTo(begin_id))
+                continue;
         }
 
         // if actually ordering fleet movement, not just prospectively previewing, ... do so

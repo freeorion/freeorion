@@ -792,14 +792,24 @@ void serialize(Archive& ar, System& obj, unsigned int const version)
     };
     std::for_each(id_sets.begin(), id_sets.end(), serialize_flat_set);
 
-    ar  & make_nvp("m_starlanes_wormholes", obj.m_starlanes_wormholes);
+    if (Archive::is_loading::value && version < 2) {
+        obj.m_starlanes.clear();
+        std::map<int, bool> lanes_wormholes;
+        ar  & make_nvp("m_starlanes_wormholes", lanes_wormholes);
+        std::transform(lanes_wormholes.begin(), lanes_wormholes.end(),
+                       std::inserter(obj.m_starlanes, obj.m_starlanes.end()),
+                       [](const auto& id_w) { return id_w.first; });
+    } else {
+        Serialize(ar, "m_starlanes", obj.m_starlanes);
+    }
+
     ar  & make_nvp("m_last_turn_battle_here", obj.m_last_turn_battle_here);
     if constexpr (Archive::is_loading::value)
         obj.m_system_id = obj.ID(); // override old value that was stored differently previously...
 }
 
 BOOST_CLASS_EXPORT(System)
-BOOST_CLASS_VERSION(System, 1)
+BOOST_CLASS_VERSION(System, 2)
 
 template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, System&, unsigned int const);
 template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, System&, unsigned int const);
