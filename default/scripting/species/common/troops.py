@@ -168,7 +168,6 @@ GREAT_DEFENSE_TROOPS = [
         scope=IsSource,
         activation=Planet(),
         effects=SetMaxTroops(value=Value * 2),
-        accountinglabel="GREAT_TROOPS_LABEL",
     ),
     *UNSTABLE_REBEL_TROOPS,
     *PROTECTION_FOCUS_TROOPS,

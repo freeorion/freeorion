@@ -20,6 +20,7 @@ Species(
     name="SP_BEIGEGOO",
     description="SP_BEIGEGOO_DESC",
     gameplay_description="SP_BEIGEGOO_GAMEPLAY_DESC",
+    native=True,
     tags=[
         "ROBOTIC",
         "GOOD_POPULATION",

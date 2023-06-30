@@ -17,7 +17,7 @@ DEFAULT_NATIVE_DEFENSE = [
             Contains(
                 Planet() & HasSpecial(name="MODERATE_TECH_NATIVES_SPECIAL")
                 | Planet() & HasSpecial(name="HIGH_TECH_NATIVES_SPECIAL")
-                | Planet() & HasSpecial(name="HIGH_TECH_NATIVES_SPECIAL")
+                | HasSpecies() & HasTag(name="PRIMITIVE")
             )
         ),
         effects=[
