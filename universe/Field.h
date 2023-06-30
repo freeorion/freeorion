@@ -31,6 +31,8 @@ public:
     [[nodiscard]] bool                  InField(std::shared_ptr<const UniverseObject> obj) const;
     [[nodiscard]] bool                  InField(double x, double y) const;
 
+    [[nodiscard]] std::size_t           SizeInMemory() const override;
+
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
     void Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id = ALL_EMPIRES) override;

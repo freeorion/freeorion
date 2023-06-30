@@ -252,6 +252,23 @@ bool System::Contains(int object_id) const {
 std::shared_ptr<UniverseObject> System::Accept(const UniverseObjectVisitor& visitor) const
 { return visitor.Visit(std::const_pointer_cast<System>(std::static_pointer_cast<const System>(shared_from_this()))); }
 
+std::size_t System::SizeInMemory() const {
+    std::size_t retval = UniverseObject::SizeInMemory();
+    retval += sizeof(System) - sizeof(UniverseObject);
+
+    retval += sizeof(decltype(m_orbits)::value_type)*m_orbits.capacity();
+    retval += sizeof(decltype(m_objects)::value_type)*m_objects.capacity();
+    retval += sizeof(decltype(m_planets)::value_type)*m_planets.capacity();
+    retval += sizeof(decltype(m_buildings)::value_type)*m_buildings.capacity();
+    retval += sizeof(decltype(m_fleets)::value_type)*m_fleets.capacity();
+    retval += sizeof(decltype(m_ships)::value_type)*m_ships.capacity();
+    retval += sizeof(decltype(m_fields)::value_type)*m_fields.capacity();
+    retval += sizeof(decltype(m_starlanes)::value_type)*m_starlanes.capacity();
+    retval += sizeof(decltype(m_overlay_texture)::value_type)*m_overlay_texture.capacity();
+
+    return retval;
+}
+
 void System::Insert(std::shared_ptr<UniverseObject> obj, int orbit, int current_turn, const ObjectMap& objects)
 { Insert(obj.get(), orbit, current_turn, objects); }
 

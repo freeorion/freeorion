@@ -720,6 +720,16 @@ float Fleet::ResourceOutput(ResourceType type, const ObjectMap& objects) const {
 bool Fleet::UnknownRoute() const
 { return m_travel_route.size() == 1 && m_travel_route.front() == INVALID_OBJECT_ID; }
 
+std::size_t Fleet::SizeInMemory() const {
+    std::size_t retval = UniverseObject::SizeInMemory();
+    retval += sizeof(Fleet) - sizeof(UniverseObject);
+
+    retval += sizeof(decltype(m_ships)::value_type)*m_ships.capacity();
+    retval += sizeof(decltype(m_travel_route)::value_type)*m_travel_route.capacity();
+
+    return retval;
+}
+
 std::shared_ptr<UniverseObject> Fleet::Accept(const UniverseObjectVisitor& visitor) const
 { return visitor.Visit(std::const_pointer_cast<Fleet>(std::static_pointer_cast<const Fleet>(shared_from_this()))); }
 

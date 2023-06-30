@@ -111,6 +111,15 @@ bool Field::InField(double x, double y) const {
     return dist2 < radius*radius;
 }
 
+std::size_t Field::SizeInMemory() const {
+    std::size_t retval = UniverseObject::SizeInMemory();
+    retval += sizeof(Field) - sizeof(UniverseObject);
+
+    retval += sizeof(decltype(m_type_name)::value_type)*m_type_name.capacity();
+
+    return retval;
+}
+
 void Field::ResetTargetMaxUnpairedMeters() {
     UniverseObject::ResetTargetMaxUnpairedMeters();
 

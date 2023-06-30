@@ -139,6 +139,8 @@ public:
       * (via combat or they retreat). **/
     [[nodiscard]] int ArrivalStarlane() const noexcept { return m_arrival_starlane; }
 
+    [[nodiscard]] std::size_t SizeInMemory() const override;
+
     void Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id = ALL_EMPIRES) override;
     void Copy(const Fleet& copied_fleet, const Universe& universe, int empire_id = ALL_EMPIRES);
 

@@ -91,6 +91,15 @@ bool Building::ContainedBy(int object_id) const noexcept {
             ||  object_id == this->SystemID());
 }
 
+std::size_t Building::SizeInMemory() const {
+    std::size_t retval = UniverseObject::SizeInMemory();
+    retval += sizeof(Building) - sizeof(UniverseObject);
+
+    retval += sizeof(decltype(m_building_type)::value_type)*m_building_type.capacity();
+
+    return retval;
+}
+
 std::string Building::Dump(uint8_t ntabs) const {
     std::stringstream os;
     os << UniverseObject::Dump(ntabs);

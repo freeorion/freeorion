@@ -95,6 +95,9 @@ public:
     [[nodiscard]] const std::string&      OverlayTexture() const noexcept     { return m_overlay_texture; }
     [[nodiscard]] double                  OverlaySize() const noexcept        { return m_overlay_size; }  ///< size in universe units
 
+    [[nodiscard]] std::size_t             SizeInMemory() const override;
+
+
     /** fleets are inserted into system */
     mutable boost::signals2::signal<void (std::vector<int>, const ObjectMap&)> FleetsInsertedSignal;
     /** fleets are removed from system */
