@@ -6,19 +6,6 @@ from common.priorities import (
     TARGET_SCALING_PRIORITY,
 )
 
-# // param1: value
-# NATIVE_PLANETARY_TROOPS
-# '''EffectsGroup
-#             scope = Source
-#             activation = And [
-#                 Planet
-#                 Unowned
-#             ]
-#             accountinglabel = "NATIVE_PLANETARY_TROOPS_LABEL"
-#             priority = [[TARGET_EARLY_BEFORE_SCALING_PRIORITY]]
-#             effects = SetMaxTroops value = Value + @1@
-# '''
-
 UNSTABLE_REBEL_TROOPS = [
     EffectsGroup(
         scope=IsSource,

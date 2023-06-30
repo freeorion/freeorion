@@ -17992,11 +17992,6 @@ NATIVE_PLANETARY_DEFENSE_LABEL
 NATIVE_PLANETARY_SHIELDS_LABEL
 %2% Boucliers planétaires natifs
 
-# %1% FIXME
-# %2% FIXME
-NATIVE_PLANETARY_TROOPS_LABEL
-%2% Infanterie planétaire native
-
 VERY_BRIGHT_STAR
 Étoile très lumineuse
 
