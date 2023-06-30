@@ -10,6 +10,7 @@ have their future focus decided.
 from __future__ import annotations
 
 import freeOrionAIInterface as fo
+from collections.abc import Sequence
 from functools import total_ordering
 from itertools import chain
 from logging import debug, info, warning
@@ -68,6 +69,28 @@ class Output(NamedTuple):
     rating: float  # sum of all production values weighed by priorities for overall comparisons
 
 
+class FocusRating(NamedTuple):
+    rating: float
+    focus: str
+
+
+class PlanetFocusRating:
+    """
+    Best and second after the best focuses for the planet.
+    """
+
+    def __init__(self, focuses: Sequence[tuple[float, str]]):
+        """
+        Initialize object wih best and second best focuses.
+
+        There is a number of focuses equal length of the `supported_foci`
+        """
+        assert len(focuses) == len(supported_foci)
+        focuses = sorted((FocusRating(rating, focus) for rating, focus in focuses), reverse=True)
+        self.best = focuses[0]
+        self.second = focuses[1]
+
+
 @total_ordering
 class PlanetFocusInfo:
     """The current, possible and future foci and output of one planet."""
@@ -85,7 +108,7 @@ class PlanetFocusInfo:
         )
         self.possible_output = {}
         self.future_focus = self.current_focus
-        self.rated_foci = []  # list of Tuple[rating:float, focus:string], with best rated foci first
+        self.rated_foci: PlanetFocusRating = None  # initialized after the object creation
         self.options = {focus for focus in planet.availableFoci if focus in supported_foci}
 
     def __repr__(self):
@@ -102,11 +125,14 @@ class PlanetFocusInfo:
         """
         return self.planet.id < other.planet.id
 
+    def set_rated_foci(self):
+        self.rated_foci = PlanetFocusRating([(self.possible_output[focus].rating, focus) for focus in supported_foci])
+
     def rating_below_best(self, focus: str) -> float:
-        return self.possible_output[focus].rating - self.rated_foci[0][0]
+        return self.possible_output[focus].rating - self.rated_foci.best.rating
 
     def best_over_second(self) -> float:
-        return self.rated_foci[0][0] - self.rated_foci[1][0]
+        return self.rated_foci.best.rating - self.rated_foci.second.rating
 
     def evaluate(self, focus: str) -> float:
         """
@@ -118,7 +144,7 @@ class PlanetFocusInfo:
         if sqrt_population == 0:
             sqrt_population = 0.0001  # prevent Zero division
 
-        if focus == self.rated_foci[0][1]:
+        if focus == self.rated_foci.best.focus:
             return self.best_over_second() / sqrt_population
         else:
             return self.rating_below_best(focus) / sqrt_population
@@ -134,7 +160,9 @@ class PlanetFocusManager:
         self.planet_ids = [planet.id for planet in PlanetUtilsAI.get_empire_populated_planets()]
 
         resource_timer.start("Targets")
-        self.planet_info = {pid: PlanetFocusInfo(universe.getPlanet(pid)) for pid in self.planet_ids}
+        self.planet_info: dict[PlanetId, PlanetFocusInfo] = {
+            pid: PlanetFocusInfo(universe.getPlanet(pid)) for pid in self.planet_ids
+        }
         self.baked_planet_info = {}
         aistate = get_aistate()
         self.priority_industry = aistate.get_priority(PriorityType.RESOURCE_PRODUCTION)
@@ -280,9 +308,7 @@ class PlanetFocusManager:
         universe.updateMeterEstimates(self.planet_ids)
 
         for pinfo in self.planet_info.values():
-            pinfo.rated_foci = sorted(
-                [(pinfo.possible_output[focus].rating, focus) for focus in supported_foci], reverse=True
-            )
+            pinfo.set_rated_foci()
         self.print_pinfo_table()
 
     def print_pinfo_table(self):
@@ -306,7 +332,7 @@ class PlanetFocusManager:
         for pinfo in self.planet_info.values():
             pinfo_table.add_row(
                 pinfo.planet,
-                _focus_name(pinfo.rated_foci[0][1]),
+                _focus_name(pinfo.rated_foci.best.focus),
                 output_table_format(pinfo.possible_output[INDUSTRY]),
                 output_table_format(pinfo.possible_output[RESEARCH]),
                 output_table_format(pinfo.possible_output[INFLUENCE]),
@@ -506,7 +532,7 @@ class PlanetFocusManager:
         industry_or_research = []
         for pid, pinfo in dict(self.planet_info).items():
             # Note that if focus hasn't been baked as INFLUENCE yet, it shouldn't be.
-            if pinfo.rated_foci[0][1] in (INDUSTRY, RESEARCH, INFLUENCE) and {INDUSTRY, RESEARCH} <= pinfo.options:
+            if pinfo.rated_foci.best.focus in (INDUSTRY, RESEARCH, INFLUENCE) and {INDUSTRY, RESEARCH} <= pinfo.options:
                 # sort planets:
                 # - negative values, if research is better
                 # - ratio of delta research / delta industry or vice versa as absolute value
@@ -523,7 +549,7 @@ class PlanetFocusManager:
                 industry_or_research.append((sort_value, pinfo))
             else:
                 # Either protection due to stability, or planet does not support both foci
-                self.bake_future_focus(pid, pinfo.rated_foci[0][1])
+                self.bake_future_focus(pid, pinfo.rated_foci.best.focus)
         industry_or_research.sort()
         debug(f"Assigning ind/res, candidates: {industry_or_research}")
         current_pp_target = sum(pi.possible_output[pi.current_focus].industry for pi in self.baked_planet_info.values())
