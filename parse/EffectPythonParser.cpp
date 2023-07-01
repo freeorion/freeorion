@@ -144,9 +144,8 @@ namespace {
     effect_group_wrapper insert_effects_group_(const py::tuple& args, const py::dict& kw) {
         auto scope = py::extract<condition_wrapper>(kw["scope"])();
         int priority = 100;
-        if (kw.has_key("priority")) {
+        if (kw.has_key("priority"))
             priority = py::extract<int>(kw["priority"])();
-        }
 
         std::vector<std::unique_ptr<Effect::Effect>> effects;
         auto effects_args = py::extract<py::list>(kw["effects"]);
@@ -159,9 +158,8 @@ namespace {
         }
 
         std::string stackinggroup;
-        if (kw.has_key("stackinggroup")) {
+        if (kw.has_key("stackinggroup"))
             stackinggroup = py::extract<std::string>(kw["stackinggroup"])();
-        }
 
         std::unique_ptr<Condition::Condition> activation;
         if (kw.has_key("activation")) {
@@ -173,10 +171,12 @@ namespace {
         }
 
         std::string accountinglabel;
-        if (kw.has_key("accountinglabel")) {
+        if (kw.has_key("accountinglabel"))
             accountinglabel = py::extract<std::string>(kw["accountinglabel"])();
-        }
-        // ToDo: implement other arguments later
+
+        std::string description;
+        if (kw.has_key("description"))
+            description = py::extract<std::string>(kw["description"])();
 
         return effect_group_wrapper(std::make_shared<Effect::EffectsGroup>(ValueRef::CloneUnique(scope.condition),
                                                       std::move(activation),
@@ -184,7 +184,7 @@ namespace {
                                                       std::move(accountinglabel),
                                                       std::move(stackinggroup),
                                                       priority,
-                                                      "",
+                                                      std::move(description),
                                                       ""));
     }
 
