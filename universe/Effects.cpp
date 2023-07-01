@@ -304,6 +304,8 @@ std::string EffectsGroup::Dump(uint8_t ntabs) const {
     if (!m_content_name.empty())
         retval += " // from " + m_content_name;
     retval += "\n";
+    if (!m_description.empty())
+        retval += DumpIndent(ntabs+1) + "description = \"" + m_description + "\"\n";
     retval += DumpIndent(ntabs+1) + "scope =\n";
     retval += m_scope->Dump(ntabs+2);
     if (m_activation) {
