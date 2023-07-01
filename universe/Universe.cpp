@@ -2161,6 +2161,118 @@ Universe::GetEmpiresPositionNextTurnFleetDetectionRanges(const ScriptingContext&
     return retval;
 }
 
+std::size_t Universe::SizeInMemory() const {
+    std::size_t retval = 0;
+    retval += sizeof(Universe);
+
+    retval += sizeof(decltype(m_pathfinder)::element_type);             // TODO: include internal dynamic storage in m_pathfinder
+    retval += sizeof(decltype(m_object_id_allocator)::element_type);    // TODO: include internal dynamic storage in m_object_id_allocator
+    retval += sizeof(decltype(m_design_id_allocator)::element_type);    // TODO: include internal dynamic storage in m_design_id_allocator
+    retval += sizeof(decltype(m_objects)::element_type);                // individual objects accounted separately.
+    retval += sizeof(decltype(m_empire_latest_known_objects)::value_type)*m_empire_latest_known_objects.size(); // individual latest known objects accounted separately.
+    retval += sizeof(decltype(m_destroyed_object_ids)::value_type)*m_destroyed_object_ids.size(); // TODO: this is an underestimate. probably convert to a flat_set
+
+    retval += sizeof(decltype(m_empire_object_visibility)::value_type)*m_empire_object_visibility.size(); // TODO: flat_set ?
+    for (const auto& id_ovm : m_empire_object_visibility)
+        retval += sizeof(decltype(id_ovm.second)::value_type)*id_ovm.second.size();
+
+    retval += sizeof(decltype(m_empire_object_visibility_turns)::value_type)*m_empire_object_visibility_turns.size();
+    for (const auto& id_ovtm : m_empire_object_visibility_turns) {
+        retval += sizeof(decltype(id_ovtm.second)::value_type)*id_ovtm.second.size();
+        for (const auto& id_vtm : id_ovtm.second)
+            retval += sizeof(decltype(id_vtm.second)::value_type)*id_vtm.second.size();
+    }
+
+    retval += sizeof(decltype(m_effect_specified_empire_object_visibilities)::value_type)*m_effect_specified_empire_object_visibilities.size();
+    for (const auto& id_ovrm : m_effect_specified_empire_object_visibilities) {
+        retval += sizeof(decltype(id_ovrm.second)::value_type)*id_ovrm.second.size();
+        for (const auto& id_vrm : id_ovrm.second) {
+            using id_valref_t = decltype(id_vrm.second)::value_type;
+            using valref_t = std::decay_t<decltype(*id_valref_t::second_type{})>;
+            retval += (sizeof(id_valref_t) + sizeof(valref_t))*id_vrm.second.size(); // TODO: this is an underestimate of most ValueRef sizes...
+        }
+    }
+
+    retval += sizeof(decltype(m_empire_object_visible_specials)::value_type)*m_empire_object_visible_specials.size();
+    for (const auto& id_ovsm : m_empire_object_visible_specials) {
+        retval += sizeof(decltype(id_ovsm.second))*id_ovsm.second.size();
+        for (const auto& s : id_ovsm.second)
+            retval += sizeof(decltype(s.second)::value_type)*s.second.size(); // underestimate of size of entry in set
+    }
+
+    retval += sizeof(decltype(m_empire_known_destroyed_object_ids)::value_type)*m_empire_known_destroyed_object_ids.size();
+    for (const auto& id_ids : m_empire_known_destroyed_object_ids) {
+        retval += (sizeof(decltype(id_ids.second)::value_type) + sizeof(void*))*id_ids.second.size(); // guesstimates
+        retval += sizeof(void*)*id_ids.second.bucket_count();
+    }
+
+    retval += sizeof(decltype(m_empire_stale_knowledge_object_ids)::value_type)*m_empire_stale_knowledge_object_ids.size();
+    for (const auto& id_ids : m_empire_stale_knowledge_object_ids) {
+        retval += (sizeof(decltype(id_ids.second)::value_type) + sizeof(void*))*id_ids.second.size(); // guesstimates
+        retval += sizeof(void*)*id_ids.second.bucket_count();
+    }
+
+    retval += sizeof(decltype(m_ship_designs)::value_type)*m_ship_designs.size(); // TODO: count ShipDesign dynamic data
+
+    retval += sizeof(decltype(m_empire_known_ship_design_ids)::value_type)*m_empire_known_ship_design_ids.size();
+    for (const auto& id_ids : m_empire_known_ship_design_ids)
+        retval += (sizeof(decltype(id_ids.second)::value_type) + sizeof(void*))*id_ids.second.size();  // guesstimate
+
+    retval += sizeof(decltype(m_effect_accounting_map)::value_type)*m_effect_accounting_map.size(); // will be bigger once used...
+    retval += sizeof(decltype(m_effect_discrepancy_map)::value_type)*m_effect_discrepancy_map.size(); // will be bigger once used...
+
+    retval += sizeof(decltype(m_marked_destroyed)::value_type)*m_marked_destroyed.size();
+    for (const auto& id_ids : m_marked_destroyed)
+        retval += (sizeof(decltype(id_ids.second)::value_type) + sizeof(void*))*id_ids.second.size();  // guesstimate, will be bigger once used
+
+    retval += sizeof(decltype(m_stat_records)::value_type)*m_stat_records.size();
+    for (const auto& str_map : m_stat_records) {
+        retval += (sizeof(decltype(str_map.second)::value_type) + sizeof(void*))*str_map.second.size();  // guesstimate
+        retval += sizeof(decltype(str_map.first)::value_type)*str_map.first.capacity();
+        for (const auto& id_map : str_map.second)
+            retval += (sizeof(decltype(id_map.second)::value_type) + sizeof(void*))*id_map.second.size(); // guesstimate
+    }
+
+    retval += sizeof(decltype(m_unlocked_items)::value_type)*m_unlocked_items.capacity();
+    for (const auto& ui : m_unlocked_items)
+        retval += sizeof(decltype(ui.name)::value_type)*ui.name.capacity();
+
+    retval += sizeof(decltype(m_unlocked_buildings)::value_type)*m_unlocked_buildings.capacity();
+    for (const auto& ui : m_unlocked_buildings)
+        retval += sizeof(decltype(ui.name)::value_type)*ui.name.capacity();
+
+    retval += sizeof(decltype(m_unlocked_fleet_plans)::value_type)*m_unlocked_fleet_plans.capacity();
+    for (const auto& fpp : m_unlocked_fleet_plans) {
+        if (!fpp) continue;
+        const auto& fp = *fpp;
+        retval += sizeof(fp);
+        retval += sizeof(std::decay_t<decltype(fp.Name())>::value_type)*fp.Name().capacity();
+        retval += sizeof(std::decay_t<decltype(fp.ShipDesigns())>::value_type)*fp.ShipDesigns().capacity();
+        for (const auto& sd : fp.ShipDesigns())
+            retval += sizeof(std::decay_t<decltype(sd)>::value_type)*sd.capacity();
+    }
+
+    retval += sizeof(decltype(m_monster_fleet_plans)::value_type)*m_monster_fleet_plans.capacity();
+    for (const auto& fpp : m_monster_fleet_plans) {
+        if (!fpp) continue;
+        const auto& fp = *fpp;
+        retval += sizeof(fp);
+        retval += sizeof(std::decay_t<decltype(fp.Name())>::value_type)*fp.Name().capacity();
+        retval += sizeof(std::decay_t<decltype(fp.ShipDesigns())>::value_type)*fp.ShipDesigns().capacity();
+        for (const auto& sd : fp.ShipDesigns())
+            retval += sizeof(std::decay_t<decltype(sd)>::value_type)*sd.capacity();
+    }
+
+    retval += (sizeof(decltype(m_empire_stats)::value_type) + sizeof(void*))*m_empire_stats.size();
+    for (const auto& [str, refup] : m_empire_stats) {
+        retval += sizeof(decltype(str)::value_type)*str.capacity();
+        if (refup)
+            retval += sizeof(decltype(*refup));
+    }
+
+    return retval;
+}
+
 namespace {
     std::map<int, float> GetEmpiresDetectionStrengths(const EmpireManager& empires, int empire_id = ALL_EMPIRES) {
         std::map<int, float> retval;

@@ -208,9 +208,9 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
     timer.EnterSection("latest known objects");
     ar  & make_nvp("empire_latest_known_objects", empire_latest_known_objects);
     DebugLogger() << "Universe::serialize : " << serializing_label << " empire known objects for " << empire_latest_known_objects.size() << " empires";
-    if constexpr (Archive::is_loading::value) {
+    if constexpr (Archive::is_loading::value)
         u.m_empire_latest_known_objects.swap(empire_latest_known_objects);
-    }
+
 
     timer.EnterSection("id allocator");
     if (version >= 1) {
@@ -261,13 +261,21 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
                 elko.second.UpdateCurrentDestroyedObjects(destroyed_ids_it->second);
         }
     }
-    DebugLogger() << "Universe " << serializing_label << " done. Objects take at least: " <<
-        [&u]() {
-            const auto& objs = u.Objects().allWithIDs();
-            auto sz = std::transform_reduce(objs.begin(), objs.end(), 0u, std::plus<>{},
-                                            [](const auto& obj) { return sizeof(obj) + obj.second->SizeInMemory(); });
-            return sz;
-        }()/1024u << " kB";
+    constexpr auto objects_mem_size = [](const ObjectMap& o) {
+        const auto& all_objs = o.allWithIDs<UniverseObject>();
+        return std::transform_reduce(all_objs.begin(), all_objs.end(), 0u, std::plus<>{},
+                                     [](const auto& id_obj) { return sizeof(id_obj) + id_obj.second->SizeInMemory(); });
+    };
+
+    const auto& eo = u.m_empire_latest_known_objects;
+    const auto empire_objects_mem_sz =
+        std::transform_reduce(eo.begin(), eo.end(), 0u, std::plus<>{},
+                              [](auto& o) { return objects_mem_size(o.second) + sizeof(o); });
+
+    DebugLogger() << "Universe " << serializing_label << " done. UniverseObjects take at least: "
+                  << objects_mem_size(u.Objects())/1024 << " kB and empire known objects at least: "
+                  << empire_objects_mem_sz/1024 << " kB";
+    DebugLogger() << "Universe other stuff takes at least: " << u.SizeInMemory()/1024u << " kB";
 }
 
 
