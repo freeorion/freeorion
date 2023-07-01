@@ -21,7 +21,6 @@ SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS
                         ]
                         SpeciesLikes name = ThisPolicy
                     ]
-            accountinglabel = "LIKES_POLICY_LABEL"
             effects =
                 SetSpeciesTargetOpinion
                     species = Target.Species
@@ -39,7 +38,6 @@ SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS
                         ]
                         SpeciesDislikes name = ThisPolicy
                     ]
-            accountinglabel = "LIKES_POLICY_LABEL"
             effects =
                 SetSpeciesTargetOpinion
                     species = Target.Species
