@@ -115,6 +115,8 @@ class PlanetFocusInfo:
         If another focus produces better, returns a negative rating, giving how much it is worse than best.
         """
         sqrt_population = min(1.0, self.planet.currentMeterValue(fo.meterType.population)) ** 0.5
+        if sqrt_population == 0:
+            sqrt_population = 0.0001  # prevent Zero division
         if focus == self.rated_foci[0][1]:
             return self.best_over_second() / sqrt_population
         else:
