@@ -16592,9 +16592,9 @@ SH_ORGANIC_DESC
 '''A living hull with one external slot and one internal slot.
 Organic Growth: starts with 24 [[metertype METER_STRUCTURE]], but grows an additional 24 structure over 25 turns.
 
-[[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is low and [[metertype METER_SPEED]] is high.
+[[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is high.
 
-Cheap and versatile hull able to carry out many fleet roles but likely to become obsolete as technology develops. Low detection makes it poorly suited in a scouting role but it can make a capable warship.
+Cheap and versatile hull able to carry out many fleet roles. Fuel regeneration and high [[encyclopedia FUEL_EFFICIENCY_TITLE]] makes the organic hull well suited for deep space exploration.
 
 [[LIVING_HULL_AUTO_REGEN]]
 
