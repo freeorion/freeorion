@@ -332,6 +332,12 @@ void FreeOrionNode::HandleMessage(Message&& msg) {
 
             break;
         }
+        case Message::MessageType::CHECKSUM: {
+            bool result = this->m_app->VerifyCheckSum(msg);
+            if (!result)
+                emit_signal("error", godot::String(UserString("ERROR_CHECKSUM_MISMATCH").c_str()), false);
+            break;
+        }
         default:
             std::ostringstream stream;
             stream << msg.Type();
