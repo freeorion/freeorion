@@ -80,7 +80,7 @@ Species(
         *STANDARD_SHIP_SHIELDS,
         EffectsGroup(
             scope=IsSource,
-            activation=Planet() & Turn(hight=0) & (GalaxyMaxAIAggression >= 1) & (GalaxyMonsterFrequency >= 1),
+            activation=Planet() & Turn(high=0) & (GalaxyMaxAIAggression >= 1) & (GalaxyMonsterFrequency >= 1),
             effects=Conditional(
                 condition=MINIMUM_DISTANCE_EMPIRE_CHECK & Star(type=[Blue, White, Yellow, Orange, Red]),
                 effects=[CreateShip(designname="SM_TREE")],
