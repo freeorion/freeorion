@@ -53,6 +53,12 @@ max-complexity = 10
     "E402",
     "F401",
 ]
+# Limitations for FOCS skeletons, it would be nice to solve this
+"default/scripting/*" =  ["F403", "F405"]
+
+# Since imports are empty we need to use asterisk import between skeletons
+"default/scripting/focs/*" = ["F405"]
+
 
 [tool.ruff.isort]
 extra-standard-library=["freeorion", "freeOrionAIInterface"]
@@ -248,7 +254,6 @@ builtins = [
     "Ship",
     "Small",
     "Source",
-    "Species",
     "SpeciesCensusOrdering",
     "SpeciesDislikes",
     "SpeciesEmpireTargetOpinion",
@@ -290,3 +295,27 @@ builtins = [
     "Yellow",
     "GalaxyMonsterFrequency",
 ]
+
+
+[tool.mypy]
+exclude = [
+    # Temp and tech dirs
+    "^(venv|venv_)",
+    # Not scripting directories
+    '^default/data',
+    '^default.python',
+    '^test-scripting',
+    '^check',
+    '^doc',
+    '^cmake',
+    '^msvc',
+    '^default/scripting/buildings/colonies/col_bld_gen.py'
+
+]
+
+explicit_package_bases = true
+no_site_packages = true
+
+mypy_path = "default/scripting"
+disable_error_code = ['name-defined', 'var-annotated']
+fast_module_lookup = true

@@ -25,4 +25,11 @@ repos:
         language: python
         files: 'default/stringtables/[a-z]{2}\.txt'
         types: [ text ]
-
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: 'v1.4.1'
+    hooks:
+      - id: mypy
+        name: focs.py type checks
+        args: [-v]
+        files: "default/scripting/.*.focs.py"
+        exclude: "^default/scripting/buildings/colonies/col_bld_gen.py"

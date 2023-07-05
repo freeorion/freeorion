@@ -1,5 +1,34 @@
 from common.misc import PLANET_SHIELD_FACTOR
 from common.priorities import POPULATION_OVERRIDE_PRIORITY
+from focs._effects import (
+    AnyEmpire,
+    AsteroidsType,
+    Barren,
+    Desert,
+    EffectsGroup,
+    GasGiantType,
+    GenerateSitRepMessage,
+    Good,
+    Inferno,
+    IsSource,
+    NamedReal,
+    Ocean,
+    OwnedBy,
+    Planet,
+    Radiated,
+    SetMaxShield,
+    SetMaxTroops,
+    SetPopulation,
+    Source,
+    Swamp,
+    Target,
+    Terran,
+    Toxic,
+    Tundra,
+    Turn,
+    Value,
+)
+from focs._species import *
 from species.common.empire_opinions import FIXED_OPINION_EFFECTS
 from species.common.focus import HAS_ADVANCED_FOCI
 from species.common.happiness import AVERAGE_HAPPINESS

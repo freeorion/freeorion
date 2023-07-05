@@ -1,6 +1,27 @@
 from common.misc import PLANET_DEFENSE_FACTOR, PLANET_SHIELD_FACTOR
+from focs._effects import (
+    AnyEmpire,
+    Blue,
+    Contains,
+    CreateBuilding,
+    CreateShip,
+    EffectsGroup,
+    IsSource,
+    Object,
+    OwnedBy,
+    Planet,
+    SetMaxDefense,
+    SetMaxShield,
+    SetStarType,
+    Source,
+    System,
+    Turn,
+    Value,
+    WithinStarlaneJumps,
+)
+from focs._species import *
 from species.common.empire_opinions import COMMON_OPINION_EFFECTS
-from species.common.env import RADIATED_STANDARD_EP
+from species.common.env import RADIATED_STANDARD_ENVIRONMENTS
 from species.common.focus import (
     HAS_ADVANCED_FOCI,
     HAS_GROWTH_FOCUS,
@@ -109,6 +130,6 @@ Species(
         *AVERAGE_PLANETARY_SHIELDS,
         *AVERAGE_PLANETARY_DEFENSE,
     ],
-    **RADIATED_STANDARD_EP,
+    environments=RADIATED_STANDARD_ENVIRONMENTS,
     graphic="icons/species/acirema.png",
 )

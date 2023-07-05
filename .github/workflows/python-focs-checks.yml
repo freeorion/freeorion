@@ -1,0 +1,21 @@
+name: FOCS Static checks
+on:
+  pull_request:
+    branches: [ 'master' ]
+    types: ['opened', 'reopened', 'synchronize']
+    paths:
+      - '.github/**'
+      - 'default/scripting/**'
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install development dependencies
+        run: pip install -r default/python/requirements-dev.txt
+      - name: Lint Python FOCS files with mypy
+        run: mypy .
+
