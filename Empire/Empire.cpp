@@ -24,6 +24,9 @@
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/unordered_set.hpp>
 
+#include <concepts>
+#include <numeric>
+#include <type_traits>
 
 namespace {
     constexpr float EPSILON = 0.01f;
@@ -1403,6 +1406,158 @@ float Empire::ResourceAvailable(ResourceType type) const
 
 float Empire::Population() const
 { return m_population_pool.Population(); }
+
+namespace {
+    template <typename X>
+        requires (std::is_arithmetic_v<X> || std::is_enum_v<X>)
+    std::size_t SizeOfContents(const X& x)
+    { return 0u; }
+
+    template <typename F, typename S>
+    std::size_t SizeOfContents(const std::pair<F, S>& p);
+
+    template <typename X>
+        requires requires(X x) { x.begin(); x.end(); }
+    std::size_t SizeOfContents(const X& x)
+    {
+        if constexpr (requires { x.capacity(); }) {
+            const std::size_t retval = sizeof(*x.begin())*x.capacity();
+            return std::transform_reduce(x.begin(), x.end(), retval, std::plus<std::size_t>{},
+                                         [](const auto& v) { return SizeOfContents(v); });
+
+        } else if constexpr (requires { x.size(); }) {
+            const std::size_t retval = sizeof(*x.begin())*x.size();
+            return std::transform_reduce(x.begin(), x.end(), retval, std::plus<std::size_t>{},
+                                         [](const auto& v) { return SizeOfContents(v); });
+        }
+    }
+
+    template <typename F, typename S>
+    std::size_t SizeOfContents(const std::pair<F, S>& p)
+    { return SizeOfContents(p.first) + SizeOfContents(p.second); }
+
+    // takes custom sz_of_contents as function eg. a lambda
+    template <typename X, typename Fx>
+        requires requires(X x, Fx f) { {f(x)} -> std::same_as<std::size_t>; }
+    std::size_t SizeOfContents(const X& x, const Fx& sz_of_contents)
+    { return sz_of_contents(x); }
+
+    template <typename X, typename Fx>
+        requires requires(X x, Fx f) { {f(*x.begin())} -> std::same_as<std::size_t>; x.begin(); x.end(); }
+    std::size_t SizeOfContents(const X& x, const Fx& sz_of_contents)
+    {
+        if constexpr (requires { x.capacity(); }) {
+            const std::size_t retval = (sizeof(*x.begin()) + sizeof(void*))*x.capacity();
+            return std::transform_reduce(x.begin(), x.end(), retval, std::plus<std::size_t>{}, sz_of_contents);
+        } else if constexpr (requires { x.size(); }) {
+            const std::size_t retval = (sizeof(*x.begin()) + sizeof(void*))*x.size();
+            return std::transform_reduce(x.begin(), x.end(), retval, std::plus<std::size_t>{}, sz_of_contents);
+        }
+    }
+
+    template <typename K, typename V, typename A, typename Fx>
+        requires requires(std::map<K,V,A> m, Fx f) { {f(*m.begin())} -> std::same_as<std::size_t>; }
+    std::size_t SizeOfContents(const std::map<K,V,A>& m, const Fx& sz_of_contents)
+    {
+        using value_type = typename std::decay_t<decltype(m)>::value_type;
+        const std::size_t retval = (sizeof(value_type) + sizeof(void*))*m.size(); // extra pointer space estimate for map node overhead
+        return std::transform_reduce(m.begin(), m.end(), retval, std::plus<std::size_t>{}, sz_of_contents);
+    }
+
+    template <typename K, typename V, typename A>
+    std::size_t SizeOfContents(const std::map<K,V,A>& m)
+    { return SizeOfContents(m, [](const auto& kv) { return SizeOfContents(kv); }); }
+
+    template <typename K, typename A, typename Fx>
+        requires requires(std::set<K,A> s, Fx f) { {f(*s.begin())} -> std::same_as<std::size_t>; }
+    std::size_t SizeOfContents(const std::set<K,A>& s, const Fx& sz_of_contents)
+    {
+        using value_type = typename std::decay_t<decltype(s)>::value_type;
+        const std::size_t retval = (sizeof(value_type) + sizeof(void*))*s.size(); // extra pointer space estimate for set node overhead
+        return std::transform_reduce(s.begin(), s.end(), retval, std::plus<std::size_t>{}, sz_of_contents);
+    }
+
+    template <typename K, typename A>
+    std::size_t SizeOfContents(const std::set<K,A>& s)
+    { return SizeOfContents(s, [](const auto& k) { return SizeOfContents(k); }); }
+
+    template <typename X>
+    std::size_t SizeOfContents(const std::shared_ptr<X>& p)
+    { return p ? SizeOfContents(*p) : 0u; }
+
+    template <typename X>
+    std::size_t SizeOfContents(const std::unique_ptr<X>& p)
+    { return p ? SizeOfContents(*p) : 0u; }
+
+    template <typename X>
+    std::size_t SizeOfContents(const X* p)
+    { return p ? SizeOfContents(*p) : 0u; }
+}
+
+std::size_t Empire::SizeInMemory() const {
+    std::size_t retval = sizeof(Empire);
+    std::size_t testval = sizeof(Empire);
+
+    retval += SizeOfContents(m_name);
+    retval += SizeOfContents(m_player_name);
+    constexpr auto soc_adpols = [](const decltype(m_adopted_policies)::value_type& val) { return SizeOfContents(val.first) + SizeOfContents(val.second.category); };
+    retval += SizeOfContents(m_adopted_policies, soc_adpols);
+    retval += SizeOfContents(m_initial_adopted_policies, soc_adpols);
+    retval += SizeOfContents(m_policy_adoption_total_duration);
+    retval += SizeOfContents(m_policy_adoption_current_duration);
+    retval += SizeOfContents(m_available_policies);
+    retval += SizeOfContents(m_victories);
+    retval += SizeOfContents(m_newly_researched_techs);
+    retval += SizeOfContents(m_techs);
+    retval += SizeOfContents(m_meters, [](const MeterMap::value_type& str_meter) { return SizeOfContents(str_meter.first); }); // .second is a Meter which has no non-POD contents
+    retval += SizeOfContents(m_research_queue, [](const ResearchQueue::Element& e) { return SizeOfContents(e.name); }); // rest of Element is POD
+    /*
+    std::map<std::string, float>    m_research_progress
+    ProductionQueue                 m_production_queue
+    InfluenceQueue                  m_influence_queue
+    StringFlatSet                   m_available_building_types
+    StringFlatSet                   m_available_ship_parts
+    StringFlatSet                   m_available_ship_hulls
+    std::map<int, int>              m_explored_systems
+    std::set<int>                   m_known_ship_designs
+    std::vector<SitRepEntry>        m_sitrep_entries
+    ResourcePool                    m_research_pool
+    ResourcePool                    m_industry_pool
+    ResourcePool                    m_influence_pool
+    PopulationPool                  m_population_pool
+    std::map<std::string, int>      m_ship_names_used
+    std::map<std::string, int>      m_species_ships_owned
+    std::map<int, int>              m_ship_designs_owned
+    std::map<std::string, int>      m_ship_parts_owned
+    std::map<ShipPartClass, int>    m_ship_part_class_owned
+    std::map<std::string, int>      m_species_colonies_owned
+    std::map<std::string, int>      m_building_types_owned
+    std::map<int, int>              m_ship_designs_in_production
+    std::unordered_set<int>         m_ships_destroyed
+    std::map<int, int>              m_empire_ships_destroyed;   ///< how many ships of each empire has this empire destroyed?
+    std::map<int, int>              m_ship_designs_destroyed;   ///< how many ships of each design has this empire destroyed?
+    std::map<std::string, int>      m_species_ships_destroyed;  ///< how many ships crewed by each species has this empire destroyed?
+    std::map<std::string, int>      m_species_planets_invaded;  ///< how many planets populated by each species has this empire captured?
+    std::map<std::string, int>      m_species_ships_produced;   ///< how many ships crewed by each species has this empire produced?
+    std::map<int, int>              m_ship_designs_produced;    ///< how many ships of each design has this empire produced?
+    std::map<std::string, int>      m_species_ships_lost;       ///< how mahy ships crewed by each species has this empire lost in combat?
+    std::map<int, int>              m_ship_designs_lost;        ///< how many ships of each design has this empire lost in combat?
+    std::map<std::string, int>      m_species_ships_scrapped;   ///< how many ships crewed by each species has this empire scrapped?
+    std::map<int, int>              m_ship_designs_scrapped;    ///< how many ships of each design has this empire scrapped?
+    std::map<std::string, int>      m_species_planets_depoped;  ///< how many planets populated by each species have depopulated while owned by this empire?
+    std::map<std::string, int>      m_species_planets_bombed;   ///< how many planets populated by each species has this empire bombarded?
+    std::map<std::string, int>      m_building_types_produced;  ///< how many buildings of each type has this empire produced?
+    std::map<std::string, int>      m_building_types_scrapped;  ///< how many buildings of each type has this empire scrapped?
+    std::map<int, float>            m_supply_system_ranges;         ///< number of starlane jumps away from each system (by id) supply can be conveyed.  This is the number due to a system's contents conveying supply and is computed and set by UpdateSystemSupplyRanges
+    std::set<int>                   m_supply_unobstructed_systems;  ///< ids of system that don't block supply from flowing
+    std::map<int, std::set<int>>    m_preserved_system_exit_lanes;  ///< for each system known to this empire, the set of exit lanes preserved for fleet travel even if otherwise blockaded
+    std::map<int, std::set<int>>    m_pending_system_exit_lanes;    ///< pending updates to m_preserved_system_exit_lanes
+    */
+
+    std::cout << "testval: " << testval << " retval: " << retval << std::endl;
+
+    return retval;
+}
 
 void Empire::SetResourceStockpile(ResourceType type, float stockpile) {
     switch (type) {

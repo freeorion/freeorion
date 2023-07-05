@@ -205,6 +205,8 @@ public:
     [[nodiscard]] const auto& GetPopulationPool() const noexcept { return m_population_pool; }
     [[nodiscard]] float       Population() const;                                 ///< returns total Population of empire
 
+    [[nodiscard]] virtual std::size_t SizeInMemory() const;
+
     /** If the object with id \a id is a planet owned by this empire, sets that
       * planet to be this empire's capital, and otherwise does nothing. */
     void SetCapitalID(int id, const ObjectMap& objects);
