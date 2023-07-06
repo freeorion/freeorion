@@ -56,8 +56,7 @@ Ship::Ship(int empire_id, int design_id, std::string species_name,
 #endif
         return retval;
     }();
-    for (const auto mt : ship_meter_types)
-        AddMeter(mt);
+    AddMeters(ship_meter_types);
 
     if (!design)
         return;

@@ -254,8 +254,16 @@ protected:
 
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
-    void AddMeter(MeterType meter_type); ///< inserts a meter into object as the \a meter_type meter.  Should be used by derived classes to add their specialized meters to objects
-    void Init();                         ///< adds stealth meter
+    void AddMeter(MeterType meter_type) { m_meters[meter_type]; }
+
+    void AddMeters(const auto& meter_types)
+        requires requires { meter_types.begin(); }
+    {
+        for (MeterType mt : meter_types)
+            AddMeter(mt);
+    }
+
+    void Init();
 
     /** Used by public UniverseObject::Copy and derived classes' ::Copy methods. */
     void Copy(const UniverseObject& copied_object, Visibility vis,

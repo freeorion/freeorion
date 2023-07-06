@@ -224,13 +224,6 @@ const Meter* UniverseObject::GetMeter(MeterType type) const noexcept {
     return nullptr;
 }
 
-void UniverseObject::AddMeter(MeterType meter_type) {
-    if (MeterType::INVALID_METER_TYPE == meter_type)
-        ErrorLogger() << "UniverseObject::AddMeter asked to add invalid meter type!";
-    else
-        m_meters[meter_type];
-}
-
 Visibility UniverseObject::GetVisibility(int empire_id, const EmpireIDtoObjectIDtoVisMap& v) const {
     auto empire_it = v.find(empire_id);
     if (empire_it == v.end())
