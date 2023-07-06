@@ -43,22 +43,21 @@ Ship::Ship(int empire_id, int design_id, std::string species_name,
         DebugLogger() << "Ship created with invalid species name: " << m_species_name;
 
 
-    UniverseObject::Init();
-
-    AddMeter(MeterType::METER_FUEL);
-    AddMeter(MeterType::METER_MAX_FUEL);
-    AddMeter(MeterType::METER_SHIELD);
-    AddMeter(MeterType::METER_MAX_SHIELD);
-    AddMeter(MeterType::METER_DETECTION);
-    AddMeter(MeterType::METER_STRUCTURE);
-    AddMeter(MeterType::METER_MAX_STRUCTURE);
-    AddMeter(MeterType::METER_SPEED);
-    AddMeter(MeterType::METER_TARGET_INDUSTRY);
-    AddMeter(MeterType::METER_INDUSTRY);
-    AddMeter(MeterType::METER_TARGET_RESEARCH);
-    AddMeter(MeterType::METER_RESEARCH);
-    AddMeter(MeterType::METER_TARGET_INFLUENCE);
-    AddMeter(MeterType::METER_INFLUENCE);
+    static constexpr auto ship_meter_types = []() {
+        std::array<MeterType, 15> retval{{
+            MeterType::METER_FUEL, MeterType::METER_MAX_FUEL, MeterType::METER_SHIELD, MeterType::METER_MAX_SHIELD,
+            MeterType::METER_DETECTION, MeterType::METER_STRUCTURE, MeterType::METER_MAX_STRUCTURE,
+            MeterType::METER_SPEED, MeterType::METER_TARGET_INDUSTRY, MeterType::METER_INDUSTRY,
+            MeterType::METER_TARGET_RESEARCH, MeterType::METER_RESEARCH, MeterType::METER_TARGET_INFLUENCE,
+            MeterType::METER_INFLUENCE, MeterType::METER_STEALTH  // stealth here means Universe::Init not needed
+        }};
+#if defined(__cpp_lib_constexpr_algorithms)
+        std::sort(retval.begin(), retval.end());
+#endif
+        return retval;
+    }();
+    for (const auto mt : ship_meter_types)
+        AddMeter(mt);
 
     if (!design)
         return;
