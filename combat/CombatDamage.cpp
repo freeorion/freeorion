@@ -173,9 +173,9 @@ std::vector<float> Combat::WeaponDamageImpl(
         return {};
     }
 
-    Universe::EmpireObjectVisibilityMap empire_object_vis{
+    const Universe::EmpireObjectVisibilityMap empire_object_vis{
         {source->Owner(), {{TEMPORARY_OBJECT_ID, Visibility::VIS_FULL_VISIBILITY}}}};
-    Universe::EmpireObjectVisibilityTurnMap empire_object_visibility_turns{
+    const Universe::EmpireObjectVisibilityTurnMap empire_object_visibility_turns{
         {source->Owner(), {{TEMPORARY_OBJECT_ID, {{Visibility::VIS_FULL_VISIBILITY, context.current_turn}}}}}};
 
     if (target_ships) {
