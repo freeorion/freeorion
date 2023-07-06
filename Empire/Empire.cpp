@@ -1416,6 +1416,10 @@ namespace {
     template <typename F, typename S>
     std::size_t SizeOfContents(const std::pair<F, S>& p);
 
+    template <typename X, typename Fx>
+        requires requires(X x, Fx f) { {f(x)} -> std::same_as<std::size_t>; }
+    std::size_t SizeOfContents(const X& x, const Fx& sz_of_contents);
+
     template <typename X>
         requires requires(X x) { x.begin(); x.end(); }
     std::size_t SizeOfContents(const X& x)
@@ -1496,7 +1500,6 @@ namespace {
 
 std::size_t Empire::SizeInMemory() const {
     std::size_t retval = sizeof(Empire);
-    std::size_t testval = sizeof(Empire);
 
     retval += SizeOfContents(m_name);
     retval += SizeOfContents(m_player_name);
@@ -1511,50 +1514,47 @@ std::size_t Empire::SizeInMemory() const {
     retval += SizeOfContents(m_techs);
     retval += SizeOfContents(m_meters, [](const MeterMap::value_type& str_meter) { return SizeOfContents(str_meter.first); }); // .second is a Meter which has no non-POD contents
     retval += SizeOfContents(m_research_queue, [](const ResearchQueue::Element& e) { return SizeOfContents(e.name); }); // rest of Element is POD
-    /*
-    std::map<std::string, float>    m_research_progress
-    ProductionQueue                 m_production_queue
-    InfluenceQueue                  m_influence_queue
-    StringFlatSet                   m_available_building_types
-    StringFlatSet                   m_available_ship_parts
-    StringFlatSet                   m_available_ship_hulls
-    std::map<int, int>              m_explored_systems
-    std::set<int>                   m_known_ship_designs
-    std::vector<SitRepEntry>        m_sitrep_entries
-    ResourcePool                    m_research_pool
-    ResourcePool                    m_industry_pool
-    ResourcePool                    m_influence_pool
-    PopulationPool                  m_population_pool
-    std::map<std::string, int>      m_ship_names_used
-    std::map<std::string, int>      m_species_ships_owned
-    std::map<int, int>              m_ship_designs_owned
-    std::map<std::string, int>      m_ship_parts_owned
-    std::map<ShipPartClass, int>    m_ship_part_class_owned
-    std::map<std::string, int>      m_species_colonies_owned
-    std::map<std::string, int>      m_building_types_owned
-    std::map<int, int>              m_ship_designs_in_production
-    std::unordered_set<int>         m_ships_destroyed
-    std::map<int, int>              m_empire_ships_destroyed;   ///< how many ships of each empire has this empire destroyed?
-    std::map<int, int>              m_ship_designs_destroyed;   ///< how many ships of each design has this empire destroyed?
-    std::map<std::string, int>      m_species_ships_destroyed;  ///< how many ships crewed by each species has this empire destroyed?
-    std::map<std::string, int>      m_species_planets_invaded;  ///< how many planets populated by each species has this empire captured?
-    std::map<std::string, int>      m_species_ships_produced;   ///< how many ships crewed by each species has this empire produced?
-    std::map<int, int>              m_ship_designs_produced;    ///< how many ships of each design has this empire produced?
-    std::map<std::string, int>      m_species_ships_lost;       ///< how mahy ships crewed by each species has this empire lost in combat?
-    std::map<int, int>              m_ship_designs_lost;        ///< how many ships of each design has this empire lost in combat?
-    std::map<std::string, int>      m_species_ships_scrapped;   ///< how many ships crewed by each species has this empire scrapped?
-    std::map<int, int>              m_ship_designs_scrapped;    ///< how many ships of each design has this empire scrapped?
-    std::map<std::string, int>      m_species_planets_depoped;  ///< how many planets populated by each species have depopulated while owned by this empire?
-    std::map<std::string, int>      m_species_planets_bombed;   ///< how many planets populated by each species has this empire bombarded?
-    std::map<std::string, int>      m_building_types_produced;  ///< how many buildings of each type has this empire produced?
-    std::map<std::string, int>      m_building_types_scrapped;  ///< how many buildings of each type has this empire scrapped?
-    std::map<int, float>            m_supply_system_ranges;         ///< number of starlane jumps away from each system (by id) supply can be conveyed.  This is the number due to a system's contents conveying supply and is computed and set by UpdateSystemSupplyRanges
-    std::set<int>                   m_supply_unobstructed_systems;  ///< ids of system that don't block supply from flowing
-    std::map<int, std::set<int>>    m_preserved_system_exit_lanes;  ///< for each system known to this empire, the set of exit lanes preserved for fleet travel even if otherwise blockaded
-    std::map<int, std::set<int>>    m_pending_system_exit_lanes;    ///< pending updates to m_preserved_system_exit_lanes
-    */
-
-    std::cout << "testval: " << testval << " retval: " << retval << std::endl;
+    retval += SizeOfContents(m_research_progress);
+    retval += SizeOfContents(m_production_queue, [](const ProductionQueue::Element& e) { return SizeOfContents(e.item.name); }); // rest of Element is POD
+    retval += SizeOfContents(m_influence_queue, [](const InfluenceQueue::Element& e) { return SizeOfContents(e.name); }); // rest of Element is POD
+    retval += SizeOfContents(m_available_building_types);
+    retval += SizeOfContents(m_available_ship_parts);
+    retval += SizeOfContents(m_available_ship_hulls);
+    retval += SizeOfContents(m_explored_systems);
+    retval += SizeOfContents(m_known_ship_designs);
+    retval += SizeOfContents(m_sitrep_entries, [](const SitRepEntry& r) { return SizeOfContents(r.GetIcon()) + SizeOfContents(r.GetLabelString()); });
+    constexpr auto soc_rpool = [](const ResourcePool& rp) { return SizeOfContents(rp.ObjectIDs()) + SizeOfContents(rp.Output()) + SizeOfContents(rp.Target()) + SizeOfContents(rp.Groups()); };
+    retval += SizeOfContents(m_research_pool, soc_rpool);
+    retval += SizeOfContents(m_industry_pool, soc_rpool);
+    retval += SizeOfContents(m_influence_pool, soc_rpool);
+    retval += SizeOfContents(m_population_pool, [](const PopulationPool& pp) { return SizeOfContents(pp.PopCenterIDs()); });
+    retval += SizeOfContents(m_ship_names_used);
+    retval += SizeOfContents(m_species_ships_owned);
+    retval += SizeOfContents(m_ship_designs_owned);
+    retval += SizeOfContents(m_ship_parts_owned);
+    retval += SizeOfContents(m_ship_part_class_owned);
+    retval += SizeOfContents(m_species_colonies_owned);
+    retval += SizeOfContents(m_building_types_owned);
+    retval += SizeOfContents(m_ship_designs_in_production);
+    retval += SizeOfContents(m_ships_destroyed); // TODO: overload for unordered_set
+    retval += SizeOfContents(m_empire_ships_destroyed);
+    retval += SizeOfContents(m_ship_designs_destroyed);
+    retval += SizeOfContents(m_species_ships_destroyed);
+    retval += SizeOfContents(m_species_planets_invaded);
+    retval += SizeOfContents(m_species_ships_produced);
+    retval += SizeOfContents(m_ship_designs_produced);
+    retval += SizeOfContents(m_species_ships_lost);
+    retval += SizeOfContents(m_ship_designs_lost);
+    retval += SizeOfContents(m_species_ships_scrapped);
+    retval += SizeOfContents(m_ship_designs_scrapped);
+    retval += SizeOfContents(m_species_planets_depoped);
+    retval += SizeOfContents(m_species_planets_bombed);
+    retval += SizeOfContents(m_building_types_produced);
+    retval += SizeOfContents(m_building_types_scrapped);
+    retval += SizeOfContents(m_supply_system_ranges);
+    retval += SizeOfContents(m_supply_unobstructed_systems);
+    retval += SizeOfContents(m_preserved_system_exit_lanes);
+    retval += SizeOfContents(m_pending_system_exit_lanes);
 
     return retval;
 }
