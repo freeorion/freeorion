@@ -1,3 +1,4 @@
+from focs._species import Species
 from species.common.env import BROAD_EP, INFERNO_BROAD_EP
 from species.common.focus import (
     HAS_ADVANCED_FOCI,

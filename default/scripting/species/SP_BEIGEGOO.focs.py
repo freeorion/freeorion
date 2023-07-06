@@ -1,6 +1,7 @@
 from common.misc import MINIMUM_DISTANCE_EMPIRE_CHECK
+from focs._species import *
 from species.common.empire_opinions import COMMON_OPINION_EFFECTS
-from species.common.env import RADIATED_STANDARD_EP
+from species.common.env import RADIATED_STANDARD_ENVIRONMENTS
 from species.common.focus import (
     HAS_ADVANCED_FOCI,
     HAS_INDUSTRY_FOCUS,
@@ -88,6 +89,6 @@ Species(
             ),
         ),
     ],
-    **RADIATED_STANDARD_EP,
+    environments=RADIATED_STANDARD_ENVIRONMENTS,
     graphic="icons/species/beige-goo.png",
 )

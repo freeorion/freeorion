@@ -1,6 +1,7 @@
+from focs._species import *
 from species.common.detection import ULTIMATE_DETECTION
 from species.common.empire_opinions import COMMON_OPINION_EFFECTS
-from species.common.env import BARREN_STANDARD_EP
+from species.common.env import BARREN_ENVIRONMENTS
 from species.common.focus import (
     HAS_ADVANCED_FOCI,
     HAS_GROWTH_FOCUS,
@@ -93,6 +94,6 @@ Species(
         *AVERAGE_PLANETARY_DEFENSE,
         *STANDARD_SHIP_SHIELDS,
     ],
-    **BARREN_STANDARD_EP,
+    environments=BARREN_ENVIRONMENTS,
     graphic="icons/species/banforo.png",
 )
