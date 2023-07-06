@@ -168,13 +168,9 @@ namespace {
 
     bool CanDamageShips(const std::vector<int>& ship_ids) {
         const ScriptingContext context;
-        for (const auto& ship : Objects().find<Ship>(ship_ids)) {
-            if (!ship)
-                continue;
-            if (ship->CanDamageShips(context))
-                return true;
-        }
-        return false;
+        const auto ships = Objects().findRaw<Ship>(ship_ids);
+        return std::any_of(ships.begin(), ships.end(), [&context](const auto* ship)
+                           { return ship && ship->CanDamageShips(context); });
     }
 
     FleetAggression AggressionForFleet(FleetAggression aggression_mode, const std::vector<int>& ship_ids) {
@@ -260,8 +256,7 @@ namespace {
                                                FleetAggression aggression,
                                                ScriptingContext& context)
     {
-        DebugLogger() << "CreateNewFleetsFromShipsForEachDesign with "
-                               << ship_ids.size() << " ship ids";
+        DebugLogger() << "CreateNewFleetsFromShipsForEachDesign with " << ship_ids.size() << " ship ids";
         if (ship_ids.empty())
             return;
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
