@@ -61,6 +61,7 @@ public:
     [[nodiscard]] iterator                  begin() noexcept { return m_empire_map.begin(); }
     [[nodiscard]] iterator                  end() noexcept { return m_empire_map.end(); }
 
+    [[nodiscard]] virtual std::size_t       SizeInMemory() const;
 
     void BackPropagateMeters();
 

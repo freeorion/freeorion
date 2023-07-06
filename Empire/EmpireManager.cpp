@@ -100,6 +100,26 @@ std::shared_ptr<Empire> EmpireManager::GetEmpire(int id) {
     return it == end() ? nullptr : it->second;
 }
 
+std::size_t EmpireManager::SizeInMemory() const {
+    std::size_t retval = sizeof(EmpireManager);
+
+    retval += sizeof(decltype(m_empire_ids)::value_type)*m_empire_ids.capacity();
+    retval += sizeof(decltype(m_capital_ids)::value_type)*m_capital_ids.capacity();
+
+    retval += (sizeof(decltype(m_empire_map)::value_type) + sizeof(void*))*m_empire_map.size();
+    for (const auto& id_e : m_empire_map) {
+        if (id_e.second)
+            retval += id_e.second->SizeInMemory();
+    }
+
+    retval += (sizeof(decltype(m_const_empire_map)::value_type) + sizeof(void*))*m_const_empire_map.size();
+    retval += sizeof(decltype(m_empire_diplomatic_statuses)::value_type)*m_empire_diplomatic_statuses.capacity();
+    retval += (sizeof(decltype(m_diplomatic_messages)::value_type) + sizeof(void*))*m_diplomatic_messages.size();
+
+    return retval;
+}
+
+
 void EmpireManager::BackPropagateMeters() {
     for (auto& entry : m_empire_map)
         entry.second->BackPropagateMeters();

@@ -366,6 +366,8 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
             }
         }
     }
+
+    DebugLogger() << "EmpireManager takes at least: " << em.SizeInMemory()/1024 << " kB";
 }
 
 template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, EmpireManager&, unsigned int const);
