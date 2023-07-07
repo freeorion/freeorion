@@ -52,7 +52,9 @@ using boost::io::str;
 bool UserStringExists(const std::string& str);
 
 #if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
-#  define CONSTEXPR_STRING constexpr
+#  if !defined(CONSTEXPR_STRING)
+#    define CONSTEXPR_STRING constexpr
+#  endif
 #else
 #  define CONSTEXPR_STRING
 #endif
