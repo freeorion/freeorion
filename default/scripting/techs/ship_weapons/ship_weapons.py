@@ -7,6 +7,23 @@ from techs.techs import (
 )
 
 
+# Set the max meters for damage and number of shots to the base value from the ship part specification.
+# So direct weapon parts with NoDefaultCapacityEffect will not have the damage/PartCapacity scaled by SHIP_DAMAGE_WEAPON_FACTOR.
+# NB: The default effects of a direct weapon part
+#     increases the part's Capacity MaxMeter by the PartCapacity (which is the capacity from the part definition scaled by the game rule)
+#     increases the part's SecondarStat MaxMeter by the PartSecondaryStat
+def SET_BOTH_MAX_CAPACITIES_FROM_PART_CAPACITIES(part_name: str):
+    return EffectsGroup(
+        scope=EMPIRE_OWNED_SHIP_WITH_PART(part_name),
+        accountinglabel=part_name,
+        priority=DEFAULT_PRIORITY - 1,
+        effects=[
+            SetMaxCapacity(partname=part_name, value=PartCapacity(name=part_name)),
+            SetMaxSecondaryStat(partname=part_name, value=PartSecondaryStat(name=part_name)),
+        ],
+    )
+
+
 # Tech based setting of damage and number of shots of a weapon. Registers named reals for use in the pedia.
 # Be careful the effect does not show in the ship damage/shot estimates in the ship designer UI if the tech is not researched yet.
 # @1@ part name
@@ -14,20 +31,6 @@ def WEAPON_BASE_EFFECTS(part_name: str):
     # these NamedReals need to be parsed to be registered in the pedia. XXX remove this when the pedia can look up ship meters/part capacity
     NamedReal(name=part_name + "_PART_CAPACITY", value=PartCapacity(name=part_name))
     NamedReal(name=part_name + "_PART_SECONDARY_STAT", value=PartSecondaryStat(name=part_name))
-
-    # Set the max meters for damage and number of shots to the base value from the ship part specification.
-    # The default effects of a direct weapon part sets the capacity to a scaled value
-    # The default effects of a fighter hangar part sets the secondary stat to a scaled value
-    # Note: So direct weapon parts with NoDefaultCapacityEffect will not have the damage/PartCapacity scaled by SHIP_DAMAGE_WEAPON_FACTOR.
-    set_max_meters_effects_group = EffectsGroup(
-        scope=EMPIRE_OWNED_SHIP_WITH_PART(part_name),
-        accountinglabel=part_name,
-        priority=DEFAULT_PRIORITY,
-        effects=[
-            SetMaxCapacity(partname=part_name, value=PartCapacity(name=part_name)),
-            SetMaxSecondaryStat(partname=part_name, value=PartSecondaryStat(name=part_name)),
-        ],
-    )
 
     # Set the damage and shot meters to the max values every turn.
     # The topup_effects_group is necessary..
@@ -42,7 +45,7 @@ def WEAPON_BASE_EFFECTS(part_name: str):
             SetSecondaryStat(partname=part_name, value=Value + ARBITRARY_BIG_NUMBER_FOR_METER_TOPUP),
         ],
     )
-    return [set_max_meters_effects_group, topup_effects_group]
+    return [topup_effects_group]
 
 
 # Tech Upgrade a direct weapon damage each turn if it was resupplied after the tech was researched.
