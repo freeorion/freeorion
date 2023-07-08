@@ -14,6 +14,7 @@ on:
       - 'test-scripting/**'
       - '.github/ISSUE_TEMPLATE/**'
       - "pyproject.toml"
+      - ".pre-commit-config.yaml"
 jobs:
   android:
     uses: ./.github/workflows/_build-android.yml

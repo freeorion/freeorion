@@ -7,6 +7,7 @@ from common.priorities import (
     TARGET_LAST_BEFORE_OVERRIDE_PRIORITY,
     TARGET_SCALING_PRIORITY,
 )
+from focs._effects import Abs, EffectsGroup, Focus, IsSource, Planet, SetTargetInfluence, Value
 
 BASE_INFLUENCE_COSTS = [
     EffectsGroup(  # colonies consume influence, proportional to square-root of how many populated planets and non-populated outposts the empire controls
@@ -179,5 +180,31 @@ GREAT_INFLUENCE = [
         accountinglabel="GREAT_INFLUENCE_LABEL",
         priority=TARGET_SCALING_PRIORITY,
         effects=SetTargetInfluence(value=Value + (1.5 - 1.0) * Abs(float, Value)),
+    ),
+]
+
+
+VERY_BAD_INFLUENCE = [
+    *BASIC_INFLUENCE,
+    EffectsGroup(
+        description="VERY_BAD_INFLUENCE_DESC",
+        scope=IsSource,
+        activation=Planet() & Focus(type=["FOCUS_INFLUENCE"]),
+        accountinglabel="VERY_BAD_INFLUENCE_LABEL",
+        priority=TARGET_SCALING_PRIORITY,
+        effects=SetTargetInfluence(value=Value + (2.0 / 3.0 - 1.0) * Abs(float, Value)),
+    ),
+]
+
+
+BAD_INFLUENCE = [
+    *BASIC_INFLUENCE,
+    EffectsGroup(
+        description="BAD_INFLUENCE_DESC",
+        scope=IsSource,
+        activation=Planet() & Focus(type=["FOCUS_INFLUENCE"]),
+        accountinglabel="BAD_INFLUENCE_LABEL",
+        priority=TARGET_SCALING_PRIORITY,
+        effects=SetTargetInfluence(value=Value + (0.8 - 1.0) * Abs(float, Value)),
     ),
 ]

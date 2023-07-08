@@ -18,6 +18,7 @@ on:
       - 'test-scripting/**'
       - '.github/ISSUE_TEMPLATE/**'
       - "pyproject.toml"
+      - ".pre-commit-config.yaml"
 jobs:
   analyze:
     name: Analyze

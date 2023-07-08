@@ -5,11 +5,23 @@ from common.priorities import (
     TARGET_EARLY_BEFORE_SCALING_PRIORITY,
     TARGET_SCALING_PRIORITY,
 )
-from species.common.multiplier import GOOD_MULTIPLIER, GREAT_MULTIPLIER
+from focs._effects import (
+    EffectsGroup,
+    Focus,
+    Happiness,
+    IsSource,
+    NamedReal,
+    Planet,
+    SetTargetIndustry,
+    TargetIndustry,
+    Value,
+)
+from species.common.multiplier import BAD_MULTIPLIER, GOOD_MULTIPLIER, GREAT_MULTIPLIER, VERY_BAD_MULTIPLIER
 
 NO_INDUSTRY = DESCRIPTION_EFFECTSGROUP_MACRO("NO_INDUSTRY_DESC")
 
-BASIC_INDUSTRY = [
+
+AVERAGE_INDUSTRY = BASIC_INDUSTRY = [
     EffectsGroup(
         scope=IsSource,
         activation=Planet() & TargetIndustry(low=0) & Happiness(low=0) & Focus(type=["FOCUS_INDUSTRY"]),
@@ -29,7 +41,36 @@ BASIC_INDUSTRY = [
     ),
 ]
 
-AVERAGE_INDUSTRY = BASIC_INDUSTRY
+
+VERY_BAD_INDUSTRY = [
+    *BASIC_INDUSTRY,
+    EffectsGroup(
+        description="VERY_BAD_INDUSTRY_DESC",
+        scope=IsSource,
+        activation=Planet() & TargetIndustry(low=0) & Happiness(low=0) & Focus(type=["FOCUS_INDUSTRY"]),
+        accountinglabel="VERY_BAD_INDUSTRY_LABEL",
+        priority=TARGET_SCALING_PRIORITY,
+        effects=SetTargetIndustry(
+            value=Value * NamedReal(name="VERY_BAD_INDUSTRY_TARGET_INDUSTRY_SCALING", value=VERY_BAD_MULTIPLIER)
+        ),
+    ),
+]
+
+
+BAD_INDUSTRY = [
+    *BASIC_INDUSTRY,
+    EffectsGroup(
+        description="BAD_INDUSTRY_DESC",
+        scope=IsSource,
+        activation=Planet() & TargetIndustry(low=0) & Happiness(low=0) and Focus(type=["FOCUS_INDUSTRY"]),
+        accountinglabel="BAD_INDUSTRY_LABEL",
+        priority=TARGET_SCALING_PRIORITY,
+        effects=SetTargetIndustry(
+            value=Value * NamedReal(name="BAD_INDUSTRY_TARGET_INDUSTRY_SCALING", value=BAD_MULTIPLIER)
+        ),
+    ),
+]
+
 
 GOOD_INDUSTRY = [
     *BASIC_INDUSTRY,

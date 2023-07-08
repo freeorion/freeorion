@@ -1,4 +1,16 @@
 from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
+from focs._effects import (
+    CurrentTurn,
+    EffectsGroup,
+    IsSource,
+    LocalCandidate,
+    MinOf,
+    Planet,
+    SetMaxSupply,
+    SetSupply,
+    Target,
+    Value,
+)
 
 STANDARD_SUPPLY_GROWTH = EffectsGroup(  # increase 1 per turn, up to max
     scope=IsSource,
@@ -8,6 +20,18 @@ STANDARD_SUPPLY_GROWTH = EffectsGroup(  # increase 1 per turn, up to max
     priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
     effects=SetSupply(value=MinOf(float, Value(Target.MaxSupply), Value + 1)),
 )
+
+BAD_SUPPLY = [
+    EffectsGroup(
+        description="BAD_SUPPLY_DESC",
+        scope=IsSource,
+        activation=Planet(),
+        accountinglabel="BAD_SUPPLY_LABEL",
+        effects=SetMaxSupply(value=Value + 0),
+    ),
+    STANDARD_SUPPLY_GROWTH,
+]
+
 
 AVERAGE_SUPPLY = [
     EffectsGroup(

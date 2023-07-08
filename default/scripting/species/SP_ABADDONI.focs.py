@@ -1,7 +1,7 @@
 from focs._effects import EffectsGroup, GiveEmpireTech, IsSource, Target, Turn
 from focs._species import *
 from species.common.empire_opinions import COMMON_OPINION_EFFECTS
-from species.common.env import BROAD_EP, INFERNO_BROAD_ENVIRONMENTS
+from species.common.env import BROAD_EP, INFERNO_BROAD_EP
 from species.common.focus import (
     HAS_ADVANCED_FOCI,
     HAS_GROWTH_FOCUS,
@@ -96,6 +96,6 @@ Species(
         BROAD_EP,
         *STANDARD_SHIP_SHIELDS,
     ],
-    environments=INFERNO_BROAD_ENVIRONMENTS,
+    environments=INFERNO_BROAD_EP,
     graphic="icons/species/abaddonnian.png",
 )

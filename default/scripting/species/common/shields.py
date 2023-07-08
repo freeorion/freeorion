@@ -1,5 +1,6 @@
 from common.misc import SHIP_SHIELD_FACTOR
 from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY, DEFAULT_PRIORITY
+from focs._effects import DesignHasPart, EffectsGroup, IsSource, SetMaxShield, Ship, StatisticIf, Value
 
 STANDARD_SHIP_SHIELDS = [
     EffectsGroup(  # gives human bonuses when AI Aggression set to Beginner
@@ -35,5 +36,36 @@ ULTIMATE_SHIP_SHIELDS = [
             + (6.0 * SHIP_SHIELD_FACTOR * StatisticIf(float, condition=IsSource & DesignHasPart(name="SH_MULTISPEC")))
             + (7.5 * SHIP_SHIELD_FACTOR * StatisticIf(float, condition=IsSource & DesignHasPart(name="SH_BLACK")))
         ),
+    ),
+]
+
+
+GREAT_SHIP_SHIELDS = [
+    *STANDARD_SHIP_SHIELDS,
+    EffectsGroup(
+        description="GREAT_SHIP_SHIELD_DESC",
+        scope=IsSource & Ship,
+        effects=[
+            SetMaxShield(
+                value=Value
+                + (
+                    1.0
+                    * SHIP_SHIELD_FACTOR
+                    * StatisticIf(float, condition=IsSource & DesignHasPart(name="SH_DEFENSE_GRID"))
+                )
+                + (
+                    2.0
+                    * SHIP_SHIELD_FACTOR
+                    * StatisticIf(float, condition=IsSource & DesignHasPart(name="SH_DEFLECTOR"))
+                )
+                + (3.0 * SHIP_SHIELD_FACTOR * StatisticIf(float, condition=IsSource & DesignHasPart(name="SH_PLASMA")))
+                + (
+                    4.0
+                    * SHIP_SHIELD_FACTOR
+                    * StatisticIf(float, condition=IsSource & DesignHasPart(name="SH_MULTISPEC"))
+                )
+                + (5.0 * SHIP_SHIELD_FACTOR * StatisticIf(float, condition=IsSource & DesignHasPart(name="SH_BLACK")))
+            )
+        ],
     ),
 ]

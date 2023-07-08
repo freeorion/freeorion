@@ -21,7 +21,7 @@ from focs._effects import (
 )
 from focs._species import *
 from species.common.empire_opinions import COMMON_OPINION_EFFECTS
-from species.common.env import RADIATED_STANDARD_ENVIRONMENTS
+from species.common.env import RADIATED_STANDARD_EP
 from species.common.focus import (
     HAS_ADVANCED_FOCI,
     HAS_GROWTH_FOCUS,
@@ -130,6 +130,6 @@ Species(
         *AVERAGE_PLANETARY_SHIELDS,
         *AVERAGE_PLANETARY_DEFENSE,
     ],
-    environments=RADIATED_STANDARD_ENVIRONMENTS,
+    environments=RADIATED_STANDARD_EP,
     graphic="icons/species/acirema.png",
 )

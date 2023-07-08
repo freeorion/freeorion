@@ -30,6 +30,5 @@ repos:
     hooks:
       - id: mypy
         name: focs.py type checks
-        args: [-v]
         files: "default/scripting/.*.focs.py"
         exclude: "^default/scripting/buildings/colonies/col_bld_gen.py"
