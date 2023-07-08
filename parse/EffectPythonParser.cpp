@@ -119,7 +119,13 @@ namespace {
     }
 
     effect_wrapper insert_ship_part_set_meter_(const MeterType m, const py::tuple& args, const py::dict& kw) {
-        auto value = py::extract<value_ref_wrapper<double>>(kw["value"])();
+        std::unique_ptr<ValueRef::ValueRef<double>> value;
+        auto value_arg = py::extract<value_ref_wrapper<double>>(kw["value"]);
+        if (value_arg.check()) {
+            value = ValueRef::CloneUnique(value_arg().value_ref);
+        } else {
+            value = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["value"])());
+        }
 
         std::unique_ptr<ValueRef::ValueRef<std::string>> partname;
         auto partname_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["partname"]);
@@ -132,7 +138,7 @@ namespace {
         return effect_wrapper(std::make_shared<Effect::SetShipPartMeter>(
             m,
             std::move(partname),
-            ValueRef::CloneUnique(value.value_ref)));
+            std::move(value)));
     }
 
     unlockable_item_wrapper insert_item_(const py::tuple& args, const py::dict& kw) {
