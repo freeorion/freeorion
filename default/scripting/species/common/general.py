@@ -1,3 +1,4 @@
+from common.misc import DESCRIPTION_EFFECTSGROUP_MACRO
 from common.priorities import (
     AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
     END_CLEANUP_PRIORITY,
@@ -185,3 +186,8 @@ FOCUS_CHANGE_PENALTY = [
         ),
     ),
 ]
+
+
+# FAST_COLONIZATION and SLOW_COLONIZATION are stubs for applying the
+# fast colonization building speed description to a species.
+FAST_COLONIZATION = DESCRIPTION_EFFECTSGROUP_MACRO("FAST_COLONIZATION_DESC")

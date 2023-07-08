@@ -251,6 +251,7 @@ builtins = [
     "SetTargetPopulation",
     "SetTargetResearch",
     "SetTroops",
+    "Species",
     "Ship",
     "Small",
     "Source",

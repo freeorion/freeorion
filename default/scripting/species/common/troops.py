@@ -5,6 +5,46 @@ from common.priorities import (
     TARGET_EARLY_BEFORE_SCALING_PRIORITY,
     TARGET_SCALING_PRIORITY,
 )
+from focs._effects import (
+    Abs,
+    Adequate,
+    Capital,
+    CurrentTurn,
+    DesignHasPart,
+    EffectsGroup,
+    EmpireStockpile,
+    Focus,
+    GalaxyMaxAIAggression,
+    Happiness,
+    HasEmpireStockpile,
+    HasSpecies,
+    Homeworld,
+    Hostile,
+    Influence,
+    IsHuman,
+    IsSource,
+    LocalCandidate,
+    MaxOf,
+    MinOf,
+    NamedReal,
+    NamedRealLookup,
+    OwnedBy,
+    PartCapacity,
+    Planet,
+    Poor,
+    SetCapacity,
+    SetMaxTroops,
+    SetRebelTroops,
+    SetTargetHappiness,
+    SetTargetInfluence,
+    SetTroops,
+    Ship,
+    Source,
+    StatisticCount,
+    Target,
+    Unowned,
+    Value,
+)
 
 UNSTABLE_REBEL_TROOPS = [
     EffectsGroup(
@@ -142,6 +182,21 @@ PROTECTION_FOCUS_TROOPS = [
     ),
 ]
 
+NO_OFFENSE_TROOPS = [
+    EffectsGroup(
+        description="NO_OFFENSE_TROOPS_DESC",
+        scope=IsSource,
+        activation=Ship & (DesignHasPart(name="GT_TROOP_POD") | DesignHasPart(name="GT_TROOP_POD_2")),
+        stackinggroup="NO_OFFENSIVE_TROOPS_STACK",
+        accountinglabel="NO_OFFENSIVE_TROOPS_LABEL",
+        effects=[
+            SetCapacity(partname="GT_TROOP_POD", value=Value * 0),  # float is not yet supported
+            SetCapacity(partname="GT_TROOP_POD_2", value=Value * 0),  # float is not yet supported
+        ],
+    )
+]
+
+
 BAD_DEFENSE_TROOPS = [
     *BASIC_DEFENSE_TROOPS,
     EffectsGroup(
@@ -168,6 +223,34 @@ GREAT_DEFENSE_TROOPS = [
         scope=IsSource,
         activation=Planet(),
         effects=SetMaxTroops(value=Value * 2),
+    ),
+    *UNSTABLE_REBEL_TROOPS,
+    *PROTECTION_FOCUS_TROOPS,
+]
+
+
+BAD_OFFENSE_TROOPS = [
+    EffectsGroup(
+        description="BAD_OFFENSE_TROOPS_DESC",
+        scope=IsSource,
+        activation=Ship & (DesignHasPart(name="GT_TROOP_POD") | DesignHasPart(name="GT_TROOP_POD_2")),
+        stackinggroup="BAD_OFFENSIVE_TROOPS_STACK",
+        accountinglabel="BAD_OFFENSIVE_TROOPS_LABEL",
+        effects=[
+            SetCapacity(partname="GT_TROOP_POD", value=PartCapacity(name="GT_TROOP_POD") * 0.5),
+            SetCapacity(partname="GT_TROOP_POD_2", value=PartCapacity(name="GT_TROOP_POD_2") * 0.5),
+        ],
+    )
+]
+
+GOOD_DEFENSE_TROOPS = [
+    *BASIC_DEFENSE_TROOPS,
+    EffectsGroup(
+        description="GOOD_DEFENSE_TROOPS_DESC",
+        scope=IsSource,
+        activation=Planet(),
+        effects=SetMaxTroops(value=Value * 1.5),
+        accountinglabel="GOOD_TROOPS_LABEL",
     ),
     *UNSTABLE_REBEL_TROOPS,
     *PROTECTION_FOCUS_TROOPS,

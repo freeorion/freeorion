@@ -1,5 +1,6 @@
 from common.opinion import POLICY_DISLIKE_SCALING
 from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
+from focs._effects import EffectsGroup, IsSource, NamedReal, Planet, SetTargetHappiness, Value
 
 STABILITY_PER_LIKED_FOCUS = 2.0
 
@@ -211,6 +212,18 @@ STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY = [
     ),
 ]
 
+BAD_HAPPINESS = [
+    *COMMON_HAPPINESS_EFFECTS,
+    *STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY,
+    EffectsGroup(
+        description="BAD_HAPPINESS_DESC",
+        scope=IsSource,
+        activation=Planet(),
+        accountinglabel="BAD_HAPPINESS_LABEL",
+        effects=SetTargetHappiness(value=Value + NamedReal(name="BAD_HAPPINESS_VAL", value=-2.5)),
+    ),
+]
+
 AVERAGE_HAPPINESS = [
     *COMMON_HAPPINESS_EFFECTS,
     *STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY,
@@ -225,5 +238,17 @@ GOOD_HAPPINESS = [
         activation=Planet(),
         accountinglabel="GOOD_HAPPINESS_LABEL",
         effects=SetTargetHappiness(value=Value + NamedReal(name="GOOD_HAPPINESS_VAL", value=2.5)),
+    ),
+]
+
+GREAT_HAPPINESS = [
+    *COMMON_HAPPINESS_EFFECTS,
+    *STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY,
+    EffectsGroup(
+        description="GREAT_HAPPINESS_DESC",
+        scope=IsSource,
+        activation=Planet(),
+        accountinglabel="GREAT_HAPPINESS_LABEL",
+        effects=SetTargetHappiness(value=Value + NamedReal(name="GREAT_HAPPINESS_VAL", value=5)),
     ),
 ]

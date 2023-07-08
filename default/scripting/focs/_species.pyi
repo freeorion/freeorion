@@ -10,7 +10,7 @@ def Species(
     defaultfocus: str,
     effectsgroups: list,
     graphic: str,
-    environments: dict = {},
+    environments: dict,
     likes: list[str] = [],
     dislikes: list[str] = [],
     can_produce_ships: bool = False,
