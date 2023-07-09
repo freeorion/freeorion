@@ -31,8 +31,8 @@ def SET_BOTH_MAX_CAPACITIES_FROM_PART_CAPACITIES(part_name: str):
 # @1@ part name
 def WEAPON_BASE_EFFECTS(part_name: str):
     # these NamedReals need to be parsed to be registered in the pedia. XXX remove this when the pedia can look up ship meters/part capacity
-    NamedReal(name=part_name + "_PART_CAPACITY", value=PartCapacity(name=part_name))
-    NamedReal(name=part_name + "_PART_SECONDARY_STAT", value=PartSecondaryStat(name=part_name))
+    NamedReal(name=f"{part_name}_PART_CAPACITY", value=PartCapacity(name=part_name))
+    NamedReal(name=f"{part_name}_PART_SECONDARY_STAT", value=PartSecondaryStat(name=part_name))
 
     # Set the damage and shot meters to the max values every turn.
     # The topup_effects_group is necessary..
