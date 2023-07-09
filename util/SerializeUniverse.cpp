@@ -261,7 +261,7 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
                 elko.second.UpdateCurrentDestroyedObjects(destroyed_ids_it->second);
         }
     }
-    constexpr auto objects_mem_size = [](const ObjectMap& o) {
+    static constexpr auto objects_mem_size = [](const ObjectMap& o) {
         const auto& all_objs = o.allWithIDs<UniverseObject>();
         return std::transform_reduce(all_objs.begin(), all_objs.end(), 0u, std::plus<>{},
                                      [](const auto& id_obj) { return sizeof(id_obj) + id_obj.second->SizeInMemory(); });
