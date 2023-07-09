@@ -4886,45 +4886,44 @@ void SpeciesOpinion::Eval(const ScriptingContext& parent_context,
     const auto& sm{parent_context.species};
 
     if (m_content && m_content->LocalCandidateInvariant()) {
-        auto process_objects_with_different_species =
+        const auto process_objects_with_different_species =
             [&sm, search_domain, &matches, &non_matches, this]
-            (const auto& species_for_objects, std::string content)
+            (auto species_for_objects, const std::string_view content)
         {
             // determine all unique species
-            std::vector<std::string_view> unique_species(species_for_objects.begin(), species_for_objects.end());
-            std::sort(unique_species.begin(), unique_species.end());
-            auto unique_it = std::unique(unique_species.begin(), unique_species.end());
-            unique_species.resize(std::distance(unique_species.begin(), unique_it));
+            std::sort(species_for_objects.begin(), species_for_objects.end());
+            auto unique_it = std::unique(species_for_objects.begin(), species_for_objects.end());
+            species_for_objects.resize(std::distance(species_for_objects.begin(), unique_it));
 
             // get set of species that match the criteron about liking or disliking the content
             std::vector<std::string_view> matching_species;
-            matching_species.reserve(unique_species.size());
+            matching_species.reserve(species_for_objects.size());
 
             if (sm.empty()) // forces check for pending species
                 DebugLogger() << "SpeciesOpinion found no species...";
 
             if (m_comp == ComparisonType::GREATER_THAN) {
                 // find species that like content
-                std::copy_if(unique_species.begin(), unique_species.end(), std::back_inserter(matching_species),
+                std::copy_if(species_for_objects.begin(), species_for_objects.end(), std::back_inserter(matching_species),
                              [content, &sm](const std::string_view sv) -> bool {
                                  const auto* species = sm.GetSpeciesUnchecked(sv); //GetSpecies(sv); //sm.GetSpeciesUnchecked(sv);
                                  if (!species)
                                      return false;
                                  const auto& likes = species->Likes();
                                  return std::any_of(likes.begin(), likes.end(),
-                                                    [&content](const auto l) { return l == content; });
+                                                    [content](const auto l) { return l == content; });
                              });
 
             } else if (m_comp == ComparisonType::LESS_THAN) {
                 // find species that dislike content
-                std::copy_if(unique_species.begin(), unique_species.end(), std::back_inserter(matching_species),
+                std::copy_if(species_for_objects.begin(), species_for_objects.end(), std::back_inserter(matching_species),
                              [content, &sm](const std::string_view sv) -> bool {
                                  const auto* species = sm.GetSpeciesUnchecked(sv); //GetSpecies(sv); // sm.GetSpeciesUnchecked(sv);
                                  if (!species)
                                      return false;
                                  const auto& dislikes = species->Dislikes();
                                  return std::any_of(dislikes.begin(), dislikes.end(),
-                                                    [&content](const auto d) { return d == content; });
+                                                    [content](const auto d) { return d == content; });
                              });
             }
 
@@ -4984,7 +4983,7 @@ void SpeciesOpinion::Eval(const ScriptingContext& parent_context,
             std::transform(from.begin(), from.end(), std::back_inserter(species_for_objects),
                            get_species_for_object);
 
-            process_objects_with_different_species(species_for_objects, m_content->Eval(parent_context));
+            process_objects_with_different_species(std::move(species_for_objects), m_content->Eval(parent_context));
 
         } else if (!m_species->LocalCandidateInvariant()) {
             auto eval_object_species = [&parent_context, this](const UniverseObject* obj) -> std::string {
@@ -4999,7 +4998,7 @@ void SpeciesOpinion::Eval(const ScriptingContext& parent_context,
             std::transform(from.begin(), from.end(), std::back_inserter(species_for_objects),
                            eval_object_species);
 
-            process_objects_with_different_species(species_for_objects, m_content->Eval(parent_context));
+            process_objects_with_different_species(std::move(species_for_objects), m_content->Eval(parent_context));
 
         } else {
             process_objects_with_same_species(m_species->Eval(parent_context), m_content->Eval(parent_context));
