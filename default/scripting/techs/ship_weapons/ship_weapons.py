@@ -16,6 +16,8 @@ def SET_BOTH_MAX_CAPACITIES_FROM_PART_CAPACITIES(part_name: str):
     return EffectsGroup(
         scope=EMPIRE_OWNED_SHIP_WITH_PART(part_name),
         accountinglabel=part_name,
+        # The standard/default effect happen at default priority, before any scripted ones happen
+        # In order for this tech effect to also happen first, we make it happen slightly earlier with a lower priority value
         priority=DEFAULT_PRIORITY - 1,
         effects=[
             SetMaxCapacity(partname=part_name, value=PartCapacity(name=part_name)),
