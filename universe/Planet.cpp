@@ -786,15 +786,15 @@ void Planet::Conquer(int conquerer, ScriptingContext& context) {
     Empire::ConquerProductionQueueItemsAtLocation(ID(), conquerer, context.Empires());
 
     ObjectMap& objects{context.ContextObjects()};
-    const auto& empire_ids = context.Empires().EmpireIDs();
+    const auto& ids_as_flatset{context.EmpireIDs()};
+    const std::vector<int> empire_ids{ids_as_flatset.begin(), ids_as_flatset.end()};
 
     // deal with UniverseObjects (eg. buildings) located on this planet
     for (auto* building : objects.findRaw<Building>(m_buildings)) {
         const BuildingType* type = GetBuildingType(building->BuildingTypeName());
 
         // determine what to do with building of this type...
-        const CaptureResult cap_result = type->GetCaptureResult(
-            building->Owner(), conquerer, this->ID(), false);
+        const auto cap_result = type->GetCaptureResult(building->Owner(), conquerer, this->ID(), false);
 
         if (cap_result == CaptureResult::CR_CAPTURE) {
             // replace ownership

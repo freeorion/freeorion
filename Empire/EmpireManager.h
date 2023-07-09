@@ -31,7 +31,7 @@ public:
     EmpireManager& operator=(EmpireManager&& other) noexcept;
     ~EmpireManager() = default;
 
-    [[nodiscard]] const std::vector<int>&               EmpireIDs() const noexcept { return m_empire_ids; }
+    [[nodiscard]] const auto&                           EmpireIDs() const noexcept { return m_empire_ids; }
     [[nodiscard]] const const_container_type&           GetEmpires() const noexcept { return m_const_empire_map; }
     [[nodiscard]] std::shared_ptr<const Empire>         GetEmpire(int id) const;  //!< Returns the empire whose ID is \a id, or nullptr if none exist
     [[nodiscard]] std::shared_ptr<const UniverseObject> GetSource(int id, const ObjectMap& objects) const;  //!< Return the empire source or nullptr if the empire or source doesn't exist
@@ -97,8 +97,8 @@ private:
     void GetDiplomaticMessagesToSerialize(std::map<std::pair<int, int>, DiplomaticMessage>& messages,
                                           int encoding_empire) const;
 
-    std::vector<int>                                 m_empire_ids;
-    std::vector<int>                                 m_capital_ids;
+    boost::container::flat_set<int>                  m_empire_ids;
+    boost::container::flat_set<int>                  m_capital_ids;
     container_type                                   m_empire_map;
     const_container_type                             m_const_empire_map;
     DiploStatusMap                                   m_empire_diplomatic_statuses;

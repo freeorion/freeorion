@@ -146,8 +146,7 @@ void EmpireManager::InsertEmpire(std::shared_ptr<Empire>&& empire) {
         return;
     }
 
-    m_empire_ids.push_back(empire_id);
-    std::sort(m_empire_ids.begin(), m_empire_ids.end());
+    m_empire_ids.insert(empire_id);
     m_const_empire_map[empire_id] = empire;
     m_empire_map[empire_id] = std::move(empire);
 }
@@ -361,7 +360,9 @@ void EmpireManager::ResetDiplomacy() {
 
 void EmpireManager::RefreshCapitalIDs() {
     m_capital_ids.clear();
-    std::transform(m_const_empire_map.begin(), m_const_empire_map.end(), std::back_inserter(m_capital_ids),
+    m_capital_ids.reserve(m_const_empire_map.size());
+    std::transform(m_const_empire_map.begin(), m_const_empire_map.end(),
+                   std::inserter(m_capital_ids, m_capital_ids.end()),
                    [](const auto& e) { return e.second->CapitalID(); });
 }
 

@@ -136,18 +136,21 @@ namespace {
                 ErrorLogger() << "DiplomaticStatusIndicator::Render couldn't get client app!";
                 return;
             }
+            const auto& empires = Empires();
 
             // add id for each empire with specified diplomatic status
             m_empire_ids.clear();
+            m_empire_ids.reserve(empires.NumEmpires());
 
-            for (const auto& empire : Empires()) {
-                int empire_id = empire.second->EmpireID();
+            std::string empires_names_text;
+            empires_names_text.reserve(empires.NumEmpires()*50); // guesstimate
 
-                if (empire.second->Eliminated()) continue;
+            for (const auto& [empire_id, empire] : empires) {
                 if (m_empire_id == empire_id) continue;
-
-                if (Empires().GetDiplomaticStatus(empire_id, m_empire_id) == m_diplo_status) {
-                    m_empire_ids.emplace_back(empire_id);
+                if (empire->Eliminated()) continue;
+                if (empires.GetDiplomaticStatus(empire_id, m_empire_id) == m_diplo_status) {
+                    m_empire_ids.insert(empire_id);
+                    empires_names_text.append(GG::RgbaTag(empire->Color())).append(empire->Name()).append("\n");
                 }
             }
 
@@ -169,15 +172,10 @@ namespace {
                 break;
             }
 
-            if (m_empire_ids.size() == 0)
-                tooltip_text += UserString("NONE");
-
-            for (int empire_id : m_empire_ids) {
-                const Empire* empire = GetEmpire(empire_id);
-                if (!empire) continue;
-
-                tooltip_text += GG::RgbaTag(empire->Color()) + empire->Name() + "\n";
-            }
+            if (empires_names_text.empty())
+                tooltip_text.append(UserString("NONE"));
+            else
+                tooltip_text.append(empires_names_text);
 
             // add tooltip
             SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(tooltip_title, tooltip_text));
@@ -185,9 +183,9 @@ namespace {
         }
 
         void Render() override {
-            int ICON_SIZE = IconSize();
-            GG::Pt ul = UpperLeft();
-            const GG::Clr& border_clr = ClientUI::WndOuterBorderColor();
+            const int ICON_SIZE = IconSize();
+            const GG::Pt ul = UpperLeft();
+            const GG::Clr border_clr = ClientUI::WndOuterBorderColor();
 
             // diplomatic status icon
             glColor(GG::CLR_WHITE);
@@ -195,12 +193,12 @@ namespace {
 
             // empire color squares; move squares to the left if empire with lower id was eliminated
             int square_position = 0;
-            for (const auto& empire : Empires()) {
-                if (empire.second->Eliminated()) continue;
+            for (const auto& [empire_id, empire] : Empires()) {
+                if (empire->Eliminated()) continue;
                 square_position++;
-                if (std::find(m_empire_ids.begin(), m_empire_ids.end(), empire.first) != m_empire_ids.end()) {
-                    const GG::Clr& square_color = empire.second->Color();
-                    GG::Pt square_ul = ul + GG::Pt(GG::X(square_position * (ICON_SIZE + PAD)), GG::Y0);
+                if (std::find(m_empire_ids.begin(), m_empire_ids.end(), empire_id) != m_empire_ids.end()) {
+                    const GG::Clr square_color = empire->Color();
+                    const GG::Pt square_ul = ul + GG::Pt(GG::X(square_position * (ICON_SIZE + PAD)), GG::Y0);
                     GG::FlatRectangle(square_ul, square_ul + GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE)), square_color, border_clr, DATA_PANEL_BORDER);
                 }
             }
@@ -211,7 +209,7 @@ namespace {
 
     private:
         int                                        m_empire_id;
-        std::vector<int>                           m_empire_ids;
+        boost::container::flat_set<int>            m_empire_ids;
         DiplomaticStatus                           m_diplo_status;
         std::shared_ptr<GG::Texture>               m_icon;
 

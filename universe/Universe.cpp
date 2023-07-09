@@ -1817,7 +1817,8 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
         }
     }
 
-    const auto& empire_ids = context.EmpireIDs();
+    const auto& ids_as_flatset{context.EmpireIDs()};
+    const std::vector<int> empire_ids{ids_as_flatset.begin(), ids_as_flatset.end()}; // TODO: avoid copy?
     auto& empires = context.Empires().GetEmpires();
 
     // actually do destroy effect action.  Executing the effect just marks

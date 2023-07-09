@@ -23,8 +23,8 @@ Moderator::DestroyUniverseObject::DestroyUniverseObject(int object_id) :
 {}
 
 void Moderator::DestroyUniverseObject::Execute() const {
-    const auto& empire_ids = Empires().EmpireIDs();
-    GetUniverse().RecursiveDestroy(m_object_id, empire_ids);
+    const auto& ids_as_flatset = Empires().EmpireIDs();
+    GetUniverse().RecursiveDestroy(m_object_id, std::vector<int>{ids_as_flatset.begin(), ids_as_flatset.end()});
     GetUniverse().InitializeSystemGraph(Empires());
 }
 

@@ -1941,7 +1941,8 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
 
     // empire elimination
     empire->Eliminate(m_empires, m_current_turn);
-    const auto empire_ids{m_empires.EmpireIDs()};
+    const auto& ids_as_flatset{m_empires.EmpireIDs()};
+    const std::vector<int> empire_ids{ids_as_flatset.begin(), ids_as_flatset.end()}; // TODO: avoid copy
 
     // destroy owned ships
     for (auto* obj : m_universe.Objects().findRaw<Ship>(is_owned)) {
@@ -2600,7 +2601,8 @@ namespace {
         // gamestate. Standard visibility updating will then transfer the
         // modified objects / combat results to empires' known gamestate
         // ObjectMaps.
-        const auto& empire_ids = empires.EmpireIDs();
+        const auto& ids_as_flatset{empires.EmpireIDs()};
+        const std::vector<int> empire_ids{ids_as_flatset.begin(), ids_as_flatset.end()}; // TODO: avoid copy?
 
         for (const CombatInfo& combat_info : combats) {
             // update visibilities from combat, in case anything was revealed
@@ -2918,7 +2920,8 @@ namespace {
     [[nodiscard]] std::pair<std::vector<int>, std::vector<int>> HandleColonization(ScriptingContext& context) {
         Universe& universe = context.ContextUniverse();
         ObjectMap& objects = context.ContextObjects();
-        const auto empire_ids{context.EmpireIDs()};
+        const auto& ids_as_flatset{context.EmpireIDs()};
+        const std::vector<int> empire_ids{ids_as_flatset.begin(), ids_as_flatset.end()}; // TODO: avoid copy?
 
         // collect, for each planet, what ships have been ordered to colonize it
         std::map<int, std::map<int, std::set<int>>> planet_empire_colonization_ship_ids; // map from planet ID to map from empire ID to set of ship IDs
@@ -3094,7 +3097,8 @@ namespace {
         Universe& universe = context.ContextUniverse();
         ObjectMap& objects = context.ContextObjects();
         EmpireManager& empires = context.Empires();
-        const auto& empire_ids = context.EmpireIDs();
+        const auto& ids_as_flatset{context.EmpireIDs()};
+        const std::vector<int> empire_ids{ids_as_flatset.begin(), ids_as_flatset.end()}; // TODO: avoid copy?
 
         // collect ships that are invading and the troops they carry
         for (auto* ship : objects.findRaw<Ship>([&universe](const Ship& s) {
@@ -3436,7 +3440,8 @@ namespace {
                          const IDsT& gifted_ids, const IDsT& annexed_planet_ids) // TODO: disallow scrapping during annexation
     {
         ObjectMap& objects{universe.Objects()};
-        const auto& empire_ids = empires.EmpireIDs();
+        const auto& ids_as_flatset{empires.EmpireIDs()};
+        const std::vector<int> empire_ids{ids_as_flatset.begin(), ids_as_flatset.end()}; // TODO: avoid copy?
 
         // only scap ships that aren't being gifted and that aren't invading or colonizing this turn
         const auto scrapped_ships = objects.findRaw<Ship>(
@@ -3594,7 +3599,8 @@ namespace {
         std::vector<Fleet*> empty_fleets;
         Universe& universe{context.ContextUniverse()};
         ObjectMap& objects{context.ContextObjects()};
-        const auto& empire_ids = context.EmpireIDs();
+        const auto& ids_as_flatset{context.EmpireIDs()};
+        const std::vector<int> empire_ids{ids_as_flatset.begin(), ids_as_flatset.end()}; // TODO: avoid copy?
 
         for (auto* fleet : objects.allRaw<Fleet>()) {
             if (fleet->Empty())
