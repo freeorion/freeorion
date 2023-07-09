@@ -1,5 +1,5 @@
 from common.misc import SHIP_WEAPON_DAMAGE_FACTOR
-from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY, DEFAULT_PRIORITY
+from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY, TARGET_EARLY_BEFORE_SCALING_PRIORITY
 from techs.techs import (
     ARBITRARY_BIG_NUMBER_FOR_METER_TOPUP,
     EMPIRE_OWNED_SHIP_WITH_PART,
@@ -17,8 +17,8 @@ def SET_BOTH_MAX_CAPACITIES_FROM_PART_CAPACITIES(part_name: str):
         scope=EMPIRE_OWNED_SHIP_WITH_PART(part_name),
         accountinglabel=part_name,
         # The standard/default effect happen at default priority, before any scripted ones happen
-        # In order for this tech effect to also happen first, we make it happen slightly earlier with a lower priority value
-        priority=DEFAULT_PRIORITY - 1,
+        # In order for this tech effect to also happen first, we make it happen slightly earlier
+        priority=TARGET_EARLY_BEFORE_SCALING_PRIORITY,
         effects=[
             SetMaxCapacity(partname=part_name, value=PartCapacity(name=part_name)),
             SetMaxSecondaryStat(partname=part_name, value=PartSecondaryStat(name=part_name)),
