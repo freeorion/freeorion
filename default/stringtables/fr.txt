@@ -1219,6 +1219,30 @@ Tour apparition des Expérimentateurs
 RULE_EXPERIMENTORS_SPAWN_BASE_TURN_DESC
 Tour minimum avant l'apparition des Expérimentateurs. Dépend de la taille de la galaxie et du Niveau d'Agressivité de l'IA.
 
+RULE_NESTS_ALWAYS_SPAWN_WILD
+Monstres sauvages éclosent toujours des nids
+
+RULE_NESTS_ALWAYS_SPAWN_WILD_DESC
+Les nids de monstres feront toujours apparaître des monstres sauvages, même si exilés
+
+RULE_WANDERING_MONSTERS_CAN_STOP_INSYSTEM
+Arrêt occasionnel des monstres errants dans système
+
+RULE_WANDERING_MONSTERS_CAN_STOP_INSYSTEM_DESC
+Les monstres errants peuvent s'arrêter occasionnellement dans un système
+
+RULE_WILD_NEST_MONSTER_SPAWN_FACTOR
+Facteur apparition monstres sauvages dans nids
+
+RULE_WILD_NEST_MONSTER_SPAWN_FACTOR_DESC
+Multiplie la probabilité qu'un monstre sauvage éclose dans un nid
+
+RULE_DOMESTIC_NEST_MONSTER_SPAWN_FACTOR
+Facteur apparition monstres domestiqués dans nids
+
+RULE_DOMESTIC_NEST_MONSTER_SPAWN_FACTOR_DESC
+Multiplie la probabilité qu'un monstre domestiqué éclose dans un nid
+
 RULE_ENABLE_SUPER_TESTER
 Activer Invasion Super-Testeurs
 
@@ -16592,9 +16616,9 @@ SH_ORGANIC_DESC
 '''Une coque vivante disposant d'une niche externe et d'une niche interne.
 Croissance Organique: débute avec une [[metertype METER_STRUCTURE]] égale à 24, mais bénéficie d'un bonus additionnel de 24 après 25 tours.
 
-Sa [[metertype METER_STEALTH]] est standard, son [[metertype METER_DETECTION]] est faible et sa [[metertype METER_SPEED]] élevée.
+Sa [[metertype METER_STEALTH]] est standard, son [[metertype METER_DETECTION]] est standard et sa [[metertype METER_SPEED]] élevée.
 
-Coque économique et polyvalente capable d'endosser de nombreux rôles au sein d'une flotte, mais qui tend à devenir obsolète à mesure que la technologie évolue. Son faible Champ de Détection la rend peu adaptée pour la reconnaissance mais ses autres attributs en font un bon astronef de guerre.
+Coque économique et polyvalente capable d'endosser de nombreux rôles au sein d'une flotte. Sa régénération en carburant et son haut [[encyclopedia FUEL_EFFICIENCY_TITLE]] font que la coque organique est bien adaptée à l'exploration lointaine de l'espace.
 
 [[LIVING_HULL_AUTO_REGEN]]
 
