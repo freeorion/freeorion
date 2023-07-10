@@ -677,7 +677,7 @@ SM_CLOAKER_DRONE
 Cloaker Drone
 
 SM_CLOAKER_DRONE_DESC
-A tool of a forgotten war, it is equiped with a basic cloaking device.
+A tool of a forgotten war, it is equipped with a basic cloaking device.
 
 SM_TERMINATOR_DRONE
 Terminator Drone
