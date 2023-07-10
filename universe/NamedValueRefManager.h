@@ -76,16 +76,15 @@ struct FO_COMMON_API NamedRef final : public ValueRef<T>
 
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override {
         std::string retval = "Named";
-        if constexpr (std::is_same<T, int>::value) {
+        if constexpr (std::is_same_v<T, int>)
             retval += "Integer";
-        } else if constexpr (std::is_same<T, double>::value) {
+        else if constexpr (std::is_same_v<T, double>)
             retval += "Real";
-        } else {
+        else
             retval += "Generic";
-        }
-        if (m_is_lookup_only) {
+
+        if (m_is_lookup_only)
             retval += "Lookup";
-        }
         retval += " name = \"" + m_value_ref_name + "\"";
         if (!m_is_lookup_only) {
             auto ref = GetValueRef();
