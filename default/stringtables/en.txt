@@ -671,7 +671,7 @@ SM_HUNTER_DRONE
 Hunter Drone
 
 SM_HUNTER_DRONE_DESC
-A tool of a forgotten war, equiped with a scanner, it homes in on any ships in range.
+A tool of a forgotten war, equipped with a scanner, it homes in on any ships in range.
 
 SM_CLOAKER_DRONE
 Cloaker Drone
