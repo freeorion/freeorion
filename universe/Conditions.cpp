@@ -1979,17 +1979,8 @@ bool Capital::Match(const ScriptingContext& local_context) const {
     }
 }
 
-ObjectSet Capital::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const {
-    ObjectSet retval;
-    const auto capital_ids{parent_context.Empires().CapitalIDs()};
-    retval.reserve(capital_ids.size());
-    for (const auto& [obj_id, obj] : parent_context.ContextObjects().allExisting()) {
-        if (std::any_of(capital_ids.begin(), capital_ids.end(),
-                        [o_id{obj_id}](const int cap_id) { return o_id == cap_id; }))
-        { retval.push_back(obj.get()); }
-    }
-    return retval;
-}
+ObjectSet Capital::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const
+{ return parent_context.ContextObjects().findExistingRaw(parent_context.Empires().CapitalIDs()); }
 
 uint32_t Capital::GetCheckSum() const {
     uint32_t retval{0};
@@ -4810,7 +4801,7 @@ namespace {
         const auto m_end = mask.end();
 
         for (; m_it != m_end; ++m_it) {
-            if (*m_it != test_val)
+            if (static_cast<bool>(*m_it) != test_val)
                 *to_dest++ = *o_it++;       // put at next position in to set and move to next object to test
             else
                 *from_dest++ = *o_it++;     // put at next output position in from set and move to next object to check mask for
