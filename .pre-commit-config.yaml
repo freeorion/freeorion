@@ -29,6 +29,13 @@ repos:
     rev: 'v1.4.1'
     hooks:
       - id: mypy
-        name: focs.py type checks
+        name: focs.py type checks with mypy
+        files: "default/scripting/.*.focs.py"
+        exclude: "^default/scripting/buildings/colonies/col_bld_gen.py"
+  - repo: https://github.com/RobertCraigie/pyright-python
+    rev: v1.1.316
+    hooks:
+      - id: pyright
+        name: focs.py type checks with pyright
         files: "default/scripting/.*.focs.py"
         exclude: "^default/scripting/buildings/colonies/col_bld_gen.py"

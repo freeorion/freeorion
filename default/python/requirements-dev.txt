@@ -3,3 +3,4 @@ pytest-github-actions-annotate-failures==0.2.0
 black==23.3.0
 ruff==0.0.270
 mypy==1.4.1
+pyright==1.1.316
