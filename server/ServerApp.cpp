@@ -3349,7 +3349,7 @@ namespace {
                     empire_gifted_ships[recipient_empire_id].push_back(ship);
             }
         }
-        for (auto& fleet : objects.all<Fleet>())
+        for (auto* fleet : objects.allRaw<Fleet>())
             fleet->ClearGiveToEmpire(); // in case things fail, to avoid potential inconsistent state
 
 
@@ -3526,7 +3526,7 @@ namespace {
             const auto annexer_empire_id = planet->OrderedAnnexedByEmpire();
             empire_annexed_planets[annexer_empire_id].push_back(planet);
         }
-        for (auto& fleet : objects.all<Planet>())
+        for (auto* fleet : objects.allRaw<Planet>())
             fleet->ResetBeingAnnxed(); // in case things fail, to avoid potential inconsistent state
 
 

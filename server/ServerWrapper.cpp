@@ -657,7 +657,7 @@ namespace {
     auto GetSystems() -> py::list
     {
         py::list py_systems;
-        for (const auto& system : Objects().all<System>())
+        for (const auto* system : Objects().allRaw<System>())
             py_systems.append(system->ID());
         return py_systems;
     }
