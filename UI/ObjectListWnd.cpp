@@ -40,6 +40,8 @@
 std::vector<std::string_view> SpecialNames();
 
 namespace {
+    enum class VIS_DISPLAY : uint8_t { SHOW_VISIBLE, SHOW_PREVIOUSLY_VISIBLE, SHOW_DESTROYED };
+    using VisMap = std::map<UniverseObjectType, std::set<VIS_DISPLAY>>; // TODO: flat_map<flat_set> ?
     using id_range = boost::any_range<int, boost::forward_traversal_tag>;
 
     constexpr unsigned int NUM_COLUMNS(12u);
@@ -398,8 +400,6 @@ namespace {
 
     constexpr int DATA_PANEL_BORDER = 1;
 
-    enum class VIS_DISPLAY : uint8_t { SHOW_VISIBLE, SHOW_PREVIOUSLY_VISIBLE, SHOW_DESTROYED };
-
     constexpr std::string_view EMPTY_STRING = "";
     constexpr std::string_view ALL_CONDITION(UserStringNop("CONDITION_ALL"));
     constexpr std::string_view EMPIREAFFILIATION_CONDITION(UserStringNop("CONDITION_EMPIREAFFILIATION"));
@@ -680,7 +680,7 @@ private:
     }
 
 public:
-    std::unique_ptr<Condition::Condition> GetCondition() {
+    std::unique_ptr<Condition::Condition> GetCondition() const {
         auto row_it = m_class_drop->CurrentItem();
         if (row_it == m_class_drop->end())
             return std::make_unique<Condition::All>();
@@ -1134,16 +1134,32 @@ private:
 ////////////////////////////////////////////////
 class FilterDialog : public CUIWnd {
 public:
-    FilterDialog(std::map<UniverseObjectType, std::set<VIS_DISPLAY>> vis_filters,
-                 const Condition::Condition* const condition_filter);
+    template <typename K, typename V>
+    using flat_map = boost::container::flat_map<K, V, std::less<>>;
+    template <typename V>
+    using flat_set = boost::container::flat_set<V, std::less<>>;
+    using filter_map = flat_map<UniverseObjectType, flat_set<VIS_DISPLAY>>;
+    using button_map = flat_map<UniverseObjectType, flat_map<VIS_DISPLAY, std::shared_ptr<GG::StateButton>>>;
+
+    FilterDialog(filter_map vis_filters, const Condition::Condition* const condition_filter);
+    FilterDialog(VisMap vis_filters, const Condition::Condition* const condition_filter) :
+        FilterDialog([](auto&& vis_filters) -> filter_map {
+            filter_map retval;
+            retval.reserve(vis_filters.size());
+            std::transform(vis_filters.begin(), vis_filters.end(), std::inserter(retval, retval.end()),
+                           [](auto&& uot_set) -> filter_map::value_type
+                           { return {uot_set.first, flat_set<VIS_DISPLAY>{uot_set.second.begin(), uot_set.second.end()}}; });
+            return retval;
+        }(vis_filters), condition_filter)
+    {}
 
     void CompleteConstruction() override;
-    bool ChangesAccepted();
-    std::map<UniverseObjectType, std::set<VIS_DISPLAY>> GetVisibilityFilters() const;
-    std::unique_ptr<Condition::Condition> GetConditionFilter();
+    bool ChangesAccepted() const noexcept { return m_accept_changes; }
+    auto& GetVisibilityFilters() const noexcept { return m_vis_filters; }
+    auto GetConditionFilter() const { return m_condition_widget->GetCondition(); }
 
 protected:
-    GG::Rect CalculatePosition() const override;
+    GG::Rect CalculatePosition() const noexcept override { return {GG::X(100), GG::Y(100), GG::X(500), GG::Y(350)}; }
 
 private:
     void AcceptClicked();
@@ -1153,25 +1169,36 @@ private:
     void UpdateVisFiltersFromObjectTypeButton(UniverseObjectType type);
     void UpdateVisFilterFromVisibilityButton(VIS_DISPLAY vis);
 
-    std::map<UniverseObjectType, std::set<VIS_DISPLAY>>     m_vis_filters;
-    std::map<UniverseObjectType,
-             std::map<VIS_DISPLAY,
-                      std::shared_ptr<GG::StateButton>>>    m_filter_buttons;
-    bool                                                    m_accept_changes = false;
+    filter_map m_vis_filters;
+    button_map m_filter_buttons;
 
     std::shared_ptr<ConditionWidget>    m_condition_widget;
     std::shared_ptr<GG::Layout>         m_filters_layout;
     std::shared_ptr<GG::Button>         m_cancel_button;
     std::shared_ptr<GG::Button>         m_apply_button;
+
+    bool m_accept_changes = false;
 };
 
 
-FilterDialog::FilterDialog(std::map<UniverseObjectType, std::set<VIS_DISPLAY>> vis_filters,
-                           const Condition::Condition* const condition_filter) :
+namespace {
+    constexpr auto UOTs = std::array{UniverseObjectType::OBJ_BUILDING, UniverseObjectType::OBJ_SHIP,
+                                     UniverseObjectType::OBJ_FLEET, UniverseObjectType::OBJ_PLANET,
+                                     UniverseObjectType::OBJ_SYSTEM, UniverseObjectType::OBJ_FIELD};
+
+    auto AddDefaultOffFilters(auto filters) {
+        filters.reserve(UOTs.size());
+        for (auto uot : UOTs)
+            filters[uot]; // does nothing to already-present entries, default initializes missing ones
+        return filters;
+    }
+}
+
+FilterDialog::FilterDialog(filter_map vis_filters, const Condition::Condition* const condition_filter) :
     CUIWnd(UserString("FILTERS"),
            GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL,
            FILTER_OPTIONS_WND_NAME),
-    m_vis_filters(std::move(vis_filters))
+    m_vis_filters{AddDefaultOffFilters(vis_filters)}
 { m_condition_widget = GG::Wnd::Create<ConditionWidget>(GG::X(3), GG::Y(3), condition_filter); }
 
 void FilterDialog::CompleteConstruction() {
@@ -1184,21 +1211,17 @@ void FilterDialog::CompleteConstruction() {
     m_filters_layout->SetColumnStretch(0, 0.0);
 
     GG::X button_width = GG::X(ClientUI::Pts()*8);
-    std::shared_ptr<GG::Button> label;
 
     int vis_row = 1;
     GG::Y min_usable_size = GG::Y1;
 
-    for (const auto& entry : {
-            std::make_tuple(VIS_DISPLAY::SHOW_VISIBLE,            UserStringNop("VISIBLE")),
-            std::make_tuple(VIS_DISPLAY::SHOW_PREVIOUSLY_VISIBLE, UserStringNop("PREVIOUSLY_VISIBLE")),
-            std::make_tuple(VIS_DISPLAY::SHOW_DESTROYED,          UserStringNop("DESTROYED"))
-        })
-    {
-        const auto visibility = std::get<0>(entry);
-        const auto label_key = std::get<1>(entry);
+    static constexpr std::array<std::pair<VIS_DISPLAY, std::string_view>, 3> vd_string{{
+        {VIS_DISPLAY::SHOW_VISIBLE,            UserStringNop("VISIBLE")},
+        {VIS_DISPLAY::SHOW_PREVIOUSLY_VISIBLE, UserStringNop("PREVIOUSLY_VISIBLE")},
+        {VIS_DISPLAY::SHOW_DESTROYED,          UserStringNop("DESTROYED")}}};
 
-        label = Wnd::Create<CUIButton>(UserString(label_key));
+    for (const auto& [visibility, label_key] : vd_string) {
+        auto label = Wnd::Create<CUIButton>(UserString(label_key));
         min_usable_size = std::max(min_usable_size, label->MinUsableSize().y);
         label->Resize(GG::Pt(button_width, min_usable_size));
         label->LeftClickedSignal.connect(
@@ -1215,13 +1238,10 @@ void FilterDialog::CompleteConstruction() {
 
     int col = 1;
 
-    for (const auto& entry : m_vis_filters) {
-        const UniverseObjectType& uot = entry.first;
-        const std::set<VIS_DISPLAY>& vis_display = entry.second;
-
+    for (const auto& [uot, vis_display] : m_vis_filters) {
         m_filters_layout->SetColumnStretch(col, 1.0);
 
-        label = Wnd::Create<CUIButton>(" " + UserString(to_string(uot)) + " ");
+        auto label = Wnd::Create<CUIButton>(" " + UserString(to_string(uot)) + " ");
         label->LeftClickedSignal.connect(
             boost::bind(&FilterDialog::UpdateVisFiltersFromObjectTypeButton, this, uot));
         m_filters_layout->Add(std::move(label), 0, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
@@ -1270,18 +1290,6 @@ void FilterDialog::CompleteConstruction() {
     SaveOptions();
 }
 
-bool FilterDialog::ChangesAccepted()
-{ return m_accept_changes; }
-
-std::map<UniverseObjectType, std::set<VIS_DISPLAY>> FilterDialog::GetVisibilityFilters() const
-{ return m_vis_filters; }
-
-std::unique_ptr<Condition::Condition> FilterDialog::GetConditionFilter()
-{ return m_condition_widget->GetCondition(); }
-
-GG::Rect FilterDialog::CalculatePosition() const
-{ return GG::Rect(GG::X(100), GG::Y(100), GG::X(500), GG::Y(350)); }
-
 void FilterDialog::AcceptClicked() {
     m_accept_changes = true;
     m_modal_done.store(true);
@@ -1294,17 +1302,18 @@ void FilterDialog::CancelClicked() {
 
 void FilterDialog::UpdateStateButtonsFromVisFilters() {
     // set state button checks to match current visibility filter settings
-    for (auto& entry : m_filter_buttons) {
+    for (auto& [uot, vis_buttons] : m_filter_buttons) {
         // find visibilities for this object type
-        auto uot_it = m_vis_filters.find(entry.first);
-        const auto& shown_vis = (uot_it != m_vis_filters.end() ?
-                                 uot_it->second : std::set<VIS_DISPLAY>());
+        const auto uot_it = m_vis_filters.find(uot);
+        const bool have_for_type = (uot_it != m_vis_filters.end());
+        if (!have_for_type)
+            continue;
+
 
         // set all button checks depending on whether that buttons visibility is to be shown
-        for (auto& button : entry.second) {
-            if (!button.second)
-                continue;
-            button.second->SetCheck(shown_vis.contains(button.first));
+        for (auto& [vis, button] : vis_buttons) {
+            if (button)
+                button->SetCheck(uot_it->second.contains(vis));
         }
     }
 }
@@ -1312,12 +1321,10 @@ void FilterDialog::UpdateStateButtonsFromVisFilters() {
 void FilterDialog::UpdateVisFiltersFromStateButtons(bool button_checked) {
     m_vis_filters.clear();
     // set all filters based on state button settings
-    for (const auto& entry : m_filter_buttons) {
-        for (const auto& button : entry.second) {
-            if (!button.second)
-                continue;
-            if (button.second->Checked())
-                m_vis_filters[entry.first].insert(button.first);
+    for (const auto& [uot, vis_buttons] : m_filter_buttons) {
+        for (const auto& [vis, button] : vis_buttons) {
+            if (button && button->Checked())
+                m_vis_filters[uot].insert(vis);
         }
     }
 }
@@ -1341,17 +1348,17 @@ void FilterDialog::UpdateVisFilterFromVisibilityButton(VIS_DISPLAY vis) {
     // toggle types for this visibility
 
     // determine if all types are already on for requested visibility
-    bool all_on = true;
-    for (const auto& entry : m_filter_buttons) {
-        auto& type_vis = m_vis_filters[entry.first];
-        if (!type_vis.contains(vis)) {
-            all_on = false;
-            break;
-        }
-    }
+    bool all_on = std::all_of(m_filter_buttons.begin(), m_filter_buttons.end(),
+                              [this, vis](const auto& uot_vis_buttons) {
+                                  const UniverseObjectType uot = uot_vis_buttons.first;
+                                  const auto it = m_vis_filters.find(uot);
+                                  return it != m_vis_filters.end() && it->second.contains(vis);
+                              });
+
     // if all on, turn all off. otherwise, turn all on
-    for (const auto& entry : m_filter_buttons) {
-        auto& type_vis = m_vis_filters[entry.first];
+    for (const auto& [uot, ignored] : m_filter_buttons) {
+        (void)ignored;
+        auto& type_vis = m_vis_filters[uot];
         if (!all_on)
             type_vis.insert(vis);
         else
@@ -1363,9 +1370,7 @@ void FilterDialog::UpdateVisFilterFromVisibilityButton(VIS_DISPLAY vis) {
 
 
 namespace {
-    std::vector<std::shared_ptr<GG::Texture>> ObjectTextures(
-        std::shared_ptr<const UniverseObject> obj)
-    {
+    auto ObjectTextures(std::shared_ptr<const UniverseObject> obj) {
         std::vector<std::shared_ptr<GG::Texture>> retval;
         retval.reserve(4);
 
@@ -1460,7 +1465,7 @@ public:
         return val;
     }
 
-    int ObjectID() const { return m_object_id; }
+    int ObjectID() const noexcept { return m_object_id; }
 
     void PreRender() override {
         GG::Control::PreRender();
@@ -1665,16 +1670,16 @@ public:
     GG::ListBox::Row::SortKeyType SortKey(std::size_t column) const override
     { return m_panel ? m_panel->SortKey(column) : ""; }
 
-    int ObjectID() const {
+    int ObjectID() const noexcept {
         if (m_panel)
             return m_panel->ObjectID();
         return INVALID_OBJECT_ID;
     }
 
-    int ContainedByPanel() const
+    int ContainedByPanel() const noexcept
     { return m_container_object_panel; }
 
-    const std::set<int>& ContainedPanels() const
+    auto& ContainedPanels() const noexcept
     { return m_contained_object_panels; }
 
     void SetContainedPanels(const std::set<int>& contained_object_panels) {
@@ -1700,13 +1705,14 @@ public:
     { ExpandCollapseSignal(m_panel ? m_panel->ObjectID() : INVALID_OBJECT_ID); }
 
     mutable boost::signals2::signal<void (int)> ExpandCollapseSignal;
+
 private:
     std::shared_ptr<ObjectPanel>            m_panel;
     int                                     m_container_object_panel;
     std::set<int>                           m_contained_object_panels;
     std::shared_ptr<const UniverseObject>   m_obj_init;
-    bool                                    m_expanded_init = false;
     int                                     m_indent_init = 0;
+    bool                                    m_expanded_init = false;
 };
 
 ////////////////////////////////////////////////
@@ -1716,9 +1722,7 @@ class ObjectHeaderPanel : public GG::Control {
 public:
     ObjectHeaderPanel(GG::X w, GG::Y h) :
         Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS)
-    {
-        SetChildClippingMode(ChildClippingMode::ClipToClient);
-    }
+    { SetChildClippingMode(ChildClippingMode::ClipToClient); }
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override {
         const GG::Pt old_size = Size();
@@ -1727,15 +1731,14 @@ public:
             DoLayout();
     }
 
-    void Render() override
-    {}
+    void Render() noexcept override {}
 
     void Refresh() {
         for (auto& button : m_controls)
-        { DetachChild(button); }
+            DetachChild(button);
         m_controls.clear();
 
-        auto&& controls = GetControls();
+        auto controls = GetControls();
         m_controls.reserve(controls.size());
         for (int i = 0; i < static_cast<int>(controls.size()); ++i) {
             m_controls.emplace_back(controls[i]);
@@ -1833,8 +1836,7 @@ private:
         std::vector<std::shared_ptr<GG::Button>> retval;
         retval.reserve(NUM_COLUMNS);
 
-        auto control = Wnd::Create<CUIButton>("-");
-        retval.emplace_back(control);
+        retval.push_back(Wnd::Create<CUIButton>("-"));
 
         for (unsigned int i = 0; i < NUM_COLUMNS; ++i) {
             std::string header_name{GetColumnName(static_cast<int>(i))};
@@ -1981,9 +1983,7 @@ namespace {
 ////////////////////////////////////////////////
 class ObjectListBox : public CUIListBox {
 public:
-    ObjectListBox() :
-        CUIListBox()
-    {}
+    ObjectListBox() = default;
 
     void CompleteConstruction() override {
         CUIListBox::CompleteConstruction();
@@ -2042,10 +2042,10 @@ public:
     static GG::Y ListRowHeight()
     { return GG::Y(ClientUI::Pts() * 2); }
 
-    const Condition::Condition* const FilterCondition() const
+    const Condition::Condition* const FilterCondition() const noexcept
     { return m_filter_condition.get(); }
 
-    const std::map<UniverseObjectType, std::set<VIS_DISPLAY>> Visibilities() const
+    const auto& Visibilities() const noexcept
     { return m_visibilities; }
 
     void CollapseObject(int object_id = INVALID_OBJECT_ID) {
@@ -2060,18 +2060,17 @@ public:
     }
 
     void ExpandObject(int object_id = INVALID_OBJECT_ID) {
-        if (object_id == INVALID_OBJECT_ID) {
+        if (object_id == INVALID_OBJECT_ID)
             m_collapsed_objects.clear();
-        } else {
+        else
             m_collapsed_objects.erase(object_id);
-        }
         Refresh();
     }
 
     bool ObjectCollapsed(int object_id) const
     { return object_id != INVALID_OBJECT_ID && m_collapsed_objects.contains(object_id); }
 
-    bool AnythingCollapsed() const
+    bool AnythingCollapsed() const noexcept
     { return !m_collapsed_objects.empty(); }
 
     void SetFilterCondition(std::unique_ptr<Condition::Condition>&& condition) {
@@ -2079,10 +2078,21 @@ public:
         Refresh();
     }
 
-    void SetVisibilityFilters(const std::map<UniverseObjectType, std::set<VIS_DISPLAY>>& vis) {
-        if (vis != m_visibilities) {
-            m_visibilities = vis;
-            Refresh();
+    void SetVisibilityFilters(auto&& vis) {
+        if constexpr (requires { vis != m_visibilities; }) {
+            if (vis != m_visibilities) {
+                m_visibilities = std::forward<decltype(vis)>(vis);
+                Refresh();
+            }
+        } else {
+            decltype(m_visibilities) new_vis;
+            for (auto& [uot, vis_set] : vis)
+                new_vis[uot].insert(vis_set.begin(), vis_set.end());
+
+            if (new_vis != m_visibilities) {
+                m_visibilities = std::move(new_vis);
+                Refresh();
+            }
         }
     }
 
@@ -2091,34 +2101,36 @@ public:
         m_object_change_connections.clear(); // should disconnect scoped connections
     }
 
-    bool ObjectShown(const UniverseObject* obj,
-                     const ScriptingContext& context,
-                     bool assume_visible_without_checking = false)
+    bool ObjectShown(const auto& obj_in, const ScriptingContext& context,
+                     bool assume_visible_without_checking = false) const
     {
+        const auto* obj = [&obj_in]() {
+            if constexpr (requires { obj_in.get(); })
+                return obj_in.get();
+            else if (std::is_pointer_v<std::decay_t<decltype(obj_in)>>)
+                return obj_in;
+        }();
         if (!obj)
             return false;
 
         if (m_filter_condition && !m_filter_condition->EvalOne(context, obj))
             return false;
 
+        const auto it = m_visibilities.find(obj->ObjectType());
+        if (it == m_visibilities.end())
+            return false;
+
         const int object_id = obj->ID();
         const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        const UniverseObjectType type = obj->ObjectType();
 
         if (context.ContextUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id).contains(object_id))
-            return m_visibilities[type].contains(VIS_DISPLAY::SHOW_DESTROYED);
+            return it->second.contains(VIS_DISPLAY::SHOW_DESTROYED);
 
         if (assume_visible_without_checking || context.ContextUniverse().GetObjectVisibilityByEmpire(object_id, client_empire_id) >= Visibility::VIS_PARTIAL_VISIBILITY)
-            return m_visibilities[type].contains(VIS_DISPLAY::SHOW_VISIBLE);
+            return it->second.contains(VIS_DISPLAY::SHOW_VISIBLE);
 
-        return m_visibilities[type].contains(VIS_DISPLAY::SHOW_PREVIOUSLY_VISIBLE);
+        return it->second.contains(VIS_DISPLAY::SHOW_PREVIOUSLY_VISIBLE);
     }
-
-    template <typename T>
-    bool ObjectShown(const std::shared_ptr<T>& obj,
-                     const ScriptingContext& context,
-                     bool assume_visible_without_checking = false)
-    { return ObjectShown(obj.get(), context, assume_visible_without_checking); }
 
     void Refresh() {
         SectionedScopedTimer timer("ObjectListBox::Refresh");
@@ -2228,8 +2240,9 @@ public:
 
                 std::vector<int> fleet_contents;
                 fleet_contents.reserve(fleet_ships[FLEET_ID].size());
-                for (const auto& ship : fleet_ships[FLEET_ID])
-                    fleet_contents.push_back(ship->ID());
+                std::transform(fleet_ships[FLEET_ID].begin(), fleet_ships[FLEET_ID].end(),
+                               std::back_inserter(fleet_contents),
+                               [](const auto& ship) { return ship->ID(); });
 
                 AddObjectRow(std::move(fleet), SYSTEM_ID, fleet_contents, indent);
                 if (ObjectCollapsed(FLEET_ID)) {
@@ -2502,7 +2515,7 @@ private:
     std::map<int, boost::signals2::scoped_connection>   m_object_change_connections;
     std::set<int>                                       m_collapsed_objects;
     std::unique_ptr<Condition::Condition>               m_filter_condition;
-    std::map<UniverseObjectType, std::set<VIS_DISPLAY>> m_visibilities;
+    VisMap                                              m_visibilities;
     std::shared_ptr<ObjectHeaderRow>                    m_header_row;
     boost::signals2::scoped_connection                  m_obj_deleted_connection;
 };
@@ -2875,7 +2888,7 @@ int ObjectListWnd::ObjectInRow(GG::ListBox::iterator it) const {
     if (it == m_list_box->end())
         return INVALID_OBJECT_ID;
 
-    if (ObjectRow* obj_row = dynamic_cast<ObjectRow*>(it->get()))
+    if (auto obj_row = dynamic_cast<const ObjectRow*>(it->get()))
         return obj_row->ObjectID();
 
     return INVALID_OBJECT_ID;
