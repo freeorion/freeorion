@@ -320,3 +320,11 @@ no_site_packages = true
 mypy_path = "default/scripting"
 disable_error_code = ['name-defined', 'var-annotated']
 fast_module_lookup = true
+
+[tool.pyright]
+include = ["default/scripting/species"]
+pythonVersion = "3.9"
+strictListInference = true
+strictDictionaryInference = true
+strictSetInference = true
+reportUndefinedVariable = false
