@@ -32,3 +32,19 @@ jobs:
     uses: ./.github/workflows/_build-windows.yml
   windows-msvc:
     uses: ./.github/workflows/_build-windows-msvs.yml
+  docker:
+    uses: ./.github/workflows/_build-docker.yml
+  discord-notify-success:  #  sample messages just for demo purposes
+     uses: ./.github/workflows/_discord.yml
+     needs:
+      - android
+      - macos
+      - ubuntu
+      - windows
+      - windows-msvc
+      - docker
+     if: always()
+     with:
+       title: 'FreeOrion build master'
+     secrets:
+       WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}

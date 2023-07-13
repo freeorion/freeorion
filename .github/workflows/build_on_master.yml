@@ -35,3 +35,17 @@ jobs:
     uses: ./.github/workflows/_build-docker.yml
   snapcraft:
     uses: ./.github/workflows/_build_snapcraft.yml
+  discord-notify-success: #  sample messages just for demo purposes
+    uses: ./.github/workflows/_discord.yml
+    needs:
+      - android
+      - macos
+      - ubuntu
+      - windows
+      - docker
+      - snapcraft
+    if: failure()
+    with:
+      title: 'FreeOrion build master'
+    secrets:
+      WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}

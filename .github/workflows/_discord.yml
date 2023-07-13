@@ -1,0 +1,22 @@
+on:
+  workflow_call:
+    inputs:
+      title:
+        type: string
+        required: true
+    secrets:
+      WEBHOOK:
+        required: true
+jobs:
+  discord:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: sarisia/actions-status-discord@v1
+        with:
+          title: ${{ inputs.title }}
+          webhook: ${{ secrets.WEBHOOK }}
+          color: 0xff0000
+          username: 'FreeOrion Repo'
+          url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          avatar_url: https://github.githubassets.com/images/modules/logos_page/Octocat.png
