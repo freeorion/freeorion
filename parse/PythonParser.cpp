@@ -151,6 +151,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         py::class_<value_ref_wrapper<std::string>>("ValueRefString", py::no_init)
             .def(py::self_ns::self + std::string())
             .def(std::string() + py::self_ns::self);
+        py::class_<value_ref_wrapper<Visibility>>("ValueRefVisibility", py::no_init);
         py::class_<condition_wrapper>("Condition", py::no_init)
             .def(py::self_ns::self & py::self_ns::self)
             .def(py::self_ns::self & py::other<value_ref_wrapper<double>>())
@@ -174,6 +175,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         py::class_<enum_wrapper<ValueRef::StatisticType>>("__StatisticType", py::no_init);
         py::class_<enum_wrapper<Condition::ContentType>>("__LocationContentType", py::no_init);
         py::class_<enum_wrapper<BuildType>>("__BuildType", py::no_init);
+        py::class_<enum_wrapper<Visibility>>("__Visibility", py::no_init);
         py::class_<unlockable_item_wrapper>("UnlockableItem", py::no_init);
         py::class_<FocusType>("__FocusType", py::no_init);
         auto py_variable_wrapper = py::class_<variable_wrapper>("__Variable", py::no_init);

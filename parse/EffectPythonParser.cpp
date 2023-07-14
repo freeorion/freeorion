@@ -295,6 +295,38 @@ namespace {
         return effect_wrapper(std::make_shared<Effect::SetPlanetSize>(std::move(planetsize)));
     }
 
+    effect_wrapper insert_set_visibility_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        EmpireAffiliationType affiliation = EmpireAffiliationType::AFFIL_ANY;
+        std::unique_ptr<ValueRef::ValueRef<int>> empire;
+        if (kw.has_key("empire")) {
+            auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
+            if (empire_args.check())
+                empire = ValueRef::CloneUnique(empire_args().value_ref);
+            else
+                empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
+            affiliation = EmpireAffiliationType::AFFIL_SELF;
+        }
+
+        if (kw.has_key("affiliation"))
+            affiliation = py::extract<enum_wrapper<EmpireAffiliationType>>(kw["affiliation"])().value;
+
+        std::unique_ptr<ValueRef::ValueRef<Visibility>> visibility;
+        auto vis_arg = boost::python::extract<value_ref_wrapper<Visibility>>(kw["visibility"]);
+        if (vis_arg.check())
+            visibility = ValueRef::CloneUnique(vis_arg().value_ref);
+        else
+            visibility = std::make_unique<ValueRef::Constant<Visibility>>(boost::python::extract<enum_wrapper<Visibility>>(kw["visibility"])().value);
+
+        std::unique_ptr<Condition::Condition> condition;
+        if (kw.has_key("condition"))
+            condition = ValueRef::CloneUnique(py::extract<condition_wrapper>(kw["condition"])().condition);
+
+        return effect_wrapper(std::make_shared<Effect::SetVisibility>(std::move(visibility),
+            affiliation,
+            std::move(empire),
+            std::move(condition)));
+    }
+
     effect_wrapper insert_give_empire_item_(UnlockableItemType item, const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<int>> empire;
         if (kw.has_key("empire")) {
@@ -602,6 +634,7 @@ void RegisterGlobalsEffects(py::dict& globals) {
     globals["MoveTo"] = py::raw_function(insert_move_to_);
     globals["MoveTowards"] = py::raw_function(insert_move_towards_);
     globals["SetPlanetSize"] = py::raw_function(insert_set_planet_size_);
+    globals["SetVisibility"] = py::raw_function(insert_set_visibility_);
 
     // give_empire_unlockable_item_enum_grammar 
     for (const auto& uit : std::initializer_list<std::pair<const char*, UnlockableItemType>>{

@@ -120,5 +120,15 @@ void RegisterGlobalsEnums(boost::python::dict& globals) {
     {
         globals[op.first] = enum_wrapper<BuildType>(op.second);
     }
+
+    // visibility_parser_rules
+    for (const auto& vis : std::initializer_list<std::pair<const char*, Visibility>>{
+            {"Invisible", Visibility::VIS_NO_VISIBILITY},
+            {"Basic",     Visibility::VIS_BASIC_VISIBILITY},
+            {"Partial",   Visibility::VIS_PARTIAL_VISIBILITY},
+            {"Full",      Visibility::VIS_FULL_VISIBILITY}})
+    {
+        globals[vis.first] = enum_wrapper<Visibility>(vis.second);
+    }
 }
 
