@@ -6,7 +6,19 @@ from common.priorities import (
     TARGET_POPULATION_OVERRIDE_PRIORITY,
     TARGET_POPULATION_SCALING_PRIORITY,
 )
-from focs._effects import Abs, EffectsGroup, GasGiantType, IsSource, Planet, SetTargetPopulation, Value
+from focs._effects import (
+    Abs,
+    EffectsGroup,
+    GasGiantType,
+    IsSource,
+    MaxOf,
+    MinOf,
+    NamedRealLookup,
+    Planet,
+    SetTargetPopulation,
+    Target,
+    Value,
+)
 from species.common.advanced_focus import ADVANCED_FOCUS_EFFECTS
 from species.common.general import (
     FOCUS_CHANGE_PENALTY,

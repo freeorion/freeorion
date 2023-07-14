@@ -255,3 +255,31 @@ GOOD_DEFENSE_TROOPS = [
     *UNSTABLE_REBEL_TROOPS,
     *PROTECTION_FOCUS_TROOPS,
 ]
+
+ULTIMATE_DEFENSE_TROOPS = [
+    *BASIC_DEFENSE_TROOPS,
+    EffectsGroup(
+        description="ULTIMATE_DEFENSE_TROOPS_DESC",
+        scope=IsSource,
+        activation=Planet(),
+        effects=SetMaxTroops(value=Value * 3),
+        accountinglabel="ULTIMATE_TROOPS_LABEL",
+    ),
+    *UNSTABLE_REBEL_TROOPS,
+    *PROTECTION_FOCUS_TROOPS,
+]
+
+
+GREAT_OFFENSE_TROOPS = [
+    EffectsGroup(
+        description="GREAT_OFFENSE_TROOPS_DESC",
+        scope=IsSource,
+        activation=Ship & (DesignHasPart(name="GT_TROOP_POD") | DesignHasPart(name="GT_TROOP_POD_2")),
+        stackinggroup="GREAT_OFFENSIVE_TROOPS_STACK",
+        accountinglabel="GREAT_OFFENSIVE_TROOPS_LABEL",
+        effects=[
+            SetCapacity(partname="GT_TROOP_POD", value=PartCapacity(name="GT_TROOP_POD") * 2),
+            SetCapacity(partname="GT_TROOP_POD_2", value=PartCapacity(name="GT_TROOP_POD_2") * 2),
+        ],
+    )
+]

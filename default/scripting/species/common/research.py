@@ -6,7 +6,13 @@ from common.priorities import (
     TARGET_SCALING_PRIORITY,
 )
 from focs._effects import EffectsGroup, Focus, Happiness, IsSource, Planet, SetTargetResearch, Value
-from species.common.multiplier import BAD_MULTIPLIER, GOOD_MULTIPLIER, GREAT_MULTIPLIER
+from species.common.multiplier import (
+    BAD_MULTIPLIER,
+    GOOD_MULTIPLIER,
+    GREAT_MULTIPLIER,
+    ULTIMATE_MULTIPLIER,
+    VERY_BAD_MULTIPLIER,
+)
 
 NO_RESEARCH = DESCRIPTION_EFFECTSGROUP_MACRO("NO_RESEARCH_DESC")
 
@@ -63,5 +69,31 @@ GREAT_RESEARCH = [
         accountinglabel="GREAT_RESEARCH_LABEL",
         priority=TARGET_SCALING_PRIORITY,
         effects=SetTargetResearch(value=Value * GREAT_MULTIPLIER),
+    ),
+]
+
+
+VERY_BAD_RESEARCH = [
+    *BASIC_RESEARCH,
+    EffectsGroup(
+        description="VERY_BAD_RESEARCH_DESC",
+        scope=IsSource,
+        activation=Planet() & Focus(type=["FOCUS_RESEARCH"]),
+        accountinglabel="VERY_BAD_RESEARCH_LABEL",
+        priority=TARGET_SCALING_PRIORITY,
+        effects=SetTargetResearch(value=Value * VERY_BAD_MULTIPLIER),
+    ),
+]
+
+
+ULTIMATE_RESEARCH = [
+    *BASIC_RESEARCH,
+    EffectsGroup(
+        description="ULTIMATE_RESEARCH_DESC",
+        scope=IsSource,
+        activation=Planet() & Focus(type=["FOCUS_RESEARCH"]),
+        accountinglabel="ULTIMATE_RESEARCH_LABEL",
+        priority=TARGET_SCALING_PRIORITY,
+        effects=SetTargetResearch(value=Value * ULTIMATE_MULTIPLIER),
     ),
 ]
