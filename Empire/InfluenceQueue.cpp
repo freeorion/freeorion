@@ -9,9 +9,6 @@
 #include "../util/GameRules.h"
 #include "../util/ScopedTimer.h"
 
-#include <boost/range/numeric.hpp>
-#include <boost/range/adaptor/map.hpp>
-
 
 namespace {
 #if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
