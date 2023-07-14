@@ -784,6 +784,7 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
 
     globals["HasSpecies"] = boost::python::raw_function(insert_has_species_);
     globals["CanColonize"] = condition_wrapper(std::make_shared<Condition::CanColonize>());
+    globals["Armed"] = condition_wrapper(std::make_shared<Condition::Armed>());
 
     globals["IsSource"] = condition_wrapper(std::make_shared<Condition::Source>());
     globals["IsTarget"] = condition_wrapper(std::make_shared<Condition::Target>());
