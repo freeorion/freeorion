@@ -1096,7 +1096,7 @@ void Empire::UpdateSystemSupplyRanges(const Universe& universe) {
 }
 
 void Empire::UpdateUnobstructedFleets(ObjectMap& objects, const std::unordered_set<int>& known_destroyed_objects) {
-    for (const auto& system : objects.find<System>(m_supply_unobstructed_systems)) {
+    for (const auto* system : objects.findRaw<System>(m_supply_unobstructed_systems)) {
         if (!system)
             continue;
 
@@ -1239,7 +1239,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
 
 
     // check each potential supplyable system for whether it can propagate supply.
-    for (const auto& sys : objects.find<System>(known_systems)) {
+    for (const auto* sys : objects.findRaw<System>(known_systems)) {
         if (!sys)
             continue;
 
