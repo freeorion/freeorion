@@ -1,4 +1,4 @@
-FORTICATION_PROBABILITY
+FORTIFICATION_PROBABILITY
 '''0.1 * max(0.2 * Source.TargetPopulation, Source.Research + Source.Industry)'''
 
 ADVANCED_NATIVE_DEFENSE
@@ -36,7 +36,7 @@ EffectsGroup
                 ]
             activation = And [
                 Planet
-                Random probability = [[FORTICATION_PROBABILITY]]
+                Random probability = [[FORTIFICATION_PROBABILITY]]
                 Not ContainedBy Contains Or [
                     And [Planet HasSpecial name = "MODERATE_TECH_NATIVES_SPECIAL"]
                     And [Planet HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL"]
@@ -44,7 +44,7 @@ EffectsGroup
                     ]
             ]
             effects = [
-                If condition = Not Random probability = [[FORTICATION_PROBABILITY]]
+                If condition = Not Random probability = [[FORTIFICATION_PROBABILITY]]
                     effects = [
                         AddSpecial name = OneOf("NATIVE_FORTIFICATION_MINIMAL", "NATIVE_FORTIFICATION_LOW", "CLOUD_COVER_MASTER_SPECIAL")
                     ]
