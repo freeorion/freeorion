@@ -53,3 +53,14 @@ GREAT_SUPPLY = [
     ),
     STANDARD_SUPPLY_GROWTH,
 ]
+
+ULTIMATE_SUPPLY = [
+    EffectsGroup(
+        description="ULTIMATE_SUPPLY_DESC",
+        scope=IsSource,
+        activation=Planet(),
+        accountinglabel="ULTIMATE_SUPPLY_LABEL",
+        effects=SetMaxSupply(value=Value + 3),
+    ),
+    STANDARD_SUPPLY_GROWTH,
+]
