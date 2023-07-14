@@ -285,7 +285,33 @@ namespace {
     static_assert(std::is_same_v<const_const_planet_raw_t2, const Planet*>);
 }
 
-void ObjectMap::DummyForTests() const {
+namespace ObjectMapPredicateTypeTraits {
+    static_assert(!int_iterable<int>);
+    static_assert(!int_iterable<std::array<float, 5>>);
+    static_assert(int_iterable<std::array<const int, 42>>);
+    static_assert(int_iterable<boost::container::flat_set<int, std::greater<>>>);
+    static_assert(int_iterable<std::vector<int>>);
+
+    static_assert(is_sorted<std::set<int>>);
+    static_assert(is_sorted<std::set<std::string, std::less<>>>);
+    static_assert(is_sorted<std::multiset<int>>);
+    static_assert(is_sorted<boost::container::flat_set<int>>);
+    static_assert(!is_sorted<std::unordered_map<int, float>>);
+    static_assert(!is_sorted<std::vector<float>>);
+    static_assert(!is_sorted<float>);
+
+    static_assert(is_unordered_set<std::unordered_set<std::vector<float>>>);
+    static_assert(is_boost_unordered_set<boost::unordered::unordered_set<std::vector<float>>>);
+
+    static_assert(is_unique_set<std::set<int, std::less<>>>);
+    static_assert(is_unique_set<std::set<std::string>>);
+    static_assert(!is_unique_set<std::multiset<int, std::less<>>>);
+    static_assert(is_unique_set<boost::container::flat_set<int>>);
+    static_assert(!is_unique_set<std::unordered_map<int, float>>);
+    static_assert(is_unique_set<std::unordered_set<float, std::equal_to<>>>);
+    static_assert(!is_unique_set<std::vector<float>>);
+    static_assert(!is_unique_set<std::unique_ptr<std::string>>);
+
     /*
     invokable_on_raw_const_object, invokable_on_raw_mutable_object,
     invokable_on_shared_const_object, invokable_on_shared_mutable_object,
@@ -293,7 +319,6 @@ void ObjectMap::DummyForTests() const {
     invokable_on_const_reference, invokable_on_mutable_reference,
     invokable, is_visitor, is_int_range
     */
-
     static constexpr auto fsiv = ObjectMap::CheckTypes<Ship, std::vector<int>>();
     static_assert(fsiv == std::array{false, false, false, false, false, false, false, false, false, false, true});
 
@@ -304,6 +329,7 @@ void ObjectMap::DummyForTests() const {
     static constexpr auto lspbicsp = ObjectMap::CheckTypes<Ship, decltype(ship_p_lambda)>();
     static_assert(lspbicsp == std::array{true, true, false, false, false, false, false, false, true, false, false});
 }
+
 
 /////////////////////////////////////////////
 // class ObjectMap

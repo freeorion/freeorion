@@ -5,10 +5,13 @@
 #include <array>
 #include <map>
 #include <memory>
+#include <set>
 #include <string>
 #include <type_traits>
 #include <unordered_set>
 #include <vector>
+#include <boost/container/flat_set.hpp>
+#include <boost/unordered/unordered_set.hpp>
 #include <boost/range/adaptor/map.hpp>
 #include "ConstantsFwd.h"
 #include "UniverseObjectVisitor.h"
@@ -273,6 +276,9 @@ public:
       * object. */
     void AuditContainment(const std::unordered_set<int>& destroyed_object_ids);
 
+    template <typename T, typename Pred>
+    [[nodiscard]] static constexpr std::array<bool, 11> CheckTypes();
+
 private:
     void insertCore(std::shared_ptr<UniverseObject> obj, bool destroyed);
     void insertCore(std::shared_ptr<Planet> obj, bool destroyed);
@@ -383,8 +389,6 @@ private:
     [[nodiscard]] const auto& ExistingMap() const noexcept
     { return Map<T, true>(); }
 
-    template <typename T, typename Pred>
-    [[nodiscard]] static constexpr std::array<bool, 11> CheckTypes();
 
     container_type<UniverseObject>  m_objects;
     container_type<Ship>            m_ships;
@@ -409,8 +413,6 @@ private:
     std::vector<const UniverseObject*> m_existing_system_vec;
     std::vector<const UniverseObject*> m_existing_building_vec;
     std::vector<const UniverseObject*> m_existing_field_vec;
-
-    void DummyForTests() const;
 
     template <typename Archive>
     friend void serialize(Archive&, ObjectMap&, unsigned int const);
@@ -452,14 +454,30 @@ std::decay_t<T>* ObjectMap::getRaw(int id)
     return it != map.end() ? it->second.get() : nullptr;
 }
 
-namespace {
+namespace ObjectMapPredicateTypeTraits{
     template <typename T>
     concept int_iterable = std::is_same_v<std::decay_t<typename T::value_type>, int> && requires(T t) { t.begin(); t.end(); };
 
-    static_assert(!int_iterable<int>);
-    static_assert(!int_iterable<std::array<float, 5>>);
-    static_assert(int_iterable<std::array<const int, 42>>);
-    static_assert(int_iterable<std::vector<int>>);
+    template <class T>
+    concept is_set = requires(T t) { []<typename ...Args>(std::set<Args...>&){}(t); };
+
+    template <class T>
+    concept is_multiset = requires(T t) { []<typename ...Args>(std::multiset<Args...>&){}(t); };
+
+    template <class T>
+    concept is_flat_set = requires(T t) { []<typename ...Args>(boost::container::flat_set<Args...>&){}(t); };
+
+    template <typename T>
+    concept is_sorted = is_set<T> || is_multiset<T> || is_flat_set<T>;
+
+    template <class C>
+    concept is_unordered_set = requires(C c) { []<typename ...Args>(std::unordered_set<Args...>&){}(c); };
+
+    template <class C>
+    concept is_boost_unordered_set = requires(C c) { []<typename ...Args>(boost::unordered::unordered_set<Args...>&){}(c); };
+
+    template <class T>
+    concept is_unique_set = is_set<T> || is_flat_set<T> || is_unordered_set<T> || is_boost_unordered_set<T>;
 }
 
 /** Checks whether and how a predicate can be applied to select objects from the ObjectMap.
@@ -480,6 +498,7 @@ constexpr std::array<bool, 11> ObjectMap::CheckTypes()
     using ConstEntryT = std::pair<const int, std::shared_ptr<const DecayT>>;
     static_assert(std::is_convertible_v<EntryT, ConstEntryT>);
 
+    using namespace ObjectMapPredicateTypeTraits;
 
     constexpr bool is_int_range = int_iterable<Pred>;
 
