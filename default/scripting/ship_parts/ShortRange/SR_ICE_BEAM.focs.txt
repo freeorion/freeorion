@@ -3,6 +3,14 @@ Part
     description = "SR_ICE_BEAM_DESC"
     class = ShortRange
     damage = 9
+    destroyFightersPerBattleMax = 0
+    combatTargets = And [
+        Or [
+           [[COMBAT_TARGETS_NOT_DESTROYED_SHIP]]
+           [[COMBAT_TARGETS_PLANET_WITH_DEFENSE]]
+        ]
+        [[COMBAT_TARGETS_VISIBLE_ENEMY]]
+    ]
     mountableSlotTypes = External
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 2
