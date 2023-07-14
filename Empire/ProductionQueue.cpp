@@ -10,12 +10,12 @@
 #include "../universe/ValueRef.h"
 #include "../util/AppInterface.h"
 #include "../util/GameRules.h"
+#include "../util/ranges.h"
 #include "../util/ScopedTimer.h"
 #include "../util/i18n.h"
 
-#include <boost/range/numeric.hpp>
-#include <boost/range/adaptor/map.hpp>
 #include <boost/uuid/uuid_io.hpp>
+#include <numeric>
 
 
 namespace {
@@ -121,7 +121,8 @@ namespace {
             return 0.0f;
         }
         const float stockpile_limit = empire->GetProductionQueue().StockpileCapacity(context.ContextObjects());
-        const float stockpile_used = boost::accumulate(allocated_stockpile_pp | boost::adaptors::map_values, 0.0f);
+        const auto stockpile_values = allocated_stockpile_pp | range_values;
+        const float stockpile_used = std::accumulate(stockpile_values.begin(), stockpile_values.end(), 0.0f);
         TraceLogger() << " ... stockpile limit: " << stockpile_limit << "  used: " << stockpile_used << "   starting: " << starting_stockpile;
         float new_contributions = 0.0f;
         for (auto const& available_group : available_pp) {

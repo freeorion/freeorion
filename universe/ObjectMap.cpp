@@ -130,8 +130,13 @@ namespace {
     void EraseFromMap(ObjectMap::container_type<T>& map, int id)
     { map.erase(id); }
 
+    template <typename VectorValueType>
+    concept is_universeobject_related = std::is_same_v<UniverseObject, std::remove_const_t<VectorValueType>> ||
+        std::is_base_of_v<UniverseObject, std::remove_const_t<VectorValueType>>;
+
     template <UniverseObjectType obj_type_filter = UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE,
               typename VectorValueType>
+        requires (is_universeobject_related<VectorValueType>)
     bool TryInsertIntoVec(std::vector<VectorValueType*>& vec, const std::shared_ptr<UniverseObject>& item)
     {
         using VecTypeBare = std::remove_const_t<VectorValueType>; // eg. Planet, UniverseObject
@@ -175,16 +180,14 @@ namespace {
             return true;
 
         } else {
-            // shouldn't be possible to instantiate with this block enabled, but if so,
-            // try to generate some useful compiler error messages to indicate what
-            // type VecObjectType is
-            using GenerateCompileError = typename VectorValueType::not_a_member_zi23tg;
+            static_assert(is_universeobject_related<VectorValueType>, "Unexpected type in vector...");
             return false;
         }
     }
 
     template <UniverseObjectType obj_type_filter = UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE,
               typename VectorValueType>
+        requires (is_universeobject_related<VectorValueType>)
     bool TryInsertIntoVec(std::vector<VectorValueType*>& vec, const UniverseObject* obj)
     {
         using VecTypeBare = std::remove_const_t<VectorValueType>; // eg. Planet, UniverseObject
@@ -227,10 +230,8 @@ namespace {
             return true;
 
         } else {
-            // shouldn't be possible to instantiate with this block enabled, but if so,
-            // try to generate some useful compiler error messages to indicate what
-            // type VecObjectType is
-            using GenerateCompileError = typename VectorValueType::not_a_member_zi23tg;
+            // shouldn't be possible to instantiate with this block enabled
+            static_assert(is_universeobject_related<VectorValueType>, "Unexpected type in vector...");
             return false;
         }
     }
@@ -406,7 +407,7 @@ void ObjectMap::insertCore(std::shared_ptr<UniverseObject> obj, bool destroyed) 
         FOR_EACH_EXISTING_VEC(TryInsertIntoVec, obj_raw)
         FOR_EACH_EXISTING_MAP(TryInsertIntoMap, obj)
 
-        bool already_there = m_existing_objects.contains(ID);
+        const bool already_there = m_existing_objects.contains(ID);
 
         m_existing_objects[ID] = obj;
         if (!already_there)

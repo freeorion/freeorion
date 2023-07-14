@@ -149,6 +149,7 @@ namespace CheckSums {
 class FO_COMMON_API TechManager {
 public:
     using TechContainer = boost::container::flat_map<std::string, Tech, std::less<>>;
+    using const_iterator = TechContainer::const_iterator;
     using iterator = TechContainer::const_iterator;
     using TechCategoryContainer = boost::container::flat_map<std::string, TechCategory, std::less<>>;
 

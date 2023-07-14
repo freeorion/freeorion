@@ -12,6 +12,7 @@
 #include "../client/human/GGHumanClientApp.h"
 #include "../util/i18n.h"
 #include "../util/Order.h"
+#include "../util/ranges.h"
 #include "../util/ScopedTimer.h"
 #include "../universe/BuildingType.h"
 #include "../universe/ShipDesign.h"
@@ -19,12 +20,9 @@
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
 
-#include <boost/cast.hpp>
-#include <boost/range/numeric.hpp>
-#include <boost/range/adaptor/map.hpp>
-
 #include <cmath>
 #include <iterator>
+#include <numeric>
 
 
 namespace {
@@ -1165,7 +1163,8 @@ void ProductionWnd::UpdateInfoPanel(const ScriptingContext& context) {
     const float PPs = empire->ResourceOutput(ResourceType::RE_INDUSTRY);
     const float total_queue_cost = queue.TotalPPsSpent();
     const float stockpile = empire->GetIndustryPool().Stockpile();
-    const float stockpile_use = boost::accumulate(empire->GetProductionQueue().AllocatedStockpilePP() | boost::adaptors::map_values, 0.0f);
+    const auto stockpile_values = empire->GetProductionQueue().AllocatedStockpilePP() | range_values;
+    const float stockpile_use = std::accumulate(stockpile_values.begin(), stockpile_values.end(), 0.0f);
     const float stockpile_use_max = queue.StockpileCapacity(objects);
     m_production_info_panel->SetTotalPointsCost(PPs, total_queue_cost, context);
     m_production_info_panel->SetStockpileCost(stockpile, stockpile_use, stockpile_use_max);

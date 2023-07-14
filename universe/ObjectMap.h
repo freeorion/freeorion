@@ -2,7 +2,6 @@
 #define _Object_Map_h_
 
 #include <array>
-#include <array>
 #include <map>
 #include <memory>
 #include <set>
@@ -12,10 +11,10 @@
 #include <vector>
 #include <boost/container/flat_set.hpp>
 #include <boost/unordered/unordered_set.hpp>
-#include <boost/range/adaptor/map.hpp>
 #include "ConstantsFwd.h"
 #include "UniverseObjectVisitor.h"
 #include "../util/Export.h"
+#include "../util/ranges.h"
 
 class Universe;
 class UniverseObject;
@@ -102,24 +101,19 @@ public:
     [[nodiscard]] auto all() const
     {
         using DecayT = std::decay_t<T>;
-        static constexpr auto tx = [](const typename container_type<DecayT>::mapped_type& p)
+        static constexpr auto const_ptr_tx = [](const typename container_type<DecayT>::mapped_type& p)
             -> typename container_type<const DecayT>::mapped_type
         { return std::const_pointer_cast<const DecayT>(p); };
 
-        return Map<DecayT, only_existing>() |
-            boost::adaptors::map_values |
-            boost::adaptors::transformed(tx);
+        return Map<DecayT, only_existing>() | range_values | range_transform(const_ptr_tx);
     }
 
     template <typename T = UniverseObject, bool only_existing = false>
     [[nodiscard]] auto allRaw() const
     {
         using DecayT = std::decay_t<T>;
-        return std::as_const(Map<DecayT, only_existing>()) |
-            boost::adaptors::map_values |
-            boost::adaptors::transformed(
-                [](const auto& p) -> const DecayT* { return p.get(); }
-        );
+        static constexpr auto raw_ptr_tx = [](const auto& p) -> const DecayT* { return p.get(); };
+        return std::as_const(Map<DecayT, only_existing>()) | range_values | range_transform(raw_ptr_tx);
     }
 
     /** Returns all the objects of type T */
@@ -131,7 +125,7 @@ public:
             const auto& const_this = *this;
             return const_this.all<DecayT, only_existing>();
         } else {
-            return std::as_const(Map<DecayT, only_existing>()) | boost::adaptors::map_values;
+            return std::as_const(Map<DecayT, only_existing>()) | range_values;
         }
     }
 
@@ -141,10 +135,8 @@ public:
     {
         using DecayT = std::decay_t<T>;
         using OutT = std::conditional_t<std::is_const_v<T>, const DecayT*, DecayT*>;
-        return Map<DecayT, only_existing>() |
-            boost::adaptors::map_values |
-            boost::adaptors::transformed(
-                [](const auto& p) -> OutT { return p.get(); });
+        static constexpr auto raw_ptr_tx = [](const auto& p) -> OutT { return p.get(); };
+        return Map<DecayT, only_existing>() | range_values | range_transform(raw_ptr_tx);
     }
 
     /** Returns all the ids and objects of type T */
@@ -156,7 +148,7 @@ public:
             -> typename container_type<const DecayT>::value_type
         { return {p.first, std::const_pointer_cast<const DecayT>(p.second)}; };
 
-        return std::as_const(Map<DecayT, only_existing>()) | boost::adaptors::transformed(tx);
+        return std::as_const(Map<DecayT, only_existing>()) | range_transform(tx);
     }
 
     /** Returns all the ids and objects of type T */

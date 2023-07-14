@@ -8,8 +8,6 @@
 #include <vector>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/optional/optional.hpp>
-#include <boost/range/adaptor/map.hpp>
-#include <boost/range/numeric.hpp>
 #include <boost/unordered_set.hpp>
 #include <GG/Layout.h>
 #include <GG/MultiEdit.h>
@@ -63,6 +61,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/Order.h"
 #include "../util/Random.h"
+#include "../util/ranges.h"
 #include "../util/ScopedTimer.h"
 
 
@@ -6952,7 +6951,8 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     double total_PP_output = empire->GetIndustryPool().TotalOutput();
     double total_PP_target_output = empire->GetIndustryPool().TargetOutput();
     float  stockpile = empire->GetIndustryPool().Stockpile();
-    float  stockpile_used = boost::accumulate(empire->GetProductionQueue().AllocatedStockpilePP() | boost::adaptors::map_values, 0.0f);
+    const auto stockpile_values = empire->GetProductionQueue().AllocatedStockpilePP() | range_values;
+    float  stockpile_used = std::accumulate(stockpile_values.begin(), stockpile_values.end(), 0.0f);
     float  stockpile_use_capacity = empire->GetProductionQueue().StockpileCapacity(context.ContextObjects());
     float  expected_stockpile = empire->GetProductionQueue().ExpectedNewStockpileAmount();
 
