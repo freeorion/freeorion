@@ -39,7 +39,6 @@ ULTIMATE_SHIP_SHIELDS = [
     ),
 ]
 
-
 GREAT_SHIP_SHIELDS = [
     *STANDARD_SHIP_SHIELDS,
     EffectsGroup(
@@ -67,5 +66,25 @@ GREAT_SHIP_SHIELDS = [
                 + (5.0 * SHIP_SHIELD_FACTOR * StatisticIf(float, condition=IsSource & DesignHasPart(name="SH_BLACK")))
             )
         ],
+    ),
+]
+
+BAD_SHIP_SHIELDS = [
+    *STANDARD_SHIP_SHIELDS,
+    EffectsGroup(
+        description="BAD_SHIP_SHIELD_DESC",
+        scope=IsSource & Ship,
+        effects=SetMaxShield(
+            value=Value
+            - (
+                0.5
+                * SHIP_SHIELD_FACTOR
+                * StatisticIf(float, condition=IsSource & DesignHasPart(name="SH_DEFENSE_GRID"))
+            )
+            - (1.0 * SHIP_SHIELD_FACTOR * StatisticIf(float, condition=IsSource & DesignHasPart(name="SH_DEFLECTOR")))
+            - (1.5 * SHIP_SHIELD_FACTOR * StatisticIf(float, condition=IsSource & DesignHasPart(name="SH_PLASMA")))
+            - (2.0 * SHIP_SHIELD_FACTOR * StatisticIf(float, condition=IsSource & DesignHasPart(name="SH_MULTISPEC")))
+            - (2.5 * SHIP_SHIELD_FACTOR * StatisticIf(float, condition=IsSource & DesignHasPart(name="SH_BLACK")))
+        ),
     ),
 ]

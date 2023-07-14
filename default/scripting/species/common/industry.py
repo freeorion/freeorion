@@ -8,11 +8,14 @@ from common.priorities import (
 from focs._effects import (
     EffectsGroup,
     Focus,
+    GalaxyMaxAIAggression,
     Happiness,
+    IsHuman,
     IsSource,
     NamedReal,
     Planet,
     SetTargetIndustry,
+    Target,
     TargetIndustry,
     Value,
 )

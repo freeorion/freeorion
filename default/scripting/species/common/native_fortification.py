@@ -1,10 +1,29 @@
-from species.common.planet_defense import AVERAGE_PLANETARY_DEFENSE
+from common.misc import PLANET_DEFENSE_FACTOR, PLANET_SHIELD_FACTOR
+from focs._effects import (
+    AddSpecial,
+    Conditional,
+    ContainedBy,
+    Contains,
+    EffectsGroup,
+    GalaxyMaxAIAggression,
+    HasSpecial,
+    HasSpecies,
+    HasTag,
+    IsSource,
+    MaxOf,
+    OneOf,
+    Planet,
+    Random,
+    Source,
+    Turn,
+)
+from species.common.detection import NATIVE_PLANETARY_DETECTION
+from species.common.planet_defense import AVERAGE_PLANETARY_DEFENSE, NATIVE_PLANETARY_DEFENSE
 from species.common.planet_shields import AVERAGE_PLANETARY_SHIELDS, NATIVE_PLANETARY_SHIELDS
 
 FORTIFICATION_PROBABILITY = 0.1 * MaxOf(float, 0.2 * Source.TargetPopulation, Source.Research + Source.Industry)
 
 NATIVE_FORTIFICATION_MINIMAL = NATIVE_PLANETARY_SHIELDS(1)
-
 
 DEFAULT_NATIVE_DEFENSE = [
     *AVERAGE_PLANETARY_SHIELDS,
@@ -43,6 +62,40 @@ DEFAULT_NATIVE_DEFENSE = [
                         )
                     ),
                 ],
+            )
+        ],
+    ),
+]
+
+ADVANCED_NATIVE_DEFENSE = [
+    *AVERAGE_PLANETARY_SHIELDS,
+    *AVERAGE_PLANETARY_DEFENSE,
+    NATIVE_PLANETARY_DETECTION(10),
+    NATIVE_PLANETARY_DEFENSE(10 * PLANET_DEFENSE_FACTOR),
+    NATIVE_PLANETARY_SHIELDS(10 * PLANET_SHIELD_FACTOR),
+    EffectsGroup(
+        scope=IsSource & Turn(low=1, high=1) & (GalaxyMaxAIAggression >= 1),
+        activation=Planet(),
+        effects=[
+            Conditional(
+                condition=~ContainedBy(
+                    Contains(
+                        Planet() & HasSpecial(name="MODERATE_TECH_NATIVES_SPECIAL")
+                        | Planet() & HasSpecial(name="HIGH_TECH_NATIVES_SPECIAL")
+                    ),
+                ),
+                effects=[
+                    AddSpecial(
+                        name=OneOf(
+                            str,
+                            "NATIVE_FORTIFICATION_LOW",
+                            "NATIVE_FORTIFICATION_MEDIUM",
+                            "CLOUD_COVER_MASTER_SPECIAL",
+                            "VOLCANIC_ASH_MASTER_SPECIAL",
+                        )
+                    )
+                ],
+                else_=[],
             )
         ],
     ),

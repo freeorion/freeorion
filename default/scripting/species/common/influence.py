@@ -7,7 +7,33 @@ from common.priorities import (
     TARGET_LAST_BEFORE_OVERRIDE_PRIORITY,
     TARGET_SCALING_PRIORITY,
 )
-from focs._effects import Abs, EffectsGroup, Focus, IsSource, Planet, SetTargetInfluence, Value
+from focs._effects import (
+    Abs,
+    Capital,
+    EffectsGroup,
+    EmpireHasAdoptedPolicy,
+    Focus,
+    GalaxyMaxAIAggression,
+    Happiness,
+    HasSpecies,
+    HasTag,
+    Homeworld,
+    IsBuilding,
+    IsHuman,
+    IsSource,
+    LocalCandidate,
+    NamedReal,
+    OwnedBy,
+    Planet,
+    ResourceSupplyConnected,
+    SetTargetInfluence,
+    Ship,
+    Source,
+    StatisticCount,
+    Target,
+    Unowned,
+    Value,
+)
 
 BASE_INFLUENCE_COSTS = [
     EffectsGroup(  # colonies consume influence, proportional to square-root of how many populated planets and non-populated outposts the empire controls
@@ -206,5 +232,17 @@ BAD_INFLUENCE = [
         accountinglabel="BAD_INFLUENCE_LABEL",
         priority=TARGET_SCALING_PRIORITY,
         effects=SetTargetInfluence(value=Value + (0.8 - 1.0) * Abs(float, Value)),
+    ),
+]
+
+ULTIMATE_INFLUENCE = [
+    *BASIC_INFLUENCE,
+    EffectsGroup(
+        description="ULTIMATE_INFLUENCE_DESC",
+        scope=IsSource,
+        activation=Planet() & Focus(type=["FOCUS_INFLUENCE"]),
+        accountinglabel="ULTIMATE_INFLUENCE_LABEL",
+        priority=TARGET_SCALING_PRIORITY,
+        effects=SetTargetInfluence(value=Value + (2.0 - 1.0) * Abs(float, Value)),
     ),
 ]

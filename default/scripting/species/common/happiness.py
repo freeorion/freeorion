@@ -1,6 +1,24 @@
+from common.misc import DESCRIPTION_EFFECTSGROUP_MACRO
 from common.opinion import POLICY_DISLIKE_SCALING
 from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
-from focs._effects import EffectsGroup, IsSource, NamedReal, Planet, SetTargetHappiness, Value
+from focs._effects import (
+    Abs,
+    CurrentTurn,
+    EffectsGroup,
+    HasSpecies,
+    HasTag,
+    IsSource,
+    LocalCandidate,
+    MinOf,
+    NamedReal,
+    Planet,
+    SetHappiness,
+    SetTargetHappiness,
+    Source,
+    Target,
+    Unowned,
+    Value,
+)
 
 STABILITY_PER_LIKED_FOCUS = 2.0
 
@@ -252,3 +270,6 @@ GREAT_HAPPINESS = [
         effects=SetTargetHappiness(value=Value + NamedReal(name="GREAT_HAPPINESS_VAL", value=5)),
     ),
 ]
+
+
+INDEPENDENT_HAPPINESS = [DESCRIPTION_EFFECTSGROUP_MACRO("INDEPENDENT_HAPPINESS_DESC"), *COMMON_HAPPINESS_EFFECTS]
