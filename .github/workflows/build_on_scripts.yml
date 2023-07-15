@@ -11,6 +11,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
       - id: set_files_changed
         working-directory: check
         run: python check_changed_files.py
