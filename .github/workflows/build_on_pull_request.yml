@@ -4,6 +4,7 @@ on:
     branches: [ 'master' ]
     types: ['opened', 'reopened', 'synchronize']
     paths-ignore:
+      - '*'
       - 'msvc*/**'
       - 'check/**'
       - 'doc/**'
