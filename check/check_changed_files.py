@@ -22,6 +22,8 @@ def print_group(title: str):
 
 
 def get_changed_files(change, base):
+    print(change, base)
+
     show_change = ["git", "show", "-q", change]
     print("Change:", getoutput(show_change))  # pyright: ignore[reportGeneralTypeIssues]
 
