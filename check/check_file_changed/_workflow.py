@@ -1,6 +1,6 @@
 from enum import Enum, auto
 
-from ._detectors import FileGroup
+from check_file_changed._detectors import FileGroup
 
 
 class Workflow(Enum):
