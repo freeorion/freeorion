@@ -8,8 +8,8 @@ from contextlib import contextmanager
 from subprocess import check_output
 from typing import TextIO
 
-from check_file_changed._detectors import detect_file_groups
-from check_file_changed._workflow import Workflow, get_workflows
+from _detectors import detect_file_groups
+from _workflow import Workflow, get_workflows
 
 
 @contextmanager
@@ -29,7 +29,7 @@ def get_changed_files(change, base):
 
 def write_workflow_output(file: TextIO, workflows: set[Workflow]):
     for workflow in workflows:
-        file.write(f"{workflow.name}=true")
+        file.write(f"{workflow.name}=true\n")
 
 
 def check_changed_files(*, change_ref, base_ref, dry_run):

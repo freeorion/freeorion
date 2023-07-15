@@ -1,14 +1,6 @@
 name: AI linters and tests
 on:
-  pull_request:
-    branches: [ 'master' ]
-    types: ['opened', 'reopened', 'synchronize']
-    paths:
-      - '.github/**'
-      - 'check/st-tool.py'
-      - 'default/python/**'
-      - 'default/scripting/**'
-      - 'test-scripting/**'
+  workflow_call:
 jobs:
   lint:
     runs-on: ubuntu-latest

@@ -1,13 +1,9 @@
-name: FOCS Static checks
+name: "Lint PY FOCS"
+
 on:
-  pull_request:
-    branches: [ 'master' ]
-    types: ['opened', 'reopened', 'synchronize']
-    paths:
-      - '.github/**'
-      - 'default/scripting/**'
+  workflow_call:
 jobs:
-  lint:
+  lint-py-focs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

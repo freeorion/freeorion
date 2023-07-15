@@ -1,10 +1,18 @@
 from enum import Enum, auto
 
-from check_file_changed._detectors import FileGroup
+from _detectors import FileGroup
 
 
 class Workflow(Enum):
     BUILD_WINDOWS_WITH_CMAKE = auto()
+    BUILD_ANDROID = auto()
+    BUILD_MACOS = auto()
+    BUILD_BUILD_UBUNTU = auto()
+    BUILD_WINDOWS_WITH_MSVS = auto()
+    LINT_PY_FOCS = auto()
+    LINT_CODEQL = auto()
+    LINT_PYTHON = auto()
+    LINT_STRING_TABLES = auto()
 
 
 workflow_mapping = {
@@ -13,7 +21,45 @@ workflow_mapping = {
         FileGroup.CPP,
         FileGroup.CMAKE,
         FileGroup.WORKFLOWS,
-    }
+    },
+    Workflow.BUILD_ANDROID: {
+        FileGroup.CPP,
+        FileGroup.WORKFLOWS,
+    },
+    Workflow.BUILD_MACOS: {
+        FileGroup.CPP,
+        FileGroup.WORKFLOWS,
+    },
+    Workflow.BUILD_BUILD_UBUNTU: {
+        FileGroup.CPP,
+        FileGroup.WORKFLOWS,
+    },
+    Workflow.BUILD_WINDOWS_WITH_MSVS: {
+        FileGroup.CPP,
+        FileGroup.WORKFLOWS,
+        FileGroup.VISUAL_STUDIO,
+    },
+    Workflow.LINT_CODEQL: {
+        FileGroup.CPP,
+        FileGroup.WORKFLOWS,
+    },
+    Workflow.LINT_PY_FOCS: {
+        FileGroup.FOCS_PY,
+        FileGroup.PYPROJECT_TOML,
+        FileGroup.PYTHON_DEV_REQUIREMENTS,
+        FileGroup.WORKFLOWS,
+    },
+    Workflow.LINT_PYTHON: {
+        FileGroup.FOCS_PY,
+        FileGroup.PYPROJECT_TOML,
+        FileGroup.PYTHON_DEV_REQUIREMENTS,
+        FileGroup.WORKFLOWS,
+        FileGroup.PYTHON,
+    },
+    Workflow.LINT_STRING_TABLES: {
+        FileGroup.STRINGTABLES,
+        FileGroup.WORKFLOWS,
+    },
 }
 
 

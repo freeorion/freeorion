@@ -10,6 +10,10 @@ class FileGroup(Enum):
     CPP = auto()
     CMAKE = auto()
     WORKFLOWS = auto()
+    VISUAL_STUDIO = auto()
+    PYTHON = auto()
+    STRINGTABLES = auto()
+    GODOT = auto()
 
 
 class _Detector(ABC):
@@ -50,7 +54,7 @@ class DetectorPyFocs(_Detector):
 
     def accept(self, path: PurePath) -> bool:
         folder = PurePath("default", "scripting")
-        return path.is_relative_to(folder) and path.name.endswith(".py")
+        return path.is_relative_to(folder) and path.name.endswith((".py", ".pyi"))
 
 
 class DetectorPyProjectToml(_Detector):
@@ -112,6 +116,45 @@ class DetectorWorkflows(_Detector):
         return path.is_relative_to(PurePath(".github", "workflows"))
 
 
+class DetectorVisualStudio(_Detector):
+    def examples(self) -> list[str]:
+        return ["msvc2022/FreeOrion.sln"]
+
+    def file_type(self) -> FileGroup:
+        return FileGroup.VISUAL_STUDIO
+
+    def accept(self, path: PurePath) -> bool:
+        return path.is_relative_to(PurePath("msvc2022"))
+
+
+class DetectorPython(_Detector):
+    def examples(self) -> list[str]:
+        return [
+            "check/st-tool.py",
+            "default/python/AI/freeOrionAIInterface.pyi",
+            "default/python/common/option_tools.py",
+        ]
+
+    def file_type(self) -> FileGroup:
+        return FileGroup.PYTHON
+
+    def accept(self, path: PurePath) -> bool:
+        return path.name.endswith((".py", ".pyi"))
+
+
+class DetectorStringTables(_Detector):
+    def examples(self) -> list[str]:
+        return ["check/st-tool.py", "default/stringtables/en.txt"]
+
+    def file_type(self) -> FileGroup:
+        return FileGroup.STRINGTABLES
+
+    def accept(self, path: PurePath) -> bool:
+        is_string_tables = path.is_relative_to(PurePath("default", "stringtables"))
+        is_check = path.name.endswith("st-tool.py")
+        return is_string_tables or is_check
+
+
 # Todo generate automatically based on classes
 registered_detectors: set[_Detector] = {
     DetectorPyFocs(),
@@ -120,6 +163,9 @@ registered_detectors: set[_Detector] = {
     DetectorCmake(),
     DetectorCPP(),
     DetectorWorkflows(),
+    DetectorVisualStudio(),
+    DetectorPython(),
+    DetectorStringTables(),
 }
 
 
