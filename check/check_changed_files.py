@@ -22,10 +22,10 @@ def print_group(title: str):
 
 
 def get_changed_files(change, base):
-    show_change = ["git" "show", change, "-q"]
+    show_change = ["git", "show", change, "-q"]
     print("Change:", getoutput(show_change))  # pyright: ignore[reportGeneralTypeIssues]
 
-    show_base = ["git" "show", base, "-q"]
+    show_base = ["git", "show", base, "-q"]
     print("Base:", getoutput(show_base))  # pyright: ignore[reportGeneralTypeIssues]
 
     cmd = ["git", "diff-tree", "--name-only", "-r", change, base]
