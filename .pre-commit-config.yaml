@@ -37,5 +37,5 @@ repos:
     hooks:
       - id: pyright
         name: focs.py type checks with pyright
-        files: "default/scripting/.*.focs.py"
+        files: "(default/scripting/.*.focs.py)|(check/check_file_changed)"
         exclude: "^default/scripting/buildings/colonies/col_bld_gen.py"
