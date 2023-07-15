@@ -5,7 +5,7 @@ import os
 import sys
 from argparse import ArgumentParser
 from contextlib import contextmanager
-from subprocess import getoutput
+from subprocess import check_output
 from typing import TextIO
 
 from check_file_changed._detectors import detect_file_groups
@@ -22,21 +22,9 @@ def print_group(title: str):
 
 
 def get_changed_files(change, base):
-    print(change, base)
-
-    show_change = ["git", "show", "-q", change]
-    print("Change:", getoutput(show_change))  # pyright: ignore[reportGeneralTypeIssues]
-
-    show_base = [
-        "git",
-        "show",
-        "-q",
-        base,
-    ]
-    print("Base:", getoutput(show_base))  # pyright: ignore[reportGeneralTypeIssues]
-
     cmd = ["git", "diff-tree", "--name-only", "-r", change, base]
-    return getoutput(cmd).split("\n")  # pyright: ignore[reportGeneralTypeIssues]
+    output = check_output(cmd)
+    return output.decode().split("\n")
 
 
 def write_workflow_output(file: TextIO, workflows: set[Workflow]):
