@@ -1,6 +1,6 @@
 if(WIN32)
-    # file(GET_RUNTIME_DEPENDENCIES
-    set(REQUIRED_CMAKE_VERSION 3.16)
+    # file(GET_RUNTIME_DEPENDENCIES and install(... ALL_COMPONENTS)
+    set(REQUIRED_CMAKE_VERSION 3.21)
 else()
     set(REQUIRED_CMAKE_VERSION 3.8)
 endif()
@@ -939,6 +939,12 @@ cpack_add_component(resources
     DISPLAY_NAME "Game resources"
 )
 
+if(BUILD_TESTING)
+    cpack_add_component(binaries-test
+        DISPLAY_NAME "Test binaries only"
+    )
+endif()
+
 if(WIN32)
     install(CODE [[
         list(APPEND pre_exclude_regexes "api-ms-.*") # windows API
@@ -951,7 +957,7 @@ if(WIN32)
         list(APPEND post_exclude_regexes ".*[Ww][Ii][Nn][Dd][Oo][Ww][Ss][\\/][Ss][Yy][Ss][Tt][Ee][Mm]32.*") # windows system dlls
         list(APPEND post_exclude_regexes ".*[Ww][Ii][Nn][Dd][Oo][Ww][Ss][\\/][Ss][Yy][Ss][Ww][Oo][Ww]64.*") # windows system dlls
     ]]
-    COMPONENT binaries)
+    ALL_COMPONENTS)
 endif()
 
 if(BUILD_CLIENT_GG)
