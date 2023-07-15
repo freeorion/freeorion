@@ -10,8 +10,10 @@ on:
       - 'snap/**'
       - '*.md'
       - 'check/**'
-      - 'default/**'
-      - 'test-scripting/**'
+      - 'test-scripting/data/**'
+      - 'test-scripting/python/**'
+      - 'test-scripting/shaders/**'
+      - 'test-scripting/scripting/focs/**'
       - '.github/ISSUE_TEMPLATE/**'
       - "pyproject.toml"
       - ".pre-commit-config.yaml"
