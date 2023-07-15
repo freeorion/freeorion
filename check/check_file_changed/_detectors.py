@@ -113,7 +113,7 @@ class DetectorWorkflows(_Detector):
 
 
 # Todo generate automatically based on classes
-registered_detectors = {
+registered_detectors: set[_Detector] = {
     DetectorPyFocs(),
     DetectorPyProjectToml(),
     DetectorPythonDevRequirements(),
@@ -124,8 +124,8 @@ registered_detectors = {
 
 
 def detect_file_groups(file_list) -> set[FileGroup]:
-    detectors: set[DetectorPyFocs] = registered_detectors.copy()
-    file_types_found: set[DetectorPyFocs] = set()
+    detectors: set[_Detector] = registered_detectors.copy()
+    file_types_found: set[_Detector] = set()
 
     for file_ in file_list:
         if not detectors:

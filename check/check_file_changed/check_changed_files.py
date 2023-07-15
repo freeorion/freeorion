@@ -12,7 +12,8 @@ from check.check_file_changed._workflow import Workflow, get_workflows
 
 
 def get_changed_files(change, base):
-    return getoutput(["git", "diff-tree", "--name-only", "-r", change, base]).split("\n")
+    cmd = ["git", "diff-tree", "--name-only", "-r", change, base]
+    return getoutput(cmd).split("\n")  # pyright: ignore[reportGeneralTypeIssues]
 
 
 def write_workflow_output(file: TextIO, workflows: set[Workflow]):
@@ -25,7 +26,7 @@ def check_changed_files(*, change_ref, base_ref, dry_run):
     changed_file_groups = detect_file_groups(changed_files)
     affected_workflows = get_workflows(changed_file_groups)
 
-    print("Changed workflows:", ", ".join(x.name for x in sorted(affected_workflows)))
+    print("Changed workflows:", ", ".join(x.name for x in sorted(affected_workflows, key=lambda x: x.name)))
 
     if dry_run:
         write_workflow_output(sys.stdout, affected_workflows)
