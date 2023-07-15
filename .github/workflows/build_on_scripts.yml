@@ -5,6 +5,7 @@ on:
     types: ['opened', 'reopened', 'synchronize']
 jobs:
   detect_changed_files:
+    runs-on: ubuntu-latest
     outputs:
       build_windows_cmake: ${{ steps.detect_changed_files.outputs.BUILD_WINDOWS_WITH_CMAKE }}
     steps:
