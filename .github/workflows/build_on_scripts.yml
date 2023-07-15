@@ -3,22 +3,17 @@ on:
   pull_request:
     branches: [ 'master' ]
     types: ['opened', 'reopened', 'synchronize']
-    paths-ignore:
-      - 'msvc*/**'
-      - 'check/**'
-      - 'doc/**'
-      - 'packaging/**'
-      - 'snap/**'
-      - '*.md'
-      - 'check/**'
-      - 'test-scripting/data/**'
-      - 'test-scripting/python/**'
-      - 'test-scripting/shaders/**'
-      - 'test-scripting/scripting/focs/**'
-      - 'test-scripting/stringtables/**'
-      - '.github/ISSUE_TEMPLATE/**'
-      - "pyproject.toml"
-      - ".pre-commit-config.yaml"
 jobs:
+  detect_changed_files:
+    outputs:
+      build_windows_cmake: ${{ steps.detect_changed_files.outputs.BUILD_WINDOWS_WITH_CMAKE }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+      - id: set_files_changed
+        run: python ./checks/check_file_changed/check_changed_files.py
   windows:
+    needs: detect_changed_files
+    if: ${{ needs.detect_changed_files.outputs.build_windows_cmake == true }}
     uses: ./.github/workflows/_build-windows.yml
+
