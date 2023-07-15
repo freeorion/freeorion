@@ -86,8 +86,8 @@ Species(
         COMMON_OPINION_EFFECTS("SP_BANFORO"),
         *AVERAGE_SUPPLY,
         *AVERAGE_DEFENSE_TROOPS,
-        ULTIMATE_DETECTION,
-        GOOD_STEALTH,
+        *ULTIMATE_DETECTION,
+        *GOOD_STEALTH,
         *LIGHT_SENSITIVE,
         # not for description
         *AVERAGE_PLANETARY_SHIELDS,
