@@ -28,7 +28,5 @@ jobs:
       os: ${{ matrix.os }}
   ubuntu:
     uses: ./.github/workflows/_build-ubuntu.yml
-  windows:
-    uses: ./.github/workflows/_build-windows.yml
   windows-msvc:
     uses: ./.github/workflows/_build-windows-msvs.yml
