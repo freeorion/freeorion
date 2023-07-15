@@ -7,15 +7,15 @@ jobs:
   detect_changed_files:
     runs-on: ubuntu-latest
     outputs:
-      build_windows_cmake: ${{ steps.detect_changed_files.outputs.BUILD_WINDOWS_WITH_CMAKE }}
-      build_windows_msvs: ${{ steps.detect_changed_files.outputs.BUILD_WINDOWS_WITH_MSVS }}
-      build_android: ${{ steps.detect_changed_files.outputs.BUILD_ANDROID }}
-      build_macos: ${{ steps.detect_changed_files.outputs.BUILD_MACOS }}
-      build_ubuntu: ${{ steps.detect_changed_files.outputs.BUILD_UBUNTU }}
-      lint_py_focs: ${{ steps.detect_changed_files.outputs.LINT_PY_FOCS }}
-      lint-codeql: ${{ steps.detect_changed_files.outputs.LINT_CODEQL }}
-      lint-lint_python: ${{ steps.detect_changed_files.outputs.LINT_PYTHON }}
-      lint_string_tables: ${{ steps.detect_changed_files.outputs.LINT_STRING_TABLES }}
+      build_windows_cmake: ${{ steps.set_files_changed.outputs.BUILD_WINDOWS_WITH_CMAKE }}
+      build_windows_msvs: ${{ steps.set_files_changed.outputs.BUILD_WINDOWS_WITH_MSVS }}
+      build_android: ${{ steps.set_files_changed.outputs.BUILD_ANDROID }}
+      build_macos: ${{ steps.set_files_changed.outputs.BUILD_MACOS }}
+      build_ubuntu: ${{ steps.set_files_changed.outputs.BUILD_UBUNTU }}
+      lint_py_focs: ${{ steps.set_files_changed.outputs.LINT_PY_FOCS }}
+      lint-codeql: ${{ steps.set_files_changed.outputs.LINT_CODEQL }}
+      lint-lint_python: ${{ steps.set_files_changed.outputs.LINT_PYTHON }}
+      lint_string_tables: ${{ steps.set_files_changed.outputs.LINT_STRING_TABLES }}
     steps:
       - uses: actions/checkout@v3
         with:
