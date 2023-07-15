@@ -7,8 +7,8 @@ from argparse import ArgumentParser
 from subprocess import getoutput
 from typing import TextIO
 
-from check.check_file_changed._detectors import detect_file_groups
-from check.check_file_changed._workflow import Workflow, get_workflows
+from check_file_changed._detectors import detect_file_groups
+from check_file_changed._workflow import Workflow, get_workflows
 
 
 def get_changed_files(change, base):
@@ -44,5 +44,5 @@ if __name__ == "__main__":
     parser.add_argument("--base-ref", default="HEAD^1")
     parser.add_argument("--dry-run", action="store_true")
 
-    args = parser.parse_args(["--base-ref", "50771b6ea5a6753ebe514b936996954582a937df", "--dry-run"])
+    args = parser.parse_args()
     check_changed_files(change_ref=args.change_ref, base_ref=args.base_ref, dry_run=args.dry_run)
