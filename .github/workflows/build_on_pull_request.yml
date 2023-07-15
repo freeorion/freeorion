@@ -1,10 +1,9 @@
 name: "Build PR"
 on:
   pull_request:
-    branches: [ 'master' ]
+    branches: [ '1111' ]
     types: ['opened', 'reopened', 'synchronize']
     paths-ignore:
-      - '*'
       - 'msvc*/**'
       - 'check/**'
       - 'doc/**'

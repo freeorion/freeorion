@@ -22,10 +22,15 @@ def print_group(title: str):
 
 
 def get_changed_files(change, base):
-    show_change = ["git", "show", change, "-q"]
+    show_change = ["git", "show", "-q", change]
     print("Change:", getoutput(show_change))  # pyright: ignore[reportGeneralTypeIssues]
 
-    show_base = ["git", "show", base, "-q"]
+    show_base = [
+        "git",
+        "show",
+        "-q",
+        base,
+    ]
     print("Base:", getoutput(show_base))  # pyright: ignore[reportGeneralTypeIssues]
 
     cmd = ["git", "diff-tree", "--name-only", "-r", change, base]
@@ -38,7 +43,7 @@ def write_workflow_output(file: TextIO, workflows: set[Workflow]):
 
 
 def check_changed_files(*, change_ref, base_ref, dry_run):
-    with print_group("Getting chendged files"):
+    with print_group("Getting changed files"):
         changed_files = get_changed_files(change_ref, base_ref)
         print("\n".join(changed_files))
     changed_file_groups = detect_file_groups(changed_files)

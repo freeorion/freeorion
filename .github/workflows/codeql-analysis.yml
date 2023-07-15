@@ -4,10 +4,9 @@ on:
   push:
     branches: [ 'master' ]
   pull_request:
-    branches: [ 'master' ]
+    branches: [ '111' ]
     types: ['opened', 'reopened', 'synchronize']
     paths-ignore:
-      - '*'
       - 'msvc*/**'
       - 'check/**'
       - 'doc/**'
