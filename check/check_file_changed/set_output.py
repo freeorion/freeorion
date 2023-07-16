@@ -52,13 +52,13 @@ def check_changed_files(*, change_ref, base_ref):
 
     output_text = "\n".join(format_output(affected_workflows))
 
+    print("Generated output:")
+    print(output_text)
+
     if is_github():
         output_path = os.environ["GITHUB_OUTPUT"]
         with open(output_path, "a") as f:
             f.write(output_text)
-    else:
-        print("Not on GitHub, expected output:\n")
-        print(output_text)
     print("Done")
 
 

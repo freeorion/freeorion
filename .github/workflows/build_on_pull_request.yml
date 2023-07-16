@@ -14,7 +14,7 @@ jobs:
       build_ubuntu: ${{ steps.set_files_changed.outputs.BUILD_UBUNTU }}
       lint_py_focs: ${{ steps.set_files_changed.outputs.LINT_PY_FOCS }}
       lint-codeql: ${{ steps.set_files_changed.outputs.LINT_CODEQL }}
-      lint-lint_python: ${{ steps.set_files_changed.outputs.LINT_PYTHON }}
+      lint_python: ${{ steps.set_files_changed.outputs.LINT_PYTHON }}
       lint_string_tables: ${{ steps.set_files_changed.outputs.LINT_STRING_TABLES }}
     steps:
       - uses: actions/checkout@v3
@@ -25,7 +25,7 @@ jobs:
           python-version: '3.9'
       - id: set_files_changed
         working-directory: check/check_file_changed
-        run: python main.py
+        run: python set_output.py
   android:
     needs: detect_changed_files
     if: ${{ needs.detect_changed_files.outputs.build_android == 'true' }}

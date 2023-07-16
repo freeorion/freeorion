@@ -7,7 +7,7 @@ class Workflow(Enum):
     BUILD_WINDOWS_WITH_CMAKE = auto()
     BUILD_ANDROID = auto()
     BUILD_MACOS = auto()
-    BUILD_BUILD_UBUNTU = auto()
+    BUILD_UBUNTU = auto()
     BUILD_WINDOWS_WITH_MSVS = auto()
     LINT_PY_FOCS = auto()
     LINT_CODEQL = auto()
@@ -30,7 +30,7 @@ workflow_mapping = {
         FileGroup.CPP,
         FileGroup.WORKFLOWS,
     },
-    Workflow.BUILD_BUILD_UBUNTU: {
+    Workflow.BUILD_UBUNTU: {
         FileGroup.CPP,
         FileGroup.WORKFLOWS,
     },
@@ -55,6 +55,7 @@ workflow_mapping = {
         FileGroup.PYTHON_DEV_REQUIREMENTS,
         FileGroup.WORKFLOWS,
         FileGroup.PYTHON,
+        FileGroup.WORKFLOWS,
     },
     Workflow.LINT_STRING_TABLES: {
         FileGroup.STRINGTABLES,
