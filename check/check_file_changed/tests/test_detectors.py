@@ -22,7 +22,7 @@ def test_classes_could_define_their_examples(detector: _Detector, example: str):
 
 
 def test_number_of_checkers_matches_enums():
-    assert {x.file_type() for x in registered_detectors} == set(FileGroup)
+    assert {x.file_type().name for x in registered_detectors} == set(x.name for x in FileGroup)
 
 
 @pytest.mark.parametrize(

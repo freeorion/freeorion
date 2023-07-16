@@ -192,7 +192,7 @@ class DetectorIgnored(_Detector):
         ]
 
     def file_type(self) -> FileGroup:
-        return FileGroup.GODOT
+        return FileGroup.IGNORED
 
     def accept(self, path: PurePath) -> bool:
         prefix_to_ignore = (
