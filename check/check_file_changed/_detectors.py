@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from enum import Enum, auto
 from pathlib import PurePath
+from typing import Optional
 
 
 class FileGroup(Enum):
@@ -14,6 +15,7 @@ class FileGroup(Enum):
     PYTHON = auto()
     STRINGTABLES = auto()
     GODOT = auto()
+    IGNORED = auto()
 
 
 class _Detector(ABC):
@@ -96,24 +98,29 @@ class DetectorCPP(_Detector):
 
 class DetectorCmake(_Detector):
     def examples(self) -> list[str]:
-        return ["cmake/FreeOrionVersion.cmake.in", "cmake/FFindVorbis.cmake"]
+        return [
+            "cmake/FreeOrionVersion.cmake.in",
+            "cmake/FFindVorbis.cmake",
+            "parse/CMakeLists.txt",
+            "GG/cmake/GiGi.pc.in",
+        ]
 
     def file_type(self) -> FileGroup:
         return FileGroup.CMAKE
 
     def accept(self, path: PurePath) -> bool:
-        return path.is_relative_to(PurePath("cmake"))
+        return "cmake" in path.as_posix().lower()
 
 
 class DetectorWorkflows(_Detector):
     def examples(self) -> list[str]:
-        return [".github/workflows/project-labeler.yml"]
+        return [".github/workflows/project-labeler.yml", ".appveyor.yml"]
 
     def file_type(self) -> FileGroup:
         return FileGroup.WORKFLOWS
 
     def accept(self, path: PurePath) -> bool:
-        return path.is_relative_to(PurePath(".github", "workflows"))
+        return path.is_relative_to(PurePath(".github", "workflows")) or path.as_posix() == ".appveyor.yml"
 
 
 class DetectorVisualStudio(_Detector):
@@ -166,6 +173,87 @@ class DetectorGodot(_Detector):
         return path.is_relative_to(PurePath("godot")) and path.name.endswith(".gd")
 
 
+class DetectorIgnored(_Detector):
+    """
+    Files we don't care to trigger build.
+    """
+
+    def examples(self) -> list[str]:
+        return [
+            "godot/assets/image/WindowFramePinWidgetOFF.png",
+            "packaging/windows_installer.nsi.in",
+            "default/scripting/techs/growth/GENOME_BANK.disabled",
+            "default/scripting/species/common/shields.macros",
+            "default/scripting/species/SP_SLY.focs.txt",
+            "default/scripting/starting_unlocks/buildings.inf",
+            "doc/Doxyfile.in",
+            "util/Serialize.ipp",
+            "default/data/art/stars/old_stars/purple4.png",
+        ]
+
+    def file_type(self) -> FileGroup:
+        return FileGroup.GODOT
+
+    def accept(self, path: PurePath) -> bool:
+        prefix_to_ignore = (
+            ".github/ISSUE_TEMPLATE",
+            ".github/debian-stable",
+            ".github/fedora-33",
+            ".github/fedora-rawhide",
+            ".github/manjaro",
+            ".github/ubuntu-22.10",
+            "GG/doc",
+            "default/data",
+            "default/python/charting",
+            "default/python/handlers",
+            "default/shaders",
+            "doc",
+            "manjaro/Dockerfile",
+            "packaging",
+            "util",
+        )
+
+        suffixes_to_ignore = (
+            ".gitattributes",
+            ".github/CODEOWNERS",
+            ".github/id_ed25519.gpg",
+            ".github/id_ed25519.pub",
+            ".github/pre-deploy.sh",
+            ".github/project-labels.yml",
+            ".github/snap-xvfb-launch.sh",
+            ".gitignore",
+            ".md",
+            "COPYING",
+            "GG/INSTALLING",
+            "GG/PACKAGING",
+            "GG/README",
+            "GG/src/nanovg/nanovg.c",
+            "LICENSE.txt",
+            "ai_debug_config.ini",
+            "client/human/FreeOrion.icns",
+            "client/human/FreeOrion.ico",
+            "client/human/FreeOrion.rc",
+            "client/human/GUIController.mm",
+            "client/human/chmain.mm",
+            "client/human/main.xib",
+            "credits.xml",
+            "default/scripting/empire_colors.xml",
+            "pre-commit-config.yaml",
+            "pytest.ini",
+            "snap/snapcraft.yaml",
+        )
+
+        return any(
+            [
+                *[path.is_relative_to(PurePath(folder)) for folder in prefix_to_ignore],
+                path.as_posix().endswith(suffixes_to_ignore),
+                path.is_relative_to(PurePath("godot")) and not path.name.endswith(".gd"),
+                path.is_relative_to(PurePath("default", "scripting"))
+                and path.name.endswith((".macros", ".macros.txt", ".focs.txt", ".inf", ".disabled")),
+            ]
+        )
+
+
 # Todo generate automatically based on classes
 registered_detectors: set[_Detector] = {
     DetectorPyFocs(),
@@ -178,7 +266,15 @@ registered_detectors: set[_Detector] = {
     DetectorPython(),
     DetectorStringTables(),
     DetectorGodot(),
+    DetectorIgnored(),
 }
+
+
+def detect_file(path: PurePath, detectors: set[_Detector]) -> Optional[_Detector]:
+    for detector in detectors:
+        if detector.accept(path):
+            return detector
+    return None
 
 
 def detect_file_groups(file_list) -> set[FileGroup]:
@@ -189,10 +285,8 @@ def detect_file_groups(file_list) -> set[FileGroup]:
         if not detectors:
             break
         file_path = PurePath(file_)
-
-        for detector in detectors:
-            if detector.accept(file_path):
-                file_types_found.add(detector)
-
+        file_group = detect_file(file_path, detectors)
+        if file_group:
+            file_types_found.add(file_group)
         detectors = detectors - file_types_found
     return {x.file_type() for x in file_types_found}
