@@ -20,6 +20,7 @@ workflow_mapping = {
         FileGroup.FOCS_PY,
         FileGroup.CPP,
         FileGroup.CMAKE,
+        FileGroup.GODOT,
         FileGroup.WORKFLOWS,
     },
     Workflow.BUILD_ANDROID: {

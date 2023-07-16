@@ -1,6 +1,8 @@
 # pyright: reportMissingImports=false
+from pathlib import PurePath
+
 import pytest
-from check.check_file_changed._detectors import FileGroup, detect_file_groups, registered_detectors
+from check.check_file_changed._detectors import FileGroup, _Detector, registered_detectors
 
 
 def flat_examples():
@@ -15,8 +17,8 @@ def flat_examples():
     ("detector", "example"),
     flat_examples(),
 )
-def test_classes_could_define_their_examples(detector, example):
-    assert detect_file_groups([example]) == {detector.file_type()}
+def test_classes_could_define_their_examples(detector: _Detector, example: str):
+    assert detector.accept(PurePath(example)) is True
 
 
 def test_number_of_checkers_matches_enums():

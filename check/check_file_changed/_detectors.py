@@ -155,6 +155,17 @@ class DetectorStringTables(_Detector):
         return is_string_tables or is_check
 
 
+class DetectorGodot(_Detector):
+    def examples(self) -> list[str]:
+        return ["godot/FleetWindow.gd"]
+
+    def file_type(self) -> FileGroup:
+        return FileGroup.GODOT
+
+    def accept(self, path: PurePath) -> bool:
+        return path.is_relative_to(PurePath("godot")) and path.name.endswith(".gd")
+
+
 # Todo generate automatically based on classes
 registered_detectors: set[_Detector] = {
     DetectorPyFocs(),
@@ -166,6 +177,7 @@ registered_detectors: set[_Detector] = {
     DetectorVisualStudio(),
     DetectorPython(),
     DetectorStringTables(),
+    DetectorGodot(),
 }
 
 
