@@ -71,7 +71,7 @@ public:
 
     [[nodiscard]] auto          Orbits() const noexcept       { return m_orbits.size(); }     ///< number of orbits in this system
 
-    [[nodiscard]] int           NumStarlanes() const noexcept { return m_starlanes.size(); }; ///< number of starlanes from this system to other systems
+    [[nodiscard]] int           NumStarlanes() const noexcept { return static_cast<int>(m_starlanes.size()); }; ///< number of starlanes from this system to other systems
     [[nodiscard]] bool          HasStarlaneTo(int id) const; ///< true if there is a starlane from this system to the system with ID number \a id
 
     [[nodiscard]] auto&         ObjectIDs() const noexcept        { return m_objects; }
