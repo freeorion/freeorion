@@ -110,7 +110,7 @@ std::shared_ptr<const UniverseObject> Empire::Source(const ObjectMap& objects) c
     // Find any planet / ship owned by the empire
     auto owned = [this](const auto& o) { return o.second->OwnedBy(m_id); };
 
-    const auto& planets = objects.allExisting<Planet>();
+    const auto& planets = objects.allExisting<Planet>(); // TODO: provide a FindAny function to do this...
     auto p_it = std::find_if(planets.begin(), planets.end(), owned);
     if (p_it != planets.end())
         return p_it->second;
@@ -2836,9 +2836,9 @@ void Empire::InitResourcePools(const ObjectMap& objects, const SupplyManager& su
     planets.reserve(objects.allExisting<Planet>().size());
     planets_and_ships.reserve(objects.allExisting<Planet>().size() + objects.allExisting<Ship>().size());
 
-    for (const auto& [res_id, res] : objects.allExisting<Planet>()) {
-        if (res->OwnedBy(m_id))
-            planets.push_back(res_id);
+    for (const auto& [planet_id, planet] : objects.allExisting<Planet>()) {
+        if (planet->OwnedBy(m_id))
+            planets.push_back(planet_id);
     }
     planets_and_ships.insert(planets_and_ships.end(), planets.begin(), planets.end());
     m_population_pool.SetPopCenters(std::move(planets));
@@ -2858,9 +2858,8 @@ void Empire::InitResourcePools(const ObjectMap& objects, const SupplyManager& su
 
     // set non-blockadeable resource pools to share resources between all systems
     std::set<std::set<int>> sets_set;
-    std::set<int> all_systems_set;
-    for (const auto& entry : objects.allExisting<System>())
-        all_systems_set.insert(entry.first);
+    auto system_ids = objects.allExisting<System>() | range_keys;
+    std::set<int> all_systems_set{system_ids.begin(), system_ids.end()};
     sets_set.insert(std::move(all_systems_set));
     m_research_pool.SetConnectedSupplyGroups(sets_set);
     m_influence_pool.SetConnectedSupplyGroups(sets_set);
@@ -2969,11 +2968,8 @@ void Empire::UpdateOwnedObjectCounters(const Universe& universe) {
     // ships of each species and design
     m_species_ships_owned.clear();
     m_ship_designs_owned.clear();
-    for (const auto& entry : objects.allExisting<Ship>()) {
-        if (!entry.second->OwnedBy(m_id))
-            continue;
-        const auto* ship = static_cast<const Ship*>(entry.second.get());
-        if (!ship)
+    for (const Ship* ship : objects.allExistingRaw<Ship>()) {
+        if (!ship->OwnedBy(m_id))
             continue;
         if (!ship->SpeciesName().empty())
             m_species_ships_owned[ship->SpeciesName()]++;
@@ -3008,11 +3004,8 @@ void Empire::UpdateOwnedObjectCounters(const Universe& universe) {
     // colonies of each species, and unspecified outposts
     m_species_colonies_owned.clear();
     m_outposts_owned = 0;
-    for (const auto& entry : objects.allExisting<Planet>()) {
-        if (!entry.second->OwnedBy(this->EmpireID()))
-            continue;
-        const auto* planet = static_cast<const Planet*>(entry.second.get());
-        if (!planet)
+    for (const auto* planet : objects.allExistingRaw<Planet>()) {
+        if (!planet || !planet->OwnedBy(this->EmpireID()))
             continue;
         if (planet->SpeciesName().empty())
             m_outposts_owned++;
@@ -3022,13 +3015,9 @@ void Empire::UpdateOwnedObjectCounters(const Universe& universe) {
 
     // buildings of each type
     m_building_types_owned.clear();
-    for (const auto& entry : objects.allExisting<Building>()) {
-        if (!entry.second->OwnedBy(this->EmpireID()))
-            continue;
-        const auto building = static_cast<const Building*>(entry.second.get());
-        if (!building)
-            continue;
-        m_building_types_owned[building->BuildingTypeName()]++;
+    for (const Building* building: objects.allExistingRaw<Building>()) {
+        if (building->OwnedBy(this->EmpireID()))
+            m_building_types_owned[building->BuildingTypeName()]++;
     }
 }
 

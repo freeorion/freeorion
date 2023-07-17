@@ -71,14 +71,14 @@ public:
     /** Returns a vector containing the objects that match \a pred when applied as a visitor or predicate filter or range of object ids */
     template <typename T = UniverseObject, typename Pred, bool only_existing = false>
     [[nodiscard]] std::vector<const std::decay_t<T>*> findRaw(Pred pred) const;
-    template <typename T = UniverseObject, typename Pred, bool only_existing = false>
+    template <typename T = UniverseObject, typename Pred>
     [[nodiscard]] std::vector<std::decay_t<T>*> findRaw(Pred pred);
     template <typename T = UniverseObject, typename Pred>
     [[nodiscard]] auto findExistingRaw(Pred pred) const
     { return findRaw<T, Pred, true>(pred); }
-    template <typename T = UniverseObject, typename Pred, bool only_existing = false>
-    [[nodiscard]] auto findExistingRaw(Pred pred)
-    { return findRaw<T, Pred, true>(pred); }
+    //template <typename T = UniverseObject, typename Pred, bool only_existing = false>
+    //[[nodiscard]] auto findExistingRaw(Pred pred)
+    //{ return findRaw<T, Pred, true>(pred); }
     template <typename T = UniverseObject, typename Pred, bool only_existing = false>
     [[nodiscard]] std::vector<std::shared_ptr<const std::decay_t<T>>> find(Pred pred) const;
     template <typename T = UniverseObject, typename Pred, bool only_existing = false>
@@ -303,8 +303,8 @@ private:
                 static const decltype(m_objects) error_retval;
                 return error_retval;
             }
-        } else {
 
+        } else {
             if constexpr (std::is_same_v<DecayT, UniverseObject>)
                 return m_existing_objects;
             else if constexpr (std::is_same_v<DecayT, Ship>)
@@ -441,20 +441,20 @@ private:
     container_type<Field>           m_fields;
 
     container_type<const UniverseObject> m_existing_objects;
-    container_type<const UniverseObject> m_existing_ships; // TODO: can/should these be Ship*, Fleet*, etc?
-    container_type<const UniverseObject> m_existing_fleets;
-    container_type<const UniverseObject> m_existing_planets;
-    container_type<const UniverseObject> m_existing_systems;
-    container_type<const UniverseObject> m_existing_buildings;
-    container_type<const UniverseObject> m_existing_fields;
+    container_type<const Ship>           m_existing_ships;
+    container_type<const Fleet>          m_existing_fleets;
+    container_type<const Planet>         m_existing_planets;
+    container_type<const System>         m_existing_systems;
+    container_type<const Building>       m_existing_buildings;
+    container_type<const Field>          m_existing_fields;
 
     std::vector<const UniverseObject*> m_existing_object_vec;
-    std::vector<const UniverseObject*> m_existing_ship_vec; // TODO: can/should these be Ship*, Fleet*, etc?
-    std::vector<const UniverseObject*> m_existing_fleet_vec;
-    std::vector<const UniverseObject*> m_existing_planet_vec;
-    std::vector<const UniverseObject*> m_existing_system_vec;
-    std::vector<const UniverseObject*> m_existing_building_vec;
-    std::vector<const UniverseObject*> m_existing_field_vec;
+    std::vector<const Ship*>           m_existing_ship_vec;
+    std::vector<const Fleet*>          m_existing_fleet_vec;
+    std::vector<const Planet*>         m_existing_planet_vec;
+    std::vector<const System*>         m_existing_system_vec;
+    std::vector<const Building*>       m_existing_building_vec;
+    std::vector<const Field*>          m_existing_field_vec;
 
     template <typename Archive>
     friend void serialize(Archive&, ObjectMap&, unsigned int const);
@@ -665,7 +665,7 @@ std::vector<const std::decay_t<T>*> ObjectMap::findRaw(Pred pred) const
     return result;
 }
 
-template <typename T, typename Pred, bool only_existing>
+template <typename T, typename Pred>
 std::vector<std::decay_t<T>*> ObjectMap::findRaw(Pred pred)
 {
     static constexpr auto invoke_flags = CheckTypes<T, Pred>();
@@ -684,7 +684,7 @@ std::vector<std::decay_t<T>*> ObjectMap::findRaw(Pred pred)
     else
         result.reserve(std::size(pred));
 
-    auto& map{Map<DecayT, only_existing>()};
+    auto& map{Map<DecayT, false>()};
 
     if constexpr (is_int_range) {
         for (int object_id : pred) {
@@ -694,31 +694,31 @@ std::vector<std::decay_t<T>*> ObjectMap::findRaw(Pred pred)
         }
 
     } else if constexpr (is_visitor) {
-        for (const auto& [id, obj] : map)
+        for (auto& [id, obj] : map)
             if (obj->Accept(pred))
                 result.push_back(obj.get());
 
     } else if constexpr (invokable_on_raw_const_object) {
-        for (const auto& [id, obj] : map) {
+        for (auto& [id, obj] : map) {
             DecayT* obj_raw = obj.get();
-            if (pred(obj_raw))
+            if (pred(std::as_const(obj_raw)))
                 result.push_back(obj_raw);
         }
 
     } else if constexpr (invokable_on_shared_const_object) {
-        for (const auto& [id, obj] : map) {
-            if (pred(obj))
+        for (auto& [id, obj] : map) {
+            if (pred(std::as_const(obj)))
                 result.push_back(obj.get());
         }
 
     } else if constexpr (invokable_on_const_entry) {
-        for (const auto& id_obj : map)
-            if (pred(id_obj))
+        for (auto& id_obj : map)
+            if (pred(std::as_const(id_obj)))
                 result.push_back(id_obj.second.get());
 
     } else if constexpr (invokable_on_const_reference) {
-        for (const auto& [id, obj] : map)
-            if (pred(*obj))
+        for (auto& [id, obj] : map)
+            if (pred(std::as_const(*obj)))
                 result.push_back(obj.get());
 
     } else {

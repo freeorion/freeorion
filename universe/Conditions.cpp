@@ -71,9 +71,15 @@ namespace {
         in_out.insert(in_out.end(), all_t.begin(), all_t.end());
     }
 
-    template <typename T = UniverseObject>
-    Condition::ObjectSet AllObjectsSet(const ObjectMap& objects)
-    { return objects.allExistingRaw<T>(); }
+    template <typename T = UniverseObject, bool cast = false>
+    decltype(auto) AllObjectsSet(const ObjectMap& objects) noexcept
+    {
+        const auto& objs = objects.allExistingRaw<T>();
+        if constexpr (cast)
+            return Condition::ObjectSet(objs.begin(), objs.end());
+        else
+            return objs;
+    }
 
 
     /** Used by 4-parameter Condition::Eval function, and some of its overrides,
@@ -1811,7 +1817,7 @@ bool Homeworld::Match(const ScriptingContext& local_context) const {
 }
 
 ObjectSet Homeworld::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const
-{ return AllObjectsSet<Planet>(parent_context.ContextObjects()); }
+{ return AllObjectsSet<Planet, true>(parent_context.ContextObjects()); }
 
 void Homeworld::SetTopLevelContent(const std::string& content_name) {
     for (auto& name : m_names) {
@@ -2030,7 +2036,7 @@ bool Monster::Match(const ScriptingContext& local_context) const {
 }
 
 ObjectSet Monster::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const
-{ return AllObjectsSet<Ship>(parent_context.ContextObjects()); }
+{ return AllObjectsSet<Ship, true>(parent_context.ContextObjects()); }
 
 uint32_t Monster::GetCheckSum() const {
     uint32_t retval{0};
@@ -2209,22 +2215,22 @@ ObjectSet Type::GetDefaultInitialCandidateObjects(const ScriptingContext& parent
 
     switch (m_type->Eval(parent_context)) {
         case UniverseObjectType::OBJ_BUILDING:
-            return AllObjectsSet<::Building>(parent_context.ContextObjects());
+            return AllObjectsSet<::Building, true>(parent_context.ContextObjects());
             break;
         case UniverseObjectType::OBJ_FIELD:
-            return AllObjectsSet<::Field>(parent_context.ContextObjects());
+            return AllObjectsSet<::Field, true>(parent_context.ContextObjects());
             break;
         case UniverseObjectType::OBJ_FLEET:
-            return AllObjectsSet<Fleet>(parent_context.ContextObjects());
+            return AllObjectsSet<Fleet, true>(parent_context.ContextObjects());
             break;
         case UniverseObjectType::OBJ_PLANET:
-            return AllObjectsSet<Planet>(parent_context.ContextObjects());
+            return AllObjectsSet<Planet, true>(parent_context.ContextObjects());
             break;
         case UniverseObjectType::OBJ_SHIP:
-            return AllObjectsSet<Ship>(parent_context.ContextObjects());
+            return AllObjectsSet<Ship, true>(parent_context.ContextObjects());
             break;
         case UniverseObjectType::OBJ_SYSTEM:
-            return AllObjectsSet<System>(parent_context.ContextObjects());
+            return AllObjectsSet<System, true>(parent_context.ContextObjects());
             break;
         case UniverseObjectType::OBJ_FIGHTER:   // shouldn't exist outside of combat as a separate object
         default:
@@ -2394,7 +2400,7 @@ std::string Building::Dump(uint8_t ntabs) const {
 }
 
 ObjectSet Building::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const
-{ return AllObjectsSet<::Building>(parent_context.ContextObjects()); }
+{ return AllObjectsSet<::Building, true>(parent_context.ContextObjects()); }
 
 bool Building::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
@@ -2554,7 +2560,7 @@ std::string Field::Dump(uint8_t ntabs) const {
 }
 
 ObjectSet Field::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const
-{ return AllObjectsSet<::Field>(parent_context.ContextObjects()); }
+{ return AllObjectsSet<::Field, true>(parent_context.ContextObjects()); }
 
 bool Field::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
@@ -3776,7 +3782,7 @@ std::string OnPlanet::Dump(uint8_t ntabs) const {
 ObjectSet OnPlanet::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const {
     if (!m_planet_id) {
         // only buildings can be on planets
-        return AllObjectsSet<::Building>(parent_context.ContextObjects());
+        return AllObjectsSet<::Building, true>(parent_context.ContextObjects());
     }
 
     const bool simple_eval_safe = m_planet_id->ConstantExpr() ||
@@ -3784,7 +3790,7 @@ ObjectSet OnPlanet::GetDefaultInitialCandidateObjects(const ScriptingContext& pa
          (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (!simple_eval_safe) {
         // only buildings can be on planets
-        return AllObjectsSet<::Building>(parent_context.ContextObjects());
+        return AllObjectsSet<::Building, true>(parent_context.ContextObjects());
     }
 
     // simple case of a single specified system id; can add just objects in that system
@@ -5399,7 +5405,7 @@ bool Enqueued::Match(const ScriptingContext& local_context) const {
 }
 
 ObjectSet Enqueued::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const
-{ return AllObjectsSet<Planet>(parent_context.ContextObjects()); }
+{ return AllObjectsSet<Planet, true>(parent_context.ContextObjects()); }
 
 void Enqueued::SetTopLevelContent(const std::string& content_name) {
     if (m_name)
@@ -5876,7 +5882,7 @@ bool DesignHasHull::Match(const ScriptingContext& local_context) const {
 }
 
 ObjectSet DesignHasHull::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const
-{ return AllObjectsSet<Ship>(parent_context.ContextObjects()); }
+{ return AllObjectsSet<Ship, true>(parent_context.ContextObjects()); }
 
 void DesignHasHull::SetTopLevelContent(const std::string& content_name) {
     if (m_name)
@@ -6060,7 +6066,7 @@ bool DesignHasPart::Match(const ScriptingContext& local_context) const {
 }
 
 ObjectSet DesignHasPart::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const
-{ return AllObjectsSet<Ship>(parent_context.ContextObjects()); }
+{ return AllObjectsSet<Ship, true>(parent_context.ContextObjects()); }
 
 void DesignHasPart::SetTopLevelContent(const std::string& content_name) {
     if (m_low)
@@ -6241,7 +6247,7 @@ bool DesignHasPartClass::Match(const ScriptingContext& local_context) const {
 }
 
 ObjectSet DesignHasPartClass::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const
-{ return AllObjectsSet<Ship>(parent_context.ContextObjects()); }
+{ return AllObjectsSet<Ship, true>(parent_context.ContextObjects()); }
 
 void DesignHasPartClass::SetTopLevelContent(const std::string& content_name) {
     if (m_low)

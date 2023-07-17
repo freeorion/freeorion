@@ -571,14 +571,14 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
     std::map<int, Effect::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
     GetEffectsAndTargets(source_effects_targets_causes, object_ids, context, true);
 
-    std::vector<std::shared_ptr<UniverseObject>> objects = context.ContextObjects().find(object_ids);
+    auto objects = context.ContextObjects().find(object_ids);
 
     // revert all current meter values (which are modified by effects) to
     // their initial state for this turn, so meter
     // value can be calculated (by accumulating all effects' modifications this
     // turn) and active meters have the proper baseline from which to
     // accumulate changes from effects
-    for (const auto& object : context.ContextObjects().findRaw(object_ids)) {
+    for (auto* object : context.ContextObjects().findRaw(object_ids)) {
         object->ResetTargetMaxUnpairedMeters();
         object->ResetPairedActiveMeters();
     }

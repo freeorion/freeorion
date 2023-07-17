@@ -133,7 +133,7 @@ namespace {
         std::set<std::set<int>> planets_with_wasted_pp;
         for (const auto& object_ids : prod_queue.ObjectsWithWastedPP(empire.GetIndustryPool())) {
             std::set<int> planet_ids;
-            for (const auto& planet : Objects().findRaw<Planet>(object_ids)) {
+            for (const auto* planet : Objects().findRaw<Planet>(object_ids)) {
                 if (planet)
                     planet_ids.insert(planet->ID());
             }

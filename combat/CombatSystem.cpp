@@ -1821,7 +1821,7 @@ namespace {
         // they won't get any chance to attack during this combat
         if (combat_info.bout < NUM_COMBAT_ROUNDS) {
             auto launches_event = std::make_shared<FighterLaunchesEvent>();
-            for (const auto& attacker : combat_info.objects.findRaw<Ship>(shuffled_attackers)) {
+            for (auto* attacker : combat_info.objects.findRaw<Ship>(shuffled_attackers)) {
                 if (!attacker)
                     continue;
                 if (!ObjectCanAttack(attacker, context)) {

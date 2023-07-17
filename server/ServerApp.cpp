@@ -2274,11 +2274,11 @@ namespace {
                                  const ObjectMap& objects)
     {
         empire_fleets.clear();
-        auto system = objects.get<System>(system_id);
+        auto* system = objects.getRaw<System>(system_id);
         if (!system)
             return;
         for (auto* fleet : objects.findRaw<const Fleet>(system->FleetIDs()))
-            empire_fleets[fleet->Owner()].emplace(fleet->ID());
+            empire_fleets[fleet->Owner()].insert(fleet->ID());
     }
 
     void GetEmpirePlanetsAtSystem(std::map<int, std::set<int>>& empire_planets, int system_id,
@@ -2345,7 +2345,7 @@ namespace {
             if (!fleet)
                 continue;
             if (fleet->Unowned()) {
-                visible_fleets.emplace(fleet->ID());   // fleet is monster, so can be sen by monsters
+                visible_fleets.insert(fleet->ID());   // fleet is monster, so can be seen by monsters
                 continue;
             }
 

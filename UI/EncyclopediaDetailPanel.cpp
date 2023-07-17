@@ -2818,16 +2818,11 @@ namespace {
 
 
         // ships of this design
-        std::vector<const Ship*> design_ships;
-        design_ships.reserve(objects.allExisting<Ship>().size());
-        for (const auto& entry : objects.allExisting<Ship>()) {
-            auto ship = static_cast<const Ship*>(entry.second.get());
-            if (ship && ship->DesignID() == design_id)
-                design_ships.emplace_back(ship);
-        }
+        const auto is_of_design = [design_id](const Ship& ship) { return ship.DesignID() == design_id; };
+        const auto design_ships = objects.findExistingRaw<Ship>(is_of_design);
         if (!design_ships.empty()) {
             detailed_description += "\n\n" + UserString("SHIPS_OF_DESIGN");
-            for (auto& ship : design_ships) {
+            for (auto* ship : design_ships) {
                 detailed_description += LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(),
                                                          ship->PublicName(client_empire_id, universe)) + ",  ";
             }

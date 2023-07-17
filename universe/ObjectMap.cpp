@@ -213,7 +213,7 @@ void ObjectMap::TypedInsertExisting(auto ID, std::shared_ptr<ObjectType> obj) {
         evec.push_back(raw_obj);
 
     auto& emap = ExistingMap<OT>();
-    emap.insert_or_assign(ID, SCast<const UniverseObject>(std::move(obj)));
+    emap.insert_or_assign(ID, std::move(obj));
 }
 
 void ObjectMap::AutoTypedInsertExisting(auto ID, auto&& obj) {
@@ -274,7 +274,7 @@ std::shared_ptr<UniverseObject> ObjectMap::erase(int id) {
     // object found, so store pointer for later...
     const auto& result = it->second;
 
-    ApplyToExistingVecs([o{result.get()}](std::vector<const UniverseObject*>& vec) {
+    ApplyToExistingVecs([o{result.get()}]<typename ObjectType>(std::vector<const ObjectType*>& vec) {
         const auto it = std::find(vec.begin(), vec.end(), o);
         if (it != vec.end())
             vec.erase(it);
