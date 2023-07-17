@@ -1,10 +1,15 @@
 from common.priorities import DEFAULT_PRIORITY
 from focs._effects import (
     EffectsGroup,
+    Full,
+    HasSpecies,
     IsSource,
+    OwnedBy,
     Planet,
     SetDetection,
+    SetVisibility,
     Ship,
+    Source,
     Unowned,
     Value,
 )
@@ -54,3 +59,14 @@ BAD_DETECTION = [
     ),
     EffectsGroup(scope=IsSource, activation=Ship, effects=SetDetection(value=Value - 9)),
 ]
+
+
+def COMMUNAL_VISION(species: str):
+    return EffectsGroup(
+        description="COMMUNAL_VISION_DESC",
+        scope=Planet()
+        & HasSpecies(name=[species])
+        & ~OwnedBy(empire=Source.Owner),  # would be redundant to re-assign visbility to own planets
+        activation=Planet() & ~Unowned,
+        effects=SetVisibility(empire=Source.Owner, visibility=Full),
+    )
