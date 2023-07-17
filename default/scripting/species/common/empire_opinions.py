@@ -1,4 +1,27 @@
-def FIXED_OPINION_EFFECTS(name: str, value):
+from focs._effects import (
+    Capital,
+    EffectsGroup,
+    GameRule,
+    HasSpecies,
+    LocalCandidate,
+    MaxOf,
+    MinOf,
+    NoEffect,
+    Planet,
+    Population,
+    SetSpeciesOpinion,
+    SetSpeciesTargetOpinion,
+    SpeciesEmpireTargetOpinion,
+    SpeciesShipsDestroyed,
+    SpeciesShipsLost,
+    StatisticCount,
+    Target,
+    ThisSpecies,
+    Value,
+)
+
+
+def FIXED_OPINION_EFFECTS(name: str, value: float):
     return EffectsGroup(
         scope=Capital,
         stackinggroup="%s_FIXED_OPINION_OF_EMPIRE" % name,
