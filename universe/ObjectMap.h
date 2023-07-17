@@ -273,7 +273,6 @@ public:
 
 private:
     void insertCore(std::shared_ptr<UniverseObject> obj, bool destroyed);
-    void insertCore(std::shared_ptr<Planet> obj, bool destroyed);
 
     void CopyObjectsToSpecializedMaps();
 
@@ -351,8 +350,7 @@ private:
                 return m_fields;
             else {
                 static_assert(std::is_same_v<DecayT, UniverseObject>, "invalid type for Map()");
-                static const decltype(m_objects) error_retval;
-                return error_retval;
+                return m_objects;
             }
         } else {
             if constexpr (std::is_same_v<DecayT, UniverseObject>)
@@ -371,8 +369,7 @@ private:
                 return m_existing_fields;
             else {
                 static_assert(std::is_same_v<DecayT, UniverseObject>, "invalid type for Map()");
-                static const decltype(m_objects) error_retval;
-                return error_retval;
+                return m_existing_objects;
             }
         }
     }
@@ -381,6 +378,59 @@ private:
     [[nodiscard]] const auto& ExistingMap() const noexcept
     { return Map<T, true>(); }
 
+    template <typename T = UniverseObject>
+    [[nodiscard]] auto& ExistingMap() noexcept
+    { return Map<T, true>(); }
+
+    template <typename T = UniverseObject>
+    [[nodiscard]] auto& ExistingVec() noexcept
+    {
+        using DecayT = std::decay_t<T>;
+        if constexpr (std::is_same_v<DecayT, UniverseObject>)
+            return m_existing_object_vec;
+        else if constexpr (std::is_same_v<DecayT, Ship>)
+            return m_existing_ship_vec;
+        else if constexpr (std::is_same_v<DecayT, Fleet>)
+            return m_existing_fleet_vec;
+        else if constexpr (std::is_same_v<DecayT, Planet>)
+            return m_existing_planet_vec;
+        else if constexpr (std::is_same_v<DecayT, System>)
+            return m_existing_system_vec;
+        else if constexpr (std::is_same_v<DecayT, Building>)
+            return m_existing_building_vec;
+        else if constexpr (std::is_same_v<DecayT, Field>)
+            return m_existing_field_vec;
+        else {
+            static_assert(std::is_same_v<DecayT, UniverseObject>, "invalid type for ExistingVec()");
+            return m_existing_object_vec;
+        }
+    }
+
+    // calls \a func on all maps containing objects
+    template <typename Function>
+    void ApplyToAllMaps(Function func, bool include_nonspecialized = true);
+
+    // calls \a func on all "existing" maps containing objects
+    template <typename Function>
+    void ApplyToExistingMaps(Function func, bool include_nonspecialized = true);
+
+    // calls \a func on all "existing" vectors of objects
+    template <typename Function>
+    void ApplyToExistingVecs(Function func, bool include_nonspecialized = true);
+
+    // inserts \a obj into the map / vec for existing objects of type of ObjectType
+    template <typename ObjectType = ::UniverseObject>
+    void TypedInsertExisting(auto ID, std::shared_ptr<ObjectType> obj);
+
+    // dispatches to the appropriate TypedInsertExisting for the dynamic object type in \a obj
+    void AutoTypedInsertExisting(auto ID, auto&& obj);
+
+    // inserts \a obj into the map / vecs for the type ObjectType
+    template <typename ObjectType = ::UniverseObject>
+    void TypedInsert(auto ID, auto destroyed, std::shared_ptr<ObjectType> obj);
+
+    // dispatches to the appropriate TypedInsert for the dynamic object type in \a obj
+    void AutoTypedInsert(auto ID, auto destroyed, auto&& obj);
 
     container_type<UniverseObject>  m_objects;
     container_type<Ship>            m_ships;
@@ -391,7 +441,7 @@ private:
     container_type<Field>           m_fields;
 
     container_type<const UniverseObject> m_existing_objects;
-    container_type<const UniverseObject> m_existing_ships;
+    container_type<const UniverseObject> m_existing_ships; // TODO: can/should these be Ship*, Fleet*, etc?
     container_type<const UniverseObject> m_existing_fleets;
     container_type<const UniverseObject> m_existing_planets;
     container_type<const UniverseObject> m_existing_systems;
@@ -399,7 +449,7 @@ private:
     container_type<const UniverseObject> m_existing_fields;
 
     std::vector<const UniverseObject*> m_existing_object_vec;
-    std::vector<const UniverseObject*> m_existing_ship_vec;
+    std::vector<const UniverseObject*> m_existing_ship_vec; // TODO: can/should these be Ship*, Fleet*, etc?
     std::vector<const UniverseObject*> m_existing_fleet_vec;
     std::vector<const UniverseObject*> m_existing_planet_vec;
     std::vector<const UniverseObject*> m_existing_system_vec;
