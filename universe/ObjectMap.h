@@ -84,62 +84,106 @@ public:
     template <typename T = UniverseObject, typename Pred, bool only_existing = false>
     [[nodiscard]] std::vector<std::shared_ptr<std::decay_t<T>>> find(Pred pred);
 
-    /** Returns IDs of all the objects that match \a pred when applied as a visitor or predicate filter or range of object ids */
+    /** Returns IDs of all the objects that match \a pred when applied as a visitor
+      * or predicate filter or range of object ids */
     template <typename T = UniverseObject, typename Pred, bool only_existing = false>
     [[nodiscard]] std::vector<int> findIDs(Pred pred) const;
 
-    /** Returns how many objects match \a pred when applied as a visitor or predicate filter or range of object ids */
+    /** Returns how many objects match \a pred when applied as a visitor or predicate
+      * filter or range of object ids */
     template <typename T = UniverseObject, typename Pred, bool only_existing = false>
     [[nodiscard]] int count(Pred pred) const;
 
-    /** Returns true iff any object matches \a pred when applied as a visitor or predicate filter or range of object ids */
+    /** Returns true iff any object matches \a pred when applied as a visitor or
+      * predicate filter or range of object ids */
     template <typename T = UniverseObject, typename Pred, bool only_existing = false>
     [[nodiscard]] bool check_if_any(Pred pred) const;
 
-    /** Returns all the objects of type T */
+    /** Returns all the objects of type T (maybe shared) ptr to const */
     template <typename T = UniverseObject, bool only_existing = false>
-    [[nodiscard]] auto all() const
+    [[nodiscard]] decltype(auto) all() const
     {
         using DecayT = std::decay_t<T>;
-        static constexpr auto const_ptr_tx = [](const typename container_type<DecayT>::mapped_type& p)
-            -> typename container_type<const DecayT>::mapped_type
-        { return std::const_pointer_cast<const DecayT>(p); };
 
-        return Map<DecayT, only_existing>() | range_values | range_transform(const_ptr_tx);
-    }
+        if constexpr (only_existing) {
+            auto rng = ExistingMap<DecayT>() | range_values;
+            using retval_value_t = decltype(rng.front());
+            return rng;
 
-    template <typename T = UniverseObject, bool only_existing = false>
-    [[nodiscard]] auto allRaw() const
-    {
-        using DecayT = std::decay_t<T>;
-        static constexpr auto raw_ptr_tx = [](const auto& p) -> const DecayT* { return p.get(); };
-        return std::as_const(Map<DecayT, only_existing>()) | range_values | range_transform(raw_ptr_tx);
-    }
-
-    /** Returns all the objects of type T */
-    template <typename T = UniverseObject, bool only_existing = false>
-    [[nodiscard]] auto all()
-    {
-        using DecayT = std::decay_t<T>;
-        if constexpr (std::is_const_v<T>) {
-            const auto& const_this = *this;
-            return const_this.all<DecayT, only_existing>();
         } else {
-            return std::as_const(Map<DecayT, only_existing>()) | range_values;
+            // convert ptr_to_mutable& to ptr_to_const
+            static constexpr auto const_ptr_tx = [](const typename container_type<DecayT>::mapped_type& p)
+                -> typename container_type<const DecayT>::mapped_type
+            { return std::const_pointer_cast<const DecayT>(p); };
+
+            auto rng = Map<DecayT, false>() | range_values | range_transform(const_ptr_tx);
+            using retval_value_t = decltype(rng.front());
+            static_assert(!std::is_reference_v<retval_value_t>); // would like to return a refence to a pointer-to-const, but not possible if adding const using const_pointer_cast
+            static_assert(!std::is_const_v<retval_value_t>); // mutable pointer to const
+
+            return rng;
         }
     }
 
-    /** Returns all the objects of type T */
+    /** Returns all the objects of type T as raw ptr to const */
+    template <typename T = UniverseObject, bool only_existing = false>
+    [[nodiscard]] auto allRaw() const
+    {
+        static_assert(!only_existing, "haven't implemented  allRaw() const  for only_existing = true ...");
+
+        using DecayT = std::decay_t<T>;
+        static constexpr auto const_raw_ptr_tx = [](const auto& p) -> const DecayT* { return p.get(); };
+        auto rng = Map<DecayT, only_existing>() | range_values | range_transform(const_raw_ptr_tx);
+        using retval_value_t = decltype(rng.front());
+        static_assert(std::is_same_v<retval_value_t, const DecayT*>);
+
+        return rng;
+    }
+
+    /** Returns all the objects of type T as (maybe const&) shared ptr to (mutable or const, depending on T) */
+    template <typename T = UniverseObject, bool only_existing = false>
+    [[nodiscard]] decltype(auto) all()
+    {
+        using DecayT = std::decay_t<T>;
+
+        if constexpr (std::is_const_v<T> || only_existing) {
+            const auto& const_this = *this;
+
+            auto rng = const_this.all<DecayT, only_existing>();
+            using retval_value_t = decltype(rng.front()); 
+            static_assert((!std::is_const_v<std::remove_reference_t<retval_value_t>> && !std::is_reference_v<retval_value_t>) || // values stored as shared_ptr<mutable T> so returning shared_ptr<const T> requires a cast rather than returning a const&
+                          (std::is_const_v<std::remove_reference_t<retval_value_t>> && std::is_reference_v<retval_value_t>)); 
+            return rng;
+
+        } else {
+            static constexpr const auto make_const =
+                [](std::shared_ptr<DecayT>& p) -> const std::shared_ptr<DecayT>& { return p; };
+
+            auto rng = Map<DecayT, false>() | range_values;
+            using retval_value_t = decltype(rng.front());
+            auto const_rng = rng | range_transform(make_const);
+            using const_retval_value_t = decltype(const_rng.front());
+
+            return const_rng;
+        }
+    }
+
+    /** Returns all the objects of type T as raw ptr to mutable */
     template <typename T = UniverseObject, bool only_existing = false>
     [[nodiscard]] auto allRaw()
     {
+        static_assert(!only_existing, "haven't implemented  allRaw() (mutable)  for only_existing = true ...");
+
         using DecayT = std::decay_t<T>;
         using OutT = std::conditional_t<std::is_const_v<T>, const DecayT*, DecayT*>;
         static constexpr auto raw_ptr_tx = [](const auto& p) -> OutT { return p.get(); };
-        return Map<DecayT, only_existing>() | range_values | range_transform(raw_ptr_tx);
+        auto rng = Map<DecayT, only_existing>() | range_values | range_transform(raw_ptr_tx);
+        using retval_value_t = decltype(rng.front());
+
+        return rng;
     }
 
-    /** Returns all the ids and objects of type T */
+    /** Returns all the ids and objects of type T as pair<int, const ptr to const> */
     template <typename T = UniverseObject, bool only_existing = false>
     [[nodiscard]] auto allWithIDs() const
     {
@@ -381,6 +425,31 @@ private:
     template <typename T = UniverseObject>
     [[nodiscard]] auto& ExistingMap() noexcept
     { return Map<T, true>(); }
+
+    template <typename T = UniverseObject>
+    [[nodiscard]] const auto& ExistingVec() const noexcept
+    {
+        using DecayT = std::decay_t<T>;
+        if constexpr (std::is_same_v<DecayT, UniverseObject>)
+            return m_existing_object_vec;
+        else if constexpr (std::is_same_v<DecayT, Ship>)
+            return m_existing_ship_vec;
+        else if constexpr (std::is_same_v<DecayT, Fleet>)
+            return m_existing_fleet_vec;
+        else if constexpr (std::is_same_v<DecayT, Planet>)
+            return m_existing_planet_vec;
+        else if constexpr (std::is_same_v<DecayT, System>)
+            return m_existing_system_vec;
+        else if constexpr (std::is_same_v<DecayT, Building>)
+            return m_existing_building_vec;
+        else if constexpr (std::is_same_v<DecayT, Field>)
+            return m_existing_field_vec;
+        else {
+            static_assert(std::is_same_v<DecayT, UniverseObject>, "invalid type for ExistingVec()");
+            static const decltype(m_existing_object_vec) error_retval;
+            return error_retval;
+        }
+    }
 
     template <typename T = UniverseObject>
     [[nodiscard]] auto& ExistingVec() noexcept
