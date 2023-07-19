@@ -25,7 +25,7 @@ APT::Install-Suggests \"false\";\n\
 " > /etc/apt/apt.conf.d/docker-no-suggests
 
 # add experimental repository to test issue https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1037667
-RUN echo "deb https://deb.debian.org/debian experimental main\n\
+RUN echo "deb http://deb.debian.org/debian experimental main\n\
 " >> /etc/apt/sources.list
 
 RUN apt-get update --assume-yes
