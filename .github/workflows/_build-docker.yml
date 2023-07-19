@@ -13,6 +13,7 @@ jobs:
           - ubuntu-22.10
           - fedora-33
           - debian-stable
+          - debian-sid
           - manjaro
           - fedora-rawhide
     env:
