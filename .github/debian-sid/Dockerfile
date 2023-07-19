@@ -30,7 +30,7 @@ RUN echo "deb http://deb.debian.org/debian experimental main\n\
 
 RUN apt-get update --assume-yes
 # install experimental g++ to test issue https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1037667
-RUN apt-get -t=experimental install g++
+RUN apt-get -t=experimental install --assume-yes g++
 RUN apt-get install --assume-yes \
         git \
         make \
