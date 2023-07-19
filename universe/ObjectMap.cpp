@@ -123,19 +123,14 @@ void ObjectMap::CopyObject(std::shared_ptr<const UniverseObject> source,
     } else {
         bool destroyed = universe.DestroyedObjectIds().contains(source_id);
         // this object is not yet present in this ObjectMap, so add a new UniverseObject object for it
-        if (source->ObjectType() == UniverseObjectType::OBJ_PLANET) {
-            auto plt = static_cast<const Planet*>(source.get());
-            insertCore(std::static_pointer_cast<Planet>(plt->Clone(universe)), destroyed);
-        } else {
-            insertCore(source->Clone(universe), destroyed);
-        }
+        insertCore(source->Clone(universe), destroyed);
     }
 }
 
-ObjectMap* ObjectMap::Clone(const Universe& universe, int empire_id) const { // TODO: can this return unique_ptr ?
+std::unique_ptr<ObjectMap> ObjectMap::Clone(const Universe& universe, int empire_id) const {
     auto result = std::make_unique<ObjectMap>();
     result->Copy(*this, universe, empire_id);
-    return result.release();
+    return result;
 }
 
 int ObjectMap::HighestObjectID() const {

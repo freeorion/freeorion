@@ -43,7 +43,7 @@ public:
     /** Copies contents of this ObjectMap to a new ObjectMap, which is
       * returned.  Copies are limited to only duplicate information that the
       * empire with id \a empire_id would know about the copied objects. */
-    [[nodiscard]] ObjectMap* Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const;
+    [[nodiscard]] std::unique_ptr<ObjectMap> Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const;
 
     /** Returns the number of objects of the specified class in this ObjectMap. */
     template <typename T = UniverseObject, bool only_existing = false>
