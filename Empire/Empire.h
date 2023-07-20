@@ -400,17 +400,16 @@ public:
       * spent on and number of turns left for each project in the queue. */
     void UpdateProductionQueue(const ScriptingContext& context,
                                const std::vector<std::tuple<std::string_view, int, float, int>>& prod_costs);
+    std::vector<std::tuple<std::string_view, int, float, int>>
+        ProductionCostsTimes(const ScriptingContext& contest) const;
+
     /** Eventually: Calls appropriate subsystem Update to calculate influence
       * spent on social projects and maintenance of buildings.  Later call to
       * CheckInfluenceProgress() will then have the correct allocations of
       * influence. */
-    std::vector<std::tuple<std::string_view, int, float, int>> ProductionCostsTimes(const ScriptingContext& contest) const;
-
     void UpdateInfluenceSpending(const ScriptingContext& context,
                                  const std::vector<std::pair<int, double>>& annex_costs,
                                  const std::vector<std::pair<std::string_view, double>>& policy_costs);
-    /** Has m_population_pool recalculate all PopCenters' and empire's total
-      * expected population growth */
     std::vector<std::pair<int, double>> PlanetAnnexationCosts(const ScriptingContext& context) const;
     std::vector<std::pair<std::string_view, double>> PolicyAdoptionCosts(const ScriptingContext& context) const;
 
