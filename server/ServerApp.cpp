@@ -3174,8 +3174,7 @@ namespace {
                 continue;
 
             std::set<int> all_involved_empires;
-            for (auto& [empire_id, ignored]: empires_troops) {
-                (void)ignored; // quiet warning
+            for (const auto empire_id : empires_troops | range_keys) {
                 if (empire_id != ALL_EMPIRES)
                     all_involved_empires.insert(empire_id);
             }
@@ -3776,11 +3775,8 @@ void ServerApp::PreCombatProcessTurns() {
     m_networking.SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::FLEET_MOVEMENT));
 
     // Update system-obstruction after orders, colonization, invasion, gifting, scrapping
-    for (auto& [ignored, empire] : m_empires) {
-        if (!empire->Eliminated())
-            empire->UpdateSupplyUnobstructedSystems(context, true);
-        (void)ignored;
-    }
+    for (auto& empire : m_empires | range_values | range_filter([](auto e) { return !e->Eliminated(); }))
+        empire->UpdateSupplyUnobstructedSystems(context, true);
 
 
     // fleet movement

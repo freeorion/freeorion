@@ -909,9 +909,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
     // supply-exchanging systems as possible.  This requires finding the
     // connected components of an undirected graph, where the node
     // adjacency are the directly-connected systems determined above.
-    for (const auto& [empire_id, ignored] : empire_propagating_supply_ranges) {
-        (void)ignored;
-
+    for (const auto empire_id : empire_propagating_supply_ranges | range_keys) {
         // assemble all direct connections between systems from traversals
         std::map<int, std::set<int>> supply_groups_map;
         for (auto const& lane : ally_merged_supply_starlane_traversals[empire_id]) {

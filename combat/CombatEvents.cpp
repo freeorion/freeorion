@@ -747,8 +747,7 @@ std::string WeaponsPlatformEvent::DebugString(const ScriptingContext& context) c
     std::stringstream desc;
     desc << "WeaponsPlatformEvent bout = " << bout << " attacker_id = "
         << attacker_id << " attacker_owner = "<< attacker_owner_id;
-    for (auto& [ignored, event_vec] : events) {
-        (void)ignored;
+    for (auto& event_vec : events | range_values) {
         for (const auto& attack : event_vec)
             desc << "\n" << attack->DebugString(context);
     }

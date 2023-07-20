@@ -863,14 +863,12 @@ void ClientUI::ZoomToFleet(std::shared_ptr<const Fleet> fleet) {
 
 bool ClientUI::ZoomToContent(const std::string& name, bool reverse_lookup) {
     if (reverse_lookup) {
-        for (const auto& [tech_name, ignored] : GetTechManager()) {
-            (void)ignored;
+        for (const auto& tech_name : GetTechManager() | range_keys) {
             if (boost::iequals(name, UserString(tech_name)))
                 return ZoomToTech(tech_name);
         }
 
-        for ([[maybe_unused]] auto& [building_name, ignored] : GetBuildingTypeManager()) {
-            (void)ignored;  // quiet unused variable warning
+        for (auto& building_name : GetBuildingTypeManager() | range_keys) {
             if (boost::iequals(name, UserString(building_name)))
                 return ZoomToBuildingType(building_name);
         }
@@ -879,20 +877,17 @@ bool ClientUI::ZoomToContent(const std::string& name, bool reverse_lookup) {
             if (boost::iequals(name, UserString(special_name)))
                 return ZoomToSpecial(std::string{special_name}); // TODO: pass just the string_view
 
-        for ([[maybe_unused]] auto& [hull_name, ignored] : GetShipHullManager()) {
-            (void)ignored;  // quiet unused variable warning
+        for (auto& hull_name : GetShipHullManager() | range_keys) {
             if (boost::iequals(name, UserString(hull_name)))
                 return ZoomToShipHull(hull_name);
         }
 
-        for ([[maybe_unused]] auto& [part_name, ignored] : GetShipPartManager()) {
-            (void)ignored;  // quiet unused variable warning
+        for (auto& part_name : GetShipPartManager() | range_keys) {
             if (boost::iequals(name, UserString(part_name)))
                 return ZoomToShipPart(part_name);
         }
 
-        for ([[maybe_unused]] auto& [species_name, ignored] : GetSpeciesManager()) {
-            (void)ignored;  // quiet unused variable warning
+        for (auto& species_name : GetSpeciesManager() | range_keys) {
             if (boost::iequals(name, UserString(species_name)))
                 return ZoomToSpecies(species_name);
         }

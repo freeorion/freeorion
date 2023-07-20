@@ -3006,8 +3006,7 @@ void MapWnd::InitTurn(ScriptingContext& context) {
 
 
     timer.EnterSection("update resource pools");
-    for (auto& [ignored, empire] : context.Empires()) {
-        (void)ignored;
+    for (auto& empire : context.Empires() | range_values) {
         empire->UpdateResourcePools(context,
                                     empire->TechCostsTimes(context),
                                     empire->PlanetAnnexationCosts(context),
