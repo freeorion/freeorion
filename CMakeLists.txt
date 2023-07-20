@@ -289,6 +289,10 @@ if(NOT Boost_PYTHON${Boost_PYTHON_SUFFIX}_FOUND)
     find_package(Boost COMPONENTS python${Boost_PYTHON_SUFFIX} REQUIRED)
 endif()
 
+if(BUILD_TESTING)
+    find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS unit_test_framework REQUIRED)
+endif()
+
 find_package(ZLIB REQUIRED)
 if(BUILD_CLIENT_GG)
     set(SDL_NO_MAIN true)
@@ -1122,6 +1126,17 @@ if(WIN32)
         endforeach()
     ]]
     COMPONENT binaries)
+    if(BUILD_TESTING)
+        install(FILES $<TARGET_FILE:Boost::unit_test_framework>
+            DESTINATION ${CMAKE_INSTALL_BINDIR}
+            COMPONENT binaries-test) 
+        if(BUILD_PARSERS)
+            install(TARGETS fo_unittest_parse
+                COMPONENT binaries-test
+                LIBRARY DESTINATION ${FreeOrion_INSTALL_LIBDIR}
+                RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})             
+        endif()
+    endif()
 endif()
 
 set(CPACK_PACKAGE_NAME ${CMAKE_PROJECT_NAME})
