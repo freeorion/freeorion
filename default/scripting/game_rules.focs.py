@@ -358,14 +358,6 @@ GameRule(
 )
 
 GameRule(
-    name="RULE_ENABLE_ALLIED_REPAIR",
-    description="RULE_ENABLE_ALLIED_REPAIR_DESC",
-    category="MULTIPLAYER",
-    type=bool,
-    default=False,
-)
-
-GameRule(
     name="RULE_FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE",
     description="RULE_FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE_DESC",
     category="BALANCE",
