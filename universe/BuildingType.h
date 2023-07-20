@@ -159,6 +159,7 @@ class BuildingTypeManager {
 public:
     using container_type = std::map<std::string, std::unique_ptr<BuildingType>, std::less<>>;
     using iterator = container_type::const_iterator;
+    using const_iterator = iterator;
 
     //! Returns the building type with the name @p name; you should use the
     //! free function GetBuildingType(...) instead, mainly to save some typing.

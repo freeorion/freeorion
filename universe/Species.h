@@ -230,6 +230,7 @@ class FO_COMMON_API SpeciesManager {
 public:
     using SpeciesTypeMap = std::map<std::string, const Species, std::less<>>;
     using iterator = typename SpeciesTypeMap::const_iterator;
+    using const_iterator = iterator;
 
 private:
     using species_entry_t = typename iterator::value_type;

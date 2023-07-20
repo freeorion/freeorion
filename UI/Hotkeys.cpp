@@ -20,6 +20,7 @@
 
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"
+#include "../util/ranges.h"
 
 
 /////////////////////////////////////////////////////////
@@ -194,8 +195,7 @@ std::string Hotkey::PrettyPrint() const
 { return ::PrettyPrint(m_key, m_mod_keys); }
 
 void Hotkey::ReadFromOptions(OptionsDB& db) {
-    for (auto& [ignored, hotkey] : hotkeys) {
-        (void)ignored;
+    for (auto& hotkey : hotkeys | range_values) {
         std::string options_db_name = hotkey.m_name + ".hotkey";
         if (!db.OptionExists(options_db_name)) {
             ErrorLogger() << "Hotkey::ReadFromOptions : no option for " << options_db_name;

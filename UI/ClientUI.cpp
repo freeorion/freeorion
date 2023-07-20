@@ -868,7 +868,7 @@ bool ClientUI::ZoomToContent(const std::string& name, bool reverse_lookup) {
                 return ZoomToTech(tech_name);
         }
 
-        for (auto& building_name : GetBuildingTypeManager() | range_keys) {
+        for (const auto& building_name : GetBuildingTypeManager() | range_keys) {
             if (boost::iequals(name, UserString(building_name)))
                 return ZoomToBuildingType(building_name);
         }
@@ -877,17 +877,17 @@ bool ClientUI::ZoomToContent(const std::string& name, bool reverse_lookup) {
             if (boost::iequals(name, UserString(special_name)))
                 return ZoomToSpecial(std::string{special_name}); // TODO: pass just the string_view
 
-        for (auto& hull_name : GetShipHullManager() | range_keys) {
+        for (const auto& hull_name : GetShipHullManager() | range_keys) {
             if (boost::iequals(name, UserString(hull_name)))
                 return ZoomToShipHull(hull_name);
         }
 
-        for (auto& part_name : GetShipPartManager() | range_keys) {
+        for (const auto& part_name : GetShipPartManager() | range_keys) {
             if (boost::iequals(name, UserString(part_name)))
                 return ZoomToShipPart(part_name);
         }
 
-        for (auto& species_name : GetSpeciesManager() | range_keys) {
+        for (const auto& species_name : GetSpeciesManager() | range_keys) {
             if (boost::iequals(name, UserString(species_name)))
                 return ZoomToSpecies(species_name);
         }

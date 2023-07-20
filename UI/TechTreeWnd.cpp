@@ -1887,10 +1887,8 @@ void TechTreeWnd::TechListBox::Populate(bool update ) {
 
     // Skip lookup check when starting with empty cache
 
-    for (const auto& [tech_name, ignored]: GetTechManager()) {
-        (void)ignored;
+    for (const auto& tech_name : GetTechManager() | range_keys)
         m_tech_row_cache.emplace(tech_name, GG::Wnd::Create<TechRow>(row_width, tech_name));
-    }
 
     DebugLogger() << "Tech List Box Populating Done,  Creation time = " << creation_timer.DurationString();
 

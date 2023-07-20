@@ -1356,8 +1356,7 @@ void FilterDialog::UpdateVisFilterFromVisibilityButton(VIS_DISPLAY vis) {
                               });
 
     // if all on, turn all off. otherwise, turn all on
-    for (const auto& [uot, ignored] : m_filter_buttons) {
-        (void)ignored;
+    for (const auto uot : m_filter_buttons | range_keys) {
         auto& type_vis = m_vis_filters[uot];
         if (!all_on)
             type_vis.insert(vis);
@@ -1799,20 +1798,17 @@ private:
         GG::MenuItem env_submenu(UserString("PLANET_ENVIRONMENTS_SUBMENU"), false, false);
         GG::MenuItem fleets_submenu(UserString("FLEETS_SUBMENU"),           false, false);
 
-        for (const auto& [name_submenu, ref] : available_column_types) {
-            (void)ref;
-            const std::string_view new_column_type = name_submenu.first; // structured binding causes problems with captures below
+        for (auto [new_column_type, submenu] : available_column_types | range_keys) {
             const bool check = (current_column_type == new_column_type);
             const auto& menu_label = UserString(new_column_type);
 
-            auto col_action = [this, column_id, new_column_type]() {
+            auto col_action = [this, column_id, nct{new_column_type}]() {
                 // set clicked column to show the selected column type info
-                SetColumnName(column_id, std::string{new_column_type});
+                SetColumnName(column_id, std::string{nct});
                 ColumnsChangedSignal();
             };
 
             // put meters into root or submenus...
-            const std::string_view submenu = name_submenu.second;
             if (submenu.empty())
                 popup->AddMenuItem(menu_label, false, check, col_action);
             else if (submenu == "METERS_SUBMENU")
@@ -2364,8 +2360,8 @@ public:
     }
 
     void SortingClicked(int clicked_column) {
-        int                         old_sort_col =  this->SortCol();
-        GG::Flags<GG::ListBoxStyle> old_style =     this->Style();
+        const auto old_sort_col = this->SortCol();
+        const auto old_style = this->Style();
 
         if (clicked_column < 0) {
             this->SetStyle(GG::LIST_NOSORT);

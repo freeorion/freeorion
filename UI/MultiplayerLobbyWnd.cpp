@@ -474,8 +474,7 @@ namespace {
                 return;
             }
             const std::string& empire_name = boost::polymorphic_downcast<GG::Label*>((*selected_it)->at(0))->Text();
-            for (const auto& [ignored, sged] : m_save_game_empire_data) {
-                (void)ignored;
+            for (const auto& sged : m_save_game_empire_data | range_values) {
                 if (sged.empire_name == empire_name) {
                     m_player_data.empire_name = empire_name;
                     m_player_data.empire_color = sged.color;

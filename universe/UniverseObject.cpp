@@ -342,10 +342,8 @@ std::size_t UniverseObject::SizeInMemory() const {
     retval += sizeof(UniverseObject);
     retval += sizeof(MeterMap::value_type)*m_meters.capacity();
     retval += sizeof(SpecialMap::value_type)*m_specials.capacity();
-    for (const auto& [name, ignored] : m_specials) {
-        (void)ignored;
-        retval += sizeof(decltype(name)::value_type)*name.capacity();
-    }
+    for (const auto& name : m_specials | range_keys)
+        retval += sizeof(std::decay_t<decltype(name)>::value_type)*name.capacity();
     return retval;
 }
 

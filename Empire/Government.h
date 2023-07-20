@@ -1,6 +1,7 @@
 #ifndef _Government_h_
 #define _Government_h_
 
+#include "../universe/Effect.h"
 #include "../universe/ValueRef.h"
 #include "../util/AppInterface.h"
 #include "../util/Export.h"
@@ -13,10 +14,6 @@
 #include <map>
 #include <set>
 
-
-namespace Effect {
-    class EffectsGroup;
-}
 
 class FO_COMMON_API Policy {
 public:
@@ -76,6 +73,7 @@ class FO_COMMON_API PolicyManager {
 public:
     using PoliciesTypeMap = boost::container::flat_map<std::string, Policy, std::less<>>;
     using iterator = PoliciesTypeMap::const_iterator;
+    using const_iterator = iterator;
 
     //! returns the policy with the name \a name; you should use the free
     //! function GetPolicy() instead

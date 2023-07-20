@@ -1,6 +1,7 @@
 #include "SidePanel.h"
 
 #include <cmath>
+#include <numeric>
 #include <boost/cast.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/format.hpp>
@@ -539,13 +540,9 @@ namespace {
     }
 
     double PendingAnnexationOrderCost(const UniverseObject* source_for_empire, const ScriptingContext& context) {
-        // transform reduce
-        double retval = 0.0;
-        for (auto& [ignored, cost] : PendingAnnexationPlanetsCosts(source_for_empire, context)) {
-            retval += cost;
-            (void)ignored;
-        }
-        return retval;
+        const auto costs = PendingAnnexationPlanetsCosts(source_for_empire, context);
+        auto costs_rng = costs | range_values;
+        return std::accumulate(costs_rng.begin(), costs_rng.end(), 0.0);
     }
 
     /** Returns map from planet ID to issued colonize orders affecting it. There
@@ -556,9 +553,8 @@ namespace {
         if (!app)
             return retval;
         for (const auto& [order_id, order] : app->Orders()) {
-            if (auto col_order = std::dynamic_pointer_cast<ColonizeOrder>(order)) {
+            if (auto col_order = std::dynamic_pointer_cast<ColonizeOrder>(order))
                 retval[col_order->PlanetID()] = order_id;
-            }
         }
         return retval;
     }
@@ -570,10 +566,9 @@ namespace {
         const ClientApp* app = ClientApp::GetApp();
         if (!app)
             return retval;
-        for (const auto& id_and_order : app->Orders()) {
-            if (auto order = std::dynamic_pointer_cast<InvadeOrder>(id_and_order.second)) {
-                retval[order->PlanetID()].insert(id_and_order.first);
-            }
+        for (const auto& [order_id, order] : app->Orders()) {
+            if (auto invade_order = std::dynamic_pointer_cast<InvadeOrder>(order))
+                retval[invade_order->PlanetID()].insert(order_id);
         }
         return retval;
     }

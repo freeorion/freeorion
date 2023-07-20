@@ -677,9 +677,8 @@ void GovernmentWnd::PolicyPalette::CompleteConstruction() {
         { continue; }
 
         const auto& us_cateory{UserString(cat_view)};
-        auto [ptr_it, ignored] = m_category_buttons.emplace(std::string{cat_view}, GG::Wnd::Create<CUIStateButton>(
-            us_cateory, GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>()));
-        (void)ignored;
+        auto ptr_it = m_category_buttons.emplace(std::string{cat_view}, GG::Wnd::Create<CUIStateButton>(
+            us_cateory, GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>())).first;
         auto& [string_in_map, ptr_in_map] = *ptr_it;
         AttachChild(ptr_in_map);
         ptr_in_map->CheckedSignal.connect(

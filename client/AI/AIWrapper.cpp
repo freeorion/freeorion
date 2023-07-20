@@ -118,15 +118,9 @@ namespace {
     auto AllEmpireIDs() -> std::vector<int>
     {
         const auto& players = AIClientApp::GetApp()->Players();
-        std::vector<int> empire_ids;
-        empire_ids.reserve(players.size());
-        for (auto& [player_id, player_info] : players) {
-            (void)player_id; // quiet warning
-            auto empire_id = player_info.empire_id;
-            if (empire_id != ALL_EMPIRES)
-                empire_ids.push_back(empire_id);
-        }
-        return empire_ids;
+        auto rng = players | range_values | range_transform([](const auto& pi) { return pi.empire_id; })
+            | range_filter([](int empire_id) { return empire_id != ALL_EMPIRES; });
+        return {rng.begin(), rng.end()};
     }
 
     void InitMeterEstimatesAndDiscrepancies() {

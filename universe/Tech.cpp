@@ -503,8 +503,7 @@ void TechManager::CheckPendingTechs() const {
     // check for empty categories
     std::vector<std::string> empty_defined_categories;
     empty_defined_categories.reserve(m_categories.size());
-    for (const auto& [cat_name, ignored] : m_categories) {
-        (void)ignored;
+    for (const auto& cat_name : m_categories | range_keys) {
         auto set_it = categories_seen_in_techs.find(cat_name);
         if (set_it == categories_seen_in_techs.end())
             empty_defined_categories.push_back(cat_name);

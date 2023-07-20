@@ -555,10 +555,8 @@ std::size_t Ship::SizeInMemory() const {
     retval += sizeof(Ship) - sizeof(UniverseObject);
 
     retval += sizeof(PartMeterMap::value_type)*m_part_meters.capacity();
-    for (const auto& [name_type, ignored] : m_part_meters) {
-        (void)ignored;
-        retval += name_type.first.capacity()*sizeof(decltype(name_type.first)::value_type);
-    }
+    for (const auto& name : m_part_meters | range_keys | range_keys)
+        retval += name.capacity()*sizeof(std::decay_t<decltype(name)>::value_type);
     retval += sizeof(decltype(m_species_name)::value_type)*m_species_name.capacity();
 
     return retval;
