@@ -53,9 +53,7 @@ void UniverseObject::Copy(const UniverseObject& copied_object,
         return;
 
     auto censored_meters = copied_object.CensoredMeters(vis);
-    for (auto& [type, copied_meter] : copied_object.m_meters) {
-        (void)copied_meter;
-
+    for (const auto type : copied_object.m_meters | range_keys) {
         // get existing meter in this object, or create a default one
         auto m_meter_it = m_meters.find(type);
         bool meter_already_known = (m_meter_it != m_meters.end());

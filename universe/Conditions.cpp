@@ -782,10 +782,8 @@ namespace {
             // compile histogram of of number of times each sort key occurs
             boost::container::flat_map<SortKeyType, uint32_t> histogram; // TODO: should this be a string_view if SortKeyType is string?
             histogram.reserve(sort_key_objects.size());
-            for ([[maybe_unused]] auto& [key, ignored_object] : sort_key_objects) {
-                (void)ignored_object;
-                histogram[key]++; // TODO: maybe redo with iteration over ranges of each unique key and distance?
-            }
+            for (const auto& key : sort_key_objects | range_keys)
+                histogram[key]++;
 
             // invert histogram to index by number of occurances
             std::vector<std::pair<uint32_t, SortKeyType>> inv_histogram; // TODO: should this be a string_view if SortKeyType is string?
@@ -5236,15 +5234,14 @@ namespace {
             int count = 0;
 
             if (m_empire_id == ALL_EMPIRES) {
-                for ([[maybe_unused]] auto& [ignored_empire_id, empire] : m_context.Empires()) {
-                    (void)ignored_empire_id; // quiet unused variable warning
+                for (const auto& empire : m_context.Empires() | range_values) {
                     count += NumberOnQueue(empire->GetProductionQueue(), m_build_type,
                                            candidate->ID(), m_context.ContextUniverse(),
                                            m_name, m_design_id);
                 }
 
             } else {
-                auto empire = m_context.GetEmpire(m_empire_id);
+                const auto& empire = m_context.GetEmpire(m_empire_id);
                 if (!empire) return false;
                 count = NumberOnQueue(empire->GetProductionQueue(), m_build_type,
                                       candidate->ID(), m_context.ContextUniverse(),

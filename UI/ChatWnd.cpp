@@ -133,18 +133,17 @@ void MessageWndEdit::KeyPress(GG::Key key, std::uint32_t key_code_point,
 
 void MessageWndEdit::FindGameWords() {
      // add player and empire names
-    for ([[maybe_unused]] auto& [ignored_id, empire] : Empires()) {
-        (void)ignored_id;   // quiet unused variable warning
+    for (const auto& empire : Empires() | range_values) {
         m_game_words.insert(empire->Name());
         m_game_words.insert(empire->PlayerName());
     }
     // add system names
-    for (auto system : GetUniverse().Objects().allRaw<System>()) {
+    for (const auto* system : GetUniverse().Objects().allRaw<const System>()) {
         if (!system->Name().empty())
             m_game_words.insert(system->Name());
     }
      // add ship names
-    for (auto ship : GetUniverse().Objects().allRaw<Ship>()) {
+    for (const auto* ship : GetUniverse().Objects().allRaw<const Ship>()) {
         if (!ship->Name().empty())
             m_game_words.insert(ship->Name());
     }
@@ -160,21 +159,19 @@ void MessageWndEdit::FindGameWords() {
             m_game_words.insert(UserString(special_name));
     }
      // add species names
-    for (const auto& [name, species] : GetSpeciesManager()) {
+    for (const auto& name : GetSpeciesManager() | range_keys) {
         if (!name.empty())
             m_game_words.insert(UserString(name));
-        (void)species; // quiet unused variable warning
     }
      // add techs names
-    for (const auto& tech_name : GetTechManager().TechNames()) {
+    for (const auto& tech_name : GetTechManager() | range_keys) {
         if (!tech_name.empty())
             m_game_words.insert(UserString(tech_name));
     }
     // add building type names
-    for (const auto& [name, type] : GetBuildingTypeManager()) {
+    for (const auto& name : GetBuildingTypeManager() | range_keys) {
         if (!name.empty())
             m_game_words.insert(UserString(name));
-        (void)type; // quiet unused variable warning
     }
     // add ship hulls
     for (const auto& design : GetPredefinedShipDesignManager().GetOrderedShipDesigns()) {

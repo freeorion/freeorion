@@ -2376,8 +2376,7 @@ void MapWnd::RenderFleetMovementLines() {
     m_fleet_move_dot_star_texture_coords.clear();
     m_fleet_move_dot_star_texture_coords.reserve(sz);
 
-    for (const auto& [fleet_id, move_line] : m_fleet_lines) {
-        (void)fleet_id;
+    for (const auto& move_line : m_fleet_lines | range_values) {
         if (move_line.vertices.empty() || move_line.vertices.size() % 2 == 1)
             continue;
         BufferAddMoveLineVertices(m_fleet_move_dot_vertices, m_fleet_move_dot_colours,
@@ -2386,8 +2385,7 @@ void MapWnd::RenderFleetMovementLines() {
     }
     m_projected_move_dots_start_index = m_fleet_move_dot_vertices.size();
 
-    for (const auto& [fleet_id, proj_line] : m_projected_fleet_lines) {
-        (void)fleet_id;
+    for (const auto& proj_line : m_projected_fleet_lines | range_values) {
         if (proj_line.vertices.empty() || proj_line.vertices.size() % 2 == 1)
             continue;
         BufferAddMoveLineVertices(m_fleet_move_dot_vertices, m_fleet_move_dot_colours,

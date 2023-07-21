@@ -248,15 +248,19 @@ InitialStealthEvent::InitialStealthEvent(const EmpireToObjectVisibilityMap& x) :
 {}
 
 std::string InitialStealthEvent::DebugString(const ScriptingContext& context) const {
+    auto get_obj_id_owner = [&context](const auto id) -> std::pair<int, int> {
+        const auto* obj = context.ContextObjects().getRaw(id);
+        return obj ? std::make_pair(obj->ID(), obj->Owner()) : std::make_pair(INVALID_OBJECT_ID, ALL_EMPIRES);
+    };
+
     std::stringstream ss;
     ss << "InitialStealthEvent: ";
     for (auto& [empire_id, empire_object_vis] : empire_to_object_visibility) {
         ss << " Viewing Empire: " << EmpireLink(empire_id, context) << "\n";
 
-        for (auto& [object_id, object_vis] : empire_object_vis) {
-            (void)object_vis; // quiet warning
-            const auto obj = context.ContextObjects().get(object_id);
-            int owner_id = obj ? obj->Owner() : ALL_EMPIRES;
+        for (const auto [object_id, owner_id] : empire_object_vis
+             | range_keys | range_transform(get_obj_id_owner))
+        {
             if (owner_id == ALL_EMPIRES)
                 continue;
             ss << FighterOrPublicNameLink(ALL_EMPIRES, object_id, owner_id, context);

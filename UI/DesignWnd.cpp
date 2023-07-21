@@ -2643,10 +2643,9 @@ void CompletedDesignsListBox::PopulateCore() {
 
     } else if (showing_available) {
         // add all known / existing designs
-        for (const auto& [des_id, design] : universe.ShipDesigns()) {
-            (void)des_id;
-            if (!design.Producible())
-                continue;
+        for (const auto& design : universe.ShipDesigns() | range_values
+             | range_filter([](const auto& d) { return d.Producible(); }))
+        {
             auto row = GG::Wnd::Create<CompletedDesignListBoxRow>(row_size.x, row_size.y, design);
             Insert(row);
             row->Resize(row_size);
@@ -2680,10 +2679,9 @@ void MonstersListBox::PopulateCore() {
 
     const GG::Pt row_size = ListRowSize();
 
-    for (const auto& [des_id, design] : universe.ShipDesigns()) {
-        (void)des_id;
-        if (!design.IsMonster())
-            continue;
+    for (const auto& design : universe.ShipDesigns() | range_values
+         | range_filter([](const auto& d) { return d.IsMonster(); }))
+    {
         auto row = GG::Wnd::Create<CompletedDesignListBoxRow>(row_size.x, row_size.y, design);
         Insert(row);
         row->Resize(row_size);
@@ -2696,8 +2694,7 @@ void AllDesignsListBox::PopulateCore() {
     const Universe& universe = GetUniverse();
     const auto row_size = ListRowSize();
 
-    for (const auto& [des_id, design] : universe.ShipDesigns()) {
-        (void)des_id;
+    for (const auto& design : universe.ShipDesigns() | range_values) {
         auto row = GG::Wnd::Create<CompletedDesignListBoxRow>(row_size.x, row_size.y, design);
         Insert(row);
         row->Resize(row_size);

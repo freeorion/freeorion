@@ -303,19 +303,17 @@ std::set<int> Universe::EmpireVisibleObjectIDs(int empire_id, const EmpireManage
     if (empire_id != ALL_EMPIRES) {
         empire_ids.insert(empire_id);
     } else {
-        for ([[maybe_unused]] auto& [loop_empire_id, empire] : empires) {
-            (void)empire;   // quieting unused variable warning
+        for (const auto loop_empire_id : empires | range_keys)
             empire_ids.insert(loop_empire_id);
-        }
     }
 
     // check each object's visibility against all empires, including the object
     // if an empire has visibility of it
-    for (const auto& obj : m_objects->all()) {
+    for (const auto obj_id : m_objects->allRaw() | range_transform([](const auto* obj) { return obj->ID(); })) {
         for (int detector_empire_id : empire_ids) {
-            Visibility vis = GetObjectVisibilityByEmpire(obj->ID(), detector_empire_id);
+            Visibility vis = GetObjectVisibilityByEmpire(obj_id, detector_empire_id);
             if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
-                retval.insert(obj->ID());
+                retval.insert(obj_id);
                 break;
             }
         }

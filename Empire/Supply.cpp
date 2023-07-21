@@ -322,8 +322,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
         }();
     }
     for (auto& [empire_id, systems] : empire_system_supply_ranges) {
-        for (auto& [system_id, ignored_range] : systems) {
-            (void)ignored_range;
+        for (const auto system_id : systems | range_keys) {
             empire_system_supply_range_sums[empire_id][system_id] =
                 EmpireTotalSupplyRangeSumInSystem(empire_id, system_id, objects);
         }
@@ -331,8 +330,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
     }
 
 
-    for (const auto& [empire_id, empire] : empires) {
-        (void)empire;
+    for (const auto empire_id : empires | range_keys) {
         const auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(empire_id);
         std::set<int> systems_containing_friendly_fleets;
 
@@ -417,19 +415,15 @@ void SupplyManager::Update(const ScriptingContext& context) {
         TraceLogger(supply) << "Propagating at range " << range_to_spread;
 
         // update systems that have supply in them
-        for (auto& [empire_id, supply_ranges] : empire_propagating_supply_ranges) {
-            (void)empire_id; // quiet warning
-            for (auto& [system_id, supply_range] : supply_ranges) {
-                (void)supply_range; // quiet warning
+        for (auto& supply_ranges : empire_propagating_supply_ranges | range_values)
+            for (const auto system_id : supply_ranges | range_keys)
                 systems_with_supply_in_them.insert(system_id);
-            }
-        }
 
 
         // resolve supply fights between multiple empires in one system.
         // pass over all empire-supplied systems, removing supply for all
         // but the empire with the highest supply range in each system
-        for (const auto& sys : objects.find<System>(systems_with_supply_in_them)) {
+        for (const auto* sys : objects.findRaw<System>(systems_with_supply_in_them)) {
             TraceLogger(supply) << "Determining top supply empire in system " << sys->Name() << " (" << sys->ID() << ")";
             // sort empires by range in this system
             std::map<float, std::set<int>> empire_ranges_here;
