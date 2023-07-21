@@ -6,6 +6,7 @@
 
 #include <boost/filesystem/path.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/container/flat_map.hpp>
 
 #include "SaveFileDialog.h"
 #include "../universe/EnumsFwd.h"
@@ -227,7 +228,7 @@ private:
     //!< when textures are looked up with GetPrefixedTextures, the specified
     //!< dir is searched for filenames that start with the prefix. pointers
     //!< to the Texture objects for these files are stored as the mapped value.
-    std::map<std::string, std::vector<std::shared_ptr<GG::Texture>>, std::less<>>
+    boost::container::flat_map<std::string, std::vector<std::shared_ptr<GG::Texture>>, std::less<>>
                                             m_prefixed_textures;
 
     std::unique_ptr<ShipDesignManager>      m_ship_designs;         //!< ship designs the client knows about, and their ordering in the UI
