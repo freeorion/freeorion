@@ -637,14 +637,14 @@ ClientUI::~ClientUI()
 { s_the_UI = nullptr; }
 
 std::shared_ptr<MapWnd> ClientUI::GetMapWnd() {
-    static bool initialized = m_map_wnd ? true : (m_map_wnd = GG::Wnd::Create<MapWnd>()) != nullptr;
-    (void)initialized; // Hide unused variable warning
+    if (!m_map_wnd)
+        m_map_wnd = GG::Wnd::Create<MapWnd>();
     return m_map_wnd;
 }
 
 MapWnd const* ClientUI::GetMapWndConst() const {
-    static bool initialized = m_map_wnd ? true : (m_map_wnd = GG::Wnd::Create<MapWnd>()) != nullptr;
-    (void)initialized; // Hide unused variable warning
+    if (!m_map_wnd)
+        m_map_wnd = GG::Wnd::Create<MapWnd>();
     return m_map_wnd.get();
 }
 
@@ -1181,8 +1181,7 @@ const std::vector<std::shared_ptr<GG::Texture>>& ClientUI::GetPrefixedTextures(
         }
     }
     std::sort(textures.begin(), textures.end(), TextureFileNameCompare);
-    auto [emplace_it, b] = m_prefixed_textures.emplace(std::move(KEY), std::move(textures));
-    (void)b; // ignored
+    auto emplace_it = m_prefixed_textures.emplace(std::move(KEY), std::move(textures)).first;
     return emplace_it->second;
 }
 
