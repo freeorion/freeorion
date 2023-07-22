@@ -312,10 +312,9 @@ namespace {
         // without finding system2
         boost::container::flat_map<int, int> accessibleSystemsMap;
         accessibleSystemsMap.reserve(system_lanes.size());
-        for (auto& [sys, lanes] : system_lanes) {
-            (void)lanes;
+        for (const auto sys : system_lanes | range_keys)
             accessibleSystemsMap.emplace_hint(accessibleSystemsMap.end(), sys, -1);
-        }
+
         static constexpr int mapped_type_max = std::numeric_limits<decltype(accessibleSystemsMap)::mapped_type>::max();
         maxLaneJumps = std::min(maxLaneJumps, mapped_type_max);
 

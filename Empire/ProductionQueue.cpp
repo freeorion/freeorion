@@ -406,6 +406,11 @@ bool ProductionQueue::ProductionItem::EnqueueConditionPassedAt(int location_id,
     }
 }
 
+namespace {
+    constexpr auto lookup_part = [](const auto& name) { return GetShipPart(name); };
+    constexpr auto not_null = [](const auto* p) -> bool { return p; };
+}
+
 std::map<std::string, std::map<int, float>>
 ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id, const ScriptingContext& context) const {
     std::map<std::string, std::map<int, float>> retval;
@@ -444,21 +449,14 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id, c
 
             if (const ShipHull* ship_hull = GetShipHull(sd->Hull())) {
                 for (const auto& [special_name, consumption] : ship_hull->ProductionSpecialConsumption()) {
-                    const auto& [amount, cond] = consumption;
-                    (void)cond;
-                    if (amount)
+                    if (const auto& amount = consumption.first)
                         retval[special_name][location_id] += static_cast<float>(amount->Eval(location_target_context));
                 }
             }
 
-            for (const std::string& part_name : sd->Parts()) {
-                const ShipPart* part = GetShipPart(part_name);
-                if (!part)
-                    continue;
+            for (const ShipPart* part : sd->Parts() | range_transform(lookup_part) | range_filter(not_null)) {
                 for (const auto& [special_name, consumption] : part->ProductionSpecialConsumption()) {
-                    const auto& [amount, cond] = consumption;
-                    (void)cond;
-                    if (amount)
+                    if (const auto& amount = consumption.first)
                         retval[special_name][location_id] += static_cast<float>(amount->Eval(location_target_context));
                 }
             }
@@ -486,9 +484,7 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(
     case BuildType::BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
             for (const auto& [mt, consumption] : bt->ProductionMeterConsumption()) {
-                const auto& [amount, cond] = consumption;
-                (void)cond;
-                if (amount)
+                if (const auto& amount = consumption.first)
                     retval[mt][location_id] = static_cast<float>(amount->Eval(location_context));
             }
         }
@@ -498,21 +494,14 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(
         if (const ShipDesign* sd = context.ContextUniverse().GetShipDesign(design_id)) {
             if (const ShipHull* ship_hull = GetShipHull(sd->Hull())) {
                 for (const auto& [mt, consumption] : ship_hull->ProductionMeterConsumption()) {
-                    const auto& [amount, cond] = consumption;
-                    (void)cond;
-                    if (amount)
+                    if (const auto& amount = consumption.first)
                         retval[mt][location_id] += static_cast<float>(amount->Eval(location_context));
                 }
             }
 
-            for (const std::string& part_name : sd->Parts()) {
-                const ShipPart* pt = GetShipPart(part_name);
-                if (!pt)
-                    continue;
-                for (const auto& [mt, consumption] : pt->ProductionMeterConsumption()) {
-                    const auto& [amount, cond] = consumption;
-                    (void)cond;
-                    if (amount)
+            for (const ShipPart* part : sd->Parts() | range_transform(lookup_part) | range_filter(not_null)) {
+                for (const auto& [mt, consumption] : part->ProductionMeterConsumption()) {
+                    if (const auto& amount = consumption.first)
                         retval[mt][location_id] += static_cast<float>(amount->Eval(location_context));
                 }
             }
@@ -661,6 +650,8 @@ namespace {
 void ProductionQueue::Update(const ScriptingContext& context,
                              const std::vector<std::tuple<std::string_view, int, float, int>>& prod_costs)
 {
+    // TODO: implement determining production costs at call site and use here
+
     const Universe& universe{context.ContextUniverse()};
 
     auto empire = context.GetEmpire(m_empire_id);
