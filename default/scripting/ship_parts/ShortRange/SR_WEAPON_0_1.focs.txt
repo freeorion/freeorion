@@ -4,7 +4,6 @@ Part
     class = ShortRange
     damage = 1
     shots = 3
-    NoDefaultCapacityEffect
     damageStructurePerBattleMax = 0
     combatTargets = And [
         Fighter
