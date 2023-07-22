@@ -1261,12 +1261,6 @@ Valor empleado para ajustarse a los cambios de [[METER_POPULATION]] en planetas 
 #*RULE_SHIP_PART_BASED_UPKEEP_DESC
 #* <not translated 1970-01-01 01:00:00>
 
-#*RULE_ENABLE_ALLIED_REPAIR
-#* <not translated 1970-01-01 01:00:00>
-
-#*RULE_ENABLE_ALLIED_REPAIR_DESC
-#* <not translated 1970-01-01 01:00:00>
-
 #*RULE_DIPLOMACY
 #* <not translated 1970-01-01 01:00:00>
 
