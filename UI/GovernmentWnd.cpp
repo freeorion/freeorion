@@ -346,8 +346,8 @@ public:
 
     explicit PoliciesListBox(const AvailabilityManager& availabilities_state);
 
-    const std::set<std::string>&    GetCategoriesShown() const;
-    const AvailabilityManager&      AvailabilityState() const { return m_availabilities_state; }
+    const auto& GetCategoriesShown() const noexcept { return m_policy_categories_shown; }
+    const auto& AvailabilityState() const noexcept { return m_availabilities_state; }
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
     void AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
@@ -374,10 +374,10 @@ private:
     std::map<std::string, std::vector<const Policy*>>
     GroupAvailableDisplayablePolicies(const Empire* empire) const;
 
-    mutable boost::signals2::scoped_connection m_empire_policies_changed_signal_connection;
-    std::set<std::string>                      m_policy_categories_shown;
-    int                                        m_previous_num_columns = -1;
-    const AvailabilityManager&                 m_availabilities_state;
+    mutable boost::signals2::scoped_connection           m_empire_policies_changed_signal_connection;
+    boost::container::flat_set<std::string, std::less<>> m_policy_categories_shown;
+    int                                                  m_previous_num_columns = -1;
+    const AvailabilityManager&                           m_availabilities_state;
 };
 
 PoliciesListBox::PoliciesListBoxRow::PoliciesListBoxRow(
@@ -436,18 +436,13 @@ PoliciesListBox::PoliciesListBox(const AvailabilityManager& availabilities_state
     SetStyle(GG::LIST_NOSEL);
 }
 
-const std::set<std::string>& PoliciesListBox::GetCategoriesShown() const
-{ return m_policy_categories_shown; }
-
 void PoliciesListBox::SizeMove(GG::Pt ul, GG::Pt lr) {
-    GG::Pt old_size = GG::Wnd::Size();
+    const GG::Pt old_size = GG::Wnd::Size();
 
-    auto policy_palette = Parent();
-    auto gov_wnd = std::dynamic_pointer_cast<GovernmentWnd>(policy_palette->Parent());
+    const auto policy_palette = Parent();
+    const auto gov_wnd = std::dynamic_pointer_cast<GovernmentWnd>(policy_palette->Parent());
 
-    GG::Pt slot_size = GG::Pt(SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT);
-    if (gov_wnd)
-        slot_size = gov_wnd->GetPolicySlotSize();
+    const GG::Pt slot_size = gov_wnd ? gov_wnd->GetPolicySlotSize() : GG::Pt(SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT);
 
     // maybe later do something interesting with docking
     CUIListBox::SizeMove(ul, lr);
@@ -483,21 +478,20 @@ void PoliciesListBox::AcceptDrops(GG::Pt, std::vector<std::shared_ptr<GG::Wnd>> 
 
 std::map<std::string, std::vector<const Policy*>>
 PoliciesListBox::GroupAvailableDisplayablePolicies(const Empire*) const {
+    using PolicyAndCat = const std::pair<const Policy*, const std::string&>;
+    static constexpr auto to_policy_and_cat = [](const Policy& p) -> PolicyAndCat { return {&p, p.Category()}; };
+    const auto cat_shown_policy_displayed = [this](PolicyAndCat& p_c) {
+        return m_policy_categories_shown.contains(p_c.second) &&
+            m_availabilities_state.PolicyDisplayed(*p_c.first);
+    };
+
+    // loop through all possible policies, outputting those shown
     std::map<std::string, std::vector<const Policy*>> policies_categorized;
-
-    // loop through all possible policies
-    for (auto& [policy_name, policy] : GetPolicyManager()) {
-        (void)policy_name; // quiet warning
-        const auto& category = policy.Category();
-
-        // check whether this policy should be shown in list
-        if (!m_policy_categories_shown.contains(category))
-            continue;   // policies of this category are not requested to be shown
-
-        // Check if part satisfies availability
-        if (m_availabilities_state.PolicyDisplayed(policy))
-            policies_categorized[category].push_back(&policy);
-    }
+    auto policies_rng = std::as_const(GetPolicyManager()) | range_values;
+    auto policy_cat_rng = policies_rng | range_transform(to_policy_and_cat)
+        | range_filter(cat_shown_policy_displayed);
+    for (const auto& [policy, category] : policy_cat_rng)
+        policies_categorized[category].push_back(policy);
     return policies_categorized;
 }
 
@@ -531,8 +525,8 @@ void PoliciesListBox::Populate() {
 
     // filter policies by availability and current designation of categories
     // for display
-    for (auto& [category_name, policies_vec] : GroupAvailableDisplayablePolicies(empire)) {
-        (void)category_name; // quiet warning
+    const auto policies = GroupAvailableDisplayablePolicies(empire);
+    for (const auto& policies_vec : policies | range_values) { // TODO: if std::views::join is available, avoid douple loop by flattening
         // take the sorted policies and make UI element rows for the PoliciesListBox
         for (const auto policy : policies_vec) {
             // check if current row is full, and make a new row if necessary
