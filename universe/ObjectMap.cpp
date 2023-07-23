@@ -37,6 +37,19 @@ namespace {
     using const_const_planet_raw_range_t2 = decltype(std::declval<ObjectMap>().allRaw<const Planet>());
     using const_const_planet_raw_t2 = decltype(std::declval<const_const_planet_raw_range_t2>().front());
     static_assert(std::is_same_v<const_const_planet_raw_t2, const Planet*>);
+
+    using const_planet_raw_ptr_t0 = decltype(std::declval<const ObjectMap>().getRaw<Planet>(INVALID_OBJECT_ID));
+    static_assert(std::is_same_v<const_planet_raw_ptr_t0, const Planet*>);
+    using const_planet_raw_ptr_t1 = decltype(std::declval<const ObjectMap>().getRaw<Planet>([](auto) { return true; }));
+    static_assert(std::is_same_v<const_planet_raw_ptr_t1, const Planet*>);
+    using const_planet_raw_ptr_t2 = decltype(std::declval<const ObjectMap>().getRaw<Planet>([](const auto&) { return true; }));
+    static_assert(std::is_same_v<const_planet_raw_ptr_t2, const Planet*>);
+    using const_planet_raw_ptr_t3 = decltype(std::declval<ObjectMap>().getRaw<Planet>([](const std::pair<int, const Planet>&) { return true; }));
+    static_assert(std::is_same_v<const_planet_raw_ptr_t3, const Planet*>);
+    using const_planet_raw_ptr_t4 = decltype(std::declval<ObjectMap>().getRaw<Planet>([](const std::pair<int, Planet>&) { return true; }));
+    static_assert(std::is_same_v<const_planet_raw_ptr_t4, const Planet*>);
+    using const_planet_raw_ptr_t5 = decltype(std::declval<ObjectMap>().getRaw<Planet>([](const std::shared_ptr<const Planet>&) { return true; }));
+    static_assert(std::is_same_v<const_planet_raw_ptr_t5, const Planet*>);
 }
 
 namespace ObjectMapPredicateTypeTraits {

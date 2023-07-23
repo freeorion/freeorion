@@ -52,13 +52,18 @@ public:
     /** Returns true if this ObjectMap contains no objects */
     [[nodiscard]] bool empty() const noexcept { return m_objects.empty(); };
 
-    /** Returns a pointer to the object of type T with ID number \a id.
-      * Returns a null std::shared_ptr if none exists or the object with
+    /** Returns pointer to the object of type T with ID number \a id.
+      * Returns a nullptr if none exists or the object with
       * ID \a id is not of type T. */
     template <typename T = UniverseObject, bool only_existing = false>
     [[nodiscard]] std::shared_ptr<const std::decay_t<T>> get(int id) const;
     template <typename T = UniverseObject, bool only_existing = false>
     [[nodiscard]] const std::decay_t<T>* getRaw(int id) const;
+
+    /** Returns pointer to an object of type T that matches predicate \a pred.
+      * returns nullptr if none exists. */
+    template <typename T = UniverseObject, typename Pred, bool only_existing = false>
+    [[nodiscard]] const std::decay_t<T>* getRaw(Pred pred) const;
 
     /** Returns a pointer to the object of type T with ID number \a id.
       * Returns a null std::shared_ptr if none exists or the object with
@@ -76,9 +81,6 @@ public:
     template <typename T = UniverseObject, typename Pred>
     [[nodiscard]] auto findExistingRaw(Pred pred) const
     { return findRaw<T, Pred, true>(pred); }
-    //template <typename T = UniverseObject, typename Pred, bool only_existing = false>
-    //[[nodiscard]] auto findExistingRaw(Pred pred)
-    //{ return findRaw<T, Pred, true>(pred); }
     template <typename T = UniverseObject, typename Pred, bool only_existing = false>
     [[nodiscard]] std::vector<std::shared_ptr<const std::decay_t<T>>> find(Pred pred) const;
     template <typename T = UniverseObject, typename Pred, bool only_existing = false>
@@ -106,9 +108,7 @@ public:
         using DecayT = std::decay_t<T>;
 
         if constexpr (only_existing) {
-            auto rng = ExistingMap<DecayT>() | range_values;
-            using retval_value_t = decltype(rng.front());
-            return rng;
+            return ExistingMap<DecayT>() | range_values;
 
         } else {
             // convert ptr_to_mutable& to ptr_to_const
@@ -158,13 +158,7 @@ public:
         } else {
             static constexpr const auto make_const =
                 [](std::shared_ptr<DecayT>& p) -> const std::shared_ptr<DecayT>& { return p; };
-
-            auto rng = Map<DecayT, false>() | range_values;
-            using retval_value_t = decltype(rng.front());
-            auto const_rng = rng | range_transform(make_const);
-            using const_retval_value_t = decltype(const_rng.front());
-
-            return const_rng;
+            return Map<DecayT, false>() | range_values | range_transform(make_const);
         }
     }
 
@@ -177,10 +171,7 @@ public:
         using DecayT = std::decay_t<T>;
         using OutT = std::conditional_t<std::is_const_v<T>, const DecayT*, DecayT*>;
         static constexpr auto raw_ptr_tx = [](const auto& p) -> OutT { return p.get(); };
-        auto rng = Map<DecayT, only_existing>() | range_values | range_transform(raw_ptr_tx);
-        using retval_value_t = decltype(rng.front());
-
-        return rng;
+        return Map<DecayT, only_existing>() | range_values | range_transform(raw_ptr_tx);
     }
 
     /** Returns all the ids and objects of type T as pair<int, const ptr to const> */
@@ -529,42 +520,6 @@ private:
     friend void serialize(Archive&, ObjectMap&, unsigned int const);
 };
 
-template <typename T, bool only_existing>
-std::shared_ptr<const std::decay_t<T>> ObjectMap::get(int id) const
-{
-    using DecayT = std::decay_t<T>;
-    auto& map{Map<DecayT, only_existing>()};
-    const auto it = map.find(id);
-    return it != map.end() ? it->second : std::shared_ptr<const DecayT>();
-}
-
-template <typename T, bool only_existing>
-const std::decay_t<T>* ObjectMap::getRaw(int id) const
-{
-    using DecayT = std::decay_t<T>;
-    auto& map{Map<DecayT, only_existing>()};
-    auto it = map.find(id);
-    return it != map.end() ? it->second.get() : nullptr;
-}
-
-template <typename T, bool only_existing>
-std::shared_ptr<std::decay_t<T>> ObjectMap::get(int id)
-{
-    using DecayT = std::decay_t<T>;
-    auto& map{Map<DecayT, only_existing>()};
-    auto it = map.find(id);
-    return it != map.end() ? it->second : std::shared_ptr<DecayT>();
-}
-
-template <typename T, bool only_existing>
-std::decay_t<T>* ObjectMap::getRaw(int id)
-{
-    using DecayT = std::decay_t<T>;
-    auto& map{Map<DecayT, only_existing>()};
-    auto it = map.find(id);
-    return it != map.end() ? it->second.get() : nullptr;
-}
-
 namespace ObjectMapPredicateTypeTraits{
     template <typename T>
     concept int_iterable = std::is_same_v<std::decay_t<typename T::value_type>, int> && requires(T t) { t.begin(); t.end(); };
@@ -669,6 +624,87 @@ constexpr std::array<bool, 11> ObjectMap::CheckTypes()
         invokable, is_visitor, is_int_range};
 }
 
+template <typename T, bool only_existing>
+std::shared_ptr<const std::decay_t<T>> ObjectMap::get(int id) const
+{
+    using DecayT = std::decay_t<T>;
+    auto& map{Map<DecayT, only_existing>()};
+    const auto it = map.find(id);
+    return it != map.end() ? it->second : std::shared_ptr<const DecayT>();
+}
+
+template <typename T, bool only_existing>
+const std::decay_t<T>* ObjectMap::getRaw(int id) const
+{
+    using DecayT = std::decay_t<T>;
+    auto& map{Map<DecayT, only_existing>()};
+    auto it = map.find(id);
+    return it != map.end() ? it->second.get() : nullptr;
+}
+
+template <typename T, typename Pred, bool only_existing>
+const std::decay_t<T>* ObjectMap::getRaw(Pred pred) const
+{
+    static constexpr auto invoke_flags = CheckTypes<T, Pred>();
+    static constexpr bool invokable_on_raw_const_object = invoke_flags[0];
+    static constexpr bool invokable_on_shared_const_object = invoke_flags[2];
+    static constexpr bool invokable_on_const_entry = invoke_flags[4];
+    static constexpr bool invokable_on_const_reference = invoke_flags[6];
+    static constexpr bool is_visitor = invoke_flags[9];
+    static constexpr bool is_int_range = invoke_flags[10];
+    static_assert(!is_int_range, "use findRaw to get multiple objects from IDs");
+
+    using DecayT = std::decay_t<T>;
+    auto& map{Map<DecayT, only_existing>()};
+    static constexpr auto raw_ptr_tx = [](const auto& p) -> const DecayT* { return p.get(); };
+    static constexpr auto ref_tx = [](const auto& p) -> const DecayT& { return *p; };
+
+    if constexpr (is_visitor) {
+        auto it = range_find_if(map | range_values | range_transform(raw_ptr_tx),
+                               [&pred](const auto* obj) { return obj->Accept(pred); });
+        return (it != map.end()) ? *it : nullptr;
+
+    } else if constexpr (invokable_on_raw_const_object) {
+        auto it = range_find_if(map | range_values | range_transform(raw_ptr_tx), pred);
+        return (it != map.end()) ? *it : nullptr;
+
+    } else if constexpr (invokable_on_shared_const_object) {
+        auto it = range_find_if(map | range_values, pred);
+        return (it != map.end()) ? it->get() : nullptr;
+
+    } else if constexpr (invokable_on_const_entry) {
+        auto it = std::find_if(map.begin(), map.end(), pred);
+        return (it != map.end()) ? it->second.get() : nullptr;
+
+    } else if constexpr (invokable_on_const_reference) {
+        auto it = range_find_if(map | range_values | range_transform(ref_tx), pred);
+        return (it != map.end()) ? &*it : nullptr;
+
+    } else {
+        static constexpr bool invokable = invoke_flags[8];
+        static_assert(is_visitor || invokable, "Don't know how to handle predicate");
+        return nullptr;
+    }
+}
+
+template <typename T, bool only_existing>
+std::shared_ptr<std::decay_t<T>> ObjectMap::get(int id)
+{
+    using DecayT = std::decay_t<T>;
+    auto& map{Map<DecayT, only_existing>()};
+    auto it = map.find(id);
+    return it != map.end() ? it->second : std::shared_ptr<DecayT>();
+}
+
+template <typename T, bool only_existing>
+std::decay_t<T>* ObjectMap::getRaw(int id)
+{
+    using DecayT = std::decay_t<T>;
+    auto& map{Map<DecayT, only_existing>()};
+    auto it = map.find(id);
+    return it != map.end() ? it->second.get() : nullptr;
+}
+
 template <typename T, typename Pred, bool only_existing>
 std::vector<const std::decay_t<T>*> ObjectMap::findRaw(Pred pred) const
 {
@@ -689,49 +725,61 @@ std::vector<const std::decay_t<T>*> ObjectMap::findRaw(Pred pred) const
         result.reserve(std::size(pred));
 
     auto& map{Map<DecayT, only_existing>()};
+    using map_value_t = typename std::decay_t<decltype(map)>::mapped_type;
+
+    static constexpr auto not_null = [](const auto& p) -> bool { return p; };
+    static constexpr auto get_rawptr = [](const auto& p) { return p.get(); };
 
     if constexpr (is_int_range) {
         // TODO: special case for sorted range of int?
-        for (int object_id : pred) {
-            auto map_it = map.find(object_id);
-            if (map_it != map.end())
-                result.push_back(map_it->second.get());
-        }
+        const auto find_in_map = [&map](auto id) -> const DecayT* {
+            auto map_it = map.find(id);
+            return (map_it != map.end()) ? map_it->second.get() : nullptr;
+        };
+        auto rng = pred | range_transform(find_in_map) | range_filter(not_null);
+        result.reserve(pred.size());
+        range_copy(rng, std::back_inserter(result));
+        return result;
 
     } else if constexpr (is_visitor) {
-        for (const auto& [id, obj] : map)
-            if (obj->Accept(pred))
-                result.push_back(obj.get());
+        const auto visitor_is_accepted = [pred](const auto& obj) -> bool { return obj->Accept(pred); };
+        auto rng = map | range_values | range_filter(visitor_is_accepted)
+            | range_transform(get_rawptr) | range_filter(not_null);
+        result.reserve(map.size());
+        range_copy(rng, std::back_inserter(result));
+        return result;
 
     } else if constexpr (invokable_on_raw_const_object) {
-        for (const auto& [id, obj] : map) {
-            const DecayT* obj_raw = obj.get();
-            if (pred(obj_raw))
-                result.push_back(obj_raw);
-        }
+        auto rng = map | range_values | range_transform(get_rawptr) | range_filter(pred);
+        result.reserve(map.size());
+        range_copy(rng, std::back_inserter(result));
+        return result;
 
     } else if constexpr (invokable_on_shared_const_object) {
-        for (const auto& [id, obj] : map) {
-            if (pred(obj))
-                result.push_back(obj.get());
-        }
+        auto rng = map | range_values | range_filter(pred) | range_transform(get_rawptr);
+        result.reserve(map.size());
+        range_copy(rng, std::back_inserter(result));
+        return result;
 
     } else if constexpr (invokable_on_const_entry) {
-        for (const auto& id_obj : map)
-            if (pred(id_obj))
-                result.push_back(id_obj.second.get());
+        auto rng = map | range_filter(pred) | range_values | range_transform(get_rawptr);
+        result.reserve(map.size());
+        range_copy(rng, std::back_inserter(result));
+        return result;
 
     } else if constexpr (invokable_on_const_reference) {
-        for (const auto& [id, obj] : map)
-            if (pred(*obj))
-                result.push_back(obj.get());
+        static constexpr auto to_cref = [](const auto& id_ptr) -> const auto& { return *(id_ptr.second); };
+        static constexpr auto to_address = [](const auto& r) { return &r; };
+        auto rng = map | range_transform(to_cref) | range_filter(pred) | range_transform(to_address);
+        result.reserve(map.size());
+        range_copy(rng, std::back_inserter(result));
+        return result;
 
     } else {
         static constexpr bool invokable = invoke_flags[8];
         static_assert(is_int_range || is_visitor || invokable, "Don't know how to handle predicate");
+        return result;
     }
-
-    return result;
 }
 
 template <typename T, typename Pred>
