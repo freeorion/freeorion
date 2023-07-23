@@ -988,21 +988,16 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
     // populate list with building types
     //DebugLogger() << "BuildDesignatorWnd::BuildSelector::PopulateList() : Adding Buildings ";
     if (m_build_types_shown.contains(BuildType::BT_BUILDING)) {
-        BuildingTypeManager& manager = GetBuildingTypeManager();
         // create and insert rows...
-        std::vector<std::shared_ptr<GG::ListBox::Row>> rows;
-        rows.reserve(std::distance(manager.begin(), manager.end()));
-        for (const auto& [name, ignored_type] : manager) {
-            (void)ignored_type; // quiet unused variable warning
-            if (!BuildableItemVisible(BuildType::BT_BUILDING, name))
-                continue;
-            timer.EnterSection(name);
-            auto item_row = GG::Wnd::Create<ProductionItemRow>(
+        const auto is_visible = [this](const auto& name) { return BuildableItemVisible(BuildType::BT_BUILDING, name); };
+        const auto create_row = [this, row_size](const auto& name) {
+            return GG::Wnd::Create<ProductionItemRow>(
                 row_size.x, row_size.y, ProductionQueue::ProductionItem(BuildType::BT_BUILDING, name),
                 m_empire_id, m_production_location);
-            rows.push_back(std::move(item_row));
-        }
-        m_buildable_items->Insert(std::move(rows));
+        };
+        auto buildable_rows_rng = GetBuildingTypeManager() | range_keys
+            | range_filter(is_visible) | range_transform(create_row);
+        m_buildable_items->Insert({buildable_rows_rng.begin(), buildable_rows_rng.end()});
     }
 
     // populate with ship designs
