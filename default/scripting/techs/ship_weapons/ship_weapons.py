@@ -32,7 +32,7 @@ from techs.techs import (
 #     increases the part's SecondarStat MaxMeter by the PartSecondaryStat
 def SET_BOTH_MAX_CAPACITIES_FROM_PART_CAPACITIES(part_name: str):
     return EffectsGroup(
-        scope=EMPIRE_OWNED_SHIP_WITH_PART(part_name),
+        scope=Ship & (OwnedBy(empire=Source.Owner) | Unowned) & DesignHasPart(name=part_name),
         accountinglabel=part_name,
         # The standard/default effect happen at default priority, before any scripted ones happen
         # In order for this tech effect to also happen first, we make it happen slightly earlier
