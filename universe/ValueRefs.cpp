@@ -1722,9 +1722,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             }
 
             int sum = 0;
-            for ([[maybe_unused]] auto& [ignored_id, loop_empire] : context.Empires()) {
-                (void)ignored_id; // quiet unused variable warning
-                auto filtered_values = empire->ShipPartClassOwned() | range_filter(key_filter_class) | range_values;
+            for (const auto& loop_empire : context.Empires() | range_values) {
+                auto filtered_values = loop_empire->ShipPartClassOwned() | range_filter(key_filter_class) | range_values;
                 sum += std::accumulate(filtered_values.begin(), filtered_values.end(), 0);
             }
             return sum;
@@ -1746,18 +1745,17 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         }
 
         int sum = 0;
-        for ([[maybe_unused]] auto& [ignored_id, loop_empire] : context.Empires()) {
-            (void)ignored_id; // quiet unused variable warning
+        for (const auto& loop_empire : context.Empires() | range_values) {
             if (empire_property_string_key) {
                 auto filtered_values = empire_property_string_key(*loop_empire) | range_filter(key_filter) | range_values;
                 sum += std::accumulate(filtered_values.begin(), filtered_values.end(), 0);
 
             } else if (empire_property_string_key2) {
-                auto filtered_values = empire_property_string_key2(*empire) | range_filter(key_filter) | range_values;
+                auto filtered_values = empire_property_string_key2(*loop_empire) | range_filter(key_filter) | range_values;
                 sum += std::accumulate(filtered_values.begin(), filtered_values.end(), 0);
 
             } else if (empire_property_string_key3) {
-                auto filtered_values = empire_property_string_key3(*empire) | range_filter(key_filter) | range_values;
+                auto filtered_values = empire_property_string_key3(*loop_empire) | range_filter(key_filter) | range_values;
                 sum += std::accumulate(filtered_values.begin(), filtered_values.end(), 0);
             }
         }
