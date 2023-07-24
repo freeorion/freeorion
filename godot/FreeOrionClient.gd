@@ -3,6 +3,7 @@ extends Control
 var game_setup_dlg: FOWindow
 var multiplayer_setup_dlg: FOWindow
 var auth_password_setup_dlg: FOWindow
+var error_dlg: FOWindow
 
 onready var viewport = get_viewport()
 
@@ -21,6 +22,9 @@ func _ready():
 	auth_password_setup_dlg.connect("ok", self, "_on_AuthSetupDlg_ok")
 	auth_password_setup_dlg.connect("cancel", self, "_on_AuthSetupDlg_cancel")
 
+	error_dlg = preload("res://ErrorWindow.tscn").instance()
+	error_dlg.connect("ok", self, "_on_ErrorDlg_ok")
+
 	global.chat_window = preload("res://ChatWindow.tscn").instance()
 	add_child(global.chat_window)
 	global.chat_window.hide()
@@ -33,6 +37,7 @@ func _ready():
 		"chat_message", global.chat_window, "_on_FreeOrion_chat_message", [], CONNECT_DEFERRED
 	)
 	FreeOrionNode.connect("chat_message", self, "_on_FreeOrion_chat_message", [], CONNECT_DEFERRED)
+	FreeOrionNode.connect("error", self, "_on_FreeOrion_error", [], CONNECT_DEFERRED)
 
 	var scale = 1
 	if OS.get_name() == "Android":
@@ -118,12 +123,23 @@ func _on_AuthSetupDlg_cancel():
 	$Popup.remove_child(auth_password_setup_dlg)
 
 
+func _on_ErrorDlg_ok():
+	$Popup.hide()
+	$Popup.remove_child(error_dlg)
+
+
 func _on_FreeOrion_auth_request(player_name, _auth):
 	$Popup.add_child(auth_password_setup_dlg)
 	var pos_x = ($Popup.get_rect().size.x - auth_password_setup_dlg.get_rect().size.x) / 2
 	var pos_y = ($Popup.get_rect().size.y - auth_password_setup_dlg.get_rect().size.y) / 2
 	auth_password_setup_dlg.set_position(Vector2(pos_x, pos_y))
 	auth_password_setup_dlg.set_player_name(player_name)
+	$Popup.popup()
+
+
+func _on_FreeOrion_error(problem: String, _fatal: bool):
+	$Popup.add_child(error_dlg)
+	error_dlg.set_error_text(problem)
 	$Popup.popup()
 
 
