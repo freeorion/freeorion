@@ -1165,12 +1165,12 @@ void Planet::ResolveGroundCombat(std::map<int, double>& empires_troops,
 
     // give bonuses for allied ground combat, so allies can effectively fight together
     auto effective_empires_troops{empires_troops};
-    for (auto& [empire1_id, troop1_count] : empires_troops) {
-        (void)troop1_count; // quiet warning
-        for (auto& [empire2_id, troop2_count] : empires_troops) {
-            if (empire1_id == empire2_id)
-                continue;
-            auto it = diplo_statuses.find(DiploKey(empire1_id, empire2_id));
+    for (const auto empire1_id : empires_troops | range_keys) {
+        for (const auto [empire2_id, troop2_count] : empires_troops
+             | range_filter([empire1_id](const auto& id2_troops)
+                            { return empire1_id != id2_troops.first; }))
+        {
+            const auto it = diplo_statuses.find(DiploKey(empire1_id, empire2_id));
             if (it != diplo_statuses.end() && it->second == DiplomaticStatus::DIPLO_ALLIED)
                 effective_empires_troops[empire1_id] += troop2_count;
         }

@@ -753,19 +753,15 @@ void SpeciesManager::ResetSpeciesOpinions(bool active, bool target) {
 }
 
 void SpeciesManager::BackPropagateOpinions() {
-    for (auto& [species, empire_ops] : m_species_empire_opinions) {
-        for (auto& [empire_id, ops] : empire_ops) {
-            (void)empire_id;
-            auto& [op, target_op] = ops;
+    for (auto& empire_ops : m_species_empire_opinions | range_values) {
+        for (auto& [op, target_op] : empire_ops | range_values) {
             op.BackPropagate();
             target_op.BackPropagate();
         }
     }
 
-    for (auto& [opinionated_species, species_ops] : m_species_species_opinions) {
-        for (auto& [about_species, ops] : species_ops) {
-            (void)about_species;
-            auto& [op, target_op] = ops;
+    for (auto& species_ops : m_species_species_opinions | range_values) {
+        for (auto& [op, target_op] : species_ops | range_values) {
             op.BackPropagate();
             target_op.BackPropagate();
         }
