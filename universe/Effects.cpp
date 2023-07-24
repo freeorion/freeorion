@@ -4200,58 +4200,59 @@ void SetVisibility::Execute(ScriptingContext& context) const {
     if (!m_vis)
         return; // nothing to evaluate!
 
-    int empire_id = ALL_EMPIRES;
-    if (m_empire_id)
-        empire_id = m_empire_id->Eval(context);
+    const int main_empire_id = m_empire_id ? m_empire_id->Eval(context) : ALL_EMPIRES;
+    const auto not_main_empire = [main_empire_id](const auto other_id) { return main_empire_id != other_id; };
+    const auto to_id_status = [&context, main_empire_id](const auto other_empire_id)
+    { return std::make_pair(other_empire_id, context.ContextDiploStatus(main_empire_id, other_empire_id)); };
+
 
     // whom to set visbility for?
-    std::set<int> empire_ids;
+    const auto all_empire_ids = context.EmpireIDs();
+    std::vector<int> empire_ids;
+
     switch (m_affiliation) {
     case EmpireAffiliationType::AFFIL_SELF: {
         // add just specified empire
-        if (empire_id != ALL_EMPIRES)
-            empire_ids.insert(empire_id);
+        if (main_empire_id != ALL_EMPIRES)
+            empire_ids.push_back(main_empire_id);
         break;
     }
 
     case EmpireAffiliationType::AFFIL_ALLY: {
-        // add allies of specified empire
-        for ([[maybe_unused]] auto& [loop_empire_id, unused_empire] : context.Empires()) {
-            (void)unused_empire; // quiet unused variable warning
-            if (loop_empire_id == empire_id || empire_id == ALL_EMPIRES)
-                continue;
+        static constexpr auto are_allied = [](const auto& id_status)
+        { return id_status.second >= DiplomaticStatus::DIPLO_ALLIED; };
 
-            DiplomaticStatus status = context.ContextDiploStatus(empire_id, loop_empire_id);
-            if (status >= DiplomaticStatus::DIPLO_ALLIED)
-                empire_ids.insert(loop_empire_id);
+        // add allies of specified empire
+        if (main_empire_id != ALL_EMPIRES) {
+            auto allied_rng = all_empire_ids | range_filter(not_main_empire)
+                | range_transform(to_id_status) | range_filter(are_allied) | range_keys;
+            empire_ids.insert(empire_ids.end(), allied_rng.begin(), allied_rng.end());
         }
         break;
     }
 
     case EmpireAffiliationType::AFFIL_PEACE: {
-        // add empires at peace with the specified empire
-        for ([[maybe_unused]] auto& [loop_empire_id, unused_empire] : context.Empires()) {
-            (void)unused_empire; // quiet unused variable warning
-            if (loop_empire_id == empire_id || empire_id == ALL_EMPIRES)
-                continue;
+        static constexpr auto are_peacey = [](const auto& id_status)
+        { return id_status.second >= DiplomaticStatus::DIPLO_PEACE; };
 
-            DiplomaticStatus status = context.ContextDiploStatus(empire_id, loop_empire_id);
-            if (status == DiplomaticStatus::DIPLO_PEACE)
-                empire_ids.insert(loop_empire_id);
+        // add empires at peace with specified empire
+        if (main_empire_id != ALL_EMPIRES) {
+            auto peacey_rng = all_empire_ids | range_filter(not_main_empire)
+                | range_transform(to_id_status) | range_filter(are_peacey) | range_keys;
+            empire_ids.insert(empire_ids.end(), peacey_rng.begin(), peacey_rng.end());
         }
         break;
     }
 
     case EmpireAffiliationType::AFFIL_ENEMY: {
-        // add enemies of specified empire
-        for ([[maybe_unused]] auto& [loop_empire_id, unused_empire] : context.Empires()) {
-            (void)unused_empire; // quiet unused variable warning
-            if (loop_empire_id == empire_id || empire_id == ALL_EMPIRES)
-                continue;
+        static constexpr auto are_warring = [](const auto& id_status)
+        { return id_status.second == DiplomaticStatus::DIPLO_WAR; };
 
-            DiplomaticStatus status = context.ContextDiploStatus(empire_id, loop_empire_id);
-            if (status == DiplomaticStatus::DIPLO_WAR)
-                empire_ids.insert(loop_empire_id);
+        // add enemies of specified empire
+        if (main_empire_id != ALL_EMPIRES) {
+            auto warring_rng = all_empire_ids | range_filter(not_main_empire)
+                | range_transform(to_id_status) | range_filter(are_warring) | range_keys;
+            empire_ids.insert(empire_ids.end(), warring_rng.begin(), warring_rng.end());
         }
         break;
     }
@@ -4265,14 +4266,9 @@ void SetVisibility::Execute(ScriptingContext& context) const {
         break;
 
     case EmpireAffiliationType::AFFIL_ANY:
-    default: {
-        // add all empires
-        for ([[maybe_unused]] auto& [loop_empire_id, unused_empire] : context.Empires()) {
-            (void)unused_empire; // quiet unused variable warning
-            empire_ids.insert(loop_empire_id);
-        }
+    default: 
+        empire_ids.insert(empire_ids.end(), all_empire_ids.begin(), all_empire_ids.end());
         break;
-    }
     }
 
     // what to set visibility of?
@@ -4292,14 +4288,10 @@ void SetVisibility::Execute(ScriptingContext& context) const {
         object_ids.resize(std::distance(object_ids.begin(), unique_it));
     }
 
-    int source_id = INVALID_OBJECT_ID;
-    if (context.source)
-        source_id = context.source->ID();
+    const int source_id = context.source ? context.source->ID() : INVALID_OBJECT_ID;
 
-    for (int emp_id : empire_ids) {
-        if (!context.GetEmpire(emp_id))
-            continue;
-        for (int obj_id : object_ids) {
+    for (const int emp_id : empire_ids) {
+        for (const int obj_id : object_ids) {
             // store source object id and ValueRef to evaluate to determine
             // what visibility level to set at time of application
             context.ContextUniverse().SetEffectDerivedVisibility(emp_id, obj_id, source_id, m_vis.get());
