@@ -477,7 +477,7 @@ private:
 
     // calls \a func on all maps containing objects
     template <typename Function>
-    void ApplyToAllMaps(Function func, bool include_nonspecialized = true);
+    void ApplyToCoreMaps(Function func, bool include_nonspecialized = true);
 
     // calls \a func on all "existing" maps containing objects
     template <typename Function>

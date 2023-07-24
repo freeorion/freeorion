@@ -155,7 +155,7 @@ void ObjectMap::ApplyToExistingMaps(Function func, bool include_nonspecialized)
 }
 
 template <typename Function>
-void ObjectMap::ApplyToAllMaps(Function func, bool include_nonspecialized)
+void ObjectMap::ApplyToCoreMaps(Function func, bool include_nonspecialized)
 {
     static_assert(requires (Function func) { func(m_objects); });
     static_assert(requires (Function func) { func(m_ships); });
@@ -173,7 +173,6 @@ void ObjectMap::ApplyToAllMaps(Function func, bool include_nonspecialized)
     func(m_systems);
     func(m_buildings);
     func(m_fields);
-    ApplyToExistingMaps(std::forward<Function>(func), include_nonspecialized);
 }
 
 template <typename Function>
@@ -207,6 +206,9 @@ void ObjectMap::TypedInsertExisting(auto ID, std::shared_ptr<ObjectType> obj) {
     if (std::find(evec.begin(), evec.end(), raw_obj) == evec.end()) // avoid inserting duplicates
         evec.push_back(raw_obj);
 
+    //std::cout << obj->ID() << " -> " << ID << " (" << to_string(raw_obj->ObjectType()) << ") "
+    //          << " as " << typeid(ObjectType).name() << std::endl;
+
     auto& emap = ExistingMap<OT>();
     emap.insert_or_assign(ID, std::move(obj));
 }
@@ -228,8 +230,13 @@ void ObjectMap::AutoTypedInsertExisting(auto ID, auto&& obj) {
 
 template <typename ObjectType>
 void ObjectMap::TypedInsert(auto ID, auto destroyed, std::shared_ptr<ObjectType> obj) {
-    if (!obj)
+    if (!obj) {
+        //std::cout << "null -> " << ID << " as " << typeid(ObjectType).name() << std::endl;
         return;
+    }
+    //std::cout << obj->ID() << " -> " << ID << " (" << (destroyed ? "destroyed" : "existing")
+    //    << " (" << to_string(obj->ObjectType()) << ") as " << typeid(ObjectType).name() << std::endl;
+
     if (!destroyed)
         TypedInsertExisting(ID, obj);
     Map<std::decay_t<ObjectType>>().insert_or_assign(ID, std::move(obj));
@@ -264,25 +271,26 @@ std::shared_ptr<UniverseObject> ObjectMap::erase(int id) {
     auto it = m_objects.find(id);
     if (it == m_objects.end())
         return nullptr;
-    //DebugLogger() << "Object was removed: " << it->second->Dump();
-    // 
+
     // object found, so store pointer for later...
     const auto& result = it->second;
 
-    ApplyToExistingVecs([o{result.get()}]<typename ObjectType>(std::vector<const ObjectType*>& vec) {
+    auto erase_from_vec = [o{result.get()}](auto& vec) {
         const auto it = std::find(vec.begin(), vec.end(), o);
         if (it != vec.end())
             vec.erase(it);
-    });
-
-    ApplyToAllMaps([id](auto& map) { map.erase(id); });
+    };
+    ApplyToExistingVecs(erase_from_vec);
+    ApplyToExistingMaps([id](auto& map) { map.erase(id); });
+    ApplyToCoreMaps([id](auto& map) { map.erase(id); });
 
     return result;
 }
 
 void ObjectMap::clear() {
     ApplyToExistingVecs([](auto& vec) { vec.clear(); });
-    ApplyToAllMaps([](auto& map) { map.clear(); });
+    ApplyToExistingMaps([](auto& map) { map.clear(); });
+    ApplyToCoreMaps([](auto& map) { map.clear(); });
 }
 
 std::vector<int> ObjectMap::FindExistingObjectIDs() const {
@@ -299,9 +307,15 @@ void ObjectMap::UpdateCurrentDestroyedObjects(const std::unordered_set<int>& des
     ApplyToExistingVecs([](auto& vec) { vec.clear(); });
     ApplyToExistingMaps([](auto& map) { map.clear(); });
 
-    for (const auto& [ID, obj] : m_objects)
-        if (!destroyed_object_ids.contains(ID))
+    for (const auto& [ID, obj] : m_objects) {
+        if (!destroyed_object_ids.contains(ID)) {
+            TypedInsertExisting<UniverseObject>(ID, obj);
             AutoTypedInsertExisting(ID, obj);
+        }
+    }
+
+    //std::cout << "updated existing" << std::endl;
+    //ApplyToExistingMaps([](auto& map) { std::cout << "map " << typeid(map).name() << " sz: " << map.size() << std::endl; }, true);
 }
 
 void ObjectMap::AuditContainment(const std::unordered_set<int>& destroyed_object_ids) {
@@ -377,9 +391,15 @@ void ObjectMap::AuditContainment(const std::unordered_set<int>& destroyed_object
 }
 
 void ObjectMap::CopyObjectsToSpecializedMaps() {
+    //std::cout << "starting existing map/vec clears" << std::endl;
     ApplyToExistingMaps([](auto& map) { map.clear(); }, false);
+    //std::cout << "starting auto typed inserts" << std::endl;
+    static constexpr bool treat_as_destroyed = true;
     for (const auto& [ID, obj] : Map<UniverseObject>())
-        AutoTypedInsert(ID, true, obj);
+        AutoTypedInsert(ID, treat_as_destroyed, obj);
+
+    //std::cout << "copied to maps/vecs" << std::endl;
+    //ApplyToExistingMaps([](auto& map) { std::cout << "map " << typeid(map).name() << " sz: " << map.size() << std::endl; }, true);
 }
 
 std::string ObjectMap::Dump(uint8_t ntabs) const {
