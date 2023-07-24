@@ -1821,8 +1821,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         }
 
         int sum = 0;
-        for ([[maybe_unused]] auto& [ignored_id, loop_empire] : context.Empires()) {
-            (void)ignored_id; // quiet unused variable warning
+        for (const auto& loop_empire : context.Empires() | range_values) {
             auto filtered_values = empire_property_int_key(*loop_empire) | range_filter(key_filter) | range_values;
             sum += std::accumulate(filtered_values.begin(), filtered_values.end(), 0);
         }
@@ -2081,9 +2080,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         }
         else {
             for (auto& [cat_name, policy_names_turns] : empire->CategoriesSlotsPoliciesAdopted()) {
-                if (cat_name == policy_category_name) {
-                    for (auto& [ignored_turn, policy_name] : policy_names_turns) {
-                        (void)ignored_turn;
+                if (cat_name == policy_category_name) { // TODO: could further rangify this...
+                    for (const auto policy_name : policy_names_turns | range_values) {
                         if (!policy_name.empty())
                             ++count;
                     }
@@ -2205,11 +2203,11 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         } else {
             float empires_max = 0.0f;
             // no empire ID specified, use max of all empires' ranges at specified system
-            for ([[maybe_unused]] auto& [unused_id, loop_empire] : context.Empires()) {
-                (void)unused_id; // quiet unused variable warning
-                const auto& empire_data = loop_empire->SystemSupplyRanges();
-                auto it = empire_data.find(system_id);
-                if (it != empire_data.end())
+            for (const auto& empire_supply_ranges : context.Empires() | range_values
+                 | range_transform([](const auto& e) -> auto& { return e->SystemSupplyRanges(); }))
+            {
+                const auto it = empire_supply_ranges.find(system_id);
+                if (it != empire_supply_ranges.end())
                     empires_max = std::max(empires_max, it->second);
             }
             return empires_max;

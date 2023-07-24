@@ -5,6 +5,7 @@
 #include "Logger.h"
 #include "OptionValidators.h"
 #include "XMLDoc.h"
+#include "ranges.h"
 
 #include <iostream>
 #include <iomanip>
@@ -314,9 +315,8 @@ std::unordered_map<std::string_view, std::set<std::string_view>> OptionsDB::Opti
 
     // tally the total number of options under each section
     std::unordered_map<std::string_view, std::size_t> total_options_per_section;
-    for (const auto& [option_name, sections_set] : sections_by_option) {
-        (void)sections_set; // quiet warning
-        auto dot_it = option_name.find_first_of(".");
+    for (const auto option_name : sections_by_option | range_keys) {
+        auto dot_it = option_name.find_first_of("."); // TODO: move into range as transform
         // increment count of each containing parent section
         while (dot_it != std::string::npos) {
             total_options_per_section[option_name.substr(0, dot_it)]++;
@@ -428,8 +428,7 @@ void OptionsDB::GetUsage(std::ostream& os, std::string_view command_line, bool a
                             name_col_width = section.size();
             }
         } else {
-            for (const auto& [sec, opts] : options_by_section) {
-                (void)opts; // ignored
+            for (const auto& sec : options_by_section | range_keys) {
                 if (OptionNameHasParentSection(sec, command_line))
                     if (section_list.emplace(sec).second && name_col_width < sec.size())
                         name_col_width = sec.size();
