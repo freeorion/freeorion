@@ -2,7 +2,8 @@ if(WIN32)
     # file(GET_RUNTIME_DEPENDENCIES and install(... ALL_COMPONENTS)
     set(REQUIRED_CMAKE_VERSION 3.21)
 else()
-    set(REQUIRED_CMAKE_VERSION 3.8)
+    # Python3_FIND_STRATEGY
+    set(REQUIRED_CMAKE_VERSION 3.15)
 endif()
 
 cmake_minimum_required(VERSION ${REQUIRED_CMAKE_VERSION} FATAL_ERROR)
@@ -32,7 +33,7 @@ message(STATUS "Build type CMAKE_BUILD_TYPE set to ${CMAKE_BUILD_TYPE}")
 include(UseCompilerCache)
 find_compiler_cache(PROGRAM ccache)
 
-list(APPEND GODOT_CPP_CMAKE_VARS "CMAKE_BUILD_TYPE;CMAKE_CONFIGURATION_TYPES;CMAKE_TOOLCHAIN_FILE;PYTHON_EXECUTABLE")
+list(APPEND GODOT_CPP_CMAKE_VARS "CMAKE_BUILD_TYPE;CMAKE_CONFIGURATION_TYPES;CMAKE_TOOLCHAIN_FILE;PYTHON_EXECUTABLE;Python3_EXECUTABLE")
 get_cmake_property(vars CACHE_VARIABLES)
 foreach(var ${vars})
   get_property(currentHelpString CACHE "${var}" PROPERTY HELPSTRING)
@@ -125,9 +126,11 @@ if(APPLE)
     set(CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/dep/")
     set(CMAKE_FRAMEWORK_PATH "${CMAKE_BINARY_DIR}/dep/Frameworks")
     set(CMAKE_PROGRAM_PATH "${CMAKE_BINARY_DIR}/dep/bin")
+    set(CMAKE_FIND_FRAMEWORK "LAST")
     set(BOOST_ROOT "${CMAKE_BINARY_DIR}/dep/")
     set(Boost_NO_SYSTEM_PATHS ON)
-    set(Python_FIND_REGISTRY "LAST")
+    set(Python3_ROOT_DIR "${CMAKE_BINARY_DIR}/dep/")
+    set(Python3_FIND_STRATEGY "LOCATION")
 endif()
 
 if(UNIX)
@@ -263,10 +266,14 @@ set(MINIMUM_PYTHON_VERSION 3.9)
 set(MINIMUM_BOOST_VERSION 1.73.0)
 
 find_package(Threads)
-find_package(PythonInterp ${MINIMUM_PYTHON_VERSION} REQUIRED)
-find_package(PythonLibs ${MINIMUM_PYTHON_VERSION} REQUIRED)
-message(STATUS "Python library version detected ${PYTHONLIBS_VERSION_STRING}")
-string(REGEX REPLACE "^([0-9]+)\\.([0-9]+)\\..*" "\\1\\2" Boost_PYTHON_SUFFIX "${PYTHONLIBS_VERSION_STRING}")
+if(ANDROID)
+    find_package(Python3 ${MINIMUM_PYTHON_VERSION} COMPONENTS Interpreter REQUIRED)
+    find_package(Python3 ${MINIMUM_PYTHON_VERSION} COMPONENTS Development REQUIRED)
+else()
+    find_package(Python3 ${MINIMUM_PYTHON_VERSION} COMPONENTS Interpreter Development REQUIRED)
+endif()
+message(STATUS "Python library version detected ${Python3_VERSION}")
+set(Boost_PYTHON_SUFFIX "${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR}")
 message(STATUS "Boost python version ${Boost_PYTHON_SUFFIX}")
 find_package(Boost ${MINIMUM_BOOST_VERSION}
     COMPONENTS
@@ -367,7 +374,7 @@ set_property(DIRECTORY APPEND
 # execution to a separate target and the existing python command
 execute_process(
     COMMAND
-    "${PYTHON_EXECUTABLE}"
+    "${Python3_EXECUTABLE}"
     "${CMAKE_SOURCE_DIR}/cmake/make_versioncpp.py"
     "${CMAKE_SOURCE_DIR}"
     "CMake"
@@ -430,7 +437,7 @@ target_compile_definitions(freeorioncommon
 
 target_include_directories(freeorioncommon SYSTEM
     PUBLIC
-        ${PYTHON_INCLUDE_PATH}
+        ${Python3_INCLUDE_DIRS}
 )
 
 target_link_libraries(freeorioncommon
@@ -447,7 +454,7 @@ target_link_libraries(freeorioncommon
         Boost::python${Boost_PYTHON_SUFFIX}
         Boost::thread
         Boost::serialization
-        ${PYTHON_LIBRARIES}
+        ${Python3_LIBRARIES}
         ZLIB::ZLIB
         ${ICUI18N_LIBRARY}
         ${ICUUC_LIBRARY}
@@ -482,7 +489,7 @@ target_compile_definitions(freeorionparseobj
 target_include_directories(freeorionparseobj
     PUBLIC
         $<TARGET_PROPERTY:Boost::boost,INTERFACE_INCLUDE_DIRECTORIES>
-        ${PYTHON_INCLUDE_PATH}
+        ${Python3_INCLUDE_DIRS}
 )
 
 set_property(TARGET freeorionparseobj
@@ -652,7 +659,7 @@ if(BUILD_CLIENT_GG)
         # at configuration time.
         execute_process(
             COMMAND
-            "${PYTHON_EXECUTABLE}"
+            "${Python3_EXECUTABLE}"
             "${CMAKE_SOURCE_DIR}/cmake/make_versioncpp.py"
             "${CMAKE_SOURCE_DIR}"
             "CMake"
@@ -723,8 +730,8 @@ if(BUILD_CLIENT_GODOT)
                 -D CMAKE_BUILD_TYPE=${GODOT_CPP_BUILD_TYPE}
                 -D CMAKE_CONFIGURATION_TYPES=${GODOT_CPP_BUILD_TYPE}
                 -D CMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
-                -D PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}
-                -D Python3_EXECUTABLE=${PYTHON_EXECUTABLE}
+                -D PYTHON_EXECUTABLE=${Python3_EXECUTABLE}
+                -D Python3_EXECUTABLE=${Python3_EXECUTABLE}
                 ${CL_ARGS}
             INSTALL_COMMAND ""
         )
@@ -794,9 +801,9 @@ endif()
 if(WIN32 AND BUILD_CLIENT_GG)
     add_custom_command(TARGET freeorion POST_BUILD
         COMMAND
-            ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_PREFIX_PATH}/bin/python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}.dll" "$<TARGET_FILE_DIR:freeorion>"
+            ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_PREFIX_PATH}/bin/python${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR}.dll" "$<TARGET_FILE_DIR:freeorion>"
         COMMAND
-            ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_PREFIX_PATH}/bin/python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}.zip" "$<TARGET_FILE_DIR:freeorion>" 
+            ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_PREFIX_PATH}/bin/python${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR}.zip" "$<TARGET_FILE_DIR:freeorion>"
     )
 endif()
 
@@ -843,9 +850,9 @@ if(APPLE AND BUILD_CLIENT_GG)
         COMMAND
            ${CMAKE_COMMAND} -E copy_if_different "${Boost_THREAD_LIBRARY}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND
-           ${CMAKE_COMMAND} -E remove_directory "$<TARGET_FILE_DIR:freeorion>/../SharedSupport/lib/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}"
+           ${CMAKE_COMMAND} -E remove_directory "$<TARGET_FILE_DIR:freeorion>/../SharedSupport/lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}"
         COMMAND
-           cp -R "${CMAKE_BINARY_DIR}/dep/lib/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport/lib/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}"
+           cp -R "${CMAKE_BINARY_DIR}/dep/lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport/lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}"
         COMMAND
            ${CMAKE_COMMAND} -E remove_directory "$<TARGET_FILE_DIR:freeorion>/../Frameworks"
         COMMAND
