@@ -22,9 +22,9 @@ def unusable_techs():
 def defense_techs_1():
     """
     Returns a list of technologies that implement the first planetary defensive
-    measures.
+    measures and mass driver upgrades.
     """
-    return ["DEF_DEFENSE_NET_1", "DEF_GARRISON_1"]
+    return ["DEF_DEFENSE_NET_1", "SHP_WEAPON_1_3", "SHP_WEAPON_1_2", "DEF_GARRISON_1"]
 
 
 class TechGroup:
@@ -124,8 +124,6 @@ class TechGroup1(TechGroup):
         self.weapon.extend(
             [
                 "SHP_WEAPON_ARC_DISRUPTOR_1",
-                "SHP_WEAPON_1_2",
-                "SHP_WEAPON_1_3",
                 "SHP_FIGHTERS_1",
                 "SHP_WEAPON_1_4",
             ]
@@ -136,13 +134,7 @@ class TechGroup1(TechGroup):
                 "DEF_DEFENSE_NET_1",
             ]
         )
-        self.hull.extend(
-            [
-                "SHP_MIL_ROBO_CONT",
-                "SHP_ORG_HULL",
-            ]
-        )
-        # always start with the same first 8 techs; leaves 1 econ, 4 weap, 2 hull
+        # always start with the same first 6 techs; leaves 1 econ, 2 weap and 2 defense
         self.enqueue(
             self.economy,
             self.economy,
@@ -150,34 +142,78 @@ class TechGroup1(TechGroup):
             self.economy,
             self.economy,
             self.weapon,
-            self.defense,
-            self.defense,
         )
 
 
-class TechGroup1a(TechGroup1):
+class TechGroup1Turtle(TechGroup1):
     def __init__(self):
         super().__init__()
         self.enqueue(
-            self.weapon,
-            self.weapon,
+            self.defense,
+            self.defense,
             self.weapon,
             self.weapon,
             self.economy,
-            self.hull,
+            "SHP_MIL_ROBO_CONT",
+            "CON_ARCH_PSYCH",
+            "SHP_ORG_HULL",
+        )
+
+
+class TechGroup1Organic(TechGroup1):
+    def __init__(self):
+        super().__init__()
+        self.enqueue(
+            "SHP_CONT_SYMB",
+            self.defense,
+            self.defense,
+            self.weapon,
+            self.economy,
+            self.weapon,
             "CON_ARCH_PSYCH",
         )
 
 
-class TechGroup1b(TechGroup1):
+class TechGroup1Robotic(TechGroup1):
     def __init__(self):
         super().__init__()
         self.enqueue(
+            "SHP_MIL_ROBO_CONT",
+            self.defense,
+            self.defense,
             self.weapon,
-            self.hull,
             self.economy,
             self.weapon,
+            "CON_ARCH_PSYCH",
+            "SHP_ORG_HULL",
+        )
+
+
+class TechGroup1Flux(TechGroup1):
+    def __init__(self):
+        super().__init__()
+        self.enqueue(
+            "SHP_SPACE_FLUX_DRIVE",
+            self.defense,
+            "SHP_SPACE_FLUX_BUBBLE",
+            self.defense,
             self.weapon,
+            self.economy,
+            self.weapon,
+            "CON_ARCH_PSYCH",
+            "SHP_MIL_ROBO_CONT",
+        )
+
+
+class TechGroup1Energy(TechGroup1):
+    def __init__(self):
+        super().__init__()
+        self.enqueue(
+            "SHP_MULTICELL_CAST",
+            self.defense,
+            self.defense,
+            self.weapon,
+            self.economy,
             self.weapon,
             "CON_ARCH_PSYCH",
         )
@@ -187,14 +223,15 @@ class TechGroup1SparseA(TechGroup1):
     def __init__(self):
         super().__init__()
         self.enqueue(
+            self.defense,
+            self.defense,
             self.economy,
-            self.hull,
-            self.weapon,
-            self.weapon,
+            "SHP_MIL_ROBO_CONT",
             self.weapon,
             "SHP_SPACE_FLUX_DRIVE",
             self.weapon,
             "CON_ARCH_PSYCH",
+            "SHP_ORG_HULL",
         )
 
 
@@ -202,9 +239,11 @@ class TechGroup1SparseB(TechGroup1):
     def __init__(self):
         super().__init__()
         self.enqueue(
+            self.defense,
+            self.defense,
             self.economy,
             self.weapon,
-            self.hull,
+            "SHP_MIL_ROBO_CONT",
             "SHP_ZORTRIUM_PLATE",
             self.weapon,
             "PRO_NANOTECH_PROD",
@@ -221,7 +260,7 @@ class TechGroup1SparseB(TechGroup1):
             "SHP_ASTEROID_HULLS",
             "PRO_FUSION_GEN",
             "SHP_WEAPON_2_1",
-            self.hull,
+            "SHP_ORG_HULL",
             "SHP_MULTICELL_CAST",
             "SHP_DEUTERIUM_TANK",
             "SHP_WEAPON_2_2",
@@ -236,12 +275,13 @@ class TechGroup1SparseC(TechGroup1):
     def __init__(self):
         super().__init__()
         self.enqueue(
+            self.defense,
+            self.defense,
             self.economy,
             "SHP_ORG_HULL",
             "SHP_MULTICELL_CAST",
             "PRO_NANOTECH_PROD",
             Dep.PRO_AUTO_1,
-            self.weapon,
             "CON_ARCH_PSYCH",
             "CON_ASYMP_MATS",
             "CON_ORBITAL_CON",  # not a economy tech in the strictest sense but bonus supply often equals more planets
@@ -284,14 +324,6 @@ class TechGroup2(TechGroup):
                 "SHP_ZORTRIUM_PLATE",
             ]
         )
-        self.hull.extend(
-            [
-                "SHP_MULTICELL_CAST",
-                "SHP_SPACE_FLUX_DRIVE",
-                # "SHP_ASTEROID_HULLS",  # should be handled by fast-forwarding when having ASteroids
-                # "SHP_DOMESTIC_MONSTER",  # should be handled by fast-forwarding when having nest
-            ]
-        )
         self.weapon.extend(
             [
                 "SHP_WEAPON_2_1",
@@ -303,7 +335,7 @@ class TechGroup2(TechGroup):
         )
 
 
-class TechGroup2A(TechGroup2):
+class TechGroup2Turtle(TechGroup2):
     def __init__(self):
         super().__init__()
         self.defense.extend(
@@ -320,7 +352,7 @@ class TechGroup2A(TechGroup2):
             self.economy,
             self.defense,
             self.defense,
-            self.hull,
+            "SHP_MULTICELL_CAST",
             self.weapon,
             self.weapon,
             self.defense,
@@ -329,11 +361,11 @@ class TechGroup2A(TechGroup2):
             self.weapon,
             self.weapon,
             self.weapon,
-            self.hull,
+            "SHP_SPACE_FLUX_DRIVE",
         )
 
 
-class TechGroup2B(TechGroup2):
+class TechGroup2Organic(TechGroup2):
     def __init__(self):
         super().__init__()
         self.defense.extend(
@@ -348,7 +380,6 @@ class TechGroup2B(TechGroup2):
             self.economy,
             self.economy,
             self.defense,
-            self.hull,
             self.weapon,
             self.weapon,
             self.economy,
@@ -359,7 +390,95 @@ class TechGroup2B(TechGroup2):
             self.weapon,
             self.economy,
             self.economy,
-            self.hull,
+            "SHP_MULTICELL_CAST",
+        )
+
+
+class TechGroup2Robotic(TechGroup2):
+    def __init__(self):
+        super().__init__()
+        self.defense.extend(
+            [
+                "LRN_FORCE_FIELD",
+                "SPY_DETECT_2",
+                "DEF_GARRISON_2",
+            ]
+        )
+        self.enqueue(
+            self.armor,
+            self.economy,
+            self.economy,
+            self.defense,
+            self.weapon,
+            self.weapon,
+            self.economy,
+            self.defense,
+            self.defense,
+            self.weapon,
+            self.weapon,
+            self.weapon,
+            self.economy,
+            self.economy,
+            "SHP_SMALL_ROBO",
+        )
+
+
+class TechGroup2Flux(TechGroup2):
+    def __init__(self):
+        super().__init__()
+        self.defense.extend(
+            [
+                "LRN_FORCE_FIELD",
+                "SPY_DETECT_2",
+                "DEF_GARRISON_2",
+            ]
+        )
+        self.enqueue(
+            self.armor,
+            self.economy,
+            self.economy,
+            self.defense,
+            "SHP_ORG_HULL",
+            self.weapon,
+            self.weapon,
+            self.economy,
+            self.defense,
+            self.defense,
+            self.weapon,
+            self.weapon,
+            self.weapon,
+            self.economy,
+            self.economy,
+            "SHP_SPACE_FLUX_COMPOSITION",
+        )
+
+
+class TechGroup2Energy(TechGroup2):
+    def __init__(self):
+        super().__init__()
+        self.defense.extend(
+            [
+                "LRN_FORCE_FIELD",
+                "SPY_DETECT_2",
+                "DEF_GARRISON_2",
+            ]
+        )
+        self.enqueue(
+            self.armor,
+            self.economy,
+            self.economy,
+            self.defense,
+            self.weapon,
+            self.weapon,
+            self.economy,
+            self.defense,
+            self.defense,
+            self.weapon,
+            self.weapon,
+            self.weapon,
+            self.economy,
+            self.economy,
+            "SHP_ENRG_FRIGATE",
         )
 
 
@@ -368,7 +487,7 @@ class TechGroup2SparseA(TechGroup2):
         super().__init__()
         self.enqueue(
             self.armor,
-            self.hull,
+            "SHP_MULTICELL_CAST",
             self.economy,
             self.economy,
             self.economy,
@@ -380,7 +499,7 @@ class TechGroup2SparseA(TechGroup2):
             self.weapon,
             self.weapon,
             self.weapon,
-            self.hull,
+            "SHP_SPACE_FLUX_DRIVE",
         )
 
 
@@ -389,7 +508,7 @@ class TechGroup2SparseB(TechGroup2):
         super().__init__()
         self.enqueue(
             self.armor,
-            self.hull,
+            "SHP_MULTICELL_CAST",
             self.economy,
             self.economy,
             self.economy,
@@ -401,20 +520,13 @@ class TechGroup2SparseB(TechGroup2):
             self.weapon,
             self.weapon,
             self.weapon,
-            self.hull,
+            "SHP_SPACE_FLUX_DRIVE",
         )
 
 
 class TechGroup3(TechGroup):
     def __init__(self):
         super().__init__()
-        self.hull.extend(
-            [
-                "SHP_ASTEROID_REFORM",
-                "SHP_HEAVY_AST_HULL",
-                "SHP_CONTGRAV_MAINT",
-            ]
-        )
         self.economy.extend(
             [
                 "PRO_INDUSTRY_CENTER_I",
@@ -475,11 +587,11 @@ class TechGroup3(TechGroup):
         )
 
 
-class TechGroup3A(TechGroup3):
+class TechGroup3Turtle(TechGroup3):
     def __init__(self):
         super().__init__()
         self.enqueue(
-            self.hull,
+            "SHP_ASTEROID_REFORM",
             self.economy,
             self.misc,
             self.defense,
@@ -495,9 +607,9 @@ class TechGroup3A(TechGroup3):
             self.misc,
             self.economy,
             self.misc,
-            self.hull,
+            "SHP_HEAVY_AST_HULL",
             self.economy,
-            self.hull,
+            "SHP_CONTGRAV_MAINT",
             self.misc,
             self.economy,
             self.economy,
@@ -523,11 +635,11 @@ class TechGroup3A(TechGroup3):
         )
 
 
-class TechGroup3B(TechGroup3):
+class TechGroup3Organic(TechGroup3):
     def __init__(self):
         super().__init__()
         self.enqueue(
-            self.hull,
+            "SHP_BIOADAPTIVE_SPEC",
             self.economy,
             self.misc,
             self.defense,
@@ -548,9 +660,149 @@ class TechGroup3B(TechGroup3):
             self.misc,
             self.weapon,
             self.weapon,
-            self.hull,
+            "SHP_ASTEROID_REFORM",
             self.economy,
-            self.hull,
+            "SHP_HEAVY_AST_HULL",
+            self.misc,
+            self.economy,
+            self.economy,
+            self.defense,
+            self.misc,
+            self.armor,
+            self.defense,
+            self.defense,
+            self.defense,
+            self.misc,
+            self.economy,
+            self.misc,
+            self.defense,
+            self.defense,
+            self.economy,
+            self.misc,
+            self.economy,
+        )
+
+
+class TechGroup3Robotic(TechGroup3):
+    def __init__(self):
+        super().__init__()
+        self.enqueue(
+            "SHP_CONTGRAV_MAINT",
+            self.economy,
+            self.misc,
+            self.defense,
+            self.defense,
+            self.economy,
+            self.economy,
+            self.economy,
+            self.weapon,
+            self.weapon,
+            self.defense,
+            self.misc,
+            self.defense,
+            self.weapon,
+            self.economy,
+            self.misc,
+            self.misc,
+            self.economy,
+            self.misc,
+            self.weapon,
+            self.weapon,
+            self.economy,
+            self.misc,
+            self.economy,
+            self.economy,
+            self.defense,
+            self.misc,
+            self.armor,
+            self.defense,
+            self.defense,
+            self.defense,
+            self.misc,
+            self.economy,
+            self.misc,
+            self.defense,
+            self.defense,
+            self.economy,
+            self.misc,
+            self.economy,
+        )
+
+
+class TechGroup3Flux(TechGroup3):
+    def __init__(self):
+        super().__init__()
+        self.enqueue(
+            "SHP_CONTGRAV_MAINT",
+            self.economy,
+            self.misc,
+            self.defense,
+            self.defense,
+            self.economy,
+            self.economy,
+            self.economy,
+            self.weapon,
+            self.weapon,
+            self.defense,
+            self.misc,
+            self.defense,
+            self.weapon,
+            self.economy,
+            self.misc,
+            self.misc,
+            self.economy,
+            self.misc,
+            self.weapon,
+            self.weapon,
+            self.economy,
+            self.misc,
+            self.economy,
+            self.economy,
+            self.defense,
+            self.misc,
+            self.armor,
+            self.defense,
+            self.defense,
+            self.defense,
+            self.misc,
+            self.economy,
+            self.misc,
+            self.defense,
+            self.defense,
+            self.economy,
+            self.misc,
+            self.economy,
+        )
+
+
+class TechGroup3Energy(TechGroup3):
+    def __init__(self):
+        super().__init__()
+        self.enqueue(
+            "SHP_CONT_BIOADAPT",
+            self.economy,
+            self.misc,
+            self.defense,
+            self.defense,
+            self.economy,
+            self.economy,
+            self.economy,
+            self.weapon,
+            self.weapon,
+            self.defense,
+            self.misc,
+            self.defense,
+            self.weapon,
+            self.economy,
+            self.misc,
+            self.misc,
+            self.economy,
+            self.misc,
+            self.weapon,
+            self.weapon,
+            "SHP_ENRG_BOUND_MAN",
+            self.economy,
+            "SHP_QUANT_ENRG_MAG",
             self.misc,
             self.economy,
             self.economy,
@@ -575,7 +827,7 @@ class TechGroup3Sparse(TechGroup3):
     def __init__(self):
         super().__init__()
         self.enqueue(
-            self.hull,
+            "SHP_ASTEROID_REFORM",
             self.misc,
             self.defense,
             self.defense,
@@ -598,8 +850,8 @@ class TechGroup3Sparse(TechGroup3):
             self.misc,
             self.weapon,
             self.weapon,
-            self.hull,
-            self.hull,
+            "SHP_HEAVY_AST_HULL",
+            "SHP_CONTGRAV_MAINT",
             self.misc,
             self.economy,
             self.economy,
@@ -625,12 +877,82 @@ class TechGroup4(TechGroup):
         self.hull.extend(
             [
                 "SHP_FRC_ENRG_COMP",
+            ]
+        )
+        self.enqueue(
+            self.hull,
+        )
+
+
+class TechGroup4Turtle(TechGroup):
+    def __init__(self):
+        super().__init__()
+        self.hull.extend(
+            [
                 "SHP_MASSPROP_SPEC",
                 "SHP_SCAT_AST_HULL",
             ]
         )
         self.enqueue(
             self.hull,
+            "SHP_ANTIMATTER_TANK",
+        )
+
+
+class TechGroup4Organic(TechGroup):
+    def __init__(self):
+        super().__init__()
+        self.hull.extend(
+            [
+                "SHP_SCAT_AST_HULL",
+            ]
+        )
+        self.enqueue(
+            "SHP_SENT_HULL",
+            self.hull,
+            "SHP_ANTIMATTER_TANK",
+        )
+
+
+class TechGroup4Robotic(TechGroup):
+    def __init__(self):
+        super().__init__()
+        self.hull.extend(
+            [
+                "SHP_MASSPROP_SPEC",
+            ]
+        )
+        self.enqueue(
+            self.hull,
+            "SHP_ANTIMATTER_TANK",
+            "SHP_MIDCOMB_LOG",
+        )
+
+
+class TechGroup4Flux(TechGroup):
+    def __init__(self):
+        super().__init__()
+        self.hull.extend(
+            [
+                "SHP_MASSPROP_SPEC",
+            ]
+        )
+        self.enqueue(
+            self.hull,
+            "SHP_ANTIMATTER_TANK",
+            "SHP_NANOROBO_MAINT",
+        )
+
+
+class TechGroup4Energy(TechGroup):
+    def __init__(self):
+        super().__init__()
+        self.hull.extend(
+            [
+                "SHP_SOLAR_CONT",
+            ]
+        )
+        self.enqueue(
             self.hull,
             "SHP_ANTIMATTER_TANK",
         )
@@ -647,12 +969,9 @@ class TechGroup5(TechGroup):
                 "LRN_GRAVITONICS",
                 "LRN_STELLAR_TOMOGRAPHY",
                 "LRN_ENCLAVE_VOID",
-                "SHP_MONOMOLEC_LATTICE",
                 "SHP_ADV_DAM_CONT",
                 "LRN_TIME_MECH",
                 "SPY_DETECT_4",
-                "SHP_CONT_SYMB",
-                "SHP_MONOCELL_EXP",
                 "GRO_TERRAFORM",
                 "GRO_ENERGY_META",
                 "LRN_DISTRIB_THOUGHT",
@@ -662,12 +981,9 @@ class TechGroup5(TechGroup):
                 "SHP_WEAPON_4_3",
                 "PRO_INDUSTRY_CENTER_III",
                 "PRO_SINGULAR_GEN",
-                "SHP_QUANT_ENRG_MAG",
                 "SHP_PLASMA_SHIELD",
-                "SHP_ENRG_BOUND_MAN",
                 "SHP_WEAPON_4_4",
                 "PRO_NEUTRONIUM_EXTRACTION",
-                "SHP_SOLAR_CONT",
                 "CON_CONC_CAMP",
                 "LRN_ART_BLACK_HOLE",
                 "DEF_SYST_DEF_MINE_2",
@@ -689,24 +1005,38 @@ def test_tech_integrity():
     Any error is displayed in chat window.
     Also checks if all techs exist and displays error if invalid tech name encountered.
     """
+    # TODO: Remove Sparse groups. Sparse groups could use the hull lines with weapon/defense techs shifted back.
     tech_groups = [
         TechGroup,
         TechGroup1,
-        TechGroup1a,
-        TechGroup1b,
+        TechGroup1Turtle,
+        TechGroup1Organic,
+        TechGroup1Robotic,
+        TechGroup1Flux,
+        TechGroup1Energy,
         TechGroup1SparseA,
         TechGroup1SparseB,
         TechGroup1SparseC,
         TechGroup2,
-        TechGroup2A,
-        TechGroup2B,
+        TechGroup2Turtle,
+        TechGroup2Organic,
+        TechGroup2Robotic,
+        TechGroup2Flux,
+        TechGroup2Energy,
         TechGroup2SparseA,
         TechGroup2SparseB,
-        TechGroup3,
-        TechGroup3A,
-        TechGroup3B,
+        TechGroup3Turtle,
+        TechGroup3Organic,
+        TechGroup3Robotic,
+        TechGroup3Flux,
+        TechGroup3Energy,
         TechGroup3Sparse,
         TechGroup4,
+        TechGroup4Turtle,
+        TechGroup4Organic,
+        TechGroup4Robotic,
+        TechGroup4Flux,
+        TechGroup4Energy,
         TechGroup5,
     ]
     debug("Checking TechGroup integrity...")
@@ -731,34 +1061,34 @@ def sparse_galaxy_techs(index):
     result = []
     debug("Choosing Sparse Research Techlist Index %d" % index)
     if index == 0:
-        result = TechGroup1a().get_techs()  # early org_hull
-        result += TechGroup2A().get_techs()  # prioritizes growth & defense over weapons
-        result += TechGroup3A().get_techs()
-        result += TechGroup4().get_techs()
+        result = TechGroup1Turtle().get_techs()  # early org_hull
+        result += TechGroup2Turtle().get_techs()  # prioritizes growth & defense over weapons
+        result += TechGroup3Turtle().get_techs()
+        result += TechGroup4Turtle().get_techs()
         result += TechGroup5().get_techs()  #
     elif index == 1:
-        result = TechGroup1b().get_techs()  # early lrn_nascent_ai
-        result += TechGroup2B().get_techs()  # prioritizes growth & defense over weapons
-        result += TechGroup3B().get_techs()
-        result += TechGroup4().get_techs()
+        result = TechGroup1Turtle().get_techs()  # early lrn_nascent_ai
+        result += TechGroup2Turtle().get_techs()  # prioritizes growth & defense over weapons
+        result += TechGroup3Turtle().get_techs()
+        result += TechGroup4Turtle().get_techs()
         result += TechGroup5().get_techs()  #
     elif index == 2:
         result = TechGroup1SparseA().get_techs()  # early lrn_nascent_ai
         result += TechGroup2SparseA().get_techs()  # prioritizes growth & defense over weapons
         result += TechGroup3Sparse().get_techs()
-        result += TechGroup4().get_techs()
+        result += TechGroup4Turtle().get_techs()
         result += TechGroup5().get_techs()  #
     elif index == 3:
         result = TechGroup1SparseB().get_techs()  # early org_hull
         result += TechGroup2SparseB().get_techs()
-        result += TechGroup3A().get_techs()
-        result += TechGroup4().get_techs()
+        result += TechGroup3Turtle().get_techs()
+        result += TechGroup4Turtle().get_techs()
         result += TechGroup5().get_techs()  #
     elif index == 4:
         result = TechGroup1SparseC().get_techs()  # early pro_adaptive_auto
         result += TechGroup2SparseB().get_techs()
-        result += TechGroup3B().get_techs()  # faster plasma weaps
-        result += TechGroup4().get_techs()
+        result += TechGroup3Turtle().get_techs()  # faster plasma weaps
+        result += TechGroup4Turtle().get_techs()
         result += TechGroup5().get_techs()  #
     return result
 
@@ -772,35 +1102,35 @@ def primary_meta_techs(index=0):
 
     debug("Choosing Research Techlist Index %d" % index)
     if index == 0:
-        result = TechGroup1a().get_techs()  # early org_hull
-        result += TechGroup2A().get_techs()  # prioritizes growth & defense over weapons
-        result += TechGroup3A().get_techs()
-        result += TechGroup4().get_techs()
-        result += TechGroup5().get_techs()  #
+        result = TechGroup1Turtle().get_techs()  # early org_hull
+        result += TechGroup2Turtle().get_techs()  # prioritizes growth & defense over weapons
+        result += TechGroup3Turtle().get_techs()
+        result += TechGroup4Turtle().get_techs()
+        result += TechGroup5().get_techs()  # Index occurs at/below typical aggression
     elif index == 1:
-        result = TechGroup1b().get_techs()  # early org_hull
-        result += TechGroup2B().get_techs()  # prioritizes growth & defense over weapons
-        result += TechGroup3B().get_techs()
-        result += TechGroup4().get_techs()
-        result += TechGroup5().get_techs()  #
+        result = TechGroup1Organic().get_techs()  # early org_hull
+        result += TechGroup2Organic().get_techs()  # prioritizes growth & defense over weapons
+        result += TechGroup3Organic().get_techs()
+        result += TechGroup4Organic().get_techs()  # Index occurs at/above typical aggression
+        result += TechGroup5().get_techs()  # Sentient hull line/scattered asteroid hull to match titans
     elif index == 2:
-        result = TechGroup1a().get_techs()  # early org_hull
-        result += TechGroup2B().get_techs()  # prioritizes growth & defense over weapons
-        result += TechGroup3A().get_techs()
-        result += TechGroup4().get_techs()
-        result += TechGroup5().get_techs()  #
+        result = TechGroup1Robotic().get_techs()  # early org_hull
+        result += TechGroup2Robotic().get_techs()  # prioritizes growth & defense over weapons
+        result += TechGroup3Robotic().get_techs()
+        result += TechGroup4Robotic().get_techs()  # Index occurs at/above typical aggression
+        result += TechGroup5().get_techs()  # Titan hull line/include logistic hulls
     elif index == 3:
-        result = TechGroup1b().get_techs()  # early org_hull
-        result += TechGroup2A().get_techs()  # prioritizes growth & defense over weapons
-        result += TechGroup3B().get_techs()
-        result += TechGroup4().get_techs()
-        result += TechGroup5().get_techs()  #
+        result = TechGroup1Flux().get_techs()  # early org_hull
+        result += TechGroup2Flux().get_techs()  # prioritizes growth & defense over weapons
+        result += TechGroup3Flux().get_techs()
+        result += TechGroup4Flux().get_techs()  # Index occurs at/above typical aggression
+        result += TechGroup5().get_techs()  #  Titan hull line/includes nanorobotic + flux hulls
     elif index == 4:
-        result = TechGroup1a().get_techs()  # early org_hull
-        result += TechGroup2A().get_techs()  # prioritizes growth & defense over weapons
-        result += TechGroup3B().get_techs()
-        result += TechGroup4().get_techs()
-        result += TechGroup5().get_techs()  #
+        result = TechGroup1Energy().get_techs()  # early org_hull
+        result += TechGroup2Energy().get_techs()  # prioritizes growth & defense over weapons
+        result += TechGroup3Energy().get_techs()
+        result += TechGroup4Energy().get_techs()  # Index occurs at/above typical aggression
+        result += TechGroup5().get_techs()  # Energy hull line/Ravenous backup
     return result
 
 
@@ -942,6 +1272,7 @@ def primary_meta_techs(index=0):
 # "SHP_SENT_HULL",
 # "SHP_SINGULARITY_ENGINE_CORE",
 # "SHP_SOLAR_CONT",
+# "SHP_SMALL_ROBO",
 # "SHP_SPACE_FLUX_BASICS",
 # "SHP_SPACE_FLUX_BUBBLE",
 # "SHP_SPACE_FLUX_COMPOSITION",

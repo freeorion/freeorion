@@ -73,6 +73,12 @@ def galaxy_is_sparse():
     )
 
 
+def galaxy_is_cramped():
+    setup_data = fo.getGalaxySetupData()
+    avg_empire_systems = setup_data.size // len(fo.allEmpireIDs())
+    return avg_empire_systems <= 25
+
+
 def get_colony_fleets():
     """examines known planets, collects various colonization data, to be later used to send colony fleets"""
     universe = fo.getUniverse()

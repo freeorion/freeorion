@@ -543,11 +543,11 @@ class EmpireIDTrait(Trait):
     # TODO remove this function as soon as old style research is gone
     # It defeats the orthogonality goal of character components for little gain
     def get_research_index(self):
-        research_index = self.id % 2
+        research_index = 0
         if self.aggression >= fo.aggression.aggressive:
             research_index = 2 + (self.id % 3)  # so indices [2,3,4]
         elif self.aggression >= fo.aggression.typical:
-            research_index += 1
+            research_index = 1 + (self.id % 2)  # indices [1,2,3]
         return research_index
 
 

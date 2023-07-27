@@ -145,6 +145,7 @@ def generate_classic_research_orders():  # noqa: max-complexity
     aistate = get_aistate()
     enemies_sighted = aistate.misc.get("enemies_sighted", {})
     galaxy_is_sparse = ColonisationAI.galaxy_is_sparse()
+    galaxy_is_cramped = ColonisationAI.galaxy_is_cramped()
 
     resource_production = empire.resourceProduction(fo.resourceType.research)
     completed_techs = sorted(list(get_completed_techs()))
@@ -219,11 +220,11 @@ def generate_classic_research_orders():  # noqa: max-complexity
         def_techs = TechsListsAI.defense_techs_1()
         for def_tech in def_techs:
             if (
-                aistate.character.may_research_tech_classic(def_tech)
+                (aistate.character.may_research_tech_classic(def_tech) or galaxy_is_cramped)
                 and def_tech not in research_queue_list[:5]
                 and not tech_is_complete(def_tech)
             ):
-                res = fo.issueEnqueueTechOrder(def_tech, min(3, len(research_queue_list)))
+                res = fo.issueEnqueueTechOrder(def_tech, min(6, len(research_queue_list)))
                 debug("Empire is very defensive, so attempted to fast-track %s, got result %d", def_tech, res)
     elif fo.currentTurn() > 100:
         generate_default_research_order()
