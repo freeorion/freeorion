@@ -296,8 +296,6 @@ ObjectMap& Universe::EmpireKnownObjects(int empire_id) {
 }
 
 std::set<int> Universe::EmpireVisibleObjectIDs(int empire_id, const EmpireManager& empires) const {
-    std::set<int> retval;
-
     // get id(s) of all empires to consider visibility of...
     std::set<int> empire_ids;
     if (empire_id != ALL_EMPIRES) {
@@ -309,17 +307,15 @@ std::set<int> Universe::EmpireVisibleObjectIDs(int empire_id, const EmpireManage
 
     // check each object's visibility against all empires, including the object
     // if an empire has visibility of it
-    for (const auto obj_id : m_objects->allRaw() | range_transform([](const auto* obj) { return obj->ID(); })) {
-        for (int detector_empire_id : empire_ids) {
-            Visibility vis = GetObjectVisibilityByEmpire(obj_id, detector_empire_id);
-            if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
-                retval.insert(obj_id);
-                break;
-            }
-        }
-    }
+    static constexpr auto to_id = [](const auto& o) { return o->ID(); };
+    const auto is_visible_to_an_empire = [&empire_ids, this](const auto obj_id) {
+        return std::any_of(empire_ids.begin(), empire_ids.end(),
+                           [obj_id, this](auto e_id)
+                           { return GetObjectVisibilityByEmpire(obj_id, e_id) >= Visibility::VIS_BASIC_VISIBILITY; });
+    };
 
-    return retval;
+    auto ids_rng = m_objects->all() | range_transform(to_id) | range_filter(is_visible_to_an_empire);
+    return {ids_rng.begin(), ids_rng.end()}; // TODO: return a better container?
 }
 
 int Universe::HighestDestroyedObjectID() const {
