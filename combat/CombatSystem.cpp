@@ -112,12 +112,13 @@ std::shared_ptr<Empire> CombatInfo::GetEmpire(int id)
 
 float CombatInfo::GetMonsterDetection() const {
     float monster_detection = 0.0;
-    for (const auto* obj : objects.allRaw<Ship>())
-        if (obj->Unowned())
-            monster_detection = std::max(monster_detection, obj->GetMeter(MeterType::METER_DETECTION)->Initial());
-    for (const auto* obj : objects.allRaw<Planet>())
-        if (obj->Unowned())
-            monster_detection = std::max(monster_detection, obj->GetMeter(MeterType::METER_DETECTION)->Initial());
+    constexpr auto not_unowned = [](const auto* obj) { return !obj->Unowned(); };
+    constexpr auto detection = [](const auto* obj) { return obj->GetMeter(MeterType::METER_DETECTION)->Initial(); };
+
+    for (const auto det : objects.allRaw<Ship>() | range_filter(not_unowned) | range_transform(detection))
+        monster_detection = std::max(monster_detection, det); // TODO: could use ranges::max_element
+    for (const auto det : objects.allRaw<Planet>() | range_filter(not_unowned)| range_transform(detection))
+        monster_detection = std::max(monster_detection, det);
     return monster_detection;
 }
 
@@ -987,20 +988,20 @@ namespace {
 
     // Information about a single empire during combat
     struct EmpireCombatInfo {
-        std::set<int> attacker_ids;
+        boost::unordered_set<int> attacker_ids;
 
-        bool HasAttackers() const { return !attacker_ids.empty(); }
+        bool HasAttackers() const noexcept { return !attacker_ids.empty(); }
 
         bool HasUnlauchedArmedFighters(const CombatInfo& combat_info) const {
             // check each ship to see if it has any unlaunched armed fighters...
-            for (const auto* ship : combat_info.objects.findRaw<Ship>(attacker_ids)) {
+            for (const auto* ship : combat_info.objects.findRaw<Ship>(attacker_ids)) { // TODO: check_if_any
                 if (!ship)
                     continue;   // discard invalid ship references
                 if (combat_info.destroyed_object_ids.contains(ship->ID()))
                     continue;   // destroyed objects can't launch fighters
 
                 auto weapons = ShipWeaponsStrengths(ship, combat_info.universe);
-                for (const PartAttackInfo& weapon : weapons) {
+                for (const PartAttackInfo& weapon : weapons) { // TODO: any_of
                     if (weapon.part_class == ShipPartClass::PC_FIGHTER_BAY &&
                         weapon.fighters_launched > 0 &&
                         weapon.fighter_damage > 0.0f)
@@ -1034,15 +1035,22 @@ namespace {
 
     /// A collection of information the autoresolution must keep around
     struct AutoresolveInfo {
-        boost::container::flat_set<int>                   valid_attacker_object_ids;  // all objects that can attack
+        boost::unordered_set<int>                         valid_attacker_object_ids;  // all objects that can attack
         boost::container::flat_map<int, EmpireCombatInfo> empire_infos;               // empire specific information, indexed by empire id
-        CombatInfo&   combat_info;
-        int           next_fighter_id = -1000001; // give fighters negative ids so as to avoid clashes with any positive-id of persistent UniverseObjects
-        std::set<int> destroyed_object_ids;       // objects that have been destroyed so far during this combat
+        CombatInfo&                                       combat_info;
+        int                                               next_fighter_id = -1000001; // give fighters negative ids so as to avoid clashes with any positive-id of persistent UniverseObjects
+        boost::container::flat_set<int>                   destroyed_object_ids;       // objects that have been destroyed so far during this combat
 
         explicit AutoresolveInfo(CombatInfo& combat_info_) :
             combat_info(combat_info_)
-        { PopulateAttackers(); }
+        {
+            valid_attacker_object_ids.reserve(combat_info.objects.size());
+            empire_infos.reserve(combat_info.empire_ids.size());
+            for (auto eid : combat_info.empire_ids)
+                empire_infos.emplace(std::piecewise_construct, std::forward_as_tuple(eid), std::forward_as_tuple());
+            destroyed_object_ids.reserve(combat_info.objects.size());
+            PopulateAttackers();
+        }
 
         std::vector<int> AddFighters(int number, float damage, int owner_empire_id,
                                      int from_ship_id, const std::string& species,
@@ -1075,13 +1083,13 @@ namespace {
                 const int new_id = next_fighter_id--;
                 fighter_ptr->SetID(new_id);
                 fighter_ptr->Rename(std::move(fighter_name));
-                combat_info.objects.insert(fighter_ptr, combat_info.destroyed_object_ids.contains(new_id));
+                combat_info.objects.insert(std::move(fighter_ptr), combat_info.destroyed_object_ids.contains(new_id));
                 retval.push_back(new_id);
 
                 // add fighter to attackers (if it can attack)
                 if (damage > 0.0f) {
                     valid_attacker_object_ids.insert(new_id);
-                    empire_infos[fighter_ptr->Owner()].attacker_ids.insert(new_id);
+                    empire_infos[owner_empire_id].attacker_ids.insert(new_id);
                     DebugLogger(combat) << "Added fighter id: " << new_id << " to attackers sets";
                 }
 
@@ -1120,7 +1128,7 @@ namespace {
             std::vector<int> delete_list;
             delete_list.reserve(combat_info.objects.size());
 
-            for (const auto* obj : combat_info.objects.allRaw()) {
+            for (const auto* obj : combat_info.objects.allRaw()) { // TODO: rangify
                 // Check if object is already noted as destroyed; don't need to re-record this
                 if (destroyed_object_ids.contains(obj->ID()))
                     continue;
@@ -1248,7 +1256,7 @@ namespace {
 
             boost::container::flat_set<int> empire_ids_with_objects;
             empire_ids_with_objects.reserve(20); // guesstimate, should normally be enough
-            for (const auto* obj : combat_info.objects.allRaw())
+            for (const auto* obj : combat_info.objects.allRaw()) // TODO: range, range init, and make container const
                 empire_ids_with_objects.insert(obj->Owner());
 
             for (const auto empire_id : empire_infos | range_keys) {
@@ -1261,18 +1269,19 @@ namespace {
 
             if (!empire_infos.empty()) {
                 DebugLogger(combat) << "Empires with objects remaining:";
-                for (auto& [empire_id, empire_info] : empire_infos) {
+                for (const auto& [empire_id, empire_info] : empire_infos) {
                     DebugLogger(combat) << " ... " << empire_id;
-                    for (auto obj_id : empire_info.attacker_ids)
+                    for (const auto obj_id : empire_info.attacker_ids)
                         TraceLogger(combat) << " ... ... " << obj_id;
                 }
             }
         }
 
         /// Clears and refills \a shuffled with attacker ids in a random order
-        void GetShuffledValidAttackerIDs(std::vector<int>& shuffled) {
-            shuffled = {valid_attacker_object_ids.begin(), valid_attacker_object_ids.end()};
-            RandomShuffle(shuffled);
+        auto GetShuffledValidAttackerIDs() {
+            std::vector<int> retval{valid_attacker_object_ids.begin(), valid_attacker_object_ids.end()};
+            RandomShuffle(retval);
+            return retval;
         }
 
         /** Report for each empire the stealthy objects in the combat. */
@@ -1401,7 +1410,7 @@ namespace {
         return species->CombatTargets();
     }
 
-    void AddObjects(ObjectMap& obj_map, Effect::TargetSet& into_set, const std::set<int>& exclude_ids) {
+    void AddObjects(ObjectMap& obj_map, Effect::TargetSet& into_set, const auto& exclude_ids) {
         using MapPair = typename ObjectMap::container_type<const UniverseObject>::value_type;
         auto objs = obj_map.findRaw([&exclude_ids](const MapPair& id_obj)
                                     { return !exclude_ids.contains(id_obj.first); });
@@ -1742,14 +1751,13 @@ namespace {
             return;
         }
 
-        std::vector<int> shuffled_attackers;
-        combat_state.GetShuffledValidAttackerIDs(shuffled_attackers);
+        const auto shuffled_attackers = combat_state.GetShuffledValidAttackerIDs();
 
         DebugLogger() << [&shuffled_attackers](){
             std::stringstream ss;
             ss << "Attacker IDs: [";
             for (int attacker : shuffled_attackers)
-            { ss << attacker << " "; }
+                ss << attacker << " ";
             ss << "]";
             return ss.str();
         }();
@@ -1763,8 +1771,8 @@ namespace {
         int round = 1;  // counter of events during the current combat bout
         const int NUM_COMBAT_ROUNDS = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS");
 
-        // todo: cache results of GetWeapons(attacker) to avoid re-calling multiple times per combat.
-        // todo: and pass into ShootAllWeapons which also calls that function
+        // TODO: cache results of GetWeapons(attacker) to avoid re-calling multiple times per combat.
+        // TODO: and pass into ShootAllWeapons which also calls that function
 
 
         // Process planets attacks first so that they still have full power,
