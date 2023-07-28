@@ -568,9 +568,8 @@ std::vector<std::pair<std::string_view, int>> Empire::EmptyPolicySlots() const {
     auto retval = TotalPolicySlots();
 
     // subtract used policy categories
-    for (const auto& cat : m_adopted_policies | range_values
-         | range_transform([](auto& pai) { return pai.category; }))
-    {
+    static constexpr auto to_cat = [](const auto& pai) -> const auto& { return pai.category; };
+    for (const auto& cat : m_adopted_policies | range_values | range_transform(to_cat)) {
         const auto it = std::find_if(retval.begin(), retval.end(),
                                      [&cat](const auto& rv) { return rv.first == cat; });
         if (it != retval.end())
@@ -1304,10 +1303,8 @@ bool Empire::PreservedLaneTravel(int start_system_id, int dest_system_id) const 
 }
 
 std::set<int> Empire::ExploredSystems() const {
-    std::set<int> retval;
-    for (const auto& entry : m_explored_systems)
-        retval.insert(entry.first);
-    return retval;
+    auto rng = m_explored_systems | range_keys;
+    return {rng.begin(), rng.end()}; // TODO: another better container? affects MapWnd NeighbourSystemsOf input
 }
 
 int Empire::TurnSystemExplored(int system_id) const {
@@ -1323,7 +1320,10 @@ std::map<int, std::set<int>> Empire::KnownStarlanes(const Universe& universe) co
 
     TraceLogger(supply) << "Empire::KnownStarlanes for empire " << m_id;
 
-    auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
+    const auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
+    const auto not_known_destroyed = [&known_destroyed_objects](auto end_id)
+    { return !known_destroyed_objects.contains(end_id); };
+
     for (const auto& sys : universe.Objects().allRaw<System>()) {
         int start_id = sys->ID();
         TraceLogger(supply) << "system " << start_id << " has up to " << sys->NumStarlanes() << " lanes / wormholes";
@@ -1334,9 +1334,7 @@ std::map<int, std::set<int>> Empire::KnownStarlanes(const Universe& universe) co
             continue;
         }
 
-        for (const auto& end_id : sys->Starlanes()) {
-            if (known_destroyed_objects.contains(end_id))
-                continue;   // is a wormhole, not a starlane, or is connected to a known destroyed system
+        for (const auto end_id : sys->Starlanes() | range_filter(not_known_destroyed)) {
             retval[start_id].insert(end_id);
             retval[end_id].insert(start_id);
         }
@@ -2898,7 +2896,9 @@ std::vector<std::pair<int, double>> Empire::PlanetAnnexationCosts(const Scriptin
     { return std::pair<int, double>{p->ID(), p->AnnexationCost(m_id, context)}; };
     auto rng = context.ContextObjects().allRaw<Planet>() | range_filter(being_annexed_by_empire)
         | range_transform(to_id_annex_cost);
-    return {rng.begin(), rng.end()};
+    std::vector<std::pair<int, double>> retval; // skipping reserve, since usually this will be few or no entries
+    range_copy(rng, std::back_inserter(retval));
+    return retval;
 }
 
 std::vector<std::pair<std::string_view, double>> Empire::PolicyAdoptionCosts(const ScriptingContext& context) const {
@@ -2909,7 +2909,10 @@ std::vector<std::pair<std::string_view, double>> Empire::PolicyAdoptionCosts(con
     { return {p.first, p.second->AdoptionCost(m_id, context)}; };
     auto rng = m_adopted_policies | range_keys | range_transform(get_policy)
         | range_filter(isnt_nullptr) | range_transform(to_cost);
-    return {rng.begin(), rng.end()};
+    std::vector<std::pair<std::string_view, double>> retval;
+    retval.reserve(m_adopted_policies.size());
+    range_copy(rng, std::back_inserter(retval));
+    return retval;
 }
 
 void Empire::UpdateResearchQueue(const ScriptingContext& context,
