@@ -2201,16 +2201,15 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
                 return 0.0;
 
         } else {
-            float empires_max = 0.0f;
             // no empire ID specified, use max of all empires' ranges at specified system
-            for (const auto& empire_supply_ranges : context.Empires() | range_values
-                 | range_transform([](const auto& e) -> auto& { return e->SystemSupplyRanges(); }))
-            {
-                const auto it = empire_supply_ranges.find(system_id);
-                if (it != empire_supply_ranges.end())
-                    empires_max = std::max(empires_max, it->second);
-            }
-            return empires_max;
+            const auto to_sys_supply_range = [system_id](const auto& e) {
+                const auto& ssr = e->SystemSupplyRanges();
+                const auto it = ssr.find(system_id);
+                return (it != ssr.end()) ? it->second : 0.0f;
+            };
+            auto sup_rng_rng = context.Empires() | range_values | range_transform(to_sys_supply_range);
+            auto max_it = range_max_element(sup_rng_rng);
+            return (max_it != sup_rng_rng.end()) ? *max_it : 0.0f;
         }
     }
 
@@ -2239,10 +2238,11 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
 
         empire_property = [res_type](const Empire* empire) { return empire->ResourceStockpile(res_type); };
 
-        static constexpr auto GetRawPtr = [](const auto& smart_ptr){ return smart_ptr.get(); };
+        static constexpr auto to_raw_ptr = [](const auto& smart_ptr){ return smart_ptr.get(); };
 
         if (!empire) {
-            auto empire_props = context.Empires() | range_values | range_transform(GetRawPtr) | range_transform(empire_property);
+            auto empire_props = context.Empires() | range_values | range_transform(to_raw_ptr)
+                | range_transform(empire_property);
             return std::accumulate(empire_props.begin(), empire_props.end(), 0);
         }
 

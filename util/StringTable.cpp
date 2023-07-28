@@ -3,6 +3,7 @@
 #include "Logger.h"
 #include "Directories.h"
 #include "../parse/Parse.h"
+#include "ranges.h"
 
 #include <boost/filesystem/fstream.hpp>
 #include <boost/xpressive/xpressive.hpp>
@@ -308,8 +309,7 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
         }
 
         // nonrecursively replace references -- convert [[type REF]] to <type REF>string for REF</type>
-        for ([[maybe_unused]] auto& [ignored_key, user_read_entry] : m_strings) {
-            (void)ignored_key;  // quiet unused variable warning
+        for (auto& user_read_entry : m_strings | range_values) {
             std::size_t position = 0; // position in the definition string, past the already processed part
             smatch match;
             while (regex_search(user_read_entry.begin() + position, user_read_entry.end(), match, REFERENCE)) {

@@ -357,8 +357,7 @@ std::unordered_map<std::string_view, std::set<std::string_view>> OptionsDB::Opti
     }
 
     // define which section are top level sections ("root"), move top level candidates with single option to misc
-    for (auto& [section_name, option_count] : total_options_per_section) {
-        (void)option_count; // quiet warning
+    for (const auto section_name : total_options_per_section | range_keys) {
         auto root_name = section_name.substr(0, section_name.find_first_of("."));
         // root_name with no dot element allowed to pass if an option is known, potentially moving to misc section
         auto total_it = total_options_per_section.find(root_name);
@@ -470,11 +469,8 @@ void OptionsDB::GetUsage(std::ostream& os, std::string_view command_line, bool a
     if (!command_line.empty()) {
         std::vector<std::string_view> option_list;
         if (command_line == "all" || command_line == "raw") {
-            for (const auto& [sec, opts] : options_by_section) {
-                (void)sec; // ignored
-                for (const auto& option : opts)
-                    option_list.push_back(option);
-            }
+            for (const auto& opts : options_by_section | range_values)
+                option_list.insert(option_list.end(), opts.begin(), opts.end());
         } else {
             auto option_section_it = options_by_section.find(command_line);
             if (option_section_it != options_by_section.end())
