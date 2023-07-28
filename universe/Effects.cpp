@@ -3875,9 +3875,7 @@ GenerateSitRepMessage::GenerateSitRepMessage(std::string message_string,
 {}
 
 void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
-    int recipient_id = ALL_EMPIRES;
-    if (m_recipient_empire_id)
-        recipient_id = m_recipient_empire_id->Eval(context);
+    const int recipient_id = m_recipient_empire_id ? m_recipient_empire_id->Eval(context) : ALL_EMPIRES;
 
     // track any ship designs used in message, which any recipients must be
     // made aware of so sitrep won't have errors
@@ -3924,7 +3922,7 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
 
         // add allies of specified empire
         if (recipient_id != ALL_EMPIRES) {
-            auto allies_rng = context.Empires() | range_keys | range_filter(not_recipient)
+            auto allies_rng = context.EmpireIDs() | range_filter(not_recipient)
                 | range_transform(to_id_status) | range_filter(are_allied) | range_keys;
             recipient_empire_ids.insert(allies_rng.begin(), allies_rng.end());
         }
@@ -3937,7 +3935,7 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
 
         // add empires at peace with the specified empire
         if (recipient_id != ALL_EMPIRES) {
-            auto peacey_rng = context.Empires() | range_keys | range_filter(not_recipient)
+            auto peacey_rng = context.EmpireIDs() | range_filter(not_recipient)
                 | range_transform(to_id_status) | range_filter(are_peacy) | range_keys;
             recipient_empire_ids.insert(peacey_rng.begin(), peacey_rng.end());
         }
@@ -3950,7 +3948,7 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
 
         // add enemies of specified empire
         if (recipient_id != ALL_EMPIRES) {
-            auto warring_rng = context.Empires() | range_keys | range_filter(not_recipient)
+            auto warring_rng = context.EmpireIDs() | range_filter(not_recipient)
                 | range_transform(to_id_status) | range_filter(are_warring) | range_keys;
             recipient_empire_ids.insert(warring_rng.begin(), warring_rng.end());
         }
@@ -3958,21 +3956,27 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
     }
 
     case EmpireAffiliationType::AFFIL_CAN_SEE: {
-        // evaluate condition
-        Condition::ObjectSet condition_matches;
-        if (m_condition)
-            condition_matches = m_condition->Eval(std::as_const(context));
+        if (!m_condition)
+            break;
+        const auto objs = m_condition->Eval(std::as_const(context)); // TODO: use lazy condition evaluation
+        const auto obj_ids_rng = objs | range_transform([](const auto* obj) { return obj->ID(); });
+        const auto& eov = context.empire_object_vis;
+
+        // can an empire see an object that matches the condition?
+        const auto can_see_any_obj_id = [obj_ids_rng, &eov](const auto empire_id) {
+            const auto eov_it = eov.find(empire_id);
+            if (eov_it == eov.end())
+                return false;
+            const auto can_see_obj_id = [&ov{eov_it->second}](const auto obj_id) {
+                const auto ov_it = ov.find(obj_id);
+                return ov_it != ov.end() && ov_it->second >= Visibility::VIS_BASIC_VISIBILITY;
+            };
+            return range_any_of(obj_ids_rng, can_see_obj_id);
+        };
 
         // add empires that can see any condition-matching object
-        for (const auto empire_id : context.Empires() | range_keys) {
-            for (auto* object : condition_matches) {
-                auto vis = context.ContextVis(object->ID(), empire_id);
-                if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
-                    recipient_empire_ids.insert(empire_id);
-                    break; // can move to the next empire, since this one has seen a matching object
-                }
-            }
-        }
+        auto empires_that_can_see_something = context.EmpireIDs() | range_filter(can_see_any_obj_id);
+        recipient_empire_ids.insert(empires_that_can_see_something.begin(), empires_that_can_see_something.end());
         break;
     }
 
@@ -3987,7 +3991,7 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
     case EmpireAffiliationType::AFFIL_ANY:
     default: {
         // add all empires
-        auto all_empires_rng = context.Empires() | range_keys;
+        const auto& all_empires_rng = context.EmpireIDs();
         recipient_empire_ids.insert(all_empires_rng.begin(), all_empires_rng.end());
         break;
     }
