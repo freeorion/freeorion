@@ -336,7 +336,7 @@ void ClientNetworking::Impl::LaunchNetworkThread(const ClientNetworking* const s
     m_socket.set_option(boost::asio::socket_base::keep_alive(true));
 
     DebugLogger(network) << "ConnectToServer() : starting networking thread";
-    boost::thread(boost::bind(&ClientNetworking::Impl::NetworkingThread, this, self->shared_from_this()));
+    boost::thread net_thread(boost::bind(&ClientNetworking::Impl::NetworkingThread, this, self->shared_from_this()));
 }
 
 
