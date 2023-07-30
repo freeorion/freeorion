@@ -74,3 +74,11 @@ jobs:
       - name: Upload binaries only
         if: ${{ inputs.weekly-deploy }}
         run: bash -c 'scp build/FreeOrion_*_Test_MacOSX_*.dmg o01eg@frs.sourceforge.net:/home/frs/project/freeorion/FreeOrion/Test/'
+      - name: Test
+        run: |
+          cd build
+          export PATH="$(pwd)/Release:/usr/local/opt/ccache/libexec:$PATH"
+          export DYLD_FALLBACK_LIBRARY_PATH="$(pwd)/dep/lib:$(pwd)/Release"
+          export DYLD_LIBRARY_PATH="$(pwd)/dep/lib:$(pwd)/Release:$DYLD_LIBRARY_PATH"
+          export
+          cmake --build . --config Release --target unittest --verbose
