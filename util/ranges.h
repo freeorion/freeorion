@@ -12,6 +12,7 @@ static constexpr auto& range_find_if = std::ranges::find_if;
 static constexpr auto& range_any_of = std::ranges::any_of;
 static constexpr auto& range_copy = std::ranges::copy;
 static constexpr auto& range_max_element = std::ranges::max_element;
+static constexpr auto& range_equal = std::ranges::equal_range;
 #else
 # include <boost/range/adaptor/map.hpp>
 # include <boost/range/adaptor/filtered.hpp>
@@ -30,6 +31,8 @@ template <typename... Args>
 inline auto range_copy(Args... args) { return boost::range::copy(args...); }
 template <typename... Args>
 inline auto range_max_element(Args... args) { return boost::range::max_element(args...); }
+template <typename... Args>
+inline auto range_equal(Args... args) { return boost::range::equal_range(args...); }
 #endif
 
 #endif
