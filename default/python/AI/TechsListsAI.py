@@ -10,6 +10,7 @@ from logging import debug, warning
 from typing import Union
 
 import AIDependencies as Dep
+from freeorion_tools import chat_human
 
 
 def unusable_techs():
@@ -682,11 +683,27 @@ class TechGroup5(TechGroup):
         )
 
 
+def _is_first_ai():
+    """
+    Return true if AI is first in list of AI.
+
+    This allows to report errors in chat only by a single AI.
+    """
+    ais = [x for x in fo.allPlayerIDs() if not fo.playerIsHost(x)]
+    return ais[0] == fo.playerID()
+
+
+def _report_tech_integrity_error(message):
+    if _is_first_ai():
+        chat_human(message, send_to_logs=False)
+    warning(message)
+
+
 def test_tech_integrity():
     """Check the TechGroups for integrity.
 
     Try to get all tech lists by querying all the TechGroups.
-    Any error is displayed in chat window.
+    Any error is displayed in chat window, before empire greetings.
     Also checks if all techs exist and displays error if invalid tech name encountered.
     """
     tech_groups = [
@@ -717,10 +734,10 @@ def test_tech_integrity():
         techs = this_group.get_techs()
         for tech in techs:
             if not fo.getTech(tech):
-                warning(f"In {group.__name__}: Tech {tech} seems not to exist!")
+                _report_tech_integrity_error(f"In {group.__name__}: Tech {tech} seems not to exist!")
                 error_occured = True
         for err in this_group.get_errors():
-            warning(err)
+            _report_tech_integrity_error(err)
             error_occured = True
         if not error_occured:
             debug("Seems to be OK!")
