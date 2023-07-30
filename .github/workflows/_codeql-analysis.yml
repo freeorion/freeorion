@@ -1,24 +1,7 @@
 name: "CodeQL C++"
 
 on:
-  push:
-    branches: [ 'master' ]
-  pull_request:
-    branches: [ 'master' ]
-    types: ['opened', 'reopened', 'synchronize']
-    paths-ignore:
-      - 'msvc*/**'
-      - 'check/**'
-      - 'doc/**'
-      - 'packaging/**'
-      - 'snap/**'
-      - '*.md'
-      - 'check/**'
-      - 'default/**'
-      - 'test-scripting/**'
-      - '.github/ISSUE_TEMPLATE/**'
-      - "pyproject.toml"
-      - ".pre-commit-config.yaml"
+  workflow_call:
 jobs:
   analyze:
     name: Analyze

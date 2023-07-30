@@ -2,21 +2,6 @@ name: "Build master"
 on:
   push:
     branches: [ 'master' ]
-    paths-ignore:
-      - 'msvc*/**'
-      - 'check/**'
-      - 'doc/**'
-      - 'packaging/**'
-      - 'snap/**'
-      - '*.md'
-      - 'check/**'
-      - 'test-scripting/data/**'
-      - 'test-scripting/python/**'
-      - 'test-scripting/shaders/**'
-      - 'test-scripting/scripting/focs/**'
-      - '.github/ISSUE_TEMPLATE/**'
-      - "pyproject.toml"
-      - ".pre-commit-config.yaml"
 jobs:
   android:
     uses: ./.github/workflows/_build-android.yml
@@ -37,3 +22,11 @@ jobs:
     uses: ./.github/workflows/_build-docker.yml
   snapcraft:
     uses: ./.github/workflows/_build_snapcraft.yml
+  code-ql:
+    uses: ./.github/workflows/_codeql-analysis.yml
+  lint-py-focs:
+    uses: ./.github/workflows/_lint_py_focs.yml
+  lint-python:
+    uses: ./.github/workflows/_lint-python.yml
+  lint-string-tables:
+    uses: ./.github/workflows/_lint_string-tables.yml
