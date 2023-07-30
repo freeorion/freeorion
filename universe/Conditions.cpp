@@ -9541,6 +9541,8 @@ bool ResourceSupplyConnectedByEmpire::operator==(const Condition& rhs) const {
 }
 
 namespace {
+    constexpr auto not_null = [](const auto* o) -> bool { return o; };
+
     struct ResourceSupplySimpleMatch {
         ResourceSupplySimpleMatch(int empire_id, const ObjectSet& from_objects,
                                   const ObjectMap& objects, const SupplyManager& supply) :
@@ -9576,7 +9578,7 @@ namespace {
                 if (candidate_planet) {
                     int candidate_planet_id = candidate_planet->ID();
                     // can only match if the from_object is (or is on) the same planet
-                    for (const auto* from_object : m_from_objects) {
+                    for (const auto* from_object : m_from_objects | range_filter(not_null)) {
                         const auto* from_obj_planet = from_object->ObjectType() == UniverseObjectType::OBJ_PLANET ?
                             static_cast<const ::Planet*>(from_object) : nullptr;
                         if (!from_obj_planet && from_object->ObjectType() == UniverseObjectType::OBJ_BUILDING) {

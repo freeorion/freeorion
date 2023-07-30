@@ -25,7 +25,7 @@
 #include "../util/Random.h"
 #include "../util/SitRepEntry.h"
 #include "../util/i18n.h"
-
+#include "../util/ranges.h"
 
 namespace {
     DeclareThreadSafeLogger(effects);
@@ -2662,15 +2662,23 @@ AddStarlanes::AddStarlanes(std::unique_ptr<Condition::Condition>&& other_lane_en
     m_other_lane_endpoint_condition(std::move(other_lane_endpoint_condition))
 {}
 
+namespace {
+    constexpr auto not_null = [](const auto* o) -> bool { return o; };
+}
+
 void AddStarlanes::Execute(ScriptingContext& context) const {
+    const auto to_system = [&context](UniverseObject* o) -> System* {
+        if (o->ObjectType() == UniverseObjectType::OBJ_SYSTEM)
+            return static_cast<System*>(o);
+        return context.ContextObjects().getRaw<System>(o->SystemID()); // may be nullptr
+    };
+
     // get target system
     if (!context.effect_target) {
         ErrorLogger(effects) << "AddStarlanes::Execute passed no target object";
         return;
     }
-    auto target_system = dynamic_cast<System*>(context.effect_target);
-    if (!target_system)
-        target_system = context.ContextObjects().getRaw<System>(context.effect_target->SystemID());
+    auto* target_system = to_system(context.effect_target);
     if (!target_system)
         return; // nothing to do!
 
@@ -2685,17 +2693,13 @@ void AddStarlanes::Execute(ScriptingContext& context) const {
     // get systems containing at least one endpoint object
     std::vector<System*> endpoint_systems;
     endpoint_systems.reserve(endpoint_objects.size());
-    for (auto endpoint_object : endpoint_objects) {
-        auto endpoint_system = dynamic_cast<System*>(endpoint_object);
-        if (!endpoint_system)
-            endpoint_system = context.ContextObjects().getRaw<System>(endpoint_object->SystemID());
-        if (!endpoint_system)
-            continue;
-        endpoint_systems.push_back(endpoint_system);
-    }
+    auto end_sys_rng = endpoint_objects | range_filter(not_null)
+        | range_transform(to_system) | range_filter(not_null);
+    range_copy(end_sys_rng, std::back_inserter(endpoint_systems));
+
     // ensure uniqueness of results
     std::sort(endpoint_systems.begin(), endpoint_systems.end());
-    auto it = std::unique(endpoint_systems.begin(), endpoint_systems.end());
+    const auto it = std::unique(endpoint_systems.begin(), endpoint_systems.end());
     endpoint_systems.resize(std::distance(endpoint_systems.begin(), it));
 
     // add starlanes from target to endpoint systems
