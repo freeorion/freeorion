@@ -8,6 +8,7 @@ jobs:
     name: ${{ matrix.os }} with ${{ matrix.compiler }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-22.04]
         compiler: [gcc, clang]
