@@ -249,7 +249,7 @@ public:
     SpeciesManager() = default;
     // extracts and moves homeworlds, opinions, populations, and destroyed
     // counts, but not species or census or pending
-    SpeciesManager& operator=(SpeciesManager&& rhs);
+    SpeciesManager& operator=(SpeciesManager&& rhs) noexcept;
 
     /** returns the species with the name \a name; you should use the
       * free function GetSpecies() instead, mainly to save some typing. */

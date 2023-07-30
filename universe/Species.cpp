@@ -580,7 +580,7 @@ uint32_t Species::GetCheckSum() const {
 /////////////////////////////////////////////////
 // SpeciesManager                              //
 /////////////////////////////////////////////////
-SpeciesManager& SpeciesManager::operator=(SpeciesManager&& rhs) {
+SpeciesManager& SpeciesManager::operator=(SpeciesManager&& rhs) noexcept {
     // intentionally not moving m_pending_types, m_species, or m_census_order
     // as these are parsed once
 
