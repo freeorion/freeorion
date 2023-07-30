@@ -102,28 +102,39 @@ namespace {
             return nullptr;
         }
 
-        while (first != last) {
+        while (obj && first != last) {
             std::string_view property_name = *first;
             if (property_name == "Planet") {
-                if (obj->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
-                    auto b = static_cast<const Building*>(obj);
+                if (obj->ObjectType() == UniverseObjectType::OBJ_BUILDING) [[likely]] {
+                    const auto b = static_cast<const Building*>(obj);
                     obj = context.ContextObjects().getRaw<Planet>(b->PlanetID());
                 } else {
                     ErrorLogger() << "FollowReference : object not a building, so can't get its planet.";
-                    obj = nullptr;
+                    return nullptr;
                 }
+                if (!obj) {
+                    ErrorLogger() << "FollowReference : Unable to get planet for building";
+                    return nullptr;
+                }
+
             } else if (property_name == "System") {
-                if (obj)
-                    obj = context.ContextObjects().getRaw<System>(obj->SystemID());
-                if (!obj)
+                obj = context.ContextObjects().getRaw<System>(obj->SystemID());
+                if (!obj) {
                     ErrorLogger() << "FollowReference : Unable to get system for object";
+                    return nullptr;
+                }
+
             } else if (property_name == "Fleet") {
-                if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP) {
-                    auto s = static_cast<const Ship*>(obj);
+                if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP) [[likely]] {
+                    const auto s = static_cast<const Ship*>(obj);
                     obj = context.ContextObjects().getRaw<Fleet>(s->FleetID());
                 } else {
                     ErrorLogger() << "FollowReference : object not a ship, so can't get its fleet";
-                    obj = nullptr;
+                    return nullptr;
+                }
+                if (!obj) {
+                    ErrorLogger() << "FollowReference : Unable to get fleet for ship";
+                    return nullptr;
                 }
             }
             ++first;
@@ -168,34 +179,37 @@ namespace {
             retval += UserString(to_string(obj->ObjectType())) + " "
                     + std::to_string(obj->ID()) + " ( " + obj->Name() + " ) ";
             initial_obj = obj;
+        } else {
+            retval += "(no object)";
         }
         retval += " | ";
 
         auto first = property_name.begin();
         const auto last = property_name.end();
-        while (first != last) {
+        while (obj && first != last) {
             std::string property_name_part = *first;
             retval.append(" ").append(property_name_part).append(" ");
             if (property_name_part == "Planet") {
                 if (obj->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
-                    auto b = static_cast<const Building*>(obj);
+                    const auto b = static_cast<const Building*>(obj);
                     retval.append("(").append(std::to_string(b->PlanetID())).append("): ");
                     obj = context.ContextObjects().getRaw<Planet>(b->PlanetID());
                 } else {
                     obj = nullptr;
                 }
+
             } else if (property_name_part == "System") {
-                if (obj) {
-                    retval.append("(").append(std::to_string(obj->SystemID())).append("): ");
-                    obj = context.ContextObjects().getRaw<System>(obj->SystemID());
-                }
+                retval.append("(").append(std::to_string(obj->SystemID())).append("): ");
+                obj = context.ContextObjects().getRaw<System>(obj->SystemID());
+
             } else if (property_name_part == "Fleet") {
                 if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP) {
-                    auto s = static_cast<const Ship*>(obj);
+                    const auto s = static_cast<const Ship*>(obj);
                     retval.append("(").append(std::to_string(s->FleetID())).append("): ");
                     obj = context.ContextObjects().getRaw<Fleet>(s->FleetID());
-                } else
+                } else {
                     obj = nullptr;
+                }
             }
 
             ++first;
