@@ -190,8 +190,8 @@ NO_OFFENSE_TROOPS = [
         stackinggroup="NO_OFFENSIVE_TROOPS_STACK",
         accountinglabel="NO_OFFENSIVE_TROOPS_LABEL",
         effects=[
-            SetCapacity(partname="GT_TROOP_POD", value=Value * 0),  # float is not yet supported
-            SetCapacity(partname="GT_TROOP_POD_2", value=Value * 0),  # float is not yet supported
+            SetCapacity(partname="GT_TROOP_POD", value=0.0),
+            SetCapacity(partname="GT_TROOP_POD_2", value=0.0),
         ],
     )
 ]
@@ -204,7 +204,6 @@ BAD_DEFENSE_TROOPS = [
         scope=IsSource,
         activation=Planet(),
         effects=SetMaxTroops(value=Value * 0.5),
-        # accountinglabel="BAD_TROOPS_LABEL",
     ),
     *UNSTABLE_REBEL_TROOPS,
     *PROTECTION_FOCUS_TROOPS,
@@ -250,7 +249,6 @@ GOOD_DEFENSE_TROOPS = [
         scope=IsSource,
         activation=Planet(),
         effects=SetMaxTroops(value=Value * 1.5),
-        accountinglabel="GOOD_TROOPS_LABEL",
     ),
     *UNSTABLE_REBEL_TROOPS,
     *PROTECTION_FOCUS_TROOPS,
@@ -263,7 +261,6 @@ ULTIMATE_DEFENSE_TROOPS = [
         scope=IsSource,
         activation=Planet(),
         effects=SetMaxTroops(value=Value * 3),
-        accountinglabel="ULTIMATE_TROOPS_LABEL",
     ),
     *UNSTABLE_REBEL_TROOPS,
     *PROTECTION_FOCUS_TROOPS,
