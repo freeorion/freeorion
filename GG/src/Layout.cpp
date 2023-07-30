@@ -317,11 +317,11 @@ void Layout::DoLayout(Pt ul, Pt lr)
     for (std::size_t i = 0; i < m_row_params.size(); ++i) {
         if (larger_than_min) {
             if (i < m_row_params.size() - 1) {
-                double raw_width =
+                float raw_width =
                     m_row_params[i].effective_min +
                     (total_stretch ?
                      space_per_unit_stretch * m_row_params[i].stretch :
-                     total_stretch_space / static_cast<double>(m_row_params.size()));
+                     total_stretch_space / static_cast<float>(m_row_params.size()));
                 int int_raw_width = static_cast<int>(raw_width);
                 m_row_params[i].current_width = int_raw_width;
                 remainder += raw_width - int_raw_width;

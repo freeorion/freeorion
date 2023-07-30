@@ -25,17 +25,17 @@ using namespace GG;
 HueSaturationPicker::HueSaturationPicker(X x, Y y, X w, Y h) :
     Control(x, y, w, h, INTERACTIVE)
 {
-    static constexpr int SAMPLES = 100;
-    static constexpr double INCREMENT = 1.0 / (SAMPLES + 1);
+    static constexpr std::size_t SAMPLES = 100u;
+    static constexpr double INCREMENT = 1.0 / (SAMPLES + 1u);
     static constexpr double VALUE = 1.0;
     m_vertices.resize(SAMPLES, std::vector<std::pair<double, double>>(2 * (SAMPLES + 1)));
     m_colors.resize(SAMPLES, std::vector<Clr>(2 * (SAMPLES + 1)));
-    for (int col = 0; col < SAMPLES; ++col) {
-        for (int row = 0; row < SAMPLES + 1; ++row) {
-            m_vertices[col][2 * row] =      {col * INCREMENT, row * INCREMENT};
-            m_vertices[col][2 * row + 1] =  {(col + 1) * INCREMENT, row * INCREMENT};
-            m_colors[col][2 * row] =        HSVClr(col * INCREMENT, 1.0 - row * INCREMENT, VALUE);
-            m_colors[col][2 * row + 1] =    HSVClr((col + 1) * INCREMENT, 1.0 - row * INCREMENT, VALUE);
+    for (std::size_t col = 0u; col < SAMPLES; ++col) {
+        for (std::size_t row = 0u; row < SAMPLES + 1; ++row) {
+            m_vertices[col][2*row] =     {col * INCREMENT, row * INCREMENT};
+            m_vertices[col][2*row + 1] = {(col + 1) * INCREMENT, row * INCREMENT};
+            m_colors[col][2*row] =       HSVClr(col * INCREMENT, 1.0 - row * INCREMENT, VALUE);
+            m_colors[col][2*row + 1] =   HSVClr((col + 1) * INCREMENT, 1.0 - row * INCREMENT, VALUE);
         }
     }
 }

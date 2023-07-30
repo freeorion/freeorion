@@ -18,7 +18,8 @@ using namespace GG;
 
 namespace {
 
-constexpr double PI = 3.141594; // probably intentionally slightly more than Pi
+constexpr double PI = 3.141594; // intentionally slightly more than Pi
+constexpr double twoPI = 2*PI;
 constexpr float SQRT2OVER2 = 0.70710678118654757274f; //std::sqrt(2.0) / 2.0;
 
 /// a stack of the currently-active clipping rects, in GG coordinates, not OpenGL scissor coordinates
@@ -202,16 +203,16 @@ void BubbleArc(Pt ul, Pt lr, Clr color1, Clr color2, Clr color3, double theta1, 
 
     // correct theta* values to range [0, 2pi)
     if (theta1 < 0)
-        theta1 += (int(-theta1 / (2 * PI)) + 1) * 2 * PI;
-    else if (theta1 >= 2 * PI)
-        theta1 -= int(theta1 / (2 * PI)) * 2 * PI;
+        theta1 += (int(-theta1 / twoPI) + 1) * twoPI;
+    else if (theta1 >= twoPI)
+        theta1 -= int(theta1 / twoPI) * twoPI;
     if (theta2 < 0)
-        theta2 += (int(-theta2 / (2 * PI)) + 1) * 2 * PI;
-    else if (theta2 >= 2 * PI)
-        theta2 -= int(theta2 / (2 * PI)) * 2 * PI;
+        theta2 += (int(-theta2 / twoPI) + 1) * twoPI;
+    else if (theta2 >= twoPI)
+        theta2 -= int(theta2 / twoPI) * twoPI;
 
     const int      SLICES = std::min(3 + std::max(Value(wd), Value(ht)), 50);  // this is a good guess at how much to tesselate the circle coordinates (50 segments max)
-    const double   HORZ_THETA = (2 * PI) / SLICES;
+    const double   HORZ_THETA = twoPI / SLICES;
 
     auto& unit_vertices = unit_circle_coords[SLICES];
     auto& colors = color_arrays[SLICES];
@@ -277,35 +278,35 @@ void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
 
     // correct theta* values to range [0, 2pi)
     if (theta1 < 0)
-        theta1 += (int(-theta1 / (2 * PI)) + 1) * 2 * PI;
-    else if (theta1 >= 2 * PI)
-        theta1 -= int(theta1 / (2 * PI)) * 2 * PI;
+        theta1 += (int(-theta1 / twoPI) + 1) * twoPI;
+    else if (theta1 >= twoPI)
+        theta1 -= int(theta1 / twoPI) * twoPI;
     if (theta2 < 0)
-        theta2 += (int(-theta2 / (2 * PI)) + 1) * 2 * PI;
-    else if (theta2 >= 2 * PI)
-        theta2 -= int(theta2 / (2 * PI)) * 2 * PI;
+        theta2 += (int(-theta2 / twoPI) + 1) * twoPI;
+    else if (theta2 >= twoPI)
+        theta2 -= int(theta2 / twoPI) * twoPI;
 
-    const int SLICES = std::min(3 + std::max(Value(wd), Value(ht)), 50);  // this is a good guess at how much to tesselate the circle coordinates (50 segments max)
-    const double HORZ_THETA = (2 * PI) / SLICES;
+    const std::size_t SLICES = std::min(3 + std::max(Value(wd), Value(ht)), 50);  // this is a good guess at how much to tesselate the circle coordinates (50 segments max)
+    const double HORZ_THETA = twoPI / SLICES;
 
     auto& unit_vertices = unit_circle_coords[SLICES];
     auto& colors = color_arrays[SLICES];
-    if (unit_vertices.size() == 0) {
-        unit_vertices.resize(2 * (SLICES + 1), 0.0);
+    if (unit_vertices.size() == 0) { // no .empty() apparently?
+        unit_vertices.resize(2u * (SLICES + 1), 0.0);
         double theta = 0.0f;
-        for (int j = 0; j <= SLICES; theta += HORZ_THETA, ++j) { // calculate x,y values for each point on a unit circle divided into SLICES arcs
+        for (std::size_t j = 0; j <= SLICES; theta += HORZ_THETA, ++j) { // calculate x,y values for each point on a unit circle divided into SLICES arcs
             unit_vertices[j*2] = cos(-theta);
             unit_vertices[j*2+1] = sin(-theta);
         }
         colors.resize(SLICES + 1, Clr()); // create but don't initialize (this is essentially just scratch space, since the colors are different call-to-call)
     }
-    int first_slice_idx = int(theta1 / HORZ_THETA + 1);
+    const int first_slice_idx = int(theta1 / HORZ_THETA + 1);
     int last_slice_idx = int(theta2 / HORZ_THETA - 1);
     if (theta1 >= theta2)
         last_slice_idx += SLICES;
-    for (int j = first_slice_idx; j <= last_slice_idx; ++j) { // calculate the color value for each needed point
-        int X = (j > SLICES ? (j - SLICES) : j) * 2, Y = X + 1;
-        double color_scale_factor = (SQRT2OVER2 * (unit_vertices[X] + unit_vertices[Y]) + 1) / 2; // this is essentially the dot product of (x,y) with (sqrt2over2,sqrt2over2), the direction of the light source, scaled to the range [0,1]
+    for (std::size_t j = first_slice_idx; j <= last_slice_idx; ++j) { // calculate the color value for each needed point
+        std::size_t X = (j > SLICES ? (j - SLICES) : j) * 2, Y = X + 1; // confusing use of operator ,
+        const double color_scale_factor = (SQRT2OVER2 * (unit_vertices[X] + unit_vertices[Y]) + 1) / 2; // this is essentially the dot product of (x,y) with (sqrt2over2,sqrt2over2), the direction of the light source, scaled to the range [0,1]
         colors[j] = BlendClr(border_color1, border_color2, color_scale_factor);
     }
 

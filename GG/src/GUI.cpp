@@ -79,7 +79,7 @@ void WriteWndToPNG(const Wnd* wnd, const std::string& filename)
     const Pt ul = wnd->UpperLeft();
     const Pt size = wnd->Size();
 
-    std::vector<GLubyte> bytes(Value(size.x) * Value(size.y) * 4);
+    std::vector<GLubyte> bytes(static_cast<std::size_t>(Value(size.x) * Value(size.y) * 4));
 
     glFinish();
 

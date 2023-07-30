@@ -115,7 +115,7 @@ struct IndexedStringBegin
 };
 struct IndexedStringEnd
 {
-    IndexedStringEnd(const std::shared_ptr<std::vector<std::string>>& strings) noexcept :
+    IndexedStringEnd(std::shared_ptr<std::vector<std::string>> strings) noexcept :
         m_strings(std::move(strings))
     {}
 
