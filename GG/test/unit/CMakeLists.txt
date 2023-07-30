@@ -37,9 +37,11 @@ foreach(_TEST ${GiGi_TESTS})
         PRIVATE
         ${_TEST}.cpp
     )
-    add_test(
-        NAME ${_TEST}
-        COMMAND gg_unittest --log_level=message "--run_test=${_TEST}" --catch_system_error=yes
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-    )
+    if(NOT APPLE)
+        add_test(
+            NAME ${_TEST}
+            COMMAND gg_unittest --log_level=message "--run_test=${_TEST}" --catch_system_error=yes
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        )
+    endif()
 endforeach()

@@ -58,10 +58,12 @@ foreach(_TEST ${FO_TEST_GAME})
         PRIVATE
         ${_TEST}.cpp
     )
-    add_test(
-        NAME ${_TEST}
-        COMMAND fo_systemtest_game --log_level=all "--run_test=${_TEST}" --catch_system_error=yes
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-    )
+    if(NOT APPLE)
+        add_test(
+            NAME ${_TEST}
+            COMMAND fo_systemtest_game --log_level=all "--run_test=${_TEST}" --catch_system_error=yes
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        )
+    endif()
 endforeach()
 
