@@ -185,7 +185,7 @@ void ResourcePool::Update(const ObjectMap& objects) {
 
     // sum the resource production for object groups, and store the total
     // group production, indexed by group of object ids
-    for (const auto& group_objects_and_ids : system_groups_to_object_groups | range_values) {
+    for (auto& group_objects_and_ids : system_groups_to_object_groups | range_values) {
         auto& [object_group, object_ids] = group_objects_and_ids;
 
         float total_group_output =

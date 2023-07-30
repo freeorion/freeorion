@@ -590,7 +590,7 @@ bool ServerFSM::EstablishPlayer(PlayerConnectionPtr player_connection,
     }
 
     // disconnect "ghost" connection after establishing new
-    for (const auto& conn : to_disconnect)
+    for (auto& conn : to_disconnect)
         m_server.Networking().Disconnect(std::move(conn));
 
     return client_type != Networking::ClientType::INVALID_CLIENT_TYPE;
@@ -2151,7 +2151,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
     TraceLogger(FSM) << "(ServerFSM) WaitingForSPGameJoiners.JoinGame";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
-    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
+    auto& player_connection = msg.m_player_connection;
 
     std::string player_name("Default_Player_Name_in_WaitingForSPGameJoiners::react(const JoinGame& msg)");
     Networking::ClientType client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
@@ -2323,7 +2323,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
     // to MPLobby or ShuttingDownServer gets context before disconnection
     ServerFSM& fsm = context<ServerFSM>();
     const Message& message = msg.m_message;
-    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
+    auto& player_connection = msg.m_player_connection;
 
     std::string player_name("Default_Player_Name_in_WaitingForMPGameJoiners::react(const JoinGame& msg)");
     Networking::ClientType client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
@@ -2459,7 +2459,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
             }
         }
 
-        fsm.EstablishPlayer(std::move(player_connection), std::move(new_player_name), client_type,
+        fsm.EstablishPlayer(player_connection, std::move(new_player_name), client_type,
                             std::move(client_version_string), roles);
     } else {
         ErrorLogger(FSM) << "WaitingForMPGameJoiners::react(const JoinGame& msg): Received JoinGame message with invalid client type: " << client_type;
@@ -2518,7 +2518,7 @@ sc::result WaitingForMPGameJoiners::react(const AuthResponse& msg) {
                 to_disconnect.push_back(*it);
             }
         }
-        for (const auto& conn : to_disconnect)
+        for (auto& conn : to_disconnect)
             server.Networking().Disconnect(std::move(conn));
 
         // expected human player

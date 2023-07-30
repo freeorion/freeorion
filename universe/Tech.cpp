@@ -32,7 +32,7 @@ namespace {
 namespace {
     // returns techs in \a techs that are not in \a researched_techs
     // and of which all prereqs are in \a researched_techs
-    auto NextTechs(const std::vector<std::string_view> researched_techs, const TechManager::TechContainer& techs) {
+    auto NextTechs(std::vector<std::string_view> researched_techs, const TechManager::TechContainer& techs) {
         const auto is_researched = [rt{std::move(researched_techs)}](const auto& tech)
         { return std::find(rt.begin(), rt.end(), tech) != rt.end(); };
 

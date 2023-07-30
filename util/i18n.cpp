@@ -399,7 +399,7 @@ std::vector<std::string> UserStringList(const std::string& key) {
     // split big string into newline-separated substrings strings
     std::string item;
     while (std::getline(template_stream, item))
-        result.push_back(std::move(item));
+        result.push_back(item);
     return result;
 }
 

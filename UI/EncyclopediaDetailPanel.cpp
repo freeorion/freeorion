@@ -1276,7 +1276,7 @@ namespace {
         futures.reserve(sorted_entries.size());
 
         for (auto& [readable_article_name, link_key] : sorted_entries) {
-            const auto& [link_text, key] = link_key;
+            auto& [link_text, key] = link_key;
 
             if (!utf8::is_valid(readable_article_name.begin(), readable_article_name.end())) {
                 ErrorLogger() << "GetSubDirs invalid article name: " << readable_article_name
@@ -1292,7 +1292,7 @@ namespace {
                                          key, exclude_custom_categories_from_dir_name, depth));
 
             retval.emplace(std::pair{key, dir_name}, // don't move from key as it's viewed by the above future
-                           std::pair{std::string{readable_article_name}, std::move(link_text)});
+                           std::pair{std::move(readable_article_name), std::move(link_text)});
         }
 
         for (auto& fut : futures)
