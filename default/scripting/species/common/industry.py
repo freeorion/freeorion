@@ -65,7 +65,7 @@ BAD_INDUSTRY = [
     EffectsGroup(
         description="BAD_INDUSTRY_DESC",
         scope=IsSource,
-        activation=Planet() & TargetIndustry(low=0) & Happiness(low=0) and Focus(type=["FOCUS_INDUSTRY"]),
+        activation=Planet() & TargetIndustry(low=0) & Happiness(low=0) & Focus(type=["FOCUS_INDUSTRY"]),
         accountinglabel="BAD_INDUSTRY_LABEL",
         priority=TARGET_SCALING_PRIORITY,
         effects=SetTargetIndustry(
