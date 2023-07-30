@@ -520,7 +520,7 @@ std::shared_ptr<Texture> TextureManager::StoreTexture(Texture* texture, std::str
 std::shared_ptr<Texture> TextureManager::StoreTexture(std::shared_ptr<Texture> texture, std::string texture_name)
 {
     std::scoped_lock lock(m_texture_access_guard);
-    m_textures[std::move(texture_name)] = std::move(texture);
+    m_textures[std::move(texture_name)] = texture;
     return texture;
 }
 

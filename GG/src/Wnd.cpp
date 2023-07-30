@@ -514,7 +514,7 @@ void Wnd::InstallEventFilter(std::shared_ptr<Wnd> wnd)
         return;
     RemoveEventFilter(wnd);
 
-    m_filters.emplace_back(std::move(wnd));
+    m_filters.push_back(wnd);
     wnd->m_filtering.insert(shared_from_this());
 }
 
