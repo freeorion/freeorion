@@ -693,6 +693,8 @@ void ProductionQueue::Update(const ScriptingContext& context,
             } else {
                 // system is in this group.
                 const auto& group = group_it->first;
+                static_assert(std::is_same_v<std::decay_t<decltype(group)>, int_flat_set>,
+                              "make sure industry_resource_pool.Output() contains ordered container / is sorted for use of ordered_unique_range below");
                 retval.emplace_back(boost::container::ordered_unique_range, group.begin(), group.end());
             }
         }
