@@ -40,6 +40,16 @@ namespace {
 #endif
 }
 
+namespace {
+    // workaround for eg. boost::unordered_set not having a contains method before Boost 1.79
+    inline bool contains(const auto& container, const auto& key) {
+        if constexpr (requires { container.contains(key); })
+            return container.contains(key);
+        else
+            return container.find(key) != container.end();
+    }
+}
+
 ////////////////////////////////////////////////
 // CombatInfo
 ////////////////////////////////////////////////
@@ -69,9 +79,10 @@ CombatInfo::CombatInfo(int system_id_, int turn_,
     auto ships = universe_mutable_in.Objects().find<Ship>(system->ShipIDs());
     auto planets = universe_mutable_in.Objects().find<Planet>(system->PlanetIDs());
 
+    const auto is_destroyed = [this](int id) { return contains(destroyed_object_ids, id); };
 
     // add system to objects in combat
-    objects.insert(std::move(system), destroyed_object_ids.contains(system_id));
+    objects.insert(std::move(system), is_destroyed(system_id));
 
     // find ships and their owners in system
     for (auto& ship : ships) {
@@ -79,7 +90,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_,
         empire_ids.insert(ship->Owner());
         // add ships to objects in combat
         const int ship_id = ship->ID();
-        objects.insert(std::move(ship), destroyed_object_ids.contains(ship_id));
+        objects.insert(std::move(ship), is_destroyed(ship_id));
     }
 
     // find planets and their owners in system
@@ -89,7 +100,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_,
             empire_ids.insert(planet->Owner());
         // add planets to objects in combat
         const int planet_id = planet->ID();
-        objects.insert(std::move(planet), destroyed_object_ids.contains(planet_id));
+        objects.insert(std::move(planet), is_destroyed(planet_id));
     }
 
     InitializeObjectVisibility();
@@ -937,7 +948,7 @@ namespace {
 
             } else if (part_class == ShipPartClass::PC_FIGHTER_HANGAR) {
                 // hangar max-capacity-modification effects stack, so only add capacity for each hangar type once
-                if (!seen_hangar_ship_parts.contains(part_name)) {
+                if (!contains(seen_hangar_ship_parts, part_name)) {
                     available_fighters += static_cast<int>(ship->CurrentPartMeterValue(MeterType::METER_CAPACITY, part_name));
                     seen_hangar_ship_parts.insert(part_name);
 
@@ -997,7 +1008,7 @@ namespace {
             for (const auto* ship : combat_info.objects.findRaw<Ship>(attacker_ids)) { // TODO: check_if_any
                 if (!ship)
                     continue;   // discard invalid ship references
-                if (combat_info.destroyed_object_ids.contains(ship->ID()))
+                if (contains(combat_info.destroyed_object_ids, ship->ID()))
                     continue;   // destroyed objects can't launch fighters
 
                 auto weapons = ShipWeaponsStrengths(ship, combat_info.universe);
@@ -1083,7 +1094,7 @@ namespace {
                 const int new_id = next_fighter_id--;
                 fighter_ptr->SetID(new_id);
                 fighter_ptr->Rename(std::move(fighter_name));
-                combat_info.objects.insert(std::move(fighter_ptr), combat_info.destroyed_object_ids.contains(new_id));
+                combat_info.objects.insert(std::move(fighter_ptr), contains(destroyed_object_ids, new_id));
                 retval.push_back(new_id);
 
                 // add fighter to attackers (if it can attack)
@@ -1130,7 +1141,7 @@ namespace {
 
             for (const auto* obj : combat_info.objects.allRaw()) { // TODO: rangify
                 // Check if object is already noted as destroyed; don't need to re-record this
-                if (destroyed_object_ids.contains(obj->ID()))
+                if (contains(destroyed_object_ids, obj->ID()))
                     continue;
                 // Check if object is destroyed and update lists if yes
                 if (!CheckDestruction(obj))
@@ -1173,7 +1184,7 @@ namespace {
         /// Checks if target is destroyed and if it is, update lists of living objects.
         /// Return true if is incapacitated
         bool CheckDestruction(const UniverseObject* target) {
-            int target_id = target->ID();
+            const int target_id = target->ID();
             // check for destruction of target object
 
             if (target->ObjectType() == UniverseObjectType::OBJ_FIGHTER) {
@@ -1214,7 +1225,7 @@ namespace {
 
             } else if (target->ObjectType() == UniverseObjectType::OBJ_PLANET) {
                 if (!ObjectCanAttack(target, ScriptingContext{combat_info}) &&
-                    valid_attacker_object_ids.contains(target_id))
+                    contains(valid_attacker_object_ids, target_id))
                 {
                     DebugLogger(combat) << "!! Target Planet " << target_id << " knocked out, can no longer attack";
                     // remove disabled planet's ID from lists of valid attackers
@@ -1230,7 +1241,7 @@ namespace {
                     // before it has been attacked then it can wrongly get regen
                     // on the next turn, so check that it has been attacked
                     // before excluding it from any remaining battle
-                    if (!combat_info.damaged_object_ids.contains(target_id)) {
+                    if (!contains(combat_info.damaged_object_ids, target_id)) {
                         DebugLogger(combat) << "!! Planet " << target_id << " has not yet been attacked, "
                                             << "so will not yet be removed from battle, despite being essentially incapacitated";
                         return false;
@@ -1260,7 +1271,7 @@ namespace {
                 empire_ids_with_objects.insert(obj->Owner());
 
             for (const auto empire_id : empire_infos | range_keys) {
-                if (!empire_ids_with_objects.contains(empire_id)) {
+                if (!contains(empire_ids_with_objects, empire_id)) {
                     temp.erase(empire_id);
                     DebugLogger(combat) << "No objects left for empire with id: " << empire_id;
                 }
@@ -1413,7 +1424,7 @@ namespace {
     void AddObjects(ObjectMap& obj_map, Effect::TargetSet& into_set, const auto& exclude_ids) {
         using MapPair = typename ObjectMap::container_type<const UniverseObject>::value_type;
         auto objs = obj_map.findRaw([&exclude_ids](const MapPair& id_obj)
-                                    { return !exclude_ids.contains(id_obj.first); });
+                                    { return !contains(exclude_ids, id_obj.first); });
         into_set.reserve(into_set.size() + objs.size());
         into_set.insert(into_set.end(), objs.begin(), objs.end());
     }
