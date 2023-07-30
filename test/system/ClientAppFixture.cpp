@@ -16,7 +16,6 @@
 #include <boost/test/unit_test.hpp>
 
 ClientAppFixture::ClientAppFixture() :
-    m_game_started(false),
     m_cookie(boost::uuids::nil_uuid())
 {
     InitDirs(boost::unit_test::framework::master_test_suite().argv[0]);

@@ -24,14 +24,14 @@ public:
 
     int EffectsProcessingThreads() const override;
 protected:
-    bool                 m_game_started;   ///< Is server started the game?
-    std::set<int>        m_ai_empires;     ///< Ids of AI empires in game.
-    std::set<int>        m_ai_waiting;     ///< Ids of AI empires not yet send orders.
-    bool                 m_turn_done;      ///< Is server processed turn?
-    bool                 m_save_completed; ///< Is server saved game?
-    boost::uuids::uuid   m_cookie;         ///< Cookie from server login.
-    bool                 m_lobby_updated;  ///< Did player get updated lobby.
-    MultiplayerLobbyData m_lobby_data;     ///< Lobby data.
+    std::set<int>        m_ai_empires;             ///< Ids of AI empires in game.
+    std::set<int>        m_ai_waiting;             ///< Ids of AI empires not yet send orders.
+    boost::uuids::uuid   m_cookie;                 ///< Cookie from server login.
+    MultiplayerLobbyData m_lobby_data;             ///< Lobby data.
+    bool                 m_lobby_updated = false;  ///< Did player get updated lobby.
+    bool                 m_game_started = false;   ///< Is server started the game?
+    bool                 m_turn_done = false;      ///< Is server processed turn?
+    bool                 m_save_completed = false; ///< Is server saved game?
 };
 
 constexpr static int MAX_WAITING_SEC = 120;
