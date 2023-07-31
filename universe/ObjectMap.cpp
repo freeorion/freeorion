@@ -272,12 +272,13 @@ std::shared_ptr<UniverseObject> ObjectMap::erase(int id) {
     if (it == m_objects.end())
         return nullptr;
 
-    // object found, so store pointer for later...
-    const auto& result = it->second;
+    // object found, so store pointer to keep alive and to return
+    auto result{std::move(it->second)};
 
+    // remove from existing and core vectors and maps...
     auto erase_from_vec = [o{result.get()}](auto& vec) {
         const auto it = std::find(vec.begin(), vec.end(), o);
-        if (it != vec.end())
+        if (it != vec.end()) // cannot pass end() to vector::erase
             vec.erase(it);
     };
     ApplyToExistingVecs(erase_from_vec);
