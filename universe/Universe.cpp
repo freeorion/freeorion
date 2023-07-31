@@ -3097,33 +3097,35 @@ std::set<int> Universe::RecursiveDestroy(int object_id, const std::vector<int>& 
         DebugLogger() << "Universe::RecursiveDestroy asked to destroy nonexistant object with id " << object_id;
         return retval;
     }
-
     auto* system = m_objects->getRaw<System>(obj->SystemID());
 
     switch (obj->ObjectType()) {
     case UniverseObjectType::OBJ_SHIP: {
+        retval.insert(object_id);
         auto* ship = static_cast<Ship*>(obj);
-        if (auto* fleet = m_objects->getRaw<Fleet>(ship->FleetID())) {
+        const auto ship_id = obj->ID();
+        const auto fleet_id = ship->FleetID();
+        if (auto* fleet = m_objects->getRaw<Fleet>(fleet_id)) {
             // if a ship is being deleted, and it is the last ship in
             // its fleet, then the empty fleet should also be deleted
-            fleet->RemoveShips({ship->ID()});
+            fleet->RemoveShips({ship_id});
             if (fleet->Empty()) {
+                retval.insert(fleet_id);
                 if (system)
-                    system->Remove(fleet->ID());
-                Destroy(fleet->ID(), empire_ids);
-                retval.insert(fleet->ID());
+                    system->Remove(fleet_id);
+                Destroy(fleet_id, empire_ids);
             }
         }
         if (system)
             system->Remove(object_id);
         Destroy(object_id, empire_ids);
-        retval.insert(object_id);
         break;
     }
 
     case UniverseObjectType::OBJ_FLEET: {
+        retval.insert(object_id);
         auto* obj_fleet = static_cast<Fleet*>(obj);
-        for (int ship_id : obj_fleet->ShipIDs()) {
+        for (const int ship_id : obj_fleet->ShipIDs()) {
             if (system)
                 system->Remove(ship_id);
             Destroy(ship_id, empire_ids);
@@ -3132,74 +3134,74 @@ std::set<int> Universe::RecursiveDestroy(int object_id, const std::vector<int>& 
         if (system)
             system->Remove(object_id);
         Destroy(object_id, empire_ids);
-        retval.insert(object_id);
         break;
     }
 
     case UniverseObjectType::OBJ_PLANET: {
+        retval.insert(object_id);
         auto* obj_planet = static_cast<Planet*>(obj);
-        for (int building_id : obj_planet->BuildingIDs()) {
+        for (const int building_id : obj_planet->BuildingIDs()) {
+            retval.insert(building_id);
             if (system)
                 system->Remove(building_id);
             Destroy(building_id, empire_ids);
-            retval.insert(building_id);
         }
         if (system)
             system->Remove(object_id);
         Destroy(object_id, empire_ids);
-        retval.insert(object_id);
         break;
     }
 
     case UniverseObjectType::OBJ_SYSTEM: {
-        auto* obj_system = static_cast<System*>(obj);
+        retval.insert(object_id);
+        const auto* obj_system = static_cast<System*>(obj);
+        const int this_sys_id = obj_system->ID();
+
         // destroy all objects in system
-        for (int system_id : obj_system->ObjectIDs()) {
-            Destroy(system_id, empire_ids);
-            retval.insert(system_id);
+        for (const int obj_in_sys_id : obj_system->ObjectIDs()) {
+            Destroy(obj_in_sys_id, empire_ids);
+            retval.insert(obj_in_sys_id);
         }
 
         // remove any starlane connections to this system
-        int this_sys_id = obj_system->ID();
         for (auto* sys : m_objects->allRaw<System>())
             sys->RemoveStarlane(this_sys_id);
 
         // remove fleets / ships moving along destroyed starlane
-        std::vector<Fleet*> fleets_to_destroy;
-        for (auto* fleet : m_objects->allRaw<Fleet>()) {
+        std::vector<int> fleets_to_destroy;
+        fleets_to_destroy.reserve(m_objects->size<Fleet>());
+        for (const auto* fleet : m_objects->allRaw<Fleet>()) { // TODO: rangify?
             if (fleet->SystemID() == INVALID_OBJECT_ID && (
                 fleet->NextSystemID() == this_sys_id ||
                 fleet->PreviousSystemID() == this_sys_id))
-            { fleets_to_destroy.push_back(fleet); }
+            { fleets_to_destroy.push_back(fleet->ID()); }
         }
-        for (auto& fleet : fleets_to_destroy)
-            RecursiveDestroy(fleet->ID(), empire_ids);
+        for (const auto fleet_id : fleets_to_destroy)
+            RecursiveDestroy(fleet_id, empire_ids);
 
         // then destroy system itself
         Destroy(object_id, empire_ids);
-        retval.insert(object_id);
         // don't need to bother with removing things from system, fleets, or
         // ships, since everything in system is being destroyed
         break;
     }
 
     case UniverseObjectType::OBJ_BUILDING: {
-        auto* building = static_cast<Building*>(obj);
-        auto* planet = m_objects->getRaw<Planet>(building->PlanetID());
-        if (planet)
+        retval.insert(object_id);
+        const auto* building = static_cast<Building*>(obj);
+        if (auto* planet = m_objects->getRaw<Planet>(building->PlanetID()))
             planet->RemoveBuilding(object_id);
         if (system)
             system->Remove(object_id);
         Destroy(object_id, empire_ids);
-        retval.insert(object_id);
         break;
     }
 
     case UniverseObjectType::OBJ_FIELD: {
+        retval.insert(object_id);
         if (system)
             system->Remove(object_id);
         Destroy(object_id, empire_ids);
-        retval.insert(object_id);
         break;
     }
 
