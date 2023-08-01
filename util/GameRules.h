@@ -37,8 +37,8 @@ struct FO_COMMON_API GameRule final : public OptionsDB::Option {
 
 
     GameRule() = default;
-    GameRule(Type type_, std::string name_, std::any value_,
-             std::any default_value_, std::string description_,
+    GameRule(Type type_, std::string name_, boost::any value_,
+             boost::any default_value_, std::string description_,
              std::unique_ptr<ValidatorBase>&& validator_, bool engine_internal_,
              std::string category_ = std::string());
     [[nodiscard]] bool IsInternal() const noexcept { return this->storable; }
@@ -98,8 +98,8 @@ public:
                                   << " from rule of type " << it->second.value.type().name()
                                   << " ... getting as int instead";
                     try {
-                        return std::any_cast<int>(it->second.value);
-                    } catch (const std::bad_any_cast&) {
+                        return boost::any_cast<int>(it->second.value);
+                    } catch (const boost::bad_any_cast&) {
                         ErrorLogger() << "Getting as int failed";
                     }
                 }
@@ -111,13 +111,13 @@ public:
         }
 
         try {
-            return std::any_cast<T>(it->second.value);
-        } catch (const std::bad_any_cast&) {
+            return boost::any_cast<T>(it->second.value);
+        } catch (const boost::bad_any_cast&) {
             ErrorLogger() << "GameRules::Get<>() : bad any cast getting value of game rule named: " << name
                           << " as type << " << typeid(T).name() << ". Returning default value of rule instead";
             try {
-                return std::any_cast<T>(it->second.default_value);
-            } catch (const std::bad_any_cast&) {
+                return boost::any_cast<T>(it->second.default_value);
+            } catch (const boost::bad_any_cast&) {
                 ErrorLogger() << "GameRules::Get<>() : bad any cast getting default value of game rule named: "
                               << name << " that contains a value of type: " << it->second.value.type().name()
                               << ". Returning " << typeid(T).name() << " default value instead: " << T();

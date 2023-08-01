@@ -5,10 +5,10 @@
 #include "Logger.h"
 #include "OptionValidators.h"
 
+#include <boost/any.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/signals2/signal.hpp>
 
-#include <any>
 #include <functional>
 #include <map>
 #include <unordered_set>
@@ -102,7 +102,7 @@ template<typename T> constexpr bool is_unique_ptr_v = is_unique_ptr<T>::value;
   * (usual.
   * <br><br>Finally, note that std::runtime_error exceptions will be thrown any
   * time a problem occurs with an option (calling Get() for one that doesn't
-  * exist, Add()ing one twice, etc.), and std::bad_any_cast exceptions will
+  * exist, Add()ing one twice, etc.), and boost::bad_any_cast exceptions will
   * be thrown in situations in which an invalid type-conversion occurs,
   * including string-to-type, type-to-string or type-to-type as in the case of
   * Get() calls with the wrong tempate parameter.
@@ -145,12 +145,12 @@ public:
         if (!OptionExists(it))
             throw std::runtime_error(std::string{"OptionsDB::Get<>() : Attempted to get nonexistent option \""}.append(name).append("\"."));
         try {
-            return std::any_cast<T>(it->second.value);
-        } catch (const std::bad_any_cast&) {
+            return boost::any_cast<T>(it->second.value);
+        } catch (const boost::bad_any_cast&) {
             ErrorLogger() << "bad any cast converting value option named: " << name << ". Returning default value instead";
             try {
-                return std::any_cast<T>(it->second.default_value);
-            } catch (const std::bad_any_cast&) {
+                return boost::any_cast<T>(it->second.default_value);
+            } catch (const boost::bad_any_cast&) {
                 ErrorLogger() << "bad any cast converting default value of option named: " << name << ". Returning data-type default value instead: " << T();
                 return T();
             }
@@ -167,8 +167,8 @@ public:
         if (!OptionExists(it))
             throw std::runtime_error(std::string{"OptionsDB::GetDefault<>() : Attempted to get nonexistent option: "}.append(name));
         try {
-            return std::any_cast<T>(it->second.default_value);
-        } catch (const std::bad_any_cast&) {
+            return boost::any_cast<T>(it->second.default_value);
+        } catch (const boost::bad_any_cast&) {
             ErrorLogger() << "bad any cast converting default value of option named: " << name << "  returning type default value instead";
             return T();
         }
@@ -226,7 +226,7 @@ public:
              std::string section = "")
     {
         auto it = m_options.find(name);
-        std::any value = default_value;
+        boost::any value = default_value;
         if (!validator)
             validator = std::make_unique<Validator<std::decay_t<T>>>();
 
@@ -286,7 +286,7 @@ public:
              std::string section = "")
     {
         auto it = m_options.find(name);
-        std::any value{default_value};
+        boost::any value{default_value};
         if (!validator)
             validator = std::make_unique<Validator<std::decay_t<T>>>();
 
@@ -415,7 +415,7 @@ public:
         if (!OptionExists(it))
             throw std::runtime_error("Attempted to set default value of nonexistent option \"" + std::string{name});
         if (it->second.default_value.type() != typeid(std::decay_t<T>))
-            throw std::bad_any_cast();
+            throw boost::bad_any_cast();
         it->second.default_value = std::forward<T>(value);
     }
 
@@ -436,8 +436,8 @@ public:
 
     struct FO_COMMON_API Option {
         Option() = default;
-        Option(char short_name_, std::string name_, std::any value_,
-               std::any default_value_, std::string description_,
+        Option(char short_name_, std::string name_, boost::any value_,
+               boost::any default_value_, std::string description_,
                std::unique_ptr<ValidatorBase>&& validator_, bool storable_, bool flag_,
                bool recognized_, std::string section = std::string());
         Option(Option&& rhs) = default;
@@ -463,8 +463,8 @@ public:
         bool            storable = false;   ///< whether this option can be stored in an XML config file for use across multiple runs
         bool            flag = false;
         bool            recognized = false; ///< whether this option has been registered before being specified via an XML input, unrecognized options can't be parsed (don't know their type) but are stored in case they are later registered with Add()
-        std::any        value;              ///< the value of the option
-        std::any        default_value;      ///< the default value of the option
+        boost::any      value;              ///< the value of the option
+        boost::any      default_value;      ///< the default value of the option
         std::string     description;        ///< a desription of the option
         std::unordered_set<std::string> sections; ///< sections this option should display under
 
@@ -526,8 +526,8 @@ bool OptionsDB::Option::SetFromValue(T&& value_) {
 
     try {
         if (flag) {
-            changed = (std::to_string(std::any_cast<bool>(value))
-                    != std::to_string(std::any_cast<bool>(value_)));
+            changed = (std::to_string(boost::any_cast<bool>(value))
+                    != std::to_string(boost::any_cast<bool>(value_)));
         } else if (validator) {
             changed = validator->String(value) != validator->String(value_);
         } else {

@@ -68,8 +68,8 @@ OptionsDB& GetOptionsDB() {
 /////////////////////////////////////////////
 // OptionsDB::Option
 /////////////////////////////////////////////
-OptionsDB::Option::Option(char short_name_, std::string name_, std::any value_,
-                          std::any default_value_, std::string description_,
+OptionsDB::Option::Option(char short_name_, std::string name_, boost::any value_,
+                          boost::any default_value_, std::string description_,
                           std::unique_ptr<ValidatorBase>&& validator_, bool storable_,
                           bool flag_, bool recognized_, std::string section) :
     name(std::move(name_)),
@@ -106,7 +106,7 @@ OptionsDB::Option::~Option() = default;
 
 bool OptionsDB::Option::SetFromString(std::string_view str) {
     bool changed = false;
-    std::any value_;
+    boost::any value_;
 
     if (!flag) {
         if (validator) {
@@ -117,8 +117,8 @@ bool OptionsDB::Option::SetFromString(std::string_view str) {
         }
     } else {
         value_ = boost::lexical_cast<bool>(str);    // if a flag, then the str parameter should just indicate true or false with "1" or "0"
-        changed = (std::to_string(std::any_cast<bool>(value))
-                   != std::to_string(std::any_cast<bool>(value_)));
+        changed = (std::to_string(boost::any_cast<bool>(value))
+                   != std::to_string(boost::any_cast<bool>(value_)));
     }
 
     if (changed) {
@@ -139,7 +139,7 @@ bool OptionsDB::Option::SetToDefault() {
 
 std::string OptionsDB::Option::ValueToString() const {
     if (flag) {
-        return std::to_string(std::any_cast<bool>(value));
+        return std::to_string(boost::any_cast<bool>(value));
     } else if (validator)
         return validator->String(value);
     else
@@ -148,7 +148,7 @@ std::string OptionsDB::Option::ValueToString() const {
 
 std::string OptionsDB::Option::DefaultValueToString() const {
     if (flag)
-        return std::to_string(std::any_cast<bool>(default_value));
+        return std::to_string(boost::any_cast<bool>(default_value));
     else if (validator)
         return validator->String(default_value);
     else
@@ -574,7 +574,7 @@ void OptionsDB::GetXML(XMLDoc& doc, bool non_default_only, bool include_version)
                 continue;
 
             // Default value of flag options will throw bad_any_cast, fortunately they always default to false
-            if (option.second.flag && !std::any_cast<bool>(option.second.value))
+            if (option.second.flag && !boost::any_cast<bool>(option.second.value))
                 continue;
         }
 
@@ -608,7 +608,7 @@ void OptionsDB::GetXML(XMLDoc& doc, bool non_default_only, bool include_version)
         if (option.second.validator) {
             temp.SetText(option.second.ValueToString());
         } else if (option.second.flag) {
-            if (!std::any_cast<bool>(option.second.value))
+            if (!boost::any_cast<bool>(option.second.value))
                 continue;
         }
         elem_stack.back()->children.push_back(temp);
@@ -708,7 +708,7 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
             } else {
                 // recognized option
                 Option& option = it->second;
-                if (!option.value.has_value())
+                if (option.value.empty())
                     throw std::runtime_error("The value member of option \"--" + option.name + "\" is undefined.");
 
                 if (!option.flag) { // non-flag
@@ -760,7 +760,7 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                     throw std::runtime_error("Option \"--" + short_name_it->second + "\", abbreviated as \"-" + short_name_it->first + "\", could not be found.");
 
                 Option& option = name_it->second;
-                if (!option.value.has_value())
+                if (option.value.empty())
                     throw std::runtime_error("The value member of option \"--" + option.name + "\" is undefined.");
 
                 if (!option.flag) {
@@ -799,7 +799,7 @@ void OptionsDB::SetFromFile(const boost::filesystem::path& file_path, std::strin
 
 void OptionsDB::SetFromXML(const XMLDoc& doc) {
     for (const XMLElement& child : doc.root_node.children)
-        SetFromXMLRecursive(child, "");
+    { SetFromXMLRecursive(child, ""); }
 }
 
 void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, std::string_view section_name) {
@@ -872,12 +872,12 @@ std::vector<std::string> OptionsDB::Get<std::vector<std::string>>(std::string_vi
     if (!OptionExists(it))
         throw std::runtime_error(std::string{"OptionsDB::Get<std::vector<std::string>>() : Attempted to get nonexistent option: "}.append(name));
     try {
-        return std::any_cast<std::vector<std::string>>(it->second.value);
-    } catch (const std::bad_any_cast&) {
+        return boost::any_cast<std::vector<std::string>>(it->second.value);
+    } catch (const boost::bad_any_cast&) {
         ErrorLogger() << "bad any cast converting value option named: " << name << ". Returning default value instead";
         try {
-            return std::any_cast<std::vector<std::string>>(it->second.default_value);
-        } catch (const std::bad_any_cast&) {
+            return boost::any_cast<std::vector<std::string>>(it->second.default_value);
+        } catch (const boost::bad_any_cast&) {
             ErrorLogger() << "bad any cast converting default value of std::vector<std::string> option named: " << name << ". Returning empty vector instead";
             return std::vector<std::string>();
         }
