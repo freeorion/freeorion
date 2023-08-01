@@ -73,7 +73,7 @@ jobs:
           DEPLOY_SSH_PASSWORD: ${{ secrets.DEPLOY_SSH_PASSWORD }}
       - name: Upload binaries only
         if: ${{ inputs.weekly-deploy }}
-        run: bash -c 'scp build/FreeOrion_*_Test_MacOSX_*.dmg o01eg@frs.sourceforge.net:/home/frs/project/freeorion/FreeOrion/Test/'
+        run: bash -c 'scp -v -o ConnectionAttempts=3 build/FreeOrion_*_Test_MacOSX_*.dmg o01eg@frs.sourceforge.net:/home/frs/project/freeorion/FreeOrion/Test/'
       - name: Test
         run: |
           cd build

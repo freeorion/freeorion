@@ -65,4 +65,4 @@ jobs:
           DEPLOY_SSH_PASSWORD: ${{ secrets.DEPLOY_SSH_PASSWORD }}
       - name: Upload weekly-test installer
         if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
-        run: bash -c 'scp FreeOrion_*_Test_Win32_Setup.exe o01eg@frs.sourceforge.net:/home/frs/project/freeorion/FreeOrion/Test/'
+        run: bash -c 'scp -v -o ConnectionAttempts=3 FreeOrion_*_Test_Win32_Setup.exe o01eg@frs.sourceforge.net:/home/frs/project/freeorion/FreeOrion/Test/'

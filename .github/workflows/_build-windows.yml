@@ -75,7 +75,7 @@ jobs:
           DEPLOY_SSH_PASSWORD: ${{ secrets.DEPLOY_SSH_PASSWORD }}
       - name: Upload weekly-test binaries only
         if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
-        run: bash -c 'scp build/FreeOrion_*.zip o01eg@frs.sourceforge.net:/home/frs/project/freeorion/FreeOrion/Test/'
+        run: bash -c 'scp -v -o ConnectionAttempts=3 build/FreeOrion_*.zip o01eg@frs.sourceforge.net:/home/frs/project/freeorion/FreeOrion/Test/'
       - name: Upload binaries artefacts
         uses: actions/upload-artifact@v3
         with:
