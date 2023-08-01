@@ -994,7 +994,7 @@ void ClientUI::DumpObject(int object_id) {
     auto obj = Objects().get(object_id);
     if (!obj)
         return;
-    m_message_wnd->HandleLogMessage(obj->Dump() + "\n");
+    m_message_wnd->HandleLogMessage(obj->Dump());
 }
 
 void ClientUI::InitializeWindows() {

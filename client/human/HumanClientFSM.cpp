@@ -231,7 +231,7 @@ boost::statechart::result WaitingForSPHostAck::react(const Error& msg) {
     if (fatal) {
         client.ResetToIntro(true);
         ClientUI::MessageBox(UserString(problem), true);
-        client.GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+        client.GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO"));
     }
     return retval;
 }
@@ -239,7 +239,7 @@ boost::statechart::result WaitingForSPHostAck::react(const Error& msg) {
 boost::statechart::result WaitingForSPHostAck::react(const StartQuittingGame& e) {
     TraceLogger(FSM) << "(HumanClientFSM) Quit or reset to main menu.";
 
-    Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+    Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO"));
 
     post_event(e);
     return transit<QuittingGame>();
@@ -313,7 +313,7 @@ boost::statechart::result WaitingForMPHostAck::react(const Error& msg) {
     if (fatal) {
         client.ResetToIntro(true);
         ClientUI::MessageBox(UserString(problem), true);
-        client.GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+        client.GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO"));
     }
     return retval;
 }
@@ -321,7 +321,7 @@ boost::statechart::result WaitingForMPHostAck::react(const Error& msg) {
 boost::statechart::result WaitingForMPHostAck::react(const StartQuittingGame& e) {
     TraceLogger(FSM) << "(HumanClientFSM) Quit or reset to main menu.";
 
-    Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+    Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO"));
 
     post_event(e);
     return transit<QuittingGame>();
@@ -426,7 +426,7 @@ boost::statechart::result WaitingForMPJoinAck::react(const Error& msg) {
     if (fatal) {
         client.ResetToIntro(true);
         ClientUI::MessageBox(UserString(problem), true);
-        client.GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+        client.GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO"));
     }
 
     return retval;
@@ -435,7 +435,7 @@ boost::statechart::result WaitingForMPJoinAck::react(const Error& msg) {
 boost::statechart::result WaitingForMPJoinAck::react(const StartQuittingGame& e) {
     TraceLogger(FSM) << "(HumanClientFSM) Quit or reset to main menu.";
 
-    Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+    Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO"));
 
     post_event(e);
     return transit<QuittingGame>();
@@ -586,7 +586,7 @@ boost::statechart::result MPLobby::react(const Error& msg) {
 boost::statechart::result MPLobby::react(const StartQuittingGame& e) {
     TraceLogger(FSM) << "(HumanClientFSM) Quit or reset to main menu.";
 
-    Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+    Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO"));
 
     post_event(e);
     return transit<QuittingGame>();
@@ -793,7 +793,7 @@ boost::statechart::result PlayingGame::react(const EndGame& msg) {
 boost::statechart::result PlayingGame::react(const StartQuittingGame& e) {
     TraceLogger(FSM) << "(HumanClientFSM) Quit or reset to main menu.";
 
-    Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+    Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO"));
 
     post_event(e);
     return transit<QuittingGame>();
@@ -960,7 +960,7 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
 
         } catch (const std::exception& e) {
             ErrorLogger(FSM) << "WaitingForGameStart::react(const GameStart& msg) unpacking failed: " << e.what();
-            client.GetClientUI().GetMessageWnd()->HandleLogMessage(UserString("ERROR_PROCESSING_SERVER_MESSAGE") + "\n");
+            client.GetClientUI().GetMessageWnd()->HandleLogMessage(UserString("ERROR_PROCESSING_SERVER_MESSAGE"));
             boost::intrusive_ptr<const UnpackFailedNotification> unpacking_failed_event{
                 new UnpackFailedNotification(), true};
             client.PostDeferredEvent(std::move(unpacking_failed_event));
@@ -1091,7 +1091,7 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg) {
 
         } catch (const std::exception& e) {
             ErrorLogger(FSM) << "WaitingForTurnData::react(const TurnUpdate& msg) unpacking failed: " << e.what();
-            client.GetClientUI().GetMessageWnd()->HandleLogMessage(UserString("ERROR_PROCESSING_SERVER_MESSAGE") + "\n");
+            client.GetClientUI().GetMessageWnd()->HandleLogMessage(UserString("ERROR_PROCESSING_SERVER_MESSAGE"));
             boost::intrusive_ptr<const UnpackFailedNotification> unpacking_failed_event{
                 new UnpackFailedNotification(), true};
             client.PostDeferredEvent(std::move(unpacking_failed_event));
@@ -1238,7 +1238,7 @@ boost::statechart::result PlayingTurn::react(const AdvanceTurn& d) {
 boost::statechart::result PlayingTurn::react(const TurnUpdate& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingTurn.TurnUpdate";
 
-     Client().GetClientUI().GetMessageWnd()->HandleLogMessage(UserString("ERROR_EARLY_TURN_UPDATE") + "\n");
+     Client().GetClientUI().GetMessageWnd()->HandleLogMessage(UserString("ERROR_EARLY_TURN_UPDATE"));
 
     // need to re-post the game start message to be re-handled after
     // transitioning into WaitingForTurnData
