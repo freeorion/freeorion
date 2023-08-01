@@ -698,8 +698,8 @@ boost::statechart::result PlayingGame::react(const PlayerChat& msg) {
     auto& cui = Client().GetClientUI();
     GG::Clr text_color{cui.TextColor()};
     if (sending_player_id != Networking::INVALID_PLAYER_ID) {
-        auto& players = Client().Players();
-        auto player_it = players.find(sending_player_id);
+        const auto& players = Client().Players();
+        const auto player_it = players.find(sending_player_id);
         if (player_it != players.end()) {
             player_name = player_it->second.name;
             if (const auto* empire = Client().GetEmpire(player_it->second.empire_id))
@@ -947,8 +947,7 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
 
         try {
             using GSDUN = GameStartDataUnpackedNotification;
-            auto unpacked_data = std::make_shared<GSDUN::UnpackedData>(
-                std::move(message));
+            auto unpacked_data = std::make_shared<GSDUN::UnpackedData>(std::move(message));
             auto unpacking_finished_event = boost::intrusive_ptr<const GSDUN>(new GSDUN(unpacked_data), true);
 
             unpacked_data->universe.InitializeSystemGraph(unpacked_data->empires,
