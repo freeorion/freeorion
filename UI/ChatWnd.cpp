@@ -407,43 +407,26 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text,
 }
 
 void MessageWnd::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id, bool prefixed) {
-    std::string phase_str;
-    switch (phase_id) {
-    case Message::TurnProgressPhase::FLEET_MOVEMENT:
-        phase_str = UserString("TURN_PROGRESS_PHASE_FLEET_MOVEMENT");
-        break;
-    case Message::TurnProgressPhase::COMBAT:
-        phase_str = UserString("TURN_PROGRESS_PHASE_COMBAT");
-        break;
-    case Message::TurnProgressPhase::EMPIRE_PRODUCTION:
-        phase_str = UserString("TURN_PROGRESS_PHASE_EMPIRE_GROWTH");
-        break;
-    case Message::TurnProgressPhase::WAITING_FOR_PLAYERS:
-        phase_str = UserString("TURN_PROGRESS_PHASE_WAITING");
-        break;
-    case Message::TurnProgressPhase::PROCESSING_ORDERS:
-        phase_str = UserString("TURN_PROGRESS_PHASE_ORDERS");
-        break;
-    case Message::TurnProgressPhase::COLONIZE_AND_SCRAP:
-        phase_str = UserString("TURN_PROGRESS_COLONIZE_AND_SCRAP");
-        break;
-    case Message::TurnProgressPhase::DOWNLOADING:
-        phase_str = UserString("TURN_PROGRESS_PHASE_DOWNLOADING");
-        break;
-    case Message::TurnProgressPhase::LOADING_GAME:
-        phase_str = UserString("TURN_PROGRESS_PHASE_LOADING_GAME");
-        break;
-    case Message::TurnProgressPhase::GENERATING_UNIVERSE:
-        phase_str = UserString("TURN_PROGRESS_PHASE_GENERATING_UNIVERSE");
-        break;
-    case Message::TurnProgressPhase::STARTING_AIS:
-        phase_str = UserString("TURN_PROGRESS_STARTING_AIS");
-        break;
-    default:
-        ErrorLogger() << "MessageWnd::HandleTurnPhaseUpdate got unknown turn phase id";
-        return;
-        break;
-    }
+#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
+    static constexpr std::string EMPTY_STRING;
+#else
+    static const std::string EMPTY_STRING;
+#endif
+    const auto& phase_str = [phase_id]() {
+        switch (phase_id) {
+        case Message::TurnProgressPhase::FLEET_MOVEMENT:        return UserString("TURN_PROGRESS_PHASE_FLEET_MOVEMENT"); break;
+        case Message::TurnProgressPhase::COMBAT:                return UserString("TURN_PROGRESS_PHASE_COMBAT"); break;
+        case Message::TurnProgressPhase::EMPIRE_PRODUCTION:     return UserString("TURN_PROGRESS_PHASE_EMPIRE_GROWTH"); break;
+        case Message::TurnProgressPhase::WAITING_FOR_PLAYERS:   return UserString("TURN_PROGRESS_PHASE_WAITING"); break;
+        case Message::TurnProgressPhase::PROCESSING_ORDERS:     return UserString("TURN_PROGRESS_PHASE_ORDERS"); break;
+        case Message::TurnProgressPhase::COLONIZE_AND_SCRAP:    return UserString("TURN_PROGRESS_COLONIZE_AND_SCRAP"); break;
+        case Message::TurnProgressPhase::DOWNLOADING:           return UserString("TURN_PROGRESS_PHASE_DOWNLOADING"); break;
+        case Message::TurnProgressPhase::LOADING_GAME:          return UserString("TURN_PROGRESS_PHASE_LOADING_GAME"); break;
+        case Message::TurnProgressPhase::GENERATING_UNIVERSE:   return UserString("TURN_PROGRESS_PHASE_GENERATING_UNIVERSE"); break;
+        case Message::TurnProgressPhase::STARTING_AIS:          return UserString("TURN_PROGRESS_STARTING_AIS"); break;
+        default:                                                return EMPTY_STRING; break;
+        }
+    }();
 
     if (prefixed)
         *m_display += boost::str(FlexibleFormat(UserString("PLAYING_GAME")) % phase_str) + "\n";
