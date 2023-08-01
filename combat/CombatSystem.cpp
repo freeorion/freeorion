@@ -185,7 +185,8 @@ void CombatInfo::InitializeObjectVisibility() {
             return 0.0f;
         }();
 
-        for (const auto* obj : objects.allRaw()) {
+        static constexpr auto not_null = [](const auto* o) -> bool { return o; };
+        for (const auto* obj : objects.allRaw() | range_filter(not_null)) {
             if (obj->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
                 // systems always visible to empires with objects in them
                 empire_object_visibility[empire_id][obj->ID()] = Visibility::VIS_PARTIAL_VISIBILITY;
@@ -222,13 +223,16 @@ void CombatInfo::InitializeObjectVisibility() {
                         DebugLogger() << "Ship " << obj->Name() << " visible from universe state";
                     }
                 }
-                if (vis < Visibility::VIS_PARTIAL_VISIBILITY && empire_detection >= obj->GetMeter(MeterType::METER_STEALTH)->Current()) {
+                if (vis < Visibility::VIS_PARTIAL_VISIBILITY &&
+                    empire_detection >= obj->GetMeter(MeterType::METER_STEALTH)->Current())
+                {
                     vis = Visibility::VIS_PARTIAL_VISIBILITY;
                     DebugLogger() << "Ship " << obj->Name() << " visible empire stealth check: " << empire_detection
                                   << " >= " << obj->GetMeter(MeterType::METER_STEALTH)->Current();
                 }
                 if (vis < Visibility::VIS_PARTIAL_VISIBILITY && GetGameRules().Get<bool>("RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE")) {
-                    if (auto ship = dynamic_cast<const Ship*>(obj)) {
+                    if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP) {
+                        const auto* ship = static_cast<const Ship*>(obj);
                         if (auto fleet = objects.getRaw<const Fleet>(ship->FleetID())) {
                             if (fleet->Aggressive()) {
                                 vis = Visibility::VIS_PARTIAL_VISIBILITY;
@@ -1093,7 +1097,7 @@ namespace {
 
                 const int new_id = next_fighter_id--;
                 fighter_ptr->SetID(new_id);
-                fighter_ptr->Rename(std::move(fighter_name));
+                fighter_ptr->Rename(fighter_name);
                 combat_info.objects.insert(std::move(fighter_ptr), contains(destroyed_object_ids, new_id));
                 retval.push_back(new_id);
 
