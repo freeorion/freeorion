@@ -333,7 +333,7 @@ void Empire::UpdatePolicies(bool update_cumulative_adoption_time, int current_tu
                                                [cat](const auto& cat_slots){ return cat == cat_slots.first; });
         const auto cat_slot_count = (cat_slots_it != total_category_slot_counts.end()) ? cat_slots_it->second : 0;
 
-        auto policies_temp{m_adopted_policies};
+        const auto policies_temp{m_adopted_policies};
 
         // all adopted policies in this category, sorted by slot and adoption turn (lower first)
         std::vector<std::tuple<int, int, std::string>> slots_turns_policies;
@@ -344,7 +344,7 @@ void Empire::UpdatePolicies(bool update_cumulative_adoption_time, int current_tu
                 continue;
             DebugLogger() << "... Policy " << temp_policy_name << " was in slot " << slot;
             m_adopted_policies.erase(temp_policy_name); // remove everything from adopted policies in this category...
-            slots_turns_policies.emplace_back(slot, turn, std::move(temp_policy_name));
+            slots_turns_policies.emplace_back(slot, turn, temp_policy_name);
         }
 
         auto slot_turn_comp = [](const auto& lhs, const auto& rhs) {
@@ -1302,9 +1302,20 @@ bool Empire::PreservedLaneTravel(int start_system_id, int dest_system_id) const 
         && find_it->second.contains(dest_system_id);
 }
 
-std::set<int> Empire::ExploredSystems() const {
-    auto rng = m_explored_systems | range_keys;
-    return {rng.begin(), rng.end()}; // TODO: another better container? affects MapWnd NeighbourSystemsOf input
+Empire::IntSet Empire::ExploredSystems() const {
+    const auto rng = m_explored_systems | range_keys;
+    static_assert(std::is_same_v<std::decay_t<decltype(m_explored_systems)>, std::map<int, int>>,
+                  "make sure m_explored_systems is sorted for use of ordered_unique_range below");
+#if BOOST_VERSION > 107400
+    return {boost::container::ordered_unique_range, rng.begin(), rng.end()};
+#else
+    Empire::IntSet::sequence_type scratch;
+    scratch.reserve(m_explored_systems.size());
+    range_copy(rng, std::back_inserter(scratch));
+    Empire::IntSet retval;
+    retval.adopt_sequence(boost::container::ordered_unique_range, std::move(scratch));
+    return retval;
+#endif
 }
 
 int Empire::TurnSystemExplored(int system_id) const {
@@ -1314,58 +1325,56 @@ int Empire::TurnSystemExplored(int system_id) const {
     return it->second;
 }
 
-std::map<int, std::set<int>> Empire::KnownStarlanes(const Universe& universe) const {
-    // compile starlanes leading into or out of each system
-    std::map<int, std::set<int>> retval;
-
-    TraceLogger(supply) << "Empire::KnownStarlanes for empire " << m_id;
-
-    const auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
-    const auto not_known_destroyed = [&known_destroyed_objects](auto end_id)
-    { return !known_destroyed_objects.contains(end_id); };
-
-    for (const auto& sys : universe.Objects().allRaw<System>()) {
-        int start_id = sys->ID();
-        TraceLogger(supply) << "system " << start_id << " has up to " << sys->NumStarlanes() << " lanes / wormholes";
-
-        // exclude lanes starting at systems known to be destroyed
-        if (known_destroyed_objects.contains(start_id)) {
-            TraceLogger(supply) << "system " << start_id << " known destroyed, so lanes from it are unknown";
-            continue;
-        }
-
-        for (const auto end_id : sys->Starlanes() | range_filter(not_known_destroyed)) {
-            retval[start_id].insert(end_id);
-            retval[end_id].insert(start_id);
-        }
-
-        TraceLogger(supply) << "system " << start_id << " had " << retval[start_id].size() << " known lanes";
-    }
-
-    TraceLogger(supply) << "Total of " << retval.size() << " systems had known lanes";
-    return retval;
-}
-
-std::map<int, std::set<int>> Empire::VisibleStarlanes(const Universe& universe) const { // TODO: return better type
-    std::map<int, std::set<int>> retval;   // compile starlanes leading into or out of each system
-
+Empire::LaneSet Empire::KnownStarlanes(const Universe& universe) const {
     const ObjectMap& objects = universe.Objects();
 
-    for (const auto* sys : objects.allRaw<System>()) {
-        const auto start_id = sys->ID();
+    // compile starlanes leading into or out of each system
+    std::vector<Empire::LaneEndpoints> scratch;
+    scratch.reserve(objects.size<System>()*10); // guesstimate
 
-        // is system visible to this empire?
-        if (universe.GetObjectVisibilityByEmpire(start_id, m_id) <= Visibility::VIS_NO_VISIBILITY)
-            continue;
+    const auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
+    const auto not_known_destroyed = [&known_destroyed_objects](const auto& obj) {
+        if constexpr (std::is_integral_v<std::decay_t<decltype(obj)>>)
+            return !known_destroyed_objects.contains(obj);
+        else
+            return !known_destroyed_objects.contains(obj.first);
+    };
 
-        // get system's visible lanes for this empire
-        for (const auto& other_end_id : sys->VisibleStarlanes(m_id, universe)) {
-            retval[start_id].insert(other_end_id);
-            retval[other_end_id].insert(start_id);
+    // collect lanes starting and ending at not destroyed systems
+    for (const auto& [start_id, sys] : objects.allWithIDs<System>() | range_filter(not_known_destroyed)) {
+        for (const auto end_id : sys->Starlanes() | range_filter(not_known_destroyed)) {
+            scratch.emplace_back(start_id, end_id);
+            scratch.emplace_back(end_id, start_id);
         }
     }
+    std::sort(scratch.begin(), scratch.end());
+    const auto unique_it = std::unique(scratch.begin(), scratch.end());
+    return Empire::LaneSet{boost::container::ordered_unique_range, scratch.begin(), unique_it};
+}
 
-    return retval;
+Empire::LaneSet Empire::VisibleStarlanes(const Universe& universe) const {
+    const ObjectMap& objects = universe.Objects();
+
+    std::vector<Empire::LaneEndpoints> scratch;
+    scratch.reserve(objects.size<System>()*10); // guesstimate
+
+    const auto is_visible = [&universe, this](const auto& obj) {
+        if constexpr (std::is_integral_v<std::decay_t<decltype(obj)>>)
+            return universe.GetObjectVisibilityByEmpire(obj, m_id) >= Visibility::VIS_BASIC_VISIBILITY;
+        else
+            return universe.GetObjectVisibilityByEmpire(obj.first, m_id) >= Visibility::VIS_BASIC_VISIBILITY;
+    };
+
+    for (const auto& [start_id, sys] : objects.allWithIDs<System>() | range_filter(is_visible)) {
+        // get system's visible lanes for this empire
+        for (const auto other_end_id : sys->VisibleStarlanes(m_id, universe)) {
+            scratch.emplace_back(start_id, other_end_id);
+            scratch.emplace_back(other_end_id, start_id);
+        }
+    }
+    std::sort(scratch.begin(), scratch.end());
+    const auto unique_it = std::unique(scratch.begin(), scratch.end());
+    return Empire::LaneSet{boost::container::ordered_unique_range, scratch.begin(), unique_it};
 }
 
 float Empire::ProductionPoints() const

@@ -7514,8 +7514,6 @@ bool MapWnd::IsFleetExploring(const int fleet_id)
 { return std::count(m_fleets_exploring.begin(), m_fleets_exploring.end(), fleet_id); }
 
 namespace {
-    typedef std::set<int> SystemIDListType;
-    typedef std::unordered_set<int> FleetIDListType;
     typedef std::vector<int> RouteListType;
     typedef std::pair<double, RouteListType> OrderedRouteType;
     typedef std::pair<int, RouteListType> FleetRouteType;
@@ -7539,18 +7537,24 @@ namespace {
                 eta.first != Fleet::ETA_OUT_OF_RANGE);
     }
 
-    //helper function for DispatchFleetsExploring
-    //return the set of all systems ID with a starlane connecting them to a system in set
-    SystemIDListType NeighbourSystemsOf(const Empire* empire, const Universe& universe,
-                                        const SystemIDListType& system_ids)
+    // helper function for DispatchFleetsExploring
+    // return systems ID with a starlane connecting them to a system in \a system_ids
+    boost::container::flat_set<int> NeighbourSystemsOf(const Empire* empire, const Universe& universe,
+                                                       const auto& system_ids)
     {
-        SystemIDListType retval;
-        auto starlanes = empire->KnownStarlanes(universe);
-        for (auto system_id : system_ids) {
-            auto new_neighboors_it = starlanes.find(system_id);
-            if (new_neighboors_it != starlanes.end())
-                retval.insert(new_neighboors_it->second.begin(), new_neighboors_it->second.end());
-        }
+        const auto starlanes{empire->KnownStarlanes(universe)};
+        using starlanes_t = std::decay_t<decltype(starlanes)>;
+        static_assert(std::is_same_v<starlanes_t, boost::container::flat_set<Empire::LaneEndpoints>>,
+                      "make sure starlanes is sorted for efficient insertion into flat_set below");
+        const auto lane_starts_in_system_in_ids = [&system_ids](const auto lane) {
+            return std::any_of(system_ids.begin(), system_ids.end(),
+                               [lane](const auto sys_id) { return lane.start == sys_id; });
+        };
+        auto rng = starlanes | range_filter(lane_starts_in_system_in_ids)
+            | range_transform([](const auto lane) { return lane.end; });
+        boost::container::flat_set<int> retval;
+        retval.reserve(starlanes.size());
+        retval.insert(rng.begin(), rng.end());
         return retval;
     }
 
@@ -7559,26 +7563,21 @@ namespace {
         const Universe& universe = GetUniverse();
         const ObjectMap& objects = universe.Objects();
         const EmpireManager& empires = Empires();
-        auto start_system = objects.get<System>(start_id);
-        auto dest_system = objects.get<System>(destination_id);
+        const auto start_system = objects.getRaw<System>(start_id);
+        const auto dest_system = objects.getRaw<System>(destination_id);
         if (!start_system || !dest_system) {
-            WarnLogger() << "Invalid start or destination system";
+            WarnLogger() << "GetShortestRoute: couldn't find start or destination systems";
             return {};
         }
 
-        auto ignore_hostile = GetOptionsDB().Get<bool>("ui.fleet.explore.hostile.ignored");
-        auto fleet_pred = std::make_shared<HostileVisitor>(empire_id, empires);
-        std::pair<std::vector<int>, double> route_distance;
+        const auto ignore_hostile = GetOptionsDB().Get<bool>("ui.fleet.explore.hostile.ignored");
+        const auto fleet_pred = std::make_shared<HostileVisitor>(empire_id, empires);
+        auto [system_list, path_length] = ignore_hostile ?
+            universe.GetPathfinder()->ShortestPath(start_id, destination_id, empire_id, objects) :
+            universe.GetPathfinder()->ShortestPath(start_id, destination_id, empire_id, fleet_pred, empires, objects);
 
-        if (ignore_hostile)
-            route_distance = universe.GetPathfinder()->ShortestPath(
-                start_id, destination_id, empire_id, objects);
-        else
-            route_distance = universe.GetPathfinder()->ShortestPath(
-                start_id, destination_id, empire_id, fleet_pred, empires, objects);
-
-        if (!route_distance.first.empty() && route_distance.second > 0.0)
-            return {route_distance.second, std::move(route_distance.first)};
+        if (!system_list.empty() && path_length > 0.0)
+            return {path_length, std::move(system_list)};
 
         return {};
     }
@@ -7591,36 +7590,35 @@ namespace {
         const ObjectMap& objects{context.ContextObjects()};
 
         if (!fleet || !destination) {
-            WarnLogger() << "Invalid fleet or system";
+            WarnLogger() << "GetOrderedFleetRoute: null fleet or system";
             return {};
         }
         if ((fleet->Fuel(objects) < 1.0f) || !fleet->MovePath(false, context).empty()) {
-            WarnLogger() << "Fleet has no fuel or non-empty move path";
+            WarnLogger() << "GetOrderedFleetRoute: no fuel or non-empty move path";
             return {};
         }
 
-        auto order_route = GetShortestRoute(fleet->Owner(), fleet->SystemID(), destination->ID());
+        auto [route_length, route_ids] = GetShortestRoute(fleet->Owner(), fleet->SystemID(), destination->ID());
 
-        if (order_route.first <= 0.0) {
+        if (route_length <= 0.0) {
             TraceLogger() << "No suitable route from system " << fleet->SystemID() << " to " << destination->ID()
-                          << " (" << order_route.second.size() << ">" << order_route.first << ")";
+                          << " (" << route_ids.size() << ">" << route_length << ")";
             return {};
         }
 
-        if (!FleetRouteInRange(fleet, order_route.second, context)) {
+        if (!FleetRouteInRange(fleet, route_ids, context)) {
             TraceLogger() << "Fleet " << std::to_string(fleet->ID())
-                          << " has no eta for route to " << std::to_string(*order_route.second.rbegin());
+                          << " has no ETA for route to " << std::to_string(route_ids.back());
             return {};
         }
 
         // decrease priority of system if previously viewed but not yet explored
         if (!destination->Name().empty()) {
-            order_route.first *= GetOptionsDB().Get<float>("ui.fleet.explore.system.known.multiplier");
+            route_length *= GetOptionsDB().Get<float>("ui.fleet.explore.system.known.multiplier");
             TraceLogger() << "Deferred priority for system " << destination->Name() << " (" << destination->ID() << ")";
         }
 
-        auto fleet_route = std::pair{fleet->ID(), std::move(order_route.second)};
-        return std::pair{order_route.first, std::move(fleet_route)};
+        return std::pair{route_length, std::pair{fleet->ID(), std::move(route_ids)}};
     }
 
     /** Shortest route not exceeding @p max_jumps from @p dest_id to a system with supply as known to @p empire */
@@ -7809,7 +7807,7 @@ namespace {
     }
 
     /** Determine and issue move order for fleet and route @p fleet_route */
-    void IssueExploringFleetOrders(FleetIDListType& idle_fleets,
+    void IssueExploringFleetOrders(boost::unordered_set<int>& idle_fleets,
                                    SystemFleetMap& systems_being_explored,
                                    const FleetRouteType& fleet_route,
                                    ScriptingContext& context)
@@ -7883,7 +7881,7 @@ void MapWnd::DispatchFleetsExploring() {
     int max_routes_per_system = GetOptionsDB().Get<int>("ui.fleet.explore.system.route.limit");
     auto destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(empire_id);
 
-    FleetIDListType idle_fleets;
+    boost::unordered_set<int> idle_fleets;
     /** all systems ID for which an exploring fleet is in route and the fleet assigned */
     SystemFleetMap systems_being_explored;
 
@@ -7918,7 +7916,7 @@ void MapWnd::DispatchFleetsExploring() {
     candidates_unknown_systems.merge(NeighbourSystemsOf(empire.get(), universe, candidates_unknown_systems));
 
     // Populate list of unexplored systems
-    SystemIDListType unexplored_systems;
+    boost::unordered_set<int> unexplored_systems;
     for (const auto* system : objects.findRaw<System>(candidates_unknown_systems)) {
         if (!system)
             continue;

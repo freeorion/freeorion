@@ -3,6 +3,7 @@
 
 
 #include <array>
+#include <compare>
 #include <string>
 #include <unordered_set>
 #include <boost/container/flat_set.hpp>
@@ -183,13 +184,27 @@ public:
      * is determined in Empire::UpdateSupplyUnobstructedSystems(). */
     [[nodiscard]] bool                         PreservedLaneTravel(int start_system_id, int dest_system_id) const;
 
-    [[nodiscard]] std::set<int>                ExploredSystems() const;     ///< returns set of ids of systems that this empire has explored
-    [[nodiscard]] int                          TurnSystemExplored(int system_id) const;
-    [[nodiscard]] std::map<int, std::set<int>> KnownStarlanes(const Universe& universe) const;     ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes known to this empire
-    [[nodiscard]] std::map<int, std::set<int>> VisibleStarlanes(const Universe& universe) const;   ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes visible to this empire this turn
+    using IntSet = boost::container::flat_set<int>;
+    struct LaneEndpoints {
+        int start = INVALID_OBJECT_ID;
+        int end = INVALID_OBJECT_ID;
+        auto operator<=>(const LaneEndpoints&) const = default;
+#if (defined(__clang_major__) && (__clang_major__ < 16))
+        LaneEndpoints() = default;
+        LaneEndpoints(int s, int e) noexcept : start(s), end(e) {};
+        LaneEndpoints(LaneEndpoints&&) noexcept = default;
+        LaneEndpoints(const LaneEndpoints&) noexcept = default;
+        LaneEndpoints& operator=(LaneEndpoints&&) noexcept = default;
+        LaneEndpoints& operator=(const LaneEndpoints&) noexcept = default;
+#endif
+    };
+    using LaneSet = boost::container::flat_set<LaneEndpoints>;
 
+    [[nodiscard]] IntSet      ExploredSystems() const;     ///< ids of systems that this empire has explored
+    [[nodiscard]] int         TurnSystemExplored(int system_id) const;
+    [[nodiscard]] LaneSet     KnownStarlanes(const Universe& universe) const;     ///< map from system id (start) to set of system ids (endpoints) of all starlanes known to this empire
+    [[nodiscard]] LaneSet     VisibleStarlanes(const Universe& universe) const;   ///< map from system id (start) to set of system ids (endpoints) of all starlanes visible to this empire this turn
     [[nodiscard]] const auto& SitReps() const noexcept { return m_sitrep_entries; }
-
     [[nodiscard]] float       ProductionPoints() const;    ///< Returns the empire's current production point output (this is available industry not including stockpile)
 
     /** Returns ResourcePool for \a resource_type or 0 if no such ResourcePool exists. */
