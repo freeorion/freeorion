@@ -57,6 +57,15 @@ jobs:
           alias cmake="/usr/local/bin/gtimeout 40m /usr/local/bin/cmake"
           cd build
           cmake --build . --config Release -- -parallelizeTargets
+      - name: Test
+        # Tests don't find dynamic libraries in build/Release on Macos 12
+        if: inputs.os == 'macos-13'
+        run: |
+          cd build
+          export PATH="$(pwd)/Release:/usr/local/opt/ccache/libexec:$PATH"
+          export DYLD_FALLBACK_LIBRARY_PATH="$(pwd)/dep/lib:$(pwd)/Release"
+          export DYLD_LIBRARY_PATH="$(pwd)/dep/lib:$(pwd)/Release:$DYLD_LIBRARY_PATH"
+          cmake --build . --config Release --target unittest --verbose
       - name: Generate binaries
         if: inputs.os != 'macos-13'
         run: |
@@ -74,11 +83,3 @@ jobs:
       - name: Upload binaries only
         if: ${{ inputs.weekly-deploy }}
         run: bash -c 'scp -vv -o ServerAliveCountMax=2 -o ServerAliveInterval=300 -o ConnectTimeout=120 -o ConnectionAttempts=5 build/FreeOrion_*_Test_MacOSX_*.dmg o01eg@frs.sourceforge.net:/home/frs/project/freeorion/FreeOrion/Test/'
-      - name: Test
-        run: |
-          cd build
-          export PATH="$(pwd)/Release:/usr/local/opt/ccache/libexec:$PATH"
-          export DYLD_FALLBACK_LIBRARY_PATH="$(pwd)/dep/lib:$(pwd)/Release"
-          export DYLD_LIBRARY_PATH="$(pwd)/dep/lib:$(pwd)/Release:$DYLD_LIBRARY_PATH"
-          export
-          cmake --build . --config Release --target unittest --verbose
