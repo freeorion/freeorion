@@ -433,12 +433,12 @@ void MessageWnd::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id, bool
 }
 
 void MessageWnd::HandleGameStatusUpdate(const std::string& text) {
-    *m_display += text;
+    *m_display += (text + "\n");
     m_display_show_time = GG::GUI::GetGUI()->Ticks();
 }
 
 void MessageWnd::HandleLogMessage(const std::string& text) {
-    *m_display += text;
+    *m_display += (text + "\n");
     m_display_show_time = GG::GUI::GetGUI()->Ticks();
 }
 
