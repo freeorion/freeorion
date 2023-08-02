@@ -295,18 +295,13 @@ ObjectMap& Universe::EmpireKnownObjects(int empire_id) {
     return empty_map;
 }
 
-std::set<int> Universe::EmpireVisibleObjectIDs(int empire_id, const EmpireManager& empires) const {
+Universe::IDSet Universe::EmpireVisibleObjectIDs(int empire_id, const EmpireManager& empires) const {
     // get id(s) of all empires to consider visibility of...
-    std::set<int> empire_ids;
-    if (empire_id != ALL_EMPIRES) {
-        empire_ids.insert(empire_id);
-    } else {
-        for (const auto loop_empire_id : empires | range_keys)
-            empire_ids.insert(loop_empire_id);
-    }
+    const auto& all_empire_ids = empires.EmpireIDs();
+    const auto empire_ids = (empire_id != ALL_EMPIRES) ?
+        std::vector<int>{empire_id} : std::vector<int>{all_empire_ids.begin(), all_empire_ids.end()};
 
-    // check each object's visibility against all empires, including the object
-    // if an empire has visibility of it
+    // check each object's visibility by the requested empire / all empires
     static constexpr auto to_id = [](const auto& o) { return o->ID(); };
     const auto is_visible_to_an_empire = [&empire_ids, this](const auto obj_id) {
         return std::any_of(empire_ids.begin(), empire_ids.end(),
@@ -314,8 +309,18 @@ std::set<int> Universe::EmpireVisibleObjectIDs(int empire_id, const EmpireManage
                            { return GetObjectVisibilityByEmpire(obj_id, e_id) >= Visibility::VIS_BASIC_VISIBILITY; });
     };
 
-    auto ids_rng = m_objects->all() | range_transform(to_id) | range_filter(is_visible_to_an_empire);
-    return {ids_rng.begin(), ids_rng.end()}; // TODO: return a better container?
+    auto ids_rng = m_objects->allWithIDs() | range_keys | range_filter(is_visible_to_an_empire);
+    Universe::IDSet retval;
+#if BOOST_VERSION > 107400
+    retval.reserve(m_objects->size());
+    retval.insert(boost::container::ordered_unique_range, ids_rng.begin(), ids_rng.end());
+#else
+    Empire::IntSet::sequence_type scratch;
+    scratch.reserve(m_objects->size());
+    range_copy(ids_rng, std::back_inserter(scratch));
+    retval.adopt_sequence(boost::container::ordered_unique_range, std::move(scratch));
+#endif
+    return retval;
 }
 
 int Universe::HighestDestroyedObjectID() const {

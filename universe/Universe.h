@@ -70,6 +70,7 @@ public:
     typedef std::map<Visibility, int>               VisibilityTurnMap;              ///< Most recent turn number on which a something, such as a Universe object, was observed at various Visibility ratings or better
     typedef std::map<int, VisibilityTurnMap>        ObjectVisibilityTurnMap;        ///< Most recent turn number on which the objects were observed at various Visibility ratings; keyed by object id
     typedef std::map<int, ObjectVisibilityTurnMap>  EmpireObjectVisibilityTurnMap;  ///< Each empire's most recent turns on which object information was known; keyed by empire id
+    using IDSet = UniverseObject::IDSet;
 
 private:
     typedef std::map<int, std::unordered_set<int>>  ObjectKnowledgeMap;             ///< IDs of Empires which know information about an object (or deleted object); keyed by object id
@@ -118,7 +119,7 @@ public:
     /** Returns IDs of objects that the Empire with id \a empire_id has vision
       * of on the current turn, or objects that at least one empire has vision
       * of on the current turn if \a empire_id = ALL_EMPIRES */
-    [[nodiscard]] std::set<int> EmpireVisibleObjectIDs(int empire_id, const EmpireManager& empires) const;
+    [[nodiscard]] IDSet EmpireVisibleObjectIDs(int empire_id, const EmpireManager& empires) const;
 
     /** Returns IDs of objects that have been destroyed. */
     [[nodiscard]] auto& DestroyedObjectIds() const noexcept { return m_destroyed_object_ids; }
