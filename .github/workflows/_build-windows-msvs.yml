@@ -11,6 +11,14 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
+      - name: Decrypt deploy SSH key
+        if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
+        run: bash .github/pre-deploy.sh
+        env:
+          DEPLOY_SSH_PASSWORD: ${{ secrets.DEPLOY_SSH_PASSWORD }}
+      - name: Validate upload target
+        if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
+        run: bash -c 'scp -vv -o ServerAliveCountMax=2 -o ServerAliveInterval=300 -o ConnectTimeout=120 -o ConnectionAttempts=5 CMakeLists.txt o01eg@frs.sourceforge.net:/dev/null'
       - name: Download SDK
         id: download-sdk
         uses: suisei-cn/actions-download-file@v1.4.0
@@ -58,11 +66,6 @@ jobs:
         run: |
           makensis packaging/windows_installer.nsi
           mv ../FreeOrion_*_Test_Win32_Setup.exe .
-      - name: Decrypt deploy SSH key
-        if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
-        run: bash .github/pre-deploy.sh
-        env:
-          DEPLOY_SSH_PASSWORD: ${{ secrets.DEPLOY_SSH_PASSWORD }}
       - name: Upload weekly-test installer
         if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
         run: bash -c 'scp -vv -o ServerAliveCountMax=2 -o ServerAliveInterval=300 -o ConnectTimeout=120 -o ConnectionAttempts=5 FreeOrion_*_Test_Win32_Setup.exe o01eg@frs.sourceforge.net:/home/frs/project/freeorion/FreeOrion/Test/'

@@ -22,6 +22,14 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
+      - name: Decrypt deploy SSH key
+        if: ${{ inputs.weekly-deploy }}
+        run: bash .github/pre-deploy.sh
+        env:
+          DEPLOY_SSH_PASSWORD: ${{ secrets.DEPLOY_SSH_PASSWORD }}
+      - name: Validate upload target
+        if: ${{ inputs.weekly-deploy }}
+        run: bash -c 'scp -vv -o ServerAliveCountMax=2 -o ServerAliveInterval=300 -o ConnectTimeout=120 -o ConnectionAttempts=5 CMakeLists.txt o01eg@frs.sourceforge.net:/dev/null'
       - name: Clean up Mono
         run: sudo ./.github/workflows/mono-uninstall.sh
       - name: Prepare ccache timestamp
@@ -66,11 +74,6 @@ jobs:
           cmake --build . --config Release --target package -- -parallelizeTargets
           ccache --cleanup
           ccache --show-stats || true
-      - name: Decrypt deploy SSH key
-        if: ${{ inputs.weekly-deploy }}
-        run: bash .github/pre-deploy.sh
-        env:
-          DEPLOY_SSH_PASSWORD: ${{ secrets.DEPLOY_SSH_PASSWORD }}
       - name: Upload binaries only
         if: ${{ inputs.weekly-deploy }}
         run: bash -c 'scp -vv -o ServerAliveCountMax=2 -o ServerAliveInterval=300 -o ConnectTimeout=120 -o ConnectionAttempts=5 build/FreeOrion_*_Test_MacOSX_*.dmg o01eg@frs.sourceforge.net:/home/frs/project/freeorion/FreeOrion/Test/'
