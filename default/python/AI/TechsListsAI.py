@@ -27,6 +27,34 @@ def defense_techs_1():
     return ["DEF_DEFENSE_NET_1", "DEF_GARRISON_1"]
 
 
+def industry_techs_1():
+    """
+    Returns a list of technologies tailored to industry focus start. Early industrialism policy unlock
+    """
+    return [
+        "LRN_PHYS_BRAIN",
+        "GRO_PLANET_ECOL",
+        "GRO_SUBTER_HAB",
+        "PRO_ROBOTIC_PROD",
+        "SHP_MIL_ROBO_CONT",
+        "PRO_INDUSTRY_CENTER_I",
+    ]
+
+
+def research_techs_1():
+    """
+    Returns a list of technologies tailored to research focus start. Early capital pop booster and cheap hull to counter poor production
+    """
+    return [
+        "LRN_PHYS_BRAIN",
+        "GRO_PLANET_ECOL",
+        "GRO_SUBTER_HAB",
+        "SHP_SPACE_FLUX_BASICS",
+        "SHP_SPACE_FLUX_BUBBLE",
+        "GRO_SYMBIOTIC_BIO",
+    ]
+
+
 class TechGroup:
     """Base class for Tech groups.
 

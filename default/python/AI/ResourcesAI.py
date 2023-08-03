@@ -27,7 +27,7 @@ from common.fo_typing import PlanetId
 from common.print_utils import Table, Text
 from empire.growth_specials import get_growth_specials
 from EnumsAI import FocusType, PriorityType, get_priority_resource_types
-from freeorion_tools import get_named_real, get_species_industry, get_species_research, tech_is_complete
+from freeorion_tools import get_named_real, tech_is_complete
 from freeorion_tools.bonus_calculation import adjust_direction
 from freeorion_tools.statistics import stats
 from freeorion_tools.timers import AITimer
@@ -179,7 +179,6 @@ class PlanetFocusManager:
         # reporter.capture_section_info("Protection")
         self.set_influence_focus()
         reporter.capture_section_info("Influence")
-        self.early_capital_handling()
         self.set_other_foci()
         reporter.capture_section_info("Typical")
         reporter.print_table(self.priority_research / self.priority_industry)
@@ -502,25 +501,6 @@ class PlanetFocusManager:
             if pinfo.planet.id not in translator_locations:
                 ProductionAI.candidate_for_translator = pinfo.planet.id
                 break
-
-    def early_capital_handling(self):
-        """
-        A small, handcrafted start optimisation for bad researchers.
-        Even if research is needed most, they do better by quickly finishing the Automatic History Analyzer.
-        """
-        if fo.currentTurn() < 7:
-            capital = fo.getUniverse().getPlanet(fo.getEmpire().capitalID)
-            if capital:
-                factor = get_species_industry(capital.speciesName) / get_species_research(capital.speciesName)
-                pinfo = self.planet_info[capital.id]
-                if factor >= 2.0 and pinfo and pinfo.current_focus == INDUSTRY:
-                    # factor at start is 2.66 for Egassem and 2 for good industry / bad research.
-                    # 1.5 currently does not exist and for normal industry / bad research (1.33) the hack is no good.
-                    switch_turn = 7 if factor > 2 else 6
-                    if fo.currentTurn() < switch_turn:
-                        debug("Special handling: keeping capital at industry.")
-                        self.bake_future_focus(capital.id, INDUSTRY)
-                    # else: don't do anything special, standard handling will likely switch to RESEARCH
 
     def set_other_foci(self):
         """
