@@ -151,7 +151,7 @@ def XENOPHOBIC_OTHER(name):
                     ~OwnedBy(empire=Target.Owner)
                     | ~EmpireHasAdoptedPolicy(empire=LocalCandidate.Owner, name="PLC_RACIAL_PURITY")
                 )
-                & WithinStarlaneJumps(jumps=NamedIntegerLookup(name="XENOPHOBIC_MAX_JUMPS"), condition=IsTarget()),
+                & WithinStarlaneJumps(jumps=NamedIntegerLookup(name="XENOPHOBIC_MAX_JUMPS"), condition=IsTarget),
             )
         ),
     )

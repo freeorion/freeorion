@@ -168,7 +168,7 @@ ARTISANS_INFLUENCE_STABILITY = [
     ),
 ]
 
-BASIC_INFLUENCE = [
+AVERAGE_INFLUENCE = BASIC_INFLUENCE = [
     EffectsGroup(  # influence focus generates influence from planets, proportional to sqare-root of population
         scope=IsSource,
         activation=Planet() & Focus(type=["FOCUS_INFLUENCE"]),
@@ -183,7 +183,6 @@ BASIC_INFLUENCE = [
     *ARTISANS_INFLUENCE_STABILITY,
 ]
 
-AVERAGE_INFLUENCE = BASIC_INFLUENCE
 
 GOOD_INFLUENCE = [
     *BASIC_INFLUENCE,
