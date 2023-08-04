@@ -47,7 +47,11 @@ public:
 
     /** Returns the number of objects of the specified class in this ObjectMap. */
     template <typename T = UniverseObject, bool only_existing = false>
-    [[nodiscard]] std::size_t size() const { return Map<typename std::decay_t<T>, only_existing>().size(); }
+    [[nodiscard]] std::size_t size() const noexcept
+    {
+        static_assert(noexcept(Map<typename std::decay_t<T>, only_existing>().size()));
+        return Map<typename std::decay_t<T>, only_existing>().size();
+    }
 
     /** Returns true if this ObjectMap contains no objects */
     [[nodiscard]] bool empty() const noexcept { return m_objects.empty(); };
