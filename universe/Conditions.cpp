@@ -9567,31 +9567,26 @@ namespace {
             const bool is_isolated = std::none_of(groups.begin(), groups.end(),
                                                   [sys_id{candidate->SystemID()}](const auto& group)
                                                   { return group.contains(sys_id); });
-            if (is_isolated) {
-                // planets are still supply-connected to themselves even if blockaded
-                const auto* candidate_planet = candidate->ObjectType() == UniverseObjectType::OBJ_PLANET ?
-                    static_cast<const ::Planet*>(candidate) : nullptr;
-                if (!candidate_planet && candidate->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
-                    const auto plt_id = static_cast<const ::Building*>(candidate)->PlanetID();
-                    candidate_planet = m_objects.getRaw<Planet>(plt_id);
-                }
-                if (candidate_planet) {
-                    int candidate_planet_id = candidate_planet->ID();
-                    // can only match if the from_object is (or is on) the same planet
-                    for (const auto* from_object : m_from_objects | range_filter(not_null)) {
-                        const auto* from_obj_planet = from_object->ObjectType() == UniverseObjectType::OBJ_PLANET ?
-                            static_cast<const ::Planet*>(from_object) : nullptr;
-                        if (!from_obj_planet && from_object->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
-                            const auto plt_id = static_cast<const ::Building*>(from_object)->PlanetID();
-                            from_obj_planet = m_objects.getRaw<Planet>(plt_id);
-                        }
-                        if (from_obj_planet && from_obj_planet->ID() == candidate_planet_id)
-                            return true;
-                    }
-                }
+            if (is_isolated) { // planets are still supply-connected to themselves even if blockaded
+                static constexpr auto planet_id_from_obj = [](const auto* obj) {
+                    const auto candidate_type = obj->ObjectType();
+                    return candidate_type == UniverseObjectType::OBJ_PLANET ?
+                        obj->ID() : candidate_type == UniverseObjectType::OBJ_BUILDING ?
+                        static_cast<const ::Building*>(obj)->PlanetID() :
+                        INVALID_OBJECT_ID;
+                };
+
+                const auto candidate_planet_id = planet_id_from_obj(candidate);
+                if (candidate_planet_id == INVALID_OBJECT_ID)
+                    return false;
+
+                // can only match if the from_object is (or is on) the same planet. otherwise,
                 // candidate is isolated, but did not match planet for any test object
-                return false;
+                return range_any_of(m_from_objects | range_filter(not_null) | range_transform(planet_id_from_obj)
+                                    | range_filter([](const auto id) { return id != INVALID_OBJECT_ID; }),
+                                    [candidate_planet_id](const auto id) { return candidate_planet_id == id; });
             }
+
             // candidate is not blockaded, so check for system group matches
             for (auto* from_object : m_from_objects) {
                 for (const auto& group : groups) {
