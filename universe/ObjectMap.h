@@ -725,7 +725,6 @@ std::vector<const std::decay_t<T>*> ObjectMap::findRaw(Pred pred) const
         result.reserve(std::size(pred));
 
     auto& map{Map<DecayT, only_existing>()};
-    using map_value_t = typename std::decay_t<decltype(map)>::mapped_type;
 
     static constexpr auto not_null = [](const auto& p) -> bool { return p; };
     static constexpr auto get_rawptr = [](const auto& p) { return p.get(); };
