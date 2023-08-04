@@ -3,6 +3,22 @@ from common.priorities import (
     AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
     TARGET_AFTER_2ND_SCALING_PRIORITY,
 )
+from focs._effects import (
+    CurrentTurn,
+    EffectsGroup,
+    Focus,
+    IsSource,
+    LocalCandidate,
+    MinOf,
+    NamedRealLookup,
+    Planet,
+    SetDefense,
+    SetMaxDefense,
+    SetTargetHappiness,
+    Target,
+    Unowned,
+    Value,
+)
 
 STANDARD_DEFENSE_GROWTH = EffectsGroup(  # increase 1 per turn, up to max
     scope=IsSource,

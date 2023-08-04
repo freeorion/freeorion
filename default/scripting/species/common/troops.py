@@ -196,6 +196,11 @@ NO_OFFENSE_TROOPS = [
     )
 ]
 
+NO_DEFENSE_TROOPS = [
+    EffectsGroup(description="NO_DEFENSE_TROOPS_DESC", scope=IsSource, effects=SetMaxTroops(value=0)),
+    *UNSTABLE_REBEL_TROOPS,
+]
+
 
 BAD_DEFENSE_TROOPS = [
     *BASIC_DEFENSE_TROOPS,
@@ -242,6 +247,21 @@ BAD_OFFENSE_TROOPS = [
     )
 ]
 
+
+GOOD_OFFENSE_TROOPS = [
+    EffectsGroup(
+        description="GOOD_OFFENSE_TROOPS_DESC",
+        scope=IsSource,
+        activation=Ship & (DesignHasPart(name="GT_TROOP_POD") | DesignHasPart(name="GT_TROOP_POD_2")),
+        stackinggroup="GOOD_OFFENSIVE_TROOPS_STACK",
+        accountinglabel="GOOD_OFFENSIVE_TROOPS_LABEL",
+        effects=[
+            SetCapacity(partname="GT_TROOP_POD", value=PartCapacity(name="GT_TROOP_POD") * 1.5),
+            SetCapacity(partname="GT_TROOP_POD_2", value=PartCapacity(name="GT_TROOP_POD_2") * 1.5),
+        ],
+    )
+]
+
 GOOD_DEFENSE_TROOPS = [
     *BASIC_DEFENSE_TROOPS,
     EffectsGroup(
@@ -265,7 +285,6 @@ ULTIMATE_DEFENSE_TROOPS = [
     *UNSTABLE_REBEL_TROOPS,
     *PROTECTION_FOCUS_TROOPS,
 ]
-
 
 GREAT_OFFENSE_TROOPS = [
     EffectsGroup(

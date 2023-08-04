@@ -3,19 +3,46 @@ from common.opinion import POLICY_DISLIKE_SCALING
 from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
 from focs._effects import (
     Abs,
+    Adequate,
+    Capital,
+    Contains,
     CurrentTurn,
     EffectsGroup,
+    EmpireHasAdoptedPolicy,
+    GameRule,
+    GasGiantType,
+    Good,
     HasSpecies,
     HasTag,
+    Homeworld,
+    Hostile,
+    Huge,
+    InSystem,
+    IsBuilding,
     IsSource,
+    JumpsBetween,
+    Large,
     LocalCandidate,
+    MaxOf,
+    Medium,
+    Min,
     MinOf,
     NamedReal,
+    OwnedBy,
     Planet,
+    Poor,
+    Population,
+    ResourceSupplyConnected,
     SetHappiness,
     SetTargetHappiness,
+    Small,
     Source,
+    SpeciesDislikes,
+    SpeciesLikes,
+    Statistic,
     Target,
+    Tiny,
+    Uninhabitable,
     Unowned,
     Value,
 )
@@ -227,6 +254,18 @@ STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY = [
         effects=SetTargetHappiness(
             value=Value - NamedReal(name="DISCONNECTED_FROM_CAPITAL_AND_REGIONAL_ADMIN_STABILITY_PENALTY", value=10)
         ),
+    ),
+]
+
+VERY_BAD_HAPPINESS = [
+    *COMMON_HAPPINESS_EFFECTS,
+    *STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY,
+    EffectsGroup(
+        description="VERY_BAD_HAPPINESS_DESC",
+        scope=IsSource,
+        activation=Planet(),
+        accountinglabel="VERY_BAD_HAPPINESS_LABEL",
+        effects=SetTargetHappiness(value=Value + NamedReal(name="VERY_BAD_HAPPINESS_VAL", value=-5.0)),
     ),
 ]
 

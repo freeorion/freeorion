@@ -5,7 +5,18 @@ from common.priorities import (
     TARGET_EARLY_BEFORE_SCALING_PRIORITY,
     TARGET_SCALING_PRIORITY,
 )
-from focs._effects import EffectsGroup, Focus, Happiness, IsSource, Planet, SetTargetResearch, Value
+from focs._effects import (
+    EffectsGroup,
+    Focus,
+    GalaxyMaxAIAggression,
+    Happiness,
+    IsHuman,
+    IsSource,
+    Planet,
+    SetTargetResearch,
+    Target,
+    Value,
+)
 from species.common.multiplier import (
     BAD_MULTIPLIER,
     GOOD_MULTIPLIER,
@@ -16,7 +27,7 @@ from species.common.multiplier import (
 
 NO_RESEARCH = DESCRIPTION_EFFECTSGROUP_MACRO("NO_RESEARCH_DESC")
 
-BASIC_RESEARCH = [
+AVERAGE_RESEARCH = BASIC_RESEARCH = [
     EffectsGroup(
         scope=IsSource,
         activation=Planet() & Focus(type=["FOCUS_RESEARCH"]) & Happiness(low=0),
@@ -45,7 +56,6 @@ BAD_RESEARCH = [
     ),
 ]
 
-AVERAGE_RESEARCH = BASIC_RESEARCH
 
 GOOD_RESEARCH = [
     *BASIC_RESEARCH,

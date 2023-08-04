@@ -3,6 +3,20 @@ from common.priorities import (
     AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
     TARGET_AFTER_2ND_SCALING_PRIORITY,
 )
+from focs._effects import (
+    CurrentTurn,
+    EffectsGroup,
+    Focus,
+    IsSource,
+    LocalCandidate,
+    MinOf,
+    Planet,
+    SetMaxShield,
+    SetShield,
+    Target,
+    Unowned,
+    Value,
+)
 
 
 def NATIVE_PLANETARY_SHIELDS(strength: int):

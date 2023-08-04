@@ -21,6 +21,19 @@ STANDARD_SUPPLY_GROWTH = EffectsGroup(  # increase 1 per turn, up to max
     effects=SetSupply(value=MinOf(float, Value(Target.MaxSupply), Value + 1)),
 )
 
+
+VERY_BAD_SUPPLY = [
+    EffectsGroup(
+        description="VERY_BAD_SUPPLY_DESC",
+        scope=IsSource,
+        activation=Planet(),
+        accountinglabel="VERY_BAD_SUPPLY_LABEL",
+        effects=SetMaxSupply(value=Value - 1),
+    ),
+    STANDARD_SUPPLY_GROWTH,
+]
+
+
 BAD_SUPPLY = [
     EffectsGroup(
         description="BAD_SUPPLY_DESC",
@@ -50,6 +63,17 @@ GREAT_SUPPLY = [
         activation=Planet(),
         accountinglabel="GREAT_SUPPLY_LABEL",
         effects=SetMaxSupply(value=Value + 2),
+    ),
+    STANDARD_SUPPLY_GROWTH,
+]
+
+ULTIMATE_SUPPLY = [
+    EffectsGroup(
+        description="ULTIMATE_SUPPLY_DESC",
+        scope=IsSource,
+        activation=Planet(),
+        accountinglabel="ULTIMATE_SUPPLY_LABEL",
+        effects=SetMaxSupply(value=Value + 3),
     ),
     STANDARD_SUPPLY_GROWTH,
 ]

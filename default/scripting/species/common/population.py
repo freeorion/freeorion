@@ -8,16 +8,47 @@ from common.priorities import (
 )
 from focs._effects import (
     Abs,
+    AnyEmpire,
+    BlackHole,
+    Blue,
+    Contains,
+    CurrentTurn,
     EffectsGroup,
+    EmpireHasAdoptedPolicy,
+    Focus,
     GasGiantType,
+    Good,
+    HasSpecies,
+    HasTag,
+    Homeworld,
+    Hostile,
     IsSource,
+    IsTarget,
+    LocalCandidate,
     MaxOf,
     MinOf,
     NamedRealLookup,
+    Neutron,
+    NoStar,
+    Orange,
+    OwnedBy,
     Planet,
+    Poor,
+    Red,
+    ResourceSupplyConnected,
+    SetPopulation,
+    SetStarType,
     SetTargetPopulation,
+    Source,
+    Star,
+    StatisticIf,
     Target,
+    TargetPopulation,
+    Turn,
+    Uninhabitable,
     Value,
+    White,
+    Yellow,
 )
 from species.common.advanced_focus import ADVANCED_FOCUS_EFFECTS
 from species.common.general import (
@@ -195,7 +226,7 @@ HOMEWORLD_GROWTH_FOCUS_BOOST = EffectsGroup(
     effects=SetTargetPopulation(value=Value + 1 * Target.HabitableSize),
 )
 
-BASIC_POPULATION = [
+AVERAGE_POPULATION = BASIC_POPULATION = [
     HOMEWORLD_BONUS_POPULATION,
     *ENVIRONMENT_MODIFIER,
     SELF_SUSTAINING_BONUS,
@@ -235,7 +266,18 @@ BASIC_POPULATION = [
     *STANDARD_METER_GROWTH,
 ]
 
-AVERAGE_POPULATION = BASIC_POPULATION
+EXTREMELY_BAD_POPULATION = [
+    *BASIC_POPULATION,
+    EffectsGroup(
+        description="EXTREMELY_BAD_POPULATION_DESC",
+        scope=IsSource,
+        activation=Planet(),
+        accountinglabel="EXTREMELY_BAD_POPULATION_LABEL",
+        priority=TARGET_POPULATION_SCALING_PRIORITY,
+        effects=SetTargetPopulation(value=Value - 0.75 * Abs(float, Value)),
+    ),
+]
+
 
 VERY_BAD_POPULATION = [
     *BASIC_POPULATION,
@@ -258,6 +300,18 @@ GOOD_POPULATION = [
         accountinglabel="GOOD_POPULATION_LABEL",
         priority=TARGET_POPULATION_SCALING_PRIORITY,
         effects=SetTargetPopulation(value=Value + 0.25 * Abs(float, Value)),
+    ),
+]
+
+GREAT_POPULATION = [
+    *BASIC_POPULATION,
+    EffectsGroup(
+        description="GREAT_POPULATION_DESC",
+        scope=IsSource,
+        activation=Planet(),
+        accountinglabel="GREAT_POPULATION_LABEL",
+        priority=TARGET_POPULATION_SCALING_PRIORITY,
+        effects=SetTargetPopulation(value=Value + 0.5 * Abs(float, Value)),
     ),
 ]
 
