@@ -541,8 +541,7 @@ namespace {
         void AddSystemPredicate(const Pathfinder::SystemExclusionPredicateType& pred,
                                 const EmpireManager& empires, const ObjectMap& objects)
         {
-            for (auto& [empire_id, empire] : empires) {
-                (void)empire;
+            for (const auto empire_id : empires | range_keys) {
                 SystemPredicateFilter sys_pred_filter(&system_graph, &objects, pred);
                 auto sys_pred_filtered_graph_ptr = std::make_shared<SystemPredicateGraph>(
                     system_graph, sys_pred_filter);
