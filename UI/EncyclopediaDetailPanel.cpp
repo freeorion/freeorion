@@ -288,13 +288,12 @@ namespace {
                                                           str));
             }
 
-            for ([[maybe_unused]] auto& [category_name, article_vec] : encyclopedia.Articles()) {
+            for (const auto& category_name : encyclopedia.Articles() | range_keys) {
                 // Do not add sub-categories
                 const EncyclopediaArticle& article = encyclopedia.GetArticleByKey(category_name);
                 // No article found or specifically a top-level category
                 if (!article.category.empty() && article.category != "ENC_INDEX")
                     continue;
-                (void)article_vec; // quiet unused variable warning
                 auto& us_name{UserString(category_name)};
                 retval.emplace_back(std::piecewise_construct,
                                     std::forward_as_tuple(us_name),
@@ -398,8 +397,7 @@ namespace {
         else if (dir_name == "ENC_SPECIES") {
             // directory populated with list of links to other articles that list species
             if (!exclude_custom_categories_from_dir_name) {
-                for (const auto& [species_name, species] : GetSpeciesManager()) {
-                    (void)species; // quiet warning
+                for (const auto& species_name : GetSpeciesManager() | range_keys) {
                     auto& us_name{UserString(species_name)};
                     retval.emplace_back(std::piecewise_construct,
                                         std::forward_as_tuple(us_name),
