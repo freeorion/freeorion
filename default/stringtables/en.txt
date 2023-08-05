@@ -16507,7 +16507,7 @@ SH_LOGISTICS_FACILITATOR
 Logistics Facilitator
 
 SH_LOGISTICS_FACILITATOR_DESC
-'''This organizational flagship is designed to organize and manage mid-battle transfers of crewmen and other objects. It has seven external slots, two internal slots and a core slot. Its built-in fleet of stealthy freighters allows transfer of personnel and material during battle, enabling all friendly ships to effect partial repairs even on turns when combat has occured, and to restore [[metertype METER_STRUCTURE]] to double the current when out of combat, meaning ships with at least half strength will fully repair.
+'''This organizational flagship is designed to organize and manage mid-battle transfers of crewmen and other objects. It has six external slots, two internal slots and a core slot. Its built-in fleet of stealthy freighters allows transfer of personnel and material during battle, enabling all friendly ships to effect partial repairs even on turns when combat has occured, and to restore [[metertype METER_STRUCTURE]] to double the current when out of combat, meaning ships with at least half strength will fully repair.
 
 [[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
 
