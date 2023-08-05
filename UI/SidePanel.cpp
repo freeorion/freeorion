@@ -1653,15 +1653,18 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     const SupplyManager& supply = context.supply;
 
     const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    const auto client_empire = context.GetEmpire(client_empire_id);
-    const auto* source_for_empire = client_empire->Source(context.ContextObjects()).get();
-
+    const auto client_empire = client_empire_id != ALL_EMPIRES ? context.GetEmpire(client_empire_id).get() : nullptr;
+    const auto* source_for_empire = client_empire ? client_empire->Source(context.ContextObjects()).get() : nullptr;
 
     auto* planet = objects.getRaw<Planet>(m_planet_id); // not const to allow updates for meter estimates
     if (!planet) {
         RequirePreRender();
         return;
     }
+    if (!source_for_empire && !planet->Unowned())
+        source_for_empire = planet;
+
+
 
     // set planet name, formatted to indicate presense of shipyards / homeworlds
 
@@ -1769,13 +1772,13 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
 
     const bool being_annexed =    planet->IsAboutToBeAnnexed();
     const auto annexability_test = [ac{annexation_condition}, &context, source_for_empire](const auto* planet)
-    { return ac && ac->EvalOne(ScriptingContext{source_for_empire, context}, planet); }; // ignores cost
+    { return ac && source_for_empire && ac->EvalOne(ScriptingContext{source_for_empire, context}, planet); }; // ignores cost
     const bool potentially_annexable = annexability_test(planet);
-    const auto this_planet_annexation_cost = PlanetAnnexationCost(planet, source_for_empire, context);
-    const double empire_annexations_cost = PendingAnnexationOrderCost(source_for_empire, context);
-    const double empire_adopted_policies_cost = client_empire->ThisTurnAdoptedPoliciesCost(context);
+    const auto this_planet_annexation_cost = source_for_empire ? PlanetAnnexationCost(planet, source_for_empire, context) : 0.0;
+    const double empire_annexations_cost = source_for_empire ? PendingAnnexationOrderCost(source_for_empire, context) : 0.0;
+    const double empire_adopted_policies_cost = client_empire ? client_empire->ThisTurnAdoptedPoliciesCost(context) : 0.0;
     const double total_costs = empire_annexations_cost + empire_adopted_policies_cost + this_planet_annexation_cost;
-    const double available_ip = client_empire->ResourceStockpile(ResourceType::RE_INFLUENCE);
+    const double available_ip = client_empire ? client_empire->ResourceStockpile(ResourceType::RE_INFLUENCE) : 0.0;
     const bool annexation_affordable = total_costs <= available_ip;
     const bool annexable =        !being_annexed && populated && !has_owner && !being_invaded && species && 
                                   potentially_annexable && annexation_affordable;
@@ -2074,7 +2077,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     if (client_empire_id != ALL_EMPIRES) {
         const Visibility visibility = u.GetObjectVisibilityByEmpire(m_planet_id, client_empire_id);
         const auto& visibility_turn_map = u.GetObjectVisibilityTurnMapByEmpire(m_planet_id, client_empire_id);
-        const float client_empire_detection_strength = client_empire->GetMeter("METER_DETECTION_STRENGTH")->Current();
+        const float client_empire_detection_strength = client_empire ? client_empire->GetMeter("METER_DETECTION_STRENGTH")->Current() : 0.0f;
         const float apparent_stealth = planet->GetMeter(MeterType::METER_STEALTH)->Initial();
 
         std::string visibility_info;
