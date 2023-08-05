@@ -539,10 +539,8 @@ void Universe::ApplyAllEffectsAndUpdateMeters(ScriptingContext& context, bool do
     // turn) and active meters have the proper baseline from which to
     // accumulate changes from effects
     ResetAllObjectMeters(true, true);
-    for ([[maybe_unused]] auto& [empire_id, empire] : context.Empires().GetEmpires()) {
-        (void)empire_id;    // quieting unused variable warning
+    for (auto& empire : context.Empires().GetEmpires() | range_values)
         empire->ResetMeters();
-    }
     context.species.ResetSpeciesOpinions(true, true);
 
     ExecuteEffects(source_effects_targets_causes, context, do_accounting, false, false, true);
@@ -612,10 +610,8 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(ScriptingContext& context, bool 
         for (auto const& [meter_type, meter] : object->Meters())
             TraceLogger(effects) << "    meter: " << meter_type << "  value: " << meter.Current();
     }
-    for ([[maybe_unused]] auto& [empire_id, empire] : context.Empires()) {
-        (void)empire_id;    // quieting unused variable warning
+    for (auto& empire : context.Empires() | range_values)
         empire->ResetMeters();
-    }
     context.species.ResetSpeciesOpinions(true, true);
 
     ExecuteEffects(source_effects_targets_causes, context, do_accounting, true, false, true);
@@ -865,7 +861,6 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec,
             account_map.reserve(meters.size());
 
             for (auto& [type, meter] : meters) {
-                (void)type; // quiet warning
                 float meter_change = meter.Current() - Meter::DEFAULT_VALUE;
                 if (meter_change != 0.0f)
                     account_map[type].emplace_back(INVALID_OBJECT_ID, EffectsCauseType::ECT_INHERENT,
