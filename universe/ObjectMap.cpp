@@ -295,13 +295,8 @@ void ObjectMap::clear() {
 }
 
 std::vector<int> ObjectMap::FindExistingObjectIDs() const {
-    std::vector<int> result;
-    result.reserve(m_existing_objects.size());
-    for ([[maybe_unused]] auto& [id, ignored_obj] : m_existing_objects) {
-        (void)ignored_obj;
-        result.push_back(id);
-    }
-    return result;
+    auto key_rng = m_existing_objects | range_keys;
+    return {key_rng.begin(), key_rng.end()};
 }
 
 void ObjectMap::UpdateCurrentDestroyedObjects(const std::unordered_set<int>& destroyed_object_ids) {
