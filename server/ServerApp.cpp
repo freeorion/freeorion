@@ -684,13 +684,11 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
 }
 
 namespace {
+    constexpr auto uneliminated = [](const auto& id_empire) { return !id_empire.second->Eliminated(); };
+
     void UpdateEmpireSupply(ScriptingContext& context, SupplyManager& supply, bool precombat) {
         // Determine initial supply distribution and exchanging and resource pools for empires
-        for ([[maybe_unused]] auto& [ignored_id, empire] : context.Empires()) {
-            (void)ignored_id; // quiet unused variable warning
-            if (empire->Eliminated())
-                continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
-
+        for (auto& empire : context.Empires() | range_filter(uneliminated) | range_values) {
             // determine which systems can propagate fleet and resource (same for both)
             empire->UpdateSupplyUnobstructedSystems(context, precombat); // TODO: pass empire ID to use for known objects lookup?
             // set range systems can propagate fleet and resourse supply (separately)
@@ -709,10 +707,7 @@ namespace {
         const unsigned int num_threads = static_cast<unsigned int>(std::max(1, EffectsProcessingThreads()));
         boost::asio::thread_pool thread_pool(num_threads);
 
-        for ([[maybe_unused]] auto& [empire_id, empire] : context.Empires()) {
-            if (empire->Eliminated())
-                continue;
-
+        for (auto& [empire_id, empire] : context.Empires() | range_filter(uneliminated)) {
             const auto tct_it = std::find_if(tech_costs_times.begin(), tech_costs_times.end(),
                                              [empire_id{empire_id}](const auto& tct) { return empire_id == tct.first; });
             if (tct_it == tech_costs_times.end()) {
@@ -2829,18 +2824,19 @@ namespace {
     void UpdateEmpireInvasionInfo(const std::map<int, std::map<int, double>>& planet_empire_invasion_troops,
                                   EmpireManager& empires, const ObjectMap& objects)
     {
-        for (auto& [planet_id, empire_troops] : planet_empire_invasion_troops) {
-            const auto* planet = objects.getRaw<Planet>(planet_id);
-            if (!planet || planet->SpeciesName().empty())
-                continue;
+        const auto get_empire = [&empires](const auto empire_id) { return empires.GetEmpire(empire_id); };
+        const auto get_planet = [&objects](const auto& planet_id_troops)
+        { return std::make_pair(objects.getRaw<Planet>(planet_id_troops.first), planet_id_troops.second); };
+        static constexpr auto has_species = [](const auto& planet_troops)
+        { return planet_troops.first && !planet_troops.first->SpeciesName().empty(); };
+        static constexpr auto not_nullptr = [](const auto& e) -> bool { return e.get(); };
 
-            for (auto& [invader_empire_id, troops] : empire_troops) {
-                (void)troops; // quiet warning
-                const auto invader_empire = empires.GetEmpire(invader_empire_id);
-                if (!invader_empire)
-                    continue;
-                invader_empire->RecordPlanetInvaded(*planet);
-            }
+        for (const auto& [planet, empire_troops] : planet_empire_invasion_troops
+             | range_transform(get_planet) | range_filter(has_species))
+        {
+            for (const auto& invader_empire : empire_troops | range_keys
+                 | range_transform(get_empire) | range_filter(not_nullptr))
+            { invader_empire->RecordPlanetInvaded(*planet); }
         }
     }
 
@@ -3587,31 +3583,34 @@ namespace {
     void UpdateEmpirePolicies(EmpireManager& empires, int current_turn,
                               bool update_cumulative_adoption_time = false)
     {
-        for ([[maybe_unused]] auto& [empire_id, empire] : empires) {
-            (void)empire_id;    // quieting unused variable warning
+        for (auto& empire : empires | range_values)
             empire->UpdatePolicies(update_cumulative_adoption_time, current_turn);
-        }
     }
 
     /** Deletes empty fleets. */
     void CleanEmptyFleets(ScriptingContext& context) {
-        std::vector<Fleet*> empty_fleets;
         Universe& universe{context.ContextUniverse()};
         ObjectMap& objects{context.ContextObjects()};
         const auto& ids_as_flatset{context.EmpireIDs()};
         const std::vector<int> empire_ids{ids_as_flatset.begin(), ids_as_flatset.end()}; // TODO: avoid copy?
 
-        for (auto* fleet : objects.allRaw<Fleet>()) {
-            if (fleet->Empty())
-                empty_fleets.push_back(fleet);
-        }
+        // need to remove empty fleets from systems and call RecursiveDestroy for each fleet
 
-        for (auto& fleet : empty_fleets) {
-            if (auto* sys = objects.getRaw<System>(fleet->SystemID()))
-                sys->Remove(fleet->ID());
+        static constexpr auto is_empty_fleet = [](const Fleet* f) { return f->Empty(); };
+        const auto to_fleet_and_system = [&objects](const Fleet* f)
+        { return std::make_pair(f, objects.getRaw<System>(f->SystemID())); }; // system may be nullptr
+        static constexpr auto in_system = [](const auto& fs) -> bool { return fs.second; };
+        static constexpr auto to_id = [](const auto* o) { return o->ID(); };
 
-            universe.RecursiveDestroy(fleet->ID(), empire_ids);
-        }
+        auto empty_fleets = objects.allRaw<const Fleet>() | range_filter(is_empty_fleet);
+        auto empty_fleet_ids = empty_fleets | range_transform(to_id);
+        auto empty_fleets_and_systems = empty_fleets | range_transform(to_fleet_and_system)
+            | range_filter(in_system);
+
+        for (auto [fleet, system] : empty_fleets_and_systems)
+            system->Remove(fleet->ID());
+        for (const auto fleet_id : empty_fleet_ids)
+            universe.RecursiveDestroy(fleet_id, empire_ids);
     }
 }
 
@@ -3716,10 +3715,8 @@ void ServerApp::PreCombatProcessTurns() {
     // clean up orders, which are no longer needed
     ClearEmpireTurnOrders();
     // TODO: CHECK THIS: was in ClearEmpireTurnOrders... needed?
-    for (auto& [empire_id, empire] : m_empires) {
-        (void)empire_id;
+    for (auto& empire : m_empires | range_values)
         empire->AutoTurnSetReady();
-    }
 
 
     // update focus history info
@@ -4109,12 +4106,11 @@ void ServerApp::PostCombatProcessTurns() {
 
     DebugLogger() << "ServerApp::PostCombatProcessTurns applying Newly Added Techs";
     // apply new techs
-    for ([[maybe_unused]] auto& [ignored_id, empire] : m_empires) {
-        (void)ignored_id;   // quiet unused variable warning
-        if (empire && !empire->Eliminated()) {
-            empire->ApplyNewTechs(m_universe, m_current_turn);
-            empire->ApplyPolicies(m_universe, m_current_turn);
-        }
+    for (auto& empire : m_empires | range_values
+         | range_filter([](const auto& e) { return e && !e->Eliminated(); }))
+    {
+        empire->ApplyNewTechs(m_universe, m_current_turn);
+        empire->ApplyPolicies(m_universe, m_current_turn);
     }
 
 
@@ -4144,10 +4140,8 @@ void ServerApp::PostCombatProcessTurns() {
 
     // misc. other updates and records
     m_universe.UpdateStatRecords(context);
-    for ([[maybe_unused]] auto& [ignored_empire_id, empire] : m_empires) {
-        (void)ignored_empire_id;    // quiet unused variable warning
+    for (auto& empire : m_empires | range_values)
         empire->UpdateOwnedObjectCounters(m_universe);
-    }
 
 
     // indicate that the clients are waiting for their new gamestate
