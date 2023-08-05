@@ -1159,9 +1159,9 @@ void SetEmpireMeter::Execute(ScriptingContext& context, const TargetSet& targets
             meter->SetCurrent(new_val);
 
     } else if (m_value->SimpleIncrement()) {
-        auto op_ref = static_cast<ValueRef::Operation<double>*>(m_value.get());
-        auto op_type = op_ref->GetOpType();
-        auto rhs = op_ref->RHS()->Eval(context);
+        const auto op_ref = static_cast<ValueRef::Operation<double>*>(m_value.get());
+        const auto op_type = op_ref->GetOpType();
+        const auto rhs = op_ref->RHS()->Eval(context);
         [[maybe_unused]] auto lhs_ref = op_ref->LHS();
         assert(lhs_ref && lhs_ref->GetReferenceType() == ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE);
 
