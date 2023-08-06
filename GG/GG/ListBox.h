@@ -116,7 +116,7 @@ public:
         /** the type of key used to sort rows */
         typedef std::string SortKeyType;
 
-        Row();
+        Row() : Row(ListBox::DEFAULT_ROW_WIDTH, ListBox::DEFAULT_ROW_HEIGHT) {}
         Row(X w, Y h);
         ~Row() = default;
 
@@ -124,7 +124,7 @@ public:
 
         /** Returns the string by which this row may be sorted. */
         virtual SortKeyType SortKey(std::size_t column) const;
-        std::size_t         size() const noexcept { return m_cells.size(); };   ///< returns the number of Controls in this Row
+        auto                size() const noexcept { return m_cells.size(); };   ///< returns the number of Controls in this Row
         bool                empty() const noexcept { return m_cells.empty(); }; ///< returns true iff there are 0 Controls in this Row
 
         /** Returns the Control in the \a nth cell of this Row
@@ -137,7 +137,7 @@ public:
         auto         Margin() const noexcept { return m_margin; }                      ///< amount of space left between the contents of adjacent cells, in pixels
         bool         IsNormalized() const noexcept { return m_is_normalized; }
 
-        void         Render() override;
+        void         Render() override {}
 
         void         push_back(std::shared_ptr<Control> c); ///< adds a given Control to the end of the Row; this Control becomes property of the Row
         void         clear(); ///< removes and deletes all cells in this Row

@@ -1216,7 +1216,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
     else if (property_name == "NumShips") {
         if (object->ObjectType() == UniverseObjectType::OBJ_FLEET) {
             auto fleet = static_cast<const Fleet*>(object);
-            return fleet->NumShips();
+            return static_cast<int>(fleet->NumShips());
         }
         return 0;
 
@@ -1225,7 +1225,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         if (object->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
             auto system = static_cast<const System*>(object);
             return system->NumStarlanes();
-            }
+        }
         return 0;
 
     }

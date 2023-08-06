@@ -169,10 +169,6 @@ void ValidateLayoutSize(GG::Layout* layout, std::size_t size)
 ////////////////////////////////////////////////
 // GG::ListBox::Row
 ////////////////////////////////////////////////
-ListBox::Row::Row() :
-    Row(ListBox::DEFAULT_ROW_WIDTH, ListBox::DEFAULT_ROW_HEIGHT)
-{}
-
 ListBox::Row::Row(X w, Y h) :
     Control(X0, Y0, w, h),
     m_row_alignment(ALIGN_VCENTER),
@@ -192,9 +188,6 @@ std::string ListBox::Row::SortKey(std::size_t col) const
     const TextControl* text_control = dynamic_cast<const TextControl*>(at(col));
     return text_control ? text_control->Text() : "";
 }
-
-void ListBox::Row::Render()
-{}
 
 void ListBox::Row::GrowWidthsStretchesAlignmentsTo(std::size_t nn) {
     if (m_col_widths.size() < nn) {
@@ -231,15 +224,13 @@ void ListBox::Row::resize(std::size_t n)
         return;
 
     auto&& layout = GetLayout();
-    for (auto& cell : m_cells) {
+    for (auto& cell : m_cells)
         layout->Remove(cell.get());
-    }
 
     std::size_t old_size = m_cells.size();
 
-    for (std::size_t ii = n; ii < old_size; ++ii) {
+    for (std::size_t ii = n; ii < old_size; ++ii)
         m_cells[ii].reset();
-    }
     m_cells.resize(n, nullptr);
     m_col_widths.resize(n);
     m_col_alignments.resize(n);

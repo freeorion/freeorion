@@ -52,7 +52,7 @@ struct FO_COMMON_API ResearchQueue {
 
     // STL container-like interface
     [[nodiscard]] bool           empty() const noexcept { return m_queue.size() > 0; }
-    [[nodiscard]] unsigned int   size() const noexcept { return m_queue.size(); }
+    [[nodiscard]] auto           size() const noexcept { return m_queue.size(); }
     [[nodiscard]] const_iterator begin() const noexcept { return m_queue.begin(); }
     [[nodiscard]] const_iterator end() const noexcept { return m_queue.end(); }
     [[nodiscard]] const_iterator find(const std::string& tech_name) const;
