@@ -365,12 +365,10 @@ void Universe::RenameShipDesign(int design_id, std::string name, std::string des
 const ShipDesign* Universe::GetGenericShipDesign(std::string_view name) const {
     if (name.empty())
         return nullptr;
-    for (const auto& [design_id, design] : m_ship_designs) {
-        (void)design_id;
-        if (name == design.Name(false))
-            return &design;
-    }
-    return nullptr;
+    const auto has_name = [name](const auto& design) { return name == design.Name(false); };
+    const auto rng = m_ship_designs | range_values;
+    const auto it = range_find_if(rng, has_name);
+    return it != rng.end() ? &(*it) : nullptr;
 }
 
 const std::set<int>& Universe::EmpireKnownShipDesignIDs(int empire_id) const {
