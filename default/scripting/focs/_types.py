@@ -1,11 +1,15 @@
 # mypy: disable-error-code="empty-body"
 from functools import total_ordering
-from typing import Generic, TypeVar
+from typing import Generic, TypeAlias, TypeVar
 
 from typing_extensions import Self
 
 
 class _Effect:
+    ...
+
+
+class _EffectGroup:
     ...
 
 
@@ -61,7 +65,7 @@ class _PlanetId(_ID):
     ...
 
 
-_T = TypeVar("_T")
+_T = TypeVar("_T", bound=[int, float, str])
 
 
 @total_ordering
@@ -109,15 +113,11 @@ class _Value(Generic[_T]):
         ...
 
 
-class _FloatValue(_Value[_T]):
-    ...
+_FloatValue: TypeAlias = _Value[float]
+_IntValue: TypeAlias = _Value[int]
 
 
-class _IntValue(_Value[_T]):
-    ...
-
-
-class _Scope:
+class _Condition:
     def __and__(self, other) -> Self:
         ...
 
@@ -128,19 +128,23 @@ class _Scope:
         ...
 
 
-@total_ordering
-class _Turn(_Scope):
-    def __lt__(self, other) -> _Scope:
-        ...
-
-    def __eq__(self, other) -> _Scope:  # type: ignore[override]
-        ...
+class _FocusType:
+    ...
 
 
 @total_ordering
-class _IntComparableScope(_Scope):
-    def __eq__(self, other) -> _Scope:  # type: ignore[override]
+class _Turn(_Condition):
+    def __lt__(self, other) -> _Condition:
         ...
 
-    def __lt__(self, other) -> _Scope:
+    def __eq__(self, other) -> _Condition:  # type: ignore[override]
+        ...
+
+
+@total_ordering
+class _IntComparableCondition(_Condition):
+    def __eq__(self, other) -> _Condition:  # type: ignore[override]
+        ...
+
+    def __lt__(self, other) -> _Condition:
         ...
