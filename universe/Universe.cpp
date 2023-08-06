@@ -2298,17 +2298,15 @@ namespace {
         const auto empire_detection_strengths = GetEmpiresDetectionStrengths(empires, empire_id);
         boost::container::flat_map<int, boost::container::flat_map<std::pair<double, double>, std::vector<int>>> retval;
         retval.reserve(empire_detection_strengths.size());
-        for (const auto& [loop_empire_id, ds] : empire_detection_strengths) {
-            (void)ds;
+        for (const int loop_empire_id : empire_detection_strengths | range_keys)
             retval[loop_empire_id].reserve(obj_count);
-        }
 
         // filter objects as detectors for this empire or detectable objects
         for (const auto& obj : objects.allRaw()) {
             const Meter* stealth_meter = obj->GetMeter(MeterType::METER_STEALTH);
             if (!stealth_meter)
                 continue;
-            float object_stealth = stealth_meter->Current();
+            const float object_stealth = stealth_meter->Current();
             std::pair<double, double> object_pos(obj->X(), obj->Y());
 
             // for each empire being checked for, check if each object could be
@@ -2562,9 +2560,8 @@ namespace {
                 //DebugLogger() << " ... contained object (" << contained_obj_id << ")";
 
                 // for each empire with a visibility map
-                for (auto& [empire_id, vis_map] : empire_object_visibility) {
+                for (auto& vis_map : empire_object_visibility | range_values) {
                     //DebugLogger() << " ... ... empire id " << empire_entry.first;
-                    (void)empire_id;
 
                     // find current empire's visibility entry for current container object
                     auto container_vis_it = vis_map.find(container_obj->ID());
@@ -2633,16 +2630,14 @@ namespace {
             int system_id = system->ID();
 
             // for each empire with a visibility map
-            for (auto& [empire_id, vis_map] : empire_object_visibility) {
-                (void)empire_id;
-
+            for (auto& vis_map : empire_object_visibility | range_values) {
                 // find current system's visibility
-                auto system_vis_it = vis_map.find(system_id);
+                const auto system_vis_it = vis_map.find(system_id);
                 if (system_vis_it == vis_map.end())
                     continue;
 
                 // skip systems that aren't at least partially visible; they can't propagate visibility along starlanes
-                Visibility system_vis = system_vis_it->second;
+                const Visibility system_vis = system_vis_it->second;
                 if (system_vis <= Visibility::VIS_BASIC_VISIBILITY)
                     continue;
 
