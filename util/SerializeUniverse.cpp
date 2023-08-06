@@ -94,6 +94,7 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
             return retval;
         } else {
             (void)timer; // silence unused capture warning
+            (void)u;
             return ship_designs_scratch;
         }
     }();
@@ -795,6 +796,7 @@ void serialize(Archive& ar, System& obj, unsigned int const version)
             else
                 Serialize(ar, name_ids.first.data(), name_ids.second);
         } else {
+            (void)version;
             Serialize(ar, name_ids.first.data(), name_ids.second);
         }
     };

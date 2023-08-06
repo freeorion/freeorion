@@ -201,7 +201,7 @@ public:
 
     [[nodiscard]] const auto& GetStatRecords() const noexcept { return m_stat_records; }
 
-    [[nodiscard]] virtual std::size_t SizeInMemory() const;
+    [[nodiscard]] std::size_t SizeInMemory() const;
 
     mutable UniverseObjectDeleteSignalType UniverseObjectDeleteSignal; ///< the state changed signal object for this UniverseObject
 

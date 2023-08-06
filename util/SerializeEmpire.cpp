@@ -345,7 +345,7 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
                 ErrorLogger() << "Erased invalid diplomatic status between empires " << e1 << " and " << e2;
             }
         }
-        for (const auto p : to_erase)
+        for (const auto& p : to_erase)
             em.m_empire_diplomatic_statuses.erase(p);
 
         // add missing empire diplomatic statuses
