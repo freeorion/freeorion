@@ -90,7 +90,7 @@ namespace ObjectMapPredicateTypeTraits {
     static_assert(fsiv == std::array{false, false, false, false, false, false, false, false, false, false, true});
 
     static constexpr auto fcuifs = ObjectMap::CheckTypes<UniverseObject, boost::container::flat_set<int>>();
-    static_assert(fsiv == std::array{false, false, false, false, false, false, false, false, false, false, true});
+    static_assert(fcuifs == std::array{false, false, false, false, false, false, false, false, false, false, true});
 
     static constexpr auto ship_p_lambda = [](const Ship*) -> bool { return false; };
     static constexpr auto lspbicsp = ObjectMap::CheckTypes<Ship, decltype(ship_p_lambda)>();
