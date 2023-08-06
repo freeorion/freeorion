@@ -37,7 +37,8 @@ public:
     int EffectsProcessingThreads() const override;
 
 protected:
-    boost::filesystem::path m_scripting_dir;
+    boost::filesystem::path m_test_scripting_dir;
+    boost::filesystem::path m_default_scripting_dir;
     PythonCommon            m_python;
 
     // Gamestate...

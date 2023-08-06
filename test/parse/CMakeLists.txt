@@ -54,11 +54,9 @@ foreach(_TEST ${FO_TEST_PARSE})
         PRIVATE
         ${_TEST}.cpp
     )
-    if(NOT APPLE OR ${_TEST} STREQUAL "TestEnumParser")
-        add_test(
-            NAME ${_TEST}
-            COMMAND fo_unittest_parse --log_level=all "--run_test=${_TEST}" --catch_system_error=yes
-            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-        )
-    endif()
+    add_test(
+        NAME ${_TEST}
+        COMMAND fo_unittest_parse --log_level=all "--run_test=${_TEST}" --catch_system_error=yes
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    )
 endforeach()

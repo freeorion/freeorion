@@ -346,7 +346,7 @@ void InitBinDir(std::string const& argv0)
 #endif
 }
 
-void InitDirs(std::string const& argv0)
+void InitDirs(std::string const& argv0, bool test)
 {
     if (g_initialized)
         return;
@@ -372,24 +372,33 @@ void InitDirs(std::string const& argv0)
         }
     }
 
+    std::cout << "Bundle dir " << bundle_dir;
+
     bundle_path = fs::path(bundle_dir);
 
-    // search bundle_path for a directory named "FreeOrion.app", exiting if not found, else constructing a path to application bundle contents
-    auto appiter = std::find(bundle_path.begin(), bundle_path.end(), "FreeOrion.app");
-    if (appiter == bundle_path.end()) {
-        std::cerr << "Error: Application bundle must be named 'FreeOrion.app' and executables must not be called from outside of it." << std::endl;
-        exit(-1);
-    } else {
-        for (auto piter = bundle_path.begin(); piter != appiter; ++piter) {
-            app_path /= *piter;
+    if (!test) {
+        // search bundle_path for a directory named "FreeOrion.app", exiting if not found, else constructing a path to application bundle contents
+        auto appiter = std::find(bundle_path.begin(), bundle_path.end(), "FreeOrion.app");
+        if (appiter == bundle_path.end()) {
+            std::cerr << "Error: Application bundle must be named 'FreeOrion.app' and executables must not be called from outside of it." << std::endl;
+            exit(-1);
+        } else {
+            for (auto piter = bundle_path.begin(); piter != appiter; ++piter) {
+                app_path /= *piter;
+            }
+            app_path /= "FreeOrion.app/Contents";
         }
-        app_path /= "FreeOrion.app/Contents";
+
+        s_root_data_dir =   app_path / "Resources";
+        s_bin_dir       =   app_path / "Executables";
+        s_python_home   =   app_path / "SharedSupport";
+    } else {
+        s_root_data_dir = bundle_path.parent_path().parent_path();
+        s_bin_dir = bundle_path;
+        s_python_home = bundle_path.parent_path() / "dep";
     }
 
-    s_root_data_dir =   app_path / "Resources";
     s_user_dir      =   fs::path(getenv("HOME")) / "Library" / "Application Support" / "FreeOrion";
-    s_bin_dir       =   app_path / "Executables";
-    s_python_home   =   app_path / "SharedSupport";
 
     fs::path p = s_user_dir;
     if (!exists(p))

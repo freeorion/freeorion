@@ -68,7 +68,7 @@ FO_COMMON_API void CompleteXDGMigration();
 //! specified location by updating the save.path option to the new location
 //! after the option is loaded from XML files.  It only updates the option
 //! if it is set to the old default option.
-FO_COMMON_API void InitDirs(std::string const& argv0);
+FO_COMMON_API void InitDirs(std::string const& argv0, bool test = false);
 
 //! Returns the directory where FreeOrion store user configurations.
 //!
