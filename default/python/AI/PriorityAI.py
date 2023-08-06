@@ -180,7 +180,7 @@ def _calculate_research_priority():  # noqa: max-complexity
         or (not got_algo)
         or ((style_index == 0) and not got_orb_gen and (current_turn < cutoffs[1]))
     ):
-        if (capital_focus == FocusType.FOCUS_INDUSTRY) or (capital_focus == FocusType.FOCUS_STOCKPILE):
+        if capital_focus in {FocusType.FOCUS_INDUSTRY, FocusType.FOCUS_STOCKPILE}:
             research_priority = (
                 settings[1] * industry_priority
             )  # keeps the capital at default focus on production species
