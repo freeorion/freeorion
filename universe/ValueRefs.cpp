@@ -2506,8 +2506,6 @@ namespace {
     [[nodiscard]] std::vector<std::string> TechsResearchedByEmpire(int empire_id, const ScriptingContext& context) {
         auto empire = context.GetEmpire(empire_id);
         if (!empire) return {};
-
-        using xxx = std::decay_t<decltype(empire->ResearchedTechs())>::const_iterator::value_type;
         auto researched_techs_range = empire->ResearchedTechs() | range_keys;
         return {researched_techs_range.begin(), researched_techs_range.end()};
     }
@@ -2515,9 +2513,6 @@ namespace {
     [[nodiscard]] std::vector<std::string> TechsResearchableByEmpire(int empire_id, const ScriptingContext& context) {
         auto empire = context.GetEmpire(empire_id);
         if (!empire) return {};
-
-        using xxx = std::decay_t<decltype(GetTechManager())>::iterator::value_type;
-
         const auto res_tech = [&empire](const auto& name_tech) { return empire->ResearchableTech(name_tech.first); };
         auto res_techs = GetTechManager() | range_filter(res_tech) | range_keys;
         return {res_techs.begin(), res_techs.end()};

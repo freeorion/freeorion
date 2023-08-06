@@ -20,7 +20,7 @@ using EmpireColor = std::array<uint8_t, 4>;
 using DiploStatusMap = boost::container::flat_map<std::pair<int, int>, DiplomaticStatus>;
 
 /** Maintains all of the Empire objects that exist in the application. */
-class FO_COMMON_API EmpireManager {
+class FO_COMMON_API EmpireManager final {
 public:
     using container_type = std::map<int, std::shared_ptr<Empire>>;
     using iterator = container_type::iterator;
@@ -61,7 +61,7 @@ public:
     [[nodiscard]] iterator                  begin() noexcept { return m_empire_map.begin(); }
     [[nodiscard]] iterator                  end() noexcept { return m_empire_map.end(); }
 
-    [[nodiscard]] virtual std::size_t       SizeInMemory() const;
+    [[nodiscard]] std::size_t               SizeInMemory() const;
 
     void BackPropagateMeters();
 

@@ -302,7 +302,6 @@ Universe::IDSet Universe::EmpireVisibleObjectIDs(int empire_id, const EmpireMana
         std::vector<int>{empire_id} : std::vector<int>{all_empire_ids.begin(), all_empire_ids.end()};
 
     // check each object's visibility by the requested empire / all empires
-    static constexpr auto to_id = [](const auto& o) { return o->ID(); };
     const auto is_visible_to_an_empire = [&empire_ids, this](const auto obj_id) {
         return std::any_of(empire_ids.begin(), empire_ids.end(),
                            [obj_id, this](auto e_id)

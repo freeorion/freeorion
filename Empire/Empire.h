@@ -49,7 +49,7 @@ FO_ENUM(
   * server, Empires are managed by a subclass of EmpireManager, and can be
   * accessed from other modules by using the EmpireManager::Lookup() method to
   * obtain a pointer. */
-class FO_COMMON_API Empire {
+class FO_COMMON_API Empire final {
 public:
     // EmpireManagers must be friends so that they can have access to the constructor and keep it hidden from others
     friend class EmpireManager;
@@ -220,7 +220,7 @@ public:
     [[nodiscard]] const auto& GetPopulationPool() const noexcept { return m_population_pool; }
     [[nodiscard]] float       Population() const;                                 ///< returns total Population of empire
 
-    [[nodiscard]] virtual std::size_t SizeInMemory() const;
+    [[nodiscard]] std::size_t SizeInMemory() const;
 
     /** If the object with id \a id is a planet owned by this empire, sets that
       * planet to be this empire's capital, and otherwise does nothing. */

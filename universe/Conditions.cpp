@@ -1718,7 +1718,7 @@ namespace {
             return false;
         }
 
-        using homeworlds_t = decltype(std::declval<const SpeciesManager>().GetSpeciesHomeworldsMap());
+        using homeworlds_t = std::decay_t<decltype(std::declval<const SpeciesManager>().GetSpeciesHomeworldsMap())>;
         const std::vector<std::string>& m_names;
         const ObjectMap&                m_objects;
         const homeworlds_t&             m_species_homeworlds;

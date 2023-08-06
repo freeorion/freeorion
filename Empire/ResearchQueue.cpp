@@ -170,9 +170,6 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
         return;    // nothing more to do if not enough RP...
     }
 
-    boost::posix_time::ptime dp_time_start;
-    boost::posix_time::ptime dp_time_end;
-
     // "Dynamic Programming" version of research queue simulator -- copy the queue simulator containers
     // perform dynamic programming calculation of completion times, then after regular simulation is done compare results (if both enabled)
 
