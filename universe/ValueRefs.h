@@ -1719,7 +1719,7 @@ Operation<T>::Operation(OpType op_type,
                         std::unique_ptr<ValueRef<T>>&& operand3) :
     Operation(op_type, [&operand1, &operand2, &operand3]() {
                 std::remove_const_t<decltype(m_operands)> retval{};
-                retval.reserve((operand1 != nullptr) + (operand2 != nullptr) + (operand3 != nullptr));
+                retval.reserve((operand1 ? 1u : 0u) + (operand2 ? 1u : 0u) + (operand3 ? 1u : 0u));
                 if (operand1)
                     retval.push_back(std::move(operand1));
                 if (operand2)
