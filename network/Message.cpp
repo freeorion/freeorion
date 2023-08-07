@@ -240,7 +240,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             Serialize(oa, orders);
             bool ui_data_available = (ui_data != nullptr);
             oa << BOOST_SERIALIZATION_NVP(ui_data_available);
-            if (ui_data_available)
+            if (ui_data)
                 oa << boost::serialization::make_nvp("ui_data", *ui_data);
             bool save_state_string_available = false;
             oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
@@ -319,7 +319,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             oa << BOOST_SERIALIZATION_NVP(ui_data_available);
             bool save_state_string_available = (save_state_string != nullptr);
             oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
-            if (save_state_string_available)
+            if (save_state_string)
                 oa << boost::serialization::make_nvp("save_state_string", *save_state_string);
             galaxy_setup_data.encoding_empire = empire_id;
             oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
@@ -342,15 +342,8 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             oa << BOOST_SERIALIZATION_NVP(ui_data_available);
             bool save_state_string_available = (save_state_string != nullptr);
             oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
-            if (save_state_string_available) {
-                if (save_state_string) {
-                    oa << boost::serialization::make_nvp("save_state_string", *save_state_string);
-                } else {
-                    ErrorLogger() << "GameStartMessage expectes save_state_string but it was nullptr";
-                    std::string temp_sss;
-                    oa << boost::serialization::make_nvp("save_state_string", temp_sss);
-                }
-            }
+            if (save_state_string)
+                oa << boost::serialization::make_nvp("save_state_string", *save_state_string);
             galaxy_setup_data.encoding_empire = empire_id;
             oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         }
@@ -888,8 +881,10 @@ void ExtractGameStartMessageData(std::string text, bool& single_player_game, int
                                  bool& ui_data_available, SaveGameUIData& ui_data, bool& save_state_string_available,
                                  std::string& save_state_string, GalaxySetupData& galaxy_setup_data)
 {
+    std::this_thread::sleep_for(std::chrono::seconds(10));
     try {
         bool try_xml = false;
+        bool did_some_binary_deserialization = false;
         try {
             // first attempt binary deserialziation
             std::istringstream is(text);
@@ -902,6 +897,8 @@ void ExtractGameStartMessageData(std::string text, bool& single_player_game, int
                >> BOOST_SERIALIZATION_NVP(empire_id)
                >> BOOST_SERIALIZATION_NVP(current_turn);
             GlobalSerializationEncodingForEmpire() = empire_id;
+
+            did_some_binary_deserialization = true; // got some binary data, so don't retry as XML even if following deserialization fails
 
             ScopedTimer deserialize_timer;
             ia >> BOOST_SERIALIZATION_NVP(empires);
@@ -918,22 +915,31 @@ void ExtractGameStartMessageData(std::string text, bool& single_player_game, int
 
 
             ia >> BOOST_SERIALIZATION_NVP(players)
-            >> BOOST_SERIALIZATION_NVP(loaded_game_data);
+               >> BOOST_SERIALIZATION_NVP(loaded_game_data);
             if (loaded_game_data) {
                 Deserialize(ia, orders);
+                DebugLogger() << "deserialized orders: " << orders.size();
                 ia >> BOOST_SERIALIZATION_NVP(ui_data_available);
+                DebugLogger() << (ui_data_available ? "have UI data" : "do not have UI data");
                 if (ui_data_available)
                     ia >> BOOST_SERIALIZATION_NVP(ui_data);
                 ia >> BOOST_SERIALIZATION_NVP(save_state_string_available);
-                if (save_state_string_available)
+                DebugLogger() << (save_state_string_available ? "have save state string" : "do not have save state string");
+                if (save_state_string_available) {
                     ia >> BOOST_SERIALIZATION_NVP(save_state_string);
+                    DebugLogger() << "save state string size:" << save_state_string.size();
+                }
             } else {
                 ui_data_available = false;
                 save_state_string_available = false;
             }
             ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         } catch (...) {
-            try_xml = true;
+            if (did_some_binary_deserialization) {
+                ErrorLogger() << "Deserialization error after partially-done binary deserialization";
+                throw;
+            }
+            try_xml = true; // try XML deserialization if no binary data was deserialized
         }
         if (try_xml) {
             // if binary deserialization failed, try more-portable XML deserialization
@@ -985,8 +991,8 @@ void ExtractGameStartMessageData(std::string text, bool& single_player_game, int
             TraceLogger() << "ExtractGameStartMessage galaxy setup data deserialization time " << deserialize_timer.DurationString();
         }
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractGameStartMessageData(...) failed!  Message probably long, so not outputting to log.\n"
-                      << "Error: " << err.what();
+        ErrorLogger() << "ExtractGameStartMessageData(...) failed!  Message text length: " << text.size()
+                      << "\nError: " << err.what();
         throw err;
     }
 }
