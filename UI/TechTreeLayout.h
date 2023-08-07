@@ -60,149 +60,86 @@
 class TechTreeLayout {
 public:
     class Node;
-
     class Edge;
-
     class Column;
 
     ~TechTreeLayout();
 
-    void AddNode(std::string const & tech, GG::X width, GG::Y height);
-
-    auto GetNode(std::string const & name) const -> Node const *;
-
-    auto GetWidth(std::string const & name) const -> double;
-
-    auto GetHeight(std::string const & name) const;
-
-    void AddEdge(std::string const & parent, std::string const & child);
-
-    auto GetOutEdges(std::string const & name) const -> std::vector<Edge*> const &;
-
+    void AddNode(const std::string& tech, GG::X width, GG::Y height);
+    auto GetNode(const std::string& name) const -> Node const *;
+    void AddEdge(const std::string& parent, std::string const & child);
+    auto GetOutEdges(const std::string& name) const -> const std::vector<Edge*>&;
     auto GetWidth() const -> GG::X const;
-
     auto GetHeight() const -> GG::Y const;
-
     void Clear();
-
     void DoLayout( double column_width, double row_height, double x_margin);
-
     void Debug() const;
 
 private:
-    //! width of the complete graph
-    double m_width = 0;
-
-    //! height of the complete graph
-    double m_height = 0;
-
+    double m_width = 0; //! width of the complete graph
+    double m_height = 0; //! height of the complete graph
     int m_row_count = 0;
-
     int m_column_count = 0;
-
-    //! map name->node for external access by name
-    std::map<std::string, Node*> m_node_map;
-
-    //! list of nodes for sorting
-    std::vector<Node*> m_nodes;
+    std::map<std::string, Node*> m_node_map; //! map name->node for external access by name
+    std::vector<Node*> m_nodes; //! list of nodes for sorting
 };
 
 
 class TechTreeLayout::Edge {
 public:
-    Edge(std::string const & from, std::string const & to);
+    Edge(std::string const& from, std::string const& to);
 
-    auto GetTechFrom() const -> std::string const &;
+    auto& GetTechFrom() const noexcept { return m_from; }
+    auto& GetTechTo() const noexcept { return m_to; }
+    auto& Points() const noexcept { return m_points; }
 
-    auto GetTechTo() const -> std::string const &;
-
-    void ReadPoints(std::vector<std::pair<double,double>> & points) const;
-
-    void AddPoint(double x, double y);
-
+    void AddPoint(double x, double y) { m_points.emplace_back(x, y); }
     void Debug() const;
 
 private:
-    //! point list of connection
-    std::vector<std::pair<double, double>> m_points;
-
-    //! source tech
-    std::string m_from;
-
-    //! destination tech
-    std::string m_to;
+    std::vector<std::pair<double, double>> m_points; //! point list of connection
+    std::string m_from; //! source tech
+    std::string m_to;   //! destination tech
 };
 
 
 class TechTreeLayout::Node {
     friend class TechTreeLayout;
-
     friend class Column;
 
 public:
     Node(std::string const & tech, GG::X width, GG::Y height);
-
     ~Node();
 
     auto GetX() const -> GG::X const;
-
     auto GetY() const -> GG::Y const;
-
     void Debug() const;
-
-    auto operator<(Node const & y) const -> bool;
+    auto operator<(const Node& y) const -> bool;
 
 private:
     Node(Node* parent, Node* child, std::vector<Node*>& nodes);
 
-    auto Wobble(Column & column) -> bool;
-
+    auto Wobble(Column& column) -> bool;
     void AddChild(Node* node);
-
     void SetDepthRecursive(int depth);
-
     auto CalculateFamilyDistance(int row_) -> double;
-
     void CreatePlaceHolder(std::vector<Node*>& nodes);
-
-    void DoLayout(std::vector<Column> & row_index, bool cat);
-
+    void DoLayout(std::vector<Column>& row_index, bool cat);
     void CalculateCoordinate(double column_width, double row_height);
-
     void CreateEdges(double x_margin, double column_width, double row_height);
 
     std::vector<Node*> parents;
-
     std::vector<Node*> children;
-
-    //! depth 1 available at beginning 2 one requisite etc
-    int depth = -1;
-
-    //! layout row, every node is organized in a straight tabelle system
-    int row = -1;
-
-    //! height in rows
-    const int weight;
-
+    int depth = -1; //! depth 1 available at beginning 2 one requisite etc
+    int row = -1; //! layout row, every node is organized in a straight tabelle system
+    const int weight; //! height in rows
     std::string tech_name;
-
     bool place_holder;
-
-    // primary child for layout
-    Node* primary_child = nullptr;
-
+    Node* primary_child = nullptr; // primary child for layout
     std::vector<Edge*> outgoing_edges;
-
-    //! left border
     double m_x = 0.0;
-
-    //! top border
     double m_y = 0.0;
-
-    //! width
     double m_width;
-
-    //! height
     double m_height;
 };
 

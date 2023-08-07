@@ -70,24 +70,10 @@ TechTreeLayout::Edge::Edge(const std::string& from, const std::string& to) :
     m_to(to)
 { assert(GetTech(from) && GetTech(to)); }
 
-const std::string& TechTreeLayout::Edge::GetTechFrom() const
-{ return m_from; }
-
-const std::string& TechTreeLayout::Edge::GetTechTo() const
-{ return m_to; }
-
-void TechTreeLayout::Edge::AddPoint(double x, double y)
-{ m_points.push_back(std::pair<double, double>(x, y)); }
-
-void TechTreeLayout::Edge::ReadPoints(std::vector<std::pair<double, double>>& points) const {
-    for (const auto& p : m_points)
-        points.push_back(p);
-}
-
 void TechTreeLayout::Edge::Debug() const {
     DebugLogger() << "Edge " << m_from << "-> " << m_to << ": ";
-    for (const auto& p : m_points)
-        DebugLogger() << "(" << p.first << "," << p.second << ") ";
+    for (const auto& [f, s] : m_points)
+        DebugLogger() << "(" << f << "," << s << ") ";
     DebugLogger() << "\n";
 }
 
