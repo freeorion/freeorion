@@ -1,6 +1,6 @@
 # mypy: disable-error-code="empty-body"
 from functools import total_ordering
-from typing import Generic, TypeAlias, TypeVar
+from typing import Generic, TypeVar
 
 from typing_extensions import Self
 
@@ -49,7 +49,7 @@ class _Resource:
     ...
 
 
-class _Agregator:
+class _Aggregator:
     ...
 
 
@@ -113,8 +113,8 @@ class _Value(Generic[_T]):
         ...
 
 
-_FloatValue: TypeAlias = _Value[float]
-_IntValue: TypeAlias = _Value[int]
+_FloatValue = _Value[float]
+_IntValue = _Value[int]
 
 
 class _Condition:
