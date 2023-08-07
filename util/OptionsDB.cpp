@@ -665,7 +665,7 @@ void OptionsDB::SetToDefault(std::string_view name) {
 void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
     //bool option_changed = false;
 
-    for (unsigned int i = 1; i < args.size(); ++i) {
+    for (std::size_t i = 1u; i < args.size(); ++i) {
         std::string_view current_token{args[i]};
 
         if (current_token.find("--") == 0) {
@@ -680,8 +680,8 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                 // unrecognized option: may be registered later on so we'll store it for now
                 // Check for more parameters (if this is the last one, assume that it is a flag).
                 std::string_view value_str{"-"};
-                if (i + 1 < static_cast<unsigned int>(args.size()))
-                    value_str = StripQuotation(args[i + 1]);
+                if ((i + 1) < static_cast<unsigned int>(args.size()))
+                    value_str = StripQuotation(args[i + 1u]);
 
                 if (value_str.front() == '-') {
                     // this is either the last parameter or the next parameter is another option, assume this one is a flag
