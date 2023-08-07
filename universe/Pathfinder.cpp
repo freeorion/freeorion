@@ -1066,6 +1066,9 @@ double Pathfinder::PathfinderImpl::ShortestPathDistance(int object1_id, int obje
         if (auto next_sys = objects.getRaw<System>(fleet->NextSystemID())) {
             dist = std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
             system_one = next_sys;
+        } else {
+            ErrorLogger() << "ShortestPathDistance couldn't get fleet " << fleet->ID() << " next system " << fleet->NextSystemID();
+            return -1.0;
         }
     }
 
@@ -1078,6 +1081,9 @@ double Pathfinder::PathfinderImpl::ShortestPathDistance(int object1_id, int obje
         if (auto next_sys = objects.getRaw<System>(fleet->NextSystemID())) {
             dist += std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
             system_two = next_sys;
+        } else {
+            ErrorLogger() << "ShortestPathDistance couldn't get fleet " << fleet->ID() << " next system " << fleet->NextSystemID();
+            return -1.0;
         }
     }
 
