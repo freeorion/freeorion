@@ -123,18 +123,16 @@ std::ostream& XMLElement::WriteElement(std::ostream& os, int indent, bool whites
             os << "\n";
     } else {
         os << ">";
-        if (!m_text.empty() && m_text.find_first_of("<&") != std::string::npos) {
+        if (!m_text.empty() && m_text.find_first_of("<&") != std::string::npos)
             os << "<![CDATA[" << m_text << "]]>";
-        } else {
+        else
             os << m_text;
-        }
         if (whitespace && !children.empty())
             os << "\n";
         for (const XMLElement& child : children)
             child.WriteElement(os, indent + 1, whitespace);
-        if (whitespace && !children.empty()) {
-            os << std::string(indent * 2, ' ');
-        }
+        if (whitespace && !children.empty())
+            os << std::string(static_cast<std::size_t>(indent) * 2, ' ');
         os << "</" << m_tag << ">";
         if (whitespace) os << "\n";
     }
