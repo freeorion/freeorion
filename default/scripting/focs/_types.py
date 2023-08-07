@@ -37,10 +37,6 @@ class _Empire:
     ...
 
 
-class _Species(str):
-    ...
-
-
 class _Focus:
     ...
 
@@ -65,7 +61,7 @@ class _PlanetId(_ID):
     ...
 
 
-_T = TypeVar("_T", bound=[int, float, str])
+_T = TypeVar("_T", str, int, float)
 
 
 @total_ordering
@@ -115,6 +111,7 @@ class _Value(Generic[_T]):
 
 _FloatValue = _Value[float]
 _IntValue = _Value[int]
+_SpeciesValue = _Value[str]
 
 
 class _Condition:
