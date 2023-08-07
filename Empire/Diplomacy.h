@@ -1,6 +1,7 @@
 #ifndef _Diplomacy_h_
 #define _Diplomacy_h_
 
+#include <compare>
 #include <string>
 #include <boost/serialization/access.hpp>
 #include "../util/Enum.h"
@@ -33,15 +34,21 @@ public:
         REJECT_PROPOSAL
     };
 
-    DiplomaticMessage();
-    DiplomaticMessage(int sender_empire_id, int recipient_empire_id, Type type);
+    constexpr DiplomaticMessage() noexcept = default;
+    constexpr DiplomaticMessage(int sender_empire_id, int recipient_empire_id, Type type) noexcept :
+        m_sender_empire(sender_empire_id),
+        m_recipient_empire(recipient_empire_id),
+        m_type(type)
+    {}
 
-    [[nodiscard]] auto GetType() const noexcept { return m_type; }
+    [[nodiscard]] constexpr auto GetType() const noexcept { return m_type; }
+    [[nodiscard]] constexpr int  SenderEmpireID() const noexcept { return m_sender_empire; }
+    [[nodiscard]] constexpr int  RecipientEmpireID() const noexcept { return m_recipient_empire; }
 
-    [[nodiscard]] int           SenderEmpireID() const noexcept { return m_sender_empire; }
-    [[nodiscard]] int           RecipientEmpireID() const noexcept { return m_recipient_empire; }
-    [[nodiscard]] std::string   Dump() const;
-    [[nodiscard]] bool          IsAllowed() const; ///< Tells if this dimplomatic message allowed by game rules
+    [[nodiscard]] std::string    Dump() const;
+    [[nodiscard]] bool           IsAllowed() const; ///< Tells if this dimplomatic message allowed by game rules
+
+    constexpr auto operator<=>(const DiplomaticMessage&) const noexcept = default;
 
 private:
     int  m_sender_empire = ALL_EMPIRES;
@@ -54,15 +61,17 @@ private:
 };
 
 struct FO_COMMON_API DiplomaticStatusUpdateInfo {
-    DiplomaticStatusUpdateInfo();
-    DiplomaticStatusUpdateInfo(int empire1_id_, int empire2_id_, DiplomaticStatus status);
+    constexpr DiplomaticStatusUpdateInfo() noexcept = default;
+    constexpr DiplomaticStatusUpdateInfo(int empire1_id_, int empire2_id_, DiplomaticStatus status) noexcept :
+        empire1_id(empire1_id_),
+        empire2_id(empire2_id_),
+        diplo_status(status)
+    {}
+    constexpr auto operator<=>(const DiplomaticStatusUpdateInfo&) const noexcept = default;
     int                 empire1_id = ALL_EMPIRES;
     int                 empire2_id = ALL_EMPIRES;
     DiplomaticStatus    diplo_status = DiplomaticStatus::INVALID_DIPLOMATIC_STATUS;
 };
-
-bool operator==(const DiplomaticMessage& lhs, const DiplomaticMessage& rhs);
-bool operator!=(const DiplomaticMessage& lhs, const DiplomaticMessage& rhs);
 
 [[nodiscard]] FO_COMMON_API DiplomaticMessage WarDeclarationDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
 [[nodiscard]] FO_COMMON_API DiplomaticMessage PeaceProposalDiplomaticMessage(int sender_empire_id, int recipient_empire_id);

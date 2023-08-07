@@ -195,16 +195,16 @@ bool EmpireManager::DiplomaticMessageAvailable(int sender_id, int recipient_id) 
 }
 
 const DiplomaticMessage& EmpireManager::GetDiplomaticMessage(int sender_id, int recipient_id) const {
-    auto it = m_diplomatic_messages.find({sender_id, recipient_id});
+    const auto it = m_diplomatic_messages.find({sender_id, recipient_id});
     if (it != m_diplomatic_messages.end())
         return it->second;
-    static DiplomaticMessage DEFAULT_DIPLOMATIC_MESSAGE;
+    static constexpr DiplomaticMessage DEFAULT_DIPLOMATIC_MESSAGE;
     //WarnLogger() << "Couldn't find requested diplomatic message between empires " << sender_id << " and " << recipient_id;
     return DEFAULT_DIPLOMATIC_MESSAGE;
 }
 
 void EmpireManager::SetDiplomaticStatus(int empire1, int empire2, DiplomaticStatus status) {
-    DiplomaticStatus initial_status = GetDiplomaticStatus(empire1, empire2);
+    const DiplomaticStatus initial_status = GetDiplomaticStatus(empire1, empire2);
     if (status != initial_status) {
         m_empire_diplomatic_statuses[DiploKey(empire1, empire2)] = status;
         DiplomaticStatusChangedSignal(empire1, empire2);
@@ -212,8 +212,8 @@ void EmpireManager::SetDiplomaticStatus(int empire1, int empire2, DiplomaticStat
 }
 
 void EmpireManager::SetDiplomaticMessage(const DiplomaticMessage& message) {
-    int empire1 = message.SenderEmpireID();
-    int empire2 = message.RecipientEmpireID();
+    const int empire1 = message.SenderEmpireID();
+    const int empire2 = message.RecipientEmpireID();
     const DiplomaticMessage& initial_message = GetDiplomaticMessage(empire1, empire2);
     if (message != initial_message) {
         m_diplomatic_messages[{empire1, empire2}] = message;
@@ -222,9 +222,9 @@ void EmpireManager::SetDiplomaticMessage(const DiplomaticMessage& message) {
 }
 
 void EmpireManager::RemoveDiplomaticMessage(int sender_id, int recipient_id) {
-    auto it = m_diplomatic_messages.find({sender_id, recipient_id});
-    bool changed = (it != m_diplomatic_messages.end()) &&
-                   (it->second.GetType() != DiplomaticMessage::Type::INVALID);
+    const auto it = m_diplomatic_messages.find({sender_id, recipient_id});
+    const bool changed = (it != m_diplomatic_messages.end()) &&
+                         (it->second.GetType() != DiplomaticMessage::Type::INVALID);
 
     m_diplomatic_messages[{sender_id, recipient_id}] =
         DiplomaticMessage(sender_id, recipient_id, DiplomaticMessage::Type::INVALID);
@@ -235,15 +235,15 @@ void EmpireManager::RemoveDiplomaticMessage(int sender_id, int recipient_id) {
 }
 
 void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
-    int sender_empire_id = message.SenderEmpireID();
-    int recipient_empire_id = message.RecipientEmpireID();
+    const int sender_empire_id = message.SenderEmpireID();
+    const int recipient_empire_id = message.RecipientEmpireID();
 
     if (!message.IsAllowed())
         return;
 
-    DiplomaticStatus diplo_status = GetDiplomaticStatus(sender_empire_id, recipient_empire_id);
-    bool message_from_recipient_to_sender_available = DiplomaticMessageAvailable(recipient_empire_id, sender_empire_id);
-    const DiplomaticMessage& existing_message_from_recipient_to_sender = GetDiplomaticMessage(recipient_empire_id, sender_empire_id);
+    const DiplomaticStatus diplo_status = GetDiplomaticStatus(sender_empire_id, recipient_empire_id);
+    const bool message_from_recipient_to_sender_available = DiplomaticMessageAvailable(recipient_empire_id, sender_empire_id);
+    const auto& existing_message_from_recipient_to_sender = GetDiplomaticMessage(recipient_empire_id, sender_empire_id);
     //bool message_from_sender_to_recipient_available = DiplomaticMessageAvailable(sender_empire_id, recipient_empire_id);
 
     switch (message.GetType()) {
