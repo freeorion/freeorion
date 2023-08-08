@@ -33,7 +33,7 @@ repos:
         files: "default/scripting/.*.focs.py"
         exclude: "^default/scripting/buildings/colonies/col_bld_gen.py"
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.316
+    rev: v1.1.320
     hooks:
       - id: pyright
         name: focs.py type checks with pyright
