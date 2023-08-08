@@ -415,7 +415,7 @@ std::string_view ClientUI::StarTypeFilePrefix(StarType star_type) noexcept
 std::string_view ClientUI::HaloStarTypeFilePrefix(StarType star_type) noexcept
 { return HaloPrefix(star_type); }
 
-ClientUI* ClientUI::s_the_UI = nullptr;
+constinit ClientUI* ClientUI::s_the_UI = nullptr;
 
 std::ostream& operator<< (std::ostream& os, const GG::UnicodeCharset& chset) {
     os << chset.m_script_name << " " << chset.m_first_char << " " << chset.m_last_char << "\n";
@@ -424,7 +424,11 @@ std::ostream& operator<< (std::ostream& os, const GG::UnicodeCharset& chset) {
 
 namespace {
     const auto& RequiredCharsets() {
-        static std::vector<GG::UnicodeCharset> retval;
+        static
+#if defined(__cpp_lib_constexpr_vector)
+               constinit
+#endif
+                         std::vector<GG::UnicodeCharset> retval;
         if (retval.empty()) {
             // Basic Latin, Latin-1 Supplement, and Latin Extended-A
             // (character sets needed to display the credits page)

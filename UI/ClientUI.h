@@ -233,7 +233,7 @@ private:
 
     std::unique_ptr<ShipDesignManager>      m_ship_designs;         //!< ship designs the client knows about, and their ordering in the UI
 
-    static ClientUI*                        s_the_UI;   //!< the singleton ClientUI object
+    static constinit ClientUI*              s_the_UI;               //!< the singleton ClientUI object
 };
 
 namespace GG {
