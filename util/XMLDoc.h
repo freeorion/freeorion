@@ -130,8 +130,10 @@ public:
     //!
     //! Create a new XMLElement with no tag-name, text, attribute or child nodes
     //! set.  Also the new instance isn't marked as root node.
-    XMLElement()
-    {}
+#if defined(__cpp_lib_constexpr_vector) && defined(__cpp_lib_constexpr_string)
+    constexpr
+#endif
+    XMLElement() noexcept = default;
 
     //! Creates a new XMLElement with the given @p tag tag-name and @p text
     //! content.
@@ -144,7 +146,10 @@ public:
     //!     The tag name of this XML element.
     //! @param[in] text
     //!     The text assigned to this XML element.
-    explicit XMLElement(std::string tag, std::string text = "") :
+#if defined(__cpp_lib_constexpr_vector)
+    constexpr
+#endif
+    explicit XMLElement(std::string tag, std::string text = "") noexcept :
         m_tag(std::move(tag)),
         m_text(std::move(text))
     {}
@@ -153,13 +158,15 @@ public:
     //!
     //! @return
     //!     The tag-name of this XMLElement.  Can be an empty string.
-    const std::string& Tag() const noexcept { return m_tag; }
+    const auto& Tag() const noexcept { return m_tag; }
 
     //! Returns the text body of this XMLElement.
     //!
     //! @return
     //!     The text content of this XMLElement.  Can be an empty string.
-    const std::string& Text() const noexcept { return m_text; }
+    const auto& Text() const noexcept { return m_text; }
+
+    const auto& Children() const noexcept { return children; }
 
     //! Returns if this XMLElement contains a child with @p tag as tag-name.
     //!
@@ -211,6 +218,9 @@ public:
     //! @see  XMLElement::Child(const std::string&) const
     XMLElement& Child(const std::string& tag);
 
+    const std::string& Attribute(const std::string& name) const;
+    bool HasAttribute(const std::string& name) const noexcept;
+
     //! Sets the tag-name of this XMLElement to @p tag.
     //!
     //! @param[in] tag
@@ -223,8 +233,11 @@ public:
     //!     The new text content this XMLElement should have.
     void SetText(std::string text);
 
+    void AddChild(XMLElement child) { children.push_back(std::move(child)); }
+
+private:
     //! The attributes associated to this XMLElement by key name mapping.
-    std::map<std::string, std::string> attributes;
+    std::vector<std::pair<std::string, std::string>> attributes;
 
     //! Stores a list of the child XMLElement%s associated to this XMLElement.
     //!
@@ -232,7 +245,6 @@ public:
     //! elements.
     std::vector<XMLElement> children;
 
-private:
     //! Creates a new XMLElement with the given @p tag tag-name and marked as
     //! root node, if @p root is set.
     //!
@@ -325,27 +337,6 @@ public:
     XMLElement root_node;
 
 private:
-    //! Creates the XML parsing rules at static initialization time.
-    struct RuleDefiner { RuleDefiner(); };
-    static RuleDefiner s_rule_definer;
-
-    //! Holds the XMLDoc to which the XML parser should add parsed elements.
-    //!
-    //! @todo
-    //!     No need to hold a static instance here, pass the document into the
-    //!     parser as additional attribute.  This also avoids potential problems
-    //!     in multithreaded setups.
-    static XMLDoc* s_curr_parsing_doc;
-
-    //! Holds the current environment for reading XMLElement%s (the current
-    //! enclosing XMLElement%s).
-    static std::vector<XMLElement*> s_element_stack;
-
-    //! Convert string tokens into XMLElement attributes.
-    //! @{
-    static XMLElement s_temp_elem;
-    static std::string s_temp_attr_name;
-
     static void SetElemName(const char* first, const char* last);
     static void SetAttributeName(const char* first, const char* last);
     static void AddAttribute(const char* first, const char* last);
@@ -354,6 +345,8 @@ private:
     static void PopElem(const char*, const char*);
     static void AppendToText(const char* first, const char* last);
     //!@}
+
+    friend struct RuleDefiner;
 };
 
 

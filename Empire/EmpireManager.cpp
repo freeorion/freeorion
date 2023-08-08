@@ -428,6 +428,6 @@ void InitEmpireColors(const boost::filesystem::path& path) {
         return;
     }
 
-    for (const XMLElement& elem : doc.root_node.children)
-        empire_colors.push_back(HexStringToEmpireColor(elem.attributes.at("hex")));
+    for (const XMLElement& elem : doc.root_node.Children())
+        empire_colors.push_back(HexStringToEmpireColor(elem.Attribute("hex")));
 }

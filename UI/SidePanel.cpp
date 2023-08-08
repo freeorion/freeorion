@@ -68,9 +68,9 @@ namespace {
             if (elem.Tag() != "RotatingPlanetData")
                 throw std::invalid_argument("Attempted to construct a RotatingPlanetData from an XMLElement that had a tag other than \"RotatingPlanetData\"");
 
-            planet_type = boost::lexical_cast<PlanetType>(elem.attributes.at("planet_type"));
-            filename = elem.attributes.at("filename");
-            shininess = boost::lexical_cast<double>(elem.attributes.at("shininess"));
+            planet_type = PlanetTypeFromString(elem.Attribute("planet_type"));
+            filename = elem.Attribute("filename");
+            shininess = boost::lexical_cast<double>(elem.Attribute("shininess"));
 
             // ensure proper bounds
             shininess = std::max(0.0, std::min(shininess, 128.0));
@@ -87,8 +87,8 @@ namespace {
             Atmosphere(const XMLElement& elem) {
                 if (elem.Tag() != "Atmosphere")
                     throw std::invalid_argument("Attempted to construct an Atmosphere from an XMLElement that had a tag other than \"Atmosphere\"");
-                filename = elem.attributes.at("filename");
-                alpha = boost::lexical_cast<int>(elem.attributes.at("alpha"));
+                filename = elem.Attribute("filename");
+                alpha = boost::lexical_cast<int>(elem.Attribute("alpha"));
                 alpha = std::max(0, std::min(alpha, 255));
             }
 
@@ -100,8 +100,8 @@ namespace {
         PlanetAtmosphereData(const XMLElement& elem) {
             if (elem.Tag() != "PlanetAtmosphereData")
                 throw std::invalid_argument("Attempted to construct a PlanetAtmosphereData from an XMLElement that had a tag other than \"PlanetAtmosphereData\"");
-            planet_filename = elem.attributes.at("planet_filename");
-            for (const XMLElement& atmosphere : elem.Child("atmospheres").children)
+            planet_filename = elem.Attribute("planet_filename");
+            for (const XMLElement& atmosphere : elem.Child("atmospheres").Children())
                 atmospheres.push_back(Atmosphere(atmosphere));
         }
 
@@ -124,7 +124,7 @@ namespace {
 
             if (doc.root_node.ContainsChild("GLPlanets")) {
                 const XMLElement& elem = doc.root_node.Child("GLPlanets");
-                for (const XMLElement& planet_definition : elem.children) {
+                for (const XMLElement& planet_definition : elem.Children()) {
                     if (planet_definition.Tag() == "RotatingPlanetData") {
                         RotatingPlanetData current_data{planet_definition};
                         data[current_data.planet_type].emplace_back(std::move(current_data));
@@ -143,7 +143,7 @@ namespace {
             doc.ReadDoc(ifs);
             ifs.close();
 
-            for (const XMLElement& atmosphere_definition : doc.root_node.children) {
+            for (const XMLElement& atmosphere_definition : doc.root_node.Children()) {
                 if (atmosphere_definition.Tag() == "PlanetAtmosphereData") {
                     try {
                         PlanetAtmosphereData current_data{atmosphere_definition};
@@ -323,29 +323,24 @@ namespace {
 
             std::map<StarType, std::array<float, 4>> retval;
 
-            if (!doc.root_node.ContainsChild("GLStars") || doc.root_node.Child("GLStars").children.empty()) {
+            if (!doc.root_node.ContainsChild("GLStars") || doc.root_node.Child("GLStars").Children().empty()) {
                 for (StarType i = StarType::STAR_BLUE; i < StarType::NUM_STAR_TYPES;
                      i = StarType(int(i) + 1))
                 { retval[i] = {1.0f, 1.0f, 1.0f, 1.0f}; }
                 return retval;
             }
 
-            for (const XMLElement& star_definition : doc.root_node.Child("GLStars").children) {
-                auto it = star_definition.attributes.find("star_type");
-                if (it == star_definition.attributes.end())
+            for (const XMLElement& star_definition : doc.root_node.Child("GLStars").Children()) {
+                if (!star_definition.HasAttribute("star_type") || !star_definition.HasAttribute("color"))
                     continue;
-                const auto& star_type_name = it->second;
+                const auto& star_type_name = star_definition.Attribute("star_type");
                 const auto star_type = StarTypeFromString(star_type_name, StarType::INVALID_STAR_TYPE);
                 if (star_type == StarType::INVALID_STAR_TYPE)
                     continue;
-
-                auto clr_it = star_definition.attributes.find("color");
-                if (clr_it == star_definition.attributes.end())
-                    continue;
-                std::string_view colour_string = clr_it->second;
+                std::string_view colour_string = star_definition.Attribute("color");
                 if (colour_string.size() != 6 && colour_string.size() != 8)
                     continue;
-                GG::Clr color = GG::Clr(colour_string);
+                const GG::Clr color = GG::Clr(colour_string);
                 retval.emplace(star_type, std::array{color.r / 255.0f, color.g / 255.0f,
                                                      color.b / 255.0f, color.a / 255.0f});
             }

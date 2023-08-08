@@ -109,30 +109,30 @@ CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, int cx, int cy, int c
     auto source_format = boost::format(" - <rgba 153 153 153 255>%1%</rgba>");
     auto note_format = boost::format("<rgba 204 204 204 255>(%1%)\n");
 
-    for (const XMLElement& group : credits_node.children) {
+    for (const XMLElement& group : credits_node.Children()) {
         if (0 == group.Tag().compare("GROUP")) {
-            credits << group_format % group.attributes.at("name");
-            for (const XMLElement& item : group.children) {
+            credits << group_format % group.Attribute("name");
+            for (const XMLElement& item : group.Children()) {
                 if (0 == item.Tag().compare("PERSON")) {
-                    if (item.attributes.contains("name"))
-                        credits << item.attributes.at("name");
-                    if (item.attributes.contains("nick") && item.attributes.at("nick").length() > 0)
-                        credits << nick_format % item.attributes.at("nick");
-                    if (item.attributes.contains("task"))
-                        credits << task_format % item.attributes.at("task");
+                    if (item.HasAttribute("name"))
+                        credits << item.Attribute("name");
+                    if (item.HasAttribute("nick") && !item.Attribute("nick").empty())
+                        credits << nick_format % item.Attribute("nick");
+                    if (item.HasAttribute("task"))
+                        credits << task_format % item.Attribute("task");
                 }
 
                 if (0 == item.Tag().compare("RESOURCE")) {
                     credits << resource_format
-                        % item.attributes.at("author")
-                        % item.attributes.at("title")
+                        % item.Attribute("author")
+                        % item.Attribute("title")
                         % UserString("INTRO_CREDITS_LICENSE")
-                        % item.attributes.at("license")
-                        % ((item.attributes.contains("source"))
-                            ? boost::str(source_format % item.attributes.at("source"))
+                        % item.Attribute("license")
+                        % ((item.HasAttribute("source"))
+                            ? boost::str(source_format % item.Attribute("source"))
                             : std::string{});
-                    if (item.attributes.contains("notes"))
-                        credits << note_format % item.attributes.at("notes");
+                    if (item.HasAttribute("notes"))
+                        credits << note_format % item.Attribute("notes");
                 }
 
                 credits << "\n";
