@@ -12,6 +12,7 @@ jobs:
         image:
           - ubuntu-22.10
           - fedora-33
+          - debian-oldstable
           - debian-stable
           - debian-sid
           - manjaro
