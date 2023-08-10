@@ -1,7 +1,8 @@
 #ifndef _Range_Fallback_Include_
 #define _Range_Fallback_Include_
 
-#if __has_include(<ranges>) && (!defined(__clang_major__) || (__clang_major__ >= 16))
+#if __has_include(<ranges>) && (!defined(__clang_major__) || (__clang_major__ >= 16)) \
+    && (!defined(__GNUC__) || (__GNUC__ >= 11) || (__GNUC__ == 10 && __GNUC_MINOR__ >= 4))
 # include <ranges>
 static constexpr auto& range_keys = std::views::keys;
 static constexpr auto& range_values = std::views::values;
