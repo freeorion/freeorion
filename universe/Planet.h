@@ -55,7 +55,7 @@ public:
     [[nodiscard]] int          ContainerObjectID() const noexcept  override { return this->SystemID(); }
     [[nodiscard]] const IDSet& ContainedObjectIDs() const noexcept override { return m_buildings; }
     [[nodiscard]] bool         Contains(int object_id) const override;
-    [[nodiscard]] bool         ContainedBy(int object_id) const override;
+    [[nodiscard]] bool         ContainedBy(int object_id) const noexcept override;
 
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 

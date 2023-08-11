@@ -180,7 +180,7 @@ UniverseObject::TagVecs Ship::Tags(const ScriptingContext& context) const {
     else return {};
 }
 
-bool Ship::ContainedBy(int object_id) const {
+bool Ship::ContainedBy(int object_id) const noexcept {
     return object_id != INVALID_OBJECT_ID
         && (    object_id == m_fleet_id
             ||  object_id == this->SystemID());

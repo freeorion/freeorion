@@ -93,7 +93,7 @@ const std::string& Field::PublicName(int empire_id, const Universe&) const {
 std::shared_ptr<UniverseObject> Field::Accept(const UniverseObjectVisitor& visitor) const
 { return visitor.Visit(std::const_pointer_cast<Field>(std::static_pointer_cast<const Field>(shared_from_this()))); }
 
-bool Field::ContainedBy(int object_id) const {
+bool Field::ContainedBy(int object_id) const noexcept {
     return object_id != INVALID_OBJECT_ID
         && object_id == this->SystemID();
 }

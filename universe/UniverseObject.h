@@ -148,7 +148,7 @@ public:
 
     /* Returns true if there is an object with id \a object_id that contains
        this UniverseObject. */
-    [[nodiscard]] virtual bool                ContainedBy(int object_id) const { return false; }
+    [[nodiscard]] virtual bool                ContainedBy(int object_id) const noexcept { return false; }
 
     using EmpireObjectVisMap = std::map<int, std::map<int, Visibility>>;
     [[nodiscard]] IDSet                       VisibleContainedObjectIDs(int empire_id, const EmpireObjectVisMap& vis) const; ///< returns the subset of contained object IDs that is visible to empire with id \a empire_id

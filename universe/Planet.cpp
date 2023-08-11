@@ -545,7 +545,7 @@ std::string Planet::CardinalSuffix(const ObjectMap& objects) const {
 bool Planet::Contains(int object_id) const
 { return object_id != INVALID_OBJECT_ID && m_buildings.contains(object_id); }
 
-bool Planet::ContainedBy(int object_id) const
+bool Planet::ContainedBy(int object_id) const noexcept
 { return object_id != INVALID_OBJECT_ID && this->SystemID() == object_id; }
 
 bool Planet::FocusAvailable(std::string_view focus, const ScriptingContext& context) const {
