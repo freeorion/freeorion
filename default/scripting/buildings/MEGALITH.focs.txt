@@ -19,7 +19,7 @@ BuildingType
                 Object id = Source.PlanetID
                 Planet
             ]
-            stackinggroup = "BLD_MEGALITH_EFFECT"
+            stackinggroup = "BLD_MEGALITH_CAPITAL_INFRA_EFFECTS"
             priority = [[TARGET_LAST_BEFORE_OVERRIDE_PRIORITY]]
             effects = [
                 SetTargetConstruction value = Value + 30
@@ -31,7 +31,7 @@ BuildingType
                 Object id = Source.PlanetID
                 Planet
             ]
-            stackinggroup = "BLD_MEGALITH_EFFECT"
+            stackinggroup = "BLD_MEGALITH_CURRENT_METERS_EFFECTS"
             priority = [[LATE_AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = [
                 SetIndustry value = Target.TargetIndustry
@@ -45,7 +45,7 @@ BuildingType
                 OwnedBy empire = Source.Owner
                 TargetPopulation low = 1
             ]
-            stackinggroup = "BLD_MEGALITH_EFFECT"
+            stackinggroup = "BLD_MEGALITH_SUPPLY_EFFECT"
             effects = SetMaxSupply value = Value + 1
 
         EffectsGroup
