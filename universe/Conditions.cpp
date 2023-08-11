@@ -3356,41 +3356,17 @@ namespace {
             if (!candidate)
                 return false;
 
-            bool match = false;
-            // gather the objects containing candidate
-            std::vector<int> candidate_containers;
             const int candidate_id = candidate->ID();
             const int    system_id = candidate->SystemID();
             const int container_id = candidate->ContainerObjectID();
-            if (   system_id != INVALID_OBJECT_ID &&    system_id != candidate_id) candidate_containers.push_back(   system_id);
-            if (container_id != INVALID_OBJECT_ID && container_id !=    system_id) candidate_containers.push_back(container_id);
-            // FIXME: currently, direct container and system will do. In the future, we might need a way to retrieve containers of containers
+            const bool sys_ok = system_id != INVALID_OBJECT_ID && system_id != candidate_id;
+            const bool con_ok = container_id != INVALID_OBJECT_ID && container_id != system_id;
 
-            // We need to test whether candidate_containers and m_subcondition_matches_ids have a common element.
-            // We choose the strategy that is more efficient by comparing the sizes of both sets.
-            if (candidate_containers.size() < m_subcondition_matches_ids.size()) {
-                // candidate_containers is smaller, so we iterate it and look up each candidate container in m_subcondition_matches_ids
-                for (int id : candidate_containers) {
-                    // std::lower_bound requires m_subcondition_matches_ids to be sorted
-                    auto matching_it = std::lower_bound(m_subcondition_matches_ids.begin(), m_subcondition_matches_ids.end(), id);
-
-                    if (matching_it != m_subcondition_matches_ids.end() && *matching_it == id) {
-                        match = true;
-                        break;
-                    }
-                }
-            } else {
-                // m_subcondition_matches_ids is smaller, so we iterate it and look up each subcondition match in the set of candidate's containers
-                for (int id : m_subcondition_matches_ids) {
-                    // candidate->ContainedBy() may have a faster implementation than candidate_containers->find()
-                    if (candidate->ContainedBy(id)) {
-                        match = true;
-                        break;
-                    }
-                }
-            }
-
-            return match;
+            // this tested faster than binary_search or scanning over each object and
+            // checking if it contained the candidate
+            const auto& scm = m_subcondition_matches_ids;
+            return (sys_ok && std::find(scm.begin(), scm.end(), system_id) != scm.end()) ||
+                   (con_ok && std::find(scm.begin(), scm.end(), container_id) != scm.end());
         }
 
         const std::vector<int> m_subcondition_matches_ids;
@@ -3414,7 +3390,7 @@ void ContainedBy::Eval(const ScriptingContext& parent_context,
 
     // how complicated is this containment test?
     if (((search_domain == SearchDomain::MATCHES) && matches.empty()) ||
-        ((search_domain == SearchDomain::NON_MATCHES) && non_matches.empty()))
+        ((search_domain == SearchDomain::NON_MATCHES) && non_matches.empty())) [[unlikely]]
     {
         // don't need to evaluate anything...
 
@@ -3424,18 +3400,22 @@ void ContainedBy::Eval(const ScriptingContext& parent_context,
             parent_context, search_domain == SearchDomain::MATCHES ? matches.front() : non_matches.front()};
 
         // initialize subcondition candidates from local candidate's containers
-        std::set<int> container_object_ids;
-        if (local_context.condition_local_candidate->ContainerObjectID() != INVALID_OBJECT_ID)
-            container_object_ids.insert(local_context.condition_local_candidate->ContainerObjectID());
-        if (local_context.condition_local_candidate->SystemID() != INVALID_OBJECT_ID)
-            container_object_ids.insert(local_context.condition_local_candidate->SystemID());
-
         const ObjectMap& objects = parent_context.ContextObjects();
-        ObjectSet subcondition_matches = objects.findRaw(container_object_ids);
+        ObjectSet subcondition_matches = [&objects, candidate{local_context.condition_local_candidate}]() {
+            const auto sys_id = candidate->SystemID();
+            const auto con_id = candidate->ContainerObjectID();
+            const bool sys_val = sys_id != INVALID_OBJECT_ID;
+            const bool con_val = con_id != INVALID_OBJECT_ID;
+            return sys_val ?
+                con_val ? objects.findRaw(std::array{sys_id, con_id}) : objects.findRaw(std::array{sys_id}) :
+                con_val ? objects.findRaw(std::array{con_id}) : ObjectSet{};
+            static_assert(std::is_same_v<ObjectSet, std::decay_t<decltype(objects.findRaw(std::array{sys_id}))>>);
+        }();
 
         // apply subcondition to candidates
         if (!subcondition_matches.empty()) {
             ObjectSet dummy;
+            dummy.reserve(subcondition_matches.size());
             m_condition->Eval(local_context, subcondition_matches, dummy, SearchDomain::MATCHES);
         }
 
