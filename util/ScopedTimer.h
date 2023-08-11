@@ -130,6 +130,7 @@ public:
     void EnterSection(const std::string& section_name);
 
     [[nodiscard]] std::chrono::nanoseconds Elapsed() const noexcept;
+    [[nodiscard]] std::vector<std::pair<std::string_view, std::chrono::nanoseconds>> SectionsElapsed() const noexcept;
 
 private:
     class Impl;
