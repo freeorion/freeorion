@@ -96,7 +96,7 @@ parts:
       - libalut-dev
       - libboost1.74-all-dev
       - libfreetype6-dev
-      - libgl1-mesa-dev
+#      - libgl1-mesa-dev
       - libglew-dev
       - libjpeg-dev
       - libogg-dev
@@ -125,7 +125,7 @@ parts:
       - libboost-thread1.74.0
       - libboost-test1.74.0
       - libglew2.2
-      - libglu1-mesa
+#      - libglu1-mesa
       - libopenal1
       - libsdl2-2.0-0
       - libvorbis0a
@@ -134,4 +134,14 @@ parts:
       - libfreetype6
       - godot3-runner
       - libenet7
-
+  # Find files provided by the base and platform snap and ensure they aren't
+  # duplicated in this snap; boilerplate inspired by gnome-calculator snapcraft.yaml
+  cleanup:
+    after: [freeorion]
+    plugin: nil
+    build-snaps: [core22, gtk-common-themes, gnome-42-2204]
+    override-prime: |
+      set -eux
+      for snap in "core22" "gtk-common-themes" "gnome-42-2204"; do
+        cd "/snap/$snap/current" && find . -type f,l -name *.so.* -exec rm -f "$CRAFT_PRIME/{}" \;
+      done
