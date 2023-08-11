@@ -928,6 +928,10 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
     else if (m_sort_key_string)
         TransferSortedObjects(number, m_sort_key_string.get(), parent_context, m_sorting_method,
                               all_subcondition_matches, matched_objects);
+    else if (m_sorting_method == SortingMethod::SORT_RANDOM)
+        TransferRandomObjects(number, all_subcondition_matches, matched_objects);
+    else
+        ErrorLogger() << "SortedNumberOf::Eval got no sort key but has key-dependent sorting method";
 
     // put objects back into matches and non_matches as output...
 
