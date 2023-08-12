@@ -67,6 +67,8 @@ public:
     /** Returns pointer to an object of type T that matches predicate \a pred.
       * returns nullptr if none exists. */
     template <typename T = UniverseObject, typename Pred, bool only_existing = false>
+    [[nodiscard]] std::shared_ptr<const std::decay_t<T>> get(Pred pred) const;
+    template <typename T = UniverseObject, typename Pred, bool only_existing = false>
     [[nodiscard]] const std::decay_t<T>* getRaw(Pred pred) const;
 
     /** Returns a pointer to the object of type T with ID number \a id.
@@ -644,6 +646,56 @@ const std::decay_t<T>* ObjectMap::getRaw(int id) const
     auto& map{Map<DecayT, only_existing>()};
     auto it = map.find(id);
     return it != map.end() ? it->second.get() : nullptr;
+}
+
+template <typename T, typename Pred, bool only_existing>
+std::shared_ptr<const std::decay_t<T>> ObjectMap::get(Pred pred) const
+{
+    static constexpr auto invoke_flags = CheckTypes<T, Pred>();
+    static constexpr bool invokable_on_raw_const_object = invoke_flags[0];
+    static constexpr bool invokable_on_shared_const_object = invoke_flags[2];
+    static constexpr bool invokable_on_const_entry = invoke_flags[4];
+    static constexpr bool invokable_on_const_reference = invoke_flags[6];
+    static constexpr bool is_visitor = invoke_flags[9];
+    static constexpr bool is_int_range = invoke_flags[10];
+    static_assert(!is_int_range, "use findRaw to get multiple objects from IDs");
+
+    using DecayT = std::decay_t<T>;
+    auto& map{Map<DecayT, only_existing>()};
+    static constexpr auto raw_ptr_tx = [](const auto& p) -> const DecayT* { return p.get(); };
+    static constexpr auto ref_tx = [](const auto& p) -> const DecayT& { return *p; };
+
+
+    if constexpr (is_visitor) {
+        auto rng = map | range_values;
+        auto it = range_find_if(rng, [&pred](const auto& obj) { return obj->Accept(pred); });
+        return (it != rng.end()) ? *it : nullptr;
+
+    } else if constexpr (invokable_on_raw_const_object) {
+        auto rng = map | range_values;
+        auto it = range_find_if(rng, [&pred](const auto& obj) { return pred(obj.get()); });
+        return (it != rng.end()) ? *it : nullptr;
+
+    } else if constexpr (invokable_on_shared_const_object) {
+        auto rng = map | range_values;
+        auto it = range_find_if(rng, pred);
+        return (it != rng.end()) ? *it : nullptr;
+
+    } else if constexpr (invokable_on_const_entry) {
+        auto it = std::find_if(map.begin(), map.end(), pred);
+        return (it != map.end()) ? it->second : nullptr;
+
+    } else if constexpr (invokable_on_const_reference) {
+        auto rng = map | range_values;
+        auto it = range_find_if(rng,
+                                [&pred](const auto& id_obj) { return pred(*id_obj->second); });
+        return (it != rng.end()) ? it->second : nullptr;
+
+    } else {
+        static constexpr bool invokable = invoke_flags[8];
+        static_assert(is_visitor || invokable, "Don't know how to handle predicate");
+        return nullptr;
+    }
 }
 
 template <typename T, typename Pred, bool only_existing>
