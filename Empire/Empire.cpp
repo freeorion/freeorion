@@ -108,17 +108,11 @@ std::shared_ptr<const UniverseObject> Empire::Source(const ObjectMap& objects) c
     }
 
     // Find any planet / ship owned by the empire
-    auto owned = [this](const auto& o) { return o.second->OwnedBy(m_id); };
-
-    const auto& planets = objects.allExisting<Planet>(); // TODO: provide a FindAny function to do this...
-    auto p_it = std::find_if(planets.begin(), planets.end(), owned);
-    if (p_it != planets.end())
-        return p_it->second;
-
-    const auto& ships = objects.allExisting<Ship>();
-    auto s_it = std::find_if(ships.begin(), ships.end(), owned);
-    if (s_it != ships.end())
-        return s_it->second;
+    auto owned = [this](const auto* o) { return o->OwnedBy(m_id); };
+    if (auto owned_planet = objects.get<Planet>(owned))
+        return owned_planet;
+    if (auto owned_ship = objects.get<Ship>(owned))
+        return owned_ship;
 
     m_source_id = INVALID_OBJECT_ID;
     return nullptr;
