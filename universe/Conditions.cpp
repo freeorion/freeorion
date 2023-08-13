@@ -3277,13 +3277,11 @@ ObjectSet Contains::GetDefaultInitialCandidateObjects(const ScriptingContext& pa
 
 bool Contains::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
-    if (!candidate)
+    if (!candidate) [[unlikely]]
         return false;
-
-    // evaluate subcondition on objects contained by the candidate
-    // initialize subcondition candidates from local candidate's contents
-    const ObjectSet contained_objects = local_context.ContextObjects().findRaw(candidate->ContainedObjectIDs());
-    return m_condition->EvalAny(local_context, contained_objects);
+    const auto matches_condition = [this, &local_context](const UniverseObject* contained_object)
+    { return m_condition->EvalOne(local_context, contained_object); };
+    return local_context.ContextObjects().check_if_any(matches_condition, candidate->ContainedObjectIDs());
 }
 
 void Contains::SetTopLevelContent(const std::string& content_name) {
@@ -3353,7 +3351,7 @@ namespace {
         {}
 
         bool operator()(const UniverseObject* candidate) const {
-            if (!candidate)
+            if (!candidate) [[unlikely]]
                 return false;
 
             const int candidate_id = candidate->ID();
