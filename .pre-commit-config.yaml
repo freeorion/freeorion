@@ -8,12 +8,12 @@ repos:
       - id: check-merge-conflict
       - id: check-yaml
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: 'v0.0.267'
+    rev: 'v0.0.284'
     hooks:
       - id: ruff
         args: [ --fix, --exit-non-zero-on-fix ]
   - repo: https://github.com/psf/black
-    rev: 23.3.0
+    rev: 23.7.0
     hooks:
       - id: black
   - repo: local
@@ -26,14 +26,14 @@ repos:
         files: 'default/stringtables/[a-z]{2}\.txt'
         types: [ text ]
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: 'v1.4.1'
+    rev: 'v1.5.0'
     hooks:
       - id: mypy
         name: focs.py type checks with mypy
         files: "default/scripting/.*.focs.py"
         exclude: "^default/scripting/buildings/colonies/col_bld_gen.py"
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.320
+    rev: v1.1.322
     hooks:
       - id: pyright
         name: focs.py type checks with pyright
