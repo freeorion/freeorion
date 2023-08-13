@@ -21,7 +21,6 @@ COMMON_OPINION_EFFECTS
             scope = Capital
             stackinggroup = "@1@_TOWARDS_TARGET_OPINION_OF_EMPIRE"
             effects = [
-                NoOp
                 SetSpeciesTargetOpinion     // baseline opinion
                     species = ThisSpecies
                     empire = Target.Owner
