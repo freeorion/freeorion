@@ -8,7 +8,7 @@ from stub_generator.stub_generator.collection_classes import is_collection_type,
 from stub_generator.stub_generator.rtype import update_method_rtype, update_property_rtype
 
 
-def _handle_class(info: ClassInfo) -> str:  # noqa: max-complexity
+def _handle_class(info: ClassInfo) -> str:  # noqa: C901
     assert not info.doc, "Got docs need to handle it"
     parents = [x for x in info.parents if x != "object"]
 

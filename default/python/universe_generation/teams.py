@@ -47,7 +47,7 @@ def home_system_team_core(home_systems: list[int], teams: list[tuple[int, int]])
     return result
 
 
-def place_teams_layout(  # noqa: max-complexity
+def place_teams_layout(  # noqa: C901
     layout: dict[int, list[int]], cores: dict[int, int], placement_teams: list[int]
 ) -> dict[int, int]:
     """

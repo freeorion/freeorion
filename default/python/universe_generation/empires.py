@@ -212,10 +212,7 @@ class HomeSystemFinder:
 
             # If we have a better candidate, set the new lower bound and try for a better candidate.
             if merit > current_merit_lower_bound:
-                print(
-                    "Home system set merit lower bound improved from {} to "
-                    "{}".format(current_merit_lower_bound, merit)
-                )
+                print(f"Home system set merit lower bound improved from {current_merit_lower_bound} to " f"{merit}")
                 current_merit_lower_bound = merit
                 best_candidate = [s for (_, s) in merit_system]
 
@@ -360,7 +357,7 @@ def add_planets_to_vicinity(vicinity, num_planets, acceptable_planet_types, allo
             print("planet types set is empty")
 
 
-def compile_home_system_list(num_home_systems, systems, gsd):  # noqa: max-complexity
+def compile_home_system_list(num_home_systems, systems, gsd):  # noqa: C901
     """
     Compiles a list with a requested number of home systems.
     """

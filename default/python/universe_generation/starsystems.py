@@ -93,9 +93,7 @@ def generate_systems(pos_list, gsd):
         if system == fo.invalid_object():
             # create system failed, report an error and try to continue with next position
             util.report_error(
-                "Python generate_systems: create system at position ({:f}, {:f}) failed".format(
-                    position[0], position[1]
-                )
+                f"Python generate_systems: create system at position ({position[0]:f}, {position[1]:f}) failed"
             )
             continue
         sys_list.append(system)

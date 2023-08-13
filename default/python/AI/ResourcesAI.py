@@ -391,9 +391,7 @@ class PlanetFocusManager:
                     continue
 
                 _print_evaluation(
-                    "considered (pop {:.1f}, growth gain {:.1f}, current focus {})".format(
-                        pop, pop_gain, pinfo.current_focus
-                    )
+                    f"considered (pop {pop:.1f}, growth gain {pop_gain:.1f}, current focus {pinfo.current_focus})"
                 )
 
                 # add a bias to discourage switching out growth focus to avoid focus change penalties

@@ -82,7 +82,7 @@ def populate_monster_fleet(fleet_plan, system):
     print("Spawn", fleet_plan.name(), "at", fo.get_name(system))
 
 
-def generate_monsters(monster_freq, systems):  # noqa: max-complexity
+def generate_monsters(monster_freq, systems):  # noqa: C901
     """
     Adds space monsters to systems.
     """

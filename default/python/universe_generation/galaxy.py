@@ -348,16 +348,11 @@ def enforce_max_distance(positions, adjacency_grid):
     if len(clusterer) == 1:
         print("All systems positioned in a single connected cluster")
     else:
-        print(
-            "{} clusters separated by more than the MAX_STARLANE_LENGTH."
-            "  Starting to fill gaps.".format(len(clusterer))
-        )
+        print(f"{len(clusterer)} clusters separated by more than the MAX_STARLANE_LENGTH." "  Starting to fill gaps.")
 
     while len(clusterer) > 1:
         smallest_cluster = clusterer.smallest_isolated_cluster()
-        print(
-            "Searching for nearest neighbor position to a cluster " "with {} positions.".format(len(smallest_cluster))
-        )
+        print("Searching for nearest neighbor position to a cluster " f"with {len(smallest_cluster)} positions.")
         for pos in smallest_cluster:
             adjacency_grid.remove_pos(pos)
         # Find nearest neighbour
@@ -376,8 +371,8 @@ def enforce_max_distance(positions, adjacency_grid):
         extra_positions = stitching_positions(p1, p2)
         for i_extra, p3 in enumerate(extra_positions):
             print(
-                "Adding {} of {} extra positions at {} to enforce "
-                "max spacing between {} and {}.".format(i_extra + 1, len(extra_positions), p3, p1, p2)
+                f"Adding {i_extra + 1} of {len(extra_positions)} extra positions at {p3} to enforce "
+                f"max spacing between {p1} and {p2}."
             )
             adjacency_grid.insert_pos(p3)
             positions.append(p3)
@@ -386,10 +381,7 @@ def enforce_max_distance(positions, adjacency_grid):
         if len(clusterer) == 1:
             print("All systems now positioned in a single connected cluster")
         else:
-            print(
-                "{} clusters separated by more the MAX_STARLANE_LENGTH.  "
-                "Continuing to fill gaps.".format(len(clusterer))
-            )
+            print(f"{len(clusterer)} clusters separated by more the MAX_STARLANE_LENGTH.  " "Continuing to fill gaps.")
 
 
 def calc_universe_width(shape, size):
@@ -448,8 +440,8 @@ def spiral_galaxy_calc_positions(positions, adjacency_grid, arms, size, width):
 
         if not attempts:
             print(
-                "Spiral galaxy shape: giving up on placing star {}, can't "
-                "find position sufficiently far from other systems.".format(i)
+                f"Spiral galaxy shape: giving up on placing star {i}, can't "
+                "find position sufficiently far from other systems."
             )
 
 
@@ -502,8 +494,8 @@ def elliptical_galaxy_calc_positions(positions, adjacency_grid, size, width):
 
         if not attempts:
             print(
-                "Elliptical galaxy shape: giving up on placing star {}, "
-                "can't find position sufficiently far from other systems".format(i)
+                f"Elliptical galaxy shape: giving up on placing star {i}, "
+                "can't find position sufficiently far from other systems"
             )
 
 
@@ -538,12 +530,12 @@ def disc_galaxy_calc_positions(positions, adjacency_grid, size, width):
 
         if not attempts:
             print(
-                "Disc galaxy shape: giving up on placing star {}, can't find"
-                " position sufficiently far from other systems".format(i)
+                f"Disc galaxy shape: giving up on placing star {i}, can't find"
+                " position sufficiently far from other systems"
             )
 
 
-def cluster_galaxy_calc_positions(  # noqa: max-complexity
+def cluster_galaxy_calc_positions(  # noqa: C901
     positions: list[tuple[int, int]], adjacency_grid: AdjacencyGrid, size: int, width: float
 ):
     """
@@ -626,8 +618,8 @@ def cluster_galaxy_calc_positions(  # noqa: max-complexity
 
         if not attempts:
             print(
-                "Cluster galaxy shape: giving up on placing star {}, can't "
-                "find position sufficiently far from other systems".format(i)
+                f"Cluster galaxy shape: giving up on placing star {i}, can't "
+                "find position sufficiently far from other systems"
             )
 
 
@@ -664,8 +656,8 @@ def ring_galaxy_calc_positions(positions, adjacency_grid, size, width):
 
         if not attempts:
             print(
-                "Ring galaxy shape: giving up on placing star {}, can't"
-                " find position sufficiently far from other systems".format(i)
+                f"Ring galaxy shape: giving up on placing star {i}, can't"
+                " find position sufficiently far from other systems"
             )
 
 
@@ -698,8 +690,8 @@ def box_galaxy_calc_positions(positions, adjacency_grid, size, width):
 
         if not attempts:
             print(
-                "Box galaxy shape: giving up on placing star {}, can't find"
-                " position sufficiently far from other systems".format(i)
+                f"Box galaxy shape: giving up on placing star {i}, can't find"
+                " position sufficiently far from other systems"
             )
 
 

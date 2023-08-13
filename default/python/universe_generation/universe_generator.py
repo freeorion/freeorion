@@ -69,7 +69,7 @@ def error_report():
 
 
 @listener
-def create_universe(psd_map):  # noqa: max-complexity
+def create_universe(psd_map):  # noqa: C901
     """
     Main universe generation function invoked from C++ code.
     """

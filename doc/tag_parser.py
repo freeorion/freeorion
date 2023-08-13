@@ -57,7 +57,7 @@ def add_doc_source(_file_name, _line_number, _content, _tags):
     _tags[_content[0]].add((fn, _line_number, _content[1].strip()))
 
 
-def parse_file(_parse_file, _tags):  # noqa: max-complexity
+def parse_file(_parse_file, _tags):  # noqa: C901
     with open(_parse_file, encoding="utf-8") as f:
         match_line = 0
         content = []

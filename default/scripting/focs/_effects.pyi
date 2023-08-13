@@ -30,8 +30,8 @@ from focs._types import (
 )
 
 # Placeholders for default function arguments
-_SOME_INT = int()
-_SOME_FLOAT = float()
+_SOME_INT = 0
+_SOME_FLOAT = 0.0
 
 Blue = _StarType()
 White = _StarType()
