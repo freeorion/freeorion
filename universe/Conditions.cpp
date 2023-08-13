@@ -1798,22 +1798,16 @@ bool Homeworld::Match(const ScriptingContext& local_context) const {
 
     if (m_names.empty()) {
         // match homeworlds for any species
-        for (const auto& entry : local_context.species.GetSpeciesHomeworldsMap()) {
-            if (entry.second.contains(planet_id))
-                return true;
-        }
+        auto rng = local_context.species.GetSpeciesHomeworldsMap() | range_values;
+        return range_any_of(rng, [planet_id](const auto& planet_ids) { return planet_ids.contains(planet_id); });
 
     } else {
         // match any of the species specified
         const auto& homeworlds = local_context.species.GetSpeciesHomeworldsMap();
-        for (const auto& name_ref : m_names) {
-            const auto species_name = name_ref->Eval(local_context);
-            if (homeworlds.contains(species_name) && homeworlds.at(species_name).contains(planet_id))
-                return true;
-        }
+        auto rng = m_names | range_transform([&local_context](const auto& name_ref) { return name_ref->Eval(local_context); });
+        return range_any_of(rng, [&homeworlds, planet_id](const auto& species_name)
+                                 { return homeworlds.contains(species_name) && homeworlds.at(species_name).contains(planet_id); });
     }
-
-    return false;
 }
 
 ObjectSet Homeworld::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const
