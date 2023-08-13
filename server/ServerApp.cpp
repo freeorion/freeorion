@@ -2826,24 +2826,18 @@ namespace {
     {
         const auto get_empire = [&empires](const auto empire_id) { return empires.GetEmpire(empire_id); };
         const auto get_planet = [&objects](const auto& planet_id_troops)
-        { return std::make_pair(objects.getRaw<Planet>(planet_id_troops.first), planet_id_troops.second); };
-        static constexpr auto has_species = [](const auto& planet_troops)
-        { return planet_troops.first && !planet_troops.first->SpeciesName().empty(); };
-        static constexpr auto not_nullptr = [](const auto& e) -> bool { return e.get(); };
+        { return std::pair(objects.getRaw<Planet>(planet_id_troops.first), planet_id_troops.second); };
+        static constexpr auto has_species = [](const auto* planet) { return planet && planet->SpeciesName().empty(); };
 
-        for (const auto& [planet, empire_troops] : planet_empire_invasion_troops
-             | range_transform(get_planet) | range_filter(has_species))
-        {
-            for (const auto& invader_empire : empire_troops | range_keys
-                 | range_transform(get_empire) | range_filter(not_nullptr))
-            { invader_empire->RecordPlanetInvaded(*planet); }
+        for (const auto& [planet, empire_troops] : planet_empire_invasion_troops | range_transform(get_planet)) {
+            if (!has_species(planet)) continue; // if in loop avoids double-transform with range filter
+            for (const auto& invader_empire : empire_troops | range_keys | range_transform(get_empire))
+                if (invader_empire) invader_empire->RecordPlanetInvaded(*planet); // if in loop avoids double-transform with a range filter
         }
     }
 
     /** Does colonization, with safety checks */
-    bool ColonizePlanet(int ship_id, int planet_id, ScriptingContext& context,
-                        const std::vector<int>& empire_ids)
-    {
+    bool ColonizePlanet(int ship_id, int planet_id, ScriptingContext& context, const std::vector<int>& empire_ids) {
         auto& objects = context.ContextObjects();
         auto& universe = context.ContextUniverse();
 
