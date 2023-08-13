@@ -106,6 +106,13 @@ public:
       * predicate filter or range of object ids */
     template <typename T = UniverseObject, typename Pred, bool only_existing = false>
     [[nodiscard]] bool check_if_any(Pred pred) const;
+    template <typename T = UniverseObject, typename Pred, typename IDs, bool only_existing = false>
+#if !defined(FREEORION_ANDROID)
+        requires requires(IDs ids) { ids.begin(); ids.end(); {*ids.begin()} -> std::convertible_to<int>; }
+#else
+        requires requires(IDs ids) { ids.begin(); ids.end(); {static_cast<int>(*ids.begin())}; }
+#endif
+    [[nodiscard]] bool check_if_any(Pred pred, IDs&& ids) const;
 
     /** Returns all the objects of type T (maybe shared) ptr to const */
     template <typename T = UniverseObject, bool only_existing = false>
@@ -1168,6 +1175,76 @@ bool ObjectMap::check_if_any(Pred pred) const
     } else if constexpr (invokable_on_const_reference) {
         return std::any_of(map.begin(), map.end(),
                            [ref_pred{pred}](const EntryT& o) { return ref_pred(*o.second); });
+
+    } else {
+        constexpr bool invokable = invoke_flags[8];
+        static_assert(invokable, "Don't know how to handle predicate");
+        return false;
+    }
+}
+
+template <typename T, typename Pred, typename IDs, bool only_existing>
+#if !defined(FREEORION_ANDROID)
+    requires requires(IDs ids) { ids.begin(); ids.end(); {*ids.begin()} -> std::convertible_to<int>; }
+#else
+    requires requires(IDs ids) { ids.begin(); ids.end(); {static_cast<int>(*ids.begin())}; }
+#endif
+bool ObjectMap::check_if_any(Pred pred, IDs&& ids) const
+{
+    constexpr auto invoke_flags = CheckTypes<T, Pred>();
+    constexpr bool invokable_on_raw_const_object = invoke_flags[0];
+    constexpr bool invokable_on_shared_const_object = invoke_flags[2];
+    constexpr bool invokable_on_const_entry = invoke_flags[4];
+    constexpr bool invokable_on_const_reference = invoke_flags[6];
+    constexpr bool is_visitor = invoke_flags[9];
+    constexpr bool is_int_range = invoke_flags[10];
+    static_assert(!is_int_range, "check_if_any passed two int ranges. Don't know what to do with this...");
+
+    using DecayT = std::decay_t<T>;
+    auto& map{Map<DecayT, only_existing>()};
+    using ContainerT = std::decay_t<decltype(map)>;
+    using EntryT = typename ContainerT::value_type;
+
+    static constexpr decltype(map.begin()->second.get()) raw_null_retval = nullptr;
+    static constexpr auto not_null = [](const auto& o) -> bool { return o; };
+
+    if constexpr (is_visitor) {
+        const auto map_lookup = [&map](const int id) -> const DecayT* {
+            const auto it = map.find(id);
+            return (it != map.end()) ? it->second.get() : raw_null_retval;
+        };
+        auto rng = ids | range_transform(map_lookup) | range_filter(not_null);
+        return range_any_of(rng, [visitor{pred}](const DecayT* o) { return o->Accept(visitor); });
+
+    } else if constexpr (invokable_on_raw_const_object) {
+        const auto map_lookup = [&map](const int id) -> const DecayT* {
+            const auto it = map.find(id);
+            return (it != map.end()) ? it->second.get() : raw_null_retval;
+        };
+        auto rng = ids | range_transform(map_lookup) | range_filter(not_null);
+        return range_any_of(rng, [obj_pred{pred}](const DecayT* o) { return obj_pred(o); });
+
+    } else if constexpr (invokable_on_shared_const_object) {
+        const auto map_lookup = [&map](const int id) -> const DecayT* {
+            const auto it = map.find(id);
+            return (it != map.end()) ? it->second : decltype(it->second){};
+        };
+        auto rng = ids | range_transform(map_lookup) | range_filter(not_null);
+        return range_any_of(rng, [obj_pred{pred}](const auto& o) { return obj_pred(o); });
+
+    } else if constexpr (invokable_on_const_entry) {
+        return std::any_of(ids.begin(), ids.end(),
+                           [&map, entry_pred{pred}](const auto id) {
+                               const auto it = map.find(id);
+                               return it != map.end() && entry_pred(*it);
+                           });
+
+    } else if constexpr (invokable_on_const_reference) {
+        return std::any_of(ids.begin(), ids.end(),
+                           [&map, cref_pred{pred}](const auto id) {
+                               const auto it = map.find(id);
+                               return it != map.end() && cref_pred(*it->second);
+                           });
 
     } else {
         constexpr bool invokable = invoke_flags[8];
