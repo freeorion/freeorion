@@ -3593,7 +3593,7 @@ namespace {
         static constexpr auto is_empty_fleet = [](const Fleet* f) { return f->Empty(); };
         using fleet_system = std::pair<const Fleet*, System*>;
         const auto to_fleet_and_system = [&objects](const Fleet* f) -> fleet_system
-        { return std::make_pair(f, objects.getRaw<System>(f->SystemID())); }; // system may be nullptr
+        { return fleet_system(f, objects.getRaw<System>(f->SystemID())); }; // system may be nullptr
         static constexpr auto in_system = [](fleet_system fs) -> bool { return fs.second; };
         static constexpr auto to_id = [](const auto* o) { return o->ID(); };
 
