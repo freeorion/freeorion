@@ -178,7 +178,7 @@ class StringTable:
     def items(self):
         return self._entries
 
-    @staticmethod  # noqa: C901
+    @staticmethod
     def set_author(fpath, entries, blames):  # noqa: C901
         blame_cmd = ["git", "blame", "--incremental", fpath]
         git_blame = subprocess.check_output(blame_cmd)
