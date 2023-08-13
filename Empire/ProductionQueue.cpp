@@ -454,7 +454,8 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id, c
                 }
             }
 
-            for (const ShipPart* part : sd->Parts() | range_transform(lookup_part) | range_filter(not_null)) {
+            for (const ShipPart* part : sd->Parts() | range_transform(lookup_part)) {
+                if (!part) continue; // in look rather than filter avoids double transform call
                 for (const auto& [special_name, consumption] : part->ProductionSpecialConsumption()) {
                     if (const auto& amount = consumption.first)
                         retval[special_name][location_id] += static_cast<float>(amount->Eval(location_target_context));
@@ -499,7 +500,8 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(
                 }
             }
 
-            for (const ShipPart* part : sd->Parts() | range_transform(lookup_part) | range_filter(not_null)) {
+            for (const ShipPart* part : sd->Parts() | range_transform(lookup_part)) {
+                if (!part) continue; // in look rather than filter avoids double transform call
                 for (const auto& [mt, consumption] : part->ProductionMeterConsumption()) {
                     if (const auto& amount = consumption.first)
                         retval[mt][location_id] += static_cast<float>(amount->Eval(location_context));
