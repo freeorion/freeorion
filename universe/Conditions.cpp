@@ -726,7 +726,7 @@ namespace {
         // pick max / min / most common values
         switch (sorting_method) {
         case SortingMethod::SORT_MIN: {
-            const auto sort_key_obj_less = [](const auto& lhs, const auto& rhs) {
+            static constexpr auto sort_key_obj_less = [](const auto& lhs, const auto& rhs) {
                 return lhs.first < rhs.first ||
                     (lhs.first == rhs.first && lhs.second && rhs.second && // break ties consistently using object IDs
                      lhs.second->ID() < rhs.second->ID());
@@ -750,7 +750,7 @@ namespace {
             break;
         }
         case SortingMethod::SORT_MAX: {
-            const auto sort_key_obj_greater = [](const auto& lhs, const auto& rhs) {
+            static constexpr auto sort_key_obj_greater = [](const auto& lhs, const auto& rhs) {
                 return lhs.first > rhs.first ||
                     (lhs.first == rhs.first && lhs.second && rhs.second && // break ties consistently using object IDs
                      lhs.second->ID() > rhs.second->ID());
@@ -776,7 +776,7 @@ namespace {
         case SortingMethod::SORT_MODE: {
             // sort input by sort key to make filling histogram faster.
             // don't need ID fallback for sorting function in this case
-            const auto sort_key_obj_less = [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; };
+            static constexpr auto sort_key_obj_less = [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; };
             std::stable_sort(sort_key_objects.begin(), sort_key_objects.end(), sort_key_obj_less);
 
             // compile histogram of of number of times each sort key occurs
@@ -825,11 +825,11 @@ namespace {
 
             // sort input by sort key to group like values for std::unique
             // don't need ID fallback for sorting function in this case
-            const auto sort_key_obj_less = [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; };
+            static constexpr auto sort_key_obj_less = [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; };
             std::stable_sort(start, end, sort_key_obj_less);
 
             // pick one object of each sort key. uniqueness only based on keys, not object pointers.
-            const auto sort_key_obj_eq = [](const auto& lhs, const auto& rhs) { return lhs.first == rhs.first; };
+            static constexpr auto sort_key_obj_eq = [](const auto& lhs, const auto& rhs) { return lhs.first == rhs.first; };
             const auto unique_it = std::unique(start, end, sort_key_obj_eq);
 
             // determine range to put into to_set, based on how many unique values are available
