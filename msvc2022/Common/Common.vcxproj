@@ -261,6 +261,7 @@
     <ClInclude Include="..\..\util\PythonCommon.h" />
     <ClInclude Include="..\..\util\Pending.h" />
     <ClInclude Include="..\..\util\Random.h" />
+    <ClInclude Include="..\..\util\ranges.h" />
     <ClInclude Include="..\..\util\SaveGamePreviewUtils.h" />
     <ClInclude Include="..\..\util\ScopedTimer.h" />
     <ClInclude Include="..\..\util\Serialize.h" />

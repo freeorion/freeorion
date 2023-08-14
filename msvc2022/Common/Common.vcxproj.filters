@@ -311,6 +311,9 @@
     <ClInclude Include="..\..\util\PythonCommon.h">
       <Filter>Header Files\python</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\util\ranges.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\network\MessageQueue.cpp">
