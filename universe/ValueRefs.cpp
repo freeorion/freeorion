@@ -2193,30 +2193,29 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
 
         if (m_int_ref1) {
             // single empire ID specified
-            int empire_id = m_int_ref1->Eval(context);
+            const int empire_id = m_int_ref1->Eval(context);
             if (empire_id == ALL_EMPIRES)
                 return 0.0;
-            auto empire = context.GetEmpire(empire_id);
+            const auto empire = context.GetEmpire(empire_id);
             if (!empire)
                 return 0.0;
             const auto& data = empire->SystemSupplyRanges();
 
-            auto it = data.find(system_id);
-            if (it != data.end())
-                return it->second;
-            else
-                return 0.0;
+            const auto it = data.find(system_id);
+            return (it != data.end()) ? it->second : 0.0f;
 
         } else {
+            const auto& empires{context.Empires()};
+            if (empires.NumEmpires() < 1)
+                return 0.0f;
             // no empire ID specified, use max of all empires' ranges at specified system
             const auto to_sys_supply_range = [system_id](const auto& e) {
-                const auto& ssr = e->SystemSupplyRanges();
+                const auto& ssr = e.second->SystemSupplyRanges();
                 const auto it = ssr.find(system_id);
                 return (it != ssr.end()) ? it->second : 0.0f;
             };
-            auto sup_rng_rng = context.Empires() | range_values | range_transform(to_sys_supply_range);
-            auto max_it = range_max_element(sup_rng_rng);
-            return (max_it != sup_rng_rng.end()) ? *max_it : 0.0f;
+            auto sup_rng_rng = empires | range_transform(to_sys_supply_range);
+            return *range_max_element(sup_rng_rng);
         }
     }
 
