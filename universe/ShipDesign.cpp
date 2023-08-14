@@ -15,6 +15,7 @@
 #include "../util/CheckSums.h"
 #include "../util/GameRules.h"
 #include "../util/i18n.h"
+#include <numeric>
 
 
 namespace {
@@ -339,10 +340,8 @@ std::vector<std::string> ShipDesign::Weapons() const {
 }
 
 int ShipDesign::PartCount() const {
-    int count = 0;
-    for (auto& entry : m_num_part_classes)
-         count += entry.second;
-    return count;
+    auto rng = m_num_part_classes | range_values;
+    return std::accumulate(rng.begin(), rng.end(), 0);
 }
 
 bool ShipDesign::ProductionLocation(int empire_id, int location_id, const ScriptingContext& context) const {
