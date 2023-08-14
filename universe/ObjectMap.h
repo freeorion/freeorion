@@ -1152,33 +1152,29 @@ bool ObjectMap::check_if_any(Pred pred) const
     using EntryT = typename ContainerT::value_type;
 
     if constexpr (is_int_range) {
-        return std::any_of(pred.begin(), pred.end(),
-                           [&map](int id) { return map.contains(id); });
-
-    } else if constexpr (is_visitor) {
-        return std::any_of(map.begin(), map.end(),
-                           [visitor{pred}](const EntryT& o) { return o.second->Accept(visitor); });
-
-    } else if constexpr (invokable_on_raw_const_object) {
-        return std::any_of(map.begin(), map.end(),
-                           [obj_pred{pred}](const EntryT& o) { return obj_pred(o.second.get()); });
-
-    } else if constexpr (invokable_on_shared_const_object) {
-        return std::any_of(map.begin(), map.end(),
-                           [obj_pred{pred}](const EntryT& o) { return obj_pred(o.second); });
-
-    } else if constexpr (invokable_on_const_entry) {
-        return std::any_of(map.begin(), map.end(),
-                           [entry_pred{pred}](const EntryT& o) { return entry_pred(o); });
-
-    } else if constexpr (invokable_on_const_reference) {
-        return std::any_of(map.begin(), map.end(),
-                           [ref_pred{pred}](const EntryT& o) { return ref_pred(*o.second); });
+        return range_any_of(pred, [&map](int id) { return map.contains(id); });
 
     } else {
-        constexpr bool invokable = invoke_flags[8];
-        static_assert(invokable, "Don't know how to handle predicate");
-        return false;
+        const auto test_pred = [&pred](const EntryT& obj) {
+            if constexpr (is_visitor)
+                return obj.second->Accept(pred);
+            else if constexpr (invokable_on_raw_const_object)
+                return pred(obj.second.get());
+            else if constexpr (invokable_on_shared_const_object)
+                return pred(obj.second);
+            else if constexpr (invokable_on_const_entry)
+                return pred(obj);
+            else if constexpr (invokable_on_const_reference)
+                return pred(obj.second);
+
+            else {
+                constexpr bool invokable = invoke_flags[8];
+                static_assert(invokable, "Don't know how to handle predicate");
+                return false;
+            }
+        };
+
+        return range_any_of(map, test_pred);
     }
 }
 
@@ -1205,7 +1201,7 @@ bool ObjectMap::check_if_any(Pred pred, IDs&& ids) const
     const auto map_lookup = [&map](const int id) { return map.find(id); };
     const auto rng = ids | range_transform(map_lookup);
 
-    const auto test_pred = [pred, end_it{map.end()}](const auto it) {
+    const auto test_pred = [&pred, end_it{map.end()}](const auto it) {
         if constexpr (is_visitor)
             return it != end_it && it->second->Accept(pred);
         else if constexpr (invokable_on_raw_const_object)
