@@ -1724,11 +1724,10 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             int key_int = m_int_ref2->Eval(context);
             if (key_int <= int(ShipPartClass::INVALID_SHIP_PART_CLASS) ||
                 key_int >= int(ShipPartClass::NUM_SHIP_PART_CLASSES))
-            {
-                return 0;
-            }
+            { return 0; }
 
-            auto key_filter_class = [part_class = ShipPartClass(key_int)](const std::map<ShipPartClass, int>::value_type& e) { return e.first == part_class; };
+            using map_val_t = const std::map<ShipPartClass, int>::value_type;
+            auto key_filter_class = [part_class = ShipPartClass(key_int)](map_val_t& e) { return e.first == part_class; };
 
             if (empire) {
                 auto filtered_values = empire->ShipPartClassOwned() | range_filter(key_filter_class) | range_values;
@@ -1915,9 +1914,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             return 0;
         }
 
-        std::string ship_part_name;
-        if (m_string_ref1)
-            ship_part_name = m_string_ref1->Eval(context);
+        const std::string ship_part_name = m_string_ref1 ? m_string_ref1->Eval(context) : std::string{};
 
         const ShipDesign* design = context.ContextUniverse().GetShipDesign(design_id);
         if (!design)
@@ -1926,12 +1923,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         if (ship_part_name.empty())
             return design->PartCount();
 
-        int count = 0;
-        for (const std::string& part : design->Parts()) {
-            if (ship_part_name == part)
-                count++;
-        }
-        return count;
+        const auto& parts = design->Parts();
+        return std::count_if(parts.begin(), parts.end(), [&ship_part_name](const auto& part) { return part == ship_part_name; });
     }
     else if (variable_name == "PartOfClassInShipDesign") {
         int design_id = INVALID_DESIGN_ID;
