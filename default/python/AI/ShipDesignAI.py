@@ -243,7 +243,7 @@ class ShipDesigner:
         """
         self.species = species
 
-    def update_stats(self, ignore_species: bool = False):  # noqa: max-complexity
+    def update_stats(self, ignore_species: bool = False):  # noqa: C901
         """
         Calculate and update all stats of the design.
 
@@ -373,7 +373,7 @@ class ShipDesigner:
                 troops_grade = get_species_attack_troops(self.species)
                 self.design_stats.troops = self.design_stats.troops * troops_grade
 
-    def _apply_hardcoded_effects(self, ignore_species=False):  # noqa: max-complexity
+    def _apply_hardcoded_effects(self, ignore_species=False):  # noqa: C901
         """Update stats that can not be read out by the AI yet, i.e. applied by effects.
 
         This function should contain *all* hardcoded effects for hulls/parts to be considered by the AI
@@ -398,7 +398,7 @@ class ShipDesigner:
                 warning("Can't parse dependent token:" + str(tup))
             return dep_val * value
 
-        def parse_tokens(tokendict: dict, is_hull: bool = False):  # noqa: max-complexity
+        def parse_tokens(tokendict: dict, is_hull: bool = False):  # noqa: C901
             """Adjust design stats according to the token dict key-value pairs.
 
             :param tokendict: tokens and values
@@ -504,8 +504,8 @@ class ShipDesigner:
             except AttributeError:
                 cached_name = Cache.map_reference_design_name[reference_name]
                 error(
-                    "{} maps to {} in Cache.map_reference_design_name."
-                    " But the design seems not to exist...".format(reference_name, cached_name),
+                    f"{reference_name} maps to {cached_name} in Cache.map_reference_design_name."
+                    " But the design seems not to exist...",
                     exc_info=True,
                 )
                 return None
@@ -532,7 +532,7 @@ class ShipDesigner:
         """
         pass
 
-    def optimize_design(  # noqa: max-complexity
+    def optimize_design(  # noqa: C901
         self,
         additional_parts=(),
         additional_hulls: Sequence = (),
@@ -689,7 +689,7 @@ class ShipDesigner:
         sorted_design_list = sorted(best_design_list, key=lambda x: x[0], reverse=True)
         return sorted_design_list
 
-    def _filter_parts(self, partname_dict: dict, verbose: bool = False):  # noqa: max-complexity
+    def _filter_parts(self, partname_dict: dict, verbose: bool = False):  # noqa: C901
         """Filter the partname_dict.
 
         This function filters a list of parts according to the following criteria:
@@ -777,7 +777,7 @@ class ShipDesigner:
         """
         return len(available_parts) * [0] + [num_slots]  # corresponds to an entirely empty design
 
-    def _combinatorial_filling(self, available_parts):  # noqa: max-complexity
+    def _combinatorial_filling(self, available_parts):  # noqa: C901
         """Fill the design using a combinatorial approach.
 
         This generic filling algorithm considers the problem of filling the slots as combinatorial problem.
@@ -1296,11 +1296,7 @@ class CarrierShipDesigner(MilitaryShipDesignerBaseClass):
                 current_available_parts[slot] = [part_ for part_ in partlist if part_ not in forbidden_hangar_parts]
             this_rating, this_partlist = ShipDesigner._filling_algorithm(self, current_available_parts)
             if verbose:
-                debug(
-                    "Best rating for part {} is {:.2f} with partlist {}".format(
-                        this_hangar_part, this_rating, this_partlist
-                    )
-                )
+                debug(f"Best rating for part {this_hangar_part} is {this_rating:.2f} with partlist {this_partlist}")
             if this_rating > best_rating:
                 best_rating = this_rating
                 best_partlist = this_partlist
@@ -1799,10 +1795,10 @@ def _get_tech_bonus(upgrade_dict, part_name):
             _raised_warnings.add(part_name)
             error(
                 (
-                    "WARNING: Encountered unknown part ({}): "
+                    f"WARNING: Encountered unknown part ({part_name}): "
                     "The AI can play on but its damage estimates may be incorrect leading to worse decision-making. "
-                    "Please update AIDependencies.py - {}"
-                ).format(part_name, upgrade_dict),
+                    f"Please update AIDependencies.py - {upgrade_dict}"
+                ),
                 exc_info=True,
             )
         return 0

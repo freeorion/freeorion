@@ -137,7 +137,7 @@ class StringTable:
     def __len__(self):
         return len(self._ientries)
 
-    def __str__(self):  # noqa: max-complexity
+    def __str__(self):  # noqa: C901
         result = ""
         result += self.language + "\n"
 
@@ -178,8 +178,8 @@ class StringTable:
     def items(self):
         return self._entries
 
-    @staticmethod  # noqa: max-complexity
-    def set_author(fpath, entries, blames):  # noqa: max-complexity
+    @staticmethod
+    def set_author(fpath, entries, blames):  # noqa: C901
         blame_cmd = ["git", "blame", "--incremental", fpath]
         git_blame = subprocess.check_output(blame_cmd)
         git_blame = git_blame.decode("utf-8", "strict")
@@ -226,7 +226,7 @@ class StringTable:
         return StringTable.from_text(fhandle.read(), fhandle.name, with_blame=with_blame)
 
     @staticmethod
-    def from_text(text, fpath, with_blame=True) -> "StringTable":  # noqa: max-complexity
+    def from_text(text, fpath, with_blame=True) -> "StringTable":  # noqa: C901
         is_quoted = False
 
         language = None
@@ -378,7 +378,7 @@ class StringTable:
         return StringTable(fpath, language, fnotes, includes, entries)
 
     @staticmethod
-    def statistic(left: "StringTable", right: "StringTable"):  # noqa: max-complexity
+    def statistic(left: "StringTable", right: "StringTable"):  # noqa: C901
         class STStatistic(NamedTuple):
             left: "StringTable"
             left_only: set

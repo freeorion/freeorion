@@ -12,7 +12,7 @@ from freeorion_tools import get_species_population, tech_is_complete
 active_growth_specials = {}
 
 
-def calc_max_pop(planet, species, detail):  # noqa: max-complexity
+def calc_max_pop(planet, species, detail):  # noqa: C901
     planet_size = planet.habitableSize
     planet_env = species.getPlanetEnvironment(planet.type)
     if planet_env == fo.planetEnvironment.uninhabitable:

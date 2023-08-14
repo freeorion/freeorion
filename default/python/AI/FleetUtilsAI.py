@@ -76,7 +76,7 @@ def get_targeted_planet_ids(planet_ids: Sequence[PlanetId], mission_type: Missio
 
 # TODO: Avoid mutable arguments and use return values instead
 # TODO: Use Dijkstra's algorithm instead of BFS to consider starlane length
-def get_fleets_for_mission(  # noqa: max-complexity
+def get_fleets_for_mission(  # noqa: C901
     target_stats: dict,
     min_stats: dict,
     cur_stats: dict,
@@ -379,7 +379,7 @@ def extract_fleet_ids_without_mission_types(fleets_ids):
     return [fleet_id for fleet_id in fleets_ids if not aistate.get_fleet_mission(fleet_id).type]
 
 
-def assess_fleet_role(fleet_id):  # noqa: max-complexity
+def assess_fleet_role(fleet_id):  # noqa: C901
     """
     Assesses ShipRoles represented in a fleet and
     returns a corresponding overall fleetRole (of type MissionType).
@@ -435,7 +435,7 @@ def assess_fleet_role(fleet_id):  # noqa: max-complexity
     return selected_role
 
 
-def assess_ship_design_role(design):  # noqa: max-complexity
+def assess_ship_design_role(design):  # noqa: C901
     parts = [get_ship_part(partname) for partname in design.parts if partname and get_ship_part(partname)]
 
     if any(p.partClass == fo.shipPartClass.colony and p.capacity == 0 for p in parts):
@@ -477,7 +477,7 @@ def assess_ship_design_role(design):  # noqa: max-complexity
         return ShipRoleType.CIVILIAN_EXPLORATION
 
 
-def generate_fleet_orders_for_fleet_missions():  # noqa: max-complexity
+def generate_fleet_orders_for_fleet_missions():  # noqa: C901
     """Generates fleet orders from targets."""
     debug("Generating fleet orders")
 

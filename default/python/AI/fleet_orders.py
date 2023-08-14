@@ -100,12 +100,7 @@ class AIFleetOrder:
             execute_status = "executed"
         elif self.order_issued:
             execute_status = "order issued"
-        return "[{}] of {} to {} {}".format(
-            self.ORDER_NAME,
-            self.fleet.get_object(),
-            self.target.get_object(),
-            execute_status,
-        )
+        return f"[{self.ORDER_NAME}] of {self.fleet.get_object()} to {self.target.get_object()} {execute_status}"
 
     def __eq__(self, other):
         return type(self) == type(other) and self.fleet == other.fleet and self.target == other.target
@@ -118,7 +113,7 @@ class OrderMove(AIFleetOrder):
     ORDER_NAME = "move"
     TARGET_TYPE = TargetSystem
 
-    def can_issue_order(self, verbose=False):  # noqa: max-complexity
+    def can_issue_order(self, verbose=False):  # noqa: C901
         if not super().can_issue_order(verbose=verbose):
             return False
         # TODO: figure out better way to have invasions (& possibly colonizations)

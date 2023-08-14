@@ -239,7 +239,7 @@ class ShipDesignCache:
             self.map_reference_design_name[reference_name] = design.name
             self.design_id_by_name[design.name] = design_id
 
-    def _check_cache_for_consistency(self):  # noqa: max-complexity
+    def _check_cache_for_consistency(self):  # noqa: C901
         """Check if the persistent cache is consistent with the gamestate and fix it if not.
 
         This function should be called once at the beginning of the turn (before update_shipdesign_cache()).

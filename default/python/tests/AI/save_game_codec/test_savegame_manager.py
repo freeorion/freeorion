@@ -53,10 +53,10 @@ class SetStateTester:
 
 @pytest.fixture(
     params=[
-        int(),
-        float(),
+        0,
+        0.0,
         "",
-        bool(),
+        False,
         1,
         1.2,
         1.2e4,

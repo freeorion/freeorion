@@ -77,5 +77,5 @@ class TestCharacter:
 
     def test_character_must_be_composed_of_traits(self):
         with pytest.raises(TypeError, match="All traits must be sub-classes of Trait"):
-            not_a_trait = int(1)
+            not_a_trait = 1
             Character([LeftTrait, not_a_trait])

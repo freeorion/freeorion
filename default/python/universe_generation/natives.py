@@ -10,7 +10,7 @@ natives_for_planet_type = {}
 planet_types_for_natives = {}
 
 
-def generate_natives(native_freq, systems, empire_home_systems):  # noqa: max-complexity
+def generate_natives(native_freq, systems, empire_home_systems):  # noqa: C901
     """
     Adds non-empire-affiliated native populations to planets.
     And to asteroids and to gasgiants as well.

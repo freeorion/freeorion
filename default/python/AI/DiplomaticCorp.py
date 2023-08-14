@@ -45,7 +45,7 @@ class DiplomaticCorp:
     def __init__(self):
         self.be_chatty = True
 
-    def handle_diplomatic_message(self, message):  # noqa: max-complexity
+    def handle_diplomatic_message(self, message):  # noqa: C901
         """Handle a diplomatic message update from the server,
         such as if another player declares war, accepts peace, or cancels a proposed peace treaty.
         :param message: message.recipient and message.sender are respective empire IDs

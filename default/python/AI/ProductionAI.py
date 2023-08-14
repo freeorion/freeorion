@@ -155,7 +155,7 @@ def get_building_allocations() -> float:
 
 
 # TODO Move Building names to AIDependencies to avoid typos and for IDE-Support
-def generate_production_orders():  # noqa: max-complexity
+def generate_production_orders():  # noqa: C901
     """Generate production orders."""
     # first check ship designs
     # next check for buildings etc, that could be placed on queue regardless of locally available PP
@@ -1103,9 +1103,9 @@ def generate_production_orders():  # noqa: max-complexity
                 if best_design is None:
                     warning(
                         "problem with mil_build_choices;"
-                        " with selector ({}) chose loc ({}), "
-                        "best_design_id ({}), best_design (None) "
-                        "from mil_build_choices: {}".format(selector, loc, best_design_id, mil_build_choices)
+                        f" with selector ({selector}) chose loc ({loc}), "
+                        f"best_design_id ({best_design_id}), best_design (None) "
+                        f"from mil_build_choices: {mil_build_choices}"
                     )
                     continue
             else:
@@ -1493,7 +1493,7 @@ def _build_scanning_facility() -> float:
     return _may_enqueue_for_stability(building_type, turn_cost)
 
 
-def _build_gas_giant_generator() -> float:  # noqa: max-complexity
+def _build_gas_giant_generator() -> float:  # noqa: C901
     """Consider building Gas Giant Generators, return added turn costs."""
     building_type = BuildingType.GAS_GIANT_GEN
     if not building_type.available():
@@ -1650,7 +1650,7 @@ class ShipYardInfo(NamedTuple):
     top_pilot_systems: TopPilotSystems
 
 
-def _build_basic_shipyards() -> ShipYardInfo:  # noqa: max-complexity
+def _build_basic_shipyards() -> ShipYardInfo:  # noqa: C901
     """
     Consider building basic ship yards and also determine some value needed for other shipyard buildings.
     """
@@ -1713,7 +1713,7 @@ def _build_basic_shipyards() -> ShipYardInfo:  # noqa: max-complexity
     return ShipYardInfo(queued_shipyard_pids, colony_systems, top_pilot_systems)  # TBD return added costs?
 
 
-def _build_energy_shipyards(  # noqa: max-complexity
+def _build_energy_shipyards(  # noqa: C901
     queued_shipyard_pids: list[PlanetId],
     colony_systems: dict[PlanetId, SystemId],
     building_ratio: float,
@@ -1795,7 +1795,7 @@ def _build_energy_shipyards(  # noqa: max-complexity
     return blackhole_pilots, red_pilots, building_expense
 
 
-def _build_asteroid_processor(  # noqa: max-complexity
+def _build_asteroid_processor(  # noqa: C901
     top_pilot_systems: TopPilotSystems, queued_shipyard_pids: list[PlanetId]
 ) -> float:
     """Consider building asteroid processor, return added turn costs."""
@@ -1879,7 +1879,7 @@ def _build_asteroid_processor(  # noqa: max-complexity
     return building_expense
 
 
-def _build_orbital_drydock(top_pilot_systems: TopPilotSystems) -> None:  # noqa: max-complexity
+def _build_orbital_drydock(top_pilot_systems: TopPilotSystems) -> None:  # noqa: C901
     """Consider building orbital drydocks."""
     building_type = Shipyard.ORBITAL_DRYDOCK
     if building_type.available():

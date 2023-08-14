@@ -8,7 +8,7 @@ from turn_state._planet_state import _get_planets_info
 
 
 class EmpireResources:
-    def __init__(self):  # noqa: max-complexity
+    def __init__(self):  # noqa: C901
         self.have_gas_giant = False
         self.have_asteroids = False
         self.owned_asteroid_coatings = 0

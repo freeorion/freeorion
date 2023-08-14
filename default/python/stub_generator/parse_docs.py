@@ -44,7 +44,7 @@ def _parse_signature(line):
 
 
 class Docs:
-    def __init__(self, text, indent, is_class=False):  # noqa: max-complexity
+    def __init__(self, text, indent, is_class=False):  # noqa: C901
         self.indent = indent
         self.is_class = is_class
 

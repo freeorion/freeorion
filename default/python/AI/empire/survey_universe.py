@@ -36,7 +36,7 @@ register_pre_handler("generateOrders", survey_universe_lock.lock)
 survey_timer = AITimer("empire.surver_universe()")
 
 
-def survey_universe():  # noqa: max-complexity
+def survey_universe():  # noqa: C901
     survey_timer.start("Categorizing Visible Planets")
     universe = fo.getUniverse()
     empire_id = fo.empireID()

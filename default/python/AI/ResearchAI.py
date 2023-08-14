@@ -138,7 +138,7 @@ def research_now(tech_name: str, with_prerequisites: bool = True) -> None:
                     break
 
 
-def generate_classic_research_orders():  # noqa: max-complexity
+def generate_classic_research_orders():  # noqa: C901
     """generate research orders"""
     empire = fo.getEmpire()
     empire_id = empire.empireID
