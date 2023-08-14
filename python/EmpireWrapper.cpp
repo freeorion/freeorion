@@ -62,7 +62,6 @@ namespace {
         // get lanes starting in system with id system_id
         static constexpr auto lane_starts_less = [](const auto lane1, const auto lane2) { return lane1.start < lane2.start; };
         static constexpr auto to_lane_end = [](const auto lane) { return lane.end; };
-        const auto not_in_retval = [&retval](const auto sys_id) { return !retval.contains(sys_id); };
 
 
         // iteratively propagate supply out from supplied systems, to determine

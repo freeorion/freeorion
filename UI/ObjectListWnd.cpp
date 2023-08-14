@@ -1639,8 +1639,8 @@ public:
         m_container_object_panel(container_object_panel),
         m_contained_object_panels(contained_object_panels.begin(), contained_object_panels.end()),
         m_obj_init(obj),
-        m_expanded_init(expanded),
-        m_indent_init(indent)
+        m_indent_init(indent),
+        m_expanded_init(expanded)
     {
         SetMargin(1);
         SetRowAlignment(GG::ALIGN_VCENTER);
