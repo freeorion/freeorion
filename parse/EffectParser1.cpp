@@ -24,7 +24,7 @@ namespace parse { namespace detail {
         bool& pass)
     {
         return effect_payload(
-            new Effect::GenerateSitRepMessage(
+            std::make_unique<Effect::GenerateSitRepMessage>(
                 message_string,
                 icon,
                 OpenEnvelopes(message_parameters, pass),
@@ -46,7 +46,7 @@ namespace parse { namespace detail {
         bool& pass)
     {
         return effect_payload(
-            new Effect::GenerateSitRepMessage(
+            std::make_unique<Effect::GenerateSitRepMessage>(
                 message_string,
                 icon,
                 OpenEnvelopes(message_parameters, pass),
@@ -67,7 +67,7 @@ namespace parse { namespace detail {
         bool& pass)
     {
         return effect_payload(
-            new Effect::GenerateSitRepMessage(
+            std::make_unique<Effect::GenerateSitRepMessage>(
                 message_string,
                 icon,
                 OpenEnvelopes(message_parameters, pass),

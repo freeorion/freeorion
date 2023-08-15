@@ -208,7 +208,7 @@ CombatReportWnd::CombatReportWnd(std::string_view config_name) :
 {}
 
 void CombatReportWnd::CompleteConstruction() {
-    m_impl.reset(new Impl(*this));
+    m_impl = std::make_unique<Impl>(*this);
     CUIWnd::CompleteConstruction();
 }
 

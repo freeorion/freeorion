@@ -595,7 +595,7 @@ namespace {
 // ClientUI
 ////////////////////////////////////////////////
 ClientUI::ClientUI() :
-    m_ship_designs(new ShipDesignManager())
+    m_ship_designs(std::make_unique<ShipDesignManager>())
 {
     s_the_UI = this;
     Hotkey::ReadFromOptions(GetOptionsDB());

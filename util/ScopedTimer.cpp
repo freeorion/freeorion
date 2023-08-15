@@ -335,7 +335,7 @@ private:
 
 SectionedScopedTimer::SectionedScopedTimer(std::string timed_name,
                                            std::chrono::microseconds threshold) :
-    m_impl(new Impl(std::move(timed_name), threshold, true, true))
+    m_impl(std::make_unique<Impl>(std::move(timed_name), threshold, true, true))
 {}
 
 // ~SectionedScopedTimer is required because Impl is defined here.

@@ -741,8 +741,8 @@ sc::result Idle::react(const Hostless&) {
     }
 
     ServerApp& server = Server();
-    std::shared_ptr<MultiplayerLobbyData> lobby_data(new MultiplayerLobbyData(server.m_galaxy_setup_data));
-    std::shared_ptr<ServerSaveGameData> server_save_game_data(new ServerSaveGameData());
+    auto lobby_data = std::make_shared<MultiplayerLobbyData>(server.m_galaxy_setup_data);
+    auto server_save_game_data = std::make_shared<ServerSaveGameData>();
     std::vector<PlayerSaveGameData> player_save_game_data;
     server.InitializePython();
     server.LoadChatHistory();
@@ -757,9 +757,8 @@ sc::result Idle::react(const Hostless&) {
             for (const auto& save : saves) {
                 // Filenames of saves lexicographically sorted with turns and timestamps so latest
                 // file will have greater string representation.
-                if (PathToString(save) > autostart_load_filename) {
+                if (PathToString(save) > autostart_load_filename)
                     autostart_load_filename = PathToString(save);
-                }
             }
         }
     }
@@ -859,8 +858,8 @@ namespace {
 
 MPLobby::MPLobby(my_context c) :
     my_base(c),
-    m_lobby_data(new MultiplayerLobbyData(std::move(Server().m_galaxy_setup_data))),
-    m_server_save_game_data(new ServerSaveGameData()),
+    m_lobby_data(std::make_shared<MultiplayerLobbyData>(std::move(Server().m_galaxy_setup_data))),
+    m_server_save_game_data(std::make_shared<ServerSaveGameData>()),
     m_ai_next_index(1)
 {
     TraceLogger(FSM) << "(ServerFSM) MPLobby";
@@ -2038,7 +2037,7 @@ sc::result MPLobby::react(const Error& msg) {
 WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
     my_base(c),
     m_single_player_setup_data(context<ServerFSM>().m_single_player_setup_data),
-    m_server_save_game_data(new ServerSaveGameData()),
+    m_server_save_game_data(std::make_shared<ServerSaveGameData>()),
     m_num_expected_players(0)
 {
     TraceLogger(FSM) << "(ServerFSM) WaitingForSPGameJoiners";

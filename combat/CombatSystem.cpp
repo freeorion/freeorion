@@ -276,8 +276,8 @@ ScriptingContext::ScriptingContext(CombatInfo& info, UniverseObject* attacker_as
 namespace {
     // if source is owned by ALL_EMPIRES, match objects owned by an empire
     // if source is owned by an empire, match unowned objects and objects owned by enemies of source's owner empire
-    Condition::Condition* VisibleEnemyOfOwnerCondition() {
-        return new Condition::Or(
+    std::unique_ptr<Condition::Condition> VisibleEnemyOfOwnerCondition() {
+        return std::make_unique<Condition::Or>(
             // unowned candidate object case
             std::make_unique<Condition::And>(
                 std::make_unique<Condition::EmpireAffiliation>(
@@ -322,7 +322,7 @@ namespace {
                             nullptr,
                             std::make_unique<ValueRef::Constant<double>>(0.0)))),
                 std::make_unique<Condition::Type>(UniverseObjectType::OBJ_FIGHTER)),
-            std::unique_ptr<Condition::Condition>{VisibleEnemyOfOwnerCondition()});
+            VisibleEnemyOfOwnerCondition());
 
     const std::unique_ptr<Condition::Condition> is_enemy_ship =
         std::make_unique<Condition::And>(
@@ -334,11 +334,11 @@ namespace {
                     nullptr,
                     std::make_unique<ValueRef::Constant<double>>(0.0))),
 
-            std::unique_ptr<Condition::Condition>{VisibleEnemyOfOwnerCondition()});
+            VisibleEnemyOfOwnerCondition());
 
     const std::unique_ptr<Condition::Condition> is_enemy_ship_fighter_or_armed_planet =
         std::make_unique<Condition::And>(
-            std::unique_ptr<Condition::Condition>{VisibleEnemyOfOwnerCondition()},  // enemies
+            VisibleEnemyOfOwnerCondition(), // enemies
             std::make_unique<Condition::Or>(
                 std::make_unique<Condition::Or>(
                     std::make_unique<Condition::And>(

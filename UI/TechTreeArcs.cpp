@@ -149,7 +149,7 @@ private:
 TechTreeArcs::TechTreeArcs() = default;
 
 TechTreeArcs::TechTreeArcs(const TechTreeLayout& layout, const std::set<std::string>& techs_to_show) :
-    m_impl(new Impl(layout, techs_to_show))
+    m_impl(std::make_unique<Impl>(layout, techs_to_show))
 {}
 
 TechTreeArcs::~TechTreeArcs() = default;
@@ -159,10 +159,8 @@ void TechTreeArcs::Render(double scale) {
         m_impl->Render(scale);
 }
 
-void TechTreeArcs::Reset() {
-    m_impl.reset();
-}
+void TechTreeArcs::Reset()
+{ m_impl.reset(); }
 
-void TechTreeArcs::Reset(const TechTreeLayout& layout, const std::set< std::string >& techs_to_show) {
-    m_impl.reset(new Impl(layout, techs_to_show));
-}
+void TechTreeArcs::Reset(const TechTreeLayout& layout, const std::set< std::string >& techs_to_show)
+{ m_impl = std::make_unique<Impl>(layout, techs_to_show); }

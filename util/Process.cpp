@@ -45,7 +45,7 @@ Process::Process() :
 {}
 
 Process::Process(const std::string& cmd, const std::vector<std::string>& argv) :
-    m_impl(new Impl(cmd, argv)),
+    m_impl(std::make_shared<Impl>(cmd, argv)),
     m_empty(false)
 {}
 

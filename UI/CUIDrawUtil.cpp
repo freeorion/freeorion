@@ -532,7 +532,7 @@ public:
 
 
 ScanlineRenderer::ScanlineRenderer() :
-    m_impl(new Impl())
+    m_impl(std::make_unique<Impl>())
 {}
 
 // This destructor is required here because ~ScanlineRendererImpl is declared here.

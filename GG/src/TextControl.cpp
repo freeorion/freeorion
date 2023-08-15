@@ -164,7 +164,7 @@ void TextControl::Render()
 }
 
 void TextControl::RefreshCache() {
-    m_render_cache.reset(new Font::RenderCache());
+    m_render_cache = std::make_unique<Font::RenderCache>();
     if (m_font)
         m_font->PreRenderText(Pt(X0, Y0), Size(), m_text, m_format, *m_render_cache, m_line_data);
 }

@@ -1495,7 +1495,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
             psgd = save_data_it->second;
         }
         if (!psgd.orders)
-            psgd.orders.reset(new OrderSet());    // need an empty order set pointed to for serialization in case no data is loaded but the game start message wants orders to send
+            psgd.orders = std::make_shared<OrderSet>(); // need an empty order set pointed to for serialization in case no data is loaded but the game start message wants orders to send
 
         // get empire ID for player. safety check on it.
         int empire_id = PlayerEmpireID(player_id);
@@ -1510,7 +1510,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         // restore saved orders.  these will be re-executed on client and
         // re-sent to the server (after possibly modification) by clients
         // when they end their turn
-        auto orders = psgd.orders;
+        auto orders{psgd.orders};
 
         bool use_binary_serialization = player_connection->IsBinarySerializationUsed();
 

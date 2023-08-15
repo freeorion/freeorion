@@ -130,10 +130,10 @@ namespace boost {
 Universe::Universe() :
     m_pathfinder(std::make_shared<Pathfinder>()),
     m_objects(std::make_unique<ObjectMap>()),
-    m_object_id_allocator(new IDAllocator(ALL_EMPIRES, std::vector<int>(), INVALID_OBJECT_ID,
-                                          TEMPORARY_OBJECT_ID, INVALID_OBJECT_ID)),
-    m_design_id_allocator(new IDAllocator(ALL_EMPIRES, std::vector<int>(), INVALID_DESIGN_ID,
-                                          INCOMPLETE_DESIGN_ID, INVALID_DESIGN_ID))
+    m_object_id_allocator(std::make_unique<IDAllocator>(ALL_EMPIRES, std::vector<int>(), INVALID_OBJECT_ID,
+                                                        TEMPORARY_OBJECT_ID, INVALID_OBJECT_ID)),
+    m_design_id_allocator(std::make_unique<IDAllocator>(ALL_EMPIRES, std::vector<int>(), INVALID_DESIGN_ID,
+                                                        INCOMPLETE_DESIGN_ID, INVALID_DESIGN_ID))
 {}
 
 Universe& Universe::operator=(Universe&& other) noexcept {

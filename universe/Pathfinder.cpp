@@ -716,7 +716,7 @@ public:
 // class Pathfinder
 /////////////////////////////////////////////
 Pathfinder::Pathfinder() :
-    pimpl(new PathfinderImpl)
+    pimpl(std::make_unique<PathfinderImpl>())
 {}
 
 Pathfinder::~Pathfinder() = default;

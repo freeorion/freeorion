@@ -860,7 +860,7 @@ private:
 
 
 Font::TextAndElementsAssembler::TextAndElementsAssembler(const Font& font) :
-    m_impl(new Impl(font))
+    m_impl(std::make_unique<Impl>(font))
 {}
 
 // Required because Impl is defined here
@@ -1860,7 +1860,7 @@ void Font::Init(FT_Face& face)
     buffer.MakePowerOfTwo();
 
     // create opengl texture from buffer
-    m_texture.reset(new Texture);
+    m_texture = std::make_shared<Texture>();
     m_texture->Init(buffer.BufferWidth(), buffer.BufferHeight(),
                     (uint8_t*)buffer.Buffer(), GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, 2);
 

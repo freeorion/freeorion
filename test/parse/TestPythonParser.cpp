@@ -158,7 +158,7 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
                         ),
                         std::string("ORBITAL_HAB_LABEL")));
 
-        auto effect_group = std::shared_ptr<Effect::EffectsGroup>(new Effect::EffectsGroup(
+        auto effect_group = std::make_shared<Effect::EffectsGroup>(
                 std::make_unique<Condition::And>(
                     std::make_unique<Condition::Species>(),
                     std::make_unique<Condition::EmpireAffiliation>(
@@ -172,7 +172,7 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
                 17,
                 "",
                 ""
-        ));
+        );
 
         Tech tech{
             "CON_ORBITAL_HAB",

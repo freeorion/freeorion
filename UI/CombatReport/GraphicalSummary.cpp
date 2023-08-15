@@ -678,7 +678,7 @@ void GraphicalSummaryWnd::DeleteSideBars() {
 void GraphicalSummaryWnd::GenerateGraph() {
     DeleteSideBars();
 
-    m_sizer.reset(new BarSizer(m_summaries, ClientSize()));
+    m_sizer = std::make_unique<BarSizer>(m_summaries, ClientSize());
 
     for (auto& summary : m_summaries) {
         if (summary.second.total_max_health > EPSILON) {

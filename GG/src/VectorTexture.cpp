@@ -182,7 +182,7 @@ public:
 // class GG::VectorTexture
 ///////////////////////////////////////
 VectorTexture::VectorTexture() :
-    m_impl(new VectorTextureImpl())
+    m_impl(std::make_shared<VectorTextureImpl>())
 {}
 
 const boost::filesystem::path& VectorTexture::Path() const

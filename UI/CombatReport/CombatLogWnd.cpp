@@ -414,7 +414,7 @@ namespace {
             GG::Wnd & parent, GG::X x, GG::Y y, const std::string& str,
             const std::shared_ptr<GG::Font>& font, GG::Clr color = GG::CLR_BLACK) :
             LinkText(x, y, UserString("ELLIPSIS"), font, color),
-            m_text(new std::string(str))
+            m_text(std::make_unique<std::string>(str))
         {
             // Register for signals that might bring the text into view
             if (const auto* log = FindParentOfType<CombatLogWnd>(&parent)) {
@@ -620,10 +620,8 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
 // Forward request to private implementation
 CombatLogWnd::CombatLogWnd(GG::X w, GG::Y h) :
     GG::Wnd(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
-    m_impl(new Impl(*this))
-{
-    SetName("CombatLogWnd");
-}
+    m_impl(std::make_unique<Impl>(*this))
+{ SetName("CombatLogWnd"); }
 
 CombatLogWnd::~CombatLogWnd() = default;
 

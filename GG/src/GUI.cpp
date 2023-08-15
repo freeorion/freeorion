@@ -240,7 +240,7 @@ struct GG::GUIImpl
 GUIImpl::GUIImpl() :
     m_last_FPS_time(std::chrono::high_resolution_clock::now()),
     m_last_frame_time(std::chrono::high_resolution_clock::now()),
-    m_style_factory(new StyleFactory())
+    m_style_factory(std::make_shared<StyleFactory>())
 {}
 
 void GUIImpl::HandleMouseButtonPress(unsigned int mouse_button, Pt pos, int curr_ticks)
@@ -1120,9 +1120,9 @@ GUI::const_accel_iterator GUI::accel_end() const
 
 GUI::AcceleratorSignalType& GUI::AcceleratorSignal(Key key, Flags<ModKey> mod_keys) const
 {
-    std::shared_ptr<AcceleratorSignalType>& sig_ptr = m_impl->m_accelerator_sigs[{key, mod_keys}];
+    auto& sig_ptr = m_impl->m_accelerator_sigs[{key, mod_keys}];
     if (!sig_ptr)
-        sig_ptr.reset(new AcceleratorSignalType());
+        sig_ptr = std::make_shared<AcceleratorSignalType>();
     if (INSTRUMENT_ALL_SIGNALS)
         sig_ptr->connect(AcceleratorEcho(key, mod_keys));
     return *sig_ptr;
@@ -1467,7 +1467,7 @@ void GUI::SetStyleFactory(const std::shared_ptr<StyleFactory>& factory)
 {
     m_impl->m_style_factory = factory;
     if (!m_impl->m_style_factory)
-        m_impl->m_style_factory.reset(new StyleFactory());
+        m_impl->m_style_factory = std::make_shared<StyleFactory>();
 }
 
 void GUI::RenderCursor(bool render)
