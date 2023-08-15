@@ -4764,9 +4764,9 @@ bool SpeciesOpinion::operator==(const Condition& rhs) const {
 }
 
 namespace {
-    std::string_view SpeciesForObject(const UniverseObject* obj, const ScriptingContext& context) {
+    const std::string& SpeciesForObject(const UniverseObject* obj, const ScriptingContext& context) {
         if (!obj)
-            return "";
+            return EMPTY_STRING;
 
         // get species from object or its container
         switch (obj->ObjectType()) {
@@ -4787,7 +4787,7 @@ namespace {
             break;
         }
         default:
-            return "";
+            return EMPTY_STRING;
             break;
         }
     }
@@ -4885,7 +4885,7 @@ void SpeciesOpinion::Eval(const ScriptingContext& parent_context,
     if (m_content && m_content->LocalCandidateInvariant()) {
         const auto process_objects_with_different_species =
             [&sm, search_domain, &matches, &non_matches, this]
-            (auto species_for_objects, const std::string_view content)
+            (auto species_for_objects, const std::string& content)
         {
             // determine all unique species
             std::sort(species_for_objects.begin(), species_for_objects.end());
@@ -4893,7 +4893,7 @@ void SpeciesOpinion::Eval(const ScriptingContext& parent_context,
             species_for_objects.resize(std::distance(species_for_objects.begin(), unique_it));
 
             // get set of species that match the criteron about liking or disliking the content
-            std::vector<std::string_view> matching_species;
+            std::vector<std::string> matching_species;
             matching_species.reserve(species_for_objects.size());
 
             if (sm.empty()) // forces check for pending species
@@ -4902,7 +4902,7 @@ void SpeciesOpinion::Eval(const ScriptingContext& parent_context,
             if (m_comp == ComparisonType::GREATER_THAN) {
                 // find species that like content
                 std::copy_if(species_for_objects.begin(), species_for_objects.end(), std::back_inserter(matching_species),
-                             [content, &sm](const std::string_view sv) -> bool {
+                             [content, &sm](const auto& sv) -> bool {
                                  const auto* species = sm.GetSpeciesUnchecked(sv); //GetSpecies(sv); //sm.GetSpeciesUnchecked(sv);
                                  if (!species)
                                      return false;
@@ -4914,7 +4914,7 @@ void SpeciesOpinion::Eval(const ScriptingContext& parent_context,
             } else if (m_comp == ComparisonType::LESS_THAN) {
                 // find species that dislike content
                 std::copy_if(species_for_objects.begin(), species_for_objects.end(), std::back_inserter(matching_species),
-                             [content, &sm](const std::string_view sv) -> bool {
+                             [content, &sm](const auto& sv) -> bool {
                                  const auto* species = sm.GetSpeciesUnchecked(sv); //GetSpecies(sv); // sm.GetSpeciesUnchecked(sv);
                                  if (!species)
                                      return false;
@@ -4927,9 +4927,9 @@ void SpeciesOpinion::Eval(const ScriptingContext& parent_context,
             // move objects that shouldn't be in from set due to their species
             // liking/disliking or not the content (ie. if in or not in matching_species)
             // ie. if (is_in_matching_species != test_val) move();
-            auto is_matching_species = [&matching_species](const std::string_view s) -> bool {
+            auto is_matching_species = [&matching_species](const std::string& s) -> bool {
                 return std::any_of(matching_species.begin(), matching_species.end(),
-                                   [s](const std::string_view ms) { return s == ms; });
+                                   [s](const auto& ms) { return s == ms; });
             };
             MoveBasedOnPairedValPredicate(search_domain, matches, non_matches,
                                           species_for_objects, is_matching_species);
@@ -4971,11 +4971,11 @@ void SpeciesOpinion::Eval(const ScriptingContext& parent_context,
 
 
         if (!m_species) {
-            auto get_species_for_object = [&parent_context](const UniverseObject* obj) -> std::string_view
+            auto get_species_for_object = [&parent_context](const UniverseObject* obj) -> const std::string&
             { return SpeciesForObject(obj, parent_context); };
 
             // get species for each object
-            std::vector<std::string_view> species_for_objects;
+            std::vector<std::string> species_for_objects; // TODO: can maybe be vector<string_view> but similar cases have lead to weird errors...
             species_for_objects.reserve(from.size());
             std::transform(from.begin(), from.end(), std::back_inserter(species_for_objects),
                            get_species_for_object);
@@ -4990,7 +4990,7 @@ void SpeciesOpinion::Eval(const ScriptingContext& parent_context,
             };
 
             // get species for each object
-            std::vector<std::string_view> species_for_objects;
+            std::vector<std::string> species_for_objects; // this cannot be vector<string_view> because eval_object_species returns a temporary
             species_for_objects.reserve(from.size());
             std::transform(from.begin(), from.end(), std::back_inserter(species_for_objects),
                            eval_object_species);
@@ -5062,11 +5062,9 @@ bool SpeciesOpinion::Match(const ScriptingContext& local_context) const {
     if (content.empty())
         return false;
 
-    const ::Species* species = nullptr;
-    if (!m_species)
-        species = local_context.species.GetSpecies(SpeciesForObject(candidate, local_context));
-    else
-        species = local_context.species.GetSpecies(m_species->Eval(local_context));
+    const auto* const species = m_species ?
+        local_context.species.GetSpecies(m_species->Eval(local_context)) :
+        local_context.species.GetSpecies(SpeciesForObject(candidate, local_context));
     if (!species)
         return false;
 
