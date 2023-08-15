@@ -387,9 +387,8 @@ void Texture::InitFromRawData(X width, Y height, const uint8_t* image, GLenum fo
     m_tex_coords[3] = Value(1.0 * m_default_height / m_height);
 }
 
-uint8_t* Texture::GetRawBytes()
+std::vector<uint8_t> Texture::GetRawBytes()
 {
-    uint8_t* retval = nullptr;
     glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
     glPixelStorei(GL_PACK_SWAP_BYTES, false);
     glPixelStorei(GL_PACK_LSB_FIRST, false);
@@ -399,8 +398,9 @@ uint8_t* Texture::GetRawBytes()
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
     // get pixel data
-    retval = new uint8_t[Value(m_width) * Value(m_height) * m_bytes_pp];
-    glGetTexImage(GL_TEXTURE_2D, 0, m_format, m_type, retval);
+    const auto num_bytes = Value(m_width) * Value(m_height) * m_bytes_pp;
+    std::vector<uint8_t> retval(num_bytes, 0u);
+    glGetTexImage(GL_TEXTURE_2D, 0, m_format, m_type, &retval[0]);
     glPopClientAttrib();
     return retval;
 }

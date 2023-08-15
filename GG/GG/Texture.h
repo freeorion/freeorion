@@ -125,7 +125,7 @@ private:
 
     void InitFromRawData(X width, Y height, const uint8_t* image, GLenum format, GLenum type,
                          unsigned int bytes_per_pixel, bool mipmap);
-    uint8_t* GetRawBytes();
+    [[nodiscard]] std::vector<uint8_t> GetRawBytes();
 
     boost::filesystem::path m_path;     ///< file path from which this Texture was constructed
 
