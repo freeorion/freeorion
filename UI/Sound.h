@@ -1,10 +1,10 @@
 #ifndef _Sound_h_
 #define _Sound_h_
 
-#include <boost/filesystem/path.hpp>
-
+#include <stdexcept>
 #include <memory>
 
+namespace boost::filesystem { class path; }
 
 class Sound {
 public:
@@ -63,12 +63,12 @@ public:
     /** Disable the sound system. */
     void Disable();
 
+    Sound();
+    ~Sound();
+
 private:
     class Impl;
     std::unique_ptr<Impl> const m_impl;
-
-    Sound();
-    ~Sound();
 };
 
 

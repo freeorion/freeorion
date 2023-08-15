@@ -94,7 +94,14 @@ private:
 };
 
 namespace {
-    constexpr int BUFFER_SIZE = 409600; // The size of the buffer we read music data into.
+    constexpr int MUSIC_BUFFER_SIZE = 409600; // initial size of the buffer sound and music data is read into
+    constexpr ogg_int64_t MAX_BUFFER_SIZE = 8 * 1024 * 1024;
+
+    std::vector<char> audio_data_buffer(MUSIC_BUFFER_SIZE, 0);
+    std::mutex buffer_mutex;
+
+    constexpr int endian = 0; // 0 for little-endian (x86), 1 for big-endian (ppc)
+    constexpr int MIN_CHUNK_SIZE = 4096;
 
 #ifdef FREEORION_WIN32
     int _fseek64_wrap(FILE *f, ogg_int64_t off, int whence) {
@@ -106,23 +113,45 @@ namespace {
 
     /// Returns 1 on failure or 0 on success
     int RefillBuffer(OggVorbis_File* ogg_file, ALenum ogg_format, ALsizei ogg_freq,
-                     ALuint bufferName, ogg_int64_t buffer_size, int& loops)
+                     ALuint buffer_id, int file_required_buffer_size, int& loops)
     {
-        int endian = 0; /// 0 for little-endian (x86), 1 for big-endian (ppc)
-        int bytes = 0;
-        std::unique_ptr<char[]> array(new char[buffer_size]); // heap allocate buffer
-
         if (!alcGetCurrentContext())
             return 1;
 
+        if (file_required_buffer_size > MAX_BUFFER_SIZE) {
+            ErrorLogger() << "RefillBuffer requested size " << file_required_buffer_size << " too big";
+            return 1;
+        }
+
+        std::unique_lock buffer_lock(buffer_mutex);
+        if (audio_data_buffer.size() < file_required_buffer_size) {
+            try {
+                audio_data_buffer.resize(file_required_buffer_size, 0);
+                DebugLogger() << "RefillBuffer buffer expanded to " << file_required_buffer_size;
+            } catch (...) {
+                ErrorLogger() << "RefilBuffer unable to reallocate buffer to size << " << file_required_buffer_size;
+                return 1;
+            }
+        }
+
+        const auto AUDIO_BUFFER_SIZE = audio_data_buffer.size();
+        int space_left_in_audio_buffer = AUDIO_BUFFER_SIZE;
         int prev_bytes_new = 0;
+        ALsizei bytes_read = 0;
+        int file_bytes_remaining = file_required_buffer_size - bytes_read;
+        int bit_stream = 0;
+        static constexpr int word = 2;
+        static constexpr int sgned = 1;
 
-        // Fill buffer. We need the loop, as ov_read treats (buffer_size - bytes) to read as a suggestion only
-        do {
-            int bitStream;
-            int bytes_new = ov_read(ogg_file, &array[bytes], (buffer_size - bytes), endian, 2, 1, &bitStream);
+        // Fill buffer. We need the loop, as ov_read treats (buffer_size - bytes_read) to read as a suggestion only
+        while (file_bytes_remaining > 0 && space_left_in_audio_buffer > MIN_CHUNK_SIZE) {
+            //std::cout << "file rem: " << file_bytes_remaining << " buf ref: " << space_left_in_audio_buffer << std::endl;
+            auto* buffer_pos = std::next(audio_data_buffer.data(), bytes_read);
+            const auto bytes_new = ov_read(ogg_file, buffer_pos, file_bytes_remaining, endian, word, sgned, &bit_stream);
+            bytes_read += bytes_new;
+            file_bytes_remaining = file_required_buffer_size - bytes_read;
+            space_left_in_audio_buffer = AUDIO_BUFFER_SIZE - bytes_read;
 
-            bytes += bytes_new;
             if (bytes_new == 0) {
                 if (loops != 0) {   // enter here to play the same file again
                     if (loops > 0)
@@ -133,19 +162,20 @@ namespace {
                 }
             }
 
+
             // safety check
             if (bytes_new == 0 && prev_bytes_new == 0) {
                 ErrorLogger() << "RefillBuffer aborting filling buffer due to repeatedly getting no new bytes";
                 break;
             }
             prev_bytes_new = bytes_new;
-        } while ((buffer_size - bytes) > 4096);
+        }
 
-        if (bytes > 0) {
-            alBufferData(bufferName, ogg_format, array.get(), static_cast<ALsizei>(bytes), ogg_freq);
-            ALenum openal_error = alGetError();
+        if (bytes_read > 0) {
+            alBufferData(buffer_id, ogg_format, audio_data_buffer.data(), bytes_read, ogg_freq);
+            const auto openal_error = alGetError();
             if (openal_error != AL_NONE)
-                ErrorLogger() << "RefillBuffer: OpenAL ERROR: " << alGetString(openal_error);
+                ErrorLogger() << "RefillBuffer unable to set OpenAL ERROR: " << alGetString(openal_error);
         } else {
             ov_clear(ogg_file); // the app might think we still have something to play.
             return 1;
@@ -166,13 +196,15 @@ Sound::TempUISoundDisabler::~TempUISoundDisabler()
 ////////////////////////////////////////////////////////////
 // Sound
 ////////////////////////////////////////////////////////////
-Sound& Sound::GetSound() {
-    static Sound sound;
-    return sound;
+namespace {
+    Sound sound;
 }
 
+Sound& Sound::GetSound()
+{ return sound; }
+
 Sound::Sound() :
-    m_impl(new Impl)
+    m_impl(std::make_unique<Impl>())
 {}
 
 // Require here because Sound::Impl is defined in this file.
@@ -215,18 +247,7 @@ void Sound::DoFrame()
 { m_impl->DoFrame(); }
 
 
-Sound::Impl::Impl() {
-    if (!GetOptionsDB().Get<bool>("audio.effects.enabled") && !GetOptionsDB().Get<bool>("audio.music.enabled"))
-        return;
-
-    try {
-        Enable();
-    } catch (const InitializationFailureException&) {
-        // Bury the exception because the GetSound() singleton may cause
-        // the sound system to initialize at unpredictable times when
-        // the user can't be usefully informed of the failure.
-    }
-}
+Sound::Impl::Impl() = default;
 
 Sound::Impl::~Impl()
 { Disable(); }
@@ -234,8 +255,10 @@ Sound::Impl::~Impl()
 void Sound::Impl::Enable() {
     if (m_initialized)
         return;
+    if (!GetOptionsDB().Get<bool>("audio.effects.enabled") && !GetOptionsDB().Get<bool>("audio.music.enabled"))
+        return;
 
-    //Reset playing audio
+    // Reset playing audio
     m_music_loops = 0;
     m_sound_buffers.clear();
     m_temporary_disable_count = 0;
@@ -243,8 +266,7 @@ void Sound::Impl::Enable() {
     InitOpenAL();
     if (!m_initialized) {
         ErrorLogger() << "Unable to initialize audio.  Sound effects and music are disabled.";
-        // TODO: Let InitOpenAL throw the OpenAL error message which
-        // might be more useful.
+        // TODO: Let InitOpenAL throw the OpenAL error message which might be more useful.
         throw InitializationFailureException("ERROR_SOUND_INITIALIZATION_FAILED");
     }
 
@@ -395,19 +417,23 @@ namespace {
 #endif
     }
 
+    // Returns buffer ID and if (true/false) if the id is a valid buffer
     std::pair<ALuint, bool> GetSoundBuffer(std::map<std::string, ALuint>& buffers, const std::string& filename) {
         // Check if the sound data of the file we want to play is already buffered
-        auto it = buffers.find(filename);
-        if (it != buffers.end())
-            return {it->second, true};
+        {
+            const auto it = buffers.find(filename);
+            if (it != buffers.end())
+                return {it->second, true};
+        }
 
+
+        // not already buffered, so buffer it
         auto file = fopen(filename.c_str(), "rb");
         if (!file)
             return {0, false};
 
         OggVorbis_File ogg_file;
-        int file_bad = FileIsBad(ogg_file, file);
-        if (file_bad > 0) {
+        if (FileIsBad(ogg_file, file)) {
             ErrorLogger() << "GetSoundBuffer: unable to open file " << filename
                           << " possibly not a .ogg vorbis file. Aborting\n";
             return {0, false};
@@ -417,20 +443,15 @@ namespace {
         ov_test_open(&ogg_file);
 
         // take some info needed later...
-        ALenum ogg_format;
-        auto vorbis_info_ptr = ov_info(&ogg_file, -1);
-        if (vorbis_info_ptr->channels == 1)
-            ogg_format = AL_FORMAT_MONO16;
-        else
-            ogg_format = AL_FORMAT_STEREO16;
-
-        ALsizei ogg_freq = vorbis_info_ptr->rate;
-        ogg_int64_t byte_size = ov_pcm_total(&ogg_file, -1) * vorbis_info_ptr->channels * 2;
+        const auto vorbis_info_ptr = ov_info(&ogg_file, -1);
+        const ALenum ogg_format = (vorbis_info_ptr->channels == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
+        const ALsizei ogg_freq = vorbis_info_ptr->rate;
+        const ogg_int64_t byte_size = ov_pcm_total(&ogg_file, -1) * vorbis_info_ptr->channels * 2;
 
         // check that size of file isn't too huge
-        static constexpr ogg_int64_t MAX_BUFFER_SIZE = 1024 * 1024 * 1024;
         if (byte_size > MAX_BUFFER_SIZE) {
-            ErrorLogger() << "PlaySound: unable to open file " << filename << " : Too big to buffer. Aborting\n";
+            ErrorLogger() << "PlaySound: unable to open file " << filename
+                          << " : Too big (" << byte_size << ") for buffer (" << MAX_BUFFER_SIZE << ")";
             return {0, false};
         }
 
@@ -494,7 +515,7 @@ void Sound::Impl::PlayMusic(const boost::filesystem::path& path, int loops) {
 
     // fill up the buffers and queue them up for the first time
     auto refill_failed = RefillBuffer(&m_music_ogg_file, m_music_ogg_format, m_music_ogg_freq,
-                                      m_music_buffers[0], BUFFER_SIZE, m_music_loops);
+                                      m_music_buffers[0], MUSIC_BUFFER_SIZE, m_music_loops);
 
     if (refill_failed == 0) {
         alSourceQueueBuffers(m_sources[0], 1, &m_music_buffers[0]); // queue up the buffer if we manage to fill it
@@ -503,7 +524,7 @@ void Sound::Impl::PlayMusic(const boost::filesystem::path& path, int loops) {
             ErrorLogger() << "PlayMusic: OpenAL ERROR: " << alGetString(openal_error);
 
         refill_failed = RefillBuffer(&m_music_ogg_file, m_music_ogg_format, m_music_ogg_freq,
-                                     m_music_buffers[1], BUFFER_SIZE, m_music_loops);
+                                     m_music_buffers[1], MUSIC_BUFFER_SIZE, m_music_loops);
         if (refill_failed == 0) {
             alSourceQueueBuffers(m_sources[0], 1, &m_music_buffers[1]);
             m_music_name = filename; //playing something that takes up more than 2 buffers
@@ -674,9 +695,9 @@ void Sound::Impl::DoFrame() {
     alGetSourcei(m_sources[0], AL_BUFFERS_PROCESSED, &num_buffers_processed);
     while (num_buffers_processed > 0) {
         ALuint buffer_name_yay;
-        alSourceUnqueueBuffers (m_sources[0], 1, &buffer_name_yay);
+        alSourceUnqueueBuffers(m_sources[0], 1, &buffer_name_yay);
         if (RefillBuffer(&m_music_ogg_file, m_music_ogg_format, m_music_ogg_freq,
-                         buffer_name_yay, BUFFER_SIZE, m_music_loops))
+                         buffer_name_yay, MUSIC_BUFFER_SIZE, m_music_loops))
         {
             m_music_name.clear();  // m_music_name.clear() must always be called before ov_clear
             break; // this happens if RefillBuffer returns 1, meaning it encountered EOF and the file shouldn't be repeated
