@@ -3037,7 +3037,7 @@ namespace {
             // Exclude species that can't colonize UNLESS they
             // are already here (aka: it's their home planet). Showing them on
             // their own planet allows comparison vs other races, which might
-            // be better suited to this planet. 
+            // be better suited to this planet.
             if (species->CanColonize() || species_name == planet_current_species)
                 // The planet's species may change, so better create a string_view
                 // from the species->Name(), not species_name
