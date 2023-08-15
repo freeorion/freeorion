@@ -934,7 +934,7 @@ namespace {
         button->SetText(Hotkey::NamedHotkey(hk_name).PrettyPrint());
 
         // update shortcuts for new hotkey
-        HotkeyManager::GetManager()->RebuildShortcuts();
+        HotkeyManager::GetManager().RebuildShortcuts();
     }
 
     void HandleResetHotkeyOption(const std::string& hk_name, GG::Button* button) {
@@ -948,7 +948,7 @@ namespace {
         button->SetText(Hotkey::NamedHotkey(hk_name).PrettyPrint());
 
         // update shortcuts for new hotkey
-        HotkeyManager::GetManager()->RebuildShortcuts();
+        HotkeyManager::GetManager().RebuildShortcuts();
     }
 }
 

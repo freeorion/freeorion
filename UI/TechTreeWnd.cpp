@@ -1141,18 +1141,18 @@ void TechTreeWnd::LayoutPanel::CompleteConstruction() {
 }
 
 void TechTreeWnd::LayoutPanel::ConnectKeyboardAcceleratorSignals() {
-    HotkeyManager* hkm = HotkeyManager::GetManager();
+    auto& hkm = HotkeyManager::GetManager();
 
-    hkm->Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomInKeyboard, this), "ui.zoom.in",
-                 AndCondition(VisibleWindowCondition(this), NoModalWndsOpenCondition));
-    hkm->Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomInKeyboard, this), "ui.zoom.in.alt",
-                 AndCondition(VisibleWindowCondition(this), NoModalWndsOpenCondition));
-    hkm->Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomOutKeyboard, this), "ui.zoom.out",
-                 AndCondition(VisibleWindowCondition(this), NoModalWndsOpenCondition));
-    hkm->Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomOutKeyboard, this), "ui.zoom.out.alt",
-                 AndCondition(VisibleWindowCondition(this), NoModalWndsOpenCondition));
+    hkm.Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomInKeyboard, this), "ui.zoom.in",
+                AndCondition(VisibleWindowCondition(this), NoModalWndsOpenCondition));
+    hkm.Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomInKeyboard, this), "ui.zoom.in.alt",
+                AndCondition(VisibleWindowCondition(this), NoModalWndsOpenCondition));
+    hkm.Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomOutKeyboard, this), "ui.zoom.out",
+                AndCondition(VisibleWindowCondition(this), NoModalWndsOpenCondition));
+    hkm.Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomOutKeyboard, this), "ui.zoom.out.alt",
+                AndCondition(VisibleWindowCondition(this), NoModalWndsOpenCondition));
 
-    hkm->RebuildShortcuts();
+    hkm.RebuildShortcuts();
 }
 
 GG::Pt TechTreeWnd::LayoutPanel::ClientLowerRight() const

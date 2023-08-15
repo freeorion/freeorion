@@ -60,7 +60,7 @@ void Hotkey::AddHotkey(const std::string& name, const std::string& description,
 
 std::string Hotkey::HotkeyToString(GG::Key key, GG::Flags<GG::ModKey> mod) {
     std::string retval;
-    const std::size_t sz = ((mod != GG::MOD_KEY_NONE) + (key > GG::Key::GGK_NONE)) * 24; // guesstimate
+    const std::size_t sz = ((mod != GG::MOD_KEY_NONE ? 1u : 0u) + (key > GG::Key::GGK_NONE ? 1u : 0u)) * 24; // guesstimate
     retval.reserve(sz);
     if (mod != GG::MOD_KEY_NONE)
         retval.append(GG::to_string(mod)).append("+");
@@ -274,13 +274,12 @@ void Hotkey::ClearHotkey(const Hotkey& old_hotkey)
 //////////////////////////////////////////////////////////////////////
 // HotkeyManager
 //////////////////////////////////////////////////////////////////////
-HotkeyManager* HotkeyManager::s_singleton = nullptr;
-
-HotkeyManager* HotkeyManager::GetManager() {
-    if (!s_singleton)
-        s_singleton = new HotkeyManager;
-    return s_singleton;
+namespace {
+    HotkeyManager hkm;
 }
+
+HotkeyManager& HotkeyManager::GetManager()
+{ return hkm; }
 
 void HotkeyManager::RebuildShortcuts() {
     m_internal_connections.clear(); // should disconnect scoped connections
@@ -306,15 +305,6 @@ void HotkeyManager::AddConditionalConnection(const std::string& name,
                                              std::function<bool()> cond)
 { m_connections[name].emplace_back(std::move(conn), std::move(cond)); }
 
-GG::GUI::AcceleratorSignalType& HotkeyManager::NamedSignal(const std::string& name) {
-    /// Unsure why GG::AcceleratorSignal implementation uses shared
-    /// pointers. Maybe I should, too ?
-    auto& sig = m_signals[name];
-    if (!sig)
-        sig = new GG::GUI::AcceleratorSignalType;
-    return *sig;
-}
-
 bool HotkeyManager::ProcessNamedShortcut(const std::string& name, GG::Key key,
                                          GG::Flags<GG::ModKey> mod)
 {
@@ -329,6 +319,5 @@ bool HotkeyManager::ProcessNamedShortcut(const std::string& name, GG::Key key,
     conds.erase(std::remove_if(conds.begin(), conds.end(), not_connected), conds.end());
 
     // Then, return the value of the signal !
-    GG::GUI::AcceleratorSignalType* sig = m_signals[name];
-    return (*sig)();
+    return m_signals[name]();
 }

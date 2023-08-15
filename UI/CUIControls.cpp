@@ -884,10 +884,10 @@ void CUIEdit::CompleteConstruction() {
     EditedSignal.connect(-1, &PlayTextTypingSound);
     SetHiliteColor(ClientUI::EditHiliteColor());
 
-    HotkeyManager* hkm = HotkeyManager::GetManager();
+    HotkeyManager& hkm = HotkeyManager::GetManager();
     auto fx = boost::bind(&CUIEdit::AutoComplete, this);
-    hkm->Connect(fx, "ui.autocomplete", FocusWindowCondition(this));
-    hkm->RebuildShortcuts();
+    hkm.Connect(fx, "ui.autocomplete", FocusWindowCondition(this));
+    hkm.RebuildShortcuts();
 }
 
 void CUIEdit::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
@@ -2061,12 +2061,8 @@ void ResourceInfoPanel::DoLayout() {
 //////////////////////////////////////////////////
 // MultiTurnProgressBar
 //////////////////////////////////////////////////
-MultiTurnProgressBar::MultiTurnProgressBar(int num_segments,
-                                           float percent_completed,
-                                           float percent_predicted,
-                                           const GG::Clr& bar_color,
-                                           const GG::Clr& bg_color,
-                                           const GG::Clr& outline_color) :
+MultiTurnProgressBar::MultiTurnProgressBar(int num_segments, float percent_completed, float percent_predicted,
+                                           GG::Clr bar_color, GG::Clr bg_color, GG::Clr outline_color) :
     Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
     m_num_segments(num_segments),
     m_perc_completed(percent_completed),
@@ -2120,14 +2116,14 @@ void MultiTurnProgressBar::Render() {
     // segment lines
     GG::GL2DVertexBuffer segment_verts;
     GG::GLRGBAColorBuffer segment_colors;
-    if (m_num_segments > 1) {
-        segment_verts.reserve(2 * m_num_segments);
-        segment_colors.reserve(2 * m_num_segments);
+    if (m_num_segments > 1u) {
+        segment_verts.reserve(std::size_t{2u} * m_num_segments);
+        segment_colors.reserve(std::size_t{2u} * m_num_segments);
 
         GG::Clr current_colour(GG::DarkenClr(m_clr_bar));
 
-        for (int n = 1; n < m_num_segments; ++n) {
-            GG::X separator_x(ul.x + Width() * n / m_num_segments);
+        for (int n = 1; n < static_cast<int>(m_num_segments); ++n) {
+            GG::X separator_x(ul.x + Width() * n / static_cast<int>(m_num_segments));
             if (separator_x > comp_rect.lr.x)
                 current_colour = GG::LightenClr(m_clr_bg);
             segment_verts.store(separator_x, ul.y);

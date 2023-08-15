@@ -204,10 +204,8 @@ public:
         m_conditions{std::forward<Args>(args)...}
     {}
 
-    bool operator()() const {
-        return std::all_of(m_conditions.begin(), m_conditions.end(),
-                           [](auto& cond) { return cond(); });
-    }
+    bool operator()() const
+    { return std::all_of(m_conditions.begin(), m_conditions.end(), [](auto& cond) { return cond(); }); }
 
 private:
     std::array<BoolFunc, N> m_conditions;
@@ -226,26 +224,20 @@ public:
     void RebuildShortcuts();
 
     /// Returns the singleton instance
-    static HotkeyManager* GetManager();
+    static HotkeyManager& GetManager();
 
     /// Connects a named shortcut to the target slot in the target instance.
     void Connect(std::function<bool()> func, const std::string& name, std::function<bool()> cond = nullptr)
-    { AddConditionalConnection(name, NamedSignal(name).connect(func), cond); };
+    { AddConditionalConnection(name, m_signals[name].connect(func), cond); };
 
-private:
     HotkeyManager() = default;
 
+private:
     /// The shortcut processing function. Passed using boost::bind.
     bool ProcessNamedShortcut(const std::string& name, GG::Key key, GG::Flags<GG::ModKey> mod);
 
-    /// Returns the signal for the given named accelerator, creating
-    /// it if necessary.
-    GG::GUI::AcceleratorSignalType& NamedSignal(const std::string& name);
-
     /// Add the given conditional connection.
-    void AddConditionalConnection(const std::string& name,
-                                  boost::signals2::connection conn,
-                                  std::function<bool()> cond);
+    void AddConditionalConnection(const std::string& name, boost::signals2::connection conn, std::function<bool()> cond);
 
     struct ConditionalConnection {
         ConditionalConnection(boost::signals2::connection conn, std::function<bool()> cond);
@@ -258,10 +250,9 @@ private:
     };
     using Connections = std::map<std::string, std::vector<ConditionalConnection>>;
 
-    Connections                                             m_connections;
-    std::map<std::string, GG::GUI::AcceleratorSignalType*>  m_signals;
-    std::set<boost::signals2::scoped_connection>            m_internal_connections;
-    static HotkeyManager*                                   s_singleton;
+    Connections                                           m_connections;
+    std::map<std::string, GG::GUI::AcceleratorSignalType> m_signals;
+    std::set<boost::signals2::scoped_connection>          m_internal_connections;
 };
 
 #endif

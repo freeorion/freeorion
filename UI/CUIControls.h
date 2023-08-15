@@ -552,16 +552,15 @@ public:
     *               Adjusted to lighter color for segment lines after
     *               @p percent_completed portion
     */
-    MultiTurnProgressBar(int num_segments, float percent_completed,
-                         float percent_predicted, const GG::Clr& bar_color,
-                         const GG::Clr& bg_color, const GG::Clr& outline_color);
+    MultiTurnProgressBar(int num_segments, float percent_completed, float percent_predicted,
+                         GG::Clr bar_color, GG::Clr bg_color, GG::Clr outline_color);
 
     void Render() override;
 
 private:
-    int m_num_segments;
-    float m_perc_completed;
-    float m_perc_predicted;
+    unsigned int m_num_segments = 0;
+    float m_perc_completed = 0.0f;
+    float m_perc_predicted = 0.0f;
     GG::Clr m_clr_bar;
     GG::Clr m_clr_bg;
     GG::Clr m_clr_outline;
