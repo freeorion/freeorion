@@ -114,12 +114,13 @@ private:
     void FillArcBuffer(GG::GL2DVertexBuffer& buffer, const std::set<std::string>& techs) {
         for (const std::string& tech_name : techs) {
             //prerequisite edge
-            for (TechTreeLayout::Edge* edge : m_layout.GetOutEdges(tech_name)) {
-                const std::string& from = edge->GetTechFrom();
-                const std::string& to   = edge->GetTechTo();
+            for (const auto& edge : m_layout.GetOutEdges(tech_name)) {
+                const auto& from = edge.GetTechFrom();
+                const auto& to   = edge.GetTechTo();
                 // Do not show lines leading to techs we are not showing
                 if (!techs.contains(to))
                     continue;
+
                 // Remember what edges we are showing so we can eventually highlight them
                 m_edges_to_show[from].insert(to);
                 if (!GetTech(from) || !GetTech(to)) {
@@ -127,7 +128,7 @@ private:
                     continue;
                 }
 
-                const auto& points = edge->Points();
+                const auto& points = edge.Points();
                 if (points.empty())
                     continue;
                 const auto pts_sz_m1 = points.size() - 1u;

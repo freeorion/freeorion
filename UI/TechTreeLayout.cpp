@@ -64,11 +64,13 @@ bool TechTreeLayout::Column::Place(int index, TechTreeLayout::Node* node) {
 ////////////////
 // class Edge //
 ////////////////
-TechTreeLayout::Edge::Edge(const std::string& from, const std::string& to) :
-    m_points(std::vector<std::pair<double, double>>()),
-    m_from(from),
-    m_to(to)
-{ assert(GetTech(from) && GetTech(to)); }
+TechTreeLayout::Edge::Edge(std::string from, std::string to, uint32_t points) :
+    m_from(std::move(from)),
+    m_to(std::move(to))
+{
+    m_points.reserve(points);
+    assert(GetTech(m_from) && GetTech(m_to));
+}
 
 void TechTreeLayout::Edge::Debug() const {
     DebugLogger() << "Edge " << m_from << "-> " << m_to << ": ";
@@ -225,14 +227,14 @@ void TechTreeLayout::AddEdge(const std::string& parent, const std::string& child
     p->second->AddChild(c->second);
 }
 
-const std::vector<TechTreeLayout::Edge*>& TechTreeLayout::GetOutEdges(const std::string& name) const {
+const std::vector<TechTreeLayout::Edge>& TechTreeLayout::GetOutEdges(const std::string& name) const {
     auto item = m_node_map.find(name);
     if (item == m_node_map.end()) {
         DebugLogger() << "TechTreeLayout::getNode: missing node " << name << "\n";
         Debug();
         throw "node missing";
     } else {
-        return (*item).second->outgoing_edges;
+        return item->second->outgoing_edges;
     }
 }
 
@@ -327,9 +329,6 @@ TechTreeLayout::Node::Node(Node* parent, Node* child, std::vector<Node*>& nodes)
 TechTreeLayout::Node::~Node() {
     children.clear();
     parents.clear();
-    for (Edge* out_edge : outgoing_edges)
-        delete out_edge;
-    outgoing_edges.clear();
 }
 
 const GG::X TechTreeLayout::Node::GetX() const
@@ -578,29 +577,36 @@ void TechTreeLayout::Node::CreateEdges(double x_margin, double column_width, dou
     for (int i = children.size(); i --> 0; ) {
         //find next real node and create coordinates
         Node* next = children[i];
+        uint32_t placeholders = 0;
         while (next->place_holder) {
             next->CalculateCoordinate(column_width, row_height);
             next = next->primary_child;
+            ++placeholders;
         }
-        const std::string& to = next->tech_name;
+
         //create drawing path
         next = children[i];
-        auto edge = new Edge(tech_name, to);
+        if (!next) {
+            ErrorLogger() << "TechTreeLayout::Node::CreateEdges bad edge!";
+            continue;
+        }
+        auto& edge = outgoing_edges.emplace_back(tech_name, next->tech_name, placeholders + 2);
+
         //from, line start
-        edge->AddPoint(m_x, m_y + m_height / 2); // start on the left side of the node
-        edge->AddPoint(m_x + m_width + x_margin, m_y + m_height / 2);
+        edge.AddPoint(m_x, m_y + m_height / 2); // start on the left side of the node
+        edge.AddPoint(m_x + m_width + x_margin, m_y + m_height / 2);
+
         //draw line until a real tech is reached
         while (next->place_holder) {
             //horizontal line bypassing the placeholder
-            edge->AddPoint(next->m_x - 2 * x_margin, next->m_y);
-            edge->AddPoint(next->m_x + m_width + x_margin, next->m_y);
+            edge.AddPoint(next->m_x - 2 * x_margin, next->m_y);
+            edge.AddPoint(next->m_x + m_width + x_margin, next->m_y);
             next = next->primary_child;
         }
+
         //to, line end
-        edge->AddPoint(next->m_x - 2 * x_margin, next->m_y + next->m_height / 2); //double space for arrow
-        edge->AddPoint(next->m_x, next->m_y + next->m_height / 2); // the end has to be exact for the arrow head
-        //store drawing path
-        outgoing_edges.push_back(edge);
+        edge.AddPoint(next->m_x - 2 * x_margin, next->m_y + next->m_height / 2); //double space for arrow
+        edge.AddPoint(next->m_x, next->m_y + next->m_height / 2); // the end has to be exact for the arrow head
     }
 }
 
@@ -619,6 +625,6 @@ void TechTreeLayout::Node::Debug() const {
 
     for (int i = outgoing_edges.size(); i-->0; ) {
         DebugLogger() << "     - ";
-        outgoing_edges[i]->Debug();
+        outgoing_edges[i].Debug();
     }
 }

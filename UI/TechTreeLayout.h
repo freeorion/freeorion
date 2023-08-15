@@ -68,7 +68,7 @@ public:
     void AddNode(const std::string& tech, GG::X width, GG::Y height);
     auto GetNode(const std::string& name) const -> Node const *;
     void AddEdge(const std::string& parent, std::string const & child);
-    auto GetOutEdges(const std::string& name) const -> const std::vector<Edge*>&;
+    auto GetOutEdges(const std::string& name) const -> const std::vector<Edge>&;
     auto GetWidth() const -> GG::X const;
     auto GetHeight() const -> GG::Y const;
     void Clear();
@@ -87,11 +87,11 @@ private:
 
 class TechTreeLayout::Edge {
 public:
-    Edge(std::string const& from, std::string const& to);
+    [[nodiscard]] Edge(std::string from, std::string to, uint32_t points = 3);
 
-    auto& GetTechFrom() const noexcept { return m_from; }
-    auto& GetTechTo() const noexcept { return m_to; }
-    auto& Points() const noexcept { return m_points; }
+    [[nodiscard]] auto& GetTechFrom() const noexcept { return m_from; }
+    [[nodiscard]] auto& GetTechTo() const noexcept { return m_to; }
+    [[nodiscard]] auto& Points() const noexcept { return m_points; }
 
     void AddPoint(double x, double y) { m_points.emplace_back(x, y); }
     void Debug() const;
@@ -136,7 +136,7 @@ private:
     std::string tech_name;
     bool place_holder;
     Node* primary_child = nullptr; // primary child for layout
-    std::vector<Edge*> outgoing_edges;
+    std::vector<Edge> outgoing_edges;
     double m_x = 0.0;
     double m_y = 0.0;
     double m_width;
