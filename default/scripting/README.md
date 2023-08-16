@@ -126,7 +126,7 @@ You could choose any, quite popular and free are:
 - Configure your IDE to treat the `default/scripting` folder as Python source (all import are relative to this folder)
   <details>
     <summary>PyCharm example</summary>
-    ![Pycharm](_readme_images/mark_as_source_root.png)  
+    <img src="_readme_images/mark_as_source_root.png"/> 
   </details>
  
 
@@ -149,18 +149,18 @@ You could write code first and add imports later.
 <details>
   <summary>Quick-fix examples</summary>
 IDE have qick-fix option, 
-![Pycharm](_readme_images/quick-fix.png)
+<img src="_readme_images/quick-fix.png"/>
 That will write import items for you.
-![Pycharm](_readme_images/import.png)
+<img src="_readme_images/import.png"/>
 This will allow you to have basic validation right in IDE.
 </details>
 
 <details>
   <summary>Validation examples in PyCharm</summary>
   Some arguments are missing
-  ![Pycharm](_readme_images/error_missed_argument.png)
+  <img src="_readme_images/error_missed_argument.png"/>
   Extra arguments are added (typo in the name)
-  ![Pycharm](_readme_images/error_typo_in_name.png)
+  <img src="_readme_images/error_typo_in_name.png"/>
 </details>
 
 
