@@ -148,22 +148,29 @@ To make IDE help you, you will need to import this object from `focs._...` modul
 You could write code first and add imports later. 
 <details>
   <summary>Quick-fix examples</summary>
-IDE have qick-fix option, 
+
+IDE have qick-fix option
+
 <img src="_readme_images/quick-fix.png"/>
+
 That will write import items for you.
+
 <img src="_readme_images/import.png"/>
+
 This will allow you to have basic validation right in IDE.
 </details>
 
 <details>
   <summary>Validation examples in PyCharm</summary>
-  Some arguments are missing
-  <img src="_readme_images/error_missed_argument.png"/>
-  Extra arguments are added (typo in the name)
-  <img src="_readme_images/error_typo_in_name.png"/>
+
+Some arguments are missing
+
+<img src="_readme_images/error_missed_argument.png"/>
+
+Extra arguments are added (typo in the name)
+
+<img src="_readme_images/error_typo_in_name.png"/>
 </details>
-
-
 
 You could use CTRL+CLICK to the function EffectsGroup and see all arguments and expected types.
 ```python
