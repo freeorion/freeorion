@@ -65,14 +65,20 @@ Species(
         *HAS_ADVANCED_FOCI,
     ],
     defaultfocus="FOCUS_INDUSTRY",
-    likes=["PLC_ALLIED_REPAIR" "PLC_BUREAUCRACY" "PLC_DESIGN_SIMPLICITY" "PLC_ENGINEERING" "PLC_EXOBOT_PRODUCTIVITY"],
+    likes=[
+        "PLC_ALLIED_REPAIR",
+        "PLC_BUREAUCRACY",
+        "PLC_DESIGN_SIMPLICITY",
+        "PLC_ENGINEERING",
+        "PLC_EXOBOT_PRODUCTIVITY",
+    ],
     dislikes=[
-        "BLD_BLACK_HOLE_POW_GEN"
-        "BLD_INDUSTRY_CENTER"
-        "BLD_LIGHTHOUSE"
-        "BLD_SCANNING_FACILITY"
-        "BLD_SHIPYARD_ENRG_COMP"
-        "BLD_SOL_ORB_GEN"
+        "BLD_BLACK_HOLE_POW_GEN",
+        "BLD_INDUSTRY_CENTER",
+        "BLD_LIGHTHOUSE",
+        "BLD_SCANNING_FACILITY",
+        "BLD_SHIPYARD_ENRG_COMP",
+        "BLD_SOL_ORB_GEN",
     ],
     effectsgroups=[
         *VERY_BAD_INDUSTRY,
