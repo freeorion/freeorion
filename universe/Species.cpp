@@ -385,6 +385,21 @@ std::string Species::Dump(uint8_t ntabs) const {
             retval += focus.Dump(ntabs+2);
         retval += DumpIndent(ntabs+1) + "]\n";
     }
+    retval += DumpIndent(ntabs+1) + "defaultfocus = \"" + m_default_focus + "\"\n";
+    retval += DumpIndent(ntabs+1) + "likes = [";
+    for (const auto& entry : m_likes) {
+        retval += "\"";
+        retval += entry;
+        retval += "\" ";
+    }
+    retval += "]\n";
+    retval += DumpIndent(ntabs+1) + "dislikes = [";
+    for (const auto& entry : m_dislikes) {
+        retval += "\"";
+        retval += entry;
+        retval += "\" ";
+    }
+    retval += "]\n";
     if (m_effects.size() == 1) {
         retval += DumpIndent(ntabs+1) + "effectsgroups =\n";
         retval += m_effects.front().Dump(ntabs+2);
