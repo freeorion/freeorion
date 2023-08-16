@@ -117,12 +117,13 @@ You could choose any, quite popular and free are:
 - "Visual Studio Code"  https://code.visualstudio.com/ 
 
 #### One time setup
-- Install Python 3.9+ 
+- Install [Python 3.9+](https://www.python.org/downloads/)
 - Open a project in the repository root
-- [optional] install pre-commit hooks
+- [optional] install [pre-commit](https://pre-commit.com/) hooks
   - `pip install pre-commit`
   - `pre-commit install`
 - [optional] install linting tools for manual code scan
+  - `pip isntall -r default/python/requirements-dev.txt`
 - Configure your IDE to treat the `default/scripting` folder as Python source (all import are relative to this folder)
   <details>
     <summary>PyCharm example</summary>
@@ -245,19 +246,13 @@ Run pre-commit hooks on all files:
 pre-commit run --all-files
 ```
 
-Also, you could just run each tools manually.
-```shell
-pip isntall -r default/python/requirements-dev.txt
-```
-
-You could run only some of them and in any order.
+Also, you could just run each tools that are used in pre-commit hooks manually.
 ```shell
 ruff .  # will remove unused imports, sort import and fix/report code warnings
 black .  # reformat code
 mypy .  # report typing errors
 pyright  # report typing errors, similar to mypy, but have some missed and extra checks.
 ```
-
 
 ### Developing FOCS API
 Every time you add/remove/change the FOCS object in C++ code, you need to update files in focs folder. 
