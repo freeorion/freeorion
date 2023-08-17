@@ -122,7 +122,7 @@ public:
 
     ~Species();
     Species() = delete;
-    Species(const Species&) = delete;
+    Species(const Species&) = delete; // can't shallow copy because likes, dislikes, and tags are stored as string_views into m_tags_concatenated
     Species(Species&&) = default;
 
     bool operator==(const Species& rhs) const;
@@ -216,12 +216,12 @@ private:
     float m_spawn_rate = 1.0;
     int   m_spawn_limit = 99999;
 
-    std::string                   m_tags_concatenated;
-    std::vector<std::string_view> m_tags;
-    std::vector<std::string_view> m_pedia_tags;
-    std::vector<std::string_view> m_likes;
-    std::vector<std::string_view> m_dislikes;
-    std::string                   m_graphic;
+    std::vector<std::string::value_type> m_tags_concatenated; // not a string to ensure pointers into data are consistent when moved (ie. no small string optimization issues causing pointed-to data to be invalid)
+    std::vector<std::string_view>        m_tags;
+    std::vector<std::string_view>        m_pedia_tags;
+    std::vector<std::string_view>        m_likes;
+    std::vector<std::string_view>        m_dislikes;
+    std::string                          m_graphic;
 };
 
 
