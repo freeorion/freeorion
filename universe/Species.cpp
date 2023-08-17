@@ -87,31 +87,31 @@ namespace {
         return retval;
     }
 
-    std::vector<std::string_view> StringViewsForTags(auto&& tags, std::string_view concat_tags) {
+    std::vector<std::string_view> StringViewsForTags(const auto& tags, std::string_view concat_tags) {
         std::vector<std::string_view> retval;
         retval.reserve(tags.size());
         std::size_t next_idx = 0;
 
         // store views into concatenated tags/likes string
-        std::for_each(tags.begin(), tags.end(), [&next_idx, &retval, concat_tags](const auto t) {
+        std::for_each(tags.begin(), tags.end(), [&next_idx, &retval, concat_tags](const auto tag) {
             // determine how much space each tag takes up after being converted to upper case
-            const auto upperized_t = boost::to_upper_copy<std::string>(t);
-            const auto upper_sz = upperized_t.size();
+            const auto upperized_tag = boost::to_upper_copy<std::string>(tag);
+            const auto upper_sz = upperized_tag.size();
             retval.push_back(concat_tags.substr(next_idx, upper_sz));
             next_idx += upper_sz;
         });
         return retval;
     }
 
-    std::vector<std::string_view> StringViewsForPediaTags(auto&& tags, std::string_view concat_tags) {
+    std::vector<std::string_view> StringViewsForPediaTags(const auto& tags, std::string_view concat_tags) {
         std::vector<std::string_view> retval;
         retval.reserve(tags.size());
-
         std::size_t next_idx = 0;
 
         // store views into concatenated tags/likes string
         std::for_each(tags.begin(), tags.end(), [&next_idx, &retval, concat_tags] (const auto tag) {
-            const auto upper_sz = boost::to_upper_copy<std::string>(tag).size();
+            const auto upperized_tag = boost::to_upper_copy<std::string>(tag);
+            const auto upper_sz = upperized_tag.size();
             static constexpr auto len{TAG_PEDIA_PREFIX.length()};
             if (tag.substr(0, len) == TAG_PEDIA_PREFIX) {
                 // store string views into the pedia tag after the "PEDIA" prefix
