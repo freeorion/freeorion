@@ -9,6 +9,7 @@
 #include "universe/UnlockableItem.h"
 #include "universe/ValueRefs.h"
 #include "universe/NamedValueRefManager.h"
+#include "util/i18n.h"
 #include "util/CheckSums.h"
 #include "util/Directories.h"
 #include "util/GameRules.h"
@@ -488,6 +489,13 @@ BOOST_AUTO_TEST_CASE(parse_species_full) {
     for (const auto& s : species) {
         for (const auto& effects : s.second.Effects()) {
             BOOST_REQUIRE_MESSAGE(effects.Scope(), s.second.Name());
+        }
+        BOOST_CHECK_MESSAGE(UserStringExists(s.second.Name()), s.second.Name());
+        for (const auto& l : s.second.Likes()) {
+            BOOST_CHECK_MESSAGE(UserStringExists(l), l);
+        }
+        for (const auto& l : s.second.Dislikes()) {
+            BOOST_CHECK_MESSAGE(UserStringExists(l), l);
         }
     }
 
