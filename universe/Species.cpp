@@ -76,11 +76,14 @@ uint32_t FocusType::GetCheckSum() const {
 // Species                                     //
 /////////////////////////////////////////////////
 namespace {
-    std::string ConcatenateAsString(auto&& stringset1, auto&& stringset2, auto&& stringset3) {
-        std::string retval;
+    auto ConcatenateAsVector(auto&& stringset1, auto&& stringset2, auto&& stringset3) {
+        std::vector<std::string::value_type> retval;
+        retval.reserve((stringset1.size() + stringset2.size() + stringset3.size())*30); // guesstimate
         for (const auto& s : {stringset1, stringset2, stringset3})
-            for (const auto& t : s)
-                retval += boost::to_upper_copy<std::string>(t);
+            for (const auto& t : s) {
+                const auto upperized_t = boost::to_upper_copy<std::string>(t);
+                retval.insert(retval.end(), upperized_t.begin(), upperized_t.end());
+            }
         return retval;
     }
 
@@ -92,7 +95,8 @@ namespace {
         // store views into concatenated tags/likes string
         std::for_each(tags.begin(), tags.end(), [&next_idx, &retval, concat_tags](const auto t) {
             // determine how much space each tag takes up after being converted to upper case
-            const auto upper_sz = boost::to_upper_copy<std::string>(t).size();
+            const auto upperized_t = boost::to_upper_copy<std::string>(t);
+            const auto upper_sz = upperized_t.size();
             retval.push_back(concat_tags.substr(next_idx, upper_sz));
             next_idx += upper_sz;
         });
@@ -243,14 +247,14 @@ Species::Species(std::string&& name, std::string&& desc,
     m_can_produce_ships(can_produce_ships),
     m_spawn_rate(spawn_rate),
     m_spawn_limit(spawn_limit),
-    m_tags_concatenated(ConcatenateAsString(tags, likes, dislikes)),
-    m_tags(StringViewsForTags(tags, m_tags_concatenated)),
-    m_pedia_tags(StringViewsForPediaTags(tags, m_tags_concatenated)),
+    m_tags_concatenated(ConcatenateAsVector(tags, likes, dislikes)),
+    m_tags(StringViewsForTags(tags, m_tags_concatenated.data())),
+    m_pedia_tags(StringViewsForPediaTags(tags, m_tags_concatenated.data())),
     m_likes([&likes, this]() {
         std::vector<std::string_view> retval;
         retval.reserve(likes.size());
 
-        const std::string_view sv{m_tags_concatenated};
+        const std::string_view sv{m_tags_concatenated.data(), m_tags_concatenated.size()};
         std::size_t next_idx = 0;
         // find starting point for first like, after end of tags, within m_tags_concatenated
         std::for_each(m_tags.begin(), m_tags.end(), [&next_idx](const auto& t) { next_idx += t.size(); });
@@ -268,7 +272,7 @@ Species::Species(std::string&& name, std::string&& desc,
         std::vector<std::string_view> retval;
         retval.reserve(dislikes.size());
 
-        const std::string_view sv{m_tags_concatenated};
+        const std::string_view sv{m_tags_concatenated.data(), m_tags_concatenated.size()};
         std::size_t next_idx = 0;
         // find starting point for first dislike, after end of tags and likes, within m_tags_concatenated
         std::for_each(m_tags.begin(), m_tags.end(), [&next_idx](const auto& t) { next_idx += t.size(); });
