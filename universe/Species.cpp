@@ -574,6 +574,8 @@ uint32_t Species::GetCheckSum() const {
     // opinions and homeworlds are per-game specific, so not included in checksum
     CheckSums::CheckSumCombine(retval, m_foci);
     CheckSums::CheckSumCombine(retval, m_default_focus);
+    CheckSums::CheckSumCombine(retval, m_likes);
+    CheckSums::CheckSumCombine(retval, m_dislikes);
     CheckSums::CheckSumCombine(retval, m_planet_environments);
     CheckSums::CheckSumCombine(retval, m_combat_targets);
     CheckSums::CheckSumCombine(retval, m_annexation_condition);
