@@ -23,7 +23,7 @@ May contain code that is used in .focs.py files
 
 ## focs/
 
-A directory that contains stubs for Python 
+A directory that contains stubs for Python
 
 
 ## .inf files
@@ -55,6 +55,7 @@ loaded from here unless included elsewhere.
 * empire_statistics/  -  Calculations made on a per-empire basis.
 * encyclopedia/  -  Entries for in-game pedia articles.
 * fields/  -  Definitions of fields (e.g. Ion Storm)
+* focs/  - technical directory with code to aid development
 * monster_designs/  -  Ship designs specifically for space monsters.
 * policies/  -  All government policy definitions.
 * ship_designs/  -  Pre-defined ship designs, this is **required for the AI**.
@@ -77,7 +78,7 @@ file and at least one entry are required.**
 pre-built.  **This file and at least one entry are required.**
 * starting_unlocks/fleets.inf  -  Fleets each player starts with.  **This file
 and at least one entry are required.**
-* empire_colors.xml  -  Color options available for empires to select from. 
+* empire_colors.xml  -  Color options available for empires to select from.
 **This file containing at least one GG::Clr node is required.**
 * custom_sitreps.txt  -  Edit this to generate sitreps as useful reminders. The
 file itself has more in-depth information.
@@ -111,10 +112,15 @@ Disclimer: Transition from focs.txt for focs.py is in progress, things might cha
 
 This is a Python code, so you need to know a basic Python syntax. Very basic, if you familiar with other languages or FOCS, it will be enough.
 
-It's recommended to have a Python IDE for this.  
-You could choose any, quite popular and free are:
-- "PyCharm Community Edition" (scroll down) https://www.jetbrains.com/pycharm/download/?section=windows
-- "Visual Studio Code"  https://code.visualstudio.com/ 
+It's recommended to have a Python IDE for this.
+<details>
+<summary>Free IDE</summary>
+
+* [PyCharm Community Edition](https://www.jetbrains.com/pycharm/download/?section=windows) scroll down for free version
+* [Visual Studio Code](https://code.visualstudio.com/)
+
+</details>
+
 
 #### One time setup
 - Install [Python 3.9+](https://www.python.org/downloads/)
@@ -127,14 +133,16 @@ You could choose any, quite popular and free are:
 - Configure your IDE to treat the `default/scripting` folder as Python source (all import are relative to this folder)
   <details>
     <summary>PyCharm example</summary>
-    <img src="_readme_images/mark_as_source_root.png"/> 
+
+    ![](_readme_images/mark_as_source_root.png)
+
   </details>
- 
+
 
 #### Editing FOCS
 In the global namespace you will have a lot of FOCS tokens. You need to combine them into an expression.
 
-For example, this function call will create an effect group expression, that will change planet size on first turn and put this object to Python list. Later you could add this object to species expression.   
+For example, this function call will create an effect group expression, that will change planet size on first turn and put this object to Python list. Later you could add this object to species expression.
 ```python
 HUGE_PLANET = [
     EffectsGroup(
@@ -144,19 +152,19 @@ HUGE_PLANET = [
     )
 ]
 ```
-To make IDE help you, you will need to import this object from `focs._...` modules.  
+To make IDE help you, you will need to import this object from `focs._...` modules.
 
-You could write code first and add imports later. 
+You could write code first and add imports later.
 <details>
   <summary>Quick-fix examples</summary>
 
 IDE have qick-fix option
 
-<img src="_readme_images/quick-fix.png"/>
+![](_readme_images/quick-fix.png)
 
 That will write import items for you.
 
-<img src="_readme_images/import.png"/>
+![](_readme_images/import.png)
 
 This will allow you to have basic validation right in IDE.
 </details>
@@ -166,11 +174,12 @@ This will allow you to have basic validation right in IDE.
 
 Some arguments are missing
 
-<img src="_readme_images/error_missed_argument.png"/>
+![](_readme_images/error_missed_argument.png)
 
 Extra arguments are added (typo in the name)
 
-<img src="_readme_images/error_typo_in_name.png"/>
+![](_readme_images/error_typo_in_name.png)
+
 </details>
 
 You could use CTRL+CLICK to the function EffectsGroup and see all arguments and expected types.
@@ -201,7 +210,7 @@ HUGE_PLANET = [
 ]
 ```
 
-Will produce and error, that says that _Condition is expected (IsSource is a _Condition) and you passed Source.
+Will produce and error, that says that `_Condition` is expected (`IsSource` is a `_Condition`) but `Source` is used.
 This is quite often issue, because FOCS use name Source in two contexts, and we could not do it with Python.
 ```
   error: Argument of type "type[Source]" cannot be assigned to parameter "scope" of type "_Condition" in function "EffectsGroup"
@@ -210,7 +219,7 @@ This is quite often issue, because FOCS use name Source in two contexts, and we 
 
 
 #### Macroses
-Python is much more flexible for writing macroses, since you could write a valid Python code that will be executed to generate expressions. We don't have any recommendations yet, we will rework how ported macroses looks like after migration is finished.  
+Python is much more flexible for writing macroses, since you could write a valid Python code that will be executed to generate expressions. We don't have any recommendations yet, we will rework how ported macroses looks like after migration is finished.
 
 
 #### Python vs FOCS
@@ -221,12 +230,12 @@ We could not use the same name for different things.
 - txt `Statistic If condition` -> `StatisticIf`, because `if` is reserved keyword in Python
 - txt `min`,  `max` -> `Min`, `Max`, conflict with builtin names.
 
-focs imported things, are not really the same as at the parsing type, it's just manually created stubs, that try to mimic runtime thins. If you see any mismatch, please report and issue. 
+focs imported things, are not really the same as at the parsing type, it's just manually created stubs, that try to mimic runtime thins. If you see any mismatch, please report and issue.
 
 #### Running checks manually
 This check will ba automatically run on GitHub when you will create a PR. But it will take some time, and running them manually will save some time.
 
-##### Running checks on commit 
+##### Running checks on commit
 Just install pre-commit hooks and check will run on each commit. Your code will be reformatted to the standard (do not spend any time on manual formatting, let the computer do it for you) and basic check will be executed.
 
 You could run hooks without commit on all changed files:
@@ -236,7 +245,7 @@ pre-commit run
 
 If you want to commit partial result, but don't want to fix all things now, just skip hooks:
 ```shell
-git commit -n 
+git commit -n
 pre-commit uninstall  # if you commit via IDE and it does not allow to skip hooks
 ```
 These check will still be run when you will create a PR, so it's better to fix them before publishing your code.
@@ -255,11 +264,11 @@ pyright  # report typing errors, similar to mypy, but have some missed and extra
 ```
 
 ### Developing FOCS API
-Every time you add/remove/change the FOCS object in C++ code, you need to update files in focs folder. 
+Every time you add/remove/change the FOCS object in C++ code, you need to update files in focs folder.
 
 There are 2 types of files:
-- `.py` these are actual Python file which are executed during the game. Often they should be empty. Game wil populate `globals()` in runtime, so it's pretty safe to import object form it. `_types.py` is a bit special, it contains type declaration, that could be used in macroses and `.pyi` files. 
-- `.pyi` this is a typing stub, it's never executed. 
-  - These files are written with a more modern python version that py files (they are not executed, we use the latest versions of linter, which support it)
+- `.py` these are actual Python file which are executed during the game. Often they should be empty. Game wil populate `globals()` in runtime, so it's pretty safe to import object form it. `_types.py` is a bit special, it contains type declaration, that could be used in macroses and `.pyi` files.
+- `.pyi` this is a typing stub, it's never executed.
+  - These files are written with a more modern Python version that py files (they are not executed, we use the latest versions of linter, which support it)
   - It should match the name of `.py`. When you do a static analysis with IDE, mypy or pyright, it will take the type information from this file.
   - When you use import in this file, it will execute `.py`,  so the value you import should be in `.py`, not to `.pyi`, that's why we have `_types.py`
