@@ -34,7 +34,7 @@ RUN apt-get install --assume-yes \
         ccache \
         coreutils \
         libpython3-dev \
-        libfreetype6-dev \
+        libfreetype-dev \
         libglew-dev \
         libopenal-dev \
         libogg-dev \
