@@ -8,6 +8,7 @@ jobs:
     name: ${{ matrix.image }}
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         image:
           - ubuntu-22.10
