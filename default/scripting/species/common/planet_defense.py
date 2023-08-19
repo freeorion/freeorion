@@ -48,7 +48,7 @@ AVERAGE_PLANETARY_DEFENSE = [
 ]
 
 
-def NATIVE_PLANETARY_DEFENSE(defence: int):
+def NATIVE_PLANETARY_DEFENSE(defence: float):
     return EffectsGroup(
         scope=IsSource,
         activation=Planet() & Unowned,

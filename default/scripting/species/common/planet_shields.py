@@ -19,7 +19,7 @@ from focs._effects import (
 )
 
 
-def NATIVE_PLANETARY_SHIELDS(strength: int):
+def NATIVE_PLANETARY_SHIELDS(strength: float):
     return EffectsGroup(
         scope=IsSource,
         activation=Planet() & Unowned,

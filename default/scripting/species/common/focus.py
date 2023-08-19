@@ -2,7 +2,6 @@ from focs._effects import (
     Capital,
     Contains,
     EmpireHasAdoptedPolicy,
-    FocusType,
     HasSpecial,
     HasSpecies,
     HasTag,
@@ -16,6 +15,7 @@ from focs._effects import (
     Source,
     Statistic,
 )
+from focs._species import *
 
 HAS_INDUSTRY_FOCUS = FocusType(
     name="FOCUS_INDUSTRY", description="FOCUS_INDUSTRY_DESC", location=Planet(), graphic="icons/focus/industry.png"
