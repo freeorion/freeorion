@@ -26,15 +26,15 @@ Species(
     gameplay_description="SP_CELESTEPHYTE_GAMEPLAY_DESC",
     native=True,
     tags=[
-        "PHOTOTROPHIC"
-        "TELEPATHIC"
-        "VERY_BAD_POPULATION"
-        "BAD_HAPPINESS"
-        "BAD_SUPPLY"
-        "VERY_BAD_INDUSTRY"
-        "NO_OFFENSE_TROOPS"
-        "PEDIA_PHOTOTROPHIC_SPECIES_CLASS"
-        "PEDIA_TELEPATHIC_TITLE"
+        "PHOTOTROPHIC",
+        "TELEPATHIC",
+        "VERY_BAD_POPULATION",
+        "BAD_HAPPINESS",
+        "BAD_SUPPLY",
+        "VERY_BAD_INDUSTRY",
+        "NO_OFFENSE_TROOPS",
+        "PEDIA_PHOTOTROPHIC_SPECIES_CLASS",
+        "PEDIA_TELEPATHIC_TITLE",
     ],
     foci=[
         HAS_INDUSTRY_FOCUS,

@@ -112,7 +112,7 @@ XENOPHOBIC_SELF = [
                 Target.HabitableSize
                 * NamedReal(name="XENOPHOBIC_TARGET_POPULATION_PERJUMP", value=-0.2)
                 * Statistic(
-                    float,
+                    int,
                     Sum,
                     value=1
                     + NamedIntegerLookup(name="XENOPHOBIC_MAX_JUMPS")

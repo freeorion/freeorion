@@ -1,6 +1,11 @@
 from common.stealth import HIGH_STEALTH, LOW_STEALTH, MEDIUM_STEALTH
 from focs._effects import EffectsGroup, HasTag, IsSource, OnPlanet, Planet, SetStealth, Source, Value
 
+# Linter get crazy because of common suffix for two different files common/stealth.py
+assert isinstance(LOW_STEALTH, int)
+assert isinstance(MEDIUM_STEALTH, int)
+assert isinstance(HIGH_STEALTH, int)
+
 BAD_STEALTH = [
     EffectsGroup(
         description="BAD_STEALTH_DESC",
