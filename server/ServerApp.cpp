@@ -3492,17 +3492,15 @@ namespace {
         // collect planets ordered annexed but that aren't being invaded
         std::map<int, std::vector<Planet*>> empire_annexed_planets; // indexed by recipient empire id
         auto annexed_not_invaded_planet = [&invaded_planet_ids](const Planet& p) {
-            return std::none_of(invaded_planet_ids.begin(), invaded_planet_ids.end(),
-                                [pid{p.ID()}](const auto iid) { return iid == pid; }) &&
-                p.IsAboutToBeAnnexed();
+            return p.IsAboutToBeAnnexed() &&
+                std::none_of(invaded_planet_ids.begin(), invaded_planet_ids.end(),
+                             [pid{p.ID()}](const auto iid) { return iid == pid; });
         };
 
-        for (auto* planet : objects.findRaw<Planet>(annexed_not_invaded_planet)) {
-            const auto annexer_empire_id = planet->OrderedAnnexedByEmpire();
-            empire_annexed_planets[annexer_empire_id].push_back(planet);
-        }
-        for (auto* fleet : objects.allRaw<Planet>())
-            fleet->ResetBeingAnnxed(); // in case things fail, to avoid potential inconsistent state
+        for (auto* planet : objects.findRaw<Planet>(annexed_not_invaded_planet))
+            empire_annexed_planets[planet->OrderedAnnexedByEmpire()].push_back(planet);
+        for (auto* planet : objects.allRaw<Planet>())
+            planet->ResetBeingAnnxed(); // in case things fail, to avoid potential inconsistent state
 
 
         // storage for list of all annexed planets
