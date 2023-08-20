@@ -12,6 +12,8 @@ import string
 from itertools import chain
 
 # List of all colonizable species in game: definition key, graphic file(relative to default/data/art)
+from typing import Any
+
 species_list = [
     ("SP_SUPER_TEST", "icons/species/other-04.png"),
     ("SP_ABADDONI", "icons/species/abaddonnian.png"),
@@ -243,7 +245,7 @@ for sp_id, sp_graphic in species_list:
     sp_gamerule = species_colony_gamerules.get(sp_id, colony_gamerule_default)
     extinct_tech = species_extinct_techs.get(sp_id, "")
 
-    data = {
+    data: dict[str, Any] = {
         "id": sp_id,
         "name": sp_name,
         "tags": sp_tags,

@@ -30,12 +30,11 @@ repos:
     hooks:
       - id: mypy
         name: focs.py type checks with mypy
-        files: "default/scripting/.*.focs.py"
-        exclude: "^default/scripting/buildings/colonies/col_bld_gen.py"
+        files: "(default/scripting/species/.*.py)|(check/check_file_changed/.*.py)"
+        exclude: "^default/scripting/focs/.*.py"
   - repo: https://github.com/RobertCraigie/pyright-python
     rev: v1.1.322
     hooks:
       - id: pyright
         name: focs.py type checks with pyright
-        files: "(default/scripting/.*.focs.py)|(check/check_file_changed)"
-        exclude: "^default/scripting/buildings/colonies/col_bld_gen.py"
+        files: "(default/scripting/species/.*.py)|(check/check_file_changed/.*.py)"
