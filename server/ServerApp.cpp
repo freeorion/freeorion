@@ -2300,7 +2300,7 @@ namespace {
     void Uniquify(auto& vec) {
         if (vec.empty())
             return;
-        std::sort(vec.begin(), vec.end());
+        std::stable_sort(vec.begin(), vec.end());
         const auto unique_it = std::unique(vec.begin(), vec.end());
         vec.erase(unique_it, vec.end());
     }
@@ -3589,71 +3589,147 @@ namespace {
     }
 
     /** Determines which planets are ordered annexed by empires, and sets
-      * their new ownership. Returns the IDs of anything annexed. */
-    std::vector<int> HandleAnnexation(EmpireManager& empires, ObjectMap& objects, int current_turn,
-                                      const std::span<const int> invaded_planet_ids)
+      * their new ownership, last turn annexed, and last annexer empire id.
+      * Returns the IDs of anything so marked as annexed.
+      * Note: Consumption of IP is done later, when updating the influence
+      * queue, which deducts IP for appropriately marked planets. */
+    std::vector<int> HandleAnnexation(ScriptingContext& context,
+                                      const std::span<int> invaded_planet_ids,
+                                      const auto& empire_planet_annexation_costs)
+#if !defined(FREEORION_ANDROID)
+        requires requires {{*empire_planet_annexation_costs.begin()->second.begin()}
+                           -> std::convertible_to<std::pair<int, double>>; }
+#endif
     {
-        // collect planets ordered annexed but that aren't being invaded
-        std::map<int, std::vector<Planet*>> empire_annexed_planets; // indexed by recipient empire id
-        std::map<int, std::vector<Building*>> empire_annexed_buildings; // indexed by recipient empire id
-        auto annexed_not_invaded_planet = [invaded_planet_ids](const Planet& p) {
+        std::vector<int> annexed_object_ids;
+        if (empire_planet_annexation_costs.empty())
+            return annexed_object_ids;
+
+
+        EmpireManager& empires = context.Empires();
+        ObjectMap& objects = context.ContextObjects();
+        const int current_turn = context.current_turn;
+
+
+        const auto annexed_not_invaded_planet = [invaded_planet_ids](const Planet& p) {
             return p.IsAboutToBeAnnexed() &&
                 std::none_of(invaded_planet_ids.begin(), invaded_planet_ids.end(),
                              [pid{p.ID()}](const auto iid) { return iid == pid; });
         };
 
-        for (auto* planet : objects.findRaw<Planet>(annexed_not_invaded_planet)) {
-            const auto loop_annexer_id = planet->OrderedAnnexedByEmpire();
-            empire_annexed_planets[loop_annexer_id].push_back(planet);
-            for (auto* building : objects.findRaw<Building>(planet->BuildingIDs()))
-                empire_annexed_buildings[loop_annexer_id].push_back(building);
+
+        // collect planets being annexed from passed-in IDs, that aren't also being invaded
+        boost::container::flat_map<int, std::vector<std::pair<Planet*, double>>> empire_annexing_planets_and_costs; // indexed by recipient / annexer empire id
+        empire_annexing_planets_and_costs.reserve(empire_planet_annexation_costs.size());
+        for (const auto& [by_empire_id, planet_id_costs] : empire_planet_annexation_costs) {
+            auto& planets_costs = empire_annexing_planets_and_costs[by_empire_id];
+            planets_costs.reserve(planet_id_costs.size());
+            for (const auto& [planet_id, cost] : planet_id_costs) {
+                Planet* planet = objects.getRaw<Planet>(planet_id);
+                if (planet && annexed_not_invaded_planet(*planet)) // skip if being invaded
+                    planets_costs.emplace_back(planet, std::max(0.0, cost)); // prevent negative cost annexations
+            }
+
+            // sort by annexation cost, so most expensive annexations are resolved first.
+            static constexpr auto expensive_first = [](const auto& lhs, const auto& rhs) { return lhs.second > rhs.second; };
+            std::stable_sort(planets_costs.begin(), planets_costs.end(), expensive_first);
         }
-        for (auto* planet : objects.allRaw<Planet>())
-            planet->ResetBeingAnnxed(); // in case things fail, to avoid potential inconsistent state
 
 
-        // storage for list of all annexed planets
-        auto do_annexation = [&empires, current_turn](auto& empire_annexed_stuff) {
-            std::vector<int> retval;
-            for (auto& [annexer_empire_id, stuff] : empire_annexed_stuff) {
-                auto annexer_empire = empires.GetEmpire(annexer_empire_id);
+        for (Planet* planet : objects.allRaw<Planet>())
+            planet->ResetBeingAnnxed(); // doing now, in case things fail, to avoid potential inconsistent state
 
-                for (auto* thing : stuff) {
-                    const auto thing_id = thing->ID();
-                    const auto initial_owner_id = thing->Owner();
-                    thing->SetOwner(annexer_empire_id);
 
-                    if constexpr (std::is_same_v<Building, std::decay_t<decltype(*thing)>>) {
-                        // TODO: generate sitrep?
+        // reserve space to store ids of everything that is annexed after considering IP limits
+        boost::container::flat_map<int, std::vector<int>> empire_annexed_object_ids;
+        empire_annexed_object_ids.reserve(empires.NumEmpires());
+        {
+            std::size_t total_annexed_count = 0u;
+            for (const auto& [empire_id, planets_costs] : empire_annexing_planets_and_costs) {
+                empire_annexed_object_ids[empire_id].reserve(planets_costs.size()); // planets and buildings, so this is probably an under-estimate
+                total_annexed_count += planets_costs.size();
+            }
+            annexed_object_ids.reserve(total_annexed_count);
+        }
 
-                    } else if constexpr (std::is_same_v<Planet, std::decay_t<decltype(*thing)>>) {
-                        retval.push_back(thing_id);
 
-                        thing->SetLastTurnAnnexed(current_turn);
-                        thing->SetLastAnnexedByEmpire(annexer_empire_id);
+        // determine available IP for annexation per empire: stockpile minus costs for policy adoption
+        auto empire_available_ip = [&empires, &context]() {
+            boost::container::flat_map<int, double> empire_available_ip;
+            empire_available_ip.reserve(empires.NumEmpires());
+            for (const auto& [id, empire] : empires) {
+                const auto stockpile = empire ? empire->ResourceStockpile(ResourceType::RE_INFLUENCE) : 0.0;
+                const auto adoption_cost = empire ? empire->ThisTurnAdoptedPoliciesCost(context) : 0.0;
+                empire_available_ip.emplace(id, stockpile - adoption_cost);
+            }
+            return empire_available_ip;
+        }();
 
-                        Empire::ConquerProductionQueueItemsAtLocation(thing_id, annexer_empire_id, empires);
 
-                        if (annexer_empire)
-                            annexer_empire->AddSitRepEntry(CreatePlanetAnnexedSitRep(
-                                thing_id, initial_owner_id, annexer_empire_id, current_turn));
+        // check that there is enough IP for all annexations for each empire,
+        // reducing available for each that is kept.
+        // skipped annexations mark the planet pointer null
+        for (auto& [annexer_empire_id, planets_costs] : empire_annexing_planets_and_costs) {
+            auto available_ip = empire_available_ip[annexer_empire_id];
+            for (auto& [planet, cost] : planets_costs) {
+                const auto effective_cost = std::max(0.0, cost); // no refunds
+                if (available_ip >= effective_cost)
+                    available_ip -= effective_cost;
+                else
+                    planet = nullptr;
+            }
+        }
 
-                        if (initial_owner_id != ALL_EMPIRES) {
-                            if (auto initial_owner_empire = empires.GetEmpire(initial_owner_id))
-                                initial_owner_empire->AddSitRepEntry(CreatePlanetAnnexedSitRep(
-                                    thing_id, initial_owner_id, annexer_empire_id, current_turn));
-                        }
-                    } else {
-                        ErrorLogger() << "Annexed unrecognized object type";
-                        break;
-                    }
+        // Note: deduction of used IP done when updating the influence queue
+
+        // do annexations
+        for (auto& [annexer_empire_id, planets_costs] : empire_annexing_planets_and_costs) {
+            const auto annexer_empire = empires.GetEmpire(annexer_empire_id); // could be null?
+
+
+            const auto emit_annexation_sitrep =
+                [&annexer_empire, current_turn, annexer_empire_id{annexer_empire_id}, &empires]
+                (int initial_owner_id, int obj_id, UniverseObjectType obj_type)
+            {
+                if (obj_type == UniverseObjectType::OBJ_PLANET) {
+                    if (annexer_empire)
+                        annexer_empire->AddSitRepEntry(CreatePlanetAnnexedSitRep(
+                            obj_id, initial_owner_id, annexer_empire_id, current_turn));
+
+                    if (initial_owner_id != ALL_EMPIRES)
+                        if (auto initial_owner_empire = empires.GetEmpire(initial_owner_id))
+                            initial_owner_empire->AddSitRepEntry(CreatePlanetAnnexedSitRep(
+                                obj_id, initial_owner_id, annexer_empire_id, current_turn));
+                }
+            };
+
+
+            for (auto& [planet, cost] : planets_costs) {
+                if (!planet)
+                    continue;
+                const auto planet_id = planet->ID();
+                const auto initial_owner_id = planet->Owner();
+                planet->SetOwner(annexer_empire_id);
+                annexed_object_ids.push_back(planet_id);
+                planet->SetLastTurnAnnexed(current_turn);
+                planet->SetLastAnnexedByEmpire(annexer_empire_id);
+                Empire::ConquerProductionQueueItemsAtLocation(planet_id, annexer_empire_id, empires);
+                emit_annexation_sitrep(initial_owner_id, planet_id, UniverseObjectType::OBJ_PLANET);
+
+                auto buildings = objects.findRaw<Building>(planet->BuildingIDs());
+                for (auto* building : buildings) {
+                    if (!building)
+                        continue;
+                    const auto building_id = building->ID();
+                    const auto initial_owner_id = building->Owner();
+                    building->SetOwner(annexer_empire_id);
+                    annexed_object_ids.push_back(building_id);
+                    emit_annexation_sitrep(initial_owner_id, building_id, UniverseObjectType::OBJ_BUILDING);
                 }
             }
-            return retval;
-        };
+        }
 
-        do_annexation(empire_annexed_buildings);
-        return do_annexation(empire_annexed_planets);
+        return annexed_object_ids;
     }
 
     /** Removes bombardment state info from objects. Actual effects of
@@ -4216,7 +4292,7 @@ void ServerApp::CacheCostsTimes(const ScriptingContext& context) {
         std::map<int, std::vector<std::pair<int, double>>> retval;
         // ensure every empire has an entry, even if empty
         for (const int id : context.EmpireIDs())
-            retval.emplace(id, decltype(retval)::mapped_type{});
+            retval.emplace(std::piecewise_construct, std::forward_as_tuple(id), std::forward_as_tuple());
         // loop over planets, for each being annexed, store its annexation cost
         const auto being_annexed = [](const Planet& p) { return p.IsAboutToBeAnnexed(); };
         for (const auto* p : context.ContextObjects().findRaw<Planet>(being_annexed)) {
@@ -4311,8 +4387,7 @@ void ServerApp::PreCombatProcessTurns() {
     auto [invaded_planet_ids, invading_ship_ids] = HandleInvasion(context);
 
     DebugLogger() << "ServerApp::ProcessTurns annexation";
-    auto annexed_ids = HandleAnnexation(m_empires, m_universe.Objects(), context.current_turn,
-                                        invaded_planet_ids);
+    auto annexed_ids = HandleAnnexation(context, invaded_planet_ids, m_cached_empire_annexation_costs);
 
     DebugLogger() << "ServerApp::ProcessTurns gifting";
     auto gifted_ids = HandleGifting(m_empires, m_universe.Objects(), context.current_turn, invaded_planet_ids,
