@@ -4,6 +4,18 @@ from common.priorities import (
     TARGET_EARLY_BEFORE_SCALING_PRIORITY,
     TARGET_SCALING_PRIORITY,
 )
+from focs._effects import (
+    EffectsGroup,
+    Focus,
+    GalaxyMaxAIAggression,
+    Happiness,
+    IsHuman,
+    IsSource,
+    Planet,
+    SetTargetResearch,
+    Target,
+    Value,
+)
 from species.common.multiplier import BAD_MULTIPLIER
 
 # NO_RESEARCH

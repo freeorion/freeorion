@@ -1,5 +1,18 @@
 from common.misc import SHIP_SHIELD_FACTOR
 from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY, DEFAULT_PRIORITY
+from focs._effects import (
+    CurrentTurn,
+    EffectsGroup,
+    GalaxyMaxAIAggression,
+    IsHuman,
+    IsSource,
+    LocalCandidate,
+    SetMaxShield,
+    SetShield,
+    Ship,
+    Target,
+    Value,
+)
 
 STANDARD_SHIP_SHIELDS = [
     EffectsGroup(  # gives human bonuses when AI Aggression set to Beginner

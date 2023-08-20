@@ -1,3 +1,5 @@
+from focs._effects import Contains, FocusType, HasSpecial, HasTag, Homeworld, IsBuilding, OwnerHasTech, Planet, Source
+
 HAS_INDUSTRY_FOCUS = FocusType(
     name="FOCUS_INDUSTRY", description="FOCUS_INDUSTRY_DESC", location=Planet(), graphic="icons/focus/industry.png"
 )

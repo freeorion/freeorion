@@ -1,3 +1,5 @@
+from focs._effects import GameRule
+
 INDUSTRY_PER_POP = 0.2
 
 STOCKPILE_PER_POP = 0.02

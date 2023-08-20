@@ -4,6 +4,31 @@ from common.priorities import (
     TARGET_LAST_BEFORE_OVERRIDE_PRIORITY,
     TARGET_SCALING_PRIORITY,
 )
+from focs._effects import (
+    Abs,
+    Capital,
+    EffectsGroup,
+    EmpireHasAdoptedPolicy,
+    Focus,
+    GalaxyMaxAIAggression,
+    Happiness,
+    HasSpecies,
+    HasTag,
+    Homeworld,
+    IsHuman,
+    IsSource,
+    LocalCandidate,
+    NamedReal,
+    OwnedBy,
+    Planet,
+    ResourceSupplyConnected,
+    SetTargetInfluence,
+    Source,
+    StatisticCount,
+    Target,
+    Unowned,
+    Value,
+)
 
 BASE_INFLUENCE_COSTS = [
     EffectsGroup(  # colonies consume influence, proportional to square-root of how many populated planets and non-populated outposts the empire controls

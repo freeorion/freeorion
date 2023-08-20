@@ -15,6 +15,20 @@ from common.priorities import (
 #             accountinglabel = "NATIVE_PLANETARY_SHIELDS_LABEL"
 #             effects = SetMaxShield value = Value + ( @1@ )
 # '''
+from focs._effects import (
+    CurrentTurn,
+    EffectsGroup,
+    Focus,
+    IsSource,
+    LocalCandidate,
+    MinOf,
+    Planet,
+    SetMaxShield,
+    SetShield,
+    Target,
+    Unowned,
+    Value,
+)
 
 STANDARD_SHIELD_GROWTH = EffectsGroup(  # increase 1 per turn, up to max
     scope=IsSource,

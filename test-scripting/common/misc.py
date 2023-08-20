@@ -1,3 +1,5 @@
+from focs._effects import EffectsGroup, GameRule, IsSource, NoEffect
+
 MIN_RECOLONIZING_SIZE = 3
 
 MIN_RECOLONIZING_HAPPINESS = 5

@@ -3,6 +3,25 @@ from common.priorities import (
     AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
     TARGET_EARLY_BEFORE_SCALING_PRIORITY,
 )
+from focs._effects import (
+    Abs,
+    CurrentTurn,
+    EffectsGroup,
+    Focus,
+    HasSpecies,
+    Homeworld,
+    IsSource,
+    LocalCandidate,
+    MinOf,
+    OwnedBy,
+    Planet,
+    SetMaxStockpile,
+    SetStockpile,
+    Source,
+    Target,
+    TargetPopulation,
+    Value,
+)
 
 
 def STOCKPILE_PER_POP_EFFECTSGROUP__SNIP(label: str, value) -> dict:
