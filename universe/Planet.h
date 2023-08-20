@@ -108,6 +108,7 @@ public:
     [[nodiscard]] bool IsAboutToBeInvaded() const noexcept          { return m_is_about_to_be_invaded; }
     [[nodiscard]] bool IsAboutToBeBombarded() const noexcept        { return m_is_about_to_be_bombarded; }
     [[nodiscard]] int OrderedAnnexedByEmpire() const noexcept       { return m_ordered_annexed_by_empire_id; }
+    [[nodiscard]] int LastAnnexedByEmpire() const noexcept          { return m_last_annexed_by_empire_id; }
     [[nodiscard]] double AnnexationCost(int empire_id, const ScriptingContext& context) const;
     [[nodiscard]] int OrderedGivenToEmpire() const noexcept         { return m_ordered_given_to_empire_id; }
     [[nodiscard]] int LastTurnAttackedByShip() const noexcept       { return m_last_turn_attacked_by_ship; }
@@ -162,6 +163,7 @@ public:
     void ResetIsAboutToBeInvaded();         ///< Marks planet as not being invaded
     void SetIsOrderAnnexedByEmpire(int empire_id);
     void ResetBeingAnnxed();
+    void SetLastAnnexedByEmpire(int id);    ///< Records the empire (or no empire) that most recently annexed this planet.
     void SetIsAboutToBeBombarded(bool b);   ///< Marks planet as being bombarded or not, depending on whether \a b is true or false
     void ResetIsAboutToBeBombarded();       ///< Marks planet as not being bombarded
     void SetGiveToEmpire(int empire_id);    ///< Marks planet to be given to empire
@@ -215,6 +217,7 @@ private:
 
     IDSet       m_buildings;
 
+    int         m_last_annexed_by_empire_id = ALL_EMPIRES;
     int         m_owner_before_last_conquered = ALL_EMPIRES;
     int         m_last_invaded_by_empire_id = ALL_EMPIRES;
     int         m_last_colonized_by_empire_id = ALL_EMPIRES;

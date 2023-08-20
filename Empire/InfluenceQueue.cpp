@@ -89,8 +89,10 @@ void InfluenceQueue::Update(const ScriptingContext& context,
     }();
 
 
-    const auto annexed_by_this_empire = [this](const Planet& planet)
-    { return planet.OrderedAnnexedByEmpire() == m_empire_id; };
+    const auto annexed_by_this_empire = [this, curturn{context.current_turn}](const Planet& planet) {
+        return planet.OrderedAnnexedByEmpire() == m_empire_id ||
+            (planet.LastAnnexedByEmpire() == m_empire_id && planet.TurnsSinceLastAnnexed(curturn) == 0);
+    };
     const auto annexed_planets = context.ContextObjects().findIDs<Planet>(annexed_by_this_empire);
 
     const float spending_on_annexation_IP = [&annexed_planets, &annex_costs]() {

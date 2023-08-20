@@ -3518,6 +3518,7 @@ namespace {
 
                     planet->SetOwner(annexer_empire_id);
                     planet->SetLastTurnAnnexed(current_turn);
+                    planet->SetLastAnnexedByEmpire(annexer_empire_id);
 
                     Empire::ConquerProductionQueueItemsAtLocation(planet_id, annexer_empire_id, empires);
 
