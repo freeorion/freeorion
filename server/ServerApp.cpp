@@ -1128,12 +1128,10 @@ void ServerApp::LoadChatHistory() {
     }
 }
 
-void ServerApp::PushChatMessage(const std::string& text,
-                                const std::string& player_name,
-                                std::array<uint8_t, 4> text_color,
-                                const boost::posix_time::ptime& timestamp)
+void ServerApp::PushChatMessage(std::string text, std::string player_name, std::array<uint8_t, 4> text_color,
+                                const boost::posix_time::ptime timestamp)
 {
-    ChatHistoryEntity chat{player_name, text, timestamp, text_color};
+    ChatHistoryEntity chat{std::move(player_name), std::move(text), timestamp, text_color};
     m_chat_history.push_back(chat);
 
     bool success = false;
@@ -1167,16 +1165,8 @@ void ServerApp::ExpireTurn() {
     m_turn_expired = true;
 }
 
-bool ServerApp::IsTurnExpired() const
-{ return m_turn_expired; }
-
-bool ServerApp::IsHaveWinner() const {
-    for (const auto& empire : m_empires) {
-        if (empire.second->Won())
-            return true;
-    }
-    return false;
-}
+bool ServerApp::IsHaveWinner() const
+{ return std::any_of(m_empires.begin(), m_empires.end(), [](const auto& e) { return e.second->Won(); }); }
 
 namespace {
     /** Verifies that a human player is connected with the indicated \a id. */
@@ -1284,7 +1274,7 @@ namespace {
         }
 
         // get ID of name-matched AI player
-        int player_id = AIPlayerIDWithName(sn, psd.player_name);
+        const int player_id = AIPlayerIDWithName(sn, psd.player_name);
         if (player_id == Networking::INVALID_PLAYER_ID) {
             ErrorLogger() << "ServerApp::LoadMPGameInit couldn't find expected AI player with name " << psd.player_name;
             return;
@@ -1325,11 +1315,8 @@ void ServerApp::LoadMPGameInit(const MultiplayerLobbyData& lobby_data,
 
     // for every player setup data entry that represents an empire in the game,
     // assign saved game data to the player ID of an established human or AI player
-    for (const auto& entry : player_setup_data) {
-        const PlayerSetupData& psd = entry.second;
-
+    for (const auto& [setup_data_player_id, psd] : player_setup_data) {
         if (psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
-            int setup_data_player_id = entry.first;
             GetSaveGameDataIndexForHumanPlayer(player_id_to_save_game_data_index, psd,
                                                setup_data_player_id, player_save_game_data,
                                                m_networking);
@@ -1453,7 +1440,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     }
 
     for (const auto& psgd : player_save_game_data) {
-        int empire_id = psgd.empire_id;
+        const int empire_id = psgd.empire_id;
         // add empires to turn processing, and restore saved orders and UI data or save state data
         if (auto empire = m_empires.GetEmpire(empire_id)) {
             if (!empire->Eliminated())
@@ -1485,20 +1472,19 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
          player_connection_it != m_networking.established_end(); ++player_connection_it)
     {
         const PlayerConnectionPtr player_connection = *player_connection_it;
-        int player_id = player_connection->PlayerID();
+        const int player_id = player_connection->PlayerID();
         Networking::ClientType client_type = player_connection->GetClientType();
 
         // attempt to find saved state data for this player.
         PlayerSaveGameData psgd;
-        auto save_data_it = player_id_save_game_data.find(player_id);
-        if (save_data_it != player_id_save_game_data.end()) {
+        const auto save_data_it = player_id_save_game_data.find(player_id);
+        if (save_data_it != player_id_save_game_data.end())
             psgd = save_data_it->second;
-        }
         if (!psgd.orders)
             psgd.orders = std::make_shared<OrderSet>(); // need an empty order set pointed to for serialization in case no data is loaded but the game start message wants orders to send
 
         // get empire ID for player. safety check on it.
-        int empire_id = PlayerEmpireID(player_id);
+        const int empire_id = PlayerEmpireID(player_id);
         if (empire_id != psgd.empire_id)
             ErrorLogger() << "LoadGameInit got inconsistent empire ids between player save game data and result of PlayerEmpireID";
 
@@ -1510,9 +1496,9 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         // restore saved orders.  these will be re-executed on client and
         // re-sent to the server (after possibly modification) by clients
         // when they end their turn
-        auto orders{psgd.orders};
+        const auto orders{psgd.orders};
 
-        bool use_binary_serialization = player_connection->IsBinarySerializationUsed();
+        const bool use_binary_serialization = player_connection->IsBinarySerializationUsed();
 
         if (client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
             // get save state string
