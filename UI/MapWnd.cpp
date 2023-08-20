@@ -6832,19 +6832,19 @@ void MapWnd::RefreshTurnButtonTooltip() {
 }
 
 void MapWnd::RefreshInfluenceResourceIndicator() {
-    Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
     if (!empire) {
         m_influence->SetValue(0.0);
         return;
     }
-    double total_IP_spent = empire->GetInfluenceQueue().TotalIPsSpent();
-    double total_IP_output = empire->GetInfluencePool().TotalOutput();
-    double total_IP_target_output = empire->GetInfluencePool().TargetOutput();
-    float  stockpile = empire->GetInfluencePool().Stockpile();
-    float  stockpile_used = empire->GetInfluenceQueue().AllocatedStockpileIP();
-    float  expected_stockpile = empire->GetInfluenceQueue().ExpectedNewStockpileAmount();
+    const double total_IP_spent = empire->GetInfluenceQueue().TotalIPsSpent();
+    const double total_IP_output = empire->GetInfluencePool().TotalOutput();
+    const double total_IP_target_output = empire->GetInfluencePool().TargetOutput();
+    const float  stockpile = empire->GetInfluencePool().Stockpile();
+    const float  stockpile_used = empire->GetInfluenceQueue().AllocatedStockpileIP();
+    const float  expected_stockpile = empire->GetInfluenceQueue().ExpectedNewStockpileAmount();
 
-    float  stockpile_plusminus_next_turn = expected_stockpile - stockpile;
+    const float  stockpile_plusminus_next_turn = expected_stockpile - stockpile;
 
     m_influence->SetValue(stockpile);
     m_influence->SetValue(stockpile_plusminus_next_turn, 1);
