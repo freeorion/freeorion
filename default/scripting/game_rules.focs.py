@@ -200,6 +200,16 @@ GameRule(
 )
 
 GameRule(
+    name="RULE_BASELINE_SPECIES_EMPIRE_OPINION",
+    description="RULE_BASELINE_SPECIES_EMPIRE_OPINION_DESC",
+    category="BALANCE_STABILITY",
+    type=int,
+    default=0,
+    min=-20,
+    max=20,
+)
+
+GameRule(
     name="RULE_INVASION_OPINION_PENALTY_SCALING",
     description="RULE_INVASION_OPINION_PENALTY_SCALING_DESC",
     category="BALANCE_STABILITY",

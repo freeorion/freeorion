@@ -115,12 +115,9 @@ COMMON_HAPPINESS_EFFECTS
             accountinglabel = "ARTISAN_APPRECIATION"
             effects = SetTargetHappiness value = Value + 1.0
 
-        EffectsGroup    // when not owned by an empire, directly apply baseline stability
+        EffectsGroup
             scope = Source
-            activation = And [
-                Unowned
-                ((GameRule name = "RULE_BASELINE_PLANET_STABILITY") != 0.0)
-            ]
+            activation = ((GameRule name = "RULE_BASELINE_PLANET_STABILITY") != 0)
             accountinglabel = "RULE_BASELINE_PLANET_STABILITY"
             effects = SetTargetHappiness value = Value + (GameRule name = "RULE_BASELINE_PLANET_STABILITY")
 

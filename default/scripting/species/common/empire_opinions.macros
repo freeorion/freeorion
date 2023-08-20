@@ -24,7 +24,7 @@ COMMON_OPINION_EFFECTS
                 SetSpeciesTargetOpinion     // baseline opinion
                     species = ThisSpecies
                     empire = Target.Owner
-                    opinion = Value + (GameRule name = "RULE_BASELINE_PLANET_STABILITY")
+                    opinion = Value + (GameRule name = "RULE_BASELINE_SPECIES_EMPIRE_OPINION")
                         + ((GameRule name = "RULE_INVASION_OPINION_PENALTY_SCALING") *
                             (Statistic Count condition = And [
                                 Planet
