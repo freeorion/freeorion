@@ -991,7 +991,7 @@ void Planet::SetIsOrderAnnexedByEmpire(int empire_id) {
         return;
 
     m_ordered_annexed_by_empire_id = empire_id;
-    StateChangedSignal();
+    ResourceCenterChangedSignal();
 }
 
 void Planet::ResetBeingAnnxed()
