@@ -1,5 +1,5 @@
 # mypy: disable-error-code="empty-body"
-from typing import Generic, TypeVar, Union
+from typing import TypeVar, Union
 
 from typing_extensions import Self
 
@@ -67,7 +67,14 @@ class _DesignID(_ID):
 _T = TypeVar("_T", str, int, float)
 
 
-class _Condition:
+class _Condition(bool):  # type: ignore
+    """
+    This value represent an expression that is resolved to boolean.
+
+    We need to have a special "class" because we use integer operands with it (& | ~),
+    which return int type, that breaks linter logic.
+    """
+
     def __and__(self, other) -> Self:
         ...
 
@@ -114,66 +121,15 @@ class _ConditionalComposition:
         ...
 
 
-class _Value(Generic[_T], _ConditionalComposition):
-    def __add__(self, other) -> Self:
-        ...
-
-    def __radd__(self, other) -> Self:
-        ...
-
-    def __sub__(self, other) -> Self:
-        ...
-
-    def __rsub__(self, other) -> Self:
-        ...
-
-    def __mul__(self, other) -> Self:
-        ...
-
-    def __rmul__(self, other) -> Self:
-        ...
-
-    def __floordiv__(self, other) -> Self:
-        ...
-
-    def __rfloordiv__(self, other) -> Self:
-        ...
-
-    def __truediv__(self, other) -> Self:
-        ...
-
-    def __rtruediv__(self, other) -> Self:
-        ...
-
-    def __pow__(self, other) -> Self:
-        ...
-
-    def __rpow__(self, other) -> Self:
-        ...
-
-
-class _FloatValue(_Value[float], float):  # type: ignore[misc]
-    ...
-
-
-class _IntValue(_Value[float], int):  # type: ignore[misc]
-    ...
-
-
-class _TurnValue(_Value[float], int):  # type: ignore[misc]
-    ...
-
-
-class _SpeciesValue(_Value[float], str):  # type: ignore[misc]
-    ...
+_SpeciesValue = str
 
 
 # Type hints for function arguments.  This could be a literal or _Value returned by other function.
-_StringParam = Union[_Value[str], str]
-_IntParam = Union[_Value[int], int]
+_StringParam = str
+_IntParam = int
 # We assume that we accept int anywhere we could accept float
-_FloatParam = Union[_Value[int], int, _Value[float], float]
-_ValueParam = Union[_Value[int], int, _Value[float], float, _Value[str], str]
+_FloatParam = Union[int, float]
+_ValueParam = Union[int, float, str]
 
 
 class _BuildingType:

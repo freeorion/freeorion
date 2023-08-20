@@ -1,6 +1,6 @@
 # This module should be imported with *, that means we should not import other things in it, otherwise things that should be imported from other modules will be imported from here.
 
-from focs._types import _Condition, _EffectGroup, _FloatValue, _PlanetEnvironment, _PlanetType
+from focs._types import _Condition, _EffectGroup, _PlanetEnvironment, _PlanetType
 
 class _FocusType: ...
 
@@ -32,6 +32,6 @@ def Species(
     spawnrate: int | None = None,
     spawnlimit: int | None = None,
     annexationcondition: _Condition | None = None,
-    annexationcost: _FloatValue = _FloatValue(),
+    annexationcost: float = 0.0,
 ): ...
 def SpeciesCensusOrdering(order: list[str]): ...
