@@ -14539,7 +14539,7 @@ Improved Engine Couplings
 SHP_IMPROVED_ENGINE_COUPLINGS_DESC
 '''[[COLONY_BUILDING_TIME_DECREASE]]
 
-Better engine parts equate to better engines. Increases [[metertype METER_SPEED]] by 20.'''
+Better engine parts equate to better engines.'''
 
 SHP_N_DIMENSIONAL_ENGINE_MATRIX
 N-Dimensional Engine Matrix
@@ -14547,7 +14547,7 @@ N-Dimensional Engine Matrix
 SHP_N_DIMENSIONAL_ENGINE_MATRIX_DESC
 '''[[COLONY_BUILDING_TIME_DECREASE]]
 
-N-Dimensional subspace research resulted in a more efficient engine matrix. Increases [[metertype METER_SPEED]] by 40.'''
+N-Dimensional subspace research resulted in a more efficient engine matrix.'''
 
 SHP_SINGULARITY_ENGINE_CORE
 Singularity Engine Core
@@ -14555,7 +14555,7 @@ Singularity Engine Core
 SHP_SINGULARITY_ENGINE_CORE_DESC
 '''[[COLONY_BUILDING_TIME_DECREASE]]
 
-A smaller cousin of the [[buildingtype BLD_HYPER_DAM]] outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases [[metertype METER_SPEED]] by 80.'''
+A smaller cousin of the [[buildingtype BLD_HYPER_DAM]] outfitted for ships, the Singularity Engine Core drastically boosts power generation.'''
 
 SHP_DEUTERIUM_TANK
 Deuterium Fuel
