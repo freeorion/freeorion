@@ -3922,8 +3922,16 @@ Annex (%1% IP)
 PL_ANNEX_FREE
 Annex
 
+# %1% cost in IP to annex this planet
+PL_ANNEXABLE
+Annexable for %1% IP
+
+PL_ANNEXATION_RESTRICTED
+Not Annexable
+
+# %1% cost in IP to annex this planet
 PL_CANCEL_ANNEX
-Cancel Annexation
+Cancel Annexation (%1% IP)
 
 # %1% size of the population this planet is colonized with.
 # %2% maximum population this planet can support.

@@ -1775,8 +1775,9 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     const double total_costs = empire_annexations_cost + empire_adopted_policies_cost + this_planet_annexation_cost;
     const double available_ip = client_empire ? client_empire->ResourceStockpile(ResourceType::RE_INFLUENCE) : 0.0;
     const bool annexation_affordable = total_costs <= available_ip;
-    const bool annexable =        !being_annexed && populated && !has_owner && !being_invaded && species && 
+    const bool annexable =        !being_annexed && populated && !has_owner && !being_invaded && species &&
                                   potentially_annexable && annexation_affordable;
+    const bool show_annex_button = being_annexed || annexable || (populated && !has_owner && !being_invaded && species);
 
 
     const bool being_bombarded =  planet->IsAboutToBeBombarded();
@@ -1801,20 +1802,28 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
             m_military_panel->Refresh();
     }
 
-    if (annexable && m_annex_button) {
-        // show annex button, specifying cost
+    if (m_annex_button && show_annex_button) {
         AttachChild(m_annex_button);
+        auto txt = [=]() -> std::string {
+            if (annexable) // specify cost
+                return (this_planet_annexation_cost == 0.0) ? UserString("PL_ANNEX_FREE") :
+                    boost::io::str(FlexibleFormat(UserString("PL_ANNEX")) %
+                                   DoubleToString(this_planet_annexation_cost, 2, false));
+            else if (being_annexed) // show cancel text
+                return boost::io::str(FlexibleFormat(UserString("PL_CANCEL_ANNEX")) %
+                                      DoubleToString(this_planet_annexation_cost, 2, false));
+            else if (!annexation_affordable && potentially_annexable) // show cost
+                return boost::io::str(FlexibleFormat(UserString("PL_ANNEXABLE")) %
+                                      DoubleToString(this_planet_annexation_cost, 2, false));
+            else if (!potentially_annexable)
+                return UserString("PL_ANNEXATION_RESTRICTED"); // TODO: tooltip for failed condition
+            else
+                return "???";
+        }();
 
-        if (this_planet_annexation_cost == 0.0)
-            m_annex_button->SetText(UserString("PL_ANNEX_FREE"));
-        else
-            m_annex_button->SetText(boost::io::str(FlexibleFormat(UserString("PL_ANNEX")) %
-                                                   DoubleToString(this_planet_annexation_cost, 2, false)));
-
-    } else if (being_annexed && m_annex_button) {
-        // show cancel annexation button
-        AttachChild(m_annex_button);
-        m_annex_button->SetText(UserString("PL_CANCEL_ANNEX")); // TODO: indicate or tooltip indicating refundable IP?
+        m_annex_button->SetText(std::move(txt));
+        const bool clickable = annexable || being_annexed;
+        m_annex_button->Disable(!clickable);
     }
 
     if (can_colonize) {
