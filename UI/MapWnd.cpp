@@ -7147,6 +7147,7 @@ namespace {
 
     constexpr std::array<int, 10> test_nums = {1,2,3,4,5,6,7,8,9,10};
     constexpr auto tnsb = test_nums.begin(), tnsrt = std::next(test_nums.begin(), 5), tnsnd = test_nums.end();
+    static_assert(*tnsrt == 6 && *LoopNext(tnsb, tnsrt, tnsnd) == 7);
     static_assert(LoopNext(tnsb, tnsnd, tnsnd) == tnsb);
 
     enum class SearchDir : bool { FORWARD, REVERSE };
