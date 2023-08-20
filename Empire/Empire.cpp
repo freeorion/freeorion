@@ -2030,17 +2030,17 @@ void Empire::AddExploredSystem(int ID, int turn, const ObjectMap& objects) {
 }
 
 std::string Empire::NewShipName() {
-    static std::vector<std::string> ship_names = UserStringList("SHIP_NAMES");
-    if (ship_names.empty())
-        ship_names.push_back(UserString("OBJ_SHIP"));
+    auto retval = []() {
+        const auto ship_names = UserStringList("SHIP_NAMES");
+        if (ship_names.empty())
+            return UserString("OBJ_SHIP");
+        // select name randomly from list
+        const int ship_name_idx = RandInt(0, static_cast<int>(ship_names.size()) - 1);
+        return ship_names[ship_name_idx];
+    }();
 
-    // select name randomly from list
-    const int ship_name_idx = RandInt(0, static_cast<int>(ship_names.size()) - 1);
-    std::string retval = ship_names[ship_name_idx];
     const int times_name_used = ++m_ship_names_used[retval];
-    if (1 < times_name_used)
-        retval += " " + RomanNumber(times_name_used);
-    return retval;
+    return (times_name_used > 1) ? (retval + " " + RomanNumber(times_name_used)) : retval;
 }
 
 void Empire::AddShipDesign(int ship_design_id, const Universe& universe, int next_design_id) {
