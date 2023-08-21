@@ -11,6 +11,7 @@
 #include "ValueRefs.h"
 #include "../util/AppInterface.h"
 #include "../util/CheckSums.h"
+#include "../util/GameRules.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../util/Random.h"
@@ -76,6 +77,19 @@ uint32_t FocusType::GetCheckSum() const {
 // Species                                     //
 /////////////////////////////////////////////////
 namespace {
+    void AddRules(GameRules& rules) {
+        rules.Add<double>(UserStringNop("RULE_ANNEX_COST_EXP_BASE"),
+                          UserStringNop("RULE_ANNEX_COST_EXP_BASE_DESC"),
+                          "BALANCE_STABILITY", 1.2, true, RangedValidator<double>(0.0, 3.0));
+        rules.Add<double>(UserStringNop("RULE_ANNEX_COST_SCALING"),
+                          UserStringNop("RULE_ANNEX_COST_SCALING_DESC"),
+                          "BALANCE_STABILITY", 5.0, true, RangedValidator<double>(0.0, 50.0));
+        rules.Add<double>(UserStringNop("RULE_ANNEX_COST_MINIMUM"),
+                          UserStringNop("RULE_ANNEX_COST_MINIMUM_DESC"),
+                          "BALANCE_STABILITY", 5.0, true, RangedValidator<double>(0.0, 50.0));
+    }
+    bool temp_bool = RegisterGameRules(&AddRules);
+
     auto ConcatenateAsVector(auto&& stringset1, auto&& stringset2, auto&& stringset3) {
         std::vector<std::string::value_type> retval;
         retval.reserve((stringset1.size() + stringset2.size() + stringset3.size())*30); // guesstimate
@@ -178,19 +192,35 @@ namespace {
     auto DefaultAnnexationCost() {
         return std::make_unique<ValueRef::Operation<double>>(
             ValueRef::OpType::MAXIMUM,
-            std::make_unique<ValueRef::Constant<double>>(5.0),
             std::make_unique<ValueRef::ComplexVariable<double>>(
-                "SpeciesEmpireOpinion",
-                std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"),
-                nullptr, nullptr,
-                std::make_unique<ValueRef::Variable<std::string>>(ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE,
-                                                                  "Species")
-            ),
+                "GameRule", nullptr, nullptr, nullptr,
+                std::make_unique<ValueRef::Constant<std::string>>("RULE_ANNEX_COST_MINIMUM")),
             std::make_unique<ValueRef::Operation<double>>(
                 ValueRef::OpType::TIMES,
-                std::make_unique<ValueRef::Constant<double>>(5.0),
-                std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE,
-                                                             "Population"))
+                std::make_unique<ValueRef::Operation<double>>(
+                    ValueRef::OpType::EXPONENTIATE,
+                    std::make_unique<ValueRef::ComplexVariable<double>>(
+                        "GameRule", nullptr, nullptr, nullptr,
+                        std::make_unique<ValueRef::Constant<std::string>>("RULE_ANNEX_COST_EXP_BASE")),
+                    std::make_unique<ValueRef::Operation<double>>(
+                        ValueRef::OpType::NEGATE,
+                        std::make_unique<ValueRef::ComplexVariable<double>>(
+                            "SpeciesEmpireOpinion",
+                            std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"),
+                            nullptr, nullptr,
+                            std::make_unique<ValueRef::Variable<std::string>>(ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE,
+                                                                              "Species")
+                        )
+                    )
+                ),
+                std::make_unique<ValueRef::Operation<double>>(
+                    ValueRef::OpType::TIMES,
+                    std::make_unique<ValueRef::ComplexVariable<double>>(
+                        "GameRule", nullptr, nullptr, nullptr,
+                        std::make_unique<ValueRef::Constant<std::string>>("RULE_ANNEX_COST_SCALING")),
+                    std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE,
+                                                                 "Population"))
+            )
         );
     }
 }

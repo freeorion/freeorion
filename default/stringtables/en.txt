@@ -1493,6 +1493,24 @@ All Allowed
 RULE_DIPLOMACY_FORBIDDEN_FOR_ALL
 All Forbidden
 
+RULE_ANNEX_COST_EXP_BASE
+Annex Cost Exponential Base
+
+RULE_ANNEX_COST_EXP_BASE_DESC
+Base of exponential determining how annexation costs scale with species empire opinion.
+
+RULE_ANNEX_COST_SCALING
+Annex Cost Scaling
+
+RULE_ANNEX_COST_SCALING_DESC
+Scaling factor for how annexation costs scale with planet population.
+
+RULE_ANNEX_COST_MINIMUM
+Annex Cost Minimum
+
+RULE_ANNEX_COST_MINIMUM_DESC
+Minimum cost to annex a planet.
+
 
 ##
 ## Command-line and options database entries
