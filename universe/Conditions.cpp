@@ -4807,6 +4807,11 @@ namespace {
         auto& from = test_val ? matches : non_matches;
         auto& to = test_val ? non_matches : matches;
 
+        if (from.size() != vals.size()) [[unlikely]] {
+            ErrorLogger() << "Inconsistent from set and values in MoveBasedOnPairedValPredicate!";
+            return;
+        }
+
         auto o_it = from.begin();               // next object to test
         auto from_dest = o_it;                  // where to put next object if it stays in from_set
         auto to_dest = std::back_inserter(to);  // where to put next object if it moves to to_set
@@ -4857,54 +4862,38 @@ void SpeciesOpinion::Eval(const ScriptingContext& parent_context,
     if (m_content && m_content->LocalCandidateInvariant()) {
         const auto process_objects_with_different_species =
             [&sm, search_domain, &matches, &non_matches, this]
-            (auto species_for_objects, const std::string& content)
+            (const auto species_for_objects, const std::string& content)
         {
-            // determine all unique species
-            std::sort(species_for_objects.begin(), species_for_objects.end());
-            auto unique_it = std::unique(species_for_objects.begin(), species_for_objects.end());
-            species_for_objects.resize(std::distance(species_for_objects.begin(), unique_it));
+            std::vector<std::string_view> suitable_species(species_for_objects.begin(), species_for_objects.end());
 
-            // get set of species that match the criteron about liking or disliking the content
-            std::vector<std::string> matching_species;
-            matching_species.reserve(species_for_objects.size());
+            // determine all unique species
+            std::sort(suitable_species.begin(), suitable_species.end());
+            auto unique_it = std::unique(suitable_species.begin(), suitable_species.end());
+            suitable_species.resize(std::distance(suitable_species.begin(), unique_it));
 
             if (sm.empty()) // forces check for pending species
                 DebugLogger() << "SpeciesOpinion found no species...";
+            const auto no_opinion = [comp{m_comp}, &content, &sm](const auto& species_name) {
+                const auto* species = sm.GetSpeciesUnchecked(species_name);
+                if (!species)
+                    return true;
+                static CONSTEXPR_VEC std::decay_t<decltype(species->Likes())> NOTHING{};
+                const auto& stuff{comp == ComparisonType::GREATER_THAN ? species->Likes() :
+                                  comp == ComparisonType::LESS_THAN  ? species->Dislikes() : NOTHING};
+                return std::none_of(stuff.begin(), stuff.end(), [&content](const auto l) { return l == content; });
+            };
 
-            if (m_comp == ComparisonType::GREATER_THAN) {
-                // find species that like content
-                std::copy_if(species_for_objects.begin(), species_for_objects.end(), std::back_inserter(matching_species),
-                             [content, &sm](const auto& sv) -> bool {
-                                 const auto* species = sm.GetSpeciesUnchecked(sv); //GetSpecies(sv); //sm.GetSpeciesUnchecked(sv);
-                                 if (!species)
-                                     return false;
-                                 const auto& likes = species->Likes();
-                                 return std::any_of(likes.begin(), likes.end(),
-                                                    [content](const auto l) { return l == content; });
-                             });
-
-            } else if (m_comp == ComparisonType::LESS_THAN) {
-                // find species that dislike content
-                std::copy_if(species_for_objects.begin(), species_for_objects.end(), std::back_inserter(matching_species),
-                             [content, &sm](const auto& sv) -> bool {
-                                 const auto* species = sm.GetSpeciesUnchecked(sv); //GetSpecies(sv); // sm.GetSpeciesUnchecked(sv);
-                                 if (!species)
-                                     return false;
-                                 const auto& dislikes = species->Dislikes();
-                                 return std::any_of(dislikes.begin(), dislikes.end(),
-                                                    [content](const auto d) { return d == content; });
-                             });
-            }
+            // get subset of species that match the criteron about liking or disliking the content
+            auto removed_it = std::remove_if(suitable_species.begin(), suitable_species.end(), no_opinion);
+            suitable_species.erase(removed_it, suitable_species.end());
 
             // move objects that shouldn't be in from set due to their species
             // liking/disliking or not the content (ie. if in or not in matching_species)
             // ie. if (is_in_matching_species != test_val) move();
-            auto is_matching_species = [&matching_species](const std::string& s) -> bool {
-                return std::any_of(matching_species.begin(), matching_species.end(),
-                                   [s](const auto& ms) { return s == ms; });
-            };
-            MoveBasedOnPairedValPredicate(search_domain, matches, non_matches,
-                                          species_for_objects, is_matching_species);
+            const auto is_matching_species = [&suitable_species](const std::string& s) -> bool
+            { return std::any_of(suitable_species.begin(), suitable_species.end(), [s](const auto& ms) { return s == ms; }); };
+
+            MoveBasedOnPairedValPredicate(search_domain, matches, non_matches, species_for_objects, is_matching_species);
         };
 
         auto process_objects_with_same_species =
