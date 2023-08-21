@@ -29,7 +29,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: [ubuntu-22.10, fedora-32, debian-oldstable, debian-stable, debian-sid, manjaro, fedora-rawhide]
+        image:
+          - ubuntu-22.10
+          - fedora-32
+          - debian-oldstable
+          - debian-stable
+          - debian-sid
+          - debian-sid-i386
+          - manjaro
+          - fedora-rawhide
     env:
       CACHE_NAME: linux
     steps:
