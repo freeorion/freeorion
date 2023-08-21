@@ -3,6 +3,31 @@ from common.priorities import (
     METER_OVERRIDE_PRIORITY,
     TARGET_AFTER_2ND_SCALING_PRIORITY,
 )
+from focs._effects import (
+    Abs,
+    EffectsGroup,
+    HasEmpireStockpile,
+    HasSpecies,
+    Influence,
+    IsSource,
+    IsTarget,
+    MaxOf,
+    MinOf,
+    NumPoliciesAdopted,
+    OwnedBy,
+    Planet,
+    Population,
+    SetConstruction,
+    SetEmpireStockpile,
+    SetHappiness,
+    SetMaxTroops,
+    SetTargetConstruction,
+    Source,
+    StatisticIf,
+    Target,
+    Value,
+)
+from focs._tech import *
 
 Tech(
     name="CON_OUTPOST",

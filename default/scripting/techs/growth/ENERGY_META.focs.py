@@ -4,6 +4,25 @@ from common.priorities import (
     TARGET_AFTER_SCALING_PRIORITY,
     TARGET_EARLY_BEFORE_SCALING_PRIORITY,
 )
+from focs._effects import (
+    EffectsGroup,
+    Focus,
+    Happiness,
+    NamedReal,
+    NamedRealLookup,
+    OwnedBy,
+    Planet,
+    SetMaxDefense,
+    SetMaxFuel,
+    SetMaxShield,
+    SetTargetIndustry,
+    SetTargetResearch,
+    Ship,
+    Source,
+    Target,
+    Value,
+)
+from focs._tech import *
 
 Tech(
     name="GRO_ENERGY_META",

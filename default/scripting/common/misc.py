@@ -1,3 +1,17 @@
+from focs._effects import (
+    AnyEmpire,
+    Contains,
+    EffectsGroup,
+    GameRule,
+    IsSource,
+    NamedIntegerLookup,
+    NoEffect,
+    OwnedBy,
+    Planet,
+    System,
+    WithinStarlaneJumps,
+)
+
 MIN_RECOLONIZING_SIZE = 3
 
 MIN_RECOLONIZING_HAPPINESS = 5

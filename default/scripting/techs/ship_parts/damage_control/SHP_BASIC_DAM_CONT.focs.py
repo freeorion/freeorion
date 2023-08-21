@@ -1,5 +1,18 @@
 from common.base_prod import TECH_COST_MULTIPLIER
 from common.misc import SHIP_STRUCTURE_FACTOR
+from focs._effects import (
+    EffectsGroup,
+    InSystem,
+    LocalCandidate,
+    OwnedBy,
+    SetStructure,
+    Ship,
+    Source,
+    Structure,
+    Turn,
+    Value,
+)
+from focs._tech import *
 
 Tech(
     name="SHP_BASIC_DAM_CONT",

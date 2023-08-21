@@ -1,4 +1,19 @@
 from common.base_prod import INDUSTRY_PER_POP, TECH_COST_MULTIPLIER
+from focs._effects import (
+    EffectsGroup,
+    EmpireHasAdoptedPolicy,
+    Focus,
+    Happiness,
+    NamedReal,
+    OwnedBy,
+    Planet,
+    SetTargetIndustry,
+    Source,
+    StatisticIf,
+    Target,
+    Value,
+)
+from focs._tech import *
 
 Tech(
     name="PRO_FUSION_GEN",

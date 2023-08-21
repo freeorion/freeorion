@@ -1,5 +1,23 @@
 from common.misc import SHIP_WEAPON_DAMAGE_FACTOR
 from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY, TARGET_EARLY_BEFORE_SCALING_PRIORITY
+from focs._effects import (
+    CurrentContent,
+    CurrentTurn,
+    EffectsGroup,
+    GenerateSitRepMessage,
+    IsSource,
+    NamedReal,
+    PartCapacity,
+    PartSecondaryStat,
+    SetCapacity,
+    SetMaxCapacity,
+    SetMaxSecondaryStat,
+    SetSecondaryStat,
+    Source,
+    Target,
+    TurnTechResearched,
+    Value,
+)
 from techs.techs import (
     ARBITRARY_BIG_NUMBER_FOR_METER_TOPUP,
     EMPIRE_OWNED_SHIP_WITH_PART,
@@ -29,6 +47,8 @@ def SET_BOTH_MAX_CAPACITIES_FROM_PART_CAPACITIES(part_name: str):
 # Tech based setting of damage and number of shots of a weapon. Registers named reals for use in the pedia.
 # Be careful the effect does not show in the ship damage/shot estimates in the ship designer UI if the tech is not researched yet.
 # @1@ part name
+
+
 def WEAPON_BASE_EFFECTS(part_name: str):
     # these NamedReals need to be parsed to be registered in the pedia. XXX remove this when the pedia can look up ship meters/part capacity
     NamedReal(name=f"{part_name}_PART_CAPACITY", value=PartCapacity(name=part_name))

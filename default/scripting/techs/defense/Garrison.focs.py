@@ -4,6 +4,22 @@ from common.priorities import (
     TARGET_AFTER_SCALING_PRIORITY,
     TARGET_EARLY_BEFORE_SCALING_PRIORITY,
 )
+from focs._effects import (
+    CurrentTurn,
+    EffectsGroup,
+    LocalCandidate,
+    MinOf,
+    NamedReal,
+    OwnedBy,
+    Planet,
+    Population,
+    SetMaxTroops,
+    SetTroops,
+    Source,
+    Target,
+    Value,
+)
+from focs._tech import *
 
 Tech(
     name="DEF_GARRISON_1",

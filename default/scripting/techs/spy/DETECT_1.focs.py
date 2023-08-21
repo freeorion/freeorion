@@ -1,3 +1,25 @@
+from focs._effects import (
+    BlackHole,
+    Blue,
+    EffectsGroup,
+    IsSource,
+    NamedReal,
+    Neutron,
+    NoStar,
+    OwnedBy,
+    OwnerHasTech,
+    Planet,
+    SetDetection,
+    SetEmpireMeter,
+    Ship,
+    Source,
+    Star,
+    Value,
+    White,
+    Yellow,
+)
+from focs._tech import *
+
 Tech(
     name="SPY_DETECT_1",
     description="SPY_DETECT_1_DESC",

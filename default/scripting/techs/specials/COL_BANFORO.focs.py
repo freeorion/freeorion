@@ -1,3 +1,5 @@
+from focs._tech import *
+
 Tech(
     name="TECH_COL_BANFORO",
     description="TECH_COL_BANFORO_DESC",

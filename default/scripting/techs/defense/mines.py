@@ -12,6 +12,29 @@
 #   FORTRESS_SPECIAL
 #   SYS_DEF_MINES_1
 
+from focs._effects import (
+    ContainedBy,
+    Contains,
+    Destroy,
+    EffectsGroup,
+    EnemyOf,
+    Fleet,
+    GenerateSitRepMessage,
+    HasTag,
+    InSystem,
+    OwnedBy,
+    Planet,
+    SetStructure,
+    Ship,
+    Source,
+    Structure,
+    System,
+    Target,
+    Unowned,
+    Value,
+    VisibleToEmpire,
+)
+
 
 def EG_SYSTEM_MINES(total_damage, priority, scope: str):
     return [

@@ -1,5 +1,18 @@
 from common.base_prod import RESEARCH_PER_POP, TECH_COST_MULTIPLIER
 from common.priorities import TARGET_AFTER_SCALING_PRIORITY
+from focs._effects import (
+    EffectsGroup,
+    Focus,
+    Happiness,
+    NamedReal,
+    OwnedBy,
+    Planet,
+    SetTargetResearch,
+    Source,
+    Target,
+    Value,
+)
+from focs._tech import *
 
 Tech(
     name="LRN_QUANT_NET",

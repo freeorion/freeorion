@@ -1,3 +1,4 @@
+from focs._tech import *
 from techs.ship_weapons.ship_weapons import SET_BOTH_MAX_CAPACITIES_FROM_PART_CAPACITIES, WEAPON_BASE_EFFECTS
 
 Tech(

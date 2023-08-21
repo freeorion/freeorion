@@ -1,5 +1,28 @@
 from common.base_prod import TECH_COST_MULTIPLIER
 from common.priorities import TARGET_AFTER_SCALING_PRIORITY
+from focs._effects import (
+    BlackHole,
+    Blue,
+    EffectsGroup,
+    Focus,
+    Happiness,
+    InSystem,
+    NamedReal,
+    Neutron,
+    Orange,
+    OwnedBy,
+    Planet,
+    Red,
+    SetTargetResearch,
+    Source,
+    Star,
+    StatisticCount,
+    Target,
+    Value,
+    White,
+    Yellow,
+)
+from focs._tech import *
 
 Tech(
     name="LRN_STELLAR_TOMOGRAPHY",

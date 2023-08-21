@@ -1,3 +1,5 @@
+from focs._tech import *
+
 Tech(
     name="SHP_ROOT_ARMOR",
     description="SHP_ROOT_ARMOR_DESC",
