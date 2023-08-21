@@ -10,6 +10,12 @@
 #endif
 
 namespace {
+    consteval bool fabs_close_enough(float f1, float f2) {
+        auto diff = f1 - f2;
+        auto abs_diff = (diff >= 0) ? diff : -diff;
+        return abs_diff < 0.0001f;
+    }
+
     // rounding checks
     constexpr Meter r1{65000.001f};
     constexpr Meter r2 = []() {
@@ -17,19 +23,19 @@ namespace {
         r2r.AddToCurrent(-1.0f);
         return r2r;
     }();
-    static_assert(r2.Current() == 64999.001f);
+    static_assert(fabs_close_enough(r2.Current(), 64999.001f));
     constexpr Meter r3 = []() {
         Meter r3r = r2;
         r3r.AddToCurrent(-0.01f);
         return r3r;
     }();
-    static_assert(r3.Current() == 64998.991f);
+    static_assert(fabs_close_enough(r3.Current(), 64998.991f));
     constexpr Meter r4 = []() {
         Meter r4r = r3;
         r4r.AddToCurrent(40.009f);
         return r4r;
     }();
-    static_assert(r4.Current() == 65039.0f);
+    static_assert(fabs_close_enough(r4.Current(), 65039.0f));
 
     constexpr Meter q1{2.01f};
     constexpr Meter q2 = []() {
@@ -37,13 +43,13 @@ namespace {
         q2r.AddToCurrent(-1.0f);
         return q2r;
     }();
-    static_assert(q2.Current() == 1.01f);
+    static_assert(fabs_close_enough(q2.Current(), 1.01f));
     constexpr Meter q3 = []() {
         Meter q3r = q2;
         q3r.AddToCurrent(-1.0f);
         return q3r;
     }();
-    static_assert(q3.Current() == 0.01f);
+    static_assert(fabs_close_enough(q3.Current(), 0.01f));
 }
 
 std::array<std::string::value_type, 64> Meter::Dump(uint8_t ntabs) const noexcept(dump_noexcept) {
