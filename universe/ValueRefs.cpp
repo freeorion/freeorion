@@ -334,7 +334,7 @@ MeterType NameToMeter(std::string_view name) noexcept { return NameToMeterCX(nam
 namespace {
     constexpr std::string_view MeterToNameCX(MeterType meter) noexcept {
         // NOTE: INVALID_METER_TYPE (enum's -1 position) <= meter < NUM_METER_TYPES (enum's final position)
-        return NAME_BY_METER[static_cast<std::underlying_type_t<MeterType>>(meter) + 1];
+        return NAME_BY_METER[static_cast<std::size_t>(static_cast<std::underlying_type_t<MeterType>>(meter)) + 1u];
     }
 }
 
