@@ -604,12 +604,15 @@ class PlanetFocusManager:
         may_switch_to_research = None
         may_switch_to_industry = None
         set_to_neither = []
+        num_industry = num_research = 0
         for pid, pinfo in dict(self.planet_info).items():
             # Note that if focus hasn't been baked as INFLUENCE yet, it shouldn't be.
             if pinfo.rated_foci.best.focus in (INDUSTRY, RESEARCH, INFLUENCE) and {INDUSTRY, RESEARCH} <= pinfo.options:
                 if pinfo.current_focus == INDUSTRY:
+                    num_industry = num_industry + 1
                     may_switch_to_research = self.change_candidate(may_switch_to_research, pinfo, INDUSTRY, RESEARCH)
                 elif pinfo.current_focus == RESEARCH:
+                    num_research = num_research + 1
                     may_switch_to_industry = self.change_candidate(may_switch_to_industry, pinfo, RESEARCH, INDUSTRY)
                 else:
                     set_to_neither.append(pinfo)
@@ -619,6 +622,11 @@ class PlanetFocusManager:
         if set_to_neither:
             self.chose_industry_or_research(set_to_neither)
         else:
+            # Never switch all planets to the lower priority focus, especially not the capital while it is the only one
+            if self.priority_industry > self.priority_research and num_industry < 2:
+                may_switch_to_research = None
+            if self.priority_research > self.priority_industry and num_research < 2:
+                may_switch_to_industry = None
             self.chose_switches(may_switch_to_research, may_switch_to_industry)
 
     def chose_industry_or_research(self, set_to_neither: list[PlanetFocusInfo]) -> None:
@@ -635,7 +643,7 @@ class PlanetFocusManager:
                 self.bake_future_focus(set_to_neither[-1].planet.id, INDUSTRY)
                 set_to_neither.pop()
 
-    def chose_switches(self, to_research: PlanetFocusInfo, to_industry: PlanetFocusInfo) -> None:
+    def chose_switches(self, to_research: PlanetFocusInfo | None, to_industry: PlanetFocusInfo | None) -> None:
         """
         Decide which of the two candidates should switch between industry and research, if any.
         """
