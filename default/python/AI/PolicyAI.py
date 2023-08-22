@@ -391,7 +391,8 @@ class PolicyManager:
                 planet.currentMeterValue(fo.meterType.construction),
             )
             for planet in PlanetUtilsAI.get_empire_populated_planets()
-            if planet.currentMeterValue(fo.meterType.targetHappiness) >= min_stability
+            if planet.focus == FocusType.FOCUS_RESEARCH
+            and planet.currentMeterValue(fo.meterType.targetHappiness) >= min_stability
         )
         rating = gain + self._rate_opinion(algo_research)
         debug(f"_rate_algo_research: rating={rating}")
