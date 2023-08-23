@@ -1,5 +1,6 @@
 from logging import error, warning
 from textwrap import fill
+from typing import Any
 
 from common.print_utils import Table, Text
 from stub_generator.interface_inspector import ClassInfo, EnumInfo, InstanceInfo
@@ -7,9 +8,40 @@ from stub_generator.parse_docs import Docs
 from stub_generator.stub_generator.collection_classes import is_collection_type, make_type
 from stub_generator.stub_generator.rtype import update_method_rtype, update_property_rtype
 
+# Types that are instantiated by Python code.
+instantiated_classes = {
+    "diplomaticMessage",
+}
+
+
+def _get_attribute(attr_name: str, attr: Any) -> str:
+    if attr["type"] == "<class 'property'>":
+        rtype = attr.get("rtype", "")
+        rtype = update_property_rtype(attr_name, rtype)
+        return f"    {attr_name}: {rtype}"
+    else:
+        msg = f"Not supported yet: {attr_name}: {attr}"
+        raise ValueError(msg)
+
+
+def process_instantiated_class(info: ClassInfo):
+    if info.parents:
+        raise ValueError("Instanceable class does not support parenting")
+
+    return "\n".join(
+        [
+            f"class {info.name}(NamedTuple):",
+            *[_get_attribute(attr_name, attr) for attr_name, attr in sorted(info.attributes.items())],
+        ]
+    )
+
 
 def _handle_class(info: ClassInfo) -> str:  # noqa: C901
     assert not info.doc, "Got docs need to handle it"
+
+    if info.name in instantiated_classes:
+        return process_instantiated_class(info)
+
     parents = [x for x in info.parents if x != "object"]
 
     result = []

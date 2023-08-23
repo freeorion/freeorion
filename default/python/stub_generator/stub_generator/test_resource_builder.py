@@ -1,5 +1,8 @@
 from io import StringIO
 
+from interface_inspector.class_processor import ClassInfo
+
+from stub_generator.stub_generator.class_generator import process_instantiated_class
 from stub_generator.stub_generator.result_builder import Import, ResultBuilder, merge_imports, sort_imports
 
 
@@ -73,3 +76,31 @@ def test_resource_builder():
     res.seek(0)
 
     assert res.read() == expected_result
+
+
+def test_process_instantiated_class():
+    cls_info = ClassInfo(
+        "diplomaticMessage",
+        {
+            "recipient": {"type": "<class 'property'>", "getter": None, "rtype": "int"},
+            "sender": {"type": "<class 'property'>", "getter": None, "rtype": "int"},
+            "type": {
+                "type": "<class 'property'>",
+                "getter": None,
+                "rtype": "freeOrionAIInterface.diplomaticMessageType",
+            },
+        },
+        None,
+        [],
+    )
+    result = process_instantiated_class(cls_info)
+    expected = "\n".join(
+        [
+            "class diplomaticMessage(NamedTuple):",
+            "    recipient: PlayerId",
+            "    sender: PlayerId",
+            "    type: diplomaticMessageType",
+        ]
+    )
+
+    assert result == expected

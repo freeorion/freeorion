@@ -12,6 +12,7 @@ from common.fo_typing import (
     BuildingName,
     EmpireId,
     FleetId,
+    NamedTuple,
     ObjectId,
     PartName,
     PlanetId,
@@ -119,13 +120,10 @@ class buildingType:
     def productionCost(self, number1: int, number2: int) -> float: ...
     def productionTime(self, number1: int, number2: int) -> int: ...
 
-class diplomaticMessage:
-    @property
-    def recipient(self) -> PlayerId: ...
-    @property
-    def sender(self) -> PlayerId: ...
-    @property
-    def type(self) -> diplomaticMessageType: ...
+class diplomaticMessage(NamedTuple):
+    recipient: PlayerId
+    sender: PlayerId
+    type: diplomaticMessageType
 
 class diplomaticStatusUpdate:
     @property
