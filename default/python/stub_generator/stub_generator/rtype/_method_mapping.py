@@ -6,6 +6,7 @@ from stub_generator.stub_generator.rtype.mapper import Mapper
 from stub_generator.stub_generator.rtype.utils import get_name_for_mapping
 
 _method_map = Mapper(
+    "methods",
     {
         "supplyProjections": Mapping[SystemId, int],
         "turnPolicyAdopted": Turn,
