@@ -65,6 +65,7 @@ Species(
         "TEMPORAL_ANOMALY_SPECIAL",
         "SPICE_SPECIAL",
     ],
+    annexation_condition=NoObject,
     effectsgroups=[
         NO_INDUSTRY,
         *ULTIMATE_RESEARCH,
