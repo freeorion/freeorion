@@ -517,7 +517,12 @@ private:
 
 template <typename T>
 bool OptionsDB::Option::SetFromValue(T&& value_) {
-    if (value.type() != typeid(std::decay_t<T>)) {
+    if constexpr (!std::is_same_v<std::decay_t<decltype(value_)>, std::string> &&
+                  std::is_convertible_v<decltype(value_), std::string>)
+    {
+        return SetFromValue(std::string(value_));
+
+    } else if (value.type() != typeid(std::decay_t<T>)) {
         DebugLogger() << "OptionsDB::Option::SetFromValue expected type " << value.type().name()
                       << " but got value of type " << typeid(T).name();
     }
