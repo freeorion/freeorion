@@ -207,35 +207,22 @@ void SimultaneousEvents::AddEvent(CombatEventPtr event)
 //{ return ""; }
 
 std::vector<ConstCombatEventPtr> SimultaneousEvents::SubEvents(int viewing_empire_id) const {
-    // Sort the events by viewing empire, then ALL_EMPIRES and then
-    // other empires.
-    std::multimap<int, ConstCombatEventPtr> empire_to_event;
-    typedef std::multimap<int, ConstCombatEventPtr>::iterator iterator;
-    typedef std::pair<iterator, iterator> range;
-
-    for (CombatEventPtr event : events) {
-        boost::optional<int> maybe_faction = event->PrincipalFaction(viewing_empire_id);
-        int faction = maybe_faction.get_value_or(ALL_EMPIRES);
-        empire_to_event.emplace(faction, event);
-    }
+    // Sort the events by viewing empire, then ALL_EMPIRES, and then other empires.
+    std::vector<std::pair<int, ConstCombatEventPtr>> empire_to_event;
+    empire_to_event.reserve(events.size());
+    const auto to_faction_event = [viewing_empire_id](const auto& event)
+    { return std::pair{event->PrincipalFaction(viewing_empire_id).get_value_or(ALL_EMPIRES), event}; };
+    range_copy(events | range_transform(to_faction_event), std::back_inserter(empire_to_event));
+    // put viewer events first
+    const auto viewer_events_end_it = std::stable_partition(empire_to_event.begin(), empire_to_event.end(),
+                                                            [viewing_empire_id](const auto& e) { return e.first == viewing_empire_id; });
+    // sort remaining events by viewer id. ALL_EMPIRES should be lower than other empire IDs so appears next
+    std::stable_sort(viewer_events_end_it, empire_to_event.end(),
+                     [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; });
 
     std::vector<ConstCombatEventPtr> ordered_events;
     ordered_events.reserve(empire_to_event.size());
-
-    range viewing_empire_events = empire_to_event.equal_range(viewing_empire_id);
-    range all_empire_events = empire_to_event.equal_range(ALL_EMPIRES);
-
-    for (iterator it = viewing_empire_events.first; it != viewing_empire_events.second; ++it)
-        ordered_events.push_back(it->second);
-
-    for (iterator it = all_empire_events.first; it != all_empire_events.second; ++it)
-        ordered_events.push_back(it->second);
-
-    for (auto& entry : empire_to_event) {
-        if (entry.first != viewing_empire_id && entry.first != ALL_EMPIRES)
-            ordered_events.push_back(entry.second);
-    }
-
+    range_copy(empire_to_event | range_values, std::back_inserter(ordered_events));
     return ordered_events;
 }
 
