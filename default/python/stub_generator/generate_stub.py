@@ -39,6 +39,7 @@ def make_stub(
                 "BuildingName",
                 "EmpireId",
                 "FleetId",
+                "NamedTuple",
                 "ObjectId",
                 "PartName",
                 "PlanetId",

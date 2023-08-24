@@ -6,6 +6,7 @@ from stub_generator.stub_generator.rtype.mapper import Mapper
 from stub_generator.stub_generator.rtype.utils import get_name_for_mapping
 
 _rtypes_map = Mapper(
+    "global_functions",
     {
         "currentTurn": Turn,
         "empireID": EmpireId,
@@ -15,7 +16,7 @@ _rtypes_map = Mapper(
         "getOptionsDBOptionDouble": float,
         "getOptionsDBOptionInt": int,
         "getOptionsDBOptionStr": str,
-    }
+    },
 )
 
 

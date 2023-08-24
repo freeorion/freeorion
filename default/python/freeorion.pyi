@@ -12,6 +12,7 @@ from common.fo_typing import (
     BuildingName,
     EmpireId,
     FleetId,
+    NamedTuple,
     ObjectId,
     PartName,
     PlanetId,
@@ -119,13 +120,10 @@ class buildingType:
     def productionCost(self, number1: int, number2: int) -> float: ...
     def productionTime(self, number1: int, number2: int) -> int: ...
 
-class diplomaticMessage:
-    @property
-    def recipient(self) -> PlayerId: ...
-    @property
-    def sender(self) -> PlayerId: ...
-    @property
-    def type(self) -> diplomaticMessageType: ...
+class diplomaticMessage(NamedTuple):
+    recipient: PlayerId
+    sender: PlayerId
+    type: diplomaticMessageType
 
 class diplomaticStatusUpdate:
     @property
@@ -165,7 +163,7 @@ class empire:
     @property
     def emptyPolicySlots(self) -> Mapping[str, int]: ...
     @property
-    def exploredSystemIDs(self) -> Set[int]: ...
+    def exploredSystemIDs(self): ...
     @property
     def fleetSupplyableSystemIDs(self) -> Set[int]: ...
     @property
@@ -774,19 +772,18 @@ class system(universeObject):
     @property
     def numStarlanes(self) -> int: ...
     @property
-    def numWormholes(self) -> int: ...
-    @property
     def planetIDs(self) -> Sequence[PlanetId]: ...
     @property
     def shipIDs(self) -> Sequence[ShipId]: ...
     @property
     def starType(self) -> starType: ...
     @property
-    def starlanesWormholes(self) -> Mapping[int, bool]: ...
-    def HasStarlaneToSystemID(self, number: int) -> bool: ...
-    def HasWormholeToSystemID(self, number: int) -> bool:
+    def starlanes(self) -> Sequence[int]: ...
+    @property
+    def starlanesWormholes(self) -> Sequence[int]: ...
+    def HasStarlaneToSystemID(self, number: int) -> bool:
         """
-        Currently unused.
+        true if the passed in ID (int) is the ID of a system this system has a starlane connection with
         """
 
 class aggression(IntEnum):
