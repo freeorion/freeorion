@@ -20,7 +20,7 @@ Tech(
                 | DesignHasPart(name="FT_HANGAR_3")
                 | DesignHasPart(name="FT_HANGAR_4")
             ),
-            accountinglabel="SHP_FIGHTERS_3",
+            accountinglabel="SHP_FIGHTERS_4",
             effects=[
                 SetMaxCapacity(
                     partname="FT_HANGAR_1", value=Value + PartsInShipDesign(name="FT_HANGAR_1", design=Target.DesignID)
