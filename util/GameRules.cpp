@@ -5,6 +5,8 @@ namespace {
         static std::vector<GameRulesFn> game_rules_registry;
         return game_rules_registry;
     }
+
+    GameRules game_rules{};
 }
 
 
@@ -17,7 +19,6 @@ bool RegisterGameRules(GameRulesFn function) {
 }
 
 GameRules& GetGameRules() {
-    static GameRules game_rules;
     if (!GameRulesRegistry().empty()) {
         DebugLogger() << "Adding options rules";
         for (GameRulesFn fn : GameRulesRegistry())
