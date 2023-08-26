@@ -186,10 +186,8 @@ std::vector<std::string_view> PolicyManager::PolicyNames(const std::string& cate
     CheckPendingPolicies();
     std::vector<std::string_view> retval;
     retval.reserve(m_policies.size());
-    // transform_if
-    for (const auto& [policy_name, policy] : m_policies)
-        if (policy.Category() == category_name)
-            retval.emplace_back(policy_name);
+    const auto in_category = [&category_name](const auto& p) { return p.second.Category() == category_name; };
+    range_copy(m_policies | range_filter(in_category) | range_keys, std::back_inserter(retval));
     return retval;
 }
 
