@@ -6,12 +6,12 @@
 #include "OptionValidators.h"
 
 #include <boost/any.hpp>
+#include <boost/container/flat_set.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/signals2/signal.hpp>
 
 #include <functional>
 #include <map>
-#include <unordered_set>
 #include <unordered_map>
 
 
@@ -210,10 +210,7 @@ public:
 
     /** find all registered Options that begin with \a prefix and store them in
       * \a ret. If \p allow_unrecognized then include unrecognized options. */
-    void FindOptions(std::set<std::string>& ret, std::string_view prefix,
-                     bool allow_unrecognized = false) const;
-    std::vector<std::string_view> FindOptions(std::string_view prefix,
-                                              bool allow_unrecognized = false) const;
+    std::vector<std::string_view> FindOptions(std::string_view prefix, bool allow_unrecognized = false) const;
 
     /** the option changed signal object for the given option */
     OptionChangedSignalType& OptionChangedSignal(std::string_view option);
@@ -458,6 +455,8 @@ public:
         [[nodiscard]] std::string DefaultValueToString() const;
         [[nodiscard]] bool        ValueIsDefault() const;
 
+        using StringSet = boost::container::flat_set<std::string>;
+
         std::string     name;               ///< the name of the option
         char            short_name{0};      ///< the one character abbreviation of the option
         bool            storable = false;   ///< whether this option can be stored in an XML config file for use across multiple runs
@@ -466,7 +465,7 @@ public:
         boost::any      value;              ///< the value of the option
         boost::any      default_value;      ///< the default value of the option
         std::string     description;        ///< a desription of the option
-        std::unordered_set<std::string> sections; ///< sections this option should display under
+        StringSet       sections;           ///< sections this option should display under
 
         /** A validator for the option.  Flags have no validators; lexical_cast
             boolean conversions are done for them. */
@@ -476,6 +475,13 @@ public:
     };
 
     struct FO_COMMON_API OptionSection {
+        OptionSection() = default;
+        OptionSection(OptionSection&&) = default;
+        OptionSection(auto&& name_, auto&& desc_, auto&& pred_) :
+            name(std::forward<decltype(name_)>(name_)),
+            description(std::forward<decltype(desc_)>(desc_)),
+            option_predicate(std::forward<decltype(pred_)>(pred_))
+        {}
         std::string name;
         std::string description;
         std::function<bool (const std::string&)> option_predicate;
@@ -508,9 +514,9 @@ private:
     std::unordered_map<std::string_view, std::set<std::string_view>> OptionsBySection(
         bool allow_unrecognized = false) const;
 
-    std::map<std::string, Option, std::less<>>          m_options;
-    std::unordered_map<std::string_view, OptionSection> m_sections;
-    bool                                                m_dirty = false; //< has OptionsDB changed since last Commit()
+    std::map<std::string, Option, std::less<>> m_options;
+    std::vector<OptionSection>                 m_sections;
+    bool                                       m_dirty = false; //< has OptionsDB changed since last Commit()
 
     friend FO_COMMON_API OptionsDB& GetOptionsDB();
 };

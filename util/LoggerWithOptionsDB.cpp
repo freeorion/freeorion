@@ -125,7 +125,7 @@ void ChangeLoggerThresholdInOptionsDB(const std::string& full_option, LogLevel o
 
     const auto& option_name = match[1];
 
-    std::set<std::tuple<std::string, std::string, LogLevel>> one_value{
+    std::vector<std::tuple<std::string, std::string, LogLevel>> one_value{
         std::make_tuple(full_option, option_name, option_value)};
     SetLoggerThresholds(one_value);
 }
@@ -133,14 +133,16 @@ void ChangeLoggerThresholdInOptionsDB(const std::string& full_option, LogLevel o
 namespace {
     /** Returns the list of full option names, logger names and thresholds for loggers in
         OptionsDB will \p prefix using \p prefix_regex.*/
-    std::set<std::tuple<std::string, std::string, LogLevel>> LoggerOptionsLabelsAndLevels(
-        const std::string prefix, const std::regex& prefix_regex) {
+    auto LoggerOptionsLabelsAndLevels(const std::string prefix, const std::regex& prefix_regex) {
         // Get a list of all of the potential loggers
-        std::set<std::string> loggers;
-        GetOptionsDB().FindOptions(loggers, prefix, true);
+        auto loggers = GetOptionsDB().FindOptions(prefix, true);
 
-        std::set<std::tuple<std::string, std::string, LogLevel>> retval;
-        for (const auto& full_option : loggers) {
+        std::vector<std::tuple<std::string, std::string, LogLevel>> retval;
+        retval.reserve(loggers.size());
+
+        for (const auto option : loggers) {
+            std::string full_option{option};
+
             // Find the option name
             std::smatch match;
             std::regex_search(full_option, match, prefix_regex);
@@ -154,7 +156,7 @@ namespace {
             const auto option_value = AddLoggerToOptionsDB(full_option);
 
             // Add to return value
-            retval.emplace(full_option, option_name, option_value);
+            retval.emplace_back(std::move(full_option), option_name, option_value);
         }
 
         return retval;
@@ -162,7 +164,7 @@ namespace {
 }
 
 /** Return the option names, labels and levels for the requested types from OptionsDB. */
-std::set<std::tuple<std::string, std::string, LogLevel>> LoggerOptionsLabelsAndLevels(const LoggerTypes types) {
+std::vector<std::tuple<std::string, std::string, LogLevel>> LoggerOptionsLabelsAndLevels(const LoggerTypes types) {
     switch (types) {
     case LoggerTypes::exec:
         // Only the per executable loggers
@@ -172,17 +174,18 @@ std::set<std::tuple<std::string, std::string, LogLevel>> LoggerOptionsLabelsAndL
         return LoggerOptionsLabelsAndLevels(source_option_name_prefix, source_name_regex);
     default: {
         // Combine both types of loggers into one set
-        const auto exec_loggers = LoggerOptionsLabelsAndLevels(exec_option_name_prefix, exec_name_regex);
+        auto exec_loggers = LoggerOptionsLabelsAndLevels(exec_option_name_prefix, exec_name_regex);
         auto source_loggers = LoggerOptionsLabelsAndLevels(source_option_name_prefix, source_name_regex);
-        for (const auto& exec_logger : exec_loggers)
-            source_loggers.insert(exec_logger);
+        source_loggers.insert(source_loggers.end(),
+                              std::make_move_iterator(exec_loggers.begin()),
+                              std::make_move_iterator(exec_loggers.end()));
         return source_loggers;
     }
     }
 }
 
 /** Sets the logger thresholds from a list of options, labels and thresholds. */
-void SetLoggerThresholds(const std::set<std::tuple<std::string, std::string, LogLevel>>& fulloption_name_and_levels) {
+void SetLoggerThresholds(const std::vector<std::tuple<std::string, std::string, LogLevel>>& fulloption_name_and_levels) {
     for (const auto& [full_option, name, value] : fulloption_name_and_levels) {
 
         // Update the option in OptionsDB if it already exists.

@@ -326,7 +326,7 @@ FO_COMMON_API Message DispatchCombatLogsMessage(const std::vector<std::pair<int,
                                                 bool use_binary_serialization, bool use_compression);
 
 /** Sends logger configuration details to server or ai process. */
-FO_COMMON_API Message LoggerConfigMessage(int sender, const std::set<std::tuple<std::string, std::string, LogLevel>>& options);
+FO_COMMON_API Message LoggerConfigMessage(int sender, const std::vector<std::tuple<std::string, std::string, LogLevel>>& options);
 
 ////////////////////////////////////////////////
 // Multiplayer Lobby Message named ctors
@@ -475,7 +475,7 @@ FO_COMMON_API void ExtractRequestCombatLogsMessageData(const Message& msg, std::
 
 FO_COMMON_API void ExtractDispatchCombatLogsMessageData(const Message& msg, std::vector<std::pair<int, CombatLog>>& logs);
 
-FO_COMMON_API void ExtractLoggerConfigMessageData(const Message& msg, std::set<std::tuple<std::string, std::string, LogLevel>>& options);
+FO_COMMON_API std::vector<std::tuple<std::string, std::string, LogLevel>> ExtractLoggerConfigMessageData(const Message& msg);
 
 FO_COMMON_API void ExtractContentCheckSumMessageData(const Message& msg, std::map<std::string, unsigned int>& checksums);
 

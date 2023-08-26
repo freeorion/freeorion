@@ -609,7 +609,7 @@ Message DispatchCombatLogsMessage(const std::vector<std::pair<int, const CombatL
     return Message{Message::MessageType::DISPATCH_COMBAT_LOGS, std::move(os).str()};
 }
 
-Message LoggerConfigMessage(int sender, const std::set<std::tuple<std::string, std::string, LogLevel>>& options) {
+Message LoggerConfigMessage(int sender, const std::vector<std::tuple<std::string, std::string, LogLevel>>& options) {
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
@@ -1365,14 +1365,17 @@ FO_COMMON_API void ExtractDispatchCombatLogsMessageData(
     }
 }
 
-FO_COMMON_API void ExtractLoggerConfigMessageData(const Message& msg,
-                                                  std::set<std::tuple<std::string, std::string, LogLevel>>& options)
+FO_COMMON_API std::vector<std::tuple<std::string, std::string, LogLevel>>
+    ExtractLoggerConfigMessageData(const Message& msg)
 {
+    std::vector<std::tuple<std::string, std::string, LogLevel>> options;
+
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
         std::size_t size;
         ia >> BOOST_SERIALIZATION_NVP(size);
+        options.reserve(size);
         for (std::size_t ii = 0; ii < size; ++ii) {
             std::string option;
             std::string name;
@@ -1380,7 +1383,7 @@ FO_COMMON_API void ExtractLoggerConfigMessageData(const Message& msg,
             ia >> BOOST_SERIALIZATION_NVP(option);
             ia >> BOOST_SERIALIZATION_NVP(name);
             ia >> BOOST_SERIALIZATION_NVP(level);
-            options.emplace(std::move(option), std::move(name), level);
+            options.emplace_back(std::move(option), std::move(name), level);
         }
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractDispatchCombatLogMessageData(const Message& msg, std::vector<std::pair<int, const CombatLog&> >& logs) failed!  Message:\n"
@@ -1388,7 +1391,7 @@ FO_COMMON_API void ExtractLoggerConfigMessageData(const Message& msg,
                       << "Error: " << err.what();
         throw err;
     }
-
+    return options;
 }
 
 void ExtractContentCheckSumMessageData(const Message& msg, std::map<std::string, unsigned int>& checksums) {

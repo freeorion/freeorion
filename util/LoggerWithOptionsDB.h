@@ -64,11 +64,12 @@ enum class LoggerTypes : uint8_t {
 };
 
 /** Return the option names, labels and levels for logger oy \p type from OptionsDB. */
-FO_COMMON_API std::set<std::tuple<std::string, std::string, LogLevel>>
+FO_COMMON_API std::vector<std::tuple<std::string, std::string, LogLevel>>
     LoggerOptionsLabelsAndLevels(const LoggerTypes types);
 
 /** Sets the logger thresholds from a list of options, labels and thresholds. */
-FO_COMMON_API void SetLoggerThresholds(const std::set<std::tuple<std::string, std::string, LogLevel>>& full_option_name_and_level);
+FO_COMMON_API void SetLoggerThresholds(
+    const std::vector<std::tuple<std::string, std::string, LogLevel>>& full_option_name_and_level);
 
 
 #endif

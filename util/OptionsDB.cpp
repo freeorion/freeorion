@@ -15,6 +15,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/container/flat_map.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/range/algorithm_ext/erase.hpp>
@@ -43,7 +44,7 @@ namespace {
     }
 
     ///< the master list of abbreviated option names, and their corresponding long-form names
-    std::map<char, std::string> short_names;
+    boost::container::flat_map<char, std::string> short_names;
 
     OptionsDB options_db;
 }
@@ -300,17 +301,20 @@ namespace {
 
 std::unordered_map<std::string_view, std::set<std::string_view>> OptionsDB::OptionsBySection(bool allow_unrecognized) const {
     // Determine sections after all predicate calls from known options
-    std::unordered_map<std::string_view, std::unordered_set<std::string_view>> sections_by_option;
-    for (const auto& [option_name, option] : m_options) {
-        if (!allow_unrecognized && !option.recognized)
-            continue;
+    boost::container::flat_map<std::string_view, std::vector<std::string_view>> sections_by_option;
+    sections_by_option.reserve(m_options.size());
 
-        for (const auto& section : option.sections)
-            sections_by_option[option_name].emplace(section);
+    const auto is_recog_ok = [allow_unrecognized](const auto& o) { return allow_unrecognized || o.second.recognized; };
 
-        for (auto& section : m_sections)
-            if (section.second.option_predicate && section.second.option_predicate(option_name))
-                sections_by_option[option_name].insert(section.first);
+    for (const auto& [option_name, option] : m_options | range_filter(is_recog_ok)) {
+        auto& sbo = sections_by_option.emplace(std::piecewise_construct,
+                                               std::forward_as_tuple(option_name),
+                                               std::forward_as_tuple(option.sections.begin(),
+                                                                     option.sections.end())).first->second;
+
+        for (const auto& section : m_sections)
+            if (section.option_predicate && section.option_predicate(option_name))
+                sections_by_option[option_name].push_back(section.name);
     }
 
     // tally the total number of options under each section
@@ -325,14 +329,17 @@ std::unordered_map<std::string_view, std::set<std::string_view>> OptionsDB::Opti
         }
     }
 
+    const auto find_section = [this](const auto section_name) {
+        const auto has_section_name = [section_name](const auto& s) { return s.name == section_name; };
+        return std::find_if(m_sections.begin(), m_sections.end(), has_section_name);
+    };
+
     // sort options into common sections
     std::unordered_map<std::string_view, std::set<std::string_view>> options_by_section;
     for (const auto& [option_name, sections_set] : sections_by_option) {
         for (std::string_view section_name : sections_set) {
-            auto defined_section_it = m_sections.find(section_name);
-            bool has_descr = defined_section_it != m_sections.end() ?
-                             !defined_section_it->second.description.empty() :
-                             false;
+            auto defined_section_it = find_section(section_name);
+            bool has_descr = (defined_section_it != m_sections.end()) && !defined_section_it->description.empty();
 
             // move options from sparse sections to more common parent
             auto section_count = total_options_per_section[section_name];
@@ -347,9 +354,9 @@ std::unordered_map<std::string_view, std::set<std::string_view>> OptionsDB::Opti
                 section_end_it = section_name.find_last_of(".");
                 section_count = total_options_per_section[section_name];
 
-                defined_section_it = m_sections.find(section_name);
+                defined_section_it = find_section(section_name);
                 if (defined_section_it != m_sections.end())
-                    has_descr = !defined_section_it->second.description.empty();
+                    has_descr = !defined_section_it->description.empty();
             }
 
             options_by_section[section_name].emplace(option_name);
@@ -358,26 +365,27 @@ std::unordered_map<std::string_view, std::set<std::string_view>> OptionsDB::Opti
 
     // define which section are top level sections ("root"), move top level candidates with single option to misc
     for (const auto section_name : total_options_per_section | range_keys) {
-        auto root_name = section_name.substr(0, section_name.find_first_of("."));
+        const auto root_name = section_name.substr(0, section_name.find_first_of("."));
         // root_name with no dot element allowed to pass if an option is known, potentially moving to misc section
-        auto total_it = total_options_per_section.find(root_name);
+        const auto total_it = total_options_per_section.find(root_name);
         if (total_it == total_options_per_section.end())
             continue;
-        auto count = total_it->second;
-
+        const auto count = total_it->second;
         if (count > 1)
             options_by_section["root"].insert(std::move(root_name));
 
-        else if (section_name != "misc" && section_name != "root" && !m_sections.contains(section_name)) {
-            // no section found with specified name, so move options in section to misc section
-            auto section_options_it = options_by_section.find(section_name);
-            if (section_options_it == options_by_section.end())
-                continue;
-            auto& section_options = section_options_it->second;
+        else if (section_name != "misc" && section_name != "root") {
+            if (find_section(section_name) == m_sections.end()) {
+                // no section found with specified name, so move options in section to misc section
+                auto section_options_it = options_by_section.find(section_name);
+                if (section_options_it == options_by_section.end())
+                    continue;
+                auto& section_options = section_options_it->second;
 
-            for (auto& option : section_options)
-                options_by_section["misc"].insert(option);
-            options_by_section.erase(section_name);
+                for (auto& option : section_options)
+                    options_by_section["misc"].insert(option);
+                options_by_section.erase(section_name);
+            }
         }
     }
 
@@ -402,15 +410,20 @@ void OptionsDB::GetUsage(std::ostream& os, std::string_view command_line, bool a
             os << "\nFreeOrion is a 4X Space Strategy game.\n\n";
     }
 
+    const auto find_section = [this](const auto section_name) {
+        const auto has_section_name = [section_name](const auto& s) { return s.name == section_name; };
+        return std::find_if(m_sections.begin(), m_sections.end(), has_section_name);
+    };
+
     // print description of command_line arg as section
     if (command_line == "all") {
         os << UserString("OPTIONS_DB_SECTION_ALL") << " ";
     } else if (command_line == "raw") {
         os << UserString("OPTIONS_DB_SECTION_RAW") << " ";
     } else {
-        auto command_section_it = m_sections.find(command_line);
-        if (command_section_it != m_sections.end() && !command_section_it->second.description.empty())
-            os << UserString(command_section_it->second.description) << " ";
+        auto command_section_it = find_section(command_line);
+        if (command_section_it != m_sections.end() && !command_section_it->description.empty())
+            os << UserString(command_section_it->description) << " ";
     }
 
     bool print_misc_section = command_line.empty();
@@ -445,8 +458,8 @@ void OptionsDB::GetUsage(std::ostream& os, std::string_view command_line, bool a
                 print_misc_section = true;
                 continue;
             }
-            const auto section_it = m_sections.find(section);
-            std::string descr = (section_it == m_sections.end()) ? "" : UserString(section_it->second.description);
+            const auto section_it = find_section(section);
+            std::string descr = (section_it == m_sections.end()) ? "" : UserString(section_it->description);
 
             os << std::setw(2) << "" // indent
                << std::setw(name_col_width) << std::left << section // section name
@@ -637,13 +650,6 @@ void OptionsDB::RemoveUnrecognized(std::string_view prefix) {
         else
             ++it;
     }
-}
-
-void OptionsDB::FindOptions(std::set<std::string>& ret, std::string_view prefix, bool allow_unrecognized) const {
-    ret.clear();
-    for (auto& [option_name, option] : m_options)
-        if ((option.recognized || allow_unrecognized) && option_name.find(prefix) == 0)
-            ret.insert(option_name);
 }
 
 std::vector<std::string_view> OptionsDB::FindOptions(std::string_view prefix, bool allow_unrecognized) const {
@@ -850,14 +856,19 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, std::string_view sec
 void OptionsDB::AddSection(const char* name, std::string description,
                            std::function<bool (const std::string&)> option_predicate)
 {
-    auto insert_result = m_sections.emplace(name, OptionSection{name, description, option_predicate});
-    // if previously existing section, update description/predicate if empty/null
-    if (!insert_result.second) {
-        if (!description.empty() && insert_result.first->second.description.empty())
-            insert_result.first->second.description = std::move(description);
-        if (!option_predicate && insert_result.first->second.option_predicate == nullptr)
-            insert_result.first->second.option_predicate = std::move(option_predicate);
+    auto it = std::find_if(m_sections.begin(), m_sections.end(),
+                           [sec_name{std::string_view{name}}](const auto& sec) { return sec.name == sec_name; });
+    if (it != m_sections.end()) {
+        // if previously existing section, update description/predicate if empty/null
+        if (!description.empty() && it->description.empty())
+            it->description = std::move(description);
+        if (option_predicate && !it->option_predicate)
+            it->option_predicate = std::move(option_predicate);
+        return;
     }
+
+    // add new section
+    m_sections.emplace_back(name, std::move(description), std::move(option_predicate));
 }
 
 template <>

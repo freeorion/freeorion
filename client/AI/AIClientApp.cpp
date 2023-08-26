@@ -347,9 +347,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
     }
 
     case Message::MessageType::LOGGER_CONFIG: {
-         std::set<std::tuple<std::string, std::string, LogLevel>> options;
-         ExtractLoggerConfigMessageData(msg, options);
-
+         auto options = ExtractLoggerConfigMessageData(msg);
          SetLoggerThresholds(options);
          break;
     }

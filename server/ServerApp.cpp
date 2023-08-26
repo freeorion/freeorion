@@ -499,9 +499,7 @@ void ServerApp::HandleLoggerConfig(const Message& msg, PlayerConnectionPtr playe
     }
 
     DebugLogger() << "Handling logging config message from the host.";
-    std::set<std::tuple<std::string, std::string, LogLevel>> options;
-    ExtractLoggerConfigMessageData(msg, options);
-
+    auto options = ExtractLoggerConfigMessageData(msg);
     SetLoggerThresholds(options);
 
     // Forward the message to all the AIs

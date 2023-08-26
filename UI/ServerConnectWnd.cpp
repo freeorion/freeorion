@@ -197,16 +197,15 @@ void ServerConnectWnd::PopulateServerList() {
         row->push_back(GG::Wnd::Create<CUILabel>(server));
         m_servers_lb->Insert(row);
     }
-    std::set<std::string> known_servers;
-    GetOptionsDB().FindOptions(known_servers, "network.known-servers", true);
-    for (const auto& option : known_servers) {
+    const auto known_servers = GetOptionsDB().FindOptions("network.known-servers", true);
+    for (const auto option : known_servers) {
         if (boost::algorithm::ends_with(option, ".address")) {
             if (!GetOptionsDB().OptionExists(option))
-                GetOptionsDB().Add<std::string>(option, "OPTIONS_DB_SERVER_COOKIE", "");
-            std::string server = GetOptionsDB().Get<std::string>(option);
+                GetOptionsDB().Add<std::string>(std::string{option}, "OPTIONS_DB_SERVER_COOKIE", "");
+            auto server = GetOptionsDB().Get<std::string>(option);
             auto row = GG::Wnd::Create<GG::ListBox::Row>();
-            row->push_back(GG::Wnd::Create<CUILabel>(server));
-            m_servers_lb->Insert(row);
+            row->push_back(GG::Wnd::Create<CUILabel>(std::move(server)));
+            m_servers_lb->Insert(std::move(row));
         }
     }
 }
