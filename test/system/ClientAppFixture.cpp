@@ -260,7 +260,7 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
         m_save_completed = true;
         return true;
     case Message::MessageType::JOIN_GAME: {
-        int player_id;
+        int player_id = Networking::INVALID_PLAYER_ID;
         ExtractJoinAckMessageData(msg, player_id, m_cookie);
         m_networking->SetPlayerID(player_id);
         return true;
@@ -284,9 +284,9 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
         BOOST_TEST_MESSAGE("Lobby Updated");
         return true;
     case Message::MessageType::ERROR_MSG: {
-            int player_id;
+            int player_id = Networking::INVALID_PLAYER_ID;
             std::string problem;
-            bool fatal;
+            bool fatal = false;
             ExtractErrorMessageData(msg, player_id, problem, fatal);
             ErrorLogger() << "Catch " << (fatal ? "fatal " : "") << "error " << problem << " from player " << player_id;
             BOOST_TEST_MESSAGE("Received " << (fatal ? "fatal " : "") << " error message: " << problem);
