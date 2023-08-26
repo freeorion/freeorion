@@ -156,25 +156,28 @@ namespace {
     /** Return true for fatal errors.*/
     bool HandleErrorMessage(const Error& msg, ServerApp& server) {
         std::stringstream ss;
-        std::string problem;
+        std::string problem_key, unlocalized_info;
         bool fatal = false;
         int player_id = Networking::INVALID_PLAYER_ID;
         try {
-            ExtractErrorMessageData(msg.m_message, player_id, problem, fatal);
+            ExtractErrorMessageData(msg.m_message, player_id, problem_key, unlocalized_info, fatal);
         } catch (...) {
-            problem = UserString("UNKNOWN");
+            problem_key = UserString("UNKNOWN");
         }
         ss << "Server received from player "
            << msg.m_player_connection->PlayerName() << "("
            << msg.m_player_connection->PlayerID() << ")"
            << (fatal?" a fatal":" an")
-           << " error message: " << problem;
+           << " error message: " << problem_key;
+        if (!unlocalized_info.empty())
+            ss << " info: " << unlocalized_info;
+        ErrorLogger(FSM) << ss.str();
 
         if (fatal) {
-            ErrorLogger(FSM) << ss.str();
-            SendMessageToAllPlayers(ErrorMessage(problem, fatal, player_id));
-        } else {
-            ErrorLogger(FSM) << ss.str();
+            if (unlocalized_info.empty())
+                SendMessageToAllPlayers(ErrorMessage(problem_key, fatal, player_id));
+            else
+                SendMessageToAllPlayers(ErrorMessage(problem_key, unlocalized_info, fatal, player_id));
         }
 
         return fatal;

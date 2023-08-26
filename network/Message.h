@@ -188,8 +188,10 @@ FO_COMMON_API std::ostream& operator<<(std::ostream& os, const Message& msg);
 ////////////////////////////////////////////////
 
 /** creates an ERROR_MSG message*/
-FO_COMMON_API Message ErrorMessage(const std::string& problem, bool fatal = true,
+FO_COMMON_API Message ErrorMessage(const std::string& problem_stringtable_key, bool fatal = true,
                                    int player_id = Networking::INVALID_PLAYER_ID);
+FO_COMMON_API Message ErrorMessage(const std::string& problem_stringtable_key, const std::string& unlocalized_info,
+                                   bool fatal = true, int player_id = Networking::INVALID_PLAYER_ID);
 
 /** creates a HOST_SP_GAME message*/
 FO_COMMON_API Message HostSPGameMessage(const SinglePlayerSetupData& setup_data, const std::map<std::string, std::string>& dependencies);
@@ -391,7 +393,8 @@ FO_COMMON_API Message RevertOrdersMessage();
 // Message data extractors
 ////////////////////////////////////////////////
 
-FO_COMMON_API void ExtractErrorMessageData(const Message& msg, int& player_id, std::string& problem, bool& fatal);
+FO_COMMON_API void ExtractErrorMessageData(const Message& msg, int& player_id, std::string& problem_key,
+                                           std::string& unlocalized_info, bool& fatal);
 
 FO_COMMON_API void ExtractHostMPGameMessageData(const Message& msg, std::string& host_player_name,
                                                 std::string& client_version_string, std::map<std::string, std::string>& dependencies);

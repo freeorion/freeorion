@@ -97,13 +97,25 @@ void HeaderToBuffer(const Message& message, Message::HeaderBuffer& buffer) {
 ////////////////////////////////////////////////
 // Message named ctors
 ////////////////////////////////////////////////
-Message ErrorMessage(const std::string& problem, bool fatal, int player_id) {
+Message ErrorMessage(const std::string& problem_stringtable_key, bool fatal, int player_id) {
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
-        oa << BOOST_SERIALIZATION_NVP(problem)
+        oa << boost::serialization::make_nvp("problem", problem_stringtable_key)
            << BOOST_SERIALIZATION_NVP(fatal)
            << BOOST_SERIALIZATION_NVP(player_id);
+    }
+    return Message{Message::MessageType::ERROR_MSG, std::move(os).str()};
+}
+
+Message ErrorMessage(const std::string& problem_stringtable_key, const std::string& unlocalized_info, bool fatal, int player_id) {
+    std::ostringstream os;
+    {
+        freeorion_xml_oarchive oa(os);
+        oa << boost::serialization::make_nvp("problem", problem_stringtable_key)
+           << BOOST_SERIALIZATION_NVP(fatal)
+           << BOOST_SERIALIZATION_NVP(player_id);
+        oa << BOOST_SERIALIZATION_NVP(unlocalized_info);
     }
     return Message{Message::MessageType::ERROR_MSG, std::move(os).str()};
 }
@@ -754,22 +766,38 @@ Message AutoTurnMessage(int turns_count)
 Message RevertOrdersMessage()
 { return Message{Message::MessageType::REVERT_ORDERS, DUMMY_EMPTY_MESSAGE}; }
 
+
 ////////////////////////////////////////////////
 // Message data extractors
 ////////////////////////////////////////////////
-void ExtractErrorMessageData(const Message& msg, int& player_id, std::string& problem, bool& fatal) {
+void ExtractErrorMessageData(const Message& msg, int& player_id, std::string& problem_key,
+                             std::string& unlocalized_info, bool& fatal)
+{
+    bool got_stuff_before_unlocalized = false;
     try {
-        std::istringstream is(msg.Text());
+        std::istringstream is(msg.Text() /*+ "</boost_serialization>"*/); // additional closing tag needed to prevent crash in freeorion_xml_iarchive destructor for incomplete input
         freeorion_xml_iarchive ia(is);
-        ia >> BOOST_SERIALIZATION_NVP(problem)
-           >> BOOST_SERIALIZATION_NVP(fatal)
-           >> BOOST_SERIALIZATION_NVP(player_id);
+
+        ia >> boost::serialization::make_nvp("problem", problem_key);
+        ia >> BOOST_SERIALIZATION_NVP(fatal);
+        ia >> BOOST_SERIALIZATION_NVP(player_id);
+
+        got_stuff_before_unlocalized = true;
+        // may fail if message didn't have any unlocalized info specified
+        ia >> BOOST_SERIALIZATION_NVP(unlocalized_info);
+
+        // this scope must exactly match scope of the archive see: https://github.com/boostorg/serialization/issues/220#issuecomment-690786015
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractErrorMessageData(const Message& msg, std::string& problem, bool& fatal) failed!  Message:\n"
-                      << msg.Text() << "\n"
-                      << "Error: " << err.what();
-        problem = UserStringNop("SERVER_MESSAGE_NOT_UNDERSTOOD");
-        fatal = false;
+        if (!got_stuff_before_unlocalized) {
+            ErrorLogger() << "ExtractErrorMessageData(const Message& msg, std::string& problem_key, std::string& unlocalized_info, bool& fatal) failed!  Message:\n"
+                          << msg.Text() << "\n"
+                          << "Error: " << err.what();
+            problem_key = UserStringNop("SERVER_MESSAGE_NOT_UNDERSTOOD");
+        } // else, not a problem; old format error message without the unlocalized info
+    } catch (...) {
+        ErrorLogger() << "ExtractErrorMessageData(const Message& msg, std::string& problem_key, std::string& unlocalized_info, bool& fatal) failed!  Message:\n"
+                      << msg.Text() << "\nError unknown.";
+        problem_key = UserStringNop("SERVER_MESSAGE_NOT_UNDERSTOOD");
     }
 }
 

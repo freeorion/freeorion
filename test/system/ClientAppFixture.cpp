@@ -285,11 +285,11 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
         return true;
     case Message::MessageType::ERROR_MSG: {
             int player_id = Networking::INVALID_PLAYER_ID;
-            std::string problem;
+            std::string problem_key, unlocalized_info;
             bool fatal = false;
-            ExtractErrorMessageData(msg, player_id, problem, fatal);
-            ErrorLogger() << "Catch " << (fatal ? "fatal " : "") << "error " << problem << " from player " << player_id;
-            BOOST_TEST_MESSAGE("Received " << (fatal ? "fatal " : "") << " error message: " << problem);
+            ExtractErrorMessageData(msg, player_id, problem_key, unlocalized_info, fatal);
+            ErrorLogger() << "Catch " << (fatal ? "fatal " : "") << "error " << problem_key << " from player " << player_id;
+            BOOST_TEST_MESSAGE("Received " << (fatal ? "fatal " : "") << " error message: " << problem_key);
         }
         return false;
     default:
