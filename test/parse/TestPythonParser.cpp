@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE(parse_game_rules) {
     BOOST_REQUIRE(GameRule::Type::TOGGLE == game_rules["RULE_ENABLE_ALLIED_REPAIR"].type);
 }
 
-std::cout << "::group::Before test\n";
+BOOST_TEST_MESSAGE("::group::Before test");
 
 BOOST_AUTO_TEST_CASE(parse_techs) {
     PythonParser parser(m_python, m_test_scripting_dir);
@@ -211,8 +211,7 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
     BOOST_REQUIRE_EQUAL(9, tech_categories.size());
     BOOST_REQUIRE_EQUAL(2, categories_seen.size());
 }
-std::cout << "::endgroup::\n";
-
+BOOST_TEST_MESSAGE("::engroup::");
 
 BOOST_AUTO_TEST_CASE(parse_species) {
     PythonParser parser(m_python, m_test_scripting_dir);
@@ -288,10 +287,10 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_REQUIRE_EQUAL(false, effect->IsConditionalEffect());
 
 
-        std::cout << "::group::Dump " " << species.Name() << ";
-        BOOST_TEST_MESSAGE("Dump " << species.Name() << ":");
+
+        BOOST_TEST_MESSAGE("::group::Dump " << species.Name() << ":");
         BOOST_TEST_MESSAGE(species.Dump(0));
-        std::cout << "::endgroup::\n";
+        BOOST_TEST_MESSAGE("::endgroup::");
 
         BOOST_REQUIRE_EQUAL(6533633, species.GetCheckSum());
 
