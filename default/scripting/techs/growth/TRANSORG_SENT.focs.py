@@ -1,5 +1,21 @@
 from common.base_prod import TECH_COST_MULTIPLIER
 from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
+from focs._effects import (
+    Conditional,
+    EffectsGroup,
+    LocalCandidate,
+    MaxOf,
+    MinOf,
+    NamedReal,
+    NamedRealLookup,
+    OwnedBy,
+    Planet,
+    SetInfluence,
+    Source,
+    Target,
+    Value,
+)
+from focs._tech import *
 
 Tech(
     name="GRO_TRANSORG_SENT",

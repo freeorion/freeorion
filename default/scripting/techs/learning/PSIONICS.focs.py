@@ -1,4 +1,13 @@
 from common.base_prod import TECH_COST_MULTIPLIER
+from focs._effects import (
+    HasTag,
+    OwnedBy,
+    Planet,
+    Ship,
+    Source,
+    StatisticIf,
+)
+from focs._tech import *
 
 Tech(
     name="LRN_PSIONICS",

@@ -1,4 +1,14 @@
 from common.base_prod import TECH_COST_MULTIPLIER
+from focs._effects import (
+    EffectsGroup,
+    NamedRealLookup,
+    OwnedBy,
+    SetMaxStructure,
+    Ship,
+    Source,
+    Value,
+)
+from focs._tech import *
 
 Tech(
     name="SHP_REINFORCED_HULL",

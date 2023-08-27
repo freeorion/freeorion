@@ -1,5 +1,17 @@
 from common.base_prod import TECH_COST_MULTIPLIER
 from common.priorities import TARGET_POPULATION_AFTER_SCALING_PRIORITY
+from focs._effects import (
+    Adequate,
+    EffectsGroup,
+    Good,
+    OwnedBy,
+    OwnerHasTech,
+    Planet,
+    SetTargetPopulation,
+    Source,
+    Value,
+)
+from focs._tech import *
 
 Tech(
     name="GRO_PLANET_ECOL",

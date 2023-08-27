@@ -1,3 +1,24 @@
+from focs._effects import (
+    BlackHole,
+    EffectsGroup,
+    Floor,
+    InSystem,
+    MaxOf,
+    NamedReal,
+    Neutron,
+    NoStar,
+    OwnedBy,
+    Red,
+    SetStealth,
+    Ship,
+    Source,
+    Star,
+    StatisticCount,
+    Target,
+    Value,
+)
+from focs._tech import *
+
 Tech(
     name="SPY_ROOT_DECEPTION",
     description="SPY_ROOT_DECEPTION_DESC",

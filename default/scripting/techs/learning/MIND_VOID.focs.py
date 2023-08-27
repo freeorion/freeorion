@@ -1,4 +1,12 @@
 from common.base_prod import TECH_COST_MULTIPLIER
+from focs._effects import (
+    EffectsGroup,
+    IsSource,
+    SetEmpireMeter,
+    Source,
+    Value,
+)
+from focs._tech import *
 
 Tech(
     name="LRN_MIND_VOID",

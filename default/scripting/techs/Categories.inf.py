@@ -1,3 +1,5 @@
+from focs._tech import *
+
 Category(
     name="LEARNING_CATEGORY",
     graphic="learning.png",

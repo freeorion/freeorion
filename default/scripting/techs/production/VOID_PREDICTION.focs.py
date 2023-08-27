@@ -1,4 +1,16 @@
 from common.base_prod import STOCKPILE_PER_POP, TECH_COST_MULTIPLIER
+from focs._effects import (
+    EffectsGroup,
+    Focus,
+    OwnedBy,
+    Planet,
+    Population,
+    SetMaxStockpile,
+    Source,
+    Target,
+    Value,
+)
+from focs._tech import *
 
 Tech(
     name="PRO_VOID_PREDICTION",

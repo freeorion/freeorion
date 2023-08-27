@@ -1,4 +1,12 @@
 from common.base_prod import TECH_COST_MULTIPLIER
+from focs._effects import (
+    EffectsGroup,
+    GalaxySize,
+    GameRule,
+    IsSource,
+    Victory,
+)
+from focs._tech import *
 
 Tech(
     name="LRN_TRANSCEND",

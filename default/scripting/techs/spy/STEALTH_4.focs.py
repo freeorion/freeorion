@@ -1,4 +1,6 @@
 from common.base_prod import TECH_COST_MULTIPLIER
+from focs._effects import AddSpecial, EffectsGroup, HasTag, OwnedBy, Planet, RemoveSpecial, Source, StatisticIf
+from focs._tech import *
 
 Tech(
     name="SPY_STEALTH_4",

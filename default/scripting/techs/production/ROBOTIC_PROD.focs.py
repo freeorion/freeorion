@@ -1,5 +1,18 @@
 from common.base_prod import INDUSTRY_PER_POP, TECH_COST_MULTIPLIER
 from common.priorities import TARGET_AFTER_SCALING_PRIORITY
+from focs._effects import (
+    EffectsGroup,
+    Focus,
+    Happiness,
+    NamedReal,
+    OwnedBy,
+    Planet,
+    SetTargetIndustry,
+    Source,
+    Target,
+    Value,
+)
+from focs._tech import *
 
 Tech(
     name="PRO_ROBOTIC_PROD",

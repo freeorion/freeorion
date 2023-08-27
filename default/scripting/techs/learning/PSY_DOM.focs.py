@@ -1,4 +1,24 @@
 from common.base_prod import TECH_COST_MULTIPLIER
+from focs._effects import (
+    ContainedBy,
+    Contains,
+    EffectsGroup,
+    Focus,
+    GenerateSitRepMessage,
+    HasTag,
+    Monster,
+    OwnedBy,
+    OwnerHasTech,
+    Planet,
+    Random,
+    SetOwner,
+    Ship,
+    Source,
+    System,
+    Target,
+    VisibleToEmpire,
+)
+from focs._tech import *
 
 Tech(
     name="LRN_PSY_DOM",

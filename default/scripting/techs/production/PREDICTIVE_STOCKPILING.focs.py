@@ -1,3 +1,6 @@
+from focs._effects import EffectsGroup, Focus, OwnedBy, Planet, SetMaxStockpile, Source, Value
+from focs._tech import *
+
 Tech(
     name="PRO_PREDICTIVE_STOCKPILING",
     description="PRO_PREDICTIVE_STOCKPILING_DESC",

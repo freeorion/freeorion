@@ -1,5 +1,19 @@
 from common.base_prod import TECH_COST_MULTIPLIER
 from common.priorities import TARGET_POPULATION_BEFORE_SCALING_PRIORITY
+from focs._effects import (
+    EffectsGroup,
+    HasTag,
+    Hostile,
+    OwnedBy,
+    Planet,
+    Poor,
+    SetTargetPopulation,
+    Source,
+    StatisticIf,
+    Target,
+    Value,
+)
+from focs._tech import *
 
 Tech(
     name="GRO_XENO_HYBRIDS",

@@ -1,4 +1,17 @@
 from common.base_prod import STOCKPILE_PER_POP, TECH_COST_MULTIPLIER
+from focs._effects import (
+    Capital,
+    EffectsGroup,
+    Focus,
+    HasSpecies,
+    OwnedBy,
+    Planet,
+    SetMaxStockpile,
+    Source,
+    Target,
+    Value,
+)
+from focs._tech import *
 
 Tech(
     name="PRO_GENERIC_SUPPLIES",

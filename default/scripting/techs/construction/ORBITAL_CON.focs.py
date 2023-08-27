@@ -1,4 +1,13 @@
 from common.base_prod import TECH_COST_MULTIPLIER
+from focs._effects import (
+    EffectsGroup,
+    OwnedBy,
+    Planet,
+    SetMaxSupply,
+    Source,
+    Value,
+)
+from focs._tech import *
 
 Tech(
     name="CON_ORBITAL_CON",

@@ -1,5 +1,20 @@
 from common.base_prod import TECH_COST_MULTIPLIER
 from common.priorities import TARGET_AFTER_2ND_SCALING_PRIORITY
+from focs._effects import (
+    EffectsGroup,
+    Focus,
+    Happiness,
+    IsSource,
+    NamedReal,
+    OwnedBy,
+    Planet,
+    SetEmpireMeter,
+    SetTargetIndustry,
+    Source,
+    TargetPopulation,
+    Value,
+)
+from focs._tech import *
 
 Tech(
     name="PRO_SENTIENT_AUTOMATION",

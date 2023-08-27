@@ -1,4 +1,5 @@
 from common.base_prod import TECH_COST_MULTIPLIER
+from focs._tech import *
 
 Tech(
     name="SHP_SONIC",

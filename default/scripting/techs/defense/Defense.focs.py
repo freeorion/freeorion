@@ -1,6 +1,23 @@
 from common.base_prod import TECH_COST_MULTIPLIER
 from common.misc import PLANET_DEFENSE_FACTOR, PLANET_SHIELD_FACTOR
 from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
+from focs._effects import (
+    CurrentTurn,
+    EffectsGroup,
+    LocalCandidate,
+    MinOf,
+    NamedRealLookup,
+    OwnedBy,
+    Planet,
+    SetDefense,
+    SetMaxShield,
+    SetShield,
+    SetTroops,
+    Source,
+    Target,
+    Value,
+)
+from focs._tech import *
 from techs.defense.mines import EG_SYSTEM_MINES
 
 Tech(

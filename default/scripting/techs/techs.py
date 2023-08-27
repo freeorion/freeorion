@@ -1,4 +1,7 @@
 # In typical usage this is used as a plain macro, not a substitution macro; the substitution is instead done within the calling macro
+from focs._effects import DesignHasPart, LocalCandidate, OwnedBy, Ship, Source, TurnTechResearched
+
+
 def EMPIRE_OWNED_SHIP_WITH_PART(part_name: str):
     return Ship & OwnedBy(empire=Source.Owner) & DesignHasPart(name=part_name)
 

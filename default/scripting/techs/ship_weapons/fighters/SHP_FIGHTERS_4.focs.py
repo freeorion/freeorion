@@ -1,5 +1,18 @@
 from common.base_prod import TECH_COST_MULTIPLIER
 from common.misc import FIGHTER_DAMAGE_FACTOR
+from focs._effects import (
+    DesignHasPart,
+    EffectsGroup,
+    OwnedBy,
+    PartsInShipDesign,
+    SetMaxCapacity,
+    SetMaxSecondaryStat,
+    Ship,
+    Source,
+    Target,
+    Value,
+)
+from focs._tech import *
 
 Tech(
     name="SHP_FIGHTERS_4",

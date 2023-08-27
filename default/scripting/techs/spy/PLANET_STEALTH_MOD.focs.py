@@ -1,3 +1,6 @@
+from focs._effects import EffectsGroup, IsBuilding, NamedReal, Planet, SetStealth, Value
+from focs._tech import *
+
 Tech(
     name="SPY_PLANET_STEALTH_MOD",
     description="SPY_PLANET_STEALTH_MOD_DESC",
