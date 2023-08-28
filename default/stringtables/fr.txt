@@ -1349,6 +1349,12 @@ Stabilité planétaire de base
 RULE_BASELINE_PLANET_STABILITY_DESC
 Niveau de base de la [[METER_HAPPINESS]] d'une planète.
 
+RULE_BASELINE_SPECIES_EMPIRE_OPINION
+Opinion de base des espèces sur l'empire
+
+RULE_BASELINE_SPECIES_EMPIRE_OPINION_DESC
+Niveau de base des opinions des espèces sur les empires.
+
 RULE_INVASION_OPINION_PENALTY_SCALING
 Variation opinion d'une espèce après invasion planétaire
 
@@ -1486,6 +1492,24 @@ Toutes autorisées
 
 RULE_DIPLOMACY_FORBIDDEN_FOR_ALL
 Toutes interdites
+
+RULE_ANNEX_COST_EXP_BASE
+Annexion: coût exponentiel de base 
+
+RULE_ANNEX_COST_EXP_BASE_DESC
+Valeur exponentielle de base déterminant la mise à l'échelle des coûts d'annexion selon l'opinion de l'espèce sur l'empire.
+
+RULE_ANNEX_COST_SCALING
+Annexion: échelle des coûts
+
+RULE_ANNEX_COST_SCALING_DESC
+Facteur d'échelle déterminant les coûts d'annexion selon la population de la planète.
+
+RULE_ANNEX_COST_MINIMUM
+Annexion: coût minimum
+
+RULE_ANNEX_COST_MINIMUM_DESC
+Coût minimum pour annexer une planète.
 
 
 ##
@@ -3916,8 +3940,16 @@ Annexer (%1% PI)
 PL_ANNEX_FREE
 Annexer
 
+# %1% cost in IP to annex this planet
+PL_ANNEXABLE
+Annexable pour %1% PI
+
+PL_ANNEXATION_RESTRICTED
+Non annexable
+
+# %1% cost in IP to annex this planet
 PL_CANCEL_ANNEX
-Annuler Annexion
+Annuler Annexion (%1% PI)
 
 # %1% size of the population this planet is colonized with.
 # %2% maximum population this planet can support.
@@ -14221,19 +14253,19 @@ SHP_FIGHTERS_2
 Chasseurs et Rampes de Lancement 2
 
 SHP_FIGHTERS_2_DESC
-Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Laser. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_2]] augmentent de 12, augmentent de 18 pour un [[shippart FT_HANGAR_3]] et de 36 pour un [[shippart FT_HANGAR_4]]. Pour les chasseurs d'un [[shippart FT_HANGAR_1]], la capacité ainsi que la cadence de lancement de la [[shippart FT_BAY_1]] augmentent de 1.
+Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Laser. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_2]] augmentent de 12, augmentent de 18 pour un [[shippart FT_HANGAR_3]] et de 36 pour un [[shippart FT_HANGAR_4]]. Pour les chasseurs d'un [[shippart FT_HANGAR_1]], la capacité augmente de 1, et la cadence de lancement de la [[shippart FT_BAY_1]] augmente de 1.
 
 SHP_FIGHTERS_3
 Chasseurs et Rampes de Lancement 3
 
 SHP_FIGHTERS_3_DESC
-Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Plasma. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_2]] augmentent de 12, augmentent de 18 pour un [[shippart FT_HANGAR_3]] et de 36 pour un [[shippart FT_HANGAR_4]]. Pour les chasseurs d'un [[shippart FT_HANGAR_1]], la capacité ainsi que la cadence de lancement de la [[shippart FT_BAY_1]] augmentent de 1.
+Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Plasma. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_2]] augmentent de 12, augmentent de 18 pour un [[shippart FT_HANGAR_3]] et de 36 pour un [[shippart FT_HANGAR_4]]. Pour les chasseurs d'un [[shippart FT_HANGAR_1]], la capacité augmente de 1, et la cadence de lancement de la [[shippart FT_BAY_1]] augmente de 1.
 
 SHP_FIGHTERS_4
 Chasseurs et Rampes de Lancement 4
 
 SHP_FIGHTERS_4_DESC
-Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Gamma. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_2]] augmentent de 12, augmentent de 18 pour un [[shippart FT_HANGAR_3]] et de 36 pour un [[shippart FT_HANGAR_4]]. Pour les chasseurs d'un [[shippart FT_HANGAR_1]], la capacité ainsi que la cadence de lancement de la [[shippart FT_BAY_1]] augmentent de 1.
+Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Gamma. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_2]] augmentent de 12, augmentent de 18 pour un [[shippart FT_HANGAR_3]] et de 36 pour un [[shippart FT_HANGAR_4]]. Pour les chasseurs d'un [[shippart FT_HANGAR_1]], la capacité augmente de 1, et la cadence de lancement de la [[shippart FT_BAY_1]] augmente de 1.
 
 SHP_WEAPON_1_2
 Canon Mitrailleur 2
@@ -14539,7 +14571,7 @@ Couplage de Motorisation Améliorée
 SHP_IMPROVED_ENGINE_COUPLINGS_DESC
 '''[[COLONY_BUILDING_TIME_DECREASE]]
 
-De meilleurs éléments de motorisation, résultent de meilleurs moteurs. Augmente de 20 la [[metertype METER_SPEED]].'''
+De meilleurs éléments de motorisation, résultent de meilleurs moteurs.'''
 
 SHP_N_DIMENSIONAL_ENGINE_MATRIX
 Matrice de Motorisation Multidimensionnelle
@@ -14547,7 +14579,7 @@ Matrice de Motorisation Multidimensionnelle
 SHP_N_DIMENSIONAL_ENGINE_MATRIX_DESC
 '''[[COLONY_BUILDING_TIME_DECREASE]]
 
-La recherche concernant les espaces multidimensionnels a rendu possible le développement de meilleures matrices de motorisation. Augmente de 40 la [[metertype METER_SPEED]].'''
+La recherche concernant les espaces multidimensionnels a rendu possible le développement de meilleures matrices de motorisation.'''
 
 SHP_SINGULARITY_ENGINE_CORE
 Noyau de Motorisation à Singularité
@@ -14555,7 +14587,7 @@ Noyau de Motorisation à Singularité
 SHP_SINGULARITY_ENGINE_CORE_DESC
 '''[[COLONY_BUILDING_TIME_DECREASE]]
 
-Dispositif dérivé de la structure [[buildingtype BLD_HYPER_DAM]] et miniaturisé pour les astronefs, le Noyau de Motorisation à Singularité accroît considérablement la génération d'énergie. Augmente de 80 la [[metertype METER_SPEED]].'''
+Dispositif dérivé de la structure [[buildingtype BLD_HYPER_DAM]] et miniaturisé pour les astronefs, le Noyau de Motorisation à Singularité accroît considérablement la génération d'énergie.'''
 
 SHP_DEUTERIUM_TANK
 Carburant Deutérium
