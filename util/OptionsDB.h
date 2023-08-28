@@ -14,7 +14,6 @@
 #include <map>
 #include <unordered_map>
 
-
 class OptionsDB;
 class XMLDoc;
 class XMLElement;
@@ -110,13 +109,67 @@ template<typename T> constexpr bool is_unique_ptr_v = is_unique_ptr<T>::value;
 class FO_COMMON_API OptionsDB {
 public:
     /** emitted when an option has changed */
-    typedef boost::signals2::signal<void ()> OptionChangedSignalType;
+    using OptionChangedSignalType = boost::signals2::signal<void ()>;
 
-    /** indicates whether an option with name \a name has been added to this
-        OptionsDB. */
+    struct FO_COMMON_API Option {
+        Option(char short_name_, std::string name_, boost::any value_,
+               boost::any default_value_, std::string description_,
+               std::unique_ptr<ValidatorBase>&& validator_, bool storable_, bool flag_,
+               bool recognized_, std::string section = std::string());
+        Option(Option&& rhs) = default;
+        Option(const Option& rhs) = delete;
+        virtual ~Option();
+        Option& operator=(Option&& rhs) = default;
+        Option& operator=(const Option& rhs) = delete;
+
+        bool operator<(const Option& rhs) const noexcept { return name < rhs.name; };
+        bool operator==(const Option& rhs) const noexcept { return name == rhs.name; };
+
+        // SetFromValue returns true if this->value is successfully changed
+        template <typename T>
+        bool SetFromValue(T&& value_);
+
+        // SetFromString returns true if this->value is successfully changed
+        bool SetFromString(std::string_view str);
+
+        // SetToDefault returns true if this->value is successfully changed
+        bool SetToDefault();
+
+        [[nodiscard]] std::string ValueToString() const;
+        [[nodiscard]] std::string DefaultValueToString() const;
+        [[nodiscard]] bool        ValueIsDefault() const;
+
+        using StringSet = boost::container::flat_set<std::string>;
+
+        std::string     name;               ///< the name of the option
+        boost::any      value;              ///< the value of the option
+        boost::any      default_value;      ///< the default value of the option
+        std::string     description;        ///< a desription of the option
+        StringSet       sections;           ///< sections this option should display under
+
+        // A validator for the option.  Flags have no validators; lexical_cast boolean conversions are done for them.
+        std::unique_ptr<ValidatorBase> validator;
+        std::unique_ptr<OptionChangedSignalType> option_changed_sig; // pointer so that references are valid even if this Option is moved
+
+        char            short_name{0};      ///< the one character abbreviation of the option
+        bool            storable = false;   ///< whether this option can be stored in an XML config file for use across multiple runs
+        bool            flag = false;
+        bool            recognized = false; ///< whether this option has been registered before being specified via an XML input, unrecognized options can't be parsed (don't know their type) but are stored in case they are later registered with Add()
+    };
+
+private:
+    using ContainerType = std::vector<Option>;
+
+    auto find_option(const std::string_view name) const
+    { return std::find_if(m_options.begin(), m_options.end(), [name](const auto& o) { return o.name == name; }); }
+    auto find_option(const std::string_view name)
+    { return std::find_if(m_options.begin(), m_options.end(), [name](const auto& o) { return o.name == name; }); }
+
+public:
+    /** Has an option with name \a name been added to this OptionsDB? */
     bool OptionExists(std::string_view name) const {
-        auto it = m_options.find(name);
-        return it != m_options.end() && it->second.recognized;
+        auto it = find_option(name);
+        return it != m_options.end() && it->recognized;
     }
 
     /** write the optionDB's non-default state to the XML config file. */
@@ -134,22 +187,21 @@ public:
     void Validate(std::string_view name, std::string_view value) const;
 
 
-
     /** returns the value of option \a name. Note that the exact type of item
       * stored in the option \a name must be known in advance.  This means that
       * Get() must be called as Get<int>("foo"), etc. */
     template <typename T>
     T Get(std::string_view name) const
     {
-        auto it = m_options.find(name);
+        auto it = find_option(name);
         if (!OptionExists(it))
             throw std::runtime_error(std::string{"OptionsDB::Get<>() : Attempted to get nonexistent option \""}.append(name).append("\"."));
         try {
-            return boost::any_cast<T>(it->second.value);
+            return boost::any_cast<T>(it->value);
         } catch (const boost::bad_any_cast&) {
             ErrorLogger() << "bad any cast converting value option named: " << name << ". Returning default value instead";
             try {
-                return boost::any_cast<T>(it->second.default_value);
+                return boost::any_cast<T>(it->default_value);
             } catch (const boost::bad_any_cast&) {
                 ErrorLogger() << "bad any cast converting default value of option named: " << name << ". Returning data-type default value instead: " << T();
                 return T();
@@ -163,11 +215,11 @@ public:
     template <typename T>
     T GetDefault(std::string_view name) const
     {
-        auto it = m_options.find(name);
+        auto it = find_option(name);
         if (!OptionExists(it))
             throw std::runtime_error(std::string{"OptionsDB::GetDefault<>() : Attempted to get nonexistent option: "}.append(name));
         try {
-            return boost::any_cast<T>(it->second.default_value);
+            return boost::any_cast<T>(it->default_value);
         } catch (const boost::bad_any_cast&) {
             ErrorLogger() << "bad any cast converting default value of option named: " << name << "  returning type default value instead";
             return T();
@@ -175,7 +227,7 @@ public:
     }
 
     bool IsDefaultValue(std::string_view name) const {
-        auto it = m_options.find(name);
+        const auto it = find_option(name);
         if (!OptionExists(it))
             throw std::runtime_error(std::string{"OptionsDB::IsDefaultValue<>() : Attempted to get nonexistent option: "}.append(name));
         return IsDefaultValue(it);
@@ -222,7 +274,7 @@ public:
              std::unique_ptr<ValidatorBase> validator = nullptr, bool storable = true,
              std::string section = "")
     {
-        auto it = m_options.find(name);
+        auto it = find_option(name);
         boost::any value = default_value;
         if (!validator)
             validator = std::make_unique<Validator<std::decay_t<T>>>();
@@ -230,21 +282,21 @@ public:
         // Check that this option hasn't already been registered and apply any
         // value that was specified on the command line or from a config file.
         if (it != m_options.end()) {
-            if (it->second.recognized)
+            if (it->recognized)
                 throw std::runtime_error("OptionsDB::Add<>() : Option registered twice: " + name);
 
             // SetFrom[...]() sets "flag" to true for unrecognised options if they look like flags
             // (i.e. no parameter is found for the option)
-            if (it->second.flag) {
+            if (it->flag) {
                 ErrorLogger() << "OptionsDB::Add<>() : Option " << name << " was specified on the command line or in a config file with no value, using default value.";
             } else {
                 try {
                     // This option was previously specified externally but was not recognized at the time.
                     // Attempt to parse the value found there, overriding the default value passed in
-                    value = validator->Validate(it->second.ValueToString());
+                    value = validator->Validate(it->ValueToString());
                 } catch (const boost::bad_lexical_cast&) {
                     ErrorLogger() << "OptionsDB::Add<>() : Option " << name
-                                  << " was given the value \"" << it->second.ValueToString()
+                                  << " was given the value \"" << it->ValueToString()
                                   << "\" from the command line or a config file but that value couldn't be converted to the correct type, using default value instead.";
                 }
             }
@@ -253,7 +305,11 @@ public:
         Option option{static_cast<char>(0), name, std::move(value), std::forward<T>(default_value),
                       std::move(description), std::move(validator), storable, false, true,
                       std::move(section)};
-        m_options.insert_or_assign(std::move(name), std::move(option));
+        if (it != m_options.end())
+            *it = std::move(option);
+        else
+            m_options.push_back(std::move(option));
+
         m_dirty = true;
     }
 
@@ -282,7 +338,7 @@ public:
              std::unique_ptr<ValidatorBase> validator = nullptr, bool storable = true,
              std::string section = "")
     {
-        auto it = m_options.find(name);
+        auto it = find_option(name);
         boost::any value{default_value};
         if (!validator)
             validator = std::make_unique<Validator<std::decay_t<T>>>();
@@ -290,19 +346,19 @@ public:
         // Check that this option hasn't already been registered and apply any
         // value that was specified on the command line or from a config file.
         if (it != m_options.end()) {
-            if (it->second.recognized)
+            if (it->recognized)
                 throw std::runtime_error("OptionsDB::Add<>() : Option registered twice: " + name);
 
             // SetFrom[...]() sets "flag" to true for unrecognised options if they look like flags
             // (i.e. no parameter is found for the option)
-            if (it->second.flag) {
+            if (it->flag) {
                 ErrorLogger() << "OptionsDB::Add<>() : Option " << name
                               << " was specified on the command line or in a config file with no value, using default value.";
             } else {
                 try {
                     // This option was previously specified externally but was not recognized at the time,
                     // attempt to parse the value found there
-                    value = validator->Validate(it->second.ValueToString());
+                    value = validator->Validate(it->ValueToString());
                 } catch (const boost::bad_lexical_cast&) {
                     ErrorLogger() << "OptionsDB::Add<>() : Option " << name
                                   << " was given the value from the command line or a config file that cannot be converted to the correct type. Using default value instead.";
@@ -313,7 +369,11 @@ public:
         Option option{short_name, name, std::move(value), std::forward<T>(default_value),
                       std::move(description), std::move(validator), storable, false, true,
                       std::move(section)};
-        m_options.insert_or_assign(std::move(name), std::move(option));
+        if (it != m_options.end())
+            *it = std::move(option);
+        else
+            m_options.push_back(std::move(option));
+
         m_dirty = true;
     }
 
@@ -322,10 +382,8 @@ public:
              T default_value, V&& validator, // validator should be wrapped in unique_ptr
              bool storable = true, std::string section = "")
     {
-        Add<T>(short_name, std::move(name), std::move(description),
-               std::move(default_value),
-               std::make_unique<V>(std::move(validator)),
-               storable, std::move(section));
+        Add<T>(short_name, std::move(name), std::move(description), std::move(default_value),
+               std::make_unique<V>(std::move(validator)), storable, std::move(section));
     }
 
     /** adds a flag Option, which is treated as a boolean value with a default
@@ -334,27 +392,30 @@ public:
     void AddFlag(std::string name, std::string description,
                  bool storable = true, std::string section = std::string())
     {
-        auto it = m_options.find(name);
+        const auto it = find_option(name);
         bool value = false;
-        auto validator = std::make_unique<Validator<bool>>();
 
         // Check that this option hasn't already been registered and apply any value
         // that was specified on the command line or from a config file.
         if (it != m_options.end()) {
-            if (it->second.recognized)
+            if (it->recognized)
                 throw std::runtime_error("OptionsDB::AddFlag<>() : Option registered twice: " + name);
 
             // SetFrom[...]() sets "flag" to false on unrecognised options if they don't look like flags
             // (flags have no parameter on the command line or have an empty tag in XML)
-            if (!it->second.flag)
+            if (!it->flag)
                 ErrorLogger() << "OptionsDB::AddFlag<>() : Option " << name << " was specified with the value \""
-                              << it->second.ValueToString() << "\", but flags should not have values assigned to them.";
+                              << it->ValueToString() << "\", but flags should not have values assigned to them.";
             value = true; // if the flag is present at all its value is true
         }
 
-        Option&& option{static_cast<char>(0), name, value, value, std::move(description),
-                        std::move(validator), storable, true, true, std::move(section)};
-        m_options.insert_or_assign(name, std::move(option));
+        Option option{static_cast<char>(0), name, value, value, std::move(description),
+                      std::make_unique<Validator<bool>>(), storable, true, true, std::move(section)};
+        if (it != m_options.end())
+            *it = std::move(option);
+        else
+            m_options.push_back(std::move(option));
+
         m_dirty = true;
     }
 
@@ -364,27 +425,31 @@ public:
     void AddFlag(char short_name, std::string name, std::string description,
                  bool storable = true, std::string section = std::string())
     {
-        auto it = m_options.find(name);
+        auto it = find_option(name);
         bool value = false;
         auto validator = std::make_unique<Validator<bool>>();
 
         // Check that this option hasn't already been registered and apply any value
         // that was specified on the command line or from a config file.
         if (it != m_options.end()) {
-            if (it->second.recognized)
+            if (it->recognized)
                 throw std::runtime_error("OptionsDB::AddFlag<>() : Option registered twice: " + name);
 
             // SetFrom[...]() sets "flag" to false on unrecognised options if they don't look like flags
             // (flags have no parameter on the command line or have an empty tag in XML)
-            if (!it->second.flag)
+            if (!it->flag)
                 ErrorLogger() << "OptionsDB::AddFlag<>() : Option " << name << " was specified with the value \""
-                              << it->second.ValueToString() << "\", but flags should not have values assigned to them.";
+                              << it->ValueToString() << "\", but flags should not have values assigned to them.";
             value = true; // if the flag is present at all its value is true
         }
 
-        Option&& option{short_name, name, value, value, std::move(description),
-                        std::move(validator), storable, true, true, std::move(section)};
-        m_options.insert_or_assign(name, std::move(option));
+        Option option{short_name, name, value, value, std::move(description),
+                      std::move(validator), storable, true, true, std::move(section)};
+        if (it != m_options.end())
+            *it = std::move(option);
+        else
+            m_options.push_back(std::move(option));
+
         m_dirty = true;
     }
 
@@ -399,21 +464,21 @@ public:
     template <typename T>
     void Set(std::string_view name, T&& value)
     {
-        auto it = m_options.find(name);
+        auto it = find_option(name);
         if (!OptionExists(it))
             throw std::runtime_error("OptionsDB::Set<>() : Attempted to set nonexistent option " + std::string{name});
-        m_dirty |= it->second.SetFromValue(std::forward<T>(value));
+        m_dirty |= it->SetFromValue(std::forward<T>(value));
     }
 
     /** Set the default value of option @p name to @p value */
     template <typename T>
     void SetDefault(std::string_view name, T&& value) {
-        auto it = m_options.find(name);
+        auto it = find_option(name);
         if (!OptionExists(it))
             throw std::runtime_error("Attempted to set default value of nonexistent option \"" + std::string{name});
-        if (it->second.default_value.type() != typeid(std::decay_t<T>))
+        if (it->default_value.type() != typeid(std::decay_t<T>))
             throw boost::bad_any_cast();
-        it->second.default_value = std::forward<T>(value);
+        it->default_value = std::forward<T>(value);
     }
 
     void SetToDefault(std::string_view name);
@@ -431,50 +496,33 @@ public:
       * XMLDoc \a doc */
     void SetFromXML(const XMLDoc& doc);
 
-    struct FO_COMMON_API Option {
-        Option() = default;
-        Option(char short_name_, std::string name_, boost::any value_,
-               boost::any default_value_, std::string description_,
-               std::unique_ptr<ValidatorBase>&& validator_, bool storable_, bool flag_,
-               bool recognized_, std::string section = std::string());
-        Option(Option&& rhs) = default;
-        virtual ~Option();
-        Option& operator=(Option&& rhs) = default;
+    /** Defines an option section with a description and optionally a option predicate.
+     *  @param name Name of section, typically in the form of a left side subset of an option name.
+     *  @param description Stringtable key used for local description
+     *  @param option_predicate Functor accepting a option name in the form of a std::string const ref and
+     *                          returning a bool. Options which return true are displayed in the section for @p name */
+    void AddSection(const char* name, std::string description,
+                    std::function<bool (const std::string&)> option_predicate = nullptr);
 
-        // SetFromValue returns true if this->value is successfully changed
-        template <typename T>
-        bool SetFromValue(T&& value_);
+private:
+    /** is option at \a it in OptionsDB? */
+    bool OptionExists(auto it) const
+        requires requires (ContainerType::const_iterator cit) { cit == it; }
+    { return it != m_options.end() && it->recognized; }
 
-        // SetFromString returns true if this->value is successfully changed
-        bool SetFromString(std::string_view str);
+    /** is current value of option at \a it the default value for that option? */
+    bool IsDefaultValue(auto it) const
+        requires requires (ContainerType::const_iterator cit) { cit == it; }
+    { return it != m_options.end() && it->ValueToString() == it->DefaultValueToString(); }
 
-        // SetToDefault returns true if this->value is successfully changed
-        bool SetToDefault();
+    void SetFromXMLRecursive(const XMLElement& elem, std::string_view section_name);
 
-        [[nodiscard]] std::string ValueToString() const;
-        [[nodiscard]] std::string DefaultValueToString() const;
-        [[nodiscard]] bool        ValueIsDefault() const;
+    /** Determine known option sections and which options each contains
+     *  A special "root" section is added for determined top-level sections */
+    std::unordered_map<std::string_view, std::set<std::string_view>>
+        OptionsBySection(bool allow_unrecognized = false) const;
 
-        using StringSet = boost::container::flat_set<std::string>;
-
-        std::string     name;               ///< the name of the option
-        char            short_name{0};      ///< the one character abbreviation of the option
-        bool            storable = false;   ///< whether this option can be stored in an XML config file for use across multiple runs
-        bool            flag = false;
-        bool            recognized = false; ///< whether this option has been registered before being specified via an XML input, unrecognized options can't be parsed (don't know their type) but are stored in case they are later registered with Add()
-        boost::any      value;              ///< the value of the option
-        boost::any      default_value;      ///< the default value of the option
-        std::string     description;        ///< a desription of the option
-        StringSet       sections;           ///< sections this option should display under
-
-        /** A validator for the option.  Flags have no validators; lexical_cast
-            boolean conversions are done for them. */
-        std::unique_ptr<ValidatorBase> validator;
-
-        OptionChangedSignalType option_changed_sig;
-    };
-
-    struct FO_COMMON_API OptionSection {
+    struct OptionSection {
         OptionSection() = default;
         OptionSection(OptionSection&&) = default;
         OptionSection(auto&& name_, auto&& desc_, auto&& pred_) :
@@ -487,36 +535,9 @@ public:
         std::function<bool (const std::string&)> option_predicate;
     };
 
-    /** Defines an option section with a description and optionally a option predicate.
-     *  @param name Name of section, typically in the form of a left side subset of an option name.
-     *  @param description Stringtable key used for local description
-     *  @param option_predicate Functor accepting a option name in the form of a std::string const ref and
-     *                          returning a bool. Options which return true are displayed in the section for @p name */
-    void AddSection(const char* name, std::string description,
-                    std::function<bool (const std::string&)> option_predicate = nullptr);
-
-private:
-    /** indicates whether the option referenced by \a it has been added to this
-        OptionsDB.  Overloaded for convenient use within other OptionsDB
-        functions */
-    bool OptionExists(std::map<std::string, Option>::const_iterator it) const
-    { return it != m_options.end() && it->second.recognized; }
-
-    /** indicates whether the current value of the option references by \a is
-        the default value for that option */
-    bool IsDefaultValue(std::map<std::string, Option>::const_iterator it) const
-    { return it != m_options.end() && it->second.ValueToString() == it->second.DefaultValueToString(); }
-
-    void SetFromXMLRecursive(const XMLElement& elem, std::string_view section_name);
-
-    /** Determine known option sections and which options each contains
-     *  A special "root" section is added for determined top-level sections */
-    std::unordered_map<std::string_view, std::set<std::string_view>> OptionsBySection(
-        bool allow_unrecognized = false) const;
-
-    std::map<std::string, Option, std::less<>> m_options;
-    std::vector<OptionSection>                 m_sections;
-    bool                                       m_dirty = false; //< has OptionsDB changed since last Commit()
+    ContainerType              m_options = [](){ ContainerType retval; retval.reserve(1000); return retval; }();
+    std::vector<OptionSection> m_sections = []() { std::vector<OptionSection> retval; retval.reserve(20); return retval; }();
+    bool                       m_dirty = false; //< has OptionsDB changed since last Commit()
 
     friend FO_COMMON_API OptionsDB& GetOptionsDB();
 };
@@ -552,7 +573,7 @@ bool OptionsDB::Option::SetFromValue(T&& value_) {
 
     if (changed) {
         value = std::forward<T>(value_);
-        option_changed_sig();
+        (*option_changed_sig)();
     }
     return changed;
 }

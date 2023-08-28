@@ -138,12 +138,8 @@ namespace {
 }
 
 
-CUIWnd::CUIWnd(std::string wnd_name,
-               GG::X x, GG::Y y,
-               GG::X w, GG::Y h,
-               GG::Flags<GG::WndFlag> flags,
-               std::string_view config_name,
-               bool visible) :
+CUIWnd::CUIWnd(std::string wnd_name, GG::X x, GG::Y y, GG::X w, GG::Y h,
+               GG::Flags<GG::WndFlag> flags, std::string_view config_name, bool visible) :
     GG::Wnd(x, y, w, h, flags & ~GG::RESIZABLE),
     m_resizable(flags & GG::RESIZABLE),
     m_closable(flags & CLOSABLE),
@@ -788,8 +784,7 @@ void CUIWnd::LoadOptions() {
 }
 
 std::string CUIWnd::AddWindowOptions(std::string_view config_name,
-                                     int left, int top,
-                                     int width, int height,
+                                     int left, int top, int width, int height,
                                      bool visible, bool pinned, bool minimized)
 {
     OptionsDB& db = GetOptionsDB();
@@ -860,7 +855,7 @@ std::string CUIWnd::AddWindowOptions(std::string_view config_name,
 void CUIWnd::InvalidateWindowOptions(std::string_view config_name) {
     OptionsDB& db = GetOptionsDB();
     std::string window_mode = db.Get<bool>("video.fullscreen.enabled") ? ".fullscreen" : ".windowed";
-    std::string edge_option_prefix = std::string{"ui."}.append(config_name).append(window_mode);
+    std::string edge_option_prefix{std::string{"ui."}.append(config_name).append(window_mode)};
 
     if (db.OptionExists(std::string{"ui."}.append(config_name).append(".initialized"))) {
         // Should be removed in window dtor.
@@ -903,7 +898,7 @@ void CUIWnd::InvalidateUnusedOptions() {
         if (window_name.empty())
             continue;
 
-        auto option_name = std::string{prefix}.append(window_name).append(".initialized");
+        auto option_name{std::string{prefix}.append(window_name).append(".initialized")};
 
         if (std::none_of(window_options.begin(), window_options.end(),
                          [&option_name](auto wo) { return wo == option_name; }))
@@ -924,8 +919,7 @@ void CUIWnd::SetParent(std::shared_ptr<GG::Wnd> wnd) {
 ///////////////////////////////////////
 // class CUIEditWnd
 ///////////////////////////////////////
-CUIEditWnd::CUIEditWnd(GG::X w, std::string prompt_text, std::string edit_text,
-                       GG::Flags<GG::WndFlag> flags) :
+CUIEditWnd::CUIEditWnd(GG::X w, std::string prompt_text, std::string edit_text, GG::Flags<GG::WndFlag> flags) :
     CUIWnd(std::move(prompt_text), GG::X0, GG::Y0, w, GG::Y1, flags)
 {
     m_edit = GG::Wnd::Create<CUIEdit>(std::move(edit_text));

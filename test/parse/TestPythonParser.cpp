@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(parse_game_rules) {
     auto game_rules = *Pending::WaitForPendingUnlocked(std::move(game_rules_p));
     BOOST_REQUIRE(!game_rules.empty());
     BOOST_REQUIRE(game_rules.contains("RULE_HABITABLE_SIZE_MEDIUM"));
-    BOOST_REQUIRE(GameRule::Type::TOGGLE == game_rules["RULE_ENABLE_ALLIED_REPAIR"].type);
+    BOOST_REQUIRE(GameRule::Type::TOGGLE == game_rules.at("RULE_ENABLE_ALLIED_REPAIR").type);
 }
 
 BOOST_AUTO_TEST_CASE(parse_techs) {
