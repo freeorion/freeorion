@@ -881,7 +881,6 @@ void ExtractGameStartMessageData(std::string text, bool& single_player_game, int
                                  bool& ui_data_available, SaveGameUIData& ui_data, bool& save_state_string_available,
                                  std::string& save_state_string, GalaxySetupData& galaxy_setup_data)
 {
-    std::this_thread::sleep_for(std::chrono::seconds(10));
     try {
         bool try_xml = false;
         bool did_some_binary_deserialization = false;
