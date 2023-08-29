@@ -274,7 +274,8 @@ void SDLGUI::SDLInit() {
         m_gl_context = SDL_GL_CreateContext(m_window);
     GLenum glew_status = glewInit();
 
-    if (!m_window || !m_gl_context || GLEW_OK != glew_status) {
+    const char* glew_error_string = reinterpret_cast<const char*>(glewGetErrorString(glew_status));
+    if (!m_window || !m_gl_context || ((GLEW_OK != glew_status) && (strcmp(glew_error_string, "Unknown Error")==0))) {
         std::string msg;
         if (!m_window) {
             msg = "Unable to create window.";
@@ -294,6 +295,9 @@ void SDLGUI::SDLInit() {
             SDL_MESSAGEBOX_ERROR, "OpenGL initialization error", msg.c_str(), nullptr);
         std::cerr << msg << std::endl;
         ExitApp(1);
+    }
+    if (GLEW_OK != glew_status) {
+        std::cerr << "[error] Ignored GLEW error when setting up OpenGL" << glew_error_string << std::endl;
     }
 
     SDL_ShowWindow(m_window);
