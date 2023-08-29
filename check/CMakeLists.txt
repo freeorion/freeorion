@@ -1,5 +1,4 @@
 find_package(CPPCheck)
-find_package(PythonInterp ${MINIMUM_PYTHON_VERSION})
 
 if(TARGET Cppcheck::cppcheck)
     add_custom_target(check-cpp
