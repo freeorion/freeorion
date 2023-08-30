@@ -105,6 +105,7 @@ namespace {
             static auto previous_mins = std::chrono::duration_cast<std::chrono::minutes>(clock_now.time_since_epoch()).count();
             if (now_mins > previous_mins) {
                 trace_count = 0;
+                previous_mins = now_mins;
             }
             if (trace_count < 11) {
                 trace_count++;
