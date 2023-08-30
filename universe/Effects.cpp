@@ -4153,10 +4153,6 @@ std::unique_ptr<Effect> SetOverlayTexture::Clone() const {
 ///////////////////////////////////////////////////////////
 // SetTexture                                            //
 ///////////////////////////////////////////////////////////
-SetTexture::SetTexture(std::string& texture) :
-    m_texture(std::move(texture))
-{}
-
 void SetTexture::Execute(ScriptingContext& context) const {
     if (!context.effect_target || context.effect_target->ObjectType() != UniverseObjectType::OBJ_PLANET)
         return;

@@ -822,7 +822,9 @@ private:
 /** Applies a texture to Planets. */
 class FO_COMMON_API SetTexture final : public Effect {
 public:
-    explicit SetTexture(std::string& texture);
+    explicit SetTexture(auto&& texture) :
+        m_texture(std::forward<decltype(texture)>(texture))
+    {}
 
     void Execute(ScriptingContext& context) const override;
 
