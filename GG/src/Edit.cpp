@@ -25,14 +25,6 @@ namespace {
         std::string m_name;
     };
 
-    struct InRange
-    {
-        InRange(CPSize value) : m_value(value) {}
-        bool operator()(const std::pair<CPSize, CPSize>& p) const
-        { return p.first < m_value && m_value < p.second; }
-        const CPSize m_value;
-    };
-
     Y HeightFromFont(const std::shared_ptr<Font>& font, unsigned int pixel_margin) noexcept
     { return font->Height() + 2 * static_cast<int>(pixel_margin); }
 }
@@ -516,7 +508,7 @@ void Edit::LosingFocus()
 
 std::pair<CPSize, CPSize> Edit::GetDoubleButtonDownWordIndices(CPSize char_index)
 {
-    unsigned int ticks = GUI::GetGUI()->Ticks();
+    const auto ticks = GUI::GetGUI()->Ticks();
     if (ticks - m_last_button_down_time <= GUI::GetGUI()->DoubleClickInterval())
         m_in_double_click_mode = true;
     m_last_button_down_time = ticks;
@@ -530,14 +522,10 @@ std::pair<CPSize, CPSize> Edit::GetDoubleButtonDownWordIndices(CPSize char_index
 
 std::pair<CPSize, CPSize> Edit::GetDoubleButtonDownDragWordIndices(CPSize char_index)
 {
-    std::pair<CPSize, CPSize> retval(char_index, char_index);
-
-    auto words = GUI::GetGUI()->FindWords(Text());
-    auto it = std::find_if(words.begin(), words.end(), InRange(char_index));
-
-    if (it != words.end())
-        retval = *it;
-    return retval;
+    const auto words = GUI::GetGUI()->FindWords(Text());
+    const auto it = std::find_if(words.begin(), words.end(),
+                                 [char_index](auto word) { return word.first < char_index && char_index < word.second; });
+    return (it != words.end()) ? *it : std::pair<CPSize, CPSize>{char_index, char_index};
 }
 
 void Edit::ClearDoubleButtonDownMode()
@@ -545,8 +533,8 @@ void Edit::ClearDoubleButtonDownMode()
 
 void Edit::ClearSelected()
 {
-    CPSize low = std::min(m_cursor_pos.first, m_cursor_pos.second);
-    CPSize high = std::max(m_cursor_pos.first, m_cursor_pos.second);
+    const CPSize low = std::min(m_cursor_pos.first, m_cursor_pos.second);
+    const CPSize high = std::max(m_cursor_pos.first, m_cursor_pos.second);
     if (m_cursor_pos.first < m_cursor_pos.second)
         m_cursor_pos.second = m_cursor_pos.first;
     else
@@ -562,8 +550,8 @@ void Edit::ClearSelected()
 
 void Edit::AdjustView()
 {
-    X text_space = ClientSize().x;
-    X first_char_offset = FirstCharOffset();
+    const X text_space = ClientSize().x;
+    const X first_char_offset = FirstCharOffset();
     if (m_cursor_pos.second < m_first_char_shown) { // if the caret is at a place left of the current visible area
         if (m_first_char_shown - m_cursor_pos.second < 5) // if the caret is less than five characters before m_first_char_shown
             m_first_char_shown = (5 < m_first_char_shown) ? m_first_char_shown - 5 : CP0; // try to move the caret by five characters
@@ -571,7 +559,7 @@ void Edit::AdjustView()
             m_first_char_shown = m_cursor_pos.second;
     } else if (Length() && text_space <= (m_cursor_pos.second ? GetLineData()[0].char_data[Value(m_cursor_pos.second - 1)].extent : X0) - first_char_offset) { // if the caret is moving to a place right of the current visible area
         // try to move the text by five characters, or to the end if caret is at a location before the end - 5th character
-        CPSize last_idx_to_use = (m_cursor_pos.second + 5 <= Length() - 1) ? m_cursor_pos.second + 5 : Length() - 1;
+        const CPSize last_idx_to_use = (m_cursor_pos.second + 5 <= Length() - 1) ? m_cursor_pos.second + 5 : Length() - 1;
         const std::vector<Font::LineData::CharData>& char_data = GetLineData()[0].char_data;
         // number of pixels that the caret position overruns the right side of text area
         X pixels_to_move = (char_data[Value(last_idx_to_use)].extent - first_char_offset) - text_space;
