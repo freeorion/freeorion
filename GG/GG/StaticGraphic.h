@@ -60,28 +60,27 @@ public:
                            Flags<WndFlag> flags = NO_WND_FLAGS);
 
     /** Returns the style of the StaticGraphic \see GraphicStyle */
-    Flags<GraphicStyle> Style() const;
+    Flags<GraphicStyle> Style() const noexcept { return m_style; }
 
     /** Returns the area in which the graphic is actually rendered, in
         UpperLeft()-relative coordinates.  This may not be the entire area of
         the StaticGraphic, based on the style being used. */
     Rect RenderedArea() const;
 
-    const SubTexture& GetTexture() const;
-    const std::shared_ptr<VectorTexture>& GetVectorTexture() const;
+    const auto& GetTexture() const noexcept { return m_graphic; }
+    const auto& GetVectorTexture() const noexcept { return m_vector_texture; }
 
     const boost::filesystem::path& GetTexturePath() const;
 
     void Render() override;
 
-    /** Sets the style flags, and perfroms sanity checking \see
-        GraphicStyle */
+    /** Sets the style flags, and perfroms sanity checking \see GraphicStyle */
     void SetStyle(Flags<GraphicStyle> style);
 
     /** Sets the texture */
-    void SetTexture(const std::shared_ptr<Texture>& texture);
-    void SetTexture(const SubTexture& subtexture);
-    void SetTexture(const std::shared_ptr<VectorTexture>& vector_texture);
+    void SetTexture(std::shared_ptr<Texture> texture);
+    void SetTexture(SubTexture subtexture);
+    void SetTexture(std::shared_ptr<VectorTexture> vector_texture);
 
 private:
     void ValidateStyle();   ///< ensures that the style flags are consistent

@@ -21,12 +21,6 @@
 #include <GG/WndEvent.h>
 #include <boost/signals2/signal.hpp>
 
-
-namespace boost { namespace archive {
-    class xml_oarchive;
-    class xml_iarchive;
-} }
-
 namespace GG {
 
 class Cursor;
@@ -321,7 +315,7 @@ public:
 
     /** Removes the desired font from the managed pool; since shared_ptr's are
         used, the font may be deleted much later. */
-    void                       FreeFont(const std::string& font_filename, unsigned int pts);
+    void FreeFont(const std::string& font_filename, unsigned int pts);
 
     /** Adds an already-constructed texture to the managed pool \warning
         calling code <b>must not</b> delete \a texture; the texture pool will
@@ -333,19 +327,11 @@ public:
 
     /** Loads the requested texture from file \a name; mipmap textures are
       * generated if \a mipmap is true. */
-    std::shared_ptr<Texture> GetTexture(const std::string& name, bool mipmap = false);
-
-    /** Loads the requested texture from file \a name; mipmap textures are
-      * generated if \a mipmap is true. */
     std::shared_ptr<Texture> GetTexture(const boost::filesystem::path& path, bool mipmap = false);
 
     /** Removes the desired texture from the managed pool; since shared_ptr's
       * are used, the texture may be deleted much later. */
-    void                       FreeTexture(const std::string& name);
-
-    /** Removes the desired texture from the managed pool; since shared_ptr's
-      * are used, the texture may be deleted much later. */
-    void                       FreeTexture(const boost::filesystem::path& path);
+    void FreeTexture(const boost::filesystem::path& path);
 
     /** Sets the currently-installed style factory. */
     void SetStyleFactory(const std::shared_ptr<StyleFactory>& factory);

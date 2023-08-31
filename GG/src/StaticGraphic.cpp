@@ -80,9 +80,6 @@ StaticGraphic::StaticGraphic(std::shared_ptr<VectorTexture> texture,
     SetColor(CLR_WHITE);
 }
 
-Flags<GraphicStyle> StaticGraphic::Style() const
-{ return m_style; }
-
 Rect StaticGraphic::RenderedArea() const
 {
     Pt ul = UpperLeft(), lr = LowerRight();
@@ -142,15 +139,9 @@ Rect StaticGraphic::RenderedArea() const
     return Rect(pt1, pt2);
 }
 
-const SubTexture& StaticGraphic::GetTexture() const
-{ return m_graphic; }
-
-const std::shared_ptr<VectorTexture>& StaticGraphic::GetVectorTexture() const
-{ return m_vector_texture; }
-
 const boost::filesystem::path& StaticGraphic::GetTexturePath() const
 {
-    static boost::filesystem::path EMPTY_PATH;
+    static const boost::filesystem::path EMPTY_PATH;
 
     if (const Texture* texture = m_graphic.GetTexture())
         return texture->Path();
@@ -162,7 +153,7 @@ const boost::filesystem::path& StaticGraphic::GetTexturePath() const
 
 void StaticGraphic::Render()
 {
-    Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
+    const Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
     glColor(color_to_use);
     Rect rendered_area = RenderedArea();
 
@@ -179,19 +170,23 @@ void StaticGraphic::SetStyle(Flags<GraphicStyle> style)
     ValidateStyle();
 }
 
-void StaticGraphic::SetTexture(const std::shared_ptr<Texture>& texture)
-{ SetTexture(SubTexture(texture, X0, Y0, texture->DefaultWidth(), texture->DefaultHeight())); }
-
-void StaticGraphic::SetTexture(const SubTexture& subtexture)
+void StaticGraphic::SetTexture(std::shared_ptr<Texture> texture)
 {
-    m_graphic = subtexture;
+    const auto w = texture->DefaultWidth();
+    const auto h = texture->DefaultHeight();
+    SetTexture(SubTexture(std::move(texture), X0, Y0, w, h));
+}
+
+void StaticGraphic::SetTexture(SubTexture subtexture)
+{
+    m_graphic = std::move(subtexture);
     if (m_vector_texture)
         m_vector_texture.reset();
 }
 
-void StaticGraphic::SetTexture(const std::shared_ptr<VectorTexture>& vector_texture)
+void StaticGraphic::SetTexture(std::shared_ptr<VectorTexture> vector_texture)
 {
-    m_vector_texture = vector_texture;
+    m_vector_texture = std::move(vector_texture);
     m_graphic.Clear();
 }
 
