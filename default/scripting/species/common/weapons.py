@@ -116,7 +116,7 @@ GOOD_WEAPONS = [
 ]
 ULTIMATE_WEAPONS = [
     EffectsGroup(
-        description="GOOD_WEAPONS_DESC",
+        description="ULTIMATE_WEAPONS_DESC",
         scope=IsSource,
         activation=Ship
         & Armed
