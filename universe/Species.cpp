@@ -189,38 +189,55 @@ namespace {
         return retval;
     }
 
+    auto NegativeSpeciesOpinion() { // (-opinion)
+        return std::make_unique<ValueRef::Operation<double>>(
+            ValueRef::OpType::NEGATE,
+            std::make_unique<ValueRef::ComplexVariable<double>>(
+                "SpeciesEmpireOpinion",
+                std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"),
+                nullptr, nullptr,
+                std::make_unique<ValueRef::Variable<std::string>>(ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE,
+                                                                  "Species")
+            )
+        );
+    }
+
+    auto ScaledPop() { // (pop * scale_factor)
+        return std::make_unique<ValueRef::Operation<double>>(
+            ValueRef::OpType::TIMES,
+            std::make_unique<ValueRef::ComplexVariable<double>>(
+                "GameRule", nullptr, nullptr, nullptr,
+                std::make_unique<ValueRef::Constant<std::string>>("RULE_ANNEX_COST_SCALING")),
+            std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE,
+                                                         "Population"));
+    }
+
+    auto ExpBaseSpeciesOpinion() { // (base^(-opinion))
+        return std::make_unique<ValueRef::Operation<double>>(
+            ValueRef::OpType::TIMES,
+            std::make_unique<ValueRef::Operation<double>>(
+                ValueRef::OpType::EXPONENTIATE,
+                std::make_unique<ValueRef::ComplexVariable<double>>(
+                    "GameRule", nullptr, nullptr, nullptr,
+                    std::make_unique<ValueRef::Constant<std::string>>("RULE_ANNEX_COST_EXP_BASE")),
+                NegativeSpeciesOpinion()
+            ),
+            ScaledPop()
+        );
+    }
+
+    auto MinimumAnnexCost() {
+        return std::make_unique<ValueRef::ComplexVariable<double>>(
+            "GameRule", nullptr, nullptr, nullptr,
+            std::make_unique<ValueRef::Constant<std::string>>("RULE_ANNEX_COST_MINIMUM"));
+    }
+
+    // TODO: add building costs / time dependence to annexation costs
     auto DefaultAnnexationCost() {
         return std::make_unique<ValueRef::Operation<double>>(
             ValueRef::OpType::MAXIMUM,
-            std::make_unique<ValueRef::ComplexVariable<double>>(
-                "GameRule", nullptr, nullptr, nullptr,
-                std::make_unique<ValueRef::Constant<std::string>>("RULE_ANNEX_COST_MINIMUM")),
-            std::make_unique<ValueRef::Operation<double>>(
-                ValueRef::OpType::TIMES,
-                std::make_unique<ValueRef::Operation<double>>(
-                    ValueRef::OpType::EXPONENTIATE,
-                    std::make_unique<ValueRef::ComplexVariable<double>>(
-                        "GameRule", nullptr, nullptr, nullptr,
-                        std::make_unique<ValueRef::Constant<std::string>>("RULE_ANNEX_COST_EXP_BASE")),
-                    std::make_unique<ValueRef::Operation<double>>(
-                        ValueRef::OpType::NEGATE,
-                        std::make_unique<ValueRef::ComplexVariable<double>>(
-                            "SpeciesEmpireOpinion",
-                            std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"),
-                            nullptr, nullptr,
-                            std::make_unique<ValueRef::Variable<std::string>>(ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE,
-                                                                              "Species")
-                        )
-                    )
-                ),
-                std::make_unique<ValueRef::Operation<double>>(
-                    ValueRef::OpType::TIMES,
-                    std::make_unique<ValueRef::ComplexVariable<double>>(
-                        "GameRule", nullptr, nullptr, nullptr,
-                        std::make_unique<ValueRef::Constant<std::string>>("RULE_ANNEX_COST_SCALING")),
-                    std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE,
-                                                                 "Population"))
-            )
+            MinimumAnnexCost(),
+            ExpBaseSpeciesOpinion()
         );
     }
 }
