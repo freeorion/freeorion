@@ -6,7 +6,6 @@ from focs._effects import (
     LocalCandidate,
     MaxOf,
     MinOf,
-    NoEffect,
     Planet,
     Population,
     SetSpeciesOpinion,
@@ -37,7 +36,6 @@ def COMMON_OPINION_EFFECTS(name: str):
         scope=Capital,
         stackinggroup="%s_TOWARDS_TARGET_OPINION_OF_EMPIRE" % name,
         effects=[
-            NoEffect,
             SetSpeciesTargetOpinion(  # baseline opinion
                 species=ThisSpecies,
                 empire=Target.Owner,

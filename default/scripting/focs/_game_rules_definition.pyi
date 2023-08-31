@@ -13,5 +13,5 @@ def GameRule(
     default: R = ...,
     min: float = 0.0,
     max: float = 0.0,
-    allowed: list[str] = [],
+    allowed: list[str] = ...,
 ) -> _GameRuleDefinition: ...

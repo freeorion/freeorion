@@ -164,7 +164,7 @@ COMMON_HAPPINESS_EFFECTS = [
     ),
     EffectsGroup(  # when not owned by an empire, directly apply baseline stability
         scope=IsSource,
-        activation=Unowned & (GameRule(type=int, name="RULE_BASELINE_PLANET_STABILITY") != 0),
+        activation=GameRule(type=int, name="RULE_BASELINE_PLANET_STABILITY") != 0,
         accountinglabel="RULE_BASELINE_PLANET_STABILITY",
         effects=SetTargetHappiness(value=Value + GameRule(type=float, name="RULE_BASELINE_PLANET_STABILITY")),
     ),
