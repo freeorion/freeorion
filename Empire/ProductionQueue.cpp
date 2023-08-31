@@ -707,11 +707,14 @@ void ProductionQueue::Update(const ScriptingContext& context,
     update_timer.EnterSection("Cacheing Costs");
     // cache producibility, and production item costs and times
     // initialize production queue item completion status to 'never'
-    std::vector<uint8_t> is_producible;
-    is_producible.reserve(m_queue.size());
-    std::transform(m_queue.begin(), m_queue.end(), std::back_inserter(is_producible),
-                   [&context, &empire](const auto& elem)
-                   { return empire->ProducibleItem(elem.item, elem.location, context); });
+    auto is_producible = [this, &context, &empire]() {
+        std::vector<uint8_t> is_producible;
+        is_producible.reserve(m_queue.size());
+        std::transform(m_queue.begin(), m_queue.end(), std::back_inserter(is_producible),
+                       [&context, &empire](const auto& elem)
+                       { return empire->ProducibleItem(elem.item, elem.location, context); });
+        return is_producible;
+    }();
 
     boost::unordered_map<std::pair<ProductionQueue::ProductionItem, int>,
                          std::pair<float, int>, PQCacheHasher> queue_item_costs_and_times;
