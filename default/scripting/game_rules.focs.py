@@ -1,5 +1,3 @@
-from focs._game_rules_definition import GameRule
-
 GameRule(
     name="RULE_SHIP_HULL_COST_FACTOR",
     description="RULE_SHIP_HULL_COST_FACTOR_DESC",
