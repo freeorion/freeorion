@@ -15,6 +15,7 @@
 
 #include <atomic>
 #include <map>
+#include <mutex>
 
 class Sound::Impl {
 public:
