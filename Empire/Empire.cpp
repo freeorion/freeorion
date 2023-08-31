@@ -1300,7 +1300,7 @@ Empire::IntSet Empire::ExploredSystems() const {
     const auto rng = m_explored_systems | range_keys;
     static_assert(std::is_same_v<std::decay_t<decltype(m_explored_systems)>, std::map<int, int>>,
                   "make sure m_explored_systems is sorted for use of ordered_unique_range below");
-#if BOOST_VERSION > 107400
+#if BOOST_VERSION > 107800
     return {boost::container::ordered_unique_range, rng.begin(), rng.end()};
 #else
     Empire::IntSet::sequence_type scratch;

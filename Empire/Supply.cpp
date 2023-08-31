@@ -419,7 +419,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
                           std::map<int, std::pair<float, float>>>,
                           "make sure supply ranges are sorted for use with ordered_unique_range below");
             auto sys_ids_rng = supply_ranges | range_keys;
-#if BOOST_VERSION > 107400
+#if BOOST_VERSION > 107800
             systems_with_supply_in_them.insert(boost::container::ordered_unique_range,
                                                sys_ids_rng.begin(), sys_ids_rng.end());
 #else

@@ -310,7 +310,7 @@ Universe::IDSet Universe::EmpireVisibleObjectIDs(int empire_id, const EmpireMana
 
     auto ids_rng = m_objects->allWithIDs() | range_keys | range_filter(is_visible_to_an_empire);
     Universe::IDSet retval;
-#if BOOST_VERSION > 107400
+#if BOOST_VERSION > 107800
     retval.reserve(m_objects->size());
     retval.insert(boost::container::ordered_unique_range, ids_rng.begin(), ids_rng.end());
 #else
