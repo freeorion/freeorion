@@ -12,6 +12,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include "Building.h"
+#include "BuildingType.h"
 #include "Enums.h"
 #include "Field.h"
 #include "Fighter.h"
@@ -2335,23 +2336,27 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
 
     }
     else if (variable_name == "ShipDesignCost") {
-        int design_id = INVALID_DESIGN_ID;
-        if (m_int_ref1)
-            design_id = m_int_ref1->Eval(context);
-
+        const int design_id = m_int_ref1 ? m_int_ref1->Eval(context) : INVALID_DESIGN_ID;
         const ShipDesign* design = context.ContextUniverse().GetShipDesign(design_id);
         if (!design)
             return 0.0;
 
-        int empire_id = ALL_EMPIRES;
-        if (m_int_ref2)
-            empire_id = m_int_ref2->Eval(context);
-
-        int location_id = INVALID_OBJECT_ID;
-        if (m_int_ref3)
-            location_id = m_int_ref3->Eval(context);
+        const int empire_id = m_int_ref2 ? m_int_ref2->Eval(context) : ALL_EMPIRES;
+        const int location_id = m_int_ref3 ? m_int_ref3->Eval(context) : INVALID_OBJECT_ID;
 
         return design->ProductionCost(empire_id, location_id, context);
+
+    }
+    else if (variable_name == "BuildingTypeCost") {
+        const std::string building_type_name = m_string_ref1 ? m_string_ref1->Eval(context) : "";
+        const auto* building_type = GetBuildingType(building_type_name);
+        if (!building_type)
+            return 0.0;
+
+        const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
+        const int location_id = m_int_ref2 ? m_int_ref2->Eval(context) : INVALID_OBJECT_ID;
+
+        return building_type->ProductionCost(empire_id, location_id, context);
 
     }
     else if (variable_name == "EmpireMeterValue") {

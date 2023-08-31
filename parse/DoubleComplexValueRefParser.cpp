@@ -72,6 +72,20 @@ namespace parse {
                 nullptr, nullptr)) ]
             ;
 
+        name_empire_location_rule
+            = (     tok.BuildingTypeCost_
+                 >  label(tok.type_) > string_grammar
+                 >  label(tok.empire_) > simple_int
+                 >  label(tok.location_) > simple_int
+              ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+                _1,
+                deconstruct_movable_(_3, _pass),
+                deconstruct_movable_(_4, _pass),
+                nullptr,
+                deconstruct_movable_(_2, _pass),
+                nullptr)) ]
+            ;
+
         empire_meter_value
             = (     tok.EmpireMeterValue_
                  >  label(tok.empire_) > simple_int
@@ -219,6 +233,7 @@ namespace parse {
         start
             %=  name_property_rule
             |   id_empire_location_rule
+            |   name_empire_location_rule
             |   empire_meter_value
             |   empire_stockpile
             |   direct_distance
@@ -233,6 +248,7 @@ namespace parse {
 
         name_property_rule.name("GameRule; Hull Fuel, Stealth, Structure, or Speed; or PartCapacity or PartSecondaryStat");
         id_empire_location_rule.name("ShipDesignCost");
+        name_empire_location_rule.name("BuildingTypeCost");
         empire_meter_value.name("EmpireMeterValue");
         empire_stockpile.name("EmpireStockpile");
         direct_distance.name("DirectDistanceBetween");
@@ -247,6 +263,7 @@ namespace parse {
 #if DEBUG_DOUBLE_COMPLEX_PARSERS
         debug(name_property_rule);
         debug(id_empire_location_rule);
+        debug(name_empire_location_rule);
         debug(empire_meter_value);
         debug(empire_stockpile);
         debug(direct_distance);
