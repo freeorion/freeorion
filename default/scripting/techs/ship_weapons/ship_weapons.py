@@ -1,5 +1,5 @@
 from common.misc import SHIP_WEAPON_DAMAGE_FACTOR
-from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY, TARGET_EARLY_BEFORE_SCALING_PRIORITY
+from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
 from focs._effects import (
     CurrentContent,
     CurrentTurn,
@@ -23,25 +23,6 @@ from techs.techs import (
     EMPIRE_OWNED_SHIP_WITH_PART,
     SHIP_PART_UPGRADE_RESUPPLY_CHECK,
 )
-
-
-# Set the max meters for damage and number of shots to the base value from the ship part specification.
-# So direct weapon parts with NoDefaultCapacityEffect will not have the damage/PartCapacity scaled by SHIP_DAMAGE_WEAPON_FACTOR.
-# NB: The default effects of a direct weapon part
-#     increases the part's Capacity MaxMeter by the PartCapacity (which is the capacity from the part definition scaled by the game rule)
-#     increases the part's SecondarStat MaxMeter by the PartSecondaryStat
-def SET_BOTH_MAX_CAPACITIES_FROM_PART_CAPACITIES(part_name: str):
-    return EffectsGroup(
-        scope=Ship & (OwnedBy(empire=Source.Owner) | Unowned) & DesignHasPart(name=part_name),
-        accountinglabel=part_name,
-        # The standard/default effect happen at default priority, before any scripted ones happen
-        # In order for this tech effect to also happen first, we make it happen slightly earlier
-        priority=TARGET_EARLY_BEFORE_SCALING_PRIORITY,
-        effects=[
-            SetMaxCapacity(partname=part_name, value=PartCapacity(name=part_name)),
-            SetMaxSecondaryStat(partname=part_name, value=PartSecondaryStat(name=part_name)),
-        ],
-    )
 
 
 # Tech based setting of damage and number of shots of a weapon. Registers named reals for use in the pedia.
