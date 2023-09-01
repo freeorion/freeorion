@@ -638,11 +638,11 @@ void RegisterGlobalsEffects(py::dict& globals) {
 
     // give_empire_unlockable_item_enum_grammar 
     for (const auto& uit : std::initializer_list<std::pair<const char*, UnlockableItemType>>{
-            {"UnlockBuildingType", UnlockableItemType::UIT_BUILDING},
-            {"UnlockShipPart", UnlockableItemType::UIT_SHIP_PART},
-            {"UnlockShipHull", UnlockableItemType::UIT_SHIP_HULL},
+            {"GiveEmpireBuilding", UnlockableItemType::UIT_BUILDING},
+            {"GiveEmpireShipPart", UnlockableItemType::UIT_SHIP_PART},
+            {"GiveEmpireShipHull", UnlockableItemType::UIT_SHIP_HULL},
             {"GiveEmpireTech", UnlockableItemType::UIT_TECH},
-            {"UnlockPolicy", UnlockableItemType::UIT_POLICY}})
+            {"GiveEmpirePolicy", UnlockableItemType::UIT_POLICY}})
     {
         const auto u = uit.second;
         globals[uit.first] = py::raw_function([u](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_give_empire_item_(u, args, kw); });
