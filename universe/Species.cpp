@@ -84,6 +84,9 @@ namespace {
         rules.Add<double>(UserStringNop("RULE_ANNEX_COST_SCALING"),
                           UserStringNop("RULE_ANNEX_COST_SCALING_DESC"),
                           "BALANCE_STABILITY", 5.0, true, RangedValidator<double>(0.0, 50.0));
+        rules.Add<double>(UserStringNop("RULE_BUILDING_ANNEX_COST_SCALING"),
+                          UserStringNop("RULE_BUILDING_ANNEX_COST_SCALING_DESC"),
+                          "BALANCE_STABILITY", 0.25, true, RangedValidator<double>(0.0, 5.0));
         rules.Add<double>(UserStringNop("RULE_ANNEX_COST_MINIMUM"),
                           UserStringNop("RULE_ANNEX_COST_MINIMUM_DESC"),
                           "BALANCE_STABILITY", 5.0, true, RangedValidator<double>(0.0, 50.0));
@@ -189,42 +192,62 @@ namespace {
         return retval;
     }
 
-    auto NegativeSpeciesOpinion() { // (-opinion)
+    auto NegativeSpeciesOpinion(std::unique_ptr<ValueRef::Variable<int>>&& empire_id_ref) { // (-opinion)
         return std::make_unique<ValueRef::Operation<double>>(
             ValueRef::OpType::NEGATE,
             std::make_unique<ValueRef::ComplexVariable<double>>(
                 "SpeciesEmpireOpinion",
-                std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"),
+                std::move(empire_id_ref),
                 nullptr, nullptr,
-                std::make_unique<ValueRef::Variable<std::string>>(ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE,
-                                                                  "Species")
+                std::make_unique<ValueRef::Variable<std::string>>(
+                    ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE, "Species")
             )
         );
     }
 
-    auto ScaledPop() { // (pop * scale_factor)
+    template <typename VR>
+    concept evalable = requires(const VR vr, const ScriptingContext c) { vr->Eval(c); };
+
+    auto operator+(evalable auto&& lhs, evalable auto&& rhs) {
         return std::make_unique<ValueRef::Operation<double>>(
-            ValueRef::OpType::TIMES,
-            std::make_unique<ValueRef::ComplexVariable<double>>(
-                "GameRule", nullptr, nullptr, nullptr,
-                std::make_unique<ValueRef::Constant<std::string>>("RULE_ANNEX_COST_SCALING")),
-            std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE,
-                                                         "Population"));
+            ValueRef::OpType::PLUS, std::forward<decltype(lhs)>(lhs), std::forward<decltype(rhs)>(rhs));
     }
 
-    auto ExpBaseSpeciesOpinion() { // (base^(-opinion))
+    auto operator*(evalable auto&& lhs, evalable auto&& rhs) {
         return std::make_unique<ValueRef::Operation<double>>(
-            ValueRef::OpType::TIMES,
-            std::make_unique<ValueRef::Operation<double>>(
-                ValueRef::OpType::EXPONENTIATE,
-                std::make_unique<ValueRef::ComplexVariable<double>>(
-                    "GameRule", nullptr, nullptr, nullptr,
-                    std::make_unique<ValueRef::Constant<std::string>>("RULE_ANNEX_COST_EXP_BASE")),
-                NegativeSpeciesOpinion()
-            ),
-            ScaledPop()
-        );
+            ValueRef::OpType::TIMES, std::forward<decltype(lhs)>(lhs), std::forward<decltype(rhs)>(rhs));
     }
+
+    auto operator^(evalable auto&& lhs, evalable auto&& rhs) {
+        return std::make_unique<ValueRef::Operation<double>>(
+            ValueRef::OpType::EXPONENTIATE, std::forward<decltype(lhs)>(lhs), std::forward<decltype(rhs)>(rhs));
+    }
+
+    auto AnnexCostScaling() {
+        return std::make_unique<ValueRef::ComplexVariable<double>>(
+            "GameRule", nullptr, nullptr, nullptr,
+            std::make_unique<ValueRef::Constant<std::string>>("RULE_ANNEX_COST_SCALING"));
+    }
+
+    auto LocalCandidatePop() {
+        return std::make_unique<ValueRef::Variable<double>>(
+            ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE, "Population");
+    }
+
+    auto ScaledPop() // (pop * scale_factor)
+    { return AnnexCostScaling() * LocalCandidatePop(); }
+
+    auto BaseAnnexCost() {
+        return std::make_unique<ValueRef::ComplexVariable<double>>(
+            "GameRule", nullptr, nullptr, nullptr,
+            std::make_unique<ValueRef::Constant<std::string>>("RULE_ANNEX_COST_EXP_BASE"));
+    }
+
+    auto SourceOwner()
+    { return std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"); }
+
+    auto ExpBaseSpeciesOpinion() // (base^(-opinion))
+    { return BaseAnnexCost() ^ NegativeSpeciesOpinion(SourceOwner()); }
 
     auto MinimumAnnexCost() {
         return std::make_unique<ValueRef::ComplexVariable<double>>(
@@ -232,12 +255,40 @@ namespace {
             std::make_unique<ValueRef::Constant<std::string>>("RULE_ANNEX_COST_MINIMUM"));
     }
 
-    // TODO: add building costs / time dependence to annexation costs
+    auto BuildingAnnexCostScaling() {
+        return std::make_unique<ValueRef::ComplexVariable<double>>(
+            "GameRule", nullptr, nullptr, nullptr,
+            std::make_unique<ValueRef::Constant<std::string>>("RULE_BUILDING_ANNEX_COST_SCALING"));
+    }
+
+    auto BuildingCostsSum(std::unique_ptr<ValueRef::Variable<int>>&& for_empire_ref) {
+        return std::make_unique<ValueRef::Statistic<double>>(
+            std::make_unique<ValueRef::ComplexVariable<double>>(
+                "BuildingTypeCost",                                                               // cost to produce buildings
+                std::move(for_empire_ref),                                                        // by passed-in empire
+                std::make_unique<ValueRef::Variable<int>>(
+                    ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE, "PlanetID"),    // at the planet the building is already on
+                nullptr,
+                std::make_unique<ValueRef::Variable<std::string>>(
+                    ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE, "BuildingType") // for each building's building type
+            ),
+            ValueRef::StatisticType::SUM,
+            std::make_unique<Condition::And>(
+                std::make_unique<Condition::Type>(UniverseObjectType::OBJ_BUILDING),
+                std::make_unique<Condition::NoOp>(),
+                std::make_unique<Condition::OnPlanet>(                  // for buildings on the planet being annexed
+                    std::make_unique<ValueRef::Variable<int>>(
+                        ValueRef::ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE, "ID")
+                )
+            )
+        );
+    }
+
     auto DefaultAnnexationCost() {
         return std::make_unique<ValueRef::Operation<double>>(
             ValueRef::OpType::MAXIMUM,
             MinimumAnnexCost(),
-            ExpBaseSpeciesOpinion()
+            (ScaledPop() * ExpBaseSpeciesOpinion()) + (BuildingAnnexCostScaling() * BuildingCostsSum(SourceOwner()))
         );
     }
 }

@@ -1500,10 +1500,16 @@ RULE_ANNEX_COST_EXP_BASE_DESC
 Base of exponential determining how annexation costs scale with species empire opinion.
 
 RULE_ANNEX_COST_SCALING
-Annex Cost Scaling
+Annex Cost Population Scaling
 
 RULE_ANNEX_COST_SCALING_DESC
 Scaling factor for how annexation costs scale with planet population.
+
+RULE_BUILDING_ANNEX_COST_SCALING
+Annex Cost Building Scaling
+
+RULE_BUILDING_ANNEX_COST_SCALING_DESC
+Scaling factor for how annexation costs scale with building production cost.
 
 RULE_ANNEX_COST_MINIMUM
 Annex Cost Minimum
