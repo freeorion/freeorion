@@ -35,11 +35,12 @@ namespace {
 
 Edit::Edit(std::string str, std::shared_ptr<Font> font,
            Clr color, Clr text_color, Clr interior) :
-    TextControl(X0, Y0, X1, HeightFromFont(font, PIXEL_MARGIN), std::move(str), font,
+    TextControl(X0, Y0, X1, HeightFromFont(font, PIXEL_MARGIN), "", font,
                 text_color, FORMAT_LEFT | FORMAT_IGNORETAGS, INTERACTIVE | REPEAT_KEY_PRESS),
     m_int_color(interior)
 {
-    SetColor(color);
+    Edit::SetColor(color);
+    Edit::SetText(std::move(str));
 
     if (INSTRUMENT_ALL_SIGNALS) {
         EditedSignal.connect(EditedEcho("Edit::EditedSignal"));

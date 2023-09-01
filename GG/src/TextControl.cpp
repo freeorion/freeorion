@@ -27,7 +27,7 @@ TextControl::TextControl(X x, Y y, X w, Y h, std::string str,
     m_font(std::move(font))
 {
     ValidateFormat();
-    SetText(std::move(str));
+    TextControl::SetText(std::move(str));
 }
 
 TextControl::TextControl(X x, Y y, X w, Y h, std::string str,
@@ -41,7 +41,7 @@ TextControl::TextControl(X x, Y y, X w, Y h, std::string str,
     m_font(std::move(font))
 {
     ValidateFormat();
-    SetText(std::move(str), std::move(text_elements));
+    TextControl::SetText(std::move(str), std::move(text_elements));
 }
 
 TextControl::TextControl(const TextControl& that) :
@@ -75,9 +75,8 @@ TextControl& TextControl::operator=(const TextControl& that)
     m_cached_minusable_size_width = that.m_cached_minusable_size_width;
     m_cached_minusable_size = that.m_cached_minusable_size;
 
-    for (auto& elem : m_text_elements) {
+    for (auto& elem : m_text_elements)
         elem->Bind(m_text);
-    }
 
     return *this;
 }

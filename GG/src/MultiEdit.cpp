@@ -68,12 +68,15 @@ namespace {
 ////////////////////////////////////////////////
 MultiEdit::MultiEdit(std::string str, const std::shared_ptr<Font>& font, Clr color,
                      Flags<MultiEditStyle> style, Clr text_color, Clr interior) :
-    Edit(std::move(str), font, color, text_color, interior),
+    Edit("", font, color, text_color, interior),
     m_style(style),
     m_cursor_begin(0, CP0),
     m_cursor_end(0, CP0),
     m_max_lines_history(ALL_LINES)
-{ SetColor(color); }
+{
+    SetColor(color);
+    Edit::SetText(std::move(str));
+}
 
 void MultiEdit::CompleteConstruction()
 {
@@ -272,8 +275,8 @@ void MultiEdit::SetText(std::string str)
         if (m_max_lines_history == ALL_LINES) {
             TextControl::SetText(std::move(str));
         } else {
-            auto text_elements = GetFont()->ExpensiveParseFromTextToTextElements(str, format);
-            auto lines = GetFont()->DetermineLines(str, format, cl_sz.x, text_elements);
+            const auto text_elements = GetFont()->ExpensiveParseFromTextToTextElements(str, format);
+            const auto lines = GetFont()->DetermineLines(str, format, cl_sz.x, text_elements);
             if (m_max_lines_history < lines.size()) {
                 std::size_t first_line = 0;
                 std::size_t last_line = m_max_lines_history - 1;

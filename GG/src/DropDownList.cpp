@@ -34,7 +34,7 @@ public:
     /** ModalListPicker is run then it returns true if it was not destroyed while running.*/
     bool RunAndCheckSelfDestruction();
     void EndRun() override;
-    void Render() override {}
+    void Render() noexcept override {}
 
     [[nodiscard]] bool Dropped() const noexcept { return m_dropped.load(); }
 
@@ -181,7 +181,7 @@ void ModalListPicker::CompleteConstruction()
 }
 
 ModalListPicker::~ModalListPicker()
-{ EndRun(); }
+{ ModalListPicker::EndRun(); }
 
 bool ModalListPicker::RunAndCheckSelfDestruction()
 {
@@ -544,7 +544,7 @@ DropDownList::DropDownList(std::size_t num_shown_elements, Clr color) :
 
     // InitBuffer here prevents a crash if DropDownList is constructed in
     // the prerender phase.
-    InitBuffer();
+    DropDownList::InitBuffer();
 
     // Set a non zero client min size.
     SetMinSize(Pt(X(1 + 2 * ListBox::BORDER_THICK), Y(1 + 2 * ListBox::BORDER_THICK)));
@@ -553,7 +553,7 @@ DropDownList::DropDownList(std::size_t num_shown_elements, Clr color) :
 }
 
 DropDownList::~DropDownList()
-{ m_modal_picker->EndRun(); }
+{ m_modal_picker->ModalListPicker::EndRun(); }
 
 DropDownList::iterator DropDownList::CurrentItem() const noexcept
 { return m_modal_picker->CurrentItem(); }
