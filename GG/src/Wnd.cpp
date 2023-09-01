@@ -33,6 +33,12 @@ static_assert(trimmed_result == "INVALID = -1");
 
 constexpr auto split_apply_result = GG::EnumMap<TestEnum>::SplitApply(
     test_enum_text, GG::EnumMap<TestEnum>::Trim, ',');
+static_assert(split_apply_result.first == 5);
+static_assert(split_apply_result.second[0] == "INVALID = -1");
+static_assert(split_apply_result.second[1] == "VALID = 0");
+static_assert(split_apply_result.second[2] == "MAX = 1");
+static_assert(split_apply_result.second[3] == "OUT_OF_RANGE");
+static_assert(split_apply_result.second[4] == "END");
 
 constexpr GG::EnumMap<TestEnum> cmap(test_enum_text);
 static_assert(cmap["MAX"] == TestEnum::MAX);

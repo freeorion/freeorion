@@ -1043,6 +1043,7 @@ std::string SortedNumberOf::Description(bool negated) const {
 
         case SortingMethod::SORT_UNIQUE:
             description_str = (!negated) ? UserString("DESC_UNIQUE_OF") : UserString("DESC_UNIQUE_OF_NOT");
+            break;
 
         default:
             break;

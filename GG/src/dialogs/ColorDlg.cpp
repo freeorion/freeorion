@@ -311,7 +311,7 @@ void ColorDlg::ColorDisplay::Render()
     full_alpha_color.a = 255;
 
 
-    GLfloat verts[12];
+    GLfloat verts[12] = {};
     // upper left: full alpha colour
     verts[0] = Value(lr.x); verts[1] = Value(ul.y);
     verts[2] = Value(ul.x); verts[3] = Value(ul.y);
@@ -628,19 +628,19 @@ void ColorDlg::AlphaSliderChanged(int value, int low, int high)
 
 void ColorDlg::HueSliderChanged(int value, int low, int high)
 {
-    m_current_color.h = value / static_cast<double>(high - low);
+    m_current_color.h = static_cast<double>(value) / static_cast<double>(high - low);
     ColorChanged(m_current_color);
 }
 
 void ColorDlg::SaturationSliderChanged(int value, int low, int high)
 {
-    m_current_color.s = value / static_cast<double>(high - low);
+    m_current_color.s = static_cast<double>(value) / static_cast<double>(high - low);
     ColorChanged(m_current_color);
 }
 
 void ColorDlg::ValueSliderChanged(int value, int low, int high)
 {
-    m_current_color.v = value / static_cast<double>(high - low);
+    m_current_color.v = static_cast<double>(value) / static_cast<double>(high - low);
     ColorChanged(m_current_color);
 }
 

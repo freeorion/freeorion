@@ -288,7 +288,7 @@ T Slider<T>::PtToPosn(Pt pt) const
         line_max = Value(Width() - (m_tab->Width() - m_tab->Width() / 2));
         pixel_nearest_to_pt_on_line = std::max(line_min, std::min(Value(pt.x - ul.x), line_max));
     }
-    double fractional_distance = static_cast<double>(pixel_nearest_to_pt_on_line) / (line_max - line_min);
+    double fractional_distance = static_cast<double>(pixel_nearest_to_pt_on_line) / static_cast<double>(line_max - line_min);
     return m_range_min + static_cast<T>((m_range_max - m_range_min) * fractional_distance);
 }
 
