@@ -1,4 +1,4 @@
-GameRule(
+GameRuleDefinition(
     name="RULE_SHIP_HULL_COST_FACTOR",
     description="RULE_SHIP_HULL_COST_FACTOR_DESC",
     category="BALANCE",
@@ -8,7 +8,7 @@ GameRule(
     max=10.0,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_SHIP_PART_COST_FACTOR",
     description="RULE_SHIP_PART_COST_FACTOR_DESC",
     category="BALANCE",
@@ -18,7 +18,7 @@ GameRule(
     max=10.0,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_TECH_COST_FACTOR",
     description="RULE_TECH_COST_FACTOR_DESC",
     category="BALANCE",
@@ -28,7 +28,7 @@ GameRule(
     max=10.0,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_BUILDING_COST_FACTOR",
     description="RULE_BUILDING_COST_FACTOR_DESC",
     category="BALANCE",
@@ -38,7 +38,7 @@ GameRule(
     max=10.0,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_SINGULARITY_COST_FACTOR",
     description="RULE_SINGULARITY_COST_FACTOR_DESC",
     category="BALANCE",
@@ -48,7 +48,7 @@ GameRule(
     max=10.0,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_ENABLE_EXPERIMENTORS",
     description="RULE_ENABLE_EXPERIMENTORS_DESC",
     category="CONTENT",
@@ -56,7 +56,7 @@ GameRule(
     default=True,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_EXPERIMENTORS_SPAWN_BASE_TURN",
     description="RULE_EXPERIMENTORS_SPAWN_BASE_TURN_DESC",
     category="CONTENT",
@@ -66,7 +66,7 @@ GameRule(
     max=500,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_NESTS_ALWAYS_SPAWN_WILD",
     description="RULE_NESTS_ALWAYS_SPAWN_WILD_DESC",
     category="CONTENT",
@@ -74,7 +74,7 @@ GameRule(
     default=False,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_WANDERING_MONSTERS_CAN_STOP_INSYSTEM",
     description="RULE_WANDERING_MONSTERS_CAN_STOP_INSYSTEM_DESC",
     category="CONTENT",
@@ -82,7 +82,7 @@ GameRule(
     default=False,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_WILD_NEST_MONSTER_SPAWN_FACTOR",
     description="RULE_WILD_NEST_MONSTER_SPAWN_FACTOR_DESC",
     category="CONTENT",
@@ -92,7 +92,7 @@ GameRule(
     max=10.0,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_DOMESTIC_NEST_MONSTER_SPAWN_FACTOR",
     description="RULE_DOMESTIC_NEST_MONSTER_SPAWN_FACTOR_DESC",
     category="CONTENT",
@@ -102,7 +102,7 @@ GameRule(
     max=10.0,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_ENABLE_SUPER_TESTER",
     description="RULE_ENABLE_SUPER_TESTER_DESC",
     category="CONTENT",
@@ -110,7 +110,7 @@ GameRule(
     default=True,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_TEST_STRING",
     description="RULE_TEST_STRING_DESC",
     category="TEST",
@@ -119,7 +119,7 @@ GameRule(
     allowed=["MODERATOR", "OBSERVER", "PLAYER", "AI_PLAYER"],
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_HABITABLE_SIZE_TINY",
     description="RULE_HABITABLE_SIZE_DESC",
     category="PLANET_SIZE",
@@ -129,7 +129,7 @@ GameRule(
     max=999,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_HABITABLE_SIZE_SMALL",
     description="RULE_HABITABLE_SIZE_DESC",
     category="PLANET_SIZE",
@@ -139,7 +139,7 @@ GameRule(
     max=999,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_HABITABLE_SIZE_MEDIUM",
     description="RULE_HABITABLE_SIZE_DESC",
     category="PLANET_SIZE",
@@ -149,7 +149,7 @@ GameRule(
     max=999,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_HABITABLE_SIZE_LARGE",
     description="RULE_HABITABLE_SIZE_DESC",
     category="PLANET_SIZE",
@@ -159,7 +159,7 @@ GameRule(
     max=999,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_HABITABLE_SIZE_HUGE",
     description="RULE_HABITABLE_SIZE_DESC",
     category="PLANET_SIZE",
@@ -169,7 +169,7 @@ GameRule(
     max=999,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_HABITABLE_SIZE_ASTEROIDS",
     description="RULE_HABITABLE_SIZE_DESC",
     category="PLANET_SIZE",
@@ -179,7 +179,7 @@ GameRule(
     max=999,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_HABITABLE_SIZE_GASGIANT",
     description="RULE_HABITABLE_SIZE_DESC",
     category="PLANET_SIZE",
@@ -189,7 +189,7 @@ GameRule(
     max=999,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_BASELINE_PLANET_STABILITY",
     description="RULE_BASELINE_PLANET_STABILITY_DESC",
     category="BALANCE_STABILITY",
@@ -199,7 +199,7 @@ GameRule(
     max=20,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_BASELINE_SPECIES_EMPIRE_OPINION",
     description="RULE_BASELINE_SPECIES_EMPIRE_OPINION_DESC",
     category="BALANCE_STABILITY",
@@ -209,7 +209,7 @@ GameRule(
     max=20,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_INVASION_OPINION_PENALTY_SCALING",
     description="RULE_INVASION_OPINION_PENALTY_SCALING_DESC",
     category="BALANCE_STABILITY",
@@ -219,7 +219,7 @@ GameRule(
     max=25.0,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_SHIPS_LOST_DESTROYED_PENALTY_SCALING",
     description="RULE_SHIPS_LOST_DESTROYED_PENALTY_SCALING_DESC",
     category="BALANCE_STABILITY",
@@ -229,7 +229,7 @@ GameRule(
     max=25.0,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_COLONIES_FOUNDED_BONUS_SCALING",
     description="RULE_COLONIES_FOUNDED_BONUS_SCALING_DESC",
     category="BALANCE_STABILITY",
@@ -239,7 +239,7 @@ GameRule(
     max=50.0,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_PROTECTION_FOCUS_STABILITY",
     description="RULE_PROTECTION_FOCUS_STABILITY_DESC",
     category="BALANCE_STABILITY",
@@ -249,7 +249,7 @@ GameRule(
     max=20,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_IMPERIAL_PALACE_INFLUENCE",
     description="RULE_IMPERIAL_PALACE_INFLUENCE_DESC",
     category="BALANCE_STABILITY",
@@ -259,7 +259,7 @@ GameRule(
     max=20,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_GOOD_ENVIRONMENT_STABILITY",
     description="RULE_GOOD_ENVIRONMENT_STABILITY_DESC",
     category="BALANCE_STABILITY",
@@ -269,7 +269,7 @@ GameRule(
     max=20,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_ADEQUATE_ENVIRONMENT_STABILITY",
     description="RULE_ADEQUATE_ENVIRONMENT_STABILITY_DESC",
     category="BALANCE_STABILITY",
@@ -279,7 +279,7 @@ GameRule(
     max=20,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_POOR_ENVIRONMENT_STABILITY",
     description="RULE_POOR_ENVIRONMENT_STABILITY_DESC",
     category="BALANCE_STABILITY",
@@ -289,7 +289,7 @@ GameRule(
     max=20,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_HOSTILE_ENVIRONMENT_STABILITY",
     description="RULE_HOSTILE_ENVIRONMENT_STABILITY_DESC",
     category="BALANCE_STABILITY",
@@ -299,7 +299,7 @@ GameRule(
     max=20,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_TINY_SIZE_STABILITY",
     description="RULE_TINY_SIZE_STABILITY_DESC",
     category="BALANCE_STABILITY",
@@ -309,7 +309,7 @@ GameRule(
     max=20,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_SMALL_SIZE_STABILITY",
     description="RULE_SMALL_SIZE_STABILITY_DESC",
     category="BALANCE_STABILITY",
@@ -319,7 +319,7 @@ GameRule(
     max=20,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_MEDIUM_SIZE_STABILITY",
     description="RULE_MEDIUM_SIZE_STABILITY_DESC",
     category="BALANCE_STABILITY",
@@ -329,7 +329,7 @@ GameRule(
     max=20,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_LARGE_SIZE_STABILITY",
     description="RULE_LARGE_SIZE_STABILITY_DESC",
     category="BALANCE_STABILITY",
@@ -339,7 +339,7 @@ GameRule(
     max=20,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_HUGE_SIZE_STABILITY",
     description="RULE_HUGE_SIZE_STABILITY_DESC",
     category="BALANCE_STABILITY",
@@ -349,7 +349,7 @@ GameRule(
     max=20,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_GAS_GIANT_SIZE_STABILITY",
     description="RULE_GAS_GIANT_SIZE_STABILITY_DESC",
     category="BALANCE_STABILITY",
@@ -359,7 +359,7 @@ GameRule(
     max=20,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_SHIP_PART_BASED_UPKEEP",
     description="RULE_SHIP_PART_BASED_UPKEEP_DESC",
     category="BALANCE",
@@ -367,7 +367,7 @@ GameRule(
     default=False,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE",
     description="RULE_FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE_DESC",
     category="BALANCE",
@@ -377,7 +377,7 @@ GameRule(
     max=20,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_ALLOW_REPEATED_SPECIES",
     description="RULE_ALLOW_REPEATED_SPECIES_DESC",
     category="CONTENT",
@@ -385,7 +385,7 @@ GameRule(
     default=False,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_ENSURE_HABITABLE_PLANET_HW_VICINITY",
     description="RULE_ENSURE_HABITABLE_PLANET_HW_VICINITY_DESC",
     category="CONTENT",
@@ -393,7 +393,7 @@ GameRule(
     default=False,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_MINIMUM_MONSTER_DISTANCE_CAPITAL",
     description="RULE_MINIMUM_MONSTER_DISTANCE_CAPITAL_DESC",
     category="BALANCE",

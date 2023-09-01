@@ -1,4 +1,4 @@
-GameRule(
+GameRuleDefinition(
     name="RULE_SHIP_HULL_COST_FACTOR",
     description="RULE_SHIP_HULL_COST_FACTOR_DESC",
     category="BALANCE",
@@ -8,7 +8,7 @@ GameRule(
     max=10.0,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_SHIP_PART_COST_FACTOR",
     description="RULE_SHIP_PART_COST_FACTOR_DESC",
     category="BALANCE",
@@ -18,7 +18,7 @@ GameRule(
     max=10.0,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_TECH_COST_FACTOR",
     description="RULE_TECH_COST_FACTOR_DESC",
     category="BALANCE",
@@ -28,7 +28,7 @@ GameRule(
     max=10.0,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_BUILDING_COST_FACTOR",
     description="RULE_BUILDING_COST_FACTOR_DESC",
     category="BALANCE",
@@ -38,7 +38,7 @@ GameRule(
     max=10.0,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_ENABLE_EXPERIMENTORS",
     description="RULE_ENABLE_EXPERIMENTORS_DESC",
     category="CONTENT",
@@ -46,7 +46,7 @@ GameRule(
     default=True,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_ENABLE_SUPER_TESTER",
     description="RULE_ENABLE_SUPER_TESTER_DESC",
     category="CONTENT",
@@ -54,7 +54,7 @@ GameRule(
     default=True,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_TEST_STRING",
     description="RULE_TEST_STRING_DESC",
     category="TEST",
@@ -63,7 +63,7 @@ GameRule(
     allowed=["MODERATOR", "OBSERVER", "PLAYER", "AI_PLAYER"],
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_HABITABLE_SIZE_TINY",
     description="RULE_HABITABLE_SIZE_DESC",
     category="PLANET_SIZE",
@@ -73,7 +73,7 @@ GameRule(
     max=999,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_HABITABLE_SIZE_SMALL",
     description="RULE_HABITABLE_SIZE_DESC",
     category="PLANET_SIZE",
@@ -83,7 +83,7 @@ GameRule(
     max=999,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_HABITABLE_SIZE_MEDIUM",
     description="RULE_HABITABLE_SIZE_DESC",
     category="PLANET_SIZE",
@@ -93,7 +93,7 @@ GameRule(
     max=999,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_HABITABLE_SIZE_LARGE",
     description="RULE_HABITABLE_SIZE_DESC",
     category="PLANET_SIZE",
@@ -103,7 +103,7 @@ GameRule(
     max=999,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_HABITABLE_SIZE_HUGE",
     description="RULE_HABITABLE_SIZE_DESC",
     category="PLANET_SIZE",
@@ -113,7 +113,7 @@ GameRule(
     max=999,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_HABITABLE_SIZE_ASTEROIDS",
     description="RULE_HABITABLE_SIZE_DESC",
     category="PLANET_SIZE",
@@ -123,7 +123,7 @@ GameRule(
     max=999,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_HABITABLE_SIZE_GASGIANT",
     description="RULE_HABITABLE_SIZE_DESC",
     category="PLANET_SIZE",
@@ -133,7 +133,7 @@ GameRule(
     max=999,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_SHIP_PART_BASED_UPKEEP",
     description="RULE_SHIP_PART_BASED_UPKEEP_DESC",
     category="BALANCE",
@@ -141,7 +141,7 @@ GameRule(
     default=False,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_ENABLE_ALLIED_REPAIR",
     description="RULE_ENABLE_ALLIED_REPAIR_DESC",
     category="MULTIPLAYER",
@@ -149,7 +149,7 @@ GameRule(
     default=False,
 )
 
-GameRule(
+GameRuleDefinition(
     name="RULE_FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE",
     description="RULE_FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE_DESC",
     category="BALANCE",
