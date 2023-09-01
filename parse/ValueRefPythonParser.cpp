@@ -561,7 +561,18 @@ namespace {
                     operands.push_back(std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(args[i])()));
             }
             return boost::python::object(value_ref_wrapper<std::string>(std::make_shared<ValueRef::Operation<std::string>>(op, std::move(operands))));
-        } else {
+        } else if (args[0] == "Visibility") {
+            std::vector<std::unique_ptr<ValueRef::ValueRef<Visibility>>> operands;
+            operands.reserve(boost::python::len(args) - 1);
+            for (auto i = 1; i < boost::python::len(args); i++) {
+                auto arg = boost::python::extract<value_ref_wrapper<Visibility>>(args[i]);
+                if (arg.check())
+                    operands.push_back(ValueRef::CloneUnique(arg().value_ref));
+                else
+                    operands.push_back(std::make_unique<ValueRef::Constant<Visibility>>(boost::python::extract<enum_wrapper<Visibility>>(args[i])().value));
+            }
+            return boost::python::object(value_ref_wrapper<Visibility>(std::make_shared<ValueRef::Operation<Visibility>>(op, std::move(operands))));
+        }{
             ErrorLogger() << "Unsupported type for min/max/oneof : " << boost::python::extract<std::string>(boost::python::str(args[0]))();
 
             throw std::runtime_error(std::string("Not implemented ") + __func__);
@@ -921,6 +932,7 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
     globals["NamedReal"] = boost::python::raw_function(insert_named_<double>);
     globals["NamedRealLookup"] = boost::python::raw_function(insert_named_lookup_<double>);
     globals["Value"] = value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE));
+    globals["ValueVisibility"] = value_ref_wrapper<Visibility>(std::make_shared<ValueRef::Variable<Visibility>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE));
 
     // free variable name
     for (const char* variable : {"CombatBout",
