@@ -638,6 +638,8 @@ double Planet::AnnexationCost(int empire_id, const ScriptingContext& context) co
     const auto* source_for_empire = context.Empires().GetSource(empire_id, context.ContextObjects()).get();
     ScriptingContext source_planet_context{source_for_empire, context};
     source_planet_context.condition_local_candidate = this;
+    if (!source_planet_context.condition_root_candidate)
+        source_planet_context.condition_root_candidate = this;
     return ac->Eval(source_planet_context);
 }
 
