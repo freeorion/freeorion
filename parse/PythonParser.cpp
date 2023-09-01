@@ -101,6 +101,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def(py::self_ns::self - int())
             .def(int() - py::self_ns::self)
             .def(py::self_ns::self + py::self_ns::self)
+            .def(py::other<value_placeholder>() + py::self_ns::self)
             .def(py::self_ns::self + int())
             .def(double() + py::self_ns::self)
             .def(py::self_ns::self < py::self_ns::self)
@@ -115,7 +116,6 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def(py::self_ns::self | py::self_ns::self)
             .def(py::self_ns::pow(py::self_ns::self, double()));
         py::class_<value_ref_wrapper<double>>("ValueRefDouble", py::no_init)
-            .def("__call__", &value_ref_wrapper<double>::call)
             .def(int() * py::self_ns::self)
             .def(py::other<value_ref_wrapper<int>>() * py::self_ns::self)
             .def(py::self_ns::self * py::other<value_ref_wrapper<int>>())
@@ -128,9 +128,11 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def(py::self_ns::self + int())
             .def(py::self_ns::self + double())
             .def(py::self_ns::self + py::self_ns::self)
+            .def(py::other<value_placeholder>() + py::self_ns::self)
             .def(py::self_ns::self + py::other<value_ref_wrapper<int>>())
             .def(py::self_ns::self - double())
             .def(py::self_ns::self - py::self_ns::self)
+            .def(py::other<value_placeholder>() - py::self_ns::self)
             .def(py::self_ns::self - py::other<value_ref_wrapper<int>>())
             .def(int() + py::self_ns::self)
             .def(int() - py::self_ns::self)
@@ -153,6 +155,15 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def(py::self_ns::self + std::string())
             .def(std::string() + py::self_ns::self);
         py::class_<value_ref_wrapper<Visibility>>("ValueRefVisibility", py::no_init);
+        py::class_<value_placeholder>("ValuePlaceHolder", py::no_init)
+            .def("__call__", &value_placeholder::call<double>)
+            .def(py::self_ns::self + double())
+            .def(py::self_ns::self * double())
+            .def(py::self_ns::self / double())
+            .def(py::self_ns::self - int())
+            .def(int() - py::self_ns::self)
+            .def(py::self_ns::self * int())
+            .def(py::self_ns::self / int());
         py::class_<condition_wrapper>("Condition", py::no_init)
             .def(py::self_ns::self & py::self_ns::self)
             .def(py::self_ns::self & py::other<value_ref_wrapper<double>>())
@@ -299,6 +310,10 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
 
         py::implicitly_convertible<value_ref_wrapper<double>, condition_wrapper>();
         py::implicitly_convertible<value_ref_wrapper<int>, condition_wrapper>();
+
+        py::implicitly_convertible<value_placeholder, value_ref_wrapper<double>>();
+        py::implicitly_convertible<value_placeholder, value_ref_wrapper<int>>();
+        py::implicitly_convertible<value_placeholder, value_ref_wrapper<Visibility>>();
 
         m_meta_path = py::extract<py::list>(py::import("sys").attr("meta_path"));
         const int meta_path_len = py::len(m_meta_path);

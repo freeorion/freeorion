@@ -103,6 +103,26 @@ value_ref_wrapper<double> operator*(const value_ref_wrapper<double>& lhs, const 
     );
 }
 
+value_ref_wrapper<double> operator*(value_placeholder, int rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(
+            ValueRef::OpType::TIMES,
+            std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE),
+            std::make_unique<ValueRef::Constant<double>>(rhs)
+        )
+    );
+}
+
+value_ref_wrapper<double> operator*(value_placeholder, double rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(
+            ValueRef::OpType::TIMES,
+            std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE),
+            std::make_unique<ValueRef::Constant<double>>(rhs)
+        )
+    );
+}
+
 value_ref_wrapper<double> operator/(const value_ref_wrapper<double>& lhs, const value_ref_wrapper<double>& rhs) {
     return value_ref_wrapper<double>(
         std::make_shared<ValueRef::Operation<double>>(
@@ -128,6 +148,26 @@ value_ref_wrapper<double> operator/(const value_ref_wrapper<double>& lhs, double
         std::make_shared<ValueRef::Operation<double>>(
             ValueRef::OpType::DIVIDE,
             ValueRef::CloneUnique(lhs.value_ref),
+            std::make_unique<ValueRef::Constant<double>>(rhs)
+        )
+    );
+}
+
+value_ref_wrapper<double> operator/(value_placeholder, int rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(
+            ValueRef::OpType::DIVIDE,
+            std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE),
+            std::make_unique<ValueRef::Constant<double>>(rhs)
+        )
+    );
+}
+
+value_ref_wrapper<double> operator/(value_placeholder, double rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(
+            ValueRef::OpType::DIVIDE,
+            std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE),
             std::make_unique<ValueRef::Constant<double>>(rhs)
         )
     );
@@ -192,6 +232,36 @@ value_ref_wrapper<double> operator+(const value_ref_wrapper<double>& lhs, const 
     );
 }
 
+value_ref_wrapper<double> operator+(value_placeholder, const value_ref_wrapper<double>& rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(
+            ValueRef::OpType::PLUS,
+            std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE),
+            ValueRef::CloneUnique(rhs.value_ref)
+        )
+    );
+}
+
+value_ref_wrapper<double> operator+(value_placeholder, const value_ref_wrapper<int>& rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(
+            ValueRef::OpType::PLUS,
+            std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE),
+            std::make_unique<ValueRef::StaticCast<int, double>>(ValueRef::CloneUnique(rhs.value_ref))
+        )
+    );
+}
+
+value_ref_wrapper<double> operator+(value_placeholder, double rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(
+            ValueRef::OpType::PLUS,
+            std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE),
+            std::make_unique<ValueRef::Constant<double>>(rhs)
+        )
+    );
+}
+
 value_ref_wrapper<double> operator+(const value_ref_wrapper<double>& lhs, const value_ref_wrapper<int>& rhs) {
     return value_ref_wrapper<double>(
         std::make_shared<ValueRef::Operation<double>>(
@@ -228,6 +298,36 @@ value_ref_wrapper<double> operator-(const value_ref_wrapper<double>& lhs, const 
             ValueRef::OpType::MINUS,
             ValueRef::CloneUnique(lhs.value_ref),
             ValueRef::CloneUnique(rhs.value_ref)
+        )
+    );
+}
+
+value_ref_wrapper<double> operator-(value_placeholder, const value_ref_wrapper<double>& rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(
+            ValueRef::OpType::MINUS,
+            std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE),
+            ValueRef::CloneUnique(rhs.value_ref)
+        )
+    );
+}
+
+value_ref_wrapper<double> operator-(value_placeholder, int rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(
+            ValueRef::OpType::MINUS,
+            std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE),
+            std::make_unique<ValueRef::Constant<double>>(static_cast<double>(rhs))
+        )
+    );
+}
+
+value_ref_wrapper<double> operator-(int lhs, value_placeholder) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(
+            ValueRef::OpType::MINUS,
+            std::make_unique<ValueRef::Constant<double>>(static_cast<double>(lhs)),
+            std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE)
         )
     );
 }
@@ -920,7 +1020,7 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
     globals["NamedIntegerLookup"] = boost::python::raw_function(insert_named_lookup_<int>);
     globals["NamedReal"] = boost::python::raw_function(insert_named_<double>);
     globals["NamedRealLookup"] = boost::python::raw_function(insert_named_lookup_<double>);
-    globals["Value"] = value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE));
+    globals["Value"] = value_placeholder();
 
     // free variable name
     for (const char* variable : {"CombatBout",

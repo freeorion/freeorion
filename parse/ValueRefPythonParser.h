@@ -20,21 +20,6 @@ struct value_ref_wrapper {
         value_ref(ref)
     {}
 
-    value_ref_wrapper<T> call(const value_ref_wrapper<T>& var_) const {
-        auto var = std::dynamic_pointer_cast<const ValueRef::Variable<T>>(var_.value_ref);
-        if (var) {
-            return value_ref_wrapper<T>(std::make_shared<ValueRef::Variable<T>>(
-                                            var->GetReferenceType(),
-                                            var->PropertyName(),
-                                            true
-                                        ));
-        } else if(var_.value_ref) {
-            throw std::runtime_error(std::string("Unknown type of Value.__call__ ") + typeid(*var_.value_ref).name());
-        } else {
-            throw std::runtime_error("Empty value in Value.__call__");
-        }
-    }
-
     operator condition_wrapper() const {
         auto op = std::dynamic_pointer_cast<const ValueRef::Operation<T>>(value_ref);
 
@@ -74,6 +59,29 @@ struct value_ref_wrapper {
     const std::shared_ptr<const ValueRef::ValueRef<T>> value_ref;
 };
 
+struct value_placeholder {
+    template<typename T>
+    operator value_ref_wrapper<T>() const {
+        return value_ref_wrapper<T>(std::make_shared<ValueRef::Variable<T>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE));
+    }
+
+    template<typename T>
+    value_ref_wrapper<T> call(const value_ref_wrapper<T>& var_) const {
+        auto var = std::dynamic_pointer_cast<const ValueRef::Variable<T>>(var_.value_ref);
+        if (var) {
+            return value_ref_wrapper<T>(std::make_shared<ValueRef::Variable<T>>(
+                                            var->GetReferenceType(),
+                                            var->PropertyName(),
+                                            true
+                                        ));
+        } else if(var_.value_ref) {
+            throw std::runtime_error(std::string("Unknown type of Value.__call__ ") + typeid(*var_.value_ref).name());
+        } else {
+            throw std::runtime_error("Empty value in Value.__call__");
+        }
+    }
+};
+
 value_ref_wrapper<double> pow(const value_ref_wrapper<int>& lhs, double rhs);
 value_ref_wrapper<double> pow(const value_ref_wrapper<double>& lhs, double rhs);
 value_ref_wrapper<double> pow(double lhs, const value_ref_wrapper<double>& rhs);
@@ -86,17 +94,27 @@ value_ref_wrapper<double> operator*(const value_ref_wrapper<double>&, double);
 value_ref_wrapper<double> operator*(double, const value_ref_wrapper<double>&);
 value_ref_wrapper<double> operator*(double, const value_ref_wrapper<int>&);
 value_ref_wrapper<double> operator*(const value_ref_wrapper<double>&, const value_ref_wrapper<double>&);
+value_ref_wrapper<double> operator*(value_placeholder, int);
+value_ref_wrapper<double> operator*(value_placeholder, double);
 value_ref_wrapper<double> operator/(const value_ref_wrapper<double>&, const value_ref_wrapper<double>&);
 value_ref_wrapper<double> operator/(const value_ref_wrapper<double>&, int);
 value_ref_wrapper<double> operator/(const value_ref_wrapper<double>&, double);
+value_ref_wrapper<double> operator/(value_placeholder, int);
+value_ref_wrapper<double> operator/(value_placeholder, double);
 value_ref_wrapper<double> operator+(int, const value_ref_wrapper<double>&);
 value_ref_wrapper<double> operator+(const value_ref_wrapper<double>&, int);
 value_ref_wrapper<double> operator+(const value_ref_wrapper<double>&, double);
 value_ref_wrapper<double> operator+(const value_ref_wrapper<double>&, const value_ref_wrapper<double>&);
+value_ref_wrapper<double> operator+(value_placeholder, const value_ref_wrapper<double>&);
+value_ref_wrapper<double> operator+(value_placeholder, const value_ref_wrapper<int>&);
+value_ref_wrapper<double> operator+(value_placeholder, double);
 value_ref_wrapper<double> operator+(const value_ref_wrapper<double>&, const value_ref_wrapper<int>&);
 value_ref_wrapper<double> operator+(double, const value_ref_wrapper<int>&);
 value_ref_wrapper<double> operator-(const value_ref_wrapper<double>&, double);
 value_ref_wrapper<double> operator-(const value_ref_wrapper<double>&, const value_ref_wrapper<double>&);
+value_ref_wrapper<double> operator-(value_placeholder, const value_ref_wrapper<double>&);
+value_ref_wrapper<double> operator-(value_placeholder, int);
+value_ref_wrapper<double> operator-(int, value_placeholder);
 value_ref_wrapper<double> operator-(int, const value_ref_wrapper<double>&);
 value_ref_wrapper<double> operator-(double, const value_ref_wrapper<int>&);
 value_ref_wrapper<double> operator-(const value_ref_wrapper<double>&, int);
