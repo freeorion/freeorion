@@ -1082,8 +1082,7 @@ void CensoredCUIEdit::ClearSelected() {
 ///////////////////////////////////////
 // class CUIMultiEdit
 ///////////////////////////////////////
-CUIMultiEdit::CUIMultiEdit(std::string str,
-                           GG::Flags<GG::MultiEditStyle> style) :
+CUIMultiEdit::CUIMultiEdit(std::string str, GG::Flags<GG::MultiEditStyle> style) :
     MultiEdit(std::move(str), ClientUI::GetFont(), ClientUI::CtrlBorderColor(), style,
               ClientUI::TextColor(), ClientUI::CtrlColor())
 {}
