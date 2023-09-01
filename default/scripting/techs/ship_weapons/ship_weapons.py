@@ -11,7 +11,6 @@ from focs._effects import (
     PartSecondaryStat,
     SetCapacity,
     SetMaxCapacity,
-    SetMaxSecondaryStat,
     SetSecondaryStat,
     Source,
     Target,
@@ -23,7 +22,6 @@ from techs.techs import (
     EMPIRE_OWNED_SHIP_WITH_PART,
     SHIP_PART_UPGRADE_RESUPPLY_CHECK,
 )
-
 
 # Tech based setting of damage and number of shots of a weapon. Registers named reals for use in the pedia.
 # Be careful the effect does not show in the ship damage/shot estimates in the ship designer UI if the tech is not researched yet.
