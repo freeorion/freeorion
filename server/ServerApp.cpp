@@ -3489,50 +3489,64 @@ namespace {
     {
         // collect planets ordered annexed but that aren't being invaded
         std::map<int, std::vector<Planet*>> empire_annexed_planets; // indexed by recipient empire id
+        std::map<int, std::vector<Building*>> empire_annexed_buildings; // indexed by recipient empire id
         auto annexed_not_invaded_planet = [&invaded_planet_ids](const Planet& p) {
             return p.IsAboutToBeAnnexed() &&
                 std::none_of(invaded_planet_ids.begin(), invaded_planet_ids.end(),
                              [pid{p.ID()}](const auto iid) { return iid == pid; });
         };
 
-        for (auto* planet : objects.findRaw<Planet>(annexed_not_invaded_planet))
-            empire_annexed_planets[planet->OrderedAnnexedByEmpire()].push_back(planet);
+        for (auto* planet : objects.findRaw<Planet>(annexed_not_invaded_planet)) {
+            const auto loop_annexer_id = planet->OrderedAnnexedByEmpire();
+            empire_annexed_planets[loop_annexer_id].push_back(planet);
+            for (auto* building : objects.findRaw<Building>(planet->BuildingIDs()))
+                empire_annexed_buildings[loop_annexer_id].push_back(building);
+        }
         for (auto* planet : objects.allRaw<Planet>())
             planet->ResetBeingAnnxed(); // in case things fail, to avoid potential inconsistent state
 
 
         // storage for list of all annexed planets
-        auto do_annexation = [&empires, current_turn](auto& empire_annexed_planets) {
+        auto do_annexation = [&empires, current_turn](auto& empire_annexed_stuff) {
             std::vector<int> retval;
-            for (auto& [annexer_empire_id, planets] : empire_annexed_planets) {
+            for (auto& [annexer_empire_id, stuff] : empire_annexed_stuff) {
                 auto annexer_empire = empires.GetEmpire(annexer_empire_id);
 
-                for (auto* planet : planets) {
-                    const auto planet_id = planet->ID();
-                    const auto initial_owner_id = planet->Owner();
-                    retval.push_back(planet_id);
+                for (auto* thing : stuff) {
+                    const auto thing_id = thing->ID();
+                    const auto initial_owner_id = thing->Owner();
+                    thing->SetOwner(annexer_empire_id);
 
-                    planet->SetOwner(annexer_empire_id);
-                    planet->SetLastTurnAnnexed(current_turn);
-                    planet->SetLastAnnexedByEmpire(annexer_empire_id);
+                    if constexpr (std::is_same_v<Building, std::decay_t<decltype(*thing)>>) {
+                        // TODO: generate sitrep?
 
-                    Empire::ConquerProductionQueueItemsAtLocation(planet_id, annexer_empire_id, empires);
+                    } else if constexpr (std::is_same_v<Planet, std::decay_t<decltype(*thing)>>) {
+                        retval.push_back(thing_id);
 
-                    if (annexer_empire)
-                        annexer_empire->AddSitRepEntry(CreatePlanetAnnexedSitRep(
-                            planet_id, initial_owner_id, annexer_empire_id, current_turn));
+                        thing->SetLastTurnAnnexed(current_turn);
+                        thing->SetLastAnnexedByEmpire(annexer_empire_id);
 
-                    if (initial_owner_id != ALL_EMPIRES) {
-                        if (auto initial_owner_empire = empires.GetEmpire(initial_owner_id)) {
-                            initial_owner_empire->AddSitRepEntry(CreatePlanetAnnexedSitRep(
-                                planet_id, initial_owner_id, annexer_empire_id, current_turn));
+                        Empire::ConquerProductionQueueItemsAtLocation(thing_id, annexer_empire_id, empires);
+
+                        if (annexer_empire)
+                            annexer_empire->AddSitRepEntry(CreatePlanetAnnexedSitRep(
+                                thing_id, initial_owner_id, annexer_empire_id, current_turn));
+
+                        if (initial_owner_id != ALL_EMPIRES) {
+                            if (auto initial_owner_empire = empires.GetEmpire(initial_owner_id))
+                                initial_owner_empire->AddSitRepEntry(CreatePlanetAnnexedSitRep(
+                                    thing_id, initial_owner_id, annexer_empire_id, current_turn));
                         }
+                    } else {
+                        ErrorLogger() << "Annexed unrecognized object type";
+                        break;
                     }
                 }
             }
             return retval;
         };
 
+        do_annexation(empire_annexed_buildings);
         return do_annexation(empire_annexed_planets);
     }
 
