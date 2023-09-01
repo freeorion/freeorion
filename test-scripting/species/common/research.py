@@ -4,18 +4,23 @@ from common.priorities import (
     TARGET_EARLY_BEFORE_SCALING_PRIORITY,
     TARGET_SCALING_PRIORITY,
 )
-from focs._effects import (
-    EffectsGroup,
-    Focus,
-    GalaxyMaxAIAggression,
-    Happiness,
-    IsHuman,
-    IsSource,
-    Planet,
-    SetTargetResearch,
-    Target,
-    Value,
-)
+
+try:
+    from focs._effects import (
+        EffectsGroup,
+        Focus,
+        GalaxyMaxAIAggression,
+        Happiness,
+        IsHuman,
+        IsSource,
+        Planet,
+        SetTargetResearch,
+        Target,
+        Value,
+    )
+except ModuleNotFoundError:
+    pass
+
 from species.common.multiplier import BAD_MULTIPLIER
 
 # NO_RESEARCH

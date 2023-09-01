@@ -1,5 +1,10 @@
 from common.base_prod import TECH_COST_MULTIPLIER
-from focs._tech import Item, Tech, UnlockPolicy
+
+try:
+    from focs._tech import *
+except ModuleNotFoundError:
+    pass
+
 
 Tech(
     name="LRN_ALGO_ELEGANCE",

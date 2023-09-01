@@ -7,7 +7,11 @@
 #         ]
 #         effects = SetPlanetSize planetsize = Huge
 # '''
-from focs._effects import EffectsGroup, IsSource, Large, Planet, SetPlanetSize, Turn
+try:
+    from focs._effects import EffectsGroup, IsSource, Large, Planet, SetPlanetSize, Turn
+except ModuleNotFoundError:
+    pass
+
 
 LARGE_PLANET = EffectsGroup(scope=IsSource, activation=Planet() & Turn(high=0), effects=SetPlanetSize(planetsize=Large))
 

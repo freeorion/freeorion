@@ -58,7 +58,9 @@ max-complexity = 10
 
 # Since imports are empty we need to use asterisk import between skeletons
 "default/scripting/focs/*" = ["F405"]
-
+"default/scripting/game_rules.focs.py"=["F821"]
+"test-scripting/game_rules.focs.py"=["F821"]
+"test-scripting/*"=["F405", "F403"]
 
 [tool.ruff.isort]
 extra-standard-library=["freeorion", "freeOrionAIInterface"]

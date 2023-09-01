@@ -6,20 +6,24 @@ from common.priorities import (
 
 # NO_INDUSTRY
 # '''[[DESCRIPTION_EFFECTSGROUP_MACRO(NO_INDUSTRY_DESC)]]'''
-from focs._effects import (
-    EffectsGroup,
-    Focus,
-    GalaxyMaxAIAggression,
-    Happiness,
-    IsHuman,
-    IsSource,
-    NamedReal,
-    Planet,
-    SetTargetIndustry,
-    Target,
-    TargetIndustry,
-    Value,
-)
+try:
+    from focs._effects import (
+        EffectsGroup,
+        Focus,
+        GalaxyMaxAIAggression,
+        Happiness,
+        IsHuman,
+        IsSource,
+        NamedReal,
+        Planet,
+        SetTargetIndustry,
+        Target,
+        TargetIndustry,
+        Value,
+    )
+except ModuleNotFoundError:
+    pass
+
 
 BASIC_INDUSTRY = [
     EffectsGroup(
