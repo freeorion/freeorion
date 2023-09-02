@@ -1493,10 +1493,10 @@ All Allowed
 RULE_DIPLOMACY_FORBIDDEN_FOR_ALL
 All Forbidden
 
-RULE_ANNEX_COST_EXP_BASE
-Annex Cost Exponential Base
+RULE_ANNEX_COST_OPINION_EXP_BASE
+Annex Cost Opinion Exponential Base
 
-RULE_ANNEX_COST_EXP_BASE_DESC
+RULE_ANNEX_COST_OPINION_EXP_BASE_DESC
 Base of exponential determining how annexation costs scale with species empire opinion.
 
 RULE_ANNEX_COST_SCALING
@@ -1504,6 +1504,12 @@ Annex Cost Population Scaling
 
 RULE_ANNEX_COST_SCALING_DESC
 Scaling factor for how annexation costs scale with planet population.
+
+RULE_ANNEX_COST_STABILITY_EXP_BASE
+Annex Cost Stability Exponential Base
+
+RULE_ANNEX_COST_STABILITY_EXP_BASE_DESC
+Base of exponential determining how annexation costs scale with planet stability.
 
 RULE_BUILDING_ANNEX_COST_SCALING
 Annex Cost Building Scaling

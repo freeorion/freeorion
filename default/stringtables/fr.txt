@@ -1493,10 +1493,10 @@ Toutes autorisées
 RULE_DIPLOMACY_FORBIDDEN_FOR_ALL
 Toutes interdites
 
-RULE_ANNEX_COST_EXP_BASE
+RULE_ANNEX_COST_OPINION_EXP_BASE
 Annexion: coût exponentiel de base 
 
-RULE_ANNEX_COST_EXP_BASE_DESC
+RULE_ANNEX_COST_OPINION_EXP_BASE_DESC
 Valeur exponentielle de base déterminant la mise à l'échelle des coûts d'annexion selon l'opinion de l'espèce sur l'empire.
 
 RULE_ANNEX_COST_SCALING
