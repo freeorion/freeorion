@@ -1784,7 +1784,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     const bool annexation_affordable = total_costs <= available_ip;
     const bool annexable =        at_war_with_me && visible && !being_annexed && populated && !being_invaded &&
                                   species && potentially_annexable && annexation_affordable;
-    const bool show_annex_button = being_annexed || annexable || (populated && !being_invaded && species);
+    const bool show_annex_button = !mine && (being_annexed || annexable || (populated && !being_invaded && species));
 
 
     const bool being_bombarded =  planet->IsAboutToBeBombarded();
