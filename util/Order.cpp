@@ -775,12 +775,17 @@ bool AnnexOrder::Check(int empire_id, int planet_id, const ScriptingContext& con
         return false;
     }
 
-    if (!planet->Unowned()) {
-        ErrorLogger() << "AnnexOrder::ExecuteImpl given an owned planet";
+    if (empire_id == ALL_EMPIRES) {
+        ErrorLogger() << "AnnexOrder::ExecuteImpl given non-empire empire id: " << empire_id;
         return false;
     }
 
-    if (planet->Unowned() && planet->GetMeter(MeterType::METER_POPULATION)->Initial() == 0.0f) {
+    if (planet->OwnedBy(empire_id)) {
+        ErrorLogger() << "AnnexOrder::ExecuteImpl given empire " << empire_id << " that already owns planet";
+        return false;
+    }
+
+    if (planet->GetMeter(MeterType::METER_POPULATION)->Initial() == 0.0f) {
         ErrorLogger() << "AnnexOrder::ExecuteImpl given unpopulated planet";
         return false;
     }

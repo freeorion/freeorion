@@ -1777,9 +1777,9 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     const double total_costs = empire_annexations_cost + empire_adopted_policies_cost + this_planet_annexation_cost;
     const double available_ip = client_empire ? client_empire->ResourceStockpile(ResourceType::RE_INFLUENCE) : 0.0;
     const bool annexation_affordable = total_costs <= available_ip;
-    const bool annexable =        !being_annexed && populated && !has_owner && !being_invaded && species &&
+    const bool annexable =        !being_annexed && populated && !being_invaded && species &&
                                   potentially_annexable && annexation_affordable;
-    const bool show_annex_button = being_annexed || annexable || (populated && !has_owner && !being_invaded && species);
+    const bool show_annex_button = being_annexed || annexable || (populated && !being_invaded && species);
 
 
     const bool being_bombarded =  planet->IsAboutToBeBombarded();
@@ -2496,9 +2496,9 @@ void SidePanel::PlanetPanel::ClickAnnex() {
     // been ordered
 
     ScriptingContext context;
-    ObjectMap& objects{context.ContextObjects()};
+    const ObjectMap& objects{context.ContextObjects()};
 
-    auto planet = objects.get<Planet>(m_planet_id);
+    const auto planet = objects.get<const Planet>(m_planet_id);
     if (!planet || !m_order_issuing_enabled)
         return;
 
