@@ -1836,11 +1836,13 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
                               &context, this_planet_annexation_cost]() -> std::string
         {
             const auto& client_empire_name = client_empire ? client_empire->Name() : UserString("UNOWNED");
-            auto opinion_of_client_empire = DoubleToString(0.0, 3, false); // TODO
+            const auto client_op = context.species.SpeciesEmpireOpinion(planet_species_name, client_empire_id, false, true);
+            auto opinion_of_client_empire = DoubleToString(client_op, 3, false);
 
             const auto owner_empire = context.GetEmpire(planet->Owner());
             const auto& owner_name = owner_empire ? owner_empire->Name() : UserString("UNOWNED");
-            auto opinion_of_owner = DoubleToString(0.0, 3, false); // TODO
+            const auto owner_op = context.species.SpeciesEmpireOpinion(planet_species_name, planet->Owner(), false, true);
+            auto opinion_of_owner = DoubleToString(owner_op, 3, false);
 
             auto stability = DoubleToString(planet->GetMeter(MeterType::METER_HAPPINESS)->Initial(), 3, false);;
             auto population = DoubleToString(planet->GetMeter(MeterType::METER_POPULATION)->Initial(), 3, false);;
