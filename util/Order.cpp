@@ -771,30 +771,36 @@ bool AnnexOrder::Check(int empire_id, int planet_id, const ScriptingContext& con
 
     const auto* planet = o.getRaw<const Planet>(planet_id);
     if (!planet) {
-        ErrorLogger() << "AnnexOrder::ExecuteImpl couldn't get planet with id " << planet_id;
+        ErrorLogger() << "AnnexOrder couldn't get planet with id " << planet_id;
         return false;
     }
 
     if (empire_id == ALL_EMPIRES) {
-        ErrorLogger() << "AnnexOrder::ExecuteImpl given non-empire empire id: " << empire_id;
+        ErrorLogger() << "AnnexOrder given non-empire empire id: " << empire_id;
         return false;
     }
 
     if (planet->OwnedBy(empire_id)) {
-        ErrorLogger() << "AnnexOrder::ExecuteImpl given empire " << empire_id << " that already owns planet";
+        ErrorLogger() << "AnnexOrder given empire " << empire_id << " that already owns planet";
         return false;
     }
 
     if (planet->GetMeter(MeterType::METER_POPULATION)->Initial() == 0.0f) {
-        ErrorLogger() << "AnnexOrder::ExecuteImpl given unpopulated planet";
+        ErrorLogger() << "AnnexOrder given unpopulated planet";
         return false;
     }
 
     if (u.GetObjectVisibilityByEmpire(planet_id, empire_id) < Visibility::VIS_BASIC_VISIBILITY) {
-        ErrorLogger() << "AnnexOrder::ExecuteImpl given planet that empire reportedly has insufficient visibility of, but will be allowed to proceed pending investigation";
+        ErrorLogger() << "AnnexOrder given planet that empire reportedly has insufficient visibility of";
         return false;
     }
 
+    if (!planet->Unowned() && context.ContextDiploStatus(planet->Owner(), empire_id) !=
+        DiplomaticStatus::DIPLO_WAR)
+    {
+        ErrorLogger() << "AnnexOrder given planet owned by an empire not at war with order-issuing empire";
+        return false;
+    }
     // TODO: check IP costs, like adopting policies
 
     return true;
@@ -837,9 +843,7 @@ ColonizeOrder::ColonizeOrder(int empire, int ship, int planet, const ScriptingCo
 std::string ColonizeOrder::Dump() const
 { return boost::io::str(FlexibleFormat(UserString("ORDER_COLONIZE")) % m_planet % m_ship) + ExecutedTag(this); }
 
-bool ColonizeOrder::Check(int empire_id, int ship_id, int planet_id,
-                          const ScriptingContext& context)
-{
+bool ColonizeOrder::Check(int empire_id, int ship_id, int planet_id, const ScriptingContext& context) {
     const Universe& u = context.ContextUniverse();
     const ObjectMap& o = context.ContextObjects();
     const SpeciesManager& sm = context.species;
@@ -988,67 +992,67 @@ bool InvadeOrder::Check(int empire_id, int ship_id, int planet_id, const Scripti
     // make sure ship_id is a ship...
     auto ship = o.get<Ship>(ship_id);
     if (!ship) {
-        ErrorLogger() << "IssueInvadeOrder : passed an invalid ship_id";
+        ErrorLogger() << "IssueInvadeOrder: passed an invalid ship_id";
         return false;
     }
 
     if (!ship->OwnedBy(empire_id)) {
-        ErrorLogger() << "IssueInvadeOrder : empire does not own passed ship";
+        ErrorLogger() << "IssueInvadeOrder: empire does not own passed ship";
         return false;
     }
     if (!ship->HasTroops(u)) {
-        ErrorLogger() << "InvadeOrder::ExecuteImpl got ship that can't invade";
+        ErrorLogger() << "InvadeOrder got ship that can't invade";
         return false;
     }
 
     // get fleet of ship
     auto fleet = o.get<Fleet>(ship->FleetID());
     if (!fleet) {
-        ErrorLogger() << "IssueInvadeOrder : ship with passed ship_id has invalid fleet_id";
+        ErrorLogger() << "IssueInvadeOrder: ship with passed ship_id has invalid fleet_id";
         return false;
     }
 
     // make sure player owns ship and its fleet
     if (!fleet->OwnedBy(empire_id)) {
-        ErrorLogger() << "IssueInvadeOrder : empire does not own fleet of passed ship";
+        ErrorLogger() << "IssueInvadeOrder: empire does not own fleet of passed ship";
         return false;
     }
 
     auto planet = o.get<Planet>(planet_id);
     if (!planet) {
-        ErrorLogger() << "InvadeOrder::ExecuteImpl couldn't get planet with id " << planet_id;
+        ErrorLogger() << "InvadeOrder couldn't get planet with id " << planet_id;
         return false;
     }
 
     if (ship->SystemID() != planet->SystemID()) {
-        ErrorLogger() << "InvadeOrder::ExecuteImpl given ids of ship and planet not in the same system";
+        ErrorLogger() << "InvadeOrder given ids of ship and planet not in the same system";
         return false;
     }
 
     if (u.GetObjectVisibilityByEmpire(planet_id, empire_id) < Visibility::VIS_BASIC_VISIBILITY) {
-        ErrorLogger() << "InvadeOrder::ExecuteImpl given planet that empire reportedly has insufficient visibility of, but will be allowed to proceed pending investigation";
+        ErrorLogger() << "InvadeOrder given planet that empire reportedly has insufficient visibility of";
         return false;
     }
 
     if (planet->OwnedBy(empire_id)) {
-        ErrorLogger() << "InvadeOrder::ExecuteImpl given planet that is already owned by the order-issuing empire";
+        ErrorLogger() << "InvadeOrder given planet that is already owned by the order-issuing empire";
         return false;
     }
 
     if (planet->Unowned() && planet->GetMeter(MeterType::METER_POPULATION)->Initial() == 0.0f) {
-        ErrorLogger() << "InvadeOrder::ExecuteImpl given unpopulated planet";
+        ErrorLogger() << "InvadeOrder given unpopulated planet";
         return false;
     }
 
     if (planet->GetMeter(MeterType::METER_SHIELD)->Initial() > 0.0f) {
-        ErrorLogger() << "InvadeOrder::ExecuteImpl given planet with shield > 0";
+        ErrorLogger() << "InvadeOrder given planet with shield > 0";
         return false;
     }
 
     if (!planet->Unowned() && context.ContextDiploStatus(planet->Owner(), empire_id) !=
                               DiplomaticStatus::DIPLO_WAR)
     {
-        ErrorLogger() << "InvadeOrder::ExecuteImpl given planet owned by an empire not at war with order-issuing empire";
+        ErrorLogger() << "InvadeOrder given planet owned by an empire not at war with order-issuing empire";
         return false;
     }
 

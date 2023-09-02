@@ -1777,8 +1777,8 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     const double total_costs = empire_annexations_cost + empire_adopted_policies_cost + this_planet_annexation_cost;
     const double available_ip = client_empire ? client_empire->ResourceStockpile(ResourceType::RE_INFLUENCE) : 0.0;
     const bool annexation_affordable = total_costs <= available_ip;
-    const bool annexable =        !being_annexed && populated && !being_invaded && species &&
-                                  potentially_annexable && annexation_affordable;
+    const bool annexable =        at_war_with_me && visible && !being_annexed && populated && !being_invaded &&
+                                  species && potentially_annexable && annexation_affordable;
     const bool show_annex_button = being_annexed || annexable || (populated && !being_invaded && species);
 
 
