@@ -55,6 +55,12 @@ std::string DoubleToString(double val, int digits, bool always_show_sign);
 bool UserStringExists(const std::string& str);
 
 namespace {
+#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
+    constexpr const std::string EMPTY_STRING;
+#else
+    const std::string EMPTY_STRING;
+#endif
+
     std::string StackTrace() {
         static std::atomic<int> string_error_lookup_count = 0;
         if (string_error_lookup_count++ > 10)
@@ -712,7 +718,7 @@ PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const
 {
     IF_CURRENT_VALUE(PlanetSize)
 
-    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
+    const std::string& property_name = m_property_name.empty() ? EMPTY_STRING : m_property_name.back();
 
     auto object = FollowReference(m_property_name.begin(), m_property_name.end(),
                                   m_ref_type, context);
@@ -748,7 +754,7 @@ PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const
 {
     IF_CURRENT_VALUE(PlanetType)
 
-    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
+    const std::string& property_name = m_property_name.empty() ? EMPTY_STRING : m_property_name.back();
 
     auto object = FollowReference(m_property_name.begin(), m_property_name.end(),
                                   m_ref_type, context);
@@ -792,7 +798,7 @@ PlanetEnvironment Variable<PlanetEnvironment>::Eval(const ScriptingContext& cont
 {
     IF_CURRENT_VALUE(PlanetEnvironment)
 
-    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
+    const std::string& property_name = m_property_name.empty() ? EMPTY_STRING : m_property_name.back();
 
     if (property_name == "PlanetEnvironment") {
         auto object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
@@ -818,7 +824,7 @@ UniverseObjectType Variable<UniverseObjectType>::Eval(const ScriptingContext& co
 {
     IF_CURRENT_VALUE(UniverseObjectType)
 
-    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
+    const std::string& property_name = m_property_name.empty() ? EMPTY_STRING : m_property_name.back();
 
     if (property_name == "ObjectType") {
         auto object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
@@ -839,7 +845,7 @@ StarType Variable<StarType>::Eval(const ScriptingContext& context) const
 {
     IF_CURRENT_VALUE(StarType)
 
-    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
+    const std::string& property_name = m_property_name.empty() ? EMPTY_STRING : m_property_name.back();
 
     auto object = FollowReference(m_property_name.begin(), m_property_name.end(),
                                   m_ref_type, context);
@@ -889,7 +895,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
 {
     IF_CURRENT_VALUE(double)
 
-    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
+    const std::string& property_name = m_property_name.empty() ? EMPTY_STRING : m_property_name.back();
 
     if (m_ref_type == ReferenceType::NON_OBJECT_REFERENCE) {
         if ((property_name == "UniverseCentreX") ||
@@ -997,7 +1003,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
 {
     IF_CURRENT_VALUE(int)
 
-    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
+    const std::string& property_name = m_property_name.empty() ? EMPTY_STRING : m_property_name.back();
 
     if (m_ref_type == ReferenceType::NON_OBJECT_REFERENCE) {
         if (property_name == "CombatBout")
@@ -1278,7 +1284,7 @@ std::vector<std::string> Variable<std::vector<std::string>>::Eval(
 {
     IF_CURRENT_VALUE(std::vector<std::string>)
 
-    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
+    const std::string& property_name = m_property_name.empty() ? EMPTY_STRING : m_property_name.back();
 
     if (m_ref_type == ReferenceType::NON_OBJECT_REFERENCE) {
         // add more non-object reference string vector functions here
@@ -1334,7 +1340,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
 {
     IF_CURRENT_VALUE(std::string)
 
-    const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
+    const std::string& property_name = m_property_name.empty() ? EMPTY_STRING : m_property_name.back();
 
     if (m_ref_type == ReferenceType::NON_OBJECT_REFERENCE) {
         if (property_name == "GalaxySeed")
