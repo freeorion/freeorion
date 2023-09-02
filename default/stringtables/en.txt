@@ -3963,6 +3963,23 @@ Not Annexable
 PL_CANCEL_ANNEX
 Cancel Annexation (%1% IP)
 
+# %1% planet species name
+# %2% name of client empire
+# %3% species on planet opinion of client empire
+# %4% name of owner empire or "unowned"
+# %5% species opinion of onwer empire
+# %6% stability of planet
+# %7% population of planet
+# %8% PP cost for client empire of buildings on planet
+# %9% annexation cost by client empire
+ANNEX_BUTTON_TOOLTIP
+'''%1% opinion of %2%: %3%
+%1% opinion of %4%: %5%
+Planet Stability: %6%
+Planet Population: %7%
+Building Production Costs: %8%
+Annexation cost for %2%: %9%'''
+
 # %1% size of the population this planet is colonized with.
 # %2% maximum population this planet can support.
 PL_COLONIZE
