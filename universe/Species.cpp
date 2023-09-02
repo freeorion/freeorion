@@ -83,7 +83,7 @@ namespace {
                           "BALANCE_STABILITY", 1.2, true, RangedValidator<double>(0.0, 3.0));
         rules.Add<double>(UserStringNop("RULE_ANNEX_COST_STABILITY_EXP_BASE"),
                           UserStringNop("RULE_ANNEX_COST_STABILITY_EXP_BASE_DESC"),
-                          "BALANCE_STABILITY", 1.2, true, RangedValidator<double>(0.0, 3.0));
+                          "BALANCE_STABILITY", 1.1, true, RangedValidator<double>(0.0, 3.0));
         rules.Add<double>(UserStringNop("RULE_ANNEX_COST_SCALING"),
                           UserStringNop("RULE_ANNEX_COST_SCALING_DESC"),
                           "BALANCE_STABILITY", 5.0, true, RangedValidator<double>(0.0, 50.0));
@@ -286,8 +286,8 @@ namespace {
             std::make_unique<ValueRef::Constant<std::string>>("RULE_ANNEX_COST_STABILITY_EXP_BASE"));
     }
 
-    auto ExpBaseStability() // (base^(-stability)
-    { return AnnexCostStabilityBase() ^ (-PlanetStability()); }
+    auto ExpBaseStability() // (base^stability)
+    { return AnnexCostStabilityBase() ^ PlanetStability(); }
 
     auto MinimumAnnexCost() {
         return std::make_unique<ValueRef::ComplexVariable<double>>(
@@ -328,7 +328,7 @@ namespace {
         return std::make_unique<ValueRef::Operation<double>>(
             ValueRef::OpType::MAXIMUM,
             MinimumAnnexCost(),
-            (ScaledPop() * ExpBaseSpeciesOpinion()) + (BuildingAnnexCostScaling() * BuildingCostsSum(SourceOwner()))
+            (ScaledPop() * ExpBaseSpeciesOpinion() * ExpBaseStability()) + (BuildingAnnexCostScaling() * BuildingCostsSum(SourceOwner()))
         );
     }
 }
