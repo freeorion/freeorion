@@ -4,6 +4,29 @@ from common.priorities import (
     TARGET_EARLY_BEFORE_SCALING_PRIORITY,
 )
 
+try:
+    from focs._effects import (
+        Abs,
+        CurrentTurn,
+        EffectsGroup,
+        Focus,
+        HasSpecies,
+        Homeworld,
+        IsSource,
+        LocalCandidate,
+        MinOf,
+        OwnedBy,
+        Planet,
+        SetMaxStockpile,
+        SetStockpile,
+        Source,
+        Target,
+        TargetPopulation,
+        Value,
+    )
+except ModuleNotFoundError:
+    pass
+
 
 def STOCKPILE_PER_POP_EFFECTSGROUP__SNIP(label: str, value) -> dict:
     return {

@@ -6,6 +6,46 @@ from common.priorities import (
     TARGET_SCALING_PRIORITY,
 )
 
+try:
+    from focs._effects import (
+        Abs,
+        Adequate,
+        Capital,
+        CurrentTurn,
+        EffectsGroup,
+        EmpireStockpile,
+        Focus,
+        GalaxyMaxAIAggression,
+        Happiness,
+        HasEmpireStockpile,
+        HasSpecies,
+        Homeworld,
+        Hostile,
+        Influence,
+        IsHuman,
+        IsSource,
+        LocalCandidate,
+        MaxOf,
+        MinOf,
+        NamedReal,
+        OwnedBy,
+        Planet,
+        Poor,
+        SetMaxTroops,
+        SetRebelTroops,
+        SetTargetHappiness,
+        SetTargetInfluence,
+        SetTroops,
+        Source,
+        StatisticCount,
+        Target,
+        Unowned,
+        Value,
+    )
+except ModuleNotFoundError:
+    pass
+
+
 UNSTABLE_REBEL_TROOPS = [
     EffectsGroup(
         scope=IsSource,

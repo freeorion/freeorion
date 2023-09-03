@@ -4,6 +4,23 @@ from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
 # '''
 # '''
 
+try:
+    from focs._effects import (
+        CurrentTurn,
+        EffectsGroup,
+        IsSource,
+        LocalCandidate,
+        MinOf,
+        Planet,
+        SetMaxSupply,
+        SetSupply,
+        Target,
+        Value,
+    )
+except ModuleNotFoundError:
+    pass
+
+
 STANDARD_SUPPLY_GROWTH = EffectsGroup(  # increase 1 per turn, up to max
     scope=IsSource,
     activation=Planet()

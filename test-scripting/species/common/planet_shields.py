@@ -16,6 +16,24 @@ from common.priorities import (
 #             effects = SetMaxShield value = Value + ( @1@ )
 # '''
 
+try:
+    from focs._effects import (
+        CurrentTurn,
+        EffectsGroup,
+        Focus,
+        IsSource,
+        LocalCandidate,
+        MinOf,
+        Planet,
+        SetMaxShield,
+        SetShield,
+        Target,
+        Unowned,
+        Value,
+    )
+except ModuleNotFoundError:
+    pass
+
 STANDARD_SHIELD_GROWTH = EffectsGroup(  # increase 1 per turn, up to max
     scope=IsSource,
     activation=Planet()

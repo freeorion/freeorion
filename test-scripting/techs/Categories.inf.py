@@ -1,3 +1,8 @@
+try:
+    from focs._tech import *
+except ModuleNotFoundError:
+    pass
+
 Category(
     name="LEARNING_CATEGORY",
     graphic="learning.png",

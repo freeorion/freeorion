@@ -55,8 +55,11 @@ class DetectorPyFocs(_Detector):
         return FileGroup.FOCS_PY
 
     def accept(self, path: PurePath) -> bool:
-        folder = PurePath("default", "scripting")
-        return path.is_relative_to(folder) and path.name.endswith((".py", ".pyi"))
+        folders = [
+            PurePath("default", "scripting"),
+            PurePath("test-scripting"),
+        ]
+        return any(path.is_relative_to(folder) for folder in folders) and path.name.endswith((".py", ".pyi"))
 
 
 class DetectorPyProjectToml(_Detector):
@@ -198,6 +201,8 @@ class DetectorIgnored(_Detector):
         prefix_to_ignore = (
             ".github/ISSUE_TEMPLATE",
             ".github/debian-stable",
+            ".github/debian-oldstable",
+            ".github/debian-sid",
             ".github/fedora-33",
             ".github/fedora-rawhide",
             ".github/manjaro",
@@ -211,6 +216,7 @@ class DetectorIgnored(_Detector):
             "manjaro/Dockerfile",
             "packaging",
             "util",
+            "default/scripting/_readme_images",
         )
 
         suffixes_to_ignore = (

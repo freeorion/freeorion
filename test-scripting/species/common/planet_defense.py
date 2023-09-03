@@ -16,6 +16,28 @@ from common.priorities import (
     TARGET_AFTER_2ND_SCALING_PRIORITY,
 )
 
+try:
+    from focs._effects import (
+        CurrentTurn,
+        EffectsGroup,
+        Focus,
+        GameRule,
+        IsSource,
+        LocalCandidate,
+        MinOf,
+        NamedReal,
+        Planet,
+        SetDefense,
+        SetMaxDefense,
+        SetTargetHappiness,
+        Target,
+        Unowned,
+        Value,
+    )
+except ModuleNotFoundError:
+    pass
+
+
 STANDARD_DEFENSE_GROWTH = EffectsGroup(  # increase 1 per turn, up to max
     scope=IsSource,
     activation=Planet() & Unowned & (LocalCandidate.LastTurnAttackedByShip < CurrentTurn),

@@ -1,6 +1,56 @@
 from common.opinion import POLICY_DISLIKE_SCALING
 from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
 
+try:
+    from focs._effects import (
+        Abs,
+        Adequate,
+        Capital,
+        Contains,
+        CurrentTurn,
+        EffectsGroup,
+        EmpireHasAdoptedPolicy,
+        GameRule,
+        GasGiantType,
+        Good,
+        HasSpecies,
+        HasTag,
+        Homeworld,
+        Hostile,
+        Huge,
+        InSystem,
+        IsBuilding,
+        IsSource,
+        JumpsBetween,
+        Large,
+        LocalCandidate,
+        MaxOf,
+        Medium,
+        Min,
+        MinOf,
+        NamedReal,
+        OwnedBy,
+        Planet,
+        Poor,
+        Population,
+        ResourceSupplyConnected,
+        SetHappiness,
+        SetTargetHappiness,
+        Small,
+        Source,
+        SpeciesDislikes,
+        SpeciesLikes,
+        Statistic,
+        Target,
+        Tiny,
+        Uninhabitable,
+        Unowned,
+        Value,
+    )
+except ModuleNotFoundError:
+    pass
+
+
 STABILITY_PER_LIKED_FOCUS = 2.0
 
 # Policy Liberty doubles de focus dislike effect, policy Conformance halves it, macro is in common/opinion.macros

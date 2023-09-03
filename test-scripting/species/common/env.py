@@ -2,6 +2,29 @@ from common.misc import DESCRIPTION_EFFECTSGROUP_MACRO
 
 # BROAD_EP and NARROW_EP are stub placeholders for applying the
 # board/narrow environment tolerance description to a species.
+
+try:
+    from focs._effects import (
+        Adequate,
+        AsteroidsType,
+        Barren,
+        Desert,
+        GasGiantType,
+        Good,
+        Hostile,
+        Inferno,
+        Ocean,
+        Poor,
+        Radiated,
+        Swamp,
+        Terran,
+        Toxic,
+        Tundra,
+        Uninhabitable,
+    )
+except ModuleNotFoundError:
+    pass
+
 BROAD_EP = DESCRIPTION_EFFECTSGROUP_MACRO("BROAD_EP_DESC")
 
 # NARROW_EP
@@ -308,19 +331,17 @@ BROAD_EP = DESCRIPTION_EFFECTSGROUP_MACRO("BROAD_EP_DESC")
 #     ]'''
 
 INFERNO_BROAD_EP = {
-    "environments": {
-        Swamp: Poor,
-        Toxic: Adequate,
-        Inferno: Good,
-        Radiated: Adequate,
-        Barren: Poor,
-        Tundra: Poor,
-        Desert: Hostile,
-        Terran: Hostile,
-        Ocean: Poor,
-        AsteroidsType: Uninhabitable,
-        GasGiantType: Uninhabitable,
-    }
+    Swamp: Poor,
+    Toxic: Adequate,
+    Inferno: Good,
+    Radiated: Adequate,
+    Barren: Poor,
+    Tundra: Poor,
+    Desert: Hostile,
+    Terran: Hostile,
+    Ocean: Poor,
+    AsteroidsType: Uninhabitable,
+    GasGiantType: Uninhabitable,
 }
 
 # RADIATED_BROAD_EP
