@@ -51,7 +51,10 @@ Tech(
     researchturns=5,
     tags=["PEDIA_DEFENSE_CATEGORY"],
     prerequisites=["DEF_GARRISON_1"],
-    unlock=Item(type=UnlockPolicy, name="PLC_CHECKPOINTS"),
+    unlock=[
+        Item(type=UnlockPolicy, name="PLC_CHECKPOINTS"),
+        Item(type=UnlockPolicy, name="PLC_INSURGENCY"),
+    ],
     effectsgroups=[
         EffectsGroup(
             scope=Planet()

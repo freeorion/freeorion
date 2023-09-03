@@ -12714,6 +12714,15 @@ PLC_TERROR_SUPPRESSION_DESC
 PLC_TERROR_SUPPRESSION_SHORT_DESC
 Increases stability with armed ships
 
+PLC_INSURGENCY
+Insurgency
+
+PLC_INSURGENCY_DESC
+Decreases [[metertype METER_TARGET_HAPPINESS]] by [[value PLC_INSURGENCY_EFFECT]] on planets owned by enemies of and within the supply network of the empire that adopts this policy.
+
+PLC_INSURGENCY_SHORT_DESC
+Decreases enemy stability
+
 PLC_DREAM_RECURSION
 Dream Recursion
 

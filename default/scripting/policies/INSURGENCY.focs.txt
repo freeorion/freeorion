@@ -1,0 +1,29 @@
+Policy
+    name = "PLC_INSURGENCY"
+    description = "PLC_INSURGENCY_DESC"
+    short_description = "PLC_INSURGENCY_SHORT_DESC"
+    category = "MILITARY_CATEGORY"
+    adoptioncost = floor(2.0 * [[POPULATION_OWNED_BY_EMPIRE]]^0.5)
+    prerequisites = [ "PLC_INTERSTELLAR_INFRA" ]
+    effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
+
+        // unowned planets within supply have reduced stability
+        EffectsGroup
+            scope = And [
+                Planet
+                Or [
+                    Unowned
+                    OwnedBy affiliation = EnemyOf empire = Source.Owner
+                ]
+                ResourceSupplyConnected empire = Source.Owner condition = And [
+                    Planet
+                    OwnedBy empire = Source.Owner
+                    Not InSystem id = RootCandidate.SystemID
+                ]
+            ]
+            effects = SetTargetHappiness value = Value - (NamedReal name = "PLC_INSURGENCY_EFFECT" value = 5.0)
+    ]
+    graphic = "icons/policies/military_insurgency.png"
+
+#include "/scripting/policies/policies.macros"
