@@ -27,6 +27,7 @@ HAS_RESEARCH_FOCUS = FocusType(
     location=Planet()
     & (
         ~EmpireHasAdoptedPolicy(empire=Source.Owner, name="PLC_RACIAL_PURITY")
+        | HasSpecies(name=["SP_EXOBOT"])
         | HasSpecies(
             name=[Statistic(str, Mode, value=LocalCandidate.Species, condition=Capital & OwnedBy(empire=Source.Owner))]
         )
@@ -40,6 +41,7 @@ HAS_INFLUENCE_FOCUS = FocusType(
     location=Planet()
     & (
         ~EmpireHasAdoptedPolicy(empire=Source.Owner, name="PLC_RACIAL_PURITY")
+        | HasSpecies(name=["SP_EXOBOT"])
         | HasSpecies(
             name=[Statistic(str, Mode, value=LocalCandidate.Species, condition=Capital & OwnedBy(empire=Source.Owner))]
         )
