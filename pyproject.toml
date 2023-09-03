@@ -148,6 +148,7 @@ builtins = [
     "GalaxyMaxAIAggression",
     "GalaxySize",
     "GameRule",
+    "GameRuleDefinition",
     "GasGiantType",
     "GenerateSitRepMessage",
     "GiveEmpireTech",

@@ -4,7 +4,7 @@ class _GameRuleDefinition: ...
 
 R = TypeVar("R", int, float, str)
 
-def GameRule(
+def GameRuleDefinition(
     *,
     type: type[R],
     name: str,
