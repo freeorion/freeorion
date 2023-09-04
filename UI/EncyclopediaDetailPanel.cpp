@@ -676,7 +676,7 @@ namespace {
                                                           str_key));
 
         }
-        else if  (dir_name == "ENC_NAMED_VALUE_REF") {
+        else if (dir_name == "ENC_NAMED_VALUE_REF") {
             retval.emplace_back(std::piecewise_construct,
                                 std::forward_as_tuple("ENC_NAMED_VALUE_REF_DESC"),
                                 std::forward_as_tuple(UserString("ENC_NAMED_VALUE_REF_DESC") + "\n\n", dir_name));
@@ -781,8 +781,10 @@ namespace {
             }
         }
 
-
-        std::sort(retval.begin(), retval.end());
+        if (dir_name == "ENC_NAMED_VALUE_REF" && !retval.empty())
+            std::sort(std::next(retval.begin()), retval.end()); // leave explanitory text first
+        else
+            std::sort(retval.begin(), retval.end());
         return retval;
     }
 
