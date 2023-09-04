@@ -297,7 +297,7 @@ void SDLGUI::SDLInit() {
         ExitApp(1);
     }
     if (GLEW_OK != glew_status) {
-        std::cerr << "[error] Ignored GLEW error when setting up OpenGL" << glew_error_string << std::endl;
+        std::cerr << "[error] Ignored GLEW error when setting up OpenGL: " << glew_error_string << std::endl;
     }
 
     SDL_ShowWindow(m_window);
