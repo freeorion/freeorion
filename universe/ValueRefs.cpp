@@ -110,7 +110,7 @@ namespace {
             if (trace_count < 11) {
                 trace_count++;
                 ErrorLogger() << " FollowReference stacktrace : top level object (" << type_string << ") not defined in scripting context.\n"
-                          << StackTrace(); // only output stack trace some times per minute, as this was very slow on windows
+                              << StackTrace(); // only output stack trace some times per minute, as this was very slow on windows
             } else {
                 ErrorLogger() << " FollowReference stacktrace : top level object (" << type_string << ") not defined in scripting context. Skip on error logger level. Already printed enough stacktraces. This can be very slow on windows.\n";
                 TraceLogger() << " FollowReference stacktrace : top level object (" << type_string << ") not defined in scripting context.\n"
