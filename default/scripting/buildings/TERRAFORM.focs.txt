@@ -25,7 +25,6 @@ TARGET_TERRAFORMING
     location = And [
         Planet
         OwnedBy empire = Source.Owner
-        TargetPopulation low = 1
         Not Planet type = [Asteroids GasGiant]
         Or [
             Planet type = @1@
