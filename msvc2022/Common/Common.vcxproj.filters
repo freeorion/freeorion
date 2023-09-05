@@ -178,6 +178,12 @@
     <ClInclude Include="..\..\util\GameRules.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\util\GameRuleCategories.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\GameRuleRanks.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\util\i18n.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>

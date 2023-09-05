@@ -7,6 +7,7 @@
 #include "../util/AppInterface.h"
 #include "../util/VarText.h"
 #include "../util/GameRules.h"
+#include "../util/GameRuleRanks.h"
 
 #include "../Empire/Empire.h"
 
@@ -21,10 +22,15 @@ namespace {
     void AddRules(GameRules& rules) {
         rules.Add<int>(UserStringNop("RULE_NUM_COMBAT_ROUNDS"),
                        UserStringNop("RULE_NUM_COMBAT_ROUNDS_DESC"),
-                       "", 4, true, RangedValidator<int>(2, 20));
+                       GameRuleCategories::GameRuleCategory::GENERAL,
+                       4, true,
+                       GameRuleRanks::RULE_NUM_COMBAT_ROUNDS_RANK,
+                       RangedValidator<int>(2, 20));
         rules.Add<bool>(UserStringNop("RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE"),
                         UserStringNop("RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE_DESC"),
-                        "", false, true);
+                        GameRuleCategories::GameRuleCategory::GENERAL,
+                        false, true,
+                        GameRuleRanks::RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE_RANK);
 
     }
     bool temp_bool = RegisterGameRules(&AddRules);

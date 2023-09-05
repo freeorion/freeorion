@@ -10,6 +10,7 @@
 #include "../universe/ValueRef.h"
 #include "../util/AppInterface.h"
 #include "../util/GameRules.h"
+#include "../util/GameRuleRanks.h"
 #include "../util/ranges.h"
 #include "../util/ScopedTimer.h"
 #include "../util/i18n.h"
@@ -25,14 +26,21 @@ namespace {
         // limits amount of PP per turn that can be imported into the stockpile
         rules.Add<bool>(UserStringNop("RULE_STOCKPILE_IMPORT_LIMITED"),
                         UserStringNop("RULE_STOCKPILE_IMPORT_LIMITED_DESC"),
-                        "", false, true);
-
+                        GameRuleCategories::GameRuleCategory::GENERAL,
+                        false, true,
+                        GameRuleRanks::RULE_STOCKPILE_IMPORT_LIMITED_RANK);
         rules.Add<double>(UserStringNop("RULE_PRODUCTION_QUEUE_FRONTLOAD_FACTOR"),
                           UserStringNop("RULE_PRODUCTION_QUEUE_FRONTLOAD_FACTOR_DESC"),
-                          "", 0.0, true, RangedValidator<double>(0.0, 30.0));
+                          GameRuleCategories::GameRuleCategory::GENERAL,
+                          0.0, true,
+                          GameRuleRanks::RULE_PRODUCTION_QUEUE_FRONTLOAD_FACTOR_RANK,
+                          RangedValidator<double>(0.0, 30.0));
         rules.Add<double>(UserStringNop("RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR"),
                           UserStringNop("RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR_DESC"),
-                          "", 0.0, true, RangedValidator<double>(0.0, 30.0));
+                          GameRuleCategories::GameRuleCategory::GENERAL,
+                          0.0, true,
+                          GameRuleRanks::RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR_RANK,
+                          RangedValidator<double>(0.0, 30.0));
     }
     bool temp_bool = RegisterGameRules(&AddRules);
 

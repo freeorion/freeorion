@@ -33,6 +33,7 @@
 #include "../Empire/Government.h"
 #include "../util/CheckSums.h"
 #include "../util/GameRules.h"
+#include "../util/GameRuleRanks.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../util/Random.h"
@@ -68,22 +69,44 @@ namespace {
         // makes all PRNG be reseeded frequently
         rules.Add<bool>(UserStringNop("RULE_RESEED_PRNG_SERVER"),
                         UserStringNop("RULE_RESEED_PRNG_SERVER_DESC"),
-                        "", true, true);
+                        GameRuleCategories::GameRuleCategory::GENERAL,
+                        true, true,
+                        GameRuleRanks::RULE_RESEED_PRNG_SERVER_RANK);
+
         rules.Add<bool>(UserStringNop("RULE_STARLANES_EVERYWHERE"),
                         UserStringNop("RULE_STARLANES_EVERYWHERE_DESC"),
-                        "TEST", false, true);
+                        GameRuleCategories::GameRuleCategory::TEST,
+                        false,
+                        true,
+                        GameRuleRanks::RULE_STARLANES_EVERYWHERE_RANK);
+
         rules.Add<bool>(UserStringNop("RULE_ALL_OBJECTS_VISIBLE"),
                         UserStringNop("RULE_ALL_OBJECTS_VISIBLE_DESC"),
-                        "TEST", false, true);
+                        GameRuleCategories::GameRuleCategory::TEST,
+                        false,
+                        true,
+                        GameRuleRanks::RULE_ALL_OBJECTS_VISIBLE_RANK);
+
         rules.Add<bool>(UserStringNop("RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE"),
                         UserStringNop("RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE_DESC"),
-                        "TEST", false, true);
+                        GameRuleCategories::GameRuleCategory::TEST,
+                        false,
+                        true,
+                        GameRuleRanks::RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE_RANK);
+
         rules.Add<bool>(UserStringNop("RULE_ALL_SYSTEMS_VISIBLE"),
                         UserStringNop("RULE_ALL_SYSTEMS_VISIBLE_DESC"),
-                        "TEST", false, true);
+                        GameRuleCategories::GameRuleCategory::TEST,
+                        false,
+                        true,
+                        GameRuleRanks::RULE_ALL_SYSTEMS_VISIBLE_RANK);
+
         rules.Add<bool>(UserStringNop("RULE_EXTRASOLAR_SHIP_DETECTION"),
                         UserStringNop("RULE_EXTRASOLAR_SHIP_DETECTION_DESC"),
-                        "", false, true);
+                        GameRuleCategories::GameRuleCategory::GENERAL,
+                        false,
+                        true,
+                        GameRuleRanks::RULE_EXTRASOLAR_SHIP_DETECTION_RANK);
     }
     bool temp_bool2 = RegisterGameRules(&AddRules);
 

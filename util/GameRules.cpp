@@ -29,19 +29,39 @@ GameRules& GetGameRules() {
     return game_rules;
 }
 
+static std::unordered_map<std::string, int8_t> AssignCategoryRanks()
+{
+    std::unordered_map<std::string, int8_t> category_ranks;
+    category_ranks[""] = static_cast<int8_t>(GameRuleCategories::GameRuleCategory::GENERAL);
+    for (const auto& [category, str_view] : GameRuleCategories::GameRuleCategoryValues()) {
+        category_ranks[std::string(str_view)] = static_cast<int8_t>(category);
+    }
+    return category_ranks;
+}
+
+static int8_t GetCategoryRank(const std::string& category)
+{
+    static auto category_ranks = AssignCategoryRanks();
+    const auto& it = category_ranks.find(category);
+    if (it != category_ranks.end()) {
+        return it->second;
+    }
+    return static_cast<int8_t>(GameRuleCategories::GameRuleCategory::UNDEFINED);
+}
 
 /////////////////////////////////////////////////////
 // GameRule
 /////////////////////////////////////////////////////
 GameRule::GameRule(Type type_, std::string name_, boost::any value_,
                    boost::any default_value_, std::string description_,
-                   std::unique_ptr<ValidatorBase>&& validator_, bool engine_internal_,
+                   std::unique_ptr<ValidatorBase>&& validator_, bool engine_internal_, uint32_t rank_,
                    std::string category_) :
     OptionsDB::Option(static_cast<char>(0), std::move(name_), std::move(value_),
                       std::move(default_value_), std::move(description_),
                       std::move(validator_), engine_internal_, false, true, "setup.rules"),
     type(type_),
-    category(std::move(category_))
+    category(std::move(category_)),
+    rank(rank_)
 {}
 
 
@@ -134,6 +154,18 @@ std::map<std::string, std::string> GameRules::GetRulesAsStrings() {
     for (auto& [rule_name, rule_value] : m_game_rules)
         retval.emplace(rule_name, rule_value.ValueToString());
     return retval;
+}
+
+std::vector<const GameRule*> GameRules::GetSortedByCategoryAndRank() {
+    CheckPendingGameRules();
+    std::vector<const GameRule*> sorted_rules(m_game_rules.size(), nullptr);
+    std::transform(m_game_rules.begin(), m_game_rules.end(), sorted_rules.begin(), [](const auto& rule_pair) { return &rule_pair.second; });
+    std::sort(sorted_rules.begin(), sorted_rules.end(), [](const GameRule* lhs, const GameRule* rhs) {
+        auto lhs_category_rank = GetCategoryRank(lhs->category);
+        auto rhs_category_rank = GetCategoryRank(rhs->category);
+        return lhs_category_rank == rhs_category_rank ? lhs->rank < rhs->rank : lhs_category_rank < rhs_category_rank;
+    });
+    return sorted_rules;
 }
 
 void GameRules::Add(Pending::Pending<GameRulesTypeMap>&& future)

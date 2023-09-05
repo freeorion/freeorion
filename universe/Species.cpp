@@ -12,6 +12,7 @@
 #include "../util/AppInterface.h"
 #include "../util/CheckSums.h"
 #include "../util/GameRules.h"
+#include "../util/GameRuleRanks.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../util/Random.h"
@@ -80,19 +81,29 @@ namespace {
     void AddRules(GameRules& rules) {
         rules.Add<double>(UserStringNop("RULE_ANNEX_COST_OPINION_EXP_BASE"),
                           UserStringNop("RULE_ANNEX_COST_OPINION_EXP_BASE_DESC"),
-                          "BALANCE_STABILITY", 1.2, true, RangedValidator<double>(0.0, 3.0));
+                          GameRuleCategories::GameRuleCategory::BALANCE_STABILITY, 1.2, true,
+                          GameRuleRanks::RULE_ANNEX_COST_OPINION_EXP_BASE_RANK,
+                          RangedValidator<double>(0.0, 3.0));
         rules.Add<double>(UserStringNop("RULE_ANNEX_COST_STABILITY_EXP_BASE"),
                           UserStringNop("RULE_ANNEX_COST_STABILITY_EXP_BASE_DESC"),
-                          "BALANCE_STABILITY", 1.1, true, RangedValidator<double>(0.0, 3.0));
+                          GameRuleCategories::GameRuleCategory::BALANCE_STABILITY, 1.1, true,
+                          GameRuleRanks::RULE_ANNEX_COST_STABILITY_EXP_BASE_RANK,
+                          RangedValidator<double>(0.0, 3.0));
         rules.Add<double>(UserStringNop("RULE_ANNEX_COST_SCALING"),
                           UserStringNop("RULE_ANNEX_COST_SCALING_DESC"),
-                          "BALANCE_STABILITY", 5.0, true, RangedValidator<double>(0.0, 50.0));
+                          GameRuleCategories::GameRuleCategory::BALANCE_STABILITY, 5.0, true,
+                          GameRuleRanks::RULE_ANNEX_COST_SCALING_RANK,
+                          RangedValidator<double>(0.0, 50.0));
         rules.Add<double>(UserStringNop("RULE_BUILDING_ANNEX_COST_SCALING"),
                           UserStringNop("RULE_BUILDING_ANNEX_COST_SCALING_DESC"),
-                          "BALANCE_STABILITY", 0.25, true, RangedValidator<double>(0.0, 5.0));
+                          GameRuleCategories::GameRuleCategory::BALANCE_STABILITY, 0.25, true,
+                          GameRuleRanks::RULE_BUILDING_ANNEX_COST_SCALING_RANK,
+                          RangedValidator<double>(0.0, 5.0));
         rules.Add<double>(UserStringNop("RULE_ANNEX_COST_MINIMUM"),
                           UserStringNop("RULE_ANNEX_COST_MINIMUM_DESC"),
-                          "BALANCE_STABILITY", 5.0, true, RangedValidator<double>(0.0, 50.0));
+                          GameRuleCategories::GameRuleCategory::BALANCE_STABILITY, 5.0, true,
+                          GameRuleRanks::RULE_ANNEX_COST_MINIMUM_RANK,
+                          RangedValidator<double>(0.0, 50.0));
     }
     bool temp_bool = RegisterGameRules(&AddRules);
 

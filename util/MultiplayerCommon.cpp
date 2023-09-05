@@ -2,6 +2,7 @@
 
 #include "Directories.h"
 #include "GameRules.h"
+#include "GameRuleRanks.h"
 #include "i18n.h"
 #include "LoggerWithOptionsDB.h"
 #include "OptionsDB.h"
@@ -68,19 +69,29 @@ namespace {
     void AddRules(GameRules& rules) {
         rules.Add<int>(UserStringNop("RULE_THRESHOLD_HUMAN_PLAYER_WIN"),
                        UserStringNop("RULE_THRESHOLD_HUMAN_PLAYER_WIN_DESC"),
-                       UserStringNop("MULTIPLAYER"), 0, true, RangedValidator<int>(0, 999));
+                       GameRuleCategories::GameRuleCategory::MULTIPLAYER,
+                       0, true,
+                       GameRuleRanks::RULE_THRESHOLD_HUMAN_PLAYER_WIN_RANK,
+                       RangedValidator<int>(0, 999));
 
         rules.Add<bool>(UserStringNop("RULE_ONLY_ALLIANCE_WIN"),
                         UserStringNop("RULE_ONLY_ALLIANCE_WIN_DESC"),
-                        UserStringNop("MULTIPLAYER"), true, true);
+                        GameRuleCategories::GameRuleCategory::MULTIPLAYER,
+                        true, true,
+                        GameRuleRanks::RULE_ONLY_ALLIANCE_WIN_RANK);
 
         rules.Add<bool>(UserStringNop("RULE_ALLOW_CONCEDE"),
                         UserStringNop("RULE_ALLOW_CONCEDE_DESC"),
-                        UserStringNop("MULTIPLAYER"), false, true);
+                        GameRuleCategories::GameRuleCategory::MULTIPLAYER,
+                        false, true,
+                        GameRuleRanks::RULE_ALLOW_CONCEDE_RANK);
 
         rules.Add<int>(UserStringNop("RULE_CONCEDE_COLONIES_THRESHOLD"),
                        UserStringNop("RULE_CONCEDE_COLONIES_THRESHOLD_DESC"),
-                       UserStringNop("MULTIPLAYER"), 1, true,  RangedValidator<int>(0, 9999));
+                       GameRuleCategories::GameRuleCategory::MULTIPLAYER,
+                       1, true,
+                       GameRuleRanks::RULE_CONCEDE_COLONIES_THRESHOLD_RANK,
+                       RangedValidator<int>(0, 9999));
     }
     bool temp_bool2 = RegisterGameRules(&AddRules);
 

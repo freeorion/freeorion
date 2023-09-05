@@ -3,6 +3,7 @@
 #include <boost/algorithm/string/case_conv.hpp>
 #include "../util/CheckSums.h"
 #include "../util/GameRules.h"
+#include "../util/GameRuleRanks.h"
 #include "../util/Logger.h"
 #include "../util/ScopedTimer.h"
 #include "../Empire/Empire.h"
@@ -26,7 +27,9 @@ namespace {
         // makes all buildings cost 1 PP and take 1 turn to produce
         rules.Add<bool>(UserStringNop("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION"),
                         UserStringNop("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION_DESC"),
-                        "TEST", false, true);
+                        GameRuleCategories::GameRuleCategory::TEST,
+                        false, true,
+                        GameRuleRanks::RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION_RANK);
     }
     bool temp_bool = RegisterGameRules(&AddRules);
 }

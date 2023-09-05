@@ -2,14 +2,17 @@
 
 #include "../universe/ConstantsFwd.h"
 #include "../util/GameRules.h"
+#include "../util/GameRuleRanks.h"
 #include "../util/i18n.h"
 
 namespace {
     void AddRules(GameRules& rules) {
         // determine if diplomacy allowed
         rules.Add<std::string>(UserStringNop("RULE_DIPLOMACY"), UserStringNop("RULE_DIPLOMACY_DESC"),
-                               UserStringNop("MULTIPLAYER"), UserStringNop("RULE_DIPLOMACY_ALLOWED_FOR_ALL"),
+                               GameRuleCategories::GameRuleCategory::MULTIPLAYER,
+                               UserStringNop("RULE_DIPLOMACY_ALLOWED_FOR_ALL"),
                                true,
+                               GameRuleRanks::RULE_DIPLOMACY_RANK,
                                DiscreteValidator<std::string>(std::array{
                                    "RULE_DIPLOMACY_ALLOWED_FOR_ALL",
                                    "RULE_DIPLOMACY_FORBIDDEN_FOR_ALL"
