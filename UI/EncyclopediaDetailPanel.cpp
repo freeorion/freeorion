@@ -1397,11 +1397,17 @@ namespace {
             return;
         }
         else if (item_name == "ENC_GAME_RULES") {
-            for (auto& [rule_name, rule] : GetGameRules()) {
-                if (rule.ValueIsDefault())
-                    detailed_description += UserString(rule_name) + " : " + rule.ValueToString() + "\n";
+            std::string last_category;
+            detailed_description += UserString("GENERAL") + ":\n";
+            for (const auto* rule : GetGameRules().GetSortedByCategoryAndRank()) {
+                if (last_category != rule->category) {
+                    last_category = rule->category;
+                    detailed_description += "\n\n" + UserString(last_category == "" ? "GENERAL" : last_category) + ":\n";
+                }
+                if (rule->ValueIsDefault())
+                    detailed_description += "    " + UserString(rule->name) + " : " + rule->ValueToString() + "\n";
                 else
-                    detailed_description += "<u>" + UserString(rule_name) + " : " + rule.ValueToString() + "</u>\n";
+                    detailed_description += "    <u>" + UserString(rule->name) + " : " + rule->ValueToString() + "</u>\n";
             }
             return;
         }

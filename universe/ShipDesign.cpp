@@ -14,6 +14,7 @@
 #include "../util/AppInterface.h"
 #include "../util/CheckSums.h"
 #include "../util/GameRules.h"
+#include "../util/GameRuleRanks.h"
 #include "../util/i18n.h"
 #include <numeric>
 
@@ -23,7 +24,8 @@ namespace {
         // makes all ships cost 1 PP and take 1 turn to produce
         rules.Add<bool>(UserStringNop("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION"),
                         UserStringNop("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION_DESC"),
-                        "TEST", false, true);
+                        GameRuleCategories::GameRuleCategory::TEST, false, true,
+                        GameRuleRanks::RULE_CHEAP_AND_FAST_SHIP_PRODUCTION_RANK);
     }
     bool temp_bool = RegisterGameRules(&AddRules);
 

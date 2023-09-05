@@ -6,6 +6,7 @@ GameRule(
     default=1.0,
     min=0.1,
     max=10.0,
+    rank=20,
 )
 
 GameRule(
@@ -16,6 +17,7 @@ GameRule(
     default=1.0,
     min=0.1,
     max=10.0,
+    rank=10,
 )
 
 GameRule(
@@ -26,6 +28,7 @@ GameRule(
     default=2.0,
     min=0.1,
     max=10.0,
+    rank=666,
 )
 
 GameRule(
@@ -36,6 +39,7 @@ GameRule(
     default=1.0,
     min=0.1,
     max=10.0,
+    rank=1337,
 )
 
 GameRule(
@@ -44,6 +48,7 @@ GameRule(
     category="CONTENT",
     type=bool,
     default=True,
+    rank=1,
 )
 
 GameRule(
@@ -52,6 +57,7 @@ GameRule(
     category="CONTENT",
     type=bool,
     default=True,
+    rank=2,
 )
 
 GameRule(
@@ -61,6 +67,7 @@ GameRule(
     type=str,
     default="PLAYER",
     allowed=["MODERATOR", "OBSERVER", "PLAYER", "AI_PLAYER"],
+    rank=999,
 )
 
 GameRule(
@@ -71,6 +78,7 @@ GameRule(
     default=1,
     min=0,
     max=999,
+    rank=900000,
 )
 
 GameRule(
@@ -81,6 +89,7 @@ GameRule(
     default=2,
     min=0,
     max=999,
+    rank=900001,
 )
 
 GameRule(
@@ -91,6 +100,7 @@ GameRule(
     default=3,
     min=0,
     max=999,
+    rank=900002,
 )
 
 GameRule(
@@ -101,6 +111,7 @@ GameRule(
     default=4,
     min=0,
     max=999,
+    rank=900003,
 )
 
 GameRule(
@@ -111,6 +122,7 @@ GameRule(
     default=5,
     min=0,
     max=999,
+    rank=900004,
 )
 
 GameRule(
@@ -121,6 +133,7 @@ GameRule(
     default=3,
     min=0,
     max=999,
+    rank=900005,
 )
 
 GameRule(
@@ -131,6 +144,7 @@ GameRule(
     default=6,
     min=0,
     max=999,
+    rank=900006,
 )
 
 GameRule(
@@ -139,6 +153,7 @@ GameRule(
     category="BALANCE",
     type=bool,
     default=False,
+    rank=1234567,
 )
 
 GameRule(
@@ -147,6 +162,7 @@ GameRule(
     category="MULTIPLAYER",
     type=bool,
     default=False,
+    rank=3001,
 )
 
 GameRule(
@@ -157,4 +173,5 @@ GameRule(
     default=3,
     min=1,
     max=20,
+    rank=42,
 )

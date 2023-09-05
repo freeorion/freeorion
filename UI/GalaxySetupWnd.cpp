@@ -175,12 +175,12 @@ void GameRulesPanel::CompleteConstruction() {
     indexed_pages[""] = CreatePage(UserString("GENERAL"));
 
     // for all rules, add to page
-    for (const auto& rule : GetGameRules()) {
+    for (const auto* rule : GetGameRules().GetSortedByCategoryAndRank()) {
         // get or create page for rule
-        auto itr = indexed_pages.find(rule.second.category);
+        auto itr = indexed_pages.find(rule->category);
         if (itr == indexed_pages.end()) {
-            indexed_pages[rule.second.category] = CreatePage(UserString(rule.second.category));
-            itr = indexed_pages.find(rule.second.category);
+            indexed_pages[rule->category] = CreatePage(UserString(rule->category));
+            itr = indexed_pages.find(rule->category);
         }
         if (itr == indexed_pages.end()) {
             ErrorLogger() << "Unable to create and insert and then find new rule page";
@@ -189,18 +189,18 @@ void GameRulesPanel::CompleteConstruction() {
         auto current_page = itr->second;
 
         // add rule to page
-        switch (rule.second.type) {
+        switch (rule->type) {
         case GameRule::Type::TOGGLE:
-            BoolRuleWidget(current_page, 0, rule.first);
+            BoolRuleWidget(current_page, 0, rule->name);
             break;
         case GameRule::Type::INT:
-            IntRuleWidget(current_page, 0, rule.first);
+            IntRuleWidget(current_page, 0, rule->name);
             break;
         case GameRule::Type::DOUBLE:
-            DoubleRuleWidget(current_page, 0, rule.first);
+            DoubleRuleWidget(current_page, 0, rule->name);
             break;
         case GameRule::Type::STRING:
-            StringRuleWidget(current_page, 0, rule.first);
+            StringRuleWidget(current_page, 0, rule->name);
             break;
         default:
             break;

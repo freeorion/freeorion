@@ -12,6 +12,7 @@
 #include "../util/AppInterface.h"
 #include "../util/CheckSums.h"
 #include "../util/GameRules.h"
+#include "../util/GameRuleRanks.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../util/ScopedTimer.h"
@@ -24,7 +25,8 @@ namespace {
         // makes all techs cost 1 RP and take 1 turn to research
         rules.Add<bool>(UserStringNop("RULE_CHEAP_AND_FAST_TECH_RESEARCH"),
                         UserStringNop("RULE_CHEAP_AND_FAST_TECH_RESEARCH_DESC"),
-                        "TEST", false, true);
+                        GameRuleCategories::GameRuleCategory::TEST, false, true,
+                        GameRuleRanks::RULE_CHEAP_AND_FAST_TECH_RESEARCH_RANK);
     }
     bool temp_bool = RegisterGameRules(&AddRules);
 }

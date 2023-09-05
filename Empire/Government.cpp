@@ -10,6 +10,7 @@
 #include "../util/GameRules.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/GameRules.h"
+#include "../util/GameRuleRanks.h"
 #include "../util/CheckSums.h"
 #include "../util/ScopedTimer.h"
 #include "../Empire/Empire.h"
@@ -23,7 +24,8 @@ namespace {
     void AddRules(GameRules& rules) {
         // makes all policies cost 1 influence to adopt
         rules.Add<bool>(UserStringNop("RULE_CHEAP_POLICIES"), UserStringNop("RULE_CHEAP_POLICIES_DESC"),
-                        "TEST", false, true);
+                        GameRuleCategories::GameRuleCategory::TEST, false, true,
+                        GameRuleRanks::RULE_CHEAP_POLICIES_RANK);
     }
     bool temp_bool = RegisterGameRules(&AddRules);
 }

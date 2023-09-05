@@ -12,15 +12,17 @@
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../util/GameRules.h"
+#include "../util/GameRuleRanks.h"
 #include "../util/i18n.h"
 
 
 namespace {
     void AddRules(GameRules& rules) {
-        // makes all PRNG be reseeded frequently
+        // whether systems detected only at basic visibility have their name and star type revealed or not
         rules.Add<bool>(UserStringNop("RULE_BASIC_VIS_SYSTEM_INFO_SHOWN"),
                         UserStringNop("RULE_BASIC_VIS_SYSTEM_INFO_SHOWN_DESC"),
-                        "", false, true);
+                        GameRuleCategories::GameRuleCategory::GENERAL, false, true,
+                        GameRuleRanks::RULE_BASIC_VIS_SYSTEM_INFO_SHOWN_RANK);
     }
     bool temp_bool = RegisterGameRules(&AddRules);
 }

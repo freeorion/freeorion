@@ -39,6 +39,8 @@ object insert_rule_(const grammar& g, GameRulesTypeMap& game_rules, const tuple&
     auto desc{extract<std::string>(kw["description"])()};
     auto category{extract<std::string>(kw["category"])()};
     auto type_ = kw["type"];
+    uint32_t rank{extract<uint32_t>(kw["rank"])()};
+
 
     if (type_ == g.m_parser.type_int) {
         int default_value{extract<int>(kw["default"])()};
@@ -49,7 +51,7 @@ object insert_rule_(const grammar& g, GameRulesTypeMap& game_rules, const tuple&
                       << ", min: " << min << ", max: " << max;
         game_rules.insert_or_assign(name, GameRule{GameRule::Type::INT, name, default_value, default_value,
                                                    std::move(desc), std::make_unique<RangedValidator<int>>(min, max),
-                                                   false, std::move(category)});
+                                                   false, rank, std::move(category)});
 
     } else if (type_ == g.m_parser.type_float) {
         double default_value{extract<double>(kw["default"])()};
@@ -60,7 +62,7 @@ object insert_rule_(const grammar& g, GameRulesTypeMap& game_rules, const tuple&
                       << ", min: " << min << ", max: " << max;
         game_rules.insert_or_assign(name, GameRule{GameRule::Type::DOUBLE, name, default_value, default_value,
                                                    std::move(desc), std::make_unique<RangedValidator<double>>(min, max),
-                                                   false, std::move(category)});
+                                                   false, rank, std::move(category)});
 
     } else if (type_ == g.m_parser.type_bool) {
         bool default_value{extract<bool>(kw["default"])()};
@@ -68,7 +70,7 @@ object insert_rule_(const grammar& g, GameRulesTypeMap& game_rules, const tuple&
                       << ", desc: " << desc << ", default: " << default_value;
         game_rules.insert_or_assign(name, GameRule{GameRule::Type::TOGGLE, name, default_value, default_value,
                                                    std::move(desc), std::make_unique<Validator<bool>>(),
-                                                   false, std::move(category)});
+                                                   false, rank, std::move(category)});
 
     } else if (type_ == g.m_parser.type_str) {
         auto default_value{extract<std::string>(kw["default"])()};
@@ -87,7 +89,7 @@ object insert_rule_(const grammar& g, GameRulesTypeMap& game_rules, const tuple&
                                                    allowed.empty() ?
                                                         nullptr :
                                                         std::make_unique<DiscreteValidator<std::string>>(std::move(allowed)),
-                                                   false, std::move(category)});
+                                                   false, rank, std::move(category)});
 
     } else {
         ErrorLogger() << "Unsupported type for rule " << name << ": " << extract<std::string>(str(type_))();

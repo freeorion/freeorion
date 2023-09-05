@@ -3,6 +3,7 @@
 
 #include "OptionsDB.h"
 #include "Pending.h"
+#include "GameRuleCategories.h"
 
 class GameRules;
 
@@ -39,12 +40,13 @@ struct FO_COMMON_API GameRule final : public OptionsDB::Option {
     GameRule() = default;
     GameRule(Type type_, std::string name_, boost::any value_,
              boost::any default_value_, std::string description_,
-             std::unique_ptr<ValidatorBase>&& validator_, bool engine_internal_,
+             std::unique_ptr<ValidatorBase>&& validator_, bool engine_internal_, uint32_t rank_,
              std::string category_ = std::string());
     [[nodiscard]] bool IsInternal() const noexcept { return this->storable; }
 
     Type type = Type::INVALID;
     std::string category;
+    uint32_t rank;
 };
 
 using GameRulesTypeMap = std::unordered_map<std::string, GameRule>;
@@ -75,6 +77,9 @@ public:
 
     /** returns all contained rules as map of name and value string. */
     [[nodiscard]] std::map<std::string, std::string> GetRulesAsStrings();
+
+    /** returns collection of game rules sorted by their rank, chiefly for use in GUI ordering */
+    [[nodiscard]] std::vector<const GameRule*> GetSortedByCategoryAndRank();
 
     template <typename T>
     [[nodiscard]] T Get(const std::string& name)
@@ -131,7 +136,7 @@ public:
         option setup.rules.server-locked.{RULE_NAME} to block rule changes from players */
     template <typename T>
     void Add(std::string name, std::string description, std::string category, T default_value,
-             bool engine_internal, std::unique_ptr<ValidatorBase> validator = nullptr)
+             bool engine_internal, uint32_t rank, std::unique_ptr<ValidatorBase> validator = nullptr)
     {
         CheckPendingGameRules();
 
@@ -154,16 +159,36 @@ public:
         DebugLogger() << "Added game rule named " << name << " with default value " << value;
 
         GameRule&& rule{GameRule::RuleTypeForType(T()), name, value, value, std::move(description),
-                        std::move(validator), engine_internal, std::move(category)};
+                        std::move(validator), engine_internal, rank, std::move(category)};
         m_game_rules.insert_or_assign(std::move(name), std::move(rule));
     }
 
     template <typename T, typename V> requires (std::is_convertible_v<V, Validator<T>>)
     void Add(std::string name, std::string description, std::string category, T default_value,
-             bool engine_internal, V&& validator)
+             bool engine_internal, uint32_t rank, V&& validator)
     {
         Add(std::move(name), std::move(description), std::move(category), std::move(default_value),
-            engine_internal, std::make_unique<V>(std::move(validator)));
+            engine_internal, rank, std::make_unique<V>(std::move(validator)));
+    }
+
+    template <typename T, typename V> requires (std::is_convertible_v<V, Validator<T>>)
+        void Add(std::string name, std::string description, GameRuleCategories::GameRuleCategory category, T default_value,
+            bool engine_internal, uint32_t rank, V&& validator)
+    {
+        Add(std::move(name), std::move(description), category, std::move(default_value),
+            engine_internal, rank, std::make_unique<V>(std::move(validator)));
+    }
+
+    /** Adds a rule, optionally with a custom validator.
+       Adds option setup.rules.{RULE_NAME} to override default value and
+       option setup.rules.server-locked.{RULE_NAME} to block rule changes from players */
+    template <typename T>
+    void Add(std::string name, std::string description, GameRuleCategories::GameRuleCategory category, T default_value,
+        bool engine_internal, uint32_t rank, std::unique_ptr<ValidatorBase> validator = nullptr)
+    {
+        Add(std::move(name), std::move(description), 
+            category == GameRuleCategories::GameRuleCategory::GENERAL ? "" : std::string(to_string(category)),
+            std::move(default_value), engine_internal, rank, std::move(validator));
     }
 
     /** Adds rules from the \p future. */
