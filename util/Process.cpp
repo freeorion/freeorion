@@ -45,9 +45,13 @@ Process::Process() :
 {}
 
 Process::Process(const std::string& cmd, const std::vector<std::string>& argv) :
-    m_impl(std::make_shared<Impl>(cmd, argv)),
+    m_impl(std::make_unique<Impl>(cmd, argv)),
     m_empty(false)
 {}
+
+Process::~Process() noexcept = default;
+Process::Process(Process&&) noexcept = default;
+Process& Process::operator=(Process&&) noexcept = default;
 
 bool Process::SetLowPriority(bool low) {
     if (m_empty)
