@@ -105,7 +105,24 @@ namespace {
                           << " target: " << (context.effect_target ? context.effect_target->Name() : "0")
                           << " local c: " << (context.condition_local_candidate ? context.condition_local_candidate->Name() : "0")
                           << " root c: " << (context.condition_root_candidate ? context.condition_root_candidate->Name() : "0")
-                          << "  " << StackTrace();
+                          << " stacktrace: see trace logging";
+            static std::atomic<uint32_t> trace_count = 0;
+            const auto clock_now = std::chrono::system_clock::now();
+            const auto now_mins = std::chrono::duration_cast<std::chrono::minutes>(clock_now.time_since_epoch()).count();
+            static auto previous_mins = std::chrono::duration_cast<std::chrono::minutes>(clock_now.time_since_epoch()).count();
+            if (now_mins > previous_mins) {
+                trace_count = 0;
+                previous_mins = now_mins;
+            }
+            if (trace_count < 11) {
+                trace_count++;
+                ErrorLogger() << " FollowReference stacktrace : top level object (" << type_string << ") not defined in scripting context.\n"
+                              << StackTrace(); // only output stack trace some times per minute, as this was very slow on windows
+            } else {
+                ErrorLogger() << " FollowReference stacktrace : top level object (" << type_string << ") not defined in scripting context. Skip on error logger level. Already printed enough stacktraces. This can be very slow on windows.\n";
+                TraceLogger() << " FollowReference stacktrace : top level object (" << type_string << ") not defined in scripting context.\n"
+                              << StackTrace(); // only output stack trace some times per minute, as this was very slow on windows
+            }
             return nullptr;
         }
 
