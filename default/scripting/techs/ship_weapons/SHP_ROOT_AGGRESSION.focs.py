@@ -1,5 +1,5 @@
 from focs._tech import *
-from techs.ship_weapons.ship_weapons import SET_BOTH_MAX_CAPACITIES_FROM_PART_CAPACITIES, WEAPON_BASE_EFFECTS
+from techs.ship_weapons.ship_weapons import WEAPON_BASE_EFFECTS
 
 Tech(
     name="SHP_ROOT_AGGRESSION",
@@ -16,7 +16,6 @@ Tech(
     ],
     effectsgroups=[
         # TODO move at least the flak effect to the part definition
-        SET_BOTH_MAX_CAPACITIES_FROM_PART_CAPACITIES("SR_WEAPON_0_1"),
         *WEAPON_BASE_EFFECTS("SR_WEAPON_0_1"),
         *WEAPON_BASE_EFFECTS("SR_WEAPON_1_1"),
     ],

@@ -18,6 +18,7 @@ Part
         Planet
         OwnedBy empire = Source.Owner
     ]
+    effectsgroups = [[SET_BOTH_MAX_CAPACITIES_FROM_PART_CAPACITIES]]
     icon = "icons/ship_parts/flak.png"
 
 #include "shortrange.macros"
