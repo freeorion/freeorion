@@ -1,0 +1,148 @@
+# This is configuration for file checker.
+# This file is coupled with the build_on_pull_request.yml
+# - Workflow name should match `jobs.detect_changed_files.outputs` section of this workflow.
+#   For example:
+#     lint_python is present 2 times in this file: lint_python: ${{ steps.set_files_changed.outputs.LINT_PYTHON }}
+# - Groups:
+#   - This is an aggregation of files that are groupped together.
+#   - examples is for documentation and testing
+#   - patterns are regular expressins, case insensitive. All paths use posix style (/ as separators, even on Windows)
+#     they are combined with OR, file is belongs to group if at least one pattern matches.
+#   - /!\ Order of groups matters: the first group that accepts the file is a group of this file.
+#     Keep group ignored at the end.
+# - Testing:
+#    - Reading config already include a bunch of checks.
+#       - Workflow groups exists
+#       - All groups used at least in a single workflow
+#       - All examples matches at with patterns
+#    - To run checks use script check_coverage.py
+# - TOML notice:
+#   Use single quotes for patterns, this is raw strings.
+[workflow]
+build_windows_with_cmake = ['focs_py', 'cpp', 'cmake', 'godot', 'workflows', 'focs_txt']
+build_android = ['cpp', 'workflows']
+build_macos = ['cpp', 'workflows']
+build_ubuntu = ['cpp', 'workflows']
+build_windows_with_msvs = ['cpp', 'workflows', 'visual_studio']
+lint_codeql = ['cpp', 'workflows']
+lint_py_focs = ['focs_py', 'pyproject_toml', 'python_dev_requirements', 'workflows']
+lint_python = ['focs_py', 'pyproject_toml', 'python_dev_requirements', 'workflows', 'python']
+lint_string_tables = ['stringtables', 'workflows']
+noop = ['ignored']
+
+[group.focs_py]
+examples = ['default/scripting/species/sp_banforo.focs.py', 'default/scripting/focs/_species.pyi']
+patterns = ['^(default/scripting|test-scripting).*\.pyi?$']
+
+[group.focs_txt]
+examples = ['default/scripting/species/common/shields.macros', 'default/scripting/techs/techs.macros',
+    'default/scripting/species/SP_SLY.focs.txt', ]
+patterns = ['^(default/scripting|test-scripting)/.*\.(focs.txt|macros|macros.txt)$']
+
+[group.pyproject_toml]
+examples = ['pyproject.toml']
+patterns = ['^pyproject.toml$']
+
+[group.python_dev_requirements]
+examples = ['default/python/requirements-dev.txt']
+patterns = ['^default/python/requirements-dev.txt$']
+
+[group.cpp]
+examples = [
+    'parse/CommonParamsParser.cpp',
+    'parse/ConditionParser.h',
+]
+patterns = ['\.(cpp|h)']
+
+[group.cmake]
+examples = [
+    'cmake/FreeOrionVersion.cmake.in',
+    'cmake/FFindVorbis.cmake',
+    'parse/CMakeLists.txt',
+    'GG/cmake/GiGi.pc.in',
+]
+patterns = ['cmake']
+
+[group.workflows]
+examples = ['.github/workflows/project-labeler.yml', '.appveyor.yml']
+patterns = ['^.github/workflows/', '^.appveyor.yml$']
+
+
+[group.visual_studio]
+examples = ['msvc2022/FreeOrion.sln']
+patterns = ['^msvc2022/']
+
+[group.python]
+examples = [
+    'check/st-tool.py',
+    'default/python/AI/freeOrionAIInterface.pyi',
+    'default/python/common/option_tools.py',
+]
+patterns = ['.pyi?$']
+
+[group.stringtables]
+examples = ['check/st-tool.py', 'default/stringtables/en.txt']
+patterns = ['^default/stringtables', '^check/st-tool.py$']
+
+[group.godot]
+examples = ['godot/FleetWindow.gd']
+patterns = ['^godot/.*.\.gd$']
+
+[group.ignored]
+examples = [
+    'godot/assets/image/WindowFramePinWidgetOFF.png',
+    'packaging/windows_installer.nsi.in',
+    'doc/Doxyfile.in',
+    'util/Serialize.ipp',
+    'default/data/art/stars/old_stars/purple4.png',
+    'default/scripting/techs/growth/GENOME_BANK.disabled',
+    'default/scripting/starting_unlocks/buildings.inf',
+]
+patterns = [
+    '^.github/ISSUE_TEMPLATE/',
+    '^.github/debian-stable/',
+    '^.github/debian-oldstable/',
+    '^.github/debian-sid/',
+    '^.github/fedora-33/',
+    '^.github/fedora-rawhide/',
+    '^.github/manjaro/',
+    '^.github/ubuntu-22.10/',
+    '^\.github/CODEOWNERS$',
+    '^\.github/id_ed25519.gpg',
+    '^\.github/id_ed25519.pub',
+    '^\.github/pre-deploy.sh',
+    '^\.github/project-labels.yml',
+    '^\.github/snap-xvfb-launch.sh',
+    '^GG/doc/',
+    '^GG/INSTALLING$',
+    '^GG/PACKAGING$',
+    '^GG/README$',
+    '^GG/src/nanovg/nanovg.*\.c$',
+    '^default/data/',
+    '^default/python/charting/',
+    '^default/python/handlers',
+    '^default/shaders/',
+    '^doc/',
+    '^packaging',
+    '^util',
+    '^default/scripting/_readme_images',
+    '^godot',
+    '.gitattributes$',
+    '\.gitignore$',
+    '\.md$',
+    'COPYING$',
+    'LICENSE.txt$',
+    'ai_debug_config.ini$',
+    'client/human/FreeOrion.icns$',
+    'client/human/FreeOrion.ico$',
+    'client/human/FreeOrion.rc$',
+    'client/human/GUIController.mm$',
+    'client/human/chmain.mm$',
+    'client/human/main.xib$',
+    'credits.xml$',
+    'default/scripting/empire_colors.xml$',
+    'pre-commit-config.yaml$',
+    'pytest.ini$',
+    'snap/snapcraft.yaml$',
+    'default/scripting/.*\.(inf|disabled)'
+]

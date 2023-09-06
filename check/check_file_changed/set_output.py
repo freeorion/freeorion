@@ -3,11 +3,11 @@ Check the files were changed and set GitHub output values.
 """
 import os
 from argparse import ArgumentParser
+from collections.abc import Collection
 from contextlib import contextmanager
 from subprocess import check_output
 
-from _detectors import detect_file_groups
-from _workflow import Workflow, get_workflows
+from _file_checker import WorkflowName, read
 
 
 def is_github():
@@ -19,41 +19,50 @@ def print_group(title: str):
     if is_github():
         print(f"::group::{title}")
     else:
-        print(title)
+        print(f"{title}:")
     yield
     print()
     if is_github():
         print("::endgroup::")
 
 
-def get_changed_files(change, base):
+def print_list(items: Collection[str]):
+    for i in sorted(items):
+        print(f" - {i}")
+
+
+def get_changed_files(change, base) -> list[str]:
     cmd = ["git", "diff-tree", "--name-only", "-r", change, base]
     output = check_output(cmd)
     return output.decode().split("\n")
 
 
-def format_output(workflows: set[Workflow]):
-    return [f"{workflow.name}=true" for workflow in workflows]
+def format_output(workflows: set[WorkflowName]):
+    return [f"{workflow.upper()}=true" for workflow in workflows]
 
 
 def check_changed_files(*, change_ref, base_ref):
+    file_checker = read()
+
     with print_group("Getting changed files"):
         changed_files = get_changed_files(change_ref, base_ref)
         print("\n".join(changed_files))
 
     with print_group("Detected file Groups:"):
-        changed_file_groups = detect_file_groups(changed_files)
-        print("\n".join(x.name for x in changed_file_groups))
+        detected_groups = (file_checker.get_detected_group(path) for path in changed_files)
+        detected_groups = {g for g in detected_groups if g}
+        print_list(detected_groups)
 
-    affected_workflows = get_workflows(changed_file_groups)
+    affected_workflows = file_checker.get_workflows(detected_groups)
 
-    print("Changed workflows:\n - %s" % "\n - ".join(x.name for x in sorted(affected_workflows, key=lambda x: x.name)))
+    print("Changed workflows:")
+    print_list(affected_workflows)
     print()
 
     output_text = "\n".join(format_output(affected_workflows))
-
-    print("Generated output:")
-    print(output_text)
+    with print_group("Generated output"):
+        print(output_text)
+        print()
 
     if is_github():
         output_path = os.environ["GITHUB_OUTPUT"]

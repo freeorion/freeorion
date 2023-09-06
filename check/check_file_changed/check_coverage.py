@@ -4,10 +4,9 @@ Check which files in the repo are covered.
 It will help to have visibility over all files in the repo.
 """
 from argparse import ArgumentParser
-from pathlib import PurePath
 from subprocess import check_output
 
-from _detectors import detect_file, registered_detectors
+from _file_checker import FileChecker, read
 
 
 def list_all_files():
@@ -15,24 +14,45 @@ def list_all_files():
     return check_output(cmd).decode().strip().split("\n")
 
 
+def check_patterns(config: FileChecker):
+    unused_patterns = []
+    for group in config.groups:
+        for pattern, count in group.matched.items():
+            if count == 0:
+                unused_patterns.append((group.name, pattern))
+
+    if not unused_patterns:
+        print("All patterns are in use")
+        return
+
+    print(f"Found {len(unused_patterns)} unused patterns")
+    for group, pattern in unused_patterns:
+        print(f" - {group:<20}: {pattern}")
+
+
 def check_coverage():
+    file_checker = read()
+
     all_files = list_all_files()
 
     missed_count = 0
     missed_files = []
 
     for path in all_files:
-        result = detect_file(PurePath(path), registered_detectors)
-        if result is None:
+        result = file_checker.get_detected_group(path)
+        if result:
+            workflows = file_checker.get_workflows([result])
+            print(
+                f"  {path:<60}  {result.upper():<20} {', '.join(sorted(workflows)).upper()}",
+            )
+        else:
             missed_count += 1
             missed_files.append(path)
-        else:
-            print(
-                f"  {path:<60}  {result}",
-            )
     print(f"Missed files: {missed_count} from {len(all_files)}")
     for f in missed_files:
-        print(" ", [f])
+        print(" ", f)
+
+    check_patterns(file_checker)
 
 
 if __name__ == "__main__":

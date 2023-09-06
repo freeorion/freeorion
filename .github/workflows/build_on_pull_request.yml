@@ -22,7 +22,7 @@ jobs:
           fetch-depth: 2
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: '3.11'
       - id: set_files_changed
         working-directory: check/check_file_changed
         run: python set_output.py
