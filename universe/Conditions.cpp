@@ -152,11 +152,11 @@ namespace Condition {
     const auto condition_description_and_test_results =
         ConditionDescriptionAndTest(conditions, source_context, candidate);
 
-    bool all_conditions_match_candidate = true, at_least_one_condition_matches_candidate = false;
-    for (const auto result : condition_description_and_test_results | range_values) {
-        all_conditions_match_candidate = all_conditions_match_candidate && result;
-        at_least_one_condition_matches_candidate = at_least_one_condition_matches_candidate || result;
-    }
+    const auto result_rng = condition_description_and_test_results | range_values;
+    static constexpr auto is_true = [](const bool b) { return b; };
+    const bool all_conditions_match_candidate = std::all_of(result_rng.begin(), result_rng.end(), is_true);
+    const bool at_least_one_condition_matches_candidate = std::any_of(result_rng.begin(), result_rng.end(), is_true);
+
 
     // concatenate (non-duplicated) single-description results
     std::string retval;
