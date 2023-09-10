@@ -358,7 +358,7 @@ namespace FreeOrionPython {
             .def("canBuild",                        +[](const Empire& empire, BuildType build_type, int design, int location) -> bool { return empire.ProducibleItem(build_type, design, location, ScriptingContext{}); })
 
             .def("hasExploredSystem",               &Empire::HasExploredSystem)
-            .add_property("exploredSystemIDs",      make_function(&Empire::ExploredSystems,         py::return_value_policy<py::return_by_value>()))
+            .add_property("exploredSystemIDs",      +[](const Empire& empire) { return ToVec(empire.ExploredSystems()); })
 
             .add_property("eliminated",             &Empire::Eliminated)
             .add_property("won",                    &Empire::Won)
