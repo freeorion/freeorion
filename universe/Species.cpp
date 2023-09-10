@@ -170,17 +170,23 @@ namespace {
         return retval;
     }
 
+    auto SourceOwner()
+    { return std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"); }
+
     auto DefaultAnnexationCondition() {
         return std::make_unique<Condition::And>(
+            std::make_unique<Condition::Or>(
+                std::make_unique<Condition::EmpireAffiliation>(EmpireAffiliationType::AFFIL_NONE),
+                std::make_unique<Condition::EmpireAffiliation>(SourceOwner(), EmpireAffiliationType::AFFIL_ENEMY)
+            ),
             std::make_unique<Condition::MeterValue>(MeterType::METER_POPULATION,
                                                     std::make_unique<ValueRef::Constant<double>>(0.001),
                                                     nullptr),
             std::make_unique<Condition::ResourceSupplyConnectedByEmpire>(
-                std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"),
+                SourceOwner(),
                 std::make_unique<Condition::And>(
                     std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET),
-                    std::make_unique<Condition::EmpireAffiliation>(
-                        std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"))
+                    std::make_unique<Condition::EmpireAffiliation>(SourceOwner())
                 )
             ));
     }
@@ -193,9 +199,6 @@ namespace {
         retval.push_back(std::move(three));
         return retval;
     }
-
-    auto SourceOwner()
-    { return std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"); }
 
     auto LocalCandidateOwner()
     { return std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE, "Owner"); }

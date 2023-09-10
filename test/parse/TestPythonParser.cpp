@@ -286,7 +286,7 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_TEST_MESSAGE("Dump " << species.Name() << ":");
         BOOST_TEST_MESSAGE(species.Dump(0));
 
-        BOOST_REQUIRE_EQUAL(6594376, species.GetCheckSum());
+        BOOST_REQUIRE_EQUAL(6606994, species.GetCheckSum());
 
         const Species test_species{"SP_ABADDONI",
             "SP_ABADDONI_DESC",
