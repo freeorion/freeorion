@@ -179,6 +179,7 @@ namespace {
                 std::make_unique<Condition::EmpireAffiliation>(EmpireAffiliationType::AFFIL_NONE),
                 std::make_unique<Condition::EmpireAffiliation>(SourceOwner(), EmpireAffiliationType::AFFIL_ENEMY)
             ),
+            std::make_unique<Condition::VisibleToEmpire>(SourceOwner()),
             std::make_unique<Condition::MeterValue>(MeterType::METER_POPULATION,
                                                     std::make_unique<ValueRef::Constant<double>>(0.001),
                                                     nullptr),
@@ -318,7 +319,6 @@ namespace {
             ValueRef::StatisticType::SUM,
             std::make_unique<Condition::And>(
                 std::make_unique<Condition::Type>(UniverseObjectType::OBJ_BUILDING),
-                std::make_unique<Condition::NoOp>(),
                 std::make_unique<Condition::OnPlanet>(                  // for buildings on the planet being annexed
                     std::make_unique<ValueRef::Variable<int>>(
                         ValueRef::ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE, "ID")
