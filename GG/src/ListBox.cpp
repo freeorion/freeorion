@@ -181,7 +181,7 @@ void ListBox::Row::CompleteConstruction()
 std::string ListBox::Row::SortKey(std::size_t col) const
 {
     if (col >= m_cells.size()) {
-        std::cout << "ListBox::Row::SortKey out of range column = " << col << " > num cols = " << m_cells.size();
+        std::cerr << "ListBox::Row::SortKey out of range column = " << col << " > num cols = " << m_cells.size();
         return "";
     }
 

@@ -3972,13 +3972,17 @@ Cancel Annexation (%1% IP)
 # %7% population of planet
 # %8% PP cost for client empire of buildings on planet
 # %9% annexation cost by client empire
+# %10% description of conditions for annexation
 ANNEX_BUTTON_TOOLTIP
 '''%1% opinion of %2%: %3%
 %1% opinion of %4%: %5%
 Planet Stability: %6%
 Planet Population: %7%
 Building Production Costs: %8%
-Annexation cost for %2%: %9%'''
+Annexation cost for %2%: %9%
+
+Conditions:
+%10%'''
 
 # %1% size of the population this planet is colonized with.
 # %2% maximum population this planet can support.

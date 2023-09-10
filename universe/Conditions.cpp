@@ -119,8 +119,8 @@ namespace {
 
 namespace Condition {
 [[nodiscard]] std::string ConditionFailedDescription(const std::vector<const Condition*>& conditions,
-                                                     const UniverseObject* candidate_object,
-                                                     const UniverseObject* source_object)
+                                                     const ScriptingContext& source_context,
+                                                     const UniverseObject* candidate_object)
 {
     if (conditions.empty())
         return UserString("NONE");
@@ -128,8 +128,7 @@ namespace Condition {
     std::string retval;
 
     // test candidate against all input conditions, and store descriptions of each
-    ScriptingContext context{source_object};
-    for (const auto& [desc, passed_test] : ConditionDescriptionAndTest(conditions, context, candidate_object)) {
+    for (const auto& [desc, passed_test] : ConditionDescriptionAndTest(conditions, source_context, candidate_object)) {
         if (!passed_test)
              retval += UserString("FAILED") + " <rgba 255 0 0 255>" + desc +"</rgba>\n";
     }
@@ -141,25 +140,27 @@ namespace Condition {
 }
 
 [[nodiscard]] std::string ConditionDescription(const std::vector<const Condition*>& conditions,
-                                               const UniverseObject* candidate_object,
-                                               const UniverseObject* source_object)
+                                               const ScriptingContext& source_context,
+                                               const UniverseObject* candidate)
 {
     if (conditions.empty())
         return UserString("NONE");
+    if (!source_context.source || !candidate)
+        return UserString("ERROR");
 
     // test candidate against all input conditions, and store descriptions of each
-    ScriptingContext context{source_object};
-    auto condition_description_and_test_results =
-        ConditionDescriptionAndTest(conditions, context, candidate_object);
+    const auto condition_description_and_test_results =
+        ConditionDescriptionAndTest(conditions, source_context, candidate);
 
     bool all_conditions_match_candidate = true, at_least_one_condition_matches_candidate = false;
-    for (const auto& result : condition_description_and_test_results) {
-        all_conditions_match_candidate = all_conditions_match_candidate && result.second;
-        at_least_one_condition_matches_candidate = at_least_one_condition_matches_candidate || result.second;
+    for (const auto result : condition_description_and_test_results | range_values) {
+        all_conditions_match_candidate = all_conditions_match_candidate && result;
+        at_least_one_condition_matches_candidate = at_least_one_condition_matches_candidate || result;
     }
 
     // concatenate (non-duplicated) single-description results
     std::string retval;
+    retval.reserve(1000); // guesstimate
     if (conditions.size() > 1 || dynamic_cast<const And*>(conditions.front())) {
         retval += UserString("ALL_OF") + " ";
         retval += (all_conditions_match_candidate ? UserString("PASSED") : UserString("FAILED")) + "\n";

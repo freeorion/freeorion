@@ -242,14 +242,14 @@ namespace {
 
         ScriptingContext context;
         const auto& objects = context.ContextObjects();
-        const UniverseObject* source = nullptr;
         if (auto empire = context.GetEmpire(empire_id))
-            source = empire->Source(objects).get();
+            context.source = empire->Source(objects).get();
+        const UniverseObject* candidate = objects.getRaw(candidate_object_id);
 
         if (only_failed_conditions)
-            return ConditionFailedDescription(enqueue_conditions, objects.getRaw(candidate_object_id), source);
+            return ConditionFailedDescription(enqueue_conditions, context, candidate);
         else
-            return ConditionDescription(enqueue_conditions, objects.getRaw(candidate_object_id), source);
+            return ConditionDescription(enqueue_conditions, context, candidate);
     }
 
     std::string LocationConditionDescription(int ship_design_id, int candidate_object_id,
@@ -270,9 +270,8 @@ namespace {
         location_conditions.push_back(&can_prod_ship_cond);
         location_conditions.push_back(&ship_avail_cond);
 
-        const ScriptingContext context;
+        ScriptingContext context;
         const Universe& universe = context.ContextUniverse();
-        const ObjectMap& objects = context.ContextObjects();
 
         if (const ShipDesign* ship_design = universe.GetShipDesign(ship_design_id)) {
             if (ship_design->CanColonize())
@@ -285,14 +284,15 @@ namespace {
             }
         }
 
-        const UniverseObject* source = nullptr;
+        const ObjectMap& objects = context.ContextObjects();
         if (auto empire = context.GetEmpire(empire_id))
-            source = empire->Source(objects).get();
+            context.source = empire->Source(objects).get();
+        const auto* candidate = objects.getRaw(candidate_object_id);
 
         if (only_failed_conditions)
-            return ConditionFailedDescription(location_conditions, objects.getRaw(candidate_object_id), source);
+            return ConditionFailedDescription(location_conditions, context, candidate);
         else
-            return ConditionDescription(location_conditions, objects.getRaw(candidate_object_id), source);
+            return ConditionDescription(location_conditions, context, candidate);
     }
 
     std::shared_ptr<GG::BrowseInfoWnd> ProductionItemRowBrowseWnd(const ProductionQueue::ProductionItem& item,
@@ -328,6 +328,7 @@ namespace {
 
             auto& title = UserString(item.name);
             std::string main_text;
+            main_text.reserve(1000); // guesstimate
 
 
             if (obj || building_type->ProductionCostTimeLocationInvariant()) {
@@ -383,7 +384,7 @@ namespace {
             main_text += "\n\n" + UserString(building_type->Description());
 
             // show build conditions
-            const std::string& enqueue_and_location_condition_failed_text =
+            const auto enqueue_and_location_condition_failed_text =
                 EnqueueAndLocationConditionDescription(item.name, candidate_object_id, empire_id, true);
             if (!enqueue_and_location_condition_failed_text.empty())
                 if (auto location = Objects().get(candidate_object_id)) {
@@ -393,8 +394,7 @@ namespace {
             }
 
             // create tooltip
-            return GG::Wnd::Create<IconTextBrowseWnd>(
-                ClientUI::BuildingIcon(item.name), title, main_text);
+            return GG::Wnd::Create<IconTextBrowseWnd>(ClientUI::BuildingIcon(item.name), title, std::move(main_text));
         }
 
         // production item is a ship

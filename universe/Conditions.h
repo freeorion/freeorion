@@ -56,8 +56,8 @@ enum class ContentType : uint8_t {
 /** Same as ConditionDescription, but returns a string only with conditions that have not been met. */
 [[nodiscard]] FO_COMMON_API std::string ConditionFailedDescription(
     const std::vector<const Condition*>& conditions,
-    const UniverseObject* candidate_object = nullptr,
-    const UniverseObject* source_object = nullptr);
+    const ScriptingContext& source_context,
+    const UniverseObject* candidate_object);
 
 /** Returns a single string which describes a vector of Conditions. If multiple
   * conditions are passed, they are treated as if they were contained by an And
@@ -70,8 +70,8 @@ enum class ContentType : uint8_t {
   * of conditions matches the object. */
 [[nodiscard]] FO_COMMON_API std::string ConditionDescription(
     const std::vector<const Condition*>& conditions,
-    const UniverseObject* candidate_object = nullptr,
-    const UniverseObject* source_object = nullptr);
+    const ScriptingContext& source_context,
+    const UniverseObject* candidate);
 
 /** Matches all objects if the number of objects that match Condition
   * \a condition is is >= \a low and < \a high.  Matched objects may
