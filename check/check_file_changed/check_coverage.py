@@ -15,11 +15,7 @@ def list_all_files():
 
 
 def check_patterns(config: FileChecker):
-    unused_patterns = []
-    for group in config.groups:
-        for pattern, count in group.matched.items():
-            if count == 0:
-                unused_patterns.append((group.name, pattern))
+    unused_patterns = _get_unused_patterns(config)
 
     if not unused_patterns:
         print("All patterns are in use")
@@ -28,6 +24,15 @@ def check_patterns(config: FileChecker):
     print(f"Found {len(unused_patterns)} unused patterns")
     for group, pattern in unused_patterns:
         print(f" - {group:<20}: {pattern}")
+
+
+def _get_unused_patterns(config):
+    unused_patterns = []
+    for group in config.groups:
+        for pattern, count in group.matched.items():
+            if count == 0:
+                unused_patterns.append((group.name, pattern))
+    return unused_patterns
 
 
 def check_coverage():
@@ -41,10 +46,8 @@ def check_coverage():
     for path in all_files:
         result = file_checker.get_detected_group(path)
         if result:
-            workflows = file_checker.get_workflows([result])
-            print(
-                f"  {path:<60}  {result.upper():<20} {', '.join(sorted(workflows)).upper()}",
-            )
+            workflows = ", ".join(sorted(file_checker.get_workflows([result]))).upper()
+            print(f"  {path:<60}  {result.upper():<20} {workflows}")
         else:
             missed_count += 1
             missed_files.append(path)

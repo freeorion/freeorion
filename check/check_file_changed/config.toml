@@ -4,7 +4,7 @@
 #   For example:
 #     lint_python is present 2 times in this file: lint_python: ${{ steps.set_files_changed.outputs.LINT_PYTHON }}
 # - Groups:
-#   - This is an aggregation of files that are groupped together.
+#   - This is an aggregation of files that are grouped together.
 #   - examples is for documentation and testing
 #   - patterns are regular expressins, case insensitive. All paths use posix style (/ as separators, even on Windows)
 #     they are combined with OR, file is belongs to group if at least one pattern matches.
@@ -99,6 +99,7 @@ examples = [
     'default/scripting/starting_unlocks/buildings.inf',
 ]
 patterns = [
+    '^check/check_file_changed/config.toml$',
     '^.github/ISSUE_TEMPLATE/',
     '^.github/debian-stable/',
     '^.github/debian-oldstable/',
