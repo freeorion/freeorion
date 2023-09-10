@@ -13,6 +13,7 @@
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../universe/Building.h"
+#include "../universe/Condition.h"
 #include "../universe/Fleet.h"
 #include "../universe/Pathfinder.h"
 #include "../universe/Planet.h"
@@ -780,27 +781,33 @@ bool AnnexOrder::Check(int empire_id, int planet_id, const ScriptingContext& con
         return false;
     }
 
-    if (planet->OwnedBy(empire_id)) {
-        ErrorLogger() << "AnnexOrder given empire " << empire_id << " that already owns planet";
+    const auto& planet_species_name = planet->SpeciesName();
+    if (planet_species_name.empty()) {
+        ErrorLogger() << "AnnexOrder given planet without a species: " << planet_id;
+        return false;
+    }
+    const auto* planet_species = GetSpeciesManager().GetSpecies(planet_species_name);
+    if (!planet_species) {
+        ErrorLogger() << "AnnexOrder given planet with an unknown species: " << planet_species_name;
+        return false;
+    }
+    const auto* annexation_condition = planet_species->AnnexationCondition();
+    if (!annexation_condition) {
+        ErrorLogger() << "AnnexOrder given planet with species with no annexation condition: " << planet_species_name;
         return false;
     }
 
-    if (planet->GetMeter(MeterType::METER_POPULATION)->Initial() == 0.0f) {
-        ErrorLogger() << "AnnexOrder given unpopulated planet";
+    if (!context.source)
+        ErrorLogger() << "AnnexOrder given context with no source... Context source should be an object owned by the order issuing empire";
+
+    if (!context.source->OwnedBy(empire_id))
+        ErrorLogger() << "AnnexOrder given context with source not owned by passed in empire id";
+
+    if (!annexation_condition->EvalOne(context, planet)) {
+        ErrorLogger() << "AnnexOrder given planet that does not meet its species annexation condition: " << planet_species_name;
         return false;
     }
 
-    if (u.GetObjectVisibilityByEmpire(planet_id, empire_id) < Visibility::VIS_BASIC_VISIBILITY) {
-        ErrorLogger() << "AnnexOrder given planet that empire reportedly has insufficient visibility of";
-        return false;
-    }
-
-    if (!planet->Unowned() && context.ContextDiploStatus(planet->Owner(), empire_id) !=
-        DiplomaticStatus::DIPLO_WAR)
-    {
-        ErrorLogger() << "AnnexOrder given planet owned by an empire not at war with order-issuing empire";
-        return false;
-    }
     // TODO: check IP costs, like adopting policies
 
     return true;

@@ -2563,10 +2563,22 @@ void SidePanel::PlanetPanel::ClickAnnex() {
     if (it != pending_annex_orders.end()) {
         // cancel previous annex order for planet
         GGHumanClientApp::GetApp()->Orders().RescindOrder(it->second, context);
+
     } else {
+        const auto empire = context.GetEmpire(empire_id);
+        if (!empire) {
+            ErrorLogger() << "No empire with id " << empire_id;
+            return;
+        }
+        const auto source = empire->Source(context.ContextObjects()).get();
+        if (!source) {
+            ErrorLogger() << "No source for empire " << empire->Name();
+            return;
+        }
+        ScriptingContext empire_context{source, context};
         GGHumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<AnnexOrder>(empire_id, m_planet_id, context),
-            context);
+            std::make_shared<AnnexOrder>(empire_id, m_planet_id, empire_context),
+            empire_context);
     }
     OrderButtonChangedSignal(m_planet_id);
 }
