@@ -1765,8 +1765,10 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
     const bool colonizable =      habitable && !populated && ( (!has_owner /*&& !shielded*/) || mine) && visible && !being_colonized;
     const bool can_colonize =     selected_colony_ship && (   (colonizable  && (colony_ship_capacity > 0.0f))
                                                            || (outpostable && (colony_ship_capacity == 0.0f)));
-    const bool at_war_with_me =   !mine && (populated || (has_owner && context.ContextDiploStatus(client_empire_id, planet->Owner()) == DiplomaticStatus::DIPLO_WAR));
-
+    const bool at_war_with_me =   !mine && (
+                                    (!has_owner && populated) ||
+                                    (has_owner && context.ContextDiploStatus(client_empire_id, planet->Owner()) == DiplomaticStatus::DIPLO_WAR)
+                                  );
 
     const bool being_invaded =    planet->IsAboutToBeInvaded();
     const bool invadable =        at_war_with_me && !shielded && visible && !being_invaded && !invasion_ships.empty();
