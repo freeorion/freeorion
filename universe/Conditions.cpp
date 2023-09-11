@@ -115,6 +115,20 @@ namespace {
                                 condition->EvalOne(parent_context, candidate_object));
         return retval;
     }
+
+    std::vector<const Condition::Condition*> DenestAnds(const std::vector<const Condition::Condition*>& in) {
+        std::vector<const Condition::Condition*> retval;
+        retval.reserve(in.size()*2); // guesstimate
+        for (const auto op : in) {
+            if (const auto and_cond = dynamic_cast<const Condition::And*>(op)) {
+                auto ops = DenestAnds(and_cond->OperandsRaw());
+                retval.insert(retval.end(), ops.begin(), ops.end());
+            } else {
+                retval.push_back(op);
+            }
+        }
+        return retval;
+    }
 }
 
 namespace Condition {
@@ -125,10 +139,11 @@ namespace Condition {
     if (conditions.empty())
         return UserString("NONE");
 
+    auto denested_conditions = DenestAnds(conditions);
     std::string retval;
 
     // test candidate against all input conditions, and store descriptions of each
-    for (const auto& [desc, passed_test] : ConditionDescriptionAndTest(conditions, source_context, candidate_object)) {
+    for (const auto& [desc, passed_test] : ConditionDescriptionAndTest(denested_conditions, source_context, candidate_object)) {
         if (!passed_test)
              retval += UserString("FAILED") + " <rgba 255 0 0 255>" + desc +"</rgba>\n";
     }
@@ -148,9 +163,11 @@ namespace Condition {
     if (!source_context.source || !candidate)
         return UserString("ERROR");
 
+    auto denested_conditions = DenestAnds(conditions);
+
     // test candidate against all input conditions, and store descriptions of each
     const auto condition_description_and_test_results =
-        ConditionDescriptionAndTest(conditions, source_context, candidate);
+        ConditionDescriptionAndTest(denested_conditions, source_context, candidate);
 
     const auto result_rng = condition_description_and_test_results | range_values;
     static constexpr auto is_true = [](const bool b) { return b; };
