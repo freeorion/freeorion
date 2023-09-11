@@ -145,7 +145,7 @@ namespace Condition {
     // test candidate against all input conditions, and store descriptions of each
     for (const auto& [desc, passed_test] : ConditionDescriptionAndTest(denested_conditions, source_context, candidate_object)) {
         if (!passed_test)
-             retval += UserString("FAILED") + " <rgba 255 0 0 255>" + desc +"</rgba>\n";
+             retval += UserString("FAILED") + " " + desc +"\n";
     }
 
     // remove empty line from the end of the string
