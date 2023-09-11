@@ -2,7 +2,7 @@ Français
 
 # This is the French String Table file for FreeOrion.
 #
-# Traduction par alchemy, shivu, zareif, nilstilar et Ouaz. Traduction achevée le 12 Juillet 2015 et couramment maintenue/améliorée par Ouaz (http://github.com/Ouaz/freeorion).
+# Traduction par alchemy, shivu, zareif, nilstilar et Ouaz. Traduction achevée le 12 Juillet 2015 et couramment maintenue/améliorée par Ouaz (https://github.com/freeorion/freeorion/commits/master/default/stringtables/fr.txt).
 #
 # Notes: to avoid potential conflict with functional keys in other files, do not make
 # any stringtable keys beginning with "FUNCTIONAL_".
@@ -1494,16 +1494,28 @@ RULE_DIPLOMACY_FORBIDDEN_FOR_ALL
 Toutes interdites
 
 RULE_ANNEX_COST_OPINION_EXP_BASE
-Annexion: coût exponentiel de base 
+Annexion (opinion): coût exponentiel de base
 
 RULE_ANNEX_COST_OPINION_EXP_BASE_DESC
 Valeur exponentielle de base déterminant la mise à l'échelle des coûts d'annexion selon l'opinion de l'espèce sur l'empire.
 
 RULE_ANNEX_COST_SCALING
-Annexion: échelle des coûts
+Annexion (population): échelle des coûts
 
 RULE_ANNEX_COST_SCALING_DESC
 Facteur d'échelle déterminant les coûts d'annexion selon la population de la planète.
+
+RULE_ANNEX_COST_STABILITY_EXP_BASE
+Annexion (stabilité): coût exponentiel de base
+
+RULE_ANNEX_COST_STABILITY_EXP_BASE_DESC
+Valeur exponentielle de base déterminant la mise à l'échelle des coûts d'annexion selon la stabilité de la planète.
+
+RULE_BUILDING_ANNEX_COST_SCALING
+Annexion (structure): coût exponentiel de base
+
+RULE_BUILDING_ANNEX_COST_SCALING_DESC
+Facteur d'échelle déterminant les coûts d'annexion selon le coût de production des structures.
 
 RULE_ANNEX_COST_MINIMUM
 Annexion: coût minimum
@@ -3951,6 +3963,27 @@ Non annexable
 PL_CANCEL_ANNEX
 Annuler Annexion (%1% PI)
 
+# %1% planet species name
+# %2% name of client empire
+# %3% species on planet opinion of client empire
+# %4% name of owner empire or "unowned"
+# %5% species opinion of onwer empire
+# %6% stability of planet
+# %7% population of planet
+# %8% PP cost for client empire of buildings on planet
+# %9% annexation cost by client empire
+# %10% description of conditions for annexation
+ANNEX_BUTTON_TOOLTIP
+'''Opinion de %1% sur %2% : %3%
+Opinion de %1% sur %4% : %5%
+Stabilité planète : %6%
+Population planète : %7%
+Coûts production structures : %8%
+Coût d'annexion pour %2% : %9%
+
+Conditions:
+%10%'''
+
 # %1% size of the population this planet is colonized with.
 # %2% maximum population this planet can support.
 PL_COLONIZE
@@ -5409,17 +5442,17 @@ ENC_GALAXY_SETUP
 # %10% upper AI aggression level in this galaxy.
 # %11% game UID
 ENC_GALAXY_SETUP_SETTINGS
-'''Graine: %1%
-Nombre de systèmes: %2%
-Forme: %3%
-Âge: %4%
-Voies spatiales: %5%
-Planètes: %6%
-Événements: %7%
-Monstres: %8%
-Indigènes: %9%
-Agressivité max de l'IA: %10%
-UID Partie: %11%
+'''Graine : %1%
+Nombre de systèmes : %2%
+Forme : %3%
+Âge : %4%
+Voies spatiales : %5%
+Planètes : %6%
+Événements : %7%
+Monstres : %8%
+Indigènes : %9%
+Agressivité max de l'IA : %10%
+UID Partie : %11%
 '''
 
 ENC_GAME_RULES
@@ -12684,6 +12717,15 @@ PLC_TERROR_SUPPRESSION_DESC
 
 PLC_TERROR_SUPPRESSION_SHORT_DESC
 Augmente la Stabilité à l'aide d'astronefs armés
+
+PLC_INSURGENCY
+Insurrection
+
+PLC_INSURGENCY_DESC
+Diminue la [[metertype METER_TARGET_HAPPINESS]] de [[value PLC_INSURGENCY_EFFECT]] sur les planètes appartenant à tout ennemi et se situant dans le réseau d'approvisionnement de l'empire adoptant cette politique.
+
+PLC_INSURGENCY_SHORT_DESC
+Diminue la Stabilité ennemie
 
 PLC_DREAM_RECURSION
 Récursivité Imaginaire
