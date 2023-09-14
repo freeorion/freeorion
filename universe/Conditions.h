@@ -1396,14 +1396,9 @@ private:
     std::unique_ptr<Condition> m_condition;
 };
 
-/** Matches objects that are in systems that could have starlanes added between
-  * them and all (not just one) of the systems containing (or that are) one of
-  * the objects matched by \a condition.  "Could have starlanes added" means
-  * that a lane would be geometrically acceptable, meaning it wouldn't cross
-  * any other lanes, pass too close to another system, or be too close in angle
-  * to an existing lane. */
-struct FO_COMMON_API CanAddStarlaneConnection : Condition {
-    explicit CanAddStarlaneConnection(std::unique_ptr<Condition>&& condition);
+/** Matches objects that have a starlane to at least one object that matches \a condition. */
+struct FO_COMMON_API HasStarlaneTo : Condition {
+    explicit HasStarlaneTo(std::unique_ptr<Condition>&& condition);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1424,8 +1419,100 @@ private:
     std::unique_ptr<Condition> m_condition;
 };
 
-/** Matches systems that have been explored by at least one Empire
-  * in \a empire_ids. */
+/** Matches objects if a starlane from the location of the candidate and the location
+  * of any object that matches \a condition would cross any existing starlane.
+  * If given multiple candidates, does not consider if lines to them from the objects
+  * that match \a condition may or may not cross. */
+struct FO_COMMON_API StarlaneToWouldCrossExistingStarlane : Condition {
+    explicit StarlaneToWouldCrossExistingStarlane(std::unique_ptr<Condition>&& condition);
+
+    bool operator==(const Condition& rhs) const override;
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
+    [[nodiscard]] std::string Description(bool negated = false) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void SetTopLevelContent(const std::string& content_name) override;
+    [[nodiscard]] uint32_t GetCheckSum() const override;
+
+    [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
+
+private:
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
+
+    std::unique_ptr<Condition> m_condition;
+};
+
+/** Matches objects if a starlane from the location of the candidate and the location
+  * of any object that matches \a condition would be angularly too close to an existing
+  * starlane on either end. Objects on both ends of the new starlane that are systems
+  * or that are in systems have that system's lanes check. If just one of the candidate
+  * and other object are or are in systems, the only the other end's existing lanes are
+  * checked. If neither object at the ends of the new lane are systems, then no existing
+  * lanes are checked. */
+struct FO_COMMON_API StarlaneToWouldBeAngularlyCloseToExistingStarlane : Condition {
+    // magic limit adjusted to allow no more than 12 starlanes from a system arccos(0.87) = 0.515594 rad = 29.5 degrees
+    static constexpr double DEFAULT_MAX_LANE_DOT_PRODUCT = 0.87;
+
+    explicit StarlaneToWouldBeAngularlyCloseToExistingStarlane(
+        std::unique_ptr<Condition>&& condition, double max_dotprod = DEFAULT_MAX_LANE_DOT_PRODUCT);
+
+    bool operator==(const Condition& rhs) const override;
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+        ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
+    [[nodiscard]] std::string Description(bool negated = false) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void SetTopLevelContent(const std::string& content_name) override;
+    [[nodiscard]] uint32_t GetCheckSum() const override;
+
+    [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
+
+private:
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
+
+    std::unique_ptr<Condition> m_condition;
+    double m_max_dotprod; // if normalized 
+};
+
+/** Matches objects if a starlane from the location of the candidate and the location
+  * of any object that matches \a lane_end_condition would be too close to any object
+  * that matches \a close_object_condition. */
+struct FO_COMMON_API StarlaneToWouldBeCloseToObject : Condition {
+    static constexpr double DEFAULT_MAX_DISTANCE = 20.0;
+
+    explicit StarlaneToWouldBeCloseToObject(
+        std::unique_ptr<Condition>&& lane_end_condition,
+        std::unique_ptr<Condition>&& close_object_condition =
+            std::make_unique<Type>(UniverseObjectType::OBJ_SYSTEM),
+        double max_distance = DEFAULT_MAX_DISTANCE);
+
+    bool operator==(const Condition& rhs) const override;
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+        ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, candidate}); }
+
+    [[nodiscard]] std::string Description(bool negated = false) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void SetTopLevelContent(const std::string& content_name) override;
+    [[nodiscard]] uint32_t GetCheckSum() const override;
+
+    [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
+
+private:
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
+
+    std::unique_ptr<Condition> m_lane_end_condition;
+    std::unique_ptr<Condition> m_close_object_condition;
+    double m_max_distance;
+};
+
+/** Matches systems that have been explored by at least one Empire in \a empire_ids. */
 struct FO_COMMON_API ExploredByEmpire final : public Condition {
     explicit ExploredByEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id);
 
@@ -1614,6 +1701,7 @@ private:
     std::unique_ptr<Condition> m_by_object_condition;
 };
 
+/** Matches the objects that have been ordered annexed by an empire. */
 struct FO_COMMON_API OrderedAnnexed final : public Condition {
     constexpr OrderedAnnexed() :
         Condition(true, true, true)
