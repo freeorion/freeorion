@@ -40,7 +40,7 @@ def COMMON_OPINION_EFFECTS(name: str):
                 species=ThisSpecies,
                 empire=Target.Owner,
                 opinion=Value
-                + GameRule(type=float, name="RULE_BASELINE_PLANET_STABILITY")
+                + GameRule(type=float, name="RULE_BASELINE_SPECIES_EMPIRE_OPINION")
                 + (
                     GameRule(type=float, name="RULE_INVASION_OPINION_PENALTY_SCALING")
                     * StatisticCount(
