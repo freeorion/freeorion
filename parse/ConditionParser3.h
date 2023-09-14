@@ -40,7 +40,10 @@ namespace parse { namespace detail {
         condition_parser_rule               random;
         condition_parser_rule               stockpile;
         condition_parser_rule               resource_supply_connected;
-        condition_parser_rule               can_add_starlane;
+        condition_parser_rule               has_starlane_to;
+        condition_parser_rule               starlane_to_would_cross_existing_starlane;
+        condition_parser_rule               starlane_to_would_be_angularly_close_to_existing_starlane;
+        condition_parser_rule               starlane_to_would_be_close_to_object;
         condition_parser_rule               start;
     };
 

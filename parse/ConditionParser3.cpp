@@ -285,12 +285,39 @@ namespace parse::detail {
                 deconstruct_movable_(_2, _pass))) ]
             ;
 
-        can_add_starlane
-            = ( omit_[tok.CanAddStarlanesTo_]
-            >   label(tok.condition_) > condition_parser)
-            [ _val = construct_movable_(new_<Condition::CanAddStarlaneConnection>(
-                deconstruct_movable_(_1, _pass))) ]
-            ;
+        has_starlane_to
+            = ( omit_[tok.HasStarlane_]
+            >   label(tok.from_) > condition_parser)
+            [_val = construct_movable_(new_<Condition::HasStarlaneTo>(
+                deconstruct_movable_(_1, _pass)))]
+        ;
+
+        starlane_to_would_cross_existing_starlane
+            = ( omit_[tok.StarlaneToWouldCrossExistingStarlane_]
+            >   label(tok.from_) > condition_parser)
+            [_val = construct_movable_(new_<Condition::StarlaneToWouldCrossExistingStarlane>(
+                deconstruct_movable_(_1, _pass)))]
+        ;
+
+        starlane_to_would_be_angularly_close_to_existing_starlane
+            = ( omit_[tok.StarlaneToWouldBeAngularlyCloseToExistingStarlane_]
+            >   label(tok.from_) > condition_parser
+            >   label(tok.maxdotprod_) > tok.double_)
+            [_val = construct_movable_(new_<Condition::StarlaneToWouldBeAngularlyCloseToExistingStarlane>(
+                deconstruct_movable_(_1, _pass),
+                _2))]
+        ;
+
+        starlane_to_would_be_close_to_object
+            = ( omit_[tok.StarlaneToWouldBeCloseToObject_]
+            >   label(tok.distance_) > tok.double_
+            >   label(tok.from_) > condition_parser
+            >   label(tok.closeto_) > condition_parser)
+            [_val = construct_movable_(new_<Condition::StarlaneToWouldBeCloseToObject>(
+                deconstruct_movable_(_2, _pass),
+                deconstruct_movable_(_3, _pass),
+                _1))]
+        ;
 
         start
             %=  has_special_capacity
@@ -309,7 +336,10 @@ namespace parse::detail {
             |   random
             |   stockpile
             |   resource_supply_connected
-            |   can_add_starlane
+            |   has_starlane_to
+            |   starlane_to_would_cross_existing_starlane
+            |   starlane_to_would_be_angularly_close_to_existing_starlane
+            |   starlane_to_would_be_close_to_object
             ;
 
         has_special_capacity.name("HasSpecialCapacity");
@@ -332,7 +362,10 @@ namespace parse::detail {
         random.name("Random");
         stockpile.name("EmpireStockpile");
         resource_supply_connected.name("ResourceSupplyConnected");
-        can_add_starlane.name("CanAddStarlanesTo");
+        has_starlane_to.name("HasStarlaneTo");
+        starlane_to_would_cross_existing_starlane.name("StarlaneToWouldCrossExistingStarlane");
+        starlane_to_would_be_angularly_close_to_existing_starlane.name("StarlaneToWouldBeAngularlyCloseToExistingStarlane");
+        starlane_to_would_be_close_to_object.name("StarlaneToWouldBeCloseToObject");
 
 #if DEBUG_CONDITION_PARSERS
         debug(has_special_capacity);
@@ -345,7 +378,10 @@ namespace parse::detail {
         debug(random);
         debug(stockpile);
         debug(resource_supply_connected);
-        debug(can_add_starlane);
+        debug(has_starlane_to);
+        debug(starlane_to_would_cross_existing_starlane);
+        debug(starlane_to_would_be_angularly_close_to_existing_starlane);
+        debug(starlane_to_would_be_close_to_object);
 #endif
     }
 }

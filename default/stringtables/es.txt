@@ -10347,14 +10347,6 @@ DESC_WITHIN_STARLANE_JUMPS
 DESC_WITHIN_STARLANE_JUMPS_NOT
 ''' que no está a más de %1% saltos de cualquier objeto%2%'''
 
-# %1% textual description of the far endpoint system the starlane connects to.
-DESC_CAN_ADD_STARLANE_CONNECTION
-''' que puede añadírsele rutas estelares que le conecten a todos los sistemas que contienen objectos%1%'''
-
-# %1% textual description of the far endpoint system the starlane connects to.
-DESC_CAN_ADD_STARLANE_CONNECTION_NOT
-''' que no puede añadírsele rutas estelares que le conecten a todos los sistemas que contienen objectos%1%'''
-
 # %1% textual description of the empire.
 DESC_EXPLORED_BY_EMPIRE
 ''' que ha sido explorado por el imperio %1%'''

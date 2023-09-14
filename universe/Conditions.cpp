@@ -8641,6 +8641,19 @@ std::string WithinStarlaneJumps::Dump(uint8_t ntabs) const {
     return retval;
 }
 
+namespace {
+    const System* ObjectToSystem(const UniverseObject* obj, const ObjectMap& objs) {
+        if (!obj)
+            return nullptr;
+        if (obj->ObjectType() == UniverseObjectType::OBJ_SYSTEM)
+            return static_cast<const System*>(obj);
+        const auto sys_id = obj->SystemID();
+        if (sys_id == INVALID_OBJECT_ID)
+            return nullptr;
+        return objs.getRaw<const System>(sys_id);
+    }
+}
+
 bool WithinStarlaneJumps::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
     if (!candidate) {
@@ -8649,23 +8662,29 @@ bool WithinStarlaneJumps::Match(const ScriptingContext& local_context) const {
     }
 
     // get subcondition matches
-    ObjectSet subcondition_matches = m_condition->Eval(local_context);
+    const ObjectSet subcondition_matches = m_condition->Eval(local_context);
     if (subcondition_matches.empty())
         return false;
 
-    int jump_limit = m_jumps->Eval(local_context);
-    if (jump_limit < 0)
+    const int jump_limit = m_jumps->Eval(local_context);
+    if (jump_limit < 0) {
         return false;
 
-    ObjectSet candidate_set{candidate};
+    } else if (jump_limit == 0) {
+        // candidate must be in the same system as a subcondition match
+        const int sys_id = candidate->SystemID();
+        if (sys_id == INVALID_OBJECT_ID)
+            return false;
+        return std::any_of(subcondition_matches.begin(), subcondition_matches.end(),
+                           [sys_id](const auto* scm) { return scm && scm->SystemID() == sys_id; });
 
-    // candidate objects within jumps of subcondition_matches objects
-    ObjectSet near_objs;
-
-    std::tie(near_objs, std::ignore) =
-        local_context.ContextUniverse().GetPathfinder()->WithinJumpsOfOthers(
-            jump_limit, local_context.ContextObjects(), candidate_set, subcondition_matches);
-    return !near_objs.empty();
+    } else {
+        ObjectSet candidate_set{candidate};
+        // candidate objects within jumps of subcondition_matches objects
+        const auto near_objs{local_context.ContextUniverse().GetPathfinder()->WithinJumpsOfOthers(
+            jump_limit, local_context.ContextObjects(), candidate_set, subcondition_matches).first};
+        return !near_objs.empty();
+    }
 }
 
 void WithinStarlaneJumps::SetTopLevelContent(const std::string& content_name) {
@@ -8692,9 +8711,9 @@ std::unique_ptr<Condition> WithinStarlaneJumps::Clone() const {
 }
 
 ///////////////////////////////////////////////////////////
-// CanAddStarlaneConnection                              //
+// HasStarlaneTo                                         //
 ///////////////////////////////////////////////////////////
-CanAddStarlaneConnection::CanAddStarlaneConnection(std::unique_ptr<Condition>&& condition) :
+HasStarlaneTo::HasStarlaneTo(std::unique_ptr<Condition>&& condition) :
     m_condition(std::move(condition))
 {
     m_root_candidate_invariant = !m_condition || m_condition->RootCandidateInvariant();
@@ -8702,13 +8721,13 @@ CanAddStarlaneConnection::CanAddStarlaneConnection(std::unique_ptr<Condition>&& 
     m_source_invariant = !m_condition || m_condition->SourceInvariant();
 }
 
-bool CanAddStarlaneConnection::operator==(const Condition& rhs) const {
+bool HasStarlaneTo::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
 
-    const CanAddStarlaneConnection& rhs_ = static_cast<const CanAddStarlaneConnection&>(rhs);
+    const HasStarlaneTo& rhs_ = static_cast<const HasStarlaneTo&>(rhs);
 
     CHECK_COND_VREF_MEMBER(m_condition)
 
@@ -8716,115 +8735,315 @@ bool CanAddStarlaneConnection::operator==(const Condition& rhs) const {
 }
 
 namespace {
-    constexpr bool abs_sqrt_noexcept = noexcept(std::abs(-2353.56f) / std::sqrt(-842.5f));
+    struct HasStarlaneToSimpleMatch {
+        HasStarlaneToSimpleMatch(const ObjectSet& to_objects, const ObjectMap& objects) :
+            m_to_objects(to_objects),
+            m_objects(objects)
+        {}
 
-    // check if two destination systems, connected to the same origin system
-    // would have starlanes too close angularly to eachother
-    bool LanesAngularlyTooClose(const UniverseObject* sys1,
-                                const UniverseObject* lane1_sys2,
-                                const UniverseObject* lane2_sys2) noexcept(abs_sqrt_noexcept)
-    {
-        if (!sys1 || !lane1_sys2 || !lane2_sys2)
-            return true;
-        if (sys1 == lane1_sys2 || sys1 == lane2_sys2 || lane1_sys2 == lane2_sys2)
-            return true;
+        bool operator()(const System* candidate_sys) const {
+            // does the candidate have a starlane to the system of any of m_to_objects
+            return candidate_sys &&
+                std::any_of(m_to_objects.begin(), m_to_objects.end(),
+                            [this, candidate_sys](const auto* obj)
+                            { return obj && candidate_sys->HasStarlaneTo(obj->SystemID()); });
+        }
 
-        const auto dx1 = lane1_sys2->X() - sys1->X();
-        const auto dy1 = lane1_sys2->Y() - sys1->Y();
-        const auto mag1 = std::sqrt(dx1*dx1 + dy1*dy1);
-        if (mag1 == 0.0f)
-            return true;
-        const auto nx1 = dx1 / mag1;
-        const auto ny1 = dy1 / mag1;
+        bool operator()(const UniverseObject* candidate) const
+        { return operator()(ObjectToSystem(candidate, m_objects)); }
 
-        const auto dx2 = lane2_sys2->X() - sys1->X();
-        const auto dy2 = lane2_sys2->Y() - sys1->Y();
-        const auto mag2 = std::sqrt(dx2*dx2 + dy2*dy2);
-        if (mag2 == 0.0f)
-            return true;
-        const auto nx2 = dx2 / mag2;
-        const auto ny2 = dy2 / mag2;
+        const ObjectSet& m_to_objects;
+        const ObjectMap& m_objects;
+    };
+}
 
+void HasStarlaneTo::Eval(const ScriptingContext& parent_context,
+                         ObjectSet& matches, ObjectSet& non_matches,
+                         SearchDomain search_domain) const
+{
+    bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
+    if (simple_eval_safe) {
+        // evaluate contained objects once and check for all candidates
 
-        static constexpr auto MAX_LANE_DOT_PRODUCT = 0.87; // magic limit adjusted to allow no more than 12 starlanes from a system
-                                                           // arccos(0.87) = 0.515594 rad = 29.5 degrees
+        // get subcondition matches
+        ObjectSet subcondition_matches = m_condition->Eval(parent_context);
 
-        const auto dp = (nx1 * nx2) + (ny1 * ny2);
-        //TraceLogger(conditions) << "systems: " << sys1->UniverseObject::Name() << "  " << lane1_sys2->UniverseObject::Name() << "  " << lane2_sys2->UniverseObject::Name() << "  dp: " << dp << "\n";
+        EvalImpl(matches, non_matches, search_domain,
+                 HasStarlaneToSimpleMatch(subcondition_matches, parent_context.ContextObjects()));
+    } else {
+        // re-evaluate contained objects for each candidate object
+        Condition::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
 
-        return dp >= MAX_LANE_DOT_PRODUCT;   // if dot product too high after normalizing vectors, angles are adequately separated
+std::string HasStarlaneTo::Description(bool negated) const {
+    return str(FlexibleFormat((!negated)
+        ? UserString("DESC_HAS_STARLANE_TO") : UserString("DESC_HAS_STARLANE_TO_NOT"))
+        % m_condition->Description());
+}
+
+std::string HasStarlaneTo::Dump(uint8_t ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "HasStarlaneTo from =\n";
+    retval += m_condition->Dump(ntabs+1);
+    return retval;
+}
+
+bool HasStarlaneTo::Match(const ScriptingContext& local_context) const {
+    const auto* candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        ErrorLogger(conditions) << "HasStarlaneTo::Match passed no candidate object";
+        return false;
     }
 
-    // check the distance between a system and a (possibly nonexistant)
-    // starlane between two other systems. distance here is how far the third
-    // system is from the line passing through the lane endpoint systems, as
-    // long as the third system is closer to either end point than the endpoints
-    // are to eachother. if the third system is further than the endpoints, than
-    // the distance to the line is not considered and the lane is considered
-    // acceptable
-    bool ObjectTooCloseToLane(const UniverseObject* lane_end_sys1,
-                              const UniverseObject* lane_end_sys2,
-                              const UniverseObject* obj) noexcept(abs_sqrt_noexcept)
-    {
-        if (!lane_end_sys1 || !lane_end_sys2 || !obj)
-            return true;
-        if (lane_end_sys1 == lane_end_sys2 || obj == lane_end_sys1 || obj == lane_end_sys2)
-            return true;
+    // get subcondition matches
+    ObjectSet subcondition_matches = m_condition->Eval(local_context);
 
-        // check distances (squared) between object and lane-end systems
-        const auto v_12_x = lane_end_sys2->X() - lane_end_sys1->X();
-        const auto v_12_y = lane_end_sys2->Y() - lane_end_sys1->Y();
-        const auto v_o1_x = lane_end_sys1->X() - obj->X();
-        const auto v_o1_y = lane_end_sys1->Y() - obj->Y();
-        const auto v_o2_x = lane_end_sys2->X() - obj->X();
-        const auto v_o2_y = lane_end_sys2->Y() - obj->Y();
+    return HasStarlaneToSimpleMatch(subcondition_matches, local_context.ContextObjects())(candidate);
+}
 
-        const float dist2_12 = v_12_x*v_12_x + v_12_y*v_12_y;
-        const float dist2_o1 = v_o1_x*v_o1_x + v_o1_y*v_o1_y;
-        const float dist2_o2 = v_o2_x*v_o2_x + v_o2_y*v_o2_y;
+void HasStarlaneTo::SetTopLevelContent(const std::string& content_name) {
+    if (m_condition)
+        m_condition->SetTopLevelContent(content_name);
+}
 
-        // object to zero-length lanes
-        if (dist2_12 == 0.0f || dist2_o1 == 0.0f || dist2_o2 == 0.0f)
-            return true;
+uint32_t HasStarlaneTo::GetCheckSum() const {
+    uint32_t retval{0};
 
-        // if object is further from either of the lane end systems than they
-        // are from each other, it is fine, regardless of the right-angle
-        // distance to the line between the systems
-        if (dist2_12 < dist2_o1 || dist2_12 < dist2_o2)
-            return false;
+    CheckSums::CheckSumCombine(retval, "Condition::HasStarlaneTo");
+    CheckSums::CheckSumCombine(retval, m_condition);
+
+    TraceLogger(conditions) << "GetCheckSum(HasStarlaneTo): retval: " << retval;
+    return retval;
+}
+
+std::unique_ptr<Condition> HasStarlaneTo::Clone() const
+{ return std::make_unique<HasStarlaneTo>(ValueRef::CloneUnique(m_condition)); }
+
+///////////////////////////////////////////////////////////
+// StarlaneToWouldCrossExistingStarlane                  //
+///////////////////////////////////////////////////////////
+StarlaneToWouldCrossExistingStarlane::StarlaneToWouldCrossExistingStarlane(std::unique_ptr<Condition>&& condition) :
+    m_condition(std::move(condition))
+{
+    m_root_candidate_invariant = !m_condition || m_condition->RootCandidateInvariant();
+    m_target_invariant = !m_condition || m_condition->TargetInvariant();
+    m_source_invariant = !m_condition || m_condition->SourceInvariant();
+}
+
+bool StarlaneToWouldCrossExistingStarlane::operator==(const Condition& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const StarlaneToWouldCrossExistingStarlane& rhs_ = static_cast<const StarlaneToWouldCrossExistingStarlane&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_condition)
+
+    return true;
+}
+
+namespace {
+    constexpr double constexprsqrt(double val2) {
+        if (val2 >= 0 && val2 < std::numeric_limits<double>::infinity()) {
+            auto recurse = [val2](double guess) { return 0.5*(guess + val2/guess); };
+
+            double guess = val2, old_guess = 0;
+            while (guess != old_guess)
+                old_guess = std::exchange(guess, recurse(guess));
+            return guess;
+        } else {
+            return std::numeric_limits<double>::quiet_NaN();
+        }
+    }
+    static_assert(constexprsqrt(0) == 0);
+    static_assert(constexprsqrt(1) == 1);
+    static_assert(constexprsqrt(4) == 2);
+    static_assert(constexprsqrt(400) == 20);
+    static_assert(constexprsqrt(0.25) == 0.5);
 
 
-        // check right-angle distance between obj and lane
+    struct vec2 {
+        constexpr vec2(double x_, double y_) noexcept : x(x_), y(y_) {}
+        vec2(const UniverseObject& obj) noexcept : x(obj.X()), y(obj.Y()) {}
+        double x = 0.0, y = 0.0;
+        constexpr auto operator-() const noexcept { return vec2{-x, -y}; };
+        constexpr auto operator-(const vec2& rhs) const noexcept { return vec2{x - rhs.x, y - rhs.y}; }
+        constexpr auto operator+(const vec2& rhs) const noexcept { return vec2{x + rhs.x, y + rhs.y}; }
+        constexpr double mag2() const noexcept { return x*x + y*y; }
+        constexpr double mag() const noexcept {
+            if (std::is_constant_evaluated())
+                return constexprsqrt(mag2());
+            else
+                return std::sqrt(mag2());
+        }
+        constexpr vec2 normalize() const noexcept {
+            vec2 retval = *this;
+            const auto this_mag = mag();
+            if (this_mag > 0.0) [[likely]] {
+                retval.x /= this_mag;
+                retval.y /= this_mag;
+            }
+            return retval;
+        }
+        operator std::string() const
+        { return "(" + std::to_string(x) + ", " + std::to_string(y) + ")"; }
+    };
 
-        // normalize vector components of lane vector
-        const auto mag_12 = std::sqrt(dist2_12);
-        if (mag_12 == 0.0)
-            return true;
-        const auto n_12_x = v_12_x / mag_12;
-        const auto n_12_y = v_12_y / mag_12;
+    struct seg {
+        constexpr seg(vec2 s_, vec2 e_) noexcept : s(s_), e(e_) {}
+        vec2 s, e;
+        constexpr vec2 to_vec() const noexcept { return vec2{e.x - s.x, e.y - s.y}; }
+    };
 
-        // distance to point from line from vector projection / cross products
-        //       O
-        //      /|
-        //     / |
-        //    /  |d
-        //   /   |
-        //  /a___|___
-        // 1         2
-        // (1O)x(12) = |1O| |12| sin(a)
-        // d = |1O| sin(a) = (1O)x(12) / |12|
-        // d = (10)x(12 / |12|)
-        static constexpr auto MIN_PERP_DIST = 20.0; // magic limit, in units of universe units (uu)
+    constexpr double CrossProduct(const vec2 v1, const vec2 v2) noexcept
+    { return v1.x*v2.y - v1.y*v2.x; }
+    constexpr double DotProduct(const vec2 v1, const vec2 v2) noexcept
+    { return v1.x*v2.x + v1.y*v2.y; }
 
-        const auto perp_dist = std::abs(v_o1_x*n_12_y - v_o1_y*n_12_x);
-        return perp_dist < MIN_PERP_DIST;
+
+    // do the line segments  lineseg1{(l1sx,l1sy)->(l1ex,l1ey)}  and  lineseg2{(l2sx,l2sy)->(l2ex,l2ey)}  intersect?
+    constexpr bool SegmentsCross(const seg seg1, const seg seg2) noexcept {
+        // vector for lanes 1 and 2 start to end
+        const vec2 v_1s_1e = seg1.to_vec(); // lane 1 start to lane 1 end
+        const vec2 v_2s_2e = seg2.to_vec(); // lane 2 start to lane 2 end
+
+        // vector from lane 1 start to lane 2 start/end
+        const vec2 v_1s_2s = seg2.s - seg1.s; // lane 1 start to lane 2 start
+        const vec2 v_1s_2e = seg2.e - seg1.s; // lane 1 start to lane 2 end
+
+        // vector from lane 2 start to lane 1 start/end
+        const vec2 v_2s_1s = -v_1s_2s;        // lane 2 start to lane 1 start
+        const vec2 v_2s_1e = seg1.e - seg2.s; // lane 2 start to lane 1 end
+
+        // vector from lane 1 end to land 2 start/end
+        const vec2 v_1e_2s = -v_2s_1e;        // lane 1 end to land 2 start
+        const vec2 v_1e_2e = seg2.e - seg1.e; // lane 1 end to land 2 end
+
+
+
+        // cross products of (vectors from lane 1 start to the two endpoints of lane 2)
+        // with (vector from lane 1 start to land 1 end), to determine
+        // on which sides of lane 1 the endpoints of lane 2 are located:
+        const auto cp_1_2s = CrossProduct(v_1s_1e, v_1s_2s);
+        const auto cp_1_2e = CrossProduct(v_1s_1e, v_1s_2e);
+        const auto cp_prod1_1s2 = cp_1_2s*cp_1_2e;
+        if (cp_prod1_1s2 > 0) // product of same sign numbers is positive, of different sign numbers is negative
+            return false; // two ends of lane 2 are on the same side of lane 1
+
+
+
+        // cross products of (vectors from lane2 start to the two endpoints of lane 1)
+        // with (vector from lane 2 start to land 2 end), to determine
+        // on which sides of lane 2 the endpoints of lane 1 are located:
+        const auto cp_2_1s = CrossProduct(v_2s_2e, v_2s_1s);
+        const auto cp_2_1e = CrossProduct(v_2s_2e, v_2s_1e);
+        const auto cp_prod2_2s1 = cp_2_1s*cp_2_1e;
+        if (cp_prod2_2s1 > 0)
+            return false; // two ends of lane 1 are on the same side of lane 2
+
+        if (cp_prod1_1s2 < 0 && cp_prod2_2s1 < 0)
+            return true; // the ends of both segments are on opposite sides of the other segment, so lanes must cross
+
+        // lanes could have at least one common point, or could be colinear but not meet.
+        // need to check if any of the points lie within the segment of the other lane.
+        // which means need to check if a point lies on the other line of the other lane
+        // and is between the two endpoints.
+
+        // being on the line of the other lane means that the cross product of the vectors
+        // from the point to the two endpoints is zero
+
+        if (cp_1_2s == 0) { // lane 2 start is on lane 1 line
+            if (DotProduct(v_2s_1s, v_2s_1e) <= 0)
+                return true; // lane 2 start is between lane 1 start and end (lane 1 start and end are in opposite directions from lane 2 start)
+        }
+        if (cp_1_2e == 0) { // lane 2 end is on lane 1 line
+            const auto v_2e_1s = -v_1s_2e;
+            const auto v_2e_1e = -v_1e_2e;
+            if (DotProduct(v_2e_1s, v_2e_1e) <= 0)
+                return true;
+        }
+        if (cp_2_1s == 0) { // lane 1 start is on lane 2 line
+            if (DotProduct(v_1s_2s, v_1s_2e) <= 0)
+                return true;
+        }
+        if (cp_2_1e == 0) { // lane 1 end is on lane 2 line
+            if (DotProduct(v_1e_2s, v_1e_2e) <= 0)
+                return true;
+        }
+
+        return false;
     }
 
-    constexpr float CrossProduct(float dx1, float dy1, float dx2, float dy2) noexcept
-    { return dx1*dy2 - dy1*dx2; }
+    namespace StaticTests {
+        // segments that cross: 1&2, 1&4, 2&4
+        // colinear segments: 5&6
+        //        e7
+        //       /
+        //      /
+        //     /      e4
+        //    /   s2 /     s3--sX
+        //   /     |/       |
+        // s7 s1--s4--e1    |  s5-s6-e6--e5
+        //         |        |
+        //        e2       e3
+        static constexpr auto seg1 = seg{vec2{-1.0,  0.0}, vec2{1.0,  0.0}};
+        static constexpr auto seg2 = seg{vec2{ 0.0, -1.0}, vec2{0.0,  1.0}};
+        static constexpr auto seg3 = seg{vec2{ 2.0, -1.0}, vec2{2.0,  1.0}};
+        static constexpr auto segX = seg{vec2{ 2.0, -1.0}, vec2{3.0, -1.0}};
+        static constexpr auto seg4 = seg{vec2{ 0.0,  0.0}, vec2{1.0, -1.5}};
+        static constexpr auto seg5 = seg{vec2{ 3.0,  0.0}, vec2{6.0,  0.0}};
+        static constexpr auto seg6 = seg{vec2{ 4.0,  0.0}, vec2{5.0,  0.0}};
+        static constexpr auto seg7 = seg{vec2{-2.0,  0.0}, vec2{0.0, -4.0}};
 
-    bool LanesCross(const System* lane1_end_sys1, const System* lane1_end_sys2,
-                    const System* lane2_end_sys1, const System* lane2_end_sys2) noexcept
+        static constexpr auto v_6s_5s = seg5.s - seg6.s;
+        static constexpr auto v_6s_5e = seg5.e - seg6.s;
+        static_assert( DotProduct(v_6s_5s, v_6s_5e) < 0); // 6s is between 5s and 5e
+        static constexpr auto v_1s_5s = seg5.s - seg1.s;
+        static constexpr auto v_1s_5e = seg5.e - seg1.s;
+        static_assert( DotProduct(v_1s_5s, v_1s_5e) > 0); // 1s is not between 5s and 5e
+        static constexpr auto v_1e_5s = seg5.s - seg1.e;
+        static constexpr auto v_1e_5e = seg5.e - seg1.e;
+        static_assert( DotProduct(v_1e_5s, v_1e_5e) > 0); // 1e is not between 5s and 5e
+
+        static constexpr auto v_1s_1e = seg1.to_vec();
+        static constexpr auto v_5s_5e = seg5.to_vec();
+        static constexpr auto v_5s_1s = -v_1s_5s;
+        static constexpr auto v_5s_1e = seg1.e - seg5.s;
+
+        static constexpr auto cp_1_5s = CrossProduct(v_1s_1e, v_1s_5s);
+        static constexpr auto cp_1_5e = CrossProduct(v_1s_1e, v_1s_5e);
+        static constexpr auto cp_5_1s = CrossProduct(v_5s_5e, v_5s_1s);
+        static constexpr auto cp_5_1e = CrossProduct(v_5s_5e, v_5s_1e);
+
+        static_assert(cp_1_5s == 0); // lane 5 start is on lane 1 line
+        static_assert(cp_1_5e == 0); // lane 5 end is on lane 1 line
+        static_assert(cp_5_1s == 0); // lane 1 start is on lane 5 line
+        static_assert(cp_5_1e == 0); // lane 1 end is on lane 5 line
+
+        static_assert(DotProduct(v_5s_1s, v_5s_1e) > 0); // lane 5 start is on same side of (not between) lane 1 start and end
+        static constexpr auto v_5e_1s = -v_1s_5e;
+        static constexpr auto v_5e_1e = -v_1e_5e;
+        static_assert(DotProduct(v_5e_1s, v_5e_1e) > 0); // lane 5 end is on same side of lane 1 start and end
+        static_assert(DotProduct(v_1s_5s, v_1s_5e) > 0); // lane 1 start is on same side of lane 5 start and end
+        static_assert(DotProduct(v_1e_5s, v_1e_5e) > 0); // lane 1 end is on same side of lane 5 start and end
+
+        static_assert( SegmentsCross(seg1, seg2));
+        static_assert(!SegmentsCross(seg1, seg3));
+        static_assert( SegmentsCross(seg1, seg4));
+        static_assert(!SegmentsCross(seg1, seg5));
+        static_assert(!SegmentsCross(seg1, seg6));
+        static_assert(!SegmentsCross(seg1, seg7));
+        static_assert(!SegmentsCross(seg2, seg3));
+        static_assert( SegmentsCross(seg2, seg4));
+        static_assert(!SegmentsCross(seg2, seg7));
+        static_assert(!SegmentsCross(seg3, seg4));
+        static_assert( SegmentsCross(seg3, segX));
+        static_assert( SegmentsCross(seg5, seg6));
+    }
+
+    bool LanesCross(const UniverseObject* lane1_end_sys1, const UniverseObject* lane1_end_sys2,
+                    const UniverseObject* lane2_end_sys1, const UniverseObject* lane2_end_sys2) noexcept
     {
         // are all endpoints valid systems?
         if (!lane1_end_sys1 || !lane1_end_sys2 || !lane2_end_sys1 || !lane2_end_sys2)
@@ -8840,246 +9059,72 @@ namespace {
         if (share_endpoint_1 && share_endpoint_2)
             return true;    // two copies of the same lane?
         if (share_endpoint_1 || share_endpoint_2)
-            return false;   // one common endpoing, but not both common, so can't cross in middle
+            return false;   // one common endpoint, but not both common, so can't cross in middle
 
-        // calculate vector components for lanes
-        // lane 1
-        const auto v_11_12_x = lane1_end_sys2->X() - lane1_end_sys1->X();
-        const auto v_11_12_y = lane1_end_sys2->Y() - lane1_end_sys1->Y();
-        // lane 2
-        const auto v_21_22_x = lane2_end_sys2->X() - lane2_end_sys1->X();
-        const auto v_21_22_y = lane2_end_sys2->Y() - lane2_end_sys1->Y();
-
-        // calculate vector components from lane 1 system 1 to lane 2 endpoints
-        // lane 1 endpoint 1 to lane 2 endpoint 1
-        const auto v_11_21_x = lane2_end_sys1->X() - lane1_end_sys1->X();
-        const auto v_11_21_y = lane2_end_sys1->Y() - lane1_end_sys1->Y();
-        // lane 1 endpoint 1 to lane 2 endpoint 2
-        const auto v_11_22_x = lane2_end_sys2->X() - lane1_end_sys1->X();
-        const auto v_11_22_y = lane2_end_sys2->Y() - lane1_end_sys1->Y();
-
-        // find cross products of vectors to check on which sides of lane 1 the
-        // endpoints of lane 2 are located...
-        const auto cp_1_21 = CrossProduct(v_11_12_x, v_11_12_y, v_11_21_x, v_11_21_y);
-        const auto cp_1_22 = CrossProduct(v_11_12_x, v_11_12_y, v_11_22_x, v_11_22_y);
-        if (cp_1_21*cp_1_22 >= 0) // product of same sign numbers is positive, of different sign numbers is negative
-            return false;   // if same sign, points are on same side of line, so can't cross it
-
-        // calculate vector components from lane 2 system 1 to lane 1 endpoints
-        // lane 2 endpoint 1 to lane 1 endpoint 1
-        const auto v_21_11_x = -v_11_21_x;
-        const auto v_21_11_y = -v_11_21_y;
-        // lane 2 endpoint 1 to lane 1 endpoint 2
-        const auto v_21_12_x = lane1_end_sys2->X() - lane2_end_sys1->X();
-        const auto v_21_12_y = lane1_end_sys2->Y() - lane2_end_sys1->Y();
-
-        // find cross products of vectors to check on which sides of lane 2 the
-        // endpoints of lane 1 are located...
-        const auto cp_2_11 = CrossProduct(v_21_22_x, v_21_22_y, v_21_11_x, v_21_11_y);
-        const auto cp_2_12 = CrossProduct(v_21_22_x, v_21_22_y, v_21_12_x, v_21_12_y);
-        if (cp_2_11*cp_2_12 >= 0)
-            return false;
-
-        // endpoints of both lines are on opposite sides of the other line, so
-        // the lines must cross
-
-        return true;
+        return SegmentsCross(seg(vec2(*lane1_end_sys1), vec2(*lane1_end_sys2)),
+                             seg(vec2(*lane2_end_sys1), vec2(*lane2_end_sys2)));
     }
 
-    bool LaneCrossesExistingLane(const System* lane_end_sys1, const System* lane_end_sys2,
-                                 const ObjectMap& objects)
+    // would a lane between \a lane_obj1 and \a lane_obj2 cross any lanes connected to \a system?
+    bool LaneCrossesSystemLane(const UniverseObject* lane_obj1, const UniverseObject* lane_obj2,
+                               const System* sys, const ObjectMap& objects)
     {
-        if (!lane_end_sys1 || !lane_end_sys2 || lane_end_sys1 == lane_end_sys2)
-            return true;
+        if (!sys) return false;
 
-        // loop over all existing lanes in all systems, checking if a lane
-        // beween the specified systems would cross any of the existing lanes
-        for (auto* system : objects.allRaw<System>()) {
-            if (system == lane_end_sys1 || system == lane_end_sys2)
-                continue;
+        // get System endpoints of starlanes of \a sys
+        const auto& sys_lanes = sys->Starlanes();
+        const auto get_sys = [&objects](const int id) { return objects.getRaw<System>(id); };
+        auto sys_lane_sys_rng = sys_lanes | range_transform(get_sys);
 
-            // check all existing lanes of currently-being-checked system
-            for (const auto& land_end_3_id : system->Starlanes()) {
-                const auto* lane_end_sys3 = objects.getRaw<System>(land_end_3_id);
-                if (!lane_end_sys3)
-                    continue;
-                // don't need to check against existing lanes that include one
-                // of the endpoints of the lane is one of the specified systems
-                if (lane_end_sys3 == lane_end_sys1 || lane_end_sys3 == lane_end_sys2)
-                    continue;
-
-                if (LanesCross(lane_end_sys1, lane_end_sys2, system, lane_end_sys3)) {
-                    //TraceLogger(conditions) << "... ... ... lane from: " << lane_end_sys1->UniverseObject::Name() << " to: " << lane_end_sys2->UniverseObject::Name() << " crosses lane from: " << system->UniverseObject::Name() << " to: " << lane_end_sys3->UniverseObject::Name() << "\n";
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        // do any of the lanes of \a sys cross a lane from \a lane_obj1 and \a lane_obj2 ?
+        const auto lane_to_sys_from_sys_crosses_lane = [lane_obj1, lane_obj2, sys](const System* sys_lane_end)
+        { return LanesCross(lane_obj1, lane_obj2, sys, sys_lane_end); };
+        return std::any_of(sys_lane_sys_rng.begin(), sys_lane_sys_rng.end(), lane_to_sys_from_sys_crosses_lane);
     }
 
-    bool LaneTooCloseToOtherSystem(const System* lane_end_sys1, const System* lane_end_sys2,
-                                   const ObjectMap& objects)
+    // would a lane between \a lane_obj1 and \a lane_obj2 cross any other lanes between systems?
+    bool LaneCrossesAnyExistingLane(const UniverseObject* lane_obj1, const UniverseObject* lane_obj2,
+                                    const ObjectMap& objects)
     {
-        if (!lane_end_sys1 || !lane_end_sys2 || lane_end_sys1 == lane_end_sys2)
-            return true;
+        if (!lane_obj1 || !lane_obj2 || lane_obj1 == lane_obj2)
+            return false; // not a lane
 
-        // loop over all existing systems, checking if each is too close to a
-        // lane between the specified lane endpoints
-        for (auto* system : objects.allRaw<System>()) {
-            if (system == lane_end_sys1 || system == lane_end_sys2)
-                continue;
+        // does a system have any lanes that cross a (potential) lane between lane_obj1 and lane_obj2
+        const auto system_has_crossing_lane = [lane_obj1, lane_obj2, &objects](const System* sys)
+        { return LaneCrossesSystemLane(lane_obj1, lane_obj2, sys, objects); };
 
-            if (ObjectTooCloseToLane(lane_end_sys1, lane_end_sys2, system))
-                return true;
-        }
-
-        return false;
+        // does ANY system have any lanes that cross lane between lane_obj1 and lane_obj2
+        auto systems_rng = objects.allRaw<System>();
+        return std::any_of(systems_rng.begin(), systems_rng.end(), system_has_crossing_lane);
     }
 
-    struct CanAddStarlaneConnectionSimpleMatch {
-        CanAddStarlaneConnectionSimpleMatch(const ObjectSet& destination_objects,
-                                            const ObjectMap& objects) :
-            m_objects(objects),
-            m_destination_systems{[&destination_objects, &objects]() {
-                // get set of (unique) systems that are or that contain any
-                // destination objects
-                std::vector<const System*> retval;
-                retval.reserve(destination_objects.size());
-                std::for_each(destination_objects.begin(), destination_objects.end(),
-                              [&objects, &retval](const UniverseObject* obj) {
-                                  if (!obj)
-                                      return;
-                                  if (obj->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
-                                      retval.push_back(static_cast<const System*>(obj));
-                                      return;
-                                  }
-                                  int sys_id = obj->SystemID();
-                                  if (sys_id != INVALID_OBJECT_ID)
-                                      if (const auto* sys = objects.getRaw<const System>(sys_id))
-                                          retval.push_back(sys);
-                              });
-                // ensure uniqueness
-                std::sort(retval.begin(), retval.end());
-                auto unique_it = std::unique(retval.begin(), retval.end());
-                retval.resize(std::distance(retval.begin(), unique_it));
-                return retval;
-            }()}
+
+    struct StarlaneToWouldCrossExistingStarlaneSimpleMatch {
+        StarlaneToWouldCrossExistingStarlaneSimpleMatch(const ObjectSet& to_objects, const ObjectMap& objects) :
+            m_to_objects(to_objects),
+            m_objects(objects)
         {}
 
         bool operator()(const UniverseObject* candidate) const {
             if (!candidate)
                 return false;
 
-            // get system from candidate
-            const System* candidate_sys = nullptr;
-            if (candidate->ObjectType() == UniverseObjectType::OBJ_SYSTEM)
-                candidate_sys = static_cast<const System*>(candidate);
-            if (!candidate_sys)
-                candidate_sys = m_objects.getRaw<System>(candidate->SystemID());
-            if (!candidate_sys)
-                return false;
+            // check if lane between candidate and object
+            const auto lane_to_crosses_existing_lane = [this, candidate](const auto* o)
+            { return LaneCrossesAnyExistingLane(candidate, o, m_objects); };
 
-            // check if candidate is one of the destination systems
-            if (std::any_of(m_destination_systems.begin(), m_destination_systems.end(),
-                [can_id{candidate_sys->ID()}](const auto* d) noexcept { return can_id == d->ID(); }))
-            { return false; }
-
-
-            // check if candidate already has a lane to any of the destination systems
-            for (auto* destination : m_destination_systems) {
-                if (candidate_sys->HasStarlaneTo(destination->ID()))
-                    return false;
-            }
-
-            // check if any of the proposed lanes are too close to any already-
-            // present lanes of the candidate system
-            //TraceLogger(conditions) << "... Checking lanes of candidate system: " << candidate->UniverseObject::Name() << "\n";
-            for (const auto& lane : candidate_sys->Starlanes()) {
-                auto candidate_existing_lane_end_sys = m_objects.getRaw<System>(lane);
-                if (!candidate_existing_lane_end_sys)
-                    continue;
-
-                // check this existing lane against potential lanes to all destination systems
-                for (auto* dest_sys : m_destination_systems) {
-                    if (LanesAngularlyTooClose(candidate_sys, candidate_existing_lane_end_sys, dest_sys)) {
-                        //TraceLogger(conditions) << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << dest_sys->UniverseObject::Name() << " due to existing lane to " << candidate_existing_lane_end_sys->UniverseObject::Name() << "\n";
-                        return false;
-                    }
-                }
-            }
-
-
-            // check if any of the proposed lanes are too close to any already-
-            // present lanes of any of the destination systems
-            //TraceLogger(conditions) << "... Checking lanes of destination systems:" << "\n";
-            for (auto* dest_sys : m_destination_systems) {
-                // check this destination system's existing lanes against a lane
-                // to the candidate system
-                for (const auto& dest_lane : dest_sys->Starlanes()) {
-                    auto dest_lane_end_sys = m_objects.getRaw<const System>(dest_lane);
-                    if (!dest_lane_end_sys)
-                        continue;
-
-                    if (LanesAngularlyTooClose(dest_sys, candidate_sys, dest_lane_end_sys)) {
-                        //TraceLogger(conditions) << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << dest_sys->UniverseObject::Name() << " due to existing lane from dest to " << dest_lane_end_sys->UniverseObject::Name() << "\n";
-                        return false;
-                    }
-                }
-            }
-
-
-            // check if any of the proposed lanes are too close to eachother
-            //TraceLogger(conditions) << "... Checking proposed lanes against eachother" << "\n";
-            for (auto it1 = m_destination_systems.begin();
-                 it1 != m_destination_systems.end(); ++it1)
-            {
-                auto* dest_sys1 = *it1;
-
-                // don't need to check a lane in both directions, so start at one past it1
-                auto it2 = it1;
-                ++it2;
-                for (; it2 != m_destination_systems.end(); ++it2) {
-                    auto* dest_sys2 = *it2;
-                    if (LanesAngularlyTooClose(candidate_sys, dest_sys1, dest_sys2)) {
-                        //TraceLogger(conditions) << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << dest_sys1->UniverseObject::Name() << " and also to " << dest_sys2->UniverseObject::Name() << "\n";
-                        return false;
-                    }
-                }
-            }
-
-
-            // check that the proposed lanes are not too close to any existing
-            // system they are not connected to
-            //TraceLogger(conditions) << "... Checking proposed lanes for proximity to other systems" << "\n";
-            for (auto* dest_sys : m_destination_systems) {
-                if (LaneTooCloseToOtherSystem(candidate_sys, dest_sys, m_objects)) {
-                    //TraceLogger(conditions) << " ... ... can't add lane from candidate: " << candidate_sys->Name() << " to " << dest_sys->Name() << " due to proximity to another system." << "\n";
-                    return false;
-                }
-            }
-
-
-            // check that there are no lanes already existing that cross the proposed lanes
-            //TraceLogger(conditions) << "... Checking for potential lanes crossing existing lanes" << "\n";
-            for (auto* dest_sys : m_destination_systems) {
-                if (LaneCrossesExistingLane(candidate_sys, dest_sys, m_objects)) {
-                    //TraceLogger(conditions) << " ... ... can't add lane from candidate: " << candidate_sys->Name() << " to " << dest_sys->Name() << " due to crossing an existing lane." << "\n";
-                    return false;
-                }
-            }
-
-            return true;
+            // check if lanes from candidate to any subcondition object cross existing lanes
+            return std::any_of(m_to_objects.begin(), m_to_objects.end(), lane_to_crosses_existing_lane);
         }
 
+        const ObjectSet& m_to_objects;
         const ObjectMap& m_objects;
-        const std::vector<const System*> m_destination_systems;
     };
 }
 
-void CanAddStarlaneConnection::Eval(const ScriptingContext& parent_context,
-                                    ObjectSet& matches, ObjectSet& non_matches,
-                                    SearchDomain search_domain) const
+void StarlaneToWouldCrossExistingStarlane::Eval(const ScriptingContext& parent_context,
+                                                ObjectSet& matches, ObjectSet& non_matches,
+                                                SearchDomain search_domain) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -9089,57 +9134,583 @@ void CanAddStarlaneConnection::Eval(const ScriptingContext& parent_context,
         ObjectSet subcondition_matches = m_condition->Eval(parent_context);
 
         EvalImpl(matches, non_matches, search_domain,
-                 CanAddStarlaneConnectionSimpleMatch(subcondition_matches,
-                                                     parent_context.ContextObjects()));
+                 StarlaneToWouldCrossExistingStarlaneSimpleMatch(subcondition_matches, parent_context.ContextObjects()));
     } else {
         // re-evaluate contained objects for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
 
-std::string CanAddStarlaneConnection::Description(bool negated) const {
+std::string StarlaneToWouldCrossExistingStarlane::Description(bool negated) const {
     return str(FlexibleFormat((!negated)
-        ? UserString("DESC_CAN_ADD_STARLANE_CONNECTION") : UserString("DESC_CAN_ADD_STARLANE_CONNECTION_NOT"))
-        % m_condition->Description());
+                              ? UserString("DESC_STARLANE_TO_WOULD_CROSS_EXISTING_LANE")
+                              : UserString("DESC_STARLANE_TO_WOULD_CROSS_EXISTING_LANE_NOT"))
+               % m_condition->Description());
 }
 
-std::string CanAddStarlaneConnection::Dump(uint8_t ntabs) const {
-    std::string retval = DumpIndent(ntabs) + "CanAddStarlanesTo condition =\n";
+std::string StarlaneToWouldCrossExistingStarlane::Dump(uint8_t ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "StarlaneToWouldCrossExistingStarlane from =\n";
     retval += m_condition->Dump(ntabs+1);
     return retval;
 }
 
-bool CanAddStarlaneConnection::Match(const ScriptingContext& local_context) const {
+bool StarlaneToWouldCrossExistingStarlane::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger(conditions) << "CanAddStarlaneConnection::Match passed no candidate object";
+        ErrorLogger(conditions) << "StarlaneToWouldCrossExistingStarlane::Match passed no candidate object";
         return false;
     }
 
     // get subcondition matches
     ObjectSet subcondition_matches = m_condition->Eval(local_context);
 
-    return CanAddStarlaneConnectionSimpleMatch(subcondition_matches,
-                                               local_context.ContextObjects())(candidate);
+    return StarlaneToWouldCrossExistingStarlaneSimpleMatch(subcondition_matches, local_context.ContextObjects())(candidate);
 }
 
-void CanAddStarlaneConnection::SetTopLevelContent(const std::string& content_name) {
+void StarlaneToWouldCrossExistingStarlane::SetTopLevelContent(const std::string& content_name) {
     if (m_condition)
         m_condition->SetTopLevelContent(content_name);
 }
 
-uint32_t CanAddStarlaneConnection::GetCheckSum() const {
+uint32_t StarlaneToWouldCrossExistingStarlane::GetCheckSum() const {
     uint32_t retval{0};
 
-    CheckSums::CheckSumCombine(retval, "Condition::CanAddStarlaneConnection");
+    CheckSums::CheckSumCombine(retval, "Condition::StarlaneToWouldCrossExistingStarlane");
     CheckSums::CheckSumCombine(retval, m_condition);
 
-    TraceLogger(conditions) << "GetCheckSum(CanAddStarlaneConnection): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(StarlaneToWouldCrossExistingStarlane): retval: " << retval;
     return retval;
 }
 
-std::unique_ptr<Condition> CanAddStarlaneConnection::Clone() const {
-    return std::make_unique<CanAddStarlaneConnection>(ValueRef::CloneUnique(m_condition));
+std::unique_ptr<Condition> StarlaneToWouldCrossExistingStarlane::Clone() const
+{ return std::make_unique<StarlaneToWouldCrossExistingStarlane>(ValueRef::CloneUnique(m_condition)); }
+
+///////////////////////////////////////////////////////////
+// StarlaneToWouldBeAngularlyCloseToExistingStarlane     //
+///////////////////////////////////////////////////////////
+StarlaneToWouldBeAngularlyCloseToExistingStarlane::StarlaneToWouldBeAngularlyCloseToExistingStarlane(
+    std::unique_ptr<Condition>&& condition, double max_dotprod) :
+    m_condition(std::move(condition)),
+    m_max_dotprod(max_dotprod)
+{
+    m_root_candidate_invariant = !m_condition || m_condition->RootCandidateInvariant();
+    m_target_invariant = !m_condition || m_condition->TargetInvariant();
+    m_source_invariant = !m_condition || m_condition->SourceInvariant();
+}
+
+bool StarlaneToWouldBeAngularlyCloseToExistingStarlane::operator==(const Condition& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const StarlaneToWouldBeAngularlyCloseToExistingStarlane& rhs_ = static_cast<const StarlaneToWouldBeAngularlyCloseToExistingStarlane&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_condition)
+
+    return m_max_dotprod == rhs_.m_max_dotprod;
+}
+
+namespace {
+    bool LanesClose(const UniverseObject* common_pos, const UniverseObject* end_pos1,
+                    const UniverseObject* end_pos2, const double max_dotprod) noexcept
+    {
+        // are all endpoints valid systems?
+        if (!common_pos || !end_pos1 || !end_pos2)
+            return false;
+        // is either lane degenerate (same start and endpoints)
+        if (common_pos == end_pos1 || common_pos == end_pos2)
+            return false;
+        // are two lanes the same?
+        if (end_pos1 == end_pos2)
+            return true;
+
+        const vec2 c{*common_pos}, e1{*end_pos1}, e2{*end_pos2};
+
+        TraceLogger(conditions)
+            << (DotProduct((e1-c).normalize(), (e2-c).normalize()) >= max_dotprod ? "OK" : "NO")
+            << "  common: " << common_pos->Name()
+            << " end1: " << end_pos1->Name() << " vec: " << std::string{(e1-c).normalize()}
+            << " end2: " << end_pos2->Name() << " vec: " << std::string{(e2-c).normalize()}
+            << " dotprod: " << DotProduct((e1-c).normalize(), (e2-c).normalize());
+
+
+        return DotProduct((e1-c).normalize(), (e2-c).normalize()) >= max_dotprod;
+    }
+
+    // returns true if \a system has a starlane to a system, which is close in
+    // angle to the vector from \a system to \a pos1
+    bool SystemHasLaneCloseTo(const System* system, const UniverseObject* pos1,
+                              const ObjectMap& objects, const double max_dotprod)
+    {
+        if (!system || !pos1)
+            return false;
+
+        const auto lanes_close = [=](const UniverseObject* pos2)
+        { return LanesClose(system, pos1, pos2, max_dotprod); };
+
+        const auto& sys_lanes = system->Starlanes();
+        const auto get_sys = [&objects](const int sys_id)
+        { return objects.getRaw<System>(sys_id); };
+        auto sys_rng = sys_lanes | range_transform(get_sys);
+        return std::any_of(sys_rng.begin(), sys_rng.end(), lanes_close);
+    }
+
+    bool LaneWouldBeCloseToExistingSystemLane(const UniverseObject* obj1, const UniverseObject* obj2,
+                                              const ObjectMap& objects, const double max_dotprod)
+    {
+        if (!obj1 || !obj2)
+            return false;
+        const System* sys1 = ObjectToSystem(obj1, objects);
+        const System* sys2 = ObjectToSystem(obj2, objects);
+        if (sys1 && sys2)
+            return SystemHasLaneCloseTo(sys1, sys2, objects, max_dotprod) ||
+                   SystemHasLaneCloseTo(sys2, sys1, objects, max_dotprod);
+        else if (sys1)
+            return SystemHasLaneCloseTo(sys1, obj2, objects, max_dotprod);
+        else if (sys2)
+            return SystemHasLaneCloseTo(sys2, obj1, objects, max_dotprod);
+        else
+            return false; // if neither endpoint of lane is or is in a System, then the lane can't be too angularly close to a System's exsiting lane
+    }
+
+    struct StarlaneToWouldBeAngularlyCloseToExistingStarlaneSimpleMatch {
+        StarlaneToWouldBeAngularlyCloseToExistingStarlaneSimpleMatch(
+            const ObjectSet& to_objects, const ObjectMap& objects, double max_dotprod) :
+            m_to_objects(to_objects),
+            m_objects(objects),
+            m_max_dotprod(max_dotprod)
+        {}
+
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
+                return false;
+
+            // check if lane between candidate and system is close to any lanes on either side
+            const auto has_angularly_close_lane = [this, candidate](const UniverseObject* o)
+            { return LaneWouldBeCloseToExistingSystemLane(candidate, o, m_objects, m_max_dotprod); };
+
+            // check if lanes from candidate to any subcondition object are
+            // angularly close to an existing lane on either end
+            return std::any_of(m_to_objects.begin(), m_to_objects.end(), has_angularly_close_lane);
+        }
+
+        const ObjectSet& m_to_objects;
+        const ObjectMap& m_objects;
+        const double m_max_dotprod;
+    };
+}
+
+void StarlaneToWouldBeAngularlyCloseToExistingStarlane::Eval(const ScriptingContext& parent_context,
+    ObjectSet& matches, ObjectSet& non_matches,
+    SearchDomain search_domain) const
+{
+    bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
+    if (simple_eval_safe) {
+        // evaluate contained objects once and check for all candidates
+
+        // get subcondition matches
+        ObjectSet subcondition_matches = m_condition->Eval(parent_context);
+
+        EvalImpl(matches, non_matches, search_domain,
+            StarlaneToWouldBeAngularlyCloseToExistingStarlaneSimpleMatch(
+                subcondition_matches, parent_context.ContextObjects(), m_max_dotprod));
+    } else {
+        // re-evaluate contained objects for each candidate object
+        Condition::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+std::string StarlaneToWouldBeAngularlyCloseToExistingStarlane::Description(bool negated) const {
+    return str(FlexibleFormat((!negated)
+                              ? UserString("DESC_STARLANE_TO_WOULD_BE_ANGULARLY_CLOSE")
+                              : UserString("DESC_STARLANE_TO_WOULD_BE_ANGULARLY_CLOSE_NOT"))
+        % m_condition->Description()
+        % m_max_dotprod);
+}
+
+std::string StarlaneToWouldBeAngularlyCloseToExistingStarlane::Dump(uint8_t ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "StarlaneToWouldBeAngularlyCloseToExistingStarlane from =\n";
+    retval += m_condition->Dump(ntabs+1) + " maxdotprod = " + std::to_string(m_max_dotprod);
+    return retval;
+}
+
+bool StarlaneToWouldBeAngularlyCloseToExistingStarlane::Match(const ScriptingContext& local_context) const {
+    const auto* candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        ErrorLogger(conditions) << "StarlaneToWouldBeAngularlyCloseToExistingStarlane::Match passed no candidate object";
+        return false;
+    }
+
+    // get subcondition matches
+    ObjectSet subcondition_matches = m_condition->Eval(local_context);
+
+    return StarlaneToWouldBeAngularlyCloseToExistingStarlaneSimpleMatch(
+        subcondition_matches, local_context.ContextObjects(), m_max_dotprod)(candidate);
+}
+
+void StarlaneToWouldBeAngularlyCloseToExistingStarlane::SetTopLevelContent(const std::string& content_name) {
+    if (m_condition)
+        m_condition->SetTopLevelContent(content_name);
+}
+
+uint32_t StarlaneToWouldBeAngularlyCloseToExistingStarlane::GetCheckSum() const {
+    uint32_t retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::StarlaneToWouldBeAngularlyCloseToExistingStarlane");
+    CheckSums::CheckSumCombine(retval, m_condition);
+
+    TraceLogger(conditions) << "GetCheckSum(StarlaneToWouldBeAngularlyCloseToExistingStarlane): retval: " << retval;
+    return retval;
+}
+
+std::unique_ptr<Condition> StarlaneToWouldBeAngularlyCloseToExistingStarlane::Clone() const {
+    return std::make_unique<StarlaneToWouldBeAngularlyCloseToExistingStarlane>(
+        ValueRef::CloneUnique(m_condition), m_max_dotprod);
+}
+
+///////////////////////////////////////////////////////////
+// StarlaneToWouldBeCloseToObject                        //
+///////////////////////////////////////////////////////////
+StarlaneToWouldBeCloseToObject::StarlaneToWouldBeCloseToObject(
+    std::unique_ptr<Condition>&& lane_end_condition,
+    std::unique_ptr<Condition>&& close_object_condition,
+    double max_distance) :
+    m_lane_end_condition(std::move(lane_end_condition)),
+    m_close_object_condition(std::move(close_object_condition)),
+    m_max_distance(max_distance)
+{
+    std::array<const Condition*, 2> operands = {{m_lane_end_condition.get(), m_close_object_condition.get()}};
+    m_root_candidate_invariant = std::all_of(operands.begin(), operands.end(), [](auto& c) { return !c || c->RootCandidateInvariant(); });
+    m_target_invariant = std::all_of(operands.begin(), operands.end(), [](auto& c) { return !c || c->TargetInvariant(); });
+    m_source_invariant = std::all_of(operands.begin(), operands.end(), [](auto& c) { return !c || c->SourceInvariant(); });
+}
+
+bool StarlaneToWouldBeCloseToObject::operator==(const Condition& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const StarlaneToWouldBeCloseToObject& rhs_ = static_cast<const StarlaneToWouldBeCloseToObject&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_lane_end_condition)
+    CHECK_COND_VREF_MEMBER(m_close_object_condition)
+
+    return m_max_distance == rhs_.m_max_distance;
+}
+
+namespace {
+    constexpr bool PointIsInLineSegBB(const vec2 seg_pt1, const vec2 seg_pt2,
+                                      const vec2 test_pt, const double dist)
+    {
+        // bounding box: is test_pt near segment at all?
+        const vec2 seg_min{std::min(seg_pt1.x, seg_pt2.x), std::min(seg_pt1.y, seg_pt2.y)};
+        const vec2 seg_max{std::max(seg_pt1.x, seg_pt2.x), std::max(seg_pt1.y, seg_pt2.y)};
+        const vec2 seg_bb_min = seg_min - vec2{dist, dist};
+        const vec2 seg_bb_max = seg_max + vec2{dist, dist};
+        return test_pt.x >= seg_bb_min.x && test_pt.y >= seg_bb_min.y &&
+               test_pt.x <= seg_bb_max.x && test_pt.y <= seg_bb_max.y;
+    }
+
+    constexpr bool PointIsInLineSegBB(const seg seg1, const vec2 test_pt, const double dist)
+    { return PointIsInLineSegBB(seg1.s, seg1.e, test_pt, dist); }
+
+    constexpr bool PointsClose(const vec2 pt1, const vec2 pt2, const double dist2)
+    { return (pt2 - pt1).mag2() <= dist2; }
+
+    constexpr auto constexprabs(const auto val) noexcept
+    { return val >= 0 ? val : -val; }
+
+    constexpr std::pair<bool, double> PointIsCloseToLineThroughSegment(
+        const vec2 seg_pt1, const vec2 seg_pt2, const vec2 test_pt, const double dist)
+    {
+        const vec2 seg1_to_test_vec = test_pt - seg_pt1;
+        const vec2 seg_norm = (seg_pt2 - seg_pt1).normalize();
+        const double dist_test_to_line = constexprabs(CrossProduct(seg1_to_test_vec, seg_norm));
+        return {dist_test_to_line <= dist, dist_test_to_line};
+    }
+
+    constexpr bool PointIsBetweenLineSegPoints(const vec2 seg_pt1, const vec2 seg_pt2,
+                                               const vec2 test_pt)
+    {
+        const vec2 seg1_to_test_vec = test_pt - seg_pt1;
+        const vec2 seg2_to_test_vec = test_pt - seg_pt2;
+        const vec2 seg_vec = seg_pt2 - seg_pt1;
+
+        // sign of dot products indicate relative direction of
+        // vectors from endpoints of segment to test point,
+        // along the line parallel with the segment
+        const bool seg1_to_test_pos = DotProduct(seg1_to_test_vec, seg_vec) > 0;
+        const bool seg2_to_test_pos = DotProduct(seg2_to_test_vec, seg_vec) > 0;
+
+        // if directions to test point from the two ends of the segment
+        // are of opposite sign, then the test point is between the two
+        // endpoint on the axis between the two endpoints
+        return seg1_to_test_pos != seg2_to_test_pos;
+    }
+
+    constexpr bool LineSegmentIsCloseToPoint(const vec2 seg_pt1, const vec2 seg_pt2,
+                                             const vec2 test_pt, const double max_dist)
+    {
+        // is test_pt within the bounding box of the segment +/- allowed distance?
+        if (!PointIsInLineSegBB(seg_pt1, seg_pt2, test_pt, max_dist)) {
+            //DebugLogger() << " ... pt " << std::string{test_pt} << " outside BB dist " << dist
+            //              << " of segment " << std::string{seg_pt1} << " - " << std::string{seg_pt2};
+            return false;
+        }
+
+        // is test_pt near either endpoint?
+        if (PointsClose(test_pt, seg_pt1, max_dist*max_dist)) {
+            //if (!std::is_constant_evaluated())
+            //    TraceLogger(conditions) << " ... pt " << std::string{test_pt} << " close to " << std::string{seg_pt1};
+            return true;
+        }
+        if (PointsClose(test_pt, seg_pt2, max_dist*max_dist)) {
+            //if (!std::is_constant_evaluated())
+            //    TraceLogger(conditions) << " ... pt " << std::string{test_pt} << " close to " << std::string{seg_pt2};
+            return true;
+        }
+
+        // is test_pt between the two endpoints?
+        if (!PointIsBetweenLineSegPoints(seg_pt1, seg_pt2, test_pt)) {
+            //if (!std::is_constant_evaluated())
+            //    TraceLogger(conditions) << " ... pt " << std::string{test_pt} << " not within segment "
+            //                            << std::string{seg_pt1} << " - " << std::string{seg_pt2};
+            return false;
+        }
+
+        const auto [close, dist_to_line] = PointIsCloseToLineThroughSegment(seg_pt1, seg_pt2, test_pt, max_dist);
+        if (!close) {
+            //if (!std::is_constant_evaluated())
+            //    TraceLogger(conditions) << " ... pt " << std::string{test_pt} << " not close to line along segment "
+            //                            << std::string{seg_pt1} << " - " << std::string{seg_pt2}
+            //                            << "  dist: " << dist_to_line;
+            return false;
+        }
+
+        //if (!std::is_constant_evaluated())
+        //    TraceLogger(conditions) << " ... pt " << std::string{test_pt} << " IS CLOSE to segment "
+        //                            << std::string{seg_pt1} << " - " << std::string{seg_pt2}
+        //                            << "  dist: " << dist_to_line;
+
+        return true;
+    }
+
+    constexpr bool LineSegmentIsCloseToPoint(const seg seg1, const vec2 test_pt, const double dist)
+    { return LineSegmentIsCloseToPoint(seg1.s, seg1.e, test_pt, dist); }
+
+    namespace StaticTests {
+        // segments that are near points:
+        //        e7
+        //       /
+        //      /
+        //     /      e4
+        //    /   s2 /     s3--sX
+        //   /     |/       |
+        // s7 s1--s4--e1    |  s5-s6-e6--e5
+        //         |        |
+        //        e2       e3
+        //static constexpr auto seg1 = seg{vec2{-1.0,  0.0}, vec2{1.0,  0.0}};
+        //static constexpr auto seg2 = seg{vec2{ 0.0, -1.0}, vec2{0.0,  1.0}};
+        //static constexpr auto seg3 = seg{vec2{ 2.0, -1.0}, vec2{2.0,  1.0}};
+        //static constexpr auto segX = seg{vec2{ 2.0, -1.0}, vec2{3.0, -1.0}};
+        //static constexpr auto seg4 = seg{vec2{ 0.0,  0.0}, vec2{1.0, -1.5}};
+        //static constexpr auto seg5 = seg{vec2{ 3.0,  0.0}, vec2{6.0,  0.0}};
+        //static constexpr auto seg6 = seg{vec2{ 4.0,  0.0}, vec2{5.0,  0.0}};
+        //static constexpr auto seg7 = seg{vec2{-2.0,  0.0}, vec2{0.0, -4.0}};
+
+        static_assert( PointsClose(seg1.s, seg1.s, 0.0));
+        static_assert( PointsClose(seg1.s, seg1.s, 1.0));
+        static_assert( PointsClose(seg1.s, seg1.s, 4.0));
+        static_assert(!PointsClose(seg1.s, seg1.e, 0.0));
+        static_assert(!PointsClose(seg1.s, seg1.e, 1.0));
+        static_assert( PointsClose(seg1.s, seg1.e, 4.0));
+        static_assert(!PointsClose(seg1.s, seg4.s, 0.25));
+        static_assert(!PointsClose(seg1.e, seg4.s, 0.25));
+        static_assert(!PointsClose(seg1.s, seg7.s, 0.25));
+        static_assert( PointsClose(seg1.s, seg7.s, 1.0));
+        static_assert(!PointsClose(seg1.s, seg7.e, 4.0));
+
+        static_assert( PointIsInLineSegBB(seg1, seg1.s, 1.0));
+        static_assert( PointIsInLineSegBB(seg1, seg1.e, 0.0));
+        static_assert( PointIsInLineSegBB(seg1, seg4.s, 1.0));
+        static_assert( PointIsInLineSegBB(seg1, seg7.s, 1.0));
+        static_assert(!PointIsInLineSegBB(seg1, seg5.s, 1.0));
+
+        static_assert( PointIsCloseToLineThroughSegment(seg1.s, seg1.e, seg1.s, 0.0).first);
+        static_assert( PointIsCloseToLineThroughSegment(seg1.s, seg1.e, seg1.e, 0.0).first);
+        static_assert(!PointIsCloseToLineThroughSegment(seg1.s, seg1.e, seg2.s, 0.25).first);
+        static_assert( PointIsCloseToLineThroughSegment(seg1.s, seg1.e, seg2.s, 1.0).first);
+        static_assert( PointIsCloseToLineThroughSegment(seg1.s, seg1.e, seg2.e, 1.0).first);
+        static_assert(!PointIsCloseToLineThroughSegment(seg1.s, seg1.e, seg2.s, 0.1).first);
+        static_assert(!PointIsCloseToLineThroughSegment(seg1.s, seg1.e, seg2.e, 0.1).first);
+        static_assert( PointIsCloseToLineThroughSegment(seg1.s, seg1.e, seg4.s, 1.0).first);
+        static_assert( PointIsCloseToLineThroughSegment(seg1.s, seg1.e, seg5.s, 0.0).first);
+        static_assert( PointIsCloseToLineThroughSegment(seg1.s, seg1.e, seg5.e, 0.0).first);
+        static_assert( PointIsCloseToLineThroughSegment(seg1.s, seg1.e, seg6.s, 0.0).first);
+        static_assert( PointIsCloseToLineThroughSegment(seg1.s, seg1.e, seg6.e, 0.0).first);
+        static_assert(!PointIsCloseToLineThroughSegment(seg2.s, seg2.e, seg5.e, 1.0).first);
+        static_assert( PointIsCloseToLineThroughSegment(seg2.s, seg2.e, seg7.e, 1.0).first);
+
+        static_assert( PointIsBetweenLineSegPoints(seg1.s, seg1.e, seg4.s));
+        static_assert( PointIsBetweenLineSegPoints(seg1.s, seg1.e, seg4.e));
+        static_assert(!PointIsBetweenLineSegPoints(seg1.s, seg1.e, seg5.e));
+        static_assert(!PointIsBetweenLineSegPoints(seg1.s, seg1.e, seg6.s));
+        static_assert(!PointIsBetweenLineSegPoints(seg1.s, seg1.e, seg7.s));
+        static_assert( PointIsBetweenLineSegPoints(seg1.s, seg1.e, seg7.e));
+        static_assert(!PointIsBetweenLineSegPoints(seg2.s, seg2.e, seg7.e));
+        static_assert(!PointIsBetweenLineSegPoints(seg2.e, seg2.s, seg7.e));
+
+        static_assert( LineSegmentIsCloseToPoint(seg1, seg4.s, 0.25));
+        static_assert( LineSegmentIsCloseToPoint(seg1, seg1.s, 0.001));
+        static_assert( LineSegmentIsCloseToPoint(seg1, seg1.s, 0.0));
+        static_assert(!LineSegmentIsCloseToPoint(seg1, seg4.e, 1.0));
+        static_assert( LineSegmentIsCloseToPoint(seg1, seg7.s, 1.0));
+        static_assert(!LineSegmentIsCloseToPoint(seg1, seg7.e, 1.0));
+        static_assert(!LineSegmentIsCloseToPoint(seg2, seg7.e, 1.0));
+        static_assert( LineSegmentIsCloseToPoint(seg5, seg6.s, 1.0));
+        static_assert( LineSegmentIsCloseToPoint(seg5, seg6.e, 1.0));
+        static_assert( LineSegmentIsCloseToPoint(seg5, seg5.s, 1.0));
+        static_assert( LineSegmentIsCloseToPoint(seg6, seg5.s, 1.0));
+        static_assert( LineSegmentIsCloseToPoint(seg6, seg5.e, 1.0));
+    }
+
+    bool LaneWouldBeCloseToOtherObject(const UniverseObject* obj1, const UniverseObject* obj2,
+                                       const ObjectSet& close_objects, const double max_distance)
+    {
+        if (!obj1 || !obj2 || close_objects.empty())
+            return false;
+
+        const auto lane_would_be_close_to_object =
+            [obj1, pt1{vec2{*obj1}}, obj2, pt2{vec2{*obj2}}, max_distance](const UniverseObject* close_obj)
+        {
+            const auto retval = LineSegmentIsCloseToPoint(pt1, pt2, vec2{*close_obj}, max_distance);
+
+            if (retval)
+                TraceLogger(conditions) << close_obj->Name() << " @ " << std::string{vec2{*close_obj}}
+                                        << " is close to lane from "<< obj1->Name() << " to " << obj2->Name()
+                                        << std::string{vec2{*obj1}} << " - " << std::string{vec2{*obj2}};
+
+            return retval;
+        };
+
+        return std::any_of(close_objects.begin(), close_objects.end(), lane_would_be_close_to_object);
+    }
+
+
+    struct StarlaneToWouldBeCloseToObjectSimpleMatch {
+        StarlaneToWouldBeCloseToObjectSimpleMatch(
+            const ObjectSet& to_objects, const ObjectSet& close_objects, double max_distance) :
+            m_to_objects(to_objects),
+            m_close_objects(close_objects),
+            m_max_distance(max_distance)
+        {}
+
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
+                return false;
+
+            // check if lane between candidate and other object is close to any
+            // object in m_close_objects
+            const auto lane_to_close_to_other_object = [this, candidate](const UniverseObject* o)
+            { return LaneWouldBeCloseToOtherObject(candidate, o, m_close_objects, m_max_distance); };
+
+            // check if lanes from candidate to any subcondition object are
+            // angularly close to an existing lane on either end
+            const auto retval = std::any_of(m_to_objects.begin(), m_to_objects.end(),
+                                            lane_to_close_to_other_object);
+
+            if (retval)
+                TraceLogger(conditions) << "lane from an object to " << candidate->Name() << " would be close to another object...";
+
+            return retval;
+        }
+
+        const ObjectSet& m_to_objects;
+        const ObjectSet& m_close_objects;
+        const double m_max_distance;
+    };
+}
+
+void StarlaneToWouldBeCloseToObject::Eval(const ScriptingContext& parent_context,
+    ObjectSet& matches, ObjectSet& non_matches,
+    SearchDomain search_domain) const
+{
+    bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
+    if (simple_eval_safe) {
+        // evaluate contained objects once and check for all candidates
+
+        // get subcondition matches
+        ObjectSet lane_from_objects = m_lane_end_condition->Eval(parent_context);
+        ObjectSet close_objects = m_close_object_condition->Eval(parent_context);
+
+        EvalImpl(matches, non_matches, search_domain,
+                 StarlaneToWouldBeCloseToObjectSimpleMatch(lane_from_objects, close_objects, m_max_distance));
+        const auto inv = search_domain == SearchDomain::MATCHES ? "NOT" : "";
+        DebugLogger() << matches.size() << " objects would be " << inv <<  " close to something";
+    } else {
+        // re-evaluate contained objects for each candidate object
+        Condition::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+std::string StarlaneToWouldBeCloseToObject::Description(bool negated) const {
+    return str(FlexibleFormat((!negated)
+            ? UserString("DESC_STARLANE_TO_WOULD_BE_CLOSE")
+            : UserString("DESC_STARLANE_TO_WOULD_BE_CLOSE_NOT"))
+        % m_lane_end_condition->Description()
+        % m_max_distance
+        % m_close_object_condition->Description());
+
+}
+
+std::string StarlaneToWouldBeCloseToObject::Dump(uint8_t ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "StarlaneToWouldBeCloseToObject distance = ";
+    retval += std::to_string(m_max_distance);
+    retval += " from =\n" + m_lane_end_condition->Dump(ntabs+1);
+    retval += " closeto =\n" + m_close_object_condition->Dump(ntabs+1);
+    return retval;
+}
+
+bool StarlaneToWouldBeCloseToObject::Match(const ScriptingContext& local_context) const {
+    const auto* candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        ErrorLogger(conditions) << "StarlaneToWouldBeCloseToObject::Match passed no candidate object";
+        return false;
+    }
+
+    // get subcondition matches
+    ObjectSet lane_ends = m_lane_end_condition->Eval(local_context);
+    ObjectSet close_objects = m_close_object_condition->Eval(local_context);
+
+    return StarlaneToWouldBeCloseToObjectSimpleMatch(lane_ends, close_objects, m_max_distance)(candidate);
+}
+
+void StarlaneToWouldBeCloseToObject::SetTopLevelContent(const std::string& content_name) {
+    if (m_lane_end_condition)
+        m_lane_end_condition->SetTopLevelContent(content_name);
+    if (m_close_object_condition)
+        m_close_object_condition->SetTopLevelContent(content_name);
+}
+
+uint32_t StarlaneToWouldBeCloseToObject::GetCheckSum() const {
+    uint32_t retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::StarlaneToWouldBeCloseToObject");
+    CheckSums::CheckSumCombine(retval, m_lane_end_condition);
+    CheckSums::CheckSumCombine(retval, m_max_distance);
+    CheckSums::CheckSumCombine(retval, m_close_object_condition);
+
+    TraceLogger(conditions) << "GetCheckSum(StarlaneToWouldBeCloseToObject): retval: " << retval;
+    return retval;
+}
+
+std::unique_ptr<Condition> StarlaneToWouldBeCloseToObject::Clone() const {
+    return std::make_unique<StarlaneToWouldBeCloseToObject>(
+        ValueRef::CloneUnique(m_lane_end_condition),
+        ValueRef::CloneUnique(m_close_object_condition),
+        m_max_distance);
 }
 
 ///////////////////////////////////////////////////////////

@@ -11937,12 +11937,42 @@ DESC_WITHIN_STARLANE_JUMPS_NOT
 ''' that is not within %1% starlane jumps of any object%2%'''
 
 # %1% textual description of the far endpoint system the starlane connects to.
-DESC_CAN_ADD_STARLANE_CONNECTION
-''' that can have starlanes added connecting to all systems that contain objects%1%'''
+DESC_HAS_STARLANE_TO
+''' that has a starlane to the location of any object%1%'''
 
 # %1% textual description of the far endpoint system the starlane connects to.
-DESC_CAN_ADD_STARLANE_CONNECTION_NOT
-''' that can not have starlanes added connecting to all systems that contain objects%1%'''
+DESC_HAS_STARLANE_TO_NOT
+''' that does not have a starlane to the location of any object%1%'''
+
+# %1% textual description of the other endpoint system the starlane connects to.
+DESC_STARLANE_TO_WOULD_CROSS_EXISTING_LANE
+''' that would cross an existing starlane if adding a starlane between it and the location of any object %1%'''
+
+# %1% textual description of the other endpoint system the starlane connects to.
+DESC_STARLANE_TO_WOULD_CROSS_EXISTING_LANE_NOT
+''' that would not cross an existing starlane if adding a starlane between it and the location of any object %1%'''
+
+# %1% textual description of the other endpoint system the starlane connects to.
+# %2% textual description max dot product of normalized lane vectors to consider "close".
+DESC_STARLANE_TO_WOULD_BE_ANGULARLY_CLOSE
+''' to which a new starlane would be angularly close (dot product > %2%) to an existing starlane on either end, with the other end being at any object %1%'''
+
+# %1% textual description of the other endpoint system the starlane connects to.
+# %2% textual description max dot product of normalized lane vectors to consider "close".
+DESC_STARLANE_TO_WOULD_BE_ANGULARLY_CLOSE_NOT
+''' to which a new starlane would not be angularly close (dot product > %2%) to an existing starlane on either end, with the other end being at any object %1%'''
+
+# %1% textual description of the other endpoint objects(s) the starlane(s) connect(s) to.
+# %2% textual description max distance from a lane to consider "close".
+# %3% textual description of the object(s) that the lane would be close to
+DESC_STARLANE_TO_WOULD_BE_CLOSE
+''' to which a new starlane from an object that %1% would be close (distance < %2%) to an object %3%'''
+
+# %1% textual description of the other endpoint object(s) the starlane(s) connect(s) to.
+# %2% textual description max distance from a lane to consider "close".
+# %3% textual description of the object(s) that the lane would be close to
+DESC_STARLANE_TO_WOULD_BE_CLOSE_NOT
+''' to which a new starlane from an object that %1% would not be close (distance < %2%) to an object %3%'''
 
 # %1% textual description of the empire.
 DESC_EXPLORED_BY_EMPIRE
