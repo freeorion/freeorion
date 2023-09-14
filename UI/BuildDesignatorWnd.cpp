@@ -40,11 +40,24 @@ namespace {
 
     static constexpr int MAX_PRODUCTION_TURNS = 200;
     static constexpr float EPSILON = 0.001f;
+    int IconTextBrowseWndRowHeight() { return ClientUI::Pts()*3/2; }
+    constexpr int   EDGE_PAD(3);
+    constexpr GG::X ICON_BROWSE_TEXT_WIDTH{400};
+    constexpr GG::X ICON_BROWSE_ICON_WIDTH{64};
+    constexpr GG::Y ICON_BROWSE_ICON_HEIGHT{64};
 
-    constexpr int ProductionTurns(float total_cost, int minimum_production_time, float local_pp_output,
-                                  float stockpile, float stockpile_limit_per_turn)
+
+#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
+    constexpr std::string EMPTY_STRING;
+#else
+    const std::string EMPTY_STRING;
+#endif
+
+    constexpr int ProductionTurns(const float total_cost, const int minimum_production_time,
+                                  const float local_pp_output, float stockpile, const float stockpile_limit_per_turn)
+        noexcept(noexcept(std::min(1.0f, -1.0f)) && noexcept(std::max(1, 0)))
     {
-        float max_allocation_per_turn = total_cost / minimum_production_time;
+        const float max_allocation_per_turn = total_cost / std::max(1, minimum_production_time);
         //std::cout << "\nProductionTurnsprod max per turn: " << max_allocation_per_turn << "  total cost: " << total_cost
         //          << "  min time: " << minimum_production_time << "  local pp: " << local_pp_output << "  stockpile: " << stockpile << std::endl;
 
@@ -52,7 +65,7 @@ namespace {
         int prod_time_here = 0;
         float total_allocated = 0.0f;
         for (; prod_time_here < MAX_PRODUCTION_TURNS && total_allocated < total_cost - EPSILON;) {
-            float avail_stockpile = std::min(stockpile, stockpile_limit_per_turn);
+            const float avail_stockpile = std::min(stockpile, stockpile_limit_per_turn);
             float industry_output_used = local_pp_output;
             float stockpile_used = 0.0f;
 
@@ -73,7 +86,7 @@ namespace {
             }
 
             stockpile -= stockpile_used;
-            total_allocated += stockpile_used + industry_output_used;
+            total_allocated += (stockpile_used + industry_output_used);
             prod_time_here++;
             //std::cout << "prod time here: " << prod_time_here << ": stockpile used: " << stockpile_used
             //          << "   industry used: " << industry_output_used << "  total cost: " << total_cost << std::endl;
@@ -295,47 +308,120 @@ namespace {
             return ConditionDescription(location_conditions, context, candidate);
     }
 
-    std::shared_ptr<GG::BrowseInfoWnd> ProductionItemRowBrowseWnd(const ProductionQueue::ProductionItem& item,
-                                                                  int candidate_object_id, int empire_id)
-    {
-        ScopedTimer timer("ProductionItemRowBrowseWnd: " + item.name);
-
-        ScriptingContext context;
-
-        // get available PP for empire at candidate location
-        float local_pp_output = 0.0f;
-        float stockpile = 0.0f;
-        float stockpile_limit_per_turn = 0.0f;
-        if (auto empire = context.GetEmpire(empire_id)) {
-            // from industry output
-            local_pp_output = empire->GetIndustryPool().GroupAvailable(candidate_object_id);
-
-            // from stockpile
-            stockpile = empire->GetIndustryPool().Stockpile();
-            stockpile_limit_per_turn = empire->GetProductionQueue().StockpileCapacity(context.ContextObjects());
+    class ProductionItemRowBrowseWnd : public GG::BrowseInfoWnd {
+    public:
+        ProductionItemRowBrowseWnd(const ProductionQueue::ProductionItem& item,
+                                   int candidate_object_id, int empire_id) :
+            GG::BrowseInfoWnd(GG::X0, GG::Y0, ICON_BROWSE_TEXT_WIDTH + ICON_BROWSE_ICON_WIDTH, GG::Y1),
+            m_item(std::move(item)),
+            m_candidate_object_id(candidate_object_id),
+            m_empire_id(empire_id)
+        {
+            RequirePreRender();
+            //std::cout << "ProductionItemRowBrowseWnd construct " << item.name << std::endl;
         }
 
-        auto obj = context.ContextObjects().getRaw(candidate_object_id);
-        std::string candidate_name = obj ? obj->Name() : "";
-        if (GetOptionsDB().Get<bool>("ui.name.id.shown"))
-            candidate_name += " (" + std::to_string(candidate_object_id) + ")";
+        bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
+            assert(mode <= wnd->BrowseModes().size());
+            return true;
+        }
 
-        // production item is a building
-        if (item.build_type == BuildType::BT_BUILDING) {
-            const BuildingType* building_type = GetBuildingType(item.name);
-            if (!building_type)
-                return nullptr;
+        void Render() {
+            const auto ul = UpperLeft();
+            const auto lr = LowerRight();
+            const GG::Y ROW_HEIGHT(IconTextBrowseWndRowHeight());
+            GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);    // main background
+            GG::FlatRectangle(GG::Pt(ul.x + ICON_BROWSE_ICON_WIDTH, ul.y), GG::Pt(lr.x, ul.y + ROW_HEIGHT),
+                              ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0); // top title filled background
+        }
 
-            auto& title = UserString(item.name);
+        void PreRender() override {
+            GG::Wnd::PreRender();
+
+            SetChildClippingMode(ChildClippingMode::ClipToClient);
+            auto [icon, main_text] = [this]() -> std::pair<std::shared_ptr<GG::Texture>, std::string> {
+                switch (m_item.build_type) {
+                case BuildType::BT_BUILDING:  return PreRenderBuilding();  break;
+                case BuildType::BT_SHIP:      return PreRenderDesign();    break;
+                case BuildType::BT_STOCKPILE: return PreRenderStockpile(); break;
+                default: return {nullptr, EMPTY_STRING};
+                }
+            }();
+            auto& title = [this]() -> const auto& {
+                switch (m_item.build_type) {
+                case BuildType::BT_STOCKPILE: [[fallthrough]];
+                case BuildType::BT_BUILDING:  return UserString(m_item.name);  break;
+                case BuildType::BT_SHIP:      return m_item.name;    break;
+                default: return EMPTY_STRING;
+                }
+            }();
+
+            //std::cout << "ProductionItemRowBrowseWnd::PreRender: " << m_item.name  << " : " << title << std::endl;
+
+
+            m_icon = GG::Wnd::Create<GG::StaticGraphic>(icon, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE);
+            m_icon->Resize(GG::Pt(ICON_BROWSE_ICON_WIDTH, ICON_BROWSE_ICON_HEIGHT));
+            AttachChild(m_icon);
+
+            const GG::Y ROW_HEIGHT(IconTextBrowseWndRowHeight());
+
+            m_title_text_label = GG::Wnd::Create<CUILabel>(title, GG::FORMAT_LEFT);
+            m_title_text_label->MoveTo(GG::Pt(m_icon->Width() + GG::X(EDGE_PAD), GG::Y0));
+            m_title_text_label->Resize(GG::Pt(ICON_BROWSE_TEXT_WIDTH, ROW_HEIGHT));
+            m_title_text_label->SetFont(ClientUI::GetBoldFont());
+
+
+            m_main_text_label = GG::Wnd::Create<CUILabel>(ValueRefLinkText(std::move(main_text), false),
+                                                          GG::FORMAT_LEFT | GG::FORMAT_TOP | GG::FORMAT_WORDBREAK);
+            m_main_text_label->MoveTo(GG::Pt(m_icon->Width() + GG::X(EDGE_PAD), ROW_HEIGHT));
+            m_main_text_label->Resize(GG::Pt(ICON_BROWSE_TEXT_WIDTH, ICON_BROWSE_ICON_HEIGHT));
+            m_main_text_label->SetResetMinSize(true);
+            m_main_text_label->Resize(m_main_text_label->MinSize());
+
+            AttachChild(m_title_text_label);
+            AttachChild(m_main_text_label);
+
+            Resize(GG::Pt(ICON_BROWSE_TEXT_WIDTH + ICON_BROWSE_ICON_WIDTH,
+                          std::max(m_icon->Height(), ROW_HEIGHT + m_main_text_label->Height())));
+        }
+
+    private:
+        std::array<float, 3> GetOutputStockpile(const ScriptingContext& context) const {
+            // get available PP for empire at candidate location
+            if (auto empire = context.GetEmpire(m_empire_id)) {
+                auto local_pp_output = empire->GetIndustryPool().GroupAvailable(m_candidate_object_id);
+                auto stockpile = empire->GetIndustryPool().Stockpile();
+                auto stockpile_limit_per_turn = empire->GetProductionQueue().StockpileCapacity(context.ContextObjects());
+                return std::array{local_pp_output, stockpile, stockpile_limit_per_turn};
+            }
+            return std::array{0.0f, 0.0f, 0.0f};
+        }
+
+        auto GetObjName(const ScriptingContext& context) const {
+            auto obj = context.ContextObjects().getRaw(m_candidate_object_id);
+            std::string candidate_name = obj ? obj->Name() : "";
+            if (GetOptionsDB().Get<bool>("ui.name.id.shown"))
+                candidate_name += " (" + std::to_string(m_candidate_object_id) + ")";
+            return std::pair{obj, std::move(candidate_name)};
+        }
+
+        std::pair<std::shared_ptr<GG::Texture>, std::string> PreRenderBuilding() {
+            const ScriptingContext context;
+            auto [obj, candidate_name] = GetObjName(context);
+            auto [local_pp_output, stockpile, stockpile_limit_per_turn] = GetOutputStockpile(context);
+
+            const auto& title = UserString(m_item.name);
             std::string main_text;
             main_text.reserve(1000); // guesstimate
 
+            const auto* building_type = GetBuildingType(m_item.name);
 
-            if (obj || building_type->ProductionCostTimeLocationInvariant()) {
+
+            if (building_type && (obj || building_type->ProductionCostTimeLocationInvariant())) {
                 // if location object is available, or cost and time are invariation to location, can safely evaluate cost and time
-                const float total_cost = building_type->ProductionCost(empire_id, candidate_object_id, context);
-                const int minimum_production_time = std::max(1, building_type->ProductionTime(
-                    empire_id, candidate_object_id, context));
+                const float total_cost = building_type->ProductionCost(m_empire_id, m_candidate_object_id, context);
+                const int minimum_production_time =
+                    std::max(1, building_type->ProductionTime( m_empire_id, m_candidate_object_id, context));
 
                 if (obj) {
                     // if location object is available, can evaluate production time at that location
@@ -356,11 +442,11 @@ namespace {
                 main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
                                                    DoubleToString(total_cost, 3, false));
 
-            } else {
+            } else if (building_type) {
                 // no location object, but have location-dependent cost or time
 
                 const int minimum_production_time =
-                    std::max(1, building_type->ProductionTime(empire_id, candidate_object_id, context));
+                    std::max(1, building_type->ProductionTime(m_empire_id, m_candidate_object_id, context));
                 // 9999 is arbitrary large time returned for evaluation failure due to lack of location object but object-dependent time
                 if (minimum_production_time >= 9999) {
                     main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM")) %
@@ -370,7 +456,7 @@ namespace {
                                                        std::to_string(minimum_production_time));
                 }
 
-                const float total_cost = building_type->ProductionCost(empire_id, candidate_object_id, context);
+                const float total_cost = building_type->ProductionCost(m_empire_id, m_candidate_object_id, context);
                 // 999999.9f is arbitrary large cost returned for evaluation failure due to lack of location object but object-dependnet cost
                 if (total_cost >= 999999.9f) {
                     main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
@@ -381,41 +467,42 @@ namespace {
                 }
             }
 
-            main_text += "\n\n" + UserString(building_type->Description());
+            if (building_type)
+                main_text += "\n\n" + UserString(building_type->Description());
 
             // show build conditions
-            const auto enqueue_and_location_condition_failed_text =
-                EnqueueAndLocationConditionDescription(item.name, candidate_object_id, empire_id, true);
-            if (!enqueue_and_location_condition_failed_text.empty())
-                if (auto location = Objects().get(candidate_object_id)) {
+            auto enqueue_and_location_condition_failed_text =
+                EnqueueAndLocationConditionDescription(m_item.name, m_candidate_object_id, m_empire_id, true);
+            if (!enqueue_and_location_condition_failed_text.empty()) {
+                if (auto location = context.ContextObjects().get(m_candidate_object_id)) {
                     std::string failed_cond_loc = boost::io::str(
                         FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_FAILED_COND")) % location->Name());
                     main_text += "\n\n" + failed_cond_loc + ":\n" + enqueue_and_location_condition_failed_text;
+                }
             }
 
-            // create tooltip
-            return GG::Wnd::Create<IconTextBrowseWnd>(ClientUI::BuildingIcon(item.name), title, std::move(main_text));
+            return std::pair{ClientUI::BuildingIcon(m_item.name), std::move(main_text)};
         }
 
-        // production item is a ship
-        if (item.build_type == BuildType::BT_SHIP) {
-            const ShipDesign* design = GetUniverse().GetShipDesign(item.design_id);
-            if (!design)
-                return nullptr;
+        std::pair<std::shared_ptr<GG::Texture>, std::string> PreRenderDesign() {
+            const ScriptingContext context;
+            auto [obj, candidate_name] = GetObjName(context);
+            auto [local_pp_output, stockpile, stockpile_limit_per_turn] = GetOutputStockpile(context);
 
-            // create title, description, production time and cost, hull type
-            const std::string& title = design->Name(true);
+            const ShipDesign* design = GetUniverse().GetShipDesign(m_item.design_id);
+            const auto& title = design ? design->Name(true) : EMPTY_STRING;
             std::string main_text;
+            main_text.reserve(1000); // guesstimate
 
-            if (obj || design->ProductionCostTimeLocationInvariant()) {
+            if (design && (obj || design->ProductionCostTimeLocationInvariant())) {
                 // if location object is available, or cost and time are invariation to location, can safely evaluate cost and time
-                float total_cost = design->ProductionCost(empire_id, candidate_object_id, context);
-                int minimum_production_time = std::max(1, design->ProductionTime(empire_id, candidate_object_id, context));
+                float total_cost = design->ProductionCost(m_empire_id, m_candidate_object_id, context);
+                int minimum_production_time = std::max(1, design->ProductionTime(m_empire_id, m_candidate_object_id, context));
 
                 if (obj) {
                     // if location object is available, can evaluate production time at that location
                     int prod_time_here = ProductionTurns(total_cost, minimum_production_time, local_pp_output,
-                                                         stockpile, stockpile_limit_per_turn);
+                                                            stockpile, stockpile_limit_per_turn);
 
                     if (prod_time_here < MAX_PRODUCTION_TURNS) {
                         main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME")) %
@@ -427,94 +514,84 @@ namespace {
                 }
 
                 main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM")) %
-                                                   std::to_string(minimum_production_time));
+                                                    std::to_string(minimum_production_time));
                 main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
-                                                   DoubleToString(total_cost, 3, false));
+                                                    DoubleToString(total_cost, 3, false));
 
-            } else {
+            } else if (design) {
                 // no location object, but have location-dependent cost or time
 
-                int minimum_production_time = std::max(1, design->ProductionTime(empire_id, candidate_object_id, context));
+                int minimum_production_time = std::max(1, design->ProductionTime(m_empire_id, m_candidate_object_id, context));
                 // 9999 is arbitrary large time returned for evaluation failure due to lack of location object but object-dependent time
                 if (minimum_production_time >= 9999) {
                     main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM")) %
-                                                       UserString("PRODUCTION_WND_TOOLTIP_LOCATION_DEPENDENT"));
+                                                        UserString("PRODUCTION_WND_TOOLTIP_LOCATION_DEPENDENT"));
                 } else {
                     main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM")) %
-                                                       std::to_string(minimum_production_time));
+                                                        std::to_string(minimum_production_time));
                 }
 
-                float total_cost = design->ProductionCost(empire_id, candidate_object_id, context);
+                float total_cost = design->ProductionCost(m_empire_id, m_candidate_object_id, context);
                 // 999999.9f is arbitrary large cost returned for evaluation failure due to lack of location object but object-dependnet cost
                 if (total_cost >= 999999.9f) {
                     main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
-                                                       UserString("PRODUCTION_WND_TOOLTIP_LOCATION_DEPENDENT"));
+                                                        UserString("PRODUCTION_WND_TOOLTIP_LOCATION_DEPENDENT"));
                 } else {
                     main_text += "\n" + boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")) %
-                                                       DoubleToString(total_cost, 3, false));
+                                                        DoubleToString(total_cost, 3, false));
                 }
             }
 
             main_text += "\n\n" + design->Description(true);
-
             main_text += "\n\n" + UserString("ENC_SHIP_HULL") + ": " + UserString(design->Hull());
 
             // load ship parts, stack ship parts that are used multiple times
-            std::string ship_parts_formatted;
-            std::map<std::string, int> ship_part_names;
-
-            for (const std::string& part_name : design->Parts()) {
-                if (ship_part_names.contains(part_name))
-                    ship_part_names[part_name]++;
-                else
-                    ship_part_names[part_name] = 1;
+            std::map<std::string_view, int> ship_part_names;
+            if (design) {
+                for (const auto& part_name : design->Parts()) {
+                    if (ship_part_names.contains(part_name))
+                        ship_part_names[part_name]++;
+                    else
+                        ship_part_names[part_name] = 1;
+                }
             }
 
-            for (const auto& part_name_count : ship_part_names) {
-                if (!UserStringExists(part_name_count.first)) continue;
-                if (ship_part_names[part_name_count.first] == 1)
-                    ship_parts_formatted += (UserString(part_name_count.first) + ", ");
+            std::string ship_parts_formatted;
+            for (const auto& [part_name, count] : ship_part_names) {
+                if (!UserStringExists(part_name)) continue;
+                if (ship_part_names[part_name] == 1)
+                    ship_parts_formatted += (UserString(part_name) + ", ");
                 else
-                    ship_parts_formatted += (UserString(part_name_count.first) + " x" +
-                                             std::to_string(part_name_count.second) + ", ");
+                    ship_parts_formatted += (UserString(part_name) + " x" + std::to_string(count) + ", ");
             }
 
             main_text += "\n" + UserString("PRODUCTION_WND_TOOLTIP_PARTS") + ": " +
                 ship_parts_formatted.substr(0, ship_parts_formatted.length() - 2);
 
             // show build conditions
-            const std::string& location_condition_failed_text =
-                LocationConditionDescription(item.design_id, candidate_object_id, empire_id, true);
+            const auto location_condition_failed_text =
+                LocationConditionDescription(m_item.design_id, m_candidate_object_id, m_empire_id, true);
             if (!location_condition_failed_text.empty())
-                if (auto location = Objects().get(candidate_object_id)) {
+                if (auto location = context.ContextObjects().getRaw(m_candidate_object_id)) {
                     std::string failed_cond_loc = boost::io::str(FlexibleFormat(
                         UserString("PRODUCTION_WND_TOOLTIP_FAILED_COND")) % location->Name());
                     main_text += ("\n\n" + failed_cond_loc + ":\n" + location_condition_failed_text);
                 }
 
-            // create tooltip
-            return GG::Wnd::Create<IconTextBrowseWnd>(
-                ClientUI::ShipDesignIcon(item.design_id), title, main_text);
+            return std::pair{ClientUI::ShipDesignIcon(m_item.design_id), std::move(main_text)};
         }
 
-        // production item is a stockpiling project
-        if (item.build_type == BuildType::BT_STOCKPILE) {
-            // create title, description, production time and cost
-            const std::string& title = UserString(item.name);
-            std::string main_text = UserString("PROJECT_BT_STOCKPILE_DESC");
+        std::pair<std::shared_ptr<GG::Texture>, std::string> PreRenderStockpile()
+        { return std::pair{ClientUI::MeterIcon(MeterType::METER_STOCKPILE), UserString("PROJECT_BT_STOCKPILE_DESC")}; }
 
-            // do not show build conditions - always buildable
+        std::shared_ptr<GG::StaticGraphic>     m_icon;
+        std::shared_ptr<GG::Label>             m_title_text_label;
+        std::shared_ptr<GG::Label>             m_main_text_label;
+        const ProductionQueue::ProductionItem& m_item;
+        const int                              m_candidate_object_id = INVALID_OBJECT_ID;
+        const int                              m_empire_id = ALL_EMPIRES;
+    };
 
-            // create tooltip
-            return GG::Wnd::Create<IconTextBrowseWnd>(
-                ClientUI::MeterIcon(MeterType::METER_STOCKPILE), title, main_text);
-        }
-
-        // other production item (?)
-        else {
-            return nullptr;
-        }
-    }
 
     ////////////////////////////////////////////////
     // ProductionItemRow
@@ -550,7 +627,7 @@ namespace {
             }
 
             SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
-            SetBrowseInfoWnd(ProductionItemRowBrowseWnd(m_item, location_id, empire_id));
+            SetBrowseInfoWnd(GG::Wnd::Create<ProductionItemRowBrowseWnd>(m_item, location_id, empire_id));
         };
 
         void CompleteConstruction() override {
