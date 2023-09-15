@@ -186,8 +186,15 @@ void ServerConnectWnd::KeyPress(GG::Key key, std::uint32_t key_code_point,
     }
 }
 
-const ServerConnectWnd::Result& ServerConnectWnd::GetResult() const
-{ return m_result; }
+namespace {
+    auto to_string_vec(const std::vector<std::string_view>& svs) {
+        std::vector<std::string> retval;
+        retval.reserve(svs.size());
+        std::transform(svs.begin(), svs.end(), std::back_inserter(retval),
+                       [](const auto sv) { return std::string{sv}; });
+        return retval;
+    }
+}
 
 void ServerConnectWnd::PopulateServerList() {
     m_servers_lb->Clear();
@@ -197,11 +204,14 @@ void ServerConnectWnd::PopulateServerList() {
         row->push_back(GG::Wnd::Create<CUILabel>(server));
         m_servers_lb->Insert(row);
     }
-    const auto known_servers = GetOptionsDB().FindOptions("network.known-servers", true);
-    for (const auto option : known_servers) {
+    // make local copies of server name options, since code below will possibly add more options.
+    // that could invalidate any views into names of existing options.
+    auto known_servers_options = to_string_vec(GetOptionsDB().FindOptions("network.known-servers", true));
+
+    for (const auto& option : known_servers_options) {
         if (boost::algorithm::ends_with(option, ".address")) {
             if (!GetOptionsDB().OptionExists(option))
-                GetOptionsDB().Add<std::string>(std::string{option}, "OPTIONS_DB_SERVER_COOKIE", "");
+                GetOptionsDB().Add<std::string>(option, "OPTIONS_DB_SERVER_COOKIE", "");
             auto server = GetOptionsDB().Get<std::string>(option);
             auto row = GG::Wnd::Create<GG::ListBox::Row>();
             row->push_back(GG::Wnd::Create<CUILabel>(std::move(server)));
