@@ -29,24 +29,15 @@ GameRules& GetGameRules() {
     return game_rules;
 }
 
-static std::unordered_map<std::string, int8_t> AssignCategoryRanks()
-{
-    std::unordered_map<std::string, int8_t> category_ranks;
-    category_ranks[""] = static_cast<int8_t>(GameRuleCategories::GameRuleCategory::GENERAL);
-    for (const auto& [category, str_view] : GameRuleCategories::GameRuleCategoryValues()) {
-        category_ranks[std::string(str_view)] = static_cast<int8_t>(category);
-    }
-    return category_ranks;
-}
+namespace {
+    constexpr auto category_ranks = GameRuleCategories::GameRuleCategoryValues();
 
-static int8_t GetCategoryRank(const std::string& category)
-{
-    static auto category_ranks = AssignCategoryRanks();
-    const auto& it = category_ranks.find(category);
-    if (it != category_ranks.end()) {
-        return it->second;
+    constexpr int8_t GetCategoryRank(std::string_view category) {
+        const auto it = std::find_if(category_ranks.begin(), category_ranks.end(),
+                                     [category](auto entry) { return entry.second == category; });
+        return static_cast<int8_t>(
+            (it == category_ranks.end() ? GameRuleCategories::GameRuleCategory::UNDEFINED : it->first));
     }
-    return static_cast<int8_t>(GameRuleCategories::GameRuleCategory::UNDEFINED);
 }
 
 /////////////////////////////////////////////////////
