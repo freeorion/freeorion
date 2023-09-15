@@ -33,6 +33,9 @@ namespace {
     constexpr auto category_ranks = GameRuleCategories::GameRuleCategoryValues();
 
     constexpr int8_t GetCategoryRank(std::string_view category) {
+        if (category.empty())
+            return static_cast<int8_t>(GameRuleCategories::GameRuleCategory::GENERAL);
+
         const auto it = std::find_if(category_ranks.begin(), category_ranks.end(),
                                      [category](auto entry) { return entry.second == category; });
         return static_cast<int8_t>(
