@@ -117,20 +117,19 @@ namespace {
  *  Given tag content (i.e. the stringtable content for the tag name) gets added as explanation.
  *  If the tag content is empty or @p add_explanation is true,
  *  the value ref description gets added as explanation instead. */
-std::string ValueRefLinkText(const std::string& text, const bool add_explanation) {
+std::string ValueRefLinkText(std::string text, const bool add_explanation) {
     static const std::string FOCS_VALUE_TAG_CLOSE{std::string{"</"}.append(VarText::FOCS_VALUE_TAG).append(">")};
     if (!boost::contains(text, FOCS_VALUE_TAG_CLOSE))
         return text;
 
-    std::string retval(text);
-    auto text_it = retval.begin();
+    auto text_it = text.begin();
     xpr::smatch match;
     const xpr::sregex FOCS_VALUE_SEARCH =
         (std::string{"<"}.append(VarText::FOCS_VALUE_TAG)) >> xpr::_s >> (xpr::s1 = REGEX_NON_BRACKET) >> ">" >>
         (xpr::s2 = REGEX_NON_BRACKET) >> (std::string{"</"}.append(VarText::FOCS_VALUE_TAG).append(">"));
 
     while (true) {
-        if (!xpr::regex_search(text_it, retval.end(), match, FOCS_VALUE_SEARCH, xpr::regex_constants::match_default))
+        if (!xpr::regex_search(text_it, text.end(), match, FOCS_VALUE_SEARCH, xpr::regex_constants::match_default))
             break;
 
         std::string value_ref_name{match[1]};
@@ -147,12 +146,12 @@ std::string ValueRefLinkText(const std::string& text, const bool add_explanation
                                .append(value_ref_name).append(">").append(value_str).append(explanation_str)
                                .append("</").append(VarText::FOCS_VALUE_TAG).append(">");
 
-        retval.replace(text_it + match.position(), text_it + match.position() + match.length(), resolved_tooltip);
+        text.replace(text_it + match.position(), text_it + match.position() + match.length(), resolved_tooltip);
 
-        text_it = retval.end() - match.suffix().length();
+        text_it = text.end() - match.suffix().length();
     }
 
-    return retval;
+    return text;
 }
 
 ///////////////////////////////////////
