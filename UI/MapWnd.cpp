@@ -3171,7 +3171,7 @@ void MapWnd::InitTurnRendering() {
     // create field icons
     std::vector<std::pair<int, float>> field_ids_by_size;
     for (auto* field : objects.allRaw<Field>()) {
-        field_ids_by_size.push_back(std::make_pair(field->ID(), field->GetMeter(MeterType::METER_SIZE)->Initial()));
+        field_ids_by_size.emplace_back(field->ID(), field->GetMeter(MeterType::METER_SIZE)->Initial());
     }
     std::sort(field_ids_by_size.begin(), field_ids_by_size.end(), [](const auto& lhs, const auto& rhs) { return lhs.second < rhs.second; });
 
