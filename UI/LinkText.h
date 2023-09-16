@@ -170,6 +170,6 @@ std::string LinkList(const std::set<std::string>& strings);
 void RegisterLinkTags();
 
 /// Helper for resolving <value> to the valueref value
-std::string ValueRefLinkText(const std::string& text, const bool add_explanation);
+std::string ValueRefLinkText(std::string text, const bool add_explanation);
 
 #endif
