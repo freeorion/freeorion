@@ -3165,13 +3165,17 @@ void MapWnd::InitTurnRendering() {
 
     // remove old field icons
     for (const auto& field_icon : m_field_icons)
-        DetachChild(field_icon.second);
+        DetachChild(field_icon);
     m_field_icons.clear();
 
     // create field icons
+    std::vector<std::pair<int, float>> field_ids_by_size;
     for (auto* field : objects.allRaw<Field>()) {
-        const int fld_id = field->ID();
+        field_ids_by_size.emplace_back(field->ID(), field->GetMeter(MeterType::METER_SIZE)->Initial());
+    }
+    std::sort(field_ids_by_size.begin(), field_ids_by_size.end(), [](const auto& lhs, const auto& rhs) { return lhs.second < rhs.second; });
 
+    for (const auto& [fld_id, field_size] : field_ids_by_size) {
         // skip known destroyed and stale fields
         if (this_client_known_destroyed_objects.contains(fld_id))
             continue;
@@ -3183,7 +3187,7 @@ void MapWnd::InitTurnRendering() {
 
         // create new system icon
         auto icon = GG::Wnd::Create<FieldIcon>(fld_id);
-        m_field_icons[fld_id] = icon;
+        m_field_icons.push_back(icon);
         icon->InstallEventFilter(shared_from_this());
 
         AttachChild(icon);
@@ -3201,10 +3205,9 @@ void MapWnd::InitTurnRendering() {
     // create fleet buttons and move lines.  needs to be after InitStarlaneRenderingBuffers so that m_starlane_endpoints is populated
     RefreshFleetButtons(true);
 
-
     // move field icons to bottom of child stack so that other icons can be moused over with a field
     for (const auto& field_icon : m_field_icons)
-        MoveChildDown(field_icon.second);
+        MoveChildDown(field_icon);
 }
 
 void MapWnd::InitSystemRenderingBuffers() {
@@ -4051,14 +4054,14 @@ void MapWnd::InitFieldRenderingBuffers() {
 
 
     for (auto& field_icon : m_field_icons) {
-        bool current_field_visible = universe.GetObjectVisibilityByEmpire(field_icon.first, empire_id) > Visibility::VIS_BASIC_VISIBILITY;
-        auto field = universe.Objects().get<Field>(field_icon.first);
+        bool current_field_visible = universe.GetObjectVisibilityByEmpire(field_icon->FieldID(), empire_id) > Visibility::VIS_BASIC_VISIBILITY;
+        auto field = universe.Objects().get<Field>(field_icon->FieldID());
         if (!field)
             continue;
         const float FIELD_SIZE = field->GetMeter(MeterType::METER_SIZE)->Initial();  // field size is its radius
         if (FIELD_SIZE <= 0)
             continue;
-        const auto& field_texture = field_icon.second->FieldTexture();
+        const auto& field_texture = field_icon->FieldTexture();
         if (!field_texture)
             continue;
 
@@ -4858,19 +4861,19 @@ void MapWnd::DoSystemIconsLayout() {
 
 void MapWnd::DoFieldIconsLayout() {
     // position and resize field icons
-    for (auto& field_icon : m_field_icons) {
-        auto field = Objects().get<Field>(field_icon.first);
+    const double zoom_factor = ZoomFactor();
+    std::for_each(m_field_icons.cbegin(), m_field_icons.cend(), [zoom_factor](const auto& field_icon) {
+        auto field = Objects().get<Field>(field_icon->FieldID());
         if (!field) {
-            ErrorLogger() << "MapWnd::DoFieldIconsLayout couldn't get field with id " << field_icon.first;
-            continue;
+            ErrorLogger() << "MapWnd::DoFieldIconsLayout couldn't get field with id " << field_icon->FieldID();
+        } else {
+            double RADIUS = zoom_factor * field->GetMeter(MeterType::METER_SIZE)->Initial();    // Field's MeterType::METER_SIZE gives the radius of the field
+
+            GG::Pt icon_ul(GG::X(static_cast<int>(field->X() * zoom_factor - RADIUS)),
+                           GG::Y(static_cast<int>(field->Y() * zoom_factor - RADIUS)));
+            field_icon->SizeMove(icon_ul, icon_ul + GG::Pt(GG::X(2 * RADIUS), GG::Y(2 * RADIUS)));
         }
-
-        double RADIUS = ZoomFactor() * field->GetMeter(MeterType::METER_SIZE)->Initial();    // Field's MeterType::METER_SIZE gives the radius of the field
-
-        GG::Pt icon_ul(GG::X(static_cast<int>(field->X()*ZoomFactor() - RADIUS)),
-                       GG::Y(static_cast<int>(field->Y()*ZoomFactor() - RADIUS)));
-        field_icon.second->SizeMove(icon_ul, icon_ul + GG::Pt(GG::X(2*RADIUS), GG::Y(2*RADIUS)));
-    }
+    });
 }
 
 void MapWnd::DoFleetButtonsLayout() {
@@ -5360,7 +5363,7 @@ void MapWnd::SetZoom(double steps_in, bool update_slide, const GG::Pt position) 
 
     // move field icons to bottom of child stack so that other icons can be moused over with a field
     for (const auto& field_icon : m_field_icons)
-        MoveChildDown(field_icon.second);
+        MoveChildDown(field_icon);
 
 
     // translate map and UI widgets to account for the change in upper left due to zooming

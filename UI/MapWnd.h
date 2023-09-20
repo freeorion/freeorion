@@ -451,7 +451,7 @@ private:
     double                                      m_zoom_steps_in = 1.0;      //!< number of zoom steps in.  each 1.0 step increases display scaling by the same zoom step factor
     std::shared_ptr<SidePanel>                  m_side_panel;               //!< planet view panel on the side of the main map
     std::unordered_map<int, std::shared_ptr<SystemIcon>> m_system_icons;    //!< system icons in the main map, indexed by system id
-    std::map<int, std::shared_ptr<FieldIcon>>   m_field_icons;              //!< field icons in the main map, indexed by field id
+    std::vector<std::shared_ptr<FieldIcon>>     m_field_icons;              //!< field icons in the main map, sorted by field size
     std::shared_ptr<SitRepPanel>                m_sitrep_panel;             //!< sitrep panel
     std::shared_ptr<ResearchWnd>                m_research_wnd;             //!< research screen
     std::shared_ptr<ProductionWnd>              m_production_wnd;           //!< production screen
