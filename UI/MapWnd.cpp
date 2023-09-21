@@ -1860,14 +1860,11 @@ void MapWnd::RenderFields() {
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
     // render not visible fields
-    for (auto& field_buffer : m_field_vertices) {
-        if (field_buffer.second.second.empty())
-            continue;
-
-        glBindTexture(GL_TEXTURE_2D, field_buffer.first->OpenGLId());
-        field_buffer.second.second.activate();
+    for (auto& [field_texture, buffer] : m_field_vertices_not_visible) {
+        glBindTexture(GL_TEXTURE_2D, field_texture->OpenGLId());
+        buffer.activate();
         m_field_texture_coords.activate();
-        glDrawArrays(GL_QUADS, 0, field_buffer.second.second.size());
+        glDrawArrays(GL_QUADS, 0, buffer.size());
     }
 
     // if any, render scanlines over not-visible fields
@@ -1892,14 +1889,11 @@ void MapWnd::RenderFields() {
 
 
     // render visible fields
-    for (auto& field_buffer : m_field_vertices) {
-        if (field_buffer.second.first.empty())
-            continue;
-
-        glBindTexture(GL_TEXTURE_2D, field_buffer.first->OpenGLId());
-        field_buffer.second.first.activate();
+    for (auto& [field_texture, buffer] : m_field_vertices_visible) {
+        glBindTexture(GL_TEXTURE_2D, field_texture->OpenGLId());
+        buffer.activate();
         m_field_texture_coords.activate();
-        glDrawArrays(GL_QUADS, 0, field_buffer.second.first.size());
+        glDrawArrays(GL_QUADS, 0, buffer.size());
     }
 
 
@@ -4052,8 +4046,8 @@ void MapWnd::InitFieldRenderingBuffers() {
     const auto empire_id = app->EmpireID();
     const auto current_turn = app->CurrentTurn();
 
-
-    for (auto& field_icon : m_field_icons) {
+    // reverse size processing so large fields are painted first and smaller ones on top of larger ones
+    for (auto& field_icon : m_field_icons | range_reverse) {
         bool current_field_visible = universe.GetObjectVisibilityByEmpire(field_icon->FieldID(), empire_id) > Visibility::VIS_BASIC_VISIBILITY;
         auto field = universe.Objects().get<Field>(field_icon->FieldID());
         if (!field)
@@ -4065,9 +4059,16 @@ void MapWnd::InitFieldRenderingBuffers() {
         if (!field_texture)
             continue;
 
-        auto& field_both_vertex_buffers = m_field_vertices[field_texture];
+        // group by texture as much as possible for fewer GL calls, but generally paint fields one by one according to size
+        // so smaller ones get painted over larger ones, including across different textures
+        // -> if field_vertices is empty (initial conditions), or the last considered texture is not the same as the current field_texture, we create new buffer;
+        //    otherwise, the field type/texture did not change, so we keep adding vertices to the old buffer, and end up with fewer gl calls during rendering
+        auto& field_vertices = current_field_visible ? m_field_vertices_visible : m_field_vertices_not_visible;
+        const bool should_create_new_buffer = (field_vertices.empty() || field_vertices.back().first != field_texture);
         GG::GL2DVertexBuffer& current_field_vertex_buffer =
-            current_field_visible ? field_both_vertex_buffers.first : field_both_vertex_buffers.second;
+            should_create_new_buffer ?
+                field_vertices.emplace_back(field_texture, std::move(GG::GL2DVertexBuffer())).second :
+                field_vertices.back().second;
 
         // determine field rotation angle...
         float rotation_angle = field->ID() * 27.0f; // arbitrary rotation in radians ("27.0" is just a number that produces pleasing results)
@@ -4119,24 +4120,26 @@ void MapWnd::InitFieldRenderingBuffers() {
     }
     m_field_scanline_circles.createServerBuffer();
 
-    for (auto& [field_texture, buffers] : m_field_vertices) {
-        if (!field_texture)
-            continue;
+    std::size_t max_buffer_size = 0;
 
-        // TODO: why the binding here?
-        glBindTexture(GL_TEXTURE_2D, field_texture->OpenGLId());
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
-        buffers.first.createServerBuffer();
-        buffers.second.createServerBuffer();
+    static constexpr auto field_texture_exists = [](const auto& field_vertices_pair) { return field_vertices_pair.first.get(); };
+    for (auto& field_vertices : { std::ref(m_field_vertices_not_visible), std::ref(m_field_vertices_visible) }) {
+        for (auto& [field_texture, buffer] : field_vertices.get() | range_filter(field_texture_exists)) {
+            // TODO: why the binding here?
+            glBindTexture(GL_TEXTURE_2D, field_texture->OpenGLId());
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+            buffer.createServerBuffer();
+            max_buffer_size = std::max(max_buffer_size, buffer.size());
+        }
     }
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    // this buffer should only need to be as big as the largest number of
-    // visible or not visisble fields for any single texture, but
-    // this is simpler to prepare and should be more than big enough
-    for (std::size_t i = 0; i < m_field_icons.size(); ++i) {
+    // make texture coords buffer's size proportional to largest number of fields rendered
+    // in one GL call; proxy for that is max_buffer_size computed earlier, and since those
+    // vertex buffers store 4 vertices per field, we divide by 4 to get field count
+    const std::size_t max_fields_per_texture = max_buffer_size / 4;
+    for (std::size_t i = 0; i < max_fields_per_texture; ++i) {
         m_field_texture_coords.store(1.0f, 0.0f);
         m_field_texture_coords.store(0.0f, 0.0f);
         m_field_texture_coords.store(0.0f, 1.0f);
@@ -4146,7 +4149,8 @@ void MapWnd::InitFieldRenderingBuffers() {
 }
 
 void MapWnd::ClearFieldRenderingBuffers() {
-    m_field_vertices.clear();
+    m_field_vertices_not_visible.clear();
+    m_field_vertices_visible.clear();
     m_field_texture_coords.clear();
     m_field_scanline_circles.clear();
 }

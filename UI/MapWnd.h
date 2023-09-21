@@ -529,11 +529,8 @@ private:
     GG::GL2DVertexBuffer    m_system_circle_vertices;
     GG::GLRGBAColorBuffer   m_system_circle_colours;
 
-    /** First buffer is visible fields, second buffer is not visible (scanlined)
-        fields for each texture. */
-    std::map<std::shared_ptr<GG::Texture>,
-             std::pair<GG::GL2DVertexBuffer, GG::GL2DVertexBuffer>>
-                                    m_field_vertices;
+    std::vector<std::pair<std::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>> m_field_vertices_visible;
+    std::vector<std::pair<std::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>> m_field_vertices_not_visible;
 
     GG::GL2DVertexBuffer            m_field_scanline_circles;
     GG::GLTexCoordBuffer            m_field_texture_coords;
