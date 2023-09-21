@@ -37,7 +37,6 @@ struct FO_COMMON_API GameRule final : public OptionsDB::Option {
     [[nodiscard]] static inline Type RuleTypeForType(std::string) noexcept { return Type::STRING; }
 
 
-    GameRule() = default;
     GameRule(Type type_, std::string name_, boost::any value_,
              boost::any default_value_, std::string description_,
              std::unique_ptr<ValidatorBase>&& validator_, bool engine_internal_, uint32_t rank_,
