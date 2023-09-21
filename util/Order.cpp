@@ -767,7 +767,6 @@ std::string AnnexOrder::Dump() const
 { return boost::io::str(FlexibleFormat(UserString("ORDER_ANNEX")) % m_planet) + ExecutedTag(this); }
 
 bool AnnexOrder::Check(int empire_id, int planet_id, const ScriptingContext& context) {
-    const Universe& u = context.ContextUniverse();
     const ObjectMap& o = context.ContextObjects();
 
     const auto* planet = o.getRaw<const Planet>(planet_id);
@@ -786,7 +785,7 @@ bool AnnexOrder::Check(int empire_id, int planet_id, const ScriptingContext& con
         ErrorLogger() << "AnnexOrder given planet without a species: " << planet_id;
         return false;
     }
-    const auto* planet_species = GetSpeciesManager().GetSpecies(planet_species_name);
+    const auto* planet_species = context.species.GetSpecies(planet_species_name);
     if (!planet_species) {
         ErrorLogger() << "AnnexOrder given planet with an unknown species: " << planet_species_name;
         return false;
