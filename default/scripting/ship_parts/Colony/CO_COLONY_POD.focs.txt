@@ -10,6 +10,7 @@ Part
     location = And [
         Planet
         OwnedBy empire = Source.Owner
+        CanColonize
         Population low = [[MIN_RECOLONIZING_SIZE]] high = 999
     ]
 // Population consumption is commented out until the discrepancy between outpost
