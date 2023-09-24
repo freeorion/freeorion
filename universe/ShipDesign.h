@@ -119,7 +119,7 @@ public:
     [[nodiscard]] float InfluenceGeneration() const noexcept  { return m_influence_generation; }  ///< returns the influence output from this ship design
     [[nodiscard]] bool  IsProductionLocation() const noexcept { return m_is_production_location;} ///< returns true if this ship design can be a production location
 
-    [[nodiscard]] bool  CanColonize() const;
+    [[nodiscard]] bool  CanColonize() const;                                                     ///< returns true iff the design has colonisation parts, or false otherwise
     [[nodiscard]] bool  HasTroops() const noexcept        { return (m_troop_capacity > 0.0f); }
     [[nodiscard]] bool  CanBombard() const noexcept       { return m_can_bombard; }
     [[nodiscard]] bool  IsArmed() const noexcept          { return m_is_armed; }
