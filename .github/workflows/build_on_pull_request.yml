@@ -12,15 +12,15 @@ jobs:
         with:
              config-file: ".github/workflows/pr_run_config.toml"
     outputs:
-      build_windows_with_cmake: ${{ steps.set_files_changed.outputs.output_01 }}
-      build_windows_with_msvs: ${{ steps.set_files_changed.outputs.output_02 }}
-      build_android: ${{ steps.set_files_changed.outputs.output_03 }}
-      build_macos: ${{ steps.set_files_changed.outputs.output_04 }}
-      build_ubuntu: ${{ steps.set_files_changed.outputs.output_05 }}
-      lint_py_focs: ${{ steps.set_files_changed.outputs.output_06 }}
-      lint_python: ${{ steps.set_files_changed.outputs.output_07 }}
-      lint_string_tables: ${{ steps.set_files_changed.outputs.output_08 }}
-      lint_codeql: ${{ steps.set_files_changed.outputs.output_09 }}
+      build_windows_with_cmake: ${{ steps.set_files_changed.outputs.output-01 }}
+      build_windows_with_msvs: ${{ steps.set_files_changed.outputs.output-02 }}
+      build_android: ${{ steps.set_files_changed.outputs.output-03 }}
+      build_macos: ${{ steps.set_files_changed.outputs.output-04 }}
+      build_ubuntu: ${{ steps.set_files_changed.outputs.output-05 }}
+      lint_py_focs: ${{ steps.set_files_changed.outputs.output-06 }}
+      lint_python: ${{ steps.set_files_changed.outputs.output-07 }}
+      lint_string_tables: ${{ steps.set_files_changed.outputs.output-08 }}
+      lint_codeql: ${{ steps.set_files_changed.outputs.output-09 }}
   android:
     needs: detect_changed_files
     if: ${{ needs.detect_changed_files.outputs.build_android == 'true' }}
