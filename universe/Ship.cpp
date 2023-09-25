@@ -273,8 +273,6 @@ bool Ship::CanColonize(const Universe& universe, const SpeciesManager& sm) const
     if (m_species_name.empty())
         return false;
     const ShipDesign* design = universe.GetShipDesign(m_design_id);
-    if (!design)
-        return false;
     if (design && design->CanColonize()) {
         if (design->ColonyCapacity() == 0.0f) // zero-capacity colony ships count as outpost ships
             return true;
