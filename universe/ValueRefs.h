@@ -2235,6 +2235,17 @@ std::string Operation<T>::Dump(uint8_t ntabs) const
     if (m_op_type == OpType::SIGN)
         return "sign(" + LHS()->Dump(ntabs) + ")";
 
+    bool parenthesize_whole = [this]() {
+        switch (m_op_type) {
+        case OpType::COMPARE_EQUAL: [[fallthrough]];
+        case OpType::COMPARE_GREATER_THAN: [[fallthrough]];
+        case OpType::COMPARE_GREATER_THAN_OR_EQUAL: [[fallthrough]];
+        case OpType::COMPARE_LESS_THAN: [[fallthrough]];
+        case OpType::COMPARE_LESS_THAN_OR_EQUAL: [[fallthrough]];
+        case OpType::COMPARE_NOT_EQUAL: return true; break;
+        default: return false;
+        }
+    }();
     bool parenthesize_lhs = false;
     bool parenthesize_rhs = false;
     if (auto lhs = dynamic_cast<const Operation<T>*>(LHS())) {
@@ -2264,26 +2275,34 @@ std::string Operation<T>::Dump(uint8_t ntabs) const
             parenthesize_rhs = true;
     }
 
-    std::string retval;
+    std::string retval = parenthesize_whole ? "(" : "";
     if (parenthesize_lhs)
         retval += '(' + LHS()->Dump(ntabs) + ')';
     else
         retval += LHS()->Dump(ntabs);
 
     switch (m_op_type) {
-    case OpType::PLUS:         retval += " + "; break;
-    case OpType::MINUS:        retval += " - "; break;
-    case OpType::TIMES:        retval += " * "; break;
-    case OpType::DIVIDE:       retval += " / "; break;
-    case OpType::REMAINDER:    retval += " % "; break;
-    case OpType::EXPONENTIATE: retval += " ^ "; break;
-    default:                   retval += " ? "; break;
+    case OpType::PLUS:                          retval += " + "; break;
+    case OpType::MINUS:                         retval += " - "; break;
+    case OpType::TIMES:                         retval += " * "; break;
+    case OpType::DIVIDE:                        retval += " / "; break;
+    case OpType::REMAINDER:                     retval += " % "; break;
+    case OpType::EXPONENTIATE:                  retval += " ^ "; break;
+    case OpType::SUBSTITUTION:                  retval += " % "; break;
+    case OpType::COMPARE_EQUAL:                 retval += " == "; break;
+    case OpType::COMPARE_GREATER_THAN:          retval += " > "; break;
+    case OpType::COMPARE_GREATER_THAN_OR_EQUAL: retval += " >= "; break;
+    case OpType::COMPARE_LESS_THAN:             retval += " < "; break;
+    case OpType::COMPARE_LESS_THAN_OR_EQUAL:    retval += " <= "; break;
+    case OpType::COMPARE_NOT_EQUAL:             retval += " != "; break;
     }
 
     if (parenthesize_rhs)
         retval += '(' + RHS()->Dump(ntabs) + ')';
     else
         retval += RHS()->Dump(ntabs);
+
+    retval += parenthesize_whole ? ")" : "";
 
     return retval;
 }
