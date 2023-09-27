@@ -1,12 +1,12 @@
-# shortrange.macros basic functionality for direct weapon ship parts
+// shortrange.macros basic functionality for direct weapon ship parts
 
-# Set the max meters for damage and number of shots to the base value from the ship part specification.
-# So direct weapon parts with NoDefaultCapacityEffect will not have the damage/PartCapacity scaled by SHIP_DAMAGE_WEAPON_FACTOR.
-# NB: The default effects of a direct weapon part
-#     increases the part's Capacity MaxMeter by the PartCapacity (which is the capacity from the part definition scaled by the game rule)
-#     increases the part's SecondarStat MaxMeter by the PartSecondaryStat
-# The standard/default effect happen at default priority, before any scripted ones happen
-# In order for this tech effect to also happen first, we make it happen slightly earlier
+// Set the max meters for damage and number of shots to the base value from the ship part specification.
+// So direct weapon parts with NoDefaultCapacityEffect will not have the damage/PartCapacity scaled by SHIP_DAMAGE_WEAPON_FACTOR.
+// NB: The default effects of a direct weapon part
+//     increases the part's Capacity MaxMeter by the PartCapacity (which is the capacity from the part definition scaled by the game rule)
+//     increases the part's SecondarStat MaxMeter by the PartSecondaryStat
+// The standard/default effect happen at default priority, before any scripted ones happen
+// In order for this tech effect to also happen first, we make it happen slightly earlier
 SET_BOTH_MAX_CAPACITIES_FROM_PART_CAPACITIES
 '''EffectsGroup
     description = "SET_BOTH_MAX_CAPACITIES_FROM_PART_CAPACITIES_DESC"
