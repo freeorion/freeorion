@@ -8,7 +8,7 @@ Policy
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 
-        // makes planets more stable where military has ships crewed by capital species
+        // makes empire's own planets more stable where military has ships crewed by capital species
         EffectsGroup
             scope = And [
                 Planet
@@ -22,6 +22,7 @@ Policy
                         OwnedBy empire = Source.Owner
                         Armed
                         Species name = Source.Species
+                        Aggressive
                     ]
                 ]
             ]
@@ -33,6 +34,7 @@ Policy
                         OwnedBy empire = Source.Owner
                         Armed
                         Species name = Source.Species
+                        Aggressive
                     ]) * (NamedReal name = "PLC_TERROR_SUPPRESSION_TARGET_STABILITY_SCALE" value = 1.0)
                     
                 SetRebelTroops value = max(0.0, Value -
@@ -42,8 +44,51 @@ Policy
                         OwnedBy empire = Source.Owner
                         Armed
                         Species name = Source.Species
+                        Aggressive
                     ]) * (NamedReal name = "PLC_TERROR_SUPPRESSION_REBEL_REDUCTION_SCALE" value = 1.0))
             ]
+
+        // makes empire's enemies' planets less stable and have less rebels where the empire military has ships crewed by capital species
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy affiliation = EnemyOf empire = Source.Owner
+                Species
+                Not Species name = Source.Species
+                ContainedBy And [
+                    Object id = RootCandidate.SystemID
+                    Contains And [
+                        InSystem id = RootCandidate.SystemID
+                        Ship
+                        OwnedBy empire = Source.Owner
+                        Armed
+                        Species name = Source.Species
+                        Aggressive
+                    ]
+                ]
+            ]
+            effects = [
+                SetTargetHappiness value = Value -
+                    (Statistic Count condition = And [
+                        InSystem id = Target.SystemID
+                        Ship
+                        OwnedBy empire = Source.Owner
+                        Armed
+                        Species name = Source.Species
+                        Aggressive
+                    ]) * (NamedRealLookup name = "PLC_TERROR_SUPPRESSION_TARGET_STABILITY_SCALE")
+                    
+                SetRebelTroops value = max(0.0, Value -
+                    (Statistic Count condition = And [
+                        InSystem id = Target.SystemID
+                        Ship
+                        OwnedBy empire = Source.Owner
+                        Armed
+                        Species name = Source.Species
+                        Aggressive
+                    ]) * (NamedReal name = "PLC_TERROR_SUPPRESSION_REBEL_REDUCTION_SCALE" value = 1.0))
+            ]
+
 
         // makes armed ships crewed by imperial capital planet's species cost influence
         EffectsGroup
