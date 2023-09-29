@@ -9353,10 +9353,7 @@ bool Aggressive::Match(const ScriptingContext& local_context) const {
         fleet = local_context.ContextObjects().getRaw<Fleet>(ship->FleetID());
     }
 
-    if (!fleet)
-        return false;
-
-    return m_aggressive == fleet->Aggressive();
+    return fleet && (m_aggressive == fleet->Aggressive());
 }
 
 uint32_t Aggressive::GetCheckSum() const {
