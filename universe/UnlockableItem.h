@@ -4,6 +4,7 @@
 
 #include "../util/Enum.h"
 #include "../util/Export.h"
+#include <compare>
 #include <cstdint>
 
 
@@ -35,8 +36,16 @@ struct FO_COMMON_API UnlockableItem {
         name(std::forward<S>(name_))
     {}
 
-    bool operator<(const UnlockableItem& rhs) const noexcept
-    { return (type < rhs.type) || (type == rhs.type && name < rhs.name); }
+#if defined(__cpp_impl_three_way_comparison) && (!defined(__clang_major__) || (__clang_major__ >= 11)) && (!defined(__GNUC__) || (__GNUC__ >= 10) || (defined(__clang_major__)))
+#  if !defined(__cpp_lib_three_way_comparison)
+    [[nodiscard]] std::strong_ordering operator<=>(const UnlockableItem&) const noexcept = default;
+#  else
+    [[nodiscard]] auto operator<=>(const UnlockableItem&) const noexcept = default;
+#  endif
+#else
+    bool operator==(const UnlockableItem&) const noexcept { return type == rhs.type && name == rhs.name; }
+    bool operator<(const UnlockableItem& rhs) const noexcept { return type < rhs.type || (type == rhs.type && name < rhs.name); }
+#endif
 
     //! Returns a data file format representation of this object
     auto Dump(uint8_t ntabs = 0) const -> std::string;
@@ -44,14 +53,6 @@ struct FO_COMMON_API UnlockableItem {
     UnlockableItemType type = UnlockableItemType::INVALID_UNLOCKABLE_ITEM_TYPE; //! The kind of item this is
     std::string name; //! the exact item this is
 };
-
-
-FO_COMMON_API inline bool operator==(const UnlockableItem& lhs, const UnlockableItem& rhs) noexcept
-{ return lhs.type == rhs.type && lhs.name == rhs.name; }
-
-FO_COMMON_API inline bool operator!=(const UnlockableItem& lhs, const UnlockableItem& rhs) noexcept
-{ return !(lhs == rhs); }
-
 
 namespace CheckSums {
     FO_COMMON_API void CheckSumCombine(uint32_t& sum, const UnlockableItem& item);

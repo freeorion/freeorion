@@ -122,6 +122,7 @@ public:
         Option& operator=(Option&& rhs) = default;
         Option& operator=(const Option& rhs) = delete;
 
+        // non-defaulted comparisons to only consider names
         bool operator<(const Option& rhs) const noexcept { return name < rhs.name; };
         bool operator==(const Option& rhs) const noexcept { return name == rhs.name; };
 

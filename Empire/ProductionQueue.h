@@ -68,6 +68,7 @@ struct FO_COMMON_API ProductionQueue {
         [[nodiscard]] std::pair<float, int> ProductionCostAndTime(int empire_id, int location_id,
                                                                   const ScriptingContext& context) const;
 
+        // non-defaulted operator< to handle different build_type differently
         [[nodiscard]] bool operator<(const ProductionItem& rhs) const noexcept {
             if (build_type < rhs.build_type)
                 return true;
@@ -80,13 +81,7 @@ struct FO_COMMON_API ProductionQueue {
             return false;
         }
 
-        [[nodiscard]] bool operator==(const ProductionItem& rhs) const noexcept {
-            return build_type == rhs.build_type &&
-                design_id == rhs.design_id &&
-                name == rhs.name;
-        }
-        [[nodiscard]] bool operator!=(const ProductionItem& rhs) const noexcept
-        { return !operator==(rhs); }
+        [[nodiscard]] bool operator==(const ProductionItem&) const noexcept  = default;
 
         [[nodiscard]] bool EnqueueConditionPassedAt(int location_id, const ScriptingContext& context) const;
 

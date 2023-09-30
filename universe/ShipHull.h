@@ -54,8 +54,6 @@ public:
     ~ShipHull();
 
     bool operator==(const ShipHull& rhs) const;
-    bool operator!=(const ShipHull& rhs) const
-    { return !(*this == rhs); }
 
     //! Returns name of hull
     [[nodiscard]] const auto& Name() const noexcept { return m_name; }

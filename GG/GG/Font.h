@@ -167,10 +167,6 @@ public:
         bool operator==(std::string_view rhs) const;
         bool operator==(const Substring& rhs) const;
 
-        /** Comparison with std::string, std::string_view. */
-        bool operator!=(const std::string& rhs) const { return !operator==(rhs); }
-        bool operator!=(std::string_view rhs) const { return !operator==(rhs); }
-
         /** Concatenation with base.  \a rhs.first must be <= \a rhs.second.
             .second must be equal to \a rhs.first (*this and \a rhs must be
             contiguous). */
@@ -243,7 +239,7 @@ public:
             element represents. */
         CPSize CodePointSize() const;
 
-        virtual bool operator==(const TextElement &rhs) const;
+        virtual bool operator==(const TextElement &rhs) const; // ignores cached_width
 
         /** The text from the original string represented by the element. */
         Substring text;
@@ -766,8 +762,14 @@ private:
         the map of rendered fonts. */
     struct GG_API FontKey
     {
-        FontKey(std::string str, unsigned int pts); ///< Ctor.
-        bool operator<(const FontKey& rhs) const; ///< Lexocograhpical ordering on filename then points.
+        template <typename S>
+        FontKey(S&& str, unsigned int pts) :
+            filename(std::forward<S>(str)),
+            points(pts)
+        {}
+        ///< Lexocograhpical ordering on filename then points.
+        [[nodiscard]] bool operator<(const FontKey& rhs) const noexcept
+        { return (filename < rhs.filename || (filename == rhs.filename && points < rhs.points)); }
 
         std::string  filename; ///< The name of the file from which this font was created.
         unsigned int points;   ///< The point size in which this font was rendered.
@@ -816,7 +818,8 @@ public:
     void                    FreeFont(std::string font_filename, unsigned int pts);
 
 private:
-    FontManager();
+    FontManager() = default;
+
     template <typename CharSetIter>
     std::shared_ptr<Font> GetFontImpl(std::string font_filename, unsigned int pts,
                                       const std::vector<uint8_t>* file_contents,

@@ -68,7 +68,6 @@ public:
          std::string&& graphic);
 
     bool operator==(const Tech& rhs) const;
-    bool operator!=(const Tech& rhs) const { return !(*this == rhs); }
     Tech(const Tech&) = delete;
     Tech(Tech&&) = default;
     Tech& operator=(const Tech&) = delete;

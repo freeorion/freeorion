@@ -60,8 +60,6 @@ public:
     ~FocusType(); // needed due to forward-declared Condition held in unique_ptr
 
     bool operator==(const FocusType& rhs) const;
-    bool operator!=(const FocusType& rhs) const
-    { return !(*this == rhs); }
 
     [[nodiscard]] const std::string&          Name() const noexcept        { return m_name; }          ///< returns the name for this focus type
     [[nodiscard]] const std::string&          Description() const noexcept { return m_description; }   ///< returns a text description of this focus type
@@ -126,8 +124,6 @@ public:
     Species(Species&&) = default;
 
     bool operator==(const Species& rhs) const;
-    bool operator!=(const Species& rhs) const
-    { return !(*this == rhs); }
 
     [[nodiscard]] const std::string& Name() const noexcept { return m_name; } ///< unique name (stringtable key) for this type of species
     [[nodiscard]] const std::string& Description() const noexcept { return m_description; }

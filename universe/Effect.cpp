@@ -14,13 +14,4 @@ bool Effect::AccountingInfo::operator==(const AccountingInfo& rhs) const noexcep
         running_meter_total == rhs.running_meter_total;
 }
 
-Effect::SourcedEffectsGroup::SourcedEffectsGroup(int source_object_id_, const EffectsGroup* effects_group_) :
-    source_object_id(source_object_id_),
-    effects_group(effects_group_)
-{}
-
-bool Effect::SourcedEffectsGroup::operator<(const SourcedEffectsGroup& right) const {
-    return (this->source_object_id < right.source_object_id ||
-            ((this->source_object_id == right.source_object_id) && this->effects_group < right.effects_group));
-}
 

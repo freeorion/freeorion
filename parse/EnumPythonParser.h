@@ -13,9 +13,7 @@ struct enum_wrapper {
 
     const E value;
 
-    bool operator==(const enum_wrapper<E>& rhs) {
-        return this->value == rhs.value;
-    }
+    auto operator<=>(const enum_wrapper<E>&) const = default;
 };
 
 template<typename E>

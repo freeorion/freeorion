@@ -95,12 +95,8 @@ inline constexpr bool is_flag_type_v = is_flag_type<T>::value;
                 throw std::invalid_argument(                            \
                     "Non-bitflag passed to " #name " constructor");     \
         }                                                               \
-        constexpr bool operator==(name rhs) const noexcept              \
-        { return m_value == rhs.m_value; }                              \
-        constexpr bool operator!=(name rhs) const noexcept              \
-        { return m_value != rhs.m_value; }                              \
-        constexpr bool operator<(name rhs) const noexcept               \
-        { return m_value < rhs.m_value; }                               \
+        [[nodiscard]] constexpr bool operator==(const name& rhs) const noexcept \
+        { return m_value == rhs.m_value; };                             \
                                                                         \
     private:                                                            \
         InternalType m_value = 0;                                       \
@@ -331,17 +327,14 @@ public:
     constexpr operator int ConvertibleToBoolDummy::* () const
     { return m_flags ? &ConvertibleToBoolDummy::_ : 0; }
 
-    constexpr bool operator==(Flags<FlagType> rhs) const noexcept
-    { return m_flags == rhs.m_flags; }
-
-    constexpr bool operator!=(Flags<FlagType> rhs) const noexcept
-    { return m_flags != rhs.m_flags; }
-
-    /** Returns true iff the underlying storage of *this is less than the
-      * underlying storage of \a rhs.  Note that this is here for use in
-      * associative containers only; it is otherwise meaningless. */
-    constexpr bool operator<(Flags<FlagType> rhs) const noexcept
-    { return m_flags < rhs.m_flags; }
+#if defined(__cpp_impl_three_way_comparison)
+    [[nodiscard]] constexpr auto operator<=>(const Flags<FlagType>&) const noexcept = default;
+#else
+    [[nodiscard]] constexpr bool operator==(const Flags<FlagType>& rhs) const noexcept
+    { return m_flags == rhs.m_flags; };
+    [[nodiscard]] constexpr bool operator!=(const Flags<FlagType>& rhs) const noexcept
+    { return m_flags != rhs.m_flags; };
+#endif
 
     constexpr auto& operator|=(Flags<FlagType> rhs) noexcept
     {

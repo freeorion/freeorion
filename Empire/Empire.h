@@ -188,7 +188,7 @@ public:
     struct LaneEndpoints {
         int start = INVALID_OBJECT_ID;
         int end = INVALID_OBJECT_ID;
-        auto operator<=>(const LaneEndpoints&) const = default;
+        constexpr auto operator<=>(const LaneEndpoints&) const noexcept = default;
 #if (defined(__clang_major__) && (__clang_major__ < 16))
         LaneEndpoints() = default;
         LaneEndpoints(int s, int e) noexcept : start(s), end(e) {};
@@ -510,11 +510,7 @@ private:
         int slot_in_category = INVALID_SLOT_INDEX;
         std::string category;
 
-        bool operator==(const PolicyAdoptionInfo& rhs) const noexcept {
-            return adoption_turn == rhs.adoption_turn &&
-                   slot_in_category == rhs.slot_in_category &&
-                   category != rhs.category;
-        }
+        bool operator==(const PolicyAdoptionInfo&) const noexcept = default;
 
         friend class boost::serialization::access;
         template <typename Archive>

@@ -30,8 +30,6 @@ struct FO_COMMON_API Condition {
     constexpr virtual ~Condition() = default;
 
     virtual bool operator==(const Condition& rhs) const;
-    bool operator!=(const Condition& rhs) const
-    { return !(*this == rhs); }
 
     /** Moves object pointers from \a matches or \a non_matches (from whichever
      * is specified in \a search_domain) to the other, if each belongs in the
