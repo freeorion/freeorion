@@ -307,6 +307,7 @@ namespace {
             col_types[{UserStringNop("AVAILABLE_FOCI"),             UserStringNop("PLANETS_SUBMENU")}]= UserStringVecValueRef("AvailableFoci");
             col_types[{UserStringNop("LAST_TURN_COLONIZED"),        UserStringNop("PLANETS_SUBMENU")}]= StringCastedValueRef<int>("LastTurnColonized");
             col_types[{UserStringNop("LAST_TURN_CONQUERED"),        UserStringNop("PLANETS_SUBMENU")}]= StringCastedValueRef<int>("LastTurnConquered");
+            col_types[{UserStringNop("LAST_TURN_ANNEXED"),          UserStringNop("PLANETS_SUBMENU")}]= StringCastedValueRef<int>("LastTurnAnnexed");
             col_types[{UserStringNop("LAST_TURN_ATTACKED_BY_SHIP"), UserStringNop("PLANETS_SUBMENU")}]= StringCastedValueRef<int>("LastTurnAttackedByShip");
 
             // ship/fleet
