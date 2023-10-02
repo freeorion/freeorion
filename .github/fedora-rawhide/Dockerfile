@@ -1,7 +1,7 @@
 FROM docker.io/fedora:rawhide
 
-RUN dnf5 update -y
-RUN dnf5 install -y cmake \
+RUN dnf update -y
+RUN dnf install -y cmake \
 	ccache \
 	python3-devel \
 	gcc-c++ \
