@@ -2367,7 +2367,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         const int empire_id = m_int_ref2 ? m_int_ref2->Eval(context) : ALL_EMPIRES;
         const int location_id = m_int_ref3 ? m_int_ref3->Eval(context) : INVALID_OBJECT_ID;
 
-        return design->ProductionCost(empire_id, location_id, context);
+        return design->ProductionCost(empire_id, location_id, context); // overrides source and local candidate to specify empire and location
 
     }
     else if (variable_name == "BuildingTypeCost") {
@@ -2379,7 +2379,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
         const int location_id = m_int_ref2 ? m_int_ref2->Eval(context) : INVALID_OBJECT_ID;
 
-        return building_type->ProductionCost(empire_id, location_id, context);
+        return building_type->ProductionCost(empire_id, location_id, context); // overrides source and local candidate to specify empire and location
 
     }
     else if (variable_name == "EmpireMeterValue") {
@@ -2397,6 +2397,25 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         if (!meter)
             return 0.0;
         return meter->Current();
+
+    }
+    else if (variable_name == "EmpireAnnexationCost") { // intended for use in UI, not in scripted content, due to ambiguity about what the "source" object would be, since this sets the source to specify the empire
+        const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
+        const auto empire = context.GetEmpire(empire_id);
+        if (!empire)
+            return std::numeric_limits<double>::quiet_NaN();
+        const auto source_for_empire = empire->Source(context.ContextObjects()); // not (necessarily) the source in context, but used to specify empire
+
+        const int location_id = m_int_ref2 ? m_int_ref2->Eval(context) : INVALID_OBJECT_ID;
+        const auto* location = context.ContextObjects().getRaw(location_id); // could be nullptr
+
+        if (!location || location->ObjectType() != UniverseObjectType::OBJ_PLANET)
+            return std::numeric_limits<double>::quiet_NaN();
+        const auto* planet = static_cast<const Planet*>(location);
+        if (planet->SpeciesName().empty())
+            return std::numeric_limits<double>::quiet_NaN();
+        return planet->AnnexationCost(empire_id, context);
+
     }
     else if (variable_name == "DirectDistanceBetween") {
         int object1_id = INVALID_OBJECT_ID;

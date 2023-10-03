@@ -252,6 +252,17 @@ namespace {
             ValueRef::NameLookup::LookupType::SHIP_DESIGN_NAME);
     }
 
+    auto AnnexationCostByClientEmpire() {
+        return ObjectTypeFilteredRef<std::string>(
+            {UniverseObjectType::OBJ_PLANET},
+            StringCastedComplexValueRef<double>(
+                "EmpireAnnexationCost",
+                std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, "ThisClientEmpireID"),
+                std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "ID")
+            )
+        );
+    }
+
     using column_ref_type = std::unique_ptr<ValueRef::ValueRef<std::string>>;
     using column_ref_raw_ptr = const column_ref_type::element_type*;
 
@@ -309,6 +320,7 @@ namespace {
             col_types[{UserStringNop("LAST_TURN_CONQUERED"),        UserStringNop("PLANETS_SUBMENU")}]= StringCastedValueRef<int>("LastTurnConquered");
             col_types[{UserStringNop("LAST_TURN_ANNEXED"),          UserStringNop("PLANETS_SUBMENU")}]= StringCastedValueRef<int>("LastTurnAnnexed");
             col_types[{UserStringNop("LAST_TURN_ATTACKED_BY_SHIP"), UserStringNop("PLANETS_SUBMENU")}]= StringCastedValueRef<int>("LastTurnAttackedByShip");
+            col_types[{UserStringNop("ANNEXATION_COST_BY_ME"),      UserStringNop("PLANETS_SUBMENU")}]= AnnexationCostByClientEmpire();
 
             // ship/fleet
             col_types[{UserStringNop("SPECIES"),                    UserStringNop("FLEETS_SUBMENU")}] = ObjectTypeFilteredRef<std::string>({UniverseObjectType::OBJ_PLANET, UniverseObjectType::OBJ_SHIP}, UserStringValueRef("Species"));
