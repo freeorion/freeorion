@@ -7515,6 +7515,9 @@ Last Turn Annexed
 LAST_TURN_ATTACKED_BY_SHIP
 Last Turn Attacked By Ship
 
+ANNEXATION_COST_BY_ME
+Annexation Cost
+
 ARRIVED_ON_TURN
 Arrived on Turn
 
