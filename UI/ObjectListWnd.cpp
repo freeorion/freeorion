@@ -109,38 +109,38 @@ namespace {
         );
     }
 
-    std::unique_ptr<ValueRef::Variable<std::string>> StringValueRef(const char* token) {
+    auto StringValueRef(const char* token) {
         return std::make_unique<ValueRef::Variable<std::string>>(
             ValueRef::ReferenceType::SOURCE_REFERENCE, token);
     }
 
-    std::unique_ptr<ValueRef::Variable<std::string>> UserStringValueRef(const char* token) {
+    auto UserStringValueRef(const char* token) {
         return std::make_unique<ValueRef::UserStringLookup<std::string>>(
             std::make_unique<ValueRef::Variable<std::string>>(
                 ValueRef::ReferenceType::SOURCE_REFERENCE, token));
     }
 
-    std::unique_ptr<ValueRef::Variable<std::string>> UserStringVecValueRef(const char* token) {
+    auto UserStringVecValueRef(const char* token) {
         return std::make_unique<ValueRef::UserStringLookup<std::vector<std::string>>>(
             std::make_unique<ValueRef::Variable<std::vector<std::string>>>(
                 ValueRef::ReferenceType::SOURCE_REFERENCE, token));
     }
 
     template <typename T>
-    std::unique_ptr<ValueRef::Variable<std::string>> StringCastedValueRef(const char* token) {
+    auto StringCastedValueRef(const char* token) {
         return std::make_unique<ValueRef::StringCast<T>>(
             std::make_unique<ValueRef::Variable<T>>(
                 ValueRef::ReferenceType::SOURCE_REFERENCE, token));
     }
 
-    std::unique_ptr<ValueRef::Variable<std::string>> StringCastedImmediateValueRef(std::string token) {
+    auto StringCastedImmediateValueRef(std::string token) {
         return std::make_unique<ValueRef::StringCast<double>>(
             std::make_unique<ValueRef::Variable<double>>(
                 ValueRef::ReferenceType::SOURCE_REFERENCE, std::move(token), true));
     }
 
     template <typename T>
-    std::unique_ptr<ValueRef::Variable<std::string>> StringCastedComplexValueRef(
+    auto StringCastedComplexValueRef(
         const char* token,
         std::unique_ptr<ValueRef::ValueRef<int>>&& int_ref1 = nullptr,
         std::unique_ptr<ValueRef::ValueRef<int>>&& int_ref2 = nullptr,
