@@ -12,9 +12,6 @@ namespace ValueRef {
 //! The common base class for all ValueRef classes. This class provides
 //! some the return-type-independent interface.
 struct FO_COMMON_API ValueRefBase {
-    constexpr ValueRefBase() = default;
-    constexpr virtual ~ValueRefBase() = default;
-
     // these getters can't be noexcept due to a derived class doing complicated stuff
     [[nodiscard]] constexpr virtual bool RootCandidateInvariant() const  { return m_root_candidate_invariant; }
     [[nodiscard]] constexpr virtual bool LocalCandidateInvariant() const { return m_local_candidate_invariant; }
@@ -32,7 +29,10 @@ struct FO_COMMON_API ValueRefBase {
 
     [[nodiscard]] virtual uint32_t GetCheckSum() const { return 0; }
 
+    constexpr virtual ~ValueRefBase() = default;
+
 protected:
+    constexpr ValueRefBase() = default;
     constexpr explicit ValueRefBase(bool constant_expr) :
         m_constant_expr(constant_expr)
     {}
@@ -97,11 +97,6 @@ enum class ReferenceType : int8_t {
 template <typename T>
 struct FO_COMMON_API ValueRef : public ValueRefBase
 {
-    constexpr ValueRef() = default;
-    virtual ~ValueRef() = default;
-
-    [[nodiscard]] virtual bool operator==(const ValueRef<T>& rhs) const;
-
     /** Evaluates the expression tree with a default context.  Useful for
       * evaluating expressions that do not depend on source, target, or
       * candidate objects. */
@@ -125,7 +120,12 @@ struct FO_COMMON_API ValueRef : public ValueRefBase
       * doesn't supports move semantics for returned values. */
     [[nodiscard]] virtual std::unique_ptr<ValueRef<T>> Clone() const = 0;
 
+    [[nodiscard]] virtual bool operator==(const ValueRef<T>& rhs) const;
+
+    constexpr virtual ~ValueRef() = default;
+
 protected:
+    constexpr ValueRef() = default;
     constexpr explicit ValueRef(ReferenceType ref_type) :
         m_ref_type(ref_type)
     {}
