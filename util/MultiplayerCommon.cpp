@@ -270,10 +270,6 @@ bool operator==(const PlayerSetupData& lhs, const PlayerSetupData& rhs) {
             lhs.starting_team == rhs.starting_team;
 }
 
-bool operator!=(const PlayerSetupData& lhs, const PlayerSetupData& rhs)
-{ return !(lhs == rhs); }
-
-
 ////////////////////////////////////////////////////
 // MultiplayerLobbyData
 /////////////////////////////////////////////////////

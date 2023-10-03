@@ -78,9 +78,6 @@ void Message::Reset() noexcept {
 bool operator==(const Message& lhs, const Message& rhs) noexcept
 { return lhs.Type() == rhs.Type() && lhs.Text() == rhs.Text(); }
 
-bool operator!=(const Message& lhs, const Message& rhs) noexcept
-{ return !(lhs == rhs); }
-
 void swap(Message& lhs, Message& rhs) noexcept
 { lhs.Swap(rhs); }
 

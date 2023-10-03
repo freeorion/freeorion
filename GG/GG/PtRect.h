@@ -65,11 +65,15 @@ struct GG_API Pt
         y(y_)
     {}
 
-    /** Returns true if x < \a rhs.x or returns true if x == \a rhs.x and y
-        <\a rhs.y.  This is useful for sorting Pts in STL containers and
-        algorithms. */
-    [[nodiscard]] constexpr bool Less(Pt rhs) const noexcept
-    { return x < rhs.x ? true : (x == rhs.x ? (y < rhs.y ? true : false) : false); }
+#if defined(__cpp_impl_three_way_comparison)
+    [[nodiscard]] constexpr bool operator==(const Pt&) const noexcept = default;
+#else
+    [[nodiscard]] constexpr bool operator==(const Pt& rhs) const noexcept
+    { return x == rhs.x && y == rhs.y; };
+    [[nodiscard]] constexpr bool operator!=(const Pt& rhs) const noexcept
+    { return x != rhs.x || y != rhs.y; };
+#endif
+
 
     [[nodiscard]] constexpr Pt operator-() const noexcept { return Pt(-x, -y); }
     constexpr Pt& operator+=(Pt rhs) noexcept             { x += rhs.x; y += rhs.y; return *this; }
@@ -85,8 +89,6 @@ struct GG_API Pt
 
 GG_API std::ostream& operator<<(std::ostream& os, Pt pt);
 
-[[nodiscard]] GG_API constexpr inline bool operator==(Pt lhs, Pt rhs) noexcept    { return lhs.x == rhs.x && lhs.y == rhs.y; } ///< returns true if \a lhs is identical to \a rhs
-[[nodiscard]] GG_API constexpr inline bool operator!=(Pt lhs, Pt rhs) noexcept    { return !(lhs == rhs); }                    ///< returns true if \a lhs differs from \a rhs
 [[nodiscard]] GG_API constexpr inline bool operator<(Pt lhs, Pt rhs) noexcept     { return lhs.x < rhs.x && lhs.y < rhs.y; }   ///< returns true if \a lhs.x and \a lhs.y are both less than the corresponding components of \a rhs
 [[nodiscard]] GG_API constexpr inline bool operator>(Pt lhs, Pt rhs) noexcept     { return lhs.x > rhs.x && lhs.y > rhs.y; }   ///< returns true if \a lhs.x and \a lhs.y are both greater than the corresponding components of \a rhs
 [[nodiscard]] GG_API constexpr inline bool operator<=(Pt lhs, Pt rhs) noexcept    { return lhs.x <= rhs.x && lhs.y <= rhs.y; } ///< returns true if \a lhs.x and \a lhs.y are both less than or equal to the corresponding components of \a rhs
@@ -129,17 +131,19 @@ struct GG_API Rect
     constexpr Rect& operator+=(Pt pt) noexcept { ul += pt; lr += pt; return *this; } ///< shifts the Rect by adding \a pt to each corner
     constexpr Rect& operator-=(Pt pt) noexcept { ul -= pt; lr -= pt; return *this; } ///< shifts the Rect by subtracting \a pt from each corner
 
-    Pt ul; ///< the upper-left corner of the Rect
-    Pt lr; ///< the lower-right corner of the Rect
+#if defined(__cpp_impl_three_way_comparison)
+    [[nodiscard]] constexpr auto operator<=>(const Rect&) const noexcept = default;
+#else
+    [[nodiscard]] constexpr bool operator==(const Rect& rhs) const noexcept
+    { return ul == rhs.ul && lr == rhs.lr; };
+    [[nodiscard]] constexpr bool operator!=(const Rect& rhs) const noexcept
+    { return ul != rhs.ul || lr != rhs.lr; };
+#endif
+
+    Pt ul, lr;
 };
 
 GG_API std::ostream& operator<<(std::ostream& os, Pt pt); ///< Pt stream-output operator for debug output
-
-/** returns true if \a lhs is identical to \a rhs */
-[[nodiscard]] GG_API inline constexpr bool operator==(Rect lhs, Rect rhs) noexcept { return lhs.ul.x == rhs.ul.x && lhs.lr.x == rhs.lr.x && lhs.ul.y == rhs.ul.y && lhs.lr.y == rhs.lr.y; }
-
-/** returns true if \a lhs differs from \a rhs */
-[[nodiscard]] GG_API inline constexpr bool operator!=(Rect lhs, Rect rhs) noexcept { return !(lhs == rhs); }
 
 [[nodiscard]] GG_API inline constexpr Rect operator+(Rect rect, Pt pt) noexcept { return Rect(rect.ul + pt, rect.lr + pt); } ///< returns \a rect shifted by adding \a pt to each corner
 [[nodiscard]] GG_API inline constexpr Rect operator-(Rect rect, Pt pt) noexcept { return Rect(rect.ul - pt, rect.lr - pt); } ///< returns \a rect shifted by subtracting \a pt from each corner

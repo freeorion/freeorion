@@ -2131,21 +2131,7 @@ std::shared_ptr<Font> Font::GetDefaultFont(unsigned int pts)
 ///////////////////////////////////////
 // class GG::FontManager
 ///////////////////////////////////////
-// FontKey 
-FontManager::FontKey::FontKey(std::string str, unsigned int pts) :
-    filename(std::move(str)),
-    points(pts)
-{}
-
-bool FontManager::FontKey::operator<(const FontKey& rhs) const
-{ return (filename < rhs.filename || (filename == rhs.filename && points < rhs.points)); }
-
-// FontManager
-// static(s)
 const std::shared_ptr<Font> FontManager::EMPTY_FONT{std::make_shared<Font>("", 0)};
-
-FontManager::FontManager()
-{}
 
 bool FontManager::HasFont(std::string font_filename, unsigned int pts) const
 { return m_rendered_fonts.count(FontKey(std::move(font_filename), pts)); }

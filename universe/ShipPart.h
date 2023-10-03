@@ -51,8 +51,6 @@ public:
     ~ShipPart();
 
     bool operator==(const ShipPart& rhs) const;
-    bool operator!=(const ShipPart& rhs) const
-    { return !(*this == rhs); }
 
     [[nodiscard]] auto& Name() const noexcept { return m_name; }
     [[nodiscard]] auto& Description() const noexcept { return m_description; }

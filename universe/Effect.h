@@ -2,6 +2,7 @@
 #define _Effect_h_
 
 
+#include <compare>
 #include <map>
 #include <memory>
 #include <string>
@@ -88,9 +89,12 @@ namespace Effect {
 
     /** Combination of an EffectsGroup and the id of a source object. */
     struct SourcedEffectsGroup {
-        SourcedEffectsGroup() = default;
-        SourcedEffectsGroup(int source_object_id_, const EffectsGroup* effects_group_);
-        bool operator<(const SourcedEffectsGroup& right) const;
+        constexpr SourcedEffectsGroup() = default;
+        constexpr SourcedEffectsGroup(int source_object_id_, const EffectsGroup* effects_group_) noexcept :
+            source_object_id(source_object_id_),
+            effects_group(effects_group_)
+        {}
+        constexpr auto operator<=>(const SourcedEffectsGroup&) const noexcept = default;
         int source_object_id = INVALID_OBJECT_ID;
         const EffectsGroup* effects_group = nullptr;
     };
@@ -126,7 +130,6 @@ namespace Effect {
                              bool only_generate_sitrep_effects = false) const;
 
         virtual bool operator==(const Effect& rhs) const;
-        bool         operator!=(const Effect& rhs) const { return !(*this == rhs); }
 
         [[nodiscard]] virtual std::string Dump(uint8_t ntabs = 0) const = 0;
 
@@ -210,8 +213,6 @@ namespace Effect {
         EffectsGroup(EffectsGroup&& rhs) = default;
 
         bool operator==(const EffectsGroup& rhs) const;
-        bool operator!=(const EffectsGroup& rhs) const
-        { return !(*this == rhs); }
 
         /** execute all effects in group */
         void Execute(ScriptingContext& source_context,

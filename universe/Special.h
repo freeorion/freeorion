@@ -42,8 +42,6 @@ public:
     ~Special();
 
     bool operator==(const Special& rhs) const;
-    bool operator!=(const Special& rhs) const
-    { return !(*this == rhs); }
 
     [[nodiscard]] auto&       Name() const noexcept            { return m_name; }           ///< unique name for this type of special
     [[nodiscard]] std::string Description() const;           ///< text description of this type of special

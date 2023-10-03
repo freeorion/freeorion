@@ -33,15 +33,15 @@ namespace GG {
     (little-endian) or opaque yellow (big-endian).*/
 struct Clr
 {
-    constexpr Clr() = default;
+    [[nodiscard]] constexpr Clr() = default;
 
     /** ctor that constructs a Clr from four ints that represent the color channels */
-    constexpr Clr(uint8_t r_, uint8_t g_, uint8_t b_, uint8_t a_) noexcept :
+    [[nodiscard]] constexpr Clr(uint8_t r_, uint8_t g_, uint8_t b_, uint8_t a_) noexcept :
         r(r_), g(g_), b(b_), a(a_)
     {}
 
     /** ctor that constructs a Clr from std::array that represents the color channels */
-    constexpr Clr(std::array<uint8_t, 4> clr) noexcept :
+    [[nodiscard]] constexpr Clr(std::array<uint8_t, 4> clr) noexcept :
         Clr{std::get<0>(clr), std::get<1>(clr), std::get<2>(clr), std::get<3>(clr)}
     {}
 
@@ -51,7 +51,7 @@ struct Clr
         value FF is assumed. When characters out of the range 0-9 and A-F are
         passed, results are undefined.
     */
-    constexpr Clr(std::string_view hex_colour)
+    [[nodiscard]] constexpr Clr(std::string_view hex_colour)
     {
         const auto sz = hex_colour.size();
 
@@ -74,7 +74,7 @@ struct Clr
         a = (sz >= 8) ? val_from_two_hex_chars(hex_colour.substr(6, 2)) : 255;
     }
 
-    explicit constexpr operator uint32_t() const noexcept
+    [[nodiscard]] explicit constexpr operator uint32_t() const noexcept
     {
         uint32_t retval = r << 24;
         retval += g << 16;
@@ -83,7 +83,7 @@ struct Clr
         return retval;
     }
 
-    explicit operator std::string() const
+    [[nodiscard]] explicit operator std::string() const
     {
         std::string retval;
         retval.reserve(1 + 4*3 + 3*2 + 1 + 1);
@@ -93,8 +93,17 @@ struct Clr
         return retval;
     }
 
-    constexpr std::array<uint8_t, 4> RGBA() const noexcept
+    [[nodiscard]] constexpr std::array<uint8_t, 4> RGBA() const noexcept
     { return {r, g, b, a}; }
+
+#if defined(__cpp_impl_three_way_comparison)
+    [[nodiscard]] constexpr auto operator<=>(const Clr&) const noexcept = default;
+#else
+    [[nodiscard]] constexpr bool operator==(const Clr& rhs) const noexcept
+    { return r == rhs.r && g == rhs.g && b == rhs.b && a == rhs.a; };
+    [[nodiscard]] constexpr bool operator!=(const Clr& rhs) const noexcept
+    { return r != rhs.r || g != rhs.g || b != rhs.b || a != rhs.a; };
+#endif
 
     uint8_t r = 0;    ///< the red channel
     uint8_t g = 0;    ///< the green channel
@@ -105,14 +114,6 @@ struct Clr
 static_assert(uint32_t{Clr{0,0,0,1}} == 1u);
 static_assert(uint32_t{Clr{0,0,2,3}} == 2*256u + 3u);
 static_assert(uint32_t{Clr{255,1,0,0}} == 256*256*256*255u + 256*256*1u);
-
-/** Returns true iff \a rhs and \a lhs are identical. */
-constexpr bool operator==(Clr rhs, Clr lhs) noexcept
-{ return rhs.r == lhs.r && rhs.g == lhs.g && rhs.b == lhs.b && rhs.a == lhs.a; }
-
-/** Returns true iff \a rhs and \a lhs are different. */
-constexpr bool operator!=(Clr rhs, Clr lhs) noexcept
-{ return !(rhs == lhs); }
 
 static_assert(Clr("A0FF01") == Clr{160, 255, 1, 255});
 static_assert(Clr("12345678") == Clr{16*1+2, 16*3+4, 16*5+6, 16*7+8});
@@ -178,18 +179,6 @@ constexpr Clr operator*(Clr lhs, float s) noexcept
 /** Returns the component-wise sum of input Clrs. */
 constexpr Clr operator+(Clr lhs, Clr rhs) noexcept
 { return Clr(lhs.r + rhs.r, lhs.g + rhs.g, lhs.b + rhs.b, lhs.a + rhs.a); }
-
-/** Clr comparisons */
-constexpr bool operator<(Clr lhs, Clr rhs) noexcept
-{
-    if (rhs.r != lhs.r)
-        return rhs.r < lhs.r;
-    if (rhs.g != lhs.g)
-        return rhs.g < lhs.g;
-    if (rhs.b != lhs.b)
-        return rhs.b < lhs.b;
-    return rhs.a < lhs.a;
-}
 
 }
 

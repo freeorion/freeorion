@@ -2295,6 +2295,7 @@ std::string Operation<T>::Dump(uint8_t ntabs) const
     case OpType::COMPARE_LESS_THAN:             retval += " < "; break;
     case OpType::COMPARE_LESS_THAN_OR_EQUAL:    retval += " <= "; break;
     case OpType::COMPARE_NOT_EQUAL:             retval += " != "; break;
+    default: break;
     }
 
     if (parenthesize_rhs)

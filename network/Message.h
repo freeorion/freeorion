@@ -169,8 +169,8 @@ FO_COMMON_API void BufferToHeader(const Message::HeaderBuffer& buffer, Message& 
 /** Fills \a header_buf from the relevant portions of \a message. */
 FO_COMMON_API void HeaderToBuffer(const Message& message, Message::HeaderBuffer& buffer);
 
-bool operator==(const Message& lhs, const Message& rhs) noexcept;
-bool operator!=(const Message& lhs, const Message& rhs) noexcept;
+// ignores m_message_size
+FO_COMMON_API bool operator==(const Message& lhs, const Message& rhs) noexcept;
 
 FO_COMMON_API void swap(Message& lhs, Message& rhs) noexcept;
 

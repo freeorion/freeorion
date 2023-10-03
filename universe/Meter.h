@@ -6,6 +6,7 @@
 #endif
 
 #include <array>
+#include <compare>
 #include <cstdint>
 #include <string>
 #include <boost/serialization/access.hpp>
@@ -38,11 +39,7 @@ public:
 
     [[nodiscard]] constexpr float Initial() const noexcept(from_int_noexcept) { return FromInt(init); };
 
-    [[nodiscard]] constexpr bool operator==(const Meter rhs) const noexcept
-    { return cur == rhs.cur && init == rhs.init; }
-
-    [[nodiscard]] constexpr bool operator<(const Meter rhs) const noexcept
-    { return cur < rhs.cur || (cur == rhs.cur && init < rhs.init); }
+    [[nodiscard]] constexpr auto operator<=>(const Meter&) const noexcept = default;
 
     constexpr void SetCurrent(float current_value) noexcept(from_float_noexcept)
     { cur = FromFloat(current_value); }

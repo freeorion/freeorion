@@ -148,8 +148,6 @@ inline constexpr std::size_t Value(std::size_t s)
 #define GG_NONMEMBER_REVERSED_BOOL_OP_SET(lhs_type, self_type) \
     inline constexpr bool operator==(lhs_type x, self_type y)  \
     { return y == x; }                                         \
-    inline constexpr bool operator!=(lhs_type x, self_type y)  \
-    { return y != x; }                                         \
     inline constexpr bool operator<(lhs_type x, self_type y)   \
     { return !(y < x || y == x); }                             \
     inline constexpr bool operator>(lhs_type x, self_type y)   \
