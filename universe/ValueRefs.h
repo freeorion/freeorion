@@ -48,8 +48,9 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
         this->m_target_invariant = true;
         this->m_source_invariant = true;
     }
+    constexpr virtual ~Constant() noexcept = default;
 
-    [[nodiscard]] bool operator==(const ValueRef<T>& rhs) const override;
+    [[nodiscard]] constexpr bool operator==(const ValueRef<T>& rhs) const override;
 
     static constexpr std::string_view current_content = "CurrentContent";
     static constexpr std::string_view no_current_content = "THERE_IS_NO_TOP_LEVEL_CONTENT";
@@ -69,7 +70,7 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    [[nodiscard]] T Value() const noexcept(noexcept(T{})) { return m_value; };
+    [[nodiscard]] constexpr T Value() const noexcept(noexcept(T{})) { return m_value; };
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override {
@@ -478,7 +479,7 @@ private:
 // ValueRef                                          //
 ///////////////////////////////////////////////////////////
 template <typename T>
-bool ValueRef<T>::operator==(const ValueRef<T>& rhs) const
+constexpr bool ValueRef<T>::operator==(const ValueRef<T>& rhs) const
 {
     if (&rhs == this)
         return true;
@@ -492,7 +493,7 @@ bool ValueRef<T>::operator==(const ValueRef<T>& rhs) const
 // Constant                                              //
 ///////////////////////////////////////////////////////////
 template <typename T>
-bool Constant<T>::operator==(const ValueRef<T>& rhs) const
+constexpr bool Constant<T>::operator==(const ValueRef<T>& rhs) const
 {
     if (&rhs == this)
         return true;

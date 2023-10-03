@@ -120,7 +120,7 @@ struct FO_COMMON_API ValueRef : public ValueRefBase
       * doesn't supports move semantics for returned values. */
     [[nodiscard]] virtual std::unique_ptr<ValueRef<T>> Clone() const = 0;
 
-    [[nodiscard]] virtual bool operator==(const ValueRef<T>& rhs) const;
+    [[nodiscard]] virtual constexpr bool operator==(const ValueRef<T>& rhs) const;
 
     constexpr virtual ~ValueRef() = default;
 
