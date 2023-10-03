@@ -736,10 +736,10 @@ void GGHumanClientApp::LoadSinglePlayerGame(std::string filename) {
     if (!filename.empty()) {
         if (!exists(FilenameToPath(filename))) {
             std::string msg = "GGHumanClientApp::LoadSinglePlayerGame() given a nonexistent file \""
-                            + filename + "\" to load; aborting.";
+                            + filename + "\" to load. Aborting load.";
             DebugLogger() << msg;
             std::cerr << msg << '\n';
-            abort();
+            return;
         }
     } else {
         try {
