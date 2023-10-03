@@ -241,8 +241,7 @@ GalaxySetupOptionGeneric GalaxySetupData::GetNativeFreq() const {
     return static_cast<GalaxySetupOptionGeneric>(GetIdx(4, seed + "natives"));       // need range 0-3 for native frequency
 }
 
-void GalaxySetupData::SetSeed(const std::string& seed_) {
-    std::string new_seed = seed_;
+void GalaxySetupData::SetSeed(std::string new_seed) {
     if (new_seed.empty() || new_seed == "RANDOM") {
         ClockSeed();
         new_seed.clear();
@@ -253,8 +252,8 @@ void GalaxySetupData::SetSeed(const std::string& seed_) {
     seed = std::move(new_seed);
 }
 
-void GalaxySetupData::SetGameUID(const std::string& game_uid_)
-{ game_uid = game_uid_; }
+void GalaxySetupData::SetGameUID(std::string game_uid_)
+{ game_uid = std::move(game_uid_); }
 
 /////////////////////////////////////////////////////
 // PlayerSetupData

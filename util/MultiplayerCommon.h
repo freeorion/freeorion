@@ -112,8 +112,8 @@ struct FO_COMMON_API GalaxySetupData {
     const auto&                  GetGameRules() const noexcept { return game_rules; }
     const auto&                  GetGameUID() const noexcept { return game_uid; }
 
-    void SetSeed(const std::string& seed);
-    void SetGameUID(const std::string& game_uid);
+    void SetSeed(std::string new_seed);
+    void SetGameUID(std::string game_uid);
 
     GalaxySetupData& operator=(const GalaxySetupData&) = default;
 
