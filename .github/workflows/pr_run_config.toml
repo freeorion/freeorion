@@ -87,13 +87,6 @@ examples = [
 patterns = [
     '^check/check_file_changed/config.toml$',
     '^.github/ISSUE_TEMPLATE/',
-    '^.github/debian-stable/',
-    '^.github/debian-oldstable/',
-    '^.github/debian-sid/',
-    '^.github/fedora-33/',
-    '^.github/fedora-rawhide/',
-    '^.github/manjaro/',
-    '^.github/ubuntu-22.10/',
     '^\.github/CODEOWNERS$',
     '^\.github/id_ed25519.gpg',
     '^\.github/id_ed25519.pub',
