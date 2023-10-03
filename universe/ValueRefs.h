@@ -1595,9 +1595,6 @@ FO_COMMON_API std::string StringCast<double>::Eval(const ScriptingContext& conte
 template <>
 FO_COMMON_API std::string StringCast<int>::Eval(const ScriptingContext& context) const;
 
-template <>
-FO_COMMON_API std::string StringCast<std::vector<std::string>>::Eval(const ScriptingContext& context) const;
-
 template <typename FromType>
 std::string StringCast<FromType>::Description() const
 { return m_value_ref->Description(); }

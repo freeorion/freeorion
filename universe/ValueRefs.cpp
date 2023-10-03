@@ -3023,6 +3023,9 @@ std::string StringCast<double>::Eval(const ScriptingContext& context) const
 
     double result = raw_ref->Eval(context);
     auto Stringify = [](double num) -> std::string {
+        if (std::isnan(num))
+            return "";
+
         const auto abs_num = std::abs(num);
         if (abs_num < 0.1 || abs_num >= 1000)
             return DoubleToString(num, 3, false);
@@ -3106,21 +3109,6 @@ std::string StringCast<int>::Eval(const ScriptingContext& context) const
     }
 
     return std::to_string(result);
-}
-
-template <>
-std::string StringCast<std::vector<std::string>>::Eval(const ScriptingContext& context) const
-{
-    if (!m_value_ref)
-        return "";
-    std::vector<std::string> temp = m_value_ref->Eval(context);
-
-    // concatenate strings into one big string
-    std::string retval;
-    retval.reserve(16 * temp.size()); // rough guesstimate to avoid reallocations
-    for (const auto& str : temp)
-        retval += str + " ";
-    return retval;
 }
 
 ///////////////////////////////////////////////////////////
