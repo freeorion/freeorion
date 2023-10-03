@@ -490,7 +490,7 @@ namespace {
     double PlanetAnnexationCost(const Planet* planet, const UniverseObject* source_for_empire,
                                 const ScriptingContext& context)
     {
-        if (!planet || !source_for_empire)
+        if (!planet)
             return 0.0;
         const auto* species = context.species.GetSpecies(planet->SpeciesName());
         if (!species)
@@ -500,6 +500,9 @@ namespace {
             return 0.0;
         if (ac->ConstantExpr())
             return ac->Eval();
+        if (!ac->SourceInvariant() && !source_for_empire)
+            return 0.0;
+
         ScriptingContext source_planet_context{source_for_empire, context};
         source_planet_context.condition_local_candidate = planet;
         if (!source_planet_context.condition_root_candidate)
