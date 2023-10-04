@@ -246,7 +246,7 @@ namespace {
                                                        int empire_id, bool only_failed_conditions)
     {
         std::vector<const Condition::Condition*> enqueue_conditions;
-        Condition::OwnerHasBuildingTypeAvailable bld_avail_cond(building_name);
+        Condition::EmpireHasBuildingTypeAvailable bld_avail_cond(building_name);
         enqueue_conditions.push_back(&bld_avail_cond);
         if (const BuildingType* building_type = GetBuildingType(building_name)) {
             enqueue_conditions.push_back(building_type->EnqueueLocation());
@@ -274,7 +274,7 @@ namespace {
 #else
         static constexpr Condition::CanProduceShips can_prod_ship_cond;
 #endif
-        const Condition::OwnerHasShipDesignAvailable ship_avail_cond{ship_design_id};
+        const Condition::EmpireHasShipDesignAvailable ship_avail_cond{ship_design_id};
 
         std::vector<const Condition::Condition*> location_conditions;
         location_conditions.reserve(4);
