@@ -7709,9 +7709,9 @@ std::unique_ptr<Condition> OwnerHasTech::Clone() const {
 }
 
 ///////////////////////////////////////////////////////////
-// OwnerHasBuildingTypeAvailable                         //
+// EmpireHasBuildingTypeAvailable                         //
 ///////////////////////////////////////////////////////////
-OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(
+EmpireHasBuildingTypeAvailable::EmpireHasBuildingTypeAvailable(
     std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
     std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
     m_name(std::move(name)),
@@ -7723,22 +7723,22 @@ OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(
     m_source_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
-OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(const std::string& name) :
-    OwnerHasBuildingTypeAvailable(nullptr, std::make_unique<ValueRef::Constant<std::string>>(name))
+EmpireHasBuildingTypeAvailable::EmpireHasBuildingTypeAvailable(const std::string& name) :
+    EmpireHasBuildingTypeAvailable(nullptr, std::make_unique<ValueRef::Constant<std::string>>(name))
 {}
 
-OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(
+EmpireHasBuildingTypeAvailable::EmpireHasBuildingTypeAvailable(
     std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    OwnerHasBuildingTypeAvailable(nullptr, std::move(name))
+    EmpireHasBuildingTypeAvailable(nullptr, std::move(name))
 {}
 
-bool OwnerHasBuildingTypeAvailable::operator==(const Condition& rhs) const {
+bool EmpireHasBuildingTypeAvailable::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
 
-    const OwnerHasBuildingTypeAvailable& rhs_ = static_cast<const OwnerHasBuildingTypeAvailable&>(rhs);
+    const EmpireHasBuildingTypeAvailable& rhs_ = static_cast<const EmpireHasBuildingTypeAvailable&>(rhs);
 
     CHECK_COND_VREF_MEMBER(m_empire_id)
     CHECK_COND_VREF_MEMBER(m_name)
@@ -7778,7 +7778,7 @@ namespace {
     };
 }
 
-void OwnerHasBuildingTypeAvailable::Eval(const ScriptingContext& parent_context,
+void EmpireHasBuildingTypeAvailable::Eval(const ScriptingContext& parent_context,
                                          ObjectSet& matches, ObjectSet& non_matches,
                                          SearchDomain search_domain) const
 {
@@ -7797,7 +7797,7 @@ void OwnerHasBuildingTypeAvailable::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string OwnerHasBuildingTypeAvailable::Description(bool negated) const {
+std::string EmpireHasBuildingTypeAvailable::Description(bool negated) const {
     // used internally for a tooltip where context is apparent, so don't need
     // to name builing type here
     return (!negated)
@@ -7805,8 +7805,8 @@ std::string OwnerHasBuildingTypeAvailable::Description(bool negated) const {
         : UserString("DESC_OWNER_HAS_BUILDING_TYPE_NOT");
 }
 
-std::string OwnerHasBuildingTypeAvailable::Dump(uint8_t ntabs) const {
-    std::string retval = DumpIndent(ntabs) + "OwnerHasBuildingTypeAvailable";
+std::string EmpireHasBuildingTypeAvailable::Dump(uint8_t ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "EmpireHasBuildingTypeAvailable";
     if (m_empire_id)
         retval += " empire = " + m_empire_id->Dump(ntabs);
     if (m_name)
@@ -7815,7 +7815,7 @@ std::string OwnerHasBuildingTypeAvailable::Dump(uint8_t ntabs) const {
     return retval;
 }
 
-bool OwnerHasBuildingTypeAvailable::Match(const ScriptingContext& local_context) const {
+bool EmpireHasBuildingTypeAvailable::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger(conditions) << "OwnerHasTech::Match passed no candidate object";
@@ -7830,33 +7830,33 @@ bool OwnerHasBuildingTypeAvailable::Match(const ScriptingContext& local_context)
     return OwnerHasBuildingTypeAvailableSimpleMatch(empire_id, name, local_context)(candidate);
 }
 
-void OwnerHasBuildingTypeAvailable::SetTopLevelContent(const std::string& content_name) {
+void EmpireHasBuildingTypeAvailable::SetTopLevelContent(const std::string& content_name) {
     if (m_empire_id)
         m_empire_id->SetTopLevelContent(content_name);
     if (m_name)
         m_name->SetTopLevelContent(content_name);
 }
 
-uint32_t OwnerHasBuildingTypeAvailable::GetCheckSum() const {
+uint32_t EmpireHasBuildingTypeAvailable::GetCheckSum() const {
     uint32_t retval{0};
 
-    CheckSums::CheckSumCombine(retval, "Condition::OwnerHasBuildingTypeAvailable");
+    CheckSums::CheckSumCombine(retval, "Condition::EmpireHasBuildingTypeAvailable");
     CheckSums::CheckSumCombine(retval, m_empire_id);
     CheckSums::CheckSumCombine(retval, m_name);
 
-    TraceLogger(conditions) << "GetCheckSum(OwnerHasBuildingTypeAvailable): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(EmpireHasBuildingTypeAvailable): retval: " << retval;
     return retval;
 }
 
-std::unique_ptr<Condition> OwnerHasBuildingTypeAvailable::Clone() const {
-    return std::make_unique<OwnerHasBuildingTypeAvailable>(ValueRef::CloneUnique(m_empire_id),
+std::unique_ptr<Condition> EmpireHasBuildingTypeAvailable::Clone() const {
+    return std::make_unique<EmpireHasBuildingTypeAvailable>(ValueRef::CloneUnique(m_empire_id),
                                                            ValueRef::CloneUnique(m_name));
 }
 
 ///////////////////////////////////////////////////////////
-// OwnerHasShipDesignAvailable                           //
+// EmpireHasShipDesignAvailable                           //
 ///////////////////////////////////////////////////////////
-OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(
+EmpireHasShipDesignAvailable::EmpireHasShipDesignAvailable(
     std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
     std::unique_ptr<ValueRef::ValueRef<int>>&& design_id) :
     m_id(std::move(design_id)),
@@ -7868,21 +7868,21 @@ OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(
     m_source_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
-OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(int design_id) :
-    OwnerHasShipDesignAvailable(nullptr, std::make_unique<ValueRef::Constant<int>>(design_id))
+EmpireHasShipDesignAvailable::EmpireHasShipDesignAvailable(int design_id) :
+    EmpireHasShipDesignAvailable(nullptr, std::make_unique<ValueRef::Constant<int>>(design_id))
 {}
 
-OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id) :
-    OwnerHasShipDesignAvailable(nullptr, std::move(design_id))
+EmpireHasShipDesignAvailable::EmpireHasShipDesignAvailable(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id) :
+    EmpireHasShipDesignAvailable(nullptr, std::move(design_id))
 {}
 
-bool OwnerHasShipDesignAvailable::operator==(const Condition& rhs) const {
+bool EmpireHasShipDesignAvailable::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
 
-    const OwnerHasShipDesignAvailable& rhs_ = static_cast<const OwnerHasShipDesignAvailable&>(rhs);
+    const EmpireHasShipDesignAvailable& rhs_ = static_cast<const EmpireHasShipDesignAvailable&>(rhs);
 
     CHECK_COND_VREF_MEMBER(m_empire_id)
     CHECK_COND_VREF_MEMBER(m_id)
@@ -7922,7 +7922,7 @@ namespace {
     };
 }
 
-void OwnerHasShipDesignAvailable::Eval(const ScriptingContext& parent_context,
+void EmpireHasShipDesignAvailable::Eval(const ScriptingContext& parent_context,
                                        ObjectSet& matches, ObjectSet& non_matches,
                                        SearchDomain search_domain) const
 {
@@ -7941,7 +7941,7 @@ void OwnerHasShipDesignAvailable::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string OwnerHasShipDesignAvailable::Description(bool negated) const {
+std::string EmpireHasShipDesignAvailable::Description(bool negated) const {
     // used internally for a tooltip where context is apparent, so don't need
     // to specify design here
     return (!negated)
@@ -7949,8 +7949,8 @@ std::string OwnerHasShipDesignAvailable::Description(bool negated) const {
         : UserString("DESC_OWNER_HAS_SHIP_DESIGN_NOT");
 }
 
-std::string OwnerHasShipDesignAvailable::Dump(uint8_t ntabs) const {
-    std::string retval = DumpIndent(ntabs) + "OwnerHasShipDesignAvailable";
+std::string EmpireHasShipDesignAvailable::Dump(uint8_t ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "EmpireHasShipDesignAvailable";
     if (m_empire_id)
         retval += " empire = " + m_empire_id->Dump(ntabs);
     if (m_id)
@@ -7959,7 +7959,7 @@ std::string OwnerHasShipDesignAvailable::Dump(uint8_t ntabs) const {
     return retval;
 }
 
-bool OwnerHasShipDesignAvailable::Match(const ScriptingContext& local_context) const {
+bool EmpireHasShipDesignAvailable::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger(conditions) << "OwnerHasTech::Match passed no candidate object";
@@ -7974,33 +7974,33 @@ bool OwnerHasShipDesignAvailable::Match(const ScriptingContext& local_context) c
     return OwnerHasShipDesignAvailableSimpleMatch(empire_id, design_id, local_context)(candidate);
 }
 
-void OwnerHasShipDesignAvailable::SetTopLevelContent(const std::string& content_name) {
+void EmpireHasShipDesignAvailable::SetTopLevelContent(const std::string& content_name) {
     if (m_empire_id)
         m_empire_id->SetTopLevelContent(content_name);
     if (m_id)
         m_id->SetTopLevelContent(content_name);
 }
 
-uint32_t OwnerHasShipDesignAvailable::GetCheckSum() const {
+uint32_t EmpireHasShipDesignAvailable::GetCheckSum() const {
     uint32_t retval{0};
 
-    CheckSums::CheckSumCombine(retval, "Condition::OwnerHasShipDesignAvailable");
+    CheckSums::CheckSumCombine(retval, "Condition::EmpireHasShipDesignAvailable");
     CheckSums::CheckSumCombine(retval, m_empire_id);
     CheckSums::CheckSumCombine(retval, m_id);
 
-    TraceLogger(conditions) << "GetCheckSum(OwnerHasShipDesignAvailable): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(EmpireHasShipDesignAvailable): retval: " << retval;
     return retval;
 }
 
-std::unique_ptr<Condition> OwnerHasShipDesignAvailable::Clone() const {
-    return std::make_unique<OwnerHasShipDesignAvailable>(ValueRef::CloneUnique(m_empire_id),
+std::unique_ptr<Condition> EmpireHasShipDesignAvailable::Clone() const {
+    return std::make_unique<EmpireHasShipDesignAvailable>(ValueRef::CloneUnique(m_empire_id),
                                                          ValueRef::CloneUnique(m_id));
 }
 
 ///////////////////////////////////////////////////////////
-// OwnerHasShipPartAvailable                             //
+// EmpireHasShipPartAvailable                             //
 ///////////////////////////////////////////////////////////
-OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(
+EmpireHasShipPartAvailable::EmpireHasShipPartAvailable(
     std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
     std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
     m_name(std::move(name)),
@@ -8012,21 +8012,21 @@ OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(
     m_source_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
-OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(const std::string& name) :
-    OwnerHasShipPartAvailable(nullptr, std::make_unique<ValueRef::Constant<std::string>>(name))
+EmpireHasShipPartAvailable::EmpireHasShipPartAvailable(const std::string& name) :
+    EmpireHasShipPartAvailable(nullptr, std::make_unique<ValueRef::Constant<std::string>>(name))
 {}
 
-OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    OwnerHasShipPartAvailable(nullptr, std::move(name))
+EmpireHasShipPartAvailable::EmpireHasShipPartAvailable(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+    EmpireHasShipPartAvailable(nullptr, std::move(name))
 {}
 
-bool OwnerHasShipPartAvailable::operator==(const Condition& rhs) const {
+bool EmpireHasShipPartAvailable::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
 
-    const OwnerHasShipPartAvailable& rhs_ = static_cast<const OwnerHasShipPartAvailable&>(rhs);
+    const EmpireHasShipPartAvailable& rhs_ = static_cast<const EmpireHasShipPartAvailable&>(rhs);
 
     CHECK_COND_VREF_MEMBER(m_empire_id)
     CHECK_COND_VREF_MEMBER(m_name)
@@ -8066,7 +8066,7 @@ namespace {
     };
 }
 
-void OwnerHasShipPartAvailable::Eval(const ScriptingContext& parent_context,
+void EmpireHasShipPartAvailable::Eval(const ScriptingContext& parent_context,
                                      ObjectSet& matches, ObjectSet& non_matches,
                                      SearchDomain search_domain) const
 {
@@ -8085,14 +8085,14 @@ void OwnerHasShipPartAvailable::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string OwnerHasShipPartAvailable::Description(bool negated) const {
+std::string EmpireHasShipPartAvailable::Description(bool negated) const {
     return (!negated)
         ? UserString("DESC_OWNER_HAS_SHIP_PART")
         : UserString("DESC_OWNER_HAS_SHIP_PART_NOT");
 }
 
-std::string OwnerHasShipPartAvailable::Dump(uint8_t ntabs) const {
-    std::string retval = DumpIndent(ntabs) + "OwnerHasShipPartAvailable";
+std::string EmpireHasShipPartAvailable::Dump(uint8_t ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "EmpireHasShipPartAvailable";
     if (m_empire_id)
         retval += " empire = " + m_empire_id->Dump(ntabs);
     if (m_name)
@@ -8101,7 +8101,7 @@ std::string OwnerHasShipPartAvailable::Dump(uint8_t ntabs) const {
     return retval;
 }
 
-bool OwnerHasShipPartAvailable::Match(const ScriptingContext& local_context) const {
+bool EmpireHasShipPartAvailable::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger(conditions) << "OwnerHasShipPart::Match passed no candidate object";
@@ -8116,26 +8116,26 @@ bool OwnerHasShipPartAvailable::Match(const ScriptingContext& local_context) con
     return OwnerHasShipPartAvailableSimpleMatch(empire_id, name, local_context)(candidate);
 }
 
-void OwnerHasShipPartAvailable::SetTopLevelContent(const std::string& content_name) {
+void EmpireHasShipPartAvailable::SetTopLevelContent(const std::string& content_name) {
     if (m_empire_id)
         m_empire_id->SetTopLevelContent(content_name);
     if (m_name)
         m_name->SetTopLevelContent(content_name);
 }
 
-uint32_t OwnerHasShipPartAvailable::GetCheckSum() const {
+uint32_t EmpireHasShipPartAvailable::GetCheckSum() const {
     uint32_t retval{0};
 
-    CheckSums::CheckSumCombine(retval, "Condition::OwnerHasShipPartAvailable");
+    CheckSums::CheckSumCombine(retval, "Condition::EmpireHasShipPartAvailable");
     CheckSums::CheckSumCombine(retval, m_empire_id);
     CheckSums::CheckSumCombine(retval, m_name);
 
-    TraceLogger(conditions) << "GetCheckSum(OwnerHasShipPartAvailable): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(EmpireHasShipPartAvailable): retval: " << retval;
     return retval;
 }
 
-std::unique_ptr<Condition> OwnerHasShipPartAvailable::Clone() const {
-    return std::make_unique<OwnerHasShipPartAvailable>(ValueRef::CloneUnique(m_empire_id),
+std::unique_ptr<Condition> EmpireHasShipPartAvailable::Clone() const {
+    return std::make_unique<EmpireHasShipPartAvailable>(ValueRef::CloneUnique(m_empire_id),
                                                        ValueRef::CloneUnique(m_name));
 }
 

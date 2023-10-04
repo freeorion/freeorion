@@ -1230,12 +1230,12 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>>         m_empire_id;
 };
 
-/** Matches all objects whose owner who has the building type \a name available. */
-struct FO_COMMON_API OwnerHasBuildingTypeAvailable final : public Condition {
-    OwnerHasBuildingTypeAvailable(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-                                  std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
-    explicit OwnerHasBuildingTypeAvailable(const std::string& name);
-    explicit OwnerHasBuildingTypeAvailable(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
+/** Matches objects if the species empire has the building type \a name available. */
+struct FO_COMMON_API EmpireHasBuildingTypeAvailable final : public Condition {
+    EmpireHasBuildingTypeAvailable(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+                                   std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
+    explicit EmpireHasBuildingTypeAvailable(const std::string& name);
+    explicit EmpireHasBuildingTypeAvailable(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1257,12 +1257,12 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>>         m_empire_id;
 };
 
-/** Matches all objects whose owner who has the ship design \a id available. */
-struct FO_COMMON_API OwnerHasShipDesignAvailable final : public Condition {
-    OwnerHasShipDesignAvailable(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-                                std::unique_ptr<ValueRef::ValueRef<int>>&& design_id);
-    explicit OwnerHasShipDesignAvailable(int design_id);
-    explicit OwnerHasShipDesignAvailable(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id);
+/** Matches object if the specified empire has the ship design \a id available. */
+struct FO_COMMON_API EmpireHasShipDesignAvailable final : public Condition {
+    EmpireHasShipDesignAvailable(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+                                 std::unique_ptr<ValueRef::ValueRef<int>>&& design_id);
+    explicit EmpireHasShipDesignAvailable(int design_id);
+    explicit EmpireHasShipDesignAvailable(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1284,12 +1284,12 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
 };
 
-/** Matches all objects whose owner who has the ship part @a name available. */
-struct FO_COMMON_API OwnerHasShipPartAvailable final : public Condition {
-    OwnerHasShipPartAvailable(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-                              std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
-    explicit OwnerHasShipPartAvailable(const std::string& name);
-    explicit OwnerHasShipPartAvailable(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
+/** Matches objects if the specified empire has the ship part @a name available. */
+struct FO_COMMON_API EmpireHasShipPartAvailable final : public Condition {
+    EmpireHasShipPartAvailable(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+                               std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
+    explicit EmpireHasShipPartAvailable(const std::string& name);
+    explicit EmpireHasShipPartAvailable(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
