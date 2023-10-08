@@ -18,7 +18,7 @@ def generate_fields(systems):
     accepted = sample(candidates, max(int(len(candidates) * uniform(0.1, 0.15)), 1))
     for system in accepted:
         # randomly pick a field type
-        field_type = choice(["FLD_NEBULA_1", "FLD_NEBULA_2", "FLD_NEBULA_3"])
+        field_type = choice(["FLD_NEBULA_1", "FLD_NEBULA_2", "FLD_NEBULA_3", "FLD_NEBULA_4", "FLD_NEBULA_5", "FLD_NEBULA_6", "FLD_NEBULA_7"])
         # and create the field
         if fo.create_field_in_system(field_type, uniform(40, 120), system) == fo.invalid_object():
             # create field failed, report an error
