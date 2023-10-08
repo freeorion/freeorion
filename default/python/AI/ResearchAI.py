@@ -6,11 +6,13 @@ from logging import debug, error, info, warning
 import AIDependencies as Dep
 import AIstate
 import ColonisationAI
+import PlanetUtilsAI
 import ShipDesignAI
 import TechsListsAI
 from aistate_interface import get_aistate
 from common.print_utils import as_columns
 from empire.colony_builders import get_colony_builders
+from EnumsAI import FocusType
 from freeorion_tools import tech_is_complete
 from ProductionAI import translators_wanted
 from turn_state import (
@@ -146,6 +148,12 @@ def generate_classic_research_orders():  # noqa: C901
     enemies_sighted = aistate.misc.get("enemies_sighted", {})
     galaxy_is_sparse = ColonisationAI.galaxy_is_sparse()
 
+    # get capital's preferred focus
+    universe = fo.getUniverse()
+    capital_id = PlanetUtilsAI.get_capital()
+    capital = universe.getPlanet(capital_id)
+    capital_focus = fo.getSpecies(capital.speciesName).preferredFocus
+
     resource_production = empire.resourceProduction(fo.resourceType.research)
     completed_techs = sorted(list(get_completed_techs()))
     _print_research_order_header(resource_production, completed_techs)
@@ -162,7 +170,12 @@ def generate_classic_research_orders():  # noqa: C901
         if fo.currentTurn() == 1:
             # do only this one on first turn, to facilitate use of a turn-1 savegame for testing of alternate
             # research strategies
-            new_tech = ["LRN_PHYS_BRAIN", "GRO_PLANET_ECOL"]
+            industry_start_techs = TechsListsAI.industry_techs_1()
+            research_start_techs = TechsListsAI.research_techs_1()
+            if (capital_focus == FocusType.FOCUS_INDUSTRY) or (capital_focus == FocusType.FOCUS_STOCKPILE):
+                new_tech = industry_start_techs
+            else:
+                new_tech = research_start_techs
         else:
             new_tech = (
                 TechsListsAI.sparse_galaxy_techs(research_index)

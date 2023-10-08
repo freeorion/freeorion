@@ -21,6 +21,7 @@ from empire.colony_builders import (
 from empire.colony_status import colonies_is_under_attack, colonies_is_under_treat
 from EnumsAI import (
     EmpireProductionTypes,
+    FocusType,
     MissionType,
     PriorityType,
     ShipRoleType,
@@ -161,6 +162,11 @@ def _calculate_research_priority():  # noqa: C901
     galaxy_is_sparse = ColonisationAI.galaxy_is_sparse()
     enemies_sighted = aistate.misc.get("enemies_sighted", {})
 
+    # get capital's preferred focus
+    capital_id = PlanetUtilsAI.get_capital()
+    capital = universe.getPlanet(capital_id)
+    capital_focus = fo.getSpecies(capital.speciesName).preferredFocus
+
     style_index = aistate.character.preferred_research_cutoff([0, 1])
     if aistate.character.may_maximize_research():
         style_index += 1
@@ -174,9 +180,14 @@ def _calculate_research_priority():  # noqa: C901
         or (not got_algo)
         or ((style_index == 0) and not got_orb_gen and (current_turn < cutoffs[1]))
     ):
-        research_priority = (
-            settings[0] * industry_priority
-        )  # high research at beginning of game to get easy gro tech and to get research booster Algotrithmic Elegance
+        if capital_focus in {FocusType.FOCUS_INDUSTRY, FocusType.FOCUS_STOCKPILE}:
+            research_priority = (
+                settings[1] * industry_priority
+            )  # keeps the capital at default focus on production species
+        else:
+            research_priority = (
+                settings[0] * industry_priority
+            )  # high research at beginning of game to get easy gro tech and to get research booster Algotrithmic Elegance
     elif (not got_orb_gen) or (current_turn < cutoffs[1]):
         research_priority = settings[1] * industry_priority  # med-high research
     elif current_turn < cutoffs[2]:
