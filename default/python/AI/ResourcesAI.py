@@ -582,8 +582,14 @@ class PlanetFocusManager:
         Calculate ratios of planned PP / industry priority and RP / research priority.
         It uses future_focus of all planets, setting this value without baking it can be used to check alternatives.
         """
-        planned_pp_target = sum(pi.possible_output[pi.future_focus].industry for pi in self.planet_info.values())
-        planned_rp_target = sum(pi.possible_output[pi.future_focus].research for pi in self.planet_info.values())
+        planned_pp_target = sum(
+            pi.possible_output[pi.future_focus].industry
+            for pi in chain(self.baked_planet_info.values(), self.planet_info.values())
+        )
+        planned_rp_target = sum(
+            pi.possible_output[pi.future_focus].research
+            for pi in chain(self.baked_planet_info.values(), self.planet_info.values())
+        )
         pp_per_priority = planned_pp_target / self.priority_industry
         rp_per_priority = planned_rp_target / self.priority_research
         debug(
