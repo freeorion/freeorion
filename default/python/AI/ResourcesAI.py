@@ -577,9 +577,9 @@ class PlanetFocusManager:
             cand_val = (cand_val - 0.1) * (self.immediate_loss_on_switch_to(candidate, to_focus) ** 0.5 + 0.1)
             return candidate if cand_val > best_val else best_so_far
 
-    def get_planned_pp_rp_per_prio(self) -> (float, float):
+    def get_planned_pp_rp_per_prio(self) -> (float, float, float, float):
         """
-        Calculate ratios of planned PP / industry priority and RP / research priority.
+        Calculate ratios of planned PP and RP and both values divided by their priority.
         It uses future_focus of all planets, setting this value without baking it can be used to check alternatives.
         """
         planned_pp_target = sum(
@@ -596,7 +596,7 @@ class PlanetFocusManager:
             f"pp: {planned_pp_target}/{self.priority_industry}={pp_per_priority}, "
             f"rp: {planned_rp_target}/{self.priority_research}={rp_per_priority}"
         )
-        return pp_per_priority, rp_per_priority
+        return planned_pp_target, planned_rp_target, pp_per_priority, rp_per_priority
 
     def set_other_foci(self):
         """
@@ -640,7 +640,8 @@ class PlanetFocusManager:
         set_to_neither.sort()
         debug(f"chose_industry_or_research set_to_neither={set_to_neither}")
         while set_to_neither:
-            pp_per_priority, rp_per_priority = self.get_planned_pp_rp_per_prio()
+            # TBD: can we also use balanced_output_value here? Most likely its only one planet anyway...
+            _, _, pp_per_priority, rp_per_priority = self.get_planned_pp_rp_per_prio()
             # sorting is best research to best industry
             if pp_per_priority > rp_per_priority:
                 self.bake_future_focus(set_to_neither[0].planet.id, RESEARCH)
@@ -661,28 +662,33 @@ class PlanetFocusManager:
             self.bake_future_focus(to_research.planet.id, RESEARCH)
             self.bake_future_focus(to_industry.planet.id, INDUSTRY)
         else:
-            pp_per_priority, rp_per_priority = self.get_planned_pp_rp_per_prio()
-            debug(f"current: PP/prio={pp_per_priority:.4f}, RP/prio={rp_per_priority:.4f}")
-            # For an AI without a capital numbers may be 0. But if one is bigger than the other,
-            # at least this one cannot be, so it is safe ot use it as a divisor.
-            if to_research and pp_per_priority > rp_per_priority:
-                self.check_switch_for_ratio(to_research, RESEARCH, rp_per_priority / pp_per_priority)
-            elif to_industry and rp_per_priority > pp_per_priority:
-                self.check_switch_for_ratio(to_industry, INDUSTRY, pp_per_priority / rp_per_priority)
+            pp, rp, pp_per_priority, rp_per_priority = self.get_planned_pp_rp_per_prio()
+            current_best = self.balanced_output_value(self.priority_industry, pp, self.priority_research, rp)
+            debug(f"current: {current_best:.2f}")
+            if to_research:
+                current_best = self.check_switch_for_ratio(to_research, RESEARCH, current_best)
+            # TBD: can we skip the second call, if the first was an improvement?
+            if to_industry:
+                self.check_switch_for_ratio(to_industry, INDUSTRY, current_best)
 
-    def check_switch_for_ratio(self, candidate: PlanetFocusInfo, new_focus: str, old_ratio: float) -> None:
+    def check_switch_for_ratio(self, candidate: PlanetFocusInfo, new_focus: str, old_best: float) -> float:
+        """
+        Check whether a switch would improve the balanced output.
+        If so, do the switch and return the new best value, else return old_best.
+        """
         candidate.future_focus = new_focus
-        new_ppp, new_rpp = self.get_planned_pp_rp_per_prio()
-        # if the targeted value is 0 after the switch, we surely want to revert
-        if new_focus == RESEARCH:
-            new_ratio = new_ppp / new_rpp if new_rpp else -1
-        else:
-            new_ratio = new_rpp / new_ppp if new_ppp else -1
-        debug(f"With switch: PP/prio={new_ppp:.4f}, RP/prio={new_rpp:.4f}")
-        # ideal ratio would be 1.0, the smaller, the worse
-        if new_ratio < old_ratio:
+        pp, rp, _, _ = self.get_planned_pp_rp_per_prio()
+        new_value = self.balanced_output_value(self.priority_industry, pp, self.priority_research, rp)
+        debug(f"With switch to {new_focus}: {new_value:.2f}")
+        if new_value < old_best:
             candidate.future_focus = candidate.current_focus
         self.bake_future_focus(candidate.planet.id, candidate.future_focus)
+        return max(old_best, new_value)
+
+    @staticmethod
+    def balanced_output_value(prio1: float, production1: float, prio2: float, production2: float) -> float:
+        """Evaluate possible production values with a preference for a production ratio equal to the priority ratio."""
+        return prio1 * production1 + prio2 * production2 + min(prio1 * production2, prio2 * production1)
 
 
 class Reporter:
