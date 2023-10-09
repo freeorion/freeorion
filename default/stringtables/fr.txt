@@ -7509,8 +7509,14 @@ Dern. Tour Colonisation
 LAST_TURN_CONQUERED
 Dern. Tour Conquête
 
+LAST_TURN_ANNEXED
+Dern. Tour Annexion
+
 LAST_TURN_ATTACKED_BY_SHIP
 Dern. Tour Attaque par Astronef
+
+ANNEXATION_COST_BY_ME
+Coût Annexion
 
 ARRIVED_ON_TURN
 Arrivé au Tour
@@ -11936,7 +11942,44 @@ DESC_WITHIN_STARLANE_JUMPS
 DESC_WITHIN_STARLANE_JUMPS_NOT
 ''' n'étant pas à moins de %1% voies spatiales de tout objet%2%'''
 
-# %1% textual description of the
+# %1% textual description of the far endpoint system the starlane connects to.
+DESC_HAS_STARLANE_TO
+''' ayant une voie spatiale vers un lieu avec tout objet%1%'''
+
+# %1% textual description of the far endpoint system the starlane connects to.
+DESC_HAS_STARLANE_TO_NOT
+''' n'ayant pas une voie spatiale vers un lieu avec tout objet%1%'''
+
+# %1% textual description of the other endpoint system the starlane connects to.
+DESC_STARLANE_TO_WOULD_CROSS_EXISTING_LANE
+''' qui croiserait une voie spatiale existante si ajout d'une voie spatiale entre la source et un lieu avec tout objet %1%'''
+
+# %1% textual description of the other endpoint system the starlane connects to.
+DESC_STARLANE_TO_WOULD_CROSS_EXISTING_LANE_NOT
+''' qui ne croiserait pas une voie spatiale existante si ajout d'une voie spatiale entre la source et un lieu avec tout objet %1%'''
+
+# %1% textual description of the other endpoint system the starlane connects to.
+# %2% textual description max dot product of normalized lane vectors to consider "close".
+DESC_STARLANE_TO_WOULD_BE_ANGULARLY_CLOSE
+''' duquel une nouvelle voie spatiale serait angulairement proche (produit scalaire > %2%) d'une voie spatiale existante à une extrémité, avec l'autre extrémité ayant tout objet %1%'''
+
+# %1% textual description of the other endpoint system the starlane connects to.
+# %2% textual description max dot product of normalized lane vectors to consider "close".
+DESC_STARLANE_TO_WOULD_BE_ANGULARLY_CLOSE_NOT
+''' duquel une nouvelle voie spatiale ne serait pas angulairement proche (produit scalaire > %2%) d'une voie spatiale existante à une extrémité, avec l'autre extrémité ayant tout objet %1%'''
+
+# %1% textual description of the other endpoint objects(s) the starlane(s) connect(s) to.
+# %2% textual description max distance from a lane to consider "close".
+# %3% textual description of the object(s) that the lane would be close to
+DESC_STARLANE_TO_WOULD_BE_CLOSE
+''' duquel une nouvelle voie spatiale depuis un objet dont %1% serait proche (distance < %2%) d'un objet %3%'''
+
+# %1% textual description of the other endpoint object(s) the starlane(s) connect(s) to.
+# %2% textual description max distance from a lane to consider "close".
+# %3% textual description of the object(s) that the lane would be close to
+DESC_STARLANE_TO_WOULD_BE_CLOSE_NOT
+''' duquel une nouvelle voie spatiale depuis un objet dont %1% ne serait pas proche (distance < %2%) d'un objet %3%'''
+
 # %1% textual description of the empire.
 DESC_EXPLORED_BY_EMPIRE
 ''' ayant été exploré par l'empire %1%'''
@@ -12704,9 +12747,10 @@ PLC_TERROR_SUPPRESSION
 Suppression du Terrorisme
 
 PLC_TERROR_SUPPRESSION_DESC
-'''• Augmente la [[metertype METER_TARGET_HAPPINESS]] des planètes habitées de [[value PLC_TERROR_SUPPRESSION_TARGET_STABILITY_SCALE]] par le nombre d'astronefs présents dans le système et appartenant à l'empire, armés, et dont l'équipage est de la même espèce que celle peuplant la Capitale impériale.
-• Diminue l'[[metertype METER_REBEL_TROOPS]] sur ces planètes de [[value PLC_TERROR_SUPPRESSION_REBEL_REDUCTION_SCALE]] par astronef.
-• Ces astronefs coûtent [[value PLC_TERROR_SUPPRESSION_SHIP_INFLUENCE_FLAT]] en [[metertype METER_INFLUENCE]].'''
+'''• Augmente la [[metertype METER_TARGET_HAPPINESS]] des planètes habitées d'un empire de [[value PLC_TERROR_SUPPRESSION_TARGET_STABILITY_SCALE]] par le nombre d'astronefs présents dans le système et appartenant à l'empire, armés, étant dans une flotte avec ordre d'engager le combat, et dont l'équipage est de la même espèce que celle peuplant la Capitale impériale.
+• Diminue l'[[metertype METER_REBEL_TROOPS]] sur les planètes possédées et celles ennemies de [[value PLC_TERROR_SUPPRESSION_REBEL_REDUCTION_SCALE]] par astronef (armé, engageant le combat, et avec espèce de la Capitale).
+• Diminue la [[metertype METER_TARGET_HAPPINESS]] des planètes habitées de l'empire ennemi (par une espèce autre que celle de la Capitale dans l'astronef de l'empire) de [[value PLC_TERROR_SUPPRESSION_TARGET_STABILITY_SCALE]] par astronef (armé, engageant le combat, et avec espèce de la Capitale).
+• Ces astronefs (armés, équipage de la même espèce que celle de la Capitale) coûtent [[value PLC_TERROR_SUPPRESSION_SHIP_INFLUENCE_FLAT]] en [[metertype METER_INFLUENCE]] (qu'ils aient ou non l'ordre d'engager le combat).'''
 
 PLC_TERROR_SUPPRESSION_SHORT_DESC
 Augmente la Stabilité à l'aide d'astronefs armés
