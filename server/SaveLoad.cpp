@@ -104,7 +104,7 @@ std::map<int, SaveGameEmpireData> CompileSaveGameEmpireData(const EmpireManager&
 }
 
 namespace {
-    constexpr std::size_t Pow(std::size_t base, std::size_t exp) noexcept {
+    consteval std::size_t Pow(std::size_t base, std::size_t exp) noexcept {
         std::size_t retval = 1;
         while (exp--)
             retval *= base;
