@@ -29,7 +29,7 @@ struct FO_COMMON_API ValueRefBase {
 
     [[nodiscard]] virtual uint32_t GetCheckSum() const { return 0; }
 
-    constexpr virtual ~ValueRefBase() = default;
+    constexpr virtual ~ValueRefBase() noexcept = default;
 
 protected:
     constexpr ValueRefBase() = default;
@@ -120,16 +120,15 @@ struct FO_COMMON_API ValueRef : public ValueRefBase
       * doesn't supports move semantics for returned values. */
     [[nodiscard]] virtual std::unique_ptr<ValueRef<T>> Clone() const = 0;
 
-    [[nodiscard]] virtual constexpr bool operator==(const ValueRef<T>& rhs) const;
-
-    constexpr virtual ~ValueRef() = default;
+    [[nodiscard]] virtual constexpr bool operator==(const ValueRef<T>& rhs) const
+    { return (&rhs == this) || (typeid(rhs) == typeid(*this)); }
 
 protected:
-    constexpr ValueRef() = default;
-    constexpr explicit ValueRef(ReferenceType ref_type) :
+    constexpr ValueRef() noexcept = default;
+    constexpr explicit ValueRef(ReferenceType ref_type) noexcept :
         m_ref_type(ref_type)
     {}
-    constexpr explicit ValueRef(bool constant_expr) :
+    constexpr explicit ValueRef(bool constant_expr) noexcept :
         ValueRefBase(constant_expr)
     {}
 

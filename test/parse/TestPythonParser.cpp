@@ -270,7 +270,7 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_REQUIRE_EQUAL(true, effect_group.HasMeterEffects());
         BOOST_REQUIRE_EQUAL(false, effect_group.HasAppearanceEffects());
         BOOST_REQUIRE_EQUAL(false, effect_group.HasSitrepEffects());
-        BOOST_REQUIRE_EQUAL(35781, effect_group.GetCheckSum());
+        BOOST_REQUIRE_EQUAL(36574, effect_group.GetCheckSum());
 
         BOOST_REQUIRE_NE(nullptr, effect_group.Scope());
         BOOST_REQUIRE_NE(nullptr, effect_group.Activation());
@@ -286,7 +286,7 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_TEST_MESSAGE("Dump " << species.Name() << ":");
         BOOST_TEST_MESSAGE(species.Dump(0));
 
-        BOOST_REQUIRE_EQUAL(6606994, species.GetCheckSum());
+        BOOST_REQUIRE_EQUAL(6714842, species.GetCheckSum());
 
         const Species test_species{"SP_ABADDONI",
             "SP_ABADDONI_DESC",

@@ -39,7 +39,8 @@ namespace parse {
         // given named_refs reference, but instead register directly here...
         auto vref = ref_envelope.OpenEnvelope(pass);
         // Signal to log an error if CurrentContent is used
-        vref->SetTopLevelContent(std::string{ValueRef::Constant<T>::no_current_content});
+        if constexpr (std::is_same_v<std::decay_t<T>, std::string>)
+            vref->SetTopLevelContent(std::string{ValueRef::Constant<std::string>::no_current_content});
         ::RegisterValueRef<T>(name, std::move(vref));
     }
 

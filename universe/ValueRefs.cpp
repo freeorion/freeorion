@@ -597,14 +597,6 @@ std::string Constant<double>::Description() const
 { return DoubleToString(m_value, 3, false); }
 
 template <>
-std::string Constant<std::string>::Description() const
-{
-    if (m_value == current_content)
-        return m_top_level_content;
-    return m_value;
-}
-
-template <>
 std::string Constant<PlanetSize>::Dump(uint8_t ntabs) const
 {
     switch (m_value) {
@@ -701,9 +693,12 @@ template <>
 std::string Constant<double>::Dump(uint8_t ntabs) const
 { return std::to_string(m_value); }
 
-template <>
-std::string Constant<std::string>::Dump(uint8_t ntabs) const
-{ return "\"" + Description() + "\""; }
+namespace StaticTests {
+    constexpr double test_val = 42.6;
+    constexpr ::ValueRef::Constant<double> cdvr(test_val);
+    static_assert(cdvr.Value() == test_val);
+    static_assert(cdvr.GetReferenceType() == ::ValueRef::ReferenceType::INVALID_REFERENCE_TYPE);
+}
 
 ///////////////////////////////////////////////////////////
 // Variable                                              //

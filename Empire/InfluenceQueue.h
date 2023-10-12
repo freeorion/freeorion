@@ -17,7 +17,7 @@ class ResourcePool;
 
 
 #if !defined(CONSTEXPR_STRING)
-#  if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 11)))
+#  if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 11))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934)))
 #    define CONSTEXPR_STRING constexpr
 #  else
 #    define CONSTEXPR_STRING
