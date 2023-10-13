@@ -69,17 +69,6 @@ StaticGraphic::StaticGraphic(SubTexture subtexture,
     SetColor(CLR_WHITE);
 }
 
-StaticGraphic::StaticGraphic(std::shared_ptr<VectorTexture> texture,
-                             Flags<GraphicStyle> style,
-                             Flags<WndFlag> flags) :
-    Control(X0, Y0, X1, Y1, flags),
-    m_vector_texture(std::move(texture)),
-    m_style(style)
-{
-    ValidateStyle();  // correct any disagreements in the style flags
-    SetColor(CLR_WHITE);
-}
-
 Rect StaticGraphic::RenderedArea() const
 {
     Pt ul = UpperLeft(), lr = LowerRight();
@@ -88,8 +77,6 @@ Rect StaticGraphic::RenderedArea() const
     Pt graphic_sz;
     if (m_graphic.GetTexture())
         graphic_sz = {m_graphic.Width(), m_graphic.Height()};
-    else if (m_vector_texture && m_vector_texture->TextureLoaded())
-        graphic_sz = m_vector_texture->Size();
 
     Pt pt1, pt2(graphic_sz); // (unscaled) default graphic size
     if (m_style & GRAPHIC_FITGRAPHIC) {
@@ -145,8 +132,6 @@ const boost::filesystem::path& StaticGraphic::GetTexturePath() const
 
     if (const Texture* texture = m_graphic.GetTexture())
         return texture->Path();
-    if (m_vector_texture && m_vector_texture->TextureLoaded())
-        return m_vector_texture->Path();
 
     return EMPTY_PATH;
 }
@@ -157,11 +142,8 @@ void StaticGraphic::Render()
     glColor(color_to_use);
     Rect rendered_area = RenderedArea();
 
-    if (m_graphic.GetTexture()) {
+    if (m_graphic.GetTexture())
         m_graphic.OrthoBlit(rendered_area.ul, rendered_area.lr);
-    } else if (m_vector_texture && m_vector_texture->TextureLoaded()) {
-        m_vector_texture->Render(rendered_area.ul, rendered_area.lr);
-    }
 }
 
 void StaticGraphic::SetStyle(Flags<GraphicStyle> style)
@@ -178,17 +160,7 @@ void StaticGraphic::SetTexture(std::shared_ptr<Texture> texture)
 }
 
 void StaticGraphic::SetTexture(SubTexture subtexture)
-{
-    m_graphic = std::move(subtexture);
-    if (m_vector_texture)
-        m_vector_texture.reset();
-}
-
-void StaticGraphic::SetTexture(std::shared_ptr<VectorTexture> vector_texture)
-{
-    m_vector_texture = std::move(vector_texture);
-    m_graphic.Clear();
-}
+{ m_graphic = std::move(subtexture); }
 
 void StaticGraphic::ValidateStyle()
 {

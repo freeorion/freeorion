@@ -31,13 +31,7 @@ ImageBlock::ImageBlock(const fs::path& path, X x, Y y, X w,
             GetTextureManager().GetTexture(path),
             GRAPHIC_PROPSCALE | GRAPHIC_SHRINKFIT | GRAPHIC_CENTER);
     } catch (const GG::Texture::BadFile&) {
-        try {
-            m_graphic = Wnd::Create<StaticGraphic>(
-                GetVectorTextureManager().GetTexture(path),
-                GRAPHIC_PROPSCALE | GRAPHIC_SHRINKFIT | GRAPHIC_CENTER);
-        } catch (const GG::Texture::BadFile&) {
-            // No can do inside GiGi.
-        }
+        // :(
     }
 }
 

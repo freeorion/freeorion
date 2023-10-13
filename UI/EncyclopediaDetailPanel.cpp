@@ -653,19 +653,6 @@ namespace {
                                                            tex_name));
              }
 
-             for (auto& [tex_name, tex] : GG::GetVectorTextureManager().Textures()) {
-                 auto texture_info_str = boost::io::str(
-                     FlexibleFormat(UserString("ENC_VECTOR_TEXTURE_INFO")) %
-                     Value(tex->Size().x) %
-                     Value(tex->Size().y) %
-                     tex->NumShapes() %
-                     tex_name);
-                 retval.emplace_back(std::piecewise_construct,
-                                     std::forward_as_tuple(tex_name),
-                                     std::forward_as_tuple(std::move(texture_info_str),
-                                                           tex_name));
-             }
-
         }
         else if (dir_name == "ENC_STRINGS") {
             // show all stringable keys and values

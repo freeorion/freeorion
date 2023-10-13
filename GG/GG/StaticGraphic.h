@@ -17,7 +17,6 @@
 
 #include <GG/Control.h>
 #include <GG/Texture.h>
-#include <GG/VectorTexture.h>
 
 
 namespace GG {
@@ -54,11 +53,6 @@ public:
                            Flags<GraphicStyle> style = GRAPHIC_NONE,
                            Flags<WndFlag> flags = NO_WND_FLAGS);
 
-    ///< creates a StaticGraphic from a pre-existing VectorTexture
-    explicit StaticGraphic(std::shared_ptr<VectorTexture> vector_texture,
-                           Flags<GraphicStyle> style = GRAPHIC_NONE,
-                           Flags<WndFlag> flags = NO_WND_FLAGS);
-
     /** Returns the style of the StaticGraphic \see GraphicStyle */
     Flags<GraphicStyle> Style() const noexcept { return m_style; }
 
@@ -68,7 +62,6 @@ public:
     Rect RenderedArea() const;
 
     const auto& GetTexture() const noexcept { return m_graphic; }
-    const auto& GetVectorTexture() const noexcept { return m_vector_texture; }
 
     const boost::filesystem::path& GetTexturePath() const;
 
@@ -80,13 +73,11 @@ public:
     /** Sets the texture */
     void SetTexture(std::shared_ptr<Texture> texture);
     void SetTexture(SubTexture subtexture);
-    void SetTexture(std::shared_ptr<VectorTexture> vector_texture);
 
 private:
     void ValidateStyle();   ///< ensures that the style flags are consistent
 
     SubTexture                      m_graphic;
-    std::shared_ptr<VectorTexture>  m_vector_texture;
     Flags<GraphicStyle>             m_style;        ///< position of texture wrt the window area
 };
 

@@ -24,15 +24,6 @@
     <Filter Include="Header Files\RichText">
       <UniqueIdentifier>{d4c017e8-2997-4a5c-90e9-83bb0aea86be}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\nanovg">
-      <UniqueIdentifier>{4603e095-151a-49f1-901e-8c72f0a2c8a9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\nanovg">
-      <UniqueIdentifier>{4abfad8b-9f2c-4aec-b4af-9e29ad35e9e2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\nanosvg">
-      <UniqueIdentifier>{3883328b-1e9c-498d-824e-7ab4d0ab77f4}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\GG\GG\Slider.h">
@@ -192,33 +183,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="..\..\GG\GG\VectorTexture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\GG\src\nanovg\fontstash.h">
-      <Filter>Header Files\nanovg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\GG\src\nanovg\nanovg.h">
-      <Filter>Header Files\nanovg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\GG\src\nanovg\nanovg_gl.h">
-      <Filter>Header Files\nanovg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\GG\src\nanovg\nanovg_gl_utils.h">
-      <Filter>Header Files\nanovg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\GG\src\nanovg\stb_image.h">
-      <Filter>Header Files\nanovg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\GG\src\nanovg\stb_truetype.h">
-      <Filter>Header Files\nanovg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\GG\src\nanosvg\nanosvg.h">
-      <Filter>Header Files\nanosvg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\GG\src\nanosvg\nanosvgrast.h">
-      <Filter>Header Files\nanosvg</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\GG\src\dialogs\FileDlg.cpp">
@@ -342,14 +306,5 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StdAfx.cpp" />
-    <ClCompile Include="..\..\GG\src\VectorTexture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\GG\src\nanovg\nanovg.c">
-      <Filter>Source Files\nanovg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\GG\src\svg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>
