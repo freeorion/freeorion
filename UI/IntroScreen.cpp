@@ -243,6 +243,13 @@ void IntroScreen::CompleteConstruction() {
                                                       GG::INTERACTIVE);
         m_logo = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::GetTexture(ClientUI::ArtDir() / "logo0104.png"),
                                                     GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    } else if (today.month() == 10 && today.day() == 31) {
+            m_splash = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::GetTexture(ClientUI::ArtDir() / "splash3110.png"),
+                                                          GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE,
+                                                          GG::INTERACTIVE);
+            m_logo = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::GetTexture(ClientUI::ArtDir() / "logo3110.png"),
+                                                        GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+
     } else {
         m_splash = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::GetTexture(ClientUI::ArtDir() / "splash.png"),
                                                       GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE,
