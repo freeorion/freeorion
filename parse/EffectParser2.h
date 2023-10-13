@@ -51,6 +51,7 @@ namespace parse::detail {
         effect_parser_rule                          set_planet_type;
         effect_parser_rule                          set_original_type;
         effect_parser_rule                          set_planet_size;
+        effect_parser_rule                          set_focus;
         effect_parser_rule                          set_species;
         string_string_int_rule                      set_species_opinion;
         effect_parser_rule                          set_owner;

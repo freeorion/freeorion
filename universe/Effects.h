@@ -256,6 +256,23 @@ private:
 
 /** Sets the species on the target to \a species_name.  This works on planets
   * and ships, but has no effect on other objects. */
+class FO_COMMON_API SetFocus final : public Effect {
+public:
+    explicit SetFocus(std::unique_ptr<ValueRef::ValueRef<std::string>>&& focus);
+
+    void Execute(ScriptingContext& context) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void SetTopLevelContent(const std::string& content_name) override;
+    [[nodiscard]] uint32_t GetCheckSum() const override;
+
+    [[nodiscard]] std::unique_ptr<Effect> Clone() const override;
+
+private:
+    std::unique_ptr<ValueRef::ValueRef<std::string>> m_focus_name;
+};
+
+/** Sets the species on the target to \a species_name.  This works on planets
+  * and ships, but has no effect on other objects. */
 class FO_COMMON_API SetSpecies final : public Effect {
 public:
     explicit SetSpecies(std::unique_ptr<ValueRef::ValueRef<std::string>>&& species);

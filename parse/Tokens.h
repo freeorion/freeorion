@@ -414,6 +414,7 @@
     (SetEmpireMeter)                            \
     (SetEmpireTechProgress)                     \
     (SetEmpireStockpile)                        \
+    (SetFocus)                                  \
     (SetFuel)                                   \
     (SetHappiness)                              \
     (SetIndustry)                               \

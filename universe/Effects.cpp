@@ -1509,6 +1509,57 @@ std::unique_ptr<Effect> SetPlanetSize::Clone() const
 
 
 ///////////////////////////////////////////////////////////
+// SetFocus                                            //
+///////////////////////////////////////////////////////////
+SetFocus::SetFocus(std::unique_ptr<ValueRef::ValueRef<std::string>>&& focus) :
+    m_focus_name(std::move(focus))
+{}
+
+void SetFocus::Execute(ScriptingContext& context) const {
+    if (!context.effect_target)
+        return;
+
+    if (context.effect_target->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+        auto planet = static_cast<Planet*>(context.effect_target);
+
+        ScriptingContext::CurrentValueVariant cvv{planet->Focus()};
+        ScriptingContext name_context{context, cvv};
+        auto new_focus = m_focus_name->Eval(name_context);
+        if (new_focus == planet->Focus())
+            return;
+
+        // only change focus if new focus is available.
+        const auto available_foci = planet->AvailableFoci(context);
+        if (std::none_of(available_foci.begin(), available_foci.end(),
+                        [&new_focus](const auto& af) { return new_focus == af; }))
+        { return; }
+
+        planet->SetFocus(std::move(new_focus), context);
+    }
+}
+
+std::string SetFocus::Dump(uint8_t ntabs) const
+{ return DumpIndent(ntabs) + "SetFocus name = " + m_focus_name->Dump(ntabs) + "\n"; }
+
+void SetFocus::SetTopLevelContent(const std::string& content_name) {
+    if (m_focus_name)
+        m_focus_name->SetTopLevelContent(content_name);
+}
+
+uint32_t SetFocus::GetCheckSum() const {
+    uint32_t retval{0};
+
+    CheckSums::CheckSumCombine(retval, "SetFocus");
+    CheckSums::CheckSumCombine(retval, m_focus_name);
+
+    TraceLogger(effects) << "GetCheckSum(SetFocus): retval: " << retval;
+    return retval;
+}
+
+std::unique_ptr<Effect> SetFocus::Clone() const
+{ return std::make_unique<SetFocus>(ValueRef::CloneUnique(m_focus_name)); }
+
+///////////////////////////////////////////////////////////
 // SetSpecies                                            //
 ///////////////////////////////////////////////////////////
 SetSpecies::SetSpecies(std::unique_ptr<ValueRef::ValueRef<std::string>>&& species) :
