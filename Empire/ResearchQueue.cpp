@@ -4,6 +4,13 @@
 #include "../universe/Tech.h"
 #include "../util/AppInterface.h"
 
+#include <utility>
+#if !defined(__cpp_lib_integer_comparison_functions)
+namespace std {
+    inline auto cmp_greater_equal(auto&& lhs, auto&& rhs) { return lhs < rhs; }
+}
+#endif
+
 namespace {
     constexpr float EPSILON = 0.01f;
 
@@ -96,7 +103,7 @@ bool ResearchQueue::Paused(const std::string& tech_name) const {
 }
 
 bool ResearchQueue::Paused(int idx) const {
-    if (idx >= static_cast<int>(m_queue.size()))
+    if (std::cmp_greater_equal(idx, m_queue.size()))
         return false;
     return std::next(begin(), idx)->paused;
 }
@@ -125,7 +132,7 @@ ResearchQueue::const_iterator ResearchQueue::find(const std::string& tech_name) 
 { return std::find_if(begin(), end(), [&tech_name](const auto& elem) { return elem.name == tech_name; }); }
 
 const ResearchQueue::Element& ResearchQueue::operator[](int i) const {
-    if (i < 0 || i >= static_cast<int>(m_queue.size()))
+    if (i < 0 || std::cmp_greater_equal(i, m_queue.size()))
         throw std::out_of_range("Tried to access ResearchQueue element out of bounds");
     return m_queue[i];
 }

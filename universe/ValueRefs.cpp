@@ -51,6 +51,14 @@ struct IUnknown; // Workaround for "combaseapi.h(229,21): error C2760: syntax er
 
 #include <boost/stacktrace.hpp>
 
+#include <utility>
+#if !defined(__cpp_lib_integer_comparison_functions)
+namespace std {
+    inline constexpr auto cmp_less(auto&& lhs, auto&& rhs) { return lhs < rhs; }
+}
+#endif
+
+
 std::string DoubleToString(double val, int digits, bool always_show_sign);
 bool UserStringExists(const std::string& str);
 
@@ -341,7 +349,7 @@ std::string ValueRefBase::InvariancePattern() const {
 
 namespace {
     constexpr MeterType NameToMeterCX(std::string_view name) noexcept {
-        for (int i = 0; i < static_cast<int>(NAME_BY_METER.size()); i++) {
+        for (int i = 0; std::cmp_less(i, NAME_BY_METER.size()); i++) {
             if (NAME_BY_METER[i] == name)
                 return static_cast<MeterType>(i - 1);
         }
@@ -376,7 +384,7 @@ std::string_view PlanetTypeToString(PlanetType planet) noexcept { return PlanetT
 namespace {
     // @return the correct PlanetType enum for a user friendly planet type string (e.g. "Ocean"), else it returns PlanetType::INVALID_PLANET_TYPE
     constexpr PlanetType StringToPlanetTypeCX(std::string_view name) noexcept {
-        for (int i = 0; i < static_cast<int>(NAME_BY_PLANET.size()); i++) {
+        for (int i = 0; std::cmp_less(i, NAME_BY_PLANET.size()); i++) {
             if (NAME_BY_PLANET[i] == name)
                 return static_cast<PlanetType>(i - 1);
         }

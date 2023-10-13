@@ -54,8 +54,13 @@
 
 #include <chrono>
 #include <thread>
-
 #include <sstream>
+#include <utility>
+#if !defined(__cpp_lib_integer_comparison_functions)
+namespace std {
+    inline auto cmp_less(auto&& lhs, auto&& rhs) { return lhs < rhs; }
+}
+#endif
 
 
 namespace fs = boost::filesystem;
@@ -576,7 +581,7 @@ void GGHumanClientApp::NewSinglePlayerGame(bool quickstart) {
     // if stored value is invalid, use a default colour
     const std::vector<EmpireColor>& empire_colours = EmpireColors();
     int colour_index = GetOptionsDB().Get<int>("setup.empire.color.index");
-    if (colour_index >= 0 && colour_index < static_cast<int>(empire_colours.size()))
+    if (colour_index >= 0 && std::cmp_less(colour_index, empire_colours.size()))
         human_player_setup_data.empire_color = empire_colours[colour_index];
     else
         human_player_setup_data.empire_color = GG::CLR_GREEN.RGBA();

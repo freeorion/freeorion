@@ -30,6 +30,13 @@
 #include <boost/python/scope.hpp>
 #include <boost/uuid/random_generator.hpp>
 
+#include <utility>
+#if !defined(__cpp_lib_integer_comparison_functions)
+namespace std {
+    inline auto cmp_less_equal(auto&& lhs, auto&& rhs) { return lhs <= rhs; }
+}
+#endif
+
 namespace py = boost::python;
 
 
@@ -462,7 +469,7 @@ namespace {
         }
 
         const ProductionQueue& queue = empire->GetProductionQueue();
-        if (queue_index < 0 || static_cast<int>(queue.size()) <= queue_index) {
+        if (queue_index < 0 || std::cmp_less_equal(queue.size(), queue_index)) {
             ErrorLogger() << "IssueChangeProductionQuantityOrder : passed queue_index outside range of items on queue.";
             return 0;
         }
@@ -500,7 +507,7 @@ namespace {
         }
 
         const ProductionQueue& queue = empire->GetProductionQueue();
-        if (old_queue_index < 0 || static_cast<int>(queue.size()) <= old_queue_index) {
+        if (old_queue_index < 0 || std::cmp_less_equal(queue.size(), old_queue_index)) {
             ErrorLogger() << "IssueRequeueProductionOrder : passed old_queue_index outside range of items on queue.";
             return 0;
         }
@@ -512,7 +519,7 @@ namespace {
         if (old_queue_index < new_queue_index)
             actual_new_index = new_queue_index - 1;
 
-        if (new_queue_index < 0 || static_cast<int>(queue.size()) <= actual_new_index) {
+        if (new_queue_index < 0 || std::cmp_less_equal(queue.size(), actual_new_index)) {
             ErrorLogger() << "IssueRequeueProductionOrder : passed new_queue_index outside range of items on queue.";
             return 0;
         }
@@ -540,7 +547,7 @@ namespace {
         }
 
         const ProductionQueue& queue = empire->GetProductionQueue();
-        if (queue_index < 0 || static_cast<int>(queue.size()) <= queue_index) {
+        if (queue_index < 0 || std::cmp_less_equal(queue.size(), queue_index)) {
             ErrorLogger() << "IssueDequeueProductionOrder : passed queue_index outside range of items on queue.";
             return 0;
         }
@@ -561,22 +568,22 @@ namespace {
     {
         ScriptingContext context;
 
-        int empire_id = AIClientApp::GetApp()->EmpireID();
-        auto empire = context.GetEmpire(empire_id);
+        const int empire_id = AIClientApp::GetApp()->EmpireID();
+        const auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IssuePauseProductionOrder : couldn't get empire with id " << empire_id;
             return 0;
         }
 
         const ProductionQueue& queue = empire->GetProductionQueue();
-        if (queue_index < 0 || static_cast<int>(queue.size()) <= queue_index) {
+        if (queue_index < 0 || std::cmp_less_equal(queue.size(), queue_index)) {
             ErrorLogger() << "IssueChangeProductionPauseOrder : passed queue_index outside range of items on queue.";
             return 0;
         }
 
-        auto queue_it = empire->GetProductionQueue().find(queue_index);
+        auto queue_it = queue.find(queue_index);
 
-        if (queue_it != empire->GetProductionQueue().end())
+        if (queue_it != queue.end())
             AIClientApp::GetApp()->Orders().IssueOrder(
                 std::make_shared<ProductionQueueOrder>(
                     ProductionQueueOrder::ProdQueueOrderAction::PAUSE_PRODUCTION,
@@ -598,7 +605,7 @@ namespace {
         }
 
         const ProductionQueue& queue = empire->GetProductionQueue();
-        if (queue_index < 0 || static_cast<int>(queue.size()) <= queue_index) {
+        if (queue_index < 0 || std::cmp_less_equal(queue.size(), queue_index)) {
             ErrorLogger() << "IssueChangeProductionStockpileOrder : passed queue_index outside range of items on queue.";
             return 0;
         }

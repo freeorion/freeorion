@@ -29,6 +29,14 @@
 
 #include <thread>
 #include <queue>
+#include <utility>
+#if !defined(__cpp_lib_integer_comparison_functions)
+namespace std {
+    inline auto cmp_less_equal(auto&& lhs, auto&& rhs) { return lhs <= rhs; }
+    inline auto cmp_not_equal(auto&& lhs, auto&& rhs) { return lhs != rhs; }
+}
+#endif
+
 
 using boost::asio::ip::tcp;
 using namespace Networking;
@@ -642,8 +650,8 @@ void ClientNetworking::Impl::HandleMessageWrite(boost::system::error_code error,
         return;
     }
 
-    assert(static_cast<int>(bytes_transferred) <= static_cast<int>(Message::HeaderBufferSize) + m_outgoing_header[Message::Parts::SIZE]);
-    if (static_cast<int>(bytes_transferred) != static_cast<int>(Message::HeaderBufferSize) + m_outgoing_header[Message::Parts::SIZE])
+    assert(std::cmp_less_equal(bytes_transferred, Message::HeaderBufferSize + m_outgoing_header[Message::Parts::SIZE]));
+    if (std::cmp_not_equal(bytes_transferred, Message::HeaderBufferSize + m_outgoing_header[Message::Parts::SIZE]))
         return;
 
     m_outgoing_messages.pop();

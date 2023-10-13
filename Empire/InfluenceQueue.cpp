@@ -9,6 +9,12 @@
 #include "../util/GameRules.h"
 #include "../util/ScopedTimer.h"
 
+#include <utility>
+#if !defined(__cpp_lib_integer_comparison_functions)
+namespace std {
+    inline auto cmp_less(auto&& lhs, auto&& rhs) { return lhs < rhs; }
+}
+#endif
 
 namespace {
 #if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
@@ -120,7 +126,7 @@ void InfluenceQueue::Update(const ScriptingContext& context,
 }
 
 void InfluenceQueue::erase(int i) {
-    if (i > 0 && i < static_cast<int>(m_queue.size()))
+    if (i > 0 && std::cmp_less(i, m_queue.size()))
         m_queue.erase(begin() + i);
 }
 
@@ -128,7 +134,7 @@ InfluenceQueue::iterator InfluenceQueue::find(const std::string& item_name)
 { return std::find_if(begin(), end(), [&](const auto& e) { return e.name == item_name; }); }
 
 InfluenceQueue::Element& InfluenceQueue::operator[](int i) {
-    assert(0 <= i && i < static_cast<int>(m_queue.size()));
+    assert(0 <= i && std::cmp_less(i, m_queue.size()));
     return m_queue[i];
 }
 
