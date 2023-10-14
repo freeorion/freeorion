@@ -75,15 +75,15 @@ OptionsDB::Option::Option(char short_name_, std::string name_, boost::any value_
                           std::unique_ptr<ValidatorBase>&& validator_, bool storable_,
                           bool flag_, bool recognized_, std::string section) :
     name(std::move(name_)),
-    short_name(short_name_),
-    storable(storable_),
-    flag(flag_),
-    recognized(recognized_),
     value(std::move(value_)),
     default_value(std::move(default_value_)),
     description(std::move(description_)),
     validator(std::move(validator_)),
-    option_changed_sig(std::make_unique<OptionChangedSignalType>())
+    option_changed_sig(std::make_unique<OptionChangedSignalType>()),
+    short_name(short_name_),
+    storable(storable_),
+    flag(flag_),
+    recognized(recognized_)
 {
     if (!validator)
         DebugLogger() << "Option " << name << " created with null validator...";

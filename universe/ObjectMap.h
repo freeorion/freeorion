@@ -669,9 +669,6 @@ std::shared_ptr<const std::decay_t<T>> ObjectMap::get(Pred pred) const
 
     using DecayT = std::decay_t<T>;
     auto& map{Map<DecayT, only_existing>()};
-    static constexpr auto raw_ptr_tx = [](const auto& p) -> const DecayT* { return p.get(); };
-    static constexpr auto ref_tx = [](const auto& p) -> const DecayT& { return *p; };
-
 
     if constexpr (is_visitor) {
         auto rng = map | range_values;
@@ -694,8 +691,7 @@ std::shared_ptr<const std::decay_t<T>> ObjectMap::get(Pred pred) const
 
     } else if constexpr (invokable_on_const_reference) {
         auto rng = map | range_values;
-        auto it = range_find_if(rng,
-                                [&pred](const auto& id_obj) { return pred(*id_obj->second); });
+        auto it = range_find_if(rng, [&pred](const auto& id_obj) { return pred(*id_obj->second); });
         return (it != rng.end()) ? it->second : nullptr;
 
     } else {
