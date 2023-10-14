@@ -169,12 +169,14 @@ DiplomaticStatus EmpireManager::GetDiplomaticStatus(int empire1, int empire2) co
     return DiplomaticStatus::INVALID_DIPLOMATIC_STATUS;
 }
 
-std::set<int> EmpireManager::GetEmpireIDsWithDiplomaticStatusWithEmpire(
+boost::container::flat_set<int> EmpireManager::GetEmpireIDsWithDiplomaticStatusWithEmpire(
     int empire_id, DiplomaticStatus diplo_status, const DiploStatusMap& statuses)
 {
-    std::set<int> retval; // TODO: flat_set ?
+    boost::container::flat_set<int> retval;
     if (empire_id == ALL_EMPIRES || diplo_status == DiplomaticStatus::INVALID_DIPLOMATIC_STATUS)
         return retval;
+    retval.reserve(statuses.size()); // probably an overestimate
+
     // find ids of empires with the specified diplomatic status with the specified empire
     for (auto const [emp1, emp2] : statuses
          | range_filter([diplo_status](const auto& ids_status) { return ids_status.second == diplo_status; })

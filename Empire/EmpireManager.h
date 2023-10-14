@@ -43,11 +43,14 @@ public:
 
     [[nodiscard]] const auto&               GetDiplomaticStatuses() const noexcept { return m_empire_diplomatic_statuses; }
     [[nodiscard]] DiplomaticStatus          GetDiplomaticStatus(int empire1, int empire2) const;
-    [[nodiscard]] std::set<int>             GetEmpireIDsWithDiplomaticStatusWithEmpire(
+
+    [[nodiscard]] boost::container::flat_set<int> GetEmpireIDsWithDiplomaticStatusWithEmpire(
         int empire_id, DiplomaticStatus diplo_status) const
     { return GetEmpireIDsWithDiplomaticStatusWithEmpire(empire_id, diplo_status, m_empire_diplomatic_statuses); }
-    [[nodiscard]] static std::set<int>      GetEmpireIDsWithDiplomaticStatusWithEmpire(
+
+    [[nodiscard]] static boost::container::flat_set<int> GetEmpireIDsWithDiplomaticStatusWithEmpire(
         int empire_id, DiplomaticStatus diplo_status, const DiploStatusMap& statuses);
+
     [[nodiscard]] bool                      DiplomaticMessageAvailable(int sender_id, int recipient_id) const;
     [[nodiscard]] const DiplomaticMessage&  GetDiplomaticMessage(int sender_id, int recipient_id) const;
 
