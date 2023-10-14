@@ -36,6 +36,12 @@
   #include <charconv>
 #endif
 #include <sstream>
+#include <utility>
+#if !defined(__cpp_lib_integer_comparison_functions)
+namespace std {
+    inline constexpr auto cmp_equal(auto&& lhs, auto&& rhs) { return lhs == rhs; }
+}
+#endif
 
 std::vector<std::string_view> SpecialNames();
 
@@ -2386,7 +2392,7 @@ public:
 
         } else if (!GetColumnName(clicked_column).empty()) { // empty columns are not sort-worthy
             this->SetSortCol(clicked_column);
-            if (old_sort_col == clicked_column) {
+            if (std::cmp_equal(old_sort_col, clicked_column)) {
                 // if previously descending sorting, switch to normal sort
                 // if previously no sorting, switch to descending sort
                 // if previously normal sort, switch to descending sort
