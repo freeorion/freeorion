@@ -66,7 +66,7 @@ struct GG_API Pt
     {}
 
 #if defined(__cpp_impl_three_way_comparison)
-    [[nodiscard]] constexpr bool operator==(const Pt&) const noexcept = default;
+    [[nodiscard]] constexpr auto operator<=>(const Pt&) const noexcept = default;
 #else
     [[nodiscard]] constexpr bool operator==(const Pt& rhs) const noexcept
     { return x == rhs.x && y == rhs.y; };
