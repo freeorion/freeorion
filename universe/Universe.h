@@ -6,6 +6,7 @@
 #include <map>
 #include <memory>
 #include <set>
+#include <span>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -343,14 +344,14 @@ public:
       * or limited versions of objects remain in empires latest known objects
       * ObjectMap, regardless of whether the empire knows the object is
       * destroyed. */
-    void Destroy(int object_id, const std::vector<int>& empire_ids,
+    void Destroy(int object_id, const std::span<const int> empire_ids,
                  bool update_destroyed_object_knowers = true);
 
     /** Destroys object with ID \a object_id, and destroys any associted
       * objects, such as contained buildings of planets, contained anything of
       * systems, or fleets if their last ship has id \a object_id and the fleet
       * is thus empty. Returns the ids of all destroyed objects. */
-    std::set<int> RecursiveDestroy(int object_id, const std::vector<int>& empire_ids);
+    std::vector<int> RecursiveDestroy(int object_id, const std::span<const int> empire_ids);
 
     /** Used by the Destroy effect to mark an object for destruction later
       * during turn processing. (objects can't be destroyed immediately as

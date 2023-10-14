@@ -67,6 +67,10 @@ namespace {
         }
         return ALL_EMPIRES;
     }
+
+    template <typename T>
+    auto to_span(const boost::container::flat_set<T>& rhs)
+    { return std::span<const T>{rhs.begin(), rhs.end()}; }
 };
 
 void Seed(unsigned int seed);
@@ -1920,18 +1924,27 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
 
     // empire elimination
     empire->Eliminate(m_empires, m_current_turn);
-    const auto& ids_as_flatset{m_empires.EmpireIDs()};
-    const std::vector<int> empire_ids{ids_as_flatset.begin(), ids_as_flatset.end()}; // TODO: avoid copy
+
+    const auto recurse_des = [this](int id) {
+        const auto& empire_ids = m_empires.EmpireIDs();
+        m_universe.RecursiveDestroy(id,
+#if (!defined(__clang_major__) || (__clang_major__ >= 16))
+                                    empire_ids
+#else
+                                    std::span<const int>(empire_ids.begin(), empire_ids.end())
+#endif
+                                   );
+        };
 
     // destroy owned ships
     for (auto* obj : m_universe.Objects().findRaw<Ship>(is_owned)) {
         obj->SetOwner(ALL_EMPIRES);
-        m_universe.RecursiveDestroy(obj->ID(), empire_ids);
+        recurse_des(obj->ID());
     }
     // destroy owned buildings
     for (auto* obj : m_universe.Objects().findRaw<Building>(is_owned)) {
         obj->SetOwner(ALL_EMPIRES);
-        m_universe.RecursiveDestroy(obj->ID(), empire_ids);
+        recurse_des(obj->ID());
     }
     // unclaim owned planets
     for (auto* planet : planets)
@@ -2876,13 +2889,13 @@ namespace {
             if (fleet->Empty()) {
                 if (system)
                     system->Remove(fleet->ID());
-                universe.Destroy(fleet->ID(), empire_ids);
+                universe.Destroy(fleet->ID(), std::span(empire_ids));
             }
         }
 
         if (system)
             system->Remove(ship->ID());
-        universe.RecursiveDestroy(ship->ID(), empire_ids); // does not count as a loss of a ship for the species / empire
+        universe.RecursiveDestroy(ship->ID(), std::span(empire_ids)); // does not count as a loss of a ship for the species / empire
 
         return true;
     }
@@ -3117,13 +3130,13 @@ namespace {
                 if (fleet->Empty()) {
                     if (system)
                         system->Remove(fleet->ID());
-                    universe.Destroy(fleet->ID(), empire_ids);
+                    universe.Destroy(fleet->ID(), std::span(empire_ids));
                 }
             }
             if (system)
                 system->Remove(ship->ID());
 
-            universe.RecursiveDestroy(ship->ID(), empire_ids); // does not count as ship loss for empire/species
+            universe.RecursiveDestroy(ship->ID(), std::span(empire_ids)); // does not count as ship loss for empire/species
         }
 
         // store invasion info in empires
@@ -3443,7 +3456,7 @@ namespace {
                 if (fleet->Empty()) {
                     if (system)
                         system->Remove(fleet_id);
-                    universe.Destroy(fleet_id, empire_ids);
+                    universe.Destroy(fleet_id, std::span(empire_ids));
                 }
             }
 
@@ -3453,7 +3466,7 @@ namespace {
                 scrapping_empire->RecordShipScrapped(*ship);
 
             //scrapped_object_ids.push_back(ship->ID());
-            universe.Destroy(ship_id, empire_ids);
+            universe.Destroy(ship_id, std::span(empire_ids));
         }
 
         auto scrapped_buildings = objects.findRaw<Building>(
@@ -3477,20 +3490,19 @@ namespace {
                 scrapping_empire->RecordBuildingScrapped(*building);
 
             //scrapped_object_ids.push_back(building->ID());
-            universe.Destroy(building->ID(), empire_ids);
+            universe.Destroy(building->ID(), std::span(empire_ids));
         }
     }
 
     /** Determines which planets are ordered annexed by empires, and sets
       * their new ownership. Returns the IDs of anything annexed. */
-    template <typename IDsT>
     std::vector<int> HandleAnnexation(EmpireManager& empires, ObjectMap& objects, int current_turn,
-                                      const IDsT& invaded_planet_ids)
+                                      const std::span<const int> invaded_planet_ids)
     {
         // collect planets ordered annexed but that aren't being invaded
         std::map<int, std::vector<Planet*>> empire_annexed_planets; // indexed by recipient empire id
         std::map<int, std::vector<Building*>> empire_annexed_buildings; // indexed by recipient empire id
-        auto annexed_not_invaded_planet = [&invaded_planet_ids](const Planet& p) {
+        auto annexed_not_invaded_planet = [invaded_planet_ids](const Planet& p) {
             return p.IsAboutToBeAnnexed() &&
                 std::none_of(invaded_planet_ids.begin(), invaded_planet_ids.end(),
                              [pid{p.ID()}](const auto iid) { return iid == pid; });
