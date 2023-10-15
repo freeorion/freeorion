@@ -1926,15 +1926,14 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
     empire->Eliminate(m_empires, m_current_turn);
 
     const auto recurse_des = [this](int id) {
-        const auto& empire_ids = m_empires.EmpireIDs();
-        m_universe.RecursiveDestroy(id,
-#if (!defined(__clang_major__) || (__clang_major__ >= 16))
-                                    empire_ids
+#if (!defined(__clang_major__) || (__clang_major__ >= 16)) && (BOOST_VERSION >= 107700)
+        m_universe.RecursiveDestroy(id, m_empires.EmpireIDs());
 #else
-                                    std::span<const int>(empire_ids.begin(), empire_ids.end())
+        const auto& empire_ids = m_empires.EmpireIDs();
+        const std::vector<int> st(empire_ids.begin(), empire_ids.end());
+        m_universe.RecursiveDestroy(id, std::span<const int>(st.begin(), st.end()));
 #endif
-                                   );
-        };
+    };
 
     // destroy owned ships
     for (auto* obj : m_universe.Objects().findRaw<Ship>(is_owned)) {
@@ -2593,18 +2592,21 @@ namespace {
         // gamestate. Standard visibility updating will then transfer the
         // modified objects / combat results to empires' known gamestate
         // ObjectMaps.
-        const auto& ids_as_flatset{empires.EmpireIDs()};
-        const std::vector<int> empire_ids{ids_as_flatset.begin(), ids_as_flatset.end()}; // TODO: avoid copy?
+
+        const auto empire_ids = 
+#if (!defined(__clang_major__) || (__clang_major__ >= 16)) && (BOOST_VERSION >= 107700)
+            std::span<const int>(empires.EmpireIDs());
+#else
+            [empires_ids_vec{std::vector<int>(empires.EmpireIDs().begin(), empires.EmpireIDs().end())}]()
+            { return std::span<const int>(empires_ids_vec.begin(), empires_ids_vec.end()); }();
+#endif
 
         for (const CombatInfo& combat_info : combats) {
             // update visibilities from combat, in case anything was revealed
             // by shooting during combat
-            for (const auto& empire_vis : combat_info.empire_object_visibility) {
-                for (const auto& object_vis : empire_vis.second) {
-                    if (object_vis.first < 0)
-                        continue;   // temporary fighter IDs
-                    universe.SetEmpireObjectVisibility(empire_vis.first, object_vis.first, object_vis.second);  // does not lower visibility
-                }
+            for (const auto& [vis_empire_id, empire_vis] : combat_info.empire_object_visibility) {
+                for (const auto& [vis_object_id, object_vis] : empire_vis | range_filter([](auto id) { return id.first >= 0; }))
+                    universe.SetEmpireObjectVisibility(vis_empire_id, vis_object_id, object_vis);  // does not lower visibility
             }
 
 
@@ -2834,7 +2836,7 @@ namespace {
     }
 
     /** Does colonization, with safety checks */
-    bool ColonizePlanet(int ship_id, int planet_id, ScriptingContext& context, const std::vector<int>& empire_ids) {
+    bool ColonizePlanet(int ship_id, int planet_id, ScriptingContext& context, const std::span<const int> empire_ids) {
         auto& objects = context.ContextObjects();
         auto& universe = context.ContextUniverse();
 
@@ -2907,8 +2909,13 @@ namespace {
     [[nodiscard]] std::pair<std::vector<int>, std::vector<int>> HandleColonization(ScriptingContext& context) {
         Universe& universe = context.ContextUniverse();
         ObjectMap& objects = context.ContextObjects();
-        const auto& ids_as_flatset{context.EmpireIDs()};
-        const std::vector<int> empire_ids{ids_as_flatset.begin(), ids_as_flatset.end()}; // TODO: avoid copy?
+        const auto empire_ids = 
+#if (!defined(__clang_major__) || (__clang_major__ >= 16)) && (BOOST_VERSION >= 107700)
+            std::span<const int>(context.EmpireIDs());
+#else
+            [empires_ids_vec{std::vector<int>(context.EmpireIDs().begin(), context.EmpireIDs().end())}]()
+            { return std::span<const int>(empires_ids_vec.begin(), empires_ids_vec.end()); }();
+#endif
 
         // collect, for each planet, what ships have been ordered to colonize it
         std::map<int, std::map<int, std::set<int>>> planet_empire_colonization_ship_ids; // map from planet ID to map from empire ID to set of ship IDs
