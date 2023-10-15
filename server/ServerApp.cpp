@@ -3091,8 +3091,14 @@ namespace {
         Universe& universe = context.ContextUniverse();
         ObjectMap& objects = context.ContextObjects();
         EmpireManager& empires = context.Empires();
-        const auto& ids_as_flatset{context.EmpireIDs()};
-        const std::vector<int> empire_ids{ids_as_flatset.begin(), ids_as_flatset.end()}; // TODO: avoid copy?
+        const auto empire_ids = 
+#if (!defined(__clang_major__) || (__clang_major__ >= 16)) && (BOOST_VERSION >= 107700)
+            std::span<const int>(context.EmpireIDs());
+#else
+            [empires_ids_vec{std::vector<int>(context.EmpireIDs().begin(), context.EmpireIDs().end())}]()
+            { return std::span<const int>(empires_ids_vec.begin(), empires_ids_vec.end()); }();
+#endif
+
 
         // collect ships that are invading and the troops they carry
         for (auto* ship : objects.findRaw<Ship>([&universe](const Ship& s) {
@@ -3299,10 +3305,11 @@ namespace {
 
     /** Determines which fleets or planets ordered given to other empires,
       * and sets their new ownership. Returns the IDs of anything gifted. */
-    template <typename IDsT>
     std::vector<int> HandleGifting(EmpireManager& empires, ObjectMap& objects, int current_turn,
-                                   const IDsT& invaded_planet_ids, const IDsT& invading_ship_ids,
-                                   const IDsT& colonizing_ship_ids, const IDsT& annexed_planets_ids) // TODO: disallow annexed planets
+                                   const std::span<const int> invaded_planet_ids,
+                                   const std::span<const int> invading_ship_ids,
+                                   const std::span<const int> colonizing_ship_ids,
+                                   const std::span<const int> annexed_planets_ids) // TODO: disallow annexed planets
     {
         // determine system IDs where empires can receive gifts
         std::map<int, std::set<int>> empire_receiving_locations;
@@ -3328,7 +3335,7 @@ namespace {
             return it != empire_receiving_locations.end() &&
                 it->second.contains(f.OrderedGivenToEmpire());
         };
-        auto not_invading_not_colonizing_ship = [&invading_ship_ids, &colonizing_ship_ids](const Ship& s) {
+        auto not_invading_not_colonizing_ship = [invading_ship_ids, colonizing_ship_ids](const Ship& s) {
             return std::none_of(invading_ship_ids.begin(), invading_ship_ids.end(),
                                 [sid{s.ID()}] (const auto iid) { return iid == sid; }) &&
                 std::none_of(colonizing_ship_ids.begin(), colonizing_ship_ids.end(),
@@ -3351,7 +3358,7 @@ namespace {
         std::map<int, std::vector<Planet*>> empire_gifted_planets; // indexed by recipient empire id
         std::map<int, std::vector<Building*>> empire_gifted_buildings;
         auto owned_given_not_invaded_planet =
-            [&invaded_planet_ids, &empire_receiving_locations](const Planet& p)
+            [invaded_planet_ids, &empire_receiving_locations](const Planet& p)
         {
             if (p.Unowned() ||
                 p.OrderedGivenToEmpire() == ALL_EMPIRES ||
@@ -3433,8 +3440,14 @@ namespace {
                          const IDsT& gifted_ids, const IDsT& annexed_planet_ids) // TODO: disallow scrapping during annexation
     {
         ObjectMap& objects{universe.Objects()};
-        const auto& ids_as_flatset{empires.EmpireIDs()};
-        const std::vector<int> empire_ids{ids_as_flatset.begin(), ids_as_flatset.end()}; // TODO: avoid copy?
+        const auto empire_ids = 
+#if (!defined(__clang_major__) || (__clang_major__ >= 16)) && (BOOST_VERSION >= 107700)
+            std::span<const int>(empires.EmpireIDs());
+#else
+            [empires_ids_vec{std::vector<int>(empires.EmpireIDs().begin(), empires.EmpireIDs().end())}]()
+            { return std::span<const int>(empires_ids_vec.begin(), empires_ids_vec.end()); }();
+#endif
+
 
         // only scap ships that aren't being gifted and that aren't invading or colonizing this turn
         const auto scrapped_ships = objects.findRaw<Ship>(
@@ -3601,8 +3614,13 @@ namespace {
     void CleanEmptyFleets(ScriptingContext& context) {
         Universe& universe{context.ContextUniverse()};
         ObjectMap& objects{context.ContextObjects()};
-        const auto& ids_as_flatset{context.EmpireIDs()};
-        const std::vector<int> empire_ids{ids_as_flatset.begin(), ids_as_flatset.end()}; // TODO: avoid copy?
+        const auto empire_ids = 
+#if (!defined(__clang_major__) || (__clang_major__ >= 16)) && (BOOST_VERSION >= 107700)
+            std::span<const int>(context.EmpireIDs());
+#else
+            [empires_ids_vec{std::vector<int>(context.EmpireIDs().begin(), context.EmpireIDs().end())}]()
+            { return std::span<const int>(empires_ids_vec.begin(), empires_ids_vec.end()); }();
+#endif
 
         // need to remove empty fleets from systems and call RecursiveDestroy for each fleet
 
