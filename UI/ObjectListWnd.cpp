@@ -1661,7 +1661,7 @@ private:
 class ObjectRow : public GG::ListBox::Row {
 public:
     ObjectRow(GG::X w, GG::Y h, std::shared_ptr<const UniverseObject> obj, bool expanded,
-              int container_object_panel, const std::span<int> contained_object_panels,
+              int container_object_panel, const std::span<const int> contained_object_panels,
               int indent) :
         GG::ListBox::Row(w, h),
         m_container_object_panel(container_object_panel),
@@ -1709,8 +1709,15 @@ public:
     auto& ContainedPanels() const noexcept
     { return m_contained_object_panels; }
 
-    void SetContainedPanels(const std::set<int>& contained_object_panels) {
-        m_contained_object_panels = contained_object_panels;
+    void SetContainedPanels(boost::container::flat_set<int>&& contained_object_panels) {
+        m_contained_object_panels = std::move(contained_object_panels);
+        m_panel->SetHasContents(!m_contained_object_panels.empty());
+        m_panel->RequirePreRender();
+    }
+
+    void SetContainedPanels(const std::span<const int> contained_object_panels) {
+        m_contained_object_panels.clear();
+        m_contained_object_panels.insert(contained_object_panels.begin(), contained_object_panels.end());
         m_panel->SetHasContents(!m_contained_object_panels.empty());
         m_panel->RequirePreRender();
     }
@@ -1736,7 +1743,7 @@ public:
 private:
     std::shared_ptr<ObjectPanel>            m_panel;
     int                                     m_container_object_panel;
-    std::set<int>                           m_contained_object_panels;
+    boost::container::flat_set<int>         m_contained_object_panels;
     std::shared_ptr<const UniverseObject>   m_obj_init;
     int                                     m_indent_init = 0;
     bool                                    m_expanded_init = false;
@@ -2420,11 +2427,11 @@ public:
     mutable boost::signals2::signal<void ()> ExpandCollapseSignal;
 
 private:
-    void AddObjectRow(int object_id, int container, int indent, const std::span<int> contents)
+    void AddObjectRow(int object_id, int container, int indent, const std::span<const int> contents)
     { AddObjectRow(Objects().get(object_id), container, indent, contents); }
 
     void AddObjectRow(std::shared_ptr<const UniverseObject> obj, int container,
-                      int indent, const std::span<int> contents = {})
+                      int indent, const std::span<const int> contents = {})
     {
         if (!obj)
             return;
@@ -2468,12 +2475,9 @@ private:
         for (auto& row : *this) {
             if (ObjectRow* object_row = dynamic_cast<ObjectRow*>(row.get())) {
                 if (object_row->ObjectID() == container_object_id) {
-                    std::set<int> new_contents;
-                    for (int content_id : object_row->ContainedPanels()) {
-                        if (content_id != object_id)
-                            new_contents.insert(content_id);
-                    }
-                    object_row->SetContainedPanels(new_contents);
+                    auto new_contents{object_row->ContainedPanels()};
+                    new_contents.erase(object_id);
+                    object_row->SetContainedPanels(std::move(new_contents));
                     object_row->Update();
                     break;
                 }
@@ -2489,7 +2493,7 @@ private:
         ObjectRow* object_row = dynamic_cast<ObjectRow*>(it->get());
 
         // recursively remove contained rows first
-        const std::set<int>& contents = object_row->ContainedPanels();
+        const auto& contents = object_row->ContainedPanels();
         for (unsigned int i = 0; i < contents.size(); ++i) {
             GG::ListBox::iterator next_it = it; ++next_it;
             if (next_it == this->end())
