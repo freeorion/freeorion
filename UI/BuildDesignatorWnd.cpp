@@ -1527,8 +1527,8 @@ void BuildDesignatorWnd::ToggleAvailabilitly(bool available, bool refresh_list) 
     }
 }
 
-void BuildDesignatorWnd::ShowBuildingTypeInEncyclopedia(const std::string& building_type)
-{ m_enc_detail_panel->SetBuildingType(building_type); }
+void BuildDesignatorWnd::ShowBuildingTypeInEncyclopedia(std::string building_type)
+{ m_enc_detail_panel->SetBuildingType(std::move(building_type)); }
 
 void BuildDesignatorWnd::ShowShipDesignInEncyclopedia(int design_id)
 { m_enc_detail_panel->SetDesign(design_id); }
@@ -1536,26 +1536,26 @@ void BuildDesignatorWnd::ShowShipDesignInEncyclopedia(int design_id)
 void BuildDesignatorWnd::ShowPlanetInEncyclopedia(int planet_id)
 { m_enc_detail_panel->SetPlanet(planet_id); }
 
-void BuildDesignatorWnd::ShowTechInEncyclopedia(const std::string& tech_name)
-{ m_enc_detail_panel->SetTech(tech_name); }
+void BuildDesignatorWnd::ShowTechInEncyclopedia(std::string tech_name)
+{ m_enc_detail_panel->SetTech(std::move(tech_name)); }
 
-void BuildDesignatorWnd::ShowPolicyInEncyclopedia(const std::string& policy_name)
-{ m_enc_detail_panel->SetPolicy(policy_name); }
+void BuildDesignatorWnd::ShowPolicyInEncyclopedia(std::string policy_name)
+{ m_enc_detail_panel->SetPolicy(std::move(policy_name)); }
 
-void BuildDesignatorWnd::ShowShipPartInEncyclopedia(const std::string& part_name)
-{ m_enc_detail_panel->SetShipPart(part_name); }
+void BuildDesignatorWnd::ShowShipPartInEncyclopedia(std::string part_name)
+{ m_enc_detail_panel->SetShipPart(std::move(part_name)); }
 
-void BuildDesignatorWnd::ShowSpeciesInEncyclopedia(const std::string& species_name)
-{ m_enc_detail_panel->SetSpecies(species_name); }
+void BuildDesignatorWnd::ShowSpeciesInEncyclopedia(std::string species_name)
+{ m_enc_detail_panel->SetSpecies(std::move(species_name)); }
 
 void BuildDesignatorWnd::ShowEmpireInEncyclopedia(int empire_id)
 { m_enc_detail_panel->SetEmpire(empire_id); }
 
-void BuildDesignatorWnd::ShowSpecialInEncyclopedia(const std::string& special_name)
-{ m_enc_detail_panel->SetSpecial(special_name); }
+void BuildDesignatorWnd::ShowSpecialInEncyclopedia(std::string special_name)
+{ m_enc_detail_panel->SetSpecial(std::move(special_name)); }
 
-void BuildDesignatorWnd::ShowFieldTypeInEncyclopedia(const std::string& field_type_name)
-{ m_enc_detail_panel->SetFieldType(field_type_name); }
+void BuildDesignatorWnd::ShowFieldTypeInEncyclopedia(std::string field_type_name)
+{ m_enc_detail_panel->SetFieldType(std::move(field_type_name)); }
 
 void BuildDesignatorWnd::ShowPedia() {
     m_enc_detail_panel->Refresh();

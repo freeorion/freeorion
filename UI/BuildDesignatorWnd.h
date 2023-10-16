@@ -79,16 +79,16 @@ public:
     void ToggleAvailabilitly(bool available, bool refresh_list = true);
 
     /** Open a pedia entry on the encyclopedia */
-    void ShowBuildingTypeInEncyclopedia(const std::string& building_type);
+    void ShowBuildingTypeInEncyclopedia(std::string building_type);
     void ShowShipDesignInEncyclopedia(int design_id);
     void ShowPlanetInEncyclopedia(int planet_id);
-    void ShowTechInEncyclopedia(const std::string& tech_name);
-    void ShowPolicyInEncyclopedia(const std::string& policy_name);
-    void ShowShipPartInEncyclopedia(const std::string& part_name);
-    void ShowSpeciesInEncyclopedia(const std::string& species_name);
+    void ShowTechInEncyclopedia(std::string tech_name);
+    void ShowPolicyInEncyclopedia(std::string policy_name);
+    void ShowShipPartInEncyclopedia(std::string part_name);
+    void ShowSpeciesInEncyclopedia(std::string species_name);
     void ShowEmpireInEncyclopedia(int empire_id);
-    void ShowSpecialInEncyclopedia(const std::string& special_name);
-    void ShowFieldTypeInEncyclopedia(const std::string& field_type_name);
+    void ShowSpecialInEncyclopedia(std::string special_name);
+    void ShowFieldTypeInEncyclopedia(std::string field_type_name);
 
     /** Show or hide the encyclopedia detail panel */
     void ShowPedia();
