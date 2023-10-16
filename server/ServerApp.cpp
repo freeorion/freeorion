@@ -3453,7 +3453,7 @@ namespace {
 
         // only scap ships that aren't being gifted and that aren't invading or colonizing this turn
         const auto scrapped_ships = objects.findRaw<Ship>(
-            [&invading_ship_ids, &colonizing_ship_ids, &gifted_ids](const Ship* s) {
+            [invading_ship_ids, colonizing_ship_ids, gifted_ids](const Ship* s) {
                 return s->OrderedScrapped() &&
                     std::none_of(gifted_ids.begin(), gifted_ids.end(),
                                  [sid{s->ID()}](const auto gid) { return gid == sid; }) &&
@@ -3478,7 +3478,7 @@ namespace {
                 if (fleet->Empty()) {
                     if (system)
                         system->Remove(fleet_id);
-                    universe.Destroy(fleet_id, std::span(empire_ids));
+                    universe.Destroy(fleet_id, empire_ids);
                 }
             }
 
@@ -3488,11 +3488,11 @@ namespace {
                 scrapping_empire->RecordShipScrapped(*ship);
 
             //scrapped_object_ids.push_back(ship->ID());
-            universe.Destroy(ship_id, std::span(empire_ids));
+            universe.Destroy(ship_id, empire_ids);
         }
 
         auto scrapped_buildings = objects.findRaw<Building>(
-            [&invaded_planet_ids, &gifted_ids](const Building* b) {
+            [invaded_planet_ids, gifted_ids](const Building* b) {
                 return b->OrderedScrapped() &&
                     std::none_of(gifted_ids.begin(), gifted_ids.end(),
                                  [bid{b->ID()}](const auto gid) { return gid == bid; }) &&
@@ -3512,7 +3512,7 @@ namespace {
                 scrapping_empire->RecordBuildingScrapped(*building);
 
             //scrapped_object_ids.push_back(building->ID());
-            universe.Destroy(building->ID(), std::span(empire_ids));
+            universe.Destroy(building->ID(), empire_ids);
         }
     }
 
