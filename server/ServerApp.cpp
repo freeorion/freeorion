@@ -3433,11 +3433,13 @@ namespace {
     }
 
     /** Destroys suitable objects that have been ordered scrapped.*/
-    template <typename IDsT>
     void HandleScrapping(Universe& universe, EmpireManager& empires,
-                         const IDsT& invading_ship_ids, const IDsT& invaded_planet_ids,
-                         const IDsT& colonizing_ship_ids, const IDsT& colonized_planet_ids,
-                         const IDsT& gifted_ids, const IDsT& annexed_planet_ids) // TODO: disallow scrapping during annexation
+                         const std::span<const int> invading_ship_ids,
+                         const std::span<const int> invaded_planet_ids,
+                         const std::span<const int> colonizing_ship_ids,
+                         const std::span<const int> colonized_planet_ids,
+                         const std::span<const int> gifted_ids,
+                         const std::span<const int> annexed_planet_ids) // TODO: disallow scrapping during annexation
     {
         ObjectMap& objects{universe.Objects()};
         const auto empire_ids = 
