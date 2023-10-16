@@ -1,4 +1,8 @@
 <p align="center">
+ <img alt="" src="./default/data/art/logo.png" width=500 align="center">
+</p>
+
+<p align="center">
     <a href="https://github.com/freeorion/freeorion/releases">
         <img src="https://img.shields.io/github/v/tag/freeorion/freeorion"
             alt="Tag"></a>
