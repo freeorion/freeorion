@@ -33,35 +33,16 @@ public:
     void Reset(const ScriptingContext& context);
     void Update(const ScriptingContext& context);
 
-    //! Shows \a building_type in production encyclopedia window
-    void ShowBuildingTypeInEncyclopedia(const std::string& building_type);
-
-    //! Shows ShipDesign with id \a design_id in production encyclopedia window
-    void ShowShipDesignInEncyclopedia(int design_id);
-
-    //! Shows \a planet in production encyclopedia window
-    void ShowPlanetInEncyclopedia(int planet_id);
-
-    //! Shows \a tech in production encyclopedia window
-    void ShowTechInEncyclopedia(const std::string& tech_name);
-
-    //! Shows @a policy_name in production encyclopedia window
-    void ShowPolicyInEncyclopedia(const std::string& policy_name);
-
-    //! Shows @a part_name in production encyclopedia window
-    void ShowShipPartInEncyclopedia(const std::string& part_name);
-
-    //! Shows \a species in production encyclopedia window
-    void ShowSpeciesInEncyclopedia(const std::string& species_name);
-
-    //! Shows \a empire in production encyclopedia window
-    void ShowEmpireInEncyclopedia(int empire_id);
-
-    //! Shows \a special in production encyclopedia window
-    void ShowSpecialInEncyclopedia(const std::string& special_name);
-
-    //! Shows \a field_type in production encyclopedia window
-    void ShowFieldTypeInEncyclopedia(const std::string& field_type_name);
+    void ShowBuildingTypeInEncyclopedia(std::string building_type); //! Shows \a building_type in production encyclopedia window
+    void ShowShipDesignInEncyclopedia(int design_id);               //! Shows ShipDesign with id \a design_id in production encyclopedia window
+    void ShowPlanetInEncyclopedia(int planet_id);                   //! Shows \a planet in production encyclopedia window
+    void ShowTechInEncyclopedia(std::string tech_name);             //! Shows \a tech in production encyclopedia window
+    void ShowPolicyInEncyclopedia(std::string policy_name);         //! Shows @a policy_name in production encyclopedia window
+    void ShowShipPartInEncyclopedia(std::string part_name);         //! Shows @a part_name in production encyclopedia window
+    void ShowSpeciesInEncyclopedia(std::string species_name);       //! Shows \a species in production encyclopedia window
+    void ShowEmpireInEncyclopedia(int empire_id);                   //! Shows \a empire in production encyclopedia window
+    void ShowSpecialInEncyclopedia(std::string special_name);       //! Shows \a special in production encyclopedia window
+    void ShowFieldTypeInEncyclopedia(std::string field_type_name);  //! Shows \a field_type in production encyclopedia window
 
     //! Change visibility of production encyclopdia panel
     void ShowPedia();

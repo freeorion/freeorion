@@ -997,8 +997,8 @@ void ProductionWnd::Update(const ScriptingContext& context) {
     m_build_designator_wnd->Update();
 }
 
-void ProductionWnd::ShowBuildingTypeInEncyclopedia(const std::string& building_type)
-{ m_build_designator_wnd->ShowBuildingTypeInEncyclopedia(building_type); }
+void ProductionWnd::ShowBuildingTypeInEncyclopedia(std::string building_type)
+{ m_build_designator_wnd->ShowBuildingTypeInEncyclopedia(std::move(building_type)); }
 
 void ProductionWnd::ShowShipDesignInEncyclopedia(int design_id)
 { m_build_designator_wnd->ShowShipDesignInEncyclopedia(design_id); }
@@ -1006,26 +1006,26 @@ void ProductionWnd::ShowShipDesignInEncyclopedia(int design_id)
 void ProductionWnd::ShowPlanetInEncyclopedia(int planet_id)
 { m_build_designator_wnd->ShowPlanetInEncyclopedia(planet_id); }
 
-void ProductionWnd::ShowTechInEncyclopedia(const std::string& tech_name)
-{ m_build_designator_wnd->ShowTechInEncyclopedia(tech_name); }
+void ProductionWnd::ShowTechInEncyclopedia(std::string tech_name)
+{ m_build_designator_wnd->ShowTechInEncyclopedia(std::move(tech_name)); }
 
-void ProductionWnd::ShowPolicyInEncyclopedia(const std::string& policy_name)
-{ m_build_designator_wnd->ShowPolicyInEncyclopedia(policy_name); }
+void ProductionWnd::ShowPolicyInEncyclopedia(std::string policy_name)
+{ m_build_designator_wnd->ShowPolicyInEncyclopedia(std::move(policy_name)); }
 
-void ProductionWnd::ShowShipPartInEncyclopedia(const std::string& part_name)
-{ m_build_designator_wnd->ShowShipPartInEncyclopedia(part_name); }
+void ProductionWnd::ShowShipPartInEncyclopedia(std::string part_name)
+{ m_build_designator_wnd->ShowShipPartInEncyclopedia(std::move(part_name)); }
 
-void ProductionWnd::ShowSpeciesInEncyclopedia(const std::string& species_name)
-{ m_build_designator_wnd->ShowSpeciesInEncyclopedia(species_name); }
+void ProductionWnd::ShowSpeciesInEncyclopedia(std::string species_name)
+{ m_build_designator_wnd->ShowSpeciesInEncyclopedia(std::move(species_name)); }
 
 void ProductionWnd::ShowEmpireInEncyclopedia(int empire_id)
 { m_build_designator_wnd->ShowEmpireInEncyclopedia(empire_id); }
 
-void ProductionWnd::ShowSpecialInEncyclopedia(const std::string& special_name)
-{ m_build_designator_wnd->ShowSpecialInEncyclopedia(special_name); }
+void ProductionWnd::ShowSpecialInEncyclopedia(std::string special_name)
+{ m_build_designator_wnd->ShowSpecialInEncyclopedia(std::move(special_name)); }
 
-void ProductionWnd::ShowFieldTypeInEncyclopedia(const std::string& field_type_name)
-{ m_build_designator_wnd->ShowFieldTypeInEncyclopedia(field_type_name); }
+void ProductionWnd::ShowFieldTypeInEncyclopedia(std::string field_type_name)
+{ m_build_designator_wnd->ShowFieldTypeInEncyclopedia(std::move(field_type_name)); }
 
 void ProductionWnd::ShowPedia()
 { m_build_designator_wnd->ShowPedia(); }
