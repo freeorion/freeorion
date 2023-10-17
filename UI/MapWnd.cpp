@@ -4365,11 +4365,11 @@ void MapWnd::ShowTech(const std::string& tech_name) {
         m_research_wnd->ShowTech(tech_name);
     if (m_in_production_view_mode) {
         m_production_wnd->ShowPedia();
-        m_production_wnd->ShowTechInEncyclopedia(tech_name);
+        m_production_wnd->ShowTechInEncyclopedia(tech_name); // TODO: move
     } else {
         if (!m_pedia_panel->Visible())
             TogglePedia();
-        m_pedia_panel->SetTech(tech_name);
+        m_pedia_panel->SetTech(tech_name); // TODO: move
     }
 }
 
@@ -4429,36 +4429,36 @@ void MapWnd::ShowShipDesign(int design_id) {
     }
 }
 
-void MapWnd::ShowSpecial(const std::string& special_name) {
+void MapWnd::ShowSpecial(std::string special_name) {
     if (m_production_wnd->Visible()) {
         m_production_wnd->ShowPedia();
-        m_production_wnd->ShowSpecialInEncyclopedia(special_name);
+        m_production_wnd->ShowSpecialInEncyclopedia(std::move(special_name));
     } else {
         if (!m_pedia_panel->Visible())
             TogglePedia();
-        m_pedia_panel->SetSpecial(special_name);
+        m_pedia_panel->SetSpecial(std::move(special_name));
     }
 }
 
-void MapWnd::ShowSpecies(const std::string& species_name) {
+void MapWnd::ShowSpecies(std::string species_name) {
     if (m_production_wnd->Visible()) {
         m_production_wnd->ShowPedia();
-        m_production_wnd->ShowSpeciesInEncyclopedia(species_name);
+        m_production_wnd->ShowSpeciesInEncyclopedia(std::move(species_name));
     } else {
         if (!m_pedia_panel->Visible())
             TogglePedia();
-        m_pedia_panel->SetSpecies(species_name);
+        m_pedia_panel->SetSpecies(std::move(species_name));
     }
 }
 
-void MapWnd::ShowFieldType(const std::string& field_type_name) {
+void MapWnd::ShowFieldType(std::string field_type_name) {
     if (m_production_wnd->Visible()) {
         m_production_wnd->ShowPedia();
-        m_production_wnd->ShowFieldTypeInEncyclopedia(field_type_name);
+        m_production_wnd->ShowFieldTypeInEncyclopedia(std::move(field_type_name));
     } else {
         if (!m_pedia_panel->Visible())
             TogglePedia();
-        m_pedia_panel->SetFieldType(field_type_name);
+        m_pedia_panel->SetFieldType(std::move(field_type_name));
     }
 }
 
@@ -4474,9 +4474,9 @@ void MapWnd::ShowEmpire(int empire_id) {
     }
 }
 
-void MapWnd::ShowMeterTypeArticle(const std::string& meter_string) {
+void MapWnd::ShowMeterTypeArticle(std::string meter_string) {
     ShowPedia();
-    m_pedia_panel->SetMeterType(meter_string);
+    m_pedia_panel->SetMeterType(std::move(meter_string));
 }
 
 void MapWnd::ShowMeterTypeArticle(MeterType meter_type) {
@@ -4484,20 +4484,15 @@ void MapWnd::ShowMeterTypeArticle(MeterType meter_type) {
     m_pedia_panel->SetMeterType(meter_type);
 }
 
-void MapWnd::ShowEncyclopediaEntry(const std::string& str) {
+void MapWnd::ShowEncyclopediaEntry(std::string str) {
     if (!m_pedia_panel->Visible())
         TogglePedia();
-    m_pedia_panel->SetEncyclopediaArticle(str);
+    m_pedia_panel->SetEncyclopediaArticle(std::move(str));
 }
 
 void MapWnd::CenterOnObject(int id) {
     if (auto obj = Objects().get(id))
         CenterOnMapCoord(obj->X(), obj->Y());
-}
-
-void MapWnd::CenterOnObject(std::shared_ptr<const UniverseObject> obj) {
-    if (!obj) return;
-    CenterOnMapCoord(obj->X(), obj->Y());
 }
 
 void MapWnd::ReselectLastSystem() {

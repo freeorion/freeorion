@@ -143,9 +143,8 @@ public:
 
     void CenterOnMapCoord(double x, double y);                   //!< centers the map on map position (x, y)
     void CenterOnObject(int id);                                 //!< centers the map on object with id \a id
-
-    /** Centers the map on object \a id. */
-    void CenterOnObject(std::shared_ptr<const UniverseObject> obj);
+    void CenterOnObject(const auto& obj)
+    { if (obj) CenterOnMapCoord(obj->X(), obj->Y()); }
 
     void ShowPlanet(int planet_id);                              //!< brings up encyclopedia panel and displays info about the planet
     void ShowCombatLog(int log_id);                              //!< brings up encyclopedia panel and displays info about the combat
@@ -161,14 +160,14 @@ public:
     //! @p ship_hull_name
     void ShowShipHull(const std::string& ship_hull_name);
 
-    void ShowShipDesign(int design_id);                          //!< brings up the production screen and displays info about the buildtype \a type_name
-    void ShowSpecial(const std::string& special_name);           //!< brings up encyclopedia panel and displays info about the special with name \a special_name
-    void ShowSpecies(const std::string& species_name);           //!< brings up encyclopedia panel and displays info about the species with name \a species_name
-    void ShowFieldType(const std::string& field_type_name);      //!< brings up encyclopedia panel and displays info about the field type with name \a field_type_name
-    void ShowEmpire(int empire_id);                              //!< brings up encyclopedia panel and displays info about the empire with id \a empire_id
-    void ShowMeterTypeArticle(const std::string& meter_string);  //!< brings up encyclopedia panel and displays info about the MeterType @a meter_type
-    void ShowMeterTypeArticle(MeterType meter_type);             //!< brings up encyclopedia panel and displays info about the MeterType @a meter_type
-    void ShowEncyclopediaEntry(const std::string& str);          //!< brings up encyclopedia panel and displays info about the specified string \a str
+    void ShowShipDesign(int design_id);                  //!< brings up the production screen and displays info about the buildtype \a type_name
+    void ShowSpecial(std::string special_name);          //!< brings up encyclopedia panel and displays info about the special with name \a special_name
+    void ShowSpecies(std::string species_name);          //!< brings up encyclopedia panel and displays info about the species with name \a species_name
+    void ShowFieldType(std::string field_type_name);     //!< brings up encyclopedia panel and displays info about the field type with name \a field_type_name
+    void ShowEmpire(int empire_id);                      //!< brings up encyclopedia panel and displays info about the empire with id \a empire_id
+    void ShowMeterTypeArticle(std::string meter_string); //!< brings up encyclopedia panel and displays info about the MeterType @a meter_type
+    void ShowMeterTypeArticle(MeterType meter_type);     //!< brings up encyclopedia panel and displays info about the MeterType @a meter_type
+    void ShowEncyclopediaEntry(std::string str);         //!< brings up encyclopedia panel and displays info about the specified string \a str
 
     void SelectSystem(int systemID); //!< programatically selects systems on map, sidepanel, and production screen.  catches signals from these when the user changes the selected system
     void ReselectLastSystem();       //!< re-selects the most recently selected system, if a valid one exists

@@ -518,11 +518,11 @@ void ResearchWnd::Update(const ScriptingContext& context)
 void ResearchWnd::CenterOnTech(const std::string& tech_name)
 { m_tech_tree_wnd->CenterOnTech(tech_name); }
 
-void ResearchWnd::ShowTech(const std::string& tech_name, bool force) {
+void ResearchWnd::ShowTech(std::string tech_name, bool force) {
     m_tech_tree_wnd->SetEncyclopediaTech(tech_name);
     if (force || m_tech_tree_wnd->TechIsVisible(tech_name)) {
         m_tech_tree_wnd->CenterOnTech(tech_name);
-        m_tech_tree_wnd->SelectTech(tech_name);
+        m_tech_tree_wnd->SelectTech(std::move(tech_name));
     }
 }
 
@@ -538,8 +538,8 @@ void ResearchWnd::TogglePedia()
 bool ResearchWnd::PediaVisible()
 { return m_tech_tree_wnd->PediaVisible(); }
 
-void ResearchWnd::QueueItemMoved(const GG::ListBox::iterator& row_it,
-                                 const GG::ListBox::iterator& original_position_it)
+void ResearchWnd::QueueItemMoved(GG::ListBox::iterator row_it,
+                                 GG::ListBox::iterator original_position_it)
 {
     if (!m_enabled)
         return;
