@@ -47,12 +47,9 @@ struct FO_COMMON_API InfluenceQueue {
         void serialize(Archive& ar, const unsigned int version);
     };
 
-    typedef std::deque<Element> QueueType;
-
-    /** The InfluenceQueue iterator type.  Dereference yields a Element. */
-    typedef QueueType::iterator iterator;
-    /** The const InfluenceQueue iterator type.  Dereference yields a Element. */
-    typedef QueueType::const_iterator const_iterator;
+    using QueueType = std::deque<Element>;
+    using iterator = QueueType::iterator ;
+    using const_iterator = QueueType::const_iterator;
 
     explicit InfluenceQueue(int empire_id) :
         m_empire_id(empire_id)
