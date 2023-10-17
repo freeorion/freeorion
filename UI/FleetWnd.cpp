@@ -3538,8 +3538,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt,
         && !ClientPlayerIsModerator()
        )
     {
-        FleetAggression nfa = fleet->Aggression();
-        auto split_damage_action = [&damaged_ship_ids, nfa]() {
+        auto split_damage_action = [nfa{fleet->Aggression()}, &damaged_ship_ids]() {
             ScriptingContext context;
             CreateNewFleetFromShips(damaged_ship_ids, nfa, context);
         };
