@@ -4195,7 +4195,7 @@ void EncyclopediaDetailPanel::RefreshImpl() {
             const auto& empire_lines = stat_name_it->second;
             m_graph->Clear();
 
-            // add lines for each empire
+            // add lines for each empire // TODO: structured binding
             for (const auto& empire_linemap : empire_lines) {
                 int empire_id = empire_linemap.first;
 
@@ -4223,8 +4223,7 @@ void EncyclopediaDetailPanel::RefreshImpl() {
 
     // Create Icons
     if (texture) {
-        m_icon = GG::Wnd::Create<GG::StaticGraphic>(
-            std::move(texture), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_icon = GG::Wnd::Create<GG::StaticGraphic>(std::move(texture), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         if (color != GG::CLR_ZERO)
             m_icon->SetColor(color);
     }
@@ -4483,7 +4482,7 @@ void EncyclopediaDetailPanel::SetItem(MeterType meter_type)
 { SetMeterType(std::string{to_string(meter_type)}); }
 
 void EncyclopediaDetailPanel::SetEncyclopediaArticle(std::string name)
-{ AddItem(TextLinker::ENCYCLOPEDIA_TAG, name); }
+{ AddItem(TextLinker::ENCYCLOPEDIA_TAG, std::move(name)); }
 
 void EncyclopediaDetailPanel::OnIndex()
 { AddItem(TextLinker::ENCYCLOPEDIA_TAG, "ENC_INDEX"); }

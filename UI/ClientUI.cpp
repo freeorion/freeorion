@@ -761,7 +761,7 @@ std::string ClientUI::FormatTimestamp(boost::posix_time::ptime timestamp) {
 }
 
 bool ClientUI::ZoomToObject(const std::string& name) {
-    // try first by finding the object by name
+    // try first by finding the object by name TODO: use getRaw or find or somesuch
     for (auto obj : GetUniverse().Objects().allRaw<UniverseObject>())
         if (boost::iequals(obj->Name(), name))
             return ZoomToObject(obj->ID());
@@ -909,59 +909,59 @@ bool ClientUI::ZoomToContent(const std::string& name, bool reverse_lookup) {
     }
 }
 
-bool ClientUI::ZoomToTech(const std::string& tech_name) {
+bool ClientUI::ZoomToTech(std::string tech_name) {
     if (!GetTech(tech_name))
         return false;
-    GetMapWnd()->ShowTech(tech_name);
+    GetMapWnd()->ShowTech(std::move(tech_name));
     return true;
 }
 
-bool ClientUI::ZoomToPolicy(const std::string& policy_name) {
+bool ClientUI::ZoomToPolicy(std::string policy_name) {
     if (!GetPolicy(policy_name))
         return false;
-    GetMapWnd()->ShowPolicy(policy_name);
+    GetMapWnd()->ShowPolicy(std::move(policy_name));
     return true;
 }
 
-bool ClientUI::ZoomToBuildingType(const std::string& building_type_name) {
+bool ClientUI::ZoomToBuildingType(std::string building_type_name) {
     if (!GetBuildingType(building_type_name))
         return false;
-    GetMapWnd()->ShowBuildingType(building_type_name);
+    GetMapWnd()->ShowBuildingType(std::move(building_type_name));
     return true;
 }
 
-bool ClientUI::ZoomToSpecial(const std::string& special_name) {
+bool ClientUI::ZoomToSpecial(std::string special_name) {
     if (!GetSpecial(special_name))
         return false;
-    GetMapWnd()->ShowSpecial(special_name);
+    GetMapWnd()->ShowSpecial(std::move(special_name));
     return true;
 }
 
-bool ClientUI::ZoomToShipHull(const std::string& hull_name) {
+bool ClientUI::ZoomToShipHull(std::string hull_name) {
     if (!GetShipHull(hull_name))
         return false;
-    GetMapWnd()->ShowShipHull(hull_name);
+    GetMapWnd()->ShowShipHull(std::move(hull_name));
     return true;
 }
 
-bool ClientUI::ZoomToShipPart(const std::string& part_name) {
+bool ClientUI::ZoomToShipPart(std::string part_name) {
     if (!GetShipPart(part_name))
         return false;
-    GetMapWnd()->ShowShipPart(part_name);
+    GetMapWnd()->ShowShipPart(std::move(part_name));
     return true;
 }
 
-bool ClientUI::ZoomToSpecies(const std::string& species_name) {
+bool ClientUI::ZoomToSpecies(std::string species_name) {
     if (!GetSpeciesManager().GetSpecies(species_name))
         return false;
-    GetMapWnd()->ShowSpecies(species_name);
+    GetMapWnd()->ShowSpecies(std::move(species_name));
     return true;
 }
 
-bool ClientUI::ZoomToFieldType(const std::string& field_type_name) {
+bool ClientUI::ZoomToFieldType(std::string field_type_name) {
     if (!GetFieldType(field_type_name))
         return false;
-    GetMapWnd()->ShowFieldType(field_type_name);
+    GetMapWnd()->ShowFieldType(std::move(field_type_name));
     return true;
 }
 
@@ -979,8 +979,8 @@ bool ClientUI::ZoomToEmpire(int empire_id) {
     return true;
 }
 
-bool ClientUI::ZoomToMeterTypeArticle(const std::string& meter_string) {
-    GetMapWnd()->ShowMeterTypeArticle(meter_string);
+bool ClientUI::ZoomToMeterTypeArticle(std::string meter_string) {
+    GetMapWnd()->ShowMeterTypeArticle(std::move(meter_string));
     return true;
 }
 
@@ -989,16 +989,14 @@ bool ClientUI::ZoomToMeterTypeArticle(MeterType meter_type) {
     return true;
 }
 
-bool ClientUI::ZoomToEncyclopediaEntry(const std::string& str) {
-    GetMapWnd()->ShowEncyclopediaEntry(str);
+bool ClientUI::ZoomToEncyclopediaEntry(std::string str) {
+    GetMapWnd()->ShowEncyclopediaEntry(std::move(str));
     return true;
 }
 
 void ClientUI::DumpObject(int object_id) {
-    auto obj = Objects().get(object_id);
-    if (!obj)
-        return;
-    m_message_wnd->HandleLogMessage(obj->Dump());
+    if (auto obj = Objects().get(object_id))
+        m_message_wnd->HandleLogMessage(obj->Dump());
 }
 
 void ClientUI::InitializeWindows() {

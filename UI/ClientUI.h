@@ -75,20 +75,20 @@ public:
     void ZoomToFleet(std::shared_ptr<const Fleet> fleet);   //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
 
     bool ZoomToContent(const std::string& name, bool reverse_lookup = false);
-    bool ZoomToTech(const std::string& tech_name);                  //!< Opens the technology screen and presents a description of the given technology
-    bool ZoomToPolicy(const std::string& policy_name);              //!< ???
-    bool ZoomToBuildingType(const std::string& building_type_name); //!< Opens the production screen and presents a description of the given building type
-    bool ZoomToSpecial(const std::string& special_name);            //!< Opens the ??? screen and presents a description of the given special
-    bool ZoomToShipHull(const std::string& hull_name);              //!< Opens the design screen and presents a description of the given hull type
-    bool ZoomToShipPart(const std::string& part_name);              //!< Opens the design screen and presents a description of the given part type
-    bool ZoomToSpecies(const std::string& species_name);            //!< Opens the ??? screen and presents a description of the given species
-    bool ZoomToFieldType(const std::string& field_type_name);       //!< Opens the ??? screen and presents a description of the given field type
+    bool ZoomToTech(std::string tech_name);                  //!< Opens the technology screen and presents a description of the given technology
+    bool ZoomToPolicy(std::string policy_name);              //!< ???
+    bool ZoomToBuildingType(std::string building_type_name); //!< Opens the production screen and presents a description of the given building type
+    bool ZoomToSpecial(std::string special_name);            //!< Opens the ??? screen and presents a description of the given special
+    bool ZoomToShipHull(std::string hull_name);              //!< Opens the design screen and presents a description of the given hull type
+    bool ZoomToShipPart(std::string part_name);              //!< Opens the design screen and presents a description of the given part type
+    bool ZoomToSpecies(std::string species_name);            //!< Opens the ??? screen and presents a description of the given species
+    bool ZoomToFieldType(std::string field_type_name);       //!< Opens the ??? screen and presents a description of the given field type
 
-    bool ZoomToShipDesign(int design_id);                           //!< Opens the design screen and presents a description of the given ship design
-    bool ZoomToEmpire(int empire_id);                               //!< Opens the ??? screen and presents a description of the given empire
-    bool ZoomToMeterTypeArticle(const std::string& meter_string);   //!< Opens the encyclopedia and presents the entry for MeterType @a meter_string
-    bool ZoomToMeterTypeArticle(MeterType meter_type);              //!< Opens the encyclopedia and presents the entry for MeterType @a meter_type
-    bool ZoomToEncyclopediaEntry(const std::string& str);           //!< Opens the encyclodedia window and presents the entry for the given term
+    bool ZoomToShipDesign(int design_id);                    //!< Opens the design screen and presents a description of the given ship design
+    bool ZoomToEmpire(int empire_id);                        //!< Opens the ??? screen and presents a description of the given empire
+    bool ZoomToMeterTypeArticle(std::string meter_string);   //!< Opens the encyclopedia and presents the entry for MeterType @a meter_string
+    bool ZoomToMeterTypeArticle(MeterType meter_type);       //!< Opens the encyclopedia and presents the entry for MeterType @a meter_type
+    bool ZoomToEncyclopediaEntry(std::string str);           //!< Opens the encyclodedia window and presents the entry for the given term
 
     void DumpObject(int object_id);                                 //!< Displays debug info about specified object in messages window
 

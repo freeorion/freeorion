@@ -146,19 +146,19 @@ public:
     void CenterOnObject(const auto& obj)
     { if (obj) CenterOnMapCoord(obj->X(), obj->Y()); }
 
-    void ShowPlanet(int planet_id);                              //!< brings up encyclopedia panel and displays info about the planet
-    void ShowCombatLog(int log_id);                              //!< brings up encyclopedia panel and displays info about the combat
-    void ShowTech(const std::string& tech_name);                 //!< brings up the research screen and centers the tech tree on \a tech_name
-    void ShowPolicy(const std::string& policy_name);             //!< brings up ??? and displays info about the policy with name \a policy_name
-    void ShowBuildingType(const std::string& building_type_name);//!< brings up the production screen and displays info about the buildtype \a type_name
+    void ShowPlanet(int planet_id);                       //!< brings up encyclopedia panel and displays info about the planet
+    void ShowCombatLog(int log_id);                       //!< brings up encyclopedia panel and displays info about the combat
+    void ShowTech(std::string tech_name);                 //!< brings up the research screen and centers the tech tree on \a tech_name
+    void ShowPolicy(std::string policy_name);             //!< brings up ??? and displays info about the policy with name \a policy_name
+    void ShowBuildingType(std::string building_type_name);//!< brings up the production screen and displays info about the buildtype \a type_name
 
     //! Brings up the production screen and displays info about
     //! the ShipPart @a ship_part_name.
-    void ShowShipPart(const std::string& ship_part_name);
+    void ShowShipPart(std::string ship_part_name);
 
     //! Brings up the production screen and displays info about the ShipHull
     //! @p ship_hull_name
-    void ShowShipHull(const std::string& ship_hull_name);
+    void ShowShipHull(std::string ship_hull_name);
 
     void ShowShipDesign(int design_id);                  //!< brings up the production screen and displays info about the buildtype \a type_name
     void ShowSpecial(std::string special_name);          //!< brings up encyclopedia panel and displays info about the special with name \a special_name

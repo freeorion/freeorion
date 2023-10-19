@@ -4360,61 +4360,61 @@ void MapWnd::ShowCombatLog(int log_id) {
     PushWndStack(m_combat_report_wnd);
 }
 
-void MapWnd::ShowTech(const std::string& tech_name) {
+void MapWnd::ShowTech(std::string tech_name) {
     if (m_research_wnd->Visible())
         m_research_wnd->ShowTech(tech_name);
     if (m_in_production_view_mode) {
         m_production_wnd->ShowPedia();
-        m_production_wnd->ShowTechInEncyclopedia(tech_name); // TODO: move
+        m_production_wnd->ShowTechInEncyclopedia(std::move(tech_name));
     } else {
         if (!m_pedia_panel->Visible())
             TogglePedia();
-        m_pedia_panel->SetTech(tech_name); // TODO: move
+        m_pedia_panel->SetTech(std::move(tech_name));
     }
 }
 
-void MapWnd::ShowPolicy(const std::string& policy_name) {
+void MapWnd::ShowPolicy(std::string policy_name) {
     if (m_production_wnd->Visible()) {
         m_production_wnd->ShowPedia();
-        m_production_wnd->ShowPolicyInEncyclopedia(policy_name);
+        m_production_wnd->ShowPolicyInEncyclopedia(std::move(policy_name));
     } else {
         if (!m_pedia_panel->Visible())
             TogglePedia();
-        m_pedia_panel->SetPolicy(policy_name);
+        m_pedia_panel->SetPolicy(std::move(policy_name));
     }
 }
 
-void MapWnd::ShowBuildingType(const std::string& building_type_name) {
+void MapWnd::ShowBuildingType(std::string building_type_name) {
     if (m_production_wnd->Visible()) {
         m_production_wnd->ShowPedia();
-        m_production_wnd->ShowBuildingTypeInEncyclopedia(building_type_name);
+        m_production_wnd->ShowBuildingTypeInEncyclopedia(std::move(building_type_name));
     } else {
         if (!m_pedia_panel->Visible())
             TogglePedia();
-        m_pedia_panel->SetBuildingType(building_type_name);
+        m_pedia_panel->SetBuildingType(std::move(building_type_name));
     }
 }
 
-void MapWnd::ShowShipPart(const std::string& ship_part_name) {
+void MapWnd::ShowShipPart(std::string ship_part_name) {
     if (m_design_wnd->Visible())
         m_design_wnd->ShowShipPartInEncyclopedia(ship_part_name);
     if (m_in_production_view_mode) {
         m_production_wnd->ShowPedia();
-        m_production_wnd->ShowShipPartInEncyclopedia(ship_part_name);
+        m_production_wnd->ShowShipPartInEncyclopedia(std::move(ship_part_name));
     } else {
         if (!m_pedia_panel->Visible())
             TogglePedia();
-        m_pedia_panel->SetShipPart(ship_part_name);
+        m_pedia_panel->SetShipPart(std::move(ship_part_name));
     }
 }
 
-void MapWnd::ShowShipHull(const std::string& ship_hull_name) {
+void MapWnd::ShowShipHull(std::string ship_hull_name) {
     if (m_design_wnd->Visible()) {
-        m_design_wnd->ShowShipHullInEncyclopedia(ship_hull_name);
+        m_design_wnd->ShowShipHullInEncyclopedia(std::move(ship_hull_name));
     } else {
         if (!m_pedia_panel->Visible())
             TogglePedia();
-        m_pedia_panel->SetShipHull(ship_hull_name);
+        m_pedia_panel->SetShipHull(std::move(ship_hull_name));
     }
 }
 
