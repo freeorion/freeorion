@@ -576,8 +576,8 @@ void MessageWnd::HandleTextCommand(const std::string& text) {
         m_display_show_time = GG::GUI::GetGUI()->Ticks();
     }
     else if (boost::iequals(command, "pm")) {
-        int player_id = ExtractPlayerID(params);
-        std::string message = ExtractMessage(params);
+        const int player_id = ExtractPlayerID(params);
+        const std::string message = ExtractMessage(params);
 
         if (player_id != Networking::INVALID_PLAYER_ID) {
             std::set<int> recipient;

@@ -701,8 +701,9 @@ void ResearchWnd::DeleteQueueItem(GG::ListBox::iterator it) {
 }
 
 void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) {
-    if (m_queue_wnd->GetQueueListBox()->IteraterIndex(it) < 0 || !m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems())
-        return;
+    if (m_queue_wnd->GetQueueListBox()->IteraterIndex(it) < 0 ||
+        !m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems())
+    { return; }
 
     if (modkeys & GG::MOD_KEY_CTRL) {
         if (m_enabled)
