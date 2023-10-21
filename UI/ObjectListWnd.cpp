@@ -50,7 +50,7 @@ std::vector<std::string_view> SpecialNames();
 
 namespace {
     enum class VIS_DISPLAY : uint8_t { SHOW_VISIBLE, SHOW_PREVIOUSLY_VISIBLE, SHOW_DESTROYED };
-    using VisMap = std::map<UniverseObjectType, std::set<VIS_DISPLAY>>; // TODO: flat_map<flat_set> ?
+    using VisMap = boost::container::flat_map<UniverseObjectType, boost::container::flat_set<VIS_DISPLAY>>;
 
     constexpr unsigned int NUM_COLUMNS(12u);
 
@@ -2030,12 +2030,13 @@ public:
 
         m_filter_condition = std::make_unique<Condition::All>();
 
+        m_visibilities.reserve(static_cast<std::size_t>(UniverseObjectType::NUM_OBJ_TYPES));
         //m_visibilities[UniverseObjectType::OBJ_BUILDING].insert(SHOW_VISIBLE);
         //m_visibilities[UniverseObjectType::OBJ_BUILDING].insert(SHOW_PREVIOUSLY_VISIBLE);
         //m_visibilities[UniverseObjectType::OBJ_SHIP].insert(SHOW_VISIBLE);
         //m_visibilities[UniverseObjectType::OBJ_FLEET].insert(SHOW_VISIBLE);
-        m_visibilities[UniverseObjectType::OBJ_PLANET].insert(VIS_DISPLAY::SHOW_VISIBLE);
-        m_visibilities[UniverseObjectType::OBJ_PLANET].insert(VIS_DISPLAY::SHOW_PREVIOUSLY_VISIBLE);
+        m_visibilities.try_emplace(UniverseObjectType::OBJ_PLANET,
+                                   boost::container::flat_set{VIS_DISPLAY::SHOW_VISIBLE, VIS_DISPLAY::SHOW_PREVIOUSLY_VISIBLE});
         //m_visibilities[UniverseObjectType::OBJ_SYSTEM].insert(SHOW_VISIBLE);
         //m_visibilities[UniverseObjectType::OBJ_SYSTEM].insert(SHOW_PREVIOUSLY_VISIBLE);
         //m_visibilities[UniverseObjectType::OBJ_FIELD].insert(SHOW_VISIBLE);
