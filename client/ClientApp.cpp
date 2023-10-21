@@ -85,7 +85,7 @@ bool ClientApp::VerifyCheckSum(const Message& msg) {
     std::map<std::string, uint32_t> server_checksums;
     ExtractContentCheckSumMessageData(msg, server_checksums);
 
-    const auto client_checksums = CheckSumContent();
+    const auto client_checksums = CheckSumContent(m_species_manager);
 
     if (server_checksums == client_checksums) {
         InfoLogger() << "Checksum received from server matches client checksum.";

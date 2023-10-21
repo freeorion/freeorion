@@ -361,7 +361,7 @@ FO_COMMON_API Message ServerPlayerChatMessage(int sender, const boost::posix_tim
 FO_COMMON_API Message StartMPGameMessage();
 
 /** creates a CHECKSUM message containing checksums of parsed content. */
-FO_COMMON_API Message ContentCheckSumMessage();
+FO_COMMON_API Message ContentCheckSumMessage(const SpeciesManager& species);
 
 /** creates a AUTH_REQUEST message containing \a player_name to login and \a auth additional authentication data. */
 FO_COMMON_API Message AuthRequestMessage(const std::string& player_name, const std::string& auth);

@@ -3470,7 +3470,7 @@ void Universe::GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_k
         empire_stale_knowledge_object_ids[encoding_empire] = it->second;
 }
 
-std::map<std::string, unsigned int> CheckSumContent() { // TODO: pass in context and other managers, avoid global getters...
+std::map<std::string, unsigned int> CheckSumContent(const SpeciesManager& species) {
     std::map<std::string, unsigned int> checksums;
 
     // add entries for various content managers...
@@ -3481,7 +3481,7 @@ std::map<std::string, unsigned int> CheckSumContent() { // TODO: pass in context
     checksums["ShipHullManager"] = GetShipHullManager().GetCheckSum();
     checksums["ShipPartManager"] = GetShipPartManager().GetCheckSum();
     checksums["PredefinedShipDesignManager"] = GetPredefinedShipDesignManager().GetCheckSum();
-    checksums["SpeciesManager"] = GetSpeciesManager().GetCheckSum();
+    checksums["SpeciesManager"] = species.GetCheckSum();
     checksums["SpecialsManager"] = GetSpecialsManager().GetCheckSum();
     checksums["TechManager"] = GetTechManager().GetCheckSum();
     // NamedValueRefManager cant ensure that parsing is finished for registrations from other content

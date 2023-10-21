@@ -612,10 +612,11 @@ private:
     friend void serialize(Archive&, Universe&, unsigned int const);
 };
 
+class SpeciesManager;
 
 /** Compute a checksum for each of the universe's content managers. Each value will be of the form
     ("BuildingManager", <checksum>) */
-FO_COMMON_API std::map<std::string, unsigned int> CheckSumContent();
+FO_COMMON_API std::map<std::string, unsigned int> CheckSumContent(const SpeciesManager& species);
 
 
 #endif

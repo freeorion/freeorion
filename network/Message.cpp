@@ -708,8 +708,8 @@ Message ServerPlayerChatMessage(int sender, const boost::posix_time::ptime& time
 Message StartMPGameMessage()
 { return Message{Message::MessageType::START_MP_GAME, DUMMY_EMPTY_MESSAGE}; }
 
-Message ContentCheckSumMessage() {
-    auto checksums = CheckSumContent();
+Message ContentCheckSumMessage(const SpeciesManager& species) {
+    auto checksums = CheckSumContent(species);
 
     std::ostringstream os;
     {
