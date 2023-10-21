@@ -4195,19 +4195,17 @@ void EncyclopediaDetailPanel::RefreshImpl() {
             const auto& empire_lines = stat_name_it->second;
             m_graph->Clear();
 
-            // add lines for each empire // TODO: structured binding
-            for (const auto& empire_linemap : empire_lines) {
-                int empire_id = empire_linemap.first;
-
+            // add lines for each empire
+            for (const auto& [empire_id, linemap] : empire_lines) {
                 GG::Clr empire_clr = GG::CLR_WHITE;
                 if (const Empire* empire = GetEmpire(empire_id))
                     empire_clr = empire->Color();
 
                 // convert formats...
                 std::vector<std::pair<double, double>> line_data_pts;
-                line_data_pts.reserve(empire_linemap.second.size());
-                for (const auto& entry : empire_linemap.second)
-                    line_data_pts.emplace_back(entry.first, entry.second);
+                line_data_pts.reserve(linemap.size());
+                for (const auto& [turn, stat_value] : linemap)
+                    line_data_pts.emplace_back(turn, stat_value);
 
                 m_graph->AddSeries(std::move(line_data_pts), empire_clr);
             }
