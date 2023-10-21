@@ -259,6 +259,7 @@ GGHumanClientApp::GGHumanClientApp(int width, int height, bool calculate_fps, st
     RegisterLoggerWithOptionsDB("conditions");
     RegisterLoggerWithOptionsDB("FSM");
     RegisterLoggerWithOptionsDB("network");
+    RegisterLoggerWithOptionsDB("parsing");
     RegisterLoggerWithOptionsDB("python");
     RegisterLoggerWithOptionsDB("timer");
     RegisterLoggerWithOptionsDB("IDallocator");
