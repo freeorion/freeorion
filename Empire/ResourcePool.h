@@ -65,11 +65,11 @@ public:
       * that stockpile and change need to be refreshed. */
     mutable boost::signals2::signal<void ()> ChangedSignal;
 
-    void SetObjects(std::vector<int> object_ids);
+    void SetObjects(std::vector<int> object_ids) noexcept;
 
     /** specifies which sets systems can share resources.  any two sets should
       * have no common systems. */
-    void SetConnectedSupplyGroups(const std::set<std::set<int>>& connected_system_groups);
+    void SetConnectedSupplyGroups(std::set<std::set<int>> connected_system_groups) noexcept;
 
     void SetStockpile(float d);             ///< sets current sockpiled amount of resource
     void Update(const ObjectMap& objects);  ///< recalculates total resource production

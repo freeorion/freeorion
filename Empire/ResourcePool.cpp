@@ -64,20 +64,18 @@ float ResourcePool::GroupOutput(int object_id) const {
 }
 
 float ResourcePool::TargetOutput() const {
-    float retval = 0.0f;
-    // transform_reduce
-    for (const auto& entry : m_connected_object_groups_resource_target_output)
-        retval += entry.second;
-    return retval;
+    return std::transform_reduce(m_connected_object_groups_resource_target_output.begin(),
+                                 m_connected_object_groups_resource_target_output.end(),
+                                 0.0f, std::plus{}, [](const auto& entry) { return entry.second; });
 }
 
 float ResourcePool::GroupTargetOutput(int object_id) const {
     // find group containing specified object
-    // find_if
-    for (const auto& entry : m_connected_object_groups_resource_target_output) {
-        if (entry.first.contains(object_id))
-            return entry.second;
-    }
+    auto it = std::find_if(m_connected_object_groups_resource_target_output.begin(),
+                           m_connected_object_groups_resource_target_output.end(),
+                           [object_id](const auto& entry) { return entry.first.contains(object_id); });
+    if (it != m_connected_object_groups_resource_target_output.end())
+        return it->second;
 
     // default return case:
     DebugLogger() << "ResourcePool::GroupTargetOutput passed unknown object id: " << object_id;
@@ -85,11 +83,9 @@ float ResourcePool::GroupTargetOutput(int object_id) const {
 }
 
 float ResourcePool::TotalAvailable() const {
-    float retval = m_stockpile;
-    // transform_reduce
-    for (const auto& entry : m_connected_object_groups_resource_output)
-        retval += entry.second;
-    return retval;
+    return std::transform_reduce(m_connected_object_groups_resource_output.begin(),
+                                 m_connected_object_groups_resource_output.end(),
+                                 m_stockpile, std::plus{}, [](const auto& entry) { return entry.second; });
 }
 
 float ResourcePool::GroupAvailable(int object_id) const {
@@ -107,11 +103,11 @@ std::string ResourcePool::Dump() const {
     return retval;
 }
 
-void ResourcePool::SetObjects(std::vector<int> object_ids)
+void ResourcePool::SetObjects(std::vector<int> object_ids) noexcept
 { m_object_ids = std::move(object_ids); }
 
-void ResourcePool::SetConnectedSupplyGroups(const std::set<std::set<int>>& connected_system_groups)
-{ m_connected_system_groups = connected_system_groups; }
+void ResourcePool::SetConnectedSupplyGroups(std::set<std::set<int>> connected_system_groups) noexcept
+{ m_connected_system_groups = std::move(connected_system_groups); }
 
 void ResourcePool::SetStockpile(float d) {
     DebugLogger() << "ResourcePool " << to_string(m_type) << " set to " << d;

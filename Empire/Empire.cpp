@@ -2854,10 +2854,10 @@ void Empire::InitResourcePools(const ObjectMap& objects, const SupplyManager& su
     // set non-blockadeable resource pools to share resources between all systems
     std::set<std::set<int>> sets_set;
     auto system_ids = objects.allExisting<System>() | range_keys;
-    std::set<int> all_systems_set{system_ids.begin(), system_ids.end()};
-    sets_set.insert(std::move(all_systems_set));
+    sets_set.emplace(system_ids.begin(), system_ids.end());
+
     m_research_pool.SetConnectedSupplyGroups(sets_set);
-    m_influence_pool.SetConnectedSupplyGroups(sets_set);
+    m_influence_pool.SetConnectedSupplyGroups(std::move(sets_set));
 }
 
 void Empire::UpdateResourcePools(const ScriptingContext& context,
