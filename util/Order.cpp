@@ -904,7 +904,7 @@ bool ColonizeOrder::Check(int empire_id, int ship_id, int planet_id, const Scrip
         return false;
     }
     if (colonist_capacity > 0.0f &&
-        planet->EnvironmentForSpecies(context, ship->SpeciesName()) < PlanetEnvironment::PE_HOSTILE)
+        planet->EnvironmentForSpecies(context.species, ship->SpeciesName()) < PlanetEnvironment::PE_HOSTILE)
     {
         ErrorLogger() << "ColonizeOrder::Check() : nonzero colonist capacity, " << colonist_capacity
                       << ", and planet " << planet->Name() << " of type, " << planet->Type() << ", that ship's species, "

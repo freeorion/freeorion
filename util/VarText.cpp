@@ -253,7 +253,7 @@ namespace {
                     return UserString(data);
                 const int planet_id = ToInt(data, INVALID_OBJECT_ID);
                 if (auto planet = context.ContextObjects().getRaw<Planet>(planet_id))
-                    return UserString(to_string(planet->EnvironmentForSpecies(context)));
+                    return UserString(to_string(planet->EnvironmentForSpecies(context.species)));
                 return UserString("UNKNOWN_PLANET");
             }},
     }};

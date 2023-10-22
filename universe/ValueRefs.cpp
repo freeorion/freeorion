@@ -828,7 +828,7 @@ PlanetEnvironment Variable<PlanetEnvironment>::Eval(const ScriptingContext& cont
         }
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             auto p = static_cast<const Planet*>(object);
-            return p->EnvironmentForSpecies(context);
+            return p->EnvironmentForSpecies(context.species);
         }
 
         return PlanetEnvironment::INVALID_PLANET_ENVIRONMENT;
@@ -1629,17 +1629,13 @@ PlanetEnvironment ComplexVariable<PlanetEnvironment>::Eval(const ScriptingContex
     const std::string& variable_name = m_property_name.back();
 
     if (variable_name == "PlanetEnvironmentForSpecies") {
-        int planet_id = INVALID_OBJECT_ID;
-        if (m_int_ref1)
-            planet_id = m_int_ref1->Eval(context);
+        const int planet_id = m_int_ref1 ? m_int_ref1->Eval(context) : INVALID_OBJECT_ID;
         const auto planet = context.ContextObjects().get<Planet>(planet_id);
         if (!planet)
             return PlanetEnvironment::INVALID_PLANET_ENVIRONMENT;
 
-        std::string species_name;
-        if (m_string_ref1)
-            species_name = m_string_ref1->Eval(context);
-        return planet->EnvironmentForSpecies(context, species_name);
+        const std::string species_name = m_string_ref1 ? m_string_ref1->Eval(context) : "";
+        return planet->EnvironmentForSpecies(context.species, species_name);
     }
 
     return PlanetEnvironment::INVALID_PLANET_ENVIRONMENT;

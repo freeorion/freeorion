@@ -76,7 +76,7 @@ public:
 
     [[nodiscard]] bool                HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
 
-    [[nodiscard]] PlanetEnvironment   EnvironmentForSpecies(const ScriptingContext& context,
+    [[nodiscard]] PlanetEnvironment   EnvironmentForSpecies(const SpeciesManager& sm,
                                                             std::string_view species_name = "") const;
     [[nodiscard]] PlanetType          NextBestPlanetTypeForSpecies(const ScriptingContext& context,
                                                                    const std::string& species_name = "") const;

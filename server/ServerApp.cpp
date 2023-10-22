@@ -2861,7 +2861,7 @@ namespace {
         const float colonist_capacity = ship->ColonyCapacity(universe);
 
         if (colonist_capacity > 0.0f &&
-            planet->EnvironmentForSpecies(context, species_name) < PlanetEnvironment::PE_HOSTILE)
+            planet->EnvironmentForSpecies(context.species, species_name) < PlanetEnvironment::PE_HOSTILE)
         {
             ErrorLogger() << "ColonizePlanet nonzero colonist capacity and planet that ship's species can't colonize";
             return false;

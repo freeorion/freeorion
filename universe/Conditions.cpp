@@ -3978,38 +3978,37 @@ bool PlanetType::operator==(const Condition& rhs) const {
 }
 
 namespace {
-    // gets a planet ID from \a obj considering obj as a planet or a building on a planet
-    ::PlanetType PlanetTypeFromObject(const UniverseObject* obj, const ObjectMap& objects) {
-        if (obj->ObjectType() == UniverseObjectType::OBJ_PLANET) {
-            auto* planet = static_cast<const ::Planet*>(obj);
-            return planet->Type();
+    // gets a planet from \a obj considering obj as a planet or a building on a planet
+    const Planet* PlanetFromObject(const UniverseObject* obj, const ObjectMap& objects) {
+        if (!obj) {
+            return nullptr;
+
+        } else if (obj->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+            return static_cast<const ::Planet*>(obj);
 
         } else if (obj->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
             auto* building = static_cast<const ::Building*>(obj);
-            if (auto* planet = objects.getRaw<Planet>(building->PlanetID()))
-                return planet->Type();
+            return objects.getRaw<Planet>(building->PlanetID());
         }
 
-        return ::PlanetType::INVALID_PLANET_TYPE;
+        return nullptr;
     }
 
     struct PlanetTypeSimpleMatch {
-        PlanetTypeSimpleMatch(const std::vector< ::PlanetType>& types, const ObjectMap& objects) noexcept:
+        PlanetTypeSimpleMatch(const std::span< ::PlanetType> types, const ObjectMap& objects) noexcept:
             m_types(types),
             m_objects(objects)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
-            if (!candidate)
-                return false;
-
-            const auto pt = PlanetTypeFromObject(candidate, m_objects);
-            if (pt == ::PlanetType::INVALID_PLANET_TYPE)
-                return false;
-            return std::count(m_types.begin(), m_types.end(), pt);
+        bool operator()(const Planet* candidate) const {
+            return candidate&& std::any_of(m_types.begin(), m_types.end(),
+                                           [pt{candidate->Type()}](const auto t) { return t == pt; });
         }
 
-        const std::vector< ::PlanetType>& m_types;
+        bool operator()(const UniverseObject* candidate) const
+        { return operator()(PlanetFromObject(candidate, m_objects)); }
+
+        const std::span< ::PlanetType> m_types;
         const ObjectMap& m_objects;
     };
 }
@@ -4169,21 +4168,8 @@ namespace {
                                             [sz{candidate->Size()}](auto size) { return size == sz; });
         }
 
-        bool operator()(const UniverseObject* candidate) const {
-            if (!candidate)
-                return false;
-
-            // is it a planet or on a planet? TODO: This concept should be generalized and factored out.
-            const Planet* planet = nullptr;
-            if (candidate->ObjectType() == UniverseObjectType::OBJ_PLANET) {
-                planet = static_cast<const Planet*>(candidate);
-            } else if (candidate->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
-                auto building = static_cast<const ::Building*>(candidate);
-                planet = m_objects.getRaw<Planet>(building->PlanetID());
-            }
-
-            return operator()(planet);
-        }
+        bool operator()(const UniverseObject* candidate) const
+        { return operator()(PlanetFromObject(candidate, m_objects)); }
 
         const std::span< ::PlanetSize> m_sizes;
         const ObjectMap& m_objects;
@@ -4344,7 +4330,7 @@ bool PlanetEnvironment::operator==(const Condition& rhs) const {
 
 namespace {
     struct PlanetEnvironmentSimpleMatch {
-        PlanetEnvironmentSimpleMatch(const std::vector< ::PlanetEnvironment>& environments,
+        PlanetEnvironmentSimpleMatch(const std::span< ::PlanetEnvironment> environments,
                                      const ScriptingContext& context,
                                      std::string_view species = "") :
             m_environments(environments),
@@ -4352,36 +4338,28 @@ namespace {
             m_context(context)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const Planet* candidate) const {
             if (!candidate)
                 return false;
 
-            // is it a planet or on a planet? TODO: factor out
-            const Planet* planet = nullptr;
-            if (candidate->ObjectType() == UniverseObjectType::OBJ_PLANET)
-                planet = static_cast<const ::Planet*>(candidate);
-            if (!planet && candidate->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
-                const auto* building = static_cast<const ::Building*>(candidate);
-                planet = m_context.ContextObjects().getRaw<Planet>(building->PlanetID());
-            }
-            if (!planet)
-                return false;
-
             // if no species specified, use planet's own species
-            std::string_view species_to_check = m_species.empty() ? planet->SpeciesName() : m_species;
+            std::string_view species_to_check = m_species.empty() ? candidate->SpeciesName() : m_species;
             // if no species specified and planet has no species, can't match
             if (species_to_check.empty())
                 return false;
 
             // get plaent's environment for specified species, and check if it matches any of the indicated environments
-            const auto planet_env = planet->EnvironmentForSpecies(m_context, species_to_check);
+            const auto planet_env = candidate->EnvironmentForSpecies(m_context.species, species_to_check);
             return std::any_of(m_environments.begin(), m_environments.end(),
                                [planet_env](const auto env) { return env == planet_env; });
         }
 
-        const std::vector< ::PlanetEnvironment>& m_environments;
-        const std::string_view                   m_species = "";
-        const ScriptingContext&                  m_context;
+        bool operator()(const UniverseObject* candidate) const
+        { return operator()(PlanetFromObject(candidate, m_context.ContextObjects())); }
+
+        const std::span< ::PlanetEnvironment> m_environments;
+        const std::string_view                m_species;
+        const ScriptingContext&               m_context;
     };
 }
 
@@ -4493,7 +4471,7 @@ bool PlanetEnvironment::Match(const ScriptingContext& local_context) const {
     if (m_species_name)
         species_name = m_species_name->Eval(local_context);
 
-    const auto env_for_planets_species = planet->EnvironmentForSpecies(local_context, species_name);
+    const auto env_for_planets_species = planet->EnvironmentForSpecies(local_context.species, species_name);
     return std::any_of(m_environments.begin(), m_environments.end(),
                        [&local_context, env_for_planets_species](const auto& env)
     { return env->Eval(local_context) == env_for_planets_species; });

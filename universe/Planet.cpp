@@ -273,17 +273,15 @@ int Planet::TurnsSinceFocusChange(int current_turn) const {
     return current_turn - m_last_turn_focus_changed;
 }
 
-PlanetEnvironment Planet::EnvironmentForSpecies(const ScriptingContext& context,
-                                                std::string_view species_name) const
-{
+PlanetEnvironment Planet::EnvironmentForSpecies(const SpeciesManager& sm, std::string_view species_name) const {
     const Species* species = nullptr;
     if (species_name.empty()) {
         auto& this_planet_species_name = this->SpeciesName();
         if (this_planet_species_name.empty())
             return PlanetEnvironment::PE_UNINHABITABLE;
-        species = context.species.GetSpecies(this_planet_species_name);
+        species = sm.GetSpecies(this_planet_species_name);
     } else {
-        species = context.species.GetSpecies(species_name);
+        species = sm.GetSpecies(species_name);
     }
     if (!species) {
         ErrorLogger() << "Planet::EnvironmentForSpecies couldn't get species with name \"" << species_name << "\"";
@@ -912,11 +910,11 @@ bool Planet::Colonize(int empire_id, std::string species_name, double population
             return false;
         }
         // check if specified species can colonize this planet
-        if (EnvironmentForSpecies(context, species_name) < PlanetEnvironment::PE_HOSTILE) {
+        if (EnvironmentForSpecies(context.species, species_name) < PlanetEnvironment::PE_HOSTILE) {
             ErrorLogger() << "Planet::Colonize: can't colonize planet with species " << species_name
                           << " because planet is " << m_type 
                           << " which for that species is environment: "
-                          << EnvironmentForSpecies(context, species_name);
+                          << EnvironmentForSpecies(context.species, species_name);
             return false;
         }
     }
