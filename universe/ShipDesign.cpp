@@ -705,10 +705,8 @@ void ShipDesign::BuildStatCaches() {
     auto last = std::unique(tags.begin(), tags.end());
 
     // compile concatenated tags into contiguous storage
-    // TODO: transform_reduce when available on all platforms...
-    std::size_t tags_sz = 0;
-    std::for_each(tags.begin(), last, [&tags_sz](auto str) { tags_sz += str.size(); });
-
+    std::size_t tags_sz = std::transform_reduce(tags.begin(), tags.end(), 0u, std::plus{},
+                                                [](const auto& tag) { return tag.size(); });
     m_tags_concatenated.reserve(tags_sz);
     m_tags.clear();
     m_tags.reserve(tags.size());

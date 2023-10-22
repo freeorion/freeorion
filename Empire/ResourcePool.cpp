@@ -48,22 +48,17 @@ ResourceType MeterToResource(MeterType type) noexcept {
 // ResourcePool
 //////////////////////////////////////////////////
 float ResourcePool::TotalOutput() const {
-    float retval = 0.0f;
-    // transform_reduce
-    for (const auto& entry : m_connected_object_groups_resource_output)
-        retval += entry.second;
-    return retval;
+    return std::transform_reduce(m_connected_object_groups_resource_output.begin(), m_connected_object_groups_resource_output.end(),
+                                 0.0f, std::plus{}, [](const auto& entry) { return entry.second; });
 }
 
 float ResourcePool::GroupOutput(int object_id) const {
     // find group containing specified object
-    // find_if
-    for (const auto& [group, output] : m_connected_object_groups_resource_output) {
-        if (group.contains(object_id))
-            return output;
-    }
+    auto it = std::find_if(m_connected_object_groups_resource_output.begin(), m_connected_object_groups_resource_output.end(),
+                           [object_id](const auto& entry) { return entry.first.contains(object_id); });
+    if (it != m_connected_object_groups_resource_output.end())
+        return it->second;
 
-    // default return case:
     //DebugLogger() << "ResourcePool::GroupOutput passed unknown object id: " << object_id;
     return 0.0f;
 }

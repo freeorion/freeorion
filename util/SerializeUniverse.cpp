@@ -484,13 +484,10 @@ namespace {
         // size of just the Meter representation, without part names
         const auto meter_text_size = meters.size() * (single_meter_text_size + 2);
 
-        // size of part names
-        const auto part_names_size = [&meters]() { // transform_reduce sum of lengths of all part names to store. will be an overestimate since the part name doesn't need to be stored once per meter, but just once per part type that has meters
-            std::size_t retval = 0;
-            for (auto& [mt_name, ignored] : meters)
-                retval += mt_name.first.size();
-            return retval;
-        }();
+        // size of part names. sum of lengths of all part names to store will be an overestimate since the
+        // part name doesn't need to be stored once per meter, but just once per part type that has meters
+        const auto part_names_size = std::transform_reduce(meters.begin(), meters.end(), 0u, std::plus{},
+                                                           [](const auto& mt_name) { return mt_name.first.first.size(); });
 
         std::vector<std::string::value_type> buffer(meter_text_size + part_names_size + 4, // 4 extra for safety padding
                                                     std::string::value_type{0});

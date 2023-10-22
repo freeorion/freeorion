@@ -36,10 +36,8 @@ FieldType::FieldType(std::string&& name, std::string&& description,
     m_stealth(stealth),
     m_tags_concatenated([&tags]() {
         // allocate storage for concatenated tags
-        // TODO: transform_reduce when available on all platforms...
-        std::size_t params_sz = 0;
-        for (const auto& t : tags)
-            params_sz += t.size();
+        std::size_t params_sz = std::transform_reduce(tags.begin(), tags.end(), 0u, std::plus{},
+                                                      [](const auto& tag) { return tag.size(); });
         std::string retval;
         retval.reserve(params_sz);
 

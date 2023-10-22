@@ -242,11 +242,9 @@ ShipPart::ShipPart(ShipPartClass part_class, double capacity, double stat2,
                       [](auto& t) { boost::to_upper<std::string>(t); });
 
         // allocate storage for concatenated tags
+        std::size_t params_sz = std::transform_reduce(common_params.tags.begin(), common_params.tags.end(), 0u, std::plus{},
+                                                      [](const auto& tag) { return tag.size(); });
         std::string retval;
-        // TODO: transform_reduce when available on all platforms...
-        std::size_t params_sz = 0;
-        for (const auto& t : common_params.tags)
-            params_sz += t.size();
         retval.reserve(params_sz);
 
         // concatenate tags
