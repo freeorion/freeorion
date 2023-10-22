@@ -202,9 +202,8 @@ void PlayerConnection::Start() {
     AsyncReadMessage();
 }
 
-void PlayerConnection::SendMessage(const Message& message) {
-    SendMessage(message, ALL_EMPIRES, INVALID_GAME_TURN);
-}
+void PlayerConnection::SendMessage(const Message& message)
+{ SendMessage(message, ALL_EMPIRES, INVALID_GAME_TURN); }
 
 void PlayerConnection::SendMessage(const Message& message, int empire_id, int turn) {
     if (!m_valid) {
@@ -215,7 +214,7 @@ void PlayerConnection::SendMessage(const Message& message, int empire_id, int tu
     m_service.post(boost::bind(&PlayerConnection::SendMessageImpl, shared_from_this(), message, empire_id, turn));
 }
 
-bool PlayerConnection::IsEstablished() const {
+bool PlayerConnection::IsEstablished() const noexcept {
     return (m_ID != INVALID_PLAYER_ID && !m_player_name.empty()
             && m_client_type != Networking::ClientType::INVALID_CLIENT_TYPE);
 }
@@ -303,7 +302,7 @@ void PlayerConnection::SetAuthRole(Networking::RoleType role, bool value) {
     SendMessage(SetAuthorizationRolesMessage(m_roles));
 }
 
-void PlayerConnection::SetCookie(boost::uuids::uuid cookie)
+void PlayerConnection::SetCookie(boost::uuids::uuid cookie) noexcept
 { m_cookie = cookie; }
 
 bool PlayerConnection::IsBinarySerializationUsed() const {

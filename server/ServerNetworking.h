@@ -92,7 +92,7 @@ public:
     [[nodiscard]] bool IsLocalConnection() const noexcept { return m_is_local_connection; }
 
     /** Checks if the player is established, has a valid name, id and client type. */
-    [[nodiscard]] bool IsEstablished() const;
+    [[nodiscard]] bool IsEstablished() const noexcept;
 
     /** Checks if the player was authenticated. */
     [[nodiscard]] bool IsAuthenticated() const noexcept { return m_authenticated; }
@@ -134,7 +134,7 @@ public:
     void SetAuthRole(Networking::RoleType role, bool value = true);
 
     /** Sets cookie value to this connection to update expire date. */
-    void SetCookie(boost::uuids::uuid cookie);
+    void SetCookie(boost::uuids::uuid cookie) noexcept;
 
     mutable boost::signals2::signal<void(bool, int, int)> MessageSentSignal;
     mutable boost::signals2::signal<void (const NullaryFn&)> EventSignal;
@@ -167,12 +167,12 @@ private:
     std::queue<OutgoingMessage>     m_outgoing_messages;
     int                             m_ID = Networking::INVALID_PLAYER_ID;
     std::string                     m_player_name;
-    bool                            m_new_connection = true;
     Networking::ClientType          m_client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
     std::string                     m_client_version_string;
-    bool                            m_authenticated = false;
     Networking::AuthRoles           m_roles;
     boost::uuids::uuid              m_cookie = boost::uuids::nil_uuid();
+    bool                            m_new_connection = true;
+    bool                            m_authenticated = false;
     bool                            m_valid = true;
     bool                            m_is_local_connection = false;
 
