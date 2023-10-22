@@ -11,13 +11,10 @@
 #include <stdexcept>
 
 ClientApp::ClientApp() :
-    IApp(),
-    m_networking(std::make_shared<ClientNetworking>()),
-    m_empire_id(ALL_EMPIRES),
-    m_current_turn(INVALID_GAME_TURN)
+    m_networking(std::make_shared<ClientNetworking>())
 {}
 
-int ClientApp::PlayerID() const
+int ClientApp::PlayerID() const noexcept
 { return m_networking->PlayerID(); }
 
 Empire* ClientApp::GetEmpire(int empire_id)

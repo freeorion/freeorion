@@ -36,7 +36,7 @@ public:
      *
      * @return The player identifier of this client as assigned by the server.
      */
-    [[nodiscard]] int PlayerID() const;
+    [[nodiscard]] int PlayerID() const noexcept;
 
     /** @brief Return the empire identifier of the empire this client controls
      *
