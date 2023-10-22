@@ -4159,10 +4159,15 @@ bool PlanetSize::operator==(const Condition& rhs) const {
 
 namespace {
     struct PlanetSizeSimpleMatch {
-        PlanetSizeSimpleMatch(const std::vector< ::PlanetSize>& sizes, const ObjectMap& objects) :
+        PlanetSizeSimpleMatch(const std::span< ::PlanetSize>& sizes, const ObjectMap& objects) :
             m_sizes(sizes),
             m_objects(objects)
         {}
+
+        bool operator()(const Planet* candidate) const {
+            return candidate && std::any_of(m_sizes.begin(), m_sizes.end(),
+                                            [sz{candidate->Size()}](auto size) { return size == sz; });
+        }
 
         bool operator()(const UniverseObject* candidate) const {
             if (!candidate)
@@ -4177,19 +4182,10 @@ namespace {
                 planet = m_objects.getRaw<Planet>(building->PlanetID());
             }
 
-            if (planet) {
-                auto planet_size = planet->Size();
-                // is it one of the specified building types?
-                for (auto size : m_sizes) {
-                    if (planet_size == size)
-                        return true;
-                }
-            }
-
-            return false;
+            return operator()(planet);
         }
 
-        const std::vector< ::PlanetSize>& m_sizes;
+        const std::span< ::PlanetSize> m_sizes;
         const ObjectMap& m_objects;
     };
 }
