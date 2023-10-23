@@ -449,11 +449,11 @@ namespace {
             m_fleet_plan(std::make_shared<FleetPlan>(std::move(fleet_plan)))
         {}
 
-        FleetPlanWrapper(const std::string& fleet_name, const py::list& py_designs) {
+        FleetPlanWrapper(std::string fleet_name, const py::list& py_designs) {
             std::vector<std::string> designs;
             for (int i = 0; i < len(py_designs); i++)
                 designs.push_back(py::extract<std::string>(py_designs[i]));
-            m_fleet_plan = std::make_shared<FleetPlan>(fleet_name, designs, false); // TODO: std::move
+            m_fleet_plan = std::make_shared<FleetPlan>(std::move(fleet_name), designs, false);
         }
 
         // name accessors
@@ -490,7 +490,7 @@ namespace {
             m_monster_fleet_plan(std::make_shared<MonsterFleetPlan>(std::move(monster_fleet_plan)))
         {}
 
-        MonsterFleetPlanWrapper(const std::string& fleet_name, const py::list& py_designs,
+        MonsterFleetPlanWrapper(std::string fleet_name, const py::list& py_designs,
                                 double spawn_rate, int spawn_limit)
         {
             std::vector<std::string> designs;
@@ -498,7 +498,7 @@ namespace {
                 designs.push_back(py::extract<std::string>(py_designs[i]));
 
             m_monster_fleet_plan =
-                std::make_shared<MonsterFleetPlan>(fleet_name, designs, spawn_rate,
+                std::make_shared<MonsterFleetPlan>(std::move(fleet_name), designs, spawn_rate,
                                                    spawn_limit, nullptr, false);
         }
 

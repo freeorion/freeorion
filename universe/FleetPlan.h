@@ -18,16 +18,16 @@
 //! file, the ShipDesign referenced are liste in `default/scripting/ship_designs`.
 class FO_COMMON_API FleetPlan {
 public:
-    FleetPlan(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
-              bool lookup_name_userstring = false) : // TODO: pass string and vector<string> with move
-        m_name(fleet_name),
-        m_ship_designs(ship_design_names),
+    FleetPlan(std::string fleet_name, std::vector<std::string> ship_design_names,
+              bool lookup_name_userstring = false) :
+        m_name(std::move(fleet_name)),
+        m_ship_designs(std::move(ship_design_names)),
         m_name_in_stringtable(lookup_name_userstring)
     {}
 
     FleetPlan() = default;
 
-    auto Name() const -> const std::string&;
+    const std::string& Name() const;
 
     const auto& ShipDesigns() const noexcept { return m_ship_designs; }
 
