@@ -3,6 +3,12 @@
 
 #if __has_include(<ranges>) && (!defined(__clang_major__) || (__clang_major__ >= 16)) \
     && (!defined(__GNUC__) || (__GNUC__ >= 11) || (__GNUC__ == 10 && __GNUC_MINOR__ >= 4))
+# define USING_STD_RANGES 1
+#else
+# define USING_STD_RANGES 0
+#endif
+
+#if (USING_STD_RANGES)
 # include <ranges>
 static constexpr auto& range_keys = std::views::keys;
 static constexpr auto& range_values = std::views::values;

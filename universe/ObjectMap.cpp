@@ -84,17 +84,21 @@ namespace ObjectMapPredicateTypeTraits {
     invokable_on_shared_const_object, invokable_on_shared_mutable_object,
     invokable_on_const_entry, invokable_on_mutable_entry,
     invokable_on_const_reference, invokable_on_mutable_reference,
-    invokable, is_visitor, is_int_range
+    invokable, is_visitor, is_int_range, invokable_on_int
     */
     static constexpr auto fsiv = ObjectMap::CheckTypes<Ship, std::vector<int>>();
-    static_assert(fsiv == std::array{false, false, false, false, false, false, false, false, false, false, true});
+    static_assert(fsiv == std::array{false, false, false, false, false, false, false, false, false, false, true, false});
 
     static constexpr auto fcuifs = ObjectMap::CheckTypes<UniverseObject, boost::container::flat_set<int>>();
-    static_assert(fcuifs == std::array{false, false, false, false, false, false, false, false, false, false, true});
+    static_assert(fcuifs == std::array{false, false, false, false, false, false, false, false, false, false, true, false});
 
     static constexpr auto ship_p_lambda = [](const Ship*) -> bool { return false; };
     static constexpr auto lspbicsp = ObjectMap::CheckTypes<Ship, decltype(ship_p_lambda)>();
-    static_assert(lspbicsp == std::array{true, true, false, false, false, false, false, false, true, false, false});
+    static_assert(lspbicsp == std::array{true, true, false, false, false, false, false, false, true, false, false, false});
+
+    static constexpr auto int_lambda = [](const int) -> bool { return false; };
+    static constexpr auto libi = ObjectMap::CheckTypes<Ship, decltype(int_lambda)>();
+    static_assert(libi == std::array{false, false, false, false, false, false, false, false, true, false, false, true});
 }
 
 
