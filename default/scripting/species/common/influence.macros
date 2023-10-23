@@ -151,7 +151,7 @@ VERY_BAD_INFLUENCE
             ]
             accountinglabel = "VERY_BAD_INFLUENCE_LABEL"
             priority = [[TARGET_SCALING_PRIORITY]]
-            effects = SetTargetInfluence value = Value + (2.0/3.0-1.0)*abs(Value)
+            effects = SetTargetInfluence value = Value + (-0.33)*abs(Value)
 '''
 
 /*
