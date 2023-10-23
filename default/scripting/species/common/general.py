@@ -150,7 +150,7 @@ FOCUS_CHANGE_PENALTY = [
     # be reduced by 2 to 18. If research is 11, then it will be only reduced to the target (10).
     EffectsGroup(
         scope=IsSource,
-        activation=Planet() & ~Focus(type=["FOCUS_INDUSTRY"]) & (LocalCandidate.TurnsSinceFocusChange == 0),
+        activation=Planet() & ~Focus(type=["FOCUS_INDUSTRY"]) & (0 == LocalCandidate.TurnsSinceFocusChange),
         priority=FOCUS_CHANGE_PENALTY_PRIORITY,
         effects=SetIndustry(
             value=Value
