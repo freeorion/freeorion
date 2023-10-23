@@ -197,7 +197,7 @@ NO_OFFENSE_TROOPS = [
 ]
 
 NO_DEFENSE_TROOPS = [
-    EffectsGroup(description="NO_DEFENSE_TROOPS_DESC", scope=IsSource, effects=SetMaxTroops(value=0)),
+    EffectsGroup(description="NO_DEFENSE_TROOPS_DESC", scope=IsSource, activation=None, effects=SetMaxTroops(value=0)),
     *UNSTABLE_REBEL_TROOPS,
 ]
 
