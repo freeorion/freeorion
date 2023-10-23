@@ -192,7 +192,7 @@ GOOD_INFLUENCE = [
         activation=Planet() & Focus(type=["FOCUS_INFLUENCE"]),
         accountinglabel="GOOD_INFLUENCE_LABEL",
         priority=TARGET_SCALING_PRIORITY,
-        effects=SetTargetInfluence(value=Value + (1.25 - 1.0) * Abs(float, Value)),
+        effects=SetTargetInfluence(value=Value + (0.25) * Abs(float, Value)),
     ),
 ]
 
@@ -204,7 +204,7 @@ GREAT_INFLUENCE = [
         activation=Planet() & Focus(type=["FOCUS_INFLUENCE"]),
         accountinglabel="GREAT_INFLUENCE_LABEL",
         priority=TARGET_SCALING_PRIORITY,
-        effects=SetTargetInfluence(value=Value + (1.5 - 1.0) * Abs(float, Value)),
+        effects=SetTargetInfluence(value=Value + (0.5) * Abs(float, Value)),
     ),
 ]
 
@@ -217,7 +217,7 @@ VERY_BAD_INFLUENCE = [
         activation=Planet() & Focus(type=["FOCUS_INFLUENCE"]),
         accountinglabel="VERY_BAD_INFLUENCE_LABEL",
         priority=TARGET_SCALING_PRIORITY,
-        effects=SetTargetInfluence(value=Value + (2.0 / 3.0 - 1.0) * Abs(float, Value)),
+        effects=SetTargetInfluence(value=Value + (-0.33) * Abs(float, Value)),
     ),
 ]
 
@@ -230,7 +230,7 @@ BAD_INFLUENCE = [
         activation=Planet() & Focus(type=["FOCUS_INFLUENCE"]),
         accountinglabel="BAD_INFLUENCE_LABEL",
         priority=TARGET_SCALING_PRIORITY,
-        effects=SetTargetInfluence(value=Value + (0.8 - 1.0) * Abs(float, Value)),
+        effects=SetTargetInfluence(value=Value + (-0.2) * Abs(float, Value)),
     ),
 ]
 
@@ -242,6 +242,6 @@ ULTIMATE_INFLUENCE = [
         activation=Planet() & Focus(type=["FOCUS_INFLUENCE"]),
         accountinglabel="ULTIMATE_INFLUENCE_LABEL",
         priority=TARGET_SCALING_PRIORITY,
-        effects=SetTargetInfluence(value=Value + (2.0 - 1.0) * Abs(float, Value)),
+        effects=SetTargetInfluence(value=Value + (1.0) * Abs(float, Value)),
     ),
 ]
