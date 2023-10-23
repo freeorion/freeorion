@@ -1387,7 +1387,12 @@ namespace {
                 break;
 
             case EmpireAffiliationType::AFFIL_CAN_SEE: {
-                return false; // TODO
+                if (m_empire_id != ALL_EMPIRES)
+                    return m_context.ContextVis(candidate->ID(), m_empire_id) >= Visibility::VIS_BASIC_VISIBILITY;
+                const auto& empire_ids = m_context.EmpireIDs();
+                return std::any_of(empire_ids.begin(), empire_ids.end(),
+                                   [this, cid{candidate->ID()}](const auto empire_id)
+                                   { return m_context.ContextVis(cid, m_empire_id) >= Visibility::VIS_BASIC_VISIBILITY; });
                 break;
             }
 
