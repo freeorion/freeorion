@@ -1035,7 +1035,7 @@ void Empire::SetAutoTurn(int turns_count)
 void Empire::SetLastTurnReceived(int last_turn_received) noexcept
 { m_last_turn_received = last_turn_received; }
 
-void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects, const ObjectMap& objects) {
+void Empire::UpdateSystemSupplyRanges(const std::span<const int> known_objects, const ObjectMap& objects) {
     TraceLogger(supply) << "Empire::UpdateSystemSupplyRanges() for empire " << this->Name();
     m_supply_system_ranges.clear();
 
@@ -1073,13 +1073,12 @@ void Empire::UpdateSystemSupplyRanges(const Universe& universe) {
     // get ids of objects partially or better visible to this empire.
     const auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
 
-    std::set<int> known_objects_set;
+    // exclude objects known to have been destroyed (or rather, include ones that aren't known
+    // by this empire to be destroyed). this should already contain sorted unique ids.
+    const auto not_known_destroyed = [&](int id) { return !known_destroyed_objects.contains(id); };
+    const auto known_object_ids = empire_known_objects.findIDs(not_known_destroyed);
 
-    // exclude objects known to have been destroyed (or rather, include ones that aren't known by this empire to be destroyed)
-    for (const auto& obj : empire_known_objects.allRaw())
-        if (!known_destroyed_objects.contains(obj->ID()))
-            known_objects_set.insert(obj->ID());
-    UpdateSystemSupplyRanges(known_objects_set, empire_known_objects);
+    UpdateSystemSupplyRanges(known_object_ids, empire_known_objects);
 }
 
 void Empire::UpdateUnobstructedFleets(ObjectMap& objects, const std::unordered_set<int>& known_destroyed_objects) {
@@ -1100,20 +1099,18 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context, bo
     const Universe& universe = context.ContextUniverse();
 
     // get ids of systems partially or better visible to this empire.
-    // TODO: make a UniverseObjectVisitor for objects visible to an empire at a specified visibility or greater
     const auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
 
-    std::set<int> known_systems_set;
+    // exclude systems known to have been destroyed (or rather, include ones that aren't known
+    // by this empire to be destroyed). this should already contain sorted unique ids.
+    const auto not_known_destroyed = [&](const int id) { return !known_destroyed_objects.contains(id); };
+    const auto known_system_ids = universe.EmpireKnownObjects(this->EmpireID()).findIDs<System>(not_known_destroyed);
 
-    // exclude systems known to have been destroyed (or rather, include ones that aren't known to be destroyed)
-    for (const auto& sys : universe.EmpireKnownObjects(this->EmpireID()).allRaw<System>())
-        if (!known_destroyed_objects.contains(sys->ID()))
-            known_systems_set.insert(sys->ID());
-    UpdateSupplyUnobstructedSystems(context, known_systems_set, precombat);
+    UpdateSupplyUnobstructedSystems(context, known_system_ids, precombat);
 }
 
 void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
-                                             const std::set<int>& known_systems,
+                                             const std::span<const int> known_systems,
                                              bool precombat)
 {
     TraceLogger(supply) << "UpdateSupplyUnobstructedSystems (allowing supply propagation) for empire " << m_id;
@@ -1123,7 +1120,8 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
     const ObjectMap& objects{context.ContextObjects()};
 
     // get systems with historically at least partial visibility
-    std::set<int> systems_with_at_least_partial_visibility_at_some_point;
+    boost::container::flat_set<int> systems_with_at_least_partial_visibility_at_some_point;
+    systems_with_at_least_partial_visibility_at_some_point.reserve(known_systems.size());
     for (int system_id : known_systems) {
         const auto& vis_turns = universe.GetObjectVisibilityTurnMapByEmpire(system_id, m_id);
         if (vis_turns.contains(Visibility::VIS_PARTIAL_VISIBILITY))
@@ -1132,13 +1130,6 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
 
     // get all fleets, or just those visible to this client's empire
     const auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
-
-    // get empire supply ranges
-    std::map<int, std::map<int, float>> empire_system_supply_ranges;
-    for (const auto& entry : context.Empires()) {
-        const auto& empire = entry.second;
-        empire_system_supply_ranges[entry.first] = empire->SystemSupplyRanges();
-    }
 
     // find systems that contain fleets that can either maintain supply or block supply.
     // to affect supply in either manner, a fleet must be armed & aggressive, & must be not

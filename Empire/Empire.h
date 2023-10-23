@@ -341,13 +341,13 @@ public:
     /** Calculates ranges that systems can send fleet and resource supplies,
       * using the specified st of \a known_objects as the source for supply-
       * producing objects and systems through which it can be propagated. */
-    void UpdateSystemSupplyRanges(const std::set<int>& known_objects, const ObjectMap& objects);
+    void UpdateSystemSupplyRanges(const std::span<const int> known_objects, const ObjectMap& objects);
     /** Calculates ranges that systems can send fleet and resource supplies. */
     void UpdateSystemSupplyRanges(const Universe& universe);
     /** Calculates systems that can propagate supply (fleet or resource) using
       * the specified set of \a known_systems */
     void UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
-                                         const std::set<int>& known_systems,
+                                         const std::span<const int> known_systems,
                                          bool precombat = false);
     /** Calculates systems that can propagate supply using this empire's own /
       * internal list of explored systems. */
