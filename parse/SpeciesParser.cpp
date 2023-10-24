@@ -26,6 +26,10 @@
 #include <boost/python/make_function.hpp>
 #include <boost/python/raw_function.hpp>
 
+namespace {
+    DeclareThreadSafeLogger(parsing);
+}
+
 #define DEBUG_PARSERS 0
 
 #if DEBUG_PARSERS
@@ -522,6 +526,9 @@ namespace parse {
 
         for (const auto& file : ListDir(path, IsFOCScript))
             detail::parse_file<grammar, start_rule_payload::first_type>(lexer::tok, file, species_);
+        TraceLogger(parsing) << "FOCS Species: " << species_.size();
+        for (auto& [sp_name, sp] : species_)
+            TraceLogger(parsing) << sp_name << " : " << sp.GetCheckSum() << "\n" << sp.Dump();
 
         py_grammar p = py_grammar(parser, species_);
         for (const auto& file : ListDir(path, IsFOCPyScript)) {
@@ -532,6 +539,11 @@ namespace parse {
 
             py_parse::detail::parse_file<py_grammar>(parser, file, p);
         }
+
+        TraceLogger(parsing) << "FOCS + Python Species: " << species_.size();
+        for (auto& [sp_name, sp] : species_)
+            TraceLogger(parsing) << sp_name << " : " << sp.GetCheckSum() << "\n" << sp.Dump();
+
 
         if (!manifest_file.empty()) {
             try {
