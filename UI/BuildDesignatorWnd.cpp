@@ -410,7 +410,6 @@ namespace {
             auto [obj, candidate_name] = GetObjName(context);
             auto [local_pp_output, stockpile, stockpile_limit_per_turn] = GetOutputStockpile(context);
 
-            const auto& title = UserString(m_item.name);
             std::string main_text;
             main_text.reserve(1000); // guesstimate
 
@@ -490,7 +489,6 @@ namespace {
             auto [local_pp_output, stockpile, stockpile_limit_per_turn] = GetOutputStockpile(context);
 
             const ShipDesign* design = GetUniverse().GetShipDesign(m_item.design_id);
-            const auto& title = design ? design->Name(true) : EMPTY_STRING;
             std::string main_text;
             main_text.reserve(1000); // guesstimate
 
