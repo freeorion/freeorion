@@ -3235,15 +3235,8 @@ void Contains::Eval(const ScriptingContext& parent_context,
         return;
 
     } else if (search_domain_size == 1u) [[likely]] {
-        // TODO: can call Match or EvalOne to test object?
-        // evaluate subcondition on objects contained by the candidate
         const auto* candidate = search_domain == SearchDomain::MATCHES ? matches.front() : non_matches.front();
-        const ScriptingContext local_context{parent_context, candidate};
-
-        // initialize subcondition candidates from local candidate's contents
-        const auto& contained_ids = candidate->ContainedObjectIDs();
-        const ObjectSet contained_objects = parent_context.ContextObjects().findRaw(contained_ids);
-        const bool contained_match_exists = m_condition->EvalAny(local_context, contained_objects);
+        const bool contained_match_exists = EvalOne(parent_context, candidate); // faster than m_condition->EvalAny(local_context, contained_objects) in my tests
 
         // move single local candidate as appropriate...
         if (search_domain == SearchDomain::MATCHES && !contained_match_exists) {
