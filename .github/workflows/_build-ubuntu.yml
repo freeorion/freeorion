@@ -56,17 +56,25 @@ jobs:
         run: |
           cd build
           cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=ON -DBUILD_CLIENT_GODOT=ON ..
+          
+      - name: Install newer Clang
+        if: ${{ matrix.compiler == 'clang' }}
+        run: |
+           wget https://apt.llvm.org/llvm.sh
+           chmod +x ./llvm.sh
+           sudo ./llvm.sh 15          
       - name: Configure for clang
         if: ${{ matrix.compiler == 'clang' }}
         env:
           CCACHE_DIR: ${{ runner.temp }}/ccache
           CXXFLAGS: '-I/usr/include/SDL2 -I/usr/include/x86_64-linux-gnu/SDL2/ -I/usr/include/x86_64-linux-gnu/'
           CFLAGS: '-I/usr/include/SDL2 -I/usr/include/x86_64-linux-gnu/SDL2/ -I/usr/include/x86_64-linux-gnu/'
-          CC: clang
-          CXX: clang++
+          CC: clang-15
+          CXX: clang++-15
         run: |
           cd build
           cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=ON -DBUILD_CLIENT_GODOT=ON ..
+
       - name: Build
         env:
           CCACHE_DIR: ${{ runner.temp }}/ccache
