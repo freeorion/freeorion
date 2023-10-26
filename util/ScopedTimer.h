@@ -7,6 +7,15 @@
 
 #include "Export.h"
 
+#if defined(__clang_major__) && (__clang_major__ < 16)
+// workaround for
+// error: call to consteval function 'std::chrono::hh_mm_ss::_S_fractional_width' is not a constant expression
+// undefined function '_S_fractional_width' cannot be used in a constant expression
+//
+// see https://www.mail-archive.com/debian-bugs-dist@lists.debian.org/msg1918839.html
+// see https://sources.debian.org/src/chromium/118.0.5993.70-1/debian/patches/fixes/gcc13-with-clang14.patch/
+constexpr int std::chrono::hh_mm_ss::_S_fractional_width() { return 6; }
+#endif
 #include <chrono>
 #include <unordered_map>
 
