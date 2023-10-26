@@ -62,15 +62,15 @@ jobs:
         run: |
            wget https://apt.llvm.org/llvm.sh
            chmod +x ./llvm.sh
-           sudo ./llvm.sh 17          
+           sudo ./llvm.sh 15          
       - name: Configure for clang
         if: ${{ matrix.compiler == 'clang' }}
         env:
           CCACHE_DIR: ${{ runner.temp }}/ccache
           CXXFLAGS: '-I/usr/include/SDL2 -I/usr/include/x86_64-linux-gnu/SDL2/ -I/usr/include/x86_64-linux-gnu/'
           CFLAGS: '-I/usr/include/SDL2 -I/usr/include/x86_64-linux-gnu/SDL2/ -I/usr/include/x86_64-linux-gnu/'
-          CC: clang-17
-          CXX: clang++-17
+          CC: clang-15
+          CXX: clang++-15
         run: |
           cd build
           cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=ON -DBUILD_CLIENT_GODOT=ON ..
