@@ -1296,6 +1296,11 @@ def _build_ship_facilities(building_type: Shipyard, top_pids: set[PlanetId] = fr
         len(building_type.queued_at()),
     )
     if not try_pids:
+        # Recursion cannot handle the base yard, but currently the AI builds it everywhere anyway.
+        # Production of shipyards should be re-written, the AI builds too many of them.
+        if prerequisite_type != Shipyard.BASE:
+            debug(f"Cannot build {building_type} at top-pilot planets, try building {prerequisite_type} first.")
+            _build_ship_facilities(prerequisite_type, top_pids)
         return
     # ship facilities all have location independent costs
     turn_cost = building_type.turn_cost(list(try_pids)[0])
