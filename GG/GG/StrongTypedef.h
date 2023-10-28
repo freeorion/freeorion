@@ -24,58 +24,58 @@
 namespace GG {
 
 /** Overload of Value() for int. */
-inline constexpr int Value(int i)
+inline constexpr int Value(int i) noexcept
 { return i; }
 
 /** Overload of Value() for double. */
-inline constexpr double Value(double d)
+inline constexpr double Value(double d) noexcept
 { return d; }
 
 /** Overload of Value() for std::size_t. */
-inline constexpr std::size_t Value(std::size_t s)
+inline constexpr std::size_t Value(std::size_t s) noexcept
 { return s; }
 
 }
 
 #define GG_MEMBER_BOOL_OP_SELF_TYPE(op, rhs_type) \
-    inline constexpr bool operator op (rhs_type rhs) const \
+    inline constexpr bool operator op (rhs_type rhs) const noexcept \
     { return m_value op rhs.m_value; }
 
 #define GG_MEMBER_BOOL_OP_OTHER_TYPE(op, rhs_type) \
-    inline constexpr bool operator op (rhs_type rhs) const \
+    inline constexpr bool operator op (rhs_type rhs) const noexcept \
     { return m_value op Value(rhs); }
 
-#define GG_MEMBER_NEG_INCR_DECR(this_type)       \
-    inline constexpr this_type operator-() const \
-    { return this_type(-m_value); }              \
-    inline constexpr this_type& operator++()     \
-    {                                            \
-        ++m_value;                               \
-        return *this;                            \
-    }                                            \
-    inline constexpr this_type& operator--()     \
-    {                                            \
-        --m_value;                               \
-        return *this;                            \
-    }                                            \
-    inline constexpr this_type operator++(int)   \
-    {                                            \
-        this_type retval(m_value);               \
-        ++m_value;                               \
-        return retval;                           \
-    }                                            \
-    inline constexpr this_type operator--(int)   \
-    {                                            \
-        this_type retval(m_value);               \
-        --m_value;                               \
-        return retval;                           \
+#define GG_MEMBER_NEG_INCR_DECR(this_type)                \
+    inline constexpr this_type operator-() const noexcept \
+    { return this_type(-m_value); }                       \
+    inline constexpr this_type& operator++()  noexcept    \
+    {                                                     \
+        ++m_value;                                        \
+        return *this;                                     \
+    }                                                     \
+    inline constexpr this_type& operator--()  noexcept    \
+    {                                                     \
+        --m_value;                                        \
+        return *this;                                     \
+    }                                                     \
+    inline constexpr this_type operator++(int)  noexcept  \
+    {                                                     \
+        this_type retval(m_value);                        \
+        ++m_value;                                        \
+        return retval;                                    \
+    }                                                     \
+    inline constexpr this_type operator--(int)  noexcept  \
+    {                                                     \
+        this_type retval(m_value);                        \
+        --m_value;                                        \
+        return retval;                                    \
     }
 
-#define GG_MEMBER_ASSIGN_OP_SELF_TYPE(op, rhs_type)         \
-    inline constexpr rhs_type& operator op (rhs_type rhs)   \
-    {                                                       \
-        m_value op rhs.m_value;                             \
-        return *this;                                       \
+#define GG_MEMBER_ASSIGN_OP_SELF_TYPE(op, rhs_type)                \
+    inline constexpr rhs_type& operator op (rhs_type rhs) noexcept \
+    {                                                              \
+        m_value op rhs.m_value;                                    \
+        return *this;                                              \
     }
 
 #define GG_MEMBER_ASSIGN_OP_OTHER_TYPE_DECL(op, self_type, rhs_type) \
