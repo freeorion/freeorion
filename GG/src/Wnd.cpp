@@ -696,18 +696,16 @@ void Wnd::GridLayout()
     // populate this new layout with the child windows, based on their placements in the pixel-grid layout
     for (const GridLayoutWnd& layout_wnd : grid_layout.get<Pointer>()) {
         auto& wnd = layout_wnd.wnd;
-        Pt ul = layout_wnd.ul;
-        Pt lr = layout_wnd.lr;
-        int left = std::distance(unique_lefts.begin(), unique_lefts.find(ul.x));
-        int top = std::distance(unique_tops.begin(), unique_tops.find(ul.y));
-        int right = std::distance(unique_lefts.begin(), unique_lefts.lower_bound(lr.x));
-        int bottom = std::distance(unique_tops.begin(), unique_tops.lower_bound(lr.y));
-        auto height = bottom - top;
-        size_t height_sz = height > 0 ? static_cast<size_t>(height) : 0u;
-        auto width = right - left;
-        size_t width_sz = width > 0 ? static_cast<size_t>(width) : 0u;
-        size_t top_sz = top > 0 ? static_cast<size_t>(top) : 0u;
-        size_t left_sz = left > 0 ? static_cast<size_t>(left) : 0u;
+        const auto ul = layout_wnd.ul;
+        const auto lr = layout_wnd.lr;
+        const auto left = std::distance(unique_lefts.begin(), unique_lefts.find(ul.x));
+        const auto top = std::distance(unique_tops.begin(), unique_tops.find(ul.y));
+        const auto right = std::distance(unique_lefts.begin(), unique_lefts.lower_bound(lr.x));
+        const auto bottom = std::distance(unique_tops.begin(), unique_tops.lower_bound(lr.y));
+        const auto height_sz = static_cast<size_t>((bottom >= top) ? (bottom - top) : 0u);
+        const auto width_sz = static_cast<size_t>((right >= left) ? (right - left) : 0u);
+        const auto top_sz = top > 0 ? static_cast<size_t>(top) : 0u;
+        const auto left_sz = left > 0 ? static_cast<size_t>(left) : 0u;
         layout->Add(wnd, top_sz, left_sz, height_sz, width_sz);
     }
 }
