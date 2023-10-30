@@ -56,13 +56,7 @@ jobs:
         run: |
           cd build
           cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=ON -DBUILD_CLIENT_GODOT=ON ..
-          
-      - name: Install newer Clang
-        if: ${{ matrix.compiler == 'clang' }}
-        run: |
-           wget https://apt.llvm.org/llvm.sh
-           chmod +x ./llvm.sh
-           sudo ./llvm.sh 15          
+      
       - name: Configure for clang
         if: ${{ matrix.compiler == 'clang' }}
         env:
