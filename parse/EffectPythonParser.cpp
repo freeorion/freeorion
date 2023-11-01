@@ -196,7 +196,15 @@ namespace {
 
     effect_wrapper set_empire_meter(const boost::python::tuple& args, const boost::python::dict& kw) {
         auto meter = boost::python::extract<std::string>(kw["meter"])();
-        auto value = ValueRef::CloneUnique(boost::python::extract<value_ref_wrapper<double>>(kw["value"])().value_ref);
+
+        std::unique_ptr<ValueRef::ValueRef<double>> value;
+        auto value_args = boost::python::extract<value_ref_wrapper<double>>(kw["value"]);
+        if (value_args.check()) {
+            value = ValueRef::CloneUnique(value_args().value_ref);
+        } else {
+            value = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["value"])());
+        }
+
         if (kw.has_key("empire")) {
             auto empire = ValueRef::CloneUnique(boost::python::extract<value_ref_wrapper<int>>(kw["empire"])().value_ref);
             return effect_wrapper(std::make_shared<Effect::SetEmpireMeter>(std::move(empire),
