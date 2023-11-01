@@ -39,7 +39,7 @@ def CONDITION_OTHER_SPECIES_NEARBY():
         & HasSpecies()
         & ~HasSpecies(name=[Source.Species])
         & ~HasTag(name="LOW_BRAINPOWER")
-        & ~IsBuilding(name=["BLD_CONC_CAMP"])
+        & ~Contains(IsBuilding(name=["BLD_CONC_CAMP"]))
         & VisibleToEmpire(empire=Source.Owner)
         & (~OwnedBy(empire=Source.Owner) | ~EmpireHasAdoptedPolicy(empire=Source.Owner, name="PLC_RACIAL_PURITY"))
         & WithinStarlaneJumps(jumps=NamedIntegerLookup(name="XENOPHOBIC_MAX_JUMPS"), condition=IsSource)
@@ -77,20 +77,20 @@ XENOPHOBIC_SELF = [
                 * Statistic(
                     float,
                     Sum,
-                    value=1 + NamedIntegerLookup(name="XENOPHOBIC_MAX_JUMPS"),
+                    value=1
+                    + NamedIntegerLookup(name="XENOPHOBIC_MAX_JUMPS")
+                    - JumpsBetween(Target.ID, LocalCandidate.ID),
                     condition=Planet()
                     & VisibleToEmpire(empire=Source.Owner)
                     & HasSpecies()
                     & ~HasSpecies(name=[Source.Species])
                     & ~HasTag(name="LOW_BRAINPOWER")
-                    & ~Contains(
-                        IsBuilding(name=["BLD_CONC_CAMP"])
-                        & (
-                            ~OwnedBy(empire=RootCandidate.Owner)
-                            | ~EmpireHasAdoptedPolicy(empire=Source.Owner, name="PLC_RACIAL_PURITY")
-                        )
-                        & WithinStarlaneJumps(jumps=NamedIntegerLookup(name="XENOPHOBIC_MAX_JUMPS"), condition=IsSource)
-                    ),
+                    & ~Contains(IsBuilding(name=["BLD_CONC_CAMP"]))
+                    & (
+                        ~OwnedBy(empire=RootCandidate.Owner)
+                        | ~EmpireHasAdoptedPolicy(empire=Source.Owner, name="PLC_RACIAL_PURITY")
+                    )
+                    & WithinStarlaneJumps(jumps=NamedIntegerLookup(name="XENOPHOBIC_MAX_JUMPS"), condition=IsSource),
                 )
             )
         ),
@@ -112,7 +112,7 @@ XENOPHOBIC_SELF = [
                 Target.HabitableSize
                 * NamedReal(name="XENOPHOBIC_TARGET_POPULATION_PERJUMP", value=-0.2)
                 * Statistic(
-                    int,
+                    float,
                     Sum,
                     value=1
                     + NamedIntegerLookup(name="XENOPHOBIC_MAX_JUMPS")
