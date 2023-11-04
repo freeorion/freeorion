@@ -28,7 +28,11 @@ include(UseCodeCoverage)
 include(Util)
 
 set(GIGI_VERSION 0.8.0)
-set(CMAKE_CXX_STANDARD 17)
+if(WIN32)
+    set(CMAKE_CXX_STANDARD 20)
+else()
+    set(CMAKE_CXX_STANDARD 17)
+endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(ENABLE_PNG_TEXTURES "Enable PNG texture support." ON)
