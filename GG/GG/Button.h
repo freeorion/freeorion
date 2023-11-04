@@ -206,9 +206,9 @@ public:
 
         \param button The StateButton instance to render.
      */
-    virtual void Render(const StateButton& button) const;
+    virtual void Render(const StateButton& button) const {}
 
-    /** \brief Respong to a button state change.
+    /** \brief Respond to a button state change.
 
         This method is called whenever a Button chanes its state.
 
@@ -216,7 +216,7 @@ public:
                        recent state.
         \param previous_state  The previous button state.
      */
-    virtual void OnChanged(const StateButton& button, StateButton::ButtonState previous_state) const;
+    virtual void OnChanged(const StateButton& button, StateButton::ButtonState previous_state) const {}
 
     /** \brief Respond to a state button change.
 
@@ -226,7 +226,7 @@ public:
         \param checked True if the state button was checked, False
                        if not.
      */
-    virtual void OnChecked(bool checked) const;
+    virtual void OnChecked(bool checked) const {}
 
     /** \brief Return the minimum size required for a usable representation
 

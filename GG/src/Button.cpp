@@ -351,35 +351,38 @@ TextControl* StateButton::GetLabel() const
 ////////////////////////////////////////////////
 // GG::StateButtonRepresenter
 ////////////////////////////////////////////////
-void StateButtonRepresenter::Render(const GG::StateButton& button) const
-{}
-
 void StateButtonRepresenter::DoLayout(const GG::StateButton& button, Pt& button_ul, Pt& button_lr, Pt& text_ul) const
 {
-    X bn_w = X(button.GetLabel()->GetFont()->PointSize()); // set button width and height to text he
-    Y bn_h = Y(button.GetLabel()->GetFont()->PointSize());
+    const auto* label = button.GetLabel();
+    const auto& font = label->GetFont();
+    const auto pt_sz = label->GetFont()->PointSize();
+    auto format = label->GetTextFormat();
+    const auto original_format = format;
+    static constexpr double SPACING = 0.5;    // the space to leave between the button and text, as a factor of the button's size (width or height)
+
+    X bn_w = X(pt_sz); // set button width and height to text he
+    Y bn_h = Y(pt_sz);
 
     button_ul = Pt();
     button_lr = Pt(bn_w, bn_h);
 
-    X w = button.Width();
-    Y h = button.Height();
+    const X w = button.Width();
+    const Y h = button.Height();
     const X BN_W = button_lr.x - button_ul.x;
     const Y BN_H = button_lr.y - button_ul.y;
     X bn_x = button_ul.x;
     Y bn_y = button_ul.y;
-    Flags<TextFormat> format = button.GetLabel()->GetTextFormat();
-    Flags<TextFormat> original_format = format;
-    static constexpr double SPACING = 0.5;    // the space to leave between the button and text, as a factor of the button's size (width or height)
+
     if (format & FORMAT_VCENTER)       // center button vertically
-        bn_y = (h - BN_H) / 2.0 + 0.5;
+        bn_y = Y{(h - BN_H) / 2.0};
     if (format & FORMAT_TOP) {         // put button at top, text just below
         bn_y = Y0;
         text_ul.y = BN_H;
     }
     if (format & FORMAT_BOTTOM) {      // put button at bottom, text just above
         bn_y = (h - BN_H);
-        text_ul.y = h - (BN_H * (1 + SPACING)) - (std::max(0, static_cast<int>(button.GetLabel()->GetLineData().size() - 1)) * button.GetLabel()->GetFont()->Lineskip() + button.GetLabel()->GetFont()->Height()) + 0.5;
+        const auto linedata_sz = std::max(0, static_cast<int>(label->GetLineData().size()) - 1);
+        text_ul.y = GG::Y{0.5 + h - (BN_H*(1 + SPACING)) - (linedata_sz*font->Lineskip() + font->Height())};
     }
 
     if (format & FORMAT_CENTER) {      // center button horizontally
@@ -387,18 +390,18 @@ void StateButtonRepresenter::DoLayout(const GG::StateButton& button, Pt& button_
             format |= FORMAT_LEFT;     // so go to the default (FORMAT_CENTER|FORMAT_LEFT)
             format &= ~FORMAT_CENTER;
         } else {
-            bn_x = (w - bn_x) / 2.0 - BN_W / 2.0 + 0.5;
+            bn_x = GG::X{0.5 + (w - bn_x) / 2.0 - BN_W / 2.0};
         }
     }
     if (format & FORMAT_LEFT) {        // put button at left, text just to the right
         bn_x = X0;
         if (format & FORMAT_VCENTER)
-            text_ul.x = BN_W * (1 + SPACING) + 0.5;
+            text_ul.x = GG::X{0.5 + BN_W * (1 + SPACING)};
     }
     if (format & FORMAT_RIGHT) {       // put button at right, text just to the left
         bn_x = (w - BN_W);
         if (format & FORMAT_VCENTER)
-            text_ul.x = -BN_W * (1 + SPACING) + 0.5;
+            text_ul.x = GG::X{0.5 -BN_W * (1 + SPACING)};
     }
     if (format != original_format)
         button.GetLabel()->SetTextFormat(format);
@@ -406,19 +409,12 @@ void StateButtonRepresenter::DoLayout(const GG::StateButton& button, Pt& button_
     button_lr = button_ul + Pt(BN_W, BN_H);
 }
 
-void StateButtonRepresenter::OnChanged(const StateButton& button, StateButton::ButtonState previous_state) const
-{}
-
-void StateButtonRepresenter::OnChecked(bool checked) const
-{}
-
 Pt StateButtonRepresenter::MinUsableSize(const StateButton& button) const
 {
     Pt bn_ul, bn_lr, tx_ul;
-
     DoLayout(button, bn_ul, bn_lr, tx_ul);
 
-    Pt text_lr = tx_ul + button.GetLabel()->MinUsableSize();
+    const Pt text_lr = tx_ul + button.GetLabel()->MinUsableSize();
     return Pt(std::max(bn_lr.x, text_lr.x) - std::min(bn_ul.x, tx_ul.x),
               std::max(bn_lr.y, text_lr.y) - std::min(bn_ul.y, tx_ul.y));
 }
@@ -434,7 +430,7 @@ BeveledCheckBoxRepresenter::BeveledCheckBoxRepresenter(Clr interior):
 void BeveledCheckBoxRepresenter::Render(const GG::StateButton& button) const
 {
     // draw button
-    Pt cl_ul = button.ClientUpperLeft();
+    const Pt cl_ul = button.ClientUpperLeft();
     Pt bn_ul, bn_lr, tx_ul;
 
     DoLayout(button, bn_ul, bn_lr, tx_ul);
@@ -469,7 +465,7 @@ BeveledRadioRepresenter::BeveledRadioRepresenter(Clr interior):
 void BeveledRadioRepresenter::Render(const GG::StateButton& button) const
 {
     // draw button
-    Pt cl_ul = button.ClientUpperLeft();
+    const Pt cl_ul = button.ClientUpperLeft();
     Pt bn_ul, bn_lr, tx_ul;
 
     DoLayout(button, bn_ul, bn_lr, tx_ul);
@@ -503,26 +499,28 @@ Pt BeveledTabRepresenter::MinUsableSize(const StateButton& button) const
 void BeveledTabRepresenter::Render(const StateButton& button) const
 {
     static constexpr int BEVEL = 2;
+    const auto button_checked = button.Checked();
 
     // draw button
-    Pt cl_ul = button.ClientUpperLeft();
-    Pt cl_lr = button.ClientLowerRight();
-    Pt tx_ul = Pt();
+    const Pt cl_ul = [button_checked, &button]() {
+        GG::Pt cl_ul = button.ClientUpperLeft();
+        if (!button_checked)
+            cl_ul.y += BEVEL;
+        return cl_ul;
+    }();
+    const Pt cl_lr = button.ClientLowerRight();
+    const Pt tx_ul = Pt(GG::X0, button_checked ? GG::Y0 : Y(BEVEL / 2));
 
-    Clr color_to_use = button.Checked() ? button.Color() : DarkenClr(button.Color());
-    color_to_use = button.Disabled() ? DisabledColor(color_to_use) : color_to_use;
-    if (!button.Checked()) {
-        cl_ul.y += BEVEL;
-        tx_ul.y = Y(BEVEL / 2);
-    }
-    BeveledRectangle(cl_ul, cl_lr,
-                     color_to_use, color_to_use,
-                     true, BEVEL,
-                     true, true, true, !button.Checked());
+    const Clr color_to_use1 = button_checked ? button.Color() : DarkenClr(button.Color());
+    const Clr color_to_use2 = button.Disabled() ? DisabledColor(color_to_use1) : color_to_use1;
 
-    button.GetLabel()->OffsetMove(tx_ul);
-    button.GetLabel()->Render();
-    button.GetLabel()->OffsetMove(-(tx_ul));
+    BeveledRectangle(cl_ul, cl_lr, color_to_use2, color_to_use2,
+                     true, BEVEL, true, true, true, !button_checked);
+
+    auto* label = button.GetLabel();
+    label->OffsetMove(tx_ul);
+    label->Render();
+    label->OffsetMove(-(tx_ul));
 }
 
 
