@@ -362,11 +362,11 @@ bool Scroll::EventFilter(Wnd* w, const WndEvent& event)
                 Pt new_ul = m_tab->RelativeUpperLeft() + event.DragMove();
                 if (m_orientation == Orientation::VERTICAL) {
                     new_ul.x = m_tab->RelativeUpperLeft().x;
-                    new_ul.y = std::max(0 + (m_decr ? m_decr->Height() : Y0),
+                    new_ul.y = std::max(m_decr ? m_decr->Height() : Y0,
                                         std::min(new_ul.y, ClientHeight() - (m_incr ? m_incr->Height() : Y0) - m_tab->Height()));
                     m_tab_dragged |= bool(m_tab->RelativeUpperLeft().y - new_ul.y);
                 } else {
-                    new_ul.x = std::max(0 + (m_decr ? m_decr->Width() : X0),
+                    new_ul.x = std::max(m_decr ? m_decr->Width() : X0,
                                         std::min(new_ul.x, ClientWidth() - (m_incr ? m_incr->Width() : X0) - m_tab->Width()));
                     new_ul.y = m_tab->RelativeUpperLeft().y;
                     m_tab_dragged |= bool(m_tab->RelativeUpperLeft().x - new_ul.x);
