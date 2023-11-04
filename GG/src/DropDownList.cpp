@@ -312,7 +312,7 @@ Pt ModalListPicker::DetermineListHeight(Pt _drop_down_size) {
         expected_height = reduced_num_rows * row_height + border_thick;
     }
 
-    drop_down_size.y = expected_height;
+    drop_down_size.y = GG::Y{expected_height};
 
     LB()->Resize(drop_down_size);
     if (!LB()->Selections().empty())
