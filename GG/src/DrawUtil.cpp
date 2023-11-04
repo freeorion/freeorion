@@ -105,16 +105,17 @@ void Check(Pt ul, Pt lr, Clr color1, Clr color2, Clr color3)
     glTranslatef(Value(ul.x + wd / 2.0f), Value(ul.y + ht / 2.0f * sf), 0.0f);  // move origin to the center of the rectangle
     glScalef(Value(wd / 2.0f * sf), Value(ht / 2.0f * sf), 1.0f);               // map the range [-1,1] to the rectangle in both directions
 
-    static std::size_t indices[22] = { 1,  4,  2,
-                                       8,  0,  3,  7,
-                                       2,  4,  5,  3,  7,  3,  5,  6,
-                                       8,  7,  6,
-                                       0,  1,  2,  3};
+    static constexpr std::array<std::size_t, 22> indices =
+      { 1,  4,  2,
+        8,  0,  3,  7,
+        2,  4,  5,  3,  7,  3,  5,  6,
+        8,  7,  6,
+        0,  1,  2,  3};
 
     GL2DVertexBuffer vert_buf;
     vert_buf.reserve(22);
-    for (std::size_t i = 0; i < 22; ++i)
-        vert_buf.store(verts[indices[i]][0], verts[indices[i]][1]);
+    for (const auto index : indices)
+        vert_buf.store(verts[index][0], verts[index][1]);
 
     glDisable(GL_TEXTURE_2D);
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
