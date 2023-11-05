@@ -11,6 +11,7 @@ Part
         Planet
         OwnedBy empire = Source.Owner
         Population low = [[MIN_RECOLONIZING_SIZE]] high = 999
+        Happiness low = 5
     ]
 // Population consumption is commented out until the discrepancy between outpost
 // population consumption and this consumption is regularized.
