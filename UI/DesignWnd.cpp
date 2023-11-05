@@ -1415,8 +1415,7 @@ void PartsListBox::SizeMove(GG::Pt ul, GG::Pt lr) {
     if (old_size != GG::Wnd::Size()) {
         // determine how many columns can fit in the box now...
         const GG::X TOTAL_WIDTH = Size().x - ClientUI::ScrollWidth();
-        const int NUM_COLUMNS = std::max(1,
-            Value(TOTAL_WIDTH / (SLOT_CONTROL_WIDTH + GG::X(PAD))));
+        const int NUM_COLUMNS = std::max(1, TOTAL_WIDTH / (SLOT_CONTROL_WIDTH + GG::X{PAD}));
 
         if (NUM_COLUMNS != m_previous_num_columns)
             Populate();
@@ -1590,9 +1589,9 @@ void PartsListBox::Populate() {
     ScopedTimer scoped_timer("PartsListBox::Populate");
 
     const GG::X TOTAL_WIDTH = ClientWidth() - ClientUI::ScrollWidth();
-    const int NUM_COLUMNS = std::max(1, Value(TOTAL_WIDTH / (SLOT_CONTROL_WIDTH + GG::X(PAD))));
+    const int NUM_COLUMNS = std::max(1, TOTAL_WIDTH / (SLOT_CONTROL_WIDTH + GG::X{PAD}));
 
-    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     const Empire* empire = GetEmpire(empire_id);  // may be nullptr
 
     int cur_col = NUM_COLUMNS;
@@ -1886,16 +1885,16 @@ void DesignWnd::PartPalette::SizeMove(GG::Pt ul, GG::Pt lr) {
 
 void DesignWnd::PartPalette::DoLayout() {
     const int PTS = ClientUI::Pts();
-    const GG::X PTS_WIDE(PTS/2);         // guess at how wide per character the font needs
-    const GG::Y BUTTON_HEIGHT(PTS*3/2);
+    const GG::X PTS_WIDE{PTS/2};         // guess at how wide per character the font needs
+    const GG::Y BUTTON_HEIGHT{PTS*3/2};
     static constexpr int BUTTON_SEPARATION = 3; // vertical or horizontal sepration between adjacent buttons
     static constexpr int BUTTON_EDGE_PAD = 2;   // distance from edges of control to buttons
-    static constexpr GG::X RIGHT_EDGE_PAD(8);   // to account for border of CUIWnd
+    static constexpr GG::X RIGHT_EDGE_PAD{8};   // to account for border of CUIWnd
 
     const GG::X USABLE_WIDTH = std::max(ClientWidth() - RIGHT_EDGE_PAD, GG::X1);   // space in which to fit buttons
     static constexpr int GUESSTIMATE_NUM_CHARS_IN_BUTTON_LABEL = 14;                   // rough guesstimate... avoid overly long part class names
     const GG::X MIN_BUTTON_WIDTH = PTS_WIDE*GUESSTIMATE_NUM_CHARS_IN_BUTTON_LABEL;
-    const int MAX_BUTTONS_PER_ROW = std::max(Value(USABLE_WIDTH / (MIN_BUTTON_WIDTH + BUTTON_SEPARATION)), 1);
+    const int MAX_BUTTONS_PER_ROW = std::max(USABLE_WIDTH / (MIN_BUTTON_WIDTH + BUTTON_SEPARATION), 1);
 
     const int NUM_CLASS_BUTTONS = std::max(1, static_cast<int>(m_class_buttons.size()));
     static constexpr int NUM_SUPERFLUOUS_CULL_BUTTONS = 1;
@@ -2302,8 +2301,8 @@ void BasesListBox::BasesListBoxRow::CompleteConstruction() {
 void BasesListBox::BasesListBoxRow::Render() {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    GG::Pt ul_adjusted_for_drop_indicator = GG::Pt(ul.x, ul.y + GG::Y(1));
-    GG::Pt lr_adjusted_for_drop_indicator = GG::Pt(lr.x, lr.y - GG::Y(2));
+    GG::Pt ul_adjusted_for_drop_indicator = GG::Pt(ul.x, ul.y + GG::Y1);
+    GG::Pt lr_adjusted_for_drop_indicator = GG::Pt(lr.x, lr.y - GG::Y{2});
     GG::FlatRectangle(ul_adjusted_for_drop_indicator, lr_adjusted_for_drop_indicator,
                       ClientUI::WndColor(),
                       (Disabled() ? DisabledColor(GG::CLR_WHITE) : GG::CLR_WHITE), 1);
@@ -3477,7 +3476,7 @@ void DesignWnd::BaseSelector::DoLayout() {
     static constexpr int BUTTON_SEPARATION = 3;
     const GG::X BUTTON_WIDTH = (AVAILABLE_WIDTH - 2*BUTTON_SEPARATION) / 3;
     const int PTS = ClientUI::Pts();
-    const GG::Y BUTTON_HEIGHT(PTS * 2);
+    const GG::Y BUTTON_HEIGHT{PTS * 2};
 
     GG::Y top(TOP_PAD);
     GG::X left(LEFT_PAD);
@@ -4497,15 +4496,15 @@ void DesignWnd::MainPanel::DoLayout() {
     // position labels and text edit boxes for name and description and buttons to clear and confirm design
 
     const int PTS = ClientUI::Pts();
-    const GG::X PTS_WIDE(PTS / 2);           // guess at how wide per character the font needs
+    const GG::X PTS_WIDE{PTS / 2};           // guess at how wide per character the font needs
     static constexpr int PAD = 6;
 
     GG::Pt ul,lr,ll,mus;
-    lr = ClientSize() - GG::Pt(GG::X(PAD), GG::Y(PAD));
+    lr = ClientSize() - GG::Pt(GG::X{PAD}, GG::Y{PAD});
     m_confirm_button->SizeMove(lr - m_confirm_button->MinUsableSize(), lr);
 
     mus=m_replace_button->MinUsableSize();
-    ul = m_confirm_button->RelativeUpperLeft() - GG::Pt(mus.x+PAD, GG::Y(0));
+    ul = m_confirm_button->RelativeUpperLeft() - GG::Pt(mus.x+PAD, GG::Y0);
     m_replace_button->SizeMove(ul, ul+mus);
 
     ll= GG::Pt(GG::X(PAD), ClientHeight() - PAD);
@@ -4545,8 +4544,8 @@ void DesignWnd::MainPanel::DoLayout() {
 
     // place slot controls over image of hull
     for (auto& slot : m_slots) {
-        GG::X x(background_rect.Left() - slot->Width()/2 - ClientUpperLeft().x + slot->XPositionFraction() * background_rect.Width());
-        GG::Y y(background_rect.Top() - slot->Height()/2 - ClientUpperLeft().y + slot->YPositionFraction() * background_rect.Height());
+        GG::X x(background_rect.Left() - GG::ToX(slot->Width()/2.0 - ClientUpperLeft().x + slot->XPositionFraction() * background_rect.Width()));
+        GG::Y y(background_rect.Top() - GG::ToY(slot->Height()/2.0 - ClientUpperLeft().y + slot->YPositionFraction() * background_rect.Height()));
         slot->MoveTo(GG::Pt(x, y));
     }
 }

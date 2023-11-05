@@ -67,7 +67,7 @@ void Edit::Render()
     BeginScissorClipping(Pt(client_ul.x - 1, client_ul.y), client_lr);
 
     X first_char_offset = FirstCharOffset();
-    Y text_y_pos(ul.y + ((lr.y - ul.y) - GetFont()->Height()) / 2.0 + 0.5);
+    Y text_y_pos = ToY(ul.y + ((lr.y - ul.y) - GetFont()->Height()) / 2.0);
     CPSize last_visible_char = LastVisibleChar();
     const StrSize INDEX_0 = StringIndexOf(0, m_first_char_shown, GetLineData());
     const StrSize INDEX_END = StringIndexOf(0, last_visible_char, GetLineData());
@@ -343,7 +343,7 @@ void Edit::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
     } else {
         // when a single-click drag occurs, move m_cursor_pos.second to where the mouse is, which selects a range of characters
         m_cursor_pos.second = idx;
-        if (xpos < 0 || ClientSize().x < xpos) // if we're dragging past the currently visible text
+        if (xpos < X0 || ClientSize().x < xpos) // if we're dragging past the currently visible text
             AdjustView();
     }
 

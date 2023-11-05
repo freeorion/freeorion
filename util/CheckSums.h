@@ -52,13 +52,13 @@ namespace CheckSums {
 
 
     // strings
-    constexpr inline void CheckSumCombine(uint32_t& sum, std::string_view sv) noexcept {
+    constexpr void CheckSumCombine(uint32_t& sum, std::string_view sv) noexcept {
         for (auto t : sv)
             CheckSumCombine(sum, t);
         sum += static_cast<uint32_t>(sv.size());
         sum %= CHECKSUM_MODULUS;
     }
-    constexpr inline void CheckSumCombine(uint32_t& sum, const char* s) noexcept
+    constexpr void CheckSumCombine(uint32_t& sum, const char* s) noexcept
     { CheckSumCombine(sum, std::string_view{s}); }
 
     // classes that have GetCheckSum methods

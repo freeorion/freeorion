@@ -581,7 +581,7 @@ namespace {
 
     void QueueProductionItemPanel::DoLayout() {
         const int FONT_PTS = ClientUI::Pts();
-        const GG::Y METER_HEIGHT(FONT_PTS);
+        const GG::Y METER_HEIGHT{FONT_PTS};
         const GG::Y HEIGHT = Y_MARGIN + FONT_PTS + Y_MARGIN + METER_HEIGHT + Y_MARGIN + FONT_PTS + Y_MARGIN + 6;
         const int GRAPHIC_SIZE = Value(HEIGHT - 9);    // 9 pixels accounts for border thickness so the sharp-cornered icon doesn't with the rounded panel corner
         const GG::X METER_WIDTH = Width() - GRAPHIC_SIZE - 3*X_MARGIN/2 - 3;
@@ -875,8 +875,8 @@ void ProductionWnd::CompleteConstruction() {
    //DebugLogger() << "ProductionWindow:  fullscreen width: "<< GetOptionsDB().Get<int>("video.fullscreen.width")
    //              << " ; windowed width: " << GetOptionsDB().Get<int>("video.windowed.width");
 
-    GG::X queue_width(GetOptionsDB().Get<int>("ui.queue.width"));
-    GG::Y info_height(ClientUI::Pts()*10);
+    GG::X queue_width(GetOptionsDB().Get<GG::X>("ui.queue.width"));
+    GG::Y info_height{ClientUI::Pts()*10};
 
     m_production_info_panel = GG::Wnd::Create<ResourceInfoPanel>(
         UserString("PRODUCTION_WND_TITLE"), UserString("PRODUCTION_INFO_PP"),
@@ -937,15 +937,15 @@ bool ProductionWnd::InClient(GG::Pt pt) const
 { return m_production_info_panel->InClient(pt) || m_queue_wnd->InClient(pt) || m_build_designator_wnd->InClient(pt); }
 
 void ProductionWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
-    const GG::Pt old_size = Size();
+    const auto old_size = Size();
     GG::Wnd::SizeMove(ul, lr);
     if (old_size != Size())
         DoLayout();
 }
 
 void ProductionWnd::DoLayout() {
-    GG::X queue_width(GetOptionsDB().Get<int>("ui.queue.width"));
-    GG::Y info_height(ClientUI::Pts()*8 + 34);
+    const GG::X queue_width(GetOptionsDB().Get<GG::X>("ui.queue.width"));
+    const GG::Y info_height{ClientUI::Pts()*8 + 34};
 
     m_production_info_panel->MoveTo(GG::Pt(GG::X0, GG::Y0));
     m_production_info_panel->Resize(GG::Pt(queue_width, info_height));

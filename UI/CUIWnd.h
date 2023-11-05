@@ -201,7 +201,7 @@ protected:
     static constexpr GG::Y BORDER_BOTTOM{5};
     static constexpr int OUTER_EDGE_ANGLE_OFFSET = 8;
     static constexpr int INNER_BORDER_ANGLE_OFFSET = 15;
-    static constexpr int TITLE_OFFSET = 2;
+    static constexpr GG::Y TITLE_OFFSET{2};
     static constexpr int RESIZE_HASHMARK1_OFFSET = 9;
     static constexpr int RESIZE_HASHMARK2_OFFSET = 4;
 };

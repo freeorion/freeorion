@@ -188,10 +188,10 @@ private:
 SDLGUI::SDLGUI(int w, int h, bool calc_FPS, std::string app_name, int x, int y,
                bool fullscreen, bool fake_mode_change) :
     GUI(std::move(app_name)),
-    m_app_width(w),
-    m_app_height(h),
-    m_initial_x(x),
-    m_initial_y(y),
+    m_app_width{w},
+    m_app_height{h},
+    m_initial_x{x},
+    m_initial_y{y},
     m_fullscreen(fullscreen),
     m_fake_mode_change(fake_mode_change)
 {

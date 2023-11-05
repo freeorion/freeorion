@@ -21,7 +21,7 @@ namespace {
             y1_ = Value(lr.y);
             x2_ = Value(lr.x);
             y2_ = Value(lr.y);
-            x3_ = Value((ul.x + lr.x) / 2.0);
+            x3_ = (ul.x + lr.x) / 2.0;
             y3_ = Value(ul.y);
             break;
         case ShapeOrientation::DOWN:
@@ -29,7 +29,7 @@ namespace {
             y1_ = Value(ul.y);
             x2_ = Value(ul.x);
             y2_ = Value(ul.y);
-            x3_ = Value((ul.x + lr.x) / 2.0);
+            x3_ = (ul.x + lr.x) / 2.0;
             y3_ = Value(lr.y);
             break;
         case ShapeOrientation::LEFT:
@@ -38,7 +38,7 @@ namespace {
             x2_ = Value(lr.x);
             y2_ = Value(ul.y);
             x3_ = Value(ul.x);
-            y3_ = Value((ul.y + lr.y) / 2.0);
+            y3_ = (ul.y + lr.y) / 2.0;
             break;
         default:
             [[fallthrough]];
@@ -48,7 +48,7 @@ namespace {
             x2_ = Value(ul.x);
             y2_ = Value(lr.y);
             x3_ = Value(lr.x);
-            y3_ = Value((ul.y + lr.y) / 2.0);
+            y3_ = (ul.y + lr.y) / 2.0;
             break;
         }
     }
@@ -60,8 +60,8 @@ void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt ul,
 {
     int wd = Value(lr.x - ul.x);
     int ht = Value(lr.y - ul.y);
-    double center_x = Value(ul.x + wd / 2.0);
-    double center_y = Value(ul.y + ht / 2.0);
+    double center_x = ul.x + wd/2.0;
+    double center_y = ul.y + ht/2.0;
     double r = std::min(wd / 2.0, ht / 2.0);
     static constexpr double PI = 3.141594; // intentionally slightly more than pi
     static constexpr double TWO_PI = 2.0 * PI;

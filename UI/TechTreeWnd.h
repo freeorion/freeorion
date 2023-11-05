@@ -69,10 +69,8 @@ private:
     class LayoutPanel;
     class TechListBox;
 
-    void TechLeftClickedSlot(const std::string& tech_name,
-                             GG::Flags<GG::ModKey> modkeys);
-    void AddTechToResearchQueue(const std::string& tech_name,
-                                bool to_front);
+    void TechLeftClickedSlot(const std::string& tech_name, GG::Flags<GG::ModKey> modkeys);
+    void AddTechToResearchQueue(const std::string& tech_name, bool to_front);
     void TechPediaDisplaySlot(const std::string& tech_name);
 
     void InitializeWindows();

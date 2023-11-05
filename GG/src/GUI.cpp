@@ -724,7 +724,7 @@ void GUIImpl::HandleMouseWheel(Flags<ModKey> mod_keys, Pt pos, Pt rel, int curr_
     m_browse_target = nullptr;
     m_prev_wnd_under_cursor_time = curr_ticks;
     // don't send out 0-movement wheel messages
-    if (curr_wnd_under_cursor && rel.y)
+    if (curr_wnd_under_cursor && rel.y != Y0)
         curr_wnd_under_cursor->HandleEvent(WndEvent(
             WndEvent::EventType::MouseWheel, pos, Value(rel.y), mod_keys));
     m_prev_wnd_under_cursor = m_curr_wnd_under_cursor; // update this for the next time around

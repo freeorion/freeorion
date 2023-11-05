@@ -141,7 +141,7 @@ void MultiEdit::Render()
     for (std::size_t row = first_visible_row; row <= last_visible_row && row < lines.size(); ++row) {
         bool is_caret_row = (caret_row == row);
 
-        Y row_y_pos = ((m_style & MULTI_TOP) || m_contents_sz.y - ClientSize().y < 0) ?
+        Y row_y_pos = ((m_style & MULTI_TOP) || m_contents_sz.y - ClientSize().y < Y0) ?
             cl_ul.y + static_cast<int>(row) * LINESKIP - m_first_row_shown :
             cl_lr.y - static_cast<int>(lines.size() - row) * LINESKIP -
                 m_first_row_shown + (m_vscroll && m_hscroll ? BottomMargin() : Y0);
@@ -220,7 +220,7 @@ void MultiEdit::SizeMove(Pt ul, Pt lr)
 {
     Pt lower_right = lr;
     if (m_style & MULTI_INTEGRAL_HEIGHT)
-        lower_right.y -= ((lr.y - ul.y) - (2 * PIXEL_MARGIN)) % GetFont()->Lineskip();
+        lower_right.y -= Value((lr.y - ul.y) - (2 * PIXEL_MARGIN)) % Value(GetFont()->Lineskip());
     const bool resized = (lower_right - ul) != Size();
 
     // need to restore scroll position after SetText call below, so that
@@ -380,25 +380,27 @@ void MultiEdit::SetMaxLinesOfHistory(std::size_t max)
 void MultiEdit::SetScrollPosition(Pt pt)
 {
     if (m_hscroll) {
-        std::pair<int, int> range = m_hscroll->ScrollRange();
-        if (pt.x < range.first)
-            pt.x = X(range.first);
-        if (pt.x > range.second)
-            pt.x = X(range.second);
-        std::pair<int, int> posn_range = m_hscroll->PosnRange();
-        if (pt.x != posn_range.first) {
+        const auto [low, high] = m_hscroll->ScrollRange();
+        const X xlow{low}, xhigh{high};
+        if (pt.x < xlow)
+            pt.x = xlow;
+        if (pt.x > xhigh)
+            pt.x = xhigh;
+        const X posn_low_x{m_hscroll->PosnRange().first};
+        if (pt.x != posn_low_x) {
             m_hscroll->ScrollTo(Value(pt.x));
             SignalScroll(*m_hscroll, true);
         }
     }
     if (m_vscroll) {
-        std::pair<int, int> range = m_vscroll->ScrollRange();
-        if (pt.y < range.first)
-            pt.y = Y(range.first);
-        if (pt.y > range.second)
-            pt.y = Y(range.second);
-        std::pair<int, int> posn_range = m_vscroll->PosnRange();
-        if (pt.y != posn_range.first) {
+        const auto [low, high] = m_vscroll->ScrollRange();
+        const Y ylow{low}, yhigh{high};
+        if (pt.y < ylow)
+            pt.y = ylow;
+        if (pt.y > yhigh)
+            pt.y = yhigh;
+        const Y posn_low_y{m_vscroll->PosnRange().first};
+        if (pt.y != posn_low_y) {
             m_vscroll->ScrollTo(Value(pt.y));
             SignalScroll(*m_vscroll, true);
         }
@@ -537,7 +539,7 @@ std::size_t MultiEdit::RowAt(Y y) const
     std::size_t retval = 0;
     const auto format = GetTextFormat();
     y += m_first_row_shown;
-    if ((format & FORMAT_TOP) || m_contents_sz.y - ClientSize().y < 0) {
+    if ((format & FORMAT_TOP) || m_contents_sz.y - ClientSize().y < Y0) {
         retval = Value(y / GetFont()->Lineskip());
     } else { // FORMAT_BOTTOM
         retval = NumLines() -
@@ -600,7 +602,7 @@ std::size_t MultiEdit::LastVisibleRow() const
 std::size_t MultiEdit::FirstFullyVisibleRow() const
 {
     std::size_t retval = RowAt(Y0);
-    if (m_first_row_shown % GetFont()->Lineskip())
+    if (Value(m_first_row_shown) % Value(GetFont()->Lineskip()))
         ++retval;
     return std::min(retval, NumLines());
 }
@@ -608,7 +610,7 @@ std::size_t MultiEdit::FirstFullyVisibleRow() const
 std::size_t MultiEdit::LastFullyVisibleRow() const
 {
     std::size_t retval = RowAt(ClientSize().y);
-    if ((m_first_row_shown + ClientSize().y + BottomMargin()) % GetFont()->Lineskip())
+    if (Value(m_first_row_shown + ClientSize().y + BottomMargin()) % Value(GetFont()->Lineskip()))
         --retval;
     return std::min(retval, NumLines());
 }
@@ -753,8 +755,8 @@ void MultiEdit::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
 
     // if dragging past the currently visible text, adjust
     // the view so more text can be selected
-    if (click_pos.x < 0 || click_pos.x > ClientSize().x ||
-        click_pos.y < 0 || click_pos.y > ClientSize().y)
+    if (click_pos.x < X0 || click_pos.x > ClientSize().x ||
+        click_pos.y < Y0 || click_pos.y > ClientSize().y)
     { AdjustView(); }
 }
 
@@ -1073,13 +1075,13 @@ void MultiEdit::ClearSelected()
 
 void MultiEdit::AdjustView()
 {
-    Pt cl_sz = ClientSize();
-    Flags<TextFormat> format = GetTextFormat();
+    const Pt cl_sz = ClientSize();
+    const auto format = GetTextFormat();
     X excess_width = m_contents_sz.x - cl_sz.x;
     Y excess_height = m_contents_sz.y - cl_sz.y;
-    X horz_min(0);            // these are default values for MULTI_LEFT and MULTI_TOP
+    X horz_min(X0);            // these are default values for MULTI_LEFT and MULTI_TOP
     X horz_max = excess_width;
-    Y vert_min(0);
+    Y vert_min(Y0);
     Y vert_max = excess_height;
 
     if (format & FORMAT_RIGHT) {
@@ -1089,20 +1091,20 @@ void MultiEdit::AdjustView()
         horz_min = -excess_width / 2;
         horz_max = horz_min + m_contents_sz.x;
     }
-    if ((format & FORMAT_BOTTOM) && 0 <= excess_height) {
+    if ((format & FORMAT_BOTTOM) && Y0 <= excess_height) {
         vert_min = -excess_height;
         vert_max = vert_min + m_contents_sz.y;
     }
 
     // make sure that m_first_row_shown and m_first_col_shown are within sane bounds
-    if (excess_width <= 0 || !m_hscroll) {
+    if (excess_width <= X0 || !m_hscroll) {
         m_first_col_shown = X0;
     } else {
         m_hscroll->ScrollTo(Value(std::max(horz_min, std::min(m_first_col_shown, horz_max))));
         SignalScroll(*m_hscroll, true);
     }
 
-    if (excess_height <= 0 || !m_vscroll) {
+    if (excess_height <= Y0 || !m_vscroll) {
         m_first_row_shown = Y0;
     } else {
         m_vscroll->ScrollTo(Value(std::max(vert_min, std::min(m_first_row_shown, vert_max))));
@@ -1127,7 +1129,7 @@ void MultiEdit::AdjustView()
     CPSize first_visible_char = FirstVisibleChar(m_cursor_end.first);
     CPSize last_visible_char = LastVisibleChar(m_cursor_end.first);
     X client_char_posn = RowStartX(m_cursor_end.first) + CharXOffset(m_cursor_end.first, m_cursor_end.second);
-    if (client_char_posn < 0 && m_hscroll) { // if the caret is at a place left of the current visible area
+    if (client_char_posn < X0 && m_hscroll) { // if the caret is at a place left of the current visible area
         if (first_visible_char - m_cursor_end.second < 5) { // if the caret is fewer than five characters before first_visible_char
             // try to move the caret by five characters
             X five_char_distance =
@@ -1170,13 +1172,13 @@ void MultiEdit::AdjustScrolls()
     const int INT_SCROLL_WIDTH = static_cast<int>(SCROLL_WIDTH);
     bool need_vert =
         !(m_style & MULTI_NO_VSCROLL) &&
-        (m_first_row_shown ||
+        (m_first_row_shown != Y0 ||
          (m_contents_sz.y > cl_sz.y ||
           (m_contents_sz.y > cl_sz.y - INT_SCROLL_WIDTH &&
            m_contents_sz.x > cl_sz.x - INT_SCROLL_WIDTH)));
     bool need_horz =
         !(m_style & MULTI_NO_HSCROLL) &&
-        (m_first_col_shown ||
+        (m_first_col_shown != X0 ||
          (m_contents_sz.x > cl_sz.x ||
           (m_contents_sz.x > cl_sz.x - INT_SCROLL_WIDTH &&
            m_contents_sz.y > cl_sz.y - INT_SCROLL_WIDTH)));
@@ -1198,9 +1200,9 @@ void MultiEdit::AdjustScrolls()
     const auto& style = GetStyleFactory();
 
     Y vscroll_min = (m_style & MULTI_TERMINAL_STYLE) ? cl_sz.y - m_contents_sz.y : Y0;
-    if (cl_sz.y - m_contents_sz.y > 0 )
+    if (cl_sz.y - m_contents_sz.y > Y0 )
         vscroll_min = Y0;
-    X hscroll_min(0); // default value for MULTI_LEFT
+    X hscroll_min(X0); // default value for MULTI_LEFT
     if (m_style & MULTI_RIGHT) {
         hscroll_min = -excess_width;
     } else if (m_style & MULTI_CENTER) {
@@ -1224,7 +1226,7 @@ void MultiEdit::AdjustScrolls()
             m_vscroll->SizeScroll(Value(vscroll_min), Value(vscroll_max),
                                   line_size, std::max(line_size, page_size));
             X scroll_x = cl_sz.x + INT_GAP - INT_SCROLL_WIDTH;
-            Y scroll_y(-GAP);
+            Y scroll_y{-GAP};
             m_vscroll->SizeMove(Pt(scroll_x, scroll_y),
                                 Pt(scroll_x + INT_SCROLL_WIDTH,
                                    scroll_y + cl_sz.y + 2 * INT_GAP - (need_horz ? INT_SCROLL_WIDTH : 0)));
@@ -1262,7 +1264,7 @@ void MultiEdit::AdjustScrolls()
 
             m_hscroll->SizeScroll(Value(hscroll_min), Value(hscroll_max),
                                   line_size, std::max(line_size, page_size));
-            X scroll_x(-GAP);
+            X scroll_x{-GAP};
             Y scroll_y = cl_sz.y + INT_GAP - INT_SCROLL_WIDTH;
             m_hscroll->SizeMove(Pt(scroll_x, scroll_y),
                                 Pt(scroll_x + cl_sz.x + 2 * INT_GAP - (need_vert ? INT_SCROLL_WIDTH : 0),

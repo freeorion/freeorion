@@ -58,7 +58,7 @@ void AccordionPanel::SetBorderMargin(int margin)
 { m_border_margin = std::max<int>(0, margin); }
 
 void AccordionPanel::Render() {
-    if (Height() < 1 || Width() < 1)
+    if (Height() < GG::Y1 || Width() < GG::X1)
         return;
 
     GG::Pt ul = UpperLeft();

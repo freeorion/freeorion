@@ -586,7 +586,7 @@ void Ship::BackPropagateMeters() {
 
 namespace {
     // specifically for ship part meters
-    inline constexpr auto ToPairedMeterType(MeterType mt) noexcept {
+    constexpr auto ToPairedMeterType(MeterType mt) noexcept {
         return
             mt == MeterType::METER_CAPACITY ? MeterType::METER_MAX_CAPACITY :
             mt == MeterType::METER_SECONDARY_STAT ? MeterType::METER_MAX_SECONDARY_STAT :
@@ -594,7 +594,7 @@ namespace {
     };
 
     // specifically for ship part meters
-    inline constexpr bool IsMaxMeterType(MeterType mt) noexcept
+    constexpr bool IsMaxMeterType(MeterType mt) noexcept
     { return mt == MeterType::METER_MAX_CAPACITY || mt == MeterType::METER_MAX_SECONDARY_STAT; }
 }
 

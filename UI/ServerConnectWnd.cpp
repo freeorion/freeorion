@@ -20,8 +20,8 @@
 
 
 namespace {
-    constexpr GG::X WINDOW_WIDTH(400);
-    constexpr GG::Y WINDOW_HEIGHT(535);
+    constexpr GG::X WINDOW_WIDTH{400};
+    constexpr GG::Y WINDOW_HEIGHT{535};
 
     bool NameOK(const std::string& name) {
         for (const auto& character : name) {
@@ -97,7 +97,7 @@ void ServerConnectWnd::CompleteConstruction() {
     m_ok_bn = Wnd::Create<CUIButton>(UserString("OK"));
     m_cancel_bn = Wnd::Create<CUIButton>(UserString("CANCEL"));
 
-    static constexpr GG::X OK_CANCEL_BUTTON_WIDTH(100);
+    static constexpr GG::X OK_CANCEL_BUTTON_WIDTH{100};
     static constexpr int CONTROL_MARGIN = 5;
 
     auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X1, GG::Y1, 8, 4, CONTROL_MARGIN);

@@ -66,8 +66,8 @@ void HueSaturationPicker::Render()
 
     // lines to indicate currently selected colour
     glLineWidth(1.5f);
-    Pt color_position(static_cast<X>(ul.x + size.x * m_hue),
-                      static_cast<Y>(ul.y + size.y * (1.0 - m_saturation)));
+    Pt color_position(ToX(ul.x + size.x * m_hue),
+                      ToY(ul.y + size.y * (1.0 - m_saturation)));
     glColor(CLR_SHADOW);
 
     static constexpr float GAP(3.0f);
@@ -131,9 +131,9 @@ void HueSaturationPicker::SetHueSaturationFromPt(Pt pt)
         pt.x = lr.x;
     if (lr.y < pt.y)
         pt.y = lr.y;
-    Pt size = Size();
-    m_hue = Value((pt.x - ul.x) * 1.0 / size.x);
-    m_saturation = Value(1.0 - (pt.y - ul.y) * 1.0 / size.y);
+    const auto size = Size();
+    m_hue = Value((pt.x - ul.x)) * 1.0 / Value(size.x);
+    m_saturation = Value(1.0 - (pt.y - ul.y)) * 1.0 / Value(size.y);
     ChangedSignal(m_hue, m_saturation);
 }
 
@@ -172,7 +172,7 @@ void ValuePicker::Render()
     colour_buf.store(HSVClr(m_hue, m_saturation, 0.0));
 
     // line indicating currently-selected lightness
-    Y color_position(eff_ul.y + h * (1.0 - m_value));
+    Y color_position(ToY(eff_ul.y + h * (1.0 - m_value)));
     vert_buf.store(Value(eff_ul.x),    Value(color_position));
     colour_buf.store(CLR_SHADOW);
     vert_buf.store(Value(eff_lr.x),    Value(color_position));
@@ -238,7 +238,7 @@ void ValuePicker::SetValueFromPt(Pt pt)
     if (lr.y < pt.y)
         pt.y = lr.y;
     Y h = Height();
-    m_value = Value(1.0 - (pt.y - ul.y) * 1.0 / h);
+    m_value = 1.0 - (pt.y - ul.y) * 1.0 / Value(h);
     ChangedSignal(m_value);
 }
 

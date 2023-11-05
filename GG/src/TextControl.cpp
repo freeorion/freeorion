@@ -410,12 +410,12 @@ void TextControl::RecomputeTextBounds()
     if (m_format & FORMAT_BOTTOM)
         m_text_ul.y = Size().y - text_sz.y;
     else if (m_format & FORMAT_VCENTER)
-        m_text_ul.y = (Size().y - text_sz.y) / 2.0;
+        m_text_ul.y = ToY((Size().y - text_sz.y) / 2.0);
     m_text_ul.x = X0; // default for FORMAT_LEFT
     if (m_format & FORMAT_RIGHT)
         m_text_ul.x = Size().x - text_sz.x;
     else if (m_format & FORMAT_CENTER)
-        m_text_ul.x = (Size().x - text_sz.x) / 2.0;
+        m_text_ul.x = ToX((Size().x - text_sz.x) / 2.0);
     m_text_lr = m_text_ul + text_sz;
     AdjustMinimumSize();
 }

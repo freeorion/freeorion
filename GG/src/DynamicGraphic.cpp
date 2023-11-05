@@ -150,27 +150,27 @@ void DynamicGraphic::Render()
         Pt pt1, pt2(graphic_sz); // (unscaled) default graphic size
         if (m_style & GRAPHIC_FITGRAPHIC) {
             if (m_style & GRAPHIC_PROPSCALE) {
-                X_d scale_x = window_sz.x / (graphic_sz.x * 1.0);
-                Y_d scale_y = window_sz.y / (graphic_sz.y * 1.0);
-                double scale = std::min(Value(scale_x), Value(scale_y));
-                pt2.x = graphic_sz.x * scale;
-                pt2.y = graphic_sz.y * scale;
+                float scale_x = Value(window_sz.x) * 1.0 / Value(graphic_sz.x);
+                float scale_y = Value(window_sz.y) * 1.0 / Value(graphic_sz.y);
+                float scale = std::min(Value(scale_x), Value(scale_y));
+                pt2.x = ToX(graphic_sz.x * scale);
+                pt2.y = ToY(graphic_sz.y * scale);
             } else {
                 pt2 = window_sz;
             }
         } else if (m_style & GRAPHIC_SHRINKFIT) {
             if (m_style & GRAPHIC_PROPSCALE) {
-                X_d scale_x = (graphic_sz.x > window_sz.x) ? window_sz.x / (graphic_sz.x * 1.0) : X_d(1.0);
-                Y_d scale_y = (graphic_sz.y > window_sz.y) ? window_sz.y / (graphic_sz.y * 1.0) : Y_d(1.0);
-                double scale = std::min(Value(scale_x), Value(scale_y));
-                pt2.x = graphic_sz.x * scale;
-                pt2.y = graphic_sz.y * scale;
+                const double scale_x = (graphic_sz.x > window_sz.x) ? window_sz.x / (graphic_sz.x * 1.0) : 1.0;
+                const double scale_y = (graphic_sz.y > window_sz.y) ? window_sz.y / (graphic_sz.y * 1.0) : 1.0;
+                const double scale = std::min(scale_x, scale_y);
+                pt2.x = ToX(graphic_sz.x * scale);
+                pt2.y = ToY(graphic_sz.y * scale);
             } else {
                 pt2 = window_sz;
             }
         }
 
-        X x_shift(0);
+        X x_shift = X0;
         if (m_style & GRAPHIC_LEFT) {
             x_shift = ul.x;
         } else if (m_style & GRAPHIC_CENTER) {
@@ -181,7 +181,7 @@ void DynamicGraphic::Render()
         pt1.x += x_shift;
         pt2.x += x_shift;
 
-        Y y_shift(0);
+        Y y_shift = Y0;
         if (m_style & GRAPHIC_TOP) {
             y_shift = ul.y;
         } else if (m_style & GRAPHIC_VCENTER) {

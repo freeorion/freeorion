@@ -30,9 +30,8 @@ namespace {
 
     constexpr double BUTTON_DIMMING_SCALE_FACTOR = 0.75;
 
-    constexpr GG::X::value_type INVALID_POS = std::numeric_limits<GG::X::value_type>::min();
-    constexpr GG::X INVALID_X = GG::X(INVALID_POS);
-    constexpr GG::Y INVALID_Y = GG::Y(INVALID_POS);
+    constexpr GG::X INVALID_X{std::numeric_limits<std::underlying_type_t<GG::X>>::min()};
+    constexpr GG::Y INVALID_Y{std::numeric_limits<std::underlying_type_t<GG::Y>>::min()};
 }
 
 ////////////////////////////////////////////////
@@ -163,7 +162,7 @@ CUIWnd::CUIWnd(std::string wnd_name, GG::Flags<GG::WndFlag> flags,
     m_minimizable(flags & MINIMIZABLE),
     m_pinable(flags & PINABLE),
     m_drag_offset(-GG::X1, -GG::Y1),
-    m_config_name(AddWindowOptions(config_name, INVALID_POS, INVALID_POS, 1, 1, visible, false, false))
+    m_config_name(AddWindowOptions(config_name, INVALID_X, INVALID_Y, GG::X1, GG::Y1, visible, false, false))
 { SetName(std::move(wnd_name)); }
 
 void CUIWnd::CompleteConstruction() {
@@ -184,7 +183,7 @@ void CUIWnd::Init() {
     }
 
     m_title = GG::Wnd::Create<CUILabel>(Name(), GG::FORMAT_LEFT, GG::NO_WND_FLAGS,
-                                        BORDER_LEFT, GG::Y{TITLE_OFFSET}, Width(), TopBorder());
+                                        BORDER_LEFT, TITLE_OFFSET, Width(), TopBorder());
 
     // User-dragable windows recalculate their position only when told to (e.g.
     // auto-reposition is set or user clicks a 'reset windows' button).
@@ -221,7 +220,7 @@ void CUIWnd::InitSizeMove(GG::Pt ul, GG::Pt lr) {
     // If the window has already had its default position specified (either in the ctor
     // or a previous call to this function), apply this position to the window.
     if (db.Get<bool>(option_initialized_name) ||
-        db.Get<int>(option_prefix + window_mode + ".left") == INVALID_X)
+        db.Get<GG::X>(option_prefix + window_mode + ".left") == INVALID_X)
     {
         SetDefaultedOptions();
         SizeMove(ul, lr);
@@ -492,7 +491,7 @@ void CUIWnd::InitButtons() {
 }
 
 GG::Y CUIWnd::TopBorder() const
-{ return GG::Y(ClientUI::TitlePts() + TITLE_OFFSET*4); }
+{ return ClientUI::TitlePts() + TITLE_OFFSET*4; }
 
 void CUIWnd::CloseClicked() {
     m_modal_done.store(true);
@@ -821,10 +820,10 @@ std::string CUIWnd::AddWindowOptions(std::string_view config_name,
 
         db.Add(std::string{"ui."}.append(config_name).append(".initialized"),      UserStringNop("OPTIONS_DB_UI_WINDOWS_EXISTS"),          false,      Validator<bool>(), false);
 
-        db.Add(std::string{"ui."}.append(config_name).append(".fullscreen.left"),  UserStringNop("OPTIONS_DB_UI_WINDOWS_LEFT"),            left,       OrValidator<int>(RangedValidator<int>(0, max_width_plus_one),   DiscreteValidator<int>(INVALID_POS)));
-        db.Add(std::string{"ui."}.append(config_name).append(".fullscreen.top"),   UserStringNop("OPTIONS_DB_UI_WINDOWS_TOP"),             top,        OrValidator<int>(RangedValidator<int>(0, max_height_plus_one),  DiscreteValidator<int>(INVALID_POS)));
-        db.Add(std::string{"ui."}.append(config_name).append(".windowed.left"),    UserStringNop("OPTIONS_DB_UI_WINDOWS_LEFT_WINDOWED"),   left,       OrValidator<int>(RangedValidator<int>(0, max_width_plus_one),   DiscreteValidator<int>(INVALID_POS)));
-        db.Add(std::string{"ui."}.append(config_name).append(".windowed.top"),     UserStringNop("OPTIONS_DB_UI_WINDOWS_TOP_WINDOWED"),    top,        OrValidator<int>(RangedValidator<int>(0, max_height_plus_one),  DiscreteValidator<int>(INVALID_POS)));
+        db.Add(std::string{"ui."}.append(config_name).append(".fullscreen.left"),  UserStringNop("OPTIONS_DB_UI_WINDOWS_LEFT"),            left,       OrValidator<int>(RangedValidator<int>(0, max_width_plus_one),   DiscreteValidator<int>(Value(INVALID_X))));
+        db.Add(std::string{"ui."}.append(config_name).append(".fullscreen.top"),   UserStringNop("OPTIONS_DB_UI_WINDOWS_TOP"),             top,        OrValidator<int>(RangedValidator<int>(0, max_height_plus_one),  DiscreteValidator<int>(Value(INVALID_Y))));
+        db.Add(std::string{"ui."}.append(config_name).append(".windowed.left"),    UserStringNop("OPTIONS_DB_UI_WINDOWS_LEFT_WINDOWED"),   left,       OrValidator<int>(RangedValidator<int>(0, max_width_plus_one),   DiscreteValidator<int>(Value(INVALID_X))));
+        db.Add(std::string{"ui."}.append(config_name).append(".windowed.top"),     UserStringNop("OPTIONS_DB_UI_WINDOWS_TOP_WINDOWED"),    top,        OrValidator<int>(RangedValidator<int>(0, max_height_plus_one),  DiscreteValidator<int>(Value(INVALID_Y))));
 
         db.Add(std::string{"ui."}.append(config_name).append(".fullscreen.width"), UserStringNop("OPTIONS_DB_UI_WINDOWS_WIDTH"),           width,      RangedValidator<int>(0, max_width_plus_one));
         db.Add(std::string{"ui."}.append(config_name).append(".fullscreen.height"),UserStringNop("OPTIONS_DB_UI_WINDOWS_HEIGHT"),          height,     RangedValidator<int>(0, max_height_plus_one));
@@ -846,9 +845,7 @@ std::string CUIWnd::AddWindowOptions(std::string_view config_name,
                                      GG::X width, GG::Y height,
                                      bool visible, bool pinned, bool minimized)
 {
-    return AddWindowOptions(config_name,
-                            Value(left), Value(top),
-                            Value(width), Value(height),
+    return AddWindowOptions(config_name, Value(left), Value(top), Value(width), Value(height),
                             visible, pinned, minimized);
 }
 
@@ -866,8 +863,8 @@ void CUIWnd::InvalidateWindowOptions(std::string_view config_name) {
         return;
     }
 
-    db.Set(edge_option_prefix + ".left",      INVALID_POS);
-    db.Set(edge_option_prefix.append(".top"), INVALID_POS);
+    db.Set(edge_option_prefix + ".left",      Value(INVALID_X));
+    db.Set(edge_option_prefix.append(".top"), Value(INVALID_Y));
     db.SetToDefault(std::string{"ui."}.append(config_name).append(".visible"));
     db.SetToDefault(std::string{"ui."}.append(config_name).append(".pinned"));
     db.SetToDefault(std::string{"ui."}.append(config_name).append(".minimized"));

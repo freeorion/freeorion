@@ -894,7 +894,7 @@ namespace {
         if (m_design_name_text)
             m_design_name_text->SizeMove(name_ul, name_lr);
 
-        if (ClientWidth() < 250)
+        if (Value(ClientWidth()) < 250)
             DetachChild(m_ship_name_text);
         else
             AttachChild(m_ship_name_text);
@@ -1700,7 +1700,7 @@ void FleetDataPanel::DoLayout() {
     if (m_fleet_destination_text)
         m_fleet_destination_text->SizeMove(name_ul, name_lr);
 
-    if (ClientWidth() < 250)
+    if (Value(ClientWidth()) < 250)
         DetachChild(m_fleet_name_text);
     else
         AttachChild(m_fleet_name_text);
@@ -3232,7 +3232,7 @@ void FleetWnd::DoLayout() {
     // how tall to make fleets list?  subtract height for other panels from available height.
     GG::Y fleets_list_height(AVAILABLE_HEIGHT);
     if (show_fleet_detail_panel)
-        fleets_list_height *= 0.5;
+        fleets_list_height /= 2;
     if (show_new_fleet_drop_target)
         fleets_list_height -= (ROW_HEIGHT + GG::Y(PAD));
 

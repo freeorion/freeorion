@@ -109,8 +109,8 @@ void SpecialsPanel::Update() {
     }
 
     const GG::X AVAILABLE_WIDTH = Width() - EDGE_PAD;
-    GG::X x(EDGE_PAD);
-    GG::Y y(EDGE_PAD);
+    GG::X x{EDGE_PAD};
+    GG::Y y{EDGE_PAD};
 
     for (auto& icon : m_icons) {
         icon->SizeMove(GG::Pt(x, y), GG::Pt(x,y) + GG::Pt(SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT));

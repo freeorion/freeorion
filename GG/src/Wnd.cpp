@@ -544,7 +544,7 @@ void Wnd::HorizontalLayout()
     Pt client_sz = ClientSize();
     for (auto& child : m_children) {
         Pt wnd_ul = child->RelativeUpperLeft(), wnd_lr = child->RelativeLowerRight();
-        if (wnd_ul.x < 0 || wnd_ul.y < 0 || client_sz.x < wnd_lr.x || client_sz.y < wnd_lr.y)
+        if (wnd_ul.x < X0 || wnd_ul.y < Y0 || client_sz.x < wnd_lr.x || client_sz.y < wnd_lr.y)
             continue;
         wnds.push_back(child);
     }
@@ -570,7 +570,7 @@ void Wnd::VerticalLayout()
     Pt client_sz = ClientSize();
     for (auto& child : m_children) {
         Pt wnd_ul = child->RelativeUpperLeft(), wnd_lr = child->RelativeLowerRight();
-        if (wnd_ul.x < 0 || wnd_ul.y < 0 || client_sz.x < wnd_lr.x || client_sz.y < wnd_lr.y)
+        if (wnd_ul.x < X0 || wnd_ul.y < Y0 || client_sz.x < wnd_lr.x || client_sz.y < wnd_lr.y)
             continue;
         wnds.push_back(child);
     }
@@ -599,7 +599,7 @@ void Wnd::GridLayout()
     for (auto it = m_children.begin(); it != m_children.end(); ++it) {
         auto& wnd = *it;
         Pt wnd_ul = wnd->RelativeUpperLeft(), wnd_lr = wnd->RelativeLowerRight();
-        if (wnd_ul.x < 0 || wnd_ul.y < 0 || client_sz.x < wnd_lr.x || client_sz.y < wnd_lr.y)
+        if (wnd_ul.x < X0 || wnd_ul.y < Y0 || client_sz.x < wnd_lr.x || client_sz.y < wnd_lr.y)
             continue;
 
         auto it2 = it;
@@ -619,7 +619,7 @@ void Wnd::GridLayout()
          it != grid_layout.get<LayoutLeft>().end(); ++it)
     {
         Pt ul = it->ul;
-        for (X x = ul.x - 1; x >= 0; --x) {
+        for (X x = ul.x - 1; x >= X0; --x) {
             if (grid_layout.get<LayoutRight>().count(x + 1, IsRight())) {
                 break;
             } else if (grid_layout.get<LayoutLeft>().count(x, IsLeft())) {
@@ -649,7 +649,7 @@ void Wnd::GridLayout()
     // align tops of windows
     for (TopIter it = grid_layout.get<LayoutTop>().begin(); it != grid_layout.get<LayoutTop>().end(); ++it) {
         Pt ul = it->ul;
-        for (Y y = ul.y - 1; y >= 0; --y) {
+        for (Y y = ul.y - Y1; y >= Y0; --y) {
             if (grid_layout.get<LayoutBottom>().count(y + 1, IsBottom())) {
                 break;
             } else if (grid_layout.get<LayoutTop>().count(y, IsTop())) {
@@ -723,7 +723,7 @@ void Wnd::SetLayout(const std::shared_ptr<Layout>& layout)
     Pt client_sz = ClientSize();
     for (auto& wnd : children) {
         Pt wnd_ul = wnd->RelativeUpperLeft(), wnd_lr = wnd->RelativeLowerRight();
-        if (wnd_ul.x < 0 || wnd_ul.y < 0 || client_sz.x < wnd_lr.x || client_sz.y < wnd_lr.y)
+        if (wnd_ul.x < X0 || wnd_ul.y < Y0 || client_sz.x < wnd_lr.x || client_sz.y < wnd_lr.y)
             AttachChild(wnd);
     }
     AttachChild(layout);
@@ -733,16 +733,16 @@ void Wnd::SetLayout(const std::shared_ptr<Layout>& layout)
 
 void Wnd::SetLayout(std::shared_ptr<Layout>&& layout)
 {
-    auto&& mm_layout = GetLayout();
+    auto mm_layout = GetLayout();
     if (layout == mm_layout || layout == LockAndResetIfExpired(m_containing_layout))
         throw BadLayout("Wnd::SetLayout() : Attempted to set a Wnd's layout to be its current layout or the layout that contains the Wnd");
     RemoveLayout();
     auto children = m_children;
     DetachChildren();
-    Pt client_sz = ClientSize();
+    const Pt client_sz = ClientSize();
     for (auto& wnd : children) {
         Pt wnd_ul = wnd->RelativeUpperLeft(), wnd_lr = wnd->RelativeLowerRight();
-        if (wnd_ul.x < 0 || wnd_ul.y < 0 || client_sz.x < wnd_lr.x || client_sz.y < wnd_lr.y)
+        if (wnd_ul.x < X0 || wnd_ul.y < Y0 || client_sz.x < wnd_lr.x || client_sz.y < wnd_lr.y)
             AttachChild(wnd);
     }
     AttachChild(layout);

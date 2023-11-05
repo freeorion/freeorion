@@ -19,7 +19,7 @@ using namespace GG;
 ////////////////////////////////////////////////
 std::ostream& GG::operator<<(std::ostream& os, Pt pt)
 {
-    os << "(" << pt.x << ", " << pt.y << ")";
+    os << "(" << Value(pt.x) << ", " << Value(pt.y) << ")";
     return os;
 }
 

@@ -28,9 +28,8 @@ class Application::Impl {
 
 class MinimalGGApp : public SDLGUI {
     public:
-        MinimalGGApp(int width, int height, bool calculate_FPS,
-                     const std::string& name, int x, int y, bool fullscreen,
-                     bool fake_mode_change);
+        MinimalGGApp(int width, int height, bool calculate_FPS, std::string name,
+                     int x, int y, bool fullscreen, bool fake_mode_change);
 
         virtual ~MinimalGGApp();
 
@@ -45,17 +44,13 @@ class MinimalGGApp : public SDLGUI {
         void Render() override;
 };
 
-MinimalGGApp::MinimalGGApp(int width, int height, bool calculate_FPS,
-                           const std::string& name, int x, int y,
-                           bool fullscreen, bool fake_mode_change) :
-    SDLGUI(width, height, calculate_FPS, name, x, y, fullscreen,
-           fake_mode_change)
+MinimalGGApp::MinimalGGApp(int width, int height, bool calculate_FPS, std::string name,
+                           int x, int y, bool fullscreen, bool fake_mode_change) :
+    SDLGUI(width, height, calculate_FPS, std::move(name), x, y, fullscreen, fake_mode_change)
 {
-    std::shared_ptr<GG::Texture> cursor_texture = std::make_shared<GG::Texture>();
+    auto cursor_texture = std::make_shared<GG::Texture>();
 
-    cursor_texture->Init(
-        GG::X(16), GG::Y(16), cursor_data, GL_RGBA, GL_UNSIGNED_BYTE, 1
-    );
+    cursor_texture->Init(GG::X(16), GG::Y(16), cursor_data, GL_RGBA, GL_UNSIGNED_BYTE, 1);
 
     GG::GetTextureManager().StoreTexture(cursor_texture, "test_cursor");
     SetCursor(std::make_shared<GG::TextureCursor>(cursor_texture, GG::Pt(GG::X(1), GG::Y(1))));
@@ -64,8 +59,7 @@ MinimalGGApp::MinimalGGApp(int width, int height, bool calculate_FPS,
     GLInit();
 }
 
-MinimalGGApp::~MinimalGGApp()
-{}
+MinimalGGApp::~MinimalGGApp() = default;
 
 // The application is assumed to be in "3D mode" (non-orthographic) whenever
 // GG is not rendering "in 2D" (orthographic, with coordinates mapped 1-1 onto
@@ -188,7 +182,7 @@ void MinimalGGApp::GLInit() {
 
     // set up perspective with vertical FOV of 50°. 1:1 application
     // window ratio, near plane of 1.0 and far plane of 10.0
-    float ratio = Value(AppWidth() * 1.0f) / Value(AppHeight());
+    float ratio = GG::Value(AppWidth() * 1.0f) / Value(AppHeight());
     float radians = 50.0f * M_PI / 180.f;
     float near = 1.0f;
     float far = 10.0f;

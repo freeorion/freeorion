@@ -159,11 +159,11 @@ FO_ENUM(
 )
 
 template<typename T>
-[[nodiscard]] inline constexpr std::unique_ptr<std::remove_const_t<T>> CloneUnique(const T* ptr)
+[[nodiscard]] constexpr std::unique_ptr<std::remove_const_t<T>> CloneUnique(const T* ptr)
 { return ptr ? ptr->Clone() : nullptr; }
 
 template<typename T>
-[[nodiscard]] inline constexpr std::unique_ptr<std::remove_const_t<T>> CloneUnique(const std::unique_ptr<T>& ptr)
+[[nodiscard]] constexpr std::unique_ptr<std::remove_const_t<T>> CloneUnique(const std::unique_ptr<T>& ptr)
 { return ptr ? ptr->Clone() : nullptr; }
 
 template<typename T>

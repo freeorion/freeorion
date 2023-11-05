@@ -42,7 +42,7 @@ void MultiIconValueIndicator::CompleteConstruction() {
 
     SetName("MultiIconValueIndicator");
 
-    GG::X x(EDGE_PAD);
+    GG::X x{EDGE_PAD};
     for (const auto& meter_type : m_meter_types) {
         const MeterType PRIMARY_METER_TYPE = meter_type.first;
         // get icon texture.

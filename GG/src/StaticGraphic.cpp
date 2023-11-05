@@ -84,8 +84,8 @@ Rect StaticGraphic::RenderedArea() const
             double scale_x = Value(window_sz.x) / static_cast<double>(Value(graphic_sz.x));
             double scale_y = Value(window_sz.y) / static_cast<double>(Value(graphic_sz.y));
             double scale = std::min(scale_x, scale_y);
-            pt2.x = graphic_sz.x * scale;
-            pt2.y = graphic_sz.y * scale;
+            pt2.x = ToX(graphic_sz.x * scale);
+            pt2.y = ToY(graphic_sz.y * scale);
         } else {
             pt2 = window_sz;
         }
@@ -94,14 +94,14 @@ Rect StaticGraphic::RenderedArea() const
             double scale_x = (graphic_sz.x > window_sz.x) ? Value(window_sz.x) / static_cast<double>(Value(graphic_sz.x)) : 1.0;
             double scale_y = (graphic_sz.y > window_sz.y) ? Value(window_sz.y) / static_cast<double>(Value(graphic_sz.y)) : 1.0;
             double scale = std::min(scale_x, scale_y);
-            pt2.x = graphic_sz.x * scale;
-            pt2.y = graphic_sz.y * scale;
+            pt2.x = ToX(graphic_sz.x * scale);
+            pt2.y = ToY(graphic_sz.y * scale);
         } else {
             pt2 = window_sz;
         }
     }
 
-    X x_shift(0);
+    X x_shift(X0);
     if (m_style & GRAPHIC_LEFT) {
         x_shift = ul.x;
     } else if (m_style & GRAPHIC_CENTER) {
@@ -112,7 +112,7 @@ Rect StaticGraphic::RenderedArea() const
     pt1.x += x_shift;
     pt2.x += x_shift;
 
-    Y y_shift(0);
+    Y y_shift(Y0);
     if (m_style & GRAPHIC_TOP) {
         y_shift = ul.y;
     } else if (m_style & GRAPHIC_VCENTER) {

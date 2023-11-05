@@ -851,10 +851,8 @@ void GGHumanClientApp::RequestSavePreviews(const std::string& relative_directory
 }
 
 std::pair<int, int> GGHumanClientApp::GetWindowLeftTop() {
-    int left(0), top(0);
-
-    left = GetOptionsDB().Get<int>("video.windowed.left");
-    top = GetOptionsDB().Get<int>("video.windowed.top");
+    int left = GetOptionsDB().Get<int>("video.windowed.left");
+    int top = GetOptionsDB().Get<int>("video.windowed.top");
 
     // clamp to edges to avoid weird bug with maximizing windows setting their
     // left and top to -9 which lead to weird issues when attmepting to recreate
@@ -893,19 +891,21 @@ std::pair<int, int> GGHumanClientApp::GetWindowWidthHeight() {
 }
 
 void GGHumanClientApp::Reinitialize() {
-    bool fullscreen = GetOptionsDB().Get<bool>("video.fullscreen.enabled");
-    bool fake_mode_change = GetOptionsDB().Get<bool>("video.fullscreen.fake.enabled");
-    std::pair<int, int> size = GetWindowWidthHeight();
+    const bool fullscreen = GetOptionsDB().Get<bool>("video.fullscreen.enabled");
+    const bool fake_mode_change = GetOptionsDB().Get<bool>("video.fullscreen.fake.enabled");
+    const auto size = GetWindowWidthHeight();
+    const GG::X width{size.first};
+    const GG::Y height{size.second};
 
-    bool fullscreen_transition = Fullscreen() != fullscreen;
-    GG::X old_width = AppWidth();
-    GG::Y old_height = AppHeight();
+    const bool fullscreen_transition = Fullscreen() != fullscreen;
+    const GG::X old_width = AppWidth();
+    const GG::Y old_height = AppHeight();
 
-    SetVideoMode(GG::X(size.first), GG::Y(size.second), fullscreen, fake_mode_change);
+    SetVideoMode(width, height, fullscreen, fake_mode_change);
     if (fullscreen_transition) {
         FullscreenSwitchSignal(fullscreen); // after video mode is changed but before DoLayout() calls
     } else if (fullscreen &&
-               (old_width != size.first || old_height != size.second) &&
+               (old_width != width || old_height != height) &&
                GetOptionsDB().Get<bool>("ui.reposition.auto.enabled"))
     {
         // Reposition windows if in fullscreen mode... handled here instead of
@@ -918,9 +918,8 @@ void GGHumanClientApp::Reinitialize() {
     // SDLGUI::HandleSystemEvents() when in windowed mode.  This sends the
     // signal (and hence calls HandleWindowResize()) when in fullscreen mode,
     // making the signal more consistent...
-    if (fullscreen) {
-        WindowResizedSignal(GG::X(size.first), GG::Y(size.second));
-    }
+    if (fullscreen)
+        WindowResizedSignal(width, height);
 }
 
 float GGHumanClientApp::GLVersion() const
@@ -1112,8 +1111,8 @@ void GGHumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
     }
 
     if (!GetOptionsDB().Get<bool>("video.fullscreen.enabled") &&
-         (GetOptionsDB().Get<int>("video.windowed.width") != w ||
-          GetOptionsDB().Get<int>("video.windowed.height") != h))
+         (GetOptionsDB().Get<GG::X>("video.windowed.width") != w ||
+          GetOptionsDB().Get<GG::Y>("video.windowed.height") != h))
     {
         if (GetOptionsDB().Get<bool>("ui.reposition.auto.enabled")) {
             // Reposition windows if in windowed mode.

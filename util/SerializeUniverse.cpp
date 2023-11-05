@@ -366,7 +366,7 @@ namespace {
 #endif
 
     template <integral T>
-    inline constexpr const auto* GetFormatString() {
+    constexpr const auto* GetFormatString() {
         if constexpr(std::is_unsigned_v<T>)
             return "%u%n";
         else if constexpr(std::is_signed_v<T>)

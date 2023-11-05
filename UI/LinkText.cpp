@@ -492,7 +492,7 @@ void TextLinker::LocateLinks() {
     if (m_links.empty())
         return;
 
-    GG::Y y_posn(0); // y-coordinate of the top of the current line
+    GG::Y y_posn(GG::Y0); // y-coordinate of the top of the current line
     const auto& font = GetFont();
 
     // We assume that links are stored in m_links in the order they appear in the text.

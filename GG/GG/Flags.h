@@ -36,7 +36,7 @@
 namespace GG {
 namespace detail {
     template <typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
-    constexpr inline std::size_t OneBits(T num) noexcept
+    constexpr std::size_t OneBits(T num) noexcept
     {
 #if defined(__cpp_lib_bitops)
         if constexpr (std::is_unsigned_v<T>) {

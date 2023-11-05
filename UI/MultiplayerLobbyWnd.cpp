@@ -37,8 +37,8 @@ namespace {
         return ClientUI::GetTexture(ClientUI::ArtDir() / "icons/host.png");
     }
 
-    constexpr GG::X EMPIRE_NAME_WIDTH(150);
-    constexpr GG::X BROWSE_BTN_WIDTH(50);
+    constexpr GG::X EMPIRE_NAME_WIDTH{150};
+    constexpr GG::X BROWSE_BTN_WIDTH{50};
 
     // Shows information about a single player in the mulitplayer lobby.
     // This inclues whether the player is a human or AI player, or an observer,
@@ -47,18 +47,16 @@ namespace {
     // players or the host.
     struct PlayerRow : GG::ListBox::Row {
         PlayerRow() :
-            GG::ListBox::Row(GG::X(90), PlayerRowHeight()),
-            m_player_data(),
-            m_player_id(Networking::INVALID_PLAYER_ID)
+            GG::ListBox::Row(GG::X{90}, PlayerRowHeight())
         {}
         PlayerRow(const PlayerSetupData& player_data, int player_id) :
-            GG::ListBox::Row(GG::X(90), PlayerRowHeight()),
+            GG::ListBox::Row(GG::X{90}, PlayerRowHeight()),
             m_player_data(player_data),
             m_player_id(player_id)
         {}
 
         PlayerSetupData         m_player_data;
-        int                     m_player_id;
+        int                     m_player_id = Networking::INVALID_PLAYER_ID;
         boost::signals2::signal<void ()>  DataChangedSignal;
     };
 
@@ -573,13 +571,13 @@ namespace {
         }
     };
 
-    constexpr GG::X     LOBBY_WND_WIDTH(960);
-    constexpr GG::Y     LOBBY_WND_HEIGHT(720);
+    constexpr GG::X     LOBBY_WND_WIDTH{960};
+    constexpr GG::Y     LOBBY_WND_HEIGHT{720};
     constexpr int       CONTROL_MARGIN = 5; // gap to leave between controls in the window
-    constexpr GG::X     GALAXY_SETUP_PANEL_WIDTH(250);
-    constexpr GG::Y     GALAXY_SETUP_PANEL_HEIGHT(340);
+    constexpr GG::X     GALAXY_SETUP_PANEL_WIDTH{250};
+    constexpr GG::Y     GALAXY_SETUP_PANEL_HEIGHT{340};
     constexpr int       GALAXY_SETUP_PANEL_MARGIN = 45;
-    constexpr GG::X     CHAT_WIDTH(350);
+    constexpr GG::X     CHAT_WIDTH{350};
     GG::Pt              g_preview_ul;
     constexpr int       PREVIEW_WIDTH = 248;
     constexpr GG::Pt    PREVIEW_SZ(GG::X{PREVIEW_WIDTH}, GG::Y{186});
@@ -587,8 +585,8 @@ namespace {
 
     std::vector<GG::X> PlayerRowColWidths(GG::X width = GG::X{600}) {
         static constexpr GG::X color_width{75};
-        const GG::X ready_width((ClientUI::Pts() / 2) * 5);
-        const GG::X prop_width = ((width - color_width - 2 * ready_width) / 4) - CONTROL_MARGIN;
+        const GG::X ready_width{(ClientUI::Pts() / 2) * 5};
+        const GG::X prop_width{(width - color_width - 2 * ready_width) / 4 - CONTROL_MARGIN};
         return {
             prop_width,  // type
             prop_width,  // player name
@@ -633,7 +631,7 @@ void MultiPlayerLobbyWnd::CompleteConstruction() {
     m_preview_image = GG::Wnd::Create<GG::StaticGraphic>(std::make_shared<GG::Texture>(), GG::GRAPHIC_FITGRAPHIC);
 
     m_players_lb_headers = GG::Wnd::Create<PlayerLabelRow>();
-    m_players_lb_headers->SetMinSize(GG::Pt(GG::X(0), PlayerRowHeight() + PlayerFontHeight()));
+    m_players_lb_headers->SetMinSize(GG::Pt(GG::X0, PlayerRowHeight() + PlayerFontHeight()));
 
     TraceLogger() << "MultiPlayerLobbyWnd::CompleteConstruction creating players list box";
     m_players_lb = GG::Wnd::Create<CUIListBox>();
@@ -869,13 +867,13 @@ GG::Pt MultiPlayerLobbyWnd::MinUsableSize() const
 { return GG::Pt(LOBBY_WND_WIDTH, LOBBY_WND_HEIGHT); }
 
 void MultiPlayerLobbyWnd::DoLayout() {
-    GG::X x(CONTROL_MARGIN);
+    GG::X x{CONTROL_MARGIN};
 
     GG::Pt chat_box_ul(x, GG::Y(CONTROL_MARGIN));
     GG::Pt chat_box_lr(CHAT_WIDTH, ClientHeight() - CONTROL_MARGIN);
     m_chat_wnd->SizeMove(chat_box_ul, chat_box_lr);
 
-    const GG::Y RADIO_BN_HT(ClientUI::Pts() + 4);
+    const GG::Y RADIO_BN_HT{ClientUI::Pts() + 4};
 
     GG::Pt galaxy_setup_panel_ul(CHAT_WIDTH + 2*CONTROL_MARGIN, RADIO_BN_HT);
     GG::Pt galaxy_setup_panel_lr = galaxy_setup_panel_ul +

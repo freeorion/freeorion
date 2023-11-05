@@ -24,13 +24,11 @@ using std::max;
 using std::min;
 
 namespace {
+    // Minimum acceptable width for a scroll.
+    constexpr X MIN_SCROLL_WIDTH{14};
 
-// Minimum acceptable width for a scroll.
-X MIN_SCROLL_WIDTH(14);
-
-// Space to leave left of the vertical scroll.
-X SCROLL_MARGIN_X(2);
-
+    // Space to leave left of the vertical scroll.
+    constexpr X SCROLL_MARGIN_X{2};
 }
 
 void ScrollPanel::SizeMove(Pt ul, Pt lr)
@@ -43,9 +41,7 @@ void ScrollPanel::SizeMove(Pt ul, Pt lr)
 }
 
 void ScrollPanel::Render()
-{
-    FlatRectangle(UpperLeft(), LowerRight(), m_background_color, CLR_ZERO, 0);
-}
+{ FlatRectangle(UpperLeft(), LowerRight(), m_background_color, CLR_ZERO, 0); }
 
 ScrollPanel::ScrollPanel() :
     m_background_color(CLR_ZERO)

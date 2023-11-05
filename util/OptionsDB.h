@@ -200,11 +200,28 @@ public:
         try {
             return boost::any_cast<T>(it->value);
         } catch (const boost::bad_any_cast&) {
-            ErrorLogger() << "bad any cast converting value option named: " << name << ". Returning default value instead";
+            if constexpr (std::is_enum_v<T>) {
+                try {
+                    return T{boost::any_cast<std::underlying_type_t<T>>(it->value)};
+                } catch (...) {}
+            }
+            ErrorLogger() << "bad any cast converting value option named: " << name
+                          << ". Returning default value instead";
+
             try {
                 return boost::any_cast<T>(it->default_value);
             } catch (const boost::bad_any_cast&) {
-                ErrorLogger() << "bad any cast converting default value of option named: " << name << ". Returning data-type default value instead: " << T();
+                if constexpr (std::is_enum_v<T>) {
+                    try {
+                        return T{boost::any_cast<std::underlying_type_t<T>>(it->default_value)};
+                    } catch (...) {
+                        ErrorLogger() << "bad any cast converting default value of option named: " << name
+                                      << ". Returning data-type default value instead.";
+                    }
+                } else {
+                    ErrorLogger() << "bad any cast converting default value of option named: " << name
+                                  << ". Returning data-type default value instead: " << T();
+                }
                 return T();
             }
         }
@@ -222,6 +239,11 @@ public:
         try {
             return boost::any_cast<T>(it->default_value);
         } catch (const boost::bad_any_cast&) {
+            if constexpr (std::is_enum_v<T>) {
+                try {
+                    return T{boost::any_cast<std::underlying_type_t<T>>(it->default_value)};
+                } catch (...) {}
+            }
             ErrorLogger() << "bad any cast converting default value of option named: " << name << "  returning type default value instead";
             return T();
         }

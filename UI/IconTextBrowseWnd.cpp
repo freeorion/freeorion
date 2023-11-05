@@ -7,8 +7,8 @@
 
 namespace {
     /** Returns height of rows of text in InfoTextBrowseWnd. */
-    int IconTextBrowseWndRowHeight()
-    { return ClientUI::Pts()*3/2; }
+    GG::Y IconTextBrowseWndRowHeight()
+    { return GG::Y{ClientUI::Pts()*3/2}; }
 
     constexpr int   EDGE_PAD = 3;
     constexpr GG::X ICON_BROWSE_TEXT_WIDTH{400};

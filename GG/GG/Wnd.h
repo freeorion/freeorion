@@ -977,6 +977,9 @@ protected:
     virtual void DetachChildCore(Wnd* wnd);
 
 private:
+    static constexpr int MAX_WINDOW_SZ{32000};
+    static_assert(MAX_WINDOW_SZ < std::numeric_limits<std::underlying_type_t<X>>::max());
+
     /// m_parent may be expired or null if there is no parent.  m_parent will reset itself if expired.
     mutable std::weak_ptr<Wnd>        m_parent;
     std::string                       m_name;                     ///< A user-significant name for this Wnd
@@ -985,8 +988,8 @@ private:
     ChildClippingMode                 m_child_clipping_mode = ChildClippingMode::DontClip;
     Pt                                m_upperleft{X0, Y0};            ///< Upper left point of window
     Pt                                m_lowerright{X1, Y1};           ///< Lower right point of window
-    Pt                                m_min_size{X0, Y0};             ///< Minimum window size
-    Pt                                m_max_size{X{1<<15},Y{1<<15}};  ///< Maximum window size
+    Pt                                m_min_size{X0, Y0};                            ///< Minimum window size
+    Pt                                m_max_size{X{MAX_WINDOW_SZ},Y{MAX_WINDOW_SZ}}; ///< Maximum window size
     bool                              m_non_client_child = false;
     bool                              m_visible = true;
     bool                              m_needs_prerender = false;  ///< Indicates if Wnd needs a PreRender();

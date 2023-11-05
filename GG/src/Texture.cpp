@@ -30,7 +30,7 @@ namespace {
     template <typename T>
     constexpr T PowerOfTwo(T input)
     {
-        T value(1);
+        T value{1};
         while (value < input)
             value *= 2;
         return value;
@@ -383,8 +383,8 @@ void Texture::InitFromRawData(X width, Y height, const uint8_t* image, GLenum fo
         m_width = X(w);
         m_height = Y(h);
     }
-    m_tex_coords[2] = Value(1.0 * m_default_width / m_width);
-    m_tex_coords[3] = Value(1.0 * m_default_height / m_height);
+    m_tex_coords[2] = static_cast<GLfloat>(m_default_width) / Value(m_width);
+    m_tex_coords[3] = static_cast<GLfloat>(m_default_height) / Value(m_height);
 }
 
 std::vector<uint8_t> Texture::GetRawBytes()
@@ -417,10 +417,10 @@ SubTexture::SubTexture(std::shared_ptr<const Texture> texture, X x1, Y y1, X x2,
     if (!m_texture) throw BadTexture("Attempted to contruct subtexture from invalid texture");
     if (x2 < x1 || y2 < y1) throw InvalidTextureCoordinates("Attempted to contruct subtexture from invalid coordinates");
 
-    m_tex_coords[0] = Value(x1 * 1.0 / m_texture->Width());
-    m_tex_coords[1] = Value(y1 * 1.0 / m_texture->Height());
-    m_tex_coords[2] = Value(x2 * 1.0 / m_texture->Width());
-    m_tex_coords[3] = Value(y2 * 1.0 / m_texture->Height());
+    m_tex_coords[0] = static_cast<GLfloat>(x1) / Value(m_texture->Width());
+    m_tex_coords[1] = static_cast<GLfloat>(y1) / Value(m_texture->Height());
+    m_tex_coords[2] = static_cast<GLfloat>(x2) / Value(m_texture->Width());
+    m_tex_coords[3] = static_cast<GLfloat>(y2) / Value(m_texture->Height());
 }
 
 SubTexture::SubTexture(std::shared_ptr<const Texture> texture) :

@@ -5,10 +5,10 @@
 
 namespace {
     constexpr int   EDGE_PAD(3);
-    constexpr GG::Y ICON_BROWSE_ICON_HEIGHT(64);
+    constexpr GG::Y ICON_BROWSE_ICON_HEIGHT{64};
 
     const GG::X BrowseTextWidth()
-    { return GG::X(FontBasedUpscale(200)); }
+    { return GG::X{FontBasedUpscale(200)}; }
 }
 
 ////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ ResourceBrowseWnd::ResourceBrowseWnd(const std::string& title_text,
 void ResourceBrowseWnd::CompleteConstruction() {
     GG::BrowseInfoWnd::CompleteConstruction();
 
-    const GG::Y ROW_HEIGHT(ClientUI::Pts() * 4 / 3);
+    const GG::Y ROW_HEIGHT{ClientUI::Pts()*4/3};
 
     GG::Pt top_left = m_offset;
 
@@ -294,7 +294,7 @@ WastedStockpiledResourceBrowseWnd::WastedStockpiledResourceBrowseWnd(
 void WastedStockpiledResourceBrowseWnd::CompleteConstruction() {
     GG::BrowseInfoWnd::CompleteConstruction();
 
-    const GG::Y ROW_HEIGHT(ClientUI::Pts() * 4 / 3);
+    const GG::Y ROW_HEIGHT{ClientUI::Pts()*4/3};
 
     GG::Pt top_left = m_offset;
 

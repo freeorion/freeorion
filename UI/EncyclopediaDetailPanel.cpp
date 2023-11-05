@@ -865,11 +865,11 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
     m_next_button->LeftClickedSignal.connect(boost::bind(&EncyclopediaDetailPanel::OnNext, this));
 
     m_description_rich_text = GG::Wnd::Create<GG::RichText>(
-        GG::X(0), GG::Y(0), ClientWidth(), ClientHeight(), "",
+        GG::X0, GG::Y0, ClientWidth(), ClientHeight(), "",
         ClientUI::GetFont(), ClientUI::TextColor(),
         GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK,
         GG::INTERACTIVE);
-    m_scroll_panel = GG::Wnd::Create<GG::ScrollPanel>(GG::X(0), GG::Y(0), ClientWidth(),
+    m_scroll_panel = GG::Wnd::Create<GG::ScrollPanel>(GG::X0, GG::Y0, ClientWidth(),
                                                       ClientHeight(), m_description_rich_text);
 
     namespace ph = boost::placeholders;

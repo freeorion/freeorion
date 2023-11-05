@@ -54,7 +54,7 @@ struct IUnknown; // Workaround for "combaseapi.h(229,21): error C2760: syntax er
 #include <utility>
 #if !defined(__cpp_lib_integer_comparison_functions)
 namespace std {
-    inline constexpr auto cmp_less(auto&& lhs, auto&& rhs) { return lhs < rhs; }
+    constexpr auto cmp_less(auto&& lhs, auto&& rhs) { return lhs < rhs; }
 }
 #endif
 

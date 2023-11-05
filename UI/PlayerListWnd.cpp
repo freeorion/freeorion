@@ -277,10 +277,10 @@ namespace {
 
         /** Renders panel background, border with color depending on the current state. */
         void Render() override {
-            const GG::Clr& background_colour = ClientUI::WndColor();
-            const GG::Clr& unselected_colour = ClientUI::WndOuterBorderColor();
-            const GG::Clr& selected_colour = ClientUI::WndInnerBorderColor();
-            GG::Clr border_colour = m_selected ? selected_colour : unselected_colour;
+            const auto background_colour = ClientUI::WndColor();
+            const auto unselected_colour = ClientUI::WndOuterBorderColor();
+            const auto selected_colour = ClientUI::WndInnerBorderColor();
+            auto border_colour = m_selected ? selected_colour : unselected_colour;
             if (Disabled())
                 border_colour = DisabledColor(border_colour);
 
@@ -288,7 +288,7 @@ namespace {
 
             glColor(GG::CLR_WHITE);
 
-            GG::Pt ICON_SIZE = GG::Pt(GG::X(IconSize()), GG::Y(IconSize()));
+            GG::Pt ICON_SIZE = GG::Pt(GG::X{IconSize()}, GG::Y{IconSize()});
 
 
             ShipIcon()->OrthoBlit(UpperLeft() + m_ship_icon_ul, UpperLeft() + m_ship_icon_ul+ ICON_SIZE);
@@ -472,30 +472,31 @@ namespace {
             m_allied_indicator->Update();
         }
     private:
-        int IconSize() const   { return Value(Height()) - 2; }
+        int IconSize() const { return Value(Height()) - 2; }
 
         void DoLayout() {
-            const GG::X PLAYER_NAME_WIDTH(ClientUI::Pts()       * 10);
-            const GG::X EMPIRE_NAME_WIDTH(ClientUI::Pts()       * 10);
-            const GG::X EMPIRE_SHIP_WIDTH(ClientUI::Pts()       * 16/5);
-            const GG::X EMPIRE_PLANET_WIDTH(ClientUI::Pts()     * 16/5);
-            const GG::X EMPIRE_PRODUCTION_WIDTH(ClientUI::Pts() * 16/5);
-            const GG::X EMPIRE_RESEARCH_WIDTH(ClientUI::Pts()   * 16/5);
-            const GG::X EMPIRE_INFLUENCE_WIDTH(ClientUI::Pts()  * 16/5);
-            const GG::X EMPIRE_DETECTION_WIDTH(ClientUI::Pts()  * 16/5);
+            const GG::X pts{ClientUI::Pts()};
+            const GG::X PLAYER_NAME_WIDTH(pts       * 10);
+            const GG::X EMPIRE_NAME_WIDTH(pts       * 10);
+            const GG::X EMPIRE_SHIP_WIDTH(pts       * 16/5);
+            const GG::X EMPIRE_PLANET_WIDTH(pts     * 16/5);
+            const GG::X EMPIRE_PRODUCTION_WIDTH(pts * 16/5);
+            const GG::X EMPIRE_RESEARCH_WIDTH(pts   * 16/5);
+            const GG::X EMPIRE_INFLUENCE_WIDTH(pts  * 16/5);
+            const GG::X EMPIRE_DETECTION_WIDTH(pts  * 16/5);
 
-            GG::X left(DATA_PANEL_BORDER);
-            GG::Y top(DATA_PANEL_BORDER);
-            GG::Y bottom(ClientHeight());
+            GG::X left{DATA_PANEL_BORDER};
+            GG::Y top{DATA_PANEL_BORDER};
+            GG::Y bottom{ClientHeight()};
             static constexpr GG::X PAD{3};
 
             int diplo_status_width = (Empires().NumEmpires() - Empires().NumEliminatedEmpires() + 1) * (IconSize() + Value(PAD));
 
             m_diplo_status_icon_ul = GG::Pt(left, top);
-            left += GG::X(IconSize()) + PAD;
+            left += IconSize() + PAD;
 
             m_diplo_msg_ul = GG::Pt(left, top);
-            left += GG::X(IconSize());
+            left += IconSize();
 
             //m_player_name_text->SizeMove(GG::Pt(left, top), GG::Pt(left + PLAYER_NAME_WIDTH, bottom));
             //left += PLAYER_NAME_WIDTH;
@@ -504,52 +505,52 @@ namespace {
             left += EMPIRE_NAME_WIDTH;
 
             m_ship_icon_ul = GG::Pt(left, top);
-            left += GG::X(IconSize()) + PAD;
+            left += IconSize() + PAD;
 
             m_empire_ship_text->SizeMove(GG::Pt(left, top), GG::Pt(left + EMPIRE_SHIP_WIDTH, bottom));
             left += EMPIRE_SHIP_WIDTH;
 
             m_planet_icon_ul = GG::Pt(left, top);
-            left += GG::X(IconSize()) + PAD;
+            left += IconSize() + PAD;
 
             m_empire_planet_text->SizeMove(GG::Pt(left, top), GG::Pt(left + EMPIRE_PLANET_WIDTH, bottom));
             left += EMPIRE_PLANET_WIDTH;
 
             m_production_icon_ul = GG::Pt(left, top);
-            left += GG::X(IconSize()) + PAD;
+            left += IconSize() + PAD;
 
             m_empire_production_text->SizeMove(GG::Pt(left, top), GG::Pt(left + EMPIRE_PRODUCTION_WIDTH, bottom));
             left += EMPIRE_PRODUCTION_WIDTH;
 
             m_research_icon_ul = GG::Pt(left, top);
-            left += GG::X(IconSize()) + PAD;
+            left += IconSize() + PAD;
 
             m_empire_research_text->SizeMove(GG::Pt(left, top), GG::Pt(left + EMPIRE_RESEARCH_WIDTH, bottom));
             left += EMPIRE_RESEARCH_WIDTH;
 
             m_influence_icon_ul = GG::Pt(left, top);
-            left += GG::X(IconSize()) + PAD;
+            left += IconSize() + PAD;
 
             m_empire_influence_text->SizeMove(GG::Pt(left, top), GG::Pt(left + EMPIRE_INFLUENCE_WIDTH, bottom));
             left += EMPIRE_INFLUENCE_WIDTH;
 
             m_detection_icon_ul = GG::Pt(left, top);
-            left += GG::X(IconSize()) + PAD;
+            left += IconSize() + PAD;
 
             m_empire_detection_text->SizeMove(GG::Pt(left, top), GG::Pt(left + EMPIRE_DETECTION_WIDTH, bottom));
             left += EMPIRE_DETECTION_WIDTH;
 
             m_player_status_icon_ul = GG::Pt(left, top);
-            left += GG::X(IconSize()) + PAD;
+            left += IconSize() + PAD;
 
             m_player_type_icon_ul = GG::Pt(left, top);
-            left += GG::X(IconSize()) + PAD;
+            left += IconSize() + PAD;
 
             m_host_icon_ul = GG::Pt(left, top);
-            left += GG::X(IconSize()) + PAD;
+            left += IconSize() + PAD;
 
             m_win_status_icon_ul = GG::Pt(left, top);
-            left += GG::X(IconSize()) + PAD;
+            left += IconSize() + PAD;
 
             m_war_indicator->SizeMove(GG::Pt(left, top), GG::Pt(GG::X(left + diplo_status_width), bottom));
             left += diplo_status_width;
@@ -562,8 +563,8 @@ namespace {
 
         }
 
-        int                                         m_player_id;
-        int                                         m_empire_id;
+        const int                                   m_player_id;
+        const int                                   m_empire_id;
         //std::shared_ptr<GG::Label>                  m_player_name_text;
         std::shared_ptr<GG::Label>                  m_empire_name_text;
         std::shared_ptr<GG::Label>                  m_empire_ship_text;
@@ -592,13 +593,13 @@ namespace {
 
         DiplomaticStatus        m_diplo_status;
         Networking::ClientType  m_player_type;
-        bool                    m_host = false;
         enum : uint8_t {
             WON,
             LOST,
             NEITHER
         }                       m_win_status = NEITHER;
 
+        bool                    m_host = false;
         bool                    m_selected = false;
     };
 

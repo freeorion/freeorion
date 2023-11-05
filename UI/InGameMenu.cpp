@@ -83,7 +83,7 @@ GG::Rect InGameMenu::CalculatePosition() const {
 
     // Calculate window width and height
     GG::Pt new_size(ButtonWidth() + H_MAINMENU_MARGIN,
-                    5.75 * ButtonCellHeight() + V_MAINMENU_MARGIN); // 9 rows + 0.75 before exit button
+                    GG::ToY(5.75 * ButtonCellHeight()) + V_MAINMENU_MARGIN); // 9 rows + 0.75 before exit button
 
     // This wnd determines its own position.
     GG::Pt new_ul((GGHumanClientApp::GetApp()->AppWidth()  - new_size.x) / 2,
@@ -95,7 +95,7 @@ GG::Rect InGameMenu::CalculatePosition() const {
 GG::X InGameMenu::ButtonWidth() const {
     static constexpr GG::X MIN_BUTTON_WIDTH{160};
 
-    GG::X button_width(0);              //width of the buttons
+    GG::X button_width(GG::X0); //width of the buttons
 
     button_width = std::max(button_width, m_save_btn->MinUsableSize().x);
     button_width = std::max(button_width, m_load_or_concede_btn->MinUsableSize().x);
@@ -108,7 +108,7 @@ GG::X InGameMenu::ButtonWidth() const {
 }
 
 GG::Y InGameMenu::ButtonCellHeight() const {
-    static constexpr GG::Y MIN_BUTTON_HEIGHT(40);
+    static constexpr GG::Y MIN_BUTTON_HEIGHT{40};
     return std::max(MIN_BUTTON_HEIGHT, m_done_btn->MinUsableSize().y);
 }
 
@@ -119,20 +119,20 @@ void InGameMenu::DoLayout() {
 
     button_lr += button_ul;
 
-    GG::Y button_cell_height = ButtonCellHeight();
+    const GG::Y button_cell_height = ButtonCellHeight();
 
     m_save_btn->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_cell_height);
-    button_lr.y += GG::Y(button_cell_height);
+    button_ul.y += button_cell_height;
+    button_lr.y += button_cell_height;
     m_load_or_concede_btn->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_cell_height);
-    button_lr.y += GG::Y(button_cell_height);
+    button_ul.y += button_cell_height;
+    button_lr.y += button_cell_height;
     m_resign_btn->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_cell_height);
-    button_lr.y += GG::Y(button_cell_height);
+    button_ul.y += button_cell_height;
+    button_lr.y += button_cell_height;
     m_options_btn->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_cell_height) * 1.75;
-    button_lr.y += GG::Y(button_cell_height) * 1.75;
+    button_ul.y += button_cell_height * 7 / 8;
+    button_lr.y += button_cell_height * 7 / 8;
     m_done_btn->SizeMove(button_ul, button_lr);
 }
 

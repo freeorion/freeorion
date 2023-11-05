@@ -1191,7 +1191,7 @@ void SidePanel::PlanetPanel::DoLayout() {
         y += m_buildings_panel->Height() + EDGE_PAD;
     }
 
-    GG::Y min_height(MaxPlanetDiameter());
+    GG::Y min_height{MaxPlanetDiameter()};
 
     RefreshPlanetGraphic();
     if (m_planet_graphic)
@@ -3672,7 +3672,7 @@ void SidePanel::RefreshImpl(ScriptingContext& context) {
         all_planets_share_owner ? all_planets : player_planets,
         std::move(meter_types));
     m_system_resource_summary->MoveTo(GG::Pt(GG::X(MaxPlanetDiameter() + 4),
-                                             140 - m_system_resource_summary->Height()));
+                                             GG::Y{140} - m_system_resource_summary->Height()));
     AttachChild(m_system_resource_summary);
 
 
@@ -3704,10 +3704,10 @@ void SidePanel::DoLayout() {
         return;
 
     const GG::Y name_height((*m_system_name->CurrentItem())->Height());
-    const GG::X button_width(Value(name_height));
+    const GG::X button_width{Value(name_height)};
 
     // left button
-    GG::Pt ul(GG::X(MaxPlanetDiameter()) + 2*EDGE_PAD, GG::Y0);
+    GG::Pt ul(GG::X{MaxPlanetDiameter()} + 2*EDGE_PAD, GG::Y0);
     GG::Pt lr(ul + GG::Pt(button_width, name_height));
     m_button_prev->SizeMove(ul, lr);
 
@@ -3717,7 +3717,7 @@ void SidePanel::DoLayout() {
     m_button_next->SizeMove(ul, lr);
 
     // system name / droplist
-    ul = GG::Pt(GG::X(MaxPlanetDiameter()), GG::Y0);
+    ul = GG::Pt(GG::X{MaxPlanetDiameter()}, GG::Y0);
     auto system_name_width = ClientWidth() - GG::X(MaxPlanetDiameter());
     lr = ul + GG::Pt(system_name_width, name_height);
     m_system_name->SetColWidth(0, system_name_width - 4 * GG::X(GG::ListBox::BORDER_THICK));

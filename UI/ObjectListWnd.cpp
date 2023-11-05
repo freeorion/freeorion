@@ -38,7 +38,7 @@
 #include <utility>
 #if !defined(__cpp_lib_integer_comparison_functions)
 namespace std {
-    inline constexpr auto cmp_equal(auto&& lhs, auto&& rhs) { return lhs == rhs; }
+    constexpr auto cmp_equal(auto&& lhs, auto&& rhs) { return lhs == rhs; }
 }
 #endif
 
@@ -1532,7 +1532,7 @@ private:
         if (!m_initialized)
             return;
 
-        const GG::X ICON_WIDTH(Value(ClientHeight()));
+        const GG::X ICON_WIDTH{Value(ClientHeight())};
 
         GG::X indent(ICON_WIDTH * m_indent);
         GG::X left = indent;
@@ -1556,14 +1556,13 @@ private:
         // second column position fixed equal to first column width value.
         // ie. reset left, not dependent on current left.
         auto& ctrl = m_controls[0];
-        GG::X width(GetColumnWidth(static_cast<int>(-1)) + GetColumnWidth(static_cast<int>(0)));
-        GG::X right = width;
+        GG::X right{GetColumnWidth(-1) + GetColumnWidth(0)};
         ctrl->SizeMove(GG::Pt(left, top), GG::Pt(right, bottom));
         left = right + 2*PAD;
 
         for (std::size_t i = 1; i < m_controls.size(); ++i) {
             right = left + GetColumnWidth(static_cast<int>(i));
-            if ((ctrl = m_controls[i]))
+            if ((ctrl = m_controls[i])) // TODO: use ranged loop, avoid this assignment?
                 ctrl->SizeMove(GG::Pt(left, top), GG::Pt(right, bottom));
             left = right + PAD;
         }
@@ -1793,7 +1792,7 @@ private:
         // loop through m_controls, positioning according to column widths.
         for (std::size_t i = 0; i < m_controls.size(); ++i) {
             auto& ctrl = m_controls[i];
-            GG::X width(GetColumnWidth(static_cast<int>(i)-1));
+            GG::X width{GetColumnWidth(static_cast<int>(i)-1)};
 
             GG::X right = left + width;
 
@@ -2585,16 +2584,16 @@ void ObjectListWnd::CompleteConstruction() {
 }
 
 void ObjectListWnd::DoLayout() {
-    GG::X BUTTON_WIDTH(ClientUI::Pts()*7);
-    GG::Y BUTTON_HEIGHT = m_filter_button->MinUsableSize().y;
+    GG::X BUTTON_WIDTH{ClientUI::Pts()*7};
+    GG::Y BUTTON_HEIGHT{m_filter_button->MinUsableSize().y};
     int PAD(3);
 
     GG::Pt button_ul(GG::X0, ClientHeight() - BUTTON_HEIGHT);
 
     m_filter_button->SizeMove(button_ul, button_ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT));
-    button_ul += GG::Pt(BUTTON_WIDTH + GG::X(PAD), GG::Y0);
+    button_ul += GG::Pt(BUTTON_WIDTH + PAD, GG::Y0);
     m_collapse_button->SizeMove(button_ul, button_ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT));
-    button_ul += GG::Pt(BUTTON_WIDTH + GG::X(PAD), GG::Y0);
+    button_ul += GG::Pt(BUTTON_WIDTH + PAD, GG::Y0);
 
     m_list_box->SizeMove(GG::Pt(GG::X0, GG::Y0), GG::Pt(ClientWidth(), button_ul.y));
 

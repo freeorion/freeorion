@@ -374,7 +374,7 @@ void StateButtonRepresenter::DoLayout(const GG::StateButton& button, Pt& button_
     Y bn_y = button_ul.y;
 
     if (format & FORMAT_VCENTER)       // center button vertically
-        bn_y = Y{(h - BN_H) / 2.0};
+        bn_y = (h - BN_H) / 2;
     if (format & FORMAT_TOP) {         // put button at top, text just below
         bn_y = Y0;
         text_ul.y = BN_H;
@@ -382,7 +382,8 @@ void StateButtonRepresenter::DoLayout(const GG::StateButton& button, Pt& button_
     if (format & FORMAT_BOTTOM) {      // put button at bottom, text just above
         bn_y = (h - BN_H);
         const auto linedata_sz = std::max(0, static_cast<int>(label->GetLineData().size()) - 1);
-        text_ul.y = GG::Y{0.5 + h - (BN_H*(1 + SPACING)) - (linedata_sz*font->Lineskip() + font->Height())};
+        const auto skip_and_height = linedata_sz*font->Lineskip() + font->Height();
+        text_ul.y = ToY(h - skip_and_height - BN_H*(1.0 + SPACING));
     }
 
     if (format & FORMAT_CENTER) {      // center button horizontally
@@ -390,18 +391,18 @@ void StateButtonRepresenter::DoLayout(const GG::StateButton& button, Pt& button_
             format |= FORMAT_LEFT;     // so go to the default (FORMAT_CENTER|FORMAT_LEFT)
             format &= ~FORMAT_CENTER;
         } else {
-            bn_x = GG::X{0.5 + (w - bn_x) / 2.0 - BN_W / 2.0};
+            bn_x = ToX((w - bn_x)/2.0 - BN_W/2.0);
         }
     }
     if (format & FORMAT_LEFT) {        // put button at left, text just to the right
         bn_x = X0;
         if (format & FORMAT_VCENTER)
-            text_ul.x = GG::X{0.5 + BN_W * (1 + SPACING)};
+            text_ul.x = ToX(BN_W * (1 + SPACING));
     }
     if (format & FORMAT_RIGHT) {       // put button at right, text just to the left
         bn_x = (w - BN_W);
         if (format & FORMAT_VCENTER)
-            text_ul.x = GG::X{0.5 -BN_W * (1 + SPACING)};
+            text_ul.x = ToX(-BN_W * (1 + SPACING));
     }
     if (format != original_format)
         button.GetLabel()->SetTextFormat(format);

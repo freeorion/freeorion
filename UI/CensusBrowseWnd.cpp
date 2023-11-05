@@ -20,7 +20,7 @@ namespace {
     }
 
     constexpr int   EDGE_PAD(3);
-    constexpr GG::Y ICON_BROWSE_ICON_HEIGHT(64);
+    constexpr GG::Y ICON_BROWSE_ICON_HEIGHT{64};
 
     const GG::X BrowseTextWidth()
     { return GG::X(FontBasedUpscale(230)); }
@@ -81,9 +81,9 @@ public:
 
 private:
     void DoLayout() {
-        const GG::X SPECIES_NAME_WIDTH(ClientUI::Pts() * 9);
-        const GG::X SPECIES_CENSUS_WIDTH(ClientUI::Pts() * 5);
-        const GG::X SPECIES_WORLDS_WIDTH(ClientUI::Pts() * 3);
+        const GG::X SPECIES_NAME_WIDTH{ClientUI::Pts() * 9};
+        const GG::X SPECIES_CENSUS_WIDTH{ClientUI::Pts() * 5};
+        const GG::X SPECIES_WORLDS_WIDTH{ClientUI::Pts() * 3};
 
         GG::X left(GG::X0);
         GG::Y bottom(MeterIconSize().y - GG::Y(EDGE_PAD));
@@ -237,7 +237,7 @@ void CensusBrowseWnd::CompleteConstruction() {
 
     m_tags_list->Resize(GG::Pt(BrowseTextWidth(), top2 -top -ROW_HEIGHT - HALF_HEIGHT + (EDGE_PAD*3)));
 
-    top2 += 0.5 * ROW_HEIGHT;
+    top2 += ROW_HEIGHT/2;
 
     m_total_worlds->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, top2 + m_offset.y));
     m_total_worlds->Resize(GG::Pt(BrowseTextWidth(), ROW_HEIGHT + HALF_HEIGHT));
@@ -273,27 +273,27 @@ bool CensusBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
 }
 
 void CensusBrowseWnd::InitBuffer() {
-    GG::Pt sz = Size();
-    const GG::Y_d ROW_HEIGHT(IconTextBrowseWndRowHeight());
+    const GG::Pt sz = Size();
+    const float ROW_HEIGHT(IconTextBrowseWndRowHeight());
 
     m_buffer.clear();
 
-    m_buffer.store(static_cast<float>(Value(sz.x)), static_cast<float>(Value(ROW_HEIGHT)));
-    m_buffer.store(0.0f,                            static_cast<float>(Value(ROW_HEIGHT)));
+    m_buffer.store(static_cast<float>(sz.x), ROW_HEIGHT);
+    m_buffer.store(0.0f,                     ROW_HEIGHT);
 
-    m_buffer.store(0.0f,                            0.0f);
-    m_buffer.store(static_cast<float>(Value(sz.x)), 0.0f);
-    m_buffer.store(static_cast<float>(Value(sz.x)), static_cast<float>(Value(sz.y)));
-    m_buffer.store(0.0f,                            static_cast<float>(Value(sz.y)));
+    m_buffer.store(0.0f,                     0.0f);
+    m_buffer.store(static_cast<float>(sz.x), 0.0f);
+    m_buffer.store(static_cast<float>(sz.x), static_cast<float>(sz.y));
+    m_buffer.store(0.0f,                     static_cast<float>(sz.y));
     m_buffer.createServerBuffer();
 }
 
 void CensusBrowseWnd::Render() {
-    GG::Pt ul = UpperLeft() + m_offset;
+    const GG::Pt ul = UpperLeft() + m_offset;
 
     glPushMatrix();
     glLoadIdentity();
-    glTranslatef(static_cast<GLfloat>(Value(ul.x)), static_cast<GLfloat>(Value(ul.y)), 0.0f);
+    glTranslatef(static_cast<GLfloat>(ul.x), static_cast<GLfloat>(ul.y), 0.0f);
     glDisable(GL_TEXTURE_2D);
     glLineWidth(1.0);
     glEnableClientState(GL_VERTEX_ARRAY);

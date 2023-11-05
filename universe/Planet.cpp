@@ -25,7 +25,7 @@ namespace {
     constexpr float HIGH_TILT_THERESHOLD = 45.0f;
     constexpr double MINIMUM_POP_CENTER_POPULATION = 0.01001;  // rounds up to 0.1 when showing 2 digits, down to 0.05 or 50.0 when showing 3
 
-    constexpr inline float SizeRotationFactor(PlanetSize size) noexcept {
+    constexpr float SizeRotationFactor(PlanetSize size) noexcept {
         switch (size) {
         case PlanetSize::SZ_TINY:     return 1.5f;
         case PlanetSize::SZ_SMALL:    return 1.25f;

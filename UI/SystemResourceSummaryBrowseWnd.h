@@ -41,10 +41,10 @@ private:
     std::vector<std::pair<std::shared_ptr<GG::Label>, std::shared_ptr<GG::Label>>> m_allocation_labels_and_amounts;
     std::vector<std::pair<std::shared_ptr<GG::Label>, std::shared_ptr<GG::Label>>> m_import_export_labels_and_amounts;
 
-    GG::Y row_height;
-    GG::Y production_label_top;
-    GG::Y allocation_label_top;
-    GG::Y import_export_label_top;
+    GG::Y row_height = GG::Y1;
+    GG::Y production_label_top = GG::Y0;
+    GG::Y allocation_label_top = GG::Y0;
+    GG::Y import_export_label_top = GG::Y0;
 };
 
 #endif

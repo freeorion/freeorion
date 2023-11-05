@@ -274,7 +274,7 @@ template void Empire::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&,
 
 
 namespace {
-    constexpr inline auto DiploKey(int id1, int ind2) noexcept
+    constexpr auto DiploKey(int id1, int ind2) noexcept
     { return std::pair(std::max(id1, ind2), std::min(id1, ind2)); }
 }
 

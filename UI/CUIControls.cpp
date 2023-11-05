@@ -215,17 +215,14 @@ CUIArrowButton::CUIArrowButton(ShapeOrientation orientation, bool fill_backgroun
     Button("", nullptr, ClientUI::DropDownListArrowColor(), GG::CLR_ZERO, flags),
     m_orientation(orientation),
     m_fill_background_with_wnd_color(fill_background)
-{
-    LeftClickedSignal.connect(-1,
-        &PlayButtonClickSound);
-}
+{ LeftClickedSignal.connect(-1, &PlayButtonClickSound); }
 
 bool CUIArrowButton::InWindow(GG::Pt pt) const {
     if (m_fill_background_with_wnd_color) {
         return Button::InWindow(pt);
     } else {
-        const GG::Pt ul = UpperLeft() + GG::Pt(GG::X(3), GG::Y(1));
-        const GG::Pt lr = LowerRight() - GG::Pt(GG::X(2), GG::Y(1));
+        const GG::Pt ul = UpperLeft() + GG::Pt(GG::X{3}, GG::Y1);
+        const GG::Pt lr = LowerRight() - GG::Pt(GG::X{2}, GG::Y1);
         return InIsoscelesTriangle(pt, ul, lr, m_orientation);
     }
 }
@@ -338,15 +335,15 @@ void CUICheckBoxRepresenter::Render(const GG::StateButton& button) const {
         AdjustBrightness(inside_color, -75);
         GG::Clr outside_color = inside_color;
         AdjustBrightness(outside_color, 40);
-        glTranslated(Value((bn_ul.x + bn_lr.x) / 2.0), Value(-(bn_ul.y + bn_lr.y) / 2.0), 0.0);
+        glTranslated((bn_ul.x + bn_lr.x) / 2.0, -(bn_ul.y + bn_lr.y) / 2.0, 0.0);
         glScaled(-1.0, 1.0, 1.0);
-        glTranslated(Value(-(bn_ul.x + bn_lr.x) / 2.0), Value((bn_ul.y + bn_lr.y) / 2.0), 0.0);
+        glTranslated(-(bn_ul.x + bn_lr.x) / 2.0, (bn_ul.y + bn_lr.y) / 2.0, 0.0);
         AngledCornerRectangle(GG::Pt(bn_ul.x + MARGIN, bn_ul.y + MARGIN),
                               GG::Pt(bn_lr.x - MARGIN, bn_lr.y - MARGIN),
                               inside_color, outside_color, Value(bn_lr.y - bn_ul.y - 2 * MARGIN) / 2, 1);
-        glTranslated(Value((bn_ul.x + bn_lr.x) / 2.0), Value(-(bn_ul.y + bn_lr.y) / 2.0), 0.0);
+        glTranslated((bn_ul.x + bn_lr.x) / 2.0, -(bn_ul.y + bn_lr.y) / 2.0, 0.0);
         glScaled(-1.0, 1.0, 1.0);
-        glTranslated(Value(-(bn_ul.x + bn_lr.x) / 2.0), Value((bn_ul.y + bn_lr.y) / 2.0), 0.0);
+        glTranslated(-(bn_ul.x + bn_lr.x) / 2.0, (bn_ul.y + bn_lr.y) / 2.0, 0.0);
     }
 
     // draw text
@@ -768,7 +765,7 @@ void CUIDropDownList::InitBuffer() {
     BufferStoreAngledCornerRectangleVertices(this->m_buffer, GG::Pt(GG::X0, GG::Y0), sz,
                                              CUIDROPDOWNLIST_ANGLE_OFFSET, false, true, false);
 
-    int margin = 3;
+    static constexpr int margin = 3;
     int triangle_width = Value(sz.y - 4 * margin);
     int outline_width = triangle_width + 3 * margin;
 
@@ -1210,14 +1207,14 @@ void CUILinkTextMultiEdit::MouseLeave() {
 void CUILinkTextMultiEdit::SizeMove(GG::Pt ul, GG::Pt lr) {
     GG::Pt lower_right = lr;
     if (Style() & GG::MULTI_INTEGRAL_HEIGHT)
-        lower_right.y -= ((lr.y - ul.y) - (2 * PIXEL_MARGIN)) % GetFont()->Lineskip();
-    bool resized = lower_right - ul != Size();
+        lower_right.y -= Value((lr.y - ul.y) - (2 * PIXEL_MARGIN)) % Value(GetFont()->Lineskip());
+    const bool resized = lower_right - ul != Size();
 
     // need to restore scroll position after SetText call below, so that
     // resizing this control doesn't reset the scroll position to the top.
     // just calling PreserveTextPositionOnNextSetText() before the SetText
     // call doesn't work as that leaves the scrollbars unadjusted for the resize
-    GG::Pt initial_scroll_pos = ScrollPosition();
+    const GG::Pt initial_scroll_pos = ScrollPosition();
 
     GG::Edit::SizeMove(ul, lower_right);
 
@@ -1306,7 +1303,7 @@ void StatisticIcon::CompleteConstruction() {
     // Format for text?
     GG::Flags<GG::TextFormat> format;
 
-    if (Width() >= Value(Height())) {
+    if (Value(Width()) >= Value(Height())) {
         format = GG::FORMAT_LEFT;
     } else {
         format = GG::FORMAT_BOTTOM;
@@ -1436,7 +1433,7 @@ void StatisticIcon::DoLayout() {
         return;
 
     GG::Pt text_ul;
-    if (Width() >= Value(Height())) {
+    if (Value(Width()) >= Value(Height())) {
         text_ul.x = GG::X(icon_dim + STAT_ICON_PAD);
     } else {
         text_ul.y = GG::Y(icon_dim + STAT_ICON_PAD);
@@ -1453,7 +1450,7 @@ GG::Pt StatisticIcon::MinUsableSize() const {
     if (m_values.empty() || !m_text)
         return m_icon->Size();
 
-    if (Width() >= Value(Height()))
+    if (Value(Width()) >= Value(Height()))
         return GG::Pt(m_text->RelativeUpperLeft().x + m_text->Width(),
                       std::max(m_icon->RelativeLowerRight().y, m_text->Height()));
     else
@@ -1518,7 +1515,7 @@ namespace {
 
             push_back(m_icon);
             push_back(m_species_label);
-            GG::X first_col_width(Value(Height()));
+            GG::X first_col_width{Value(Height())};
             SetColWidth(0, first_col_width);
             SetColWidth(1, Width() - first_col_width);
             GetLayout()->SetColumnStretch(0, 0.0);
@@ -2085,22 +2082,22 @@ MultiTurnProgressBar::MultiTurnProgressBar(int num_segments, float percent_compl
 }
 
 void MultiTurnProgressBar::Render() {
-    GG::Pt ul(UpperLeft());
-    GG::Pt lr(LowerRight());
-    GG::Y bottom(lr.y);
-    GG::Rect border_rect({GG::X1, GG::Y1}, {GG::X1, GG::Y1});
+    const GG::Pt ul(UpperLeft());
+    const GG::Pt lr(LowerRight());
+    const GG::Y bottom(lr.y);
+    const GG::Rect border_rect({GG::X1, GG::Y1}, {GG::X1, GG::Y1});
 
     // background
     GG::GL2DVertexBuffer bg_verts;
     BufferStoreRectangle(bg_verts, {ul, lr}, border_rect);
 
     // define completed and predicted bar sizes
-    GG::X comp_width(Width() * m_perc_completed);
-    GG::X pred_width(Width() * m_perc_predicted);
+    const GG::X comp_width(GG::ToX(Width() * m_perc_completed));
+    const GG::X pred_width(GG::ToX(Width() * m_perc_predicted));
     // maximum lower right points to lower right of control
-    GG::Rect comp_rect(ul, {std::min(lr.x, ul.x + comp_width), bottom});
-    GG::Rect pred_rect({std::max(ul.x, comp_rect.lr.x - 1), ul.y},
-                       {std::min(lr.x, comp_rect.lr.x + pred_width), bottom});
+    const GG::Rect comp_rect(ul, {std::min(lr.x, ul.x + comp_width), bottom});
+    const GG::Rect pred_rect({std::max(ul.x, comp_rect.lr.x - 1), ul.y},
+                             {std::min(lr.x, comp_rect.lr.x + pred_width), bottom});
 
     // predicted progress
     GG::GL2DVertexBuffer pred_verts;
@@ -2258,8 +2255,8 @@ GG::Rect MultiTextureStaticGraphic::RenderedArea(const GG::SubTexture& subtextur
             double scale_x = Value(window_sz.x) / static_cast<double>(Value(graphic_sz.x));
             double scale_y = Value(window_sz.y) / static_cast<double>(Value(graphic_sz.y));
             double scale = std::min(scale_x, scale_y);
-            pt2.x = graphic_sz.x * scale;
-            pt2.y = graphic_sz.y * scale;
+            pt2.x = GG::ToX(graphic_sz.x * scale);
+            pt2.y = GG::ToY(graphic_sz.y * scale);
         } else {
             pt2 = window_sz;
         }
@@ -2268,14 +2265,14 @@ GG::Rect MultiTextureStaticGraphic::RenderedArea(const GG::SubTexture& subtextur
             double scale_x = (graphic_sz.x > window_sz.x) ? Value(window_sz.x) / static_cast<double>(Value(graphic_sz.x)) : 1.0;
             double scale_y = (graphic_sz.y > window_sz.y) ? Value(window_sz.y) / static_cast<double>(Value(graphic_sz.y)) : 1.0;
             double scale = std::min(scale_x, scale_y);
-            pt2.x = graphic_sz.x * scale;
-            pt2.y = graphic_sz.y * scale;
+            pt2.x = GG::ToX(graphic_sz.x * scale);
+            pt2.y = GG::ToY(graphic_sz.y * scale);
         } else {
             pt2 = window_sz;
         }
     }
 
-    GG::X x_shift(0);
+    GG::X x_shift(GG::X0);
     if (style & GG::GRAPHIC_LEFT) {
         x_shift = ul.x;
     } else if (style & GG::GRAPHIC_CENTER) {
@@ -2286,7 +2283,7 @@ GG::Rect MultiTextureStaticGraphic::RenderedArea(const GG::SubTexture& subtextur
     pt1.x += x_shift;
     pt2.x += x_shift;
 
-    GG::Y y_shift(0);
+    GG::Y y_shift(GG::Y0);
     if (style & GG::GRAPHIC_TOP) {
         y_shift = ul.y;
     } else if (style & GG::GRAPHIC_VCENTER) {
@@ -2303,7 +2300,7 @@ GG::Rect MultiTextureStaticGraphic::RenderedArea(const GG::SubTexture& subtextur
 void MultiTextureStaticGraphic::Render() {
     const GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
     glColor(color_to_use);
-    for (auto i = 0u; i < m_graphics.size(); ++i) {
+    for (std::size_t i = 0; i < m_graphics.size(); ++i) {
         const GG::Rect rendered_area = RenderedArea(m_graphics[i], m_styles[i]);
         m_graphics[i].OrthoBlit(rendered_area.ul, rendered_area.lr);
     }

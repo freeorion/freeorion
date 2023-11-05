@@ -1598,7 +1598,7 @@ void MapWnd::DoLayout() {
 }
 
 void MapWnd::InitializeWindows() {
-    const GG::X SIDEPANEL_WIDTH(GetOptionsDB().Get<int>("ui.map.sidepanel.width"));
+    const GG::X SIDEPANEL_WIDTH(GetOptionsDB().Get<GG::X>("ui.map.sidepanel.width"));
 
     // system-view side panel
     const GG::Pt sidepanel_ul(AppWidth() - SIDEPANEL_WIDTH, m_toolbar->Bottom());
@@ -1645,16 +1645,16 @@ double MapWnd::ZoomFactor() const
 
 GG::Pt MapWnd::ScreenCoordsFromUniversePosition(double universe_x, double universe_y) const {
     GG::Pt cl_ul = ClientUpperLeft();
-    GG::X x((universe_x * ZoomFactor()) + cl_ul.x);
-    GG::Y y((universe_y * ZoomFactor()) + cl_ul.y);
+    GG::X x(GG::ToX(universe_x * ZoomFactor()) + cl_ul.x);
+    GG::Y y(GG::ToY(universe_y * ZoomFactor()) + cl_ul.y);
     return GG::Pt(x, y);
 }
 
 std::pair<double, double> MapWnd::UniversePositionFromScreenCoords(GG::Pt screen_coords) const {
     GG::Pt cl_ul = ClientUpperLeft();
-    double x = Value((screen_coords - cl_ul).x / ZoomFactor());
-    double y = Value((screen_coords - cl_ul).y / ZoomFactor());
-    return std::pair<double, double>(x, y);
+    double x = (screen_coords - cl_ul).x / ZoomFactor();
+    double y = (screen_coords - cl_ul).y / ZoomFactor();
+    return {x, y};
 }
 
 int MapWnd::SelectedSystemID() const
@@ -4314,30 +4314,29 @@ void MapWnd::RestoreFromSaveData(const SaveGameUIData& data) {
 }
 
 void MapWnd::ShowSystemNames() {
-    for (auto& system_icon : m_system_icons) {
+    for (auto& system_icon : m_system_icons)
         system_icon.second->ShowName();
-    }
 }
 
 void MapWnd::HideSystemNames() {
-    for (auto& system_icon : m_system_icons) {
+    for (auto& system_icon : m_system_icons)
         system_icon.second->HideName();
-    }
 }
 
 void MapWnd::CenterOnMapCoord(double x, double y) {
     if (GetOptionsDB().Get<bool>("ui.map.lock"))
         return;
 
-    GG::Pt ul = ClientUpperLeft();
-    GG::X_d current_x = (AppWidth() / 2 - ul.x) / ZoomFactor();
-    GG::Y_d current_y = (AppHeight() / 2 - ul.y) / ZoomFactor();
-    GG::Pt map_move = GG::Pt(static_cast<GG::X>((current_x - x) * ZoomFactor()),
-                             static_cast<GG::Y>((current_y - y) * ZoomFactor()));
+    const GG::Pt ul = ClientUpperLeft();
+    const auto zf = ZoomFactor();
+    const double current_x = (AppWidth()/2 - ul.x) / zf;
+    const double current_y = (AppHeight()/2 - ul.y) / zf;
+    GG::Pt map_move = GG::Pt(static_cast<GG::X>((current_x - x) * zf),
+                             static_cast<GG::Y>((current_y - y) * zf));
     OffsetMove(map_move);
 
     // this correction ensures that the centering doesn't leave too large a margin to the side
-    GG::Pt move_to_pt = ul = ClientUpperLeft();
+    GG::Pt move_to_pt = ClientUpperLeft();
     CorrectMapPosition(move_to_pt);
 
     MoveTo(move_to_pt - GG::Pt(AppWidth(), AppHeight()));
@@ -4939,29 +4938,28 @@ void MapWnd::DoFleetButtonsLayout() {
                 continue;
 
             // position button
-            GG::Pt button_ul(button_pos->first  * ZoomFactor() - FLEET_BUTTON_SIZE.x / 2.0,
-                             button_pos->second * ZoomFactor() - FLEET_BUTTON_SIZE.y / 2.0);
+            GG::Pt button_ul(GG::ToX(button_pos->first  * ZoomFactor() - FLEET_BUTTON_SIZE.x / 2.0),
+                             GG::ToY(button_pos->second * ZoomFactor() - FLEET_BUTTON_SIZE.y / 2.0));
 
             fb->MoveTo(button_ul);
         }
     }
 
     // position offroad fleet buttons
-    for (auto& pos_and_fbs : m_offroad_fleet_buttons) {
-        for (auto& fb : pos_and_fbs.second) {
+    for (auto& [button_pos, buttons] : m_offroad_fleet_buttons) {
+        for (auto& fb : buttons) {
             const GG::Pt FLEET_BUTTON_SIZE = fb->Size();
-            std::shared_ptr<const Fleet> fleet;
+            const auto& fb_fleets = fb->Fleets();
 
             // skip button if it has no fleets (somehow...?) or if the first fleet in the button is 0
-            if (fb->Fleets().empty() || !(fleet = objects.get<Fleet>(fb->Fleets().front()))) {
+            if (fb_fleets.empty() || !objects.getRaw<Fleet>(fb_fleets.front())) {
                 ErrorLogger() << "DoFleetButtonsLayout couldn't get first fleet for button";
                 continue;
             }
 
             // position button
-            auto& button_pos = pos_and_fbs.first;
-            GG::Pt button_ul(button_pos.first  * ZoomFactor() - FLEET_BUTTON_SIZE.x / 2.0,
-                             button_pos.second * ZoomFactor() - FLEET_BUTTON_SIZE.y / 2.0);
+            GG::Pt button_ul(GG::ToX(button_pos.first  * ZoomFactor() - FLEET_BUTTON_SIZE.x / 2.0),
+                             GG::ToY(button_pos.second * ZoomFactor() - FLEET_BUTTON_SIZE.y / 2.0));
 
             fb->MoveTo(button_ul);
         }
@@ -4976,8 +4974,8 @@ boost::optional<std::pair<double, double>> MapWnd::MovingFleetMapPositionOnLane(
         return boost::none;
 
     // get endpoints of lane on screen
-    int sys1_id = fleet->PreviousSystemID();
-    int sys2_id = fleet->NextSystemID();
+    const int sys1_id = fleet->PreviousSystemID();
+    const int sys2_id = fleet->NextSystemID();
 
     // get apparent positions of endpoints for this lane that have been pre-calculated
     auto endpoints_it = m_starlane_endpoints.find({sys1_id, sys2_id});
@@ -4993,7 +4991,7 @@ boost::optional<std::pair<double, double>> MapWnd::MovingFleetMapPositionOnLane(
     // return apparent position of fleet on starlane
     const LaneEndpoints& screen_lane_endpoints = endpoints_it->second;
     return ScreenPosOnStarlane(fleet->X(), fleet->Y(), sys1_id, sys2_id,
-                              screen_lane_endpoints, context);
+                               screen_lane_endpoints, context);
 }
 
 namespace {
@@ -5010,7 +5008,7 @@ namespace {
                                                   const IntSet& known_destroyed_objects,
                                                   const IntSet& stale_object_info)
     {
-        int object_id = obj->ID();
+        const int object_id = obj->ID();
         if (obj->ObjectType() != UniverseObjectType::OBJ_FLEET)
             return nullptr;
 
@@ -5285,7 +5283,7 @@ FleetButton::SizeType MapWnd::FleetButtonSizeType() const {
 }
 
 void MapWnd::Zoom(int delta) {
-    GG::Pt center = GG::Pt(AppWidth() / 2.0, AppHeight() / 2.0);
+    GG::Pt center = GG::Pt(AppWidth()/2, AppHeight()/2);
     Zoom(delta, center);
 }
 
@@ -5299,7 +5297,7 @@ void MapWnd::Zoom(int delta, const GG::Pt position) {
 }
 
 void MapWnd::SetZoom(double steps_in, bool update_slide) {
-    GG::Pt center = GG::Pt(AppWidth() / 2.0, AppHeight() / 2.0);
+    GG::Pt center = GG::Pt(AppWidth()/2, AppHeight()/2);
     SetZoom(steps_in, update_slide, center);
 }
 
@@ -5320,10 +5318,10 @@ void MapWnd::SetZoom(double steps_in, bool update_slide, const GG::Pt position) 
 
     // save position offsets and old zoom factors
     GG::Pt                      ul =                    ClientUpperLeft();
-    const GG::X_d               center_x =              AppWidth() / 2.0;
-    const GG::Y_d               center_y =              AppHeight() / 2.0;
-    GG::X_d                     ul_offset_x =           ul.x - center_x;
-    GG::Y_d                     ul_offset_y =           ul.y - center_y;
+    GG::X                       center_x =              GG::ToX(AppWidth() / 2.0);
+    GG::Y                       center_y =              GG::ToY(AppHeight() / 2.0);
+    GG::X                       ul_offset_x =           ul.x - center_x;
+    GG::Y                       ul_offset_y =           ul.y - center_y;
     const double                OLD_ZOOM =              ZoomFactor();
     const FleetButton::SizeType OLD_FLEETBUTTON_SIZE =  FleetButtonSizeType();
 
@@ -5373,8 +5371,7 @@ void MapWnd::SetZoom(double steps_in, bool update_slide, const GG::Pt position) 
 
 
     // translate map and UI widgets to account for the change in upper left due to zooming
-    GG::Pt map_move(static_cast<GG::X>((center_x + ul_offset_x) - ul.x),
-                    static_cast<GG::Y>((center_y + ul_offset_y) - ul.y));
+    GG::Pt map_move(center_x + ul_offset_x - ul.x, center_y + ul_offset_y - ul.y);
     OffsetMove(map_move);
 
     // this correction ensures that zooming in doesn't leave too large a margin to the side
@@ -5395,7 +5392,7 @@ void MapWnd::SetZoom(double steps_in, bool update_slide, const GG::Pt position) 
 }
 
 void MapWnd::CorrectMapPosition(GG::Pt& move_to_pt) {
-    GG::X contents_width(static_cast<int>(ZoomFactor() * GetUniverse().UniverseWidth()));
+    GG::X contents_width(GG::ToX(ZoomFactor() * GetUniverse().UniverseWidth()));
     GG::X app_width =  AppWidth();
     GG::Y app_height = AppHeight();
     GG::X map_margin_width(app_width);
@@ -5406,17 +5403,17 @@ void MapWnd::CorrectMapPosition(GG::Pt& move_to_pt) {
     // restrict map positions to prevent map from being dragged too far off screen.
     // add extra padding to restrictions when universe to be shown is larger than
     // the screen area in which to show it.
-    if (app_width - map_margin_width < contents_width || Value(app_height) - map_margin_width < contents_width) {
+    if (app_width - map_margin_width < contents_width || GG::X{Value(app_height)} - map_margin_width < contents_width) {
         if (map_margin_width < move_to_pt.x)
             move_to_pt.x = map_margin_width;
         if (move_to_pt.x + contents_width < app_width - map_margin_width)
             move_to_pt.x = app_width - map_margin_width - contents_width;
-        if (map_margin_width < Value(move_to_pt.y))
-            move_to_pt.y = GG::Y(Value(map_margin_width));
-        if (Value(move_to_pt.y) + contents_width < Value(app_height) - map_margin_width)
+        if (Value(map_margin_width) < Value(move_to_pt.y))
+            move_to_pt.y = GG::Y{Value(map_margin_width)};
+        if (Value(move_to_pt.y) + contents_width < GG::X{Value(app_height)} - map_margin_width)
             move_to_pt.y = app_height - Value(map_margin_width) - Value(contents_width);
     } else {
-        if (move_to_pt.x < 0)
+        if (move_to_pt.x < GG::X0)
             move_to_pt.x = GG::X0;
         if (app_width < move_to_pt.x + contents_width)
             move_to_pt.x = app_width - contents_width;
@@ -5432,9 +5429,8 @@ void MapWnd::FieldRightClicked(int field_id) {
         ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
         ClientNetworking& net = GGHumanClientApp::GetApp()->Networking();
 
-        if (mas == ModeratorActionSetting::MAS_Destroy) {
+        if (mas == ModeratorActionSetting::MAS_Destroy)
             net.SendMessage(ModeratorActionMessage(Moderator::DestroyUniverseObject(field_id)));
-        }
         return;
     }
 }

@@ -339,10 +339,10 @@ inline const EnumMap<EnumType>& GetEnumMap() noexcept
     inline std::ostream& operator<<(std::ostream& os, EnumName value)                   \
     { return os << GetEnumMap<EnumName>()[value]; }                                     \
                                                                                         \
-    [[nodiscard]] constexpr inline std::string_view to_string(EnumName value) noexcept  \
+    [[nodiscard]] constexpr std::string_view to_string(EnumName value) noexcept         \
     { return CGetEnumMap<EnumName>()[value]; }                                          \
                                                                                         \
-    [[nodiscard]] constexpr inline EnumName EnumName##FromString(                       \
+    [[nodiscard]] constexpr EnumName EnumName##FromString(                              \
         std::string_view sv, EnumName result_not_found = EnumName(0)) noexcept          \
     { return CGetEnumMap<EnumName>().FromString(sv, result_not_found); }
 }

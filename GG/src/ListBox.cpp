@@ -546,7 +546,7 @@ bool ListBox::Selected(iterator it) const
 ListBox::iterator ListBox::LastVisibleRow() const
 {
     Y visible_pixels = ClientSize().y;
-    Y acc(0);
+    Y acc(Y0);
     iterator it = m_first_row_shown;
     for (; it != m_rows.end(); ) {
         acc += (*it)->Height();
@@ -788,7 +788,7 @@ void ListBox::Render()
     BeginClipping();
 
     // draw selection hiliting
-    Y top(0);
+    Y top(Y0);
     Y bottom = (*m_first_row_shown)->Height();
     for (iterator curr_sel : m_selections) {
         if (RowAboveOrIsRow(m_first_row_shown, curr_sel, m_rows.end()) &&
@@ -835,7 +835,7 @@ bool ListBox::ShowVisibleRows(bool do_prerender)
     bool a_row_size_changed = false;
     // Ensure that data in occluded cells is not rendered
     // and that any re-layout during prerender is immediate.
-    Y visible_height(BORDER_THICK);
+    Y visible_height{BORDER_THICK};
     Y max_visible_height = ClientSize().y;
     bool hide = true;
     for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
@@ -1169,7 +1169,7 @@ void ListBox::SetColHeaders(std::shared_ptr<Row> r)
             m_col_widths.resize(m_header_row->size(),
                                 ClientWidth() / static_cast<int>(m_header_row->size()));
             // put the remainder in the last column, so the total width == ClientWidth()
-            m_col_widths.back() += ClientWidth() % static_cast<int>(m_header_row->size());
+            m_col_widths.back() += Value(ClientWidth()) % static_cast<int>(m_header_row->size());
             m_col_alignments.resize(m_header_row->size(), AlignmentFromStyle(m_style));
             m_col_stretches.resize(m_header_row->size(), 0.0);
         }
@@ -1197,7 +1197,7 @@ void ListBox::SetNumCols(std::size_t n)
             m_col_stretches.resize(n, 0.0);
         } else {
             m_col_widths.resize(n, ClientSize().x / static_cast<int>(n));
-            m_col_widths.back() += ClientSize().x % static_cast<int>(n);
+            m_col_widths.back() += Value(ClientSize().x) % static_cast<int>(n);
             Alignment alignment = ALIGN_NONE;
             if (m_style & LIST_LEFT)
                 alignment = ALIGN_LEFT;
@@ -1381,7 +1381,7 @@ void ListBox::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_
         case Key::GGK_PAGEUP: // page up key (not numpad key)
             if (m_caret != m_rows.end()) {
                 Y space = ClientSize().y;
-                while (m_caret != m_rows.begin() && 0 < (space -= (*std::prev(m_caret))->Height())) {
+                while (m_caret != m_rows.begin() && Y0 < (space -= (*std::prev(m_caret))->Height())) {
                     --m_caret;
                 }
             }
@@ -1389,7 +1389,7 @@ void ListBox::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_
         case Key::GGK_PAGEDOWN: // page down key (not numpad key)
             if (m_caret != m_rows.end()) {
                 Y space = ClientSize().y;
-                while (m_caret != --m_rows.end() && 0 < (space -= (*m_caret)->Height())) {
+                while (m_caret != --m_rows.end() && Y0 < (space -= (*m_caret)->Height())) {
                     ++m_caret;
                 }
             }
@@ -1675,11 +1675,12 @@ void ListBox::DefineColWidths(const Row& row)
         total_width += row.ColWidth(i);
     }
 
-    const GG::X_d SCALE_FACTOR = 1.0 * WIDTH / total_width;
+    const double SCALE_FACTOR = (WIDTH / (1.0 * total_width));
 
     GG::X total_scaled_width = GG::X0;
     for (std::size_t i = 0; i < row.size(); ++i) {
-        total_scaled_width += (m_col_widths[i] = row.ColWidth(i) * SCALE_FACTOR);
+        m_col_widths[i] = GG::ToX(row.ColWidth(i) * SCALE_FACTOR);
+        total_scaled_width += m_col_widths[i];
     }
     m_col_widths.back() += total_scaled_width - WIDTH;
 }
@@ -1967,7 +1968,7 @@ std::pair<boost::optional<X>, boost::optional<Y>> ListBox::CheckIfScrollsRequire
     auto cl_sz = maybe_client_size ? *maybe_client_size : ClientSizeExcludingScrolls();
 
     X total_x_extent = std::accumulate(m_col_widths.begin(), m_col_widths.end(), X0);
-    Y total_y_extent(0);
+    Y total_y_extent(Y0);
     for (auto& row : m_rows)
         total_y_extent += row->Height();
 
@@ -2058,7 +2059,7 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
         MoveChildUp(m_vscroll.get());
 
         // Scroll to the correct location
-        Y acc(0);
+        Y acc(Y0);
         for (iterator it2 = m_rows.begin(); it2 != m_first_row_shown; ++it2)
             acc += (*it2)->Height();
         m_vscroll->ScrollTo(Value(acc));
@@ -2126,14 +2127,14 @@ void ListBox::AdjustScrolls(bool adjust_for_resize, std::pair<bool, bool> force_
 
     if (m_vscroll) {
         X scroll_x = cl_sz.x - SCROLL_WIDTH;
-        Y scroll_y(0);
+        Y scroll_y(Y0);
         m_vscroll->SizeMove(Pt(scroll_x, scroll_y),
                             Pt(scroll_x + SCROLL_WIDTH,
                                scroll_y + cl_sz.y - (m_hscroll ? SCROLL_WIDTH : 0)));
     }
 
     if (m_hscroll) {
-        X scroll_x(0);
+        X scroll_x(X0);
         Y scroll_y = cl_sz.y - SCROLL_WIDTH;
         m_hscroll->SizeMove(Pt(scroll_x, scroll_y),
                             Pt(scroll_x + cl_sz.x - (m_vscroll ? SCROLL_WIDTH : 0),
@@ -2152,7 +2153,7 @@ void ListBox::AdjustScrolls(bool adjust_for_resize, std::pair<bool, bool> force_
 void ListBox::VScrolled(int tab_low, int tab_high, int low, int high)
 {
     m_first_row_shown = m_rows.empty() ? m_rows.end() : m_rows.begin();
-    Y position(BORDER_THICK);
+    Y position{BORDER_THICK};
 
     // scan through list of rows until the tab position is less than one of the rows' centres
     for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
@@ -2166,7 +2167,7 @@ void ListBox::VScrolled(int tab_low, int tab_high, int low, int high)
             break;
 
         // current row is too far for the tab position to be moved to its end. current row remains the first one shown.
-        if (tab_low < (-position) + row_height / 2)
+        if (tab_low < (Value(-position) + Value(row_height / 2)))
             break;
 
         // position is at least at the bottom of the current row
@@ -2182,11 +2183,11 @@ void ListBox::VScrolled(int tab_low, int tab_high, int low, int high)
 void ListBox::HScrolled(int tab_low, int tab_high, int low, int high)
 {
     m_first_col_shown = 0;
-    X accum(BORDER_THICK);
-    X position(BORDER_THICK);
+    X accum{BORDER_THICK};
+    X position{BORDER_THICK};
     for (std::size_t i = 0; i < m_col_widths.size(); ++i) {
         X col_width = m_col_widths[i];
-        if (tab_low < accum + col_width / 2) {
+        if (tab_low < Value(accum + col_width / 2)) {
             m_first_col_shown = i;
             position = -accum;
             break;

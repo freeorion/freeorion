@@ -21,29 +21,21 @@ public:
         GUI("MockGUI")
     {}
 
-    unsigned int Ticks() const override
-    { return 0; }
+    unsigned int Ticks() const noexcept override { return 0; }
 
-    GG::X AppWidth() const override
-    { return GG::X(800); }
+    GG::X AppWidth() const noexcept override { return GG::X(800); }
 
-    GG::Y AppHeight() const override
-    { return GG::Y(600); }
+    GG::Y AppHeight() const noexcept override { return GG::Y(600); }
 
-    void ExitApp(int code = 0) override
-    {}
+    void ExitApp(int code) noexcept override {}
 
-    void Enter2DMode() override
-    {}
+    void Enter2DMode() noexcept override {}
 
-    void Exit2DMode() override
-    {}
+    void Exit2DMode() noexcept override {}
 
-    void RenderBegin() override
-    {}
+    void RenderBegin() noexcept override {}
 
-    void RenderEnd() override
-    {}
+    void RenderEnd() noexcept override {}
 
     std::vector<std::string> GetSupportedResolutions() const override
     { return std::vector<std::string>(1, "800x600"); }
@@ -51,16 +43,13 @@ public:
     GG::Pt GetDefaultResolution(int display_id) const override
     { return GG::Pt(GG::X(800), GG::Y(600)); }
 
-    void HandleSystemEvents() override
-    {}
+    void HandleSystemEvents() noexcept override {}
 
-    void Run() override
-    {}
+    void Run() noexcept override {}
 };
 
 class MockFont : public GG::Font
-{
-};
+{};
 
 class InspectButton : public GG::Button
 {
@@ -118,7 +107,7 @@ BOOST_AUTO_TEST_CASE( constructor )
 
     BOOST_CHECK(button.Text() == "Test");
     BOOST_CHECK(button.State() == GG::Button::ButtonState::BN_UNPRESSED);
-    BOOST_CHECK(button.MinUsableSize() == GG::Pt(GG::X(0), GG::Y(0)));
+    BOOST_CHECK(button.MinUsableSize() == GG::Pt(GG::X0, GG::Y0));
     BOOST_CHECK(button.Color() == GG::CLR_WHITE);
     BOOST_CHECK(button.GetLabel().TextColor() == GG::CLR_GREEN);
     BOOST_CHECK(button.UnpressedGraphic().Empty());
@@ -140,28 +129,28 @@ BOOST_AUTO_TEST_CASE( constructor )
     BOOST_CHECK(!button.PreRenderRequired());
     BOOST_CHECK(button.Name() == "");
     BOOST_CHECK(button.DragDropDataType() == "");
-    BOOST_CHECK(button.UpperLeft() == GG::Pt(GG::X(0), GG::Y(0)));
-    BOOST_CHECK(button.RelativeUpperLeft() == GG::Pt(GG::X(0), GG::Y(0)));
-    BOOST_CHECK(button.ClientUpperLeft() == GG::Pt(GG::X(0), GG::Y(0)));
-    BOOST_CHECK(button.Left() == GG::X(0));
-    BOOST_CHECK(button.Top() == GG::Y(0));
-    BOOST_CHECK(button.LowerRight() == GG::Pt(GG::X(1), GG::Y(1)));
-    BOOST_CHECK(button.RelativeLowerRight() == GG::Pt(GG::X(1), GG::Y(1)));
-    BOOST_CHECK(button.ClientLowerRight() == GG::Pt(GG::X(1), GG::Y(1)));
-    BOOST_CHECK(button.Right() == GG::X(1));
-    BOOST_CHECK(button.Bottom() == GG::Y(1));
-    BOOST_CHECK(button.Width() == GG::X(1));
-    BOOST_CHECK(button.ClientWidth() == GG::X(1));
-    BOOST_CHECK(button.Height() == GG::Y(1));
-    BOOST_CHECK(button.ClientHeight() == GG::Y(1));
-    BOOST_CHECK(button.Size() == GG::Pt(GG::X(1), GG::Y(1)));
-    BOOST_CHECK(button.ClientSize() == GG::Pt(GG::X(1), GG::Y(1)));
-    BOOST_CHECK(button.MinSize() == GG::Pt(GG::X(0), GG::Y(0)));
-    BOOST_CHECK(button.MinUsableSize() == GG::Pt(GG::X(0), GG::Y(0)));
-    BOOST_CHECK(button.ScreenToWindow(GG::Pt(GG::X(0), GG::Y(0))) == GG::Pt(GG::X(0), GG::Y(0)));
-    BOOST_CHECK(button.ScreenToClient(GG::Pt(GG::X(0), GG::Y(0))) == GG::Pt(GG::X(0), GG::Y(0)));
-    BOOST_CHECK(button.InWindow(GG::Pt(GG::X(0), GG::Y(0))));
-    BOOST_CHECK(button.InClient(GG::Pt(GG::X(0), GG::Y(0))));
+    BOOST_CHECK(button.UpperLeft() == GG::Pt(GG::X0, GG::Y0));
+    BOOST_CHECK(button.RelativeUpperLeft() == GG::Pt(GG::X0, GG::Y0));
+    BOOST_CHECK(button.ClientUpperLeft() == GG::Pt(GG::X0, GG::Y0));
+    BOOST_CHECK(button.Left() == GG::X0);
+    BOOST_CHECK(button.Top() == GG::Y0);
+    BOOST_CHECK(button.LowerRight() == GG::Pt(GG::X1, GG::Y1));
+    BOOST_CHECK(button.RelativeLowerRight() == GG::Pt(GG::X1, GG::Y1));
+    BOOST_CHECK(button.ClientLowerRight() == GG::Pt(GG::X1, GG::Y1));
+    BOOST_CHECK(button.Right() == GG::X1);
+    BOOST_CHECK(button.Bottom() == GG::Y1);
+    BOOST_CHECK(button.Width() == GG::X1);
+    BOOST_CHECK(button.ClientWidth() == GG::X1);
+    BOOST_CHECK(button.Height() == GG::Y1);
+    BOOST_CHECK(button.ClientHeight() == GG::Y1);
+    BOOST_CHECK(button.Size() == GG::Pt(GG::X1, GG::Y1));
+    BOOST_CHECK(button.ClientSize() == GG::Pt(GG::X1, GG::Y1));
+    BOOST_CHECK(button.MinSize() == GG::Pt(GG::X0, GG::Y0));
+    BOOST_CHECK(button.MinUsableSize() == GG::Pt(GG::X0, GG::Y0));
+    BOOST_CHECK(button.ScreenToWindow(GG::Pt(GG::X0, GG::Y0)) == GG::Pt(GG::X0, GG::Y0));
+    BOOST_CHECK(button.ScreenToClient(GG::Pt(GG::X0, GG::Y0)) == GG::Pt(GG::X0, GG::Y0));
+    BOOST_CHECK(button.InWindow(GG::Pt(GG::X0, GG::Y0)));
+    BOOST_CHECK(button.InClient(GG::Pt(GG::X0, GG::Y0)));
     BOOST_CHECK(button.Children().size() == 2);
     BOOST_CHECK(!button.Parent());
     BOOST_CHECK(!button.RootParent());
@@ -169,7 +158,7 @@ BOOST_AUTO_TEST_CASE( constructor )
     BOOST_CHECK(!button.ContainingLayout());
     BOOST_CHECK(button.BrowseModes().size() == 1);
     BOOST_CHECK(button.GetStyleFactory() == gui.GetStyleFactory());
-    BOOST_CHECK(button.WindowRegion(GG::Pt(GG::X(0), GG::Y(0))) == GG::WndRegion::WR_NONE);
+    BOOST_CHECK(button.WindowRegion(GG::Pt(GG::X0, GG::Y0)) == GG::WndRegion::WR_NONE);
 }
 
 BOOST_AUTO_TEST_CASE( resize )
@@ -195,8 +184,8 @@ BOOST_AUTO_TEST_CASE( resize )
     BOOST_CHECK(button.ClientHeight() == GG::Y(30));
     BOOST_CHECK(button.Size() == GG::Pt(GG::X(30), GG::Y(30)));
     BOOST_CHECK(button.ClientSize() == GG::Pt(GG::X(30), GG::Y(30)));
-    BOOST_CHECK(button.MinSize() == GG::Pt(GG::X(0), GG::Y(0)));
-    BOOST_CHECK(button.MinUsableSize() == GG::Pt(GG::X(0), GG::Y(0)));
+    BOOST_CHECK(button.MinSize() == GG::Pt(GG::X0, GG::Y0));
+    BOOST_CHECK(button.MinUsableSize() == GG::Pt(GG::X0, GG::Y0));
 }
 
 struct MouseClickCatcher

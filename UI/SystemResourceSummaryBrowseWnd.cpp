@@ -92,11 +92,7 @@ SystemResourceSummaryBrowseWnd::SystemResourceSummaryBrowseWnd(ResourceType reso
     GG::BrowseInfoWnd(GG::X0, GG::Y0, LabelWidth() + ValueWidth(), GG::Y1),
     m_resource_type(resource_type),
     m_system_id(system_id),
-    m_empire_id(empire_id),
-    row_height(1),
-    production_label_top(0),
-    allocation_label_top(0),
-    import_export_label_top(0)
+    m_empire_id(empire_id)
 {}
 
 bool SystemResourceSummaryBrowseWnd::WndHasBrowseInfo(const GG::Wnd* wnd, std::size_t mode) const {

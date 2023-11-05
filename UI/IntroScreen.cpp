@@ -163,7 +163,7 @@ void CreditsWnd::DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2) {
     GG::Flags<GG::TextFormat> format = GG::FORMAT_CENTER | GG::FORMAT_TOP;
 
     //offset starts with 0, credits are place by transforming the viewport
-    GG::Y offset(0);
+    GG::Y offset(GG::Y0);
 
     //start color is white (name), this color is valid outside the rgba tags
     glColor(GG::Clr(255, 255, 255, 255));
@@ -438,10 +438,10 @@ void IntroScreen::PreRender() {
         return;
 
     // position menu window
-    GG::Pt ul(Width()  * GetOptionsDB().Get<double>("ui.intro.menu.center.x") - layout->MinUsableSize().x / 2,
-              Height() * GetOptionsDB().Get<double>("ui.intro.menu.center.y") - layout->MinUsableSize().y / 2);
-    GG::Pt lr(Width()  * GetOptionsDB().Get<double>("ui.intro.menu.center.x") + layout->MinUsableSize().x / 2,
-              Height() * GetOptionsDB().Get<double>("ui.intro.menu.center.y") + layout->MinUsableSize().y / 2);
+    GG::Pt ul(GG::ToX(Width()  * GetOptionsDB().Get<double>("ui.intro.menu.center.x")) - layout->MinUsableSize().x / 2,
+              GG::ToY(Height() * GetOptionsDB().Get<double>("ui.intro.menu.center.y")) - layout->MinUsableSize().y / 2);
+    GG::Pt lr(GG::ToX(Width()  * GetOptionsDB().Get<double>("ui.intro.menu.center.x")) + layout->MinUsableSize().x / 2,
+              GG::ToY(Height() * GetOptionsDB().Get<double>("ui.intro.menu.center.y")) + layout->MinUsableSize().y / 2);
 
     m_menu->InitSizeMove(ul, lr);
 }

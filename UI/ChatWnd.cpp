@@ -322,7 +322,7 @@ void MessageWnd::CompleteConstruction() {
 }
 
 void MessageWnd::DoLayout() {
-    static constexpr GG::Y PAD(3);
+    static constexpr GG::Y PAD{3};
     m_display->SizeMove(GG::Pt(GG::X0, GG::Y0),
                         GG::Pt(ClientWidth(), ClientHeight() - PAD - m_edit->MinUsableSize().y));
     m_edit->SizeMove(GG::Pt(GG::X0, ClientHeight() - m_edit->MinUsableSize().y),

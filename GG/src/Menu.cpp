@@ -27,7 +27,7 @@ namespace {
 ////////////////////////////////////////////////
 namespace {
     // distance to leave between edge of PopupMenuClassic contents and the control's border
-    constexpr X HORIZONTAL_MARGIN(3);
+    constexpr X HORIZONTAL_MARGIN{3};
 }
 
 PopupMenu::PopupMenu(X x, Y y, std::shared_ptr<Font> font, Clr text_color,
@@ -52,15 +52,15 @@ void PopupMenu::AddMenuItem(std::string str, bool disable, bool check, std::func
 void PopupMenu::Render()
 {
     if (m_menu_data.next_level.size()) {
-        Pt ul = ClientUpperLeft();
+        const Pt ul = ClientUpperLeft();
 
-        const Y INDICATOR_VERTICAL_MARGIN(3);
+        const Y INDICATOR_VERTICAL_MARGIN{3};
         const Y INDICATOR_HEIGHT = m_font->Lineskip() - 2 * INDICATOR_VERTICAL_MARGIN;
         const Y CHECK_HEIGHT = INDICATOR_HEIGHT;
-        const X CHECK_WIDTH(Value(CHECK_HEIGHT));
+        const X CHECK_WIDTH{Value(CHECK_HEIGHT)};
 
-        X next_menu_x_offset(0);
-        Y next_menu_y_offset(0);
+        X next_menu_x_offset(X0);
+        Y next_menu_y_offset(Y0);
         for (std::size_t i = 0; i < m_caret.size(); ++i) {
             bool needs_indicator = false;
 

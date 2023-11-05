@@ -298,16 +298,19 @@ public:
         tag. */
     struct GG_API FormattingTag : TextElement
     {
-        /** Ctor.  \a close indicates that the tag is a close-tag
-            (e.g. "</rgba>"). */
-        FormattingTag(bool close);
+        /** Ctor.  \a close indicates that the tag is a close-tag (e.g. "</rgba>"). */
+        FormattingTag(bool close) :
+            TextElement(false, false),
+            close_tag(close)
+        {}
 
         /** Attach to \p whole_text by binding all Substring data members,
             both the base class and the data member tag_name to the string
             \p whole_text.*/
         void Bind(const std::string& whole_text) override;
 
-        TextElementType Type() const override;
+        TextElementType Type() const noexcept override
+        { return close_tag ? TextElementType::CLOSE_TAG : TextElementType::OPEN_TAG; }
 
         bool operator==(const TextElement &rhs) const override;
 
@@ -319,10 +322,10 @@ public:
         Substring tag_name;
 
         /** True iff this is a close-tag. */
-        const bool close_tag;
+        const bool close_tag = false;
 
     private:
-        FormattingTag();
+        FormattingTag() = default;
     };
 
     /** \brief Holds the essential data on each line that a string occupies when
@@ -518,7 +521,7 @@ public:
 
     /** Fill the \p cache with glyphs corresponding to the passed in \p text and \p line_data.*/
     void PreRenderText(Pt pt1, Pt pt2, const std::string& text,
-                       Flags<TextFormat>& format, const std::vector<LineData>& line_data,
+                       Flags<TextFormat> format, const std::vector<LineData>& line_data,
                        RenderState& render_state, std::size_t begin_line, CPSize begin_char,
                        std::size_t end_line, CPSize end_char, RenderCache& cache) const;
 
@@ -658,9 +661,7 @@ private:
     struct Glyph
     {
         Glyph() = default;
-
-        Glyph(const std::shared_ptr<Texture>& texture, Pt ul, Pt lr,
-              Y y_ofs, X lb, X adv);
+        Glyph(std::shared_ptr<Texture> texture, Pt ul, Pt lr, Y y_ofs, X lb, X adv);
 
         SubTexture  sub_texture;       ///< The subtexture containing just this glyph
         Y           y_offset = Y0;     ///< The vertical offset to draw this glyph (may be negative!)
@@ -872,16 +873,11 @@ GG::Font::Font(std::string font_filename, unsigned int pts,
     m_font_filename(std::move(font_filename)),
     m_pt_sz(pts),
     m_charsets(first, last),
-    m_ascent(0),
-    m_descent(0),
-    m_height(0),
-    m_lineskip(0),
     m_underline_offset(0.0),
     m_underline_height(0.0),
     m_italics_offset(0.0),
     m_super_sub_offset(0.0),
-    m_shadow_offset(0.0),
-    m_space_width(0)
+    m_shadow_offset(0.0)
 {
     if (!m_font_filename.empty()) {
         detail::FTFaceWrapper wrapper;
@@ -898,16 +894,11 @@ GG::Font::Font(std::string font_filename, unsigned int pts,
     m_font_filename(std::move(font_filename)),
     m_pt_sz(pts),
     m_charsets(first, last),
-    m_ascent(0),
-    m_descent(0),
-    m_height(0),
-    m_lineskip(0),
     m_underline_offset(0.0),
     m_underline_height(0.0),
     m_italics_offset(0.0),
     m_super_sub_offset(0.0),
-    m_shadow_offset(0.0),
-    m_space_width(0)
+    m_shadow_offset(0.0)
 {
     assert(!file_contents.empty());
     detail::FTFaceWrapper wrapper;

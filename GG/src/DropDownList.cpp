@@ -307,9 +307,9 @@ Pt ModalListPicker::DetermineListHeight(Pt _drop_down_size) {
 
     // Shrink the height if too near app edge.
     auto dist_to_app_edge = GUI::GetGUI()->AppHeight() - m_relative_to_wnd->Bottom();
-    if (expected_height > dist_to_app_edge && row_height > 0) {
-        auto reduced_num_rows = std::max(GG::Y(1), (dist_to_app_edge - border_thick) / row_height);
-        expected_height = reduced_num_rows * row_height + border_thick;
+    if (expected_height > dist_to_app_edge && row_height > Y0) {
+        auto reduced_num_rows = std::max(1, (dist_to_app_edge-border_thick) / row_height);
+        expected_height = reduced_num_rows*row_height + border_thick;
     }
 
     drop_down_size.y = GG::Y{expected_height};

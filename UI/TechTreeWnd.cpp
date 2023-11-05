@@ -389,7 +389,7 @@ void TechTreeWnd::TechTreeControls::CategoryButtonCheckedSlot(std::string catego
 
 void TechTreeWnd::TechTreeControls::DoButtonLayout() {
     const int PTS = ClientUI::Pts();
-    const GG::X RIGHT_EDGE_PAD(PTS / 3);
+    const GG::X RIGHT_EDGE_PAD{PTS / 3};
     const GG::X USABLE_WIDTH = std::max(ClientWidth() - RIGHT_EDGE_PAD, GG::X1);   // space in which to do layout
     const GG::X BUTTON_WIDTH = GG::X{static_cast<int>(
         PTS * std::max(GetOptionsDB().Get<double>("ui.research.control.graphic.size"), 0.5))};
@@ -397,7 +397,7 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout() {
 
     m_col_offset = BUTTON_WIDTH + BUTTON_SEPARATION;    // horizontal distance between each column of buttons
     m_row_offset = BUTTON_HEIGHT + BUTTON_SEPARATION;   // vertical distance between each row of buttons
-    m_buttons_per_row = std::max(Value(USABLE_WIDTH / (m_col_offset)), 1);
+    m_buttons_per_row = std::max(1, USABLE_WIDTH / m_col_offset);
 
     static constexpr int NUM_NON_CATEGORY_BUTTONS = 6;  //  ALL, Locked, Partial, Unlocked, Complete, ViewType
 
@@ -743,7 +743,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::PreRender() {
 
     static constexpr int PAD = 8;
     GG::X text_left(GG::X(Value(TechPanelHeight())) + PAD);
-    GG::Y text_top(0);
+    GG::Y text_top(GG::Y0);
     GG::X text_width(TechPanelWidth() - text_left);
     GG::Y text_height(TechPanelHeight()/2);
 
@@ -793,7 +793,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::PreRender() {
 void TechTreeWnd::LayoutPanel::TechPanel::Render() {
     static constexpr int PAD = 8;
     GG::X text_left(GG::X(Value(TechPanelHeight())) + PAD);
-    GG::Y text_top(0);
+    GG::Y text_top(GG::Y0);
     GG::X text_width(TechPanelWidth() - text_left);
     GG::Y text_height(TechPanelHeight()/2);
 
@@ -1193,7 +1193,7 @@ void TechTreeWnd::LayoutPanel::DoLayout() {
     GG::Pt hscroll_lr = GG::Pt(Width() - SCRLWDTH, Height());
     m_hscroll->SizeMove(hscroll_ul, hscroll_lr);
 
-    const GG::X ZBSIZE(ClientUI::ScrollWidth() * 2);
+    const GG::X ZBSIZE{ClientUI::ScrollWidth() * 2};
     const int ZBOFFSET = ClientUI::ScrollWidth() / 2;
 
     GG::Pt button_ul = GG::Pt(Width() - ZBSIZE - ZBOFFSET - SCRLWDTH, GG::Y(ZBOFFSET));
@@ -1308,12 +1308,12 @@ void TechTreeWnd::LayoutPanel::CenterOnTech(const std::string& tech_name) {
 void TechTreeWnd::LayoutPanel::DoZoom(GG::Pt pt) const {
     glPushMatrix();
     //center to panel
-    glTranslated(Value(Width()/2.0), Value(Height()/2.0), 0);
+    glTranslated(Width()/2.0, Height()/2.0, 0.0);
     //zoom
     glScaled(m_scale, m_scale, 1);
     //translate to actual scroll position
-    glTranslated(-m_scroll_position_x, -m_scroll_position_y, 0);
-    glTranslated(Value(pt.x), Value(pt.y), 0);
+    glTranslated(-m_scroll_position_x, -m_scroll_position_y, 0.0);
+    glTranslated(Value(pt.x), Value(pt.y), 0.0);
 }
 
 void TechTreeWnd::LayoutPanel::UndoZoom() const
@@ -1322,13 +1322,13 @@ void TechTreeWnd::LayoutPanel::UndoZoom() const
 GG::Pt TechTreeWnd::LayoutPanel::ConvertPtScreenToZoomed(GG::Pt pt) const {
     double x = Value(pt.x);
     double y = Value(pt.y);
-    x -= Value(Width()/2.0);
-    y -= Value(Height()/2.0);
+    x -= Width()/2.0;
+    y -= Height()/2.0;
     x /= m_scale;
     y /= m_scale;
     x += m_scroll_position_x;
     y += m_scroll_position_y;
-    return GG::Pt(GG::X(static_cast<int>(x)), GG::Y(static_cast<int>(y)));
+    return GG::Pt(GG::ToX(x), GG::ToY(y));
 }
 
 GG::Pt TechTreeWnd::LayoutPanel::ConvertPtZoomedToScreen(GG::Pt pt) const {
@@ -1338,14 +1338,14 @@ GG::Pt TechTreeWnd::LayoutPanel::ConvertPtZoomedToScreen(GG::Pt pt) const {
     y -= m_scroll_position_y;
     x *= m_scale;
     y *= m_scale;
-    x += Value(Width()/2.0);
-    y += Value(Height()/2.0);
-    return GG::Pt(GG::X(static_cast<int>(x)), GG::Y(static_cast<int>(y)));
+    x += Width()/2.0;
+    y += Height()/2.0;
+    return GG::Pt(GG::ToX(x), GG::ToY(y));
 }
 
 void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
-    const GG::X TECH_PANEL_MARGIN_X(ClientUI::Pts()*16);
-    const GG::Y TECH_PANEL_MARGIN_Y(ClientUI::Pts()*16 + 100);
+    const GG::X TECH_PANEL_MARGIN_X{ClientUI::Pts()*16};
+    const GG::Y TECH_PANEL_MARGIN_Y{ClientUI::Pts()*16 + 100};
     const double RANK_SEP = Value(TechPanelWidth()) * GetOptionsDB().Get<double>("ui.research.tree.spacing.horizontal");
     const double NODE_SEP = Value(TechPanelHeight()) * GetOptionsDB().Get<double>("ui.research.tree.spacing.vertical");
     const double WIDTH = Value(TechPanelWidth());
@@ -1466,8 +1466,8 @@ void TechTreeWnd::LayoutPanel::SelectTech(const std::string& tech_name) {
 }
 
 void TechTreeWnd::LayoutPanel::TreeDraggedSlot(GG::Pt move) {
-    m_hscroll->ScrollTo(static_cast<int>(m_drag_scroll_position_x - Value(move.x / m_scale)));
-    m_vscroll->ScrollTo(static_cast<int>(m_drag_scroll_position_y - Value(move.y / m_scale)));
+    m_hscroll->ScrollTo(static_cast<int>(m_drag_scroll_position_x - move.x / m_scale));
+    m_vscroll->ScrollTo(static_cast<int>(m_drag_scroll_position_y - move.y / m_scale));
     m_scroll_position_x = m_hscroll->PosnRange().first;
     m_scroll_position_y = m_vscroll->PosnRange().first;
 }
@@ -1569,16 +1569,16 @@ void TechTreeWnd::TechListBox::TechRow::Render() {
 }
 
 std::vector<GG::X> TechTreeWnd::TechListBox::TechRow::ColWidths(GG::X total_width) {
-    GG::X graphic_width(GetOptionsDB().Get<int>("ui.research.list.column.graphic.width"));
-    GG::X name_width(GetOptionsDB().Get<int>("ui.research.list.column.name.width"));
-    GG::X cost_width(GetOptionsDB().Get<int>("ui.research.list.column.cost.width"));
-    GG::X time_width(GetOptionsDB().Get<int>("ui.research.list.column.time.width"));
-    GG::X category_width(GetOptionsDB().Get<int>("ui.research.list.column.category.width"));
+    GG::X graphic_width(GetOptionsDB().Get<GG::X>("ui.research.list.column.graphic.width"));
+    GG::X name_width(GetOptionsDB().Get<GG::X>("ui.research.list.column.name.width"));
+    GG::X cost_width(GetOptionsDB().Get<GG::X>("ui.research.list.column.cost.width"));
+    GG::X time_width(GetOptionsDB().Get<GG::X>("ui.research.list.column.time.width"));
+    GG::X category_width(GetOptionsDB().Get<GG::X>("ui.research.list.column.category.width"));
 
     GG::X cols_width_sum = graphic_width + name_width + cost_width + time_width + category_width;
 
-    GG::X desc_width(std::max(GetOptionsDB().Get<int>("ui.research.list.column.description.width"),
-                              Value(total_width - cols_width_sum)));
+    GG::X desc_width{std::max(GetOptionsDB().Get<int>("ui.research.list.column.description.width"),
+                              Value(total_width - cols_width_sum))};
 
     return {graphic_width, name_width, cost_width, time_width, category_width, desc_width};
 }
@@ -1624,8 +1624,8 @@ void TechTreeWnd::TechListBox::TechRow::CompleteConstruction() {
 
     std::vector<GG::X> col_widths = ColWidths(Width());
     const GG::X GRAPHIC_WIDTH = col_widths[0];
-    const GG::Y ICON_HEIGHT(std::min(Value(Height()) - 12,
-                                     std::max(ClientUI::Pts(), Value(GRAPHIC_WIDTH) - 6)));
+    const GG::Y ICON_HEIGHT{std::min(Value(Height() - 12),
+                                     std::max(ClientUI::Pts(), Value(GRAPHIC_WIDTH) - 6))};
     // TODO replace string padding with new TextFormat flag
     std::string just_pad = "    ";
 
@@ -1754,7 +1754,7 @@ void TechTreeWnd::TechListBox::CompleteConstruction() {
 
     GG::X row_width = Width() - ClientUI::ScrollWidth() - ClientUI::Pts();
     std::vector<GG::X> col_widths = TechRow::ColWidths(row_width);
-    const GG::Y HEIGHT(Value(col_widths[0]));
+    const GG::Y HEIGHT{Value(col_widths[0])};
     m_header_row = GG::Wnd::Create<GG::ListBox::Row>(row_width, HEIGHT);
 
     auto graphic_col = GG::Wnd::Create<CUILabel>("");  // graphic
@@ -2116,13 +2116,13 @@ void TechTreeWnd::Reset() {
 }
 
 void TechTreeWnd::InitializeWindows() {
-    static constexpr GG::Pt pedia_ul(GG::X0,  GG::Y0);
-    static constexpr GG::Pt pedia_wh(GG::X(480), GG::Y(240));
+    static constexpr GG::Pt pedia_ul(GG::X0, GG::Y0);
+    static constexpr GG::Pt pedia_wh(GG::X{480}, GG::Y{240});
 
     // Don't know this wnd's height in advance so place it off the bottom edge,
     // it subclasses CUIWnd so it will reposition itself to be visible.
     const GG::Pt controls_ul(GG::X1, m_layout_panel->Height());
-    const GG::Pt controls_wh((m_layout_panel->Width() * 0.6) - ClientUI::ScrollWidth(), GG::Y0);
+    const GG::Pt controls_wh(GG::ToX(m_layout_panel->Width()*0.6) - ClientUI::ScrollWidth(), GG::Y0);
 
     m_enc_detail_panel->InitSizeMove(pedia_ul,  pedia_ul + pedia_wh);
     m_tech_tree_controls->InitSizeMove(controls_ul,  controls_ul + controls_wh);

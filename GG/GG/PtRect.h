@@ -17,28 +17,160 @@
 
 #include <boost/functional/hash.hpp>
 #include <GG/Base.h>
-#include <GG/StrongTypedef.h>
+#include <cmath>
+
+namespace CXRound {
+    [[nodiscard]] constexpr int round_to_int(float f) noexcept
+    { return static_cast<int>((f >= 0.0f) ? (f + 0.5f) : (f - 0.5f)); }
+    [[nodiscard]] constexpr int round_to_int(double d) noexcept
+    { return static_cast<int>((d >= 0.0) ? (d + 0.5) : (d - 0.5)); }
+}
+
+#define POSITION_TYPEDEF(name)                                                                  \
+enum class name : int     {};                                                                   \
+constexpr name name ## 0 {0};                                                                   \
+constexpr name name ## 1 {1};                                                                   \
+                                                                                                \
+constexpr name To ## name (float f) noexcept { return name{CXRound::round_to_int(f)}; }         \
+constexpr name To ## name (double d) noexcept { return name{CXRound::round_to_int(d)}; }        \
+                                                                                                \
+constexpr int Value(name x) noexcept { return static_cast<int>(x); }                            \
+                                                                                                \
+constexpr name operator-(name x) noexcept { return name{-Value(x)}; }                           \
+                                                                                                \
+constexpr name operator+(name lhs, name rhs) noexcept { return name{Value(lhs) + Value(rhs)}; } \
+constexpr name operator+(name x, int i) noexcept { return name{Value(x) + i}; }                 \
+constexpr name operator+(int i, name x) noexcept { return name{Value(x) + i}; }                 \
+constexpr name& operator+=(name& lhs, name rhs) noexcept { lhs = lhs + rhs; return lhs; }       \
+constexpr name& operator+=(name& lhs, int rhs) noexcept { lhs = lhs + rhs; return lhs; }        \
+constexpr float operator+(name x, float f) noexcept { return Value(x) + f; }                    \
+constexpr float operator+(float f, name x) noexcept { return x + f; }                           \
+constexpr name& operator+=(name&, float) noexcept = delete;                                     \
+constexpr double operator+(name x, double d) noexcept { return Value(x) + d; }                  \
+constexpr double operator+(double d, name x) noexcept { return x + d; }                         \
+constexpr name& operator+=(name&, double) noexcept = delete;                                    \
+                                                                                                \
+constexpr name operator-(name lhs, name rhs) noexcept { return name{Value(lhs) - Value(rhs)}; } \
+constexpr name operator-(name x, int i) noexcept { return name{Value(x) - i}; }                 \
+constexpr int operator-(int i, name x) noexcept { return i - Value(x); }                        \
+constexpr name& operator-=(name& lhs, name rhs) noexcept { lhs = lhs - rhs; return lhs; }       \
+constexpr name& operator-=(name& lhs, int rhs) noexcept { lhs = lhs - rhs; return lhs; }        \
+constexpr float operator-(name x, float f) noexcept { return Value(x) - f; }                    \
+constexpr float operator-(float f, name x) noexcept { return f - Value(x); }                    \
+constexpr name& operator-=(name&, float) noexcept = delete;                                     \
+constexpr double operator-(name x, double d) noexcept { return Value(x) - d; }                  \
+constexpr double operator-(double d, name x) noexcept { return d - Value(x); }                  \
+constexpr name& operator-=(name&, double) noexcept = delete;                                    \
+                                                                                                \
+constexpr name operator*(name lhs, name rhs) noexcept { return name{Value(lhs) * Value(rhs)}; } \
+constexpr name operator*(name x, int i) noexcept { return name{Value(x) * i}; }                 \
+constexpr name operator*(int i, name x) noexcept { return name{Value(x) * i}; }                 \
+constexpr name& operator*=(name& lhs, name rhs) noexcept { lhs = lhs * rhs; return lhs; }       \
+constexpr name& operator*=(name& lhs, int rhs) noexcept { lhs = lhs * rhs; return lhs; }        \
+constexpr float operator*(name x, float f) noexcept { return Value(x) * f; }                    \
+constexpr float operator*(float f, name x) noexcept { return x * f; }                           \
+constexpr name& operator*=(name& x, float f) noexcept { x = To ## name (x * f); return x; }     \
+constexpr double operator*(name x, double d) noexcept { return Value(x) * d; }                  \
+constexpr double operator*(double d, name x) noexcept { return x * d; }                         \
+constexpr name& operator*=(name& x, double d) noexcept { x = To ## name (x * d); return x; }    \
+                                                                                                \
+constexpr int operator/(name lhs, name rhs) noexcept { return Value(lhs) / Value(rhs); }        \
+constexpr name operator/(name x, int i) noexcept { return name{Value(x) / i}; }                 \
+constexpr name& operator/=(name& lhs, int rhs) noexcept { lhs = lhs / rhs; return lhs; }        \
+constexpr float operator/(name x, float f) noexcept { return Value(x) / f; }                    \
+constexpr float operator/(float, name) noexcept = delete;                                       \
+constexpr name& operator/=(name& x, float f) noexcept { x = To ## name(x / f); return x; }      \
+constexpr double operator/(name x, double d) noexcept { return Value(x) / d; }                  \
+constexpr double operator/(double, name) noexcept = delete;                                     \
+constexpr name& operator/=(name& x, double d) noexcept { x = To ## name(x / d); return x; }     \
+                                                                                                \
+constexpr name& operator++(name& x)     { x += name ## 1; return x; }                           \
+constexpr name operator++(name& x, int) { name rv = x; x += name ## 1; return rv; }             \
+constexpr name& operator--(name& x)     { x -= name ## 1; return x; }                           \
+constexpr name operator--(name& x, int) { name rv = x; x -= name ## 1; return rv; }
 
 
 namespace GG {
 
-/** \class GG::X
-    \brief The x-coordinate value type.
+// X screen coordinate
+POSITION_TYPEDEF(X)
+// Y screen coordinate
+POSITION_TYPEDEF(Y)
 
-    X has an underlying value type of int.  \see GG_STRONG_INTEGRAL_TYPEDEF */
-GG_STRONG_INTEGRAL_TYPEDEF(X, int32_t);
 
-/** \class GG::Y
-    \brief The y-coordinate value type.
+namespace StaticTests {
+    static_assert(ToX(0.50f) == X1);
+    static_assert(ToX(0.49) == X0);
+    static_assert(ToY(0.0) == Y0);
+    static_assert(ToY(-0.5f) == -Y1);
+    static_assert(ToY(-1.49f) == -Y1);
+    static_assert(ToY(-1.5) == Y{-2});
 
-    Y has an underlying value type of int.  \see GG_STRONG_INTEGRAL_TYPEDEF */
-GG_STRONG_INTEGRAL_TYPEDEF(Y, int32_t);
+    static_assert(-X0 == X0);
+    static_assert(-X1 == X{-1});
+    static_assert(X1 + 1.0f == 2.0f);
+    static_assert(std::is_same_v<decltype(X0 + 1.0), decltype(1.0 + X0)>);
+    static_assert(std::is_same_v<decltype(X0 + 1.0f), float>);
+    static_assert(X0/2 == X0);
+    static_assert(std::is_same_v<decltype(42 - X0), int>);
+    static_assert(std::is_same_v<decltype(Y0 - 2.4), decltype(2.4 - Y0)>);
 
-// some useful coordinate constants
-constexpr X X0{0};
-constexpr X X1{1};
-constexpr Y Y0{0};
-constexpr Y Y1{1};
+    static_assert(X1 + X0 == X1);
+    static_assert(Value(X{10} + 5) == 15);
+    static_assert(X{10} + 5 == 3 + X{12});
+    static_assert([](){ X x(X0); x += X1; return x; }() == X1);
+    static_assert(Value([](){ X x(X1); x += (-2); return x; }()) == -1);
+    static_assert(X0 + 1.0 == 1.0);
+    static_assert(10.0 + X1 == 11.0 + X0);
+
+    static_assert(X1 - X0 == X1);
+    static_assert(Value(X{10} - 5) == 5);
+    static_assert(10 - X{5} == 5);
+    static_assert([](){ X x(X1); x -= X1; return x; }() == X0);
+    static_assert([](){ X x(X0); x -= (-1); return x; }() == X1);
+    static_assert(X1 - 1.0f == 0.0f);
+    static_assert(10.0f - X1 == 9.0f + X0);
+
+    static_assert(X1 * X0 == X0);
+    static_assert(X{10} * 5 == X{50});
+    static_assert(5 * X{10} == X{50});
+    static_assert(X{10} * 5 == 2 * X{25});
+    static_assert([](){ X x(X1); x *= X1; return x; }() == X1);
+    static_assert(Value([](){ X x(X1); x *= (-1); return x; }()) == -1);
+    static_assert(X1 * 1.0 == 1.0);
+    static_assert(10.0 * X1 == X1 * 10.0);
+
+    static_assert(X1 / X1 == 1);
+    static_assert(X{10} / 5 == X{2});
+    constexpr auto qq = X{5} / 10.0;
+    static_assert(X{5} / 10.0 == 25/50.0);
+    static_assert(Value([](){ X x(X1); x /= (-1); return x; }()) == -1);
+    static_assert(Value([](){ X x{21}; x /= 3.0; return x; }()) == 7);
+    static_assert(X1 / 1.0 == 1.0);
+
+    static_assert([](){ X x(X0); return ++x; }() == X1);
+    static_assert([](){ Y y(Y0); y++; return y; }() == Y1);
+    static_assert([](){ Y y(Y1); y++; return y; }() != Y1);
+    static_assert([](){ X x(X1); return --x; }() == X0);
+    static_assert([](){ Y y(Y1); y--; return y; }() == Y0);
+    static_assert([](){ Y y(Y0); y--; return y; }() != Y0);
+
+    constexpr Y szy{22};
+    constexpr int margin = 3;
+    constexpr int tw = Value(szy - 4 * margin);
+    static_assert(tw == 10);
+    constexpr int ow = tw + 3 * margin;
+    static_assert(ow == 19);
+    constexpr X szx{5};
+    constexpr X tl = szx - tw - margin * 5 / 2;
+    static_assert(Value(tl) == -12);
+    constexpr auto btnl = szx - ow - margin;
+    static_assert(btnl == GG::X(-17));
+    constexpr auto btnr = szx - margin;
+    static_assert(Value(btnr) == 2);
+    static_assert(margin - szx == -Value(btnr));
+}
+
 
 /** \brief A GG screen coordinate class. */
 struct GG_API Pt
@@ -46,21 +178,6 @@ struct GG_API Pt
     constexpr Pt() = default;
 
     constexpr Pt(X x_, Y y_) noexcept :
-        x(x_),
-        y(y_)
-    {}
-
-    constexpr Pt(X_d x_, Y y_) noexcept :
-        x(x_),
-        y(y_)
-    {}
-
-    constexpr Pt(X x_, Y_d y_) noexcept :
-        x(x_),
-        y(y_)
-    {}
-
-    constexpr Pt(X_d x_, Y_d y_) noexcept :
         x(x_),
         y(y_)
     {}
@@ -89,14 +206,14 @@ struct GG_API Pt
 
 GG_API std::ostream& operator<<(std::ostream& os, Pt pt);
 
-[[nodiscard]] GG_API constexpr inline bool operator<(Pt lhs, Pt rhs) noexcept     { return lhs.x < rhs.x && lhs.y < rhs.y; }   ///< returns true if \a lhs.x and \a lhs.y are both less than the corresponding components of \a rhs
-[[nodiscard]] GG_API constexpr inline bool operator>(Pt lhs, Pt rhs) noexcept     { return lhs.x > rhs.x && lhs.y > rhs.y; }   ///< returns true if \a lhs.x and \a lhs.y are both greater than the corresponding components of \a rhs
-[[nodiscard]] GG_API constexpr inline bool operator<=(Pt lhs, Pt rhs) noexcept    { return lhs.x <= rhs.x && lhs.y <= rhs.y; } ///< returns true if \a lhs.x and \a lhs.y are both less than or equal to the corresponding components of \a rhs
-[[nodiscard]] GG_API constexpr inline bool operator>=(Pt lhs, Pt rhs) noexcept    { return lhs.x >= rhs.x && lhs.y >= rhs.y; } ///< returns true if \a lhs.x and \a lhs.y are both greater than or equal to the corresponding components of \a rhs
-[[nodiscard]] GG_API constexpr inline Pt   operator+(Pt lhs, Pt rhs) noexcept     { return Pt{lhs.x + rhs.x, lhs.y + rhs.y}; } ///< returns the vector sum of \a lhs and \a rhs
-[[nodiscard]] GG_API constexpr inline Pt   operator-(Pt lhs, Pt rhs) noexcept     { return Pt{lhs.x - rhs.x, lhs.y - rhs.y}; } ///< returns the vector difference of \a lhs and \a rhs
-[[nodiscard]] GG_API constexpr inline Pt   operator*(Pt lhs, double rhs) noexcept { return Pt{lhs.x * rhs, lhs.y * rhs}; }     ///< returns the vector with components multiplied by \a rhs
-[[nodiscard]] GG_API constexpr inline Pt   operator/(Pt lhs, double rhs) noexcept { return Pt{lhs.x / rhs, lhs.y / rhs}; }     ///< returns the vector with components divided by \a rhs
+[[nodiscard]] GG_API constexpr bool operator<(Pt lhs, Pt rhs) noexcept     { return lhs.x < rhs.x && lhs.y < rhs.y; }   ///< returns true if \a lhs.x and \a lhs.y are both less than the corresponding components of \a rhs
+[[nodiscard]] GG_API constexpr bool operator>(Pt lhs, Pt rhs) noexcept     { return lhs.x > rhs.x && lhs.y > rhs.y; }   ///< returns true if \a lhs.x and \a lhs.y are both greater than the corresponding components of \a rhs
+[[nodiscard]] GG_API constexpr bool operator<=(Pt lhs, Pt rhs) noexcept    { return lhs.x <= rhs.x && lhs.y <= rhs.y; } ///< returns true if \a lhs.x and \a lhs.y are both less than or equal to the corresponding components of \a rhs
+[[nodiscard]] GG_API constexpr bool operator>=(Pt lhs, Pt rhs) noexcept    { return lhs.x >= rhs.x && lhs.y >= rhs.y; } ///< returns true if \a lhs.x and \a lhs.y are both greater than or equal to the corresponding components of \a rhs
+[[nodiscard]] GG_API constexpr Pt   operator+(Pt lhs, Pt rhs) noexcept     { return Pt{lhs.x + rhs.x, lhs.y + rhs.y}; } ///< returns the vector sum of \a lhs and \a rhs
+[[nodiscard]] GG_API constexpr Pt   operator-(Pt lhs, Pt rhs) noexcept     { return Pt{lhs.x - rhs.x, lhs.y - rhs.y}; } ///< returns the vector difference of \a lhs and \a rhs
+[[nodiscard]] GG_API constexpr Pt   operator*(Pt lhs, double rhs) noexcept { return Pt{ToX(lhs.x * rhs), ToY(lhs.y * rhs)}; }     ///< returns the vector with components multiplied by \a rhs
+[[nodiscard]] GG_API constexpr Pt   operator/(Pt lhs, double rhs) noexcept { return Pt{ToX(lhs.x / rhs), ToY(lhs.y / rhs)}; }     ///< returns the vector with components divided by \a rhs
 
 /** \brief A GG rectangle class.
 
@@ -145,10 +262,10 @@ struct GG_API Rect
 
 GG_API std::ostream& operator<<(std::ostream& os, Pt pt); ///< Pt stream-output operator for debug output
 
-[[nodiscard]] GG_API inline constexpr Rect operator+(Rect rect, Pt pt) noexcept { return Rect(rect.ul + pt, rect.lr + pt); } ///< returns \a rect shifted by adding \a pt to each corner
-[[nodiscard]] GG_API inline constexpr Rect operator-(Rect rect, Pt pt) noexcept { return Rect(rect.ul - pt, rect.lr - pt); } ///< returns \a rect shifted by subtracting \a pt from each corner
-[[nodiscard]] GG_API inline constexpr Rect operator+(Pt pt, Rect rect) noexcept { return rect + pt; } ///< returns \a rect shifted by adding \a pt to each corner
-[[nodiscard]] GG_API inline constexpr Rect operator-(Pt pt, Rect rect) noexcept { return rect - pt; } ///< returns \a rect shifted by subtracting \a pt from each corner
+[[nodiscard]] GG_API constexpr Rect operator+(Rect rect, Pt pt) noexcept { return Rect(rect.ul + pt, rect.lr + pt); } ///< returns \a rect shifted by adding \a pt to each corner
+[[nodiscard]] GG_API constexpr Rect operator-(Rect rect, Pt pt) noexcept { return Rect(rect.ul - pt, rect.lr - pt); } ///< returns \a rect shifted by subtracting \a pt from each corner
+[[nodiscard]] GG_API constexpr Rect operator+(Pt pt, Rect rect) noexcept { return rect + pt; } ///< returns \a rect shifted by adding \a pt to each corner
+[[nodiscard]] GG_API constexpr Rect operator-(Pt pt, Rect rect) noexcept { return rect - pt; } ///< returns \a rect shifted by subtracting \a pt from each corner
 
 GG_API std::ostream& operator<<(std::ostream& os, Rect rect); ///< Rect stream-output operator for debug output
 

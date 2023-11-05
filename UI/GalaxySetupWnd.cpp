@@ -830,7 +830,7 @@ void GalaxySetupPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
 void GalaxySetupPanel::DoLayout() {
     const GG::X LABELS_WIDTH = (Width() - CONTROL_MARGIN) / 2;
     const GG::X DROPLIST_WIDTH = LABELS_WIDTH;
-    const GG::Y DROPLIST_HEIGHT(ClientUI::Pts() + 12);
+    const GG::Y DROPLIST_HEIGHT{ClientUI::Pts() + 12};
 
     GG::Pt row_advance(GG::X0, PANEL_CONTROL_SPACING);
 
@@ -840,7 +840,7 @@ void GalaxySetupPanel::DoLayout() {
     GG::Pt control_ul(GG::Pt(LABELS_WIDTH + 2 * CONTROL_MARGIN, GG::Y0) + GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_seed_edit->MinUsableSize().y) / 2));
     GG::Pt control_lr = control_ul + GG::Pt(LABELS_WIDTH -30, m_seed_edit->MinUsableSize().y);
     GG::Pt button_ul(2 * LABELS_WIDTH + 3 * CONTROL_MARGIN - 30, CONTROL_VMARGIN);
-    GG::Pt button_lr = button_ul + GG::Pt(GG::X(20), GG::Y(20));
+    GG::Pt button_lr = button_ul + GG::Pt(GG::X{20}, GG::Y{20});
 
     m_seed_label->SizeMove(label_ul, label_lr);
     m_seed_edit->SizeMove(control_ul, control_lr);

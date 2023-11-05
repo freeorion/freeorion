@@ -60,7 +60,7 @@ constexpr std::string_view PRE_TAG = "pre";
 template <typename T>
 constexpr T NextPowerOfTwo(T input)
 {
-    T value(1);
+    T value{1};
     while (value < input)
         value *= 2;
     return value;
@@ -687,27 +687,13 @@ bool Font::TextElement::operator==(const TextElement &rhs) const
 ///////////////////////////////////////
 // class GG::Font::FormattingTag
 ///////////////////////////////////////
-Font::FormattingTag::FormattingTag() :
-    TextElement(),
-    close_tag(false)
-{}
-
-Font::FormattingTag::FormattingTag(bool close) :
-    TextElement(false, false),
-    close_tag(close)
-{}
-
 void Font::FormattingTag::Bind(const std::string& whole_text)
 {
     TextElement::Bind(whole_text);
     tag_name.Bind(whole_text);
-    for (Substring& substring : params) {
+    for (Substring& substring : params)
         substring.Bind(whole_text);
-    }
 }
-
-Font::FormattingTag::TextElementType Font::FormattingTag::Type() const
-{ return close_tag ? TextElementType::CLOSE_TAG : TextElementType::OPEN_TAG; }
 
 bool Font::FormattingTag::operator==(const TextElement &rhs) const
 {
@@ -730,11 +716,11 @@ public:
     {}
 
     /** Return the constructed text.*/
-    const std::string& Text() const
+    const auto& Text() const noexcept
     { return m_text; }
 
     /** Return the constructed TextElements.*/
-    const std::vector<std::shared_ptr<TextElement>>& Elements()
+    const auto& Elements()
     {
         if (!m_are_widths_calculated)
             m_font.FillTemplatedText(m_text, m_text_elements, m_text_elements.begin());
@@ -744,7 +730,7 @@ public:
 
     /** Add an open tag iff it exists as a recognized tag.*/
     void AddOpenTag(const std::string& tag, const std::vector<std::string>* params = nullptr)
-    {
+    {   // TODO: variation taking a span of strings instead of a vector
         if (!StaticTagHandler().IsKnown(tag))
             return;
 
@@ -982,9 +968,8 @@ Font::LineData::CharData::CharData(X extent_, StrSize str_index, StrSize str_siz
 ///////////////////////////////////////
 // struct GG::Font::Glyph
 ///////////////////////////////////////
-Font::Glyph::Glyph(const std::shared_ptr<Texture>& texture, Pt ul, Pt lr,
-                   Y y_ofs, X lb, X adv) :
-    sub_texture(texture, ul.x, ul.y, lr.x, lr.y),
+Font::Glyph::Glyph(std::shared_ptr<Texture> texture, Pt ul, Pt lr, Y y_ofs, X lb, X adv) :
+    sub_texture(std::move(texture), ul.x, ul.y, lr.x, lr.y),
     y_offset(y_ofs),
     left_bearing(lb),
     advance(adv),
@@ -1082,44 +1067,64 @@ void Font::PreRenderText(Pt ul, Pt lr, const std::string& text, Flags<TextFormat
     }
 }
 
-void Font::PreRenderText(Pt ul, Pt lr, const std::string& text, Flags<TextFormat>& format,
+namespace {
+    constexpr X LineOriginX(const X left, const X right, const X line_width, const Alignment align) noexcept
+    {
+        const X middle = left + (right - left)/2;
+        return (align & ALIGN_LEFT) ? left :
+            (align & ALIGN_RIGHT) ? (right - line_width) :
+            (align & ALIGN_CENTER) ? (middle - line_width/2) :
+            left;
+    }
+
+    constexpr Y LineOriginY(const Y top, const Y bottom, const Flags<TextFormat> format,
+                            const Y font_lineskip, const Y font_height,
+                            std::size_t end_line, std::size_t begin_line) noexcept
+    {
+        const int num_lines_less_1 = static_cast<int>(end_line) - static_cast<int>(begin_line) - 1;
+        const Y rendered_height = font_height + num_lines_less_1*font_lineskip;
+        const Y middle = top + (bottom - top)/2;
+
+        return (format & FORMAT_TOP) ? top :
+            (format & FORMAT_BOTTOM) ? (bottom - rendered_height) :
+            (format & FORMAT_VCENTER) ? (middle - rendered_height/2) :
+            top;
+    }
+
+    constexpr Y LinePosY(const Y origin, const std::size_t line_num,
+                         const std::size_t begin_line, const Y lineskip)
+    { return origin + (static_cast<int>(line_num) - static_cast<int>(begin_line)) * lineskip; }
+}
+
+void Font::PreRenderText(Pt ul, Pt lr, const std::string& text, Flags<TextFormat> format,
                          const std::vector<LineData>& line_data, RenderState& render_state,
                          std::size_t begin_line, CPSize begin_char,
                          std::size_t end_line, CPSize end_char,
                          RenderCache& cache) const
 {
-    //glBindTexture(GL_TEXTURE_2D, m_texture->OpenGLId());
-
-    Y y_origin = ul.y; // default value for FORMAT_TOP
-    if (format & FORMAT_BOTTOM)
-        y_origin = lr.y - (static_cast<int>(end_line - begin_line - 1) * m_lineskip + m_height);
-    else if (format & FORMAT_VCENTER)
-        y_origin = ul.y + ((lr.y - ul.y) - (static_cast<int>(end_line - begin_line - 1) * m_lineskip + m_height)) / 2.0;
+    const Y y_origin = LineOriginY(ul.y, lr.y, format, m_lineskip, m_height, end_line, begin_line);
 
     for (std::size_t i = begin_line; i < end_line; ++i) {
         const LineData& line = line_data[i];
-        X x_origin = ul.x; // default value for FORMAT_LEFT
-        if (line.justification == ALIGN_RIGHT)
-            x_origin = lr.x - line.Width();
-        else if (line.justification == ALIGN_CENTER)
-            x_origin = ul.x + ((lr.x - ul.x) - line.Width()) / 2.0;
-        Y y = y_origin + static_cast<int>(i - begin_line) * m_lineskip;
+
+        const X x_origin = LineOriginX(ul.x, lr.x, line.Width(), line.justification);
         X x = x_origin;
 
-        CPSize start = CP0;
-        if (i == begin_line)
-            start = std::max(CP0, std::min(begin_char, CPSize(line.char_data.size() - 1)));
-        CPSize end = CPSize(line.char_data.size());
-        if (i == end_line - 1)
-            end = std::max(CP0, std::min(end_char, CPSize(line.char_data.size())));
+        const Y y = LinePosY(y_origin, i, begin_line, m_lineskip);
 
-        auto string_end_it = text.end();
+
+        const CPSize start = (i != begin_line) ?
+            CP0 : std::max(CP0, std::min(begin_char, CPSize(line.char_data.size() - 1)));
+        const CPSize end = (i != end_line - 1) ? CPSize(line.char_data.size()) :
+            std::max(CP0, std::min(end_char, CPSize(line.char_data.size())));
+
+        const auto string_end_it = text.end();
         for (CPSize j = start; j < end; ++j) {
             const auto& char_data = line.char_data[Value(j)];
-            for (auto tag : char_data.tags) {
+            for (const auto& tag : char_data.tags)
                 HandleTag(tag, render_state);
-            }
-            std::uint32_t c = utf8::peek_next(text.begin() + Value(char_data.string_index), string_end_it);
+
+            const std::uint32_t c = utf8::peek_next(text.begin() + Value(char_data.string_index), string_end_it);
             assert((text[Value(char_data.string_index)] == '\n') == (c == WIDE_NEWLINE));
             if (c == WIDE_NEWLINE)
                 continue;
@@ -1259,7 +1264,7 @@ namespace DebugOutput {
                 std::cout << "FormattingTag\n    text=\"" << tag_elem->text << "\" (@ "
                           << static_cast<const void*>(&tag_elem->text.front()) << ")\n    widths=";
                 for (const X& width : tag_elem->widths)
-                    std::cout << width << " ";
+                    std::cout << Value(width) << " ";
                 std::cout << "\n    whitespace=" << tag_elem->whitespace << "\n    newline="
                           << tag_elem->newline << "\n    params=\n";
                 for (const Font::Substring& param : tag_elem->params)
@@ -1270,7 +1275,7 @@ namespace DebugOutput {
                 std::cout << "TextElement\n    text=\"" << elem->text << "\" (@ "
                           << static_cast<const void*>(&elem->text.front()) << ")\n    widths=";
                 for (const X& width : elem->widths)
-                    std::cout << width << " ";
+                    std::cout << Value(width) << " ";
                 std::cout << "\n    whitespace=" << elem->whitespace << "\n    newline=" << elem->newline << "\n";
             }
             std::cout << "    string_size=" << elem->StringSize() << "\n";
@@ -1286,13 +1291,13 @@ namespace DebugOutput {
     {
         std::cout << "Font::DetermineLines(text=\"" << text << "\" (@ "
                   << static_cast<const void*>(&text.front()) << ") format="
-                  << format << " box_width=" << box_width << ")" << std::endl;
+                  << format << " box_width=" << Value(box_width) << ")" << std::endl;
 
         std::cout << "Line breakdown:\n";
         for (std::size_t i = 0; i < line_data.size(); ++i) {
             std::cout << "Line " << i << ":\n    extents=";
             for (const auto& character : line_data[i].char_data)
-                std::cout << character.extent << " ";
+                std::cout << Value(character.extent) << " ";
             std::cout << "\n    string indices=";
             for (const auto& character : line_data[i].char_data)
                 std::cout << character.string_index << " ";
@@ -1308,7 +1313,7 @@ namespace DebugOutput {
                     if (tag_elem) {
                         std::cout << "FormattingTag @" << j << "\n    text=\"" << tag_elem->text << "\"\n    widths=";
                         for (const X& width : tag_elem->widths)
-                            std::cout << width << " ";
+                            std::cout << Value(width) << " ";
                         std::cout << "\n    whitespace=" << tag_elem->whitespace
                                   << "\n    newline=" << tag_elem->newline << "\n    params=\n";
                         for (const auto& param : tag_elem->params)
@@ -1583,7 +1588,7 @@ std::vector<Font::LineData> Font::DetermineLines(
 
                     // if we're using linewrap and this space won't fit on this line
                     if ((format & FORMAT_LINEWRAP) && box_width < advance_position) {
-                        if (!x && box_width < advance) {
+                        if (x == X0 && box_width < advance) {
                             // if the space is larger than the line and alone
                             // on the line, let the space overrun this line
                             // and then start a new one
@@ -1626,7 +1631,7 @@ std::vector<Font::LineData> Font::DetermineLines(
             if (format & FORMAT_WORDBREAK) {
                 // if the text "word" overruns this line, and isn't alone on
                 // this line, move it down to the next line
-                if (box_width < x + elem->Width() && x) {
+                if (box_width < x + elem->Width() && x != X0) {
                     line_data.emplace_back();
                     x = X0;
                     SetJustification(last_line_of_curr_just,
@@ -1662,7 +1667,7 @@ std::vector<Font::LineData> Font::DetermineLines(
                     const StrSize char_size = std::distance(elem->text.begin(), it) - char_index;
                     // if the char overruns this line, and isn't alone on this
                     // line, move it down to the next line
-                    if ((format & FORMAT_LINEWRAP) && box_width < x + elem->widths[j] && x) {
+                    if ((format & FORMAT_LINEWRAP) && box_width < x + elem->widths[j] && x != X0) {
                         line_data.emplace_back();
                         x = elem->widths[j];
                         line_data.back().char_data.emplace_back(
@@ -1801,7 +1806,7 @@ void Font::Init(FT_Face& face)
     // We will lay out the glyphs on the texture side by side
     // until the width would reach TEX_MAX_SIZE, then go to the next row.
     // QUESTION: Would a more square-like shape be better for the texture?
-    Buffer2d<std::uint16_t> buffer(X(16), Y(16), 0);
+    Buffer2d<std::uint16_t> buffer(X{16}, Y{16}, 0);
 
     X x = X0;
     Y y = Y0;
@@ -1977,16 +1982,12 @@ X Font::StoreGlyph(Pt pt, const Glyph& glyph, const Font::RenderState* render_st
     int shadow_offset = 0;
     int super_sub_offset = 0;
 
-    if (render_state && render_state->use_italics) {
-        // Should we enable sub pixel italics offsets?
+    if (render_state && render_state->use_italics) // Should we enable sub pixel italics offsets?
         italic_top_offset = static_cast<int>(m_italics_offset);
-    }
-    if (render_state && render_state->use_shadow) {
+    if (render_state && render_state->use_shadow)
         shadow_offset = static_cast<int>(m_shadow_offset);
-    }
-    if (render_state) {
+    if (render_state)
         super_sub_offset = -static_cast<int>(render_state->super_sub_shift * m_super_sub_offset);
-    }
 
     // render shadows?
     if (shadow_offset > 0) {

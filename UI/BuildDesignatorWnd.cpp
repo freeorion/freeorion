@@ -131,11 +131,11 @@ namespace {
             if (!m_initialized)
                 return;
 
-            const GG::X ICON_WIDTH(Value(ClientHeight()));
-            const GG::X ITEM_NAME_WIDTH(ClientUI::Pts() * 16);
-            //const GG::X COST_WIDTH(ClientUI::Pts() * 4);
-            const GG::X TIME_WIDTH(ClientUI::Pts() * 3);
-            const GG::X DESC_WIDTH(ClientUI::Pts() * 18);
+            const GG::X ICON_WIDTH{Value(ClientHeight())};
+            const GG::X ITEM_NAME_WIDTH{ClientUI::Pts() * 16};
+            //const GG::X COST_WIDTH{ClientUI::Pts() * 4};
+            const GG::X TIME_WIDTH{ClientUI::Pts() * 3};
+            const GG::X DESC_WIDTH{ClientUI::Pts() * 18};
 
             GG::X left(GG::X0);
             GG::Y bottom(ClientHeight());
@@ -329,7 +329,7 @@ namespace {
         void Render() {
             const auto ul = UpperLeft();
             const auto lr = LowerRight();
-            const GG::Y ROW_HEIGHT(IconTextBrowseWndRowHeight());
+            const GG::Y ROW_HEIGHT{IconTextBrowseWndRowHeight()};
             GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);    // main background
             GG::FlatRectangle(GG::Pt(ul.x + ICON_BROWSE_ICON_WIDTH, ul.y), GG::Pt(lr.x, ul.y + ROW_HEIGHT),
                               ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0); // top title filled background
@@ -363,7 +363,7 @@ namespace {
             m_icon->Resize(GG::Pt(ICON_BROWSE_ICON_WIDTH, ICON_BROWSE_ICON_HEIGHT));
             AttachChild(m_icon);
 
-            const GG::Y ROW_HEIGHT(IconTextBrowseWndRowHeight());
+            const GG::Y ROW_HEIGHT{IconTextBrowseWndRowHeight()};
 
             m_title_text_label = GG::Wnd::Create<CUILabel>(title, GG::FORMAT_LEFT);
             m_title_text_label->MoveTo(GG::Pt(m_icon->Width() + GG::X(EDGE_PAD), GG::Y0));
@@ -839,9 +839,9 @@ void BuildDesignatorWnd::BuildSelector::CompleteConstruction() {
 
 void BuildDesignatorWnd::BuildSelector::DoLayout() {
     int num_buttons = 4;
-    GG::X x(0);
+    GG::X x(GG::X0);
     GG::X button_width = ClientWidth() / num_buttons;
-    GG::Y button_height(ClientUI::Pts()*4/3);
+    GG::Y button_height{ClientUI::Pts()*4/3};
 
     m_build_type_buttons[BuildType::BT_BUILDING]->SizeMove(GG::Pt(x, GG::Y0), GG::Pt(x + button_width, button_height));
     x += button_width;
@@ -1406,9 +1406,9 @@ void BuildDesignatorWnd::Update() {
 }
 
 void BuildDesignatorWnd::InitializeWindows() {
-    GG::X queue_width(GetOptionsDB().Get<int>("ui.queue.width"));
+    GG::X queue_width(GetOptionsDB().Get<GG::X>("ui.queue.width"));
 
-    const GG::X SIDEPANEL_WIDTH(GetOptionsDB().Get<int>("ui.map.sidepanel.width"));
+    const GG::X SIDEPANEL_WIDTH(GetOptionsDB().Get<GG::X>("ui.map.sidepanel.width"));
     static constexpr GG::Y PANEL_HEIGHT{240};
 
     const GG::Pt pedia_ul(queue_width, GG::Y0);

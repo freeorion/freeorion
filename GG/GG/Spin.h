@@ -312,7 +312,7 @@ void Spin<T>::SetTextColor(Clr c)
 template <typename T>
 void Spin<T>::SetButtonWidth(X width)
 {
-    if (1 <= width) {
+    if (X1 <= width) {
         if (Width() - 2 * BORDER_THICK - 1 < width)
             width = Width() - 2 * BORDER_THICK - 1;
         m_button_width = width;

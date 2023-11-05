@@ -67,7 +67,7 @@ namespace {
 
     constexpr int    EDGE_PAD(3);
     constexpr int    BAR_PAD(1);
-    constexpr GG::Y  BAR_HEIGHT(10);
+    constexpr GG::Y  BAR_HEIGHT{10};
     constexpr double MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE_INCREMENT = 100.0;
 }
 
@@ -150,7 +150,7 @@ void MultiMeterStatusBar::Render() {
         const bool SHOW_TARGET_MAX = (m_target_max_values[i] != Meter::INVALID_VALUE);
 
 
-        const GG::X INITIAL_RIGHT(BAR_LEFT + BAR_MAX_LENGTH * m_initial_values[i] / MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE);
+        const GG::X INITIAL_RIGHT(BAR_LEFT + GG::ToX(BAR_MAX_LENGTH * m_initial_values[i] / MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE));
         const GG::Y INITIAL_TOP(BAR_TOP);
         if (SHOW_INITIAL) {
             // initial value
@@ -160,7 +160,7 @@ void MultiMeterStatusBar::Render() {
             GG::FlatRectangle(GG::Pt(BAR_LEFT, INITIAL_TOP), GG::Pt(INITIAL_RIGHT, BAR_BOTTOM), GG::CLR_ZERO, GG::CLR_BLACK, 1);
         }
 
-        const GG::X PROJECTED_RIGHT(BAR_LEFT + BAR_MAX_LENGTH * m_projected_values[i] / MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE);
+        const GG::X PROJECTED_RIGHT(BAR_LEFT + GG::ToX(BAR_MAX_LENGTH * m_projected_values[i] / MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE));
         const GG::Y PROJECTED_TOP(INITIAL_TOP);
         if (SHOW_PROJECTED) {
             // projected colour bar with black border
@@ -171,7 +171,7 @@ void MultiMeterStatusBar::Render() {
             }
         }
 
-        const GG::X TARGET_MAX_RIGHT(BAR_LEFT + BAR_MAX_LENGTH * m_target_max_values[i] / MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE);
+        const GG::X TARGET_MAX_RIGHT(BAR_LEFT + GG::ToX(BAR_MAX_LENGTH * m_target_max_values[i] / MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE));
         if (SHOW_TARGET_MAX && TARGET_MAX_RIGHT > BAR_LEFT) {
             // max / target value
             //glColor(DarkColor(m_bar_colours[i]));

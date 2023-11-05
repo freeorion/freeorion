@@ -29,18 +29,18 @@ void BrowseInfoWnd::Update(std::size_t mode, const Wnd* target)
     if (PositionWnd) {
         new_pos = PositionWnd(m_cursor_pos, GUI::GetGUI()->GetCursor(), *this, *target);
     } else {
-        static constexpr Y MARGIN(2);
+        static constexpr Y MARGIN{2};
         new_pos = m_cursor_pos - Pt(Width() / 2, Height() + MARGIN);
     }
     MoveTo(new_pos);
     Pt ul = UpperLeft(), lr = LowerRight();
     if (GUI::GetGUI()->AppWidth() <= lr.x)
         ul.x += GUI::GetGUI()->AppWidth() - lr.x;
-    else if (ul.x < 0)
+    else if (ul.x < X0)
         ul.x = X0;
     if (GUI::GetGUI()->AppHeight() <= lr.y)
         ul.y += GUI::GetGUI()->AppHeight() - lr.y;
-    else if (ul.y < 0)
+    else if (ul.y < Y0)
         ul.y = Y0;
     MoveTo(ul);
 }
