@@ -147,6 +147,30 @@ namespace {
         return condition_wrapper(std::make_shared<Condition::MeterValue>(m, std::move(low), std::move(high)));
     }
 
+    condition_wrapper insert_sorted_number_of_(const boost::python::tuple& args, const boost::python::dict& kw, Condition::SortingMethod method) {
+        std::unique_ptr<ValueRef::ValueRef<int>> number;
+        auto number_args = boost::python::extract<value_ref_wrapper<int>>(kw["number"]);
+        if (number_args.check()) {
+            number = ValueRef::CloneUnique(number_args().value_ref);
+        } else {
+            number = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["number"])());
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<double>> sortkey;
+        auto sortkey_args = boost::python::extract<value_ref_wrapper<double>>(kw["sortkey"]);
+        if (sortkey_args.check()) {
+            sortkey = ValueRef::CloneUnique(sortkey_args().value_ref);
+        } else {
+            sortkey = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["sortkey"])());
+        }
+
+        auto condition = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["condition"])().condition);
+        return condition_wrapper(std::make_shared<Condition::SortedNumberOf>(std::move(number),
+                                                                             std::move(sortkey),
+                                                                             method,
+                                                                             std::move(condition)));
+    }
+
     condition_wrapper insert_visible_to_empire_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<int>> empire;
         auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
@@ -254,6 +278,20 @@ namespace {
             return condition_wrapper(std::make_shared<Condition::Species>(std::move(names)));
         }
         return condition_wrapper(std::make_shared<Condition::Species>());
+    }
+
+    condition_wrapper insert_is_field_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> names;
+        boost::python::stl_input_iterator<boost::python::object> it_begin(kw["name"]), it_end;
+        for (auto it = it_begin; it != it_end; ++it) {
+            auto name_arg = boost::python::extract<value_ref_wrapper<std::string>>(*it);
+            if (name_arg.check()) {
+                names.push_back(ValueRef::CloneUnique(name_arg().value_ref));
+            } else {
+                names.push_back(std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(*it)()));
+            }
+        }
+        return condition_wrapper(std::make_shared<Condition::Field>(std::move(names)));
     }
 
     condition_wrapper insert_has_tag_(const boost::python::tuple& args, const boost::python::dict& kw) {
@@ -782,7 +820,18 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
         globals[op.first] = enum_wrapper<Condition::ContentType>(op.second);
     }
 
+    for (const auto& op : std::initializer_list<std::pair<const char*, Condition::SortingMethod>>{
+            {"MaximumNumberOf", Condition::SortingMethod::SORT_MAX},
+            {"MinimumNumberOf", Condition::SortingMethod::SORT_MIN},
+            {"ModeNumberOf",    Condition::SortingMethod::SORT_MODE},
+            {"UniqueNumberOf",  Condition::SortingMethod::SORT_UNIQUE}})
+    {
+        const auto sm = op.second;
+        globals[op.first] = boost::python::raw_function([sm](const auto& args, const auto& kw) { return insert_sorted_number_of_(args, kw, sm); });
+    }            
+
     globals["HasSpecies"] = boost::python::raw_function(insert_has_species_);
+    globals["IsField"] = boost::python::raw_function(insert_is_field_);
     globals["CanColonize"] = condition_wrapper(std::make_shared<Condition::CanColonize>());
     globals["Armed"] = condition_wrapper(std::make_shared<Condition::Armed>());
 
