@@ -42,7 +42,7 @@ struct Clr
 
     /** ctor that constructs a Clr from std::array that represents the color channels */
     [[nodiscard]] constexpr Clr(std::array<uint8_t, 4> clr) noexcept :
-        Clr{std::get<0>(clr), std::get<1>(clr), std::get<2>(clr), std::get<3>(clr)}
+        Clr{clr[0], clr[1], clr[2], clr[3]}
     {}
 
     /** ctor that constructs a Clr from a string that represents the color
