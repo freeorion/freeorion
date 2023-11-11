@@ -15,7 +15,11 @@
 #define _GG_Clr_h_
 
 #include <array>
+#if __has_include(<charconv>)
+  #include <charconv>
+#endif
 #include <cstdint>
+#include <limits>
 #include <sstream>
 #include <string>
 #include <GG/Export.h>
@@ -42,7 +46,7 @@ struct Clr
 
     /** ctor that constructs a Clr from std::array that represents the color channels */
     [[nodiscard]] constexpr Clr(std::array<uint8_t, 4> clr) noexcept :
-        Clr{clr[0], clr[1], clr[2], clr[3]}
+        Clr(clr[0], clr[1], clr[2], clr[3])
     {}
 
     /** ctor that constructs a Clr from a string that represents the color
@@ -74,22 +78,31 @@ struct Clr
     }
 
     [[nodiscard]] explicit constexpr operator uint32_t() const noexcept
-    {
-        uint32_t retval = r << 24;
-        retval += g << 16;
-        retval += b << 8;
-        retval += a;
-        return retval;
-    }
+    { return (r << 24) + (g << 16) + (b << 8) + a; }
 
     [[nodiscard]] explicit operator std::string() const
     {
-        std::string retval;
-        retval.reserve(1 + 4*3 + 3*2 + 1 + 1);
-        retval.append("(").append(std::to_string(+r)).append(", ").append(std::to_string(+g))
-              .append(", ").append(std::to_string(+b)).append(", ").append(std::to_string(+a))
-              .append(")");
-        return retval;
+#if defined(__cpp_lib_to_chars)     //     '(' "255"  ' '  ')'  0
+        std::array<std::string::value_type, 1 + 4*3 + 3*1 + 1 + 1> buf{"("};
+        auto it = std::next(buf.data());
+        const auto end_it = std::next(buf.data(), buf.size());
+        auto result = std::to_chars(it, end_it, r);
+        *result.ptr++ = ' ';
+        result = std::to_chars(it, end_it, g);
+        *result.ptr++ = ' ';
+        result = std::to_chars(it, end_it, b);
+        *result.ptr++ = ' ';
+        result = std::to_chars(it, end_it, a);
+        *result.ptr++ = ')';
+        return std::string{buf.data()};
+#else
+        std::string buf;
+        buf.reserve(1 + 4*3 + 3*2 + 1 + 1);
+        buf.append("(").append(std::to_string(+r)).append(", ").append(std::to_string(+g))
+           .append(", ").append(std::to_string(+b)).append(", ").append(std::to_string(+a))
+           .append(")");
+        return buf;
+#endif
     }
 
     [[nodiscard]] constexpr std::array<uint8_t, 4> RGBA() const noexcept
@@ -127,11 +140,8 @@ inline std::ostream& operator<<(std::ostream& os, Clr clr)
 //! channel unchanged, and multiplies the other channels by some factor.
 constexpr Clr LightenClr(Clr clr, float factor = 2.0) noexcept
 {
-    return Clr(
-        static_cast<uint8_t>(std::min(static_cast<int>(clr.r * factor), 255)),
-        static_cast<uint8_t>(std::min(static_cast<int>(clr.g * factor), 255)),
-        static_cast<uint8_t>(std::min(static_cast<int>(clr.b * factor), 255)),
-        clr.a);
+    return Clr(std::min<uint8_t>(clr.r * factor, 255), std::min<uint8_t>(clr.g * factor, 255),
+               std::min<uint8_t>(clr.b * factor, 255), clr.a);
 }
 
 //! Returns the darkened version of color clr.  DarkenClr leaves the alpha
@@ -145,8 +155,10 @@ constexpr Clr DarkenClr(const Clr clr, float factor = 2.0) noexcept
         clr.a);
 }
 
-constexpr Clr InvertClr(const Clr clr) noexcept
-{ return Clr(255 - clr.r, 255 - clr.g, 255 - clr.b, clr.a); }
+constexpr Clr InvertClr(const Clr clr) noexcept {
+    constexpr uint8_t MAX{std::numeric_limits<decltype(clr.a)>::max()};
+    return Clr(MAX - clr.r, MAX - clr.g, MAX - clr.b, clr.a);
+}
 
 constexpr Clr BlendClr(Clr src, Clr dst, float factor) noexcept
 {
