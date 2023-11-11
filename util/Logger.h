@@ -140,7 +140,7 @@
 // The logging levels.
 enum class LogLevel : uint8_t {trace, debug, info, warn, error, min = trace, max = error};
 
-constexpr LogLevel default_log_level_threshold = LogLevel::debug;
+inline constexpr LogLevel default_log_level_threshold = LogLevel::debug;
 
 namespace LoggerDetails {
     constexpr std::array<std::string_view, 5> log_level_names{"trace", "debug", "info", "warn", "error"};
@@ -154,7 +154,7 @@ constexpr const char* to_string(LogLevel level) {
 }
 
 namespace LoggerDetails {
-    constexpr std::array<std::pair<std::string_view, LogLevel>, 14> valid_names_and_levels{{
+    inline constexpr std::array<std::pair<std::string_view, LogLevel>, 14> valid_names_and_levels{{
         {to_string(LogLevel::trace), LogLevel::trace},
         {"TRACE",                    LogLevel::trace},
         {to_string(LogLevel::debug), LogLevel::debug},

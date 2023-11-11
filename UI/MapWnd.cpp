@@ -481,11 +481,11 @@ namespace {
                       descr_ul, descr_lr, value_ul, value_lr, next_row);
             LayoutRow(FLEET_DETAIL_SLOT_COUNT,
                       descr_ul, descr_lr, value_ul, value_lr,
-                      m_ship_design_labels.empty() ? GG::Pt(GG::X0, GG::Y0) : space_row);
+                      m_ship_design_labels.empty() ? GG::Pt0 : space_row);
 
             for (auto it = m_ship_design_labels.begin(); it != m_ship_design_labels.end(); ++it) {
                 LayoutRow(*it, descr_ul, descr_lr, value_ul, value_lr,
-                          std::next(it) == m_ship_design_labels.end()? GG::Pt(GG::X0, GG::Y0) : next_row);
+                          std::next(it) == m_ship_design_labels.end()? GG::Pt0 : next_row);
             }
 
             Resize(GG::Pt(value_lr.x + (m_margin * 3), value_lr.y + (m_margin * 3)));

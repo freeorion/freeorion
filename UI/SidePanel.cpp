@@ -3169,7 +3169,7 @@ namespace {
 
             auto title_label = GG::Wnd::Create<CUILabel>(
                 UserString(to_string(m_meter_type)), GG::FORMAT_RIGHT);
-            title_label->MoveTo(GG::Pt(GG::X0, GG::Y0));
+            title_label->MoveTo(GG::Pt0);
             title_label->Resize(GG::Pt(LabelWidth(), row_height));
             title_label->SetFont(ClientUI::GetBoldFont());
             AttachChild(title_label);

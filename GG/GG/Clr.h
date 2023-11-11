@@ -65,8 +65,7 @@ struct Clr
         static_assert(val_from_two_hex_chars("01") == 1);
         static_assert(val_from_two_hex_chars("FF") == 255);
         static_assert(val_from_two_hex_chars("A0") == 160);
-        constexpr auto huh = val_from_two_hex_chars("!.");
-        static_assert(huh == 14u);
+        static_assert(val_from_two_hex_chars("!.") == 14u);
 
         r = (sz >= 2) ? val_from_two_hex_chars(hex_colour.substr(0, 2)) : 0;
         g = (sz >= 4) ? val_from_two_hex_chars(hex_colour.substr(2, 2)) : 0;

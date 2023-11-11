@@ -12,8 +12,8 @@ namespace Networking {
     FO_COMMON_API extern const std::string DISCOVERY_QUESTION;
     FO_COMMON_API extern const std::string DISCOVERY_ANSWER;
     FO_COMMON_API extern const int SOCKET_LINGER_TIME;
-    constexpr int INVALID_PLAYER_ID = -1;
-    constexpr int NO_TEAM_ID = -1;
+    inline constexpr int INVALID_PLAYER_ID = -1;
+    inline constexpr int NO_TEAM_ID = -1;
 
     FO_COMMON_API int DiscoveryPort();
     FO_COMMON_API int MessagePort();

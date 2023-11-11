@@ -735,7 +735,7 @@ bool TechTreeWnd::LayoutPanel::TechPanel::InWindow(GG::Pt pt) const {
     const GG::Pt p = m_layout_panel->ConvertPtScreenToZoomed(pt) - UpperLeft();
     if (m_icon->InWindow(p))
         return true;
-    return GG::Pt(GG::X0, GG::Y0) <= p && p < GG::Pt(TechPanelWidth(), TechPanelHeight());
+    return GG::Pt0 <= p && p < GG::Pt(TechPanelWidth(), TechPanelHeight());
 }
 
 void TechTreeWnd::LayoutPanel::TechPanel::PreRender() {

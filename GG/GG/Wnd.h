@@ -38,14 +38,14 @@ class WndEvent;
 /** Wnd creation flags type. */
 GG_FLAG_TYPE(WndFlag);
 
-constexpr WndFlag NO_WND_FLAGS       (0);       // None of the below flags
-constexpr WndFlag INTERACTIVE        (1 << 0);  // Clicks hit this window, rather than passing through it, and mouse-overs detect that they are over this window.
-constexpr WndFlag REPEAT_BUTTON_DOWN (1 << 1);  // When a mouse button is held down over this window, it expects to receive multiple *ButtonDown messages.
-constexpr WndFlag DRAGABLE           (1 << 2);  // This window can be dragged around independently.
-constexpr WndFlag RESIZABLE          (1 << 3);  // This window can be resized by the user, with the mouse.
-constexpr WndFlag ONTOP              (1 << 4);  // This windows is an "on-top" window, and will always appear above all non-on-top and non-modal windows.  Note that this only applies to top-level (Parent()-less) Wnds.
-constexpr WndFlag MODAL              (1 << 5);  // This window is modal; while it is active, no other windows are interactive.  Modal windows are considered above "on-top" windows, and should not be flagged as OnTop.  Note that this only applies to top-level (Parent()-less) Wnds.
-constexpr WndFlag REPEAT_KEY_PRESS   (1 << 6);  // When a keyboard key is held down while this window has input focus, it expects to receive KeyPress messages.
+inline constexpr WndFlag NO_WND_FLAGS       (0);       // None of the below flags
+inline constexpr WndFlag INTERACTIVE        (1 << 0);  // Clicks hit this window, rather than passing through it, and mouse-overs detect that they are over this window.
+inline constexpr WndFlag REPEAT_BUTTON_DOWN (1 << 1);  // When a mouse button is held down over this window, it expects to receive multiple *ButtonDown messages.
+inline constexpr WndFlag DRAGABLE           (1 << 2);  // This window can be dragged around independently.
+inline constexpr WndFlag RESIZABLE          (1 << 3);  // This window can be resized by the user, with the mouse.
+inline constexpr WndFlag ONTOP              (1 << 4);  // This windows is an "on-top" window, and will always appear above all non-on-top and non-modal windows.  Note that this only applies to top-level (Parent()-less) Wnds.
+inline constexpr WndFlag MODAL              (1 << 5);  // This window is modal; while it is active, no other windows are interactive.  Modal windows are considered above "on-top" windows, and should not be flagged as OnTop.  Note that this only applies to top-level (Parent()-less) Wnds.
+inline constexpr WndFlag REPEAT_KEY_PRESS   (1 << 6);  // When a keyboard key is held down while this window has input focus, it expects to receive KeyPress messages.
 
 
 /** \brief This is the basic GG window class.

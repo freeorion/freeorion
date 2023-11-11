@@ -230,7 +230,7 @@ void OwnerColoredSystemName::CompleteConstruction() {
     }
     AttachChild(m_text);
     GG::Pt text_size(m_text->TextLowerRight() - m_text->TextUpperLeft());
-    m_text->SizeMove(GG::Pt(GG::X0, GG::Y0), text_size);
+    m_text->SizeMove(GG::Pt0, text_size);
     Resize(text_size);
 }
 

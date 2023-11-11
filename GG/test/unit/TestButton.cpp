@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE( constructor )
 
     BOOST_CHECK(button.Text() == "Test");
     BOOST_CHECK(button.State() == GG::Button::ButtonState::BN_UNPRESSED);
-    BOOST_CHECK(button.MinUsableSize() == GG::Pt(GG::X0, GG::Y0));
+    BOOST_CHECK(button.MinUsableSize() == GG::Pt0);
     BOOST_CHECK(button.Color() == GG::CLR_WHITE);
     BOOST_CHECK(button.GetLabel().TextColor() == GG::CLR_GREEN);
     BOOST_CHECK(button.UnpressedGraphic().Empty());
@@ -129,9 +129,9 @@ BOOST_AUTO_TEST_CASE( constructor )
     BOOST_CHECK(!button.PreRenderRequired());
     BOOST_CHECK(button.Name() == "");
     BOOST_CHECK(button.DragDropDataType() == "");
-    BOOST_CHECK(button.UpperLeft() == GG::Pt(GG::X0, GG::Y0));
-    BOOST_CHECK(button.RelativeUpperLeft() == GG::Pt(GG::X0, GG::Y0));
-    BOOST_CHECK(button.ClientUpperLeft() == GG::Pt(GG::X0, GG::Y0));
+    BOOST_CHECK(button.UpperLeft() == GG::Pt0);
+    BOOST_CHECK(button.RelativeUpperLeft() == GG::Pt0);
+    BOOST_CHECK(button.ClientUpperLeft() == GG::Pt0);
     BOOST_CHECK(button.Left() == GG::X0);
     BOOST_CHECK(button.Top() == GG::Y0);
     BOOST_CHECK(button.LowerRight() == GG::Pt(GG::X1, GG::Y1));
@@ -145,12 +145,12 @@ BOOST_AUTO_TEST_CASE( constructor )
     BOOST_CHECK(button.ClientHeight() == GG::Y1);
     BOOST_CHECK(button.Size() == GG::Pt(GG::X1, GG::Y1));
     BOOST_CHECK(button.ClientSize() == GG::Pt(GG::X1, GG::Y1));
-    BOOST_CHECK(button.MinSize() == GG::Pt(GG::X0, GG::Y0));
-    BOOST_CHECK(button.MinUsableSize() == GG::Pt(GG::X0, GG::Y0));
-    BOOST_CHECK(button.ScreenToWindow(GG::Pt(GG::X0, GG::Y0)) == GG::Pt(GG::X0, GG::Y0));
-    BOOST_CHECK(button.ScreenToClient(GG::Pt(GG::X0, GG::Y0)) == GG::Pt(GG::X0, GG::Y0));
-    BOOST_CHECK(button.InWindow(GG::Pt(GG::X0, GG::Y0)));
-    BOOST_CHECK(button.InClient(GG::Pt(GG::X0, GG::Y0)));
+    BOOST_CHECK(button.MinSize() == GG::Pt0);
+    BOOST_CHECK(button.MinUsableSize() == GG::Pt0);
+    BOOST_CHECK(button.ScreenToWindow(GG::Pt0) == GG::Pt0);
+    BOOST_CHECK(button.ScreenToClient(GG::Pt0) == GG::Pt0);
+    BOOST_CHECK(button.InWindow(GG::Pt0));
+    BOOST_CHECK(button.InClient(GG::Pt0));
     BOOST_CHECK(button.Children().size() == 2);
     BOOST_CHECK(!button.Parent());
     BOOST_CHECK(!button.RootParent());
@@ -158,7 +158,7 @@ BOOST_AUTO_TEST_CASE( constructor )
     BOOST_CHECK(!button.ContainingLayout());
     BOOST_CHECK(button.BrowseModes().size() == 1);
     BOOST_CHECK(button.GetStyleFactory() == gui.GetStyleFactory());
-    BOOST_CHECK(button.WindowRegion(GG::Pt(GG::X0, GG::Y0)) == GG::WndRegion::WR_NONE);
+    BOOST_CHECK(button.WindowRegion(GG::Pt0) == GG::WndRegion::WR_NONE);
 }
 
 BOOST_AUTO_TEST_CASE( resize )
@@ -184,8 +184,8 @@ BOOST_AUTO_TEST_CASE( resize )
     BOOST_CHECK(button.ClientHeight() == GG::Y(30));
     BOOST_CHECK(button.Size() == GG::Pt(GG::X(30), GG::Y(30)));
     BOOST_CHECK(button.ClientSize() == GG::Pt(GG::X(30), GG::Y(30)));
-    BOOST_CHECK(button.MinSize() == GG::Pt(GG::X0, GG::Y0));
-    BOOST_CHECK(button.MinUsableSize() == GG::Pt(GG::X0, GG::Y0));
+    BOOST_CHECK(button.MinSize() == GG::Pt0);
+    BOOST_CHECK(button.MinUsableSize() == GG::Pt0);
 }
 
 struct MouseClickCatcher

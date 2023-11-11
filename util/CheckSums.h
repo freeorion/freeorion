@@ -10,13 +10,13 @@
 #include <string_view>
 
 namespace CheckSums {
-    constexpr uint32_t CHECKSUM_MODULUS = 10000000U;    // reasonably big number that should be well below UINT_MAX, which is ~4.29x10^9 for 32 bit unsigned int
+    inline constexpr uint32_t CHECKSUM_MODULUS = 10000000U;    // reasonably big number that should be well below UINT_MAX, which is ~4.29x10^9 for 32 bit unsigned int
     static_assert(CHECKSUM_MODULUS < UINT_MAX/4);
 
-    constexpr bool csc_double = noexcept(noexcept(std::log10(std::abs(43.0))));
+    inline constexpr bool csc_double = noexcept(noexcept(std::log10(std::abs(43.0))));
     FO_COMMON_API void CheckSumCombine(uint32_t& sum, double t) noexcept(csc_double);
 
-    constexpr bool csc_float = noexcept(noexcept(std::log10(std::abs(43.0f))));
+    inline constexpr bool csc_float = noexcept(noexcept(std::log10(std::abs(43.0f))));
     FO_COMMON_API void CheckSumCombine(uint32_t& sum, float t) noexcept(csc_float);
 
     // integeral types

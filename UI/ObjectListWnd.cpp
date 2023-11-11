@@ -2595,7 +2595,7 @@ void ObjectListWnd::DoLayout() {
     m_collapse_button->SizeMove(button_ul, button_ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT));
     button_ul += GG::Pt(BUTTON_WIDTH + PAD, GG::Y0);
 
-    m_list_box->SizeMove(GG::Pt(GG::X0, GG::Y0), GG::Pt(ClientWidth(), button_ul.y));
+    m_list_box->SizeMove(GG::Pt0, GG::Pt(ClientWidth(), button_ul.y));
 
     SetMinSize(GG::Pt(3*BUTTON_WIDTH, 6*BUTTON_HEIGHT));
 

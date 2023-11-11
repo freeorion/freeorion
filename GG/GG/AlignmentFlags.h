@@ -24,13 +24,13 @@ namespace GG {
 /** Alignment flags. */
 GG_FLAG_TYPE(Alignment);
 
-constexpr Alignment ALIGN_NONE      (0);        ///< No alignment selected.
-constexpr Alignment ALIGN_VCENTER   (1 << 0);   ///< Vertically-centered.
-constexpr Alignment ALIGN_TOP       (1 << 1);   ///< Aligned to top.
-constexpr Alignment ALIGN_BOTTOM    (1 << 2);   ///< Aligned to bottom.
-constexpr Alignment ALIGN_CENTER    (1 << 3);   ///< Horizontally-centered.
-constexpr Alignment ALIGN_LEFT      (1 << 4);   ///< Aligned to left.
-constexpr Alignment ALIGN_RIGHT     (1 << 5);   ///< Aligned to right.
+inline constexpr Alignment ALIGN_NONE      (0);        ///< No alignment selected.
+inline constexpr Alignment ALIGN_VCENTER   (1 << 0);   ///< Vertically-centered.
+inline constexpr Alignment ALIGN_TOP       (1 << 1);   ///< Aligned to top.
+inline constexpr Alignment ALIGN_BOTTOM    (1 << 2);   ///< Aligned to bottom.
+inline constexpr Alignment ALIGN_CENTER    (1 << 3);   ///< Horizontally-centered.
+inline constexpr Alignment ALIGN_LEFT      (1 << 4);   ///< Aligned to left.
+inline constexpr Alignment ALIGN_RIGHT     (1 << 5);   ///< Aligned to right.
 
 }
 

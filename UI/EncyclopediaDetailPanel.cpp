@@ -3117,7 +3117,7 @@ namespace {
 
     GG::Pt HairSpaceExtent() {
         static GG::Pt retval;
-        if (retval > GG::Pt(GG::X0, GG::Y0))
+        if (retval > GG::Pt0)
             return retval;
 
         GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE;

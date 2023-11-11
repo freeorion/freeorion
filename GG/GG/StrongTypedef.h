@@ -31,8 +31,8 @@ namespace CXRound {
 
 #define POSITION_TYPEDEF(name)                                                                  \
 enum class name : int {};                                                                       \
-constexpr name name ## 0 {0};                                                                   \
-constexpr name name ## 1 {1};                                                                   \
+inline constexpr name name ## 0 {0};                                                            \
+inline constexpr name name ## 1 {1};                                                            \
                                                                                                 \
 constexpr name To ## name (float f) noexcept { return name{CXRound::round_to_int(f)}; }         \
 constexpr name To ## name (double d) noexcept { return name{CXRound::round_to_int(d)}; }        \
@@ -96,9 +96,9 @@ constexpr name operator--(name& x, int) { name rv = x; x -= name ## 1; return rv
 
 #define SIZE_TYPEDEF(name, abbrevname)                                                          \
 enum class name : std::size_t {};                                                               \
-constexpr name abbrevname ## 0 {0};                                                             \
-constexpr name abbrevname ## 1 {1};                                                             \
-constexpr name INVALID_ ## abbrevname ## _SIZE {std::numeric_limits<std::size_t>::max()};       \
+inline constexpr name abbrevname ## 0 {0};                                                      \
+inline constexpr name abbrevname ## 1 {1};                                                      \
+inline constexpr name INVALID_ ## abbrevname ## _SIZE {std::numeric_limits<std::size_t>::max()};\
                                                                                                 \
 constexpr std::size_t Value(name x) noexcept { return static_cast<std::size_t>(x); }            \
                                                                                                 \

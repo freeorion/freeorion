@@ -71,7 +71,6 @@ namespace StaticTests {
 
     static_assert(X1 / X1 == 1);
     static_assert(X{10} / 5 == X{2});
-    constexpr auto qq = X{5} / 10.0;
     static_assert(X{5} / 10.0 == 25/50.0);
     static_assert(Value([](){ X x(X1); x /= (-1); return x; }()) == -1);
     static_assert(Value([](){ X x{21}; x /= 3.0; return x; }()) == 7);
@@ -84,18 +83,18 @@ namespace StaticTests {
     static_assert([](){ Y y(Y1); y--; return y; }() == Y0);
     static_assert([](){ Y y(Y0); y--; return y; }() != Y0);
 
-    constexpr Y szy{22};
-    constexpr int margin = 3;
-    constexpr int tw = Value(szy - 4 * margin);
+    inline constexpr Y szy{22};
+    inline constexpr int margin = 3;
+    inline constexpr int tw = Value(szy - 4 * margin);
     static_assert(tw == 10);
-    constexpr int ow = tw + 3 * margin;
+    inline constexpr int ow = tw + 3 * margin;
     static_assert(ow == 19);
-    constexpr X szx{5};
-    constexpr X tl = szx - tw - margin * 5 / 2;
+    inline constexpr X szx{5};
+    inline constexpr X tl = szx - tw - margin * 5 / 2;
     static_assert(Value(tl) == -12);
-    constexpr auto btnl = szx - ow - margin;
+    inline constexpr auto btnl = szx - ow - margin;
     static_assert(btnl == GG::X(-17));
-    constexpr auto btnr = szx - margin;
+    inline constexpr auto btnr = szx - margin;
     static_assert(Value(btnr) == 2);
     static_assert(margin - szx == -Value(btnr));
 }
@@ -132,6 +131,8 @@ struct GG_API Pt
     X x = X0;
     Y y = Y0;
 };
+
+inline constexpr Pt Pt0{GG::X0, GG::Y0};
 
 GG_API std::ostream& operator<<(std::ostream& os, Pt pt);
 

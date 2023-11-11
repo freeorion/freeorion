@@ -854,7 +854,7 @@ public:
 
 private:
     void DoLayout() {
-        m_queue_lb->SizeMove(GG::Pt(GG::X0, GG::Y0),
+        m_queue_lb->SizeMove(GG::Pt0,
                              GG::Pt(ClientWidth(), ClientHeight() - GG::Y(CUIWnd::INNER_BORDER_ANGLE_OFFSET)));
     }
 
@@ -947,7 +947,7 @@ void ProductionWnd::DoLayout() {
     const GG::X queue_width(GetOptionsDB().Get<GG::X>("ui.queue.width"));
     const GG::Y info_height{ClientUI::Pts()*8 + 34};
 
-    m_production_info_panel->MoveTo(GG::Pt(GG::X0, GG::Y0));
+    m_production_info_panel->MoveTo(GG::Pt0);
     m_production_info_panel->Resize(GG::Pt(queue_width, info_height));
 
     m_queue_wnd->MoveTo(GG::Pt(GG::X0, info_height));

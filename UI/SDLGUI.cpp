@@ -586,7 +586,7 @@ Pt SDLGUI::GetDefaultResolutionStatic(int display_id) {
         Pt resolution(X(mode.w), Y(mode.h));
         return resolution;
     } else {
-        return Pt(X0, Y0);
+        return Pt0;
     }
 }
 
@@ -619,7 +619,7 @@ void SDLGUI::RelayTextInput(const SDL_TextInputEvent& text, GG::Pt mouse_pos) {
     const char* end = current + SDL_TEXTEDITINGEVENT_TEXT_SIZE;
     while (current != end && *current)
         ++current;
-    HandleGGEvent(EventType::TEXTINPUT, Key::GGK_NONE, 0u, GG::Flags<GG::ModKey>(), mouse_pos, Pt(X0, Y0),
+    HandleGGEvent(EventType::TEXTINPUT, Key::GGK_NONE, 0u, GG::Flags<GG::ModKey>(), mouse_pos, Pt0,
                   std::string(text.text, current));
 }
 

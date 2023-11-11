@@ -63,7 +63,7 @@ public:
 
     void DoLayout() {
         // Leave space for the resize tab.
-        m_tabs->SizeMove(GG::Pt(GG::X0, GG::Y0),
+        m_tabs->SizeMove(GG::Pt0,
                          GG::Pt(m_wnd.ClientWidth(),
                                 m_wnd.ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET)));
 
@@ -72,7 +72,7 @@ public:
                dynamic_cast<GraphicalSummaryWnd*>(m_tabs->CurrentWnd())) {
             graphical_wnd->DoLayout();
         } else if (auto log_wnd = dynamic_cast<GG::ScrollPanel*>(m_tabs->CurrentWnd())) {
-            log_wnd->SizeMove(GG::Pt(GG::X0, GG::Y0),
+            log_wnd->SizeMove(GG::Pt0,
                          GG::Pt(m_wnd.ClientWidth(),
                                 m_wnd.ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET)));
         }
@@ -150,7 +150,7 @@ private:
     GG::Pt                                  m_min_size; //< Minimum size according to the contents, is not constrained by the app window size
 
     void UpdateMinSize() {
-        m_min_size = GG::Pt(GG::X0, GG::Y0);
+        m_min_size = GG::Pt0;
         m_min_size += m_wnd.Size() - m_wnd.ClientSize();
 
         // The rest of this function could use m_tabs->MinUsableSize instead of
@@ -167,7 +167,7 @@ private:
             m_min_size += GG::Pt(ClientUI::GetFont()->SpaceWidth()*20, ClientUI::GetFont()->Height());
         }
 
-        auto&& layout_begin = m_tabs->GetLayout()->Children().begin();
+        auto layout_begin = m_tabs->GetLayout()->Children().begin();
         // First object in the layout should be the tab bar.
         if (layout_begin != m_tabs->GetLayout()->Children().end()) {
             GG::Pt tab_min_size = (*layout_begin)->MinUsableSize();

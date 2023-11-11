@@ -435,13 +435,13 @@ void BuildingIndicator::DoLayout() {
     GG::Pt child_lr = Size() - GG::Pt(GG::X1, GG::Y1);   // extra pixel prevents graphic from overflowing border box
 
     if (m_graphic)
-        m_graphic->SizeMove(GG::Pt(GG::X0, GG::Y0), child_lr);
+        m_graphic->SizeMove(GG::Pt0, child_lr);
 
     if (m_scanlines)
-        m_scanlines->SizeMove(GG::Pt(GG::X0, GG::Y0), child_lr);
+        m_scanlines->SizeMove(GG::Pt0, child_lr);
 
     if (m_scrap_indicator)
-        m_scrap_indicator->SizeMove(GG::Pt(GG::X0, GG::Y0), child_lr);
+        m_scrap_indicator->SizeMove(GG::Pt0, child_lr);
 
     GG::Y bar_top = Height() * 4 / 5;
     if (m_progress_bar)

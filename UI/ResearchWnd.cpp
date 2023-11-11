@@ -403,7 +403,7 @@ public:
 private:
     void DoLayout() {
         m_queue_lb->SizeMove(
-            GG::Pt(GG::X0, GG::Y0),
+            GG::Pt0,
             GG::Pt(ClientWidth(), ClientHeight() - GG::Y(CUIWnd::INNER_BORDER_ANGLE_OFFSET)));
     }
 
@@ -468,7 +468,7 @@ void ResearchWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
 }
 
 void ResearchWnd::DoLayout(bool init) {
-    m_research_info_panel->MoveTo(GG::Pt(GG::X0, GG::Y0));
+    m_research_info_panel->MoveTo(GG::Pt0);
     GG::X queue_width = GG::X(init ? GetOptionsDB().GetDefault<int>("ui.queue.width") :
                                      GetOptionsDB().Get<int>("ui.queue.width"));
     if (init) {

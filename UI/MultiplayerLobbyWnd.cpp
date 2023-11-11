@@ -902,8 +902,8 @@ void MultiPlayerLobbyWnd::DoLayout() {
 
     const GG::Y TEXT_HEIGHT = GG::Y(ClientUI::Pts() * 3/2);
 
-    m_ready_bn->SizeMove(GG::Pt(GG::X0, GG::Y0), GG::Pt(GG::X(125), m_ready_bn->MinUsableSize().y));
-    m_cancel_bn->SizeMove(GG::Pt(GG::X0, GG::Y0), GG::Pt(GG::X(125), m_ready_bn->MinUsableSize().y));
+    m_ready_bn->SizeMove(GG::Pt0, GG::Pt(GG::X(125), m_ready_bn->MinUsableSize().y));
+    m_cancel_bn->SizeMove(GG::Pt0, GG::Pt(GG::X(125), m_ready_bn->MinUsableSize().y));
     m_cancel_bn->MoveTo(GG::Pt(ClientWidth() - m_cancel_bn->Width() - CONTROL_MARGIN,
                                ClientHeight() - m_cancel_bn->Height() - CONTROL_MARGIN));
     m_ready_bn->MoveTo(GG::Pt(m_cancel_bn->RelativeUpperLeft().x - CONTROL_MARGIN - m_ready_bn->Width(),

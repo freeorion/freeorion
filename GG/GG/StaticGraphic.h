@@ -23,16 +23,17 @@ namespace GG {
 
 /** Styles for StaticGraphic controls. */
 GG_FLAG_TYPE(GraphicStyle);
-constexpr GraphicStyle GRAPHIC_NONE          (0);       ///< Default style selected.
-constexpr GraphicStyle GRAPHIC_VCENTER       (1 << 0);  ///< Centers graphic vertically.
-constexpr GraphicStyle GRAPHIC_TOP           (1 << 1);  ///< Top-justifies graphic.
-constexpr GraphicStyle GRAPHIC_BOTTOM        (1 << 2);  ///< Justifies the graphic to the bottom of the rectangle.
-constexpr GraphicStyle GRAPHIC_CENTER        (1 << 3);  ///< Centers graphic horizontally in the rectangle.
-constexpr GraphicStyle GRAPHIC_LEFT          (1 << 4);  ///< Aligns graphic to the left.
-constexpr GraphicStyle GRAPHIC_RIGHT         (1 << 5);  ///< Aligns graphic to the right.
-constexpr GraphicStyle GRAPHIC_FITGRAPHIC    (1 << 6);  ///< Scales graphic to fit within the StaticGraphic's window dimensions.
-constexpr GraphicStyle GRAPHIC_SHRINKFIT     (1 << 7);  ///< Like GRAPHIC_FITGRAPHIC, but this one only scales the image if it otherwise would not fit in the window.
-constexpr GraphicStyle GRAPHIC_PROPSCALE     (1 << 8);  ///< If GRAPHIC_FITGRAPHIC or GRAPHIC_SHRINKFIT is used, this ensures scaling is done proportionally.
+
+inline constexpr GraphicStyle GRAPHIC_NONE          (0);       ///< Default style selected.
+inline constexpr GraphicStyle GRAPHIC_VCENTER       (1 << 0);  ///< Centers graphic vertically.
+inline constexpr GraphicStyle GRAPHIC_TOP           (1 << 1);  ///< Top-justifies graphic.
+inline constexpr GraphicStyle GRAPHIC_BOTTOM        (1 << 2);  ///< Justifies the graphic to the bottom of the rectangle.
+inline constexpr GraphicStyle GRAPHIC_CENTER        (1 << 3);  ///< Centers graphic horizontally in the rectangle.
+inline constexpr GraphicStyle GRAPHIC_LEFT          (1 << 4);  ///< Aligns graphic to the left.
+inline constexpr GraphicStyle GRAPHIC_RIGHT         (1 << 5);  ///< Aligns graphic to the right.
+inline constexpr GraphicStyle GRAPHIC_FITGRAPHIC    (1 << 6);  ///< Scales graphic to fit within the StaticGraphic's window dimensions.
+inline constexpr GraphicStyle GRAPHIC_SHRINKFIT     (1 << 7);  ///< Like GRAPHIC_FITGRAPHIC, but this one only scales the image if it otherwise would not fit in the window.
+inline constexpr GraphicStyle GRAPHIC_PROPSCALE     (1 << 8);  ///< If GRAPHIC_FITGRAPHIC or GRAPHIC_SHRINKFIT is used, this ensures scaling is done proportionally.
 
 
 /** \brief A simple, non-interactive window that displays a GG::SubTexture.

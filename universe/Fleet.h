@@ -47,8 +47,8 @@ FO_ENUM(
 )
 
 namespace FleetDefaults {
-    constexpr auto FLEET_DEFAULT_ARMED = FleetAggression::FLEET_AGGRESSIVE;
-    constexpr auto FLEET_DEFAULT_UNARMED = FleetAggression::FLEET_DEFENSIVE;
+    inline constexpr auto FLEET_DEFAULT_ARMED = FleetAggression::FLEET_AGGRESSIVE;
+    inline constexpr auto FLEET_DEFAULT_UNARMED = FleetAggression::FLEET_DEFENSIVE;
 }
 
 constexpr double FLEET_MOVEMENT_EPSILON = 0.1;  // how close a fleet needs to be to a system to have arrived in the system

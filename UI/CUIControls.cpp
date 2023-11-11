@@ -762,7 +762,7 @@ CUIDropDownList::CUIDropDownList(std::size_t num_shown_elements) :
 void CUIDropDownList::InitBuffer() {
     m_buffer.clear();
     GG::Pt sz = Size();
-    BufferStoreAngledCornerRectangleVertices(this->m_buffer, GG::Pt(GG::X0, GG::Y0), sz,
+    BufferStoreAngledCornerRectangleVertices(this->m_buffer, GG::Pt0, sz,
                                              CUIDROPDOWNLIST_ANGLE_OFFSET, false, true, false);
 
     static constexpr int margin = 3;
@@ -1426,7 +1426,7 @@ void StatisticIcon::DragDropLeave()
 void StatisticIcon::DoLayout() {
     // arrange child controls horizontally if icon is wider than it is high, or vertically otherwise
     int icon_dim = std::min(Value(Height()), Value(Width()));
-    m_icon->SizeMove(GG::Pt(GG::X0, GG::Y0),
+    m_icon->SizeMove(GG::Pt0,
                      GG::Pt(GG::X(icon_dim), GG::Y(icon_dim)));
 
     if (m_values.empty())
