@@ -182,7 +182,7 @@ void MinimalGGApp::GLInit() {
 
     // set up perspective with vertical FOV of 50°. 1:1 application
     // window ratio, near plane of 1.0 and far plane of 10.0
-    float ratio = GG::Value(AppWidth() * 1.0f) / Value(AppHeight());
+    float ratio = AppWidth() / static_cast<float>(Value(AppHeight()));
     float radians = 50.0f * M_PI / 180.f;
     float near = 1.0f;
     float far = 10.0f;
