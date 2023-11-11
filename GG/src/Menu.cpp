@@ -202,7 +202,7 @@ void PopupMenu::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
         if (pt.x >= m_open_levels[i].ul.x && pt.x <= m_open_levels[i].lr.x &&
             pt.y >= m_open_levels[i].ul.y && pt.y <= m_open_levels[i].lr.y)
         {
-            std::size_t row_selected = Value((pt.y - m_open_levels[i].ul.y) / m_font->Lineskip());
+            const std::size_t row_selected = (pt.y - m_open_levels[i].ul.y) / m_font->Lineskip();
             if (row_selected == m_caret[i]) {
                 cursor_is_in_menu = true;
             } else if (row_selected < menu.next_level.size()) {

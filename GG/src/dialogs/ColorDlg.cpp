@@ -133,7 +133,7 @@ void HueSaturationPicker::SetHueSaturationFromPt(Pt pt)
         pt.y = lr.y;
     const auto size = Size();
     m_hue = Value((pt.x - ul.x)) * 1.0 / Value(size.x);
-    m_saturation = Value(1.0 - (pt.y - ul.y)) * 1.0 / Value(size.y);
+    m_saturation = 1.0 - (pt.y - ul.y)*1.0/Value(size.y);
     ChangedSignal(m_hue, m_saturation);
 }
 

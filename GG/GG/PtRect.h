@@ -17,78 +17,7 @@
 
 #include <boost/functional/hash.hpp>
 #include <GG/Base.h>
-#include <cmath>
-
-namespace CXRound {
-    [[nodiscard]] constexpr int round_to_int(float f) noexcept
-    { return static_cast<int>((f >= 0.0f) ? (f + 0.5f) : (f - 0.5f)); }
-    [[nodiscard]] constexpr int round_to_int(double d) noexcept
-    { return static_cast<int>((d >= 0.0) ? (d + 0.5) : (d - 0.5)); }
-}
-
-#define POSITION_TYPEDEF(name)                                                                  \
-enum class name : int     {};                                                                   \
-constexpr name name ## 0 {0};                                                                   \
-constexpr name name ## 1 {1};                                                                   \
-                                                                                                \
-constexpr name To ## name (float f) noexcept { return name{CXRound::round_to_int(f)}; }         \
-constexpr name To ## name (double d) noexcept { return name{CXRound::round_to_int(d)}; }        \
-                                                                                                \
-constexpr int Value(name x) noexcept { return static_cast<int>(x); }                            \
-                                                                                                \
-constexpr name operator-(name x) noexcept { return name{-Value(x)}; }                           \
-                                                                                                \
-constexpr name operator+(name lhs, name rhs) noexcept { return name{Value(lhs) + Value(rhs)}; } \
-constexpr name operator+(name x, int i) noexcept { return name{Value(x) + i}; }                 \
-constexpr name operator+(int i, name x) noexcept { return name{Value(x) + i}; }                 \
-constexpr name& operator+=(name& lhs, name rhs) noexcept { lhs = lhs + rhs; return lhs; }       \
-constexpr name& operator+=(name& lhs, int rhs) noexcept { lhs = lhs + rhs; return lhs; }        \
-constexpr float operator+(name x, float f) noexcept { return Value(x) + f; }                    \
-constexpr float operator+(float f, name x) noexcept { return x + f; }                           \
-constexpr name& operator+=(name&, float) noexcept = delete;                                     \
-constexpr double operator+(name x, double d) noexcept { return Value(x) + d; }                  \
-constexpr double operator+(double d, name x) noexcept { return x + d; }                         \
-constexpr name& operator+=(name&, double) noexcept = delete;                                    \
-                                                                                                \
-constexpr name operator-(name lhs, name rhs) noexcept { return name{Value(lhs) - Value(rhs)}; } \
-constexpr name operator-(name x, int i) noexcept { return name{Value(x) - i}; }                 \
-constexpr int operator-(int i, name x) noexcept { return i - Value(x); }                        \
-constexpr name& operator-=(name& lhs, name rhs) noexcept { lhs = lhs - rhs; return lhs; }       \
-constexpr name& operator-=(name& lhs, int rhs) noexcept { lhs = lhs - rhs; return lhs; }        \
-constexpr float operator-(name x, float f) noexcept { return Value(x) - f; }                    \
-constexpr float operator-(float f, name x) noexcept { return f - Value(x); }                    \
-constexpr name& operator-=(name&, float) noexcept = delete;                                     \
-constexpr double operator-(name x, double d) noexcept { return Value(x) - d; }                  \
-constexpr double operator-(double d, name x) noexcept { return d - Value(x); }                  \
-constexpr name& operator-=(name&, double) noexcept = delete;                                    \
-                                                                                                \
-constexpr name operator*(name lhs, name rhs) noexcept { return name{Value(lhs) * Value(rhs)}; } \
-constexpr name operator*(name x, int i) noexcept { return name{Value(x) * i}; }                 \
-constexpr name operator*(int i, name x) noexcept { return name{Value(x) * i}; }                 \
-constexpr name& operator*=(name& lhs, name rhs) noexcept { lhs = lhs * rhs; return lhs; }       \
-constexpr name& operator*=(name& lhs, int rhs) noexcept { lhs = lhs * rhs; return lhs; }        \
-constexpr float operator*(name x, float f) noexcept { return Value(x) * f; }                    \
-constexpr float operator*(float f, name x) noexcept { return x * f; }                           \
-constexpr name& operator*=(name& x, float f) noexcept { x = To ## name (x * f); return x; }     \
-constexpr double operator*(name x, double d) noexcept { return Value(x) * d; }                  \
-constexpr double operator*(double d, name x) noexcept { return x * d; }                         \
-constexpr name& operator*=(name& x, double d) noexcept { x = To ## name (x * d); return x; }    \
-                                                                                                \
-constexpr int operator/(name lhs, name rhs) noexcept { return Value(lhs) / Value(rhs); }        \
-constexpr name operator/(name x, int i) noexcept { return name{Value(x) / i}; }                 \
-constexpr name& operator/=(name& lhs, int rhs) noexcept { lhs = lhs / rhs; return lhs; }        \
-constexpr float operator/(name x, float f) noexcept { return Value(x) / f; }                    \
-constexpr float operator/(float, name) noexcept = delete;                                       \
-constexpr name& operator/=(name& x, float f) noexcept { x = To ## name(x / f); return x; }      \
-constexpr double operator/(name x, double d) noexcept { return Value(x) / d; }                  \
-constexpr double operator/(double, name) noexcept = delete;                                     \
-constexpr name& operator/=(name& x, double d) noexcept { x = To ## name(x / d); return x; }     \
-                                                                                                \
-constexpr name& operator++(name& x)     { x += name ## 1; return x; }                           \
-constexpr name operator++(name& x, int) { name rv = x; x += name ## 1; return rv; }             \
-constexpr name& operator--(name& x)     { x -= name ## 1; return x; }                           \
-constexpr name operator--(name& x, int) { name rv = x; x -= name ## 1; return rv; }
-
+#include <GG/StrongTypedef.h>
 
 namespace GG {
 

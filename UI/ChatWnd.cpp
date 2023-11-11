@@ -216,8 +216,11 @@ bool MessageWndEdit::AutoComplete() {
     } else {
         bool exact_match = false;
 
-        auto cursor_pos = this->CursorPosn();
-        if (cursor_pos.first == cursor_pos.second && 0 < cursor_pos.first && cursor_pos.first <= full_line.size()) {
+        const auto cursor_pos = this->CursorPosn();
+        if (cursor_pos.first == cursor_pos.second &&
+            GG::CP0 < cursor_pos.first &&
+            Value(cursor_pos.first) <= full_line.size())
+        {
             auto word_start = full_line.substr(0, Value(cursor_pos.first)).find_last_of(" :");
             if (word_start == std::string::npos)
                 word_start = 0;
@@ -235,7 +238,7 @@ bool MessageWndEdit::AutoComplete() {
                 if (boost::iequals(word, partial_word)) { // if there's an exact match, just add a space
                     full_line.insert(Value(cursor_pos.first), " ");
                     this->SetText(std::move(full_line));
-                    this->SelectRange(cursor_pos.first + 1, cursor_pos.first + 1);
+                    this->SelectRange(cursor_pos.first + GG::CP1, cursor_pos.first + GG::CP1);
                     exact_match = true;
                     break;
                 }

@@ -1064,9 +1064,9 @@ std::vector<std::pair<StrSize, StrSize>> GUI::FindWordsStringIndices(std::string
         {
             auto word_pos_it = first;
             std::advance(word_pos_it, match_result.position());
-            StrSize start_idx(std::distance(begin, word_pos_it.base()));
+            StrSize start_idx{static_cast<std::size_t>(std::distance(begin, word_pos_it.base()))};
             std::advance(word_pos_it, match_result.length());
-            StrSize end_idx(std::distance(begin, word_pos_it.base()));
+            StrSize end_idx{static_cast<std::size_t>(std::distance(begin, word_pos_it.base()))};
 
             return {start_idx, end_idx};
         });

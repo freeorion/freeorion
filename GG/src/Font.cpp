@@ -390,25 +390,25 @@ std::ostream& GG::operator<<(std::ostream& os, Font::Substring substr)
 CPSize GG::CodePointIndexOf(std::size_t line, CPSize index,
                             const std::vector<Font::LineData>& line_data)
 {
-    CPSize retval(0);
+    CPSize retval(CP0);
     if (line_data.size() <= line) {
         auto it = line_data.rbegin();
         auto end_it = line_data.rend();
         while (it != end_it) {
             if (!it->char_data.empty()) {
-                retval = it->char_data.back().code_point_index + 1;
+                retval = it->char_data.back().code_point_index + CP1;
                 break;
             }
             ++it;
         }
-    } else if (index < line_data[line].char_data.size()) {
+    } else if (Value(index) < line_data[line].char_data.size()) {
         retval = line_data[line].char_data[Value(index)].code_point_index;
     } else {
         auto it = line_data.rbegin() + (line_data.size() - 1 - line);
         auto end_it = line_data.rend();
         while (it != end_it) {
             if (!it->char_data.empty()) {
-                retval = it->char_data.back().code_point_index + 1;
+                retval = it->char_data.back().code_point_index + CP1;
                 break;
             }
             ++it;
@@ -420,7 +420,7 @@ CPSize GG::CodePointIndexOf(std::size_t line, CPSize index,
 StrSize GG::StringIndexOf(std::size_t line, CPSize index,
                           const std::vector<Font::LineData>& line_data)
 {
-    StrSize retval(0);
+    StrSize retval(S0);
     if (line_data.size() <= line) {
         auto it = line_data.rbegin();
         auto end_it = line_data.rend();
@@ -431,7 +431,7 @@ StrSize GG::StringIndexOf(std::size_t line, CPSize index,
             }
             ++it;
         }
-    } else if (index < line_data[line].char_data.size()) {
+    } else if (Value(index) < line_data[line].char_data.size()) {
         retval = line_data[line].char_data[Value(index)].string_index;
     } else {
         auto it = line_data.rbegin() + (line_data.size() - 1 - line);
@@ -1278,7 +1278,7 @@ namespace DebugOutput {
                     std::cout << Value(width) << " ";
                 std::cout << "\n    whitespace=" << elem->whitespace << "\n    newline=" << elem->newline << "\n";
             }
-            std::cout << "    string_size=" << elem->StringSize() << "\n";
+            std::cout << "    string_size=" << Value(elem->StringSize()) << "\n";
             std::cout << "\n";
         }
         std::cout << std::endl;
@@ -1300,10 +1300,10 @@ namespace DebugOutput {
                 std::cout << Value(character.extent) << " ";
             std::cout << "\n    string indices=";
             for (const auto& character : line_data[i].char_data)
-                std::cout << character.string_index << " ";
+                std::cout << Value(character.string_index) << " ";
             std::cout << "\n    code point indices=";
             for (const auto& character : line_data[i].char_data)
-                std::cout << character.code_point_index << " ";
+                std::cout << Value(character.code_point_index) << " ";
             std::cout << "\n    chars on line: \"";
             for (const auto& character : line_data[i].char_data)
                 std::cout << text[Value(character.string_index)];
@@ -1312,7 +1312,7 @@ namespace DebugOutput {
                 for (auto& tag_elem : line_data[i].char_data[j].tags) {
                     if (tag_elem) {
                         std::cout << "FormattingTag @" << j << "\n    text=\"" << tag_elem->text << "\"\n    widths=";
-                        for (const X& width : tag_elem->widths)
+                        for (const auto width : tag_elem->widths)
                             std::cout << Value(width) << " ";
                         std::cout << "\n    whitespace=" << tag_elem->whitespace
                                   << "\n    newline=" << tag_elem->newline << "\n    params=\n";
@@ -1557,9 +1557,9 @@ std::vector<Font::LineData> Font::DetermineLines(
 
     X x = X0;
     // the position within the original string of the current TextElement
-    StrSize original_string_offset(0);
+    StrSize original_string_offset(S0);
     // the index of the first code point of the current TextElement
-    CPSize code_point_offset(0);
+    CPSize code_point_offset(CP0);
     std::vector<std::shared_ptr<TextElement>> pending_formatting_tags;
     for (const auto& elem : text_elements) {
         // if a newline is explicitly requested, start a new one
@@ -1575,9 +1575,9 @@ std::vector<Font::LineData> Font::DetermineLines(
             auto it = elem->text.begin();
             const auto end_it = elem->text.end();
             while (it != end_it) {
-                const StrSize char_index(std::distance(elem->text.begin(), it));
+                const StrSize char_index{static_cast<std::size_t>(std::distance(elem->text.begin(), it))};
                 const std::uint32_t c = utf8::next(it, end_it);
-                const StrSize char_size = std::distance(elem->text.begin(), it) - char_index;
+                const StrSize char_size{std::distance(elem->text.begin(), it) - Value(char_index)};
                 if (c != WIDE_CR && c != WIDE_FF) {
                     X advance_position = x + m_space_width;
                     if (c == WIDE_TAB && expand_tabs)
@@ -1643,9 +1643,9 @@ std::vector<Font::LineData> Font::DetermineLines(
                 const auto end_it = elem->text.end();
                 std::size_t j = 0;
                 while (it != end_it) {
-                    const StrSize char_index(std::distance(elem->text.begin(), it));
+                    const StrSize char_index{static_cast<std::size_t>(std::distance(elem->text.begin(), it))};
                     utf8::next(it, end_it);
-                    const StrSize char_size = std::distance(elem->text.begin(), it) - char_index;
+                    const StrSize char_size{std::distance(elem->text.begin(), it) - Value(char_index)};
                     x += elem->widths[j];
                     line_data.back().char_data.emplace_back(
                         x,
@@ -1662,9 +1662,9 @@ std::vector<Font::LineData> Font::DetermineLines(
                 const auto end_it = elem->text.end();
                 std::size_t j = 0;
                 while (it != end_it) {
-                    const StrSize char_index(std::distance(elem->text.begin(), it));
+                    const StrSize char_index{static_cast<std::size_t>(std::distance(elem->text.begin(), it))};
                     utf8::next(it, end_it);
-                    const StrSize char_size = std::distance(elem->text.begin(), it) - char_index;
+                    const StrSize char_size{std::distance(elem->text.begin(), it) - Value(char_index)};
                     // if the char overruns this line, and isn't alone on this
                     // line, move it down to the next line
                     if ((format & FORMAT_LINEWRAP) && box_width < x + elem->widths[j] && x != X0) {
@@ -1772,11 +1772,11 @@ void Font::Init(FT_Face& face)
         m_underline_height = 1.0;
 
     // italics info
-    m_italics_offset = Value(ITALICS_FACTOR * m_height / 2.0);
+    m_italics_offset = ITALICS_FACTOR * m_height / 2.0;
     // shadow info
     m_shadow_offset = 1.0;
     // super/subscript
-    m_super_sub_offset = Value(m_height / 4.0);
+    m_super_sub_offset = m_height / 4.0;
 
     // we always need these whitespace, number, and punctuation characters
     std::vector<std::pair<std::uint32_t, std::uint32_t>> range_vec(

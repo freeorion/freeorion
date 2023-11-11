@@ -188,8 +188,8 @@ protected:
         std::size_t frames = 0;                 ///< the number of frames in this texture
     };
 
-    std::size_t FramesInTexture(const Texture* t) const;///< returns the maximum number of frames that could be stored in \a t given the size of the control and Margin()
-    const std::vector<FrameSet>& Textures() const;      ///< returns the shared_ptrs to texture objects with all animation frames
+    std::size_t FramesInTexture(const Texture* t) const;   ///< returns the maximum number of frames that could be stored in \a t given the size of the control and Margin()
+    auto& Textures() const noexcept { return m_textures; } ///< returns the shared_ptrs to texture objects with all animation frames
 
     std::size_t  CurrentTexture() const;    ///< returns the current Texture being shown (part of it, anyway); INVALID_INDEX if none
     std::size_t  CurrentSubTexture() const; ///< returns the current frame being shown within Texture number CurrTexture(); INVALID_INDEX if none

@@ -19,8 +19,6 @@
 #include <GG/Flags.h>
 #include <GG/StrongTypedef.h>
 
-#include <limits>
-
 namespace GG {
 
 class Font;
@@ -50,7 +48,7 @@ constexpr TextFormat FORMAT_IGNORETAGS(1 << 9); ///< Text formatting tags (e.g. 
 
     Such values refer to indices into UTF-8 encoded strings, \a not code
     points.  \see GG_STRONG_SIZE_TYPEDEF */
-GG_STRONG_SIZE_TYPEDEF(StrSize);
+SIZE_TYPEDEF(StrSize, S);
 
 /** \class GG::CPSize
     \brief The code point size and index value type.
@@ -58,18 +56,10 @@ GG_STRONG_SIZE_TYPEDEF(StrSize);
     Such values refer to indices of code points in Unicode strings, \a not
     indices into underlying UTF-8 encoded strings.  \see
     GG_STRONG_SIZE_TYPEDEF */
-GG_STRONG_SIZE_TYPEDEF(CPSize);
+SIZE_TYPEDEF(CPSize, CP);
 #ifdef _MSC_VER
  #pragma warning(pop)
 #endif
-
-// some useful size constants
-constexpr StrSize S0{0};
-constexpr StrSize S1{1};
-constexpr StrSize INVALID_STR_SIZE{std::numeric_limits<std::size_t>::max()};
-constexpr CPSize CP0{0};
-constexpr CPSize CP1{1};
-constexpr CPSize INVALID_CP_SIZE{std::numeric_limits<std::size_t>::max()};
 
 }
 

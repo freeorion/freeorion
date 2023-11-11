@@ -197,20 +197,27 @@ void Layout::DoLayout(Pt ul, Pt lr)
 
         // adjust row minimums
         double total_stretch = 0.0;
-        for (std::size_t i = wnd_position.second.first_row; i < wnd_position.second.last_row; ++i) {
+        for (std::size_t i = wnd_position.second.first_row; i < wnd_position.second.last_row; ++i)
             total_stretch += m_row_params[i].stretch;
-        }
+
         if (total_stretch) {
             for (std::size_t i = wnd_position.second.first_row; i < wnd_position.second.last_row; ++i) {
-                m_row_params[i].effective_min = std::max(m_row_params[i].effective_min, static_cast<unsigned int>(Value(min_space_needed.y / total_stretch * m_row_params[i].stretch)));
-                row_effective_min_usable_sizes[i] = std::max(row_effective_min_usable_sizes[i], static_cast<unsigned int>(Value(min_usable_size.y / total_stretch * m_row_params[i].stretch)));
+                m_row_params[i].effective_min = std::max<unsigned int>(
+                    m_row_params[i].effective_min,
+                    Value(min_space_needed.y) / total_stretch * m_row_params[i].stretch);
+                row_effective_min_usable_sizes[i] = std::max<unsigned int>(
+                    row_effective_min_usable_sizes[i],
+                    Value(min_usable_size.y) / total_stretch * m_row_params[i].stretch);
             }
+
         } else { // if all rows have 0.0 stretch, distribute height evenly
-            double per_row_min = Value(min_space_needed.y / static_cast<double>(wnd_position.second.last_row - wnd_position.second.first_row));
-            double per_row_usable_min = Value(min_usable_size.y / static_cast<double>(wnd_position.second.last_row - wnd_position.second.first_row));
+            double per_row_min = Value(min_space_needed.y) / static_cast<double>(wnd_position.second.last_row - wnd_position.second.first_row);
+            double per_row_usable_min = Value(min_usable_size.y) / static_cast<double>(wnd_position.second.last_row - wnd_position.second.first_row);
             for (std::size_t i = wnd_position.second.first_row; i < wnd_position.second.last_row; ++i) {
-                m_row_params[i].effective_min = std::max(m_row_params[i].effective_min, static_cast<unsigned int>(per_row_min + 0.5));
-                row_effective_min_usable_sizes[i] = std::max(row_effective_min_usable_sizes[i], static_cast<unsigned int>(per_row_usable_min + 0.5));
+                m_row_params[i].effective_min = std::max<unsigned int>(
+                    m_row_params[i].effective_min, per_row_min + 0.5);
+                row_effective_min_usable_sizes[i] = std::max<unsigned int>(
+                    row_effective_min_usable_sizes[i], per_row_usable_min + 0.5);
             }
         }
 
@@ -221,15 +228,21 @@ void Layout::DoLayout(Pt ul, Pt lr)
         }
         if (total_stretch) {
             for (std::size_t i = wnd_position.second.first_column; i < wnd_position.second.last_column; ++i) {
-                m_column_params[i].effective_min = std::max(m_column_params[i].effective_min, static_cast<unsigned int>(Value(min_space_needed.x / total_stretch * m_column_params[i].stretch)));
-                column_effective_min_usable_sizes[i] = std::max(column_effective_min_usable_sizes[i], static_cast<unsigned int>(Value(min_usable_size.x / total_stretch * m_column_params[i].stretch)));
+                m_column_params[i].effective_min = std::max<unsigned int>(
+                    m_column_params[i].effective_min,
+                    Value(min_space_needed.x) / total_stretch * m_column_params[i].stretch);
+                column_effective_min_usable_sizes[i] = std::max<unsigned int>(
+                    column_effective_min_usable_sizes[i],
+                    Value(min_usable_size.x) / total_stretch * m_column_params[i].stretch);
             }
         } else { // if all columns have 0.0 stretch, distribute width evenly
-            double per_column_min = Value(min_space_needed.x / static_cast<double>(wnd_position.second.last_column - wnd_position.second.first_column));
-            double per_column_usable_min = Value(min_usable_size.x / static_cast<double>(wnd_position.second.last_column - wnd_position.second.first_column));
+            double per_column_min = Value(min_space_needed.x) / static_cast<double>(wnd_position.second.last_column - wnd_position.second.first_column);
+            double per_column_usable_min = Value(min_usable_size.x) / static_cast<double>(wnd_position.second.last_column - wnd_position.second.first_column);
             for (std::size_t i = wnd_position.second.first_column; i < wnd_position.second.last_column; ++i) {
-                m_column_params[i].effective_min = std::max(m_column_params[i].effective_min, static_cast<unsigned int>(per_column_min + 0.5));
-                column_effective_min_usable_sizes[i] = std::max(column_effective_min_usable_sizes[i], static_cast<unsigned int>(per_column_usable_min + 0.5));
+                m_column_params[i].effective_min = std::max<unsigned int>(
+                    m_column_params[i].effective_min, per_column_min + 0.5);
+                column_effective_min_usable_sizes[i] = std::max<unsigned int>(
+                    column_effective_min_usable_sizes[i], per_column_usable_min + 0.5);
             }
         }
     }

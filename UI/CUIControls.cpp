@@ -1046,7 +1046,7 @@ void CensoredCUIEdit::AcceptPastedText(const std::string& text) {
 
     if (modified_text) {
         // moves cursor to end of pasted text
-        GG::CPSize text_span(utf8::distance(text.begin(), text.end()));
+        GG::CPSize text_span{static_cast<std::size_t>(utf8::distance(text.begin(), text.end()))};
         GG::CPSize new_cursor_pos = std::max(GG::CP0, std::min(Length(), m_cursor_pos.second + text_span));
         m_cursor_pos.second = new_cursor_pos;
 

@@ -17,406 +17,118 @@
 #define _GG_StrongTypedef_h_
 
 
-#include <iostream>
-#include <type_traits>
+#include <cmath>
+#include <limits>
 
-
-namespace GG {
-
-/** Overload of Value() for int. */
-constexpr int Value(int i) noexcept
-{ return i; }
-
-/** Overload of Value() for double. */
-constexpr double Value(double d) noexcept
-{ return d; }
-
-/** Overload of Value() for std::size_t. */
-constexpr std::size_t Value(std::size_t s) noexcept
-{ return s; }
-
+namespace CXRound {
+    [[nodiscard]] constexpr int round_to_int(float f) noexcept
+    { return static_cast<int>((f >= 0.0f) ? (f + 0.5f) : (f - 0.5f)); }
+    [[nodiscard]] constexpr int round_to_int(double d) noexcept
+    { return static_cast<int>((d >= 0.0) ? (d + 0.5) : (d - 0.5)); }
+    [[nodiscard]] constexpr std::size_t abs_to_size(int i) noexcept
+    { return static_cast<std::size_t>(i >= 0 ? i : -i); }
 }
 
-#define GG_MEMBER_BOOL_OP_SELF_TYPE(op, rhs_type) \
-    constexpr bool operator op (rhs_type rhs) const noexcept \
-    { return m_value op rhs.m_value; }
-
-#define GG_MEMBER_BOOL_OP_OTHER_TYPE(op, rhs_type) \
-    constexpr bool operator op (rhs_type rhs) const noexcept \
-    { return m_value op Value(rhs); }
-
-#define GG_MEMBER_NEG_INCR_DECR(this_type)                \
-    constexpr this_type operator-() const noexcept \
-    { return this_type(-m_value); }                       \
-    constexpr this_type& operator++()  noexcept    \
-    {                                                     \
-        ++m_value;                                        \
-        return *this;                                     \
-    }                                                     \
-    constexpr this_type& operator--()  noexcept    \
-    {                                                     \
-        --m_value;                                        \
-        return *this;                                     \
-    }                                                     \
-    constexpr this_type operator++(int)  noexcept  \
-    {                                                     \
-        this_type retval(m_value);                        \
-        ++m_value;                                        \
-        return retval;                                    \
-    }                                                     \
-    constexpr this_type operator--(int)  noexcept  \
-    {                                                     \
-        this_type retval(m_value);                        \
-        --m_value;                                        \
-        return retval;                                    \
-    }
-
-#define GG_MEMBER_ASSIGN_OP_SELF_TYPE(op, rhs_type)                \
-    constexpr rhs_type& operator op (rhs_type rhs) noexcept \
-    {                                                              \
-        m_value op rhs.m_value;                                    \
-        return *this;                                              \
-    }
-
-#define GG_MEMBER_ASSIGN_OP_OTHER_TYPE_DECL(op, self_type, rhs_type) \
-    constexpr self_type& operator op ## = (rhs_type rhs)
-
-#define GG_MEMBER_ASSIGN_OP_OTHER_TYPE(op, self_type, rhs_type)  \
-    GG_MEMBER_ASSIGN_OP_OTHER_TYPE_DECL(op, self_type, rhs_type) \
-    {                                                            \
-        m_value = static_cast<self_type::value_type>(            \
-            m_value op Value(rhs)                                \
-        );                                                       \
-        return *this;                                            \
-    }
-
-#define GG_MEMBER_OP_OTHER_TYPE_DECL(op, self_type, rhs_type) \
-    constexpr self_type& operator op (rhs_type rhs) const
-
-#define GG_MEMBER_OP_OTHER_TYPE(op, self_type, rhs_type)  \
-    GG_MEMBER_OP_OTHER_TYPE_DECL(op, self_type, rhs_type) \
-    { return self_type(m_value op Value(rhs)); }
-
-#define GG_NONMEMBER_OP_SELF_TYPE(op, self_type)                            \
-    constexpr self_type operator op (self_type lhs, self_type rhs)   \
-    { return lhs op ## = rhs; }
-
-#define GG_NONMEMBER_OP_OTHER_TYPE(op, self_type, rhs_type)               \
-    constexpr self_type operator op (self_type lhs, rhs_type rhs)  \
-    { return lhs op ## = Value(rhs); }
-
-#define GG_MEMBER_SELF_COMPARATORS(self_type)    \
-    GG_MEMBER_BOOL_OP_SELF_TYPE(==, self_type); \
-    GG_MEMBER_BOOL_OP_SELF_TYPE(!=, self_type); \
-    GG_MEMBER_BOOL_OP_SELF_TYPE(<, self_type);  \
-    GG_MEMBER_BOOL_OP_SELF_TYPE(>, self_type);  \
-    GG_MEMBER_BOOL_OP_SELF_TYPE(<=, self_type); \
-    GG_MEMBER_BOOL_OP_SELF_TYPE(>=, self_type);
-
-#define GG_MEMBER_OTHER_COMPARATORS(rhs_type)   \
-    GG_MEMBER_BOOL_OP_OTHER_TYPE(==, rhs_type); \
-    GG_MEMBER_BOOL_OP_OTHER_TYPE(!=, rhs_type); \
-    GG_MEMBER_BOOL_OP_OTHER_TYPE(<, rhs_type);  \
-    GG_MEMBER_BOOL_OP_OTHER_TYPE(>, rhs_type);  \
-    GG_MEMBER_BOOL_OP_OTHER_TYPE(<=, rhs_type); \
-    GG_MEMBER_BOOL_OP_OTHER_TYPE(>=, rhs_type);
-
-#define GG_MEMBER_ARITH_ASSIGN_OPS_SELF_TYPE(rhs_type) \
-    GG_MEMBER_ASSIGN_OP_SELF_TYPE(+=, rhs_type);       \
-    GG_MEMBER_ASSIGN_OP_SELF_TYPE(-=, rhs_type);       \
-    GG_MEMBER_ASSIGN_OP_SELF_TYPE(*=, rhs_type);       \
-    GG_MEMBER_ASSIGN_OP_SELF_TYPE(/=, rhs_type);
-
-#define GG_MEMBER_ARITH_ASSIGN_OPS_OTHER_TYPE(self_type, rhs_type) \
-    GG_MEMBER_ASSIGN_OP_OTHER_TYPE(+, self_type, rhs_type);        \
-    GG_MEMBER_ASSIGN_OP_OTHER_TYPE(-, self_type, rhs_type);        \
-    GG_MEMBER_ASSIGN_OP_OTHER_TYPE(*, self_type, rhs_type);        \
-    GG_MEMBER_ASSIGN_OP_OTHER_TYPE(/, self_type, rhs_type);
-
-#define GG_NONMEMBER_ARITH_OPS_SELF_TYPE(self_type) \
-    GG_NONMEMBER_OP_SELF_TYPE(+, self_type);        \
-    GG_NONMEMBER_OP_SELF_TYPE(-, self_type);        \
-    GG_NONMEMBER_OP_SELF_TYPE(*, self_type);        \
-    GG_NONMEMBER_OP_SELF_TYPE(/, self_type);
-
-#define GG_NONMEMBER_ARITH_OPS_OTHER_TYPE(self_type, rhs_type) \
-    GG_NONMEMBER_OP_OTHER_TYPE(+, self_type, rhs_type);        \
-    GG_NONMEMBER_OP_OTHER_TYPE(-, self_type, rhs_type);        \
-    GG_NONMEMBER_OP_OTHER_TYPE(*, self_type, rhs_type);        \
-    GG_NONMEMBER_OP_OTHER_TYPE(/, self_type, rhs_type);
-
-#define GG_NONMEMBER_REVERSED_BOOL_OP_SET(lhs_type, self_type) \
-    constexpr bool operator==(lhs_type x, self_type y)  \
-    { return y == x; }                                         \
-    constexpr bool operator<(lhs_type x, self_type y)   \
-    { return !(y < x || y == x); }                             \
-    constexpr bool operator>(lhs_type x, self_type y)   \
-    { return !(y > x || y == x); }                             \
-    constexpr bool operator<=(lhs_type x, self_type y)  \
-    { return !(y < x); }                                       \
-    constexpr bool operator>=(lhs_type x, self_type y)  \
-    { return !(y > x); }
-
-#define GG_NONMEMBER_REVERSED_ARITH_OP_SET(lhs_type, self_type)   \
-    constexpr self_type operator+(lhs_type x, self_type y) \
-    { return y += x; }                                            \
-    constexpr self_type operator-(lhs_type x, self_type y) \
-    { return -(y -= x); }                                         \
-    constexpr self_type operator*(lhs_type x, self_type y) \
-    { return y *= x; }
+#define POSITION_TYPEDEF(name)                                                                  \
+enum class name : int {};                                                                       \
+constexpr name name ## 0 {0};                                                                   \
+constexpr name name ## 1 {1};                                                                   \
+                                                                                                \
+constexpr name To ## name (float f) noexcept { return name{CXRound::round_to_int(f)}; }         \
+constexpr name To ## name (double d) noexcept { return name{CXRound::round_to_int(d)}; }        \
+                                                                                                \
+constexpr int Value(name x) noexcept { return static_cast<int>(x); }                            \
+                                                                                                \
+constexpr name operator-(name x) noexcept { return name{-Value(x)}; }                           \
+                                                                                                \
+constexpr name operator+(name lhs, name rhs) noexcept { return name{Value(lhs) + Value(rhs)}; } \
+constexpr name operator+(name x, int i) noexcept { return name{Value(x) + i}; }                 \
+constexpr name operator+(int i, name x) noexcept { return name{Value(x) + i}; }                 \
+constexpr name& operator+=(name& lhs, name rhs) noexcept { lhs = lhs + rhs; return lhs; }       \
+constexpr name& operator+=(name& lhs, int rhs) noexcept { lhs = lhs + rhs; return lhs; }        \
+constexpr float operator+(name x, float f) noexcept { return Value(x) + f; }                    \
+constexpr float operator+(float f, name x) noexcept { return x + f; }                           \
+constexpr name& operator+=(name&, float) noexcept = delete;                                     \
+constexpr double operator+(name x, double d) noexcept { return Value(x) + d; }                  \
+constexpr double operator+(double d, name x) noexcept { return x + d; }                         \
+constexpr name& operator+=(name&, double) noexcept = delete;                                    \
+                                                                                                \
+constexpr name operator-(name lhs, name rhs) noexcept { return name{Value(lhs) - Value(rhs)}; } \
+constexpr name operator-(name x, int i) noexcept { return name{Value(x) - i}; }                 \
+constexpr int operator-(int i, name x) noexcept { return i - Value(x); }                        \
+constexpr name& operator-=(name& lhs, name rhs) noexcept { lhs = lhs - rhs; return lhs; }       \
+constexpr name& operator-=(name& lhs, int rhs) noexcept { lhs = lhs - rhs; return lhs; }        \
+constexpr float operator-(name x, float f) noexcept { return Value(x) - f; }                    \
+constexpr float operator-(float f, name x) noexcept { return f - Value(x); }                    \
+constexpr name& operator-=(name&, float) noexcept = delete;                                     \
+constexpr double operator-(name x, double d) noexcept { return Value(x) - d; }                  \
+constexpr double operator-(double d, name x) noexcept { return d - Value(x); }                  \
+constexpr name& operator-=(name&, double) noexcept = delete;                                    \
+                                                                                                \
+constexpr name operator*(name lhs, name rhs) noexcept { return name{Value(lhs) * Value(rhs)}; } \
+constexpr name operator*(name x, int i) noexcept { return name{Value(x) * i}; }                 \
+constexpr name operator*(int i, name x) noexcept { return name{Value(x) * i}; }                 \
+constexpr name& operator*=(name& lhs, name rhs) noexcept { lhs = lhs * rhs; return lhs; }       \
+constexpr name& operator*=(name& lhs, int rhs) noexcept { lhs = lhs * rhs; return lhs; }        \
+constexpr float operator*(name x, float f) noexcept { return Value(x) * f; }                    \
+constexpr float operator*(float f, name x) noexcept { return x * f; }                           \
+constexpr name& operator*=(name& x, float f) noexcept { x = To ## name (x * f); return x; }     \
+constexpr double operator*(name x, double d) noexcept { return Value(x) * d; }                  \
+constexpr double operator*(double d, name x) noexcept { return x * d; }                         \
+constexpr name& operator*=(name& x, double d) noexcept { x = To ## name (x * d); return x; }    \
+                                                                                                \
+constexpr int operator/(name lhs, name rhs) noexcept { return Value(lhs) / Value(rhs); }        \
+constexpr name operator/(name x, int i) noexcept { return name{Value(x) / i}; }                 \
+constexpr name& operator/=(name& lhs, int rhs) noexcept { lhs = lhs / rhs; return lhs; }        \
+constexpr float operator/(name x, float f) noexcept { return Value(x) / f; }                    \
+constexpr float operator/(float, name) noexcept = delete;                                       \
+constexpr name& operator/=(name& x, float f) noexcept { x = To ## name(x / f); return x; }      \
+constexpr double operator/(name x, double d) noexcept { return Value(x) / d; }                  \
+constexpr double operator/(double, name) noexcept = delete;                                     \
+constexpr name& operator/=(name& x, double d) noexcept { x = To ## name(x / d); return x; }     \
+                                                                                                \
+constexpr name& operator++(name& x)     { x += name ## 1; return x; }                           \
+constexpr name operator++(name& x, int) { name rv = x; x += name ## 1; return rv; }             \
+constexpr name& operator--(name& x)     { x -= name ## 1; return x; }                           \
+constexpr name operator--(name& x, int) { name rv = x; x -= name ## 1; return rv; }
 
 
-#define GG_STRONG_DOUBLE_TYPEDEF(name, type)                            \
-    class name;                                                         \
-    class name ## _d;                                                   \
-    constexpr type Value(name x) noexcept;                              \
-    constexpr double Value(name ## _d x) noexcept;                      \
-                                                                        \
-    class name ## _d                                                    \
-    {                                                                   \
-    private:                                                            \
-        struct ConvertibleToBoolDummy {int _;};                         \
-                                                                        \
-    public:                                                             \
-        typedef double value_type;                                      \
-                                                                        \
-        constexpr name ## _d() = default;                               \
-        explicit constexpr name ## _d(double t) : m_value(t) {}         \
-                                                                        \
-        GG_MEMBER_SELF_COMPARATORS(name ## _d);                         \
-                                                                        \
-        GG_MEMBER_OTHER_COMPARATORS(double);                            \
-                                                                        \
-        operator int ConvertibleToBoolDummy::* () const                 \
-        { return m_value ? &ConvertibleToBoolDummy::_ : 0; }            \
-                                                                        \
-        GG_MEMBER_NEG_INCR_DECR(name ## _d);                            \
-                                                                        \
-        GG_MEMBER_ARITH_ASSIGN_OPS_SELF_TYPE(name ## _d);               \
-                                                                        \
-        GG_MEMBER_ARITH_ASSIGN_OPS_OTHER_TYPE(name ## _d, double);      \
-                                                                        \
-        GG_MEMBER_ASSIGN_OP_OTHER_TYPE_DECL(+, name ## _d, name);       \
-        GG_MEMBER_ASSIGN_OP_OTHER_TYPE_DECL(-, name ## _d, name);       \
-        GG_MEMBER_ASSIGN_OP_OTHER_TYPE_DECL(*, name ## _d, name);       \
-        GG_MEMBER_ASSIGN_OP_OTHER_TYPE_DECL(/, name ## _d, name);       \
-                                                                        \
-    private:                                                            \
-        double m_value = 0.0;                                           \
-                                                                        \
-        friend constexpr double Value(name ## _d x) noexcept;           \
-    };                                                                  \
-                                                                        \
-    GG_NONMEMBER_ARITH_OPS_SELF_TYPE(name ## _d);                       \
-                                                                        \
-    GG_NONMEMBER_ARITH_OPS_OTHER_TYPE(name ## _d, double);              \
-                                                                        \
-    GG_NONMEMBER_REVERSED_BOOL_OP_SET(double, name ## _d);              \
-                                                                        \
-    GG_NONMEMBER_REVERSED_ARITH_OP_SET(double, name ## _d);             \
-                                                                        \
-    constexpr double Value(name ## _d x) noexcept                \
-    { return x.m_value; }                                               \
-                                                                        \
-    inline std::ostream& operator<<(std::ostream& os, name ## _d x)     \
-    { os << Value(x); return os; }                                      \
-                                                                        \
-    inline std::istream& operator>>(std::istream& os, name ## _d& x)    \
-    {                                                                   \
-        double t;                                                       \
-        os >> t;                                                        \
-        x = name ## _d(t);                                              \
-        return os;                                                      \
-    }                                                                   \
-                                                                        \
-    void dummy_function_to_force_semicolon()
 
-/** Creates a new type \a name, based on underlying type \a type, which is not
-    interconvertible with any other numeric type.  \a type must be an integral
-    type.  The resulting type has most of the operations of the underlying
-    integral type.  Specifically, the type is totally ordered, incrementable,
-    decrementable, and arithmetic.  The type is also interarithemtic with and
-    comparable to objects of types \a type and double.  Note that the free
-    functions accepting doubles return GG_STRONG_DOUBLE_TYPEDEF's called \a
-    name_d.  This allows \a name objects to be used in floating point math. */
-#define GG_STRONG_INTEGRAL_TYPEDEF(name, type)                          \
-    GG_STRONG_DOUBLE_TYPEDEF(name, type);                               \
-                                                                        \
-    constexpr type Value(name x) noexcept;                              \
-                                                                        \
-    class name                                                          \
-    {                                                                   \
-    private:                                                            \
-        struct ConvertibleToBoolDummy {int _;};                         \
-                                                                        \
-    public:                                                             \
-        static_assert((std::is_integral_v<type>),                       \
-            "Creating an strong integral without passing an integral type"); \
-                                                                        \
-        typedef type value_type;                                        \
-                                                                        \
-        constexpr name() = default;                                     \
-        explicit constexpr name(type t) : m_value(t) {}                 \
-        explicit constexpr name(name ## _d t) :                         \
-            m_value(static_cast<type>(Value(t)))                        \
-        {}                                                              \
-                                                                        \
-        name& operator=(name ## _d t)                                   \
-        { m_value = static_cast<type>(Value(t)); return *this; }        \
-                                                                        \
-        GG_MEMBER_SELF_COMPARATORS(name);                               \
-                                                                        \
-        GG_MEMBER_OTHER_COMPARATORS(type);                              \
-        GG_MEMBER_OTHER_COMPARATORS(name ## _d);                        \
-        GG_MEMBER_OTHER_COMPARATORS(double);                            \
-                                                                        \
-        constexpr operator int ConvertibleToBoolDummy::* () const       \
-        { return m_value ? &ConvertibleToBoolDummy::_ : 0; }            \
-                                                                        \
-        GG_MEMBER_NEG_INCR_DECR(name);                                  \
-                                                                        \
-        GG_MEMBER_ARITH_ASSIGN_OPS_SELF_TYPE(name);                     \
-        GG_MEMBER_ASSIGN_OP_SELF_TYPE(%=, name);                        \
-                                                                        \
-        GG_MEMBER_ARITH_ASSIGN_OPS_OTHER_TYPE(name, type);              \
-        GG_MEMBER_ASSIGN_OP_OTHER_TYPE(%, name, type);                  \
-                                                                        \
-        GG_MEMBER_ARITH_ASSIGN_OPS_OTHER_TYPE(name, name ## _d);        \
-        GG_MEMBER_ARITH_ASSIGN_OPS_OTHER_TYPE(name, double);            \
-                                                                        \
-    private:                                                            \
-        type m_value = 0;                                               \
-                                                                        \
-        friend class name ## _d;                                        \
-        friend constexpr type Value(name x) noexcept;                   \
-    };                                                                  \
-                                                                        \
-    GG_NONMEMBER_ARITH_OPS_SELF_TYPE(name);                             \
-    GG_NONMEMBER_OP_SELF_TYPE(%, name);                                 \
-                                                                        \
-    GG_NONMEMBER_ARITH_OPS_OTHER_TYPE(name, type);                      \
-    GG_NONMEMBER_OP_OTHER_TYPE(%, name, type);                          \
-                                                                        \
-    GG_NONMEMBER_REVERSED_BOOL_OP_SET(type, name);                      \
-    GG_NONMEMBER_REVERSED_BOOL_OP_SET(name ## _d, name);                \
-    GG_NONMEMBER_REVERSED_BOOL_OP_SET(double, name);                    \
-                                                                        \
-    GG_NONMEMBER_REVERSED_ARITH_OP_SET(type, name);                     \
-                                                                        \
-    constexpr name ## _d operator+(name x, double y)             \
-    { return name ## _d(Value(x)) + y; }                                \
-    constexpr name ## _d operator-(name x, double y)             \
-    { return name ## _d(Value(x)) - y; }                                \
-    constexpr name ## _d operator*(name x, double y)             \
-    { return name ## _d(Value(x)) * y; }                                \
-    constexpr name ## _d operator/(name x, double y)             \
-    { return name ## _d(Value(x)) / y; }                                \
-                                                                        \
-    constexpr name ## _d operator+(double x, name y)             \
-    { return x + name ## _d(Value(y)); }                                \
-    constexpr name ## _d operator-(double x, name y)             \
-    { return x - name ## _d(Value(y)); }                                \
-    constexpr name ## _d operator*(double x, name y)             \
-    { return x * name ## _d(Value(y)); }                                \
-                                                                        \
-    constexpr type Value(name x) noexcept                        \
-    { return x.m_value; }                                               \
-                                                                        \
-    inline std::ostream& operator<<(std::ostream& os, name x)           \
-    { os << Value(x); return os; }                                      \
-                                                                        \
-    inline std::istream& operator>>(std::istream& os, name& x)          \
-    {                                                                   \
-        type t;                                                         \
-        os >> t;                                                        \
-        x = name(t);                                                    \
-        return os;                                                      \
-    }                                                                   \
-                                                                        \
-    constexpr name ## _d& name ## _d::operator+=(name rhs)       \
-    { m_value += Value(rhs); return *this; }                            \
-    constexpr name ## _d& name ## _d::operator-=(name rhs)       \
-    { m_value -= Value(rhs); return *this; }                            \
-    constexpr name ## _d& name ## _d::operator*=(name rhs)       \
-    { m_value *= Value(rhs); return *this; }                            \
-    constexpr name ## _d& name ## _d::operator/=(name rhs)       \
-    { m_value /= Value(rhs); return *this; }                            \
-                                                                        \
-    GG_NONMEMBER_ARITH_OPS_OTHER_TYPE(name ## _d, name);                \
-                                                                        \
-    GG_NONMEMBER_REVERSED_ARITH_OP_SET(name, name ## _d);               \
-    constexpr name ## _d operator/(name x, name ## _d y)         \
-    { return name ## _d(Value(x) / Value(y)); }                         \
-                                                                        \
-    void dummy_function_to_force_semicolon()
-
-/** Creates a new type \a name, based on underlying type std::size_t, which is
-    not interconvertible with any other numeric type.  The resulting type has
-    most of the operations of std::size_t.  Specifically, the type is totally
-    ordered, incrementable, decrementable, and arithmetic.  The type is also
-    interarithemtic with and comparable to objects of type std::size_t. */
-#define GG_STRONG_SIZE_TYPEDEF(name)                                    \
-    class name;                                                         \
-    constexpr std::size_t Value(name x) noexcept;                       \
-                                                                        \
-    class name                                                          \
-    {                                                                   \
-    private:                                                            \
-        struct ConvertibleToBoolDummy {int _;};                         \
-                                                                        \
-    public:                                                             \
-        typedef std::size_t value_type;                                 \
-                                                                        \
-        constexpr name() = default;                                     \
-        explicit constexpr name(std::size_t t) : m_value(t) {}          \
-                                                                        \
-        GG_MEMBER_SELF_COMPARATORS(name);                               \
-                                                                        \
-        GG_MEMBER_OTHER_COMPARATORS(std::size_t);                       \
-                                                                        \
-        constexpr operator int ConvertibleToBoolDummy::* () const       \
-        { return m_value ? &ConvertibleToBoolDummy::_ : 0; }            \
-                                                                        \
-        GG_MEMBER_NEG_INCR_DECR(name);                                  \
-                                                                        \
-        GG_MEMBER_ARITH_ASSIGN_OPS_SELF_TYPE(name);                     \
-        GG_MEMBER_ASSIGN_OP_SELF_TYPE(%=, name);                        \
-                                                                        \
-        GG_MEMBER_ARITH_ASSIGN_OPS_OTHER_TYPE(name, std::size_t);       \
-        GG_MEMBER_ASSIGN_OP_OTHER_TYPE(%, name, std::size_t);           \
-                                                                        \
-    private:                                                            \
-        std::size_t m_value = 0;                                        \
-                                                                        \
-        friend class name ## _d;                                        \
-        friend constexpr std::size_t Value(name x) noexcept;            \
-    };                                                                  \
-                                                                        \
-    GG_NONMEMBER_ARITH_OPS_SELF_TYPE(name);                             \
-    GG_NONMEMBER_OP_SELF_TYPE(%, name);                                 \
-                                                                        \
-    GG_NONMEMBER_ARITH_OPS_OTHER_TYPE(name, std::size_t);               \
-    GG_NONMEMBER_OP_OTHER_TYPE(%, name, std::size_t);                   \
-                                                                        \
-    GG_NONMEMBER_REVERSED_BOOL_OP_SET(std::size_t, name);               \
-                                                                        \
-    GG_NONMEMBER_REVERSED_ARITH_OP_SET(std::size_t, name);              \
-                                                                        \
-    constexpr std::size_t Value(name x) noexcept                 \
-    { return x.m_value; }                                               \
-                                                                        \
-    inline std::ostream& operator<<(std::ostream& os, name x)           \
-    { os << Value(x); return os; }                                      \
-                                                                        \
-    inline std::istream& operator>>(std::istream& os, name& x)          \
-    {                                                                   \
-        std::size_t t;                                                  \
-        os >> t;                                                        \
-        x = name(t);                                                    \
-        return os;                                                      \
-    }                                                                   \
-                                                                        \
-    void dummy_function_to_force_semicolon()
-
+#define SIZE_TYPEDEF(name, abbrevname)                                                          \
+enum class name : std::size_t {};                                                               \
+constexpr name abbrevname ## 0 {0};                                                             \
+constexpr name abbrevname ## 1 {1};                                                             \
+constexpr name INVALID_ ## abbrevname ## _SIZE {std::numeric_limits<std::size_t>::max()};       \
+                                                                                                \
+constexpr std::size_t Value(name x) noexcept { return static_cast<std::size_t>(x); }            \
+                                                                                                \
+constexpr name operator+(name lhs, name rhs) noexcept { return name{Value(lhs) + Value(rhs)}; } \
+constexpr name operator+(name x, std::size_t s) noexcept { return name{Value(x) + s}; }         \
+constexpr name operator+(std::size_t s, name x) noexcept { return name{Value(x) + s}; }         \
+constexpr name& operator+=(name& lhs, name rhs) noexcept { lhs = lhs + rhs; return lhs; }       \
+constexpr name& operator+=(name& lhs, std::size_t rhs) noexcept { lhs = lhs + rhs; return lhs; }\
+constexpr float operator+(name, float) noexcept = delete;                                       \
+constexpr float operator+(float, name) noexcept = delete;                                       \
+constexpr name& operator+=(name&, float) noexcept = delete;                                     \
+constexpr double operator+(name, double) noexcept = delete;                                     \
+constexpr double operator+(double, name) noexcept = delete;                                     \
+constexpr name& operator+=(name&, double) noexcept = delete;                                    \
+                                                                                                \
+constexpr name operator-(name lhs, name rhs) noexcept { return name{Value(lhs) - Value(rhs)}; } \
+constexpr name operator-(name x, std::size_t s) noexcept { return name{Value(x) - s}; }         \
+constexpr std::size_t operator-(std::size_t s, name x) noexcept { return s - Value(x); }        \
+constexpr name& operator-=(name& lhs, name rhs) noexcept { lhs = lhs - rhs; return lhs; }       \
+constexpr name& operator-=(name& x, std::size_t s) noexcept { x = x - s; return x; }            \
+constexpr float operator-(name, float) noexcept = delete;                                       \
+constexpr float operator-(float, name) noexcept = delete;                                       \
+constexpr name& operator-=(name&, float) noexcept = delete;                                     \
+constexpr double operator-(name, double) noexcept = delete;                                     \
+constexpr double operator-(double, name) noexcept = delete;                                     \
+constexpr name& operator-=(name&, double) noexcept = delete;                                    \
+                                                                                                \
+constexpr name& operator++(name& x)     { x += abbrevname ## 1; return x; }                     \
+constexpr name operator++(name& x, int) { name rv = x; x += abbrevname ## 1; return rv; }       \
+constexpr name& operator--(name& x)     { x -= abbrevname ## 1; return x; }                     \
+constexpr name operator--(name& x, int) { name rv = x; x -= abbrevname ## 1; return rv; }
 
 #endif
