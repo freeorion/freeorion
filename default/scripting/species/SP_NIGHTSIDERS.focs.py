@@ -114,7 +114,7 @@ Species(
         EffectsGroup(
             scope=MinimumNumberOf(
                 number=1,
-                sortkey=DirectDistanceBetween(target=Source.ID, source=LocalCandidate.ID),
+                sortkey=DirectDistanceBetween(Source.ID, LocalCandidate.ID),
                 condition=IsField(name=["FLD_METEOR_BLIZZARD"]),
             ),
             effects=MoveTowards(speed=5, target=IsSource),
@@ -123,7 +123,7 @@ Species(
         EffectsGroup(
             scope=MinimumNumberOf(
                 number=1,
-                sortkey=DirectDistanceBetween(target=Source.ID, source=LocalCandidate.ID),
+                sortkey=DirectDistanceBetween(Source.ID, LocalCandidate.ID),
                 condition=IsField(name=["FLD_NANITE_SWARM"]),
             ),
             effects=MoveTowards(speed=-5, target=IsSource),
