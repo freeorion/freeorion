@@ -2,6 +2,7 @@
 
 #include "parse/Parse.h"
 #include "parse/PythonParser.h"
+#include "universe/BuildingType.h"
 #include "universe/Conditions.h"
 #include "universe/Effects.h"
 #include "universe/Planet.h"
@@ -427,6 +428,65 @@ BOOST_AUTO_TEST_CASE(parse_species) {
     // test it last
     BOOST_CHECK_EQUAL(7, ordering.size());
     BOOST_CHECK_EQUAL(1, species_map.size());
+}
+
+BOOST_AUTO_TEST_CASE(parse_buildings) {
+    auto buildings_p = Pending::StartAsyncParsing(parse::buildings, m_test_scripting_dir / "buildings");
+    const auto buildings = *Pending::WaitForPendingUnlocked(std::move(buildings_p));
+
+    BOOST_REQUIRE(!buildings.empty());
+
+    BOOST_CHECK_EQUAL(1, buildings.size());
+    BOOST_CHECK_EQUAL(1, buildings.contains("BLD_ART_BLACK_HOLE"));
+
+    const auto building_it = buildings.find("BLD_ART_BLACK_HOLE");
+    BOOST_REQUIRE(building_it != buildings.end());
+
+    const auto& building = building_it->second;
+
+    BOOST_REQUIRE(building);
+
+    std::set<std::string> test_tags{};
+    
+    const BuildingType test_building{
+        "BLD_ART_BLACK_HOLE",
+        "BLD_ART_BLACK_HOLE_DESC",
+        CommonParams{
+            std::make_unique<ValueRef::Operation<double>>(ValueRef::OpType::TIMES,
+                std::make_unique<ValueRef::Constant<double>>(45.0),
+                std::make_unique<ValueRef::ComplexVariable<double>>(
+                    "GameRule",
+                    nullptr,
+                    nullptr,
+                    nullptr,
+                    std::make_unique<ValueRef::Constant<std::string>>(std::string("RULE_BUILDING_COST_FACTOR")),
+                    nullptr
+                )),
+            std::make_unique<ValueRef::Constant<int>>(6),
+            true,
+            test_tags,
+            std::make_unique<Condition::And>(
+                std::make_unique<Condition::Species>(),
+                std::make_unique<Condition::EmpireAffiliation>(
+                    std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner")
+                )
+            ),
+            {},
+            {},
+            {},
+            std::make_unique<Condition::And>(
+                std::make_unique<Condition::Species>(),
+                std::make_unique<Condition::EmpireAffiliation>(
+                    std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner")
+                )
+            )
+        },
+        CaptureResult::CR_CAPTURE,
+        "icons/building/blackhole.png" 
+    };
+
+    BOOST_CHECK(test_building.Name() == building->Name());
+
 }
 
 BOOST_AUTO_TEST_SUITE_END()
