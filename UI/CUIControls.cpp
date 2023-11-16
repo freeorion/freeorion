@@ -129,11 +129,9 @@ GG::Pt CUIButton::MinUsableSize() const {
 
 void CUIButton::RenderPressed() {
     if (PressedGraphic().Empty()) {
-        GG::Clr background_clr = Color();
+        GG::Clr background_clr = AdjustBrightness(Color(), 25);
         GG::Clr border_clr     = ClientUI::CtrlBorderColor();
         int     border_thick   = 1;
-
-        AdjustBrightness(background_clr, 25);
 
         GG::Pt ul = UpperLeft();
         GG::Pt lr = LowerRight();
@@ -156,7 +154,7 @@ void CUIButton::RenderRollover() {
             background_clr = DisabledColor(background_clr);
             border_clr     = DisabledColor(border_clr);
         } else {
-            AdjustBrightness(border_clr, 100);
+            border_clr = AdjustBrightness(border_clr, 100);
         }
 
         GG::Pt ul = UpperLeft();
@@ -250,7 +248,7 @@ void CUIArrowButton::RenderRollover() {
         FlatRectangle(ul, lr, ClientUI::WndColor(), GG::CLR_ZERO, 0);
     GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
     if (!Disabled())
-        AdjustBrightness(color_to_use, ARROW_BRIGHTENING_SCALE_FACTOR);
+        color_to_use = AdjustBrightness(color_to_use, ARROW_BRIGHTENING_SCALE_FACTOR);
     GG::Pt tri_ul = ul + GG::Pt(GG::X(3), GG::Y1), tri_lr = lr - GG::Pt(GG::X(2), GG::Y1);
     IsoscelesTriangle(tri_ul, tri_lr, m_orientation, color_to_use);
 }
@@ -509,7 +507,7 @@ void CUILabelButtonRepresenter::Render(const GG::StateButton& button) const {
 }
 
 CUIIconButtonRepresenter::CUIIconButtonRepresenter(std::shared_ptr<GG::SubTexture> icon,
-                                                   const GG::Clr& highlight_clr) :
+                                                   GG::Clr highlight_clr) :
     m_unchecked_icon(icon),
     m_checked_icon(std::move(icon)),
     m_unchecked_color(highlight_clr),
@@ -517,9 +515,9 @@ CUIIconButtonRepresenter::CUIIconButtonRepresenter(std::shared_ptr<GG::SubTextur
 {}
 
 CUIIconButtonRepresenter::CUIIconButtonRepresenter(std::shared_ptr<GG::SubTexture> unchecked_icon,
-                                                   const GG::Clr& unchecked_clr,
+                                                   GG::Clr unchecked_clr,
                                                    std::shared_ptr<GG::SubTexture> checked_icon,
-                                                   const GG::Clr& checked_clr) :
+                                                   GG::Clr checked_clr) :
     m_unchecked_icon(std::move(unchecked_icon)),
     m_checked_icon(std::move(checked_icon)),
     m_unchecked_color(unchecked_clr),
@@ -554,8 +552,8 @@ void CUIIconButtonRepresenter::Render(const GG::StateButton& button) const {
 
     // highlight on mouseover
     if (GG::StateButton::ButtonState::BN_ROLLOVER == button.State()) {
-        AdjustBrightness(border_clr, 100);
-        AdjustBrightness(icon_clr, 1.7);
+        border_clr = AdjustBrightness(border_clr, 100);
+        icon_clr = AdjustBrightness(icon_clr, 1.7);
     }
 
     // shrink icon for border
@@ -651,8 +649,8 @@ void CUIScroll::ScrollTab::Render() {
     GG::Clr background_color = Disabled() ? DisabledColor(Color()) : Color();
     GG::Clr border_color = Disabled() ? DisabledColor(m_border_color) : m_border_color;
     if (!Disabled() && m_mouse_here) {
-        AdjustBrightness(background_color, 100);
-        AdjustBrightness(border_color,     100);
+        background_color = AdjustBrightness(background_color, 100);
+        border_color = AdjustBrightness(border_color, 100);
     }
 
     static constexpr int CUISCROLL_ANGLE_OFFSET = 3;
@@ -810,9 +808,8 @@ void CUIDropDownList::Render() {
     if (m_render_drop_arrow) {
         GG::Clr triangle_fill_color = ClientUI::DropDownListArrowColor();
         if (m_mouse_here && !Disabled())
-            AdjustBrightness(triangle_fill_color, ARROW_BRIGHTENING_SCALE_FACTOR);
-        GG::Clr triangle_border_color = triangle_fill_color;
-        AdjustBrightness(triangle_border_color, 75);
+            triangle_fill_color = AdjustBrightness(triangle_fill_color, ARROW_BRIGHTENING_SCALE_FACTOR);
+        GG::Clr triangle_border_color = AdjustBrightness(triangle_fill_color, 75);
 
         // triangle interior
         glColor(triangle_fill_color);
@@ -1602,7 +1599,7 @@ namespace {
     // row type used in the EmpireColorSelector
     struct ColorRow : public GG::ListBox::Row {
         struct ColorSquare : GG::Control {
-            ColorSquare(const GG::Clr& color, GG::Y h) :
+            ColorSquare(GG::Clr color, GG::Y h) :
                 GG::Control(GG::X0, GG::Y0, COLOR_SELECTOR_WIDTH - 40, h, GG::NO_WND_FLAGS)
             {
                 SetColor(color);
@@ -1613,7 +1610,7 @@ namespace {
             { GG::FlatRectangle(UpperLeft(), LowerRight(), Color(), GG::CLR_ZERO, 0); }
         };
 
-        ColorRow(const GG::Clr& color, GG::Y h) :
+        ColorRow(GG::Clr color, GG::Y h) :
             GG::ListBox::Row(GG::X(Value(h)), h),
             m_color_square(GG::Wnd::Create<ColorSquare>(color, h))
         {}
@@ -1649,7 +1646,7 @@ EmpireColorSelector::EmpireColorSelector(GG::Y h) :
 GG::Clr EmpireColorSelector::CurrentColor() const
 { return !(**CurrentItem()).empty() ? (**CurrentItem()).at(0)->Color() : GG::CLR_RED; }
 
-void EmpireColorSelector::SelectColor(const GG::Clr& clr) {
+void EmpireColorSelector::SelectColor(GG::Clr clr) {
     for (iterator list_it = begin(); list_it != end(); ++list_it) {
         const auto& row = *list_it;
         if (row && !row->empty() && row->at(0)->Color() == clr) {

@@ -349,8 +349,8 @@ namespace {
             m_player_data.empire_name = str;
             DataChangedSignal();
         }
-        void ColorChanged(const GG::Clr& clr) {
-            m_player_data.empire_color = {{clr.r, clr.g, clr.b, clr.a}};
+        void ColorChanged(const GG::Clr clr) {
+            m_player_data.empire_color = clr.RGBA();
             DataChangedSignal();
         }
         void SpeciesChanged(const std::string& str) {
@@ -737,8 +737,8 @@ void MultiPlayerLobbyWnd::PlayerLabelRow::SetText(std::size_t column, const std:
 }
 
 void MultiPlayerLobbyWnd::PlayerLabelRow::Render() {
-    const GG::Clr& BG_CLR = ClientUI::WndOuterBorderColor();
-    const GG::Clr& BORDER_CLR = ClientUI::WndInnerBorderColor();
+    const GG::Clr BG_CLR = ClientUI::WndOuterBorderColor();
+    const GG::Clr BORDER_CLR = ClientUI::WndInnerBorderColor();
     GG::Pt ul(UpperLeft().x + CONTROL_MARGIN, UpperLeft().y + CONTROL_MARGIN);
     GG::Pt lr(LowerRight().x - CONTROL_MARGIN, LowerRight().y - CONTROL_MARGIN);
 

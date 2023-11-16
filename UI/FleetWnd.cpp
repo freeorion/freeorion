@@ -683,12 +683,12 @@ namespace {
 
     void ShipDataPanel::Render() {
         // main background position and colour
-        const GG::Clr& background_colour = ClientUI::WndColor();
+        const GG::Clr background_colour = ClientUI::WndColor();
         const GG::Pt ul = UpperLeft(), lr = LowerRight(), cul = ClientUpperLeft();
 
         // title background colour and position
-        const GG::Clr& unselected_colour = ClientUI::WndOuterBorderColor();
-        const GG::Clr& selected_colour = ClientUI::WndInnerBorderColor();
+        const GG::Clr unselected_colour = ClientUI::WndOuterBorderColor();
+        const GG::Clr selected_colour = ClientUI::WndInnerBorderColor();
         GG::Clr border_colour = m_selected ? selected_colour : unselected_colour;
         if (Disabled())
             border_colour = DisabledColor(border_colour);
@@ -1146,12 +1146,12 @@ void FleetDataPanel::PreRender() {
 
 void FleetDataPanel::Render() {
     // main background position and colour
-    const GG::Clr& background_colour = ClientUI::WndColor();
+    const GG::Clr background_colour = ClientUI::WndColor();
     const GG::Pt ul = UpperLeft(), lr = LowerRight(), cul = ClientUpperLeft();
 
     // title background colour and position
-    const GG::Clr& unselected_colour = ClientUI::WndOuterBorderColor();
-    const GG::Clr& selected_colour = ClientUI::WndInnerBorderColor();
+    const GG::Clr unselected_colour = ClientUI::WndOuterBorderColor();
+    const GG::Clr selected_colour = ClientUI::WndInnerBorderColor();
     GG::Clr border_colour = m_selected ? selected_colour : unselected_colour;
     if (Disabled())
         border_colour = DisabledColor(border_colour);
@@ -1795,7 +1795,7 @@ void FleetDataPanel::Init() {
 }
 
 void FleetDataPanel::ColorTextForSelect() {
-    const GG::Clr& unselected_text_color = ClientUI::TextColor();
+    const GG::Clr unselected_text_color = ClientUI::TextColor();
     static constexpr GG::Clr selected_text_color = GG::CLR_BLACK;
 
     GG::Clr text_color_to_use = m_selected ? selected_text_color : unselected_text_color;

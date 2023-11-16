@@ -91,17 +91,8 @@ GG::Clr     ClientUI::WndInnerBorderColor()     { return GetOptionsDB().Get<GG::
 
 GG::Clr     ClientUI::CtrlColor()               { return GetOptionsDB().Get<GG::Clr>("ui.control.background.color"); }
 GG::Clr     ClientUI::CtrlBorderColor()         { return GetOptionsDB().Get<GG::Clr>("ui.control.border.color"); }
-GG::Clr     ClientUI::ButtonHiliteColor() {
-    GG::Clr colour = CtrlColor();
-    AdjustBrightness(colour, 50);
-    return colour;
-}
-
-GG::Clr     ClientUI::ButtonHiliteBorderColor() {
-    GG::Clr colour = CtrlBorderColor();
-    AdjustBrightness(colour, 50);
-    return colour;
-}
+GG::Clr     ClientUI::ButtonHiliteColor()       { return AdjustBrightness(CtrlColor(), 50); }
+GG::Clr     ClientUI::ButtonHiliteBorderColor() { return AdjustBrightness(CtrlBorderColor(), 50); }
 
 int         ClientUI::ScrollWidth()             { return GetOptionsDB().Get<int>("ui.scroll.width"); }
 

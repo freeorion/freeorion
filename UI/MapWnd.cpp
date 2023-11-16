@@ -421,8 +421,8 @@ namespace {
         void Render() override {
             const GG::Y row_height{ClientUI::Pts() + (m_margin * 2)};
             static constexpr GG::Y offset{32};
-            const GG::Clr& BG_CLR = ClientUI::WndColor();
-            const GG::Clr& BORDER_CLR = ClientUI::WndOuterBorderColor();
+            const GG::Clr BG_CLR = ClientUI::WndColor();
+            const GG::Clr BORDER_CLR = ClientUI::WndOuterBorderColor();
             const GG::Pt UL = GG::Pt(UpperLeft().x, UpperLeft().y + offset);
             const GG::Pt LR = LowerRight();
 
@@ -2512,7 +2512,7 @@ namespace {
     // Reimplementation of the boost::hash_range function, embedding
     // boost::hash_combine and using std::hash instead of boost::hash
     struct hash_clr {
-        std::size_t operator()(const GG::Clr& clr) const noexcept {
+        std::size_t operator()(const GG::Clr clr) const noexcept {
             static constexpr std::hash<uint32_t> hasher;
             return hasher(uint32_t(clr));
         }
@@ -4207,9 +4207,8 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
     // each's visibilty circles and outlines
     for (const auto& [circle_colour, ul_lrs] : circles) {
         // get empire colour and calculate brighter radii outline colour
-        GG::Clr border_colour = circle_colour;
+        GG::Clr border_colour = AdjustBrightness(circle_colour, 2.0, true);
         border_colour.a = std::min(255, border_colour.a + 80);
-        AdjustBrightness(border_colour, 2.0, true);
 
         const std::size_t radii_start_index = m_visibility_radii_vertices.size();
         const std::size_t border_start_index = m_visibility_radii_border_vertices.size();

@@ -155,12 +155,12 @@ public:
 class CUIIconButtonRepresenter final : public GG::StateButtonRepresenter {
 public:
     CUIIconButtonRepresenter(std::shared_ptr<GG::SubTexture> icon,
-                             const GG::Clr& highlight_clr);
+                             GG::Clr highlight_clr);
 
     CUIIconButtonRepresenter(std::shared_ptr<GG::SubTexture> unchecked_icon,
-                             const GG::Clr& unchecked_clr,
+                             GG::Clr unchecked_clr,
                              std::shared_ptr<GG::SubTexture> checked_icon,
-                             const GG::Clr& checked_clr);
+                             GG::Clr checked_clr);
 
     void Render(const GG::StateButton& button) const override;
 
@@ -445,7 +445,7 @@ public:
 
     GG::Clr CurrentColor() const; ///< returns the color that is currently selected, or GG::CLR_ZERO if none is selected
 
-    void SelectColor(const GG::Clr& clr);
+    void SelectColor(GG::Clr clr);
 
     mutable boost::signals2::signal<void (GG::Clr)> ColorChangedSignal;
 };

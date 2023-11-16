@@ -19,7 +19,7 @@ GraphControl::GraphControl() :
     AutoSetRange();
 }
 
-void GraphControl::AddSeries(std::vector<std::pair<double, double>> data, const GG::Clr& clr) {
+void GraphControl::AddSeries(std::vector<std::pair<double, double>> data, GG::Clr clr) {
     if (!data.empty()) {
         m_data.emplace_back(std::move(data), clr);
         DoLayout();

@@ -13,17 +13,17 @@
   * original \a amount would out any of the rgb channel values above 255,
   * \a amount for all channels is reduced so that the highest resulting rgb
   * channel value is 255. */
-void AdjustBrightness(GG::Clr& color, int amount, bool jointly_capped=false);
+[[nodiscard]] GG::Clr AdjustBrightness(GG::Clr color, int amount, bool jointly_capped=false);
 
 /** adjusts the intensity of the color up or down by multiplying the non-alpa
   * channels by \a amount if \a jointly_capped is true then, if the original
   * \a amount would out any of the rgb channel values above 255,
   * \a amount for all channels is reduced so that the highest resulting rgb
   * channel value is 255. */
-void AdjustBrightness(GG::Clr& color, double amount, bool jointly_capped=false);
+[[nodiscard]] GG::Clr AdjustBrightness(GG::Clr color, double amount, bool jointly_capped=false);
 
 /** returns fully opaque (max alpha channel) version of the color */
-GG::Clr OpaqueColor(const GG::Clr& color);
+[[nodiscard]] GG::Clr OpaqueColor(GG::Clr color);
 
 /** Stores verticies in CCW order that outline a rectangle
  * @param[out] buffer Buffer to store verticies
@@ -31,15 +31,14 @@ GG::Clr OpaqueColor(const GG::Clr& color);
  * @param[in] border_thickness Thickness of border for each corner, drawn
  *              towards the interior of @p area.
  */
-void BufferStoreRectangle(GG::GL2DVertexBuffer& buffer,
-                          const GG::Rect& area,
-                          const GG::Rect& border_thickness);
+void BufferStoreRectangle(GG::GL2DVertexBuffer& buffer, GG::Rect area, GG::Rect border_thickness);
 
 /** Using immediate GL calls, renders a rectangle whose upper left and lower
   * right corners are angled.  If \a upper_left_angled == false, the upper left
   * corner is drawn as a normal corner */
-void AngledCornerRectangle(const GG::Pt ul, const GG::Pt lr, GG::Clr color, GG::Clr border, int angle_offset, int thick,
-                           bool upper_left_angled = true, bool lower_right_angled = true, bool draw_bottom = true);
+void AngledCornerRectangle(const GG::Pt ul, const GG::Pt lr, GG::Clr color, GG::Clr border,
+                           int angle_offset, int thick, bool upper_left_angled = true,
+                           bool lower_right_angled = true, bool draw_bottom = true);
 
 /** Stores, in \a buffer verticies in CCW order that outline a rectangle
   * with upper left and lower right corners are angled. */

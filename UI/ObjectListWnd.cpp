@@ -1502,9 +1502,9 @@ public:
     }
 
     void Render() override {
-        const GG::Clr& background_colour = ClientUI::WndColor();
-        const GG::Clr& unselected_colour = ClientUI::WndOuterBorderColor();
-        const GG::Clr& selected_colour = ClientUI::WndInnerBorderColor();
+        GG::Clr background_colour = ClientUI::WndColor();
+        GG::Clr unselected_colour = ClientUI::WndOuterBorderColor();
+        GG::Clr selected_colour = ClientUI::WndInnerBorderColor();
         GG::Clr border_colour = m_selected ? selected_colour : unselected_colour;
         if (Disabled())
             border_colour = DisabledColor(border_colour);

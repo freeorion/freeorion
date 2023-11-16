@@ -220,8 +220,8 @@ namespace {
     }
 
     void RenderSphere(
-        double radius, const GG::Clr& ambient, const GG::Clr& diffuse,
-        const GG::Clr& spec, double shine,
+        double radius, const GG::Clr ambient, const GG::Clr diffuse,
+        const GG::Clr spec, double shine,
         std::shared_ptr<GG::Texture> texture)
     {
         struct PolarCoordinate {
