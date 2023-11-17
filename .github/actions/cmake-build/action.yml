@@ -52,7 +52,7 @@ runs:
       id: download-godot
       uses: suisei-cn/actions-download-file@v1.3.0
       with:
-        url: https://downloads.tuxfamily.org/godotengine/3.2.3/Godot_v3.2.3-stable_win32.exe.zip
+        url: https://github.com/godotengine/godot-builds/releases/download/3.2.3-stable/Godot_v3.2.3-stable_win32.exe.zip
         target: ../
     - name: Download Mesa
       id: download-mesa
