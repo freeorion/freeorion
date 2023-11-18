@@ -1930,8 +1930,9 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
         m_universe.RecursiveDestroy(id, m_empires.EmpireIDs());
 #else
         const auto& empire_ids = m_empires.EmpireIDs();
-        const std::vector<int> st(empire_ids.begin(), empire_ids.end());
-        m_universe.RecursiveDestroy(id, std::span<const int>(st.begin(), st.end()));
+        const std::vector<int> empire_ids_vec(empire_ids.begin(), empire_ids.end());
+        const std::span<const int> empire_ids_span(empire_ids_vec);
+        m_universe.RecursiveDestroy(id, empire_ids_span);
 #endif
     };
 
@@ -2593,12 +2594,11 @@ namespace {
         // modified objects / combat results to empires' known gamestate
         // ObjectMaps.
 
-        const auto empire_ids = 
 #if (!defined(__clang_major__) || (__clang_major__ >= 16)) && (BOOST_VERSION >= 107700)
-            std::span<const int>(empires.EmpireIDs());
+        const auto empire_ids = std::span<const int>(empires.EmpireIDs());
 #else
-            [empires_ids_vec{std::vector<int>(empires.EmpireIDs().begin(), empires.EmpireIDs().end())}]()
-            { return std::span<const int>(empires_ids_vec.begin(), empires_ids_vec.end()); }();
+        const std::vector<int> empire_ids_vec(empires.EmpireIDs().begin(), empires.EmpireIDs().end());
+        const auto empire_ids = std::span<const int>(empire_ids_vec);
 #endif
 
         for (const CombatInfo& combat_info : combats) {
@@ -2909,12 +2909,12 @@ namespace {
     [[nodiscard]] std::pair<std::vector<int>, std::vector<int>> HandleColonization(ScriptingContext& context) {
         Universe& universe = context.ContextUniverse();
         ObjectMap& objects = context.ContextObjects();
-        const auto empire_ids = 
 #if (!defined(__clang_major__) || (__clang_major__ >= 16)) && (BOOST_VERSION >= 107700)
-            std::span<const int>(context.EmpireIDs());
+        const std::span<const int> empire_ids(context.EmpireIDs());
 #else
-            [empires_ids_vec{std::vector<int>(context.EmpireIDs().begin(), context.EmpireIDs().end())}]()
-            { return std::span<const int>(empires_ids_vec.begin(), empires_ids_vec.end()); }();
+        const auto& empire_ids_fs = context.EmpireIDs();
+        const std::vector<int> empire_ids_vec(empire_ids_fs.begin(), empire_ids_fs.end());
+        const std::span<const int> empire_ids(empire_ids_vec);
 #endif
 
         // collect, for each planet, what ships have been ordered to colonize it
@@ -3091,14 +3091,13 @@ namespace {
         Universe& universe = context.ContextUniverse();
         ObjectMap& objects = context.ContextObjects();
         EmpireManager& empires = context.Empires();
-        const auto empire_ids = 
 #if (!defined(__clang_major__) || (__clang_major__ >= 16)) && (BOOST_VERSION >= 107700)
-            std::span<const int>(context.EmpireIDs());
+        const std::span<const int> empire_ids(context.EmpireIDs());
 #else
-            [empires_ids_vec{std::vector<int>(context.EmpireIDs().begin(), context.EmpireIDs().end())}]()
-            { return std::span<const int>(empires_ids_vec.begin(), empires_ids_vec.end()); }();
+        const auto& empire_ids_fs = context.EmpireIDs();
+        const std::vector<int> empire_ids_vec(empire_ids_fs.begin(), empire_ids_fs.end());
+        const std::span<const int> empire_ids(empire_ids_vec);
 #endif
-
 
         // collect ships that are invading and the troops they carry
         for (auto* ship : objects.findRaw<Ship>([&universe](const Ship& s) {
@@ -3143,13 +3142,13 @@ namespace {
                 if (fleet->Empty()) {
                     if (system)
                         system->Remove(fleet->ID());
-                    universe.Destroy(fleet->ID(), std::span(empire_ids));
+                    universe.Destroy(fleet->ID(), empire_ids);
                 }
             }
             if (system)
                 system->Remove(ship->ID());
 
-            universe.RecursiveDestroy(ship->ID(), std::span(empire_ids)); // does not count as ship loss for empire/species
+            universe.RecursiveDestroy(ship->ID(), empire_ids); // does not count as ship loss for empire/species
         }
 
         // store invasion info in empires
@@ -3442,14 +3441,13 @@ namespace {
                          const std::span<const int> annexed_planet_ids) // TODO: disallow scrapping during annexation
     {
         ObjectMap& objects{universe.Objects()};
-        const auto empire_ids = 
 #if (!defined(__clang_major__) || (__clang_major__ >= 16)) && (BOOST_VERSION >= 107700)
-            std::span<const int>(empires.EmpireIDs());
+        const std::span<const int> empire_ids(empires.EmpireIDs());
 #else
-            [empires_ids_vec{std::vector<int>(empires.EmpireIDs().begin(), empires.EmpireIDs().end())}]()
-            { return std::span<const int>(empires_ids_vec.begin(), empires_ids_vec.end()); }();
+        const auto& empire_ids_fs = empires.EmpireIDs();
+        const std::vector<int> empire_ids_vec(empire_ids_fs.begin(), empire_ids_fs.end());
+        const std::span<const int> empire_ids(empire_ids_vec);
 #endif
-
 
         // only scap ships that aren't being gifted and that aren't invading or colonizing this turn
         const auto scrapped_ships = objects.findRaw<Ship>(
@@ -3616,12 +3614,12 @@ namespace {
     void CleanEmptyFleets(ScriptingContext& context) {
         Universe& universe{context.ContextUniverse()};
         ObjectMap& objects{context.ContextObjects()};
-        const auto empire_ids = 
 #if (!defined(__clang_major__) || (__clang_major__ >= 16)) && (BOOST_VERSION >= 107700)
-            std::span<const int>(context.EmpireIDs());
+        const std::span<const int> empire_ids(context.EmpireIDs());
 #else
-            [empires_ids_vec{std::vector<int>(context.EmpireIDs().begin(), context.EmpireIDs().end())}]()
-            { return std::span<const int>(empires_ids_vec.begin(), empires_ids_vec.end()); }();
+        const auto& empire_ids_fs = context.EmpireIDs();
+        const std::vector<int> empire_ids_vec(empire_ids_fs.begin(), empire_ids_fs.end());
+        const std::span<const int> empire_ids(empire_ids_vec);
 #endif
 
         // need to remove empty fleets from systems and call RecursiveDestroy for each fleet
