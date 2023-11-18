@@ -383,10 +383,8 @@ void VarText::SetTemplateString(std::string template_string, bool stringtable_lo
 std::vector<std::string_view> VarText::GetVariableTags() const {
     std::vector<std::string_view> retval;
     retval.reserve(m_variables.size());
-    for (const auto& [tag, data] : m_variables) { // TODO: could transform, make sure lambda return -> std::string_view
-        (void)data;
-        retval.push_back(tag);
-    }
+    auto rng = m_variables | range_keys;
+    range_copy(rng, std::back_inserter(retval));
     return retval;
 }
 
