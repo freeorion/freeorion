@@ -635,7 +635,7 @@ int ProductionQueue::IndexOfUUID(boost::uuids::uuid uuid) const {
     auto it = find(uuid);
     if (it == end())
         return -1;
-    return std::distance(begin(), it);
+    return static_cast<int>(std::distance(begin(), it));
 }
 
 namespace {
