@@ -53,3 +53,48 @@ MINIMUM_DISTANCE_EMPIRE_CHECK
 // empire id used for unowned planets/ships - as defined in Universe.cpp(?)
 UNOWNED_EMPIRE_ID
 '''-1'''
+
+
+GROWTH_RATE_FACTOR
+'''
+0.1 *
+(1 - (Statistic If condition = And [Target EmpireHasAdoptedPolicy name = "PLC_NO_GROWTH"])) *       // no growth with no-growth policy
+(1 + 0.5*(Statistic If condition = And [Target EmpireHasAdoptedPolicy name = "PLC_POPULATION"])) *  // +50% growth with population policy
+(1 + (Statistic If condition = And [Target EmpireHasAdoptedPolicy name = "PLC_AUGMENTATION"]) *     // slower growth with augmentation on low-infrastructure planets
+      min(1.2, max(0.5, Target.Construction / (NamedRealLookup name = "AUGMENTATION_FULL_GROWTH_INFRASTRUCTURE_REQUIREMENT"))))
+'''
+
+
+// @1@ Species key
+LIFECYCLE_MANIP_POPULATION_EFFECTS
+'''
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = LocalCandidate.CreationTurn + 1 high = LocalCandidate.CreationTurn + 1
+            ]
+            priority = [[POPULATION_DEFAULT_PRIORITY]]
+            effects = [
+                SetSpecies name = @1@
+                SetPopulation value = 1
+            ]
+
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = LocalCandidate.CreationTurn + 1 high = LocalCandidate.CreationTurn + 1
+            ]
+            priority = [[POPULATION_DEFAULT_PRIORITY]]
+            effects = [
+                SetSpecies name = @1@
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+'''
