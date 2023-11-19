@@ -15,23 +15,22 @@ parse::detail::info_visitor::info_visitor(std::ostream& os, const string& tag, s
 {}
 
 void parse::detail::info_visitor::indent() const {
-    if (m_indent)
+    if (m_indent > 0)
         m_os << std::string(m_indent, ' ');
 }
 
 std::string parse::detail::info_visitor::prepare(const string& s) const {
-    std::string str = s;
-    if (str == parse::lexer::bool_regex)
-        str = "boolean (true or false)";
-    else if (str == parse::lexer::string_regex)
-        str = "string";
-    else if (str == parse::lexer::int_regex)
-        str = "integer";
-    else if (str == parse::lexer::double_regex)
-        str = "real number";
-    else if (str.find("(?i:") == 0)
-        str = str.substr(4, str.size() - 5);
-    return str;
+    if (s == parse::lexer::bool_regex)
+        return "boolean (true or false)";
+    else if (s == parse::lexer::string_regex)
+        return "string";
+    else if (s == parse::lexer::int_regex)
+        return "integer";
+    else if (s == parse::lexer::double_regex)
+        return "real number";
+    else if (s.find("(?i:") == 0)
+        return s.substr(4, s.size() - 5);
+    return s;
 }
 
 void parse::detail::info_visitor::print(const string& str) const
@@ -66,9 +65,8 @@ void parse::detail::info_visitor::multi_info(Iter first, const Iter last) const
             ++first;
         const string* value = boost::get<string>(&first->value);
         if (value && *value == "[") {
-            for (; first != last; ++first) {
+            for (; first != last; ++first)
                 boost::apply_visitor(info_visitor(m_os, first->tag, 1), first->value);
-            }
         } else {
             boost::apply_visitor(info_visitor(m_os, first->tag, 1), first->value);
         }

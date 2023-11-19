@@ -25,7 +25,7 @@ namespace parse {
 
             std::ostream& m_os;
             const string& m_tag;
-            int m_indent;
+            std::size_t m_indent;
         };
 
         void pretty_print(std::ostream& os, boost::spirit::info const& what);
