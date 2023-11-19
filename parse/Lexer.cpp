@@ -11,13 +11,8 @@ namespace {
     struct strip_quotes_ {
         typedef std::string result_type;
 
-        std::string operator()(const parse::text_iterator& start,
-                               const parse::text_iterator& end) const
-        {
-            auto start_ = start;
-            auto end_ = end;
-            return std::string(++start_, --end_);
-        }
+        std::string operator()(parse::text_iterator start, parse::text_iterator end) const
+        { return std::string(++start, --end); }
     };
     const boost::phoenix::function<strip_quotes_> strip_quotes;
 }
