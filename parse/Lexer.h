@@ -76,10 +76,10 @@ struct lexer : boost::spirit::lex::lexer<spirit_lexer_base_type> {
     boost::spirit::lex::token_def<boost::spirit::lex::omit> error_token;
     //@}
 
-    static constexpr const char* bool_regex = "(?i:true|false)";
-    static constexpr const char* int_regex = "\\d+";
-    static constexpr const char* double_regex = "\\d+\\.\\d*|\\d*\\.\\d+";
-    static constexpr const char* string_regex = "\\\"[^\\\"]*\\\"";
+    static inline const std::string bool_regex{"(?i:true|false)"};
+    static inline const std::string int_regex{"\\d+"};
+    static inline const std::string double_regex{"\\d+\\.\\d*|\\d*\\.\\d+"};
+    static inline const std::string string_regex{"\\\"[^\\\"]*\\\""};
     static const lexer tok;
 };
 
