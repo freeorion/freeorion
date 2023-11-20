@@ -1,3 +1,4 @@
+from common.misc import GROWTH_RATE_FACTOR
 from common.priorities import (
     POPULATION_FIRST_PRIORITY,
     TARGET_POPULATION_AFTER_SCALING_PRIORITY,
@@ -14,7 +15,6 @@ from focs._effects import (
     Contains,
     CurrentTurn,
     EffectsGroup,
-    EmpireHasAdoptedPolicy,
     Focus,
     GasGiantType,
     Good,
@@ -23,11 +23,9 @@ from focs._effects import (
     Homeworld,
     Hostile,
     IsSource,
-    IsTarget,
     LocalCandidate,
     MaxOf,
     MinOf,
-    NamedRealLookup,
     Neutron,
     NoStar,
     Orange,
@@ -41,7 +39,6 @@ from focs._effects import (
     SetTargetPopulation,
     Source,
     Star,
-    StatisticIf,
     Target,
     TargetPopulation,
     Turn,
@@ -55,30 +52,6 @@ from species.common.general import (
     FOCUS_CHANGE_PENALTY,
     STANDARD_CONSTRUCTION,
     STANDARD_METER_GROWTH,
-)
-
-GROWTH_RATE_FACTOR = (
-    0.1
-    * (
-        1 - StatisticIf(float, condition=IsTarget & EmpireHasAdoptedPolicy(name="PLC_NO_GROWTH"))
-    )  # no growth with no-growth policy
-    * (
-        1 + 0.5 * StatisticIf(float, condition=IsTarget & EmpireHasAdoptedPolicy(name="PLC_POPULATION"))
-    )  # +50% growth with population policy
-    * (
-        1
-        + StatisticIf(float, condition=IsTarget & EmpireHasAdoptedPolicy(name="PLC_AUGMENTATION"))
-        # slower growth with augmentation on low-infrastructure planets
-        * MinOf(
-            float,
-            1.2,
-            MaxOf(
-                float,
-                0.5,
-                Target.Construction / NamedRealLookup(name="AUGMENTATION_FULL_GROWTH_INFRASTRUCTURE_REQUIREMENT"),
-            ),
-        )
-    )
 )
 
 HOMEWORLD_BONUS_POPULATION = EffectsGroup(

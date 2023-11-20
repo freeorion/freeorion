@@ -132,7 +132,7 @@ BuildingType
 #include "/scripting/common/upkeep.macros"
 #include "/scripting/common/priorities.macros"
 #include "/scripting/common/base_prod.macros"
-#include "/scripting/species/common/population.macros"
+#include "/scripting/common/misc.macros"
 """
 )
 

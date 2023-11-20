@@ -2,13 +2,20 @@ from focs._effects import (
     AnyEmpire,
     Contains,
     EffectsGroup,
+    EmpireHasAdoptedPolicy,
     GameRule,
     IsSource,
+    IsTarget,
+    MaxOf,
+    MinOf,
     NamedIntegerLookup,
+    NamedRealLookup,
     NoEffect,
     OwnedBy,
     Planet,
+    StatisticIf,
     System,
+    Target,
     WithinStarlaneJumps,
 )
 
@@ -46,4 +53,29 @@ UNOWNED_EMPIRE_ID = -1
 MINIMUM_DISTANCE_EMPIRE_CHECK = ~WithinStarlaneJumps(
     jumps=NamedIntegerLookup(name="MIN_MONSTER_DISTANCE"),
     condition=System & Contains(Planet() & OwnedBy(affiliation=AnyEmpire)),
+)
+
+
+GROWTH_RATE_FACTOR = (
+    0.1
+    * (
+        1 - StatisticIf(float, condition=IsTarget & EmpireHasAdoptedPolicy(name="PLC_NO_GROWTH"))
+    )  # no growth with no-growth policy
+    * (
+        1 + 0.5 * StatisticIf(float, condition=IsTarget & EmpireHasAdoptedPolicy(name="PLC_POPULATION"))
+    )  # +50% growth with population policy
+    * (
+        1
+        + StatisticIf(float, condition=IsTarget & EmpireHasAdoptedPolicy(name="PLC_AUGMENTATION"))
+        # slower growth with augmentation on low-infrastructure planets
+        * MinOf(
+            float,
+            1.2,
+            MaxOf(
+                float,
+                0.5,
+                Target.Construction / NamedRealLookup(name="AUGMENTATION_FULL_GROWTH_INFRASTRUCTURE_REQUIREMENT"),
+            ),
+        )
+    )
 )

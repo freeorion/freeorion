@@ -1,5 +1,12 @@
 from common.base_prod import RESEARCH_PER_POP
 from common.misc import DESCRIPTION_EFFECTSGROUP_MACRO
+from common.multiplier import (
+    BAD_MULTIPLIER,
+    GOOD_MULTIPLIER,
+    GREAT_MULTIPLIER,
+    ULTIMATE_MULTIPLIER,
+    VERY_BAD_MULTIPLIER,
+)
 from common.priorities import (
     TARGET_AFTER_SCALING_PRIORITY,
     TARGET_EARLY_BEFORE_SCALING_PRIORITY,
@@ -16,13 +23,6 @@ from focs._effects import (
     SetTargetResearch,
     Target,
     Value,
-)
-from species.common.multiplier import (
-    BAD_MULTIPLIER,
-    GOOD_MULTIPLIER,
-    GREAT_MULTIPLIER,
-    ULTIMATE_MULTIPLIER,
-    VERY_BAD_MULTIPLIER,
 )
 
 NO_RESEARCH = DESCRIPTION_EFFECTSGROUP_MACRO("NO_RESEARCH_DESC")

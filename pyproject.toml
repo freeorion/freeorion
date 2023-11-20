@@ -125,6 +125,7 @@ exclude = [
     '^doc',
     '^cmake',
     '^msvc',
+    '^scripting/common',
 ]
 
 explicit_package_bases = true
