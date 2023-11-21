@@ -21,10 +21,15 @@ from focs._effects import (
     Value,
 )
 
+try:
+    from focs._types import _EffectGroup
+except ImportError:
+    _EffectGroup = None  # type: ignore[misc,assignment]
+
 NO_INDUSTRY = DESCRIPTION_EFFECTSGROUP_MACRO("NO_INDUSTRY_DESC")
 
 
-AVERAGE_INDUSTRY = BASIC_INDUSTRY = [
+BASIC_INDUSTRY = [
     EffectsGroup(
         scope=IsSource,
         activation=Planet() & TargetIndustry(low=0) & Happiness(low=0) & Focus(type=["FOCUS_INDUSTRY"]),
@@ -45,60 +50,24 @@ AVERAGE_INDUSTRY = BASIC_INDUSTRY = [
 ]
 
 
-VERY_BAD_INDUSTRY = [
-    *BASIC_INDUSTRY,
-    EffectsGroup(
-        description="VERY_BAD_INDUSTRY_DESC",
-        scope=IsSource,
-        activation=Planet() & TargetIndustry(low=0) & Happiness(low=0) & Focus(type=["FOCUS_INDUSTRY"]),
-        accountinglabel="VERY_BAD_INDUSTRY_LABEL",
-        priority=TARGET_SCALING_PRIORITY,
-        effects=SetTargetIndustry(
-            value=Value * NamedReal(name="VERY_BAD_INDUSTRY_TARGET_INDUSTRY_SCALING", value=VERY_BAD_MULTIPLIER)
+def _industry(tag, default_multiplier) -> list[_EffectGroup]:  # type: ignore[reportGeneralTypeIssues]
+    return [
+        *BASIC_INDUSTRY,
+        EffectsGroup(
+            description=f"{tag}_INDUSTRY_DESC",
+            scope=IsSource,
+            activation=Planet() & TargetIndustry(low=0) & Happiness(low=0) & Focus(type=["FOCUS_INDUSTRY"]),
+            accountinglabel=f"{tag}_INDUSTRY_LABEL",
+            priority=TARGET_SCALING_PRIORITY,
+            effects=SetTargetIndustry(
+                value=Value * NamedReal(name=f"{tag}_INDUSTRY_TARGET_INDUSTRY_SCALING", value=default_multiplier)
+            ),
         ),
-    ),
-]
+    ]
 
 
-BAD_INDUSTRY = [
-    *BASIC_INDUSTRY,
-    EffectsGroup(
-        description="BAD_INDUSTRY_DESC",
-        scope=IsSource,
-        activation=Planet() & TargetIndustry(low=0) & Happiness(low=0) & Focus(type=["FOCUS_INDUSTRY"]),
-        accountinglabel="BAD_INDUSTRY_LABEL",
-        priority=TARGET_SCALING_PRIORITY,
-        effects=SetTargetIndustry(
-            value=Value * NamedReal(name="BAD_INDUSTRY_TARGET_INDUSTRY_SCALING", value=BAD_MULTIPLIER)
-        ),
-    ),
-]
-
-
-GOOD_INDUSTRY = [
-    *BASIC_INDUSTRY,
-    EffectsGroup(
-        description="GOOD_INDUSTRY_DESC",
-        scope=IsSource,
-        activation=Planet() & TargetIndustry(low=0) & Happiness(low=0) & Focus(type=["FOCUS_INDUSTRY"]),
-        accountinglabel="GOOD_INDUSTRY_LABEL",
-        priority=TARGET_SCALING_PRIORITY,
-        effects=SetTargetIndustry(
-            value=Value * NamedReal(name="GOOD_INDUSTRY_TARGET_INDUSTRY_SCALING", value=GOOD_MULTIPLIER)
-        ),
-    ),
-]
-
-GREAT_INDUSTRY = [
-    *BASIC_INDUSTRY,
-    EffectsGroup(
-        description="GREAT_INDUSTRY_DESC",
-        scope=IsSource,
-        activation=Planet() & TargetIndustry(low=0) & Happiness(low=0) & Focus(type=["FOCUS_INDUSTRY"]),
-        accountinglabel="GREAT_INDUSTRY_LABEL",
-        priority=TARGET_SCALING_PRIORITY,
-        effects=SetTargetIndustry(
-            value=Value * NamedReal(name="GREAT_INDUSTRY_TARGET_INDUSTRY_SCALING", value=GREAT_MULTIPLIER)
-        ),
-    ),
-]
+VERY_BAD_INDUSTRY = _industry("VERY_BAD", VERY_BAD_MULTIPLIER)
+BAD_INDUSTRY = _industry("BAD", BAD_MULTIPLIER)
+AVERAGE_INDUSTRY = BASIC_INDUSTRY
+GOOD_INDUSTRY = _industry("GOOD", GOOD_MULTIPLIER)
+GREAT_INDUSTRY = _industry("GREAT", GREAT_MULTIPLIER)
