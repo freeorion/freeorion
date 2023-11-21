@@ -25,9 +25,7 @@ from focs._effects import (
     Value,
 )
 
-NO_RESEARCH = DESCRIPTION_EFFECTSGROUP_MACRO("NO_RESEARCH_DESC")
-
-AVERAGE_RESEARCH = BASIC_RESEARCH = [
+_BASIC_RESEARCH = [
     EffectsGroup(
         scope=IsSource,
         activation=Planet() & Focus(type=["FOCUS_RESEARCH"]) & Happiness(low=0),
@@ -44,8 +42,24 @@ AVERAGE_RESEARCH = BASIC_RESEARCH = [
     ),
 ]
 
+NO_RESEARCH = DESCRIPTION_EFFECTSGROUP_MACRO("NO_RESEARCH_DESC")
+
+
+VERY_BAD_RESEARCH = [
+    *_BASIC_RESEARCH,
+    EffectsGroup(
+        description="VERY_BAD_RESEARCH_DESC",
+        scope=IsSource,
+        activation=Planet() & Focus(type=["FOCUS_RESEARCH"]),
+        accountinglabel="VERY_BAD_RESEARCH_LABEL",
+        priority=TARGET_SCALING_PRIORITY,
+        effects=SetTargetResearch(value=Value * VERY_BAD_MULTIPLIER),
+    ),
+]
+
+
 BAD_RESEARCH = [
-    *BASIC_RESEARCH,
+    *_BASIC_RESEARCH,
     EffectsGroup(
         description="BAD_RESEARCH_DESC",
         scope=IsSource,
@@ -56,9 +70,10 @@ BAD_RESEARCH = [
     ),
 ]
 
+AVERAGE_RESEARCH = _BASIC_RESEARCH
 
 GOOD_RESEARCH = [
-    *BASIC_RESEARCH,
+    *_BASIC_RESEARCH,
     EffectsGroup(
         description="GOOD_RESEARCH_DESC",
         scope=IsSource,
@@ -71,7 +86,7 @@ GOOD_RESEARCH = [
 
 
 GREAT_RESEARCH = [
-    *BASIC_RESEARCH,
+    *_BASIC_RESEARCH,
     EffectsGroup(
         description="GREAT_RESEARCH_DESC",
         scope=IsSource,
@@ -83,21 +98,8 @@ GREAT_RESEARCH = [
 ]
 
 
-VERY_BAD_RESEARCH = [
-    *BASIC_RESEARCH,
-    EffectsGroup(
-        description="VERY_BAD_RESEARCH_DESC",
-        scope=IsSource,
-        activation=Planet() & Focus(type=["FOCUS_RESEARCH"]),
-        accountinglabel="VERY_BAD_RESEARCH_LABEL",
-        priority=TARGET_SCALING_PRIORITY,
-        effects=SetTargetResearch(value=Value * VERY_BAD_MULTIPLIER),
-    ),
-]
-
-
 ULTIMATE_RESEARCH = [
-    *BASIC_RESEARCH,
+    *_BASIC_RESEARCH,
     EffectsGroup(
         description="ULTIMATE_RESEARCH_DESC",
         scope=IsSource,

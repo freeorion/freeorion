@@ -19,11 +19,10 @@ from focs._effects import (
 )
 from species.common.detection import NATIVE_PLANETARY_DETECTION
 from species.common.planet_defense import AVERAGE_PLANETARY_DEFENSE, NATIVE_PLANETARY_DEFENSE
-from species.common.planet_shields import AVERAGE_PLANETARY_SHIELDS, NATIVE_PLANETARY_SHIELDS
+from species.common.planet_shields import AVERAGE_PLANETARY_SHIELDS, _native_planetary_shields
 
-FORTIFICATION_PROBABILITY = 0.1 * MaxOf(float, 0.2 * Source.TargetPopulation, Source.Research + Source.Industry)
+_FORTIFICATION_PROBABILITY = 0.1 * MaxOf(float, 0.2 * Source.TargetPopulation, Source.Research + Source.Industry)
 
-NATIVE_FORTIFICATION_MINIMAL = NATIVE_PLANETARY_SHIELDS(1)
 
 DEFAULT_NATIVE_DEFENSE = [
     *AVERAGE_PLANETARY_SHIELDS,
@@ -31,7 +30,7 @@ DEFAULT_NATIVE_DEFENSE = [
     EffectsGroup(
         scope=IsSource & Turn(low=1, high=1) & (GalaxyMaxAIAggression >= 1),
         activation=Planet()
-        & Random(probability=FORTIFICATION_PROBABILITY)
+        & Random(probability=_FORTIFICATION_PROBABILITY)
         & ~ContainedBy(
             Contains(
                 Planet() & HasSpecial(name="MODERATE_TECH_NATIVES_SPECIAL")
@@ -41,7 +40,7 @@ DEFAULT_NATIVE_DEFENSE = [
         ),
         effects=[
             Conditional(
-                condition=~Random(probability=FORTIFICATION_PROBABILITY),
+                condition=~Random(probability=_FORTIFICATION_PROBABILITY),
                 effects=[
                     AddSpecial(
                         name=OneOf(
@@ -72,7 +71,7 @@ ADVANCED_NATIVE_DEFENSE = [
     *AVERAGE_PLANETARY_DEFENSE,
     NATIVE_PLANETARY_DETECTION(10),
     NATIVE_PLANETARY_DEFENSE(10 * PLANET_DEFENSE_FACTOR),
-    NATIVE_PLANETARY_SHIELDS(10 * PLANET_SHIELD_FACTOR),
+    _native_planetary_shields(10 * PLANET_SHIELD_FACTOR),
     EffectsGroup(
         scope=IsSource & Turn(low=1, high=1) & (GalaxyMaxAIAggression >= 1),
         activation=Planet(),
