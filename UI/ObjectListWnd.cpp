@@ -1939,7 +1939,7 @@ namespace {
 #endif
         }
 
-        static auto StringToFloat(const std::string& key) {
+        static auto StringToFloat(const std::string_view key) {
 #if defined(__cpp_lib_to_chars)
             float retval = 0.0f;
             auto result = std::from_chars(key.data(), key.data() + key.size(), retval);
