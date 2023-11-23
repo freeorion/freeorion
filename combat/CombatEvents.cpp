@@ -11,9 +11,6 @@
 
 #include "../Empire/Empire.h"
 
-#if __has_include(<charconv>)
-  #include <charconv>
-#endif
 #include <sstream>
 
 namespace {
@@ -75,35 +72,49 @@ namespace {
         return retval;
     }
 
-    //Copied pasted from Font.cpp due to Font not being linked into AI and server code
+    constexpr auto* UInt8ToChars(std::string::value_type* out_it, const uint8_t num) noexcept {
+        const uint8_t hundreds = num / 100u;
+        const uint8_t less_than_100 = num - hundreds*100u;
+        const uint8_t tens = less_than_100 / 10u;
+        const uint8_t ones = less_than_100 - tens*10u;
+        if (hundreds > 0)
+            *out_it++ = (hundreds + '0');
+        if (tens > 0 || hundreds > 0)
+            *out_it++ = (tens + '0');
+        *out_it++ = (ones + '0');
+        return out_it;
+    };
+
+    constexpr auto* ToChars(std::string::value_type* it, EmpireColor c) noexcept {
+        it = UInt8ToChars(it, c[0]);
+        *it++ = ' ';
+        it = UInt8ToChars(it, c[1]);
+        *it++ = ' ';
+        it = UInt8ToChars(it, c[2]);
+        *it++ = ' ';
+        it = UInt8ToChars(it, c[3]);
+        return it;
+    }
+
+
     std::string WrapColorTag(std::string_view text, EmpireColor c) {
         static constexpr auto lim = std::numeric_limits<EmpireColor::value_type>::max();
         static_assert(lim < 1000); // ensure no more than 3 characters will be consumed per number
         assert(c.size() >= 4);
+        //                                      <rgba  255  ' ' '>'  0
+        static constexpr std::size_t rgba_tag_sz = 6 + 4*3 + 3 + 1 + 1;
+        std::array<std::string::value_type, rgba_tag_sz> rgba_tag{"<rgba "}; // rest should be nulls
+        static constexpr std::string_view rgba_close_tag{"</rgba>"};
 
         std::string retval;
+        retval.reserve(text.size() + rgba_tag_sz + rgba_close_tag.size());
 
-#if defined(__cpp_lib_to_chars)
-        std::array<std::string::value_type, 6 + 4*4 + 1> buffer{"<rgba "}; // rest should be nulls
-        auto result = std::to_chars(buffer.data() + 6, buffer.data() + 9, static_cast<int>(c[0]));
-        *result.ptr = ' ';
-        result = std::to_chars(result.ptr + 1, result.ptr + 4, static_cast<int>(c[1]));
-        *result.ptr = ' ';
-        result = std::to_chars(result.ptr + 1, result.ptr + 4, static_cast<int>(c[2]));
-        *result.ptr = ' ';
-        result = std::to_chars(result.ptr + 1, result.ptr + 4, static_cast<int>(c[3]));
-        *result.ptr = '>';
-        retval.reserve(buffer.size() + text.size() + 7 + 1);
-        retval.append(buffer.data()).append(text).append("</rgba>");
-#else
-        retval.reserve(6 + 4*4 + text.size() + 7 + 4);
-        retval.append("<rgba ")
-              .append(std::to_string(static_cast<int>(std::get<0>(c)))).append(" ")
-              .append(std::to_string(static_cast<int>(std::get<1>(c)))).append(" ")
-              .append(std::to_string(static_cast<int>(std::get<2>(c)))).append(" ")
-              .append(std::to_string(static_cast<int>(std::get<3>(c)))).append(">")
-              .append(text).append("</rgba>");
-#endif
+        auto next_it = ToChars(std::next(rgba_tag.data(), 6), c);
+        *next_it++ = '>';
+        const auto tag_view = std::string_view(rgba_tag.data(), std::distance(rgba_tag.data(), next_it));
+
+        retval.append(tag_view).append(text).append(rgba_close_tag);
+
         return retval;
     }
 
