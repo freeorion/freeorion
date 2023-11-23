@@ -118,14 +118,11 @@ namespace {
         return retval;
     }
 
-    std::string EmpireColorWrappedText(int empire_id, std::string_view text,
-                                       const ScriptingContext& context)
-    {
-        // TODO: refactor this to somewhere that links with the UI code.
-        // Hardcoded default color becauses not linked with UI code.
-        auto empire = context.GetEmpire(empire_id);
-        return WrapColorTag(text, empire ? empire->Color() : EmpireColor{{80, 255, 128, 255}});
-    }
+    std::string EmpireColorWrappedText(const auto& empire, std::string_view text)
+    { return WrapColorTag(text, empire ? empire->Color() : EmpireColor{{80, 255, 128, 255}}); }
+
+    std::string EmpireColorWrappedText(int empire_id, std::string_view text, const ScriptingContext& context)
+    { return EmpireColorWrappedText(context.GetEmpire(empire_id), text); }
 
     /// Creates a link tag of the appropriate type for object_id,
     /// with the content being the public name from the point of view of empire_id.
@@ -154,17 +151,16 @@ namespace {
         if (empire_id == ALL_EMPIRES) {
             return UserString("NEUTRAL");
         } else if (auto empire = context.GetEmpire(empire_id)) {
-            return EmpireColorWrappedText(
-                empire_id, WrapWithTagAndId(empire->Name(), VarText::EMPIRE_ID_TAG, empire_id),
-                context);
+            return EmpireColorWrappedText(empire,
+                                          WrapWithTagAndId(empire->Name(), VarText::EMPIRE_ID_TAG, empire_id));
         } else {
             return UserString("ENC_COMBAT_UNKNOWN_OBJECT");
         }
     }
 
     std::string ShipPartLink(std::string_view part) {
-        return part.empty() ? UserString("ENC_COMBAT_UNKNOWN_OBJECT")
-            : WrapUserStringWithTag(part, VarText::SHIP_PART_TAG);
+        return part.empty() ?
+            UserString("ENC_COMBAT_UNKNOWN_OBJECT") : WrapUserStringWithTag(part, VarText::SHIP_PART_TAG);
     }
 }
 
