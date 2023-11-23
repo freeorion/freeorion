@@ -8959,34 +8959,34 @@ namespace {
         // s7 s1--s4--e1    |  s5-s6-e6--e5
         //         |        |
         //        e2       e3
-        static constexpr auto seg1 = seg{vec2{-1.0,  0.0}, vec2{1.0,  0.0}};
-        static constexpr auto seg2 = seg{vec2{ 0.0, -1.0}, vec2{0.0,  1.0}};
-        static constexpr auto seg3 = seg{vec2{ 2.0, -1.0}, vec2{2.0,  1.0}};
-        static constexpr auto segX = seg{vec2{ 2.0, -1.0}, vec2{3.0, -1.0}};
-        static constexpr auto seg4 = seg{vec2{ 0.0,  0.0}, vec2{1.0, -1.5}};
-        static constexpr auto seg5 = seg{vec2{ 3.0,  0.0}, vec2{6.0,  0.0}};
-        static constexpr auto seg6 = seg{vec2{ 4.0,  0.0}, vec2{5.0,  0.0}};
-        static constexpr auto seg7 = seg{vec2{-2.0,  0.0}, vec2{0.0, -4.0}};
+        constexpr auto seg1 = seg{vec2{-1.0,  0.0}, vec2{1.0,  0.0}};
+        constexpr auto seg2 = seg{vec2{ 0.0, -1.0}, vec2{0.0,  1.0}};
+        constexpr auto seg3 = seg{vec2{ 2.0, -1.0}, vec2{2.0,  1.0}};
+        constexpr auto segX = seg{vec2{ 2.0, -1.0}, vec2{3.0, -1.0}};
+        constexpr auto seg4 = seg{vec2{ 0.0,  0.0}, vec2{1.0, -1.5}};
+        constexpr auto seg5 = seg{vec2{ 3.0,  0.0}, vec2{6.0,  0.0}};
+        constexpr auto seg6 = seg{vec2{ 4.0,  0.0}, vec2{5.0,  0.0}};
+        constexpr auto seg7 = seg{vec2{-2.0,  0.0}, vec2{0.0, -4.0}};
 
-        static constexpr auto v_6s_5s = seg5.s - seg6.s;
-        static constexpr auto v_6s_5e = seg5.e - seg6.s;
+        constexpr auto v_6s_5s = seg5.s - seg6.s;
+        constexpr auto v_6s_5e = seg5.e - seg6.s;
         static_assert( DotProduct(v_6s_5s, v_6s_5e) < 0); // 6s is between 5s and 5e
-        static constexpr auto v_1s_5s = seg5.s - seg1.s;
-        static constexpr auto v_1s_5e = seg5.e - seg1.s;
+        constexpr auto v_1s_5s = seg5.s - seg1.s;
+        constexpr auto v_1s_5e = seg5.e - seg1.s;
         static_assert( DotProduct(v_1s_5s, v_1s_5e) > 0); // 1s is not between 5s and 5e
-        static constexpr auto v_1e_5s = seg5.s - seg1.e;
-        static constexpr auto v_1e_5e = seg5.e - seg1.e;
+        constexpr auto v_1e_5s = seg5.s - seg1.e;
+        constexpr auto v_1e_5e = seg5.e - seg1.e;
         static_assert( DotProduct(v_1e_5s, v_1e_5e) > 0); // 1e is not between 5s and 5e
 
-        static constexpr auto v_1s_1e = seg1.to_vec();
-        static constexpr auto v_5s_5e = seg5.to_vec();
-        static constexpr auto v_5s_1s = -v_1s_5s;
-        static constexpr auto v_5s_1e = seg1.e - seg5.s;
+        constexpr auto v_1s_1e = seg1.to_vec();
+        constexpr auto v_5s_5e = seg5.to_vec();
+        constexpr auto v_5s_1s = -v_1s_5s;
+        constexpr auto v_5s_1e = seg1.e - seg5.s;
 
-        static constexpr auto cp_1_5s = CrossProduct(v_1s_1e, v_1s_5s);
-        static constexpr auto cp_1_5e = CrossProduct(v_1s_1e, v_1s_5e);
-        static constexpr auto cp_5_1s = CrossProduct(v_5s_5e, v_5s_1s);
-        static constexpr auto cp_5_1e = CrossProduct(v_5s_5e, v_5s_1e);
+        constexpr auto cp_1_5s = CrossProduct(v_1s_1e, v_1s_5s);
+        constexpr auto cp_1_5e = CrossProduct(v_1s_1e, v_1s_5e);
+        constexpr auto cp_5_1s = CrossProduct(v_5s_5e, v_5s_1s);
+        constexpr auto cp_5_1e = CrossProduct(v_5s_5e, v_5s_1e);
 
         static_assert(cp_1_5s == 0); // lane 5 start is on lane 1 line
         static_assert(cp_1_5e == 0); // lane 5 end is on lane 1 line
@@ -8994,8 +8994,8 @@ namespace {
         static_assert(cp_5_1e == 0); // lane 1 end is on lane 5 line
 
         static_assert(DotProduct(v_5s_1s, v_5s_1e) > 0); // lane 5 start is on same side of (not between) lane 1 start and end
-        static constexpr auto v_5e_1s = -v_1s_5e;
-        static constexpr auto v_5e_1e = -v_1e_5e;
+        constexpr auto v_5e_1s = -v_1s_5e;
+        constexpr auto v_5e_1e = -v_1e_5e;
         static_assert(DotProduct(v_5e_1s, v_5e_1e) > 0); // lane 5 end is on same side of lane 1 start and end
         static_assert(DotProduct(v_1s_5s, v_1s_5e) > 0); // lane 1 start is on same side of lane 5 start and end
         static_assert(DotProduct(v_1e_5s, v_1e_5e) > 0); // lane 1 end is on same side of lane 5 start and end
@@ -9483,14 +9483,14 @@ namespace {
         // s7 s1--s4--e1    |  s5-s6-e6--e5
         //         |        |
         //        e2       e3
-        //static constexpr auto seg1 = seg{vec2{-1.0,  0.0}, vec2{1.0,  0.0}};
-        //static constexpr auto seg2 = seg{vec2{ 0.0, -1.0}, vec2{0.0,  1.0}};
-        //static constexpr auto seg3 = seg{vec2{ 2.0, -1.0}, vec2{2.0,  1.0}};
-        //static constexpr auto segX = seg{vec2{ 2.0, -1.0}, vec2{3.0, -1.0}};
-        //static constexpr auto seg4 = seg{vec2{ 0.0,  0.0}, vec2{1.0, -1.5}};
-        //static constexpr auto seg5 = seg{vec2{ 3.0,  0.0}, vec2{6.0,  0.0}};
-        //static constexpr auto seg6 = seg{vec2{ 4.0,  0.0}, vec2{5.0,  0.0}};
-        //static constexpr auto seg7 = seg{vec2{-2.0,  0.0}, vec2{0.0, -4.0}};
+        //constexpr auto seg1 = seg{vec2{-1.0,  0.0}, vec2{1.0,  0.0}};
+        //constexpr auto seg2 = seg{vec2{ 0.0, -1.0}, vec2{0.0,  1.0}};
+        //constexpr auto seg3 = seg{vec2{ 2.0, -1.0}, vec2{2.0,  1.0}};
+        //constexpr auto segX = seg{vec2{ 2.0, -1.0}, vec2{3.0, -1.0}};
+        //constexpr auto seg4 = seg{vec2{ 0.0,  0.0}, vec2{1.0, -1.5}};
+        //constexpr auto seg5 = seg{vec2{ 3.0,  0.0}, vec2{6.0,  0.0}};
+        //constexpr auto seg6 = seg{vec2{ 4.0,  0.0}, vec2{5.0,  0.0}};
+        //constexpr auto seg7 = seg{vec2{-2.0,  0.0}, vec2{0.0, -4.0}};
 
         static_assert( PointsClose(seg1.s, seg1.s, 0.0));
         static_assert( PointsClose(seg1.s, seg1.s, 1.0));

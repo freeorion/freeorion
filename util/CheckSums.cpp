@@ -51,10 +51,10 @@ namespace CheckSums {
         return sc2ucvals;
     }(scvals);
 
-    static constexpr auto csc1 = csc(ucvals);
-    static constexpr auto csc2 = csc(sc2ucvals);
-    static constexpr auto csc3 = csc(uc2scvals);
-    static constexpr auto csc4 = csc(scvals);
+    constexpr auto csc1 = csc(ucvals);
+    constexpr auto csc2 = csc(sc2ucvals);
+    constexpr auto csc3 = csc(uc2scvals);
+    constexpr auto csc4 = csc(scvals);
     static_assert(csc1 == csc2);
     static_assert(csc2 == csc3);
     static_assert(csc3 == csc4);
