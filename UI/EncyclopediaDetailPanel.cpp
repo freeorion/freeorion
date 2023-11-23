@@ -3244,7 +3244,7 @@ namespace {
             PlanetType::NUM_PLANET_TYPES));
 
         // all lower-case string representations of PlanetType value names
-        static constexpr auto lower_planet_type_names{[]() {
+        constexpr auto lower_planet_type_names{[]() {
             std::array<std::array<std::string::value_type, 16>, NUM_PT> retval{}; // 16 chars should be big enough for all planet types as text...
             for (std::size_t idx = 0; idx < NUM_PT; ++idx) {
                 const auto sv = to_string(PlanetType(idx));
@@ -3255,7 +3255,7 @@ namespace {
             }
             return retval;
         }()};
-        static constexpr auto lower_names_by_type{[]() {
+        constexpr auto lower_names_by_type{[]() {
             std::array<std::string_view, lower_planet_type_names.size()> retval;
             for (std::size_t idx = 0; idx < retval.size(); ++idx)
                 retval[idx] = std::string_view{lower_planet_type_names[idx].data()};
@@ -3544,50 +3544,50 @@ namespace {
         // UTF-8 code points that can be easily converted from lower and upper case by offsetting the wchar_t
 
         // Latin-1 supplement
-        static constexpr uint8_t A_WITH_GRAVE_byte1 = 0x80; // À
+        constexpr uint8_t A_WITH_GRAVE_byte1 = 0x80; // À
         //static_assert(u8"\u00C0"[1] == A_WITH_GRAVE_byte1);
         //static_assert(u8"\u00C0"[0] == u8"À"[0] && u8"\u00C0"[1] == u8"À"[1]);
 
-        static constexpr uint8_t O_WITH_DIARESIS_byte1 = 0x96; // Ö
+        constexpr uint8_t O_WITH_DIARESIS_byte1 = 0x96; // Ö
         // multiply symbol × is between these ranges...
-        static constexpr uint8_t O_WITH_STROKE_byte1 = 0x98; // Ø
+        constexpr uint8_t O_WITH_STROKE_byte1 = 0x98; // Ø
 
-        static constexpr uint8_t THORN_byte1 = 0x9E; // Þ
+        constexpr uint8_t THORN_byte1 = 0x9E; // Þ
         //static_assert(u8"\u00DE"[1] == THORN_byte1);
-        static constexpr uint8_t a_with_grave_byte1 = 0xA0; // à
+        constexpr uint8_t a_with_grave_byte1 = 0xA0; // à
         //static_assert(u8"\u00E0"[1] == a_with_grave_byte1);
 
-        static constexpr uint8_t y_with_diaresis_byte1 = 0xBF; // ÿ
+        constexpr uint8_t y_with_diaresis_byte1 = 0xBF; // ÿ
 
 
         // Latin extended-A first half
-        static constexpr uint8_t A_WITH_MACRON_byte1 = 0x80; // Ā
+        constexpr uint8_t A_WITH_MACRON_byte1 = 0x80; // Ā
         //static_assert(u8"\u0100"[1] == A_WITH_MACRON_byte1);
         //static_assert(u8"\u0100"[0] == u8"Ā"[0] && u8"\u0100"[1] == u8"Ā"[1]);
-        static constexpr uint8_t I_WITH_OGONEK_byte1 = 0xAE; // Į
+        constexpr uint8_t I_WITH_OGONEK_byte1 = 0xAE; // Į
         //static_assert(u8"\u012E"[1] == I_WITH_OGONEK_byte1);
         //static_assert(u8"\u012E"[0] == u8"Į"[0] && u8"\u012E"[1] == u8"Į"[1]);
 
-        static constexpr uint8_t LIGATURE_IJ_byte1 = 0xB2; // Ĳ
+        constexpr uint8_t LIGATURE_IJ_byte1 = 0xB2; // Ĳ
         //static_assert(u8"\u0132"[1] == LIGATURE_IJ_byte1);
         //static_assert(u8"\u0132"[0] == u8"Ĳ"[0] && u8"\u0132"[1] == u8"Ĳ"[1]);
-        static constexpr uint8_t K_WITH_CEDILLA_byte1 = 0xB6; // Ķ
+        constexpr uint8_t K_WITH_CEDILLA_byte1 = 0xB6; // Ķ
         //static_assert(u8"\u0136"[1] == K_WITH_CEDILLA_byte1);
         //static_assert(u8"\u0136"[0] == u8"Ķ"[0] && u8"\u0136"[1] == u8"Ķ"[1]);
 
-        static constexpr uint8_t kra_byte1 = 0xB8; // ĸ
+        constexpr uint8_t kra_byte1 = 0xB8; // ĸ
 
-        static constexpr uint8_t L_WITH_ACUTE_byte1 = 0xB9; // Ĺ
+        constexpr uint8_t L_WITH_ACUTE_byte1 = 0xB9; // Ĺ
         //static_assert(u8"\u0139"[1] == L_WITH_ACUTE_byte1);
         //static_assert(u8"\u0139"[0] == u8"Ĺ"[0] && u8"\u0139"[1] == u8"Ĺ"[1]);
-        static constexpr uint8_t L_WITH_CARON_byte1 = 0xBD; // Ľ
+        constexpr uint8_t L_WITH_CARON_byte1 = 0xBD; // Ľ
         //static_assert(u8"\u013D"[1] == L_WITH_CARON_byte1);
         //static_assert(u8"\u013D"[0] == u8"Ľ"[0] && u8"\u013D"[1] == u8"Ľ"[1]);
 
 
-        static constexpr uint8_t a_with_macron_byte1 = 0x81; // ā
-        static constexpr uint8_t awmb0 = u8"\u0101"[0];
-        static constexpr uint8_t awmb1 = u8"\u0101"[1];
+        constexpr uint8_t a_with_macron_byte1 = 0x81; // ā
+        constexpr uint8_t awmb0 = u8"\u0101"[0];
+        constexpr uint8_t awmb1 = u8"\u0101"[1];
         static_assert(awmb0 == 0xC4);
         static_assert(awmb1 == 0x81);
         static_assert(awmb1 == a_with_macron_byte1);
@@ -3595,84 +3595,84 @@ namespace {
         static_assert(a_with_macron_byte1 - A_WITH_MACRON_byte1 == 1); // this range of chars is offset by one between upper and and lower case
 
         // Latin Extended-A first-to-second half
-        static constexpr uint8_t L_WITH_MIDDLE_DOT_byte1 = 0xBF; // first byte C4
-        static constexpr uint8_t l_with_middle_dot_byte1 = 0x80; // first byte C5
+        constexpr uint8_t L_WITH_MIDDLE_DOT_byte1 = 0xBF; // first byte C4
+        constexpr uint8_t l_with_middle_dot_byte1 = 0x80; // first byte C5
 
         // Latin Extended-A second half
-        static constexpr uint8_t L_WITH_STROKE_byte1 = 0x81; // Ł
+        constexpr uint8_t L_WITH_STROKE_byte1 = 0x81; // Ł
         //static constexpr uint8_t l_with_stroke_byte1 = 0x82; // ł
-        static constexpr uint8_t N_WITH_CARON_byte1 = 0x87; // Ň
+        constexpr uint8_t N_WITH_CARON_byte1 = 0x87; // Ň
 
-        static constexpr uint8_t n_preceeded_by_apostrophe_byte1 = 0x89; // ŉ
+        constexpr uint8_t n_preceeded_by_apostrophe_byte1 = 0x89; // ŉ
 
-        static constexpr uint8_t ENG_byte1 = 0x8A; // Ŋ
-        static constexpr uint8_t Y_WITH_CIRCUMFLEX_byte1 = 0xB6; // Ŷ
+        constexpr uint8_t ENG_byte1 = 0x8A; // Ŋ
+        constexpr uint8_t Y_WITH_CIRCUMFLEX_byte1 = 0xB6; // Ŷ
 
-        static constexpr uint8_t Y_WITH_DIARESIS_byte1 = 0xB8; // Ÿ
+        constexpr uint8_t Y_WITH_DIARESIS_byte1 = 0xB8; // Ÿ
 
-        static constexpr uint8_t Z_WITH_ACCUTE_byte1 = 0xB9; // Ź
-        static constexpr uint8_t Z_WITH_CARON_byte1 = 0xBD; // Ž
+        constexpr uint8_t Z_WITH_ACCUTE_byte1 = 0xB9; // Ź
+        constexpr uint8_t Z_WITH_CARON_byte1 = 0xBD; // Ž
 
-        static constexpr uint8_t long_s_byte1 = 0xBF; // ſ
+        constexpr uint8_t long_s_byte1 = 0xBF; // ſ
 
         // Greek and Coptic
 
         // first byte 0xCE
-        static constexpr uint8_t ALPHA_byte1 = 0x91; // Α
-        static constexpr uint8_t OMICRON_byte1 = 0x9F; // Ο
-        static constexpr uint8_t PI_byte1 = 0xA0; // Π
-        static constexpr uint8_t RHO_byte1 = 0xA1; // Ρ
+        constexpr uint8_t ALPHA_byte1 = 0x91; // Α
+        constexpr uint8_t OMICRON_byte1 = 0x9F; // Ο
+        constexpr uint8_t PI_byte1 = 0xA0; // Π
+        constexpr uint8_t RHO_byte1 = 0xA1; // Ρ
         // no code at 0xA2
-        static constexpr uint8_t SIGMA_byte1 = 0xA3; // Ρ
+        constexpr uint8_t SIGMA_byte1 = 0xA3; // Ρ
         //static constexpr uint8_t OMEGA_byte1 = 0xA9; // Ω
-        static constexpr uint8_t UPSILON_WITH_DIALYTIKA_byte1 = 0xAB; // Ϋ
+        constexpr uint8_t UPSILON_WITH_DIALYTIKA_byte1 = 0xAB; // Ϋ
 
-        static constexpr uint8_t alpha_with_tonos_byte1 = 0xAC; // ά
-        static constexpr uint8_t alpha_byte1 = 0xB1; // α
-        static constexpr uint8_t omicron_byte1 = 0xBF; // ο
+        constexpr uint8_t alpha_with_tonos_byte1 = 0xAC; // ά
+        constexpr uint8_t alpha_byte1 = 0xB1; // α
+        constexpr uint8_t omicron_byte1 = 0xBF; // ο
 
         // first byte 0xCF
-        static constexpr uint8_t pi_byte1 = 0x80;
-        static constexpr uint8_t rho_byte1 = 0x81; // ρ
+        constexpr uint8_t pi_byte1 = 0x80;
+        constexpr uint8_t rho_byte1 = 0x81; // ρ
 
-        //static constexpr uint8_t final_sigma_byte1 = 0x82; // ς
+        //constexpr uint8_t final_sigma_byte1 = 0x82; // ς
 
-        static constexpr uint8_t sigma_byte1 = 0x83; // σ
+        constexpr uint8_t sigma_byte1 = 0x83; // σ
         //static constexpr uint8_t upsilon_with_dialytika_byte1 = 0x8B; // ϋ
 
         //static constexpr uint8_t omicron_with_tonos_byte1 = 0x8C; // ό
-        static constexpr uint8_t omega_with_tonos_byte1 = 0x8E; // ώ
+        constexpr uint8_t omega_with_tonos_byte1 = 0x8E; // ώ
 
         // note: alternate mu/micro encoding covered by full page 0xC2 case
-        static constexpr auto micro = u8"\u00B5"; // µ (micro)
-        static constexpr uint8_t microb0 = micro[0];
-        static constexpr uint8_t microb1 = micro[1];
+        constexpr auto micro = u8"\u00B5"; // µ (micro)
+        constexpr uint8_t microb0 = micro[0];
+        constexpr uint8_t microb1 = micro[1];
         static_assert(microb0 == 0xC2);
         static_assert(microb1 == 0xB5);
 
-        static constexpr auto micro2 = u8"µ";
-        static constexpr uint8_t micro2b0 = micro2[0];
-        static constexpr uint8_t micro2b1 = micro2[1];
+        constexpr auto micro2 = u8"µ";
+        constexpr uint8_t micro2b0 = micro2[0];
+        constexpr uint8_t micro2b1 = micro2[1];
         static_assert(micro2b0 == 0xC2);
         static_assert(micro2b1 == 0xB5);
 
-        static constexpr auto mu = u8"\u03BC"; // μ (lower case mu)
-        static constexpr uint8_t mub0 = mu[0];
-        static constexpr uint8_t mub1 = mu[1];
+        constexpr auto mu = u8"\u03BC"; // μ (lower case mu)
+        constexpr uint8_t mub0 = mu[0];
+        constexpr uint8_t mub1 = mu[1];
         static_assert(mub0 == 0xCE);
         static_assert(mub1 == 0xBC);
 
         // following tests fail on MSVC x64
-        //static constexpr auto mu2 = u8"μ";
-        //static constexpr uint8_t mu2b0 = mu2[0];
-        //static constexpr uint8_t mu2b1 = mu2[1];
+        //constexpr auto mu2 = u8"μ";
+        //constexpr uint8_t mu2b0 = mu2[0];
+        //constexpr uint8_t mu2b1 = mu2[1];
         //static_assert(mu2b0 == 0xCE);
         //static_assert(mu2b1 == 0xBC);
 
 
-        static constexpr auto o_with_dot_below = u8"ọ";
-        static constexpr uint8_t o_with_dot_below_byte1 = o_with_dot_below[1];
-        static constexpr uint8_t o_with_dot_below_byte2 = o_with_dot_below[2];
+        constexpr auto o_with_dot_below = u8"ọ";
+        constexpr uint8_t o_with_dot_below_byte1 = o_with_dot_below[1];
+        constexpr uint8_t o_with_dot_below_byte2 = o_with_dot_below[2];
     }
 
     // Checks if the (next few) chars starting at \a it are a 3-byte code

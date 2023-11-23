@@ -680,7 +680,7 @@ std::string LinkTaggedPresetText(std::string_view tag, std::string_view stringta
 }
 
 namespace {
-    static bool link_tags_registered = false;
+    bool link_tags_registered = false;
 }
 
 void RegisterLinkTags() {

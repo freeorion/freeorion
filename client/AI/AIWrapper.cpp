@@ -45,7 +45,7 @@ namespace py = boost::python;
 ////////////////////////
 namespace {
     // static string to save AI state
-    static std::string s_save_state_string("");
+    std::string s_save_state_string("");
 
     /** @brief Return the player name of the client identified by @a player_id
      *

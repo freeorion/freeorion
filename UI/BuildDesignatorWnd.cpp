@@ -38,8 +38,8 @@ namespace {
     { db.Add("ui." + PROD_PEDIA_WND_NAME + ".hidden.enabled", UserStringNop("OPTIONS_DB_PRODUCTION_PEDIA_HIDDEN"), false); }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    static constexpr int MAX_PRODUCTION_TURNS = 200;
-    static constexpr float EPSILON = 0.001f;
+    constexpr int MAX_PRODUCTION_TURNS = 200;
+    constexpr float EPSILON = 0.001f;
     int IconTextBrowseWndRowHeight() { return ClientUI::Pts()*3/2; }
     constexpr int   EDGE_PAD(3);
     constexpr GG::X ICON_BROWSE_TEXT_WIDTH{400};

@@ -45,9 +45,9 @@ static_assert(cmap["MAX"] == TestEnum::MAX);
 static_assert(cmap["OUT_OF_RANGE"] == TestEnum::OUT_OF_RANGE);
 
 
-static constexpr auto em = GG::CGetEnumMap<GG::WndRegion>();
-static constexpr auto qq = em[GG::WndRegion::WR_TOPLEFT];
-static constexpr auto rr = GG::to_string(GG::WndRegion::WR_TOPLEFT);
+constexpr auto em = GG::CGetEnumMap<GG::WndRegion>();
+constexpr auto qq = em[GG::WndRegion::WR_TOPLEFT];
+constexpr auto rr = GG::to_string(GG::WndRegion::WR_TOPLEFT);
 static_assert(rr == "WR_TOPLEFT");
 static_assert(rr == qq);
 
