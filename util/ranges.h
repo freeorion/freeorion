@@ -10,19 +10,19 @@
 
 #if (USING_STD_RANGES)
 # include <ranges>
-static constexpr auto& range_keys = std::views::keys;
-static constexpr auto& range_values = std::views::values;
-static constexpr auto& range_transform = std::views::transform;
-static constexpr auto& range_filter = std::views::filter;
-//static constexpr auto& range_join = std::views::join; // no equivalent in boost ranges
-static constexpr auto& range_reverse = std::views::reverse;
-static constexpr auto& range_find_if = std::ranges::find_if;
-static constexpr auto& range_any_of = std::ranges::any_of;
-static constexpr auto& range_copy = std::ranges::copy;
-static constexpr auto& range_copy_if = std::ranges::copy_if;
-static constexpr auto& range_max_element = std::ranges::max_element;
-static constexpr auto& range_equal = std::ranges::equal_range;
-static constexpr auto& range_end = std::ranges::end;
+inline constexpr auto& range_keys = std::views::keys;
+inline constexpr auto& range_values = std::views::values;
+inline constexpr auto& range_transform = std::views::transform;
+inline constexpr auto& range_filter = std::views::filter;
+//inline constexpr auto& range_join = std::views::join; // no equivalent in boost ranges
+inline constexpr auto& range_reverse = std::views::reverse;
+inline constexpr auto& range_find_if = std::ranges::find_if;
+inline constexpr auto& range_any_of = std::ranges::any_of;
+inline constexpr auto& range_copy = std::ranges::copy;
+inline constexpr auto& range_copy_if = std::ranges::copy_if;
+inline constexpr auto& range_max_element = std::ranges::max_element;
+inline constexpr auto& range_equal = std::ranges::equal_range;
+inline constexpr auto& range_end = std::ranges::end;
 #else
 # include <boost/range/adaptor/map.hpp>
 # include <boost/range/adaptor/filtered.hpp>
@@ -32,15 +32,15 @@ static constexpr auto& range_end = std::ranges::end;
 # include <boost/range/end.hpp>
 # include <boost/algorithm/cxx11/any_of.hpp>
 # include <boost/algorithm/cxx11/copy_if.hpp>
-static const auto& range_keys = boost::adaptors::map_keys;
-static const auto& range_values = boost::adaptors::map_values;
-static const auto& range_filter = boost::adaptors::filtered;
-static const auto& range_transform = boost::adaptors::transformed;
-static const auto& range_reverse = boost::adaptors::reversed;
+inline const auto& range_keys = boost::adaptors::map_keys;
+inline const auto& range_values = boost::adaptors::map_values;
+inline const auto& range_filter = boost::adaptors::filtered;
+inline const auto& range_transform = boost::adaptors::transformed;
+inline const auto& range_reverse = boost::adaptors::reversed;
 template <typename... Args>
 inline auto range_find_if(Args... args) { return boost::range::find_if(std::forward<Args>(args)...); }
 template <typename... Args>
-static const auto range_any_of(Args... args) { return boost::algorithm::any_of(std::forward<Args>(args)...); }
+inline const auto range_any_of(Args... args) { return boost::algorithm::any_of(std::forward<Args>(args)...); }
 template <typename... Args>
 inline auto range_copy(Args... args) { return boost::range::copy(std::forward<Args>(args)...); }
 template <typename... Args>
