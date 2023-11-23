@@ -131,7 +131,7 @@ std::wstring ToWString(const std::string& utf8_string) {
 Process::Impl::Impl(const std::string& cmd, const std::vector<std::string>& argv) {
     // convert UTF8 command and arguments to UTF16
     std::wstring wargs;
-    for (unsigned int i = 0; i < argv.size(); ++i) {
+    for (std::size_t i = 0u; i < argv.size(); ++i) {
         wargs += ToWString(argv[i]);
         if (i + 1 < argv.size())
             wargs += ' ';
@@ -141,22 +141,22 @@ Process::Impl::Impl(const std::string& cmd, const std::vector<std::string>& argv
     m_startup_info.cb = sizeof(STARTUPINFOW);
     ZeroMemory(&m_process_info, sizeof(PROCESS_INFORMATION));
 
-    std::wstring wcmd = ToWString(cmd);
-
+    const std::wstring wcmd = ToWString(cmd);
 
     if (!CreateProcessW(wcmd.c_str(), const_cast<LPWSTR>(wargs.c_str()), 0, 0,
-        false, CREATE_NO_WINDOW, 0, 0, &m_startup_info, &m_process_info)) {
-            std::string err_str;
-            DWORD err = GetLastError();
-            static constexpr DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM;
-            LPSTR buf = {};
-            if (FormatMessageA(flags, 0, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&buf, 0, 0)) {
-                err_str += buf;
-                LocalFree(buf);
-            }
-            throw std::runtime_error("Process::Process : Failed to create child process.  Windows error was: \"" + err_str + "\"");
+                        false, CREATE_NO_WINDOW, 0, 0, &m_startup_info, &m_process_info))
+    {
+        std::string err_str;
+        DWORD err = GetLastError();
+        static constexpr DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM;
+        LPSTR buf = {};
+        if (FormatMessageA(flags, 0, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&buf, 0, 0)) {
+            err_str += buf;
+            LocalFree(buf);
         }
-        WaitForInputIdle(m_process_info.hProcess, 1000); // wait for process to finish setting up, or for 1 sec, which ever comes first
+        throw std::runtime_error("Process::Process : Failed to create child process.  Windows error was: \"" + err_str + "\"");
+    }
+    WaitForInputIdle(m_process_info.hProcess, 1000); // wait for process to finish setting up, or for 1 sec, which ever comes first
 }
 
 Process::Impl::~Impl()
