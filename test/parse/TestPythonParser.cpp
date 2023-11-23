@@ -437,7 +437,7 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
     BOOST_REQUIRE(!buildings.empty());
 
     BOOST_CHECK_EQUAL(1, buildings.size());
-    BOOST_CHECK_EQUAL(1, buildings.contains("BLD_ART_BLACK_HOLE"));
+    BOOST_CHECK_EQUAL(true, buildings.contains("BLD_ART_BLACK_HOLE"));
 
     const auto building_it = buildings.find("BLD_ART_BLACK_HOLE");
     BOOST_REQUIRE(building_it != buildings.end());
