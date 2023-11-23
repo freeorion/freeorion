@@ -16,10 +16,10 @@ def _weapon(*, tag: str, tier_0: int, tier_1: int, tier_2: int, tier_3: int, tie
                 | DesignHasPart(name="SR_WEAPON_4_1")
             ),
             effects=[
-                SetMaxDamage(partname="SR_WEAPON_1_1", value=Value - SHIP_WEAPON_DAMAGE_FACTOR * tier_1),
-                SetMaxDamage(partname="SR_WEAPON_2_1", value=Value - SHIP_WEAPON_DAMAGE_FACTOR * tier_2),
-                SetMaxDamage(partname="SR_WEAPON_3_1", value=Value - SHIP_WEAPON_DAMAGE_FACTOR * tier_3),
-                SetMaxDamage(partname="SR_WEAPON_4_1", value=Value - SHIP_WEAPON_DAMAGE_FACTOR * tier_4),
+                SetMaxDamage(partname="SR_WEAPON_1_1", value=Value + SHIP_WEAPON_DAMAGE_FACTOR * tier_1),
+                SetMaxDamage(partname="SR_WEAPON_2_1", value=Value + SHIP_WEAPON_DAMAGE_FACTOR * tier_2),
+                SetMaxDamage(partname="SR_WEAPON_3_1", value=Value + SHIP_WEAPON_DAMAGE_FACTOR * tier_3),
+                SetMaxDamage(partname="SR_WEAPON_4_1", value=Value + SHIP_WEAPON_DAMAGE_FACTOR * tier_4),
             ],
         ),
         EffectsGroup(
@@ -48,7 +48,7 @@ def _weapon(*, tag: str, tier_0: int, tier_1: int, tier_2: int, tier_3: int, tie
     ]
 
 
-BAD_WEAPONS = _weapon(tag="BAD", tier_0=-1, tier_1=1, tier_2=2, tier_3=3, tier_4=5, hangar=-1.0)
+BAD_WEAPONS = _weapon(tag="BAD", tier_0=-1, tier_1=-1, tier_2=-2, tier_3=-3, tier_4=-5, hangar=-1.0)
 GOOD_WEAPONS = _weapon(tag="GOOD", tier_0=1, tier_1=1, tier_2=2, tier_3=3, tier_4=5, hangar=1.5)
-GREAT_WEAPONS = _weapon(tag="GREAT", tier_0=2, tier_1=2, tier_2=3, tier_3=6, tier_4=10, hangar=3.0)
+GREAT_WEAPONS = _weapon(tag="GREAT", tier_0=2, tier_1=2, tier_2=4, tier_3=6, tier_4=10, hangar=3.0)
 ULTIMATE_WEAPONS = _weapon(tag="ULTIMATE", tier_0=3, tier_1=3, tier_2=6, tier_3=9, tier_4=15, hangar=4.5)
