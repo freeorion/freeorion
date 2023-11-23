@@ -221,10 +221,10 @@ namespace {
             /// the like...
         };
 
-        static std::pair<GG::Key, GG::Flags<GG::ModKey>> GetKeypress() {
+        static auto GetKeypress() {
             auto ct = GG::Wnd::Create<KeyPressCatcher>();
             ct->Run();
-            return std::pair(ct->m_key, ct->m_mods);
+            return std::pair{ct->m_key, ct->m_mods};
         };
     };
 

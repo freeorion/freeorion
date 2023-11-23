@@ -125,7 +125,7 @@ namespace {
 /** Describes how a column should be set up in the dialog */
 class SaveFileColumn {
 public:
-    static std::vector<SaveFileColumn> GetColumns(GG::X max_width) {
+    static auto GetColumns(GG::X max_width) {
         std::vector<SaveFileColumn> columns;
         columns.reserve(VALID_PREVIEW_COLUMNS.size());
         for (const auto& sv : VALID_PREVIEW_COLUMNS)
@@ -133,14 +133,13 @@ public:
         return columns;
     }
 
-    static std::shared_ptr<GG::Control> TitleForColumn(const SaveFileColumn& column) {
+    static auto TitleForColumn(const SaveFileColumn& column) {
         auto retval = GG::Wnd::Create<CUILabel>(column.Title(), GG::FORMAT_LEFT);
         retval->Resize(GG::Pt(GG::X1, ClientUI::GetFont()->Height()));
         return retval;
     }
 
-    static std::shared_ptr<GG::Control> CellForColumn(const SaveFileColumn& column,
-                                                      const FullPreview& full, GG::X max_width)
+    static auto CellForColumn(const SaveFileColumn& column, const FullPreview& full, GG::X max_width)
     {
         GG::Clr color = ClientUI::TextColor();
         std::string value = ColumnInPreview(full, column.m_name);

@@ -3952,18 +3952,13 @@ namespace {
         }
     }
 
-    std::map<std::pair<int, int>, LaneEndpoints> CalculateStarlaneEndpoints(
-        const std::unordered_map<int, std::shared_ptr<SystemIcon>>& sys_icons)
-    {
-
+    auto CalculateStarlaneEndpoints(const std::unordered_map<int, std::shared_ptr<SystemIcon>>& sys_icons) {
         std::map<std::pair<int, int>, LaneEndpoints> retval;
 
         const auto& this_client_known_destroyed_objects =
             GetUniverse().EmpireKnownDestroyedObjectIDs(GGHumanClientApp::GetApp()->EmpireID());
 
-        for (auto const& id_icon : sys_icons) {
-            int system_id = id_icon.first;
-
+        for (auto const system_id : sys_icons | range_keys) {
             // skip systems that don't actually exist
             if (this_client_known_destroyed_objects.contains(system_id))
                 continue;

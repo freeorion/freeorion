@@ -157,9 +157,9 @@ namespace {
         return buff.data();
     }
 
-    static float stored_gl_version = -1.0f;  // to be replaced when gl version first checked
 
     float GetGLVersion() {
+        static float stored_gl_version = -1.0f; // to be replaced when gl version first checked
         if (stored_gl_version != -1.0f)
             return stored_gl_version;
 

@@ -18,82 +18,82 @@
 namespace {
     constexpr int DATA_PANEL_BORDER = 1;
 
-    std::shared_ptr<GG::Texture> AIIcon() {
-        static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ai.png");
+    auto AIIcon() {
+        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ai.png");
         return retval;
     }
 
-    std::shared_ptr<GG::Texture> MessageIcon() {
-        static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png");
+    auto MessageIcon() {
+        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png");
         return retval;
     }
 
-    std::shared_ptr<GG::Texture> HumanIcon() {
-        static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "human.png");
+    auto HumanIcon() {
+        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "human.png");
         return retval;
     }
-    std::shared_ptr<GG::Texture> ObserverIcon() {
-        static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "observer.png");
+    auto ObserverIcon() {
+        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "observer.png");
         return retval;
     }
-    std::shared_ptr<GG::Texture> ModeratorIcon() {
-        static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator.png");
+    auto ModeratorIcon() {
+        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator.png");
         return retval;
     }
-    std::shared_ptr<GG::Texture> HostIcon() {
-        static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "host.png");
+    auto HostIcon() {
+        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "host.png");
         return retval;
     }
-    std::shared_ptr<GG::Texture> PlayingIcon() {
-        static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "not_ready.png");
+    auto PlayingIcon() {
+        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "not_ready.png");
         return retval;
     }
-    std::shared_ptr<GG::Texture> WaitingIcon() {
-        static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ready.png");
+    auto WaitingIcon() {
+        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ready.png");
         return retval;
     }
-    std::shared_ptr<GG::Texture> WarIcon() {
-        static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "war.png");
+    auto WarIcon() {
+        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "war.png");
         return retval;
     }
-    std::shared_ptr<GG::Texture> PeaceIcon() {
-        static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "peace.png");
+    auto PeaceIcon() {
+        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "peace.png");
         return retval;
     }
-    std::shared_ptr<GG::Texture> AlliedIcon() {
-        static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "allied.png");
+    auto AlliedIcon() {
+        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "allied.png");
         return retval;
     }
-    std::shared_ptr<GG::Texture> UnknownIcon() {
-        static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "unknown.png");
+    auto UnknownIcon() {
+        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "unknown.png");
         return retval;
     }
-    std::shared_ptr<GG::Texture> ShipIcon() {
-        static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png");
+    auto ShipIcon() {
+        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png");
         return retval;
     }
-    std::shared_ptr<GG::Texture> ProductionIcon() {
-        static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "industry.png");
+    auto ProductionIcon() {
+        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "industry.png");
         return retval;
     }
-    std::shared_ptr<GG::Texture> ResearchIcon() {
-        static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "research.png");
+    auto ResearchIcon() {
+        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "research.png");
         return retval;
     }
-    std::shared_ptr<GG::Texture> InfluenceIcon() {
-        static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "influence.png");
+    auto InfluenceIcon() {
+        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "influence.png");
         return retval;
     }
-    std::shared_ptr<GG::Texture> DetectionIcon() {
-        static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "detection.png");
+    auto DetectionIcon() {
+        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "detection.png");
         return retval;
     }
-    std::shared_ptr<GG::Texture> WonIcon() {
-        static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "victory.png");
+    auto WonIcon() {
+        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "victory.png");
         return retval;
     }
-    std::shared_ptr<GG::Texture> LostIcon() {
-        static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "empire_eliminated.png");
+    auto LostIcon() {
+        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "empire_eliminated.png");
         return retval;
     }
 
@@ -208,13 +208,13 @@ namespace {
         void RButtonDown(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override { ForwardEventToParent(); }
 
     private:
-        int                                        m_empire_id;
-        boost::container::flat_set<int>            m_empire_ids;
-        DiplomaticStatus                           m_diplo_status;
-        std::shared_ptr<GG::Texture>               m_icon;
+        int                             m_empire_id;
+        boost::container::flat_set<int> m_empire_ids;
+        DiplomaticStatus                m_diplo_status;
+        std::shared_ptr<GG::Texture>    m_icon;
 
         int IconSize() const { return Value(Height()); }
-        int PAD = 3;
+        static const int PAD = 3;
     };
 
 
