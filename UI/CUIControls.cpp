@@ -540,7 +540,7 @@ void CUIIconButtonRepresenter::Render(const GG::StateButton& button) const {
     if (button.Disabled() || (!render_checked &&
                               (m_checked_color == m_unchecked_color) &&
                               (m_checked_icon == m_unchecked_icon)))
-        icon_clr = DisabledColor(icon_clr) * 0.8f;
+    { icon_clr = GG::BlendClr(DisabledColor(icon_clr), GG::CLR_ZERO, 0.8f); }
 
     // highlight on mouseover
     if (GG::StateButton::ButtonState::BN_ROLLOVER == button.State()) {

@@ -1765,8 +1765,8 @@ void MapWnd::RenderStarfields() {
             float z = RandDouble(-100, 100)*std::exp(-r2/(starfield_width*starfield_width/4));
             m_starfield_verts.store(x, y, z);
 
-            float brightness = 1.0f - std::pow(RandZeroToOne(), 2);
-            m_starfield_colours.store(GG::CLR_WHITE * brightness);
+            const float brightness = 1.0f - std::pow(RandZeroToOne(), 2);
+            m_starfield_colours.store(GG::BlendClr(GG::CLR_WHITE, GG::CLR_ZERO, brightness));
         }
         m_starfield_verts.createServerBuffer();
         m_starfield_colours.createServerBuffer();

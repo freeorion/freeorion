@@ -16,7 +16,6 @@
 
 #include <array>
 #include <cstdint>
-#include <limits>
 #include <sstream>
 #include <string>
 #include <GG/Export.h>
@@ -37,7 +36,7 @@ struct Clr
     [[nodiscard]] constexpr Clr() = default;
 
     /** ctor that constructs a Clr from four ints that represent the color channels */
-    [[nodiscard]] constexpr Clr(uint8_t r_, uint8_t g_, uint8_t b_, uint8_t a_) noexcept :
+    [[nodiscard]] constexpr Clr(uint8_t r_, uint8_t g_, uint8_t b_, uint8_t a_ = 255u) noexcept :
         r(r_), g(g_), b(b_), a(a_)
     {}
 
@@ -175,8 +174,11 @@ inline std::ostream& operator<<(std::ostream& os, Clr clr)
 //! channel unchanged, and multiplies the other channels by some factor.
 constexpr Clr LightenClr(Clr clr, float factor = 2.0) noexcept
 {
-    return Clr(std::min<uint8_t>(clr.r * factor, 255), std::min<uint8_t>(clr.g * factor, 255),
-               std::min<uint8_t>(clr.b * factor, 255), clr.a);
+    return Clr(
+        static_cast<uint8_t>(std::max(std::min(clr.r*factor, 255.0f), 0.0f)),
+        static_cast<uint8_t>(std::max(std::min(clr.g*factor, 255.0f), 0.0f)),
+        static_cast<uint8_t>(std::max(std::min(clr.b*factor, 255.0f), 0.0f)),
+        clr.a);
 }
 
 //! Returns the darkened version of color clr.  DarkenClr leaves the alpha
@@ -184,47 +186,33 @@ constexpr Clr LightenClr(Clr clr, float factor = 2.0) noexcept
 constexpr Clr DarkenClr(const Clr clr, float factor = 2.0) noexcept
 {
     return Clr(
-        static_cast<uint8_t>(clr.r / factor),
-        static_cast<uint8_t>(clr.g / factor),
-        static_cast<uint8_t>(clr.b / factor),
+        static_cast<uint8_t>(std::max(std::min(clr.r / factor, 255.0f), 0.0f)),
+        static_cast<uint8_t>(std::max(std::min(clr.g / factor, 255.0f), 0.0f)),
+        static_cast<uint8_t>(std::max(std::min(clr.b / factor, 255.0f), 0.0f)),
         clr.a);
 }
 
-constexpr Clr InvertClr(const Clr clr) noexcept {
-    constexpr uint8_t MAX{std::numeric_limits<decltype(clr.a)>::max()};
-    return Clr(MAX - clr.r, MAX - clr.g, MAX - clr.b, clr.a);
-}
+constexpr Clr InvertClr(const Clr clr) noexcept
+{ return Clr(255 - clr.r, 255 - clr.g, 255 - clr.b, clr.a); }
 
-constexpr Clr BlendClr(Clr src, Clr dst, float factor) noexcept
+constexpr Clr BlendClr(Clr src, Clr dst, float factor = 0.5f) noexcept
 {
-    return Clr(static_cast<uint8_t>(src.r * factor + dst.r * (1 - factor)),
-               static_cast<uint8_t>(src.g * factor + dst.g * (1 - factor)),
-               static_cast<uint8_t>(src.b * factor + dst.b * (1 - factor)),
-               static_cast<uint8_t>(src.a * factor + dst.a * (1 - factor)));
+    const auto ifactor = 1.0f - factor;
+    return Clr(static_cast<uint8_t>(std::max(std::min(src.r*factor + dst.r*ifactor, 255.0f), 0.0f)),
+               static_cast<uint8_t>(std::max(std::min(src.g*factor + dst.g*ifactor, 255.0f), 0.0f)),
+               static_cast<uint8_t>(std::max(std::min(src.b*factor + dst.b*ifactor, 255.0f), 0.0f)),
+               static_cast<uint8_t>(std::max(std::min(src.a*factor + dst.a*ifactor, 255.0f), 0.0f)));
 }
 
 /** Named ctor that constructs a Clr from four floats that represent the color
     channels (each must be >= 0.0 and <= 1.0). */
 constexpr Clr FloatClr(float r, float g, float b, float a) noexcept
 {
-    return Clr(static_cast<uint8_t>(r * 255),
-               static_cast<uint8_t>(g * 255),
-               static_cast<uint8_t>(b * 255),
-               static_cast<uint8_t>(a * 255));
+    return Clr(static_cast<uint8_t>(std::max(std::min(r, 1.0f) * 255, 0.0f)),
+               static_cast<uint8_t>(std::max(std::min(g, 1.0f) * 255, 0.0f)),
+               static_cast<uint8_t>(std::max(std::min(b, 1.0f) * 255, 0.0f)),
+               static_cast<uint8_t>(std::max(std::min(a, 1.0f) * 255, 0.0f)));
 }
-
-/** Returns the input Clr scaned by the input factor \a s. */
-constexpr Clr operator*(Clr lhs, float s) noexcept
-{
-    return Clr(static_cast<uint8_t>(lhs.r * s),
-               static_cast<uint8_t>(lhs.g * s),
-               static_cast<uint8_t>(lhs.b * s),
-               static_cast<uint8_t>(lhs.a * s));
-}
-
-/** Returns the component-wise sum of input Clrs. */
-constexpr Clr operator+(Clr lhs, Clr rhs) noexcept
-{ return Clr(lhs.r + rhs.r, lhs.g + rhs.g, lhs.b + rhs.b, lhs.a + rhs.a); }
 
 }
 

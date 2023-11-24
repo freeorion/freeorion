@@ -45,6 +45,15 @@ inline constexpr Clr CLR_DARK_BLUE = Clr(0, 0, 127, 255);
 inline constexpr Clr CLR_PURPLE = Clr(127, 0, 127, 255);
 inline constexpr Clr CLR_ORANGE = Clr(255, 127, 0, 255);
 
+
+namespace ClrStaticTests {
+    static_assert(LightenClr(CLR_DARK_GRAY, 3.0f) == CLR_LIGHT_GRAY);
+    static_assert(LightenClr(CLR_DARK_GRAY, 100.0f) == CLR_WHITE);
+    static_assert(DarkenClr(CLR_DARK_GRAY, 1000.0f) == CLR_BLACK);
+    static_assert(DarkenClr(CLR_DARK_GRAY, 0.00001f) == CLR_WHITE);
+    static_assert(BlendClr(CLR_DARK_GRAY, CLR_LIGHT_GRAY) == InvertClr(CLR_GRAY));
+    static_assert(BlendClr(CLR_WHITE, CLR_ZERO, 0.8f) == Clr(255*4/5, 255*4/5, 255*4/5, 255*4/5));
+}
 }
 
 
