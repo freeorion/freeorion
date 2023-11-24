@@ -277,16 +277,15 @@ void CUICheckBoxRepresenter::Render(const GG::StateButton& button) const {
     if (!button.Disabled() && !button.Checked() &&
         GG::StateButton::ButtonState::BN_ROLLOVER == button.State())
     {
-        AdjustBrightness(color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
-        AdjustBrightness(border_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
+        color_to_use = AdjustBrightness(color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
+        border_color_to_use = AdjustBrightness(border_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
     }
 
     static constexpr int MARGIN = 3;
     FlatRectangle(bn_ul, bn_lr, GG::CLR_ZERO, border_color_to_use, 1);
     if (button.Checked()) {
         GG::Clr inside_color = color_to_use;
-        GG::Clr outside_color = color_to_use;
-        AdjustBrightness(outside_color, 50);
+        GG::Clr outside_color = AdjustBrightness(color_to_use, 50);
         bn_ul += GG::Pt(GG::X(MARGIN), GG::Y(MARGIN));
         bn_lr -= GG::Pt(GG::X(MARGIN), GG::Y(MARGIN));
         const int OFFSET = Value(bn_lr.y - bn_ul.y) / 2;
@@ -329,10 +328,8 @@ void CUICheckBoxRepresenter::Render(const GG::StateButton& button) const {
         glPopClientAttrib();
         glEnable(GL_TEXTURE_2D);
     } else {
-        GG::Clr inside_color = border_color_to_use;
-        AdjustBrightness(inside_color, -75);
-        GG::Clr outside_color = inside_color;
-        AdjustBrightness(outside_color, 40);
+        GG::Clr inside_color = AdjustBrightness(border_color_to_use, -75);
+        GG::Clr outside_color = AdjustBrightness(inside_color, 40);
         glTranslated((bn_ul.x + bn_lr.x) / 2.0, -(bn_ul.y + bn_lr.y) / 2.0, 0.0);
         glScaled(-1.0, 1.0, 1.0);
         glTranslated(-(bn_ul.x + bn_lr.x) / 2.0, (bn_ul.y + bn_lr.y) / 2.0, 0.0);
@@ -377,16 +374,15 @@ void CUIRadioRepresenter::Render(const GG::StateButton& button) const {
     if (!button.Disabled() && !button.Checked() &&
         GG::StateButton::ButtonState::BN_ROLLOVER == button.State())
     {
-        AdjustBrightness(color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
-        AdjustBrightness(border_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
+        color_to_use = AdjustBrightness(color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
+        border_color_to_use = AdjustBrightness(border_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
     }
 
     static constexpr int MARGIN = 2;
     FlatCircle(bn_ul, bn_lr, GG::CLR_ZERO, border_color_to_use, 1);
     if (button.Checked()) {
         GG::Clr inside_color = color_to_use;
-        GG::Clr outside_color = color_to_use;
-        AdjustBrightness(outside_color, 50);
+        GG::Clr outside_color = AdjustBrightness(color_to_use, 50);
         FlatCircle(GG::Pt(bn_ul.x + MARGIN, bn_ul.y + MARGIN),
                    GG::Pt(bn_lr.x - MARGIN, bn_lr.y - MARGIN),
                    GG::CLR_ZERO, outside_color, 1);
@@ -394,10 +390,8 @@ void CUIRadioRepresenter::Render(const GG::StateButton& button) const {
                    GG::Pt(bn_lr.x - MARGIN - 1, bn_lr.y - MARGIN - 1), 
                    inside_color, outside_color, 1);
     } else {
-        GG::Clr inside_color = border_color_to_use;
-        AdjustBrightness(inside_color, -75);
-        GG::Clr outside_color = inside_color;
-        AdjustBrightness(outside_color, 40);
+        GG::Clr inside_color = AdjustBrightness(border_color_to_use, -75);
+        GG::Clr outside_color = AdjustBrightness(inside_color, 40);;
         FlatCircle(GG::Pt(bn_ul.x + MARGIN, bn_ul.y + MARGIN),
                    GG::Pt(bn_lr.x - MARGIN, bn_lr.y - MARGIN),
                    inside_color, outside_color, 1);
@@ -430,7 +424,7 @@ void CUITabRepresenter::Render(const GG::StateButton& button) const {
 
     if (button.Checked() || (!button.Disabled() &&
                              GG::StateButton::ButtonState::BN_ROLLOVER == button.State()))
-    { AdjustBrightness(border_color_to_use, 100); }
+    { border_color_to_use = AdjustBrightness(border_color_to_use, 100); }
 
     static constexpr int UNCHECKED_OFFSET = 4;
 
@@ -490,13 +484,11 @@ void CUILabelButtonRepresenter::Render(const GG::StateButton& button) const {
         border_clr     = DisabledColor(border_clr);
     } else {
         if (GG::StateButton::ButtonState::BN_PRESSED == button.State()) {
-            AdjustBrightness(background_clr, 25);
-
+            background_clr = AdjustBrightness(background_clr, 25);
             tx_ul = GG::Pt(GG::X1, GG::Y1);
         }
-        if (GG::StateButton::ButtonState::BN_ROLLOVER == button.State()) {
-            AdjustBrightness(border_clr, 100);
-        }
+        if (GG::StateButton::ButtonState::BN_ROLLOVER == button.State())
+            border_clr = AdjustBrightness(border_clr, 100);
     }
 
     AngledCornerRectangle(ul, lr, background_clr, border_clr, CUIBUTTON_ANGLE_OFFSET, border_thick);

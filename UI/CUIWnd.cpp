@@ -49,7 +49,7 @@ void CUI_MinRestoreButton::Render() {
     GG::Pt lr = LowerRight();
     GG::Clr color_to_use = ClientUI::WndInnerBorderColor();
     if (State() != ButtonState::BN_ROLLOVER)
-        AdjustBrightness(color_to_use, BUTTON_DIMMING_SCALE_FACTOR);
+        color_to_use = AdjustBrightness(color_to_use, BUTTON_DIMMING_SCALE_FACTOR);
     if (m_mode == Mode::MINIMIZE) {
         // draw a dash to signify the minimize command
         GG::Y middle_y = (lr.y + ul.y) / 2;
