@@ -211,7 +211,7 @@ bool ResourceBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const
 }
 
 void ResourceBrowseWnd::InitBuffer() {
-    GG::Pt sz = Size();
+    const auto sz = Size();
     const float ROW_HEIGHT(ClientUI::Pts()*4.0/3.0);
 
     m_buffer.clear();
@@ -411,7 +411,7 @@ bool WastedStockpiledResourceBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::si
 }
 
 void WastedStockpiledResourceBrowseWnd::InitBuffer() {
-    GG::Pt sz = Size();
+    const auto sz = Size();
     const float ROW_HEIGHT(ClientUI::Pts()*4.0/3.0);
 
     m_buffer.clear();

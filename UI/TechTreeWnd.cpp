@@ -1174,7 +1174,7 @@ void TechTreeWnd::LayoutPanel::Render() {
 }
 
 void TechTreeWnd::LayoutPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
-    const GG::Pt old_size = Size();
+    const auto old_size = Size();
     GG::Wnd::SizeMove(ul, lr);
     if (old_size != Size())
         DoLayout();
@@ -1183,12 +1183,12 @@ void TechTreeWnd::LayoutPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
 void TechTreeWnd::LayoutPanel::DoLayout() {
     const int SCRLWDTH = ClientUI::ScrollWidth();
 
-    GG::Pt vscroll_ul = GG::Pt(Width() - SCRLWDTH, GG::Y0);
-    GG::Pt vscroll_lr = GG::Pt(Width(), Height() - SCRLWDTH);
+    const auto vscroll_ul = GG::Pt(Width() - SCRLWDTH, GG::Y0);
+    const auto vscroll_lr = GG::Pt(Width(), Height() - SCRLWDTH);
     m_vscroll->SizeMove(vscroll_ul, vscroll_lr);
 
-    GG::Pt hscroll_ul = GG::Pt(GG::X0, Height() - SCRLWDTH);
-    GG::Pt hscroll_lr = GG::Pt(Width() - SCRLWDTH, Height());
+    const auto hscroll_ul = GG::Pt(GG::X0, Height() - SCRLWDTH);
+    const auto hscroll_lr = GG::Pt(Width() - SCRLWDTH, Height());
     m_hscroll->SizeMove(hscroll_ul, hscroll_lr);
 
     const GG::X ZBSIZE{ClientUI::ScrollWidth() * 2};
@@ -2070,7 +2070,7 @@ void TechTreeWnd::CompleteConstruction() {
 }
 
 void TechTreeWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
-    const GG::Pt old_size = Size();
+    const auto old_size = Size();
     GG::Wnd::SizeMove(ul, lr);
     if (old_size != Size()) {
         m_enc_detail_panel->ValidatePosition();

@@ -624,9 +624,9 @@ void DropDownList::InitBuffer()
 {
     m_buffer.clear();
 
-    GG::Pt lr = Size();
-    GG::Pt inner_ul = GG::Pt(GG::X(ListBox::BORDER_THICK), GG::Y(ListBox::BORDER_THICK));
-    GG::Pt inner_lr = lr - inner_ul;
+    const auto lr = Size();
+    const auto inner_ul = GG::Pt(GG::X(ListBox::BORDER_THICK), GG::Y(ListBox::BORDER_THICK));
+    const auto inner_lr = lr - inner_ul;
 
     // outer border
     m_buffer.store(0.0f,    0.0f);

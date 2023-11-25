@@ -42,8 +42,8 @@ HueSaturationPicker::HueSaturationPicker(X x, Y y, X w, Y h) :
 
 void HueSaturationPicker::Render()
 {
-    Pt ul = UpperLeft(), lr = LowerRight();
-    Pt size = Size();
+    const auto ul = UpperLeft(), lr = LowerRight();
+    const auto size = Size();
     glDisable(GL_TEXTURE_2D);
 
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);

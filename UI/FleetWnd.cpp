@@ -720,7 +720,7 @@ namespace {
     }
 
     void ShipDataPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
-        const GG::Pt old_size = Size();
+        const auto old_size = Size();
         GG::Control::SizeMove(ul, lr);
         if (old_size != Size())
             RequirePreRender();
@@ -1014,7 +1014,7 @@ namespace {
         }
 
         void SizeMove(GG::Pt ul, GG::Pt lr) override {
-            const GG::Pt old_size = Size();
+            const auto old_size = Size();
             GG::ListBox::Row::SizeMove(ul, lr);
             if (!empty() && old_size != Size() && m_panel)
                 m_panel->Resize(Size());
@@ -1305,7 +1305,7 @@ void FleetDataPanel::SetSystemID(int id)
 { m_system_id = id; }
 
 void FleetDataPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
-    const GG::Pt old_size = Size();
+    const auto old_size = Size();
     GG::Control::SizeMove(ul, lr);
     if (old_size != Size())
         DoLayout();
@@ -1832,7 +1832,7 @@ namespace {
         }
 
         void SizeMove(GG::Pt ul, GG::Pt lr) override {
-            const GG::Pt old_size = Size();
+            const auto old_size = Size();
             GG::ListBox::Row::SizeMove(ul, lr);
             if (!empty() && old_size != Size() && m_panel)
                 m_panel->Resize(Size());
@@ -2070,7 +2070,7 @@ public:
     }
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override {
-        const GG::Pt old_size = Size();
+        const auto old_size = Size();
         CUIListBox::SizeMove(ul, lr);
         if (old_size != Size()) {
             const GG::Pt row_size = ListRowSize();
@@ -2367,7 +2367,7 @@ public:
     }
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override {
-        const GG::Pt old_size = Size();
+        const auto old_size = Size();
         CUIListBox::SizeMove(ul, lr);
         if (old_size != Size()) {
             const GG::Pt row_size = ListRowSize();
@@ -2543,7 +2543,7 @@ std::set<int> FleetDetailPanel::SelectedShipIDs() const {
 }
 
 void FleetDetailPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
-    const GG::Pt old_size = Size();
+    const auto old_size = Size();
     GG::Wnd::SizeMove(ul, lr);
     if (old_size != Size())
         DoLayout();
@@ -3332,7 +3332,7 @@ void FleetWnd::SelectShips(const std::set<int>& ship_ids)
 { m_fleet_detail_panel->SelectShips(ship_ids); }
 
 void FleetWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
-    GG::Pt old_size = Size();
+    const auto old_size = Size();
     MapWndPopup::SizeMove(ul, lr);
     if (Size() != old_size)
         DoLayout();

@@ -351,7 +351,7 @@ std::string MessageWnd::GetText() const
 { return *m_display; }
 
 void MessageWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
-    const GG::Pt old_size = Size();
+    const auto old_size = Size();
     CUIWnd::SizeMove(ul, lr);
     if (old_size != Size())
         RequirePreRender();

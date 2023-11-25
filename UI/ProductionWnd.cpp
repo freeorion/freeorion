@@ -663,7 +663,7 @@ namespace {
     }
 
     void QueueProductionItemPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
-        const GG::Pt old_size = Size();
+        const auto old_size = Size();
         GG::Control::SizeMove(ul, lr);
         if (Size() != old_size)
             RequirePreRender();
@@ -834,7 +834,7 @@ public:
     }
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override {
-        GG::Pt sz = Size();
+        const auto sz = Size();
         CUIWnd::SizeMove(ul, lr);
         if (Size() != sz)
             DoLayout();

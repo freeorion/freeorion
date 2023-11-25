@@ -304,14 +304,10 @@ void FleetButton::MouseHere(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
 }
 
 void FleetButton::SizeMove(GG::Pt ul, GG::Pt lr) {
-    GG::Pt sz = Size();
-
+    const auto sz = Size();
     Button::SizeMove(ul, lr);
-
-    if (sz == Size())
-        return;
-
-    LayoutIcons();
+    if (sz != Size())
+        LayoutIcons();
 }
 
 void FleetButton::LayoutIcons() {

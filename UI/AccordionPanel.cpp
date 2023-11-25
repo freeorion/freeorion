@@ -35,7 +35,7 @@ AccordionPanel::~AccordionPanel()
 { m_border_buffer.clear(); }
 
 void AccordionPanel::InitBuffer() {
-    GG::Pt sz = Size();
+    const auto sz = Size();
     m_border_buffer.clear();
     m_border_buffer.store(0.0f,        0.0f);
     m_border_buffer.store(Value(sz.x), 0.0f);

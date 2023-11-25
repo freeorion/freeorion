@@ -2309,7 +2309,7 @@ void BasesListBox::BasesListBoxRow::Render() {
 }
 
 void BasesListBox::BasesListBoxRow::SizeMove(GG::Pt ul, GG::Pt lr) {
-    const GG::Pt old_size = Size();
+    const auto old_size = Size();
     CUIListBox::Row::SizeMove(ul, lr);
     if (!empty() && old_size != Size())
         at(0)->Resize(Size());
@@ -2383,7 +2383,7 @@ void BasesListBox::CompleteConstruction() {
 }
 
 void BasesListBox::SizeMove(GG::Pt ul, GG::Pt lr) {
-    const GG::Pt old_size = Size();
+    const auto old_size = Size();
     CUIListBox::SizeMove(ul, lr);
     if (old_size != Size()) {
         const GG::Pt row_size = ListRowSize();
@@ -3405,7 +3405,7 @@ void DesignWnd::BaseSelector::CompleteConstruction() {
 }
 
 void DesignWnd::BaseSelector::SizeMove(GG::Pt ul, GG::Pt lr) {
-    const GG::Pt old_size = Size();
+    const auto old_size = Size();
     CUIWnd::SizeMove(ul, lr);
     if (old_size != Size())
         DoLayout();
@@ -5014,7 +5014,7 @@ void DesignWnd::CompleteConstruction() {
 }
 
 void DesignWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
-    const GG::Pt old_size = Size();
+    const auto old_size = Size();
     GG::Wnd::SizeMove(ul, lr);
     if (old_size != Size()) {
         m_detail_panel->ValidatePosition();

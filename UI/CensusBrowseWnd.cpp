@@ -105,7 +105,7 @@ private:
     }
 
     void InitBuffer() {
-        GG::Pt sz = Size();
+        const auto sz = Size();
         m_buffer.clear();
 
         m_buffer.store(0.0f,                            0.0f);
@@ -273,7 +273,7 @@ bool CensusBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
 }
 
 void CensusBrowseWnd::InitBuffer() {
-    const GG::Pt sz = Size();
+    const auto sz = Size();
     const float ROW_HEIGHT(IconTextBrowseWndRowHeight());
 
     m_buffer.clear();

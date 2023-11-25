@@ -1248,7 +1248,7 @@ std::vector<std::string> GovernmentWnd::MainPanel::Policies() const {
 }
 
 void GovernmentWnd::MainPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
-    const GG::Pt old_size = Size();
+    const auto old_size = Size();
     GG::Wnd::SizeMove(ul, lr);
     if (old_size != Size())
         DoLayout();
@@ -1635,7 +1635,7 @@ void GovernmentWnd::CompleteConstruction() {
 }
 
 void GovernmentWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
-    const GG::Pt old_size = Size();
+    const auto old_size = Size();
     CUIWnd::SizeMove(ul, lr);
     if (old_size != Size())
         DoLayout();

@@ -1512,11 +1512,11 @@ public:
         GG::FlatRectangle(UpperLeft(), LowerRight(), background_colour, border_colour, DATA_PANEL_BORDER);
     }
 
-    void Select(bool b)
+    void Select(bool b) noexcept
     { m_selected = b; }
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override {
-        const GG::Pt old_size = Size();
+        const auto old_size = Size();
         GG::Control::SizeMove(ul, lr);
         if (old_size != Size())
             RequirePreRender();//DoLayout();//RequirePreRender();
@@ -1726,7 +1726,7 @@ public:
     { m_panel->RequirePreRender(); }
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override {
-        const GG::Pt old_size = Size();
+        const auto old_size = Size();
         GG::ListBox::Row::SizeMove(ul, lr);
         if (!empty() && old_size != Size() && m_panel){
             GG::Pt border(GG::X(2 * GetLayout()->BorderMargin()),
@@ -1759,7 +1759,7 @@ public:
     { SetChildClippingMode(ChildClippingMode::ClipToClient); }
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override {
-        const GG::Pt old_size = Size();
+        const auto old_size = Size();
         GG::Control::SizeMove(ul, lr);
         if (old_size != Size())
             DoLayout();
@@ -1902,7 +1902,7 @@ public:
     }
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override {
-        const GG::Pt old_size = Size();
+        const auto old_size = Size();
         GG::ListBox::Row::SizeMove(ul, lr);
         //std::cout << "ObjectRow::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
         if (!empty() && old_size != Size() && m_panel)
@@ -2062,7 +2062,7 @@ public:
     }
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override {
-        const GG::Pt old_size = Size();
+        const auto old_size = Size();
         Wnd::SizeMove(ul, lr);
         if (old_size != Size())
             RequirePreRender();

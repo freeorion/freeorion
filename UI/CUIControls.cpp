@@ -696,7 +696,7 @@ void CUIScroll::Render() {
 }
 
 void CUIScroll::SizeMove(GG::Pt ul, GG::Pt lr) {
-    GG::Pt old_sz = Size();
+    const auto old_sz = Size();
     Wnd::SizeMove(ul, lr);
 
     TabButton()->SizeMove(TabButton()->RelativeUpperLeft(), 
@@ -751,20 +751,20 @@ CUIDropDownList::CUIDropDownList(std::size_t num_shown_elements) :
 
 void CUIDropDownList::InitBuffer() {
     m_buffer.clear();
-    GG::Pt sz = Size();
+    const auto sz = Size();
     BufferStoreAngledCornerRectangleVertices(this->m_buffer, GG::Pt0, sz,
                                              CUIDROPDOWNLIST_ANGLE_OFFSET, false, true, false);
 
     static constexpr int margin = 3;
-    int triangle_width = Value(sz.y - 4 * margin);
-    int outline_width = triangle_width + 3 * margin;
+    const int triangle_width = Value(sz.y - 4 * margin);
+    const int outline_width = triangle_width + 3 * margin;
 
-    GG::Pt triangle_ul = GG::Pt(sz.x - triangle_width - margin * 5 / 2, GG::Y(2 * margin));
-    GG::Pt triangle_lr = GG::Pt(sz.x - margin * 5 / 2, sz.y - 2 * margin);
+    const auto triangle_ul = GG::Pt(sz.x - triangle_width - margin * 5 / 2, GG::Y(2 * margin));
+    const auto triangle_lr = GG::Pt(sz.x - margin * 5 / 2, sz.y - 2 * margin);
     BufferStoreIsoscelesTriangle(this->m_buffer, triangle_ul, triangle_lr, ShapeOrientation::DOWN);
 
-    GG::Pt btn_ul = GG::Pt(sz.x - outline_width - margin, GG::Y(margin));
-    GG::Pt btn_lr = GG::Pt(sz.x - margin, sz.y - margin);
+    const auto btn_ul = GG::Pt(sz.x - outline_width - margin, GG::Y(margin));
+    const auto btn_lr = GG::Pt(sz.x - margin, sz.y - margin);
 
     BufferStoreAngledCornerRectangleVertices(this->m_buffer, btn_ul, btn_lr,
                                              CUIDROPDOWNLIST_ANGLE_OFFSET, false, true, false);
@@ -825,12 +825,13 @@ void CUIDropDownList::Render() {
 
 GG::Pt CUIDropDownList::ClientLowerRight() const noexcept
 {
-    GG::Pt sz = Size();
-    int margin = 3;
-    int triangle_width = Value(sz.y - 4 * margin);
-    int outline_width = triangle_width + 4 * margin;
-    return (DropDownList::ClientLowerRight()
-            - GG::Pt((m_render_drop_arrow ? GG::X(outline_width + 2 * margin) : GG::X0), GG::Y0));
+    const auto sz = Size();
+    const int margin = 3;
+    const int triangle_width = Value(sz.y - 4 * margin);
+    const int outline_width = triangle_width + 4 * margin;
+    return DropDownList::ClientLowerRight()- GG::Pt(
+        (m_render_drop_arrow ? GG::X(outline_width + 2 * margin) : GG::X0),
+        GG::Y0);
 }
 
 GG::X CUIDropDownList::DroppedRowWidth() const
@@ -1662,7 +1663,7 @@ ColorSelector::~ColorSelector()
 { m_border_buffer.clear(); }
 
 void ColorSelector::InitBuffer() {
-    GG::Pt sz = Size();
+    const auto sz = Size();
     m_border_buffer.clear();
     m_border_buffer.store(0.0f,        0.0f);
     m_border_buffer.store(Value(sz.x), 0.0f);

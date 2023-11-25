@@ -170,7 +170,7 @@ void BuildingsPanel::ExpandCollapseButtonPressed()
 { ExpandCollapse(!s_expanded_map[m_planet_id]); }
 
 void BuildingsPanel::DoLayout() {
-    auto old_size = Size();
+    const auto old_size = Size();
     AccordionPanel::DoLayout();
 
     int row = 0;
@@ -354,10 +354,8 @@ void BuildingIndicator::Refresh() {
 }
 
 void BuildingIndicator::SizeMove(GG::Pt ul, GG::Pt lr) {
-    GG::Pt old_size = Size();
-
+    const auto old_size = Size();
     GG::Wnd::SizeMove(ul, lr);
-
     if (old_size != Size())
         DoLayout();
 }

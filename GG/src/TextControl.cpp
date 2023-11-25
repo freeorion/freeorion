@@ -237,7 +237,7 @@ void TextControl::SetFont(std::shared_ptr<Font> font)
 
 void TextControl::SizeMove(Pt ul, Pt lr)
 {
-    GG::Pt old_size = Size();
+    const auto old_size = Size();
     Wnd::SizeMove(ul, lr);
     bool resized = old_size != Size();
     bool redo_determine_lines = false;

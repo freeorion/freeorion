@@ -132,7 +132,7 @@ void GraphControl::ScaleToZero(bool zero) {
 }
 
 void GraphControl::SizeMove(GG::Pt ul, GG::Pt lr) {
-    GG::Pt old_sz = Size();
+    const auto old_sz = Size();
     GG::Control::SizeMove(ul, lr);
     if (Size() != old_sz)
         DoLayout();

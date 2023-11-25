@@ -123,7 +123,7 @@ Orientation Scroll::ScrollOrientation() const
 
 void Scroll::InitBuffer()
 {
-    GG::Pt sz = Size();
+    const auto sz = Size();
     m_buffer.clear();
     m_buffer.store(0.0f,        0.0f);
     m_buffer.store(Value(sz.x), 0.0f);
@@ -155,10 +155,8 @@ void Scroll::Render()
 
 void Scroll::SizeMove(Pt ul, Pt lr)
 {
-    Pt old_size = Size();
-
+    const auto old_size = Size();
     Wnd::SizeMove(ul, lr);
-
     if (old_size != Size()) {
         DoLayout();
         InitBuffer();

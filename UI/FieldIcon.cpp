@@ -44,9 +44,8 @@ void FieldIcon::LButtonUp(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 void FieldIcon::SizeMove(GG::Pt ul, GG::Pt lr) {
     Wnd::SizeMove(ul, lr);
 
-    GG::Pt middle = GG::Pt(Width() / 2, Height() / 2);
-
-    const GG::Pt SEL_IND_SIZE = Size();
+    const auto middle = GG::Pt(Width() / 2, Height() / 2);
+    const auto SEL_IND_SIZE = Size();
 
     // selection indicator
     if (m_selected && m_selection_indicator) {

@@ -110,7 +110,7 @@ void TextBoxBrowseInfoWnd::SetText(std::string str)
 
 void TextBoxBrowseInfoWnd::InitBuffer()
 {
-    GG::Pt sz = Size();
+    const auto sz = Size();
     m_buffer.clear();
     m_buffer.store(0.0f,        0.0f);
     m_buffer.store(Value(sz.x), 0.0f);
@@ -122,7 +122,7 @@ void TextBoxBrowseInfoWnd::InitBuffer()
 
 void TextBoxBrowseInfoWnd::SizeMove(Pt ul, Pt lr)
 {
-    Pt sz = Size();
+    const auto sz = Size();
     BrowseInfoWnd::SizeMove(ul, lr);
     if (sz != Size())
         InitBuffer();
@@ -130,7 +130,7 @@ void TextBoxBrowseInfoWnd::SizeMove(Pt ul, Pt lr)
 
 void TextBoxBrowseInfoWnd::Render()
 {
-    Pt ul = UpperLeft();
+    const auto ul = UpperLeft();
 
     glPushMatrix();
     glLoadIdentity();

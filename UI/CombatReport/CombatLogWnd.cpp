@@ -654,7 +654,7 @@ void CombatLogWnd::PreRender() {
     This fix forces the combat accordion window to correctly resize itself.
 
     TODO: Fix intial size of CombatReport from (30,15) to its actual first displayed size.*/
-    GG::Pt size = Size();
+    const auto size = Size();
     Resize(size + GG::Pt(2 * m_impl->m_font->SpaceWidth(), GG::Y0));
     GG::GUI::PreRenderWindow(this);
     Resize(size);

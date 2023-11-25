@@ -250,7 +250,7 @@ void CUIWnd::SetName(std::string name) {
 }
 
 void CUIWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
-    GG::Pt old_sz = Size();
+    const auto old_sz = Size();
     if (m_config_save) {    // can write position/size to OptionsDB
 
         GG::Pt available_size;
@@ -636,14 +636,9 @@ void CUIWnd::SetDefaultedOptions() {
 
 void CUIWnd::SaveDefaultedOptions() {
     OptionsDB& db = GetOptionsDB();
-    std::string config_prefix = "ui." + m_config_name;
-    std::string window_mode = db.Get<bool>("video.fullscreen.enabled") ?
-                              ".fullscreen" : ".windowed";
-    GG::Pt size;
-    if (m_minimized)
-        size = m_original_size;
-    else
-        size = Size();
+    const std::string config_prefix = "ui." + m_config_name;
+    const std::string window_mode = db.Get<bool>("video.fullscreen.enabled") ? ".fullscreen" : ".windowed";
+    const auto size = m_minimized ? m_original_size : Size();
 
     std::string config_name = config_prefix + window_mode + ".left";
     int int_value = Value(RelativeUpperLeft().x);
@@ -688,7 +683,7 @@ void CUIWnd::SaveOptions() const {
 
     // The default empty string means 'do not save/load properties'
     // Also do not save while the window is being dragged.
-    auto gui = GG::GUI::GetGUI();
+    const auto gui = GG::GUI::GetGUI();
     std::string option_prefix = "ui." + m_config_name;
     if (m_config_name.empty() || !m_config_save || !gui || gui->DragWnd(this, 0)) {
         return;
@@ -700,13 +695,9 @@ void CUIWnd::SaveOptions() const {
         return;
     }
 
-    GG::Pt size;
-    if (m_minimized)
-        size = m_original_size;
-    else
-        size = Size();
+    const auto size = m_minimized ? m_original_size : Size();
 
-    std::string window_mode = db.Get<bool>("video.fullscreen.enabled") ?
+    const std::string window_mode = db.Get<bool>("video.fullscreen.enabled") ?
                               ".fullscreen" : ".windowed";
 
     db.Set(option_prefix + window_mode + ".left",      Value(RelativeUpperLeft().x));
