@@ -1287,12 +1287,9 @@ PolicyOrder::PolicyOrder(int empire, std::string name, std::string category, boo
 {}
 
 std::string PolicyOrder::Dump() const {
-    if (m_adopt) {
-        return boost::io::str(FlexibleFormat(UserString("ORDER_POLICY_ADOPT"))
-                              % m_policy_name % m_category % m_slot) + ExecutedTag(this);
-    } else {
-        return boost::io::str(FlexibleFormat(UserString("ORDER_POLICY_ABANDON")) % m_policy_name) + ExecutedTag(this);
-    }
+    const auto& template_str = m_adopt ? UserString("ORDER_POLICY_ADOPT") : UserString("ORDER_POLICY_ABANDON");
+    return boost::io::str(FlexibleFormat(template_str)
+                          % m_policy_name % m_category % m_slot) + ExecutedTag(this);
 }
 
 void PolicyOrder::ExecuteImpl(ScriptingContext& context) const {
@@ -1331,8 +1328,21 @@ ResearchQueueOrder::ResearchQueueOrder(int empire, std::string tech_name, bool p
     m_pause(pause ? PAUSE : RESUME)
 {}
 
-std::string ResearchQueueOrder::Dump() const
-{ return UserString("ORDER_RESEARCH"); }
+std::string ResearchQueueOrder::Dump() const {
+    const auto& template_str = [this]() -> const auto& {
+        if (m_remove)
+            return UserString("ORDER_RESEARCH_REMOVE");
+        else if (m_pause == PAUSE)
+            return UserString("ORDER_RESEARCH_PAUSE");
+        else if (m_pause == RESUME)
+            return UserString("ORDER_RESEARCH_RESUME");
+        else
+            return UserString("ORDER_RESEARCH_ENQUEUE_AT");
+    }();
+
+    const auto& tech_name = UserStringExists(m_tech_name) ? UserString(m_tech_name) : m_tech_name;
+    return boost::io::str(FlexibleFormat(template_str) % tech_name % m_position) + ExecutedTag(this);
+}
 
 void ResearchQueueOrder::ExecuteImpl(ScriptingContext& context) const {
     auto empire = GetValidatedEmpire(context);

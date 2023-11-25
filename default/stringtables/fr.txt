@@ -5635,8 +5635,17 @@ Adopter Politique %1% de la catégorie %2% choix %3%
 ORDER_POLICY_ABANDON
 Abandonner Politique %1%
 
-ORDER_RESEARCH
-Recherche
+ORDER_RESEARCH_REMOVE
+Retirer %1%
+
+ORDER_RESEARCH_PAUSE
+Mettre en pause %1%
+
+ORDER_RESEARCH_RESUME
+Reprendre %1%
+
+ORDER_RESEARCH_ENQUEUE_AT
+Recherche %1% à l'indice %2%
 
 ORDER_PRODUCTION  # translated
 Production

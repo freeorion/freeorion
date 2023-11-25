@@ -5635,8 +5635,17 @@ Adopt Policy %1% in category %2% slot %3%
 ORDER_POLICY_ABANDON
 Abandon Policy %1%
 
-ORDER_RESEARCH
-Research
+ORDER_RESEARCH_REMOVE
+Remove Tech %1% from Queue
+
+ORDER_RESEARCH_PAUSE
+Pause Researching Tech %1%
+
+ORDER_RESEARCH_RESUME
+Resume Researching Tech %1%
+
+ORDER_RESEARCH_ENQUEUE_AT
+Enqueue Tech %1% at index %2%
 
 ORDER_PRODUCTION
 Production
