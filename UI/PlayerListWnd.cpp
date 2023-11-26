@@ -476,7 +476,7 @@ namespace {
 
         void DoLayout() {
             const GG::X pts{ClientUI::Pts()};
-            const GG::X PLAYER_NAME_WIDTH(pts       * 10);
+            //const GG::X PLAYER_NAME_WIDTH(pts       * 10); // uses below commented out
             const GG::X EMPIRE_NAME_WIDTH(pts       * 10);
             const GG::X EMPIRE_SHIP_WIDTH(pts       * 16/5);
             const GG::X EMPIRE_PLANET_WIDTH(pts     * 16/5);

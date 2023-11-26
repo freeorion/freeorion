@@ -4496,56 +4496,57 @@ void DesignWnd::MainPanel::DoLayout() {
     // position labels and text edit boxes for name and description and buttons to clear and confirm design
 
     const int PTS = ClientUI::Pts();
-    const GG::X PTS_WIDE{PTS / 2};           // guess at how wide per character the font needs
     static constexpr int PAD = 6;
 
-    GG::Pt ul,lr,ll,mus;
-    lr = ClientSize() - GG::Pt(GG::X{PAD}, GG::Y{PAD});
+    auto lr = ClientSize() - GG::Pt(GG::X{PAD}, GG::Y{PAD});
     m_confirm_button->SizeMove(lr - m_confirm_button->MinUsableSize(), lr);
 
-    mus=m_replace_button->MinUsableSize();
-    ul = m_confirm_button->RelativeUpperLeft() - GG::Pt(mus.x+PAD, GG::Y0);
+    auto mus = m_replace_button->MinUsableSize();
+    auto ul = m_confirm_button->RelativeUpperLeft() - GG::Pt(mus.x+PAD, GG::Y0);
     m_replace_button->SizeMove(ul, ul+mus);
 
-    ll= GG::Pt(GG::X(PAD), ClientHeight() - PAD);
-    mus=m_clear_button->MinUsableSize();
-    ul = ll-GG::Pt(GG::X0, mus.y);
-    m_clear_button->SizeMove(ul, ul+mus);
+    const auto ll = GG::Pt(GG::X(PAD), ClientHeight() - PAD);
+    mus = m_clear_button->MinUsableSize();
+    ul = ll - GG::Pt(GG::X0, mus.y);
+    m_clear_button->SizeMove(ul, ul + mus);
 
     ul = GG::Pt(GG::X(PAD), GG::Y(PAD));
     // adjust based on the (bigger) height of the edit bar 
-    lr= ul+GG::Pt(m_design_name_label->MinUsableSize().x, m_design_name->MinUsableSize().y);
+    lr = ul+GG::Pt(m_design_name_label->MinUsableSize().x, m_design_name->MinUsableSize().y);
     m_design_name_label->SizeMove(ul, lr);
 
-    ul= GG::Pt(m_design_name_label->RelativeLowerRight().x+PAD, GG::Y(PAD));
+    ul = GG::Pt(m_design_name_label->RelativeLowerRight().x+PAD, GG::Y(PAD));
     m_design_name->SizeMove(ul, GG::Pt(GG::X(ClientWidth()-PAD), ul.y+m_design_name->MinUsableSize().y));
 
-    ul=GG::Pt(GG::X(PAD), GG::Y(m_design_name->RelativeLowerRight().y+PAD));
+    ul = GG::Pt(GG::X(PAD), GG::Y(m_design_name->RelativeLowerRight().y+PAD));
     // Apparently calling minuseablesize on the button itself doesn't work
-    lr= ul+GG::Pt(m_design_description_toggle->GetLabel()->MinUsableSize().x+10, m_design_name->MinUsableSize().y);
+    lr = ul + GG::Pt(m_design_description_toggle->GetLabel()->MinUsableSize().x + 10,
+                     m_design_name->MinUsableSize().y);
     m_design_description_toggle->SizeMove(ul, lr);
 
     ul.x = m_design_description_toggle->RelativeLowerRight().x + PAD;
     m_design_description_edit->SizeMove(ul, GG::Pt(GG::X(ClientWidth()-PAD),ul.y+PTS*4+8));
-    if (m_design_description_toggle->Checked()) { m_design_description_edit->Show() ; }
-    else { m_design_description_edit->Hide(); }
+    if (m_design_description_toggle->Checked())
+        m_design_description_edit->Show();
+    else
+        m_design_description_edit->Hide();
 
     // place background image of hull
     ul.x = GG::X0;
     ul.y += m_design_name->Height();
-    GG::Rect background_rect = GG::Rect(ul, ClientLowerRight());
+    GG::Rect background_rect{ul, ClientLowerRight()};
 
     if (m_background_image) {
-        GG::Pt bg_ul = background_rect.UpperLeft();
-        GG::Pt bg_lr = ClientSize();
+        const auto bg_ul = background_rect.UpperLeft();
+        const auto bg_lr = ClientSize();
         m_background_image->SizeMove(bg_ul, bg_lr);
         background_rect = m_background_image->RenderedArea();
     }
 
     // place slot controls over image of hull
     for (auto& slot : m_slots) {
-        GG::X x(background_rect.Left() - GG::ToX(slot->Width()/2.0 - ClientUpperLeft().x + slot->XPositionFraction() * background_rect.Width()));
-        GG::Y y(background_rect.Top() - GG::ToY(slot->Height()/2.0 - ClientUpperLeft().y + slot->YPositionFraction() * background_rect.Height()));
+        const auto x = background_rect.Left() - GG::ToX(slot->Width()/2.0 - ClientUpperLeft().x + slot->XPositionFraction() * background_rect.Width());
+        const auto y = background_rect.Top() - GG::ToY(slot->Height()/2.0 - ClientUpperLeft().y + slot->YPositionFraction() * background_rect.Height());
         slot->MoveTo(GG::Pt(x, y));
     }
 }
@@ -4554,7 +4555,7 @@ void DesignWnd::MainPanel::DesignChanged() {
     m_replace_button->ClearBrowseInfoWnd();
     m_confirm_button->ClearBrowseInfoWnd();
 
-    int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     m_disabled_by_name = false;
     m_disabled_by_part_conflict = false;
 

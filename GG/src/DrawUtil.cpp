@@ -7,12 +7,21 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
+#include <utility>
 #include <valarray>
 #include <GG/ClrConstants.h>
 #include <GG/DrawUtil.h>
 #include <GG/GLClientAndServerBuffer.h>
 #include <GG/GUI.h>
 
+
+#if !defined(__cpp_lib_integer_comparison_functions)
+constexpr bool cmp_less_equal(std::size_t l, int r) noexcept { return l <= r; }
+constexpr bool cmp_greater(std::size_t l, int r) noexcept { return l > r; }
+#else
+using std::cmp_less_equal;
+using std::cmp_greater;
+#endif
 
 using namespace GG;
 
@@ -310,7 +319,7 @@ void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
     int last_slice_idx = int(theta2 / HORZ_THETA - 1);
     if (theta1 >= theta2)
         last_slice_idx += SLICES;
-    for (std::size_t j = first_slice_idx; j <= last_slice_idx; ++j) { // calculate the color value for each needed point
+    for (std::size_t j = first_slice_idx; cmp_less_equal(j, last_slice_idx); ++j) { // calculate the color value for each needed point
         std::size_t X = (j > SLICES ? (j - SLICES) : j) * 2, Y = X + 1; // confusing use of operator ,
         const double color_scale_factor = (SQRT2OVER2 * (unit_vertices[X] + unit_vertices[Y]) + 1) / 2; // this is essentially the dot product of (x,y) with (sqrt2over2,sqrt2over2), the direction of the light source, scaled to the range [0,1]
         colors[j] = BlendClr(border_color1, border_color2, color_scale_factor);
@@ -329,9 +338,10 @@ void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
     glVertex2f(theta1_x * inner_radius, theta1_y * inner_radius);
     // angles in between theta1 and theta2, if any
     for (int i = first_slice_idx; i <= last_slice_idx; ++i) {
-        int X = (i > SLICES ? (i - SLICES) : i) * 2, Y = X + 1;
+        int X = 2 * (cmp_greater(i, SLICES) ? (i - SLICES) : i);
+        int Y = X + 1;
         glVertex2f(unit_vertices[X] * inner_radius, unit_vertices[Y] * inner_radius);
-    }      // theta2
+    }
     double theta2_x = cos(-theta2), theta2_y = sin(-theta2);
     glVertex2f(theta2_x * inner_radius, theta2_y * inner_radius);
     glEnd();
@@ -344,7 +354,8 @@ void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
     glVertex2f(theta1_x * inner_radius, theta1_y * inner_radius);
     // angles in between theta1 and theta2, if any
     for (int i = first_slice_idx; i <= last_slice_idx; ++i) {
-        int X = (i > SLICES ? (i - SLICES) : i) * 2, Y = X + 1;
+        const int X = 2 * (cmp_greater(i, SLICES) ? (i - SLICES) : i);
+        const int Y = X + 1;
         glColor(colors[i]);
         glVertex2f(unit_vertices[X], unit_vertices[Y]);
         glVertex2f(unit_vertices[X] * inner_radius, unit_vertices[Y] * inner_radius);
