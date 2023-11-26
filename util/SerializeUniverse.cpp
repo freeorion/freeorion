@@ -676,15 +676,20 @@ namespace {
         } else {
             std::size_t retval = 1u;
             if constexpr (std::is_signed_v<T>)
-                retval += (t < 0u);
+                retval += (t < 0); // for '-' character
 
-            while (t != 0u) {
-                retval += 1u;
-                t /= 10u;
+            while (t/10 != 0) {
+                retval += 1;
+                t /= 10;
             }
             return retval;
         }
     }
+    static_assert(Digits(0) == 1);
+    static_assert(Digits(1) == 1);
+    static_assert(Digits(-1) == 2);
+    static_assert(Digits(-12089) == 6);
+    static_assert(Digits(12089) == 5);
     constexpr auto digits_id_max = Digits(std::numeric_limits<UniverseObject::IDSet::value_type>::max());
     constexpr auto digits_id_min = Digits(std::numeric_limits<UniverseObject::IDSet::value_type>::min());
     constexpr auto digits_id = std::max(digits_id_max, digits_id_min);
