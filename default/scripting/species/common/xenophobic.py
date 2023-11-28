@@ -33,7 +33,7 @@ from focs._effects import (
 )
 
 
-def CONDITION_OTHER_SPECIES_NEARBY():
+def _condition_other_species_nearby():
     return (
         Planet()
         & HasSpecies()
@@ -46,7 +46,7 @@ def CONDITION_OTHER_SPECIES_NEARBY():
     )
 
 
-def XENOPHOBIC_SELFSUSTAINING_QUALIFYING_PLANET_COUNT():
+def _xenophobic_selfsustaining_qualifying_planet_count():
     return StatisticCount(
         int,
         condition=Planet()
@@ -66,7 +66,7 @@ XENOPHOBIC_SELF = [
     # Xenophobic Frenzy: stability malus for xenophobic species nearby other species
     EffectsGroup(
         scope=IsSource,
-        activation=Number(low=1, condition=CONDITION_OTHER_SPECIES_NEARBY()),
+        activation=Number(low=1, condition=_condition_other_species_nearby()),
         stackinggroup="XENOPHOBIC_LABEL_SELF",
         accountinglabel="XENOPHOBIC_LABEL_SELF",
         priority=TARGET_AFTER_SCALING_PRIORITY,
@@ -100,7 +100,7 @@ XENOPHOBIC_SELF = [
         scope=IsSource,
         activation=Planet()
         & HasTag(name="SELF_SUSTAINING")
-        & (0 < XENOPHOBIC_SELFSUSTAINING_QUALIFYING_PLANET_COUNT()),
+        & (0 < _xenophobic_selfsustaining_qualifying_planet_count()),
         stackinggroup="XENOPHOBIC_POP_SELF",
         accountinglabel="XENOPHOBIC_LABEL_SELF",
         priority=TARGET_POPULATION_LAST_BEFORE_OVERRIDE_PRIORITY,
@@ -133,7 +133,7 @@ XENOPHOBIC_SELF = [
 def XENOPHOBIC_OTHER(name):
     # Xenophobic Harassment: stability malus to non-exobot species nearby different, xenophobic species
     return EffectsGroup(
-        scope=CONDITION_OTHER_SPECIES_NEARBY(),
+        scope=_condition_other_species_nearby(),
         activation=Planet(),
         stackinggroup=f"XENOPHOBIC_LABEL_{name}_OTHER",
         accountinglabel=f"XENOPHOBIC_LABEL_{name}_OTHER",

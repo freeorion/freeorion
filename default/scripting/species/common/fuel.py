@@ -4,7 +4,7 @@ from common.priorities import TARGET_AFTER_SCALING_PRIORITY
 from focs._effects import EffectsGroup, IsSource, SetMaxFuel, Ship, Value
 
 
-def FUEL_EFFECTSGROUP(label: str, fuel_change: float):
+def _fuel(label: str, fuel_change: float):
     return EffectsGroup(
         description=f"{label}_FUEL_DESC",
         scope=IsSource & Ship,
@@ -15,18 +15,18 @@ def FUEL_EFFECTSGROUP(label: str, fuel_change: float):
 
 
 NO_FUEL = [
-    FUEL_EFFECTSGROUP("NO", Value + 0),
+    _fuel("NO", Value + 0),
 ]
 BAD_FUEL = [
-    FUEL_EFFECTSGROUP("BAD", Value - 0.5),
+    _fuel("BAD", Value - 0.5),
 ]
 GOOD_FUEL = [
-    FUEL_EFFECTSGROUP("GOOD", Value + 0.5),
+    _fuel("GOOD", Value + 0.5),
 ]
 AVERAGE_FUEL = []
 GREAT_FUEL = [
-    FUEL_EFFECTSGROUP("GREAT", Value + 1),
+    _fuel("GREAT", Value + 1),
 ]
 ULTIMATE_FUEL = [
-    FUEL_EFFECTSGROUP("ULTIMATE", Value + 1.5),
+    _fuel("ULTIMATE", Value + 1.5),
 ]

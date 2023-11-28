@@ -46,7 +46,7 @@ from focs._effects import (
     Value,
 )
 
-UNSTABLE_REBEL_TROOPS = [
+_UNSTABLE_REBEL_TROOPS = [
     EffectsGroup(
         scope=IsSource,
         activation=~Unowned & ~Happiness(low=0),
@@ -102,7 +102,33 @@ UNSTABLE_REBEL_TROOPS = [
     ),
 ]
 
-BASIC_DEFENSE_TROOPS = [
+_PROTECTION_FOCUS_TROOPS = [
+    EffectsGroup(  # double max troops
+        scope=IsSource,
+        activation=Planet() & Focus(type=["FOCUS_PROTECTION"]),
+        stackinggroup="FOCUS_PROTECTION_TROOPS_STACK",
+        priority=TARGET_AFTER_2ND_SCALING_PRIORITY,
+        effects=SetMaxTroops(value=MaxOf(float, Value, Value * 2)),
+        # accountinglabel="FOCUS_PROTECTION_LABEL",
+    ),
+    EffectsGroup(  # increase troop growth rate
+        scope=IsSource,
+        activation=Planet()
+        & Focus(type=["FOCUS_PROTECTION"])
+        & (LocalCandidate.LastTurnConquered < CurrentTurn)
+        & (LocalCandidate.LastTurnAttackedByShip < CurrentTurn),
+        accountinglabel="FOCUS_PROTECTION_LABEL",
+        priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
+        effects=SetTroops(
+            value=MinOf(
+                float, Value(Target.MaxTroops), Value + MaxOf(float, Target.MaxTroops, Target.Population) ** 0.5
+            )
+        ),
+    ),
+]
+
+
+_BASIC_DEFENSE_TROOPS = [
     EffectsGroup(
         scope=IsSource,
         activation=Homeworld() & ~Unowned,
@@ -157,30 +183,68 @@ BASIC_DEFENSE_TROOPS = [
     ),
 ]
 
-PROTECTION_FOCUS_TROOPS = [
-    EffectsGroup(  # double max troops
-        scope=IsSource,
-        activation=Planet() & Focus(type=["FOCUS_PROTECTION"]),
-        stackinggroup="FOCUS_PROTECTION_TROOPS_STACK",
-        priority=TARGET_AFTER_2ND_SCALING_PRIORITY,
-        effects=SetMaxTroops(value=MaxOf(float, Value, Value * 2)),
-        # accountinglabel="FOCUS_PROTECTION_LABEL",
-    ),
-    EffectsGroup(  # increase troop growth rate
-        scope=IsSource,
-        activation=Planet()
-        & Focus(type=["FOCUS_PROTECTION"])
-        & (LocalCandidate.LastTurnConquered < CurrentTurn)
-        & (LocalCandidate.LastTurnAttackedByShip < CurrentTurn),
-        accountinglabel="FOCUS_PROTECTION_LABEL",
-        priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
-        effects=SetTroops(
-            value=MinOf(
-                float, Value(Target.MaxTroops), Value + MaxOf(float, Target.MaxTroops, Target.Population) ** 0.5
-            )
-        ),
-    ),
+NO_DEFENSE_TROOPS = [
+    EffectsGroup(description="NO_DEFENSE_TROOPS_DESC", scope=IsSource, activation=None, effects=SetMaxTroops(value=0)),
+    *_UNSTABLE_REBEL_TROOPS,
 ]
+
+
+BAD_DEFENSE_TROOPS = [
+    *_BASIC_DEFENSE_TROOPS,
+    EffectsGroup(
+        description="BAD_DEFENSE_TROOPS_DESC",
+        scope=IsSource,
+        activation=Planet(),
+        effects=SetMaxTroops(value=Value * 0.5),
+    ),
+    *_UNSTABLE_REBEL_TROOPS,
+    *_PROTECTION_FOCUS_TROOPS,
+]
+
+AVERAGE_DEFENSE_TROOPS = [
+    *_BASIC_DEFENSE_TROOPS,
+    *_UNSTABLE_REBEL_TROOPS,
+    *_PROTECTION_FOCUS_TROOPS,
+]
+
+
+GOOD_DEFENSE_TROOPS = [
+    *_BASIC_DEFENSE_TROOPS,
+    EffectsGroup(
+        description="GOOD_DEFENSE_TROOPS_DESC",
+        scope=IsSource,
+        activation=Planet(),
+        effects=SetMaxTroops(value=Value * 1.5),
+    ),
+    *_UNSTABLE_REBEL_TROOPS,
+    *_PROTECTION_FOCUS_TROOPS,
+]
+
+
+GREAT_DEFENSE_TROOPS = [
+    *_BASIC_DEFENSE_TROOPS,
+    EffectsGroup(
+        description="GREAT_DEFENSE_TROOPS_DESC",
+        scope=IsSource,
+        activation=Planet(),
+        effects=SetMaxTroops(value=Value * 2),
+    ),
+    *_UNSTABLE_REBEL_TROOPS,
+    *_PROTECTION_FOCUS_TROOPS,
+]
+
+ULTIMATE_DEFENSE_TROOPS = [
+    *_BASIC_DEFENSE_TROOPS,
+    EffectsGroup(
+        description="ULTIMATE_DEFENSE_TROOPS_DESC",
+        scope=IsSource,
+        activation=Planet(),
+        effects=SetMaxTroops(value=Value * 3),
+    ),
+    *_UNSTABLE_REBEL_TROOPS,
+    *_PROTECTION_FOCUS_TROOPS,
+]
+
 
 NO_OFFENSE_TROOPS = [
     EffectsGroup(
@@ -195,43 +259,6 @@ NO_OFFENSE_TROOPS = [
         ],
     )
 ]
-
-NO_DEFENSE_TROOPS = [
-    EffectsGroup(description="NO_DEFENSE_TROOPS_DESC", scope=IsSource, activation=None, effects=SetMaxTroops(value=0)),
-    *UNSTABLE_REBEL_TROOPS,
-]
-
-
-BAD_DEFENSE_TROOPS = [
-    *BASIC_DEFENSE_TROOPS,
-    EffectsGroup(
-        description="BAD_DEFENSE_TROOPS_DESC",
-        scope=IsSource,
-        activation=Planet(),
-        effects=SetMaxTroops(value=Value * 0.5),
-    ),
-    *UNSTABLE_REBEL_TROOPS,
-    *PROTECTION_FOCUS_TROOPS,
-]
-
-AVERAGE_DEFENSE_TROOPS = [
-    *BASIC_DEFENSE_TROOPS,
-    *UNSTABLE_REBEL_TROOPS,
-    *PROTECTION_FOCUS_TROOPS,
-]
-
-GREAT_DEFENSE_TROOPS = [
-    *BASIC_DEFENSE_TROOPS,
-    EffectsGroup(
-        description="GREAT_DEFENSE_TROOPS_DESC",
-        scope=IsSource,
-        activation=Planet(),
-        effects=SetMaxTroops(value=Value * 2),
-    ),
-    *UNSTABLE_REBEL_TROOPS,
-    *PROTECTION_FOCUS_TROOPS,
-]
-
 
 BAD_OFFENSE_TROOPS = [
     EffectsGroup(
@@ -262,29 +289,6 @@ GOOD_OFFENSE_TROOPS = [
     )
 ]
 
-GOOD_DEFENSE_TROOPS = [
-    *BASIC_DEFENSE_TROOPS,
-    EffectsGroup(
-        description="GOOD_DEFENSE_TROOPS_DESC",
-        scope=IsSource,
-        activation=Planet(),
-        effects=SetMaxTroops(value=Value * 1.5),
-    ),
-    *UNSTABLE_REBEL_TROOPS,
-    *PROTECTION_FOCUS_TROOPS,
-]
-
-ULTIMATE_DEFENSE_TROOPS = [
-    *BASIC_DEFENSE_TROOPS,
-    EffectsGroup(
-        description="ULTIMATE_DEFENSE_TROOPS_DESC",
-        scope=IsSource,
-        activation=Planet(),
-        effects=SetMaxTroops(value=Value * 3),
-    ),
-    *UNSTABLE_REBEL_TROOPS,
-    *PROTECTION_FOCUS_TROOPS,
-]
 
 GREAT_OFFENSE_TROOPS = [
     EffectsGroup(

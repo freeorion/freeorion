@@ -24,7 +24,7 @@ from focs._effects import (
 )
 
 
-def STOCKPILE_PER_POP_EFFECTSGROUP__SNIP(label: str, value) -> dict:
+def _stockpile_per_pop_effectsgroup_snip(label: str, value) -> dict:
     return {
         "scope": IsSource,
         "activation": Planet(),
@@ -34,13 +34,13 @@ def STOCKPILE_PER_POP_EFFECTSGROUP__SNIP(label: str, value) -> dict:
     }
 
 
-def STOCKPILE_PER_POP_EFFECTSGROUP(label: str, value):
-    return EffectsGroup(description=label + "_STOCKPILE_DESC", **STOCKPILE_PER_POP_EFFECTSGROUP__SNIP(label, value))
+def _stockpile_per_pop_effectsgroup(label: str, value):
+    return EffectsGroup(description=label + "_STOCKPILE_DESC", **_stockpile_per_pop_effectsgroup_snip(label, value))
 
 
 NO_STOCKPILE = []
 
-STANDARD_STOCKPILE = [
+_STANDARD_STOCKPILE = [
     EffectsGroup(  # increase or decrease towards target meter, when not recently conquered
         scope=IsSource,
         activation=Planet()
@@ -69,33 +69,33 @@ STANDARD_STOCKPILE = [
 ]
 
 BAD_STOCKPILE = [
-    STOCKPILE_PER_POP_EFFECTSGROUP("BAD", Value + 0.5 * Target.Population * STOCKPILE_PER_POP),
-    *STANDARD_STOCKPILE,
+    _stockpile_per_pop_effectsgroup("BAD", Value + 0.5 * Target.Population * STOCKPILE_PER_POP),
+    *_STANDARD_STOCKPILE,
 ]
 
 
 AVERAGE_STOCKPILE = [
     EffectsGroup(
         # Skip the AVERAGE_STOCKPILE_DESC, same as for the other *_STOCKPILE macros
-        **STOCKPILE_PER_POP_EFFECTSGROUP__SNIP("AVERAGE", Value + 1 * Target.Population * STOCKPILE_PER_POP)
+        **_stockpile_per_pop_effectsgroup_snip("AVERAGE", Value + 1 * Target.Population * STOCKPILE_PER_POP)
     ),
-    *STANDARD_STOCKPILE,
+    *_STANDARD_STOCKPILE,
 ]
 
 
 GOOD_STOCKPILE = [
-    STOCKPILE_PER_POP_EFFECTSGROUP("GOOD", Value + 3 * Target.Population * STOCKPILE_PER_POP),
-    *STANDARD_STOCKPILE,
+    _stockpile_per_pop_effectsgroup("GOOD", Value + 3 * Target.Population * STOCKPILE_PER_POP),
+    *_STANDARD_STOCKPILE,
 ]
 
 
 GREAT_STOCKPILE = [
-    STOCKPILE_PER_POP_EFFECTSGROUP("GREAT", Value + 10 * Target.Population * STOCKPILE_PER_POP),
-    *STANDARD_STOCKPILE,
+    _stockpile_per_pop_effectsgroup("GREAT", Value + 10 * Target.Population * STOCKPILE_PER_POP),
+    *_STANDARD_STOCKPILE,
 ]
 
 
 ULTIMATE_STOCKPILE = [
-    STOCKPILE_PER_POP_EFFECTSGROUP("ULTIMATE", Value + 15 * Target.Population * STOCKPILE_PER_POP),
-    *STANDARD_STOCKPILE,
+    _stockpile_per_pop_effectsgroup("ULTIMATE", Value + 15 * Target.Population * STOCKPILE_PER_POP),
+    *_STANDARD_STOCKPILE,
 ]

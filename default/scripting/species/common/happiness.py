@@ -47,12 +47,12 @@ from focs._effects import (
     Value,
 )
 
-STABILITY_PER_LIKED_FOCUS = 2.0
+_STABILITY_PER_LIKED_FOCUS = 2.0
 
 # Policy Liberty doubles de focus dislike effect, policy Conformance halves it, macro is in common/opinion.macros
-STABILITY_PER_DISLIKED_FOCUS = 2.0 * POLICY_DISLIKE_SCALING
+_STABILITY_PER_DISLIKED_FOCUS = 2.0 * POLICY_DISLIKE_SCALING
 
-ENVIRONMENT_STABILITY_MODIFIER = [
+_ENVIRONMENT_STABILITY_MODIFIER = [
     EffectsGroup(
         scope=IsSource,
         activation=Planet()
@@ -95,7 +95,7 @@ ENVIRONMENT_STABILITY_MODIFIER = [
     ),
 ]
 
-PLANET_SIZE_STABILITY_MODIFIER = [
+_PLANET_SIZE_STABILITY_MODIFIER = [
     EffectsGroup(
         scope=IsSource,
         activation=Planet() & Planet(size=[Tiny]) & (GameRule(type=int, name="RULE_TINY_SIZE_STABILITY") != 0),
@@ -136,9 +136,9 @@ PLANET_SIZE_STABILITY_MODIFIER = [
     ),
 ]
 
-COMMON_HAPPINESS_EFFECTS = [
-    *ENVIRONMENT_STABILITY_MODIFIER,
-    *PLANET_SIZE_STABILITY_MODIFIER,
+_COMMON_HAPPINESS_EFFECTS = [
+    *_ENVIRONMENT_STABILITY_MODIFIER,
+    *_PLANET_SIZE_STABILITY_MODIFIER,
     EffectsGroup(  # increase or decrease 1 per turn towards target
         scope=IsSource,
         activation=Planet() & (LocalCandidate.LastTurnConquered < CurrentTurn),
@@ -172,13 +172,13 @@ COMMON_HAPPINESS_EFFECTS = [
         scope=IsSource,
         activation=Population(low=0.001) & SpeciesLikes(name=LocalCandidate.Focus),
         accountinglabel="LIKES_FOCUS_LABEL",
-        effects=SetTargetHappiness(value=Value + STABILITY_PER_LIKED_FOCUS),
+        effects=SetTargetHappiness(value=Value + _STABILITY_PER_LIKED_FOCUS),
     ),
     EffectsGroup(  # less stable when disliked focuses are adopted
         scope=IsSource,
         activation=~Unowned & Population(low=0.001) & SpeciesDislikes(name=LocalCandidate.Focus),
         accountinglabel="DISLIKES_FOCUS_LABEL",
-        effects=SetTargetHappiness(value=Value - STABILITY_PER_DISLIKED_FOCUS),
+        effects=SetTargetHappiness(value=Value - _STABILITY_PER_DISLIKED_FOCUS),
     ),
     EffectsGroup(  # species on their own homeworld are more stable
         scope=IsSource,
@@ -202,12 +202,12 @@ COMMON_HAPPINESS_EFFECTS = [
 ]
 
 # this should ensure that there is a capital / admin for JUMPS_TO_CAPITAL_OR_REGAD
-SUPPLY_CONNECTED_TO_CAPITAL_OR_REGAD = ResourceSupplyConnected(
+_SUPPLY_CONNECTED_TO_CAPITAL_OR_REGAD = ResourceSupplyConnected(
     empire=Source.Owner, condition=(Capital | IsBuilding(name=["BLD_REGIONAL_ADMIN"])) & OwnedBy(empire=Source.Owner)
 )
 
 
-def JUMPS_TO_CAPITAL_OR_REGAD(type):
+def _jumps_to_capital_or_regad(type):
     return Statistic(
         type,
         Min,
@@ -221,16 +221,16 @@ def JUMPS_TO_CAPITAL_OR_REGAD(type):
     )
 
 
-STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY = [
+_STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY = [
     EffectsGroup(  # close supply connected to capital planet is more stable
         scope=IsSource,
         activation=Planet()
         & ~Unowned
         & ~Capital
-        & SUPPLY_CONNECTED_TO_CAPITAL_OR_REGAD
-        & (JUMPS_TO_CAPITAL_OR_REGAD(int) < 5),
+        & _SUPPLY_CONNECTED_TO_CAPITAL_OR_REGAD
+        & (_jumps_to_capital_or_regad(int) < 5),
         accountinglabel="CAPITAL_CONNECTION_LABEL",
-        effects=SetTargetHappiness(value=Value + MinOf(float, 5, 5 - JUMPS_TO_CAPITAL_OR_REGAD(float))),
+        effects=SetTargetHappiness(value=Value + MinOf(float, 5, 5 - _jumps_to_capital_or_regad(float))),
     ),
     EffectsGroup(  # far supply connected to capital planet is less
         scope=IsSource,
@@ -238,10 +238,10 @@ STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY = [
         & ~Unowned
         & ~Capital
         & ~EmpireHasAdoptedPolicy(empire=Source.Owner, name="PLC_CONFEDERATION")
-        & SUPPLY_CONNECTED_TO_CAPITAL_OR_REGAD
-        & (JUMPS_TO_CAPITAL_OR_REGAD(int) > 5),
+        & _SUPPLY_CONNECTED_TO_CAPITAL_OR_REGAD
+        & (_jumps_to_capital_or_regad(int) > 5),
         accountinglabel="CAPITAL_POOR_CONNECTION_LABEL",
-        effects=SetTargetHappiness(value=Value + MaxOf(float, -5, 5 - JUMPS_TO_CAPITAL_OR_REGAD(float))),
+        effects=SetTargetHappiness(value=Value + MaxOf(float, -5, 5 - _jumps_to_capital_or_regad(float))),
     ),
     EffectsGroup(  # no connection is much less stable
         scope=IsSource,
@@ -249,7 +249,7 @@ STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY = [
         & ~Unowned
         & ~Capital
         & ~EmpireHasAdoptedPolicy(empire=Source.Owner, name="PLC_CONFEDERATION")
-        & ~SUPPLY_CONNECTED_TO_CAPITAL_OR_REGAD,
+        & ~_SUPPLY_CONNECTED_TO_CAPITAL_OR_REGAD,
         accountinglabel="CAPITAL_DISCONNECTION_LABEL",
         effects=SetTargetHappiness(
             value=Value - NamedReal(name="DISCONNECTED_FROM_CAPITAL_AND_REGIONAL_ADMIN_STABILITY_PENALTY", value=10)
@@ -258,8 +258,8 @@ STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY = [
 ]
 
 VERY_BAD_HAPPINESS = [
-    *COMMON_HAPPINESS_EFFECTS,
-    *STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY,
+    *_COMMON_HAPPINESS_EFFECTS,
+    *_STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY,
     EffectsGroup(
         description="VERY_BAD_HAPPINESS_DESC",
         scope=IsSource,
@@ -270,8 +270,8 @@ VERY_BAD_HAPPINESS = [
 ]
 
 BAD_HAPPINESS = [
-    *COMMON_HAPPINESS_EFFECTS,
-    *STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY,
+    *_COMMON_HAPPINESS_EFFECTS,
+    *_STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY,
     EffectsGroup(
         description="BAD_HAPPINESS_DESC",
         scope=IsSource,
@@ -282,13 +282,13 @@ BAD_HAPPINESS = [
 ]
 
 AVERAGE_HAPPINESS = [
-    *COMMON_HAPPINESS_EFFECTS,
-    *STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY,
+    *_COMMON_HAPPINESS_EFFECTS,
+    *_STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY,
 ]
 
 GOOD_HAPPINESS = [
-    *COMMON_HAPPINESS_EFFECTS,
-    *STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY,
+    *_COMMON_HAPPINESS_EFFECTS,
+    *_STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY,
     EffectsGroup(
         description="GOOD_HAPPINESS_DESC",
         scope=IsSource,
@@ -299,8 +299,8 @@ GOOD_HAPPINESS = [
 ]
 
 GREAT_HAPPINESS = [
-    *COMMON_HAPPINESS_EFFECTS,
-    *STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY,
+    *_COMMON_HAPPINESS_EFFECTS,
+    *_STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY,
     EffectsGroup(
         description="GREAT_HAPPINESS_DESC",
         scope=IsSource,
@@ -311,4 +311,4 @@ GREAT_HAPPINESS = [
 ]
 
 
-INDEPENDENT_HAPPINESS = [DESCRIPTION_EFFECTSGROUP_MACRO("INDEPENDENT_HAPPINESS_DESC"), *COMMON_HAPPINESS_EFFECTS]
+INDEPENDENT_HAPPINESS = [DESCRIPTION_EFFECTSGROUP_MACRO("INDEPENDENT_HAPPINESS_DESC"), *_COMMON_HAPPINESS_EFFECTS]

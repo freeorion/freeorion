@@ -54,7 +54,7 @@ from species.common.general import (
     STANDARD_METER_GROWTH,
 )
 
-HOMEWORLD_BONUS_POPULATION = EffectsGroup(
+_HOMEWORLD_BONUS_POPULATION = EffectsGroup(
     scope=IsSource & Homeworld(name=[Source.Species]),
     activation=Planet(),
     stackinggroup="HOMEWORLD_STACK",
@@ -63,29 +63,11 @@ HOMEWORLD_BONUS_POPULATION = EffectsGroup(
     effects=SetTargetPopulation(value=Value + 2 * Target.HabitableSize),
 )
 
-# reduces max population in systems with bright stars
-LIGHT_SENSITIVE = [
-    EffectsGroup(
-        description="LIGHT_SENSITIVE_DESC",
-        scope=IsSource,
-        activation=Planet() & Star(type=[Blue]),
-        accountinglabel="VERY_BRIGHT_STAR",
-        priority=TARGET_POPULATION_AFTER_SCALING_PRIORITY,
-        effects=SetTargetPopulation(value=Value - 2 * Source.HabitableSize),
-    ),
-    EffectsGroup(
-        scope=IsSource,
-        activation=Planet() & Star(type=[White]),
-        accountinglabel="BRIGHT_STAR",
-        priority=TARGET_POPULATION_AFTER_SCALING_PRIORITY,
-        effects=SetTargetPopulation(value=Value - Source.HabitableSize),
-    ),
-]
 
 # Implements environmental modifiers from Growth techs.
 # Changes to the growth tree should take this into account.
 
-ENVIRONMENT_MODIFIER = [
+_ENVIRONMENT_MODIFIER = [
     EffectsGroup(
         scope=IsSource,
         activation=Planet() & Planet(environment=[Uninhabitable]),
@@ -127,7 +109,7 @@ ENVIRONMENT_MODIFIER = [
 
 # This is dependent on current placement in population effects calc,
 # just after Homeworld and Environment
-SELF_SUSTAINING_BONUS = EffectsGroup(
+_SELF_SUSTAINING_BONUS = EffectsGroup(
     scope=IsSource,
     activation=Planet(environment=[Good]) & HasTag(name="SELF_SUSTAINING"),
     accountinglabel="SELF_SUSTAINING_LABEL",
@@ -135,7 +117,7 @@ SELF_SUSTAINING_BONUS = EffectsGroup(
     effects=SetTargetPopulation(value=Value + 3 * Target.HabitableSize),  # Gets the same bonus as three growth specials
 )
 
-PHOTOTROPHIC_BONUS = [
+_PHOTOTROPHIC_BONUS = [
     EffectsGroup(
         scope=Contains(IsSource),
         activation=Planet()
@@ -178,7 +160,7 @@ PHOTOTROPHIC_BONUS = [
     ),
 ]
 
-GASEOUS_BONUS = EffectsGroup(
+_GASEOUS_BONUS = EffectsGroup(
     scope=IsSource,
     activation=Planet(type=[GasGiantType]) & HasTag(name="GASEOUS"),
     accountinglabel="GASEOUS_LABEL",
@@ -186,7 +168,7 @@ GASEOUS_BONUS = EffectsGroup(
     effects=SetTargetPopulation(value=Value - 0.5 * Abs(float, Value)),
 )
 
-HOMEWORLD_GROWTH_FOCUS_BOOST = EffectsGroup(
+_HOMEWORLD_GROWTH_FOCUS_BOOST = EffectsGroup(
     scope=Planet()
     & OwnedBy(empire=Source.Owner)
     & HasSpecies(name=[Source.Species])
@@ -199,13 +181,14 @@ HOMEWORLD_GROWTH_FOCUS_BOOST = EffectsGroup(
     effects=SetTargetPopulation(value=Value + 1 * Target.HabitableSize),
 )
 
-AVERAGE_POPULATION = BASIC_POPULATION = [
-    HOMEWORLD_BONUS_POPULATION,
-    *ENVIRONMENT_MODIFIER,
-    SELF_SUSTAINING_BONUS,
-    *PHOTOTROPHIC_BONUS,
-    GASEOUS_BONUS,
-    HOMEWORLD_GROWTH_FOCUS_BOOST,
+
+_BASIC_POPULATION = [
+    _HOMEWORLD_BONUS_POPULATION,
+    *_ENVIRONMENT_MODIFIER,
+    _SELF_SUSTAINING_BONUS,
+    *_PHOTOTROPHIC_BONUS,
+    _GASEOUS_BONUS,
+    _HOMEWORLD_GROWTH_FOCUS_BOOST,
     # population growth or decay towards to target population
     EffectsGroup(
         scope=IsSource,
@@ -240,7 +223,7 @@ AVERAGE_POPULATION = BASIC_POPULATION = [
 ]
 
 EXTREMELY_BAD_POPULATION = [
-    *BASIC_POPULATION,
+    *_BASIC_POPULATION,
     EffectsGroup(
         description="EXTREMELY_BAD_POPULATION_DESC",
         scope=IsSource,
@@ -253,7 +236,7 @@ EXTREMELY_BAD_POPULATION = [
 
 
 VERY_BAD_POPULATION = [
-    *BASIC_POPULATION,
+    *_BASIC_POPULATION,
     EffectsGroup(
         description="VERY_BAD_POPULATION_DESC",
         scope=IsSource,
@@ -264,8 +247,22 @@ VERY_BAD_POPULATION = [
     ),
 ]
 
+BAD_POPULATION = [
+    *_BASIC_POPULATION,
+    EffectsGroup(
+        description="BAD_POPULATION_DESC",
+        scope=IsSource,
+        activation=Planet(),
+        accountinglabel="BAD_POPULATION_LABEL",
+        priority=TARGET_POPULATION_SCALING_PRIORITY,
+        effects=SetTargetPopulation(value=Value - 0.25 * Abs(float, Value)),
+    ),
+]
+
+AVERAGE_POPULATION = _BASIC_POPULATION
+
 GOOD_POPULATION = [
-    *BASIC_POPULATION,
+    *_BASIC_POPULATION,
     EffectsGroup(
         description="GOOD_POPULATION_DESC",
         scope=IsSource,
@@ -277,7 +274,7 @@ GOOD_POPULATION = [
 ]
 
 GREAT_POPULATION = [
-    *BASIC_POPULATION,
+    *_BASIC_POPULATION,
     EffectsGroup(
         description="GREAT_POPULATION_DESC",
         scope=IsSource,
@@ -288,14 +285,22 @@ GREAT_POPULATION = [
     ),
 ]
 
-BAD_POPULATION = [
-    *BASIC_POPULATION,
+
+# reduces max population in systems with bright stars
+LIGHT_SENSITIVE = [
     EffectsGroup(
-        description="BAD_POPULATION_DESC",
+        description="LIGHT_SENSITIVE_DESC",
         scope=IsSource,
-        activation=Planet(),
-        accountinglabel="BAD_POPULATION_LABEL",
-        priority=TARGET_POPULATION_SCALING_PRIORITY,
-        effects=SetTargetPopulation(value=Value - 0.25 * Abs(float, Value)),
+        activation=Planet() & Star(type=[Blue]),
+        accountinglabel="VERY_BRIGHT_STAR",
+        priority=TARGET_POPULATION_AFTER_SCALING_PRIORITY,
+        effects=SetTargetPopulation(value=Value - 2 * Source.HabitableSize),
+    ),
+    EffectsGroup(
+        scope=IsSource,
+        activation=Planet() & Star(type=[White]),
+        accountinglabel="BRIGHT_STAR",
+        priority=TARGET_POPULATION_AFTER_SCALING_PRIORITY,
+        effects=SetTargetPopulation(value=Value - Source.HabitableSize),
     ),
 ]

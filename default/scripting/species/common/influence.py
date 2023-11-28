@@ -35,7 +35,7 @@ from focs._effects import (
     Value,
 )
 
-BASE_INFLUENCE_COSTS = [
+_BASE_INFLUENCE_COSTS = [
     EffectsGroup(  # colonies consume influence, proportional to square-root of how many populated planets and non-populated outposts the empire controls
         scope=IsSource,
         activation=Planet() & ~Unowned & ~Capital,
@@ -145,9 +145,9 @@ BASE_INFLUENCE_COSTS = [
     ),
 ]
 
-NO_INFLUENCE = [DESCRIPTION_EFFECTSGROUP_MACRO("NO_INFLUENCE_DESC"), *BASE_INFLUENCE_COSTS]
+NO_INFLUENCE = [DESCRIPTION_EFFECTSGROUP_MACRO("NO_INFLUENCE_DESC"), *_BASE_INFLUENCE_COSTS]
 
-ARTISANS_INFLUENCE_STABILITY = [
+_ARTISANS_INFLUENCE_STABILITY = [
     EffectsGroup(  # artistic species generate influence when artisans workshops policy adopted
         scope=IsSource,
         activation=HasTag(name="ARTISTIC")
@@ -168,7 +168,8 @@ ARTISANS_INFLUENCE_STABILITY = [
     ),
 ]
 
-AVERAGE_INFLUENCE = BASIC_INFLUENCE = [
+
+_BASIC_INFLUENCE = [
     EffectsGroup(  # influence focus generates influence from planets, proportional to sqare-root of population
         scope=IsSource,
         activation=Planet() & Focus(type=["FOCUS_INFLUENCE"]),
@@ -179,38 +180,13 @@ AVERAGE_INFLUENCE = BASIC_INFLUENCE = [
             + (Target.Population**0.5) * NamedReal(name="FOCUS_INFLUENCE_INFLUENCE_PER_SQRT_POP", value=1.0)
         ),
     ),
-    *BASE_INFLUENCE_COSTS,
-    *ARTISANS_INFLUENCE_STABILITY,
-]
-
-
-GOOD_INFLUENCE = [
-    *BASIC_INFLUENCE,
-    EffectsGroup(
-        description="GOOD_INFLUENCE_DESC",
-        scope=IsSource,
-        activation=Planet() & Focus(type=["FOCUS_INFLUENCE"]),
-        accountinglabel="GOOD_INFLUENCE_LABEL",
-        priority=TARGET_SCALING_PRIORITY,
-        effects=SetTargetInfluence(value=Value + (0.25) * Abs(float, Value)),
-    ),
-]
-
-GREAT_INFLUENCE = [
-    *BASIC_INFLUENCE,
-    EffectsGroup(
-        description="GREAT_INFLUENCE_DESC",
-        scope=IsSource,
-        activation=Planet() & Focus(type=["FOCUS_INFLUENCE"]),
-        accountinglabel="GREAT_INFLUENCE_LABEL",
-        priority=TARGET_SCALING_PRIORITY,
-        effects=SetTargetInfluence(value=Value + (0.5) * Abs(float, Value)),
-    ),
+    *_BASE_INFLUENCE_COSTS,
+    *_ARTISANS_INFLUENCE_STABILITY,
 ]
 
 
 VERY_BAD_INFLUENCE = [
-    *BASIC_INFLUENCE,
+    *_BASIC_INFLUENCE,
     EffectsGroup(
         description="VERY_BAD_INFLUENCE_DESC",
         scope=IsSource,
@@ -223,7 +199,7 @@ VERY_BAD_INFLUENCE = [
 
 
 BAD_INFLUENCE = [
-    *BASIC_INFLUENCE,
+    *_BASIC_INFLUENCE,
     EffectsGroup(
         description="BAD_INFLUENCE_DESC",
         scope=IsSource,
@@ -234,8 +210,37 @@ BAD_INFLUENCE = [
     ),
 ]
 
+
+AVERAGE_INFLUENCE = _BASIC_INFLUENCE
+
+
+GOOD_INFLUENCE = [
+    *_BASIC_INFLUENCE,
+    EffectsGroup(
+        description="GOOD_INFLUENCE_DESC",
+        scope=IsSource,
+        activation=Planet() & Focus(type=["FOCUS_INFLUENCE"]),
+        accountinglabel="GOOD_INFLUENCE_LABEL",
+        priority=TARGET_SCALING_PRIORITY,
+        effects=SetTargetInfluence(value=Value + (0.25) * Abs(float, Value)),
+    ),
+]
+
+GREAT_INFLUENCE = [
+    *_BASIC_INFLUENCE,
+    EffectsGroup(
+        description="GREAT_INFLUENCE_DESC",
+        scope=IsSource,
+        activation=Planet() & Focus(type=["FOCUS_INFLUENCE"]),
+        accountinglabel="GREAT_INFLUENCE_LABEL",
+        priority=TARGET_SCALING_PRIORITY,
+        effects=SetTargetInfluence(value=Value + (0.5) * Abs(float, Value)),
+    ),
+]
+
+
 ULTIMATE_INFLUENCE = [
-    *BASIC_INFLUENCE,
+    *_BASIC_INFLUENCE,
     EffectsGroup(
         description="ULTIMATE_INFLUENCE_DESC",
         scope=IsSource,

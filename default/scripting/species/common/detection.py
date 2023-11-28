@@ -14,6 +14,17 @@ from focs._effects import (
     Value,
 )
 
+BAD_DETECTION = [
+    EffectsGroup(
+        description="BAD_DETECTION_DESC",
+        scope=IsSource,
+        activation=~Ship,
+        effects=SetDetection(value=Value - 20),
+    ),
+    EffectsGroup(scope=IsSource, activation=Ship, effects=SetDetection(value=Value - 9)),
+]
+
+
 GOOD_DETECTION = [
     EffectsGroup(
         description="GOOD_DETECTION_DESC",
@@ -48,17 +59,6 @@ def NATIVE_PLANETARY_DETECTION(detection):
         priority=DEFAULT_PRIORITY,
         effects=SetDetection(value=Value + detection),
     )
-
-
-BAD_DETECTION = [
-    EffectsGroup(
-        description="BAD_DETECTION_DESC",
-        scope=IsSource,
-        activation=~Ship,
-        effects=SetDetection(value=Value - 20),
-    ),
-    EffectsGroup(scope=IsSource, activation=Ship, effects=SetDetection(value=Value - 9)),
-]
 
 
 def COMMUNAL_VISION(species: str):

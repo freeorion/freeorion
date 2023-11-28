@@ -81,7 +81,7 @@ Species(
         # not for description,
         *AVERAGE_PLANETARY_SHIELDS,
         *AVERAGE_PLANETARY_DEFENSE,
-        LARGE_PLANET,
+        *LARGE_PLANET,
         *STANDARD_SHIP_SHIELDS,
     ],
     environments=TERRAN_STANDARD_EP,

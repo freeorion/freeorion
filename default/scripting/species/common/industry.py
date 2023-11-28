@@ -29,7 +29,7 @@ except ImportError:
 NO_INDUSTRY = DESCRIPTION_EFFECTSGROUP_MACRO("NO_INDUSTRY_DESC")
 
 
-BASIC_INDUSTRY = [
+_BASIC_INDUSTRY = [
     EffectsGroup(
         scope=IsSource,
         activation=Planet() & TargetIndustry(low=0) & Happiness(low=0) & Focus(type=["FOCUS_INDUSTRY"]),
@@ -52,7 +52,7 @@ BASIC_INDUSTRY = [
 
 def _industry(tag, default_multiplier) -> list[_EffectGroup]:  # type: ignore[reportGeneralTypeIssues]
     return [
-        *BASIC_INDUSTRY,
+        *_BASIC_INDUSTRY,
         EffectsGroup(
             description=f"{tag}_INDUSTRY_DESC",
             scope=IsSource,
@@ -68,6 +68,6 @@ def _industry(tag, default_multiplier) -> list[_EffectGroup]:  # type: ignore[re
 
 VERY_BAD_INDUSTRY = _industry("VERY_BAD", VERY_BAD_MULTIPLIER)
 BAD_INDUSTRY = _industry("BAD", BAD_MULTIPLIER)
-AVERAGE_INDUSTRY = BASIC_INDUSTRY
+AVERAGE_INDUSTRY = _BASIC_INDUSTRY
 GOOD_INDUSTRY = _industry("GOOD", GOOD_MULTIPLIER)
 GREAT_INDUSTRY = _industry("GREAT", GREAT_MULTIPLIER)
