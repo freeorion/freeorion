@@ -60,11 +60,18 @@ void IApp::StartBackgroundParsing(const PythonParser& python, std::promise<void>
 
     DebugLogger() << "Start background parsing...";
 
+    // TODO: remove after all code is moved to macros
     // named value ref parsing can be done in parallel as the referencing happens after parsing
     if (IsExistingDir(rdir / "scripting/common"))
         GetNamedValueRefManager().SetNamedValueRefParse(Pending::ParseSynchronously(parse::named_value_refs, rdir / "scripting/common"));
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/common").string();
+
+    // named value ref parsing can be done in parallel as the referencing happens after parsing
+    if (IsExistingDir(rdir / "scripting/macros"))
+        GetNamedValueRefManager().SetNamedValueRefParse(Pending::ParseSynchronously(parse::named_value_refs, rdir / "scripting/macros"));
+    else
+        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/macros").string();
 
     if (IsExistingDir(rdir / "scripting/buildings"))
         GetBuildingTypeManager().SetBuildingTypes(Pending::StartAsyncParsing(parse::buildings, rdir / "scripting/buildings"));
