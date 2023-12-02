@@ -1322,42 +1322,53 @@ void StatisticIcon::SetValue(double value, std::size_t index) {
         ErrorLogger() << "StatisticIcon::SetValue passed index out of range index:" << index;
         return;
     }
+    const auto& font = ClientUI::GetFont();
+    if (!font) {
+        ErrorLogger() << "StatisticIcon::SetValue couldn't get a font";
+        return;
+    }
+
+    auto& entry0 = m_values[0];
+    auto& [value0, precision0, show_sign0] = entry0;
 
     if (index >= m_values.size()) {
-        auto entry = std::tuple<double, int, bool>(m_values[0]);
-        std::get<0>(entry) = value;
-        m_values.resize(index + 1, entry);
+        value0 = value;
+        m_values.resize(index + 1, entry0);
         RequirePreRender();
     }
-    if (value != std::get<0>(m_values[index]))
-        RequirePreRender();
-    std::get<0>(m_values[index]) = value;
 
+    auto& entryi = m_values[index];
+    auto& valuei = std::get<0>(entryi);
+    if (value != valuei) {
+        RequirePreRender();
+        valuei = value;
+    }
 
     // Compute text elements
     GG::Font::TextAndElementsAssembler text_elements(*ClientUI::GetFont());
-    text_elements.AddOpenTag(ClientUI::TextColor())
-        .AddText(DoubleToString(std::get<0>(m_values[0]), std::get<1>(m_values[0]), std::get<2>(m_values[0])))
+
+    text_elements
+        .AddOpenTag(ClientUI::TextColor())
+        .AddText(DoubleToString(value0, precision0, show_sign0))
         .AddCloseTag("rgba");
 
     if (m_values.size() > 1) {
-        GG::Clr clr = ClientUI::TextColor();
+        const auto [value1, precision1, show_sign1] = m_values[1];
 
-        int effectiveSign = EffectiveSign(std::get<0>(m_values.at(1)));
+        const auto effective_sign = EffectiveSign(value1);
+        const auto clr = (effective_sign == -1) ? ClientUI::StatDecrColor() :
+            (effective_sign == 1) ? ClientUI::StatIncrColor() :
+            ClientUI::TextColor();
 
-        if (effectiveSign == -1)
-            clr = ClientUI::StatDecrColor();
-        else if (effectiveSign == 1)
-            clr = ClientUI::StatIncrColor();
+        text_elements
+            .AddText(" ")
+            .AddOpenTag(clr);
 
-        text_elements.AddText(" ")
-                     .AddOpenTag(clr);
-
-        if (effectiveSign != -1)
+        if (effective_sign != -1)
             text_elements.AddText("+");
 
         text_elements
-            .AddText(DoubleToString(std::get<0>(m_values[1]), std::get<1>(m_values[1]), std::get<2>(m_values[1])))
+            .AddText(DoubleToString(value1, precision1, show_sign1))
             .AddCloseTag("rgba");
     }
 
