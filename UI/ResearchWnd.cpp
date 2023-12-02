@@ -153,7 +153,7 @@ namespace {
         const GG::X METER_WIDTH = std::max(Width() - GRAPHIC_SIZE - 4*MARGIN - 3, GG::X1);
         const GG::X TURNS_AND_COST_WIDTH = std::max(NAME_WIDTH/2 - MARGIN, GG::X1);
 
-        ScriptingContext context;
+        const ScriptingContext context;
         const Tech* tech = GetTech(m_tech_name);
         if (tech)
             m_total_turns = tech->ResearchTime(m_empire_id, context);
