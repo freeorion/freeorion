@@ -177,35 +177,25 @@ namespace {
         m_name_text->SetChildClippingMode(ChildClippingMode::ClipToClient);
         top += m_name_text->Height();
 
-        int total_time = 0;
-        float perc_complete = 0.0f;
-        float next_progress = 0.0f;
-        float research_cost = 0.0f;
-        if (tech) {
-            total_time = m_total_turns;
-            perc_complete = total_time > 0 ? turns_completed / total_time : 0.0f;
-            research_cost = tech->ResearchCost(m_empire_id, context);
-            next_progress = turn_spending / std::max(1.0f, research_cost);
-        }
-        GG::Clr outline_color = ClientUI::ResearchableTechFillColor();
-        if (m_in_progress)
-            outline_color = GG::LightenClr(outline_color);
+        const int total_time = tech ? m_total_turns : 0;
+        const float perc_complete = (tech && total_time > 0) ? (turns_completed / total_time) : 0.0f;
+        const float research_cost = tech ? tech->ResearchCost(m_empire_id, context) : 0.0f;
+        const float next_progress = turn_spending / std::max(1.0f, research_cost);
 
-        m_progress_bar = GG::Wnd::Create<MultiTurnProgressBar>(total_time,
-                                                               perc_complete,
-                                                               next_progress,
-                                                               GG::LightenClr(ClientUI::TechWndProgressBarBackgroundColor()),
-                                                               ClientUI::TechWndProgressBarColor(),
-                                                               outline_color);
+        const auto fill_clr = ClientUI::ResearchableTechFillColor();
+        const auto outline_color = m_in_progress ? GG::LightenClr(fill_clr) : fill_clr;
+
+        m_progress_bar = GG::Wnd::Create<MultiTurnProgressBar>(
+            total_time, perc_complete, next_progress,
+            GG::LightenClr(ClientUI::TechWndProgressBarBackgroundColor()),
+            ClientUI::TechWndProgressBarColor(), outline_color);
 
         m_progress_bar->MoveTo(GG::Pt(left, top));
         m_progress_bar->Resize(GG::Pt(METER_WIDTH, METER_HEIGHT));
         top += m_progress_bar->Height() + MARGIN;
 
-        using boost::io::str;
-
         const double max_spending_per_turn = research_cost;
-        std::string turns_cost_text = str(FlexibleFormat(UserString("TECH_TURN_COST_STR"))
+        std::string turns_cost_text = boost::io::str(FlexibleFormat(UserString("TECH_TURN_COST_STR"))
             % DoubleToString(turn_spending, 3, false)
             % DoubleToString(max_spending_per_turn, 3, false));
         m_RPs_and_turns_text = GG::Wnd::Create<CUILabel>(std::move(turns_cost_text), GG::FORMAT_LEFT);
