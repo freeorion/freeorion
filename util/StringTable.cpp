@@ -108,6 +108,28 @@ namespace {
         const auto& m{match[idx]};
         return {&*m.first, static_cast<std::size_t>(std::max(0, static_cast<int>(m.length())))};
     }
+
+    using namespace boost::xpressive;
+
+    const sregex IDENTIFIER = +_w;
+    const sregex COMMENT = '#' >> *(~_n) >> _n;
+    const sregex KEY = IDENTIFIER;
+    const sregex SINGLE_LINE_VALUE = *(~_n);
+    const sregex MULTI_LINE_VALUE = -*_;
+
+    const sregex ENTRY =
+        keep(*(space | keep(+COMMENT))) >>
+        KEY >> *blank >> (_n | COMMENT) >>
+        (("'''" >> MULTI_LINE_VALUE >> "'''" >> *space >> _n) | SINGLE_LINE_VALUE >> _n);
+
+    const sregex TRAILING_WS =
+        *(space | COMMENT);
+
+    const sregex REFERENCE =
+        keep("[[" >> (s1 = IDENTIFIER) >> +space >> (s2 = IDENTIFIER) >> "]]");
+
+    const sregex KEYEXPANSION =
+        keep("[[" >> (s1 = IDENTIFIER) >> "]]");
 }
 
 void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
@@ -141,31 +163,11 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
         fallback_lookup_strings = fallback->m_strings; //.insert(fallback->m_strings.begin(), fallback->m_strings.end());
     }
 
-    using namespace boost::xpressive;
-
-    const sregex IDENTIFIER = +_w;
-    const sregex COMMENT = '#' >> *(~_n) >> _n;
-    const sregex KEY = IDENTIFIER;
-    const sregex SINGLE_LINE_VALUE = *(~_n);
-    const sregex MULTI_LINE_VALUE = -*_;
-
-    const sregex ENTRY =
-        keep(*(space | keep(+COMMENT))) >>
-        KEY >> *blank >> (_n | COMMENT) >>
-        (("'''" >> MULTI_LINE_VALUE >> "'''" >> *space >> _n) | SINGLE_LINE_VALUE >> _n);
-
-    const sregex TRAILING_WS =
-        *(space | COMMENT);
-
-    const sregex REFERENCE =
-        keep("[[" >> (s1 = IDENTIFIER) >> +space >> (s2 = IDENTIFIER) >> "]]");
-
-    const sregex KEYEXPANSION =
-        keep("[[" >> (s1 = IDENTIFIER) >> "]]");
+    using boost::xpressive::smatch;
 
     // parse input text stream
     auto it = file_contents.begin();
-    auto end = file_contents.end();
+    const auto end = file_contents.end();
 
     smatch matches;
     bool well_formed = false;
