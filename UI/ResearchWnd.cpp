@@ -38,7 +38,7 @@ namespace {
     public:
         QueueTechPanel(GG::X x, GG::Y y, GG::X w, std::string_view tech_name,
                        double allocated_rp, int turns_left, double turns_completed,
-                       int empire_id, bool paused = false);
+                       int empire_id, bool paused);
 
         void CompleteConstruction() override;
         void Render() override;
@@ -80,18 +80,16 @@ namespace {
             const auto empire = context.GetEmpire(elem.empire_id);
 
             const Tech* tech = GetTech(elem.name);
-            const double per_turn_cost = tech ? tech->PerTurnCost(elem.empire_id, context) : 1;
-            double progress = 0.0;
-            if (empire && empire->TechResearched(elem.name))
-                progress = tech ? tech->ResearchCost(elem.empire_id, context) : 0.0;
-            else if (empire)
-                progress = empire->ResearchProgress(elem.name, context);
+            const double per_turn_cost = tech ? tech->PerTurnCost(elem.empire_id, context) : 1.0;
+            const double progress = (empire && empire->TechResearched(elem.name)) ?
+                (tech ? tech->ResearchCost(elem.empire_id, context) : 0.0) :
+                (empire ? empire->ResearchProgress(elem.name, context) : 0.0);
 
             panel = GG::Wnd::Create<QueueTechPanel>(GG::X(GetLayout()->BorderMargin()),
                                                     GG::Y(GetLayout()->BorderMargin()),
                                                     ClientWidth(), elem.name, elem.allocated_rp,
                                                     elem.turns_left, progress / per_turn_cost,
-                                                    elem.empire_id);
+                                                    elem.empire_id, elem.paused);
             push_back(panel); // DO NOT MOVE; panel is a member
 
             SetDragDropDataType("RESEARCH_QUEUE_ROW");
@@ -155,12 +153,11 @@ namespace {
 
         const ScriptingContext context;
         const Tech* tech = GetTech(m_tech_name);
-        if (tech)
-            m_total_turns = tech->ResearchTime(m_empire_id, context);
+        m_total_turns = tech ? tech->ResearchTime(m_empire_id, context) : 1;
 
-        GG::Clr clr = m_in_progress
-                        ? GG::LightenClr(ClientUI::ResearchableTechTextAndBorderColor())
-                        : ClientUI::ResearchableTechTextAndBorderColor();
+        const auto clr = m_in_progress ?
+            GG::LightenClr(ClientUI::ResearchableTechTextAndBorderColor()) :
+            ClientUI::ResearchableTechTextAndBorderColor();
 
         GG::Y top{MARGIN};
         GG::X left{MARGIN};
@@ -168,10 +165,11 @@ namespace {
         m_icon = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::TechIcon(m_tech_name), GG::GRAPHIC_FITGRAPHIC);
         m_icon->MoveTo(GG::Pt(left, top));
         m_icon->Resize(GG::Pt(GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE)));
-        m_icon->SetColor(tech ? ClientUI::CategoryColor(tech->Category()) : GG::Clr());
+        m_icon->SetColor(tech ? ClientUI::CategoryColor(tech->Category()) : GG::CLR_ZERO);
         left += m_icon->Width() + MARGIN;
 
-        m_name_text = GG::Wnd::Create<CUILabel>(m_paused ? UserString("PAUSED") : UserString(m_tech_name), GG::FORMAT_TOP | GG::FORMAT_LEFT);
+        m_name_text = GG::Wnd::Create<CUILabel>(m_paused ? UserString("PAUSED") : UserString(m_tech_name),
+                                                GG::FORMAT_TOP | GG::FORMAT_LEFT);
         m_name_text->MoveTo(GG::Pt(left, top));
         m_name_text->Resize(GG::Pt(NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN)));
         m_name_text->SetTextColor(clr);
@@ -206,7 +204,7 @@ namespace {
 
         using boost::io::str;
 
-        double max_spending_per_turn = research_cost;
+        const double max_spending_per_turn = research_cost;
         std::string turns_cost_text = str(FlexibleFormat(UserString("TECH_TURN_COST_STR"))
             % DoubleToString(turn_spending, 3, false)
             % DoubleToString(max_spending_per_turn, 3, false));
@@ -219,8 +217,10 @@ namespace {
 
         left += TURNS_AND_COST_WIDTH;
 
-        std::string turns_left_text = turns_left < 0 ? UserString("TECH_TURNS_LEFT_NEVER")
-                                                     : str(FlexibleFormat(UserString("TECH_TURNS_LEFT_STR")) % turns_left);
+        std::string turns_left_text = m_paused ? UserString("PAUSED") :
+            (turns_left < 0) ? UserString("TECH_TURNS_LEFT_NEVER") :
+            str(FlexibleFormat(UserString("TECH_TURNS_LEFT_STR")) % turns_left);
+
         m_turns_remaining_text = GG::Wnd::Create<CUILabel>(std::move(turns_left_text), GG::FORMAT_RIGHT);
         m_turns_remaining_text->MoveTo(GG::Pt(left, top));
         m_turns_remaining_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN)));
@@ -239,8 +239,8 @@ namespace {
     }
 
     void QueueTechPanel::Render() {
-        GG::Clr fill = m_in_progress ? GG::LightenClr(ClientUI::ResearchableTechFillColor()) : ClientUI::ResearchableTechFillColor();
-        GG::Clr text_and_border = m_in_progress ? GG::LightenClr(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
+        const auto fill = m_in_progress ? GG::LightenClr(ClientUI::ResearchableTechFillColor()) : ClientUI::ResearchableTechFillColor();
+        const auto text_and_border = m_in_progress ? GG::LightenClr(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
 
         glDisable(GL_TEXTURE_2D);
         Draw(fill, true);
