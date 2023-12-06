@@ -10,6 +10,7 @@
 #include "universe/UnlockableItem.h"
 #include "universe/ValueRefs.h"
 #include "universe/NamedValueRefManager.h"
+#include "universe/System.h"
 #include "util/i18n.h"
 #include "util/CheckSums.h"
 #include "util/Directories.h"
@@ -22,6 +23,10 @@
 namespace {
     template <typename T, size_t N>
     inline std::vector<std::unique_ptr<T>> array_to_vector(std::array<std::unique_ptr<T>, N>&& a)
+    { return {std::make_move_iterator(a.begin()), std::make_move_iterator(a.end())}; }
+
+    template <typename T, size_t N>
+    inline std::vector<std::pair<std::string, std::unique_ptr<T>>> pair_array_to_vector(std::array<std::pair<std::string, std::unique_ptr<T>>, N>&& a)
     { return {std::make_move_iterator(a.begin()), std::make_move_iterator(a.end())}; }
 }
 
@@ -466,16 +471,75 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
             true,
             test_tags,
             std::make_unique<Condition::And>(
-                std::make_unique<Condition::Species>(),
+                std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET),
+                std::make_unique<Condition::Not>(std::make_unique<Condition::Contains>(
+                    std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({
+                       std::make_unique<ValueRef::Constant<std::string>>(std::string("BLD_ART_BLACK_HOLE")) 
+                    }))
+                )),
                 std::make_unique<Condition::EmpireAffiliation>(
                     std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner")
-                )
+                ),
+                std::make_unique<Condition::StarType>(array_to_vector<ValueRef::ValueRef< ::StarType>, 1>({
+                    std::make_unique<ValueRef::Constant< ::StarType>>(::StarType::STAR_RED)
+                }))
             ),
-            {},
+            array_to_vector<Effect::EffectsGroup, 2>({
+                std::make_unique<Effect::EffectsGroup>(
+                    std::make_unique<Condition::And>(
+                        std::make_unique<Condition::ObjectID>(
+                            std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "SystemID")
+                        ),
+                        std::make_unique<Condition::Type>(UniverseObjectType::OBJ_SYSTEM)
+                    ),
+                    std::make_unique<Condition::StarType>(array_to_vector<ValueRef::ValueRef< ::StarType>, 1>({
+                        std::make_unique<ValueRef::Constant< ::StarType>>(::StarType::STAR_RED)
+                    })),
+                    array_to_vector<Effect::Effect, 2>({
+                        std::make_unique<Effect::SetStarType>(
+                            std::make_unique<ValueRef::Constant< ::StarType>>(::StarType::STAR_BLACK)
+                        ),
+                        std::make_unique<Effect::GenerateSitRepMessage>(
+                            std::string{"EFFECT_BLACKHOLE"},
+                            std::string{"icons/building/blackhole.png"},
+                            pair_array_to_vector<ValueRef::ValueRef<std::string>, 0>({
+                                /*{"system", std::make_unique<ValueRef::StringCast<int>>(
+                                    std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "SystemID")
+                                )}*/
+                            }),
+                            std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"),
+                            EmpireAffiliationType::AFFIL_SELF,
+                            std::string{"EFFECT_BLACKHOLE_LABEL"}
+                        )
+                    }),
+                    "",
+                    "ART_BLACK_HOLE"
+                ),
+                std::make_unique<Effect::EffectsGroup>(
+                    std::make_unique<Condition::Source>(),
+                    nullptr,
+                    array_to_vector<Effect::Effect, 1>({
+                        std::make_unique<Effect::Destroy>()
+                    })
+                )
+            }),
             {},
             {},
             std::make_unique<Condition::And>(
-                std::make_unique<Condition::Species>(),
+                std::make_unique<Condition::Not>(std::make_unique<Condition::Contains>(
+                    std::make_unique<Condition::And>(
+                        std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({
+                            std::make_unique<ValueRef::Constant<std::string>>(std::string{ValueRef::Constant<std::string>::current_content})
+                        })),
+                        std::make_unique<Condition::EmpireAffiliation>(
+                            std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner")
+                        )
+                    )
+                )),
+                std::make_unique<Condition::Not>(std::make_unique<Condition::Enqueued>(
+                    BuildType::BT_BUILDING,
+                    std::make_unique<ValueRef::Constant<std::string>>(std::string{ValueRef::Constant<std::string>::current_content})
+                )),
                 std::make_unique<Condition::EmpireAffiliation>(
                     std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner")
                 )
@@ -485,8 +549,54 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
         "icons/building/blackhole.png" 
     };
 
-    BOOST_CHECK(test_building.Name() == building->Name());
+    BOOST_CHECK_EQUAL(test_building.Name(), building->Name());
+    BOOST_CHECK_EQUAL(test_building.Description(), building->Description());
+    BOOST_CHECK_EQUAL(test_building.ProductionCostTimeLocationInvariant(), building->ProductionCostTimeLocationInvariant());
+    BOOST_CHECK((*test_building.Cost()) == (*building->Cost()));
+    BOOST_CHECK((*test_building.Time()) == (*building->Time()));
+    BOOST_CHECK_EQUAL(test_building.Producible(), building->Producible());
+    BOOST_CHECK(test_building.ProductionMeterConsumption() == building->ProductionMeterConsumption());
+    BOOST_CHECK(test_building.ProductionSpecialConsumption() == building->ProductionSpecialConsumption());
+    BOOST_CHECK(test_building.Tags() == building->Tags());
 
+    const Condition::And* location_cond = dynamic_cast<const Condition::And*>(building->Location());
+    BOOST_REQUIRE(location_cond != nullptr);
+    std::vector<const Condition::Condition*> location_conds = location_cond->OperandsRaw();
+    BOOST_REQUIRE_EQUAL(4, location_conds.size());
+    BOOST_CHECK(dynamic_cast<const Condition::Type*>(location_conds[0]) != nullptr);
+    BOOST_CHECK(dynamic_cast<const Condition::Not*>(location_conds[1]) != nullptr);
+    BOOST_CHECK(dynamic_cast<const Condition::EmpireAffiliation*>(location_conds[2]) != nullptr);
+    BOOST_CHECK(dynamic_cast<const Condition::StarType*>(location_conds[3]) != nullptr);
+    BOOST_CHECK_EQUAL(22501, location_cond->GetCheckSum());
+    BOOST_CHECK_EQUAL(3267, location_conds[0]->GetCheckSum());
+    BOOST_CHECK_EQUAL(9108, location_conds[1]->GetCheckSum());
+    BOOST_CHECK_EQUAL(5099, location_conds[2]->GetCheckSum());
+    BOOST_CHECK_EQUAL(3683, location_conds[3]->GetCheckSum());
+
+    const Condition::And* test_location_cond = dynamic_cast<const Condition::And*>(test_building.Location());
+    BOOST_REQUIRE(test_location_cond != nullptr);
+    std::vector<const Condition::Condition*> test_location_conds = test_location_cond->OperandsRaw();
+    BOOST_REQUIRE_EQUAL(4, test_location_conds.size());
+    BOOST_CHECK(dynamic_cast<const Condition::Type*>(test_location_conds[0]) != nullptr);
+    BOOST_CHECK(dynamic_cast<const Condition::Not*>(test_location_conds[1]) != nullptr);
+    BOOST_CHECK(dynamic_cast<const Condition::EmpireAffiliation*>(test_location_conds[2]) != nullptr);
+    BOOST_CHECK(dynamic_cast<const Condition::StarType*>(test_location_conds[3]) != nullptr);
+    BOOST_CHECK_EQUAL(22501, test_location_cond->GetCheckSum());
+    BOOST_CHECK_EQUAL(3267, test_location_conds[0]->GetCheckSum());
+    BOOST_CHECK_EQUAL(9108, test_location_conds[1]->GetCheckSum());
+    BOOST_CHECK_EQUAL(5099, test_location_conds[2]->GetCheckSum());
+    BOOST_CHECK_EQUAL(3683, test_location_conds[3]->GetCheckSum());
+
+#if defined(FREEORION_MACOSX)
+    // ToDo: fix broken test on MacOS
+    BOOST_WARN((*test_building.Location()) == (*building->Location()));
+#else
+    BOOST_CHECK((*test_building.Location()) == (*building->Location()));
+#endif
+    BOOST_CHECK((*test_building.EnqueueLocation()) == (*building->EnqueueLocation()));
+    //BOOST_CHECK(test_building.Effects() == building->Effects());
+    BOOST_CHECK_EQUAL(test_building.Icon(), building->Icon());
+    //BOOST_CHECK_EQUAL(test_building.GetCheckSum(), building->GetCheckSum());
 }
 
 BOOST_AUTO_TEST_SUITE_END()
