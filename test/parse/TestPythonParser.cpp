@@ -502,10 +502,10 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
                         std::make_unique<Effect::GenerateSitRepMessage>(
                             std::string{"EFFECT_BLACKHOLE"},
                             std::string{"icons/building/blackhole.png"},
-                            pair_array_to_vector<ValueRef::ValueRef<std::string>, 0>({
-                                /*{"system", std::make_unique<ValueRef::StringCast<int>>(
+                            pair_array_to_vector<ValueRef::ValueRef<std::string>, 1>({
+                                std::make_pair("system", std::make_unique<ValueRef::StringCast<int>>(
                                     std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "SystemID")
-                                )}*/
+                                ))
                             }),
                             std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"),
                             EmpireAffiliationType::AFFIL_SELF,
@@ -513,14 +513,18 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
                         )
                     }),
                     "",
-                    "ART_BLACK_HOLE"
+                    "ART_BLACK_HOLE",
+                    100
                 ),
                 std::make_unique<Effect::EffectsGroup>(
                     std::make_unique<Condition::Source>(),
                     nullptr,
                     array_to_vector<Effect::Effect, 1>({
                         std::make_unique<Effect::Destroy>()
-                    })
+                    }),
+                    "",
+                    "",
+                    100
                 )
             }),
             {},
@@ -593,10 +597,22 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
 #else
     BOOST_CHECK((*test_building.Location()) == (*building->Location()));
 #endif
+    BOOST_CHECK_EQUAL(test_building.Location()->GetCheckSum(), building->Location()->GetCheckSum());
     BOOST_CHECK((*test_building.EnqueueLocation()) == (*building->EnqueueLocation()));
-    //BOOST_CHECK(test_building.Effects() == building->Effects());
+    BOOST_REQUIRE_EQUAL(test_building.Effects().size(), building->Effects().size());
+#if defined(FREEORION_MACOSX)
+    // ToDo: fix broken test on MacOS
+    BOOST_WARN(test_building.Effects() == building->Effects());
+    BOOST_WARN(test_building.Effects()[0] == building->Effects()[0]);
+#else
+    BOOST_CHECK(test_building.Effects() == building->Effects());
+    BOOST_CHECK(test_building.Effects()[0] == building->Effects()[0]);
+#endif
+    BOOST_CHECK_EQUAL(test_building.Effects()[0].GetCheckSum(), building->Effects()[0].GetCheckSum());
+    BOOST_CHECK(test_building.Effects()[1] == building->Effects()[1]);
+    BOOST_CHECK_EQUAL(test_building.Effects()[1].GetCheckSum(), building->Effects()[1].GetCheckSum());
     BOOST_CHECK_EQUAL(test_building.Icon(), building->Icon());
-    //BOOST_CHECK_EQUAL(test_building.GetCheckSum(), building->GetCheckSum());
+    BOOST_CHECK_EQUAL(test_building.GetCheckSum(), building->GetCheckSum());
 }
 
 BOOST_AUTO_TEST_SUITE_END()

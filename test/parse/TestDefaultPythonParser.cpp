@@ -2,6 +2,7 @@
 
 #include "parse/Parse.h"
 #include "parse/PythonParser.h"
+#include "universe/BuildingType.h"
 #include "universe/Conditions.h"
 #include "universe/Effects.h"
 #include "universe/Planet.h"
@@ -33,9 +34,9 @@ BOOST_AUTO_TEST_CASE(parse_techs_full) {
     auto techs_p = Pending::ParseSynchronously(parse::techs<TechManager::TechParseTuple>, parser, m_default_scripting_dir / "techs");
     auto [techs, tech_categories, categories_seen] = *Pending::WaitForPendingUnlocked(std::move(techs_p));
 
-    BOOST_REQUIRE(!techs.empty());
-    BOOST_REQUIRE(!tech_categories.empty());
-    BOOST_REQUIRE(!categories_seen.empty());
+    BOOST_CHECK(!techs.empty());
+    BOOST_CHECK(!tech_categories.empty());
+    BOOST_CHECK(!categories_seen.empty());
 
     BOOST_REQUIRE_EQUAL(209, techs.size());
     BOOST_REQUIRE_EQUAL(9, tech_categories.size());
@@ -60,7 +61,7 @@ BOOST_AUTO_TEST_CASE(parse_techs_full) {
 
 /**
  * Checks count of species and species census ordering in real scripts
- * FO_CHECKSUM_SPECIES_NAME determines tech name to be check for FO_CHECKSUM_SPECIES_VALUE checksum
+ * FO_CHECKSUM_SPECIES_NAME determines species name to be check for FO_CHECKSUM_SPECIES_VALUE checksum
  */
 
 BOOST_AUTO_TEST_CASE(parse_species_full) {
@@ -71,8 +72,8 @@ BOOST_AUTO_TEST_CASE(parse_species_full) {
     auto species_p = Pending::ParseSynchronously(parse::species, parser, m_default_scripting_dir / "species");
     const auto [species, ordering] = *Pending::WaitForPendingUnlocked(std::move(species_p));
 
-    BOOST_REQUIRE(!ordering.empty());
-    BOOST_REQUIRE(!species.empty());
+    BOOST_CHECK(!ordering.empty());
+    BOOST_CHECK(!species.empty());
 
     BOOST_REQUIRE_EQUAL(7, ordering.size());
     BOOST_REQUIRE_EQUAL(50, species.size());
@@ -103,6 +104,36 @@ BOOST_AUTO_TEST_CASE(parse_species_full) {
             uint32_t value{0};
             CheckSums::CheckSumCombine(value, species_it->second);
             BOOST_REQUIRE_EQUAL(species_checksum, value);
+        }
+    }
+}
+
+/**
+ * Checks count of buildings in real scripts
+ * FO_CHECKSUM_BUILDINGS_NAME determines building name to be check for FO_CHECKSUM_BUILDINGS_VALUE checksum
+ */
+
+BOOST_AUTO_TEST_CASE(parse_buildings_full) {
+    auto buildings_p = Pending::StartAsyncParsing(parse::buildings, m_default_scripting_dir / "buildings");
+    const auto buildings = *Pending::WaitForPendingUnlocked(std::move(buildings_p));
+
+    BOOST_CHECK(!buildings.empty());
+
+    BOOST_REQUIRE_EQUAL(108, buildings.size());
+
+    if (const char *buildings_name = std::getenv("FO_CHECKSUM_BUILDINGS_NAME")) {
+        const auto buildings_it = buildings.find(buildings_name);
+        BOOST_REQUIRE(buildings.end() != buildings_it);
+        BOOST_REQUIRE_EQUAL(buildings_name, buildings_it->second->Name());
+
+        BOOST_TEST_MESSAGE("Dump " << buildings_name << ":");
+        BOOST_TEST_MESSAGE(buildings_it->second->Dump(0));
+
+        if (const char *buildings_checksum_str = std::getenv("FO_CHECKSUM_BUILDINGS_VALUE")) {
+            uint32_t buildings_checksum = boost::lexical_cast<uint32_t>(buildings_checksum_str);
+            uint32_t value{0};
+            CheckSums::CheckSumCombine(value, buildings_it->second);
+            BOOST_REQUIRE_EQUAL(buildings_checksum, value);
         }
     }
 }
