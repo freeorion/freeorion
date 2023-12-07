@@ -22,7 +22,6 @@
 #include <boost/filesystem/fstream.hpp>
 
 #include <cstdlib>
-#include <fstream>
 #include <string>
 
 namespace {
