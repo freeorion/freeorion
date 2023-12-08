@@ -967,7 +967,7 @@ bool Empire::EnqueuableItem(const ProductionQueue::ProductionItem& item, int loc
         throw std::invalid_argument("Empire::ProducibleItem was passed a ProductionItem with an invalid BuildType");
 }
 
-int Empire::NumSitRepEntries(int turn) const {
+int Empire::NumSitRepEntries(int turn) const noexcept {
     if (turn == INVALID_GAME_TURN)
         return m_sitrep_entries.size();
     int count = 0;
@@ -2534,9 +2534,7 @@ void Empire::CheckProductionProgress(
         for (auto& [special_name, consumption_map] : sc) {
             for (auto [obj_id, consumption] : consumption_map) {
                 auto obj = context.ContextObjects().getRaw(obj_id);
-                if (!obj)
-                    continue;
-                if (!obj->HasSpecial(special_name))
+                if (!obj || !obj->HasSpecial(special_name))
                     continue;
                 float cur_capacity = obj->SpecialCapacity(special_name);
                 float new_capacity = std::max(0.0f, cur_capacity - consumption * elem.blocksize);
@@ -2562,20 +2560,25 @@ void Empire::CheckProductionProgress(
         // create actual thing(s) being produced
         switch (elem.item.build_type) {
         case BuildType::BT_BUILDING: {
-            auto planet = context.ContextObjects().get<Planet>(elem.location);
+            auto planet = context.ContextObjects().getRaw<Planet>(elem.location);
+            if (!planet)
+                continue;
+            const auto planet_id = planet->ID();
 
             // create new building
             auto building = universe.InsertNew<Building>(m_id, elem.item.name,
                                                          m_id, context.current_turn);
-            planet->AddBuilding(building->ID());
-            building->SetPlanetID(planet->ID());
-            system->Insert(building, System::NO_ORBIT, context.current_turn, context.ContextObjects());
+            if (!building)
+                continue;
+            const auto building_id = building->ID();
+            planet->AddBuilding(building_id);
+            building->SetPlanetID(planet_id);
+            system->Insert(std::move(building), System::NO_ORBIT, context.current_turn, context.ContextObjects());
 
             // record building production in empire stats
             m_building_types_produced[elem.item.name]++;
 
-            AddSitRepEntry(CreateBuildingBuiltSitRep(building->ID(), planet->ID(),
-                                                     context.current_turn));
+            AddSitRepEntry(CreateBuildingBuiltSitRep(building_id, planet_id, context.current_turn));
             DebugLogger() << "New Building created on turn: " << context.current_turn;
             break;
         }

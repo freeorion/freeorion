@@ -167,7 +167,7 @@ public:
     [[nodiscard]] bool        Won() const noexcept { return !m_victories.empty(); }       ///< whether this empire has won the game
     [[nodiscard]] bool        Ready() const noexcept { return m_ready; }                  ///< readiness status of empire
 
-    [[nodiscard]] int         NumSitRepEntries(int turn = INVALID_GAME_TURN) const;       ///< number of entries in the SitRep.
+    [[nodiscard]] int         NumSitRepEntries(int turn = INVALID_GAME_TURN) const noexcept; ///< number of entries in the SitRep.
 
     /** Returns distance in jumps away from each system that this empire can
       * propagate supply. */
@@ -182,7 +182,7 @@ public:
     /** Returns true if the specified lane travel is preserved against being blockaded (i.e., the empire
      * has in the start system at least one fleet that meets the requirements to preserve the lane (which
      * is determined in Empire::UpdateSupplyUnobstructedSystems(). */
-    [[nodiscard]] bool                         PreservedLaneTravel(int start_system_id, int dest_system_id) const;
+    [[nodiscard]] bool        PreservedLaneTravel(int start_system_id, int dest_system_id) const;
 
     using IntSet = boost::container::flat_set<int>;
     struct LaneEndpoints {
