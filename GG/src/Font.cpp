@@ -729,7 +729,34 @@ public:
     }
 
     /** Add an open tag iff it exists as a recognized tag.*/
-    void AddOpenTag(const std::string& tag, const std::vector<std::string>* params = nullptr)
+    void AddOpenTag(const std::string& tag)
+    {
+        if (!StaticTagHandler().IsKnown(tag))
+            return;
+
+        m_are_widths_calculated = false;
+
+        // Create the opening part of an open tag, like this: "<tag"
+        auto element = std::make_shared<Font::FormattingTag>(false);
+
+        auto tag_begin = m_text.size();
+        auto tag_name_begin = m_text.append("<").size();
+        auto tag_name_end = m_text.append(tag).size();
+        auto tag_end = m_text.append(">").size();
+
+        element->tag_name = Substring(m_text,
+                                      std::next(m_text.begin(), tag_name_begin),
+                                      std::next(m_text.begin(), tag_name_end));
+        // Create the close part of an open tag to complete the tag, like this:"<tag param1 param2>"
+        element->text = Substring(m_text,
+                                  std::next(m_text.begin(), tag_begin),
+                                  std::next(m_text.begin(), tag_end));
+
+        m_text_elements.push_back(std::move(element));
+    }
+
+    /** Add an open tag iff it exists as a recognized tag.*/
+    void AddOpenTag(const std::string& tag, const std::vector<std::string>& params)
     {   // TODO: variation taking a span of strings instead of a vector
         if (!StaticTagHandler().IsKnown(tag))
             return;
@@ -745,17 +772,15 @@ public:
                                       std::next(m_text.begin(), tag_name_begin),
                                       std::next(m_text.begin(), tag_name_end));
 
-        // If there are params add them, like this: "<tag param1 param2"
-        if (params) {
-            for (const std::string& param : *params) {
-                m_text.append(" ");
-                auto param_begin = m_text.size();
-                auto param_end = m_text.append(param).size();
+        // add params, like: "<tag param1 param2"
+        for (const auto& param : params) {
+            m_text.append(" ");
+            auto param_begin = m_text.size();
+            auto param_end = m_text.append(param).size();
 
-                element->params.emplace_back(m_text,
-                                             std::next(m_text.begin(), param_begin),
-                                             std::next(m_text.begin(), param_end));
-            }
+            element->params.emplace_back(m_text,
+                                         std::next(m_text.begin(), param_begin),
+                                         std::next(m_text.begin(), param_end));
         }
 
         // Create the close part of an open tag to complete the tag, like this:"<tag param1 param2>"
@@ -777,17 +802,19 @@ public:
 
         // Create a close tag that looks like this: "</tag>"
         auto element = std::make_shared<Font::FormattingTag>(true);
-        auto tag_begin = m_text.size();
-        auto tag_name_begin = m_text.append("</").size();
-        auto tag_name_end = m_text.append(tag).size();
-        auto tag_end = m_text.append(">").size();
+
+        const auto tag_begin = m_text.size();
+        const auto tag_name_begin = m_text.append("</").size();
+        const auto tag_name_end = m_text.append(tag).size();
+        const auto tag_end = m_text.append(">").size();
+
         element->text = Substring(m_text,
                                   std::next(m_text.begin(), tag_begin),
                                   std::next(m_text.begin(), tag_end));
-
         element->tag_name = Substring(m_text,
                                       std::next(m_text.begin(), tag_name_begin),
                                       std::next(m_text.begin(), tag_name_end));
+
         m_text_elements.push_back(std::move(element));
     }
 
@@ -834,7 +861,7 @@ public:
                                             std::to_string(color.b),
                                             std::to_string(color.a) };
 
-        AddOpenTag("rgba", &params);
+        AddOpenTag("rgba", params);
     }
 
 private:
@@ -867,7 +894,7 @@ Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddOpenTag(const
 Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddOpenTag(
     const std::string& tag, const std::vector<std::string>& params)
 {
-    m_impl->AddOpenTag(tag, &params);
+    m_impl->AddOpenTag(tag, params);
     return *this;
 }
 
