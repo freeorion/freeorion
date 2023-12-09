@@ -1,8 +1,3 @@
-from common.misc import PLANET_DEFENSE_FACTOR
-from common.priorities import (
-    AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
-    TARGET_AFTER_2ND_SCALING_PRIORITY,
-)
 from focs._effects import (
     CurrentTurn,
     EffectsGroup,
@@ -18,6 +13,11 @@ from focs._effects import (
     Target,
     Unowned,
     Value,
+)
+from macros.misc import PLANET_DEFENSE_FACTOR
+from macros.priorities import (
+    AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
+    TARGET_AFTER_2ND_SCALING_PRIORITY,
 )
 
 AVERAGE_PLANETARY_DEFENSE = [

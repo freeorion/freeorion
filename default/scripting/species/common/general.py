@@ -1,10 +1,3 @@
-from common.misc import DESCRIPTION_EFFECTSGROUP_MACRO
-from common.priorities import (
-    AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
-    END_CLEANUP_PRIORITY,
-    FOCUS_CHANGE_PENALTY_PRIORITY,
-    LATE_AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
-)
 from focs._effects import (
     Abs,
     CurrentTurn,
@@ -29,6 +22,13 @@ from focs._effects import (
     Target,
     TargetPopulation,
     Value,
+)
+from macros.misc import DESCRIPTION_EFFECTSGROUP_MACRO
+from macros.priorities import (
+    AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
+    END_CLEANUP_PRIORITY,
+    FOCUS_CHANGE_PENALTY_PRIORITY,
+    LATE_AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
 )
 
 STANDARD_METER_GROWTH = [

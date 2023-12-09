@@ -1,4 +1,3 @@
-from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
 from focs._effects import (
     CurrentTurn,
     EffectsGroup,
@@ -11,6 +10,7 @@ from focs._effects import (
     Target,
     Value,
 )
+from macros.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
 
 STANDARD_SUPPLY_GROWTH = EffectsGroup(  # increase 1 per turn, up to max
     scope=IsSource,

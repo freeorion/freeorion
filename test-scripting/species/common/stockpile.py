@@ -1,5 +1,5 @@
-from common.base_prod import STOCKPILE_PER_POP
-from common.priorities import (
+from macros.base_prod import STOCKPILE_PER_POP
+from macros.priorities import (
     AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
     TARGET_EARLY_BEFORE_SCALING_PRIORITY,
 )

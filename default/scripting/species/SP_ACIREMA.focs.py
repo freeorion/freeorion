@@ -1,4 +1,3 @@
-from common.misc import PLANET_DEFENSE_FACTOR, PLANET_SHIELD_FACTOR
 from focs._effects import (
     AnyEmpire,
     Blue,
@@ -20,6 +19,7 @@ from focs._effects import (
     WithinStarlaneJumps,
 )
 from focs._species import *
+from macros.misc import PLANET_DEFENSE_FACTOR, PLANET_SHIELD_FACTOR
 from species.common.empire_opinions import COMMON_OPINION_EFFECTS
 from species.common.env import RADIATED_STANDARD_EP
 from species.common.focus import (

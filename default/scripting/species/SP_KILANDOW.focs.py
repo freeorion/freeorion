@@ -1,4 +1,3 @@
-from common.base_prod import INDUSTRY_PER_POP
 from focs._effects import (
     AsteroidsType,
     ContainedBy,
@@ -17,6 +16,7 @@ from focs._effects import (
     Value,
 )
 from focs._species import *
+from macros.base_prod import INDUSTRY_PER_POP
 from species.common.empire_opinions import COMMON_OPINION_EFFECTS
 from species.common.env import RADIATED_STANDARD_EP
 from species.common.focus import (

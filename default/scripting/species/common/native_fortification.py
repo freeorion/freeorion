@@ -1,4 +1,3 @@
-from common.misc import PLANET_DEFENSE_FACTOR, PLANET_SHIELD_FACTOR
 from focs._effects import (
     AddSpecial,
     Conditional,
@@ -17,6 +16,7 @@ from focs._effects import (
     Source,
     Turn,
 )
+from macros.misc import PLANET_DEFENSE_FACTOR, PLANET_SHIELD_FACTOR
 from species.common.detection import NATIVE_PLANETARY_DETECTION
 from species.common.planet_defense import AVERAGE_PLANETARY_DEFENSE, NATIVE_PLANETARY_DEFENSE
 from species.common.planet_shields import AVERAGE_PLANETARY_SHIELDS, _native_planetary_shields

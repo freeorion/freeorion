@@ -1,5 +1,5 @@
-from common.misc import MINIMUM_DISTANCE_EMPIRE_CHECK
 from focs._species import *
+from macros.misc import MINIMUM_DISTANCE_EMPIRE_CHECK
 from species.common.empire_opinions import COMMON_OPINION_EFFECTS
 from species.common.env import RADIATED_STANDARD_EP
 from species.common.focus import (

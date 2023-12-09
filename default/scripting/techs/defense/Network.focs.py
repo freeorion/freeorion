@@ -1,6 +1,3 @@
-from common.base_prod import TECH_COST_MULTIPLIER
-from common.misc import PLANET_DEFENSE_FACTOR
-from common.priorities import DEFAULT_PRIORITY
 from focs._effects import (
     EffectsGroup,
     MaxOf,
@@ -13,6 +10,9 @@ from focs._effects import (
     Value,
 )
 from focs._tech import *
+from macros.base_prod import TECH_COST_MULTIPLIER
+from macros.misc import PLANET_DEFENSE_FACTOR
+from macros.priorities import DEFAULT_PRIORITY
 
 
 def EG_DEFENSE_NET(multiplier: int, stack_postfix: str):

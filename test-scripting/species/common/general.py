@@ -1,4 +1,4 @@
-from common.priorities import (
+from macros.priorities import (
     AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
     END_CLEANUP_PRIORITY,
     FOCUS_CHANGE_PENALTY_PRIORITY,

@@ -1,8 +1,3 @@
-from common.priorities import (
-    POPULATION_DEFAULT_PRIORITY,
-    POPULATION_FIRST_PRIORITY,
-    TARGET_POPULATION_AFTER_SCALING_PRIORITY,
-)
 from focs._effects import (
     AddSpecial,
     Conditional,
@@ -42,6 +37,11 @@ from focs._effects import (
     Value,
     WithinDistance,
     WithinStarlaneJumps,
+)
+from macros.priorities import (
+    POPULATION_DEFAULT_PRIORITY,
+    POPULATION_FIRST_PRIORITY,
+    TARGET_POPULATION_AFTER_SCALING_PRIORITY,
 )
 
 PLANETARY_DRIVE_ACTIVATION = (

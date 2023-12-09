@@ -1,5 +1,3 @@
-from common.base_prod import TECH_COST_MULTIPLIER
-from common.misc import FIGHTER_DAMAGE_FACTOR
 from focs._effects import (
     DesignHasPart,
     EffectsGroup,
@@ -13,6 +11,8 @@ from focs._effects import (
     Value,
 )
 from focs._tech import *
+from macros.base_prod import TECH_COST_MULTIPLIER
+from macros.misc import FIGHTER_DAMAGE_FACTOR
 
 Tech(
     name="SHP_FIGHTERS_2",

@@ -1,5 +1,5 @@
-from common.opinion import POLICY_DISLIKE_SCALING
-from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
+from macros.opinion import POLICY_DISLIKE_SCALING
+from macros.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
 
 try:
     from focs._effects import (

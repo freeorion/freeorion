@@ -1,6 +1,3 @@
-from common.misc import DESCRIPTION_EFFECTSGROUP_MACRO
-from common.opinion import POLICY_DISLIKE_SCALING
-from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
 from focs._effects import (
     Abs,
     Adequate,
@@ -46,6 +43,9 @@ from focs._effects import (
     Unowned,
     Value,
 )
+from macros.misc import DESCRIPTION_EFFECTSGROUP_MACRO
+from macros.opinion import POLICY_DISLIKE_SCALING
+from macros.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
 
 _STABILITY_PER_LIKED_FOCUS = 2.0
 

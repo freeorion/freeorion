@@ -1,8 +1,3 @@
-from common.priorities import (
-    AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
-    METER_OVERRIDE_PRIORITY,
-    TARGET_AFTER_2ND_SCALING_PRIORITY,
-)
 from focs._effects import (
     Abs,
     EffectsGroup,
@@ -28,6 +23,11 @@ from focs._effects import (
     Value,
 )
 from focs._tech import *
+from macros.priorities import (
+    AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
+    METER_OVERRIDE_PRIORITY,
+    TARGET_AFTER_2ND_SCALING_PRIORITY,
+)
 
 Tech(
     name="CON_OUTPOST",

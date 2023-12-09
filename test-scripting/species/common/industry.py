@@ -1,5 +1,5 @@
-from common.base_prod import INDUSTRY_PER_POP
-from common.priorities import (
+from macros.base_prod import INDUSTRY_PER_POP
+from macros.priorities import (
     TARGET_AFTER_SCALING_PRIORITY,
     TARGET_EARLY_BEFORE_SCALING_PRIORITY,
 )

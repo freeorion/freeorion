@@ -1,5 +1,3 @@
-from common.misc import SHIP_WEAPON_DAMAGE_FACTOR
-from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
 from focs._effects import (
     CurrentContent,
     CurrentTurn,
@@ -17,6 +15,8 @@ from focs._effects import (
     TurnTechResearched,
     Value,
 )
+from macros.misc import SHIP_WEAPON_DAMAGE_FACTOR
+from macros.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
 from techs.techs import (
     ARBITRARY_BIG_NUMBER_FOR_METER_TOPUP,
     EMPIRE_OWNED_SHIP_WITH_PART,

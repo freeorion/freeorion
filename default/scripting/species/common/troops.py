@@ -1,10 +1,3 @@
-from common.base_prod import TROOPS_PER_POP
-from common.priorities import (
-    AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
-    TARGET_AFTER_2ND_SCALING_PRIORITY,
-    TARGET_EARLY_BEFORE_SCALING_PRIORITY,
-    TARGET_SCALING_PRIORITY,
-)
 from focs._effects import (
     Abs,
     Adequate,
@@ -44,6 +37,13 @@ from focs._effects import (
     Target,
     Unowned,
     Value,
+)
+from macros.base_prod import TROOPS_PER_POP
+from macros.priorities import (
+    AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
+    TARGET_AFTER_2ND_SCALING_PRIORITY,
+    TARGET_EARLY_BEFORE_SCALING_PRIORITY,
+    TARGET_SCALING_PRIORITY,
 )
 
 _UNSTABLE_REBEL_TROOPS = [

@@ -1,4 +1,4 @@
-from common.priorities import (
+from macros.priorities import (
     POPULATION_DEFAULT_PRIORITY,
     POPULATION_FIRST_PRIORITY,
     TARGET_POPULATION_AFTER_SCALING_PRIORITY,

@@ -1,5 +1,3 @@
-from common.misc import PLANET_SHIELD_FACTOR
-from common.priorities import POPULATION_OVERRIDE_PRIORITY
 from focs._effects import (
     AnyEmpire,
     AsteroidsType,
@@ -29,6 +27,8 @@ from focs._effects import (
     Value,
 )
 from focs._species import *
+from macros.misc import PLANET_SHIELD_FACTOR
+from macros.priorities import POPULATION_OVERRIDE_PRIORITY
 from species.common.empire_opinions import FIXED_OPINION_EFFECTS
 from species.common.focus import HAS_ADVANCED_FOCI
 from species.common.happiness import AVERAGE_HAPPINESS

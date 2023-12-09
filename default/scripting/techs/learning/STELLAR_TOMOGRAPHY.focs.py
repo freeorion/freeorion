@@ -1,5 +1,3 @@
-from common.base_prod import TECH_COST_MULTIPLIER
-from common.priorities import TARGET_AFTER_SCALING_PRIORITY
 from focs._effects import (
     BlackHole,
     Blue,
@@ -23,6 +21,8 @@ from focs._effects import (
     Yellow,
 )
 from focs._tech import *
+from macros.base_prod import TECH_COST_MULTIPLIER
+from macros.priorities import TARGET_AFTER_SCALING_PRIORITY
 
 Tech(
     name="LRN_STELLAR_TOMOGRAPHY",
