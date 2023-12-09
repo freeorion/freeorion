@@ -72,3 +72,4 @@ max(max(max(max(
 #include "/scripting/common/upkeep.macros"
 
 #include "/scripting/common/misc.macros"
+#include "/scripting/common/priorities.macros"

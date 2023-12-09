@@ -31,3 +31,4 @@ Policy
 
 #include "/scripting/policies/policies.macros"
 #include "/scripting/common/misc.macros"
+#include "/scripting/common/priorities.macros"
