@@ -44,3 +44,4 @@ FieldType
     graphic = "fields/molecular_cloud.png"
 
 #include "/scripting/common/misc.macros"
+#include "/scripting/common/priorities.macros"

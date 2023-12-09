@@ -18,5 +18,5 @@ Part
     icon = "icons/ship_parts/cryonic_colony_pod.png"
 
 #include "/scripting/common/upkeep.macros"
-
+#include "/scripting/common/priorities.macros"
 #include "/scripting/common/misc.macros"

@@ -25,3 +25,4 @@ Special
     graphic = "icons/focus/protection.png"
 
 #include "/scripting/common/misc.macros"
+#include "/scripting/common/priorities.macros"
