@@ -74,7 +74,7 @@ void IApp::StartBackgroundParsing(const PythonParser& python, std::promise<void>
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/macros").string();
 
     if (IsExistingDir(rdir / "scripting/buildings"))
-        GetBuildingTypeManager().SetBuildingTypes(Pending::StartAsyncParsing(parse::buildings, rdir / "scripting/buildings"));
+        GetBuildingTypeManager().SetBuildingTypes(Pending::ParseSynchronously(parse::buildings, python, rdir / "scripting/buildings"));
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/buildings").string();
 

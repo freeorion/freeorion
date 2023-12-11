@@ -17,7 +17,7 @@
 #include "PythonParser.h"
 
 namespace parse {
-    std::map<std::string, std::unique_ptr<BuildingType>, std::less<>> buildings(const boost::filesystem::path& path)
+    std::map<std::string, std::unique_ptr<BuildingType>, std::less<>> buildings(const PythonParser& parser, const boost::filesystem::path& path)
     { return {}; }
 
     std::map<std::string, std::unique_ptr<FieldType>, std::less<>> fields(const boost::filesystem::path& path)

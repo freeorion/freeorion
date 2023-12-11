@@ -436,7 +436,9 @@ BOOST_AUTO_TEST_CASE(parse_species) {
 }
 
 BOOST_AUTO_TEST_CASE(parse_buildings) {
-    auto buildings_p = Pending::StartAsyncParsing(parse::buildings, m_test_scripting_dir / "buildings");
+    PythonParser parser(m_python, m_test_scripting_dir);
+
+    auto buildings_p = Pending::ParseSynchronously(parse::buildings, parser, m_test_scripting_dir / "buildings");
     const auto buildings = *Pending::WaitForPendingUnlocked(std::move(buildings_p));
 
     BOOST_REQUIRE(!buildings.empty());
