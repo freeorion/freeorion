@@ -6,11 +6,20 @@
 #include "ValueRefParser.h"
 #include "CommonParamsParser.h"
 
+#include "PythonParserImpl.h"
+#include "ValueRefPythonParser.h"
+#include "ConditionPythonParser.h"
+#include "EffectPythonParser.h"
+#include "EnumPythonParser.h"
+#include "SourcePythonParser.h"
+
 #include "../universe/BuildingType.h"
 #include "../universe/Condition.h"
 #include "../universe/ValueRef.h"
 #include "../util/Directories.h"
 
+#include <boost/python/import.hpp>
+#include <boost/python/raw_function.hpp>
 
 #define DEBUG_PARSERS 0
 
@@ -114,16 +123,49 @@ namespace {
         building_type_rule                      building_type;
         start_rule                              start;
     };
+
+    boost::python::object py_insert_buildings_(start_rule_payload& buildings_, const boost::python::tuple& args,
+                                             const boost::python::dict& kw)
+    { 
+        return boost::python::object();
+    }
+
+    struct py_grammar {
+        boost::python::dict globals;
+
+        py_grammar(const PythonParser& parser, start_rule_payload& buildings_) :
+            globals(boost::python::import("builtins").attr("__dict__"))
+        {
+#if PY_VERSION_HEX < 0x03080000
+            globals["__builtins__"] = boost::python::import("builtins");
+#endif
+            RegisterGlobalsEffects(globals);
+            RegisterGlobalsConditions(globals);
+            RegisterGlobalsValueRefs(globals, parser);
+            RegisterGlobalsSources(globals);
+            RegisterGlobalsEnums(globals);
+
+            globals["BuildingType"] = boost::python::raw_function(
+                [&buildings_](const boost::python::tuple& args, const boost::python::dict& kw)
+                { return py_insert_buildings_(buildings_, args, kw); });
+        }
+
+        boost::python::dict operator()() const { return globals; }        
+    };
 }
 
 namespace parse {
-    start_rule_payload buildings(const boost::filesystem::path& path) {
+    start_rule_payload buildings(const PythonParser& parser, const boost::filesystem::path& path) {
         start_rule_payload building_types;
 
         ScopedTimer timer("Buildings Parsing");
 
         for (const auto& file : ListDir(path, IsFOCScript))
             detail::parse_file<grammar, start_rule_payload>(lexer::tok, file, building_types);
+
+        py_grammar p = py_grammar(parser, building_types);
+        for (const auto& file : ListDir(path, IsFOCPyScript))
+            py_parse::detail::parse_file<py_grammar>(parser, file, p);
 
         return building_types;
     }

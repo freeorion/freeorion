@@ -41,7 +41,7 @@ namespace ValueRef {
 }
 
 namespace parse {
-    FO_PARSE_API std::map<std::string, std::unique_ptr<BuildingType>, std::less<>> buildings(const boost::filesystem::path& path);
+    FO_PARSE_API std::map<std::string, std::unique_ptr<BuildingType>, std::less<>> buildings(const PythonParser& parser, const boost::filesystem::path& path);
     FO_PARSE_API std::map<std::string, std::unique_ptr<FieldType>, std::less<>> fields(const boost::filesystem::path& path);
     FO_PARSE_API std::map<std::string, std::unique_ptr<ValueRef::ValueRefBase>, std::less<>> named_value_refs(const boost::filesystem::path& path);
     FO_PARSE_API std::map<std::string, std::unique_ptr<Special>, std::less<>> specials(const boost::filesystem::path& path);
