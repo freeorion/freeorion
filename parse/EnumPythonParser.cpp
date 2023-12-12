@@ -2,6 +2,7 @@
 
 #include <boost/python/dict.hpp>
 
+#include "../universe/BuildingType.h"
 #include "../universe/Enums.h"
 #include "../universe/Planet.h"
 #include "../universe/Species.h"
@@ -129,6 +130,15 @@ void RegisterGlobalsEnums(boost::python::dict& globals) {
             {"Full",      Visibility::VIS_FULL_VISIBILITY}})
     {
         globals[vis.first] = enum_wrapper<Visibility>(vis.second);
+    }
+
+    // capture_result_enum_grammar
+    for (const auto& capt : std::initializer_list<std::pair<const char*, CaptureResult>>{
+            {"Capture",          CaptureResult::CR_CAPTURE},
+            {"Retain",           CaptureResult::CR_RETAIN},
+            {"DestroyOnCapture", CaptureResult::CR_DESTROY}})
+    {
+        globals[capt.first] = enum_wrapper<CaptureResult>(capt.second);
     }
 }
 
