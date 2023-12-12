@@ -126,7 +126,91 @@ namespace {
 
     boost::python::object py_insert_buildings_(start_rule_payload& buildings_, const boost::python::tuple& args,
                                              const boost::python::dict& kw)
-    { 
+    {
+        auto name = boost::python::extract<std::string>(kw["name"])();
+
+        auto description = boost::python::extract<std::string>(kw["description"])();
+
+        auto capture_result = CaptureResult::CR_CAPTURE;
+        if (kw.has_key("captureresult")) {
+            capture_result = boost::python::extract<enum_wrapper<CaptureResult>>(kw["captureresult"])().value;
+        }
+
+        auto icon = boost::python::extract<std::string>(kw["icon"])();
+
+        std::unique_ptr<ValueRef::ValueRef<double>> production_cost;
+        auto production_cost_arg = boost::python::extract<value_ref_wrapper<double>>(kw["buildcost"]);
+        if (production_cost_arg.check()) {
+            production_cost = ValueRef::CloneUnique(production_cost_arg().value_ref);
+        } else {
+            production_cost = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["buildcost"])());
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<int>> production_time;
+        auto production_time_arg = boost::python::extract<value_ref_wrapper<int>>(kw["buildtime"]);
+        if (production_time_arg.check()) {
+            production_time = ValueRef::CloneUnique(production_time_arg().value_ref);
+        } else {
+            production_time = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["buildtime"])());
+        }
+
+        bool producible = true;
+        if (kw.has_key("producible"))
+            producible = boost::python::extract<bool>(kw["producible"])();
+
+        std::set<std::string> tags;
+        if (kw.has_key("tags")) {
+            boost::python::stl_input_iterator<std::string> tags_begin(kw["tags"]), tags_end;
+            tags = std::set<std::string>(tags_begin, tags_end);
+        }
+
+        std::unique_ptr<Condition::Condition> location;
+        if (kw.has_key("location")) {
+            location = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["location"])().condition);
+        } else {
+            location = std::make_unique<Condition::All>();
+        }
+
+        std::unique_ptr<Condition::Condition> enqueue_location;
+        if (kw.has_key("enqueuelocation")) {
+            enqueue_location = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["enqueuelocation"])().condition);
+        } else {
+            enqueue_location = std::make_unique<Condition::All>();
+        }
+
+        std::vector<std::unique_ptr<Effect::EffectsGroup>> effectsgroups;
+        boost::python::stl_input_iterator<effect_group_wrapper> effectsgroups_begin(kw["effectsgroups"]), effectsgroups_end;
+        for (auto it = effectsgroups_begin; it != effectsgroups_end; ++it) {
+            const auto& effects_group = *it->effects_group;
+            effectsgroups.push_back(std::make_unique<Effect::EffectsGroup>(
+                ValueRef::CloneUnique(effects_group.Scope()),
+                ValueRef::CloneUnique(effects_group.Activation()),
+                ValueRef::CloneUnique(effects_group.Effects()),
+                effects_group.AccountingLabel(),
+                effects_group.StackingGroup(),
+                effects_group.Priority(),
+                effects_group.GetDescription(),
+                effects_group.TopLevelContent()
+            ));
+        }
+
+        auto building_type = std::make_unique<BuildingType>(
+            std::string(name), std::move(description),
+            std::move(CommonParams{
+                std::move(production_cost),
+                std::move(production_time),
+                producible,
+                tags,
+                std::move(location),
+                std::move(effectsgroups),
+                {},
+                {},
+                std::move(enqueue_location)
+            }),
+            capture_result, std::move(icon));
+
+        buildings_.emplace(std::move(name), std::move(building_type));
+
         return boost::python::object();
     }
 
