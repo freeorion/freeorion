@@ -39,7 +39,7 @@ public:
         //! You own the returned control.
         virtual std::shared_ptr<BlockControl> CreateFromTag(const TAG_PARAMS&, std::string,
                                                             std::shared_ptr<Font>, Clr,
-                                                            Flags<TextFormat>) = 0;
+                                                            Flags<TextFormat>) const = 0;
     };
 
     //! The type of the object where we store control factories of tags.

@@ -25,7 +25,7 @@ public:
         //! You own the returned control.
         std::shared_ptr<GG::BlockControl> CreateFromTag(const GG::RichText::TAG_PARAMS&, std::string,
                                                         std::shared_ptr<GG::Font>, GG::Clr,
-                                                        GG::Flags<GG::TextFormat>) override;
+                                                        GG::Flags<GG::TextFormat>) const override;
 
         ///< link clicked signals: first string is the link type, second string is the specific item clicked
         mutable boost::signals2::signal<void (const std::string&, const std::string&)> LinkClickedSignal;

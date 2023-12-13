@@ -52,7 +52,7 @@ public:
                                                 std::string content,
                                                 std::shared_ptr<Font> font,
                                                 Clr color,
-                                                Flags<TextFormat> format) override
+                                                Flags<TextFormat> format) const override
     {
         return Wnd::Create<TextBlock>(X0, Y0, X1, std::move(content), std::move(font),
                                       color, format, NO_WND_FLAGS);

@@ -38,7 +38,7 @@ GG::Pt CUILinkTextBlock::SetMaxWidth(GG::X width) {
 
 std::shared_ptr<GG::BlockControl> CUILinkTextBlock::Factory::CreateFromTag(
     const GG::RichText::TAG_PARAMS&, std::string content,
-    std::shared_ptr<GG::Font>, GG::Clr color, GG::Flags<GG::TextFormat> format)
+    std::shared_ptr<GG::Font>, GG::Clr color, GG::Flags<GG::TextFormat> format) const
 {
     auto block = GG::Wnd::Create<CUILinkTextBlock>(std::move(content), format, color, GG::NO_WND_FLAGS);
 
