@@ -178,8 +178,5 @@ std::shared_ptr<ThreeButtonDlg> StyleFactory::NewThreeButtonDlg(
                                        text_color, buttons, std::move(zero), std::move(one), std::move(two));
 }
 
-const std::string& StyleFactory::DefaultFontName()
-{
-    static std::string retval = DEFAULT_FONT_NAME;
-    return retval;
-}
+std::string_view StyleFactory::DefaultFontName() noexcept
+{ return DEFAULT_FONT_NAME; }

@@ -179,7 +179,7 @@ public:
         std::string zero = "", std::string one = "", std::string two = "") const;
 
     /** The "filename" of the default font. */
-    static const std::string& DefaultFontName();
+    static std::string_view DefaultFontName() noexcept;
 };
 
 }

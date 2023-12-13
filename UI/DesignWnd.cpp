@@ -4498,25 +4498,28 @@ void DesignWnd::MainPanel::DoLayout() {
     const int PTS = ClientUI::Pts();
     static constexpr int PAD = 6;
 
-    auto lr = ClientSize() - GG::Pt(GG::X{PAD}, GG::Y{PAD});
+    const auto cl_sz = ClientSize();
+    const auto [cl_width, cl_height] = cl_sz;
+
+    auto lr = cl_sz - GG::Pt(GG::X{PAD}, GG::Y{PAD});
     m_confirm_button->SizeMove(lr - m_confirm_button->MinUsableSize(), lr);
 
     auto mus = m_replace_button->MinUsableSize();
     auto ul = m_confirm_button->RelativeUpperLeft() - GG::Pt(mus.x+PAD, GG::Y0);
     m_replace_button->SizeMove(ul, ul+mus);
 
-    const auto ll = GG::Pt(GG::X(PAD), ClientHeight() - PAD);
+    const auto ll = GG::Pt(GG::X(PAD), cl_sz.y - PAD);
     mus = m_clear_button->MinUsableSize();
     ul = ll - GG::Pt(GG::X0, mus.y);
     m_clear_button->SizeMove(ul, ul + mus);
 
     ul = GG::Pt(GG::X(PAD), GG::Y(PAD));
     // adjust based on the (bigger) height of the edit bar 
-    lr = ul+GG::Pt(m_design_name_label->MinUsableSize().x, m_design_name->MinUsableSize().y);
+    lr = ul + GG::Pt(m_design_name_label->MinUsableSize().x, m_design_name->MinUsableSize().y);
     m_design_name_label->SizeMove(ul, lr);
 
     ul = GG::Pt(m_design_name_label->RelativeLowerRight().x+PAD, GG::Y(PAD));
-    m_design_name->SizeMove(ul, GG::Pt(GG::X(ClientWidth()-PAD), ul.y+m_design_name->MinUsableSize().y));
+    m_design_name->SizeMove(ul, GG::Pt(cl_sz.x-PAD, ul.y+m_design_name->MinUsableSize().y));
 
     ul = GG::Pt(GG::X(PAD), GG::Y(m_design_name->RelativeLowerRight().y+PAD));
     // Apparently calling minuseablesize on the button itself doesn't work
@@ -4525,7 +4528,7 @@ void DesignWnd::MainPanel::DoLayout() {
     m_design_description_toggle->SizeMove(ul, lr);
 
     ul.x = m_design_description_toggle->RelativeLowerRight().x + PAD;
-    m_design_description_edit->SizeMove(ul, GG::Pt(GG::X(ClientWidth()-PAD),ul.y+PTS*4+8));
+    m_design_description_edit->SizeMove(ul, GG::Pt(cl_sz.x-PAD, ul.y+PTS*4+8));
     if (m_design_description_toggle->Checked())
         m_design_description_edit->Show();
     else
@@ -4534,19 +4537,20 @@ void DesignWnd::MainPanel::DoLayout() {
     // place background image of hull
     ul.x = GG::X0;
     ul.y += m_design_name->Height();
-    GG::Rect background_rect{ul, ClientLowerRight()};
 
+    auto bg_ul = ul;
     if (m_background_image) {
-        const auto bg_ul = background_rect.UpperLeft();
-        const auto bg_lr = ClientSize();
-        m_background_image->SizeMove(bg_ul, bg_lr);
-        background_rect = m_background_image->RenderedArea();
+        m_background_image->SizeMove(bg_ul, cl_sz);
+        bg_ul = m_background_image->RenderedArea().UpperLeft();
     }
 
     // place slot controls over image of hull
+    const auto slot_ref_ul = bg_ul - ClientUpperLeft();
+    const auto bg_sz = cl_sz - bg_ul;
+
     for (auto& slot : m_slots) {
-        const auto x = background_rect.Left() - GG::ToX(slot->Width()/2.0 - ClientUpperLeft().x + slot->XPositionFraction() * background_rect.Width());
-        const auto y = background_rect.Top() - GG::ToY(slot->Height()/2.0 - ClientUpperLeft().y + slot->YPositionFraction() * background_rect.Height());
+        const auto x = slot_ref_ul.x - GG::ToX(slot->Width()/2.0 + slot->XPositionFraction() * bg_sz.x);
+        const auto y = slot_ref_ul.y - GG::ToY(slot->Height()/2.0 + slot->YPositionFraction() * bg_sz.y);
         slot->MoveTo(GG::Pt(x, y));
     }
 }

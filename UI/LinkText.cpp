@@ -688,33 +688,15 @@ void RegisterLinkTags() {
     link_tags_registered = true;
 
     // need to register the tags that link text uses so GG::Font will know how to (not) render them
-    GG::Font::RegisterKnownTag(VarText::PLANET_ID_TAG);
-    GG::Font::RegisterKnownTag(VarText::SYSTEM_ID_TAG);
-    GG::Font::RegisterKnownTag(VarText::SHIP_ID_TAG);
-    GG::Font::RegisterKnownTag(VarText::FLEET_ID_TAG);
-    GG::Font::RegisterKnownTag(VarText::BUILDING_ID_TAG);
-    GG::Font::RegisterKnownTag(VarText::FIELD_ID_TAG);
-
-    GG::Font::RegisterKnownTag(VarText::COMBAT_ID_TAG);
-
-    GG::Font::RegisterKnownTag(VarText::EMPIRE_ID_TAG);
-    GG::Font::RegisterKnownTag(VarText::DESIGN_ID_TAG);
-    GG::Font::RegisterKnownTag(VarText::PREDEFINED_DESIGN_TAG);
-
-    GG::Font::RegisterKnownTag(VarText::TECH_TAG);
-    GG::Font::RegisterKnownTag(VarText::POLICY_TAG);
-    GG::Font::RegisterKnownTag(VarText::BUILDING_TYPE_TAG);
-    GG::Font::RegisterKnownTag(VarText::SPECIAL_TAG);
-    GG::Font::RegisterKnownTag(VarText::SHIP_HULL_TAG);
-    GG::Font::RegisterKnownTag(VarText::SHIP_PART_TAG);
-    GG::Font::RegisterKnownTag(VarText::SPECIES_TAG);
-    GG::Font::RegisterKnownTag(VarText::FIELD_TYPE_TAG);
-    GG::Font::RegisterKnownTag(VarText::METER_TYPE_TAG);
-
-    GG::Font::RegisterKnownTag(VarText::FOCS_VALUE_TAG);
-
-    GG::Font::RegisterKnownTag(TextLinker::ENCYCLOPEDIA_TAG);
-    GG::Font::RegisterKnownTag(TextLinker::GRAPH_TAG);
-    GG::Font::RegisterKnownTag(TextLinker::URL_TAG);
-    GG::Font::RegisterKnownTag(TextLinker::BROWSE_PATH_TAG);
+    GG::Font::RegisterKnownTags({VarText::PLANET_ID_TAG, VarText::SYSTEM_ID_TAG, VarText::SHIP_ID_TAG,
+                                 VarText::FLEET_ID_TAG, VarText::BUILDING_ID_TAG, VarText::FIELD_ID_TAG,
+                                 VarText::COMBAT_ID_TAG,
+                                 VarText::EMPIRE_ID_TAG,
+                                 VarText::DESIGN_ID_TAG, VarText::PREDEFINED_DESIGN_TAG,
+                                 VarText::TECH_TAG, VarText::POLICY_TAG, VarText::BUILDING_TYPE_TAG,
+                                 VarText::SPECIAL_TAG, VarText::SHIP_HULL_TAG, VarText::SHIP_PART_TAG,
+                                 VarText::SPECIES_TAG, VarText::FIELD_TYPE_TAG, VarText::METER_TYPE_TAG,
+                                 VarText::FOCS_VALUE_TAG,
+                                 TextLinker::ENCYCLOPEDIA_TAG, TextLinker::GRAPH_TAG,
+                                 TextLinker::URL_TAG, TextLinker::BROWSE_PATH_TAG});
 }

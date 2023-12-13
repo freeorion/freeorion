@@ -333,11 +333,11 @@ std::shared_ptr<RichText::BlockFactoryMap> RichText::DefaultBlockFactoryMap() {
     return tag_map;
 }
 
-int RichText::RegisterDefaultBlock(std::string tag,
-                                   std::shared_ptr<IBlockControlFactory>&& factory)
+int RichText::RegisterDefaultBlock(std::string_view tag,
+                                   std::shared_ptr<IBlockControlFactory> factory)
 {
-    Font::RegisterKnownTag(tag);
-    DefaultBlockFactoryMap()->operator[](std::move(tag)) = std::move(factory);
+    Font::RegisterKnownTags({tag});
+    DefaultBlockFactoryMap()->operator[](std::string(tag)) = std::move(factory);
 
     // Return a dummy to enable static registration.
     return 0;

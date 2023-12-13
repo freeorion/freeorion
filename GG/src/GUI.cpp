@@ -1428,10 +1428,10 @@ void GUI::EnableModalAcceleratorSignals(bool allow)
 void GUI::SetMouseLRSwapped(bool swapped)
 { m_impl->m_mouse_lr_swap = swapped; }
 
-std::shared_ptr<Font> GUI::GetFont(const std::string& font_filename, unsigned int pts)
+std::shared_ptr<Font> GUI::GetFont(std::string_view font_filename, unsigned int pts)
 { return GetFontManager().GetFont(font_filename, pts); }
 
-std::shared_ptr<Font> GUI::GetFont(const std::string& font_filename, unsigned int pts,
+std::shared_ptr<Font> GUI::GetFont(std::string_view font_filename, unsigned int pts,
                                    const std::vector<uint8_t>& file_contents)
 { return GetFontManager().GetFont(font_filename, pts, file_contents); }
 
@@ -1448,7 +1448,7 @@ std::shared_ptr<Font> GUI::GetFont(const std::shared_ptr<Font>& font, unsigned i
     return retval;
 }
 
-void GUI::FreeFont(const std::string& font_filename, unsigned int pts)
+void GUI::FreeFont(std::string_view font_filename, unsigned int pts)
 { GetFontManager().FreeFont(font_filename, pts); }
 
 std::shared_ptr<Texture> GUI::StoreTexture(Texture* texture, const std::string& texture_name)

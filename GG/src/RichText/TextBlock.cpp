@@ -61,6 +61,6 @@ public:
 
 namespace {
     // Register text block as the default plaintext handler.
-    int dummy = RichText::RegisterDefaultBlock(std::string{RichText::PLAINTEXT_TAG},
-                                               std::make_shared<TextBlockFactory>());
+    const auto dummy = RichText::RegisterDefaultBlock(RichText::PLAINTEXT_TAG,
+                                                      std::make_shared<TextBlockFactory>());
 }

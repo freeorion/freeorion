@@ -46,9 +46,13 @@ struct GG_API UnicodeCharset
         assert(m_first_char < m_last_char);
     }
 
-    // only compare first char, so don't use default operator<=>
+    // compare first char, then last char, then name
     constexpr bool operator<(const UnicodeCharset& rhs) const noexcept
-    { return m_first_char < rhs.m_first_char; }
+    {
+        return (m_first_char < rhs.m_first_char) ||
+            (m_first_char == rhs.m_first_char && m_last_char < rhs.m_last_char) ||
+            (m_first_char == rhs.m_first_char && m_last_char == rhs.m_last_char && m_script_name < rhs.m_script_name);
+    }
 
 #if defined(__cpp_impl_three_way_comparison)
     [[nodiscard]] constexpr bool operator==(const UnicodeCharset& rhs) const noexcept = default;

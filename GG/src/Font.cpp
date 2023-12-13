@@ -473,11 +473,11 @@ namespace {
         expression that includes a tag stack which can be cleared and
         provided to callers without the overhead of recompiling the
         regular expression.*/
+    template <typename TagHandlerT>
     class CompiledRegex {
     public:
-        CompiledRegex(const std::unordered_set<std::string>& known_tags,
-                      bool strip_unpaired_tags) :
-            m_known_tags(&known_tags)
+        CompiledRegex(const TagHandlerT& tag_handler, bool strip_unpaired_tags) :
+            m_tag_handler(tag_handler)
         {
             // Synonyms for s1 thru s5 sub matches
             xpr::mark_tag tag_name_tag(1);
@@ -493,7 +493,7 @@ namespace {
             // regex then ignore them.
 
             // -+ 'non-greedy',   ~ 'not',   set[|] 'set',    _s 'space' = 'anything but space or <'
-            const xpr::sregex TAG_PARAM =
+            static const xpr::sregex TAG_PARAM =
                 -+~xpr::set[xpr::_s | '<'];
 
             //+_w one or more greed word chars,  () group no capture,  [] semantic operation
@@ -506,11 +506,11 @@ namespace {
 
             // *blank  'zero or more greedy whitespace',   >> 'followed by',    _ln 'newline',
             // (set = 'a', 'b') is '[ab]',    +blank 'one or more greedy blank'
-            const xpr::sregex WHITESPACE =
+            static const xpr::sregex WHITESPACE =
                 (*xpr::blank >> (xpr::_ln | (xpr::set = '\n', '\r', '\f'))) | +xpr::blank;
 
             // < followed by not space or <   or one or more not space or <
-            const xpr::sregex TEXT =
+            static const xpr::sregex TEXT =
                 ('<' >> *~xpr::set[xpr::_s | '<']) | (+~xpr::set[xpr::_s | '<']);
 
             if (!strip_unpaired_tags) {
@@ -546,13 +546,11 @@ namespace {
         }
 
     private:
-
-        bool MatchesKnownTag(const boost::xpressive::ssub_match& sub) {
-            return m_ignore_tags ? false : m_known_tags->count(sub.str()) != 0;
-        }
+        bool MatchesKnownTag(const boost::xpressive::ssub_match& sub)
+        { return !m_ignore_tags && m_tag_handler.IsKnown(sub.str()); }
 
         bool MatchesTopOfStack(const boost::xpressive::ssub_match& sub) {
-            bool retval = m_tag_stack.empty() ? false : m_tag_stack.top() == sub;
+            bool retval = !m_tag_stack.empty() && m_tag_stack.top() == sub;
             if (retval) {
                 m_tag_stack.pop();
                 if (m_tag_stack.empty() || m_tag_stack.top() != PRE_TAG)
@@ -562,7 +560,7 @@ namespace {
         }
 
         const std::string* m_text = nullptr;
-        const std::unordered_set<std::string>* m_known_tags = nullptr;
+        const TagHandlerT& m_tag_handler;
         bool m_ignore_tags = false;
 
         // m_tag_stack is used to track XML opening/closing tags.
@@ -578,27 +576,36 @@ namespace {
     class TagHandler {
     public:
         TagHandler() :
-            m_regex_w_tags(m_known_tags, false),
-            m_regex_w_tags_skipping_unmatched(m_known_tags, true)
+            m_regex_w_tags(*this, false),
+            m_regex_w_tags_skipping_unmatched(*this, true)
         {}
 
         /** Add a tag to the set of known tags.*/
-        void Insert(const std::string& tag)
-        { m_known_tags.emplace(tag); }
-
-        void Insert(std::string_view tag)
-        { m_known_tags.emplace(tag); }
+        void Insert(std::vector<std::string_view> tags)
+        {
+            for (const auto tag : tags)
+                if (!IsKnown(tag))
+                    m_custom_tags.push_back(tag);
+        }
 
         /** Remove a tag from the set of known tags.*/
-        void Erase(const std::string& tag)
-        { m_known_tags.erase(tag); }
+        void Erase(std::string_view tag)
+        {
+            const auto it = std::find(m_custom_tags.begin(), m_custom_tags.end(), tag);
+            if (it != m_custom_tags.end())
+                m_custom_tags.erase(it);
+        }
 
         /** Remove all tags from the set of known tags.*/
         void Clear()
-        { m_known_tags.clear(); }
+        { m_custom_tags.clear(); }
 
-        bool IsKnown(const std::string& tag) const
-        { return m_known_tags.count(tag); }
+        bool IsKnown(std::string_view tag) const
+        {
+            const auto matches_tag = [tag](const auto sv) noexcept{ return sv == tag; };
+            return std::any_of(m_default_tags.begin(), m_default_tags.end(), matches_tag)
+                || std::any_of(m_custom_tags.begin(), m_custom_tags.end(), matches_tag);
+        }
 
         // Return a regex bound to \p text using the currently known
         // tags.  If required \p ignore_tags and/or \p strip_unpaired_tags.
@@ -612,43 +619,20 @@ namespace {
 
     private:
         // set of tags known to the handler
-        std::unordered_set<std::string> m_known_tags;
+        static constexpr std::array<std::string_view, 10> m_default_tags{
+            {ITALIC_TAG, SHADOW_TAG, UNDERLINE_TAG, SUPERSCRIPT_TAG, SUBSCRIPT_TAG,
+             RGBA_TAG, ALIGN_LEFT_TAG, ALIGN_CENTER_TAG, ALIGN_RIGHT_TAG, PRE_TAG}};
+
+        std::vector<std::string_view> m_custom_tags;
 
         // Compiled regular expression including tag stack
-        CompiledRegex m_regex_w_tags;
+        CompiledRegex<TagHandler> m_regex_w_tags;
 
         // Compiled regular expression using tags but skipping unmatched tags.
-        CompiledRegex m_regex_w_tags_skipping_unmatched;
+        CompiledRegex<TagHandler> m_regex_w_tags_skipping_unmatched;
     };
 
-
-    // Global set of known tags. Wrapped in a function for deterministic static initialization order.
-    TagHandler& StaticTagHandler()
-    {
-        static TagHandler tag_handler;
-        return tag_handler;
-    }
-
-    // Registers the default action and known tags.
-    int RegisterDefaultTags()
-    {
-        StaticTagHandler().Insert(ITALIC_TAG);
-        StaticTagHandler().Insert(SHADOW_TAG);
-        StaticTagHandler().Insert(UNDERLINE_TAG);
-        StaticTagHandler().Insert(SUPERSCRIPT_TAG);
-        StaticTagHandler().Insert(SUBSCRIPT_TAG);
-        StaticTagHandler().Insert(RGBA_TAG);
-        StaticTagHandler().Insert(ALIGN_LEFT_TAG);
-        StaticTagHandler().Insert(ALIGN_CENTER_TAG);
-        StaticTagHandler().Insert(ALIGN_RIGHT_TAG);
-        StaticTagHandler().Insert(PRE_TAG);
-
-        // Must have return value to call at static initialization time.
-        return 0;
-    }
-
-    // Register the default tags at static initialization time.
-    int register_tags_dummy = RegisterDefaultTags();
+    TagHandler tag_handler{};
 }
 
 ///////////////////////////////////////
@@ -672,10 +656,10 @@ X Font::TextElement::Width() const
     return cached_width;
 }
 
-StrSize Font::TextElement::StringSize() const
+StrSize Font::TextElement::StringSize() const noexcept
 { return StrSize(text.size()); }
 
-CPSize Font::TextElement::CodePointSize() const
+CPSize Font::TextElement::CodePointSize() const noexcept
 { return CPSize(widths.size()); }
 
 bool Font::TextElement::operator==(const TextElement &rhs) const
@@ -729,9 +713,9 @@ public:
     }
 
     /** Add an open tag iff it exists as a recognized tag.*/
-    void AddOpenTag(const std::string& tag)
+    void AddOpenTag(std::string_view tag)
     {
-        if (!StaticTagHandler().IsKnown(tag))
+        if (!tag_handler.IsKnown(tag))
             return;
 
         m_are_widths_calculated = false;
@@ -756,9 +740,9 @@ public:
     }
 
     /** Add an open tag iff it exists as a recognized tag.*/
-    void AddOpenTag(const std::string& tag, const std::vector<std::string>& params)
-    {   // TODO: variation taking a span of strings instead of a vector
-        if (!StaticTagHandler().IsKnown(tag))
+    void AddOpenTag(std::string_view tag, const std::vector<std::string>& params)
+    {
+        if (!tag_handler.IsKnown(tag))
             return;
 
         m_are_widths_calculated = false;
@@ -793,9 +777,9 @@ public:
     }
 
     /** Add a close tag iff it exists as a recognized tag.*/
-    void AddCloseTag(const std::string& tag)
+    void AddCloseTag(std::string_view tag)
     {
-        if (!StaticTagHandler().IsKnown(tag))
+        if (!tag_handler.IsKnown(tag))
             return;
 
         m_are_widths_calculated = false;
@@ -819,7 +803,7 @@ public:
     }
 
     /** Add a text element.  Any whitespace in this text element will be non-breaking.*/
-    void AddText(const std::string& text)
+    void AddText(std::string_view text)
     {
         m_are_widths_calculated = false;
 
@@ -833,7 +817,7 @@ public:
     }
 
     /** Add a white space element.*/
-    void AddWhitespace(const std::string& whitespace)
+    void AddWhitespace(std::string_view whitespace)
     {
         m_are_widths_calculated = false;
 
@@ -885,32 +869,32 @@ const std::string& Font::TextAndElementsAssembler::Text() const
 const std::vector<std::shared_ptr<Font::TextElement>>& Font::TextAndElementsAssembler::Elements() const
 { return m_impl->Elements(); }
 
-Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddOpenTag(const std::string& tag)
+Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddOpenTag(std::string_view tag)
 {
     m_impl->AddOpenTag(tag);
     return *this;
 }
 
 Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddOpenTag(
-    const std::string& tag, const std::vector<std::string>& params)
+    std::string_view tag, const std::vector<std::string>& params)
 {
     m_impl->AddOpenTag(tag, params);
     return *this;
 }
 
-Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddCloseTag(const std::string& tag)
+Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddCloseTag(std::string_view tag)
 {
     m_impl->AddCloseTag(tag);
     return *this;
 }
 
-Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddText(const std::string& text)
+Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddText(std::string_view text)
 {
     m_impl->AddText(text);
     return *this;
 }
 
-Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddWhitespace(const std::string& whitespace)
+Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddWhitespace(std::string_view whitespace)
 {
     m_impl->AddWhitespace(whitespace);
     return *this;
@@ -1217,8 +1201,8 @@ void Font::ProcessTagsBefore(const std::vector<LineData>& line_data, RenderState
 std::string Font::StripTags(std::string_view text, bool strip_unpaired_tags)
 {
     using namespace boost::xpressive;
-    std::string text_str{text}; // temporary until StaticTagHandler().Regex returns a cregex
-    auto& regex = StaticTagHandler().Regex(text_str, false, strip_unpaired_tags);
+    std::string text_str{text}; // temporary until tag_handler.Regex returns a cregex
+    auto& regex = tag_handler.Regex(text_str, false, strip_unpaired_tags);
 
     static const mark_tag tag_name_tag(1);
     static const mark_tag open_bracket_tag(2);
@@ -1260,22 +1244,14 @@ Pt Font::TextExtent(const std::vector<LineData>& line_data) const
     return retval;
 }
 
-void Font::RegisterKnownTag(const std::string& tag)
-{ StaticTagHandler().Insert(tag); }
+void Font::RegisterKnownTags(std::vector<std::string_view> tags)
+{ tag_handler.Insert(std::move(tags)); }
 
-void Font::RegisterKnownTag(std::string_view tag)
-{ StaticTagHandler().Insert(tag); }
-
-void Font::RemoveKnownTag(const std::string& tag)
-{ StaticTagHandler().Erase(tag); }
+void Font::RemoveKnownTag(std::string_view tag)
+{ tag_handler.Erase(tag); }
 
 void Font::ClearKnownTags()
-{
-    StaticTagHandler().Clear();
-
-    // Always know the default tags.
-    RegisterDefaultTags();
-}
+{ tag_handler.Clear(); }
 
 void Font::ThrowBadGlyph(const std::string& format_str, std::uint32_t c)
 {
@@ -1368,7 +1344,7 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, Flags<TextFo
     bool ignore_tags = format & FORMAT_IGNORETAGS;
 
     // Fetch and use the regular expression from the TagHandler which parses all the known XML tags.
-    sregex& regex = StaticTagHandler().Regex(text, ignore_tags);
+    sregex& regex = tag_handler.Regex(text, ignore_tags);
     sregex_iterator it(text.begin(), text.end(), regex);
 
     // These are the types found by the regular expression: XML open/close tags, text and
@@ -2149,7 +2125,7 @@ void Font::HandleTag(const std::shared_ptr<FormattingTag>& tag, RenderState& ren
     }
 }
 
-bool Font::IsDefaultFont()
+bool Font::IsDefaultFont() const noexcept
 { return m_font_filename == StyleFactory::DefaultFontName(); }
 
 std::shared_ptr<Font> Font::GetDefaultFont(unsigned int pts)
@@ -2161,28 +2137,24 @@ std::shared_ptr<Font> Font::GetDefaultFont(unsigned int pts)
 ///////////////////////////////////////
 const std::shared_ptr<Font> FontManager::EMPTY_FONT{std::make_shared<Font>("", 0)};
 
-bool FontManager::HasFont(std::string font_filename, unsigned int pts) const
-{ return m_rendered_fonts.count(FontKey(std::move(font_filename), pts)); }
+bool FontManager::HasFont(std::string_view font_filename, unsigned int pts) const noexcept
+{ return FontLookup(font_filename, pts) != m_rendered_fonts.end(); }
 
-std::shared_ptr<Font> FontManager::GetFont(std::string font_filename, unsigned int pts)
-{
-    std::vector<UnicodeCharset> v;
-    auto it = v.end();
-    return GetFont(std::move(font_filename), pts, it, it);
+namespace {
+    const std::vector<UnicodeCharset> empty_charsets;
+    const auto empty_it = empty_charsets.end();
 }
 
-std::shared_ptr<Font> FontManager::GetFont(std::string font_filename, unsigned int pts,
+std::shared_ptr<Font> FontManager::GetFont(std::string_view font_filename, unsigned int pts)
+{ return GetFont(font_filename, pts, empty_it, empty_it); }
+
+std::shared_ptr<Font> FontManager::GetFont(std::string_view font_filename, unsigned int pts,
                                            const std::vector<uint8_t>& file_contents)
-{
-    std::vector<UnicodeCharset> v;
-    auto it = v.end();
-    return GetFont(std::move(font_filename), pts, file_contents, it, it);
-}
+{ return GetFont(font_filename, pts, file_contents, empty_it, empty_it); }
 
-void FontManager::FreeFont(std::string font_filename, unsigned int pts)
+void FontManager::FreeFont(std::string_view font_filename, unsigned int pts)
 {
-    FontKey key(std::move(font_filename), pts);
-    auto it = m_rendered_fonts.find(key);
+    auto it = FontLookup(font_filename, pts);
     if (it != m_rendered_fonts.end())
         m_rendered_fonts.erase(it);
 }

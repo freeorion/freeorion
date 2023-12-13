@@ -75,8 +75,10 @@ public:
     //! Use this to customize the handling of tags in the text on a per-object basis.
     void SetBlockFactoryMap(std::shared_ptr<BlockFactoryMap> block_factory_map);
 
-    //! Registers a factory in the default block factory map.
-    static int RegisterDefaultBlock(std::string tag, std::shared_ptr<IBlockControlFactory>&& factory);
+    /** Registers a factory in the default block factory map. \a tag must be a view of
+      * persistant storage that will be valid indefinitely after this call. */
+    static int RegisterDefaultBlock(std::string_view tag, std::shared_ptr<IBlockControlFactory> factory);
+    static int RegisterDefaultBlock(std::string, std::shared_ptr<IBlockControlFactory>) = delete;
 
     //! Access the default block factory map.
     static std::shared_ptr<RichText::BlockFactoryMap> DefaultBlockFactoryMap();

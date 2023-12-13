@@ -132,9 +132,11 @@ private:
     }
 };
 
-// Register image block as the image tag handler.
-static int dummy = RichText::RegisterDefaultBlock(std::string{ImageBlock::IMAGE_TAG},
-                                                  std::make_shared<ImageBlockFactory>());
+namespace {
+    // Register image block as the image tag handler.
+    const auto dummy = RichText::RegisterDefaultBlock(ImageBlock::IMAGE_TAG,
+                                                      std::make_shared<ImageBlockFactory>());
+}
 
 //! Set the root path from which to look for images with the factory.
 bool ImageBlock::SetImagePath(RichText::IBlockControlFactory* factory, fs::path path)
