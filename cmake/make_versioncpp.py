@@ -3,7 +3,7 @@
 
 import os
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from glob import glob
 from platform import system
 from string import Template
@@ -148,7 +148,7 @@ try:
     timestamp = float(
         check_output(["git", "show", "--no-show-signature", "-s", "--format=%ct", "HEAD"], text=True).strip()
     )
-    build_no = ".".join([datetime.utcfromtimestamp(timestamp).strftime("%Y-%m-%d"), commit])
+    build_no = ".".join([datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime("%Y-%m-%d"), commit])
     if branch[:7] == "release":
         version_file_name = "v" + version
     else:
