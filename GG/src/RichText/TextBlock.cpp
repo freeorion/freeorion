@@ -48,7 +48,7 @@ Pt TextBlock::SetMaxWidth(X width)
 class TextBlockFactory: public RichText::IBlockControlFactory {
 public:
     //! Create a Text block from a plain text tag.
-    std::shared_ptr<BlockControl> CreateFromTag(const RichText::TAG_PARAMS& params,
+    std::shared_ptr<BlockControl> CreateFromTag(const RichText::TAG_PARAMS&,
                                                 std::string content,
                                                 std::shared_ptr<Font> font,
                                                 Clr color,
