@@ -28,7 +28,7 @@ class RichTextPrivate;
 class GG_API RichText: public Control
 {
 public:
-    typedef std::map<std::string, std::string> TAG_PARAMS;
+    using TAG_PARAMS = std::vector<std::pair<std::string_view, std::string_view>>;
 
     //! An interface for object that create block controls from tags.
     class IBlockControlFactory

@@ -113,20 +113,23 @@ private:
     static fs::path ExtractPath(const RichText::TAG_PARAMS& params)
     {
         // Find the src.
-        auto src_param = params.find("src");
+        const auto src_param_it = std::find_if(params.begin(), params.end(),
+                                               [](const auto p) { return p.first == "src"; });
 
         // If src not found, error out.
-        if (src_param == params.end()) {
+        if (src_param_it == params.end()) {
             return fs::path();
+
         } else {
 #if defined(_WIN32)
+            const auto src_param = src_param_it->second;
             // convert UTF-8 path string to UTF-16
             fs::path::string_type str_native;
-            str_native.reserve(src_param->second.size());
-            utf8::utf8to16(src_param->second.begin(), src_param->second.end(), std::back_inserter(str_native));
+            str_native.reserve(src_param.size());
+            utf8::utf8to16(src_param.begin(), src_param.end(), std::back_inserter(str_native));
             return fs::path(str_native);
 #else
-            return fs::path(src_param->second);
+            return fs::path(std::string{src_param_it->second});
 #endif
         }
     }
