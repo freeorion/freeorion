@@ -904,12 +904,10 @@ auto IsInDir(fs::path const& dir, fs::path const& test_dir) -> bool
         return false;
 
     // Resolve any symbolic links, dots or dot-dots
-    auto canon_dir = fs::canonical(dir);
+    const auto canon_dir = fs::canonical(dir);
     // Don't resolve path if directory doesn't exist
     // TODO: Change to fs::weakly_canonical after bump boost version above 1.60
-    auto canon_path = test_dir;
-    if (fs::exists(test_dir))
-        canon_path = fs::canonical(test_dir);
+    const auto canon_path = fs::exists(test_dir) ? fs::canonical(test_dir) : test_dir;
 
     // Paths shorter than dir are not in dir
     auto dir_length = std::distance(canon_dir.begin(), canon_dir.end());
