@@ -72,6 +72,10 @@ condition_wrapper operator&(const value_ref_wrapper<double>& lhs, const value_re
     return lhs.operator condition_wrapper() & rhs.operator condition_wrapper();
 }
 
+condition_wrapper operator&(const value_ref_wrapper<int>& lhs, const condition_wrapper& rhs) {
+    return lhs.operator condition_wrapper() & rhs;
+}
+
 
 condition_wrapper operator|(const condition_wrapper& lhs, const condition_wrapper& rhs) {
     return condition_wrapper(std::make_shared<Condition::Or>(
