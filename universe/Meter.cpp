@@ -14,25 +14,31 @@
 namespace {
     // rounding checks
 
-    constexpr Meter r1{65000.001f};
+    constexpr Meter r1{62000.001f};
     constexpr Meter r2 = []() {
         Meter r2 = r1;
         r2.AddToCurrent(-1.0f);
         return r2;
     }();
-    static_assert(r2.Current() == 64999.001f);
+    static_assert(r2.Current() == 61999.001f);
     constexpr Meter r3 = []() {
         Meter r3 = r2;
         r3.AddToCurrent(-0.01f);
         return r3;
     }();
-    static_assert(r3.Current() == 64998.991f);
+    static_assert(r3.Current() == 61998.988f);
     constexpr Meter r4 = []() {
         Meter r4 = r3;
         r4.AddToCurrent(40.009f);
         return r4;
     }();
-    static_assert(r4.Current() == 65039.0f);
+    static_assert(r4.Current() == 62038.996f);
+    constexpr Meter r5 = []() {
+        Meter r5 = r4;
+        r5.AddToCurrent(4000);
+        return r5;
+    }();
+    static_assert(r5.Current() == Meter::LARGE_VALUE);
 
     constexpr Meter q1{2.01f};
     constexpr Meter q2 = []() {
@@ -75,9 +81,6 @@ std::array<std::string::value_type, 64> Meter::Dump(uint8_t ntabs) const noexcep
     return buffer;
 }
 
-void Meter::ClampCurrentToRange(float min, float max) noexcept
-{ cur = std::max(std::min(cur, FromFloat(max)), FromFloat(min)); }
-
 namespace {
     template <typename T>
     constexpr T Pow(T base, T exp) {
@@ -86,7 +89,6 @@ namespace {
             retval *= base;
         return retval;
     }
-
 
     template <typename T, std::size_t N>
     constexpr std::size_t ArrSize(std::array<T, N>) // TODO: replace with std::ssize when available (C++20 ?)
@@ -100,6 +102,9 @@ Meter::ToCharsArrayT Meter::ToChars() const {
     static constexpr auto digits_one_int = 1 + 10;
     static constexpr auto digits_meter = 2*digits_one_int + 1 + 1; // two numbers, one space, one padding to be safe
     static_assert(ArrSize(ToCharsArrayT()) == digits_meter);
+
+    static_assert(DEFAULT_AS_INT == FromFloat(DEFAULT_VALUE));
+    static_assert(LARGE_AS_INT == FromFloat(LARGE_VALUE));
 
     ToCharsArrayT buffer{};
     ToChars(buffer.data(), buffer.data() + buffer.size());
